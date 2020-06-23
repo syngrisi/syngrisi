@@ -1,0 +1,35 @@
+{
+  "name": "vrt",
+  "version": "1.0.0",
+  "description": "This project is the stub for Applitools",
+  "main": "server.js",
+  "scripts": {
+    "test": "cd ..; wdio wdio.conf.js --spec vrt/tests/features/*; cd vrt;",
+    "startdebug": "nodemon --ignore 'views/lib/*.js' server.js",
+    "start": "nodemon --ignore 'views/lib/*.js' server.js &",
+    "clear": "mongo VRSdb --eval 'db.vrschecks.drop();db.vrssnapshots.drop();db.vrstests.drop();db.vrsapps.drop();db.vrssuites.drop();'; rm ./baselines/*.png",
+    "start_test": "VRT_CONN_STRING='mongodb://localhost/VRTdbTest' VRT_PORT=3001 VRT_BASELINE_PATH='./baselinesTest/' nodemon server.js",
+    "clear_test": "mongo VRSdbTest --eval 'db.vrschecks.drop();db.vrssnapshots.drop();db.vrstests.drop();db.vrsapps.drop();db.vrssuites.drop();'; rm ./baselinesTest/*.png",
+    "clearwin": "mongo VRTdb --eval \"db.vrtchecks.drop();db.vrtsnapshots.drop();db.vrttests.drop();db.vrtapps.drop();db.vrtsuites.drop();\" & DEL /F /Q /S ..\\tests\\BaselineImages\\*.png"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async-lock": "^1.2.2",
+    "body-parser": "^1.19.0",
+    "connect-busboy": "0.0.2",
+    "ejs": "^3.0.1",
+    "express": "^4.17.1",
+    "express-fileupload": "^1.1.6",
+    "got": "^10.2.1",
+    "hasha": "^5.1.0",
+    "moment": "^2.25.3",
+    "mongodb": "^3.4.1",
+    "mongoose": "^5.9.12",
+    "nodemon": "^2.0.2",
+    "p-queue": "^6.4.0",
+    "pino-http": "^5.2.0",
+    "request": "^2.88.0",
+    "resemblejs": "^3.2.4"
+  }
+}

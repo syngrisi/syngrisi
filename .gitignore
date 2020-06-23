@@ -1,0 +1,5 @@
+node_modules
+/baselines/
+/baselinesTest/
+*.log
+.DS_Store
