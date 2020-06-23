@@ -3,4 +3,3 @@ node_modules
 /baselinesTest/
 *.log
 .DS_Store
-src/lib/VRSDrivers/ATDriver.js
