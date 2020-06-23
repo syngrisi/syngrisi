@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css"
+          integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
+          integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
+          crossorigin="anonymous">
+    <!--    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"-->
+    <style>
+        .snapshoot-canvas {
+            width: 100%;
+            /*height: 1500px;*/
+            position: absolute;
+            top: 0px;
+            left: 0px;
+        }
+
+        .snapshot-image {
+            /*width:100%; height:100%;*/
+            position: absolute;
+            top: 0px;
+            left: 0px;
+        }
+    </style>
+
+    <title>Shapshoot - <%= snapshot.name %> | <%= snapshot.id %> | <%= snapshot.formattedCreatedDate %></title>
+</head>
+<body>
+<div class="container">
+    <div class="row ">
+        <div name="sidebar" class="col w-25 border mt-3 float-right">
+            <div class="container sticky-top pt-2 mt-2">
+                <div class="row justify-content-center">
+                    <button name="zoom in" type="button" class="" onclick=" baseline.resize(1.2)">
+                        <i class="fas fa-search-plus fa-1x"></i>
+                    </button>
+                </div>
+
+                <div class="row justify-content-center">
+                    <button name="add-region" type="button" class=""
+                            onclick="baseline.addIgnoreRegion( {name: 'ignore_rect', strokeWidth: 0,})">
+                        <i class="fas fa-expand fa-1x"></i>
+                    </button>
+                </div>
+                <div class="row justify-content-center">
+                    <button name="add-region" type="button" class="" onclick="baseline.addBoundingRegion('bound_rect')">
+                        <i class="fas fa-border-style"></i>
+                    </button>
+                </div>
+
+                <div class="row justify-content-center">
+                    <button name="zoom-out" type="button" class="" onclick="baseline.resize(0.8)">
+                        <i class="fas fa-search-minus fa-1x"></i>
+                    </button>
+                </div>
+                <div class="row justify-content-center">
+                    <button name="save-snapshot" type="button" class=""
+                            onclick="baseline.sendIgnoreRegions('<%= snapshot.id %>' ,baseline.getRectData())">
+                        <i class="fas fa-save fa-1x"></i>
+                    </button>
+                </div>
+                <div class="row justify-content-center">
+                    <button id="remove" name="remove" type="button" class="" style="display:none">
+                        <i class="fas fa-trash fa-1x"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!--        <div name="shapshoot" id='snapshoot' class="col-11 border mt-3 mh-100" style="height: 1500px">-->
+        <div name="shapshoot" id='snapshoot' class="col-11 border mt-3 mh-100" style="height: 3500px">
+            <div class="panel">
+                <!--                <img name="snapshootimage" class="snapshot-image w-100 img-responsive"-->
+                <!--                     src="/snapshoots/<%= snapshot.id %>.png"-->
+                <!--                     alt="<%= snapshot.id %>">-->
+                <canvas class="snapshoot-canvas" id="2d" style="height: 1300px">
+                </canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"
+        integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
+        crossorigin="anonymous"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/fabric.js/3.6.1/fabric.min.js"></script>
+<script src="lib/baselineView.js"></script>
+<script>
+    $(document).on('click', ".deleteBtn", function () {
+        if (baseline.canvas.getActiveObject()) {
+            baseline.canvas.remove(baseline.canvas.getActiveObject());
+            $(".deleteBtn").remove();
+        }
+    });
+    $('#remove').on('click', function () {
+        baseline.canvas.remove(baseline.canvas.getActiveObject())
+    });
+
+    var baseline = {};
+    fabric.Object.prototype.objectCaching = false;
+    fabric.Image.fromURL('/snapshoots/<%= snapshot.id %>.png', function (oImg) {
+        baseline = new BaselineView('2d',
+            oImg,
+            {
+                height: document.getElementById('snapshoot').offsetHeight,
+                weight: document.getElementById('snapshoot').offsetWidth
+            }
+        );
+        baseline.getSnapshotIgnoreRegionsDataAndDrawRegions('<%= snapshot.id %>');
+    })
+</script>
+</body>
+</html>
