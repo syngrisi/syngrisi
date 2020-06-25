@@ -14,7 +14,6 @@
     <style>
         .snapshoot-canvas {
             width: 100%;
-            height: 1500px;
             position: absolute;
             top: 0px;
             left: 0px;
@@ -60,12 +59,9 @@
                 </div>
             </div>
         </div>
-        <div name="shapshoot" id='snapshoot' class="col-11 border mt-3 mh-100" style="height: 1500px">
+        <div name="shapshoot" id='snapshoot' class="col-11 border mt-3 mh-100">
             <div class="panel">
-                <!--                <img name="snapshootimage" class="snapshot-image w-100 img-responsive"-->
-                <!--                     src="/snapshoots/<%= expected_snapshoot.id %>.png"-->
-                <!--                     alt="<%= expected_snapshoot.id %>">-->
-                <canvas class="snapshoot-canvas" id="2d" style="height: 1300px">
+                <canvas class="snapshoot-canvas" id="2d">
                 </canvas>
             </div>
         </div>
@@ -90,13 +86,40 @@
     var actualImg = {};
     var diffImg = {};
     var baseline = {};
-    canvas.setHeight(document.getElementById('snapshoot').offsetHeight);
+    // canvas.setHeight(document.getElementById('snapshoot').offsetHeight);
     canvas.setWidth(document.getElementById('snapshoot').offsetWidth);
+
     canvas.hoverCursor = 'col-resize'
 
-    // function getLastRegion() {
-    //     return canvas.item(canvas.getObjects().length - 1);
-    // }
+    fabric.Image.fromURL('/snapshoots/<%= expected_snapshoot.id %>.png', function (oImg) {
+        window.BaselineImg = oImg;
+        oImg.clipPath = clipPath;
+        canvas.add(oImg);
+        expectedImg = oImg;
+        oImg.moveTo(0);
+        oImg.scaleToWidth(canvas.width);
+        canvas.setHeight(oImg.getScaledHeight())
+
+
+        fabric.Image.fromURL('/snapshoots/<%= actual_snapshoot.id %>.png', function (oImg) {
+            canvas.add(oImg);
+            window.expectedImg = oImg;
+            actualImg = oImg;
+            oImg.moveTo(0);
+            oImg.scaleToWidth(canvas.width);
+            canvas.renderAll();
+        });
+    });
+
+    fabric.Image.fromURL('/snapshoots/<%= diff_snapshoot.id %>.png', function (oImg) {
+        oImg.set('opacity', 0)
+        canvas.add(oImg);
+        diffImg = oImg;
+        oImg.moveTo(4);
+        oImg.scaleToWidth(canvas.width);
+        canvas.renderAll();
+    });
+
 
     var clipPath = new fabric.Rect({
         width: canvas.width,
@@ -152,34 +175,6 @@
 
     }
 
-    fabric.Image.fromURL('/snapshoots/<%= expected_snapshoot.id %>.png', function (oImg) {
-        oImg.clipPath = clipPath;
-        canvas.add(oImg);
-        expectedImg = oImg;
-        oImg.moveTo(0);
-        oImg.scaleToWidth(canvas.width);
-        canvas.renderAll();
-
-
-        fabric.Image.fromURL('/snapshoots/<%= actual_snapshoot.id %>.png', function (oImg) {
-            canvas.add(oImg);
-            // expectedImg = oImg;
-            actualImg = oImg;
-            oImg.moveTo(0);
-            oImg.scaleToWidth(canvas.width);
-            canvas.renderAll();
-        });
-    });
-
-    fabric.Image.fromURL('/snapshoots/<%= diff_snapshoot.id %>.png', function (oImg) {
-        // fabric.Image.fromURL('/snapshoots/DIFF.png', function (oImg) {
-        oImg.set('opacity', 0)
-        canvas.add(oImg);
-        diffImg = oImg;
-        oImg.moveTo(4);
-        oImg.scaleToWidth(canvas.width);
-        canvas.renderAll();
-    });
 
     function resizeSnapshoot(ratio) {
         let w = expectedImg.getScaledWidth();
