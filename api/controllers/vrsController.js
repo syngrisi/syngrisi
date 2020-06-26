@@ -450,9 +450,9 @@ exports.remove_test = async function (req, res) {
 };
 
 exports.create_check = async function (req, res) {
-    return new Promise(
-        async function (resolve, reject) {
+    return new Promise(async function (resolve, reject) {
             try {
+                let executionTimer = process.hrtime()
                 let params = req.body;
                 console.log(`CREATE check with params: '${JSON.stringify(params)}'`);
 
@@ -550,7 +550,10 @@ exports.create_check = async function (req, res) {
                     await check.updateOne(updateParams);
                     resultResponse = await Check.findById(check.id);
                 }
-                res.json(resultResponse);
+                const result = Object.assign({}, resultResponse.toObject(),
+                    {executeTime: process.hrtime(executionTimer).toString()})
+                console.log({res})
+                res.json(result);
                 resolve([req, res, check]);
             } catch (e) {
                 reject(e);
