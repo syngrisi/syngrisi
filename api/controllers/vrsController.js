@@ -16,15 +16,11 @@ const App = mongoose.model('VRSApp');
 const moment = require('moment');
 
 function fatalError(req, res, e) {
-    let stack = ''
-    if (e.stack) {
-        stack = e.stack;
-    }
+    let stack = e.stack ? e.stack : '';
     const errMsg = 'Fatal error: ' + e + "\n" + stack;
     req.log.fatal(errMsg);
     console.log(errMsg);
-    res.status(500).send(
-        `<pre>${errMsg}</pre>>`);
+    res.status(500).json({status: 'fatalError', message: errMsg});
 }
 
 // get last updated document
@@ -38,17 +34,18 @@ async function getLastCheckBaselineId(identifier) {
     return null;
 }
 
-async function getSnapshot(hash) {
+async function getSnapshotByImgHash(hash) {
     return (await Snapshot.find({imghash: hash}))[0];
 }
 
-async function createSnapshotIfNotExist(params, fileData) {
-    // console.log(baseline);
+async function createSnapshotIfNotExist(parameters) {
+    const {params, fileData, hashCode} = parameters
     let opts = {name: params.name};
-    opts['imghash'] = hasha(fileData);
-    // console.log(opts['imghash']);
-    const equalSnapshot = await getSnapshot(opts['imghash']);
-    // console.log(equalSnapshot);
+    if (!fileData && !hashCode)
+        throw new Error("Error: the 'fileData' nor 'hashCode' is set, you should provide at least one parameter")
+
+    opts['imghash'] = hashCode || hasha(fileData);
+    const equalSnapshot = await getSnapshotByImgHash(opts['imghash']);
     if (equalSnapshot) {
         console.log(`Snapshot with hash: '${opts['imghash']}' is already exist.`);
         return equalSnapshot;
@@ -67,7 +64,6 @@ async function createSnapshotIfNotExist(params, fileData) {
     console.log(`Save screenshot to: '${path}'`);
     fs.writeFileSync(path, fileData);
     return snapshoot;
-
 }
 
 async function compareSnapshots(params) {
@@ -112,7 +108,7 @@ exports.checkview = async function (req, res) {
             });
         } catch (e) {
             fatalError(req, res, e);
-            reject(e);
+            return reject(e);
         }
     })
 };
@@ -154,7 +150,7 @@ exports.checksgroupview = async function (req, res) {
             });
         } catch (e) {
             fatalError(req, res, e);
-            reject(e);
+            return reject(e);
         }
     });
 
@@ -180,7 +176,7 @@ exports.snapshootview = async function (req, res) {
             });
         } catch (e) {
             fatalError(req, res, e);
-            reject(e);
+            return reject(e);
         }
     });
 };
@@ -217,12 +213,12 @@ exports.diffview = async function (req, res) {
             } catch (e) {
                 res.status(500)
                     .send(`Error preparing diff page: ${JSON.stringify(e)}`);
-                reject(e);
+                return reject(e);
             }
 
         } catch (e) {
             fatalError(req, res, e);
-            reject(e);
+            return reject(e);
         }
     });
 };
@@ -274,7 +270,7 @@ async function checksGroupedByIdent(checkFilter) {
             resolve(result);
         } catch (e) {
             fatalError(req, res, e);
-            reject(e);
+            return reject(e);
         }
     })
 }
@@ -314,8 +310,8 @@ exports.index = async function (req, res) {
                     checksByTestGroupedByIdent: checksByTestGroupedByIdent
                 });
             } catch (e) {
-                reject(e);
                 fatalError(req, res, e);
+                return reject(e);
             }
         }
     )
@@ -329,11 +325,11 @@ exports.checks_group_by_ident = async function (req, res) {
             let testId = req.params.testid;
             res.json(await checksGroupedByIdent({test: testId}).catch(function (e) {
                 fatalError(req, res, e);
-                reject(e);
+                return reject(e);
             }));
         } catch (e) {
             fatalError(req, res, e);
-            reject(e);
+            return reject(e);
         }
     })
 
@@ -362,7 +358,6 @@ exports.create_test = async function (req, res) {
             try {
                 let params = req.body;
 
-                console.log(`Create test with name '${params.testname}', params: '${JSON.stringify(params)}'`);
                 req.log.info(`Create test with name '${params.testname}', params: '${JSON.stringify(params)}'`);
                 const test = await orm.createTest({
                     name: params.testname,
@@ -395,21 +390,21 @@ exports.update_test = async function (req, res) {
                     function (e) {
                         console.log(`Cannot update the test, error: '${e}'`);
                         fatalError(req, res, e)
-                        reject(e);
+                        return reject(e);
                     }
                 )
                 tst.save().catch(
                     function (e) {
                         console.log(`Cannot save the test, error: '${e}'`);
                         fatalError(req, res, e)
-                        reject(e);
+                        return reject(e);
                     }
                 )
                 res.status(200).send(`Test with id: '${id}' was updated`);
                 resolve(tst);
             } catch (e) {
                 fatalError(req, res, e)
-                reject(e);
+                return reject(e);
             }
         });
 };
@@ -433,18 +428,18 @@ exports.remove_test = async function (req, res) {
                             (err) => {
                                 res.status(400)
                                     .send(`Cannot remove the test with id: '${id}', error: '${err}'`);
-                                reject(e);
+                                return reject(e);
                             }
                         );
                 })
                 .catch(function (error) {
                     res.status(400)
                         .send(`Cannot remove the checks related to id: '${id}', error: '${error}'`);
-                    reject(e);
+                    return reject(e);
                 });
         } catch (e) {
             fatalError(req, res, e);
-            reject(e);
+            return reject(e);
         }
     })
 };
@@ -452,68 +447,112 @@ exports.remove_test = async function (req, res) {
 exports.create_check = async function (req, res) {
     return new Promise(async function (resolve, reject) {
             try {
+                console.log(`CREATE check, input data: '${JSON.stringify(req.body, 2)}'`);
                 let executionTimer = process.hrtime()
-                let params = req.body;
-                console.log(`CREATE check with params: '${JSON.stringify(params)}'`);
+                checkRequestBody: {
+                    if (!req.body.testid) {
+                        const errMsg = `Cannot create check without 'testid' parameter, try to initialize session at first. parameters: '${JSON.stringify(req.body)}'`
+                        res.status(400)
+                            .send({
+                                status: 'paramNotFound',
+                                message: errMsg
+                            });
+                        reject(errMsg);
+                        return
+                    }
+                    if (!req.body.hashcode) {
+                        const errMsg = `Cannot create check without 'hashcode' parameter, parameters: '${JSON.stringify(req.body)}'`;
+                        res.status(400)
+                            .send({
+                                status: 'paramNotFound',
+                                message: errMsg
+                            });
+                        reject(errMsg);
+                        return
+                    }
 
-                params['Updated_date'] = Date.now();
-                let resultResponse = '';
+                    console.log(`Try to find test with id: '${req.body.testid}'`);
+                    if (!Test.findById(req.body.testid)) {
+                        const errMsg = `Error: Can not find test with id: '${req.body.testid}', parameters: '${JSON.stringify(req.body)}'`
+                        res.status(400)
+                            .send({
+                                status: 'testNotFound',
+                                message: errMsg
+                            });
 
-                // if (params.testname) {
-                //     console.log(`Create test with name '${params.testname}' if not exist`);
-                //     const test = await orm.createTestIfNotExist({ name: params.testname });
-                //     params.test = test.id;
-                // }
-                let test = {};
-                if (!params.testid) {
-                    res.status(400)
-                        .send("Cannot create check without 'testid' parameters, try to initialize session at first");
-                } else {
-                    console.log(`Try to find test with Id: ${params.testid}`);
-                    test = await Test.findById(params.testid);
-                    console.log(`Attach this check to the tests '${JSON.stringify(test)}' if not exist`);
-                    // const test = await orm.createTestIfNotExist({ name: params.testname });
-                    params.test = test.id;
+                        reject(errMsg)
+                        return
+                    }
                 }
 
-                if (params.suitename) {
-                    console.log(`Create suite with name '${params.suitename}' if not exist`);
-                    const suite = await orm.createSuiteIfNotExist({name: params.suitename});
-                    params.suite = suite.id;
+                let params = {
+                    testname: req.body.testname,
+                    test: req.body.testid,
+                    name: req.body.name,
+                    viewport: req.body.viewport,
+                    browserName: req.body.browserName,
+                    os: req.body.os,
+                    Updated_date: Date.now(),
+                    suite: (await orm.createSuiteIfNotExist({name: req.body.suitename || 'Others'})).id,
+                    appname: (await orm.createAppIfNotExist({name: req.body.appname || 'Unknown'})).id,
                 }
-
-                if (params.appname) {
-                    console.log(`Create App with name '${params.appname}' if not exist`);
-                    const test = await orm.createAppIfNotExist({name: params.appname});
-                    params.app = test.id;
+                const fileData = req.files ? req.files.file.data : false
+                /**
+                 * Usually there is two stage of checking request:
+                 * Phase I
+                 *   1. Client sends request with 'req.body.hashcode' value but without 'req.files.file.data'
+                 *   2. Server finds for snapshot with this image 'hashcode' and if found - go to Step 3 of Phase2,
+                 *      if not - sends response "{status: 'requiredFileData', message: 'cannot found an image with this hashcode,
+                 *      please add image file data and resend request'}"
+                 * Phase2
+                 *   1. Client receives response with incomplete status and resend the same request but with 'req.files.file.data' parameter
+                 *   2. Server create a new snapshot based on parameters
+                 *   3. Server handle checking the snapshoot and return to client check response with one of 'complete` status (eq:. new, failed, passed)
+                 */
+                const snapshotFoundedByHashcode = await getSnapshotByImgHash(req.body.hashcode);
+                if (!req.files && !snapshotFoundedByHashcode) {
+                    console.log(`Cannot find snapshoot with hash: '${req.body.hashcode}', response with 206, 'requiredFileData' message`)
+                    res.status(206).json({
+                        status: 'requiredFileData',
+                        message: 'cannot found an image with this hashcode, please add image file data and resend request',
+                        hashCode: req.body.hashcode
+                    })
+                    resolve()
+                    return
                 }
+                if (snapshotFoundedByHashcode) {
+                    console.log(`FOUND snapshoot by hashcode: '${JSON.stringify(snapshotFoundedByHashcode)}'`)
+                }
+                handleBaseline:{
+                    // check MUST be identified by Name, OS, Browser, Viewport
+                    const checkIdentifier = {
+                        name: params.name,
+                        os: params.os,
+                        browserName: params.browserName,
+                        viewport: params.viewport,
+                    };
+                    console.log(`Find for baseline for check with identifier: '${JSON.stringify(checkIdentifier)}'`);
+                    const previousBaselineId = await getLastCheckBaselineId(checkIdentifier);
+                    const currentSnapshot = snapshotFoundedByHashcode || (await createSnapshotIfNotExist({
+                        params: req.body,
+                        fileData: fileData,
+                        hashCode: req.body.hashcode
+                    }));
+                    if (previousBaselineId) {
+                        console.log(`A baseline for check name: '${req.body.name}', id: '${previousBaselineId}' is already exists`);
+                        params.baselineId = previousBaselineId;
 
-                // create an actual snapshot if baseline Id is exist in a previous сheck or create a new baseline otherwise
-                console.log(`Check if baselineId is exist in previous check with name: '${req.body.name}'`);
+                        console.log(`Creating an actual snapshot for check with name: '${req.body.name}'`);
 
-                // check MUST be identified by Name, OS, Browser, Viewport
-                const checkIdentifier = {
-                    name: params.name,
-                    os: params.os,
-                    browserName: params.browserName,
-                    viewport: params.viewport,
-                };
-
-                console.log(`Find for baseline for check with identifier: '${JSON.stringify(checkIdentifier)}'`);
-                const previousBaselineId = await getLastCheckBaselineId(checkIdentifier);
-                if (previousBaselineId) {
-                    console.log(`A baseline for check name: '${req.body.name}', id is '${previousBaselineId}' is already exists`);
-                    params.baselineId = previousBaselineId;
-
-                    console.log(`Creating an actual snapshot for check with name: '${req.body.name}'`);
-                    const actualSnapshot = await createSnapshotIfNotExist(req.body, req.files.file.data);
-                    params.actualSnapshotId = actualSnapshot.id;
-                    params.status = 'pending';
-                } else {
-                    console.log(`A baseline snapshot for previous check with name: '${req.body.name}', does not exist creating new one`);
-                    const baseline = await createSnapshotIfNotExist(req.body, req.files.file.data);
-                    params.baselineId = baseline.id;
-                    params.status = 'new';
+                        const actualSnapshot = currentSnapshot
+                        params.actualSnapshotId = actualSnapshot.id;
+                        params.status = 'pending';
+                    } else {
+                        console.log(`A baseline snapshot for previous check with name: '${req.body.name}', does not exist creating new one`);
+                        const baseline = currentSnapshot
+                        params.baselineId = baseline.id;
+                        params.status = 'new';
+                    }
                 }
 
                 // params.browserName = test.browserName;
@@ -521,6 +560,7 @@ exports.create_check = async function (req, res) {
                 console.log(`Create and save new check with params: '${JSON.stringify(params, 2)}'`);
                 let check = await Check.create(params);
 
+                let resultResponse;
                 await check.save()
                     .then(function (chk) {
                             resultResponse = chk;
@@ -538,7 +578,10 @@ exports.create_check = async function (req, res) {
                     const diff = await compareSnapshots(params);
                     if (diff.misMatchPercentage !== '0.00') {
                         console.log(`Saving diff snapshot for check with Id: '${check.id}'`);
-                        const diffSnapshot = await createSnapshotIfNotExist(req.body, diff.getBuffer());
+                        const diffSnapshot = await createSnapshotIfNotExist({
+                            params: req.body,
+                            fileData: diff.getBuffer()
+                        });
                         updateParams['diffId'] = diffSnapshot.id;
                         updateParams['status'] = 'failed';
                     } else {
@@ -552,12 +595,11 @@ exports.create_check = async function (req, res) {
                 }
                 const result = Object.assign({}, resultResponse.toObject(),
                     {executeTime: process.hrtime(executionTimer).toString()})
-                console.log({res})
                 res.json(result);
                 resolve([req, res, check]);
             } catch (e) {
-                reject(e);
                 fatalError(req, res, e);
+                return reject(e);
             }
         }
     );
@@ -611,20 +653,20 @@ exports.update_check = async function (req, res) {
                         })
                         .catch(function (error) {
                             console.log(`Cannot update check, error: '${error}'`);
-                            reject(e);
+                            return reject(e);
                         });
                 })
                 .catch(
                     (e) => {
                         res.status(400)
                             .send(`Cannot update a check with id: '${id}', error: ${e}`);
-                        reject(e);
+                        return reject(e);
                     }
                 );
 
         } catch (e) {
             fatalError(req, res, e);
-            reject(e);
+            return reject(e);
         }
     })
 
@@ -641,7 +683,7 @@ exports.update_snapshot = async function (req, res) {
                 function (e) {
                     console.log(`Cannot update a snapshot with id: '${id}', error: ${e}`);
                     fatalError(req, res, e);
-                    reject(e)
+                    return reject(e)
                 }
             );
             await snp.save()
@@ -650,7 +692,7 @@ exports.update_snapshot = async function (req, res) {
                 .json({item: 'Snapshot', action: 'update', id: id, opts: opts})
         } catch (e) {
             fatalError(req, res, e);
-            reject(e);
+            return reject(e);
         }
     })
 };
@@ -674,7 +716,7 @@ exports.get_snapshot = async function (req, res) {
                 );
         } catch (e) {
             fatalError(req, res, e);
-            reject(e);
+            return reject(e);
         }
     })
 };
@@ -698,7 +740,7 @@ exports.get_check = async function (req, res) {
                 );
         } catch (e) {
             fatalError(req, res, e);
-            reject(e);
+            return reject(e);
         }
     })
 };
