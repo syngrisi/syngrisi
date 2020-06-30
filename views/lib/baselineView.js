@@ -13,19 +13,18 @@ class BaselineView {
             }
             this.canvas.setWidth(params.weight);
         }
-            this.image = image;
-            const classThis = this;
-            this.image.lockScalingX = true;
-            this.image.lockScalingY = true;
-            this.image.lockMovementX = true;
-            this.image.lockMovementY = true;
-        if(!params.noAddImage){
-
+        this.image = image;
+        const classThis = this;
+        this.image.lockScalingX = true;
+        this.image.lockScalingY = true;
+        this.image.lockMovementX = true;
+        this.image.lockMovementY = true;
+        if (!params.noAddImage) {
             this.canvas.add(this.image);
         }
 
         this.image.sendToBack();
-            this.image.scaleToWidth(this.canvas.width);
+        this.image.scaleToWidth(this.canvas.width);
 
         this.canvas.on('object:selected', function (o) {
             if (o.target.name === 'ignore_rect') {
@@ -60,12 +59,16 @@ class BaselineView {
         let lastLeft = null;
         let lastTop = null;
         if (this.getLastRegion() !== undefined) {
-            lastLeft = this.getLastRegion().left;
+            lastLeft = this.getLastRegion().left || 50;
             lastTop = this.getLastRegion().top;
         }
+        console.log(document.documentElement.scrollTop)
+        // if last elements fit in current viewport create new region near this region
+        const top = (lastTop > document.documentElement.scrollTop && lastTop < document.documentElement.scrollTop + window.innerHeight) ? lastTop + 20 : document.documentElement.scrollTop + 50;
+        const left = (lastLeft < (this.canvas.width - 80)) ? lastLeft + 20 : lastLeft - 50;
         return new fabric.Rect({
-            left: params.left || (lastLeft + 20) || 100,
-            top: params.top || (lastTop + 20) || 100,
+            left: params.left || left,
+            top: params.top || top,
             fill: params.fill || 'blue',
             width: params.width || 200,
             height: params.height || 100,
@@ -111,6 +114,8 @@ class BaselineView {
         });
         this.canvas.add(r);
         r.bringToFront();
+        // become selected
+        this.canvas.setActiveObject(r);
     }
 
     addBoundingRegion(name) {
