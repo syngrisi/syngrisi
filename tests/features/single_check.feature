@@ -35,18 +35,6 @@ Feature: VRS One Suite, One test, One check
 
   @withEndSession
   Scenario: VRS create new check - with session ending
-    Given I clear test VRS database
-    Given I kill process which used port: "3001"
-    Given I start VRS server with parameters:
-    """
-      port: 3001
-      databaseName: VRSdbTest
-      baseLineFolder: ./baselinesTest/
-    """
-    Given I setup VRS driver with parameters:
-    """
-      url: "http://vrs:3001/"
-    """
     Given I set window size: "1366x768"
     Given I start VRS session with parameters:
     """
@@ -97,7 +85,6 @@ Feature: VRS One Suite, One test, One check
     Then I expect that VRS check "1/1 new_int_check_3" has "Passed" status
 
   Scenario: VRS create new check - failed after new
-
     Given I set window size: "1366x768"
 
     Given I start VRS session with parameters:
@@ -128,7 +115,6 @@ Feature: VRS One Suite, One test, One check
     Then I expect that VRS check "1/1 new_int_check_4" has "Failed" status
 
   Scenario: VRS create new check - failed after success
-
     Given I set window size: "1366x768"
 
     Given I start VRS session with parameters:
