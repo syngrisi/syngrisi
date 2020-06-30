@@ -79,7 +79,7 @@
                 <!--                <img name="snapshootimage" class="snapshot-image w-100 img-responsive"-->
                 <!--                     src="/snapshoots/<%= snapshot.id %>.png"-->
                 <!--                     alt="<%= snapshot.id %>">-->
-                <canvas class="snapshoot-canvas" id="2d" style="height: 1300px">
+                <canvas class="snapshoot-canvas" id="2d">
                 </canvas>
             </div>
         </div>
@@ -107,19 +107,25 @@
     $('#remove').on('click', function () {
         baseline.canvas.remove(baseline.canvas.getActiveObject())
     });
-
     var baseline = {};
-    fabric.Object.prototype.objectCaching = false;
-    fabric.Image.fromURL('/snapshoots/<%= snapshot.id %>.png', function (oImg) {
-        baseline = new BaselineView('2d',
-            oImg,
-            {
-                height: document.getElementById('snapshoot').offsetHeight,
-                weight: document.getElementById('snapshoot').offsetWidth
-            }
-        );
-        baseline.getSnapshotIgnoreRegionsDataAndDrawRegions('<%= snapshot.id %>');
-    })
+
+    let baselineImg = new Image();
+    baselineImg.src = '/snapshoots/<%= snapshot.id %>.png';
+    baselineImg.onload = function() {
+        document.getElementById('snapshoot').style.height = this.height + 'px'
+        fabric.Object.prototype.objectCaching = false;
+        fabric.Image.fromURL(baselineImg.src, function (oImg) {
+            baseline = new BaselineView('2d',
+                oImg,
+                {
+                    height: document.getElementById('snapshoot').offsetHeight,
+                    weight: document.getElementById('snapshoot').offsetWidth
+                }
+            );
+            baseline.getSnapshotIgnoreRegionsDataAndDrawRegions('<%= snapshot.id %>');
+        })
+    }
+
 </script>
 </body>
 </html>
