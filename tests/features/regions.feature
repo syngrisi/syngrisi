@@ -60,7 +60,7 @@ Feature: Regions works properly
     """
     Then I expect the stored "js" object is equal:
     """
-      20,20,200,100,MediumVioletRed,rgba(100,200,200,0.5),0.5
+      20,50,200,100,MediumVioletRed,rgba(100,200,200,0.5),0.5
     """
 
     When I refresh page
@@ -100,7 +100,7 @@ Feature: Regions works properly
     """
     Then I expect the stored "js" object is equal:
     """
-      20,20,200,100,MediumVioletRed,rgba(100,200,200,0.5),0.5
+      20,50,200,100,MediumVioletRed,rgba(100,200,200,0.5),0.5
     """
 
     When I click on the element "[name=save-snapshot]"
@@ -123,9 +123,8 @@ Feature: Regions works properly
     """
     Then I expect the stored "js" object is equal:
     """
-      20,20,200,100,MediumVioletRed,rgba(100,200,200,0.5),0.5
+      20,50,200,100,MediumVioletRed,rgba(100,200,200,0.5),0.5
     """
-
 
   Scenario: Create Region with saving after change position
     When I open the url "http://vrs:3001/"
@@ -151,7 +150,7 @@ Feature: Regions works properly
     """
     Then I expect the stored "js" object is equal:
     """
-      20,20,200,100,MediumVioletRed,rgba(100,200,200,0.5),0.5
+      20,50,200,100,MediumVioletRed,rgba(100,200,200,0.5),0.5
     """
 
     When I execute javascript code:
