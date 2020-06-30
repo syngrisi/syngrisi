@@ -364,7 +364,8 @@ exports.create_test = async function (req, res) {
                     status: params.teststatus,
                     viewport: params.testsviewport,
                     browserName: params.testsbrowsername,
-                    os: params.testos
+                    os: params.testos,
+                    Start_date: new Date(),
                 });
 
                 res.json(test);
