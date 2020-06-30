@@ -115,6 +115,8 @@ class BaselineView {
         this.canvas.add(r);
         r.bringToFront();
         // become selected
+        if (params.noSelect)
+            return
         this.canvas.setActiveObject(r);
     }
 
@@ -248,6 +250,7 @@ class BaselineView {
         console.log('converted:', regs.length, regs);
         const classThis = this;
         regs.forEach(function (regParams) {
+            regParams['noSelect'] = true;
             classThis.addIgnoreRegion(regParams);
         })
     }
@@ -269,13 +272,12 @@ class BaselineView {
     }
 
     addDeleteBtn(target) {
+        const regionIndex = baseline.canvas.getObjects().indexOf(target)
         $(".deleteBtn").remove();
-        var btnLeft = target.calcCoords().tr.x - 0;
-        var btnTop = target.calcCoords().tr.y - 15;
-        // var btnLeft = target.oCoords.tr.x - 0;
-        // var btnTop = target.oCoords.tr.y - 15;
+        let btnLeft = target.calcCoords().tr.x - 0;
+        let btnTop = target.calcCoords().tr.y - 15;
 
-        var deleteBtn = '<i class="fas fa-window-close deleteBtn" style="color: firebrick; background-color: white; position:absolute;top:' + btnTop + 'px;left:' + btnLeft + 'px;cursor:pointer; padding: 0px"></i>';
+        let deleteBtn = `<i name="delete-region" id="region-delete-icon-${regionIndex}" class="fas fa-window-close deleteBtn" style="color: firebrick; background-color: white; position:absolute;top:` + btnTop + 'px;left:' + btnLeft + 'px;cursor:pointer; padding: 0px"></i>';
         $(".canvas-container").append(deleteBtn);
     }
 }
