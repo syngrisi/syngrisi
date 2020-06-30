@@ -99,11 +99,11 @@
         </div>
         <div class="col w-75  ml-1 bg-secondary border-primary border-top border-left border-right">
             <div class="row ">
-                <div class="col-1 col-lg-1 text-truncate small">
+                <div class="col-1 col-lg-auto text-truncate small">
                     <input name="checkAll" onclick="checkAllTests()" type="checkbox">
                 </div>
-                <div class="col-2 col-lg-2 text-truncate small">Status</div>
-                <div class="col-4 col-lg-3 text-truncate small">Name</div>
+                <div class="col-2 col-lg-1 text-truncate small">Status</div>
+                <div class="col-4 col-lg-4 text-truncate small">Name</div>
                 <div class="col-1 col-lg-2 text-truncate small">Start date</div>
                 <div class="col-1 col-lg-1 text-truncate small">Browser</div>
                 <div class="col-1 col-lg-1 text-truncate small">Platform</div>
@@ -132,12 +132,12 @@
                     <!--TEST_INFO START-->
                     <% if(Object.keys(checksByTestGroupedByIdent[test.id]).length > 0) { %>
                         <div class="testinfo row clearfix border-bottom_ border-secondary bg-light text-secondary1 m-0 w-100">
-                            <div class="cell-input cell col-1 col-lg-1 border-bottom border-right text-truncate small d-flex align-items-center ">
+                            <div class="cell-input cell col-1 col-lg-auto border-bottom border-right text-truncate small d-flex align-items-center ">
                                 <input id="<%= test.id %>"
                                       name="test"
                                        type="checkbox">
                             </div>
-                            <div class="cell-status cell col-2 col-lg-2 border-bottom border-right text-truncate">
+                            <div class="cell-status cell col-2 col-lg-1 border-bottom border-right text-truncate">
                             <% const statusesClasses = { Failed: 'text-danger', Passed: 'text-success', Unresolved: 'text-warning', Running: 'text-info', New: 'text-success font-weight-bold' }%>
 
                                     <span name="cell-status" id="<%= test.id %>_cell-status"
@@ -152,7 +152,7 @@
 <!--                                        <%= test.blinking%>-->
                                     </span>
                             </div>
-                            <div class="cell-name cell col-4 col-lg-3 border-bottom border-right text-truncate">
+                            <div class="cell-name cell col-4 col-lg-4 border-bottom border-right text-truncate">
                                 <a data-toggle="collapse" class="collapsing" href="#testchecks_<%= test.id %>"
                                    onclick="drawTestChecksPreviews('<%= test.id %>');">
                                 <span name="cell-name" id="<%= test.id %>_cell-name" class="text-secondary small "
