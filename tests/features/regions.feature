@@ -60,7 +60,7 @@ Feature: Regions works properly
     """
     Then I expect the stored "js" object is equal:
     """
-      20,50,200,100,MediumVioletRed,rgba(100,200,200,0.5),0.5
+      70,50,200,100,MediumVioletRed,rgba(100,200,200,0.5),0.5
     """
 
     When I refresh page
@@ -100,7 +100,7 @@ Feature: Regions works properly
     """
     Then I expect the stored "js" object is equal:
     """
-      20,50,200,100,MediumVioletRed,rgba(100,200,200,0.5),0.5
+      70,50,200,100,MediumVioletRed,rgba(100,200,200,0.5),0.5
     """
 
     When I click on the element "[name=save-snapshot]"
@@ -123,7 +123,7 @@ Feature: Regions works properly
     """
     Then I expect the stored "js" object is equal:
     """
-      20,50,200,100,MediumVioletRed,rgba(100,200,200,0.5),0.5
+      70,50,200,100,MediumVioletRed,rgba(100,200,200,0.5),0.5
     """
 
   Scenario: Create Region with saving after change position
@@ -150,7 +150,7 @@ Feature: Regions works properly
     """
     Then I expect the stored "js" object is equal:
     """
-      20,50,200,100,MediumVioletRed,rgba(100,200,200,0.5),0.5
+      70,50,200,100,MediumVioletRed,rgba(100,200,200,0.5),0.5
     """
 
     When I execute javascript code:
@@ -191,7 +191,7 @@ Feature: Regions works properly
       300,500,200,100,MediumVioletRed,rgba(100,200,200,0.5),0.5
     """
 
-  Scenario: Create Region with saving - two regiona
+  Scenario: Create Region with saving - two regions
     When I open the url "http://vrs:3001/"
     When I click on "Region check" VRS test
     Then I expect that VRS test "Region check" is unfolded
@@ -212,3 +212,27 @@ Feature: Regions works properly
     """
       2
     """
+
+  Scenario: Delete Region with saving
+    When I open the url "http://vrs:3001/"
+    When I click on "Region check" VRS test
+    Then I expect that VRS test "Region check" is unfolded
+    When I click on the element "[name=region]"
+    When I click on the element "[name=baseline_link]"
+
+    When I click on the element "[name=add-region]"
+    When I click on the element "[name=save-snapshot]"
+    When I click on the element "#region-delete-icon-1"
+    When I click on the element "[name=save-snapshot]"
+
+    When I refresh page
+    When I execute javascript code:
+    """
+     return baseline.canvas.getObjects().filter(x=>x.name==='ignore_rect').length.toString()
+    """
+    When I wait for "1" seconds
+    Then I expect the stored "js" object is equal:
+    """
+      0
+    """
+
