@@ -2,7 +2,7 @@
 
 const mongoose = require('mongoose');
 const hasha = require('hasha');
-const fs = require('fs');
+const fs = require('fs').promises;
 const {config} = require('../../config');
 const {getDiff} = require('../../lib/comparator');
 const {Lock} = require('../../lib/lock');
@@ -62,7 +62,7 @@ async function createSnapshotIfNotExist(parameters) {
     console.log(`Snapshot was saved: '${JSON.stringify(snapshoot)}'`);
     const path = `${config.defaultBaselinePath}${snapshoot.id}.png`;
     console.log(`Save screenshot to: '${path}'`);
-    fs.writeFileSync(path, fileData);
+    await fs.writeFile(path, fileData);
     return snapshoot;
 }
 
@@ -70,14 +70,14 @@ async function compareSnapshots(params) {
     console.log(`Compare baseline and actual snapshots with ids: [${params.baselineId}, ${params.actualSnapshotId}]`);
     const baseline = await Snapshot.findById(params.baselineId);
     console.log(`BASELINE: ${JSON.stringify(baseline)}`);
-    const baselineFile = fs.readFileSync(`${config.defaultBaselinePath}${params.baselineId}.png`);
-    const actualData = fs.readFileSync(`${config.defaultBaselinePath}${params.actualSnapshotId}.png`);
+    const baselineData = fs.readFile(`${config.defaultBaselinePath}${params.baselineId}.png`);
+    const actualData = fs.readFile(`${config.defaultBaselinePath}${params.actualSnapshotId}.png`);
     let opts = {};
     if (baseline.ignoreRegions !== 'undefined') {
         let ignored = JSON.parse(JSON.parse(baseline.ignoreRegions))
         opts = {ignoredBoxes: ignored}
     }
-    const diff = await getDiff(baselineFile, actualData, opts);
+    const diff = await getDiff(baselineData, actualData, opts);
     if (diff.misMatchPercentage !== '0.00') {
         console.log(`Images are different, ids: [${params.baselineId}, ${params.actualSnapshotId}]\n diff: ${JSON.stringify(diff)}`);
     }
