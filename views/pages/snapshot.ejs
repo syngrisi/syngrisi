@@ -111,8 +111,10 @@
 
     let baselineImg = new Image();
     baselineImg.src = '/snapshoots/<%= snapshot.id %>.png';
-    baselineImg.onload = function() {
-        document.getElementById('snapshoot').style.height = this.height + 'px'
+    baselineImg.onload = function () {
+        let coef = document.getElementById('snapshoot').clientWidth / this.width;
+        let calculatedHeight = this.height * coef
+        document.getElementById('snapshoot').style.height = calculatedHeight + 'px'
         fabric.Object.prototype.objectCaching = false;
         fabric.Image.fromURL(baselineImg.src, function (oImg) {
             baseline = new BaselineView('2d',
