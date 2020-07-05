@@ -2,21 +2,18 @@
 
 const mongoose = require('mongoose');
 
-const { Schema } = mongoose;
+const {Schema} = mongoose;
 
 const VRSSnapshotSchema = new Schema({
     name: {
         type: String,
-        // unique: true,
         required: 'the name of the snapshot entity is empty',
     },
     path: {
         type: String,
-        // required: 'the path of the snapshot entity is empty',
     },
     filename: {
         type: String,
-        // required: 'the filename of the snapshot entity is empty',
     },
     imghash: {
         type: String,
@@ -41,6 +38,12 @@ const VRSSnapshotSchema = new Schema({
         type: String,
         default: 'undefined',
     },
+    vOffset: {
+        type: Number,
+    },
+    hOffset: {
+        type: Number,
+    }
 });
 
 const VRSCheckSchema = new Schema({
@@ -102,7 +105,9 @@ const VRSCheckSchema = new Schema({
         type: String,
         default: 'undefined',
     },
-
+    domDump: {
+        type: String,
+    }
     // matchtype: {
     //     type: [{
     //         type: String,

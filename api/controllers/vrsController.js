@@ -34,6 +34,13 @@ async function getLastCheck(identifier) {
     return null;
 }
 
+async function getLastSuccessCheck(identifier) {
+    const condition = [{...identifier, 'status': 'new'}, {...identifier, 'status': 'passed'}]
+    return (await Check.find({
+        $or: condition
+    }).sort({Updated_date: -1}).limit(1))[0];
+}
+
 async function getSnapshotByImgHash(hash) {
     return (await Snapshot.find({imghash: hash}))[0];
 }
@@ -66,13 +73,11 @@ async function createSnapshotIfNotExist(parameters) {
     return snapshoot;
 }
 
-async function compareSnapshots(baselineShapshot, actualSnapshot) {
-// const baseline = await Snapshot.findById(params.baselineId);
-    const baseline = baselineShapshot;
-    console.log(`Compare baseline and actual snapshots with ids: [${baseline.id}, ${actualSnapshot.id}]`);
+async function compareSnapshots(baseline, actual) {
+    console.log(`Compare baseline and actual snapshots with ids: [${baseline.id}, ${actual.id}]`);
     console.log(`BASELINE: ${JSON.stringify(baseline)}`);
     const baselineData = fs.readFile(`${config.defaultBaselinePath}${baseline.id}.png`);
-    const actualData = fs.readFile(`${config.defaultBaselinePath}${actualSnapshot.id}.png`);
+    const actualData = fs.readFile(`${config.defaultBaselinePath}${actual.id}.png`);
     let opts = {};
     if (baseline.ignoreRegions !== 'undefined') {
         let ignored = JSON.parse(JSON.parse(baseline.ignoreRegions))
@@ -80,7 +85,23 @@ async function compareSnapshots(baselineShapshot, actualSnapshot) {
     }
     const diff = await getDiff(baselineData, actualData, opts);
     if (diff.misMatchPercentage !== '0.00') {
-        console.log(`Images are different, ids: [${baseline.id}, ${actualSnapshot.id}]\n diff: ${JSON.stringify(diff)}`);
+        console.log(`Images are different, ids: [${baseline.id}, ${actual.id}]\n diff: ${JSON.stringify(diff)}`);
+    }
+    console.log(diff)
+    if (diff.stabMethod && diff.vOffset) {
+        if (diff.stabMethod === 'downup') {
+            // this mean that we delete first 'diff.vOffset' line of pixels from actual
+            // then we will use this during parse actual page DOM dump
+            actual.vOffset = -diff.vOffset;
+            await actual.save()
+        }
+        if (diff.stabMethod === 'updown') {
+
+            // this mean that we delete first 'diff.vOffset' line of pixels from baseline
+            // then we will use this during parse actual page DOM dump
+            baseline.vOffset = -diff.vOffset;
+            await baseline.save()
+        }
     }
     return diff;
 }
@@ -500,6 +521,7 @@ exports.create_check = async function (req, res) {
                     Updated_date: Date.now(),
                     suite: (await orm.createSuiteIfNotExist({name: req.body.suitename || 'Others'})).id,
                     appname: (await orm.createAppIfNotExist({name: req.body.appname || 'Unknown'})).id,
+                    domDump: req.body.domdump,
                 }
                 const fileData = req.files ? req.files.file.data : false
                 /**
@@ -529,16 +551,20 @@ exports.create_check = async function (req, res) {
                     console.log(`FOUND snapshoot by hashcode: '${JSON.stringify(snapshotFoundedByHashcode)}'`)
                 }
                 let currentSnapshot, baselineShapshot, actualSnapshot
+
+                // check MUST be identified by Name, OS, Browser, Viewport
+                const checkIdentifier = {
+                    name: params.name,
+                    os: params.os,
+                    browserName: params.browserName,
+                    viewport: params.viewport,
+                };
+
                 handleBaseline:{
-                    // check MUST be identified by Name, OS, Browser, Viewport
-                    const checkIdentifier = {
-                        name: params.name,
-                        os: params.os,
-                        browserName: params.browserName,
-                        viewport: params.viewport,
-                    };
+
                     console.log(`Find for baseline for check with identifier: '${JSON.stringify(checkIdentifier)}'`);
                     const lastCheck = await getLastCheck(checkIdentifier);
+
                     const previousBaselineId = lastCheck ? lastCheck.baselineId : null;
                     currentSnapshot = snapshotFoundedByHashcode || (await createSnapshotIfNotExist({
                         params: req.body,
@@ -563,7 +589,6 @@ exports.create_check = async function (req, res) {
                         params.status = 'new';
                     }
                 }
-
                 // params.browserName = test.browserName;
                 // params.viewport = test.viewport;
                 console.log(`Create and save new check with params: '${JSON.stringify(params, 2)}'`);
@@ -603,9 +628,12 @@ exports.create_check = async function (req, res) {
                     resultResponse = await Check.findById(check.id);
                 }
                 const result = Object.assign({}, resultResponse.toObject(),
-                    {executeTime: process.hrtime(executionTimer).toString()})
+                    {
+                        executeTime: process.hrtime(executionTimer).toString(),
+                        lastSuccess: (await getLastSuccessCheck(checkIdentifier)).id
+                    })
                 res.json(result);
-                resolve([req, res, check]);
+                resolve([req, res, result]);
             } catch (e) {
                 fatalError(req, res, e);
                 return reject(e);
