@@ -1,5 +1,19 @@
 class BaselineView {
     constructor(canvasId, image, params) {
+        const thisClass = this;
+        if (params.backimageId) {
+            fabric.Image.fromURL(`/snapshoots/${params.backimageId}.png`, function (oImg) {
+                window.backImage = oImg;
+                thisClass['backImg'] = oImg;
+                oImg.scaleToWidth(thisClass.canvas.width);
+                thisClass.canvas.add(thisClass.backImg);
+
+                thisClass.backImg.moveTo(0);
+
+                thisClass.canvas.renderAll();
+            });
+        }
+
         if (params.canvas) {
             this.canvas = params.canvas;
         } else {
