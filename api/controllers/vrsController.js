@@ -7,7 +7,8 @@ const {config} = require('../../config');
 const {getDiff} = require('../../lib/comparator');
 const {Lock} = require('../../lib/lock');
 const orm = require('../../lib/dbItems');
-
+const {parseDiff} = require('../../lib/parseDiff');
+const {getAllElementsByPositionFromDump} = require('../../lib/getElementsByPixPositionsFromDump')
 const Snapshot = mongoose.model('VRSSnapshot');
 const Check = mongoose.model('VRSCheck');
 const Test = mongoose.model('VRSTest');
@@ -17,7 +18,7 @@ const moment = require('moment');
 
 function fatalError(req, res, e) {
     let stack = e.stack ? e.stack : '';
-    const errMsg = 'Fatal error: ' + e + "\n" + stack;
+    const errMsg = e.stack ? `Fatal error: '${e}' \n  '${e.stack}'` : `Fatal error: ${e} \n`;
     req.log.fatal(errMsg);
     console.log(errMsg);
     res.status(500).json({status: 'fatalError', message: errMsg});
@@ -359,6 +360,35 @@ exports.checks_group_by_ident = async function (req, res) {
     })
 
 };
+
+exports.affectedelements = async function (req, res) {
+    return new Promise(async function (resolve, reject) {
+        try {
+            if (!req.query.checktid || !req.query.diffid) {
+                const e = "checktid|diffid query values are empty";
+                fatalError(req, res, e);
+                return reject(e);
+            }
+            const chk = await Check.findById(req.query.checktid).exec().catch((e) => {
+                    fatalError(req, res, e);
+                    return reject(e)
+                }
+            )
+            if(!chk){
+                fatalError(req, res, `Cannot find check with such id: '${req.query.checktid}'`)
+            }
+
+            const imDiffData = await fs.readFile(`${config.defaultBaselinePath}${req.query.diffid}.png`);
+            const positions = parseDiff(imDiffData);
+            const result = getAllElementsByPositionFromDump(chk.domDump, positions)
+            console.table(Array.from(result), ['tag', 'id', 'x', 'y', "width", "height", "domPath"])
+            res.json(result);
+            resolve(result)
+        }catch (e) {
+            fatalError(req, res, e)
+        }
+    })
+}
 
 exports.list_all_checks = async function (req, res) {
     return new Promise(async function (resolve, reject) {

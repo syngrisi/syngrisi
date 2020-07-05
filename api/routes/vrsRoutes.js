@@ -18,6 +18,9 @@ module.exports = async function (app) {
         .get('/', async function (req, res, next) {
             VRS.index(req, res).catch(next).catch(next);
         })
+        .get('/affectedelements', async function (req, res, next) {
+            VRS.affectedelements(req, res).catch(next).catch(next);
+        })
         .get('/checkview', async function (req, res, next) {
             VRS.checkview(req, res).catch(next);
         })
