@@ -16,7 +16,7 @@ Feature: Suites
     """
 
   @withEndSession
-  Scenario: VRS create heck - with empty suite
+  Scenario: VRS create check - with empty suite
     Given I start VRS session with parameters:
     """
       testName: Unnamed Suite Test
@@ -32,7 +32,7 @@ Feature: Suites
     Then I expect that element "span=Unnamed Suite Test" is displayed
 
   @withEndSession
-  Scenario: VRS create heck - with suite
+  Scenario: VRS create check - with suite
     Given I start VRS session with parameters:
     """
       testName: Named Suite Test
