@@ -1,6 +1,30 @@
 <!doctype html>
 <html lang="en">
 <head>
+    <style>
+        .frontimage {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 2;
+            width: 80%;
+        }
+
+        .backdiffbaseline {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 1;
+            width: 80%;
+        }
+        .snapshoot-link {
+            top: 15px;
+            left: 15px;
+            position: absolute;
+            width: 20em;
+            height: 20em;
+        }
+    </style>
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
@@ -28,7 +52,7 @@
         <div class="container border">
             <div class="row check-toolbar  pr-0">
                 <div class="col-10 p-0"></div>
-<!--                <div class="col-1 p-0"></div>-->
+                <!--                <div class="col-1 p-0"></div>-->
                 <div class="toolbar m-0 w-25 col-2 p-0">
                     <div class="container">
                         <button type="button" class="btn-outline-danger btn-sm float-left p-1 rounded-0 border-1 mr-0"
@@ -69,25 +93,28 @@
 
             <div class="row images border-top">
                 <div class="screenshoot baseline m-1 col-3">
-                    <a href="/snapshootview?id=<%= check.baselineId %>" name="baseline_link">
+                    <a class="snapshoot-link" href="/snapshootview?id=<%= check.baselineId %>" name="baseline_link">
                         <img src="/snapshoots/<%= check.baselineId %>.png" alt=""
-                             class="w-100">
+                             class="frontimage">
                     </a>
                 </div>
                 <% if (check.actualSnapshotId) { %>
                     <div class="screenshoot actual m-1 w-25 col-3">
-                        <a href="/snapshootview?id=<%= check.actualSnapshotId %>">
+                        <a class="snapshoot-link" href="/snapshootview?id=<%= check.actualSnapshotId %>">
                             <img src="/snapshoots/<%= check.actualSnapshotId %>.png"
                                  alt=""
-                                 class="w-100">
+                                 class="frontimage">
                         </a>
                     </div>
                 <% } %>
                 <% if (check.diffId) { %>
                     <div class="screenshoot diff m-1 w-25 col-3">
-                        <a href="/snapshootview?id=<%= check.diffId %>">
+                        <a class="snapshoot-link"
+                           href="/snapshootview?id=<%= check.diffId %>&baselineid=<%= check.baselineId %>">
                             <img src="/snapshoots/<%= check.diffId %>.png" alt=""
-                                 class="w-100">
+                                 class="frontimage">
+                            <img src="/snapshoots/<%= check.baselineId %>.png" alt=""
+                                 class="backdiffbaseline">
                         </a>
                     </div>
                 <% } %>
@@ -165,6 +192,5 @@
         xhr.send(params);
     }
 </script>
-
 </body>
 </html>
