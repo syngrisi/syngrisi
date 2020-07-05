@@ -121,7 +121,8 @@
                 oImg,
                 {
                     height: document.getElementById('snapshoot').offsetHeight,
-                    weight: document.getElementById('snapshoot').offsetWidth
+                    weight: document.getElementById('snapshoot').offsetWidth,
+                    backimageId: '<%= baselineId %>'
                 }
             );
             baseline.getSnapshotIgnoreRegionsDataAndDrawRegions('<%= snapshot.id %>');
