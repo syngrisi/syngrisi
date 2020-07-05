@@ -1,0 +1,40 @@
+<!doctype>
+<html>
+<head>
+    <style>
+        #parent {
+            width: 200px;
+            height: 200px;
+            background: cadetblue;
+            border: 1px solid black;
+            margin: 5px;
+        }
+
+        #child {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            background: darkslategrey;
+            margin: 50px;
+        }
+
+        #point {
+            position:absolute;                  /* added */
+            /*bottom:0;                           !* added *!*/
+            top: 0;
+            /*left:0;*/
+
+            width: 10px;
+            height: 10px;
+            background: red;
+        }
+    </style>
+</head>
+<body style="margin: 0;">
+<div id="parent">
+    <div id="child">
+        <div id="point"></div>
+    </div>
+</div>
+</body>
+</html>
