@@ -375,7 +375,8 @@
                             baseline = new BaselineView('canvas_snapshoot_' + id,
                                 oImg,
                                 {
-                                    weight: document.getElementById('canvas_snapshoot_' + id).offsetWidth
+                                    weight: document.getElementById('canvas_snapshoot_' + id).offsetWidth,
+                                    backimageId: baselineIds[index]
                                 }
                             );
                             baseline.getSnapshotIgnoreRegionsDataAndDrawRegions(baselineIds[index]);
