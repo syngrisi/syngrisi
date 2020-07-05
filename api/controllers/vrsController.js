@@ -24,12 +24,12 @@ function fatalError(req, res, e) {
 }
 
 // get last updated document
-async function getLastCheckBaselineId(identifier) {
+async function getLastCheck(identifier) {
     const last = (await Check.find(identifier)
         .sort({Updated_date: -1})
         .limit(1))[0];
     if (last && last.baselineId) {
-        return last.baselineId;
+        return last;
     }
     return null;
 }
@@ -66,12 +66,13 @@ async function createSnapshotIfNotExist(parameters) {
     return snapshoot;
 }
 
-async function compareSnapshots(params) {
-    console.log(`Compare baseline and actual snapshots with ids: [${params.baselineId}, ${params.actualSnapshotId}]`);
-    const baseline = await Snapshot.findById(params.baselineId);
+async function compareSnapshots(baselineShapshot, actualSnapshot) {
+// const baseline = await Snapshot.findById(params.baselineId);
+    const baseline = baselineShapshot;
+    console.log(`Compare baseline and actual snapshots with ids: [${baseline.id}, ${actualSnapshot.id}]`);
     console.log(`BASELINE: ${JSON.stringify(baseline)}`);
-    const baselineData = fs.readFile(`${config.defaultBaselinePath}${params.baselineId}.png`);
-    const actualData = fs.readFile(`${config.defaultBaselinePath}${params.actualSnapshotId}.png`);
+    const baselineData = fs.readFile(`${config.defaultBaselinePath}${baseline.id}.png`);
+    const actualData = fs.readFile(`${config.defaultBaselinePath}${actualSnapshot.id}.png`);
     let opts = {};
     if (baseline.ignoreRegions !== 'undefined') {
         let ignored = JSON.parse(JSON.parse(baseline.ignoreRegions))
@@ -79,7 +80,7 @@ async function compareSnapshots(params) {
     }
     const diff = await getDiff(baselineData, actualData, opts);
     if (diff.misMatchPercentage !== '0.00') {
-        console.log(`Images are different, ids: [${params.baselineId}, ${params.actualSnapshotId}]\n diff: ${JSON.stringify(diff)}`);
+        console.log(`Images are different, ids: [${baseline.id}, ${actualSnapshot.id}]\n diff: ${JSON.stringify(diff)}`);
     }
     return diff;
 }
@@ -527,6 +528,7 @@ exports.create_check = async function (req, res) {
                 if (snapshotFoundedByHashcode) {
                     console.log(`FOUND snapshoot by hashcode: '${JSON.stringify(snapshotFoundedByHashcode)}'`)
                 }
+                let currentSnapshot, baselineShapshot, actualSnapshot
                 handleBaseline:{
                     // check MUST be identified by Name, OS, Browser, Viewport
                     const checkIdentifier = {
@@ -536,8 +538,9 @@ exports.create_check = async function (req, res) {
                         viewport: params.viewport,
                     };
                     console.log(`Find for baseline for check with identifier: '${JSON.stringify(checkIdentifier)}'`);
-                    const previousBaselineId = await getLastCheckBaselineId(checkIdentifier);
-                    const currentSnapshot = snapshotFoundedByHashcode || (await createSnapshotIfNotExist({
+                    const lastCheck = await getLastCheck(checkIdentifier);
+                    const previousBaselineId = lastCheck ? lastCheck.baselineId : null;
+                    currentSnapshot = snapshotFoundedByHashcode || (await createSnapshotIfNotExist({
                         params: req.body,
                         fileData: fileData,
                         hashCode: req.body.hashcode
@@ -548,12 +551,14 @@ exports.create_check = async function (req, res) {
 
                         console.log(`Creating an actual snapshot for check with name: '${req.body.name}'`);
 
-                        const actualSnapshot = currentSnapshot
+                        actualSnapshot = currentSnapshot
+                        baselineShapshot = await Snapshot.findById(previousBaselineId);
                         params.actualSnapshotId = actualSnapshot.id;
                         params.status = 'pending';
                     } else {
                         console.log(`A baseline snapshot for previous check with name: '${req.body.name}', does not exist creating new one`);
                         const baseline = currentSnapshot
+                        baselineShapshot = currentSnapshot
                         params.baselineId = baseline.id;
                         params.status = 'new';
                     }
@@ -579,7 +584,7 @@ exports.create_check = async function (req, res) {
                 // compare actual with baseline if a check isn't new
                 let updateParams = {};
                 if (check.status.toString() !== 'new') {
-                    const diff = await compareSnapshots(params);
+                    const diff = await compareSnapshots(baselineShapshot, actualSnapshot);
                     if (diff.misMatchPercentage !== '0.00') {
                         console.log(`Saving diff snapshot for check with Id: '${check.id}'`);
                         const diffSnapshot = await createSnapshotIfNotExist({
