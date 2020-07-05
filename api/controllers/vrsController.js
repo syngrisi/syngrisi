@@ -168,11 +168,14 @@ exports.snapshootview = async function (req, res) {
             }
 
             const snapshot = await Snapshot.findById(`${opts.id}`);
+            let baselineId = opts.baselineid ? opts.baselineid : '';
+
             const moment = require('moment');
             snapshot.formattedCreatedDate = moment(snapshot.Created_date)
                 .format('YYYY-MM-DD hh:mm');
             res.render('pages/snapshot', {
                 snapshot: snapshot,
+                baselineId: baselineId
             });
         } catch (e) {
             fatalError(req, res, e);
