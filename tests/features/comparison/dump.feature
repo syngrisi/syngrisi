@@ -1,17 +1,17 @@
 @visual @comparison @shifting
 Feature: DOM dump
   Background:
-#    Given I clear test VRS database
-#    Given I kill process which used port: "3001"
-#    Given I start VRS server with parameters:
-#    """
-#      port: 3001
-#      databaseName: VRSdbTest
-#      baseLineFolder: ./baselinesTest/
-#    """
+    Given I clear test VRS database
+    Given I kill process which used port: "3001"
+    Given I start VRS server with parameters:
+    """
+      port: 3001
+      databaseName: VRSdbTest
+      baseLineFolder: ./baselinesTest/
+    """
     Given I setup VRS driver with parameters:
     """
-      url: "http://vrs:3000/"
+      url: "http://vrs:3001/"
     """
 
   Scenario: Create check with DOM dump
@@ -20,16 +20,33 @@ Feature: DOM dump
       testName: Create Check with Dom Dump
       suiteName: Dom Dump
     """
-    When I open the url "http://localhost:3000/static/shift.html"
+    When I open the url "http://localhost:3001/static/shift.html"
     When I visually check page with DOM dump as "Dom dump check"
     When I stop VRS session
+
+    Then I expect "checkDump" saved object:
+    """
+      "tag": "DIV"
+      "id": "rectangle"
+      "x": 0
+      "y": 0
+      "width": 644
+      "height": 402
+      "top": 0
+      "right": 644
+      "bottom": 402
+      "left": 0
+      "domPath":
+        - "body"
+        - "div#rectangle"
+    """
 
 #    Given I start VRS session with parameters:
 #    """
 #      testName: Down-Up
 #      suiteName: Vertical Shifting
 #    """
-#    When I open the url "http://localhost:3000/static/shift.html"
+#    When I open the url "http://localhost:3001/static/shift.html"
 #    When I execute javascript code:
 #    """
 #    document.getElementById('rectangle').style['margin-top']='1px'
@@ -45,7 +62,7 @@ Feature: DOM dump
 #      testName: Down-Up
 #      suiteName: Vertical Shifting
 #    """
-#    When I open the url "http://localhost:3000/static/shift.html"
+#    When I open the url "http://localhost:3001/static/shift.html"
 #    When I execute javascript code:
 #    """
 #    document.getElementById('rectangle').style['margin-top']='1px'
@@ -59,7 +76,7 @@ Feature: DOM dump
 #      testName: Down-Up
 #      suiteName: Vertical Shifting
 #    """
-#    When I open the url "http://localhost:3000/static/shift.html"
+#    When I open the url "http://localhost:3001/static/shift.html"
 #
 #    Then I visually assert page as "Top - Down Shifting"
 #    When I stop VRS session
