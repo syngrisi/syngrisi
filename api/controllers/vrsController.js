@@ -398,6 +398,8 @@ exports.list_all_checks = async function (req, res) {
         let filter = {}
         if (req.query.testid)
             filter.test = req.query.testid
+        if (req.query.id)
+            filter._id = req.query.id
         const checks = await Check.find(filter).exec().catch(
             function (e) {
                 fatalError(req, res, e);
