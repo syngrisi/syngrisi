@@ -17,7 +17,6 @@ const App = mongoose.model('VRSApp');
 const moment = require('moment');
 
 function fatalError(req, res, e) {
-    let stack = e.stack ? e.stack : '';
     const errMsg = e.stack ? `Fatal error: '${e}' \n  '${e.stack}'` : `Fatal error: ${e} \n`;
     req.log.fatal(errMsg);
     console.log(errMsg);
@@ -374,17 +373,21 @@ exports.affectedelements = async function (req, res) {
                     return reject(e)
                 }
             )
-            if(!chk){
+            if (!chk) {
                 fatalError(req, res, `Cannot find check with such id: '${req.query.checktid}'`)
             }
 
-            const imDiffData = await fs.readFile(`${config.defaultBaselinePath}${req.query.diffid}.png`);
+            const imDiffData = await fs.readFile(`${config.defaultBaselinePath}${req.query.diffid}.png`).catch(
+                function (e) {
+                    throw new Error(e)
+                }
+            );
             const positions = parseDiff(imDiffData);
-            const result = getAllElementsByPositionFromDump(chk.domDump, positions)
+            const result = await getAllElementsByPositionFromDump(JSON.parse(chk.domDump), positions)
             console.table(Array.from(result), ['tag', 'id', 'x', 'y', "width", "height", "domPath"])
             res.json(result);
             resolve(result)
-        }catch (e) {
+        } catch (e) {
             fatalError(req, res, e)
         }
     })
@@ -500,10 +503,20 @@ exports.remove_test = async function (req, res) {
     })
 };
 
+function prettyCheckParams(result) {
+    if(!result.domDump)
+        return  JSON.stringify(result);
+    const dump = JSON.parse(result.domDump);
+    let resObs = {...result};
+    delete resObs.domDump;
+    resObs.domDump = JSON.stringify(dump).substr(0,20) + `... and about ${dump.length} items]`
+    return JSON.stringify(resObs);
+}
+
 exports.create_check = async function (req, res) {
     return new Promise(async function (resolve, reject) {
             try {
-                console.log(`CREATE check, input data: '${JSON.stringify(req.body, 2)}'`);
+                console.log(`CREATE check name: '${prettyCheckParams(req.body.name)}'`);
                 let executionTimer = process.hrtime()
                 checkRequestBody: {
                     if (!req.body.testid) {
@@ -589,7 +602,7 @@ exports.create_check = async function (req, res) {
                     browserName: params.browserName,
                     viewport: params.viewport,
                 };
-
+                const lastSuccessCheck = await getLastSuccessCheck(checkIdentifier);
                 handleBaseline:{
 
                     console.log(`Find for baseline for check with identifier: '${JSON.stringify(checkIdentifier)}'`);
@@ -619,9 +632,7 @@ exports.create_check = async function (req, res) {
                         params.status = 'new';
                     }
                 }
-                // params.browserName = test.browserName;
-                // params.viewport = test.viewport;
-                console.log(`Create and save new check with params: '${JSON.stringify(params, 2)}'`);
+                console.log(`Create and save new check with params: '${prettyCheckParams(params)}'`);
                 let check = await Check.create(params);
 
                 let resultResponse;
@@ -660,7 +671,7 @@ exports.create_check = async function (req, res) {
                 const result = Object.assign({}, resultResponse.toObject(),
                     {
                         executeTime: process.hrtime(executionTimer).toString(),
-                        lastSuccess: (await getLastSuccessCheck(checkIdentifier)).id
+                        lastSuccess: lastSuccessCheck ? (lastSuccessCheck).id : null
                     })
                 res.json(result);
                 resolve([req, res, result]);
