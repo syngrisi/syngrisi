@@ -28,6 +28,7 @@
     "moment": "^2.25.3",
     "mongodb": "^3.4.1",
     "mongoose": "^5.9.12",
+    "node-libpng": "^0.2.16",
     "nodemon": "^2.0.2",
     "p-queue": "^6.4.0",
     "pino-http": "^5.2.0",
