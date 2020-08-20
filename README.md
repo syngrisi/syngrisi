@@ -28,7 +28,7 @@
 
 ```shell script
 npm run start # as detached from current shell process
-npm run startdebug # attached to current step
+npm run startdebug # attached to current shell process
 npm run startservice # start like service, required forever module globally (https://www.npmjs.com/package/forever) 
 ```
 
