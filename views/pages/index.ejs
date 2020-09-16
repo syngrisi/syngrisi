@@ -78,13 +78,13 @@
             <% } %>
         </div>
         <div class="tests-toolbar col text-light p-1">
-            <button name="more-tests" type="button" class="float-right">
+            <button name="more-tests" type="button" class="float-right" title="more">
                 <i class="fas fa-ellipsis-v fa-1x float-right "></i>
             </button>
-            <button name="remove-tests" type="button" class="float-right" onclick="removeTests()">
+            <button name="remove-tests" type="button" class="float-right" onclick="removeTests()" title="remove checked tests">
                 <i class="fas fa-trash fa-1x  float-right"></i>
             </button>
-            <button name="reload-tests" type="button" class="float-right" onclick="location.reload()">
+            <button name="reload-tests" type="button" class="float-right" onclick="location.reload()" title="reload page">
                 <i class="fas fa-sync-alt fa-1x float-right "></i>
             </button>
         </div>
@@ -93,13 +93,13 @@
     <!--    TABLE HEADER START    -->
     <div class="all-header row text-light">
         <div class="col-2 col-lg-3 .col-xl-3 w-25 pl-1 bg-dark border-top text-left float-right pr-1">
-            <button name="more-suites" type="button" class="float-right">
+            <button name="more-suites" type="button" class="float-right" title="more">
                 <i class="fas fa-ellipsis-v fa-1x float-right "></i>
             </button>
-            <button name="delete-suites" type="button" class="float-right">
+            <button name="delete-suites" type="button" class="float-right" title="delete suites and associated items">
                 <i class="fas fa-trash fa-1x float-right "></i>
             </button>
-            <button name="reload-suites" type="button" class="float-right" onclick="location.reload()">
+            <button name="reload-suites" type="button" class="float-right" onclick="location.reload()" title="reload">
                 <i class="fas fa-sync-alt fa-1x float-right "></i>
             </button>
 
@@ -107,7 +107,7 @@
         <div class="col w-75  ml-1 bg-secondary border-primary border-top border-left border-right">
             <div class="row ">
                 <div class="col-1 col-lg-auto text-truncate small">
-                    <input name="checkAll" onclick="checkAllTests()" type="checkbox">
+                    <input name="checkAll" onclick="checkAllTests()" type="checkbox" title="check all tests">
                 </div>
                 <div class="col-2 col-lg-1 text-truncate small">Status</div>
                 <div class="col-4 col-lg-4 text-truncate small">Name</div>
