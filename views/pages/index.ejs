@@ -272,8 +272,10 @@
                                                                     id="acceptbutton_<%= check.id %>"
                                                                     data-toggle="tooltip"
                                                                     data-placement="top"
-                                                                    title="Accept actual snapshot"
-                                                                    onclick="acceptCheck('<%= check.id %>', '<%= check.actualSnapshotId %>')">
+                                                                    onclick="acceptCheck('<%= check.id %>', '<%= check.actualSnapshotId %>')"
+                                                                    title="Accept the actual snapshoot as baseline"
+                                                            >
+
                                                                 <i class="fas fa-check fa-1x"></i>
                                                             </button>
                                                             <% if(groupStatus == 'failed') { %>
@@ -284,7 +286,7 @@
                                                                         data-toggle="tooltip"
                                                                         data-placement="top"
                                                                         title="Compare snapshots"
-                                                                        onclick="location.href='./diffview?diffid=<%= check.diffId %>&actualid=<%= check.actualSnapshotId %>&expectedid=<%= check.baselineId %>';">
+                                                                        onclick="location.href='./diffview?diffid=<%= check.diffId %>&actualid=<%= check.actualSnapshotId %>&expectedid=<%= check.baselineId %>&checkid=<%= check.id %>';">
                                                                     <i class="fas fa-exchange-alt fa-1x"></i>
                                                                 </button>
                                                             <% } %>
