@@ -262,7 +262,7 @@
                                                                     data-toggle="tooltip"
                                                                     data-placement="top"
                                                                     title="Remove this check"
-                                                                    onclick="removeCheck('<%= check.id %>')">
+                                                                    onclick="removeOneCheck('<%= check.id %>')">
                                                                 <i class="fas fa-times-circle fa-1x"></i>
                                                             </button>
 
@@ -272,7 +272,7 @@
                                                                     id="acceptbutton_<%= check.id %>"
                                                                     data-toggle="tooltip"
                                                                     data-placement="top"
-                                                                    onclick="acceptCheck('<%= check.id %>', '<%= check.actualSnapshotId %>')"
+                                                                    onclick="acceptOneCheck('<%= check.id %>', '<%= check.actualSnapshotId %>')"
                                                                     title="Accept the actual snapshoot as baseline"
                                                             >
 
@@ -416,6 +416,11 @@
                     }, 100);
                 }
 
+                function removeOneCheck(id) {
+                    if(!confirmation()) return;
+                    removeCheck(id);
+                }
+
                 function removeCheck(id) {
                     var xhr = new XMLHttpRequest();
                     var params = `id=${id}`;
@@ -435,6 +440,11 @@
                         }
                     };
                     xhr.send(params);
+                }
+
+                function acceptOneCheck(id, newBaselineId) {
+                    if(!confirmation()) return;
+                    acceptCheck(id, newBaselineId);
                 }
 
                 function acceptCheck(id, newBaselineId) {
@@ -480,6 +490,7 @@
                 }
 
                 function removeTests() {
+                    if(!confirmation()) return;
                     let checkboxes = document.querySelectorAll('input[name=test]:checked');
                     // console.log(checkboxes);
                     // checkboxes.forEach(ch => console.log(ch.id));
@@ -498,6 +509,13 @@
                         }
                     });
                 }
+
+                function confirmation(text = 'are you sure?'){
+                    const answer = window.confirm(text);
+                    console.log(answer);
+                    return answer;
+                }
+
             </script>
 </body>
 </html>

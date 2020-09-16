@@ -47,7 +47,11 @@
                         <i class="fas fa-search-minus fa-1x"></i>
                     </button>
                 </div>
-
+                <div class="row justify-content-center">
+                    <button name="details" type="button" class="" onclick="window.location.href = '/checksgroupview?id=<%= check_id %>'">
+                        <i class="fas fa-th fa-1x  "></i>
+                    </button>
+                </div>
                 <div class="row justify-content-center">
                     <button name="show-diff" type="button" class="" onclick="toggleDiffOpacity()">
                         <i class="fas fa-exchange-alt fa-1x"></i>
@@ -213,7 +217,13 @@
         toggleDiffOpacity();
     })
 
+    function confirmation(text = 'are you sure?'){
+        return window.confirm(text);
+    }
+
     function acceptCheck(id, newBaselineId) {
+        if(!confirmation()) return;
+
         var xhr = new XMLHttpRequest();
         // send empty diffid
         var params = `id=${id}&baselineId=${newBaselineId}&diffId&status=passed`;
