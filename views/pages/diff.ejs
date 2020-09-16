@@ -5,6 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="icon" href="static/logo.png">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
           integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
           crossorigin="anonymous">
@@ -48,13 +49,18 @@
                 </div>
 
                 <div class="row justify-content-center">
-                    <button name="show-diff" type="button" class="" onclick="toggleDiffOpaciry()">
+                    <button name="show-diff" type="button" class="" onclick="toggleDiffOpacity()">
                         <i class="fas fa-exchange-alt fa-1x"></i>
                     </button>
                 </div>
                 <div class="row justify-content-center">
-                    <button name="show-diff" type="button" class="" onclick="toggleReqions()">
+                    <button name="show-overlay" type="button" class="" onclick="toggleReqions()">
                         <i class="far fa-object-group fa-1x"></i>
+                    </button>
+                </div>
+                <div class="row justify-content-center">
+                    <button name="accept-baseline" type="button" class="" onclick="acceptCheck('<%= check_id %>', '<%= actual_snapshoot.id %>')" title="accept the actual snapshoot as baseline">
+                        <i class="fas fa-check fa-1x"></i>
                     </button>
                 </div>
             </div>
@@ -175,7 +181,6 @@
 
     }
 
-
     function resizeSnapshoot(ratio) {
         let w = expectedImg.getScaledWidth();
         expectedImg.scaleToWidth(w * ratio);
@@ -184,7 +189,7 @@
         canvas.renderAll();
     }
 
-    function toggleDiffOpaciry() {
+    function toggleDiffOpacity() {
         if (diffImg.opacity === 1) {
             diffImg.opacity = 0;
             canvas.hoverCursor = 'col-resize'
@@ -205,8 +210,27 @@
         canvas.renderAll();
     })
     canvas.on("mouse:up:before", function (event) {
-        toggleDiffOpaciry();
+        toggleDiffOpacity();
     })
+
+    function acceptCheck(id, newBaselineId) {
+        var xhr = new XMLHttpRequest();
+        // send empty diffid
+        var params = `id=${id}&baselineId=${newBaselineId}&diffId&status=passed`;
+        xhr.open('PUT', `/checks/${id}`, true);
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        // NEED TO ADD UPDATE BASELINE LOGIC TO .onload EVENT!!!
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                console.log('Success ' + id + '--' + xhr.responseText);
+                const newUri = `/diffview?diffid=${newBaselineId}&actualid=${newBaselineId}&expectedid=${newBaselineId}&checkid=${id}`
+                window.location.href = newUri;
+            } else {
+                console.log('Request failed. Returned status of ' + xhr.status + 'resp:' + xhr.responseText);
+            }
+        };
+        xhr.send(params);
+    }
 
 </script>
 </body>
