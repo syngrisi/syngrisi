@@ -294,4 +294,23 @@ class BaselineView {
         let deleteBtn = `<i name="delete-region" id="region-delete-icon-${regionIndex}" class="fas fa-window-close deleteBtn" style="color: firebrick; background-color: white; position:absolute;top:` + btnTop + 'px;left:' + btnLeft + 'px;cursor:pointer; padding: 0px"></i>';
         $(".canvas-container").append(deleteBtn);
     }
+
+    toggleDiff(diffId) {
+        const thisClass = this;
+        if (diffId && !thisClass['diffImg']) {
+            fabric.Image.fromURL(`/snapshoots/${diffId}.png`, function (diffImg) {
+                window.backImage = diffImg;
+                thisClass['diffImg'] = diffImg;
+                diffImg.scaleToWidth(thisClass.canvas.width);
+                thisClass.canvas.add(thisClass.diffImg);
+
+                thisClass.diffImg.bringToFront();
+                thisClass.canvas.renderAll();
+            });
+        }
+        else {
+            thisClass.canvas.remove(thisClass['diffImg']);
+            thisClass['diffImg'] = undefined;
+        }
+    }
 }
