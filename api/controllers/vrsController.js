@@ -190,14 +190,16 @@ exports.snapshootview = async function (req, res) {
             }
 
             const snapshot = await Snapshot.findById(`${opts.id}`);
-            let baselineId = opts.baselineid ? opts.baselineid : '';
+            const baselineId = opts.baselineid ? opts.baselineid : '';
+            const diffId = opts.diffid ? opts.diffid : '';
 
             const moment = require('moment');
             snapshot.formattedCreatedDate = moment(snapshot.Created_date)
                 .format('YYYY-MM-DD hh:mm');
             res.render('pages/snapshot', {
                 snapshot: snapshot,
-                baselineId: baselineId
+                baselineId: baselineId,
+                diffId: diffId
             });
         } catch (e) {
             fatalError(req, res, e);
