@@ -26,6 +26,16 @@
             top: 0px;
             left: 0px;
         }
+
+        .con-relative {
+            position: relative;
+        }
+        .centered-overlay-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
     </style>
 
     <title>Shapshoot - <%= expected_snapshoot.name %> | <%= expected_snapshoot.id %>
@@ -34,7 +44,7 @@
 <body>
 <div class="container">
     <div class="row ">
-        <div name="sidebar" class="col w-25 border mt-3 float-right">
+        <div name="sidebar" class="col w-25 border-right mt-3 float-right">
             <div class="container sticky-top pt-2 mt-2">
                 <div class="row justify-content-center">
                     <button name="zoom in" type="button" class="" onclick="resizeSnapshoot(1.2)">
@@ -68,8 +78,34 @@
                     </button>
                 </div>
             </div>
+            <div class="container mt-2">
+                <div class="row border border-secondary">
+                    <div class="con-relative">
+                        <a href="/snapshootview?id=<%= expected_snapshoot.id %>" title="baseline snapshoot">
+                            <img class="w-100 " src="/snapshoots/<%= expected_snapshoot.id %>.png" alt="baseline">
+                            <div class="centered-overlay-text h3 text-light bg-dark">B</div>
+                        </a>
+                    </div>
+                </div>
+                <div class="row border border-secondary mt-1">
+                    <div class="con-relative">
+                        <a href="/snapshootview?id=<%= actual_snapshoot.id %>" title="actual snapshoot">
+                            <img class="w-100 " src="/snapshoots/<%= actual_snapshoot.id %>.png" alt="actual">
+                            <div class="centered-overlay-text h3 text-light bg-dark">A</div>
+                        </a>
+                    </div>
+                </div>
+                <div class="row border border-secondary mt-1">
+                    <div class="con-relative">
+                        <a href="/snapshootview?id=<%= diff_snapshoot.id %>&baselineid=<%= expected_snapshoot.id %>" title="diff">
+                            <img class="w-100 " src="/snapshoots/<%= diff_snapshoot.id %>.png" alt="diff">
+                            <div class="centered-overlay-text h3 text-light bg-dark">D</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div name="shapshoot" id='snapshoot' class="col-11 border mt-3 mh-100">
+        <div name="shapshoot" id='snapshoot' class="col-11 border1 mt-3 mh-100">
             <div class="panel">
                 <canvas class="snapshoot-canvas" id="2d">
                 </canvas>
@@ -180,9 +216,7 @@
                 }
             );
             baseline.getSnapshotIgnoreRegionsDataAndDrawRegions('<%= expected_snapshoot.id %>');
-
         }
-
     }
 
     function resizeSnapshoot(ratio) {
