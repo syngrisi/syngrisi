@@ -62,8 +62,8 @@
             text-decoration: none;
         }
     </style>
-    <% if(currentSuiteName) { %>
-        <title>VRS list of checks - <%= currentSuiteName %> </title>
+    <% if(currentSuite) { %>
+        <title>VRS list of checks - <%= currentSuite.name %> </title>
     <% }else{ %>
         <title>VRS list of checks - all suites</title>
     <% } %>
@@ -95,8 +95,8 @@
         </div>
         <!--    TESTS TOOLBAR-->
         <div class="suite-head col-4 col-lg-6 text-light1 bg-sidebar pl-5 pt-3 h4 border-left mb-0 yellow-title">
-            <% if(currentSuiteName) { %>
-                <span><%= currentSuiteName %></span>
+            <% if(currentSuite) { %>
+                <span><%= currentSuite.name %></span>
             <% }else{ %>
                 <span>All checks</span>
             <% } %>
@@ -152,10 +152,9 @@
     </div>
     <!--    TABLE HEADER END    -->
     <div class="all-table row mh-100">
-        <div class="sidebar col-2 col-lg-3  mh-100 bg-light  border-top border-left1 border-right border-bottom border-silver float-left w-251 ml-0 mr-0"
-        <div class="sidebar col-2 col-lg-3  mh-100 bg-light border-top border-left1 border-right border-bottom border-silver float-left w-251 ml-0 mr-0"
+        <div class="sidebar col-2 col-lg-3  mh-100 bg-light  border-top border-right border-bottom border-silver float-left w-251 ml-0 mr-0"
+        <div class="sidebar col-2 col-lg-3  mh-100 bg-light border-top  border-right border-bottom border-silver float-left w-251 ml-0 mr-0"
              style="width: 100px">
-            <!--            <div class="suites-header border-bottom border-secondary small row p-1">Last Suites</div>-->
             <div class="suites-menu row pl-1 pt-1 bg-sidebar collapse light-purple" id="collapseSuiteMenu">
                 <div class="col-12 p-0">
                     <div class="row border1 mr-1 ml-1">
@@ -192,7 +191,7 @@
                 <% suites.forEach(function(suite){ %>
                     <div class="row pl-3 w-100 border-bottom1 border-silver mt-1">
                         <div class="col.auto pl-2">
-                            <input class="small" type="checkbox">
+                            <input class="small" type="checkbox" id="suite-checkbox-<%=suite.id%>">
                         </div>
                         <div class="col pl-2 pb-1">
                             <a href="/?suitename=<%= suite.name %>" class="small text-dark"><%= suite.name %></a>

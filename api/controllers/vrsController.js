@@ -335,7 +335,7 @@ exports.index = async function (req, res) {
                 res.render('pages/index', {
                     suites: suites,
                     tests: tests,
-                    currentSuiteName: opts.suitename,
+                    currentSuite: suite,
                     checksByTestGroupedByIdent: checksByTestGroupedByIdent
                 });
             } catch (e) {
