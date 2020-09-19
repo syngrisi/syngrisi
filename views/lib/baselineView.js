@@ -199,10 +199,15 @@ class BaselineView {
             let bottom = reg.top + reg.getScaledHeight();
             data.push({
                 name: reg.name,
-                top: coef > 1 ? reg.top * coef : reg.top / coef,
-                left: coef > 1 ? reg.left * coef : reg.left / coef,
-                bottom: coef > 1 ? bottom * coef : bottom / coef,
-                right: coef > 1 ? right * coef : right / coef
+                top: reg.top * coef,
+                left: reg.left * coef,
+                bottom: bottom * coef,
+                right: right * coef,
+
+                // top: coef > 1 ? reg.top * coef : reg.top / coef,
+                // left: coef > 1 ? reg.left * coef : reg.left / coef,
+                // bottom: coef > 1 ? bottom * coef : bottom / coef,
+                // right: coef > 1 ? right * coef : right / coef
             });
         })
         return JSON.stringify(data);
@@ -307,8 +312,7 @@ class BaselineView {
                 thisClass.diffImg.bringToFront();
                 thisClass.canvas.renderAll();
             });
-        }
-        else {
+        } else {
             thisClass.canvas.remove(thisClass['diffImg']);
             thisClass['diffImg'] = undefined;
         }
