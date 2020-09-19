@@ -60,6 +60,9 @@
 .silver { color: #DDDDDD; }
 .gray { color: #AAAAAA; }
 .black { color: #111111; }
+.yellow-title { color: #FFE484; }
+.light-purple { color: #CBBDE2; }
+
 /* Border colors
 
    Use with another border utility that sets border-width and style
@@ -82,6 +85,8 @@
 .border--gray { border-color: #AAAAAA; }
 .border--silver { border-color: #DDDDDD; }
 .border--black { border-color: #111111; }
+.border-purple { border-color: #CBBDE2 !important;}
+
 /* Fills for SVG */
 .fill-navy { fill: #001F3F; }
 .fill-blue { fill: #0074D9; }
