@@ -52,7 +52,8 @@
                     </button>
                 </div>
                 <div class="row justify-content-center">
-                    <button name="add-region" type="button" class="" onclick="baseline.addBoundingRegion('bound_rect')">
+                    <button name="add-region" type="button" class="" onclick="baseline.addBoundingRegion('bound_rect')"
+                            title="(A) Add ignore region">
                         <i class="fas fa-border-style"></i>
                     </button>
                 </div>
@@ -70,7 +71,8 @@
                 </div>
                 <% if (diffId) { %>
                     <div class="row justify-content-center">
-                        <button id="diff" name="diff" type="button" class="" onclick="baseline.toggleDiff('<%= diffId %>')">
+                        <button id="diff" name="diff" type="button" class=""
+                                onclick="baseline.toggleDiff('<%= diffId %>')">
                             <i class="fas fa-exchange-alt fa-1x"></i>
                         </button>
                     </div>
@@ -108,6 +110,13 @@
 <script src="http://cdnjs.cloudflare.com/ajax/libs/fabric.js/3.6.1/fabric.min.js"></script>
 <script src="lib/baselineView.js"></script>
 <script>
+
+    document.addEventListener('keydown', function (event) {
+        console.log(event.code);
+        if (event.code == 'KeyA') {
+            baseline.addIgnoreRegion({name: 'ignore_rect', strokeWidth: 0,})
+        }
+    });
 
     $(document).on('click', ".deleteBtn", function () {
         if (baseline.canvas.getActiveObject()) {

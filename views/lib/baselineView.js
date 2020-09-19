@@ -192,29 +192,39 @@ class BaselineView {
     getRectData() {
         let rects = this.allRects
         let data = []
-        let coef = this.coef;
+        let coef = parseFloat(this.coef);
 
         rects.forEach(function (reg) {
             let right = reg.left + reg.getScaledWidth();
             let bottom = reg.top + reg.getScaledHeight();
-            data.push({
-                name: reg.name,
-                // top: reg.top * coef,
-                // left: reg.left * coef,
-                // bottom: bottom * coef,
-                // right: right * coef,
-
-                // name: reg.name,
-                // top: reg.top * coef,
-                // left: reg.left * coef,
-                // bottom: bottom * coef,
-                // right: right * coef,
-
-                top: coef > 1 ? reg.top * coef : reg.top / coef,
-                left: coef > 1 ? reg.left * coef : reg.left / coef,
-                bottom: coef > 1 ? bottom * coef : bottom / coef,
-                right: coef > 1 ? right * coef : right / coef
-            });
+            if (coef) {
+                data.push({
+                    name: reg.name,
+                    top: reg.top * coef,
+                    left: reg.left * coef,
+                    bottom: bottom * coef,
+                    right: right * coef,
+                });
+            } else {
+                // data.push({
+                //     // name: reg.name,
+                //     // top: reg.top / coef,
+                //     // left: reg.left / coef,
+                //     // bottom: bottom / coef,
+                //     // right: right / coef,
+                //
+                //     // name: reg.name,
+                //     // top: reg.top * coef,
+                //     // left: reg.left * coef,
+                //     // bottom: bottom * coef,
+                //     // right: right * coef,
+                //     // //
+                //     // top: (coef > 1) ? (reg.top * coef) : (reg.top / coef),
+                //     // left: (coef > 1) ? (reg.left * coef) : (reg.left / coef),
+                //     // bottom: (coef > 1) ? (bottom * coef) : (bottom / coef),
+                //     // right: (coef > 1) ? (right * coef) : (right / coef)
+                // });
+            }
         })
         return JSON.stringify(data);
     }
@@ -246,29 +256,38 @@ class BaselineView {
      */
     convertRegionsDataFromServer(regions) {
         let data = [];
-        let coef = this.coef;
+        let coef =  parseFloat(this.coef);
         JSON.parse(regions).forEach(function (reg) {
             let width = reg.right - reg.left;
             let height = reg.bottom - reg.top;
             console.log({coef});
-            data.push({
-
-                name: reg.name,
-                // top: reg.top * coef,
-                // left: reg.left * coef,
-                // width: width * coef,
-                // height: height * coef
-
-                // name: reg.name,
-                // top: reg.top / coef,
-                // left: reg.left / coef,
-                // width: width / coef,
-                // height: height / coef
-                top: coef < 1 ? (reg.top * coef) : (reg.top / coef),
-                left: coef < 1 ? (reg.left * coef) : (reg.left / coef),
-                width: coef < 1 ? (width * coef) : (width / coef),
-                height: coef < 1 ? (height * coef) : (height / coef)
-            })
+            if (coef) {
+                data.push({
+                    name: reg.name,
+                    top: reg.top / coef,
+                    left: reg.left / coef,
+                    width: width / coef,
+                    height: height / coef
+                })
+            } else {
+                // data.push({
+                //     name: reg.name,
+                //     top: reg.top * coef,
+                //     left: reg.left * coef,
+                //     width: width * coef,
+                //     height: height * coef
+                //
+                //     // name: reg.name,
+                //     // top: reg.top / coef,
+                //     // left: reg.left / coef,
+                //     // width: width / coef,
+                //     // height: height / coef
+                //     // top: coef < 1 ? (reg.top * coef) : (reg.top / coef),
+                //     // left: coef < 1 ? (reg.left * coef) : (reg.left / coef),
+                //     // width: coef < 1 ? (width * coef) : (width / coef),
+                //     // height: coef < 1 ? (height * coef) : (height / coef)
+                // })
+            }
         })
         return data;
     }
