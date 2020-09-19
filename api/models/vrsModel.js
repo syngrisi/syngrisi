@@ -154,6 +154,10 @@ const VRSTestSchema = new Schema({
         type: Date,
         // default: Date.now,
     },
+    suite: {
+        type: Schema.Types.ObjectId,
+        ref: 'VRSSuite',
+    },
 });
 
 const VRSSuiteSchema = new Schema({
