@@ -199,15 +199,21 @@ class BaselineView {
             let bottom = reg.top + reg.getScaledHeight();
             data.push({
                 name: reg.name,
-                top: reg.top * coef,
-                left: reg.left * coef,
-                bottom: bottom * coef,
-                right: right * coef,
+                // top: reg.top * coef,
+                // left: reg.left * coef,
+                // bottom: bottom * coef,
+                // right: right * coef,
 
-                // top: coef > 1 ? reg.top * coef : reg.top / coef,
-                // left: coef > 1 ? reg.left * coef : reg.left / coef,
-                // bottom: coef > 1 ? bottom * coef : bottom / coef,
-                // right: coef > 1 ? right * coef : right / coef
+                // name: reg.name,
+                // top: reg.top * coef,
+                // left: reg.left * coef,
+                // bottom: bottom * coef,
+                // right: right * coef,
+
+                top: coef > 1 ? reg.top * coef : reg.top / coef,
+                left: coef > 1 ? reg.left * coef : reg.left / coef,
+                bottom: coef > 1 ? bottom * coef : bottom / coef,
+                right: coef > 1 ? right * coef : right / coef
             });
         })
         return JSON.stringify(data);
@@ -244,13 +250,24 @@ class BaselineView {
         JSON.parse(regions).forEach(function (reg) {
             let width = reg.right - reg.left;
             let height = reg.bottom - reg.top;
-
+            console.log({coef});
             data.push({
+
                 name: reg.name,
-                top: coef < 1 ? reg.top * coef : reg.top / coef,
-                left: coef < 1 ? reg.left * coef : reg.left / coef,
-                width: coef < 1 ? width * coef : width / coef,
-                height: coef < 1 ? height * coef : height / coef
+                // top: reg.top * coef,
+                // left: reg.left * coef,
+                // width: width * coef,
+                // height: height * coef
+
+                // name: reg.name,
+                // top: reg.top / coef,
+                // left: reg.left / coef,
+                // width: width / coef,
+                // height: height / coef
+                top: coef < 1 ? (reg.top * coef) : (reg.top / coef),
+                left: coef < 1 ? (reg.left * coef) : (reg.left / coef),
+                width: coef < 1 ? (width * coef) : (width / coef),
+                height: coef < 1 ? (height * coef) : (height / coef)
             })
         })
         return data;
