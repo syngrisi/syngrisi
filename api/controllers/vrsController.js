@@ -222,7 +222,12 @@ exports.diffview = async function (req, res) {
                 const expected_snapshoot = await Snapshot.findById(`${opts.expectedid}`);
                 const actual_snapshoot = await Snapshot.findById(`${opts.actualid}`);
                 const diff_snapshoot = await Snapshot.findById(`${opts.diffid}`);
-                const check_id = opts.checkid
+
+                const check_id = opts.checkid;
+                const check = await Check.findById(check_id);
+
+                const suite = await Suite.findById(`${check.suite}`);
+                const test = await Test.findById(`${check.test}`);
 
                 // const snapshot = await Snapshot.findById(`${opts.id}`);
                 var moment = require('moment');
@@ -237,7 +242,9 @@ exports.diffview = async function (req, res) {
                     expected_snapshoot: expected_snapshoot,
                     actual_snapshoot: actual_snapshoot,
                     diff_snapshoot: diff_snapshoot,
-                    check_id: check_id
+                    check_id: check_id,
+                    suite: suite,
+                    test: test
                 });
             } catch (e) {
                 res.status(500)

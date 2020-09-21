@@ -491,6 +491,16 @@
 <script src="http://cdnjs.cloudflare.com/ajax/libs/fabric.js/3.6.1/fabric.min.js"></script>
 <script src="lib/baselineView.js"></script>
 <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const unfoldTestId = urlParams.get('unfoldTestId');
+    if(unfoldTestId)
+    unfoldCheck(unfoldTestId)
+    function unfoldCheck(id) {
+        jQuery(`#testchecks_${id}`)[0].scrollIntoView();
+        jQuery(`#testchecks_${id}`).collapse('show');
+        drawTestChecksPreviews(unfoldTestId);
+    }
+
     function drawOverlay(expectedId, actualId, diff) {
         document.getElementById('overlay').style.display = 'block';
     }
