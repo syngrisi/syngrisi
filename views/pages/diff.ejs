@@ -6,7 +6,7 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="icon" href="../../static/imgs/logo.png">
-<!--    <link rel="icon" href="../../static/imgs/simpleLogoLightShadow.png">-->
+    <!--    <link rel="icon" href="../../static/imgs/simpleLogoLightShadow.png">-->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
           integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
           crossorigin="anonymous">
@@ -52,19 +52,26 @@
                 <div class="col-auto pl-3 pr-0">
                     <div class="border-top border-bottom border-left rounded-left border-right rounded-right pl-1 pr-1 pt-1 pb-1">
                         <a class="unlink" href="/">
-                            <img src="static/imgs/simpleLogoLightShadow3.png" alt="robo logo bg-light1" class="" style="width: 35px ">
+                            <img src="static/imgs/simpleLogoLightShadow3.png" alt="robo logo bg-light1" class=""
+                                 style="width: 35px ">
                         </a>
                     </div>
                 </div>
                 <div class="col pl-2 pt-2 mr-0 text-truncate">
-<!--                    <a class="unlink" href="/">Visual Regression Service</a>-->
                     <a class="unlink" href="/" title="Σύγκριση">Syngrisi</a>
                 </div>
             </div>
 
         </div>
 
-        <div class="col pl-4 pt-3 h4"><%= (expected_snapshoot.name.replace(/_/g, ' ')); %></div>
+        <div name="title" class="col pl-4 pt-3 h4">
+            <a class="unlink" name="suite-link"
+               href="/?suitename=<%= suite.name %>"><%= suite.name %></a>
+            <span>/</span>
+            <a class="unlink" name="check-link"
+               href='/?suitename=<%= suite.name %>&unfoldTestId=<%= test.id %>'><%= test.name %></a>
+            <span>/</span>
+            <%= (expected_snapshoot.name.replace(/_/g, ' ')); %></div>
     </div>
     <div name="header-line" class="row bg-sidebar text-light ">
         <div class="col p-1"></div>
