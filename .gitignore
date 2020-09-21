@@ -4,3 +4,4 @@ node_modules
 *.log
 .DS_Store
 /tests/files/randomImg.png
+*.bak
