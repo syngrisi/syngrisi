@@ -315,7 +315,7 @@ exports.index = async function (req, res) {
                     suiteFilter = {suite: suite.id};
                 const suites = await Suite.find({})
                     .sort({Updated_date: -1}).exec()
-                const tests = await Test.find()
+                const tests = await Test.find(suiteFilter)
                     .sort({Updated_date: -1}).exec()
                 tests.map(function (test) {
                     test.formattedCreatedDate = moment(test.Start_date)
@@ -510,17 +510,19 @@ exports.remove_test = async function (req, res) {
 };
 
 function prettyCheckParams(result) {
-    if(!result.domDump)
-        return  JSON.stringify(result);
+    if (!result.domDump)
+        return JSON.stringify(result);
     const dump = JSON.parse(result.domDump);
     let resObs = {...result};
     delete resObs.domDump;
-    resObs.domDump = JSON.stringify(dump).substr(0,20) + `... and about ${dump.length} items]`
+    resObs.domDump = JSON.stringify(dump).substr(0, 20) + `... and about ${dump.length} items]`
     return JSON.stringify(resObs);
 }
 
 exports.create_check = async function (req, res) {
     return new Promise(async function (resolve, reject) {
+            let test;
+            let suite;
             try {
                 console.log(`CREATE check name: '${prettyCheckParams(req.body.name)}'`);
                 let executionTimer = process.hrtime()
@@ -547,7 +549,8 @@ exports.create_check = async function (req, res) {
                     }
 
                     console.log(`Try to find test with id: '${req.body.testid}'`);
-                    if (!Test.findById(req.body.testid)) {
+                    test = await Test.findById(req.body.testid).exec();
+                    if (!test) {
                         const errMsg = `Error: Can not find test with id: '${req.body.testid}', parameters: '${JSON.stringify(req.body)}'`
                         res.status(400)
                             .send({
@@ -559,6 +562,8 @@ exports.create_check = async function (req, res) {
                         return
                     }
                 }
+                suite = await orm.createSuiteIfNotExist({name: req.body.suitename || 'Others'});
+                orm.updateItem('VRSTest', {_id: test.id}, {suite: suite.id});
 
                 let params = {
                     testname: req.body.testname,
@@ -568,7 +573,7 @@ exports.create_check = async function (req, res) {
                     browserName: req.body.browserName,
                     os: req.body.os,
                     Updated_date: Date.now(),
-                    suite: (await orm.createSuiteIfNotExist({name: req.body.suitename || 'Others'})).id,
+                    suite: suite.id,
                     appname: (await orm.createAppIfNotExist({name: req.body.appname || 'Unknown'})).id,
                     domDump: req.body.domdump,
                 }
