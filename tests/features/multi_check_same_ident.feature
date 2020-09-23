@@ -48,7 +48,7 @@ Feature: VRS Few checks with same identification
     Then I expect that VRS test "two passed checks" has "Passed" status
 
     When I click on "two passed checks" VRS test
-    Then I expect that VRS check "1/1(2) check_1" has "Passed" status
+    Then I expect that VRS check "1/1 (2) check_1" has "Passed" status
 
   Scenario: VRS two failed checks with same ident - failed ident group, failed test
     # 1. One check - "New" status
@@ -80,7 +80,7 @@ Feature: VRS Few checks with same identification
     Then I expect that VRS test "two failed checks" has "Failed" status
 
     When I click on "two failed checks" VRS test
-    Then I expect that VRS check "1/1(2) check_1" has "Failed" status
+    Then I expect that VRS check "1/1 (2) check_1" has "Failed" status
 
   Scenario: VRS first failed check and second passed with same ident - blinking ident group, passed test
     # 1. One check - "New" status
@@ -113,7 +113,7 @@ Feature: VRS Few checks with same identification
     Then I expect that 1th VRS test "failed and passed" has blink icon
 
     When I click on "failed and passed" VRS test
-    Then I expect that VRS check "1/1(2) check_1" has "Blinking" status
+    Then I expect that VRS check "1/1 (2) check_1" has "Blinking" status
 
   @EdgeCase
   Scenario: VRS first passed check and second failed with same ident - failed ident group, failed test
@@ -146,7 +146,7 @@ Feature: VRS Few checks with same identification
     Then I expect that VRS test "passed and failed" has "Failed" status
 
     When I click on "passed and failed" VRS test
-    Then I expect that VRS check "1/1(2) check_1" has "Failed" status
+    Then I expect that VRS check "1/1 (2) check_1" has "Failed" status
 
 
 
