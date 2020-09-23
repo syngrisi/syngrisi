@@ -106,13 +106,15 @@
                         <i class="far fa-object-group fa-1x"></i>
                     </button>
                 </div>
-                <div class="row justify-content-center">
-                    <button name="accept-baseline" type="button" class=""
-                            onclick="acceptCheck('<%= check_id %>', '<%= actual_snapshoot.id %>')"
-                            title="accept the actual snapshoot as baseline">
-                        <i class="fas fa-check fa-1x"></i>
-                    </button>
-                </div>
+                <% if(check.status == 'failed') { %>
+                    <div class="row justify-content-center">
+                        <button name="accept-baseline" type="button" class=""
+                                onclick="acceptCheck('<%= check_id %>', '<%= actual_snapshoot.id %>')"
+                                title="accept the actual snapshoot as baseline">
+                            <i class="fas fa-check fa-1x"></i>
+                        </button>
+                    </div>
+                <% } %>
                 <div class="container mt-2">
                     <div class="row border border-secondary">
                         <div class="con-relative">
