@@ -45,11 +45,11 @@
         | <%= expected_snapshoot.formattedCreatedDate %></title>
 </head>
 <body>
-<div class="container-fluid pl-1 pr-1">
+<div class="container-fluid pl-3 pr-1">
     <div name="header" class="row bg-sidebar text-light ">
-        <div class="col-2 col-lg-3 w-25 pl-4 pt-2">
-            <div class="row pl-1">
-                <div class="col-auto pl-3 pr-0">
+        <div class="col-2 col-lg-3 w-25 pl-4 pt-1">
+            <div class="row pl-1 pb-3">
+                <div class="col-auto pl-2 pr-0 pt-3">
                     <div class="border-top border-bottom border-left rounded-left border-right rounded-right pl-1 pr-1 pt-1 pb-1">
                         <a class="unlink" href="/">
                             <img src="static/imgs/simpleLogoLightShadow3.png" alt="robo logo bg-light1" class=""
@@ -58,13 +58,12 @@
                     </div>
                 </div>
                 <div class="col pl-2 pt-2 mr-0 text-truncate">
-                    <a class="unlink" href="/" title="Σύγκριση">Syngrisi</a>
+                    <a class="unlink h1" href="/" title="Σύγκριση">Syngrisi</a>
                 </div>
             </div>
-
         </div>
 
-        <div name="title" class="col pl-4 pt-3 h4">
+        <div name="title" class="col pl-4 pt-3 h4 border-left mb-0 light-purple">
             <a class="unlink" name="suite-link"
                href="/?suitename=<%= suite.name %>"><%= suite.name %></a>
             <span>/</span>
@@ -73,46 +72,46 @@
             <span>/</span>
             <%= (expected_snapshoot.name.replace(/_/g, ' ')); %></div>
     </div>
-    <div name="header-line" class="row bg-sidebar text-light ">
-        <div class="col p-1"></div>
-    </div>
     <div name="all-content" class="row pl-4">
         <div name="sidebar" class="col-1 border-right1 mt-3 float-right p-0 pr-1">
             <div class="container sticky-top pt-2 p-0 mt-2">
                 <div class="row justify-content-center">
-                    <button name="zoom in" type="button" class="" onclick="resizeSnapshoot(1.2)">
+                    <a name="zoom in" type="button" class="btn btn-check p-1 border-0 rounded-0"
+                       onclick="resizeSnapshoot(1.2)">
                         <i class="fas fa-search-plus fa-1x  "></i>
-                    </button>
+                    </a>
                 </div>
-
                 <div class="row justify-content-center">
-                    <button name="zoom-out" type="button" class="" onclick="resizeSnapshoot(0.8)">
+                    <a name="zoom-out" type="button" class="btn btn-check p-1 border-0 rounded-0"
+                       onclick="resizeSnapshoot(0.8)">
                         <i class="fas fa-search-minus fa-1x"></i>
-                    </button>
+                    </a>
                 </div>
                 <div class="row justify-content-center">
-                    <button name="details" type="button" class=""
-                            onclick="window.location.href = '/checksgroupview?id=<%= check_id %>'">
+                    <a name="details" type="button" class="btn btn-check p-1 border-0 rounded-0"
+                       onclick="window.location.href = '/checksgroupview?id=<%= check_id %>'">
                         <i class="fas fa-th fa-1x  "></i>
-                    </button>
+                    </a>
                 </div>
                 <div class="row justify-content-center">
-                    <button name="show-diff" type="button" class="" onclick="toggleDiffOpacity()">
+                    <a name="show-diff" type="button" class="btn btn-check p-1 border-0 rounded-0"
+                       onclick="toggleDiffOpacity()">
                         <i class="fas fa-exchange-alt fa-1x"></i>
-                    </button>
+                    </a>
                 </div>
                 <div class="row justify-content-center">
-                    <button name="show-overlay" type="button" class="" onclick="toggleReqions()">
+                    <a name="show-overlay" type="button" class="btn btn-check p-1 border-0 rounded-0"
+                       onclick="toggleReqions()">
                         <i class="far fa-object-group fa-1x"></i>
-                    </button>
+                    </a>
                 </div>
                 <% if(check.status == 'failed') { %>
                     <div class="row justify-content-center">
-                        <button name="accept-baseline" type="button" class=""
-                                onclick="acceptCheck('<%= check_id %>', '<%= actual_snapshoot.id %>')"
-                                title="accept the actual snapshoot as baseline">
+                        <a name="accept-baseline" type="button" class="btn btn-check p-1 border-0 rounded-0"
+                           onclick="acceptCheck('<%= check_id %>', '<%= actual_snapshoot.id %>')"
+                           title="accept the actual snapshoot as baseline">
                             <i class="fas fa-check fa-1x"></i>
-                        </button>
+                        </a>
                     </div>
                 <% } %>
                 <div class="container mt-2">
