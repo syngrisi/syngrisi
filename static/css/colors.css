@@ -162,6 +162,13 @@ a.unlink {
 }
 a.unlink:hover {
     color: inherit;
+    text-decoration: none;
+}
+
+.blink-icon {
+    /*background: url('./static/blinking.png');*/
+    height: 16px;
+    width: 16px;
 }
 
 a.btn-check:hover { background: rgba(86, 61, 124, 0.3); }
