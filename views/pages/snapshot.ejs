@@ -35,7 +35,29 @@
     <title>Shapshoot - <%= snapshot.name %> | <%= snapshot.id %> | <%= snapshot.formattedCreatedDate %></title>
 </head>
 <body>
-<div class="container">
+<div class="container-fluid pl-3 pr-4">
+    <div name="header" class="row bg-sidebar text-light ">
+        <div name="logo-and-label" class="col-2 col-lg-3 w-25 pl-4 pt-1">
+            <div class="row pl-1 pb-3">
+                <div class="col-auto pl-2 pr-0 pt-3">
+                    <div class="border-top border-bottom border-left rounded-left border-right rounded-right pl-1 pr-1 pt-1 pb-1">
+                        <a class="unlink" href="/">
+                            <img src="static/imgs/simpleLogoLightShadow3.png" alt="robo logo bg-light1" class=""
+                                 style="width: 35px ">
+                        </a>
+                    </div>
+                </div>
+                <div class="col pl-2 pt-2 mr-0 text-truncate">
+                    <a class="unlink h1" href="/" title="Σύγκριση">Syngrisi</a>
+                </div>
+            </div>
+        </div>
+
+        <div name="title" class="col pl-4 pt-3 h4 border-left mb-0 light-purple">
+            <%= snapshot.name.replace(/_/g, ' ') %>
+        </div>
+    </div>
+
     <div class="row ">
         <div name="sidebar" class="col w-25 border mt-3 float-right">
             <div class="container sticky-top pt-2 mt-2">
@@ -52,7 +74,8 @@
                     </button>
                 </div>
                 <div class="row justify-content-center">
-                    <button name="add-region" type="button" class="" onclick="baseline.addBoundingRegion('bound_rect')"
+                    <button name="add-region" type="button" class=""
+                            onclick="baseline.addBoundingRegion('bound_rect')"
                             title="(A) Add ignore region">
                         <i class="fas fa-border-style"></i>
                     </button>
