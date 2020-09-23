@@ -244,7 +244,8 @@ exports.diffview = async function (req, res) {
                     diff_snapshoot: diff_snapshoot,
                     check_id: check_id,
                     suite: suite,
-                    test: test
+                    test: test,
+                    check: check
                 });
             } catch (e) {
                 res.status(500)
@@ -481,40 +482,100 @@ exports.update_test = async function (req, res) {
         });
 };
 
-exports.remove_test = async function (req, res) {
+function removeTest(id) {
+    return new Promise(function (resolve, reject) {
+        try {
+            console.log(`Try to delete all checks associated to test with ID: '${id}'`);
+            Check.remove({test: id}).then(function (result) {
+                console.log(`DELETE test with ID: '${id}'`);
+                Test.findByIdAndDelete(id).then(function (out) {
+                    return resolve(out);
+                });
+            })
+        } catch (e) {
+            return reject(e);
+        }
+    })
+}
+
+exports.remove_test = function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
             const id = req.params.id;
-            console.log(`DELETE test with ID: '${id}'`);
-            console.log(`Try to delete all checks associated to test with ID: '${id}'`);
-            Check.remove({test: id})
-                .then(function (output) {
-                    // console.log(output);
-                    Test.findByIdAndDelete(id)
-                        .then(function (out) {
-                            res.status(200)
-                                .send(`Test with id: '${id}' and all related checks were removed 
-                        output: '${JSON.stringify(output)}' | ${JSON.stringify(out)}'`);
-                        })
-                        .catch(
-                            (err) => {
-                                res.status(400)
-                                    .send(`Cannot remove the test with id: '${id}', error: '${err}'`);
-                                return reject(e);
-                            }
-                        );
-                })
-                .catch(function (error) {
-                    res.status(400)
-                        .send(`Cannot remove the checks related to id: '${id}', error: '${error}'`);
-                    return reject(e);
-                });
+            removeTest(id).then(function (output) {
+                res.status(200)
+                    .send(`Test with id: '${id}' and all related checks were removed
+                        output: '${JSON.stringify(output)}'`);
+                return resolve();
+            });
         } catch (e) {
             fatalError(req, res, e);
             return reject(e);
         }
     })
 };
+
+exports.remove_suite = async function (req, res) {
+    return new Promise(async function (resolve, reject) {
+        try {
+            const id = req.params.id;
+            console.log(`DELETE test and checks which associate with the suite with ID: '${id}'`);
+            const tests = await Test.find({suite: id});
+
+            let results = []
+            for (const test of tests) {
+                results.push(removeTest(test._id));
+            }
+
+            Promise.all(results).then(function (result) {
+                Suite.findByIdAndDelete(id).then(function (out) {
+                    res.status(200)
+                        .send(`Suite with id: '${id}' and all related tests and checks were removed
+                    output: '${JSON.stringify(out)}'`);
+                    return resolve();
+                })
+            })
+        } catch (e) {
+            return reject(e);
+        }
+    })
+};
+
+
+// exports.remove_test = async function (req, res) {
+//     return new Promise(async function (resolve, reject) {
+//         try {
+//             const id = req.params.id;
+//             console.log(`DELETE test with ID: '${id}'`);
+//             console.log(`Try to delete all checks associated to test with ID: '${id}'`);
+//             Check.remove({test: id})
+//                 .then(function (output) {
+//                     // console.log(output);
+//                     Test.findByIdAndDelete(id)
+//                         .then(function (out) {
+//                             res.status(200)
+//                                 .send(`Test with id: '${id}' and all related checks were removed
+//                         output: '${JSON.stringify(output)}' | ${JSON.stringify(out)}'`);
+//                         })
+//                         .catch(
+//                             (err) => {
+//                                 res.status(400)
+//                                     .send(`Cannot remove the test with id: '${id}', error: '${err}'`);
+//                                 return reject(e);
+//                             }
+//                         );
+//                 })
+//                 .catch(function (error) {
+//                     res.status(400)
+//                         .send(`Cannot remove the checks related to id: '${id}', error: '${error}'`);
+//                     return reject(e);
+//                 });
+//         } catch (e) {
+//             fatalError(req, res, e);
+//             return reject(e);
+//         }
+//     })
+// };
 
 function prettyCheckParams(result) {
     if (!result.domDump)

@@ -17,6 +17,7 @@
             z-index: 1;
             width: 80%;
         }
+
         .snapshoot-link {
             top: 15px;
             left: 15px;
@@ -95,14 +96,16 @@
 
             <div class="row images border-top">
                 <div class="screenshoot baseline m-1 col-3">
-                    <a class="snapshoot-link" href="/snapshootview?id=<%= check.baselineId %>" name="baseline_link">
+                    <a class="snapshoot-link"
+                       href="/snapshootview?id=<%= check.baselineId %>&diffid=<%= check.diffId %>" name="baseline_link">
                         <img src="/snapshoots/<%= check.baselineId %>.png" alt=""
                              class="frontimage">
                     </a>
                 </div>
                 <% if (check.actualSnapshotId) { %>
                     <div class="screenshoot actual m-1 w-25 col-3">
-                        <a class="snapshoot-link" href="/snapshootview?id=<%= check.actualSnapshotId %>">
+                        <a class="snapshoot-link"
+                           href="/snapshootview?id=<%= check.actualSnapshotId %>&diffid=<%= check.diffId %>">
                             <img src="/snapshoots/<%= check.actualSnapshotId %>.png"
                                  alt=""
                                  class="frontimage">

@@ -233,18 +233,33 @@ class BaselineView {
         return this.image.height / this.image.getScaledHeight();
     }
 
+    showNotification(msg, status = 'Success') {
+        document.getElementById("notify-header").textContent = status;
+        document.getElementById("notify-message").textContent = msg;
+        document.getElementById("notify-rect").setAttribute('fill', '#2ECC40');
+        if (status === 'Error')
+            document.getElementById("notify-rect").setAttribute('fill', '#FF4136');
+        $('#notify').show()
+        setTimeout(function () {
+                $('#notify').hide()
+            },
+            4000)
+    }
+
     sendIgnoreRegions(id, regionsData) {
         var xhr = new XMLHttpRequest();
         var params = `id=${id}&ignoreRegions=${JSON.stringify(regionsData)}`;
         xhr.open('PUT', `/snapshots/${id}`, true);
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-
+        const classThis = this;
         // NEED TO ADD UPDATE BASELINE LOGIC TO .onload EVENT!!!
         xhr.onload = function () {
             if (xhr.status === 200) {
                 console.log(`Successful send regions data, id: '${id}'  resp: '${xhr.responseText}'`);
+                classThis.showNotification('Regions were saved');
             } else {
                 console.error(`Cannot send regions data, status: '${xhr.status}',  resp: '${xhr.responseText}'`);
+                classThis.showNotification('Cannot save regions', 'Error');
             }
         };
         xhr.send(params);
@@ -256,7 +271,7 @@ class BaselineView {
      */
     convertRegionsDataFromServer(regions) {
         let data = [];
-        let coef =  parseFloat(this.coef);
+        let coef = parseFloat(this.coef);
         JSON.parse(regions).forEach(function (reg) {
             let width = reg.right - reg.left;
             let height = reg.bottom - reg.top;
@@ -269,24 +284,6 @@ class BaselineView {
                     width: width / coef,
                     height: height / coef
                 })
-            } else {
-                // data.push({
-                //     name: reg.name,
-                //     top: reg.top * coef,
-                //     left: reg.left * coef,
-                //     width: width * coef,
-                //     height: height * coef
-                //
-                //     // name: reg.name,
-                //     // top: reg.top / coef,
-                //     // left: reg.left / coef,
-                //     // width: width / coef,
-                //     // height: height / coef
-                //     // top: coef < 1 ? (reg.top * coef) : (reg.top / coef),
-                //     // left: coef < 1 ? (reg.left * coef) : (reg.left / coef),
-                //     // width: coef < 1 ? (width * coef) : (width / coef),
-                //     // height: coef < 1 ? (height * coef) : (height / coef)
-                // })
             }
         })
         return data;
@@ -310,20 +307,27 @@ class BaselineView {
         })
     }
 
-    getSnapshotIgnoreRegionsDataAndDrawRegions(id) {
-        console.log('get snapshoot data', id)
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', `/snapshot/${id}/`, true);
-        const classThis = this;
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                console.log(`Successful got regions data, id: '${id}'  resp: '${xhr.responseText}'`);
-                classThis.drawRegions(JSON.parse(xhr.responseText).ignoreRegions);
-            } else {
-                console.error(`Cannot get regions data, status: '${xhr.status}',  resp: '${xhr.responseText}'`);
-            }
-        };
-        xhr.send('');
+    getRegionsData(snapshootId) {
+        return new Promise(function (resolve, reject) {
+            console.log(`get snapshoot data id: ${snapshootId}`);
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', `/snapshot/${snapshootId}/`, true);
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    console.log(`Successful got regions data, id: '${snapshootId}'  resp: '${xhr.responseText}'`);
+                    resolve(JSON.parse(xhr.responseText));
+                } else {
+                    console.error(`Cannot get regions data, status: '${xhr.status}',  resp: '${xhr.responseText}'`);
+                    return reject(xhr);
+                }
+            };
+            xhr.send('');
+        })
+    }
+
+    async getSnapshotIgnoreRegionsDataAndDrawRegions(id) {
+        const regionData = await this.getRegionsData(id)
+        this.drawRegions(regionData.ignoreRegions);
     }
 
     addDeleteBtn(target) {

@@ -44,6 +44,9 @@ module.exports = async function (app) {
         .delete('/tests/:id', async (req, res, next) => {
             VRS.remove_test(req, res).catch(next);
         })
+        .delete('/suites/:id', async (req, res, next) => {
+            VRS.remove_suite(req, res).catch(next);
+        })
         .put('/tests/:id', async (req, res, next) => {
             VRS.update_test(req, res).catch(next);
         })
