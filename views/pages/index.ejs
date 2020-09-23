@@ -363,11 +363,8 @@ fix    </style>
                                                  data-toggle="tooltip"
                                                  data-placement="top"
                                                  title="<%= check.name %>">
-                                                <%= (ind + 1) %>
-                                                /<%= Object.keys(checksByTestGroupedByIdent[test.id]).length %>
-                                                <% if(checksByTestGroupedByIdent[test.id][groupName].checks.length > 1){ %>
-                                                    <sup>(<%= checksByTestGroupedByIdent[test.id][groupName].checks.length %>
-                                                        )</sup>
+                                                <%= (ind + 1) %>/<%= Object.keys(checksByTestGroupedByIdent[test.id]).length %>                                                <% if(checksByTestGroupedByIdent[test.id][groupName].checks.length > 1){ %>
+                                                   <sup>(<%= checksByTestGroupedByIdent[test.id][groupName].checks.length %>)</sup>
                                                 <% } %>
                                                 <%= check.name %>
                                             </div>

@@ -5,7 +5,6 @@ const hasha = require('hasha');
 const fs = require('fs').promises;
 const {config} = require('../../config');
 const {getDiff} = require('../../lib/comparator');
-const {Lock} = require('../../lib/lock');
 const orm = require('../../lib/dbItems');
 const {parseDiff} = require('../../lib/parseDiff');
 const {getAllElementsByPositionFromDump} = require('../../lib/getElementsByPixPositionsFromDump')

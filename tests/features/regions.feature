@@ -80,9 +80,11 @@ Feature: Regions works properly
     When I click on "Region check" VRS test
     Then I expect that VRS test "Region check" is unfolded
     When I click on the element "[name=region]"
+    When I wait for "2" seconds
     When I click on the element "[name=baseline_link]"
-
+    When I wait for "2" seconds
     When I click on the element "[name=add-region]"
+    When I wait for "1" seconds
     When I execute javascript code:
     """
      return baseline.allRects.length.toString()
@@ -131,7 +133,9 @@ Feature: Regions works properly
     When I click on "Region check" VRS test
     Then I expect that VRS test "Region check" is unfolded
     When I click on the element "[name=region]"
+    When I wait for "2" seconds
     When I click on the element "[name=baseline_link]"
+    When I wait for "1" seconds
 
     When I click on the element "[name=add-region]"
     When I execute javascript code:
@@ -168,6 +172,7 @@ Feature: Regions works properly
 
     When I click on the element "[name=save-snapshot]"
 
+    When I wait for "1" seconds
     When I refresh page
     When I execute javascript code:
     """
@@ -196,8 +201,9 @@ Feature: Regions works properly
     When I click on "Region check" VRS test
     Then I expect that VRS test "Region check" is unfolded
     When I click on the element "[name=region]"
+    When I wait for "1" seconds
     When I click on the element "[name=baseline_link]"
-
+    When I wait for "1" seconds
     When I click on the element "[name=add-region]"
     When I click on the element "[name=add-region]"
     When I click on the element "[name=save-snapshot]"
@@ -218,7 +224,9 @@ Feature: Regions works properly
     When I click on "Region check" VRS test
     Then I expect that VRS test "Region check" is unfolded
     When I click on the element "[name=region]"
+    When I wait for "1" seconds
     When I click on the element "[name=baseline_link]"
+    When I wait for "1" seconds
 
     When I click on the element "[name=add-region]"
     When I click on the element "[name=save-snapshot]"
