@@ -51,6 +51,9 @@ module.exports = async function (app) {
         .put('/tests/:id', async (req, res, next) => {
             API.update_test(req, res).catch(next);
         })
+        .post('/session/:testid', async (req, res, next) => {
+            API.stop_session(req, res).catch(next);
+        })
         .get('/checks', async (req, res, next) => {
             req.log.trace(`get '/checks' queue pending count: `, queue.pending);
             await queue.add(() => API.list_all_checks(req, res).catch(next));

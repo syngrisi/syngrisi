@@ -64,3 +64,19 @@ exports.checksGroupedByIdent = async function checksGroupedByIdent(checkFilter) 
         }
     })
 }
+
+
+exports.waitUntil = async function waitUntil(cb, attempts = 5, interval = 700) {
+    let result = false;
+    let iteration = 0;
+    while (result === false) {
+        result = await cb();
+        await new Promise(r => setTimeout(r, interval));
+        iteration = iteration + 1;
+
+        if (iteration > attempts) {
+            result = true;
+        }
+    }
+    return result;
+}

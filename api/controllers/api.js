@@ -13,7 +13,7 @@ const Check = mongoose.model('VRSCheck');
 const Test = mongoose.model('VRSTest');
 const Suite = mongoose.model('VRSSuite');
 const {checksGroupedByIdent} = require('./utils');
-const {fatalError} = require('./utils');
+const {fatalError, waitUntil} = require('./utils');
 
 // get last updated document
 async function getLastCheck(identifier) {
@@ -100,7 +100,7 @@ async function compareSnapshots(baseline, actual) {
 
 // API
 
-exports.checks_group_by_ident = async function (req, res) {
+const checks_group_by_ident = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
             let testId = req.params.testid;
@@ -115,6 +115,8 @@ exports.checks_group_by_ident = async function (req, res) {
     })
 
 };
+
+exports.checks_group_by_ident = checks_group_by_ident;
 
 exports.affectedelements = async function (req, res) {
     return new Promise(async function (resolve, reject) {
@@ -159,12 +161,12 @@ exports.list_all_checks = async function (req, res) {
         const checks = await Check.find(filter).exec().catch(
             function (e) {
                 fatalError(req, res, e);
-                reject(e)
-                return
+                return reject(e)
+
             }
         )
         res.json(checks);
-        resolve(checks)
+        return resolve(checks)
     })
 };
 
@@ -194,6 +196,88 @@ exports.create_test = async function (req, res) {
         });
 };
 
+exports.stop_session = async function (req, res) {
+    return new Promise(async function (resolve, reject) {
+        try {
+            let testId = req.params.testid;
+            let opts = req.body;
+
+            await waitUntil(async () => {
+                return (await Check.find({test: testId}).exec())
+                    .filter(ch => ch.status.toString() !== 'pending').length > 0;
+            });
+            const checksGroup = await checksGroupedByIdent({test: testId});
+            const groupStatuses = Object.keys(checksGroup).map(group => checksGroup[group].status);
+            let testStatus = 'not set';
+            if (groupStatuses.some(st => st === 'failed'))
+                testStatus = 'Failed'
+            if (groupStatuses.some(st => st === 'passed')
+                && !groupStatuses.some(st => st === 'failed'))
+                testStatus = 'Passed'
+            if (groupStatuses.some(st => st === 'new')
+                && !groupStatuses.some(st => st === 'failed'))
+                testStatus = 'Passed'
+            if (groupStatuses.some(st => st === 'blinking')
+                && !groupStatuses.some(st => st === 'failed'))
+                testStatus = 'Passed'
+            if (groupStatuses.every(st => st === 'new'))
+                testStatus = 'New'
+            const blinkingCount = groupStatuses.filter(g => g === 'blinking').length;
+            console.log('STATUS');
+            console.log('STATUS');
+            console.log('STATUS');
+            console.log('STATUS');
+            console.log({testStatus})
+            console.log({testStatus})
+            console.log({testStatus})
+            console.log({testStatus})
+            const updatedTest = await updateTest({
+                    id: testId,
+                    status: testStatus,
+                    blinking: blinkingCount,
+                    // viewport: await this.getViewport()
+                }).catch(function (e) {
+                    console.log(`Cannot update session: ${e}`)
+                    throw (e.stack ? e.stack.split("\n") : e)
+                })
+            const result = updatedTest.toObject();
+            result.calculatedStatus = testStatus;
+            res.json(result);
+            return resolve(result);
+        } catch (e) {
+            fatalError(req, res, e)
+            return reject(e);
+        }
+    });
+};
+
+function updateTest(opts){
+    return new Promise(async function (resolve, reject) {
+        try{
+            const id = opts.id
+            opts['Updated_date'] = Date.now();
+            console.log(`UPDATE test id '${id}' with params '${JSON.stringify(opts)}'`);
+
+            const tst = await Test.findByIdAndUpdate(id, opts).exec().catch(
+                function (e) {
+                    console.log(`Cannot update the test, error: '${e}'`);
+                    return reject(e);
+                }
+            )
+            tst.save().catch(
+                function (e) {
+                    console.log(`Cannot save the test, error: '${e}'`);
+                    return reject(e);
+                }
+            )
+            return resolve(tst);
+        }
+        catch (e) {
+            reject(e);
+        }
+    })
+
+}
 exports.update_test = async function (req, res) {
     return new Promise(
         async function (resolve, reject) {
