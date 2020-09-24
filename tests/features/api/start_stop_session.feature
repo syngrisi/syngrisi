@@ -1,0 +1,466 @@
+Feature: Start/Stop session
+
+  Background:
+    Given I clear test VRS database
+    Given I kill process which used port: "3001"
+    Given I start VRS server with parameters:
+    """
+      port: 3001
+      databaseName: VRSdbTest
+      baseLineFolder: ./baselinesTest/
+    """
+    Given I setup VRS driver with parameters:
+    """
+      url: "http://vrs:3001/"
+    """
+
+  Scenario: Start/Stop Session - New
+    # Start
+    When I send "post" request to "http://vrs:3001/tests" with:
+    """
+    form:
+      testname: Test VRS API Smoke - Start/Stop Session
+      teststatus: passed
+      testsviewport: 10x10
+      testsbrowsername: chrome
+      testos: MacOs
+    """
+    When I expect the "post" response with:
+    """
+    statusCode: 200
+    json:
+      name: Test VRS API Smoke - Start/Stop Session
+      status: passed
+      browserName: chrome
+      viewport: 10x10
+      os: MacOs
+      blinking: 0
+    """
+
+    # Setup & Check
+    When I set properties for VRSDriver:
+    """
+      os: 'MacIntel'
+      viewport: '1366x768'
+      browserName: 'chrome'
+      app: 'Test App'
+      test: 'Passed test'
+      testId: <post: _id>
+      suite:
+        name: Test VRS API Smoke - Start/Stop Session
+    """
+    When I check image with path: "vrs/tests/files/A.png" as "stop session check_01"
+
+
+    # Stop
+    When I send "post" request to "http://vrs:3001/session/<post: _id>" with:
+    """
+    form:
+      testId: <post: _id>
+    """
+
+    When I expect the "post" response with:
+    """
+    statusCode: 200
+    json:
+      name: Test VRS API Smoke - Start/Stop Session
+      calculatedStatus: New
+      status: passed
+      browserName: chrome
+      viewport: 10x10
+      os: MacOs
+      blinking: 0
+    """
+
+  Scenario: Start/Stop Session - New, Passed
+    # Start - New
+    When I send "post" request to "http://vrs:3001/tests" with:
+    """
+    form:
+      testname: Test VRS API Smoke - Start/Stop Session
+      teststatus: passed
+      testsviewport: 10x10
+      testsbrowsername: chrome
+      testos: MacOs
+    """
+    Then I expect the "post" response with:
+    """
+    statusCode: 200
+    json:
+      name: Test VRS API Smoke - Start/Stop Session
+      status: passed
+      browserName: chrome
+      viewport: 10x10
+      os: MacOs
+      blinking: 0
+    """
+
+    # Setup & Check - New
+    When I set properties for VRSDriver:
+    """
+      os: 'MacIntel'
+      viewport: '1366x768'
+      browserName: 'chrome'
+      app: 'Test App'
+      test: 'Passed test'
+      testId: <post: _id>
+      suite:
+        name: Test VRS API Smoke - Start/Stop Session
+    """
+    When I check image with path: "vrs/tests/files/A.png" as "stop session check_01"
+
+
+    # Stop - New
+    When I send "post" request to "http://vrs:3001/session/<post: _id>" with:
+    """
+    form:
+      testId: <post: _id>
+    """
+
+    Then I expect the "post" response with:
+    """
+    statusCode: 200
+    json:
+      name: Test VRS API Smoke - Start/Stop Session
+      calculatedStatus: New
+      browserName: chrome
+      viewport: 10x10
+      os: MacOs
+      blinking: 0
+    """
+
+    # Start - Passed
+    When I send "post" request to "http://vrs:3001/tests" with:
+    """
+    form:
+      testname: Test VRS API Smoke - Start/Stop Session
+      teststatus: passed
+      testsviewport: 10x10
+      testsbrowsername: chrome
+      testos: MacOs
+    """
+    Then I expect the "post" response with:
+    """
+    statusCode: 200
+    json:
+      name: Test VRS API Smoke - Start/Stop Session
+      status: passed
+      browserName: chrome
+      viewport: 10x10
+      os: MacOs
+      blinking: 0
+    """
+
+    # Setup & Check - Passed
+    When I set properties for VRSDriver:
+    """
+      os: 'MacIntel'
+      viewport: '1366x768'
+      browserName: 'chrome'
+      app: 'Test App'
+      test: 'Passed test'
+      testId: <post: _id>
+      suite:
+        name: Test VRS API Smoke - Start/Stop Session
+    """
+    When I check image with path: "vrs/tests/files/A.png" as "stop session check_01"
+
+    # Stop - Passed
+    When I send "post" request to "http://vrs:3001/session/<post: _id>" with:
+    """
+    form:
+      testId: <post: _id>
+    """
+
+    Then I expect the "post" response with:
+    """
+    statusCode: 200
+    json:
+      name: Test VRS API Smoke - Start/Stop Session
+      calculatedStatus: Passed
+      browserName: chrome
+      viewport: 10x10
+      os: MacOs
+      blinking: 0
+    """
+
+  Scenario: Start/Stop Session - New, Failed
+    # Start - New
+    When I send "post" request to "http://vrs:3001/tests" with:
+    """
+    form:
+      testname: Test VRS API Smoke - Start/Stop Session
+      teststatus: passed
+      testsviewport: 10x10
+      testsbrowsername: chrome
+      testos: MacOs
+    """
+    Then I expect the "post" response with:
+    """
+    statusCode: 200
+    json:
+      name: Test VRS API Smoke - Start/Stop Session
+      status: passed
+      browserName: chrome
+      viewport: 10x10
+      os: MacOs
+      blinking: 0
+    """
+
+    # Setup & Check - New
+    When I set properties for VRSDriver:
+    """
+      os: 'MacIntel'
+      viewport: '1366x768'
+      browserName: 'chrome'
+      app: 'Test App'
+      test: 'Passed test'
+      testId: <post: _id>
+      suite:
+        name: Test VRS API Smoke - Start/Stop Session
+    """
+    When I check image with path: "vrs/tests/files/A.png" as "stop session check_01"
+
+
+    # Stop - New
+    When I send "post" request to "http://vrs:3001/session/<post: _id>" with:
+    """
+    form:
+      testId: <post: _id>
+    """
+
+    Then I expect the "post" response with:
+    """
+    statusCode: 200
+    json:
+      name: Test VRS API Smoke - Start/Stop Session
+      calculatedStatus: New
+      browserName: chrome
+      viewport: 10x10
+      os: MacOs
+      blinking: 0
+    """
+
+    # Start - Failed
+    When I send "post" request to "http://vrs:3001/tests" with:
+    """
+    form:
+      testname: Test VRS API Smoke - Start/Stop Session
+      teststatus: passed
+      testsviewport: 10x10
+      testsbrowsername: chrome
+      testos: MacOs
+    """
+    Then I expect the "post" response with:
+    """
+    statusCode: 200
+    json:
+      name: Test VRS API Smoke - Start/Stop Session
+      status: passed
+      browserName: chrome
+      viewport: 10x10
+      os: MacOs
+      blinking: 0
+    """
+
+    # Setup & Check - Failed
+    When I set properties for VRSDriver:
+    """
+      os: 'MacIntel'
+      viewport: '1366x768'
+      browserName: 'chrome'
+      app: 'Test App'
+      test: 'Passed test'
+      testId: <post: _id>
+      suite:
+        name: Test VRS API Smoke - Start/Stop Session
+    """
+    When I check image with path: "vrs/tests/files/B.png" as "stop session check_01"
+
+    # Stop - Failed
+    When I send "post" request to "http://vrs:3001/session/<post: _id>" with:
+    """
+    form:
+      testId: <post: _id>
+    """
+
+    Then I expect the "post" response with:
+    """
+    statusCode: 200
+    json:
+      name: Test VRS API Smoke - Start/Stop Session
+      calculatedStatus: Failed
+      browserName: chrome
+      viewport: 10x10
+      os: MacOs
+      blinking: 0
+    """
+
+
+  Scenario: Start/Stop Session - New, Passed, Failed
+    # Start - New
+    When I send "post" request to "http://vrs:3001/tests" with:
+    """
+    form:
+      testname: Test VRS API Smoke - Start/Stop Session
+      teststatus: passed
+      testsviewport: 10x10
+      testsbrowsername: chrome
+      testos: MacOs
+    """
+    Then I expect the "post" response with:
+    """
+    statusCode: 200
+    json:
+      name: Test VRS API Smoke - Start/Stop Session
+      status: passed
+      browserName: chrome
+      viewport: 10x10
+      os: MacOs
+      blinking: 0
+    """
+
+    # Setup & Check - New
+    When I set properties for VRSDriver:
+    """
+      os: 'MacIntel'
+      viewport: '1366x768'
+      browserName: 'chrome'
+      app: 'Test App'
+      test: 'Passed test'
+      testId: <post: _id>
+      suite:
+        name: Test VRS API Smoke - Start/Stop Session
+    """
+    When I check image with path: "vrs/tests/files/A.png" as "stop session check_01"
+
+
+    # Stop - New
+    When I send "post" request to "http://vrs:3001/session/<post: _id>" with:
+    """
+    form:
+      testId: <post: _id>
+    """
+
+    Then I expect the "post" response with:
+    """
+    statusCode: 200
+    json:
+      name: Test VRS API Smoke - Start/Stop Session
+      calculatedStatus: New
+      browserName: chrome
+      viewport: 10x10
+      os: MacOs
+      blinking: 0
+    """
+
+    # Start - Passed
+    When I send "post" request to "http://vrs:3001/tests" with:
+    """
+    form:
+      testname: Test VRS API Smoke - Start/Stop Session
+      teststatus: passed
+      testsviewport: 10x10
+      testsbrowsername: chrome
+      testos: MacOs
+    """
+    Then I expect the "post" response with:
+    """
+    statusCode: 200
+    json:
+      name: Test VRS API Smoke - Start/Stop Session
+      status: passed
+      browserName: chrome
+      viewport: 10x10
+      os: MacOs
+      blinking: 0
+    """
+
+    # Setup & Check - Passed
+    When I set properties for VRSDriver:
+    """
+      os: 'MacIntel'
+      viewport: '1366x768'
+      browserName: 'chrome'
+      app: 'Test App'
+      test: 'Passed test'
+      testId: <post: _id>
+      suite:
+        name: Test VRS API Smoke - Start/Stop Session
+    """
+    When I check image with path: "vrs/tests/files/A.png" as "stop session check_01"
+
+    # Stop - Passed
+    When I send "post" request to "http://vrs:3001/session/<post: _id>" with:
+    """
+    form:
+      testId: <post: _id>
+    """
+
+    Then I expect the "post" response with:
+    """
+    statusCode: 200
+    json:
+      name: Test VRS API Smoke - Start/Stop Session
+      calculatedStatus: Passed
+      browserName: chrome
+      viewport: 10x10
+      os: MacOs
+      blinking: 0
+    """
+
+     # Start - Failed
+    When I send "post" request to "http://vrs:3001/tests" with:
+    """
+    form:
+      testname: Test VRS API Smoke - Start/Stop Session
+      teststatus: passed
+      testsviewport: 10x10
+      testsbrowsername: chrome
+      testos: MacOs
+    """
+    Then I expect the "post" response with:
+    """
+    statusCode: 200
+    json:
+      name: Test VRS API Smoke - Start/Stop Session
+      status: passed
+      browserName: chrome
+      viewport: 10x10
+      os: MacOs
+      blinking: 0
+    """
+
+    # Setup & Check - Failed
+    When I set properties for VRSDriver:
+    """
+      os: 'MacIntel'
+      viewport: '1366x768'
+      browserName: 'chrome'
+      app: 'Test App'
+      test: 'Passed test'
+      testId: <post: _id>
+      suite:
+        name: Test VRS API Smoke - Start/Stop Session
+    """
+    When I check image with path: "vrs/tests/files/B.png" as "stop session check_01"
+
+    # Stop - Failed
+    When I send "post" request to "http://vrs:3001/session/<post: _id>" with:
+    """
+    form:
+      testId: <post: _id>
+    """
+
+    Then I expect the "post" response with:
+    """
+    statusCode: 200
+    json:
+      name: Test VRS API Smoke - Start/Stop Session
+      calculatedStatus: Failed
+      browserName: chrome
+      viewport: 10x10
+      os: MacOs
+      blinking: 0
+    """
+
