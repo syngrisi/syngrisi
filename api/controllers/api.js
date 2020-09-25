@@ -223,14 +223,6 @@ exports.stop_session = async function (req, res) {
             if (groupStatuses.every(st => st === 'new'))
                 testStatus = 'New'
             const blinkingCount = groupStatuses.filter(g => g === 'blinking').length;
-            console.log('STATUS');
-            console.log('STATUS');
-            console.log('STATUS');
-            console.log('STATUS');
-            console.log({testStatus})
-            console.log({testStatus})
-            console.log({testStatus})
-            console.log({testStatus})
             const updatedTest = await updateTest({
                     id: testId,
                     status: testStatus,
