@@ -41,6 +41,11 @@ const VRSSnapshotSchema = new Schema({
     },
     hOffset: {
         type: Number,
+    },
+    matchType: {
+        type: String,
+        enum: ['antialiasing', 'nothing', 'less', 'colors', 'alpha'],
+        default: 'antialiasing',
     }
 });
 
