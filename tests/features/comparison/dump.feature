@@ -21,7 +21,7 @@ Feature: DOM dump
       suiteName: Dom Dump
     """
     When I open the url "http://localhost:3001/static/shift.html"
-    When I visually check page with DOM dump as "Dom dump check"
+    When I visually check page with DOM as "Dom dump check"
     When I stop VRS session
 
     Then I expect "checkDump" saved object:

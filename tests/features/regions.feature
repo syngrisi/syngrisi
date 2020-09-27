@@ -17,18 +17,18 @@ Feature: Regions works properly
 
     Given I start VRS session with parameters:
     """
-      testName: "Region check"
+      testName: "region check"
     """
     When I open the url "http://vrs:3001/"
-    When I check image with path: "vrs/tests/files/A.png" as "Region"
+    When I check image with path: "vrs/tests/files/A.png" as "region"
     Then the "check" "status" should be "new"
 
     When I stop VRS session
 
   Scenario: Create Region without saving
     When I open the url "http://vrs:3001/"
-    When I click on "Region check" VRS test
-    Then I expect that VRS test "Region check" is unfolded
+    When I click on "region check" VRS test
+    Then I expect that VRS test "region check" is unfolded
     When I click on the element "[name=region]"
     When I click on the element "[name=baseline_link]"
     When I execute javascript code:
@@ -77,8 +77,8 @@ Feature: Regions works properly
 
   Scenario: Create Region with saving
     When I open the url "http://vrs:3001/"
-    When I click on "Region check" VRS test
-    Then I expect that VRS test "Region check" is unfolded
+    When I click on "region check" VRS test
+    Then I expect that VRS test "region check" is unfolded
     When I click on the element "[name=region]"
     When I wait for "2" seconds
     When I click on the element "[name=baseline_link]"
@@ -130,8 +130,8 @@ Feature: Regions works properly
 
   Scenario: Create Region with saving after change position
     When I open the url "http://vrs:3001/"
-    When I click on "Region check" VRS test
-    Then I expect that VRS test "Region check" is unfolded
+    When I click on "region check" VRS test
+    Then I expect that VRS test "region check" is unfolded
     When I click on the element "[name=region]"
     When I wait for "2" seconds
     When I click on the element "[name=baseline_link]"
@@ -198,8 +198,8 @@ Feature: Regions works properly
 
   Scenario: Create Region with saving - two regions
     When I open the url "http://vrs:3001/"
-    When I click on "Region check" VRS test
-    Then I expect that VRS test "Region check" is unfolded
+    When I click on "region check" VRS test
+    Then I expect that VRS test "region check" is unfolded
     When I click on the element "[name=region]"
     When I wait for "1" seconds
     When I click on the element "[name=baseline_link]"
@@ -221,8 +221,8 @@ Feature: Regions works properly
 
   Scenario: Delete Region with saving
     When I open the url "http://vrs:3001/"
-    When I click on "Region check" VRS test
-    Then I expect that VRS test "Region check" is unfolded
+    When I click on "region check" VRS test
+    Then I expect that VRS test "region check" is unfolded
     When I click on the element "[name=region]"
     When I wait for "1" seconds
     When I click on the element "[name=baseline_link]"

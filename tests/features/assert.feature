@@ -45,7 +45,7 @@ Feature: VRS Assert Smoke
 
     When I click on "Passed Assert" VRS test
     Then I expect that VRS test "Passed Assert" is unfolded
-    Then I expect that VRS check "1/1 new_int_assert_1" has "Passed" status
+    Then I expect that VRS check "1/1 new int assert_1" has "Passed" status
 
   Scenario: VRS failed assert
     Given I set window size: "1366x768"
@@ -77,4 +77,4 @@ Feature: VRS Assert Smoke
 
     When I click on "Failed Assert" VRS test
     Then I expect that VRS test "Failed Assert" is unfolded
-    Then I expect that VRS check "1/1 new_int_assert_2" has "Failed" status
+    Then I expect that VRS check "1/1 new int assert_2" has "Failed" status
