@@ -224,14 +224,14 @@ exports.stop_session = async function (req, res) {
                 testStatus = 'New'
             const blinkingCount = groupStatuses.filter(g => g === 'blinking').length;
             const updatedTest = await updateTest({
-                    id: testId,
-                    status: testStatus,
-                    blinking: blinkingCount,
-                    // viewport: await this.getViewport()
-                }).catch(function (e) {
-                    console.log(`Cannot update session: ${e}`)
-                    throw (e.stack ? e.stack.split("\n") : e)
-                })
+                id: testId,
+                status: testStatus,
+                blinking: blinkingCount,
+                // viewport: await this.getViewport()
+            }).catch(function (e) {
+                console.log(`Cannot update session: ${e}`)
+                throw (e.stack ? e.stack.split("\n") : e)
+            })
             const result = updatedTest.toObject();
             result.calculatedStatus = testStatus;
             res.json(result);
@@ -243,9 +243,9 @@ exports.stop_session = async function (req, res) {
     });
 };
 
-function updateTest(opts){
+function updateTest(opts) {
     return new Promise(async function (resolve, reject) {
-        try{
+        try {
             const id = opts.id
             opts['Updated_date'] = Date.now();
             console.log(`UPDATE test id '${id}' with params '${JSON.stringify(opts)}'`);
@@ -263,13 +263,13 @@ function updateTest(opts){
                 }
             )
             return resolve(tst);
-        }
-        catch (e) {
+        } catch (e) {
             reject(e);
         }
     })
 
 }
+
 exports.update_test = async function (req, res) {
     return new Promise(
         async function (resolve, reject) {

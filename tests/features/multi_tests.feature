@@ -31,8 +31,8 @@ Feature: VRS One Suite, Two tests, Few checks
     Then I expect that VRS test "Two checks - new" has "New" status
 
     When I click on "Two checks - new" VRS test
-    Then I expect that VRS check "1/2 check_1" has "New" status
-    Then I expect that VRS check "2/2 check_2" has "New" status
+    Then I expect that VRS check "1/2 check 1" has "New" status
+    Then I expect that VRS check "2/2 check 2" has "New" status
 
   Scenario: VRS two checks - new, passed
     Given I start VRS session with parameters:
@@ -67,7 +67,7 @@ Feature: VRS One Suite, Two tests, Few checks
 
     When I click on "Two checks - new, passed" VRS test
     Then I expect that VRS test "Two checks - new, passed" is unfolded
-    Then I expect that VRS check "1/1 check_1" has "Passed" status
+    Then I expect that VRS check "1/1 check 1" has "Passed" status
 
   Scenario: VRS two checks - passed, passed
     Given I start VRS session with parameters:
@@ -103,8 +103,8 @@ Feature: VRS One Suite, Two tests, Few checks
 
     When I click on "Two checks - passed, passed" VRS test
     Then I expect that VRS test "Two checks - passed, passed" is unfolded
-    Then I expect that VRS check "1/2 check_1" has "Passed" status
-    Then I expect that VRS check "2/2 check_2" has "Passed" status
+    Then I expect that VRS check "1/2 check 1" has "Passed" status
+    Then I expect that VRS check "2/2 check 2" has "Passed" status
 
   Scenario: VRS two checks - failed, failed
     Given I start VRS session with parameters:
@@ -134,8 +134,8 @@ Feature: VRS One Suite, Two tests, Few checks
 
     When I click on "Two checks - failed, failed" VRS test
     Then I expect that VRS test "Two checks - failed, failed" is unfolded
-    Then I expect that VRS check "1/2 check_1" has "Failed" status
-    Then I expect that VRS check "2/2 check_2" has "Failed" status
+    Then I expect that VRS check "1/2 check 1" has "Failed" status
+    Then I expect that VRS check "2/2 check 2" has "Failed" status
 
   Scenario: VRS two checks - passed, failed
     Given I start VRS session with parameters:
@@ -165,5 +165,5 @@ Feature: VRS One Suite, Two tests, Few checks
 
     When I click on "Two checks - passed, failed" VRS test
     Then I expect that VRS test "Two checks - passed, failed" is unfolded
-    Then I expect that VRS check "1/2 check_1" has "Passed" status
-    Then I expect that VRS check "2/2 check_2" has "Failed" status
+    Then I expect that VRS check "1/2 check 1" has "Passed" status
+    Then I expect that VRS check "2/2 check 2" has "Failed" status

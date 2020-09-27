@@ -31,7 +31,7 @@ Feature: VRS One Suite, One test, One check
 
     When I click on "Without session ending" VRS test
     Then I expect that VRS test "Without session ending" is unfolded
-    Then I expect that VRS check "1/1 new_int_check" has "New" status
+    Then I expect that VRS check "1/1 new int check" has "New" status
 
   @withEndSession
   Scenario: VRS create new check - with session ending
@@ -52,7 +52,7 @@ Feature: VRS One Suite, One test, One check
 
     When I click on "With session ending" VRS test
     Then I expect that VRS test "With session ending" is unfolded
-    Then I expect that VRS check "1/1 new_int_check_2" has "New" status
+    Then I expect that VRS check "1/1 new int check 2" has "New" status
 
   @newPassed
   Scenario: VRS create new check - passed
@@ -82,7 +82,7 @@ Feature: VRS One Suite, One test, One check
 
     When I click on "Passed test" VRS test
     Then I expect that VRS test "Passed test" is unfolded
-    Then I expect that VRS check "1/1 new_int_check_3" has "Passed" status
+    Then I expect that VRS check "1/1 new int check 3" has "Passed" status
 
   Scenario: VRS create new check - failed after new
     Given I set window size: "1366x768"
@@ -112,7 +112,7 @@ Feature: VRS One Suite, One test, One check
 
     When I click on "Failed test" VRS test
     Then I expect that VRS test "Failed test" is unfolded
-    Then I expect that VRS check "1/1 new_int_check_4" has "Failed" status
+    Then I expect that VRS check "1/1 new int check 4" has "Failed" status
 
   Scenario: VRS create new check - failed after success
     Given I set window size: "1366x768"
@@ -149,5 +149,5 @@ Feature: VRS One Suite, One test, One check
 
     When I click on "Failed test" VRS test
     Then I expect that VRS test "Failed test" is unfolded
-    Then I expect that VRS check "1/1 new_int_check_5" has "Failed" status
+    Then I expect that VRS check "1/1 new int check 5" has "Failed" status
 

@@ -46,7 +46,8 @@
             z-index: 2;
             cursor: pointer;
         }
-fix    </style>
+
+        fix    </style>
     <% if(currentSuite) { %>
         <title>VRS list of checks - <%= currentSuite.name %> </title>
     <% }else{ %>
@@ -351,68 +352,74 @@ fix    </style>
                                             <% } %>
                                         </div>
                                         <!-- SNAPSHOT TOOOLBAR START-->
-                                        <div class="check-mini-toolbar d-flex row text-light pl-1 m-0">
-                                            <div class="col-1 pr-1 pl-1 pt-1">
-                                                <input name="check-input" id="<%= check.id %>"
-                                                       actualId="<%= check.actualSnapshotId %>"
-                                                       baselineId="<%= check.baselineId %>"
-                                                       type="checkbox">
-                                            </div>
-                                            <div name="check-name"
-                                                 class="col-8 ml-0 mr-0 pt-2 pb-0 float-right align-middle text-truncate  small p-0"
-                                                 data-toggle="tooltip"
-                                                 data-placement="top"
-                                                 title="<%= check.name %>">
-                                                <%= (ind + 1) %>/<%= Object.keys(checksByTestGroupedByIdent[test.id]).length %>                                                <% if(checksByTestGroupedByIdent[test.id][groupName].checks.length > 1){ %>
-                                                   <sup>(<%= checksByTestGroupedByIdent[test.id][groupName].checks.length %>)</sup>
-                                                <% } %>
-                                                <%= check.name %>
-                                            </div>
-                                            <div name="check-buttons"
-                                                 class="col-3 pr-0 pl-1 pt-1 float-right flex-row-reverse">
-                                                <!--                                                <div class="check-buttons  mt-1 mb-1 pb-1 pt-1 pl-1 pr-0">-->
-                                                <div class="row flex-row-reverse mr-1 ml-0">
-                                                    <div class="p-0 float-right">
-                                                        <a
-                                                                class="btn-check btn-sm ml-1 rounded-0 border-0"
-                                                                style="line-height: 0.1; padding: 2px;"
-                                                                id="checkbutton_<%= check.id %>"
-                                                                data-toggle="tooltip"
-                                                                data-placement="top"
-                                                                title="Remove this check"
-                                                                onclick="removeOneCheck('<%= check.id %>')">
-                                                            <i class="fas fa-times-circle fa-1x"></i>
-                                                        </a>
-                                                    </div>
-                                                    <div class="p-0 float-right">
-                                                        <% if(groupStatus == 'failed') { %>
-                                                            <a
-                                                                    class="btn-check btn-sm ml-1  rounded-0 border-0"
-                                                                    style="line-height: 0.1; padding: 2px;"
-                                                                    id="acceptbutton_<%= check.id %>"
-                                                                    data-toggle="tooltip"
-                                                                    data-placement="top"
-                                                                    onclick="acceptOneCheck('<%= check.id %>', '<%= check.actualSnapshotId %>', '<%= check.baselineId %>', '<%= test.id %>')"
-                                                                    title="Accept the actual snapshoot as baseline"
-                                                            >
+                                        <div class="container pl-0 pr-0">
+                                            <div class="check-mini-toolbar d-flex row justify-content-around1 text-light pl-1 m-0">
+                                                <div class="col-1 pr-1 pl-1 pt-1">
+                                                    <input name="check-input" id="<%= check.id %>"
+                                                           actualId="<%= check.actualSnapshotId %>"
+                                                           baselineId="<%= check.baselineId %>"
+                                                           type="checkbox">
+                                                </div>
 
-                                                                <i class="fas fa-check fa-1x"></i>
-                                                            </a>
-                                                        <% } %>
-                                                    </div>
-                                                    <div class="p-0 float-right">
-                                                        <% if(groupStatus == 'failed') { %>
-                                                            <a
-                                                                    class="btn-check btn-outline-success1 btn-sm  rounded-0 border-0"
-                                                                    style="line-height: 0.1; padding: 2px;"
-                                                                    id="comparebutton_<%= check.id %>"
-                                                                    data-toggle="tooltip"
-                                                                    data-placement="top"
-                                                                    title="Compare snapshots"
-                                                                    onclick="location.href='./diffview?diffid=<%= check.diffId %>&actualid=<%= check.actualSnapshotId %>&expectedid=<%= check.baselineId %>&checkid=<%= check.id %>';">
-                                                                <i class="fas fa-exchange-alt fa-1x"></i>
-                                                            </a>
-                                                        <% } %>
+                                                <% const checksCount = Object.keys(checksByTestGroupedByIdent[test.id]).length %>
+                                                <% const groupChecksCount = (checksByTestGroupedByIdent[test.id][groupName].checks.length > 1) ? `(${checksByTestGroupedByIdent[test.id][groupName].checks.length})` : '' %>
+                                                <div name="check-name"
+                                                     class="col-8 flex-shrink-1111 ml-0 mr-0 pt-2 pb-0 float-right1 align-middle text-truncate  small p-0"
+                                                     data-toggle="tooltip"
+                                                     data-placement="top"
+                                                     title="<%= check.name %>">
+                                                    <%= (ind + 1) %>/<%= checksCount %>
+                                                    <sup><%= groupChecksCount %></sup> <%= check.name %>
+                                                </div>
+
+                                                <div name="check-buttons"
+                                                     class="col-3 pr-0 pl-0 pt-1 float-right flex-row-reverse1">
+                                                    <!--                                                <div class="check-buttons  mt-1 mb-1 pb-1 pt-1 pl-1 pr-0">-->
+                                                    <div class="container pl-0 pr-0">
+                                                        <div class="row justify-content-end  flex-row-reverse mr-0 ml-1">
+                                                            <div class="col-3 p-0 float-right1">
+                                                                <a
+                                                                        class="btn-check btn-sm ml-1 rounded-0 border-0"
+                                                                        style="line-height: 0.1; padding: 2px;"
+                                                                        id="checkbutton_<%= check.id %>"
+                                                                        data-toggle="tooltip"
+                                                                        data-placement="top"
+                                                                        title="Remove this check"
+                                                                        onclick="removeOneCheck('<%= check.id %>')">
+                                                                    <i class="fas fa-times-circle fa-1x"></i>
+                                                                </a>
+                                                            </div>
+                                                            <div class="col-3 ml-0 p-0 float-right1">
+                                                                <% if(groupStatus == 'failed') { %>
+                                                                    <a
+                                                                            class="btn-check btn-sm ml-1  rounded-0 border-0"
+                                                                            style="line-height: 0.1; padding: 2px;"
+                                                                            id="acceptbutton_<%= check.id %>"
+                                                                            data-toggle="tooltip"
+                                                                            data-placement="top"
+                                                                            onclick="acceptOneCheck('<%= check.id %>', '<%= check.actualSnapshotId %>', '<%= check.baselineId %>', '<%= test.id %>')"
+                                                                            title="Accept the actual snapshoot as baseline"
+                                                                    >
+
+                                                                        <i class="fas fa-check fa-1x"></i>
+                                                                    </a>
+                                                                <% } %>
+                                                            </div>
+                                                            <div class="col-3 ml-2 p-0 float-right1">
+                                                                <% if(groupStatus == 'failed') { %>
+                                                                    <a
+                                                                            class="btn-check btn-outline-success1 btn-sm  rounded-0 border-0"
+                                                                            style="line-height: 0.1; padding: 2px;"
+                                                                            id="comparebutton_<%= check.id %>"
+                                                                            data-toggle="tooltip"
+                                                                            data-placement="top"
+                                                                            title="Compare snapshots"
+                                                                            onclick="location.href='./diffview?diffid=<%= check.diffId %>&actualid=<%= check.actualSnapshotId %>&expectedid=<%= check.baselineId %>&checkid=<%= check.id %>';">
+                                                                        <i class="fas fa-exchange-alt fa-1x"></i>
+                                                                    </a>
+                                                                <% } %>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

@@ -22,7 +22,7 @@ Feature: Affected elements
       suiteName: Affected elements
     """
     When I open the url "http://localhost:3001/static/affected.html"
-    When I visually check page with DOM dump as "Affected without shifting"
+    When I visually check page with DOM as "Affected without shifting"
     When I stop VRS session
 
     Given I start VRS session with parameters:
@@ -36,7 +36,7 @@ Feature: Affected elements
     document.getElementById('child').style['height']='90px'
     """
 
-    When I visually check page with DOM dump as "Affected without shifting"
+    When I visually check page with DOM as "Affected without shifting"
     When I stop VRS session
     When I parse all affected elements in current and last successful checks from "http://localhost:3001/"
 
