@@ -54,54 +54,101 @@
         </div>
 
         <div name="title" class="col pl-4 pt-3 h4 border-left mb-0 light-purple">
-            <%= snapshot.name.replace(/_/g, ' ') %>
+            <%= snapshot.name %>
         </div>
+        <div name="menu" class="col-2 align-self-end pl-4 pt-3 h4 mb-0 light-purple">
+            <div class="dropdown mb-1">
+                <button class="btn btn-secondary1 bg-sidebar text-light dropdown-toggle btn-sm" type="button"
+                        id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <%= snapshot.matchType %>
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenu">
+                    <a class="dropdown-item small" href="#" onclick="setMatchType('antialiasing')">Ignore
+                        antialiasing</a>
+                    <a class="dropdown-item small" href="#" onclick="setMatchType('nothing')">Exact</a>
+                    <a class="dropdown-item small" href="#" onclick="setMatchType('less')">Ignore less</a>
+                    <a class="dropdown-item small" href="#" onclick="setMatchType('colors')">Ignore colors</a>
+                    <a class="dropdown-item small" href="#" onclick="setMatchType('alpha')">Ignore alpha</a>
+                </div>
+            </div>
+        </div>
+        <script>
+            function setMatchType(type) {
+                const buttonElement = document.getElementById('dropdownMenuButton');
+                sendMatchType('<%= snapshot.id %>', type);
+                buttonElement.innerText = type;
+            }
+
+            function sendMatchType(id, type) {
+                var xhr = new XMLHttpRequest();
+                var params = `id=${id}&matchType=${type}`;
+                xhr.open('PUT', `/snapshots/${id}`, true);
+                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                const classThis = this;
+
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        console.log(`Successful send snapshoot match type data, id: '${id}'  resp: '${xhr.responseText}'`);
+                        showNotification('Match type was saved');
+                    } else {
+                        console.error(`Cannot set snapshoot match type , status: '${xhr.status}',  resp: '${xhr.responseText}'`);
+                        showNotification('Cannot set snapshoot match type', 'Error');
+                    }
+                };
+                xhr.send(params);
+            }
+
+        </script>
+
     </div>
 
     <div class="row ">
         <div name="sidebar" class="col w-25 border mt-3 float-right">
             <div class="container sticky-top pt-2 mt-2">
                 <div class="row justify-content-center">
-                    <a name="zoom in" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0" onclick=" baseline.resize(1.2)">
+                    <a name="zoom in" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0"
+                       onclick=" baseline.resize(1.2)">
                         <i class="fas fa-search-plus fa-1x"></i>
                     </a>
                 </div>
 
                 <div class="row justify-content-center">
                     <a name="add-region" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0"
-                            onclick="baseline.addIgnoreRegion( {name: 'ignore_rect', strokeWidth: 0,})">
+                       onclick="baseline.addIgnoreRegion( {name: 'ignore_rect', strokeWidth: 0,})">
                         <i class="fas fa-expand fa-1x"></i>
                     </a>
                 </div>
                 <div class="row justify-content-center">
                     <a name="add-region" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0"
-                            onclick="baseline.addBoundingRegion('bound_rect')"
-                            title="(A) Add ignore region">
+                       onclick="baseline.addBoundingRegion('bound_rect')"
+                       title="(A) Add ignore region">
                         <i class="fas fa-border-style"></i>
                     </a>
                 </div>
 
                 <div class="row justify-content-center">
-                    <a name="zoom-out" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0" onclick="baseline.resize(0.8)">
+                    <a name="zoom-out" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0"
+                       onclick="baseline.resize(0.8)">
                         <i class="fas fa-search-minus fa-1x"></i>
                     </a>
                 </div>
                 <div class="row justify-content-center">
                     <a name="save-snapshot" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0"
-                            onclick="baseline.sendIgnoreRegions('<%= snapshot.id %>' ,baseline.getRectData())">
+                       onclick="baseline.sendIgnoreRegions('<%= snapshot.id %>' ,baseline.getRectData())">
                         <i class="fas fa-save fa-1x"></i>
                     </a>
                 </div>
                 <% if (diffId) { %>
                     <div class="row justify-content-center">
                         <a id="diff" name="diff" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0"
-                                onclick="baseline.toggleDiff('<%= diffId %>')">
+                           onclick="baseline.toggleDiff('<%= diffId %>')">
                             <i class="fas fa-exchange-alt fa-1x"></i>
                         </a>
                     </div>
                 <% } %>
                 <div class="row justify-content-center">
-                    <a id="remove" name="remove" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0" style="display:none">
+                    <a id="remove" name="remove" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0"
+                       style="display:none">
                         <i class="fas fa-trash fa-1x"></i>
                     </a>
                 </div>
@@ -157,18 +204,18 @@
 <script src="http://cdnjs.cloudflare.com/ajax/libs/fabric.js/3.6.1/fabric.min.js"></script>
 <script src="lib/baselineView.js"></script>
 <script>
-    // function showNotification(msg, status = 'Success') {
-    //     document.getElementById("notify-header").textContent = status;
-    //     document.getElementById("notify-message").textContent = msg;
-    //     document.getElementById("notify-rect").setAttribute('fill', '#2ECC40');
-    //     if (status === 'Error')
-    //         document.getElementById("notify-rect").setAttribute('fill', '#FF4136');
-    //     $('#notify').show()
-    //     setTimeout(function () {
-    //             $('#notify').hide()
-    //         },
-    //         7000)
-    // }
+    function showNotification(msg, status = 'Success') {
+        document.getElementById("notify-header").textContent = status;
+        document.getElementById("notify-message").textContent = msg;
+        document.getElementById("notify-rect").setAttribute('fill', '#2ECC40');
+        if (status === 'Error')
+            document.getElementById("notify-rect").setAttribute('fill', '#FF4136');
+        $('#notify').show()
+        setTimeout(function () {
+                $('#notify').hide()
+            },
+            7000)
+    }
 
     document.addEventListener('keydown', function (event) {
         console.log(event.code);

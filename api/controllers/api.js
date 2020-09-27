@@ -75,6 +75,7 @@ async function compareSnapshots(baseline, actual) {
         let ignored = JSON.parse(JSON.parse(baseline.ignoreRegions))
         opts = {ignoredBoxes: ignored}
     }
+    opts.ignore = baseline.matchType;
     const diff = await getDiff(baselineData, actualData, opts);
     if (diff.misMatchPercentage !== '0.00') {
         console.log(`Images are different, ids: [${baseline.id}, ${actual.id}]\n diff: ${JSON.stringify(diff)}`);
