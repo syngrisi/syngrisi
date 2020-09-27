@@ -58,7 +58,7 @@ exports.checksgroupview = async function (req, res) {
             console.warn(check.name, "|", testId, "|", suite, "|", ident, "|")
             const groups = await checksGroupedByIdent({test: testId});
             const groupChecks = groups[ident].checks;
-            console.log(groupChecks);
+            // console.log(groupChecks);
             const moment = require('moment');
             groupChecks.map(function (check) {
                 check.formattedCreatedDate = moment(check.Created_date)
@@ -70,7 +70,6 @@ exports.checksgroupview = async function (req, res) {
             //     .format('YYYY-MM-DD hh:mm');
             res.render('pages/checkgroup', {
                 checks: groupChecks,
-                // firstCheck: check,
                 test: test,
                 suite: suite
             });

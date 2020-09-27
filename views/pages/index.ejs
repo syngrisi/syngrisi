@@ -46,8 +46,7 @@
             z-index: 2;
             cursor: pointer;
         }
-
-        fix    </style>
+         </style>
     <% if(currentSuite) { %>
         <title>VRS list of checks - <%= currentSuite.name %> </title>
     <% }else{ %>
@@ -519,6 +518,7 @@
                     }
                 );
                 baseline.getSnapshotIgnoreRegionsDataAndDrawRegions(baselineIds[index]);
+                baseline.canvas.hoverCursor="pointer";
                 baselines[id] = baseline;
             })
         })

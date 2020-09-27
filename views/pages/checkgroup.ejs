@@ -1,31 +1,6 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <style>
-        .frontimage {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            z-index: 2;
-            width: 80%;
-        }
-
-        .backdiffbaseline {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            z-index: 1;
-            width: 80%;
-        }
-
-        .snapshoot-link {
-            top: 15px;
-            left: 15px;
-            position: absolute;
-            width: 20em;
-            height: 20em;
-        }
-    </style>
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
@@ -39,95 +14,75 @@
           crossorigin="anonymous">
     <link rel="stylesheet" href="static/css/colors.css">
 
+    <style>
+        .snapshoot-image {
+            width: 21em;
+        }
+    </style>
+
     <title>Suite: <%= suite.name %> Test: <%= test.name %> Checks name - <%= checks[0].name %></title>
 </head>
 <body>
-<div class="container">
-    <div class="container sticky-top bg-dark text-light">
-        <h3 class="display-2111">
-            Suite: <%= suite.name %> Test: <%= test.name %> Checks name - <%= checks[0].name %> |
-            [<%= checks[0].status %>]| <%= checks[0].formattedCreatedDate %> | <%= checks[0].browserName %>
-            | <%= checks[0].viewport %> </h3>
-    </div>
+<div class="container-fluid pl-3 pr-1">
 
-    <!--    checks foreach - START -->
-    <% checks.forEach(function (check) { %>
-        <div class="container border">
-            <div class="row check-toolbar  pr-0">
-                <div class="col-10 p-0"></div>
-                <!--                <div class="col-1 p-0"></div>-->
-                <div class="toolbar m-0 w-25 col-2 p-0">
-                    <div class="container">
-                        <button type="button" class="btn-outline-danger btn-sm float-left p-1 rounded-0 border-1 mr-0"
-                                id="checkbutton_<%= check.id %>"
-                                data-toggle="tooltip"
-                                data-placement="top"
-
-                                title="Remove this check"
-                                onclick="removeCheck('<%= check.id %>')">
-                            <i class="fas fa-window-close fa-1x"></i>
-                        </button>
-
-                        <button type="button" class="btn-outline-success btn-sm float-left p-1 rounded-0 border-1 mr-0"
-                                id="acceptbutton_<%= check.id %>"
-                                data-toggle="tooltip"
-                                data-placement="top"
-                                title="Accept actual snapshot"
-                                onclick="acceptCheck('<%= check.id %>', '<%= check.actualSnapshotId %>')">
-                            <i class="fas fa-check-circle fa-1x"></i>
-                        </button>
-
-                        <div class="dropdown float-left">
-                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle p-1 rounded-0" type="button"
-                                    id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
-                                    aria-expanded="false">
-                                match
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="#">Strict</a>
-                                <a class="dropdown-item" href="#">Ignore alpha</a>
-                                <a class="dropdown-item" href="#">..</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="row images border-top">
-                <div class="screenshoot baseline m-1 col-3">
-                    <a class="snapshoot-link"
-                       href="/snapshootview?id=<%= check.baselineId %>&diffid=<%= check.diffId %>" name="baseline_link">
-                        <img src="/snapshoots/<%= check.baselineId %>.png" alt=""
-                             class="frontimage">
-                    </a>
-                </div>
-                <% if (check.actualSnapshotId) { %>
-                    <div class="screenshoot actual m-1 w-25 col-3">
-                        <a class="snapshoot-link"
-                           href="/snapshootview?id=<%= check.actualSnapshotId %>&diffid=<%= check.diffId %>">
-                            <img src="/snapshoots/<%= check.actualSnapshotId %>.png"
-                                 alt=""
-                                 class="frontimage">
+    <div name="header" class="row bg-sidebar text-light ">
+        <div name="logo-and-label" class="col-2 col-lg-3 w-25 pl-4 pt-1">
+            <div class="row pl-1 pb-3">
+                <div class="col-auto pl-2 pr-0 pt-3">
+                    <div class="border-top border-bottom border-left rounded-left border-right rounded-right pl-1 pr-1 pt-1 pb-1">
+                        <a class="unlink" href="/">
+                            <img src="static/imgs/simpleLogoLightShadow3.png" alt="robo logo bg-light1" class=""
+                                 style="width: 35px ">
                         </a>
                     </div>
-                <% } %>
-                <% if (check.diffId) { %>
-                    <div class="screenshoot diff m-1 w-25 col-3">
-                        <a class="snapshoot-link"
-                           href="/snapshootview?id=<%= check.diffId %>&baselineid=<%= check.baselineId %>">
-                            <img src="/snapshoots/<%= check.diffId %>.png" alt=""
-                                 class="frontimage">
-                            <img src="/snapshoots/<%= check.baselineId %>.png" alt=""
-                                 class="backdiffbaseline">
-                        </a>
-                    </div>
-                <% } %>
+                </div>
+                <div class="col pl-2 pt-2 mr-0 text-truncate">
+                    <a class="unlink h1" href="/" title="Σύγκριση">Syngrisi</a>
+                </div>
             </div>
         </div>
-    <% }) %>
-    <!--    checks foreach - END -->
 
+        <div name="title" class="col pl-4 pt-3 h4 border-left mb-0 light-purple">
+            <a class="unlink" name="suite-link"
+               href="/?suitename=<%= suite.name %>"><%= suite.name %></a>
+            <span>/</span>
+            <a class="unlink" name="check-link"
+               href='/?suitename=<%= suite.name %>&unfoldTestId=<%= test.id %>'><%= test.name %></a>
+            <span>/</span>
+            <%= checks[0].name %></div>
+    </div>
+
+    <div name="rows" class="container mt-3">
+        <% for(const check of checks) { %>
+            <div class="row w-100">
+                <div class="col-auto">
+                    <a href="/snapshootview?id=<%= check.baselineId %>&diffid=<%= check.diffId %>" name="baseline_link">
+                        <img src="/snapshoots/<%= check.baselineId %>.png" alt="baseline snapshoot"
+                             title="baseline snapshoot"
+                             class="snapshoot-image">
+                    </a>
+                </div>
+                <div class="col-auto">
+                    <% if (check.actualSnapshotId) { %>
+                        <a href="/snapshootview?id=<%= check.actualSnapshotId %>&diffid=<%= check.diffId %>">
+                            <img src="/snapshoots/<%= check.actualSnapshotId %>.png" alt="actual snapshoot"
+                                 title="actual snapshoot"
+                                 class="snapshoot-image">
+                        </a>
+                    <% } %>
+                </div>
+                <div class="col-auto">
+                    <% if (check.diffId) { %>
+                        <a href="/snapshootview?id=<%= check.diffId %>">
+                            <img src="/snapshoots/<%= check.diffId %>.png" alt="diff snapshoot" title="diff snapshoot"
+                                 class="snapshoot-image">
+                        </a>
+                    <% } %>
+                </div>
+            </div>
+
+        <% } %>
+    </div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
@@ -140,25 +95,12 @@
         integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
         crossorigin="anonymous"></script>
 <script>
-    function pulseButton(el) {
-        // let el = document.getElementById();
-        el.style.borderRadius = '40%';
-        setTimeout(function () {
-            el.style.borderRadius = '25%';
-            setTimeout(function () {
-                pulseButton(el)
-            }, 100)
-        }, 100);
-    }
-
     function removeCheck(id) {
         var xhr = new XMLHttpRequest();
         var params = `id=${id}`;
         xhr.open('DELETE', `/checks/${id}`, true);
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         let el = document.getElementById(`checkbutton_${id}`);
-
-        pulseButton(el)
 
         xhr.onload = function () {
             if (xhr.status === 200) {
@@ -179,8 +121,6 @@
         xhr.open('PUT', `/checks/${id}`, true);
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         let el = document.getElementById(`acceptbutton_${id}`);
-
-        pulseButton(el)
 
         // NEED TO ADD UPDATE BASELINE LOGIC TO .onload EVENT!!!
 
