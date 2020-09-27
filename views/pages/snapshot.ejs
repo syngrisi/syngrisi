@@ -62,48 +62,48 @@
         <div name="sidebar" class="col w-25 border mt-3 float-right">
             <div class="container sticky-top pt-2 mt-2">
                 <div class="row justify-content-center">
-                    <button name="zoom in" type="button" class="" onclick=" baseline.resize(1.2)">
+                    <a name="zoom in" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0" onclick=" baseline.resize(1.2)">
                         <i class="fas fa-search-plus fa-1x"></i>
-                    </button>
+                    </a>
                 </div>
 
                 <div class="row justify-content-center">
-                    <button name="add-region" type="button" class=""
+                    <a name="add-region" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0"
                             onclick="baseline.addIgnoreRegion( {name: 'ignore_rect', strokeWidth: 0,})">
                         <i class="fas fa-expand fa-1x"></i>
-                    </button>
+                    </a>
                 </div>
                 <div class="row justify-content-center">
-                    <button name="add-region" type="button" class=""
+                    <a name="add-region" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0"
                             onclick="baseline.addBoundingRegion('bound_rect')"
                             title="(A) Add ignore region">
                         <i class="fas fa-border-style"></i>
-                    </button>
+                    </a>
                 </div>
 
                 <div class="row justify-content-center">
-                    <button name="zoom-out" type="button" class="" onclick="baseline.resize(0.8)">
+                    <a name="zoom-out" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0" onclick="baseline.resize(0.8)">
                         <i class="fas fa-search-minus fa-1x"></i>
-                    </button>
+                    </a>
                 </div>
                 <div class="row justify-content-center">
-                    <button name="save-snapshot" type="button" class=""
+                    <a name="save-snapshot" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0"
                             onclick="baseline.sendIgnoreRegions('<%= snapshot.id %>' ,baseline.getRectData())">
                         <i class="fas fa-save fa-1x"></i>
-                    </button>
+                    </a>
                 </div>
                 <% if (diffId) { %>
                     <div class="row justify-content-center">
-                        <button id="diff" name="diff" type="button" class=""
+                        <a id="diff" name="diff" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0"
                                 onclick="baseline.toggleDiff('<%= diffId %>')">
                             <i class="fas fa-exchange-alt fa-1x"></i>
-                        </button>
+                        </a>
                     </div>
                 <% } %>
                 <div class="row justify-content-center">
-                    <button id="remove" name="remove" type="button" class="" style="display:none">
+                    <a id="remove" name="remove" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0" style="display:none">
                         <i class="fas fa-trash fa-1x"></i>
-                    </button>
+                    </a>
                 </div>
 
             </div>
