@@ -68,15 +68,29 @@ async function createSnapshotIfNotExist(parameters) {
 async function compareSnapshots(baseline, actual) {
     console.log(`Compare baseline and actual snapshots with ids: [${baseline.id}, ${actual.id}]`);
     console.log(`BASELINE: ${JSON.stringify(baseline)}`);
-    const baselineData = fs.readFile(`${config.defaultBaselinePath}${baseline.id}.png`);
-    const actualData = fs.readFile(`${config.defaultBaselinePath}${actual.id}.png`);
-    let opts = {};
-    if (baseline.ignoreRegions !== 'undefined') {
-        let ignored = JSON.parse(JSON.parse(baseline.ignoreRegions))
-        opts = {ignoredBoxes: ignored}
+    let diff;
+    if (baseline.imghash === actual.imghash) {
+        console.log(`Baseline and actual snapshoot have the identical image hashes: '${baseline.imghash}'`)
+        diff = {
+            isSameDimensions: true,
+            dimensionDifference: { width: 0, height: 0 },
+            rawMisMatchPercentage: 0,
+            misMatchPercentage: '0.00',
+            analysisTime: 0,
+            executionTotalTime: '0'
+        }
+    } else {
+        const baselineData = fs.readFile(`${config.defaultBaselinePath}${baseline.id}.png`);
+        const actualData = fs.readFile(`${config.defaultBaselinePath}${actual.id}.png`);
+        let opts = {};
+        if (baseline.ignoreRegions !== 'undefined') {
+            let ignored = JSON.parse(JSON.parse(baseline.ignoreRegions))
+            opts = {ignoredBoxes: ignored}
+        }
+        opts.ignore = baseline.matchType;
+        diff = await getDiff(baselineData, actualData, opts);
     }
-    opts.ignore = baseline.matchType;
-    const diff = await getDiff(baselineData, actualData, opts);
+
     if (diff.misMatchPercentage !== '0.00') {
         console.log(`Images are different, ids: [${baseline.id}, ${actual.id}]\n diff: ${JSON.stringify(diff)}`);
     }
