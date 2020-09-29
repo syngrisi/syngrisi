@@ -60,15 +60,14 @@
             <div class="dropdown mb-1">
                 <button class="btn btn-secondary1 bg-sidebar text-light dropdown-toggle btn-sm" type="button"
                         id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <%= snapshot.matchType %>
+                    Ignore <%= snapshot.matchType %>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenu">
-                    <a class="dropdown-item small" href="#" onclick="setMatchType('antialiasing')">Ignore
-                        antialiasing</a>
-                    <a class="dropdown-item small" href="#" onclick="setMatchType('nothing')">Exact</a>
-                    <a class="dropdown-item small" href="#" onclick="setMatchType('less')">Ignore less</a>
-                    <a class="dropdown-item small" href="#" onclick="setMatchType('colors')">Ignore colors</a>
-                    <a class="dropdown-item small" href="#" onclick="setMatchType('alpha')">Ignore alpha</a>
+                    <a class="dropdown-item small" href="#" onclick="setMatchType('antialiasing')">antialiasing</a>
+                    <a class="dropdown-item small" href="#" onclick="setMatchType('nothing')">nothing</a>
+                    <a class="dropdown-item small" href="#" onclick="setMatchType('less')">less</a>
+                    <a class="dropdown-item small" href="#" onclick="setMatchType('colors')">colors</a>
+                    <a class="dropdown-item small" href="#" onclick="setMatchType('alpha')">alpha</a>
                 </div>
             </div>
         </div>
@@ -76,7 +75,7 @@
             function setMatchType(type) {
                 const buttonElement = document.getElementById('dropdownMenuButton');
                 sendMatchType('<%= snapshot.id %>', type);
-                buttonElement.innerText = type;
+                buttonElement.innerText = 'Ignore ' + type;
             }
 
             function sendMatchType(id, type) {
@@ -84,7 +83,6 @@
                 var params = `id=${id}&matchType=${type}`;
                 xhr.open('PUT', `/snapshots/${id}`, true);
                 xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-                const classThis = this;
 
                 xhr.onload = function () {
                     if (xhr.status === 200) {
