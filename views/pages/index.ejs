@@ -14,39 +14,6 @@
           integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
           crossorigin="anonymous">
     <link rel="stylesheet" href="static/css/colors.css">
-    <style>
-        .tooltip-inner {
-            max-width: 300px;
-            /* If max-width does not work, try using width instead */
-            width: 300px;
-            text-align: left;
-        }
-
-        .overlay-container {
-            position: absolute;
-            top: 50%;
-            border: 0px none transparent;
-            left: 50%;
-            /*font-size: 50px;*/
-            color: white;
-            transform: translate(-50%, -50%);
-            -ms-transform: translate(-50%, -50%);
-        }
-
-        .overlay {
-            position: fixed;
-            display: none;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 2;
-            cursor: pointer;
-        }
-         </style>
     <% if(currentSuite) { %>
         <title>VRS list of checks - <%= currentSuite.name %> </title>
     <% }else{ %>
@@ -58,59 +25,59 @@
 
 <div class="main container-fluid pl-3 pr-3 ml-0 mh-100">
 
-    <div class="row bg-sidebar" name="logo-and-link">
-        <div class="col-3 col-lg-3 w-25 pl-0 bg-sidebar text-light">
-            <diw class="row pl-1">
-                <div class="col-auto pl-4 pr-0 pt-3">
+    <div class="row bg-sidebar sticky-top" name="logo-and-link">
+        <div class="col-3 col-lg-3 w-25 pl-0 pb-2 bg-sidebar text-light" id="logo-and-label-container">
+            <div class="row pl-1">
+                <div name="logo-img" class="col-auto pl-4 pr-0 pt-2">
                     <div class="border-top border-bottom border-left rounded-left border-right rounded-right pl-1 pr-1 pt-1 pb-1">
                         <a class="unlink" href="/">
-                            <img src="static/imgs/simpleLogoLightShadow3.png" alt="robo logo bg-light1" class=""
+                            <img src="static/imgs/simpleLogoLightShadow3.png" alt="logo" class=""
                                  style="width: 35px ">
                         </a>
                     </div>
                 </div>
-                <div class="col pl-2 pt-2 mr-0 text-truncate">
+                <div class="col pl-2 pt-1 mr-0 text-truncate">
                     <!--                    <a class="unlink" href="/">Visual Regression Service</a>-->
                     <a class="unlink h1" href="/" title="Σύγκριση">Syngrisi</a>
+                </div>
+                <div class="col-auto p-0">
+                    <div class="container pt-3  ">
+                        <a name="more-suites"
+                           type="button"
+                           onclick="setSuiteMenuWidth()"
+                           data-toggle="collapse"
+                           href="#collapseSuiteMenu"
+                           aria-expanded="false"
+                           aria-controls="collapseSuiteMenu"
+                           class="btn btn-secondary border-0 bg-sidebar float-right unlink white" title="more"
+                           style="box-shadow: none">
+
+                            <i class="fas fa-caret-down fa-1x float-right "></i>
+                        </a>
+                    </div>
                 </div>
                 <!--                <div class="col pl-2 pt-1 mr-0 border-top border-bottom border-right rounded-right text-truncate">-->
                 <!--                    <a class="unlink" href="/">Visual Regression Service</a>-->
                 <!--                </div>-->
-            </diw>
+            </div>
         </div>
         <!--    TESTS TOOLBAR-->
-        <div class="suite-head col-4 col-lg-6 text-light1 bg-sidebar pl-5 pt-3 h4 border-left mb-0 light-purple">
+        <div class="suite-head col-4 col-lg-6 text-light1 bg-sidebar pl-5 pt-3 h4 border-left mb-0 light-purple sticky-top1">
             <% if(currentSuite) { %>
-                <span><%= currentSuite.name %></span>
+                <a href="?suitename=<%= currentSuite.name %>" class="unlink">
+                    <span><%= currentSuite.name %></span>
+                </a>
             <% }else{ %>
-                <span>All checks</span>
+                <a href="/" class="unlink">
+                    <span>All checks</span>
+                </a>
             <% } %>
         </div>
-    </div>
+        <div class="col sticky-top1">
+            <div class="row all-header light-purple sticky-top1">
+                <div class="tests-toolbar sticky-top1 col text-light p-1 pt-3 bg-sidebar align-self-end">
+                    <div class="sticky-top1 row d-flex flex-row-reverse pr-2">
 
-    <!--    TABLE HEADER START    -->
-    <div class="all-header row light-purple">
-        <div class="col-3 col-lg-3 .col-xl-3 w-25 pl-0 bg-sidebar text-left float-right pr-1 pt-2 white">
-            <div class="container">
-                <a name="more-suites"
-                   type="button"
-                   data-toggle="collapse"
-                   href="#collapseSuiteMenu"
-                   aria-expanded="false"
-                   aria-controls="collapseSuiteMenu"
-                   class="btn btn-secondary border-0 bg-sidebar float-right unlink white" title="more">
-
-                    <i class="fas fa-ellipsis-v fa-1x float-right "></i>
-                </a>
-            </div>
-
-        </div>
-        <div class="col w-75  ml-0 bg-sidebar border-light border-top1 border-left rounded-left1">
-            <div class="row ">
-
-
-                <div class="tests-toolbar col text-light p-1 bg-sidebar ">
-                    <div class="row d-flex flex-row-reverse pr-2">
                         <div class="col-auto pl-1">
                             <a name="more-tests" type="button" class="btn btn-secondary bg-sidebar border-0"
                                title="more">
@@ -141,7 +108,6 @@
 
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -150,28 +116,30 @@
         <div class="sidebar col-3 col-lg-3  mh-100 bg-light  border-top border-right border-bottom border-silver float-left w-251 ml-0 mr-0"
         <div class="sidebar col-3 col-lg-3  mh-100 bg-light border-top  border-right border-bottom border-silver float-left w-251 ml-0 mr-0"
              style="width: 100px">
-            <div class="suites-menu row pl-1 pt-1 bg-sidebar collapse light-purple" id="collapseSuiteMenu">
-                <div class="col-12 p-0">
-                    <div class="row border1 mr-1 ml-1">
-                        <div class="col-auto ml-1">
-                            <a name="check-all" type="button" class="btn btn-secondary bg-sidebar border-0 m-1"
-                               onclick="location.reload()"
-                               title="check all">
-                                <i class="far fa-check-square fa-lg float-right"></i>
+            <div class="suites-menu position-fixed sticky-top1 row pl-2 pt-0 bg-sidebar collapse light-purple"
+                 id="collapseSuiteMenu" style="z-index: 9000">
+                <div class="col-12 ml-2" >
+                    <div class="row border1 mr-1 ml-0">
+                        <div class="col-auto ml-1 pb-0">
+                            <a name="check-all" type="button" class="btn btn-secondary bg-sidebar border-0"
+                               onclick="checkAllSuites()"
+                               title="check all suites">
+                                <input type="checkbox">
+<!--                                <i class="far fa-check-square fa-lg float-right"></i>-->
                             </a>
                         </div>
                         <div class="col-auto mr-1">
                             <a name="reload-suites" type="button" class="btn btn-secondary bg-sidebar border-0 m-1"
                                onclick="location.reload()"
                                title="reload">
-                                <i class="fas fa-sync-alt fa-lg float-right"></i>
+                                <i class="fas fa-sync-alt fa-sm float-right"></i>
                             </a>
                         </div>
                         <div class="col-auto mr-1">
                             <a name="accept-last-as-baseline" type="button"
                                class="btn btn-secondary bg-sidebar border-0 m-1"
                                onclick="location.reload()" title="accept last as baseline">
-                                <i class="far fa-check-circle fa-lg float-right green"></i>
+                                <i class="far fa-check-circle fa-sm float-right green"></i>
                             </a>
                         </div>
                         <div class="col-auto mr-1 p-0">
@@ -179,22 +147,22 @@
                                title="delete suites and associated items"
                                onclick="removeCheckedSuites()"
                             >
-                                <i class="fas fa-trash fa-lg float-right red"></i>
+                                <i class="fas fa-trash fa-sm float-right red"></i>
                             </a>
                         </div>
                     </div>
                 </div>
             </div>
             <!--            SUITES LIST-->
-            <div class="suites-list row pl-2 p-1 bg-light text-secondary ">
+            <div class="suites-list row pl-2 pt-1 pr-0 bg-light text-secondary ">
 
                 <% suites.forEach(function(suite){ %>
-                    <div class="row pl-3 w-100 border-bottom1 border-silver mt-1">
+                    <div name="suite-menu-item-container" class="row pl-3 w-100 btn-light border-silver mt-1 mr-0">
                         <div class="col.auto pl-2">
                             <input name="suite-item" class="small" type="checkbox" suiteid="<%= suite.id %>"
                                    id="suite-checkbox-<%= suite.id %>">
                         </div>
-                        <div class="col pl-2 pb-1">
+                        <div class="col pr-1 pl-2 pb-1">
                             <a href="/?suitename=<%= suite.name %>" class="small text-dark"><%= suite.name %></a>
                         </div>
                     </div>
@@ -203,16 +171,28 @@
             <!--            SUITES LIST END-->
         </div>
         <div class="table-rows content col float-right ">
-            <div class="row bg-sidebar light-purple border-purple border-top">
-                <div class="col-1 col-lg-auto text-truncate small ml-0 mt-1">
+            <div name="table-headers" class="row bg-sidebar light-purple border-purple border-top">
+                <div name="checkbox-header" class="col-1 col-lg-auto text-truncate small ml-0 mt-1">
                     <input name="checkAll" onclick="checkAllTests()" type="checkbox" title="check all tests">
                 </div>
-                <div class="col-2 col-lg-1 text-truncate small">Status</div>
-                <div class="col-4 col-lg-4 text-truncate small">Name</div>
-                <div class="col-1 col-lg-2 text-truncate small">Start date</div>
-                <div class="col-1 col-lg-1 text-truncate small">Browser</div>
-                <div class="col-1 col-lg-1 text-truncate small">Platform</div>
-                <div class="col-2 col-lg-2 text-truncate small">Viewport</div>
+                <div name="status-header" class="col-2 col-lg-1 text-truncate btn-check small" onclick="sort('status')" title="click to sort by this field">
+                    <a href="javascript:void(0)"  class="unlink text-light">Status</a>
+                </div>
+                <div name="status-name" class="col-4 col-lg-4 text-truncate btn-check small" onclick="sort('name')" title="click to sort by this field">
+                    <a href="javascript:void(0)" onclick="sort('name')" class="unlink text-light">Name</a>
+                </div>
+                <div name="status-date" class="col-1 col-lg-2 text-truncate btn-check small" onclick="sort('Updated_date')" title="click to sort by this field">
+                    <a href="javascript:void(0)" onclick="sort('Updated_date')" class="unlink text-light">Date</a>
+                </div>
+                <div name="status-browser" class="col-1 col-lg-1 text-truncate btn-check small" onclick="sort('browserName')" title="click to sort by this field">
+                    <a href="javascript:void(0)" onclick="sort('browserName')" class="unlink text-light">Browser</a>
+                </div>
+                <div name="status-os" class="col-1 col-lg-1 text-truncate btn-check small" onclick="sort('os')" title="click to sort by this field">
+                    <a href="javascript:void(0)" onclick="sort('os')" class="unlink text-light">Platform</a>
+                </div>
+                <div name="status-viewport" class="col-2 col-lg-2 text-truncate btn-check small" onclick="sort('viewport')" title="click to sort by this field">
+                    <a href="javascript:void(0)" onclick="sort('viewport')" class="unlink text-light">Viewport</a>
+                </div>
                 <!--                <div class="col-1 small border-left border-right1">Id</div>-->
             </div>
 
@@ -220,7 +200,7 @@
                 <% tests.forEach(function(test){ %>
                     <!--TEST_INFO START-->
                     <% if(Object.keys(checksByTestGroupedByIdent[test.id]).length > 0) { %>
-                        <div class="testinfo row clearfix border-bottom_ border-secondary bg-light text-secondary1 m-0 w-100">
+                        <div name="testinfo" class="testinfo row button btn-light border-secondary m-0 w-100">
                             <div class="cell-input cell col-1 col-lg-auto border-bottom border-right text-truncate small d-flex align-items-center ">
                                 <input id="<%= test.id %>"
                                        name="test"
@@ -260,7 +240,7 @@
                                 <span name="cell-date" id="<%= test.id %>_cell-date" class="text-primary small"
                                       data-toggle="tooltip"
                                       data-placement="top"
-                                      title="<%= test.formattedCreatedDate %>"><%= test.formattedCreatedDate %></span>
+                                      title="<%= test.formattedUpdatedDate %>"><%= test.formattedUpdatedDate %></span>
                             </div>
                             <div class="cell-browser cell col-1 col-lg-1 border-bottom border-right text-truncate">
                                 <span name="cell-browser" id="<%= test.id %>_cell-browser" class="text-primary small"
@@ -327,7 +307,7 @@
                                              data-placement="right"
                                              title="Status: [<%= groupStatus %>]</br>
                                              Name: <%= check.name %> </br>
-                                             Created: <%= check.formattedCreatedDate %> </br>
+                                             Created: <%= check.formattedUpdatedDate %> </br>
                                              Browser: <%= check.browserName %> </br>
                                              Viewport: <%= check.viewport %> </br>
                                              Platform: <%= check.os %> </br>
@@ -518,7 +498,7 @@
                     }
                 );
                 baseline.getSnapshotIgnoreRegionsDataAndDrawRegions(baselineIds[index]);
-                baseline.canvas.hoverCursor="pointer";
+                baseline.canvas.hoverCursor = "pointer";
                 baselines[id] = baseline;
             })
         })
@@ -535,6 +515,32 @@
             });
     });</script>
 <script>
+
+    function setSuiteMenuWidth() {
+        const logoWidth = document.getElementById('logo-and-label-container').clientWidth
+        document.getElementById('collapseSuiteMenu').style.width = logoWidth + 'px'
+    }
+
+    function sort(prop, order=-1) {
+        const currentUri = document.location.href;
+        if(currentUri.includes(`sortprop=${prop}`) && currentUri.includes('order=-1')){
+            order=1
+        }
+
+        let clearedUri = currentUri.replace(/[&]{0,1}(sortorder=[-]{0,1}.)/, "");
+        clearedUri = clearedUri.replace(/[&]{0,1}sortprop=\w+/, "");
+
+        let outUri;
+        if (clearedUri.includes('?')) {
+            outUri = clearedUri + `&sortprop=${prop}&sortorder=${order}`;
+        } else {
+            outUri = clearedUri + `?sortprop=${prop}&sortorder=${order}`;
+        }
+        outUri = outUri.replace("?&", "?");
+
+        document.location.href = outUri;
+    }
+
     function showNotification(msg, status = 'Success') {
         document.getElementById("notify-header").textContent = status;
         document.getElementById("notify-message").textContent = msg;
@@ -714,11 +720,30 @@
         for (const checkbox of checkboxes) {
             result.push(removeSuite(checkbox.getAttribute('suiteid')));
         }
-        Promise.all(result).then(() => location.reload())
+        Promise.all(result).then(
+            function () {
+                showNotification('All suites were removed');
+                setTimeout(() => location.reload(), 1300);
+            }
+        ).catch(function (e) {
+            showNotification('Cannot remove all suites');
+            console.error('Cannot remove all suites, error: ' + e);
+        })
     }
 
     function checkAllTests() {
         let checkboxes = document.querySelectorAll('input[name=test]');
+        checkboxes.forEach(function (ch) {
+            if (ch.checked === false) {
+                ch.checked = true;
+            } else {
+                ch.checked = false;
+            }
+        });
+    }
+
+    function checkAllSuites() {
+        let checkboxes = document.querySelectorAll('input[name=suite-item]');
         checkboxes.forEach(function (ch) {
             if (ch.checked === false) {
                 ch.checked = true;

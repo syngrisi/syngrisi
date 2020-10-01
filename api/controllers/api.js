@@ -71,6 +71,7 @@ async function compareSnapshots(baseline, actual) {
     let diff;
     if (baseline.imghash === actual.imghash) {
         console.log(`Baseline and actual snapshoot have the identical image hashes: '${baseline.imghash}'`)
+        // stub for diff object
         diff = {
             isSameDimensions: true,
             dimensionDifference: { width: 0, height: 0 },
@@ -471,7 +472,7 @@ exports.create_check = async function (req, res) {
                 if (snapshotFoundedByHashcode) {
                     console.log(`FOUND snapshoot by hashcode: '${JSON.stringify(snapshotFoundedByHashcode)}'`)
                 }
-                let currentSnapshot, baselineShapshot, actualSnapshot
+                let currentSnapshot, baselineSnapshoot, actualSnapshot
 
                 // check MUST be identified by Name, OS, Browser, Viewport
                 const checkIdentifier = {
@@ -499,13 +500,13 @@ exports.create_check = async function (req, res) {
                         console.log(`Creating an actual snapshot for check with name: '${req.body.name}'`);
 
                         actualSnapshot = currentSnapshot
-                        baselineShapshot = await Snapshot.findById(previousBaselineId);
+                        baselineSnapshoot = await Snapshot.findById(previousBaselineId);
                         params.actualSnapshotId = actualSnapshot.id;
                         params.status = 'pending';
                     } else {
                         console.log(`A baseline snapshot for previous check with name: '${req.body.name}', does not exist creating new one`);
                         const baseline = currentSnapshot
-                        baselineShapshot = currentSnapshot
+                        baselineSnapshoot = currentSnapshot
                         params.baselineId = baseline.id;
                         params.status = 'new';
                     }
@@ -528,7 +529,7 @@ exports.create_check = async function (req, res) {
                 // compare actual with baseline if a check isn't new
                 let updateParams = {};
                 if (check.status.toString() !== 'new') {
-                    const diff = await compareSnapshots(baselineShapshot, actualSnapshot);
+                    const diff = await compareSnapshots(baselineSnapshoot, actualSnapshot);
                     if (diff.misMatchPercentage !== '0.00') {
                         console.log(`Saving diff snapshot for check with Id: '${check.id}'`);
                         const diffSnapshot = await createSnapshotIfNotExist({

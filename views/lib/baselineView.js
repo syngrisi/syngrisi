@@ -336,7 +336,7 @@ class BaselineView {
         let btnLeft = target.calcCoords().tr.x - 0;
         let btnTop = target.calcCoords().tr.y - 15;
 
-        let deleteBtn = `<i name="delete-region" id="region-delete-icon-${regionIndex}" class="fas fa-window-close deleteBtn" style="color: firebrick; background-color: white; position:absolute;top:` + btnTop + 'px;left:' + btnLeft + 'px;cursor:pointer; padding: 0px"></i>';
+        let deleteBtn = `<i name="delete-region" id="region-delete-icon-${regionIndex}" class="far fa-1x fa-window-close deleteBtn bg-transparent" style="color: red; background-color: white; position:absolute;top:` + btnTop + 'px;left:' + btnLeft + 'px;cursor:pointer; padding: 0px"></i>';
         $(".canvas-container").append(deleteBtn);
     }
 

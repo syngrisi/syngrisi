@@ -39,6 +39,27 @@
             left: 50%;
             transform: translate(-50%, -50%);
         }
+
+        .bg-passed {
+            background-color: #28a745 !important;
+        }
+
+        .bg-new {
+            background-color: #176a30 !important;
+        }
+
+        .bg-failed {
+            background-color: #dc3545 !important;
+        }
+
+        .bg-running {
+            background-color: #17a2b8 !important;
+        }
+        img.preview {
+            max-height: 180px;
+            object-fit: contain;
+        }
+
     </style>
 
     <title>Shapshoot - <%= expected_snapshoot.name %> | <%= expected_snapshoot.id %>
@@ -52,7 +73,7 @@
                 <div class="col-auto pl-2 pr-0 pt-3">
                     <div class="border-top border-bottom border-left rounded-left border-right rounded-right pl-1 pr-1 pt-1 pb-1">
                         <a class="unlink" href="/">
-                            <img src="static/imgs/simpleLogoLightShadow3.png" alt="robo logo bg-light1" class=""
+                            <img src="static/imgs/simpleLogoLightShadow3.png" alt="logo bg-light1" class=""
                                  style="width: 35px ">
                         </a>
                     </div>
@@ -70,7 +91,40 @@
             <a class="unlink" name="check-link"
                href='/?suitename=<%= suite.name %>&unfoldTestId=<%= test.id %>'><%= test.name %></a>
             <span>/</span>
-            <%= (expected_snapshoot.name.replace(/_/g, ' ')); %></div>
+            <%= (check.name.replace(/_/g, ' ')); %> [<%= check.status[0] %>]
+        </div>
+
+        <div name="dropdown-menu" class="col-2 align-self-end pl-4 pt-3 h4 mb-0 light-purple">
+            <div class="d-flex flex-row pb-1 pt-1 dropdown dropdown-item1 pl-2 pr-2 pb-1"  data-toggle="dropdown">
+
+                <div class="bg-<%= check.status[0] %> ml-2 mt-2 ml-1 mb-0" style="width: 20px; height: 20px"></div>
+                <div class="dropdown1 mb-1">
+                    <button class="btn mr-1 bg-sidebar text-light dropdown-toggle btn-sm" type="button"
+                            id="dropdownMenuButton"  aria-haspopup="true" aria-expanded="false"
+                            style="box-shadow: none"
+                    >
+                        <%= check.viewport %> <%= check.os %>
+                    </button>
+                    <div class="dropdown-menu text-left" aria-labelledby="dropdownMenu">
+
+                        <% for (const ch of lastChecksWithSameName) { %>
+                        <!-- "ch.actualSnapshotId || ch.baselineId" is to stub new case -->
+                        <% const url = `?diffid=${ch.diffId || '' }&actualid=${ch.actualSnapshotId || ch.baselineId}&expectedid=${ch.baselineId}&checkid=${ch.id}` %>
+                            <div class="d-flex flex-row pb-1 pt-1 dropdown-item pl-2 pr-2">
+                                <div class="bg-<%= ch.status[0] %> ml-2 mb-0" style="width: 20px"></div>
+                                <div>
+                                    <% const decoration = (ch.id === check.id) ? 'underline' : 'none'%>
+                                    <a class="dropdown-item small pl-2 pr-2" onclick="document.location.href = '<%= url %>'"
+                                       href=# style="text-decoration: <%= decoration %>"> <%= ch.viewport %> <%= ch.os %> </a>
+                                </div>
+                            </div>
+
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
     <div name="all-content" class="row pl-4">
         <div name="sidebar" class="col-1 border-right1 mt-3 float-right p-0 pr-1">
@@ -88,27 +142,33 @@
                     </a>
                 </div>
                 <div class="row justify-content-center">
-                    <a name="details" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0 mb-1 border-0 rounded-0"
-                       onclick="window.location.href = '/checksgroupview?id=<%= check_id %>'">
+                    <a name="group view" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0 mb-1 border-0 rounded-0"
+                       onclick="window.location.href = '/checksgroupview?id=<%= check.id %>'"
+                       title="Group view (checks with same idents in the same session)">
                         <i class="fas fa-th fa-1x  "></i>
                     </a>
                 </div>
+                <% if(actual_snapshoot) { %>
+                    <div class="row justify-content-center">
+                        <a name="show-diff" type="button"
+                           class="btn btn-check pl-1 pr-1 pt-0 pb-0 mb-1 border-0 rounded-0"
+                           onclick="toggleDiffOpacity()">
+                            <i class="fas fa-exchange-alt fa-1x"></i>
+                        </a>
+                    </div>
+                <% } %>
                 <div class="row justify-content-center">
-                    <a name="show-diff" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0 mb-1 border-0 rounded-0"
-                       onclick="toggleDiffOpacity()">
-                        <i class="fas fa-exchange-alt fa-1x"></i>
-                    </a>
-                </div>
-                <div class="row justify-content-center">
-                    <a name="show-overlay" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0 mb-1 border-0 rounded-0"
+                    <a name="show-overlay" type="button"
+                       class="btn btn-check pl-1 pr-1 pt-0 pb-0 mb-1 border-0 rounded-0"
                        onclick="toggleReqions()">
                         <i class="far fa-object-group fa-1x"></i>
                     </a>
                 </div>
                 <% if(check.status == 'failed') { %>
                     <div class="row justify-content-center">
-                        <a name="accept-baseline" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0 mb-1 border-0 rounded-0"
-                           onclick="acceptCheck('<%= check_id %>', '<%= actual_snapshoot.id %>')"
+                        <a name="accept-baseline" type="button"
+                           class="btn btn-check pl-1 pr-1 pt-0 pb-0 mb-1 border-0 rounded-0"
+                           onclick="acceptCheck('<%= check.id %>', '<%= actual_snapshoot.id %>')"
                            title="accept the actual snapshoot as baseline">
                             <i class="fas fa-check fa-1x"></i>
                         </a>
@@ -119,28 +179,22 @@
                         <div class="con-relative">
                             <a href="/snapshootview?id=<%= expected_snapshoot.id %>&diffid=<%= diff_snapshoot.id %>"
                                title="baseline snapshoot">
-                                <img class="w-100" src="/snapshoots/<%= expected_snapshoot.id %>.png" alt="baseline">
+                                <img class="w-100 preview" src="/snapshoots/<%= expected_snapshoot.id %>.png" alt="baseline">
                                 <div class="centered-overlay-text h4 white bg-maroon">B</div>
                             </a>
                         </div>
                     </div>
-                    <div class="row border border-secondary mt-3">
-                        <div class="con-relative">
-                            <a href="/snapshootview?id=<%= actual_snapshoot.id %>&diffid=<%= diff_snapshoot.id %>"
-                               title="actual snapshoot">
-                                <img class="w-100" src="/snapshoots/<%= actual_snapshoot.id %>.png" alt="actual">
-                                <div class="centered-overlay-text h4 text-light bg-maroon">A</div>
-                            </a>
+                    <% if(actual_snapshoot) { %>
+                        <div class="row border border-secondary mt-3">
+                            <div class="con-relative">
+                                <a href="/snapshootview?id=<%= actual_snapshoot.id %>&diffid=<%= diff_snapshoot.id %>"
+                                   title="actual snapshoot">
+                                    <img class="w-100 preview" src="/snapshoots/<%= actual_snapshoot.id %>.png" alt="actual">
+                                    <div class="centered-overlay-text h4 text-light bg-maroon">A</div>
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                    <!-- <div class="row border border-secondary mt-3">
-                    <div class="con-relative">
-                        <a href="/snapshootview?id=<%= diff_snapshoot.id %>&baselineid=<%= expected_snapshoot.id %>" title="diff">
-                            <img class="w-100 " src="/snapshoots/<%= diff_snapshoot.id %>.png" alt="diff">
-                            <div class="centered-overlay-text h6 text-light bg-info">D</div>
-                        </a>
-                    </div>
-                </div>-->
+                    <% } %>
                 </div>
             </div>
         </div>
@@ -184,9 +238,8 @@
         oImg.moveTo(0);
         oImg.scaleToWidth(canvas.width);
         canvas.setHeight(oImg.getScaledHeight())
-
-
-        fabric.Image.fromURL('/snapshoots/<%= actual_snapshoot.id %>.png', function (oImg) {
+        <% if(actual_snapshoot) { %>
+        fabric.Image.fromURL(`/snapshoots/<%= actual_snapshoot.id %>.png`, function (oImg) {
             canvas.add(oImg);
             window.expectedImg = oImg;
             actualImg = oImg;
@@ -194,6 +247,7 @@
             oImg.scaleToWidth(canvas.width);
             canvas.renderAll();
         });
+        <% } %>
     });
 
     fabric.Image.fromURL('/snapshoots/<%= diff_snapshoot.id %>.png', function (oImg) {

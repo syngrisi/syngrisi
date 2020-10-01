@@ -38,6 +38,7 @@ exports.checkview = async function (req, res) {
         }
     })
 };
+
 exports.checksgroupview = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
@@ -116,39 +117,59 @@ exports.diffview = async function (req, res) {
         try {
             const opts = req.query;
 
-            if (!opts.actualid || !opts.expectedid || !opts.diffid) {
+            if (!opts.expectedid) {
                 res.status(400)
-                    .send(`Error: There is no "id" fields (actualid || expectedid ||opts_diffid) in request query: ${JSON.stringify(opts)}`);
+                    .send(`Error: There is no "id" fields (actualid) in request query: ${JSON.stringify(opts)}`);
                 return;
             }
             try {
-                const expected_snapshoot = await Snapshot.findById(`${opts.expectedid}`);
-                const actual_snapshoot = await Snapshot.findById(`${opts.actualid}`);
-                const diff_snapshoot = await Snapshot.findById(`${opts.diffid}`);
+                const baseline = await Snapshot.findById(`${opts.expectedid}`);
+                baseline.formattedCreatedDate = moment(baseline.Created_date)
+                    .format('YYYY-MM-DD hh:mm');
 
-                const check_id = opts.checkid;
-                const check = await Check.findById(check_id);
+                let actual_snapshoot;
+                let diff_snapshoot;
 
+                // for new check case
+                if (opts.actualid) {
+                    actual_snapshoot = await Snapshot.findById(`${opts.actualid}`);
+                    actual_snapshoot.formattedCreatedDate = moment(actual_snapshoot.Created_date)
+                        .format('YYYY-MM-DD hh:mm');
+                } else {
+                    diff_snapshoot = baseline;
+                    // actual_snapshoot = baseline;
+                }
+
+                // for passed check case
+                if (opts.diffid) {
+                    diff_snapshoot = await Snapshot.findById(`${opts.diffid}`);
+                    diff_snapshoot.formattedCreatedDate = moment(diff_snapshoot.Created_date)
+                        .format('YYYY-MM-DD hh:mm');
+                } else {
+
+                    diff_snapshoot = actual_snapshoot ? actual_snapshoot : baseline;
+                }
+
+                const check = await Check.findById(opts.checkid);
                 const suite = await Suite.findById(`${check.suite}`);
                 const test = await Test.findById(`${check.test}`);
 
-                // const snapshot = await Snapshot.findById(`${opts.id}`);
-                var moment = require('moment');
-                expected_snapshoot.formattedCreatedDate = moment(expected_snapshoot.Created_date)
-                    .format('YYYY-MM-DD hh:mm');
-                actual_snapshoot.formattedCreatedDate = moment(actual_snapshoot.Created_date)
-                    .format('YYYY-MM-DD hh:mm');
-                diff_snapshoot.formattedCreatedDate = moment(diff_snapshoot.Created_date)
-                    .format('YYYY-MM-DD hh:mm');
+                const checksWithSameName = await checksGroupedByIdent({name: check.name});
+
+                let lastChecksWithSameName = [];
+                for (const group of Object.values(checksWithSameName)) {
+                    lastChecksWithSameName.push(group.checks[group.checks.length - 1]);
+                }
+                // console.log({lastChecksWithSameName});
 
                 res.render('pages/diff', {
-                    expected_snapshoot: expected_snapshoot,
+                    expected_snapshoot: baseline,
                     actual_snapshoot: actual_snapshoot,
                     diff_snapshoot: diff_snapshoot,
-                    check_id: check_id,
                     suite: suite,
                     test: test,
-                    check: check
+                    check: check,
+                    lastChecksWithSameName: lastChecksWithSameName
                 });
             } catch (e) {
                 res.status(500)
@@ -169,15 +190,30 @@ exports.index = async function (req, res) {
             try {
                 let opts = req.query;
                 let suiteFilter = {};
+                let sortBy;
+                if ((opts.sortprop === 'name')
+                    || (opts.sortprop === 'status')
+                    || (opts.sortprop === 'browserName')
+                    || (opts.sortprop === 'suite')
+                    || (opts.sortprop === 'os')
+                    || (opts.sortprop === 'viewport')
+                    || (opts.sortprop === 'Updated_date')) {
+                    sortBy = opts.sortprop
+                }
+                sortBy = sortBy ? sortBy : 'Updated_date'
+                const sortOrder = opts.sortorder ? opts.sortorder : -1;
+                let sortFilter = {};
+                sortFilter[sortBy] = sortOrder;
+
                 const suite = await Suite.findOne({name: opts.suitename}).exec()
                 if (suite)
                     suiteFilter = {suite: suite.id};
                 const suites = await Suite.find({})
-                    .sort({Updated_date: -1}).exec()
+                    .sort({name: 'asc'}).exec()
                 const tests = await Test.find(suiteFilter)
-                    .sort({Updated_date: -1}).exec()
+                    .sort(sortFilter).exec()
                 tests.map(function (test) {
-                    test.formattedCreatedDate = moment(test.Start_date)
+                    test.formattedUpdatedDate = moment(test.Updated_date)
                         .format('YYYY-MM-DD hh:mm');
                     return test;
                 })
