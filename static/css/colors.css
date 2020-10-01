@@ -172,4 +172,8 @@ a.unlink:hover {
 }
 
 a.btn-check:hover { background: rgba(86, 61, 124, 0.3); }
+div.btn-check:hover {
+    background: rgba(216, 202, 239, 0.2);
+    cursor: pointer;
+}
 
