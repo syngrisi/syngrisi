@@ -17,7 +17,7 @@ Feature: VRS One Suite, One test, One check
 
   @withoutEndSession
   Scenario: VRS create new check - without session ending
-    Given I set window size: "1200x790"
+    Given I set custom window size: "1200x790"
     Given I start VRS session with parameters:
     """
       testName: "Without session ending"
