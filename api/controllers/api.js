@@ -74,7 +74,7 @@ async function compareSnapshots(baseline, actual) {
         // stub for diff object
         diff = {
             isSameDimensions: true,
-            dimensionDifference: { width: 0, height: 0 },
+            dimensionDifference: {width: 0, height: 0},
             rawMisMatchPercentage: 0,
             misMatchPercentage: '0.00',
             analysisTime: 0,
@@ -193,15 +193,22 @@ exports.create_test = async function (req, res) {
                 let params = req.body;
 
                 req.log.info(`Create test with name '${params.testname}', params: '${JSON.stringify(params)}'`);
-                const test = await orm.createTest({
-                    run: params.run,
+
+                let opts = {
                     name: params.name,
                     status: params.status,
                     viewport: params.viewport,
                     browserName: params.browser,
                     os: params.os,
                     Start_date: new Date(),
-                });
+                }
+
+                let run;
+                if (params.run) {
+                    run = await orm.createRunIfNotExist({name: params.run});
+                    opts.run = run.id;
+                }
+                const test = await orm.createTest(opts);
 
                 res.json(test);
                 resolve([req, res, test]);
