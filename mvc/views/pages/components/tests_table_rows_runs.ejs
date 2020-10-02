@@ -1,8 +1,8 @@
 <% tests.forEach(function(test){ %>
     <!--TEST_INFO START-->
     <% if(Object.keys(checksByTestGroupedByIdent[test.id]).length > 0) { %>
-        <div name="testinfo" class="testinfo row button btn-light border-secondary m-0 w-100">
-            <div class="cell-input cell col-1 col-lg-auto border-bottom border-right text-truncate small d-flex align-items-center ">
+        <div name="testinfo" class="testinfo row button btn-light border-secondary ml-3 m-0 w-100">
+            <div class="cell-input ml-1 pl-1 pr-1 cell col-auto border-bottom border-right text-truncate small d-flex align-items-center ">
                 <input id="<%= test.id %>"
                        name="test"
                        type="checkbox">
@@ -23,12 +23,12 @@
                       title="<%= test.status %>"><%= test.status %></span>
                 <span data-toggle="tooltip" data-original-title="<%= test.blinking %>">
                     <% if(test.blinking > 0) { %>
-                        <img src="./static/blinking.png" class="img-fluid blink-icon" alt="blink">
+                        <img src="../../../../static/blinking.png" class="img-fluid blink-icon" alt="blink">
                     <% } %>
                     <!--                                        <%= test.blinking %>-->
                                     </span>
             </div>
-            <div class="cell-name cell col-4 col-lg-4 border-bottom border-right text-truncate">
+            <div name="test-name" class="cell col-8 col-lg-8 border-bottom border-right text-truncate">
                 <a data-toggle="collapse" class="collapsing" href="#testchecks_<%= test.id %>"
                    onclick="drawTestChecksPreviews('<%= test.id %>');">
                                 <span name="cell-name" id="<%= test.id %>_cell-name" class="text-secondary small "
@@ -37,35 +37,12 @@
                                       title="<%= test.name %>"><%= test.name %></span>
                 </a>
             </div>
-            <div class="cell-date cell col-1 col-lg-2 border-bottom border-right text-truncate">
+            <div name="test-date" class="cell col-1 col-lg-2 border-bottom border-right text-truncate align-self-end">
                                 <span name="cell-date" id="<%= test.id %>_cell-date" class="text-primary small"
                                       data-toggle="tooltip"
                                       data-placement="top"
                                       title="<%= test.formattedUpdatedDate %>"><%= test.formattedUpdatedDate %></span>
             </div>
-            <div class="cell-browser cell col-1 col-lg-1 border-bottom border-right text-truncate">
-                                <span name="cell-browser" id="<%= test.id %>_cell-browser" class="text-primary small"
-                                      data-toggle="tooltip"
-                                      data-placement="top"
-                                      title="<%= test.browserName %>"><%= test.browserName %></span>
-            </div>
-            <div class="cell-platform cell col-1 col-lg-1 border-bottom border-right text-truncate">
-                                <span name="cell-os" id="<%= test.id %>_cell-os" class="text-primary small"
-                                      data-toggle="tooltip"
-                                      data-placement="top"
-                                      title="<%= test.os %>"><%= test.os %></span>
-            </div>
-            <div class="cell-viewport cell col-2 col-lg-2 border-bottom  text-truncate">
-                                <span name="cell-viewport" id="<%= test.id %>_cell-viewport" class="text-primary small"
-                                      data-toggle="tooltip"
-                                      data-placement="top"
-                                      title="<%= test.viewport %>"><%= test.viewport %></span>
-            </div>
-            <!--                            <div class="col-1 border text-truncate">-->
-            <!--                                <span class="text-primary small" data-toggle="tooltip"-->
-            <!--                                      data-placement="top"-->
-            <!--                                      title="<%= test.id %>"><%= test.id %></span>-->
-            <!--                            </div>-->
         </div>
         <!--TEST_INFO END-->
 
