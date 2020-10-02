@@ -160,6 +160,9 @@ const VRSTestSchema = new Schema({
     suite: {
         type: Schema.Types.ObjectId,
     },
+    run: {
+        type: String,
+    },
 });
 
 const VRSSuiteSchema = new Schema({
