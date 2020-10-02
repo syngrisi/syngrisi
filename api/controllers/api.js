@@ -194,11 +194,12 @@ exports.create_test = async function (req, res) {
 
                 req.log.info(`Create test with name '${params.testname}', params: '${JSON.stringify(params)}'`);
                 const test = await orm.createTest({
-                    name: params.testname,
-                    status: params.teststatus,
-                    viewport: params.testsviewport,
-                    browserName: params.testsbrowsername,
-                    os: params.testos,
+                    run: params.run,
+                    name: params.name,
+                    status: params.status,
+                    viewport: params.viewport,
+                    browserName: params.browser,
+                    os: params.os,
                     Start_date: new Date(),
                 });
 

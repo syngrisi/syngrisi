@@ -19,11 +19,11 @@ Feature: Start/Stop session
     When I send "post" request to "http://vrs:3001/tests" with:
     """
     form:
-      testname: Test VRS API Smoke - Start/Stop Session
-      teststatus: passed
-      testsviewport: 10x10
-      testsbrowsername: chrome
-      testos: MacOs
+      name: Test VRS API Smoke - Start/Stop Session
+      status: passed
+      viewport: 10x10
+      browser: chrome
+      os: MacOs
     """
     When I expect the "post" response with:
     """
@@ -77,12 +77,13 @@ Feature: Start/Stop session
     When I send "post" request to "http://vrs:3001/tests" with:
     """
     form:
-      testname: Test VRS API Smoke - Start/Stop Session
-      teststatus: passed
-      testsviewport: 10x10
-      testsbrowsername: chrome
-      testos: MacOs
+      name: Test VRS API Smoke - Start/Stop Session
+      status: passed
+      viewport: 10x10
+      browser: chrome
+      os: MacOs
     """
+
     Then I expect the "post" response with:
     """
     statusCode: 200
@@ -133,11 +134,11 @@ Feature: Start/Stop session
     When I send "post" request to "http://vrs:3001/tests" with:
     """
     form:
-      testname: Test VRS API Smoke - Start/Stop Session
-      teststatus: passed
-      testsviewport: 10x10
-      testsbrowsername: chrome
-      testos: MacOs
+      name: Test VRS API Smoke - Start/Stop Session
+      status: passed
+      viewport: 10x10
+      browser: chrome
+      os: MacOs
     """
     Then I expect the "post" response with:
     """
@@ -189,11 +190,11 @@ Feature: Start/Stop session
     When I send "post" request to "http://vrs:3001/tests" with:
     """
     form:
-      testname: Test VRS API Smoke - Start/Stop Session
-      teststatus: passed
-      testsviewport: 10x10
-      testsbrowsername: chrome
-      testos: MacOs
+      name: Test VRS API Smoke - Start/Stop Session
+      status: passed
+      viewport: 10x10
+      browser: chrome
+      os: MacOs
     """
     Then I expect the "post" response with:
     """
@@ -245,11 +246,11 @@ Feature: Start/Stop session
     When I send "post" request to "http://vrs:3001/tests" with:
     """
     form:
-      testname: Test VRS API Smoke - Start/Stop Session
-      teststatus: passed
-      testsviewport: 10x10
-      testsbrowsername: chrome
-      testos: MacOs
+      name: Test VRS API Smoke - Start/Stop Session
+      status: passed
+      viewport: 10x10
+      browser: chrome
+      os: MacOs
     """
     Then I expect the "post" response with:
     """
@@ -302,11 +303,11 @@ Feature: Start/Stop session
     When I send "post" request to "http://vrs:3001/tests" with:
     """
     form:
-      testname: Test VRS API Smoke - Start/Stop Session
-      teststatus: passed
-      testsviewport: 10x10
-      testsbrowsername: chrome
-      testos: MacOs
+      name: Test VRS API Smoke - Start/Stop Session
+      status: passed
+      viewport: 10x10
+      browser: chrome
+      os: MacOs
     """
     Then I expect the "post" response with:
     """
@@ -358,11 +359,11 @@ Feature: Start/Stop session
     When I send "post" request to "http://vrs:3001/tests" with:
     """
     form:
-      testname: Test VRS API Smoke - Start/Stop Session
-      teststatus: passed
-      testsviewport: 10x10
-      testsbrowsername: chrome
-      testos: MacOs
+      name: Test VRS API Smoke - Start/Stop Session
+      status: passed
+      viewport: 10x10
+      browser: chrome
+      os: MacOs
     """
     Then I expect the "post" response with:
     """
@@ -413,11 +414,11 @@ Feature: Start/Stop session
     When I send "post" request to "http://vrs:3001/tests" with:
     """
     form:
-      testname: Test VRS API Smoke - Start/Stop Session
-      teststatus: passed
-      testsviewport: 10x10
-      testsbrowsername: chrome
-      testos: MacOs
+      name: Test VRS API Smoke - Start/Stop Session
+      status: passed
+      viewport: 10x10
+      browser: chrome
+      os: MacOs
     """
     Then I expect the "post" response with:
     """

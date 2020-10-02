@@ -18,11 +18,11 @@ Feature: Smoke VRS API
     When I send "post" request to "http://vrs:3001/tests" with:
     """
     form:
-      testname: Test VRS API Smoke
-      teststatus: passed
-      testsviewport: 1x1
-      testsbrowsername: chrome
-      testos: MacOs
+      name: Test VRS API Smoke
+      status: passed
+      viewport: 1x1
+      browser: chrome
+      os: MacOs
     """
 
     When I expect the "post" response with:
@@ -42,11 +42,11 @@ Feature: Smoke VRS API
       """
         url: http://vrs:3001/tests
         params:
-          testname: Test Check Phase 1
-          teststatus: passed
-          testsviewport: 1x1
-          testsbrowsername: chrome
-          testos: MacOs
+          name: Test Check Phase 1
+          status: passed
+          viewport: 1x1
+          browser: chrome
+          os: MacOs
       """
     Given I generate a random image "./vrs/tests/files/randomImg.png"
     Given I create new VRS Check with:
@@ -76,11 +76,11 @@ Feature: Smoke VRS API
       """
         url: http://vrs:3001/tests
         params:
-          testname: Test Check Phase 1-2
-          teststatus: passed
-          testsviewport: 1x1
-          testsbrowsername: chrome
-          testos: MacOs
+          name: Test Check Phase 1-2
+          status: passed
+          viewport: 1x1
+          browser: chrome
+          os: MacOs
       """
     Given I generate a random image "./vrs/tests/files/randomImg.png"
     Given I create new VRS Check with:
@@ -127,11 +127,11 @@ Feature: Smoke VRS API
       """
         url: http://vrs:3001/tests
         params:
-          testname: Test Check Phase 1-2 already exist - 1
-          teststatus: passed
-          testsviewport: 1x1
-          testsbrowsername: chrome
-          testos: MacOs
+          name: Test Check Phase 1-2 already exist - 1
+          status: passed
+          viewport: 1x1
+          browser: chrome
+          os: MacOs
       """
     Given I generate a random image "./vrs/tests/files/randomImg.png"
     Given I create new VRS Check with:
@@ -188,11 +188,11 @@ Feature: Smoke VRS API
       """
         url: http://vrs:3001/tests
         params:
-          testname: Test Check Phase 1-2 already exist - 2
-          teststatus: passed
-          testsviewport: 1x1
-          testsbrowsername: chrome
-          testos: MacOs
+          name: Test Check Phase 1-2 already exist - 2
+          status: passed
+          viewport: 1x1
+          browser: chrome
+          os: MacOs
       """
 
     When I create new VRS Check with:
