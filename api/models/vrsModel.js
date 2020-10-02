@@ -161,7 +161,7 @@ const VRSTestSchema = new Schema({
         type: Schema.Types.ObjectId,
     },
     run: {
-        type: String,
+        type: Schema.Types.ObjectId,
     },
 });
 
@@ -176,6 +176,22 @@ const VRSSuiteSchema = new Schema({
         type: String,
     },
     Updated_date: {
+        type: Date,
+        default: Date.now,
+    },
+});
+
+const VRSRunSchema = new Schema({
+    name: {
+        type: String,
+        default: 'Others',
+        unique: true,
+        required: 'the suite name is empty',
+    },
+    description: {
+        type: String,
+    },
+    updatedDate: {
         type: Date,
         default: Date.now,
     },
@@ -205,3 +221,4 @@ module.exports = mongoose.model('VRSCheck', VRSCheckSchema);
 module.exports = mongoose.model('VRSTest', VRSTestSchema);
 module.exports = mongoose.model('VRSSuite', VRSSuiteSchema);
 module.exports = mongoose.model('VRSApp', VRSAppSchema);
+module.exports = mongoose.model('VRSRun', VRSRunSchema);
