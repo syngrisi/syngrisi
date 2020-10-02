@@ -1,0 +1,11 @@
+<% items.forEach(function(item){ %>
+    <div name="suite-menu-item-container" class="row pl-3 w-100 btn-light border-silver mt-1 mr-0">
+        <div class="col.auto pl-2">
+            <input name="suite-item" class="small" type="checkbox" suiteid="<%= item.id %>"
+                   id="suite-checkbox-<%= item.id %>">
+        </div>
+        <div class="col pr-1 pl-2 pb-1">
+            <a href="/?suitename=<%= item.name %>" class="small text-dark"><%= item.name %></a>
+        </div>
+    </div>
+<% }); %>
