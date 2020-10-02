@@ -3,8 +3,8 @@ const {default: PQueue} = require('p-queue');
 const queue = new PQueue({concurrency: 1});
 
 module.exports = async function (app) {
-    const UI = require('../controllers/ui');
-    const API = require('../controllers/api');
+    const UI = require('../controllers/ui/ui');
+    const API = require('../controllers/api/api');
 
     await app
         .delete('/checks/:id', async (req, res, next) => {
@@ -18,6 +18,9 @@ module.exports = async function (app) {
         })
         .get('/', async function (req, res, next) {
             UI.index(req, res).catch(next).catch(next);
+        })
+        .get('/runs', async function (req, res, next) {
+            UI.runs(req, res).catch(next).catch(next);
         })
         .get('/affectedelements', async function (req, res, next) {
             API.affectedelements(req, res).catch(next).catch(next);

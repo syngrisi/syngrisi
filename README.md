@@ -1,4 +1,4 @@
-## Visual regression service
+## Syngrisi
 
 ### Main concept
 
@@ -38,5 +38,10 @@ npm run startservice # start like service, required forever module globally (htt
 npm run clear
 ```
 
+ ### Environment variables
  
+ `VRS_BASELINE_PATH` - path to baseline images
+ `VRS_CONN_STRING` - mongo db connection string
+ `VRS_PORT` - tcp port for application server (default is 3000)
+ `V_SHIFTING` - value for vertical page shifting
  

@@ -17,7 +17,7 @@ const VRSSnapshotSchema = new Schema({
         type: String,
         required: 'the image hash of the snapshot entity is empty',
     },
-    Created_date: {
+    createdDate: {
         type: Date,
         default: Date.now,
     },
@@ -77,12 +77,12 @@ const VRSCheckSchema = new Schema({
     diffId: {
         type: String,
     },
-    Created_date: {
+    createdDate: {
         type: Date,
         required: true,
         default: Date.now,
     },
-    Updated_date: {
+    updatedDate: {
         type: Date,
         // default: Date.now,
     },
@@ -111,13 +111,6 @@ const VRSCheckSchema = new Schema({
     domDump: {
         type: String,
     }
-    // matchtype: {
-    //     type: [{
-    //         type: String,
-    //         enum: ['new', 'brocken', 'strict', 'ignorecolor',],
-    //     }],
-    //     default: ['new'],
-    // },
 });
 
 const VRSTestSchema = new Schema({
@@ -149,11 +142,11 @@ const VRSTestSchema = new Schema({
         type: Number,
         default: 0,
     },
-    Updated_date: {
+    updatedDate: {
         type: Date,
         // default: Date.now,
     },
-    Start_date: {
+    startDate: {
         type: Date,
         // default: Date.now,
     },
@@ -175,7 +168,7 @@ const VRSSuiteSchema = new Schema({
     description: {
         type: String,
     },
-    Updated_date: {
+    updatedDate: {
         type: Date,
         default: Date.now,
     },
@@ -210,7 +203,7 @@ const VRSAppSchema = new Schema({
     version: {
         type: String,
     },
-    Updated_date: {
+    updatedDate: {
         type: Date,
         default: Date.now,
     },

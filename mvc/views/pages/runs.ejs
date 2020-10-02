@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="en" xmlns:width="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!--    <link rel="icon" href="../../static/imgs/logo.png">-->
+    <link rel="icon" href="../../../static/imgs/simpleLogoLightShadow.png">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
+          integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
+          integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="../../../static/css/colors.css">
+    <% if(currentRun) { %>
+        <title>VRS list of checks - <%= currentRun.name %> </title>
+    <% }else{ %>
+        <title>VRS list of checks - all runs</title>
+    <% } %>
+
+</head>
+<body>
+
+<div name="main" class="main container-fluid pl-3 pr-3 ml-0 mh-100">
+    <div name="page-head" class="row bg-sidebar sticky-top">
+        <div name="logo-and-link"  class="col-5 col-lg-5 w-25 pl-0 pb-2 bg-sidebar text-light" id="logo-and-label-container">
+            <%- include('components/logo_and_link', {drop: false})%>
+        </div>
+        <!--    TESTS TOOLBAR-->
+        <div name="header-title" class="run-head col-4 col-lg-4 text-light1 bg-sidebar pl-5 pt-3 h4 border-left mb-0 light-purple sticky-top1">
+            <%- include('components/header_title', {currentItem: currentRun})%>
+        </div>
+        <div name="run-menu-toolbar" class="col">
+            <div class="row all-header light-purple sticky-top1">
+                <div class="tests-toolbar sticky-top1 col text-light p-1 pt-3 bg-sidebar align-self-end">
+                    <div class="sticky-top1 row d-flex flex-row-reverse pr-2">
+
+                        <div class="col-auto pl-1">
+                            <a name="more-tests" type="button" class="btn btn-secondary bg-sidebar border-0"
+                               title="more">
+                                <i class="fas fa-ellipsis-v fa-lg"></i>
+                            </a>
+                        </div>
+                        <div class="col-auto pl-1 pr-1">
+                            <a name="remove-tests" type="button" class="btn btn-secondary bg-sidebar border-0"
+                               onclick="removeTests()"
+                               title="remove checked tests">
+                                <i class="fas fa-trash fa-lg"></i>
+                            </a>
+                        </div>
+                        <div class="col-auto pl-1 pr-1">
+                            <a name="accept-checks" type="button" class="btn btn-secondary bg-sidebar border-0"
+                               onclick="acceptSelectedChecks()"
+                               title="accept selected checks">
+                                <i class="far fa-check-circle fa-lg"></i>
+                            </a>
+                        </div>
+                        <div class="col-auto pl-1 pr-1">
+                            <a name="reload-tests" type="button" class="btn btn-secondary bg-sidebar border-0"
+                               onclick="location.reload()"
+                               title="reload page">
+                                <i class="fas fa-sync-alt fa-lg"></i>
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--    DATA GRID START    -->
+    <div class="all-table row mh-100">
+        <!--   SIDEBAR    -->
+        <div name="sidebar" class="sidebar col-5 col-lg-5 pr-0 mr-0 ml-1 bg-light border-top border-right border-bottom border-silver float-left ml-0 mr-0"
+             style="width: 100px">
+            <!--   SUITES LIST-->
+            <div class="runs-list ml-0 row pl-2 pt-1 pr-0 bg-light text-secondary mr-0">
+                <% let items = runs %>
+                <%- include('components/sidebar_items_runs', {items: items})%>
+            </div>
+            <!--  SUITES LIST END-->
+        </div>
+        <!--   TESTS TABLE-->
+        <div name class="table-rows p-0 content col float-right ">
+            <%- include('components/tests_table_headers_runs', {})%>
+
+
+            <div name="tests-row" class="checks row">
+                <%- include('components/tests_table_rows_runs', {checksByTestGroupedByIdent: checksByTestGroupedByIdent})%>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--NOTIFY BOX-->
+<div id="notify" role="alert" aria-live="assertive" aria-atomic="true"
+     class="fixed-bottom-right bg-light m-1 border rounded toast fade show"
+     data-autohide="false"
+     style="display: none"
+>
+    <div class="toast-header border-bottom">
+        <svg class="bd-placeholder-img rounded mr-2" width="20" height="20" xmlns="http://www.w3.org/2000/svg"
+             preserveAspectRatio="xMidYMid slice" focusable="false" role="img">
+            <rect id="notify-rect" width="100%" height="100%" fill="#2ECC40"></rect>
+        </svg>
+        <strong id="notify-header" class="mr-auto">Success</strong>
+        <!--        <small>11 mins ago</small>-->
+        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"
+                onclick="$('#notify').hide()">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+    <div id="notify-message" class="toast-body">
+        Operation was successful finished
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"
+        integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
+        crossorigin="anonymous"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/fabric.js/3.6.1/fabric.min.js"></script>
+<script src="../lib/baselineView.js"></script>
+<script>
+    var baselines = {}
+    const urlParams = new URLSearchParams(window.location.search);
+    const unfoldTestId = urlParams.get('unfoldTestId');
+    if (unfoldTestId)
+        unfoldCheck(unfoldTestId)
+
+    function unfoldCheck(id) {
+        jQuery(`#testchecks_${id}`)[0].scrollIntoView();
+        jQuery(`#testchecks_${id}`).collapse('show');
+        drawTestChecksPreviews(unfoldTestId);
+    }
+
+    function drawOverlay(expectedId, actualId, diff) {
+        document.getElementById('overlay').style.display = 'block';
+    }
+
+    function drawTestChecksPreviews(testId) {
+        var checksDivs = Array.prototype.slice.call(document.getElementById(`testchecks_${testId}`).children);
+        let checksIds = []
+        checksDivs.forEach(el => checksIds.push(el.id.replace('check_', '')))
+
+        let baselineIds = []
+        checksDivs.forEach(el => baselineIds.push(el.getAttribute('baselineId')))
+
+        let diffsIds = []
+        checksDivs.forEach(el => diffsIds.push(el.getAttribute('diffId')))
+
+        let statuses = []
+        checksDivs.forEach(el => statuses.push(el.getAttribute('checkStatus')))
+        console.log(statuses)
+
+        checksIds.forEach(function (id, index) {
+            let baseline = {};
+            fabric.Object.prototype.objectCaching = false;
+            const snapshotId = ((statuses[index] === 'new') || (statuses[index] === 'passed') || (statuses[index] === 'blinking')) ? baselineIds[index] : diffsIds[index]
+            // const snapshotId = diffsIds[index]
+            fabric.Image.fromURL(`/snapshoots/${snapshotId}.png`, function (oImg) {
+                baseline = new BaselineView('canvas_snapshoot_' + id,
+                    oImg,
+                    {
+                        weight: document.getElementById('canvas_snapshoot_' + id).offsetWidth,
+                        backimageId: baselineIds[index]
+                    }
+                );
+                baseline.getSnapshotIgnoreRegionsDataAndDrawRegions(baselineIds[index]);
+                baseline.canvas.hoverCursor = "pointer";
+                baselines[id] = baseline;
+            })
+        })
+    }
+
+    $(function () {
+        $('[data-toggle="tooltip"]')
+            .tooltip({
+                animation: true,
+                delay: {
+                    show: 0,
+                    hide: 100
+                }
+            });
+    });</script>
+<script>
+
+    function setSuiteMenuWidth() {
+        const logoWidth = document.getElementById('logo-and-label-container').clientWidth
+        document.getElementById('collapseSuiteMenu').style.width = logoWidth + 'px'
+    }
+
+    function sort(prop, order = -1) {
+        const currentUri = document.location.href;
+        if (currentUri.includes(`sortprop=${prop}`) && currentUri.includes('order=-1')) {
+            order = 1
+        }
+
+        let clearedUri = currentUri.replace(/[&]{0,1}(sortorder=[-]{0,1}.)/, "");
+        clearedUri = clearedUri.replace(/[&]{0,1}sortprop=\w+/, "");
+
+        let outUri;
+        if (clearedUri.includes('?')) {
+            outUri = clearedUri + `&sortprop=${prop}&sortorder=${order}`;
+        } else {
+            outUri = clearedUri + `?sortprop=${prop}&sortorder=${order}`;
+        }
+        outUri = outUri.replace("?&", "?");
+
+        document.location.href = outUri;
+    }
+
+    function showNotification(msg, status = 'Success') {
+        document.getElementById("notify-header").textContent = status;
+        document.getElementById("notify-message").textContent = msg;
+        document.getElementById("notify-rect").setAttribute('fill', '#2ECC40');
+        if (status === 'Error')
+            document.getElementById("notify-rect").setAttribute('fill', '#FF4136');
+        $('#notify').show()
+        setTimeout(function () {
+                $('#notify').hide()
+            },
+            7000)
+    }
+
+    function removeOneCheck(id) {
+        if (!confirmation()) return;
+        removeCheck(id);
+    }
+
+    function removeCheck(id) {
+        var xhr = new XMLHttpRequest();
+        var params = `id=${id}`;
+        xhr.open('DELETE', `/checks/${id}`, true);
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                console.log('Success ' + id + '--' + xhr.responseText);
+                let checkDiv = document.getElementById(`check_${id}`);
+                checkDiv.parentNode.removeChild(checkDiv);
+                showNotification('The check was removed')
+            } else {
+                showNotification('Remove request was failing', 'Error');
+                console.log('Request failed.  Returned status of ' + xhr.status);
+            }
+        };
+        xhr.send(params);
+    }
+
+    async function acceptOneCheck(id, newBaselineId, oldBaselineId, testId) {
+        if (!confirmation()) return;
+        const regionData = await baselines[id].getRegionsData(oldBaselineId);
+        if (regionData.ignoreRegions && regionData.ignoreRegions != 'undefined') {
+            const confirm = confirmation('The previous baseline contains regions. Doy you want to copy them?')
+            if (confirm) {
+                baselines[id].sendIgnoreRegions(newBaselineId, JSON.parse(regionData.ignoreRegions));
+                console.log('ignore region data was sent to new baseline snapshoot' + JSON.parse(regionData.ignoreRegions));
+            }
+        }
+        let unfoldLocation;
+        const cleanUrl = document.URL.replace(/[&?]{0,1}unfoldTestId=[^$&]{24}/g, '');
+
+        if (cleanUrl.includes('?')) {
+            unfoldLocation = cleanUrl + '&unfoldTestId=' + testId;
+        } else {
+            unfoldLocation = cleanUrl + '?unfoldTestId=' + testId;
+        }
+        acceptCheck(id, newBaselineId, () => location.href = unfoldLocation);
+    }
+
+    async function acceptSelectedChecks() {
+        if (!confirmation('Please pay attention to everything regions\' data will be copied to new baselines. Are you sure? Are you sure?')) return;
+        let checkboxes = document.querySelectorAll('input[name=check-input]:checked');
+        let results = [];
+        for (const checkbox of checkboxes) {
+            const checkId = checkbox.getAttribute('id');
+            const baselineId = checkbox.getAttribute('baselineId');
+            const actualId = checkbox.getAttribute('actualId');
+            const regionData = await baselines[checkId].getRegionsData(baselineId);
+            if (regionData.ignoreRegions && regionData.ignoreRegions != 'undefined') {
+                baselines[checkId].sendIgnoreRegions(actualId, JSON.parse(regionData.ignoreRegions));
+                console.log('ignore region data was sent to new baseline snapshoot' + JSON.parse(regionData.ignoreRegions));
+            }
+
+            results.push(acceptCheck(checkId, actualId));
+        }
+        Promise.all(results).then((result) => {
+            location.reload();
+        }).catch(e => {
+            console.log(e);
+        })
+    }
+
+    function acceptCheck(id, newBaselineId, callback) {
+        return new Promise((resolve, reject) => {
+            try {
+                const xhr = new XMLHttpRequest();
+                // send empty diffid
+                const params = `id=${id}&baselineId=${newBaselineId}&diffId&status=passed`;
+                console.log(params);
+                xhr.open('PUT', `/checks/${id}`, true);
+                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        showNotification(`The check '${id}' was accepted`)
+
+                        console.log('Success ' + id + '--' + xhr.responseText);
+                        if (callback)
+                            callback();
+                        return resolve(xhr);
+                    } else {
+                        console.log('Request failed. Returned status of ' + xhr.status + 'resp:' + xhr.responseText);
+                    }
+                };
+                xhr.send(params);
+            } catch (e) {
+                return reject(e);
+            }
+        })
+    }
+
+    function removeTest(id) {
+        return new Promise(function (resolve, reject) {
+            try {
+                const xhr = new XMLHttpRequest();
+                const params = `id=${id}`;
+                xhr.open('DELETE', `/tests/${id}`, true);
+                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        console.log('Success ' + id + '--' + xhr.responseText);
+                        return resolve(xhr);
+                    } else {
+                        console.log('Request failed.  Returned status of ' + xhr.status);
+                        return reject(xhr);
+                    }
+                };
+                xhr.send(params);
+            } catch (e) {
+                return reject(e);
+            }
+        })
+
+    }
+
+    function removeTests() {
+        if (!confirmation()) return;
+        let checkboxes = document.querySelectorAll('input[name=test]:checked');
+        let results = []
+        for (const checkbox of checkboxes) {
+            results.push(removeTest(checkbox.id))
+        }
+        Promise.all(results).then(function (results) {
+            showNotification('Tests were removed successfully')
+            setTimeout(()=> location.reload(), 800);
+        }).catch((e)=>{
+            console.error(e);
+            showNotification('Cannot remove tests')
+
+        })
+    }
+
+    // function removeSuite(id) {
+    //     return new Promise(function (resolve, reject) {
+    //         try {
+    //             const xhr = new XMLHttpRequest();
+    //             const params = `id=${id}`;
+    //             xhr.open('DELETE', `/suites/${id}`, true);
+    //             xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    //
+    //             xhr.onload = function () {
+    //                 if (xhr.status === 200) {
+    //                     console.log(`Suite was successfully removed, id: '${id}', resonse test: '${xhr.responseText}'`);
+    //                     return resolve(xhr)
+    //                 } else {
+    //                     console.log('Cannot remove the suite. Request is failed.  Returned status of ' + xhr.status);
+    //                     reject(xhr)
+    //                 }
+    //             };
+    //             xhr.send(params);
+    //         } catch (e) {
+    //             return reject(e)
+    //         }
+    //     })
+    // }
+
+    // function removeCheckedSuites() {
+    //     if (!confirmation()) return;
+    //     let checkboxes = document.querySelectorAll('input[name=suite-item]:checked');
+    //     let result = [];
+    //     for (const checkbox of checkboxes) {
+    //         result.push(removeSuite(checkbox.getAttribute('suiteid')));
+    //     }
+    //     Promise.all(result).then(
+    //         function () {
+    //             showNotification('All suites were removed');
+    //             setTimeout(() => location.reload(), 1300);
+    //         }
+    //     ).catch(function (e) {
+    //         showNotification('Cannot remove all suites');
+    //         console.error('Cannot remove all suites, error: ' + e);
+    //     })
+    // }
+
+    function checkAllTests() {
+        let checkboxes = document.querySelectorAll('input[name=test]');
+        checkboxes.forEach(function (ch) {
+            if (ch.checked === false) {
+                ch.checked = true;
+            } else {
+                ch.checked = false;
+            }
+        });
+    }
+
+    // function checkAllSuites() {
+    //     let checkboxes = document.querySelectorAll('input[name=suite-item]');
+    //     checkboxes.forEach(function (ch) {
+    //         if (ch.checked === false) {
+    //             ch.checked = true;
+    //         } else {
+    //             ch.checked = false;
+    //         }
+    //     });
+    // }
+
+    function confirmation(text = 'are you sure?') {
+        const answer = window.confirm(text);
+        console.log(answer);
+        return answer;
+    }
+
+</script>
+</body>
+</html>
