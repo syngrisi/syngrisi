@@ -3,22 +3,22 @@
 const mongoose = require('mongoose');
 const hasha = require('hasha');
 const fs = require('fs').promises;
-const {config} = require('../../config');
-const {getDiff} = require('../../lib/comparator');
-const orm = require('../../lib/dbItems');
-const {parseDiff} = require('../../lib/parseDiff');
-const {getAllElementsByPositionFromDump} = require('../../lib/getElementsByPixPositionsFromDump')
+const {config} = require('../../../config');
+const {getDiff} = require('../../../lib/comparator');
+const orm = require('../../../lib/dbItems');
+const {parseDiff} = require('../../../lib/parseDiff');
+const {getAllElementsByPositionFromDump} = require('../../../lib/getElementsByPixPositionsFromDump')
 const Snapshot = mongoose.model('VRSSnapshot');
 const Check = mongoose.model('VRSCheck');
 const Test = mongoose.model('VRSTest');
 const Suite = mongoose.model('VRSSuite');
-const {checksGroupedByIdent} = require('./utils');
-const {fatalError, waitUntil} = require('./utils');
+const {checksGroupedByIdent} = require('../utils');
+const {fatalError, waitUntil} = require('../utils');
 
 // get last updated document
 async function getLastCheck(identifier) {
     const last = (await Check.find(identifier)
-        .sort({Updated_date: -1})
+        .sort({updatedDate: -1})
         .limit(1))[0];
     if (last && last.baselineId) {
         return last;
@@ -30,7 +30,7 @@ async function getLastSuccessCheck(identifier) {
     const condition = [{...identifier, 'status': 'new'}, {...identifier, 'status': 'passed'}]
     return (await Check.find({
         $or: condition
-    }).sort({Updated_date: -1}).limit(1))[0];
+    }).sort({updatedDate: -1}).limit(1))[0];
 }
 
 async function getSnapshotByImgHash(hash) {
@@ -200,7 +200,7 @@ exports.create_test = async function (req, res) {
                     viewport: params.viewport,
                     browserName: params.browser,
                     os: params.os,
-                    Start_date: new Date(),
+                    startDate: new Date(),
                 }
 
                 let run;
@@ -271,7 +271,7 @@ function updateTest(opts) {
     return new Promise(async function (resolve, reject) {
         try {
             const id = opts.id
-            opts['Updated_date'] = Date.now();
+            opts['updatedDate'] = Date.now();
             console.log(`UPDATE test id '${id}' with params '${JSON.stringify(opts)}'`);
 
             const tst = await Test.findByIdAndUpdate(id, opts).exec().catch(
@@ -300,7 +300,7 @@ exports.update_test = async function (req, res) {
             try {
                 let opts = req.body;
                 let id = req.params.id;
-                opts['Updated_date'] = Date.now();
+                opts['updatedDate'] = Date.now();
                 console.log(`UPDATE test id '${id}' with params '${JSON.stringify(opts)}'`);
 
                 const tst = await Test.findByIdAndUpdate(id, opts).exec().catch(
@@ -448,7 +448,7 @@ exports.create_check = async function (req, res) {
                     viewport: req.body.viewport,
                     browserName: req.body.browserName,
                     os: req.body.os,
-                    Updated_date: Date.now(),
+                    updatedDate: Date.now(),
                     suite: suite.id,
                     appname: (await orm.createAppIfNotExist({name: req.body.appname || 'Unknown'})).id,
                     domDump: req.body.domdump,
@@ -551,7 +551,7 @@ exports.create_check = async function (req, res) {
                     }
 
                     console.log(`Update check with params: '${JSON.stringify(updateParams)}'`);
-                    updateParams['Updated_date'] = Date.now();
+                    updateParams['updatedDate'] = Date.now();
                     await check.updateOne(updateParams);
                     resultResponse = await Check.findById(check.id);
                 }
@@ -601,7 +601,7 @@ exports.update_check = async function (req, res) {
         try {
             let opts = req.body;
             let id = req.params.id;
-            opts['Updated_date'] = Date.now();
+            opts['updatedDate'] = Date.now();
             console.log(`UPDATE check id: '${id}' with params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`);
 
             // Check.findByIdAndUpdate(req.param.id, opts)
@@ -642,7 +642,7 @@ exports.update_snapshot = async function (req, res) {
         try {
             let opts = req.body;
             let id = req.params.id;
-            opts['Updated_date'] = Date.now();
+            opts['updatedDate'] = Date.now();
             console.log(`UPDATE snapshot id: '${id}' with params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`);
             const snp = await Snapshot.findByIdAndUpdate(id, opts).exec().catch(
                 function (e) {

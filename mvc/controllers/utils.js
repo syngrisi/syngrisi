@@ -39,9 +39,9 @@ exports.checksGroupedByIdent = async function checksGroupedByIdent(checkFilter) 
         try {
             // console.log(checkFilter)
             let chs = await Check.find(checkFilter)
-                .sort({Updated_date: 1}).exec()
+                .sort({updatedDate: 1}).exec()
             let checks = chs.map(function (ch) {
-                ch.formattedCreatedDate = moment(ch.Created_date)
+                ch.formattedCreatedDate = moment(ch.createdDate)
                     .format('YYYY-MM-DD hh:mm');
                 return ch;
             });

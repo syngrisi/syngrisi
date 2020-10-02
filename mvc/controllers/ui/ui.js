@@ -5,9 +5,10 @@ const Snapshot = mongoose.model('VRSSnapshot');
 const Check = mongoose.model('VRSCheck');
 const Test = mongoose.model('VRSTest');
 const Suite = mongoose.model('VRSSuite');
+const Run = mongoose.model('VRSRun');
 // const App = mongoose.model('VRSApp');
 const moment = require('moment');
-const {fatalError, checkIdent, checksGroupedByIdent} = require('./utils');
+const {fatalError, checkIdent, checksGroupedByIdent} = require('../utils');
 
 async function getSnapshotByImgHash(hash) {
     return (await Snapshot.find({imghash: hash}))[0];
@@ -26,7 +27,7 @@ exports.checkview = async function (req, res) {
 
             const check = await Check.findById(`${opts.id}`);
             var moment = require('moment');
-            const checkDate = moment(check.Created_date)
+            const checkDate = moment(check.createdDate)
                 .format('YYYY-MM-DD hh:mm');
             res.render('pages/check', {
                 check: check,
@@ -62,12 +63,12 @@ exports.checksgroupview = async function (req, res) {
             // console.log(groupChecks);
             const moment = require('moment');
             groupChecks.map(function (check) {
-                check.formattedCreatedDate = moment(check.Created_date)
+                check.formattedCreatedDate = moment(check.createdDate)
                     .format('YYYY-MM-DD hh:mm');
                 return check
             })
             // console.log(JSON.stringify(group, null, "  "))
-            // const checkDate = moment(check.Created_date)
+            // const checkDate = moment(check.createdDate)
             //     .format('YYYY-MM-DD hh:mm');
             res.render('pages/checkgroup', {
                 checks: groupChecks,
@@ -98,7 +99,7 @@ exports.snapshootview = async function (req, res) {
             const diffId = opts.diffid ? opts.diffid : '';
 
             const moment = require('moment');
-            snapshot.formattedCreatedDate = moment(snapshot.Created_date)
+            snapshot.formattedCreatedDate = moment(snapshot.createdDate)
                 .format('YYYY-MM-DD hh:mm');
             res.render('pages/snapshot', {
                 snapshot: snapshot,
@@ -124,7 +125,7 @@ exports.diffview = async function (req, res) {
             }
             try {
                 const baseline = await Snapshot.findById(`${opts.expectedid}`);
-                baseline.formattedCreatedDate = moment(baseline.Created_date)
+                baseline.formattedCreatedDate = moment(baseline.createdDate)
                     .format('YYYY-MM-DD hh:mm');
 
                 let actual_snapshoot;
@@ -133,7 +134,7 @@ exports.diffview = async function (req, res) {
                 // for new check case
                 if (opts.actualid) {
                     actual_snapshoot = await Snapshot.findById(`${opts.actualid}`);
-                    actual_snapshoot.formattedCreatedDate = moment(actual_snapshoot.Created_date)
+                    actual_snapshoot.formattedCreatedDate = moment(actual_snapshoot.createdDate)
                         .format('YYYY-MM-DD hh:mm');
                 } else {
                     diff_snapshoot = baseline;
@@ -143,7 +144,7 @@ exports.diffview = async function (req, res) {
                 // for passed check case
                 if (opts.diffid) {
                     diff_snapshoot = await Snapshot.findById(`${opts.diffid}`);
-                    diff_snapshoot.formattedCreatedDate = moment(diff_snapshoot.Created_date)
+                    diff_snapshoot.formattedCreatedDate = moment(diff_snapshoot.createdDate)
                         .format('YYYY-MM-DD hh:mm');
                 } else {
 
@@ -197,10 +198,10 @@ exports.index = async function (req, res) {
                     || (opts.sortprop === 'suite')
                     || (opts.sortprop === 'os')
                     || (opts.sortprop === 'viewport')
-                    || (opts.sortprop === 'Updated_date')) {
+                    || (opts.sortprop === 'updatedDate')) {
                     sortBy = opts.sortprop
                 }
-                sortBy = sortBy ? sortBy : 'Updated_date'
+                sortBy = sortBy ? sortBy : 'updatedDate'
                 const sortOrder = opts.sortorder ? opts.sortorder : -1;
                 let sortFilter = {};
                 sortFilter[sortBy] = sortOrder;
@@ -213,7 +214,7 @@ exports.index = async function (req, res) {
                 const tests = await Test.find(suiteFilter)
                     .sort(sortFilter).exec()
                 tests.map(function (test) {
-                    test.formattedUpdatedDate = moment(test.Updated_date)
+                    test.formattedUpdatedDate = moment(test.updatedDate)
                         .format('YYYY-MM-DD hh:mm');
                     return test;
                 })
@@ -232,6 +233,71 @@ exports.index = async function (req, res) {
                     tests: tests,
                     currentSuite: suite,
                     checksByTestGroupedByIdent: checksByTestGroupedByIdent
+                });
+            } catch (e) {
+                fatalError(req, res, e);
+                return reject(e);
+            }
+        }
+    )
+};
+
+exports.runs = async function (req, res) {
+    return new Promise(
+        async function (resolve, reject) {
+            try {
+                let opts = req.query;
+                let testFilter = {};
+                let sortBy;
+                if ((opts.sortprop === 'name')
+                    || (opts.sortprop === 'status')
+                    || (opts.sortprop === 'browserName')
+                    || (opts.sortprop === 'suite')
+                    || (opts.sortprop === 'os')
+                    || (opts.sortprop === 'viewport')
+                    || (opts.sortprop === 'updatedDate')) {
+                    sortBy = opts.sortprop
+                }
+                sortBy = sortBy ? sortBy : 'updatedDate'
+                const sortOrder = opts.sortorder ? opts.sortorder : -1;
+                let sortFilter = {};
+                sortFilter[sortBy] = sortOrder;
+
+                // const suite = await Suite.findOne({name: opts.suitename}).exec()
+                const run = await Run.findOne({name: opts.runName}).exec()
+                if (run)
+                    testFilter = {run: run.id};
+                let runs = await Run.find({})
+                    .sort({updatedDate: 'desc'}).exec()
+                runs.map(function (run) {
+                    run.formattedUpdatedDate = moment(run.updatedDate)
+                        .format('hh:mm DD-MM-YYYY');
+                    return run;
+                })
+
+                const allTests = await Test.find({}).exec();
+
+                const tests = await Test.find(testFilter)
+                    .sort(sortFilter).exec()
+                tests.map(function (test) {
+                    test.formattedUpdatedDate = moment(test.updatedDate)
+                        .format('YYYY-MM-DD hh:mm');
+                    return test;
+                })
+
+                let checksByTestGroupedByIdent = {}
+
+                for (const test of tests) {
+                    let checkFilter = {test: test.id}
+                    checksByTestGroupedByIdent[test.id] = await checksGroupedByIdent(checkFilter);
+                }
+
+                res.render('pages/runs', {
+                    runs: runs,
+                    tests: tests,
+                    currentRun: run,
+                    checksByTestGroupedByIdent: checksByTestGroupedByIdent,
+                    allTests: allTests
                 });
             } catch (e) {
                 fatalError(req, res, e);

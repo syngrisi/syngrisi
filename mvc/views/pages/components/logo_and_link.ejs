@@ -2,7 +2,7 @@
     <div name="logo-img" class="col-auto pl-4 pr-0 pt-2">
         <div class="border-top border-bottom border-left rounded-left border-right rounded-right pl-1 pr-1 pt-1 pb-1">
             <a class="unlink" href="/">
-                <img src="static/imgs/simpleLogoLightShadow3.png" alt="logo" class=""
+                <img src="../../../../static/imgs/simpleLogoLightShadow3.png" alt="logo" class=""
                      style="width: 35px ">
             </a>
         </div>
@@ -12,20 +12,22 @@
         <a class="unlink h1" href="/" title="Σύγκριση">Syngrisi</a>
     </div>
     <div class="col-auto p-0">
-        <div class="container pt-3  ">
-            <a name="more-suites"
-               type="button"
-               onclick="setSuiteMenuWidth()"
-               data-toggle="collapse"
-               href="#collapseSuiteMenu"
-               aria-expanded="false"
-               aria-controls="collapseSuiteMenu"
-               class="btn btn-secondary border-0 bg-sidebar float-right unlink white" title="more"
-               style="box-shadow: none">
+        <% if(drop) { %>
+            <div class="container pt-3  ">
+                <a name="more-suites"
+                   type="button"
+                   onclick="setSuiteMenuWidth()"
+                   data-toggle="collapse"
+                   href="#collapseSuiteMenu"
+                   aria-expanded="false"
+                   aria-controls="collapseSuiteMenu"
+                   class="btn btn-secondary border-0 bg-sidebar float-right unlink white" title="more"
+                   style="box-shadow: none">
 
-                <i class="fas fa-caret-down fa-1x float-right "></i>
-            </a>
-        </div>
+                    <i class="fas fa-caret-down fa-1x float-right "></i>
+                </a>
+            </div>
+        <% } %>
     </div>
     <!--                <div class="col pl-2 pt-1 mr-0 border-top border-bottom border-right rounded-right text-truncate">-->
     <!--                    <a class="unlink" href="/">Visual Regression Service</a>-->
