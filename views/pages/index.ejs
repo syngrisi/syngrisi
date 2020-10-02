@@ -23,57 +23,16 @@
 </head>
 <body>
 
-<div class="main container-fluid pl-3 pr-3 ml-0 mh-100">
-
-    <div class="row bg-sidebar sticky-top" name="logo-and-link">
-        <div class="col-3 col-lg-3 w-25 pl-0 pb-2 bg-sidebar text-light" id="logo-and-label-container">
-            <div class="row pl-1">
-                <div name="logo-img" class="col-auto pl-4 pr-0 pt-2">
-                    <div class="border-top border-bottom border-left rounded-left border-right rounded-right pl-1 pr-1 pt-1 pb-1">
-                        <a class="unlink" href="/">
-                            <img src="static/imgs/simpleLogoLightShadow3.png" alt="logo" class=""
-                                 style="width: 35px ">
-                        </a>
-                    </div>
-                </div>
-                <div class="col pl-2 pt-0 mr-0 text-truncate">
-                    <!--                    <a class="unlink" href="/">Visual Regression Service</a>-->
-                    <a class="unlink h1" href="/" title="Σύγκριση">Syngrisi</a>
-                </div>
-                <div class="col-auto p-0">
-                    <div class="container pt-3  ">
-                        <a name="more-suites"
-                           type="button"
-                           onclick="setSuiteMenuWidth()"
-                           data-toggle="collapse"
-                           href="#collapseSuiteMenu"
-                           aria-expanded="false"
-                           aria-controls="collapseSuiteMenu"
-                           class="btn btn-secondary border-0 bg-sidebar float-right unlink white" title="more"
-                           style="box-shadow: none">
-
-                            <i class="fas fa-caret-down fa-1x float-right "></i>
-                        </a>
-                    </div>
-                </div>
-                <!--                <div class="col pl-2 pt-1 mr-0 border-top border-bottom border-right rounded-right text-truncate">-->
-                <!--                    <a class="unlink" href="/">Visual Regression Service</a>-->
-                <!--                </div>-->
-            </div>
+<div name="main" class="main container-fluid pl-3 pr-3 ml-0 mh-100">
+    <div name="page-head" class="row bg-sidebar sticky-top">
+        <div name="logo-and-link"  class="col-3 col-lg-3 w-25 pl-0 pb-2 bg-sidebar text-light" id="logo-and-label-container">
+            <%- include('components/logo_and_link', {})%>
         </div>
         <!--    TESTS TOOLBAR-->
-        <div class="suite-head col-4 col-lg-6 text-light1 bg-sidebar pl-5 pt-3 h4 border-left mb-0 light-purple sticky-top1">
-            <% if(currentSuite) { %>
-                <a href="?suitename=<%= currentSuite.name %>" class="unlink">
-                    <span><%= currentSuite.name %></span>
-                </a>
-            <% }else{ %>
-                <a href="/" class="unlink">
-                    <span>All checks</span>
-                </a>
-            <% } %>
+        <div name="header-title" class="suite-head col-4 col-lg-6 text-light1 bg-sidebar pl-5 pt-3 h4 border-left mb-0 light-purple sticky-top1">
+            <%- include('components/header_title', {currentSuite: currentSuite})%>
         </div>
-        <div class="col sticky-top1">
+        <div name="suite-menu-toolbar" class="col">
             <div class="row all-header light-purple sticky-top1">
                 <div class="tests-toolbar sticky-top1 col text-light p-1 pt-3 bg-sidebar align-self-end">
                     <div class="sticky-top1 row d-flex flex-row-reverse pr-2">
@@ -111,21 +70,23 @@
             </div>
         </div>
     </div>
-    <!--    TABLE HEADER END    -->
+
+    <!--    TABLE START    -->
     <div class="all-table row mh-100">
-        <div class="sidebar col-3 col-lg-3  mh-100 bg-light  border-top border-right border-bottom border-silver float-left w-251 ml-0 mr-0"
-        <div class="sidebar col-3 col-lg-3  mh-100 bg-light border-top  border-right border-bottom border-silver float-left w-251 ml-0 mr-0"
+        <!--   SIDEBAR    -->
+        <div name="sidebar" class="sidebar col-3 col-lg-3  mh-100 bg-light border-top  border-right border-bottom border-silver float-left w-251 ml-0 mr-0"
              style="width: 100px">
+            <!--   COLLAPSED SUITES TOOLBAR-->
             <div class="suites-menu position-fixed sticky-top1 row pl-2 pt-0 bg-sidebar collapse light-purple"
                  id="collapseSuiteMenu" style="z-index: 9000">
-                <div class="col-12 ml-2" >
+                <div class="col-12 ml-2">
                     <div class="row border1 mr-1 ml-0">
                         <div class="col-auto ml-1 pb-0">
                             <a name="check-all" type="button" class="btn btn-secondary bg-sidebar border-0"
                                onclick="checkAllSuites()"
                                title="check all suites">
                                 <input type="checkbox">
-<!--                                <i class="far fa-check-square fa-lg float-right"></i>-->
+                                <!--                                <i class="far fa-check-square fa-lg float-right"></i>-->
                             </a>
                         </div>
                         <div class="col-auto mr-1">
@@ -153,273 +114,26 @@
                     </div>
                 </div>
             </div>
-            <!--            SUITES LIST-->
+            <!--   SUITES LIST-->
             <div class="suites-list row pl-2 pt-1 pr-0 bg-light text-secondary ">
-
-                <% suites.forEach(function(suite){ %>
-                    <div name="suite-menu-item-container" class="row pl-3 w-100 btn-light border-silver mt-1 mr-0">
-                        <div class="col.auto pl-2">
-                            <input name="suite-item" class="small" type="checkbox" suiteid="<%= suite.id %>"
-                                   id="suite-checkbox-<%= suite.id %>">
-                        </div>
-                        <div class="col pr-1 pl-2 pb-1">
-                            <a href="/?suitename=<%= suite.name %>" class="small text-dark"><%= suite.name %></a>
-                        </div>
-                    </div>
-                <% }); %>
+                <% let items = suites %>
+                <%- include('components/sidebar_items', {items: suites})%>
             </div>
-            <!--            SUITES LIST END-->
+            <!--  SUITES LIST END-->
         </div>
-        <div class="table-rows content col float-right ">
-            <div name="table-headers" class="row bg-sidebar light-purple border-purple border-top">
-                <div name="checkbox-header" class="col-1 col-lg-auto text-truncate small ml-0 mt-1">
-                    <input name="checkAll" onclick="checkAllTests()" type="checkbox" title="check all tests">
-                </div>
-                <div name="status-header" class="col-2 col-lg-1 text-truncate btn-check small" onclick="sort('status')" title="click to sort by this field">
-                    <a href="javascript:void(0)"  class="unlink text-light">Status</a>
-                </div>
-                <div name="status-name" class="col-4 col-lg-4 text-truncate btn-check small" onclick="sort('name')" title="click to sort by this field">
-                    <a href="javascript:void(0)" onclick="sort('name')" class="unlink text-light">Name</a>
-                </div>
-                <div name="status-date" class="col-1 col-lg-2 text-truncate btn-check small" onclick="sort('Updated_date')" title="click to sort by this field">
-                    <a href="javascript:void(0)" onclick="sort('Updated_date')" class="unlink text-light">Date</a>
-                </div>
-                <div name="status-browser" class="col-1 col-lg-1 text-truncate btn-check small" onclick="sort('browserName')" title="click to sort by this field">
-                    <a href="javascript:void(0)" onclick="sort('browserName')" class="unlink text-light">Browser</a>
-                </div>
-                <div name="status-os" class="col-1 col-lg-1 text-truncate btn-check small" onclick="sort('os')" title="click to sort by this field">
-                    <a href="javascript:void(0)" onclick="sort('os')" class="unlink text-light">Platform</a>
-                </div>
-                <div name="status-viewport" class="col-2 col-lg-2 text-truncate btn-check small" onclick="sort('viewport')" title="click to sort by this field">
-                    <a href="javascript:void(0)" onclick="sort('viewport')" class="unlink text-light">Viewport</a>
-                </div>
-                <!--                <div class="col-1 small border-left border-right1">Id</div>-->
+        <!--   TESTS TABLE-->
+        <div name class="table-rows content col float-right ">
+            <%- include('components/tests_table_headers', {})%>
+
+
+            <div name="tests-row" class="checks row">
+                <%- include('components/tests_table_rows', {checksByTestGroupedByIdent: checksByTestGroupedByIdent})%>
             </div>
-
-            <div class="checks row">
-                <% tests.forEach(function(test){ %>
-                    <!--TEST_INFO START-->
-                    <% if(Object.keys(checksByTestGroupedByIdent[test.id]).length > 0) { %>
-                        <div name="testinfo" class="testinfo row button btn-light border-secondary m-0 w-100">
-                            <div class="cell-input cell col-1 col-lg-auto border-bottom border-right text-truncate small d-flex align-items-center ">
-                                <input id="<%= test.id %>"
-                                       name="test"
-                                       type="checkbox">
-                            </div>
-                            <div class="cell-status cell col-2 col-lg-1 pl-3 pr-2 border-bottom border-right text-truncate">
-                                <% const statusesClasses = {
-                                    Failed: 'text-danger',
-                                    Passed: 'text-success',
-                                    Unresolved: 'text-warning',
-                                    Running: 'text-info',
-                                    New: 'text-success font-weight-bold'
-                                } %>
-
-                                <span name="cell-status" id="<%= test.id %>_cell-status"
-                                      class="<%= statusesClasses[test.status] %> small bg-gu"
-                                      data-toggle="tooltip"
-                                      data-placement="top"
-                                      title="<%= test.status %>"><%= test.status %></span>
-                                <span data-toggle="tooltip" data-original-title="<%= test.blinking %>">
-                                    <% if(test.blinking > 0) { %>
-                                        <img src="./static/blinking.png" class="img-fluid blink-icon" alt="blink">
-                                    <% } %>
-                                    <!--                                        <%= test.blinking %>-->
-                                    </span>
-                            </div>
-                            <div class="cell-name cell col-4 col-lg-4 border-bottom border-right text-truncate">
-                                <a data-toggle="collapse" class="collapsing" href="#testchecks_<%= test.id %>"
-                                   onclick="drawTestChecksPreviews('<%= test.id %>');">
-                                <span name="cell-name" id="<%= test.id %>_cell-name" class="text-secondary small "
-                                      data-toggle="tooltip"
-                                      data-placement="top"
-                                      title="<%= test.name %>"><%= test.name %></span>
-                                </a>
-                            </div>
-                            <div class="cell-date cell col-1 col-lg-2 border-bottom border-right text-truncate">
-                                <span name="cell-date" id="<%= test.id %>_cell-date" class="text-primary small"
-                                      data-toggle="tooltip"
-                                      data-placement="top"
-                                      title="<%= test.formattedUpdatedDate %>"><%= test.formattedUpdatedDate %></span>
-                            </div>
-                            <div class="cell-browser cell col-1 col-lg-1 border-bottom border-right text-truncate">
-                                <span name="cell-browser" id="<%= test.id %>_cell-browser" class="text-primary small"
-                                      data-toggle="tooltip"
-                                      data-placement="top"
-                                      title="<%= test.browserName %>"><%= test.browserName %></span>
-                            </div>
-                            <div class="cell-platform cell col-1 col-lg-1 border-bottom border-right text-truncate">
-                                <span name="cell-os" id="<%= test.id %>_cell-os" class="text-primary small"
-                                      data-toggle="tooltip"
-                                      data-placement="top"
-                                      title="<%= test.os %>"><%= test.os %></span>
-                            </div>
-                            <div class="cell-viewport cell col-2 col-lg-2 border-bottom  text-truncate">
-                                <span name="cell-viewport" id="<%= test.id %>_cell-viewport" class="text-primary small"
-                                      data-toggle="tooltip"
-                                      data-placement="top"
-                                      title="<%= test.viewport %>"><%= test.viewport %></span>
-                            </div>
-                            <!--                            <div class="col-1 border text-truncate">-->
-                            <!--                                <span class="text-primary small" data-toggle="tooltip"-->
-                            <!--                                      data-placement="top"-->
-                            <!--                                      title="<%= test.id %>"><%= test.id %></span>-->
-                            <!--                            </div>-->
-                        </div>
-                        <!--TEST_INFO END-->
-
-                        <!-- CHECKS START -->
-                        <div name="checks-previews" class="all-checks row w-100 m-0 collapsing "
-                             id="testchecks_<%= test.id %>">
-
-                            <!--  foreach checks start-->
-                            <% Object.keys(checksByTestGroupedByIdent[test.id]).forEach(function(groupName, ind){ %>
-                                <% const group = checksByTestGroupedByIdent[test.id][groupName]['checks'] %>
-                                <% const check = group[0] %>
-                                <% let groupStatus = 'not set' %>
-                                <% if (group.map(g => g.status.toString()).includes('failed')) {
-                                    groupStatus = 'failed'
-                                } %>
-                                <% if (group.map(g => g.status.toString()).includes('failed') && group[group.length - 1].status[0] === 'passed') {
-                                    groupStatus = 'blinking'
-                                } %>
-                                <% if (!group.map(g => g.status.toString()).includes('failed')) {
-                                    groupStatus = 'passed'
-                                } %>
-                                <% if (check.status == 'new') {
-                                    groupStatus = 'new'
-                                } %>
-                                <div class="check col-4 border_ text-secondary mb-3 bg-light  pl-1"
-                                     id="check_<%= check.id %>" diffId="<%= check.diffId %>"
-                                     baselineId="<%= check.baselineId %>"
-                                     checkStatus="<%= groupStatus %>">
-                                    <% const statusesClasses = {
-                                        passed: 'bg-success',
-                                        new: 'bg-info',
-                                        failed: 'bg-danger',
-                                        blinking: 'bg-warning'
-                                    } %>
-                                    <div class="status-border image-wrapper column <%= statusesClasses[groupStatus] %> w-100 p-2 m-1">
-
-                                        <div class="check-image column baseline m-1"
-                                             data-toggle="tooltip"
-                                             data-html="true"
-                                             data-placement="right"
-                                             title="Status: [<%= groupStatus %>]</br>
-                                             Name: <%= check.name %> </br>
-                                             Created: <%= check.formattedUpdatedDate %> </br>
-                                             Browser: <%= check.browserName %> </br>
-                                             Viewport: <%= check.viewport %> </br>
-                                             Platform: <%= check.os %> </br>
-                                             Id: <%= check.id %> </br>
-                                             ActualId: <%= check.actualSnapshotId %></br>
-                                             BaselineId: <%= check.baselineId %></br>">
-
-                                            <% if (groupStatus == 'new' || groupStatus == 'passed' || groupStatus === 'blinking') { %>
-                                                <a href="/checksgroupview?id=<%= check.id %>" name="<%= check.name %>"
-                                                   id="grouplink_<%= check.id %>">
-                                                    <canvas class="snapshoot-canvas w-100"
-                                                            id="canvas_snapshoot_<%= check.id %>"
-                                                    ></canvas>
-                                                </a>
-                                            <% } else { %>
-                                                <a href="/checksgroupview?id=<%= check.id %>">
-                                                    <canvas class="snapshoot-canvas w-100"
-                                                            id="canvas_snapshoot_<%= check.id %>"
-                                                    ></canvas>
-                                                </a>
-                                            <% } %>
-                                        </div>
-                                        <!-- SNAPSHOT TOOOLBAR START-->
-                                        <div class="container pl-0 pr-0">
-                                            <div class="check-mini-toolbar d-flex row justify-content-around1 text-light pl-1 m-0">
-                                                <div class="col-1 pr-1 pl-1 pt-1">
-                                                    <input name="check-input" id="<%= check.id %>"
-                                                           actualId="<%= check.actualSnapshotId %>"
-                                                           baselineId="<%= check.baselineId %>"
-                                                           type="checkbox">
-                                                </div>
-
-                                                <% const checksCount = Object.keys(checksByTestGroupedByIdent[test.id]).length %>
-                                                <% const groupChecksCount = (checksByTestGroupedByIdent[test.id][groupName].checks.length > 1) ? `(${checksByTestGroupedByIdent[test.id][groupName].checks.length})` : '' %>
-                                                <div name="check-name"
-                                                     class="col-8 flex-shrink-1111 ml-0 mr-0 pt-2 pb-0 float-right1 align-middle text-truncate  small p-0"
-                                                     data-toggle="tooltip"
-                                                     data-placement="top"
-                                                     title="<%= check.name %>">
-                                                    <%= (ind + 1) %>/<%= checksCount %>
-                                                    <sup><%= groupChecksCount %></sup> <%= check.name %>
-                                                </div>
-
-                                                <div name="check-buttons"
-                                                     class="col-3 pr-0 pl-0 pt-1 float-right flex-row-reverse1">
-                                                    <!--                                                <div class="check-buttons  mt-1 mb-1 pb-1 pt-1 pl-1 pr-0">-->
-                                                    <div class="container pl-0 pr-0">
-                                                        <div class="row justify-content-end  flex-row-reverse mr-0 ml-1">
-                                                            <div class="col-3 p-0 float-right1">
-                                                                <a
-                                                                        class="btn-check btn-sm ml-1 rounded-0 border-0"
-                                                                        style="line-height: 0.1; padding: 2px;"
-                                                                        id="checkbutton_<%= check.id %>"
-                                                                        data-toggle="tooltip"
-                                                                        data-placement="top"
-                                                                        title="Remove this check"
-                                                                        onclick="removeOneCheck('<%= check.id %>')">
-                                                                    <i class="fas fa-times-circle fa-1x"></i>
-                                                                </a>
-                                                            </div>
-                                                            <div class="col-3 ml-0 p-0 float-right1">
-                                                                <% if(groupStatus == 'failed') { %>
-                                                                    <a
-                                                                            class="btn-check btn-sm ml-1  rounded-0 border-0"
-                                                                            style="line-height: 0.1; padding: 2px;"
-                                                                            id="acceptbutton_<%= check.id %>"
-                                                                            data-toggle="tooltip"
-                                                                            data-placement="top"
-                                                                            onclick="acceptOneCheck('<%= check.id %>', '<%= check.actualSnapshotId %>', '<%= check.baselineId %>', '<%= test.id %>')"
-                                                                            title="Accept the actual snapshoot as baseline"
-                                                                    >
-
-                                                                        <i class="fas fa-check fa-1x"></i>
-                                                                    </a>
-                                                                <% } %>
-                                                            </div>
-                                                            <div class="col-3 ml-2 p-0 float-right1">
-                                                                <% if(groupStatus == 'failed') { %>
-                                                                    <a
-                                                                            class="btn-check btn-outline-success1 btn-sm  rounded-0 border-0"
-                                                                            style="line-height: 0.1; padding: 2px;"
-                                                                            id="comparebutton_<%= check.id %>"
-                                                                            data-toggle="tooltip"
-                                                                            data-placement="top"
-                                                                            title="Compare snapshots"
-                                                                            onclick="location.href='./diffview?diffid=<%= check.diffId %>&actualid=<%= check.actualSnapshotId %>&expectedid=<%= check.baselineId %>&checkid=<%= check.id %>';">
-                                                                        <i class="fas fa-exchange-alt fa-1x"></i>
-                                                                    </a>
-                                                                <% } %>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- SNAPSHOT TOOOLBAR START-->
-                                    </div>
-                                </div>
-                            <% }); %>
-
-                            <!--  foreach checks end-->
-                        </div>
-                        <!-- all-checks-->
-                    <% }; %>
-
-                <% }); %>
-                <!--tests.forEach -->
-            </div> <!-- .checks -->
-        </div> <!-- .content     -->
-    </div> <!-- all row -->
+        </div>
+    </div>
 </div>
 
+<!--NOTIFY BOX-->
 <div id="notify" role="alert" aria-live="assertive" aria-atomic="true"
      class="fixed-bottom-right bg-light m-1 border rounded toast fade show"
      data-autohide="false"
@@ -441,6 +155,7 @@
         Operation was successful finished
     </div>
 </div>
+
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>
@@ -521,10 +236,10 @@
         document.getElementById('collapseSuiteMenu').style.width = logoWidth + 'px'
     }
 
-    function sort(prop, order=-1) {
+    function sort(prop, order = -1) {
         const currentUri = document.location.href;
-        if(currentUri.includes(`sortprop=${prop}`) && currentUri.includes('order=-1')){
-            order=1
+        if (currentUri.includes(`sortprop=${prop}`) && currentUri.includes('order=-1')) {
+            order = 1
         }
 
         let clearedUri = currentUri.replace(/[&]{0,1}(sortorder=[-]{0,1}.)/, "");
@@ -685,7 +400,12 @@
             results.push(removeTest(checkbox.id))
         }
         Promise.all(results).then(function (results) {
-            location.reload();
+            showNotification('Tests were removed successfully')
+            setTimeout(()=> location.reload(), 800);
+        }).catch((e)=>{
+            console.error(e);
+            showNotification('Cannot remove tests')
+
         })
     }
 
