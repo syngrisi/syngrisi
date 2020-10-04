@@ -1,26 +1,14 @@
 ## Syngrisi
 
-### Main concept
-
-![concept](img/concept.png)
-
-### Features
-
-* Pix-to-pix comparison
-    * Perceptual comparison:
-    * Antialiasing
-    * Offset stabilization
-    * Ignore regions
-    * Works with data hashes that allows quickly perform comparison action.
-    * Affected elements analyse based on DOM dump and diff image.
-    * UI panel to observe results and manage test data (baselines, regions, test, suite, etc.) )
-
 ### Prerequisites
-
- * [NodeJS](https://nodejs.org/en/download/) ver `v13.13.0` or above, it is preferably to use [nvm](https://github.com/nvm-sh/nvm);
+ * [NodeJS](https://nodejs.org/en/download/) `v12` or above, it is preferably to use [nvm](https://github.com/nvm-sh/nvm);
  * [MongoDB Community Edition](https://docs.mongodb.com/manual/administration/install-community/)
  
 ### Quick start
+
+>⚠️ Make sure MongoDB started before run Syngrisi
+
+
 Clone this project:
 ```shell script
 git clone git@github.com:viktor-silakov/syngrisi.git
@@ -34,6 +22,21 @@ Run Syngrisi server
 ```shell script
 npm run startdebug
 ```
+
+### Main concept
+
+![concept](img/concept.png)
+
+### Features
+
+* Pix-to-pix comparison
+* Perceptual comparison:
+    * Antialiasing
+    * Offset stabilization
+* Ignore regions
+* Works with data hashes that allows quickly perform comparison action.
+* Affected elements analyse based on DOM dump and diff image.
+* UI panel to observe results and manage test data (baselines, regions, test, suite, etc.) )
 
 ### Advance run options
 
@@ -51,10 +54,10 @@ npm run clear
 
 ### Environment variables
  
- `VRS_BASELINE_PATH` - path to baseline images
+ `VRS_BASELINE_PATH` - path to baseline images, default value is `./baselines/`
  
- `VRS_CONN_STRING` - mongo db connection string
+ `VRS_CONN_STRING` - MongoDB connection string, default value is `mongodb://localhost/VRSdb` 
  
- `VRS_PORT` - tcp port for application server (default is 3000)
+ `VRS_PORT` - tcp port for application server, default value is `3000`
  
- `V_SHIFTING` - value for vertical page shifting
+ `V_SHIFTING` - value for vertical page shifting, default value is `0`
