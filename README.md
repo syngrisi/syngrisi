@@ -20,11 +20,22 @@
  * [NodeJS](https://nodejs.org/en/download/) ver `v13.13.0` or above, it is preferably to use [nvm](https://github.com/nvm-sh/nvm);
  * [MongoDB Community Edition](https://docs.mongodb.com/manual/administration/install-community/)
  
-### Installation
+### Quick start
+Clone this project:
+```shell script
+git clone git@github.com:viktor-silakov/syngrisi.git
+```
+Go to application folder and install Dependencies 
+```shell script
+npm i
+```
 
-> `npm i`
+Run Syngrisi server
+```shell script
+npm run startdebug
+```
 
-### Run
+### Advance run options
 
 ```shell script
 npm run start # as detached from current shell process
@@ -38,10 +49,12 @@ npm run startservice # start like service, required forever module globally (htt
 npm run clear
 ```
 
- ### Environment variables
+### Environment variables
  
  `VRS_BASELINE_PATH` - path to baseline images
- `VRS_CONN_STRING` - mongo db connection string
- `VRS_PORT` - tcp port for application server (default is 3000)
- `V_SHIFTING` - value for vertical page shifting
  
+ `VRS_CONN_STRING` - mongo db connection string
+ 
+ `VRS_PORT` - tcp port for application server (default is 3000)
+ 
+ `V_SHIFTING` - value for vertical page shifting
