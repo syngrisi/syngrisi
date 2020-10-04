@@ -1,4 +1,6 @@
-## Syngrisi
+## Syngrisi - Visual Testing Tool
+
+Syngrisi helps to implement Automated Visual Regression Testing along with your new or existing Test Automation Kit, it provides API for Test Automated solutions and a convenient UI tool to review and Visual Test data.
 
 ### Prerequisites
  * [NodeJS](https://nodejs.org/en/download/) `v12` or above, it is preferably to use [nvm](https://github.com/nvm-sh/nvm);
@@ -36,7 +38,7 @@ npm run startdebug
 * Ignore regions
 * Works with data hashes that allows quickly perform comparison action.
 * Affected elements analyse based on DOM dump and diff image.
-* UI panel to observe results and manage test data (baselines, regions, test, suite, etc.) )
+* UI panel to observe results and manage test data (baselines, regions, test, suites, runs. etc.) )
 
 ### Advance run options
 
