@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Baseline application</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
+          integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
+          integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/css/simple-sidebar.css">
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+    <script src="/static/js/chart.js"></script>
+
+    <style>
+        .footer {
+            position: fixed;
+            height: 50px;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .bg-black {
+            background-color: black;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div name=header" class="row bg-black">
+        <div id="logo" class="col-auto text-light mt-1 mb-1">
+            <img src="./imgs/test-logo.png" alt="logo" style="width: 50px">
+        </div>
+        <div class="col text-light pt-2 pl-1">
+            <h2>UberCompany 3000</h2>
+        </div>
+    </div>
+    <div name="main-content" class="row">
+        <div name=sidebar" class="col-auto border-right1 pl-1 pr-0">
+            <div class="bg-light border-right" id="sidebar-wrapper">
+                <div class="list-group list-group-flush">
+                    <a href="#" id="Dashboard" class="list-group-item list-group-item-action bg-light">Dashboard</a>
+                    <a href="#" id="Shortcuts" class="list-group-item list-group-item-action bg-light">Shortcuts</a>
+                    <a href="#" id="Overview" class="list-group-item list-group-item-action bg-light">Overview</a>
+                    <a href="#" id="Events" class="list-group-item list-group-item-action bg-light">Events</a>
+                    <a href="#" id="Profile" class="list-group-item list-group-item-action bg-light">Profile</a>
+                    <a href="#" id="Status" class="list-group-item list-group-item-action bg-light">Status</a>
+                </div>
+            </div>
+        </div>
+        <div name="content" class="col-9">
+            <div class="row mt-3">
+
+                <div class="col p-3 pl-4">
+                    <div id="chartContainer" style="height: 400px; width: 100%;"></div>
+                </div>
+
+
+            </div>
+            <div class="row">
+                <div class="col">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet aspernatur atque
+                    blanditiis dignissimos eveniet illum iusto odio sunt tempore, vero! Aperiam blanditiis eius eveniet
+                    fuga. Et ex impedit quidem tenetur! Lorem ipsum dolor sit amet, consectetur adipisicing elit. A
+                    aliquam corporis culpa doloremque, eos expedita labore mollitia nemo officia optio quos rem
+                    repellendus rerum saepe, sunt suscipit tempora veritatis. Est? Lorem ipsum dolor sit amet,
+                    consectetur adipisicing elit. A adipisci aliquam aspernatur commodi deserunt doloremque eligendi
+                    exercitationem explicabo illo incidunt magni nemo odit, officiis porro quasi suscipit voluptatum?
+                    Iusto, unde?
+                </div>
+            </div>
+            <div class="row">
+                <div id="table" class="col pt-4 ml-3 mr-4">
+                    <div name="table-header" class="row border-light bg-dark text-light border-info">
+                        <div class="col-5 border-right small">Name</div>
+                        <div class="col-1 border-right small">First</div>
+                        <div class="col-1 border-right small">Second</div>
+                        <div class="col-1 border-right small">Third</div>
+                        <div id="total" class="col-4 text-right border-right small">Total</div>
+                    </div>
+                    <div class="row border-bottom border-info">
+                        <div class="col-5 left">Label</div>
+                        <div class="col-1 text-right">100</div>
+                        <div class="col-1 text-right">200</div>
+                        <div class="col-1 text-right">300</div>
+                        <div class="col-4 text-right">600</div>
+                    </div>
+                    <div class="row border-bottom border-info">
+                        <div class="col-5 left">Label</div>
+                        <div class="col-1 text-right">100</div>
+                        <div class="col-1 text-right">200</div>
+                        <div class="col-1 text-right">300</div>
+                        <div class="col-4 text-right">600</div>
+                    </div>
+                    <div class="row border-bottom border-info">
+                        <div class="col-5 left">Label</div>
+                        <div class="col-1 text-right">100</div>
+                        <div class="col-1 text-right">200</div>
+                        <div class="col-1 text-right">300</div>
+                        <div class="col-4 text-right">600</div>
+                    </div>
+                    <div class="row border-bottom border-info">
+                        <div class="col-5 left">Label</div>
+                        <div class="col-1 text-right">100</div>
+                        <div class="col-1 text-right">200</div>
+                        <div class="col-1 text-right">300</div>
+                        <div class="col-4 text-right">600</div>
+                    </div>
+                    <div class="row border-bottom border-info">
+                        <div class="col-5 left">Label</div>
+                        <div class="col-1 text-right">100</div>
+                        <div class="col-1 text-right">200</div>
+                        <div class="col-1 text-right">300</div>
+                        <div class="col-4 text-right">600</div>
+                    </div>
+                    <div class="row border-bottom border-info">
+                        <div class="col-5 left">Label</div>
+                        <div class="col-1 text-right">100</div>
+                        <div class="col-1 text-right">200</div>
+                        <div class="col-1 text-right">300</div>
+                        <div class="col-4 text-right">600</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div name="footer" class="row footer bg-black text-light">
+        <div class="col-auto pt-1"><img src="./imgs/test-logo.png" alt="logo" style="width: 40px; display: none"></div>
+        <div class="col-6 pt-3 pl-0">
+            2020-2999 All rights are reserved, footer text footer text footer text footer text footer text
+        </div>
+        <div class="col-5 pt-1 text-right">
+            <a href="#" class="btn btn-dark bg-black border-0 p-1"><i class="fab fa-2x fa-instagram"></i></a>
+            <a href="#" class="btn btn-dark p-1 bg-black border-0"><i class="fab fa-2x fa-youtube-square"></i></i></a>
+            <a href="#" class="btn btn-dark p-1 bg-black border-0"><i class="fab fa-2x fa-facebook-square"></i></a>
+        </div>
+    </div>
+    <div id="break-buttons" class="fixed-top p-2 m-2 mt-5 bg-dark border border-secondary"
+         style="right: 0; left: unset">
+        <div class="m-1" id="break-chart">
+            <a href="javascript:void(0)" class="btn btn-danger" onclick="brokeChart()">Break the chart</a>
+        </div>
+        <div class="m-1 mt-2" id="break-table">
+            <a href="javascript:void(0)" class="btn btn-danger" onclick="brokeTable()">Break the table</a>
+        </div>
+    </div>
+
+</div>
+</body>
+<script>
+    var chart = '';
+    window.onload = (function () {
+        chart = drawChart();
+    })()
+
+    document.onload = randomSideEffect();
+
+    function getRandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function randomSideEffect() {
+        if (document.location.href.includes('rand')) {
+            console.log('RAND!');
+            const el = document.getElementById('logo');
+            const randomNum = getRandomInt(1,3);
+            console.log(randomNum)
+            if(randomNum !== 1){
+                // el.style.display = "none";
+                el.style.marginLeft='123px'
+            }
+        }
+    }
+
+    function brokeChart() {
+        const el = document.getElementById('chartContainer');
+        el.scrollIntoView();
+        chart.data[3].dataPoints[6].y = 111;
+        chart.data[0].dataPoints[5].y = 8;
+        chart.data[2].dataPoints[5].y = 80;
+        chart.render();
+    }
+
+    function brokeTable() {
+        const el = document.getElementById('total');
+        el.scrollIntoView();
+        el.style.paddingRight = "140px";
+        el.style.color = 'red';
+    }
+</script>
+</html>
