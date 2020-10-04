@@ -224,14 +224,23 @@ exports.stop_session = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
             let testId = req.params.testid;
-            let opts = req.body;
-
+            // let opts = req.body;
             await waitUntil(async () => {
                 return (await Check.find({test: testId}).exec())
                     .filter(ch => ch.status.toString() !== 'pending').length > 0;
             });
             const checksGroup = await checksGroupedByIdent({test: testId});
             const groupStatuses = Object.keys(checksGroup).map(group => checksGroup[group].status);
+            // console.log(JSON.stringify(checksGroup, null, "\t"));
+            const groupViewPorts = Object.keys(checksGroup).map(group => checksGroup[group].viewport);
+            // console.log({groupViewPorts});
+            const uniqueGroupViewports = Array.from(new Set(groupViewPorts));
+            let testViewport;
+            if (uniqueGroupViewports.length === 1)
+                testViewport = uniqueGroupViewports[0];
+            else
+                testViewport = uniqueGroupViewports.length
+
             let testStatus = 'not set';
             if (groupStatuses.some(st => st === 'failed'))
                 testStatus = 'Failed'
@@ -251,6 +260,7 @@ exports.stop_session = async function (req, res) {
                 id: testId,
                 status: testStatus,
                 blinking: blinkingCount,
+                calculatedViewport: testViewport
                 // viewport: await this.getViewport()
             }).catch(function (e) {
                 console.log(`Cannot update session: ${e}`)
@@ -452,6 +462,7 @@ exports.create_check = async function (req, res) {
                     suite: suite.id,
                     appname: (await orm.createAppIfNotExist({name: req.body.appname || 'Unknown'})).id,
                     domDump: req.body.domdump,
+                    run: test.run
                 }
                 const fileData = req.files ? req.files.file.data : false
                 /**
@@ -536,13 +547,15 @@ exports.create_check = async function (req, res) {
 
                 // compare actual with baseline if a check isn't new
                 let updateParams = {};
+                let totalCheckHandleTime;
+                let compareResult;
                 if (check.status.toString() !== 'new') {
-                    const diff = await compareSnapshots(baselineSnapshoot, actualSnapshot);
-                    if (diff.misMatchPercentage !== '0.00') {
+                    compareResult = await compareSnapshots(baselineSnapshoot, actualSnapshot);
+                    if (compareResult.misMatchPercentage !== '0.00') {
                         console.log(`Saving diff snapshot for check with Id: '${check.id}'`);
                         const diffSnapshot = await createSnapshotIfNotExist({
                             params: req.body,
-                            fileData: diff.getBuffer()
+                            fileData: compareResult.getBuffer()
                         });
                         updateParams['diffId'] = diffSnapshot.id;
                         updateParams['status'] = 'failed';
@@ -552,12 +565,17 @@ exports.create_check = async function (req, res) {
 
                     console.log(`Update check with params: '${JSON.stringify(updateParams)}'`);
                     updateParams['updatedDate'] = Date.now();
+                    totalCheckHandleTime = process.hrtime(executionTimer).toString()
+
+                    compareResult['totalCheckHandleTime'] = totalCheckHandleTime;
+                    updateParams['result'] = JSON.stringify(compareResult, null, "\t");
+
                     await check.updateOne(updateParams);
                     resultResponse = await Check.findById(check.id);
                 }
                 const result = Object.assign({}, resultResponse.toObject(),
                     {
-                        executeTime: process.hrtime(executionTimer).toString(),
+                        executeTime: totalCheckHandleTime,
                         lastSuccess: lastSuccessCheck ? (lastSuccessCheck).id : null
                     })
                 res.json(result);

@@ -25,6 +25,10 @@ function groupStatus(checks) {
     return resultStatus
 }
 
+function groupViewPort(checks) {
+    return checks[0].viewport;
+}
+
 fatalError = function fatalError(req, res, e) {
     const errMsg = e.stack ? `Fatal error: '${e}' \n  '${e.stack}'` : `Fatal error: ${e} \n`;
     req.log.fatal(errMsg);
@@ -55,6 +59,9 @@ exports.checksGroupedByIdent = async function checksGroupedByIdent(checkFilter) 
             })
             for (const groupIdent in result) {
                 result[groupIdent].status = groupStatus(result[groupIdent].checks)
+            }
+            for (const groupIdent in result) {
+                result[groupIdent].viewport = groupViewPort(result[groupIdent].checks)
             }
             resolve(result);
         } catch (e) {

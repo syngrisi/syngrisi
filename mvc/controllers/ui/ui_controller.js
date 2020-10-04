@@ -55,7 +55,6 @@ exports.checksgroupview = async function (req, res) {
             const test = await Test.findById(check.test).exec();
             const suite = await Suite.findById(check.suite).exec();
             const testId = check.test;
-            const suiteId = check.suite;
             const ident = checkIdent(check);
             console.warn(check.name, "|", testId, "|", suite, "|", ident, "|")
             const groups = await checksGroupedByIdent({test: testId});
@@ -197,7 +196,7 @@ exports.index = async function (req, res) {
                     || (opts.sortprop === 'browserName')
                     || (opts.sortprop === 'suite')
                     || (opts.sortprop === 'os')
-                    || (opts.sortprop === 'viewport')
+                    || (opts.sortprop === 'calculatedViewport')
                     || (opts.sortprop === 'updatedDate')) {
                     sortBy = opts.sortprop
                 }
@@ -289,6 +288,8 @@ exports.runs = async function (req, res) {
 
                 for (const test of tests) {
                     let checkFilter = {test: test.id}
+                    if(run)
+                        checkFilter.run = run.id;
                     checksByTestGroupedByIdent[test.id] = await checksGroupedByIdent(checkFilter);
                 }
 
