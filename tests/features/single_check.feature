@@ -27,7 +27,7 @@ Feature: VRS One Suite, One test, One check
     Then I wait and refresh page on element "span=Without session ending" for "3" seconds to exist
     Then I expect that VRS test "Without session ending" has "Running" status
     Then I expect that VRS test "Without session ending" has "chrome" browser
-    Then I expect that VRS test "Without session ending" has "1200x790" viewport
+    Then I expect that VRS test "Without session ending" has "≠" viewport
 
     When I click on "Without session ending" VRS test
     Then I expect that VRS test "Without session ending" is unfolded

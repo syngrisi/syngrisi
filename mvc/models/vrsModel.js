@@ -110,7 +110,14 @@ const VRSCheckSchema = new Schema({
     },
     domDump: {
         type: String,
-    }
+    },
+    result: {
+        type: String,
+        default: '{}'
+    },
+    run: {
+        type: Schema.Types.ObjectId,
+    },
 });
 
 const VRSTestSchema = new Schema({
@@ -130,9 +137,15 @@ const VRSTestSchema = new Schema({
         type: String,
         default: 'undefined',
     },
+    // on the start of test
     viewport: {
         type: String,
         default: 'undefined',
+    },
+    // after handle all checks inside the test
+    calculatedViewport: {
+        type: String,
+        default: '???',
     },
     os: {
         type: String,
