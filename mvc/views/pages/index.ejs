@@ -14,23 +14,55 @@
           integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
           crossorigin="anonymous">
     <link rel="stylesheet" href="../../../static/css/colors.css">
-    <% if(currentSuite) { %>
+    <script src="lib/gridHelpers.js"></script>
+
+<% if(currentSuite) { %>
         <title>VRS list of checks - <%= currentSuite.name %> </title>
     <% }else{ %>
         <title>VRS list of checks - all suites</title>
     <% } %>
+    <style>
+        .preview-overlay-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            opacity: 70%;
+        }
 
+        a:hover .preview-overlay-text {
+            display: none;
+        }
+
+        .image-wrapper {
+            position: relative;
+        }
+
+        .current-menu-item {
+            text-decoration: underline;
+            background-color: silver;
+            opacity: 80%;
+        }
+
+        /*.current-menu-item:hover {*/
+        /*    background-color: #2ECC40;*/
+        /*}*/
+
+    </style>
 </head>
 <body>
 
 <div name="main" class="main container-fluid pl-3 pr-3 ml-0 mh-100">
     <div name="page-head" class="row bg-sidebar sticky-top">
-        <div name="logo-and-link"  class="col-3 col-lg-3 w-25 pl-0 pb-2 bg-sidebar text-light" id="logo-and-label-container">
-            <%- include('components/logo_and_link', {drop: true})%>
+        <div name="logo-and-link" class="col-3 col-lg-3 w-25 pl-0 pb-2 bg-sidebar text-light"
+             id="logo-and-label-container">
+            <%- include('components/logo_and_link', {drop: true}) %>
         </div>
         <!--    TESTS TOOLBAR-->
-        <div name="header-title" class="suite-head col-4 col-lg-6 text-light1 bg-sidebar pl-5 pt-3 h4 border-left mb-0 light-purple sticky-top1">
-            <%- include('components/header_title', {currentItem: currentSuite})%>
+        <div name="header-title"
+             class="suite-head col-4 col-lg-6 bg-sidebar pl-5 pt-3 h4 border-left mb-0 light-purple text-truncate">
+            <%- include('components/header_title', {currentItem: currentSuite}) %>
         </div>
         <div name="suite-menu-toolbar" class="col">
             <div class="row all-header light-purple sticky-top1">
@@ -74,60 +106,25 @@
     <!--    DATA GRID START    -->
     <div class="all-table row mh-100">
         <!--   SIDEBAR    -->
-        <div name="sidebar" class="sidebar col-3 col-lg-3  mh-100 bg-light border-top  border-right border-bottom border-silver float-left w-251 ml-0 mr-0"
+        <div name="sidebar"
+             class="sidebar col-3 col-lg-3  mh-100 bg-light border-top  border-right border-bottom border-silver float-left w-251 ml-0 mr-0"
              style="width: 100px">
             <!--   COLLAPSED SUITES TOOLBAR-->
-            <div class="suites-menu position-fixed sticky-top1 row pl-2 pt-0 bg-sidebar collapse light-purple"
-                 id="collapseSuiteMenu" style="z-index: 9000">
-                <div class="col-12 ml-2">
-                    <div class="row border1 mr-1 ml-0">
-                        <div class="col-auto ml-1 pb-0">
-                            <a name="check-all" type="button" class="btn btn-secondary bg-sidebar border-0"
-                               onclick="checkAllSuites()"
-                               title="check all suites">
-                                <input type="checkbox">
-                                <!--                                <i class="far fa-check-square fa-lg float-right"></i>-->
-                            </a>
-                        </div>
-                        <div class="col-auto mr-1">
-                            <a name="reload-suites" type="button" class="btn btn-secondary bg-sidebar border-0 m-1"
-                               onclick="location.reload()"
-                               title="reload">
-                                <i class="fas fa-sync-alt fa-sm float-right"></i>
-                            </a>
-                        </div>
-                        <div class="col-auto mr-1">
-                            <a name="go to runs" type="button"
-                               class="btn btn-secondary bg-sidebar border-0 m-1"
-                               onclick="document.location.href='/runs'" title="click to go to runs page">
-                                <i class="fas fa-rocket fa-sm float-right green1"></i>
-                            </a>
-                        </div>
-                        <div class="col-auto mr-1 p-0">
-                            <a name="delete-suites" type="button" class="btn btn-secondary bg-sidebar border-0 m-1"
-                               title="delete suites and associated items"
-                               onclick="removeCheckedSuites()"
-                            >
-                                <i class="fas fa-trash fa-sm float-right red"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <%- include('components/items_menu', {itemName: 'suite-item'}) %>
             <!--   SUITES LIST-->
             <div class="suites-list row pl-2 pt-1 pr-0 bg-light text-secondary ">
                 <% let items = suites %>
-                <%- include('components/sidebar_items', {items: suites})%>
+                <%- include('components/sidebar_items', {items: suites, currentItem: currentSuite}) %>
             </div>
             <!--  SUITES LIST END-->
         </div>
         <!--   TESTS TABLE-->
         <div name class="table-rows content col float-right ">
-            <%- include('components/tests_table_headers', {})%>
+            <%- include('components/tests_table_headers', {}) %>
 
 
             <div name="tests-row" class="checks row">
-                <%- include('components/tests_table_rows', {checksByTestGroupedByIdent: checksByTestGroupedByIdent})%>
+                <%- include('components/tests_table_rows', {checksByTestGroupedByIdent: checksByTestGroupedByIdent}) %>
             </div>
         </div>
     </div>
@@ -167,6 +164,9 @@
         crossorigin="anonymous"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/fabric.js/3.6.1/fabric.min.js"></script>
 <script src="lib/baselineView.js"></script>
+<script>
+    window.addEventListener('resize', setSuiteMenuWidth);
+</script>
 <script>
     var baselines = {}
     const urlParams = new URLSearchParams(window.location.search);
@@ -229,256 +229,5 @@
                 }
             });
     });</script>
-<script>
-
-    function setSuiteMenuWidth() {
-        const logoWidth = document.getElementById('logo-and-label-container').clientWidth
-        document.getElementById('collapseSuiteMenu').style.width = logoWidth + 'px'
-    }
-
-    function sort(prop, order = -1) {
-        const currentUri = document.location.href;
-        if (currentUri.includes(`sortprop=${prop}`) && currentUri.includes('order=-1')) {
-            order = 1
-        }
-
-        let clearedUri = currentUri.replace(/[&]{0,1}(sortorder=[-]{0,1}.)/, "");
-        clearedUri = clearedUri.replace(/[&]{0,1}sortprop=\w+/, "");
-
-        let outUri;
-        if (clearedUri.includes('?')) {
-            outUri = clearedUri + `&sortprop=${prop}&sortorder=${order}`;
-        } else {
-            outUri = clearedUri + `?sortprop=${prop}&sortorder=${order}`;
-        }
-        outUri = outUri.replace("?&", "?");
-
-        document.location.href = outUri;
-    }
-
-    function showNotification(msg, status = 'Success') {
-        document.getElementById("notify-header").textContent = status;
-        document.getElementById("notify-message").textContent = msg;
-        document.getElementById("notify-rect").setAttribute('fill', '#2ECC40');
-        if (status === 'Error')
-            document.getElementById("notify-rect").setAttribute('fill', '#FF4136');
-        $('#notify').show()
-        setTimeout(function () {
-                $('#notify').hide()
-            },
-            7000)
-    }
-
-    function removeOneCheck(id) {
-        if (!confirmation()) return;
-        removeCheck(id);
-    }
-
-    function removeCheck(id) {
-        var xhr = new XMLHttpRequest();
-        var params = `id=${id}`;
-        xhr.open('DELETE', `/checks/${id}`, true);
-        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                console.log('Success ' + id + '--' + xhr.responseText);
-                let checkDiv = document.getElementById(`check_${id}`);
-                checkDiv.parentNode.removeChild(checkDiv);
-                showNotification('The check was removed')
-            } else {
-                showNotification('Remove request was failing', 'Error');
-                console.log('Request failed.  Returned status of ' + xhr.status);
-            }
-        };
-        xhr.send(params);
-    }
-
-    async function acceptOneCheck(id, newBaselineId, oldBaselineId, testId) {
-        if (!confirmation()) return;
-        const regionData = await baselines[id].getRegionsData(oldBaselineId);
-        if (regionData.ignoreRegions && regionData.ignoreRegions != 'undefined') {
-            const confirm = confirmation('The previous baseline contains regions. Doy you want to copy them?')
-            if (confirm) {
-                baselines[id].sendIgnoreRegions(newBaselineId, JSON.parse(regionData.ignoreRegions));
-                console.log('ignore region data was sent to new baseline snapshoot' + JSON.parse(regionData.ignoreRegions));
-            }
-        }
-        let unfoldLocation;
-        const cleanUrl = document.URL.replace(/[&?]{0,1}unfoldTestId=[^$&]{24}/g, '');
-
-        if (cleanUrl.includes('?')) {
-            unfoldLocation = cleanUrl + '&unfoldTestId=' + testId;
-        } else {
-            unfoldLocation = cleanUrl + '?unfoldTestId=' + testId;
-        }
-        acceptCheck(id, newBaselineId, () => location.href = unfoldLocation);
-    }
-
-    async function acceptSelectedChecks() {
-        if (!confirmation('Please pay attention to everything regions\' data will be copied to new baselines. Are you sure? Are you sure?')) return;
-        let checkboxes = document.querySelectorAll('input[name=check-input]:checked');
-        let results = [];
-        for (const checkbox of checkboxes) {
-            const checkId = checkbox.getAttribute('id');
-            const baselineId = checkbox.getAttribute('baselineId');
-            const actualId = checkbox.getAttribute('actualId');
-            const regionData = await baselines[checkId].getRegionsData(baselineId);
-            if (regionData.ignoreRegions && regionData.ignoreRegions != 'undefined') {
-                baselines[checkId].sendIgnoreRegions(actualId, JSON.parse(regionData.ignoreRegions));
-                console.log('ignore region data was sent to new baseline snapshoot' + JSON.parse(regionData.ignoreRegions));
-            }
-
-            results.push(acceptCheck(checkId, actualId));
-        }
-        Promise.all(results).then((result) => {
-            location.reload();
-        }).catch(e => {
-            console.log(e);
-        })
-    }
-
-    function acceptCheck(id, newBaselineId, callback) {
-        return new Promise((resolve, reject) => {
-            try {
-                const xhr = new XMLHttpRequest();
-                // send empty diffid
-                const params = `id=${id}&baselineId=${newBaselineId}&diffId&status=passed`;
-                console.log(params);
-                xhr.open('PUT', `/checks/${id}`, true);
-                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-
-                xhr.onload = function () {
-                    if (xhr.status === 200) {
-                        showNotification(`The check '${id}' was accepted`)
-
-                        console.log('Success ' + id + '--' + xhr.responseText);
-                        if (callback)
-                            callback();
-                        return resolve(xhr);
-                    } else {
-                        console.log('Request failed. Returned status of ' + xhr.status + 'resp:' + xhr.responseText);
-                    }
-                };
-                xhr.send(params);
-            } catch (e) {
-                return reject(e);
-            }
-        })
-    }
-
-    function removeTest(id) {
-        return new Promise(function (resolve, reject) {
-            try {
-                const xhr = new XMLHttpRequest();
-                const params = `id=${id}`;
-                xhr.open('DELETE', `/tests/${id}`, true);
-                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-
-                xhr.onload = function () {
-                    if (xhr.status === 200) {
-                        console.log('Success ' + id + '--' + xhr.responseText);
-                        return resolve(xhr);
-                    } else {
-                        console.log('Request failed.  Returned status of ' + xhr.status);
-                        return reject(xhr);
-                    }
-                };
-                xhr.send(params);
-            } catch (e) {
-                return reject(e);
-            }
-        })
-
-    }
-
-    function removeTests() {
-        if (!confirmation()) return;
-        let checkboxes = document.querySelectorAll('input[name=test]:checked');
-        let results = []
-        for (const checkbox of checkboxes) {
-            results.push(removeTest(checkbox.id))
-        }
-        Promise.all(results).then(function (results) {
-            showNotification('Tests were removed successfully')
-            setTimeout(()=> location.reload(), 800);
-        }).catch((e)=>{
-            console.error(e);
-            showNotification('Cannot remove tests')
-
-        })
-    }
-
-    function removeSuite(id) {
-        return new Promise(function (resolve, reject) {
-            try {
-                const xhr = new XMLHttpRequest();
-                const params = `id=${id}`;
-                xhr.open('DELETE', `/suites/${id}`, true);
-                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-
-                xhr.onload = function () {
-                    if (xhr.status === 200) {
-                        console.log(`Suite was successfully removed, id: '${id}', resonse test: '${xhr.responseText}'`);
-                        return resolve(xhr)
-                    } else {
-                        console.log('Cannot remove the suite. Request is failed.  Returned status of ' + xhr.status);
-                        reject(xhr)
-                    }
-                };
-                xhr.send(params);
-            } catch (e) {
-                return reject(e)
-            }
-        })
-    }
-
-    function removeCheckedSuites() {
-        if (!confirmation()) return;
-        let checkboxes = document.querySelectorAll('input[name=suite-item]:checked');
-        let result = [];
-        for (const checkbox of checkboxes) {
-            result.push(removeSuite(checkbox.getAttribute('suiteid')));
-        }
-        Promise.all(result).then(
-            function () {
-                showNotification('All suites were removed');
-                setTimeout(() => location.reload(), 1300);
-            }
-        ).catch(function (e) {
-            showNotification('Cannot remove all suites');
-            console.error('Cannot remove all suites, error: ' + e);
-        })
-    }
-
-    function checkAllTests() {
-        let checkboxes = document.querySelectorAll('input[name=test]');
-        checkboxes.forEach(function (ch) {
-            if (ch.checked === false) {
-                ch.checked = true;
-            } else {
-                ch.checked = false;
-            }
-        });
-    }
-
-    function checkAllSuites() {
-        let checkboxes = document.querySelectorAll('input[name=suite-item]');
-        checkboxes.forEach(function (ch) {
-            if (ch.checked === false) {
-                ch.checked = true;
-            } else {
-                ch.checked = false;
-            }
-        });
-    }
-
-    function confirmation(text = 'are you sure?') {
-        const answer = window.confirm(text);
-        console.log(answer);
-        return answer;
-    }
-
-</script>
 </body>
 </html>

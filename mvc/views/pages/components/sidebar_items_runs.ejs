@@ -2,23 +2,24 @@
     <% const itemCount = (allTests.filter((tst) => tst.run == item.id)).length %>
     <% if (itemCount > 0){ %>
         <div name="run-menu-item-container"
-             class="row pl-1 pb-1 w-100 btn-light border-silver mt-1 mr-0 row justify-content-around1">
+             class="row pl-0 pb-1 w-100 btn-light border-silver mt-1 mr-0 row justify-content-around">
             <div class="col-auto pl-2 pr-1">
-                <input name="run-item" class="small" type="checkbox" suiteid="<%= item.id %>"
+                <input name="run-item" class="small" type="checkbox" runid="<%= item.id %>"
                        id="run-checkbox-<%= item.id %>">
             </div>
 
-            <div class="col-7 pr-0 pl-1 pb- text-truncate">
-                <a href="?runName=<%= item.name %>" class="small text-dark"><%= item.name %></a>
+            <div name="item-name" class="col-6 pr-0 pl-1 pb- text-truncate">
+                <% let shortName = (item.name.split)('_')[0] %>
+                <a href="?runName=<%= item.name %>" title="<%= item.name %>" class="small text-dark"><%= shortName %></a>
             </div>
 
-            <div class="col-3 pr-1 pl-1 pt-0 ml-3 text-truncate silver2 small1 bg-sidebar2 rounded text-right align-self-center">
+            <div name="item-date" class="col-auto pr-1 pl-1 pt-0 ml-1 text-truncate silver2 small1 bg-sidebar2 rounded text-right align-self-center">
             <span class="small bg-secondary silver rounded p-1" style="opacity: 70%">
                 <%= item.formattedUpdatedDate %>
             </span>
             </div>
 
-            <div class="col-1 pr-1 pl-1 pt-0 text-truncate silver2 small1 bg-sidebar2 rounded text-right align-self-end">
+            <div name="item-count" class="col-1 pr-1 pl-1 pt-0 text-truncate silver2 small1 bg-sidebar2 rounded text-right align-self-end">
             <span class="small bg-sidebar silver rounded p-1">
                 <%= itemCount %>
             </span>

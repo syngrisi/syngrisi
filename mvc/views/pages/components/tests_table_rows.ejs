@@ -56,16 +56,20 @@
                                       title="<%= test.os %>"><%= test.os %></span>
             </div>
             <div class="cell-viewport cell col-2 col-lg-2 border-bottom  text-truncate">
-                                <span name="cell-viewport" id="<%= test.id %>_cell-viewport" class="text-primary small"
-                                      data-toggle="tooltip"
-                                      data-placement="top"
-                                      title="<%= test.viewport %>"><%= test.viewport %></span>
+                <% let viewport; %>
+                <% let toolTip; %>
+                <% if(!test.calculatedViewport.includes('x')) { %>
+                    <% viewport = '≠'; %>
+                    <% toolTip = `there is ${test.calculatedViewport} different viewports in this test`; %>
+                <% } else { %>
+                    <% viewport = test.calculatedViewport; %>
+                    <% toolTip = `${test.calculatedViewport} - all checks in this test has the same viewport`; %>
+                <% } %>
+                <span name="cell-viewport" id="<%= test.id %>_cell-viewport" class="text-primary small"
+                      data-toggle="tooltip"
+                      data-placement="top"
+                      title="<%= toolTip %>"><%= viewport %></span>
             </div>
-            <!--                            <div class="col-1 border text-truncate">-->
-            <!--                                <span class="text-primary small" data-toggle="tooltip"-->
-            <!--                                      data-placement="top"-->
-            <!--                                      title="<%= test.id %>"><%= test.id %></span>-->
-            <!--                            </div>-->
         </div>
         <!--TEST_INFO END-->
 
@@ -102,7 +106,7 @@
                     } %>
                     <div class="status-border image-wrapper column <%= statusesClasses[groupStatus] %> w-100 p-2 m-1">
 
-                        <div class="check-image column baseline m-1"
+                        <div name="preview-container" class="check-image column baseline m-1"
                              data-toggle="tooltip"
                              data-html="true"
                              data-placement="right"
@@ -116,15 +120,20 @@
                                              ActualId: <%= check.actualSnapshotId %></br>
                                              BaselineId: <%= check.baselineId %></br>">
 
-                            <% if (groupStatus == 'new' || groupStatus == 'passed' || groupStatus === 'blinking') { %>
+                        <% if (groupStatus == 'new' || groupStatus == 'passed' || groupStatus === 'blinking') { %>
                                 <a href="/checksgroupview?id=<%= check.id %>" name="<%= check.name %>"
                                    id="grouplink_<%= check.id %>">
+                                    <div id='' class="preview-overlay-text h4 white bg-maroon" ><%= check.viewport %></div>
+
                                     <canvas class="snapshoot-canvas w-100"
                                             id="canvas_snapshoot_<%= check.id %>"
                                     ></canvas>
                                 </a>
+
                             <% } else { %>
                                 <a href="/checksgroupview?id=<%= check.id %>">
+                                    <div class="preview-overlay-text h4 white bg-maroon" ><%= check.viewport %></div>
+
                                     <canvas class="snapshoot-canvas w-100"
                                             id="canvas_snapshoot_<%= check.id %>"
                                     ></canvas>
