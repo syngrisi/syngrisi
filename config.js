@@ -7,6 +7,6 @@ if (!fs.existsSync(bsPath)){
 
 exports.config = {
     defaultBaselinePath: bsPath,
-    connectionString: process.env.VRS_CONN_STRING || 'mongodb://vrs/VRSdb',
+    connectionString: process.env.VRS_CONN_STRING || 'mongodb://localhost/VRSdb',
     port: process.env.VRS_PORT || 3000
 };
