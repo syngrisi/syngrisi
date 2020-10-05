@@ -30,7 +30,7 @@ Feature: VRS Viewport
 
     When I stop VRS session
     When I open the url "http://vrs:3001/"
-    Then I expect that VRS test "Viewport integration test" has "712x834" viewport
+    Then I expect that VRS test "Viewport integration test" has "712x970" viewport
     When I click on "Viewport integration test" VRS test
     Then I expect that VRS test "Viewport integration test" is unfolded
     Then I expect that VRS check "1/1 viewport - single check" has "New" status
