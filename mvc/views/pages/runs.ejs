@@ -27,7 +27,7 @@
 
 <div name="main" class="main container-fluid pl-3 pr-3 ml-0 mh-100">
     <div name="page-head" class="row bg-sidebar sticky-top">
-        <div name="logo-and-link"  class="col-4 w-25 pl-0 pb-2 bg-sidebar text-light" id="logo-and-label-container">
+        <div name="logo-and-link"  class="col-5 w-25 pl-0 pb-2 bg-sidebar text-light" id="logo-and-label-container">
             <%- include('components/logo_and_link', {drop: true})%>
         </div>
         <!--    TESTS TOOLBAR-->
@@ -76,7 +76,7 @@
     <!--    DATA GRID START    -->
     <div class="all-table row mh-100">
         <!--   SIDEBAR    -->
-        <div name="sidebar" class="sidebar col-4 pr-0 mr-0 ml-1 pl-1 bg-light border-top border-right border-bottom border-silver float-left ml-0 mr-0"
+        <div name="sidebar" class="sidebar col-5 pr-0 mr-0 ml-1 pl-1 bg-light border-top border-right border-bottom border-silver float-left ml-0 mr-0"
              style="width: 100px">
             <%- include('components/sidebar_items_toolbar', {itemName: 'run-item'}) %>
 
@@ -92,7 +92,7 @@
             <%- include('components/tests_table_headers_runs', {})%>
 
 
-            <div name="tests-row" class="checks row">
+            <div name="tests-row" class="checks pl-0 row">
                 <%- include('components/tests_table_rows_runs', {checksByTestGroupedByIdent: checksByTestGroupedByIdent})%>
             </div>
         </div>
