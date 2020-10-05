@@ -460,10 +460,11 @@ exports.create_check = async function (req, res) {
                     os: req.body.os,
                     updatedDate: Date.now(),
                     suite: suite.id,
-                    appname: (await orm.createAppIfNotExist({name: req.body.appname || 'Unknown'})).id,
+                    app: (await orm.createAppIfNotExist({name: req.body.appName || 'Unknown'})).id,
                     domDump: req.body.domdump,
                     run: test.run
                 }
+
                 const fileData = req.files ? req.files.file.data : false
                 /**
                  * Usually there is two stage of checking request:
@@ -493,12 +494,13 @@ exports.create_check = async function (req, res) {
                 }
                 let currentSnapshot, baselineSnapshoot, actualSnapshot
 
-                // check MUST be identified by Name, OS, Browser, Viewport
+                // check MUST be identified by Name, OS, Browser, Viewport, App
                 const checkIdentifier = {
                     name: params.name,
                     os: params.os,
                     browserName: params.browserName,
                     viewport: params.viewport,
+                    app: params.app,
                 };
                 const lastSuccessCheck = await getLastSuccessCheck(checkIdentifier);
                 handleBaseline:{
