@@ -29,6 +29,8 @@ npm run startdebug
 
 ![concept](img/concept.png)
 
+More descriptive flow (with DOM part) see [here](img/flow.png) 
+
 ### Features
 
 * Pix-to-pix comparison
