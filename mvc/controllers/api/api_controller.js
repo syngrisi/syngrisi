@@ -93,9 +93,9 @@ async function compareSnapshots(baseline, actual) {
     }
 
     if (diff.misMatchPercentage !== '0.00') {
-        console.log(`Images are different, ids: [${baseline.id}, ${actual.id}]\n diff: ${JSON.stringify(diff)}`);
+        console.log(`Images are different, ids: [${baseline.id}, ${actual.id}]`);
     }
-    console.log(diff)
+    console.log({diff});
     if (diff.stabMethod && diff.vOffset) {
         if (diff.stabMethod === 'downup') {
             // this mean that we delete first 'diff.vOffset' line of pixels from actual
@@ -115,7 +115,6 @@ async function compareSnapshots(baseline, actual) {
 }
 
 // API
-
 const checks_group_by_ident = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
@@ -570,6 +569,7 @@ exports.create_check = async function (req, res) {
                     totalCheckHandleTime = process.hrtime(executionTimer).toString()
 
                     compareResult['totalCheckHandleTime'] = totalCheckHandleTime;
+                    console.log({compareResult})
                     updateParams['result'] = JSON.stringify(compareResult, null, "\t");
 
                     await check.updateOne(updateParams);

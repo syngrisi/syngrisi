@@ -36,7 +36,7 @@ Feature: VRS Viewport
     Then I expect that VRS check "1/1 viewport - single check" has "New" status
     # assert preview
     Then I expect that element "//div[contains(@class, 'preview-overlay-text')]" is clickable
-    Then I expect that element "//div[contains(@class, 'preview-overlay-text')]" to have text "712x834"
+    Then I expect that element "//div[contains(@class, 'preview-overlay-text')]" to have text "712x970"
 
   Scenario: VRS ViewPort - two checks with same viewports
     When I set env variables:
@@ -55,7 +55,7 @@ Feature: VRS Viewport
 
     When I stop VRS session
     When I open the url "http://vrs:3001/"
-    Then I expect that VRS test "Viewport integration test" has "712x834" viewport
+    Then I expect that VRS test "Viewport integration test" has "712x970" viewport
 
   Scenario: VRS ViewPort - two checks with different viewports
     When I set env variables:
