@@ -3,6 +3,10 @@ Feature: Vertical Shifting
   Background:
     Given I clear test VRS database
     Given I kill process which used port: "3001"
+    When I set env variables:
+    """
+    V_SHIFTING:1
+    """
     Given I start VRS server with parameters:
     """
       port: 3001
