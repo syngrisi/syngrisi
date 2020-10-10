@@ -1,7 +1,7 @@
 {
-  "name": "vrt",
-  "version": "1.0.0",
-  "description": "This project is the stub for Applitools",
+  "name": "Singrisy",
+  "version": "1.0.5",
+  "description": "Syngrisi - Visual Testing Tool",
   "main": "server.js",
   "scripts": {
     "test": "cd ..; wdio wdio.conf.js --spec vrt/tests/features/*; cd vrt;",
@@ -11,10 +11,10 @@
     "clear": "mongo VRSdb --eval 'db.vrschecks.drop();db.vrssnapshots.drop();db.vrstests.drop();db.vrsapps.drop();db.vrssuites.drop();'; rm ./baselines/*.png",
     "start_test": "VRT_CONN_STRING='mongodb://localhost/VRTdbTest' VRT_PORT=3001 VRT_BASELINE_PATH='./baselinesTest/' nodemon server.js",
     "clear_test": "mongo VRSdbTest --eval 'db.vrschecks.drop();db.vrssnapshots.drop();db.vrstests.drop();db.vrsapps.drop();db.vrssuites.drop();'; rm ./baselinesTest/*.png",
-    "clearwin": "mongo VRTdb --eval \"db.vrtchecks.drop();db.vrtsnapshots.drop();db.vrttests.drop();db.vrtapps.drop();db.vrtsuites.drop();\" & DEL /F /Q /S ..\\tests\\BaselineImages\\*.png"
+    "clearwin": "mongo VRSdb --eval \"db.vrtchecks.drop();db.vrtsnapshots.drop();db.vrttests.drop();db.vrtapps.drop();db.vrtsuites.drop();\" & DEL /F /Q /S ..\\tests\\BaselineImages\\*.png"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "async-lock": "^1.2.2",
     "body-parser": "^1.19.0",
