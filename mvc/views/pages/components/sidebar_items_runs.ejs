@@ -1,8 +1,6 @@
 <% items.forEach(function(item){ %>
-    <% const itemCount = (allTests.filter((tst) => tst.run == item.id)).length %>
-    <% const failedItemCount = (allTests.filter((tst) => ((tst.run == item.id) && (tst.status === "Failed")))).length %>
-    <% const successItemCount = (allTests.filter((tst) => ((tst.run == item.id) && (tst.status != "Failed") && (tst.status != "Running")))).length %>
-
+    <% const itemCount = testsCountsGroupByRunId[item.id] || 0 %>
+    <% const failedItemCount = failedTestsCountsGroupByRunId[item.id] || 0%>
     <% if (itemCount > 0){ %>
         <div name="run-menu-item-container"
              class="flex-row pl-0 pb-1 w-100 btn-light border-silver mt-1 mr-0 row justify-content-around">
@@ -31,7 +29,6 @@
                     <div class="col-auto">
                         <div class="small text-right d-flex align-items-end p- bg-sidebar silver rounded pl-1 pr-1 pt-0 pb-0 ">
                             <span><%= itemCount %></span>&nbsp;/&nbsp;<span
-                                    class="text-success"> <%= successItemCount %>   </span>&nbsp;/&nbsp;<span
                                     class="text-danger"><%= failedItemCount %></span>
                         </div>
                     </div>
