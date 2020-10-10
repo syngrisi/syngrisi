@@ -8,6 +8,10 @@
     overflow-x: hidden;
  }
 
+#Dashboard:hover{
+  background-color: hotpink !important;
+}
+
 #sidebar-wrapper {
   min-height: 100vh;
   margin-left: -15rem;

@@ -276,6 +276,27 @@ exports.runs = async function (req, res) {
 
                 const allTests = await Test.find({}).exec();
 
+                const testsCountsGroupByRunId = (await Test.aggregate()
+                    .group({
+                        _id: "$run",
+                        count: {$sum: 1}
+                    }).exec()).reduce(function (map, obj) {
+                    map[obj._id] = obj.count;
+                    return map;
+                }, {});
+
+                const failedTestsCountsGroupByRunId = (await Test.aggregate()
+                        .match({
+                            status: "Failed"
+                        })
+                        .group({
+                            _id: "$run",
+                            count: {$sum: 1}
+                        }).exec()).reduce(function (map, obj) {
+                        map[obj._id] = obj.count;
+                        return map;
+                    }, {});
+
                 const tests = await Test.find(testFilter)
                     .sort(sortFilter).exec()
                 tests.map(function (test) {
@@ -288,7 +309,7 @@ exports.runs = async function (req, res) {
 
                 for (const test of tests) {
                     let checkFilter = {test: test.id}
-                    if(run)
+                    if (run)
                         checkFilter.run = run.id;
                     checksByTestGroupedByIdent[test.id] = await checksGroupedByIdent(checkFilter);
                 }
@@ -298,7 +319,9 @@ exports.runs = async function (req, res) {
                     tests: tests,
                     currentRun: run,
                     checksByTestGroupedByIdent: checksByTestGroupedByIdent,
-                    allTests: allTests
+                    allTests: allTests,
+                    testsCountsGroupByRunId,
+                    failedTestsCountsGroupByRunId
                 });
             } catch (e) {
                 fatalError(req, res, e);
