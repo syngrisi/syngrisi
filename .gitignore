@@ -6,3 +6,6 @@ node_modules
 /tests/files/randomImg.png
 *.bak
 /lib/debug.js
+/lib/B.png
+/lib/A.png
+/lib/rsJsEngine.js
