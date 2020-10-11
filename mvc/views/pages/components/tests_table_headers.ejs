@@ -5,25 +5,49 @@
     <div name="status-header" class="col-2 col-lg-1 text-truncate btn-check small" onclick="sort('status')"
          title="click to sort by this field">
         <a href="javascript:void(0)" class="unlink text-light">Status</a>
+        <span id="status_sort" class="small"></span>
     </div>
     <div name="status-name" class="col-4 col-lg-4 text-truncate btn-check small" onclick="sort('name')"
          title="click to sort by this field">
         <a href="javascript:void(0)" onclick="sort('name')" class="unlink text-light">Name</a>
+        <span id="name_sort" class="small"></span>
     </div>
     <div name="status-date" class="col-1 col-lg-2 text-truncate btn-check small"
          onclick="sort('updatedDate')" title="click to sort by this field">
         <a href="javascript:void(0)" onclick="sort('updatedDate')" class="unlink text-light">Date</a>
+        <span id="updatedDate_sort" class="small"></span>
     </div>
-    <div name="status-browser" class="col-1 col-lg-1 text-truncate btn-check small"
+    <div name="status-browser" class="col-1 col-lg-1 pl-3 pr-2 text-truncate btn-check small"
          onclick="sort('browserName')" title="click to sort by this field">
         <a href="javascript:void(0)" onclick="sort('browserName')" class="unlink text-light">Browser</a>
+        <span id="browserName_sort" class="small"></span>
     </div>
-    <div name="status-os" class="col-1 col-lg-1 text-truncate btn-check small" onclick="sort('os')"
+    <div name="status-os" class="col-1 col-lg-1 pl-3 pr-2 text-truncate btn-check small" onclick="sort('os')"
          title="click to sort by this field">
         <a href="javascript:void(0)" onclick="sort('os')" class="unlink text-light">Platform</a>
+        <span id="os_sort" class="small"></span>
+
     </div>
     <div name="status-viewport" class="col-2 col-lg-2 text-truncate btn-check small"
          onclick="sort('calculatedViewport')" title="click to sort by this field">
         <a href="javascript:void(0)" onclick="sort('calculatedViewport')" class="unlink text-light">Viewport</a>
+        <span id="calculatedViewport_sort" class="small"></span>
     </div>
 </div>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const sortprop = urlParams.get('sortprop');
+    const sortorder = urlParams.get('sortorder');
+
+    if (!sortprop) {
+        document.getElementById(`updatedDate_sort`).innerText = "↑";
+    } else {
+        if(sortorder === "1"){
+            document.getElementById(`${sortprop}_sort`).innerText = "↑";
+        }else{
+            document.getElementById(`${sortprop}_sort`).innerText = "↓";
+        }
+    }
+
+
+</script>
