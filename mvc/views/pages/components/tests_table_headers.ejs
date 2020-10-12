@@ -35,17 +35,19 @@
     </div>
 </div>
 <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const sortprop = urlParams.get('sortprop');
-    const sortorder = urlParams.get('sortorder');
+    {
+        const urlParams = new URLSearchParams(window.location.search);
+        const sortprop = urlParams.get('sortprop');
+        const sortorder = urlParams.get('sortorder');
 
-    if (!sortprop) {
-        document.getElementById(`updatedDate_sort`).innerText = "↑";
-    } else {
-        if(sortorder === "1"){
-            document.getElementById(`${sortprop}_sort`).innerText = "↑";
-        }else{
-            document.getElementById(`${sortprop}_sort`).innerText = "↓";
+        if (!sortprop) {
+            document.getElementById(`updatedDate_sort`).innerText = "↑";
+        } else {
+            if (sortorder === "1") {
+                document.getElementById(`${sortprop}_sort`).innerText = "↑";
+            } else {
+                document.getElementById(`${sortprop}_sort`).innerText = "↓";
+            }
         }
     }
 
