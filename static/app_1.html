@@ -13,6 +13,15 @@
     <link rel="stylesheet" href="/static/css/simple-sidebar.css">
     <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
     <script src="/static/js/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"
+            integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
+            crossorigin="anonymous"></script>
 
     <style>
         .footer {
@@ -134,7 +143,7 @@
                 </div>
             </div>
             <div class="row mb-4">
-                <viv class="col pb-5">
+                <div class="col">
                     Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem dolorem eaque impedit pariatur saepe
                     sapiente velit! Ad alias aliquid aperiam eius iusto libero necessitatibus obcaecati quidem tempore
                     totam? Esse, vero? Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium asperiores
@@ -149,7 +158,39 @@
                     asperiores cum cumque, deserunt distinctio ex fugiat ipsa ipsam, iure iusto, labore maiores minima
                     nobis pariatur quos saepe soluta vero? Assumenda, beatae corporis incidunt minus officiis voluptate!
                     Impedit laudantium maiores molestiae recusandae tempore. Illo, magni.
-                </viv>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <a class="" data-toggle="collapse" href="#collapseForm" role="button"
+                       aria-expanded="false" aria-controls="collapseForm">+ Add feedback</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="collapse multi-collapse" id="collapseForm">
+                        <div class="card card-body">
+                            <form action="#">
+                                <p>
+                                    <input class="form-control m-1" type="text" id="firstName" placeholder="First Name">
+                                    <input class="form-control m-1" type="text" id="lastName" placeholder="Last Name">
+                                    <input class="form-control m-1" type="text" id="phone" placeholder="Phone">
+                                    <input class="form-control m-1" type="text" id="email" placeholder="Email">
+                                </p>
+                                <p>
+                                    <textarea name="feedabck" id="feedbackText" cols="110" rows="10"
+                                              placeholder="Enter the feedback"></textarea>
+                                </p>
+
+                                <input class="btn btn-primary" type="button" value="Submit">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col" style="height: 200px"></div>
             </div>
         </div>
     </div>
