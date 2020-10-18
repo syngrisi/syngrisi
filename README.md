@@ -35,8 +35,10 @@ More descriptive flow (with DOM part) see [here](img/flow.png)
 
 * Pix-to-pix comparison
 * Perceptual comparison:
-    * Antialiasing
     * Offset stabilization
+    * Ignore Alpha
+    * Ignore Colors
+    * Ignore Antialiasing
 * Ignore regions
 * Works with data hashes that allows quickly perform comparison action.
 * Affected elements analyse based on DOM dump and diff image.
