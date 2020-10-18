@@ -25,10 +25,11 @@
 
     <style>
         .footer {
-            position: fixed;
+            position: absolute;
             height: 50px;
             bottom: 0;
             width: 100%;
+            z-index: 1000;
         }
 
         .bg-black {
@@ -162,8 +163,9 @@
             </div>
             <div class="row">
                 <div class="col">
+                    <span>+</span>
                     <a class="" data-toggle="collapse" href="#collapseForm" role="button"
-                       aria-expanded="false" aria-controls="collapseForm">+ Add feedback</a>
+                       aria-expanded="false" aria-controls="collapseForm">Add feedback</a>
                 </div>
             </div>
             <div class="row">

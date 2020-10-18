@@ -197,13 +197,13 @@
                                             <div class="col-3 ml-2 p-0 float-right1">
                                                 <% if(groupStatus == 'failed') { %>
                                                     <a
-                                                            class="btn-check btn-outline-success1 btn-sm  rounded-0 border-0"
+                                                            class="unlink btn-check btn-outline-success1 btn-sm rounded-0 border-0"
                                                             style="line-height: 0.1; padding: 2px;"
                                                             id="comparebutton_<%= check.id %>"
                                                             data-toggle="tooltip"
                                                             data-placement="top"
                                                             title="Compare snapshots"
-                                                            onclick="location.href='./diffview?diffid=<%= check.diffId %>&actualid=<%= check.actualSnapshotId %>&expectedid=<%= check.baselineId %>&checkid=<%= check.id %>';">
+                                                            href="diffview?diffid=<%= check.diffId %>&actualid=<%= check.actualSnapshotId %>&expectedid=<%= check.baselineId %>&checkid=<%= check.id %>">
                                                         <i class="fas fa-exchange-alt fa-1x"></i>
                                                     </a>
                                                 <% } %>
