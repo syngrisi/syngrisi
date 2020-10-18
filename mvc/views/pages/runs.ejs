@@ -30,10 +30,7 @@
         <div name="logo-and-link"  class="col-5 w-25 pl-0 pb-2 bg-sidebar text-light" id="logo-and-label-container">
             <%- include('components/logo_and_link', {drop: true})%>
         </div>
-        <!--    TESTS TOOLBAR-->
-        <div name="header-title" class="run-head col-5 bg-sidebar pl-5 pt-3 h4 border-left mb-0 light-purple text-truncate">
-            <%- include('components/header_title', {currentItem: currentRun})%>
-        </div>
+
         <div name="run-menu-toolbar" class="col">
             <div class="row all-header light-purple sticky-top1">
                 <div class="tests-toolbar sticky-top1 col text-light p-1 pt-3 bg-sidebar align-self-end">
@@ -88,8 +85,8 @@
         </div>
         <!--   TESTS TABLE-->
         <div name class="table-rows p-0 content col float-right ">
+            <%- include('components/subheader_title_rows', {currentItem: currentRun}) %>
             <%- include('components/tests_table_headers_runs', {})%>
-
 
             <div name="tests-row" class="checks pl-0 m-0 row">
                 <%- include('components/tests_table_rows_runs', {checksByTestGroupedByIdent: checksByTestGroupedByIdent})%>

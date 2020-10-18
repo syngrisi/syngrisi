@@ -1,0 +1,13 @@
+<div name="subheader" class="row pl-0 ml-0 bg-headers text-light border-purple border-top1">
+    <div class="col">
+        <% if(currentItem) { %>
+            <a href="?runName=<%= currentItem.name %>" class="unlink">
+                <span><%= currentItem.name %></span>
+            </a>
+        <% }else{ %>
+            <a href="/" class="unlink">
+                <span>All tests</span>
+            </a>
+        <% } %>
+    </div>
+</div>

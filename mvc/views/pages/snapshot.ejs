@@ -37,26 +37,15 @@
 <body>
 <div class="container-fluid pl-3 pr-4">
     <div name="header" class="row bg-sidebar text-light">
-        <div name="logo-and-label" class="col-2 col-lg-3 w-25 pl-4 pt-1">
-            <div class="row pl-1 pb-3">
-                <div class="col-auto pl-2 pr-0 pt-3">
-                    <div class="border-top border-bottom border-left rounded-left border-right rounded-right pl-1 pr-1 pt-1 pb-1">
-                        <a class="unlink" href="/">
-                            <img src="../../../static/imgs/simpleLogoLightShadow3.png" alt="robo logo bg-light1" class=""
-                                 style="width: 35px ">
-                        </a>
-                    </div>
-                </div>
-                <div class="col pl-2 pt-2 mr-0 text-truncate">
-                    <a class="unlink h1" href="/" title="Σύγκριση">Syngrisi</a>
-                </div>
-            </div>
+        <div name="logo-and-link" class="col-3 col-lg-3 w-25 pl-0 pb-1 bg-sidebar text-light"
+             id="logo-and-label-container">
+            <%- include('components/logo_and_link', {drop: true}) %>
         </div>
 
-        <div name="title" class="col pl-4 pt-3 h4 border-left mb-0 light-purple">
+        <div name="title" class="col pl-4 pt-1 h4 border-left mb-0 light-purple">
             <%= snapshot.name %>
         </div>
-        <div name="menu" class="col-auto col-flex align-self-end pl-4 pt-3 h4 mb-0 light-purple">
+        <div name="ignore-menu" class="col-auto col-flex align-self-end pl-4 pt-1 h4 mb-0 light-purple">
             <div class="dropdown mb-1">
                 <button class="btn mb-1 bg-sidebar text-light dropdown-toggle btn-sm" type="button"
                         id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"

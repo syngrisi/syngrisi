@@ -1,17 +1,39 @@
-<div name="table-headers" class="row bg-sidebar light-purple border-purple border-top m-0">
+<div name="table-headers" class="row bg-headers light-purple border-purple border-top m-0">
     <div name="checkbox-header" class="col-1 pl-2 pr-1 col-lg-auto text-truncate small ml-0 mt-1">
         <input name="checkAll" onclick="checkAllTests()" type="checkbox" title="check all tests">
     </div>
     <div name="status-header" class="col-2 col-lg-1 text-truncate btn-check small" onclick="sort('status')"
          title="click to sort by this field">
         <a href="javascript:void(0)" class="unlink text-light">Status</a>
+        <span id="status_sort" class="small"></span>
     </div>
     <div name="status-name" class="col-8 col-lg-8 text-truncate btn-check small" onclick="sort('name')"
          title="click to sort by this field">
         <a href="javascript:void(0)" onclick="sort('name')" class="unlink text-light">Name</a>
+        <span id="name_sort" class="small"></span>
     </div>
     <div name="status-date" class="col-1 col-lg-2 text-truncate btn-check small"
          onclick="sort('updatedDate')" title="click to sort by this field">
         <a href="javascript:void(0)" onclick="sort('updatedDate')" class="unlink text-light">Date</a>
+        <span id="updatedDate_sort" class="small"></span>
     </div>
 </div>
+<script>
+    {
+        const urlParams = new URLSearchParams(window.location.search);
+        const sortprop = urlParams.get('sortprop');
+        const sortorder = urlParams.get('sortorder');
+
+        if (!sortprop) {
+            document.getElementById(`updatedDate_sort`).innerText = "↑";
+        } else {
+            if (sortorder === "1") {
+                document.getElementById(`${sortprop}_sort`).innerText = "↑";
+            } else {
+                document.getElementById(`${sortprop}_sort`).innerText = "↓";
+            }
+        }
+    }
+
+
+</script>
