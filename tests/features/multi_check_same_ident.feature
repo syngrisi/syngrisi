@@ -1,7 +1,7 @@
 @integration
 Feature: VRS Few checks with same identification
   This feature is intended to check behavior of VRS system when there is a few checks in one test with same ident
-  ident is a combination of checks ['name', 'viewport', 'browserName', 'os'] the system group few checks to group with same ident
+  ident is a combination of checks ['name', 'viewport', 'browserName', 'browserVersion', 'os'] the system group few checks to group with same ident
 
   Background:
     Given I clear test VRS database

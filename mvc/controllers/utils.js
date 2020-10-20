@@ -3,7 +3,7 @@ const Check = mongoose.model('VRSCheck');
 const moment = require('moment');
 
 const checkIdent = function checkIdent(check) {
-    return ['name', 'viewport', 'browserName', 'os'].reduce((accumulator, prop) => accumulator + '.' + check[prop], 'ident')
+    return ['name', 'viewport', 'browserName', 'browserVersion', 'os'].reduce((accumulator, prop) => accumulator + '.' + check[prop], 'ident')
 }
 exports.checkIdent = checkIdent;
 

@@ -198,6 +198,7 @@ exports.create_test = async function (req, res) {
                     status: params.status,
                     viewport: params.viewport,
                     browserName: params.browser,
+                    browserVersion: params.browserVersion,
                     os: params.os,
                     startDate: new Date(),
                 }
@@ -456,6 +457,7 @@ exports.create_check = async function (req, res) {
                     name: req.body.name,
                     viewport: req.body.viewport,
                     browserName: req.body.browserName,
+                    browserVersion: req.body.browserVersion,
                     os: req.body.os,
                     updatedDate: Date.now(),
                     suite: suite.id,

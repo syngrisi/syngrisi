@@ -23,6 +23,7 @@ Feature: Start/Stop session
       status: passed
       viewport: 10x10
       browser: chrome
+      browserVersion: "86"
       os: MacOs
     """
     When I expect the "post" response with:
@@ -32,6 +33,7 @@ Feature: Start/Stop session
       name: Test VRS API Smoke - Start/Stop Session
       status: passed
       browserName: chrome
+      browserVersion: "86"
       viewport: 10x10
       os: MacOs
       blinking: 0
@@ -43,6 +45,7 @@ Feature: Start/Stop session
       os: 'MacIntel'
       viewport: '1366x768'
       browserName: 'chrome'
+      browserVersion: "86"
       app: 'Test App'
       test: 'Passed test'
       testId: <post: _id>
@@ -67,6 +70,7 @@ Feature: Start/Stop session
       calculatedStatus: New
       status: passed
       browserName: chrome
+      browserVersion: "86"
       viewport: 10x10
       os: MacOs
       blinking: 0
@@ -81,6 +85,7 @@ Feature: Start/Stop session
       status: passed
       viewport: 10x10
       browser: chrome
+      browserVersion: "86"
       os: MacOs
     """
 
@@ -91,6 +96,7 @@ Feature: Start/Stop session
       name: Test VRS API Smoke - Start/Stop Session
       status: passed
       browserName: chrome
+      browserVersion: "86"
       viewport: 10x10
       os: MacOs
       blinking: 0
@@ -102,6 +108,7 @@ Feature: Start/Stop session
       os: 'MacIntel'
       viewport: '1366x768'
       browserName: 'chrome'
+      browserVersion: "86"
       app: 'Test App'
       test: 'Passed test'
       testId: <post: _id>
@@ -125,6 +132,7 @@ Feature: Start/Stop session
       name: Test VRS API Smoke - Start/Stop Session
       calculatedStatus: New
       browserName: chrome
+      browserVersion: "86"
       viewport: 10x10
       os: MacOs
       blinking: 0
@@ -138,6 +146,7 @@ Feature: Start/Stop session
       status: passed
       viewport: 10x10
       browser: chrome
+      browserVersion: "86"
       os: MacOs
     """
     Then I expect the "post" response with:
@@ -147,6 +156,7 @@ Feature: Start/Stop session
       name: Test VRS API Smoke - Start/Stop Session
       status: passed
       browserName: chrome
+      browserVersion: "86"
       viewport: 10x10
       os: MacOs
       blinking: 0
@@ -158,6 +168,7 @@ Feature: Start/Stop session
       os: 'MacIntel'
       viewport: '1366x768'
       browserName: 'chrome'
+      browserVersion: "86"
       app: 'Test App'
       test: 'Passed test'
       testId: <post: _id>
@@ -180,6 +191,7 @@ Feature: Start/Stop session
       name: Test VRS API Smoke - Start/Stop Session
       calculatedStatus: Passed
       browserName: chrome
+      browserVersion: "86"
       viewport: 10x10
       os: MacOs
       blinking: 0
@@ -194,6 +206,7 @@ Feature: Start/Stop session
       status: passed
       viewport: 10x10
       browser: chrome
+      browserVersion: "86"
       os: MacOs
     """
     Then I expect the "post" response with:
@@ -203,6 +216,7 @@ Feature: Start/Stop session
       name: Test VRS API Smoke - Start/Stop Session
       status: passed
       browserName: chrome
+      browserVersion: "86"
       viewport: 10x10
       os: MacOs
       blinking: 0
@@ -214,6 +228,7 @@ Feature: Start/Stop session
       os: 'MacIntel'
       viewport: '1366x768'
       browserName: 'chrome'
+      browserVersion: "86"
       app: 'Test App'
       test: 'Passed test'
       testId: <post: _id>
@@ -237,6 +252,7 @@ Feature: Start/Stop session
       name: Test VRS API Smoke - Start/Stop Session
       calculatedStatus: New
       browserName: chrome
+      browserVersion: "86"
       viewport: 10x10
       os: MacOs
       blinking: 0
@@ -250,6 +266,7 @@ Feature: Start/Stop session
       status: passed
       viewport: 10x10
       browser: chrome
+      browserVersion: "86"
       os: MacOs
     """
     Then I expect the "post" response with:
@@ -259,6 +276,7 @@ Feature: Start/Stop session
       name: Test VRS API Smoke - Start/Stop Session
       status: passed
       browserName: chrome
+      browserVersion: "86"
       viewport: 10x10
       os: MacOs
       blinking: 0
@@ -270,6 +288,7 @@ Feature: Start/Stop session
       os: 'MacIntel'
       viewport: '1366x768'
       browserName: 'chrome'
+      browserVersion: "86"
       app: 'Test App'
       test: 'Passed test'
       testId: <post: _id>
@@ -292,6 +311,7 @@ Feature: Start/Stop session
       name: Test VRS API Smoke - Start/Stop Session
       calculatedStatus: Failed
       browserName: chrome
+      browserVersion: "86"
       viewport: 10x10
       os: MacOs
       blinking: 0
@@ -307,6 +327,7 @@ Feature: Start/Stop session
       status: passed
       viewport: 10x10
       browser: chrome
+      browserVersion: "86"
       os: MacOs
     """
     Then I expect the "post" response with:
@@ -316,6 +337,7 @@ Feature: Start/Stop session
       name: Test VRS API Smoke - Start/Stop Session
       status: passed
       browserName: chrome
+      browserVersion: "86"
       viewport: 10x10
       os: MacOs
       blinking: 0
@@ -327,6 +349,7 @@ Feature: Start/Stop session
       os: 'MacIntel'
       viewport: '1366x768'
       browserName: 'chrome'
+      browserVersion: "86"
       app: 'Test App'
       test: 'Passed test'
       testId: <post: _id>
@@ -350,6 +373,7 @@ Feature: Start/Stop session
       name: Test VRS API Smoke - Start/Stop Session
       calculatedStatus: New
       browserName: chrome
+      browserVersion: "86"
       viewport: 10x10
       os: MacOs
       blinking: 0
@@ -363,6 +387,7 @@ Feature: Start/Stop session
       status: passed
       viewport: 10x10
       browser: chrome
+      browserVersion: "86"
       os: MacOs
     """
     Then I expect the "post" response with:
@@ -372,6 +397,7 @@ Feature: Start/Stop session
       name: Test VRS API Smoke - Start/Stop Session
       status: passed
       browserName: chrome
+      browserVersion: "86"
       viewport: 10x10
       os: MacOs
       blinking: 0
@@ -383,6 +409,7 @@ Feature: Start/Stop session
       os: 'MacIntel'
       viewport: '1366x768'
       browserName: 'chrome'
+      browserVersion: "86"
       app: 'Test App'
       test: 'Passed test'
       testId: <post: _id>
@@ -405,6 +432,7 @@ Feature: Start/Stop session
       name: Test VRS API Smoke - Start/Stop Session
       calculatedStatus: Passed
       browserName: chrome
+      browserVersion: "86"
       viewport: 10x10
       os: MacOs
       blinking: 0
@@ -418,6 +446,7 @@ Feature: Start/Stop session
       status: passed
       viewport: 10x10
       browser: chrome
+      browserVersion: "86"
       os: MacOs
     """
     Then I expect the "post" response with:
@@ -427,6 +456,7 @@ Feature: Start/Stop session
       name: Test VRS API Smoke - Start/Stop Session
       status: passed
       browserName: chrome
+      browserVersion: "86"
       viewport: 10x10
       os: MacOs
       blinking: 0
@@ -438,6 +468,7 @@ Feature: Start/Stop session
       os: 'MacIntel'
       viewport: '1366x768'
       browserName: 'chrome'
+      browserVersion: "86"
       app: 'Test App'
       test: 'Passed test'
       testId: <post: _id>
@@ -460,6 +491,7 @@ Feature: Start/Stop session
       name: Test VRS API Smoke - Start/Stop Session
       calculatedStatus: Failed
       browserName: chrome
+      browserVersion: "86"
       viewport: 10x10
       os: MacOs
       blinking: 0
