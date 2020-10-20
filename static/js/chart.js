@@ -2,7 +2,7 @@ function drawChart() {
 
     var chart = new CanvasJS.Chart("chartContainer", {
         animationEnabled: true,
-        animationDuration: 300,
+        animationDuration: 100,
         title: {
             text: "Composition of Internet Traffic in North America"
         },
