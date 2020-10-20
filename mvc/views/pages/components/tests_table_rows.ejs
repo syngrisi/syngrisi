@@ -43,11 +43,12 @@
                                       data-placement="top"
                                       title="<%= test.formattedUpdatedDate %>"><%= test.formattedUpdatedDate %></span>
             </div>
-            <div class="cell-browser cell col-1 col-lg-1 border-bottom border-right text-truncate">
+            <div class="cell-browser cell col-1 col-lg-1 pl-2 pr-1 border-bottom border-right text-truncate">
+                <% const browserVersion =  (test.browserVersion === 'undefined') ? '?' : test.browserVersion%>
                                 <span name="cell-browser" id="<%= test.id %>_cell-browser" class="text-primary small"
                                       data-toggle="tooltip"
                                       data-placement="top"
-                                      title="<%= test.browserName %>"><%= test.browserName %></span>
+                                      title="<%= test.browserName %> <%= test.browserVersion %>"><%= test.browserName %></span> <sup class="text-secondary"><%= browserVersion %></sup>
             </div>
             <div class="cell-platform cell col-1 col-lg-1 border-bottom border-right text-truncate">
                                 <span name="cell-os" id="<%= test.id %>_cell-os" class="text-primary small"
@@ -113,7 +114,8 @@
                              title="Status: [<%= groupStatus %>]</br>
                                              Name: <%= check.name %> </br>
                                              Created: <%= check.formattedUpdatedDate %> </br>
-                                             Browser: <%= check.browserName %> </br>
+                                             BrowserName: <%= check.browserName %> </br>
+                                             BrowserVersion: <%= check.browserVersion %> </br>
                                              Viewport: <%= check.viewport %> </br>
                                              Platform: <%= check.os %> </br>
                                              Id: <%= check.id %> </br>
@@ -153,7 +155,7 @@
                                 <% const checksCount = Object.keys(checksByTestGroupedByIdent[test.id]).length %>
                                 <% const groupChecksCount = (checksByTestGroupedByIdent[test.id][groupName].checks.length > 1) ? `(${checksByTestGroupedByIdent[test.id][groupName].checks.length})` : '' %>
                                 <div name="check-name"
-                                     class="col-8 flex-shrink-1111 ml-0 mr-0 pt-2 pb-0 float-right1 align-middle text-truncate  small p-0"
+                                     class="col-8 ml-0 mr-0 pt-2 pb-0 float-right1 align-middle text-truncate  small p-0"
                                      data-toggle="tooltip"
                                      data-placement="top"
                                      title="<%= check.name %>">

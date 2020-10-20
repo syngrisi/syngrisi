@@ -100,6 +100,10 @@ const VRSCheckSchema = new Schema({
         type: String,
         default: 'undefined',
     },
+    browserVersion: {
+        type: String,
+        default: 'undefined',
+    },
     viewport: {
         type: String,
         default: 'undefined',
@@ -134,6 +138,10 @@ const VRSTestSchema = new Schema({
         default: 'undefined',
     },
     browserName: {
+        type: String,
+        default: 'undefined',
+    },
+    browserVersion: {
         type: String,
         default: 'undefined',
     },

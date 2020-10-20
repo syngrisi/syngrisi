@@ -35,6 +35,33 @@
         .bg-black {
             background-color: black;
         }
+        .btn:visited:active:focus {
+            outline: none;
+            /*border-style: outset !important;*/
+            box-shadow: none !important;
+            border: none;
+        }
+        .btn-danger.focus, .btn-danger:focus {
+            outline: none;
+            /*border-style: outset !important;*/
+            box-shadow: none !important;
+            border: none;
+        }
+
+        .btn {
+            -webkit-border-radius: 0px;
+            -moz-border-radius: 0px;
+            -ms-border-radius: 0px;
+            -o-border-radius: 0px;
+            border-radius: 0px;
+            outline: none;
+            border: none;
+
+        }
+        .btn:active {
+            border-style: outset;
+            border: none;
+        }
     </style>
 </head>
 <body>
@@ -210,10 +237,10 @@
     <div id="break-buttons" class="fixed-top p-2 m-2 mt-5 bg-dark border border-secondary"
          style="right: 0; left: unset">
         <div class="m-1" id="break-chart">
-            <a href="javascript:void(0)" class="btn btn-danger" onclick="brokeChart()">Break the chart</a>
+            <a href="javascript:void(0)" class="btn btn-danger border-0" onclick="brokeChart()">Break the chart</a>
         </div>
         <div class="m-1 mt-2" id="break-table">
-            <a href="javascript:void(0)" class="btn btn-danger" onclick="brokeTable()">Break the table</a>
+            <a href="javascript:void(0)" class="btn btn-danger border-0" onclick="brokeTable()">Break the table</a>
         </div>
     </div>
 
@@ -247,8 +274,8 @@
     }
 
     function brokeChart() {
-        const el = document.getElementById('chartContainer');
-        el.scrollIntoView();
+        // const el = document.getElementById('chartContainer');
+        // el.scrollIntoView();
         chart.data[3].dataPoints[6].y = 111;
         chart.data[0].dataPoints[5].y = 8;
         chart.data[2].dataPoints[5].y = 80;
@@ -257,7 +284,7 @@
 
     function brokeTable() {
         const el = document.getElementById('total');
-        el.scrollIntoView();
+        // el.scrollIntoView();
         el.style.paddingRight = "140px";
         el.style.color = 'red';
     }
