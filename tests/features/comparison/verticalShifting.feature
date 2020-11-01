@@ -1,4 +1,4 @@
-@visual @comparison @shifting
+@visual @comparison @shifting @Pending
 Feature: Vertical Shifting
   Background:
     Given I clear test VRS database
