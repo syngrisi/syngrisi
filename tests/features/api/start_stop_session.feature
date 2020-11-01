@@ -52,7 +52,7 @@ Feature: Start/Stop session
       suite:
         name: Test VRS API Smoke - Start/Stop Session
     """
-    When I check image with path: "vrs/tests/files/A.png" as "stop session check_01"
+    When I check image with path: "./files/A.png" as "stop session check_01"
 
 
     # Stop
@@ -115,7 +115,7 @@ Feature: Start/Stop session
       suite:
         name: Test VRS API Smoke - Start/Stop Session
     """
-    When I check image with path: "vrs/tests/files/A.png" as "stop session check_01"
+    When I check image with path: "files/A.png" as "stop session check_01"
 
 
     # Stop - New
@@ -175,7 +175,7 @@ Feature: Start/Stop session
       suite:
         name: Test VRS API Smoke - Start/Stop Session
     """
-    When I check image with path: "vrs/tests/files/A.png" as "stop session check_01"
+    When I check image with path: "files/A.png" as "stop session check_01"
 
     # Stop - Passed
     When I send "post" request to "http://vrs:3001/session/<post: _id>" with:
@@ -235,7 +235,7 @@ Feature: Start/Stop session
       suite:
         name: Test VRS API Smoke - Start/Stop Session
     """
-    When I check image with path: "vrs/tests/files/A.png" as "stop session check_01"
+    When I check image with path: "files/A.png" as "stop session check_01"
 
 
     # Stop - New
@@ -295,7 +295,7 @@ Feature: Start/Stop session
       suite:
         name: Test VRS API Smoke - Start/Stop Session
     """
-    When I check image with path: "vrs/tests/files/B.png" as "stop session check_01"
+    When I check image with path: "files/B.png" as "stop session check_01"
 
     # Stop - Failed
     When I send "post" request to "http://vrs:3001/session/<post: _id>" with:
@@ -356,7 +356,7 @@ Feature: Start/Stop session
       suite:
         name: Test VRS API Smoke - Start/Stop Session
     """
-    When I check image with path: "vrs/tests/files/A.png" as "stop session check_01"
+    When I check image with path: "files/A.png" as "stop session check_01"
 
 
     # Stop - New
@@ -416,7 +416,7 @@ Feature: Start/Stop session
       suite:
         name: Test VRS API Smoke - Start/Stop Session
     """
-    When I check image with path: "vrs/tests/files/A.png" as "stop session check_01"
+    When I check image with path: "files/A.png" as "stop session check_01"
 
     # Stop - Passed
     When I send "post" request to "http://vrs:3001/session/<post: _id>" with:
@@ -475,7 +475,7 @@ Feature: Start/Stop session
       suite:
         name: Test VRS API Smoke - Start/Stop Session
     """
-    When I check image with path: "vrs/tests/files/B.png" as "stop session check_01"
+    When I check image with path: "files/B.png" as "stop session check_01"
 
     # Stop - Failed
     When I send "post" request to "http://vrs:3001/session/<post: _id>" with:

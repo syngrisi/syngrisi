@@ -1,0 +1,68 @@
+import waitFor from 'src/support/action/waitFor';
+
+let waitForExist;
+let waitForEnabled;
+let waitForDisplayed;
+
+describe('waitFor', () => {
+    beforeEach(() => {
+        waitForExist = jest.fn();
+        waitForEnabled = jest.fn();
+        waitForDisplayed = jest.fn();
+
+        global.$ = jest.fn().mockReturnValue({
+            waitForExist,
+            waitForEnabled,
+            waitForDisplayed,
+        });
+    });
+
+    it('should call waitForExist on the element object', () => {
+        waitFor('element', 1, undefined, '');
+
+        expect(waitForExist).toHaveBeenCalledTimes(1);
+        expect(waitForExist).toHaveBeenCalledWith(1, false);
+    });
+
+    it('should call waitForExist on the element object', () => {
+        waitFor('element', 1, false, '');
+
+        expect(waitForExist).toHaveBeenCalledTimes(1);
+        expect(waitForExist).toHaveBeenCalledWith(1, false);
+    });
+
+    it('should call waitForExist on the element object', () => {
+        waitFor('element', 1, true, '');
+
+        expect(waitForExist).toHaveBeenCalledTimes(1);
+        expect(waitForExist).toHaveBeenCalledWith(1, true);
+    });
+
+    it('should use a default value for the timeout', () => {
+        waitFor('element', 0, false, '');
+
+        expect(waitForExist).toHaveBeenCalledTimes(1);
+        expect(waitForExist).toHaveBeenCalledWith(3000, false);
+    });
+
+    it('should call waitForEnabled on the browser object', () => {
+        waitFor('element', 1, false, 'be enabled');
+
+        expect(waitForEnabled).toHaveBeenCalledTimes(1);
+        expect(waitForEnabled).toHaveBeenCalledWith(1, false);
+    });
+
+    it('should call waitForVisible on the element object', () => {
+        waitFor('element', 1, false, 'be displayed');
+
+        expect(waitForDisplayed).toHaveBeenCalledTimes(1);
+        expect(waitForDisplayed).toHaveBeenCalledWith(1, false);
+    });
+
+    it('should call waitForExist on the element object', () => {
+        waitFor('element', 1, false, 'exist');
+
+        expect(waitForExist).toHaveBeenCalledTimes(1);
+        expect(waitForExist).toHaveBeenCalledWith(1, false);
+    });
+});

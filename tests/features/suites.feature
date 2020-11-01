@@ -22,7 +22,7 @@ Feature: Suites
       testName: Unnamed Suite Test
       suiteName: EMPTY
     """
-    When I check image with path: "vrs/tests/files/A.png" as "new int check suites 1"
+    When I check image with path: "files/A.png" as "new int check suites 1"
 
     When I stop VRS session
     When I open the url "http://vrs:3001/"
@@ -38,7 +38,7 @@ Feature: Suites
       testName: Named Suite Test
       suiteName: NotEmptySuite
     """
-    When I check image with path: "vrs/tests/files/A.png" as "new int check suites 1"
+    When I check image with path: "files/A.png" as "new int check suites 1"
 
     When I stop VRS session
     When I open the url "http://vrs:3001/"
