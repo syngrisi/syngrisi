@@ -25,7 +25,7 @@ Feature: VRS Few checks with same identification
       testName: "two passed checks"
     """
 
-    When I check image with path: "vrs/tests/files/A.png" as "check 1"
+    When I check image with path: "files/A.png" as "check 1"
 
     When I stop VRS session
     When I open the url "http://vrs:3001/"
@@ -39,8 +39,8 @@ Feature: VRS Few checks with same identification
     """
       testName: "two passed checks"
     """
-    When I check image with path: "vrs/tests/files/A.png" as "check 1"
-    When I check image with path: "vrs/tests/files/A.png" as "check 1"
+    When I check image with path: "files/A.png" as "check 1"
+    When I check image with path: "files/A.png" as "check 1"
 
     When I stop VRS session
     When I open the url "http://vrs:3001/"
@@ -57,7 +57,7 @@ Feature: VRS Few checks with same identification
       testName: "two failed checks"
     """
 
-    When I check image with path: "vrs/tests/files/A.png" as "check 1"
+    When I check image with path: "files/A.png" as "check 1"
 
     When I stop VRS session
     When I open the url "http://vrs:3001/"
@@ -71,8 +71,8 @@ Feature: VRS Few checks with same identification
     """
       testName: "two failed checks"
     """
-    When I check image with path: "vrs/tests/files/B.png" as "check 1"
-    When I check image with path: "vrs/tests/files/B.png" as "check 1"
+    When I check image with path: "files/B.png" as "check 1"
+    When I check image with path: "files/B.png" as "check 1"
 
     When I stop VRS session
     When I open the url "http://vrs:3001/"
@@ -89,7 +89,7 @@ Feature: VRS Few checks with same identification
       testName: "failed and passed"
     """
 
-    When I check image with path: "vrs/tests/files/A.png" as "check 1"
+    When I check image with path: "files/A.png" as "check 1"
 
     When I stop VRS session
     When I open the url "http://vrs:3001/"
@@ -103,8 +103,8 @@ Feature: VRS Few checks with same identification
     """
       testName: "failed and passed"
     """
-    When I check image with path: "vrs/tests/files/B.png" as "check 1"
-    When I check image with path: "vrs/tests/files/A.png" as "check 1"
+    When I check image with path: "files/B.png" as "check 1"
+    When I check image with path: "files/A.png" as "check 1"
 
     When I stop VRS session
     When I open the url "http://vrs:3001/"
@@ -123,7 +123,7 @@ Feature: VRS Few checks with same identification
       testName: "passed and failed"
     """
 
-    When I check image with path: "vrs/tests/files/A.png" as "check 1"
+    When I check image with path: "files/A.png" as "check 1"
 
     When I stop VRS session
     When I open the url "http://vrs:3001/"
@@ -137,8 +137,8 @@ Feature: VRS Few checks with same identification
     """
       testName: "passed and failed"
     """
-    When I check image with path: "vrs/tests/files/A.png" as "check 1"
-    When I check image with path: "vrs/tests/files/B.png" as "check 1"
+    When I check image with path: "files/A.png" as "check 1"
+    When I check image with path: "files/B.png" as "check 1"
 
     When I stop VRS session
     When I open the url "http://vrs:3001/"

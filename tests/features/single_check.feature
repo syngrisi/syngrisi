@@ -22,11 +22,11 @@ Feature: VRS One Suite, One test, One check
     """
       testName: "Without session ending"
     """
-    When I check image with path: "vrs/tests/files/A.png" as "new int check"
+    When I check image with path: "files/A.png" as "new int check"
     When I open the url "http://vrs:3001/"
     Then I wait and refresh page on element "span=Without session ending" for "3" seconds to exist
     Then I expect that VRS test "Without session ending" has "Running" status
-    Then I expect that VRS test "Without session ending" has "chrome" browser
+    Then I expect that VRS test "Without session ending" has "Chrome" browser
     Then I expect that VRS test "Without session ending" has "≠" viewport
 
     When I click on "Without session ending" VRS test
@@ -41,13 +41,13 @@ Feature: VRS One Suite, One test, One check
       appName: "Integration Test App"
       testName: "With session ending"
     """
-    When I check image with path: "vrs/tests/files/A.png" as "new int check 2"
+    When I check image with path: "files/A.png" as "new int check 2"
 
     When I stop VRS session
     When I open the url "http://vrs:3001/"
     Then I wait and refresh page on element "span=With session ending" for "3" seconds to exist
     Then I expect that VRS test "With session ending" has "New" status
-    Then I expect that VRS test "With session ending" has "chrome" browser
+    Then I expect that VRS test "With session ending" has "Chrome" browser
     Then I expect that VRS test "With session ending" has "1366x768" viewport
 
     When I click on "With session ending" VRS test
@@ -62,20 +62,20 @@ Feature: VRS One Suite, One test, One check
     """
       testName: "Passed test"
     """
-    When I check image with path: "vrs/tests/files/A.png" as "new int check 3"
+    When I check image with path: "files/A.png" as "new int check 3"
     When I stop VRS session
     Given I start VRS session with parameters:
     """
       testName: "Passed test"
     """
-    When I check image with path: "vrs/tests/files/A.png" as "new int check 3"
+    When I check image with path: "files/A.png" as "new int check 3"
     When I stop VRS session
 #
     When I open the url "http://vrs:3001/"
 
     Then I wait and refresh page on element "span=Passed" for "3" seconds to exist
     Then I expect that 1th VRS test "Passed test" has "Passed" status
-    Then I expect that 1th VRS test "Passed test" has "chrome" browser
+    Then I expect that 1th VRS test "Passed test" has "Chrome" browser
     Then I expect that 1th VRS test "Passed test" has "1366x768" viewport
 
     Then I expect that 2th VRS test "Passed test" has "New" status
@@ -91,21 +91,21 @@ Feature: VRS One Suite, One test, One check
     """
       testName: "Failed test"
     """
-    When I check image with path: "vrs/tests/files/A.png" as "new int check 4"
+    When I check image with path: "files/A.png" as "new int check 4"
     When I stop VRS session
 
     Given I start VRS session with parameters:
     """
       testName: "Failed test"
     """
-    When I check image with path: "vrs/tests/files/B.png" as "new int check 4"
+    When I check image with path: "files/B.png" as "new int check 4"
     When I stop VRS session
 
     When I open the url "http://vrs:3001/"
 
     Then I wait and refresh page on element "span=Failed" for "3" seconds to exist
     Then I expect that 1th VRS test "Failed test" has "Failed" status
-    Then I expect that 1th VRS test "Failed test" has "chrome" browser
+    Then I expect that 1th VRS test "Failed test" has "Chrome" browser
     Then I expect that 1th VRS test "Failed test" has "1366x768" viewport
 
     Then I expect that 2th VRS test "Failed test" has "New" status
@@ -121,28 +121,28 @@ Feature: VRS One Suite, One test, One check
     """
       testName: "Failed test"
     """
-    When I check image with path: "vrs/tests/files/A.png" as "new int check 5"
+    When I check image with path: "files/A.png" as "new int check 5"
     When I stop VRS session
 
     Given I start VRS session with parameters:
     """
       testName: "Failed test"
     """
-    When I check image with path: "vrs/tests/files/A.png" as "new int check 5"
+    When I check image with path: "files/A.png" as "new int check 5"
     When I stop VRS session
 
     Given I start VRS session with parameters:
     """
       testName: "Failed test"
     """
-    When I check image with path: "vrs/tests/files/B.png" as "new int check 5"
+    When I check image with path: "files/B.png" as "new int check 5"
     When I stop VRS session
 
     When I open the url "http://vrs:3001/"
 
     Then I wait and refresh page on element "span=Failed" for "3" seconds to exist
     Then I expect that 1th VRS test "Failed test" has "Failed" status
-    Then I expect that 1th VRS test "Failed test" has "chrome" browser
+    Then I expect that 1th VRS test "Failed test" has "Chrome" browser
     Then I expect that 1th VRS test "Failed test" has "1366x768" viewport
 
     Then I expect that 2th VRS test "Failed test" has "Passed" status

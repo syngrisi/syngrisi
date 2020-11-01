@@ -48,11 +48,11 @@ Feature: Smoke VRS API
           browser: chrome
           os: MacOs
       """
-    Given I generate a random image "./vrs/tests/files/randomImg.png"
+    Given I generate a random image "./files/randomImg.png"
     Given I create new VRS Check with:
       """
         url: http://vrs:3001/checks
-        hashFilePath: ./vrs/tests/files/randomImg.png
+        hashFilePath: ./files/randomImg.png
         params:
           testname: Test Check Phase 1
           name: check phase1
@@ -82,11 +82,11 @@ Feature: Smoke VRS API
           browser: chrome
           os: MacOs
       """
-    Given I generate a random image "./vrs/tests/files/randomImg.png"
+    Given I generate a random image "./files/randomImg.png"
     Given I create new VRS Check with:
       """
         url: http://vrs:3001/checks
-        hashFilePath: ./vrs/tests/files/randomImg.png
+        hashFilePath: ./files/randomImg.png
         params:
           testname: Test Check Phase 1-2
           name: check phase12
@@ -99,8 +99,8 @@ Feature: Smoke VRS API
     Given I create new VRS Check with:
       """
         url: http://vrs:3001/checks
-        hashFilePath: ./vrs/tests/files/randomImg.png
-        file: ./vrs/tests/files/randomImg.png
+        hashFilePath: ./files/randomImg.png
+        file: ./files/randomImg.png
         params:
           testname: Test Check Phase 1-2
           name: check phase12
@@ -133,11 +133,11 @@ Feature: Smoke VRS API
           browser: chrome
           os: MacOs
       """
-    Given I generate a random image "./vrs/tests/files/randomImg.png"
+    Given I generate a random image "./files/randomImg.png"
     Given I create new VRS Check with:
       """
         url: http://vrs:3001/checks
-        hashFilePath: ./vrs/tests/files/randomImg.png
+        hashFilePath: ./files/randomImg.png
         params:
           testname: Test Check Phase 1-2 already exist - 1
           name: check phase12 ae-1
@@ -159,8 +159,8 @@ Feature: Smoke VRS API
     Given I create new VRS Check with:
       """
         url: http://vrs:3001/checks
-        hashFilePath: ./vrs/tests/files/randomImg.png
-        file: ./vrs/tests/files/randomImg.png
+        hashFilePath: ./files/randomImg.png
+        file: ./files/randomImg.png
         params:
           testname: Test Check Phase 1-2 already exist - 1
           name: check phase12 ae-1
@@ -198,7 +198,7 @@ Feature: Smoke VRS API
     When I create new VRS Check with:
       """
         url: http://vrs:3001/checks
-        hashFilePath: ./vrs/tests/files/randomImg.png
+        hashFilePath: ./files/randomImg.png
         params:
           testname: Test Check Phase 1-2 already exist - 2
           name: check phase12 ae-2

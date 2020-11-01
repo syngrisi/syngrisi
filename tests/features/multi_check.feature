@@ -25,8 +25,8 @@ Feature: VRS One Suite, One test, Few checks
       testName: "Two checks - new"
     """
 
-    When I check image with path: "vrs/tests/files/A.png" as "check 1"
-    When I check image with path: "vrs/tests/files/B.png" as "check 2"
+    When I check image with path: "files/A.png" as "check 1"
+    When I check image with path: "files/B.png" as "check 2"
 
     When I stop VRS session
     When I open the url "http://vrs:3001/"
@@ -46,8 +46,8 @@ Feature: VRS One Suite, One test, Few checks
       testName: "Two checks - new, passed"
     """
 
-    When I check image with path: "vrs/tests/files/A.png" as "check 1"
-    When I check image with path: "vrs/tests/files/B.png" as "check 2"
+    When I check image with path: "files/A.png" as "check 1"
+    When I check image with path: "files/B.png" as "check 2"
 
     When I stop VRS session
 
@@ -59,7 +59,7 @@ Feature: VRS One Suite, One test, Few checks
       testName: "Two checks - new, passed"
     """
 
-    When I check image with path: "vrs/tests/files/A.png" as "check 1"
+    When I check image with path: "files/A.png" as "check 1"
 
     When I stop VRS session
 
@@ -81,8 +81,8 @@ Feature: VRS One Suite, One test, Few checks
       testName: "Two checks - passed, passed"
     """
 
-    When I check image with path: "vrs/tests/files/A.png" as "check 1"
-    When I check image with path: "vrs/tests/files/B.png" as "check 2"
+    When I check image with path: "files/A.png" as "check 1"
+    When I check image with path: "files/B.png" as "check 2"
 
     When I stop VRS session
 
@@ -94,8 +94,8 @@ Feature: VRS One Suite, One test, Few checks
       testName: "Two checks - passed, passed"
     """
 
-    When I check image with path: "vrs/tests/files/A.png" as "check 1"
-    When I check image with path: "vrs/tests/files/B.png" as "check 2"
+    When I check image with path: "files/A.png" as "check 1"
+    When I check image with path: "files/B.png" as "check 2"
 
     When I stop VRS session
 
@@ -115,8 +115,8 @@ Feature: VRS One Suite, One test, Few checks
       testName: "Two checks - failed, failed"
     """
 
-    When I check image with path: "vrs/tests/files/A.png" as "check 1"
-    When I check image with path: "vrs/tests/files/B.png" as "check 2"
+    When I check image with path: "files/A.png" as "check 1"
+    When I check image with path: "files/B.png" as "check 2"
 
     When I stop VRS session
 
@@ -125,8 +125,8 @@ Feature: VRS One Suite, One test, Few checks
       testName: "Two checks - failed, failed"
     """
 
-    When I check image with path: "vrs/tests/files/B.png" as "check 1"
-    When I check image with path: "vrs/tests/files/A.png" as "check 2"
+    When I check image with path: "files/B.png" as "check 1"
+    When I check image with path: "files/A.png" as "check 2"
 
     When I stop VRS session
 
@@ -146,8 +146,8 @@ Feature: VRS One Suite, One test, Few checks
       testName: "Two checks - passed, failed"
     """
 
-    When I check image with path: "vrs/tests/files/A.png" as "check 1"
-    When I check image with path: "vrs/tests/files/B.png" as "check 2"
+    When I check image with path: "files/A.png" as "check 1"
+    When I check image with path: "files/B.png" as "check 2"
 
     When I stop VRS session
 
@@ -156,8 +156,8 @@ Feature: VRS One Suite, One test, Few checks
       testName: "Two checks - passed, failed"
     """
 
-    When I check image with path: "vrs/tests/files/A.png" as "check 1"
-    When I check image with path: "vrs/tests/files/A.png" as "check 2"
+    When I check image with path: "files/A.png" as "check 1"
+    When I check image with path: "files/A.png" as "check 2"
 
     When I stop VRS session
 

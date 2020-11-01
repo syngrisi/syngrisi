@@ -1,0 +1,16 @@
+# Logs
+*.log
+
+# Dependency directory
+# Commenting this out is preferred by some people, see
+# https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git-
+node_modules
+
+errorShots
+coverage
+
+# Editor files
+.idea
+.vscode
+!.vscode/extensions.json
+yarn.lock

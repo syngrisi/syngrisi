@@ -25,7 +25,7 @@ Feature: VRS Runs Smoke
     """
       testName: "Runs integration test"
     """
-    When I assert image with path: "vrs/tests/files/A.png" as "new int assert_1"
+    When I assert image with path: "files/A.png" as "new int assert_1"
     Then the "check" "status" should be "new"
 
     When I stop VRS session
@@ -51,7 +51,7 @@ Feature: VRS Runs Smoke
     """
       testName: "Runs integration test - 01"
     """
-    When I assert image with path: "vrs/tests/files/A.png" as "new int assert_1"
+    When I assert image with path: "files/A.png" as "new int assert_1"
     Then the "check" "status" should be "new"
     When I stop VRS session
 
@@ -65,7 +65,7 @@ Feature: VRS Runs Smoke
     """
       testName: "Runs integration test - 02"
     """
-    When I assert image with path: "vrs/tests/files/A.png" as "new int assert_2"
+    When I assert image with path: "files/A.png" as "new int assert_2"
     Then the "check" "status" should be "new"
     When I stop VRS session
 
@@ -93,7 +93,7 @@ Feature: VRS Runs Smoke
     """
       testName: "Runs integration test - 01"
     """
-    When I assert image with path: "vrs/tests/files/A.png" as "new int assert_1"
+    When I assert image with path: "files/A.png" as "new int assert_1"
     Then the "check" "status" should be "new"
     When I stop VRS session
 
@@ -107,7 +107,7 @@ Feature: VRS Runs Smoke
     """
       testName: "Runs integration test - 02"
     """
-    When I assert image with path: "vrs/tests/files/A.png" as "new int assert_2"
+    When I assert image with path: "files/A.png" as "new int assert_2"
     Then the "check" "status" should be "new"
     When I stop VRS session
 
@@ -115,7 +115,7 @@ Feature: VRS Runs Smoke
     """
       testName: "Runs integration test - 02"
     """
-    When I check image with path: "vrs/tests/files/B.png" as "new int assert_2"
+    When I check image with path: "files/B.png" as "new int assert_2"
     Then the "check" "status" should be "failed"
     When I stop VRS session
 
@@ -144,7 +144,7 @@ Feature: VRS Runs Smoke
     """
       testName: "Runs integration test - 01"
     """
-    When I assert image with path: "vrs/tests/files/A.png" as "new int assert_1"
+    When I assert image with path: "files/A.png" as "new int assert_1"
     Then the "check" "status" should be "new"
     When I stop VRS session
 
@@ -158,7 +158,7 @@ Feature: VRS Runs Smoke
     """
       testName: "Runs integration test - 02"
     """
-    When I assert image with path: "vrs/tests/files/A.png" as "new int assert_2"
+    When I assert image with path: "files/A.png" as "new int assert_2"
     Then the "check" "status" should be "new"
     When I stop VRS session
 
@@ -173,10 +173,10 @@ Feature: VRS Runs Smoke
     """
       testName: "Runs integration test - 03"
     """
-    When I assert image with path: "vrs/tests/files/A.png" as "new int assert_3"
+    When I assert image with path: "files/A.png" as "new int assert_3"
     Then the "check" "status" should be "new"
 
-    When I assert image with path: "vrs/tests/files/A.png" as "new int assert_4"
+    When I assert image with path: "files/A.png" as "new int assert_4"
     Then the "check" "status" should be "new"
 
     When I stop VRS session
