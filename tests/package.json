@@ -25,14 +25,15 @@
     "selenium"
   ],
   "scripts": {
-    "test": "DBG=1 HL=1 npx wdio --spec features/**/*",
-    "testui": "DBG=1 HL=0 npx wdio --spec features/**/*"
+    "test": "DBG=1 HL=1 npx wdio --spec 'features/*.feature'",
+    "testui": "DBG=1 HL=0 npx wdio --spec 'features/**/*.feature'"
   },
   "dependencies": {
     "@syngrisi/syngrisi-wdio-sdk": "^1.0.7-f",
     "frisby": "^2.1.3",
     "imagejs": "0.0.9",
-    "wdio-screenshot-v5": "^1.0.0"
+    "wdio-screenshot-v5": "^1.0.0",
+    "yaml": "^1.10.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
