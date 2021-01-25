@@ -1,6 +1,6 @@
 {
   "name": "singrisy",
-  "version": "1.0.7",
+  "version": "1.0.11",
   "description": "Syngrisi - Visual Testing Tool",
   "main": "server.js",
   "scripts": {

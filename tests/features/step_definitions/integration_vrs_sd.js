@@ -324,8 +324,8 @@ When(/^I wait for "([^"]*)" seconds$/, {timeout: 600000}, function (sec) {
 
 Then(/^I expect the stored "([^"]*)" object is( not|) equal:$/, function (itemName, condition, expected) {
     const itemValue = this.getSavedItem(itemName);
-    console.log('Expect:', expected)
-    console.log('Stored:', itemValue)
+    console.log('Expect:', expected.trim());
+    console.log('Stored:', itemValue.trim());
     if (condition === ' not') {
         expect(itemValue.trim()).not.toEqual(expected.trim());
     } else {
