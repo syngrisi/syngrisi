@@ -72,9 +72,13 @@ class BaselineView {
         params.name = params.name ? params.name : 'default_rect'
         let lastLeft = null;
         let lastTop = null;
-        if (this.getLastRegion() !== undefined) {
+        let width = null;
+        let height = null;
+        if ((this.getLastRegion() !== undefined) && (baseline.getLastRegion().name === 'ignore_rect')) {
             lastLeft = this.getLastRegion().left || 50;
             lastTop = this.getLastRegion().top;
+            width = this.getLastRegion().getScaledWidth();
+            height = this.getLastRegion().getScaledHeight();
         }
         console.log(document.documentElement.scrollTop)
         // if last elements fit in current viewport create new region near this region
@@ -84,8 +88,8 @@ class BaselineView {
             left: params.left || left,
             top: params.top || top,
             fill: params.fill || 'blue',
-            width: params.width || 200,
-            height: params.height || 100,
+            width: params.width || width || 200,
+            height: params.height || height || 100,
             strokeWidth: params.strokeWidth || 0,
             stroke: params.stroke || 'rgba(100,200,200,0.5)',
             opacity: 0.5,
