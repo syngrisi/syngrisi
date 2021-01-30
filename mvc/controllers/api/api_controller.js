@@ -115,7 +115,7 @@ async function compareSnapshots(baseline, actual) {
 }
 
 // API
-const checks_group_by_ident = async function (req, res) {
+const checksGroupByIdent = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
             let testId = req.params.testid;
@@ -131,9 +131,9 @@ const checks_group_by_ident = async function (req, res) {
 
 };
 
-exports.checks_group_by_ident = checks_group_by_ident;
+exports.checksGroupByIdent = checksGroupByIdent;
 
-exports.affectedelements = async function (req, res) {
+exports.affectedElements = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
             if (!req.query.checktid || !req.query.diffid) {
@@ -166,7 +166,7 @@ exports.affectedelements = async function (req, res) {
     })
 }
 
-exports.list_all_checks = async function (req, res) {
+exports.listAllChecks = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         let filter = {}
         if (req.query.testid)
@@ -185,7 +185,7 @@ exports.list_all_checks = async function (req, res) {
     })
 };
 
-exports.create_test = async function (req, res) {
+exports.createTest = async function (req, res) {
     return new Promise(
         async function (resolve, reject) {
             try {
@@ -220,7 +220,7 @@ exports.create_test = async function (req, res) {
         });
 };
 
-exports.stop_session = async function (req, res) {
+exports.stopSession = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
             let testId = req.params.testid;
@@ -304,7 +304,7 @@ function updateTest(opts) {
 
 }
 
-exports.update_test = async function (req, res) {
+exports.updateTest = async function (req, res) {
     return new Promise(
         async function (resolve, reject) {
             try {
@@ -352,7 +352,7 @@ function removeTest(id) {
     })
 }
 
-exports.remove_test = function (req, res) {
+exports.removeTest = function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
             const id = req.params.id;
@@ -369,7 +369,7 @@ exports.remove_test = function (req, res) {
     })
 };
 
-exports.remove_suite = async function (req, res) {
+exports.removeSuite = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
             const id = req.params.id;
@@ -405,7 +405,7 @@ function prettyCheckParams(result) {
     return JSON.stringify(resObs);
 }
 
-exports.create_check = async function (req, res) {
+exports.createCheck = async function (req, res) {
     return new Promise(async function (resolve, reject) {
             let test;
             let suite;
@@ -592,7 +592,7 @@ exports.create_check = async function (req, res) {
     );
 };
 
-exports.remove_check = async function (req, res) {
+exports.removeCheck = async function (req, res) {
     return new Promise(function (resolve, reject) {
         try {
             const id = req.params.id;
@@ -618,7 +618,7 @@ exports.remove_check = async function (req, res) {
 
 };
 
-exports.update_check = async function (req, res) {
+exports.updateCheck = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
             let opts = req.body;
@@ -659,7 +659,7 @@ exports.update_check = async function (req, res) {
 
 };
 
-exports.update_snapshot = async function (req, res) {
+exports.updateSnapshot = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
             let opts = req.body;
@@ -684,7 +684,7 @@ exports.update_snapshot = async function (req, res) {
     })
 };
 
-exports.get_snapshot = async function (req, res) {
+exports.getSnapshot = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
             let opts = req.body;
@@ -708,7 +708,7 @@ exports.get_snapshot = async function (req, res) {
     })
 };
 
-exports.get_check = async function (req, res) {
+exports.getCheck = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
             let opts = req.body;
