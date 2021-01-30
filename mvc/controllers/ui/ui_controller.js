@@ -14,7 +14,7 @@ async function getSnapshotByImgHash(hash) {
     return (await Snapshot.find({imghash: hash}))[0];
 }
 
-exports.checkview = async function (req, res) {
+exports.checkView = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
             const opts = req.query;
@@ -40,7 +40,7 @@ exports.checkview = async function (req, res) {
     })
 };
 
-exports.checksgroupview = async function (req, res) {
+exports.checksGroupView = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
             const opts = req.query;
@@ -82,7 +82,7 @@ exports.checksgroupview = async function (req, res) {
 
 };
 
-exports.snapshootview = async function (req, res) {
+exports.snapshotView = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
             const opts = req.query;
@@ -112,7 +112,7 @@ exports.snapshootview = async function (req, res) {
     });
 };
 
-exports.diffview = async function (req, res) {
+exports.diffView = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
             const opts = req.query;
@@ -127,27 +127,25 @@ exports.diffview = async function (req, res) {
                 baseline.formattedCreatedDate = moment(baseline.createdDate)
                     .format('YYYY-MM-DD hh:mm');
 
-                let actual_snapshoot;
-                let diff_snapshoot;
+                let actualSnapshoot;
+                let diffSnapshoot;
 
                 // for new check case
                 if (opts.actualid) {
-                    actual_snapshoot = await Snapshot.findById(`${opts.actualid}`);
-                    actual_snapshoot.formattedCreatedDate = moment(actual_snapshoot.createdDate)
+                    actualSnapshoot = await Snapshot.findById(`${opts.actualid}`);
+                    actualSnapshoot.formattedCreatedDate = moment(actualSnapshoot.createdDate)
                         .format('YYYY-MM-DD hh:mm');
                 } else {
-                    diff_snapshoot = baseline;
-                    // actual_snapshoot = baseline;
+                    diffSnapshoot = baseline;
                 }
 
                 // for passed check case
                 if (opts.diffid) {
-                    diff_snapshoot = await Snapshot.findById(`${opts.diffid}`);
-                    diff_snapshoot.formattedCreatedDate = moment(diff_snapshoot.createdDate)
+                    diffSnapshoot = await Snapshot.findById(`${opts.diffid}`);
+                    diffSnapshoot.formattedCreatedDate = moment(diffSnapshoot.createdDate)
                         .format('YYYY-MM-DD hh:mm');
                 } else {
-
-                    diff_snapshoot = actual_snapshoot ? actual_snapshoot : baseline;
+                    diffSnapshoot = actualSnapshoot ? actualSnapshoot : baseline;
                 }
 
                 const check = await Check.findById(opts.checkid);
@@ -164,8 +162,8 @@ exports.diffview = async function (req, res) {
 
                 res.render('pages/diff', {
                     expected_snapshoot: baseline,
-                    actual_snapshoot: actual_snapshoot,
-                    diff_snapshoot: diff_snapshoot,
+                    actual_snapshoot: actualSnapshoot,
+                    diff_snapshoot: diffSnapshoot,
                     suite: suite,
                     test: test,
                     check: check,
