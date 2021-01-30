@@ -26,16 +26,16 @@ module.exports = async function (app) {
             API.affectedElements(req, res).catch(next).catch(next);
         })
         .get('/checkview', async function (req, res, next) {
-            UI.checkview(req, res).catch(next);
+            UI.checkView(req, res).catch(next);
         })
         .get('/checksgroupview', async function (req, res, next) {
-            UI.checksgroupview(req, res).catch(next);
+            UI.checksGroupView(req, res).catch(next);
         })
         .get('/snapshootview', async function (req, res, next) {
-            UI.snapshootview(req, res).catch(next);
+            UI.snapshotView(req, res).catch(next);
         })
         .get('/diffview', async function (req, res, next) {
-            UI.diffview(req, res).catch(next);
+            UI.diffView(req, res).catch(next);
         })
         .post('/checks', async (req, res, next) => {
             req.log.trace(`post '/checks' queue pending count: `, queue.pending);
