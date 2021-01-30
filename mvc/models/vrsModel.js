@@ -84,14 +84,13 @@ const VRSCheckSchema = new Schema({
     },
     updatedDate: {
         type: Date,
-        // default: Date.now,
     },
     status: {
         type: [{
             type: String,
             enum: {
                 values: ['new', 'pending', 'approved', 'running', 'passed', 'failed', 'aborted'],
-                message: 'Status is required!',
+                message: 'status is required',
             },
         }],
         default: 'new',
@@ -122,12 +121,17 @@ const VRSCheckSchema = new Schema({
     run: {
         type: Schema.Types.ObjectId,
     },
+    acceptedDate: {
+        type: Date,
+    },
+    acceptedBy: {
+        type: Date,
+    },
 });
 
 const VRSTestSchema = new Schema({
     name: {
         type: String,
-        // unique: true,
         required: 'the test name is empty',
     },
     description: {
@@ -165,11 +169,9 @@ const VRSTestSchema = new Schema({
     },
     updatedDate: {
         type: Date,
-        // default: Date.now,
     },
     startDate: {
         type: Date,
-        // default: Date.now,
     },
     suite: {
         type: Schema.Types.ObjectId,
@@ -216,7 +218,7 @@ const VRSAppSchema = new Schema({
         type: String,
         default: 'Others',
         unique: true,
-        required: 'the Application name is empty',
+        required: 'the application name is empty',
     },
     description: {
         type: String,
@@ -230,9 +232,37 @@ const VRSAppSchema = new Schema({
     },
 });
 
+const VRSUserSchema = new Schema({
+    username: {
+        type: String,
+        unique: true,
+        required: 'the username name is empty',
+    },
+    role: {
+        type: String,
+        enum: {
+            values: ['admin', 'user'],
+            message: 'role is required',
+        },
+    },
+    password: {
+        type: String,
+    },
+    token: {
+        type: String,
+    },
+    updatedDate: {
+        type: Date,
+    },
+    expiration: {
+        type: Date,
+    },
+});
+
 module.exports = mongoose.model('VRSSnapshot', VRSSnapshotSchema);
 module.exports = mongoose.model('VRSCheck', VRSCheckSchema);
 module.exports = mongoose.model('VRSTest', VRSTestSchema);
 module.exports = mongoose.model('VRSSuite', VRSSuiteSchema);
 module.exports = mongoose.model('VRSApp', VRSAppSchema);
 module.exports = mongoose.model('VRSRun', VRSRunSchema);
+module.exports = mongoose.model('VRSUser', VRSUserSchema);
