@@ -147,6 +147,7 @@ exports.config = {
     // If you are using Cucumber you need to specify the location of your step definitions.
     cucumberOpts: {
         scenarioLevelReporter: true,
+        retry: process.env['RETRY'] | 0,
         // <boolean> show full backtrace for errors
         backtrace: false,
         // <string[]> module used for processing required features
