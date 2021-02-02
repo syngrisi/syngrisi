@@ -121,11 +121,16 @@ const VRSCheckSchema = new Schema({
     run: {
         type: Schema.Types.ObjectId,
     },
+    accepted: {
+        type: Boolean,
+        default: false
+    },
     acceptedDate: {
         type: Date,
     },
     acceptedBy: {
-        type: Date,
+        type: String,
+        default: undefined
     },
 });
 
@@ -179,6 +184,10 @@ const VRSTestSchema = new Schema({
     run: {
         type: Schema.Types.ObjectId,
     },
+    accepted: {
+        type: Boolean,
+        default: false
+    },
 });
 
 const VRSSuiteSchema = new Schema({
@@ -187,6 +196,10 @@ const VRSSuiteSchema = new Schema({
         default: 'Others',
         unique: true,
         required: 'the suite name is empty',
+    },
+    tags: {
+        type: [String],
+        default: undefined
     },
     description: {
         type: String,
