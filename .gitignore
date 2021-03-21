@@ -10,3 +10,4 @@ node_modules
 /lib/A.png
 /lib/rsJsEngine.js
 /.idea/
+/debug.js
