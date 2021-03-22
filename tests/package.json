@@ -25,7 +25,7 @@
     "selenium"
   ],
   "scripts": {
-    "test": "DBG=1 HL=1 npx wdio --spec 'features/*.feature'",
+    "test": "DBG=1 HL=1 npx wdio --spec 'features/**/*.feature'",
     "testui": "DBG=1 HL=0 npx wdio --spec 'features/**/*.feature'"
   },
   "dependencies": {

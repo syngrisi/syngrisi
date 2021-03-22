@@ -4,7 +4,7 @@
   "description": "Syngrisi - Visual Testing Tool",
   "main": "server.js",
   "scripts": {
-    "test": "cd ..; wdio wdio.conf.js --spec vrt/tests/features/*; cd vrt;",
+    "test": "",
     "startdebug": "nodemon --ignore 'mvc/views/lib/*.js' server.js",
     "startservice": "forever start -l forever.log -o out.log -e err.log server.js",
     "start": "nodemon --ignore 'mvc/views/lib/*.js' server.js &",
@@ -32,6 +32,7 @@
     "nodemon": "^2.0.2",
     "p-queue": "^6.4.0",
     "pino-http": "^5.2.0",
+    "querystring": "^0.2.1",
     "request": "^2.88.0",
     "resemblejs": "^3.2.4"
   }
