@@ -59,7 +59,11 @@ module.exports = async function (app) {
         })
         .get('/checks', async (req, res, next) => {
             req.log.trace(`get '/checks' queue pending count: `, queue.pending);
-            await queue.add(() => API.listAllChecks(req, res).catch(next));
+            await queue.add(() => API.getChecks(req, res).catch(next));
+        })
+        .get('/removeEmptyTests', async (req, res, next) => {
+            req.log.trace(`get '/removeEmptyTests' queue pending count: `, queue.pending);
+            await queue.add(() => API.removeEmptyTests(req, res).catch(next));
         })
         .get('/snapshot/:id', async (req, res, next) => {
             API.getSnapshot(req, res).catch(next);
