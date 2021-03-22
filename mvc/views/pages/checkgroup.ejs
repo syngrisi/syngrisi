@@ -33,10 +33,10 @@
 
         <div name="title" class="col pl-4 pt-1 h4 border-left mb-0 light-purple">
             <a class="unlink" name="suite-link"
-               href="/?suitename=<%= suite.name %>"><%= suite.name %></a>
+               href="/?filter_suitename_eq=<%= suite.name %>"><%= suite.name %></a>
             <span>/</span>
             <a class="unlink" name="check-link"
-               href='/?suitename=<%= suite.name %>&unfoldTestId=<%= test.id %>'><%= test.name %></a>
+               href='/?filter_suitename_eq=<%= suite.name %>&unfoldTestId=<%= test.id %>'><%= test.name %></a>
             <span>/</span>
             <%= checks[0].name %></div>
     </div>
