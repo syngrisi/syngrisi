@@ -1,5 +1,6 @@
 'use strict';
 
+const querystring = require('querystring');
 const mongoose = require('mongoose');
 const hasha = require('hasha');
 const fs = require('fs').promises;
@@ -166,22 +167,133 @@ exports.affectedElements = async function (req, res) {
     })
 }
 
-exports.listAllChecks = async function (req, res) {
-    return new Promise(async function (resolve, reject) {
-        let filter = {}
-        if (req.query.testid)
-            filter.test = req.query.testid
-        if (req.query.id)
-            filter._id = req.query.id
-        const checks = await Check.find(filter).exec().catch(
-            function (e) {
-                fatalError(req, res, e);
-                return reject(e)
+function buildQuery(params) {
+    const query = Object.keys(params)
+        .filter(key => key.startsWith('filter_'))
+        .reduce((obj, key) => {
+            const props = key.split('_');
+            const name = props[1];
+            const operator = props[2];
+            const value = decodeURI(params[key]);
+            obj[`${name}`] = {[`$${operator}`]: value};
+            if (operator === 'regex')
+                obj[`${name}`]["$options"] = 'i';
+            return obj;
+        }, {});
 
+    return query;
+}
+
+function parseSorting(params) {
+    const sortObj = Object.keys(params)
+        .filter(key => key.startsWith('sort_'))
+        .reduce((obj, key) => {
+            const props = key.split('_');
+            const sortBy = props[1];
+            const sortDirection = parseInt(props[2]);
+            obj[sortBy] = sortDirection;
+            return obj;
+        }, {});
+
+    return sortObj;
+}
+
+async function removeEmptyTests(req, res) {
+    return new Promise(async function (resolve, reject) {
+        res.write('<pre>\n');
+        res.write('- query all tests\n');
+        console.log('- query all tests\n');
+
+        const tests = await (Test.find({}).exec());
+        res.write(`tests count: '${await Test.count()}'\n`)
+        console.log(`tests count: '${await Test.count()}'\n`)
+
+        res.write('- remove empty tests\n');
+        console.log('>- remove empty tests\n');
+
+        for (const test of tests) {
+            let checkFilter = {test: test.id};
+            const groups = await checksGroupedByIdent(checkFilter);
+
+            if (Object.keys(groups).length < 1)
+
+                if (Object.keys(groups).length < 1) {
+                    await removeTest(test._id);
+                    res.write(test._id.toString() + "\n");
+                }
+        }
+
+        res.write('- done\n');
+        console.log('- done\n');
+        res.write('</pre>\n');
+        res.end()
+        resolve();
+    })
+};
+
+exports.removeEmptyTests = removeEmptyTests;
+
+exports.getChecks = async function (req, res) {
+    return new Promise(async function (resolve, reject) {
+        let opts = req.query;
+        console.log(opts);
+        const pageSize = parseInt(process.env['PAGE_SIZE']) || 50
+        let skip;
+        let sortFilter = parseSorting(opts);
+
+        skip = opts.page ? ((parseInt(opts.page)) * pageSize - pageSize) : 0;
+        console.log({pageSize})
+
+        if (Object.keys(sortFilter).length < 1)
+            sortFilter = {updatedDate: -1}
+
+        const query = buildQuery(opts);
+        const decodedQuerystringSuiteName = Object.keys(querystring.decode(opts.filter_suitename_eq))[0];
+        if (opts.filter_suitename_eq) {
+            const suite = await Suite.findOne({name: {'$eq': decodedQuerystringSuiteName}}).exec();
+            if (opts.filter_suitename_eq && !suite) {
+                res.status(200).json({});
+                return resolve({})
             }
-        )
-        res.json(checks);
-        return resolve(checks)
+            if (suite) {
+                query.suite = suite.id;
+
+                delete query.suitename;
+            }
+        }
+        const tests = await Test.find(query)
+            .sort(sortFilter)
+            .skip(skip)
+            .limit(pageSize)
+            .exec()
+
+        let checksByTestGroupedByIdent = {}
+
+        for (const test of tests) {
+            let checkFilter = {test: test.id};
+            const groups = await checksGroupedByIdent(checkFilter);
+            // console.log(groups);
+            if (Object.keys(groups).length < 1) {
+                continue;
+            }
+            // console.log({groups})
+            checksByTestGroupedByIdent[test.id] = groups;
+            checksByTestGroupedByIdent[test.id]['id'] = test.id;
+            checksByTestGroupedByIdent[test.id]['name'] = test.name;
+            checksByTestGroupedByIdent[test.id]['status'] = test.status;
+            checksByTestGroupedByIdent[test.id]['browserName'] = test.browserName;
+            checksByTestGroupedByIdent[test.id]['browserVersion'] = test.browserVersion;
+            checksByTestGroupedByIdent[test.id]['viewport'] = test.viewport;
+            checksByTestGroupedByIdent[test.id]['calculatedViewport'] = test.calculatedViewport;
+            checksByTestGroupedByIdent[test.id]['os'] = test.os;
+            checksByTestGroupedByIdent[test.id]['blinking'] = test.blinking;
+            checksByTestGroupedByIdent[test.id]['updatedDate'] = test.updatedDate;
+            checksByTestGroupedByIdent[test.id]['startDate'] = test.startDate;
+            checksByTestGroupedByIdent[test.id]['suite'] = test.suite;
+            checksByTestGroupedByIdent[test.id]['run'] = test.run;
+        }
+        res.status(200).json(checksByTestGroupedByIdent);
+        return resolve(checksByTestGroupedByIdent)
     })
 };
 
@@ -201,6 +313,7 @@ exports.createTest = async function (req, res) {
                     browserVersion: params.browserVersion,
                     os: params.os,
                     startDate: new Date(),
+                    updatedDate: new Date(),
                 }
 
                 let run;
