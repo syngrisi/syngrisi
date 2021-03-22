@@ -1,7 +1,7 @@
 <div name="subheader" class="row bg-headers text-light border-purple border-top1">
     <div class="col">
         <% if(currentItem) { %>
-            <a href="?suitename=<%= currentItem.name %>" class="unlink">
+            <a href="?filter_suitename_eq=<%= currentItem.name %>" class="unlink">
                 <span><%= currentItem.name %></span>
             </a>
         <% }else{ %>
