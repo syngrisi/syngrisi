@@ -1,6 +1,74 @@
 function setSuiteMenuWidth() {
     const logoWidth = document.getElementById('logo-and-label-container').clientWidth
-    document.getElementById('collapseSuiteMenu').style.width = (logoWidth ) + 'px'
+    document.getElementById('collapseSuiteMenu').style.width = (logoWidth) + 'px'
+}
+
+function updateQueryParam(param, newval, url) {
+    const searchParams = new URLSearchParams(url);
+    searchParams.delete(param);
+    // console.log(searchParams.toString());
+    searchParams.set(param, newval);
+    // console.log(searchParams.toString());
+    return "?" + searchParams.toString();
+}
+
+function removeQueryParamContains(search, word) {
+    const searchParams = new URLSearchParams(search);
+
+    console.log(searchParams.toString())
+    let toDelete = [];
+    for (var pair of searchParams.entries()) {
+
+        console.log(pair[0] + ', ' + pair[1]);
+        if (pair[0].toString().includes(word)) {
+            toDelete.push(pair[0]);
+        }
+    }
+
+    toDelete.forEach(x => searchParams.delete(x));
+
+    return searchParams.toString();
+}
+
+function searchToObject(search) {
+    if(!search)
+        return null;
+    return JSON.parse('{"' + decodeURI(search).replace('?', '').replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g, '":"') + '"}')
+}
+
+function objectToSearch(obj) {
+    var str = [];
+    for (var p in obj)
+        if (obj.hasOwnProperty(p)) {
+            str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+        }
+    return str.join("&");
+}
+
+function sort2(prop, order = -1) {
+    const currentSearch = window.location.search;
+
+    const r = new RegExp(`sort_${prop}_([^\d]{0,1}[1]{1,1})`);
+    console.log(r);
+    let parsedOrder;
+    if (currentSearch.match(r)) {
+        parsedOrder = currentSearch.match(r)[1];
+        console.log({parsedOrder});
+    }
+    const inverseOrder = parsedOrder === '1' ? '-1' : '1'
+
+    const clearedSearch = removeQueryParamContains(currentSearch, 'sort_');
+    let updatedSearch = updateQueryParam(`sort_${prop}_${inverseOrder || order}`, 'true', clearedSearch)
+    console.log({updatedSearch});
+    document.location.href = document.location.origin + updatedSearch;
+}
+
+function updateUrlWithoutReloading(page, title, url) {
+    if ("undefined" !== typeof history.pushState) {
+        history.pushState({page: page}, title, url);
+    } else {
+        window.location.assign(url);
+    }
 }
 
 function sort(prop, order = -1) {

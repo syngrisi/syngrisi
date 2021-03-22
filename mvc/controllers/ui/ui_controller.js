@@ -208,28 +208,12 @@ exports.index = async function (req, res) {
                     suiteFilter = {suite: suite.id};
                 const suites = await Suite.find({})
                     .sort({name: 'asc'}).exec()
-                const tests = await Test.find(suiteFilter)
-                    .sort(sortFilter).exec()
-                tests.map(function (test) {
-                    test.formattedUpdatedDate = moment(test.updatedDate)
-                        .format('YYYY-MM-DD hh:mm');
-                    return test;
-                })
-
-                let checksByTestGroupedByIdent = {}
-
-                for (const test of tests) {
-                    let checkFilter = {test: test.id}
-                    if (suite)
-                        checkFilter.suite = suite.id
-                    checksByTestGroupedByIdent[test.id] = await checksGroupedByIdent(checkFilter);
-                }
 
                 res.render('pages/index', {
                     suites: suites,
-                    tests: tests,
+                    // tests: tests,
                     currentSuite: suite,
-                    checksByTestGroupedByIdent: checksByTestGroupedByIdent
+                    // checksByTestGroupedByIdent: checksByTestGroupedByIdent
                 });
             } catch (e) {
                 fatalError(req, res, e);
@@ -284,16 +268,16 @@ exports.runs = async function (req, res) {
                 }, {});
 
                 const failedTestsCountsGroupByRunId = (await Test.aggregate()
-                        .match({
-                            status: "Failed"
-                        })
-                        .group({
-                            _id: "$run",
-                            count: {$sum: 1}
-                        }).exec()).reduce(function (map, obj) {
-                        map[obj._id] = obj.count;
-                        return map;
-                    }, {});
+                    .match({
+                        status: "Failed"
+                    })
+                    .group({
+                        _id: "$run",
+                        count: {$sum: 1}
+                    }).exec()).reduce(function (map, obj) {
+                    map[obj._id] = obj.count;
+                    return map;
+                }, {});
 
                 const tests = await Test.find(testFilter)
                     .sort(sortFilter).exec()
