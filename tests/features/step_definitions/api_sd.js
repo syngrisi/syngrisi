@@ -9,7 +9,8 @@ When(/^I send "([^"]*)" request to "([^"]*)"$/, async function (reqType, url) {
 
 When(/^I send "([^"]*)" request to "([^"]*)" with:$/, async function (reqType, url, yml) {
     url = YAML.parse(this.fillItemsPlaceHolders(url));
-    const params = YAML.parse(this.fillItemsPlaceHolders(yml));
+    let params;
+    if (yml) params = YAML.parse(this.fillItemsPlaceHolders(yml));
     let response;
     switch (reqType) {
         case 'post': {
@@ -18,11 +19,19 @@ When(/^I send "([^"]*)" request to "([^"]*)" with:$/, async function (reqType, u
                 for (const key in params.form) {
                     form.append(key, params.form[key]);
                 }
-                response = frisby[reqType](url, { body: form });
+                response = frisby[reqType](url, {body: form});
             }
+            break;
         }
+        case 'get': {
+            response = frisby[reqType](url);
+            break;
+        }
+        default:
+            break;
     }
     const outResp = (await response).json;
+    console.log(outResp);
     outResp.statusCode = (await response).status;
     await this.saveItem(reqType, outResp);
 });
@@ -33,4 +42,11 @@ When(/^I expect the "([^"]*)" response with:$/, async function (requestType, yml
     console.log({response});
     expect(response.statusCode).toEqual(params.statusCode);
     expect(response).toMatchObject(params.json);
+});
+
+When(/^I expect the "([^"]*)" ([\d]+)st value response with:$/, async function (requestType, itemNum, yml) {
+    const params = YAML.parse(yml);
+    const response = Object.values(await this.getSavedItem(requestType))[parseInt(itemNum) - 1];
+    console.log({response});
+    expect(response).toMatchObject(params);
 });

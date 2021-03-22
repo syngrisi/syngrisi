@@ -45,4 +45,5 @@ Feature: Suites
     Then I expect that element "=NotEmptySuite" is displayed
     Then I wait and refresh page on element "span=Named Suite Test" for "3" seconds to exist
     When I click on the element "=NotEmptySuite"
+    When I wait for "2" seconds
     Then I expect that element "span=Named Suite Test" is displayed

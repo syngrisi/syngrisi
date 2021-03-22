@@ -55,6 +55,8 @@ Feature: VRS Viewport
 
     When I stop VRS session
     When I open the url "http://vrs:3001/"
+
+    When I wait for "2" seconds
     Then I expect that VRS test "Viewport integration test" has "712x970" viewport
 
   Scenario: VRS ViewPort - two checks with different viewports
@@ -76,4 +78,6 @@ Feature: VRS Viewport
 
     When I stop VRS session
     When I open the url "http://vrs:3001/"
+    When I wait for "2" seconds
+
     Then I expect that VRS test "Viewport integration test" has "≠" viewport

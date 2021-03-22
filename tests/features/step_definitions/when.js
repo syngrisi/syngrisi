@@ -96,3 +96,7 @@ When(
     /^I move to element "([^"]*)?"(?: with an offset of (\d+),(\d+))*$/,
     moveTo
 );
+
+When(/^I scroll to the bottom of page$/, {timeout: 180000}, function () {
+    browser.execute("window.scrollTo({left: 0, top: document.body.scrollHeight, behavior: 'smooth'});");
+});

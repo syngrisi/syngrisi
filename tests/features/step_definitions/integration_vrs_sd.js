@@ -1,11 +1,11 @@
 const hasha = require('hasha');
 const YAML = require('yaml');
-const { spawn } = require('child_process');
+const {spawn} = require('child_process');
 const got = require('got');
 const frisby = require('frisby');
 const fs = require('fs');
-const { Given, When, Then } = require('cucumber');
-const { getDomDump } = require('@syngrisi/syngrisi-wdio-sdk');
+const {Given, When, Then} = require('cucumber');
+const {getDomDump} = require('@syngrisi/syngrisi-wdio-sdk');
 const checkVRS = require('../../src/support/check/checkVrs').default;
 const waitForAndRefresh = require('../../src/support/action/waitForAndRefresh').default;
 
@@ -51,7 +51,7 @@ Given(/^I stop VRS session$/, async function () {
     await browser.vDriver.stopTestSession();
 });
 
-When(/^I start VRS server with parameters:$/, function (params) {
+When(/^I start VRS server with parameters:$/, {timeout: 600000}, function (params) {
     const srvOpts = YAML.parse(params);
 
     // const cmdPath = browser.config.rootPath + '/vrs/';
@@ -60,13 +60,14 @@ When(/^I start VRS server with parameters:$/, function (params) {
     env.VRS_PORT = srvOpts.port;
     env.VRS_BASELINE_PATH = srvOpts.baseLineFolder;
     env.VRS_CONN_STRING = `mongodb://localhost/${srvOpts.databaseName}`;
+    env.PAGE_SIZE = srvOpts.pageSize || '10';
     const homedir = require('os')
         .homedir();
     const nodePath = process.env['OLTA_NODE_PATH'] || (homedir + '/.nvm/versions/node/v13.13.0/bin');
     let child = spawn(nodePath + '/npm',
-        ['run', 'startdebug', '-g', '--prefix', cmdPath], { env: env });
+        ['run', 'startdebug', '-g', '--prefix', cmdPath], {env: env});
     browser.waitUntil(async function () {
-        return (await got.get(`http://vrs:${srvOpts.port}/`, { throwHttpErrors: false })).statusCode === 200;
+        return (await got.get(`http://vrs:${srvOpts.port}/`, {throwHttpErrors: false})).statusCode === 200;
     });
 
     this.STATE.vrsPid = child.pid;
@@ -100,7 +101,7 @@ When(/^I kill process which used port: "([^"]*)"$/, function (port) {
         if (pidsString) {
             try {
                 for (const pid of pidsString.split('\n')) {
-                    console.log({ pid });
+                    console.log({pid});
                     process.kill(pid);
                 }
                 return true;
@@ -193,7 +194,7 @@ When(/^I create new VRS Test with:$/, async function (yml) {
     for (const key in params.params) {
         form.append(key, params.params[key]);
     }
-    const response = await frisby.post(params.url, { body: form });
+    const response = await frisby.post(params.url, {body: form});
     console.log(response.json);
     this.saveItem('VRSTestResponse', response);
 
@@ -216,7 +217,7 @@ Given(/^I create new VRS Check with:$/, async function (yml) {
         form.append('file', fs.createReadStream(params.file));
     }
 
-    const response = await frisby.post(params.url, { body: form });
+    const response = await frisby.post(params.url, {body: form});
     let resp = response.json;
     resp.statusCode = response.status;
     this.saveItem('VRSCheck', resp);
@@ -257,6 +258,27 @@ When(/^I check image with path: "([^"]*)" as "([^"]*)"$/, async function (filePa
     const checkResult = await checkVRS(checkName, imageBuffer);
     this.STATE.check = checkResult;
 });
+When(/^I create "([^"]*)" tests with params:$/, {timeout: 60000000}, async function (num, yml) {
+    const params = YAML.parse(yml);
+
+    browser.vDriver.setCurrentSuite({
+        name: 'Integration suite',
+        id: 'Integration_suite',
+    });
+
+    for (const i of Array.from(Array(parseInt(num)).keys())) {
+        console.log(`Create test # ${i}`);
+        await browser.vDriver.startTestSession({
+            app: 'Test App',
+            test: `${params.testName} - ${i + 1}`,
+        });
+        browser.pause(300);
+        const imageBuffer = fs.readFileSync(browser.config.rootPath + '/' + params.filePath);
+        const checkResult = await checkVRS('Check - ' + Math.random().toString(36).substring(7), imageBuffer);
+        this.STATE.check = checkResult;
+        await browser.vDriver.stopTestSession();
+    }
+});
 
 When(/^I visually check page with DOM as "([^"]*)"$/, async function (checkName) {
     let domDump;
@@ -282,7 +304,7 @@ Then(/^I expect "([^"]*)" saved object:$/, function (itemName, yml) {
 });
 
 
-Given(/^I set window size: "(1366x768|712x970|880x768|1050x768|1300x768|1700x768|500x500)"$/, function (viewport) {
+Given(/^I set window size: "(1366x768|712x970|880x768|1050x768|1300x768|1300x400|1700x768|500x500)"$/, function (viewport) {
     const size = viewport.split('x');
     browser.setWindowSize(parseInt(size[0]), parseInt(size[1]));
 });
@@ -306,11 +328,11 @@ Then(/^the "([^"]*)" "([^"]*)" should be "([^"]*)"$/, function (itemType, proper
         .toEqual(exceptedValue);
 });
 
-When(/^I wait and refresh page on element "([^"]*)" for "([^"]*)" seconds to( not)* (exist)$/, { timeout: 600000 },
+When(/^I wait and refresh page on element "([^"]*)" for "([^"]*)" seconds to( not)* (exist)$/, {timeout: 600000},
     waitForAndRefresh
 );
 
-When(/^I start debugger$/, { timeout: 600000 }, function () {
+When(/^I start debugger$/, {timeout: 6000000}, function () {
     browser.debug();
 });
 
@@ -367,5 +389,18 @@ Given(/^I set custom window size: "([^"]*)"$/, function (viewport) {
 });
 
 Then(/^I expect that element "([^"]*)" is clickable$/, function (selector) {
-    expect($(selector)).toBeClickable()
+    expect($(selector)).toBeClickable();
+});
+
+Then(/^I expect get to url "([^"]*)" answer JSON object to match:$/, async function (url, params) {
+    const jsonBodyObject = JSON.parse((await got(url)).body);
+    // const jsonBodyObject = JSON.parse(browser.getPageSource());
+    const expectedObject = JSON.parse(params);
+    expect(jsonBodyObject).toMatchObject(expectedObject);
+});
+
+Then(/^I expect "([^"]*)" tests for get url "([^"]*)"$/, async function (testsNum, url) {
+    const jsonBodyObject = JSON.parse((await got(url)).body);
+    // console.log({jsonBodyObject});
+    expect(Object.keys(jsonBodyObject).length).toBe(parseInt(testsNum));
 });
