@@ -32,6 +32,22 @@ const VRSSnapshotSchema = new Schema({
         type: String,
         default: 'undefined',
     },
+    markedAs: {
+        type: String,
+        enum: ['bug', 'accepted'],
+        default: undefined,
+    },
+    markedDate: {
+        type: Date,
+    },
+    markedBy: {
+        type: String,
+        default: undefined
+    },
+    lastMarkedCheck: {
+        type: Schema.Types.ObjectId,
+        ref: 'VRSCheck',
+    },
     boundRegions: {
         type: String,
         default: 'undefined',
@@ -103,6 +119,10 @@ const VRSCheckSchema = new Schema({
         type: String,
         default: 'undefined',
     },
+    browserFullVersion: {
+        type: String,
+        default: 'undefined',
+    },
     viewport: {
         type: String,
         default: 'undefined',
@@ -121,74 +141,76 @@ const VRSCheckSchema = new Schema({
     run: {
         type: Schema.Types.ObjectId,
     },
-    accepted: {
-        type: Boolean,
-        default: false
+    markedAs: {
+        type: String,
+        enum: ['bug', 'accepted'],
+        default: undefined,
     },
-    acceptedDate: {
+    markedDate: {
         type: Date,
     },
-    acceptedBy: {
+    markedBy: {
         type: String,
         default: undefined
     },
 });
 
 const VRSTestSchema = new Schema({
-    name: {
-        type: String,
-        required: 'the test name is empty',
+        name: {
+            type: String,
+            required: 'the test name is empty',
+        },
+        description: {
+            type: String,
+        },
+        status: {
+            type: String,
+            default: 'undefined',
+        },
+        browserName: {
+            type: String,
+            default: 'undefined',
+        },
+        browserVersion: {
+            type: String,
+            default: 'undefined',
+        },
+        // on the start of test
+        viewport: {
+            type: String,
+            default: 'undefined',
+        },
+        // after handle all checks inside the test
+        calculatedViewport: {
+            type: String,
+            default: '???',
+        },
+        os: {
+            type: String,
+            default: 'undefined',
+        },
+        blinking: {
+            type: Number,
+            default: 0,
+        },
+        updatedDate: {
+            type: Date,
+        },
+        startDate: {
+            type: Date,
+        },
+        suite: {
+            type: Schema.Types.ObjectId,
+        },
+        run: {
+            type: Schema.Types.ObjectId,
+        },
+        accepted: {
+            type: Boolean,
+            default: false
+        },
     },
-    description: {
-        type: String,
-    },
-    status: {
-        type: String,
-        default: 'undefined',
-    },
-    browserName: {
-        type: String,
-        default: 'undefined',
-    },
-    browserVersion: {
-        type: String,
-        default: 'undefined',
-    },
-    // on the start of test
-    viewport: {
-        type: String,
-        default: 'undefined',
-    },
-    // after handle all checks inside the test
-    calculatedViewport: {
-        type: String,
-        default: '???',
-    },
-    os: {
-        type: String,
-        default: 'undefined',
-    },
-    blinking: {
-        type: Number,
-        default: 0,
-    },
-    updatedDate: {
-        type: Date,
-    },
-    startDate: {
-        type: Date,
-    },
-    suite: {
-        type: Schema.Types.ObjectId,
-    },
-    run: {
-        type: Schema.Types.ObjectId,
-    },
-    accepted: {
-        type: Boolean,
-        default: false
-    },
-});
+    {strictQuery: true}); // remove filters that not exist in schema
 
 const VRSSuiteSchema = new Schema({
     name: {
@@ -223,6 +245,27 @@ const VRSRunSchema = new Schema({
     updatedDate: {
         type: Date,
         default: Date.now,
+    },
+});
+
+const VRSLogSchema = new Schema({
+    msgType: {
+        type: String,
+        default: 'other',
+        unique: true,
+        required: 'the suite name is empty',
+    },
+    severity: {
+        type: String,
+        enum: ['debug', 'info', 'warning', 'error'],
+        default: 'info',
+    },
+    message: {
+        type: String,
+    },
+    date: {
+        type: Date,
+        default: undefined,
     },
 });
 
@@ -264,6 +307,9 @@ const VRSUserSchema = new Schema({
     token: {
         type: String,
     },
+    apiKey: {
+        type: String,
+    },
     updatedDate: {
         type: Date,
     },
@@ -278,4 +324,5 @@ module.exports = mongoose.model('VRSTest', VRSTestSchema);
 module.exports = mongoose.model('VRSSuite', VRSSuiteSchema);
 module.exports = mongoose.model('VRSApp', VRSAppSchema);
 module.exports = mongoose.model('VRSRun', VRSRunSchema);
+module.exports = mongoose.model('VRSLog', VRSLogSchema);
 module.exports = mongoose.model('VRSUser', VRSUserSchema);
