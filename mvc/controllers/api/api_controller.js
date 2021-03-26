@@ -83,6 +83,8 @@ async function compareSnapshots(baseline, actual) {
     } else {
         const baselineData = fs.readFile(`${config.defaultBaselinePath}${baseline.id}.png`);
         const actualData = fs.readFile(`${config.defaultBaselinePath}${actual.id}.png`);
+        console.log(`baseline path: ${config.defaultBaselinePath}${baseline.id}.png`)
+        console.log(`actual path: ${config.defaultBaselinePath}${actual.id}.png`)
         let opts = {};
         if (baseline.ignoreRegions !== 'undefined') {
             let ignored = JSON.parse(JSON.parse(baseline.ignoreRegions))

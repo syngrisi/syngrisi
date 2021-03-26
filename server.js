@@ -9,6 +9,7 @@ const fileUpload = require('express-fileupload');
 const {default: PQueue} = require('p-queue');
 const pino = require('pino');
 const path = require('path');
+const fs = require('fs');
 const logger = require('pino-http')(
     {
         name: 'vrs',
@@ -48,7 +49,12 @@ app.use((req, res) => {
     res.status(404)
         .send({url: `${req.originalUrl} not found`});
 });
-app.listen(port);
+app.listen(port, function () {
+    const dir = './.tmp';
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir);
+    }
+});
 
 console.log(`Server started on: ${port}`);
 
