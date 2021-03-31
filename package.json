@@ -29,10 +29,11 @@
     "mongodb": "^3.4.1",
     "mongoose": "^5.9.12",
     "node-libpng": "^0.2.16",
+    "nodejs-resemble": "^0.3.0",
     "nodemon": "^2.0.2",
     "p-queue": "^6.4.0",
     "pino-http": "^5.2.0",
     "request": "^2.88.0",
-    "resemblejs": "^3.2.4"
+    "resemblejs": "^3.2.5"
   }
 }
