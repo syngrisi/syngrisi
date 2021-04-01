@@ -94,7 +94,7 @@ async function compareSnapshots(baseline, actual) {
         diff = await getDiff(baselineData, actualData, opts);
     }
 
-    if (diff.misMatchPercentage !== '0.00') {
+    if (parseFloat(diff.misMatchPercentage) !== 0) {
         console.log(`Images are different, ids: [${baseline.id}, ${actual.id}]`);
     }
     console.log({diff});
