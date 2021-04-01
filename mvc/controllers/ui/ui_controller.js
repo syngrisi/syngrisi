@@ -286,16 +286,16 @@ exports.runs = async function (req, res) {
                 }, {});
 
                 const failedTestsCountsGroupByRunId = (await Test.aggregate()
-                        .match({
-                            status: "Failed"
-                        })
-                        .group({
-                            _id: "$run",
-                            count: {$sum: 1}
-                        }).exec()).reduce(function (map, obj) {
-                        map[obj._id] = obj.count;
-                        return map;
-                    }, {});
+                    .match({
+                        status: "Failed"
+                    })
+                    .group({
+                        _id: "$run",
+                        count: {$sum: 1}
+                    }).exec()).reduce(function (map, obj) {
+                    map[obj._id] = obj.count;
+                    return map;
+                }, {});
 
                 const tests = await Test.find(testFilter)
                     .sort(sortFilter).exec()
@@ -316,7 +316,7 @@ exports.runs = async function (req, res) {
 
                 res.render('pages/runs', {
                     runs: runs,
-                    tests: tests,
+                    tests: run ? tests : {},
                     currentRun: run,
                     checksByTestGroupedByIdent: checksByTestGroupedByIdent,
                     allTests: allTests,
