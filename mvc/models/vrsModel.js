@@ -252,8 +252,6 @@ const VRSLogSchema = new Schema({
     msgType: {
         type: String,
         default: 'other',
-        unique: true,
-        required: 'the suite name is empty',
     },
     severity: {
         type: String,
@@ -274,7 +272,7 @@ const VRSAppSchema = new Schema({
         type: String,
         default: 'Others',
         unique: true,
-        required: 'the application name is empty',
+        required: 'the Application name is empty',
     },
     description: {
         type: String,

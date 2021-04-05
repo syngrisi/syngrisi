@@ -84,6 +84,8 @@ async function compareSnapshots(baseline, actual) {
     } else {
         const baselineData = fs.readFile(`${config.defaultBaselinePath}${baseline.id}.png`);
         const actualData = fs.readFile(`${config.defaultBaselinePath}${actual.id}.png`);
+        console.log(`baseline path: ${config.defaultBaselinePath}${baseline.id}.png`)
+        console.log(`actual path: ${config.defaultBaselinePath}${actual.id}.png`)
         let opts = {};
         if (baseline.ignoreRegions !== 'undefined') {
             let ignored = JSON.parse(JSON.parse(baseline.ignoreRegions))
@@ -93,7 +95,8 @@ async function compareSnapshots(baseline, actual) {
         diff = await getDiff(baselineData, actualData, opts);
     }
 
-    if (diff.misMatchPercentage !== '0.00') {
+    console.log({diff});
+    if (parseFloat(diff.misMatchPercentage) !== 0) {
         console.log(`Images are different, ids: [${baseline.id}, ${actual.id}]`);
     }
     console.log({diff});
@@ -666,27 +669,34 @@ exports.createCheck = async function (req, res) {
                 let totalCheckHandleTime;
                 let compareResult;
                 if (check.status.toString() !== 'new') {
-                    compareResult = await compareSnapshots(baselineSnapshoot, actualSnapshot);
-                    if (compareResult.misMatchPercentage !== '0.00') {
-                        console.log(`Saving diff snapshot for check with Id: '${check.id}'`);
-                        const diffSnapshot = await createSnapshotIfNotExist({
-                            params: req.body,
-                            fileData: compareResult.getBuffer()
-                        });
-                        updateParams['diffId'] = diffSnapshot.id;
+                    try {
+                        compareResult = await compareSnapshots(baselineSnapshoot, actualSnapshot);
+                        if (compareResult.misMatchPercentage !== '0.00') {
+                            console.log(`Saving diff snapshot for check with Id: '${check.id}'`);
+                            const diffSnapshot = await createSnapshotIfNotExist({
+                                params: req.body,
+                                fileData: compareResult.getBuffer()
+                            });
+                            updateParams['diffId'] = diffSnapshot.id;
+                            updateParams['status'] = 'failed';
+                        } else {
+                            updateParams['status'] = 'passed';
+                        }
+
+                        console.log(`Update check with params: '${JSON.stringify(updateParams)}'`);
+                        updateParams['updatedDate'] = Date.now();
+                        totalCheckHandleTime = process.hrtime(executionTimer).toString()
+
+                        compareResult['totalCheckHandleTime'] = totalCheckHandleTime;
+                        console.log({compareResult})
+                        updateParams['result'] = JSON.stringify(compareResult, null, "\t");
+                    } catch (e) {
                         updateParams['status'] = 'failed';
-                    } else {
-                        updateParams['status'] = 'passed';
+                        updateParams['result'] = `{error: "Server error - ${e}"}`
+                        await check.updateOne(updateParams);
+                        resultResponse = await Check.findById(check.id);
+                        throw e;
                     }
-
-                    console.log(`Update check with params: '${JSON.stringify(updateParams)}'`);
-                    updateParams['updatedDate'] = Date.now();
-                    totalCheckHandleTime = process.hrtime(executionTimer).toString()
-
-                    compareResult['totalCheckHandleTime'] = totalCheckHandleTime;
-                    console.log({compareResult})
-                    updateParams['result'] = JSON.stringify(compareResult, null, "\t");
-
                     await check.updateOne(updateParams);
                     resultResponse = await Check.findById(check.id);
                 }
