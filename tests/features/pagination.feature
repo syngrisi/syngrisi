@@ -6,12 +6,15 @@ Feature: Pagination
         Given I kill process which used port: "3001"
 
     Scenario: Pagination - no duplicated tests
+        When I set env variables:
+        """
+          PAGE_SIZE: 10
+        """
         Given I start VRS server with parameters:
         """
           port: 3001
           databaseName: VRSdbTest
           baseLineFolder: ./baselinesTest/
-          pageSize: 10
         """
         Given I setup VRS driver with parameters:
         """

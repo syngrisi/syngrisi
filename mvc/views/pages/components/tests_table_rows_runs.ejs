@@ -1,21 +1,22 @@
 <div class="col pl-0 pr-0">
-    <% tests.forEach(function(test){ %>
-        <!--TEST_INFO START-->
-        <% if(Object.keys(checksByTestGroupedByIdent[test.id]).length > 0) { %>
-            <div name="testinfo" class="testinfo row button btn-light border-secondary ml-0 m-0 w-100">
-                <div class="cell-input ml-1 pl-1 pr-1 cell col-auto border-bottom border-right text-truncate small d-flex align-items-center ">
-                    <input id="<%= test.id %>"
-                           name="test"
-                           type="checkbox">
-                </div>
-                <div class="cell-status cell col-2 col-lg-1 pl-3 pr-2 border-bottom border-right text-truncate">
-                    <% const statusesClasses = {
-                        Failed: 'text-danger',
-                        Passed: 'text-success',
-                        Unresolved: 'text-warning',
-                        Running: 'text-info',
-                        New: 'text-success font-weight-bold'
-                    } %>
+    <% if(tests.length > 0 ){ %>
+        <% tests.forEach(function(test){ %>
+            <!--TEST_INFO START-->
+            <% if(Object.keys(checksByTestGroupedByIdent[test.id]).length > 0) { %>
+                <div name="testinfo" class="testinfo row button btn-light border-secondary ml-0 m-0 w-100">
+                    <div class="cell-input ml-1 pl-1 pr-1 cell col-auto border-bottom border-right text-truncate small d-flex align-items-center ">
+                        <input id="<%= test.id %>"
+                               name="test"
+                               type="checkbox">
+                    </div>
+                    <div class="cell-status cell col-2 col-lg-1 pl-3 pr-2 border-bottom border-right text-truncate">
+                        <% const statusesClasses = {
+                            Failed: 'text-danger',
+                            Passed: 'text-success',
+                            Unresolved: 'text-warning',
+                            Running: 'text-info',
+                            New: 'text-success font-weight-bold'
+                        } %>
 
                     <span name="cell-status" id="<%= test.id %>_cell-status"
                           class="<%= statusesClasses[test.status] %> small bg-gu"
@@ -193,5 +194,12 @@
             <!-- all-checks-->
         <% }; %>
 
-    <% }); %>
+        <% }); %>
+    <% } else { %>
+        <div class="row ">
+            <div class="col m-4 text-center text-secondary">
+                <h4>Please select some item</h4>
+            </div>
+        </div>
+    <% } %>
 </div>

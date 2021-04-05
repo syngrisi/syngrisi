@@ -60,7 +60,7 @@ When(/^I start VRS server with parameters:$/, {timeout: 600000}, function (param
     env.VRS_PORT = srvOpts.port;
     env.VRS_BASELINE_PATH = srvOpts.baseLineFolder;
     env.VRS_CONN_STRING = `mongodb://localhost/${srvOpts.databaseName}`;
-    env.PAGE_SIZE = srvOpts.pageSize || '10';
+    // env.PAGE_SIZE = srvOpts.pageSize || '10';
     const homedir = require('os')
         .homedir();
     const nodePath = process.env['OLTA_NODE_PATH'] || (homedir + '/.nvm/versions/node/v13.13.0/bin');
@@ -403,4 +403,16 @@ Then(/^I expect "([^"]*)" tests for get url "([^"]*)"$/, async function (testsNu
     const jsonBodyObject = JSON.parse((await got(url)).body);
     // console.log({jsonBodyObject});
     expect(Object.keys(jsonBodyObject).length).toBe(parseInt(testsNum));
+});
+
+When(/^I check image with path: "([^"]*)" as "([^"]*)" and suppress exceptions$/, async function (filePath, checkName) {
+    try {
+        browser.pause(300);
+        const imageBuffer = fs.readFileSync(browser.config.rootPath + '/' + filePath);
+        const checkResult = await checkVRS(checkName, imageBuffer);
+        this.STATE.check = checkResult;
+    } catch (e) {
+        this.STATE.check = {error: e};
+        this.saveItem('error', e.message);
+    }
 });

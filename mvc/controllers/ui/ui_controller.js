@@ -298,7 +298,7 @@ exports.runs = async function (req, res) {
 
                 res.render('pages/runs', {
                     runs: runs,
-                    tests: tests,
+                    tests: run ? tests : {},
                     currentRun: run,
                     checksByTestGroupedByIdent: checksByTestGroupedByIdent,
                     allTests: allTests,
