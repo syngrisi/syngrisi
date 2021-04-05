@@ -1,11 +1,11 @@
 const hasha = require('hasha');
 const YAML = require('yaml');
-const { spawn } = require('child_process');
+const {spawn} = require('child_process');
 const got = require('got');
 const frisby = require('frisby');
 const fs = require('fs');
-const { Given, When, Then } = require('cucumber');
-const { getDomDump } = require('@syngrisi/syngrisi-wdio-sdk');
+const {Given, When, Then} = require('cucumber');
+const {getDomDump} = require('@syngrisi/syngrisi-wdio-sdk');
 const checkVRS = require('../../src/support/check/checkVrs').default;
 const waitForAndRefresh = require('../../src/support/action/waitForAndRefresh').default;
 
@@ -64,9 +64,9 @@ When(/^I start VRS server with parameters:$/, function (params) {
         .homedir();
     const nodePath = process.env['OLTA_NODE_PATH'] || (homedir + '/.nvm/versions/node/v13.13.0/bin');
     let child = spawn(nodePath + '/npm',
-        ['run', 'startdebug', '-g', '--prefix', cmdPath], { env: env });
+        ['run', 'startdebug', '-g', '--prefix', cmdPath], {env: env});
     browser.waitUntil(async function () {
-        return (await got.get(`http://vrs:${srvOpts.port}/`, { throwHttpErrors: false })).statusCode === 200;
+        return (await got.get(`http://vrs:${srvOpts.port}/`, {throwHttpErrors: false})).statusCode === 200;
     });
 
     this.STATE.vrsPid = child.pid;
@@ -100,7 +100,7 @@ When(/^I kill process which used port: "([^"]*)"$/, function (port) {
         if (pidsString) {
             try {
                 for (const pid of pidsString.split('\n')) {
-                    console.log({ pid });
+                    console.log({pid});
                     process.kill(pid);
                 }
                 return true;
@@ -193,7 +193,7 @@ When(/^I create new VRS Test with:$/, async function (yml) {
     for (const key in params.params) {
         form.append(key, params.params[key]);
     }
-    const response = await frisby.post(params.url, { body: form });
+    const response = await frisby.post(params.url, {body: form});
     console.log(response.json);
     this.saveItem('VRSTestResponse', response);
 
@@ -216,7 +216,7 @@ Given(/^I create new VRS Check with:$/, async function (yml) {
         form.append('file', fs.createReadStream(params.file));
     }
 
-    const response = await frisby.post(params.url, { body: form });
+    const response = await frisby.post(params.url, {body: form});
     let resp = response.json;
     resp.statusCode = response.status;
     this.saveItem('VRSCheck', resp);
@@ -256,6 +256,18 @@ When(/^I check image with path: "([^"]*)" as "([^"]*)"$/, async function (filePa
     const imageBuffer = fs.readFileSync(browser.config.rootPath + '/' + filePath);
     const checkResult = await checkVRS(checkName, imageBuffer);
     this.STATE.check = checkResult;
+});
+
+When(/^I check image with path: "([^"]*)" as "([^"]*)" and suppress exceptions$/, async function (filePath, checkName) {
+    try {
+        browser.pause(300);
+        const imageBuffer = fs.readFileSync(browser.config.rootPath + '/' + filePath);
+        const checkResult = await checkVRS(checkName, imageBuffer);
+        this.STATE.check = checkResult;
+    } catch (e) {
+        this.STATE.check = {error: e};
+        this.saveItem('error', e.message);
+    }
 });
 
 When(/^I visually check page with DOM as "([^"]*)"$/, async function (checkName) {
@@ -306,11 +318,11 @@ Then(/^the "([^"]*)" "([^"]*)" should be "([^"]*)"$/, function (itemType, proper
         .toEqual(exceptedValue);
 });
 
-When(/^I wait and refresh page on element "([^"]*)" for "([^"]*)" seconds to( not)* (exist)$/, { timeout: 600000 },
+When(/^I wait and refresh page on element "([^"]*)" for "([^"]*)" seconds to( not)* (exist)$/, {timeout: 600000},
     waitForAndRefresh
 );
 
-When(/^I start debugger$/, { timeout: 600000 }, function () {
+When(/^I start debugger$/, {timeout: 600000}, function () {
     browser.debug();
 });
 
