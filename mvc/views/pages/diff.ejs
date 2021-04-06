@@ -340,9 +340,9 @@
     function acceptCheck(id, newBaselineId) {
         if (!confirmation()) return;
 
-        var xhr = new XMLHttpRequest();
+        const xhr = new XMLHttpRequest();
         // send empty diffid
-        var params = `id=${id}&baselineId=${newBaselineId}&diffId&status=passed`;
+        const params = `id=${id}&baselineId=${newBaselineId}&diffId&status=passed`;
         xhr.open('PUT', `/checks/${id}`, true);
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         // NEED TO ADD UPDATE BASELINE LOGIC TO .onload EVENT!!!

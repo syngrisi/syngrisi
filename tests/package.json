@@ -25,8 +25,8 @@
     "selenium"
   ],
   "scripts": {
-    "test": "DBG=1 HL=1 npx wdio --spec 'features/**/*.feature'",
-    "testui": "DBG=1 HL=0 npx wdio --spec 'features/**/*.feature'"
+    "test": "LOG=1 HL=1 npx wdio --spec 'features/**/*.feature'",
+    "testui": "LOG=1 HL=0 npx wdio --spec 'features/**/*.feature'"
   },
   "dependencies": {
     "@syngrisi/syngrisi-wdio-sdk": "file:/Users/vsilakou/Projects/Syngrisi/syngrisi-sdk",

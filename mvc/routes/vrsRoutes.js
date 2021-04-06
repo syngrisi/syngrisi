@@ -37,9 +37,23 @@ module.exports = async function (app) {
         .get('/diffview', async function (req, res, next) {
             UI.diffView(req, res).catch(next);
         })
+        .get('/admin', async function (req, res, next) {
+            UI.admin(req, res).catch(next);
+        })
+        .get('/users', async function (req, res, next) {
+            API.getUsers(req, res).catch(next);
+        })
         .post('/checks', async (req, res, next) => {
             req.log.trace(`post '/checks' queue pending count: `, queue.pending);
             await queue.add(() => API.createCheck(req, res).catch(next));
+        })
+        .post('/users', async (req, res, next) => {
+            req.log.trace(`post '/users' queue pending count: `, queue.pending);
+            await queue.add(() => API.createUser(req, res).catch(next));
+        })
+        .put('/users', async (req, res, next) => {
+            req.log.trace(`put '/users' queue pending count: `, queue.pending);
+            await queue.add(() => API.updateUser(req, res).catch(next));
         })
         .post('/tests', async (req, res, next) => {
             req.log.trace(`post '/tests' queue pending count: `, queue.pending);
@@ -47,6 +61,9 @@ module.exports = async function (app) {
         })
         .delete('/tests/:id', async (req, res, next) => {
             API.removeTest(req, res).catch(next);
+        })
+        .delete('/users/:id', async (req, res, next) => {
+            API.removeUser(req, res).catch(next);
         })
         .delete('/suites/:id', async (req, res, next) => {
             API.removeSuite(req, res).catch(next);

@@ -1,5 +1,5 @@
 const path = require('path');
-const { hooks } = require('./src/support/hooks');
+const {hooks} = require('./src/support/hooks');
 const WdioScreenshot = require('wdio-screenshot-v5');
 
 
@@ -191,11 +191,11 @@ exports.config = {
         // <boolean> add cucumber tags to feature or scenario name
         tagsInTitle: false,
         // <number> timeout for step definitions
-        timeout: 60000,
+        timeout: process.env['DBG'] === '1' ? 600000 : 60000,
     },
 
-    beforeStep: function ({ uri, feature, step }, context) {
-        if (process.env.DBG =='1') {
+    beforeStep: function ({uri, feature, step}, context) {
+        if (process.env['LOG'] === '1' || process.env['DBG'] === '1') {
             console.log(`STEP BEFORE: ${step.step.text}:${step.sourceLocation.uri}:${step.step.location.line}, ${step.step.location.column}`);
         }
     },

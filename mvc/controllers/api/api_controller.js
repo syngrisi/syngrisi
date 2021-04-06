@@ -13,6 +13,7 @@ const Snapshot = mongoose.model('VRSSnapshot');
 const Check = mongoose.model('VRSCheck');
 const Test = mongoose.model('VRSTest');
 const Suite = mongoose.model('VRSSuite');
+const User = mongoose.model('VRSUser');
 const {checksGroupedByIdent} = require('../utils');
 const {fatalError, waitUntil} = require('../utils');
 
@@ -163,7 +164,7 @@ exports.affectedElements = async function (req, res) {
             const result = await getAllElementsByPositionFromDump(JSON.parse(chk.domDump), positions)
             console.table(Array.from(result), ['tag', 'id', 'x', 'y', "width", "height", "domPath"])
             res.json(result);
-            resolve(result)
+            return resolve(result)
         } catch (e) {
             fatalError(req, res, e)
         }
@@ -230,7 +231,7 @@ async function removeEmptyTests(req, res) {
         console.log('- done\n');
         res.write('</pre>\n');
         res.end()
-        resolve();
+        return resolve();
     })
 };
 
@@ -300,6 +301,14 @@ exports.getChecks = async function (req, res) {
     })
 };
 
+exports.getUsers = async function (req, res) {
+    return new Promise(async function (resolve, reject) {
+        const users = await User.find().exec();
+        res.status(200).json(users);
+        return resolve(users)
+    })
+};
+
 exports.createTest = async function (req, res) {
     return new Promise(
         async function (resolve, reject) {
@@ -327,11 +336,72 @@ exports.createTest = async function (req, res) {
                 const test = await orm.createTest(opts);
 
                 res.json(test);
-                resolve([req, res, test]);
+                return resolve([req, res, test]);
 
             } catch (e) {
-                reject(e);
+                return reject(e);
                 fatalError(req, res, e)
+            }
+        });
+};
+
+exports.createUser = async function (req, res) {
+    return new Promise(
+        async function (resolve, reject) {
+            try {
+                let params = req.body;
+
+                req.log.info(`Create user with name '${params.username}', params: '${JSON.stringify(params)}'`);
+
+                let opts = Object.assign(params, {updatedDate: new Date()})
+                if (opts.password) {
+                    const hasha = require('hasha');
+                    opts.password = hasha(opts.password);
+                }
+
+                const user = await orm.createUser(opts).catch((e) => {
+                    throw e;
+                });
+
+                res.json(user);
+                return resolve([req, res, user]);
+
+            } catch (e) {
+                fatalError(req, res, e)
+                return reject(e);
+            }
+        });
+};
+
+exports.updateUser = async function (req, res) {
+    return new Promise(
+        async function (resolve, reject) {
+            try {
+                let params = req.body;
+
+                console.log(`Update user with id: '${params.id}' name '${params.username}', params: '${JSON.stringify(params)}'`);
+
+                let opts = Object.assign(params, {updatedDate: new Date()})
+                if (opts.password) {
+                    const hasha = require('hasha');
+                    opts.password = hasha(opts.password);
+                } else {
+                    delete opts.password;
+                }
+
+                const user = await User.findOne({_id: opts.id});
+                if (user) {
+                    await user.update(params);
+                } else {
+                    res.status(500).json({status: 'Error', message: `Cannot find user with id: '${opts.id}'`});
+                }
+
+                res.json(user);
+                return resolve([req, res, user]);
+
+            } catch (e) {
+                fatalError(req, res, e)
+                return reject(e);
             }
         });
 };
@@ -444,7 +514,7 @@ exports.updateTest = async function (req, res) {
                     }
                 )
                 res.status(200).send(`Test with id: '${id}' was updated`);
-                resolve(tst);
+                return resolve(tst);
             } catch (e) {
                 fatalError(req, res, e)
                 return reject(e);
@@ -603,8 +673,7 @@ exports.createCheck = async function (req, res) {
                         message: 'cannot found an image with this hashcode, please add image file data and resend request',
                         hashCode: req.body.hashcode
                     })
-                    resolve()
-                    return
+                    return resolve();
                 }
                 if (snapshotFoundedByHashcode) {
                     console.log(`FOUND snapshoot by hashcode: '${JSON.stringify(snapshotFoundedByHashcode)}'`)
@@ -706,7 +775,7 @@ exports.createCheck = async function (req, res) {
                         lastSuccess: lastSuccessCheck ? (lastSuccessCheck).id : null
                     })
                 res.json(result);
-                resolve([req, res, result]);
+                return resolve([req, res, result]);
             } catch (e) {
                 fatalError(req, res, e);
                 return reject(e);
@@ -730,16 +799,32 @@ exports.removeCheck = async function (req, res) {
                     (err) => {
                         res.status(400)
                             .send(`Cannot remove a check with id: '${id}', error: ${err}`);
-                        resolve(err);
+                        return resolve(err);
                     }
                 );
         } catch (e) {
             fatalError(req, res, e)
-            resolve(e);
+            return reject(e)
         }
     })
-
 };
+
+exports.removeUser = function (req, res) {
+    return new Promise(async function (resolve, reject) {
+        try {
+            const id = req.params.id;
+            console.log(`Remove user with id: '${id}'`);
+            const user = await User.findOneAndDelete({_id: id});
+            console.log(`User with id: '${user._id}' and username: '${user.username}' was removed`);
+            res.status(200)
+                .send({message: `User with id: '${user._id}' and username: '${user.username}' was removed`});
+            return resolve();
+        } catch (e) {
+            fatalError(req, res, e)
+            return reject(e);
+        }
+    })
+}
 
 exports.updateCheck = async function (req, res) {
     return new Promise(async function (resolve, reject) {
@@ -821,7 +906,7 @@ exports.getSnapshot = async function (req, res) {
                     (err) => {
                         res.status(400)
                             .send(`Cannot GET a snapshot with id: '${id}', error: ${err}`);
-                        resolve(err);
+                        return resolve(err);
                     }
                 );
         } catch (e) {
@@ -845,7 +930,7 @@ exports.getCheck = async function (req, res) {
                     (err) => {
                         res.status(400)
                             .send(`Cannot GET a Check with id: '${id}', error: ${err}`);
-                        resolve(err);
+                        return resolve(err);
                     }
                 );
         } catch (e) {

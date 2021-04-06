@@ -15,9 +15,7 @@ export default (method, value, selector) => {
     const command = (method === 'add') ? 'addValue' : 'setValue';
 
     let checkValue = value;
-
-    checkIfElementExists(selector, false, 1);
-
+    $(selector).waitForDisplayed();
     if (!value) {
         checkValue = '';
     }

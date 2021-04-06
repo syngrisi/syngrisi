@@ -3,6 +3,13 @@ function setSuiteMenuWidth() {
     document.getElementById('collapseSuiteMenu').style.width = (logoWidth) + 'px'
 }
 
+function uuidv4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
 function updateQueryParam(param, newval, url) {
     const searchParams = new URLSearchParams(url);
     searchParams.delete(param);
@@ -110,8 +117,8 @@ function removeOneCheck(id) {
 }
 
 function removeCheck(id) {
-    var xhr = new XMLHttpRequest();
-    var params = `id=${id}`;
+    const xhr = new XMLHttpRequest();
+    const params = `id=${id}`;
     xhr.open('DELETE', `/checks/${id}`, true);
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
@@ -239,8 +246,7 @@ function removeTests() {
         setTimeout(() => location.reload(), 800);
     }).catch((e) => {
         console.error(e);
-        showNotification('Cannot remove tests')
-
+        showNotification('Cannot remove tests', 'Error')
     })
 }
 
@@ -281,7 +287,7 @@ function removeCheckedSuites() {
             setTimeout(() => location.reload(), 1300);
         }
     ).catch(function (e) {
-        showNotification('Cannot remove all suites');
+        showNotification('Cannot remove all suites', 'Error');
         console.error('Cannot remove all suites, error: ' + e);
     })
 }
@@ -326,4 +332,25 @@ function confirmation(text = 'are you sure?') {
     const answer = window.confirm(text);
     console.log(answer);
     return answer;
+}
+
+function getRequest(path) {
+    return new Promise((resolve, reject) => {
+        try {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', path, true);
+
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    console.log('Successfully finish get request for: ' + path);
+                    return resolve(xhr.responseText);
+                } else {
+                    console.log('Request failed. Returned status of ' + xhr.status + 'resp:' + xhr.responseText);
+                }
+            };
+            xhr.send();
+        } catch (e) {
+            return reject(e);
+        }
+    })
 }
