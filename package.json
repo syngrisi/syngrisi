@@ -10,8 +10,8 @@
     "start": "nodemon --ignore 'mvc/views/lib/*.js' server.js &",
     "clear": "mongo VRSdb --eval 'db.vrschecks.drop();db.vrssnapshots.drop();db.vrstests.drop();db.vrsapps.drop();db.vrssuites.drop();'; rm ./baselines/*.png",
     "start_test": "VRT_CONN_STRING='mongodb://localhost/VRTdbTest' VRT_PORT=3001 VRT_BASELINE_PATH='./baselinesTest/' nodemon server.js",
-    "clear_test": "mongo VRSdbTest --eval 'db.vrschecks.drop();db.vrssnapshots.drop();db.vrstests.drop();db.vrsapps.drop();db.vrssuites.drop();'; rm ./baselinesTest/*.png",
-    "clearwin": "mongo VRSdb --eval \"db.vrtchecks.drop();db.vrtsnapshots.drop();db.vrttests.drop();db.vrtapps.drop();db.vrtsuites.drop();\" & DEL /F /Q /S ..\\tests\\BaselineImages\\*.png"
+    "clear_test": "mongo VRSdbTest --eval 'db.vrschecks.drop();db.vrssnapshots.drop();db.vrstests.drop();db.vrsapps.drop();db.vrssuites.drop();db.vrsusers.drop();db.vrslogs.drop();'; rm ./baselinesTest/*.png",
+    "clearwin": "mongo VRSdb --eval \"db.vrtchecks.drop();db.vrtsnapshots.drop();db.vrttests.drop();db.vrtapps.drop();db.vrtsuites.drop();db.vrsusers.drop();db.vrslogs.drop();\" & DEL /F /Q /S ..\\tests\\BaselineImages\\*.png"
   },
   "author": "",
   "license": "MIT",
@@ -29,6 +29,7 @@
     "mongodb": "^3.4.1",
     "mongoose": "^5.9.12",
     "node-libpng": "^0.2.16",
+    "nodejs-resemble": "^0.3.0",
     "nodemon": "^2.0.2",
     "p-queue": "^6.4.0",
     "pino-http": "^5.2.0",

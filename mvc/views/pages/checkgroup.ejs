@@ -104,9 +104,9 @@
     }
 
     function acceptCheck(id, newBaselineId) {
-        var xhr = new XMLHttpRequest();
+        const xhr = new XMLHttpRequest();
         // send empty diffid
-        var params = `id=${id}&baselineId=${newBaselineId}&diffId`;
+        const params = `id=${id}&baselineId=${newBaselineId}&diffId`;
         xhr.open('PUT', `/checks/${id}`, true);
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         let el = document.getElementById(`acceptbutton_${id}`);

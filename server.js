@@ -8,7 +8,6 @@ const VRSModel = require('./mvc/models/vrsModel'); // created model loading here
 const fileUpload = require('express-fileupload');
 const {default: PQueue} = require('p-queue');
 const pino = require('pino');
-const fs = require('fs');
 const path = require('path');
 const logger = require('pino-http')(
     {
@@ -50,10 +49,7 @@ app.use((req, res) => {
         .send({url: `${req.originalUrl} not found`});
 });
 app.listen(port, function () {
-    const dir = './.tmp';
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir);
-    }
+    require('./lib/onStart');
 });
 
 console.log(`Server started on: ${port}`);

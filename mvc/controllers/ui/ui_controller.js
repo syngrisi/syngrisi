@@ -6,6 +6,7 @@ const Check = mongoose.model('VRSCheck');
 const Test = mongoose.model('VRSTest');
 const Suite = mongoose.model('VRSSuite');
 const Run = mongoose.model('VRSRun');
+const User = mongoose.model('VRSUser');
 // const App = mongoose.model('VRSApp');
 const moment = require('moment');
 const {fatalError, checkIdent, checksGroupedByIdent} = require('../utils');
@@ -214,6 +215,22 @@ exports.index = async function (req, res) {
                     // tests: tests,
                     currentSuite: suite,
                     // checksByTestGroupedByIdent: checksByTestGroupedByIdent
+                });
+            } catch (e) {
+                fatalError(req, res, e);
+                return reject(e);
+            }
+        }
+    )
+};
+
+exports.admin = async function (req, res) {
+    return new Promise(
+        async function (resolve, reject) {
+            try {
+                let users = await User.find().exec();
+                res.render('pages/admin', {
+                    users: users
                 });
             } catch (e) {
                 fatalError(req, res, e);

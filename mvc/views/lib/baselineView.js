@@ -251,8 +251,8 @@ class BaselineView {
     }
 
     sendIgnoreRegions(id, regionsData) {
-        var xhr = new XMLHttpRequest();
-        var params = `id=${id}&ignoreRegions=${JSON.stringify(regionsData)}`;
+        const xhr = new XMLHttpRequest();
+        const params = `id=${id}&ignoreRegions=${JSON.stringify(regionsData)}`;
         xhr.open('PUT', `/snapshots/${id}`, true);
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         const classThis = this;

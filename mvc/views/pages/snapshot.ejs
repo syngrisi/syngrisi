@@ -70,8 +70,8 @@
             }
 
             function sendMatchType(id, type) {
-                var xhr = new XMLHttpRequest();
-                var params = `id=${id}&matchType=${type}`;
+                const xhr = new XMLHttpRequest();
+                const params = `id=${id}&matchType=${type}`;
                 xhr.open('PUT', `/snapshots/${id}`, true);
                 xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 

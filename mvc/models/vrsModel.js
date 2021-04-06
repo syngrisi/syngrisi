@@ -249,6 +249,9 @@ const VRSRunSchema = new Schema({
 });
 
 const VRSLogSchema = new Schema({
+    Reference: {
+        type: String,
+    },
     msgType: {
         type: String,
         default: 'other',
@@ -292,6 +295,14 @@ const VRSUserSchema = new Schema({
         unique: true,
         required: 'the username name is empty',
     },
+    firstName: {
+        type: String,
+        required: 'the firstName name is empty',
+    },
+    lastName: {
+        type: String,
+        required: 'the lastName name is empty',
+    },
     role: {
         type: String,
         enum: {
@@ -301,6 +312,7 @@ const VRSUserSchema = new Schema({
     },
     password: {
         type: String,
+        required: 'password cannot be empty',
     },
     token: {
         type: String,
