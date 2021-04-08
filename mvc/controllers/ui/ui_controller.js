@@ -209,12 +209,11 @@ exports.index = async function (req, res) {
                     suiteFilter = {suite: suite.id};
                 const suites = await Suite.find({})
                     .sort({name: 'asc'}).exec()
-
+                const currentUser = req.user;
                 res.render('pages/index', {
                     suites: suites,
-                    // tests: tests,
                     currentSuite: suite,
-                    // checksByTestGroupedByIdent: checksByTestGroupedByIdent
+                    user: currentUser
                 });
             } catch (e) {
                 fatalError(req, res, e);
@@ -228,9 +227,60 @@ exports.admin = async function (req, res) {
     return new Promise(
         async function (resolve, reject) {
             try {
+                if (req.user.role !== 'admin') {
+                    res.status(401).json({error: "You need to have 'admin' role to access the page"});
+                    return resolve();
+                }
                 let users = await User.find().exec();
                 res.render('pages/admin', {
-                    users: users
+                    users: users,
+                    currentUser: req.user
+                });
+            } catch (e) {
+                fatalError(req, res, e);
+                return reject(e);
+            }
+        }
+    )
+};
+
+exports.userinfo = async function (req, res) {
+    return new Promise(
+        async function (resolve, reject) {
+            try {
+                res.json(req.user);
+                return resolve();
+            } catch (e) {
+                fatalError(req, res, e);
+                return reject(e);
+            }
+        }
+    )
+};
+
+exports.login = async function (req, res) {
+    return new Promise(
+        async function (resolve, reject) {
+            try {
+                const version = require('../../../package.json').version;
+                res.render('pages/login', {
+                    version: version
+                });
+            } catch (e) {
+                fatalError(req, res, e);
+                return reject(e);
+            }
+        }
+    )
+};
+
+exports.changePasswordPage = async function (req, res) {
+    return new Promise(
+        async function (resolve, reject) {
+            try {
+                const version = require('../../../package.json').version;
+                res.render('pages/changePassword', {
+                    version: version
                 });
             } catch (e) {
                 fatalError(req, res, e);

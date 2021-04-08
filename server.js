@@ -9,6 +9,10 @@ const fileUpload = require('express-fileupload');
 const {default: PQueue} = require('p-queue');
 const pino = require('pino');
 const path = require('path');
+const passport = require('passport');
+const User = mongoose.model('VRSUser');
+const LocalStrategy = require('passport-local').Strategy
+
 const logger = require('pino-http')(
     {
         name: 'vrs',
@@ -18,6 +22,20 @@ const logger = require('pino-http')(
     },
     pino.destination('./application.log')
 )
+
+const expressSession = require('express-session')({
+
+    secret: 'secret-sss',
+    resave: true,
+    saveUninitialized: false,
+    cookie: {secure: false}
+});
+app.use(expressSession);
+
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(logger)
 
 app.use(fileUpload({
@@ -51,6 +69,11 @@ app.use((req, res) => {
 app.listen(port, function () {
     require('./lib/onStart');
 });
+
+
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 console.log(`Server started on: ${port}`);
 

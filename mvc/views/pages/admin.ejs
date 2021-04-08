@@ -30,6 +30,15 @@
         <div id="tagline" class="col-3 col-lg-3 w-25 pl-0 pb-1 mt-2 text-light">
             <h3 class="mb-0">Admin Panel</h3>
         </div>
+        <div class="col d-flex flex-row-reverse w-25 pl-0 pb-1 mt-2 text-light">
+
+            <%- include('components/user_icon', {user: currentUser}) %>
+
+            <a name="reload-tests" type="button" class="btn btn-secondary bg-olive border-0" onclick="location.reload()" title="reload page">
+                <i class="fas fa-sync-alt fa-1x"></i>
+            </a>
+
+        </div>
     </div>
     <div class="all-table row mh-100">
         <!--   SIDEBAR    -->
@@ -71,7 +80,8 @@
                     <div class="col-10">
                     </div>
                     <div class="col-2 pr-2 pl-1 ">
-                        <input id="add-user" type="button" class="btn btn-primary" style="visibility: hidden" value="Add User">
+                        <input id="add-user" type="button" class="btn btn-primary" style="visibility: hidden"
+                               value="Add User">
                     </div>
                 </div>
             </div>
@@ -167,7 +177,8 @@
             col('apiKey', user._id, 'auto', user.apiKey, 'disabled'),
             col('updatedDate', user._id, '1', user.updatedDate, 'disabled')
         ]
-        if (user.username !== 'Administrator') {
+        console.log(user.username);
+        if ((user.username !== 'Administrator') && (user.username !== 'Guest')) {
             row.push(`\t<div class='col-1 pl-0 pr-1'>
                 <a id="update-user_btn_${user._id}" type="button" class="btn btn-secondary border-0" title="Update the User" onclick="updateUser('user_row_${user._id}')">
                         <i class="fas fa-check-square"></i>
