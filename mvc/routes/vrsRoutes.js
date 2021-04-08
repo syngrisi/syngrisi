@@ -1,6 +1,8 @@
 'use strict';
 const {default: PQueue} = require('p-queue');
 const queue = new PQueue({concurrency: 1});
+const {ensureLoggedIn} = require('../../lib/ensureLogin/index');
+const passport = require('passport');
 
 module.exports = async function (app) {
     const UI = require('../controllers/ui/ui_controller');
@@ -16,42 +18,53 @@ module.exports = async function (app) {
         .put('/snapshots/:id', async (req, res, next) => {
             API.updateSnapshot(req, res).catch(next);
         })
-        .get('/', async function (req, res, next) {
-            UI.index(req, res).catch(next).catch(next);
-        })
-        .get('/runs', async function (req, res, next) {
+        .get('/', ensureLoggedIn(),
+            async function (req, res, next) {
+                UI.index(req, res).catch(next).catch(next);
+            })
+        .get('/runs', ensureLoggedIn(), async function (req, res, next) {
             UI.runs(req, res).catch(next).catch(next);
         })
         .get('/affectedelements', async function (req, res, next) {
             API.affectedElements(req, res).catch(next).catch(next);
         })
-        .get('/checkview', async function (req, res, next) {
+        .get('/checkview', ensureLoggedIn(), async function (req, res, next) {
             UI.checkView(req, res).catch(next);
         })
-        .get('/checksgroupview', async function (req, res, next) {
+        .get('/checksgroupview', ensureLoggedIn(), async function (req, res, next) {
             UI.checksGroupView(req, res).catch(next);
         })
-        .get('/snapshootview', async function (req, res, next) {
+        .get('/snapshootview', ensureLoggedIn(), async function (req, res, next) {
             UI.snapshotView(req, res).catch(next);
         })
-        .get('/diffview', async function (req, res, next) {
+        .get('/diffview', ensureLoggedIn(), async function (req, res, next) {
             UI.diffView(req, res).catch(next);
         })
-        .get('/admin', async function (req, res, next) {
+        .get('/admin', ensureLoggedIn(), async function (req, res, next) {
             UI.admin(req, res).catch(next);
         })
-        .get('/users', async function (req, res, next) {
+        .get('/changepassword', ensureLoggedIn(), async function (req, res, next) {
+            UI.changePasswordPage(req, res).catch(next);
+        })
+        .get('/users',  ensureLoggedIn(), async function (req, res, next) {
             API.getUsers(req, res).catch(next);
+        })
+        .get('/login', async function (req, res, next) {
+            UI.login(req, res).catch(next);
         })
         .post('/checks', async (req, res, next) => {
             req.log.trace(`post '/checks' queue pending count: `, queue.pending);
             await queue.add(() => API.createCheck(req, res).catch(next));
         })
-        .post('/users', async (req, res, next) => {
+        .post('/users',  ensureLoggedIn(), async (req, res, next) => {
             req.log.trace(`post '/users' queue pending count: `, queue.pending);
             await queue.add(() => API.createUser(req, res).catch(next));
         })
-        .put('/users', async (req, res, next) => {
+        .post('/password', ensureLoggedIn(), async (req, res, next) => {
+            req.log.trace(`post '/password' queue pending count: `, queue.pending);
+            await queue.add(() => API.changePassword(req, res).catch(next));
+        })
+        .put('/users',ensureLoggedIn(), async (req, res, next) => {
             req.log.trace(`put '/users' queue pending count: `, queue.pending);
             await queue.add(() => API.updateUser(req, res).catch(next));
         })
@@ -78,7 +91,7 @@ module.exports = async function (app) {
             req.log.trace(`get '/checks' queue pending count: `, queue.pending);
             await queue.add(() => API.getChecks(req, res).catch(next));
         })
-        .get('/removeEmptyTests', async (req, res, next) => {
+        .get('/removeEmptyTests', ensureLoggedIn(), async (req, res, next) => {
             req.log.trace(`get '/removeEmptyTests' queue pending count: `, queue.pending);
             await queue.add(() => API.removeEmptyTests(req, res).catch(next));
         })
@@ -90,5 +103,29 @@ module.exports = async function (app) {
         })
         .get('/check/:id', async (req, res, next) => {
             API.getCheck(req, res).catch(next);
+        }).get('/logout', async (req, res, next) => {
+            req.logout;
+            return res.redirect('/login');
+        }).get('/userinfo', ensureLoggedIn(), async (req, res, next) => {
+            UI.userinfo(req, res).catch(next);
+        }).post('/login', (req, res, next) => {
+            passport.authenticate('local',
+                (err, user, info) => {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    if (!user) {
+                        return res.redirect('/login?info=' + info);
+                    }
+
+                    req.logIn(user, function (err) {
+                        if (err) {
+                            return next(err);
+                        }
+                        return res.redirect('/');
+                    });
+
+                })(req, res, next);
         });
-};
+}

@@ -14,6 +14,7 @@
           integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
           crossorigin="anonymous">
     <link rel="stylesheet" href="../../../static/css/colors.css">
+    <link rel="stylesheet" href="../../../static/css/common.css">
     <script src="lib/gridHelpers.js"></script>
     <script src="../../../static/js/ejs.js"></script>
     <script src="../../../static/js/moment.min.js"></script>
@@ -24,32 +25,6 @@
         <title>VRS list of checks - all suites</title>
     <% } %>
     <style>
-        .preview-overlay-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 9999;
-            opacity: 70%;
-        }
-
-        a:hover .preview-overlay-text {
-            display: none;
-        }
-
-        .image-wrapper {
-            position: relative;
-        }
-
-        .current-menu-item {
-            text-decoration: underline;
-            background-color: silver;
-            opacity: 80%;
-        }
-
-        /*.current-menu-item:hover {*/
-        /*    background-color: #2ECC40;*/
-        /*}*/
 
     </style>
 </head>
@@ -62,16 +37,13 @@
             <%- include('components/logo_and_link', {drop: true}) %>
         </div>
 
-        <div name="suite-menu-toolbar" class="col">
+        <div name="suite-menu-toolbar" class="col mr-3">
             <div class="row all-header light-purple sticky-top1">
                 <div class="tests-toolbar sticky-top1 col text-light p-0 pt-1 bg-olive align-self-end">
                     <div class="sticky-top1 row d-flex flex-row-reverse pr-2">
 
                         <div class="col-auto pl-1">
-                            <a name="more-tests" type="button" class="btn btn-secondary bg-olive border-0"
-                               title="more">
-                                <i class="fas fa-ellipsis-v fa-1x"></i>
-                            </a>
+                            <%- include('components/user_icon', {user: user}) %>
                         </div>
                         <div class="col-auto pl-1 pr-1">
                             <a name="remove-tests" type="button" class="btn btn-secondary bg-olive border-0"

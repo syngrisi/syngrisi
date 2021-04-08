@@ -1,8 +1,20 @@
 {
   "name": "singrisy",
-  "version": "1.0.11",
+  "version": "1.1.0",
   "description": "Syngrisi - Visual Testing Tool",
   "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/viktor-silakov/syngrisi"
+  },
+  "homepage": "https://github.com/viktor-silakov/syngrisi",
+  "keywords": [
+    "testing",
+    "regression",
+    "visual",
+    "screenshots",
+    "comparison"
+  ],
   "scripts": {
     "test": "",
     "startdebug": "nodemon --ignore 'mvc/views/lib/*.js' server.js",
@@ -13,18 +25,27 @@
     "clear_test": "mongo VRSdbTest --eval 'db.vrschecks.drop();db.vrssnapshots.drop();db.vrstests.drop();db.vrsapps.drop();db.vrssuites.drop();db.vrsusers.drop();db.vrslogs.drop();'; rm ./baselinesTest/*.png",
     "clearwin": "mongo VRSdb --eval \"db.vrtchecks.drop();db.vrtsnapshots.drop();db.vrttests.drop();db.vrtapps.drop();db.vrtsuites.drop();db.vrsusers.drop();db.vrslogs.drop();\" & DEL /F /Q /S ..\\tests\\BaselineImages\\*.png"
   },
-  "author": "",
+  "author": {
+    "name": "Viktar Silakou",
+    "email": "1105714@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/viktor-silakov/syngrisi/issues"
+  },
   "license": "MIT",
   "dependencies": {
     "async-lock": "^1.2.2",
     "body-parser": "^1.19.0",
     "canvas": "^2.6.1",
     "connect-busboy": "0.0.2",
+    "connect-ensure-login": "^0.1.1",
     "ejs": "^3.0.1",
     "express": "^4.17.1",
     "express-fileupload": "^1.1.6",
+    "express-session": "^1.17.1",
     "got": "^10.2.1",
     "hasha": "^5.1.0",
+    "memorystore": "^1.6.6",
     "moment": "^2.25.3",
     "mongodb": "^3.4.1",
     "mongoose": "^5.9.12",
@@ -32,6 +53,8 @@
     "nodejs-resemble": "^0.3.0",
     "nodemon": "^2.0.2",
     "p-queue": "^6.4.0",
+    "passport": "^0.4.1",
+    "passport-local-mongoose": "^6.1.0",
     "pino-http": "^5.2.0",
     "querystring": "^0.2.1",
     "request": "^2.88.0",

@@ -312,7 +312,6 @@ const VRSUserSchema = new Schema({
     },
     password: {
         type: String,
-        required: 'password cannot be empty',
     },
     token: {
         type: String,
@@ -327,6 +326,10 @@ const VRSUserSchema = new Schema({
         type: Date,
     },
 });
+
+const passportLocalMongoose = require('passport-local-mongoose');
+
+VRSUserSchema.plugin(passportLocalMongoose, {hashField: 'password'});
 
 module.exports = mongoose.model('VRSSnapshot', VRSSnapshotSchema);
 module.exports = mongoose.model('VRSCheck', VRSCheckSchema);

@@ -351,20 +351,50 @@ exports.createUser = async function (req, res) {
             try {
                 let params = req.body;
 
-                req.log.info(`Create user with name '${params.username}', params: '${JSON.stringify(params)}'`);
+                console.log(`Create user with name '${params.username}', params: '${JSON.stringify(params)}'`);
 
                 let opts = Object.assign(params, {updatedDate: new Date()})
-                if (opts.password) {
-                    const hasha = require('hasha');
-                    opts.password = hasha(opts.password);
-                }
-
-                const user = await orm.createUser(opts).catch((e) => {
+                orm.createUser(opts).then((user) => {
+                    user.setPassword(opts.password).then(async (usr) => {
+                        await usr.save();
+                        console.log(`Password for user: '${user.username}' set successfully`)
+                        res.json(user);
+                        return resolve([req, res, user]);
+                    }).catch((e) => {
+                        throw e;
+                    });
+                }).catch((e) => {
                     throw e;
                 });
+            } catch (e) {
+                fatalError(req, res, e)
+                return reject(e);
+            }
+        });
+};
 
-                res.json(user);
-                return resolve([req, res, user]);
+exports.changePassword = async function (req, res) {
+    return new Promise(
+        async function (resolve, reject) {
+            try {
+                let params = req.body;
+
+                console.log(`Change password for  '${req.user.username}', params: '${JSON.stringify(params)}'`);
+                User.findOne({username: req.user.username})
+                    .then(foundUser => {
+                        foundUser.changePassword(params['old-password'], params['new-password'])
+                            .then(() => {
+                                console.log(`password was successfully changed for user: ${req.user.username}`);
+                                res.redirect('/login');
+                            })
+                            .catch((error) => {
+                                console.log(error);
+                            })
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+                return resolve();
 
             } catch (e) {
                 fatalError(req, res, e)
@@ -382,20 +412,19 @@ exports.updateUser = async function (req, res) {
                 console.log(`Update user with id: '${params.id}' name '${params.username}', params: '${JSON.stringify(params)}'`);
 
                 let opts = Object.assign(params, {updatedDate: new Date()})
-                if (opts.password) {
-                    const hasha = require('hasha');
-                    opts.password = hasha(opts.password);
-                } else {
-                    delete opts.password;
-                }
 
                 const user = await User.findOne({_id: opts.id});
-                if (user) {
-                    await user.update(params);
-                } else {
+                if (!user) {
                     res.status(500).json({status: 'Error', message: `Cannot find user with id: '${opts.id}'`});
+                    return reject;
                 }
-
+                const password = opts.password;
+                const upUser = await user.update(params)
+                if (password) {
+                    await user.setPassword(password);
+                    await user.save();
+                }
+                console.log(`User '${upUser.username}' was updated successfully`);
                 res.json(user);
                 return resolve([req, res, user]);
 
