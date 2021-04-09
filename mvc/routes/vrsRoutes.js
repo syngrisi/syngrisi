@@ -46,7 +46,7 @@ module.exports = async function (app) {
         .get('/changepassword', ensureLoggedIn(), async function (req, res, next) {
             UI.changePasswordPage(req, res).catch(next);
         })
-        .get('/users',  ensureLoggedIn(), async function (req, res, next) {
+        .get('/users', ensureLoggedIn(), async function (req, res, next) {
             API.getUsers(req, res).catch(next);
         })
         .get('/login', async function (req, res, next) {
@@ -56,7 +56,7 @@ module.exports = async function (app) {
             req.log.trace(`post '/checks' queue pending count: `, queue.pending);
             await queue.add(() => API.createCheck(req, res).catch(next));
         })
-        .post('/users',  ensureLoggedIn(), async (req, res, next) => {
+        .post('/users', ensureLoggedIn(), async (req, res, next) => {
             req.log.trace(`post '/users' queue pending count: `, queue.pending);
             await queue.add(() => API.createUser(req, res).catch(next));
         })
@@ -64,7 +64,7 @@ module.exports = async function (app) {
             req.log.trace(`post '/password' queue pending count: `, queue.pending);
             await queue.add(() => API.changePassword(req, res).catch(next));
         })
-        .put('/users',ensureLoggedIn(), async (req, res, next) => {
+        .put('/users', ensureLoggedIn(), async (req, res, next) => {
             req.log.trace(`put '/users' queue pending count: `, queue.pending);
             await queue.add(() => API.updateUser(req, res).catch(next));
         })
@@ -104,10 +104,12 @@ module.exports = async function (app) {
         .get('/check/:id', async (req, res, next) => {
             API.getCheck(req, res).catch(next);
         }).get('/logout', async (req, res, next) => {
-            req.logout;
+            req.logout();
             return res.redirect('/login');
         }).get('/userinfo', ensureLoggedIn(), async (req, res, next) => {
             UI.userinfo(req, res).catch(next);
+        }).get('/loadTestUser', ensureLoggedIn(), async (req, res, next) => {
+            API.loadTestUser(req, res).catch(next);
         }).post('/login', (req, res, next) => {
             passport.authenticate('local',
                 (err, user, info) => {
@@ -116,13 +118,14 @@ module.exports = async function (app) {
                     }
 
                     if (!user) {
-                        return res.redirect('/login?info=' + info);
+                        return res.redirect('/login?info=' + JSON.stringify(info));
                     }
 
                     req.logIn(user, function (err) {
                         if (err) {
                             return next(err);
                         }
+                        console.log({user})
                         return res.redirect('/');
                     });
 

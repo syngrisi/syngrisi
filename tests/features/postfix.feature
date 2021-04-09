@@ -18,7 +18,7 @@ Feature: VRS Postfix
   Scenario: VRS ViewPort - postfix
     When I set env variables:
     """
-    ENV_POSTFIX: Integration
+      ENV_POSTFIX: Integration
     """
     Given I set window size: "712x970"
     Given I start VRS session with parameters:
@@ -30,5 +30,6 @@ Feature: VRS Postfix
 
     When I stop VRS session
     When I open the url "http://vrs:3001/"
+    When I wait for "2" seconds
     Then I expect that VRS test "Postfix integration test" has "_Integration" platform
 

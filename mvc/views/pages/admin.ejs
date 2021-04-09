@@ -34,7 +34,8 @@
 
             <%- include('components/user_icon', {user: currentUser}) %>
 
-            <a name="reload-tests" type="button" class="btn btn-secondary bg-olive border-0" onclick="location.reload()" title="reload page">
+            <a name="reload-tests" type="button" class="btn btn-secondary bg-olive border-0" onclick="location.reload()"
+               title="reload page">
                 <i class="fas fa-sync-alt fa-1x"></i>
             </a>
 
@@ -104,9 +105,10 @@
     <div class="col-1 pl-0 pr-1">
         <input name="lastName" class="form-control" placeholder="Last Name">
     </div>
-    <div class="col-1 pl-0 pr-1">
-        <input name="role" class="form-control" placeholder="role">
-    </div>
+    <select name="role" new-user-role="" class="form-select" aria-label="role">
+        <option value="user">user</option>
+        <option value="admin">admin</option>
+    </select>
     <div class="col-1 pl-0 pr-1">
         <input name="password" class="form-control" placeholder="password" type="password">
     </div>
@@ -172,15 +174,18 @@
             col('username', user._id, '1', user.username, 'disabled'),
             col('firstName', user._id, '1', user.firstName),
             col('lastName', user._id, '1', user.lastName),
-            col('role', user._id, '1', user.role),
+            `<select name="role" username="${user.username}" class="form-select" aria-label="role" id='input_${user.username}_${user._id}'\`>
+                    <option value="${user.role}">${user.role}</option>
+                    <option value="${user.role === 'admin' ? 'user' : 'admin'}">${user.role === 'admin' ? 'user' : 'admin'}</option>
+             </select>`,
             col('password', user._id, '1', '', 'enabled', 'password'),
             col('apiKey', user._id, 'auto', user.apiKey, 'disabled'),
             col('updatedDate', user._id, '1', user.updatedDate, 'disabled')
         ]
-        console.log(user.username);
+        // console.log(user.username);
         if ((user.username !== 'Administrator') && (user.username !== 'Guest')) {
             row.push(`\t<div class='col-1 pl-0 pr-1'>
-                <a id="update-user_btn_${user._id}" type="button" class="btn btn-secondary border-0" title="Update the User" onclick="updateUser('user_row_${user._id}')">
+                <a id="update-user_btn_${user._id}" type="button" update-button-username="${user.username}" class="btn btn-secondary border-0" title="Update the User" onclick="updateUser('user_row_${user._id}')">
                         <i class="fas fa-check-square"></i>
                 </a>
 
@@ -228,19 +233,20 @@
     }
 
     function getInputValueByName(name, arr) {
-        console.log({name})
+        // console.log({name})
         return arr.filter(x => x.name === name)[0].value;
     }
 
     function createUser(rowId) {
+        const select = Array.prototype.slice.call(document.getElementById(rowId).getElementsByTagName('select'))
         const inputs = Array.prototype.slice.call(document.getElementById(rowId).getElementsByTagName('input'))
             .filter(x => ((x.readOnly === false) || (x.name === 'apiKey')))
-        console.log({inputs})
+        // console.log({inputs})
         const params = {
             username: getInputValueByName('username', inputs),
             firstName: getInputValueByName('firstName', inputs),
             lastName: getInputValueByName('lastName', inputs),
-            role: getInputValueByName('role', inputs),
+            role: select[0].value,
             password: getInputValueByName('password', inputs),
             apiKey: getInputValueByName('apiKey', inputs),
         }
@@ -266,14 +272,15 @@
     }
 
     function updateUser(rowId) {
+        const select = Array.prototype.slice.call(document.getElementById(rowId).getElementsByTagName('select'))
         const inputs = Array.prototype.slice.call(document.getElementById(rowId).getElementsByTagName('input'))
-        console.log({inputs})
+        // console.log({inputs})
         const params = {
             id: getInputValueByName('id', inputs),
             username: getInputValueByName('username', inputs),
             firstName: getInputValueByName('firstName', inputs),
             lastName: getInputValueByName('lastName', inputs),
-            role: getInputValueByName('role', inputs),
+            role: select[0].value,
             password: getInputValueByName('password', inputs),
             apiKey: getInputValueByName('apiKey', inputs),
         }
@@ -317,7 +324,7 @@
         let data;
         if (searchObject) {
             if (searchObject.task === 'users') {
-                console.log(searchObject)
+                // console.log(searchObject)
                 data = {};
                 data = JSON.parse(await getRequest(`/users`));
                 renderTableHeader();
@@ -328,7 +335,6 @@
             } else {
                 let taskHtml;
                 let taskTemplate;
-                console.log({data});
                 taskTemplate = await getRequest(`../../../../static/ejs/admin_${searchObject.task}.ejs`);
                 taskHtml = '<div class="row">' + ejs.render(taskTemplate, {
                     data: data
