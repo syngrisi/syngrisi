@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 mongoose.set('useUnifiedTopology', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
+
 const {Schema} = mongoose;
 
 const VRSSnapshotSchema = new Schema({

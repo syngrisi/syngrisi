@@ -12,3 +12,4 @@ node_modules
 /.idea/
 /debug.js
 *.tmp
+/debug2.js
