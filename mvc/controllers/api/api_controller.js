@@ -814,10 +814,9 @@ exports.createCheck = async function (req, res) {
                 let resultResponse;
                 await check.save()
                     .then(function (chk) {
-                            resultResponse = chk;
-                            console.log(`Check with id: '${check.id}', successful saved!`);
-                        }
-                    )
+                        resultResponse = chk;
+                        console.log(`Check with id: '${check.id}', successful saved!`);
+                    })
                     .catch(function (error) {
                         res.send(error);
                         console.log(`Cannot save the check, error: '${error}'`);

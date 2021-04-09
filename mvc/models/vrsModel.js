@@ -11,10 +11,6 @@ const VRSSnapshotSchema = new Schema({
         type: String,
         required: 'the name of the snapshot entity is empty',
     },
-    checkId: {
-        type: Schema.Types.ObjectId,
-        ref: 'VRSTest',
-    },
     path: {
         type: String,
     },
