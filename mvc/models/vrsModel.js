@@ -1,5 +1,8 @@
 'use strict';
 const mongoose = require('mongoose');
+mongoose.set('useUnifiedTopology', true);
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
 const {Schema} = mongoose;
 
 const VRSSnapshotSchema = new Schema({
@@ -30,7 +33,6 @@ const VRSSnapshotSchema = new Schema({
     },
     ignoreRegions: {
         type: String,
-        default: 'undefined',
     },
     markedAs: {
         type: String,
@@ -50,7 +52,6 @@ const VRSSnapshotSchema = new Schema({
     },
     boundRegions: {
         type: String,
-        default: 'undefined',
     },
     vOffset: {
         type: Number,
@@ -113,23 +114,18 @@ const VRSCheckSchema = new Schema({
     },
     browserName: {
         type: String,
-        default: 'undefined',
     },
     browserVersion: {
         type: String,
-        default: 'undefined',
     },
     browserFullVersion: {
         type: String,
-        default: 'undefined',
     },
     viewport: {
         type: String,
-        default: 'undefined',
     },
     os: {
         type: String,
-        default: 'undefined',
     },
     domDump: {
         type: String,
@@ -144,14 +140,12 @@ const VRSCheckSchema = new Schema({
     markedAs: {
         type: String,
         enum: ['bug', 'accepted'],
-        default: undefined,
     },
     markedDate: {
         type: Date,
     },
     markedBy: {
         type: String,
-        default: undefined
     },
 });
 
@@ -165,20 +159,16 @@ const VRSTestSchema = new Schema({
         },
         status: {
             type: String,
-            default: 'undefined',
         },
         browserName: {
             type: String,
-            default: 'undefined',
         },
         browserVersion: {
             type: String,
-            default: 'undefined',
         },
         // on the start of test
         viewport: {
             type: String,
-            default: 'undefined',
         },
         // after handle all checks inside the test
         calculatedViewport: {
@@ -187,7 +177,6 @@ const VRSTestSchema = new Schema({
         },
         os: {
             type: String,
-            default: 'undefined',
         },
         blinking: {
             type: Number,

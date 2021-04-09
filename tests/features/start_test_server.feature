@@ -10,4 +10,4 @@ Feature: VRS Server running
     """
     When I open the url "http://vrs:3001/"
 
-    Then the title is "VRS list of checks - all suites"
+    Then the title is "Syngrisi list of checks - all suites"

@@ -88,7 +88,9 @@ async function compareSnapshots(baseline, actual) {
         console.log(`baseline path: ${config.defaultBaselinePath}${baseline.id}.png`)
         console.log(`actual path: ${config.defaultBaselinePath}${actual.id}.png`)
         let opts = {};
-        if (baseline.ignoreRegions !== 'undefined') {
+        // back compatibility
+        (baseline.ignoreRegions === 'undefined') && delete baseline.ignoreRegions
+        if (baseline.ignoreRegions) {
             let ignored = JSON.parse(JSON.parse(baseline.ignoreRegions))
             opts = {ignoredBoxes: ignored}
         }
@@ -287,6 +289,7 @@ exports.getChecks = async function (req, res) {
             checksByTestGroupedByIdent[test.id]['status'] = test.status;
             checksByTestGroupedByIdent[test.id]['browserName'] = test.browserName;
             checksByTestGroupedByIdent[test.id]['browserVersion'] = test.browserVersion;
+            checksByTestGroupedByIdent[test.id]['browserFullVersion'] = test.browserFullVersion;
             checksByTestGroupedByIdent[test.id]['viewport'] = test.viewport;
             checksByTestGroupedByIdent[test.id]['calculatedViewport'] = test.calculatedViewport;
             checksByTestGroupedByIdent[test.id]['os'] = test.os;
@@ -343,6 +346,7 @@ exports.createTest = async function (req, res) {
                     viewport: params.viewport,
                     browserName: params.browser,
                     browserVersion: params.browserVersion,
+                    browserFullVersion: params.browserFullVersion,
                     os: params.os,
                     startDate: new Date(),
                     updatedDate: new Date(),
@@ -444,7 +448,7 @@ exports.updateUser = async function (req, res) {
                 }
                 const password = opts.password;
 
-                await user.update(params).catch((e) => {
+                await user.updateOne(params).catch((e) => {
                     fatalError(req, res, e)
                     return reject(e);
                 })
@@ -583,7 +587,7 @@ function removeTest(id) {
     return new Promise(function (resolve, reject) {
         try {
             console.log(`Try to delete all checks associated to test with ID: '${id}'`);
-            Check.remove({test: id}).then(function (result) {
+            Check.removeOne({test: id}).then(function (result) {
                 console.log(`DELETE test with ID: '${id}'`);
                 Test.findByIdAndDelete(id).then(function (out) {
                     return resolve(out);
@@ -701,6 +705,7 @@ exports.createCheck = async function (req, res) {
                     viewport: req.body.viewport,
                     browserName: req.body.browserName,
                     browserVersion: req.body.browserVersion,
+                    browserFullVersion: req.body.browserFullVersion,
                     os: req.body.os,
                     updatedDate: Date.now(),
                     suite: suite.id,
@@ -871,7 +876,8 @@ exports.removeUser = function (req, res) {
         try {
             const id = req.params.id;
             console.log(`Remove user with id: '${id}'`);
-            const user = await User.findOneAndDelete({_id: id});
+            // const user = await User.findOneAndDelete({_id: id});
+            const user = await User.findByIdAndDelete(id)
             console.log(`User with id: '${user._id}' and username: '${user.username}' was removed`);
             res.status(200)
                 .send({message: `User with id: '${user._id}' and username: '${user.username}' was removed`});

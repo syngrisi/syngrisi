@@ -4,9 +4,8 @@ const app = express();
 const port = config.port;
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const VRSModel = require('./mvc/models/vrsModel'); // created model loading here
+require('./mvc/models/vrsModel'); // created model loading here
 const fileUpload = require('express-fileupload');
-const {default: PQueue} = require('p-queue');
 const pino = require('pino');
 const path = require('path');
 const passport = require('passport');
@@ -44,9 +43,9 @@ app.use(fileUpload({
 
 // mongoose instance connection url connection
 mongoose.Promise = global.Promise;
-mongoose.connect(config.connectionString);
+mongoose.connect(config.connectionString, {useNewUrlParser: true});
 
-var viewPath = path.join(__dirname, 'mvc/views');
+const viewPath = path.join(__dirname, 'mvc/views');
 
 app.set('views', viewPath);
 
@@ -75,7 +74,7 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-console.log(`Server started on: ${port}`);
+console.log(`Server started on port: '${port}'`);
 
 
 

@@ -1,5 +1,5 @@
-<div name="subheader" class="row bg-headers text-light border-purple border-top1">
-    <div class="col">
+<div name="subheader" class="row sticky-top bg-light text-dark border-purple border-top1 pt-2 pb-3 mr-0">
+    <div class="col text-truncate pt-2" style="font-size: 14pt">
         <% if(currentItem) { %>
             <a href="?filter_suitename_eq=<%= currentItem.name %>" class="unlink">
                 <span><%= currentItem.name %></span>
@@ -9,6 +9,39 @@
                 <span>All tests</span>
             </a>
         <% } %>
+    </div>
+    <div class="col">
+        <div class="row flex-row-reverse pr-4">
+            <div class="col-auto pl-1 pr-1 pt-2">
+                <a name="remove-tests" type="button" class="btn btn-secondary bg-light border-0 pr-1 pl-1 pt-0 pb-1"
+                   onclick="removeTests()"
+                   title="remove checked tests">
+                    <i class="fas fa-trash fa-sm"></i>
+                </a>
+            </div>
+            <div class="col-auto pl-1 pr-1 pt-2">
+                <a name="accept-checks" type="button" class="btn btn-secondary bg-light border-0 pr-1 pl-1 pt-0 pb-1"
+                   onclick="acceptSelectedChecks()"
+                   title="accept selected checks">
+                    <i class="far fa-check-circle fa-sm"></i>
+                </a>
+            </div>
+            <div class="col-auto pl-1 pr-1 pt-2">
+                <a name="reload-tests" type="button" class="btn btn-secondary bg-light border-0 pr-1 pl-1 pt-0 pb-1"
+                   onclick="location.reload()"
+                   title="reload page">
+                    <i class="fas fa-sync-alt fa-sm"></i>
+                </a>
+            </div>
+            <div class="col-8 pl-1 pr-1">
+                <div class="input-group input-group-sm mt-2">
+                    <input type="text" aria-describedby="inputGroup-sizing-sm"  style="font-size: 0.7rem; height: 26px" class="form-control rounded-0"  placeholder="Search" aria-label="Search" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary rounded-0" style="font-size: 0.7rem; height: 26px" type="button">S</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
