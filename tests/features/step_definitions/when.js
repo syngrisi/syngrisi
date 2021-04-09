@@ -100,3 +100,7 @@ When(
 When(/^I scroll to the bottom of page$/, {timeout: 180000}, function () {
     browser.execute("window.scrollTo({left: 0, top: document.body.scrollHeight, behavior: 'smooth'});");
 });
+
+When(/^I click on browser back button$/, function () {
+    browser.back();
+});

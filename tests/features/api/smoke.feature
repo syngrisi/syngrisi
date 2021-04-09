@@ -143,6 +143,8 @@ Feature: Smoke VRS API
           name: check phase12 ae-1
           viewport: 10x10
           browserName: firefox
+          browserVersion: 11
+          browserFullVersion: 11.01.01
           os: MacOs
           suitename: VRS API - Check
           appname: Test Api App
@@ -166,6 +168,8 @@ Feature: Smoke VRS API
           name: check phase12 ae-1
           viewport: 10x10
           browserName: firefox
+          browserVersion: 11
+          browserFullVersion: 11.01.01
           os: MacOs
           suitename: VRS API - Check
           appname: Test Api App
@@ -180,7 +184,6 @@ Feature: Smoke VRS API
         browserName: firefox
         os: MacOs
     """
-
 
     # Main section
 
@@ -204,6 +207,8 @@ Feature: Smoke VRS API
           name: check phase12 ae-2
           viewport: 10x10
           browserName: firefox
+          browserVersion: 11
+          browserFullVersion: 11.01.01
           os: MacOs
           suitename: VRS API - Check
           appname: Test Api App

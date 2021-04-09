@@ -42,23 +42,19 @@
             <%- include('components/logo_and_link', {drop: true}) %>
         </div>
 
-        <div name="title" class="col pl-4 pt-1 h4 border-left mb-0 light-purple">
-            <%= snapshot.name %>
-        </div>
+        <div name="title" class="col pl-4 pt-1 h4 border-left mb-0 light-purple"><%= snapshot.name %></div>
         <div name="ignore-menu" class="col-auto col-flex align-self-end pl-4 pt-1 h4 mb-0 light-purple">
             <div class="dropdown mb-1">
                 <button class="btn mb-1 bg-sidebar text-light dropdown-toggle btn-sm" type="button"
                         id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                         style="box-shadow: none"
                 >
-                    Ignore <%= snapshot.matchType %>
+                    Ignore <%= snapshot.matchType ? snapshot.matchType : 'antialiasing' %>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenu">
                     <a class="dropdown-item small" href="#" onclick="setMatchType('antialiasing')">antialiasing</a>
                     <a class="dropdown-item small" href="#" onclick="setMatchType('nothing')">nothing</a>
-                    <a class="dropdown-item small" href="#" onclick="setMatchType('less')">less</a>
                     <a class="dropdown-item small" href="#" onclick="setMatchType('colors')">colors</a>
-                    <a class="dropdown-item small" href="#" onclick="setMatchType('alpha')">alpha</a>
                 </div>
             </div>
         </div>
@@ -227,7 +223,7 @@
     var baseline = {};
 
     let baselineImg = new Image();
-    baselineImg.src = '/snapshoots/<%= snapshot.id %>.png';
+    baselineImg.src = '/snapshoots/<%= snapshot.filename || snapshot.id + '.png' %>';
     baselineImg.onload = function () {
         let coef = document.getElementById('snapshoot').clientWidth / this.width;
         let calculatedHeight = this.height * coef

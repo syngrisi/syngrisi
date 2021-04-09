@@ -46,15 +46,17 @@
             <div class="row w-100">
                 <div class="col-auto">
                     <a href="/snapshootview?id=<%= check.baselineId %>&diffid=<%= check.diffId %>" name="baseline_link">
-                        <img src="/snapshoots/<%= check.baselineId %>.png" alt="baseline snapshoot"
+                        <img src="/snapshoots/<%= baseline.filename || baseline._id + '.png' %>" alt="baseline snapshoot"
                              title="baseline snapshoot"
                              class="snapshoot-image">
                     </a>
                 </div>
                 <div class="col-auto">
                     <% if (check.actualSnapshotId) { %>
-                        <a href="/snapshootview?id=<%= check.actualSnapshotId %>&diffid=<%= check.diffId %>">
-                            <img src="/snapshoots/<%= check.actualSnapshotId %>.png" alt="actual snapshoot"
+                        <a href="/snapshootview?id=<%= check.actualSnapshotId %>&diffid=<%= check.diffId %>"
+                           name="actual_link">
+                            <img src="/snapshoots/<%= actual.filename || actual._id + '.png' %>"
+                                 alt="actual snapshoot"
                                  title="actual snapshoot"
                                  class="snapshoot-image">
                         </a>
@@ -63,7 +65,7 @@
                 <div class="col-auto">
                     <% if (check.diffId) { %>
                         <a href="/snapshootview?id=<%= check.diffId %>">
-                            <img src="/snapshoots/<%= check.diffId %>.png" alt="diff snapshoot" title="diff snapshoot"
+                            <img src="/snapshoots/<%= diff.filename || diff._id + '.png' %>" alt="diff snapshoot" title="diff snapshoot"
                                  class="snapshoot-image">
                         </a>
                     <% } %>
@@ -112,13 +114,10 @@
         let el = document.getElementById(`acceptbutton_${id}`);
 
         // NEED TO ADD UPDATE BASELINE LOGIC TO .onload EVENT!!!
-
         xhr.onload = function () {
             if (xhr.status === 200) {
                 console.log('Success ' + id + '--' + xhr.responseText);
                 location.reload();
-                // let checkDiv = document.getElementById(`check_${id}`);
-                // checkDiv.parentNode.removeChild(checkDiv);
             } else {
                 console.log('Request failed. Returned status of ' + xhr.status + 'resp:' + xhr.responseText);
             }

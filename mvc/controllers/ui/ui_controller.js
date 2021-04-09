@@ -53,6 +53,9 @@ exports.checksGroupView = async function (req, res) {
             }
 
             const check = await Check.findById(`${opts.id}`).exec();
+            const actual = await Snapshot.findById(check.actualSnapshotId).exec()
+            const baseline = await Snapshot.findById(check.baselineId).exec()
+            const diff = await Snapshot.findById(check.diffId).exec()
             const test = await Test.findById(check.test).exec();
             const suite = await Suite.findById(check.suite).exec();
             const testId = check.test;
@@ -73,7 +76,11 @@ exports.checksGroupView = async function (req, res) {
             res.render('pages/checkgroup', {
                 checks: groupChecks,
                 test: test,
-                suite: suite
+                suite: suite,
+                actual: actual,
+                diff: diff,
+                baseline: baseline,
+
             });
         } catch (e) {
             fatalError(req, res, e);

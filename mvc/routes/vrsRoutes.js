@@ -100,8 +100,7 @@ module.exports = async function (app) {
         })
         .get('/checks/byident/:testid', async (req, res, next) => {
             API.checksGroupByIdent(req, res).catch(next);
-        })
-        .get('/check/:id', async (req, res, next) => {
+        }).get('/check/:id', async (req, res, next) => {
             API.getCheck(req, res).catch(next);
         }).get('/logout', async (req, res, next) => {
             req.logout();

@@ -36,34 +36,41 @@ async function getLastSuccessCheck(identifier) {
 }
 
 async function getSnapshotByImgHash(hash) {
-    return (await Snapshot.find({imghash: hash}))[0];
+    return (await Snapshot.findOne({imghash: hash}));
 }
 
-async function createSnapshotIfNotExist(parameters) {
-    const {params, fileData, hashCode} = parameters
-    let opts = {name: params.name};
+async function createSnapshot(parameters) {
+    console.log({parameters});
+    const {params, fileData, hashCode, filename} = parameters
+    let opts = {
+        name: params.name,
+    };
+    filename && (opts.filename = filename);
+
     if (!fileData && !hashCode)
         throw new Error("Error: the 'fileData' nor 'hashCode' is set, you should provide at least one parameter")
 
-    opts['imghash'] = hashCode || hasha(fileData);
-    const equalSnapshot = await getSnapshotByImgHash(opts['imghash']);
-    if (equalSnapshot) {
-        console.log(`Snapshot with hash: '${opts['imghash']}' is already exist.`);
-        return equalSnapshot;
-    }
-    console.log(`Snapshot with hash: '${opts['imghash']}' doesn't exists creating new one...`);
+    opts.imghash = hashCode || hasha(fileData);
+    // const equalSnapshot = await getSnapshotByImgHash(opts['imghash']);
+    // if (equalSnapshot) {
+    //     console.log(`Snapshot with hash: '${opts['imghash']}' is already exist.`);
+    //     return equalSnapshot;
+    // }
+    // console.log(`Snapshot with hash: '${opts['imghash']}' doesn't exists creating new one...`);
 
     const snapshoot = new Snapshot(opts);
-
-    snapshoot.save(function (err, bline) {
+    !filename && (snapshoot.filename = snapshoot._id + '.png')
+    snapshoot.save(function (err, result) {
         if (err) {
             throw err;
         }
     });
-    console.log(`Snapshot was saved: '${JSON.stringify(snapshoot)}'`);
-    const path = `${config.defaultBaselinePath}${snapshoot.id}.png`;
-    console.log(`Save screenshot to: '${path}'`);
-    await fs.writeFile(path, fileData);
+    if (fileData) {
+        console.log(`Snapshot was saved: '${JSON.stringify(snapshoot)}'`);
+        const path = `${config.defaultBaselinePath}${snapshoot.id}.png`;
+        console.log(`Save screenshot to: '${path}'`);
+        await fs.writeFile(path, fileData);
+    }
     return snapshoot;
 }
 
@@ -83,8 +90,10 @@ async function compareSnapshots(baseline, actual) {
             executionTotalTime: '0'
         }
     } else {
-        const baselineData = fs.readFile(`${config.defaultBaselinePath}${baseline.id}.png`);
-        const actualData = fs.readFile(`${config.defaultBaselinePath}${actual.id}.png`);
+        const baselinePath = `${config.defaultBaselinePath}${baseline.filename || baseline.id + '.png'}`
+        const actualPath = `${config.defaultBaselinePath}${actual.filename || actual.id + '.png'}`
+        const baselineData = fs.readFile(baselinePath);
+        const actualData = fs.readFile(actualPath);
         console.log(`baseline path: ${config.defaultBaselinePath}${baseline.id}.png`)
         console.log(`actual path: ${config.defaultBaselinePath}${actual.id}.png`)
         let opts = {};
@@ -94,7 +103,7 @@ async function compareSnapshots(baseline, actual) {
             let ignored = JSON.parse(JSON.parse(baseline.ignoreRegions))
             opts = {ignoredBoxes: ignored}
         }
-        opts.ignore = baseline.matchType;
+        opts.ignore = baseline.matchType || 'antialiasing';
         diff = await getDiff(baselineData, actualData, opts);
     }
 
@@ -587,7 +596,7 @@ function removeTest(id) {
     return new Promise(function (resolve, reject) {
         try {
             console.log(`Try to delete all checks associated to test with ID: '${id}'`);
-            Check.removeOne({test: id}).then(function (result) {
+            Check.remove({test: id}).then(function (result) {
                 console.log(`DELETE test with ID: '${id}'`);
                 Test.findByIdAndDelete(id).then(function (out) {
                     return resolve(out);
@@ -650,6 +659,20 @@ function prettyCheckParams(result) {
     delete resObs.domDump;
     resObs.domDump = JSON.stringify(dump).substr(0, 20) + `... and about ${dump.length} items]`
     return JSON.stringify(resObs);
+}
+
+function cloneSnapshoot(sourceSnapshoot, params, fileData) {
+    return new Promise(async (resolve, reject) => {
+        const filename = sourceSnapshoot.filename ? sourceSnapshoot.filename : sourceSnapshoot._id + '.png'
+        const newSnapshoot = await createSnapshot({
+            filename: filename,
+            params: params,
+            // fileData: fileData,
+            hashCode: params.hashcode
+        })
+        resolve(newSnapshoot);
+    })
+
 }
 
 exports.createCheck = async function (req, res) {
@@ -757,7 +780,12 @@ exports.createCheck = async function (req, res) {
                     const lastCheck = await getLastCheck(checkIdentifier);
 
                     const previousBaselineId = lastCheck ? lastCheck.baselineId : null;
-                    currentSnapshot = snapshotFoundedByHashcode || (await createSnapshotIfNotExist({
+
+                    let newClonedSnapshot;
+                    if (snapshotFoundedByHashcode) {
+                        newClonedSnapshot = await cloneSnapshoot(snapshotFoundedByHashcode, req.body, fileData)
+                    }
+                    currentSnapshot = newClonedSnapshot || (await createSnapshot({
                         params: req.body,
                         fileData: fileData,
                         hashCode: req.body.hashcode
@@ -804,7 +832,8 @@ exports.createCheck = async function (req, res) {
                         compareResult = await compareSnapshots(baselineSnapshoot, actualSnapshot);
                         if (compareResult.misMatchPercentage !== '0.00') {
                             console.log(`Saving diff snapshot for check with Id: '${check.id}'`);
-                            const diffSnapshot = await createSnapshotIfNotExist({
+                            const diffSnapshot = await createSnapshot({
+
                                 params: req.body,
                                 fileData: compareResult.getBuffer()
                             });

@@ -51,7 +51,8 @@
 </head>
 <body class="bg-black pl-0" style="max-height: 100vh; min-height: 100vh; min-width: 97.8vw; max-width: 97.8vw">
 
-<div name="main" class="main container-fluid1 pl-0 pr-0 ml-3 mr-0 d-inline-block bg-light" style="min-height: 100vh; max-width: 100%; min-width: 100%">
+<div name="main" class="main container-fluid1 pl-0 pr-0 ml-3 mr-0 d-inline-block bg-light"
+     style="min-height: 100vh; max-width: 100%; min-width: 100%">
     <div name="page-head" class="row bg-olive sticky-top1 mr-0" style="margin-right: -16px; margin-left: -16px">
         <div name="logo-and-link" class="col-3 col-lg-3 w-25 pl-0 pb-1 bg-olive text-light"
              id="logo-and-label-container">
@@ -66,14 +67,6 @@
                         <div class="col-auto pl-1">
                             <%- include('components/user_icon', {user: user}) %>
                         </div>
-<!--                        <div class="col-auto pl-1">-->
-<!--                            <div class="input-group input-group-sm mb-1 mt-2">-->
-
-<!--                                <input class="form-control h-50" aria-describedby="inputGroup-sizing-sm"-->
-<!--                                       placeholder="Search">-->
-<!--                            </div>-->
-<!--                        </div>-->
-
                     </div>
                 </div>
             </div>
@@ -311,7 +304,7 @@
         document.getElementById('overlay').style.display = 'block';
     }
 
-    function drawTestChecksPreviews(testId) {
+    function drawTestChecksPreviews(testId, test) {
         var checksDivs = Array.prototype.slice.call(document.getElementById(`testchecks_${testId}`).children);
         let checksIds = []
         checksDivs.forEach(el => checksIds.push(el.id.replace('check_', '')))
@@ -326,12 +319,16 @@
         checksDivs.forEach(el => statuses.push(el.getAttribute('checkStatus')))
         console.log(statuses)
 
-        checksIds.forEach(function (id, index) {
+        checksIds.forEach(async function (id, index) {
+
             let baseline = {};
             fabric.Object.prototype.objectCaching = false;
             const snapshotId = ((statuses[index] === 'new') || (statuses[index] === 'passed') || (statuses[index] === 'blinking')) ? baselineIds[index] : diffsIds[index]
+            const snapshoot = JSON.parse(await getRequest(`/snapshot/${snapshotId}`));
+            console.log({snapshoot})
+
             // const snapshotId = diffsIds[index]
-            fabric.Image.fromURL(`/snapshoots/${snapshotId}.png`, function (oImg) {
+            fabric.Image.fromURL(`/snapshoots/${snapshoot.filename || snapshotId + '.png'}`, function (oImg) {
                 baseline = new BaselineView('canvas_snapshoot_' + id,
                     oImg,
                     {
