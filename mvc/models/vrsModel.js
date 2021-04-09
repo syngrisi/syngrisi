@@ -11,6 +11,10 @@ const VRSSnapshotSchema = new Schema({
         type: String,
         required: 'the name of the snapshot entity is empty',
     },
+    checkId: {
+        type: Schema.Types.ObjectId,
+        ref: 'VRSTest',
+    },
     path: {
         type: String,
     },
@@ -30,7 +34,6 @@ const VRSSnapshotSchema = new Schema({
             type: String,
             enum: ['new', 'approved'],
         }],
-        default: 'new',
     },
     ignoreRegions: {
         type: String,
@@ -62,8 +65,9 @@ const VRSSnapshotSchema = new Schema({
     },
     matchType: {
         type: String,
-        enum: ['antialiasing', 'nothing', 'less', 'colors', 'alpha'],
-        default: 'antialiasing',
+        // enum: ['antialiasing', 'nothing', 'less', 'colors', 'alpha'],
+        enum: ['antialiasing', 'nothing', 'colors'],
+        // default: 'antialiasing',
     }
 });
 

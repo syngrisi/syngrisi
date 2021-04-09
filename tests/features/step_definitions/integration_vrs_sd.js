@@ -175,6 +175,8 @@ Then(/^I expect that VRS check "([^"]*)" has "([^"]*)" status$/, (checkName, exp
 Then(/^I expect that(:? (\d)th)? VRS test "([^"]*)" is unfolded$/, (number, testName) => {
     const intNumber = number ? parseInt(number) : 1;
     const row = TableVRSComp.data.filter((row) => row.name.getText() === testName)[intNumber - 1];
+    // console.log(row.name.getHTML());
+    // console.log(row.name.$('span').getHTML());
     const nameCell = row.name.$('span');
     const foldDiff = nameCell.$('.//../../../../div[contains(@class, \'all-checks\')]');
     expect(foldDiff)
