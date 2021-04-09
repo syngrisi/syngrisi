@@ -25,7 +25,28 @@
         <title>VRS list of checks - all suites</title>
     <% } %>
     <style>
+        .preview-overlay-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            opacity: 70%;
+        }
 
+        a:hover .preview-overlay-text {
+            display: none;
+        }
+
+        .image-wrapper {
+            position: relative;
+        }
+
+        .current-menu-item {
+            text-decoration: underline;
+            background-color: silver;
+            opacity: 80%;
+        }
     </style>
 </head>
 <body>

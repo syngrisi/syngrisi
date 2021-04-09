@@ -309,6 +309,26 @@ exports.getUsers = async function (req, res) {
     })
 };
 
+exports.loadTestUser = async function (req, res) {
+    return new Promise(async function (resolve, reject) {
+        if (process.env.TEST !== '1') {
+            return res.json({msg: "the feature works only in test mode"})
+        }
+        const testAdmin = await User.findOne({username: 'Test'})
+        if (!testAdmin) {
+            const fs = require('fs');
+            console.log('Create the test Administrator');
+            const adminData = JSON.parse(fs.readFileSync('./lib/testAdmin.json'));
+            const admin = await User.create(adminData);
+            console.log(`Test Administrator with id: '${admin._id}' was created`);
+            res.json(admin);
+        } else {
+            console.log(testAdmin)
+            res.send(`{"msg": "Already exist '${testAdmin}'"`);
+        }
+    })
+};
+
 exports.createTest = async function (req, res) {
     return new Promise(
         async function (resolve, reject) {
@@ -361,10 +381,12 @@ exports.createUser = async function (req, res) {
                         res.json(user);
                         return resolve([req, res, user]);
                     }).catch((e) => {
-                        throw e;
+                        fatalError(req, res, e)
+                        return reject(e);
                     });
                 }).catch((e) => {
-                    throw e;
+                    fatalError(req, res, e)
+                    return reject(e);
                 });
             } catch (e) {
                 fatalError(req, res, e)
@@ -388,11 +410,13 @@ exports.changePassword = async function (req, res) {
                                 res.redirect('/login');
                             })
                             .catch((error) => {
-                                console.log(error);
+                                fatalError(req, res, e)
+                                return reject(e);
                             })
                     })
                     .catch((error) => {
-                        console.log(error);
+                        fatalError(req, res, e)
+                        return reject(e);
                     });
                 return resolve();
 
@@ -419,12 +443,16 @@ exports.updateUser = async function (req, res) {
                     return reject;
                 }
                 const password = opts.password;
-                const upUser = await user.update(params)
+
+                await user.update(params).catch((e) => {
+                    fatalError(req, res, e)
+                    return reject(e);
+                })
                 if (password) {
                     await user.setPassword(password);
                     await user.save();
                 }
-                console.log(`User '${upUser.username}' was updated successfully`);
+                console.log(`User '${user.username}' was updated successfully`);
                 res.json(user);
                 return resolve([req, res, user]);
 

@@ -6,21 +6,21 @@ const frisby = require('frisby');
 const fs = require('fs');
 const {Given, When, Then} = require('cucumber');
 const {getDomDump} = require('@syngrisi/syngrisi-wdio-sdk');
+const VRSDriver = require('@syngrisi/syngrisi-wdio-sdk').vDriver;
 const checkVRS = require('../../src/support/check/checkVrs').default;
 const waitForAndRefresh = require('../../src/support/action/waitForAndRefresh').default;
 
-const saveRandomImage = require('../../src/utills/common').saveRandomImage;
-const VRSDriver = require('@syngrisi/syngrisi-wdio-sdk').vDriver;
-const TableVRSComp = require('../../src/PO/vrs/tableVRS.comp').TableVRSComp;
+const {saveRandomImage} = require('../../src/utills/common');
+const {TableVRSComp} = require('../../src/PO/vrs/tableVRS.comp');
 
-Given(/^I setup VRS driver with parameters:$/, async function (params) {
+Given(/^I setup VRS driver with parameters:$/, async (params) => {
     const drvOpts = YAML.parse(params);
     browser.vDriver = new VRSDriver({
-        url: drvOpts.url
+        url: drvOpts.url,
     });
 });
 
-Given(/^I start VRS session with parameters:$/, async function (params) {
+Given(/^I start VRS session with parameters:$/, async (params) => {
     const sessOpts = YAML.parse(params);
     sessOpts.suiteName = sessOpts.suiteName || 'Integration suite';
     sessOpts.suiteId = sessOpts.suiteId || sessOpts.suiteName.replace(' ', '_');
@@ -28,7 +28,7 @@ Given(/^I start VRS session with parameters:$/, async function (params) {
 
     const currentSuite = {
         name: sessOpts.suiteName || 'Integration suite',
-        id: sessOpts.suiteId || sessOpts.suiteName.replace(' ', '_')
+        id: sessOpts.suiteId || sessOpts.suiteName.replace(' ', '_'),
     };
 
     if ((sessOpts.suiteName !== 'EMPTY')) {
@@ -38,16 +38,16 @@ Given(/^I start VRS session with parameters:$/, async function (params) {
     await browser.vDriver.startTestSession({
         app: sessOpts.appName,
         test: sessOpts.testName,
-        run: process.env['RUN_NAME']
+        run: process.env.RUN_NAME,
     });
 });
 
 // for debug purposes ONLY
-Given(/^I update the VRStest$/, async function () {
+Given(/^I update the VRStest$/, async () => {
     await browser.vDriver.updateTest();
 });
 
-Given(/^I stop VRS session$/, async function () {
+Given(/^I stop VRS session$/, async () => {
     await browser.vDriver.stopTestSession();
 });
 
@@ -56,38 +56,36 @@ When(/^I start VRS server with parameters:$/, {timeout: 600000}, function (param
 
     // const cmdPath = browser.config.rootPath + '/vrs/';
     const cmdPath = '../';
-    let env = Object.create(process.env);
+    const env = Object.create(process.env);
     env.VRS_PORT = srvOpts.port;
     env.VRS_BASELINE_PATH = srvOpts.baseLineFolder;
     env.VRS_CONN_STRING = `mongodb://localhost/${srvOpts.databaseName}`;
     // env.PAGE_SIZE = srvOpts.pageSize || '10';
     const homedir = require('os')
         .homedir();
-    const nodePath = process.env['OLTA_NODE_PATH'] || (homedir + '/.nvm/versions/node/v13.13.0/bin');
-    let child = spawn(nodePath + '/npm',
-        ['run', 'startdebug', '-g', '--prefix', cmdPath], {env: env});
-    browser.waitUntil(async function () {
-        return (await got.get(`http://vrs:${srvOpts.port}/`, {throwHttpErrors: false})).statusCode === 200;
-    });
+    const nodePath = process.env.OLTA_NODE_PATH || (`${homedir}/.nvm/versions/node/v13.13.0/bin`);
+    const child = spawn(`${nodePath}/npm`,
+        ['run', 'startdebug', '-g', '--prefix', cmdPath], {env});
+    browser.waitUntil(async () => (await got.get(`http://vrs:${srvOpts.port}/`, {throwHttpErrors: false})).statusCode === 200);
 
     this.STATE.vrsPid = child.pid;
 });
 
-When(/^I clear test VRS database$/, function () {
+When(/^I clear test VRS database$/, () => {
     // const cmdPath = browser.config.rootPath + '/vrs/';
     const cmdPath = '../';
     const homedir = require('os')
         .homedir();
-    const nodePath = process.env['OLTA_NODE_PATH'] || (homedir + '/.nvm/versions/node/v13.13.0/bin');
-    let child = spawn(nodePath + '/npm',
+    const nodePath = process.env.OLTA_NODE_PATH || (`${homedir}/.nvm/versions/node/v13.13.0/bin`);
+    const child = spawn(`${nodePath}/npm`,
         ['run', 'clear_test', '-g', '--prefix', cmdPath]);
 });
 
 
-When(/^I kill process which used port: "([^"]*)"$/, function (port) {
-    const execSync = require('child_process').execSync;
-    let lSoftOut = false;
-    browser.waitUntil(function () {
+When(/^I kill process which used port: "([^"]*)"$/, (port) => {
+    const {execSync} = require('child_process');
+    const lSoftOut = false;
+    browser.waitUntil(() => {
         console.log(`Try to kill apps on port: '${port}'`);
         let pidsString;
         try {
@@ -112,57 +110,53 @@ When(/^I kill process which used port: "([^"]*)"$/, function (port) {
         } else {
             return true;
         }
-
     }, {
-        timeout: 40000
+        timeout: 40000,
     });
-
 });
 
-When(/^I click on "([^"]*)" VRS test$/, function (testName) {
+When(/^I click on "([^"]*)" VRS test$/, (testName) => {
     TableVRSComp.init();
-    TableVRSComp.data.filter(row => row.name.getText() === testName)[0].name.$('a')
+    TableVRSComp.data.filter((row) => row.name.getText() === testName)[0].name.$('a')
         .click();
 });
 
 When(/^I expect that(:? (\d)th)? VRS test "([^"]*)" has "([^"]*)" (status|browser|platform|viewport)$/,
-    function (number, testName, fieldValue, fieldName) {
+    (number, testName, fieldValue, fieldName) => {
         const intNumber = number ? parseInt(number) : 1;
         TableVRSComp.init();
-        const row = TableVRSComp.data.filter(row => row.name.getText() === testName)[intNumber - 1];
+        const row = TableVRSComp.data.filter((row) => row.name.getText() === testName)[intNumber - 1];
         expect(row[fieldName].$('span'))
             .toHaveTextContaining(fieldValue);
         if (fieldName === 'status') {
             const statusClasses = {
                 Running: {
-                    text: 'text-info'
+                    text: 'text-info',
                 },
                 New: {
-                    text: 'text-success'
+                    text: 'text-success',
                 },
                 Passed: {
-                    text: 'text-success'
+                    text: 'text-success',
                 },
                 Failed: {
-                    text: 'text-danger'
-                }
+                    text: 'text-danger',
+                },
             };
-            expect(row['status'].$('span'))
+            expect(row.status.$('span'))
                 .toHaveAttributeContaining('class', statusClasses[fieldValue].text);
         }
-    }
-);
+    });
 When(/^I expect that(:? (\d)th)? VRS test "([^"]*)" has blink icon$/,
-    function (number, testName) {
+    (number, testName) => {
         const intNumber = number ? parseInt(number) : 1;
         TableVRSComp.init();
-        const row = TableVRSComp.data.filter(row => row.name.getText() === testName)[intNumber - 1];
-        expect(row['status'].$('img'))
+        const row = TableVRSComp.data.filter((row) => row.name.getText() === testName)[intNumber - 1];
+        expect(row.status.$('img'))
             .toHaveAttributeContaining('class', 'blink-icon');
-    }
-);
+    });
 
-Then(/^I expect that VRS check "([^"]*)" has "([^"]*)" status$/, function (checkName, expectedStatus) {
+Then(/^I expect that VRS check "([^"]*)" has "([^"]*)" status$/, (checkName, expectedStatus) => {
     expect($(`.//div[contains(normalize-space(.), '${checkName}')]/../..`))
         .toBeExisting();
 
@@ -172,16 +166,16 @@ Then(/^I expect that VRS check "([^"]*)" has "([^"]*)" status$/, function (check
         New: 'bg-info',
         Passed: 'bg-success',
         Failed: 'bg-danger',
-        Blinking: 'bg-warning'
+        Blinking: 'bg-warning',
     };
     expect(border)
         .toHaveAttrContaining('class', classStatuses[expectedStatus]);
 });
 
-Then(/^I expect that(:? (\d)th)? VRS test "([^"]*)" is unfolded$/, function (number, testName) {
+Then(/^I expect that(:? (\d)th)? VRS test "([^"]*)" is unfolded$/, (number, testName) => {
     const intNumber = number ? parseInt(number) : 1;
-    const row = TableVRSComp.data.filter(row => row.name.getText() === testName)[intNumber - 1];
-    const nameCell = row['name'].$('span');
+    const row = TableVRSComp.data.filter((row) => row.name.getText() === testName)[intNumber - 1];
+    const nameCell = row.name.$('span');
     const foldDiff = nameCell.$('.//../../../../div[contains(@class, \'all-checks\')]');
     expect(foldDiff)
         .toHaveAttributeContaining('class', 'show');
@@ -190,19 +184,18 @@ Then(/^I expect that(:? (\d)th)? VRS test "([^"]*)" is unfolded$/, function (num
 When(/^I create new VRS Test with:$/, async function (yml) {
     const params = YAML.parse(yml);
 
-    let form = frisby.formData();
+    const form = frisby.formData();
     for (const key in params.params) {
         form.append(key, params.params[key]);
     }
     const response = await frisby.post(params.url, {body: form});
     console.log(response.json);
     this.saveItem('VRSTestResponse', response);
-
 });
 
 Given(/^I create new VRS Check with:$/, async function (yml) {
     const params = YAML.parse(yml);
-    let form = frisby.formData();
+    const form = frisby.formData();
     for (const key in params.params) {
         form.append(key, params.params[key]);
     }
@@ -218,12 +211,12 @@ Given(/^I create new VRS Check with:$/, async function (yml) {
     }
 
     const response = await frisby.post(params.url, {body: form});
-    let resp = response.json;
+    const resp = response.json;
     resp.statusCode = response.status;
     this.saveItem('VRSCheck', resp);
 });
 
-Given(/^I generate a random image "([^"]*)"$/, async function (filePath) {
+Given(/^I generate a random image "([^"]*)"$/, async (filePath) => {
     await saveRandomImage(filePath);
 });
 
@@ -245,7 +238,7 @@ When(/^I set properties for VRSDriver:$/, function (yml) {
     Object.assign(browser.vDriver._params, params);
 });
 
-When(/^I set env variables:$/, function (yml) {
+When(/^I set env variables:$/, (yml) => {
     const params = YAML.parse(yml);
     for (const key in params) {
         process.env[key] = params[key];
@@ -254,7 +247,7 @@ When(/^I set env variables:$/, function (yml) {
 
 When(/^I check image with path: "([^"]*)" as "([^"]*)"$/, async function (filePath, checkName) {
     browser.pause(300);
-    const imageBuffer = fs.readFileSync(browser.config.rootPath + '/' + filePath);
+    const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${filePath}`);
     const checkResult = await checkVRS(checkName, imageBuffer);
     this.STATE.check = checkResult;
 });
@@ -273,8 +266,8 @@ When(/^I create "([^"]*)" tests with params:$/, {timeout: 60000000}, async funct
             test: `${params.testName} - ${i + 1}`,
         });
         browser.pause(300);
-        const imageBuffer = fs.readFileSync(browser.config.rootPath + '/' + params.filePath);
-        const checkResult = await checkVRS('Check - ' + Math.random().toString(36).substring(7), imageBuffer);
+        const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${params.filePath}`);
+        const checkResult = await checkVRS(`Check - ${Math.random().toString(36).substring(7)}`, imageBuffer);
         this.STATE.check = checkResult;
         await browser.vDriver.stopTestSession();
     }
@@ -304,14 +297,14 @@ Then(/^I expect "([^"]*)" saved object:$/, function (itemName, yml) {
 });
 
 
-Given(/^I set window size: "(1366x768|712x970|880x768|1050x768|1300x768|1300x400|1700x768|500x500)"$/, function (viewport) {
+Given(/^I set window size: "(1366x768|712x970|880x768|1050x768|1300x768|1300x400|1700x768|500x500)"$/, (viewport) => {
     const size = viewport.split('x');
     browser.setWindowSize(parseInt(size[0]), parseInt(size[1]));
 });
 
 When(/^I assert image with path: "([^"]*)" as "([^"]*)"$/, async function (filePath, checkName) {
     browser.pause(300);
-    const imageBuffer = fs.readFileSync(browser.config.rootPath + '/' + filePath);
+    const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${filePath}`);
     const checkResult = await checkVRS(checkName, imageBuffer);
     this.STATE.check = checkResult;
     try {
@@ -329,18 +322,17 @@ Then(/^the "([^"]*)" "([^"]*)" should be "([^"]*)"$/, function (itemType, proper
 });
 
 When(/^I wait and refresh page on element "([^"]*)" for "([^"]*)" seconds to( not)* (exist)$/, {timeout: 600000},
-    waitForAndRefresh
-);
+    waitForAndRefresh);
 
-When(/^I start debugger$/, {timeout: 6000000}, function () {
+When(/^I start debugger$/, {timeout: 6000000}, () => {
     browser.debug();
 });
 
-When(/^I refresh page$/, function () {
+When(/^I refresh page$/, () => {
     browser.refresh();
 });
 
-When(/^I wait for "([^"]*)" seconds$/, {timeout: 600000}, function (sec) {
+When(/^I wait for "([^"]*)" seconds$/, {timeout: 600000}, (sec) => {
     browser.pause(sec * 1000);
 });
 
@@ -355,51 +347,48 @@ Then(/^I expect the stored "([^"]*)" object is( not|) equal:$/, function (itemNa
     }
 });
 
-When(/^I expect that element "([^"]*)" to (contain|have) text "([^"]*)"$/, function (selector, matchCase, text) {
+When(/^I expect that element "([^"]*)" to (contain|have) text "([^"]*)"$/, (selector, matchCase, text) => {
     const filledText = text;
-    if (matchCase === 'contains')
-        expect($(selector)).toHaveTextContaining(filledText);
-    else
-        expect($(selector)).toHaveText(filledText);
-
+    if (matchCase === 'contains') expect($(selector)).toHaveTextContaining(filledText);
+    else expect($(selector)).toHaveText(filledText);
 });
 
-Then(/^the current url contains "([^"]*)"$/, function (url) {
+Then(/^the current url contains "([^"]*)"$/, (url) => {
     const windowHandles = browser.getWindowHandles();
     const lastWindowHanle = windowHandles[windowHandles.length - 1];
     browser.switchToWindow(lastWindowHanle);
     expect(browser).toHaveUrl(url, {containing: true});
 });
 
-Then(/^I expect "([^"]*)" occurrences of (Visible|Clickable|Enabled|Existig|Selected) "([^"]*)"$/, function (num, verb, selector) {
-    const actualNum = $$(selector).filter(el => el[`is${verb}`]()).length;
+Then(/^I expect "([^"]*)" occurrences of (Visible|Clickable|Enabled|Existig|Selected) "([^"]*)"$/, (num, verb, selector) => {
+    const actualNum = $$(selector).filter((el) => el[`is${verb}`]()).length;
     expect(actualNum).toEqual(parseInt(num));
 });
 
 When(/^I visually check page as "([^"]*)"$/, {timeout: 180000}, async function (checkName) {
     browser.pause(300);
-    const imageBuffer = new Buffer((await browser.saveDocumentScreenshot()), 'base64')
+    const imageBuffer = new Buffer((await browser.saveDocumentScreenshot()), 'base64');
     const checkResult = await checkVRS(checkName, imageBuffer);
-    this.saveItem('checkResult', checkResult)
+    this.saveItem('checkResult', checkResult);
 });
 
-Given(/^I set custom window size: "([^"]*)"$/, function (viewport) {
+Given(/^I set custom window size: "([^"]*)"$/, (viewport) => {
     const size = viewport.split('x');
     browser.setWindowSize(parseInt(size[0]), parseInt(size[1]));
 });
 
-Then(/^I expect that element "([^"]*)" is clickable$/, function (selector) {
+Then(/^I expect that element "([^"]*)" is clickable$/, (selector) => {
     expect($(selector)).toBeClickable();
 });
 
-Then(/^I expect get to url "([^"]*)" answer JSON object to match:$/, async function (url, params) {
+Then(/^I expect get to url "([^"]*)" answer JSON object to match:$/, async (url, params) => {
     const jsonBodyObject = JSON.parse((await got(url)).body);
     // const jsonBodyObject = JSON.parse(browser.getPageSource());
     const expectedObject = JSON.parse(params);
     expect(jsonBodyObject).toMatchObject(expectedObject);
 });
 
-Then(/^I expect "([^"]*)" tests for get url "([^"]*)"$/, async function (testsNum, url) {
+Then(/^I expect "([^"]*)" tests for get url "([^"]*)"$/, async (testsNum, url) => {
     const jsonBodyObject = JSON.parse((await got(url)).body);
     // console.log({jsonBodyObject});
     expect(Object.keys(jsonBodyObject).length).toBe(parseInt(testsNum));
@@ -408,11 +397,43 @@ Then(/^I expect "([^"]*)" tests for get url "([^"]*)"$/, async function (testsNu
 When(/^I check image with path: "([^"]*)" as "([^"]*)" and suppress exceptions$/, async function (filePath, checkName) {
     try {
         browser.pause(300);
-        const imageBuffer = fs.readFileSync(browser.config.rootPath + '/' + filePath);
+        const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${filePath}`);
         const checkResult = await checkVRS(checkName, imageBuffer);
         this.STATE.check = checkResult;
     } catch (e) {
         this.STATE.check = {error: e};
         this.saveItem('error', e.message);
     }
+});
+
+When(/^I login with user:"([^"]*)" password "([^"]*)"$/, (login, password) => {
+    $('#password').waitForDisplayed();
+    $('#email').setValue(login);
+    $('#password').setValue(password);
+    $('button*=Login').click();
+});
+
+When(/^I expect that element "([^"]*)" contain value "([^"]*)"$/, function (selector, val) {
+    const actualValue = $(selector).getValue();
+    console.log({actualValue});
+    expect(actualValue).toContain(val);
+});
+
+When(/^I expect that element "([^"]*)" contain text "([^"]*)"$/, function (selector, val) {
+    const actualValue = $(selector).getText();
+    console.log({actualValue});
+    expect(actualValue).toContain(val);
+});
+
+Then(/^page source match:$/, function (source) {
+    const parsedExpectedObj = JSON.parse(source);
+    let parseActualdObj = {};
+    if ($('pre').isExisting()) {
+        parseActualdObj = JSON.parse($('pre').getText());
+    } else {
+        parseActualdObj = JSON.parse(browser.getPageSource());
+    }
+    console.log({parsedExpectedObj});
+    console.log({parseActualdObj});
+    expect(parseActualdObj.user).toMatchObject(parsedExpectedObj);
 });

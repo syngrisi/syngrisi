@@ -4,6 +4,25 @@ Feature: Delete User
     Background:
         Given I clear test VRS database
         Given I kill process which used port: "3001"
+        When I set env variables:
+        """
+        TEST: 1
+        SYNGRISY_AUTH: 0
+        """
+        Given I start VRS server with parameters:
+        """
+        port: 3001
+        databaseName: VRSdbTest
+        baseLineFolder: ./baselinesTest/
+        """
+        When I open the url "http://vrs:3001/loadTestUser"
+        Given I kill process which used port: "3001"
+
+        When I set env variables:
+        """
+        TEST: 0
+        SYNGRISY_AUTH: 1
+        """
         Given I start VRS server with parameters:
         """
         port: 3001
@@ -15,6 +34,10 @@ Feature: Delete User
         """
         url: "http://vrs:3001/"
         """
+        When I open the url "http://vrs:3001/login"
+        When I wait for "2" seconds
+        When I login with user:"Test" password "123"
+        Then I wait on element "*=TA" to be displayed
 
     Scenario: Delete User - Success
         When I open the url "http://vrs:3001/admin?task=users"
@@ -23,7 +46,7 @@ Feature: Delete User
         When I set "i_ivanov@gmail.com" to the inputfield "//input[@placeholder='Username']"
         When I set "Ivan" to the inputfield "//input[@placeholder='First Name']"
         When I set "Ivanov" to the inputfield "//input[@placeholder='Last Name']"
-        When I set "user" to the inputfield "//input[@placeholder='role']"
+        When I set "user" to the inputfield "//select[@new-user-role]"
         When I set "Password-123" to the inputfield "//input[@placeholder='password']"
         When I click on the element "a.send-new-user-button"
         When I wait for "3" seconds

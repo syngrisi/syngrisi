@@ -1,5 +1,4 @@
-@integration
-Feature: Update User
+Feature: Login
 
     Background:
         Given I clear test VRS database
@@ -16,6 +15,7 @@ Feature: Update User
         baseLineFolder: ./baselinesTest/
         """
         When I open the url "http://vrs:3001/loadTestUser"
+
         Given I kill process which used port: "3001"
 
         When I set env variables:
@@ -34,12 +34,20 @@ Feature: Update User
         """
         url: "http://vrs:3001/"
         """
+
+    Scenario: Login - default Test user
         When I open the url "http://vrs:3001/login"
         When I wait for "2" seconds
         When I login with user:"Test" password "123"
         Then I wait on element "*=TA" to be displayed
 
-    Scenario: Update User - Success
+    Scenario: Login - Create user and login
+        # crate user
+        When I open the url "http://vrs:3001/login"
+        When I wait for "2" seconds
+        When I login with user:"Test" password "123"
+        Then I wait on element "*=TA" to be displayed
+
         When I open the url "http://vrs:3001/admin?task=users"
         When I wait for "3" seconds
         When I click on the element "input[value='Add User']"
@@ -53,17 +61,43 @@ Feature: Update User
         When I refresh page
         When I wait for "3" seconds
         Then I expect that element "//input[@name='username' and @value='i_ivanov@gmail.com']/../..//input[@name='firstName' and @value='Ivan']/../..//input[@name='lastName' and @value='Ivanov']" is displayed
-        When I expect that element "//input[@name='username' and @value='i_ivanov@gmail.com']/../..//input[@name='firstName' and @value='Ivan']/../..//input[@name='lastName' and @value='Ivanov']/../..//select[@name='role']" contain value "user"
 
-        When I set "Ivan_1" to the inputfield "//input[@name='username' and @value='i_ivanov@gmail.com']/../..//input[@name='firstName']"
+        # prepare servers
+        Given I kill process which used port: "3001"
 
-        When I set "Ivanov_1" to the inputfield "//input[@name='username' and @value='i_ivanov@gmail.com']/../..//input[@name='lastName']"
-        When I set "admin" to the inputfield "//input[@name='username' and @value='i_ivanov@gmail.com']/../..//select[@name='role']"
-        When I set "Password-1234" to the inputfield "//input[@name='username' and @value='i_ivanov@gmail.com']/../..//input[@name='password']"
+        When I set env variables:
+        """
+        TEST: 0
+        SYNGRISY_AUTH: 1
+        """
+        Given I start VRS server with parameters:
+        """
+        port: 3001
+        databaseName: VRSdbTest
+        baseLineFolder: ./baselinesTest/
+        """
+
+        Given I setup VRS driver with parameters:
+        """
+        url: "http://vrs:3001/"
+        """
+
+        # login
+        When I open the url "http://vrs:3001/login"
+        When I wait for "2" seconds
+        When I login with user:"i_ivanov@gmail.com" password "Password-123"
+        Then I wait on element "*=II" to be displayed
+
+    Scenario: Login - Wrong password
+        When I open the url "http://vrs:3001/login"
+        When I wait for "2" seconds
+        When I login with user:"Test" password "567"
         When I wait for "1" seconds
-        When I click on the element "a[update-button-username='i_ivanov@gmail.com']"
-        When I wait for "5" seconds
-        When I refresh page
-        When I wait for "3" seconds
-        Then I expect that element "//input[@name='username' and @value='i_ivanov@gmail.com']/../..//input[@name='firstName' and @value='Ivan_1']/../..//input[@name='lastName' and @value='Ivanov_1']" is displayed
-        When I expect that element "//input[@name='username' and @value='i_ivanov@gmail.com']/../..//input[@name='firstName' and @value='Ivan_1']/../..//input[@name='lastName' and @value='Ivanov_1']/../..//select[@name='role']" contain value "admin"
+        Then I expect that element "#error-message" contain text "Password or username is incorrect"
+
+    Scenario: Login - Empty credentials
+        When I open the url "http://vrs:3001/login"
+        When I wait for "2" seconds
+        When I login with user:"" password ""
+        When I wait for "1" seconds
+        Then I expect that element "#error-message" contain text "Missing credentials"

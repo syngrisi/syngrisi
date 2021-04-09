@@ -248,7 +248,8 @@ exports.userinfo = async function (req, res) {
     return new Promise(
         async function (resolve, reject) {
             try {
-                res.json(req.user);
+                const user = req.user;
+                res.json({user});
                 return resolve();
             } catch (e) {
                 fatalError(req, res, e);

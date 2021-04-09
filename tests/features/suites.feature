@@ -29,6 +29,7 @@ Feature: Suites
     Then I expect that element "=Others" is displayed
     Then I wait and refresh page on element "span=Unnamed Suite Test" for "3" seconds to exist
     When I click on the element "=Others"
+    When I wait for "3" seconds
     Then I expect that element "span=Unnamed Suite Test" is displayed
 
   @withEndSession

@@ -27,6 +27,7 @@ Feature: Regions works properly
 
     Scenario: Create Region without saving
         When I open the url "http://vrs:3001/"
+        When I wait for "3" seconds
         When I click on "region check" VRS test
         Then I expect that VRS test "region check" is unfolded
         When I click on the element "[name=region]"
@@ -68,6 +69,7 @@ Feature: Regions works properly
         """
 
         When I refresh page
+        When I wait for "2" seconds
         When I execute javascript code:
         """
          return(baseline.allRects.length.toString());
@@ -81,6 +83,7 @@ Feature: Regions works properly
 
     Scenario: Create Region with saving
         When I open the url "http://vrs:3001/"
+        When I wait for "3" seconds
         When I click on "region check" VRS test
         Then I expect that VRS test "region check" is unfolded
         When I click on the element "[name=region]"
@@ -114,6 +117,7 @@ Feature: Regions works properly
         When I click on the element "[name=save-snapshot]"
 
         When I refresh page
+        When I wait for "2" seconds
         When I execute javascript code:
         """
          return baseline.allRects.length.toString()
@@ -138,6 +142,7 @@ Feature: Regions works properly
 
     Scenario: Create Region with saving after change position
         When I open the url "http://vrs:3001/"
+        When I wait for "3" seconds
         When I click on "region check" VRS test
         Then I expect that VRS test "region check" is unfolded
         When I click on the element "[name=region]"
@@ -186,6 +191,7 @@ Feature: Regions works properly
 
         When I wait for "1" seconds
         When I refresh page
+        When I wait for "2" seconds
         When I execute javascript code:
         """
          return baseline.canvas.getObjects().filter(x=>x.name==='ignore_rect').length.toString()
@@ -213,6 +219,7 @@ Feature: Regions works properly
 
     Scenario: Create Region with saving - two regions
         When I open the url "http://vrs:3001/"
+        When I wait for "3" seconds
         When I click on "region check" VRS test
         Then I expect that VRS test "region check" is unfolded
         When I click on the element "[name=region]"
@@ -224,6 +231,7 @@ Feature: Regions works properly
         When I click on the element "[name=save-snapshot]"
 
         When I refresh page
+        When I wait for "2" seconds
         When I execute javascript code:
         """
          return baseline.canvas.getObjects().filter(x=>x.name==='ignore_rect').length.toString()
@@ -236,6 +244,7 @@ Feature: Regions works properly
 
     Scenario: Delete Region with saving
         When I open the url "http://vrs:3001/"
+        When I wait for "3" seconds
         When I click on "region check" VRS test
         Then I expect that VRS test "region check" is unfolded
         When I click on the element "[name=region]"
@@ -249,6 +258,7 @@ Feature: Regions works properly
         When I click on the element "[name=save-snapshot]"
 
         When I refresh page
+        When I wait for "2" seconds
         When I execute javascript code:
         """
          return baseline.canvas.getObjects().filter(x=>x.name==='ignore_rect').length.toString()
