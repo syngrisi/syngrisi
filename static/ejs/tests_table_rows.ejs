@@ -3,8 +3,7 @@
 <? //if(!checksByTestGroupedByIdent[test.id][groupName]['checks'].length < 1) continue; ?>
 
 <!--TEST_INFO START-->
-<!--<? if(Object.keys(checksByTestGroupedByIdent[test.id]).filter(x => x.includes('ident')).length > 0) { ?>-->
-<div name="testinfo" class="testinfo row button btn-light border-secondary m-0 w-100">
+<div name="testinfo" class="testinfo row pr-0 button btn-light border-secondary m-0 w-100">
     <div class="cell-input cell col-1 col-lg-auto border-bottom border-right text-truncate small d-flex align-items-center ">
         <input id="<?= test.id ?>"
                name="test"
@@ -238,6 +237,4 @@
     <!--  foreach checks end-->
 </div>
 <!-- all-checks-->
-<!--<? }; ?>-->
-
 <? }; ?>

@@ -203,8 +203,7 @@ exports.index = async function (req, res) {
                 const sortOrder = opts.sortorder ? opts.sortorder : -1;
                 let sortFilter = {};
                 sortFilter[sortBy] = sortOrder;
-
-                const suite = await Suite.findOne({name: opts.suitename}).exec()
+                const suite = await Suite.findOne({name: opts.filter_suitename_eq}).exec()
                 if (suite)
                     suiteFilter = {suite: suite.id};
                 const suites = await Suite.find({})

@@ -20,9 +20,9 @@
     <script src="../../../static/js/moment.min.js"></script>
 
     <% if(currentSuite) { %>
-        <title>VRS list of checks - <%= currentSuite.name %> </title>
+        <title>Syngrisi list of checks - <%= currentSuite.name %> </title>
     <% }else{ %>
-        <title>VRS list of checks - all suites</title>
+        <title>Syngrisi list of checks - all suites</title>
     <% } %>
     <style>
         .preview-overlay-text {
@@ -49,10 +49,10 @@
         }
     </style>
 </head>
-<body>
+<body class="bg-black pl-0" style="max-height: 100vh; min-height: 100vh; min-width: 97.8vw; max-width: 97.8vw">
 
-<div name="main" class="main container-fluid pl-3 pr-3 ml-0 mh-100">
-    <div name="page-head" class="row bg-olive sticky-top">
+<div name="main" class="main container-fluid1 pl-0 pr-0 ml-3 mr-0 d-inline-block bg-light" style="min-height: 100vh; max-width: 100%; min-width: 100%">
+    <div name="page-head" class="row bg-olive sticky-top1 mr-0" style="margin-right: -16px; margin-left: -16px">
         <div name="logo-and-link" class="col-3 col-lg-3 w-25 pl-0 pb-1 bg-olive text-light"
              id="logo-and-label-container">
             <%- include('components/logo_and_link', {drop: true}) %>
@@ -66,27 +66,13 @@
                         <div class="col-auto pl-1">
                             <%- include('components/user_icon', {user: user}) %>
                         </div>
-                        <div class="col-auto pl-1 pr-1">
-                            <a name="remove-tests" type="button" class="btn btn-secondary bg-olive border-0"
-                               onclick="removeTests()"
-                               title="remove checked tests">
-                                <i class="fas fa-trash fa-1x"></i>
-                            </a>
-                        </div>
-                        <div class="col-auto pl-1 pr-1">
-                            <a name="accept-checks" type="button" class="btn btn-secondary bg-olive border-0"
-                               onclick="acceptSelectedChecks()"
-                               title="accept selected checks">
-                                <i class="far fa-check-circle fa-1x"></i>
-                            </a>
-                        </div>
-                        <div class="col-auto pl-1 pr-1">
-                            <a name="reload-tests" type="button" class="btn btn-secondary bg-olive border-0"
-                               onclick="location.reload()"
-                               title="reload page">
-                                <i class="fas fa-sync-alt fa-1x"></i>
-                            </a>
-                        </div>
+<!--                        <div class="col-auto pl-1">-->
+<!--                            <div class="input-group input-group-sm mb-1 mt-2">-->
+
+<!--                                <input class="form-control h-50" aria-describedby="inputGroup-sizing-sm"-->
+<!--                                       placeholder="Search">-->
+<!--                            </div>-->
+<!--                        </div>-->
 
                     </div>
                 </div>
@@ -95,22 +81,22 @@
     </div>
 
     <!--    DATA GRID START    -->
-    <div class="all-table row mh-100">
+    <div class="all-table row mh-100 mr-0">
         <!--   SIDEBAR    -->
         <div name="sidebar"
-             class="sidebar col-3 col-lg-3  mh-100 bg-light border-top  border-right border-bottom border-silver float-left w-251 ml-0 mr-0"
-             style="width: 100px">
+             class="sidebar col-3 col-lg-3  mh-100 bg-light border-top  border-right border-silver float-left w-251 ml-0 mr-0"
+             style="width: 100px; min-height: 100vh">
             <!--   COLLAPSED SUITES TOOLBAR-->
             <%- include('components/sidebar_items_toolbar', {itemName: 'suite-item'}) %>
             <!--   SUITES LIST-->
-            <div class="suites-list row pl-2 pt-1 pr-0 bg-light text-secondary ">
+            <div class="suites-list row pl-3 pt-3 pr-0 bg-light text-secondary">
                 <% let items = suites %>
                 <%- include('components/sidebar_items', {items: suites, currentItem: currentSuite}) %>
             </div>
-            <!--  SUITES LIST END-->
+            <!--  /SUITES LIST-->
         </div>
         <!--   TESTS TABLE-->
-        <div name class="table-rows content col float-right" id="wrapper">
+        <div name class="table-rows content col float-right pr-0" id="wrapper">
             <%- include('components/subheader_title', {currentItem: currentSuite}) %>
             <%- include('components/tests_table_headers2', {}) %>
 
@@ -171,7 +157,6 @@
         return '?' + searchForDataPulling
     }
 
-
     function renderNextPage(page) {
         return new Promise(async function (resolve, reject) {
 
@@ -201,7 +186,7 @@
             const checksByTestGroupedByIdent = JSON.parse(json);
             let options = {delimiter: '?'};
             const pageTemplate = await getRequest('../../../static/ejs/tests_table_rows.ejs');
-            let testsHtml = '<div class="row">' + ejs.render(pageTemplate, {
+            let testsHtml = '<div class="test-page-wrapper row mr-0">' + ejs.render(pageTemplate, {
                 checksByTestGroupedByIdent: checksByTestGroupedByIdent
             }, options) + '</div>';
 

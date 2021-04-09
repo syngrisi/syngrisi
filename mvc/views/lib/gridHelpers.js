@@ -139,7 +139,8 @@ function removeCheck(id) {
 async function acceptOneCheck(id, newBaselineId, oldBaselineId, testId) {
     if (!confirmation()) return;
     const regionData = await baselines[id].getRegionsData(oldBaselineId);
-    if (regionData.ignoreRegions && regionData.ignoreRegions != 'undefined') {
+    //  !== 'undefined' - is for back compatibility
+    if (regionData.ignoreRegions && regionData.ignoreRegions !== 'undefined') {
         const confirm = confirmation('The previous baseline contains regions. Doy you want to copy them?')
         if (confirm) {
             baselines[id].sendIgnoreRegions(newBaselineId, JSON.parse(regionData.ignoreRegions));
@@ -166,7 +167,7 @@ async function acceptSelectedChecks() {
         const baselineId = checkbox.getAttribute('baselineId');
         const actualId = checkbox.getAttribute('actualId');
         const regionData = await baselines[checkId].getRegionsData(baselineId);
-        if (regionData.ignoreRegions && regionData.ignoreRegions != 'undefined') {
+        if (regionData.ignoreRegions) {
             baselines[checkId].sendIgnoreRegions(actualId, JSON.parse(regionData.ignoreRegions));
             console.log('ignore region data was sent to new baseline snapshoot' + JSON.parse(regionData.ignoreRegions));
         }

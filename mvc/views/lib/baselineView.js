@@ -298,7 +298,7 @@ class BaselineView {
     }
 
     drawRegions(data) {
-        if (!data || (data === 'undefined')) {
+        if (!data) {
             console.error('The regions data is empty')
             return;
         }

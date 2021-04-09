@@ -17,52 +17,52 @@
     <script src="../lib/gridHelpers.js"></script>
 
 <% if(currentRun) { %>
-        <title>VRS list of checks - <%= currentRun.name %> </title>
+        <title>Syngrisi list of checks - <%= currentRun.name %> </title>
     <% }else{ %>
-        <title>VRS list of checks - all runs</title>
+        <title>Syngrisi list of checks - all runs</title>
     <% } %>
 
 </head>
-<body>
+<body class="bg-light pl-0" style="max-height: 100vh; min-height: 100vh; min-width: 100vw; max-width: 100vw">
 
 <div name="main" class="main container-fluid pl-3 pr-3 ml-0 mh-100">
-    <div name="page-head" class="row bg-sidebar sticky-top">
-        <div name="logo-and-link"  class="col-5 w-25 pl-0 pb-2 bg-sidebar text-light" id="logo-and-label-container">
+    <div name="page-head" class="row bg-olive sticky-top1">
+        <div name="logo-and-link"  class="col-5 w-25 pl-0 pb-2 bg-olive text-light" id="logo-and-label-container">
             <%- include('components/logo_and_link', {drop: true})%>
         </div>
 
         <div name="run-menu-toolbar" class="col">
             <div class="row all-header light-purple sticky-top1">
-                <div class="tests-toolbar sticky-top1 col text-light p-1 pt-3 bg-sidebar align-self-end">
-                    <div class="sticky-top1 row d-flex flex-row-reverse pr-2">
+                <div class="tests-toolbar sticky-top1 col text-light p-1 pt-3 bg-olive align-self-end">
+                    <div class="sticky-top1 row d-flex flex-row-reverse pr-2 bg-olive">
 
-                        <div class="col-auto pl-1">
-                            <a name="more-tests" type="button" class="btn btn-secondary bg-sidebar border-0"
-                               title="more">
-                                <i class="fas fa-ellipsis-v fa-1x"></i>
-                            </a>
-                        </div>
-                        <div class="col-auto pl-1 pr-1">
-                            <a name="remove-tests" type="button" class="btn btn-secondary bg-sidebar border-0"
-                               onclick="removeTests()"
-                               title="remove checked tests">
-                                <i class="fas fa-trash fa-1x"></i>
-                            </a>
-                        </div>
-                        <div class="col-auto pl-1 pr-1">
-                            <a name="accept-checks" type="button" class="btn btn-secondary bg-sidebar border-0"
-                               onclick="acceptSelectedChecks()"
-                               title="accept selected checks">
-                                <i class="far fa-check-circle fa-1x"></i>
-                            </a>
-                        </div>
-                        <div class="col-auto pl-1 pr-1">
-                            <a name="reload-tests" type="button" class="btn btn-secondary bg-sidebar border-0"
-                               onclick="location.reload()"
-                               title="reload page">
-                                <i class="fas fa-sync-alt fa-1x"></i>
-                            </a>
-                        </div>
+<!--                        <div class="col-auto pl-1">-->
+<!--                            <a name="more-tests" type="button" class="btn btn-secondary bg-olive border-0"-->
+<!--                               title="more">-->
+<!--                                <i class="fas fa-ellipsis-v fa-1x"></i>-->
+<!--                            </a>-->
+<!--                        </div>-->
+<!--                        <div class="col-auto pl-1 pr-1">-->
+<!--                            <a name="remove-tests" type="button" class="btn btn-secondary bg-olive border-0"-->
+<!--                               onclick="removeTests()"-->
+<!--                               title="remove checked tests">-->
+<!--                                <i class="fas fa-trash fa-1x"></i>-->
+<!--                            </a>-->
+<!--                        </div>-->
+<!--                        <div class="col-auto pl-1 pr-1">-->
+<!--                            <a name="accept-checks" type="button" class="btn btn-secondary bg-olive border-0"-->
+<!--                               onclick="acceptSelectedChecks()"-->
+<!--                               title="accept selected checks">-->
+<!--                                <i class="far fa-check-circle fa-1x"></i>-->
+<!--                            </a>-->
+<!--                        </div>-->
+<!--                        <div class="col-auto pl-1 pr-1">-->
+<!--                            <a name="reload-tests" type="button" class="btn btn-secondary bg-olive border-0"-->
+<!--                               onclick="location.reload()"-->
+<!--                               title="reload page">-->
+<!--                                <i class="fas fa-sync-alt fa-1x"></i>-->
+<!--                            </a>-->
+<!--                        </div>-->
                     </div>
                 </div>
             </div>
@@ -72,7 +72,7 @@
     <!--    DATA GRID START    -->
     <div class="all-table row mh-100">
         <!--   SIDEBAR    -->
-        <div name="sidebar" class="sidebar col-5 pr-0 mr-0 ml-1 pl-1 bg-light border-top border-right border-bottom border-silver float-left ml-0 mr-0"
+        <div name="sidebar" class="sidebar col-5 pr-0 mr-0 ml-1 pl-1 bg-light border-top border-right border-silver float-left ml-0 mr-0"
              style="width: 100px">
             <%- include('components/sidebar_items_toolbar', {itemName: 'run-item'}) %>
 
@@ -85,7 +85,7 @@
         </div>
         <!--   TESTS TABLE-->
         <div name class="table-rows p-0 content col float-right ">
-            <%- include('components/subheader_title_rows', {currentItem: currentRun}) %>
+            <%- include('components/subheader_title', {currentItem: currentRun, itemName: 'run'}) %>
             <%- include('components/tests_table_headers_runs', {})%>
 
             <div name="tests-row" class="checks pl-0 m-0 row">
