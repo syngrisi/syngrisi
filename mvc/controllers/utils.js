@@ -38,6 +38,10 @@ fatalError = function fatalError(req, res, e) {
 
 exports.fatalError = fatalError;
 
+exports.removeEmptyProperties = function removeEmptyProperties(obj) {
+    return Object.fromEntries(Object.entries(obj).filter(([_, v]) => (v != null) && (v !== '')));
+}
+
 exports.checksGroupedByIdent = async function checksGroupedByIdent(checkFilter) {
     return new Promise(async function (resolve, reject) {
         try {
