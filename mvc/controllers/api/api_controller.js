@@ -15,7 +15,7 @@ const Test = mongoose.model('VRSTest');
 const Suite = mongoose.model('VRSSuite');
 const User = mongoose.model('VRSUser');
 const {checksGroupedByIdent} = require('../utils');
-const {fatalError, waitUntil} = require('../utils');
+const {fatalError, waitUntil, removeEmptyProperties} = require('../utils');
 
 // get last updated document
 async function getLastCheck(identifier) {
@@ -213,41 +213,6 @@ function parseSorting(params) {
     return sortObj;
 }
 
-async function removeEmptyTests(req, res) {
-    return new Promise(async function (resolve, reject) {
-        res.write('<pre>\n');
-        res.write('- query all tests\n');
-        console.log('- query all tests\n');
-
-        const tests = await (Test.find({}).exec());
-        res.write(`tests count: '${await Test.count()}'\n`)
-        console.log(`tests count: '${await Test.count()}'\n`)
-
-        res.write('- remove empty tests\n');
-        console.log('>- remove empty tests\n');
-
-        for (const test of tests) {
-            let checkFilter = {test: test.id};
-            const groups = await checksGroupedByIdent(checkFilter);
-
-            if (Object.keys(groups).length < 1)
-
-                if (Object.keys(groups).length < 1) {
-                    await removeTest(test._id);
-                    res.write(test._id.toString() + "\n");
-                }
-        }
-
-        res.write('- done\n');
-        console.log('- done\n');
-        res.write('</pre>\n');
-        res.end()
-        return resolve();
-    })
-};
-
-exports.removeEmptyTests = removeEmptyTests;
-
 exports.getChecks = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         let opts = req.query;
@@ -321,26 +286,6 @@ exports.getUsers = async function (req, res) {
     })
 };
 
-exports.loadTestUser = async function (req, res) {
-    return new Promise(async function (resolve, reject) {
-        if (process.env.TEST !== '1') {
-            return res.json({msg: "the feature works only in test mode"})
-        }
-        const testAdmin = await User.findOne({username: 'Test'})
-        if (!testAdmin) {
-            const fs = require('fs');
-            console.log('Create the test Administrator');
-            const adminData = JSON.parse(fs.readFileSync('./lib/testAdmin.json'));
-            const admin = await User.create(adminData);
-            console.log(`Test Administrator with id: '${admin._id}' was created`);
-            res.json(admin);
-        } else {
-            console.log(testAdmin)
-            res.send(`{"msg": "Already exist '${testAdmin}'"`);
-        }
-    })
-};
-
 exports.createTest = async function (req, res) {
     return new Promise(
         async function (resolve, reject) {
@@ -349,7 +294,7 @@ exports.createTest = async function (req, res) {
 
                 req.log.info(`Create test with name '${params.testname}', params: '${JSON.stringify(params)}'`);
 
-                let opts = {
+                let opts = removeEmptyProperties({
                     name: params.name,
                     status: params.status,
                     viewport: params.viewport,
@@ -359,7 +304,7 @@ exports.createTest = async function (req, res) {
                     os: params.os,
                     startDate: new Date(),
                     updatedDate: new Date(),
-                }
+                })
 
                 let run;
                 if (params.run) {
@@ -386,7 +331,7 @@ exports.createUser = async function (req, res) {
 
                 console.log(`Create user with name '${params.username}', params: '${JSON.stringify(params)}'`);
 
-                let opts = Object.assign(params, {updatedDate: new Date()})
+                let opts = removeEmptyProperties(Object.assign(params, {updatedDate: new Date()}))
                 orm.createUser(opts).then((user) => {
                     user.setPassword(opts.password).then(async (usr) => {
                         await usr.save();
@@ -448,7 +393,7 @@ exports.updateUser = async function (req, res) {
 
                 console.log(`Update user with id: '${params.id}' name '${params.username}', params: '${JSON.stringify(params)}'`);
 
-                let opts = Object.assign(params, {updatedDate: new Date()})
+                let opts = removeEmptyProperties(Object.assign(params, {updatedDate: new Date()}));
 
                 const user = await User.findOne({_id: opts.id});
                 if (!user) {
@@ -480,7 +425,6 @@ exports.stopSession = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
             let testId = req.params.testid;
-            // let opts = req.body;
             await waitUntil(async () => {
                 return (await Check.find({test: testId}).exec())
                     .filter(ch => ch.status.toString() !== 'pending').length > 0;
@@ -564,7 +508,7 @@ exports.updateTest = async function (req, res) {
     return new Promise(
         async function (resolve, reject) {
             try {
-                let opts = req.body;
+                let opts = removeEmptyProperties(req.body);
                 let id = req.params.id;
                 opts['updatedDate'] = Date.now();
                 console.log(`UPDATE test id '${id}' with params '${JSON.stringify(opts)}'`);
@@ -920,13 +864,12 @@ exports.removeUser = function (req, res) {
 exports.updateCheck = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
-            let opts = req.body;
+            let opts = removeEmptyProperties(req.body);
             let id = req.params.id;
             opts['updatedDate'] = Date.now();
             console.log(`UPDATE check id: '${id}' with params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`);
 
-            // Check.findByIdAndUpdate(req.param.id, opts)
-            const chk = await Check.findByIdAndUpdate(id, opts)
+            await Check.findByIdAndUpdate(id, opts)
                 .then(async function (chk) {
                     await chk.save()
                         .then(async function () {
@@ -961,7 +904,7 @@ exports.updateCheck = async function (req, res) {
 exports.updateSnapshot = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
-            let opts = req.body;
+            let opts = removeEmptyProperties(req.body);
             let id = req.params.id;
             opts['updatedDate'] = Date.now();
             console.log(`UPDATE snapshot id: '${id}' with params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`);
@@ -986,7 +929,7 @@ exports.updateSnapshot = async function (req, res) {
 exports.getSnapshot = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
-            let opts = req.body;
+            let opts = removeEmptyProperties(req.body);
             let id = req.params.id;
             console.log(`GET snapshot with id: '${id}',  params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`);
             const snp = await Snapshot.findById(id)
@@ -1007,26 +950,75 @@ exports.getSnapshot = async function (req, res) {
     })
 };
 
-exports.getCheck = async function (req, res) {
+// maintain
+exports.removeEmptyTests = async function removeEmptyTests(req, res) {
     return new Promise(async function (resolve, reject) {
-        try {
-            let opts = req.body;
-            let id = req.params.id;
-            console.log(`GET check with id: '${id}', params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`);
-            const snp = await Check.findById(id)
-                .then(async function (item) {
-                    res.json(item);
-                })
-                .catch(
-                    (err) => {
-                        res.status(400)
-                            .send(`Cannot GET a Check with id: '${id}', error: ${err}`);
-                        return resolve(err);
-                    }
-                );
-        } catch (e) {
-            fatalError(req, res, e);
-            return reject(e);
+        res.write('<pre>\n');
+        res.write('- query all tests\n');
+        console.log('- query all tests\n');
+
+        const tests = await (Test.find({}).exec());
+        res.write(`tests count: '${await Test.count()}'\n`)
+        console.log(`tests count: '${await Test.count()}'\n`)
+
+        res.write('- remove empty tests\n');
+        console.log('>- remove empty tests\n');
+
+        for (const test of tests) {
+            let checkFilter = {test: test.id};
+            const groups = await checksGroupedByIdent(checkFilter);
+
+            if (Object.keys(groups).length < 1)
+
+                if (Object.keys(groups).length < 1) {
+                    await removeTest(test._id);
+                    res.write(test._id.toString() + "\n");
+                }
+        }
+
+        res.write('- done\n');
+        console.log('- done\n');
+        res.write('</pre>\n');
+        res.end()
+        return resolve();
+    })
+};
+
+exports.loadTestUser = async function (req, res) {
+    return new Promise(async function (resolve, reject) {
+        if (process.env.TEST !== '1') {
+            return res.json({msg: "the feature works only in test mode"})
+        }
+        const testAdmin = await User.findOne({username: 'Test'})
+        if (!testAdmin) {
+            const fs = require('fs');
+            console.log('Create the test Administrator');
+            const adminData = JSON.parse(fs.readFileSync('./lib/testAdmin.json'));
+            const admin = await User.create(adminData);
+            console.log(`Test Administrator with id: '${admin._id}' was created`);
+            res.json(admin);
+        } else {
+            console.log(testAdmin)
+            res.send(`{"msg": "Already exist '${testAdmin}'"`);
         }
     })
 };
+
+exports.fixDocumentsTypes = function (req, res) {
+    return new Promise(async function (resolve, reject) {
+        if (req.user.role !== 'admin') {
+            res.status(401).json({error: "You need to have 'admin' role to access the page"});
+            return resolve();
+        }
+        const checks = await Check.find({});
+        for (const check of checks) {
+            console.log({check})
+            check.baselineId && (check.baselineId = mongoose.Types.ObjectId(check.baselineId));
+            check.actualSnapshotId && (check.actualSnapshotId = mongoose.Types.ObjectId(check.actualSnapshotId));
+            check.actualSnapshotId && (check.diffId = mongoose.Types.ObjectId(check.diffId));
+        }
+        return resolve(res.json(checks));
+    })
+};
+
+

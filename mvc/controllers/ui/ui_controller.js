@@ -9,7 +9,7 @@ const Run = mongoose.model('VRSRun');
 const User = mongoose.model('VRSUser');
 // const App = mongoose.model('VRSApp');
 const moment = require('moment');
-const {fatalError, checkIdent, checksGroupedByIdent} = require('../utils');
+const {fatalError, checkIdent, checksGroupedByIdent, removeEmptyProperties} = require('../utils');
 
 async function getSnapshotByImgHash(hash) {
     return (await Snapshot.find({imghash: hash}))[0];
@@ -18,7 +18,7 @@ async function getSnapshotByImgHash(hash) {
 exports.checksGroupView = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
-            const opts = req.query;
+            const opts = removeEmptyProperties(req.query);
 
             if (!opts.id) {
                 res.status(404)
@@ -67,7 +67,7 @@ exports.checksGroupView = async function (req, res) {
 exports.snapshotView = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
-            const opts = req.query;
+            const opts = removeEmptyProperties(req.query);
 
             if (!opts.id) {
                 res.status(400)
@@ -97,7 +97,7 @@ exports.snapshotView = async function (req, res) {
 exports.diffView = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
-            const opts = req.query;
+            const opts = removeEmptyProperties(req.query);
 
             if (!opts.expectedid) {
                 res.status(400)
@@ -168,7 +168,7 @@ exports.index = async function (req, res) {
     return new Promise(
         async function (resolve, reject) {
             try {
-                let opts = req.query;
+                let opts = removeEmptyProperties(req.query);
                 let suiteFilter = {};
                 let sortBy;
                 if ((opts.sortprop === 'name')
@@ -207,10 +207,6 @@ exports.admin = async function (req, res) {
     return new Promise(
         async function (resolve, reject) {
             try {
-                if (req.user.role !== 'admin') {
-                    res.status(401).json({error: "You need to have 'admin' role to access the page"});
-                    return resolve();
-                }
                 let users = await User.find().exec();
                 res.render('pages/admin', {
                     users: users,
@@ -275,7 +271,7 @@ exports.runs = async function (req, res) {
     return new Promise(
         async function (resolve, reject) {
             try {
-                let opts = req.query;
+                let opts = removeEmptyProperties(req.query);
                 let testFilter = {};
                 let sortBy;
                 if ((opts.sortprop === 'name')

@@ -1,7 +1,7 @@
 'use strict';
 const {default: PQueue} = require('p-queue');
 const queue = new PQueue({concurrency: 1});
-const {ensureLoggedIn} = require('../../lib/ensureLogin/index');
+const {ensureLoggedIn, ensureLoggedInApi} = require('../../lib/ensureLogin/ensureLoggedIn');
 const passport = require('passport');
 
 module.exports = async function (app) {
@@ -12,7 +12,7 @@ module.exports = async function (app) {
         .delete('/checks/:id', async (req, res, next) => {
             API.removeCheck(req, res).catch(next);
         })
-        .put('/checks/:id', async (req, res, next) => {
+        .put('/checks/:id', ensureLoggedInApi(), async (req, res, next) => {
             API.updateCheck(req, res);
         })
         .put('/snapshots/:id', async (req, res, next) => {
@@ -69,13 +69,13 @@ module.exports = async function (app) {
             req.log.trace(`post '/tests' queue pending count: `, queue.pending);
             await queue.add(() => API.createTest(req, res).catch(next));
         })
-        .delete('/tests/:id', async (req, res, next) => {
+        .delete('/tests/:id', ensureLoggedInApi(), async (req, res, next) => {
             API.removeTest(req, res).catch(next);
         })
-        .delete('/users/:id', async (req, res, next) => {
+        .delete('/users/:id', ensureLoggedInApi(), async (req, res, next) => {
             API.removeUser(req, res).catch(next);
         })
-        .delete('/suites/:id', async (req, res, next) => {
+        .delete('/suites/:id', ensureLoggedInApi(), async (req, res, next) => {
             API.removeSuite(req, res).catch(next);
         })
         .put('/tests/:id', async (req, res, next) => {
@@ -88,25 +88,23 @@ module.exports = async function (app) {
             req.log.trace(`get '/checks' queue pending count: `, queue.pending);
             await queue.add(() => API.getChecks(req, res).catch(next));
         })
-        .get('/removeEmptyTests', ensureLoggedIn(), async (req, res, next) => {
-            req.log.trace(`get '/removeEmptyTests' queue pending count: `, queue.pending);
-            await queue.add(() => API.removeEmptyTests(req, res).catch(next));
-        })
         .get('/snapshot/:id', async (req, res, next) => {
             API.getSnapshot(req, res).catch(next);
         })
         .get('/checks/byident/:testid', async (req, res, next) => {
             API.checksGroupByIdent(req, res).catch(next);
-        }).get('/check/:id', async (req, res, next) => {
+        })
+        .get('/check/:id', async (req, res, next) => {
             API.getCheck(req, res).catch(next);
-        }).get('/logout', async (req, res, next) => {
+        })
+        .get('/logout', async (req, res, next) => {
             req.logout();
             return res.redirect('/login');
-        }).get('/userinfo', ensureLoggedIn(), async (req, res, next) => {
+        })
+        .get('/userinfo', ensureLoggedIn(), async (req, res, next) => {
             UI.userinfo(req, res).catch(next);
-        }).get('/loadTestUser', ensureLoggedIn(), async (req, res, next) => {
-            API.loadTestUser(req, res).catch(next);
-        }).post('/login', (req, res, next) => {
+        })
+        .post('/login', (req, res, next) => {
             passport.authenticate('local',
                 (err, user, info) => {
                     if (err) {
@@ -126,5 +124,16 @@ module.exports = async function (app) {
                     });
 
                 })(req, res, next);
-        });
+        })
+        //maintenance
+        .get('/loadTestUser', ensureLoggedIn(), async (req, res, next) => {
+            API.loadTestUser(req, res).catch(next);
+        })
+        .get('/migration', ensureLoggedIn(), async (req, res, next) => {
+            API.fixDocumentsTypes(req, res).catch(next);
+        })
+        .get('/removeEmptyTests', ensureLoggedIn(), async (req, res, next) => {
+            req.log.trace(`get '/removeEmptyTests' queue pending count: `, queue.pending);
+            await queue.add(() => API.removeEmptyTests(req, res).catch(next));
+        })
 }
