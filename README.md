@@ -69,3 +69,7 @@ npm run clear
  `V_SHIFTING` - value for vertical page shifting, default value is `0`
  
  `PAGE_SIZE` - number of tests items on that return `/checks?page={page_num}` API
+
+ `SYNGRISY_AUTH` - enables authentication if equal `1`
+
+ `TEST` - enables test admin user if equal `1`
