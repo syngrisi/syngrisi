@@ -15,32 +15,6 @@ async function getSnapshotByImgHash(hash) {
     return (await Snapshot.find({imghash: hash}))[0];
 }
 
-exports.checkView = async function (req, res) {
-    return new Promise(async function (resolve, reject) {
-        try {
-            const opts = req.query;
-
-            if (!opts.id) {
-                res.status(404)
-                    .send('Cannot return check. There is no "id" field in request query');
-                return;
-            }
-
-            const check = await Check.findById(`${opts.id}`);
-            var moment = require('moment');
-            const checkDate = moment(check.createdDate)
-                .format('YYYY-MM-DD hh:mm');
-            res.render('pages/check', {
-                check: check,
-                checkDate: checkDate
-            });
-        } catch (e) {
-            fatalError(req, res, e);
-            return reject(e);
-        }
-    })
-};
-
 exports.checksGroupView = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {

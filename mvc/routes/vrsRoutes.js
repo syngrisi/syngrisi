@@ -28,9 +28,6 @@ module.exports = async function (app) {
         .get('/affectedelements', async function (req, res, next) {
             API.affectedElements(req, res).catch(next).catch(next);
         })
-        .get('/checkview', ensureLoggedIn(), async function (req, res, next) {
-            UI.checkView(req, res).catch(next);
-        })
         .get('/checksgroupview', ensureLoggedIn(), async function (req, res, next) {
             UI.checksGroupView(req, res).catch(next);
         })

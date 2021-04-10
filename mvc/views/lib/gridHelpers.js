@@ -355,3 +355,43 @@ function getRequest(path) {
         }
     })
 }
+
+function drawTestChecksPreviews(testId) {
+    var checksDivs = Array.prototype.slice.call(document.getElementById(`testchecks_${testId}`).children);
+    let checksIds = []
+    checksDivs.forEach(el => checksIds.push(el.id.replace('check_', '')))
+
+    let baselineIds = []
+    checksDivs.forEach(el => baselineIds.push(el.getAttribute('baselineId')))
+
+    let diffsIds = []
+    checksDivs.forEach(el => diffsIds.push(el.getAttribute('diffId')))
+
+    let statuses = []
+    checksDivs.forEach(el => statuses.push(el.getAttribute('checkStatus')))
+    console.log(statuses)
+
+    checksIds.forEach(async function (id, index) {
+
+        let baseline = {};
+        fabric.Object.prototype.objectCaching = false;
+        const snapshotId = ((statuses[index] === 'new') || (statuses[index] === 'passed') || (statuses[index] === 'blinking')) ? baselineIds[index] : diffsIds[index]
+        const snapshoot = JSON.parse(await getRequest(`/snapshot/${snapshotId}`));
+        const baselineObj = JSON.parse(await getRequest(`/snapshot/${baselineIds[index]}`));
+        // console.log({snapshoot})
+
+        fabric.Image.fromURL(`/snapshoots/${snapshoot.filename || snapshotId + '.png'}`, function (oImg) {
+            baseline = new BaselineView('canvas_snapshoot_' + id,
+                oImg,
+                {
+                    weight: document.getElementById('canvas_snapshoot_' + id).offsetWidth,
+                    backimageId: baselineObj.filename ? baselineObj.filename : baselineObj.id + '.png'
+                }
+            );
+            baseline.getSnapshotIgnoreRegionsDataAndDrawRegions(baselineIds[index]);
+            baseline.canvas.hoverCursor = "pointer";
+            baselines[id] = baseline;
+        })
+    })
+}
+
