@@ -168,7 +168,7 @@
                         <div class="con-relative">
                             <a href="/snapshootview?id=<%= expected_snapshoot.id %>&diffid=<%= diff_snapshoot.id %>"
                                title="baseline snapshoot">
-                                <img class="w-100 preview" src="/snapshoots/<%= expected_snapshoot.id %>.png" alt="baseline">
+                                <img class="w-100 preview" src="/snapshoots/<%= expected_snapshoot.filename ? expected_snapshoot.filename : expected_snapshoot.id + '.png' %>" alt="baseline">
                                 <div class="centered-overlay-text h4 white bg-maroon">B</div>
                             </a>
                         </div>
@@ -178,7 +178,7 @@
                             <div class="con-relative">
                                 <a href="/snapshootview?id=<%= actual_snapshoot.id %>&diffid=<%= diff_snapshoot.id %>"
                                    title="actual snapshoot">
-                                    <img class="w-100 preview" src="/snapshoots/<%= actual_snapshoot.id %>.png" alt="actual">
+                                    <img class="w-100 preview" src="/snapshoots/<%= actual_snapshoot.filename ? actual_snapshoot.filename : actual_snapshoot.id + '.png' %>" alt="actual">
                                     <div class="centered-overlay-text h4 text-light bg-maroon">A</div>
                                 </a>
                             </div>
@@ -219,7 +219,7 @@
 
     canvas.hoverCursor = 'col-resize'
 
-    fabric.Image.fromURL('/snapshoots/<%= expected_snapshoot.id %>.png', function (oImg) {
+    fabric.Image.fromURL('/snapshoots/<%= expected_snapshoot.filename ? expected_snapshoot.filename : expected_snapshoot.id + '.png' %>', function (oImg) {
         window.BaselineImg = oImg;
         oImg.clipPath = clipPath;
         canvas.add(oImg);
@@ -228,7 +228,7 @@
         oImg.scaleToWidth(canvas.width);
         canvas.setHeight(oImg.getScaledHeight())
         <% if(actual_snapshoot) { %>
-        fabric.Image.fromURL(`/snapshoots/<%= actual_snapshoot.id %>.png`, function (oImg) {
+        fabric.Image.fromURL(`/snapshoots/<%= actual_snapshoot.filename ? actual_snapshoot.filename : actual_snapshoot.id + '.png' %>`, function (oImg) {
             canvas.add(oImg);
             window.expectedImg = oImg;
             actualImg = oImg;
@@ -239,7 +239,7 @@
         <% } %>
     });
 
-    fabric.Image.fromURL('/snapshoots/<%= diff_snapshoot.id %>.png', function (oImg) {
+    fabric.Image.fromURL('/snapshoots/<%= diff_snapshoot.filename ? diff_snapshoot.filename : diff_snapshoot.id + '.png' %>', function (oImg) {
         oImg.set('opacity', 0)
         canvas.add(oImg);
         diffImg = oImg;

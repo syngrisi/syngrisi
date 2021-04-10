@@ -1,8 +1,8 @@
 class BaselineView {
     constructor(canvasId, image, params) {
         const thisClass = this;
-        if (params.backimageId) {
-            fabric.Image.fromURL(`/snapshoots/${params.backimageId}.png`, function (oImg) {
+        if (params.fileName) {
+            fabric.Image.fromURL(`/snapshoots/${params.fileName}`, function (oImg) {
                 window.backImage = oImg;
                 thisClass['backImg'] = oImg;
                 oImg.scaleToWidth(thisClass.canvas.width);
@@ -298,9 +298,15 @@ class BaselineView {
     }
 
     drawRegions(data) {
-        if (!data) {
-            console.error('The regions data is empty')
-            return;
+        console.log({data})
+        if (!data || data === 'undefined') {
+            {
+                // console.error('The regions data is empty')
+                return;
+            }
+
+            // console.log('The regions data is empty')
+            // return new Error('The regions data is empty');
         }
         const regs = this.convertRegionsDataFromServer(JSON.parse(data));
         console.log('converted:', regs.length, regs);

@@ -32,7 +32,7 @@
     </div>
     <div class="cell-name cell col-4 col-lg-4 border-bottom border-right text-truncate">
         <a data-toggle="collapse" class="collapsing" href="#testchecks_<?= test.id ?>"
-           onclick="drawTestChecksPreviews('<?= test.id ?>', '<?= test ?>');">
+           onclick="drawTestChecksPreviews('<?= test.id ?>'); ">
                                 <span name="cell-name" id="<?= test.id ?>_cell-name" class="text-secondary small "
                                       data-toggle="tooltip"
                                       data-placement="top"
@@ -134,18 +134,19 @@
                                              ActualId: <?= check.actualSnapshotId ?></br>
                                              BaselineId: <?= check.baselineId ?></br>">
 
+                <? const snapshootId = groupStatus === 'new' ? check.baselineId : check.actualSnapshotId ?>
                 <? if (groupStatus == 'new' || groupStatus == 'passed' || groupStatus === 'blinking') { ?>
-                <a href="/checksgroupview?id=<?= check._id ?>" name="<?= check.name ?>"
-                   id="grouplink_<?= check._id ?>">
+                <a href="/checksgroupview?id=<?= check._id ?>" name="<?= check.name ?>" class="group-links-view"
+                   snapshot="<?= snapshootId ?>"  id="grouplink_<?= check._id ?>">
                     <div id='' class="preview-overlay-text h4 white bg-maroon"><?= check.viewport ?></div>
 
                     <canvas class="snapshoot-canvas w-100"
                             id="canvas_snapshoot_<?= check._id ?>"
                     ></canvas>
                 </a>
-
                 <? } else { ?>
-                <a href="/checksgroupview?id=<?= check._id ?>">
+                <a href="/checksgroupview?id=<?= check._id ?>" id="grouplink_<?= check._id ?>"
+                   snapshot="<?= snapshootId ?>" class="group-links-view">
                     <div class="preview-overlay-text h4 white bg-maroon"><?= check.viewport ?></div>
 
                     <canvas class="snapshoot-canvas w-100"
