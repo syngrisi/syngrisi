@@ -5,8 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="icon" href="../../../static/imgs/logo.png">
-    <!--    <link rel="icon" href="../../static/imgs/simpleLogoLightShadow.png">-->
+    <link rel="icon" href="../../../static/imgs/new-logo6.png">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
           integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
           crossorigin="anonymous">
@@ -14,6 +13,7 @@
           integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
           crossorigin="anonymous">
     <link rel="stylesheet" href="../../../static/css/colors.css">
+    <link rel="stylesheet" href="../../../static/css/common.css">
     <style>
         .snapshoot-canvas {
             width: 100%;
@@ -55,6 +55,7 @@
         .bg-running {
             background-color: #17a2b8 !important;
         }
+
         img.preview {
             max-height: 180px;
             object-fit: contain;
@@ -67,13 +68,13 @@
 </head>
 <body>
 <div class="container-fluid pl-3 pr-1">
-    <div name="page-head" class="row bg-sidebar text-light ">
-        <div name="logo-and-link" class="col-3 col-lg-3 w-25 pl-0 pb-1 bg-sidebar text-light"
+    <div name="page-head" class="row bg-olive text-light ">
+        <div name="logo-and-link" class="col-3 col-lg-3 w-25 pl-0 pb-1 bg-olive text-light"
              id="logo-and-label-container">
-            <%- include('components/logo_and_link', {drop: true}) %>
+            <%- include('components/logo_and_link', {location: 'Difference'}) %>
         </div>
 
-        <div name="title" class="col pl-4 pt-1 h4 border-left mb-0 light-purple">
+        <div name="title" class="col pl-4 pt-1 h4 border-left mb-0">
             <a class="unlink" name="suite-link"
                href="/?filter_suitename_eq=<%= suite.name %>"><%= suite.name %></a>
             <span>/</span>
@@ -84,12 +85,12 @@
         </div>
 
         <div name="dropdown-menu" class="col-2 align-self-end pl-4 pt-0 h4 mb-0 light-purple">
-            <div class="d-flex flex-row pb-1 pt-1 dropdown dropdown-item1 pl-2 pr-2 pb-1"  data-toggle="dropdown">
+            <div class="d-flex flex-row pb-1 pt-1 dropdown dropdown-item1 pl-2 pr-2 pb-1" data-toggle="dropdown">
 
                 <div class="bg-<%= check.status[0] %> ml-2 mt-2 ml-1 mb-0" style="width: 20px; height: 20px"></div>
                 <div class="dropdown1 mb-1">
-                    <button class="btn mr-1 bg-sidebar text-light dropdown-toggle btn-sm" type="button"
-                            id="dropdownMenuButton"  aria-haspopup="true" aria-expanded="false"
+                    <button class="btn mr-1 bg-olive text-light dropdown-toggle btn-sm" type="button"
+                            id="dropdownMenuButton" aria-haspopup="true" aria-expanded="false"
                             style="box-shadow: none"
                     >
                         <%= check.viewport %> <%= check.os %>
@@ -97,14 +98,16 @@
                     <div class="dropdown-menu text-left" aria-labelledby="dropdownMenu">
 
                         <% for (const ch of lastChecksWithSameName) { %>
-                        <!-- "ch.actualSnapshotId || ch.baselineId" is to stub new case -->
-                        <% const url = `?diffid=${ch.diffId || '' }&actualid=${ch.actualSnapshotId || ch.baselineId}&expectedid=${ch.baselineId}&checkid=${ch.id}` %>
+                            <!-- "ch.actualSnapshotId || ch.baselineId" is to stub new case -->
+                            <% const url = `?diffid=${ch.diffId || ''}&actualid=${ch.actualSnapshotId || ch.baselineId}&expectedid=${ch.baselineId}&checkid=${ch.id}` %>
                             <div class="d-flex flex-row pb-1 pt-1 dropdown-item pl-2 pr-2">
                                 <div class="bg-<%= ch.status[0] %> ml-2 mb-0" style="width: 20px"></div>
                                 <div>
-                                    <% const decoration = (ch.id === check.id) ? 'underline' : 'none'%>
-                                    <a class="dropdown-item small pl-2 pr-2" onclick="document.location.href = '<%= url %>'"
-                                       href=# style="text-decoration: <%= decoration %>"> <%= ch.viewport %> <%= ch.os %> </a>
+                                    <% const decoration = (ch.id === check.id) ? 'underline' : 'none' %>
+                                    <a class="dropdown-item small pl-2 pr-2"
+                                       onclick="document.location.href = '<%= url %>'"
+                                       href=#
+                                       style="text-decoration: <%= decoration %>"> <%= ch.viewport %> <%= ch.os %> </a>
                                 </div>
                             </div>
 
@@ -168,7 +171,9 @@
                         <div class="con-relative">
                             <a href="/snapshootview?id=<%= expected_snapshoot.id %>&diffid=<%= diff_snapshoot.id %>"
                                title="baseline snapshoot">
-                                <img class="w-100 preview" src="/snapshoots/<%= expected_snapshoot.filename ? expected_snapshoot.filename : expected_snapshoot.id + '.png' %>" alt="baseline">
+                                <img class="w-100 preview"
+                                     src="/snapshoots/<%= expected_snapshoot.filename ? expected_snapshoot.filename : expected_snapshoot.id + '.png' %>"
+                                     alt="baseline">
                                 <div class="centered-overlay-text h4 white bg-maroon">B</div>
                             </a>
                         </div>
@@ -178,7 +183,9 @@
                             <div class="con-relative">
                                 <a href="/snapshootview?id=<%= actual_snapshoot.id %>&diffid=<%= diff_snapshoot.id %>"
                                    title="actual snapshoot">
-                                    <img class="w-100 preview" src="/snapshoots/<%= actual_snapshoot.filename ? actual_snapshoot.filename : actual_snapshoot.id + '.png' %>" alt="actual">
+                                    <img class="w-100 preview"
+                                         src="/snapshoots/<%= actual_snapshoot.filename ? actual_snapshoot.filename : actual_snapshoot.id + '.png' %>"
+                                         alt="actual">
                                     <div class="centered-overlay-text h4 text-light bg-maroon">A</div>
                                 </a>
                             </div>

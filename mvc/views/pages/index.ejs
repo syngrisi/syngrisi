@@ -5,7 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="icon" href="../../../static/imgs/new_icon_logo8.png">
+    <link rel="icon" href="../../../static/imgs/new-logo6.png">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
           integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
           crossorigin="anonymous">
@@ -23,30 +23,6 @@
     <% }else{ %>
         <title>Syngrisi list of checks - all suites</title>
     <% } %>
-    <style>
-        .preview-overlay-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 9999;
-            opacity: 70%;
-        }
-
-        a:hover .preview-overlay-text {
-            display: none;
-        }
-
-        .image-wrapper {
-            position: relative;
-        }
-
-        .current-menu-item {
-            text-decoration: underline;
-            background-color: silver;
-            opacity: 80%;
-        }
-    </style>
 </head>
 <body class="bg-black pl-0" style="max-height: 100vh; min-height: 100vh; min-width: 97.8vw; max-width: 97.8vw">
 
@@ -55,7 +31,7 @@
     <div name="page-head" class="row bg-olive sticky-top1 mr-0" style="margin-right: -16px; margin-left: -16px">
         <div name="logo-and-link" class="col-3 col-lg-3 w-25 pl-0 pb-1 bg-olive text-light"
              id="logo-and-label-container">
-            <%- include('components/logo_and_link', {drop: true}) %>
+            <%- include('components/logo_and_link', {location: 'Suite'}) %>
         </div>
 
         <div name="suite-menu-toolbar" class="col mr-3">
@@ -79,22 +55,32 @@
              class="sidebar col-3 col-lg-3  mh-100 bg-light border-top  border-right border-silver float-left w-251 ml-0 mr-0"
              style="width: 100px; min-height: 100vh">
             <!--   COLLAPSED SUITES TOOLBAR-->
-            <%- include('components/sidebar_items_toolbar', {itemName: 'suite-item'}) %>
+            <%- // include('components/sidebar_items_toolbar', {itemName: 'suite-item'})   %>
+            <!--   SUITES CONTROL PANEL-->
+            <div class="row">
+                <div class="col suites-toolbar">
+                    <%- include('components/suites_toolbar.ejs') %>
+                </div>
+            </div>
             <!--   SUITES LIST-->
-            <div class="suites-list row pl-3 pt-3 pr-0 bg-light text-secondary">
-                <% let items = suites %>
-                <%- include('components/sidebar_items', {items: suites, currentItem: currentSuite}) %>
+            <div class="suites-list row pl-3 pt-1 pr-0 bg-light text-secondary">
+                <div class="col">
+                    <% let items = suites %>
+                    <%- include('components/sidebar_items', {items: suites, currentItem: currentSuite}) %>
+                </div>
             </div>
             <!--  /SUITES LIST-->
         </div>
         <!--   TESTS TABLE-->
-        <div name class="table-rows content col float-right pr-0" id="wrapper">
+        <div name class="table-rows content col float-right pr-0 pl-3" id="wrapper">
             <%- include('components/subheader_title', {currentItem: currentSuite}) %>
-            <%- include('components/tests_table_headers2', {}) %>
+            <div class="container table-container">
+                <%- include('components/tests_table_headers2', {}) %>
+                <row name="tests-end" id="tests-table-end">
 
-            <row name="tests-end" id="tests-table-end">
+                </row>
+            </div>
 
-            </row>
         </div>
     </div>
 </div>

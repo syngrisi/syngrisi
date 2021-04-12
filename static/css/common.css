@@ -1,3 +1,68 @@
+.preview-overlay-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    opacity: 70%;
+}
+
+.check-toolbar {
+    position: absolute;
+    top: 90%;
+    left: 0%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    /*opacity: 70%;*/
+}
+
+a:hover .preview-overlay-text {
+    display: none;
+}
+
+.image-wrapper {
+    position: relative;
+}
+
+.current-menu-item {
+    text-decoration: underline;
+    background-color: silver;
+    opacity: 80%;
+}
+
+.header-hover:hover {
+    background-color: #42a777 !important;
+}
+
+.header-dropdown {
+    z-index: 10000;
+}
+
+div[name="testinfo"]:nth-of-type(4n+3) {
+    background-color: rgba(238, 236, 236, 0.89);
+
+}
+
+/*div.row.test-row:nth-of-type(2n+1) {*/
+/*    background-color: blue;*/
+/*}*/
+/*div.row.test-row:nth-of-type(2n+1) {*/
+/*    background-color: red;*/
+/*}*/
+
+
+/*div.row.test-row:nth-of-type(2) {*/
+/*    background-color: blue;*/
+/*}*/
+
+/*div.row.test-row:nth-of-type(5) {*/
+/*    background-color: blue;*/
+/*}*/
+
+/*.test-row:nth-of-type(even) {*/
+/*    background-color: red;*/
+/*}*/
+
 .btn-circle.btn-sm {
     width: 30px;
     height: 30px;
