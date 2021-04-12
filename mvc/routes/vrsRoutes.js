@@ -91,11 +91,17 @@ module.exports = async function (app) {
         .get('/snapshot/:id', async (req, res, next) => {
             API.getSnapshot(req, res).catch(next);
         })
+        .get('/check/:id',ensureLoggedInApi(), async (req, res, next) => {
+            API.getCheck(req, res).catch(next);
+        })
         .get('/checks/byident/:testid', async (req, res, next) => {
             API.checksGroupByIdent(req, res).catch(next);
         })
         .get('/check/:id', async (req, res, next) => {
             API.getCheck(req, res).catch(next);
+        })
+        .get('/test/:id', ensureLoggedInApi(), async (req, res, next) => {
+            API.getTestById(req, res).catch(next);
         })
         .get('/logout', async (req, res, next) => {
             req.logout();
@@ -119,7 +125,7 @@ module.exports = async function (app) {
                         if (err) {
                             return next(err);
                         }
-                        console.log({user})
+                        // console.log({user})
                         return res.redirect('/');
                     });
 
