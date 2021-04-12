@@ -24,3 +24,13 @@
     font-size: 12px;
     text-align: center;
 }
+
+.not-accepted-button-icon {
+    color: #888888;
+    background-color: #f3f3f3;
+}
+
+.accepted-button-icon {
+    color: #2ECC40;
+    background-color: #f3f3f3;
+}

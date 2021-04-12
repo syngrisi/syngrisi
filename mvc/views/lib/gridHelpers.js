@@ -4,10 +4,53 @@ function setSuiteMenuWidth() {
 }
 
 function uuidv4() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
     });
+}
+
+async function redrawCheckAcceptedStatus(id) {
+    try {
+        const check = JSON.parse(await getRequest(`check/${id}`));
+        const icon = document.getElementsByClassName(`check-accept-button-check-id_${id}`)[0];
+        if (check.markedAs === 'accepted') {
+            icon.classList.contains('not-accepted-button-icon') && icon.classList.remove('not-accepted-button-icon');
+            !icon.classList.contains('accepted-button-icon') && icon.classList.add('accepted-button-icon');
+        }
+    } catch (e) {
+        console.log(`cannot redraw accept check icon with id: '${id}' error: '${e}'`)
+    }
+}
+
+async function redrawTestAcceptedStatus(id) {
+    try {
+        const test = JSON.parse(await getRequest(`test/${id}`));
+        const acceptedStatus = test.markedAs ? test.markedAs : 'Unaccepted'
+        const label = document.getElementsByClassName(`check-accept-label-test-id_${id}`)[0];
+        label.innerText = acceptedStatus;
+    } catch (e) {
+        console.log(`cannot redraw accept test status with id: '${id}' error: '${e}'`)
+    }
+}
+
+async function removeTestFromDomIfEmpty(id) {
+    try {
+        const resp = await getRequest(`/checks?filter_id_eq=${id}`);
+        if (resp !== '{}') {
+            const tests = JSON.parse(await getRequest(`/checks?filter_id_eq=${id}`, true));
+            const len = Object.keys(tests[id]).filter(x => x.includes('ident')).length;
+            if (len < 1) {
+                console.log(document.getElementsByClassName(`testinfo_${id}`));
+                document.getElementsByClassName(`testinfo_${id}`)[0].remove();
+            }
+        } else {
+            console.log(document.getElementsByClassName(`testinfo_${id}`));
+            document.getElementsByClassName(`testinfo_${id}`)[0].remove();
+        }
+    } catch (e) {
+        console.log(`cannot redraw accept test status with id: '${id}' error: '${e}'`)
+    }
 }
 
 function updateQueryParam(param, newval, url) {
@@ -38,7 +81,7 @@ function removeQueryParamContains(search, word) {
 }
 
 function searchToObject(search) {
-    if(!search)
+    if (!search)
         return null;
     return JSON.parse('{"' + decodeURI(search).replace('?', '').replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g, '":"') + '"}')
 }
@@ -111,29 +154,39 @@ function showNotification(msg, status = 'Success') {
         7000)
 }
 
-function removeOneCheck(id) {
+async function removeOneCheck(id, testId) {
     if (!confirmation()) return;
-    removeCheck(id);
+    await removeCheck(id, testId);
+    await removeTestFromDomIfEmpty(testId)
+    await redrawTestAcceptedStatus(testId);
 }
 
-function removeCheck(id) {
-    const xhr = new XMLHttpRequest();
-    const params = `id=${id}`;
-    xhr.open('DELETE', `/checks/${id}`, true);
-    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+function removeCheck(id, testId) {
+    return new Promise((resolve, reject) => {
+        try {
+            const xhr = new XMLHttpRequest();
+            const params = `id=${id}`;
+            xhr.open('DELETE', `/checks/${id}`, true);
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
-    xhr.onload = function () {
-        if (xhr.status === 200) {
-            console.log('Success ' + id + '--' + xhr.responseText);
-            let checkDiv = document.getElementById(`check_${id}`);
-            checkDiv.parentNode.removeChild(checkDiv);
-            showNotification('The check was removed')
-        } else {
-            showNotification('Remove request was failing', 'Error');
-            console.log('Request failed.  Returned status of ' + xhr.status);
+            xhr.onload = async function () {
+                if (xhr.status === 200) {
+                    console.log('Success ' + id + '--' + xhr.responseText);
+                    let checkDiv = document.getElementById(`check_${id}`);
+                    checkDiv.parentNode.removeChild(checkDiv);
+                    showNotification('The check was removed')
+                    return resolve();
+                } else {
+                    showNotification('Remove request was failing', 'Error');
+                    console.log('Request failed.  Returned status of ' + xhr.status);
+                    return reject('Request failed.  Returned status of ' + xhr.status);
+                }
+            };
+            xhr.send(params);
+        } catch (e) {
+            console.log(`error in removeCheck: '${e}'`);
         }
-    };
-    xhr.send(params);
+    })
 }
 
 async function acceptOneCheck(id, newBaselineId, oldBaselineId, testId) {
@@ -147,15 +200,12 @@ async function acceptOneCheck(id, newBaselineId, oldBaselineId, testId) {
             console.log('ignore region data was sent to new baseline snapshoot' + JSON.parse(regionData.ignoreRegions));
         }
     }
-    let unfoldLocation;
-    const cleanUrl = document.URL.replace(/[&?]{0,1}unfoldTestId=[^$&]{24}/g, '');
 
-    if (cleanUrl.includes('?')) {
-        unfoldLocation = cleanUrl + '&unfoldTestId=' + testId;
-    } else {
-        unfoldLocation = cleanUrl + '?unfoldTestId=' + testId;
-    }
-    acceptCheck(id, newBaselineId, () => location.href = unfoldLocation);
+    await acceptCheck(id, newBaselineId, () => {
+    });
+
+    await redrawCheckAcceptedStatus(id);
+    await redrawTestAcceptedStatus(testId);
 }
 
 async function acceptSelectedChecks() {
@@ -174,7 +224,7 @@ async function acceptSelectedChecks() {
 
         results.push(acceptCheck(checkId, actualId));
     }
-    Promise.all(results).then((result) => {
+    Promise.all(results).then(async (result) => {
         location.reload();
     }).catch(e => {
         console.log(e);
@@ -186,7 +236,7 @@ function acceptCheck(id, newBaselineId, callback) {
         try {
             const xhr = new XMLHttpRequest();
             // send empty diffid
-            const params = `id=${id}&baselineId=${newBaselineId}&diffId&status=passed`;
+            const params = `id=${id}&baselineId=${newBaselineId}&diffId&accept=true`;
             console.log(params);
             xhr.open('PUT', `/checks/${id}`, true);
             xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
@@ -242,7 +292,7 @@ function removeTests() {
     for (const checkbox of checkboxes) {
         results.push(removeTest(checkbox.id))
     }
-    Promise.all(results).then(function (results) {
+    Promise.all(results).then(async function (results) {
         showNotification('Tests were removed successfully')
         setTimeout(() => location.reload(), 800);
     }).catch((e) => {
@@ -335,7 +385,7 @@ function confirmation(text = 'are you sure?') {
     return answer;
 }
 
-function getRequest(path) {
+function getRequest(path, verbose) {
     return new Promise((resolve, reject) => {
         try {
             const xhr = new XMLHttpRequest();
@@ -343,7 +393,8 @@ function getRequest(path) {
 
             xhr.onload = function () {
                 if (xhr.status === 200) {
-                    console.log('Successfully finish get request for: ' + path);
+                    verbose && console.log(`Successfully finish get request for: '${path}', resp: '${xhr.responseText}'`);
+                    console.log(`Successfully finish get request for: '${path}'`);
                     return resolve(xhr.responseText);
                 } else {
                     console.log('Request failed. Returned status of ' + xhr.status + 'resp:' + xhr.responseText);

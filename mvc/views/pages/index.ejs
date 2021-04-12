@@ -5,8 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <!--    <link rel="icon" href="../../static/imgs/logo.png">-->
-    <link rel="icon" href="../../../static/imgs/simpleLogoLightShadow.png">
+    <link rel="icon" href="../../../static/imgs/new_icon_logo8.png">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
           integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
           crossorigin="anonymous">
@@ -111,28 +110,6 @@
 
     const queryObject = paramsToObject(window.location.search);
 
-    function getRequest(path) {
-        return new Promise((resolve, reject) => {
-            try {
-                const xhr = new XMLHttpRequest();
-                xhr.open('GET', path, true);
-
-                xhr.onload = function () {
-                    if (xhr.status === 200) {
-                        // console.log('Successfully finish get request');
-                        console.log('Successfully finish get request for: ' + path);
-                        return resolve(xhr.responseText);
-                    } else {
-                        console.log('Request failed. Returned status of ' + xhr.status + 'resp:' + xhr.responseText);
-                    }
-                };
-                xhr.send();
-            } catch (e) {
-                return reject(e);
-            }
-        })
-    }
-
     function getSearchForPageDataPulling(searchObject) {
 
         if (!searchObject) return '';
@@ -153,7 +130,7 @@
     async function checksGroupViewClick(evt) {
         console.log({evt})
         const id = evt.currentTarget.getAttribute('snapshot')
-        if(event.metaKey){
+        if (event.metaKey) {
             window.open(`/snapshoots/${id}.png`, '_blank').focus();
         }
     }

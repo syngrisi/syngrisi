@@ -25,30 +25,8 @@ const VRSSnapshotSchema = new Schema({
         type: Date,
         default: Date.now,
     },
-    status: {
-        type: [{
-            type: String,
-            enum: ['new', 'approved'],
-        }],
-    },
     ignoreRegions: {
         type: String,
-    },
-    markedAs: {
-        type: String,
-        enum: ['bug', 'accepted'],
-        default: undefined,
-    },
-    markedDate: {
-        type: Date,
-    },
-    markedBy: {
-        type: String,
-        default: undefined
-    },
-    lastMarkedCheck: {
-        type: Schema.Types.ObjectId,
-        ref: 'VRSCheck',
     },
     boundRegions: {
         type: String,
@@ -63,7 +41,6 @@ const VRSSnapshotSchema = new Schema({
         type: String,
         // enum: ['antialiasing', 'nothing', 'less', 'colors', 'alpha'],
         enum: ['antialiasing', 'nothing', 'colors'],
-        // default: 'antialiasing',
     }
 });
 
@@ -86,14 +63,17 @@ const VRSCheckSchema = new Schema({
         ref: 'VRSApp',
     },
     baselineId: {
-        type: String,
-        required: 'the baselineId of the check entity is empty',
+        type: Schema.Types.ObjectId,
+        ref: 'VRSSnapshot',
+        required: 'baselineId cannot be empty empty',
     },
     actualSnapshotId: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: 'VRSSnapshot',
     },
     diffId: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: 'VRSSnapshot',
     },
     createdDate: {
         type: Date,
@@ -145,9 +125,20 @@ const VRSCheckSchema = new Schema({
     markedDate: {
         type: Date,
     },
-    markedBy: {
+    markedById: {
+        type: Schema.Types.ObjectId,
+        ref: 'VRSUser'
+    },
+    markedByUsername: {
         type: String,
     },
+    markedBugComment: {
+        type: String,
+    },
+    creator: {
+        type: Schema.Types.ObjectId,
+        ref: 'VRSUser',
+    }
 });
 
 const VRSTestSchema = new Schema({
@@ -167,6 +158,9 @@ const VRSTestSchema = new Schema({
         browserVersion: {
             type: String,
         },
+        tags: {
+            type: [String],
+        },
         // on the start of test
         viewport: {
             type: String,
@@ -174,7 +168,6 @@ const VRSTestSchema = new Schema({
         // after handle all checks inside the test
         calculatedViewport: {
             type: String,
-            default: '???',
         },
         os: {
             type: String,
@@ -195,10 +188,14 @@ const VRSTestSchema = new Schema({
         run: {
             type: Schema.Types.ObjectId,
         },
-        accepted: {
-            type: Boolean,
-            default: false
+        markedAs: {
+            type: String,
+            enum: ['Bug', 'Accepted', 'Unaccepted', 'Partially'],
         },
+        creator: {
+            type: Schema.Types.ObjectId,
+            ref: 'VRSUser',
+        }
     },
     {strictQuery: true}); // remove filters that not exist in schema
 
@@ -211,7 +208,6 @@ const VRSSuiteSchema = new Schema({
     },
     tags: {
         type: [String],
-        default: undefined
     },
     description: {
         type: String,
@@ -236,10 +232,13 @@ const VRSRunSchema = new Schema({
         type: Date,
         default: Date.now,
     },
+    parameters: {
+        type: [String],
+    },
 });
 
 const VRSLogSchema = new Schema({
-    Reference: {
+    reference: {
         type: String,
     },
     msgType: {

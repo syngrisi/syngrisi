@@ -16,6 +16,7 @@ const Suite = mongoose.model('VRSSuite');
 const User = mongoose.model('VRSUser');
 const {checksGroupedByIdent} = require('../utils');
 const {fatalError, waitUntil, removeEmptyProperties} = require('../utils');
+const moment = require('moment');
 
 // get last updated document
 async function getLastCheck(identifier) {
@@ -35,6 +36,10 @@ async function getLastSuccessCheck(identifier) {
     }).sort({updatedDate: -1}).limit(1))[0];
 }
 
+
+// API
+
+// snapshots
 async function getSnapshotByImgHash(hash) {
     return (await Snapshot.findOne({imghash: hash}));
 }
@@ -130,7 +135,68 @@ async function compareSnapshots(baseline, actual) {
     return diff;
 }
 
-// API
+exports.updateSnapshot = async function (req, res) {
+    return new Promise(async function (resolve, reject) {
+        try {
+            let opts = removeEmptyProperties(req.body);
+            let id = req.params.id;
+            opts['updatedDate'] = Date.now();
+            console.log(`UPDATE snapshot id: '${id}' with params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`);
+            const snp = await Snapshot.findByIdAndUpdate(id, opts).exec().catch(
+                function (e) {
+                    console.log(`Cannot update a snapshot with id: '${id}', error: ${e}`);
+                    fatalError(req, res, e);
+                    return reject(e)
+                }
+            );
+            await snp.save()
+            console.log(`Snapshot with id: '${id}' and opts: '${JSON.stringify(opts)}' was updated`);
+            res.status(200)
+                .json({item: 'Snapshot', action: 'update', id: id, opts: opts})
+        } catch (e) {
+            fatalError(req, res, e);
+            return reject(e);
+        }
+    })
+};
+
+exports.getSnapshot = async function (req, res) {
+    return new Promise(async function (resolve, reject) {
+        try {
+            let opts = removeEmptyProperties(req.body);
+            let id = req.params.id;
+            console.log(`GET snapshot with id: '${id}',  params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`);
+            const snp = await Snapshot.findById(id)
+                .then(async function (snp) {
+                    res.json(snp);
+                })
+                .catch(
+                    (err) => {
+                        res.status(400)
+                            .send(`Cannot GET a snapshot with id: '${id}', error: ${err}`);
+                        return resolve(err);
+                    }
+                );
+        } catch (e) {
+            fatalError(req, res, e);
+            return reject(e);
+        }
+    })
+};
+
+function cloneSnapshoot(sourceSnapshoot, params, fileData) {
+    return new Promise(async (resolve, reject) => {
+        const filename = sourceSnapshoot.filename ? sourceSnapshoot.filename : sourceSnapshoot._id + '.png'
+        const newSnapshoot = await createSnapshot({
+            filename: filename,
+            params: params,
+            // fileData: fileData,
+            hashCode: params.hashcode
+        })
+        resolve(newSnapshoot);
+    })
+}
+
 const checksGroupByIdent = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
@@ -144,7 +210,6 @@ const checksGroupByIdent = async function (req, res) {
             return reject(e);
         }
     })
-
 };
 
 exports.checksGroupByIdent = checksGroupByIdent;
@@ -187,7 +252,8 @@ function buildQuery(params) {
         .filter(key => key.startsWith('filter_'))
         .reduce((obj, key) => {
             const props = key.split('_');
-            const name = props[1];
+            const name = props[1] === 'id' ? '_id' : props[1];
+
             const operator = props[2];
             const value = decodeURI(params[key]);
             obj[`${name}`] = {[`$${operator}`]: value};
@@ -213,116 +279,7 @@ function parseSorting(params) {
     return sortObj;
 }
 
-exports.getChecks = async function (req, res) {
-    return new Promise(async function (resolve, reject) {
-        let opts = req.query;
-        console.log(opts);
-        const pageSize = parseInt(process.env['PAGE_SIZE']) || 50
-        let skip;
-        let sortFilter = parseSorting(opts);
-
-        skip = opts.page ? ((parseInt(opts.page)) * pageSize - pageSize) : 0;
-        console.log({pageSize})
-
-        if (Object.keys(sortFilter).length < 1)
-            sortFilter = {updatedDate: -1}
-
-        const query = buildQuery(opts);
-        const decodedQuerystringSuiteName = Object.keys(querystring.decode(opts.filter_suitename_eq))[0];
-        if (opts.filter_suitename_eq) {
-            const suite = await Suite.findOne({name: {'$eq': decodedQuerystringSuiteName}}).exec();
-            if (opts.filter_suitename_eq && !suite) {
-                res.status(200).json({});
-                return resolve({})
-            }
-            if (suite) {
-                query.suite = suite.id;
-
-                delete query.suitename;
-            }
-        }
-        const tests = await Test.find(query)
-            .sort(sortFilter)
-            .skip(skip)
-            .limit(pageSize)
-            .exec()
-
-        let checksByTestGroupedByIdent = {}
-
-        for (const test of tests) {
-            let checkFilter = {test: test.id};
-            const groups = await checksGroupedByIdent(checkFilter);
-            // console.log(groups);
-            if (Object.keys(groups).length < 1) {
-                continue;
-            }
-            // console.log({groups})
-            checksByTestGroupedByIdent[test.id] = groups;
-            checksByTestGroupedByIdent[test.id]['id'] = test.id;
-            checksByTestGroupedByIdent[test.id]['name'] = test.name;
-            checksByTestGroupedByIdent[test.id]['status'] = test.status;
-            checksByTestGroupedByIdent[test.id]['browserName'] = test.browserName;
-            checksByTestGroupedByIdent[test.id]['browserVersion'] = test.browserVersion;
-            checksByTestGroupedByIdent[test.id]['browserFullVersion'] = test.browserFullVersion;
-            checksByTestGroupedByIdent[test.id]['viewport'] = test.viewport;
-            checksByTestGroupedByIdent[test.id]['calculatedViewport'] = test.calculatedViewport;
-            checksByTestGroupedByIdent[test.id]['os'] = test.os;
-            checksByTestGroupedByIdent[test.id]['blinking'] = test.blinking;
-            checksByTestGroupedByIdent[test.id]['updatedDate'] = test.updatedDate;
-            checksByTestGroupedByIdent[test.id]['startDate'] = test.startDate;
-            checksByTestGroupedByIdent[test.id]['suite'] = test.suite;
-            checksByTestGroupedByIdent[test.id]['run'] = test.run;
-        }
-        res.status(200).json(checksByTestGroupedByIdent);
-        return resolve(checksByTestGroupedByIdent)
-    })
-};
-
-exports.getUsers = async function (req, res) {
-    return new Promise(async function (resolve, reject) {
-        const users = await User.find().exec();
-        res.status(200).json(users);
-        return resolve(users)
-    })
-};
-
-exports.createTest = async function (req, res) {
-    return new Promise(
-        async function (resolve, reject) {
-            try {
-                let params = req.body;
-
-                req.log.info(`Create test with name '${params.testname}', params: '${JSON.stringify(params)}'`);
-
-                let opts = removeEmptyProperties({
-                    name: params.name,
-                    status: params.status,
-                    viewport: params.viewport,
-                    browserName: params.browser,
-                    browserVersion: params.browserVersion,
-                    browserFullVersion: params.browserFullVersion,
-                    os: params.os,
-                    startDate: new Date(),
-                    updatedDate: new Date(),
-                })
-
-                let run;
-                if (params.run) {
-                    run = await orm.createRunIfNotExist({name: params.run});
-                    opts.run = run.id;
-                }
-                const test = await orm.createTest(opts);
-
-                res.json(test);
-                return resolve([req, res, test]);
-
-            } catch (e) {
-                return reject(e);
-                fatalError(req, res, e)
-            }
-        });
-};
-
+// users
 exports.createUser = async function (req, res) {
     return new Promise(
         async function (resolve, reject) {
@@ -352,6 +309,66 @@ exports.createUser = async function (req, res) {
             }
         });
 };
+
+exports.getUsers = async function (req, res) {
+    return new Promise(async function (resolve, reject) {
+        const users = await User.find().exec();
+        res.status(200).json(users);
+        return resolve(users)
+    })
+};
+
+exports.updateUser = async function (req, res) {
+    return new Promise(
+        async function (resolve, reject) {
+            try {
+                let params = req.body;
+
+                console.log(`Update user with id: '${params.id}' name '${params.username}', params: '${JSON.stringify(params)}'`);
+
+                let opts = removeEmptyProperties(Object.assign(params, {updatedDate: new Date()}));
+
+                const user = await User.findById(opts.id);
+                if (!user) {
+                    res.status(500).json({status: 'Error', message: `Cannot find user with id: '${opts.id}'`});
+                    return reject;
+                }
+                const password = opts.password;
+
+                await User.findByIdAndUpdate(user._id, params).catch((e) => {
+                    fatalError(req, res, e)
+                    return reject(e);
+                })
+                if (password) {
+                    await user.setPassword(password);
+                    await user.save();
+                }
+                console.log(`User '${user.username}' was updated successfully`);
+                res.json(user);
+                return resolve([req, res, user]);
+
+            } catch (e) {
+                fatalError(req, res, e)
+                return reject(e);
+            }
+        });
+};
+exports.removeUser = function (req, res) {
+    return new Promise(async function (resolve, reject) {
+        try {
+            const id = req.params.id;
+            console.log(`Remove user with id: '${id}'`);
+            const user = await User.findByIdAndDelete(id)
+            console.log(`User with id: '${user._id}' and username: '${user.username}' was removed`);
+            res.status(200)
+                .send({message: `User with id: '${user._id}' and username: '${user.username}' was removed`});
+            return resolve();
+        } catch (e) {
+            fatalError(req, res, e)
+            return reject(e);
+        }
+    })
+}
 
 exports.changePassword = async function (req, res) {
     return new Promise(
@@ -385,98 +402,7 @@ exports.changePassword = async function (req, res) {
         });
 };
 
-exports.updateUser = async function (req, res) {
-    return new Promise(
-        async function (resolve, reject) {
-            try {
-                let params = req.body;
-
-                console.log(`Update user with id: '${params.id}' name '${params.username}', params: '${JSON.stringify(params)}'`);
-
-                let opts = removeEmptyProperties(Object.assign(params, {updatedDate: new Date()}));
-
-                const user = await User.findOne({_id: opts.id});
-                if (!user) {
-                    res.status(500).json({status: 'Error', message: `Cannot find user with id: '${opts.id}'`});
-                    return reject;
-                }
-                const password = opts.password;
-
-                await user.updateOne(params).catch((e) => {
-                    fatalError(req, res, e)
-                    return reject(e);
-                })
-                if (password) {
-                    await user.setPassword(password);
-                    await user.save();
-                }
-                console.log(`User '${user.username}' was updated successfully`);
-                res.json(user);
-                return resolve([req, res, user]);
-
-            } catch (e) {
-                fatalError(req, res, e)
-                return reject(e);
-            }
-        });
-};
-
-exports.stopSession = async function (req, res) {
-    return new Promise(async function (resolve, reject) {
-        try {
-            let testId = req.params.testid;
-            await waitUntil(async () => {
-                return (await Check.find({test: testId}).exec())
-                    .filter(ch => ch.status.toString() !== 'pending').length > 0;
-            });
-            const checksGroup = await checksGroupedByIdent({test: testId});
-            const groupStatuses = Object.keys(checksGroup).map(group => checksGroup[group].status);
-            // console.log(JSON.stringify(checksGroup, null, "\t"));
-            const groupViewPorts = Object.keys(checksGroup).map(group => checksGroup[group].viewport);
-            // console.log({groupViewPorts});
-            const uniqueGroupViewports = Array.from(new Set(groupViewPorts));
-            let testViewport;
-            if (uniqueGroupViewports.length === 1)
-                testViewport = uniqueGroupViewports[0];
-            else
-                testViewport = uniqueGroupViewports.length
-
-            let testStatus = 'not set';
-            if (groupStatuses.some(st => st === 'failed'))
-                testStatus = 'Failed'
-            if (groupStatuses.some(st => st === 'passed')
-                && !groupStatuses.some(st => st === 'failed'))
-                testStatus = 'Passed'
-            if (groupStatuses.some(st => st === 'new')
-                && !groupStatuses.some(st => st === 'failed'))
-                testStatus = 'Passed'
-            if (groupStatuses.some(st => st === 'blinking')
-                && !groupStatuses.some(st => st === 'failed'))
-                testStatus = 'Passed'
-            if (groupStatuses.every(st => st === 'new'))
-                testStatus = 'New'
-            const blinkingCount = groupStatuses.filter(g => g === 'blinking').length;
-            const updatedTest = await updateTest({
-                id: testId,
-                status: testStatus,
-                blinking: blinkingCount,
-                calculatedViewport: testViewport
-                // viewport: await this.getViewport()
-            }).catch(function (e) {
-                console.log(`Cannot update session: ${e}`)
-                throw (e.stack ? e.stack.split("\n") : e)
-            })
-            const result = updatedTest.toObject();
-            result.calculatedStatus = testStatus;
-            res.json(result);
-            return resolve(result);
-        } catch (e) {
-            fatalError(req, res, e)
-            return reject(e);
-        }
-    });
-};
-
+// tests
 function updateTest(opts) {
     return new Promise(async function (resolve, reject) {
         try {
@@ -569,6 +495,60 @@ exports.removeTest = function (req, res) {
     })
 };
 
+exports.createTest = async function (req, res) {
+    return new Promise(
+        async function (resolve, reject) {
+            try {
+                let params = req.body;
+
+                req.log.info(`Create test with name '${params.testname}', params: '${JSON.stringify(params)}'`);
+
+                let opts = removeEmptyProperties({
+                    name: params.name,
+                    status: params.status,
+                    viewport: params.viewport,
+                    browserName: params.browser,
+                    browserVersion: params.browserVersion,
+                    browserFullVersion: params.browserFullVersion,
+                    os: params.os,
+                    startDate: new Date(),
+                    updatedDate: new Date(),
+                })
+
+                let run;
+                if (params.run) {
+                    run = await orm.createRunIfNotExist({name: params.run});
+                    opts.run = run.id;
+                }
+                const test = await orm.createTest(opts);
+
+                res.json(test);
+                return resolve([req, res, test]);
+
+            } catch (e) {
+                return reject(e);
+                fatalError(req, res, e)
+            }
+        });
+};
+
+function calculateTestStatus(testId) {
+    return new Promise(async function (resolve, reject) {
+        const checksInTest = await Check.find({test: testId});
+        const statuses = checksInTest.map(x => x.status);
+        let testCalculatedStatus = 'Failed'
+        if (statuses.every(x => (x === 'new') || (x === 'passed'))) {
+            testCalculatedStatus = 'Passed'
+        }
+        if (statuses.every(x => (x === 'new'))) {
+            testCalculatedStatus = 'New'
+        }
+        console.log({testCalculatedStatus});
+        return resolve(testCalculatedStatus);
+    })
+}
+
+// suites
 exports.removeSuite = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
@@ -595,6 +575,7 @@ exports.removeSuite = async function (req, res) {
     })
 };
 
+// checks
 function prettyCheckParams(result) {
     if (!result.domDump)
         return JSON.stringify(result);
@@ -603,20 +584,6 @@ function prettyCheckParams(result) {
     delete resObs.domDump;
     resObs.domDump = JSON.stringify(dump).substr(0, 20) + `... and about ${dump.length} items]`
     return JSON.stringify(resObs);
-}
-
-function cloneSnapshoot(sourceSnapshoot, params, fileData) {
-    return new Promise(async (resolve, reject) => {
-        const filename = sourceSnapshoot.filename ? sourceSnapshoot.filename : sourceSnapshoot._id + '.png'
-        const newSnapshoot = await createSnapshot({
-            filename: filename,
-            params: params,
-            // fileData: fileData,
-            hashCode: params.hashcode
-        })
-        resolve(newSnapshoot);
-    })
-
 }
 
 exports.createCheck = async function (req, res) {
@@ -744,6 +711,11 @@ exports.createCheck = async function (req, res) {
                         baselineSnapshoot = await Snapshot.findById(previousBaselineId);
                         params.actualSnapshotId = actualSnapshot.id;
                         params.status = 'pending';
+                        if(lastCheck.markedAs==='accepted'){
+                            params.markedAs = 'accepted';
+                            params.markedDate = lastCheck.markedDate;
+                            params.markedByUsername = lastCheck.markedByUsername;
+                        }
                     } else {
                         console.log(`A baseline snapshot for previous check with name: '${req.body.name}', does not exist creating new one`);
                         const baseline = currentSnapshot
@@ -754,6 +726,16 @@ exports.createCheck = async function (req, res) {
                 }
                 console.log(`Create and save new check with params: '${prettyCheckParams(params)}'`);
                 let check = await Check.create(params);
+
+                // update test and suite
+                const testCalculatedAcceptedStatus = await calculateAcceptedStatus(check.test);
+
+                // test.status = testCalculatedStatus;
+                test.markedAs = testCalculatedAcceptedStatus;
+                test.updatedDate = moment(new Date()).format('YYYY-MM-DD hh:mm');
+
+                await orm.updateItemDate('VRSSuite', check.suite);
+                await test.save();
 
                 let resultResponse;
                 await check.save()
@@ -776,7 +758,6 @@ exports.createCheck = async function (req, res) {
                         if (compareResult.misMatchPercentage !== '0.00') {
                             console.log(`Saving diff snapshot for check with Id: '${check.id}'`);
                             const diffSnapshot = await createSnapshot({
-
                                 params: req.body,
                                 fileData: compareResult.getBuffer()
                             });
@@ -796,11 +777,11 @@ exports.createCheck = async function (req, res) {
                     } catch (e) {
                         updateParams['status'] = 'failed';
                         updateParams['result'] = `{error: "Server error - ${e}"}`
-                        await check.updateOne(updateParams);
+                        await Check.findByIdAndUpdate(check._id, updateParams);
                         resultResponse = await Check.findById(check.id);
                         throw e;
                     }
-                    await check.updateOne(updateParams);
+                    await Check.findByIdAndUpdate(check._id, updateParams);
                     resultResponse = await Check.findById(check.id);
                 }
                 const result = Object.assign({}, resultResponse.toObject(),
@@ -818,6 +799,175 @@ exports.createCheck = async function (req, res) {
     );
 };
 
+exports.getChecks = async function (req, res) {
+    return new Promise(async function (resolve, reject) {
+        let opts = req.query;
+        // const currentUser = req.user;
+        const pageSize = parseInt(process.env['PAGE_SIZE']) || 50
+        let skip;
+        let sortFilter = parseSorting(opts);
+
+        skip = opts.page ? ((parseInt(opts.page)) * pageSize - pageSize) : 0;
+        // console.log({pageSize})
+
+        if (Object.keys(sortFilter).length < 1)
+            sortFilter = {updatedDate: -1}
+
+        const query = buildQuery(opts);
+        // console.log({opts})
+        const decodedQuerystringSuiteName = Object.keys(querystring.decode(opts.filter_suitename_eq))[0];
+        if (opts.filter_suitename_eq) {
+            const suite = await Suite.findOne({name: {'$eq': decodedQuerystringSuiteName}}).exec();
+            if (opts.filter_suitename_eq && !suite) {
+                res.status(200).json({});
+                return resolve({})
+            }
+            if (suite) {
+                query.suite = suite.id;
+
+                delete query.suitename;
+            }
+        }
+
+        const tests = await Test.find(query)
+            .sort(sortFilter)
+            .skip(skip)
+            .limit(pageSize)
+            .exec()
+
+        // console.log({query})
+
+        let checksByTestGroupedByIdent = {}
+
+        for (const test of tests) {
+            let checkFilter = {test: test.id};
+            const groups = await checksGroupedByIdent(checkFilter);
+            // console.log(groups);
+            if (Object.keys(groups).length < 1) {
+                continue;
+            }
+            // console.log({groups})
+            checksByTestGroupedByIdent[test.id] = groups;
+            checksByTestGroupedByIdent[test.id]['id'] = test.id;
+            checksByTestGroupedByIdent[test.id]['creator'] = test.creator;
+            checksByTestGroupedByIdent[test.id]['markedAs'] = test.markedAs;
+            checksByTestGroupedByIdent[test.id]['name'] = test.name;
+            checksByTestGroupedByIdent[test.id]['status'] = test.status;
+            checksByTestGroupedByIdent[test.id]['browserName'] = test.browserName;
+            checksByTestGroupedByIdent[test.id]['browserVersion'] = test.browserVersion;
+            checksByTestGroupedByIdent[test.id]['browserFullVersion'] = test.browserFullVersion;
+            checksByTestGroupedByIdent[test.id]['viewport'] = test.viewport;
+            checksByTestGroupedByIdent[test.id]['calculatedViewport'] = test.calculatedViewport;
+            checksByTestGroupedByIdent[test.id]['os'] = test.os;
+            checksByTestGroupedByIdent[test.id]['blinking'] = test.blinking;
+            checksByTestGroupedByIdent[test.id]['updatedDate'] = test.updatedDate;
+            checksByTestGroupedByIdent[test.id]['startDate'] = test.startDate;
+            checksByTestGroupedByIdent[test.id]['suite'] = test.suite;
+            checksByTestGroupedByIdent[test.id]['run'] = test.run;
+        }
+        res.status(200).json(checksByTestGroupedByIdent);
+        return resolve(checksByTestGroupedByIdent)
+    })
+};
+
+exports.getCheck = async function (req, res) {
+    return new Promise(async function (resolve, reject) {
+        try {
+            let opts = removeEmptyProperties(req.body);
+            let id = req.params.id;
+            console.log(`GET check with id: '${id}',  params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`);
+            await Check.findById(id)
+                .then(async function (snp) {
+                    res.json(snp);
+                })
+                .catch(
+                    (err) => {
+                        res.status(400)
+                            .send(`Cannot GET a check with id: '${id}', error: ${err}`);
+                        return resolve(err);
+                    }
+                );
+        } catch (e) {
+            fatalError(req, res, e);
+            return reject(e);
+        }
+    })
+};
+
+function calculateAcceptedStatus(testId) {
+    return new Promise(async function (resolve, reject) {
+        const checksInTest = await Check.find({test: testId});
+        const statuses = checksInTest.map(x => x.markedAs);
+        if (statuses.length < 1) {
+            return resolve('Unaccepted')
+        }
+        let testCalculatedStatus = 'Unaccepted';
+        if (statuses.some(x => x === 'accepted')) {
+            testCalculatedStatus = 'Partially'
+        }
+        if (statuses.every(x => x === 'accepted')) {
+            testCalculatedStatus = 'Accepted'
+        }
+        console.log({testCalculatedStatus});
+        return resolve(testCalculatedStatus);
+    })
+}
+
+function addMarkedAsOptions(opts, user, mark) {
+    opts.markedById = user._id;
+    opts.markedByUsername = user.username;
+    opts.markedDate = moment(new Date()).format('YYYY-MM-DD hh:mm');
+    opts.markedAs = mark;
+    return opts;
+}
+
+exports.updateCheck = async function updateCheck(req, res) {
+    return new Promise(async function (resolve, reject) {
+        try {
+            let opts = removeEmptyProperties(req.body);
+            let checkId = req.params.id;
+            const check = await Check.findById(checkId).exec();
+            const test = await Test.findById(check.test).exec();
+
+            if (opts.accept === 'true') {
+                opts = addMarkedAsOptions(opts, req.user, 'accepted')
+            } else {
+                await test.updateOne({
+                    status: 'Running',
+                    updatedDate: moment(new Date()).format('YYYY-MM-DD hh:mm')
+                }).exec();
+            }
+            delete opts.id;
+            delete opts.accept;
+            await Check.findByIdAndUpdate(check._id, opts);
+
+            const testCalculatedStatus = await calculateTestStatus(check.test);
+            const testCalculatedAcceptedStatus = await calculateAcceptedStatus(check.test);
+
+            opts['updatedDate'] = Date.now();
+
+            console.log(`UPDATE check id: '${checkId}' with params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`);
+            test.status = testCalculatedStatus;
+            test.markedAs = testCalculatedAcceptedStatus;
+            test.updatedDate = moment(new Date()).format('YYYY-MM-DD hh:mm');
+
+            await orm.updateItemDate('VRSSuite', check.suite);
+            await test.save();
+            console.log({test})
+            await check.save();
+            console.log(`Check with id: '${checkId}' was updated`);
+
+
+            res.status(200)
+                .send(`Check with id: '${checkId}' was updated`);
+            resolve();
+        } catch (e) {
+            fatalError(req, res, e);
+            return reject(e);
+        }
+    })
+};
+
 exports.removeCheck = async function (req, res) {
     return new Promise(function (resolve, reject) {
         try {
@@ -825,17 +975,32 @@ exports.removeCheck = async function (req, res) {
             console.log(`DELETE check with ID: '${id}'`);
 
             Check.findByIdAndDelete(id)
-                .then(function () {
+                .then(async function (check) {
+
+                    const test = await Test.findById(check.test).exec();
+                    const testCalculatedStatus = await calculateTestStatus(check.test);
+                    const testCalculatedAcceptedStatus = await calculateAcceptedStatus(check.test);
+
+                    console.log(`DELETE check id: '${id}' with params: '${JSON.stringify(req.params)}'`);
+                    test.status = testCalculatedStatus;
+                    test.markedAs = testCalculatedAcceptedStatus;
+                    test.updatedDate = moment(new Date()).format('YYYY-MM-DD hh:mm');
+
+                    await orm.updateItemDate('VRSSuite', check.suite);
+                    test.save();
+
+                    console.log(`Check with id: '${id}' was removed`);
                     res.status(200)
                         .send(`Check with id: '${id}' was removed`);
                 })
                 .catch(
-                    (err) => {
-                        res.status(400)
-                            .send(`Cannot remove a check with id: '${id}', error: ${err}`);
-                        return resolve(err);
+                    (e) => {
+                        console.log(`Cannot remove a check with id: '${id}', error: '${e}'`);
+                        fatalError(req, res, e);
+                        return reject(e);
                     }
                 );
+
         } catch (e) {
             fatalError(req, res, e)
             return reject(e)
@@ -843,103 +1008,20 @@ exports.removeCheck = async function (req, res) {
     })
 };
 
-exports.removeUser = function (req, res) {
-    return new Promise(async function (resolve, reject) {
-        try {
-            const id = req.params.id;
-            console.log(`Remove user with id: '${id}'`);
-            // const user = await User.findOneAndDelete({_id: id});
-            const user = await User.findByIdAndDelete(id)
-            console.log(`User with id: '${user._id}' and username: '${user.username}' was removed`);
-            res.status(200)
-                .send({message: `User with id: '${user._id}' and username: '${user.username}' was removed`});
-            return resolve();
-        } catch (e) {
-            fatalError(req, res, e)
-            return reject(e);
-        }
-    })
-}
-
-exports.updateCheck = async function (req, res) {
+exports.getTestById = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
             let opts = removeEmptyProperties(req.body);
             let id = req.params.id;
-            opts['updatedDate'] = Date.now();
-            console.log(`UPDATE check id: '${id}' with params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`);
-
-            await Check.findByIdAndUpdate(id, opts)
-                .then(async function (chk) {
-                    await chk.save()
-                        .then(async function () {
-                            await orm.updateItemDate('VRSSuite', chk.suite);
-                            await orm.updateItemDate('VRSTest', chk.test);
-
-                            console.log(`Check with id: '${id}' was updated`);
-                            res.status(200)
-                                .send(`Check with id: '${id}' was updated`);
-                        })
-                        .catch(function (error) {
-                            console.log(`Cannot update check, error: '${error}'`);
-                            return reject(e);
-                        });
-                })
-                .catch(
-                    (e) => {
-                        res.status(400)
-                            .send(`Cannot update a check with id: '${id}', error: ${e}`);
-                        return reject(e);
-                    }
-                );
-
-        } catch (e) {
-            fatalError(req, res, e);
-            return reject(e);
-        }
-    })
-
-};
-
-exports.updateSnapshot = async function (req, res) {
-    return new Promise(async function (resolve, reject) {
-        try {
-            let opts = removeEmptyProperties(req.body);
-            let id = req.params.id;
-            opts['updatedDate'] = Date.now();
-            console.log(`UPDATE snapshot id: '${id}' with params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`);
-            const snp = await Snapshot.findByIdAndUpdate(id, opts).exec().catch(
-                function (e) {
-                    console.log(`Cannot update a snapshot with id: '${id}', error: ${e}`);
-                    fatalError(req, res, e);
-                    return reject(e)
-                }
-            );
-            await snp.save()
-            console.log(`Snapshot with id: '${id}' and opts: '${JSON.stringify(opts)}' was updated`);
-            res.status(200)
-                .json({item: 'Snapshot', action: 'update', id: id, opts: opts})
-        } catch (e) {
-            fatalError(req, res, e);
-            return reject(e);
-        }
-    })
-};
-
-exports.getSnapshot = async function (req, res) {
-    return new Promise(async function (resolve, reject) {
-        try {
-            let opts = removeEmptyProperties(req.body);
-            let id = req.params.id;
-            console.log(`GET snapshot with id: '${id}',  params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`);
-            const snp = await Snapshot.findById(id)
+            console.log(`GET test with id: '${id}',  params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`);
+            await Test.findById(id)
                 .then(async function (snp) {
                     res.json(snp);
                 })
                 .catch(
                     (err) => {
                         res.status(400)
-                            .send(`Cannot GET a snapshot with id: '${id}', error: ${err}`);
+                            .send(`Cannot GET a test with id: '${id}', error: ${err}`);
                         return resolve(err);
                     }
                 );
@@ -948,6 +1030,61 @@ exports.getSnapshot = async function (req, res) {
             return reject(e);
         }
     })
+};
+
+exports.stopSession = async function (req, res) {
+    return new Promise(async function (resolve, reject) {
+        try {
+            let testId = req.params.testid;
+            await waitUntil(async () => {
+                return (await Check.find({test: testId}).exec())
+                    .filter(ch => ch.status.toString() !== 'pending').length > 0;
+            });
+            const checksGroup = await checksGroupedByIdent({test: testId});
+            const groupStatuses = Object.keys(checksGroup).map(group => checksGroup[group].status);
+            // console.log(JSON.stringify(checksGroup, null, "\t"));
+            const groupViewPorts = Object.keys(checksGroup).map(group => checksGroup[group].viewport);
+            // console.log({groupViewPorts});
+            const uniqueGroupViewports = Array.from(new Set(groupViewPorts));
+            let testViewport;
+            if (uniqueGroupViewports.length === 1)
+                testViewport = uniqueGroupViewports[0];
+            else
+                testViewport = uniqueGroupViewports.length
+
+            let testStatus = 'not set';
+            if (groupStatuses.some(st => st === 'failed'))
+                testStatus = 'Failed'
+            if (groupStatuses.some(st => st === 'passed')
+                && !groupStatuses.some(st => st === 'failed'))
+                testStatus = 'Passed'
+            if (groupStatuses.some(st => st === 'new')
+                && !groupStatuses.some(st => st === 'failed'))
+                testStatus = 'Passed'
+            if (groupStatuses.some(st => st === 'blinking')
+                && !groupStatuses.some(st => st === 'failed'))
+                testStatus = 'Passed'
+            if (groupStatuses.every(st => st === 'new'))
+                testStatus = 'New'
+            const blinkingCount = groupStatuses.filter(g => g === 'blinking').length;
+            const updatedTest = await updateTest({
+                id: testId,
+                status: testStatus,
+                blinking: blinkingCount,
+                calculatedViewport: testViewport
+            }).catch(function (e) {
+                console.log(`Cannot update session: ${e}`)
+                throw (e.stack ? e.stack.split("\n") : e)
+            })
+            const result = updatedTest.toObject();
+            result.calculatedStatus = testStatus;
+            res.json(result);
+            return resolve(result);
+        } catch (e) {
+            fatalError(req, res, e)
+            return reject(e);
+        }
+    });
 };
 
 // maintain
