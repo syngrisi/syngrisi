@@ -3,22 +3,35 @@
 <? //if(!checksByTestGroupedByIdent[test.id][groupName]['checks'].length < 1) continue; ?>
 
 <!--TEST_INFO START-->
-<div name="testinfo" class="testinfo testinfo_<?= test.id ?> row pr-0 button btn-light border-secondary m-0 w-100">
-    <div class="cell-input cell col-1 col-lg-auto border-bottom border-right text-truncate small d-flex align-items-center ">
+<div name="testinfo"
+     class="testinfo testinfo_<?= test.id ?> row  py-2 test-row pr-0 button btn-light border-secondary1 m-0 w-100">
+    <div class="cell-input cell col-1 col-lg-auto border-bottom1 border-right1 text-truncate small d-flex align-items-center ">
         <input id="<?= test.id ?>"
                name="test"
                type="checkbox">
     </div>
-    <div class="cell-status cell col-2 col-lg-1 pl-3 pr-2 border-bottom border-right text-truncate">
+    <? const statusesClassesBg = {
+                    Failed: 'bg-danger',
+                    Passed: 'bg-success',
+                    Unresolved: 'bg-warning',
+                    Running: 'bg-info',
+                    New: 'bg-success font-weight-bold'
+                }
+     ?>
+
+    <div class="cell-status <?= statusesClassesBg[test.status] ?> cell col-auto pl-1 pr-0 border-0  text-truncate">
         <? const statusesClasses = {
                     Failed: 'text-danger',
                     Passed: 'text-success',
                     Unresolved: 'text-warning',
                     Running: 'text-info',
                     New: 'text-success font-weight-bold'
-                } ?>
+                }
+        ?>
+
 
         <span name="cell-status" id="<?= test.id ?>_cell-status"
+              style="display: none"
               class="<?= statusesClasses[test.status] ?> small bg-gu"
               data-toggle="tooltip"
               data-placement="top"
@@ -27,10 +40,9 @@
                     <? if(test.blinking > 0) { ?>
                         <img src="../../../../static/blinking.png" class="img-fluid blink-icon" alt="blink">
             <? } ?>
-            <!--                                        <?= test.blinking ?>-->
-                                    </span>
+        </span>
     </div>
-    <div class="cell-name cell col-4 col-lg-4 border-bottom border-right text-truncate"
+    <div class="cell-name cell col-4 col-lg-4 border-bottom1 border-right1 text-truncate"
          data-toggle="collapse" style="cursor: pointer" onclick="drawTestChecksPreviews('<?= test.id ?>');"
          data-target="#testchecks_<?= test.id ?>" id="test-checks-wrapper_<?= test.id ?>">
         <div class="row">
@@ -48,7 +60,7 @@
 
     </div>
     <? const acceptedStatus = test.markedAs  ? test.markedAs : 'Unaccepted' ?>
-    <div class="cell-accepted-state cell col-1 border-bottom border-right text-truncate">
+    <div class="cell-accepted-state cell col-1 border-bottom1 border-right1 text-truncate">
         <div class="row justify-content-end">
             <div class="col-auto pr-2 pl-2 mr-1 mb-1 border rounded">
                 <small class="text-secondary check-accept-label-test-id_<?= test.id ?>"
@@ -56,14 +68,14 @@
             </div>
         </div>
     </div>
-    <div class="cell-date cell col-2 border-bottom border-right text-truncate">
+    <div class="cell-date cell col-2 border-bottom1 border-right1 text-truncate">
                                 <span name="cell-date" id="<?= test.id ?>_cell-date" class="text-primary small"
                                       data-toggle="tooltip"
                                       data-placement="top"
                                       title="<?= test.formattedUpdatedDate ?>"><?= moment(test.updatedDate).format('YYYY-MM-DD hh:mm'); ?>
                                 </span>
     </div>
-    <div class="cell-browser cell col-1 col-lg-1 pl-2 pr-1 border-bottom border-right text-truncate">
+    <div class="cell-browser cell col-1 col-lg-1 pl-2 pr-1 border1-bottom border-right1 text-truncate">
         <? const browserVersion =  (test.browserVersion === 'undefined') ? '?' : test.browserVersion?>
         <span name="cell-browser" id="<?= test.id ?>_cell-browser" class="text-primary small"
               data-toggle="tooltip"
@@ -71,14 +83,14 @@
               title="<?= test.browserName ?> <?= test.browserVersion ?>"><?= test.browserName ?></span> <sup
                 class="text-secondary"><?= browserVersion ?></sup>
     </div>
-    <div class="cell-platform cell col-1 pl-1 col-lg-1 border-bottom border-right text-truncate">
+    <div class="cell-platform cell col-1 pl-1 col-lg-1 border-bottom1 border-right1 text-truncate">
         <i class="fab fa-apple"></i>
         <span name="cell-os" id="<?= test.id ?>_cell-os" class="text-primary small"
               data-toggle="tooltip"
               data-placement="top"
               title="<?= test.os ?>"><?= test.os ?></span>
     </div>
-    <div class="cell-viewport cell col-1 border-bottom pr-0 text-truncate">
+    <div class="cell-viewport cell col-1 border-bottom1 pr-0 text-truncate">
         <? let viewport; ?>
         <? let toolTip; ?>
         <? if(!test.calculatedViewport || !test.calculatedViewport.includes('x')) { ?>
@@ -155,29 +167,36 @@
                                              BaselineId: <?= check.baselineId ?></br>">
 
                 <? const snapshootId = groupStatus === 'new' ? check.baselineId : check.actualSnapshotId ?>
-                <? if (groupStatus == 'new' || groupStatus == 'passed' || groupStatus === 'blinking') { ?>
+<!--                <? //if (groupStatus == 'new' || groupStatus == 'passed' || groupStatus === 'blinking') { ?>-->
+<!--                &lt;!&ndash;CHECK LINK&ndash;&gt;-->
+<!--                <a href="/checksgroupview?id=<?= check._id ?>" name="<?= check.name ?>" class="group-links-view"-->
+<!--                   snapshot="<?= snapshootId ?>" id="grouplink_<?= check._id ?>">-->
+<!--                    <div class="preview-overlay-text h4 white bg-maroon"><?= check.viewport ?></div>-->
+
+<!--                    <canvas class="snapshoot-canvas w-100"-->
+<!--                            id="canvas_snapshoot_<?= check._id ?>"-->
+<!--                    ></canvas>-->
+<!--                </a>-->
+<!--                <? //} else { ?>-->
                 <a href="/checksgroupview?id=<?= check._id ?>" name="<?= check.name ?>" class="group-links-view"
                    snapshot="<?= snapshootId ?>" id="grouplink_<?= check._id ?>">
-                    <div id='' class="preview-overlay-text h4 white bg-maroon"><?= check.viewport ?></div>
-
-                    <canvas class="snapshoot-canvas w-100"
-                            id="canvas_snapshoot_<?= check._id ?>"
-                    ></canvas>
-                </a>
-                <? } else { ?>
-                <a href="/checksgroupview?id=<?= check._id ?>" id="grouplink_<?= check._id ?>"
-                   snapshot="<?= snapshootId ?>" class="group-links-view">
                     <div class="preview-overlay-text h4 white bg-maroon"><?= check.viewport ?></div>
+                    <!--123 -->
+
+
+
+
 
                     <canvas class="snapshoot-canvas w-100"
                             id="canvas_snapshoot_<?= check._id ?>"
                     ></canvas>
                 </a>
-                <? } ?>
+                <? // } ?>
             </div>
-            <!-- SNAPSHOT TOOOLBAR START-->
+            <!-- SNAPSHOT TOOLBAR START-->
             <div class="container pl-0 pr-0">
                 <div class="check-mini-toolbar d-flex row justify-content-around1 text-light pl-1 m-0">
+                    <!--CHECKBOX-->
                     <div class="col-1 pr-1 pl-1 pt-1">
                         <input name="check-input" id="<?= check._id ?>"
                                actualId="<?= check.actualSnapshotId ?>"
@@ -185,9 +204,10 @@
                                type="checkbox">
                     </div>
 
-                    <? const checksCount = Object.keys(checksByTestGroupedByIdent[test.id]).filter(x =>
+                    <!-- CHECK NAME AND COUNT-->
+                    <?  let checksCount = Object.keys(checksByTestGroupedByIdent[test.id]).filter(x =>
                     x.includes('ident')).length ?>
-                    <? const groupChecksCount = (checksByTestGroupedByIdent[test.id][groupName].checks.length > 1) ?
+                    <?  let groupChecksCount = (checksByTestGroupedByIdent[test.id][groupName].checks.length > 1) ?
                     `(${checksByTestGroupedByIdent[test.id][groupName].checks.length})` : '' ?>
                     <div name="check-name"
                          class="col-8 ml-0 mr-0 pt-2 pb-0 float-right1 align-middle text-truncate  small p-0"
@@ -198,6 +218,7 @@
                         <sup><?= groupChecksCount ?></sup> <?= check.name ?>
                     </div>
 
+                    <!-- CHECK BUTTONS -->
                     <div name="check-buttons"
                          class="col-3 pr-0 pl-0 pt-1 float-right flex-row-reverse1">
                         <div class="container pl-0 pr-0">
@@ -249,7 +270,7 @@
                     </div>
                 </div>
             </div>
-            <!-- SNAPSHOT TOOOLBAR START-->
+            <!-- SNAPSHOT TOOLBAR START-->
         </div>
     </div>
 

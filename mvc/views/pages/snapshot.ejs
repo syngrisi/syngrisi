@@ -5,7 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="icon" href="../../../static/imgs/logo.png">
+    <link rel="icon" href="../../../static/imgs/new-logo6.png">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css"
           integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
 
@@ -14,6 +14,7 @@
           integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
           crossorigin="anonymous">
     <link rel="stylesheet" href="../../../static/css/colors.css">
+    <link rel="stylesheet" href="../../../static/css/common.css">
     <script src="lib/gridHelpers.js"></script>
 
     <!--    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"-->
@@ -38,16 +39,16 @@
 </head>
 <body>
 <div class="container-fluid pl-3 pr-4">
-    <div name="header" class="row bg-sidebar text-light">
-        <div name="logo-and-link" class="col-3 col-lg-3 w-25 pl-0 pb-1 bg-sidebar text-light"
+    <div name="header" class="row bg-olive text-light">
+        <div name="logo-and-link" class="col-3 col-lg-3 w-25 pl-0 pb-1 bg-olive text-light"
              id="logo-and-label-container">
-            <%- include('components/logo_and_link', {drop: true}) %>
+            <%- include('components/logo_and_link', {location: 'Snapshoot'}) %>
         </div>
 
-        <div name="title" class="col pl-4 pt-1 h4 border-left mb-0 light-purple"><%= snapshot.name %></div>
-        <div name="ignore-menu" class="col-auto col-flex align-self-end pl-4 pt-1 h4 mb-0 light-purple">
+        <div name="title" class="col pl-4 pt-1 h4 border-left mb-0"><%= snapshot.name %></div>
+        <div name="ignore-menu" class="col-auto col-flex align-self-end pl-4 pt-1 h4 mb-0">
             <div class="dropdown mb-1">
-                <button class="btn mb-1 bg-sidebar text-light dropdown-toggle btn-sm" type="button"
+                <button class="btn mb-1 bg-olive text-light dropdown-toggle btn-sm" type="button"
                         id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                         style="box-shadow: none"
                 >

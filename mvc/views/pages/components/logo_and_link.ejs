@@ -8,28 +8,28 @@
         </div>
     </div>
     <div class="col pl-1 pt-1 mr-0 text-truncate">
-        <!--                    <a class="unlink" href="/">Visual Regression Service</a>-->
         <a class="unlink h3" href="/" title="Σύγκριση">Syngrisi</a>
     </div>
-    <div class="col-auto p-0 pt-2">
-        <% if(drop) { %>
-            <div class="container pt-1">
-                <a name="more-suites"
-                   type="button"
-                   onclick="setSuiteMenuWidth()"
-                   data-toggle="collapse"
-                   href="#collapseSuiteMenu"
-                   aria-expanded="false"
-                   aria-controls="collapseSuiteMenu"
-                   class="btn btn-secondary border-0 bg-olive float-right unlink white" title="more"
-                   style="box-shadow: none">
+    <div class="col-auto p-0 pt-2 mr-2">
+        <div class="btn-group1">
+            <a type="button"
+               class="pr-1 header-hover btn btn-secondary btn-md bg-olive text-light dropdown-toggle1 border-0"
+               id="user-icon" data-toggle="dropdown" aria-haspopup="true" data-display="static" aria-expanded="false"
+               data-reference="parent">
+                <%= location %>
+            </a>
+            <button type="button"
+                    class="btn bg-olive border-0 header-hover btn-secondary dropdown-toggle dropdown-toggle-split"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="sr-only header-hover">Toggle Dropdown</span>
+            </button>
 
-                    <i class="fas fa-caret-down fa-1x float-right "></i>
-                </a>
+
+            <div class="dropdown-menu mr-0 dropdown-menu-right" aria-labelledby="navigation">
+                <a class="dropdown-item" style="font-size: 90%" href="/">Suites</a>
+                <a class="dropdown-item" style="font-size: 90%" href="/runs">Runs</a>
+                <a class="dropdown-item " style="font-size: 90%" href="/admin?task=users">Admin Panel</a>
             </div>
-        <% } %>
+        </div>
     </div>
-    <!--                <div class="col pl-2 pt-1 mr-0 border-top border-bottom border-right rounded-right text-truncate">-->
-    <!--                    <a class="unlink" href="/">Visual Regression Service</a>-->
-    <!--                </div>-->
 </div>

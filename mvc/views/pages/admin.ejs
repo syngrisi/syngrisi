@@ -5,8 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <!--    <link rel="icon" href="../../static/imgs/logo.png">-->
-    <link rel="icon" href="../../../static/imgs/simpleLogoLightShadow.png">
+    <link rel="icon" href="../../../static/imgs/new-logo6.png">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
           integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
           crossorigin="anonymous">
@@ -14,6 +13,7 @@
           integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
           crossorigin="anonymous">
     <link rel="stylesheet" href="../../../static/css/colors.css">
+    <link rel="stylesheet" href="../../../static/css/common.css">
     <script src="../lib/gridHelpers.js"></script>
     <script src="../../../../static/js/ejs.js"></script>
     <script src="../../../../static/js/moment.min.js"></script>
@@ -23,13 +23,35 @@
 <body>
 <div name="main" class="main container-fluid pl-3 pr-3 ml-0 mh-100">
     <div name="page-head" class="row bg-olive sticky-top">
-        <div class="col-3 col-lg-3 w-25 pl-0 pb-1 text-light"
+<!--        Logo-->
+        <div class="col-3 pl-0 pb-1 text-light"
              id="logo-and-label-container">
-            <%- include('components/logo_and_link_ap', {drop: true}) %>
+            <%- include('components/logo_and_link', {location: 'Admin'}) %>
         </div>
-        <div id="tagline" class="col-3 col-lg-3 w-25 pl-0 pb-1 mt-2 text-light">
-            <h3 class="mb-0">Admin Panel</h3>
+        <!--        Navigation-->
+        <div class="col-3 p-0 pt-2 mr-2">
+<!--            <div class="btn-group1">-->
+<!--                <a type="button" class="pr-1 header-hover btn btn-secondary btn-md bg-olive text-light dropdown-toggle1 border-0"-->
+<!--                   id="user-icon" data-toggle="dropdown" aria-haspopup="true" data-display="static" aria-expanded="false"-->
+<!--                   data-reference="parent">-->
+<!--                    Suites-->
+<!--                </a>-->
+<!--                <button type="button" class="btn bg-olive border-0 header-hover btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+<!--                    <span class="sr-only header-hover">Toggle Dropdown</span>-->
+<!--                </button>-->
+
+
+<!--                <div class="dropdown-menu mr-0 dropdown-menu-right" aria-labelledby="navigation">-->
+<!--                    <a class="dropdown-item" style="font-size: 80%" href="/">Suites</a>-->
+<!--                    <a class="dropdown-item" style="font-size: 80%" href="/runs">Runs</a>-->
+<!--                    <a class="dropdown-item " style="font-size: 80%" href="/admin?task=users">Admin Panel</a>-->
+<!--                </div>-->
+<!--            </div>-->
         </div>
+
+<!--        <div id="tagline" class="col-3 col-lg-3 w-25 pl-0 pb-1 mt-2 text-light">-->
+<!--            <h3 class="mb-0">Admin Panel</h3>-->
+<!--        </div>-->
         <div class="col d-flex flex-row-reverse w-25 pl-0 pb-1 mt-2 text-light">
 
             <%- include('components/user_icon', {user: currentUser}) %>

@@ -149,7 +149,7 @@ function showNotification(msg, status = 'Success') {
         document.getElementById("notify-rect").setAttribute('fill', '#FF4136');
     $('#notify').show()
     setTimeout(function () {
-            $('#notify').hide()
+            status === 'Success' && $('#notify').hide()
         },
         7000)
 }
@@ -335,7 +335,7 @@ function removeCheckedSuites() {
     Promise.all(result).then(
         function () {
             showNotification('All suites were removed');
-            setTimeout(() => location.reload(), 1300);
+            setTimeout(() => location.reload(), 1000);
         }
     ).catch(function (e) {
         showNotification('Cannot remove all suites', 'Error');
