@@ -1,0 +1,139 @@
+@import "./bootstrap-4.3.1/scss/bootstrap";
+@import "./bootstrap-4.3.1/scss/bootstrap-grid";
+
+.col-1-5 {
+  @include make-col(1.2);
+}
+
+.preview-button {
+  background-color: rgba(0, 0, 0, 0);
+}
+
+.shadow {
+  box-shadow: 0 .225rem .35rem rgba(0, 0, 0, .75) !important;
+}
+
+.cell-status {
+  margin-top: -8px;
+  margin-bottom: -7px;
+}
+
+.testinfo:hover {
+  background-color: #ecf3f8 !important
+}
+
+.preview-overlay-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  opacity: 70%;
+}
+
+.overlay-bottom {
+  position: absolute;
+  font-size: 12px;
+  opacity: 90%;
+  bottom: 41px;
+  /*right: 13px;*/
+  left: 0px;
+  /*transform: translate(-50%, -50%);*/
+  z-index: 19999;
+  /*opacity: 70%;*/
+}
+
+div:hover > .preview-overlay-text {
+  display: none;
+}
+
+.image-wrapper {
+  position: relative;
+}
+
+.suite-menu-item-container {
+  cursor: pointer;
+}
+
+.current-menu-item {
+  /*text-decoration: underline;*/
+  background-color: silver;
+  opacity: 80%;
+}
+
+.hide {
+  display: none;
+}
+
+.header-hover:hover {
+  background-color: #42a777 !important;
+}
+
+.header-dropdown {
+  z-index: 10000;
+}
+
+div[name="testinfo"]:nth-of-type(4n+1) {
+  background-color: rgba(238, 236, 236, 0.89);
+}
+
+/*div.row.test-row:nth-of-type(2n+1) {*/
+/*    background-color: blue;*/
+/*}*/
+/*div.row.test-row:nth-of-type(2n+1) {*/
+/*    background-color: red;*/
+/*}*/
+
+
+/*div.row.test-row:nth-of-type(2) {*/
+/*    background-color: blue;*/
+/*}*/
+
+/*div.row.test-row:nth-of-type(5) {*/
+/*    background-color: blue;*/
+/*}*/
+
+/*.test-row:nth-of-type(even) {*/
+/*    background-color: red;*/
+/*}*/
+
+.btn-circle.btn-sm {
+  width: 30px;
+  height: 30px;
+  padding: 6px 0px;
+  border-radius: 15px;
+  font-size: 8px;
+  text-align: center;
+}
+
+.btn-circle.btn-md {
+  width: 40px;
+  height: 40px;
+  padding: 7px 10px;
+  border-radius: 25px;
+  font-size: 16px;
+  text-align: center;
+}
+
+.btn-circle.btn-xl {
+  width: 70px;
+  height: 70px;
+  padding: 10px 16px;
+  border-radius: 35px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.not-accepted-button-icon {
+  color: #888888;
+  /*background-color: #111111;*/
+  opacity: 90%;
+  padding-bottom: 2px;
+}
+
+.accepted-button-icon {
+  color: #2ECC40;
+  /*background-color: #111111;*/
+
+  opacity: 90%;
+}
