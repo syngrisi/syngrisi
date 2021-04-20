@@ -20,15 +20,17 @@
                       class="<%= statusesClasses[test.status] %> small bg-gu"
                       data-toggle="tooltip"
                       data-placement="top"
-                      title="<%= test.status %>"><%= test.status %></span>
-                <span data-toggle="tooltip" data-original-title="<%= test.blinking %>">
-                    <% if(test.blinking > 0) { %>
-                        <img src="../../../../static/blinking.png" class="img-fluid blink-icon" alt="blink">
-                    <% } %>
-                    <!--                                        <%= test.blinking %>-->
-                                    </span>
+                      title="<%= test.status %>"><%= test.status %>
+                </span>
+
             </div>
             <div class="cell-name cell col-4 col-lg-4 border-bottom border-right text-truncate">
+                 <span data-toggle="tooltip" data-original-title="<%= test.blinking %>">
+                     <% if(test.blinking > 0) { %>
+                         <img src="../../../../static/blinking.png" class="img-fluid blink-icon" alt="blink">
+                     <% } %>
+                     <!--                                        <%= test.blinking %>-->
+                </span>
                 <a data-toggle="collapse" class="collapsing" href="#testchecks_<%= test.id %>"
                    onclick="drawTestChecksPreviews('<%= test.id %>');">
                                 <span name="cell-name" id="<%= test.id %>_cell-name" class="text-secondary small "

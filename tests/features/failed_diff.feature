@@ -54,6 +54,6 @@ Feature: Crashed check
         Then I expect that VRS test "Crashed test" is unfolded
 
         Then I expect that VRS check "1/1 crashed" has "Failed" status
-        When I click on the element "//div[contains(., 'crashed') and @name='check-name']/../../../..//a"
+        When I click on the element "//div[contains(., 'crashed') and @name='check-name']/../../../..//div[@class='group-links-view']"
         When I wait for "2" seconds
         Then I expect that element "[title='diff snapshoot']" is not displayed

@@ -80,7 +80,7 @@ Feature: Get Checks
         When I send "get" request to "http://vrs:3001/checks?page=2" with:
         """
         """
-#        When I start debugger
+#        When I START DEBUGGER
         When I expect the "get" 1st value response with:
         """
         name: 'GetChecks2'

@@ -7,7 +7,7 @@ Feature: Default Users
         When I set env variables:
         """
         TEST: 1
-        SYNGRISY_AUTH: 0
+        SYNGRISI_AUTH: 0
         """
         Given I start VRS server with parameters:
         """
@@ -16,12 +16,12 @@ Feature: Default Users
         baseLineFolder: ./baselinesTest/
         """
         When I open the url "http://vrs:3001/loadTestUser"
-        Given I kill process which used port: "3001"
+        When I stop the Syngrisi server
 
         When I set env variables:
         """
         TEST: 0
-        SYNGRISY_AUTH: 1
+        SYNGRISI_AUTH: 1
         """
         Given I start VRS server with parameters:
         """
