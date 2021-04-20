@@ -12,8 +12,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
           integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
           crossorigin="anonymous">
-    <link rel="stylesheet" href="../../../static/css/colors.css">
     <link rel="stylesheet" href="../../../static/css/common.css">
+    <link rel="stylesheet" href="../../../static/css/colors.css">
     <style>
         .snapshoot-canvas {
             width: 100%;
@@ -225,8 +225,9 @@
     canvas.setWidth(document.getElementById('snapshoot').offsetWidth);
 
     canvas.hoverCursor = 'col-resize'
-
-    fabric.Image.fromURL('/snapshoots/<%= expected_snapshoot.filename ? expected_snapshoot.filename : expected_snapshoot.id + '.png' %>', function (oImg) {
+    console.log('/snapshoots/<%= expected_snapshoot.filename ? expected_snapshoot.filename : expected_snapshoot.id + '.png' %>')
+    fabric.Image.fromURL('/snapshoots/<%= expected_snapshoot.filename ? expected_snapshoot.filename : expected_snapshoot.id + '.png' %>',
+        function (oImg) {
         window.BaselineImg = oImg;
         oImg.clipPath = clipPath;
         canvas.add(oImg);
@@ -235,6 +236,8 @@
         oImg.scaleToWidth(canvas.width);
         canvas.setHeight(oImg.getScaledHeight())
         <% if(actual_snapshoot) { %>
+            // console.log(`<%= actual_snapshoot.filename %>`);
+            // console.log(`/snapshoots/<%= actual_snapshoot.filename ? actual_snapshoot.filename : actual_snapshoot.id + '.png' %>`)
         fabric.Image.fromURL(`/snapshoots/<%= actual_snapshoot.filename ? actual_snapshoot.filename : actual_snapshoot.id + '.png' %>`, function (oImg) {
             canvas.add(oImg);
             window.expectedImg = oImg;

@@ -6,7 +6,7 @@ Feature: Userinfo
         When I set env variables:
         """
         TEST: 1
-        SYNGRISY_AUTH: 0
+        SYNGRISI_AUTH: 0
         """
         Given I start VRS server with parameters:
         """
@@ -14,6 +14,7 @@ Feature: Userinfo
         databaseName: VRSdbTest
         baseLineFolder: ./baselinesTest/
         """
+        When I wait for "5" seconds
         When I open the url "http://vrs:3001/loadTestUser"
 
         Given I kill process which used port: "3001"
@@ -21,7 +22,7 @@ Feature: Userinfo
         When I set env variables:
         """
         TEST: 0
-        SYNGRISY_AUTH: 1
+        SYNGRISI_AUTH: 1
         """
         Given I start VRS server with parameters:
         """
@@ -41,6 +42,7 @@ Feature: Userinfo
         When I login with user:"Test" password "123"
         Then I wait on element "*=TA" to be displayed
 
+        When I wait for "5" seconds
         When I open the url "http://vrs:3001/userinfo"
         When I wait for "1" seconds
         Then page source match:
@@ -52,3 +54,4 @@ Feature: Userinfo
             "lastName": "Admin"
         }
         """
+        When I stop the Syngrisi server

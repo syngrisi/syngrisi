@@ -12,8 +12,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
           integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
           crossorigin="anonymous">
-    <link rel="stylesheet" href="../../../static/css/colors.css">
     <link rel="stylesheet" href="../../../static/css/common.css">
+    <link rel="stylesheet" href="../../../static/css/colors.css">
 
     <style>
         .snapshoot-image {
@@ -44,19 +44,20 @@
 
     <div name="rows" class="container mt-3">
         <% for(const check of checks) { %>
-            <div class="row w-100">
+            <div class="row w-100 pb-3">
                 <div class="col-auto">
-                    <a href="/snapshootview?id=<%= check.baselineId %>&diffid=<%= check.diffId %>" name="baseline_link">
-                        <img src="/snapshoots/<%= baseline.filename || baseline._id + '.png' %>" alt="baseline snapshoot"
+                    <a href="/snapshootview?id=<%= check.baseline._id %>&diffid=<%= check.diff ? check.diff._id : '' %>" name="baseline_link">
+                        <img src="/snapshoots/<%= check.baseline.filename || check.baseline._id + '.png' %>"
+                             alt="baseline snapshoot"
                              title="baseline snapshoot"
                              class="snapshoot-image">
                     </a>
                 </div>
                 <div class="col-auto">
                     <% if (check.actualSnapshotId) { %>
-                        <a href="/snapshootview?id=<%= check.actualSnapshotId %>&diffid=<%= check.diffId %>"
+                        <a href="/snapshootview?id=<%= check.actual._id %>&diffid=<%= check.diff ? check.diff._id : '' %>"
                            name="actual_link">
-                            <img src="/snapshoots/<%= actual.filename || actual._id + '.png' %>"
+                            <img src="/snapshoots/<%= check.actual.filename || check.actual._id + '.png' %>"
                                  alt="actual snapshoot"
                                  title="actual snapshoot"
                                  class="snapshoot-image">
@@ -64,9 +65,10 @@
                     <% } %>
                 </div>
                 <div class="col-auto">
-                    <% if (check.diffId) { %>
-                        <a href="/snapshootview?id=<%= check.diffId %>">
-                            <img src="/snapshoots/<%= diff.filename || diff._id + '.png' %>" alt="diff snapshoot" title="diff snapshoot"
+                    <% if (check.diff) { %>
+                        <a href="/snapshootview?id=<%= check.diff._id %>">
+                            <img src="/snapshoots/<%= check.diff.filename || check.diff._id + '.png' %>" alt="diff snapshoot"
+                                 title="diff snapshoot"
                                  class="snapshoot-image">
                         </a>
                     <% } %>
@@ -87,44 +89,6 @@
         integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
         crossorigin="anonymous"></script>
 <script>
-    function removeCheck(id) {
-        var xhr = new XMLHttpRequest();
-        var params = `id=${id}`;
-        xhr.open('DELETE', `/checks/${id}`, true);
-        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        let el = document.getElementById(`checkbutton_${id}`);
-
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                console.log('Success ' + id + '--' + xhr.responseText);
-                let checkDiv = document.getElementById(`check_${id}`);
-                checkDiv.parentNode.removeChild(checkDiv);
-            } else {
-                console.log('Request failed.  Returned status of ' + xhr.status);
-            }
-        };
-        xhr.send(params);
-    }
-
-    function acceptCheck(id, newBaselineId) {
-        const xhr = new XMLHttpRequest();
-        // send empty diffid
-        const params = `id=${id}&baselineId=${newBaselineId}&diffId`;
-        xhr.open('PUT', `/checks/${id}`, true);
-        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        let el = document.getElementById(`acceptbutton_${id}`);
-
-        // NEED TO ADD UPDATE BASELINE LOGIC TO .onload EVENT!!!
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                console.log('Success ' + id + '--' + xhr.responseText);
-                location.reload();
-            } else {
-                console.log('Request failed. Returned status of ' + xhr.status + 'resp:' + xhr.responseText);
-            }
-        };
-        xhr.send(params);
-    }
 </script>
 </body>
 </html>

@@ -9,10 +9,10 @@ const Run = mongoose.model('VRSRun');
 const User = mongoose.model('VRSUser');
 // const App = mongoose.model('VRSApp');
 const moment = require('moment');
-const {fatalError, checkIdent, checksGroupedByIdent, removeEmptyProperties} = require('../utils');
+const { fatalError, checkIdent, checksGroupedByIdent, removeEmptyProperties } = require('../utils');
 
 async function getSnapshotByImgHash(hash) {
-    return (await Snapshot.find({imghash: hash}))[0];
+    return (await Snapshot.find({ imghash: hash }))[0];
 }
 
 exports.checksGroupView = async function (req, res) {
@@ -27,34 +27,32 @@ exports.checksGroupView = async function (req, res) {
             }
 
             const check = await Check.findById(`${opts.id}`).exec();
-            const actual = await Snapshot.findById(check.actualSnapshotId).exec()
-            const baseline = await Snapshot.findById(check.baselineId).exec()
-            const diff = await Snapshot.findById(check.diffId).exec()
+
             const test = await Test.findById(check.test).exec();
             const suite = await Suite.findById(check.suite).exec();
             const testId = check.test;
             const ident = checkIdent(check);
             console.warn(check.name, "|", testId, "|", suite, "|", ident, "|")
-            const groups = await checksGroupedByIdent({test: testId});
+            const groups = await checksGroupedByIdent({ test: testId });
             const groupChecks = groups[ident].checks;
-            // console.log(groupChecks);
             const moment = require('moment');
-            groupChecks.map(function (check) {
-                check.formattedCreatedDate = moment(check.createdDate)
-                    .format('YYYY-MM-DD hh:mm');
-                return check
-            })
-            // console.log(JSON.stringify(group, null, "  "))
-            // const checkDate = moment(check.createdDate)
-            //     .format('YYYY-MM-DD hh:mm');
+            let transGroups = await Promise.all(
+                groupChecks.map(async function (check) {
+                    const actual = await Snapshot.findById(check.actualSnapshotId).exec();
+                    const baseline = await Snapshot.findById(check.baselineId).exec();
+                    const diff = await Snapshot.findById(check.diffId).exec();
+                    const chk = check.toObject();
+                    chk.actual = actual ? actual.toObject() : null
+                    chk.baseline = baseline ? baseline.toObject() : null;
+                    chk.diff = diff ? diff.toObject() : null;
+                    return chk;
+                })
+            )
+            console.log({ transGroups });
             res.render('pages/checkgroup', {
-                checks: groupChecks,
+                checks: transGroups,
                 test: test,
-                suite: suite,
-                actual: actual,
-                diff: diff,
-                baseline: baseline,
-
+                suite: suite
             });
         } catch (e) {
             fatalError(req, res, e);
@@ -134,7 +132,7 @@ exports.diffView = async function (req, res) {
                 const suite = await Suite.findById(`${check.suite}`);
                 const test = await Test.findById(`${check.test}`);
 
-                const checksWithSameName = await checksGroupedByIdent({name: check.name});
+                const checksWithSameName = await checksGroupedByIdent({ name: check.name });
 
                 let lastChecksWithSameName = [];
                 for (const group of Object.values(checksWithSameName)) {
@@ -184,11 +182,11 @@ exports.index = async function (req, res) {
                 const sortOrder = opts.sortorder ? opts.sortorder : -1;
                 let sortFilter = {};
                 sortFilter[sortBy] = sortOrder;
-                const suite = await Suite.findOne({name: opts.filter_suitename_eq}).exec()
+                const suite = await Suite.findOne({ name: opts.filter_suitename_eq }).exec()
                 if (suite)
-                    suiteFilter = {suite: suite.id};
+                    suiteFilter = { suite: suite.id };
                 const suites = await Suite.find({})
-                    .sort({name: 'asc'}).exec()
+                    .sort({ name: 'asc' }).exec()
                 const currentUser = req.user;
                 res.render('pages/index', {
                     suites: suites,
@@ -225,7 +223,7 @@ exports.userinfo = async function (req, res) {
         async function (resolve, reject) {
             try {
                 const user = req.user;
-                res.json({user});
+                res.json({ user });
                 return resolve();
             } catch (e) {
                 fatalError(req, res, e);
@@ -289,11 +287,11 @@ exports.runs = async function (req, res) {
                 sortFilter[sortBy] = sortOrder;
 
                 // const suite = await Suite.findOne({name: opts.suitename}).exec()
-                const run = await Run.findOne({name: opts.runName}).exec()
+                const run = await Run.findOne({ name: opts.runName }).exec()
                 if (run)
-                    testFilter = {run: run.id};
+                    testFilter = { run: run.id };
                 let runs = await Run.find({})
-                    .sort({updatedDate: 'desc'}).exec()
+                    .sort({ updatedDate: 'desc' }).exec()
                 runs.map(function (run) {
                     run.formattedUpdatedDate = moment(run.updatedDate)
                         .format('hh:mm DD-MM-YYYY');
@@ -305,7 +303,7 @@ exports.runs = async function (req, res) {
                 const testsCountsGroupByRunId = (await Test.aggregate()
                     .group({
                         _id: "$run",
-                        count: {$sum: 1}
+                        count: { $sum: 1 }
                     }).exec()).reduce(function (map, obj) {
                     map[obj._id] = obj.count;
                     return map;
@@ -317,7 +315,7 @@ exports.runs = async function (req, res) {
                     })
                     .group({
                         _id: "$run",
-                        count: {$sum: 1}
+                        count: { $sum: 1 }
                     }).exec()).reduce(function (map, obj) {
                     map[obj._id] = obj.count;
                     return map;
@@ -334,7 +332,7 @@ exports.runs = async function (req, res) {
                 let checksByTestGroupedByIdent = {}
 
                 for (const test of tests) {
-                    let checkFilter = {test: test.id}
+                    let checkFilter = { test: test.id }
                     if (run)
                         checkFilter.run = run.id;
                     checksByTestGroupedByIdent[test.id] = await checksGroupedByIdent(checkFilter);

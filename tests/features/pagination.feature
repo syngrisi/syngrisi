@@ -30,11 +30,11 @@ Feature: Pagination
         When I wait for "3" seconds
 
         Then I expect that element "span*=Pagination Test" does appear exactly "5" times
-        Then I expect that element "span=Pagination Test - 1" does appear exactly "1" times
-        Then I expect that element "span=Pagination Test - 2" does appear exactly "1" times
-        Then I expect that element "span=Pagination Test - 3" does appear exactly "1" times
-        Then I expect that element "span=Pagination Test - 4" does appear exactly "1" times
-        Then I expect that element "span=Pagination Test - 5" does appear exactly "1" times
+        Then I expect that element "span*=Pagination Test - 1" does appear exactly "1" times
+        Then I expect that element "span*=Pagination Test - 2" does appear exactly "1" times
+        Then I expect that element "span*=Pagination Test - 3" does appear exactly "1" times
+        Then I expect that element "span*=Pagination Test - 4" does appear exactly "1" times
+        Then I expect that element "span*=Pagination Test - 5" does appear exactly "1" times
 
     Scenario: Pagination, suite - no duplicated tests
         When I set env variables:
@@ -58,15 +58,15 @@ Feature: Pagination
         testName: Pagination Test
         """
         When I open the url "http://vrs:3001/"
-        When I click on the element "=Integration suite"
+        When I click on the element "span=Integration suite"
         When I wait for "3" seconds
 
         Then I expect that element "span*=Pagination Test" does appear exactly "5" times
-        Then I expect that element "span=Pagination Test - 1" does appear exactly "1" times
-        Then I expect that element "span=Pagination Test - 2" does appear exactly "1" times
-        Then I expect that element "span=Pagination Test - 3" does appear exactly "1" times
-        Then I expect that element "span=Pagination Test - 4" does appear exactly "1" times
-        Then I expect that element "span=Pagination Test - 5" does appear exactly "1" times
+        Then I expect that element "span*=Pagination Test - 1" does appear exactly "1" times
+        Then I expect that element "span*=Pagination Test - 2" does appear exactly "1" times
+        Then I expect that element "span*=Pagination Test - 3" does appear exactly "1" times
+        Then I expect that element "span*=Pagination Test - 4" does appear exactly "1" times
+        Then I expect that element "span*=Pagination Test - 5" does appear exactly "1" times
 
     Scenario: Pagination - 3 pages appears from start
         When I set env variables:

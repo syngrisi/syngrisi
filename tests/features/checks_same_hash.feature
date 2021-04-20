@@ -51,15 +51,16 @@ Feature: Checks with same Hash
         Then I expect that VRS check "1/1 Check Same Hash - 1" has "Passed" status
 
         # check baseline name
-        When I click on the element "a[name='Check Same Hash - 1']"
-        When I click on the element "a[name='baseline_link']"
+        When I click on the element "div[name='Check Same Hash - 1']"
+        When I click on the element "[title='baseline snapshoot']"
         When I wait for "2" seconds
         Then I expect that element "//div[@name='title' and text()='Check Same Hash - 1']" is displayed
 
         # check actual name (= baseline name)
         When I click on browser back button
         When I wait for "2" seconds
-        When I click on the element "a[name='actual_link']"
+        When I click on the element "[title='actual snapshoot']"
+
         When I wait for "2" seconds
         Then I expect that element "//div[@name='title' and text()='Check Same Hash - 1']" is displayed
 
@@ -97,8 +98,8 @@ Feature: Checks with same Hash
         Then I expect that VRS check "1/1 Check Same Hash - 2" has "New" status
 
         # check baseline name (should be as check name)
-        When I click on the element "a[name='Check Same Hash - 2']"
-        When I click on the element "a[name='baseline_link']"
+        When I click on the element "div[name='Check Same Hash - 2']"
+        When I click on the element "[title='baseline snapshoot']"
         When I wait for "2" seconds
         Then I expect that element "//div[@name='title' and text()='Check Same Hash - 2']" is displayed
 
@@ -150,7 +151,7 @@ Feature: Checks with same Hash
 #
 #        # check baseline name (should be as check name)
 #        When I click on the element "a[name='Check Same Hash - 2']"
-#        When I click on the element "a[name='baseline_link']"
+#        When I click on the element "[title='baseline snapshoot']"
 #        When I wait for "2" seconds
 #        Then I expect that element "//div[@name='title' and text()='Check Same Hash - 2']" is displayed
 #

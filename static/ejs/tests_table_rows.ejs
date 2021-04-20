@@ -1,15 +1,17 @@
-<? //Object.values(checksByTestGroupedByIdent).forEach(function(test){ ?>
 <? for(const test of Object.values(checksByTestGroupedByIdent)){ ?>
-<? //if(!checksByTestGroupedByIdent[test.id][groupName]['checks'].length < 1) continue; ?>
 
 <!--TEST_INFO START-->
 <div name="testinfo"
-     class="testinfo testinfo_<?= test.id ?> row  py-2 test-row pr-0 button btn-light border-secondary1 m-0 w-100">
+     class="testinfo testinfo_<?= test.id ?> row py-2 test-row pr-0 button m-0 w-100"
+     data-toggle="collapse" style="cursor: pointer" onclick="drawTestChecksPreviews('<?= test.id ?>');"
+     data-target="#testchecks_<?= test.id ?>">
+    <!--TEST CHECKBOX-->
     <div class="cell-input cell col-1 col-lg-auto border-bottom1 border-right1 text-truncate small d-flex align-items-center ">
         <input id="<?= test.id ?>"
                name="test"
                type="checkbox">
     </div>
+    <!--TEST STATUS-->
     <? const statusesClassesBg = {
                     Failed: 'bg-danger',
                     Passed: 'bg-success',
@@ -29,173 +31,205 @@
                 }
         ?>
 
-
         <span name="cell-status" id="<?= test.id ?>_cell-status"
-              style="display: none"
-              class="<?= statusesClasses[test.status] ?> small bg-gu"
+              class="<?= statusesClasses[test.status] ?> small bg-gu hide"
               data-toggle="tooltip"
               data-placement="top"
               title="<?= test.status ?>"><?= test.status ?></span>
-        <span data-toggle="tooltip" data-original-title="<?= test.blinking ?>">
-                    <? if(test.blinking > 0) { ?>
-                        <img src="../../../../static/blinking.png" class="img-fluid blink-icon" alt="blink">
-            <? } ?>
-        </span>
-    </div>
-    <div class="cell-name cell col-4 col-lg-4 border-bottom1 border-right1 text-truncate"
-         data-toggle="collapse" style="cursor: pointer" onclick="drawTestChecksPreviews('<?= test.id ?>');"
-         data-target="#testchecks_<?= test.id ?>" id="test-checks-wrapper_<?= test.id ?>">
-        <div class="row">
-            <div class="col">
-                <a data-toggle="collapse" class="collapsing1" href="#testchecks_<?= test.id ?>"
-                   onclick="//drawTestChecksPreviews('<?= test.id ?>'); ">
-                                <span name="cell-name" id="<?= test.id ?>_cell-name" class="text-secondary small"
-                                      data-toggle="tooltip"
-                                      data-placement="top"
-                                      title="<?= test.name ?>"><?= test.name ?></span>
-                </a>
-            </div>
-        </div>
-        </a>
 
     </div>
-    <? const acceptedStatus = test.markedAs  ? test.markedAs : 'Unaccepted' ?>
-    <div class="cell-accepted-state cell col-1 border-bottom1 border-right1 text-truncate">
-        <div class="row justify-content-end">
-            <div class="col-auto pr-2 pl-2 mr-1 mb-1 border rounded">
-                <small class="text-secondary check-accept-label-test-id_<?= test.id ?>"
-                       style="font-size: 80%"><?= acceptedStatus ?></small>
-            </div>
+
+    <!--NAME-->
+    <div class="cell-name cell pl-3 col-4-5 text-truncate">
+        <div data-toggle="collapse">
+            <i data-toggle="tooltip" data-original-title="<?= test.blinking ?>">
+                <? if(test.blinking > 0) { ?>
+                <img src="../../../../static/blinking.png" class="img-fluid blink-icon" alt="blink">
+                <? } ?>
+            </i>
+            <span name="cell-name" id="<?= test.id ?>_cell-name" class="text-secondary small"
+                  data-toggle="tooltip"
+                  data-placement="top"
+                  title="<?= test.name ?>"><?= test.name ?>
+            </span>
         </div>
     </div>
-    <div class="cell-date cell col-2 border-bottom1 border-right1 text-truncate">
-                                <span name="cell-date" id="<?= test.id ?>_cell-date" class="text-primary small"
-                                      data-toggle="tooltip"
-                                      data-placement="top"
-                                      title="<?= test.formattedUpdatedDate ?>"><?= moment(test.updatedDate).format('YYYY-MM-DD hh:mm'); ?>
-                                </span>
+
+    <!--CREATOR-->
+    <div class="cell-name cell col-1-5 text-truncate">
+
+        <div data-toggle="collapse">
+            <span name="cell-creator" id="<?= test.id ?>_cell-creator" class="text-secondary small"
+                  data-toggle="tooltip"
+                  data-placement="top"
+                  title="???????">
+                <?= 'vsilakou@exadel.com' ?>
+            </span>
+        </div>
     </div>
-    <div class="cell-browser cell col-1 col-lg-1 pl-2 pr-1 border1-bottom border-right1 text-truncate">
+
+    <!--ACCEPTED STATE-->
+    <? const acceptedStatus = test.markedAs  ? test.markedAs : 'Unaccepted' ?>
+    <div class="cell-accepted-state cell col-1 pl-2 pr-0 text-truncate">
+        <span class="text-secondary check-accept-label-test-id_<?= test.id ?>"
+               style="font-size: 80%"><?= acceptedStatus ?></span>
+    </div>
+
+    <!--DATE-->
+    <div class="cell-date cell col-1-5 pl-2 text-truncate">
+        <span name="cell-date" id="<?= test.id ?>_cell-date" class="text-secondary small"
+              data-toggle="tooltip"
+              data-placement="top"
+              title="<?= test.formattedUpdatedDate ?>"><?= moment(test.updatedDate).format('YYYY-MM-DD hh:mm'); ?>
+        </span>
+    </div>
+
+    <!--BROWSER-->
+    <div class="cell-browser cell col-1-3 pl-2 pr-1 text-truncate" id="<?= test.id ?>_cell-browser">
+        <? const browserIconMap =  {
+            chrome: 'fab fa-chrome',
+            'chrome [HEADLESS]': 'fab fa-chrome',
+            Chrome: 'fab fa-chrome',
+            firefox: 'fab fa-firefox',
+            Firefox: 'fab fa-firefox',
+            msedge: 'fab fa-edge',
+            Msedge: 'fab fa-edge',
+            Safari: 'fab fa-safari',
+            safari: 'fab fa-safari',
+            'internet explorer': 'fab fa-internet-explorer'
+        }?>
         <? const browserVersion =  (test.browserVersion === 'undefined') ? '?' : test.browserVersion?>
-        <span name="cell-browser" id="<?= test.id ?>_cell-browser" class="text-primary small"
-              data-toggle="tooltip"
-              data-placement="top"
-              title="<?= test.browserName ?> <?= test.browserVersion ?>"><?= test.browserName ?></span> <sup
-                class="text-secondary"><?= browserVersion ?></sup>
+        <i class="<?= browserIconMap[test.browserName] ? browserIconMap[test.browserName] : 'fas fa-question' ?> >"
+           title="<?= test.browserName ?> <?= test.browserVersion ?>"
+           data-toggle="tooltip"
+           data-placement="top"
+        ></i>
+        <span class="small text-secondary"><?= test.browserName ?></span>
+        <sup class="text-secondary" style="margin-left: -2  px;"><?= browserVersion ?></sup>
     </div>
-    <div class="cell-platform cell col-1 pl-1 col-lg-1 border-bottom1 border-right1 text-truncate">
-        <i class="fab fa-apple"></i>
-        <span name="cell-os" id="<?= test.id ?>_cell-os" class="text-primary small"
-              data-toggle="tooltip"
-              data-placement="top"
-              title="<?= test.os ?>"><?= test.os ?></span>
+
+    <!--PLATFORM-->
+    <? const osIconMap =  {
+            'Linux x86_64': 'fab fa-linux',
+            'iPhone XS': 'fas fa-mobile-alt',
+            'Samsung Galaxy Tab S4': 'fas fa-tablet-alt',
+            'Win32': 'fab fa-windows',
+            'WINDOWS': 'fab fa-windows',
+            'MacIntel': 'fab fa-apple',
+        }?>
+    <div class="cell-platform cell pl-1 pr-0 col-0-3 text-truncate"
+         id="<?= test.id ?>_cell-os"
+         data-toggle="tooltip"
+         data-placement="top"
+         title="<?= test.os ?>"
+    >
+        <i class="<?=osIconMap[test.os] ? osIconMap[test.os] : 'fas fa-question' ?>"></i>
+        <span name="cell-os" class="text-primary small hide"><?= test.os ?></span>
     </div>
-    <div class="cell-viewport cell col-1 border-bottom1 pr-0 text-truncate">
-        <? let viewport; ?>
-        <? let toolTip; ?>
-        <? if(!test.calculatedViewport || !test.calculatedViewport.includes('x')) { ?>
-        <? viewport = '≠'; ?>
-        <? toolTip = `there is ${test.calculatedViewport} different viewports in this test`; ?>
-        <? } else { ?>
-        <? viewport = test.calculatedViewport; ?>
-        <? toolTip = `${test.calculatedViewport} - all checks in this test has the same viewport`; ?>
-        <? } ?>
-        <span name="cell-viewport" id="<?= test.id ?>_cell-viewport" class="text-primary small"
+
+    <!--VIEWPORT-->
+    <div class="cell-viewport cell pl-3 col-1-2 border-bottom1 pr-0 text-truncate">
+        <? let viewport;
+        let toolTip;
+        if(!test.calculatedViewport || !test.calculatedViewport.includes('x')) {
+        viewport = '≠';
+        toolTip = `there is ${test.calculatedViewport} different viewports in this test`;
+        } else {
+        viewport = test.calculatedViewport;
+        toolTip = `${test.calculatedViewport} - all checks in this test has the same viewport`;
+        } ?>
+
+        <span name="cell-viewport" id="<?= test.id ?>_cell-viewport" class="text-secondary small"
               data-toggle="tooltip"
               data-placement="top"
               title="<?= toolTip ?>"><?= viewport ?></span>
     </div>
 </div>
-<!--TEST_INFO END-->
+<!--/TEST_INFO-->
 
 <!-- CHECKS START -->
-<div name="checks-previews" class="all-checks row w-100 m-0 collapsing "
-     id="testchecks_<?= test.id ?>">
+<div name="checks-previews" class="all-checks row w-100 m-0 collapsing pl-3" id="testchecks_<?= test.id ?>">
 
     <!--  foreach checks start-->
-    <? //Object.keys(checksByTestGroupedByIdent[test.id]).forEach(function(groupName, ind){ ?>
-    <? // console.log(Object.keys(checksByTestGroupedByIdent[test.id])) ?>
+    <?
+    const groups = Object.keys(checksByTestGroupedByIdent[test.id]).filter(function (x){ return x.includes('ident') }).entries()
+    for(const [index, groupName] of groups){
+        const group = checksByTestGroupedByIdent[test.id][groupName]['checks'];
+        // const check = group[0];
+        console.log({group});
+        const check = group[group.length-1];
+        // console.log({check});
 
-    <? for(const [index, groupName] of Object.keys(checksByTestGroupedByIdent[test.id]).filter(x =>
-    x.includes('ident')).entries()){ ?>
-    <? //if(!checksByTestGroupedByIdent[test.id][groupName]) continue; ?>
-    <? // console.log({groupName}) ?>
-    <? const group = checksByTestGroupedByIdent[test.id][groupName]['checks'] ?>
-    <? // console.log({group}) ?>
-    <? //if(!group || group.length < 1) continue; ?>
-    <? const check = group[0] ?>
-    <? // console.log({check}) ?>
+        let groupStatus = 'not set'
+        if (group.map(function (g) { return g.status.toString() }).includes('failed')) {
+            groupStatus = 'failed';
+        }
+        if (group.map(function (g) {return g.status.toString()}).includes('failed') && group[group.length - 1].status[0] === 'passed') {
+            groupStatus = 'blinking';
+        }
+        if (!group.map(function (g) {return g.status.toString()}).includes('failed')) {
+            groupStatus = 'passed';
+        }
+        if (check.status == 'new') {
+            groupStatus = 'new';
+    } ?>
 
-    <? let groupStatus = 'not set' ?>
-    <? if (group.map(g => g.status.toString()).includes('failed')) {
-    groupStatus = 'failed'
-    } ?>
-    <? if (group.map(g => g.status.toString()).includes('failed') && group[group.length - 1].status[0] === 'passed') {
-    groupStatus = 'blinking'
-    } ?>
-    <? if (!group.map(g => g.status.toString()).includes('failed')) {
-    groupStatus = 'passed'
-    } ?>
-    <? if (check.status == 'new') {
-                    groupStatus = 'new'
-                } ?>
-    <div class="check col-4 border_ text-secondary mb-3 bg-light  pl-1"
-         id="check_<?= check._id ?>" diffId="<?= check.diffId ?>"
-         baselineId="<?= check.baselineId ?>"
-         checkStatus="<?= groupStatus ?>">
-        <? const statusesClasses = {
+    <? const statusesClasses = {
                         passed: 'bg-success',
                         new: 'bg-info',
                         failed: 'bg-danger',
                         blinking: 'bg-warning'
                     } ?>
-        <div class="status-border image-wrapper column <?= statusesClasses[groupStatus] ?> w-100 p-2 m-1">
+    <div class="col-4 pr-3 pl-2 pt-2 mb-3" id="check_<?= check._id ?>" diffId="<?= check.diffId ?>"
+         baselineId="<?= check.baselineId ?>"
+         checkStatus="<?= groupStatus ?>">
+        <div class="row pl-1">
+            <div name="check-status" class="col-auto <?= statusesClasses[groupStatus] ?> pt-1 pb-1 pl-1 pr-1"
+                 style="width: 2px"></div>
+            <div id="check1_<?= check._id ?>" class="col-11 pl-0 pb-1 pr-1 shadow"
+                 baselineId="<?= check.baselineId ?>"
+                 checkStatus="<?= groupStatus ?>">
+                <!--PREVIEW START-->
+                <div name="preview-container" class="check-image column baseline ml-0"
+                     data-toggle="tooltip"
+                     data-html="true"
+                     data-placement="right"
+                     title="Status: [<?= groupStatus ?>]
+                     Name: <?= check.name ?>
+                     Accepted by: <?= check.markedByUsername ?>
+                     Accepted date: <?= check.markedDate ?>
+                     Marked as: <?= check.markedAs ?>
+                     Created date: <?= check.formattedUpdatedDate ?>
+                     Created by: <?= check.creator ?>
+                     BrowserName: <?= check.browserName ?>
+                     BrowserVersion: <?= check.browserVersion ?>
+                     Viewport: <?= check.viewport ?>
+                     Platform: <?= check.os ?>
+                     Id: <?= check._id ?>
+                     ActualId: <?= check.actualSnapshotId ?>
+                     BaselineId: <?= check.baselineId ?>">
+                    <? console.log({check}) ?>
+                    <? console.log({diffid: check.diffid}) ?>
+                    <? const snapshootId = groupStatus === 'new' ? check.baselineId : check.actualSnapshotId ?>
+                    <? console.log({snapshootId}) ?>
 
-            <div name="preview-container" class="check-image column baseline m-1"
-                 data-toggle="tooltip"
-                 data-html="true"
-                 data-placement="right"
-                 title="Status: [<?= groupStatus ?>]</br>
-                                             Name: <?= check.name ?> </br>
-                                             Created: <?= check.formattedUpdatedDate ?> </br>
-                                             BrowserName: <?= check.browserName ?> </br>
-                                             BrowserVersion: <?= check.browserVersion ?> </br>
-                                             Viewport: <?= check.viewport ?> </br>
-                                             Platform: <?= check.os ?> </br>
-                                             Id: <?= check._id ?> </br>
-                                             ActualId: <?= check.actualSnapshotId ?></br>
-                                             BaselineId: <?= check.baselineId ?></br>">
+                    <div onclick="document.location.href='diffview?diffid=<?= check.diffId ?>&actualid=<?= check.actualSnapshotId ?>&expectedid=<?= check.baselineId ?>&checkid=<?= check._id ?>'"
+                         href="/checksgroupview?id=<?= check._id ?>" name="<?= check.name ?>" class="group-links-view"
+                         snapshot="<?= snapshootId ?>" id="grouplink_<?= check._id ?>">
+                        <!--OVERLAY VIEWPORT-->
+                        <div class="preview-overlay-text h4 white bg-maroon"><?= check.viewport ?></div>
 
-                <? const snapshootId = groupStatus === 'new' ? check.baselineId : check.actualSnapshotId ?>
-<!--                <? //if (groupStatus == 'new' || groupStatus == 'passed' || groupStatus === 'blinking') { ?>-->
-<!--                &lt;!&ndash;CHECK LINK&ndash;&gt;-->
-<!--                <a href="/checksgroupview?id=<?= check._id ?>" name="<?= check.name ?>" class="group-links-view"-->
-<!--                   snapshot="<?= snapshootId ?>" id="grouplink_<?= check._id ?>">-->
-<!--                    <div class="preview-overlay-text h4 white bg-maroon"><?= check.viewport ?></div>-->
-
-<!--                    <canvas class="snapshoot-canvas w-100"-->
-<!--                            id="canvas_snapshoot_<?= check._id ?>"-->
-<!--                    ></canvas>-->
-<!--                </a>-->
-<!--                <? //} else { ?>-->
-                <a href="/checksgroupview?id=<?= check._id ?>" name="<?= check.name ?>" class="group-links-view"
-                   snapshot="<?= snapshootId ?>" id="grouplink_<?= check._id ?>">
-                    <div class="preview-overlay-text h4 white bg-maroon"><?= check.viewport ?></div>
-                    <!--123 -->
-
-
-
-
-
-                    <canvas class="snapshoot-canvas w-100"
-                            id="canvas_snapshoot_<?= check._id ?>"
-                    ></canvas>
-                </a>
-                <? // } ?>
+                        <canvas class="snapshoot-canvas w-100"
+                                id="canvas_snapshoot_<?= check._id ?>"
+                        ></canvas>
+                    </div>
+                </div>
             </div>
+        </div>
+        <div class="row">
             <!-- SNAPSHOT TOOLBAR START-->
-            <div class="container pl-0 pr-0">
-                <div class="check-mini-toolbar d-flex row justify-content-around1 text-light pl-1 m-0">
+            <div class="container pl-1 pr-4 mt-1">
+                <div class="check-mini-toolbar d-flex row justify-content-around1 text-dark pl-1 m-0">
                     <!--CHECKBOX-->
                     <div class="col-1 pr-1 pl-1 pt-1">
                         <input name="check-input" id="<?= check._id ?>"
@@ -203,29 +237,31 @@
                                baselineId="<?= check.baselineId ?>"
                                type="checkbox">
                     </div>
-
                     <!-- CHECK NAME AND COUNT-->
                     <?  let checksCount = Object.keys(checksByTestGroupedByIdent[test.id]).filter(x =>
                     x.includes('ident')).length ?>
                     <?  let groupChecksCount = (checksByTestGroupedByIdent[test.id][groupName].checks.length > 1) ?
-                    `(${checksByTestGroupedByIdent[test.id][groupName].checks.length})` : '' ?>
+                    `(${checksByTestGroupedByIdent[test.id][groupName].checks.length})`
+                    : '' ?>
                     <div name="check-name"
                          class="col-8 ml-0 mr-0 pt-2 pb-0 float-right1 align-middle text-truncate  small p-0"
                          data-toggle="tooltip"
                          data-placement="top"
-                         title="<?= check.name ?>">
-                        <?= (index + 1) ?>/<?= checksCount ?>
-                        <sup><?= groupChecksCount ?></sup> <?= check.name ?>
+                         title='<?= check.name ?>'>
+                        <?= (index + 1) ?>/<?= checksCount ?><?- groupChecksCount ? `<sup name="group-count"><a
+                                name="group-count-link"
+                                href='/checksgroupview?id=${check._id}'>${groupChecksCount}</a></sup>` : ''
+                        ?> <?= check.name ?>
                     </div>
 
                     <!-- CHECK BUTTONS -->
                     <div name="check-buttons"
                          class="col-3 pr-0 pl-0 pt-1 float-right flex-row-reverse1">
                         <div class="container pl-0 pr-0">
-                            <div class="row justify-content-end  flex-row-reverse mr-0 ml-1">
-                                <div class="col-3 p-0 float-right1">
+                            <div class="row justify-content-end1  float-right flex-row-reverse mr-0">
+                                <div class="col-3 ml-2 p-0 float-right1">
                                     <a
-                                            class="btn-check btn-sm ml-1 rounded-0 border-0"
+                                            class="btn-check btn-mini-toolbar btn-sm ml-1 rounded-0 border-0"
                                             style="line-height: 0.1; padding: 2px;"
                                             id="checkbutton_<?= check._id ?>"
                                             data-toggle="tooltip"
@@ -236,34 +272,19 @@
                                     </a>
                                 </div>
                                 <div class="col-3 ml-0 p-0 float-right1">
-                                    <? // if(groupStatus == 'failed') { ?>
                                     <a
-                                            class="btn-check btn-sm ml-1  rounded-0 border-0"
+                                            class="accept-button btn-mini-toolbar btn-check btn-sm ml-1 rounded-0 border-0"
                                             style="line-height: 0.1; padding: 2px;"
                                             id="acceptbutton_<?= check._id ?>"
                                             data-toggle="tooltip"
                                             data-placement="top"
                                             onclick="acceptOneCheck('<?= check._id ?>', '<?= check.actualSnapshotId ?>', '<?= check.baselineId ?>', '<?= test.id ?>')"
-                                            title="Accept the actual snapshoot as baseline"
                                     >
 
-                                        <i class="check-accept-button-check-id_<?= check._id ?> <?= check.markedAs === 'accepted' ? 'accepted-button-icon' : 'not-accepted-button-icon' ?> accept-button-icon fas fa-thumbs-up fa-1x"></i>
+                                        <i class="check-accept-button-check-id_<?= check._id ?> <?= check.markedAs === 'accepted' ? 'accepted-button-icon' : 'not-accepted-button-icon' ?> accept-button-icon fas fa-thumbs-up fa-1x"
+                                           title="<?- check.markedByUsername ? `Accepted by: ${check.markedByUsername} \n Accepted date: ${check.markedDate}` : 'Click here to accept this check'?>"
+                                        ></i>
                                     </a>
-                                    <? // } ?>
-                                </div>
-                                <div class="col-3 ml-2 p-0 float-right1">
-                                    <? if(groupStatus == 'failed') { ?>
-                                    <a
-                                            class="unlink btn-check btn-outline-success1 btn-sm rounded-0 border-0"
-                                            style="line-height: 0.1; padding: 2px;"
-                                            id="comparebutton_<?= check._id ?>"
-                                            data-toggle="tooltip"
-                                            data-placement="top"
-                                            title="Compare snapshots"
-                                            href="diffview?diffid=<?= check.diffId ?>&actualid=<?= check.actualSnapshotId ?>&expectedid=<?= check.baselineId ?>&checkid=<?= check._id ?>">
-                                        <i class="fas fa-exchange-alt fa-1x"></i>
-                                    </a>
-                                    <? } ?>
                                 </div>
                             </div>
                         </div>
@@ -275,8 +296,8 @@
     </div>
 
     <? }; ?>
-
     <!--  foreach checks end-->
+
 </div>
 <!-- all-checks-->
 <? }; ?>

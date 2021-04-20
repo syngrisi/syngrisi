@@ -6,7 +6,7 @@ Feature: Reset Password
         When I set env variables:
         """
         TEST: 1
-        SYNGRISY_AUTH: 0
+        SYNGRISI_AUTH: 0
         """
         Given I start VRS server with parameters:
         """
@@ -21,7 +21,7 @@ Feature: Reset Password
         When I set env variables:
         """
         TEST: 0
-        SYNGRISY_AUTH: 1
+        SYNGRISI_AUTH: 1
         """
         Given I start VRS server with parameters:
         """
@@ -62,7 +62,7 @@ Feature: Reset Password
         When I set env variables:
         """
         TEST: 0
-        SYNGRISY_AUTH: 1
+        SYNGRISI_AUTH: 1
         """
         Given I start VRS server with parameters:
         """

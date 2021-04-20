@@ -1,17 +1,17 @@
 const hasha = require('hasha');
 const YAML = require('yaml');
-const {spawn} = require('child_process');
+const { spawn } = require('child_process');
 const got = require('got');
 const frisby = require('frisby');
 const fs = require('fs');
-const {Given, When, Then} = require('cucumber');
-const {getDomDump} = require('@syngrisi/syngrisi-wdio-sdk');
+const { Given, When, Then } = require('cucumber');
+const { getDomDump } = require('@syngrisi/syngrisi-wdio-sdk');
 const VRSDriver = require('@syngrisi/syngrisi-wdio-sdk').vDriver;
 const checkVRS = require('../../src/support/check/checkVrs').default;
 const waitForAndRefresh = require('../../src/support/action/waitForAndRefresh').default;
 
-const {saveRandomImage} = require('../../src/utills/common');
-const {TableVRSComp} = require('../../src/PO/vrs/tableVRS.comp');
+const { saveRandomImage } = require('../../src/utills/common');
+const { TableVRSComp } = require('../../src/PO/vrs/tableVRS.comp');
 
 Given(/^I setup VRS driver with parameters:$/, async (params) => {
     const drvOpts = YAML.parse(params);
@@ -51,7 +51,7 @@ Given(/^I stop VRS session$/, async () => {
     await browser.vDriver.stopTestSession();
 });
 
-When(/^I start VRS server with parameters:$/, {timeout: 600000}, function (params) {
+When(/^I start VRS server with parameters:$/, { timeout: 600000 }, (params) => {
     const srvOpts = YAML.parse(params);
 
     // const cmdPath = browser.config.rootPath + '/vrs/';
@@ -65,10 +65,24 @@ When(/^I start VRS server with parameters:$/, {timeout: 600000}, function (param
         .homedir();
     const nodePath = process.env.OLTA_NODE_PATH || (`${homedir}/.nvm/versions/node/v13.13.0/bin`);
     const child = spawn(`${nodePath}/npm`,
-        ['run', 'startdebug', '-g', '--prefix', cmdPath], {env});
-    browser.waitUntil(async () => (await got.get(`http://vrs:${srvOpts.port}/`, {throwHttpErrors: false})).statusCode === 200);
+        ['run', 'startdebug', '-g', '--prefix', cmdPath], { env });
 
-    this.STATE.vrsPid = child.pid;
+    const startDate = new Date() / 1;
+    child.stdout.setEncoding('utf8');
+    child.stdout.on('data', (data) => {
+        console.log(`stdout: ${data}`);
+        fs.appendFileSync(`./.tmp/syngrisi_out_${child.pid}_${startDate}.txt`, data);
+    });
+
+    child.stderr.setEncoding('utf8');
+    child.stderr.on('data', (data) => {
+        console.log(`stderr: ${data}`);
+        fs.appendFileSync(`./.tmp/syngrisi_err_${child.pid}_${startDate}.txt`, data);
+    });
+
+    browser.waitUntil(async () => (await got.get(`http://vrs:${srvOpts.port}/`, { throwHttpErrors: false })).statusCode === 200);
+    browser.pause(3000);
+    browser.syngrisiServer = child;
 });
 
 When(/^I clear test VRS database$/, () => {
@@ -83,7 +97,7 @@ When(/^I clear test VRS database$/, () => {
 
 
 When(/^I kill process which used port: "([^"]*)"$/, (port) => {
-    const {execSync} = require('child_process');
+    const { execSync } = require('child_process');
     const lSoftOut = false;
     browser.waitUntil(() => {
         console.log(`Try to kill apps on port: '${port}'`);
@@ -99,7 +113,7 @@ When(/^I kill process which used port: "([^"]*)"$/, (port) => {
         if (pidsString) {
             try {
                 for (const pid of pidsString.split('\n')) {
-                    console.log({pid});
+                    console.log({ pid });
                     process.kill(pid);
                 }
                 return true;
@@ -117,15 +131,19 @@ When(/^I kill process which used port: "([^"]*)"$/, (port) => {
 
 When(/^I click on "([^"]*)" VRS test$/, (testName) => {
     TableVRSComp.init();
-    TableVRSComp.data.filter((row) => row.name.getText() === testName)[0].name.$('a')
+    TableVRSComp.data.filter((row) => row.name.getText().includes(testName))[0].name.$('div')
         .click();
 });
 
-When(/^I expect that(:? (\d)th)? VRS test "([^"]*)" has "([^"]*)" (status|browser|platform|viewport)$/,
+When(/^I expect that(:? (\d)th)? VRS test "([^"]*)" has "([^"]*)" (status|browser|platform|viewport|accepted status)$/,
     (number, testName, fieldValue, fieldName) => {
         const intNumber = number ? parseInt(number) : 1;
         TableVRSComp.init();
-        const row = TableVRSComp.data.filter((row) => row.name.getText() === testName)[intNumber - 1];
+        const row = TableVRSComp.data.filter((row) => row.name.getText().includes(testName))[intNumber - 1];
+        TableVRSComp.data.forEach((x) => {
+            console.log({ NAME: x.name.getText() });
+        });
+        console.log(row[fieldName].getHTML());
         expect(row[fieldName].$('span'))
             .toHaveTextContaining(fieldValue);
         if (fieldName === 'status') {
@@ -151,8 +169,8 @@ When(/^I expect that(:? (\d)th)? VRS test "([^"]*)" has blink icon$/,
     (number, testName) => {
         const intNumber = number ? parseInt(number) : 1;
         TableVRSComp.init();
-        const row = TableVRSComp.data.filter((row) => row.name.getText() === testName)[intNumber - 1];
-        expect(row.status.$('img'))
+        const row = TableVRSComp.data.filter((row) => row.name.getText().includes(testName))[intNumber - 1];
+        expect(row.name.$('img'))
             .toHaveAttributeContaining('class', 'blink-icon');
     });
 
@@ -160,8 +178,8 @@ Then(/^I expect that VRS check "([^"]*)" has "([^"]*)" status$/, (checkName, exp
     expect($(`.//div[contains(normalize-space(.), '${checkName}')]/../..`))
         .toBeExisting();
 
-    // const border = $("div.all-checks.show").$("div.check-mini-toolbar").$(`.//div[contains(., '${checkName}')]/../..`);
-    const border = $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../..`);
+    const border = $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//div[@name='check-status']`);
+    // "/../../../..//div[@name='check-status']\"/"
     const classStatuses = {
         New: 'bg-info',
         Passed: 'bg-success',
@@ -188,7 +206,7 @@ When(/^I create new VRS Test with:$/, async function (yml) {
     for (const key in params.params) {
         form.append(key, params.params[key]);
     }
-    const response = await frisby.post(params.url, {body: form});
+    const response = await frisby.post(params.url, { body: form });
     console.log(response.json);
     this.saveItem('VRSTestResponse', response);
 });
@@ -210,7 +228,7 @@ Given(/^I create new VRS Check with:$/, async function (yml) {
         form.append('file', fs.createReadStream(params.file));
     }
 
-    const response = await frisby.post(params.url, {body: form});
+    const response = await frisby.post(params.url, { body: form });
     const resp = response.json;
     resp.statusCode = response.status;
     this.saveItem('VRSCheck', resp);
@@ -251,7 +269,7 @@ When(/^I check image with path: "([^"]*)" as "([^"]*)"$/, async function (filePa
     const checkResult = await checkVRS(checkName, imageBuffer);
     this.STATE.check = checkResult;
 });
-When(/^I create "([^"]*)" tests with params:$/, {timeout: 60000000}, async function (num, yml) {
+When(/^I create "([^"]*)" tests with params:$/, { timeout: 60000000 }, async function (num, yml) {
     const params = YAML.parse(yml);
 
     browser.vDriver.setCurrentSuite({
@@ -321,10 +339,10 @@ Then(/^the "([^"]*)" "([^"]*)" should be "([^"]*)"$/, function (itemType, proper
         .toEqual(exceptedValue);
 });
 
-When(/^I wait and refresh page on element "([^"]*)" for "([^"]*)" seconds to( not)* (exist)$/, {timeout: 600000},
+When(/^I wait and refresh page on element "([^"]*)" for "([^"]*)" seconds to( not)* (exist)$/, { timeout: 600000 },
     waitForAndRefresh);
 
-When(/^I start debugger$/, {timeout: 6000000}, () => {
+When(/^I START DEBUGGER$/, { timeout: 6000000 }, () => {
     browser.debug();
 });
 
@@ -332,7 +350,7 @@ When(/^I refresh page$/, () => {
     browser.refresh();
 });
 
-When(/^I wait for "([^"]*)" seconds$/, {timeout: 600000}, (sec) => {
+When(/^I wait for "([^"]*)" seconds$/, { timeout: 600000 }, (sec) => {
     browser.pause(sec * 1000);
 });
 
@@ -357,7 +375,7 @@ Then(/^the current url contains "([^"]*)"$/, (url) => {
     const windowHandles = browser.getWindowHandles();
     const lastWindowHanle = windowHandles[windowHandles.length - 1];
     browser.switchToWindow(lastWindowHanle);
-    expect(browser).toHaveUrl(url, {containing: true});
+    expect(browser).toHaveUrl(url, { containing: true });
 });
 
 Then(/^I expect "([^"]*)" occurrences of (Visible|Clickable|Enabled|Existig|Selected) "([^"]*)"$/, (num, verb, selector) => {
@@ -365,7 +383,7 @@ Then(/^I expect "([^"]*)" occurrences of (Visible|Clickable|Enabled|Existig|Sele
     expect(actualNum).toEqual(parseInt(num));
 });
 
-When(/^I visually check page as "([^"]*)"$/, {timeout: 180000}, async function (checkName) {
+When(/^I visually check page as "([^"]*)"$/, { timeout: 180000 }, async function (checkName) {
     browser.pause(300);
     const imageBuffer = new Buffer((await browser.saveDocumentScreenshot()), 'base64');
     const checkResult = await checkVRS(checkName, imageBuffer);
@@ -401,7 +419,7 @@ When(/^I check image with path: "([^"]*)" as "([^"]*)" and suppress exceptions$/
         const checkResult = await checkVRS(checkName, imageBuffer);
         this.STATE.check = checkResult;
     } catch (e) {
-        this.STATE.check = {error: e};
+        this.STATE.check = { error: e };
         this.saveItem('error', e.message);
     }
 });
@@ -413,19 +431,19 @@ When(/^I login with user:"([^"]*)" password "([^"]*)"$/, (login, password) => {
     $('button*=Login').click();
 });
 
-When(/^I expect that element "([^"]*)" contain value "([^"]*)"$/, function (selector, val) {
+When(/^I expect that element "([^"]*)" contain value "([^"]*)"$/, (selector, val) => {
     const actualValue = $(selector).getValue();
-    console.log({actualValue});
+    // console.log({ actualValue });
     expect(actualValue).toContain(val);
 });
 
-When(/^I expect that element "([^"]*)" contain text "([^"]*)"$/, function (selector, val) {
+When(/^I expect that element "([^"]*)" contain text "([^"]*)"$/, (selector, val) => {
     const actualValue = $(selector).getText();
-    console.log({actualValue});
+    console.log({ actualValue });
     expect(actualValue).toContain(val);
 });
 
-Then(/^page source match:$/, function (source) {
+Then(/^page source match:$/, (source) => {
     const parsedExpectedObj = JSON.parse(source);
     let parseActualdObj = {};
     if ($('pre').isExisting()) {
@@ -433,7 +451,47 @@ Then(/^page source match:$/, function (source) {
     } else {
         parseActualdObj = JSON.parse(browser.getPageSource());
     }
-    console.log({parsedExpectedObj});
-    console.log({parseActualdObj});
+    console.log({ parsedExpectedObj });
+    console.log({ parseActualdObj });
     expect(parseActualdObj.user).toMatchObject(parsedExpectedObj);
+});
+
+When(/^I stop the Syngrisi server$/, () => {
+    browser.syngrisiServer.kill();
+});
+
+When(/^I accept the "([^"]*)" check$/, (checkName) => {
+    expect($(`.//div[contains(normalize-space(.), '${checkName}')]/../..`))
+        .toBeExisting();
+
+    // eslint-disable-next-line max-len
+    $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//a[contains(@class, 'accept-button')]`).click();
+    browser.acceptAlert();
+});
+
+When(/^I expect the "([^"]*)" check has "([^"]*)" acceptance status$/, (checkName, acceptStatus) => {
+    const acceptStatusMap = {
+        accept: 'accepted-button-icon',
+        'not accept': 'not-accepted-button-icon',
+    };
+
+    // eslint-disable-next-line max-len
+    const icon = $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//a[contains(@class, 'accept-button')]/i`);
+
+    expect(icon).toHaveAttrContaining('class', acceptStatusMap[acceptStatus]);
+});
+
+Then(/^I expect that last "([^"]*)" checks with ident "([^"]*)" has (not |)the same "([^"]*)"$/, async function (num, ident, negative, prop) {
+    const checksGroups = JSON.parse((await got('http://vrs:3001/checks')).body);
+    const checks = Object.values(checksGroups);
+    // console.log({ checks });
+    const values = checks.map((x) => x[ident].checks).flat().slice(0, num).map((x) => x.[prop]);
+    expect(values.length).toBeGreaterThan(0);
+    console.log({values})
+    if (negative) {
+        console.log('NEGATIVE')
+        expect(values.every((val, i, arr) => (val) === arr[0])).toBe(false);
+        return
+    }
+    expect(values.every((val, i, arr) => (val) === arr[0])).toBe(true);
 });

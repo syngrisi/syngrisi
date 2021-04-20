@@ -6,7 +6,7 @@ Feature: Logout
         When I set env variables:
         """
         TEST: 1
-        SYNGRISY_AUTH: 0
+        SYNGRISI_AUTH: 0
         """
         Given I start VRS server with parameters:
         """
@@ -21,7 +21,7 @@ Feature: Logout
         When I set env variables:
         """
         TEST: 0
-        SYNGRISY_AUTH: 1
+        SYNGRISI_AUTH: 1
         """
         Given I start VRS server with parameters:
         """
@@ -43,7 +43,7 @@ Feature: Logout
 
         When I open the url "http://vrs:3001/logout"
 
-        When I wait for "3" seconds
+        When I wait for "5" seconds
         When I open the url "http://vrs:3001"
         When I wait for "1" seconds
         When I expect the url to contain "/login"

@@ -17,6 +17,7 @@ async function redrawCheckAcceptedStatus(id) {
         if (check.markedAs === 'accepted') {
             icon.classList.contains('not-accepted-button-icon') && icon.classList.remove('not-accepted-button-icon');
             !icon.classList.contains('accepted-button-icon') && icon.classList.add('accepted-button-icon');
+            icon.setAttribute('title', check.markedByUsername ? `Accepted by: ${check.markedByUsername} \n Accepted date: ${check.markedDate}` : 'Click here to accept this check')
         }
     } catch (e) {
         console.log(`cannot redraw accept check icon with id: '${id}' error: '${e}'`)
@@ -103,19 +104,19 @@ function sort2(prop, order = -1) {
     let parsedOrder;
     if (currentSearch.match(r)) {
         parsedOrder = currentSearch.match(r)[1];
-        console.log({parsedOrder});
+        // console.log({ parsedOrder });
     }
     const inverseOrder = parsedOrder === '1' ? '-1' : '1'
 
     const clearedSearch = removeQueryParamContains(currentSearch, 'sort_');
     let updatedSearch = updateQueryParam(`sort_${prop}_${inverseOrder || order}`, 'true', clearedSearch)
-    console.log({updatedSearch});
+    // console.log({ updatedSearch });
     document.location.href = document.location.origin + updatedSearch;
 }
 
 function updateUrlWithoutReloading(page, title, url) {
     if ("undefined" !== typeof history.pushState) {
-        history.pushState({page: page}, title, url);
+        history.pushState({ page: page }, title, url);
     } else {
         window.location.assign(url);
     }
