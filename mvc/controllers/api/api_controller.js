@@ -280,6 +280,27 @@ function parseSorting(params) {
 }
 
 // users
+
+function getApiKey() {
+    const uuidAPIKey = require('uuid-apikey');
+
+    return uuidAPIKey.create().apiKey;
+}
+
+exports.generateApiKey = async function (req, res) {
+    return new Promise(async function (resolve, reject) {
+        const apiKey = getApiKey();
+        console.log(`Generate Api Key for user: '${req.user.username}'`);
+        const hash = hasha(apiKey);
+        const user = await User.findOne({ username: req.user.username });
+        user.apiKey = hash;
+        await user.save();
+
+        res.status(200).json({ apikey: apiKey });
+        return resolve();
+    })
+};
+
 exports.createUser = async function (req, res) {
     return new Promise(
         async function (resolve, reject) {
@@ -318,7 +339,7 @@ exports.getUsers = async function (req, res) {
     })
 };
 
-exports.updateUser = async function (req, res) {
+const updateUser = async function (req, res) {
     return new Promise(
         async function (resolve, reject) {
             try {
@@ -353,6 +374,8 @@ exports.updateUser = async function (req, res) {
             }
         });
 };
+
+exports.updateUser = updateUser;
 
 exports.removeUser = function (req, res) {
     return new Promise(async function (resolve, reject) {
@@ -591,9 +614,12 @@ exports.createCheck = async function (req, res) {
     return new Promise(async function (resolve, reject) {
             let test;
             let suite;
+            let currentUser;
             try {
                 console.log(`CREATE check name: '${prettyCheckParams(req.body.name)}'`);
-                let executionTimer = process.hrtime()
+                let executionTimer = process.hrtime();
+                currentUser = await User.findOne({ apiKey: req.headers.apikey }).exec();
+
                 checkRequestBody: {
                     if (!req.body.testid) {
                         const errMsg = `Cannot create check without 'testid' parameter, try to initialize session at first. parameters: '${JSON.stringify(req.body)}'`
@@ -631,7 +657,11 @@ exports.createCheck = async function (req, res) {
                     }
                 }
                 suite = await orm.createSuiteIfNotExist({ name: req.body.suitename || 'Others' });
-                orm.updateItem('VRSTest', { _id: test.id }, { suite: suite.id });
+                orm.updateItem('VRSTest', { _id: test.id }, {
+                    suite: suite.id,
+                    creatorId: currentUser._id,
+                    creatorUsername: currentUser.username
+                });
 
                 let params = {
                     testname: req.body.testname,
@@ -646,7 +676,9 @@ exports.createCheck = async function (req, res) {
                     suite: suite.id,
                     app: (await orm.createAppIfNotExist({ name: req.body.appName || 'Unknown' })).id,
                     domDump: req.body.domdump,
-                    run: test.run
+                    run: test.run,
+                    creatorId: currentUser._id,
+                    creatorUsername: currentUser.username
                 }
 
                 const fileData = req.files ? req.files.file.data : false
@@ -852,7 +884,8 @@ exports.getChecks = async function (req, res) {
             // console.log({groups})
             checksByTestGroupedByIdent[test.id] = groups;
             checksByTestGroupedByIdent[test.id]['id'] = test.id;
-            checksByTestGroupedByIdent[test.id]['creator'] = test.creator;
+            checksByTestGroupedByIdent[test.id]['creatorId'] = test.creatorId;
+            checksByTestGroupedByIdent[test.id]['creatorUsername'] = test.creatorUsername;
             checksByTestGroupedByIdent[test.id]['markedAs'] = test.markedAs;
             checksByTestGroupedByIdent[test.id]['markedByUsername'] = test.markedByUsername;
             checksByTestGroupedByIdent[test.id]['markedDate'] = test.markedDate;
@@ -867,7 +900,7 @@ exports.getChecks = async function (req, res) {
             checksByTestGroupedByIdent[test.id]['os'] = test.os;
             checksByTestGroupedByIdent[test.id]['blinking'] = test.blinking;
             checksByTestGroupedByIdent[test.id]['updatedDate'] = test.updatedDate;
-            checksByTestGroupedByIdent[test.id]['startDate'] = test.startDate;
+            checksByTestGroupedByIdent[test.id]['createdDate'] = test.createdDate;
             checksByTestGroupedByIdent[test.id]['suite'] = test.suite;
             checksByTestGroupedByIdent[test.id]['run'] = test.run;
         }
@@ -1045,6 +1078,9 @@ exports.stopSession = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
             let testId = req.params.testid;
+            if (!testId || testId === 'undefined') {
+                return reject(fatalError(req, res, 'Cannot stop test Session testId is empty'));
+            }
             await waitUntil(async () => {
                 return (await Check.find({ test: testId }).exec())
                     .filter(ch => ch.status.toString() !== 'pending').length > 0;
@@ -1092,7 +1128,7 @@ exports.stopSession = async function (req, res) {
             res.json(result);
             return resolve(result);
         } catch (e) {
-            fatalError(req, res, e)
+            fatalError(req, res, e);
             return reject(e);
         }
     });

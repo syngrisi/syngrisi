@@ -1,10 +1,12 @@
 const path = require('path');
-const {hooks} = require('./src/support/hooks');
+const { hooks } = require('./src/support/hooks');
 const WdioScreenshot = require('wdio-screenshot-v5');
+const hasha = require('hasha');
 
 
 exports.config = {
     rootPath: process.cwd(),
+    apiKey: process.env.SYNGRISI_API_KEY ? hasha(process.env.SYNGRISI_API_KEY) : '123',
     //
     // ====================
     // Runner Configuration
@@ -60,8 +62,9 @@ exports.config = {
         //
         browserName: 'Chrome',
         'goog:chromeOptions': {
-            args: process.env.HL === '1' ? ['--headless', '--disable-gpu'] : [],
-            prefs: {
+            args: process.env.HL === '1' ? ['--headless', '--enable-automation'] : ['--enable-automation'],
+            'prefs': {
+                'credentials_enable_service': false,
                 'download': {
                     'prompt_for_download': false,
                     'directory_upgrade': true,
@@ -194,7 +197,7 @@ exports.config = {
         timeout: process.env['DBG'] === '1' ? 600000 : 60000,
     },
 
-    beforeStep: function ({uri, feature, step}, context) {
+    beforeStep: function ({ uri, feature, step }, context) {
         if (process.env['LOG'] === '1' || process.env['DBG'] === '1') {
             console.log(`STEP BEFORE: ${step.step.text}:${step.sourceLocation.uri}:${step.step.location.line}, ${step.step.location.column}`);
         }

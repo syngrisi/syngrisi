@@ -23,7 +23,7 @@
 <body>
 <div name="main" class="main container-fluid pl-3 pr-3 ml-0 mh-100">
     <div name="page-head" class="row bg-olive sticky-top">
-<!--        Logo-->
+        <!--        Logo-->
         <div class="col-3 pl-0 pb-1 text-light"
              id="logo-and-label-container">
             <%- include('components/logo_and_link', {location: 'Admin'}) %>
@@ -36,7 +36,8 @@
 
             <%- include('components/user_icon', {user: currentUser}) %>
 
-            <a name="reload-tests" type="button" class="btn btn-secondary bg-olive border-0 header-hover" onclick="location.reload()"
+            <a name="reload-tests" type="button" class="btn btn-secondary bg-olive border-0 header-hover"
+               onclick="location.reload()"
                title="reload page">
                 <i class="fas fa-sync-alt fa-1x"></i>
             </a>
@@ -178,7 +179,9 @@
             col('lastName', user._id, '1', user.lastName),
             `<select name="role" username="${user.username}" class="form-select" aria-label="role" id='input_${user.username}_${user._id}'\`>
                     <option value="${user.role}">${user.role}</option>
-                    <option value="${user.role === 'admin' ? 'user' : 'admin'}">${user.role === 'admin' ? 'user' : 'admin'}</option>
+                    ${(user.role !== 'admin') ? '<option value="admin">admin</option>' : ''}
+                    ${(user.role !== 'user') ? '<option value="user">user</option>' : ''}
+                    ${(user.role !== 'reviewer') ? '<option value="reviewer">reviewer</option>' : ''}
              </select>`,
             col('password', user._id, '1', '', 'enabled', 'password'),
             col('apiKey', user._id, 'auto', user.apiKey, 'disabled'),
@@ -315,7 +318,7 @@
             element.id = uuidv4();
             const sendLink = element.getElementsByClassName('send-new-user-button')[0];
             sendLink.setAttribute('onclick', `createUser('${element.id}')`);
-            console.log({sendLink});
+            // console.log({ sendLink });
             // console.log(element)
             $("#users-table-end").after(element);
         });
@@ -340,7 +343,7 @@
                 taskTemplate = await getRequest(`../../../../static/ejs/admin_${searchObject.task}.ejs`);
                 taskHtml = '<div class="row">' + ejs.render(taskTemplate, {
                     data: data
-                }, {delimiter: '?'}) + '</div>';
+                }, { delimiter: '?' }) + '</div>';
             }
         }
     }

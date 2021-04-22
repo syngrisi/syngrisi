@@ -1,5 +1,5 @@
 @integration
-Feature: Check acceptance
+Feature: Check Acceptance
 
     Background:
         Given I clear test VRS database

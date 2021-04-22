@@ -58,6 +58,10 @@
     "pino-http": "^5.2.0",
     "querystring": "^0.2.1",
     "request": "^2.88.0",
-    "resemblejs": "^3.2.4"
+    "resemblejs": "^3.2.4",
+    "uuid-apikey": "^1.5.2"
+  },
+  "devDependencies": {
+    "form-data": "^4.0.0"
   }
 }

@@ -142,9 +142,20 @@ function sort(prop, order = -1) {
     document.location.href = outUri;
 }
 
-function showNotification(msg, status = 'Success') {
-    document.getElementById("notify-header").textContent = status;
-    document.getElementById("notify-message").textContent = msg;
+function showNotification(msg, status = 'Success', timeout = 7000) {
+    if (status === 'SuccessInput') {
+        const textArea = document.createElement('textarea');
+        textArea.id = 'notification-textarea'
+        textArea.classList.add('w-100');
+
+        textArea.innerText = msg;
+        document.getElementById("notify-message").appendChild(textArea);
+        document.getElementById("notify-header").textContent = 'Success';
+    } else {
+        document.getElementById("notify-header").textContent = status;
+        document.getElementById("notify-message").textContent = msg;
+    }
+
     document.getElementById("notify-rect").setAttribute('fill', '#2ECC40');
     if (status === 'Error')
         document.getElementById("notify-rect").setAttribute('fill', '#FF4136');
@@ -152,7 +163,7 @@ function showNotification(msg, status = 'Success') {
     setTimeout(function () {
             status === 'Success' && $('#notify').hide()
         },
-        7000)
+        timeout);
 }
 
 async function removeOneCheck(id, testId) {
@@ -398,7 +409,8 @@ function getRequest(path, verbose) {
                     console.log(`Successfully finish get request for: '${path}'`);
                     return resolve(xhr.responseText);
                 } else {
-                    console.log('Request failed. Returned status of ' + xhr.status + 'resp:' + xhr.responseText);
+                    console.log('Request failed. Returned status of ' + xhr.status + ' resp:' + xhr.responseText);
+                    return reject(xhr.responseText);
                 }
             };
             xhr.send();

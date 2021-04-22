@@ -9,6 +9,7 @@ const { getDomDump } = require('@syngrisi/syngrisi-wdio-sdk');
 const VRSDriver = require('@syngrisi/syngrisi-wdio-sdk').vDriver;
 const checkVRS = require('../../src/support/check/checkVrs').default;
 const waitForAndRefresh = require('../../src/support/action/waitForAndRefresh').default;
+const { startSession } = require('../../src/utills/common')
 
 const { saveRandomImage } = require('../../src/utills/common');
 const { TableVRSComp } = require('../../src/PO/vrs/tableVRS.comp');
@@ -22,24 +23,7 @@ Given(/^I setup VRS driver with parameters:$/, async (params) => {
 
 Given(/^I start VRS session with parameters:$/, async (params) => {
     const sessOpts = YAML.parse(params);
-    sessOpts.suiteName = sessOpts.suiteName || 'Integration suite';
-    sessOpts.suiteId = sessOpts.suiteId || sessOpts.suiteName.replace(' ', '_');
-    sessOpts.appName = sessOpts.appName || 'Integration Test App';
-
-    const currentSuite = {
-        name: sessOpts.suiteName || 'Integration suite',
-        id: sessOpts.suiteId || sessOpts.suiteName.replace(' ', '_'),
-    };
-
-    if ((sessOpts.suiteName !== 'EMPTY')) {
-        browser.vDriver.setCurrentSuite(currentSuite);
-    }
-
-    await browser.vDriver.startTestSession({
-        app: sessOpts.appName,
-        test: sessOpts.testName,
-        run: process.env.RUN_NAME,
-    });
+    await startSession(sessOpts);
 });
 
 // for debug purposes ONLY
@@ -48,7 +32,7 @@ Given(/^I update the VRStest$/, async () => {
 });
 
 Given(/^I stop VRS session$/, async () => {
-    await browser.vDriver.stopTestSession();
+    await browser.vDriver.stopTestSession(browser.config.apiKey);
 });
 
 When(/^I start VRS server with parameters:$/, { timeout: 600000 }, (params) => {
@@ -71,17 +55,17 @@ When(/^I start VRS server with parameters:$/, { timeout: 600000 }, (params) => {
     child.stdout.setEncoding('utf8');
     child.stdout.on('data', (data) => {
         console.log(`stdout: ${data}`);
-        fs.appendFileSync(`./.tmp/syngrisi_out_${child.pid}_${startDate}.txt`, data);
+        fs.appendFileSync(`./.tmp/syngrisi_out.txt`, data);
     });
 
     child.stderr.setEncoding('utf8');
     child.stderr.on('data', (data) => {
         console.log(`stderr: ${data}`);
-        fs.appendFileSync(`./.tmp/syngrisi_err_${child.pid}_${startDate}.txt`, data);
+        fs.appendFileSync(`./.tmp/syngrisi_err.txt`, data);
     });
 
+    browser.pause(2500);
     browser.waitUntil(async () => (await got.get(`http://vrs:${srvOpts.port}/`, { throwHttpErrors: false })).statusCode === 200);
-    browser.pause(3000);
     browser.syngrisiServer = child;
 });
 
@@ -143,7 +127,7 @@ When(/^I expect that(:? (\d)th)? VRS test "([^"]*)" has "([^"]*)" (status|browse
         TableVRSComp.data.forEach((x) => {
             console.log({ NAME: x.name.getText() });
         });
-        console.log(row[fieldName].getHTML());
+        // console.log(row[fieldName].getHTML());
         expect(row[fieldName].$('span'))
             .toHaveTextContaining(fieldValue);
         if (fieldName === 'status') {
@@ -241,8 +225,10 @@ Given(/^I generate a random image "([^"]*)"$/, async (filePath) => {
 When(/^I parse all affected elements in current and last successful checks from "([^"]*)"$/, async function (baseurl) {
     const result = this.getSavedItem('checkDumpResult');
     console.log(result);
-    const affectResp = await got(`${baseurl}affectedelements?checktid=${result._id}&diffid=${result.diffId}`);
-    const prevAffectResp = await got(`${baseurl}affectedelements?checktid=${result.lastSuccess}&diffid=${result.diffId}`);
+    const affectResp = await got(`${baseurl}affectedelements?checktid=${result._id}&diffid=${result.diffId}`,
+        { headers: { apikey: browser.config.apiKey } });
+    const prevAffectResp = await got(`${baseurl}affectedelements?checktid=${result.lastSuccess}&diffid=${result.diffId}`,
+        { headers: { apikey: browser.config.apiKey } });
     console.log(affectResp.body);
     console.log(prevAffectResp.body);
     this.saveItem('actualElements', JSON.parse(affectResp.body));
@@ -282,12 +268,12 @@ When(/^I create "([^"]*)" tests with params:$/, { timeout: 60000000 }, async fun
         await browser.vDriver.startTestSession({
             app: 'Test App',
             test: `${params.testName} - ${i + 1}`,
-        });
+        }, browser.config.apiKey);
         browser.pause(300);
         const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${params.filePath}`);
         const checkResult = await checkVRS(`Check - ${Math.random().toString(36).substring(7)}`, imageBuffer);
         this.STATE.check = checkResult;
-        await browser.vDriver.stopTestSession();
+        await browser.vDriver.stopTestSession(browser.config.apiKey);
     }
 });
 
@@ -487,11 +473,29 @@ Then(/^I expect that last "([^"]*)" checks with ident "([^"]*)" has (not |)the s
     // console.log({ checks });
     const values = checks.map((x) => x[ident].checks).flat().slice(0, num).map((x) => x.[prop]);
     expect(values.length).toBeGreaterThan(0);
-    console.log({values})
+    console.log({ values })
     if (negative) {
         console.log('NEGATIVE')
         expect(values.every((val, i, arr) => (val) === arr[0])).toBe(false);
         return
     }
     expect(values.every((val, i, arr) => (val) === arr[0])).toBe(true);
+});
+
+When(/^I parse the API key$/, function () {
+    const apiKey = $('#notification-textarea').getValue();
+    this.saveItem('apiKey', apiKey);
+});
+
+When(/^I set the API key in config$/, function () {
+    browser.config.apiKey = this.getSavedItem('apiKey');
+});
+
+Then(/^I expect that "([^"]*)" check has Created "([^"]*)" equal to "([^"]*)"$/, function (checkNum, field, value) {
+    const checkTitle = $(`(//div[@name='preview-container'])[${checkNum}]`).getAttribute('title');
+
+    const regex = new RegExp(`${field}: (.+?$)`, `gm`);
+    // const regex = new RegExp(`${field}`, `gm`);
+    const match = regex.exec(checkTitle);
+    expect(match[1]).toContain(value);
 });

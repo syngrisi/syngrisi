@@ -34,7 +34,7 @@ rules:
     - SwitchCase: 1
   max-len:
     - 'error'
-    - 100
+    - 150
     - ignorePattern: '\s*\/\^(.*)\$\/,$'
   new-cap:
     - 'error'
@@ -46,9 +46,9 @@ rules:
   require-jsdoc:
     - 'error'
     - require:
-        FunctionDeclaration: true
-        MethodDefinition: true
-        ClassDeclaration: true
+        FunctionDeclaration: false
+        MethodDefinition: false
+        ClassDeclaration: false
   strict: 'off'
   valid-jsdoc:
     - 'error'

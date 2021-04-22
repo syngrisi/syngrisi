@@ -4,7 +4,7 @@ mongoose.set('useUnifiedTopology', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 
-const {Schema} = mongoose;
+const { Schema } = mongoose;
 
 const VRSSnapshotSchema = new Schema({
     name: {
@@ -135,9 +135,12 @@ const VRSCheckSchema = new Schema({
     markedBugComment: {
         type: String,
     },
-    creator: {
+    creatorId: {
         type: Schema.Types.ObjectId,
         ref: 'VRSUser',
+    },
+    creatorUsername: {
+        type: String,
     }
 });
 
@@ -192,12 +195,15 @@ const VRSTestSchema = new Schema({
             type: String,
             enum: ['Bug', 'Accepted', 'Unaccepted', 'Partially'],
         },
-        creator: {
+        creatorId: {
             type: Schema.Types.ObjectId,
             ref: 'VRSUser',
+        },
+        creatorUsername: {
+            type: String,
         }
     },
-    {strictQuery: true}); // remove filters that not exist in schema
+    { strictQuery: true }); // remove filters that not exist in schema
 
 const VRSSuiteSchema = new Schema({
     name: {
@@ -295,7 +301,7 @@ const VRSUserSchema = new Schema({
     role: {
         type: String,
         enum: {
-            values: ['admin', 'user'],
+            values: ['admin', 'reviewer', 'user'],
             message: 'role is required',
         },
     },
@@ -318,7 +324,7 @@ const VRSUserSchema = new Schema({
 
 const passportLocalMongoose = require('passport-local-mongoose');
 
-VRSUserSchema.plugin(passportLocalMongoose, {hashField: 'password'});
+VRSUserSchema.plugin(passportLocalMongoose, { hashField: 'password' });
 
 module.exports = mongoose.model('VRSSnapshot', VRSSnapshotSchema);
 module.exports = mongoose.model('VRSCheck', VRSCheckSchema);
