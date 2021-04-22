@@ -1,7 +1,7 @@
 'use strict';
 const {default: PQueue} = require('p-queue');
 const queue = new PQueue({concurrency: 1});
-const {ensureLoggedIn, ensureLoggedInApi} = require('../../lib/ensureLogin/ensureLoggedIn');
+const {ensureLoggedIn, ensureLoggedInApi, ensureApiKey} = require('../../lib/ensureLogin/ensureLoggedIn');
 const passport = require('passport');
 
 module.exports = async function (app) {
@@ -9,13 +9,13 @@ module.exports = async function (app) {
     const API = require('../controllers/api/api_controller');
 
     await app
-        .delete('/checks/:id', async (req, res, next) => {
+        .delete('/checks/:id', ensureLoggedInApi(),  async (req, res, next) => {
             API.removeCheck(req, res).catch(next);
         })
         .put('/checks/:id', ensureLoggedInApi(), async (req, res, next) => {
             API.updateCheck(req, res);
         })
-        .put('/snapshots/:id', async (req, res, next) => {
+        .put('/snapshots/:id',ensureLoggedInApi(), async (req, res, next) => {
             API.updateSnapshot(req, res).catch(next);
         })
         .get('/', ensureLoggedIn(),
@@ -25,7 +25,7 @@ module.exports = async function (app) {
         .get('/runs', ensureLoggedIn(), async function (req, res, next) {
             UI.runs(req, res).catch(next).catch(next);
         })
-        .get('/affectedelements', async function (req, res, next) {
+        .get('/affectedelements', ensureApiKey(), async function (req, res, next) {
             API.affectedElements(req, res).catch(next).catch(next);
         })
         .get('/checksgroupview', ensureLoggedIn(), async function (req, res, next) {
@@ -49,7 +49,7 @@ module.exports = async function (app) {
         .get('/login', async function (req, res, next) {
             UI.login(req, res).catch(next);
         })
-        .post('/checks', async (req, res, next) => {
+        .post('/checks', ensureApiKey(), async (req, res, next) => {
             req.log.trace(`post '/checks' queue pending count: `, queue.pending);
             await queue.add(() => API.createCheck(req, res).catch(next));
         })
@@ -65,7 +65,7 @@ module.exports = async function (app) {
             req.log.trace(`put '/users' queue pending count: `, queue.pending);
             await queue.add(() => API.updateUser(req, res).catch(next));
         })
-        .post('/tests', async (req, res, next) => {
+        .post('/tests', ensureApiKey(), async (req, res, next) => {
             req.log.trace(`post '/tests' queue pending count: `, queue.pending);
             await queue.add(() => API.createTest(req, res).catch(next));
         })
@@ -75,20 +75,23 @@ module.exports = async function (app) {
         .delete('/users/:id', ensureLoggedInApi(), async (req, res, next) => {
             API.removeUser(req, res).catch(next);
         })
+        .get('/apikey/', ensureLoggedInApi(), async (req, res, next) => {
+            API.generateApiKey(req, res).catch(next);
+        })
         .delete('/suites/:id', ensureLoggedInApi(), async (req, res, next) => {
             API.removeSuite(req, res).catch(next);
         })
-        .put('/tests/:id', async (req, res, next) => {
-            API.updateTest(req, res).catch(next);
-        })
-        .post('/session/:testid', async (req, res, next) => {
+        // .put('/tests/:id', async (req, res, next) => {
+        //     API.updateTest(req, res).catch(next);
+        // })
+        .post('/session/:testid',ensureApiKey(),  async (req, res, next) => {
             API.stopSession(req, res).catch(next);
         })
-        .get('/checks', async (req, res, next) => {
+        .get('/checks', ensureLoggedInApi(), async (req, res, next) => {
             req.log.trace(`get '/checks' queue pending count: `, queue.pending);
             await queue.add(() => API.getChecks(req, res).catch(next));
         })
-        .get('/snapshot/:id', async (req, res, next) => {
+        .get('/snapshot/:id', ensureLoggedInApi(), async (req, res, next) => {
             API.getSnapshot(req, res).catch(next);
         })
         .get('/check/:id',ensureLoggedInApi(), async (req, res, next) => {
@@ -97,7 +100,7 @@ module.exports = async function (app) {
         .get('/checks/byident/:testid', async (req, res, next) => {
             API.checksGroupByIdent(req, res).catch(next);
         })
-        .get('/check/:id', async (req, res, next) => {
+        .get('/check/:id', ensureLoggedInApi(), async (req, res, next) => {
             API.getCheck(req, res).catch(next);
         })
         .get('/test/:id', ensureLoggedInApi(), async (req, res, next) => {

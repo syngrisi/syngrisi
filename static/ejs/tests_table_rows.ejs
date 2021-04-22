@@ -6,7 +6,8 @@
      data-toggle="collapse" style="cursor: pointer" onclick="drawTestChecksPreviews('<?= test.id ?>');"
      data-target="#testchecks_<?= test.id ?>">
     <!--TEST CHECKBOX-->
-    <div class="cell-input cell col-1 col-lg-auto border-bottom1 border-right1 text-truncate small d-flex align-items-center ">
+    <div class="cell-input cell col-1 col-lg-auto text-truncate small d-flex align-items-center"
+         onclick="event.stopPropagation();">
         <input id="<?= test.id ?>"
                name="test"
                type="checkbox">
@@ -62,8 +63,8 @@
             <span name="cell-creator" id="<?= test.id ?>_cell-creator" class="text-secondary small"
                   data-toggle="tooltip"
                   data-placement="top"
-                  title="???????">
-                <?= 'vsilakou@exadel.com' ?>
+                  title="Created by: <?= test.creatorUsername ?>">
+                <?= test.creatorUsername ?>
             </span>
         </div>
     </div>
@@ -72,7 +73,7 @@
     <? const acceptedStatus = test.markedAs  ? test.markedAs : 'Unaccepted' ?>
     <div class="cell-accepted-state cell col-1 pl-2 pr-0 text-truncate">
         <span class="text-secondary check-accept-label-test-id_<?= test.id ?>"
-               style="font-size: 80%"><?= acceptedStatus ?></span>
+              style="font-size: 80%"><?= acceptedStatus ?></span>
     </div>
 
     <!--DATE-->
@@ -196,11 +197,11 @@
                      data-placement="right"
                      title="Status: [<?= groupStatus ?>]
                      Name: <?= check.name ?>
-                     Accepted by: <?= check.markedByUsername ?>
-                     Accepted date: <?= check.markedDate ?>
-                     Marked as: <?= check.markedAs ?>
-                     Created date: <?= check.formattedUpdatedDate ?>
-                     Created by: <?= check.creator ?>
+                     Accepted by: <?= check.markedByUsername ? check.markedByUsername : '-' ?>
+                     Accepted date: <?= check.markedDate ? check.markedDate : '-' ?>
+                     Marked as: <?= check.markedAs ? check.markedAs : '-' ?>
+                     Created date: <?= check.createdDate ?>
+                     Created by: <?= check.creatorUsername ?>
                      BrowserName: <?= check.browserName ?>
                      BrowserVersion: <?= check.browserVersion ?>
                      Viewport: <?= check.viewport ?>
