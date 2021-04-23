@@ -1,11 +1,12 @@
 function setSuiteMenuWidth() {
-    const logoWidth = document.getElementById('logo-and-label-container').clientWidth
-    document.getElementById('collapseSuiteMenu').style.width = (logoWidth) + 'px'
+    const logoWidth = document.getElementById('logo-and-label-container').clientWidth;
+    document.getElementById('collapseSuiteMenu').style.width = (logoWidth) + 'px';
 }
 
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        var r = Math.random() * 16 | 0,
+            v = c == 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
     });
 }
@@ -17,21 +18,21 @@ async function redrawCheckAcceptedStatus(id) {
         if (check.markedAs === 'accepted') {
             icon.classList.contains('not-accepted-button-icon') && icon.classList.remove('not-accepted-button-icon');
             !icon.classList.contains('accepted-button-icon') && icon.classList.add('accepted-button-icon');
-            icon.setAttribute('title', check.markedByUsername ? `Accepted by: ${check.markedByUsername} \n Accepted date: ${check.markedDate}` : 'Click here to accept this check')
+            icon.setAttribute('title', check.markedByUsername ? `Accepted by: ${check.markedByUsername} \n Accepted date: ${check.markedDate}` : 'Click here to accept this check');
         }
     } catch (e) {
-        console.log(`cannot redraw accept check icon with id: '${id}' error: '${e}'`)
+        console.log(`cannot redraw accept check icon with id: '${id}' error: '${e}'`);
     }
 }
 
 async function redrawTestAcceptedStatus(id) {
     try {
         const test = JSON.parse(await getRequest(`test/${id}`));
-        const acceptedStatus = test.markedAs ? test.markedAs : 'Unaccepted'
+        const acceptedStatus = test.markedAs ? test.markedAs : 'Unaccepted';
         const label = document.getElementsByClassName(`check-accept-label-test-id_${id}`)[0];
         label.innerText = acceptedStatus;
     } catch (e) {
-        console.log(`cannot redraw accept test status with id: '${id}' error: '${e}'`)
+        console.log(`cannot redraw accept test status with id: '${id}' error: '${e}'`);
     }
 }
 
@@ -40,7 +41,8 @@ async function removeTestFromDomIfEmpty(id) {
         const resp = await getRequest(`/checks?filter_id_eq=${id}`);
         if (resp !== '{}') {
             const tests = JSON.parse(await getRequest(`/checks?filter_id_eq=${id}`, true));
-            const len = Object.keys(tests[id]).filter(x => x.includes('ident')).length;
+            const len = Object.keys(tests[id])
+                .filter(x => x.includes('ident')).length;
             if (len < 1) {
                 console.log(document.getElementsByClassName(`testinfo_${id}`));
                 document.getElementsByClassName(`testinfo_${id}`)[0].remove();
@@ -50,7 +52,7 @@ async function removeTestFromDomIfEmpty(id) {
             document.getElementsByClassName(`testinfo_${id}`)[0].remove();
         }
     } catch (e) {
-        console.log(`cannot redraw accept test status with id: '${id}' error: '${e}'`)
+        console.log(`cannot redraw accept test status with id: '${id}' error: '${e}'`);
     }
 }
 
@@ -60,18 +62,19 @@ function updateQueryParam(param, newval, url) {
     // console.log(searchParams.toString());
     searchParams.set(param, newval);
     // console.log(searchParams.toString());
-    return "?" + searchParams.toString();
+    return '?' + searchParams.toString();
 }
 
 function removeQueryParamContains(search, word) {
     const searchParams = new URLSearchParams(search);
 
-    console.log(searchParams.toString())
+    console.log(searchParams.toString());
     let toDelete = [];
     for (var pair of searchParams.entries()) {
 
         console.log(pair[0] + ', ' + pair[1]);
-        if (pair[0].toString().includes(word)) {
+        if (pair[0].toString()
+            .includes(word)) {
             toDelete.push(pair[0]);
         }
     }
@@ -82,18 +85,24 @@ function removeQueryParamContains(search, word) {
 }
 
 function searchToObject(search) {
-    if (!search)
+    if (!search) {
         return null;
-    return JSON.parse('{"' + decodeURI(search).replace('?', '').replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g, '":"') + '"}')
+    }
+    return JSON.parse('{"' + decodeURI(search)
+        .replace('?', '')
+        .replace(/"/g, '\\"')
+        .replace(/&/g, '","')
+        .replace(/=/g, '":"') + '"}');
 }
 
 function objectToSearch(obj) {
     var str = [];
-    for (var p in obj)
+    for (var p in obj) {
         if (obj.hasOwnProperty(p)) {
-            str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+            str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]));
         }
-    return str.join("&");
+    }
+    return str.join('&');
 }
 
 function sort2(prop, order = -1) {
@@ -106,16 +115,16 @@ function sort2(prop, order = -1) {
         parsedOrder = currentSearch.match(r)[1];
         // console.log({ parsedOrder });
     }
-    const inverseOrder = parsedOrder === '1' ? '-1' : '1'
+    const inverseOrder = parsedOrder === '1' ? '-1' : '1';
 
     const clearedSearch = removeQueryParamContains(currentSearch, 'sort_');
-    let updatedSearch = updateQueryParam(`sort_${prop}_${inverseOrder || order}`, 'true', clearedSearch)
+    let updatedSearch = updateQueryParam(`sort_${prop}_${inverseOrder || order}`, 'true', clearedSearch);
     // console.log({ updatedSearch });
     document.location.href = document.location.origin + updatedSearch;
 }
 
 function updateUrlWithoutReloading(page, title, url) {
-    if ("undefined" !== typeof history.pushState) {
+    if ('undefined' !== typeof history.pushState) {
         history.pushState({ page: page }, title, url);
     } else {
         window.location.assign(url);
@@ -125,11 +134,11 @@ function updateUrlWithoutReloading(page, title, url) {
 function sort(prop, order = -1) {
     const currentUri = document.location.href;
     if (currentUri.includes(`sortprop=${prop}`) && currentUri.includes('order=-1')) {
-        order = 1
+        order = 1;
     }
 
-    let clearedUri = currentUri.replace(/[&]{0,1}(sortorder=[-]{0,1}.)/, "");
-    clearedUri = clearedUri.replace(/[&]{0,1}sortprop=\w+/, "");
+    let clearedUri = currentUri.replace(/[&]{0,1}(sortorder=[-]{0,1}.)/, '');
+    clearedUri = clearedUri.replace(/[&]{0,1}sortprop=\w+/, '');
 
     let outUri;
     if (clearedUri.includes('?')) {
@@ -137,7 +146,7 @@ function sort(prop, order = -1) {
     } else {
         outUri = clearedUri + `?sortprop=${prop}&sortorder=${order}`;
     }
-    outUri = outUri.replace("?&", "?");
+    outUri = outUri.replace('?&', '?');
 
     document.location.href = outUri;
 }
@@ -145,23 +154,29 @@ function sort(prop, order = -1) {
 function showNotification(msg, status = 'Success', timeout = 7000) {
     if (status === 'SuccessInput') {
         const textArea = document.createElement('textarea');
-        textArea.id = 'notification-textarea'
+        textArea.id = 'notification-textarea';
         textArea.classList.add('w-100');
 
         textArea.innerText = msg;
-        document.getElementById("notify-message").appendChild(textArea);
-        document.getElementById("notify-header").textContent = 'Success';
+        document.getElementById('notify-message')
+            .appendChild(textArea);
+        document.getElementById('notify-header').textContent = 'Success';
     } else {
-        document.getElementById("notify-header").textContent = status;
-        document.getElementById("notify-message").textContent = msg;
+        document.getElementById('notify-header').textContent = status;
+        document.getElementById('notify-message').textContent = msg;
     }
 
-    document.getElementById("notify-rect").setAttribute('fill', '#2ECC40');
-    if (status === 'Error')
-        document.getElementById("notify-rect").setAttribute('fill', '#FF4136');
-    $('#notify').show()
+    document.getElementById('notify-rect')
+        .setAttribute('fill', '#2ECC40');
+    if (status === 'Error') {
+        document.getElementById('notify-rect')
+            .setAttribute('fill', '#FF4136');
+    }
+    $('#notify')
+        .show();
     setTimeout(function () {
-            status === 'Success' && $('#notify').hide()
+            status === 'Success' && $('#notify')
+                .hide();
         },
         timeout);
 }
@@ -169,7 +184,7 @@ function showNotification(msg, status = 'Success', timeout = 7000) {
 async function removeOneCheck(id, testId) {
     if (!confirmation()) return;
     await removeCheck(id, testId);
-    await removeTestFromDomIfEmpty(testId)
+    await removeTestFromDomIfEmpty(testId);
     await redrawTestAcceptedStatus(testId);
 }
 
@@ -186,7 +201,7 @@ function removeCheck(id, testId) {
                     console.log('Success ' + id + '--' + xhr.responseText);
                     let checkDiv = document.getElementById(`check_${id}`);
                     checkDiv.parentNode.removeChild(checkDiv);
-                    showNotification('The check was removed')
+                    showNotification('The check was removed');
                     return resolve();
                 } else {
                     showNotification('Remove request was failing', 'Error');
@@ -198,7 +213,7 @@ function removeCheck(id, testId) {
         } catch (e) {
             console.log(`error in removeCheck: '${e}'`);
         }
-    })
+    });
 }
 
 async function acceptOneCheck(id, newBaselineId, oldBaselineId, testId) {
@@ -206,7 +221,7 @@ async function acceptOneCheck(id, newBaselineId, oldBaselineId, testId) {
     const regionData = await baselines[id].getRegionsData(oldBaselineId);
     //  !== 'undefined' - is for back compatibility
     if (regionData.ignoreRegions && regionData.ignoreRegions !== 'undefined') {
-        const confirm = confirmation('The previous baseline contains regions. Doy you want to copy them?')
+        const confirm = confirmation('The previous baseline contains regions. Doy you want to copy them?');
         if (confirm) {
             baselines[id].sendIgnoreRegions(newBaselineId, JSON.parse(regionData.ignoreRegions));
             console.log('ignore region data was sent to new baseline snapshoot' + JSON.parse(regionData.ignoreRegions));
@@ -236,11 +251,13 @@ async function acceptSelectedChecks() {
 
         results.push(acceptCheck(checkId, actualId));
     }
-    Promise.all(results).then(async (result) => {
-        location.reload();
-    }).catch(e => {
-        console.log(e);
-    })
+    Promise.all(results)
+        .then(async (result) => {
+            location.reload();
+        })
+        .catch(e => {
+            console.log(e);
+        });
 }
 
 function acceptCheck(id, newBaselineId, callback) {
@@ -255,11 +272,12 @@ function acceptCheck(id, newBaselineId, callback) {
 
             xhr.onload = function () {
                 if (xhr.status === 200) {
-                    showNotification(`The check '${id}' was accepted`)
+                    showNotification(`The check '${id}' was accepted`);
 
                     console.log('Success ' + id + '--' + xhr.responseText);
-                    if (callback)
+                    if (callback) {
                         callback();
+                    }
                     return resolve(xhr);
                 } else {
                     console.log('Request failed. Returned status of ' + xhr.status + 'resp:' + xhr.responseText);
@@ -269,7 +287,7 @@ function acceptCheck(id, newBaselineId, callback) {
         } catch (e) {
             return reject(e);
         }
-    })
+    });
 }
 
 function removeTest(id) {
@@ -293,24 +311,26 @@ function removeTest(id) {
         } catch (e) {
             return reject(e);
         }
-    })
+    });
 
 }
 
 function removeTests() {
     if (!confirmation()) return;
     let checkboxes = document.querySelectorAll('input[name=test]:checked');
-    let results = []
+    let results = [];
     for (const checkbox of checkboxes) {
-        results.push(removeTest(checkbox.id))
+        results.push(removeTest(checkbox.id));
     }
-    Promise.all(results).then(async function (results) {
-        showNotification('Tests were removed successfully')
-        setTimeout(() => location.reload(), 800);
-    }).catch((e) => {
-        console.error(e);
-        showNotification('Cannot remove tests', 'Error')
-    })
+    Promise.all(results)
+        .then(async function (results) {
+            showNotification('Tests were removed successfully');
+            setTimeout(() => location.reload(), 800);
+        })
+        .catch((e) => {
+            console.error(e);
+            showNotification('Cannot remove tests', 'Error');
+        });
 }
 
 function removeSuite(id) {
@@ -324,17 +344,17 @@ function removeSuite(id) {
             xhr.onload = function () {
                 if (xhr.status === 200) {
                     console.log(`Suite was successfully removed, id: '${id}', resonse test: '${xhr.responseText}'`);
-                    return resolve(xhr)
+                    return resolve(xhr);
                 } else {
                     console.log('Cannot remove the suite. Request is failed.  Returned status of ' + xhr.status);
-                    reject(xhr)
+                    reject(xhr);
                 }
             };
             xhr.send(params);
         } catch (e) {
-            return reject(e)
+            return reject(e);
         }
-    })
+    });
 }
 
 function removeCheckedSuites() {
@@ -344,20 +364,22 @@ function removeCheckedSuites() {
     for (const checkbox of checkboxes) {
         result.push(removeSuite(checkbox.getAttribute('suiteid')));
     }
-    Promise.all(result).then(
-        function () {
-            showNotification('All suites were removed');
-            setTimeout(() => location.reload(), 1000);
-        }
-    ).catch(function (e) {
-        showNotification('Cannot remove all suites', 'Error');
-        console.error('Cannot remove all suites, error: ' + e);
-    })
+    Promise.all(result)
+        .then(
+            function () {
+                showNotification('All suites were removed');
+                setTimeout(() => location.reload(), 1000);
+            }
+        )
+        .catch(function (e) {
+            showNotification('Cannot remove all suites', 'Error');
+            console.error('Cannot remove all suites, error: ' + e);
+        });
 }
 
 function checkAllTests() {
     let checkboxes = document.querySelectorAll('input[name=test]');
-    console.log(`Checked: '${checkboxes.length}'`)
+    console.log(`Checked: '${checkboxes.length}'`);
     checkboxes.forEach(function (ch) {
         if (ch.checked === false) {
             ch.checked = true;
@@ -369,7 +391,7 @@ function checkAllTests() {
 
 function checkAllSuites() {
     let checkboxes = document.querySelectorAll('input[name=suite-item]');
-    console.log(`Checked: '${checkboxes.length}'`)
+    console.log(`Checked: '${checkboxes.length}'`);
     checkboxes.forEach(function (ch) {
         if (ch.checked === false) {
             ch.checked = true;
@@ -381,7 +403,7 @@ function checkAllSuites() {
 
 function checkAllItems(name) {
     let checkboxes = document.querySelectorAll(`input[name=${name}]`);
-    console.log(`Checked: '${checkboxes.length}'`)
+    console.log(`Checked: '${checkboxes.length}'`);
     checkboxes.forEach(function (ch) {
         if (ch.checked === false) {
             ch.checked = true;
@@ -417,29 +439,29 @@ function getRequest(path, verbose) {
         } catch (e) {
             return reject(e);
         }
-    })
+    });
 }
 
 function drawTestChecksPreviews(testId) {
     var checksDivs = Array.prototype.slice.call(document.getElementById(`testchecks_${testId}`).children);
-    let checksIds = []
-    checksDivs.forEach(el => checksIds.push(el.id.replace('check_', '')))
+    let checksIds = [];
+    checksDivs.forEach(el => checksIds.push(el.id.replace('check_', '')));
 
-    let baselineIds = []
-    checksDivs.forEach(el => baselineIds.push(el.getAttribute('baselineId')))
+    let baselineIds = [];
+    checksDivs.forEach(el => baselineIds.push(el.getAttribute('baselineId')));
 
-    let diffsIds = []
-    checksDivs.forEach(el => diffsIds.push(el.getAttribute('diffId')))
+    let diffsIds = [];
+    checksDivs.forEach(el => diffsIds.push(el.getAttribute('diffId')));
 
-    let statuses = []
-    checksDivs.forEach(el => statuses.push(el.getAttribute('checkStatus')))
-    console.log(statuses)
+    let statuses = [];
+    checksDivs.forEach(el => statuses.push(el.getAttribute('checkStatus')));
+    console.log(statuses);
 
     checksIds.forEach(async function (id, index) {
 
         let baseline = {};
         fabric.Object.prototype.objectCaching = false;
-        const snapshotId = ((statuses[index] === 'new') || (statuses[index] === 'passed') || (statuses[index] === 'blinking')) ? baselineIds[index] : diffsIds[index]
+        const snapshotId = ((statuses[index] === 'new') || (statuses[index] === 'passed') || (statuses[index] === 'blinking')) ? baselineIds[index] : diffsIds[index];
         const snapshoot = JSON.parse(await getRequest(`/snapshot/${snapshotId}`));
         const baselineObj = JSON.parse(await getRequest(`/snapshot/${baselineIds[index]}`));
         // console.log({snapshoot})

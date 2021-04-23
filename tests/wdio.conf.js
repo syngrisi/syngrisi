@@ -3,7 +3,6 @@ const { hooks } = require('./src/support/hooks');
 const WdioScreenshot = require('wdio-screenshot-v5');
 const hasha = require('hasha');
 
-
 exports.config = {
     rootPath: process.cwd(),
     apiKey: process.env.SYNGRISI_API_KEY ? hasha(process.env.SYNGRISI_API_KEY) : '123',

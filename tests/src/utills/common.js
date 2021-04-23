@@ -2,7 +2,6 @@
 const ImageJS = require('imagejs');
 const YAML = require('yaml');
 
-
 const saveRandomImage = async function saveRandomImage(fullPath) {
     function getRandomInt(max) {
         return Math.floor(Math.random() * Math.floor(max));
@@ -10,7 +9,10 @@ const saveRandomImage = async function saveRandomImage(fullPath) {
 
     const size = 30;
     return new Promise((resolve) => {
-        const bitmap = new ImageJS.Bitmap({ width: size, height: size });
+        const bitmap = new ImageJS.Bitmap({
+            width: size,
+            height: size
+        });
         for (const val of [...Array(size)]) {
             bitmap.setPixel(getRandomInt(size), getRandomInt(size), 255, 1, 1, 255);
         }
@@ -42,11 +44,12 @@ const startSession = async function (sessOpts) {
     }, browser.config.apiKey);
 };
 
-const checkWithFile = async function(){
+const checkWithFile = async function () {
     browser.pause(300);
     const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${filePath}`);
     const checkResult = await checkVRS(checkName, imageBuffer);
-}
+};
 module.exports = {
-    saveRandomImage, startSession,
+    saveRandomImage,
+    startSession,
 };

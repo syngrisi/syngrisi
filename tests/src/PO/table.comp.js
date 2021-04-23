@@ -36,7 +36,8 @@ export default class TableComp {
 
     // return array of rows elements
     rowsEls() {
-        return this.tableEl().$$(this.lRow);
+        return this.tableEl()
+            .$$(this.lRow);
     }
 
     // return array of cells elements
@@ -48,18 +49,19 @@ export default class TableComp {
     collectData() {
         const classThis = this;
         const data = [];
-        this.rowsEls().forEach(
-            function (row) {
-                const cells = classThis.cellsEls(row);
-                const cellsData = {};
-                cells.forEach(
-                    function (cellEl, index) {
-                        cellsData[classThis.headers(index)] = cellEl;
-                    }
-                );
-                data.push(cellsData);
-            }
-        );
+        this.rowsEls()
+            .forEach(
+                function (row) {
+                    const cells = classThis.cellsEls(row);
+                    const cellsData = {};
+                    cells.forEach(
+                        function (cellEl, index) {
+                            cellsData[classThis.headers(index)] = cellEl;
+                        }
+                    );
+                    data.push(cellsData);
+                }
+            );
         return data;
     }
 }

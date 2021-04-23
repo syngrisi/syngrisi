@@ -34,26 +34,27 @@ function CustomWorld() {
     //     return fillCommonPlaceholders(fillItemsPlaceHolders(str, this.getSavedItems()))
     // }
 
-    this.fillItemsPlaceHolders = function  fillItemsPlaceHolders(str) {
+    this.fillItemsPlaceHolders = function fillItemsPlaceHolders(str) {
 
         // parse all placeholders like '<User: First Name>'
         let matches = (str).match(/<([^>^<]+?):([^>^<]+?)>/gm);
-        if (!matches)
-            return str
-        let resultStr = str
+        if (!matches) {
+            return str;
+        }
+        let resultStr = str;
         // parse item name and property in two regex group
         const r = new RegExp(`<([^>^<]+?):([^>^<]+?)>`);
         for (let ph of matches) {
-            let found = r.exec(ph)
+            let found = r.exec(ph);
             const item = found[1].trim();
-            console.log('ITEM', item)
+            console.log('ITEM', item);
             const property = found[2].trim();
-            console.log('PROPERTY', property)
+            console.log('PROPERTY', property);
 
-            resultStr = resultStr.replace(ph.trim(), this.getSavedItems()[item][property])
+            resultStr = resultStr.replace(ph.trim(), this.getSavedItems()[item][property]);
         }
         return resultStr;
-    }
+    };
 
 }
 

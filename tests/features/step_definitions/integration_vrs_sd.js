@@ -9,7 +9,7 @@ const { getDomDump } = require('@syngrisi/syngrisi-wdio-sdk');
 const VRSDriver = require('@syngrisi/syngrisi-wdio-sdk').vDriver;
 const checkVRS = require('../../src/support/check/checkVrs').default;
 const waitForAndRefresh = require('../../src/support/action/waitForAndRefresh').default;
-const { startSession } = require('../../src/utills/common')
+const { startSession } = require('../../src/utills/common');
 
 const { saveRandomImage } = require('../../src/utills/common');
 const { TableVRSComp } = require('../../src/PO/vrs/tableVRS.comp');
@@ -79,7 +79,6 @@ When(/^I clear test VRS database$/, () => {
         ['run', 'clear_test', '-g', '--prefix', cmdPath]);
 });
 
-
 When(/^I kill process which used port: "([^"]*)"$/, (port) => {
     const { execSync } = require('child_process');
     const lSoftOut = false;
@@ -115,7 +114,8 @@ When(/^I kill process which used port: "([^"]*)"$/, (port) => {
 
 When(/^I click on "([^"]*)" VRS test$/, (testName) => {
     TableVRSComp.init();
-    TableVRSComp.data.filter((row) => row.name.getText().includes(testName))[0].name.$('div')
+    TableVRSComp.data.filter((row) => row.name.getText()
+        .includes(testName))[0].name.$('div')
         .click();
 });
 
@@ -123,7 +123,8 @@ When(/^I expect that(:? (\d)th)? VRS test "([^"]*)" has "([^"]*)" (status|browse
     (number, testName, fieldValue, fieldName) => {
         const intNumber = number ? parseInt(number) : 1;
         TableVRSComp.init();
-        const row = TableVRSComp.data.filter((row) => row.name.getText().includes(testName))[intNumber - 1];
+        const row = TableVRSComp.data.filter((row) => row.name.getText()
+            .includes(testName))[intNumber - 1];
         TableVRSComp.data.forEach((x) => {
             console.log({ NAME: x.name.getText() });
         });
@@ -153,7 +154,8 @@ When(/^I expect that(:? (\d)th)? VRS test "([^"]*)" has blink icon$/,
     (number, testName) => {
         const intNumber = number ? parseInt(number) : 1;
         TableVRSComp.init();
-        const row = TableVRSComp.data.filter((row) => row.name.getText().includes(testName))[intNumber - 1];
+        const row = TableVRSComp.data.filter((row) => row.name.getText()
+            .includes(testName))[intNumber - 1];
         expect(row.name.$('img'))
             .toHaveAttributeContaining('class', 'blink-icon');
     });
@@ -178,7 +180,7 @@ Then(/^I expect that(:? (\d)th)? VRS test "([^"]*)" is unfolded$/, (number, test
     const intNumber = number ? parseInt(number) : 1;
     const row = TableVRSComp.data.filter((row) => row.name.getText() === testName)[intNumber - 1];
     const nameCell = row.name.$('span');
-    const foldDiff = nameCell.$("./../../../../../..//div[contains(@class, 'all-checks')]");
+    const foldDiff = nameCell.$('./../../../../../..//div[contains(@class, \'all-checks\')]');
     expect(foldDiff)
         .toHaveAttributeContaining('class', 'show');
 });
@@ -263,7 +265,8 @@ When(/^I create "([^"]*)" tests with params:$/, { timeout: 60000000 }, async fun
         id: 'Integration_suite',
     });
 
-    for (const i of Array.from(Array(parseInt(num)).keys())) {
+    for (const i of Array.from(Array(parseInt(num))
+        .keys())) {
         console.log(`Create test # ${i}`);
         await browser.vDriver.startTestSession({
             app: 'Test App',
@@ -271,7 +274,9 @@ When(/^I create "([^"]*)" tests with params:$/, { timeout: 60000000 }, async fun
         }, browser.config.apiKey);
         browser.pause(300);
         const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${params.filePath}`);
-        const checkResult = await checkVRS(`Check - ${Math.random().toString(36).substring(7)}`, imageBuffer);
+        const checkResult = await checkVRS(`Check - ${Math.random()
+            .toString(36)
+            .substring(7)}`, imageBuffer);
         this.STATE.check = checkResult;
         await browser.vDriver.stopTestSession(browser.config.apiKey);
     }
@@ -299,7 +304,6 @@ Then(/^I expect "([^"]*)" saved object:$/, function (itemName, yml) {
     expect(item)
         .toMatchObject(params);
 });
-
 
 Given(/^I set window size: "(1366x768|712x970|880x768|1050x768|1300x768|1300x400|1700x768|500x500)"$/, (viewport) => {
     const size = viewport.split('x');
@@ -345,28 +349,39 @@ Then(/^I expect the stored "([^"]*)" object is( not|) equal:$/, function (itemNa
     console.log('Expect:', expected.trim());
     console.log('Stored:', itemValue.trim());
     if (condition === ' not') {
-        expect(itemValue.trim()).not.toEqual(expected.trim());
+        expect(itemValue.trim())
+            .not
+            .toEqual(expected.trim());
     } else {
-        expect(itemValue.trim()).toEqual(expected.trim());
+        expect(itemValue.trim())
+            .toEqual(expected.trim());
     }
 });
 
 When(/^I expect that element "([^"]*)" to (contain|have) text "([^"]*)"$/, (selector, matchCase, text) => {
     const filledText = text;
-    if (matchCase === 'contains') expect($(selector)).toHaveTextContaining(filledText);
-    else expect($(selector)).toHaveText(filledText);
+    if (matchCase === 'contains') {
+        expect($(selector))
+            .toHaveTextContaining(filledText);
+    } else {
+        expect($(selector))
+            .toHaveText(filledText);
+    }
 });
 
 Then(/^the current url contains "([^"]*)"$/, (url) => {
     const windowHandles = browser.getWindowHandles();
     const lastWindowHanle = windowHandles[windowHandles.length - 1];
     browser.switchToWindow(lastWindowHanle);
-    expect(browser).toHaveUrl(url, { containing: true });
+    expect(browser)
+        .toHaveUrl(url, { containing: true });
 });
 
 Then(/^I expect "([^"]*)" occurrences of (Visible|Clickable|Enabled|Existig|Selected) "([^"]*)"$/, (num, verb, selector) => {
-    const actualNum = $$(selector).filter((el) => el[`is${verb}`]()).length;
-    expect(actualNum).toEqual(parseInt(num));
+    const actualNum = $$(selector)
+        .filter((el) => el[`is${verb}`]()).length;
+    expect(actualNum)
+        .toEqual(parseInt(num));
 });
 
 When(/^I visually check page as "([^"]*)"$/, { timeout: 180000 }, async function (checkName) {
@@ -382,20 +397,23 @@ Given(/^I set custom window size: "([^"]*)"$/, (viewport) => {
 });
 
 Then(/^I expect that element "([^"]*)" is clickable$/, (selector) => {
-    expect($(selector)).toBeClickable();
+    expect($(selector))
+        .toBeClickable();
 });
 
 Then(/^I expect get to url "([^"]*)" answer JSON object to match:$/, async (url, params) => {
     const jsonBodyObject = JSON.parse((await got(url)).body);
     // const jsonBodyObject = JSON.parse(browser.getPageSource());
     const expectedObject = JSON.parse(params);
-    expect(jsonBodyObject).toMatchObject(expectedObject);
+    expect(jsonBodyObject)
+        .toMatchObject(expectedObject);
 });
 
 Then(/^I expect "([^"]*)" tests for get url "([^"]*)"$/, async (testsNum, url) => {
     const jsonBodyObject = JSON.parse((await got(url)).body);
     // console.log({jsonBodyObject});
-    expect(Object.keys(jsonBodyObject).length).toBe(parseInt(testsNum));
+    expect(Object.keys(jsonBodyObject).length)
+        .toBe(parseInt(testsNum));
 });
 
 When(/^I check image with path: "([^"]*)" as "([^"]*)" and suppress exceptions$/, async function (filePath, checkName) {
@@ -411,35 +429,46 @@ When(/^I check image with path: "([^"]*)" as "([^"]*)" and suppress exceptions$/
 });
 
 When(/^I login with user:"([^"]*)" password "([^"]*)"$/, (login, password) => {
-    $('#password').waitForDisplayed();
-    $('#email').setValue(login);
-    $('#password').setValue(password);
-    $('button*=Login').click();
+    $('#password')
+        .waitForDisplayed();
+    $('#email')
+        .setValue(login);
+    $('#password')
+        .setValue(password);
+    $('button*=Login')
+        .click();
 });
 
 When(/^I expect that element "([^"]*)" contain value "([^"]*)"$/, (selector, val) => {
-    const actualValue = $(selector).getValue();
+    const actualValue = $(selector)
+        .getValue();
     // console.log({ actualValue });
-    expect(actualValue).toContain(val);
+    expect(actualValue)
+        .toContain(val);
 });
 
 When(/^I expect that element "([^"]*)" contain text "([^"]*)"$/, (selector, val) => {
-    const actualValue = $(selector).getText();
+    const actualValue = $(selector)
+        .getText();
     console.log({ actualValue });
-    expect(actualValue).toContain(val);
+    expect(actualValue)
+        .toContain(val);
 });
 
 Then(/^page source match:$/, (source) => {
     const parsedExpectedObj = JSON.parse(source);
     let parseActualdObj = {};
-    if ($('pre').isExisting()) {
-        parseActualdObj = JSON.parse($('pre').getText());
+    if ($('pre')
+        .isExisting()) {
+        parseActualdObj = JSON.parse($('pre')
+            .getText());
     } else {
         parseActualdObj = JSON.parse(browser.getPageSource());
     }
     console.log({ parsedExpectedObj });
     console.log({ parseActualdObj });
-    expect(parseActualdObj.user).toMatchObject(parsedExpectedObj);
+    expect(parseActualdObj.user)
+        .toMatchObject(parsedExpectedObj);
 });
 
 When(/^I stop the Syngrisi server$/, () => {
@@ -451,7 +480,8 @@ When(/^I accept the "([^"]*)" check$/, (checkName) => {
         .toBeExisting();
 
     // eslint-disable-next-line max-len
-    $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//a[contains(@class, 'accept-button')]`).click();
+    $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//a[contains(@class, 'accept-button')]`)
+        .click();
     browser.acceptAlert();
 });
 
@@ -464,26 +494,34 @@ When(/^I expect the "([^"]*)" check has "([^"]*)" acceptance status$/, (checkNam
     // eslint-disable-next-line max-len
     const icon = $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//a[contains(@class, 'accept-button')]/i`);
 
-    expect(icon).toHaveAttrContaining('class', acceptStatusMap[acceptStatus]);
+    expect(icon)
+        .toHaveAttrContaining('class', acceptStatusMap[acceptStatus]);
 });
 
 Then(/^I expect that last "([^"]*)" checks with ident "([^"]*)" has (not |)the same "([^"]*)"$/, async function (num, ident, negative, prop) {
     const checksGroups = JSON.parse((await got('http://vrs:3001/checks')).body);
     const checks = Object.values(checksGroups);
     // console.log({ checks });
-    const values = checks.map((x) => x[ident].checks).flat().slice(0, num).map((x) => x.[prop]);
-    expect(values.length).toBeGreaterThan(0);
-    console.log({ values })
+    const values = checks.map((x) => x[ident].checks)
+        .flat()
+        .slice(0, num)
+        .map((x) => x.[prop]);
+    expect(values.length)
+        .toBeGreaterThan(0);
+    console.log({ values });
     if (negative) {
-        console.log('NEGATIVE')
-        expect(values.every((val, i, arr) => (val) === arr[0])).toBe(false);
-        return
+        console.log('NEGATIVE');
+        expect(values.every((val, i, arr) => (val) === arr[0]))
+            .toBe(false);
+        return;
     }
-    expect(values.every((val, i, arr) => (val) === arr[0])).toBe(true);
+    expect(values.every((val, i, arr) => (val) === arr[0]))
+        .toBe(true);
 });
 
 When(/^I parse the API key$/, function () {
-    const apiKey = $('#notification-textarea').getValue();
+    const apiKey = $('#notification-textarea')
+        .getValue();
     this.saveItem('apiKey', apiKey);
 });
 
@@ -492,10 +530,12 @@ When(/^I set the API key in config$/, function () {
 });
 
 Then(/^I expect that "([^"]*)" check has Created "([^"]*)" equal to "([^"]*)"$/, function (checkNum, field, value) {
-    const checkTitle = $(`(//div[@name='preview-container'])[${checkNum}]`).getAttribute('title');
+    const checkTitle = $(`(//div[@name='preview-container'])[${checkNum}]`)
+        .getAttribute('title');
 
     const regex = new RegExp(`${field}: (.+?$)`, `gm`);
     // const regex = new RegExp(`${field}`, `gm`);
     const match = regex.exec(checkTitle);
-    expect(match[1]).toContain(value);
+    expect(match[1])
+        .toContain(value);
 });

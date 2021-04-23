@@ -1,5 +1,5 @@
 const frisby = require('frisby');
-const {When} = require('cucumber');
+const { When } = require('cucumber');
 const YAML = require('yaml');
 
 When(/^I send "([^"]*)" request to "([^"]*)"$/, async function (reqType, url) {
@@ -19,7 +19,7 @@ When(/^I send "([^"]*)" request to "([^"]*)" with:$/, async function (reqType, u
                 for (const key in params.form) {
                     form.append(key, params.form[key]);
                 }
-                response = frisby[reqType](url, {body: form});
+                response = frisby[reqType](url, { body: form });
             }
             break;
         }
@@ -39,16 +39,19 @@ When(/^I send "([^"]*)" request to "([^"]*)" with:$/, async function (reqType, u
 When(/^I expect the "([^"]*)" response with:$/, async function (requestType, yml) {
     const params = YAML.parse(yml);
     const response = await this.getSavedItem(requestType);
-    console.log({response});
-    expect(response.statusCode).toEqual(params.statusCode);
-    expect(response).toMatchObject(params.json);
+    console.log({ response });
+    expect(response.statusCode)
+        .toEqual(params.statusCode);
+    expect(response)
+        .toMatchObject(params.json);
 });
 
 When(/^I expect the "([^"]*)" ([\d]+)st value response with:$/, async function (requestType, itemNum, yml) {
     const params = YAML.parse(yml);
     const TMP = await this.getSavedItem(requestType);
-    console.log({TMP});
+    console.log({ TMP });
     const response = Object.values(await this.getSavedItem(requestType))[parseInt(itemNum) - 1];
-    console.log({response});
-    expect(response).toMatchObject(params);
+    console.log({ response });
+    expect(response)
+        .toMatchObject(params);
 });
