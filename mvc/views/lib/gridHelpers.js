@@ -124,11 +124,12 @@ function sort2(prop, order = -1) {
 }
 
 function updateUrlWithoutReloading(page, title, url) {
-    if ('undefined' !== typeof history.pushState) {
-        history.pushState({ page: page }, title, url);
-    } else {
-        window.location.assign(url);
-    }
+    window.history.replaceState(page, title, url);
+    // if ('undefined' !== typeof history.pushState) {
+    //     history.pushState({ page: page }, title, url);
+    // } else {
+    //     window.location.assign(url);
+    // }
 }
 
 function sort(prop, order = -1) {
@@ -475,9 +476,9 @@ function drawTestChecksPreviews(testId) {
                 }
             );
             baseline.getSnapshotIgnoreRegionsDataAndDrawRegions(baselineIds[index]);
-            baseline.canvas.hoverCursor = "pointer";
+            baseline.canvas.hoverCursor = 'pointer';
             baselines[id] = baseline;
-        })
-    })
+        });
+    });
 }
 
