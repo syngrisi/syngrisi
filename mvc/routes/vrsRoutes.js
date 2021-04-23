@@ -63,9 +63,8 @@ module.exports = async function (app) {
             API.getUsers(req, res)
                 .catch(next);
         })
-        .get('/login', async function (req, res, next) {
-            UI.login(req, res)
-                .catch(next);
+        .get('/login', (req, res) => {
+            UI.login(req, res);
         })
         .post('/checks', ensureApiKey(), async (req, res, next) => {
             req.log.trace(`post '/checks' queue pending count: `, queue.pending);

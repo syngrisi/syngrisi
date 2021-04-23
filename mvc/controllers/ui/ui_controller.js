@@ -248,20 +248,34 @@ exports.userinfo = async function (req, res) {
     );
 };
 
-exports.login = async function (req, res) {
-    return new Promise(
-        async function (resolve, reject) {
-            try {
-                const version = require('../../../package.json').version;
-                res.render('pages/login', {
-                    version: version
-                });
-            } catch (e) {
-                fatalError(req, res, e);
-                return reject(e);
-            }
+// exports.login = async function (req, res) {
+//     return new Promise(
+//         (resolve, reject) => {
+//             try {
+//                 const { version } = require('../../../package.json');
+//                 return res.render('pages/login', {
+//                     version,
+//                 });
+//             } catch (e) {
+//                 fatalError(req, res, e);
+//                 return reject(e);
+//             }
+//         }
+//     );
+// };
+
+exports.login = function (req, res) {
+    try {
+        if (req.user) {
+            return res.redirect('/');
         }
-    );
+        const { version } = require('../../../package.json');
+        return res.render('pages/login', {
+            version,
+        });
+    } catch (e) {
+        return fatalError(req, res, e);
+    }
 };
 
 exports.changePasswordPage = async function (req, res) {
