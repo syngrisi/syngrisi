@@ -1,15 +1,17 @@
 'use strict';
 
 const mongoose = require('mongoose');
+
 const Snapshot = mongoose.model('VRSSnapshot');
 const Check = mongoose.model('VRSCheck');
 const Test = mongoose.model('VRSTest');
 const Suite = mongoose.model('VRSSuite');
 const Run = mongoose.model('VRSRun');
 const User = mongoose.model('VRSUser');
-// const App = mongoose.model('VRSApp');
 const moment = require('moment');
-const { fatalError, checkIdent, checksGroupedByIdent, removeEmptyProperties } = require('../utils');
+const {
+    fatalError, checkIdent, checksGroupedByIdent, removeEmptyProperties, buildQuery, getSuitesByTestsQuery,
+} = require('../utils');
 
 async function getSnapshotByImgHash(hash) {
     return (await Snapshot.find({ imghash: hash }))[0];
@@ -26,28 +28,34 @@ exports.checksGroupView = async function (req, res) {
                 return;
             }
 
-            const check = await Check.findById(`${opts.id}`).exec();
+            const check = await Check.findById(`${opts.id}`)
+                .exec();
 
-            const test = await Test.findById(check.test).exec();
-            const suite = await Suite.findById(check.suite).exec();
+            const test = await Test.findById(check.test)
+                .exec();
+            const suite = await Suite.findById(check.suite)
+                .exec();
             const testId = check.test;
             const ident = checkIdent(check);
-            console.warn(check.name, "|", testId, "|", suite, "|", ident, "|")
+            console.warn(check.name, '|', testId, '|', suite, '|', ident, '|');
             const groups = await checksGroupedByIdent({ test: testId });
             const groupChecks = groups[ident].checks;
             const moment = require('moment');
             let transGroups = await Promise.all(
                 groupChecks.map(async function (check) {
-                    const actual = await Snapshot.findById(check.actualSnapshotId).exec();
-                    const baseline = await Snapshot.findById(check.baselineId).exec();
-                    const diff = await Snapshot.findById(check.diffId).exec();
+                    const actual = await Snapshot.findById(check.actualSnapshotId)
+                        .exec();
+                    const baseline = await Snapshot.findById(check.baselineId)
+                        .exec();
+                    const diff = await Snapshot.findById(check.diffId)
+                        .exec();
                     const chk = check.toObject();
-                    chk.actual = actual ? actual.toObject() : null
+                    chk.actual = actual ? actual.toObject() : null;
                     chk.baseline = baseline ? baseline.toObject() : null;
                     chk.diff = diff ? diff.toObject() : null;
                     return chk;
                 })
-            )
+            );
             console.log({ transGroups });
             res.render('pages/checkgroup', {
                 checks: transGroups,
@@ -167,7 +175,7 @@ exports.index = async function (req, res) {
         async function (resolve, reject) {
             try {
                 let opts = removeEmptyProperties(req.query);
-                let suiteFilter = {};
+                // let suiteFilter = {};
                 let sortBy;
                 if ((opts.sortprop === 'name')
                     || (opts.sortprop === 'status')
@@ -176,17 +184,23 @@ exports.index = async function (req, res) {
                     || (opts.sortprop === 'os')
                     || (opts.sortprop === 'calculatedViewport')
                     || (opts.sortprop === 'updatedDate')) {
-                    sortBy = opts.sortprop
+                    sortBy = opts.sortprop;
                 }
-                sortBy = sortBy ? sortBy : 'updatedDate'
+                sortBy = sortBy ? sortBy : 'updatedDate';
                 const sortOrder = opts.sortorder ? opts.sortorder : -1;
                 let sortFilter = {};
                 sortFilter[sortBy] = sortOrder;
-                const suite = await Suite.findOne({ name: opts.filter_suitename_eq }).exec()
-                if (suite)
-                    suiteFilter = { suite: suite.id };
-                const suites = await Suite.find({})
-                    .sort({ name: 'asc' }).exec()
+                const suite = await Suite.findOne({ name: opts.filter_suitename_eq })
+                    .exec();
+
+                const query = buildQuery(opts);
+                if (req.user.role === 'user') {
+                    query.creatorUsername = req.user.username;
+                }
+                const suites = await getSuitesByTestsQuery(query);
+                // const suites = await Suite.find({})
+                //     .sort({ name: 'asc' })
+                //     .exec();
                 const currentUser = req.user;
                 res.render('pages/index', {
                     suites: suites,
@@ -198,14 +212,15 @@ exports.index = async function (req, res) {
                 return reject(e);
             }
         }
-    )
+    );
 };
 
 exports.admin = async function (req, res) {
     return new Promise(
         async function (resolve, reject) {
             try {
-                let users = await User.find().exec();
+                let users = await User.find()
+                    .exec();
                 res.render('pages/admin', {
                     users: users,
                     currentUser: req.user
@@ -215,7 +230,7 @@ exports.admin = async function (req, res) {
                 return reject(e);
             }
         }
-    )
+    );
 };
 
 exports.userinfo = async function (req, res) {
@@ -230,7 +245,7 @@ exports.userinfo = async function (req, res) {
                 return reject(e);
             }
         }
-    )
+    );
 };
 
 exports.login = async function (req, res) {
@@ -246,7 +261,7 @@ exports.login = async function (req, res) {
                 return reject(e);
             }
         }
-    )
+    );
 };
 
 exports.changePasswordPage = async function (req, res) {
@@ -262,7 +277,7 @@ exports.changePasswordPage = async function (req, res) {
                 return reject(e);
             }
         }
-    )
+    );
 };
 
 exports.runs = async function (req, res) {
@@ -279,62 +294,70 @@ exports.runs = async function (req, res) {
                     || (opts.sortprop === 'os')
                     || (opts.sortprop === 'viewport')
                     || (opts.sortprop === 'updatedDate')) {
-                    sortBy = opts.sortprop
+                    sortBy = opts.sortprop;
                 }
-                sortBy = sortBy ? sortBy : 'updatedDate'
+                sortBy = sortBy ? sortBy : 'updatedDate';
                 const sortOrder = opts.sortorder ? opts.sortorder : -1;
                 let sortFilter = {};
                 sortFilter[sortBy] = sortOrder;
 
                 // const suite = await Suite.findOne({name: opts.suitename}).exec()
-                const run = await Run.findOne({ name: opts.runName }).exec()
-                if (run)
+                const run = await Run.findOne({ name: opts.runName })
+                    .exec();
+                if (run) {
                     testFilter = { run: run.id };
+                }
                 let runs = await Run.find({})
-                    .sort({ updatedDate: 'desc' }).exec()
+                    .sort({ updatedDate: 'desc' })
+                    .exec();
                 runs.map(function (run) {
                     run.formattedUpdatedDate = moment(run.updatedDate)
                         .format('hh:mm DD-MM-YYYY');
                     return run;
-                })
+                });
 
-                const allTests = await Test.find({}).exec();
+                const allTests = await Test.find({})
+                    .exec();
 
                 const testsCountsGroupByRunId = (await Test.aggregate()
                     .group({
-                        _id: "$run",
+                        _id: '$run',
                         count: { $sum: 1 }
-                    }).exec()).reduce(function (map, obj) {
+                    })
+                    .exec()).reduce(function (map, obj) {
                     map[obj._id] = obj.count;
                     return map;
                 }, {});
 
                 const failedTestsCountsGroupByRunId = (await Test.aggregate()
                     .match({
-                        status: "Failed"
+                        status: 'Failed'
                     })
                     .group({
-                        _id: "$run",
+                        _id: '$run',
                         count: { $sum: 1 }
-                    }).exec()).reduce(function (map, obj) {
+                    })
+                    .exec()).reduce(function (map, obj) {
                     map[obj._id] = obj.count;
                     return map;
                 }, {});
 
                 const tests = await Test.find(testFilter)
-                    .sort(sortFilter).exec()
+                    .sort(sortFilter)
+                    .exec();
                 tests.map(function (test) {
                     test.formattedUpdatedDate = moment(test.updatedDate)
                         .format('YYYY-MM-DD hh:mm');
                     return test;
-                })
+                });
 
-                let checksByTestGroupedByIdent = {}
+                let checksByTestGroupedByIdent = {};
 
                 for (const test of tests) {
-                    let checkFilter = { test: test.id }
-                    if (run)
+                    let checkFilter = { test: test.id };
+                    if (run) {
                         checkFilter.run = run.id;
+                    }
                     checksByTestGroupedByIdent[test.id] = await checksGroupedByIdent(checkFilter);
                 }
 
@@ -352,5 +375,5 @@ exports.runs = async function (req, res) {
                 return reject(e);
             }
         }
-    )
+    );
 };

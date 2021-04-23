@@ -1,5 +1,7 @@
 'use strict';
+
 const mongoose = require('mongoose');
+
 mongoose.set('useUnifiedTopology', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
@@ -41,7 +43,7 @@ const VRSSnapshotSchema = new Schema({
         type: String,
         // enum: ['antialiasing', 'nothing', 'less', 'colors', 'alpha'],
         enum: ['antialiasing', 'nothing', 'colors'],
-    }
+    },
 });
 
 const VRSCheckSchema = new Schema({
@@ -113,7 +115,7 @@ const VRSCheckSchema = new Schema({
     },
     result: {
         type: String,
-        default: '{}'
+        default: '{}',
     },
     run: {
         type: Schema.Types.ObjectId,
@@ -127,7 +129,7 @@ const VRSCheckSchema = new Schema({
     },
     markedById: {
         type: Schema.Types.ObjectId,
-        ref: 'VRSUser'
+        ref: 'VRSUser',
     },
     markedByUsername: {
         type: String,
@@ -141,10 +143,11 @@ const VRSCheckSchema = new Schema({
     },
     creatorUsername: {
         type: String,
-    }
+    },
 });
 
-const VRSTestSchema = new Schema({
+const VRSTestSchema = new Schema(
+    {
         name: {
             type: String,
             required: 'the test name is empty',
@@ -201,9 +204,10 @@ const VRSTestSchema = new Schema({
         },
         creatorUsername: {
             type: String,
-        }
+        },
     },
-    { strictQuery: true }); // remove filters that not exist in schema
+    { strictQuery: true }
+); // remove filters that not exist in schema
 
 const VRSSuiteSchema = new Schema({
     name: {

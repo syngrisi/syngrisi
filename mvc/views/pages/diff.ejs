@@ -224,30 +224,33 @@
     // canvas.setHeight(document.getElementById('snapshoot').offsetHeight);
     canvas.setWidth(document.getElementById('snapshoot').offsetWidth);
 
+    <% if(actual_snapshoot) { %>
     canvas.hoverCursor = 'col-resize'
-    console.log('/snapshoots/<%= expected_snapshoot.filename ? expected_snapshoot.filename : expected_snapshoot.id + '.png' %>')
+    <% } %>
+    <!--console.log('/snapshoots/<%= expected_snapshoot.filename ? expected_snapshoot.filename : expected_snapshoot.id + '.png' %>')-->
     fabric.Image.fromURL('/snapshoots/<%= expected_snapshoot.filename ? expected_snapshoot.filename : expected_snapshoot.id + '.png' %>',
         function (oImg) {
-        window.BaselineImg = oImg;
-        oImg.clipPath = clipPath;
-        canvas.add(oImg);
-        expectedImg = oImg;
-        oImg.moveTo(0);
-        oImg.scaleToWidth(canvas.width);
-        canvas.setHeight(oImg.getScaledHeight())
-        <% if(actual_snapshoot) { %>
-            // console.log(`<%= actual_snapshoot.filename %>`);
-            // console.log(`/snapshoots/<%= actual_snapshoot.filename ? actual_snapshoot.filename : actual_snapshoot.id + '.png' %>`)
-        fabric.Image.fromURL(`/snapshoots/<%= actual_snapshoot.filename ? actual_snapshoot.filename : actual_snapshoot.id + '.png' %>`, function (oImg) {
+            window.BaselineImg = oImg;
             canvas.add(oImg);
-            window.expectedImg = oImg;
-            actualImg = oImg;
+            expectedImg = oImg;
             oImg.moveTo(0);
             oImg.scaleToWidth(canvas.width);
-            canvas.renderAll();
+            canvas.setHeight(oImg.getScaledHeight())
+            <% if(actual_snapshoot) { %>
+            oImg.clipPath = clipPath;
+
+            // console.log(`<%= actual_snapshoot.filename %>`);
+            console.log(`/snapshoots/<%= actual_snapshoot.filename ? actual_snapshoot.filename : actual_snapshoot.id + '.png' %>`)
+            fabric.Image.fromURL(`/snapshoots/<%= actual_snapshoot.filename ? actual_snapshoot.filename : actual_snapshoot.id + '.png' %>`, function (oImg) {
+                canvas.add(oImg);
+                window.expectedImg = oImg;
+                actualImg = oImg;
+                oImg.moveTo(0);
+                oImg.scaleToWidth(canvas.width);
+                canvas.renderAll();
+            });
+            <% } %>
         });
-        <% } %>
-    });
 
     fabric.Image.fromURL('/snapshoots/<%= diff_snapshoot.filename ? diff_snapshoot.filename : diff_snapshoot.id + '.png' %>', function (oImg) {
         oImg.set('opacity', 0)
@@ -257,7 +260,6 @@
         oImg.scaleToWidth(canvas.width);
         canvas.renderAll();
     });
-
 
     var clipPath = new fabric.Rect({
         width: canvas.width,
@@ -314,8 +316,12 @@
     function resizeSnapshoot(ratio) {
         let w = expectedImg.getScaledWidth();
         expectedImg.scaleToWidth(w * ratio);
-        actualImg.scaleToWidth(w * ratio);
-        diffImg.scaleToWidth(w * ratio);
+        if (Object.keys(actualImg).length > 0) {
+            actualImg.scaleToWidth(w * ratio);
+        }
+        if (Object.keys(diffImg).length > 0) {
+            diffImg.scaleToWidth(w * ratio);
+        }
         canvas.renderAll();
     }
 
@@ -331,6 +337,8 @@
         canvas.renderAll();
     }
 
+    <% if(actual_snapshoot) { %>
+
     canvas.on("mouse:move", function (event) {
         let ofsetX = parseInt(event.pointer.x);
         clipPath.width = ofsetX;
@@ -339,10 +347,11 @@
         clipPathWrapper.height = actualImg.getScaledHeight() + 2
         canvas.renderAll();
     })
+
     canvas.on("mouse:up:before", function (event) {
         toggleDiffOpacity();
     })
-
+    <% } %>
     function confirmation(text = 'are you sure?') {
         return window.confirm(text);
     }

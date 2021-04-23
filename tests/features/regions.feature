@@ -31,7 +31,9 @@ Feature: Regions works properly
         When I click on "region check" VRS test
         Then I expect that VRS test "region check" is unfolded
         When I click on the element "[name=region]"
+        When I wait for "1" seconds
         When I click on the element "[title='baseline snapshoot']"
+        When I wait for "1" seconds
         When I execute javascript code:
         """
         (()=>{
