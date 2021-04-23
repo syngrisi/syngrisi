@@ -17,9 +17,12 @@ class BaselineView {
         if (params.canvas) {
             this.canvas = params.canvas;
         } else {
-            this.canvas = new fabric.Canvas(canvasId, {preserveObjectStacking: true, uniScaleTransform: true});
+            this.canvas = new fabric.Canvas(canvasId, {
+                preserveObjectStacking: true,
+                uniScaleTransform: true
+            });
             if (params.height) {
-                this.canvas.setHeight(params.height)
+                this.canvas.setHeight(params.height);
             } else {
 
                 let ratio = params.weight / image.width;
@@ -42,19 +45,23 @@ class BaselineView {
 
         this.canvas.on('object:selected', function (o) {
             if (o.target.name === 'ignore_rect') {
-                $('#remove').show();
+                $('#remove')
+                    .show();
             } else {
-                $('#remove').hide();
+                $('#remove')
+                    .hide();
             }
         });
 
         this.canvas.on('selection:cleared', function () {
-            $('#remove').hide();
+            $('#remove')
+                .hide();
         });
 
         this.canvas.on('mouse:down', function (e) {
             if (!classThis.canvas.getActiveObject()) {
-                $(".deleteBtn").remove();
+                $('.deleteBtn')
+                    .remove();
             }
         });
     }
@@ -63,13 +70,13 @@ class BaselineView {
         const classThis = this;
         this.allRects.forEach(
             function (reg) {
-                classThis.canvas.remove(reg)
+                classThis.canvas.remove(reg);
             }
-        )
+        );
     }
 
     rect(params) {
-        params.name = params.name ? params.name : 'default_rect'
+        params.name = params.name ? params.name : 'default_rect';
         let lastLeft = null;
         let lastTop = null;
         let width = null;
@@ -77,10 +84,12 @@ class BaselineView {
         if ((this.getLastRegion() !== undefined) && (baseline.getLastRegion().name === 'ignore_rect')) {
             lastLeft = this.getLastRegion().left || 50;
             lastTop = this.getLastRegion().top;
-            width = this.getLastRegion().getScaledWidth();
-            height = this.getLastRegion().getScaledHeight();
+            width = this.getLastRegion()
+                .getScaledWidth();
+            height = this.getLastRegion()
+                .getScaledHeight();
         }
-        console.log(document.documentElement.scrollTop)
+        console.log(document.documentElement.scrollTop);
         // if last elements fit in current viewport create new region near this region
         const top = (lastTop > document.documentElement.scrollTop && lastTop < document.documentElement.scrollTop + window.innerHeight) ? lastTop + 20 : document.documentElement.scrollTop + 50;
         const left = (lastLeft < (this.canvas.width - 80)) ? lastLeft + 20 : lastLeft - 50;
@@ -101,8 +110,8 @@ class BaselineView {
 
     addIgnoreRegion(params) {
         const classThis = this;
-        Object.assign(params, {fill: 'MediumVioletRed'})
-        let r = this.rect(params)
+        Object.assign(params, { fill: 'MediumVioletRed' });
+        let r = this.rect(params);
         r.setControlsVisibility({
             bl: true,
             br: true,
@@ -114,27 +123,31 @@ class BaselineView {
         });
 
         r.on('selected', function (e) {
-            classThis.addDeleteBtn(r)
-        })
+            classThis.addDeleteBtn(r);
+        });
 
         r.on('modified', function (e) {
             classThis.addDeleteBtn(r);
         });
 
         r.on('scaling', function (e) {
-            $(".deleteBtn").remove();
+            $('.deleteBtn')
+                .remove();
         });
         r.on('moving', function (e) {
-            $(".deleteBtn").remove();
+            $('.deleteBtn')
+                .remove();
         });
         r.on('rotating', function (e) {
-            $(".deleteBtn").remove();
+            $('.deleteBtn')
+                .remove();
         });
         this.canvas.add(r);
         r.bringToFront();
         // become selected
-        if (params.noSelect)
-            return
+        if (params.noSelect) {
+            return;
+        }
         this.canvas.setActiveObject(r);
     }
 
@@ -149,7 +162,7 @@ class BaselineView {
             width: this.image.getScaledWidth() - 10,
             height: this.image.getScaledHeight() - 10
         };
-        let r = this.rect(params)
+        let r = this.rect(params);
         this.canvas.add(r);
         r.bringToFront();
     }
@@ -161,11 +174,11 @@ class BaselineView {
     resize(ratio) {
         let w = this.image.getScaledWidth();
         this.image.scaleToWidth(w * ratio);
-        const classThis = this
+        const classThis = this;
         this.allRects.forEach(function (reg) {
             reg.setCoords();
-            let reqWidth = reg.getScaledWidth()
-            let reqHeight = reg.getScaledHeight()
+            let reqWidth = reg.getScaledWidth();
+            let reqHeight = reg.getScaledHeight();
             // console.log('Old W, H', reqWidth, reqHeight)
 
             // reg.scaleToHeight(reqHeight * ratio);
@@ -178,13 +191,14 @@ class BaselineView {
             reg.setCoords();
             classThis.canvas.renderAll();
             // console.log('ratio', ratio)
-            console.log('New Scaled W, H', reg.getScaledWidth(), reg.getScaledHeight())
-            console.log('New  W, H', reg.width, reg.height)
+            console.log('New Scaled W, H', reg.getScaledWidth(), reg.getScaledHeight());
+            console.log('New  W, H', reg.width, reg.height);
 
             reg.top = reg.top * ratio;
             reg.left = reg.left * ratio;
-        })
-        $(".deleteBtn").remove();
+        });
+        $('.deleteBtn')
+            .remove();
         this.canvas.renderAll();
     }
 
@@ -194,8 +208,8 @@ class BaselineView {
      * 3. return json string
      */
     getRectData() {
-        let rects = this.allRects
-        let data = []
+        let rects = this.allRects;
+        let data = [];
         let coef = parseFloat(this.coef);
 
         rects.forEach(function (reg) {
@@ -229,7 +243,7 @@ class BaselineView {
                 //     // right: (coef > 1) ? (right * coef) : (right / coef)
                 // });
             }
-        })
+        });
         return JSON.stringify(data);
     }
 
@@ -238,16 +252,21 @@ class BaselineView {
     }
 
     showNotification(msg, status = 'Success') {
-        document.getElementById("notify-header").textContent = status;
-        document.getElementById("notify-message").textContent = msg;
-        document.getElementById("notify-rect").setAttribute('fill', '#2ECC40');
-        if (status === 'Error')
-            document.getElementById("notify-rect").setAttribute('fill', '#FF4136');
-        $('#notify').show()
+        document.getElementById('notify-header').textContent = status;
+        document.getElementById('notify-message').textContent = msg;
+        document.getElementById('notify-rect')
+            .setAttribute('fill', '#2ECC40');
+        if (status === 'Error') {
+            document.getElementById('notify-rect')
+                .setAttribute('fill', '#FF4136');
+        }
+        $('#notify')
+            .show();
         setTimeout(function () {
-                $('#notify').hide()
+                $('#notify')
+                    .hide();
             },
-            4000)
+            4000);
     }
 
     sendIgnoreRegions(id, regionsData) {
@@ -276,29 +295,31 @@ class BaselineView {
     convertRegionsDataFromServer(regions) {
         let data = [];
         let coef = parseFloat(this.coef);
-        JSON.parse(regions).forEach(function (reg) {
-            let width = reg.right - reg.left;
-            let height = reg.bottom - reg.top;
-            console.log({coef});
-            if (coef) {
-                data.push({
-                    name: reg.name,
-                    top: reg.top / coef,
-                    left: reg.left / coef,
-                    width: width / coef,
-                    height: height / coef
-                })
-            }
-        })
+        JSON.parse(regions)
+            .forEach(function (reg) {
+                let width = reg.right - reg.left;
+                let height = reg.bottom - reg.top;
+                console.log({ coef });
+                if (coef) {
+                    data.push({
+                        name: reg.name,
+                        top: reg.top / coef,
+                        left: reg.left / coef,
+                        width: width / coef,
+                        height: height / coef
+                    });
+                }
+            });
         return data;
     }
 
     get allRects() {
-        return this.canvas.getObjects().filter(r => (r.name === 'ignore_rect') || (r.name === 'bound_rect'))
+        return this.canvas.getObjects()
+            .filter(r => (r.name === 'ignore_rect') || (r.name === 'bound_rect'));
     }
 
     drawRegions(data) {
-        console.log({data})
+        console.log({ data });
         if (!data || data === 'undefined') {
             {
                 // console.error('The regions data is empty')
@@ -314,7 +335,7 @@ class BaselineView {
         regs.forEach(function (regParams) {
             regParams['noSelect'] = true;
             classThis.addIgnoreRegion(regParams);
-        })
+        });
     }
 
     getRegionsData(snapshootId) {
@@ -332,22 +353,25 @@ class BaselineView {
                 }
             };
             xhr.send('');
-        })
+        });
     }
 
     async getSnapshotIgnoreRegionsDataAndDrawRegions(id) {
-        const regionData = await this.getRegionsData(id)
+        const regionData = await this.getRegionsData(id);
         this.drawRegions(regionData.ignoreRegions);
     }
 
     addDeleteBtn(target) {
-        const regionIndex = baseline.canvas.getObjects().indexOf(target)
-        $(".deleteBtn").remove();
+        const regionIndex = baseline.canvas.getObjects()
+            .indexOf(target);
+        $('.deleteBtn')
+            .remove();
         let btnLeft = target.calcCoords().tr.x - 0;
         let btnTop = target.calcCoords().tr.y - 15;
 
         let deleteBtn = `<i name="delete-region" id="region-delete-icon-${regionIndex}" class="far fa-1x fa-window-close deleteBtn bg-transparent" style="color: red; background-color: white; position:absolute;top:` + btnTop + 'px;left:' + btnLeft + 'px;cursor:pointer; padding: 0px"></i>';
-        $(".canvas-container").append(deleteBtn);
+        $('.canvas-container')
+            .append(deleteBtn);
     }
 
     toggleDiff(diffId) {

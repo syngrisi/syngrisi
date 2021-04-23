@@ -142,11 +142,11 @@ exports.hooks = {
     // },
     // beforeStep: function ({uri, feature, step}, context) {
     // },
-    afterStep: function ({uri, feature, step}, context, {error, result, duration, passed}) {
+    afterStep: function ({ uri, feature, step }, context, { error, result, duration, passed }) {
         if (!passed) {
 
             if (process.env['DBG'] === '1') {
-                console.error(`Error in: /${step.step.text}:${step.sourceLocation.uri}:${step.step.location.line}, ${step.step.location.column}`)
+                console.error(`Error in: /${step.step.text}:${step.sourceLocation.uri}:${step.step.location.line}, ${step.step.location.column}`);
 
                 console.error(error);
                 if (error.stack) {

@@ -195,12 +195,16 @@
     function showNotification(msg, status = 'Success') {
         document.getElementById("notify-header").textContent = status;
         document.getElementById("notify-message").textContent = msg;
-        document.getElementById("notify-rect").setAttribute('fill', '#2ECC40');
+        document.getElementById("notify-rect")
+            .setAttribute('fill', '#2ECC40');
         if (status === 'Error')
-            document.getElementById("notify-rect").setAttribute('fill', '#FF4136');
-        $('#notify').show()
+            document.getElementById("notify-rect")
+                .setAttribute('fill', '#FF4136');
+        $('#notify')
+            .show()
         setTimeout(function () {
-                $('#notify').hide()
+                $('#notify')
+                    .hide()
             },
             7000)
     }
@@ -208,20 +212,26 @@
     document.addEventListener('keydown', function (event) {
         console.log(event.code);
         if (event.code == 'KeyA') {
-            baseline.addIgnoreRegion({name: 'ignore_rect', strokeWidth: 0,})
+            baseline.addIgnoreRegion({
+                name: 'ignore_rect',
+                strokeWidth: 0,
+            })
         }
     });
 
-    $(document).on('click', ".deleteBtn", function () {
-        if (baseline.canvas.getActiveObject()) {
-            baseline.canvas.remove(baseline.canvas.getActiveObject());
-            $(".deleteBtn").remove();
-        }
-    });
+    $(document)
+        .on('click', ".deleteBtn", function () {
+            if (baseline.canvas.getActiveObject()) {
+                baseline.canvas.remove(baseline.canvas.getActiveObject());
+                $(".deleteBtn")
+                    .remove();
+            }
+        });
 
-    $('#remove').on('click', function () {
-        baseline.canvas.remove(baseline.canvas.getActiveObject())
-    });
+    $('#remove')
+        .on('click', function () {
+            baseline.canvas.remove(baseline.canvas.getActiveObject())
+        });
 
     var baseline = {};
 
