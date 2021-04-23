@@ -273,11 +273,11 @@ exports.affectedElements = async function (req, res) {
 
 function parseSorting(params) {
     const sortObj = Object.keys(params)
-        .filter(key => key.startsWith('sort_'))
+        .filter((key) => key.startsWith('sort_'))
         .reduce((obj, key) => {
             const props = key.split('_');
             const sortBy = props[1];
-            const sortDirection = parseInt(props[2]);
+            const sortDirection = parseInt(props[2], 10);
             obj[sortBy] = sortDirection;
             return obj;
         }, {});
@@ -643,7 +643,8 @@ function prettyCheckParams(result) {
 }
 
 exports.createCheck = async function (req, res) {
-    return new Promise(async function (resolve, reject) {
+    return new Promise(
+        async function (resolve, reject) {
             let test;
             let suite;
             let currentUser;
@@ -655,11 +656,11 @@ exports.createCheck = async function (req, res) {
 
                 checkRequestBody: {
                     if (!req.body.testid) {
-                        const errMsg = `Cannot create check without 'testid' parameter, try to initialize session at first. parameters: '${JSON.stringify(req.body)}'`;
+                        const errMsg = `Cannot create check without 'testid' parameter, try to initialize the session at first. parameters: '${JSON.stringify(req.body)}'`;
                         res.status(400)
                             .send({
                                 status: 'paramNotFound',
-                                message: errMsg
+                                message: errMsg,
                             });
                         reject(errMsg);
                         return;
@@ -669,7 +670,7 @@ exports.createCheck = async function (req, res) {
                         res.status(400)
                             .send({
                                 status: 'paramNotFound',
-                                message: errMsg
+                                message: errMsg,
                             });
                         reject(errMsg);
                         return;
@@ -1015,7 +1016,7 @@ exports.updateCheck = async function updateCheck(req, res) {
     return new Promise(async function (resolve, reject) {
         try {
             let opts = removeEmptyProperties(req.body);
-            let checkId = req.params.id;
+            const checkId = req.params.id;
             const check = await Check.findById(checkId)
                 .exec();
             const test = await Test.findById(check.test)
@@ -1027,8 +1028,8 @@ exports.updateCheck = async function updateCheck(req, res) {
             } else {
                 await test.updateOne({
                     status: 'Running',
-                    updatedDate: moment(new Date())
-                        .format('YYYY-MM-DD hh:mm')
+                    updatedDate: moment(new Date()),
+                    // .format('YYYY-MM-DD hh:mm'),
                 })
                     .exec();
             }

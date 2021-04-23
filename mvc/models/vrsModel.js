@@ -307,6 +307,7 @@ const VRSUserSchema = new Schema({
         enum: {
             values: ['admin', 'reviewer', 'user'],
             message: 'role is required',
+            required: 'role is required',
         },
     },
     password: {
