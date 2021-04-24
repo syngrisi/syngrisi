@@ -11,6 +11,9 @@ globals:
   assert: true
   expect: true
 
+overrides:
+  - files: "mvc/controllers/*.js"
+
 parserOptions:
   ecmaVersion: 8
   ecmaFeatures:
