@@ -54,14 +54,14 @@ When(/^I start VRS server with parameters:$/, { timeout: 600000 }, (params) => {
     const startDate = new Date() / 1;
     child.stdout.setEncoding('utf8');
     child.stdout.on('data', (data) => {
-        console.log(`stdout: ${data}`);
-        fs.appendFileSync(`./.tmp/syngrisi_out.txt`, data);
+        console.log(`#: ${data}`);
+        // fs.appendFileSync(`./.tmp/syngrisi_out.txt`, data);
     });
 
     child.stderr.setEncoding('utf8');
     child.stderr.on('data', (data) => {
         console.log(`stderr: ${data}`);
-        fs.appendFileSync(`./.tmp/syngrisi_err.txt`, data);
+        // fs.appendFileSync(`./.tmp/syngrisi_err.txt`, data);
     });
 
     browser.pause(2500);
@@ -498,10 +498,22 @@ When(/^I expect the "([^"]*)" check has "([^"]*)" acceptance status$/, (checkNam
         .toHaveAttrContaining('class', acceptStatusMap[acceptStatus]);
 });
 
-Then(/^I expect that last "([^"]*)" checks with ident "([^"]*)" has (not |)the same "([^"]*)"$/, async function (num, ident, negative, prop) {
+Then(/^I expect that last "([^"]*)" checks with ident contains "([^"]*)" has (not |)the same "([^"]*)"$/, async function (num, ident, negative, prop) {
     const checksGroups = JSON.parse((await got('http://vrs:3001/checks')).body);
-    const checks = Object.values(checksGroups);
-    // console.log({ checks });
+    console.log({ checksGroups });
+    const checks = Object.values(checksGroups)
+        .map((x) => {
+            const identKey = Object.keys(x)
+                .filter(x => x.startsWith('ident'))[0];
+            console.log({ x });
+            console.log({ identKey });
+            const identParts = identKey.split('.');
+            identParts.pop();
+            const cuttedIdent = identParts.join('.');
+            x[cuttedIdent] = x[identKey];
+            return x;
+        });
+    console.log({ checks });
     const values = checks.map((x) => x[ident].checks)
         .flat()
         .slice(0, num)

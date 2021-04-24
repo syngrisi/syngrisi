@@ -4,6 +4,11 @@ Feature: VRS Assert Smoke
     Background:
         Given I clear test VRS database
         Given I kill process which used port: "3001"
+        When I set env variables:
+        """
+        TEST: 1
+        SYNGRISI_AUTH: 0
+        """
         Given I start VRS server with parameters:
         """
           port: 3001

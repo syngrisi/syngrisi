@@ -40,10 +40,11 @@ Feature: Logout
         When I wait for "2" seconds
         When I login with user:"Test" password "123"
         Then I wait on element "*=TA" to be displayed
+        When I wait for "2" seconds
 
         When I open the url "http://vrs:3001/logout"
 
-        When I wait for "5" seconds
+        When I wait for "2" seconds
         When I open the url "http://vrs:3001"
         When I wait for "1" seconds
         When I expect the url to contain "/login"

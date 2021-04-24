@@ -1,4 +1,4 @@
-/* eslint-disable dot-notation */
+/* eslint-disable dot-notation,no-underscore-dangle */
 const querystring = require('querystring');
 const mongoose = require('mongoose');
 const hasha = require('hasha');
@@ -15,9 +15,9 @@ const Check = mongoose.model('VRSCheck');
 const Test = mongoose.model('VRSTest');
 const Suite = mongoose.model('VRSSuite');
 const User = mongoose.model('VRSUser');
-const { checksGroupedByIdent } = require('../utils');
+const { checksGroupedByIdent, calculateAcceptedStatus } = require('../utils');
 const {
-    fatalError, waitUntil, removeEmptyProperties, buildQuery, getSuitesByTestsQuery
+    fatalError, waitUntil, removeEmptyProperties, buildQuery, getSuitesByTestsQuery, buildIdentObject
 } = require('../utils');
 
 // get last updated document
@@ -34,13 +34,13 @@ async function getLastCheck(identifier) {
 async function getLastSuccessCheck(identifier) {
     const condition = [{
         ...identifier,
-        'status': 'new'
+        status: 'new',
     }, {
         ...identifier,
-        'status': 'passed'
+        status: 'passed',
     }];
     return (await Check.find({
-        $or: condition
+        $or: condition,
     })
         .sort({ updatedDate: -1 })
         .limit(1))[0];
@@ -55,8 +55,10 @@ async function getSnapshotByImgHash(hash) {
 
 async function createSnapshot(parameters) {
     console.log({ parameters });
-    const { params, fileData, hashCode, filename } = parameters;
-    let opts = {
+    const {
+        params, fileData, hashCode, filename,
+    } = parameters;
+    const opts = {
         name: params.name,
     };
     filename && (opts.filename = filename);
@@ -74,8 +76,8 @@ async function createSnapshot(parameters) {
     // console.log(`Snapshot with hash: '${opts['imghash']}' doesn't exists creating new one...`);
 
     const snapshoot = new Snapshot(opts);
-    !filename && (snapshoot.filename = snapshoot._id + '.png');
-    snapshoot.save(function (err, result) {
+    !filename && (snapshoot.filename = `${snapshoot._id}.png`);
+    snapshoot.save((err, result) => {
         if (err) {
             throw err;
         }
@@ -100,16 +102,16 @@ async function compareSnapshots(baseline, actual) {
             isSameDimensions: true,
             dimensionDifference: {
                 width: 0,
-                height: 0
+                height: 0,
             },
             rawMisMatchPercentage: 0,
             misMatchPercentage: '0.00',
             analysisTime: 0,
-            executionTotalTime: '0'
+            executionTotalTime: '0',
         };
     } else {
-        const baselinePath = `${config.defaultBaselinePath}${baseline.filename || baseline.id + '.png'}`;
-        const actualPath = `${config.defaultBaselinePath}${actual.filename || actual.id + '.png'}`;
+        const baselinePath = `${config.defaultBaselinePath}${baseline.filename || `${baseline.id}.png`}`;
+        const actualPath = `${config.defaultBaselinePath}${actual.filename || `${actual.id}.png`}`;
         const baselineData = fs.readFile(baselinePath);
         const actualData = fs.readFile(actualPath);
         console.log(`baseline path: ${config.defaultBaselinePath}${baseline.id}.png`);
@@ -118,7 +120,7 @@ async function compareSnapshots(baseline, actual) {
         // back compatibility
         (baseline.ignoreRegions === 'undefined') && delete baseline.ignoreRegions;
         if (baseline.ignoreRegions) {
-            let ignored = JSON.parse(JSON.parse(baseline.ignoreRegions));
+            const ignored = JSON.parse(JSON.parse(baseline.ignoreRegions));
             opts = { ignoredBoxes: ignored };
         }
         opts.ignore = baseline.matchType || 'antialiasing';
@@ -138,7 +140,6 @@ async function compareSnapshots(baseline, actual) {
             await actual.save();
         }
         if (diff.stabMethod === 'updown') {
-
             // this mean that we delete first 'diff.vOffset' line of pixels from baseline
             // then we will use this during parse actual page DOM dump
             baseline.vOffset = -diff.vOffset;
@@ -149,16 +150,16 @@ async function compareSnapshots(baseline, actual) {
 }
 
 exports.updateSnapshot = async function (req, res) {
-    return new Promise(async function (resolve, reject) {
+    return new Promise(async (resolve, reject) => {
         try {
-            let opts = removeEmptyProperties(req.body);
-            let id = req.params.id;
+            const opts = removeEmptyProperties(req.body);
+            const { id } = req.params;
             opts['updatedDate'] = Date.now();
             console.log(`UPDATE snapshot id: '${id}' with params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`);
             const snp = await Snapshot.findByIdAndUpdate(id, opts)
                 .exec()
                 .catch(
-                    function (e) {
+                    (e) => {
                         console.log(`Cannot update a snapshot with id: '${id}', error: ${e}`);
                         fatalError(req, res, e);
                         return reject(e);
@@ -170,8 +171,8 @@ exports.updateSnapshot = async function (req, res) {
                 .json({
                     item: 'Snapshot',
                     action: 'update',
-                    id: id,
-                    opts: opts
+                    id,
+                    opts,
                 });
         } catch (e) {
             fatalError(req, res, e);
@@ -181,13 +182,13 @@ exports.updateSnapshot = async function (req, res) {
 };
 
 exports.getSnapshot = async function (req, res) {
-    return new Promise(async function (resolve, reject) {
+    return new Promise(async (resolve, reject) => {
         try {
-            let opts = removeEmptyProperties(req.body);
-            let id = req.params.id;
+            const opts = removeEmptyProperties(req.body);
+            const { id } = req.params;
             console.log(`GET snapshot with id: '${id}',  params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`);
             const snp = await Snapshot.findById(id)
-                .then(async function (snp) {
+                .then(async (snp) => {
                     res.json(snp);
                 })
                 .catch(
@@ -206,23 +207,23 @@ exports.getSnapshot = async function (req, res) {
 
 function cloneSnapshoot(sourceSnapshoot, params, fileData) {
     return new Promise(async (resolve, reject) => {
-        const filename = sourceSnapshoot.filename ? sourceSnapshoot.filename : sourceSnapshoot._id + '.png';
+        const filename = sourceSnapshoot.filename ? sourceSnapshoot.filename : `${sourceSnapshoot._id}.png`;
         const newSnapshoot = await createSnapshot({
-            filename: filename,
-            params: params,
+            filename,
+            params,
             // fileData: fileData,
-            hashCode: params.hashcode
+            hashCode: params.hashcode,
         });
         resolve(newSnapshoot);
     });
 }
 
 const checksGroupByIdent = async function (req, res) {
-    return new Promise(async function (resolve, reject) {
+    return new Promise(async (resolve, reject) => {
         try {
-            let testId = req.params.testid;
+            const testId = req.params.testid;
             res.json(await checksGroupedByIdent({ test: testId })
-                .catch(function (e) {
+                .catch((e) => {
                     fatalError(req, res, e);
                     return reject(e);
                 }));
@@ -236,7 +237,7 @@ const checksGroupByIdent = async function (req, res) {
 exports.checksGroupByIdent = checksGroupByIdent;
 
 exports.affectedElements = async function (req, res) {
-    return new Promise(async function (resolve, reject) {
+    return new Promise(async (resolve, reject) => {
         try {
             if (!req.query.checktid || !req.query.diffid) {
                 const e = 'checktid|diffid query values are empty';
@@ -246,17 +247,16 @@ exports.affectedElements = async function (req, res) {
             const chk = await Check.findById(req.query.checktid)
                 .exec()
                 .catch((e) => {
-                        fatalError(req, res, e);
-                        return reject(e);
-                    }
-                );
+                    fatalError(req, res, e);
+                    return reject(e);
+                });
             if (!chk) {
                 fatalError(req, res, `Cannot find check with such id: '${req.query.checktid}'`);
             }
 
             const imDiffData = await fs.readFile(`${config.defaultBaselinePath}${req.query.diffid}.png`)
                 .catch(
-                    function (e) {
+                    (e) => {
                         throw new Error(e);
                     }
                 );
@@ -294,7 +294,7 @@ function getApiKey() {
 }
 
 exports.generateApiKey = async function (req, res) {
-    return new Promise(async function (resolve, reject) {
+    return new Promise(async (resolve, reject) => {
         const apiKey = getApiKey();
         console.log(`Generate Api Key for user: '${req.user.username}'`);
         const hash = hasha(apiKey);
@@ -310,13 +310,13 @@ exports.generateApiKey = async function (req, res) {
 
 exports.createUser = async function (req, res) {
     return new Promise(
-        async function (resolve, reject) {
+        async (resolve, reject) => {
             try {
-                let params = req.body;
+                const params = req.body;
 
                 console.log(`Create user with name '${params.username}', params: '${JSON.stringify(params)}'`);
 
-                let opts = removeEmptyProperties(Object.assign(params, { updatedDate: new Date() }));
+                const opts = removeEmptyProperties(Object.assign(params, { updatedDate: new Date() }));
                 orm.createUser(opts)
                     .then((user) => {
                         user.setPassword(opts.password)
@@ -339,11 +339,12 @@ exports.createUser = async function (req, res) {
                 fatalError(req, res, e);
                 return reject(e);
             }
-        });
+        }
+    );
 };
 
 exports.getUsers = async function (req, res) {
-    return new Promise(async function (resolve, reject) {
+    return new Promise(async (resolve, reject) => {
         const users = await User.find()
             .exec();
         res.status(200)
@@ -354,24 +355,24 @@ exports.getUsers = async function (req, res) {
 
 const updateUser = async function (req, res) {
     return new Promise(
-        async function (resolve, reject) {
+        async (resolve, reject) => {
             try {
-                let params = req.body;
+                const params = req.body;
 
                 console.log(`Update user with id: '${params.id}' name '${params.username}', params: '${JSON.stringify(params)}'`);
 
-                let opts = removeEmptyProperties(Object.assign(params, { updatedDate: new Date() }));
+                const opts = removeEmptyProperties(Object.assign(params, { updatedDate: new Date() }));
 
                 const user = await User.findById(opts.id);
                 if (!user) {
                     res.status(500)
                         .json({
                             status: 'Error',
-                            message: `Cannot find user with id: '${opts.id}'`
+                            message: `Cannot find user with id: '${opts.id}'`,
                         });
                     return reject;
                 }
-                const password = opts.password;
+                const { password } = opts;
 
                 await User.findByIdAndUpdate(user._id, params)
                     .catch((e) => {
@@ -385,20 +386,20 @@ const updateUser = async function (req, res) {
                 console.log(`User '${user.username}' was updated successfully`);
                 res.json(user);
                 return resolve([req, res, user]);
-
             } catch (e) {
                 fatalError(req, res, e);
                 return reject(e);
             }
-        });
+        }
+    );
 };
 
 exports.updateUser = updateUser;
 
 exports.removeUser = function (req, res) {
-    return new Promise(async function (resolve, reject) {
+    return new Promise(async (resolve, reject) => {
         try {
-            const id = req.params.id;
+            const { id } = req.params;
             console.log(`Remove user with id: '${id}'`);
             const user = await User.findByIdAndDelete(id);
             console.log(`User with id: '${user._id}' and username: '${user.username}' was removed`);
@@ -412,57 +413,41 @@ exports.removeUser = function (req, res) {
     });
 };
 
-exports.changePassword = async function (req, res) {
-    return new Promise(
-        async function (resolve, reject) {
-            try {
-                let params = req.body;
-
-                console.log(`Change password for  '${req.user.username}', params: '${JSON.stringify(params)}'`);
-                User.findOne({ username: req.user.username })
-                    .then(foundUser => {
-                        foundUser.changePassword(params['old-password'], params['new-password'])
-                            .then(() => {
-                                console.log(`password was successfully changed for user: ${req.user.username}`);
-                                res.redirect('/login');
-                            })
-                            .catch((error) => {
-                                fatalError(req, res, e);
-                                return reject(e);
-                            });
-                    })
-                    .catch((error) => {
-                        fatalError(req, res, e);
-                        return reject(e);
-                    });
-                return resolve();
-
-            } catch (e) {
-                fatalError(req, res, e);
-                return reject(e);
-            }
+exports.changePassword = function (req, res) {
+    const params = req.body;
+    console.log(`Change password for  '${req.user.username}', params: '${JSON.stringify(params)}'`);
+    User.findOne({ username: req.user.username })
+        .then((foundUser) => {
+            foundUser.changePassword(params['old-password'], params['new-password'])
+                .then(
+                    () => {
+                        console.log(`password was successfully changed for user: ${req.user.username}`);
+                        return res.redirect('/logout');
+                    },
+                    (e) => fatalError(req, res, e)
+                );
         });
 };
 
 // tests
 function updateTest(opts) {
-    return new Promise(async function (resolve, reject) {
+    return new Promise(async (resolve, reject) => {
         try {
-            const id = opts.id;
+            const { id } = opts;
             opts['updatedDate'] = Date.now();
             console.log(`UPDATE test id '${id}' with params '${JSON.stringify(opts)}'`);
 
             const tst = await Test.findByIdAndUpdate(id, opts)
                 .exec()
                 .catch(
-                    function (e) {
+                    (e) => {
                         console.log(`Cannot update the test, error: '${e}'`);
                         return reject(e);
                     }
                 );
             tst.save()
                 .catch(
-                    function (e) {
+                    (e) => {
                         console.log(`Cannot save the test, error: '${e}'`);
                         return reject(e);
                     }
@@ -472,22 +457,21 @@ function updateTest(opts) {
             reject(e);
         }
     });
-
 }
 
 exports.updateTest = async function (req, res) {
     return new Promise(
-        async function (resolve, reject) {
+        async (resolve, reject) => {
             try {
-                let opts = removeEmptyProperties(req.body);
-                let id = req.params.id;
+                const opts = removeEmptyProperties(req.body);
+                const { id } = req.params;
                 opts['updatedDate'] = Date.now();
                 console.log(`UPDATE test id '${id}' with params '${JSON.stringify(opts)}'`);
 
                 const tst = await Test.findByIdAndUpdate(id, opts)
                     .exec()
                     .catch(
-                        function (e) {
+                        (e) => {
                             console.log(`Cannot update the test, error: '${e}'`);
                             fatalError(req, res, e);
                             return reject(e);
@@ -495,7 +479,7 @@ exports.updateTest = async function (req, res) {
                     );
                 tst.save()
                     .catch(
-                        function (e) {
+                        (e) => {
                             console.log(`Cannot save the test, error: '${e}'`);
                             fatalError(req, res, e);
                             return reject(e);
@@ -508,20 +492,19 @@ exports.updateTest = async function (req, res) {
                 fatalError(req, res, e);
                 return reject(e);
             }
-        });
+        }
+    );
 };
 
 function removeTest(id) {
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
         try {
             console.log(`Try to delete all checks associated to test with ID: '${id}'`);
             Check.remove({ test: id })
-                .then(function (result) {
+                .then((result) => {
                     console.log(`DELETE test with ID: '${id}'`);
                     Test.findByIdAndDelete(id)
-                        .then(function (out) {
-                            return resolve(out);
-                        });
+                        .then((out) => resolve(out));
                 });
         } catch (e) {
             return reject(e);
@@ -530,11 +513,11 @@ function removeTest(id) {
 }
 
 exports.removeTest = function (req, res) {
-    return new Promise(async function (resolve, reject) {
+    return new Promise(async (resolve, reject) => {
         try {
-            const id = req.params.id;
+            const { id } = req.params;
             removeTest(id)
-                .then(function (output) {
+                .then((output) => {
                     res.status(200)
                         .send(`Test with id: '${id}' and all related checks were removed
                         output: '${JSON.stringify(output)}'`);
@@ -549,13 +532,13 @@ exports.removeTest = function (req, res) {
 
 exports.createTest = async function (req, res) {
     return new Promise(
-        async function (resolve, reject) {
+        async (resolve, reject) => {
             try {
-                let params = req.body;
+                const params = req.body;
 
                 req.log.info(`Create test with name '${params.testname}', params: '${JSON.stringify(params)}'`);
 
-                let opts = removeEmptyProperties({
+                const opts = removeEmptyProperties({
                     name: params.name,
                     status: params.status,
                     viewport: params.viewport,
@@ -576,23 +559,23 @@ exports.createTest = async function (req, res) {
 
                 res.json(test);
                 return resolve([req, res, test]);
-
             } catch (e) {
                 return reject(e);
                 fatalError(req, res, e);
             }
-        });
+        }
+    );
 };
 
 function calculateTestStatus(testId) {
-    return new Promise(async function (resolve, reject) {
+    return new Promise(async (resolve, reject) => {
         const checksInTest = await Check.find({ test: testId });
-        const statuses = checksInTest.map(x => x.status[0]);
+        const statuses = checksInTest.map((x) => x.status[0]);
         let testCalculatedStatus = 'Failed';
-        if (statuses.every(x => (x === 'new') || (x === 'passed'))) {
+        if (statuses.every((x) => (x === 'new') || (x === 'passed'))) {
             testCalculatedStatus = 'Passed';
         }
-        if (statuses.every(x => (x === 'new'))) {
+        if (statuses.every((x) => (x === 'new'))) {
             testCalculatedStatus = 'New';
         }
         // console.log({ testCalculatedStatus });
@@ -602,21 +585,21 @@ function calculateTestStatus(testId) {
 
 // suites
 exports.removeSuite = async function (req, res) {
-    return new Promise(async function (resolve, reject) {
+    return new Promise(async (resolve, reject) => {
         try {
-            const id = req.params.id;
+            const { id } = req.params;
             console.log(`DELETE test and checks which associate with the suite with ID: '${id}'`);
             const tests = await Test.find({ suite: id });
 
-            let results = [];
+            const results = [];
             for (const test of tests) {
                 results.push(removeTest(test._id));
             }
 
             Promise.all(results)
-                .then(function (result) {
+                .then((result) => {
                     Suite.findByIdAndDelete(id)
-                        .then(function (out) {
+                        .then((out) => {
                             res.status(200)
                                 .send(`Suite with id: '${id}' and all related tests and checks were removed
                     output: '${JSON.stringify(out)}'`);
@@ -635,70 +618,73 @@ function prettyCheckParams(result) {
         return JSON.stringify(result);
     }
     const dump = JSON.parse(result.domDump);
-    let resObs = { ...result };
+    const resObs = { ...result };
     delete resObs.domDump;
-    resObs.domDump = JSON.stringify(dump)
-        .substr(0, 20) + `... and about ${dump.length} items]`;
+    resObs.domDump = `${JSON.stringify(dump)
+        .substr(0, 20)}... and about ${dump.length} items]`;
     return JSON.stringify(resObs);
 }
 
 exports.createCheck = async function (req, res) {
     return new Promise(
-        async function (resolve, reject) {
+        async (resolve, reject) => {
             let test;
             let suite;
             let currentUser;
             try {
-                console.log(`CREATE check name: '${prettyCheckParams(req.body.name)}'`);
-                let executionTimer = process.hrtime();
+                const executionTimer = process.hrtime();
                 currentUser = await User.findOne({ apiKey: req.headers.apikey })
                     .exec();
+                console.log(`CREATE check name: '${prettyCheckParams(req.body.name)}', user: ${JSON.stringify(currentUser)}`);
 
-                checkRequestBody: {
-                    if (!req.body.testid) {
-                        const errMsg = `Cannot create check without 'testid' parameter, try to initialize the session at first. parameters: '${JSON.stringify(req.body)}'`;
-                        res.status(400)
-                            .send({
-                                status: 'paramNotFound',
-                                message: errMsg,
-                            });
-                        reject(errMsg);
-                        return;
-                    }
-                    if (!req.body.hashcode) {
-                        const errMsg = `Cannot create check without 'hashcode' parameter, parameters: '${JSON.stringify(req.body)}'`;
-                        res.status(400)
-                            .send({
-                                status: 'paramNotFound',
-                                message: errMsg,
-                            });
-                        reject(errMsg);
-                        return;
-                    }
-
-                    console.log(`Try to find test with id: '${req.body.testid}'`);
-                    test = await Test.findById(req.body.testid)
-                        .exec();
-                    if (!test) {
-                        const errMsg = `Error: Can not find test with id: '${req.body.testid}', parameters: '${JSON.stringify(req.body)}'`;
-                        res.status(400)
-                            .send({
-                                status: 'testNotFound',
-                                message: errMsg
-                            });
-
-                        reject(errMsg);
-                        return;
-                    }
+                /** validate request */
+                if (!req.body.testid) {
+                    const errMsg = 'Cannot create check without testid parameter, '
+                        + `try to initialize the session at first. parameters: '${JSON.stringify(req.body)}'`;
+                    res.status(400)
+                        .send({
+                            status: 'paramNotFound',
+                            message: errMsg,
+                        });
+                    reject(errMsg);
+                    return;
                 }
+                if (!req.body.hashcode) {
+                    const errMsg = `Cannot create check without 'hashcode' parameter, parameters: '${JSON.stringify(req.body)}'`;
+                    res.status(400)
+                        .send({
+                            status: 'paramNotFound',
+                            message: errMsg,
+                        });
+                    reject(errMsg);
+                    return;
+                }
+
+                /** look for or create test and suite */
+                console.log(`Try to find test with id: '${req.body.testid}'`);
+                test = await Test.findById(req.body.testid)
+                    .exec();
+                if (!test) {
+                    const errMsg = `Error: Can not find test with id: '${req.body.testid}', parameters: '${JSON.stringify(req.body)}'`;
+                    res.status(400)
+                        .send({
+                            status: 'testNotFound',
+                            message: errMsg,
+                        });
+
+                    reject(errMsg);
+                    return;
+                }
+
                 suite = await orm.createSuiteIfNotExist({ name: req.body.suitename || 'Others' });
                 orm.updateItem('VRSTest', { _id: test.id }, {
                     suite: suite.id,
                     creatorId: currentUser._id,
-                    creatorUsername: currentUser.username
+                    creatorUsername: currentUser.username,
                 });
 
-                let params = {
+                /** define params for new check */
+                const params = {
                     testname: req.body.testname,
                     test: req.body.testid,
                     name: req.body.name,
@@ -713,96 +699,104 @@ exports.createCheck = async function (req, res) {
                     domDump: req.body.domdump,
                     run: test.run,
                     creatorId: currentUser._id,
-                    creatorUsername: currentUser.username
+                    creatorUsername: currentUser.username,
                 };
 
-                const fileData = req.files ? req.files.file.data : false;
                 /**
                  * Usually there is two stage of checking request:
                  * Phase 1
                  *   1. Client sends request with 'req.body.hashcode' value but without 'req.files.file.data'
                  *   2. Server finds for snapshot with this image 'hashcode' and if found - go to Step 3 of Phase2,
-                 *      if not - sends response "{status: 'requiredFileData', message: 'cannot found an image with this hashcode,
+                 *      if not - sends response "{status: 'requiredFileData', message: 'cannot found an image
+                 *      with this hashcode,
                  *      please add image file data and resend request'}"
                  * Phase 2
-                 *   1. Client receives response with incomplete status and resend the same request but with 'req.files.file.data' parameter
+                 *   1. Client receives response with incomplete status and resend the same request but,
+                 *   with 'req.files.file.data' parameter
                  *   2. Server create a new snapshot based on parameters
-                 *   3. Server handle checking the snapshoot and return to client check response with one of 'complete` status (eq:. new, failed, passed)
+                 *   3. Server handle checking the snapshoot and return to client check response
+                 *   with one of 'complete` status (eq:. new, failed, passed)
                  */
+
+                /** look up the snapshoot with same hashcode if didn't find, ask for file data */
                 const snapshotFoundedByHashcode = await getSnapshotByImgHash(req.body.hashcode);
                 if (!req.files && !snapshotFoundedByHashcode) {
-                    console.log(`Cannot find snapshoot with hash: '${req.body.hashcode}', response with 206, 'requiredFileData' message`);
-                    res.status(206)
+                    console.log(`Cannot find the snapshoot with hash: '${req.body.hashcode}'`);
+                    return resolve(res.status(206)
                         .json({
                             status: 'requiredFileData',
-                            message: 'cannot found an image with this hashcode, please add image file data and resend request',
-                            hashCode: req.body.hashcode
-                        });
-                    return resolve();
+                            message: 'cannot found any snapshoot with such hashcode, please add image file data and resend request',
+                            hashCode: req.body.hashcode,
+                        }));
                 }
                 if (snapshotFoundedByHashcode) {
-                    console.log(`FOUND snapshoot by hashcode: '${JSON.stringify(snapshotFoundedByHashcode)}'`);
+                    console.log(`FOUND: snapshoot by hashcode: '${JSON.stringify(snapshotFoundedByHashcode)}'`);
                 }
-                let currentSnapshot,
-                    baselineSnapshoot,
-                    actualSnapshot;
 
-                // check MUST be identified by Name, OS, Browser, Viewport, App
-                const checkIdentifier = {
-                    name: params.name,
-                    os: params.os,
-                    browserName: params.browserName,
-                    viewport: params.viewport,
-                    app: params.app,
-                };
-                const lastSuccessCheck = await getLastSuccessCheck(checkIdentifier);
-                handleBaseline:{
+                /** ASSIGN BASELINE */
+                let currentSnapshot;
+                let currentBaseline;
 
-                    console.log(`Find for baseline for check with identifier: '${JSON.stringify(checkIdentifier)}'`);
-                    const lastCheck = await getLastCheck(checkIdentifier);
+                const checkIdent = buildIdentObject(params);
 
-                    const previousBaselineId = lastCheck ? lastCheck.baselineId : null;
+                const fileData = req.files ? req.files.file.data : false;
 
-                    let newClonedSnapshot;
-                    if (snapshotFoundedByHashcode) {
-                        newClonedSnapshot = await cloneSnapshoot(snapshotFoundedByHashcode, req.body, fileData);
-                    }
-                    currentSnapshot = newClonedSnapshot || (await createSnapshot({
+                console.log(`Find for baseline for check with identifier: '${JSON.stringify(checkIdent)}'`);
+                const lastCheck = await getLastCheck(checkIdent);
+
+                // let newClonedSnapshot;
+                // if (snapshotFoundedByHashcode) {
+                //     newClonedSnapshot = await cloneSnapshoot(snapshotFoundedByHashcode, req.body, fileData);
+                // }
+                // currentSnapshot = newClonedSnapshot || (await createSnapshot({
+                //     params: req.body,
+                //     fileData,
+                //     hashCode: req.body.hashcode,
+                // }));
+                if (snapshotFoundedByHashcode) {
+                    currentSnapshot = await cloneSnapshoot(snapshotFoundedByHashcode, req.body, fileData);
+                } else {
+                    currentSnapshot = await createSnapshot({
                         params: req.body,
-                        fileData: fileData,
-                        hashCode: req.body.hashcode
-                    }));
-                    if (previousBaselineId) {
-                        console.log(`A baseline for check name: '${req.body.name}', id: '${previousBaselineId}' is already exists`);
-                        params.baselineId = previousBaselineId;
-
-                        console.log(`Creating an actual snapshot for check with name: '${req.body.name}'`);
-
-                        actualSnapshot = currentSnapshot;
-                        baselineSnapshoot = await Snapshot.findById(previousBaselineId);
-                        params.actualSnapshotId = actualSnapshot.id;
-                        params.status = 'pending';
-                        if (lastCheck.markedAs === 'accepted') {
-                            params.markedAs = 'accepted';
-                            params.markedDate = lastCheck.markedDate;
-                            params.markedByUsername = lastCheck.markedByUsername;
-                        }
-                    } else {
-                        console.log(`A baseline snapshot for previous check with name: '${req.body.name}', does not exist creating new one`);
-                        const baseline = currentSnapshot;
-                        baselineSnapshoot = currentSnapshot;
-                        params.baselineId = baseline.id;
-                        params.status = 'new';
-                    }
+                        fileData,
+                        hashCode: req.body.hashcode,
+                    });
                 }
-                console.log(`Create and save new check with params: '${prettyCheckParams(params)}'`);
-                let check = await Check.create(params);
+
+                const previousBaselineId = lastCheck ? lastCheck.baselineId : null;
+
+                // if last check has baseline id copy properties from last check
+                // and set it as `currentBaseline` to make diff
+                if (previousBaselineId) {
+                    console.log(`A baseline for check name: '${req.body.name}', id: '${previousBaselineId}' is already exists`);
+                    params.baselineId = previousBaselineId;
+
+                    console.log(`Creating an actual snapshot for check with name: '${req.body.name}'`);
+
+                    // actualSnapshot = currentSnapshot;
+                    params.actualSnapshotId = currentSnapshot.id;
+                    params.status = 'pending';
+                    if (lastCheck.markedAs === 'accepted') {
+                        params.markedAs = 'accepted';
+                        params.markedDate = lastCheck.markedDate;
+                        params.markedByUsername = lastCheck.markedByUsername;
+                    }
+
+                    currentBaseline = await Snapshot.findById(previousBaselineId);
+                } else {
+                    // since the `previousBaselineId` does not exist set current snapshoot as currentBaseline to make diff
+                    console.log(`A baseline snapshot for previous check with name: '${req.body.name}', does not exist creating new one`);
+                    params.baselineId = currentSnapshot.id;
+                    params.status = 'new';
+
+                    currentBaseline = currentSnapshot;
+                }
+                /** create new check and update related items (test and suite) */
+                console.log(`Create and the new check with params: '${prettyCheckParams(params)}'`);
+                const check = await Check.create(params);
 
                 // update test and suite
-                const testCalculatedAcceptedStatus = await calculateAcceptedStatus(check.test);
-
-                // test.status = testCalculatedStatus;
-                test.markedAs = testCalculatedAcceptedStatus;
+                test.markedAs = await calculateAcceptedStatus(check.test);
                 test.updatedDate = moment(new Date())
                     .format('YYYY-MM-DD hh:mm');
 
@@ -811,28 +805,28 @@ exports.createCheck = async function (req, res) {
 
                 let resultResponse;
                 await check.save()
-                    .then(function (chk) {
+                    .then((chk) => {
                         resultResponse = chk;
                         console.log(`Check with id: '${check.id}', successful saved!`);
                     })
-                    .catch(function (error) {
+                    .catch((error) => {
                         res.send(error);
                         console.log(`Cannot save the check, error: '${error}'`);
                     });
 
-                // compare actual with baseline if a check isn't new
-                let updateParams = {};
+                /** compare actual with baseline if a check isn't new */
+                const updateParams = {};
                 let totalCheckHandleTime;
                 let compareResult;
                 if (check.status.toString() !== 'new') {
                     try {
-                        console.log(`The check isn't new, make comparing`);
-                        compareResult = await compareSnapshots(baselineSnapshoot, actualSnapshot);
+                        console.log('The check isn\'t new, make comparing');
+                        compareResult = await compareSnapshots(currentBaseline, currentSnapshot);
                         if (compareResult.misMatchPercentage !== '0.00') {
                             console.log(`Saving diff snapshot for check with Id: '${check.id}'`);
                             const diffSnapshot = await createSnapshot({
                                 params: req.body,
-                                fileData: compareResult.getBuffer()
+                                fileData: compareResult.getBuffer(),
                             });
                             updateParams['diffId'] = diffSnapshot.id;
                             updateParams['status'] = 'failed';
@@ -859,11 +853,13 @@ exports.createCheck = async function (req, res) {
                     await Check.findByIdAndUpdate(check._id, updateParams);
                     resultResponse = await Check.findById(check.id);
                 }
-                const result = Object.assign({}, resultResponse.toObject(),
-                    {
-                        executeTime: totalCheckHandleTime,
-                        lastSuccess: lastSuccessCheck ? (lastSuccessCheck).id : null
-                    });
+
+                const lastSuccessCheck = await getLastSuccessCheck(checkIdent);
+                const result = {
+                    ...resultResponse.toObject(),
+                    executeTime: totalCheckHandleTime,
+                    lastSuccess: lastSuccessCheck ? (lastSuccessCheck).id : null,
+                };
                 res.json(result);
                 return resolve([req, res, result]);
             } catch (e) {
@@ -875,7 +871,7 @@ exports.createCheck = async function (req, res) {
 };
 
 exports.getChecks = async function (req, res) {
-    return new Promise(async function (resolve, reject) {
+    return new Promise(async (resolve, reject) => {
         const opts = req.query;
 
         const pageSize = parseInt(process.env['PAGE_SIZE'], 10) || 50;
@@ -888,6 +884,7 @@ exports.getChecks = async function (req, res) {
         }
 
         const query = buildQuery(opts);
+        // console.log({ query });
         // console.log({opts})
         if (opts.filter_suitename_eq) {
             const decodedQuerystringSuiteName = Object.keys(querystring.decode(opts.filter_suitename_eq))[0];
@@ -961,13 +958,13 @@ exports.getChecks = async function (req, res) {
 };
 
 exports.getCheck = async function (req, res) {
-    return new Promise(async function (resolve, reject) {
+    return new Promise(async (resolve, reject) => {
         try {
-            let opts = removeEmptyProperties(req.body);
-            let id = req.params.id;
+            const opts = removeEmptyProperties(req.body);
+            const { id } = req.params;
             console.log(`GET check with id: '${id}',  params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`);
             await Check.findById(id)
-                .then(async function (snp) {
+                .then(async (snp) => {
                     res.json(snp);
                 })
                 .catch(
@@ -984,25 +981,6 @@ exports.getCheck = async function (req, res) {
     });
 };
 
-function calculateAcceptedStatus(testId) {
-    return new Promise(async function (resolve, reject) {
-        const checksInTest = await Check.find({ test: testId });
-        const statuses = checksInTest.map(x => x.markedAs);
-        if (statuses.length < 1) {
-            return resolve('Unaccepted');
-        }
-        let testCalculatedStatus = 'Unaccepted';
-        if (statuses.some(x => x === 'accepted')) {
-            testCalculatedStatus = 'Partially';
-        }
-        if (statuses.every(x => x === 'accepted')) {
-            testCalculatedStatus = 'Accepted';
-        }
-        console.log({ testCalculatedStatus });
-        return resolve(testCalculatedStatus);
-    });
-}
-
 function addMarkedAsOptions(opts, user, mark) {
     opts.markedById = user._id;
     opts.markedByUsername = user.username;
@@ -1013,7 +991,7 @@ function addMarkedAsOptions(opts, user, mark) {
 }
 
 exports.updateCheck = async function updateCheck(req, res) {
-    return new Promise(async function (resolve, reject) {
+    return new Promise(async (resolve, reject) => {
         try {
             let opts = removeEmptyProperties(req.body);
             const checkId = req.params.id;
@@ -1067,14 +1045,13 @@ exports.updateCheck = async function updateCheck(req, res) {
 };
 
 exports.removeCheck = async function (req, res) {
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
         try {
-            const id = req.params.id;
+            const { id } = req.params;
             console.log(`DELETE check with ID: '${id}'`);
 
             Check.findByIdAndDelete(id)
-                .then(async function (check) {
-
+                .then(async (check) => {
                     const test = await Test.findById(check.test)
                         .exec();
                     const testCalculatedStatus = await calculateTestStatus(check.test);
@@ -1100,7 +1077,6 @@ exports.removeCheck = async function (req, res) {
                         return reject(e);
                     }
                 );
-
         } catch (e) {
             fatalError(req, res, e);
             return reject(e);
@@ -1109,13 +1085,13 @@ exports.removeCheck = async function (req, res) {
 };
 
 exports.getTestById = async function (req, res) {
-    return new Promise(async function (resolve, reject) {
+    return new Promise(async (resolve, reject) => {
         try {
-            let opts = removeEmptyProperties(req.body);
-            let id = req.params.id;
+            const opts = removeEmptyProperties(req.body);
+            const { id } = req.params;
             console.log(`GET test with id: '${id}',  params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`);
             await Test.findById(id)
-                .then(async function (snp) {
+                .then(async (snp) => {
                     res.json(snp);
                 })
                 .catch(
@@ -1133,23 +1109,21 @@ exports.getTestById = async function (req, res) {
 };
 
 exports.stopSession = async function (req, res) {
-    return new Promise(async function (resolve, reject) {
+    return new Promise(async (resolve, reject) => {
         try {
-            let testId = req.params.testid;
+            const testId = req.params.testid;
             if (!testId || testId === 'undefined') {
                 return reject(fatalError(req, res, 'Cannot stop test Session testId is empty'));
             }
-            await waitUntil(async () => {
-                return (await Check.find({ test: testId })
-                    .exec())
-                    .filter(ch => ch.status.toString() !== 'pending').length > 0;
-            });
+            await waitUntil(async () => (await Check.find({ test: testId })
+                .exec())
+                .filter((ch) => ch.status.toString() !== 'pending').length > 0);
             const checksGroup = await checksGroupedByIdent({ test: testId });
             const groupStatuses = Object.keys(checksGroup)
-                .map(group => checksGroup[group].status);
+                .map((group) => checksGroup[group].status);
             // console.log(JSON.stringify(checksGroup, null, "\t"));
             const groupViewPorts = Object.keys(checksGroup)
-                .map(group => checksGroup[group].viewport);
+                .map((group) => checksGroup[group].viewport);
             // console.log({groupViewPorts});
             const uniqueGroupViewports = Array.from(new Set(groupViewPorts));
             let testViewport;
@@ -1160,34 +1134,34 @@ exports.stopSession = async function (req, res) {
             }
 
             let testStatus = 'not set';
-            if (groupStatuses.some(st => st === 'failed')) {
+            if (groupStatuses.some((st) => st === 'failed')) {
                 testStatus = 'Failed';
             }
-            if (groupStatuses.some(st => st === 'passed')
-                && !groupStatuses.some(st => st === 'failed')) {
+            if (groupStatuses.some((st) => st === 'passed')
+                && !groupStatuses.some((st) => st === 'failed')) {
                 testStatus = 'Passed';
             }
-            if (groupStatuses.some(st => st === 'new')
-                && !groupStatuses.some(st => st === 'failed')) {
+            if (groupStatuses.some((st) => st === 'new')
+                && !groupStatuses.some((st) => st === 'failed')) {
                 testStatus = 'Passed';
             }
-            if (groupStatuses.some(st => st === 'blinking')
-                && !groupStatuses.some(st => st === 'failed')) {
+            if (groupStatuses.some((st) => st === 'blinking')
+                && !groupStatuses.some((st) => st === 'failed')) {
                 testStatus = 'Passed';
             }
-            if (groupStatuses.every(st => st === 'new')) {
+            if (groupStatuses.every((st) => st === 'new')) {
                 testStatus = 'New';
             }
-            const blinkingCount = groupStatuses.filter(g => g === 'blinking').length;
+            const blinkingCount = groupStatuses.filter((g) => g === 'blinking').length;
             const testParams = {
                 id: testId,
                 status: testStatus,
                 blinking: blinkingCount,
-                calculatedViewport: testViewport
+                calculatedViewport: testViewport,
             };
             console.log(`Session ending test update with params: '${JSON.stringify(testParams)}'`);
             const updatedTest = await updateTest(testParams)
-                .catch(function (e) {
+                .catch((e) => {
                     console.log(`Cannot update session: ${e}`);
                     throw (e.stack ? e.stack.split('\n') : e);
                 });
@@ -1204,7 +1178,7 @@ exports.stopSession = async function (req, res) {
 
 // maintain
 exports.removeEmptyTests = async function removeEmptyTests(req, res) {
-    return new Promise(async function (resolve, reject) {
+    return new Promise(async (resolve, reject) => {
         res.write('<pre>\n');
         res.write('- query all tests\n');
         console.log('- query all tests\n');
@@ -1218,13 +1192,13 @@ exports.removeEmptyTests = async function removeEmptyTests(req, res) {
         console.log('>- remove empty tests\n');
 
         for (const test of tests) {
-            let checkFilter = { test: test.id };
+            const checkFilter = { test: test.id };
             const groups = await checksGroupedByIdent(checkFilter);
 
             if (Object.keys(groups).length < 1) {
                 if (Object.keys(groups).length < 1) {
                     await removeTest(test._id);
-                    res.write(test._id.toString() + '\n');
+                    res.write(`${test._id.toString()}\n`);
                 }
             }
         }
@@ -1238,7 +1212,7 @@ exports.removeEmptyTests = async function removeEmptyTests(req, res) {
 };
 
 exports.loadTestUser = async function (req, res) {
-    return new Promise(async function (resolve, reject) {
+    return new Promise(async (resolve, reject) => {
         if (process.env.TEST !== '1') {
             return res.json({ msg: 'the feature works only in test mode' });
         }
@@ -1258,7 +1232,7 @@ exports.loadTestUser = async function (req, res) {
 };
 
 exports.fixDocumentsTypes = function (req, res) {
-    return new Promise(async function (resolve, reject) {
+    return new Promise(async (resolve, reject) => {
         if (req.user.role !== 'admin') {
             res.status(401)
                 .json({ error: 'You need to have \'admin\' role to access the page' });
@@ -1274,5 +1248,3 @@ exports.fixDocumentsTypes = function (req, res) {
         return resolve(res.json(checks));
     });
 };
-
-
