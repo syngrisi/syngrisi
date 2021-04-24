@@ -198,7 +198,7 @@ exports.config = {
 
     beforeStep: function ({ uri, feature, step }, context) {
         if (process.env['LOG'] === '1' || process.env['DBG'] === '1') {
-            console.log(`STEP BEFORE: ${step.step.text}: ${step.sourceLocation.uri} : ${step.step.location.line}, ${step.step.location.column}`);
+            console.log(`STEP BEFORE: ${step.step.text}: ${step.sourceLocation.uri}:${step.step.location.line}, ${step.step.location.column}`);
         }
     },
 

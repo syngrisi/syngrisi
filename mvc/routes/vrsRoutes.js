@@ -55,9 +55,8 @@ module.exports = async function (app) {
             UI.admin(req, res)
                 .catch(next);
         })
-        .get('/changepassword', ensureLoggedIn(), async function (req, res, next) {
-            UI.changePasswordPage(req, res)
-                .catch(next);
+        .get('/changepassword', ensureLoggedIn(), (req, res) => {
+            UI.changePasswordPage(req, res);
         })
         .get('/users', ensureLoggedIn(), async function (req, res, next) {
             API.getUsers(req, res)
@@ -65,6 +64,9 @@ module.exports = async function (app) {
         })
         .get('/login', (req, res) => {
             UI.login(req, res);
+        })
+        .post('/password', ensureLoggedIn(), (req, res) => {
+            API.changePassword(req, res);
         })
         .post('/checks', ensureApiKey(), async (req, res, next) => {
             req.log.trace(`post '/checks' queue pending count: `, queue.pending);
@@ -74,11 +76,6 @@ module.exports = async function (app) {
         .post('/users', ensureLoggedIn(), async (req, res, next) => {
             req.log.trace(`post '/users' queue pending count: `, queue.pending);
             await queue.add(() => API.createUser(req, res)
-                .catch(next));
-        })
-        .post('/password', ensureLoggedIn(), async (req, res, next) => {
-            req.log.trace(`post '/password' queue pending count: `, queue.pending);
-            await queue.add(() => API.changePassword(req, res)
                 .catch(next));
         })
         .put('/users', ensureLoggedIn(), async (req, res, next) => {
@@ -139,7 +136,7 @@ module.exports = async function (app) {
             API.getTestById(req, res)
                 .catch(next);
         })
-        .get('/logout', async (req, res, next) => {
+        .get('/logout', (req, res) => {
             req.logout();
             return res.redirect('/login');
         })

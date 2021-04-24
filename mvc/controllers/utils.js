@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation */
 const mongoose = require('mongoose');
 
 const moment = require('moment');
@@ -8,8 +9,23 @@ const Test = mongoose.model('VRSTest');
 
 const Suite = mongoose.model('VRSSuite');
 
+const ident = ['name', 'viewport', 'browserName', 'os', 'app'];
+exports.ident = ident;
+
+/**
+ * Returns check `Ident` object
+ * @param {Object} params  - plain object with bunch of properties
+ * @returns {Object} - plain object with only ident properties
+ */
+exports.buildIdentObject = (params) => {
+    return Object.fromEntries(
+        Object.entries(params)
+            .filter(([key]) => ident.includes(key))
+    );
+};
+
 const checkIdent = function checkIdent(check) {
-    return ['name', 'viewport', 'browserName', 'os'].reduce((accumulator, prop) => accumulator + '.' + check[prop], 'ident');
+    return ident.reduce((accumulator, prop) => accumulator + '.' + check[prop], 'ident');
 };
 exports.checkIdent = checkIdent;
 
@@ -26,15 +42,16 @@ exports.getSuitesByTestsQuery = async function (query) {
 };
 
 exports.buildQuery = function buildQuery(params) {
+    const querystring = require('querystring');
     const query = Object.keys(params)
-        .filter(key => key.startsWith('filter_'))
+        .filter((key) => key.startsWith('filter_'))
         .reduce((obj, key) => {
             const props = key.split('_');
             const name = props[1] === 'id' ? '_id' : props[1];
-
             const operator = props[2];
             const value = decodeURI(params[key]);
-            obj[`${name}`] = { [`$${operator}`]: value };
+            const decodedValue = Object.keys(querystring.decode(value))[0];
+            obj[`${name}`] = { [`$${operator}`]: decodedValue };
             if (operator === 'regex') {
                 obj[`${name}`]['$options'] = 'i';
             }
@@ -70,7 +87,7 @@ function groupViewPort(checks) {
     return checks[0].viewport;
 }
 
-fatalError = function fatalError(req, res, e) {
+const fatalError = function fatalError(req, res, e) {
     const errMsg = e.stack ? `Fatal error: '${e}' \n  '${e.stack}'` : `Fatal error: ${e} \n`;
     req.log.fatal(errMsg);
     console.log(errMsg);
@@ -136,4 +153,23 @@ exports.waitUntil = async function waitUntil(cb, attempts = 5, interval = 700) {
         }
     }
     return result;
+};
+
+exports.calculateAcceptedStatus = function calculateAcceptedStatus(testId) {
+    return new Promise(async (resolve, reject) => {
+        const checksInTest = await Check.find({ test: testId });
+        const statuses = checksInTest.map((x) => x.markedAs);
+        if (statuses.length < 1) {
+            return resolve('Unaccepted');
+        }
+        let testCalculatedStatus = 'Unaccepted';
+        if (statuses.some((x) => x === 'accepted')) {
+            testCalculatedStatus = 'Partially';
+        }
+        if (statuses.every((x) => x === 'accepted')) {
+            testCalculatedStatus = 'Accepted';
+        }
+        console.log({ testCalculatedStatus });
+        return resolve(testCalculatedStatus);
+    });
 };

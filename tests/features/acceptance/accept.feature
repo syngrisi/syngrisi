@@ -4,6 +4,11 @@ Feature: Check Acceptance
     Background:
         Given I clear test VRS database
         Given I kill process which used port: "3001"
+        When I set env variables:
+        """
+          TEST: 1
+          SYNGRISI_AUTH: 0
+        """
         Given I start VRS server with parameters:
         """
           port: 3001
@@ -94,7 +99,7 @@ Feature: Check Acceptance
 
         When I wait for "1" seconds
         Then I expect the "1/1 new int check 1" check has "accept" acceptance status
-        Then I expect that last "2" checks with ident "ident.new int check 1.1366x768.Chrome.MacIntel" has the same "baselineId"
+        Then I expect that last "2" checks with ident contains "ident.new int check 1.1366x768.Chrome.MacIntel" has the same "baselineId"
 
     Scenario: Acceptance - two Test, one Check, accept Second
         Given I set window size: "1366x768"
@@ -146,7 +151,7 @@ Feature: Check Acceptance
 
         When I wait for "1" seconds
         Then I expect the "1/1 new int check 1" check has "accept" acceptance status
-        Then I expect that last "2" checks with ident "ident.new int check 1.1366x768.Chrome.MacIntel" has not the same "baselineId"
+        Then I expect that last "2" checks with ident contains "ident.new int check 1.1366x768.Chrome.MacIntel" has not the same "baselineId"
 
     Scenario: Acceptance - three Test, one Check
         Given I set window size: "1366x768"
@@ -226,7 +231,7 @@ Feature: Check Acceptance
         When I wait for "1" seconds
         Then I expect the "1/1 new int check 1" check has "accept" acceptance status
 
-        Then I expect that last "3" checks with ident "ident.new int check 1.1366x768.Chrome.MacIntel" has the same "baselineId"
+        Then I expect that last "3" checks with ident contains "ident.new int check 1.1366x768.Chrome.MacIntel" has the same "baselineId"
 
     Scenario: Acceptance - two Test, two Check
         Given I set window size: "1366x768"
@@ -298,5 +303,5 @@ Feature: Check Acceptance
         Then I expect that VRS check "1/2 new int check 1" has "Passed" status
         Then I expect that VRS check "2/2 new int check 2" has "Passed" status
         Then I expect that VRS test "Acceptance - two Test, two Check" has "Accepted" accepted status
-#        Then I expect that last "2" checks with ident "ident.new int check 1.1366x768.Chrome.MacIntel" has the same "baselineId"
-#        Then I expect that last "2" checks with ident "ident.new int check 2.1366x768.Chrome.MacIntel" has the same "baselineId"
+#        Then I expect that last "2" checks with ident contains "ident.new int check 1.1366x768.Chrome.MacIntel" has the same "baselineId"
+#        Then I expect that last "2" checks with ident contains "ident.new int check 2.1366x768.Chrome.MacIntel" has the same "baselineId"

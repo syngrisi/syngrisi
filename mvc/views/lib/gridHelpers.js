@@ -482,3 +482,9 @@ function drawTestChecksPreviews(testId) {
     });
 }
 
+function search() {
+    const searchString = document.getElementById('subheader-search')
+        .value
+        .trim();
+    (searchString !== '') && (document.location.href = `/?filter_name_regex=${searchString}`);
+}

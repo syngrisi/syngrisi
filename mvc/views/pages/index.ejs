@@ -55,7 +55,7 @@
              class="sidebar col-3 pl-0 pr-0 mh-100 bg-light border-top  border-right border-silver float-left w-251 ml-0 mr-0"
              style="width: 100px; min-height: 100vh">
             <!--   COLLAPSED SUITES TOOLBAR-->
-            <%- // include('components/sidebar_items_toolbar', {itemName: 'suite-item'})  %>
+            <%- // include('components/sidebar_items_toolbar', {itemName: 'suite-item'})      %>
             <!--   SUITES CONTROL PANEL-->
             <div class="row">
                 <div class="col suites-toolbar">
@@ -88,16 +88,18 @@
 <script>
     async function generateApiKey() {
         if (!confirmation('After generate the Api Key, you MUST reconfigure the solution. Are you sure?')) return;
-        await getRequest('/apikey').then((result) => {
-            return showNotification(JSON.parse(result).apikey, 'SuccessInput', 1000 * 40);
-        }).catch((e) => {
-            console.log('error api key generation: ' + e);
-            return showNotification(e, 'Error', 1000 * 60);
-        });
+        await getRequest('/apikey')
+            .then((result) => {
+                return showNotification(JSON.parse(result).apikey, 'SuccessInput', 1000 * 40);
+            })
+            .catch((e) => {
+                console.log('error api key generation: ' + e);
+                return showNotification(e, 'Error', 1000 * 60);
+            });
     }
 
     function paramsToObject(entries) {
-        const result = {}
+        const result = {};
         for (const [key, value] of entries) { // each 'entry' is a [key, value] tupple
             result[key] = value;
         }
@@ -115,19 +117,22 @@
         const checker = value =>
             allowed.some(element => value.includes(element));
 
-        const filteredSearch = Object.keys(searchObject).filter(checker).reduce((obj, key) => {
-            obj[key] = searchObject[key];
-            return obj;
-        }, {});
+        const filteredSearch = Object.keys(searchObject)
+            .filter(checker)
+            .reduce((obj, key) => {
+                obj[key] = searchObject[key];
+                return obj;
+            }, {});
         const searchForDataPulling = objectToSearch(filteredSearch);
-        return '?' + searchForDataPulling
+        return '?' + searchForDataPulling;
     }
 
     async function checksGroupViewClick(evt) {
         // console.log({ evt })
-        const id = evt.currentTarget.getAttribute('snapshot')
+        const id = evt.currentTarget.getAttribute('snapshot');
         if (event.metaKey) {
-            window.open(`/snapshoots/${id}.png`, '_blank').focus();
+            window.open(`/snapshoots/${id}.png`, '_blank')
+                .focus();
         }
     }
 
@@ -136,12 +141,11 @@
 
             // add page=1 if empty
             const searchObject0 = searchToObject(window.location.search);
-            console.log({ searchObject0 })
+            // console.log({ searchObject0 });
             if (searchObject0 == null || (searchObject0 && !searchObject0.page)) {
                 const updatedSearch0 = updateQueryParam('page', 1, window.location.search);
                 updateUrlWithoutReloading(null, null, document.location.origin + updatedSearch0);
             }
-
 
             // prepare search URI part and get json data
             const searchObject = searchToObject(window.location.search);
@@ -167,11 +171,12 @@
             // ad events to groupview links
             const linkElements = Array.prototype.slice.call(document.getElementsByClassName('group-links-view'));
             for (const link of linkElements) {
-                link.addEventListener("click", checksGroupViewClick);
+                link.addEventListener('click', checksGroupViewClick);
             }
 
             // insert HTML
-            document.getElementById('tests-table-end').insertAdjacentHTML('beforebegin', testsHtml);
+            document.getElementById('tests-table-end')
+                .insertAdjacentHTML('beforebegin', testsHtml);
 
             let pageNum;
             if (searchObject) {
@@ -182,18 +187,18 @@
             }
 
             const updatedSearch = updateQueryParam('page', pageNum, window.location.search);
-            if (json === "{}") {
+            if (json === '{}') {
                 window.removeEventListener('scroll', scroller);
                 return resolve(json);
             } else {
                 updateUrlWithoutReloading(null, null, document.location.origin + updatedSearch);
-                return resolve(json)
+                return resolve(json);
             }
-        })
+        });
     }
 
     async function scroller() {
-        console.log('scroller')
+        console.log('scroller');
         let lastScroll = 0;
 
         // function () {
@@ -212,17 +217,19 @@
         let pageNum;
         // load all pages that are in query like: 'page=10'
         if (searchObject && searchObject.page > 1) {
-            console.log("preload pages > 1")
+            console.log('preload pages > 1');
 
             pageNum = parseInt(searchObject.page);
-            const pagesArray = Array.from(Array(pageNum).keys());
+            const pagesArray = Array.from(Array(pageNum)
+                .keys());
             for (const i of pagesArray) {
                 await renderNextPage(i + 1);
             }
         } else {
             // just load few pages to enable scroll, because there is no way to trigger scroll event otherwise
-            console.log("preload pages")
-            for (const i of Array.from(Array(3).keys())) {
+            console.log('preload pages');
+            for (const i of Array.from(Array(3)
+                .keys())) {
                 // console.log({ i });
                 await renderNextPage();
             }
@@ -231,8 +238,18 @@
 
     window.onload = function () {
         firstPaginatorLoad();
-        window.addEventListener("scroll", scroller)
-    }
+        window.addEventListener('scroll', scroller);
+
+        // search trigger on press enter
+        document.getElementById('subheader-search')
+            .addEventListener('keyup', function (event) {
+                console.log(123);
+                if (event.keyCode === 13) {
+                    event.preventDefault();
+                    search();
+                }
+            });
+    };
 
 </script>
 
@@ -274,15 +291,17 @@
     window.addEventListener('resize', setSuiteMenuWidth);
 </script>
 <script>
-    var baselines = {}
+    var baselines = {};
     const urlParams = new URLSearchParams(window.location.search);
     const unfoldTestId = urlParams.get('unfoldTestId');
-    if (unfoldTestId)
-        unfoldCheck(unfoldTestId)
+    if (unfoldTestId) {
+        unfoldCheck(unfoldTestId);
+    }
 
     function unfoldCheck(id) {
         jQuery(`#testchecks_${id}`)[0].scrollIntoView();
-        jQuery(`#testchecks_${id}`).collapse('show');
+        jQuery(`#testchecks_${id}`)
+            .collapse('show');
         drawTestChecksPreviews(unfoldTestId);
     }
 

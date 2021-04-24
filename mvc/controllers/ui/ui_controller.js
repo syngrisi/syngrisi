@@ -267,7 +267,7 @@ exports.userinfo = async function (req, res) {
 exports.login = function (req, res) {
     try {
         if (req.user) {
-            return res.redirect('/');
+            if (req.user.username !== 'Test') return res.redirect('/');
         }
         const { version } = require('../../../package.json');
         return res.render('pages/login', {
@@ -278,20 +278,15 @@ exports.login = function (req, res) {
     }
 };
 
-exports.changePasswordPage = async function (req, res) {
-    return new Promise(
-        async function (resolve, reject) {
-            try {
-                const version = require('../../../package.json').version;
-                res.render('pages/changePassword', {
-                    version: version
-                });
-            } catch (e) {
-                fatalError(req, res, e);
-                return reject(e);
-            }
-        }
-    );
+exports.changePasswordPage = function (req, res) {
+    try {
+        const { version } = require('../../../package.json');
+        return res.render('pages/changePassword', {
+            version,
+        });
+    } catch (e) {
+        return fatalError(req, res, e);
+    }
 };
 
 exports.runs = async function (req, res) {
