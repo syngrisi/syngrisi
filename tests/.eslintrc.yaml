@@ -17,7 +17,6 @@ parserOptions:
   ecmaVersion: 8
 
 root: true
-
 rules:
   comma-dangle:
     - 'error'
