@@ -13706,6 +13706,16 @@ html {
     margin-left: auto !important;
   }
 }
+.check-toolbar-button-info:hover {
+  background-color: rgba(12, 36, 29, 0.4) !important;
+  color: white;
+}
+
+.check-toolbar-button-danger:hover {
+  background-color: rgba(170, 10, 6, 0.4) !important;
+  color: white;
+}
+
 .suites-list:hover {
   overflow-y: auto;
 }

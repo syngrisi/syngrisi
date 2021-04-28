@@ -89,7 +89,7 @@ Feature: Acceptance by User
         When I click on "Accept by User - 1" VRS test
         Then I expect that VRS test "Accept by User - 1" is unfolded
         When I click on the element "a.accept-button"
-        When I accept the confirmbox
+        When I click on the element "a.accept-option"
 
 #        Then I expect that "1" check has Created "Accepted by" equal to "i_ivanov@gmail.com"
         Then I expect that VRS test "Accept by User - 1" has "Accepted" accepted status

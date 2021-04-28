@@ -34,6 +34,10 @@ async function redrawTestAcceptedStatus(id) {
         const test = JSON.parse(await getRequest(`test/${id}`));
         const acceptedStatus = test.markedAs ? test.markedAs : 'Unaccepted';
         const label = document.getElementsByClassName(`check-accept-label-test-id_${id}`)[0];
+        // remove all classes that start with 'status-'
+        label.classList.remove.apply(label.classList, Array.from(label.classList)
+            .filter((v) => v.startsWith('status-')));
+
         label.classList.add(acceptStatusesClass(acceptedStatus));
         label.innerText = acceptedStatus;
     } catch (e) {
@@ -188,7 +192,6 @@ function showNotification(msg, status = 'Success', timeout = 7000) {
 }
 
 async function removeOneCheck(id, testId) {
-    if (!confirmation()) return;
     await removeCheck(id, testId);
     await removeTestFromDomIfEmpty(testId);
     await redrawTestAcceptedStatus(testId);
@@ -223,7 +226,6 @@ function removeCheck(id, testId) {
 }
 
 async function acceptOneCheck(id, newBaselineId, oldBaselineId, testId) {
-    if (!confirmation()) return;
     const regionData = await baselines[id].getRegionsData(oldBaselineId);
     //  !== 'undefined' - is for back compatibility
     if (regionData.ignoreRegions && regionData.ignoreRegions !== 'undefined') {

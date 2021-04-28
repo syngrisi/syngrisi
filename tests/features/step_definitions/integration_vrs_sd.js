@@ -485,7 +485,7 @@ When(/^I accept the "([^"]*)" check$/, (checkName) => {
     $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//a[contains(@class, 'accept-button')]`)
         .click();
     browser.pause(200);
-    browser.acceptAlert();
+    $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../div[@name='check-buttons']//a[contains(@class, 'accept-option')]`).click();
 });
 
 When(/^I delete the "([^"]*)" check$/, (checkName) => {
@@ -495,7 +495,8 @@ When(/^I delete the "([^"]*)" check$/, (checkName) => {
     // eslint-disable-next-line max-len
     $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//a[contains(@class, 'delete-button')]`)
         .click();
-    browser.acceptAlert();
+    browser.pause(200);
+    $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../div[@name='check-buttons']//a[contains(@class, 'remove-option')]`).click();
 });
 
 When(/^I expect the "([^"]*)" check has "([^"]*)" acceptance status$/, (checkName, acceptStatus) => {
