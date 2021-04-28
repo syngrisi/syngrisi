@@ -50,7 +50,7 @@ Feature: Login
 
         When I open the url "http://vrs:3001/admin?task=users"
         When I wait for "3" seconds
-        When I click on the element "input[value='Add User']"
+        When I click on the element "#add-user"
         When I set "i_ivanov@gmail.com" to the inputfield "//input[@placeholder='Username']"
         When I set "Ivan" to the inputfield "//input[@placeholder='First Name']"
         When I set "Ivanov" to the inputfield "//input[@placeholder='Last Name']"

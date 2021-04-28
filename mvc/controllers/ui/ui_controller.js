@@ -217,14 +217,13 @@ exports.index = async function (req, res) {
 
 exports.admin = async function (req, res) {
     return new Promise(
-        async function (resolve, reject) {
+        (resolve, reject) => {
             try {
-                let users = await User.find()
-                    .exec();
-                res.render('pages/admin', {
-                    users: users,
-                    currentUser: req.user
-                });
+                User.find()
+                    .then((result) => resolve(res.render('pages/admin', {
+                        users: result,
+                        currentUser: req.user,
+                    })));
             } catch (e) {
                 fatalError(req, res, e);
                 return reject(e);
