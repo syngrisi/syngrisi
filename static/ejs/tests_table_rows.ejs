@@ -301,33 +301,65 @@
                         <div class="container pl-0 pr-0">
                             <div class="row justify-content-end1  float-right flex-row-reverse mr-0">
                                 <div class="col-3 ml-2 p-0 float-right1">
-                                    <a
-                                            class="delete-button btn-check btn-mini-toolbar btn-sm ml-1 rounded-0 border-0"
-                                            check-name="<?= check.name ?>"
-                                            style="line-height: 0.1; padding: 2px;"
-                                            id="checkbutton_<?= check._id ?>"
-                                            data-toggle="tooltip"
-                                            data-placement="top"
-                                            title="Remove this check"
-                                            onclick="removeOneCheck('<?= check._id ?>', '<?= test.id ?>');">
-                                        <i class="fas fa-times-circle fa-1x"></i>
-                                    </a>
+                                    <!--Remove dropdown-->
+                                    <div class="dropdown">
+                                        <a
+                                                class="delete-button btn-check btn-mini-toolbar btn-sm ml-1 rounded-0 border-0"
+                                                check-name="<?= check.name ?>"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                                style="line-height: 0.1; padding: 2px;"
+                                                id="checkbutton_<?= check._id ?>"
+                                                data-toggle="tooltip"
+                                                data-placement="top"
+                                                title="Remove this check"
+                                                onclick="//removeOneCheck('<?= check._id ?>', '<?= test.id ?>');">
+                                            <i class="fas fa-times-circle fa-1x"></i>
+                                        </a>
+                                        <div class="dropdown-menu pl-2 pr-2 text-light bg-danger"
+                                             aria-labelledby="checkbutton_<?= check._id ?>"
+                                             style="min-width: 5.5rem"
+                                        >
+                                            <a class="remove-option dropdown-item check-toolbar-button-info pl-1 pr-0 text-light bg-danger"
+                                               href="javascript:void(0)"
+                                               onclick="removeOneCheck('<?= check._id ?>', '<?= test.id ?>');">
+                                                Remove
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <!--/Remove dropdown-->
                                 </div>
                                 <div class="col-3 ml-0 p-0 float-right1">
-                                    <a
-                                            class="accept-button btn-mini-toolbar btn-check btn-sm ml-1 rounded-0 border-0"
-                                            style="line-height: 0.1; padding: 2px;"
-                                            check-name="<?= check.name ?>"
-                                            id="acceptbutton_<?= check._id ?>"
-                                            data-toggle="tooltip"
-                                            data-placement="top"
-                                            onclick="acceptOneCheck('<?= check._id ?>', '<?= check.actualSnapshotId ?>', '<?= check.baselineId ?>', '<?= test.id ?>')"
-                                    >
+                                    <!--Accept dropdown-->
+                                    <div class="dropdown">
+                                        <a
+                                                class="accept-button btn-mini-toolbar btn-check btn-sm ml-1 rounded-0 border-0"
+                                                style="line-height: 0.1; padding: 2px;"
 
-                                        <i class="check-accept-button-check-id_<?= check._id ?> <?= check.markedAs === 'accepted' ? 'accepted-button-icon' : 'not-accepted-button-icon' ?> accept-button-icon fas fa-thumbs-up fa-1x"
-                                           title="<?- check.markedByUsername ? `Accepted by: ${check.markedByUsername} \n Accepted date: ${check.markedDate}` : 'Click here to accept this check'?>"
-                                        ></i>
-                                    </a>
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+
+                                                check-name="<?= check.name ?>"
+                                                id="acceptbutton_<?= check._id ?>"
+                                                data-toggle="tooltip"
+                                                data-placement="top"
+                                                onclick="//acceptOneCheck('<?= check._id ?>', '<?= check.actualSnapshotId ?>', '<?= check.baselineId ?>', '<?= test.id ?>')"
+                                        >
+
+                                            <i class="check-accept-button-check-id_<?= check._id ?> <?= check.markedAs === 'accepted' ? 'accepted-button-icon' : 'not-accepted-button-icon' ?> accept-button-icon fas fa-thumbs-up fa-1x"
+                                               title="<?- check.markedByUsername ? `Accepted by: ${check.markedByUsername} \n Accepted date: ${check.markedDate}` : 'Click here to accept this check'?>"
+                                            ></i>
+                                        </a>
+                                        <div class="dropdown-menu pl-2 pr-2 text-light bg-olive"
+                                             aria-labelledby="acceptbutton_<?= check._id ?>"
+                                             style="min-width: 5.5rem"
+                                        >
+                                            <a class="accept-option dropdown-item check-toolbar-button-info pl-1 pr-0 text-light bg-olive"
+                                               href="javascript:void(0)"
+                                               onclick="acceptOneCheck('<?= check._id ?>', '<?= check.actualSnapshotId ?>', '<?= check.baselineId ?>', '<?= test.id ?>')">
+                                                Accept
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <!--/Accept dropdown-->
                                 </div>
                             </div>
                         </div>

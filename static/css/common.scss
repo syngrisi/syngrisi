@@ -1,9 +1,20 @@
 @import "./bootstrap-4.3.1/scss/bootstrap";
 @import "./bootstrap-4.3.1/scss/bootstrap-grid";
 
+.check-toolbar-button-info:hover {
+  background-color: rgba(12, 36, 29, 0.40) !important;
+  color: white;
+}
+
+.check-toolbar-button-danger:hover {
+  background-color: rgba(170, 10, 6, 0.4) !important;
+  color: white;
+}
+
 .suites-list:hover {
   overflow-y: auto;
 }
+
 .status-accepted {
   color: #06ba0e;
   //color: #07cca5;
