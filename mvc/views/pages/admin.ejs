@@ -80,56 +80,60 @@
                 <row id="users-table-end">
 
                 </row>
-                <div class="row align-items-end pt-4">
+                <div class="row d-flex justify-content-end align-items-end pt-4">
+                    <!--                    <div class="col-10">-->
+                    <!--                    </div>-->
                     <div class="col-10">
+                        <input id="add-user" type="button" class="btn btn-secondary bg-olive float-right "
+                               style="visibility: hidden; font-size: 1.2em"
+                               value="+">
                     </div>
-                    <div class="col-2 pr-2 pl-1 ">
-                        <input id="add-user" type="button" class="btn btn-primary" style="visibility: hidden"
-                               value="Add User">
-                    </div>
+                    <div class="col-1-2"></div>
                 </div>
             </div>
         </div>
-        <!--   /USERS TABLE-->
     </div>
+    <!--   /USERS TABLE-->
+</div>
 </div>
 <!--USER ROW TEMPLATE-->
 <div id="user-row-template" class="row pt-1" style="opacity: 0">
-    <div class="col-auto pl-0 pr-1">
-        <input name="id" class="form-control" placeholder="id" readonly>
+    <div class="col-1-2 pl-0 pr-1">
+        <input name="id" class="form-control form-control-sm" placeholder="id" readonly>
     </div>
 
     <div class="col-1 pl-0 pr-1">
-        <input name="username" class="form-control" placeholder="Username">
+        <input name="username" class="form-control form-control-sm" placeholder="Username">
+    </div>
+    <div class="col-1-2 pl-0 pr-1">
+        <input name="firstName" class="form-control form-control-sm" placeholder="First Name">
+    </div>
+    <div class="col-1-2 pl-0 pr-1">
+        <input name="lastName" class="form-control form-control-sm" placeholder="Last Name">
     </div>
     <div class="col-1 pl-0 pr-1">
-        <input name="firstName" class="form-control" placeholder="First Name">
+        <select name="role" new-user-role="" class="form-select form-control form-control-sm" aria-label="role">
+            <option value="user">user</option>
+            <option value="reviewer">reviewer</option>
+            <option value="admin">admin</option>
+        </select>
     </div>
     <div class="col-1 pl-0 pr-1">
-        <input name="lastName" class="form-control" placeholder="Last Name">
+        <input name="password" class="form-control form-control-sm" placeholder="password" type="password">
     </div>
-    <select name="role" new-user-role="" class="form-select" aria-label="role">
-        <option value="user">user</option>
-        <option value="reviewer">reviewer</option>
-        <option value="admin">admin</option>
-    </select>
-    <div class="col-1 pl-0 pr-1">
-        <input name="password" class="form-control" placeholder="password" type="password">
+    <div class="col-2 pl-0 pr-1">
+        <input name="apiKey" class="form-control form-control-sm" placeholder="api key" type="text" readonly>
     </div>
-    <div class="col-auto pl-0 pr-1">
-        <input name="apiKey" class="form-control" placeholder="api key" type="text" readonly>
+    <div class="col-2 pl-0 pr-1">
+        <input name="updatedDate" class="form-control form-control-sm" placeholder="created date" type="text" readonly>
     </div>
     <div class="col-1 pl-0 pr-1">
-        <input name="updatedDate" class="form-control" placeholder="created date" type="text" readonly>
-    </div>
-    <div class="col-1 pl-0 pr-1">
-        <a type="button" class="send-new-user-button btn btn-secondary border-0 " onclick="">
+        <a type="button" class="send-new-user-button btn-sm btn-secondary border-0 " onclick="">
             <i class="fa fa-paper-plane"></i>
         </a>
     </div>
 </div>
 <!/--USER ROW TEMPLATE-->
-
 
 <script>
     function paramsToObject(entries) {
@@ -146,7 +150,7 @@
 
         let col = [
             `\t<div class='col-${width} pl-0 pr-1'>`,
-            `\t\t<input class='form-control ${bg}' id='input_${name}_${id}'` +
+            `\t\t<input class='form-control form-control-sm ${bg}' id='input_${name}_${id}'` +
             `name='${name}' value="${value}" type='${type}' ${ro} state='${state}'>`,
             `\t\t</input>`,
             "\t</div>"
@@ -156,46 +160,49 @@
 
     function renderTableHeader() {
         let row = [
-            "<div class='row pt-1'>",
-            "<div class='col-2 border-left'>Id</div>",
-            "<div class='col-1 border-left'>Username</div>",
-            "<div class='col-1 border-left'>First Name</div>",
-            "<div class='col-1 border-left'>Last Name</div>",
-            "<div class='col-1 border-left'>Role</div>",
-            "<div class='col-1 border-left'>Password</div>",
-            "<div class='col-2 border-left'>Api Key</div>",
-            "<div class='col-auto border-left border-right'>Updated</div>",
+            "<div class='row pt-1 small'>",
+            "<div class='col-1-2 p-2 pl-0 pr-1 border-left1'>Id</div>",
+            "<div class='col-1 p-2 pl-0 pr-1 border-left1'>Username</div>",
+            "<div class='col-1-2 p-2 pl-0 pr-1 border-left1'>First Name</div>",
+            "<div class='col-1-2 p-2 pl-0 pr-1 border-left1'>Last Name</div>",
+            "<div class='col-1 p-2 pl-0 pr-1 border-left1'>Role</div>",
+            "<div class='col-1 p-2 pl-0 pr-1 border-left1'>Password</div>",
+            "<div class='col-2 p-2 pl-0 pr-1 border-left1'>Api Key</div>",
+            "<div class='col-2 p-2 pl-0 pr-1 border-left2 border-right1'>Updated</div>",
             "<div class=col-1></div>",
             "</div>"
         ]
         const result = row.join("\n");
-        document.getElementById('users-table-end').insertAdjacentHTML('beforebegin', result);
+        document.getElementById('users-table-end')
+            .insertAdjacentHTML('beforebegin', result);
     }
 
     function renderUserRow(user) {
         let row = [`<div id='user_row_${user._id}' class='row pt-1'>`,
-            col('id', user._id, 'auto', user._id, 'disabled'),
+            col('id', user._id, '1-2', user._id, 'disabled'),
             col('username', user._id, '1', user.username, 'disabled'),
-            col('firstName', user._id, '1', user.firstName),
-            col('lastName', user._id, '1', user.lastName),
-            `<select name="role" username="${user.username}" class="form-select" aria-label="role" id='input_${user.username}_${user._id}'\`>
-                    <option value="${user.role}">${user.role}</option>
-                    ${(user.role !== 'admin') ? '<option value="admin">admin</option>' : ''}
-                    ${(user.role !== 'user') ? '<option value="user">user</option>' : ''}
-                    ${(user.role !== 'reviewer') ? '<option value="reviewer">reviewer</option>' : ''}
-             </select>`,
+            col('firstName', user._id, '1-2', user.firstName),
+            col('lastName', user._id, '1-2', user.lastName),
+            `<div class="col-1 pl-0 pr-1">
+                 <select name="role" username="${user.username}" class="form-select form-control form-control-sm" aria-label="role" id='input_${user.username}_${user._id}'\`>
+                        <option value="${user.role}">${user.role}</option>
+                        ${(user.role !== 'admin') ? '<option value="admin">admin</option>' : ''}
+                        ${(user.role !== 'user') ? '<option value="user">user</option>' : ''}
+                        ${(user.role !== 'reviewer') ? '<option value="reviewer">reviewer</option>' : ''}
+                 </select>
+             </div>`,
             col('password', user._id, '1', '', 'enabled', 'password'),
-            col('apiKey', user._id, 'auto', user.apiKey, 'disabled'),
-            col('updatedDate', user._id, '1', user.updatedDate, 'disabled')
+            col('apiKey', user._id, '2', user.apiKey, 'disabled'),
+            col('updatedDate', user._id, '2', user.updatedDate, 'disabled')
         ]
         // console.log(user.username);
         if ((user.username !== 'Administrator') && (user.username !== 'Guest')) {
-            row.push(`\t<div class='col-1 pl-0 pr-1'>
-                <a id="update-user_btn_${user._id}" type="button" update-button-username="${user.username}" class="btn btn-secondary border-0" title="Update the User" onclick="updateUser('user_row_${user._id}')">
-                        <i class="fas fa-check-square"></i>
+            row.push(`\t<div class='col-1 pl-2 pr-1'>
+                <a id="update-user_btn_${user._id}" type="button" update-button-username="${user.username}" class="btn btn-sm btn-secondary border-0" title="Update the User" onclick="updateUser('user_row_${user._id}')">
+                        <i class="fa fa-paper-plane"></i>
                 </a>
 
-                <a id="remove-user_btn_${user._id}" type="button" class="btn btn-secondary border-0" title="Remove the User" onclick="removeUser('${user._id}')">
+                <a id="remove-user_btn_${user._id}" type="button" class="btn btn-sm btn-secondary border-0" title="Remove the User" onclick="removeUser('${user._id}')">
                         <i class="fas fa-trash fa-1x"></i>
                 </a>
                </div>`)
@@ -205,7 +212,8 @@
         }
         row.push("</div>");
         const result = row.join("\n");
-        document.getElementById('users-table-end').insertAdjacentHTML('beforebegin', result);
+        document.getElementById('users-table-end')
+            .insertAdjacentHTML('beforebegin', result);
     }
 
     function enableInput(evt) {
@@ -244,8 +252,10 @@
     }
 
     function createUser(rowId) {
-        const select = Array.prototype.slice.call(document.getElementById(rowId).getElementsByTagName('select'))
-        const inputs = Array.prototype.slice.call(document.getElementById(rowId).getElementsByTagName('input'))
+        const select = Array.prototype.slice.call(document.getElementById(rowId)
+            .getElementsByTagName('select'))
+        const inputs = Array.prototype.slice.call(document.getElementById(rowId)
+            .getElementsByTagName('input'))
             .filter(x => ((x.readOnly === false) || (x.name === 'apiKey')))
         // console.log({inputs})
         const params = {
@@ -278,8 +288,11 @@
     }
 
     function updateUser(rowId) {
-        const select = Array.prototype.slice.call(document.getElementById(rowId).getElementsByTagName('select'))
-        const inputs = Array.prototype.slice.call(document.getElementById(rowId).getElementsByTagName('input'))
+        if (!confirmation()) return;
+        const select = Array.prototype.slice.call(document.getElementById(rowId)
+            .getElementsByTagName('select'))
+        const inputs = Array.prototype.slice.call(document.getElementById(rowId)
+            .getElementsByTagName('input'))
         // console.log({inputs})
         const params = {
             id: getInputValueByName('id', inputs),
@@ -312,18 +325,22 @@
     }
 
     // clone user row
-    $(document).ready(function () {
-        $("#add-user").on('click', function () {
-            const element = $("#user-row-template").clone()[0];
-            element.style.opacity = 1;
-            element.id = uuidv4();
-            const sendLink = element.getElementsByClassName('send-new-user-button')[0];
-            sendLink.setAttribute('onclick', `createUser('${element.id}')`);
-            // console.log({ sendLink });
-            // console.log(element)
-            $("#users-table-end").after(element);
+    $(document)
+        .ready(function () {
+            $("#add-user")
+                .on('click', function () {
+                    const element = $("#user-row-template")
+                        .clone()[0];
+                    element.style.opacity = 1;
+                    element.id = uuidv4();
+                    const sendLink = element.getElementsByClassName('send-new-user-button')[0];
+                    sendLink.setAttribute('onclick', `createUser('${element.id}')`);
+                    // console.log({ sendLink });
+                    // console.log(element)
+                    $("#users-table-end")
+                        .after(element);
+                });
         });
-    });
 
     window.onload = async function () {
         const searchObject = searchToObject(window.location.search);
@@ -348,8 +365,6 @@
             }
         }
     }
-
-
 </script>
 
 <!--NOTIFY BOX-->
@@ -385,16 +400,5 @@
         integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
         crossorigin="anonymous"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/fabric.js/3.6.1/fabric.min.js"></script>
-<script>
-    $(function () {
-        $('[data-toggle="tooltip"]')
-            .tooltip({
-                animation: true,
-                delay: {
-                    show: 0,
-                    hide: 100
-                }
-            });
-    });</script>
 </body>
 </html>

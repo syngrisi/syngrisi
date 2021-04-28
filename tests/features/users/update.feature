@@ -42,7 +42,7 @@ Feature: Update User
     Scenario: Update User - Success
         When I open the url "http://vrs:3001/admin?task=users"
         When I wait for "3" seconds
-        When I click on the element "input[value='Add User']"
+        When I click on the element "#add-user"
         When I set "i_ivanov@gmail.com" to the inputfield "//input[@placeholder='Username']"
         When I set "Ivan" to the inputfield "//input[@placeholder='First Name']"
         When I set "Ivanov" to the inputfield "//input[@placeholder='Last Name']"
@@ -62,6 +62,8 @@ Feature: Update User
         When I set "Password-1234" to the inputfield "//input[@name='username' and @value='i_ivanov@gmail.com']/../..//input[@name='password']"
         When I wait for "1" seconds
         When I click on the element "a[update-button-username='i_ivanov@gmail.com']"
+        When I wait for "1" seconds
+        When I accept the confirmbox
         When I wait for "5" seconds
         When I refresh page
         When I wait for "3" seconds
