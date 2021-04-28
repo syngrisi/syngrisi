@@ -17,16 +17,15 @@ body::before {
 }
 
 body {
-    background-image: url("../imgs/blur_background.png");
+    background-image: url("../imgs/blur_login_background2.jpg");
     opacity: 1;
-    background-size: 0 0;  /* Image should not be drawn here */
-    width: 100%;
-    height: 100%;
+    width: 101%;
+    height: 101%;
     position: fixed; /* Or absolute for scrollable backgrounds */
 }
 
 body.my-login-page {
-    background-color: #f7f9fb;
+    background-color: rgba(247, 249, 251, 0);
     font-size: 14px;
 }
 

@@ -3,16 +3,16 @@
     <% if(currentItem){ %>
         <% itemClass = item.id === currentItem.id ? 'current-menu-item' : '' %>
     <% } %>
-    <div name="suite-menu-item-container"
+    <li name="suite-menu-item-container"
          class="row suite-menu-item-container pl-0 w-100 btn-light border-silver pt-2 pb-2 mr-0 ml-0 <%= itemClass %>"
          onclick="window.location.href='/?filter_suitename_eq=<%= item.name %>'"
     >
-        <div class="col.auto pl-2">
+        <div class="col.auto pl-3">
             <input name="suite-item" class="small" type="checkbox" suiteid="<%= item.id %>"
-                   id="suite-checkbox-<%= item.id %>">
+                   id="suite-checkbox-<%= item.id %>" onclick="event.stopPropagation();">
         </div>
         <div class="col pr-1 pl-2 pb-1 ">
             <span class="small text-dark "><%= item.name %></span>
         </div>
-    </div>
+    </li>
 <% }); %>

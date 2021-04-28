@@ -48,6 +48,7 @@ Feature: VRS Few checks with same identification
         Then I expect that VRS test "two passed checks" has "Passed" status
 
         When I click on "two passed checks" VRS test
+        When I wait for "1" seconds
         Then I expect that VRS check "1/1(2) check 1" has "Passed" status
 
         # 3 Check groupview page
@@ -87,6 +88,7 @@ Feature: VRS Few checks with same identification
         Then I expect that VRS test "two failed checks" has "Failed" status
 
         When I click on "two failed checks" VRS test
+        When I wait for "1" seconds
         Then I expect that VRS check "1/1(2) check 1" has "Failed" status
 
         # 3 Check groupview page
@@ -127,6 +129,7 @@ Feature: VRS Few checks with same identification
         Then I expect that 1th VRS test "failed and passed" has blink icon
 
         When I click on "failed and passed" VRS test
+        When I wait for "1" seconds
         Then I expect that VRS check "1/1(2) check 1" has "Blinking" status
 
         # 3 Check groupview page
@@ -167,6 +170,7 @@ Feature: VRS Few checks with same identification
         Then I expect that VRS test "passed and failed" has "Failed" status
 
         When I click on "passed and failed" VRS test
+        When I wait for "1" seconds
         Then I expect that VRS check "1/1(2) check 1" has "Failed" status
 
         # 3 Check groupview page

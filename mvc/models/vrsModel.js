@@ -146,6 +146,53 @@ const VRSCheckSchema = new Schema({
     },
 });
 
+const VRSBaselineSchema = new Schema({
+    snapshootId: Schema.Types.ObjectId,
+    name: {
+        type: String,
+        required: 'VRSBaselineSchema: the name of the snapshoot entity is empty',
+    },
+    app: {
+        type: Schema.Types.ObjectId,
+        ref: 'VRSApp',
+    },
+    browserName: {
+        type: String,
+    },
+    browserVersion: {
+        type: String,
+    },
+    browserFullVersion: {
+        type: String,
+    },
+    viewport: {
+        type: String,
+    },
+    os: {
+        type: String,
+    },
+    baselineHistory: {
+        type: [{
+            id: Schema.Types.ObjectId,
+            date: Date,
+        }],
+    },
+    markedAs: {
+        type: String,
+        enum: ['bug', 'accepted'],
+    },
+    lastMarkedDate: {
+        type: Date,
+    },
+    markedById: {
+        type: Schema.Types.ObjectId,
+        ref: 'VRSUser',
+    },
+    markedByUsername: {
+        type: String,
+    },
+});
+
 const VRSTestSchema = new Schema(
     {
         name: {
@@ -339,3 +386,4 @@ module.exports = mongoose.model('VRSApp', VRSAppSchema);
 module.exports = mongoose.model('VRSRun', VRSRunSchema);
 module.exports = mongoose.model('VRSLog', VRSLogSchema);
 module.exports = mongoose.model('VRSUser', VRSUserSchema);
+module.exports = mongoose.model('VRSBaseline', VRSBaselineSchema);

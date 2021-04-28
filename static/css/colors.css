@@ -29,6 +29,7 @@
     bottom: 0;
     /*z-index: $zindex-fixed;*/
 }
+
 .toast-header {
     display: -ms-flexbox;
     display: flex;
@@ -75,8 +76,39 @@
     background-color: #39CCCC;
 }
 
+.bg-item-failed {
+    background-color: #fb4d45;
+}
+
+.bg-item-passed {
+    background-color: #06ba0e;
+    /*background-color: #07cca5;;*/
+    /*background-color: #07ccb9;;*/
+}
+
+.bg-item-new {
+    background-color: #63bae1;
+}
+
+.bg-item-accepted {
+    background-color: #06ba0e;
+}
+
+.bg-item-unaccepted {
+    background-color: #fb4d45;
+}
+
+.bg-item-partially {
+    background-color: #fbb61c;
+}
+
+.bg-item-other {
+    background-color: #575858;
+}
+
 .bg-olive {
-    background-color: #3D9970;
+    /*background-color: #3D9970;*/
+    background-color: #3eae95;
 }
 
 .bg-dark-olive {

@@ -52,22 +52,22 @@
     <div class="all-table row mh-100 mr-0">
         <!--   SIDEBAR    -->
         <div name="sidebar"
-             class="sidebar col-3 pl-0 pr-0 mh-100 bg-light border-top  border-right border-silver float-left w-251 ml-0 mr-0"
+             class="sidebar col-2-5 pl-0 pr-0 mh-100 bg-light border-top border-right border-silver float-left w-251 ml-0 mr-0"
              style="width: 100px; min-height: 100vh">
             <!--   COLLAPSED SUITES TOOLBAR-->
             <%- // include('components/sidebar_items_toolbar', {itemName: 'suite-item'})      %>
             <!--   SUITES CONTROL PANEL-->
-            <div class="row">
-                <div class="col suites-toolbar">
+            <div class="row sticky-top bg-light">
+                <div class="col suites-toolbar ">
                     <%- include('components/suites_toolbar.ejs') %>
                 </div>
             </div>
             <!--   SUITES LIST-->
-            <div class="suites-list m-0 row pl-0 pt-1 pr-0 bg-light text-secondary">
-                <div class="col pr-0 pl-0">
+            <div class="suites-list m-0 row pl-0 pt-1 pr-0 bg-light text-secondary" style="height: 100vh">
+                <ul class="col pr-0 pl-0">
                     <% let items = suites %>
                     <%- include('components/sidebar_items', {items: suites, currentItem: currentSuite}) %>
-                </div>
+                </ul>
             </div>
             <!--  /SUITES LIST-->
         </div>
@@ -287,9 +287,6 @@
         crossorigin="anonymous"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/fabric.js/3.6.1/fabric.min.js"></script>
 <script src="lib/baselineView.js"></script>
-<script>
-    window.addEventListener('resize', setSuiteMenuWidth);
-</script>
 <script>
     var baselines = {};
     const urlParams = new URLSearchParams(window.location.search);
