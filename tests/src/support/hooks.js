@@ -156,8 +156,9 @@ exports.hooks = {
             }
         }
     },
-    // afterScenario: function (uri, feature, scenario, result, sourceLocation) {
-    // },
+    afterScenario: function (uri, feature, scenario, result, sourceLocation) {
+        if (browser.syngrisiServer) browser.syngrisiServer.kill();
+    },
     // afterFeature: function (uri, feature, scenarios) {
     // }
 };

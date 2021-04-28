@@ -2,7 +2,7 @@
 
 <!--TEST_INFO START-->
 <div name="testinfo"
-     class="testinfo testinfo_<?= test.id ?> row py-2 test-row pr-0 button m-0 w-100"
+     class="testinfo testinfo_<?= test.id ?> row py-2 test-row pr-0 pt-3 pb-3 m-0 w-100"
      data-toggle="collapse" style="cursor: pointer" onclick="drawTestChecksPreviews('<?= test.id ?>');"
      data-target="#testchecks_<?= test.id ?>">
     <!--TEST CHECKBOX-->
@@ -14,15 +14,15 @@
     </div>
     <!--TEST STATUS-->
     <? const statusesClassesBg = {
-                    Failed: 'bg-danger',
-                    Passed: 'bg-success',
+                    Failed: 'bg-item-failed',
+                    Passed: 'bg-item-passed',
                     Unresolved: 'bg-warning',
-                    Running: 'bg-info',
-                    New: 'bg-success font-weight-bold'
+                    Running: 'bg-item-partially',
+                    New: 'bg-item-new'
                 }
      ?>
 
-    <div class="cell-status <?= statusesClassesBg[test.status] ?> cell col-auto pl-1 pr-0 border-0  text-truncate">
+    <div class="cell-status <?= statusesClassesBg[test.status] ?> cell col-auto pr-0 border-0  text-truncate">
         <? const statusesClasses = {
                     Failed: 'text-danger',
                     Passed: 'text-success',
@@ -39,25 +39,52 @@
               title="<?= test.status ?>"><?= test.status ?></span>
 
     </div>
+    <div class="cell-status-expand bg-warning col-auto pr-0 border-0 text-truncate">
+        <?
+        function calculatecheckGroupStatus(group) {
+        const statuses = group.map( x => x.status[0] );
+        if(statuses.includes('new')) return 'new';
+        if(statuses.includes('passed')) return 'passed';
+        return 'failed';
+        }
+        // calculate checks group statuses
+        const groupStatuses = Object.values(checksByTestGroupedByIdent[test.id]).filter(x => x.checks).map(x =>
+        calculatecheckGroupStatus(x.checks));
+        const allCount = groupStatuses.length;
+        const groupStatusesCounts = {};
+        groupStatuses.forEach(function(x) { groupStatusesCounts[x] = (groupStatusesCounts[x] || 0)+1; });
+        console.log({groupStatusesCounts});
+        let groupStatusesCountsByPercent = {};
+        Object.keys(groupStatusesCounts).forEach((x)=>{
+        groupStatusesCountsByPercent[x] = groupStatusesCounts[x] / (allCount / 100)
+        }
+        )
+        console.log({groupStatusesCountsByPercent});
+        // const statusesKeys = Object.keys(calculatecheckGroupStatus);
+        ?>
+
+        <? for( const status in groupStatusesCountsByPercent) { ?>
+        <div class="row bg-item-<?= status ?>"
+             style="height: <?= groupStatusesCountsByPercent[status] ?>%"></div>
+        <? }?>
+    </div>
 
     <!--NAME-->
     <div class="cell-name cell pl-3 col-4-5 text-truncate">
-        <div data-toggle="collapse">
-            <i data-toggle="tooltip" data-original-title="<?= test.blinking ?>">
-                <? if(test.blinking > 0) { ?>
-                <img src="../../../../static/blinking.png" class="img-fluid blink-icon" alt="blink">
-                <? } ?>
-            </i>
-            <span name="cell-name" id="<?= test.id ?>_cell-name" class="text-secondary small"
-                  data-toggle="tooltip"
-                  data-placement="top"
-                  title="<?= test.name ?>"><?= test.name ?>
-            </span>
-        </div>
+        <i data-toggle="tooltip" data-original-title="<?= test.blinking ?>">
+            <? if(test.blinking > 0) { ?>
+            <img src="../../../../static/blinking.png" class="img-fluid blink-icon" alt="blink">
+            <? } ?>
+        </i>
+        <span name="cell-name" id="<?= test.id ?>_cell-name" class="text-secondary small"
+              data-toggle="tooltip"
+              data-placement="top"
+              title="<?= test.name ?>"
+        ><?- test.name -?></span>
     </div>
 
     <!--CREATOR-->
-    <div class="cell-creator cell col-1-5 text-truncate">
+    <div class="cell-creator cell col-1-2 pl-2 text-truncate">
 
         <div data-toggle="collapse">
             <span name="cell-creator" id="<?= test.id ?>_cell-creator" class="text-secondary small"
@@ -70,9 +97,19 @@
     </div>
 
     <!--ACCEPTED STATE-->
+    <?
+    function acceptStatusesClass(acceptedStatus) {
+         const statuses = {
+                Accepted: 'status-accepted',
+                Unaccepted: 'status-unaccepted',
+                Partially: 'status-partially',
+         }
+         return statuses[acceptedStatus] || 'status-other';
+    }
+    ?>
     <? const acceptedStatus = test.markedAs  ? test.markedAs : 'Unaccepted' ?>
-    <div class="cell-accepted-state cell col-1 pl-2 pr-0 text-truncate">
-        <span class="text-secondary check-accept-label-test-id_<?= test.id ?>"
+    <div class="cell-accepted-state cell col-1-2 pl-2 pb-1 pr-0 text-truncate">
+        <span class="accept-label p-1 <?= acceptStatusesClass(acceptedStatus) ?> check-accept-label-test-id_<?= test.id ?>"
               style="font-size: 80%"><?= acceptedStatus ?></span>
     </div>
 
@@ -153,32 +190,34 @@
 
     <!--  foreach checks start-->
     <?
-    const groups = Object.keys(checksByTestGroupedByIdent[test.id]).filter(function (x){ return x.includes('ident') }).entries()
+    const groups = Object.keys(checksByTestGroupedByIdent[test.id]).filter(function (x){ return x.includes('ident')
+    }).entries()
     for(const [index, groupName] of groups){
-        const group = checksByTestGroupedByIdent[test.id][groupName]['checks'];
-        // const check = group[0];
-        console.log({group});
-        const check = group[group.length-1];
-        // console.log({check});
+    const group = checksByTestGroupedByIdent[test.id][groupName]['checks'];
+    // const check = group[0];
+    // console.log({group});
+    const check = group[group.length-1];
+    // console.log({check});
 
-        let groupStatus = 'not set'
-        if (group.map(function (g) { return g.status.toString() }).includes('failed')) {
-            groupStatus = 'failed';
-        }
-        if (group.map(function (g) {return g.status.toString()}).includes('failed') && group[group.length - 1].status[0] === 'passed') {
-            groupStatus = 'blinking';
-        }
-        if (!group.map(function (g) {return g.status.toString()}).includes('failed')) {
-            groupStatus = 'passed';
-        }
-        if (check.status == 'new') {
-            groupStatus = 'new';
+    let groupStatus = 'not set'
+    if (group.map(function (g) { return g.status.toString() }).includes('failed')) {
+    groupStatus = 'failed';
+    }
+    if (group.map(function (g) {return g.status.toString()}).includes('failed') && group[group.length - 1].status[0] ===
+    'passed') {
+    groupStatus = 'blinking';
+    }
+    if (!group.map(function (g) {return g.status.toString()}).includes('failed')) {
+    groupStatus = 'passed';
+    }
+    if (check.status == 'new') {
+    groupStatus = 'new';
     } ?>
 
     <? const statusesClasses = {
-                        passed: 'bg-success',
-                        new: 'bg-info',
-                        failed: 'bg-danger',
+                        passed: 'bg-item-passed',
+                        new: 'bg-item-new',
+                        failed: 'bg-item-failed',
                         blinking: 'bg-warning'
                     } ?>
     <div class="col-4 pr-3 pl-2 pt-2 mb-3" id="check_<?= check._id ?>" diffId="<?= check.diffId ?>"
@@ -209,16 +248,16 @@
                      Id: <?= check._id ?>
                      ActualId: <?= check.actualSnapshotId ?>
                      BaselineId: <?= check.baselineId ?>">
-                    <? console.log({check}) ?>
-                    <? console.log({diffid: check.diffid}) ?>
+                    <? // console.log({check}) ?>
+                    <? // console.log({diffid: check.diffid}) ?>
                     <? const snapshootId = groupStatus === 'new' ? check.baselineId : check.actualSnapshotId ?>
-                    <? console.log({snapshootId}) ?>
+                    <? // console.log({snapshootId}) ?>
 
                     <div onclick="document.location.href='diffview?diffid=<?= check.diffId ?>&actualid=<?= check.actualSnapshotId ?>&expectedid=<?= check.baselineId ?>&checkid=<?= check._id ?>'"
                          href="/checksgroupview?id=<?= check._id ?>" name="<?= check.name ?>" class="group-links-view"
                          snapshot="<?= snapshootId ?>" id="grouplink_<?= check._id ?>">
                         <!--OVERLAY VIEWPORT-->
-                        <div class="preview-overlay-text h4 white bg-maroon"><?= check.viewport ?></div>
+                        <div class="preview-overlay-text h4 white bg-olive"><?= check.viewport ?></div>
 
                         <canvas class="snapshoot-canvas w-100"
                                 id="canvas_snapshoot_<?= check._id ?>"
@@ -248,11 +287,12 @@
                          class="col-8 ml-0 mr-0 pt-2 pb-0 float-right1 align-middle text-truncate  small p-0"
                          data-toggle="tooltip"
                          data-placement="top"
-                         title='<?= check.name ?>'>
-                        <?= (index + 1) ?>/<?= checksCount ?><?- groupChecksCount ? `<sup name="group-count"><a
+                         title='<?= check.name ?>'
+                    ><?- (index + 1) -?>/<?= checksCount ?><?- groupChecksCount ? `<sup name="group-count"><a
+                                class="text-secondary"
                                 name="group-count-link"
                                 href='/checksgroupview?id=${check._id}'>${groupChecksCount}</a></sup>` : ''
-                        ?> <?= check.name ?>
+                        -?> <?- check.name -?>
                     </div>
 
                     <!-- CHECK BUTTONS -->
@@ -262,7 +302,8 @@
                             <div class="row justify-content-end1  float-right flex-row-reverse mr-0">
                                 <div class="col-3 ml-2 p-0 float-right1">
                                     <a
-                                            class="btn-check btn-mini-toolbar btn-sm ml-1 rounded-0 border-0"
+                                            class="delete-button btn-check btn-mini-toolbar btn-sm ml-1 rounded-0 border-0"
+                                            check-name="<?= check.name ?>"
                                             style="line-height: 0.1; padding: 2px;"
                                             id="checkbutton_<?= check._id ?>"
                                             data-toggle="tooltip"
@@ -276,6 +317,7 @@
                                     <a
                                             class="accept-button btn-mini-toolbar btn-check btn-sm ml-1 rounded-0 border-0"
                                             style="line-height: 0.1; padding: 2px;"
+                                            check-name="<?= check.name ?>"
                                             id="acceptbutton_<?= check._id ?>"
                                             data-toggle="tooltip"
                                             data-placement="top"

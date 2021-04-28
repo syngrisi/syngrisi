@@ -162,9 +162,9 @@ Feature: User roles
         Then I wait on element "*=II" to be displayed
         # checks
         When I wait for "3" seconds
-        Then I expect that element "//span[contains(text(), 'User test')]/../../..//span[@name='cell-creator' and contains(text(), 'user@gmail.com')]" does appear exactly "5" times
-        Then I expect that element "//span[contains(text(), 'Reviewer test')]/../../..//span[@name='cell-creator']" is not displayed
-        Then I expect that element "//span[contains(text(), 'Admin test')]/../../..//span[@name='cell-creator']" is not displayed
+        Then I expect that element "//span[contains(text(), 'User test')]/../..//span[@name='cell-creator' and contains(text(), 'user@gmail.com')]" does appear exactly "5" times
+        Then I expect that element "//span[contains(text(), 'Reviewer test')]/../..//span[@name='cell-creator']" is not displayed
+        Then I expect that element "//span[contains(text(), 'Admin test')]/../..//span[@name='cell-creator']" is not displayed
         When I open the url "http://vrs:3001/logout"
         When I wait for "1" seconds
 
@@ -176,9 +176,9 @@ Feature: User roles
         Then I wait on element "*=PP" to be displayed
         # checks
         When I wait for "3" seconds
-        Then I expect that element "//span[contains(text(), 'User test')]/../../..//span[@name='cell-creator']" does appear exactly "5" times
-        Then I expect that element "//span[contains(text(), 'Reviewer test')]/../../..//span[@name='cell-creator' and contains(text(), 'reviewer@gmail.com')]" does appear exactly "7" times
-        Then I expect that element "//span[contains(text(), 'Admin test')]/../../..//span[@name='cell-creator']" does appear exactly "3" times
+        Then I expect that element "//span[contains(text(), 'User test')]/../..//span[@name='cell-creator']" does appear exactly "5" times
+        Then I expect that element "//span[contains(text(), 'Reviewer test')]/../..//span[@name='cell-creator' and contains(text(), 'reviewer@gmail.com')]" does appear exactly "7" times
+        Then I expect that element "//span[contains(text(), 'Admin test')]/../..//span[@name='cell-creator']" does appear exactly "3" times
 
         When I open the url "http://vrs:3001/logout"
         When I wait for "1" seconds
@@ -191,9 +191,9 @@ Feature: User roles
         Then I wait on element "*=SS" to be displayed
         # checks
         When I wait for "3" seconds
-        Then I expect that element "//span[contains(text(), 'User test')]/../../..//span[@name='cell-creator']" does appear exactly "5" times
-        Then I expect that element "//span[contains(text(), 'Reviewer test')]/../../..//span[@name='cell-creator']" does appear exactly "7" times
-        Then I expect that element "//span[contains(text(), 'Admin test')]/../../..//span[@name='cell-creator' and contains(text(), 'superadmin@gmail.com')]" does appear exactly "3" times
+        Then I expect that element "//span[contains(text(), 'User test')]/../..//span[@name='cell-creator']" does appear exactly "5" times
+        Then I expect that element "//span[contains(text(), 'Reviewer test')]/../..//span[@name='cell-creator']" does appear exactly "7" times
+        Then I expect that element "//span[contains(text(), 'Admin test')]/../..//span[@name='cell-creator' and contains(text(), 'superadmin@gmail.com')]" does appear exactly "3" times
 
     Scenario: Admin panel access
         # login as test admin

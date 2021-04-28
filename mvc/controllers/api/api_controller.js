@@ -3,7 +3,6 @@ const querystring = require('querystring');
 const mongoose = require('mongoose');
 const hasha = require('hasha');
 const fs = require('fs').promises;
-const moment = require('moment');
 const { config } = require('../../../config');
 const { getDiff } = require('../../../lib/comparator');
 const orm = require('../../../lib/dbItems');
@@ -15,6 +14,7 @@ const Check = mongoose.model('VRSCheck');
 const Test = mongoose.model('VRSTest');
 const Suite = mongoose.model('VRSSuite');
 const User = mongoose.model('VRSUser');
+const Baseline = mongoose.model('VRSBaseline');
 const { checksGroupedByIdent, calculateAcceptedStatus } = require('../utils');
 const {
     fatalError, waitUntil, removeEmptyProperties, buildQuery, getSuitesByTestsQuery, buildIdentObject
@@ -625,6 +625,49 @@ function prettyCheckParams(result) {
     return JSON.stringify(resObs);
 }
 
+async function setBaseline(params) {
+    // find if baseline already exist
+    const identFields = buildIdentObject(params);
+    const baseline = await Baseline.findOne(identFields);
+    // update if already exist
+    if (baseline) {
+        // Object.assign(baseline, props);
+        if (params.markedAs) baseline.markedAs = params.markedAs;
+        if (params.markedById) baseline.markedById = params.markedById;
+        if (params.markedByUsername) baseline.markedByUsername = params.markedByUsername;
+        if (params.markedDate) baseline.lastMarkedDate = params.markedDate;
+        baseline.snapshootId = params.actualSnapshotId;
+        baseline.baselineHistory.push({
+            id: params.actualSnapshotId,
+            date: new Date(),
+        });
+        return Promise.resolve(await baseline.save());
+    }
+
+    // create the new baseline since does not exist
+    const newBaseline = await Baseline.create(identFields);
+    if (params.markedAs) newBaseline.markedAs = params.markedAs;
+    if (params.markedById) newBaseline.markedById = params.markedById;
+    if (params.markedByUsername) newBaseline.markedByUsername = params.markedByUsername;
+    newBaseline.snapshootId = params.actualSnapshotId;
+
+    if (!newBaseline.baselineHistory) newBaseline.baselineHistory = [];
+    await newBaseline.baselineHistory.push({
+        id: params.actualSnapshotId,
+        date: new Date(),
+    });
+    return Promise.resolve(await newBaseline.save());
+}
+
+async function getBaseline(params) {
+    // find if baseline already exist
+    const identFields = buildIdentObject(params);
+    const baseline = await Baseline.findOne(identFields);
+    // update if already exist
+    if (baseline) return baseline;
+    return null;
+}
+
 exports.createCheck = async function (req, res) {
     return new Promise(
         async (resolve, reject) => {
@@ -739,11 +782,6 @@ exports.createCheck = async function (req, res) {
 
                 const checkIdent = buildIdentObject(params);
 
-                const fileData = req.files ? req.files.file.data : false;
-
-                console.log(`Find for baseline for check with identifier: '${JSON.stringify(checkIdent)}'`);
-                const lastCheck = await getLastCheck(checkIdent);
-
                 // let newClonedSnapshot;
                 // if (snapshotFoundedByHashcode) {
                 //     newClonedSnapshot = await cloneSnapshoot(snapshotFoundedByHashcode, req.body, fileData);
@@ -753,6 +791,8 @@ exports.createCheck = async function (req, res) {
                 //     fileData,
                 //     hashCode: req.body.hashcode,
                 // }));
+                const fileData = req.files ? req.files.file.data : false;
+
                 if (snapshotFoundedByHashcode) {
                     currentSnapshot = await cloneSnapshoot(snapshotFoundedByHashcode, req.body, fileData);
                 } else {
@@ -763,45 +803,48 @@ exports.createCheck = async function (req, res) {
                     });
                 }
 
-                const previousBaselineId = lastCheck ? lastCheck.baselineId : null;
+                console.log(`Find for baseline for check with identifier: '${JSON.stringify(checkIdent)}'`);
+                // const lastCheck = await getLastCheck(checkIdent);
 
+                // const previousBaselineId = lastCheck ? lastCheck.baselineId : null;
+                const storedBaseline = await getBaseline(params);
+                // console.log({ STOREDBASELINE: storedBaseline });
+                let check;
                 // if last check has baseline id copy properties from last check
                 // and set it as `currentBaseline` to make diff
-                if (previousBaselineId) {
-                    console.log(`A baseline for check name: '${req.body.name}', id: '${previousBaselineId}' is already exists`);
-                    params.baselineId = previousBaselineId;
+                if (storedBaseline !== null) {
+                    console.log(`A baseline for check name: '${req.body.name}', id: '${storedBaseline.snapshootId}' is already exists`);
+                    params.baselineId = storedBaseline.snapshootId;
 
                     console.log(`Creating an actual snapshot for check with name: '${req.body.name}'`);
 
                     // actualSnapshot = currentSnapshot;
                     params.actualSnapshotId = currentSnapshot.id;
                     params.status = 'pending';
-                    if (lastCheck.markedAs === 'accepted') {
-                        params.markedAs = 'accepted';
-                        params.markedDate = lastCheck.markedDate;
-                        params.markedByUsername = lastCheck.markedByUsername;
+                    if (storedBaseline.markedAs) {
+                        params.markedAs = storedBaseline.markedAs;
+                        params.markedDate = storedBaseline.lastMarkedDate;
+                        // if (storedBaseline.baselineHistory.length > 0) {
+                        //     params.markedDate = storedBaseline.baselineHistory[storedBaseline.baselineHistory.length - 1];
+                        // }
+                        params.markedByUsername = storedBaseline.markedByUsername;
                     }
 
-                    currentBaseline = await Snapshot.findById(previousBaselineId);
+                    currentBaseline = await Snapshot.findById(storedBaseline.snapshootId);
+                    console.log(`Create and the new check with params: '${prettyCheckParams(params)}'`);
+                    check = await Check.create(params);
                 } else {
-                    // since the `previousBaselineId` does not exist set current snapshoot as currentBaseline to make diff
+                    // since the `storedBaseline` does not exist set current snapshoot as currentBaseline to make diff
                     console.log(`A baseline snapshot for previous check with name: '${req.body.name}', does not exist creating new one`);
                     params.baselineId = currentSnapshot.id;
+                    params.actualSnapshotId = currentSnapshot.id;
                     params.status = 'new';
-
                     currentBaseline = currentSnapshot;
+                    console.log(`Create and the new check with params: '${prettyCheckParams(params)}'`);
+                    check = await Check.create(params);
+                    await setBaseline(check.toObject());
                 }
-                /** create new check and update related items (test and suite) */
-                console.log(`Create and the new check with params: '${prettyCheckParams(params)}'`);
-                const check = await Check.create(params);
-
-                // update test and suite
-                test.markedAs = await calculateAcceptedStatus(check.test);
-                test.updatedDate = moment(new Date())
-                    .format('YYYY-MM-DD hh:mm');
-
-                await orm.updateItemDate('VRSSuite', check.suite);
-                await test.save();
+                /** create check related items (test and suite) */
 
                 let resultResponse;
                 await check.save()
@@ -831,6 +874,7 @@ exports.createCheck = async function (req, res) {
                             updateParams['diffId'] = diffSnapshot.id;
                             updateParams['status'] = 'failed';
                         } else {
+                            await setBaseline(check.toObject());
                             updateParams['status'] = 'passed';
                         }
 
@@ -853,6 +897,13 @@ exports.createCheck = async function (req, res) {
                     await Check.findByIdAndUpdate(check._id, updateParams);
                     resultResponse = await Check.findById(check.id);
                 }
+
+                // update test and suite
+                test.markedAs = await calculateAcceptedStatus(check.test);
+                test.updatedDate = new Date();
+
+                await orm.updateItemDate('VRSSuite', check.suite);
+                await test.save();
 
                 const lastSuccessCheck = await getLastSuccessCheck(checkIdent);
                 const result = {
@@ -984,8 +1035,7 @@ exports.getCheck = async function (req, res) {
 function addMarkedAsOptions(opts, user, mark) {
     opts.markedById = user._id;
     opts.markedByUsername = user.username;
-    opts.markedDate = moment(new Date())
-        .format('YYYY-MM-DD hh:mm');
+    opts.markedDate = new Date();
     opts.markedAs = mark;
     return opts;
 }
@@ -1006,15 +1056,17 @@ exports.updateCheck = async function updateCheck(req, res) {
             } else {
                 await test.updateOne({
                     status: 'Running',
-                    updatedDate: moment(new Date()),
+                    updatedDate: new Date(),
                     // .format('YYYY-MM-DD hh:mm'),
                 })
                     .exec();
             }
             delete opts.id;
             delete opts.accept;
-            await Check.findByIdAndUpdate(check._id, opts);
-
+            // await Check.findByIdAndUpdate(check._id, opts);
+            Object.assign(check, opts);
+            await setBaseline(check.toObject());
+            await check.save();
             const testCalculatedStatus = await calculateTestStatus(check.test);
             const testCalculatedAcceptedStatus = await calculateAcceptedStatus(check.test);
 
@@ -1024,13 +1076,11 @@ exports.updateCheck = async function updateCheck(req, res) {
 
             test.status = testCalculatedStatus;
             test.markedAs = testCalculatedAcceptedStatus;
-            test.updatedDate = moment(new Date())
-                .format('YYYY-MM-DD hh:mm');
+            test.updatedDate = new Date();
 
             await orm.updateItemDate('VRSSuite', check.suite);
             console.log(`UPDATE test with status: '${testCalculatedStatus}', marked: '${testCalculatedAcceptedStatus}'`);
             await test.save();
-            console.log({ test });
             await check.save();
             console.log(`Check with id: '${checkId}' was updated`);
 
@@ -1060,8 +1110,7 @@ exports.removeCheck = async function (req, res) {
                     console.log(`DELETE check id: '${id}' with params: '${JSON.stringify(req.params)}'`);
                     test.status = testCalculatedStatus;
                     test.markedAs = testCalculatedAcceptedStatus;
-                    test.updatedDate = moment(new Date())
-                        .format('YYYY-MM-DD hh:mm');
+                    test.updatedDate = new Date();
 
                     await orm.updateItemDate('VRSSuite', check.suite);
                     test.save();

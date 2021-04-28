@@ -17,12 +17,10 @@ exports.ident = ident;
  * @param {Object} params  - plain object with bunch of properties
  * @returns {Object} - plain object with only ident properties
  */
-exports.buildIdentObject = (params) => {
-    return Object.fromEntries(
-        Object.entries(params)
-            .filter(([key]) => ident.includes(key))
-    );
-};
+exports.buildIdentObject = (params) => Object.fromEntries(
+    Object.entries(params)
+        .filter(([key]) => ident.includes(key))
+);
 
 const checkIdent = function checkIdent(check) {
     return ident.reduce((accumulator, prop) => accumulator + '.' + check[prop], 'ident');
@@ -169,7 +167,7 @@ exports.calculateAcceptedStatus = function calculateAcceptedStatus(testId) {
         if (statuses.every((x) => x === 'accepted')) {
             testCalculatedStatus = 'Accepted';
         }
-        console.log({ testCalculatedStatus });
+        // console.log({ testCalculatedStatus });
         return resolve(testCalculatedStatus);
     });
 };

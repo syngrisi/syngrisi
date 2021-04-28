@@ -49,7 +49,7 @@ When(/^I start VRS server with parameters:$/, { timeout: 600000 }, (params) => {
         .homedir();
     const nodePath = process.env.OLTA_NODE_PATH || (`${homedir}/.nvm/versions/node/v13.13.0/bin`);
     const child = spawn(`${nodePath}/npm`,
-        ['run', 'startdebug', '-g', '--prefix', cmdPath], { env });
+        ['run', 'starttest', '-g', '--prefix', cmdPath], { env });
 
     const startDate = new Date() / 1;
     child.stdout.setEncoding('utf8');
@@ -114,8 +114,9 @@ When(/^I kill process which used port: "([^"]*)"$/, (port) => {
 
 When(/^I click on "([^"]*)" VRS test$/, (testName) => {
     TableVRSComp.init();
+
     TableVRSComp.data.filter((row) => row.name.getText()
-        .includes(testName))[0].name.$('div')
+        .includes(testName))[0].name
         .click();
 });
 
@@ -125,6 +126,7 @@ When(/^I expect that(:? (\d)th)? VRS test "([^"]*)" has "([^"]*)" (status|browse
         TableVRSComp.init();
         const row = TableVRSComp.data.filter((row) => row.name.getText()
             .includes(testName))[intNumber - 1];
+
         TableVRSComp.data.forEach((x) => {
             console.log({ NAME: x.name.getText() });
         });
@@ -167,9 +169,9 @@ Then(/^I expect that VRS check "([^"]*)" has "([^"]*)" status$/, (checkName, exp
     const border = $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//div[@name='check-status']`);
     // "/../../../..//div[@name='check-status']\"/"
     const classStatuses = {
-        New: 'bg-info',
-        Passed: 'bg-success',
-        Failed: 'bg-danger',
+        New: 'bg-item-new',
+        Passed: 'bg-item-passed',
+        Failed: 'bg-item-failed',
         Blinking: 'bg-warning',
     };
     expect(border)
@@ -481,6 +483,17 @@ When(/^I accept the "([^"]*)" check$/, (checkName) => {
 
     // eslint-disable-next-line max-len
     $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//a[contains(@class, 'accept-button')]`)
+        .click();
+    browser.pause(200);
+    browser.acceptAlert();
+});
+
+When(/^I delete the "([^"]*)" check$/, (checkName) => {
+    expect($(`.//div[contains(normalize-space(.), '${checkName}')]/../..`))
+        .toBeExisting();
+
+    // eslint-disable-next-line max-len
+    $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//a[contains(@class, 'delete-button')]`)
         .click();
     browser.acceptAlert();
 });

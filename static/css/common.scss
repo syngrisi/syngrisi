@@ -1,8 +1,42 @@
 @import "./bootstrap-4.3.1/scss/bootstrap";
 @import "./bootstrap-4.3.1/scss/bootstrap-grid";
 
+.suites-list:hover {
+  overflow-y: auto;
+}
+.status-accepted {
+  color: #06ba0e;
+  //color: #07cca5;
+  background-color: rgba(6, 186, 14, 0.1);
+  border-radius: 4px;
+  padding: 5px;
+}
+
+.status-unaccepted {
+  color: #fb4d45;
+  background-color: rgba(251, 77, 69, 0.1);
+  border-radius: 4px;
+  padding: 5px;
+}
+
+.status-partially {
+  color: #fbb61c;
+  //background-color: rgba(251, 203, 28, 0.12);
+  background-color: rgba(251, 182, 28, 0.1);
+  border-radius: 4px;
+  padding: 5px;
+}
+
 .col-1-5 {
   @include make-col(1.5);
+}
+
+.col-2-5 {
+  @include make-col(2.5);
+}
+
+.col-2-7 {
+  @include make-col(2.7);
 }
 
 .col-4-5 {
@@ -34,8 +68,25 @@
 }
 
 .cell-status {
-  margin-top: -8px;
-  margin-bottom: -7px;
+  padding-left: 0.35rem !important;
+  margin-top: -15px;
+  margin-bottom: -16px;
+}
+
+.testinfo:hover .cell-status {
+  //margin-right: -0.25rem !important;
+  padding-left: 0 !important;
+}
+
+.cell-status-expand {
+  padding-left: 0 !important;
+  margin-top: -15px;
+  margin-bottom: -16px;
+}
+
+.testinfo:hover .cell-status-expand {
+  margin-right: 0 !important;
+  padding-left: 0.35rem !important;
 }
 
 .testinfo:hover {
@@ -47,8 +98,11 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 9999;
-  opacity: 70%;
+  z-index: 999;
+  opacity: 85%;
+  font-size: 1.3rem;
+  padding-left: 3px;
+  padding-right: 3px;
 }
 
 .overlay-bottom {
@@ -77,8 +131,8 @@ div:hover > .preview-overlay-text {
 
 .current-menu-item {
   /*text-decoration: underline;*/
-  background-color: silver;
-  opacity: 80%;
+  background-color: rgba(208, 206, 206, 0.89);;
+  opacity: 90%;
 }
 
 .hide {
@@ -88,6 +142,7 @@ div:hover > .preview-overlay-text {
 .header-hover:hover {
   background-color: #42a777 !important;
 }
+
 .btn-mini-toolbar:hover {
   background-color: #e6e4e4 !important;
 }

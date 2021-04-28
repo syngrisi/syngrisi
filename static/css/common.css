@@ -13706,9 +13706,44 @@ html {
     margin-left: auto !important;
   }
 }
+.suites-list:hover {
+  overflow-y: auto;
+}
+
+.status-accepted {
+  color: #06ba0e;
+  background-color: rgba(6, 186, 14, 0.1);
+  border-radius: 4px;
+  padding: 5px;
+}
+
+.status-unaccepted {
+  color: #fb4d45;
+  background-color: rgba(251, 77, 69, 0.1);
+  border-radius: 4px;
+  padding: 5px;
+}
+
+.status-partially {
+  color: #fbb61c;
+  background-color: rgba(251, 182, 28, 0.1);
+  border-radius: 4px;
+  padding: 5px;
+}
+
 .col-1-5 {
   flex: 0 0 12.5%;
   max-width: 12.5%;
+}
+
+.col-2-5 {
+  flex: 0 0 20.8333333333%;
+  max-width: 20.8333333333%;
+}
+
+.col-2-7 {
+  flex: 0 0 22.5%;
+  max-width: 22.5%;
 }
 
 .col-4-5 {
@@ -13745,8 +13780,24 @@ html {
 }
 
 .cell-status {
-  margin-top: -8px;
-  margin-bottom: -7px;
+  padding-left: 0.35rem !important;
+  margin-top: -15px;
+  margin-bottom: -16px;
+}
+
+.testinfo:hover .cell-status {
+  padding-left: 0 !important;
+}
+
+.cell-status-expand {
+  padding-left: 0 !important;
+  margin-top: -15px;
+  margin-bottom: -16px;
+}
+
+.testinfo:hover .cell-status-expand {
+  margin-right: 0 !important;
+  padding-left: 0.35rem !important;
 }
 
 .testinfo:hover {
@@ -13758,8 +13809,11 @@ html {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 9999;
-  opacity: 70%;
+  z-index: 999;
+  opacity: 85%;
+  font-size: 1.3rem;
+  padding-left: 3px;
+  padding-right: 3px;
 }
 
 .overlay-bottom {
@@ -13788,8 +13842,8 @@ div:hover > .preview-overlay-text {
 
 .current-menu-item {
   /*text-decoration: underline;*/
-  background-color: silver;
-  opacity: 80%;
+  background-color: rgba(208, 206, 206, 0.89);
+  opacity: 90%;
 }
 
 .hide {

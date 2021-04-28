@@ -18,12 +18,13 @@
   "scripts": {
     "test": "",
     "startdebug": "nodemon --ignore 'mvc/views/lib/*.js' server.js",
+    "starttest": "node server.js",
     "startservice": "forever start -l forever.log -o out.log -e err.log server.js",
     "start": "nodemon --ignore 'mvc/views/lib/*.js' server.js &",
-    "clear": "mongo VRSdb --eval 'db.vrschecks.drop();db.vrssnapshots.drop();db.vrstests.drop();db.vrsapps.drop();db.vrssuites.drop();'; rm ./baselines/*.png",
-    "start_test": "VRT_CONN_STRING='mongodb://localhost/VRTdbTest' VRT_PORT=3001 VRT_BASELINE_PATH='./baselinesTest/' nodemon server.js",
-    "clear_test": "mongo VRSdbTest --eval 'db.vrschecks.drop();db.vrssnapshots.drop();db.vrstests.drop();db.vrsapps.drop();db.vrssuites.drop();db.vrsusers.drop();db.vrslogs.drop();'; rm ./baselinesTest/*.png",
-    "clearwin": "mongo VRSdb --eval \"db.vrtchecks.drop();db.vrtsnapshots.drop();db.vrttests.drop();db.vrtapps.drop();db.vrtsuites.drop();db.vrsusers.drop();db.vrslogs.drop();\" & DEL /F /Q /S ..\\tests\\BaselineImages\\*.png"
+    "clear": "mongo VRSdb --eval 'db.vrschecks.drop();db.vrssnapshots.drop();db.vrstests.drop();db.vrsapps.drop();db.vrssuites.drop();db.vrsusers.drop();db.vrslogs.drop();db.runs.drop();db.vrsbaselines.drop();'; rm ./baselines/*.png",
+    "start_test": "VRT_CONN_STRING='mongodb://localhost/VRSdbTest' VRT_PORT=3001 VRT_BASELINE_PATH='./baselinesTest/' nodemon server.js",
+    "clear_test": "mongo VRSdbTest --eval 'db.vrschecks.drop();db.vrssnapshots.drop();db.vrstests.drop();db.vrsapps.drop();db.vrssuites.drop();db.vrsusers.drop();db.vrslogs.drop();db.runs.drop();db.vrsbaselines.drop();'; rm ./baselinesTest/*.png",
+    "clearwin": "mongo VRSdb --eval \"db.vrtchecks.drop();db.vrtsnapshots.drop();db.vrttests.drop();db.vrtapps.drop();db.vrtsuites.drop();db.vrsusers.drop();db.vrslogs.drop();db.vrsbaselines.drop();\" & DEL /F /Q /S ..\\tests\\BaselineImages\\*.png"
   },
   "author": {
     "name": "Viktar Silakou",

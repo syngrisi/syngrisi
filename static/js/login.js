@@ -34,7 +34,7 @@ $(function() {
 		});
 		$this.after($("<div/>", {
 			html: 'Show',
-			class: 'btn btn-primary btn-sm',
+			class: 'btn btn-secondary bg-olive btn-sm',
 			id: 'passeye-toggle-'+i,
 		}).css({
 				position: 'absolute',

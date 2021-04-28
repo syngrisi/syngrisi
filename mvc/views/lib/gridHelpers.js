@@ -1,11 +1,6 @@
-function setSuiteMenuWidth() {
-    const logoWidth = document.getElementById('logo-and-label-container').clientWidth;
-    document.getElementById('collapseSuiteMenu').style.width = (logoWidth) + 'px';
-}
-
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        var r = Math.random() * 16 | 0,
+        const r = Math.random() * 16 | 0,
             v = c == 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
     });
@@ -25,11 +20,21 @@ async function redrawCheckAcceptedStatus(id) {
     }
 }
 
+function acceptStatusesClass(acceptedStatus) {
+    const statuses = {
+        Accepted: 'status-accepted',
+        Unaccepted: 'status-unaccepted',
+        Partially: 'status-partially',
+    };
+    return statuses[acceptedStatus] || 'status-other';
+}
+
 async function redrawTestAcceptedStatus(id) {
     try {
         const test = JSON.parse(await getRequest(`test/${id}`));
         const acceptedStatus = test.markedAs ? test.markedAs : 'Unaccepted';
         const label = document.getElementsByClassName(`check-accept-label-test-id_${id}`)[0];
+        label.classList.add(acceptStatusesClass(acceptedStatus));
         label.innerText = acceptedStatus;
     } catch (e) {
         console.log(`cannot redraw accept test status with id: '${id}' error: '${e}'`);
