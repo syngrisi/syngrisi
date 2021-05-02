@@ -38,6 +38,16 @@
   padding: 5px;
 }
 
+.pl-2-2,
+.px-2-2 {
+  padding-left: 0.60rem !important;
+}
+
+.pl-3-5,
+.px-3-5 {
+  padding-left: 1.25rem !important;
+}
+
 .col-1-5 {
   @include make-col(1.5);
 }
@@ -137,6 +147,10 @@ div:hover > .preview-overlay-text {
 }
 
 .suite-menu-item-container {
+  cursor: pointer;
+}
+
+.run-menu-item-container {
   cursor: pointer;
 }
 

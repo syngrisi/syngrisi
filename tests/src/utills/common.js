@@ -40,7 +40,8 @@ const startSession = async function (sessOpts) {
     await browser.vDriver.startTestSession({
         app: sessOpts.appName,
         test: sessOpts.testName,
-        run: process.env.RUN_NAME,
+        run: process.env.RUN_NAME || 'integration_run_name',
+        runident: process.env.RUN_IDENT || 'integration_run_ident',
     }, browser.config.apiKey);
 };
 

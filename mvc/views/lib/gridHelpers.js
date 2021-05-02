@@ -342,7 +342,7 @@ function removeTests() {
 }
 
 function removeSuite(id) {
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
         try {
             const xhr = new XMLHttpRequest();
             const params = `id=${id}`;
@@ -367,21 +367,65 @@ function removeSuite(id) {
 
 function removeCheckedSuites() {
     if (!confirmation()) return;
-    let checkboxes = document.querySelectorAll('input[name=suite-item]:checked');
-    let result = [];
+    const checkboxes = document.querySelectorAll('input[name=suite-item]:checked');
+    const result = [];
     for (const checkbox of checkboxes) {
         result.push(removeSuite(checkbox.getAttribute('suiteid')));
     }
     Promise.all(result)
         .then(
-            function () {
+            () => {
                 showNotification('All suites were removed');
                 setTimeout(() => location.reload(), 1000);
             }
         )
-        .catch(function (e) {
+        .catch((e) => {
             showNotification('Cannot remove all suites', 'Error');
-            console.error('Cannot remove all suites, error: ' + e);
+            console.error(`Cannot remove all suites, error: ${e}`);
+        });
+}
+
+function removeRun(id) {
+    return new Promise((resolve, reject) => {
+        try {
+            const xhr = new XMLHttpRequest();
+            const params = `id=${id}`;
+            xhr.open('DELETE', `/runs/${id}`, true);
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    console.log(`Run was successfully removed, id: '${id}', resonse test: '${xhr.responseText}'`);
+                    return resolve(xhr);
+                } else {
+                    console.log(`Cannot remove the run. Request is failed.  Returned status of ${xhr.status}`);
+                    reject(xhr);
+                }
+            };
+            xhr.send(params);
+        } catch (e) {
+            return reject(e);
+        }
+    });
+}
+
+function removeCheckedRuns() {
+    if (!confirmation()) return;
+    const checkboxes = document.querySelectorAll('input[name=run-item]:checked');
+    const result = [];
+    for (const checkbox of checkboxes) {
+        result.push(removeRun(checkbox.getAttribute('runid')));
+    }
+    Promise.all(result)
+        .then(
+            () => {
+                showNotification('All selected runs were removed');
+                setTimeout(() => location.reload(), 1000);
+            }
+        )
+        .catch((e) => {
+            showNotification('Cannot remove all selected runs', 'Error');
+            console.error(`Cannot remove all suites, error: ${e}`);
         });
 }
 
@@ -410,9 +454,9 @@ function checkAllSuites() {
 }
 
 function checkAllItems(name) {
-    let checkboxes = document.querySelectorAll(`input[name=${name}]`);
+    const checkboxes = document.querySelectorAll(`input[name='${name}']`);
     console.log(`Checked: '${checkboxes.length}'`);
-    checkboxes.forEach(function (ch) {
+    checkboxes.forEach((ch) => {
         if (ch.checked === false) {
             ch.checked = true;
         } else {

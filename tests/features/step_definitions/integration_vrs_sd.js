@@ -273,6 +273,8 @@ When(/^I create "([^"]*)" tests with params:$/, { timeout: 60000000 }, async fun
         await browser.vDriver.startTestSession({
             app: 'Test App',
             test: `${params.testName} - ${i + 1}`,
+            run: process.env.RUN_NAME || 'integration_run_name',
+            runident: process.env.RUN_IDENT || 'integration_run_ident',
         }, browser.config.apiKey);
         browser.pause(300);
         const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${params.filePath}`);
@@ -485,7 +487,8 @@ When(/^I accept the "([^"]*)" check$/, (checkName) => {
     $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//a[contains(@class, 'accept-button')]`)
         .click();
     browser.pause(200);
-    $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../div[@name='check-buttons']//a[contains(@class, 'accept-option')]`).click();
+    $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../div[@name='check-buttons']//a[contains(@class, 'accept-option')]`)
+        .click();
 });
 
 When(/^I delete the "([^"]*)" check$/, (checkName) => {
@@ -496,7 +499,8 @@ When(/^I delete the "([^"]*)" check$/, (checkName) => {
     $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//a[contains(@class, 'delete-button')]`)
         .click();
     browser.pause(200);
-    $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../div[@name='check-buttons']//a[contains(@class, 'remove-option')]`).click();
+    $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../div[@name='check-buttons']//a[contains(@class, 'remove-option')]`)
+        .click();
 });
 
 When(/^I expect the "([^"]*)" check has "([^"]*)" acceptance status$/, (checkName, acceptStatus) => {

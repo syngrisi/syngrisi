@@ -10,7 +10,7 @@ const Run = mongoose.model('VRSRun');
 const User = mongoose.model('VRSUser');
 const moment = require('moment');
 const {
-    fatalError, checkIdent, checksGroupedByIdent, removeEmptyProperties, buildQuery, getSuitesByTestsQuery,
+    fatalError, checkIdent, checksGroupedByIdent, removeEmptyProperties, buildQuery, getSuitesByTestsQuery, getRunsByTestsQuery
 } = require('../utils');
 
 async function getSnapshotByImgHash(hash) {
@@ -174,8 +174,7 @@ exports.index = async function (req, res) {
     return new Promise(
         async function (resolve, reject) {
             try {
-                let opts = removeEmptyProperties(req.query);
-                // let suiteFilter = {};
+                const opts = removeEmptyProperties(req.query);
                 let sortBy;
                 if ((opts.sortprop === 'name')
                     || (opts.sortprop === 'status')
@@ -186,9 +185,9 @@ exports.index = async function (req, res) {
                     || (opts.sortprop === 'updatedDate')) {
                     sortBy = opts.sortprop;
                 }
-                sortBy = sortBy ? sortBy : 'updatedDate';
+                sortBy = sortBy || 'updatedDate';
                 const sortOrder = opts.sortorder ? opts.sortorder : -1;
-                let sortFilter = {};
+                const sortFilter = {};
                 sortFilter[sortBy] = sortOrder;
                 const suite = await Suite.findOne({ name: opts.filter_suitename_eq })
                     .exec();
@@ -203,9 +202,69 @@ exports.index = async function (req, res) {
                 //     .exec();
                 const currentUser = req.user;
                 res.render('pages/index', {
-                    suites: suites,
+                    suites,
                     currentSuite: suite,
-                    user: currentUser
+                    user: currentUser,
+                });
+            } catch (e) {
+                fatalError(req, res, e);
+                return reject(e);
+            }
+        }
+    );
+};
+
+exports.runs = function (req, res) {
+    return new Promise(
+        async function (resolve, reject) {
+            try {
+                const opts = removeEmptyProperties(req.query);
+                let sortBy;
+                if ((opts.sortprop === 'name')
+                    || (opts.sortprop === 'status')
+                    || (opts.sortprop === 'browserName')
+                    || (opts.sortprop === 'suite')
+                    || (opts.sortprop === 'os')
+                    || (opts.sortprop === 'calculatedViewport')
+                    || (opts.sortprop === 'updatedDate')) {
+                    sortBy = opts.sortprop;
+                }
+                sortBy = sortBy || 'updatedDate';
+                const sortOrder = opts.sortorder ? opts.sortorder : -1;
+                const sortFilter = {};
+                sortFilter[sortBy] = sortOrder;
+
+                const query = buildQuery(opts);
+                delete query.run;
+                if (req.user.role === 'user') {
+                    query.creatorUsername = req.user.username;
+                }
+
+                function getCheckStatuses(tests) {
+                    const statuses = tests.map((x) => x.status);
+                    const groupStatusesCounts = {};
+                    statuses.forEach((x) => {
+                        groupStatusesCounts[x] = (groupStatusesCounts[x] || 0) + 1;
+                    });
+                    // console.log({ groupStatusesCounts });
+                    return Promise.resolve(groupStatusesCounts);
+                }
+
+                const runs = await getRunsByTestsQuery(query, 150);
+                const agregateRuns = await Promise.all(runs.map(async (run) => {
+                    run['statuses'] = await getCheckStatuses(await Test.find({ run: run.id }));
+                    return run;
+                }));
+
+                // console.log({ runs });
+                const currentRun = await Run.findById(opts.filter_run_eq)
+                    .exec();
+
+                const currentUser = req.user;
+                res.render('pages/runs2', {
+                    runs: agregateRuns,
+                    currentRun,
+                    user: currentUser,
                 });
             } catch (e) {
                 fatalError(req, res, e);
@@ -219,11 +278,9 @@ exports.admin = async function (req, res) {
     return new Promise(
         (resolve, reject) => {
             try {
-                User.find()
-                    .then((result) => resolve(res.render('pages/admin', {
-                        users: result,
-                        currentUser: req.user,
-                    })));
+                return resolve(res.render('pages/admin', {
+                    currentUser: req.user,
+                }));
             } catch (e) {
                 fatalError(req, res, e);
                 return reject(e);
@@ -270,6 +327,7 @@ exports.login = function (req, res) {
         }
         const { version } = require('../../../package.json');
         return res.render('pages/login', {
+            origin: req.query.origin,
             version,
         });
     } catch (e) {
@@ -286,102 +344,4 @@ exports.changePasswordPage = function (req, res) {
     } catch (e) {
         return fatalError(req, res, e);
     }
-};
-
-exports.runs = async function (req, res) {
-    return new Promise(
-        async function (resolve, reject) {
-            try {
-                let opts = removeEmptyProperties(req.query);
-                let testFilter = {};
-                let sortBy;
-                if ((opts.sortprop === 'name')
-                    || (opts.sortprop === 'status')
-                    || (opts.sortprop === 'browserName')
-                    || (opts.sortprop === 'suite')
-                    || (opts.sortprop === 'os')
-                    || (opts.sortprop === 'viewport')
-                    || (opts.sortprop === 'updatedDate')) {
-                    sortBy = opts.sortprop;
-                }
-                sortBy = sortBy ? sortBy : 'updatedDate';
-                const sortOrder = opts.sortorder ? opts.sortorder : -1;
-                let sortFilter = {};
-                sortFilter[sortBy] = sortOrder;
-
-                // const suite = await Suite.findOne({name: opts.suitename}).exec()
-                const run = await Run.findOne({ name: opts.runName })
-                    .exec();
-                if (run) {
-                    testFilter = { run: run.id };
-                }
-                let runs = await Run.find({})
-                    .sort({ updatedDate: 'desc' })
-                    .exec();
-                runs.map(function (run) {
-                    run.formattedUpdatedDate = moment(run.updatedDate)
-                        .format('hh:mm DD-MM-YYYY');
-                    return run;
-                });
-
-                const allTests = await Test.find({})
-                    .exec();
-
-                const testsCountsGroupByRunId = (await Test.aggregate()
-                    .group({
-                        _id: '$run',
-                        count: { $sum: 1 }
-                    })
-                    .exec()).reduce(function (map, obj) {
-                    map[obj._id] = obj.count;
-                    return map;
-                }, {});
-
-                const failedTestsCountsGroupByRunId = (await Test.aggregate()
-                    .match({
-                        status: 'Failed'
-                    })
-                    .group({
-                        _id: '$run',
-                        count: { $sum: 1 }
-                    })
-                    .exec()).reduce(function (map, obj) {
-                    map[obj._id] = obj.count;
-                    return map;
-                }, {});
-
-                const tests = await Test.find(testFilter)
-                    .sort(sortFilter)
-                    .exec();
-                tests.map(function (test) {
-                    test.formattedUpdatedDate = moment(test.updatedDate)
-                        .format('YYYY-MM-DD hh:mm');
-                    return test;
-                });
-
-                let checksByTestGroupedByIdent = {};
-
-                for (const test of tests) {
-                    let checkFilter = { test: test.id };
-                    if (run) {
-                        checkFilter.run = run.id;
-                    }
-                    checksByTestGroupedByIdent[test.id] = await checksGroupedByIdent(checkFilter);
-                }
-
-                res.render('pages/runs', {
-                    runs: runs,
-                    tests: run ? tests : {},
-                    currentRun: run,
-                    checksByTestGroupedByIdent: checksByTestGroupedByIdent,
-                    allTests: allTests,
-                    testsCountsGroupByRunId,
-                    failedTestsCountsGroupByRunId
-                });
-            } catch (e) {
-                fatalError(req, res, e);
-                return reject(e);
-            }
-        }
-    );
 };
