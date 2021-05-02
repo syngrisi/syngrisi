@@ -166,7 +166,7 @@
     </div>
 
     <!--VIEWPORT-->
-    <div class="cell-viewport cell pl-3 col-1-2 border-bottom1 pr-0 text-truncate">
+    <div class="cell-viewport cell pl-3-5 col-1-2 border-bottom1 pr-0 text-truncate">
         <? let viewport;
         let toolTip;
         if(!test.calculatedViewport || !test.calculatedViewport.includes('x')) {
@@ -332,7 +332,7 @@
                                     <!--Accept dropdown-->
                                     <div class="dropdown">
                                         <a
-                                                class="accept-button btn-mini-toolbar btn-check btn-sm ml-1 rounded-0 border-0"
+                                                class="accept-button btn-mini-toolbar btn-check btn-sm rounded ml-1 rounded-0 border-0"
                                                 style="line-height: 0.1; padding: 2px;"
 
                                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
@@ -352,7 +352,7 @@
                                              aria-labelledby="acceptbutton_<?= check._id ?>"
                                              style="min-width: 5.5rem"
                                         >
-                                            <a class="accept-option dropdown-item check-toolbar-button-info pl-1 pr-0 text-light bg-olive"
+                                            <a class="accept-option dropdown-item check-toolbar-button-info rounded pl-1 pr-0 text-light bg-olive"
                                                href="javascript:void(0)"
                                                onclick="acceptOneCheck('<?= check._id ?>', '<?= check.actualSnapshotId ?>', '<?= check.baselineId ?>', '<?= test.id ?>')">
                                                 Accept

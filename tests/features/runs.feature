@@ -215,6 +215,46 @@ Feature: Runs Smoke
         When I wait for "2" seconds
         Then I expect "2" occurrences of Clickable "//div[@name='check-name']"
 
+    Scenario: Runs - same name, different ident
+    If we use same run name and different run idents the tests have to get to the different tests
+
+        # create 3 tests in one run and 4 in another
+        When I set env variables:
+        """
+        RUN_NAME: SAME NAME
+        RUN_IDENT: ident1
+        """
+        When I create "3" tests with params:
+         """
+          filePath: files/A.png
+          testName: test1
+        """
+        When I open the url "http://vrs:3001/runs"
+
+
+        When I set env variables:
+        """
+        RUN_NAME: SAME NAME
+        RUN_IDENT: ident2
+        """
+        When I create "4" tests with params:
+         """
+          filePath: files/A.png
+          testName: test2
+        """
+        When I open the url "http://vrs:3001/runs"
+
+        # check tests quantities
+        When I click on the element "(//span[text()='SAME NAME'])[1]"
+        When I wait for "2" seconds
+        Then I expect that element "span*=test2" does appear exactly "4" times
+        Then I expect that element "span*=test1" does appear exactly "0" times
+
+        When I click on the element "(//span[text()='SAME NAME'])[2]"
+        When I wait for "2" seconds
+        Then I expect that element "span*=test2" does appear exactly "0" times
+        Then I expect that element "span*=test1" does appear exactly "3" times
+
     Scenario: Runs - remove
         # create 3 tests in one run and 4 in another
         When I set env variables:

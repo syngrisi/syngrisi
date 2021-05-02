@@ -23,7 +23,7 @@
                 <div class="card fat content">
                     <div class="card-body">
                         <h4 class="card-title">Login</h4>
-                        <form method="POST" class="change-pwd" novalidate="" action="/login">
+                        <form method="POST" class="change-pwd" novalidate="" action="/login?origin=<%= origin %>">
                             <div class="form-group">
                                 <label for="email">Username</label>
                                 <input id="email" type="email" class="form-control" name="username" value="" required
