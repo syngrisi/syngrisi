@@ -65,7 +65,7 @@
 
                     <div id="admin" class="row pl-3 w-100 btn-light border-silver mt-1 mr-0 ">
                         <div class="col pr-1 pl-2 pb-1 ">
-                            <a href="?task=maintenance" class="small1 text-dark ">Maintenance</a>
+                            <a href="?task=tasks" class="small1 text-dark ">Tasks</a>
                         </div>
                     </div>
                 </div>
@@ -75,7 +75,7 @@
         <!--   /SIDEBAR    -->
 
         <!--   USERS TABLE-->
-        <div id="users" class="col pt-4 pl-3">
+        <div id="main-content" class="col pt-4 pl-3">
             <div class="container">
                 <row id="users-table-end">
 
@@ -359,11 +359,60 @@
                 let taskHtml;
                 let taskTemplate;
                 taskTemplate = await getRequest(`../../../../static/ejs/admin_${searchObject.task}.ejs`);
+                const mainContent = document.getElementById('main-content');
+
                 taskHtml = '<div class="row">' + ejs.render(taskTemplate, {
                     data: data
                 }, { delimiter: '?' }) + '</div>';
+                mainContent.innerHTML = taskHtml;
             }
         }
+    }
+
+    function clearConsole() {
+        document.getElementById('tasks-output').innerText = '';
+    }
+
+    function renderParams(taskName) {
+        clearConsole();
+        const allParams = {
+            remove_empty_tests: `<label for="test">Test label</label>
+                                 <input id="test" name="test">
+                                 <input id="test1" name="test1">
+                                 <a class="btn btn-sm btn-dark text-light" onclick="runAndRenderTask('remove_empty_tests');">Start</a>`,
+            remove_empty_runs: ` <a class="btn btn-sm btn-dark text-light" onclick="runAndRenderTask('remove_empty_runs');">Start</a>`
+        }
+        const form = document.getElementById('params-form');
+        form.innerHTML = allParams[taskName];
+    }
+
+    async function runAndRenderTask(taskName) {
+        const form = document.getElementById('params-form');
+        const formData = new FormData(form);
+
+        const data = [...formData.entries()];
+        const queryString = data
+            .map(x => `${encodeURIComponent(x[0])}=${encodeURIComponent(x[1])}`)
+            .join('&');
+        console.log({ queryString });
+
+        const path = (`/task_${taskName}?${queryString}`);
+        console.log({ path })
+        const outputPre = document.getElementById('tasks-output');
+
+        // get output data by chunks
+        let last_index = 0;
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", path);
+        xhr.onprogress = function () {
+            const curr_index = xhr.responseText.length;
+            if (last_index === curr_index) return;
+            const s = xhr.responseText.substring(last_index, curr_index);
+            last_index = curr_index;
+            console.log("PROGRESS:", s);
+            outputPre.innerText += s;
+        };
+        xhr.send();
     }
 </script>
 
