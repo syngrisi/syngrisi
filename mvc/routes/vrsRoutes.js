@@ -24,16 +24,17 @@ module.exports = async function (app) {
                 .catch(next);
         })
         .get('/', ensureLoggedIn(),
-            async function (req, res, next) {
+            (req, res, next) => {
                 UI.index(req, res)
                     .catch(next)
                     .catch(next);
             })
-        .get('/runs', ensureLoggedIn(), async function (req, res, next) {
-            UI.runs(req, res)
-                .catch(next)
-                .catch(next);
-        })
+        .get('/runs', ensureLoggedIn(),
+            (req, res, next) => {
+                UI.runs(req, res)
+                    .catch(next)
+                    .catch(next);
+            })
         .get('/affectedelements', ensureApiKey(), async function (req, res, next) {
             API.affectedElements(req, res)
                 .catch(next)
@@ -61,9 +62,6 @@ module.exports = async function (app) {
         .get('/users', ensureLoggedIn(), async function (req, res, next) {
             API.getUsers(req, res)
                 .catch(next);
-        })
-        .get('/login', (req, res) => {
-            UI.login(req, res);
         })
         .post('/password', ensureLoggedIn(), (req, res) => {
             API.changePassword(req, res);
@@ -102,6 +100,10 @@ module.exports = async function (app) {
         })
         .delete('/suites/:id', ensureLoggedIn(), async (req, res, next) => {
             API.removeSuite(req, res)
+                .catch(next);
+        })
+        .delete('/runs/:id', ensureLoggedIn(), async (req, res, next) => {
+            API.removeRun(req, res)
                 .catch(next);
         })
         // .put('/tests/:id', async (req, res, next) => {
@@ -144,7 +146,12 @@ module.exports = async function (app) {
             UI.userinfo(req, res)
                 .catch(next);
         })
+        .get('/login', (req, res) => {
+            UI.login(req, res);
+        })
         .post('/login', (req, res, next) => {
+            const origin = req.query.origin ? req.query.origin : '/';
+
             passport.authenticate('local',
                 (err, user, info) => {
                     if (err) {
@@ -155,17 +162,18 @@ module.exports = async function (app) {
                         return res.redirect('/login?info=' + JSON.stringify(info));
                     }
 
-                    req.logIn(user, function (err) {
+                    req.logIn(user, (err) => {
                         if (err) {
                             return next(err);
                         }
+
                         // console.log({user})
-                        return res.redirect('/');
+                        return res.redirect(origin);
                     });
 
                 })(req, res, next);
         })
-        //maintenance
+        // maintenance
         .get('/loadTestUser', ensureLoggedIn(), async (req, res, next) => {
             API.loadTestUser(req, res)
                 .catch(next);
@@ -174,9 +182,14 @@ module.exports = async function (app) {
             API.fixDocumentsTypes(req, res)
                 .catch(next);
         })
-        .get('/removeEmptyTests', ensureLoggedIn(), async (req, res, next) => {
-            req.log.trace(`get '/removeEmptyTests' queue pending count: `, queue.pending);
-            await queue.add(() => API.removeEmptyTests(req, res)
+        .get('/task_remove_empty_tests', ensureLoggedIn(), async (req, res, next) => {
+            req.log.trace(`get '/task_remove_empty_tests' queue pending count: `, queue.pending);
+            await queue.add(() => API.task_remove_empty_tests(req, res)
+                .catch(next));
+        })
+        .get('/task_remove_empty_runs', ensureLoggedIn(), async (req, res, next) => {
+            req.log.trace(`get '/task_remove_empty_runs' queue pending count: `, queue.pending);
+            await queue.add(() => API.task_remove_empty_runs(req, res)
                 .catch(next));
         });
 };

@@ -18,8 +18,8 @@
     <script src="../../../static/js/ejs.js"></script>
     <script src="../../../static/js/moment.min.js"></script>
 
-    <% if(currentSuite) { %>
-        <title>Syngrisi list of checks - <%= currentSuite.name %> </title>
+    <% if(currentRun) { %>
+        <title>Syngrisi list of checks - <%= currentRun.name %> </title>
     <% }else{ %>
         <title>Syngrisi list of checks - all suites</title>
     <% } %>
@@ -37,12 +37,11 @@
         <div name="suite-menu-toolbar" class="col mr-3">
             <div class="row all-header light-purple sticky-top1">
                 <div class="tests-toolbar sticky-top1 col text-light p-0 pt-1 bg-olive align-self-end">
-                    <div class="sticky-top1 row d-flex flex-row-reverse pr-0">
-                        <!--USER ICON-->
-                        <div class="user-icon-wrapper col-auto pl-1 pr-0 mr-3" style="margin-top: 3px">
+                    <div class="sticky-top1 row d-flex flex-row-reverse pr-2">
+
+                        <div class="col-auto pl-1">
                             <%- include('components/user_icon', {user: user}) %>
                         </div>
-                        <!--/USER ICON-->
                     </div>
                 </div>
             </div>
@@ -53,28 +52,28 @@
     <div class="all-table row mh-100 mr-0">
         <!--   SIDEBAR    -->
         <div name="sidebar"
-             class="sidebar col-2-5 pl-0 pr-0 mh-100 bg-light border-top border-right border-silver float-left w-251 ml-0 mr-0"
+             class="sidebar col-2-5 pl-0 pr-0 mh-100 bg-light border-top border-right border-silver float-left ml-0 mr-0"
              style="width: 100px; min-height: 100vh">
             <!--   COLLAPSED SUITES TOOLBAR-->
-            <%- // include('components/sidebar_items_toolbar', {itemName: 'suite-item'})       %>
+            <%- // include('components/sidebar_items_toolbar', {itemName: 'suite-item'})        %>
             <!--   SUITES CONTROL PANEL-->
             <div class="row sticky-top bg-light">
                 <div class="col suites-toolbar ">
-                    <%- include('components/suites_toolbar.ejs') %>
+                    <%- include('components/runs_toolbar.ejs') %>
                 </div>
             </div>
             <!--   SUITES LIST-->
-            <div class="suites-list m-0 row pl-0 pt-1 pr-0 bg-light text-secondary" style="height: 100vh">
+            <div class="suites-list m-0 row pl-0 pt-0 pr-0 bg-light text-secondary" style="height: 100vh">
                 <ul class="col pr-0 pl-0">
-                    <% let items = suites %>
-                    <%- include('components/sidebar_items', {items: suites, currentItem: currentSuite}) %>
+                    <% let items = runs %>
+                    <%- include('components/sidebar_items_runs2', {items: runs, currentItem: currentRun}) %>
                 </ul>
             </div>
             <!--  /SUITES LIST-->
         </div>
         <!--   TESTS TABLE-->
         <div name class="table-rows content col float-right pr-0 pl-0" id="wrapper">
-            <%- include('components/subheader_title', {currentItem: currentSuite}) %>
+            <%- include('components/subheader_title', {currentItem: currentRun}) %>
             <div class="container table-container">
                 <%- include('components/tests_table_headers2', {}) %>
                 <row name="tests-end" id="tests-table-end">
@@ -145,7 +144,7 @@
             // console.log({ searchObject0 });
             if (searchObject0 == null || (searchObject0 && !searchObject0.page)) {
                 const updatedSearch0 = updateQueryParam('page', 1, window.location.search);
-                updateUrlWithoutReloading(null, null, document.location.origin + updatedSearch0);
+                updateUrlWithoutReloading(null, null, document.location.origin + document.location.pathname + updatedSearch0);
             }
 
             // prepare search URI part and get json data
@@ -163,7 +162,7 @@
 
             // prepare testHTML using ejs template and obtained json data
             const checksByTestGroupedByIdent = JSON.parse(json);
-            // console.log({ checksByTestGroupedByIdent });
+            console.log({ checksByTestGroupedByIdent })
             let options = { delimiter: '?' };
             const pageTemplate = await getRequest('../../../static/ejs/tests_table_rows.ejs');
             let testsHtml = '<div class="test-page-wrapper row mr-0">' + ejs.render(pageTemplate, {
@@ -193,7 +192,7 @@
                 window.removeEventListener('scroll', scroller);
                 return resolve(json);
             } else {
-                updateUrlWithoutReloading(null, null, document.location.origin + updatedSearch);
+                updateUrlWithoutReloading(null, null, document.location.origin + document.location.pathname + updatedSearch);
                 return resolve(json);
             }
         });

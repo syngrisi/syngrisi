@@ -7,6 +7,8 @@ const Check = mongoose.model('VRSCheck');
 
 const Test = mongoose.model('VRSTest');
 
+const Run = mongoose.model('VRSRun');
+
 const Suite = mongoose.model('VRSSuite');
 
 const ident = ['name', 'viewport', 'browserName', 'os', 'app'];
@@ -37,6 +39,16 @@ exports.getSuitesByTestsQuery = async function (query) {
     )
         .sort({ name: 'asc' });
     return suites;
+};
+
+exports.getRunsByTestsQuery = async function (query, limit = 150) {
+    const runsIds = await Test
+        .find(query)
+        .distinct('run');
+    const runs = await Run.find({ _id: { $in: runsIds } })
+        .limit(limit)
+        .sort({ updatedDate: -1 });
+    return runs;
 };
 
 exports.buildQuery = function buildQuery(params) {
@@ -103,10 +115,9 @@ exports.removeEmptyProperties = function removeEmptyProperties(obj) {
         .filter(([_, v]) => (v != null) && (v !== '')));
 };
 
-exports.checksGroupedByIdent = async function checksGroupedByIdent(checkFilter) {
+exports.checksGroupedByIdent = function checksGroupedByIdent(checkFilter) {
     return new Promise(async function (resolve, reject) {
         try {
-            // console.log(checkFilter)
             let chs = await Check.find(checkFilter)
                 .sort({ updatedDate: 1 })
                 .exec();

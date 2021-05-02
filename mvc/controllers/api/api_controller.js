@@ -12,6 +12,7 @@ const { getAllElementsByPositionFromDump } = require('../../../lib/getElementsBy
 const Snapshot = mongoose.model('VRSSnapshot');
 const Check = mongoose.model('VRSCheck');
 const Test = mongoose.model('VRSTest');
+const Run = mongoose.model('VRSRun');
 const Suite = mongoose.model('VRSSuite');
 const User = mongoose.model('VRSUser');
 const Baseline = mongoose.model('VRSBaseline');
@@ -552,7 +553,10 @@ exports.createTest = async function (req, res) {
 
                 let run;
                 if (params.run) {
-                    run = await orm.createRunIfNotExist({ name: params.run });
+                    run = await orm.createRunIfNotExist({
+                        name: params.run,
+                        ident: params.runident,
+                    });
                     opts.run = run.id;
                 }
                 const test = await orm.createTest(opts);
@@ -602,6 +606,34 @@ exports.removeSuite = async function (req, res) {
                         .then((out) => {
                             res.status(200)
                                 .send(`Suite with id: '${id}' and all related tests and checks were removed
+                    output: '${JSON.stringify(out)}'`);
+                            return resolve();
+                        });
+                });
+        } catch (e) {
+            return reject(e);
+        }
+    });
+};
+
+exports.removeRun = async function (req, res) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const { id } = req.params;
+            console.log(`DELETE test and checks which associate with the suite run ID: '${id}'`);
+            const tests = await Test.find({ run: id });
+
+            const results = [];
+            for (const test of tests) {
+                results.push(removeTest(test._id));
+            }
+
+            Promise.all(results)
+                .then((result) => {
+                    Run.findByIdAndDelete(id)
+                        .then((out) => {
+                            res.status(200)
+                                .send(`Run with id: '${id}' and all related tests and checks were removed
                     output: '${JSON.stringify(out)}'`);
                             return resolve();
                         });
@@ -948,7 +980,6 @@ exports.getChecks = async function (req, res) {
             }
             if (suite) {
                 query.suite = suite.id;
-
                 delete query.suitename;
             }
         }
@@ -965,11 +996,6 @@ exports.getChecks = async function (req, res) {
             .exec();
 
         // const suites = await getSuitesByTestsQuery(query);
-        //
-        // // const SS = tests.select('suite');
-        // console.log({ suites });
-        // // console.log({query})
-
         const checksByTestGroupedByIdent = {};
 
         for (const test of tests) {
@@ -1002,6 +1028,7 @@ exports.getChecks = async function (req, res) {
             checksByTestGroupedByIdent[test.id]['suite'] = test.suite;
             checksByTestGroupedByIdent[test.id]['run'] = test.run;
         }
+        // console.log(Object.keys(checksByTestGroupedByIdent).length);
         res.status(200)
             .json(checksByTestGroupedByIdent);
         return resolve(checksByTestGroupedByIdent);
@@ -1225,38 +1252,100 @@ exports.stopSession = async function (req, res) {
     });
 };
 
-// maintain
-exports.removeEmptyTests = async function removeEmptyTests(req, res) {
-    return new Promise(async (resolve, reject) => {
-        res.write('<pre>\n');
+// TASKS
+exports.task_remove_empty_tests = function (req, res) {
+    return new Promise((resolve, reject) => {
+        // this header to response with chunks data
+        res.writeHead(200, {
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            'Content-Encoding': 'none',
+        });
         res.write('- query all tests\n');
         console.log('- query all tests\n');
 
-        const tests = await (Test.find({})
-            .exec());
-        res.write(`tests count: '${await Test.count()}'\n`);
-        console.log(`tests count: '${await Test.count()}'\n`);
+        Test.find({})
+            .then((tests) => {
+                res.write(`- all tests count: '${tests.length}'\n`);
+                console.log(`- all tests count: '${tests.length}'\n`);
+                res.write('- remove empty tests\n');
+                console.log('- remove empty tests\n');
 
-        res.write('- remove empty tests\n');
-        console.log('>- remove empty tests\n');
+                let count = 0;
+                Promise.all(tests.map((test) => {
+                    const checkFilter = { test: test.id };
+                    return checksGroupedByIdent(checkFilter)
+                        .then((checkGroups) => {
+                            if (Object.keys(checkGroups).length < 1) {
+                                count += 1;
+                                const targetToRemove = {
+                                    id: test._id,
+                                    name: test.name,
+                                };
+                                console.log({ targetToRemove });
+                                res.write(`${JSON.stringify(targetToRemove)}\n`);
 
-        for (const test of tests) {
-            const checkFilter = { test: test.id };
-            const groups = await checksGroupedByIdent(checkFilter);
+                                return Test.findByIdAndDelete(test._id,)
+                                    .then(() => targetToRemove);
+                            }
+                        });
+                }))
+                    .then((x) => {
+                        res.write(`- removed tests count: '${count}'\n`);
+                        console.log(`- removed tests count: '${count}'\n`);
+                        res.write('- done\n');
+                        console.log('- done\n');
+                        return resolve(res.end());
+                    });
+            });
+    });
+};
 
-            if (Object.keys(groups).length < 1) {
-                if (Object.keys(groups).length < 1) {
-                    await removeTest(test._id);
-                    res.write(`${test._id.toString()}\n`);
-                }
-            }
-        }
+exports.task_remove_empty_runs = function (req, res) {
+    return new Promise((resolve, reject) => {
+        // this header to response with chunks data
+        res.writeHead(200, {
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            'Content-Encoding': 'none',
+        });
+        res.write('- query all runs\n');
+        console.log('- query all runs\n');
 
-        res.write('- done\n');
-        console.log('- done\n');
-        res.write('</pre>\n');
-        res.end();
-        return resolve();
+        Run.find({})
+            .then((runs) => {
+                res.write(`- all runs count: '${runs.length}'\n`);
+                console.log(`- all runs count: '${runs.length}'\n`);
+                res.write('- remove empty runs\n');
+                console.log('- remove empty runs\n');
+
+                let count = 0;
+                Promise.all(runs.map((run) => {
+                    const checkFilter = { run: run.id };
+                    return checksGroupedByIdent(checkFilter)
+                        .then((checkGroups) => {
+                            if (Object.keys(checkGroups).length < 1) {
+                                count += 1;
+                                const targetToRemove = {
+                                    id: run._id,
+                                    name: run.name,
+                                };
+                                console.log({ targetToRemove });
+                                res.write(`${JSON.stringify(targetToRemove)}\n`);
+
+                                return Run.findByIdAndDelete(run.id,)
+                                    .then(() => targetToRemove);
+                            }
+                        });
+                }))
+                    .then((x) => {
+                        res.write(`- removed runs count: '${count}'\n`);
+                        console.log(`- removed runs count: '${count}'\n`);
+                        res.write('- done\n');
+                        console.log('- done\n');
+                        return resolve(res.end());
+                    });
+            });
     });
 };
 

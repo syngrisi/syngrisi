@@ -278,9 +278,11 @@ const VRSSuiteSchema = new Schema({
 const VRSRunSchema = new Schema({
     name: {
         type: String,
-        default: 'Others',
-        unique: true,
-        required: 'the suite name is empty',
+        required: 'the run name cannot be empty',
+    },
+    ident: {
+        type: String,
+        required: 'the run ident run cannot be empty',
     },
     description: {
         type: String,
