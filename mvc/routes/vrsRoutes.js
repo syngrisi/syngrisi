@@ -178,8 +178,8 @@ module.exports = async function (app) {
             API.loadTestUser(req, res)
                 .catch(next);
         })
-        .get('/migration', ensureLoggedIn(), async (req, res, next) => {
-            API.fixDocumentsTypes(req, res)
+        .get('/task_migration_1_1_0', ensureLoggedIn(), async (req, res, next) => {
+            API.task_migration_1_1_0(req, res)
                 .catch(next);
         })
         .get('/task_remove_empty_tests', ensureLoggedIn(), async (req, res, next) => {

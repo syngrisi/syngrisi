@@ -94,48 +94,60 @@
         <div name="sidebar" class="col w-25 border mt-3 float-right">
             <div class="container sticky-top pt-2 mt-2">
                 <div class="row justify-content-center">
-                    <a name="zoom in" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0"
+                    <a name="zoom in" type="button" title="Soom In" class="btn btn-check pl-1 pr-1 pt-0 pb-0"
                        onclick=" baseline.resize(1.2)">
                         <i class="fas fa-search-plus fa-1x"></i>
                     </a>
                 </div>
 
                 <div class="row justify-content-center">
-                    <a name="add-region" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0"
+                    <a name="add-region" type="button" title="(Ctrl + A) Add ignore region"
+                       class="btn btn-check pl-1 pr-1 pt-0 pb-0"
                        onclick="baseline.addIgnoreRegion( {name: 'ignore_rect', strokeWidth: 0,})">
                         <i class="fas fa-expand fa-1x"></i>
                     </a>
                 </div>
                 <div class="row justify-content-center">
-                    <a name="add-region" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0"
+                    <a name="add-region=bound" type="button" title="Add bound region"
+                       class="btn btn-check pl-1 pr-1 pt-0 pb-0"
                        onclick="baseline.addBoundingRegion('bound_rect')"
-                       title="(A) Add ignore region">
+                    >
                         <i class="fas fa-border-style"></i>
                     </a>
                 </div>
 
                 <div class="row justify-content-center">
-                    <a name="zoom-out" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0"
+                    <a name="zoom-out" type="button" title="Zoom out" class="btn btn-check pl-1 pr-1 pt-0 pb-0"
                        onclick="baseline.resize(0.8)">
                         <i class="fas fa-search-minus fa-1x"></i>
                     </a>
                 </div>
                 <div class="row justify-content-center">
-                    <a name="save-snapshot" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0"
+                    <a name="save-snapshot" type="button" title="Save" class="btn btn-check pl-1 pr-1 pt-0 pb-0"
                        onclick="baseline.sendIgnoreRegions('<%= snapshot.id %>' ,baseline.getRectData())">
                         <i class="fas fa-save fa-1x"></i>
                     </a>
                 </div>
                 <% if (diffId) { %>
                     <div class="row justify-content-center">
-                        <a id="diff" name="diff" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0"
+                        <a id="diff" name="diff" type="button" title="Toggle diff"
+                           class="btn btn-check pl-1 pr-1 pt-0 pb-0"
                            onclick="baseline.toggleDiff('<%= diffId %>')">
                             <i class="fas fa-exchange-alt fa-1x"></i>
                         </a>
                     </div>
                 <% } %>
                 <div class="row justify-content-center">
-                    <a id="remove" name="remove" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0"
+                    <a id="image-link" name="image-link" title="Open image link" type="button"
+                       class="btn btn-check pl-1 pr-1 pt-0 pb-0"
+                       href="/snapshoots/<%= snapshot.filename ? snapshot.filename : (snapshot.id + '.png') %>"
+                       target="_blank"
+                    >
+                        <i class="far fa-file-image fa-1x"></i>
+                    </a>
+                </div>
+                <div class="row justify-content-center">
+                    <a id="remove" name="remove" title="Remove" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0"
                        style="display:none">
                         <i class="fas fa-trash fa-1x"></i>
                     </a>
@@ -193,20 +205,21 @@
 <script src="lib/baselineView.js"></script>
 <script>
     function showNotification(msg, status = 'Success') {
-        document.getElementById("notify-header").textContent = status;
-        document.getElementById("notify-message").textContent = msg;
-        document.getElementById("notify-rect")
+        document.getElementById('notify-header').textContent = status;
+        document.getElementById('notify-message').textContent = msg;
+        document.getElementById('notify-rect')
             .setAttribute('fill', '#2ECC40');
-        if (status === 'Error')
-            document.getElementById("notify-rect")
+        if (status === 'Error') {
+            document.getElementById('notify-rect')
                 .setAttribute('fill', '#FF4136');
+        }
         $('#notify')
-            .show()
+            .show();
         setTimeout(function () {
                 $('#notify')
-                    .hide()
+                    .hide();
             },
-            7000)
+            7000);
     }
 
     document.addEventListener('keydown', function (event) {
@@ -215,22 +228,22 @@
             baseline.addIgnoreRegion({
                 name: 'ignore_rect',
                 strokeWidth: 0,
-            })
+            });
         }
     });
 
     $(document)
-        .on('click', ".deleteBtn", function () {
+        .on('click', '.deleteBtn', function () {
             if (baseline.canvas.getActiveObject()) {
                 baseline.canvas.remove(baseline.canvas.getActiveObject());
-                $(".deleteBtn")
+                $('.deleteBtn')
                     .remove();
             }
         });
 
     $('#remove')
         .on('click', function () {
-            baseline.canvas.remove(baseline.canvas.getActiveObject())
+            baseline.canvas.remove(baseline.canvas.getActiveObject());
         });
 
     var baseline = {};
@@ -239,14 +252,14 @@
     baselineImg.src = '/snapshoots/<%= snapshot.filename || snapshot.id + '.png' %>';
     baselineImg.onload = async function () {
         let coef = document.getElementById('snapshoot').clientWidth / this.width;
-        let calculatedHeight = this.height * coef
-        document.getElementById('snapshoot').style.height = calculatedHeight + 'px'
+        let calculatedHeight = this.height * coef;
+        document.getElementById('snapshoot').style.height = calculatedHeight + 'px';
         fabric.Object.prototype.objectCaching = false;
         let baselineObj;
         let baselineFilename;
         if ('<%= baselineId %>' !== '') {
             baselineObj = JSON.parse(await getRequest(`/snapshot/<%= baselineId %>`));
-            baselineFilename = baselineObj.filename ? baselineObj.filename : baselineObj.id + '.png'
+            baselineFilename = baselineObj.filename ? baselineObj.filename : baselineObj.id + '.png';
         }
         fabric.Image.fromURL(baselineImg.src, function (oImg) {
             baseline = new BaselineView('2d',
@@ -259,8 +272,8 @@
                 }
             );
             baseline.getSnapshotIgnoreRegionsDataAndDrawRegions('<%= snapshot.id %>');
-        })
-    }
+        });
+    };
 </script>
 </body>
 </html>

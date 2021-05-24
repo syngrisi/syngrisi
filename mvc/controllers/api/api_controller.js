@@ -1,4 +1,4 @@
-/* eslint-disable dot-notation,no-underscore-dangle */
+/* eslint-disable dot-notation,no-underscore-dangle,quotes */
 const querystring = require('querystring');
 const mongoose = require('mongoose');
 const hasha = require('hasha');
@@ -542,6 +542,9 @@ exports.createTest = async function (req, res) {
                 const opts = removeEmptyProperties({
                     name: params.name,
                     status: params.status,
+                    app: params.app,
+                    tags: params.tags && JSON.parse(params.tags),
+                    branch: params.branch,
                     viewport: params.viewport,
                     browserName: params.browser,
                     browserVersion: params.browserVersion,
@@ -564,8 +567,8 @@ exports.createTest = async function (req, res) {
                 res.json(test);
                 return resolve([req, res, test]);
             } catch (e) {
-                return reject(e);
                 fatalError(req, res, e);
+                return reject(e);
             }
         }
     );
@@ -657,47 +660,40 @@ function prettyCheckParams(result) {
     return JSON.stringify(resObs);
 }
 
-async function setBaseline(params) {
+async function createNewBaseline(params) {
     // find if baseline already exist
     const identFields = buildIdentObject(params);
-    const baseline = await Baseline.findOne(identFields);
-    // update if already exist
-    if (baseline) {
-        // Object.assign(baseline, props);
-        if (params.markedAs) baseline.markedAs = params.markedAs;
-        if (params.markedById) baseline.markedById = params.markedById;
-        if (params.markedByUsername) baseline.markedByUsername = params.markedByUsername;
-        if (params.markedDate) baseline.lastMarkedDate = params.markedDate;
-        baseline.snapshootId = params.actualSnapshotId;
-        baseline.baselineHistory.push({
-            id: params.actualSnapshotId,
-            date: new Date(),
-        });
-        return Promise.resolve(await baseline.save());
-    }
+    // const baseline = await Baseline.findOne(identFields);
+    // // update if already exist
+    // if (baseline) {
+    //     // Object.assign(baseline, props);
+    //     if (params.markedAs) baseline.markedAs = params.markedAs;
+    //     if (params.markedById) baseline.markedById = params.markedById;
+    //     if (params.markedByUsername) baseline.markedByUsername = params.markedByUsername;
+    //     if (params.markedDate) baseline.lastMarkedDate = params.markedDate;
+    //     baseline.snapshootId = params.actualSnapshotId;
+    //     baseline.baselineHistory.push({
+    //         id: params.actualSnapshotId,
+    //         date: new Date(),
+    //     });
+    //     return Promise.resolve(await baseline.save());
+    // }
 
     // create the new baseline since does not exist
     const newBaseline = await Baseline.create(identFields);
     if (params.markedAs) newBaseline.markedAs = params.markedAs;
     if (params.markedById) newBaseline.markedById = params.markedById;
     if (params.markedByUsername) newBaseline.markedByUsername = params.markedByUsername;
+    if (params.markedDate) newBaseline.lastMarkedDate = params.markedDate;
+    newBaseline.createdDate = new Date();
     newBaseline.snapshootId = params.actualSnapshotId;
 
-    if (!newBaseline.baselineHistory) newBaseline.baselineHistory = [];
-    await newBaseline.baselineHistory.push({
-        id: params.actualSnapshotId,
-        date: new Date(),
-    });
     return Promise.resolve(await newBaseline.save());
 }
 
-async function getBaseline(params) {
-    // find if baseline already exist
+function getBaseline(params) {
     const identFields = buildIdentObject(params);
-    const baseline = await Baseline.findOne(identFields);
-    // update if already exist
-    if (baseline) return baseline;
-    return null;
+    return Baseline.findOne(identFields, {}, { sort: { createdDate: -1 } },);
 }
 
 exports.createCheck = async function (req, res) {
@@ -771,6 +767,7 @@ exports.createCheck = async function (req, res) {
                     updatedDate: Date.now(),
                     suite: suite.id,
                     app: (await orm.createAppIfNotExist({ name: req.body.appName || 'Unknown' })).id,
+                    branch: req.body.branch,
                     domDump: req.body.domdump,
                     run: test.run,
                     creatorId: currentUser._id,
@@ -874,7 +871,7 @@ exports.createCheck = async function (req, res) {
                     currentBaseline = currentSnapshot;
                     console.log(`Create and the new check with params: '${prettyCheckParams(params)}'`);
                     check = await Check.create(params);
-                    await setBaseline(check.toObject());
+                    await createNewBaseline(check.toObject());
                 }
                 /** create check related items (test and suite) */
 
@@ -906,7 +903,7 @@ exports.createCheck = async function (req, res) {
                             updateParams['diffId'] = diffSnapshot.id;
                             updateParams['status'] = 'failed';
                         } else {
-                            await setBaseline(check.toObject());
+                            await createNewBaseline(check.toObject());
                             updateParams['status'] = 'passed';
                         }
 
@@ -987,21 +984,21 @@ exports.getChecks = async function (req, res) {
         if (req.user.role === 'user') {
             query.creatorUsername = req.user.username;
         }
-
+        // console.log({ query });
         const tests = await Test
             .find(query)
             .sort(sortFilter)
             .skip(skip)
             .limit(pageSize)
             .exec();
-
+        // console.log({ tests });
         // const suites = await getSuitesByTestsQuery(query);
         const checksByTestGroupedByIdent = {};
 
         for (const test of tests) {
             const checkFilter = { test: test.id };
             const groups = await checksGroupedByIdent(checkFilter);
-            // console.log(groups);
+            // console.log(groups.length);
             if (Object.keys(groups).length < 1) {
                 continue;
             }
@@ -1027,6 +1024,9 @@ exports.getChecks = async function (req, res) {
             checksByTestGroupedByIdent[test.id]['createdDate'] = test.createdDate;
             checksByTestGroupedByIdent[test.id]['suite'] = test.suite;
             checksByTestGroupedByIdent[test.id]['run'] = test.run;
+            checksByTestGroupedByIdent[test.id]['tags'] = test.tags;
+            checksByTestGroupedByIdent[test.id]['branch'] = test.branch;
+            checksByTestGroupedByIdent[test.id]['app'] = test.app;
         }
         // console.log(Object.keys(checksByTestGroupedByIdent).length);
         res.status(200)
@@ -1092,7 +1092,7 @@ exports.updateCheck = async function updateCheck(req, res) {
             delete opts.accept;
             // await Check.findByIdAndUpdate(check._id, opts);
             Object.assign(check, opts);
-            await setBaseline(check.toObject());
+            await createNewBaseline(check.toObject());
             await check.save();
             const testCalculatedStatus = await calculateTestStatus(check.test);
             const testCalculatedAcceptedStatus = await calculateAcceptedStatus(check.test);
@@ -1301,6 +1301,47 @@ exports.task_remove_empty_tests = function (req, res) {
     });
 };
 
+exports.loadTestUser = async function (req, res) {
+    return new Promise(async (resolve, reject) => {
+        if (process.env.TEST !== '1') {
+            return res.json({ msg: 'the feature works only in test mode' });
+        }
+        const testAdmin = await User.findOne({ username: 'Test' });
+        if (!testAdmin) {
+            const fs = require('fs');
+            console.log('Create the test Administrator');
+            const adminData = JSON.parse(fs.readFileSync('./lib/testAdmin.json'));
+            const admin = await User.create(adminData);
+            console.log(`Test Administrator with id: '${admin._id}' was created`);
+            res.json(admin);
+        } else {
+            console.log(testAdmin);
+            res.send(`{"msg": "Already exist '${testAdmin}'"`);
+        }
+    });
+};
+
+const fixDocumentsTypes = function (req, res) {
+    return new Promise(async (resolve, reject) => {
+        if (req.user.role !== 'admin') {
+            res.status(401)
+                .json({ error: 'You need to have \'admin\' role to access the page' });
+            return resolve();
+        }
+        const checks = await Check.find({});
+        for (const check of checks) {
+            console.log({ check });
+            res.write(`${check._id}\n`);
+            check.baselineId && (check.baselineId = mongoose.Types.ObjectId(check.baselineId));
+            check.actualSnapshotId && (check.actualSnapshotId = mongoose.Types.ObjectId(check.actualSnapshotId));
+            check.actualSnapshotId && (check.diffId = mongoose.Types.ObjectId(check.diffId));
+        }
+        return resolve(checks);
+    });
+};
+
+exports.fixDocumentsTypes = fixDocumentsTypes;
+
 exports.task_remove_empty_runs = function (req, res) {
     return new Promise((resolve, reject) => {
         // this header to response with chunks data
@@ -1349,40 +1390,17 @@ exports.task_remove_empty_runs = function (req, res) {
     });
 };
 
-exports.loadTestUser = async function (req, res) {
-    return new Promise(async (resolve, reject) => {
-        if (process.env.TEST !== '1') {
-            return res.json({ msg: 'the feature works only in test mode' });
-        }
-        const testAdmin = await User.findOne({ username: 'Test' });
-        if (!testAdmin) {
-            const fs = require('fs');
-            console.log('Create the test Administrator');
-            const adminData = JSON.parse(fs.readFileSync('./lib/testAdmin.json'));
-            const admin = await User.create(adminData);
-            console.log(`Test Administrator with id: '${admin._id}' was created`);
-            res.json(admin);
-        } else {
-            console.log(testAdmin);
-            res.send(`{"msg": "Already exist '${testAdmin}'"`);
-        }
-    });
-};
+exports.task_migration_1_1_0 = async function (req, res) {
+    // res.write('1. Fix docs types');
+    // await fixDocumentsTypes(req, res).catch(e => req.write(e));
+    res.write(`\n2. Change 'The Test App' => 'HPE'`);
+    const app = await orm.createAppIfNotExist({ name: 'HPE' });
+    const checks = await Check.find({});
+    for (const check of checks) {
+        check.app = app.id;
+        check.save();
+        res.write(`\n${check._id}`);
+    }
 
-exports.fixDocumentsTypes = function (req, res) {
-    return new Promise(async (resolve, reject) => {
-        if (req.user.role !== 'admin') {
-            res.status(401)
-                .json({ error: 'You need to have \'admin\' role to access the page' });
-            return resolve();
-        }
-        const checks = await Check.find({});
-        for (const check of checks) {
-            console.log({ check });
-            check.baselineId && (check.baselineId = mongoose.Types.ObjectId(check.baselineId));
-            check.actualSnapshotId && (check.actualSnapshotId = mongoose.Types.ObjectId(check.actualSnapshotId));
-            check.actualSnapshotId && (check.diffId = mongoose.Types.ObjectId(check.diffId));
-        }
-        return resolve(res.json(checks));
-    });
+    res.end('\nDone');
 };

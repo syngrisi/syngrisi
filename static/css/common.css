@@ -13707,12 +13707,12 @@ html {
   }
 }
 .check-toolbar-button-info:hover {
-  background-color: rgba(12, 36, 29, 0.4) !important;
+  background-color: #047008;
   color: white;
 }
 
 .check-toolbar-button-danger:hover {
-  background-color: rgba(170, 10, 6, 0.4) !important;
+  background-color: #ee0f05;
   color: white;
 }
 
@@ -13744,6 +13744,11 @@ html {
 .pl-2-2,
 .px-2-2 {
   padding-left: 0.6rem !important;
+}
+
+.pt-2-5,
+.py-2-5 {
+  padding-top: 0.7rem !important;
 }
 
 .pl-3-5,
@@ -13801,8 +13806,8 @@ html {
 
 .cell-status {
   padding-left: 0.35rem !important;
-  margin-top: -15px;
-  margin-bottom: -16px;
+  margin-top: -4px;
+  margin-bottom: 0px;
 }
 
 .testinfo:hover .cell-status {
@@ -13811,8 +13816,8 @@ html {
 
 .cell-status-expand {
   padding-left: 0 !important;
-  margin-top: -15px;
-  margin-bottom: -16px;
+  margin-top: -3px;
+  margin-bottom: 0px;
 }
 
 .testinfo:hover .cell-status-expand {
@@ -13830,8 +13835,8 @@ html {
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 999;
-  opacity: 85%;
-  font-size: 1.3rem;
+  opacity: 90%;
+  font-size: 1.2rem;
   padding-left: 3px;
   padding-right: 3px;
 }

@@ -64,6 +64,9 @@ const VRSCheckSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'VRSApp',
     },
+    branch: {
+        type: String,
+    },
     baselineId: {
         type: Schema.Types.ObjectId,
         ref: 'VRSSnapshot',
@@ -156,6 +159,9 @@ const VRSBaselineSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'VRSApp',
     },
+    branch: {
+        type: String,
+    },
     browserName: {
         type: String,
     },
@@ -171,17 +177,14 @@ const VRSBaselineSchema = new Schema({
     os: {
         type: String,
     },
-    baselineHistory: {
-        type: [{
-            id: Schema.Types.ObjectId,
-            date: Date,
-        }],
-    },
     markedAs: {
         type: String,
         enum: ['bug', 'accepted'],
     },
     lastMarkedDate: {
+        type: Date,
+    },
+    createdDate: {
         type: Date,
     },
     markedById: {
@@ -211,10 +214,12 @@ const VRSTestSchema = new Schema(
         browserVersion: {
             type: String,
         },
+        branch: {
+            type: String,
+        },
         tags: {
             type: [String],
         },
-        // on the start of test
         viewport: {
             type: String,
         },
@@ -223,6 +228,9 @@ const VRSTestSchema = new Schema(
             type: String,
         },
         os: {
+            type: String,
+        },
+        app: {
             type: String,
         },
         blinking: {

@@ -115,7 +115,7 @@ When(/^I kill process which used port: "([^"]*)"$/, (port) => {
 When(/^I click on "([^"]*)" VRS test$/, (testName) => {
     TableVRSComp.init();
 
-    TableVRSComp.data.filter((row) => row.name.getText()
+    TableVRSComp.data.filter((row) => row.name.$('span[name=cell-name').getText()
         .includes(testName))[0].name
         .click();
 });
@@ -124,7 +124,7 @@ When(/^I expect that(:? (\d)th)? VRS test "([^"]*)" has "([^"]*)" (status|browse
     (number, testName, fieldValue, fieldName) => {
         const intNumber = number ? parseInt(number) : 1;
         TableVRSComp.init();
-        const row = TableVRSComp.data.filter((row) => row.name.getText()
+        const row = TableVRSComp.data.filter((row) => row.name.$('span[name=cell-name').getText()
             .includes(testName))[intNumber - 1];
 
         TableVRSComp.data.forEach((x) => {
@@ -156,7 +156,7 @@ When(/^I expect that(:? (\d)th)? VRS test "([^"]*)" has blink icon$/,
     (number, testName) => {
         const intNumber = number ? parseInt(number) : 1;
         TableVRSComp.init();
-        const row = TableVRSComp.data.filter((row) => row.name.getText()
+        const row = TableVRSComp.data.filter((row) => row.name.$('span[name=cell-name').getText()
             .includes(testName))[intNumber - 1];
         expect(row.name.$('img'))
             .toHaveAttributeContaining('class', 'blink-icon');
@@ -180,7 +180,7 @@ Then(/^I expect that VRS check "([^"]*)" has "([^"]*)" status$/, (checkName, exp
 
 Then(/^I expect that(:? (\d)th)? VRS test "([^"]*)" is unfolded$/, (number, testName) => {
     const intNumber = number ? parseInt(number) : 1;
-    const row = TableVRSComp.data.filter((row) => row.name.getText() === testName)[intNumber - 1];
+    const row = TableVRSComp.data.filter((row) => row.name.$('span[name=cell-name').getText() === testName)[intNumber - 1];
     const nameCell = row.name.$('span');
     const foldDiff = nameCell.$('./../../../../../..//div[contains(@class, \'all-checks\')]');
     expect(foldDiff)
