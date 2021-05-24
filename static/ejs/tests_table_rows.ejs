@@ -2,7 +2,7 @@
 
 <!--TEST_INFO START-->
 <div name="testinfo"
-     class="testinfo testinfo_<?= test.id ?> row py-2 test-row pr-0 pt-3 pb-3 m-0 w-100"
+     class="testinfo testinfo_<?= test.id ?> row test-row pr-0 pt-1 pb-0 m-0 w-100"
      data-toggle="collapse" style="cursor: pointer" onclick="drawTestChecksPreviews('<?= test.id ?>');"
      data-target="#testchecks_<?= test.id ?>">
     <!--TEST CHECKBOX-->
@@ -39,7 +39,7 @@
               title="<?= test.status ?>"><?= test.status ?></span>
 
     </div>
-    <div class="cell-status-expand bg-warning col-auto pr-0 border-0 text-truncate">
+    <div class="cell-status-expand border-bottom border-top bg-warning col-auto pr-0  text-truncate">
         <?
         function calculatecheckGroupStatus(group) {
         const statuses = group.map( x => x.status[0] );
@@ -70,21 +70,55 @@
     </div>
 
     <!--NAME-->
-    <div class="cell-name cell pl-3 col-4-5 text-truncate">
-        <i data-toggle="tooltip" data-original-title="<?= test.blinking ?>">
-            <? if(test.blinking > 0) { ?>
-            <img src="../../../../static/blinking.png" class="img-fluid blink-icon" alt="blink">
-            <? } ?>
-        </i>
-        <span name="cell-name" id="<?= test.id ?>_cell-name" class="text-secondary small"
-              data-toggle="tooltip"
-              data-placement="top"
-              title="<?= test.name ?>"
-        ><?- test.name -?></span>
+    <div class="cell-name cell pl-3 pt-3 pb-3 col-4-5 text-truncate align-middle" style="position: relative">
+        <!--NAME:tags-->
+        <div style="font-size: 0.8rem; position: absolute; top: -0px; left: 14px" class="small text-dark text-truncate" title="Test tags">
+            <?
+            if(test.tags && (test.tags.length > 0)) {
+            ?>
+            <sub><i class="text-secondary fas fa-tags"></i></sub>
+            <? for(const tag of test.tags) {
+            ?>
+            <sub style="margin-left: -2px">
+                <span class="text-secondary" onclick="event.stopPropagation();" href="#"><?= tag ?></span>
+            </sub>
+            <?
+            }
+            }
+            ?>
+        </div>
+
+        <!--NAME:branch-->
+        <div style="font-size: 0.7rem; position: absolute; bottom: 7px; left: 23vw;"
+             title="Git branch"
+             class="small">
+            <span class="text-light bg-dark text-truncate rounded"
+                  style="padding-right: 3px; padding-left: 3px; padding-bottom: 2px; padding-top: 1px ">
+                <i class="fas fa-code-branch text-light"></i>
+                <a class="text-light"
+                   onclick="event.stopPropagation();"
+                   href="?filter_branch_regex=<?= test.branch || 'unknown' ?>"><?= test.branch || 'unknown' ?></a>
+            </span>
+        </div>
+
+        <div>
+            <i data-toggle="tooltip" data-original-title="<?= test.blinking ?>">
+                <? if(test.blinking > 0) { ?>
+                <img src="../../../../static/blinking.png" class="img-fluid blink-icon" alt="blink">
+                <? } ?>
+            </i>
+            <span name="cell-name" id="<?= test.id ?>_cell-name" class="text-secondary small"
+                  data-toggle="tooltip"
+                  data-placement="top"
+                  title="<?= test.name ?>"
+            ><?- test.name -?>
+            </span>
+        </div>
     </div>
 
+
     <!--CREATOR-->
-    <div class="cell-creator cell col-1-2 pl-2 text-truncate">
+    <div class="cell-creator cell pt-3 pb-3 col-1-2 pl-2 text-truncate">
 
         <div data-toggle="collapse">
             <span name="cell-creator" id="<?= test.id ?>_cell-creator" class="text-secondary small"
@@ -108,13 +142,13 @@
     }
     ?>
     <? const acceptedStatus = test.markedAs  ? test.markedAs : 'Unaccepted' ?>
-    <div class="cell-accepted-state cell col-1-2 pl-2 pb-1 pr-0 text-truncate">
+    <div class="cell-accepted-state cell col-1-2 pt-3 pb-3 pb-2 pr-0 text-truncate">
         <span class="accept-label p-1 <?= acceptStatusesClass(acceptedStatus) ?> check-accept-label-test-id_<?= test.id ?>"
               style="font-size: 80%"><?= acceptedStatus ?></span>
     </div>
 
     <!--DATE-->
-    <div class="cell-date cell col-1-5 pl-2 text-truncate">
+    <div class="cell-date cell pt-3 pb-3 col-1-5 pl-2 text-truncate">
         <span name="cell-date" id="<?= test.id ?>_cell-date" class="text-secondary small"
               data-toggle="tooltip"
               data-placement="top"
@@ -123,7 +157,7 @@
     </div>
 
     <!--BROWSER-->
-    <div class="cell-browser cell col-1-3 pl-2 pr-1 text-truncate" id="<?= test.id ?>_cell-browser">
+    <div class="cell-browser cell pt-3 pb-3 col-1-3 pl-2 pr-1 text-truncate" id="<?= test.id ?>_cell-browser">
         <? const browserIconMap =  {
             chrome: 'fab fa-chrome',
             'chrome [HEADLESS]': 'fab fa-chrome',
@@ -155,7 +189,7 @@
             'WINDOWS': 'fab fa-windows',
             'MacIntel': 'fab fa-apple',
         }?>
-    <div class="cell-platform cell pl-1 pr-0 col-0-3 text-truncate"
+    <div class="cell-platform cell pt-3 pb-3 pl-1 pr-0 col-0-3 text-truncate"
          id="<?= test.id ?>_cell-os"
          data-toggle="tooltip"
          data-placement="top"
@@ -166,7 +200,7 @@
     </div>
 
     <!--VIEWPORT-->
-    <div class="cell-viewport cell pl-3-5 col-1-2 border-bottom1 pr-0 text-truncate">
+    <div class="cell-viewport cell pt-3 pb-3 pl-3-5 col-1-2 border-bottom1 pr-0 text-truncate">
         <? let viewport;
         let toolTip;
         if(!test.calculatedViewport || !test.calculatedViewport.includes('x')) {
@@ -315,11 +349,11 @@
                                                 onclick="//removeOneCheck('<?= check._id ?>', '<?= test.id ?>');">
                                             <i class="fas fa-times-circle fa-1x"></i>
                                         </a>
-                                        <div class="dropdown-menu pl-2 pr-2 text-light bg-danger"
+                                        <div class="dropdown-menu pl-2 pr-2 text-light bg-item-failed text-center"
                                              aria-labelledby="checkbutton_<?= check._id ?>"
                                              style="min-width: 5.5rem"
                                         >
-                                            <a class="remove-option dropdown-item check-toolbar-button-info pl-1 pr-0 text-light bg-danger"
+                                            <a class="remove-option dropdown-item check-toolbar-button-danger rounded pl-1 pr-1 text-light"
                                                href="javascript:void(0)"
                                                onclick="removeOneCheck('<?= check._id ?>', '<?= test.id ?>');">
                                                 Remove
@@ -348,11 +382,11 @@
                                                title="<?- check.markedByUsername ? `Accepted by: ${check.markedByUsername} \n Accepted date: ${check.markedDate}` : 'Click here to accept this check'?>"
                                             ></i>
                                         </a>
-                                        <div class="dropdown-menu pl-2 pr-2 text-light bg-olive"
+                                        <div class="dropdown-menu pl-2 pr-2 text-light bg-item-passed text-center"
                                              aria-labelledby="acceptbutton_<?= check._id ?>"
                                              style="min-width: 5.5rem"
                                         >
-                                            <a class="accept-option dropdown-item check-toolbar-button-info rounded pl-1 pr-0 text-light bg-olive"
+                                            <a class="accept-option dropdown-item check-toolbar-button-info rounded pl-1 pr-1 text-light bg-olive1"
                                                href="javascript:void(0)"
                                                onclick="acceptOneCheck('<?= check._id ?>', '<?= check.actualSnapshotId ?>', '<?= check.baselineId ?>', '<?= test.id ?>')">
                                                 Accept

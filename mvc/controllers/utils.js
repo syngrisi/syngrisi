@@ -11,7 +11,7 @@ const Run = mongoose.model('VRSRun');
 
 const Suite = mongoose.model('VRSSuite');
 
-const ident = ['name', 'viewport', 'browserName', 'os', 'app'];
+const ident = ['name', 'viewport', 'browserName', 'os', 'app', 'branch'];
 exports.ident = ident;
 
 /**
