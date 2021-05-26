@@ -2,7 +2,7 @@
 
 <!--TEST_INFO START-->
 <div name="testinfo"
-     class="testinfo testinfo_<?= test.id ?> row test-row pr-0 pt-1 pb-0 m-0 w-100"
+     class="testinfo testinfo_<?= test.id ?> row test-row pr-0 pt-0 pb-0 m-0 w-100"
      data-toggle="collapse" style="cursor: pointer" onclick="drawTestChecksPreviews('<?= test.id ?>');"
      data-target="#testchecks_<?= test.id ?>">
     <!--TEST CHECKBOX-->
@@ -70,18 +70,21 @@
     </div>
 
     <!--NAME-->
-    <div class="cell-name cell pl-3 pt-3 pb-3 col-4-5 text-truncate align-middle" style="position: relative">
+    <div class="cell-name cell pl-3 pr-1 pt-3-2 pb-3-2 col-4-5 text-truncate align-middle" style="position: relative">
         <!--NAME:tags-->
-        <div style="font-size: 0.8rem; position: absolute; top: -0px; left: 14px" class="small text-dark text-truncate" title="Test tags">
+        <div style="font-size: 0.6rem; position: absolute; top: -0px; left: 1rem; padding-top: 7px" class="small text-dark text-truncate"
+             title="Test tags">
             <?
             if(test.tags && (test.tags.length > 0)) {
             ?>
-            <sub><i class="text-secondary fas fa-tags"></i></sub>
+            <span style="font-size: 0.45rem">
+                <i class="text-secondary fas fa-tags"></i>
+            </span>
             <? for(const tag of test.tags) {
             ?>
-            <sub style="margin-left: -2px">
-                <span class="text-secondary" onclick="event.stopPropagation();" href="#"><?= tag ?></span>
-            </sub>
+            <span style="margin-left: -2px; margin-top: -5px">
+                <span class="text-secondary" onclick="event.stopPropagation();"><?= tag ?></span>
+            </span>
             <?
             }
             }
@@ -89,11 +92,10 @@
         </div>
 
         <!--NAME:branch-->
-        <div style="font-size: 0.7rem; position: absolute; bottom: 7px; left: 23vw;"
-             title="Git branch"
-             class="small">
-            <span class="text-light bg-dark text-truncate rounded"
-                  style="padding-right: 3px; padding-left: 3px; padding-bottom: 2px; padding-top: 1px ">
+        <div
+                title="Git branch"
+                class="small branch">
+            <span class="branch text-light bg-dark text-truncate rounded">
                 <i class="fas fa-code-branch text-light"></i>
                 <a class="text-light"
                    onclick="event.stopPropagation();"
@@ -101,7 +103,7 @@
             </span>
         </div>
 
-        <div>
+        <div class="name-wrapper text-truncate">
             <i data-toggle="tooltip" data-original-title="<?= test.blinking ?>">
                 <? if(test.blinking > 0) { ?>
                 <img src="../../../../static/blinking.png" class="img-fluid blink-icon" alt="blink">
