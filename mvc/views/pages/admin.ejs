@@ -381,7 +381,10 @@
                                  <input id="test1" name="test1">
                                  <a class="btn btn-sm btn-dark text-light" onclick="runAndRenderTask('remove_empty_tests');">Start</a>`,
             remove_empty_runs: ` <a class="btn btn-sm btn-dark text-light" onclick="runAndRenderTask('remove_empty_runs');">Start</a>`,
-            migration_1_1_0: ` <a class="btn btn-sm btn-dark text-light" onclick="runAndRenderTask('${taskName}');">Start</a>`
+            migration_1_1_0: ` <a class="btn btn-sm btn-dark text-light" onclick="runAndRenderTask('${taskName}');">Start</a>`,
+            remove_old_tests: `<label for="test">Remove older that (days): </label>
+                               <input type="text" id="days" name="days" value="30">
+                               <a class="btn btn-sm btn-dark text-light" onclick="runAndRenderTask('remove_old_tests');">Start</a>`,
         }
         const form = document.getElementById('params-form');
         form.innerHTML = allParams[taskName];

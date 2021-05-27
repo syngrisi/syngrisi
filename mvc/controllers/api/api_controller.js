@@ -3,6 +3,7 @@ const querystring = require('querystring');
 const mongoose = require('mongoose');
 const hasha = require('hasha');
 const fs = require('fs').promises;
+const { format, subDays } = require('date-fns');
 const { config } = require('../../../config');
 const { getDiff } = require('../../../lib/comparator');
 const orm = require('../../../lib/dbItems');
@@ -660,26 +661,14 @@ function prettyCheckParams(result) {
     return JSON.stringify(resObs);
 }
 
-async function createNewBaseline(params) {
-    // find if baseline already exist
+function getBaseline(params) {
     const identFields = buildIdentObject(params);
-    // const baseline = await Baseline.findOne(identFields);
-    // // update if already exist
-    // if (baseline) {
-    //     // Object.assign(baseline, props);
-    //     if (params.markedAs) baseline.markedAs = params.markedAs;
-    //     if (params.markedById) baseline.markedById = params.markedById;
-    //     if (params.markedByUsername) baseline.markedByUsername = params.markedByUsername;
-    //     if (params.markedDate) baseline.lastMarkedDate = params.markedDate;
-    //     baseline.snapshootId = params.actualSnapshotId;
-    //     baseline.baselineHistory.push({
-    //         id: params.actualSnapshotId,
-    //         date: new Date(),
-    //     });
-    //     return Promise.resolve(await baseline.save());
-    // }
+    return Baseline.findOne(identFields, {}, { sort: { createdDate: -1 } },);
+}
 
-    // create the new baseline since does not exist
+async function createNewBaseline(params) {
+    const identFields = buildIdentObject(params);
+
     const newBaseline = await Baseline.create(identFields);
     if (params.markedAs) newBaseline.markedAs = params.markedAs;
     if (params.markedById) newBaseline.markedById = params.markedById;
@@ -691,9 +680,11 @@ async function createNewBaseline(params) {
     return Promise.resolve(await newBaseline.save());
 }
 
-function getBaseline(params) {
-    const identFields = buildIdentObject(params);
-    return Baseline.findOne(identFields, {}, { sort: { createdDate: -1 } },);
+async function createBaselineifNotExist(params) {
+    // find if baseline already exist
+    const baseline = await getBaseline(params);
+    if (baseline) return Promise.resolve(baseline);
+    return createNewBaseline(params);
 }
 
 exports.createCheck = async function (req, res) {
@@ -903,7 +894,7 @@ exports.createCheck = async function (req, res) {
                             updateParams['diffId'] = diffSnapshot.id;
                             updateParams['status'] = 'failed';
                         } else {
-                            await createNewBaseline(check.toObject());
+                            await createBaselineifNotExist(check.toObject());
                             updateParams['status'] = 'passed';
                         }
 
@@ -1121,6 +1112,12 @@ exports.updateCheck = async function updateCheck(req, res) {
     });
 };
 
+exports.removeSnapshoot = (id) => new Promise(async (resolve, reject) => {
+    console.log(`REMOVE snapshoot with id: ${id}`);
+    console.log(`Check if snapshoot '${id}' is baseline`);
+    const baseline = Snapshot.find({});
+});
+
 exports.removeCheck = async function (req, res) {
     return new Promise((resolve, reject) => {
         try {
@@ -1145,6 +1142,7 @@ exports.removeCheck = async function (req, res) {
                     console.log(`Check with id: '${id}' was removed`);
                     res.status(200)
                         .send(`Check with id: '${id}' was removed`);
+                    return resolve();
                 })
                 .catch(
                     (e) => {
@@ -1253,6 +1251,47 @@ exports.stopSession = async function (req, res) {
 };
 
 // TASKS
+exports.loadTestUser = async function (req, res) {
+    return new Promise(async (resolve, reject) => {
+        if (process.env.TEST !== '1') {
+            return res.json({ msg: 'the feature works only in test mode' });
+        }
+        const testAdmin = await User.findOne({ username: 'Test' });
+        if (!testAdmin) {
+            const fs = require('fs');
+            console.log('Create the test Administrator');
+            const adminData = JSON.parse(fs.readFileSync('./lib/testAdmin.json'));
+            const admin = await User.create(adminData);
+            console.log(`Test Administrator with id: '${admin._id}' was created`);
+            res.json(admin);
+        } else {
+            console.log(testAdmin);
+            res.send(`{"msg": "Already exist '${testAdmin}'"`);
+        }
+    });
+};
+
+const fixDocumentsTypes = function (req, res) {
+    return new Promise(async (resolve, reject) => {
+        if (req.user.role !== 'admin') {
+            res.status(401)
+                .json({ error: 'You need to have \'admin\' role to access the page' });
+            return resolve();
+        }
+        const checks = await Check.find({});
+        for (const check of checks) {
+            console.log({ check });
+            res.write(`${check._id}\n`);
+            check.baselineId && (check.baselineId = mongoose.Types.ObjectId(check.baselineId));
+            check.actualSnapshotId && (check.actualSnapshotId = mongoose.Types.ObjectId(check.actualSnapshotId));
+            check.actualSnapshotId && (check.diffId = mongoose.Types.ObjectId(check.diffId));
+        }
+        return resolve(checks);
+    });
+};
+
+exports.fixDocumentsTypes = fixDocumentsTypes;
+
 exports.task_remove_empty_tests = function (req, res) {
     return new Promise((resolve, reject) => {
         // this header to response with chunks data
@@ -1301,47 +1340,6 @@ exports.task_remove_empty_tests = function (req, res) {
     });
 };
 
-exports.loadTestUser = async function (req, res) {
-    return new Promise(async (resolve, reject) => {
-        if (process.env.TEST !== '1') {
-            return res.json({ msg: 'the feature works only in test mode' });
-        }
-        const testAdmin = await User.findOne({ username: 'Test' });
-        if (!testAdmin) {
-            const fs = require('fs');
-            console.log('Create the test Administrator');
-            const adminData = JSON.parse(fs.readFileSync('./lib/testAdmin.json'));
-            const admin = await User.create(adminData);
-            console.log(`Test Administrator with id: '${admin._id}' was created`);
-            res.json(admin);
-        } else {
-            console.log(testAdmin);
-            res.send(`{"msg": "Already exist '${testAdmin}'"`);
-        }
-    });
-};
-
-const fixDocumentsTypes = function (req, res) {
-    return new Promise(async (resolve, reject) => {
-        if (req.user.role !== 'admin') {
-            res.status(401)
-                .json({ error: 'You need to have \'admin\' role to access the page' });
-            return resolve();
-        }
-        const checks = await Check.find({});
-        for (const check of checks) {
-            console.log({ check });
-            res.write(`${check._id}\n`);
-            check.baselineId && (check.baselineId = mongoose.Types.ObjectId(check.baselineId));
-            check.actualSnapshotId && (check.actualSnapshotId = mongoose.Types.ObjectId(check.actualSnapshotId));
-            check.actualSnapshotId && (check.diffId = mongoose.Types.ObjectId(check.diffId));
-        }
-        return resolve(checks);
-    });
-};
-
-exports.fixDocumentsTypes = fixDocumentsTypes;
-
 exports.task_remove_empty_runs = function (req, res) {
     return new Promise((resolve, reject) => {
         // this header to response with chunks data
@@ -1387,6 +1385,23 @@ exports.task_remove_empty_runs = function (req, res) {
                         return resolve(res.end());
                     });
             });
+    });
+};
+
+exports.task_remove_old_tests = function (req, res) {
+    return new Promise((resolve, reject) => {
+        // this header to response with chunks data
+        res.writeHead(200, {
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            'Content-Encoding': 'none',
+        });
+        const trashHoldDate = subDays(new Date(), parseInt(req.query.days, 10));
+
+        res.write(`- will remove all tests older that '${format(trashHoldDate, 'yyyy-MM-dd')}'\n`);
+        console.log(`- will remove all tests older that '${format(trashHoldDate, 'yyyy-MM-dd')}'\n`);
+        console.log(req.query);
+        return resolve(res.end());
     });
 };
 

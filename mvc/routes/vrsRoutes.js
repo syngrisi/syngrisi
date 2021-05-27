@@ -187,6 +187,11 @@ module.exports = async function (app) {
             await queue.add(() => API.task_remove_empty_tests(req, res)
                 .catch(next));
         })
+        .get('/task_remove_old_tests', ensureLoggedIn(), async (req, res, next) => {
+            req.log.trace(`get '/task_remove_old_tests' queue pending count: `, queue.pending);
+            await queue.add(() => API.task_remove_old_tests(req, res)
+                .catch(next));
+        })
         .get('/task_remove_empty_runs', ensureLoggedIn(), async (req, res, next) => {
             req.log.trace(`get '/task_remove_empty_runs' queue pending count: `, queue.pending);
             await queue.add(() => API.task_remove_empty_runs(req, res)
