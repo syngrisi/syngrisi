@@ -1,5 +1,6 @@
 'use strict';
 
+/* global log:readonly */
 const mongoose = require('mongoose');
 
 const Snapshot = mongoose.model('VRSSnapshot');

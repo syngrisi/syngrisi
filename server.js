@@ -27,9 +27,22 @@ const logger = require('pino-http')(
     },
     pino.destination('./application.log')
 );
-const { config } = require('./config.js');
 
-const { port } = config;
+const winston = require('winston');
+
+global.log = winston.createLogger({
+    transports: [
+        new winston.transports.Console({
+            level: 'debug',
+            format: winston.format.combine(
+                winston.format.colorize(),
+                winston.format.simple()
+            ),
+        }),
+    ],
+});
+
+const { config } = require('./config.js');
 
 app.use(expressSession);
 
@@ -68,7 +81,7 @@ app.use((req, res) => {
     res.status(404)
         .send({ url: `${req.originalUrl} not found` });
 });
-app.listen(port, () => {
+app.listen(config.port, () => {
     require('./lib/onStart');
 });
 
@@ -76,4 +89,4 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-console.log(`Syngrisi started on port: '${port}'`);
+console.log(`Syngrisi started on port: '${config.port}'`);
