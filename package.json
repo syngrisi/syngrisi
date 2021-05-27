@@ -57,12 +57,14 @@
     "p-queue": "^6.4.0",
     "passport": "^0.4.1",
     "passport-local-mongoose": "^6.1.0",
+    "pino": "^6.11.3",
     "pino-http": "^5.2.0",
     "prettier": "^2.2.1",
     "querystring": "^0.2.1",
     "request": "^2.88.0",
     "resemblejs": "^3.2.4",
-    "uuid-apikey": "^1.5.2"
+    "uuid-apikey": "^1.5.2",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",

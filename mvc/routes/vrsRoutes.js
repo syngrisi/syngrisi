@@ -1,5 +1,8 @@
 'use strict';
 
+// eslint-disable-next-line no-unused-vars
+/* global log:readonly */
+
 const { default: PQueue } = require('p-queue');
 
 const queue = new PQueue({ concurrency: 1 });

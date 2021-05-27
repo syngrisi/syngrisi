@@ -1,4 +1,6 @@
 /* eslint-disable dot-notation,no-underscore-dangle,quotes */
+// eslint-disable-next-line no-unused-vars
+/* global log:readonly */
 const querystring = require('querystring');
 const mongoose = require('mongoose');
 const hasha = require('hasha');
@@ -1112,7 +1114,7 @@ exports.updateCheck = async function updateCheck(req, res) {
     });
 };
 
-exports.removeSnapshoot = (id) => new Promise(async (resolve, reject) => {
+const removeSnapshoot = (id) => new Promise(async (resolve, reject) => {
     console.log(`REMOVE snapshoot with id: ${id}`);
     console.log(`Check if snapshoot '${id}' is baseline`);
     const baseline = Snapshot.find({});
@@ -1122,31 +1124,32 @@ exports.removeCheck = async function (req, res) {
     return new Promise((resolve, reject) => {
         try {
             const { id } = req.params;
-            console.log(`DELETE check with ID: '${id}'`);
-
+            log.info(`DELETE -- check id: '${id}', user: '${req.user.username}', params: '${JSON.stringify(req.params)}'`);
             Check.findByIdAndDelete(id)
                 .then(async (check) => {
+                    log.debug(`Check with id: '${id}' was removed, update test: ${check.test}`);
+
                     const test = await Test.findById(check.test)
                         .exec();
                     const testCalculatedStatus = await calculateTestStatus(check.test);
                     const testCalculatedAcceptedStatus = await calculateAcceptedStatus(check.test);
 
-                    console.log(`DELETE check id: '${id}' with params: '${JSON.stringify(req.params)}'`);
                     test.status = testCalculatedStatus;
                     test.markedAs = testCalculatedAcceptedStatus;
                     test.updatedDate = new Date();
 
                     await orm.updateItemDate('VRSSuite', check.suite);
                     test.save();
+                    log.debug(`try to remove snapshoot, actual: ${check.actualSnapshotId}`);
+                    log.debug(`try to remove snapshoot, baseline: ${check.baselineId}`);
 
-                    console.log(`Check with id: '${id}' was removed`);
                     res.status(200)
                         .send(`Check with id: '${id}' was removed`);
                     return resolve();
                 })
                 .catch(
                     (e) => {
-                        console.log(`Cannot remove a check with id: '${id}', error: '${e}'`);
+                        log.error(`Cannot remove a check with id: '${id}', error: '${e}'`);
                         fatalError(req, res, e);
                         return reject(e);
                     }

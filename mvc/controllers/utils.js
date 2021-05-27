@@ -1,4 +1,5 @@
 /* eslint-disable dot-notation */
+/* global log:readonly */
 const mongoose = require('mongoose');
 
 const moment = require('moment');
@@ -100,7 +101,7 @@ function groupViewPort(checks) {
 const fatalError = function fatalError(req, res, e) {
     const errMsg = e.stack ? `Fatal error: '${e}' \n  '${e.stack}'` : `Fatal error: ${e} \n`;
     req.log.fatal(errMsg);
-    console.log(errMsg);
+    log.error(errMsg);
     res.status(500)
         .json({
             status: 'fatalError',
