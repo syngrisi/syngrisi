@@ -1114,10 +1114,75 @@ exports.updateCheck = async function updateCheck(req, res) {
     });
 };
 
+exports.getBaselines = (req, res) => {
+    Baseline.find()
+        .then((baselines) => {
+            res.json(baselines);
+        });
+};
+
+async function isLastLinkToSnapshoot(id) {
+    const baselines = await Check.find({ baselineId: id });
+    const actuals = await Check.find({ actualSnapshotId: id });
+
+    // console.log({ BL: baselines.length });
+    // console.log({ AL: actuals.length });
+    if (!baselines && !actuals) return false;
+    return (baselines.length === 0) && (actuals.length === 0);
+}
+
+const removeSnapshootFile = (snapshoot) => new Promise(async (resolve, reject) => {
+    log.debug(`find all snapshots with same filename`);
+    const snapshoots = await Snapshot.find({ filename: snapshoot.filename });
+    if (snapshoots.length === 0) {
+        const path = snapshoot.filename ? `${config.defaultBaselinePath}${snapshoot.id}.png` : `${config.defaultBaselinePath}${snapshoot.id}.png`;
+        const fss = require('fs');
+        if (fss.existsSync(path)) {
+            console.log(`Remove file: '${path}'`);
+            fss.unlinkSync(path);
+        }
+    }
+    return resolve();
+});
+
 const removeSnapshoot = (id) => new Promise(async (resolve, reject) => {
-    console.log(`REMOVE snapshoot with id: ${id}`);
-    console.log(`Check if snapshoot '${id}' is baseline`);
-    const baseline = Snapshot.find({});
+    log.debug(`DELETE -- snapshoot with id: ${id}`);
+    log.debug(`check if snapshoot '${id}' is baseline`);
+    if (!id) {
+        log.debug('id is empty');
+        return resolve();
+    }
+    const snapshoot = await Snapshot.findById(id);
+
+    if (snapshoot === null) {
+        log.debug(`cannot find the snapshoot with id: '${id}'`);
+        return resolve();
+    }
+
+    const baselines = await Baseline.find({ snapshootId: id })
+        .sort({ createdDate: -1 });
+    if (baselines.length > 0) {
+        // remove snapshoot and baselines
+        // console.log({ markedAs: baselines[0].markedAs });
+        if (baselines[0].markedAs === undefined && (await isLastLinkToSnapshoot(id))) {
+            await Snapshot.findByIdAndDelete(id);
+            await Baseline.deleteMany({ snapshootId: id });
+            log.debug(`snapshoot: '${id}' and related baselines was removed because it was last unaccepted snapshoot`);
+            log.debug(`try to remove snapshoot file, id: '${snapshoot._id}', filename: '${snapshoot.filename}'`);
+            await removeSnapshootFile(snapshoot);
+            return resolve();
+        } else {
+            log.debug(`cannot remove the snapshoot because it is accepted or not last baseline`);
+            return resolve();
+        }
+    } else {
+        log.debug(`snapshoot: '${id}' is not a baseline, try to remove it`);
+        await Snapshot.findByIdAndDelete(id);
+        log.debug(`snapshoot: '${id}' was removed`);
+        log.debug(`try to remove snapshoot file, id: '${snapshoot._id}', filename: '${snapshoot.filename}'`);
+        await removeSnapshootFile(snapshoot);
+        return resolve();
+    }
 });
 
 exports.removeCheck = async function (req, res) {
@@ -1127,7 +1192,7 @@ exports.removeCheck = async function (req, res) {
             log.info(`DELETE -- check id: '${id}', user: '${req.user.username}', params: '${JSON.stringify(req.params)}'`);
             Check.findByIdAndDelete(id)
                 .then(async (check) => {
-                    log.debug(`Check with id: '${id}' was removed, update test: ${check.test}`);
+                    log.debug(`check with id: '${id}' was removed, update test: ${check.test}`);
 
                     const test = await Test.findById(check.test)
                         .exec();
@@ -1140,16 +1205,23 @@ exports.removeCheck = async function (req, res) {
 
                     await orm.updateItemDate('VRSSuite', check.suite);
                     test.save();
-                    log.debug(`try to remove snapshoot, actual: ${check.actualSnapshotId}`);
+
                     log.debug(`try to remove snapshoot, baseline: ${check.baselineId}`);
+                    await removeSnapshoot(check.baselineId);
+
+                    log.debug(`try to remove snapshoot, actual: ${check.actualSnapshotId}`);
+                    await removeSnapshoot(check.actualSnapshotId);
+
+                    log.debug(`try to remove snapshoot, diff: ${check.diffId}`);
+                    await removeSnapshoot(check.diffId);
 
                     res.status(200)
-                        .send(`Check with id: '${id}' was removed`);
+                        .send(`check with id: '${id}' was removed`);
                     return resolve();
                 })
                 .catch(
                     (e) => {
-                        log.error(`Cannot remove a check with id: '${id}', error: '${e}'`);
+                        log.error(`cannot remove a check with id: '${id}', error: '${e}'`);
                         fatalError(req, res, e);
                         return reject(e);
                     }

@@ -31,7 +31,7 @@ When(/^I send "([^"]*)" request to "([^"]*)" with:$/, async function (reqType, u
             break;
     }
     const outResp = (await response).json;
-    console.log(outResp);
+    console.log({ outResp });
     outResp.statusCode = (await response).status;
     await this.saveItem(reqType, outResp);
 });
