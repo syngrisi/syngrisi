@@ -55,8 +55,6 @@
         <div name="sidebar"
              class="sidebar col-2-5 pl-0 pr-0 mh-100 bg-light border-top border-right border-silver float-left w-251 ml-0 mr-0"
              style="width: 100px; min-height: 100vh">
-            <!--   COLLAPSED SUITES TOOLBAR-->
-            <%- // include('components/sidebar_items_toolbar', {itemName: 'suite-item'})       %>
             <!--   SUITES CONTROL PANEL-->
             <div class="row sticky-top bg-light">
                 <div class="col suites-toolbar ">
@@ -293,12 +291,22 @@
     var baselines = {};
     const urlParams = new URLSearchParams(window.location.search);
     const unfoldTestId = urlParams.get('unfoldTestId');
-    if (unfoldTestId) {
-        unfoldCheck(unfoldTestId);
-    }
+
+    // waiting for the 'testinfo' element appearance
+    // wrapped to the async function to not block the loop
+    (async () => {
+        if (unfoldTestId) {
+
+            while (!document.querySelector(`.testinfo_${unfoldTestId}`)) {
+                await new Promise(r => setTimeout(r, 200));
+            }
+            unfoldCheck(unfoldTestId);
+        }
+    })();
 
     function unfoldCheck(id) {
-        jQuery(`#testchecks_${id}`)[0].scrollIntoView();
+        console.log({ UNFOLD: id });
+        jQuery(`.testinfo_${id}`)[0].scrollIntoView(true);
         jQuery(`#testchecks_${id}`)
             .collapse('show');
         drawTestChecksPreviews(unfoldTestId);

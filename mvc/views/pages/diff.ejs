@@ -62,6 +62,11 @@
         }
 
     </style>
+    <script>
+        function backToTest(id) {
+            window.location = `${document.referrer}&unfoldTestId=${id}`;
+        }
+    </script>
 
     <title>Shapshoot - <%= expected_snapshoot.name %> | <%= expected_snapshoot.id %>
         | <%= expected_snapshoot.formattedcreatedDate %></title>
@@ -75,10 +80,11 @@
         </div>
 
         <div name="title" class="col pl-4 pt-2-5 h4 mb-0">
-            <a class="diff-back-button unlink small" href="javascript:window.history.back()">
+            <a class="diff-back-button unlink small" href="javascript:void(0)"
+               onclick="backToTest('<%= test.id %>')">
                 <i class="fa fa-arrow-left" aria-hidden="true"></i>
             </a>
-
+            &nbsp;
             <a class="unlink" name="suite-link"
                href="/?filter_suitename_eq=<%= suite.name %>"><%= suite.name %></a>
             <span>/</span>
@@ -229,7 +235,7 @@
     canvas.setWidth(document.getElementById('snapshoot').offsetWidth);
 
     <% if(actual_snapshoot) { %>
-    canvas.hoverCursor = 'col-resize'
+    canvas.hoverCursor = 'col-resize';
     <% } %>
     <!--console.log('/snapshoots/<%= expected_snapshoot.filename ? expected_snapshoot.filename : expected_snapshoot.id + '.png' %>')-->
     fabric.Image.fromURL('/snapshoots/<%= expected_snapshoot.filename ? expected_snapshoot.filename : expected_snapshoot.id + '.png' %>',
@@ -239,12 +245,12 @@
             expectedImg = oImg;
             oImg.moveTo(0);
             oImg.scaleToWidth(canvas.width);
-            canvas.setHeight(oImg.getScaledHeight())
+            canvas.setHeight(oImg.getScaledHeight());
             <% if(actual_snapshoot) { %>
             oImg.clipPath = clipPath;
 
             // console.log(`<%= actual_snapshoot.filename %>`);
-            console.log(`/snapshoots/<%= actual_snapshoot.filename ? actual_snapshoot.filename : actual_snapshoot.id + '.png' %>`)
+            console.log(`/snapshoots/<%= actual_snapshoot.filename ? actual_snapshoot.filename : actual_snapshoot.id + '.png' %>`);
             fabric.Image.fromURL(`/snapshoots/<%= actual_snapshoot.filename ? actual_snapshoot.filename : actual_snapshoot.id + '.png' %>`, function (oImg) {
                 canvas.add(oImg);
                 window.expectedImg = oImg;
@@ -257,7 +263,7 @@
         });
 
     fabric.Image.fromURL('/snapshoots/<%= diff_snapshoot.filename ? diff_snapshoot.filename : diff_snapshoot.id + '.png' %>', function (oImg) {
-        oImg.set('opacity', 0)
+        oImg.set('opacity', 0);
         canvas.add(oImg);
         diffImg = oImg;
         oImg.moveTo(4);
@@ -303,8 +309,8 @@
 
     function toggleReqions() {
         if (baseline.allRects && (baseline.allRects.length > 0)) {
-            console.log('DESTROY')
-            baseline.destroy()
+            console.log('DESTROY');
+            baseline.destroy();
         } else {
             baseline = new BaselineView('2d',
                 expectedImg,
@@ -332,10 +338,10 @@
     function toggleDiffOpacity() {
         if (diffImg.opacity === 1) {
             diffImg.opacity = 0;
-            canvas.hoverCursor = 'col-resize'
+            canvas.hoverCursor = 'col-resize';
         } else {
             diffImg.opacity = 1;
-            canvas.hoverCursor = 'auto'
+            canvas.hoverCursor = 'auto';
         }
 
         canvas.renderAll();
@@ -343,18 +349,18 @@
 
     <% if(actual_snapshoot) { %>
 
-    canvas.on("mouse:move", function (event) {
+    canvas.on('mouse:move', function (event) {
         let ofsetX = parseInt(event.pointer.x);
         clipPath.width = ofsetX;
         clipPathWrapper.width = ofsetX + 2;
-        clipPath.height = actualImg.getScaledHeight()
-        clipPathWrapper.height = actualImg.getScaledHeight() + 2
+        clipPath.height = actualImg.getScaledHeight();
+        clipPathWrapper.height = actualImg.getScaledHeight() + 2;
         canvas.renderAll();
-    })
+    });
 
-    canvas.on("mouse:up:before", function (event) {
+    canvas.on('mouse:up:before', function (event) {
         toggleDiffOpacity();
-    })
+    });
     <% } %>
     function confirmation(text = 'are you sure?') {
         return window.confirm(text);
@@ -372,7 +378,7 @@
         xhr.onload = function () {
             if (xhr.status === 200) {
                 console.log('Success ' + id + '--' + xhr.responseText);
-                const newUri = `/diffView?diffid=${newBaselineId}&actualid=${newBaselineId}&expectedid=${newBaselineId}&checkid=${id}`
+                const newUri = `/diffView?diffid=${newBaselineId}&actualid=${newBaselineId}&expectedid=${newBaselineId}&checkid=${id}`;
                 window.location.href = newUri;
             } else {
                 console.log('Request failed. Returned status of ' + xhr.status + 'resp:' + xhr.responseText);
