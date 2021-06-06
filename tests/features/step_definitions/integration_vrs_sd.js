@@ -115,7 +115,8 @@ When(/^I kill process which used port: "([^"]*)"$/, (port) => {
 When(/^I click on "([^"]*)" VRS test$/, (testName) => {
     TableVRSComp.init();
 
-    TableVRSComp.data.filter((row) => row.name.$('span[name=cell-name').getText()
+    TableVRSComp.data.filter((row) => row.name.$('span[name=cell-name]')
+        .getText()
         .includes(testName))[0].name
         .click();
 });
@@ -124,7 +125,8 @@ When(/^I expect that(:? (\d)th)? VRS test "([^"]*)" has "([^"]*)" (status|browse
     (number, testName, fieldValue, fieldName) => {
         const intNumber = number ? parseInt(number) : 1;
         TableVRSComp.init();
-        const row = TableVRSComp.data.filter((row) => row.name.$('span[name=cell-name').getText()
+        const row = TableVRSComp.data.filter((row) => row.name.$('span[name=cell-name]')
+            .getText()
             .includes(testName))[intNumber - 1];
 
         TableVRSComp.data.forEach((x) => {
@@ -156,7 +158,8 @@ When(/^I expect that(:? (\d)th)? VRS test "([^"]*)" has blink icon$/,
     (number, testName) => {
         const intNumber = number ? parseInt(number) : 1;
         TableVRSComp.init();
-        const row = TableVRSComp.data.filter((row) => row.name.$('span[name=cell-name').getText()
+        const row = TableVRSComp.data.filter((row) => row.name.$('span[name=cell-name]')
+            .getText()
             .includes(testName))[intNumber - 1];
         expect(row.name.$('img'))
             .toHaveAttributeContaining('class', 'blink-icon');
@@ -180,7 +183,9 @@ Then(/^I expect that VRS check "([^"]*)" has "([^"]*)" status$/, (checkName, exp
 
 Then(/^I expect that(:? (\d)th)? VRS test "([^"]*)" is unfolded$/, (number, testName) => {
     const intNumber = number ? parseInt(number) : 1;
-    const row = TableVRSComp.data.filter((row) => row.name.$('span[name=cell-name').getText() === testName)[intNumber - 1];
+    const row = TableVRSComp.data.filter((row) => row.name.$('span[name=cell-name]')
+        .getText() === testName)[intNumber - 1];
+    console.log({ row });
     const nameCell = row.name.$('span');
     const foldDiff = nameCell.$('./../../../../../..//div[contains(@class, \'all-checks\')]');
     expect(foldDiff)
@@ -278,9 +283,10 @@ When(/^I create "([^"]*)" tests with params:$/, { timeout: 60000000 }, async fun
         }, browser.config.apiKey);
         browser.pause(300);
         const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${params.filePath}`);
-        const checkResult = await checkVRS(`Check - ${Math.random()
+        const checkName = params.checkName || `Check - ${Math.random()
             .toString(36)
-            .substring(7)}`, imageBuffer);
+            .substring(7)}`;
+        const checkResult = await checkVRS(checkName, imageBuffer);
         this.STATE.check = checkResult;
         await browser.vDriver.stopTestSession(browser.config.apiKey);
     }
@@ -496,7 +502,7 @@ When(/^I delete the "([^"]*)" check$/, (checkName) => {
         .toBeExisting();
 
     // eslint-disable-next-line max-len
-    $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//a[contains(@class, 'delete-button')]`)
+    $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//a[contains(@class, 'remove-button')]`)
         .click();
     browser.pause(200);
     $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../div[@name='check-buttons']//a[contains(@class, 'remove-option')]`)
@@ -568,4 +574,26 @@ Then(/^I expect that "([^"]*)" check has Created "([^"]*)" equal to "([^"]*)"$/,
     const match = regex.exec(checkTitle);
     expect(match[1])
         .toContain(value);
+});
+
+Then(/^I expect ([\d]+) baselines$/, function (num) {
+    browser.url('http://vrs:3001/baselines');
+    const baselines = JSON.parse($('pre')
+        .getHTML(false));
+    expect(baselines.length)
+        .toBe(parseInt(num, 10));
+});
+
+Then(/^I expect ([\d]+)st baseline with:$/, function (num, yml) {
+    browser.url('http://vrs:3001/baselines');
+    const baselines = JSON.parse($('pre')
+        .getHTML(false));
+    console.log({ baselines });
+
+    const params = YAML.parse(yml);
+    const baseline = baselines[parseInt(num) - 1];
+    baseline.markedByUsername = baseline.markedByUsername || '';
+    baseline.markedAs = baseline.markedAs || '';
+    expect(baseline)
+        .toMatchObject(params);
 });

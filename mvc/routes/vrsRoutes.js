@@ -66,6 +66,9 @@ module.exports = async function (app) {
             API.getUsers(req, res)
                 .catch(next);
         })
+        .get('/baselines', ensureLoggedIn(), (req, res) => {
+            API.getBaselines(req, res);
+        })
         .post('/password', ensureLoggedIn(), (req, res) => {
             API.changePassword(req, res);
         })

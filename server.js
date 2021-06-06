@@ -66,9 +66,6 @@ app.set('views', viewPath);
 
 app.set('view engine', 'ejs');
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-app.use(express.urlencoded({ limit: '50mb' }));
 app.use(express.json({ limit: '50mb' }));
 app.use('/snapshoots', express.static(config.defaultBaselinePath));
 app.use('/static', express.static('./static'));

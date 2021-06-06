@@ -74,7 +74,11 @@
             <%- include('components/logo_and_link', {location: 'Difference'}) %>
         </div>
 
-        <div name="title" class="col pl-4 pt-1 h4 border-left mb-0">
+        <div name="title" class="col pl-4 pt-2-5 h4 mb-0">
+            <a class="diff-back-button unlink small" href="javascript:window.history.back()">
+                <i class="fa fa-arrow-left" aria-hidden="true"></i>
+            </a>
+
             <a class="unlink" name="suite-link"
                href="/?filter_suitename_eq=<%= suite.name %>"><%= suite.name %></a>
             <span>/</span>
