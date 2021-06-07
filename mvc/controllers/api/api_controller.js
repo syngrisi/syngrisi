@@ -1346,27 +1346,6 @@ exports.loadTestUser = async function (req, res) {
     });
 };
 
-const fixDocumentsTypes = function (req, res) {
-    return new Promise(async (resolve, reject) => {
-        if (req.user.role !== 'admin') {
-            res.status(401)
-                .json({ error: 'You need to have \'admin\' role to access the page' });
-            return resolve();
-        }
-        const checks = await Check.find({});
-        for (const check of checks) {
-            console.log({ check });
-            res.write(`${check._id}\n`);
-            check.baselineId && (check.baselineId = mongoose.Types.ObjectId(check.baselineId));
-            check.actualSnapshotId && (check.actualSnapshotId = mongoose.Types.ObjectId(check.actualSnapshotId));
-            check.actualSnapshotId && (check.diffId = mongoose.Types.ObjectId(check.diffId));
-        }
-        return resolve(checks);
-    });
-};
-
-exports.fixDocumentsTypes = fixDocumentsTypes;
-
 exports.task_remove_empty_tests = function (req, res) {
     return new Promise((resolve, reject) => {
         // this header to response with chunks data
@@ -1480,17 +1459,54 @@ exports.task_remove_old_tests = function (req, res) {
     });
 };
 
+// const fixDocumentsTypes = async function (req, res) {
+//
+// };
+//
+// exports.fixDocumentsTypes = fixDocumentsTypes;
+
 exports.task_migration_1_1_0 = async function (req, res) {
-    // res.write('1. Fix docs types');
-    // await fixDocumentsTypes(req, res).catch(e => req.write(e));
-    res.write(`\n2. Change 'The Test App' => 'HPE'`);
-    const app = await orm.createAppIfNotExist({ name: 'HPE' });
+    if (req.user.role !== 'admin') {
+        res.status(401)
+            .json({ error: 'You need to have \'admin\' role to access the page' });
+        return;
+    }
+    // this header to response with chunks data
+    res.writeHead(200, {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Content-Encoding': 'none',
+    });
+
     const checks = await Check.find({});
+    res.write('1. Fix empty diffs\n');
     for (const check of checks) {
-        check.app = app.id;
-        check.save();
-        res.write(`\n${check._id}`);
+        if (!check.diffId) {
+            console.log({ DIFF: check.diffId });
+            delete check.diffId;
+            const tempCheck = check.toObject();
+            await check.remove();
+            delete tempCheck.diffId;
+            Check.create(tempCheck);
+        }
+    }
+    res.write('\n2. Fix docs types\n');
+    for (const check of checks) {
+        console.log({ check });
+        res.write(`${JSON.stringify(check)}\n\n`);
+        if (check.baselineId) (check.baselineId = mongoose.Types.ObjectId(check.baselineId));
+        if (check.actualSnapshotId) (check.actualSnapshotId = mongoose.Types.ObjectId(check.actualSnapshotId));
+        if (check.actualSnapshotId) (check.diffId = mongoose.Types.ObjectId(check.diffId));
+        await check.save();
     }
 
-    res.end('\nDone');
+    // res.write(`\n2. Change 'The Test App' => 'HPE'`);
+    // const app = await orm.createAppIfNotExist({ name: 'HPE' });
+    // const checks = await Check.find({});
+    // for (const check of checks) {
+    //     check.app = app.id;
+    //     check.save();
+    //     res.write(`\n${check._id}`);
+    // }
+    res.end('\nDone\n');
 };

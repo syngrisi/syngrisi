@@ -282,13 +282,14 @@ function acceptCheck(id, newBaselineId, callback) {
                 if (xhr.status === 200) {
                     showNotification(`The check '${id}' was accepted`);
 
-                    console.log('Success ' + id + '--' + xhr.responseText);
+                    console.log(`Success check: '${id}' response text: '${xhr.responseText}'`);
                     if (callback) {
                         callback();
                     }
                     return resolve(xhr);
                 } else {
-                    console.log('Request failed. Returned status of ' + xhr.status + 'resp:' + xhr.responseText);
+                    showNotification(`Cannot accept check: '${id}'`, 'Error');
+                    console.log(`Request failed. Returned status of: '${xhr.status}' resp: '${xhr.responseText}'`);
                 }
             };
             xhr.send(params);
