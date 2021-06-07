@@ -13706,6 +13706,10 @@ html {
     margin-left: auto !important;
   }
 }
+body::-webkit-scrollbar {
+  display: none;
+}
+
 div.branch {
   font-size: 0.6rem;
   position: absolute;
@@ -13730,8 +13734,14 @@ span.branch {
   color: white;
 }
 
-.suites-list:hover {
+.suites-list {
   overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.table-container {
+  overflow-y: auto;
+  height: 100vh;
 }
 
 .status-accepted {
