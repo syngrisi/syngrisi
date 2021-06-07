@@ -85,5 +85,6 @@ app.listen(config.port, () => {
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+const { version } = require('./package.json');
 
-console.log(`Syngrisi started on port: '${config.port}'`);
+console.log(`Syngrisi version: ${version}, port: '${config.port}'`);
