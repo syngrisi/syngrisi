@@ -40,7 +40,7 @@ span.branch {
 
 /* scrollbars */
 .suites-list::-webkit-scrollbar {
-  width: 7px;
+  width: 10px;
 }
 
 .suites-list::-webkit-scrollbar-track {
@@ -50,7 +50,7 @@ span.branch {
 
 .suites-list::-webkit-scrollbar-thumb {
   background: #6c757d;
-  border-radius: 7px;
+  border-radius: 10px;
 }
 
 .table-container::-webkit-scrollbar {
