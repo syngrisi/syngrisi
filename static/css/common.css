@@ -13792,6 +13792,10 @@ span.branch {
   padding: 5px;
 }
 
+.pr-0-5 {
+  padding-right: 0.125rem !important;
+}
+
 .pl-2-2,
 .px-2-2 {
   padding-left: 0.6rem !important;
