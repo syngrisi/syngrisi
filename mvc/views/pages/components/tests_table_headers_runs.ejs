@@ -1,6 +1,6 @@
 <div name="table-headers" class="row bg-light text-secondary light-purple border--gray border-top m-0">
     <div name="checkbox-header" class="col-1 pl-2 pr-1 col-lg-auto text-truncate small ml-0 mt-1">
-        <input name="checkAll" onclick="checkAllTests()" type="checkbox" title="check all tests">
+        <input name="checkAll" id="check-all-tests" onclick="checkAllTests()" type="checkbox" title="check all tests">
     </div>
     <div name="status-header" class="col-2 col-lg-1 text-truncate btn-check small" onclick="sort('status')"
          title="click to sort by this field">
@@ -25,12 +25,12 @@
         const sortorder = urlParams.get('sortorder');
 
         if (!sortprop) {
-            document.getElementById(`updatedDate_sort`).innerText = "↑";
+            document.getElementById(`updatedDate_sort`).innerText = '↑';
         } else {
-            if (sortorder === "1") {
-                document.getElementById(`${sortprop}_sort`).innerText = "↑";
+            if (sortorder === '1') {
+                document.getElementById(`${sortprop}_sort`).innerText = '↑';
             } else {
-                document.getElementById(`${sortprop}_sort`).innerText = "↓";
+                document.getElementById(`${sortprop}_sort`).innerText = '↓';
             }
         }
     }

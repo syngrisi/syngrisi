@@ -1,9 +1,16 @@
+/* global baselines $ document XMLHttpRequest */
+
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         const r = Math.random() * 16 | 0,
             v = c == 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
     });
+}
+
+function confirmation(text = 'are you sure?') {
+    const answer = window.confirm(text);
+    return answer;
 }
 
 async function redrawCheckAcceptedStatus(id) {
@@ -177,18 +184,58 @@ function showNotification(msg, status = 'Success', timeout = 7000) {
     }
 
     document.getElementById('notify-rect')
-        .setAttribute('fill', '#2ECC40');
+        .setAttribute('fill', '#06ba0e');
     if (status === 'Error') {
         document.getElementById('notify-rect')
             .setAttribute('fill', '#FF4136');
     }
     $('#notify')
         .show();
-    setTimeout(function () {
-            status === 'Success' && $('#notify')
-                .hide();
+    setTimeout(
+        () => {
+            if (status === 'Success') {
+                $('#notify')
+                    .hide();
+            }
         },
-        timeout);
+        timeout
+    );
+}
+
+function sendIgnoreRegions(id, regionsData) {
+    const xhr = new XMLHttpRequest();
+    const params = `id=${id}&ignoreRegions=${JSON.stringify(regionsData)}`;
+    xhr.open('PUT', `/snapshots/${id}`, true);
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    const classThis = this;
+    // NEED TO ADD UPDATE BASELINE LOGIC TO .onload EVENT!!!
+    xhr.onload = function () {
+        if (xhr.status === 200) {
+            console.log(`Successful send regions data, id: '${id}'  resp: '${xhr.responseText}'`);
+            classThis.showNotification('Regions were saved');
+        } else {
+            console.error(`Cannot send regions data, status: '${xhr.status}',  resp: '${xhr.responseText}'`);
+            classThis.showNotification('Cannot save regions', 'Error');
+        }
+    };
+    xhr.send(params);
+}
+
+function getRegionsData(snapshootId) {
+    return new Promise((resolve, reject) => {
+        console.log(`get snapshoot data id: ${snapshootId}`);
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', `/snapshot/${snapshootId}/`, true);
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                console.log(`Successful got regions data, id: '${snapshootId}'  resp: '${xhr.responseText}'`);
+                return resolve(JSON.parse(xhr.responseText));
+            }
+            console.error(`Cannot get regions data, status: '${xhr.status}',  resp: '${xhr.responseText}'`);
+            return reject(xhr);
+        };
+        xhr.send('');
+    });
 }
 
 async function removeOneCheck(id, testId) {
@@ -225,49 +272,6 @@ function removeCheck(id, testId) {
     });
 }
 
-async function acceptOneCheck(id, newBaselineId, oldBaselineId, testId) {
-    const regionData = await baselines[id].getRegionsData(oldBaselineId);
-    //  !== 'undefined' - is for back compatibility
-    if (regionData.ignoreRegions && regionData.ignoreRegions !== 'undefined') {
-        const confirm = confirmation('The previous baseline contains regions. Doy you want to copy them?');
-        if (confirm) {
-            baselines[id].sendIgnoreRegions(newBaselineId, JSON.parse(regionData.ignoreRegions));
-            console.log('ignore region data was sent to new baseline snapshoot' + JSON.parse(regionData.ignoreRegions));
-        }
-    }
-
-    await acceptCheck(id, newBaselineId, () => {
-    });
-
-    await redrawCheckAcceptedStatus(id);
-    await redrawTestAcceptedStatus(testId);
-}
-
-async function acceptSelectedChecks() {
-    if (!confirmation('Please pay attention to everything regions\' data will be copied to new baselines. Are you sure? Are you sure?')) return;
-    let checkboxes = document.querySelectorAll('input[name=check-input]:checked');
-    let results = [];
-    for (const checkbox of checkboxes) {
-        const checkId = checkbox.getAttribute('id');
-        const baselineId = checkbox.getAttribute('baselineId');
-        const actualId = checkbox.getAttribute('actualId');
-        const regionData = await baselines[checkId].getRegionsData(baselineId);
-        if (regionData.ignoreRegions) {
-            baselines[checkId].sendIgnoreRegions(actualId, JSON.parse(regionData.ignoreRegions));
-            console.log('ignore region data was sent to new baseline snapshoot' + JSON.parse(regionData.ignoreRegions));
-        }
-
-        results.push(acceptCheck(checkId, actualId));
-    }
-    Promise.all(results)
-        .then(async (result) => {
-            location.reload();
-        })
-        .catch(e => {
-            console.log(e);
-        });
-}
-
 function acceptCheck(id, newBaselineId, callback) {
     return new Promise((resolve, reject) => {
         try {
@@ -280,23 +284,105 @@ function acceptCheck(id, newBaselineId, callback) {
 
             xhr.onload = function () {
                 if (xhr.status === 200) {
-                    showNotification(`The check '${id}' was accepted`);
-
                     console.log(`Success check: '${id}' response text: '${xhr.responseText}'`);
                     if (callback) {
                         callback();
                     }
                     return resolve(xhr);
-                } else {
-                    showNotification(`Cannot accept check: '${id}'`, 'Error');
-                    console.log(`Request failed. Returned status of: '${xhr.status}' resp: '${xhr.responseText}'`);
                 }
+                console.log(`Request failed. Returned status of: '${xhr.status}' resp: '${xhr.responseText}'`);
+                return reject(xhr);
             };
             xhr.send(params);
         } catch (e) {
             return reject(e);
         }
     });
+}
+
+// eslint-disable-next-line no-unused-vars
+async function acceptOneCheck(id, newBaselineId, oldBaselineId, testId) {
+    let regionData;
+    try {
+        regionData = await getRegionsData(oldBaselineId);
+    } catch (e) {
+        showNotification(`Cannot accept check: '${id}', cannot get region data`, 'Error');
+    }
+    //  !== 'undefined' - is for back compatibility
+    if (regionData.ignoreRegions && regionData.ignoreRegions !== 'undefined') {
+        const confirm = confirmation('The previous baseline contains regions. Doy you want to copy them?');
+        if (confirm) {
+            sendIgnoreRegions(newBaselineId, JSON.parse(regionData.ignoreRegions));
+            console.log(`ignore region data was sent to new baseline snapshoot: ${JSON.parse(regionData.ignoreRegions)}`);
+        }
+    }
+
+    await acceptCheck(id, newBaselineId, () => {
+    })
+        .then(() => {
+            showNotification(`The check '${id}' was accepted`);
+        })
+        .catch(() => {
+            showNotification(`Cannot accept check: '${id}'`, 'Error');
+        });
+
+    await redrawCheckAcceptedStatus(id);
+    await redrawTestAcceptedStatus(testId);
+}
+
+function acceptChecksByTestId(testid) {
+    return new Promise((resolve, reject) => {
+        const checks = Array.from(document.querySelectorAll(`div[name="check-wrapper"][testid="${testid}"]`));
+        const checkProm = checks.map(
+            async (check) => {
+                const oldBaselineId = check.getAttribute('baselineId');
+                const newBaselineId = check.getAttribute('actualSnapshotId');
+                const id = check.id.replace('check_', '');
+
+                const regionData = await getRegionsData(oldBaselineId);
+                if (regionData.ignoreRegions && regionData.ignoreRegions !== 'undefined') {
+                    sendIgnoreRegions(newBaselineId, JSON.parse(regionData.ignoreRegions));
+                    console.log(`ignore region data was sent to new baseline snapshoot: ${JSON.parse(regionData.ignoreRegions)}`);
+                }
+
+                const result = await acceptCheck(id, newBaselineId, () => {
+                });
+
+                await redrawCheckAcceptedStatus(id);
+                return result;
+            }
+        );
+
+        Promise.all(checkProm)
+            .then((result) => {
+                showNotification(`All checks for test: '${testid}' were accepted`);
+                redrawTestAcceptedStatus(testid)
+                    .then(
+                        () => resolve(result)
+                    );
+            })
+            .catch((e) => {
+                console.log(`Cannot accept test: '${testid}', error: '${e}'`);
+                showNotification(`Cannot accept test: '${testid}'`, 'Error');
+                return reject(e);
+            });
+    });
+}
+
+// eslint-disable-next-line no-unused-vars
+function acceptTests() {
+    if (!confirmation('Please pay attention to everything regions\' data will be copied to new baselines. Are you sure? Are you sure?')) return;
+    const checkboxes = Array.from(document.querySelectorAll('input[name=test]:checked'));
+    const results = checkboxes.map((checkbox) => acceptChecksByTestId(checkbox.id));
+    Promise.all(results)
+        .then((results2) => {
+            console.log({ acceptTests: results2 });
+            showNotification('Tests were accepted successfully');
+        })
+        .catch((e) => {
+            console.error(`Cannot accept tests: ${e}`);
+            showNotification('Cannot accept tests', 'Error');
+        });
 }
 
 function removeTest(id) {
@@ -430,46 +516,22 @@ function removeCheckedRuns() {
         });
 }
 
+// eslint-disable-next-line no-unused-vars
 function checkAllTests() {
-    let checkboxes = document.querySelectorAll('input[name=test]');
-    console.log(`Checked: '${checkboxes.length}'`);
-    checkboxes.forEach(function (ch) {
-        if (ch.checked === false) {
-            ch.checked = true;
-        } else {
-            ch.checked = false;
-        }
-    });
-}
-
-function checkAllSuites() {
-    let checkboxes = document.querySelectorAll('input[name=suite-item]');
-    console.log(`Checked: '${checkboxes.length}'`);
-    checkboxes.forEach(function (ch) {
-        if (ch.checked === false) {
-            ch.checked = true;
-        } else {
-            ch.checked = false;
-        }
-    });
-}
-
-function checkAllItems(name) {
-    const checkboxes = document.querySelectorAll(`input[name='${name}']`);
-    console.log(`Checked: '${checkboxes.length}'`);
+    const controlInput = document.getElementById('check-all-tests');
+    const checkboxes = document.querySelectorAll('input[name=test]');
     checkboxes.forEach((ch) => {
-        if (ch.checked === false) {
-            ch.checked = true;
-        } else {
-            ch.checked = false;
-        }
+        ch.checked = controlInput.checked;
     });
 }
 
-function confirmation(text = 'are you sure?') {
-    const answer = window.confirm(text);
-    console.log(answer);
-    return answer;
+// eslint-disable-next-line no-unused-vars
+function checkAllItems(name) {
+    const controlInput = document.getElementById('check-sidebar-items');
+    const checkboxes = document.querySelectorAll(`input[name='${name}']`);
+    checkboxes.forEach((ch) => {
+        ch.checked = controlInput.checked;
+    });
 }
 
 function getRequest(path, verbose) {

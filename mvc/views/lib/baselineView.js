@@ -1,3 +1,4 @@
+/* global XMLHttpRequest */
 class BaselineView {
     constructor(canvasId, image, params) {
         const thisClass = this;
@@ -339,14 +340,14 @@ class BaselineView {
     }
 
     getRegionsData(snapshootId) {
-        return new Promise(function (resolve, reject) {
+        return new Promise((resolve, reject) => {
             console.log(`get snapshoot data id: ${snapshootId}`);
             const xhr = new XMLHttpRequest();
             xhr.open('GET', `/snapshot/${snapshootId}/`, true);
             xhr.onload = function () {
                 if (xhr.status === 200) {
                     console.log(`Successful got regions data, id: '${snapshootId}'  resp: '${xhr.responseText}'`);
-                    resolve(JSON.parse(xhr.responseText));
+                    return resolve(JSON.parse(xhr.responseText));
                 } else {
                     console.error(`Cannot get regions data, status: '${xhr.status}',  resp: '${xhr.responseText}'`);
                     return reject(xhr);
