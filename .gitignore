@@ -13,3 +13,4 @@ node_modules
 /debug.js
 *.tmp
 /debug2.js
+/baselineProd/
