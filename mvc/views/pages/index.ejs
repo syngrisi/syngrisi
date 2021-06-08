@@ -73,7 +73,7 @@
         <!--   TESTS TABLE-->
         <div name class="table-rows content col float-right pr-0 pl-0" id="wrapper">
             <%- include('components/subheader_title', {currentItem: currentSuite}) %>
-            <div class="container table-container">
+            <div class="container table-container pl-0 pr-0">
                 <%- include('components/tests_table_headers2', {}) %>
                 <row name="tests-end" id="tests-table-end">
 
@@ -164,7 +164,7 @@
             // console.log({ checksByTestGroupedByIdent });
             let options = { delimiter: '?' };
             const pageTemplate = await getRequest('../../../static/ejs/tests_table_rows.ejs');
-            let testsHtml = '<div class="test-page-wrapper row mr-0">' + ejs.render(pageTemplate, {
+            let testsHtml = '<div class="test-page-wrapper row ml-0 mr-0">' + ejs.render(pageTemplate, {
                 checksByTestGroupedByIdent: checksByTestGroupedByIdent
             }, options) + '</div>';
 
