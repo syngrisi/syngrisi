@@ -16,6 +16,8 @@ const Snapshot = mongoose.model('VRSSnapshot');
 const Check = mongoose.model('VRSCheck');
 const Test = mongoose.model('VRSTest');
 const Run = mongoose.model('VRSRun');
+const Log = mongoose.model('VRSLog');
+const App = mongoose.model('VRSApp');
 const Suite = mongoose.model('VRSSuite');
 const User = mongoose.model('VRSUser');
 const Baseline = mongoose.model('VRSBaseline');
@@ -1479,7 +1481,36 @@ exports.task_migration_1_1_0 = async function (req, res) {
     });
 
     const checks = await Check.find({});
-    res.write('1. Fix empty diffs\n');
+    res.write('\n0. Resync indexes\n');
+
+    await Check.syncIndexes();
+    console.log('Check');
+    res.write('\nCheck\n');
+
+    await Test.syncIndexes();
+    console.log('Test');
+    res.write('\nTest\n');
+
+    await Snapshot.syncIndexes();
+    console.log('Snapshot');
+    res.write('\nSnapshot\n');
+    await Run.syncIndexes();
+    console.log('Run');
+    res.write('\nRun\n');
+    await User.syncIndexes();
+    console.log('User');
+    res.write('\nUser\n');
+    await Baseline.syncIndexes();
+    console.log('Baseline');
+    res.write('\nBaseline\n');
+    await App.syncIndexes();
+    console.log('App');
+    res.write('\nApp\n');
+    await Log.syncIndexes();
+    console.log('Log');
+    res.write('\nLog\n');
+
+    res.write('\n1. Fix empty diffs\n');
     for (const check of checks) {
         if (!check.diffId) {
             console.log({ DIFF: check.diffId });

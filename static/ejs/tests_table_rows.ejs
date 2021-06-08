@@ -73,7 +73,8 @@
     <!--NAME-->
     <div class="cell-name cell pl-3 pr-1 pt-3-2 pb-3-2 col-4-5 text-truncate align-middle" style="position: relative">
         <!--NAME:tags-->
-        <div style="font-size: 0.6rem; position: absolute; top: -0px; left: 1rem; padding-top: 7px" class="small text-dark text-truncate"
+        <div style="font-size: 0.6rem; position: absolute; top: -0px; left: 1rem; padding-top: 7px"
+             class="small text-dark text-truncate"
              title="Test tags">
             <?
             if(test.tags && (test.tags.length > 0)) {
@@ -257,8 +258,12 @@
                         failed: 'bg-item-failed',
                         blinking: 'bg-warning'
                     } ?>
-    <div class="col-4 pr-3 pl-2 pt-2 mb-3" id="check_<?= check._id ?>" diffId="<?= check.diffId ?>"
+    <div class="col-4 pr-3 pl-2 pt-2 mb-3" id="check_<?= check._id ?>"
+         name="check-wrapper"
+         testid="<?= test.id ?>"
+         diffId="<?= check.diffId ?>"
          baselineId="<?= check.baselineId ?>"
+         actualSnapshotId="<?= check.actualSnapshotId ?>"
          checkStatus="<?= groupStatus ?>">
         <div class="row pl-1">
             <div name="check-status" class="col-auto <?= statusesClasses[groupStatus] ?> pt-1 pb-1 pl-1 pr-1"
@@ -285,10 +290,7 @@
                      Id: <?= check._id ?>
                      ActualId: <?= check.actualSnapshotId ?>
                      BaselineId: <?= check.baselineId ?>">
-                    <? // console.log({check}) ?>
-                    <? // console.log({diffid: check.diffid}) ?>
                     <? const snapshootId = groupStatus === 'new' ? check.baselineId : check.actualSnapshotId ?>
-                    <? // console.log({snapshootId}) ?>
 
                     <div onclick="document.location.href='diffview?diffid=<?= check.diffId ?>&actualid=<?= check.actualSnapshotId ?>&expectedid=<?= check.baselineId ?>&checkid=<?= check._id ?>'"
                          href="/checksgroupview?id=<?= check._id ?>" name="<?= check.name ?>" class="group-links-view"
@@ -306,14 +308,7 @@
         <div class="row">
             <!-- SNAPSHOT TOOLBAR START-->
             <div class="container pl-1 pr-4 mt-1">
-                <div class="check-mini-toolbar d-flex row justify-content-around1 text-dark pl-1 m-0">
-                    <!--CHECKBOX-->
-                    <div class="col-1 pr-1 pl-1 pt-1">
-                        <input name="check-input" id="<?= check._id ?>"
-                               actualId="<?= check.actualSnapshotId ?>"
-                               baselineId="<?= check.baselineId ?>"
-                               type="checkbox">
-                    </div>
+                <div class="check-mini-toolbar d-flex row justify-content-around1 text-dark pl-3 m-0">
                     <!-- CHECK NAME AND COUNT-->
                     <?  let checksCount = Object.keys(checksByTestGroupedByIdent[test.id]).filter(x =>
                     x.includes('ident')).length ?>
@@ -348,8 +343,7 @@
                                                 id="checkbutton_<?= check._id ?>"
                                                 data-toggle="tooltip"
                                                 data-placement="top"
-                                                title="Remove this check"
-                                                onclick="//removeOneCheck('<?= check._id ?>', '<?= test.id ?>');">
+                                                title="Remove this check">
                                             <i class="fas fa-times-circle fa-1x"></i>
                                         </a>
                                         <div class="dropdown-menu pl-2 pr-2 text-light bg-item-failed text-center"
@@ -378,7 +372,6 @@
                                                 id="acceptbutton_<?= check._id ?>"
                                                 data-toggle="tooltip"
                                                 data-placement="top"
-                                                onclick="//acceptOneCheck('<?= check._id ?>', '<?= check.actualSnapshotId ?>', '<?= check.baselineId ?>', '<?= test.id ?>')"
                                         >
 
                                             <i class="check-accept-button-check-id_<?= check._id ?> <?= check.markedAs === 'accepted' ? 'accepted-button-icon' : 'not-accepted-button-icon' ?> accept-button-icon fas fa-thumbs-up fa-1x"
