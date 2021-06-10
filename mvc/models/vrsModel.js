@@ -1,6 +1,12 @@
 'use strict';
+
 const mongoose = require('mongoose');
-const {Schema} = mongoose;
+
+mongoose.set('useUnifiedTopology', true);
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
+
+const { Schema } = mongoose;
 
 const VRSSnapshotSchema = new Schema({
     name: {
@@ -21,20 +27,11 @@ const VRSSnapshotSchema = new Schema({
         type: Date,
         default: Date.now,
     },
-    status: {
-        type: [{
-            type: String,
-            enum: ['new', 'approved'],
-        }],
-        default: 'new',
-    },
     ignoreRegions: {
         type: String,
-        default: 'undefined',
     },
     boundRegions: {
         type: String,
-        default: 'undefined',
     },
     vOffset: {
         type: Number,
@@ -44,9 +41,9 @@ const VRSSnapshotSchema = new Schema({
     },
     matchType: {
         type: String,
-        enum: ['antialiasing', 'nothing', 'less', 'colors', 'alpha'],
-        default: 'antialiasing',
-    }
+        // enum: ['antialiasing', 'nothing', 'less', 'colors', 'alpha'],
+        enum: ['antialiasing', 'nothing', 'colors'],
+    },
 });
 
 const VRSCheckSchema = new Schema({
@@ -67,15 +64,21 @@ const VRSCheckSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'VRSApp',
     },
-    baselineId: {
+    branch: {
         type: String,
-        required: 'the baselineId of the check entity is empty',
+    },
+    baselineId: {
+        type: Schema.Types.ObjectId,
+        ref: 'VRSSnapshot',
+        required: 'baselineId cannot be empty empty',
     },
     actualSnapshotId: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: 'VRSSnapshot',
     },
     diffId: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: 'VRSSnapshot',
     },
     createdDate: {
         type: Date,
@@ -84,100 +87,182 @@ const VRSCheckSchema = new Schema({
     },
     updatedDate: {
         type: Date,
-        // default: Date.now,
     },
     status: {
         type: [{
             type: String,
             enum: {
                 values: ['new', 'pending', 'approved', 'running', 'passed', 'failed', 'aborted'],
-                message: 'Status is required!',
+                message: 'status is required',
             },
         }],
         default: 'new',
     },
     browserName: {
         type: String,
-        default: 'undefined',
     },
     browserVersion: {
         type: String,
-        default: 'undefined',
+    },
+    browserFullVersion: {
+        type: String,
     },
     viewport: {
         type: String,
-        default: 'undefined',
     },
     os: {
         type: String,
-        default: 'undefined',
     },
     domDump: {
         type: String,
     },
     result: {
         type: String,
-        default: '{}'
+        default: '{}',
     },
     run: {
         type: Schema.Types.ObjectId,
+    },
+    markedAs: {
+        type: String,
+        enum: ['bug', 'accepted'],
+    },
+    markedDate: {
+        type: Date,
+    },
+    markedById: {
+        type: Schema.Types.ObjectId,
+        ref: 'VRSUser',
+    },
+    markedByUsername: {
+        type: String,
+    },
+    markedBugComment: {
+        type: String,
+    },
+    creatorId: {
+        type: Schema.Types.ObjectId,
+        ref: 'VRSUser',
+    },
+    creatorUsername: {
+        type: String,
     },
 });
 
-const VRSTestSchema = new Schema({
+const VRSBaselineSchema = new Schema({
+    snapshootId: Schema.Types.ObjectId,
     name: {
         type: String,
-        // unique: true,
-        required: 'the test name is empty',
+        required: 'VRSBaselineSchema: the name of the snapshoot entity is empty',
     },
-    description: {
-        type: String,
+    app: {
+        type: Schema.Types.ObjectId,
+        ref: 'VRSApp',
     },
-    status: {
+    branch: {
         type: String,
-        default: 'undefined',
     },
     browserName: {
         type: String,
-        default: 'undefined',
     },
     browserVersion: {
         type: String,
-        default: 'undefined',
     },
-    // on the start of test
+    browserFullVersion: {
+        type: String,
+    },
     viewport: {
         type: String,
-        default: 'undefined',
-    },
-    // after handle all checks inside the test
-    calculatedViewport: {
-        type: String,
-        default: '???',
     },
     os: {
         type: String,
-        default: 'undefined',
     },
-    blinking: {
-        type: Number,
-        default: 0,
+    markedAs: {
+        type: String,
+        enum: ['bug', 'accepted'],
     },
-    updatedDate: {
+    lastMarkedDate: {
         type: Date,
-        // default: Date.now,
     },
-    startDate: {
+    createdDate: {
         type: Date,
-        // default: Date.now,
     },
-    suite: {
+    markedById: {
         type: Schema.Types.ObjectId,
+        ref: 'VRSUser',
     },
-    run: {
-        type: Schema.Types.ObjectId,
+    markedByUsername: {
+        type: String,
     },
 });
+
+const VRSTestSchema = new Schema(
+    {
+        name: {
+            type: String,
+            required: 'the test name is empty',
+        },
+        description: {
+            type: String,
+        },
+        status: {
+            type: String,
+        },
+        browserName: {
+            type: String,
+        },
+        browserVersion: {
+            type: String,
+        },
+        branch: {
+            type: String,
+        },
+        tags: {
+            type: [String],
+        },
+        viewport: {
+            type: String,
+        },
+        // after handle all checks inside the test
+        calculatedViewport: {
+            type: String,
+        },
+        os: {
+            type: String,
+        },
+        app: {
+            type: String,
+        },
+        blinking: {
+            type: Number,
+            default: 0,
+        },
+        updatedDate: {
+            type: Date,
+        },
+        startDate: {
+            type: Date,
+        },
+        suite: {
+            type: Schema.Types.ObjectId,
+        },
+        run: {
+            type: Schema.Types.ObjectId,
+        },
+        markedAs: {
+            type: String,
+            enum: ['Bug', 'Accepted', 'Unaccepted', 'Partially'],
+        },
+        creatorId: {
+            type: Schema.Types.ObjectId,
+            ref: 'VRSUser',
+        },
+        creatorUsername: {
+            type: String,
+        },
+    },
+    { strictQuery: true }
+); // remove filters that not exist in schema
 
 const VRSSuiteSchema = new Schema({
     name: {
@@ -185,6 +270,9 @@ const VRSSuiteSchema = new Schema({
         default: 'Others',
         unique: true,
         required: 'the suite name is empty',
+    },
+    tags: {
+        type: [String],
     },
     description: {
         type: String,
@@ -198,9 +286,11 @@ const VRSSuiteSchema = new Schema({
 const VRSRunSchema = new Schema({
     name: {
         type: String,
-        default: 'Others',
-        unique: true,
-        required: 'the suite name is empty',
+        required: 'the run name cannot be empty',
+    },
+    ident: {
+        type: String,
+        required: 'the run ident run cannot be empty',
     },
     description: {
         type: String,
@@ -208,6 +298,31 @@ const VRSRunSchema = new Schema({
     updatedDate: {
         type: Date,
         default: Date.now,
+    },
+    parameters: {
+        type: [String],
+    },
+});
+
+const VRSLogSchema = new Schema({
+    reference: {
+        type: String,
+    },
+    msgType: {
+        type: String,
+        default: 'other',
+    },
+    severity: {
+        type: String,
+        enum: ['debug', 'info', 'warning', 'error'],
+        default: 'info',
+    },
+    message: {
+        type: String,
+    },
+    date: {
+        type: Date,
+        default: undefined,
     },
 });
 
@@ -230,9 +345,55 @@ const VRSAppSchema = new Schema({
     },
 });
 
+const VRSUserSchema = new Schema({
+    username: {
+        type: String,
+        unique: true,
+        required: 'the username name is empty',
+    },
+    firstName: {
+        type: String,
+        required: 'the firstName name is empty',
+    },
+    lastName: {
+        type: String,
+        required: 'the lastName name is empty',
+    },
+    role: {
+        type: String,
+        enum: {
+            values: ['admin', 'reviewer', 'user'],
+            message: 'role is required',
+            required: 'role is required',
+        },
+    },
+    password: {
+        type: String,
+    },
+    token: {
+        type: String,
+    },
+    apiKey: {
+        type: String,
+    },
+    updatedDate: {
+        type: Date,
+    },
+    expiration: {
+        type: Date,
+    },
+});
+
+const passportLocalMongoose = require('passport-local-mongoose');
+
+VRSUserSchema.plugin(passportLocalMongoose, { hashField: 'password' });
+
 module.exports = mongoose.model('VRSSnapshot', VRSSnapshotSchema);
 module.exports = mongoose.model('VRSCheck', VRSCheckSchema);
 module.exports = mongoose.model('VRSTest', VRSTestSchema);
 module.exports = mongoose.model('VRSSuite', VRSSuiteSchema);
 module.exports = mongoose.model('VRSApp', VRSAppSchema);
 module.exports = mongoose.model('VRSRun', VRSRunSchema);
+module.exports = mongoose.model('VRSLog', VRSLogSchema);
+module.exports = mongoose.model('VRSUser', VRSUserSchema);
+module.exports = mongoose.model('VRSBaseline', VRSBaselineSchema);

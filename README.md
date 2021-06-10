@@ -67,3 +67,9 @@ npm run clear
  `VRS_PORT` - tcp port for application server, default value is `3000`
  
  `V_SHIFTING` - value for vertical page shifting, default value is `0`
+ 
+ `PAGE_SIZE` - number of tests items on that return `/checks?page={page_num}` API
+
+ `SYNGRISI_AUTH` - enables authentication if equal `1`
+
+ `TEST` - enables test admin user if equal `1`

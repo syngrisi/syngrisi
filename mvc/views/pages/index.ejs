@@ -5,94 +5,44 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <!--    <link rel="icon" href="../../static/imgs/logo.png">-->
-    <link rel="icon" href="../../../static/imgs/simpleLogoLightShadow.png">
+    <link rel="icon" href="../../../static/imgs/new-logo6.png">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
           integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
           crossorigin="anonymous">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
           integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
           crossorigin="anonymous">
+    <link rel="stylesheet" href="../../../static/css/common.css">
     <link rel="stylesheet" href="../../../static/css/colors.css">
     <script src="lib/gridHelpers.js"></script>
+    <script src="../../../static/js/ejs.js"></script>
+    <script src="../../../static/js/moment.min.js"></script>
 
-<% if(currentSuite) { %>
-        <title>VRS list of checks - <%= currentSuite.name %> </title>
+    <% if(currentSuite) { %>
+        <title>Syngrisi list of checks - <%= currentSuite.name %> </title>
     <% }else{ %>
-        <title>VRS list of checks - all suites</title>
+        <title>Syngrisi list of checks - all suites</title>
     <% } %>
-    <style>
-        .preview-overlay-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 9999;
-            opacity: 70%;
-        }
-
-        a:hover .preview-overlay-text {
-            display: none;
-        }
-
-        .image-wrapper {
-            position: relative;
-        }
-
-        .current-menu-item {
-            text-decoration: underline;
-            background-color: silver;
-            opacity: 80%;
-        }
-
-        /*.current-menu-item:hover {*/
-        /*    background-color: #2ECC40;*/
-        /*}*/
-
-    </style>
 </head>
-<body>
+<body class="bg-light pl-0" style="max-height: 100vh; min-height: 100vh; min-width: 97.8vw; max-width: 98.9vw">
 
-<div name="main" class="main container-fluid pl-3 pr-3 ml-0 mh-100">
-    <div name="page-head" class="row bg-sidebar sticky-top">
-        <div name="logo-and-link" class="col-3 col-lg-3 w-25 pl-0 pb-1 bg-sidebar text-light"
+<div name="main" class="main container-fluid1 pl-0 pr-0 ml-3 mr-0 d-inline-block bg-light"
+     style="min-height: 100vh; max-width: 100%; min-width: 100%">
+    <div name="page-head" class="row bg-olive sticky-top1 mr-0" style="margin-right: -16px; margin-left: -16px">
+        <div name="logo-and-link" class="col-3 col-lg-3 w-25 pl-0 pb-1 bg-olive text-light"
              id="logo-and-label-container">
-            <%- include('components/logo_and_link', {drop: true}) %>
+            <%- include('components/logo_and_link', {location: 'Suites'}) %>
         </div>
 
-        <div name="suite-menu-toolbar" class="col">
+        <div name="suite-menu-toolbar" class="col mr-3">
             <div class="row all-header light-purple sticky-top1">
-                <div class="tests-toolbar sticky-top1 col text-light p-0 pt-1 bg-sidebar align-self-end">
-                    <div class="sticky-top1 row d-flex flex-row-reverse pr-2">
-
-                        <div class="col-auto pl-1">
-                            <a name="more-tests" type="button" class="btn btn-secondary bg-sidebar border-0"
-                               title="more">
-                                <i class="fas fa-ellipsis-v fa-1x"></i>
-                            </a>
+                <div class="tests-toolbar sticky-top1 col text-light p-0 pt-1 bg-olive align-self-end">
+                    <div class="sticky-top1 row d-flex flex-row-reverse pr-0">
+                        <!--USER ICON-->
+                        <div class="user-icon-wrapper col-auto pl-1 pr-0 mr-3" style="margin-top: 3px">
+                            <%- include('components/user_icon', {user: user}) %>
                         </div>
-                        <div class="col-auto pl-1 pr-1">
-                            <a name="remove-tests" type="button" class="btn btn-secondary bg-sidebar border-0"
-                               onclick="removeTests()"
-                               title="remove checked tests">
-                                <i class="fas fa-trash fa-1x"></i>
-                            </a>
-                        </div>
-                        <div class="col-auto pl-1 pr-1">
-                            <a name="accept-checks" type="button" class="btn btn-secondary bg-sidebar border-0"
-                               onclick="acceptSelectedChecks()"
-                               title="accept selected checks">
-                                <i class="far fa-check-circle fa-1x"></i>
-                            </a>
-                        </div>
-                        <div class="col-auto pl-1 pr-1">
-                            <a name="reload-tests" type="button" class="btn btn-secondary bg-sidebar border-0"
-                               onclick="location.reload()"
-                               title="reload page">
-                                <i class="fas fa-sync-alt fa-1x"></i>
-                            </a>
-                        </div>
-
+                        <!--/USER ICON-->
                     </div>
                 </div>
             </div>
@@ -100,32 +50,208 @@
     </div>
 
     <!--    DATA GRID START    -->
-    <div class="all-table row mh-100">
+    <div class="all-table row mh-100 mr-0">
         <!--   SIDEBAR    -->
         <div name="sidebar"
-             class="sidebar col-3 col-lg-3  mh-100 bg-light border-top  border-right border-bottom border-silver float-left w-251 ml-0 mr-0"
-             style="width: 100px">
-            <!--   COLLAPSED SUITES TOOLBAR-->
-            <%- include('components/sidebar_items_toolbar', {itemName: 'suite-item'}) %>
-            <!--   SUITES LIST-->
-            <div class="suites-list row pl-2 pt-1 pr-0 bg-light text-secondary ">
-                <% let items = suites %>
-                <%- include('components/sidebar_items', {items: suites, currentItem: currentSuite}) %>
+             class="sidebar col-2-5 pl-0 pr-0 mh-100 bg-light border-top border-right border-silver float-left w-251 ml-0 mr-0"
+             style="width: 100px; min-height: 100vh">
+            <!--   SUITES CONTROL PANEL-->
+            <div class="row sticky-top bg-light">
+                <div class="col suites-toolbar ">
+                    <%- include('components/suites_toolbar.ejs') %>
+                </div>
             </div>
-            <!--  SUITES LIST END-->
+            <!--   SUITES LIST-->
+            <div class="suites-list m-0 row pl-0 pt-1 pr-0 bg-light text-secondary" style="height: 100vh">
+                <ul class="col pr-0 pl-0">
+                    <% let items = suites %>
+                    <%- include('components/sidebar_items', {items: suites, currentItem: currentSuite}) %>
+                </ul>
+            </div>
+            <!--  /SUITES LIST-->
         </div>
         <!--   TESTS TABLE-->
-        <div name class="table-rows content col float-right ">
+        <div name class="table-rows content col float-right pr-0-5 pl-0" id="wrapper">
             <%- include('components/subheader_title', {currentItem: currentSuite}) %>
-            <%- include('components/tests_table_headers', {}) %>
+            <div class=".container-fluid table-container pl-0 pr-0 m-0">
+                <%- include('components/tests_table_headers2', {}) %>
+                <row name="tests-end" id="tests-table-end">
 
-
-            <div name="tests-row" class="checks row">
-                <%- include('components/tests_table_rows', {checksByTestGroupedByIdent: checksByTestGroupedByIdent}) %>
+                </row>
             </div>
+
         </div>
     </div>
 </div>
+
+<script>
+    async function generateApiKey() {
+        if (!confirmation('After generate the Api Key, you MUST reconfigure the solution. Are you sure?')) return;
+        await getRequest('/apikey')
+            .then((result) => {
+                return showNotification(JSON.parse(result).apikey, 'SuccessInput', 1000 * 40);
+            })
+            .catch((e) => {
+                console.log('error api key generation: ' + e);
+                return showNotification(e, 'Error', 1000 * 60);
+            });
+    }
+
+    function paramsToObject(entries) {
+        const result = {};
+        for (const [key, value] of entries) { // each 'entry' is a [key, value] tupple
+            result[key] = value;
+        }
+        return result;
+    }
+
+    const queryObject = paramsToObject(window.location.search);
+
+    function getSearchForPageDataPulling(searchObject) {
+
+        if (!searchObject) return '';
+
+        const allowed = ['sort', 'page', 'filter'];
+
+        const checker = value =>
+            allowed.some(element => value.includes(element));
+
+        const filteredSearch = Object.keys(searchObject)
+            .filter(checker)
+            .reduce((obj, key) => {
+                obj[key] = searchObject[key];
+                return obj;
+            }, {});
+        const searchForDataPulling = objectToSearch(filteredSearch);
+        return '?' + searchForDataPulling;
+    }
+
+    async function checksGroupViewClick(evt) {
+        // console.log({ evt })
+        const id = evt.currentTarget.getAttribute('snapshot');
+        if (event.metaKey) {
+            window.open(`/snapshoots/${id}.png`, '_blank')
+                .focus();
+        }
+    }
+
+    function renderNextPage(page) {
+        return new Promise(async function (resolve, reject) {
+
+            // add page=1 if empty
+            const searchObject0 = searchToObject(window.location.search);
+            // console.log({ searchObject0 });
+            if (searchObject0 == null || (searchObject0 && !searchObject0.page)) {
+                const updatedSearch0 = updateQueryParam('page', 1, window.location.search);
+                updateUrlWithoutReloading(null, null, document.location.origin + updatedSearch0);
+            }
+
+            // prepare search URI part and get json data
+            const searchObject = searchToObject(window.location.search);
+
+            if (page) {
+                searchObject.page = parseInt(page);
+            }
+            const searchForDataPulling = getSearchForPageDataPulling(searchObject);
+            // console.log({searchForDataPulling});
+            window.removeEventListener('scroll', scroller);
+            let json = await getRequest(`/checks${searchForDataPulling}`);
+            // console.log(json);
+            window.addEventListener('scroll', scroller);
+
+            // prepare testHTML using ejs template and obtained json data
+            const checksByTestGroupedByIdent = JSON.parse(json);
+            // console.log({ checksByTestGroupedByIdent });
+            let options = { delimiter: '?' };
+            const pageTemplate = await getRequest('../../../static/ejs/tests_table_rows.ejs');
+            let testsHtml = '<div class="test-page-wrapper row ml-0 mr-0">' + ejs.render(pageTemplate, {
+                checksByTestGroupedByIdent: checksByTestGroupedByIdent
+            }, options) + '</div>';
+
+            // ad events to groupview links
+            const linkElements = Array.prototype.slice.call(document.getElementsByClassName('group-links-view'));
+            for (const link of linkElements) {
+                link.addEventListener('click', checksGroupViewClick);
+            }
+
+            // insert HTML
+            document.getElementById('tests-table-end')
+                .insertAdjacentHTML('beforebegin', testsHtml);
+
+            let pageNum;
+            if (searchObject) {
+                // pageNum = (searchObject.page && parseInt(searchObject.page) !== 1) ? (parseInt(searchObject.page) + 1) : 1
+                pageNum = (searchObject.page) ? (parseInt(searchObject.page) + 1) : 1;
+            } else {
+                pageNum = 1;
+            }
+
+            const updatedSearch = updateQueryParam('page', pageNum, window.location.search);
+            if (json === '{}') {
+                window.removeEventListener('scroll', scroller);
+                return resolve(json);
+            } else {
+                updateUrlWithoutReloading(null, null, document.location.origin + updatedSearch);
+                return resolve(json);
+            }
+        });
+    }
+
+    async function scroller() {
+        console.log('scroller');
+        let lastScroll = 0;
+
+        // function () {
+        let currentScroll = document.documentElement.scrollTop || document.body.scrollTop; // Get Current Scroll Value
+
+        if (currentScroll > 0 && lastScroll <= currentScroll) {
+            await renderNextPage();
+            lastScroll = currentScroll;
+        } else {
+            lastScroll = currentScroll;
+        }
+    }
+
+    async function firstPaginatorLoad() {
+        const searchObject = searchToObject(window.location.search);
+        let pageNum;
+        // load all pages that are in query like: 'page=10'
+        if (searchObject && searchObject.page > 1) {
+            console.log('preload pages > 1');
+
+            pageNum = parseInt(searchObject.page);
+            const pagesArray = Array.from(Array(pageNum)
+                .keys());
+            for (const i of pagesArray) {
+                await renderNextPage(i + 1);
+            }
+        } else {
+            // just load few pages to enable scroll, because there is no way to trigger scroll event otherwise
+            console.log('preload pages');
+            for (const i of Array.from(Array(3)
+                .keys())) {
+                // console.log({ i });
+                await renderNextPage();
+            }
+        }
+    }
+
+    window.onload = function () {
+        firstPaginatorLoad();
+        window.addEventListener('scroll', scroller);
+
+        // search trigger on press enter
+        document.getElementById('subheader-search')
+            .addEventListener('keyup', function (event) {
+                console.log(123);
+                if (event.keyCode === 13) {
+                    event.preventDefault();
+                    search();
+                }
+            });
+    };
+
+</script>
 
 <!--NOTIFY BOX-->
 <div id="notify" role="alert" aria-live="assertive" aria-atomic="true"
@@ -162,58 +288,32 @@
 <script src="http://cdnjs.cloudflare.com/ajax/libs/fabric.js/3.6.1/fabric.min.js"></script>
 <script src="lib/baselineView.js"></script>
 <script>
-    window.addEventListener('resize', setSuiteMenuWidth);
-</script>
-<script>
-    var baselines = {}
+    var baselines = {};
     const urlParams = new URLSearchParams(window.location.search);
     const unfoldTestId = urlParams.get('unfoldTestId');
-    if (unfoldTestId)
-        unfoldCheck(unfoldTestId)
+
+    // waiting for the 'testinfo' element appearance
+    // wrapped to the async function to not block the loop
+    (async () => {
+        if (unfoldTestId) {
+
+            while (!document.querySelector(`.testinfo_${unfoldTestId}`)) {
+                await new Promise(r => setTimeout(r, 200));
+            }
+            unfoldCheck(unfoldTestId);
+        }
+    })();
 
     function unfoldCheck(id) {
-        jQuery(`#testchecks_${id}`)[0].scrollIntoView();
-        jQuery(`#testchecks_${id}`).collapse('show');
+        console.log({ UNFOLD: id });
+        jQuery(`.testinfo_${id}`)[0].scrollIntoView(true);
+        jQuery(`#testchecks_${id}`)
+            .collapse('show');
         drawTestChecksPreviews(unfoldTestId);
     }
 
     function drawOverlay(expectedId, actualId, diff) {
         document.getElementById('overlay').style.display = 'block';
-    }
-
-    function drawTestChecksPreviews(testId) {
-        var checksDivs = Array.prototype.slice.call(document.getElementById(`testchecks_${testId}`).children);
-        let checksIds = []
-        checksDivs.forEach(el => checksIds.push(el.id.replace('check_', '')))
-
-        let baselineIds = []
-        checksDivs.forEach(el => baselineIds.push(el.getAttribute('baselineId')))
-
-        let diffsIds = []
-        checksDivs.forEach(el => diffsIds.push(el.getAttribute('diffId')))
-
-        let statuses = []
-        checksDivs.forEach(el => statuses.push(el.getAttribute('checkStatus')))
-        console.log(statuses)
-
-        checksIds.forEach(function (id, index) {
-            let baseline = {};
-            fabric.Object.prototype.objectCaching = false;
-            const snapshotId = ((statuses[index] === 'new') || (statuses[index] === 'passed') || (statuses[index] === 'blinking')) ? baselineIds[index] : diffsIds[index]
-            // const snapshotId = diffsIds[index]
-            fabric.Image.fromURL(`/snapshoots/${snapshotId}.png`, function (oImg) {
-                baseline = new BaselineView('canvas_snapshoot_' + id,
-                    oImg,
-                    {
-                        weight: document.getElementById('canvas_snapshoot_' + id).offsetWidth,
-                        backimageId: baselineIds[index]
-                    }
-                );
-                baseline.getSnapshotIgnoreRegionsDataAndDrawRegions(baselineIds[index]);
-                baseline.canvas.hoverCursor = "pointer";
-                baselines[id] = baseline;
-            })
-        })
     }
 
     $(function () {
@@ -223,7 +323,8 @@
                 delay: {
                     show: 0,
                     hide: 100
-                }
+                },
+                trigger: 'hover'
             });
     });</script>
 </body>

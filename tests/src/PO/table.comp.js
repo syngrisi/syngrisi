@@ -1,24 +1,20 @@
 export default class TableComp {
     constructor() {
-        this._lTable = "//table";
-        this._lRow = ".//tr";
+        this._lTable = '//table';
+        this._lRow = './/tr';
         this._lCell = './/td';
 
         this.data = [];
-        // this.registerPO()
     }
-    // registerPO(){
-    //     global.PO[this.constructor.name] = this;
-    // }
 
     init() {
-        this.data = this.collect_data();
-        return this
+        this.data = this.collectData();
+        return this;
     }
 
     // return string array of headers
     headers(index) {
-        return this._headers[index]
+        return this._headers[index];
     }
 
     // Locators
@@ -31,39 +27,41 @@ export default class TableComp {
     }
 
     get lTable() {
-        return this._lTable
+        return this._lTable;
     }
 
-    table_el() {
-        return $(this.lTable)
+    tableEl() {
+        return $(this.lTable);
     }
 
-    //return array of rows elements
-    rows_els() {
-        return this.table_el().$$(this.lRow)
+    // return array of rows elements
+    rowsEls() {
+        return this.tableEl()
+            .$$(this.lRow);
     }
 
-    //return array of cells elements
-    cells_els(row) {
-        return row.$$(this.lCell)
+    // return array of cells elements
+    cellsEls(row) {
+        return row.$$(this.lCell);
     }
 
     // Queries
-    collect_data() {
+    collectData() {
         const classThis = this;
-        let data = [];
-        this.rows_els().forEach(
-            function (row) {
-                const cells = classThis.cells_els(row)
-                let cells_data = {};
-                cells.forEach(
-                    function (cell_el, index) {
-                        cells_data[classThis.headers(index)] = cell_el;
-                    }
-                )
-                data.push(cells_data)
-            }
-        )
-        return data
+        const data = [];
+        this.rowsEls()
+            .forEach(
+                function (row) {
+                    const cells = classThis.cellsEls(row);
+                    const cellsData = {};
+                    cells.forEach(
+                        function (cellEl, index) {
+                            cellsData[classThis.headers(index)] = cellEl;
+                        }
+                    );
+                    data.push(cellsData);
+                }
+            );
+        return data;
     }
 }

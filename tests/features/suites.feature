@@ -26,9 +26,10 @@ Feature: Suites
 
     When I stop VRS session
     When I open the url "http://vrs:3001/"
-    Then I expect that element "=Others" is displayed
+    Then I expect that element "span=Others" is displayed
     Then I wait and refresh page on element "span=Unnamed Suite Test" for "3" seconds to exist
-    When I click on the element "=Others"
+    When I click on the element "span=Others"
+    When I wait for "3" seconds
     Then I expect that element "span=Unnamed Suite Test" is displayed
 
   @withEndSession
@@ -42,7 +43,8 @@ Feature: Suites
 
     When I stop VRS session
     When I open the url "http://vrs:3001/"
-    Then I expect that element "=NotEmptySuite" is displayed
+    Then I expect that element "span=NotEmptySuite" is displayed
     Then I wait and refresh page on element "span=Named Suite Test" for "3" seconds to exist
-    When I click on the element "=NotEmptySuite"
+    When I click on the element "span=NotEmptySuite"
+    When I wait for "2" seconds
     Then I expect that element "span=Named Suite Test" is displayed

@@ -1,10 +1,11 @@
 const path = require('path');
 const { hooks } = require('./src/support/hooks');
 const WdioScreenshot = require('wdio-screenshot-v5');
-
+const hasha = require('hasha');
 
 exports.config = {
     rootPath: process.cwd(),
+    apiKey: process.env.SYNGRISI_API_KEY ? hasha(process.env.SYNGRISI_API_KEY) : '123',
     //
     // ====================
     // Runner Configuration
@@ -60,8 +61,9 @@ exports.config = {
         //
         browserName: 'Chrome',
         'goog:chromeOptions': {
-            args: process.env.HL === '1' ? ['--headless', '--disable-gpu'] : [],
-            prefs: {
+            args: process.env.HL === '1' ? ['--headless', '--enable-automation'] : ['--enable-automation'],
+            'prefs': {
+                'credentials_enable_service': false,
                 'download': {
                     'prompt_for_download': false,
                     'directory_upgrade': true,
@@ -107,7 +109,7 @@ exports.config = {
     // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
     // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
     // gets prepended directly.
-    baseUrl: '',
+    baseUrl: 'http://vrs:3000',
     //
     // Default timeout for all waitFor* commands.
     waitforTimeout: 10000,
@@ -147,6 +149,7 @@ exports.config = {
     // If you are using Cucumber you need to specify the location of your step definitions.
     cucumberOpts: {
         scenarioLevelReporter: true,
+        retry: process.env['RETRY'] | 0,
         // <boolean> show full backtrace for errors
         backtrace: false,
         // <string[]> module used for processing required features
@@ -190,12 +193,12 @@ exports.config = {
         // <boolean> add cucumber tags to feature or scenario name
         tagsInTitle: false,
         // <number> timeout for step definitions
-        timeout: 20000,
+        timeout: process.env['DBG'] === '1' ? 600000 : 60000,
     },
 
     beforeStep: function ({ uri, feature, step }, context) {
-        if (process.env.DBG =='1') {
-            console.log(`STEP BEFORE: ${step.step.text}:${step.sourceLocation.uri}:${step.step.location.line}, ${step.step.location.column}`);
+        if (process.env['LOG'] === '1' || process.env['DBG'] === '1') {
+            console.log(`STEP BEFORE: ${step.step.text}: ${step.sourceLocation.uri}:${step.step.location.line}, ${step.step.location.column}`);
         }
     },
 

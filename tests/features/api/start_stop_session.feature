@@ -1,3 +1,4 @@
+@Pending
 Feature: Start/Stop session
 
   Background:

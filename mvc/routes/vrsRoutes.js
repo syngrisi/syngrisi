@@ -1,73 +1,206 @@
 'use strict';
-const {default: PQueue} = require('p-queue');
-const queue = new PQueue({concurrency: 1});
+
+// eslint-disable-next-line no-unused-vars
+/* global log:readonly */
+
+const { default: PQueue } = require('p-queue');
+
+const queue = new PQueue({ concurrency: 1 });
+const passport = require('passport');
+const { ensureLoggedIn, ensureApiKey } = require('../../lib/ensureLogin/ensureLoggedIn');
 
 module.exports = async function (app) {
     const UI = require('../controllers/ui/ui_controller');
     const API = require('../controllers/api/api_controller');
 
     await app
-        .delete('/checks/:id', async (req, res, next) => {
-            API.remove_check(req, res).catch(next);
+        .delete('/checks/:id', ensureLoggedIn(), async (req, res, next) => {
+            API.removeCheck(req, res)
+                .catch(next);
         })
-        .put('/checks/:id', async (req, res, next) => {
-            API.update_check(req, res);
+        .put('/checks/:id', ensureLoggedIn(), async (req, res, next) => {
+            await queue.add(() => API.updateCheck(req, res)
+                .catch(next));
         })
-        .put('/snapshots/:id', async (req, res, next) => {
-            API.update_snapshot(req, res).catch(next);
+        .put('/snapshots/:id', ensureLoggedIn(), async (req, res, next) => {
+            API.updateSnapshot(req, res)
+                .catch(next);
         })
-        .get('/', async function (req, res, next) {
-            UI.index(req, res).catch(next).catch(next);
+        .get('/', ensureLoggedIn(),
+            (req, res, next) => {
+                UI.index(req, res)
+                    .catch(next)
+                    .catch(next);
+            })
+        .get('/runs', ensureLoggedIn(),
+            (req, res, next) => {
+                UI.runs(req, res)
+                    .catch(next)
+                    .catch(next);
+            })
+        .get('/affectedelements', ensureApiKey(), async function (req, res, next) {
+            API.affectedElements(req, res)
+                .catch(next)
+                .catch(next);
         })
-        .get('/runs', async function (req, res, next) {
-            UI.runs(req, res).catch(next).catch(next);
+        .get('/checksgroupview', ensureLoggedIn(), async function (req, res, next) {
+            UI.checksGroupView(req, res)
+                .catch(next);
         })
-        .get('/affectedelements', async function (req, res, next) {
-            API.affectedelements(req, res).catch(next).catch(next);
+        .get('/snapshootview', ensureLoggedIn(), async function (req, res, next) {
+            UI.snapshotView(req, res)
+                .catch(next);
         })
-        .get('/checkview', async function (req, res, next) {
-            UI.checkview(req, res).catch(next);
+        .get('/diffview', ensureLoggedIn(), async function (req, res, next) {
+            UI.diffView(req, res)
+                .catch(next);
         })
-        .get('/checksgroupview', async function (req, res, next) {
-            UI.checksgroupview(req, res).catch(next);
+        .get('/admin', ensureLoggedIn(), async function (req, res, next) {
+            UI.admin(req, res)
+                .catch(next);
         })
-        .get('/snapshootview', async function (req, res, next) {
-            UI.snapshootview(req, res).catch(next);
+        .get('/changepassword', ensureLoggedIn(), (req, res) => {
+            UI.changePasswordPage(req, res);
         })
-        .get('/diffview', async function (req, res, next) {
-            UI.diffview(req, res).catch(next);
+        .get('/users', ensureLoggedIn(), async function (req, res, next) {
+            API.getUsers(req, res)
+                .catch(next);
         })
-        .post('/checks', async (req, res, next) => {
+        .get('/baselines', ensureLoggedIn(), (req, res) => {
+            API.getBaselines(req, res);
+        })
+        .post('/password', ensureLoggedIn(), (req, res) => {
+            API.changePassword(req, res);
+        })
+        .post('/checks', ensureApiKey(), async (req, res, next) => {
             req.log.trace(`post '/checks' queue pending count: `, queue.pending);
-            await queue.add(() => API.create_check(req, res).catch(next));
+            await queue.add(() => API.createCheck(req, res)
+                .catch(next));
         })
-        .post('/tests', async (req, res, next) => {
+        .post('/users', ensureLoggedIn(), async (req, res, next) => {
+            req.log.trace(`post '/users' queue pending count: `, queue.pending);
+            await queue.add(() => API.createUser(req, res)
+                .catch(next));
+        })
+        .put('/users', ensureLoggedIn(), async (req, res, next) => {
+            req.log.trace(`put '/users' queue pending count: `, queue.pending);
+            await queue.add(() => API.updateUser(req, res)
+                .catch(next));
+        })
+        .post('/tests', ensureApiKey(), async (req, res, next) => {
             req.log.trace(`post '/tests' queue pending count: `, queue.pending);
-            await queue.add(() => API.create_test(req, res).catch(next));
+            await queue.add(() => API.createTest(req, res)
+                .catch(next));
         })
-        .delete('/tests/:id', async (req, res, next) => {
-            API.remove_test(req, res).catch(next);
+        .delete('/tests/:id', ensureLoggedIn(), async (req, res, next) => {
+            API.removeTest(req, res)
+                .catch(next);
         })
-        .delete('/suites/:id', async (req, res, next) => {
-            API.remove_suite(req, res).catch(next);
+        .delete('/users/:id', ensureLoggedIn(), async (req, res, next) => {
+            API.removeUser(req, res)
+                .catch(next);
         })
-        .put('/tests/:id', async (req, res, next) => {
-            API.update_test(req, res).catch(next);
+        .get('/apikey/', ensureLoggedIn(), async (req, res, next) => {
+            API.generateApiKey(req, res)
+                .catch(next);
         })
-        .post('/session/:testid', async (req, res, next) => {
-            API.stop_session(req, res).catch(next);
+        .delete('/suites/:id', ensureLoggedIn(), async (req, res, next) => {
+            API.removeSuite(req, res)
+                .catch(next);
         })
-        .get('/checks', async (req, res, next) => {
+        .delete('/runs/:id', ensureLoggedIn(), async (req, res, next) => {
+            API.removeRun(req, res)
+                .catch(next);
+        })
+        // .put('/tests/:id', async (req, res, next) => {
+        //     API.updateTest(req, res).catch(next);
+        // })
+        .post('/session/:testid', ensureApiKey(), async (req, res, next) => {
+            API.stopSession(req, res)
+                .catch(next);
+        })
+        .get('/checks', ensureLoggedIn(), async (req, res, next) => {
             req.log.trace(`get '/checks' queue pending count: `, queue.pending);
-            await queue.add(() => API.list_all_checks(req, res).catch(next));
+            await queue.add(() => API.getChecks(req, res)
+                .catch(next));
         })
-        .get('/snapshot/:id', async (req, res, next) => {
-            API.get_snapshot(req, res).catch(next);
+        .get('/snapshot/:id', ensureLoggedIn(), async (req, res, next) => {
+            API.getSnapshot(req, res)
+                .catch(next);
+        })
+        .get('/check/:id', ensureLoggedIn(), async (req, res, next) => {
+            API.getCheck(req, res)
+                .catch(next);
         })
         .get('/checks/byident/:testid', async (req, res, next) => {
-            API.checks_group_by_ident(req, res).catch(next);
+            API.checksGroupByIdent(req, res)
+                .catch(next);
         })
-        .get('/check/:id', async (req, res, next) => {
-            API.get_check(req, res).catch(next);
+        .get('/check/:id', ensureLoggedIn(), async (req, res, next) => {
+            API.getCheck(req, res)
+                .catch(next);
+        })
+        .get('/test/:id', ensureLoggedIn(), async (req, res, next) => {
+            API.getTestById(req, res)
+                .catch(next);
+        })
+        .get('/logout', (req, res) => {
+            req.logout();
+            return res.redirect('/login');
+        })
+        .get('/userinfo', ensureLoggedIn(), async (req, res, next) => {
+            UI.userinfo(req, res)
+                .catch(next);
+        })
+        .get('/login', (req, res) => {
+            UI.login(req, res);
+        })
+        .post('/login', (req, res, next) => {
+            const origin = req.query.origin ? req.query.origin : '/';
+
+            passport.authenticate('local',
+                (err, user, info) => {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    if (!user) {
+                        return res.redirect('/login?info=' + JSON.stringify(info));
+                    }
+
+                    req.logIn(user, (err) => {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        // console.log({user})
+                        return res.redirect(origin);
+                    });
+
+                })(req, res, next);
+        })
+        // maintenance
+        .get('/loadTestUser', ensureLoggedIn(), async (req, res, next) => {
+            API.loadTestUser(req, res)
+                .catch(next);
+        })
+        .get('/task_migration_1_1_0', ensureLoggedIn(), async (req, res, next) => {
+            API.task_migration_1_1_0(req, res)
+                .catch(next);
+        })
+        .get('/task_remove_empty_tests', ensureLoggedIn(), async (req, res, next) => {
+            req.log.trace(`get '/task_remove_empty_tests' queue pending count: `, queue.pending);
+            await queue.add(() => API.task_remove_empty_tests(req, res)
+                .catch(next));
+        })
+        .get('/task_remove_old_tests', ensureLoggedIn(), async (req, res, next) => {
+            req.log.trace(`get '/task_remove_old_tests' queue pending count: `, queue.pending);
+            await queue.add(() => API.task_remove_old_tests(req, res)
+                .catch(next));
+        })
+        .get('/task_remove_empty_runs', ensureLoggedIn(), async (req, res, next) => {
+            req.log.trace(`get '/task_remove_empty_runs' queue pending count: `, queue.pending);
+            await queue.add(() => API.task_remove_empty_runs(req, res)
+                .catch(next));
         });
 };
