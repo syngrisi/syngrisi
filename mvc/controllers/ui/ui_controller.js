@@ -1,49 +1,27 @@
 'use strict';
 
+/* global log:readonly */
 const mongoose = require('mongoose');
+
 const Snapshot = mongoose.model('VRSSnapshot');
 const Check = mongoose.model('VRSCheck');
 const Test = mongoose.model('VRSTest');
 const Suite = mongoose.model('VRSSuite');
 const Run = mongoose.model('VRSRun');
-// const App = mongoose.model('VRSApp');
+const User = mongoose.model('VRSUser');
 const moment = require('moment');
-const {fatalError, checkIdent, checksGroupedByIdent} = require('../utils');
+const {
+    fatalError, checkIdent, checksGroupedByIdent, removeEmptyProperties, buildQuery, getSuitesByTestsQuery, getRunsByTestsQuery
+} = require('../utils');
 
 async function getSnapshotByImgHash(hash) {
-    return (await Snapshot.find({imghash: hash}))[0];
+    return (await Snapshot.find({ imghash: hash }))[0];
 }
 
-exports.checkview = async function (req, res) {
+exports.checksGroupView = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
-            const opts = req.query;
-
-            if (!opts.id) {
-                res.status(404)
-                    .send('Cannot return check. There is no "id" field in request query');
-                return;
-            }
-
-            const check = await Check.findById(`${opts.id}`);
-            var moment = require('moment');
-            const checkDate = moment(check.createdDate)
-                .format('YYYY-MM-DD hh:mm');
-            res.render('pages/check', {
-                check: check,
-                checkDate: checkDate
-            });
-        } catch (e) {
-            fatalError(req, res, e);
-            return reject(e);
-        }
-    })
-};
-
-exports.checksgroupview = async function (req, res) {
-    return new Promise(async function (resolve, reject) {
-        try {
-            const opts = req.query;
+            const opts = removeEmptyProperties(req.query);
 
             if (!opts.id) {
                 res.status(404)
@@ -51,26 +29,37 @@ exports.checksgroupview = async function (req, res) {
                 return;
             }
 
-            const check = await Check.findById(`${opts.id}`).exec();
-            const test = await Test.findById(check.test).exec();
-            const suite = await Suite.findById(check.suite).exec();
+            const check = await Check.findById(`${opts.id}`)
+                .exec();
+
+            const test = await Test.findById(check.test)
+                .exec();
+            const suite = await Suite.findById(check.suite)
+                .exec();
             const testId = check.test;
             const ident = checkIdent(check);
-            console.warn(check.name, "|", testId, "|", suite, "|", ident, "|")
-            const groups = await checksGroupedByIdent({test: testId});
+            console.warn(check.name, '|', testId, '|', suite, '|', ident, '|');
+            const groups = await checksGroupedByIdent({ test: testId });
             const groupChecks = groups[ident].checks;
-            // console.log(groupChecks);
             const moment = require('moment');
-            groupChecks.map(function (check) {
-                check.formattedCreatedDate = moment(check.createdDate)
-                    .format('YYYY-MM-DD hh:mm');
-                return check
-            })
-            // console.log(JSON.stringify(group, null, "  "))
-            // const checkDate = moment(check.createdDate)
-            //     .format('YYYY-MM-DD hh:mm');
+            let transGroups = await Promise.all(
+                groupChecks.map(async function (check) {
+                    const actual = await Snapshot.findById(check.actualSnapshotId)
+                        .exec();
+                    const baseline = await Snapshot.findById(check.baselineId)
+                        .exec();
+                    const diff = await Snapshot.findById(check.diffId)
+                        .exec();
+                    const chk = check.toObject();
+                    chk.actual = actual ? actual.toObject() : null;
+                    chk.baseline = baseline ? baseline.toObject() : null;
+                    chk.diff = diff ? diff.toObject() : null;
+                    return chk;
+                })
+            );
+            console.log({ transGroups });
             res.render('pages/checkgroup', {
-                checks: groupChecks,
+                checks: transGroups,
                 test: test,
                 suite: suite
             });
@@ -82,10 +71,10 @@ exports.checksgroupview = async function (req, res) {
 
 };
 
-exports.snapshootview = async function (req, res) {
+exports.snapshotView = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
-            const opts = req.query;
+            const opts = removeEmptyProperties(req.query);
 
             if (!opts.id) {
                 res.status(400)
@@ -112,10 +101,10 @@ exports.snapshootview = async function (req, res) {
     });
 };
 
-exports.diffview = async function (req, res) {
+exports.diffView = async function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
-            const opts = req.query;
+            const opts = removeEmptyProperties(req.query);
 
             if (!opts.expectedid) {
                 res.status(400)
@@ -127,34 +116,32 @@ exports.diffview = async function (req, res) {
                 baseline.formattedCreatedDate = moment(baseline.createdDate)
                     .format('YYYY-MM-DD hh:mm');
 
-                let actual_snapshoot;
-                let diff_snapshoot;
+                let actualSnapshoot;
+                let diffSnapshoot;
 
                 // for new check case
                 if (opts.actualid) {
-                    actual_snapshoot = await Snapshot.findById(`${opts.actualid}`);
-                    actual_snapshoot.formattedCreatedDate = moment(actual_snapshoot.createdDate)
+                    actualSnapshoot = await Snapshot.findById(`${opts.actualid}`);
+                    actualSnapshoot.formattedCreatedDate = moment(actualSnapshoot.createdDate)
                         .format('YYYY-MM-DD hh:mm');
                 } else {
-                    diff_snapshoot = baseline;
-                    // actual_snapshoot = baseline;
+                    diffSnapshoot = baseline;
                 }
 
                 // for passed check case
                 if (opts.diffid) {
-                    diff_snapshoot = await Snapshot.findById(`${opts.diffid}`);
-                    diff_snapshoot.formattedCreatedDate = moment(diff_snapshoot.createdDate)
+                    diffSnapshoot = await Snapshot.findById(`${opts.diffid}`);
+                    diffSnapshoot.formattedCreatedDate = moment(diffSnapshoot.createdDate)
                         .format('YYYY-MM-DD hh:mm');
                 } else {
-
-                    diff_snapshoot = actual_snapshoot ? actual_snapshoot : baseline;
+                    diffSnapshoot = actualSnapshoot ? actualSnapshoot : baseline;
                 }
 
                 const check = await Check.findById(opts.checkid);
                 const suite = await Suite.findById(`${check.suite}`);
                 const test = await Test.findById(`${check.test}`);
 
-                const checksWithSameName = await checksGroupedByIdent({name: check.name});
+                const checksWithSameName = await checksGroupedByIdent({ name: check.name });
 
                 let lastChecksWithSameName = [];
                 for (const group of Object.values(checksWithSameName)) {
@@ -164,8 +151,8 @@ exports.diffview = async function (req, res) {
 
                 res.render('pages/diff', {
                     expected_snapshoot: baseline,
-                    actual_snapshoot: actual_snapshoot,
-                    diff_snapshoot: diff_snapshoot,
+                    actual_snapshoot: actualSnapshoot,
+                    diff_snapshoot: diffSnapshoot,
                     suite: suite,
                     test: test,
                     check: check,
@@ -188,8 +175,7 @@ exports.index = async function (req, res) {
     return new Promise(
         async function (resolve, reject) {
             try {
-                let opts = req.query;
-                let suiteFilter = {};
+                const opts = removeEmptyProperties(req.query);
                 let sortBy;
                 if ((opts.sortprop === 'name')
                     || (opts.sortprop === 'status')
@@ -198,135 +184,165 @@ exports.index = async function (req, res) {
                     || (opts.sortprop === 'os')
                     || (opts.sortprop === 'calculatedViewport')
                     || (opts.sortprop === 'updatedDate')) {
-                    sortBy = opts.sortprop
+                    sortBy = opts.sortprop;
                 }
-                sortBy = sortBy ? sortBy : 'updatedDate'
+                sortBy = sortBy || 'updatedDate';
                 const sortOrder = opts.sortorder ? opts.sortorder : -1;
-                let sortFilter = {};
+                const sortFilter = {};
                 sortFilter[sortBy] = sortOrder;
+                const suite = await Suite.findOne({ name: opts.filter_suitename_eq })
+                    .exec();
 
-                const suite = await Suite.findOne({name: opts.suitename}).exec()
-                if (suite)
-                    suiteFilter = {suite: suite.id};
-                const suites = await Suite.find({})
-                    .sort({name: 'asc'}).exec()
-                const tests = await Test.find(suiteFilter)
-                    .sort(sortFilter).exec()
-                tests.map(function (test) {
-                    test.formattedUpdatedDate = moment(test.updatedDate)
-                        .format('YYYY-MM-DD hh:mm');
-                    return test;
-                })
-
-                let checksByTestGroupedByIdent = {}
-
-                for (const test of tests) {
-                    let checkFilter = {test: test.id}
-                    if (suite)
-                        checkFilter.suite = suite.id
-                    checksByTestGroupedByIdent[test.id] = await checksGroupedByIdent(checkFilter);
+                const query = buildQuery(opts);
+                if (req.user.role === 'user') {
+                    query.creatorUsername = req.user.username;
                 }
-
+                const suites = await getSuitesByTestsQuery(query);
+                // const suites = await Suite.find({})
+                //     .sort({ name: 'asc' })
+                //     .exec();
+                const currentUser = req.user;
                 res.render('pages/index', {
-                    suites: suites,
-                    tests: tests,
+                    suites,
                     currentSuite: suite,
-                    checksByTestGroupedByIdent: checksByTestGroupedByIdent
+                    user: currentUser,
                 });
             } catch (e) {
                 fatalError(req, res, e);
                 return reject(e);
             }
         }
-    )
+    );
 };
 
-exports.runs = async function (req, res) {
+exports.runs = function (req, res) {
     return new Promise(
         async function (resolve, reject) {
             try {
-                let opts = req.query;
-                let testFilter = {};
+                const opts = removeEmptyProperties(req.query);
                 let sortBy;
                 if ((opts.sortprop === 'name')
                     || (opts.sortprop === 'status')
                     || (opts.sortprop === 'browserName')
                     || (opts.sortprop === 'suite')
                     || (opts.sortprop === 'os')
-                    || (opts.sortprop === 'viewport')
+                    || (opts.sortprop === 'calculatedViewport')
                     || (opts.sortprop === 'updatedDate')) {
-                    sortBy = opts.sortprop
+                    sortBy = opts.sortprop;
                 }
-                sortBy = sortBy ? sortBy : 'updatedDate'
+                sortBy = sortBy || 'updatedDate';
                 const sortOrder = opts.sortorder ? opts.sortorder : -1;
-                let sortFilter = {};
+                const sortFilter = {};
                 sortFilter[sortBy] = sortOrder;
 
-                // const suite = await Suite.findOne({name: opts.suitename}).exec()
-                const run = await Run.findOne({name: opts.runName}).exec()
-                if (run)
-                    testFilter = {run: run.id};
-                let runs = await Run.find({})
-                    .sort({updatedDate: 'desc'}).exec()
-                runs.map(function (run) {
-                    run.formattedUpdatedDate = moment(run.updatedDate)
-                        .format('hh:mm DD-MM-YYYY');
-                    return run;
-                })
-
-                const allTests = await Test.find({}).exec();
-
-                const testsCountsGroupByRunId = (await Test.aggregate()
-                    .group({
-                        _id: "$run",
-                        count: {$sum: 1}
-                    }).exec()).reduce(function (map, obj) {
-                    map[obj._id] = obj.count;
-                    return map;
-                }, {});
-
-                const failedTestsCountsGroupByRunId = (await Test.aggregate()
-                    .match({
-                        status: "Failed"
-                    })
-                    .group({
-                        _id: "$run",
-                        count: {$sum: 1}
-                    }).exec()).reduce(function (map, obj) {
-                    map[obj._id] = obj.count;
-                    return map;
-                }, {});
-
-                const tests = await Test.find(testFilter)
-                    .sort(sortFilter).exec()
-                tests.map(function (test) {
-                    test.formattedUpdatedDate = moment(test.updatedDate)
-                        .format('YYYY-MM-DD hh:mm');
-                    return test;
-                })
-
-                let checksByTestGroupedByIdent = {}
-
-                for (const test of tests) {
-                    let checkFilter = {test: test.id}
-                    if (run)
-                        checkFilter.run = run.id;
-                    checksByTestGroupedByIdent[test.id] = await checksGroupedByIdent(checkFilter);
+                const query = buildQuery(opts);
+                delete query.run;
+                if (req.user.role === 'user') {
+                    query.creatorUsername = req.user.username;
                 }
 
-                res.render('pages/runs', {
-                    runs: runs,
-                    tests: run ? tests : {},
-                    currentRun: run,
-                    checksByTestGroupedByIdent: checksByTestGroupedByIdent,
-                    allTests: allTests,
-                    testsCountsGroupByRunId,
-                    failedTestsCountsGroupByRunId
+                function getCheckStatuses(tests) {
+                    const statuses = tests.map((x) => x.status);
+                    const groupStatusesCounts = {};
+                    statuses.forEach((x) => {
+                        groupStatusesCounts[x] = (groupStatusesCounts[x] || 0) + 1;
+                    });
+                    // console.log({ groupStatusesCounts });
+                    return Promise.resolve(groupStatusesCounts);
+                }
+
+                const runs = await getRunsByTestsQuery(query, 150);
+                const agregateRuns = await Promise.all(runs.map(async (run) => {
+                    run['statuses'] = await getCheckStatuses(await Test.find({ run: run.id }));
+                    return run;
+                }));
+
+                // console.log({ runs });
+                const currentRun = await Run.findById(opts.filter_run_eq)
+                    .exec();
+
+                const currentUser = req.user;
+                res.render('pages/runs2', {
+                    runs: agregateRuns,
+                    currentRun,
+                    user: currentUser,
                 });
             } catch (e) {
                 fatalError(req, res, e);
                 return reject(e);
             }
         }
-    )
+    );
+};
+
+exports.admin = async function (req, res) {
+    return new Promise(
+        (resolve, reject) => {
+            try {
+                return resolve(res.render('pages/admin', {
+                    currentUser: req.user,
+                }));
+            } catch (e) {
+                fatalError(req, res, e);
+                return reject(e);
+            }
+        }
+    );
+};
+
+exports.userinfo = async function (req, res) {
+    return new Promise(
+        async function (resolve, reject) {
+            try {
+                const user = req.user;
+                res.json({ user });
+                return resolve();
+            } catch (e) {
+                fatalError(req, res, e);
+                return reject(e);
+            }
+        }
+    );
+};
+
+// exports.login = async function (req, res) {
+//     return new Promise(
+//         (resolve, reject) => {
+//             try {
+//                 const { version } = require('../../../package.json');
+//                 return res.render('pages/login', {
+//                     version,
+//                 });
+//             } catch (e) {
+//                 fatalError(req, res, e);
+//                 return reject(e);
+//             }
+//         }
+//     );
+// };
+
+exports.login = function (req, res) {
+    try {
+        if (req.user) {
+            if (req.user.username !== 'Test') return res.redirect('/');
+        }
+        const { version } = require('../../../package.json');
+        return res.render('pages/login', {
+            origin: req.query.origin,
+            version,
+        });
+    } catch (e) {
+        return fatalError(req, res, e);
+    }
+};
+
+exports.changePasswordPage = function (req, res) {
+    try {
+        const { version } = require('../../../package.json');
+        return res.render('pages/changePassword', {
+            version,
+        });
+    } catch (e) {
+        return fatalError(req, res, e);
+    }
 };

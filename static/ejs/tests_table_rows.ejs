@@ -1,0 +1,408 @@
+<? for(const test of Object.values(checksByTestGroupedByIdent)){ ?>
+
+<!--TEST_INFO START-->
+<div name="testinfo"
+     class="testinfo testinfo_<?= test.id ?> row test-row pr-0 pt-0 pb-0 m-0 w-100"
+
+     data-toggle="collapse" style="cursor: pointer" onclick="drawTestChecksPreviews('<?= test.id ?>');"
+     data-target="#testchecks_<?= test.id ?>">
+    <!--TEST CHECKBOX-->
+    <div class="cell-input cell col-1 col-lg-auto text-truncate small d-flex align-items-center"
+         onclick="event.stopPropagation();">
+        <input id="<?= test.id ?>"
+               name="test"
+               type="checkbox">
+    </div>
+    <!--TEST STATUS-->
+    <? const statusesClassesBg = {
+                    Failed: 'bg-item-failed',
+                    Passed: 'bg-item-passed',
+                    Unresolved: 'bg-warning',
+                    Running: 'bg-item-partially',
+                    New: 'bg-item-new'
+                }
+     ?>
+
+    <div class="cell-status <?= statusesClassesBg[test.status] ?> cell col-auto pr-0 border-0  text-truncate">
+        <? const statusesClasses = {
+                    Failed: 'text-danger',
+                    Passed: 'text-success',
+                    Unresolved: 'text-warning',
+                    Running: 'text-info',
+                    New: 'text-success font-weight-bold'
+                }
+        ?>
+
+        <span name="cell-status" id="<?= test.id ?>_cell-status"
+              class="<?= statusesClasses[test.status] ?> small bg-gu hide"
+              data-toggle="tooltip"
+              data-placement="top"
+              title="<?= test.status ?>"><?= test.status ?></span>
+
+    </div>
+    <div class="cell-status-expand border-bottom border-top bg-warning col-auto pr-0  text-truncate">
+        <?
+        function calculatecheckGroupStatus(group) {
+        const statuses = group.map( x => x.status[0] );
+        if(statuses.includes('new')) return 'new';
+        if(statuses.includes('passed')) return 'passed';
+        return 'failed';
+        }
+        // calculate checks group statuses
+        const groupStatuses = Object.values(checksByTestGroupedByIdent[test.id]).filter(x => x.checks).map(x =>
+        calculatecheckGroupStatus(x.checks));
+        const allCount = groupStatuses.length;
+        const groupStatusesCounts = {};
+        groupStatuses.forEach(function(x) { groupStatusesCounts[x] = (groupStatusesCounts[x] || 0)+1; });
+        console.log({groupStatusesCounts});
+        let groupStatusesCountsByPercent = {};
+        Object.keys(groupStatusesCounts).forEach((x)=>{
+        groupStatusesCountsByPercent[x] = groupStatusesCounts[x] / (allCount / 100)
+        }
+        )
+        console.log({groupStatusesCountsByPercent});
+        // const statusesKeys = Object.keys(calculatecheckGroupStatus);
+        ?>
+
+        <? for( const status in groupStatusesCountsByPercent) { ?>
+        <div class="row bg-item-<?= status ?>"
+             style="height: <?= groupStatusesCountsByPercent[status] ?>%"></div>
+        <? }?>
+    </div>
+
+    <!--NAME-->
+    <div class="cell-name cell pl-3 pr-1 pt-3-2 pb-3-2 col-4-5 text-truncate align-middle" style="position: relative">
+        <!--NAME:tags-->
+        <div style="font-size: 0.6rem; position: absolute; top: -0px; left: 1rem; padding-top: 7px"
+             class="small text-dark text-truncate"
+             title="Test tags">
+            <?
+            if(test.tags && (test.tags.length > 0)) {
+            ?>
+            <span style="font-size: 0.45rem">
+                <i class="text-secondary fas fa-tags"></i>
+            </span>
+            <? for(const tag of test.tags) {
+            ?>
+            <span style="margin-left: -2px; margin-top: -5px">
+                <span class="text-secondary" onclick="event.stopPropagation();"><?= tag ?></span>
+            </span>
+            <?
+            }
+            }
+            ?>
+        </div>
+
+        <!--NAME:branch-->
+        <div
+                title="Git branch"
+                class="small branch">
+            <span class="branch text-light bg-dark text-truncate rounded">
+                <i class="fas fa-code-branch text-light"></i>
+                <a class="text-light"
+                   onclick="event.stopPropagation();"
+                   href="?filter_branch_regex=<?= test.branch || 'unknown' ?>"><?= test.branch || 'unknown' ?></a>
+            </span>
+        </div>
+
+        <div class="name-wrapper text-truncate">
+            <i data-toggle="tooltip" data-original-title="<?= test.blinking ?>">
+                <? if(test.blinking > 0) { ?>
+                <img src="../../../../static/blinking.png" class="img-fluid blink-icon" alt="blink">
+                <? } ?>
+            </i>
+            <span name="cell-name" id="<?= test.id ?>_cell-name" class="text-secondary small"
+                  data-toggle="tooltip"
+                  data-placement="top"
+                  title="<?= test.name ?>"
+            ><?- test.name -?>
+            </span>
+        </div>
+    </div>
+
+
+    <!--CREATOR-->
+    <div class="cell-creator cell pt-3 pb-3 col-1-2 pl-2 pr-1 text-truncate">
+
+        <div data-toggle="collapse" class="text-truncate">
+            <span name="cell-creator" id="<?= test.id ?>_cell-creator" class="text-secondary small"
+                  data-toggle="tooltip"
+                  data-placement="top"
+                  title="Created by: <?= test.creatorUsername ?>">
+                <?= test.creatorUsername ?>
+            </span>
+        </div>
+    </div>
+
+    <!--ACCEPTED STATE-->
+    <?
+    function acceptStatusesClass(acceptedStatus) {
+         const statuses = {
+                Accepted: 'status-accepted',
+                Unaccepted: 'status-unaccepted',
+                Partially: 'status-partially',
+         }
+         return statuses[acceptedStatus] || 'status-other';
+    }
+    ?>
+    <? const acceptedStatus = test.markedAs  ? test.markedAs : 'Unaccepted' ?>
+    <div class="cell-accepted-state cell col-1-2 pt-3 pb-3 pb-2 pr-0 text-truncate">
+        <span class="accept-label p-1 <?= acceptStatusesClass(acceptedStatus) ?> check-accept-label-test-id_<?= test.id ?>"
+              style="font-size: 80%"><?= acceptedStatus ?></span>
+    </div>
+
+    <!--DATE-->
+    <div class="cell-date cell pt-3 pb-3 col-1-5 pl-2 text-truncate">
+        <span name="cell-date" id="<?= test.id ?>_cell-date" class="text-secondary small"
+              data-toggle="tooltip"
+              data-placement="top"
+              title="<?= test.formattedUpdatedDate ?>"><?= moment(test.updatedDate).format('YYYY-MM-DD hh:mm'); ?>
+        </span>
+    </div>
+
+    <!--BROWSER-->
+    <div class="cell-browser cell pt-3 pb-3 col-1-3 pl-2 pr-1 text-truncate" id="<?= test.id ?>_cell-browser">
+        <? const browserIconMap =  {
+            chrome: 'fab fa-chrome',
+            'chrome [HEADLESS]': 'fab fa-chrome',
+            Chrome: 'fab fa-chrome',
+            firefox: 'fab fa-firefox',
+            Firefox: 'fab fa-firefox',
+            msedge: 'fab fa-edge',
+            Msedge: 'fab fa-edge',
+            Safari: 'fab fa-safari',
+            safari: 'fab fa-safari',
+            'internet explorer': 'fab fa-internet-explorer'
+        }?>
+        <? const browserVersion =  (test.browserVersion === 'undefined') ? '?' : test.browserVersion?>
+        <i class="<?= browserIconMap[test.browserName] ? browserIconMap[test.browserName] : 'fas fa-question' ?> >"
+           title="<?= test.browserName ?> <?= test.browserVersion ?>"
+           data-toggle="tooltip"
+           data-placement="top"
+        ></i>
+        <span class="small text-secondary"><?= test.browserName ?></span>
+        <sup class="text-secondary" style="margin-left: -2  px;"><?= browserVersion ?></sup>
+    </div>
+
+    <!--PLATFORM-->
+    <? const osIconMap =  {
+            'Linux x86_64': 'fab fa-linux',
+            'iPhone XS': 'fas fa-mobile-alt',
+            'Samsung Galaxy Tab S4': 'fas fa-tablet-alt',
+            'Win32': 'fab fa-windows',
+            'WINDOWS': 'fab fa-windows',
+            'MacIntel': 'fab fa-apple',
+        }?>
+    <div class="cell-platform cell pt-3 pb-3 pl-1 pr-0 col-0-3 text-truncate"
+         id="<?= test.id ?>_cell-os"
+         data-toggle="tooltip"
+         data-placement="top"
+         title="<?= test.os ?>"
+    >
+        <i class="<?=osIconMap[test.os] ? osIconMap[test.os] : 'fas fa-question' ?>"></i>
+        <span name="cell-os" class="text-primary small hide"><?= test.os ?></span>
+    </div>
+
+    <!--VIEWPORT-->
+    <div class="cell-viewport cell pt-3 pb-3 pl-3-5 col-1-2 border-bottom1 pr-0 text-truncate">
+        <? let viewport;
+        let toolTip;
+        if(!test.calculatedViewport || !test.calculatedViewport.includes('x')) {
+        viewport = '≠';
+        toolTip = `there is ${test.calculatedViewport} different viewports in this test`;
+        } else {
+        viewport = test.calculatedViewport;
+        toolTip = `${test.calculatedViewport} - all checks in this test has the same viewport`;
+        } ?>
+
+        <span name="cell-viewport" id="<?= test.id ?>_cell-viewport" class="text-secondary small"
+              data-toggle="tooltip"
+              data-placement="top"
+              title="<?= toolTip ?>"><?= viewport ?></span>
+    </div>
+</div>
+<!--/TEST_INFO-->
+
+<!-- CHECKS START -->
+<div name="checks-previews" class="all-checks row w-100 m-0 collapsing pl-3" id="testchecks_<?= test.id ?>">
+
+    <!--  foreach checks start-->
+    <?
+    const groups = Object.keys(checksByTestGroupedByIdent[test.id]).filter(function (x){ return x.includes('ident')
+    }).entries()
+    for(const [index, groupName] of groups){
+    const group = checksByTestGroupedByIdent[test.id][groupName]['checks'];
+    // const check = group[0];
+    // console.log({group});
+    const check = group[group.length-1];
+    // console.log({check});
+
+    let groupStatus = 'not set'
+    if (group.map(function (g) { return g.status.toString() }).includes('failed')) {
+    groupStatus = 'failed';
+    }
+    if (group.map(function (g) {return g.status.toString()}).includes('failed') && group[group.length - 1].status[0] ===
+    'passed') {
+    groupStatus = 'blinking';
+    }
+    if (!group.map(function (g) {return g.status.toString()}).includes('failed')) {
+    groupStatus = 'passed';
+    }
+    if (check.status == 'new') {
+    groupStatus = 'new';
+    } ?>
+
+    <? const statusesClasses = {
+                        passed: 'bg-item-passed',
+                        new: 'bg-item-new',
+                        failed: 'bg-item-failed',
+                        blinking: 'bg-warning'
+                    } ?>
+    <div class="col-4 pr-3 pl-2 pt-2 mb-3" id="check_<?= check._id ?>"
+         name="check-wrapper"
+         testid="<?= test.id ?>"
+         diffId="<?= check.diffId ?>"
+         baselineId="<?= check.baselineId ?>"
+         actualSnapshotId="<?= check.actualSnapshotId ?>"
+         checkStatus="<?= groupStatus ?>">
+        <div class="row pl-1">
+            <div name="check-status" class="col-auto <?= statusesClasses[groupStatus] ?> pt-1 pb-1 pl-1 pr-1"
+                 style="width: 2px"></div>
+            <div id="check1_<?= check._id ?>" class="col-11 pl-0 pb-1 pr-1 shadow"
+                 baselineId="<?= check.baselineId ?>"
+                 checkStatus="<?= groupStatus ?>">
+                <!--PREVIEW START-->
+                <div name="preview-container" class="check-image column baseline ml-0"
+                     data-toggle="tooltip"
+                     data-html="true"
+                     data-placement="right"
+                     title="Status: [<?= groupStatus ?>]
+                     Name: <?= check.name ?>
+                     Accepted by: <?= check.markedByUsername ? check.markedByUsername : '-' ?>
+                     Accepted date: <?= check.markedDate ? check.markedDate : '-' ?>
+                     Marked as: <?= check.markedAs ? check.markedAs : '-' ?>
+                     Created date: <?= check.createdDate ?>
+                     Created by: <?= check.creatorUsername ?>
+                     BrowserName: <?= check.browserName ?>
+                     BrowserVersion: <?= check.browserVersion ?>
+                     Viewport: <?= check.viewport ?>
+                     Platform: <?= check.os ?>
+                     Id: <?= check._id ?>
+                     ActualId: <?= check.actualSnapshotId ?>
+                     BaselineId: <?= check.baselineId ?>">
+                    <? const snapshootId = groupStatus === 'new' ? check.baselineId : check.actualSnapshotId ?>
+
+                    <div onclick="document.location.href='diffview?diffid=<?= check.diffId ?>&actualid=<?= check.actualSnapshotId ?>&expectedid=<?= check.baselineId ?>&checkid=<?= check._id ?>'"
+                         href="/checksgroupview?id=<?= check._id ?>" name="<?= check.name ?>" class="group-links-view"
+                         snapshot="<?= snapshootId ?>" id="grouplink_<?= check._id ?>">
+                        <!--OVERLAY VIEWPORT-->
+                        <div class="preview-overlay-text h4 white bg-olive"><?= check.viewport ?></div>
+
+                        <canvas class="snapshoot-canvas w-100"
+                                id="canvas_snapshoot_<?= check._id ?>"
+                        ></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <!-- SNAPSHOT TOOLBAR START-->
+            <div class="container pl-1 pr-4 mt-1">
+                <div class="check-mini-toolbar d-flex row justify-content-around1 text-dark pl-3 m-0">
+                    <!-- CHECK NAME AND COUNT-->
+                    <?  let checksCount = Object.keys(checksByTestGroupedByIdent[test.id]).filter(x =>
+                    x.includes('ident')).length ?>
+                    <?  let groupChecksCount = (checksByTestGroupedByIdent[test.id][groupName].checks.length > 1) ?
+                    `(${checksByTestGroupedByIdent[test.id][groupName].checks.length})`
+                    : '' ?>
+                    <div name="check-name"
+                         class="col-8 ml-0 mr-0 pt-2 pb-0 float-right1 align-middle text-truncate  small p-0"
+                         data-toggle="tooltip"
+                         data-placement="top"
+                         title='<?= check.name ?>'
+                    ><?- (index + 1) -?>/<?= checksCount ?><?- groupChecksCount ? `<sup name="group-count"><a
+                                class="text-secondary"
+                                name="group-count-link"
+                                href='/checksgroupview?id=${check._id}'>${groupChecksCount}</a></sup>` : ''
+                        -?> <?- check.name -?>
+                    </div>
+
+                    <!-- CHECK BUTTONS -->
+                    <div name="check-buttons"
+                         class="col-3 pr-0 pl-0 pt-1 float-right flex-row-reverse1">
+                        <div class="container pl-0 pr-0">
+                            <div class="row justify-content-end1  float-right flex-row-reverse mr-0">
+                                <div class="col-3 ml-2 p-0 float-right1">
+                                    <!--Remove dropdown-->
+                                    <div class="dropdown">
+                                        <a
+                                                class="remove-button btn-check btn-mini-toolbar btn-sm ml-1 rounded-0 border-0"
+                                                check-name="<?= check.name ?>"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                                style="line-height: 0.1; padding: 2px;"
+                                                id="checkbutton_<?= check._id ?>"
+                                                data-toggle="tooltip"
+                                                data-placement="top"
+                                                title="Remove this check">
+                                            <i class="fas fa-times-circle fa-1x"></i>
+                                        </a>
+                                        <div class="dropdown-menu pl-2 pr-2 text-light bg-item-failed text-center"
+                                             aria-labelledby="checkbutton_<?= check._id ?>"
+                                             style="min-width: 5.5rem"
+                                        >
+                                            <a class="remove-option dropdown-item check-toolbar-button-danger rounded pl-1 pr-1 text-light"
+                                               href="javascript:void(0)"
+                                               onclick="removeOneCheck('<?= check._id ?>', '<?= test.id ?>');">
+                                                Remove
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <!--/Remove dropdown-->
+                                </div>
+                                <div class="col-3 ml-0 p-0 float-right1">
+                                    <!--Accept dropdown-->
+                                    <div class="dropdown">
+                                        <a
+                                                class="accept-button btn-mini-toolbar btn-check btn-sm rounded ml-1 rounded-0 border-0"
+                                                style="line-height: 0.1; padding: 2px;"
+
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+
+                                                check-name="<?= check.name ?>"
+                                                id="acceptbutton_<?= check._id ?>"
+                                                data-toggle="tooltip"
+                                                data-placement="top"
+                                        >
+
+                                            <i class="check-accept-button-check-id_<?= check._id ?> <?= check.markedAs === 'accepted' ? 'accepted-button-icon' : 'not-accepted-button-icon' ?> accept-button-icon fas fa-thumbs-up fa-1x"
+                                               title="<?- check.markedByUsername ? `Accepted by: ${check.markedByUsername} \n Accepted date: ${check.markedDate}` : 'Click here to accept this check'?>"
+                                            ></i>
+                                        </a>
+                                        <div class="dropdown-menu pl-2 pr-2 text-light bg-item-passed text-center"
+                                             aria-labelledby="acceptbutton_<?= check._id ?>"
+                                             style="min-width: 5.5rem"
+                                        >
+                                            <a class="accept-option dropdown-item check-toolbar-button-info rounded pl-1 pr-1 text-light bg-olive1"
+                                               href="javascript:void(0)"
+                                               onclick="acceptOneCheck('<?= check._id ?>', '<?= check.actualSnapshotId ?>', '<?= check.baselineId ?>', '<?= test.id ?>')">
+                                                Accept
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <!--/Accept dropdown-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- SNAPSHOT TOOLBAR START-->
+        </div>
+    </div>
+
+    <? }; ?>
+    <!--  foreach checks end-->
+
+</div>
+<!-- all-checks-->
+<? }; ?>

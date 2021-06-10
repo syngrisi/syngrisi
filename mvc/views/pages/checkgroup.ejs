@@ -5,13 +5,14 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="icon" href="../../../static/imgs/logo.png">
+    <link rel="icon" href="../../../static/imgs/new-logo6.png">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
           integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
           crossorigin="anonymous">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
           integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
           crossorigin="anonymous">
+    <link rel="stylesheet" href="../../../static/css/common.css">
     <link rel="stylesheet" href="../../../static/css/colors.css">
 
     <style>
@@ -25,45 +26,49 @@
 <body>
 <div class="container-fluid pl-3 pr-1">
 
-    <div name="header" class="row bg-sidebar text-light ">
-        <div name="logo-and-link" class="col-3 col-lg-3 w-25 pl-0 pb-1 bg-sidebar text-light"
+    <div name="header" class="row bg-olive text-light ">
+        <div name="logo-and-link" class="col-3 col-lg-3 w-25 pl-0 pb-1 bg-olive text-light"
              id="logo-and-label-container">
-            <%- include('components/logo_and_link', {drop: true}) %>
+            <%- include('components/logo_and_link', {location: 'Groups of checks'}) %>
         </div>
 
-        <div name="title" class="col pl-4 pt-1 h4 border-left mb-0 light-purple">
+        <div name="title" class="col pl-4 pt-1 h4 border-left mb-0">
             <a class="unlink" name="suite-link"
-               href="/?suitename=<%= suite.name %>"><%= suite.name %></a>
+               href="/?filter_suitename_eq=<%= suite.name %>"><%= suite.name %></a>
             <span>/</span>
             <a class="unlink" name="check-link"
-               href='/?suitename=<%= suite.name %>&unfoldTestId=<%= test.id %>'><%= test.name %></a>
+               href='/?filter_suitename_eq=<%= suite.name %>&unfoldTestId=<%= test.id %>'><%= test.name %></a>
             <span>/</span>
             <%= checks[0].name %></div>
     </div>
 
     <div name="rows" class="container mt-3">
         <% for(const check of checks) { %>
-            <div class="row w-100">
+            <div class="row w-100 pb-3">
                 <div class="col-auto">
-                    <a href="/snapshootview?id=<%= check.baselineId %>&diffid=<%= check.diffId %>" name="baseline_link">
-                        <img src="/snapshoots/<%= check.baselineId %>.png" alt="baseline snapshoot"
+                    <a href="/snapshootview?id=<%= check.baseline._id %>&diffid=<%= check.diff ? check.diff._id : '' %>" name="baseline_link">
+                        <img src="/snapshoots/<%= check.baseline.filename || check.baseline._id + '.png' %>"
+                             alt="baseline snapshoot"
                              title="baseline snapshoot"
                              class="snapshoot-image">
                     </a>
                 </div>
                 <div class="col-auto">
                     <% if (check.actualSnapshotId) { %>
-                        <a href="/snapshootview?id=<%= check.actualSnapshotId %>&diffid=<%= check.diffId %>">
-                            <img src="/snapshoots/<%= check.actualSnapshotId %>.png" alt="actual snapshoot"
+                        <a href="/snapshootview?id=<%= check.actual._id %>&diffid=<%= check.diff ? check.diff._id : '' %>"
+                           name="actual_link">
+                            <img src="/snapshoots/<%= check.actual.filename || check.actual._id + '.png' %>"
+                                 alt="actual snapshoot"
                                  title="actual snapshoot"
                                  class="snapshoot-image">
                         </a>
                     <% } %>
                 </div>
                 <div class="col-auto">
-                    <% if (check.diffId) { %>
-                        <a href="/snapshootview?id=<%= check.diffId %>">
-                            <img src="/snapshoots/<%= check.diffId %>.png" alt="diff snapshoot" title="diff snapshoot"
+                    <% if (check.diff) { %>
+                        <a href="/snapshootview?id=<%= check.diff._id %>">
+                            <img src="/snapshoots/<%= check.diff.filename || check.diff._id + '.png' %>" alt="diff snapshoot"
+                                 title="diff snapshoot"
                                  class="snapshoot-image">
                         </a>
                     <% } %>
@@ -84,47 +89,6 @@
         integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
         crossorigin="anonymous"></script>
 <script>
-    function removeCheck(id) {
-        var xhr = new XMLHttpRequest();
-        var params = `id=${id}`;
-        xhr.open('DELETE', `/checks/${id}`, true);
-        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        let el = document.getElementById(`checkbutton_${id}`);
-
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                console.log('Success ' + id + '--' + xhr.responseText);
-                let checkDiv = document.getElementById(`check_${id}`);
-                checkDiv.parentNode.removeChild(checkDiv);
-            } else {
-                console.log('Request failed.  Returned status of ' + xhr.status);
-            }
-        };
-        xhr.send(params);
-    }
-
-    function acceptCheck(id, newBaselineId) {
-        var xhr = new XMLHttpRequest();
-        // send empty diffid
-        var params = `id=${id}&baselineId=${newBaselineId}&diffId`;
-        xhr.open('PUT', `/checks/${id}`, true);
-        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        let el = document.getElementById(`acceptbutton_${id}`);
-
-        // NEED TO ADD UPDATE BASELINE LOGIC TO .onload EVENT!!!
-
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                console.log('Success ' + id + '--' + xhr.responseText);
-                location.reload();
-                // let checkDiv = document.getElementById(`check_${id}`);
-                // checkDiv.parentNode.removeChild(checkDiv);
-            } else {
-                console.log('Request failed. Returned status of ' + xhr.status + 'resp:' + xhr.responseText);
-            }
-        };
-        xhr.send(params);
-    }
 </script>
 </body>
 </html>

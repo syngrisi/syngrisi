@@ -13,6 +13,7 @@ export default (selector, sec, falseState, state) => {
 
     browser.waitUntil(function () {
         browser.refresh();
+        browser.pause(1000);
         return !boolFalseState ? ($$(selector).length > 0) : ($$(selector).length === 0);
     }, {
         timeout: ms,

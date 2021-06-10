@@ -20,15 +20,17 @@
                       class="<%= statusesClasses[test.status] %> small bg-gu"
                       data-toggle="tooltip"
                       data-placement="top"
-                      title="<%= test.status %>"><%= test.status %></span>
-                <span data-toggle="tooltip" data-original-title="<%= test.blinking %>">
-                    <% if(test.blinking > 0) { %>
-                        <img src="../../../../static/blinking.png" class="img-fluid blink-icon" alt="blink">
-                    <% } %>
-                    <!--                                        <%= test.blinking %>-->
-                                    </span>
+                      title="<%= test.status %>"><%= test.status %>
+                </span>
+
             </div>
             <div class="cell-name cell col-4 col-lg-4 border-bottom border-right text-truncate">
+                 <span data-toggle="tooltip" data-original-title="<%= test.blinking %>">
+                     <% if(test.blinking > 0) { %>
+                         <img src="../../../../static/blinking.png" class="img-fluid blink-icon" alt="blink">
+                     <% } %>
+                     <!--                                        <%= test.blinking %>-->
+                </span>
                 <a data-toggle="collapse" class="collapsing" href="#testchecks_<%= test.id %>"
                    onclick="drawTestChecksPreviews('<%= test.id %>');">
                                 <span name="cell-name" id="<%= test.id %>_cell-name" class="text-secondary small "
@@ -44,11 +46,12 @@
                                       title="<%= test.formattedUpdatedDate %>"><%= test.formattedUpdatedDate %></span>
             </div>
             <div class="cell-browser cell col-1 col-lg-1 pl-2 pr-1 border-bottom border-right text-truncate">
-                <% const browserVersion =  (test.browserVersion === 'undefined') ? '?' : test.browserVersion%>
-                                <span name="cell-browser" id="<%= test.id %>_cell-browser" class="text-primary small"
-                                      data-toggle="tooltip"
-                                      data-placement="top"
-                                      title="<%= test.browserName %> <%= test.browserVersion %>"><%= test.browserName %></span> <sup class="text-secondary"><%= browserVersion %></sup>
+                <% const browserVersion = (test.browserVersion === 'undefined') ? '?' : test.browserVersion %>
+                <span name="cell-browser" id="<%= test.id %>_cell-browser" class="text-primary small"
+                      data-toggle="tooltip"
+                      data-placement="top"
+                      title="<%= test.browserName %> <%= test.browserVersion %>"><%= test.browserName %></span> <sup
+                        class="text-secondary"><%= browserVersion %></sup>
             </div>
             <div class="cell-platform cell col-1 col-lg-1 border-bottom border-right text-truncate">
                                 <span name="cell-os" id="<%= test.id %>_cell-os" class="text-primary small"
@@ -122,10 +125,11 @@
                                              ActualId: <%= check.actualSnapshotId %></br>
                                              BaselineId: <%= check.baselineId %></br>">
 
-                        <% if (groupStatus == 'new' || groupStatus == 'passed' || groupStatus === 'blinking') { %>
+                            <% if (groupStatus == 'new' || groupStatus == 'passed' || groupStatus === 'blinking') { %>
                                 <a href="/checksgroupview?id=<%= check.id %>" name="<%= check.name %>"
                                    id="grouplink_<%= check.id %>">
-                                    <div id='' class="preview-overlay-text h4 white bg-maroon" ><%= check.viewport %></div>
+                                    <div id=''
+                                         class="preview-overlay-text h4 white bg-maroon"><%= check.viewport %></div>
 
                                     <canvas class="snapshoot-canvas w-100"
                                             id="canvas_snapshoot_<%= check.id %>"
@@ -134,7 +138,7 @@
 
                             <% } else { %>
                                 <a href="/checksgroupview?id=<%= check.id %>">
-                                    <div class="preview-overlay-text h4 white bg-maroon" ><%= check.viewport %></div>
+                                    <div class="preview-overlay-text h4 white bg-maroon"><%= check.viewport %></div>
 
                                     <canvas class="snapshoot-canvas w-100"
                                             id="canvas_snapshoot_<%= check.id %>"
@@ -176,7 +180,7 @@
                                                         data-toggle="tooltip"
                                                         data-placement="top"
                                                         title="Remove this check"
-                                                        onclick="removeOneCheck('<%= check.id %>')">
+                                                        onclick="removeOneCheck('<?= check._id ?>', '<?= test.id ?>')">
                                                     <i class="fas fa-times-circle fa-1x"></i>
                                                 </a>
                                             </div>

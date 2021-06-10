@@ -1,30 +1,53 @@
 {
-  "name": "singrisy",
-  "version": "1.0.11",
+  "name": "syngrisi",
+  "version": "1.1.0",
   "description": "Syngrisi - Visual Testing Tool",
   "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/viktor-silakov/syngrisi"
+  },
+  "homepage": "https://github.com/viktor-silakov/syngrisi",
+  "keywords": [
+    "testing",
+    "regression",
+    "visual",
+    "screenshots",
+    "comparison"
+  ],
   "scripts": {
-    "test": "cd ..; wdio wdio.conf.js --spec vrt/tests/features/*; cd vrt;",
+    "test": "",
     "startdebug": "nodemon --ignore 'mvc/views/lib/*.js' server.js",
+    "starttest": "node server.js",
     "startservice": "forever start -l forever.log -o out.log -e err.log server.js",
     "start": "nodemon --ignore 'mvc/views/lib/*.js' server.js &",
-    "clear": "mongo VRSdb --eval 'db.vrschecks.drop();db.vrssnapshots.drop();db.vrstests.drop();db.vrsapps.drop();db.vrssuites.drop();'; rm ./baselines/*.png",
-    "start_test": "VRT_CONN_STRING='mongodb://localhost/VRTdbTest' VRT_PORT=3001 VRT_BASELINE_PATH='./baselinesTest/' nodemon server.js",
-    "clear_test": "mongo VRSdbTest --eval 'db.vrschecks.drop();db.vrssnapshots.drop();db.vrstests.drop();db.vrsapps.drop();db.vrssuites.drop();'; rm ./baselinesTest/*.png",
-    "clearwin": "mongo VRSdb --eval \"db.vrtchecks.drop();db.vrtsnapshots.drop();db.vrttests.drop();db.vrtapps.drop();db.vrtsuites.drop();\" & DEL /F /Q /S ..\\tests\\BaselineImages\\*.png"
+    "clear": "mongo VRSdb --eval 'db.vrschecks.drop();db.vrssnapshots.drop();db.vrstests.drop();db.vrsapps.drop();db.vrssuites.drop();db.vrsusers.drop();db.vrslogs.drop();db.vrsruns.drop();db.vrsbaselines.drop();'; rm ./baselines/*.png",
+    "start_test": "VRT_CONN_STRING='mongodb://localhost/VRSdbTest' VRT_PORT=3001 VRT_BASELINE_PATH='./baselinesTest/' nodemon server.js",
+    "clear_test": "mongo VRSdbTest --eval 'db.vrschecks.drop();db.vrssnapshots.drop();db.vrstests.drop();db.vrsapps.drop();db.vrssuites.drop();db.vrsusers.drop();db.vrslogs.drop();db.vrsruns.drop();db.vrsbaselines.drop();'; rm ./baselinesTest/*.png",
+    "clearwin": "mongo VRSdb --eval \"db.vrtchecks.drop();db.vrtsnapshots.drop();db.vrttests.drop();db.vrtapps.drop();db.vrtsuites.drop();db.vrsusers.drop();db.vrslogs.drop();db.vrsbaselines.drop();\" & DEL /F /Q /S ..\\tests\\BaselineImages\\*.png"
   },
-  "author": "",
+  "author": {
+    "name": "Viktar Silakou",
+    "email": "1105714@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/viktor-silakov/syngrisi/issues"
+  },
   "license": "MIT",
   "dependencies": {
     "async-lock": "^1.2.2",
     "body-parser": "^1.19.0",
     "canvas": "^2.6.1",
     "connect-busboy": "0.0.2",
+    "connect-ensure-login": "^0.1.1",
+    "date-fns": "^2.21.3",
     "ejs": "^3.0.1",
     "express": "^4.17.1",
     "express-fileupload": "^1.1.6",
+    "express-session": "^1.17.1",
     "got": "^10.2.1",
     "hasha": "^5.1.0",
+    "memorystore": "^1.6.6",
     "moment": "^2.25.3",
     "mongodb": "^3.4.1",
     "mongoose": "^5.9.12",
@@ -32,8 +55,22 @@
     "nodejs-resemble": "^0.3.0",
     "nodemon": "^2.0.2",
     "p-queue": "^6.4.0",
+    "passport": "^0.4.1",
+    "passport-local-mongoose": "^6.1.0",
+    "pino": "^6.11.3",
     "pino-http": "^5.2.0",
+    "prettier": "^2.2.1",
+    "querystring": "^0.2.1",
     "request": "^2.88.0",
-    "resemblejs": "^3.2.5"
+    "resemblejs": "^3.2.4",
+    "uuid-apikey": "^1.5.2",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.24.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.2",
+    "form-data": "^4.0.0"
   }
 }

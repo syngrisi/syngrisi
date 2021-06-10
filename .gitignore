@@ -11,4 +11,6 @@ node_modules
 /lib/rsJsEngine.js
 /.idea/
 /debug.js
+*.tmp
 /debug2.js
+/baselineProd/

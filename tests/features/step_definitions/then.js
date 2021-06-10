@@ -43,8 +43,12 @@ Then(
 );
 
 Then(
-    /^I expect that element "([^"]*)?" does( not)* appear exactly "([^"]*)?" times$/,
-    checkIfElementExists
+    /^I expect that element "([^"]*)?" does appear exactly "([^"]*)?" times$/,
+    function (selector, times) {
+        expect($$(selector).length)
+            .toBe(parseInt(times));
+    }
+    // checkIfElementExists
 );
 
 Then(
