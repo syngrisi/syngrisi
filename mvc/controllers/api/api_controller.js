@@ -1481,6 +1481,7 @@ exports.task_migration_1_1_0 = async function (req, res) {
     });
 
     const checks = await Check.find({});
+    const tests = await Test.find({});
     res.write('\n0. Resync indexes\n');
 
     await Check.syncIndexes();
@@ -1510,26 +1511,37 @@ exports.task_migration_1_1_0 = async function (req, res) {
     console.log('Log');
     res.write('\nLog\n');
 
-    res.write('\n1. Fix empty diffs\n');
+    res.write('\n0. Update all check & tests to master branch\n');
     for (const check of checks) {
-        if (!check.diffId) {
-            console.log({ DIFF: check.diffId });
-            delete check.diffId;
-            const tempCheck = check.toObject();
-            await check.remove();
-            delete tempCheck.diffId;
-            Check.create(tempCheck);
-        }
+        check.branch = 'master';
+        check.save();
     }
-    res.write('\n2. Fix docs types\n');
-    for (const check of checks) {
-        console.log({ check });
-        res.write(`${JSON.stringify(check)}\n\n`);
-        if (check.baselineId) (check.baselineId = mongoose.Types.ObjectId(check.baselineId));
-        if (check.actualSnapshotId) (check.actualSnapshotId = mongoose.Types.ObjectId(check.actualSnapshotId));
-        if (check.actualSnapshotId) (check.diffId = mongoose.Types.ObjectId(check.diffId));
-        await check.save();
+    for (const test of tests) {
+        console.log(test.name);
+        res.write(test.name);
+        test.branch = 'master';
+        test.save();
     }
+    // res.write('\n1. Fix empty diffs\n');
+    // for (const check of checks) {
+    //     if (!check.diffId) {
+    //         console.log({ DIFF: check.diffId });
+    //         delete check.diffId;
+    //         const tempCheck = check.toObject();
+    //         await check.remove();
+    //         delete tempCheck.diffId;
+    //         Check.create(tempCheck);
+    //     }
+    // }
+    // res.write('\n2. Fix docs types\n');
+    // for (const check of checks) {
+    //     console.log({ check });
+    //     res.write(`${JSON.stringify(check)}\n\n`);
+    //     if (check.baselineId) (check.baselineId = mongoose.Types.ObjectId(check.baselineId));
+    //     if (check.actualSnapshotId) (check.actualSnapshotId = mongoose.Types.ObjectId(check.actualSnapshotId));
+    //     if (check.actualSnapshotId) (check.diffId = mongoose.Types.ObjectId(check.diffId));
+    //     await check.save();
+    // }
 
     // res.write(`\n2. Change 'The Test App' => 'HPE'`);
     // const app = await orm.createAppIfNotExist({ name: 'HPE' });
