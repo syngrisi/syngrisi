@@ -123,14 +123,14 @@ async function compareSnapshots(baseline, actual) {
         console.log(`baseline path: ${config.defaultBaselinePath}${baseline.id}.png`);
         console.log(`actual path: ${config.defaultBaselinePath}${actual.id}.png`);
         let opts = {};
-        // back compatibility
-        log.debug(`ignore regions: ${baseline.ignoreRegions}`);
-        if (baseline.ignoreRegions === 'undefined') {
-            delete baseline.ignoreRegions;
-            log.debug(`remove ignore regions: ${baseline.ignoreRegions}`);
-        }
+        log.debug(`ignore regions: '${baseline.ignoreRegions}', type: '${typeof baseline.ignoreRegions}'`);
+        // if (baseline.ignoreRegions === 'undefined') {
+        //     delete baseline.ignoreRegions;
+        //     log.debug(`remove ignore regions: ${baseline.ignoreRegions}`);
+        // }
 
-        if (baseline.ignoreRegions) {
+        // back compatibility
+        if ((baseline.ignoreRegions !== 'undefined') && baseline.ignoreRegions) {
             const ignored = JSON.parse(JSON.parse(baseline.ignoreRegions));
             opts = { ignoredBoxes: ignored };
         }
