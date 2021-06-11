@@ -41,7 +41,6 @@ exports.checksGroupView = async function (req, res) {
             console.warn(check.name, '|', testId, '|', suite, '|', ident, '|');
             const groups = await checksGroupedByIdent({ test: testId });
             const groupChecks = groups[ident].checks;
-            const moment = require('moment');
             let transGroups = await Promise.all(
                 groupChecks.map(async function (check) {
                     const actual = await Snapshot.findById(check.actualSnapshotId)
@@ -71,29 +70,29 @@ exports.checksGroupView = async function (req, res) {
 
 };
 
-exports.snapshotView = async function (req, res) {
+exports.snapshotView = function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
             const opts = removeEmptyProperties(req.query);
 
             if (!opts.id) {
                 res.status(400)
-                    .send('Cannot return snapshoot. There is no "id" field in request query');
-                return;
+                    .json({ error: 'Cannot return snapshoot. There is no "id" field in request query' });
+                return reject();
             }
 
             const snapshot = await Snapshot.findById(`${opts.id}`);
             const baselineId = opts.baselineid ? opts.baselineid : '';
             const diffId = opts.diffid ? opts.diffid : '';
 
-            const moment = require('moment');
             snapshot.formattedCreatedDate = moment(snapshot.createdDate)
                 .format('YYYY-MM-DD hh:mm');
             res.render('pages/snapshot', {
                 snapshot: snapshot,
                 baselineId: baselineId,
-                diffId: diffId
+                diffId: diffId,
             });
+            return resolve();
         } catch (e) {
             fatalError(req, res, e);
             return reject(e);
@@ -101,15 +100,17 @@ exports.snapshotView = async function (req, res) {
     });
 };
 
-exports.diffView = async function (req, res) {
-    return new Promise(async function (resolve, reject) {
+exports.diffView = function (req, res) {
+    return new Promise(async (resolve, reject) => {
         try {
             const opts = removeEmptyProperties(req.query);
 
             if (!opts.expectedid) {
                 res.status(400)
-                    .send(`Error: There is no "id" fields (actualid) in request query: ${JSON.stringify(opts)}`);
-                return;
+                    .json({ error: `There is no 'id' fields (actualid) in request query: ${JSON.stringify(opts)}` });
+                log.error(`There is no 'id' fields (actualid) in request query: ${JSON.stringify(opts)}`);
+                console.trace();
+                return resolve();
             }
             try {
                 const baseline = await Snapshot.findById(`${opts.expectedid}`);
@@ -131,10 +132,18 @@ exports.diffView = async function (req, res) {
                 // for passed check case
                 if (opts.diffid) {
                     diffSnapshoot = await Snapshot.findById(`${opts.diffid}`);
+                    if (diffSnapshoot === null) {
+                        res.status(400)
+                            .json({ error: `Cannot find diff with id: ${opts.diffid}` });
+                        log.error(`Cannot find diff with id: ${opts.diffid}`);
+                        console.trace();
+
+                        return resolve();
+                    }
                     diffSnapshoot.formattedCreatedDate = moment(diffSnapshoot.createdDate)
                         .format('YYYY-MM-DD hh:mm');
                 } else {
-                    diffSnapshoot = actualSnapshoot ? actualSnapshoot : baseline;
+                    diffSnapshoot = actualSnapshoot || baseline;
                 }
 
                 const check = await Check.findById(opts.checkid);
@@ -143,7 +152,7 @@ exports.diffView = async function (req, res) {
 
                 const checksWithSameName = await checksGroupedByIdent({ name: check.name });
 
-                let lastChecksWithSameName = [];
+                const lastChecksWithSameName = [];
                 for (const group of Object.values(checksWithSameName)) {
                     lastChecksWithSameName.push(group.checks[group.checks.length - 1]);
                 }
@@ -158,12 +167,12 @@ exports.diffView = async function (req, res) {
                     check: check,
                     lastChecksWithSameName: lastChecksWithSameName
                 });
+                return resolve();
             } catch (e) {
                 res.status(500)
                     .send(`Error preparing diff page: ${JSON.stringify(e)}`);
                 return reject(e);
             }
-
         } catch (e) {
             fatalError(req, res, e);
             return reject(e);

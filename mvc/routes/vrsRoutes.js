@@ -51,7 +51,7 @@ module.exports = async function (app) {
             UI.snapshotView(req, res)
                 .catch(next);
         })
-        .get('/diffview', ensureLoggedIn(), async function (req, res, next) {
+        .get('/diffview', ensureLoggedIn(), (req, res, next) => {
             UI.diffView(req, res)
                 .catch(next);
         })
