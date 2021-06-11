@@ -76,7 +76,7 @@ routes(app); // register the route
 
 app.use((req, res) => {
     res.status(404)
-        .send({ url: `${req.originalUrl} not found` });
+        .json({ url: `${req.originalUrl} not found` });
 });
 app.listen(config.port, () => {
     require('./lib/onStart');

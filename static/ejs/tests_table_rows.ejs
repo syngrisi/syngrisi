@@ -291,8 +291,9 @@
                      ActualId: <?= check.actualSnapshotId ?>
                      BaselineId: <?= check.baselineId ?>">
                     <? const snapshootId = groupStatus === 'new' ? check.baselineId : check.actualSnapshotId ?>
+                    <? const diffId = (groupStatus === 'failed') ? check.diffId : '' ?>
 
-                    <div onclick="document.location.href='diffview?diffid=<?= check.diffId ?>&actualid=<?= check.actualSnapshotId ?>&expectedid=<?= check.baselineId ?>&checkid=<?= check._id ?>'"
+                    <div onclick="document.location.href='diffview?diffid=<?= diffId ?>&actualid=<?= check.actualSnapshotId ?>&expectedid=<?= check.baselineId ?>&checkid=<?= check._id ?>'"
                          href="/checksgroupview?id=<?= check._id ?>" name="<?= check.name ?>" class="group-links-view"
                          snapshot="<?= snapshootId ?>" id="grouplink_<?= check._id ?>">
                         <!--OVERLAY VIEWPORT-->
