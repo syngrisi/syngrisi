@@ -124,7 +124,12 @@ async function compareSnapshots(baseline, actual) {
         console.log(`actual path: ${config.defaultBaselinePath}${actual.id}.png`);
         let opts = {};
         // back compatibility
-        (baseline.ignoreRegions === 'undefined') && delete baseline.ignoreRegions;
+        log.debug(`ignore regions: ${baseline.ignoreRegions}`);
+        if (baseline.ignoreRegions === 'undefined') {
+            delete baseline.ignoreRegions;
+            log.debug(`remove ignore regions: ${baseline.ignoreRegions}`);
+        }
+
         if (baseline.ignoreRegions) {
             const ignored = JSON.parse(JSON.parse(baseline.ignoreRegions));
             opts = { ignoredBoxes: ignored };
@@ -1518,7 +1523,7 @@ exports.task_migration_1_1_0 = async function (req, res) {
     }
     for (const test of tests) {
         console.log(test.name);
-        res.write(test.name);
+        res.write(test.name + '\n');
         test.branch = 'master';
         test.save();
     }
