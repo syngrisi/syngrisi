@@ -1487,6 +1487,7 @@ exports.task_migration_1_1_0 = async function (req, res) {
 
     const checks = await Check.find({});
     const tests = await Test.find({});
+    const snapshoots = await Snapshot.find({});
     res.write('\n0. Resync indexes\n');
 
     await Check.syncIndexes();
@@ -1516,17 +1517,17 @@ exports.task_migration_1_1_0 = async function (req, res) {
     console.log('Log');
     res.write('\nLog\n');
 
-    res.write('\n0. Update all check & tests to master branch\n');
-    for (const check of checks) {
-        check.branch = 'master';
-        check.save();
-    }
-    for (const test of tests) {
-        console.log(test.name);
-        res.write(test.name + '\n');
-        test.branch = 'master';
-        test.save();
-    }
+    // res.write('\n0. Update all check & tests to master branch\n');
+    // for (const check of checks) {
+    //     check.branch = 'master';
+    //     check.save();
+    // }
+    // for (const test of tests) {
+    //     console.log(test.name);
+    //     res.write(test.name + '\n');
+    //     test.branch = 'master';
+    //     test.save();
+    // }
     // res.write('\n1. Fix empty diffs\n');
     // for (const check of checks) {
     //     if (!check.diffId) {
@@ -1556,5 +1557,20 @@ exports.task_migration_1_1_0 = async function (req, res) {
     //     check.save();
     //     res.write(`\n${check._id}`);
     // }
+
+    res.write('\n3. Fix undefined regions\n');
+    for (const snp of snapshoots) {
+        if ((snp.ignoreRegions === 'undefined') || (snp.boundRegions === 'undefined')) {
+            console.log({ Snp: snp.name });
+            res.write(`\n${snp.name}`);
+            // delete snp.ignoreRegions;
+            // delete snp.boundRegions;
+            const tempSnp = snp.toObject();
+            await snp.remove();
+            delete tempSnp.ignoreRegions;
+            delete tempSnp.boundRegions;
+            Snapshot.create(tempSnp);
+        }
+    }
     res.end('\nDone\n');
 };
