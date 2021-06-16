@@ -684,7 +684,7 @@ async function createNewBaseline(params) {
     if (params.markedByUsername) newBaseline.markedByUsername = params.markedByUsername;
     if (params.markedDate) newBaseline.lastMarkedDate = params.markedDate;
     newBaseline.createdDate = new Date();
-    newBaseline.snapshootId = params.actualSnapshotId;
+    newBaseline.snapshootId = params.actualSnapshotId || params.baselineId;
 
     return Promise.resolve(await newBaseline.save());
 }
@@ -1092,6 +1092,7 @@ exports.updateCheck = async function updateCheck(req, res) {
             delete opts.accept;
             // await Check.findByIdAndUpdate(check._id, opts);
             Object.assign(check, opts);
+            console.log({ NEW_BASELINE_OPTS: check.toObject() });
             await createNewBaseline(check.toObject());
             await check.save();
             const testCalculatedStatus = await calculateTestStatus(check.test);
