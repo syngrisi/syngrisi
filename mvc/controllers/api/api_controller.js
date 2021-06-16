@@ -837,7 +837,7 @@ exports.createCheck = async function (req, res) {
 
                 // const previousBaselineId = lastCheck ? lastCheck.baselineId : null;
                 const storedBaseline = await getBaseline(params);
-                // console.log({ STOREDBASELINE: storedBaseline });
+                console.log({ STOREDBASELINE: storedBaseline });
                 let check;
                 // if last check has baseline id copy properties from last check
                 // and set it as `currentBaseline` to make diff
@@ -860,7 +860,7 @@ exports.createCheck = async function (req, res) {
                     }
 
                     currentBaseline = await Snapshot.findById(storedBaseline.snapshootId);
-                    console.log(`Create and the new check with params: '${prettyCheckParams(params)}'`);
+                    console.log(`Create the new check with params: '${prettyCheckParams(params)}'`);
                     check = await Check.create(params);
                 } else {
                     // since the `storedBaseline` does not exist set current snapshoot as currentBaseline to make diff
@@ -869,7 +869,7 @@ exports.createCheck = async function (req, res) {
                     params.actualSnapshotId = currentSnapshot.id;
                     params.status = 'new';
                     currentBaseline = currentSnapshot;
-                    console.log(`Create and the new check with params: '${prettyCheckParams(params)}'`);
+                    console.log(`Create the new check with params: '${prettyCheckParams(params)}'`);
                     check = await Check.create(params);
                     await createNewBaseline(check.toObject());
                 }
