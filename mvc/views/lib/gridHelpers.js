@@ -378,6 +378,7 @@ function acceptTests() {
         .then((results2) => {
             console.log({ acceptTests: results2 });
             showNotification('Tests were accepted successfully');
+            checkboxes.forEach((x) => x.checked = false);
         })
         .catch((e) => {
             console.error(`Cannot accept tests: ${e}`);
