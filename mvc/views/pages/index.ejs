@@ -243,12 +243,19 @@
         // search trigger on press enter
         document.getElementById('subheader-search')
             .addEventListener('keyup', function (event) {
-                console.log(123);
                 if (event.keyCode === 13) {
                     event.preventDefault();
                     search();
                 }
             });
+
+        // draw preview after collapse event fired
+        jQuery(document)
+            .on('shown.bs.collapse', function (e) {
+                const testId = e.target.id.replace('testchecks_', '');
+                drawTestChecksPreviews(testId);
+            });
+
     };
 
 </script>
@@ -300,16 +307,18 @@
             while (!document.querySelector(`.testinfo_${unfoldTestId}`)) {
                 await new Promise(r => setTimeout(r, 200));
             }
-            unfoldCheck(unfoldTestId);
+            unfoldChecksWithScroll(unfoldTestId);
         }
     })();
 
-    function unfoldCheck(id) {
+    function unfoldChecksWithScroll(id) {
         console.log({ UNFOLD: id });
         jQuery(`.testinfo_${id}`)[0].scrollIntoView(true);
         jQuery(`#testchecks_${id}`)
             .collapse('show');
-        drawTestChecksPreviews(unfoldTestId);
+        setTimeout((x) => {
+            drawTestChecksPreviews(unfoldTestId);
+        }, 200);
     }
 
     function drawOverlay(expectedId, actualId, diff) {

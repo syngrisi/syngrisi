@@ -1,4 +1,4 @@
-/* global baselines $ document XMLHttpRequest */
+/* global baselines $ document XMLHttpRequest fabric */
 
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -544,7 +544,7 @@ function getRequest(path, verbose) {
             xhr.onload = function () {
                 if (xhr.status === 200) {
                     verbose && console.log(`Successfully finish get request for: '${path}', resp: '${xhr.responseText}'`);
-                    console.log(`Successfully finish get request for: '${path}'`);
+                    // console.log(`Successfully finish get request for: '${path}'`);
                     return resolve(xhr.responseText);
                 } else {
                     console.log('Request failed. Returned status of ' + xhr.status + ' resp:' + xhr.responseText);
@@ -571,7 +571,7 @@ function drawTestChecksPreviews(testId) {
 
     let statuses = [];
     checksDivs.forEach(el => statuses.push(el.getAttribute('checkStatus')));
-    console.log(statuses);
+    // console.log({ statuses });
 
     checksIds.forEach(async function (id, index) {
 
@@ -581,13 +581,16 @@ function drawTestChecksPreviews(testId) {
         const snapshoot = JSON.parse(await getRequest(`/snapshot/${snapshotId}`));
         const baselineObj = JSON.parse(await getRequest(`/snapshot/${baselineIds[index]}`));
         // console.log({snapshoot})
+        const weight = document.getElementById(`canvas_snapshoot_${id}`).parentElement.offsetWidth;
+        // const weight = document.getElementById(`canvas_snapshoot_60b62f0085f8ac444887ead5`).offsetWidth;
 
-        fabric.Image.fromURL(`/snapshoots/${snapshoot.filename || snapshotId + '.png'}`, function (oImg) {
-            baseline = new BaselineView('canvas_snapshoot_' + id,
+        fabric.Image.fromURL(`/snapshoots/${snapshoot.filename || `${snapshotId}.png`}`, (oImg) => {
+            baseline = new BaselineView(`canvas_snapshoot_${id}`,
                 oImg,
                 {
-                    weight: document.getElementById('canvas_snapshoot_' + id).offsetWidth,
-                    backimageId: baselineObj.filename ? baselineObj.filename : baselineObj.id + '.png'
+                    // weight: document.getElementById(`canvas_snapshoot_${id}`).offsetWidth,
+                    weight: weight,
+                    backimageId: baselineObj.filename ? baselineObj.filename : `${baselineObj.id}.png`,
                 }
             );
             baseline.getSnapshotIgnoreRegionsDataAndDrawRegions(baselineIds[index]);
