@@ -1,9 +1,12 @@
-/* global XMLHttpRequest fabric $ */
+/* eslint-disable dot-notation */
+/* global XMLHttpRequest fabric $ document window */
+
+// eslint-disable-next-line no-unused-vars
 class BaselineView {
     constructor(canvasId, image, params) {
         const thisClass = this;
         if (params.fileName) {
-            fabric.Image.fromURL(`/snapshoots/${params.fileName}`, function (oImg) {
+            fabric.Image.fromURL(`/snapshoots/${params.fileName}`, (oImg) => {
                 window.backImage = oImg;
                 thisClass['backImg'] = oImg;
                 oImg.scaleToWidth(thisClass.canvas.width);
@@ -25,7 +28,6 @@ class BaselineView {
             if (params.height) {
                 this.canvas.setHeight(params.height);
             } else {
-
                 const ratio = params.weight / image.width;
                 this.canvas.setHeight(image.height * ratio);
             }
@@ -92,7 +94,9 @@ class BaselineView {
         }
         console.log(document.documentElement.scrollTop);
         // if last elements fit in current viewport create new region near this region
-        const top = (lastTop > document.documentElement.scrollTop && lastTop < document.documentElement.scrollTop + window.innerHeight) ? lastTop + 20 : document.documentElement.scrollTop + 50;
+        const top = (lastTop > document.documentElement.scrollTop && lastTop < document.documentElement.scrollTop + window.innerHeight)
+            ? lastTop + 20
+            : document.documentElement.scrollTop + 50;
         const left = (lastLeft < (this.canvas.width - 80)) ? lastLeft + 20 : lastLeft - 50;
         return new fabric.Rect({
             left: params.left || left,
@@ -112,7 +116,7 @@ class BaselineView {
     addIgnoreRegion(params) {
         const classThis = this;
         Object.assign(params, { fill: 'MediumVioletRed' });
-        let r = this.rect(params);
+        const r = this.rect(params);
         r.setControlsVisibility({
             bl: true,
             br: true,
@@ -120,26 +124,26 @@ class BaselineView {
             tr: true,
             mt: true,
             mb: true,
-            mtr: false
+            mtr: false,
         });
 
-        r.on('selected', function (e) {
+        r.on('selected', (e) => {
             classThis.addDeleteBtn(r);
         });
 
-        r.on('modified', function (e) {
+        r.on('modified', (e) => {
             classThis.addDeleteBtn(r);
         });
 
-        r.on('scaling', function (e) {
+        r.on('scaling', (e) => {
             $('.deleteBtn')
                 .remove();
         });
-        r.on('moving', function (e) {
+        r.on('moving', (e) => {
             $('.deleteBtn')
                 .remove();
         });
-        r.on('rotating', function (e) {
+        r.on('rotating', (e) => {
             $('.deleteBtn')
                 .remove();
         });
@@ -153,8 +157,8 @@ class BaselineView {
     }
 
     addBoundingRegion(name) {
-        let params = {
-            name: name,
+        const params = {
+            name,
             fill: 'rgba(0,0,0,0)',
             stroke: 'green',
             strokeWidth: 3,
@@ -163,7 +167,7 @@ class BaselineView {
             width: this.image.getScaledWidth() - 10,
             height: this.image.getScaledHeight() - 10,
         };
-        let r = this.rect(params);
+        const r = this.rect(params);
         this.canvas.add(r);
         r.bringToFront();
     }
@@ -173,21 +177,13 @@ class BaselineView {
     }
 
     resize(ratio) {
-        let w = this.image.getScaledWidth();
+        const w = this.image.getScaledWidth();
         this.image.scaleToWidth(w * ratio);
         const classThis = this;
-        this.allRects.forEach(function (reg) {
+        this.allRects.forEach((reg) => {
             reg.setCoords();
-            let reqWidth = reg.getScaledWidth();
-            let reqHeight = reg.getScaledHeight();
-            // console.log('Old W, H', reqWidth, reqHeight)
-
-            // reg.scaleToHeight(reqHeight * ratio);
-            // reg.scaleToWidth(reqWidth * ratio);
-            // reg.width = reqWidth * ratio;
-            // reg.height = reqHeight * ratio;
-            reg.width = reg.width * ratio;
-            reg.height = reg.height * ratio;
+            reg.width *= ratio;
+            reg.height *= ratio;
             // reg.scale(ratio);
             reg.setCoords();
             classThis.canvas.renderAll();
@@ -195,8 +191,8 @@ class BaselineView {
             console.log('New Scaled W, H', reg.getScaledWidth(), reg.getScaledHeight());
             console.log('New  W, H', reg.width, reg.height);
 
-            reg.top = reg.top * ratio;
-            reg.left = reg.left * ratio;
+            reg.top *= ratio;
+            reg.left *= ratio;
         });
         $('.deleteBtn')
             .remove();
@@ -209,13 +205,13 @@ class BaselineView {
      * 3. return json string
      */
     getRectData() {
-        let rects = this.allRects;
-        let data = [];
-        let coef = parseFloat(this.coef);
+        const rects = this.allRects;
+        const data = [];
+        const coef = parseFloat(this.coef);
 
-        rects.forEach(function (reg) {
-            let right = reg.left + reg.getScaledWidth();
-            let bottom = reg.top + reg.getScaledHeight();
+        rects.forEach((reg) => {
+            const right = reg.left + reg.getScaledWidth();
+            const bottom = reg.top + reg.getScaledHeight();
             if (coef) {
                 data.push({
                     name: reg.name,
@@ -224,25 +220,6 @@ class BaselineView {
                     bottom: bottom * coef,
                     right: right * coef,
                 });
-            } else {
-                // data.push({
-                //     // name: reg.name,
-                //     // top: reg.top / coef,
-                //     // left: reg.left / coef,
-                //     // bottom: bottom / coef,
-                //     // right: right / coef,
-                //
-                //     // name: reg.name,
-                //     // top: reg.top * coef,
-                //     // left: reg.left * coef,
-                //     // bottom: bottom * coef,
-                //     // right: right * coef,
-                //     // //
-                //     // top: (coef > 1) ? (reg.top * coef) : (reg.top / coef),
-                //     // left: (coef > 1) ? (reg.left * coef) : (reg.left / coef),
-                //     // bottom: (coef > 1) ? (bottom * coef) : (bottom / coef),
-                //     // right: (coef > 1) ? (right * coef) : (right / coef)
-                // });
             }
         });
         return JSON.stringify(data);
@@ -263,7 +240,7 @@ class BaselineView {
         }
         $('#notify')
             .show();
-        setTimeout(function () {
+        setTimeout(() => {
                 $('#notify')
                     .hide();
             },
@@ -294,12 +271,12 @@ class BaselineView {
      * @returns {object}             region data in fabric.js format
      */
     convertRegionsDataFromServer(regions) {
-        let data = [];
-        let coef = parseFloat(this.coef);
+        const data = [];
+        const coef = parseFloat(this.coef);
         JSON.parse(regions)
-            .forEach(function (reg) {
-                let width = reg.right - reg.left;
-                let height = reg.bottom - reg.top;
+            .forEach((reg) => {
+                const width = reg.right - reg.left;
+                const height = reg.bottom - reg.top;
                 console.log({ coef });
                 if (coef) {
                     data.push({
@@ -307,7 +284,7 @@ class BaselineView {
                         top: reg.top / coef,
                         left: reg.left / coef,
                         width: width / coef,
-                        height: height / coef
+                        height: height / coef,
                     });
                 }
             });
@@ -316,24 +293,19 @@ class BaselineView {
 
     get allRects() {
         return this.canvas.getObjects()
-            .filter(r => (r.name === 'ignore_rect') || (r.name === 'bound_rect'));
+            .filter((r) => (r.name === 'ignore_rect') || (r.name === 'bound_rect'));
     }
 
     drawRegions(data) {
         console.log({ data });
         if (!data || data === 'undefined') {
-            {
-                // console.error('The regions data is empty')
-                return;
-            }
-
-            // console.log('The regions data is empty')
-            // return new Error('The regions data is empty');
+            return;
+            // console.error('The regions data is empty')
         }
         const regs = this.convertRegionsDataFromServer(JSON.parse(data));
         console.log('converted:', regs.length, regs);
         const classThis = this;
-        regs.forEach(function (regParams) {
+        regs.forEach((regParams) => {
             regParams['noSelect'] = true;
             classThis.addIgnoreRegion(regParams);
         });
@@ -348,10 +320,9 @@ class BaselineView {
                 if (xhr.status === 200) {
                     console.log(`Successful got regions data, id: '${snapshootId}'  resp: '${xhr.responseText}'`);
                     return resolve(JSON.parse(xhr.responseText));
-                } else {
-                    console.error(`Cannot get regions data, status: '${xhr.status}',  resp: '${xhr.responseText}'`);
-                    return reject(xhr);
                 }
+                console.error(`Cannot get regions data, status: '${xhr.status}',  resp: '${xhr.responseText}'`);
+                return reject(xhr);
             };
             xhr.send('');
         });
@@ -363,14 +334,15 @@ class BaselineView {
     }
 
     addDeleteBtn(target) {
-        const regionIndex = baseline.canvas.getObjects()
+        const regionIndex = this.canvas.getObjects()
             .indexOf(target);
         $('.deleteBtn')
             .remove();
-        let btnLeft = target.calcCoords().tr.x - 0;
-        let btnTop = target.calcCoords().tr.y - 15;
+        const btnLeft = target.calcCoords().tr.x - 0;
+        const btnTop = target.calcCoords().tr.y - 15;
 
-        let deleteBtn = `<i name="delete-region" id="region-delete-icon-${regionIndex}" class="far fa-1x fa-window-close deleteBtn bg-transparent" style="color: red; background-color: white; position:absolute;top:` + btnTop + 'px;left:' + btnLeft + 'px;cursor:pointer; padding: 0px"></i>';
+        // eslint-disable-next-line max-len
+        const deleteBtn = `<i name="delete-region" id="region-delete-icon-${regionIndex}" class="far fa-1x fa-window-close deleteBtn bg-transparent" style="color: red; background-color: white; position:absolute;top:${btnTop}px;left:${btnLeft}px;cursor:pointer; padding: 0px"></i>`;
         $('.canvas-container')
             .append(deleteBtn);
     }
@@ -378,7 +350,7 @@ class BaselineView {
     toggleDiff(diffId) {
         const thisClass = this;
         if (diffId && !thisClass['diffImg']) {
-            fabric.Image.fromURL(`/snapshoots/${diffId}.png`, function (diffImg) {
+            fabric.Image.fromURL(`/snapshoots/${diffId}.png`, (diffImg) => {
                 window.backImage = diffImg;
                 thisClass['diffImg'] = diffImg;
                 diffImg.scaleToWidth(thisClass.canvas.width);
