@@ -1,4 +1,4 @@
-/* global XMLHttpRequest */
+/* global XMLHttpRequest fabric $ */
 class BaselineView {
     constructor(canvasId, image, params) {
         const thisClass = this;
@@ -20,13 +20,13 @@ class BaselineView {
         } else {
             this.canvas = new fabric.Canvas(canvasId, {
                 preserveObjectStacking: true,
-                uniScaleTransform: true
+                uniScaleTransform: true,
             });
             if (params.height) {
                 this.canvas.setHeight(params.height);
             } else {
 
-                let ratio = params.weight / image.width;
+                const ratio = params.weight / image.width;
                 this.canvas.setHeight(image.height * ratio);
             }
             this.canvas.setWidth(params.weight);
@@ -44,7 +44,7 @@ class BaselineView {
         this.image.sendToBack();
         this.image.scaleToWidth(this.canvas.width);
 
-        this.canvas.on('object:selected', function (o) {
+        this.canvas.on('object:selected', (o) => {
             if (o.target.name === 'ignore_rect') {
                 $('#remove')
                     .show();
@@ -54,12 +54,12 @@ class BaselineView {
             }
         });
 
-        this.canvas.on('selection:cleared', function () {
+        this.canvas.on('selection:cleared', () => {
             $('#remove')
                 .hide();
         });
 
-        this.canvas.on('mouse:down', function (e) {
+        this.canvas.on('mouse:down', (e) => {
             if (!classThis.canvas.getActiveObject()) {
                 $('.deleteBtn')
                     .remove();
@@ -70,7 +70,7 @@ class BaselineView {
     destroy() {
         const classThis = this;
         this.allRects.forEach(
-            function (reg) {
+            (reg) => {
                 classThis.canvas.remove(reg);
             }
         );
@@ -82,7 +82,7 @@ class BaselineView {
         let lastTop = null;
         let width = null;
         let height = null;
-        if ((this.getLastRegion() !== undefined) && (baseline.getLastRegion().name === 'ignore_rect')) {
+        if ((this.getLastRegion() !== undefined) && (this.getLastRegion().name === 'ignore_rect')) {
             lastLeft = this.getLastRegion().left || 50;
             lastTop = this.getLastRegion().top;
             width = this.getLastRegion()
@@ -161,7 +161,7 @@ class BaselineView {
             top: 1,
             left: 1,
             width: this.image.getScaledWidth() - 10,
-            height: this.image.getScaledHeight() - 10
+            height: this.image.getScaledHeight() - 10,
         };
         let r = this.rect(params);
         this.canvas.add(r);
