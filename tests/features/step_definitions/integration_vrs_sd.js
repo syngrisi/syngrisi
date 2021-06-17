@@ -438,17 +438,17 @@ Then(/^I expect "([^"]*)" tests for get url "([^"]*)"$/, async (testsNum, url) =
         .toBe(parseInt(testsNum));
 });
 
-When(/^I check image with path: "([^"]*)" as "([^"]*)" and suppress exceptions$/, async function (filePath, checkName) {
-    try {
-        browser.pause(300);
-        const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${filePath}`);
-        const checkResult = await checkVRS(checkName, imageBuffer);
-        this.STATE.check = checkResult;
-    } catch (e) {
-        this.STATE.check = { error: e };
-        this.saveItem('error', e.message);
-    }
-});
+// When(/^I check image with path: "([^"]*)" as "([^"]*)" and suppress exceptions$/, async function (filePath, checkName) {
+//     try {
+//         browser.pause(300);
+//         const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${filePath}`);
+//         const checkResult = await checkVRS(checkName, imageBuffer);
+//         this.STATE.check = checkResult;
+//     } catch (e) {
+//         this.STATE.check = { error: e };
+//         this.saveItem('error', e.message);
+//     }
+// });
 
 When(/^I login with user:"([^"]*)" password "([^"]*)"$/, (login, password) => {
     $('#password')
