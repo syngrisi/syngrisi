@@ -17,7 +17,6 @@ class BaselineView {
                 thisClass.canvas.renderAll();
             });
         }
-
         if (params.canvas) {
             this.canvas = params.canvas;
         } else {
@@ -92,7 +91,6 @@ class BaselineView {
             height = this.getLastRegion()
                 .getScaledHeight();
         }
-        console.log(document.documentElement.scrollTop);
         // if last elements fit in current viewport create new region near this region
         const top = (lastTop > document.documentElement.scrollTop && lastTop < document.documentElement.scrollTop + window.innerHeight)
             ? lastTop + 20
@@ -277,7 +275,6 @@ class BaselineView {
             .forEach((reg) => {
                 const width = reg.right - reg.left;
                 const height = reg.bottom - reg.top;
-                console.log({ coef });
                 if (coef) {
                     data.push({
                         name: reg.name,
@@ -297,13 +294,13 @@ class BaselineView {
     }
 
     drawRegions(data) {
-        console.log({ data });
+        // console.log({ data });
         if (!data || data === 'undefined') {
             return;
             // console.error('The regions data is empty')
         }
         const regs = this.convertRegionsDataFromServer(JSON.parse(data));
-        console.log('converted:', regs.length, regs);
+        // console.log('converted:', regs.length, regs);
         const classThis = this;
         regs.forEach((regParams) => {
             regParams['noSelect'] = true;
@@ -313,12 +310,12 @@ class BaselineView {
 
     getRegionsData(snapshootId) {
         return new Promise((resolve, reject) => {
-            console.log(`get snapshoot data id: ${snapshootId}`);
+            // console.log(`get snapshoot data id: ${snapshootId}`);
             const xhr = new XMLHttpRequest();
             xhr.open('GET', `/snapshot/${snapshootId}/`, true);
             xhr.onload = function () {
                 if (xhr.status === 200) {
-                    console.log(`Successful got regions data, id: '${snapshootId}'  resp: '${xhr.responseText}'`);
+                    // console.log(`Successful got regions data, id: '${snapshootId}'  resp: '${xhr.responseText}'`);
                     return resolve(JSON.parse(xhr.responseText));
                 }
                 console.error(`Cannot get regions data, status: '${xhr.status}',  resp: '${xhr.responseText}'`);

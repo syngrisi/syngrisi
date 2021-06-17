@@ -4,7 +4,7 @@
 <div name="testinfo"
      class="testinfo testinfo_<?= test.id ?> row test-row pr-0 pt-0 pb-0 m-0 w-100"
 
-     data-toggle="collapse" style="cursor: pointer" onclick="drawTestChecksPreviews('<?= test.id ?>');"
+     data-toggle="collapse" style="cursor: pointer"
      data-target="#testchecks_<?= test.id ?>">
     <!--TEST CHECKBOX-->
     <div class="cell-input cell col-1 col-lg-auto text-truncate small d-flex align-items-center"
@@ -54,14 +54,13 @@
         const allCount = groupStatuses.length;
         const groupStatusesCounts = {};
         groupStatuses.forEach(function(x) { groupStatusesCounts[x] = (groupStatusesCounts[x] || 0)+1; });
-        console.log({groupStatusesCounts});
         let groupStatusesCountsByPercent = {};
         Object.keys(groupStatusesCounts).forEach((x)=>{
         groupStatusesCountsByPercent[x] = groupStatusesCounts[x] / (allCount / 100)
         }
         )
-        console.log({groupStatusesCountsByPercent});
-        // const statusesKeys = Object.keys(calculatecheckGroupStatus);
+        // console.log({groupStatusesCountsByPercent});
+        // const statusesKeys = Object.keys(calculatecheckGroupStatus____);
         ?>
 
         <? for( const status in groupStatusesCountsByPercent) { ?>
@@ -124,7 +123,7 @@
     <!--CREATOR-->
     <div class="cell-creator cell pt-3 pb-3 col-1-2 pl-2 pr-1 text-truncate">
 
-        <div data-toggle="collapse" class="text-truncate">
+        <div class="text-truncate">
             <span name="cell-creator" id="<?= test.id ?>_cell-creator" class="text-secondary small"
                   data-toggle="tooltip"
                   data-placement="top"
