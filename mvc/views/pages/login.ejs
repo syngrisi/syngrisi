@@ -25,8 +25,7 @@
                         <h4 class="card-title">Login</h4>
                         <form method="POST" class="change-pwd" novalidate="" action="/login?origin=<%= origin %>">
                             <div class="form-group">
-                                <label for="email">Username</label>
-                                <input id="email" type="email" class="form-control" name="username" value="" required
+                                <input id="email" type="email" class="form-control" name="username" placeholder="Username" value="" required
                                        autofocus>
                                 <div class="invalid-feedback">
                                     Email is invalid
@@ -35,7 +34,7 @@
 
                             <div class="form-group">
 
-                                <input id="password" type="password" class="form-control" name="password" required
+                                <input id="password" type="password" class="form-control" placeholder="Password" name="password" required
                                        data-eye>
                                 <div class="invalid-feedback">
                                     Password is required
