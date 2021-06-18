@@ -126,15 +126,6 @@
         return '?' + searchForDataPulling;
     }
 
-    async function checksGroupViewClick(evt) {
-        // console.log({ evt })
-        const id = evt.currentTarget.getAttribute('snapshot');
-        if (event.metaKey) {
-            window.open(`/snapshoots/${id}.png`, '_blank')
-                .focus();
-        }
-    }
-
     function renderNextPage(page) {
         return new Promise(async function (resolve, reject) {
 
@@ -167,12 +158,6 @@
             let testsHtml = '<div class="test-page-wrapper row ml-0 mr-0">' + ejs.render(pageTemplate, {
                 checksByTestGroupedByIdent: checksByTestGroupedByIdent
             }, options) + '</div>';
-
-            // ad events to groupview links
-            const linkElements = Array.prototype.slice.call(document.getElementsByClassName('group-links-view'));
-            for (const link of linkElements) {
-                link.addEventListener('click', checksGroupViewClick);
-            }
 
             // insert HTML
             document.getElementById('tests-table-end')
@@ -256,6 +241,10 @@
                 drawTestChecksPreviews(testId);
             });
 
+        jQuery(document)
+            .on('click', 'canvas', function (e) {
+                openDiffView(e);
+            });
     };
 
 </script>

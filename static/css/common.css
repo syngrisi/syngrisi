@@ -13724,6 +13724,14 @@ span.branch {
   padding-top: 1px;
 }
 
+.preview-upper-canvas {
+  pointer-events: none;
+}
+
+.lower-canvas {
+  cursor: pointer;
+}
+
 .check-toolbar-button-info:hover {
   background-color: #047008;
   color: white;

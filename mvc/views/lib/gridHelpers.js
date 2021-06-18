@@ -594,7 +594,7 @@ function drawTestChecksPreviews(testId) {
                 }
             );
             baseline.getSnapshotIgnoreRegionsDataAndDrawRegions(baselineIds[index]);
-            baseline.canvas.hoverCursor = 'pointer';
+            baseline.canvas.upperCanvasEl.classList.add('preview-upper-canvas');
             baselines[id] = baseline;
         });
     });
@@ -605,4 +605,19 @@ function search() {
         .value
         .trim();
     (searchString !== '') && (document.location.href = `/?filter_name_regex=${searchString}`);
+}
+
+async function openDiffView(e) {
+    const checkId = e.currentTarget.getAttribute('checkid');
+    const diffId = e.currentTarget.getAttribute('diffid');
+    const baselineId = e.currentTarget.getAttribute('baselineid');
+    const actualSnapshotId = e.currentTarget.getAttribute('actualsnapshotid');
+    const urn = `diffview?diffid=${diffId}&actualid=${actualSnapshotId}` +
+        `&expectedid=${baselineId}&checkid=${checkId}`;
+    if (event.metaKey) {
+        window.open(urn, '_blank');
+        return;
+    }
+
+    document.location.href = urn;
 }

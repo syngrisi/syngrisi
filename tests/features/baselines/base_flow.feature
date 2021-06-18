@@ -3,7 +3,7 @@ Feature: Base baseline flow
 
     Background:
         Given I clear test VRS database
-        Given I kill process which used port: "3001"
+        When I stop the Syngrisi server
         When I set env variables:
         """
         TEST: 1
@@ -16,7 +16,7 @@ Feature: Base baseline flow
         baseLineFolder: ./baselinesTest/
         """
         When I open the url "http://vrs:3001/loadTestUser"
-        Given I kill process which used port: "3001"
+        When I stop the Syngrisi server
 
         When I set env variables:
         """
