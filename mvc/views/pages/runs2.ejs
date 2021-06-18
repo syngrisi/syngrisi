@@ -55,7 +55,7 @@
              class="sidebar col-2-5 pl-0 pr-0 mh-100 bg-light border-top border-right border-silver float-left ml-0 mr-0"
              style="width: 100px; min-height: 100vh">
             <!--   COLLAPSED SUITES TOOLBAR-->
-            <%- // include('components/sidebar_items_toolbar', {itemName: 'suite-item'})          %>
+            <%- // include('components/sidebar_items_toolbar', {itemName: 'suite-item'})           %>
             <!--   SUITES CONTROL PANEL-->
             <div class="row sticky-top bg-light">
                 <div class="col suites-toolbar ">
@@ -245,6 +245,27 @@
             .on('click', 'canvas', function (e) {
                 openDiffView(e);
             });
+        jQuery(document)
+            .on('mouseover', '[data-toggle="tooltip"]', (e) => {
+                // console.log({ TARGET: e.target });
+                $(e.target)
+                    .tooltip({
+                        animation: true,
+                        delay: {
+                            show: 0,
+                            hide: 100
+                        },
+                        trigger: 'manual'
+                    });
+                $(e.target)
+                    .tooltip('show');
+            });
+        jQuery(document)
+            .on('mouseout', '[data-toggle="tooltip"]', (e) => {
+                // console.log({ TARGETOUT: e.target });
+                $(e.target)
+                    .tooltip('hide');
+            });
     };
 
 </script>
@@ -302,16 +323,6 @@
         document.getElementById('overlay').style.display = 'block';
     }
 
-    $(function () {
-        $('[data-toggle="tooltip"]')
-            .tooltip({
-                animation: true,
-                delay: {
-                    show: 0,
-                    hide: 100
-                },
-                trigger: 'hover'
-            });
-    });</script>
+</script>
 </body>
 </html>
