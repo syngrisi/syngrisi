@@ -1,6 +1,6 @@
 const hasha = require('hasha');
 const YAML = require('yaml');
-const {spawn} = require('child_process');
+const { spawn } = require('child_process');
 const got = require('got');
 const frisby = require('frisby');
 const fs = require('fs');
@@ -96,7 +96,7 @@ When(/^I kill process which used port: "([^"]*)"$/, (port) => {
         if (pidsString) {
             try {
                 for (const pid of pidsString.split('\n')) {
-                    console.log({pid});
+                    console.log({ pid });
                     process.kill(pid);
                 }
                 return true;
@@ -199,7 +199,7 @@ When(/^I create new VRS Test with:$/, async function (yml) {
     for (const key in params.params) {
         form.append(key, params.params[key]);
     }
-    const response = await frisby.post(params.url, {body: form});
+    const response = await frisby.post(params.url, { body: form });
     console.log(response.json);
     this.saveItem('VRSTestResponse', response);
 });
@@ -299,7 +299,7 @@ When(/^I check image with path: "([^"]*)" as "([^"]*)" and suppress exceptions$/
         const checkResult = await checkVRS(checkName, imageBuffer);
         this.STATE.check = checkResult;
     } catch (e) {
-        this.STATE.check = {error: e};
+        this.STATE.check = { error: e };
         this.saveItem('error', e.message);
     }
 });
@@ -317,6 +317,7 @@ When(/^I visually check page with DOM as "([^"]*)"$/, async function (checkName)
 
 When(/^I execute javascript code:$/, function (js) {
     const result = browser.execute(js);
+    console.log({ result });
     this.saveItem('js', result);
 });
 
@@ -494,7 +495,11 @@ Then(/^page source match:$/, (source) => {
 });
 
 When(/^I stop the Syngrisi server$/, () => {
-    browser.syngrisiServer.kill();
+    try {
+        browser.syngrisiServer.kill();
+    } catch (e) {
+        console.log('WARNING: Syngrisi server does not run');
+    }
 });
 
 When(/^I accept the "([^"]*)" check$/, (checkName) => {

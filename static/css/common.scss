@@ -19,6 +19,14 @@ span.branch {
   padding-top: 1px
 }
 
+.preview-upper-canvas {
+  pointer-events: none;
+}
+
+.lower-canvas {
+  cursor: pointer;
+}
+
 .check-toolbar-button-info:hover {
   background-color: darken(#06ba0e, 15%);
 
@@ -94,7 +102,7 @@ span.branch {
   padding: 5px;
 }
 
-.pr-0-5{
+.pr-0-5 {
   padding-right: 0.125rem !important;
 }
 
