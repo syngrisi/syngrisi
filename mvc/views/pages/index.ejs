@@ -245,6 +245,28 @@
             .on('click', 'canvas', function (e) {
                 openDiffView(e);
             });
+
+        jQuery(document)
+            .on('mouseover', '[data-toggle="tooltip"]', (e) => {
+                // console.log({ TARGET: e.target });
+                $(e.target)
+                    .tooltip({
+                        animation: true,
+                        delay: {
+                            show: 0,
+                            hide: 100
+                        },
+                        trigger: 'manual'
+                    });
+                $(e.target)
+                    .tooltip('show');
+            });
+        jQuery(document)
+            .on('mouseout', '[data-toggle="tooltip"]', (e) => {
+                // console.log({ TARGETOUT: e.target });
+                $(e.target)
+                    .tooltip('hide');
+            });
     };
 
 </script>
@@ -314,16 +336,6 @@
         document.getElementById('overlay').style.display = 'block';
     }
 
-    $(function () {
-        $('[data-toggle="tooltip"]')
-            .tooltip({
-                animation: true,
-                delay: {
-                    show: 0,
-                    hide: 100
-                },
-                trigger: 'hover'
-            });
-    });</script>
+</script>
 </body>
 </html>

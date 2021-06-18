@@ -40,7 +40,7 @@
               title="<?= test.status ?>"><?= test.status ?></span>
 
     </div>
-    <div class="cell-status-expand border-bottom border-top bg-warning col-auto pr-0  text-truncate">
+    <div class="cell-status-expand border-bottom border-top bg-warning col-auto pr-0 text-truncate">
         <?
         function calculatecheckGroupStatus(group) {
         const statuses = group.map( x => x.status[0] );
@@ -64,7 +64,7 @@
         ?>
 
         <? for( const status in groupStatusesCountsByPercent) { ?>
-        <div class="row bg-item-<?= status ?>"
+        <div class="row bg-item-<?= status ?>" data-toggle="tooltip" title="<?= status ?>"
              style="height: <?= groupStatusesCountsByPercent[status] ?>%"></div>
         <? }?>
     </div>
@@ -275,138 +275,147 @@
                      data-toggle="tooltip"
                      data-html="true"
                      data-placement="right"
-                     title="Status: [<?= groupStatus ?>]
-                     Name: <?= check.name ?>
-                     Accepted by: <?= check.markedByUsername ? check.markedByUsername : '-' ?>
-                     Accepted date: <?= check.markedDate ? check.markedDate : '-' ?>
-                     Marked as: <?= check.markedAs ? check.markedAs : '-' ?>
-                     Created date: <?= check.createdDate ?>
-                     Created by: <?= check.creatorUsername ?>
-                     BrowserName: <?= check.browserName ?>
-                     BrowserVersion: <?= check.browserVersion ?>
-                     Viewport: <?= check.viewport ?>
-                     Platform: <?= check.os ?>
-                     Id: <?= check._id ?>
-                     ActualId: <?= check.actualSnapshotId ?>
-                     BaselineId: <?= check.baselineId ?>">
+                >
                     <? const snapshootId = groupStatus === 'new' ? check.baselineId : check.actualSnapshotId ?>
                     <? const diffId = (groupStatus === 'failed') ? check.diffId : '' ?>
 
-                    <div onclick1="document.location.href='diffview?diffid=<?= diffId ?>&actualid=<?= check.actualSnapshotId ?>&expectedid=<?= check.baselineId ?>&checkid=<?= check._id ?>'"
-                         name="<?= check.name ?>" class="group-links-view"
+                    <div name="<?= check.name ?>" class="group-links-view"
                          snapshot="<?= snapshootId ?>" id="grouplink_<?= check._id ?>">
                         <!--OVERLAY VIEWPORT-->
                         <div class="preview-overlay-text h4 white bg-olive"><?= check.viewport ?></div>
-
-                        <canvas class="snapshoot-canvas w-100"
-                                id="canvas_snapshoot_<?= check._id ?>"
-                                checkid="<?= check._id ?>"
-                                testid="<?= test.id ?>"
-                                diffid="<?= check.diffId ?>"
-                                baselineid="<?= check.baselineId ?>"
-                                actualsnapshotid="<?= check.actualSnapshotId ?>"
-                        ></canvas>
+                        <?
+                        const previewTooltip = `
+                        <div class='text-left'>
+                        '${check.name}'</br>
+                        ${check.browserName} | ${check.browserVersion} | ${check.viewport} | ${check.os} |
+                        ${check.branch}</br>
+                        <div style="height:6px;"></div>
+                        created by: ${check.creatorUsername || 'unknown'}</br>
+                        accepted by: ${check.markedByUsername ? check.markedByUsername : '-'}</br>
+                        status: [ ${groupStatus} ]</br>
+                        marked as: ${check.markedAs ? check.markedAs : '-'}</br>
+                        accepted date: ${check.markedDate ? moment(check.markedDate).format('YYYY-MM-DD hh:mm') : '-'
+                        }</br>
+                        created date: ${moment(check.createdDate).format('YYYY-MM-DD hh:mm')}</br>
                     </div>
+                    `
+                    ?>
+                    <canvas class="snapshoot-canvas w-100"
+                            id="canvas_snapshoot_<?= check._id ?>"
+                            checkid="<?= check._id ?>"
+                            testid="<?= test.id ?>"
+                            diffid="<?= check.diffId ?>"
+                            baselineid="<?= check.baselineId ?>"
+                            actualsnapshotid="<?= check.actualSnapshotId ?>"
+                            data-toggle="tooltip"
+                            data-html="true"
+                            data-placement="right"
+                            title="<?= previewTooltip ?>"
+                    ></canvas>
                 </div>
             </div>
         </div>
-        <div class="row">
-            <!-- SNAPSHOT TOOLBAR START-->
-            <div class="container pl-1 pr-4 mt-1">
-                <div class="check-mini-toolbar d-flex row justify-content-around1 text-dark pl-3 m-0">
-                    <!-- CHECK NAME AND COUNT-->
-                    <?  let checksCount = Object.keys(checksByTestGroupedByIdent[test.id]).filter(x =>
-                    x.includes('ident')).length ?>
-                    <?  let groupChecksCount = (checksByTestGroupedByIdent[test.id][groupName].checks.length > 1) ?
-                    `(${checksByTestGroupedByIdent[test.id][groupName].checks.length})`
-                    : '' ?>
-                    <div name="check-name"
-                         class="col-8 ml-0 mr-0 pt-2 pb-0 float-right1 align-middle text-truncate  small p-0"
-                         data-toggle="tooltip"
-                         data-placement="top"
-                         title='<?= check.name ?>'
-                    ><?- (index + 1) -?>/<?= checksCount ?><?- groupChecksCount ? `<sup name="group-count"><a
-                                class="text-secondary"
-                                name="group-count-link"
-                                href='/checksgroupview?id=${check._id}'>${groupChecksCount}</a></sup>` : ''
-                        -?> <?- check.name -?>
-                    </div>
+    </div>
+    <div class="row">
+        <!-- SNAPSHOT TOOLBAR START-->
+        <div class="container pl-1 pr-4 mt-1">
+            <div class="check-mini-toolbar d-flex row justify-content-around1 text-dark pl-3 m-0">
+                <!-- CHECK NAME AND COUNT-->
+                <?  let checksCount = Object.keys(checksByTestGroupedByIdent[test.id]).filter(x =>
+                x.includes('ident')).length ?>
+                <?  let groupChecksCount = (checksByTestGroupedByIdent[test.id][groupName].checks.length > 1) ?
+                `(${checksByTestGroupedByIdent[test.id][groupName].checks.length})`
+                : '' ?>
+                <div name="check-name"
+                     class="col-8 ml-0 mr-0 pt-2 pb-0 float-right1 align-middle text-truncate  small p-0"
+                     data-toggle="tooltip"
+                     data-placement="top"
+                     title='<?= check.name ?>'
+                ><?- (index + 1) -?>/<?= checksCount ?><?- groupChecksCount ? `<sup name="group-count"><a
+                            class="text-secondary"
+                            name="group-count-link"
+                            href='/checksgroupview?id=${check._id}'>${groupChecksCount}</a></sup>` : ''
+                    -?> <?- check.name -?>
+                </div>
 
-                    <!-- CHECK BUTTONS -->
-                    <div name="check-buttons"
-                         class="col-3 pr-0 pl-0 pt-1 float-right flex-row-reverse1">
-                        <div class="container pl-0 pr-0">
-                            <div class="row justify-content-end1  float-right flex-row-reverse mr-0">
-                                <div class="col-3 ml-2 p-0 float-right1">
-                                    <!--Remove dropdown-->
-                                    <div class="dropdown">
-                                        <a
-                                                class="remove-button btn-check btn-mini-toolbar btn-sm ml-1 rounded-0 border-0"
-                                                check-name="<?= check.name ?>"
-                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                                                style="line-height: 0.1; padding: 2px;"
-                                                id="checkbutton_<?= check._id ?>"
-                                                data-toggle="tooltip"
-                                                data-placement="top"
-                                                title="Remove this check">
-                                            <i class="fas fa-times-circle fa-1x"></i>
+                <!-- CHECK BUTTONS -->
+                <div name="check-buttons"
+                     class="col-3 pr-0 pl-0 pt-1 float-right flex-row-reverse1">
+                    <div class="container pl-0 pr-0">
+                        <div class="row justify-content-end1  float-right flex-row-reverse mr-0">
+                            <div class="col-3 ml-2 p-0 float-right1">
+                                <!--Remove dropdown-->
+                                <div class="dropdown">
+                                    <a
+                                            class="remove-button btn-check btn-mini-toolbar btn-sm ml-1 rounded-0 border-0"
+                                            check-name="<?= check.name ?>"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                            style="line-height: 0.1; padding: 2px;"
+                                            id="checkbutton_<?= check._id ?>"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="Remove this check">
+                                        <i class="fas fa-times-circle fa-1x"></i>
+                                    </a>
+                                    <div class="dropdown-menu pl-2 pr-2 text-light bg-item-failed text-center"
+                                         aria-labelledby="checkbutton_<?= check._id ?>"
+                                         style="min-width: 5.5rem"
+                                    >
+                                        <a class="remove-option dropdown-item check-toolbar-button-danger rounded pl-1 pr-1 text-light"
+                                           href="javascript:void(0)"
+                                           onclick="removeOneCheck('<?= check._id ?>', '<?= test.id ?>');">
+                                            Remove
                                         </a>
-                                        <div class="dropdown-menu pl-2 pr-2 text-light bg-item-failed text-center"
-                                             aria-labelledby="checkbutton_<?= check._id ?>"
-                                             style="min-width: 5.5rem"
-                                        >
-                                            <a class="remove-option dropdown-item check-toolbar-button-danger rounded pl-1 pr-1 text-light"
-                                               href="javascript:void(0)"
-                                               onclick="removeOneCheck('<?= check._id ?>', '<?= test.id ?>');">
-                                                Remove
-                                            </a>
-                                        </div>
                                     </div>
-                                    <!--/Remove dropdown-->
                                 </div>
-                                <div class="col-3 ml-0 p-0 float-right1">
-                                    <!--Accept dropdown-->
-                                    <div class="dropdown">
-                                        <a
-                                                class="accept-button btn-mini-toolbar btn-check btn-sm rounded ml-1 rounded-0 border-0"
-                                                style="line-height: 0.1; padding: 2px;"
+                                <!--/Remove dropdown-->
+                            </div>
+                            <div class="col-3 ml-0 p-0 float-right1">
+                                <!--Accept dropdown-->
+                                <div class="dropdown">
+                                    <a
+                                            class="accept-button btn-mini-toolbar btn-check btn-sm rounded ml-1 rounded-0 border-0"
+                                            style="line-height: 0.1; padding: 2px;"
 
-                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
 
-                                                check-name="<?= check.name ?>"
-                                                id="acceptbutton_<?= check._id ?>"
-                                                data-toggle="tooltip"
-                                                data-placement="top"
-                                        >
+                                            check-name="<?= check.name ?>"
+                                            id="acceptbutton_<?= check._id ?>"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                    >
 
-                                            <i class="check-accept-button-check-id_<?= check._id ?> <?= check.markedAs === 'accepted' ? 'accepted-button-icon' : 'not-accepted-button-icon' ?> accept-button-icon fas fa-thumbs-up fa-1x"
-                                               title="<?- check.markedByUsername ? `Accepted by: ${check.markedByUsername} \n Accepted date: ${check.markedDate}` : 'Click here to accept this check'?>"
-                                            ></i>
+                                        <i class="check-accept-button-check-id_<?= check._id ?> <?= check.markedAs === 'accepted' ? 'accepted-button-icon' : 'not-accepted-button-icon' ?> accept-button-icon fas fa-thumbs-up fa-1x"
+                                           data-toggle="tooltip"
+                                           data-html="true"
+                                           data-placement="right"
+                                           title="<div class='text-left'><?- check.markedByUsername ? `Accepted by: ${check.markedByUsername} </br> Accepted date: ${check.markedDate}` : 'Click here to accept this check'?></div>"
+                                        ></i>
+                                    </a>
+                                    <div class="dropdown-menu pl-2 pr-2 text-light bg-item-passed text-center"
+                                         aria-labelledby="acceptbutton_<?= check._id ?>"
+                                         style="min-width: 5.5rem"
+                                    >
+                                        <a class="accept-option dropdown-item check-toolbar-button-info rounded pl-1 pr-1 text-light bg-olive1"
+                                           href="javascript:void(0)"
+                                           onclick="acceptOneCheck('<?= check._id ?>', '<?= check.actualSnapshotId ?>', '<?= check.baselineId ?>', '<?= test.id ?>')">
+                                            Accept
                                         </a>
-                                        <div class="dropdown-menu pl-2 pr-2 text-light bg-item-passed text-center"
-                                             aria-labelledby="acceptbutton_<?= check._id ?>"
-                                             style="min-width: 5.5rem"
-                                        >
-                                            <a class="accept-option dropdown-item check-toolbar-button-info rounded pl-1 pr-1 text-light bg-olive1"
-                                               href="javascript:void(0)"
-                                               onclick="acceptOneCheck('<?= check._id ?>', '<?= check.actualSnapshotId ?>', '<?= check.baselineId ?>', '<?= test.id ?>')">
-                                                Accept
-                                            </a>
-                                        </div>
                                     </div>
-                                    <!--/Accept dropdown-->
                                 </div>
+                                <!--/Accept dropdown-->
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- SNAPSHOT TOOLBAR START-->
         </div>
+        <!-- SNAPSHOT TOOLBAR START-->
     </div>
+</div>
 
-    <? }; ?>
-    <!--  foreach checks end-->
+<? }; ?>
+<!--  foreach checks end-->
 
 </div>
 <!-- all-checks-->
