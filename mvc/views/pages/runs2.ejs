@@ -55,7 +55,7 @@
              class="sidebar col-2-5 pl-0 pr-0 mh-100 bg-light border-top border-right border-silver float-left ml-0 mr-0"
              style="width: 100px; min-height: 100vh">
             <!--   COLLAPSED SUITES TOOLBAR-->
-            <%- // include('components/sidebar_items_toolbar', {itemName: 'suite-item'})        %>
+            <%- // include('components/sidebar_items_toolbar', {itemName: 'suite-item'})         %>
             <!--   SUITES CONTROL PANEL-->
             <div class="row sticky-top bg-light">
                 <div class="col suites-toolbar ">
@@ -162,7 +162,7 @@
 
             // prepare testHTML using ejs template and obtained json data
             const checksByTestGroupedByIdent = JSON.parse(json);
-            console.log({ checksByTestGroupedByIdent })
+            console.log({ checksByTestGroupedByIdent });
             let options = { delimiter: '?' };
             const pageTemplate = await getRequest('../../../static/ejs/tests_table_rows.ejs');
             let testsHtml = '<div class="test-page-wrapper row ml-0 mr-0">' + ejs.render(pageTemplate, {
@@ -249,6 +249,12 @@
                     event.preventDefault();
                     search();
                 }
+            });
+        // draw preview after collapse event fired
+        jQuery(document)
+            .on('shown.bs.collapse', function (e) {
+                const testId = e.target.id.replace('testchecks_', '');
+                drawTestChecksPreviews(testId);
             });
     };
 
