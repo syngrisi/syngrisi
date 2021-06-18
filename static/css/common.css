@@ -13728,6 +13728,11 @@ span.branch {
   pointer-events: none;
 }
 
+.tooltip-inner {
+  max-width: 300px;
+  font-size: 0.675rem;
+}
+
 .lower-canvas {
   cursor: pointer;
 }
