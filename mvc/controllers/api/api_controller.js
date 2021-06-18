@@ -1488,6 +1488,7 @@ exports.task_migration_1_1_0 = async function (req, res) {
 
     const checks = await Check.find({});
     const tests = await Test.find({});
+    const baselines = await Baseline.find({});
     const snapshoots = await Snapshot.find({});
     res.write('\n0. Resync indexes\n');
 
@@ -1518,60 +1519,89 @@ exports.task_migration_1_1_0 = async function (req, res) {
     console.log('Log');
     res.write('\nLog\n');
 
-    res.write('\n0. Update all check & tests to master branch\n');
+    res.write('\n-1. fix app ids\n');
+
+    res.write(`\n***FIX CHECKS***\n`);
     for (const check of checks) {
-        check.branch = 'master';
-        check.save();
-    }
-    for (const test of tests) {
-        console.log(test.name);
-        res.write(test.name + '\n');
-        test.branch = 'master';
-        test.save();
-    }
-    res.write('\n1. Fix empty diffs\n');
-    for (const check of checks) {
-        if (!check.diffId) {
-            console.log({ DIFF: check.diffId });
-            delete check.diffId;
-            const tempCheck = check.toObject();
-            await check.remove();
-            delete tempCheck.diffId;
-            Check.create(tempCheck);
+        if(check.app != '5f981e3b3ca49d202326ede0') {
+            console.log(check.app);
+            res.write(`\n${check.app}\n`);
+            check.app = '5f981e3b3ca49d202326ede0';
+            check.save();
         }
     }
-    res.write('\n2. Fix docs types\n');
-    for (const check of checks) {
-        console.log({ check });
-        res.write(`${JSON.stringify(check)}\n\n`);
-        if (check.baselineId) (check.baselineId = mongoose.Types.ObjectId(check.baselineId));
-        if (check.actualSnapshotId) (check.actualSnapshotId = mongoose.Types.ObjectId(check.actualSnapshotId));
-        if (check.actualSnapshotId) (check.diffId = mongoose.Types.ObjectId(check.diffId));
-        await check.save();
-    }
 
-    res.write(`\n2. Change 'The Test App' => 'HPE'`);
-    const app = await orm.createAppIfNotExist({ name: 'HPE' });
-    // const checks = await Check.find({});
-    for (const check of checks) {
-        check.app = app.id;
-        check.save();
-        res.write(`\n${check._id}`);
-    }
-
-    res.write('\n3. Fix undefined regions\n');
-    for (const snp of snapshoots) {
-        if ((snp.ignoreRegions === 'undefined') || (snp.boundRegions === 'undefined')) {
-            console.log({ Snp: snp.name });
-            res.write(`\n${snp.name}`);
-            // delete snp.ignoreRegions;
-            // delete snp.boundRegions;
-            const tempSnp = snp.toObject();
-            await snp.remove();
-            delete tempSnp.ignoreRegions;
-            delete tempSnp.boundRegions;
-            Snapshot.create(tempSnp);
+    res.write(`\n***FIX BASELINES***\n`)
+    for (const baseline of baselines) {
+        if(baseline.app != '5f981e3b3ca49d202326ede0') {
+            console.log(baseline.app);
+            res.write(`\n${baseline.app}\n`);
+            baseline.app = '5f981e3b3ca49d202326ede0';
+            baseline.save();
         }
     }
+
+    // for (const test of tests) {
+    //     console.log(test.name);
+    //     res.write(test.name + '\n');
+    //     test.branch = 'master';
+    //     test.save();
+    // }
+
+    // res.write('\n0. Update all check & tests to master branch\n');
+    // for (const check of checks) {
+    //     check.branch = 'master';
+    //     check.save();
+    // }
+    // for (const test of tests) {
+    //     console.log(test.name);
+    //     res.write(test.name + '\n');
+    //     test.branch = 'master';
+    //     test.save();
+    // }
+    // res.write('\n1. Fix empty diffs\n');
+    // for (const check of checks) {
+    //     if (!check.diffId) {
+    //         console.log({ DIFF: check.diffId });
+    //         delete check.diffId;
+    //         const tempCheck = check.toObject();
+    //         await check.remove();
+    //         delete tempCheck.diffId;
+    //         Check.create(tempCheck);
+    //     }
+    // }
+    // res.write('\n2. Fix docs types\n');
+    // for (const check of checks) {
+    //     console.log({ check });
+    //     res.write(`${JSON.stringify(check)}\n\n`);
+    //     if (check.baselineId) (check.baselineId = mongoose.Types.ObjectId(check.baselineId));
+    //     if (check.actualSnapshotId) (check.actualSnapshotId = mongoose.Types.ObjectId(check.actualSnapshotId));
+    //     if (check.actualSnapshotId) (check.diffId = mongoose.Types.ObjectId(check.diffId));
+    //     await check.save();
+    // }
+    //
+    // res.write(`\n2. Change 'The Test App' => 'HPE'`);
+    // const app = await orm.createAppIfNotExist({ name: 'HPE' });
+    // // const checks = await Check.find({});
+    // for (const check of checks) {
+    //     check.app = app.id;
+    //     check.save();
+    //     res.write(`\n${check._id}`);
+    // }
+    //
+    // res.write('\n3. Fix undefined regions\n');
+    // for (const snp of snapshoots) {
+    //     if ((snp.ignoreRegions === 'undefined') || (snp.boundRegions === 'undefined')) {
+    //         console.log({ Snp: snp.name });
+    //         res.write(`\n${snp.name}`);
+    //         // delete snp.ignoreRegions;
+    //         // delete snp.boundRegions;
+    //         const tempSnp = snp.toObject();
+    //         await snp.remove();
+    //         delete tempSnp.ignoreRegions;
+    //         delete tempSnp.boundRegions;
+    //         Snapshot.create(tempSnp);
+    //     }
+    // }
     res.end('\nDone\n');
 };
