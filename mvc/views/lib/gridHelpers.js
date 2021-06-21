@@ -614,7 +614,7 @@ async function openDiffView(e) {
     const actualSnapshotId = e.currentTarget.getAttribute('actualsnapshotid');
     const urn = `diffview?diffid=${diffId}&actualid=${actualSnapshotId}` +
         `&expectedid=${baselineId}&checkid=${checkId}`;
-    if (event.metaKey) {
+    if (e.metaKey || e.ctrlKey) {
         window.open(urn, '_blank');
         return;
     }

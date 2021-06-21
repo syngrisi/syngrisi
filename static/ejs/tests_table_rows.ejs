@@ -114,7 +114,7 @@
                   data-toggle="tooltip"
                   data-placement="top"
                   title="<?= test.name ?>"
-            ><?- test.name -?>
+            ><?= test.name ?>
             </span>
         </div>
     </div>
@@ -335,7 +335,7 @@
                             class="text-secondary"
                             name="group-count-link"
                             href='/checksgroupview?id=${check._id}'>${groupChecksCount}</a></sup>` : ''
-                    -?> <?- check.name -?>
+                    -?> <?= check.name ?>
                 </div>
 
                 <!-- CHECK BUTTONS -->
@@ -389,7 +389,7 @@
                                            data-toggle="tooltip"
                                            data-html="true"
                                            data-placement="right"
-                                           title="<div class='text-left'><?- check.markedByUsername ? `Accepted by: ${check.markedByUsername} </br> Accepted date: ${check.markedDate}` : 'Click here to accept this check'?></div>"
+                                           title="<div class='text-left'><?= check.markedByUsername ? `Accepted by: ${check.markedByUsername} </br> Accepted date: ${check.markedDate}` : 'Click here to accept this check'?></div>"
                                         ></i>
                                     </a>
                                     <div class="dropdown-menu pl-2 pr-2 text-light bg-item-passed text-center"
