@@ -1,1 +1,0 @@
-np --yolo --no-publish
