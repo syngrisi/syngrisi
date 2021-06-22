@@ -162,15 +162,15 @@ exports.diffView = function (req, res) {
                     expected_snapshoot: baseline,
                     actual_snapshoot: actualSnapshoot,
                     diff_snapshoot: diffSnapshoot,
-                    suite: suite,
-                    test: test,
-                    check: check,
-                    lastChecksWithSameName: lastChecksWithSameName
+                    suite,
+                    test,
+                    check,
+                    lastChecksWithSameName,
                 });
                 return resolve();
             } catch (e) {
                 res.status(500)
-                    .send(`Error preparing diff page: ${JSON.stringify(e)}`);
+                    .send(`Error preparing diff page: '${JSON.stringify(e)}'`);
                 return reject(e);
             }
         } catch (e) {
