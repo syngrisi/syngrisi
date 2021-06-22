@@ -627,14 +627,6 @@ async function openDiffView(e) {
     document.location.href = urnDiff;
 }
 
-function getRunsClass(num) {
-    if (num % 5 === 0) return 'runs-5';
-    if (num % 4 === 0) return 'runs-4';
-    if (num % 3 === 0) return 'runs-3';
-    if (num % 2 === 0) return 'runs-2';
-    return 'runs-1';
-}
-
 function toggleSidebar() {
     const sidebar = document.getElementsByName('sidebar')[0];
     if (sidebar.classList.contains('hide')) {
@@ -649,24 +641,17 @@ function colorizeRuns() {
     const runsIds = Array.from(runsDivs)
         .map((run) => run.getAttribute('run'));
     const uniqueIds = [...new Set(runsIds)];
-
-    const colors = Please.make_scheme(
+    console.log({ LEN: Array.from(uniqueIds).length });
+    const colors = Please.make_color(
         {
-            h: 200,
-            s: 0.7,
-            v: 0.6,
-        },
-        {
-            scheme_type: 'triadic',
             format: 'hex',
-            colors_returned: uniqueIds.length,
+            colors_returned: Array.from(uniqueIds).length,
         });
-
+    console.log({ colors });
     for (const [i, id] of uniqueIds.entries()) {
         for (const run of runsDivs) {
             if (run.getAttribute('run') === id) {
                 run.style.backgroundColor = colors[i];
-                run.classList.add(getRunsClass(i));
             }
         }
     }
