@@ -325,7 +325,7 @@
     })();
 
     function unfoldChecksWithScroll(id) {
-        console.log({ UNFOLD: id });
+        // console.log({ UNFOLD: id });
         jQuery(`.testinfo_${id}`)[0].scrollIntoView(true);
         jQuery(`#testchecks_${id}`)
             .collapse('show');
