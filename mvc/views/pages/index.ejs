@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="../../../static/css/colors.css">
     <script src="lib/gridHelpers.js"></script>
     <script src="../../../static/js/ejs.js"></script>
+    <script src="../../../static/js/Please.js"></script>
     <script src="../../../static/js/moment.min.js"></script>
 
     <% if(currentSuite) { %>
@@ -227,7 +228,8 @@
         // EVENTS
         window.addEventListener('scroll', scroller);
 
-        jQuery('#subheader-search').on('keyup', function (event) {
+        jQuery('#subheader-search')
+            .on('keyup', function (event) {
                 if (event.keyCode === 13) {
                     event.preventDefault();
                     search();

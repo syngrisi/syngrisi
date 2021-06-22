@@ -612,12 +612,62 @@ async function openDiffView(e) {
     const diffId = e.currentTarget.getAttribute('diffid');
     const baselineId = e.currentTarget.getAttribute('baselineid');
     const actualSnapshotId = e.currentTarget.getAttribute('actualsnapshotid');
-    const urn = `diffview?diffid=${diffId}&actualid=${actualSnapshotId}` +
+    const urnDiff = `diffview?diffid=${diffId}&actualid=${actualSnapshotId}` +
         `&expectedid=${baselineId}&checkid=${checkId}`;
+    const urnGroup = `checksgroupview?id=${checkId}`;
     if (e.metaKey || e.ctrlKey) {
-        window.open(urn, '_blank');
+        window.open(urnDiff, '_blank');
         return;
     }
+    // if (e.shiftKey) {
+    //     window.open(urnGroup, '_blank');
+    //     return;
+    // }
 
-    document.location.href = urn;
+    document.location.href = urnDiff;
+}
+
+function getRunsClass(num) {
+    if (num % 5 === 0) return 'runs-5';
+    if (num % 4 === 0) return 'runs-4';
+    if (num % 3 === 0) return 'runs-3';
+    if (num % 2 === 0) return 'runs-2';
+    return 'runs-1';
+}
+
+function toggleSidebar() {
+    const sidebar = document.getElementsByName('sidebar')[0];
+    if (sidebar.classList.contains('hide')) {
+        sidebar.classList.remove('hide');
+        return;
+    }
+    sidebar.classList.add('hide');
+}
+
+function colorizeRuns() {
+    const runsDivs = document.querySelectorAll('.cell-run[run]');
+    const runsIds = Array.from(runsDivs)
+        .map((run) => run.getAttribute('run'));
+    const uniqueIds = [...new Set(runsIds)];
+
+    const colors = Please.make_scheme(
+        {
+            h: 200,
+            s: 0.7,
+            v: 0.6,
+        },
+        {
+            scheme_type: 'triadic',
+            format: 'hex',
+            colors_returned: uniqueIds.length,
+        });
+
+    for (const [i, id] of uniqueIds.entries()) {
+        for (const run of runsDivs) {
+            if (run.getAttribute('run') === id) {
+                run.style.backgroundColor = colors[i];
+                run.classList.add(getRunsClass(i));
+            }
+        }
+    }
 }

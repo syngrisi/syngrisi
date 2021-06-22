@@ -2,12 +2,12 @@
 
 <!--TEST_INFO START-->
 <div name="testinfo"
-     class="testinfo testinfo_<?= test.id ?> row test-row pr-0 pt-0 pb-0 m-0 w-100"
+     class="testinfo row justify-content-between testinfo_<?= test.id ?> row test-row pr-0 pt-0 pb-0 m-0 w-100"
 
      data-toggle="collapse" style="cursor: pointer"
      data-target="#testchecks_<?= test.id ?>">
     <!--TEST CHECKBOX-->
-    <div class="cell-input cell col-1 col-lg-auto text-truncate small d-flex align-items-center"
+    <div class="cell-input cell col-auto text-truncate small d-flex align-items-center"
          onclick="event.stopPropagation();">
         <input id="<?= test.id ?>"
                name="test"
@@ -218,6 +218,10 @@
               data-toggle="tooltip"
               data-placement="top"
               title="<?= toolTip ?>"><?= viewport ?></span>
+    </div>
+    <!-- RUN -->
+    <div class="cell-run cell p-0 col-0-1 text-truncate" run="<?= test.run ?>" title="<?= test.run ?>">
+        <span></span>
     </div>
 </div>
 <!--/TEST_INFO-->
