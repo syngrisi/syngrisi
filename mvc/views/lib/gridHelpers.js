@@ -641,13 +641,11 @@ function colorizeRuns() {
     const runsIds = Array.from(runsDivs)
         .map((run) => run.getAttribute('run'));
     const uniqueIds = [...new Set(runsIds)];
-    console.log({ LEN: Array.from(uniqueIds).length });
     const colors = Please.make_color(
         {
             format: 'hex',
             colors_returned: Array.from(uniqueIds).length,
         });
-    console.log({ colors });
     for (const [i, id] of uniqueIds.entries()) {
         for (const run of runsDivs) {
             if (run.getAttribute('run') === id) {
