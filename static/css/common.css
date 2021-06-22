@@ -13857,6 +13857,11 @@ span.branch {
   max-width: 2.5%;
 }
 
+.col-0-1 {
+  flex: 0 0 0.8333333333%;
+  max-width: 0.8333333333%;
+}
+
 .col-0-5 {
   flex: 0 0 4.1666666667%;
   max-width: 4.1666666667%;
@@ -13881,24 +13886,31 @@ span.branch {
 }
 
 .cell-status {
-  padding-left: 0.35rem !important;
+  display: block;
+  padding-left: 0 !important;
+  width: 0.5rem !important;
   margin-top: -1px;
   margin-bottom: 0px;
 }
 
 .testinfo:hover .cell-status {
+  display: none;
   padding-left: 0 !important;
 }
 
 .cell-status-expand {
   padding-left: 0 !important;
+  display: none;
+  padding-bottom: 0px !important;
   margin-top: -1px;
-  margin-bottom: 1px;
 }
 
 .testinfo:hover .cell-status-expand {
+  display: block;
   margin-right: 0 !important;
-  padding-left: 0.35rem !important;
+  width: 0.5rem;
+  margin-top: -1px;
+  margin-bottom: 1px;
 }
 
 .testinfo:hover {

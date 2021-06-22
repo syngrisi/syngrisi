@@ -23,7 +23,7 @@ span.branch {
   pointer-events: none;
 }
 
-.tooltip-inner{
+.tooltip-inner {
   max-width: 300px;
   font-size: 0.675rem;
 }
@@ -154,6 +154,10 @@ span.branch {
   @include make-col(0.3);
 }
 
+.col-0-1 {
+  @include make-col(0.1);
+}
+
 .col-0-5 {
   @include make-col(0.5);
 }
@@ -175,25 +179,31 @@ span.branch {
 }
 
 .cell-status {
-  padding-left: 0.35rem !important;
+  display: block;
+  padding-left: 0 !important;
+  width: 0.50rem !important;
   margin-top: -1px;
   margin-bottom: 0px;
 }
 
 .testinfo:hover .cell-status {
-  //margin-right: -0.25rem !important;
+  display: none;
   padding-left: 0 !important;
 }
 
 .cell-status-expand {
   padding-left: 0 !important;
+  display: none;
+  padding-bottom: 0px !important;
   margin-top: -1px;
-  margin-bottom: 1px;
 }
 
 .testinfo:hover .cell-status-expand {
+  display: block;
   margin-right: 0 !important;
-  padding-left: 0.35rem !important;
+  width: 0.50rem;
+  margin-top: -1px;
+  margin-bottom: 1px;
 }
 
 .testinfo:hover {
