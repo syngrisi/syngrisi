@@ -310,7 +310,12 @@ const VRSLogSchema = new Schema({
     },
     msgType: {
         type: String,
-        default: 'other',
+    },
+    itemType: {
+        type: String,
+    },
+    itemId: {
+        type: Schema.Types.ObjectId,
     },
     severity: {
         type: String,

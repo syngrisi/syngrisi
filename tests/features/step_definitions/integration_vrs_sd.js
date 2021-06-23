@@ -130,7 +130,6 @@ When(/^I kill process which used port: "([^"]*)"$/, (port) => {
 
 When(/^I click on "([^"]*)" VRS test$/, (testName) => {
     TableVRSComp.init();
-
     TableVRSComp.data.filter((row) => row.name.$('span[name=cell-name]')
         .getText()
         .includes(testName))[0].name
@@ -201,7 +200,6 @@ Then(/^I expect that(:? (\d)th)? VRS test "([^"]*)" is unfolded$/, (number, test
     const intNumber = number ? parseInt(number) : 1;
     const row = TableVRSComp.data.filter((row) => row.name.$('span[name=cell-name]')
         .getText() === testName)[intNumber - 1];
-    console.log({ row });
     const nameCell = row.name.$('span');
     const foldDiff = nameCell.$('./../../../../../..//div[contains(@class, \'all-checks\')]');
     expect(foldDiff)
@@ -303,6 +301,36 @@ When(/^I create "([^"]*)" tests with params:$/, { timeout: 60000000 }, async fun
             .toString(36)
             .substring(7)}`;
         const checkResult = await checkVRS(checkName, imageBuffer);
+        this.STATE.check = checkResult;
+        await browser.vDriver.stopTestSession(browser.config.apiKey);
+    }
+});
+
+When(/^I create "([^"]*)" tests with few checks:$/, { timeout: 60000000 }, async function (num, yml) {
+    const params = YAML.parse(yml);
+
+    browser.vDriver.setCurrentSuite({
+        name: 'Integration suite',
+        id: 'Integration_suite',
+    });
+
+    for (const i of Array.from(Array(parseInt(num))
+        .keys())) {
+        console.log(`Create test # ${i}`);
+        await browser.vDriver.startTestSession({
+            app: 'Test App',
+            test: params.testName.includes('-') ? (`${params.testName}${i + 1}`) : params.testName,
+            run: process.env.RUN_NAME || 'integration_run_name',
+            runident: process.env.RUN_IDENT || 'integration_run_ident',
+        }, browser.config.apiKey);
+        browser.pause(300);
+        let checkResult = [];
+
+        for (const check of params.checks) {
+            const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${check.filePath}`);
+            checkResult.push(await checkVRS(check.checkName, imageBuffer));
+        }
+
         this.STATE.check = checkResult;
         await browser.vDriver.stopTestSession(browser.config.apiKey);
     }
@@ -546,14 +574,31 @@ When(/^I delete the "([^"]*)" check$/, (checkName) => {
 When(/^I expect the "([^"]*)" check has "([^"]*)" acceptance status$/, (checkName, acceptStatus) => {
     const acceptStatusMap = {
         accept: 'accepted-button-icon',
+        'previously accept': 'prev-accepted-button-icon',
         'not accept': 'not-accepted-button-icon',
     };
-
-    // eslint-disable-next-line max-len
     const icon = $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//a[contains(@class, 'accept-button')]/i`);
 
-    expect(icon)
-        .toHaveAttrContaining('class', acceptStatusMap[acceptStatus]);
+    const classesList = icon
+        .getAttribute('class')
+        .split(' ');
+
+    expect(classesList)
+        .toContain(
+            acceptStatusMap[acceptStatus]
+        );
+
+    const wrongStatuses = Object.keys(acceptStatusMap)
+        .filter(x => x !== acceptStatus);
+    console.log({ wrongStatuses });
+
+    for (const wrongStatus of wrongStatuses) {
+        expect(classesList)
+            .not
+            .toContain(
+                acceptStatusMap[wrongStatus]
+            );
+    }
 });
 
 Then(/^I expect that last "([^"]*)" checks with ident contains "([^"]*)" has (not |)the same "([^"]*)"$/, async function (num, ident, negative, prop) {
@@ -631,4 +676,39 @@ Then(/^I expect ([\d]+)st baseline with:$/, function (num, yml) {
     baseline.markedAs = baseline.markedAs || '';
     expect(baseline)
         .toMatchObject(params);
+});
+
+When(/^I select the test "([^"]*)"$/, function (testName) {
+    $(`//span[normalize-space(text())='${testName}']/../../..//input`)
+        .click();
+});
+
+Then(/^I expect the (\d)st "([^"]*)" check has "([^"]*)" acceptance status$/, function (num, checkName, acceptStatus) {
+    const acceptStatusMap = {
+        accept: 'accepted-button-icon',
+        'previously accept': 'prev-accepted-button-icon',
+        'not accept': 'not-accepted-button-icon',
+    };
+    const icon = $(`(.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//a[contains(@class, 'accept-button')]/i)[${num}]`);
+
+    const classesList = icon
+        .getAttribute('class')
+        .split(' ');
+
+    expect(classesList)
+        .toContain(
+            acceptStatusMap[acceptStatus]
+        );
+
+    const wrongStatuses = Object.keys(acceptStatusMap)
+        .filter(x => x !== acceptStatus);
+    console.log({ wrongStatuses });
+
+    for (const wrongStatus of wrongStatuses) {
+        expect(classesList)
+            .not
+            .toContain(
+                acceptStatusMap[wrongStatus]
+            );
+    }
 });
