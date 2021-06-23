@@ -348,10 +348,12 @@ Feature: Check Acceptance
         Then I expect the "3/3 new int check 3" check has "not accept" acceptance status
 
 
+        When I wait for "2" seconds
         Then I expect that VRS test "Acceptance - two Test, three Check, accept, remove, check Test status" has "Partially" accepted status
 
+        When I wait for "2" seconds
         When I delete the "1/3 new int check 1" check
-        Then I expect that element "//div[text()='1/2 new int check 1']" is not displayed
+        Then I expect that element "//div[text()='1/3 new int check 1']" is not displayed
 
         Then I expect that VRS test "Acceptance - two Test, three Check, accept, remove, check Test status" has "Unaccepted" accepted status
         When I refresh page

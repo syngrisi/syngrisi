@@ -5,6 +5,7 @@ const hasha = require('hasha');
 
 exports.config = {
     rootPath: process.cwd(),
+    serverPort: 3001,
     apiKey: process.env.SYNGRISI_API_KEY ? hasha(process.env.SYNGRISI_API_KEY) : '123',
     //
     // ====================
