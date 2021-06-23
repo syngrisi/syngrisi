@@ -325,14 +325,15 @@ div[name="testinfo"]:nth-of-type(4n+1) {
 
 .not-accepted-button-icon {
   color: #888888;
-  /*background-color: #111111;*/
   opacity: 90%;
   padding-bottom: 2px;
 }
 
 .accepted-button-icon {
   color: #2ECC40;
-  /*background-color: #111111;*/
-
   opacity: 90%;
+}
+
+.prev-accepted-button-icon {
+  color: #4d8000;
 }

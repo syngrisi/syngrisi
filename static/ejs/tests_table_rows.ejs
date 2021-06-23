@@ -23,7 +23,8 @@
                 }
      ?>
 
-    <div class="cell-status <?= statusesClassesBg[test.status] ?> cell col-auto pr-0 border-0  text-truncate">
+    <div class="cell-status <?= statusesClassesBg[test.status] ?> cell col-auto pr-0 border-0 text-truncate"
+         name="cell-status" testid="<?= test.id ?>">
         <? const statusesClasses = {
                     Failed: 'text-danger',
                     Passed: 'text-success',
@@ -269,7 +270,8 @@
          actualSnapshotId="<?= check.actualSnapshotId ?>"
          checkStatus="<?= groupStatus ?>">
         <div class="row pl-1">
-            <div name="check-status" class="col-auto <?= statusesClasses[groupStatus] ?> pt-1 pb-1 pl-1 pr-1"
+            <div name="check-status" checkid="<?= check._id ?>"
+                 class="col-auto <?= statusesClasses[groupStatus] ?> pt-1 pb-1 pl-1 pr-1"
                  style="width: 2px"></div>
             <div id="check1_<?= check._id ?>" class="col-11 pl-0 pb-1 pr-1 shadow"
                  baselineId="<?= check.baselineId ?>"
@@ -389,11 +391,22 @@
                                             data-placement="top"
                                     >
 
-                                        <i class="check-accept-button-check-id_<?= check._id ?> <?= check.markedAs === 'accepted' ? 'accepted-button-icon' : 'not-accepted-button-icon' ?> accept-button-icon fas fa-thumbs-up fa-1x"
+                                        <?
+                                        let acceptButtonClass;
+                                        if(check.markedAs === 'accepted'){
+                                                acceptButtonClass  = (check.baselineId === check.actualSnapshotId) ? 'accepted-button-icon' : 'prev-accepted-button-icon'
+                                        }
+                                        else{
+                                            acceptButtonClass ='not-accepted-button-icon';
+                                        }
+
+                                        ?>
+                                        <i class="check-accept-button-check-id_<?= check._id ?> <?= acceptButtonClass ?> accept-button-icon fas fa-thumbs-up fa-1x"
                                            data-toggle="tooltip"
+                                           name="accept-button-icon"
                                            data-html="true"
                                            data-placement="right"
-                                           title="<div class='text-left'><?= check.markedByUsername ? `Accepted by: ${check.markedByUsername} </br> Accepted date: ${check.markedDate}` : 'Click here to accept this check'?></div>"
+                                           title="<div class='text-left'><?= check.markedByUsername ? `Accepted by: ${check.markedByUsername} </br> Accepted date: ${moment(check.markedDate).format('YYYY-MM-DD hh:mm.ss')}` : 'Click here to accept this check'?></div>"
                                         ></i>
                                     </a>
                                     <div class="dropdown-menu pl-2 pr-2 text-light bg-item-passed text-center"

@@ -1,4 +1,4 @@
-/* global baselines $ document XMLHttpRequest fabric */
+/* global baselines $ document XMLHttpRequest fabric window */
 
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
@@ -13,17 +13,64 @@ function confirmation(text = 'are you sure?') {
     return answer;
 }
 
-async function redrawCheckAcceptedStatus(id) {
+async function redrawCheckStatus(id, status = 'passed') {
     try {
-        const check = JSON.parse(await getRequest(`check/${id}`));
-        const icon = document.getElementsByClassName(`check-accept-button-check-id_${id}`)[0];
-        if (check.markedAs === 'accepted') {
-            icon.classList.contains('not-accepted-button-icon') && icon.classList.remove('not-accepted-button-icon');
-            !icon.classList.contains('accepted-button-icon') && icon.classList.add('accepted-button-icon');
-            icon.setAttribute('title', check.markedByUsername ? `Accepted by: ${check.markedByUsername} \n Accepted date: ${check.markedDate}` : 'Click here to accept this check');
-        }
+        const statusesClasses = {
+            passed: 'bg-item-passed',
+            new: 'bg-item-new',
+            failed: 'bg-item-failed',
+            blinking: 'bg-warning',
+        };
+        const statusDiv = document.querySelector(`[name='check-status'][checkid='${id}']`);
+        statusDiv.classList.forEach((x) => {
+            if (x.includes('bg-item')) {
+                statusDiv.classList.remove(x);
+            }
+        });
+        statusDiv.classList.add(statusesClasses[status]);
     } catch (e) {
-        console.log(`cannot redraw accept check icon with id: '${id}' error: '${e}'`);
+        console.error(`cannot redraw  check status with id: '${id}' error: '${e}'`);
+    }
+}
+
+async function redrawTestStatus(test) {
+    try {
+        const statusesClasses = {
+            passed: 'bg-item-passed',
+            new: 'bg-item-new',
+            failed: 'bg-item-failed',
+            blinking: 'bg-warning',
+        };
+        const statusDiv = document.querySelector(`[name='cell-status'][testid='${test._id}']`);
+        statusDiv.classList.forEach((x) => {
+            if (x.includes('bg-item')) {
+                statusDiv.classList.remove(x);
+            }
+        });
+        statusDiv.classList.add(statusesClasses[test.status.toLowerCase()]);
+    } catch (e) {
+        console.error(`cannot redraw test status with id: '${test._id}' error: '${e}'`);
+    }
+}
+
+async function redrawCheckAcceptedStatus(check) {
+    try {
+        // redraw thumb class
+        const icon = document.getElementsByClassName(`check-accept-button-check-id_${check._id}`)[0];
+        // console.log({ MARK_US: check.markedAs });
+        if (check.markedAs === 'accepted') {
+            if (icon.classList.contains('not-accepted-button-icon')) icon.classList.remove('not-accepted-button-icon');
+            if (icon.classList.contains('prev-accepted-button-icon')) icon.classList.remove('prev-accepted-button-icon');
+            if (!icon.classList.contains('accepted-button-icon')) icon.classList.add('accepted-button-icon');
+            icon.setAttribute('title', check.markedByUsername ? `Accepted by: ${check.markedByUsername} \n Accepted date: ${moment(check.markedDate)
+                .format('YYYY-MM-DD hh:mm.ss')}` : 'Click here to accept this check');
+        }
+        // redraw canvas IDs
+        const canvas = document.querySelector(`[checkid='${check._id}']`);
+        canvas.setAttribute('baselineid', check.baselineId);
+        canvas.setAttribute('actualsnapshotid', check.actualSnapshotId);
+    } catch (e) {
+        console.error(`cannot redraw accept check icon with id: '${check._id}' error: '${e}'`);
     }
 }
 
@@ -36,11 +83,10 @@ function acceptStatusesClass(acceptedStatus) {
     return statuses[acceptedStatus] || 'status-other';
 }
 
-async function redrawTestAcceptedStatus(id) {
+async function redrawTestAcceptedStatus(test) {
     try {
-        const test = JSON.parse(await getRequest(`test/${id}`));
         const acceptedStatus = test.markedAs ? test.markedAs : 'Unaccepted';
-        const label = document.getElementsByClassName(`check-accept-label-test-id_${id}`)[0];
+        const label = document.getElementsByClassName(`check-accept-label-test-id_${test._id}`)[0];
         // remove all classes that start with 'status-'
         label.classList.remove.apply(label.classList, Array.from(label.classList)
             .filter((v) => v.startsWith('status-')));
@@ -48,7 +94,7 @@ async function redrawTestAcceptedStatus(id) {
         label.classList.add(acceptStatusesClass(acceptedStatus));
         label.innerText = acceptedStatus;
     } catch (e) {
-        console.log(`cannot redraw accept test status with id: '${id}' error: '${e}'`);
+        console.error(`cannot redraw accept test status for test: '${test}' error: '${e}'`);
     }
 }
 
@@ -68,7 +114,7 @@ async function removeTestFromDomIfEmpty(id) {
             document.getElementsByClassName(`testinfo_${id}`)[0].remove();
         }
     } catch (e) {
-        console.log(`cannot redraw accept test status with id: '${id}' error: '${e}'`);
+        console.error(`cannot redraw accept test status with id: '${id}' error: '${e}'`);
     }
 }
 
@@ -125,7 +171,7 @@ function sort2(prop, order = -1) {
     const currentSearch = window.location.search;
 
     const r = new RegExp(`sort_${prop}_([^\d]{0,1}[1]{1,1})`);
-    console.log(r);
+    // console.log({ r });
     let parsedOrder;
     if (currentSearch.match(r)) {
         parsedOrder = currentSearch.match(r)[1];
@@ -241,7 +287,10 @@ function getRegionsData(snapshootId) {
 async function removeOneCheck(id, testId) {
     await removeCheck(id, testId);
     await removeTestFromDomIfEmpty(testId);
-    await redrawTestAcceptedStatus(testId);
+
+    const test = JSON.parse(await getRequest(`test/${testId}`));
+    await redrawTestAcceptedStatus(test);
+    await redrawTestStatus(test);
 }
 
 function removeCheck(id, testId) {
@@ -254,43 +303,50 @@ function removeCheck(id, testId) {
 
             xhr.onload = async function () {
                 if (xhr.status === 200) {
-                    console.log('Success ' + id + '--' + xhr.responseText);
+                    console.log(`Success id: ${id} resp: ${xhr.responseText}`);
                     let checkDiv = document.getElementById(`check_${id}`);
                     checkDiv.parentNode.removeChild(checkDiv);
                     showNotification('The check was removed');
                     return resolve();
                 } else {
                     showNotification('Remove request was failing', 'Error');
-                    console.log('Request failed.  Returned status of ' + xhr.status);
+                    console.error('Request failed.  Returned status of ' + xhr.status);
                     return reject('Request failed.  Returned status of ' + xhr.status);
                 }
             };
             xhr.send(params);
         } catch (e) {
-            console.log(`error in removeCheck: '${e}'`);
+            console.error(`error in removeCheck: '${e}'`);
         }
     });
 }
 
-function acceptCheck(id, newBaselineId, callback) {
+function redirectToNewDiffAfterAccept(id, newBaselineId, diffId) {
+    const newUri = `/diffView?diffid=${diffId}&actualid=${newBaselineId}&expectedid=${newBaselineId}&checkid=${id}`;
+    window.location.href = newUri;
+}
+
+function acceptCheck(check, newBaselineId, callback) {
     return new Promise((resolve, reject) => {
         try {
             const xhr = new XMLHttpRequest();
+
+            const status = (check.status[0] === 'new') ? 'new' : 'passed';
             // send empty diffid
-            const params = `id=${id}&baselineId=${newBaselineId}&diffId&accept=true`;
-            console.log(params);
-            xhr.open('PUT', `/checks/${id}`, true);
+            const params = `id=${check._id}&baselineId=${newBaselineId}&diffId&status=${status}&accept=true`;
+            console.log({ params });
+            xhr.open('PUT', `/checks/${check._id}`, true);
             xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
             xhr.onload = function () {
                 if (xhr.status === 200) {
-                    console.log(`Success check: '${id}' response text: '${xhr.responseText}'`);
+                    console.log(`Success check: '${check._id}' response text: '${xhr.responseText}'`);
                     if (callback) {
                         callback();
                     }
                     return resolve(xhr);
                 }
-                console.log(`Request failed. Returned status of: '${xhr.status}' resp: '${xhr.responseText}'`);
+                console.error(`Request failed. Returned status of: '${xhr.status}' resp: '${xhr.responseText}'`);
                 return reject(xhr);
             };
             xhr.send(params);
@@ -301,7 +357,7 @@ function acceptCheck(id, newBaselineId, callback) {
 }
 
 // eslint-disable-next-line no-unused-vars
-async function acceptOneCheck(id, newBaselineId, oldBaselineId, testId) {
+async function acceptOneCheck(id, newBaselineId, oldBaselineId, testId, redraw = true) {
     let regionData;
     try {
         regionData = await getRegionsData(oldBaselineId);
@@ -316,23 +372,29 @@ async function acceptOneCheck(id, newBaselineId, oldBaselineId, testId) {
             console.log(`ignore region data was sent to new baseline snapshoot: ${JSON.parse(regionData.ignoreRegions)}`);
         }
     }
-
-    await acceptCheck(id, newBaselineId, () => {
+    const check = JSON.parse(await getRequest(`check/${id}`));
+    acceptCheck(check, newBaselineId, () => {
     })
-        .then(() => {
+        .then(async () => {
             showNotification(`The check '${id}' was accepted`);
+            if (redraw) {
+                const acceptedCheck = JSON.parse(await getRequest(`check/${id}`));
+                const checkStatus = (acceptedCheck.status[0] === 'new') ? 'new' : 'passed';
+                await redrawCheckAcceptedStatus(acceptedCheck);
+                await redrawCheckStatus(id, checkStatus);
+                const test = JSON.parse(await getRequest(`test/${testId}`));
+                await redrawTestAcceptedStatus(test);
+                await redrawTestStatus(test);
+            }
         })
         .catch(() => {
             showNotification(`Cannot accept check: '${id}'`, 'Error');
         });
-
-    await redrawCheckAcceptedStatus(id);
-    await redrawTestAcceptedStatus(testId);
 }
 
-function acceptChecksByTestId(testid) {
+function acceptChecksByTestId(testId) {
     return new Promise((resolve, reject) => {
-        const checks = Array.from(document.querySelectorAll(`div[name="check-wrapper"][testid="${testid}"]`));
+        const checks = Array.from(document.querySelectorAll(`div[name="check-wrapper"][testid="${testId}"]`));
         const checkProm = checks.map(
             async (check) => {
                 const oldBaselineId = check.getAttribute('baselineId');
@@ -345,25 +407,31 @@ function acceptChecksByTestId(testid) {
                     console.log(`ignore region data was sent to new baseline snapshoot: ${JSON.parse(regionData.ignoreRegions)}`);
                 }
 
-                const result = await acceptCheck(id, newBaselineId, () => {
+                const checkObj = JSON.parse(await getRequest(`check/${id}`));
+
+                const result = await acceptCheck(checkObj, newBaselineId, () => {
                 });
 
-                await redrawCheckAcceptedStatus(id);
+                const acceptedcheckObj = JSON.parse(await getRequest(`check/${id}`));
+
+                await redrawCheckAcceptedStatus(acceptedcheckObj);
+
                 return result;
             }
         );
 
         Promise.all(checkProm)
-            .then((result) => {
-                showNotification(`All checks for test: '${testid}' were accepted`);
-                redrawTestAcceptedStatus(testid)
+            .then(async (result) => {
+                showNotification(`All checks for test: '${testId}' were accepted`);
+                const test = JSON.parse(await getRequest(`test/${testId}`));
+                redrawTestAcceptedStatus(test)
                     .then(
                         () => resolve(result)
                     );
             })
             .catch((e) => {
-                console.log(`Cannot accept test: '${testid}', error: '${e}'`);
-                showNotification(`Cannot accept test: '${testid}'`, 'Error');
+                console.error(`Cannot accept test: '${testId}', error: '${e}'`);
+                showNotification(`Cannot accept test: '${testId}'`, 'Error');
                 return reject(e);
             });
     });
@@ -399,7 +467,7 @@ function removeTest(id) {
                     console.log('Success ' + id + '--' + xhr.responseText);
                     return resolve(xhr);
                 } else {
-                    console.log('Request failed.  Returned status of ' + xhr.status);
+                    console.error('Request failed.  Returned status of ' + xhr.status);
                     return reject(xhr);
                 }
             };

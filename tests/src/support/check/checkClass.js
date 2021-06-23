@@ -10,17 +10,22 @@ export default (selector, falseCase, expectedClassName) => {
      * List of all the classes of the element
      * @type {Array}
      */
-    const classesList = $(selector).getAttribute('className').split(' ');
+    const classesList = $(selector)
+        .getAttribute('class')
+        .split(' ');
 
     if (falseCase === 'does not have') {
-        expect(classesList).not.toContain(
-            expectedClassName,
-            `Element ${selector} should not have the class ${expectedClassName}`
-        );
+        expect(classesList)
+            .not
+            .toContain(
+                expectedClassName,
+                `Element ${selector} should not have the class ${expectedClassName}`
+            );
     } else {
-        expect(classesList).toContain(
-            expectedClassName,
-            `Element ${selector} should have the class ${expectedClassName}`
-        );
+        expect(classesList)
+            .toContain(
+                expectedClassName,
+                `Element ${selector} should have the class ${expectedClassName}`
+            );
     }
 };

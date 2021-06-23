@@ -144,16 +144,14 @@
                         <i class="far fa-object-group fa-1x"></i>
                     </a>
                 </div>
-                <% if(check.status == 'failed') { %>
-                    <div class="row justify-content-center">
-                        <a name="accept-baseline" type="button"
-                           class="btn btn-check pl-1 pr-1 pt-0 pb-0 mb-1 border-0 rounded-0"
-                           onclick="acceptOneCheck('<%= check.id %>', '<%= actual_snapshoot._id %>', '<%= expected_snapshoot._id %>', '<%= test._id %>')"
-                           title="accept the actual snapshoot as baseline">
-                            <i class="fas fa-check fa-1x"></i>
-                        </a>
-                    </div>
-                <% } %>
+                <div class="row justify-content-center">
+                    <a name="accept-baseline" type="button"
+                       class="btn btn-check pl-1 pr-1 pt-0 pb-0 mb-1 border-0 rounded-0"
+                       onclick="acceptOneCheck('<%= check.id %>', '<%= actual_snapshoot._id %>', '<%= expected_snapshoot._id %>', '<%= test._id %>', false); redirectToNewDiffAfterAccept('<%= check.id %>', '<%= expected_snapshoot._id %>', '<%= diff_snapshoot.id %>');"
+                       title="accept the actual snapshoot as baseline">
+                        <i class="fas fa-check fa-1x"></i>
+                    </a>
+                </div>
                 <div class="container mt-2">
                     <div class="row border border-secondary">
                         <div class="con-relative">

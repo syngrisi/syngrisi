@@ -13,8 +13,6 @@ Feature: Regions - Copy regions data after acceptance
         Given I setup VRS driver
 
     Scenario: Regions - Copy regions data after acceptance
-        Given I set window size: "1366x768"
-
         When I create "1" tests with params:
         """
           filePath: files/A.png
