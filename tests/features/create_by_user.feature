@@ -87,7 +87,7 @@ Feature: Creation by User
         When I click on "Create by User - 1" VRS test
 
         Then I expect that VRS test "Create by User - 1" is unfolded
-        Then I expect that "1" check has Created "Created by" equal to "i_ivanov@gmail.com"
+        Then I expect that "1" check has Created "created by" equal to "i_ivanov@gmail.com"
 
         # the check validation as test admin
         When I open the url "http://vrs:3001/logout"
@@ -102,7 +102,7 @@ Feature: Creation by User
         When I click on "Create by User - 1" VRS test
 
         Then I expect that VRS test "Create by User - 1" is unfolded
-        Then I expect that "1" check has Created "Created by" equal to "i_ivanov@gmail.com"
+        Then I expect that "1" check has Created "created by" equal to "i_ivanov@gmail.com"
 
 
 

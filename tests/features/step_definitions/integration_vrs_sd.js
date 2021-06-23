@@ -14,11 +14,19 @@ const { startSession } = require('../../src/utills/common');
 const { saveRandomImage } = require('../../src/utills/common');
 const { TableVRSComp } = require('../../src/PO/vrs/tableVRS.comp');
 
-Given(/^I setup VRS driver with parameters:$/, async (params) => {
-    const drvOpts = YAML.parse(params);
+function startDriver(params) {
+    const drvOpts = YAML.parse(params) || {};
     browser.vDriver = new VRSDriver({
-        url: drvOpts.url,
+        url: drvOpts.url || 'http://vrs:3001/',
     });
+}
+
+Given(/^I setup VRS driver with parameters:$/, async (params) => {
+    startDriver(params);
+});
+
+Given(/^I setup VRS driver$/, async () => {
+    startDriver('');
 });
 
 Given(/^I start VRS session with parameters:$/, async (params) => {
@@ -35,16 +43,15 @@ Given(/^I stop VRS session$/, async () => {
     await browser.vDriver.stopTestSession(browser.config.apiKey);
 });
 
-When(/^I start VRS server with parameters:$/, { timeout: 600000 }, (params) => {
-    const srvOpts = YAML.parse(params);
+function startServer(params) {
+    const srvOpts = YAML.parse(params) || {};
 
-    // const cmdPath = browser.config.rootPath + '/vrs/';
+    const databaseName = srvOpts.databaseName || 'VRSdbTest';
     const cmdPath = '../';
     const env = Object.create(process.env);
-    env.VRS_PORT = srvOpts.port;
-    env.VRS_BASELINE_PATH = srvOpts.baseLineFolder;
-    env.VRS_CONN_STRING = `mongodb://localhost/${srvOpts.databaseName}`;
-    // env.PAGE_SIZE = srvOpts.pageSize || '10';
+    env.VRS_PORT = srvOpts.port || browser.config.serverPort;
+    env.VRS_BASELINE_PATH = srvOpts.baseLineFolder || './baselinesTest/';
+    env.VRS_CONN_STRING = `mongodb://localhost/${databaseName}`;
     const homedir = require('os')
         .homedir();
     const nodePath = process.env.OLTA_NODE_PATH || (`${homedir}/.nvm/versions/node/v13.13.0/bin`);
@@ -65,8 +72,17 @@ When(/^I start VRS server with parameters:$/, { timeout: 600000 }, (params) => {
     });
 
     browser.pause(2500);
-    browser.waitUntil(async () => (await got.get(`http://vrs:${srvOpts.port}/`, { throwHttpErrors: false })).statusCode === 200);
+    browser.waitUntil(async () => (await got.get(`http://vrs:${srvOpts.port || browser.config.serverPort}/`, { throwHttpErrors: false })).statusCode === 200);
     browser.syngrisiServer = child;
+
+}
+
+When(/^I start VRS server with parameters:$/, { timeout: 600000 }, (params) => {
+    startServer(params);
+});
+
+When(/^I start VRS server$/, { timeout: 600000 }, () => {
+    startServer('');
 });
 
 When(/^I clear test VRS database$/, () => {
@@ -519,6 +535,7 @@ When(/^I delete the "([^"]*)" check$/, (checkName) => {
         .toBeExisting();
 
     // eslint-disable-next-line max-len
+    browser.pause(1000);
     $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//a[contains(@class, 'remove-button')]`)
         .click();
     browser.pause(200);
@@ -583,13 +600,14 @@ When(/^I set the API key in config$/, function () {
 });
 
 Then(/^I expect that "([^"]*)" check has Created "([^"]*)" equal to "([^"]*)"$/, function (checkNum, field, value) {
-    const checkTitle = $(`(//div[@name='preview-container'])[${checkNum}]`)
+    const checkTitle = $(`(//canvas[contains(@class, 'snapshoot-canvas')])[${checkNum}]`)
         .getAttribute('title');
-
-    const regex = new RegExp(`${field}: (.+?$)`, `gm`);
-    // const regex = new RegExp(`${field}`, `gm`);
+    console.log({ checkTitle });
+    const regex = new RegExp(`${field}: (.+?)[<]`, `gm`);
+    console.log({ regex });
     const match = regex.exec(checkTitle);
-    expect(match[1])
+    console.log({ match });
+    expect(match[0])
         .toContain(value);
 });
 
