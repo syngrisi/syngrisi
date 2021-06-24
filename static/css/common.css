@@ -14037,7 +14037,8 @@ div[name=testinfo]:nth-of-type(4n+1) {
 }
 
 .prev-accepted-button-icon {
-  color: #4d8000;
+  color: #2ECC40;
+  filter: grayscale(55%);
 }
 
 /*# sourceMappingURL=common.css.map */

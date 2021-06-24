@@ -1,6 +1,6 @@
+@use "sass:color";
 @import "./bootstrap-4.3.1/scss/bootstrap";
 @import "./bootstrap-4.3.1/scss/bootstrap-grid";
-
 body::-webkit-scrollbar {
   display: none;
 }
@@ -323,6 +323,8 @@ div[name="testinfo"]:nth-of-type(4n+1) {
   text-align: center;
 }
 
+$accepted-color: #2ECC40;
+
 .not-accepted-button-icon {
   color: #888888;
   opacity: 90%;
@@ -330,10 +332,13 @@ div[name="testinfo"]:nth-of-type(4n+1) {
 }
 
 .accepted-button-icon {
-  color: #2ECC40;
+  color: $accepted-color;
   opacity: 90%;
 }
 
 .prev-accepted-button-icon {
-  color: #4d8000;
+  //color: color.scale($accepted-color, $lightness: -40%);
+  color: $accepted-color;
+  //color: #0ba46c;
+  filter: grayscale(55%);
 }
