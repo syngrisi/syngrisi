@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@syngrisi/syngrisi-wdio-sdk": "file:/Users/vsilakou/Projects/Syngrisi/syngrisi-sdk",
+    "faker": "^5.5.3",
     "frisby": "^2.1.3",
     "imagejs": "0.0.9",
     "nodemon": "^2.0.7",

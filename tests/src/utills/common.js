@@ -1,6 +1,8 @@
 // const moment = require('moment');
 const ImageJS = require('imagejs');
 const YAML = require('yaml');
+const faker = require('faker');
+const moment = require('moment');
 
 const saveRandomImage = async function saveRandomImage(fullPath) {
     function getRandomInt(max) {
@@ -50,7 +52,24 @@ const checkWithFile = async function () {
     const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${filePath}`);
     const checkResult = await checkVRS(checkName, imageBuffer);
 };
+
+const fillCommonPlaceholders = function fillPlaceholders(str) {
+    require('./extendString');
+    return str.formatPlaceholders(
+        {
+            'YYYY-MM-DD': moment(new Date())
+                .format('YYYY-MM-DD'),
+            Email: faker.internet.email()
+                .toLowerCase(),
+            ShortSlug: faker.lorem.slug(2),
+            Slug: faker.lorem.slug(),
+            Uuid: faker.random.uuid(),
+        }
+    );
+};
+
 module.exports = {
     saveRandomImage,
     startSession,
+    fillCommonPlaceholders,
 };

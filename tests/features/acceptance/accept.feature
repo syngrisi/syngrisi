@@ -22,7 +22,7 @@ Feature: Check Acceptance
         When I stop VRS session
 
         # BEFORE ACCEPT
-        When I open the url "http://vrs:3001/"
+        When I open the app
         Then I wait and refresh page on element "span=Accept one check" for "3" seconds to exist
         Then I expect that VRS test "Accept one check" has "New" status
         Then I expect that VRS test "Accept one check" has "Unaccepted" accepted status
@@ -36,13 +36,21 @@ Feature: Check Acceptance
         When I accept the "new int check 1" check
         Then I expect that VRS test "Accept one check" has "Accepted" accepted status
         Then I expect the "new int check 1" check has "accept" acceptance status
+        Then I expect that the element "i.accept-button-icon" to have attribute "title" containing "Accepted by: Guest"
+        Then I expect that the element "i.accept-button-icon" to have attribute "title" containing "Accepted date: <YYYY-MM-DD>"
+
+        Then I expect that the element "canvas.snapshoot-canvas" to have attribute "title" containing "created by: Guest"
 
         When I refresh page
         When I wait for "3" seconds
         When I click on "Accept one check" VRS test
         When I wait for "3" seconds
         Then I expect the "new int check 1" check has "accept" acceptance status
+        Then I expect that the element "i.accept-button-icon" to have attribute "title" containing "Accepted by: Guest"
+        Then I expect that the element "i.accept-button-icon" to have attribute "title" containing "Accepted date: <YYYY-MM-DD>"
 
+        Then I expect that the element "canvas.snapshoot-canvas" to have attribute "title" containing "accepted by: Guest"
+        Then I expect that the element "canvas.snapshoot-canvas" to have attribute "title" containing "accepted date: <YYYY-MM-DD>"
 
     Scenario: Acceptance - two Test, one Check, accept First
         # FIRST TEST
@@ -87,7 +95,7 @@ Feature: Check Acceptance
         When I stop VRS session
         When I wait for "3" seconds
 
-        When I open the url "http://vrs:3001/"
+        When I open the app
 
         When I wait for "2" seconds
         Then I expect that VRS test "Accept two checks" has "Passed" status

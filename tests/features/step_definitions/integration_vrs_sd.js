@@ -11,7 +11,7 @@ const checkVRS = require('../../src/support/check/checkVrs').default;
 const waitForAndRefresh = require('../../src/support/action/waitForAndRefresh').default;
 const { startSession } = require('../../src/utills/common');
 
-const { saveRandomImage } = require('../../src/utills/common');
+const { saveRandomImage, fillCommonPlaceholders } = require('../../src/utills/common');
 const { TableVRSComp } = require('../../src/PO/vrs/tableVRS.comp');
 
 function startDriver(params) {
@@ -711,4 +711,10 @@ Then(/^I expect the (\d)st "([^"]*)" check has "([^"]*)" acceptance status$/, fu
                 acceptStatusMap[wrongStatus]
             );
     }
+});
+
+Then(/^I expect that the element "([^"]*)" to have attribute "([^"]*)" containing "([^"]*)"$/, function (selector, attr, value) {
+    const value2 = fillCommonPlaceholders(value);
+    expect($(selector))
+        .toHaveAttrContaining(attr, value2);
 });
