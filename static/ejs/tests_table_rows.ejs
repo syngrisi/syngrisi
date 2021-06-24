@@ -146,7 +146,7 @@
     }
     ?>
     <? const acceptedStatus = test.markedAs  ? test.markedAs : 'Unaccepted' ?>
-    <div class="cell-accepted-state cell col-1-2 pt-3 pb-3 pb-2 pr-0 text-truncate">
+    <div class="cell-accepted-state cell col-1-2 pl-2-2 pt-3 pb-3 pb-2 pr-0 text-truncate">
         <span class="accept-label p-1 <?= acceptStatusesClass(acceptedStatus) ?> check-accept-label-test-id_<?= test.id ?>"
               style="font-size: 80%"><?= acceptedStatus ?></span>
     </div>
@@ -193,7 +193,7 @@
             'WINDOWS': 'fab fa-windows',
             'MacIntel': 'fab fa-apple',
         }?>
-    <div class="cell-platform cell pt-3 pb-3 pl-1 pr-0 col-0-3 text-truncate"
+    <div class="cell-platform cell pt-3 pb-3 pl-2-2 pr-0 col-0-3 text-truncate"
          id="<?= test.id ?>_cell-os"
          data-toggle="tooltip"
          data-placement="top"
