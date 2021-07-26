@@ -1,4 +1,4 @@
-/* eslint-disable dot-notation,no-underscore-dangle,quotes */
+/* eslint-disable dot-notation,no-underscore-dangle,quotes,object-shorthand */
 // eslint-disable-next-line no-unused-vars
 /* global log:readonly */
 const querystring = require('querystring');
@@ -21,7 +21,7 @@ const App = mongoose.model('VRSApp');
 const Suite = mongoose.model('VRSSuite');
 const User = mongoose.model('VRSUser');
 const Baseline = mongoose.model('VRSBaseline');
-const { checksGroupedByIdent, calculateAcceptedStatus } = require('../utils');
+const { checksGroupedByIdent, checksGroupedByIdent2, calculateAcceptedStatus } = require('../utils');
 const {
     fatalError, waitUntil, removeEmptyProperties, buildQuery, getSuitesByTestsQuery, buildIdentObject
 } = require('../utils');
@@ -948,6 +948,91 @@ exports.createCheck = async function (req, res) {
             }
         }
     );
+};
+
+exports.getChecks2 = function (req, res) {
+    return new Promise(async (resolve, reject) => {
+        const opts = req.query;
+
+        const pageSize = parseInt(process.env['PAGE_SIZE'], 10) || 50;
+
+        const skip = opts.page ? ((parseInt(opts.page, 10)) * pageSize - pageSize) : 0;
+
+        let sortFilter = parseSorting(opts);
+        if (Object.keys(sortFilter).length < 1) {
+            sortFilter = { updatedDate: -1 };
+        }
+
+        const query = buildQuery(opts);
+        // console.log({ query });
+        // console.log({opts})
+        if (opts.filter_suitename_eq) {
+            const decodedQuerystringSuiteName = Object.keys(querystring.decode(opts.filter_suitename_eq))[0];
+            const suite = await Suite.findOne({ name: { $eq: decodedQuerystringSuiteName } })
+                .exec();
+            if (opts.filter_suitename_eq && !suite) {
+                res.status(200)
+                    .json({});
+                return resolve({});
+            }
+            if (suite) {
+                query.suite = suite.id;
+                delete query.suitename;
+            }
+        }
+
+        if (req.user.role === 'user') {
+            query.creatorUsername = req.user.username;
+        }
+        // console.log({ query });
+        const tests = await Test
+            .find(query)
+            .sort(sortFilter)
+            .skip(skip)
+            .limit(pageSize)
+            .exec();
+        // console.log({ tests });
+        // const suites = await getSuitesByTestsQuery(query);
+        const checksByTestGroupedByIdent = [];
+
+        for (const test of tests) {
+            const groups = await checksGroupedByIdent2(test.id);
+            console.log(Object.keys(groups).length);
+            if (Object.keys(groups).length < 1) {
+                continue;
+            }
+            // console.log({groups})
+            checksByTestGroupedByIdent.push({
+                id: test.id,
+                creatorId: test.creatorId,
+                creatorUsername: test.creatorUsername,
+                markedAs: test.markedAs,
+                markedByUsername: test.markedByUsername,
+                markedDate: test.markedDate,
+                name: test.name,
+                status: test.status,
+                browserName: test.browserName,
+                browserVersion: test.browserVersion,
+                browserFullVersion: test.browserFullVersion,
+                viewport: test.viewport,
+                calculatedViewport: test.calculatedViewport,
+                os: test.os,
+                blinking: test.blinking,
+                updatedDate: test.updatedDate,
+                createdDate: test.createdDate,
+                suite: test.suite,
+                run: test.run,
+                tags: test.tags,
+                branch: test.branch,
+                app: test.app,
+                groups: groups,
+            });
+        }
+        // console.log(Object.keys(checksByTestGroupedByIdent).length);
+        res.status(200)
+            .json(checksByTestGroupedByIdent);
+        return resolve(checksByTestGroupedByIdent);
+    });
 };
 
 exports.getChecks = async function (req, res) {
