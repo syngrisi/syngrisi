@@ -670,9 +670,14 @@ function prettyCheckParams(result) {
     return JSON.stringify(resObs);
 }
 
-function getBaseline(params) {
+async function getBaseline(params) {
     const identFields = buildIdentObject(params);
-    return Baseline.findOne(identFields, {}, { sort: { createdDate: -1 } },);
+    const identFieldsAccepted = Object.assign(buildIdentObject(params), { markedAs: 'accepted' });
+    const acceptedBaseline = await Baseline.findOne(identFieldsAccepted, {}, { sort: { createdDate: -1 } });
+    console.log({ acceptedBaseline });
+    const simpleBaseline = await Baseline.findOne(identFields, {}, { sort: { createdDate: -1 } });
+    console.log({ simpleBaseline });
+    return acceptedBaseline || simpleBaseline;
 }
 
 async function createNewBaseline(params) {
