@@ -1,4 +1,4 @@
-/* eslint-disable dot-notation */
+/* eslint-disable dot-notation,object-shorthand */
 /* global log:readonly */
 const mongoose = require('mongoose');
 
@@ -26,7 +26,7 @@ exports.buildIdentObject = (params) => Object.fromEntries(
 );
 
 const checkIdent = function checkIdent(check) {
-    return ident.reduce((accumulator, prop) => accumulator + '.' + check[prop], 'ident');
+    return ident.reduce((accumulator, prop) => `${accumulator}.${check[prop]}`, 'ident');
 };
 exports.checkIdent = checkIdent;
 
@@ -73,9 +73,7 @@ exports.buildQuery = function buildQuery(params) {
 };
 
 function groupStatus(checks) {
-    const statuses = checks.map(function (check) {
-        return check.status[0];
-    });
+    const statuses = checks.map((check) => check.status[0]);
     const lastStatus = statuses[statuses.length - 1];
     let resultStatus = 'not set';
 
@@ -117,18 +115,18 @@ exports.removeEmptyProperties = function removeEmptyProperties(obj) {
 };
 
 exports.checksGroupedByIdent = function checksGroupedByIdent(checkFilter) {
-    return new Promise(async function (resolve, reject) {
+    return new Promise(async (resolve, reject) => {
         try {
-            let chs = await Check.find(checkFilter)
+            const chs = await Check.find(checkFilter)
                 .sort({ updatedDate: 1 })
                 .exec();
-            let checks = chs.map(function (ch) {
+            const checks = chs.map((ch) => {
                 ch.formattedCreatedDate = moment(ch.createdDate)
                     .format('YYYY-MM-DD hh:mm');
                 return ch;
             });
-            let result = {};
-            checks.forEach(function (check) {
+            const result = {};
+            checks.forEach((check) => {
                 if (result[checkIdent(check)] === undefined) {
                     result[checkIdent(check)] = {};
                     result[checkIdent(check)]['checks'] = [];
@@ -150,13 +148,40 @@ exports.checksGroupedByIdent = function checksGroupedByIdent(checkFilter) {
     });
 };
 
+exports.checksGroupedByIdent2 = function checksGroupedByIdent2(testId) {
+    return new Promise((resolve, reject) => {
+        Check.find({ test: testId })
+            .sort({ updatedDate: 1 })
+            .then((checks) => {
+                const result = {};
+                checks.forEach((check) => {
+                    if (result[checkIdent(check)] === undefined) {
+                        result[checkIdent(check)] = {};
+                        result[checkIdent(check)]['checks'] = [];
+                    }
+                    result[checkIdent(check)]['checks'].push(check);
+                });
+                // transform ident group object to array
+                const result2 = Object.keys(result)
+                    .map((idnt) => ({
+                        ident: idnt,
+                        checks: result[idnt].checks,
+                        status: groupStatus(result[idnt].checks),
+                        viewport: groupViewPort(result[idnt].checks),
+                    }));
+                return resolve(result2);
+            })
+            .catch((e) => reject(e));
+    });
+};
+
 exports.waitUntil = async function waitUntil(cb, attempts = 5, interval = 700) {
     let result = false;
     let iteration = 0;
     while (result === false) {
         result = await cb();
-        await new Promise(r => setTimeout(r, interval));
-        iteration = iteration + 1;
+        await new Promise((r) => setTimeout(r, interval));
+        iteration += 1;
 
         if (iteration > attempts) {
             result = true;

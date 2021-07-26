@@ -120,9 +120,13 @@ module.exports = async function (app) {
                 .catch(next);
         })
         .get('/checks', ensureLoggedIn(), async (req, res, next) => {
-            req.log.trace(`get '/checks' queue pending count: `, queue.pending);
+            req.log.trace(`get '/checks' queue pending count: ${queue.pending} `);
             await queue.add(() => API.getChecks(req, res)
                 .catch(next));
+        })
+        .get('/checks2', ensureLoggedIn(), async (req, res, next) => {
+            API.getChecks2(req, res)
+                .catch(next);
         })
         .get('/snapshot/:id', ensureLoggedIn(), async (req, res, next) => {
             API.getSnapshot(req, res)
