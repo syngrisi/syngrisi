@@ -802,7 +802,7 @@ exports.createCheck = async function (req, res) {
                     return resolve(res.status(206)
                         .json({
                             status: 'requiredFileData',
-                            message: 'cannot found any snapshoot with such hashcode, please add image file data and resend request',
+                            message: 'could not find a snapshot with such a hash code, please add image file data and resend request',
                             hashCode: req.body.hashcode,
                         }));
                 }
