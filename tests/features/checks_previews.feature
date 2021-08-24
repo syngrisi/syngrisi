@@ -48,10 +48,8 @@ Feature: Checks previews
 
         When I execute javascript code:
         """
-        (()=>{
-         const { left, top, width, height, fill, stroke, opacity } = baseline.getLastRegion()
-         return [left, top, width, height, fill, stroke, opacity].toString()
-        })()
+         const { left, top: top1, width, height, fill, stroke, opacity } = baseline.getLastRegion()
+         return [left, top1, width, height, fill, stroke, opacity].toString()
         """
         Then I expect the stored "js" object is equal:
         """
@@ -85,12 +83,10 @@ Feature: Checks previews
 
         When I execute javascript code:
         """
-          (()=>{
-          const { left, top, width, height, fill, stroke, opacity } = baselines[Object.keys(baselines)[0]].getLastRegion();
-          return [left, top, width, height, fill, stroke, opacity].toString();
-          })()
+          const { left, top: top1, width, height, fill, stroke, opacity } = baselines[Object.keys(baselines)[0]].getLastRegion();
+          return [left, top1, width, height, fill, stroke, opacity].toString();
         """
         Then I expect the stored "js" object is equal:
         """
-          5.187901008249313,12.969752520623281,51.879010082493124,25.939505041246566,MediumVioletRed,rgba(100,200,200,0.5),0.5
+          5.197103781174578,12.992759452936445,51.97103781174578,25.98551890587289,MediumVioletRed,rgba(100,200,200,0.5),0.5
         """

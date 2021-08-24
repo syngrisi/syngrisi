@@ -139,6 +139,7 @@ exports.hooks = {
     // beforeFeature: function (uri, feature, scenarios) {
     // },
     beforeScenario: function (uri, feature, scenario, sourceLocation) {
+        require('../utills/addCommands');
         browser.setWindowSize(1366, 768);
     },
     // beforeStep: function ({uri, feature, step}, context) {

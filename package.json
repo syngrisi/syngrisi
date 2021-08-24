@@ -16,7 +16,7 @@
     "comparison"
   ],
   "scripts": {
-    "test": "",
+    "test": "cd tests && npm run testui",
     "pub": "np --yolo --no-publish",
     "startdebug": "nodemon --ignore 'mvc/views/lib/*.js' server.js",
     "starttest": "node server.js",

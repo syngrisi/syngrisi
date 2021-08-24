@@ -20,7 +20,7 @@ Feature: VRS Viewport
         """
         RUN_NAME: RUN-01
         """
-        Given I set window size: "712x970"
+        Given I set window size: "1366x768"
         Given I start VRS session with parameters:
         """
           testName: "Viewport integration test"
@@ -32,13 +32,13 @@ Feature: VRS Viewport
 
         When I open the url "http://vrs:3001/"
         When I wait for "2" seconds
-        Then I expect that VRS test "Viewport integration test" has "712x970" viewport
+        Then I expect that VRS test "Viewport integration test" has "1366x768" viewport
         When I click on "Viewport integration test" VRS test
         Then I expect that VRS test "Viewport integration test" is unfolded
         Then I expect that VRS check "1/1 viewport - single check" has "New" status
         # assert preview
         Then I expect that element "//div[contains(@class, 'preview-overlay-text')]" is clickable
-        Then I expect that element "//div[contains(@class, 'preview-overlay-text')]" to have text "712x970"
+        Then I expect that element "//div[contains(@class, 'preview-overlay-text')]" to have text "1366x768"
 
     Scenario: VRS ViewPort - two checks with same viewports
         When I set env variables:
@@ -49,7 +49,7 @@ Feature: VRS Viewport
         """
           testName: "Viewport integration test"
         """
-        Given I set window size: "712x970"
+        Given I set window size: "1366x768"
         When I open the url "http://vrs:3001/static/app_1.html"
         When I visually check page as "viewport - two checks same viewports 01"
 
@@ -59,7 +59,7 @@ Feature: VRS Viewport
         When I open the url "http://vrs:3001/"
 
         When I wait for "2" seconds
-        Then I expect that VRS test "Viewport integration test" has "712x970" viewport
+        Then I expect that VRS test "Viewport integration test" has "1366x768" viewport
 
     Scenario: VRS ViewPort - two checks with different viewports
         When I set env variables:
@@ -70,7 +70,7 @@ Feature: VRS Viewport
         """
           testName: "Viewport integration test"
         """
-        Given I set window size: "712x970"
+        Given I set window size: "1366x768"
         When I open the url "http://vrs:3001/static/app_1.html"
         When I visually check page as "viewport - two checks same viewports 01"
 

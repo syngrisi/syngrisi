@@ -46,12 +46,13 @@ Feature: Regions - Copy regions data after acceptance
           1
         """
 
+        When I wait for "2" seconds
         When I execute javascript code:
         """
-        (()=>{
-         const { left, top, width, height, fill, stroke, opacity } = baseline.getLastRegion()
-         return [Math.round(left), Math.round(top), Math.round(width), Math.round(height), fill, stroke, opacity].toString()
-        })()
+
+         const { left, top: top1, width, height, fill, stroke, opacity } = baseline.getLastRegion();
+         return [Math.round(left), Math.round(top1), Math.round(width), Math.round(height), fill, stroke, opacity].toString();
+
         """
         Then I expect the stored "js" object is equal:
         """
@@ -73,6 +74,7 @@ Feature: Regions - Copy regions data after acceptance
         Then I expect that VRS test "Copy region - 1" has "Failed" status
 
         When I click on "Copy region - 1" VRS test
+        When I wait for "1" seconds
         When I click on the element "a.accept-button"
         When I click on the element "a.accept-option"
         When I wait for "1" seconds
@@ -94,10 +96,8 @@ Feature: Regions - Copy regions data after acceptance
 
         When I execute javascript code:
         """
-        (()=>{
-         const { left, top, width, height, fill, stroke, opacity } = baseline.getLastRegion()
-         return [Math.round(left), Math.round(top), Math.round(width), Math.round(height), fill, stroke, opacity].toString()
-        })()
+         const { left, top: top1, width, height, fill, stroke, opacity } = baseline.getLastRegion()
+         return [Math.round(left), Math.round(top1), Math.round(width), Math.round(height), fill, stroke, opacity].toString()
         """
         Then I expect the stored "js" object is equal:
         """
@@ -139,10 +139,8 @@ Feature: Regions - Copy regions data after acceptance
 
         When I execute javascript code:
         """
-        (()=>{
-         const { left, top, width, height, fill, stroke, opacity } = baseline.getLastRegion()
-         return [Math.round(left), Math.round(top), Math.round(width), Math.round(height), fill, stroke, opacity].toString()
-        })()
+         const { left, top: top1, width, height, fill, stroke, opacity } = baseline.getLastRegion()
+         return [Math.round(left), Math.round(top1), Math.round(width), Math.round(height), fill, stroke, opacity].toString()
         """
         Then I expect the stored "js" object is equal:
         """

@@ -34,6 +34,7 @@ Feature: Check Acceptance
 
         # AFTER ACCEPT
         When I accept the "new int check 1" check
+        When I wait for "1" seconds
         Then I expect that VRS test "Accept one check" has "Accepted" accepted status
         Then I expect the "new int check 1" check has "accept" acceptance status
         Then I expect that the element "i.accept-button-icon" to have attribute "title" containing "Accepted by: Guest"
@@ -217,7 +218,7 @@ Feature: Check Acceptance
 
         When I wait for "2" seconds
         Then I expect the "1/1 new int check 1" check has "accept" acceptance status
-#        Then I expect that last "2" checks with ident contains "ident.new int check 1.1366x768.Chrome.MacIntel" has not the same "baselineId"
+#        Then I expect that last "2" checks with ident contains "ident.new int check 1.1366x768.chrome.MacIntel" has not the same "baselineId"
 
 
     Scenario: Acceptance - three Test, one Check
@@ -298,7 +299,7 @@ Feature: Check Acceptance
         When I wait for "2" seconds
         Then I expect the "1/1 new int check 1" check has "previously accept" acceptance status
 
-#        Then I expect that last "2" checks with ident contains "ident.new int check 1.1366x768.Chrome.MacIntel" has the same "baselineId"
+#        Then I expect that last "2" checks with ident contains "ident.new int check 1.1366x768.chrome.MacIntel" has the same "baselineId"
 
     Scenario: Acceptance - two Test, two Check
         # FIRST TEST

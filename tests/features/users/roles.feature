@@ -54,7 +54,7 @@ Feature: User roles
         When I set "user@gmail.com" to the inputfield "//input[@placeholder='Username']"
         When I set "Ivan" to the inputfield "//input[@placeholder='First Name']"
         When I set "Ivanov" to the inputfield "//input[@placeholder='Last Name']"
-        When I set "user" to the inputfield "//select[@new-user-role]"
+        When I select the option with the text "user" for element "//select[@new-user-role]"
         When I set "Password-123" to the inputfield "//input[@placeholder='password']"
         When I click on the element "a.send-new-user-button"
 
@@ -65,7 +65,7 @@ Feature: User roles
         When I set "reviewer@gmail.com" to the inputfield "//input[@placeholder='Username']"
         When I set "Petr" to the inputfield "//input[@placeholder='First Name']"
         When I set "Petrov" to the inputfield "//input[@placeholder='Last Name']"
-        When I set "reviewer" to the inputfield "//select[@new-user-role]"
+        When I select the option with the text "reviewer" for element "//select[@new-user-role]"
         When I set "Password-123" to the inputfield "//input[@placeholder='password']"
         When I click on the element "a.send-new-user-button"
 
@@ -76,7 +76,7 @@ Feature: User roles
         When I set "superadmin@gmail.com" to the inputfield "//input[@placeholder='Username']"
         When I set "Sidor" to the inputfield "//input[@placeholder='First Name']"
         When I set "Sidorov" to the inputfield "//input[@placeholder='Last Name']"
-        When I set "admin" to the inputfield "//select[@new-user-role]"
+        When I select the option with the text "admin" for element "//select[@new-user-role]"
         When I set "Password-123" to the inputfield "//input[@placeholder='password']"
         When I click on the element "a.send-new-user-button"
 
@@ -209,7 +209,7 @@ Feature: User roles
         When I set "superadmin@gmail.com" to the inputfield "//input[@placeholder='Username']"
         When I set "Sidor" to the inputfield "//input[@placeholder='First Name']"
         When I set "Sidorov" to the inputfield "//input[@placeholder='Last Name']"
-        When I set "admin" to the inputfield "//select[@new-user-role]"
+        When I select the option with the text "admin" for element "//select[@new-user-role]"
         When I set "Password-123" to the inputfield "//input[@placeholder='password']"
         When I click on the element "a.send-new-user-button"
 
