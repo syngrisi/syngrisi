@@ -20,6 +20,7 @@
     "pub": "np --yolo --no-publish",
     "startdebug": "nodemon --ignore 'mvc/views/lib/*.js' server.js",
     "starttest": "node server.js",
+    "tasks:reindex": "node tasks/reindex.js",
     "startservice": "forever start -l forever.log -o out.log -e err.log server.js",
     "start": "nodemon --ignore 'mvc/views/lib/*.js' server.js &",
     "clear": "mongo VRSdb --eval 'db.vrschecks.drop();db.vrssnapshots.drop();db.vrstests.drop();db.vrsapps.drop();db.vrssuites.drop();db.vrsusers.drop();db.vrslogs.drop();db.vrsruns.drop();db.vrsbaselines.drop();'; rm ./baselines/*.png",
