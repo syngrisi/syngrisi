@@ -46,7 +46,7 @@ Feature: Update User
         When I set "i_ivanov@gmail.com" to the inputfield "//input[@placeholder='Username']"
         When I set "Ivan" to the inputfield "//input[@placeholder='First Name']"
         When I set "Ivanov" to the inputfield "//input[@placeholder='Last Name']"
-        When I set "user" to the inputfield "//select[@new-user-role]"
+        When I select the option with the text "user" for element "//select[@new-user-role]"
         When I set "Password-123" to the inputfield "//input[@placeholder='password']"
         When I click on the element "a.send-new-user-button"
         When I wait for "3" seconds
@@ -58,7 +58,7 @@ Feature: Update User
         When I set "Ivan_1" to the inputfield "//input[@name='username' and @value='i_ivanov@gmail.com']/../..//input[@name='firstName']"
 
         When I set "Ivanov_1" to the inputfield "//input[@name='username' and @value='i_ivanov@gmail.com']/../..//input[@name='lastName']"
-        When I set "admin" to the inputfield "//input[@name='username' and @value='i_ivanov@gmail.com']/../..//select[@name='role']"
+        When I select the option with the text "admin" for element "//input[@name='username' and @value='i_ivanov@gmail.com']/../..//select[@name='role']"
         When I set "Password-1234" to the inputfield "//input[@name='username' and @value='i_ivanov@gmail.com']/../..//input[@name='password']"
         When I wait for "1" seconds
         When I click on the element "a[update-button-username='i_ivanov@gmail.com']"

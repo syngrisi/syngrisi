@@ -48,7 +48,7 @@ Feature: Base baseline flow
         When I set "i_ivanov@gmail.com" to the inputfield "//input[@placeholder='Username']"
         When I set "Ivan" to the inputfield "//input[@placeholder='First Name']"
         When I set "Ivanov" to the inputfield "//input[@placeholder='Last Name']"
-        When I set "user" to the inputfield "//select[@new-user-role]"
+        When I select the option with the text "user" for element "//select[@new-user-role]"
         When I set "Password-123" to the inputfield "//input[@placeholder='password']"
         When I click on the element "a.send-new-user-button"
         When I wait for "3" seconds
@@ -85,7 +85,7 @@ Feature: Base baseline flow
         Then I expect 1 baselines
         Then I expect 1st baseline with:
         """
-        browserName: 'Chrome'
+        browserName: 'chrome'
         markedByUsername: ''
         markedAs: ''
         """
@@ -106,14 +106,14 @@ Feature: Base baseline flow
         Then I expect 2 baselines
         Then I expect 1st baseline with:
         """
-        browserName: 'Chrome'
+        browserName: 'chrome'
         markedByUsername: ''
         markedAs: ''
         """
 
         Then I expect 2st baseline with:
         """
-        browserName: 'Chrome'
+        browserName: 'chrome'
         markedByUsername: 'i_ivanov@gmail.com'
         markedAs: 'accepted'
         """
@@ -164,7 +164,7 @@ Feature: Base baseline flow
         Then I expect 1 baselines
         Then I expect 1st baseline with:
         """
-        browserName: 'Chrome'
+        browserName: 'chrome'
         markedByUsername: ''
         markedAs: ''
         """

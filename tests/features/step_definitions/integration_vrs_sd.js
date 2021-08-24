@@ -6,7 +6,7 @@ const frisby = require('frisby');
 const fs = require('fs');
 const { Given, When, Then } = require('cucumber');
 const { getDomDump } = require('@syngrisi/syngrisi-wdio-sdk');
-const VRSDriver = require('@syngrisi/syngrisi-wdio-sdk').vDriver;
+const syngrisiDriver = require('@syngrisi/syngrisi-wdio-sdk').syngrisiDriver;
 const checkVRS = require('../../src/support/check/checkVrs').default;
 const waitForAndRefresh = require('../../src/support/action/waitForAndRefresh').default;
 const { startSession } = require('../../src/utills/common');
@@ -16,7 +16,7 @@ const { TableVRSComp } = require('../../src/PO/vrs/tableVRS.comp');
 
 function startDriver(params) {
     const drvOpts = YAML.parse(params) || {};
-    browser.vDriver = new VRSDriver({
+    browser.vDriver = new syngrisiDriver({
         url: drvOpts.url || 'http://vrs:3001/',
     });
 }
@@ -148,8 +148,9 @@ When(/^I expect that(:? (\d)th)? VRS test "([^"]*)" has "([^"]*)" (status|browse
             console.log({ NAME: x.name.getText() });
         });
         // console.log(row[fieldName].getHTML());
-        expect(row[fieldName].$('span'))
-            .toHaveTextContaining(fieldValue);
+        expect(row[fieldName].$('span')
+            .jsGetText())
+            .toBe(fieldValue);
         if (fieldName === 'status') {
             const statusClasses = {
                 Running: {
@@ -413,6 +414,7 @@ When(/^I wait for "([^"]*)" seconds$/, { timeout: 600000 }, (sec) => {
 
 Then(/^I expect the stored "([^"]*)" object is( not|) equal:$/, function (itemName, condition, expected) {
     const itemValue = this.getSavedItem(itemName);
+
     console.log('Expect:', expected.trim());
     console.log('Stored:', itemValue.trim());
     if (condition === ' not') {

@@ -6,7 +6,7 @@ const hasha = require('hasha');
 exports.config = {
     rootPath: process.cwd(),
     serverPort: 3001,
-    syngrisiUrl: "http://vrs:3001/",
+    syngrisiUrl: 'http://vrs:3001/',
     apiKey: process.env.SYNGRISI_API_KEY ? hasha(process.env.SYNGRISI_API_KEY) : '123',
     //
     // ====================
@@ -61,7 +61,7 @@ exports.config = {
         // 5 instances get started at a time.
         maxInstances: 1,
         //
-        browserName: 'Chrome',
+        browserName: 'chrome',
         'goog:chromeOptions': {
             args: process.env.HL === '1' ? ['--headless', '--enable-automation'] : ['--enable-automation'],
             'prefs': {
@@ -85,8 +85,8 @@ exports.config = {
     // Define all options that are relevant for the WebdriverIO instance here
     //
     // Level of logging verbosity: trace | debug | info | warn | error | silent
-    logLevel: 'trace',
-    outputDir: path.join(__dirname, '/logs'),
+    logLevel: 'warn',
+    // outputDir: path.join(__dirname, '/logs'),
     //
     // Set specific log levels per logger
     // loggers:
@@ -127,7 +127,11 @@ exports.config = {
     // Services take over a specific job you don't want to take care of. They enhance
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
-    services: [[WdioScreenshot]],
+    services: [
+        [WdioScreenshot], ['chromedriver',
+            {
+                port: 7777,
+            }]],
     //
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber

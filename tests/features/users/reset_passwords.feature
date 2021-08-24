@@ -48,7 +48,7 @@ Feature: Reset Password
         When I set "i_ivanov@gmail.com" to the inputfield "//input[@placeholder='Username']"
         When I set "Ivan" to the inputfield "//input[@placeholder='First Name']"
         When I set "Ivanov" to the inputfield "//input[@placeholder='Last Name']"
-        When I set "user" to the inputfield "//select[@new-user-role]"
+        When I select the option with the text "user" for element "//select[@new-user-role]"
         When I set "Password-123" to the inputfield "//input[@placeholder='password']"
         When I click on the element "a.send-new-user-button"
         When I wait for "3" seconds

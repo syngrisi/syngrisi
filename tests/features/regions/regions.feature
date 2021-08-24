@@ -36,9 +36,7 @@ Feature: Regions works properly
         When I wait for "1" seconds
         When I execute javascript code:
         """
-        (()=>{
            return(baseline.allRects.length.toString());
-        })()
         """
         When I wait for "1" seconds
         Then I expect the stored "js" object is equal:
@@ -60,10 +58,8 @@ Feature: Regions works properly
 
         When I execute javascript code:
         """
-        (()=>{
-         const { left, top, width, height, fill, stroke, opacity } = baseline.getLastRegion();
-         return([left, top, width, height, fill, stroke, opacity].toString());
-        })()
+         const { left, top: top1, width, height, fill, stroke, opacity } = baseline.getLastRegion();
+         return([left, top1, width, height, fill, stroke, opacity].toString());
         """
         Then I expect the stored "js" object is equal:
         """
@@ -106,10 +102,8 @@ Feature: Regions works properly
 
         When I execute javascript code:
         """
-        (()=>{
-         const { left, top, width, height, fill, stroke, opacity } = baseline.getLastRegion()
-         return [left, top, width, height, fill, stroke, opacity].toString()
-        })()
+         const { left, top: top1, width, height, fill, stroke, opacity } = baseline.getLastRegion()
+         return [left, top1, width, height, fill, stroke, opacity].toString()
         """
         Then I expect the stored "js" object is equal:
         """
@@ -132,10 +126,8 @@ Feature: Regions works properly
 
         When I execute javascript code:
         """
-        (()=>{
-         const { left, top, width, height, fill, stroke, opacity } = baseline.getLastRegion()
-         return [Math.round(left), Math.round(top), Math.round(width), Math.round(height), fill, stroke, opacity].toString()
-        })()
+         const { left, top: top1, width, height, fill, stroke, opacity } = baseline.getLastRegion()
+         return [Math.round(left), Math.round(top1), Math.round(width), Math.round(height), fill, stroke, opacity].toString()
         """
         Then I expect the stored "js" object is equal:
         """
@@ -164,10 +156,8 @@ Feature: Regions works properly
 
         When I execute javascript code:
         """
-        (()=>{
-         const { left, top, width, height, fill, stroke, opacity } = baseline.getLastRegion()
-         return [left, top, width, height, fill, stroke, opacity].toString()
-        })()
+         const { left, top: top1, width, height, fill, stroke, opacity } = baseline.getLastRegion()
+         return [left, top1, width, height, fill, stroke, opacity].toString()
         """
         Then I expect the stored "js" object is equal:
         """
@@ -176,13 +166,11 @@ Feature: Regions works properly
 
         When I execute javascript code:
         """
-        (()=>{
           baseline.getLastRegion().left = 300
           baseline.getLastRegion().top = 500
           baseline.canvas.renderAll()
-          const { left, top, width, height, fill, stroke, opacity } = baseline.getLastRegion()
-          return [Math.round(left), Math.round(top), Math.round(width), Math.round(height), fill, stroke, opacity].toString()
-        })()
+          const { left, top: top1, width, height, fill, stroke, opacity } = baseline.getLastRegion()
+          return [Math.round(left), Math.round(top1), Math.round(width), Math.round(height), fill, stroke, opacity].toString()
         """
         Then I expect the stored "js" object is equal:
         """
@@ -205,13 +193,11 @@ Feature: Regions works properly
 
         When I execute javascript code:
         """
-        (()=>{
-         const { left, top, width, height, fill, stroke, opacity } = baseline.getLastRegion()
+         const { left, top: top1, width, height, fill, stroke, opacity } = baseline.getLastRegion()
          console.log(baseline.getLastRegion())
          console.log(baseline.getLastRegion())
          console.log(baseline.getLastRegion())
-         return [Math.round(left), Math.round(top), Math.round(width), Math.round(height), fill, stroke, opacity].toString()
-        })()
+         return [Math.round(left), Math.round(top1), Math.round(width), Math.round(height), fill, stroke, opacity].toString()
         """
 
         Then I expect the stored "js" object is equal:
