@@ -3,6 +3,7 @@ const ImageJS = require('imagejs');
 const YAML = require('yaml');
 const faker = require('faker');
 const moment = require('moment');
+const { format, subDays } = require('date-fns');
 
 const saveRandomImage = async function saveRandomImage(fullPath) {
     function getRandomInt(max) {
@@ -22,6 +23,38 @@ const saveRandomImage = async function saveRandomImage(fullPath) {
             .then(() => {
                 resolve();
             });
+    });
+};
+
+const killServer = function (port) {
+    const { execSync } = require('child_process');
+    browser.waitUntil(() => {
+        console.log(`Try to kill apps on port: '${port}'`);
+        let pidsString;
+        try {
+            pidsString = execSync(`lsof -t -i:${port} -sTCP:LISTEN`)
+                .toString()
+                .trim();
+        } catch (e) {
+            console.log(e.stdout.toString());
+            console.log(e.stderr.toString());
+        }
+        if (pidsString) {
+            try {
+                for (const pid of pidsString.split('\n')) {
+                    console.log({ pid });
+                    process.kill(pid);
+                }
+                return true;
+            } catch (e) {
+                console.error(`Cannot kill process: '${e}'`);
+                return false;
+            }
+        } else {
+            return true;
+        }
+    }, {
+        timeout: 40000,
     });
 };
 
@@ -63,7 +96,8 @@ const fillCommonPlaceholders = function fillPlaceholders(str) {
                 .toLowerCase(),
             ShortSlug: faker.lorem.slug(2),
             Slug: faker.lorem.slug(),
-            Uuid: faker.random.uuid(),
+            Uuid: faker.datatype.uuid(),
+            'currentDate-10': subDays(new Date(), 10),
         }
     );
 };
@@ -72,4 +106,5 @@ module.exports = {
     saveRandomImage,
     startSession,
     fillCommonPlaceholders,
+    killServer,
 };

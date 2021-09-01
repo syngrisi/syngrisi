@@ -34,8 +34,6 @@ Feature: Create User
         """
         url: "http://vrs:3001/"
         """
-        When I open the url "http://vrs:3001/login"
-        When I wait for "2" seconds
         When I login with user:"Test" password "123"
         Then I wait on element "*=TA" to be displayed
 

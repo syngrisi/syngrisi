@@ -36,15 +36,11 @@ Feature: Login
         """
 
     Scenario: Login - default Test user
-        When I open the url "http://vrs:3001/login"
-        When I wait for "2" seconds
         When I login with user:"Test" password "123"
         Then I wait on element "*=TA" to be displayed
 
     Scenario: Login - Create user and login
         # crate user
-        When I open the url "http://vrs:3001/login"
-        When I wait for "2" seconds
         When I login with user:"Test" password "123"
         Then I wait on element "*=TA" to be displayed
 
@@ -83,21 +79,15 @@ Feature: Login
         """
 
         # login
-        When I open the url "http://vrs:3001/login"
-        When I wait for "2" seconds
         When I login with user:"i_ivanov@gmail.com" password "Password-123"
         Then I wait on element "*=II" to be displayed
 
     Scenario: Login - Wrong password
-        When I open the url "http://vrs:3001/login"
-        When I wait for "2" seconds
         When I login with user:"Test" password "567"
         When I wait for "1" seconds
         Then I expect that element "#error-message" contain text "Password or username is incorrect"
 
     Scenario: Login - Empty credentials
-        When I open the url "http://vrs:3001/login"
-        When I wait for "2" seconds
         When I login with user:"" password ""
         When I wait for "1" seconds
         Then I expect that element "#error-message" contain text "Missing credentials"

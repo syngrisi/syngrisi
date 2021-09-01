@@ -112,9 +112,6 @@ module.exports = async function (app) {
             API.removeRun(req, res)
                 .catch(next);
         })
-        // .put('/tests/:id', async (req, res, next) => {
-        //     API.updateTest(req, res).catch(next);
-        // })
         .post('/session/:testid', ensureApiKey(), async (req, res, next) => {
             API.stopSession(req, res)
                 .catch(next);
@@ -140,16 +137,30 @@ module.exports = async function (app) {
             API.checksGroupByIdent(req, res)
                 .catch(next);
         })
-        .get('/check/:id', ensureLoggedIn(), async (req, res, next) => {
-            API.getCheck(req, res)
-                .catch(next);
-        })
         .get('/test/:id', ensureLoggedIn(), async (req, res, next) => {
             API.getTestById(req, res)
                 .catch(next);
         })
-        .get('/logout', (req, res) => {
-            req.logout();
+        .get('/checks/byfilter', ensureLoggedIn(), async (req, res, next) => {
+            API.checksByFilter(req, res);
+        })
+        .get('/tests/byfilter', ensureLoggedIn(), async (req, res, next) => {
+            API.testsByFilter(req, res);
+        })
+        .put('/tests/:id', async (req, res, next) => {
+            if (process.env['TEST'] !== '1') {
+                res.status('400')
+                    .json({ error: 'only in test mode' });
+                return next;
+            }
+            API.updateTest(req, res)
+                .catch(next);
+        })
+        .get('/screenshots', ensureLoggedIn(), async (req, res, next) => {
+            API.getScreenshotList(req, res);
+        })
+        .get('/logout', async (req, res) => {
+            await req.logout();
             return res.redirect('/login');
         })
         .get('/userinfo', ensureLoggedIn(), async (req, res, next) => {
@@ -177,15 +188,25 @@ module.exports = async function (app) {
                             return next(err);
                         }
 
-                        // console.log({user})
+                        console.log({ err });
+                        // this is for tests http login purpose
+                        if (req.query.noredirect) {
+                            return res.status(200)
+                                .json({
+                                    autoTests: true,
+                                });
+                        }
                         return res.redirect(origin);
                     });
-
                 })(req, res, next);
         })
         // maintenance
         .get('/loadTestUser', ensureLoggedIn(), async (req, res, next) => {
             API.loadTestUser(req, res)
+                .catch(next);
+        })
+        .get('/status', async (req, res, next) => {
+            API.status(req, res)
                 .catch(next);
         })
         .get('/task_migration_1_1_0', ensureLoggedIn(), async (req, res, next) => {

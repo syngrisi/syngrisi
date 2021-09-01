@@ -37,8 +37,6 @@ Feature: Acceptance by User
 
     Scenario: Create User and Accept
         # login as test admin
-        When I open the url "http://vrs:3001/login"
-        When I wait for "2" seconds
         When I login with user:"Test" password "123"
         Then I wait on element "*=TA" to be displayed
 
@@ -61,8 +59,6 @@ Feature: Acceptance by User
         When I wait for "1" seconds
 
         # login by user
-        When I open the url "http://vrs:3001/login"
-        When I wait for "2" seconds
         When I login with user:"i_ivanov@gmail.com" password "Password-123"
         Then I wait on element "*=II" to be displayed
 
@@ -81,7 +77,7 @@ Feature: Acceptance by User
         """
 
         # the check validation as new user
-        When I open the url "http://vrs:3001"
+        When I go to "main" page
         When I wait for "3" seconds
         Then I expect that VRS test "Accept by User - 1" has "New" status
         Then I expect that VRS test "Accept by User - 1" has "Unaccepted" accepted status

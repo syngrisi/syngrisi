@@ -25,7 +25,7 @@
     "start": "nodemon --ignore 'mvc/views/lib/*.js' server.js &",
     "clear": "mongo VRSdb --eval 'db.vrschecks.drop();db.vrssnapshots.drop();db.vrstests.drop();db.vrsapps.drop();db.vrssuites.drop();db.vrsusers.drop();db.vrslogs.drop();db.vrsruns.drop();db.vrsbaselines.drop();'; rm ./baselines/*.png",
     "start_test": "VRT_CONN_STRING='mongodb://localhost/VRSdbTest' VRT_PORT=3001 VRT_BASELINE_PATH='./baselinesTest/' nodemon server.js",
-    "clear_test": "mongo VRSdbTest --eval 'db.vrschecks.drop();db.vrssnapshots.drop();db.vrstests.drop();db.vrsapps.drop();db.vrssuites.drop();db.vrsusers.drop();db.vrslogs.drop();db.vrsruns.drop();db.vrsbaselines.drop();'; rm ./baselinesTest/*.png",
+    "clear_test": "mongo VRSdbTest --eval 'db.vrschecks.drop();db.vrssnapshots.drop();db.vrstests.drop();db.vrsapps.drop();db.vrssuites.drop();db.vrsusers.drop();db.vrslogs.drop();db.vrsruns.drop();db.vrsbaselines.drop();'; rm -f ./baselinesTest/*.png",
     "clearwin": "mongo VRSdb --eval \"db.vrtchecks.drop();db.vrtsnapshots.drop();db.vrttests.drop();db.vrtapps.drop();db.vrtsuites.drop();db.vrsusers.drop();db.vrslogs.drop();db.vrsbaselines.drop();\" & DEL /F /Q /S ..\\tests\\BaselineImages\\*.png"
   },
   "author": {
@@ -73,6 +73,7 @@
     "eslint": "^7.24.0",
     "eslint-config-airbnb-base": "^14.1.0",
     "eslint-plugin-import": "^2.20.2",
-    "form-data": "^4.0.0"
+    "form-data": "^4.0.0",
+    "node-fetch": "^2.6.1"
   }
 }
