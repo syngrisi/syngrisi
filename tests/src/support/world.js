@@ -3,7 +3,7 @@ const { setWorldConstructor, defineParameterType } = require('cucumber');
 function CustomWorld() {
     this.STATE = {
         description: 'object to store data between steps',
-        checks: []
+        checks: [],
     };
 
     this.addCheck = function (check) {

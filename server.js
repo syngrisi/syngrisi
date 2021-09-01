@@ -1,3 +1,4 @@
+/* global log */
 const express = require('express');
 const expressSession = require('express-session')({
     secret: 'secret-sss',
@@ -78,8 +79,11 @@ app.use((req, res) => {
     res.status(404)
         .json({ url: `${req.originalUrl} not found` });
 });
-app.listen(config.port, () => {
-    require('./lib/onStart');
+app.listen(config.port, async () => {
+    log.debug('run onStart jobs');
+    const startUp = await require('./lib/onStart');
+    startUp.createTempDir();
+    await startUp.createBasicUsers();
 });
 
 passport.use(new LocalStrategy(User.authenticate()));

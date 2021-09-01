@@ -1,15 +1,16 @@
 const hasha = require('hasha');
 const YAML = require('yaml');
-const { spawn } = require('child_process');
+const { spawn, execSync } = require('child_process');
 const got = require('got');
 const frisby = require('frisby');
+const path = require('path');
 const fs = require('fs');
 const { Given, When, Then } = require('cucumber');
 const { getDomDump } = require('@syngrisi/syngrisi-wdio-sdk');
 const syngrisiDriver = require('@syngrisi/syngrisi-wdio-sdk').syngrisiDriver;
 const checkVRS = require('../../src/support/check/checkVrs').default;
 const waitForAndRefresh = require('../../src/support/action/waitForAndRefresh').default;
-const { startSession } = require('../../src/utills/common');
+const { startSession, killServer } = require('../../src/utills/common');
 
 const { saveRandomImage, fillCommonPlaceholders } = require('../../src/utills/common');
 const { TableVRSComp } = require('../../src/PO/vrs/tableVRS.comp');
@@ -72,7 +73,15 @@ function startServer(params) {
     });
 
     browser.pause(2500);
-    browser.waitUntil(async () => (await got.get(`http://vrs:${srvOpts.port || browser.config.serverPort}/`, { throwHttpErrors: false })).statusCode === 200);
+    browser.waitUntil(async () => {
+            const res = (await got.get(`http://${browser.config.serverDomain}:`
+                + `${srvOpts.port || browser.config.serverPort}/status`, { throwHttpErrors: false })
+                .json());
+            console.log({ isAlive: res.alive });
+            return (res.alive === true);
+        }
+    );
+    console.log(`SERVER IS START`);
     browser.syngrisiServer = child;
 
 }
@@ -88,44 +97,13 @@ When(/^I start VRS server$/, { timeout: 600000 }, () => {
 When(/^I clear test VRS database$/, () => {
     // const cmdPath = browser.config.rootPath + '/vrs/';
     const cmdPath = '../';
-    const homedir = require('os')
-        .homedir();
-    const nodePath = process.env.OLTA_NODE_PATH || (`${homedir}/.nvm/versions/node/v13.13.0/bin`);
-    const child = spawn(`${nodePath}/npm`,
-        ['run', 'clear_test', '-g', '--prefix', cmdPath]);
+    const result = execSync('npm run clear_test', { cwd: cmdPath })
+        .toString('utf8');
+    console.log({ result });
 });
 
 When(/^I kill process which used port: "([^"]*)"$/, (port) => {
-    const { execSync } = require('child_process');
-    const lSoftOut = false;
-    browser.waitUntil(() => {
-        console.log(`Try to kill apps on port: '${port}'`);
-        let pidsString;
-        try {
-            pidsString = execSync(`lsof -t -i:${port} -sTCP:LISTEN`)
-                .toString()
-                .trim();
-        } catch (e) {
-            console.log(e.stdout.toString());
-            console.log(e.stderr.toString());
-        }
-        if (pidsString) {
-            try {
-                for (const pid of pidsString.split('\n')) {
-                    console.log({ pid });
-                    process.kill(pid);
-                }
-                return true;
-            } catch (e) {
-                console.error(`Cannot kill process: '${e}'`);
-                return false;
-            }
-        } else {
-            return true;
-        }
-    }, {
-        timeout: 40000,
-    });
+    killServer(port);
 });
 
 When(/^I click on "([^"]*)" VRS test$/, (testName) => {
@@ -147,9 +125,10 @@ When(/^I expect that(:? (\d)th)? VRS test "([^"]*)" has "([^"]*)" (status|browse
         TableVRSComp.data.forEach((x) => {
             console.log({ NAME: x.name.getText() });
         });
-        // console.log(row[fieldName].getHTML());
-        expect(row[fieldName].$('span')
-            .jsGetText())
+        let actualValue = row[fieldName].$('span')
+            .jsGetText();
+        const actualValue2 = actualValue.replace(/ [\[]HEADLESS[\]]/, '');
+        expect(actualValue2)
             .toBe(fieldValue);
         if (fieldName === 'status') {
             const statusClasses = {
@@ -279,7 +258,7 @@ When(/^I check image with path: "([^"]*)" as "([^"]*)"$/, async function (filePa
     const checkResult = await checkVRS(checkName, imageBuffer);
     this.STATE.check = checkResult;
 });
-When(/^I create "([^"]*)" tests with params:$/, { timeout: 60000000 }, async function (num, yml) {
+When(/^I create "([^"]*)" tests with params:$/, { timeout: 600000 }, async function (num, yml) {
     const params = YAML.parse(yml);
 
     browser.vDriver.setCurrentSuite({
@@ -297,11 +276,13 @@ When(/^I create "([^"]*)" tests with params:$/, { timeout: 60000000 }, async fun
             runident: process.env.RUN_IDENT || 'integration_run_ident',
         }, browser.config.apiKey);
         browser.pause(300);
-        const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${params.filePath}`);
+        const filePath = params.filePath || 'files/A.png';
+        const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${filePath}`);
         const checkName = params.checkName || `Check - ${Math.random()
             .toString(36)
             .substring(7)}`;
         const checkResult = await checkVRS(checkName, imageBuffer);
+        console.log({ checkResult });
         this.STATE.check = checkResult;
         await browser.vDriver.stopTestSession(browser.config.apiKey);
     }
@@ -486,6 +467,8 @@ Then(/^I expect "([^"]*)" tests for get url "([^"]*)"$/, async (testsNum, url) =
 });
 
 When(/^I login with user:"([^"]*)" password "([^"]*)"$/, (login, password) => {
+    browser.url(`http://${browser.config.serverDomain}:${browser.config.serverPort}/`);
+    browser.pause(2000);
     $('#password')
         .waitForDisplayed();
     $('#email')
@@ -532,7 +515,8 @@ When(/^I stop the Syngrisi server$/, () => {
     try {
         browser.syngrisiServer.kill();
     } catch (e) {
-        console.log('WARNING: Syngrisi server does not run');
+        console.log('WARNING: cannot stop te Syngrisi server via child, try to kill process');
+        killServer(browser.config.serverPort);
     }
 });
 
@@ -707,4 +691,328 @@ Then(/^I expect that the element "([^"]*)" to have attribute "([^"]*)" containin
     const value2 = fillCommonPlaceholders(value);
     expect($(selector))
         .toHaveAttrContaining(attr, value2);
+});
+
+When(/^I create via http test user$/, async function () {
+    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/loadTestUser`;
+    console.log({ uri });
+    const res = await got.get(uri);
+    console.log({ response: res.body });
+    expect(JSON.parse(res.body).username)
+        .toBe('Test');
+});
+
+When(/^I login via http with user:"([^"]*)" password "([^"]*)"$/, async function (login, password) {
+    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}`;
+    console.log({ uri });
+
+    const res = (await got.post(
+        uri + '/login?origin=%2F&noredirect=1',
+        {
+            'headers': {
+                'upgrade-insecure-requests': '1',
+                'content-type': 'application/x-www-form-urlencoded',
+            },
+            'body': `username=${login}&password=${password}`,
+        }
+    ));
+    // console.log({ Body: res.body });
+    const sessionSid = res.headers['set-cookie'][0].split(';')
+        .filter(x => x.includes('connect.sid'))[0].split('=')[1];
+    console.log({ sessionSid });
+
+    this.saveItem('users', {
+        [login]: { sessionSid }
+    });
+
+    this.saveItem('lastSessionId', sessionSid);
+});
+
+When(/^I create via http user as:"([^"]*)" with params:$/, async function (user, json) {
+    const params = JSON.parse(json);
+    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/users`;
+    const sessionSid = this.getSavedItem('users')[user]['sessionSid'];
+    console.log({ sessionSid });
+
+    const res = await requestWithLastSessionSid(`${uri}`,
+        this,
+        {
+            method: 'POST',
+            form: {
+                username: params.username,
+                firstName: params.firstName,
+                lastName: params.lastName,
+                role: params.role,
+                password: params.password,
+            }
+        });
+    console.log({ respBody: res.json });
+});
+
+async function getWithLastSessionSid(uri, $this) {
+    // console.log({ uri });
+    const sessionSid = $this.getSavedItem('lastSessionId');
+    // console.log({ sessionSid });
+
+    const res = await got.get(`${uri}`, {
+        'headers': {
+            'cookie': `connect.sid=${sessionSid}`
+        },
+    });
+    return {
+        raw: res,
+        json: JSON.parse(res.body)
+    };
+}
+
+async function requestWithLastSessionSid(uri, $this, opts = { method: 'GET' }, body,) {
+    const sessionSid = $this.getSavedItem('lastSessionId');
+
+    const res = await got(`${uri}`, {
+            headers: {
+                'cookie': `connect.sid=${sessionSid}`
+            },
+            form: opts.form,
+            method: opts.method,
+            body
+        },
+    );
+    let json;
+    try {
+        json = JSON.parse(res.body);
+    } catch (e) {
+        console.warn(`Warning: cannot parse body as json`);
+        json = '';
+    }
+    return {
+        raw: res,
+        json
+    };
+}
+
+When(/^I generate API key for the User$/, async function () {
+    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/apikey`;
+    const res = await requestWithLastSessionSid(uri, this);
+    console.log({ respBodyJSON: res.json });
+    const apiKey = res.json.apikey;
+    console.log({ apiKey });
+    this.saveItem('apiKey', apiKey);
+
+});
+
+Then(/^I expect via http (\d+) baselines$/, async function (num) {
+    const baselines = (await requestWithLastSessionSid(
+        `http://${browser.config.serverDomain}:${browser.config.serverPort}/baselines`,
+        this
+    )).json;
+
+    expect(baselines.length)
+        .toBe(parseInt(num, 10));
+});
+
+Then(/^I expect via http ([\d]+)st baseline with:$/, async function (num, yml) {
+    const baselines = (await requestWithLastSessionSid(
+        `http://${browser.config.serverDomain}:${browser.config.serverPort}/baselines`,
+        this
+    )).json;
+    console.log({ baselines });
+
+    const params = YAML.parse(yml);
+    const baseline = baselines[parseInt(num) - 1];
+    baseline.markedByUsername = baseline.markedByUsername || '';
+    baseline.markedAs = baseline.markedAs || '';
+    expect(baseline)
+        .toMatchObject(params);
+});
+
+When(/^I parse via http "([^"]*)" snapshot for (\d)st check with name "([^"]*)"$/, async function (type, num, name) {
+    const checkUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
+        + `checks/byfilter?name=${name}`;
+    console.log({ uri: checkUri });
+    const check = (await requestWithLastSessionSid(
+        checkUri,
+        this
+    )).json[num - 1];
+    const transformType = {
+        actual: 'baselineId',
+        baseline: 'actualSnapshotId'
+    };
+    console.log({ check });
+
+    const snapshotId = check[transformType[type]];
+    console.log({ snapshotId });
+    const snapshootUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
+        + `snapshot/${snapshotId}`;
+    console.log({ snapshootUri });
+    const snapshoot = (await requestWithLastSessionSid(
+        snapshootUri,
+        this
+    )).json;
+    console.log({ snapshoot });
+
+    this.saveItem('snapshot', snapshoot);
+});
+
+Then(/^I expect that the snapshoot filename is (not exists|exists)$/, function (condition) {
+    const snapshoot = this.getSavedItem('snapshot');
+    const filePath = path.join(path.resolve(__dirname, '../../../baselinesTest'),
+        snapshoot.filename);
+    console.log({ filePath });
+    if (condition === 'exists') {
+        expect(fs.existsSync(filePath))
+            .toBe(true);
+        return;
+    }
+    expect(fs.existsSync(filePath))
+        .toBe(false);
+});
+
+Then(/^I expect exact "([^"]*)" snapshoot files$/, async function (num) {
+    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
+        + 'screenshots';
+    console.log({ uri: uri });
+    const items = (await requestWithLastSessionSid(
+        uri,
+        this
+    )).json;
+    console.log(items);
+    expect(items.length)
+        .toBe(parseInt(num, 10));
+});
+
+Then(/^I expect via http that "([^"]*)" (test|check) exist exactly "([^"]*)" times$/, async function (name, itemName, num) {
+    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
+        + `${itemName}s/byfilter?name=${name}`;
+    console.log({ uri: uri });
+    const items = (await requestWithLastSessionSid(
+        uri,
+        this
+    )).json;
+    expect(items.length)
+        .toBe(parseInt(num, 10));
+});
+
+When(/^I remove via http (\d+)st test with name "([^"]*)"$/, async function (num, name) {
+    const testUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
+        + `tests/byfilter?name=${name}`;
+    console.log({ uri: testUri });
+    const test = (await requestWithLastSessionSid(
+        testUri,
+        this
+    )).json[num - 1];
+    console.log({ test });
+    const id = test._id;
+
+    const removeTestUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
+        + `tests/${id}`;
+    console.log({ uri: removeTestUri });
+    const result = (await requestWithLastSessionSid(
+        removeTestUri,
+        this,
+        {
+            method: 'DELETE',
+            form: { id: id }
+        }
+    )).json;
+    console.log({ result });
+});
+
+When(/^I remove via http (\d+)st check with name "([^"]*)"$/, async function (num, name) {
+    const testUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
+        + `checks/byfilter?name=${name}`;
+    console.log({ uri: testUri });
+    const check = (await requestWithLastSessionSid(
+        testUri,
+        this
+    )).json[num - 1];
+    console.log({ check });
+    const id = check._id;
+
+    const removeCheckUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
+        + `checks/${id}`;
+    console.log({ uri: removeCheckUri });
+    const result = (await requestWithLastSessionSid(
+        removeCheckUri,
+        this,
+        {
+            method: 'DELETE',
+            form: { id: id }
+        }
+    )).json;
+    console.log({ result });
+});
+
+When(/^I accept via http the (\d+)st check with name "([^"]*)"$/, async function (num, name) {
+
+    const checkUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
+        + `checks/byfilter?name=${name}`;
+    console.log({ uri: checkUri });
+    const check = (await requestWithLastSessionSid(
+        checkUri,
+        this
+    )).json[num - 1];
+    console.log({ check });
+    const checkId = check._id;
+    const checkAcceptUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
+        + `checks/${checkId}`;
+
+    const result = (await requestWithLastSessionSid(
+        checkAcceptUri,
+        this,
+        {
+            method: 'PUT',
+            form: {
+                id: checkId,
+                baselineId: check.baselineId,
+                status: 'new',
+                accept: 'true',
+            }
+        }
+    )).json;
+    console.log({ result });
+});
+
+When(/^I go to "([^"]*)" page$/, function (str) {
+    if (str === 'main') {
+        browser.url(`http://${browser.config.serverDomain}:${browser.config.serverPort}/`);
+        return;
+    }
+    const pages = {
+        admin: {
+            users: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin?task=users`
+        }
+    };
+
+    const page = str.split('>')[0];
+    const subPage = str.split('>')[1];
+    browser.url(pages[page][subPage]);
+});
+
+When(/^I update via http test with params:$/, async function (str) {
+    const params = YAML.parse(this.fillItemsPlaceHolders(fillCommonPlaceholders(str)));
+    const testId = this.STATE.check.test;
+
+    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
+        + `tests/${testId}`;
+    const result = (await requestWithLastSessionSid(
+        uri,
+        this,
+        {
+            method: 'PUT',
+            form: params
+        },
+    )).json;
+    console.log({ result });
+});
+
+When(/^I remove via http tests that older than "([^"]*)" days$/, async function (days) {
+    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}`
+        + `/task_remove_old_tests?days=${days}`;
+    const result = (await requestWithLastSessionSid(
+        uri,
+        this,
+    ));
+    console.log({ STATUS: result.raw.statusCode });
+    expect(result.raw.statusCode)
+        .toBe(200);
 });

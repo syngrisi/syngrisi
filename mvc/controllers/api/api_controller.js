@@ -5,6 +5,7 @@ const querystring = require('querystring');
 const mongoose = require('mongoose');
 const hasha = require('hasha');
 const fs = require('fs').promises;
+const fss = require('fs');
 const { format, subDays } = require('date-fns');
 const { config } = require('../../../config');
 const { getDiff } = require('../../../lib/comparator');
@@ -476,28 +477,15 @@ exports.updateTest = async function (req, res) {
             try {
                 const opts = removeEmptyProperties(req.body);
                 const { id } = req.params;
-                opts['updatedDate'] = Date.now();
-                console.log(`UPDATE test id '${id}' with params '${JSON.stringify(opts)}'`);
+                console.log({ id });
+                console.log(`UPDATE TEST: id '${id}' with params '${JSON.stringify(opts, null, 2)}'`);
 
-                const tst = await Test.findByIdAndUpdate(id, opts)
-                    .exec()
-                    .catch(
-                        (e) => {
-                            console.log(`Cannot update the test, error: '${e}'`);
-                            fatalError(req, res, e);
-                            return reject(e);
-                        }
-                    );
-                tst.save()
-                    .catch(
-                        (e) => {
-                            console.log(`Cannot save the test, error: '${e}'`);
-                            fatalError(req, res, e);
-                            return reject(e);
-                        }
-                    );
+                const tst = await Test.findOneAndUpdate({ _id: id }, opts, { new: true });
                 res.status(200)
-                    .send(`Test with id: '${id}' was updated`);
+                    .json({
+                        message: `Test with id: '${id}' was updated`,
+                        test: tst.toObject(),
+                    });
                 return resolve(tst);
             } catch (e) {
                 fatalError(req, res, e);
@@ -507,16 +495,69 @@ exports.updateTest = async function (req, res) {
     );
 };
 
-function removeTest(id) {
+function removeCheck(id) {
     return new Promise((resolve, reject) => {
+        Check.findByIdAndDelete(id)
+            .then(async (check) => {
+                log.debug(`check with id: '${id}' was removed, update test: ${check.test}`);
+
+                const test = await Test.findById(check.test)
+                    .exec();
+                const testCalculatedStatus = await calculateTestStatus(check.test);
+                const testCalculatedAcceptedStatus = await calculateAcceptedStatus(check.test);
+
+                test.status = testCalculatedStatus;
+                test.markedAs = testCalculatedAcceptedStatus;
+                test.updatedDate = new Date();
+
+                await orm.updateItemDate('VRSSuite', check.suite);
+                test.save();
+
+                const allCheckIds = {
+                    baseline: check.baselineId?.toString(),
+                    actual: check.actualSnapshotId?.toString(),
+                    diff: check.diffId?.toString(),
+                };
+                if (check.baselineId ?? true) {
+                    log.debug(`try to remove snapshoot, baseline: ${check.baselineId}`);
+                    await removeSnapshoot('baseline', allCheckIds);
+                }
+
+                if (check.actualSnapshotId ?? true) {
+                    log.debug(`try to remove snapshoot, actual: ${check.actualSnapshotId}`);
+                    await removeSnapshoot('actual', allCheckIds);
+                }
+
+                if (check.diffId ?? true) {
+                    log.debug(`try to remove snapshoot, diff: ${check.diffId}`);
+                    await removeSnapshoot('diff', allCheckIds);
+                }
+                return resolve();
+            })
+            .catch(
+                (e) => {
+                    log.error(`cannot remove a check with id: '${id}', error: '${e}'`);
+                    return reject(e);
+                }
+            );
+    });
+}
+
+function removeTest(id) {
+    return new Promise(async (resolve, reject) => {
         try {
             console.log(`Try to delete all checks associated to test with ID: '${id}'`);
-            Check.remove({ test: id })
-                .then((result) => {
-                    console.log(`DELETE test with ID: '${id}'`);
-                    Test.findByIdAndDelete(id)
-                        .then((out) => resolve(out));
-                });
+            const checks = await Check.find({ test: id });
+            const checksRemoveResult = [];
+            checks.forEach((check) => {
+                checksRemoveResult.push(removeCheck(check._id));
+            });
+            console.log({ checksRemoveResult });
+            await Promise.all(checksRemoveResult);
+
+            await Test.findByIdAndDelete(id);
+
+            return resolve();
         } catch (e) {
             return reject(e);
         }
@@ -528,10 +569,11 @@ exports.removeTest = function (req, res) {
         try {
             const { id } = req.params;
             removeTest(id)
-                .then((output) => {
+                .then(() => {
                     res.status(200)
-                        .send(`Test with id: '${id}' and all related checks were removed
-                        output: '${JSON.stringify(output)}'`);
+                        .json({
+                            message: `Test with id: '${id}' and all related checks were removed`,
+                        });
                     return resolve();
                 });
         } catch (e) {
@@ -1203,7 +1245,9 @@ exports.updateCheck = async function updateCheck(req, res) {
             console.log(`Check with id: '${checkId}' was updated`);
 
             res.status(200)
-                .send(`Check with id: '${checkId}' was updated`);
+                .json({
+                    message: `Check with id: '${checkId}' was updated`,
+                });
             resolve();
         } catch (e) {
             fatalError(req, res, e);
@@ -1229,31 +1273,41 @@ async function isLastLinkToSnapshoot(id) {
     return (baselines.length === 0) && (actuals.length === 0);
 }
 
-const removeSnapshootFile = (snapshoot) => new Promise(async (resolve, reject) => {
+const removeSnapshootFile = (snapshoot, allChecksIds) => new Promise(async (resolve, reject) => {
     log.debug(`find all snapshots with same filename`);
     const snapshoots = await Snapshot.find({ filename: snapshoot.filename });
-    if (snapshoots.length === 0) {
+    // eslint-disable-next-line arrow-body-style
+    const isLastSnapshotFile = () => {
+        return (snapshoots.length === 0)
+            || (
+                (snapshoots.length === 1)
+                && (Object.values(allChecksIds)
+                    .includes(snapshoots[0]?._id?.toString()))
+            );
+    };
+    if (isLastSnapshotFile()) {
         const path = snapshoot.filename ? `${config.defaultBaselinePath}${snapshoot.id}.png` : `${config.defaultBaselinePath}${snapshoot.id}.png`;
-        const fss = require('fs');
         if (fss.existsSync(path)) {
             console.log(`Remove file: '${path}'`);
             fss.unlinkSync(path);
         }
     }
+    log.debug(`there is '${snapshoots.length}' snapshoots with such filename`);
     return resolve();
 });
 
-const removeSnapshoot = (id) => new Promise(async (resolve, reject) => {
-    log.debug(`DELETE -- snapshoot with id: ${id}`);
+const removeSnapshoot = (snapshootName, allCheckIds) => new Promise(async (resolve, reject) => {
+    const id = allCheckIds[snapshootName];
+    log.info(`DELETE: snapshoot with id: '${id}'`);
     log.debug(`check if snapshoot '${id}' is baseline`);
     if (!id) {
-        log.debug('id is empty');
+        log.warn('id is empty');
         return resolve();
     }
     const snapshoot = await Snapshot.findById(id);
 
     if (snapshoot === null) {
-        log.debug(`cannot find the snapshoot with id: '${id}'`);
+        log.info(`cannot find the snapshoot with id: '${id}'`);
         return resolve();
     }
 
@@ -1264,70 +1318,40 @@ const removeSnapshoot = (id) => new Promise(async (resolve, reject) => {
         // console.log({ markedAs: baselines[0].markedAs });
         if (baselines[0].markedAs === undefined && (await isLastLinkToSnapshoot(id))) {
             await Snapshot.findByIdAndDelete(id);
+
             await Baseline.deleteMany({ snapshootId: id });
             log.debug(`snapshoot: '${id}' and related baselines was removed because it was last unaccepted snapshoot`);
             log.debug(`try to remove snapshoot file, id: '${snapshoot._id}', filename: '${snapshoot.filename}'`);
-            await removeSnapshootFile(snapshoot);
+            await removeSnapshootFile(snapshoot, allCheckIds);
             return resolve();
         } else {
             log.debug(`cannot remove the snapshoot because it is accepted or not last baseline`);
             return resolve();
         }
-    } else {
-        log.debug(`snapshoot: '${id}' is not a baseline, try to remove it`);
-        await Snapshot.findByIdAndDelete(id);
-        log.debug(`snapshoot: '${id}' was removed`);
-        log.debug(`try to remove snapshoot file, id: '${snapshoot._id}', filename: '${snapshoot.filename}'`);
-        await removeSnapshootFile(snapshoot);
-        return resolve();
     }
+
+    log.debug(`snapshoot: '${id}' is not a baseline, try to remove it`);
+    await Snapshot.findByIdAndDelete(id);
+    log.debug(`snapshoot: '${id}' was removed`);
+    log.debug(`try to remove snapshoot file, id: '${snapshoot._id}', filename: '${snapshoot.filename}'`);
+    await removeSnapshootFile(snapshoot, allCheckIds);
+    return resolve();
 });
 
-exports.removeCheck = async function (req, res) {
+exports.removeCheck = function (req, res) {
     return new Promise((resolve, reject) => {
-        try {
-            const { id } = req.params;
-            log.info(`DELETE -- check id: '${id}', user: '${req.user.username}', params: '${JSON.stringify(req.params)}'`);
-            Check.findByIdAndDelete(id)
-                .then(async (check) => {
-                    log.debug(`check with id: '${id}' was removed, update test: ${check.test}`);
-
-                    const test = await Test.findById(check.test)
-                        .exec();
-                    const testCalculatedStatus = await calculateTestStatus(check.test);
-                    const testCalculatedAcceptedStatus = await calculateAcceptedStatus(check.test);
-
-                    test.status = testCalculatedStatus;
-                    test.markedAs = testCalculatedAcceptedStatus;
-                    test.updatedDate = new Date();
-
-                    await orm.updateItemDate('VRSSuite', check.suite);
-                    test.save();
-
-                    log.debug(`try to remove snapshoot, baseline: ${check.baselineId}`);
-                    await removeSnapshoot(check.baselineId);
-
-                    log.debug(`try to remove snapshoot, actual: ${check.actualSnapshotId}`);
-                    await removeSnapshoot(check.actualSnapshotId);
-
-                    log.debug(`try to remove snapshoot, diff: ${check.diffId}`);
-                    await removeSnapshoot(check.diffId);
-
-                    res.status(200)
-                        .send(`check with id: '${id}' was removed`);
-                    return resolve();
-                })
-                .catch(
-                    (e) => {
-                        log.error(`cannot remove a check with id: '${id}', error: '${e}'`);
-                        fatalError(req, res, e);
-                        return reject(e);
-                    }
-                );
-        } catch (e) {
-            fatalError(req, res, e);
-            return reject(e);
-        }
+        const { id } = req.params;
+        log.info(`DELETE CHECK, id: '${id}', user: '${req.user.username}', params: '${JSON.stringify(req.params)}'`);
+        removeCheck(id)
+            .then(() => {
+                res.status(200)
+                    .json({ message: `check with id: '${id}' was removed` });
+                return resolve();
+            })
+            .catch((e) => {
+                fatalError(req, res, e);
+                return reject(e);
+            });
     });
 };
 
@@ -1423,26 +1447,74 @@ exports.stopSession = async function (req, res) {
     });
 };
 
+// TESTABILITY
+exports.checksByFilter = function (req, res) {
+    log.debug(JSON.stringify(req.query, null, 2));
+    if (Object.keys(req.query).length === 0) {
+        res.status(400)
+            .json({ error: 'the query is empty' });
+    }
+    Check.find(req.query)
+        .limit(100)
+        .then((result) => {
+            res.json(result);
+        });
+};
+
+exports.testsByFilter = function (req, res) {
+    log.debug(JSON.stringify(req.query, null, 2));
+    if (Object.keys(req.query).length === 0) {
+        res.status(400)
+            .json({ error: 'the query is empty' });
+    }
+    Test.find(req.query)
+        .limit(100)
+        .then((result) => {
+            res.json(result);
+        });
+};
+
+exports.getScreenshotList = function (req, res) {
+    const files = fss.readdirSync(config.defaultBaselinePath);
+    res.json(files);
+};
+
 // TASKS
+exports.status = async function (req, res) {
+    const count = await User.countDocuments();
+    log.info(`server status: check users counts: ${count}`);
+    // log.debug({ count });
+    if (count > 1) {
+        res.json({ alive: true });
+        return;
+    }
+    res.json({ alive: false });
+};
+
 exports.loadTestUser = async function (req, res) {
     return new Promise(async (resolve, reject) => {
         if (process.env.TEST !== '1') {
-            return res.json({ msg: 'the feature works only in test mode' });
+            return res.json({ message: 'the feature works only in test mode' });
         }
         const testAdmin = await User.findOne({ username: 'Test' });
         if (!testAdmin) {
-            const fs = require('fs');
             console.log('Create the test Administrator');
-            const adminData = JSON.parse(fs.readFileSync('./lib/testAdmin.json'));
+            const adminData = JSON.parse(fss.readFileSync('./lib/testAdmin.json'));
             const admin = await User.create(adminData);
             console.log(`Test Administrator with id: '${admin._id}' was created`);
             res.json(admin);
-        } else {
-            console.log(testAdmin);
-            res.send(`{"msg": "Already exist '${testAdmin}'"`);
+            return resolve(admin);
         }
+
+        log.info(`Test admin is exists: ${JSON.stringify(testAdmin, null, 2)}`);
+        res.json({ msg: `Already exist '${testAdmin}'` });
     });
 };
+
+function taskOutput(msg, res) {
+    res.write(`${msg.toString()}\n`);
+    console.log(msg.toString());
+}
 
 exports.task_remove_empty_tests = function (req, res) {
     return new Promise((resolve, reject) => {
@@ -1541,7 +1613,7 @@ exports.task_remove_empty_runs = function (req, res) {
 };
 
 exports.task_remove_old_tests = function (req, res) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         // this header to response with chunks data
         res.writeHead(200, {
             'Content-Type': 'text/event-stream',
@@ -1549,10 +1621,21 @@ exports.task_remove_old_tests = function (req, res) {
             'Content-Encoding': 'none',
         });
         const trashHoldDate = subDays(new Date(), parseInt(req.query.days, 10));
+        taskOutput(
+            `- will remove all tests older that: '${req.query.days}' days,`
+            + ` '${format(trashHoldDate, 'yyyy-MM-dd')}'\n`,
+            res
+        );
 
-        res.write(`- will remove all tests older that '${format(trashHoldDate, 'yyyy-MM-dd')}'\n`);
-        console.log(`- will remove all tests older that '${format(trashHoldDate, 'yyyy-MM-dd')}'\n`);
-        console.log(req.query);
+        const oldTestsCount = await Test.find({ startDate: { $lt: trashHoldDate } })
+            .countDocuments();
+        const oldTests = await Test.find({ startDate: { $lt: trashHoldDate } });
+        taskOutput(`- the count of documents is: '${oldTestsCount}'\n`, res);
+        oldTests.forEach((test) => {
+            taskOutput(`{\n\tid: ${test._id},\n\tname: ${test.name},\n\tdate:${test.startDate}\n}`, res);
+            removeTest(test._id);
+        });
+
         return resolve(res.end());
     });
 };

@@ -36,8 +36,6 @@ Feature: Logout
         """
 
     Scenario: Logout - default Test user
-        When I open the url "http://vrs:3001/login"
-        When I wait for "2" seconds
         When I login with user:"Test" password "123"
         Then I wait on element "*=TA" to be displayed
         When I wait for "2" seconds
@@ -45,7 +43,7 @@ Feature: Logout
         When I open the url "http://vrs:3001/logout"
 
         When I wait for "2" seconds
-        When I open the url "http://vrs:3001"
+        When I go to "main" page
         When I wait for "1" seconds
         When I expect the url to contain "/login"
         Then the title is "Login Page"

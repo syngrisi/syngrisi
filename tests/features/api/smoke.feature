@@ -4,16 +4,8 @@ Feature: Smoke VRS API
     Background:
         Given I clear test VRS database
         Given I kill process which used port: "3001"
-        Given I start VRS server with parameters:
-        """
-          port: 3001
-          databaseName: VRSdbTest
-          baseLineFolder: ./baselinesTest/
-        """
-        Given I setup VRS driver with parameters:
-        """
-          url: "http://vrs:3001/"
-        """
+        Given I start VRS server
+        Given I setup VRS driver
 
     Scenario: New test
         When I send "post" request to "http://vrs:3001/tests" with:
