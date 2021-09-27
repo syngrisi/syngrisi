@@ -16,5 +16,3 @@ class TableVRSComp extends Table {
 }
 
 module.exports.TableVRSComp = new TableVRSComp();
-// export default TableVRSComp;
-// export default new TableVRSComp();

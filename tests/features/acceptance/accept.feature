@@ -167,7 +167,6 @@ Feature: Check Acceptance
         Then I expect that VRS test "second Failed accept both" is unfolded
         Then I expect that VRS check "1/1 Check - 1" has "Passed" status
 
-
     Scenario: Acceptance - two Test, one Check, accept Second
         # FIRST TEST
         Given I start VRS session with parameters:
@@ -219,7 +218,6 @@ Feature: Check Acceptance
         When I wait for "2" seconds
         Then I expect the "1/1 new int check 1" check has "accept" acceptance status
 #        Then I expect that last "2" checks with ident contains "ident.new int check 1.1366x768.chrome.MacIntel" has not the same "baselineId"
-
 
     Scenario: Acceptance - three Test, one Check
         # FIRST TEST
@@ -374,7 +372,6 @@ Feature: Check Acceptance
         Then I expect that VRS check "2/2 new int check 2" has "Passed" status
         Then I expect that VRS test "Acceptance - two Test, two Check" has "Accepted" accepted status
 
-
     Scenario: Acceptance - two Test, three Check, accept, remove, check Test status
         # FIRST TEST
         Given I start VRS session with parameters:
@@ -428,6 +425,7 @@ Feature: Check Acceptance
         When I click on "Acceptance - two Test, three Check, accept, remove, check Test status" VRS test
         When I wait for "1" seconds
         When I accept the "1/2 new int check 2" check
+        When I wait for "1" seconds
         Then I expect that VRS test "Acceptance - two Test, three Check, accept, remove, check Test status" has "Partially" accepted status
         When I refresh page
         When I wait for "2" seconds
@@ -436,6 +434,7 @@ Feature: Check Acceptance
         When I click on "Acceptance - two Test, three Check, accept, remove, check Test status" VRS test
         When I wait for "1" seconds
         When I accept the "2/2 new int check 3" check
+        When I wait for "1" seconds
         Then I expect that VRS test "Acceptance - two Test, three Check, accept, remove, check Test status" has "Accepted" accepted status
         When I refresh page
         When I wait for "2" seconds
