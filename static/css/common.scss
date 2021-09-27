@@ -337,8 +337,6 @@ $accepted-color: #2ECC40;
 }
 
 .prev-accepted-button-icon {
-  //color: color.scale($accepted-color, $lightness: -40%);
-  color: $accepted-color;
-  //color: #0ba46c;
-  filter: grayscale(55%);
+  -webkit-text-stroke: 1px #2ECC40;
+  color: white;
 }
