@@ -57,7 +57,10 @@
             <%- include('components/logo_and_link', {location: 'Difference'}) %>
         </div>
 
-        <div name="title" class="col pl-4 pt-2-5 h4 mb-0">
+        <div name="title"
+             class="col pl-4 pt-3 h6 mb-0 text-truncate"
+              title="<%= suite.name %>/<%= test.name %>/<%= (check.name.replace(/_/g, ' ')); %> [<%= check.status[0] %>]"
+        >
             <a class="diff-back-button unlink small" href="javascript:void(0)"
                onclick="backToTest('<%= test.id %>')">
                 <i class="fa fa-arrow-left" aria-hidden="true"></i>

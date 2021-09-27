@@ -1,18 +1,31 @@
 const hasha = require('hasha');
 const YAML = require('yaml');
-const { spawn, execSync } = require('child_process');
+const {
+    spawn,
+    execSync,
+} = require('child_process');
 const got = require('got');
 const frisby = require('frisby');
 const path = require('path');
 const fs = require('fs');
-const { Given, When, Then } = require('cucumber');
+const {
+    Given,
+    When,
+    Then,
+} = require('cucumber');
 const { getDomDump } = require('@syngrisi/syngrisi-wdio-sdk');
 const syngrisiDriver = require('@syngrisi/syngrisi-wdio-sdk').syngrisiDriver;
 const checkVRS = require('../../src/support/check/checkVrs').default;
 const waitForAndRefresh = require('../../src/support/action/waitForAndRefresh').default;
-const { startSession, killServer } = require('../../src/utills/common');
+const {
+    startSession,
+    killServer,
+} = require('../../src/utills/common');
 
-const { saveRandomImage, fillCommonPlaceholders } = require('../../src/utills/common');
+const {
+    saveRandomImage,
+    fillCommonPlaceholders,
+} = require('../../src/utills/common');
 const { TableVRSComp } = require('../../src/PO/vrs/tableVRS.comp');
 
 function startDriver(params) {
@@ -53,13 +66,16 @@ function startServer(params) {
     env.VRS_PORT = srvOpts.port || browser.config.serverPort;
     env.VRS_BASELINE_PATH = srvOpts.baseLineFolder || './baselinesTest/';
     env.VRS_CONN_STRING = `mongodb://localhost/${databaseName}`;
-    const homedir = require('os')
-        .homedir();
-    const nodePath = process.env.OLTA_NODE_PATH || (`${homedir}/.nvm/versions/node/v13.13.0/bin`);
-    const child = spawn(`${nodePath}/npm`,
-        ['run', 'starttest', '-g', '--prefix', cmdPath], { env });
+    // const homedir = require('os')
+    //     .homedir();
+    // const nodePath = process.env.OLTA_NODE_PATH || (`C:\\Program Files\\nodejs`);
+    const child = spawn(`node`,
+        [`server.js`], {
+            env,
+            shell: process.platform === 'win32',
+            cwd: cmdPath
+        });
 
-    const startDate = new Date() / 1;
     child.stdout.setEncoding('utf8');
     child.stdout.on('data', (data) => {
         console.log(`#: ${data}`);
@@ -81,7 +97,7 @@ function startServer(params) {
             return (res.alive === true);
         }
     );
-    console.log(`SERVER IS START`);
+    console.log(`SERVER IS STARTED, PID: '${child.pid}'`);
     browser.syngrisiServer = child;
 
 }
@@ -123,6 +139,7 @@ When(/^I expect that(:? (\d)th)? VRS test "([^"]*)" has "([^"]*)" (status|browse
             .includes(testName))[intNumber - 1];
 
         TableVRSComp.data.forEach((x) => {
+            console.log({ EL: x.name.selector });
             console.log({ NAME: x.name.getText() });
         });
         let actualValue = row[fieldName].$('span')
@@ -512,8 +529,17 @@ Then(/^page source match:$/, (source) => {
 });
 
 When(/^I stop the Syngrisi server$/, () => {
+
     try {
+            console.log(`THE SYNGRISI SERVER PID: '${browser.syngrisiServer.pid}'`);
+            if(process.platform === 'win32'){
+                killServer(browser.config.serverPort);
+                return
+            }
+        if (browser.syngrisiServer) {
+
         browser.syngrisiServer.kill();
+        }
     } catch (e) {
         console.log('WARNING: cannot stop te Syngrisi server via child, try to kill process');
         killServer(browser.config.serverPort);

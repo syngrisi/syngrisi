@@ -3,7 +3,10 @@ const ImageJS = require('imagejs');
 const YAML = require('yaml');
 const faker = require('faker');
 const moment = require('moment');
-const { format, subDays } = require('date-fns');
+const {
+    format,
+    subDays,
+} = require('date-fns');
 
 const saveRandomImage = async function saveRandomImage(fullPath) {
     function getRandomInt(max) {
@@ -30,28 +33,12 @@ const killServer = function (port) {
     const { execSync } = require('child_process');
     browser.waitUntil(() => {
         console.log(`Try to kill apps on port: '${port}'`);
-        let pidsString;
         try {
-            pidsString = execSync(`lsof -t -i:${port} -sTCP:LISTEN`)
-                .toString()
-                .trim();
-        } catch (e) {
-            console.log(e.stdout.toString());
-            console.log(e.stderr.toString());
-        }
-        if (pidsString) {
-            try {
-                for (const pid of pidsString.split('\n')) {
-                    console.log({ pid });
-                    process.kill(pid);
-                }
-                return true;
-            } catch (e) {
-                console.error(`Cannot kill process: '${e}'`);
-                return false;
-            }
-        } else {
+            const output = execSync(`npx kill-port ${port}`).toString();
+            console.log({ output });
             return true;
+        } catch (e) {
+            console.log({ err: e.stdout.toString() });
         }
     }, {
         timeout: 40000,
