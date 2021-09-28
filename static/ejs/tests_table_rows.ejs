@@ -354,7 +354,7 @@
                                 <!--Remove dropdown-->
                                 <div class="dropdown">
                                     <a
-                                            class="remove-button btn-check btn-mini-toolbar btn-sm ml-1 rounded-0 border-0"
+                                            class="remove-button btn-check btn-mini-toolbar btn-sm ml-1 mr-1 rounded-0 border-0"
                                             check-name="<?= check.name ?>"
                                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                                             style="line-height: 0.1; padding: 2px;"
@@ -362,7 +362,7 @@
                                             data-toggle="tooltip"
                                             data-placement="top"
                                             title="Remove this check">
-                                        <i class="fas fa-times-circle fa-1x"></i>
+                                        <i class="remove-button-icon"></i>
                                     </a>
                                     <div class="dropdown-menu pl-2 pr-2 text-light bg-item-failed text-center"
                                          aria-labelledby="checkbutton_<?= check._id ?>"
@@ -402,7 +402,7 @@
                                         }
 
                                         ?>
-                                        <i class="check-accept-button-check-id_<?= check._id ?> <?= acceptButtonClass ?> accept-button-icon fas fa-thumbs-up fa-1x"
+                                        <i class="check-accept-button-check-id_<?= check._id ?> <?= acceptButtonClass ?> accept-button-icon"
                                            data-toggle="tooltip"
                                            name="accept-button-icon"
                                            data-html="true"
