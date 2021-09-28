@@ -14,3 +14,4 @@ node_modules
 *.tmp
 /debug2.js
 /baselineProd/
+/static/debug.html

@@ -13968,7 +13968,7 @@ div:hover > .preview-overlay-text {
 }
 
 .header-hover:hover {
-  background-color: #42a777 !important;
+  background-color: #649D77 !important;
 }
 
 .btn-mini-toolbar:hover {
@@ -14026,19 +14026,39 @@ div[name=testinfo]:nth-of-type(4n+1) {
 }
 
 .not-accepted-button-icon {
-  color: #888888;
-  opacity: 90%;
-  padding-bottom: 2px;
-}
-
-.accepted-button-icon {
-  color: #2ECC40;
-  opacity: 90%;
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-image: url(/static/icons/not-accepted-button-icon.svg);
 }
 
 .prev-accepted-button-icon {
-  -webkit-text-stroke: 1px #2ECC40;
-  color: white;
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-image: url(/static/icons/prev-accepted-button-icon.svg);
+}
+
+.accepted-button-icon {
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-image: url(/static/icons/accepted-button-icon.svg);
+}
+
+.remove-button-icon {
+  width: 13px;
+  height: 13px;
+  display: inline-block;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-image: url(/static/icons/remove-button-icon.svg);
 }
 
 /*# sourceMappingURL=common.css.map */
