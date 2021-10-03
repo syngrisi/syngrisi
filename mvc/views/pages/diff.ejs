@@ -5,7 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="icon" href="../../../static/imgs/new-logo6.png">
+    <link rel="icon" href="../../../static/icons/leaf_logo.svg">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
           integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
           crossorigin="anonymous">
@@ -16,28 +16,6 @@
     <link rel="stylesheet" href="../../../static/css/colors.css">
     <script src="lib/gridHelpers.js"></script>
     <style>
-        .snapshoot-canvas {
-            width: 100%;
-            position: absolute;
-            top: 0px;
-            left: 0px;
-        }
-
-        .con-relative {
-            position: relative;
-        }
-
-        .centered-overlay-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        img.preview {
-            max-height: 180px;
-            object-fit: contain;
-        }
 
     </style>
     <script>
@@ -46,24 +24,34 @@
         }
     </script>
 
-    <title>Shapshoot - <%= expected_snapshoot.name %> | <%= expected_snapshoot.id %>
-        | <%= expected_snapshoot.formattedcreatedDate %></title>
+    <title>Shapshoot - <%= expected_snapshoot.name; %> | <%= expected_snapshoot.id; %>
+        | <%= expected_snapshoot.formattedcreatedDate; %></title>
 </head>
 <body>
 <div class="container-fluid pl-3 pr-1">
     <div name="page-head" class="row bg-olive text-light ">
-        <div name="logo-and-link" class="col-3 col-lg-3 w-25 pl-0 pb-1 bg-olive text-light"
-             id="logo-and-label-container">
-            <%- include('components/logo_and_link', {location: 'Difference'}) %>
+        <div name="logo-and-link"
+             class="col-auto pr-0"
+             id="logo-and-label-container"
+             style="width: 90px !important"
+        >
+            <div class="row">
+                <div class="col-auto ml-4 pl-0 pr-0 pt-1 toggle-sidebar-button-wrapper vcenter">
+                    <%- include('components/sidebar_switcher') %>
+                </div>
+                <div name="logo-img" class="col-auto pl-1 pr-0 pt-1">
+                    <%- include('components/logo') %>
+                </div>
+            </div>
         </div>
 
         <div name="title"
-             class="col pl-4 pt-3 h6 mb-0 text-truncate"
-              title="<%= suite.name %>/<%= test.name %>/<%= (check.name.replace(/_/g, ' ')); %> [<%= check.status[0] %>]"
+             class="col pl-4 pt-0 h6 mb-0 d-flex align-items-center text-truncate"
+             title="<%= suite.name; %>/<%= test.name; %>/<%= (check.name.replace(/_/g, ' ')); %> [<%= check.status[0] %>]"
         >
-            <a class="diff-back-button unlink small" href="javascript:void(0)"
+            <a class="diff-back-button back-button unlink small" href="javascript:void(0)"
                onclick="backToTest('<%= test.id %>')">
-                <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                <img src="../../../static/icons/back-button.svg" alt="navigation button" class="navigation-button">
             </a>
             &nbsp;
             <a class="unlink" name="suite-link"
@@ -75,7 +63,7 @@
             <%= (check.name.replace(/_/g, ' ')); %> [<%= check.status[0] %>]
         </div>
 
-        <div name="dropdown-menu" class="col-2 align-self-end pl-4 pt-0 h4 mb-0 light-purple">
+        <div name="dropdown-menu" class="col-auto align-self-end pl-4 pt-0 h4 mb-0 light-purple">
             <div class="d-flex flex-row pb-1 pt-1 dropdown dropdown-item1 pl-2 pr-2 pb-1" data-toggle="dropdown">
 
                 <div class="bg-<%= check.status[0] %> ml-2 mt-2 ml-1 mb-0" style="width: 20px; height: 20px"></div>
@@ -372,5 +360,7 @@
     }
 
 </script>
+<script src="../../../static/js/bootstrap-toolkit.js"></script>
+<script src="../lib/commonEvents.js"></script>
 </body>
 </html>

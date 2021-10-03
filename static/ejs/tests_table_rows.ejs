@@ -7,9 +7,10 @@
      data-toggle="collapse" style="cursor: pointer"
      data-target="#testchecks_<?= test.id ?>">
     <!--TEST CHECKBOX-->
-    <div class="cell-input cell col-auto text-truncate small d-flex align-items-center"
-         onclick="event.stopPropagation();">
+    <div class="cell-input cell col-1 col-lg-auto col-sm-1 text-truncate small d-flex align-items-center"
+         onclick="toggleRemoveButton('test-input', 'mass-tests-actions'), event.stopPropagation();">
         <input id="<?= test.id ?>"
+               class="test-input"
                name="test"
                type="checkbox">
     </div>
@@ -71,7 +72,7 @@
     </div>
 
     <!--NAME-->
-    <div class="cell-name cell pl-3 pr-1 pt-3-2 pb-3-2 col-4-5 text-truncate align-middle" style="position: relative">
+    <div class="cell-name cell col-10 col-sm-9 col-md-3 col-lg-4-5 pl-3 pr-1 pt-3-2 pb-3-2 text-truncate align-middle" style="position: relative">
         <!--NAME:tags-->
         <div style="font-size: 0.6rem; position: absolute; top: -0px; left: 1rem; padding-top: 7px"
              class="small text-dark text-truncate"
@@ -122,7 +123,7 @@
 
 
     <!--CREATOR-->
-    <div class="cell-creator cell pt-3 pb-3 col-1-2 pl-2 pr-1 text-truncate">
+    <div class="cell-creator col-1-2 d-none d-sm-none d-md-block cell pt-3 pb-3 pl-2 pr-1 text-truncate">
 
         <div class="text-truncate">
             <span name="cell-creator" id="<?= test.id ?>_cell-creator" class="text-secondary small"
@@ -146,13 +147,13 @@
     }
     ?>
     <? const acceptedStatus = test.markedAs  ? test.markedAs : 'Unaccepted' ?>
-    <div class="cell-accepted-state cell col-1-2 pl-2-2 pt-3 pb-3 pb-2 pr-0 text-truncate">
+    <div class="cell-accepted-state cell col-1-2 d-none d-md-block pt-3 pb-3 pb-2 pr-0 text-truncate">
         <span class="accept-label p-1 <?= acceptStatusesClass(acceptedStatus) ?> check-accept-label-test-id_<?= test.id ?>"
               style="font-size: 80%"><?= acceptedStatus ?></span>
     </div>
 
     <!--DATE-->
-    <div class="cell-date cell pt-3 pb-3 col-1-5 pl-2 text-truncate">
+    <div class="cell-date cell pt-3 pb-3 col-1-5 d-none d-sm-none d-md-block pl-2 text-truncate">
         <span name="cell-date" id="<?= test.id ?>_cell-date" class="text-secondary small"
               data-toggle="tooltip"
               data-placement="top"
@@ -161,7 +162,7 @@
     </div>
 
     <!--BROWSER-->
-    <div class="cell-browser cell pt-3 pb-3 col-1-3 pl-2 pr-1 text-truncate" id="<?= test.id ?>_cell-browser">
+    <div class="cell-browser cell pt-3 pb-3 col-1-3 d-none d-md-block pl-2 pr-1 text-truncate" id="<?= test.id ?>_cell-browser">
         <? const browserIconMap =  {
             chrome: 'fab fa-chrome',
             'chrome [HEADLESS]': 'fab fa-chrome',
@@ -194,7 +195,7 @@
             'MacIntel': 'fab fa-apple',
             'macOS': 'fab fa-apple',
         }?>
-    <div class="cell-platform cell pt-3 pb-3 pl-2-2 pr-0 col-0-3 text-truncate"
+    <div class="cell-platform cell pt-3 pb-3 pl-2-2 pr-0 col-0-3 d-none d-md-block text-truncate"
          id="<?= test.id ?>_cell-os"
          data-toggle="tooltip"
          data-placement="top"
@@ -205,7 +206,7 @@
     </div>
 
     <!--VIEWPORT-->
-    <div class="cell-viewport cell pt-3 pb-3 pl-3-5 col-1-2 border-bottom1 pr-0 text-truncate">
+    <div class="cell-viewport cell pt-3 pb-3 pl-3-5 col-1-2 d-none d-sm-none d-md-block border-bottom1 pr-0 text-truncate">
         <? let viewport;
         let toolTip;
         if(!test.calculatedViewport || !test.calculatedViewport.includes('x')) {

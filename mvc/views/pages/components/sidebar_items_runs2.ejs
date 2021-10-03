@@ -18,8 +18,8 @@
         onclick="window.location.href='/runs?filter_run_eq=<%= item._id %>'"
     >
         <div class="col.auto pl-3">
-            <input name="run-item" class="small" type="checkbox" runid="<%= item._id %>"
-                  runname="<%= item.name %>" id="run-checkbox-<%= item._id %>" onclick="event.stopPropagation();">
+            <input name="run-item" class="small run-input" type="checkbox" runid="<%= item._id %>"
+                  runname="<%= item.name %>" id="run-checkbox-<%= item._id %>" onclick="toggleRemoveButton('run-input', 'mass-runs-actions'); event.stopPropagation();">
         </div>
         <div class="col pr-1 pl-2 pb-1 ">
             <span class="small text-dark "><%= item.name %><%= item.statuses.N %></span>

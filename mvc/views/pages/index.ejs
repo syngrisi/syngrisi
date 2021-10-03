@@ -5,7 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="icon" href="../../../static/imgs/new-logo6.png">
+    <link rel="icon" href="../../../static/icons/leaf_logo.svg">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
           integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
           crossorigin="anonymous">
@@ -27,43 +27,26 @@
 </head>
 <body class="bg-light pl-0" style="max-height: 100vh; min-height: 100vh; min-width: 97.8vw; max-width: 98.9vw">
 
-<div name="main" class="main container-fluid1 pl-0 pr-0 ml-3 mr-0 d-inline-block bg-light"
+<div name="main" class="main pl-0 pr-0 ml-3 mr-0 d-inline-block bg-light"
      style="min-height: 100vh; max-width: 100%; min-width: 100%">
-    <div name="page-head" class="row bg-olive sticky-top1 mr-0" style="margin-right: -16px; margin-left: -16px">
-        <div name="logo-and-link" class="col-3 col-lg-3 w-25 pl-0 pb-1 bg-olive text-light"
-             id="logo-and-label-container">
-            <%- include('components/logo_and_link', {location: 'Suites'}) %>
-        </div>
-
-        <div name="suite-menu-toolbar" class="col mr-3">
-            <div class="row all-header light-purple sticky-top1">
-                <div class="tests-toolbar sticky-top1 col text-light p-0 pt-1 bg-olive align-self-end">
-                    <div class="sticky-top1 row d-flex flex-row-reverse pr-0">
-                        <!--USER ICON-->
-                        <div class="user-icon-wrapper col-auto pl-1 pr-0 mr-3" style="margin-top: 3px">
-                            <%- include('components/user_icon', {user: user}) %>
-                        </div>
-                        <!--/USER ICON-->
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div name="page-head" class="row pb-0 bg-olive mr-0" style="margin-right: -16px; margin-left: -16px">
+        <%- include('components/header') %>
     </div>
 
     <!--    DATA GRID START    -->
     <div class="all-table row mh-100 mr-0">
         <!--   SIDEBAR    -->
         <div name="sidebar"
-             class="sidebar col-2-5 pl-0 pr-0 mh-100 bg-light border-top border-right border-silver float-left w-251 ml-0 mr-0"
+             class="sidebar col-2-5 pl-0 pr-0 mh-100 bg-light border-top border-right1 border-silver float-left w-251 ml-0 mr-0"
              style="width: 100px; min-height: 100vh">
             <!--   SUITES CONTROL PANEL-->
-            <div class="row sticky-top bg-light">
-                <div class="col suites-toolbar ">
+            <div class="m-0 row pl-0 pt-0 pr-0 bg-light text-secondary">
+                <div class="pl-0 pr-0 col suites-toolbar-wrapper ">
                     <%- include('components/suites_toolbar.ejs') %>
                 </div>
             </div>
             <!--   SUITES LIST-->
-            <div class="suites-list m-0 row pl-0 pt-1 pr-0 bg-light text-secondary" style="height: 100vh">
+            <div class="suites-list m-0 row pl-0 pt-1 bg-light text-secondary" style="height: 100vh">
                 <ul class="col pr-0 pl-0">
                     <% let items = suites %>
                     <%- include('components/sidebar_items', {items: suites, currentItem: currentSuite}) %>
@@ -228,14 +211,6 @@
         // EVENTS
         window.addEventListener('scroll', scroller);
 
-        jQuery('#subheader-search')
-            .on('keyup', function (event) {
-                if (event.keyCode === 13) {
-                    event.preventDefault();
-                    search();
-                }
-            });
-
         // draw preview after collapse event fired
         jQuery(document)
             .on('shown.bs.collapse', function (e) {
@@ -246,6 +221,11 @@
         jQuery(document)
             .on('click', 'canvas', function (e) {
                 openDiffView(e);
+            });
+
+        jQuery(document)
+            .on('click', '.test-input', function (e) {
+                console.log({e})
             });
 
         jQuery(document)
@@ -286,7 +266,7 @@
         </svg>
         <strong id="notify-header" class="mr-auto">Success</strong>
         <!--        <small>11 mins ago</small>-->
-        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"
+        <button type="button" class="ml-2 mb-0 close" data-dismiss="toast" aria-label="Close"
                 onclick="$('#notify').hide()">
             <span aria-hidden="true">×</span>
         </button>
@@ -299,6 +279,8 @@
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>
+<script src="../../../static/js/bootstrap-toolkit.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
         crossorigin="anonymous"></script>
@@ -339,5 +321,7 @@
     }
 
 </script>
+<script src="../../../static/js/bootstrap-toolkit.js"></script>
+<script src="../lib/commonEvents.js"></script>
 </body>
 </html>

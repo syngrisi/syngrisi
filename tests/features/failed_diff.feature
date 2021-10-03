@@ -51,9 +51,16 @@ Feature: Crashed check
         Then I expect that 2th VRS test "Crashed test" has "New" status
 
         When I click on "Crashed test" VRS test
+        When I wait for "2" seconds
         Then I expect that VRS test "Crashed test" is unfolded
 
         Then I expect that VRS check "1/1 crashed" has "Failed" status
+        When I wait for "1" seconds
+        When I execute javascript code:
+        """
+        document.getElementsByClassName('group-links-view')[0].style.height='300px'
+        document.getElementsByClassName('group-links-view')[0].style.width='300px'
+        """
         When I click on the element "//div[contains(., 'crashed') and @name='check-name']/../../../..//div[@class='group-links-view']"
         When I wait for "2" seconds
         Then I expect that element "[title='diff snapshoot']" is not displayed

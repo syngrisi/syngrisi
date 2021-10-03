@@ -5,7 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="icon" href="../../../static/imgs/new-logo6.png">
+    <link rel="icon" href="../../../static/icons/leaf_logo.svg">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
           integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
           crossorigin="anonymous">
@@ -22,27 +22,8 @@
 </head>
 <body>
 <div name="main" class="main container-fluid pl-3 pr-3 ml-0 mh-100">
-    <div name="page-head" class="row bg-olive sticky-top">
-        <!--        Logo-->
-        <div class="col-3 pl-0 pb-1 text-light"
-             id="logo-and-label-container">
-            <%- include('components/logo_and_link', {location: 'Admin'}) %>
-        </div>
-        <!--        Navigation-->
-        <div class="col-3 p-0 pt-2 mr-2">
-        </div>
-
-        <div class="col d-flex flex-row-reverse w-25 pl-0 pb-1 mt-2 text-light">
-
-            <%- include('components/user_icon', {user: currentUser}) %>
-
-            <a name="reload-tests" type="button" class="btn btn-secondary bg-olive border-0 header-hover"
-               onclick="location.reload()"
-               title="reload page">
-                <i class="fas fa-sync-alt fa-1x"></i>
-            </a>
-
-        </div>
+    <div name="page-head" class="row pb-1 bg-olive sticky-top1 mr-0" style="margin-right: -16px; margin-left: -16px">
+        <%- include('components/header') %>
     </div>
     <div class="all-table row mh-100">
         <!--   SIDEBAR    -->
@@ -136,6 +117,15 @@
 <!/--USER ROW TEMPLATE-->
 
 <script>
+    // search trigger on press enter
+    document.getElementById('subheader-search')
+        .addEventListener('keyup', function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                search();
+            }
+        });
+
     function paramsToObject(entries) {
         const result = {};
         for (const [key, value] of entries) { // each 'entry' is a [key, value] tupple
@@ -451,5 +441,7 @@
         integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
         crossorigin="anonymous"></script>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/fabric.js/3.6.1/fabric.min.js"></script>
+<script src="../../../static/js/bootstrap-toolkit.js"></script>
+<script src="../lib/commonEvents.js"></script>
 </body>
 </html>

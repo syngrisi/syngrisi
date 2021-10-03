@@ -1,20 +1,18 @@
-<div class="row flex-row-reverse pr-4">
-    <div class="col-auto pl-1 pr-1 pt-2">
-        <a name="remove-tests" type="button" class="btn btn-secondary bg-light border-0 pr-1 pl-1 pt-0 pb-1"
-           title="delete suites and associated items" onclick="removeCheckedRuns();">
-            <i class="fas fa-trash fa-sm"></i>
-        </a>
-    </div>
-    <div class="col-auto pl-1 pr-1 pt-2">
-        <a name="reload-tests" type="button" class="btn btn-secondary bg-light border-0 pr-1 pl-1 pt-0 pb-1"
-           onclick="location.reload();" title="reload page">
-            <i class="fas fa-sync-alt fa-sm"></i>
-        </a>
-    </div>
-    <div class="col-auto pl-1 pr-1 pt-2">
+<div class="suites-toolbar d-flex flex-row ml-1 pl-1 pr-2 mb-0">
+    <div class="col-auto pl-1 pr-1 pt-1">
         <a name="check-all" type="button" class="btn btn-secondary bg-light border-0 pr-1 pl-1 pt-0 pb-1"
-           onclick="checkAllItems('run-item');" title="check all suites">
-            <input  id="check-sidebar-items" type="checkbox" style="margin-top: 6px">
+           onclick="checkAllRunItems('run-item')" title="check all runs">
+            <input id="check-sidebar-items" type="checkbox" style="margin-top: 7px">
+        </a>
+    </div>
+    <div class="col-10 pl-1 pr-1 align-content-start pt-1 justify-content-start"
+         style="font-weight: 400">
+        Runs
+    </div>
+    <div class="col-auto pl-1 pr-1 pt-1 justify-content-end">
+        <a name="remove-tests" type="button" class="btn mass-runs-actions btn-secondary bg-light border-0 pr-1 pl-1 pt-0 pb-1"
+           title="delete runs and associated items" id="remove-runs-button" onclick="removeCheckedRuns();">
+            <i class="fas fa-trash fa-sm"></i>
         </a>
     </div>
 </div>

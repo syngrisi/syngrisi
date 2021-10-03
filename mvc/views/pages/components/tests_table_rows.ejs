@@ -5,6 +5,7 @@
             <div class="cell-input cell col-1 col-lg-auto border-bottom border-right text-truncate small d-flex align-items-center ">
                 <input id="<%= test.id %>"
                        name="test"
+                       class="test-input"
                        type="checkbox">
             </div>
             <div class="cell-status cell col-2 col-lg-1 pl-3 pr-2 border-bottom border-right text-truncate">
@@ -22,9 +23,8 @@
                       data-placement="top"
                       title="<%= test.status %>"><%= test.status %>
                 </span>
-
             </div>
-            <div class="cell-name cell col-4 col-lg-4 border-bottom border-right text-truncate">
+            <div class="cell-name cell col-2 col-sm-2 col-md-3 col-lg-4-5 border-bottom border-right text-truncate">
                  <span data-toggle="tooltip" data-original-title="<%= test.blinking %>">
                      <% if(test.blinking > 0) { %>
                          <img src="../../../../static/blinking.png" class="img-fluid blink-icon" alt="blink">

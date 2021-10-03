@@ -289,7 +289,7 @@ exports.admin = async function (req, res) {
         (resolve, reject) => {
             try {
                 return resolve(res.render('pages/admin', {
-                    currentUser: req.user,
+                    user: req.user,
                 }));
             } catch (e) {
                 fatalError(req, res, e);

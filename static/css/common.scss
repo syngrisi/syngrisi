@@ -1,6 +1,7 @@
 @use "sass:color";
 @import "./bootstrap-4.3.1/scss/bootstrap";
 @import "./bootstrap-4.3.1/scss/bootstrap-grid";
+
 body::-webkit-scrollbar {
   display: none;
 }
@@ -47,12 +48,18 @@ span.branch {
 }
 
 .suites-list {
-  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.suites-list:hover {
+  overflow-y: scroll;
   overflow-x: hidden;
+  padding-right: 0px;
 }
 
 /* scrollbars */
 .suites-list::-webkit-scrollbar {
+  padding-right: 0px;
   width: 10px;
 }
 
@@ -79,9 +86,15 @@ span.branch {
   border-radius: 10px;
 }
 
-.table-container {
+.table-container:hover {
   overflow-y: auto;
-  height: 100vh;
+  height: 100vw;
+  margin-right: 0px !important;
+}
+
+.table-container {
+  overflow: hidden;
+  margin-right: 10px !important;
 }
 
 .status-accepted {
@@ -148,6 +161,12 @@ span.branch {
 
 .col-4-5 {
   @include make-col(4.5);
+}
+
+.col-lg-4-5 {
+  @include media-breakpoint-up(lg) {
+    @include make-col(4.5);
+  }
 }
 
 .col-0-3 {
@@ -306,9 +325,9 @@ div[name="testinfo"]:nth-of-type(4n+1) {
 }
 
 .btn-circle.btn-md {
-  width: 40px;
-  height: 40px;
-  padding: 7px 10px;
+  width: 36px;
+  height: 36px;
+  padding: 6px 7px;
   border-radius: 25px;
   font-size: 16px;
   text-align: center;
@@ -333,6 +352,7 @@ $accepted-color: #2ECC40;
   background-repeat: no-repeat;
   background-image: url(/static/icons/not-accepted-button-icon.svg);
 }
+
 .prev-accepted-button-icon {
   width: 14px;
   height: 14px;
@@ -341,6 +361,7 @@ $accepted-color: #2ECC40;
   background-repeat: no-repeat;
   background-image: url(/static/icons/prev-accepted-button-icon.svg);
 }
+
 .accepted-button-icon {
   width: 14px;
   height: 14px;
@@ -357,4 +378,113 @@ $accepted-color: #2ECC40;
   background-size: cover;
   background-repeat: no-repeat;
   background-image: url(/static/icons/remove-button-icon.svg);
+}
+
+.login-logo {
+  width: 85px;
+}
+
+.login-app-name {
+  color: white;
+}
+
+.logo-header {
+  width: 36px;
+  margin-bottom: 0;
+  margin-top: 2px;
+  margin-left: -2px;
+}
+
+#subheader-search {
+  height: 26px;
+}
+
+#search-wrapper {
+  transition: all 500ms ease-in-out;
+  -mz-transition: all 500ms ease-in-out;
+  -o-transition: all 500ms ease-in-out;
+  -webkit-transition: all 500ms ease-in-out;
+}
+
+#logo-and-label-container {
+  @extend .w-25;
+  @extend .pl-0;
+  @extend .text-light;
+}
+
+input.suite-item {
+  margin-top: 8px;
+}
+
+img.navigation-button {
+  height: 14px;
+}
+
+.run-menu-item-container:first-of-type {
+  border-top: 1px solid #dee2e6 !important
+}
+
+.suite-menu-item-container {
+  border-top: 1px solid #dee2e6 !important
+}
+
+// diff view
+.snapshoot-canvas {
+  width: 100%;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+
+.con-relative {
+  position: relative;
+}
+
+.centered-overlay-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+img.preview {
+  max-height: 180px;
+  object-fit: contain;
+}
+
+.vcenter {
+  height: 43px;
+  line-height: 38px;
+}
+
+.vcenter-item {
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+.back-button:hover {
+  margin-left: -3px;
+  margin-right: 3px;
+}
+
+.back-button {
+  display: inline-block;
+  transition: all 300ms ease-in-out;
+  -mz-transition: all 300ms ease-in-out;
+  -o-transition: all 300ms ease-in-out;
+  -webkit-transition: all 300ms ease-in-out;
+}
+
+#remove-suite-button, #mass-test-remove-button, #remove-runs-button, .mass-tests-actions, mass-runs-actions {
+  color: #343A40;
+  display: none;
+  opacity: 0;
+  transition: all 500ms ease-in-out;
+  -mz-transition: all 500ms ease-in-out;
+  -o-transition: all 500ms ease-in-out;
+  -webkit-transition: all 500ms ease-in-out;
+}
+
+#remove-runs-button {
+  color: #343A40;
 }

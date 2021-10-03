@@ -22,6 +22,7 @@ parserOptions:
 root: true
 
 rules:
+  linebreak-style: off
   comma-dangle:
     - 'error'
     - arrays: 'always-multiline'
