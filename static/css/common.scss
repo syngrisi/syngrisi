@@ -488,3 +488,11 @@ img.preview {
 #remove-runs-button {
   color: #343A40;
 }
+
+.diff-toolbar:hover {
+  opacity: 100%;
+}
+
+.diff-toolbar {
+  opacity: 75%;
+}

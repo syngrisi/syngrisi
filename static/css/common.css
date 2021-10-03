@@ -14182,4 +14182,12 @@ img.preview {
   color: #343A40;
 }
 
+.diff-toolbar:hover {
+  opacity: 100%;
+}
+
+.diff-toolbar {
+  opacity: 75%;
+}
+
 /*# sourceMappingURL=common.css.map */
