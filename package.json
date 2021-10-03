@@ -64,6 +64,7 @@
     "querystring": "^0.2.1",
     "request": "^2.88.0",
     "resemblejs": "^3.2.4",
+    "responsive-toolkit": "^2.6.3",
     "uuid-apikey": "^1.5.2",
     "winston": "^3.3.3"
   },

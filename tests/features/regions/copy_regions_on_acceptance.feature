@@ -23,6 +23,7 @@ Feature: Regions - Copy regions data after acceptance
         When I open the url "http://vrs:3001/"
         Then I wait and refresh page on element "span=Copy region - 1" for "3" seconds to exist
         When I click on "Copy region - 1" VRS test
+        When I wait for "2" seconds
         When I click on the element "[name=preview-container]"
 
         # add region, save and check if exists
@@ -117,6 +118,7 @@ Feature: Regions - Copy regions data after acceptance
         Then I expect that VRS test "Copy region - 1" has "Failed" status
 
         When I click on "Copy region - 1" VRS test
+        When I wait for "1" seconds
         When I click on the element "[name=preview-container]"
         When I wait for "3" seconds
         When I click on the element "[name=accept-baseline]"

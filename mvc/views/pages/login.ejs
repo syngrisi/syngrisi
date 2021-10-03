@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Login Page</title>
-    <link rel="icon" href="../../../static/imgs/new_logo.svg">
+    <link rel="icon" href="../../../static/icons/leaf_logo.svg">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="static/css/login.css">
@@ -16,16 +16,23 @@
 <section class="h-100" style="overflow: auto;">
     <div class="container h-100 bg-image">
         <div class="row justify-content-md-center h-100">
+
             <div class="card-wrapper">
-                <div class="brand p-1">
-                    <img class="p1" src="static/imgs/new_logo.svg" alt="logo">
-                </div>
+                    <div class="d-flex flex-row pb-5 pt-5 align-items-center">
+                        <div class="col-5 d-flex pr-2 justify-content-end">
+                            <img class="login-logo" src="static/icons/leaf_logo.svg" alt="logo">
+                        </div>
+                        <div class="col pl-0 pt-1">
+                            <h1 class="login-app-name">Syngrisi</h1>
+                        </div>
+                    </div>
                 <div class="card fat content">
                     <div class="card-body">
                         <h4 class="card-title">Login</h4>
                         <form method="POST" class="change-pwd" novalidate="" action="/login?origin=<%= origin %>">
                             <div class="form-group">
-                                <input id="email" type="email" class="form-control" name="username" placeholder="Username" value="" required
+                                <input id="email" type="email" class="form-control" name="username"
+                                       placeholder="Username" value="" required
                                        autofocus>
                                 <div class="invalid-feedback">
                                     Email is invalid
@@ -34,7 +41,8 @@
 
                             <div class="form-group">
 
-                                <input id="password" type="password" class="form-control" placeholder="Password" name="password" required
+                                <input id="password" type="password" class="form-control" placeholder="Password"
+                                       name="password" required
                                        data-eye>
                                 <div class="invalid-feedback">
                                     Password is required
@@ -70,9 +78,9 @@
     const info = urlParams.get('info');
 
     if (info) {
-        const errorMessage = document.getElementById("error-message");
+        const errorMessage = document.getElementById('error-message');
         errorMessage.innerText = info.toString();
-        errorMessage.style.display = "block";
+        errorMessage.style.display = 'block';
     }
 </script>
 

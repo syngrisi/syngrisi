@@ -1042,3 +1042,7 @@ When(/^I remove via http tests that older than "([^"]*)" days$/, async function 
     expect(result.raw.statusCode)
         .toBe(200);
 });
+
+When(/^I click on the element "([^"]*)" via js$/, function (selector) {
+    $(selector).jsClick();
+});

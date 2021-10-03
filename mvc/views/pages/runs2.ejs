@@ -5,7 +5,7 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="icon" href="../../../static/imgs/new-logo6.png">
+    <link rel="icon" href="../../../static/icons/leaf_logo.svg">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
           integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
           crossorigin="anonymous">
@@ -21,49 +21,31 @@
     <% if(currentRun) { %>
         <title>Syngrisi list of checks - <%= currentRun.name %> </title>
     <% }else{ %>
-        <title>Syngrisi list of checks - all suites</title>
+        <title>Syngrisi list of checks - all tests</title>
     <% } %>
 </head>
 <body class="bg-light pl-0" style="max-height: 100vh; min-height: 100vh; min-width: 97.8vw; max-width: 98.9vw">
 
-<div name="main" class="main container-fluid1 pl-0 pr-0 ml-3 mr-0 d-inline-block bg-light"
+<div name="main" class="main pl-0 pr-0 ml-3 mr-0 d-inline-block bg-light"
      style="min-height: 100vh; max-width: 100%; min-width: 100%">
-    <div name="page-head" class="row bg-olive sticky-top1 mr-0" style="margin-right: -16px; margin-left: -16px">
-        <div name="logo-and-link" class="col-3 col-lg-3 w-25 pl-0 pb-1 bg-olive text-light"
-             id="logo-and-label-container">
-            <%- include('components/logo_and_link', {location: 'Runs'}) %>
-        </div>
-
-        <div name="suite-menu-toolbar" class="col mr-3">
-            <div class="row all-header light-purple sticky-top1">
-                <div class="tests-toolbar sticky-top1 col text-light p-0 pt-1 bg-olive align-self-end">
-                    <div class="sticky-top1 row d-flex flex-row-reverse pr-2">
-
-                        <div class="col-auto pl-1">
-                            <%- include('components/user_icon', {user: user}) %>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div name="page-head" class="row pb-0 bg-olive mr-0" style="margin-right: -16px; margin-left: -16px">
+        <%- include('components/header') %>
     </div>
 
     <!--    DATA GRID START    -->
     <div class="all-table row mh-100 mr-0">
         <!--   SIDEBAR    -->
         <div name="sidebar"
-             class="sidebar col-2-5 pl-0 pr-0 mh-100 bg-light border-top border-right border-silver float-left ml-0 mr-0"
+             class="sidebar col-2-5 pl-0 pr-0 mh-100 bg-light border-top border-right1 border-silver float-left ml-0 mr-0"
              style="width: 100px; min-height: 100vh">
-            <!--   COLLAPSED SUITES TOOLBAR-->
-            <%- // include('components/sidebar_items_toolbar', {itemName: 'suite-item'})           %>
             <!--   SUITES CONTROL PANEL-->
-            <div class="row sticky-top bg-light">
-                <div class="col suites-toolbar ">
+            <div class="m-0 row pl-0 pt-0 pr-0 bg-light text-secondary">
+                <div class="pl-0 pr-0 col suites-toolbar-wrapper ">
                     <%- include('components/runs_toolbar.ejs') %>
                 </div>
             </div>
             <!--   SUITES LIST-->
-            <div class="suites-list m-0 row pl-0 pt-0 pr-0 bg-light text-secondary" style="height: 100vh">
+            <div class="suites-list m-0 row pl-0 pt-0 bg-light text-secondary" style="height: 100vh">
                 <ul class="col pr-0 pl-0">
                     <% let items = runs %>
                     <%- include('components/sidebar_items_runs2', {items: runs, currentItem: currentRun}) %>
@@ -325,5 +307,7 @@
     }
 
 </script>
+<script src="../../../static/js/bootstrap-toolkit.js"></script>
+<script src="../lib/commonEvents.js"></script>
 </body>
 </html>

@@ -1,9 +1,9 @@
 /* global baselines $ document XMLHttpRequest fabric window */
 
 function uuidv4() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        const r = Math.random() * 16 | 0,
-            v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+        const r = Math.random() * 16 | 0;
+        const v = c == 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
     });
 }
@@ -104,7 +104,7 @@ async function removeTestFromDomIfEmpty(id) {
         if (resp !== '{}') {
             const tests = JSON.parse(await getRequest(`/checks?filter_id_eq=${id}`, true));
             const len = Object.keys(tests[id])
-                .filter(x => x.includes('ident')).length;
+                .filter((x) => x.includes('ident')).length;
             if (len < 1) {
                 console.log(document.getElementsByClassName(`testinfo_${id}`));
                 document.getElementsByClassName(`testinfo_${id}`)[0].remove();
@@ -124,24 +124,23 @@ function updateQueryParam(param, newval, url) {
     // console.log(searchParams.toString());
     searchParams.set(param, newval);
     // console.log(searchParams.toString());
-    return '?' + searchParams.toString();
+    return `?${searchParams.toString()}`;
 }
 
 function removeQueryParamContains(search, word) {
     const searchParams = new URLSearchParams(search);
 
     console.log(searchParams.toString());
-    let toDelete = [];
-    for (var pair of searchParams.entries()) {
-
-        console.log(pair[0] + ', ' + pair[1]);
+    const toDelete = [];
+    for (const pair of searchParams.entries()) {
+        console.log(`${pair[0]}, ${pair[1]}`);
         if (pair[0].toString()
             .includes(word)) {
             toDelete.push(pair[0]);
         }
     }
 
-    toDelete.forEach(x => searchParams.delete(x));
+    toDelete.forEach((x) => searchParams.delete(x));
 
     return searchParams.toString();
 }
@@ -150,18 +149,18 @@ function searchToObject(search) {
     if (!search) {
         return null;
     }
-    return JSON.parse('{"' + decodeURI(search)
+    return JSON.parse(`{"${decodeURI(search)
         .replace('?', '')
         .replace(/"/g, '\\"')
         .replace(/&/g, '","')
-        .replace(/=/g, '":"') + '"}');
+        .replace(/=/g, '":"')}"}`);
 }
 
 function objectToSearch(obj) {
-    var str = [];
-    for (var p in obj) {
+    const str = [];
+    for (const p in obj) {
         if (obj.hasOwnProperty(p)) {
-            str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]));
+            str.push(`${encodeURIComponent(p)}=${encodeURIComponent(obj[p])}`);
         }
     }
     return str.join('&');
@@ -180,7 +179,7 @@ function sort2(prop, order = -1) {
     const inverseOrder = parsedOrder === '1' ? '-1' : '1';
 
     const clearedSearch = removeQueryParamContains(currentSearch, 'sort_');
-    let updatedSearch = updateQueryParam(`sort_${prop}_${inverseOrder || order}`, 'true', clearedSearch);
+    const updatedSearch = updateQueryParam(`sort_${prop}_${inverseOrder || order}`, 'true', clearedSearch);
     // console.log({ updatedSearch });
     document.location.href = document.location.origin + updatedSearch;
 }
@@ -205,9 +204,9 @@ function sort(prop, order = -1) {
 
     let outUri;
     if (clearedUri.includes('?')) {
-        outUri = clearedUri + `&sortprop=${prop}&sortorder=${order}`;
+        outUri = `${clearedUri}&sortprop=${prop}&sortorder=${order}`;
     } else {
-        outUri = clearedUri + `?sortprop=${prop}&sortorder=${order}`;
+        outUri = `${clearedUri}?sortprop=${prop}&sortorder=${order}`;
     }
     outUri = outUri.replace('?&', '?');
 
@@ -304,15 +303,14 @@ function removeCheck(id, testId) {
             xhr.onload = async function () {
                 if (xhr.status === 200) {
                     console.log(`Success id: ${id} resp: ${xhr.responseText}`);
-                    let checkDiv = document.getElementById(`check_${id}`);
+                    const checkDiv = document.getElementById(`check_${id}`);
                     checkDiv.parentNode.removeChild(checkDiv);
                     showNotification('The check was removed');
                     return resolve();
-                } else {
-                    showNotification('Remove request was failing', 'Error');
-                    console.error('Request failed.  Returned status of ' + xhr.status);
-                    return reject('Request failed.  Returned status of ' + xhr.status);
                 }
+                showNotification('Remove request was failing', 'Error');
+                console.error(`Request failed.  Returned status of ${xhr.status}`);
+                return reject(`Request failed.  Returned status of ${xhr.status}`);
             };
             xhr.send(params);
         } catch (e) {
@@ -439,7 +437,7 @@ function acceptChecksByTestId(testId) {
 
 // eslint-disable-next-line no-unused-vars
 function acceptTests() {
-    if (!confirmation('Please pay attention to everything regions\' data will be copied to new baselines. Are you sure? Are you sure?')) return;
+    if (!confirmation('Please pay attention to everything regions\' data will be copied to new baselines. Are you sure?')) return;
     const checkboxes = Array.from(document.querySelectorAll('input[name=test]:checked'));
     const results = checkboxes.map((checkbox) => acceptChecksByTestId(checkbox.id));
     Promise.all(results)
@@ -455,7 +453,7 @@ function acceptTests() {
 }
 
 function removeTest(id) {
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
         try {
             const xhr = new XMLHttpRequest();
             const params = `id=${id}`;
@@ -464,30 +462,28 @@ function removeTest(id) {
 
             xhr.onload = function () {
                 if (xhr.status === 200) {
-                    console.log('Success ' + id + '--' + xhr.responseText);
+                    console.log(`Success ${id}--${xhr.responseText}`);
                     return resolve(xhr);
-                } else {
-                    console.error('Request failed.  Returned status of ' + xhr.status);
-                    return reject(xhr);
                 }
+                console.error(`Request failed.  Returned status of ${xhr.status}`);
+                return reject(xhr);
             };
             xhr.send(params);
         } catch (e) {
             return reject(e);
         }
     });
-
 }
 
 function removeTests() {
     if (!confirmation()) return;
-    let checkboxes = document.querySelectorAll('input[name=test]:checked');
-    let results = [];
+    const checkboxes = document.querySelectorAll('input[name=test]:checked');
+    const results = [];
     for (const checkbox of checkboxes) {
         results.push(removeTest(checkbox.id));
     }
     Promise.all(results)
-        .then(async function (results) {
+        .then(async (results) => {
             showNotification('Tests were removed successfully');
             setTimeout(() => location.reload(), 800);
         })
@@ -509,10 +505,9 @@ function removeSuite(id) {
                 if (xhr.status === 200) {
                     console.log(`Suite was successfully removed, id: '${id}', resonse test: '${xhr.responseText}'`);
                     return resolve(xhr);
-                } else {
-                    console.log('Cannot remove the suite. Request is failed.  Returned status of ' + xhr.status);
-                    reject(xhr);
                 }
+                console.log(`Cannot remove the suite. Request is failed.  Returned status of ${xhr.status}`);
+                reject(xhr);
             };
             xhr.send(params);
         } catch (e) {
@@ -553,10 +548,9 @@ function removeRun(id) {
                 if (xhr.status === 200) {
                     console.log(`Run was successfully removed, id: '${id}', resonse test: '${xhr.responseText}'`);
                     return resolve(xhr);
-                } else {
-                    console.log(`Cannot remove the run. Request is failed.  Returned status of ${xhr.status}`);
-                    reject(xhr);
                 }
+                console.log(`Cannot remove the run. Request is failed.  Returned status of ${xhr.status}`);
+                reject(xhr);
             };
             xhr.send(params);
         } catch (e) {
@@ -592,6 +586,9 @@ function checkAllTests() {
     checkboxes.forEach((ch) => {
         ch.checked = controlInput.checked;
     });
+    setTimeout(() => {
+        toggleRemoveButton('test-input', 'mass-tests-actions');
+    }, 200);
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -601,6 +598,20 @@ function checkAllItems(name) {
     checkboxes.forEach((ch) => {
         ch.checked = controlInput.checked;
     });
+    setTimeout(() => {
+        toggleRemoveButton('suite-item', 'mass-suites-actions');
+    }, 200);
+}
+
+function checkAllRunItems(name) {
+    const controlInput = document.getElementById('check-sidebar-items');
+    const checkboxes = document.querySelectorAll(`input[name='${name}']`);
+    checkboxes.forEach((ch) => {
+        ch.checked = controlInput.checked;
+    });
+    setTimeout(() => {
+        toggleRemoveButton('run-input', 'mass-runs-actions');
+    }, 200);
 }
 
 function getRequest(path, verbose) {
@@ -614,10 +625,9 @@ function getRequest(path, verbose) {
                     verbose && console.log(`Successfully finish get request for: '${path}', resp: '${xhr.responseText}'`);
                     // console.log(`Successfully finish get request for: '${path}'`);
                     return resolve(xhr.responseText);
-                } else {
-                    console.log('Request failed. Returned status of ' + xhr.status + ' resp:' + xhr.responseText);
-                    return reject(xhr.responseText);
                 }
+                console.log(`Request failed. Returned status of ${xhr.status} resp:${xhr.responseText}`);
+                return reject(xhr.responseText);
             };
             xhr.send();
         } catch (e) {
@@ -627,22 +637,21 @@ function getRequest(path, verbose) {
 }
 
 function drawTestChecksPreviews(testId) {
-    var checksDivs = Array.prototype.slice.call(document.getElementById(`testchecks_${testId}`).children);
-    let checksIds = [];
-    checksDivs.forEach(el => checksIds.push(el.id.replace('check_', '')));
+    const checksDivs = Array.prototype.slice.call(document.getElementById(`testchecks_${testId}`).children);
+    const checksIds = [];
+    checksDivs.forEach((el) => checksIds.push(el.id.replace('check_', '')));
 
-    let baselineIds = [];
-    checksDivs.forEach(el => baselineIds.push(el.getAttribute('baselineId')));
+    const baselineIds = [];
+    checksDivs.forEach((el) => baselineIds.push(el.getAttribute('baselineId')));
 
-    let diffsIds = [];
-    checksDivs.forEach(el => diffsIds.push(el.getAttribute('diffId')));
+    const diffsIds = [];
+    checksDivs.forEach((el) => diffsIds.push(el.getAttribute('diffId')));
 
-    let statuses = [];
-    checksDivs.forEach(el => statuses.push(el.getAttribute('checkStatus')));
+    const statuses = [];
+    checksDivs.forEach((el) => statuses.push(el.getAttribute('checkStatus')));
     // console.log({ statuses });
 
-    checksIds.forEach(async function (id, index) {
-
+    checksIds.forEach(async (id, index) => {
         let baseline = {};
         fabric.Object.prototype.objectCaching = false;
         const snapshotId = ((statuses[index] === 'new') || (statuses[index] === 'passed') || (statuses[index] === 'blinking')) ? baselineIds[index] : diffsIds[index];
@@ -657,10 +666,9 @@ function drawTestChecksPreviews(testId) {
                 oImg,
                 {
                     // weight: document.getElementById(`canvas_snapshoot_${id}`).offsetWidth,
-                    weight: weight,
+                    weight,
                     backimageId: baselineObj.filename ? baselineObj.filename : `${baselineObj.id}.png`,
-                }
-            );
+                });
             baseline.getSnapshotIgnoreRegionsDataAndDrawRegions(baselineIds[index]);
             baseline.canvas.upperCanvasEl.classList.add('preview-upper-canvas');
             baselines[id] = baseline;
@@ -680,8 +688,8 @@ async function openDiffView(e) {
     const diffId = e.currentTarget.getAttribute('diffid');
     const baselineId = e.currentTarget.getAttribute('baselineid');
     const actualSnapshotId = e.currentTarget.getAttribute('actualsnapshotid');
-    const urnDiff = `diffview?diffid=${diffId}&actualid=${actualSnapshotId}` +
-        `&expectedid=${baselineId}&checkid=${checkId}`;
+    const urnDiff = `diffview?diffid=${diffId}&actualid=${actualSnapshotId}`
+        + `&expectedid=${baselineId}&checkid=${checkId}`;
     const urnGroup = `checksgroupview?id=${checkId}`;
     if (e.metaKey || e.ctrlKey) {
         window.open(urnDiff, '_blank');
@@ -713,7 +721,8 @@ function colorizeRuns() {
         {
             format: 'hex',
             colors_returned: Array.from(uniqueIds).length,
-        });
+        }
+    );
     for (const [i, id] of uniqueIds.entries()) {
         for (const run of runsDivs) {
             if (run.getAttribute('run') === id) {
@@ -721,4 +730,35 @@ function colorizeRuns() {
             }
         }
     }
+}
+
+function wideSearchInput() {
+    const el = document.getElementById('search-wrapper');
+    el.style.setProperty('width', '75%', 'important');
+}
+
+function narrowSearchInput() {
+    const el = document.getElementById('search-wrapper');
+    el.style.setProperty('width', '50%', 'important');
+}
+
+function toggleRemoveButton(checkboxClass, buttonsClass = 'mass-tests-actions') {
+    const itemsChecked = Array.from(document.getElementsByClassName(checkboxClass))
+        .filter((x) => x.checked).length > 0;
+    const els = Array.from(document.getElementsByClassName(buttonsClass));
+    if (itemsChecked) {
+        els.forEach((el) => {
+            el.style.display = 'inline-block';
+            setTimeout(() => {
+                el.style.opacity = '1';
+            }, 10);
+        });
+        return;
+    }
+    els.forEach((el) => {
+        el.style.opacity = '0';
+        setTimeout(() => {
+            el.style.display = 'none';
+        }, 600);
+    });
 }
