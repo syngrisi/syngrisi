@@ -3,6 +3,7 @@ const { hooks } = require('./src/support/hooks');
 const WdioScreenshot = require('wdio-screenshot-v5');
 const hasha = require('hasha');
 
+
 exports.config = {
     rootPath: process.cwd(),
     serverPort: 3001,
@@ -205,7 +206,7 @@ exports.config = {
 
     beforeStep: function ({ uri, feature, step }, context) {
         if (process.env['LOG'] === '1' || process.env['DBG'] === '1') {
-            console.log(`STEP BEFORE: ${step.step.text}: ${step.sourceLocation.uri}:${step.step.location.line}, ${step.step.location.column}`);
+            console.log(`STEP BEFORE: ${step.step.text}: ${step.sourceLocation.uri.split(path.sep).join(path.posix.sep)}:${step.step.location.line}, ${step.step.location.column}`);
         }
     },
 

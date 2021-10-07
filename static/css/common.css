@@ -13748,12 +13748,11 @@ span.branch {
 }
 
 .suites-list {
-  padding-right: 10px;
+  overflow-y: scroll;
 }
 
 .suites-list:hover {
-  overflow-y: scroll;
-  overflow-x: hidden;
+  overflow-x: auto;
   padding-right: 0px;
 }
 
@@ -13785,15 +13784,10 @@ span.branch {
   border-radius: 10px;
 }
 
-.table-container:hover {
-  overflow-y: auto;
-  height: 100vw;
-  margin-right: 0px !important;
-}
-
 .table-container {
-  overflow: hidden;
-  margin-right: 10px !important;
+  overflow-x: auto;
+  overflow-y: scroll !important;
+  height: 100vw;
 }
 
 .status-accepted {
