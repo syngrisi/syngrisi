@@ -34,7 +34,7 @@ Feature: Checks previews
         When I wait for "2" seconds
         When I click on the element "[title='baseline snapshoot']"
         When I wait for "2" seconds
-        When I click on the element "[name=add-region]"
+        When I click on the element "[name=ignore-regions]"
         When I wait for "1" seconds
         When I execute javascript code:
         """
@@ -56,7 +56,7 @@ Feature: Checks previews
           20,50,200,100,MediumVioletRed,rgba(100,200,200,0.5),0.5
         """
 
-        When I click on the element "[name=save-snapshot]"
+        When I click on the element "[name=save-baseline]"
 
         When I open the url "http://vrs:3001/"
         When I wait for "3" seconds
@@ -88,5 +88,5 @@ Feature: Checks previews
         """
         Then I expect the stored "js" object is equal:
         """
-          5.197103781174578,12.992759452936445,51.97103781174578,25.98551890587289,MediumVioletRed,rgba(100,200,200,0.5),0.5
+          4.8448145344436035,12.112036336109007,48.44814534443603,24.224072672218018,MediumVioletRed,rgba(100,200,200,0.5),0.5
         """

@@ -30,10 +30,10 @@ Feature: Regions - Copy regions data after acceptance
         When I wait for "2" seconds
         When I click on the element "[title='baseline snapshoot']"
         When I wait for "2" seconds
-        When I click on the element "[name=add-region]"
+        When I click on the element "[name=ignore-regions]"
         When I wait for "1" seconds
 
-        When I click on the element "[name=save-snapshot]"
+        When I click on the element "[name=save-baseline]"
         When I wait for "2" seconds
         When I refresh page
         When I wait for "2" seconds

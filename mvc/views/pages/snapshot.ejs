@@ -36,9 +36,10 @@
 
     <title>Shapshoot - <%= snapshot.name %> | <%= snapshot.id %> | <%= snapshot.formattedcreatedDate %></title>
 </head>
-<body>
-<div class="container-fluid pl-3 pr-4">
-    <div name="page-head" class="row d-flex pb-1 bg-olive mr-0 justify-content-start text-light" style="margin-right: -16px; margin-left: -16px">
+<body style="overflow-x: auto">
+<div class="container-fluid pl-3 pr-0" style="background-color: #E5E5E5 !important;">
+    <div name="page-head" class="row d-flex pb-1 bg-olive mr-0 justify-content-start text-light"
+         style="margin-right: -16px; margin-left: -16px">
         <div name="logo-and-link"
              class="col-auto pr-0"
              id="logo-and-label-container"
@@ -54,7 +55,8 @@
             </div>
         </div>
 
-        <div name="title" class="col pl-3 pt-0 h6 mb-0 d-flex align-items-center text-truncate"><%= snapshot.name %></div>
+        <div name="title"
+             class="col pl-3 pt-0 h6 mb-0 d-flex align-items-center text-truncate"><%= snapshot.name %></div>
         <div name="ignore-menu" class="col-auto col-flex align-self-end pl-4 pt-1 h4 mb-0">
             <div class="dropdown mb-1">
                 <button class="btn mb-1 bg-olive text-light dropdown-toggle btn-sm" type="button"
@@ -63,7 +65,7 @@
                 >
                     Ignore <%= snapshot.matchType ? snapshot.matchType : 'antialiasing' %>
                 </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenu">
+                <div class="dropdown-menu" aria-labelledby="dropdownMenu" style="z-index: 8888">
                     <a class="dropdown-item small" href="#" onclick="setMatchType('antialiasing')">antialiasing</a>
                     <a class="dropdown-item small" href="#" onclick="setMatchType('nothing')">nothing</a>
                     <a class="dropdown-item small" href="#" onclick="setMatchType('colors')">colors</a>
@@ -85,11 +87,11 @@
 
                 xhr.onload = function () {
                     if (xhr.status === 200) {
-                        console.log(`Successful send snapshoot match type data, id: '${id}'  resp: '${xhr.responseText}'`);
+                        console.log(`Successful send snapshot match type data, id: '${id}'  resp: '${xhr.responseText}'`);
                         showNotification('Match type was saved');
                     } else {
-                        console.error(`Cannot set snapshoot match type , status: '${xhr.status}',  resp: '${xhr.responseText}'`);
-                        showNotification('Cannot set snapshoot match type', 'Error');
+                        console.error(`Cannot set snapshot match type , status: '${xhr.status}',  resp: '${xhr.responseText}'`);
+                        showNotification('Cannot set snapshot match type', 'Error');
                     }
                 };
                 xhr.send(params);
@@ -99,80 +101,18 @@
 
     </div>
 
-    <div class="row ">
-        <div name="sidebar" class="col w-25 border mt-3 float-right">
-            <div class="container sticky-top pt-2 mt-2">
-                <div class="row justify-content-center">
-                    <a name="zoom in" type="button" title="Soom In" class="btn btn-check pl-1 pr-1 pt-0 pb-0"
-                       onclick=" baseline.resize(1.2)">
-                        <i class="fas fa-search-plus fa-1x"></i>
-                    </a>
-                </div>
+    <div class="row pr-1 mr-3">
+        <div name="shapshoot" id='snapshoot' class="w-100 border border-dark mb-3 pt-0 ml-2 mr-3 mt-3 mh-100 shadow" style="height: 3500px">
 
-                <div class="row justify-content-center">
-                    <a name="add-region" type="button" title="(Ctrl + A) Add ignore region"
-                       class="btn btn-check pl-1 pr-1 pt-0 pb-0"
-                       onclick="baseline.addIgnoreRegion( {name: 'ignore_rect', strokeWidth: 0,})">
-                        <i class="fas fa-expand fa-1x"></i>
-                    </a>
+            <div class="toolbar-wrapper sticky-top float-right pt-1 pr-4">
+                <div class="diff-toolbar vcenter border border-secondary rounded mt-1 pr-0 row d-flex align-content-center bg-light"
+                     style="height: 33px; line-height: 30px;">
+                    <%- include('components/snapshot_toolbar') %>
                 </div>
-                <div class="row justify-content-center">
-                    <a name="add-region=bound" type="button" title="Add bound region"
-                       class="btn btn-check pl-1 pr-1 pt-0 pb-0"
-                       onclick="baseline.addBoundingRegion('bound_rect')"
-                    >
-                        <i class="fas fa-border-style"></i>
-                    </a>
-                </div>
-
-                <div class="row justify-content-center">
-                    <a name="zoom-out" type="button" title="Zoom out" class="btn btn-check pl-1 pr-1 pt-0 pb-0"
-                       onclick="baseline.resize(0.8)">
-                        <i class="fas fa-search-minus fa-1x"></i>
-                    </a>
-                </div>
-                <div class="row justify-content-center">
-                    <a name="save-snapshot" type="button" title="Save" class="btn btn-check pl-1 pr-1 pt-0 pb-0"
-                       onclick="baseline.sendIgnoreRegions('<%= snapshot.id %>' ,baseline.getRectData())">
-                        <i class="fas fa-save fa-1x"></i>
-                    </a>
-                </div>
-                <% if (diffId) { %>
-                    <div class="row justify-content-center">
-                        <a id="diff" name="diff" type="button" title="Toggle diff"
-                           class="btn btn-check pl-1 pr-1 pt-0 pb-0"
-                           onclick="baseline.toggleDiff('<%= diffId %>')">
-                            <i class="fas fa-exchange-alt fa-1x"></i>
-                        </a>
-                    </div>
-                <% } %>
-                <div class="row justify-content-center">
-                    <a id="image-link" name="image-link" title="Open image link" type="button"
-                       class="btn btn-check pl-1 pr-1 pt-0 pb-0"
-                       href="/snapshoots/<%= snapshot.filename ? snapshot.filename : (snapshot.id + '.png') %>"
-                       target="_blank"
-                    >
-                        <i class="far fa-file-image fa-1x"></i>
-                    </a>
-                </div>
-                <div class="row justify-content-center">
-                    <a id="remove" name="remove" title="Remove" type="button" class="btn btn-check pl-1 pr-1 pt-0 pb-0"
-                       style="display:none">
-                        <i class="fas fa-trash fa-1x"></i>
-                    </a>
-                </div>
-
             </div>
-        </div>
-        <!--        <div name="shapshoot" id='snapshoot' class="col-11 border mt-3 mh-100" style="height: 1500px">-->
-        <div name="shapshoot" id='snapshoot' class="col-11 border mt-3 mh-100" style="height: 3500px">
-            <div class="panel">
-                <!--                <img name="snapshootimage" class="snapshot-image w-100 img-responsive"-->
-                <!--                     src="/snapshoots/<%= snapshot.id %>.png"-->
-                <!--                     alt="<%= snapshot.id %>">-->
-                <canvas class="snapshoot-canvas" id="2d">
-                </canvas>
-            </div>
+
+            <canvas class="snapshoot-canvas pb-1" id="2d">
+            </canvas>
         </div>
     </div>
 </div>
@@ -213,6 +153,22 @@
 <script src="http://cdnjs.cloudflare.com/ajax/libs/fabric.js/3.6.1/fabric.min.js"></script>
 <script src="lib/baselineView.js"></script>
 <script>
+
+    function toggleSnapshotToolbarCollapse() {
+        const wrapper = document.getElementsByClassName('toolbar-wrapper')[0]
+        const buttonsEl = document.getElementById('snapshot-toolbar-buttons');
+        const collapseIcon = document.getElementById('snapshot-collapse-icon');
+        if (buttonsEl.style.display === 'none') {
+            wrapper.style.marginRight = '0'
+            buttonsEl.style.display = 'inline-block';
+            collapseIcon.src = '../../../../static/icons/collapse.svg';
+            return;
+        }
+        collapseIcon.src = '../../../../static/icons/expand.svg';
+        wrapper.style.marginRight = '-41px'
+        buttonsEl.style.display = 'none';
+    }
+
     function showNotification(msg, status = 'Success') {
         document.getElementById('notify-header').textContent = status;
         document.getElementById('notify-message').textContent = msg;

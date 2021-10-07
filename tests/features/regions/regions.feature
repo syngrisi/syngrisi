@@ -44,7 +44,7 @@ Feature: Regions works properly
           0
         """
 
-        When I click on the element "[name=add-region]"
+        When I click on the element "[name=ignore-regions]"
         When I execute javascript code:
         """
          return (baseline.allRects.length.toString());
@@ -88,7 +88,7 @@ Feature: Regions works properly
         When I wait for "2" seconds
         When I click on the element "[title='baseline snapshoot']"
         When I wait for "2" seconds
-        When I click on the element "[name=add-region]"
+        When I click on the element "[name=ignore-regions]"
         When I wait for "1" seconds
         When I execute javascript code:
         """
@@ -110,7 +110,7 @@ Feature: Regions works properly
           20,50,200,100,MediumVioletRed,rgba(100,200,200,0.5),0.5
         """
 
-        When I click on the element "[name=save-snapshot]"
+        When I click on the element "[name=save-baseline]"
 
         When I refresh page
         When I wait for "2" seconds
@@ -144,7 +144,7 @@ Feature: Regions works properly
         When I click on the element "[title='baseline snapshoot']"
         When I wait for "1" seconds
 
-        When I click on the element "[name=add-region]"
+        When I click on the element "[name=ignore-regions]"
         When I execute javascript code:
         """
          return baseline.allRects.length.toString();
@@ -177,7 +177,7 @@ Feature: Regions works properly
           300,500,200,100,MediumVioletRed,rgba(100,200,200,0.5),0.5
         """
 
-        When I click on the element "[name=save-snapshot]"
+        When I click on the element "[name=save-baseline]"
 
         When I wait for "1" seconds
         When I refresh page
@@ -214,9 +214,9 @@ Feature: Regions works properly
         When I wait for "1" seconds
         When I click on the element "[title='baseline snapshoot']"
         When I wait for "1" seconds
-        When I click on the element "[name=add-region]"
-        When I click on the element "[name=add-region]"
-        When I click on the element "[name=save-snapshot]"
+        When I click on the element "[name=ignore-regions]"
+        When I click on the element "[name=ignore-regions]"
+        When I click on the element "[name=save-baseline]"
 
         When I refresh page
         When I wait for "2" seconds
@@ -240,10 +240,10 @@ Feature: Regions works properly
         When I click on the element "[title='baseline snapshoot']"
         When I wait for "1" seconds
 
-        When I click on the element "[name=add-region]"
-        When I click on the element "[name=save-snapshot]"
+        When I click on the element "[name=ignore-regions]"
+        When I click on the element "[name=save-baseline]"
         When I click on the element "#region-delete-icon-1"
-        When I click on the element "[name=save-snapshot]"
+        When I click on the element "[name=save-baseline]"
 
         When I refresh page
         When I wait for "2" seconds
