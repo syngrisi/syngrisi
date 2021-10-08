@@ -72,10 +72,10 @@
     </div>
 
     <!--NAME-->
-    <div class="cell-name cell col-10 col-sm-9 col-md-3 col-lg-4-5 pl-3 pr-1 pt-3-2 pb-3-2 text-truncate align-middle" style="position: relative">
+    <div class="cell-name cell col-10 col-sm-9 col-md-3 col-lg-4-5 pl-3 pr-1 pt-3-2 pb-3-2 text-truncate align-middle" style="  position: relative">
         <!--NAME:tags-->
-        <div style="font-size: 0.6rem; position: absolute; top: -0px; left: 1rem; padding-top: 7px"
-             class="small text-dark text-truncate"
+        <div
+             class="test-tags"
              title="Test tags">
             <?
             if(test.tags && (test.tags.length > 0)) {
@@ -83,10 +83,9 @@
             <span style="font-size: 0.45rem">
                 <i class="text-secondary fas fa-tags"></i>
             </span>
-            <? for(const tag of test.tags) {
-            ?>
+            <? for(const tag of test.tags) {?>
             <span style="margin-left: -2px; margin-top: -5px">
-                <span class="text-secondary" onclick="event.stopPropagation();"><?= tag ?></span>
+                <span class="test-tag text-secondary" onclick="event.stopPropagation();"><?= tag ?></span>
             </span>
             <?
             }

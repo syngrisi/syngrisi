@@ -423,7 +423,8 @@ hr {
 }
 
 small,
-.small {
+.small,
+.test-tags {
   font-size: 80%;
   font-weight: 400;
 }
@@ -9342,7 +9343,7 @@ button.bg-dark:focus {
   white-space: nowrap !important;
 }
 
-.text-truncate {
+.text-truncate, .test-tags {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -9508,11 +9509,11 @@ a.text-light:hover, a#logo-and-label-container:hover, a.text-light:focus, a#logo
   color: #cbd3da !important;
 }
 
-.text-dark {
+.text-dark, .test-tags {
   color: #343a40 !important;
 }
 
-a.text-dark:hover, a.text-dark:focus {
+a.text-dark:hover, a.test-tags:hover, a.text-dark:focus, a.test-tags:focus {
   color: #121416 !important;
 }
 
@@ -14182,6 +14183,29 @@ img.preview {
 
 .diff-toolbar {
   opacity: 75%;
+}
+
+.bg-submenu {
+  background-color: #7CC393;
+}
+
+.no-highlight {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+mark {
+  padding: 0;
+  font-weight: bold;
+  background: inherit;
+}
+
+.test-tags {
+  font-size: 0.6rem;
+  position: absolute;
+  top: 0px;
+  left: 1rem;
+  padding-top: 7px;
 }
 
 /*# sourceMappingURL=common.css.map */

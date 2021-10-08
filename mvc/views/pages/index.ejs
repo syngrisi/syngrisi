@@ -14,13 +14,18 @@
           crossorigin="anonymous">
     <link rel="stylesheet" href="../../../static/css/common.css">
     <link rel="stylesheet" href="../../../static/css/colors.css">
-    <script src="lib/gridHelpers.js"></script>
+    <link rel="stylesheet" href="../../../static/font/bootstrap-icons.css">
     <script src="../../../static/js/ejs.js"></script>
     <script src="../../../static/js/Please.js"></script>
     <script src="../../../static/js/moment.min.js"></script>
+    <script src="../../../static/js/mark.min.js"></script>
+    <script src="lib/gridHelpers.js"></script>
 
-    <% if(currentSuite) { %>
+
+<% if(currentSuite) { %>
         <title>Syngrisi list of checks - <%= currentSuite.name %> </title>
+    <% } else if (opts.filter_name_regex) { %>
+        <title>Syngrisi search results for - <%= opts.filter_name_regex %> </title>
     <% }else{ %>
         <title>Syngrisi list of checks - all suites</title>
     <% } %>
@@ -306,6 +311,8 @@
         }
     })();
 
+    // console.log({urlParams})
+
     function unfoldChecksWithScroll(id) {
         // console.log({ UNFOLD: id });
         jQuery(`.testinfo_${id}`)[0].scrollIntoView(true);
@@ -314,10 +321,6 @@
         setTimeout((x) => {
             drawTestChecksPreviews(unfoldTestId);
         }, 200);
-    }
-
-    function drawOverlay(expectedId, actualId, diff) {
-        document.getElementById('overlay').style.display = 'block';
     }
 
 </script>

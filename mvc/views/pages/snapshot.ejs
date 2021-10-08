@@ -15,23 +15,29 @@
           crossorigin="anonymous">
     <link rel="stylesheet" href="../../../static/css/common.css">
     <link rel="stylesheet" href="../../../static/css/colors.css">
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"
+            integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
+            crossorigin="anonymous"></script>
+    <script src="./static/js/fabric.min.js"></script>
+    <script src="lib/baselineView.js"></script>
+
     <script src="lib/gridHelpers.js"></script>
 
     <style>
-        .snapshoot-canvas {
-            width: 100%;
-            /*height: 1500px;*/
-            position: absolute;
-            top: 0px;
-            left: 0px;
-        }
-
-        .snapshot-image {
-            /*width:100%; height:100%;*/
-            position: absolute;
-            top: 0px;
-            left: 0px;
-        }
+        /*.snapshoot-canvas {*/
+        /*    width: 100%;*/
+        /*    !*height: 1500px;*!*/
+        /*    position: absolute;*/
+        /*    top: 0px;*/
+        /*    left: 0px;*/
+        /*}*/
     </style>
 
     <title>Shapshoot - <%= snapshot.name %> | <%= snapshot.id %> | <%= snapshot.formattedcreatedDate %></title>
@@ -46,7 +52,7 @@
              style="width: 90px !important"
         >
             <div class="row">
-                <div class="col-auto ml-4 pl-0 pr-0 pt-1 toggle-sidebar-button-wrapper vcenter">
+                <div class="col-auto ml-4 pl-0 pr-0 pt-1 no-highlight toggle-sidebar-button-wrapper vcenter">
                     <%- include('components/sidebar_switcher') %>
                 </div>
                 <div name="logo-img" class="col-auto pl-1 pr-0 pt-1">
@@ -140,18 +146,6 @@
     </div>
 </div>
 <!--TOAST END-->
-
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-        crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
-        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
-        crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"
-        integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
-        crossorigin="anonymous"></script>
-<script src="http://cdnjs.cloudflare.com/ajax/libs/fabric.js/3.6.1/fabric.min.js"></script>
-<script src="lib/baselineView.js"></script>
 <script>
 
     function toggleSnapshotToolbarCollapse() {
@@ -169,23 +163,23 @@
         buttonsEl.style.display = 'none';
     }
 
-    function showNotification(msg, status = 'Success') {
-        document.getElementById('notify-header').textContent = status;
-        document.getElementById('notify-message').textContent = msg;
-        document.getElementById('notify-rect')
-            .setAttribute('fill', '#2ECC40');
-        if (status === 'Error') {
-            document.getElementById('notify-rect')
-                .setAttribute('fill', '#FF4136');
-        }
-        $('#notify')
-            .show();
-        setTimeout(function () {
-                $('#notify')
-                    .hide();
-            },
-            7000);
-    }
+    // function showNotification(msg, status = 'Success') {
+    //     document.getElementById('notify-header').textContent = status;
+    //     document.getElementById('notify-message').textContent = msg;
+    //     document.getElementById('notify-rect')
+    //         .setAttribute('fill', '#2ECC40');
+    //     if (status === 'Error') {
+    //         document.getElementById('notify-rect')
+    //             .setAttribute('fill', '#FF4136');
+    //     }
+    //     $('#notify')
+    //         .show();
+    //     setTimeout(function () {
+    //             $('#notify')
+    //                 .hide();
+    //         },
+    //         7000);
+    // }
 
     document.addEventListener('keydown', function (event) {
         console.log(event.code);

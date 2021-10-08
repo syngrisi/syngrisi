@@ -203,18 +203,17 @@ exports.index = async function (req, res) {
                     .exec();
 
                 const query = buildQuery(opts);
+                // console.log({query, opts});
                 if (req.user.role === 'user') {
                     query.creatorUsername = req.user.username;
                 }
                 const suites = await getSuitesByTestsQuery(query);
-                // const suites = await Suite.find({})
-                //     .sort({ name: 'asc' })
-                //     .exec();
                 const currentUser = req.user;
                 res.render('pages/index', {
                     suites,
                     currentSuite: suite,
                     user: currentUser,
+                    opts: opts,
                 });
             } catch (e) {
                 fatalError(req, res, e);
@@ -275,6 +274,7 @@ exports.runs = function (req, res) {
                     runs: agregateRuns,
                     currentRun,
                     user: currentUser,
+                    opts: opts,
                 });
             } catch (e) {
                 fatalError(req, res, e);
