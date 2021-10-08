@@ -492,3 +492,29 @@ img.preview {
 .diff-toolbar {
   opacity: 75%;
 }
+
+.bg-submenu {
+  background-color: #7CC393;
+}
+
+.no-highlight {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+mark {
+  padding: 0;
+  font-weight: bold;
+  background: inherit;
+}
+
+.test-tags {
+  @extend .small ;
+  @extend .text-dark ;
+  @extend .text-truncate;
+  font-size: 0.6rem;
+  position: absolute;
+  top: -0px;
+  left: 1rem;
+  padding-top: 7px
+}

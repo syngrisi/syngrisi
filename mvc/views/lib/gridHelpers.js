@@ -683,6 +683,11 @@ function search() {
     (searchString !== '') && (document.location.href = `/?filter_name_regex=${searchString}`);
 }
 
+function clearSearch() {
+    const searchInput = document.getElementById('subheader-search');
+    searchInput.value = '';
+}
+
 async function openDiffView(e) {
     const checkId = e.currentTarget.getAttribute('checkid');
     const diffId = e.currentTarget.getAttribute('diffid');
@@ -738,8 +743,10 @@ function wideSearchInput() {
 }
 
 function narrowSearchInput() {
-    const el = document.getElementById('search-wrapper');
-    el.style.setProperty('width', '50%', 'important');
+    setTimeout(() => {
+        const el = document.getElementById('search-wrapper');
+        el.style.setProperty('width', '50%', 'important');
+    }, 10);
 }
 
 function toggleRemoveButton(checkboxClass, buttonsClass = 'mass-tests-actions') {
@@ -761,4 +768,16 @@ function toggleRemoveButton(checkboxClass, buttonsClass = 'mass-tests-actions') 
             el.style.display = 'none';
         }, 600);
     });
+}
+
+async function higlightElement(text, context) {
+    const instance = new Mark(context);
+    instance.mark(text,
+        { "exclude": [".test-tag"] }
+    );
+}
+
+function higlightSearshResult(text) {
+    const wrappers = Array.from(document.getElementsByClassName('cell-name'));
+    wrappers.forEach((x) => higlightElement(text, x));
 }
