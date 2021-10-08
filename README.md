@@ -22,7 +22,7 @@ npm i
 
 Run Syngrisi server
 ```shell script
-npm run startdebug
+npm run start
 ```
 
 ### Main concept
