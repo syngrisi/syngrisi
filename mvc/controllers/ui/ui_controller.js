@@ -11,7 +11,13 @@ const Run = mongoose.model('VRSRun');
 const User = mongoose.model('VRSUser');
 const moment = require('moment');
 const {
-    fatalError, checkIdent, checksGroupedByIdent, removeEmptyProperties, buildQuery, getSuitesByTestsQuery, getRunsByTestsQuery
+    fatalError,
+    checkIdent,
+    checksGroupedByIdent,
+    removeEmptyProperties,
+    buildQuery,
+    getSuitesByTestsQuery,
+    getRunsByTestsQuery,
 } = require('../utils');
 
 async function getSnapshotByImgHash(hash) {
@@ -70,27 +76,55 @@ exports.checksGroupView = async function (req, res) {
 
 };
 
-exports.snapshotView = function (req, res) {
+exports.checkView = function (req, res) {
     return new Promise(async function (resolve, reject) {
         try {
             const opts = removeEmptyProperties(req.query);
 
             if (!opts.id) {
                 res.status(400)
-                    .json({ error: 'Cannot return snapshoot. There is no "id" field in request query' });
+                    .json({ error: 'Cannot return snapshot. There is no "id" field in request query' });
                 return reject();
             }
+            const check = await Check.findById(opts.id);
+            const test = await Test.findById(`${check.test}`);
+            const suite = await Suite.findById(`${check.suite}`);
+            const baselineSnapshot = await Snapshot.findById(`${check.baselineId}`);
+            let actualSnapshot;
 
-            const snapshot = await Snapshot.findById(`${opts.id}`);
-            const baselineId = opts.baselineid ? opts.baselineid : '';
-            const diffId = opts.diffid ? opts.diffid : '';
+            if (check.actualSnapshotId) {
+                actualSnapshot = await Snapshot.findById(`${check.actualSnapshotId}`);
+                actualSnapshot.formattedCreatedDate = moment(actualSnapshot.createdDate);
+            }
+            const diffId = check.diffId ? check.diffId : '';
 
-            snapshot.formattedCreatedDate = moment(snapshot.createdDate)
+            let diffSnapshot;
+            if (check.diffId) {
+                diffSnapshot = await Snapshot.findById(`${check.diffId}`);
+                diffSnapshot.formattedCreatedDate = moment(diffSnapshot.createdDate);
+            }
+            baselineSnapshot.formattedCreatedDate = moment(baselineSnapshot.createdDate)
                 .format('YYYY-MM-DD hh:mm');
-            res.render('pages/snapshot', {
-                snapshot: snapshot,
-                baselineId: baselineId,
-                diffId: diffId,
+
+            const checksWithSameName = await checksGroupedByIdent({ name: check.name });
+
+            let lastChecksWithSameName = [];
+            for (const group of Object.values(checksWithSameName)) {
+                lastChecksWithSameName.push(group.checks[group.checks.length - 1]);
+            }
+            lastChecksWithSameName = lastChecksWithSameName.sort(function(a,b){
+                return Number(new Date(b.updatedDate) - Number(new Date(a.updatedDate)));
+            });
+            res.render('pages/checkview', {
+                baselineSnapshot,
+                diffId,
+                actualSnapshot,
+                diffSnapshot,
+                check,
+                test,
+                suite,
+                lastChecksWithSameName,
+                user: req.user,
             });
             return resolve();
         } catch (e) {

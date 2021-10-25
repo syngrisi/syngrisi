@@ -387,7 +387,7 @@ $accepted-color: #2ECC40;
 .logo-header {
   width: 36px;
   margin-bottom: 0;
-  margin-top: 2px;
+  margin-top: 1px;
   margin-left: -2px;
 }
 
@@ -490,7 +490,7 @@ img.preview {
 }
 
 .diff-toolbar {
-  opacity: 75%;
+  opacity: 85%;
 }
 
 .bg-submenu {
@@ -517,4 +517,41 @@ mark {
   top: -0px;
   left: 1rem;
   padding-top: 7px
+}
+
+.pressed-toolbar-button {
+  background-color: #808080 !important;
+}
+
+.pressed-toolbar-button:hover {
+  background-color: #808080 !important;
+}
+
+.check-sidebar {
+  overflow-y: auto;
+  height: 100vh !important;
+}
+
+.check-sidebar:hover {
+  overflow-y: auto;
+  overflow-x: auto;
+  height: 100vh !important;
+}
+
+/* scrollbars */
+.check-sidebar::-webkit-scrollbar {
+  width: 10px;
+}
+
+.check-sidebar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.check-sidebar::-webkit-scrollbar-thumb {
+  background: #6c757d;
+  border-radius: 10px;
+}
+
+.header-icons {
+  font-size: 1.5em !important;
 }

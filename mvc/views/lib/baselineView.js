@@ -21,6 +21,7 @@ class BaselineView {
             this.canvas = params.canvas;
         } else {
             this.canvas = new fabric.Canvas(canvasId, {
+                // defaultCursor: 'default',
                 preserveObjectStacking: true,
                 uniScaleTransform: true,
             });
@@ -38,6 +39,8 @@ class BaselineView {
         this.image.lockScalingY = true;
         this.image.lockMovementX = true;
         this.image.lockMovementY = true;
+        this.image.hoverCursor = 'default';
+
         if (!params.noAddImage) {
             this.canvas.add(this.image);
         }

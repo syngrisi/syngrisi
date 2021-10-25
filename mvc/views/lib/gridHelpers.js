@@ -690,20 +690,11 @@ function clearSearch() {
 
 async function openDiffView(e) {
     const checkId = e.currentTarget.getAttribute('checkid');
-    const diffId = e.currentTarget.getAttribute('diffid');
-    const baselineId = e.currentTarget.getAttribute('baselineid');
-    const actualSnapshotId = e.currentTarget.getAttribute('actualsnapshotid');
-    const urnDiff = `diffview?diffid=${diffId}&actualid=${actualSnapshotId}`
-        + `&expectedid=${baselineId}&checkid=${checkId}`;
-    const urnGroup = `checksgroupview?id=${checkId}`;
+    const urnDiff = `checkview?id=${checkId}`;
     if (e.metaKey || e.ctrlKey) {
         window.open(urnDiff, '_blank');
         return;
     }
-    // if (e.shiftKey) {
-    //     window.open(urnGroup, '_blank');
-    //     return;
-    // }
 
     document.location.href = urnDiff;
 }

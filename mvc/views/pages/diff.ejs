@@ -69,7 +69,7 @@
                             id="dropdownMenuButton" aria-haspopup="true" aria-expanded="false"
                             style="box-shadow: none"
                     >
-                        <%= check.viewport %> <%= check.os %>
+                        <%= check.viewport %> ! <%= check.os %>
                     </button>
                     <div class="dropdown-menu text-left" aria-labelledby="dropdownMenu">
 
@@ -218,14 +218,13 @@
     clipPath.moveTo(3);
     clipPath.scaleToWidth(canvas.width);
 
-    clipPath.originX = 'left';
 
     function toggleReqions() {
         if (baseline.allRects && (baseline.allRects.length > 0)) {
             console.log('DESTROY');
             baseline.destroy();
         } else {
-            baseline = new BaselineView('2d',
+            baseline = new MainView('2d',
                 expectedImg,
                 {
                     canvas: canvas,

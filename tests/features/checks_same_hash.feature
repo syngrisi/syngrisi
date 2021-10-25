@@ -20,7 +20,6 @@ Feature: Checks with same Hash
         Given I set window size: "1366x768"
 
     Scenario: Checks with same Hash with different Test name but same Check name
-
         # check - 1
         Given I start VRS session with parameters:
         """
@@ -41,31 +40,37 @@ Feature: Checks with same Hash
         Then the "check" "status" should be "passed"
         When I stop VRS session
 
-        # go to into Test 2
-        When I wait for "3" seconds
+        # check baseline name
         When I open the url "http://vrs:3001/"
-        When I wait for "2" seconds
+        When I wait for "1" seconds
+
+        # go to test 2
         When I click on "Test Same Hash - 2" VRS test
         When I wait for "1" seconds
-        Then I expect that VRS test "Test Same Hash - 2" is unfolded
-        Then I expect that VRS check "1/1 Check Same Hash - 1" has "Passed" status
 
-        # check baseline name
+        # check baseline and actual name (should be as check name)
         When I click on the element "div[name='Check Same Hash - 1']"
+        When I click on the element "#navigation"
+        When I click on the element "a[name='group view']"
+        When I wait for "2" seconds
+
+        Then the element "#baseline-label" matches the text "Check Same Hash - 1"
+        Then the element "#actual-label" matches the text "Check Same Hash - 1"
+
+        # screenshot existence
         When I click on the element "[title='baseline snapshoot']"
-        When I wait for "2" seconds
-        Then I expect that element "//div[@name='title' and text()='Check Same Hash - 1']" is displayed
-
-        # check actual name (= baseline name)
+        Then I expect HTML does not contains:
+        """
+        not found
+        """
         When I click on browser back button
-        When I wait for "2" seconds
         When I click on the element "[title='actual snapshoot']"
-
-        When I wait for "2" seconds
-        Then I expect that element "//div[@name='title' and text()='Check Same Hash - 1']" is displayed
+        Then I expect HTML does not contains:
+        """
+        not found
+        """
 
     Scenario: Checks with same Hash with different Test name and Check name
-
         # check - 1
         Given I start VRS session with parameters:
         """
@@ -88,70 +93,53 @@ Feature: Checks with same Hash
         When I wait for "2" seconds
         Then the "check" "status" should be "new"
 
+        ## check baseline and actual names
         # go to into Test 2
-        When I wait for "3" seconds
         When I open the url "http://vrs:3001/"
         When I wait for "2" seconds
         When I click on "Test Same Hash - 2" VRS test
         When I wait for "1" seconds
-        Then I expect that VRS test "Test Same Hash - 2" is unfolded
-        Then I expect that VRS check "1/1 Check Same Hash - 2" has "New" status
 
-        # check baseline name (should be as check name)
+        # baseline and actual name should be as check name
         When I click on the element "div[name='Check Same Hash - 2']"
-        When I click on the element "[title='baseline snapshoot']"
+        When I click on the element "#navigation"
+        When I click on the element "a[name='group view']"
         When I wait for "2" seconds
-        Then I expect that element "//div[@name='title' and text()='Check Same Hash - 2']" is displayed
 
-#    Scenario: Checks with same Hash with different Test name and Check name - 2
-#
-#        # check - 1
-#        Given I start VRS session with parameters:
-#        """
-#          testName: "Test Same Hash - 1"
-#        """
-#        When I open the url "http://vrs:3001/"
-#        When I check image with path: "files/A.png" as "Check Same Hash - 1"
-#        When I stop VRS session
-#        When I wait for "2" seconds
-#        Then the "check" "status" should be "new"
-#
-#        # check - 2
-#        Given I start VRS session with parameters:
-#        """
-#          testName: "Test Same Hash - 2"
-#        """
-#        When I open the url "http://vrs:3001/"
-#        When I check image with path: "files/A.png" as "Check Same Hash - 2"
-#        When I stop VRS session
-#        When I wait for "2" seconds
-#        Then the "check" "status" should be "new"
-#
-#        # check - 3
-#        Given I start VRS session with parameters:
-#        """
-#          testName: "Test Same Hash - 2"
-#        """
-#        When I open the url "http://vrs:3001/"
-#        When I check image with path: "files/B.png" as "Check Same Hash - 2"
-#        When I stop VRS session
-#        When I wait for "2" seconds
-#        Then the "check" "status" should be "new"
+        Then the element "#baseline-label" matches the text "Check Same Hash - 2"
+        Then the element "#actual-label" matches the text "Check Same Hash - 2"
 
+        ## check file names
+        # probe Test 1
+        When I open the url "http://vrs:3001/"
+        When I wait for "2" seconds
+        When I click on "Test Same Hash - 1" VRS test
+        When I wait for "1" seconds
 
+        # baseline and actual name should be as check name
+        When I click on the element "div[name='Check Same Hash - 1']"
+        When I click on the element "#navigation"
+        When I click on the element "a[name='group view']"
+        When I wait for "2" seconds
+        When I execute javascript code and save as "filename - test-1, check-1":
+        """
+         return document.querySelector("#baseline-label").dataset.filename
+        """
+        # go to into Test 2
+        When I open the url "http://vrs:3001/"
+        When I wait for "2" seconds
+        When I click on "Test Same Hash - 2" VRS test
+        When I wait for "1" seconds
 
-#        # go to into Test 2
-#        When I wait for "3" seconds
-#        When I open the url "http://vrs:3001/"
-#        When I wait for "2" seconds
-#        When I click on "Test Same Hash - 2" VRS test
-#        When I wait for "1" seconds
-#        Then I expect that VRS test "Test Same Hash - 2" is unfolded
-#        Then I expect that VRS check "1/1 Check Same Hash - 2" has "New" status
-#
-#        # check baseline name (should be as check name)
-#        When I click on the element "a[name='Check Same Hash - 2']"
-#        When I click on the element "[title='baseline snapshoot']"
-#        When I wait for "2" seconds
-#        Then I expect that element "//div[@name='title' and text()='Check Same Hash - 2']" is displayed
-#
+        # baseline and actual name should be as check name
+        When I click on the element "div[name='Check Same Hash - 2']"
+        When I click on the element "#navigation"
+        When I click on the element "a[name='group view']"
+        When I wait for "2" seconds
+
+        When I execute javascript code and save as "filename - test-2, check-1":
+        """
+         return document.querySelector("#baseline-label").dataset.filename
+        """
+        Then I expect that the "filename - test-1, check-1" saved value equal the "filename - test-2, check-1" saved value
+

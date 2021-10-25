@@ -32,13 +32,11 @@ Feature: Checks previews
         Then I expect that VRS test "region check" is unfolded
         When I click on the element "[name=region]"
         When I wait for "2" seconds
-        When I click on the element "[title='baseline snapshoot']"
-        When I wait for "2" seconds
-        When I click on the element "[name=ignore-regions]"
+        When I click on the element "#ignore-regions"
         When I wait for "1" seconds
         When I execute javascript code:
         """
-         return baseline.allRects.length.toString();
+         return mainView.allRects.length.toString();
         """
         When I wait for "1" seconds
         Then I expect the stored "js" object is equal:
@@ -48,15 +46,15 @@ Feature: Checks previews
 
         When I execute javascript code:
         """
-         const { left, top: top1, width, height, fill, stroke, opacity } = baseline.getLastRegion()
+         const { left, top: top1, width, height, fill, stroke, opacity } = mainView.getLastRegion()
          return [left, top1, width, height, fill, stroke, opacity].toString()
         """
         Then I expect the stored "js" object is equal:
         """
-          20,50,200,100,MediumVioletRed,rgba(100,200,200,0.5),0.5
+          20,50,200,100,MediumVioletRed,black,0.5
         """
 
-        When I click on the element "[name=save-baseline]"
+        When I click on the element "#save-baseline"
 
         When I open the url "http://vrs:3001/"
         When I wait for "3" seconds
@@ -88,5 +86,5 @@ Feature: Checks previews
         """
         Then I expect the stored "js" object is equal:
         """
-          4.8448145344436035,12.112036336109007,48.44814534443603,24.224072672218018,MediumVioletRed,rgba(100,200,200,0.5),0.5
+        6.349206349206349,15.873015873015872,64.12698412698413,32.38095238095239,MediumVioletRed,rgba(100,200,200,0.5),0.5
         """
