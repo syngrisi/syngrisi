@@ -364,6 +364,12 @@ When(/^I execute javascript code:$/, function (js) {
     this.saveItem('js', result);
 });
 
+When(/^I execute javascript code and save as "([^"]*)":$/, function (itemName, js) {
+    const result = browser.execute(js);
+    console.log({ result });
+    this.saveItem(itemName, result);
+});
+
 Then(/^I expect "([^"]*)" saved object:$/, function (itemName, yml) {
     const params = YAML.parse(yml);
     const item = this.getSavedItem(itemName);
@@ -531,14 +537,14 @@ Then(/^page source match:$/, (source) => {
 When(/^I stop the Syngrisi server$/, () => {
 
     try {
-            console.log(`THE SYNGRISI SERVER PID: '${browser.syngrisiServer.pid}'`);
-            if(process.platform === 'win32'){
-                killServer(browser.config.serverPort);
-                return
-            }
+        console.log(`THE SYNGRISI SERVER PID: '${browser.syngrisiServer.pid}'`);
+        if (process.platform === 'win32') {
+            killServer(browser.config.serverPort);
+            return;
+        }
         if (browser.syngrisiServer) {
 
-        browser.syngrisiServer.kill();
+            browser.syngrisiServer.kill();
         }
     } catch (e) {
         console.log('WARNING: cannot stop te Syngrisi server via child, try to kill process');
@@ -1044,5 +1050,20 @@ When(/^I remove via http tests that older than "([^"]*)" days$/, async function 
 });
 
 When(/^I click on the element "([^"]*)" via js$/, function (selector) {
-    $(selector).jsClick();
+    $(selector)
+        .jsClick();
+});
+
+Then(/^I expect HTML does not contains:$/, function (text) {
+    const source = $('html')
+        .getHTML();
+    expect(source)
+        .not
+        .toContain(text);
+});
+
+Then(/^I expect that the "([^"]*)" saved value equal the "([^"]*)" saved value$/, function (first, second) {
+    const firstItem = this.getSavedItem(first);
+    const secondItem = this.getSavedItem(second);
+    expect(firstItem.toString()).toBe(secondItem.toString());
 });

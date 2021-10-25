@@ -47,8 +47,8 @@ module.exports = async function (app) {
             UI.checksGroupView(req, res)
                 .catch(next);
         })
-        .get('/snapshootview', ensureLoggedIn(), async function (req, res, next) {
-            UI.snapshotView(req, res)
+        .get('/checkview', ensureLoggedIn(), async function (req, res, next) {
+            UI.checkView(req, res)
                 .catch(next);
         })
         .get('/diffview', ensureLoggedIn(), (req, res, next) => {

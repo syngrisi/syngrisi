@@ -1,7 +1,7 @@
 @font-face {
   font-family: "bootstrap-icons";
-  src: url("./fonts/bootstrap-icons.woff2?08010997d90ae93356d746b56abb8ea3") format("woff2"),
-url("./fonts/bootstrap-icons.woff?08010997d90ae93356d746b56abb8ea3") format("woff");
+  src: url("./fonts/bootstrap-icons.woff2?c7dbd3d8b560564aa89cf143296d4b9a") format("woff2"),
+url("./fonts/bootstrap-icons.woff?c7dbd3d8b560564aa89cf143296d4b9a") format("woff");
 }
 
 [class^="bi-"]::before,
@@ -1404,3 +1404,5 @@ url("./fonts/bootstrap-icons.woff?08010997d90ae93356d746b56abb8ea3") format("wof
 .bi-strava::before { content: "\f668"; }
 .bi-wordpress::before { content: "\f669"; }
 .bi-vimeo::before { content: "\f66a"; }
+.bi-chatx::before { content: "\f66b"; }
+.bi-save-arrow::before { content: "\f66c"; }

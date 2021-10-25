@@ -1,0 +1,54 @@
+<div name="logo-and-link"
+     class="col-8 ml-3"
+     id="logo-and-label-container">
+    <div class="row align-items-center1">
+        <div class="col-auto ml-4 pl-0 pr-0 pt-0 toggle-sidebar-button-wrapper no-highlight vcenter">
+            <%- include('sidebar_switcher') %>
+        </div>
+        <div name="logo-img" class="col-auto pl-1 pt-0 pr-0 vcenter">
+            <%- include('logo') %>
+        </div>
+        <!--HEADER TITLE-->
+        <div name="title"
+             class="col pl-2 ml-2 pt-0 h6 mb-0 d-flex align-items-center text-truncate"
+             title="<%= suite.name; %>/<%= test.name; %>/<%= (check.name.replace(/_/g, ' ')); %> [<%= check.status[0] %>]"
+        >
+            <!--BACK LINK-->
+            <a class="diff-back-button back-button unlink small" href="javascript:void(0)"
+               onclick="backToTest('<%= test.id %>')">
+                <img src="../../../static/icons/back-button.svg" alt="navigation button" class="navigation-button">
+            </a>
+            <!--STATUS-->
+            <span class="status d-inline-block ml-2 mr-2 rounded border border-light bg-item-<%= check.status[0] %>"
+                  style="padding: 2px"
+            >
+                <%= check.status[0] %>
+            </span>
+            <!--LINKS TO SUITE / CHECK-->
+            <a class="unlink" name="suite-link"
+               href="/?filter_suitename_eq=<%= suite.name %>"><%= suite.name %></a>
+            <span>/</span>
+            <a class="unlink" name="check-link"
+               href='/?filter_suitename_eq=<%= suite.name %>&unfoldTestId=<%= test.id %>'><%= test.name %></a>
+        </div>
+    </div>
+</div>
+
+<div name="suite-menu-toolbar" class="col mr-3">
+    <div class="row all-header light-purple">
+        <div class="tests-toolbar col text-light p-0 pt-0 bg-olive align-self-end">
+            <div class="row d-flex flex-row pr-0 justify-content-end">
+                <!--NAV BUTTON ICON-->
+                <div class="user-icon-wrapper col-auto  pl-1 pr-0 mr-1 vcenter" >
+                    <%- include('nav_button', {user: user}) %>
+                </div>
+                <!--NAV BUTTON ICON-->
+                <!--USER ICON-->
+                <div class="user-icon-wrapper col-auto pl-1 pr-0 mr-3 vcenter">
+                    <%- include('user_icon', {user: user}) %>
+                </div>
+                <!--/USER ICON-->
+            </div>
+        </div>
+    </div>
+</div>

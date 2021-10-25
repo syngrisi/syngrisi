@@ -17,7 +17,7 @@
         }
     </style>
 
-    <title>Suite: <%= suite.name ;%> Test: <%= test.name ;%> Checks name - <%= checks[0].name ;%></title>
+    <title>Suite: <%= suite.name; %> Test: <%= test.name; %> Checks name - <%= checks[0].name; %></title>
 </head>
 <body>
 <div class="container-fluid pl-3 pr-1">
@@ -40,42 +40,43 @@
 
         <div name="title" class="col pl-3 pt-1 h6 mb-0 d-flex align-items-center text-truncate">
             <a class="unlink" name="suite-link"
-               href="/?filter_suitename_eq=<%= suite.name ;%>"><%= suite.name ;%></a>
+               href="/?filter_suitename_eq=<%= suite.name; %>"><%= suite.name; %></a>
             <span>/</span>
             <a class="unlink" name="check-link"
-               href='/?filter_suitename_eq=<%= suite.name ;%>&unfoldTestId=<%= test.id ;%>'><%= test.name ;%></a>
+               href='/?filter_suitename_eq=<%= suite.name; %>&unfoldTestId=<%= test.id; %>'><%= test.name; %></a>
             <span>/</span>
-            <%= checks[0].name ;%>
+            <%= checks[0].name; %>
         </div>
     </div>
 
     <div name="rows" class="container mt-3">
         <% for(const check of checks) { %>
             <div class="row w-100 pb-3">
-                <div class="col-auto">
-                    <a href="/snapshootview?id=<%= check.baseline._id ;%>&diffid=<%= check.diff ? check.diff._id : '' ;%>"
+                <div class="col-3">
+                    <a href="/snapshoots/<%= check.baseline.filename || check.baseline._id + '.png'; %>"
+                       class=""
                        name="baseline_link">
-                        <img src="/snapshoots/<%= check.baseline.filename || check.baseline._id + '.png' ;%>"
+                        <img src="/snapshoots/<%= check.baseline.filename || check.baseline._id + '.png'; %>"
                              alt="baseline snapshoot"
                              title="baseline snapshoot"
                              class="snapshoot-image">
                     </a>
                 </div>
-                <div class="col-auto">
+                <div class="col-3">
                     <% if (check.actualSnapshotId) { %>
-                        <a href="/snapshootview?id=<%= check.actual._id ;%>&diffid=<%= check.diff ? check.diff._id : '' ;%>"
+                        <a href="/snapshoots/<%= check.actual.filename || check.actual._id + '.png'; %>"
                            name="actual_link">
-                            <img src="/snapshoots/<%= check.actual.filename || check.actual._id + '.png' ;%>"
+                            <img src="/snapshoots/<%= check.actual.filename || check.actual._id + '.png'; %>"
                                  alt="actual snapshoot"
                                  title="actual snapshoot"
                                  class="snapshoot-image">
                         </a>
                     <% } %>
                 </div>
-                <div class="col-auto">
+                <div class="col-3">
                     <% if (check.diff) { %>
-                        <a href="/snapshootview?id=<%= check.diff._id ;%>">
-                            <img src="/snapshoots/<%= check.diff.filename || check.diff._id + '.png' ;%>"
+                        <a href="/snapshootview?id=<%= check.diff._id; %>">
+                            <img src="/snapshoots/<%= check.diff.filename || check.diff._id + '.png'; %>"
                                  alt="diff snapshoot"
                                  title="diff snapshoot"
                                  class="snapshoot-image">
@@ -83,7 +84,24 @@
                     <% } %>
                 </div>
             </div>
-
+            <div class="row">
+                <div id="baseline-label"
+                     class="col-3 text-center"
+                     data-filename="<%= check.baseline.filename %>"
+                ><%= check.baseline.name %></div>
+                <% if (check.actual) { %>
+                    <div id="actual-label"
+                         class="col-3 text-center"
+                         data-filename="<%= check.actual.filename %>"
+                    ><%= check.actual.name %></div>
+                <% } %>
+                <% if (check.diff) { %>
+                    <div id="diff-label"
+                         class="col-3 text-center"
+                         data-filename="<%= check.diff.filename %>"
+                    ><%= check.diff.name %></div>
+                <% } %>
+            </div>
         <% } %>
     </div>
 </div>
