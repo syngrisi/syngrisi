@@ -7,7 +7,7 @@
             const baseline = JSON.parse(await baselineResponse.text());
             console.log({ check });
         %>
-        <% const imageSrc = `snapshoots/${baseline.filename}`; %>
+        <% const imageSrc = `snapshoots/${baseline.filename ||  baseline._id + '.png'}`; %>
         <div class="p-1 pt-3 <%= check._id === ch._id ? 'bg-secondary' : '' ;%> d-flex">
             <a class="unlink small pl-2 pr-2"
                onclick="document.location.href = '<%= url ;%>'"
