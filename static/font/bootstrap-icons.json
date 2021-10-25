@@ -1386,5 +1386,7 @@
   "wordpress": 63081,
   "vimeo": 63082,
   "chatx": 63083,
-  "save-arrow": 63084
+  "save-arrow": 63084,
+  "diff-view": 63085,
+  "Vector": 63086
 }
