@@ -39,10 +39,11 @@ class SideToSideView {
         this.canvas.on('object:moved', () => {
             $this.baselineLabel.opacity = 0;
             $this.actualLabel.opacity = 0;
+            $this.inMovement = false;
         });
 
         this.canvas.on('object:moving', (evt) => {
-            console.log(evt);
+            $this.inMovement = true;
             if (evt.target.name === 'divider') {
                 // console.log($this.canvas.getZoom());
                 this.baselineLabel.opacity = 1;

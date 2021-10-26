@@ -14,7 +14,7 @@
 <div class="col-auto" id="snapshot-toolbar-buttons">
     <div class="row">
         <!--ZOOM IN-->
-        <div class="col-auto btn-check pl-1 pr-1" onclick="mainView.zoom(1.2)">
+        <div class="col-auto btn-check pl-1 pr-1" onclick="mainView.zoom(15)">
             <a name="zoom in" type="button"
                class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-1 border-0 rounded"
                title="zoom in (+)"
@@ -27,7 +27,7 @@
             <a name="zoom-out" type="button"
                title="zoom out (-)"
                class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-1 border-0 rounded"
-               onclick="mainView.zoom(0.8)">
+               onclick="mainView.zoom(-15)">
                 <i class="bi bi-zoom-out"></i>
             </a>
         </div>
@@ -63,12 +63,12 @@
         <% if (actualSnapshot) { %>
             <div class="col-auto btn-check pl-1 pr-1 pt-0 border-secondary" id="actual-wrapper"
                  onclick="mainView.toggleActual(<%= JSON.stringify(actualSnapshot) %>);">
-                <a id="toggle-actual" type="button"
-                   title="toggle actual snapshot"
-                   class="vcenter-item pl-1 pr-1 pt-0 pb-0 border-0"
+                <a id="toggle-actual-baseline" type="button"
+                   title="switch to actual snapshot (current is baseline)"
+                   class="vcenter-item pl-1 pr-1 pt-0 pb-0 border-0 noselect"
                    style="margin-top: -2px;"
                 >
-                    A
+                    B
                 </a>
             </div>
         <% } %>
@@ -82,7 +82,7 @@
                    class="vcenter-item pl-1 pr-1 pt-0 pb-0 border-0 rounded"
                    style="margin-top: -2px;"
                 >
-                    <i class="bi bi-square-half"></i>
+                    <i class="bi bi-vr"></i>
                 </a>
             </div>
         <% } %>
@@ -98,21 +98,21 @@
             </a>
         </div>
         <!--ADD BOUND REGIONS-->
-        <div class="col-auto btn-check pl-1 pr-1 border-secondary"
-             style="padding-top: 1px"
-        >
-            <a id="bound-regions" type="button"
-               class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-1 border-0 rounded"
-               title="add bound regions"
-               onclick="mainView.addBoundingRegion('bound_rect')"
-            >
-                <i class="bi bi-fullscreen"></i>
-            </a>
-        </div>
+<!--        <div class="col-auto btn-check pl-1 pr-1 border-secondary"-->
+<!--             style="padding-top: 1px"-->
+<!--        >-->
+<!--            <a id="bound-regions" type="button"-->
+<!--               class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-1 border-0 rounded"-->
+<!--               title="add bound regions"-->
+<!--               onclick="mainView.addBoundingRegion('bound_rect')"-->
+<!--            >-->
+<!--                <i class="bi bi-fullscreen"></i>-->
+<!--            </a>-->
+<!--        </div>-->
         <!--DELETE-->
         <div class="col-auto btn-check pl-1 pr-1 border-left border-secondary"
              style="padding-top: 1px"
-             onclick="mainView.removeActiveIgnoreRegion()">
+             onclick="mainView.removeActiveIgnoreRegions()">
             <a id="delete-rect" type="button"
                class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-1 border-0 rounded"
                title="delete active region (Delete or Backspace)"
@@ -122,7 +122,7 @@
             </a>
         </div>
         <!--ACCEPT-->
-        <div class="col-auto btn-check pl-1 pr-1 border-left1 border-secondary"
+        <div class="col-auto btn-check pl-0 pr-1 border-left1 border-secondary"
              style="margin-top: -1px"
              onclick="setTimeout(()=>{acceptAndRedirect2({
                      checkId: '<%= check.id %>',
@@ -133,6 +133,7 @@
                      })}, 100);">
             <a id="accept-rect" type="button"
                class="vcenter-item pl-1 pr-1"
+               style="margin-top: -1px"
                title="accept the actual snapshot as the baseline"
 
             >
@@ -159,7 +160,7 @@
                title="save the baseline (S)"
 
             >
-                <i class="bi bi-save-arrow"></i>
+                <i class="bi bi-check2"></i>
             </a>
         </div>
 

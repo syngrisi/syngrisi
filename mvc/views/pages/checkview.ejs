@@ -130,7 +130,8 @@
 
     function setPanEvents(canvas) {
         canvas.on('mouse:move', (e) => {
-                if (mouseDown && currentMode.isPan()) {
+                const s2sMoving = mainView.sideToSideView.inMovement;
+                if (mouseDown && currentMode.isPan() && !s2sMoving) {
                     canvas.setCursor('grab');
 
                     // console.log({ e })
@@ -147,18 +148,16 @@
 
                 if (currentMode.isPan()) {
                     canvas.setCursor('grab');
-
+                    canvas.selection = false;
                     canvas.renderAll();
                 }
             }
         );
         canvas.on('mouse:up', (e) => {
                 mouseDown = false;
-                // if (currentMode.isPan()) {
-                //     console.log(currentMode.isPan());
                 canvas.setCursor('default');
                 canvas.renderAll();
-                // }
+                canvas.selection = true;
             }
         );
     }
@@ -190,16 +189,16 @@
                 strokeWidth: 0,
             });
         }
-        if (event.code === 'Minus') {
-            mainView.zoom(0.8);
+        if (event.code === 'Minus' || event.code === 'NumpadSubtract') {
+            mainView.zoom(-15);
         }
 
-        if (event.code === 'Equal') {
-            mainView.zoom(1.2);
+        if (event.code === 'Equal' || event.code === 'NumpadAdd') {
+            mainView.zoom(15);
         }
 
         if ((event.code === 'Delete') || (event.code === 'Backspace')) {
-            mainView.removeActiveIgnoreRegion();
+            mainView.removeActiveIgnoreRegions();
         }
 
         if ((event.code === 'KeyG')) {
@@ -221,15 +220,6 @@
         }
     });
 
-    $(document)
-        .on('click', '.deleteBtn', function () {
-            if (mainView.canvas.getActiveObject()) {
-                mainView.canvas.remove(mainView.canvas.getActiveObject());
-                $('.deleteBtn')
-                    .remove();
-            }
-        });
-
     var mainView = {};
 
     let baselineImg = new Image();
@@ -241,6 +231,7 @@
         // console.log({ canvasElementClientWidth: document.getElementById('snapshoot').clientWidth });
         let calculatedHeight = this.height * coef;
         // console.log({ canvasElementClientHeight: document.getElementById('snapshoot').clientHeight });
+        // document.getElementById('snapshoot').style.height = '100%';
         document.getElementById('snapshoot').style.height = calculatedHeight + 'px';
         // console.log({ canvasElementClientHeight: document.getElementById('snapshoot').clientHeight });
 

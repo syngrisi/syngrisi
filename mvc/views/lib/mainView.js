@@ -19,8 +19,27 @@ class MainView {
             this.sideToSideView = new SideToSideView(this.canvas, this.baselineUrl, MainView.snapshotUrl(params.actual.filename));
         }
 
+        this.selectionEvents();
         // render view
         this.renderBaselineView();
+    }
+
+    selectionEvents() {
+        // disable rotation point for selections
+        this.canvas.on('selection:created', (e) => {
+            const activeSelection = e.target;
+            activeSelection.controls.mtr.visible = false;
+            this.canvas.renderAll();
+        });
+
+        // fired e.g. when you select one object first,
+        // then add another via shift+click
+        this.canvas.on('selection:updated', (e) => {
+            const activeSelection = e.target;
+            if (activeSelection.hasRotatingPoint) {
+                activeSelection.controls.mtr.visible = false;
+            }
+        });
     }
 
     get objects() {
@@ -44,7 +63,9 @@ class MainView {
     // DESTROY VIEWS
     destroyActualView() {
         this.canvas.remove(this.actualImage);
-        this.unpressedButton('actual-wrapper');
+        const button = document.getElementById('toggle-actual-baseline');
+        button.innerText = 'B';
+        button.title = 'switch to actual snapshot (current is baseline)';
     }
 
     destroyBaselineView() {
@@ -81,6 +102,7 @@ class MainView {
             lockMovementY: true,
             hoverCursor: 'default',
             hasControls: false,
+            selectable: false,
         });
     }
 
@@ -107,7 +129,9 @@ class MainView {
 
         this.actualImage.sendToBack();
         this.actualImage.scaleToWidth(this.canvas.width * this.canvas.getZoom());
-        this.pressedButton('actual-wrapper');
+        const button = document.getElementById('toggle-actual-baseline');
+        button.innerText = 'A';
+        button.title = 'switch to baseline snapshot (current is actual)';
     }
 
     async renderDiffView(url) {
@@ -161,13 +185,19 @@ class MainView {
         this.renderDiffView(uri);
     }
 
-    removeActiveIgnoreRegion() {
-        const el = this.canvas.getActiveObject();
-        if (!el || el.name !== 'ignore_rect') {
+    removeActiveIgnoreRegions() {
+        const els = this.canvas.getActiveObjects()
+            .filter(x => x.name === 'ignore_rect');
+        this.canvas.discardActiveObject()
+            .renderAll();
+        if (els.length === 0) {
             alert('there is no active regions for removing');
             return;
         }
-        this.canvas.remove(el);
+        els.forEach((el) => {
+            this.canvas.remove(el);
+        });
+        this.canvas.renderAll();
     }
 
     addRect(params) {
@@ -255,17 +285,12 @@ class MainView {
     }
 
     zoom(ratio) {
-        const newRatio = this.canvas.getZoom() * ratio;
+        // console.log({ currentZoom: this.canvas.getZoom() });
+        let newRatio = Math.round(this.canvas.getZoom() * 100) + ratio;
+        newRatio = newRatio < 2 ? 2 : newRatio;
+        newRatio = newRatio > 1000 ? 1000 : newRatio;
         this.canvas.zoomToPoint(new fabric.Point(this.canvas.width / 2,
-            this.canvas.height / 2), newRatio);
-
-        // this.canvas.setZoom(newRatio);
-        console.log({ Zoom: Math.round(newRatio * 100) });
-        // console.log({ wrapperSize: this.getCanvasWrapperSize() });
-        console.log({
-            width: this.canvas.width * this.canvas.getZoom(),
-            height: this.canvas.height * this.canvas.getZoom(),
-        });
+            30), newRatio / 100);
         this.canvas.renderAll();
     }
 
