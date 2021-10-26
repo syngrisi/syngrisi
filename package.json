@@ -1,6 +1,6 @@
 {
   "name": "syngrisi",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "Syngrisi - Visual Testing Tool",
   "main": "server.js",
   "repository": {
