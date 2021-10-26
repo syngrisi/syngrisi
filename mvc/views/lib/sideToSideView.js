@@ -245,7 +245,8 @@ class SideToSideView {
         this.actualLabel.top = this.canvas.getHeight() / 2 - 15;
         this.actualLabel.left = this.divider.left + this.canvas.getWidth() / 10;
 
-        this.rectClip.width = this.canvas.getWidth();
+        // this.rectClip.width = this.canvas.getWidth();
+        this.rectClip.width = 10000;
         this.rectClip.height = this.canvas.getHeight();
 
         // SCALING

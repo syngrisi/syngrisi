@@ -108,60 +108,6 @@
         button.classList.add('pressed-toolbar-button');
     }
 
-    // PAN
-    let mouseDown = false;
-
-    const defaultMode = '';
-    var currentMode = {
-        mode: '',
-        set: function (value) {
-            this.mode = value;
-        },
-        toggle: function (mode) {
-            if (this.mode === mode) {
-                return this.set(defaultMode);
-            }
-            this.set(mode);
-        },
-        isPan: function () {
-            return this.mode === 'pan';
-        }
-    };
-
-    function setPanEvents(canvas) {
-        canvas.on('mouse:move', (e) => {
-                const s2sMoving = mainView.sideToSideView.inMovement;
-                if (mouseDown && currentMode.isPan() && !s2sMoving) {
-                    canvas.setCursor('grab');
-
-                    // console.log({ e })
-                    const mEvent = e.e;
-                    // console.log({ e })
-                    const delta = new fabric.Point(mEvent.movementX, mEvent.movementY);
-                    canvas.relativePan(delta);
-                    canvas.renderAll();
-                }
-            }
-        );
-        canvas.on('mouse:down', (e) => {
-                mouseDown = true;
-
-                if (currentMode.isPan()) {
-                    canvas.setCursor('grab');
-                    canvas.selection = false;
-                    canvas.renderAll();
-                }
-            }
-        );
-        canvas.on('mouse:up', (e) => {
-                mouseDown = false;
-                canvas.setCursor('default');
-                canvas.renderAll();
-                canvas.selection = true;
-            }
-        );
-    }
-
     function toggleSnapshotToolbarCollapse() {
         const wrapper = document.getElementsByClassName('toolbar-wrapper')[0];
         const buttonsEl = document.getElementById('snapshot-toolbar-buttons');
@@ -250,8 +196,6 @@
             }
         );
         mainView.getSnapshotIgnoreRegionsDataAndDrawRegions('<%= baselineSnapshot.id; %>');
-        setPanEvents(mainView.canvas);
-
     };
 </script>
 <script src="../../../static/js/bootstrap-toolkit.js"></script>
