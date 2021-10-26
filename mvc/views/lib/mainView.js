@@ -1,4 +1,4 @@
-/* eslint-disable dot-notation */
+/* eslint-disable dot-notation,no-underscore-dangle */
 /* global XMLHttpRequest fabric $ document window */
 
 // eslint-disable-next-line no-unused-vars
@@ -14,21 +14,87 @@ class MainView {
             uniformScaling: false,
         });
 
+        this.defaultMode = '';
+        this.currentMode = {
+            mode: '',
+            set: function (value) {
+                this.mode = value;
+            },
+            toggle: function (mode) {
+                if (this.mode === mode) {
+                    return this.set(this.defaultMode);
+                }
+                return this.set(mode);
+            },
+            isPan: function () {
+                return this.mode === 'pan';
+            },
+        };
+
         this.baselineUrl = params.url;
         if (params.actual) {
             this.sideToSideView = new SideToSideView(this.canvas, this.baselineUrl, MainView.snapshotUrl(params.actual.filename));
         }
 
         this.selectionEvents();
+        this.zoomEvents();
+        this.panEvents();
         // render view
         this.renderBaselineView();
+    }
+
+    panEvents() {
+        this.canvas.on(
+            'mouse:move', (e) => {
+                const s2sMoving = this.sideToSideView.inMovement;
+                if (this.mouseDown && this.currentMode.isPan() && !s2sMoving) {
+                    this.canvas.setCursor('grab');
+
+                    const mEvent = e.e;
+                    const delta = new fabric.Point(mEvent.movementX, mEvent.movementY);
+                    this.canvas.relativePan(delta);
+                    this.canvas.renderAll();
+                }
+            }
+        );
+
+        this.canvas.on(
+            'mouse:down', (e) => {
+                this.mouseDown = true;
+
+                if (this.currentMode.isPan()) {
+                    this.canvas.setCursor('grab');
+                    this.canvas.selection = false;
+                    this.canvas.renderAll();
+                }
+            }
+        );
+        this.canvas.on(
+            'mouse:up', (e) => {
+                this.mouseDown = false;
+                this.canvas.setCursor('default');
+                this.canvas.renderAll();
+                this.canvas.selection = true;
+            }
+        );
+
+        this.canvas.on('mouse:wheel', (opt) => {
+            if (opt.e.ctrlKey) return;
+            const delta = new fabric.Point(-opt.e.deltaX / 2, -opt.e.deltaY / 2);
+            this.canvas.relativePan(delta);
+            this.canvas.renderAll();
+            opt.e.preventDefault();
+            opt.e.stopPropagation();
+        });
     }
 
     selectionEvents() {
         // disable rotation point for selections
         this.canvas.on('selection:created', (e) => {
             const activeSelection = e.target;
-            activeSelection.controls.mtr.visible = false;
+            console.log(activeSelection?._objects?.length);
+            if (!activeSelection?._objects?.length || (activeSelection?._objects?.length < 2)) return;
+            activeSelection.hasControls = false;
             this.canvas.renderAll();
         });
 
@@ -36,9 +102,28 @@ class MainView {
         // then add another via shift+click
         this.canvas.on('selection:updated', (e) => {
             const activeSelection = e.target;
-            if (activeSelection.hasRotatingPoint) {
-                activeSelection.controls.mtr.visible = false;
+            if (!activeSelection?._objects?.length || (activeSelection?._objects?.length < 2)) return;
+            if (activeSelection.hasControls) {
+                activeSelection.hasControls = false;
             }
+        });
+    }
+
+    zoomEvents() {
+        this.canvas.on('mouse:wheel', (opt) => {
+            if (!opt.e.ctrlKey) return;
+            const delta = opt.e.deltaY;
+            let zoom = this.canvas.getZoom();
+            zoom *= 0.999 ** delta;
+            if (zoom > 20) zoom = 20;
+            if (zoom < 0.01) zoom = 0.01;
+            // console.log({zoom: zoom * 100});
+            this.canvas.zoomToPoint({
+                x: opt.e.offsetX,
+                y: opt.e.offsetY,
+            }, zoom);
+            opt.e.preventDefault();
+            opt.e.stopPropagation();
         });
     }
 

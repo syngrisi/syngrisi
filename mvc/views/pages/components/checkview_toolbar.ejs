@@ -17,7 +17,7 @@
         <div class="col-auto btn-check pl-1 pr-1" onclick="mainView.zoom(15)">
             <a name="zoom in" type="button"
                class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-1 border-0 rounded"
-               title="zoom in (+)"
+               title="zoom in (+ or use Ctrl + mouse wheel)"
             >
                 <i class="bi bi-zoom-in"></i>
             </a>
@@ -25,7 +25,7 @@
         <!--ZOOM OUT-->
         <div class="col-auto btn-check pl-1 pr-1">
             <a name="zoom-out" type="button"
-               title="zoom out (-)"
+               title="zoom out (- or use Ctrl + mouse wheel)"
                class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-1 border-0 rounded"
                onclick="mainView.zoom(-15)">
                 <i class="bi bi-zoom-out"></i>
@@ -34,7 +34,7 @@
 
         <!--TOGGLE GRAB MODE-->
         <div class="col-auto btn-check pl-1 pr-1 pt-0" id="grab-wrapper"
-             onclick="toggleButtonAsPressed('grab-wrapper'); currentMode.toggle('pan')">
+             onclick="toggleButtonAsPressed('grab-wrapper'); mainView.currentMode.toggle('pan')">
             <a id="grab" type="button"
                title="grab the viewport (G)"
                class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-1 border-0 rounded"
@@ -98,17 +98,17 @@
             </a>
         </div>
         <!--ADD BOUND REGIONS-->
-<!--        <div class="col-auto btn-check pl-1 pr-1 border-secondary"-->
-<!--             style="padding-top: 1px"-->
-<!--        >-->
-<!--            <a id="bound-regions" type="button"-->
-<!--               class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-1 border-0 rounded"-->
-<!--               title="add bound regions"-->
-<!--               onclick="mainView.addBoundingRegion('bound_rect')"-->
-<!--            >-->
-<!--                <i class="bi bi-fullscreen"></i>-->
-<!--            </a>-->
-<!--        </div>-->
+        <!--        <div class="col-auto btn-check pl-1 pr-1 border-secondary"-->
+        <!--             style="padding-top: 1px"-->
+        <!--        >-->
+        <!--            <a id="bound-regions" type="button"-->
+        <!--               class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-1 border-0 rounded"-->
+        <!--               title="add bound regions"-->
+        <!--               onclick="mainView.addBoundingRegion('bound_rect')"-->
+        <!--            >-->
+        <!--                <i class="bi bi-fullscreen"></i>-->
+        <!--            </a>-->
+        <!--        </div>-->
         <!--DELETE-->
         <div class="col-auto btn-check pl-1 pr-1 border-left border-secondary"
              style="padding-top: 1px"
@@ -210,10 +210,10 @@
                 </a>
                 <a id="check-info" type="button"
                    class="btn btn-check vcenter-item pl-3 pr-1 mt-2 pb-0 mb-0 border-0 rounded-0"
-                   href="/check/<%=check.id%>"
+                   href="/check/<%= check.id %>"
                 >
                     <i class="bi bi-info-circle"></i>
-                   <span class="pl-2">Raw check info</span>
+                    <span class="pl-2">Raw check info</span>
                 </a>
 
                 <div class="dropdown-divider"></div>
