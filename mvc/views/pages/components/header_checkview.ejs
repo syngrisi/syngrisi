@@ -9,9 +9,15 @@
             <%- include('logo') %>
         </div>
         <!--HEADER TITLE-->
+        <% const checkResult = JSON.parse(check.result) %>
+        <% const misMatchPercentage = checkResult.misMatchPercentage ? ('(' + checkResult.misMatchPercentage + '%)') : '' %>
         <div name="title"
              class="col pl-2 ml-2 pt-0 h6 mb-0 d-flex align-items-center text-truncate"
-             title="<%= suite.name; %>/<%= test.name; %>/<%= (check.name.replace(/_/g, ' ')); %> [<%= check.status[0] %>]"
+        <% if(misMatchPercentage !== '(0.00%)') { %>
+             title="this check mismatch percentage: <%= misMatchPercentage %>"
+        <% } else{ %>
+             title="success"
+                <% } %>
         >
             <!--BACK LINK-->
             <a class="diff-back-button back-button unlink small" href="javascript:void(0)"
@@ -22,7 +28,11 @@
             <span class="status d-inline-block ml-2 mr-2 rounded border border-light bg-item-<%= check.status[0] %>"
                   style="padding: 2px"
             >
+
                 <%= check.status[0] %>
+                <% if(misMatchPercentage !== '(0.00%)') { %>
+                    <span><%= misMatchPercentage %></span>
+                <% } %>
             </span>
             <!--LINKS TO SUITE / CHECK-->
             <a class="unlink" name="suite-link"
@@ -39,7 +49,7 @@
         <div class="tests-toolbar col text-light p-0 pt-0 bg-olive align-self-end">
             <div class="row d-flex flex-row pr-0 justify-content-end">
                 <!--NAV BUTTON ICON-->
-                <div class="user-icon-wrapper col-auto  pl-1 pr-0 mr-1 vcenter" >
+                <div class="user-icon-wrapper col-auto  pl-1 pr-0 mr-1 vcenter">
                     <%- include('nav_button', {user: user}) %>
                 </div>
                 <!--NAV BUTTON ICON-->
