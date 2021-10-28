@@ -112,7 +112,7 @@ exports.checkView = function (req, res) {
             for (const group of Object.values(checksWithSameName)) {
                 lastChecksWithSameName.push(group.checks[group.checks.length - 1]);
             }
-            lastChecksWithSameName = lastChecksWithSameName.sort(function(a,b){
+            lastChecksWithSameName = lastChecksWithSameName.sort(function (a, b) {
                 return Number(new Date(b.updatedDate) - Number(new Date(a.updatedDate)));
             });
             res.render('pages/checkview', {
@@ -138,6 +138,8 @@ exports.diffView = function (req, res) {
     return new Promise(async (resolve, reject) => {
         try {
             const opts = removeEmptyProperties(req.query);
+            // redirect to new view
+            return resolve(res.redirect(301, `/checkview?id=${opts.checkid}`));
 
             if (!opts.expectedid) {
                 res.status(400)
