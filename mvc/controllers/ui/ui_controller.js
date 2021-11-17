@@ -62,7 +62,7 @@ exports.checksGroupView = async function (req, res) {
                     return chk;
                 })
             );
-            console.log({ transGroups });
+            log.info(transGroups);
             res.render('pages/checkgroup', {
                 checks: transGroups,
                 test: test,
@@ -217,6 +217,7 @@ exports.diffView = function (req, res) {
 };
 
 exports.index = async function (req, res) {
+    this.logMeta = { scope: 'index' };
     return new Promise(
         async function (resolve, reject) {
             try {

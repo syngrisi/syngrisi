@@ -7,7 +7,11 @@ const { default: PQueue } = require('p-queue');
 
 const queue = new PQueue({ concurrency: 1 });
 const passport = require('passport');
-const { ensureLoggedIn, ensureApiKey } = require('../../lib/ensureLogin/ensureLoggedIn');
+const {
+    ensureLoggedIn,
+    ensureApiKey,
+} = require('../../lib/ensureLogin/ensureLoggedIn');
+const { use } = require('express/lib/router');
 
 module.exports = async function (app) {
     const UI = require('../controllers/ui/ui_controller');
@@ -172,7 +176,8 @@ module.exports = async function (app) {
         })
         .post('/login', (req, res, next) => {
             const origin = req.query.origin ? req.query.origin : '/';
-
+            const $this = {};
+            $this['logMeta'] = { scope: 'login' };
             passport.authenticate('local',
                 (err, user, info) => {
                     if (err) {
@@ -188,7 +193,7 @@ module.exports = async function (app) {
                             return next(err);
                         }
 
-                        console.log({ err });
+                        log.info('user was logged in', $this, { user: user.username });
                         // this is for tests http login purpose
                         if (req.query.noredirect) {
                             return res.status(200)

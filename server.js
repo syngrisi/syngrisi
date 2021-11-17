@@ -22,28 +22,15 @@ const LocalStrategy = require('passport-local').Strategy;
 const logger = require('pino-http')(
     {
         name: 'vrs',
-        level: 'info',
         autoLogging: true,
-        useLevel: 'debug',
+        useLevel: 'info',
     },
     pino.destination('./application.log')
 );
-
-const winston = require('winston');
-
-global.log = winston.createLogger({
-    transports: [
-        new winston.transports.Console({
-            level: 'debug',
-            format: winston.format.combine(
-                winston.format.colorize(),
-                winston.format.simple()
-            ),
-        }),
-    ],
-});
-
 const { config } = require('./config.js');
+const { Logger } = require('./lib/logger');
+global.log = new Logger({ dbConnectionString: config.connectionString });
+this.logMeta = { scope: 'entrypoint' };
 
 app.use(expressSession);
 
@@ -59,7 +46,10 @@ app.use(fileUpload({
 
 // mongoose instance connection url connection
 mongoose.Promise = global.Promise;
-mongoose.connect(config.connectionString, { useNewUrlParser: true });
+mongoose.connect(config.connectionString, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+});
 
 const viewPath = path.join(__dirname, 'mvc/views');
 
@@ -80,7 +70,7 @@ app.use((req, res) => {
         .json({ url: `${req.originalUrl} not found` });
 });
 app.listen(config.port, async () => {
-    log.debug('run onStart jobs');
+    log.debug('run onStart jobs', this);
     const startUp = await require('./lib/onStart');
     startUp.createTempDir();
     await startUp.createBasicUsers();
@@ -91,4 +81,5 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 const { version } = require('./package.json');
 
-console.log(`Syngrisi version: ${version}, port: '${config.port}'`);
+log.info(`Syngrisi version: ${version} started at 'http://localhost:${config.port}'`, this);
+log.info('Press <Ctrl+C> to exit', this);

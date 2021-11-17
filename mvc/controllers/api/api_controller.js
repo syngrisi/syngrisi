@@ -6,7 +6,10 @@ const mongoose = require('mongoose');
 const hasha = require('hasha');
 const fs = require('fs').promises;
 const fss = require('fs');
-const { format, subDays } = require('date-fns');
+const {
+    format,
+    subDays,
+} = require('date-fns');
 const { config } = require('../../../config');
 const { getDiff } = require('../../../lib/comparator');
 const orm = require('../../../lib/dbItems');
@@ -17,15 +20,28 @@ const Snapshot = mongoose.model('VRSSnapshot');
 const Check = mongoose.model('VRSCheck');
 const Test = mongoose.model('VRSTest');
 const Run = mongoose.model('VRSRun');
-const Log = mongoose.model('VRSLog');
 const App = mongoose.model('VRSApp');
 const Suite = mongoose.model('VRSSuite');
 const User = mongoose.model('VRSUser');
 const Baseline = mongoose.model('VRSBaseline');
-const { checksGroupedByIdent, checksGroupedByIdent2, calculateAcceptedStatus } = require('../utils');
 const {
-    fatalError, waitUntil, removeEmptyProperties, buildQuery, getSuitesByTestsQuery, buildIdentObject
+    checksGroupedByIdent,
+    checksGroupedByIdent2,
+    calculateAcceptedStatus,
 } = require('../utils');
+const {
+    fatalError,
+    waitUntil,
+    removeEmptyProperties,
+    buildQuery,
+    getSuitesByTestsQuery,
+    buildIdentObject,
+} = require('../utils');
+const $this = this;
+$this.logMeta = {
+    scope: 'api_controllers',
+    msgType: 'API',
+};
 
 // get last updated document
 async function getLastCheck(identifier) {
@@ -61,14 +77,18 @@ async function getSnapshotByImgHash(hash) {
 }
 
 async function createSnapshot(parameters) {
-    console.log({ parameters });
     const {
-        params, fileData, hashCode, filename,
+        params,
+        fileData,
+        hashCode,
+        filename,
     } = parameters;
     const opts = {
         name: params.name,
     };
-    filename && (opts.filename = filename);
+    if (filename) {
+        (opts.filename = filename);
+    }
 
     if (!fileData && !hashCode) {
         throw new Error('Error: the \'fileData\' nor \'hashCode\' is set, you should provide at least one parameter');
@@ -83,27 +103,33 @@ async function createSnapshot(parameters) {
     // console.log(`Snapshot with hash: '${opts['imghash']}' doesn't exists creating new one...`);
 
     const snapshoot = new Snapshot(opts);
-    !filename && (snapshoot.filename = `${snapshoot._id}.png`);
+    if (!filename) (snapshoot.filename = `${snapshoot._id}.png`);
     snapshoot.save((err, result) => {
         if (err) {
             throw err;
         }
     });
     if (fileData) {
-        console.log(`Snapshot was saved: '${JSON.stringify(snapshoot)}'`);
+        log.debug(`snapshot was saved: '${JSON.stringify(snapshoot)}'`, $this, { scope: 'createSnapshot' });
         const path = `${config.defaultBaselinePath}${snapshoot.id}.png`;
-        console.log(`Save screenshot to: '${path}'`);
+        log.debug(`save screenshot to: '${path}'`, $this, { scope: 'createSnapshot' });
         await fs.writeFile(path, fileData);
     }
     return snapshoot;
 }
 
 async function compareSnapshots(baseline, actual) {
-    console.log(`Compare baseline and actual snapshots with ids: [${baseline.id}, ${actual.id}]`);
-    console.log(`BASELINE: ${JSON.stringify(baseline)}`);
+    const logOpts = {
+        scope: 'compareSnapshots',
+        ref: baseline.id,
+        itemType: 'snapshot',
+        msgType: 'COMPARE',
+    };
+    log.debug(`compare baseline and actual snapshots with ids: [${baseline.id}, ${actual.id}]`, $this, logOpts);
+    log.debug(`BASELINE: ${JSON.stringify(baseline)}`, $this, logOpts);
     let diff;
     if (baseline.imghash === actual.imghash) {
-        console.log(`Baseline and actual snapshoot have the identical image hashes: '${baseline.imghash}'`);
+        log.debug(`baseline and actual snapshot have the identical image hashes: '${baseline.imghash}'`, $this, logOpts);
         // stub for diff object
         diff = {
             isSameDimensions: true,
@@ -121,8 +147,8 @@ async function compareSnapshots(baseline, actual) {
         const actualPath = `${config.defaultBaselinePath}${actual.filename || `${actual.id}.png`}`;
         const baselineData = fs.readFile(baselinePath);
         const actualData = fs.readFile(actualPath);
-        console.log(`baseline path: ${config.defaultBaselinePath}${baseline.id}.png`);
-        console.log(`actual path: ${config.defaultBaselinePath}${actual.id}.png`);
+        log.debug(`baseline path: ${config.defaultBaselinePath}${baseline.id}.png`, $this, logOpts);
+        log.debug(`actual path: ${config.defaultBaselinePath}${actual.id}.png`, $this, logOpts);
         let opts = {};
         log.debug(`ignore regions: '${baseline.ignoreRegions}', type: '${typeof baseline.ignoreRegions}'`);
         // if (baseline.ignoreRegions === 'undefined') {
@@ -139,11 +165,10 @@ async function compareSnapshots(baseline, actual) {
         diff = await getDiff(baselineData, actualData, opts);
     }
 
-    console.log({ diff });
+    log.silly(diff);
     if (parseFloat(diff.misMatchPercentage) !== 0) {
-        console.log(`Images are different, ids: [${baseline.id}, ${actual.id}]`);
+        log.debug(`images are different, ids: [${baseline.id}, ${actual.id}]`);
     }
-    console.log({ diff });
     if (diff.stabMethod && diff.vOffset) {
         if (diff.stabMethod === 'downup') {
             // this mean that we delete first 'diff.vOffset' line of pixels from actual
@@ -162,23 +187,29 @@ async function compareSnapshots(baseline, actual) {
 }
 
 exports.updateSnapshot = async function (req, res) {
+    const logOpts = {
+        scope: 'updateSnapshot',
+        ref: req.id,
+        itemType: 'snapshot',
+        msgType: 'UPDATE',
+    };
     return new Promise(async (resolve, reject) => {
         try {
             const opts = removeEmptyProperties(req.body);
             const { id } = req.params;
             opts['updatedDate'] = Date.now();
-            console.log(`UPDATE snapshot id: '${id}' with params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`);
+            log.debug(`start update snapshot with id: '${id}', params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`, $this, logOpts);
             const snp = await Snapshot.findByIdAndUpdate(id, opts)
                 .exec()
                 .catch(
                     (e) => {
-                        console.log(`Cannot update a snapshot with id: '${id}', error: ${e}`);
+                        log.error(`cannot update a snapshot with id: '${id}', error: ${e}`, $this, logOpts);
                         fatalError(req, res, e);
                         return reject(e);
                     }
                 );
             await snp.save();
-            console.log(`Snapshot with id: '${id}' and opts: '${JSON.stringify(opts)}' was updated`);
+            log.debug(`snapshot with id: '${id}' and opts: '${JSON.stringify(opts)}' was updated`, $this, logOpts);
             res.status(200)
                 .json({
                     item: 'Snapshot',
@@ -195,22 +226,23 @@ exports.updateSnapshot = async function (req, res) {
 
 exports.getSnapshot = async function (req, res) {
     return new Promise(async (resolve, reject) => {
+        let id;
         try {
             const opts = removeEmptyProperties(req.body);
-            const { id } = req.params;
-            console.log(`GET snapshot with id: '${id}',  params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`);
-            const snp = await Snapshot.findById(id)
-                .then(async (snp) => {
-                    res.json(snp);
-                })
-                .catch(
-                    (err) => {
-                        res.status(400)
-                            .send(`Cannot GET a snapshot with id: '${id}', error: ${err}`);
-                        return resolve(err);
-                    }
-                );
+            id = req.params.id;
+            log.debug(`get snapshot with id: '${id}', params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`,
+                $this, {
+                    scope: 'getSnapshot',
+                    msgType: 'GET',
+                });
+            const snp = await Snapshot.findById(id);
+            res.json(snp);
+            return resolve(snp);
         } catch (e) {
+            log.error((`cannot get a snapshot with id: '${id}', error: ${e}`, $this, {
+                scope: 'getSnapshot',
+                msgType: 'GET',
+            }));
             fatalError(req, res, e);
             return reject(e);
         }
@@ -308,7 +340,7 @@ function getApiKey() {
 exports.generateApiKey = async function (req, res) {
     return new Promise(async (resolve, reject) => {
         const apiKey = getApiKey();
-        console.log(`Generate Api Key for user: '${req.user.username}'`);
+        log.debug(`generate API Key for user: '${req.user.username}'`, $this);
         const hash = hasha(apiKey);
         const user = await User.findOne({ username: req.user.username });
         user.apiKey = hash;
@@ -321,12 +353,19 @@ exports.generateApiKey = async function (req, res) {
 };
 
 exports.createUser = async function (req, res) {
+    const params = req.body;
+    const logOpts = {
+        msgType: 'CREATE',
+        itemType: 'user',
+        ref: params.username,
+        user: req?.user?.username,
+        scope: 'createUser',
+    };
     return new Promise(
         async (resolve, reject) => {
             try {
-                const params = req.body;
-
-                console.log(`Create user with name '${params.username}', params: '${JSON.stringify(params)}'`);
+                log.debug(`create the user with name '${params.username}', params: '${JSON.stringify(params)}'`,
+                    $this, logOpts);
 
                 const opts = removeEmptyProperties(Object.assign(params, { updatedDate: new Date() }));
                 orm.createUser(opts)
@@ -334,7 +373,7 @@ exports.createUser = async function (req, res) {
                         user.setPassword(opts.password)
                             .then(async (usr) => {
                                 await usr.save();
-                                console.log(`Password for user: '${user.username}' set successfully`);
+                                log.debug(`password for user: '${user.username}' set successfully`, $this, logOpts);
                                 res.json(user);
                                 return resolve([req, res, user]);
                             })
@@ -366,12 +405,19 @@ exports.getUsers = async function (req, res) {
 };
 
 const updateUser = async function (req, res) {
+    const params = req.body;
+    const logOpts = {
+        msgType: 'UPDATE',
+        itemType: 'user',
+        ref: params.username,
+        user: req?.user?.username,
+        scope: 'updateUser',
+    };
     return new Promise(
         async (resolve, reject) => {
             try {
-                const params = req.body;
-
-                console.log(`Update user with id: '${params.id}' name '${params.username}', params: '${JSON.stringify(params)}'`);
+                log.debug(`update user with id: '${params.id}' name '${params.username}', params: '${JSON.stringify(params)}'`,
+                    $this, logOpts);
 
                 const opts = removeEmptyProperties(Object.assign(params, { updatedDate: new Date() }));
 
@@ -395,7 +441,7 @@ const updateUser = async function (req, res) {
                     await user.setPassword(password);
                     await user.save();
                 }
-                console.log(`User '${user.username}' was updated successfully`);
+                log.debug(`user '${user.username}' was updated successfully`, $this, logOpts);
                 res.json(user);
                 return resolve([req, res, user]);
             } catch (e) {
@@ -409,14 +455,23 @@ const updateUser = async function (req, res) {
 exports.updateUser = updateUser;
 
 exports.removeUser = function (req, res) {
+    const params = req.body;
+    const logOpts = {
+        msgType: 'REMOVE',
+        itemType: 'user',
+        ref: params.username,
+        user: req?.user?.username,
+        scope: 'removeUser',
+    };
     return new Promise(async (resolve, reject) => {
         try {
             const { id } = req.params;
-            console.log(`Remove user with id: '${id}'`);
+            log.debug(`remove the user with id: '${id}'`, $this, logOpts);
             const user = await User.findByIdAndDelete(id);
-            console.log(`User with id: '${user._id}' and username: '${user.username}' was removed`);
+            log.debug(`user with id: '${user._id}' and username: '${user.username}' was removed`,
+                $this, logOpts);
             res.status(200)
-                .send({ message: `User with id: '${user._id}' and username: '${user.username}' was removed` });
+                .send({ message: `user with id: '${user._id}' and username: '${user.username}' was removed` });
             return resolve();
         } catch (e) {
             fatalError(req, res, e);
@@ -427,13 +482,19 @@ exports.removeUser = function (req, res) {
 
 exports.changePassword = function (req, res) {
     const params = req.body;
-    console.log(`Change password for  '${req.user.username}', params: '${JSON.stringify(params)}'`);
+    const logOpts = {
+        scope: 'changePassword',
+        msgType: 'CHANGE PWD',
+        itemType: 'user',
+        ref: req?.user?.username,
+    };
+    log.debug(`change password for  '${req.user.username}', params: '${JSON.stringify(params)}'`, $this, logOpts);
     User.findOne({ username: req.user.username })
         .then((foundUser) => {
             foundUser.changePassword(params['old-password'], params['new-password'])
                 .then(
                     () => {
-                        console.log(`password was successfully changed for user: ${req.user.username}`);
+                        log.debug(`password was successfully changed for user: ${req.user.username}`, $this, logOpts);
                         return res.redirect('/logout');
                     },
                     (e) => fatalError(req, res, e)
@@ -444,23 +505,28 @@ exports.changePassword = function (req, res) {
 // tests
 function updateTest(opts) {
     return new Promise(async (resolve, reject) => {
+        const { id } = opts;
+        const logOpts = {
+            msgType: 'UPDATE',
+            itemType: 'test',
+            scope: 'updateTest',
+        };
         try {
-            const { id } = opts;
             opts['updatedDate'] = Date.now();
-            console.log(`UPDATE test id '${id}' with params '${JSON.stringify(opts)}'`);
+            log.debug(`update test id '${id}' with params '${JSON.stringify(opts)}'`, $this, logOpts);
 
             const tst = await Test.findByIdAndUpdate(id, opts)
                 .exec()
                 .catch(
                     (e) => {
-                        console.log(`Cannot update the test, error: '${e}'`);
+                        log.error(`cannot update the test, error: '${e}'`, $this, logOpts);
                         return reject(e);
                     }
                 );
             tst.save()
                 .catch(
                     (e) => {
-                        console.log(`Cannot save the test, error: '${e}'`);
+                        log.error(`cannot save the test, error: '${e}'`, $this, logOpts);
                         return reject(e);
                     }
                 );
@@ -472,13 +538,22 @@ function updateTest(opts) {
 }
 
 exports.updateTest = async function (req, res) {
+    const opts = removeEmptyProperties(req.body);
+    const { id } = req.params;
+    const logOpts = {
+        msgType: 'UPDATE',
+        itemType: 'test',
+        ref: id,
+        user: req?.user?.username,
+        scope: 'updateTest',
+    };
     return new Promise(
         async (resolve, reject) => {
             try {
-                const opts = removeEmptyProperties(req.body);
-                const { id } = req.params;
-                console.log({ id });
-                console.log(`UPDATE TEST: id '${id}' with params '${JSON.stringify(opts, null, 2)}'`);
+
+                // console.log({ id });
+                log.debug(`update test with id '${id}' with params '${JSON.stringify(opts, null, 2)}'`,
+                    $this, logOpts);
 
                 const tst = await Test.findOneAndUpdate({ _id: id }, opts, { new: true });
                 res.status(200)
@@ -497,9 +572,16 @@ exports.updateTest = async function (req, res) {
 
 function removeCheck(id) {
     return new Promise((resolve, reject) => {
+        let logOpts = {};
         Check.findByIdAndDelete(id)
             .then(async (check) => {
-                log.debug(`check with id: '${id}' was removed, update test: ${check.test}`);
+                logOpts = {
+                    scope: 'removeCheck',
+                    msgType: 'REMOVE',
+                    itemType: 'check',
+                    ref: id,
+                };
+                log.debug(`check with id: '${id}' was removed, update test: ${check.test}`, $this, logOpts);
 
                 const test = await Test.findById(check.test)
                     .exec();
@@ -519,24 +601,24 @@ function removeCheck(id) {
                     diff: check.diffId?.toString(),
                 };
                 if (check.baselineId ?? true) {
-                    log.debug(`try to remove snapshoot, baseline: ${check.baselineId}`);
+                    log.debug(`try to remove the snapshot, baseline: ${check.baselineId}`, $this, logOpts);
                     await removeSnapshoot('baseline', allCheckIds);
                 }
 
                 if (check.actualSnapshotId ?? true) {
-                    log.debug(`try to remove snapshoot, actual: ${check.actualSnapshotId}`);
+                    log.debug(`try to remove the snapshot, actual: ${check.actualSnapshotId}`, $this, logOpts);
                     await removeSnapshoot('actual', allCheckIds);
                 }
 
                 if (check.diffId ?? true) {
-                    log.debug(`try to remove snapshoot, diff: ${check.diffId}`);
+                    log.debug(`try to remove snapshot, diff: ${check.diffId}`, $this, logOpts);
                     await removeSnapshoot('diff', allCheckIds);
                 }
                 return resolve();
             })
             .catch(
                 (e) => {
-                    log.error(`cannot remove a check with id: '${id}', error: '${e}'`);
+                    log.error(`cannot remove a check with id: '${id}', error: '${e}'`, $this, logOpts);
                     return reject(e);
                 }
             );
@@ -546,13 +628,17 @@ function removeCheck(id) {
 function removeTest(id) {
     return new Promise(async (resolve, reject) => {
         try {
-            console.log(`Try to delete all checks associated to test with ID: '${id}'`);
+            log.debug(`try to delete all checks associated to test with ID: '${id}'`, $this,
+                {
+                    itemType: 'test',
+                    msgType: 'REMOVE',
+                    ref: id,
+                });
             const checks = await Check.find({ test: id });
             const checksRemoveResult = [];
             checks.forEach((check) => {
                 checksRemoveResult.push(removeCheck(check._id));
             });
-            console.log({ checksRemoveResult });
             await Promise.all(checksRemoveResult);
 
             await Test.findByIdAndDelete(id);
@@ -584,12 +670,19 @@ exports.removeTest = function (req, res) {
 };
 
 exports.createTest = async function (req, res) {
+    const $this = this;
+    $this.logMeta = {
+        scope: 'createTest',
+        user: req?.user?.username,
+        itemType: 'test',
+        msgType: 'CREATE',
+    };
     return new Promise(
         async (resolve, reject) => {
             try {
                 const params = req.body;
 
-                req.log.info(`Create test with name '${params.testname}', params: '${JSON.stringify(params)}'`);
+                log.info(`create test with name '${params.name}', params: '${JSON.stringify(params)}'`, $this);
 
                 const opts = removeEmptyProperties({
                     name: params.name,
@@ -644,10 +737,18 @@ function calculateTestStatus(testId) {
 
 // suites
 exports.removeSuite = async function (req, res) {
+    const $this = this;
+    $this.logMeta = {
+        scope: 'removeSuite',
+        user: req?.user?.username,
+        itemType: 'suite',
+        msgType: 'REMOVE',
+    };
     return new Promise(async (resolve, reject) => {
         try {
             const { id } = req.params;
-            console.log(`DELETE test and checks which associate with the suite with ID: '${id}'`);
+            const suite = await Suite.findOne({ _id: id });
+            log.info(`remove suite with name: '${suite.name}'`, $this, { ref: id });
             const tests = await Test.find({ suite: id });
 
             const results = [];
@@ -673,9 +774,17 @@ exports.removeSuite = async function (req, res) {
 
 exports.removeRun = async function (req, res) {
     return new Promise(async (resolve, reject) => {
+        const $this = this;
+        $this.logMeta = {
+            scope: 'removeRun',
+            user: req?.user?.username,
+            itemType: 'run',
+            msgType: 'REMOVE',
+        };
         try {
             const { id } = req.params;
-            console.log(`DELETE test and checks which associate with the suite run ID: '${id}'`);
+            const run = await Run.findOne({ _id: id });
+            log.info(`delete run and checks which associate with the run: '${run.name}'`, this, { ref: id });
             const tests = await Test.find({ run: id });
 
             const results = [];
@@ -716,9 +825,9 @@ async function getBaseline(params) {
     const identFields = buildIdentObject(params);
     const identFieldsAccepted = Object.assign(buildIdentObject(params), { markedAs: 'accepted' });
     const acceptedBaseline = await Baseline.findOne(identFieldsAccepted, {}, { sort: { createdDate: -1 } });
-    console.log({ acceptedBaseline });
+    log.debug(JSON.stringify(acceptedBaseline), $this);
     const simpleBaseline = await Baseline.findOne(identFields, {}, { sort: { createdDate: -1 } });
-    console.log({ simpleBaseline });
+    log.debug(JSON.stringify(simpleBaseline), $this);
     return acceptedBaseline || simpleBaseline;
 }
 
@@ -744,6 +853,13 @@ async function createBaselineifNotExist(params) {
 }
 
 exports.createCheck = async function (req, res) {
+    const $this = this;
+    $this.logMeta = {
+        scope: 'createCheck',
+        user: req?.user?.username,
+        itemType: 'check',
+        msgType: 'CREATE',
+    };
     return new Promise(
         async (resolve, reject) => {
             let test;
@@ -753,7 +869,7 @@ exports.createCheck = async function (req, res) {
                 const executionTimer = process.hrtime();
                 currentUser = await User.findOne({ apiKey: req.headers.apikey })
                     .exec();
-                console.log(`CREATE check name: '${prettyCheckParams(req.body.name)}', user: ${JSON.stringify(currentUser)}`);
+                log.info(`create check: '${prettyCheckParams(req.body.name)}'`, $this);
 
                 /** validate request */
                 if (!req.body.testid) {
@@ -779,7 +895,7 @@ exports.createCheck = async function (req, res) {
                 }
 
                 /** look for or create test and suite */
-                console.log(`Try to find test with id: '${req.body.testid}'`);
+                log.debug(`try to find test with id: '${req.body.testid}'`, $this);
                 test = await Test.findById(req.body.testid)
                     .exec();
                 if (!test) {
@@ -793,8 +909,9 @@ exports.createCheck = async function (req, res) {
                     reject(errMsg);
                     return;
                 }
-
-                suite = await orm.createSuiteIfNotExist({ name: req.body.suitename || 'Others' });
+                const suiteName = req.body.suitename || 'Others';
+                log.debug(`create suite with name '${suiteName}' if not exist`, $this);
+                suite = await orm.createSuiteIfNotExist({ name: suiteName });
                 orm.updateItem('VRSTest', { _id: test.id }, {
                     suite: suite.id,
                     creatorId: currentUser._id,
@@ -840,7 +957,7 @@ exports.createCheck = async function (req, res) {
                 /** look up the snapshoot with same hashcode if didn't find, ask for file data */
                 const snapshotFoundedByHashcode = await getSnapshotByImgHash(req.body.hashcode);
                 if (!req.files && !snapshotFoundedByHashcode) {
-                    console.log(`Cannot find the snapshoot with hash: '${req.body.hashcode}'`);
+                    log.debug(`cannot find the snapshot with hash: '${req.body.hashcode}'`, $this);
                     return resolve(res.status(206)
                         .json({
                             status: 'requiredFileData',
@@ -849,7 +966,7 @@ exports.createCheck = async function (req, res) {
                         }));
                 }
                 if (snapshotFoundedByHashcode) {
-                    console.log(`FOUND: snapshoot by hashcode: '${JSON.stringify(snapshotFoundedByHashcode)}'`);
+                    log.debug(`FOUND: snapshot by hashcode: '${JSON.stringify(snapshotFoundedByHashcode)}'`, $this);
                 }
 
                 /** ASSIGN BASELINE */
@@ -879,20 +996,20 @@ exports.createCheck = async function (req, res) {
                     });
                 }
 
-                console.log(`Find for baseline for check with identifier: '${JSON.stringify(checkIdent)}'`);
+                log.info(`find a baseline for the check with identifier: '${JSON.stringify(checkIdent)}'`, $this);
                 // const lastCheck = await getLastCheck(checkIdent);
 
                 // const previousBaselineId = lastCheck ? lastCheck.baselineId : null;
                 const storedBaseline = await getBaseline(params);
-                console.log({ STOREDBASELINE: storedBaseline });
+                // console.log({ STOREDBASELINE: storedBaseline });
                 let check;
                 // if last check has baseline id copy properties from last check
                 // and set it as `currentBaseline` to make diff
                 if (storedBaseline !== null) {
-                    console.log(`A baseline for check name: '${req.body.name}', id: '${storedBaseline.snapshootId}' is already exists`);
+                    log.debug(`a baseline for check name: '${req.body.name}', id: '${storedBaseline.snapshootId}' is already exists`, $this);
                     params.baselineId = storedBaseline.snapshootId;
 
-                    console.log(`Creating an actual snapshot for check with name: '${req.body.name}'`);
+                    log.debug(`creating an actual snapshot for check with name: '${req.body.name}'`, $this);
 
                     // actualSnapshot = currentSnapshot;
                     params.actualSnapshotId = currentSnapshot.id;
@@ -907,16 +1024,16 @@ exports.createCheck = async function (req, res) {
                     }
 
                     currentBaseline = await Snapshot.findById(storedBaseline.snapshootId);
-                    console.log(`Create the new check with params: '${prettyCheckParams(params)}'`);
+                    log.debug(`create the new check with params: '${prettyCheckParams(params)}'`, $this);
                     check = await Check.create(params);
                 } else {
                     // since the `storedBaseline` does not exist set current snapshoot as currentBaseline to make diff
-                    console.log(`A baseline snapshot for previous check with name: '${req.body.name}', does not exist creating new one`);
+                    log.debug(`a baseline snapshot for previous check with name: '${req.body.name}', does not exist creating new one`, this);
                     params.baselineId = currentSnapshot.id;
                     params.actualSnapshotId = currentSnapshot.id;
                     params.status = 'new';
                     currentBaseline = currentSnapshot;
-                    console.log(`Create the new check with params: '${prettyCheckParams(params)}'`);
+                    log.debug(`create the new check with params: '${prettyCheckParams(params)}'`, $this);
                     check = await Check.create(params);
                     await createNewBaseline(check.toObject());
                 }
@@ -926,11 +1043,11 @@ exports.createCheck = async function (req, res) {
                 await check.save()
                     .then((chk) => {
                         resultResponse = chk;
-                        console.log(`Check with id: '${check.id}', successful saved!`);
+                        log.debug(`check with id: '${check.id}', successful saved!`, $this, { ref: check.id }, $this);
                     })
                     .catch((error) => {
                         res.send(error);
-                        console.log(`Cannot save the check, error: '${error}'`);
+                        log.error(`cannot save the check, error: '${error}'`, $this);
                     });
 
                 /** compare actual with baseline if a check isn't new */
@@ -939,10 +1056,10 @@ exports.createCheck = async function (req, res) {
                 let compareResult;
                 if (check.status.toString() !== 'new') {
                     try {
-                        console.log('The check isn\'t new, make comparing');
+                        log.debug('the check isn\'t new, make comparing', $this);
                         compareResult = await compareSnapshots(currentBaseline, currentSnapshot);
                         if (compareResult.misMatchPercentage !== '0.00') {
-                            console.log(`Saving diff snapshot for check with Id: '${check.id}'`);
+                            log.debug(`saving diff snapshot for check with Id: '${check.id}'`, $this);
                             const diffSnapshot = await createSnapshot({
                                 params: req.body,
                                 fileData: compareResult.getBuffer(),
@@ -959,10 +1076,10 @@ exports.createCheck = async function (req, res) {
                             .toString();
 
                         compareResult['totalCheckHandleTime'] = totalCheckHandleTime;
-                        console.log({ compareResult });
+                        log.silly(compareResult, $this);
                         updateParams['result'] = JSON.stringify(compareResult, null, '\t');
 
-                        console.log(`Update check with params: '${JSON.stringify(updateParams)}'`);
+                        log.debug(`update check with params: '${JSON.stringify(updateParams)}'`, $this, { ref: check._id });
                     } catch (e) {
                         updateParams['status'] = 'failed';
                         updateParams['result'] = `{ error: "Server error - '${e}'" }`;
@@ -977,7 +1094,7 @@ exports.createCheck = async function (req, res) {
                 // update test and suite
                 test.markedAs = await calculateAcceptedStatus(check.test);
                 test.updatedDate = new Date();
-
+                log.debug('update suite', $this);
                 await orm.updateItemDate('VRSSuite', check.suite);
                 await test.save();
 
@@ -1044,7 +1161,7 @@ exports.getChecks2 = function (req, res) {
 
         for (const test of tests) {
             const groups = await checksGroupedByIdent2(test.id);
-            console.log(Object.keys(groups).length);
+            // console.log(Object.keys(groups).length);
             if (Object.keys(groups).length < 1) {
                 continue;
             }
@@ -1172,7 +1289,12 @@ exports.getCheck = async function (req, res) {
         try {
             const opts = removeEmptyProperties(req.body);
             const { id } = req.params;
-            console.log(`GET check with id: '${id}',  params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`);
+            log.debug(`get check with id: '${id}',  params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`,
+                $this, {
+                    msgType: 'GET',
+                    itemType: 'check',
+                    scope: 'getCheck',
+                });
             await Check.findById(id)
                 .then(async (snp) => {
                     res.json(snp);
@@ -1200,17 +1322,24 @@ function addMarkedAsOptions(opts, user, mark) {
 }
 
 exports.updateCheck = async function updateCheck(req, res) {
+    let opts = removeEmptyProperties(req.body);
+    const checkId = req.params.id;
+    const logOpts = {
+        msgType: 'UPDATE',
+        itemType: 'check',
+        ref: checkId,
+        user: req?.user?.username,
+        scope: 'updateCheck',
+    };
     return new Promise(async (resolve, reject) => {
         try {
-            let opts = removeEmptyProperties(req.body);
-            const checkId = req.params.id;
             const check = await Check.findById(checkId)
                 .exec();
             const test = await Test.findById(check.test)
                 .exec();
 
             if (opts.accept === 'true') {
-                console.log(`ACCEPT check: ${checkId}`);
+                log.debug(`ACCEPT check: ${checkId}`, $this, logOpts);
                 opts = addMarkedAsOptions(opts, req.user, 'accepted');
             } else {
                 await test.updateOne({
@@ -1224,7 +1353,7 @@ exports.updateCheck = async function updateCheck(req, res) {
             delete opts.accept;
             // await Check.findByIdAndUpdate(check._id, opts);
             Object.assign(check, opts);
-            console.log({ NEW_BASELINE_OPTS: check.toObject() });
+            log.debug({ NEW_BASELINE_OPTS: check.toObject() }, $this, logOpts);
             await createNewBaseline(check.toObject());
             await check.save();
             const testCalculatedStatus = await calculateTestStatus(check.test);
@@ -1232,17 +1361,23 @@ exports.updateCheck = async function updateCheck(req, res) {
 
             opts['updatedDate'] = Date.now();
 
-            console.log(`UPDATE check id: '${checkId}' with params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`);
+            log.debug(`update check id: '${checkId}' with params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`,
+                $this, logOpts);
 
             test.status = testCalculatedStatus;
             test.markedAs = testCalculatedAcceptedStatus;
             test.updatedDate = new Date();
 
             await orm.updateItemDate('VRSSuite', check.suite);
-            console.log(`UPDATE test with status: '${testCalculatedStatus}', marked: '${testCalculatedAcceptedStatus}'`);
+            log.debug(`update test with status: '${testCalculatedStatus}', marked: '${testCalculatedAcceptedStatus}'`, $this,
+                {
+                    msgType: 'UPDATE',
+                    itemType: 'test',
+                    ref: test._id
+                });
             await test.save();
             await check.save();
-            console.log(`Check with id: '${checkId}' was updated`);
+            log.debug(`check with id: '${checkId}' was updated`, $this, logOpts);
 
             res.status(200)
                 .json({
@@ -1274,7 +1409,7 @@ async function isLastLinkToSnapshoot(id) {
 }
 
 const removeSnapshootFile = (snapshoot, allChecksIds) => new Promise(async (resolve, reject) => {
-    log.debug(`find all snapshots with same filename`);
+    log.debug(`find all snapshots with same filename`, $this);
     const snapshoots = await Snapshot.find({ filename: snapshoot.filename });
     // eslint-disable-next-line arrow-body-style
     const isLastSnapshotFile = () => {
@@ -1288,18 +1423,27 @@ const removeSnapshootFile = (snapshoot, allChecksIds) => new Promise(async (reso
     if (isLastSnapshotFile()) {
         const path = snapshoot.filename ? `${config.defaultBaselinePath}${snapshoot.id}.png` : `${config.defaultBaselinePath}${snapshoot.id}.png`;
         if (fss.existsSync(path)) {
-            console.log(`Remove file: '${path}'`);
+            log.debug(`remove file: '${path}'`, $this, {
+                msgType: 'REMOVE',
+                itemType: 'file',
+            });
             fss.unlinkSync(path);
         }
     }
-    log.debug(`there is '${snapshoots.length}' snapshoots with such filename`);
+    log.debug(`there is '${snapshoots.length}' snapshots with such filename`, $this);
     return resolve();
 });
 
 const removeSnapshoot = (snapshootName, allCheckIds) => new Promise(async (resolve, reject) => {
     const id = allCheckIds[snapshootName];
-    log.info(`DELETE: snapshoot with id: '${id}'`);
-    log.debug(`check if snapshoot '${id}' is baseline`);
+    const logOpts = {
+        scope: 'removeSnapshoot',
+        msgType: 'REMOVE',
+        itemType: 'snapshot',
+        ref: id,
+    };
+    log.info(`delete snapshot with id: '${id}'`, $this, logOpts);
+    log.debug(`check if the snapshot:'${id}' is baseline`, $this, logOpts);
     if (!id) {
         log.warn('id is empty');
         return resolve();
@@ -1320,7 +1464,7 @@ const removeSnapshoot = (snapshootName, allCheckIds) => new Promise(async (resol
             await Snapshot.findByIdAndDelete(id);
 
             await Baseline.deleteMany({ snapshootId: id });
-            log.debug(`snapshoot: '${id}' and related baselines was removed because it was last unaccepted snapshoot`);
+            log.debug(`snapshot: '${id}' and related baselines was removed because it was last unaccepted snapshoot`);
             log.debug(`try to remove snapshoot file, id: '${snapshoot._id}', filename: '${snapshoot.filename}'`);
             await removeSnapshootFile(snapshoot, allCheckIds);
             return resolve();
@@ -1330,10 +1474,10 @@ const removeSnapshoot = (snapshootName, allCheckIds) => new Promise(async (resol
         }
     }
 
-    log.debug(`snapshoot: '${id}' is not a baseline, try to remove it`);
+    log.debug(`snapshot: '${id}' is not a baseline, try to remove it`, $this, logOpts);
     await Snapshot.findByIdAndDelete(id);
-    log.debug(`snapshoot: '${id}' was removed`);
-    log.debug(`try to remove snapshoot file, id: '${snapshoot._id}', filename: '${snapshoot.filename}'`);
+    log.debug(`snapshot: '${id}' was removed`, $this, logOpts);
+    log.debug(`try to remove snapshot file, id: '${snapshoot._id}', filename: '${snapshoot.filename}'`, $this, logOpts);
     await removeSnapshootFile(snapshoot, allCheckIds);
     return resolve();
 });
@@ -1360,7 +1504,11 @@ exports.getTestById = async function (req, res) {
         try {
             const opts = removeEmptyProperties(req.body);
             const { id } = req.params;
-            console.log(`GET test with id: '${id}',  params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`);
+            log.debug(`get test with id: '${id}',  params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`,
+                $this, {
+                    msgType: 'GET',
+                    itemType: 'test'
+                });
             await Test.findById(id)
                 .then(async (snp) => {
                     res.json(snp);
@@ -1381,8 +1529,14 @@ exports.getTestById = async function (req, res) {
 
 exports.stopSession = async function (req, res) {
     return new Promise(async (resolve, reject) => {
+        const testId = req.params.testid;
+        const logOpts = {
+            msgType: 'END_SESSION',
+            itemType: 'test',
+            scope: 'stopSession',
+            ref: testId
+        };
         try {
-            const testId = req.params.testid;
             if (!testId || testId === 'undefined') {
                 return reject(fatalError(req, res, 'Cannot stop test Session testId is empty'));
             }
@@ -1430,10 +1584,11 @@ exports.stopSession = async function (req, res) {
                 blinking: blinkingCount,
                 calculatedViewport: testViewport,
             };
-            console.log(`Session ending test update with params: '${JSON.stringify(testParams)}'`);
+            log.info(`the session is over, the test will be updated with parameters: '${JSON.stringify(testParams)}'`,
+                $this, logOpts);
             const updatedTest = await updateTest(testParams)
                 .catch((e) => {
-                    console.log(`Cannot update session: ${e}`);
+                    log.error(`cannot update session: ${e}`, $this, logOpts);
                     throw (e.stack ? e.stack.split('\n') : e);
                 });
             const result = updatedTest.toObject();
@@ -1493,27 +1648,32 @@ exports.status = async function (req, res) {
 
 exports.loadTestUser = async function (req, res) {
     return new Promise(async (resolve, reject) => {
+        const logOpts = {
+            itemType: 'user',
+            msgType: 'LOAD',
+            ref: 'Administrator',
+        };
         if (process.env.TEST !== '1') {
             return res.json({ message: 'the feature works only in test mode' });
         }
         const testAdmin = await User.findOne({ username: 'Test' });
         if (!testAdmin) {
-            console.log('Create the test Administrator');
+            log.info('create the test Administrator', $this, logOpts);
             const adminData = JSON.parse(fss.readFileSync('./lib/testAdmin.json'));
             const admin = await User.create(adminData);
-            console.log(`Test Administrator with id: '${admin._id}' was created`);
+            log.info(`test Administrator with id: '${admin._id}' was created`, $this, logOpts);
             res.json(admin);
             return resolve(admin);
         }
 
-        log.info(`Test admin is exists: ${JSON.stringify(testAdmin, null, 2)}`);
-        res.json({ msg: `Already exist '${testAdmin}'` });
+        log.info(`test admin is exists: ${JSON.stringify(testAdmin, null, 2)}`, $this, logOpts);
+        res.json({ msg: `already exist '${testAdmin}'` });
     });
 };
 
 function taskOutput(msg, res) {
     res.write(`${msg.toString()}\n`);
-    console.log(msg.toString());
+    log.debug(msg.toString(), $this);
 }
 
 exports.task_remove_empty_tests = function (req, res) {
@@ -1525,14 +1685,14 @@ exports.task_remove_empty_tests = function (req, res) {
             'Content-Encoding': 'none',
         });
         res.write('- query all tests\n');
-        console.log('- query all tests\n');
+        log.debug('- query all tests\n', $this);
 
         Test.find({})
             .then((tests) => {
                 res.write(`- all tests count: '${tests.length}'\n`);
-                console.log(`- all tests count: '${tests.length}'\n`);
+                log.debug(`- all tests count: '${tests.length}'\n`, $this);
                 res.write('- remove empty tests\n');
-                console.log('- remove empty tests\n');
+                log.debug('- remove empty tests\n', $this);
 
                 let count = 0;
                 Promise.all(tests.map((test) => {
@@ -1555,9 +1715,9 @@ exports.task_remove_empty_tests = function (req, res) {
                 }))
                     .then((x) => {
                         res.write(`- removed tests count: '${count}'\n`);
-                        console.log(`- removed tests count: '${count}'\n`);
+                        log.info(`- removed tests count: '${count}'\n`, $this);
                         res.write('- done\n');
-                        console.log('- done\n');
+                        log.info('- done\n', $this);
                         return resolve(res.end());
                     });
             });
@@ -1573,14 +1733,14 @@ exports.task_remove_empty_runs = function (req, res) {
             'Content-Encoding': 'none',
         });
         res.write('- query all runs\n');
-        console.log('- query all runs\n');
+        log.info('- query all runs\n', $this);
 
         Run.find({})
             .then((runs) => {
                 res.write(`- all runs count: '${runs.length}'\n`);
-                console.log(`- all runs count: '${runs.length}'\n`);
+                log.info(`- all runs count: '${runs.length}'\n`, $this);
                 res.write('- remove empty runs\n');
-                console.log('- remove empty runs\n');
+                log.info('- remove empty runs\n', $this);
 
                 let count = 0;
                 Promise.all(runs.map((run) => {
@@ -1603,9 +1763,9 @@ exports.task_remove_empty_runs = function (req, res) {
                 }))
                     .then((x) => {
                         res.write(`- removed runs count: '${count}'\n`);
-                        console.log(`- removed runs count: '${count}'\n`);
+                        log.info(`- removed runs count: '${count}'\n`, $this);
                         res.write('- done\n');
-                        console.log('- done\n');
+                        log.info('- done\n', $this);
                         return resolve(res.end());
                     });
             });
@@ -1665,31 +1825,31 @@ exports.task_migration_1_1_0 = async function (req, res) {
     res.write('\n0. Resync indexes\n');
 
     await Check.syncIndexes();
-    console.log('Check');
+    log.info('Check');
     res.write('\nCheck\n');
 
     await Test.syncIndexes();
-    console.log('Test');
+    log.info('Test');
     res.write('\nTest\n');
 
     await Snapshot.syncIndexes();
-    console.log('Snapshot');
+    log.info('Snapshot');
     res.write('\nSnapshot\n');
     await Run.syncIndexes();
-    console.log('Run');
+    log.info('Run');
     res.write('\nRun\n');
     await User.syncIndexes();
-    console.log('User');
+    log.info('User');
     res.write('\nUser\n');
     await Baseline.syncIndexes();
-    console.log('Baseline');
+    log.info('Baseline');
     res.write('\nBaseline\n');
     await App.syncIndexes();
-    console.log('App');
+    log.info('App');
     res.write('\nApp\n');
-    await Log.syncIndexes();
-    console.log('Log');
-    res.write('\nLog\n');
+    // await Log.syncIndexes();
+    // log.info('Log');
+    // res.write('\nLog\n');
 
     res.write('\n0. Update all check & tests to master branch\n');
     for (const check of checks) {
@@ -1697,7 +1857,7 @@ exports.task_migration_1_1_0 = async function (req, res) {
         check.save();
     }
     for (const test of tests) {
-        console.log(test.name);
+        log.info(test.name);
         res.write(test.name + '\n');
         test.branch = 'master';
         test.save();
@@ -1705,7 +1865,7 @@ exports.task_migration_1_1_0 = async function (req, res) {
     res.write('\n1. Fix empty diffs\n');
     for (const check of checks) {
         if (!check.diffId) {
-            console.log({ DIFF: check.diffId });
+            log.info({ DIFF: check.diffId });
             delete check.diffId;
             const tempCheck = check.toObject();
             await check.remove();
@@ -1715,7 +1875,7 @@ exports.task_migration_1_1_0 = async function (req, res) {
     }
     res.write('\n2. Fix docs types\n');
     for (const check of checks) {
-        console.log({ check });
+        log.info({ check });
         res.write(`${JSON.stringify(check)}\n\n`);
         if (check.baselineId) (check.baselineId = mongoose.Types.ObjectId(check.baselineId));
         if (check.actualSnapshotId) (check.actualSnapshotId = mongoose.Types.ObjectId(check.actualSnapshotId));
@@ -1735,7 +1895,7 @@ exports.task_migration_1_1_0 = async function (req, res) {
     res.write('\n3. Fix undefined regions\n');
     for (const snp of snapshoots) {
         if ((snp.ignoreRegions === 'undefined') || (snp.boundRegions === 'undefined')) {
-            console.log({ Snp: snp.name });
+            log.info({ Snp: snp.name });
             res.write(`\n${snp.name}`);
             // delete snp.ignoreRegions;
             // delete snp.boundRegions;
