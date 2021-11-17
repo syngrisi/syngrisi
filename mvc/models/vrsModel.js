@@ -304,32 +304,32 @@ const VRSRunSchema = new Schema({
     },
 });
 
-const VRSLogSchema = new Schema({
-    reference: {
-        type: String,
-    },
-    msgType: {
-        type: String,
-    },
-    itemType: {
-        type: String,
-    },
-    itemId: {
-        type: Schema.Types.ObjectId,
-    },
-    severity: {
-        type: String,
-        enum: ['debug', 'info', 'warning', 'error'],
-        default: 'info',
-    },
-    message: {
-        type: String,
-    },
-    date: {
-        type: Date,
-        default: undefined,
-    },
-});
+// const VRSLogSchema = new Schema({
+//     reference: {
+//         type: String,
+//     },
+//     msgType: {
+//         type: String,
+//     },
+//     itemType: {
+//         type: String,
+//     },
+//     itemId: {
+//         type: Schema.Types.ObjectId,
+//     },
+//     severity: {
+//         type: String,
+//         enum: ['debug', 'info', 'warning', 'error'],
+//         default: 'info',
+//     },
+//     message: {
+//         type: String,
+//     },
+//     date: {
+//         type: Date,
+//         default: undefined,
+//     },
+// });
 
 const VRSAppSchema = new Schema({
     name: {
@@ -399,6 +399,5 @@ module.exports = mongoose.model('VRSTest', VRSTestSchema);
 module.exports = mongoose.model('VRSSuite', VRSSuiteSchema);
 module.exports = mongoose.model('VRSApp', VRSAppSchema);
 module.exports = mongoose.model('VRSRun', VRSRunSchema);
-module.exports = mongoose.model('VRSLog', VRSLogSchema);
 module.exports = mongoose.model('VRSUser', VRSUserSchema);
 module.exports = mongoose.model('VRSBaseline', VRSBaselineSchema);

@@ -72,4 +72,6 @@ npm run clear
 
  `SYNGRISI_AUTH` - enables authentication if equal `1`
 
+ `LOGLEVEL` - log level (`error`|`warn`|`info`|`verbose`|`debug`|`silly`) default is debug
+
  `TEST` - enables test admin user if equal `1`

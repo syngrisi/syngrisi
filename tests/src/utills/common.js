@@ -38,7 +38,7 @@ const killServer = function (port) {
             console.log({ output });
             return true;
         } catch (e) {
-            console.log({ err: e.stdout.toString() });
+            console.log({ error: e.stdout.toString() });
         }
     }, {
         timeout: 40000,
