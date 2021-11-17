@@ -157,12 +157,27 @@
              onclick="mainView.sendIgnoreRegions('<%= baselineSnapshot.id; %>' ,mainView.getRectData())">
             <a id="save-baseline" type="button"
                class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-1 border-0 rounded"
+               style="margin-top: 2px"
+
                title="save the baseline (S)"
 
             >
                 <i class="bi bi-check2"></i>
             </a>
         </div>
+
+        <!--SAVE-->
+        <div class="col-auto btn-check pl-1 pr-1 pr-1 border-left border-secondary">
+            <a id="check-info" type="button"
+               class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-1 border-0 rounded"
+               title="go to check info"
+               style="margin-top: 2px"
+               href="#info-wrapper"
+            >
+                <i class="bi bi-info-circle"></i>
+            </a>
+        </div>
+
 
         <!--IGNORE MENU-->
         <div name="ignore-menu"

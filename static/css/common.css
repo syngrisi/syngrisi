@@ -14258,7 +14258,19 @@ mark {
   /* Internet Explorer/Edge */
   user-select: none;
   /* Non-prefixed version, currently
-               supported by Chrome, Edge, Opera and Firefox */
+                                   supported by Chrome, Edge, Opera and Firefox */
+}
+
+.nav-tabs {
+  border-bottom: 0px solid #dee2e6;
+}
+
+.check_info {
+  border-bottom: 1px solid #FFFFFF;
+  border-top-color: #6c757d !important;
+  border-right-color: #6c757d !important;
+  border-bottom-color: white !important;
+  border-left-color: #6c757d !important;
 }
 
 /*# sourceMappingURL=common.css.map */

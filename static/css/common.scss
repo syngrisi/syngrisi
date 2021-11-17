@@ -562,6 +562,51 @@ mark {
   -khtml-user-select: none; /* Konqueror HTML */
   -moz-user-select: none; /* Old versions of Firefox */
   -ms-user-select: none; /* Internet Explorer/Edge */
-  user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome, Edge, Opera and Firefox */
+  user-select: none;
+  /* Non-prefixed version, currently
+                                   supported by Chrome, Edge, Opera and Firefox */
+}
+
+.nav-tabs {
+  border-bottom: 0px solid #dee2e6;
+}
+
+//
+//.active.checkview-tab-links {
+//  border-bottom: 2px solid #FFFFFF !important;
+//  //border-color: #dee2e6 #dee2e6 #fff;
+//  border-top-color: #6c757d !important;
+//  border-right-color: #6c757d !important;
+//  border-bottom-color: rgb(255, 255, 255) !important;
+//  border-left-color: #6c757d !important;
+//  margin-bottom: -1px;
+//}
+//.checkview-tab-links {
+//  border-bottom: 2px solid #FFFFFF;
+//}
+//.nav-tabs {
+//  border-bottom: 1px solid #6c757d;
+//}
+//.active.checkview-tab-links:hover {
+//  margin-bottom: -1px;
+//  border-bottom: 2px solid #FFFFFF !important;
+//}
+//.checkview-tab-links:hover {
+//  margin-bottom: -1px;
+//  border-bottom: 1px solid #FFFFFF !important;
+//  //border-color: #dee2e6 #dee2e6 #fff;
+//  border-top-color: #6c757d !important;
+//  border-right-color: #6c757d !important;
+//  border-bottom-color: rgb(255, 255, 255) !important;
+//  border-left-color: #6c757d !important;
+//}
+
+
+.check_info {
+  border-bottom: 1px solid #FFFFFF;
+  //border-color: #dee2e6 #dee2e6 #fff;
+  border-top-color: #6c757d !important;
+  border-right-color: #6c757d !important;
+  border-bottom-color: rgb(255, 255, 255) !important;
+  border-left-color: #6c757d !important;
 }

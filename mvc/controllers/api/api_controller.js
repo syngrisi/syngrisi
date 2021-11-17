@@ -20,6 +20,7 @@ const Snapshot = mongoose.model('VRSSnapshot');
 const Check = mongoose.model('VRSCheck');
 const Test = mongoose.model('VRSTest');
 const Run = mongoose.model('VRSRun');
+const Log = mongoose.model('VRSLog');
 const App = mongoose.model('VRSApp');
 const Suite = mongoose.model('VRSSuite');
 const User = mongoose.model('VRSUser');
@@ -1043,7 +1044,7 @@ exports.createCheck = async function (req, res) {
                 await check.save()
                     .then((chk) => {
                         resultResponse = chk;
-                        log.debug(`check with id: '${check.id}', successful saved!`, $this, { ref: check.id }, $this);
+                        log.debug(`the check with id: '${check.id}', was successfully created!`, $this, { ref: check.id }, $this);
                     })
                     .catch((error) => {
                         res.send(error);
@@ -1507,7 +1508,7 @@ exports.getTestById = async function (req, res) {
             log.debug(`get test with id: '${id}',  params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`,
                 $this, {
                     msgType: 'GET',
-                    itemType: 'test'
+                    itemType: 'test',
                 });
             await Test.findById(id)
                 .then(async (snp) => {
@@ -1525,6 +1526,36 @@ exports.getTestById = async function (req, res) {
             return reject(e);
         }
     });
+};
+
+exports.getCheckHistory = async function (req, res) {
+    try {
+        const opts = removeEmptyProperties(req.body);
+        const { id } = req.params;
+        log.debug(`get check history, id: '${id}',  params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`,
+            $this, {
+                msgType: 'GET_HISTORY',
+                itemType: 'check',
+            });
+        const check = await Check.findById(id);
+        if (!check) {
+            throw new Error(`Cannot find check with id: ${id}`);
+        }
+        const checkLogs = await Log.find({
+            $or: [
+                { 'meta.ref': check._id.toString() },
+                { 'meta.ref': check.suite.toString() },
+                { 'meta.ref': check.test.toString() },
+                { 'meta.ref': check.run.toString() },
+                { 'meta.ref': check.baselineId.toString() },
+                { 'meta.ref': check.actualSnapshotId.toString() },
+            ],
+        });
+
+        res.json(checkLogs);
+    } catch (e) {
+        fatalError(req, res, e);
+    }
 };
 
 exports.stopSession = async function (req, res) {

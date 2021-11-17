@@ -9,11 +9,14 @@
     <link rel="stylesheet" href="./static/css/common.css">
     <link rel="stylesheet" href="./static/fa/css/all.min.css">
     <link rel="stylesheet" href="./static/css/colors.css">
+    <link rel="stylesheet" href="./static/css/tabulator_bulma.css">
     <link rel="stylesheet" href="../../../static/font/bootstrap-icons.css">
     <script src="./static/js/jquery-3.3.1.slim.js"></script>
     <script src="./static/js/popper.min.js"></script>
     <script src="./static/js/bootstrap.min.js"></script>
     <script src="./static/js/fabric.min.js"></script>
+    <!--    <link href="https://unpkg.com/tabulator-tables@5.0.7/dist/css/tabulator.min.css" rel="stylesheet">-->
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.0.7/dist/js/tabulator.min.js"></script>
     <script src="./lib/mainView.js"></script>
     <script src="./lib/sideToSideView.js"></script>
 
@@ -21,8 +24,7 @@
     <script src="lib/diffHelpers.js"></script>
     <script src="../../../static/js/ejs.js"></script>
 
-    <title>Shapshoot - <%= baselineSnapshot.name; %> | <%= baselineSnapshot.id; %>
-        | <%= baselineSnapshot.formattedcreatedDate; %></title>
+    <title>Check - <%= check.name; %> [<%= check.status; %>]</title>
 </head>
 <body style="overflow-x: auto; overflow-y: auto">
 <div class="container-fluid pl-0 pr-0" style="background-color: #E5E5E5 !important;">
@@ -57,148 +59,339 @@
         </div>
 
 
-        <div name="shapshoot" id='snapshoot'
-             class="col-9 float-left w-100 border border-dark mb-3 pt-0 mr-0 ml-2 pl-0 pr-0 mt-3 mh-100 shadow"
-             style="height: 3500px;">
+        <div class="col-9" id="snapshot-and-info-wrapPer">
+            <div class="row" id="snapshot-wrapper">
+                <div name="shapshoot" id='snapshoot'
+                     class="col-12 float-left w-100 border border-dark mb-3 pt-0 mr-0 ml-2 pl-0 pr-0 mt-3 mh-100 shadow"
+                     style="height: 3500px;">
 
-            <div class="toolbar-wrapper sticky-top float-right pt-1 pr-4">
-                <div class="diff-toolbar vcenter border border-secondary rounded mt-1 pr-0 row d-flex align-content-center bg-light"
-                     style="font-size: 1.4em; line-height: 27px;"
-                >
-                    <%- include('components/checkview_toolbar') %>
+                    <div class="toolbar-wrapper sticky-top float-right pt-1 pr-4">
+                        <div class="diff-toolbar vcenter border border-secondary rounded mt-1 pr-0 row d-flex align-content-center bg-light"
+                             style="font-size: 1.4em; line-height: 27px;"
+                        >
+                            <%- include('components/checkview_toolbar') %>
+                        </div>
+                    </div>
+
+                    <canvas class="snapshoot-canvas pb-1" id="2d">
+                    </canvas>
+                </div>
+            </div>
+            <!--CHECK DETAILS-->
+            <div class="row" id="info-wrapper">
+                <div class="col-12">
+                    <div class="test-tabs">
+                        <!--TABS-->
+                        <ul class="nav nav-tabs" style="text-align: left;">
+                            <li class="nav-item">
+                                <a href="#check_info" class="nav-link active checkview-tab-links" data-toggle="tab"
+                                   id="check_tab_link">Check
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#baseline_info" class="nav-link checkview-tab-links" data-toggle="tab"
+                                   id="baseline_tab_link">
+                                    Baseline
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#actual_info" class="nav-link checkview-tab-links" data-toggle="tab"
+                                   id="actual_tab_link">Actual
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#history" class="nav-link checkview-tab-links" data-toggle="tab"
+                                   id="actual_tab_link">History
+                                </a>
+                            </li>
+                        </ul>
+                        <!--TAB CONTENT-->
+                        <div class="tab-content mb-3" style="max-height: 550px; overflow-y: auto">
+
+                            <div id="check_info" class="active tab-pane fade in show">
+                                <div id="check-info-table" class="w-100"></div>
+                            </div>
+
+                            <div id="baseline_info" class="tab-pane fade in">
+                                <div id="baseline-info-table" class="w-100"></div>
+                            </div>
+
+                            <div id="actual_info" class="tab-pane fade in">
+                                <div id="actual-info-table" class="w-100"></div>
+                            </div>
+                            <div id="history" class="tab-pane fade in">
+                                <div id="history-table" class="w-100"></div>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
             </div>
 
-            <canvas class="snapshoot-canvas pb-1" id="2d">
-            </canvas>
+
         </div>
     </div>
-</div>
 
-<!--TOAST START-->
-<div id="notify" role="alert" aria-live="assertive" aria-atomic="true"
-     class="fixed-bottom-right bg-light m-1 border rounded toast fade show"
-     data-autohide="false"
-     style="display: none"
->
-    <div class="toast-header border-bottom">
-        <svg class="bd-placeholder-img rounded mr-2" width="20" height="20" xmlns="http://www.w3.org/2000/svg"
-             preserveAspectRatio="xMidYMid slice" focusable="false" role="img">
-            <rect id="notify-rect" width="100%" height="100%" fill="#2ECC40"></rect>
-        </svg>
-        <strong id="notify-header" class="mr-auto">Success</strong>
-        <!--        <small>11 mins ago</small>-->
-        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"
-                onclick="$('#notify').hide()">
-            <span aria-hidden="true">×</span>
-        </button>
+    <!--TOAST START-->
+    <div id="notify" role="alert" aria-live="assertive" aria-atomic="true"
+         class="fixed-bottom-right bg-light m-1 border rounded toast fade show"
+         data-autohide="false"
+         style="display: none"
+    >
+        <div class="toast-header border-bottom">
+            <svg class="bd-placeholder-img rounded mr-2" width="20" height="20" xmlns="http://www.w3.org/2000/svg"
+                 preserveAspectRatio="xMidYMid slice" focusable="false" role="img">
+                <rect id="notify-rect" width="100%" height="100%" fill="#2ECC40"></rect>
+            </svg>
+            <strong id="notify-header" class="mr-auto">Success</strong>
+            <!--        <small>11 mins ago</small>-->
+            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"
+                    onclick="$('#notify').hide()">
+                <span aria-hidden="true">×</span>
+            </button>
+        </div>
+        <div id="notify-message" class="toast-body">
+            Operation was successful finished
+        </div>
     </div>
-    <div id="notify-message" class="toast-body">
-        Operation was successful finished
-    </div>
-</div>
-<!--TOAST END-->
-<% const actual = actualSnapshot ? JSON.stringify(actualSnapshot) : null %>
-<script>
-    function toggleButtonAsPressed(id) {
-        const button = document.getElementById(id);
-        if (button.classList.contains('pressed-toolbar-button')) {
-            return button.classList.remove('pressed-toolbar-button');
-        }
-        button.classList.add('pressed-toolbar-button');
-    }
-
-    function toggleSnapshotToolbarCollapse() {
-        const wrapper = document.getElementsByClassName('toolbar-wrapper')[0];
-        const buttonsEl = document.getElementById('snapshot-toolbar-buttons');
-        const collapseIcon = document.getElementById('snapshot-collapse-icon');
-        if (buttonsEl.style.display === 'none') {
-            wrapper.style.marginRight = '0';
-            buttonsEl.style.display = 'inline-block';
-            collapseIcon.classList.remove('bi-chevron-compact-left');
-            collapseIcon.classList.add('bi-chevron-compact-right');
-            return;
-        }
-        collapseIcon.classList.remove('bi-chevron-compact-right');
-        collapseIcon.classList.add('bi-chevron-compact-left');
-
-        wrapper.style.marginRight = '-41px';
-        buttonsEl.style.display = 'none';
-    }
-
-    // KEY BINDING
-    document.addEventListener('keydown', function (event) {
-        console.log(event.code);
-        if (event.code === 'KeyA') {
-            mainView.addIgnoreRegion({
-                name: 'ignore_rect',
-                strokeWidth: 0,
-            });
-        }
-        if (event.code === 'Minus' || event.code === 'NumpadSubtract') {
-            mainView.zoom(-15);
-        }
-
-        if (event.code === 'Equal' || event.code === 'NumpadAdd') {
-            mainView.zoom(15);
-        }
-
-        if ((event.code === 'Delete') || (event.code === 'Backspace')) {
-            mainView.removeActiveIgnoreRegions();
-        }
-
-        if ((event.code === 'KeyG')) {
-            currentMode.toggle('pan');
-            toggleButtonAsPressed('grab-wrapper');
-        }
-
-        if ((event.code === 'KeyD')) {
-            mainView.toggleDiff({
-                filename: '<%= diffSnapshot?.filename %>',
-                id: '<%= diffSnapshot?.id %>',
-                name: '<%= diffSnapshot?.name %>',
-                createdDate: '<%= diffSnapshot?.formattedCreatedDate %>'
-            });
-        }
-
-        if ((event.code === 'KeyS')) {
-            mainView.sendIgnoreRegions('<%= baselineSnapshot.id %>', mainView.getRectData());
-        }
-    });
-
-    var mainView = {};
-
-    let baselineImg = new Image();
-    baselineImg.src = '/snapshoots/<%= baselineSnapshot.filename || baselineSnapshot.id + '.png'; %>';
-    baselineImg.onload = async function () {
-        // calculate the canvas DOM element height to resize it according the image proportion
-        // the canvas width doesn't not update
-        let coef = document.getElementById('snapshoot').clientWidth / this.width;
-        // console.log({ canvasElementClientWidth: document.getElementById('snapshoot').clientWidth });
-        let calculatedHeight = this.height * coef;
-        // console.log({ canvasElementClientHeight: document.getElementById('snapshoot').clientHeight });
-        // document.getElementById('snapshoot').style.height = '100%';
-        document.getElementById('snapshoot').style.height = calculatedHeight + 'px';
-        // console.log({ canvasElementClientHeight: document.getElementById('snapshoot').clientHeight });
-
-        fabric.Object.prototype.objectCaching = false;
-
-        mainView = new MainView(
-            {
-                canvasId: '2d',
-                canvasElementWidth: document.getElementById('snapshoot').clientWidth,
-                canvasElementHeight: document.getElementById('snapshoot').clientHeight,
-                url: baselineImg.src,
-                diffId: '<%= diffSnapshot?.id; %>',
-                <% if(actual) { %>
-                actual: <%- actual %>,
-                <% } %>
+    <!--TOAST END-->
+    <% const actual = actualSnapshot ? JSON.stringify(actualSnapshot) : null %>
+    <script>
+        function toggleButtonAsPressed(id) {
+            const button = document.getElementById(id);
+            if (button.classList.contains('pressed-toolbar-button')) {
+                return button.classList.remove('pressed-toolbar-button');
             }
-        );
-        mainView.getSnapshotIgnoreRegionsDataAndDrawRegions('<%= baselineSnapshot.id; %>');
-    };
-</script>
-<script src="../../../static/js/bootstrap-toolkit.js"></script>
-<script src="../lib/commonEvents.js"></script>
+            button.classList.add('pressed-toolbar-button');
+        }
+
+        function toggleSnapshotToolbarCollapse() {
+            const wrapper = document.getElementsByClassName('toolbar-wrapper')[0];
+            const buttonsEl = document.getElementById('snapshot-toolbar-buttons');
+            const collapseIcon = document.getElementById('snapshot-collapse-icon');
+            if (buttonsEl.style.display === 'none') {
+                wrapper.style.marginRight = '0';
+                buttonsEl.style.display = 'inline-block';
+                collapseIcon.classList.remove('bi-chevron-compact-left');
+                collapseIcon.classList.add('bi-chevron-compact-right');
+                return;
+            }
+            collapseIcon.classList.remove('bi-chevron-compact-right');
+            collapseIcon.classList.add('bi-chevron-compact-left');
+
+            wrapper.style.marginRight = '-41px';
+            buttonsEl.style.display = 'none';
+        }
+
+        // KEY BINDING
+        document.addEventListener('keydown', function (event) {
+            console.log(event.code);
+            if (event.code === 'KeyA') {
+                mainView.addIgnoreRegion({
+                    name: 'ignore_rect',
+                    strokeWidth: 0,
+                });
+            }
+            if (event.code === 'Minus' || event.code === 'NumpadSubtract') {
+                mainView.zoom(-15);
+            }
+
+            if (event.code === 'Equal' || event.code === 'NumpadAdd') {
+                mainView.zoom(15);
+            }
+
+            if ((event.code === 'Delete') || (event.code === 'Backspace')) {
+                mainView.removeActiveIgnoreRegions();
+            }
+
+            if ((event.code === 'KeyG')) {
+                currentMode.toggle('pan');
+                toggleButtonAsPressed('grab-wrapper');
+            }
+
+            if ((event.code === 'KeyD')) {
+                mainView.toggleDiff({
+                    filename: '<%= diffSnapshot?.filename %>',
+                    id: '<%= diffSnapshot?.id %>',
+                    name: '<%= diffSnapshot?.name %>',
+                    createdDate: '<%= diffSnapshot?.formattedCreatedDate %>'
+                });
+            }
+
+            if ((event.code === 'KeyS')) {
+                mainView.sendIgnoreRegions('<%= baselineSnapshot.id %>', mainView.getRectData());
+            }
+        });
+
+        var mainView = {};
+
+        let baselineImg = new Image();
+        baselineImg.src = '/snapshoots/<%= baselineSnapshot.filename || baselineSnapshot.id + '.png'; %>';
+        baselineImg.onload = async function () {
+            // calculate the canvas DOM element height to resize it according the image proportion
+            // the canvas width doesn't not update
+            let coef = document.getElementById('snapshoot').clientWidth / this.width;
+            // console.log({ canvasElementClientWidth: document.getElementById('snapshoot').clientWidth });
+            let calculatedHeight = this.height * coef;
+            // console.log({ canvasElementClientHeight: document.getElementById('snapshoot').clientHeight });
+            // document.getElementById('snapshoot').style.height = '100%';
+            document.getElementById('snapshoot').style.height = calculatedHeight + 'px';
+            // console.log({ canvasElementClientHeight: document.getElementById('snapshoot').clientHeight });
+
+            fabric.Object.prototype.objectCaching = false;
+
+            mainView = new MainView(
+                {
+                    canvasId: '2d',
+                    canvasElementWidth: document.getElementById('snapshoot').clientWidth,
+                    canvasElementHeight: document.getElementById('snapshoot').clientHeight,
+                    url: baselineImg.src,
+                    diffId: '<%= diffSnapshot?.id; %>',
+                    <% if(actual) { %>
+                    actual: <%- actual %>,
+                    <% } %>
+                }
+            );
+            mainView.getSnapshotIgnoreRegionsDataAndDrawRegions('<%= baselineSnapshot.id; %>');
+        };
+    </script>
+
+    <script>
+        function formTableData(item) {
+            const tableData = [];
+            for (const key of Object.keys(item)) {
+                tableData.push({
+                    property: key,
+                    value: item[key]
+                })
+            }
+            return tableData;
+        }
+
+        const snapshotsColumns = [
+            {
+                title: "Property",
+                field: "property",
+                width: "450",
+                hozAlign: "left",
+
+            },
+            {
+                title: "Value",
+                field: "value",
+                hozAlign: "left",
+            },
+        ]
+        // CHECK TABLE
+        const check = <%- JSON.stringify(check) %>;
+        const checkData = formTableData(check);
+        const compareResult = formTableData(JSON.parse(check.result));
+        const mergedCheckData = checkData.concat(compareResult);
+        const checkTableData = mergedCheckData.filter((x) => {
+            return !['result', '__v', 'dimensionDifference'].includes(x.property)
+        })
+        console.log({ compareResult })
+        console.log({ checkTableData })    //define data
+
+        //create Tabulator on DOM element with id "example-table"
+        var checkInfoTable = new Tabulator("#check-info-table", {
+            data: checkTableData,
+            layout: "fitColumns",
+            columns: snapshotsColumns,
+        });
+
+        // BASELINE TABLE
+        const baselineSnapshot = <%- JSON.stringify(baselineSnapshot) %>;
+        // const baselineTableData = formTableData(baselineSnapshot);
+        var baselineInfoTable = new Tabulator("#baseline-info-table", {
+            data: formTableData(baselineSnapshot),
+            layout: "fitColumns",
+            columns: snapshotsColumns,
+        });
+
+        // ACTUAL TABLE
+        const actualSnapshot = <%- JSON.stringify(actualSnapshot) %>;
+        // const actualTableData = formTableData(actualSnapshot);
+        var actualInfoTable = new Tabulator("#actual-info-table", {
+            data: formTableData(actualSnapshot),
+            layout: "fitColumns",
+            columns: snapshotsColumns,
+        });
+
+        // HISTORY
+        async function getCheckHistory() {
+            return await fetch(`/checkhistory/<%- check.id %>/`);
+        }
+
+        const historyColumns = [
+            {
+                title: "Time",
+                field: "timestamp",
+            },
+
+            {
+                title: "Message",
+                field: "message",
+                width: '550',
+            },
+            {
+                title: "User",
+                field: "user",
+            },
+            {
+                title: 'Item Type',
+                field: "itemType",
+            },
+            {
+                title: 'Operation',
+                field: "msgType",
+            },
+            {
+                title: "Level",
+                field: "level",
+                // hozAlign: "left"
+            },
+            {
+                title: 'Reference',
+                field: "ref",
+            },
+            {
+                title: 'Scope',
+                field: "scope",
+            },
+        ]
+
+        // "ref":"61941a32512d107490675a3e","timestamp":"2021-11-17T13:56:01.915Z"},"hostname":"TBSL00003"}'
+        function transformHistory(arr) {
+            const result = [];
+            for (const item of arr) {
+                console.log({ item })
+                item.user = item?.meta?.user;
+                item.itemType = item?.meta?.itemType;
+                item.msgType = item?.meta?.msgType;
+                item.ref = item?.meta?.ref;
+                item.scope = item?.meta?.scope;
+                item.timestamp = new Date(item?.meta?.timestamp).toLocaleString();
+                result.push(item);
+            }
+            return result;
+        }
+
+        var historyArr;
+        getCheckHistory()
+            .then(async (result) => {
+                historyArr = JSON.parse(await result.text());
+                console.log({ historyArr })
+                var historyTable = new Tabulator("#history-table", {
+                    data: transformHistory(historyArr),
+                    layout: "fitData",
+                    columns: historyColumns,
+                });
+            });
+    </script>
+
+
+    <script src="../../../static/js/bootstrap-toolkit.js"></script>
+    <script src="../lib/commonEvents.js"></script>
 </body>
 </html>
