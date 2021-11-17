@@ -503,10 +503,10 @@ function removeSuite(id) {
 
             xhr.onload = function () {
                 if (xhr.status === 200) {
-                    console.log(`Suite was successfully removed, id: '${id}', resonse test: '${xhr.responseText}'`);
+                    console.log(`suite was successfully removed, id: '${id}', resonse test: '${xhr.responseText}'`);
                     return resolve(xhr);
                 }
-                console.log(`Cannot remove the suite. Request is failed.  Returned status of ${xhr.status}`);
+                console.log(`cannot remove the suite. Request is failed.  Returned status of ${xhr.status}`);
                 reject(xhr);
             };
             xhr.send(params);
@@ -546,10 +546,10 @@ function removeRun(id) {
 
             xhr.onload = function () {
                 if (xhr.status === 200) {
-                    console.log(`Run was successfully removed, id: '${id}', resonse test: '${xhr.responseText}'`);
+                    console.log(`run was successfully removed, id: '${id}', resonse test: '${xhr.responseText}'`);
                     return resolve(xhr);
                 }
-                console.log(`Cannot remove the run. Request is failed.  Returned status of ${xhr.status}`);
+                console.log(`cannot remove the run. Request is failed.  Returned status of ${xhr.status}`);
                 reject(xhr);
             };
             xhr.send(params);

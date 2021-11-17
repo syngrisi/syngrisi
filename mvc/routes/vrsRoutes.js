@@ -133,6 +133,10 @@ module.exports = async function (app) {
             API.getSnapshot(req, res)
                 .catch(next);
         })
+        .get('/checkhistory/:id', ensureLoggedIn(), async (req, res, next) => {
+            API.getCheckHistory(req, res)
+                .catch(next);
+        })
         .get('/check/:id', ensureLoggedIn(), async (req, res, next) => {
             API.getCheck(req, res)
                 .catch(next);
