@@ -416,6 +416,7 @@ Feature: Check Acceptance
         When I wait for "2" seconds
         When I delete the "1/3 new int check 1" check
         Then I expect that element "//div[text()='1/3 new int check 1']" is not displayed
+        When I wait for "2" seconds
 
         Then I expect that VRS test "Acceptance - two Test, three Check, accept, remove, check Test status" has "Unaccepted" accepted status
         When I refresh page
