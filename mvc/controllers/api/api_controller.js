@@ -861,6 +861,9 @@ exports.createCheck = async function (req, res) {
                 const executionTimer = process.hrtime();
                 currentUser = await User.findOne({ apiKey: req.headers.apikey })
                     .exec();
+                if (!currentUser) {
+                    throw new Error(`the user with API key: '${req.headers?.apikey}' is not found`);
+                }
                 log.info(`create check: '${prettyCheckParams(req.body.name)}'`, $this);
 
                 /** validate request */
