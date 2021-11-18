@@ -299,12 +299,7 @@ exports.affectedElements = async function (req, res) {
                 fatalError(req, res, `Cannot find check with such id: '${req.query.checktid}'`);
             }
 
-            const imDiffData = await fs.readFile(`${config.defaultBaselinePath}${req.query.diffid}.png`)
-                .catch(
-                    (e) => {
-                        throw new Error(e);
-                    }
-                );
+            const imDiffData = await fs.readFile(`${config.defaultBaselinePath}${req.query.diffid}.png`);
             const positions = parseDiff(imDiffData);
             const result = await getAllElementsByPositionFromDump(JSON.parse(chk.domDump), positions);
             console.table(Array.from(result), ['tag', 'id', 'x', 'y', 'width', 'height', 'domPath']);
@@ -339,18 +334,14 @@ function getApiKey() {
 }
 
 exports.generateApiKey = async function (req, res) {
-    return new Promise(async (resolve, reject) => {
-        const apiKey = getApiKey();
-        log.debug(`generate API Key for user: '${req.user.username}'`, $this);
-        const hash = hasha(apiKey);
-        const user = await User.findOne({ username: req.user.username });
-        user.apiKey = hash;
-        await user.save();
-
-        res.status(200)
-            .json({ apikey: apiKey });
-        return resolve();
-    });
+    const apiKey = getApiKey();
+    log.debug(`generate API Key for user: '${req.user.username}'`, $this, { user: req.user.username });
+    const hash = hasha(apiKey);
+    const user = await User.findOne({ username: req.user.username });
+    user.apiKey = hash;
+    await user.save();
+    res.status(200)
+        .json({ apikey: apiKey });
 };
 
 exports.createUser = async function (req, res) {
@@ -1617,11 +1608,7 @@ exports.stopSession = async function (req, res) {
             };
             log.info(`the session is over, the test will be updated with parameters: '${JSON.stringify(testParams)}'`,
                 $this, logOpts);
-            const updatedTest = await updateTest(testParams)
-                .catch((e) => {
-                    log.error(`cannot update session: ${e}`, $this, logOpts);
-                    throw (e.stack ? e.stack.split('\n') : e);
-                });
+            const updatedTest = await updateTest(testParams);
             const result = updatedTest.toObject();
             result.calculatedStatus = testStatus;
             res.json(result);
