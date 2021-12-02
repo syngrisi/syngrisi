@@ -14,6 +14,7 @@ require('./mvc/models/vrsModel'); // created model loading here
 const fileUpload = require('express-fileupload');
 const pino = require('pino');
 const path = require('path');
+const compression = require('compression');
 const passport = require('passport');
 
 const User = mongoose.model('VRSUser');
@@ -29,16 +30,18 @@ const logger = require('pino-http')(
 );
 const { config } = require('./config.js');
 const { Logger } = require('./lib/logger');
+
 global.log = new Logger({ dbConnectionString: config.connectionString });
 this.logMeta = { scope: 'entrypoint' };
 
 app.use(expressSession);
-
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(logger);
+app.use(compression());
+
 
 app.use(fileUpload({
     limits: { fileSize: 50 * 1024 * 1024 },
