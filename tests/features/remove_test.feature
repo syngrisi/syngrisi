@@ -61,6 +61,7 @@ Feature: Remove tests
         Then I expect that element "span=Remove tests - 1" does not exist
         Then I expect via http that "Check - 1" check exist exactly "0" times
         Then I expect via http that "Remove tests - 1" test exist exactly "0" times
+        When I wait for "3" seconds
         Then I expect that the snapshoot filename is not exists
         Then I expect via http 0 baselines
 

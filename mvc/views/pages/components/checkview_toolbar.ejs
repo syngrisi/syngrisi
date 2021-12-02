@@ -189,13 +189,13 @@
                         id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                         style="box-shadow: none; opacity: 1 !important;"
                 >
-                    <%= baselineSnapshot.matchType ? baselineSnapshot.matchType : 'antialiasing'; %>
+                    <%= baselineSnapshot.matchType ? baselineSnapshot.matchType : 'nothing'; %>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenu" style="z-index: 8888">
                     <a class="dropdown-item small" href="#"
-                       onclick="setMatchType('antialiasing', '<%= baselineSnapshot.id; %>'); setTimeout(() => location.reload(), 500)">antialiasing</a>
-                    <a class="dropdown-item small" href="#"
                        onclick="setMatchType('nothing',  '<%= baselineSnapshot.id; %>'); setTimeout(() => location.reload(), 500)">nothing</a>
+                    <a class="dropdown-item small" href="#"
+                       onclick="setMatchType('antialiasing', '<%= baselineSnapshot.id; %>'); setTimeout(() => location.reload(), 500)">antialiasing</a>
                     <a class="dropdown-item small" href="#"
                        onclick="setMatchType('colors',  '<%= baselineSnapshot.id; %>'); setTimeout(() => location.reload(), 500)">colors</a>
                 </div>

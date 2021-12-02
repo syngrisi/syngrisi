@@ -37,7 +37,7 @@ Feature: Crashed check
         testName: "Crashed test"
         """
         When I check image with path: "files/crash_1.png" as "crashed" and suppress exceptions
-        Then I expect the stored "error" object is equal:
+        Then I expect the stored "error" object is contain:
         """
         Response code 500 (Internal Server Error)
         """

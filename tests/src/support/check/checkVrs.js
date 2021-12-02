@@ -5,7 +5,7 @@ export default function (name, imageBuffer, domDump) {
                 if (!browser.vDriver) {
                     return reject(new Error("'browser.vDriver' is not defined, looks lite the driver wasn't init, check @visual tag on scenario"));
                 }
-                const result = browser.vDriver.checkSnapshoot(name,
+                const result = browser.vDriver.checkSnapshot(name,
                     imageBuffer,
                     domDump,
                     browser.config.apiKey);
