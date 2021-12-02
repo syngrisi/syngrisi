@@ -31,5 +31,5 @@ Feature: VRS Postfix
     When I stop VRS session
     When I open the url "http://vrs:3001/"
     When I wait for "2" seconds
-    Then I expect that VRS test "Postfix integration test" has "Win32_Integration" platform
+    Then I expect that VRS test "Postfix integration test" has "MacIntel_Integration" platform
 

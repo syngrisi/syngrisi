@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 'use strict';
 
 // eslint-disable-next-line no-unused-vars
@@ -11,7 +12,6 @@ const {
     ensureLoggedIn,
     ensureApiKey,
 } = require('../../lib/ensureLogin/ensureLoggedIn');
-const { use } = require('express/lib/router');
 
 module.exports = async function (app) {
     const UI = require('../controllers/ui/ui_controller');

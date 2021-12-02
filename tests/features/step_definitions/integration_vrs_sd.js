@@ -14,7 +14,7 @@ const {
     Then,
 } = require('cucumber');
 const { getDomDump } = require('@syngrisi/syngrisi-wdio-sdk');
-const syngrisiDriver = require('@syngrisi/syngrisi-wdio-sdk').syngrisiDriver;
+const SyngrisiDriver = require('@syngrisi/syngrisi-wdio-sdk').SyngrisiDriver;
 const checkVRS = require('../../src/support/check/checkVrs').default;
 const waitForAndRefresh = require('../../src/support/action/waitForAndRefresh').default;
 const {
@@ -30,7 +30,7 @@ const { TableVRSComp } = require('../../src/PO/vrs/tableVRS.comp');
 
 function startDriver(params) {
     const drvOpts = YAML.parse(params) || {};
-    browser.vDriver = new syngrisiDriver({
+    browser.vDriver = new SyngrisiDriver({
         url: drvOpts.url || 'http://vrs:3001/',
     });
 }
@@ -416,18 +416,26 @@ When(/^I wait for "([^"]*)" seconds$/, { timeout: 600000 }, (sec) => {
     browser.pause(sec * 1000);
 });
 
-Then(/^I expect the stored "([^"]*)" object is( not|) equal:$/, function (itemName, condition, expected) {
+Then(/^I expect the stored "([^"]*)" object is( not|) (equal|contain):$/, function (itemName, condition, type, expected) {
     const itemValue = this.getSavedItem(itemName);
+
+    // up first letter in string
+    function capitalize(s) {
+        return s[0].toUpperCase() + s.slice(1);
+    };
+    const assertMethod = 'to' + capitalize(type);
+    // console.log({ assertMethod });
 
     console.log('Expect:', expected.trim());
     console.log('Stored:', itemValue.trim());
     if (condition === ' not') {
         expect(itemValue.trim())
             .not
-            .toEqual(expected.trim());
+            [assertMethod](expected.trim());
+        // .toEqual(expected.trim());
     } else {
         expect(itemValue.trim())
-            .toEqual(expected.trim());
+            [assertMethod](expected.trim());
     }
 });
 
@@ -626,7 +634,7 @@ Then(/^I expect that last "([^"]*)" checks with ident contains "([^"]*)" has (no
     const values = checks.map((x) => x[ident].checks)
         .flat()
         .slice(0, num)
-        .map((x) => x.[prop]);
+        .map((x) => x[prop]);
     expect(values.length)
         .toBeGreaterThan(0);
     console.log({ values });
@@ -1065,5 +1073,6 @@ Then(/^I expect HTML does not contains:$/, function (text) {
 Then(/^I expect that the "([^"]*)" saved value equal the "([^"]*)" saved value$/, function (first, second) {
     const firstItem = this.getSavedItem(first);
     const secondItem = this.getSavedItem(second);
-    expect(firstItem.toString()).toBe(secondItem.toString());
+    expect(firstItem.toString())
+        .toBe(secondItem.toString());
 });

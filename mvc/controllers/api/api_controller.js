@@ -44,17 +44,6 @@ $this.logMeta = {
     msgType: 'API',
 };
 
-// get last updated document
-async function getLastCheck(identifier) {
-    const last = (await Check.find(identifier)
-        .sort({ updatedDate: -1 })
-        .limit(1))[0];
-    if (last && last.baselineId) {
-        return last;
-    }
-    return null;
-}
-
 async function getLastSuccessCheck(identifier) {
     const condition = [{
         ...identifier,
@@ -162,7 +151,7 @@ async function compareSnapshots(baseline, actual) {
             const ignored = JSON.parse(JSON.parse(baseline.ignoreRegions));
             opts = { ignoredBoxes: ignored };
         }
-        opts.ignore = baseline.matchType || 'antialiasing';
+        opts.ignore = baseline.matchType || 'nothing';
         diff = await getDiff(baselineData, actualData, opts);
     }
 
@@ -861,14 +850,14 @@ exports.createCheck = async function (req, res) {
                 const executionTimer = process.hrtime();
                 currentUser = await User.findOne({ apiKey: req.headers.apikey })
                     .exec();
-                if (!currentUser) {
-                    throw new Error(`the user with API key: '${req.headers?.apikey}' is not found`);
-                }
-                log.info(`create check: '${prettyCheckParams(req.body.name)}'`, $this);
+                // if (!currentUser) {
+                //     throw new Error(`the user with API key: '${req.headers?.apikey}' is not found`);
+                // }
+                log.info(`start create check: '${prettyCheckParams(req.body.name)}'`, $this);
 
                 /** validate request */
                 if (!req.body.testid) {
-                    const errMsg = 'Cannot create check without testid parameter, '
+                    const errMsg = `Cannot create check without 'testid' parameter, `
                         + `try to initialize the session at first. parameters: '${JSON.stringify(req.body)}'`;
                     res.status(400)
                         .send({
@@ -896,13 +885,9 @@ exports.createCheck = async function (req, res) {
                 if (!test) {
                     const errMsg = `Error: Can not find test with id: '${req.body.testid}', parameters: '${JSON.stringify(req.body)}'`;
                     res.status(400)
-                        .send({
-                            status: 'testNotFound',
-                            message: errMsg,
-                        });
+                        .send({ status: 'testNotFound', message: errMsg });
 
-                    reject(errMsg);
-                    return;
+                    return reject(errMsg);
                 }
                 const suiteName = req.body.suitename || 'Others';
                 log.debug(`create suite with name '${suiteName}' if not exist`, $this);
@@ -949,7 +934,7 @@ exports.createCheck = async function (req, res) {
                  *   with one of 'complete` status (eq:. new, failed, passed)
                  */
 
-                /** look up the snapshoot with same hashcode if didn't find, ask for file data */
+                /** look up the snapshot with same hashcode if didn't find, ask for file data */
                 const snapshotFoundedByHashcode = await getSnapshotByImgHash(req.body.hashcode);
                 if (!req.files && !snapshotFoundedByHashcode) {
                     log.debug(`cannot find the snapshot with hash: '${req.body.hashcode}'`, $this);
@@ -970,15 +955,6 @@ exports.createCheck = async function (req, res) {
 
                 const checkIdent = buildIdentObject(params);
 
-                // let newClonedSnapshot;
-                // if (snapshotFoundedByHashcode) {
-                //     newClonedSnapshot = await cloneSnapshoot(snapshotFoundedByHashcode, req.body, fileData);
-                // }
-                // currentSnapshot = newClonedSnapshot || (await createSnapshot({
-                //     params: req.body,
-                //     fileData,
-                //     hashCode: req.body.hashcode,
-                // }));
                 const fileData = req.files ? req.files.file.data : false;
 
                 if (snapshotFoundedByHashcode) {
@@ -992,11 +968,9 @@ exports.createCheck = async function (req, res) {
                 }
 
                 log.info(`find a baseline for the check with identifier: '${JSON.stringify(checkIdent)}'`, $this);
-                // const lastCheck = await getLastCheck(checkIdent);
 
-                // const previousBaselineId = lastCheck ? lastCheck.baselineId : null;
                 const storedBaseline = await getBaseline(params);
-                // console.log({ STOREDBASELINE: storedBaseline });
+
                 let check;
                 // if last check has baseline id copy properties from last check
                 // and set it as `currentBaseline` to make diff
@@ -1006,15 +980,11 @@ exports.createCheck = async function (req, res) {
 
                     log.debug(`creating an actual snapshot for check with name: '${req.body.name}'`, $this);
 
-                    // actualSnapshot = currentSnapshot;
                     params.actualSnapshotId = currentSnapshot.id;
                     params.status = 'pending';
                     if (storedBaseline.markedAs) {
                         params.markedAs = storedBaseline.markedAs;
                         params.markedDate = storedBaseline.lastMarkedDate;
-                        // if (storedBaseline.baselineHistory.length > 0) {
-                        //     params.markedDate = storedBaseline.baselineHistory[storedBaseline.baselineHistory.length - 1];
-                        // }
                         params.markedByUsername = storedBaseline.markedByUsername;
                     }
 
@@ -1022,7 +992,7 @@ exports.createCheck = async function (req, res) {
                     log.debug(`create the new check with params: '${prettyCheckParams(params)}'`, $this);
                     check = await Check.create(params);
                 } else {
-                    // since the `storedBaseline` does not exist set current snapshoot as currentBaseline to make diff
+                    // since the `storedBaseline` does not exist set current snapshot as currentBaseline to make diff
                     log.debug(`a baseline snapshot for previous check with name: '${req.body.name}', does not exist creating new one`, this);
                     params.baselineId = currentSnapshot.id;
                     params.actualSnapshotId = currentSnapshot.id;

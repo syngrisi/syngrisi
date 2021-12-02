@@ -6,23 +6,22 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="icon" href="../../../static/icons/leaf_logo.svg">
-    <link rel="stylesheet" href="./static/css/common.css">
+    <link rel="stylesheet" href="./static/css/common.min.css">
     <link rel="stylesheet" href="./static/fa/css/all.min.css">
     <link rel="stylesheet" href="./static/css/colors.css">
     <link rel="stylesheet" href="./static/css/tabulator_bulma.css">
     <link rel="stylesheet" href="../../../static/font/bootstrap-icons.css">
-    <script src="./static/js/jquery-3.3.1.slim.js"></script>
+    <script src="./static/js/jquery-3.3.1.slim.min.js"></script>
     <script src="./static/js/popper.min.js"></script>
     <script src="./static/js/bootstrap.min.js"></script>
     <script src="./static/js/fabric.min.js"></script>
-    <!--    <link href="https://unpkg.com/tabulator-tables@5.0.7/dist/css/tabulator.min.css" rel="stylesheet">-->
-    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.0.7/dist/js/tabulator.min.js"></script>
+    <script type="text/javascript" src="./static/js/tabulator.min.js"></script>
     <script src="./lib/mainView.js"></script>
     <script src="./lib/sideToSideView.js"></script>
 
     <script src="lib/gridHelpers.js"></script>
     <script src="lib/diffHelpers.js"></script>
-    <script src="../../../static/js/ejs.js"></script>
+    <script src="../../../static/js/ejs.min.js"></script>
 
     <title>Check - <%= check.name; %> [<%= check.status; %>]</title>
 </head>
@@ -43,16 +42,16 @@
                     // SIDEBAR
                     const pageTemplate = await getRequest('../../../static/ejs/check_sidebar.ejs');
                     let sidebarHtml = await ejs.render(pageTemplate,
-                        {
-                            check: <%- JSON.stringify(check) %>,
-                            lastChecksWithSameName: <%- JSON.stringify(lastChecksWithSameName) %>,
+                            {
+                                check: <%- JSON.stringify(check) %>,
+                                lastChecksWithSameName: <%- JSON.stringify(lastChecksWithSameName) %>,
 
-                        },
-                        { async: true },
+                            },
+                            { async: true },
                     );
 
                     document.getElementById('sidebar')
-                        .innerHTML = sidebarHtml;
+                            .innerHTML = sidebarHtml;
                 });
 
             </script>
@@ -241,16 +240,16 @@
             fabric.Object.prototype.objectCaching = false;
 
             mainView = new MainView(
-                {
-                    canvasId: '2d',
-                    canvasElementWidth: document.getElementById('snapshoot').clientWidth,
-                    canvasElementHeight: document.getElementById('snapshoot').clientHeight,
-                    url: baselineImg.src,
-                    diffId: '<%= diffSnapshot?.id; %>',
-                    <% if(actual) { %>
-                    actual: <%- actual %>,
-                    <% } %>
-                }
+                    {
+                        canvasId: '2d',
+                        canvasElementWidth: document.getElementById('snapshoot').clientWidth,
+                        canvasElementHeight: document.getElementById('snapshoot').clientHeight,
+                        url: baselineImg.src,
+                        diffId: '<%= diffSnapshot?.id; %>',
+                        <% if(actual) { %>
+                        actual: <%- actual %>,
+                        <% } %>
+                    }
             );
             mainView.getSnapshotIgnoreRegionsDataAndDrawRegions('<%= baselineSnapshot.id; %>');
         };
@@ -263,58 +262,58 @@
                 tableData.push({
                     property: key,
                     value: item[key]
-                })
+                });
             }
             return tableData;
         }
 
         const snapshotsColumns = [
             {
-                title: "Property",
-                field: "property",
-                width: "450",
-                hozAlign: "left",
+                title: 'Property',
+                field: 'property',
+                width: '450',
+                hozAlign: 'left',
 
             },
             {
-                title: "Value",
-                field: "value",
-                hozAlign: "left",
+                title: 'Value',
+                field: 'value',
+                hozAlign: 'left',
             },
-        ]
+        ];
         // CHECK TABLE
         const check = <%- JSON.stringify(check) %>;
         const checkData = formTableData(check);
         const compareResult = formTableData(JSON.parse(check.result));
         const mergedCheckData = checkData.concat(compareResult);
         const checkTableData = mergedCheckData.filter((x) => {
-            return !['result', '__v', 'dimensionDifference'].includes(x.property)
-        })
-        console.log({ compareResult })
-        console.log({ checkTableData })    //define data
+            return !['result', '__v', 'dimensionDifference'].includes(x.property);
+        });
+        console.log({ compareResult });
+        console.log({ checkTableData });    //define data
 
         //create Tabulator on DOM element with id "example-table"
-        var checkInfoTable = new Tabulator("#check-info-table", {
+        var checkInfoTable = new Tabulator('#check-info-table', {
             data: checkTableData,
-            layout: "fitColumns",
+            layout: 'fitColumns',
             columns: snapshotsColumns,
         });
 
         // BASELINE TABLE
         const baselineSnapshot = <%- JSON.stringify(baselineSnapshot) %>;
         // const baselineTableData = formTableData(baselineSnapshot);
-        var baselineInfoTable = new Tabulator("#baseline-info-table", {
+        var baselineInfoTable = new Tabulator('#baseline-info-table', {
             data: formTableData(baselineSnapshot),
-            layout: "fitColumns",
+            layout: 'fitColumns',
             columns: snapshotsColumns,
         });
 
         // ACTUAL TABLE
         const actualSnapshot = <%- JSON.stringify(actualSnapshot) %>;
         // const actualTableData = formTableData(actualSnapshot);
-        var actualInfoTable = new Tabulator("#actual-info-table", {
+        var actualInfoTable = new Tabulator('#actual-info-table', {
             data: formTableData(actualSnapshot),
-            layout: "fitColumns",
+            layout: 'fitColumns',
             columns: snapshotsColumns,
         });
 
@@ -325,47 +324,47 @@
 
         const historyColumns = [
             {
-                title: "Time",
-                field: "timestamp",
+                title: 'Time',
+                field: 'timestamp',
             },
 
             {
-                title: "Message",
-                field: "message",
+                title: 'Message',
+                field: 'message',
                 width: '550',
             },
             {
-                title: "User",
-                field: "user",
+                title: 'User',
+                field: 'user',
             },
             {
                 title: 'Item Type',
-                field: "itemType",
+                field: 'itemType',
             },
             {
                 title: 'Operation',
-                field: "msgType",
+                field: 'msgType',
             },
             {
-                title: "Level",
-                field: "level",
+                title: 'Level',
+                field: 'level',
                 // hozAlign: "left"
             },
             {
                 title: 'Reference',
-                field: "ref",
+                field: 'ref',
             },
             {
                 title: 'Scope',
-                field: "scope",
+                field: 'scope',
             },
-        ]
+        ];
 
         // "ref":"61941a32512d107490675a3e","timestamp":"2021-11-17T13:56:01.915Z"},"hostname":"TBSL00003"}'
         function transformHistory(arr) {
             const result = [];
             for (const item of arr) {
-                console.log({ item })
+                console.log({ item });
                 item.user = item?.meta?.user;
                 item.itemType = item?.meta?.itemType;
                 item.msgType = item?.meta?.msgType;
@@ -379,15 +378,15 @@
 
         var historyArr;
         getCheckHistory()
-            .then(async (result) => {
-                historyArr = JSON.parse(await result.text());
-                console.log({ historyArr })
-                var historyTable = new Tabulator("#history-table", {
-                    data: transformHistory(historyArr),
-                    layout: "fitData",
-                    columns: historyColumns,
+                .then(async (result) => {
+                    historyArr = JSON.parse(await result.text());
+                    console.log({ historyArr });
+                    var historyTable = new Tabulator('#history-table', {
+                        data: transformHistory(historyArr),
+                        layout: 'fitData',
+                        columns: historyColumns,
+                    });
                 });
-            });
     </script>
 
 

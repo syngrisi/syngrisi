@@ -5,19 +5,16 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="icon" href="../../../static/icons/leaf_logo.svg">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
+    <link rel="icon" href="./static/icons/leaf_logo.svg">
+    <link rel="stylesheet" href="./static/fa/css/all.min.css"
           integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
           crossorigin="anonymous">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"
-          integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
-          crossorigin="anonymous">
-    <link rel="stylesheet" href="../../../static/css/common.css">
-    <link rel="stylesheet" href="../../../static/css/colors.css">
+    <link rel="stylesheet" href="./static/css/common.min.css">
+    <link rel="stylesheet" href="./static/css/colors.css">
     <script src="../lib/gridHelpers.js"></script>
-    <script src="../../../../static/js/ejs.js"></script>
-    <script src="../../../../static/js/moment.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="./static/js/ejs.min.js"></script>
+    <script src="./static/js/moment.min.js"></script>
+    <script src="./static/js/jquery-3.3.1.slim.min.js"></script>
     <title>Admin panel </title>
 </head>
 <body>
@@ -119,12 +116,12 @@
 <script>
     // search trigger on press enter
     document.getElementById('subheader-search')
-        .addEventListener('keyup', function (event) {
-            if (event.keyCode === 13) {
-                event.preventDefault();
-                search();
-            }
-        });
+            .addEventListener('keyup', function (event) {
+                if (event.keyCode === 13) {
+                    event.preventDefault();
+                    search();
+                }
+            });
 
     function paramsToObject(entries) {
         const result = {};
@@ -164,7 +161,7 @@
         ];
         const result = row.join('\n');
         document.getElementById('users-table-end')
-            .insertAdjacentHTML('beforebegin', result);
+                .insertAdjacentHTML('beforebegin', result);
     }
 
     function renderUserRow(user) {
@@ -203,7 +200,7 @@
         row.push('</div>');
         const result = row.join('\n');
         document.getElementById('users-table-end')
-            .insertAdjacentHTML('beforebegin', result);
+                .insertAdjacentHTML('beforebegin', result);
     }
 
     function enableInput(evt) {
@@ -243,10 +240,10 @@
 
     function createUser(rowId) {
         const select = Array.prototype.slice.call(document.getElementById(rowId)
-            .getElementsByTagName('select'));
+                .getElementsByTagName('select'));
         const inputs = Array.prototype.slice.call(document.getElementById(rowId)
-            .getElementsByTagName('input'))
-            .filter(x => ((x.readOnly === false) || (x.name === 'apiKey')));
+                .getElementsByTagName('input'))
+                .filter(x => ((x.readOnly === false) || (x.name === 'apiKey')));
         // console.log({inputs})
         const params = {
             username: getInputValueByName('username', inputs),
@@ -280,9 +277,9 @@
     function updateUser(rowId) {
         if (!confirmation()) return;
         const select = Array.prototype.slice.call(document.getElementById(rowId)
-            .getElementsByTagName('select'));
+                .getElementsByTagName('select'));
         const inputs = Array.prototype.slice.call(document.getElementById(rowId)
-            .getElementsByTagName('input'));
+                .getElementsByTagName('input'));
         // console.log({inputs})
         const params = {
             id: getInputValueByName('id', inputs),
@@ -316,19 +313,19 @@
 
     // clone user row
     $(document)
-        .ready(function () {
-            $('#add-user')
-                .on('click', function () {
-                    const element = $('#user-row-template')
-                        .clone()[0];
-                    element.style.opacity = 1;
-                    element.id = uuidv4();
-                    const sendLink = element.getElementsByClassName('send-new-user-button')[0];
-                    sendLink.setAttribute('onclick', `createUser('${element.id}')`);
-                    $('#users-table-end')
-                        .after(element);
-                });
-        });
+            .ready(function () {
+                $('#add-user')
+                        .on('click', function () {
+                            const element = $('#user-row-template')
+                                    .clone()[0];
+                            element.style.opacity = 1;
+                            element.id = uuidv4();
+                            const sendLink = element.getElementsByClassName('send-new-user-button')[0];
+                            sendLink.setAttribute('onclick', `createUser('${element.id}')`);
+                            $('#users-table-end')
+                                    .after(element);
+                        });
+            });
 
     window.onload = async function () {
         const searchObject = searchToObject(window.location.search);
@@ -384,8 +381,8 @@
 
         const data = [...formData.entries()];
         const queryString = data
-            .map(x => `${encodeURIComponent(x[0])}=${encodeURIComponent(x[1])}`)
-            .join('&');
+                .map(x => `${encodeURIComponent(x[0])}=${encodeURIComponent(x[1])}`)
+                .join('&');
         console.log({ queryString });
 
         const path = (`/task_${taskName}?${queryString}`);
@@ -431,17 +428,12 @@
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-        crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+<script src="./static/js/popper.min.js"
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
         crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"
-        integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
-        crossorigin="anonymous"></script>
-<script src="http://cdnjs.cloudflare.com/ajax/libs/fabric.js/3.6.1/fabric.min.js"></script>
-<script src="../../../static/js/bootstrap-toolkit.js"></script>
+<script src="./static/js/bootstrap.min.js"></script>
+<script src="./static/js/fabric.min.js"></script>
+<script src="./static/js/bootstrap-toolkit.js"></script>
 <script src="../lib/commonEvents.js"></script>
 </body>
 </html>
