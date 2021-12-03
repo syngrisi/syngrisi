@@ -10,6 +10,7 @@ parser: "babel-eslint"
 globals:
   assert: true
   expect: true
+  document: readonly
 
 overrides:
   - files: "mvc/controllers/*.js"
