@@ -728,18 +728,6 @@ function colorizeRuns() {
     }
 }
 
-function wideSearchInput() {
-    const el = document.getElementById('search-wrapper');
-    el.style.setProperty('width', '75%', 'important');
-}
-
-function narrowSearchInput() {
-    setTimeout(() => {
-        const el = document.getElementById('search-wrapper');
-        el.style.setProperty('width', '50%', 'important');
-    }, 10);
-}
-
 function toggleRemoveButton(checkboxClass, buttonsClass = 'mass-tests-actions') {
     const itemsChecked = Array.from(document.getElementsByClassName(checkboxClass))
         .filter((x) => x.checked).length > 0;
