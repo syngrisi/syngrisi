@@ -18,11 +18,11 @@
   "scripts": {
     "test": "cd tests && npm run test",
     "pub": "np --yolo --no-publish",
-    "startdebug": "nodemon --ignore 'mvc/views/lib/*.js' server.js",
+    "startdebug": "nodemon --ignore 'mvc/views/lib/*.js' --ignore 'tests' server.js",
     "starttest": "node server.js",
     "tasks:reindex": "node tasks/reindex.js",
     "startservice": "forever start -l forever.log -o out.log -e err.log server.js",
-    "start": "nodemon --ignore 'mvc/views/lib/*.js' server.js",
+    "start": "nodemon --ignore 'mvc/views/lib/*.js' --ignore 'tests' server.js",
     "clear": "mongo VRSdb --eval 'db.vrschecks.drop();db.vrssnapshots.drop();db.vrstests.drop();db.vrsapps.drop();db.vrssuites.drop();db.vrsusers.drop();db.vrslogs.drop();db.vrsruns.drop();db.vrsbaselines.drop();'; rm ./baselines/*.png",
     "start_test": "cross-env VRT_CONN_STRING='mongodb://localhost/VRSdbTest' VRT_PORT=3001 VRT_BASELINE_PATH='./baselinesTest/' nodemon server.js",
     "clear_test": "mongo VRSdbTest --eval \"db.vrschecks.drop();db.vrssnapshots.drop();db.vrstests.drop();db.vrsapps.drop();db.vrssuites.drop();db.vrsusers.drop();db.vrslogs.drop();db.vrsruns.drop();db.vrsbaselines.drop();\" && rm -f ./baselinesTest/*.png"
@@ -36,6 +36,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@wdio/dot-reporter": "^7.16.6",
     "async-lock": "^1.2.2",
     "body-parser": "^1.19.0",
     "canvas": "^2.6.1",

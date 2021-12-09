@@ -1,3 +1,4 @@
+/* eslint-disable */
 const hasha = require('hasha');
 const YAML = require('yaml');
 const {
@@ -28,6 +29,8 @@ const {
 } = require('../../src/utills/common');
 const { TableVRSComp } = require('../../src/PO/vrs/tableVRS.comp');
 
+const { requestWithLastSessionSid } = require('./lib/utils');
+
 function startDriver(params) {
     const drvOpts = YAML.parse(params) || {};
     browser.vDriver = new SyngrisiDriver({
@@ -35,6 +38,7 @@ function startDriver(params) {
     });
 }
 
+// DEPRECATED?????????
 Given(/^I setup VRS driver with parameters:$/, async (params) => {
     startDriver(params);
 });
@@ -57,191 +61,6 @@ Given(/^I stop VRS session$/, async () => {
     await browser.vDriver.stopTestSession(browser.config.apiKey);
 });
 
-function startServer(params) {
-    const srvOpts = YAML.parse(params) || {};
-
-    const databaseName = srvOpts.databaseName || 'VRSdbTest';
-    const cmdPath = '../';
-    const env = Object.create(process.env);
-    env.VRS_PORT = srvOpts.port || browser.config.serverPort;
-    env.VRS_BASELINE_PATH = srvOpts.baseLineFolder || './baselinesTest/';
-    env.VRS_CONN_STRING = `mongodb://localhost/${databaseName}`;
-    // const homedir = require('os')
-    //     .homedir();
-    // const nodePath = process.env.OLTA_NODE_PATH || (`C:\\Program Files\\nodejs`);
-    const child = spawn(`node`,
-        [`server.js`], {
-            env,
-            shell: process.platform === 'win32',
-            cwd: cmdPath
-        });
-
-    child.stdout.setEncoding('utf8');
-    child.stdout.on('data', (data) => {
-        console.log(`#: ${data}`);
-        // fs.appendFileSync(`./.tmp/syngrisi_out.txt`, data);
-    });
-
-    child.stderr.setEncoding('utf8');
-    child.stderr.on('data', (data) => {
-        console.log(`stderr: ${data}`);
-        // fs.appendFileSync(`./.tmp/syngrisi_err.txt`, data);
-    });
-
-    browser.pause(2500);
-    browser.waitUntil(async () => {
-            const res = (await got.get(`http://${browser.config.serverDomain}:`
-                + `${srvOpts.port || browser.config.serverPort}/status`, { throwHttpErrors: false })
-                .json());
-            console.log({ isAlive: res.alive });
-            return (res.alive === true);
-        }
-    );
-    console.log(`SERVER IS STARTED, PID: '${child.pid}'`);
-    browser.syngrisiServer = child;
-
-}
-
-When(/^I start VRS server with parameters:$/, { timeout: 600000 }, (params) => {
-    startServer(params);
-});
-
-When(/^I start VRS server$/, { timeout: 600000 }, () => {
-    startServer('');
-});
-
-When(/^I clear test VRS database$/, () => {
-    // const cmdPath = browser.config.rootPath + '/vrs/';
-    const cmdPath = '../';
-    const result = execSync('npm run clear_test', { cwd: cmdPath })
-        .toString('utf8');
-    console.log({ result });
-});
-
-When(/^I kill process which used port: "([^"]*)"$/, (port) => {
-    killServer(port);
-});
-
-When(/^I click on "([^"]*)" VRS test$/, (testName) => {
-    TableVRSComp.init();
-    TableVRSComp.data.filter((row) => row.name.$('span[name=cell-name]')
-        .getText()
-        .includes(testName))[0].name
-        .click();
-});
-
-When(/^I expect that(:? (\d)th)? VRS test "([^"]*)" has "([^"]*)" (status|browser|platform|viewport|accepted status)$/,
-    (number, testName, fieldValue, fieldName) => {
-        const intNumber = number ? parseInt(number) : 1;
-        TableVRSComp.init();
-        const row = TableVRSComp.data.filter((row) => row.name.$('span[name=cell-name]')
-            .getText()
-            .includes(testName))[intNumber - 1];
-
-        TableVRSComp.data.forEach((x) => {
-            console.log({ EL: x.name.selector });
-            console.log({ NAME: x.name.getText() });
-        });
-        let actualValue = row[fieldName].$('span')
-            .jsGetText();
-        const actualValue2 = actualValue.replace(/ [\[]HEADLESS[\]]/, '');
-        expect(actualValue2)
-            .toBe(fieldValue);
-        if (fieldName === 'status') {
-            const statusClasses = {
-                Running: {
-                    text: 'text-info',
-                },
-                New: {
-                    text: 'text-success',
-                },
-                Passed: {
-                    text: 'text-success',
-                },
-                Failed: {
-                    text: 'text-danger',
-                },
-            };
-            expect(row.status.$('span'))
-                .toHaveAttributeContaining('class', statusClasses[fieldValue].text);
-        }
-    });
-When(/^I expect that(:? (\d)th)? VRS test "([^"]*)" has blink icon$/,
-    (number, testName) => {
-        const intNumber = number ? parseInt(number) : 1;
-        TableVRSComp.init();
-        const row = TableVRSComp.data.filter((row) => row.name.$('span[name=cell-name]')
-            .getText()
-            .includes(testName))[intNumber - 1];
-        expect(row.name.$('img'))
-            .toHaveAttributeContaining('class', 'blink-icon');
-    });
-
-Then(/^I expect that VRS check "([^"]*)" has "([^"]*)" status$/, (checkName, expectedStatus) => {
-    expect($(`.//div[contains(normalize-space(.), '${checkName}')]/../..`))
-        .toBeExisting();
-
-    const border = $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//div[@name='check-status']`);
-    // "/../../../..//div[@name='check-status']\"/"
-    const classStatuses = {
-        New: 'bg-item-new',
-        Passed: 'bg-item-passed',
-        Failed: 'bg-item-failed',
-        Blinking: 'bg-warning',
-    };
-    expect(border)
-        .toHaveAttrContaining('class', classStatuses[expectedStatus]);
-});
-
-Then(/^I expect that(:? (\d)th)? VRS test "([^"]*)" is unfolded$/, (number, testName) => {
-    const intNumber = number ? parseInt(number) : 1;
-    const row = TableVRSComp.data.filter((row) => row.name.$('span[name=cell-name]')
-        .getText() === testName)[intNumber - 1];
-    const nameCell = row.name.$('span');
-    const foldDiff = nameCell.$('./../../../../../..//div[contains(@class, \'all-checks\')]');
-    expect(foldDiff)
-        .toHaveAttributeContaining('class', 'show');
-});
-
-When(/^I create new VRS Test with:$/, async function (yml) {
-    const params = YAML.parse(yml);
-
-    const form = frisby.formData();
-    for (const key in params.params) {
-        form.append(key, params.params[key]);
-    }
-    const response = await frisby.post(params.url, { body: form });
-    console.log(response.json);
-    this.saveItem('VRSTestResponse', response);
-});
-
-Given(/^I create new VRS Check with:$/, async function (yml) {
-    const params = YAML.parse(yml);
-    const form = frisby.formData();
-    for (const key in params.params) {
-        form.append(key, params.params[key]);
-    }
-    const testResp = await this.getSavedItem('VRSTestResponse');
-    console.log(testResp);
-    form.append('testid', testResp.json._id);
-
-    const imageData = fs.readFileSync(params.hashFilePath);
-    form.append('hashcode', hasha(imageData));
-
-    if (params.file) {
-        form.append('file', fs.createReadStream(params.file));
-    }
-
-    const response = await frisby.post(params.url, { body: form });
-    const resp = response.json;
-    resp.statusCode = response.status;
-    this.saveItem('VRSCheck', resp);
-});
-
-Given(/^I generate a random image "([^"]*)"$/, async (filePath) => {
-    await saveRandomImage(filePath);
-});
-
 When(/^I parse all affected elements in current and last successful checks from "([^"]*)"$/, async function (baseurl) {
     const result = this.getSavedItem('checkDumpResult');
     console.log(result);
@@ -262,91 +81,6 @@ When(/^I set properties for VRSDriver:$/, function (yml) {
     Object.assign(browser.vDriver._params, params);
 });
 
-When(/^I set env variables:$/, (yml) => {
-    const params = YAML.parse(yml);
-    for (const key in params) {
-        process.env[key] = params[key];
-    }
-});
-
-When(/^I check image with path: "([^"]*)" as "([^"]*)"$/, async function (filePath, checkName) {
-    browser.pause(300);
-    const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${filePath}`);
-    const checkResult = await checkVRS(checkName, imageBuffer);
-    this.STATE.check = checkResult;
-});
-When(/^I create "([^"]*)" tests with params:$/, { timeout: 600000 }, async function (num, yml) {
-    const params = YAML.parse(yml);
-
-    browser.vDriver.setCurrentSuite({
-        name: 'Integration suite',
-        id: 'Integration_suite',
-    });
-
-    for (const i of Array.from(Array(parseInt(num))
-        .keys())) {
-        console.log(`Create test # ${i}`);
-        await browser.vDriver.startTestSession({
-            app: 'Test App',
-            test: `${params.testName} - ${i + 1}`,
-            run: process.env.RUN_NAME || 'integration_run_name',
-            runident: process.env.RUN_IDENT || 'integration_run_ident',
-        }, browser.config.apiKey);
-        browser.pause(300);
-        const filePath = params.filePath || 'files/A.png';
-        const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${filePath}`);
-        const checkName = params.checkName || `Check - ${Math.random()
-            .toString(36)
-            .substring(7)}`;
-        const checkResult = await checkVRS(checkName, imageBuffer);
-        console.log({ checkResult });
-        this.STATE.check = checkResult;
-        await browser.vDriver.stopTestSession(browser.config.apiKey);
-    }
-});
-
-When(/^I create "([^"]*)" tests with few checks:$/, { timeout: 60000000 }, async function (num, yml) {
-    const params = YAML.parse(yml);
-
-    browser.vDriver.setCurrentSuite({
-        name: 'Integration suite',
-        id: 'Integration_suite',
-    });
-
-    for (const i of Array.from(Array(parseInt(num))
-        .keys())) {
-        console.log(`Create test # ${i}`);
-        await browser.vDriver.startTestSession({
-            app: 'Test App',
-            test: params.testName.includes('-') ? (`${params.testName}${i + 1}`) : params.testName,
-            run: process.env.RUN_NAME || 'integration_run_name',
-            runident: process.env.RUN_IDENT || 'integration_run_ident',
-        }, browser.config.apiKey);
-        browser.pause(300);
-        let checkResult = [];
-
-        for (const check of params.checks) {
-            const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${check.filePath}`);
-            checkResult.push(await checkVRS(check.checkName, imageBuffer));
-        }
-
-        this.STATE.check = checkResult;
-        await browser.vDriver.stopTestSession(browser.config.apiKey);
-    }
-});
-
-When(/^I check image with path: "([^"]*)" as "([^"]*)" and suppress exceptions$/, async function (filePath, checkName) {
-    try {
-        browser.pause(300);
-        const imageBuffer = fs.readFileSync(browser.config.rootPath + '/' + filePath);
-        const checkResult = await checkVRS(checkName, imageBuffer);
-        this.STATE.check = checkResult;
-    } catch (e) {
-        this.STATE.check = { error: e };
-        this.saveItem('error', e.message);
-    }
-});
-
 When(/^I visually check page with DOM as "([^"]*)"$/, async function (checkName) {
     let domDump;
     domDump = await browser.executeAsync(getDomDump);
@@ -356,30 +90,6 @@ When(/^I visually check page with DOM as "([^"]*)"$/, async function (checkName)
     console.log(checkResult);
     this.saveItem('checkDump', JSON.parse(checkResult.domDump)[0]);
     this.saveItem('checkDumpResult', checkResult);
-});
-
-When(/^I execute javascript code:$/, function (js) {
-    const result = browser.execute(js);
-    console.log({ result });
-    this.saveItem('js', result);
-});
-
-When(/^I execute javascript code and save as "([^"]*)":$/, function (itemName, js) {
-    const result = browser.execute(js);
-    console.log({ result });
-    this.saveItem(itemName, result);
-});
-
-Then(/^I expect "([^"]*)" saved object:$/, function (itemName, yml) {
-    const params = YAML.parse(yml);
-    const item = this.getSavedItem(itemName);
-    expect(item)
-        .toMatchObject(params);
-});
-
-Given(/^I set window size: "(1366x768|712x970|880x768|1050x768|1300x768|1300x400|1700x768|500x500)"$/, (viewport) => {
-    const size = viewport.split('x');
-    browser.setWindowSize(parseInt(size[0]), parseInt(size[1]));
 });
 
 When(/^I assert image with path: "([^"]*)" as "([^"]*)"$/, async function (filePath, checkName) {
@@ -396,98 +106,11 @@ When(/^I assert image with path: "([^"]*)" as "([^"]*)"$/, async function (fileP
     }
 });
 
-Then(/^the "([^"]*)" "([^"]*)" should be "([^"]*)"$/, function (itemType, property, exceptedValue) {
-    expect(this.STATE[itemType][property].toString())
-        .toEqual(exceptedValue);
-});
-
-When(/^I wait and refresh page on element "([^"]*)" for "([^"]*)" seconds to( not)* (exist)$/, { timeout: 600000 },
-    waitForAndRefresh);
-
-When(/^I START DEBUGGER$/, { timeout: 6000000 }, () => {
-    browser.debug();
-});
-
-When(/^I refresh page$/, () => {
-    browser.refresh();
-});
-
-When(/^I wait for "([^"]*)" seconds$/, { timeout: 600000 }, (sec) => {
-    browser.pause(sec * 1000);
-});
-
-Then(/^I expect the stored "([^"]*)" object is( not|) (equal|contain):$/, function (itemName, condition, type, expected) {
-    const itemValue = this.getSavedItem(itemName);
-
-    // up first letter in string
-    function capitalize(s) {
-        return s[0].toUpperCase() + s.slice(1);
-    };
-    const assertMethod = 'to' + capitalize(type);
-    // console.log({ assertMethod });
-
-    console.log('Expect:', expected.trim());
-    console.log('Stored:', itemValue.trim());
-    if (condition === ' not') {
-        expect(itemValue.trim())
-            .not
-            [assertMethod](expected.trim());
-        // .toEqual(expected.trim());
-    } else {
-        expect(itemValue.trim())
-            [assertMethod](expected.trim());
-    }
-});
-
-When(/^I expect that element "([^"]*)" to (contain|have) text "([^"]*)"$/, (selector, matchCase, text) => {
-    const filledText = text;
-    if (matchCase === 'contains') {
-        expect($(selector))
-            .toHaveTextContaining(filledText);
-    } else {
-        expect($(selector))
-            .toHaveText(filledText);
-    }
-});
-
-Then(/^the current url contains "([^"]*)"$/, (url) => {
-    const windowHandles = browser.getWindowHandles();
-    const lastWindowHanle = windowHandles[windowHandles.length - 1];
-    browser.switchToWindow(lastWindowHanle);
-    expect(browser)
-        .toHaveUrl(url, { containing: true });
-});
-
-Then(/^I expect "([^"]*)" occurrences of (Visible|Clickable|Enabled|Existig|Selected) "([^"]*)"$/, (num, verb, selector) => {
-    const actualNum = $$(selector)
-        .filter((el) => el[`is${verb}`]()).length;
-    expect(actualNum)
-        .toEqual(parseInt(num));
-});
-
 When(/^I visually check page as "([^"]*)"$/, { timeout: 180000 }, async function (checkName) {
     browser.pause(300);
     const imageBuffer = new Buffer((await browser.saveDocumentScreenshot()), 'base64');
     const checkResult = await checkVRS(checkName, imageBuffer);
     this.saveItem('checkResult', checkResult);
-});
-
-Given(/^I set custom window size: "([^"]*)"$/, (viewport) => {
-    const size = viewport.split('x');
-    browser.setWindowSize(parseInt(size[0]), parseInt(size[1]));
-});
-
-Then(/^I expect that element "([^"]*)" is clickable$/, (selector) => {
-    expect($(selector))
-        .toBeClickable();
-});
-
-Then(/^I expect get to url "([^"]*)" answer JSON object to match:$/, async (url, params) => {
-    const jsonBodyObject = JSON.parse((await got(url)).body);
-    // const jsonBodyObject = JSON.parse(browser.getPageSource());
-    const expectedObject = JSON.parse(params);
-    expect(jsonBodyObject)
-        .toMatchObject(expectedObject);
 });
 
 Then(/^I expect "([^"]*)" tests for get url "([^"]*)"$/, async (testsNum, url) => {
@@ -508,166 +131,6 @@ When(/^I login with user:"([^"]*)" password "([^"]*)"$/, (login, password) => {
         .setValue(password);
     $('button*=Login')
         .click();
-});
-
-When(/^I expect that element "([^"]*)" contain value "([^"]*)"$/, (selector, val) => {
-    const actualValue = $(selector)
-        .getValue();
-    // console.log({ actualValue });
-    expect(actualValue)
-        .toContain(val);
-});
-
-When(/^I expect that element "([^"]*)" contain text "([^"]*)"$/, (selector, val) => {
-    const actualValue = $(selector)
-        .getText();
-    console.log({ actualValue });
-    expect(actualValue)
-        .toContain(val);
-});
-
-Then(/^page source match:$/, (source) => {
-    const parsedExpectedObj = JSON.parse(source);
-    let parseActualdObj = {};
-    if ($('pre')
-        .isExisting()) {
-        parseActualdObj = JSON.parse($('pre')
-            .getText());
-    } else {
-        parseActualdObj = JSON.parse(browser.getPageSource());
-    }
-    console.log({ parsedExpectedObj });
-    console.log({ parseActualdObj });
-    expect(parseActualdObj.user)
-        .toMatchObject(parsedExpectedObj);
-});
-
-When(/^I stop the Syngrisi server$/, () => {
-
-    try {
-        console.log(`THE SYNGRISI SERVER PID: '${browser.syngrisiServer.pid}'`);
-        if (process.platform === 'win32') {
-            killServer(browser.config.serverPort);
-            return;
-        }
-        if (browser.syngrisiServer) {
-
-            browser.syngrisiServer.kill();
-        }
-    } catch (e) {
-        console.log('WARNING: cannot stop te Syngrisi server via child, try to kill process');
-        killServer(browser.config.serverPort);
-    }
-});
-
-When(/^I accept the "([^"]*)" check$/, (checkName) => {
-    expect($(`.//div[contains(normalize-space(.), '${checkName}')]/../..`))
-        .toBeExisting();
-
-    // eslint-disable-next-line max-len
-    $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//a[contains(@class, 'accept-button')]`)
-        .click();
-    browser.pause(200);
-    $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../div[@name='check-buttons']//a[contains(@class, 'accept-option')]`)
-        .click();
-});
-
-When(/^I delete the "([^"]*)" check$/, (checkName) => {
-    expect($(`.//div[contains(normalize-space(.), '${checkName}')]/../..`))
-        .toBeExisting();
-
-    // eslint-disable-next-line max-len
-    browser.pause(1000);
-    $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//a[contains(@class, 'remove-button')]`)
-        .click();
-    browser.pause(200);
-    $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../div[@name='check-buttons']//a[contains(@class, 'remove-option')]`)
-        .click();
-});
-
-When(/^I expect the "([^"]*)" check has "([^"]*)" acceptance status$/, (checkName, acceptStatus) => {
-    const acceptStatusMap = {
-        accept: 'accepted-button-icon',
-        'previously accept': 'prev-accepted-button-icon',
-        'not accept': 'not-accepted-button-icon',
-    };
-    const icon = $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//a[contains(@class, 'accept-button')]/i`);
-
-    const classesList = icon
-        .getAttribute('class')
-        .split(' ');
-
-    expect(classesList)
-        .toContain(
-            acceptStatusMap[acceptStatus]
-        );
-
-    const wrongStatuses = Object.keys(acceptStatusMap)
-        .filter(x => x !== acceptStatus);
-    console.log({ wrongStatuses });
-
-    for (const wrongStatus of wrongStatuses) {
-        expect(classesList)
-            .not
-            .toContain(
-                acceptStatusMap[wrongStatus]
-            );
-    }
-});
-
-Then(/^I expect that last "([^"]*)" checks with ident contains "([^"]*)" has (not |)the same "([^"]*)"$/, async function (num, ident, negative, prop) {
-    const checksGroups = JSON.parse((await got('http://vrs:3001/checks')).body);
-    console.log({ checksGroups });
-    const checks = Object.values(checksGroups)
-        .map((x) => {
-            const identKey = Object.keys(x)
-                .filter(x => x.startsWith('ident'))[0];
-            console.log({ x });
-            console.log({ identKey });
-            const identParts = identKey.split('.');
-            identParts.pop();
-            const cuttedIdent = identParts.join('.');
-            x[cuttedIdent] = x[identKey];
-            return x;
-        });
-    console.log({ checks });
-    const values = checks.map((x) => x[ident].checks)
-        .flat()
-        .slice(0, num)
-        .map((x) => x[prop]);
-    expect(values.length)
-        .toBeGreaterThan(0);
-    console.log({ values });
-    if (negative) {
-        console.log('NEGATIVE');
-        expect(values.every((val, i, arr) => (val) === arr[0]))
-            .toBe(false);
-        return;
-    }
-    expect(values.every((val, i, arr) => (val) === arr[0]))
-        .toBe(true);
-});
-
-When(/^I parse the API key$/, function () {
-    const apiKey = $('#notification-textarea')
-        .getValue();
-    this.saveItem('apiKey', apiKey);
-});
-
-When(/^I set the API key in config$/, function () {
-    browser.config.apiKey = this.getSavedItem('apiKey');
-});
-
-Then(/^I expect that "([^"]*)" check has Created "([^"]*)" equal to "([^"]*)"$/, function (checkNum, field, value) {
-    const checkTitle = $(`(//canvas[contains(@class, 'snapshoot-canvas')])[${checkNum}]`)
-        .getAttribute('title');
-    console.log({ checkTitle });
-    const regex = new RegExp(`${field}: (.+?)[<]`, `gm`);
-    console.log({ regex });
-    const match = regex.exec(checkTitle);
-    console.log({ match });
-    expect(match[0])
-        .toContain(value);
 });
 
 Then(/^I expect ([\d]+) baselines$/, function (num) {
@@ -733,62 +196,6 @@ Then(/^I expect that the element "([^"]*)" to have attribute "([^"]*)" containin
         .toHaveAttrContaining(attr, value2);
 });
 
-When(/^I create via http test user$/, async function () {
-    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/loadTestUser`;
-    console.log({ uri });
-    const res = await got.get(uri);
-    console.log({ response: res.body });
-    expect(JSON.parse(res.body).username)
-        .toBe('Test');
-});
-
-When(/^I login via http with user:"([^"]*)" password "([^"]*)"$/, async function (login, password) {
-    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}`;
-    console.log({ uri });
-
-    const res = (await got.post(
-        uri + '/login?origin=%2F&noredirect=1',
-        {
-            'headers': {
-                'upgrade-insecure-requests': '1',
-                'content-type': 'application/x-www-form-urlencoded',
-            },
-            'body': `username=${login}&password=${password}`,
-        }
-    ));
-    // console.log({ Body: res.body });
-    const sessionSid = res.headers['set-cookie'][0].split(';')
-        .filter(x => x.includes('connect.sid'))[0].split('=')[1];
-    console.log({ sessionSid });
-
-    this.saveItem('users', {
-        [login]: { sessionSid }
-    });
-
-    this.saveItem('lastSessionId', sessionSid);
-});
-
-When(/^I create via http user as:"([^"]*)" with params:$/, async function (user, json) {
-    const params = JSON.parse(json);
-    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/users`;
-    const sessionSid = this.getSavedItem('users')[user]['sessionSid'];
-    console.log({ sessionSid });
-
-    const res = await requestWithLastSessionSid(`${uri}`,
-        this,
-        {
-            method: 'POST',
-            form: {
-                username: params.username,
-                firstName: params.firstName,
-                lastName: params.lastName,
-                role: params.role,
-                password: params.password,
-            }
-        });
-    console.log({ respBody: res.json });
-});
-
 async function getWithLastSessionSid(uri, $this) {
     // console.log({ uri });
     const sessionSid = $this.getSavedItem('lastSessionId');
@@ -805,213 +212,7 @@ async function getWithLastSessionSid(uri, $this) {
     };
 }
 
-async function requestWithLastSessionSid(uri, $this, opts = { method: 'GET' }, body,) {
-    const sessionSid = $this.getSavedItem('lastSessionId');
-
-    const res = await got(`${uri}`, {
-            headers: {
-                'cookie': `connect.sid=${sessionSid}`
-            },
-            form: opts.form,
-            method: opts.method,
-            body
-        },
-    );
-    let json;
-    try {
-        json = JSON.parse(res.body);
-    } catch (e) {
-        console.warn(`Warning: cannot parse body as json`);
-        json = '';
-    }
-    return {
-        raw: res,
-        json
-    };
-}
-
-When(/^I generate API key for the User$/, async function () {
-    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/apikey`;
-    const res = await requestWithLastSessionSid(uri, this);
-    console.log({ respBodyJSON: res.json });
-    const apiKey = res.json.apikey;
-    console.log({ apiKey });
-    this.saveItem('apiKey', apiKey);
-
-});
-
-Then(/^I expect via http (\d+) baselines$/, async function (num) {
-    const baselines = (await requestWithLastSessionSid(
-        `http://${browser.config.serverDomain}:${browser.config.serverPort}/baselines`,
-        this
-    )).json;
-
-    expect(baselines.length)
-        .toBe(parseInt(num, 10));
-});
-
-Then(/^I expect via http ([\d]+)st baseline with:$/, async function (num, yml) {
-    const baselines = (await requestWithLastSessionSid(
-        `http://${browser.config.serverDomain}:${browser.config.serverPort}/baselines`,
-        this
-    )).json;
-    console.log({ baselines });
-
-    const params = YAML.parse(yml);
-    const baseline = baselines[parseInt(num) - 1];
-    baseline.markedByUsername = baseline.markedByUsername || '';
-    baseline.markedAs = baseline.markedAs || '';
-    expect(baseline)
-        .toMatchObject(params);
-});
-
-When(/^I parse via http "([^"]*)" snapshot for (\d)st check with name "([^"]*)"$/, async function (type, num, name) {
-    const checkUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
-        + `checks/byfilter?name=${name}`;
-    console.log({ uri: checkUri });
-    const check = (await requestWithLastSessionSid(
-        checkUri,
-        this
-    )).json[num - 1];
-    const transformType = {
-        actual: 'baselineId',
-        baseline: 'actualSnapshotId'
-    };
-    console.log({ check });
-
-    const snapshotId = check[transformType[type]];
-    console.log({ snapshotId });
-    const snapshootUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
-        + `snapshot/${snapshotId}`;
-    console.log({ snapshootUri });
-    const snapshoot = (await requestWithLastSessionSid(
-        snapshootUri,
-        this
-    )).json;
-    console.log({ snapshoot });
-
-    this.saveItem('snapshot', snapshoot);
-});
-
-Then(/^I expect that the snapshoot filename is (not exists|exists)$/, function (condition) {
-    const snapshoot = this.getSavedItem('snapshot');
-    const filePath = path.join(path.resolve(__dirname, '../../../baselinesTest'),
-        snapshoot.filename);
-    console.log({ filePath });
-    if (condition === 'exists') {
-        expect(fs.existsSync(filePath))
-            .toBe(true);
-        return;
-    }
-    expect(fs.existsSync(filePath))
-        .toBe(false);
-});
-
-Then(/^I expect exact "([^"]*)" snapshoot files$/, async function (num) {
-    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
-        + 'screenshots';
-    console.log({ uri: uri });
-    const items = (await requestWithLastSessionSid(
-        uri,
-        this
-    )).json;
-    console.log(items);
-    expect(items.length)
-        .toBe(parseInt(num, 10));
-});
-
-Then(/^I expect via http that "([^"]*)" (test|check) exist exactly "([^"]*)" times$/, async function (name, itemName, num) {
-    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
-        + `${itemName}s/byfilter?name=${name}`;
-    console.log({ uri: uri });
-    const items = (await requestWithLastSessionSid(
-        uri,
-        this
-    )).json;
-    expect(items.length)
-        .toBe(parseInt(num, 10));
-});
-
-When(/^I remove via http (\d+)st test with name "([^"]*)"$/, async function (num, name) {
-    const testUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
-        + `tests/byfilter?name=${name}`;
-    console.log({ uri: testUri });
-    const test = (await requestWithLastSessionSid(
-        testUri,
-        this
-    )).json[num - 1];
-    console.log({ test });
-    const id = test._id;
-
-    const removeTestUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
-        + `tests/${id}`;
-    console.log({ uri: removeTestUri });
-    const result = (await requestWithLastSessionSid(
-        removeTestUri,
-        this,
-        {
-            method: 'DELETE',
-            form: { id: id }
-        }
-    )).json;
-    console.log({ result });
-});
-
-When(/^I remove via http (\d+)st check with name "([^"]*)"$/, async function (num, name) {
-    const testUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
-        + `checks/byfilter?name=${name}`;
-    console.log({ uri: testUri });
-    const check = (await requestWithLastSessionSid(
-        testUri,
-        this
-    )).json[num - 1];
-    console.log({ check });
-    const id = check._id;
-
-    const removeCheckUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
-        + `checks/${id}`;
-    console.log({ uri: removeCheckUri });
-    const result = (await requestWithLastSessionSid(
-        removeCheckUri,
-        this,
-        {
-            method: 'DELETE',
-            form: { id: id }
-        }
-    )).json;
-    console.log({ result });
-});
-
-When(/^I accept via http the (\d+)st check with name "([^"]*)"$/, async function (num, name) {
-
-    const checkUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
-        + `checks/byfilter?name=${name}`;
-    console.log({ uri: checkUri });
-    const check = (await requestWithLastSessionSid(
-        checkUri,
-        this
-    )).json[num - 1];
-    console.log({ check });
-    const checkId = check._id;
-    const checkAcceptUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
-        + `checks/${checkId}`;
-
-    const result = (await requestWithLastSessionSid(
-        checkAcceptUri,
-        this,
-        {
-            method: 'PUT',
-            form: {
-                id: checkId,
-                baselineId: check.baselineId,
-                status: 'new',
-                accept: 'true',
-            }
-        }
-    )).json;
-    console.log({ result });
-});
-
+// COMMON
 When(/^I go to "([^"]*)" page$/, function (str) {
     if (str === 'main') {
         browser.url(`http://${browser.config.serverDomain}:${browser.config.serverPort}/`);
@@ -1020,41 +221,12 @@ When(/^I go to "([^"]*)" page$/, function (str) {
     const pages = {
         admin: {
             users: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin?task=users`
-        }
+        },
     };
 
     const page = str.split('>')[0];
     const subPage = str.split('>')[1];
     browser.url(pages[page][subPage]);
-});
-
-When(/^I update via http test with params:$/, async function (str) {
-    const params = YAML.parse(this.fillItemsPlaceHolders(fillCommonPlaceholders(str)));
-    const testId = this.STATE.check.test;
-
-    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
-        + `tests/${testId}`;
-    const result = (await requestWithLastSessionSid(
-        uri,
-        this,
-        {
-            method: 'PUT',
-            form: params
-        },
-    )).json;
-    console.log({ result });
-});
-
-When(/^I remove via http tests that older than "([^"]*)" days$/, async function (days) {
-    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}`
-        + `/task_remove_old_tests?days=${days}`;
-    const result = (await requestWithLastSessionSid(
-        uri,
-        this,
-    ));
-    console.log({ STATUS: result.raw.statusCode });
-    expect(result.raw.statusCode)
-        .toBe(200);
 });
 
 When(/^I click on the element "([^"]*)" via js$/, function (selector) {
@@ -1070,9 +242,127 @@ Then(/^I expect HTML does not contains:$/, function (text) {
         .toContain(text);
 });
 
-Then(/^I expect that the "([^"]*)" saved value equal the "([^"]*)" saved value$/, function (first, second) {
-    const firstItem = this.getSavedItem(first);
-    const secondItem = this.getSavedItem(second);
-    expect(firstItem.toString())
-        .toBe(secondItem.toString());
+When(/^I wait and refresh page on element "([^"]*)" for "([^"]*)" seconds to( not)* (exist)$/, { timeout: 600000 },
+    waitForAndRefresh);
+
+When(/^I START DEBUGGER$/, { timeout: 6000000 }, () => {
+    browser.debug();
+});
+
+When(/^I refresh page$/, () => {
+    browser.refresh();
+});
+
+When(/^I wait for "([^"]*)" seconds$/, { timeout: 600000 }, (sec) => {
+    browser.pause(sec * 1000);
+});
+
+When(/^I execute javascript code:$/, function (js) {
+    const result = browser.execute(js);
+    console.log({ result });
+    this.saveItem('js', result);
+});
+
+When(/^I execute javascript code and save as "([^"]*)":$/, function (itemName, js) {
+    const result = browser.execute(js);
+    console.log({ result });
+    this.saveItem(itemName, result);
+});
+
+Given(/^I set window size: "(1366x768|712x970|880x768|1050x768|1300x768|1300x400|1700x768|500x500)"$/, (viewport) => {
+    const size = viewport.split('x');
+    browser.setWindowSize(parseInt(size[0]), parseInt(size[1]));
+});
+
+Given(/^I generate a random image "([^"]*)"$/, async (filePath) => {
+    await saveRandomImage(filePath);
+});
+
+When(/^I set env variables:$/, (yml) => {
+    const params = YAML.parse(yml);
+    for (const key in params) {
+        process.env[key] = params[key];
+    }
+});
+
+Then(/^the "([^"]*)" "([^"]*)" should be "([^"]*)"$/, function (itemType, property, exceptedValue) {
+    expect(this.STATE[itemType][property].toString())
+        .toEqual(exceptedValue);
+});
+
+When(/^I expect that element "([^"]*)" to (contain|have) text "([^"]*)"$/, (selector, matchCase, text) => {
+    const filledText = text;
+    if (matchCase === 'contains') {
+        expect($(selector))
+            .toHaveTextContaining(filledText);
+    } else {
+        expect($(selector))
+            .toHaveText(filledText);
+    }
+});
+
+Then(/^the current url contains "([^"]*)"$/, (url) => {
+    const windowHandles = browser.getWindowHandles();
+    const lastWindowHanle = windowHandles[windowHandles.length - 1];
+    browser.switchToWindow(lastWindowHanle);
+    expect(browser)
+        .toHaveUrl(url, { containing: true });
+});
+
+Given(/^I set custom window size: "([^"]*)"$/, (viewport) => {
+    const size = viewport.split('x');
+    browser.setWindowSize(parseInt(size[0]), parseInt(size[1]));
+});
+
+Then(/^I expect that element "([^"]*)" is clickable$/, (selector) => {
+    expect($(selector))
+        .toBeClickable();
+});
+
+When(/^I expect that element "([^"]*)" contain value "([^"]*)"$/, (selector, val) => {
+    const actualValue = $(selector)
+        .getValue();
+    // console.log({ actualValue });
+    expect(actualValue)
+        .toContain(val);
+});
+
+When(/^I expect that element "([^"]*)" contain text "([^"]*)"$/, (selector, val) => {
+    const actualValue = $(selector)
+        .getText();
+    console.log({ actualValue });
+    expect(actualValue)
+        .toContain(val);
+});
+
+Then(/^page source match:$/, (source) => {
+    const parsedExpectedObj = JSON.parse(source);
+    let parseActualdObj = {};
+    if ($('pre')
+        .isExisting()) {
+        parseActualdObj = JSON.parse($('pre')
+            .getText());
+    } else {
+        parseActualdObj = JSON.parse(browser.getPageSource());
+    }
+    console.log({ parsedExpectedObj });
+    console.log({ parseActualdObj });
+    expect(parseActualdObj.user)
+        .toMatchObject(parsedExpectedObj);
+});
+
+
+// Then(/^I expect get to url "([^"]*)" answer JSON object to match:$/, async (url, params) => {
+//     const jsonBodyObject = JSON.parse((await got(url)).body);
+//     // const jsonBodyObject = JSON.parse(browser.getPageSource());
+//     const expectedObject = JSON.parse(params);
+//     expect(jsonBodyObject)
+//         .toMatchObject(expectedObject);
+// });
+
+Then(/^I expect "([^"]*)" occurrences of (Visible|Clickable|Enabled|Existig|Selected) "([^"]*)"$/, (num, verb, selector) => {
+    const actualNum = $$(selector)
+        .filter((el) => el[`is${verb}`]()).length;
+    expect(actualNum)
+        .toEqual(parseInt(num));
 });
