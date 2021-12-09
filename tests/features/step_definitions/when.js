@@ -1,3 +1,4 @@
+/* eslint-disable prefer-arrow-callback,func-names */
 import clearInputField from '../../src/support/action/clearInputField';
 import clickElement from '../../src/support/action/clickElement';
 import closeLastOpenedWindow from '../../src/support/action/closeLastOpenedWindow';

@@ -34,7 +34,7 @@ Feature: Remove tests
         }
         """
         When I login via http with user:"i_ivanov@gmail.com" password "Password-123"
-        When I generate API key for the User
+        When I generate via http API key for the User
         When I set the API key in config
 
     @e2e

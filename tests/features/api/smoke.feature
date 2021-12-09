@@ -31,7 +31,7 @@ Feature: Smoke VRS API
         """
 
     Scenario: Check Phase 1
-        When I create new VRS Test with:
+        When I create via http new VRS Test with:
           """
             url: http://vrs:3001/tests
             params:
@@ -42,7 +42,7 @@ Feature: Smoke VRS API
               os: MacOs
           """
         Given I generate a random image "./files/randomImg.png"
-        Given I create new VRS Check with:
+        Given I create via http new VRS Check with:
           """
             url: http://vrs:3001/checks
             hashFilePath: ./files/randomImg.png
@@ -65,7 +65,7 @@ Feature: Smoke VRS API
 
     Scenario: Check Phase 1-2
 
-        When I create new VRS Test with:
+        When I create via http new VRS Test with:
           """
             url: http://vrs:3001/tests
             params:
@@ -76,7 +76,7 @@ Feature: Smoke VRS API
               os: MacOs
           """
         Given I generate a random image "./files/randomImg.png"
-        Given I create new VRS Check with:
+        Given I create via http new VRS Check with:
           """
             url: http://vrs:3001/checks
             hashFilePath: ./files/randomImg.png
@@ -89,7 +89,7 @@ Feature: Smoke VRS API
               suitename: VRS API - Check
               appname: Test Api App
           """
-        Given I create new VRS Check with:
+        Given I create via http new VRS Check with:
           """
             url: http://vrs:3001/checks
             hashFilePath: ./files/randomImg.png
@@ -116,7 +116,7 @@ Feature: Smoke VRS API
 
     Scenario: Check Phase 1-2 - already exist with different test name
     # this section is needed to create snapshoot with test with other name
-        When I create new VRS Test with:
+        When I create via http new VRS Test with:
           """
             url: http://vrs:3001/tests
             params:
@@ -127,7 +127,7 @@ Feature: Smoke VRS API
               os: MacOs
           """
         Given I generate a random image "./files/randomImg.png"
-        Given I create new VRS Check with:
+        Given I create via http new VRS Check with:
           """
             url: http://vrs:3001/checks
             hashFilePath: ./files/randomImg.png
@@ -151,7 +151,7 @@ Feature: Smoke VRS API
             message: cannot found an image with this hashcode, please add image file data and resend request
         """
 
-        Given I create new VRS Check with:
+        Given I create via http new VRS Check with:
           """
             url: http://vrs:3001/checks
             hashFilePath: ./files/randomImg.png
@@ -180,7 +180,7 @@ Feature: Smoke VRS API
 
         # Main section
 
-        When I create new VRS Test with:
+        When I create via http new VRS Test with:
           """
             url: http://vrs:3001/tests
             params:
@@ -191,7 +191,7 @@ Feature: Smoke VRS API
               os: MacOs
           """
 
-        When I create new VRS Check with:
+        When I create via http new VRS Check with:
           """
             url: http://vrs:3001/checks
             hashFilePath: ./files/randomImg.png
