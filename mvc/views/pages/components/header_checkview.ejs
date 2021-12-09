@@ -37,9 +37,11 @@
             <!--LINKS TO SUITE / CHECK-->
             <a class="unlink" name="suite-link"
                href="/?filter_suitename_eq=<%= suite.name %>"><%= suite.name %></a>
-            <span>/</span>
+            <span>&nbsp;/&nbsp;</span>
             <a class="unlink" name="check-link"
                href='/?filter_suitename_eq=<%= suite.name %>&unfoldTestId=<%= test.id %>'><%= test.name %></a>
+            <span>&nbsp;/&nbsp;</span>
+            <span><a href="" class="unlink"><%= check.name %></a></span>
         </div>
     </div>
 </div>
