@@ -50,8 +50,6 @@ app.use(fileUpload({
 // mongoose instance connection url connection
 mongoose.Promise = global.Promise;
 mongoose.connect(config.connectionString, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
 });
 
 const viewPath = path.join(__dirname, 'mvc/views');

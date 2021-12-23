@@ -61,7 +61,7 @@ exports.config = {
                 port: 7777,
             }]],
     framework: 'cucumber',
-    reporters: ['dot', 'spec'],
+    reporters: ['spec'],
     cucumberOpts: {
         scenarioLevelReporter: true,
         retry: process.env.RETRY || 0,
