@@ -1,4 +1,4 @@
-@integration
+@integration @smoke
 Feature: VRS Server running
   Scenario: VRS web server start/stop
     Given I kill process which used port: "3001"
