@@ -1,7 +1,7 @@
 /* eslint-disable prefer-arrow-callback,no-console */
 const { When } = require('cucumber');
 const got = require('got');
-const { requestWithLastSessionSid } = require('../lib/utils');
+const { requestWithLastSessionSid } = require('../../src/utills/common');
 
 When(/^I create via http test user$/, async function () {
     const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/loadTestUser`;

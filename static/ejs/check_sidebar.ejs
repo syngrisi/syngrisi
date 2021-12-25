@@ -5,7 +5,6 @@
         <%
             const baselineResponse = await fetch(`/snapshot/${ch.baselineId}/`);
             const baseline = JSON.parse(await baselineResponse.text());
-            console.log({ check });
         %>
         <% const imageSrc = `snapshoots/${baseline.filename ||  baseline._id + '.png'}`; %>
         <div class="p-1 pt-3 <%= check._id === ch._id ? 'bg-secondary' : '' ;%> d-flex">

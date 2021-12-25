@@ -1,43 +1,36 @@
-<!--COLLAPSE-->
-<div class="col-auto  btn-check border-right border-secondary pl-1 pr-1"
-     id="diff-toolbar-collapse"
-     style="margin-top: 2px;"
->
-    <a type="button"
-       class="btn vcenter-item pl-0 pr-0 pt-0 pb-1 mb-0  rounded-0 dropdown-toggle-split "
-       title="toggle toolbar"
-       onclick="toggleSnapshotToolbarCollapse()"
-    >
-        <i class="bi bi-chevron-compact-right" id="snapshot-collapse-icon"></i>
-    </a>
-</div>
-<div class="col-auto" id="snapshot-toolbar-buttons">
-    <div class="row">
+<div class="col-auto text-light">
+    <div class="row align-items-center justify-content-end vcenter" style="font-size: 1.2rem">
         <!--ZOOM IN-->
-        <div class="col-auto btn-check pl-1 pr-1" onclick="mainView.zoom(15)">
+        <div class="col-auto btn-check pl-1 pr-1 vcenter-item1"
+             onclick="mainView.zoom(15)"
+             style="margin-top: 2px;"
+        >
             <a name="zoom in" type="button"
-               class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-1 border-0 rounded"
+               class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-0 border-0 rounded"
                title="zoom in (+ or use Ctrl + mouse wheel)"
             >
                 <i class="bi bi-zoom-in"></i>
             </a>
         </div>
         <!--ZOOM OUT-->
-        <div class="col-auto btn-check pl-1 pr-1">
+        <div class="col-auto btn-check pl-1 pr-1"
+             style="margin-top: 2px;"
+        >
             <a name="zoom-out" type="button"
                title="zoom out (- or use Ctrl + mouse wheel)"
-               class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-1 border-0 rounded"
+               class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-0 border-0 rounded"
                onclick="mainView.zoom(-15)">
                 <i class="bi bi-zoom-out"></i>
             </a>
         </div>
 
         <!--TOGGLE GRAB MODE-->
-        <div class="col-auto btn-check pl-1 pr-1 pt-0" id="grab-wrapper"
+        <div class="col-auto d-lg-none d-md-none d-xl-inline-block btn-check pl-1 pr-1 pt-0" id="grab-wrapper"
+             style="margin-top: -2px;"
              onclick="toggleButtonAsPressed('grab-wrapper'); mainView.currentMode.toggle('pan')">
             <a id="grab" type="button"
                title="grab the viewport (G)"
-               class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-1 border-0 rounded"
+               class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-0 border-0 rounded"
             >
                 <i class="far fa-hand-rock"></i>
             </a>
@@ -45,15 +38,15 @@
 
         <!--TOGGLE DIFF-->
         <% if (actualSnapshot && diffSnapshot) { %>
-            <div class="col-auto btn-check pl-1 pr-1 pt-0 border-left border-secondary" id="diff-wrapper"
+            <div class="col-auto btn-check pl-1 pr-1 pt-0 border-left border-header" id="diff-wrapper"
                  onclick="mainView.toggleDiff({filename: '<%= diffSnapshot.filename; %>', id: '<%= diffSnapshot.id; %>', name: '<%= diffSnapshot.name; %>',createdDate: '<%= diffSnapshot.formattedCreatedDate; %>' })"
             >
+
                 <a id="toggle-diff" type="button"
                    title="toggle diff (D)"
                    class="vcenter-item pl-0 pr-0 pt-0 pb-0 border-0"
                    style="margin-top: -2px;"
                 >
-
                     <i class="bi bi-arrow-left-right"></i>
                 </a>
             </div>
@@ -61,7 +54,7 @@
 
         <!--ACTUAL VIEW-->
         <% if (actualSnapshot) { %>
-            <div class="col-auto btn-check pl-1 pr-1 pt-0 border-secondary" id="actual-wrapper"
+            <div class="col-auto btn-check pl-1 pr-1 pt-0 border-header" id="actual-wrapper"
                  onclick="mainView.toggleActual(<%= JSON.stringify(actualSnapshot) %>);">
                 <a id="toggle-actual-baseline" type="button"
                    title="switch to actual snapshot (current is baseline)"
@@ -74,7 +67,7 @@
         <% } %>
         <!--SIDE TO SIDE VIEW-->
         <% if (actualSnapshot) { %>
-            <div class="col-auto btn-check pl-1 pr-1 pt-0 border-right border-secondary" id="side-wrapper"
+            <div class="col-auto btn-check pl-1 pr-1 pt-0 border-right border-header" id="side-wrapper"
                  onclick="mainView.toggleSideToSideView();"
             >
                 <a id="toggle-side" type="button"
@@ -98,7 +91,7 @@
             </a>
         </div>
         <!--ADD BOUND REGIONS-->
-        <!--        <div class="col-auto btn-check pl-1 pr-1 border-secondary"-->
+        <!--        <div class="col-auto btn-check pl-1 pr-1 border-header"-->
         <!--             style="padding-top: 1px"-->
         <!--        >-->
         <!--            <a id="bound-regions" type="button"-->
@@ -109,22 +102,21 @@
         <!--                <i class="bi bi-fullscreen"></i>-->
         <!--            </a>-->
         <!--        </div>-->
+
         <!--DELETE-->
-        <div class="col-auto btn-check pl-1 pr-1 border-left border-secondary"
-             style="padding-top: 1px"
+        <div class="col-auto btn-check pl-1 pr-1 border-left border-header"
              onclick="mainView.removeActiveIgnoreRegions()">
             <a id="delete-rect" type="button"
-               class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-1 border-0 rounded"
+               class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-0 border-0 rounded"
                title="delete active region (Delete or Backspace)"
-
             >
                 <i class="bi bi-trash"></i>
             </a>
         </div>
         <!--ACCEPT-->
-        <div class="col-auto btn-check pl-0 pr-1 border-left1 border-secondary"
+        <div class="col-auto btn-check pl-1 pr-1 border-left1 border-header"
              style="margin-top: -1px"
-             onclick="setTimeout(()=>{acceptAndRedirect2({
+             onclick="setTimeout(()=>{ acceptAndRedirect2({
                      checkId: '<%= check.id %>',
                      actualId:  '<%= actualSnapshot.id %>',
                      expectedId:  '<%= baselineSnapshot.id %>',
@@ -135,57 +127,47 @@
                class="vcenter-item pl-1 pr-1"
                style="margin-top: -1px"
                title="accept the actual snapshot as the baseline"
-
             >
                 <% const isPrev = check.actualSnapshotId.toString() !== check.baselineId.toString() %>
-                <% console.log(check.actualSnapshotId) %>
-                <% console.log(check.baselineId) %>
-                <% console.log({ isPrev }) %>
                 <% if ((check.markedAs === 'accepted') && isPrev) { %>
-                    <i class="bi bi-hand-thumbs-up" style="color: #06ba0e"></i>
+                    <i class="bi bi-hand-thumbs-up" style="color: #0bf316;"></i>
                 <% } else if((check.markedAs === 'accepted') && !isPrev){ %>
-                    <i class="bi bi-hand-thumbs-up-fill" style="color: #06ba0e"></i>
+                    <i class="bi bi-hand-thumbs-up-fill" style="color: #0bf316;"></i>
                 <% } else { %>
                     <i class="bi bi-hand-thumbs-up"></i>
                 <% } %>
-
             </a>
         </div>
 
         <!--SAVE-->
-        <div class="col-auto btn-check pl-1 pr-1 pr-1 border-left border-secondary"
+        <div class="col-auto btn-check pl-1 pr-1 pr-1 border-left border-header"
              onclick="mainView.sendIgnoreRegions('<%= baselineSnapshot.id; %>' ,mainView.getRectData())">
             <a id="save-baseline" type="button"
-               class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-1 border-0 rounded"
-               style="margin-top: 2px"
-
+               class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-0 border-0 rounded"
                title="save the baseline (S)"
-
             >
                 <i class="bi bi-check2"></i>
             </a>
         </div>
 
-        <!--SAVE-->
-        <div class="col-auto btn-check pl-1 pr-1 pr-1 border-left border-secondary">
+        <!--INFO-->
+        <div class="col-auto btn-check pl-1 pr-1 pr-1 border-left border-right border-header">
             <a id="check-info" type="button"
-               class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-1 border-0 rounded"
+               class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-0 border-0 rounded"
                title="go to check info"
-               style="margin-top: 2px"
                href="#info-wrapper"
             >
                 <i class="bi bi-info-circle"></i>
             </a>
         </div>
 
-
         <!--IGNORE MENU-->
         <div name="ignore-menu"
-             class="col-auto col-flex border-left border-right border-secondary  pl-0 pr-0 align-self-end"
+             class="col-auto d-lg-none d-md-none d-xl-inline-block col-flex pl-0 pr-0 align-self-end"
              title="apply to the baseline one of ignore strategy"
         >
             <div class="dropdown">
-                <button class="btn mb-1 text-dark dropdown-toggle btn-sm" type="button"
+                <button class="btn dropdown-toggle btn-sm text-light" type="button"
                         id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                         style="box-shadow: none; opacity: 1 !important;"
                 >
@@ -206,29 +188,22 @@
         <div class="col-auto btn-check pl-1 pr-1">
             <a type="button"
                id="navigation"
-               class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-1 border-0 rounded dropdown-toggle-split"
-               title="open other views" data-toggle="dropdown" aria-haspopup="true"
+               class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-0 border-0 rounded dropdown-toggle-split"
+               title="open other related views" data-toggle="dropdown" aria-haspopup="true"
                aria-expanded="true">
-                <i class="bi bi-grid-3x3-gap"></i>
+                <i class="bi bi-stack"></i>
             </a>
             <div class="dropdown-menu mr-0 dropdown-menu-right" aria-labelledby="navigation"
                  style="z-index: 10000">
 
                 <!--DROPDOWN ITEMS-->
+                <!--GROUP VIEW-->
                 <a name="group view" type="button"
                    class="btn btn-check vcenter-item pl-3 pr-1 pt-0 pb-0 mb-0 border-0 rounded-0"
                    onclick="window.location.href = '/checksgroupview?id=<%= check.id %>'"
                    title="Group view (checks with same idents in the same session)">
-                    <img src="../../../../static/icons/group-view.svg" alt="group view"
-                         class="pt-1 pr-1">
+                    <i class="bi bi-layout-three-columns"></i>
                     <span style="display: inline-block; margin-left: 3px">Group View</span>
-                </a>
-                <a id="check-info" type="button"
-                   class="btn btn-check vcenter-item pl-3 pr-1 mt-2 pb-0 mb-0 border-0 rounded-0"
-                   href="/check/<%= check.id %>"
-                >
-                    <i class="bi bi-info-circle"></i>
-                    <span class="pl-2">Raw check info</span>
                 </a>
 
                 <div class="dropdown-divider"></div>

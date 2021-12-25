@@ -14209,11 +14209,11 @@ mark {
 }
 
 .pressed-toolbar-button {
-  background-color: #808080 !important;
+  background-color: #72B187 !important;
 }
 
 .pressed-toolbar-button:hover {
-  background-color: #808080 !important;
+  background-color: #72B187 !important;
 }
 
 .check-sidebar {
@@ -14271,6 +14271,10 @@ mark {
   border-right-color: #6c757d !important;
   border-bottom-color: white !important;
   border-left-color: #6c757d !important;
+}
+
+.border-header {
+  border-color: #518162 !important;
 }
 
 /*# sourceMappingURL=common.css.map */

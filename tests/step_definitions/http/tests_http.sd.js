@@ -4,8 +4,8 @@ const YAML = require('yaml');
 const frisby = require('frisby');
 const fs = require('fs');
 const hasha = require('hasha');
-const { fillCommonPlaceholders } = require('../../../src/utills/common');
-const { requestWithLastSessionSid } = require('../lib/utils');
+const { fillCommonPlaceholders } = require('../../src/utills/common');
+const { requestWithLastSessionSid } = require('../../src/utills/common');
 
 When(/^I update via http test with params:$/, async function (str) {
     const params = YAML.parse(this.fillItemsPlaceHolders(fillCommonPlaceholders(str)));

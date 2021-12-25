@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 const { When } = require('cucumber');
 const { execSync } = require('child_process');
-const { killServer } = require('../../src/utills/common');
-const { startServer } = require('./lib/utils');
+const { killServer } = require('../src/utills/common');
+const { startServer } = require('../src/utills/common');
 
 When(/^I stop the Syngrisi server$/, () => {
     try {

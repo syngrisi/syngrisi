@@ -88,6 +88,7 @@ Feature: Acceptance by User
         When I click on the element "a.accept-option"
 
 #        Then I expect that "1" check has Created "Accepted by" equal to "i_ivanov@gmail.com"
+        When I wait for "2" seconds
         Then I expect that VRS test "Accept by User - 1" has "Accepted" accepted status
 
         When I refresh page

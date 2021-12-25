@@ -2,11 +2,11 @@
 const { Then } = require('cucumber');
 const path = require('path');
 const fs = require('fs');
-const { requestWithLastSessionSid } = require('./lib/utils');
+const { requestWithLastSessionSid } = require('../src/utills/common');
 
 Then(/^I expect that the snapshoot filename is (not exists|exists)$/, function (condition) {
     const snapshot = this.getSavedItem('snapshot');
-    const filePath = path.join(path.resolve(__dirname, '../../../baselinesTest'),
+    const filePath = path.join(path.resolve(__dirname, '../../baselinesTest'),
         snapshot.filename);
     console.log({ filePath });
     if (condition === 'exists') {

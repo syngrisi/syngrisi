@@ -16,20 +16,20 @@ const {
 } = require('cucumber');
 const { getDomDump } = require('@syngrisi/syngrisi-wdio-sdk');
 const SyngrisiDriver = require('@syngrisi/syngrisi-wdio-sdk').SyngrisiDriver;
-const checkVRS = require('../../src/support/check/checkVrs').default;
-const waitForAndRefresh = require('../../src/support/action/waitForAndRefresh').default;
+const checkVRS = require('../src/support/check/checkVrs').default;
+const waitForAndRefresh = require('../src/support/action/waitForAndRefresh').default;
 const {
     startSession,
     killServer,
-} = require('../../src/utills/common');
+} = require('../src/utills/common');
 
 const {
     saveRandomImage,
     fillCommonPlaceholders,
-} = require('../../src/utills/common');
-const { TableVRSComp } = require('../../src/PO/vrs/tableVRS.comp');
+} = require('../src/utills/common');
+const { TableVRSComp } = require('../src/PO/vrs/tableVRS.comp');
 
-const { requestWithLastSessionSid } = require('./lib/utils');
+const { requestWithLastSessionSid } = require('../src/utills/common');
 
 function startDriver(params) {
     const drvOpts = YAML.parse(params) || {};
@@ -38,7 +38,6 @@ function startDriver(params) {
     });
 }
 
-// DEPRECATED?????????
 Given(/^I setup VRS driver with parameters:$/, async (params) => {
     startDriver(params);
 });
@@ -350,7 +349,6 @@ Then(/^page source match:$/, (source) => {
     expect(parseActualdObj.user)
         .toMatchObject(parsedExpectedObj);
 });
-
 
 // Then(/^I expect get to url "([^"]*)" answer JSON object to match:$/, async (url, params) => {
 //     const jsonBodyObject = JSON.parse((await got(url)).body);
