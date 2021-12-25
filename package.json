@@ -55,7 +55,7 @@
     "mongodb": "^3.4.1",
     "mongoose": "^6.1.3",
     "node-libpng": "^0.2.16",
-    "nodejs-resemble": "^0.4.1",
+    "nodejs-resemble": "^0.3.0",
     "nodemon": "^2.0.15",
     "p-queue": "^6.4.0",
     "passport": "^0.4.1",
