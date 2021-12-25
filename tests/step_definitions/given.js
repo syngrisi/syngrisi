@@ -1,25 +1,25 @@
 import { Given } from 'cucumber';
 
-import checkContainsAnyText from '../../src/support/check/checkContainsAnyText';
-import checkIsEmpty from '../../src/support/check/checkIsEmpty';
-import checkContainsText from '../../src/support/check/checkContainsText';
-import checkCookieContent from '../../src/support/check/checkCookieContent';
-import checkCookieExists from '../../src/support/check/checkCookieExists';
-import checkDimension from '../../src/support/check/checkDimension';
-import checkElementExists from '../../src/support/check/checkElementExists';
-import checkEqualsText from '../../src/support/check/checkEqualsText';
-import checkModal from '../../src/support/check/checkModal';
-import checkOffset from '../../src/support/check/checkOffset';
-import checkProperty from '../../src/support/check/checkProperty';
-import checkSelected from '../../src/support/check/checkSelected';
-import checkTitle from '../../src/support/check/checkTitle';
-import checkUrl from '../../src/support/check/checkURL';
-import closeAllButFirstTab from '../../src/support/action/closeAllButFirstTab';
-import compareText from '../../src/support/check/compareText';
-import isEnabled from '../../src/support/check/isEnabled';
-import isDisplayed from '../../src/support/check/isDisplayed';
-import openWebsite from '../../src/support/action/openWebsite';
-import setWindowSize from '../../src/support/action/setWindowSize';
+import checkContainsAnyText from '../src/support/check/checkContainsAnyText';
+import checkIsEmpty from '../src/support/check/checkIsEmpty';
+import checkContainsText from '../src/support/check/checkContainsText';
+import checkCookieContent from '../src/support/check/checkCookieContent';
+import checkCookieExists from '../src/support/check/checkCookieExists';
+import checkDimension from '../src/support/check/checkDimension';
+import checkElementExists from '../src/support/check/checkElementExists';
+import checkEqualsText from '../src/support/check/checkEqualsText';
+import checkModal from '../src/support/check/checkModal';
+import checkOffset from '../src/support/check/checkOffset';
+import checkProperty from '../src/support/check/checkProperty';
+import checkSelected from '../src/support/check/checkSelected';
+import checkTitle from '../src/support/check/checkTitle';
+import checkUrl from '../src/support/check/checkURL';
+import closeAllButFirstTab from '../src/support/action/closeAllButFirstTab';
+import compareText from '../src/support/check/compareText';
+import isEnabled from '../src/support/check/isEnabled';
+import isDisplayed from '../src/support/check/isDisplayed';
+import openWebsite from '../src/support/action/openWebsite';
+import setWindowSize from '../src/support/action/setWindowSize';
 
 Given(
     /^I open the (url|site) "([^"]*)?"$/,

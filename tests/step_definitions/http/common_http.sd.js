@@ -1,7 +1,7 @@
 /* eslint-disable object-shorthand,no-console,func-names */
 const { Then, When } = require('cucumber');
 const YAML = require('yaml');
-const { requestWithLastSessionSid } = require('../lib/utils');
+const { requestWithLastSessionSid } = require('../../src/utills/common');
 
 Then(/^I expect via http that "([^"]*)" (test|check) exist exactly "([^"]*)" times$/, async function (name, itemName, num) {
     const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`

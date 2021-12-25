@@ -1,12 +1,14 @@
-// const moment = require('moment');
 const ImageJS = require('imagejs');
 const YAML = require('yaml');
 const faker = require('faker');
 const moment = require('moment');
+/* eslint-disable no-console */
 const {
     format,
     subDays,
 } = require('date-fns');
+const got = require('got');
+const { spawn } = require('child_process');
 
 const saveRandomImage = async function saveRandomImage(fullPath) {
     function getRandomInt(max) {
@@ -34,12 +36,14 @@ const killServer = function (port) {
     browser.waitUntil(() => {
         console.log(`Try to kill apps on port: '${port}'`);
         try {
-            const output = execSync(`npx kill-port ${port}`).toString();
+            const output = execSync(`npx kill-port ${port}`)
+                .toString();
             console.log({ output });
             return true;
         } catch (e) {
             console.log({ error: e.stdout.toString() });
         }
+        return false;
     }, {
         timeout: 40000,
     });
@@ -67,11 +71,11 @@ const startSession = async function (sessOpts) {
     }, browser.config.apiKey);
 };
 
-const checkWithFile = async function () {
-    browser.pause(300);
-    const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${filePath}`);
-    const checkResult = await checkVRS(checkName, imageBuffer);
-};
+// const checkWithFile = async function () {
+//     browser.pause(300);
+//     const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${filePath}`);
+//     const checkResult = await checkVRS(checkName, imageBuffer);
+// };
 
 const fillCommonPlaceholders = function fillPlaceholders(str) {
     require('./extendString');
@@ -89,9 +93,76 @@ const fillCommonPlaceholders = function fillPlaceholders(str) {
     );
 };
 
+const requestWithLastSessionSid = async function requestWithLastSessionSid(uri, $this, opts = { method: 'GET' }, body,) {
+    const sessionSid = $this.getSavedItem('lastSessionId');
+
+    const res = await got(
+        `${uri}`,
+        {
+            headers: {
+                cookie: `connect.sid=${sessionSid}`,
+            },
+            form: opts.form,
+            method: opts.method,
+            body,
+        },
+    );
+    let json;
+    try {
+        json = JSON.parse(res.body);
+    } catch (e) {
+        console.warn('Warning: cannot parse body as json');
+        json = '';
+    }
+    return {
+        raw: res,
+        json,
+    };
+};
+
+const startServer = (params) => {
+    const srvOpts = YAML.parse(params) || {};
+
+    const databaseName = srvOpts.databaseName || 'VRSdbTest';
+    const cmdPath = '../';
+    const env = Object.create(process.env);
+    env.VRS_PORT = srvOpts.port || browser.config.serverPort;
+    env.VRS_BASELINE_PATH = srvOpts.baseLineFolder || './baselinesTest/';
+    env.VRS_CONN_STRING = `mongodb://localhost/${databaseName}`;
+    const child = spawn('node',
+        ['server.js'], {
+            env,
+            shell: process.platform === 'win32',
+            cwd: cmdPath,
+        });
+
+    child.stdout.setEncoding('utf8');
+    child.stdout.on('data', (data) => {
+        console.log(`#: ${data}`);
+    });
+
+    child.stderr.setEncoding('utf8');
+    child.stderr.on('data', (data) => {
+        console.log(`stderr: ${data}`);
+    });
+
+    browser.pause(2500);
+    browser.waitUntil(async () => {
+        const res = (await got.get(`http://${browser.config.serverDomain}:`
+            + `${srvOpts.port || browser.config.serverPort}/status`, { throwHttpErrors: false })
+            .json());
+        console.log({ isAlive: res.alive });
+        return (res.alive === true);
+    });
+    console.log(`SERVER IS STARTED, PID: '${child.pid}'`);
+    browser.syngrisiServer = child;
+};
+
 module.exports = {
     saveRandomImage,
     startSession,
     fillCommonPlaceholders,
     killServer,
+    requestWithLastSessionSid,
+    startServer,
 };

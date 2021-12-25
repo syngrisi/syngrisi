@@ -59,7 +59,7 @@
                         <img src="/snapshoots/<%= check.baseline.filename || check.baseline._id + '.png'; %>"
                              alt="baseline snapshoot"
                              title="baseline snapshoot"
-                             class="snapshoot-image">
+                             class="snapshoot-image w-100">
                     </a>
                 </div>
                 <div class="col-3">
@@ -69,7 +69,7 @@
                             <img src="/snapshoots/<%= check.actual.filename || check.actual._id + '.png'; %>"
                                  alt="actual snapshoot"
                                  title="actual snapshoot"
-                                 class="snapshoot-image">
+                                 class="snapshoot-image w-100">
                         </a>
                     <% } %>
                 </div>
@@ -79,12 +79,12 @@
                             <img src="/snapshoots/<%= check.diff.filename || check.diff._id + '.png'; %>"
                                  alt="diff snapshoot"
                                  title="diff snapshoot"
-                                 class="snapshoot-image">
+                                 class="snapshoot-image w-100">
                         </a>
                     <% } %>
                 </div>
             </div>
-            <div class="row">
+            <div class="row w-100">
                 <div id="baseline-label"
                      class="col-3 text-center"
                      data-filename="<%= check.baseline.filename %>"

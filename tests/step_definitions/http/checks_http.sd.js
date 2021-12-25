@@ -1,8 +1,8 @@
 /* eslint-disable */
 const { When } = require('cucumber');
-const { requestWithLastSessionSid } = require('../lib/utils');
+const { requestWithLastSessionSid } =  require('../../src/utills/common');
 const fs = require('fs');
-const { default: checkVRS } = require('../../../src/support/check/checkVrs');
+const { default: checkVRS } = require('../../src/support/check/checkVrs');
 
 When(/^I remove via http (\d+)st check with name "([^"]*)"$/, async function (num, name) {
     const testUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`

@@ -16,44 +16,31 @@
     <script src="./static/js/bootstrap.min.js"></script>
     <script src="./static/js/fabric.min.js"></script>
     <script type="text/javascript" src="./static/js/tabulator.min.js"></script>
-    <script src="./lib/mainView.js"></script>
-    <script src="./lib/sideToSideView.js"></script>
-
+    <script src="../../../static/js/checkview/mainView.min.js"></script>
+    <script src="../../../static/js/checkview/sideToSideView.min.js"></script>
+    <script src="../../../static/js/checkview/helpers.min.js"></script>
+    <script src="./static/js/indexHelper.min.js"></script>
     <script src="./static/js/gridHelpers.js"></script>
     <script src="./static/js/diffHelpers.min.js"></script>
     <script src="./static/js/ejs.min.js"></script>
 
     <title>Check - <%= check.name; %> [<%= check.status; %>]</title>
 </head>
-<body style="overflow-x: auto; overflow-y: auto">
+<body>
 <div class="container-fluid pl-0 pr-0" style="background-color: #E5E5E5 !important;">
 
-
-    <div name="page-head" class="row pb-0 bg-olive mr-0" style="margin-right: -16px; margin-left: -16px">
+    <div name="page-head" class="row pb-0 bg-olive mr-0 sticky-top" style="margin-right: -16px; margin-left: -16px">
         <%- include('components/header_checkview') %>
     </div>
-
 
     <div class="row main-content pr-1 mr-3 ml-0">
 
         <div id="sidebar" name="sidebar" class="col-2 check-sidebar pl-2 ml-1 pt-3">
             <script>
-                window.addEventListener('load', async () => {
-                    // SIDEBAR
-                    const pageTemplate = await getRequest('../../../static/ejs/check_sidebar.ejs');
-                    let sidebarHtml = await ejs.render(pageTemplate,
-                            {
-                                check: <%- JSON.stringify(check) %>,
-                                lastChecksWithSameName: <%- JSON.stringify(lastChecksWithSameName) %>,
-
-                            },
-                            { async: true },
-                    );
-
-                    document.getElementById('sidebar')
-                            .innerHTML = sidebarHtml;
-                });
-
+                $(window)
+                        .on('load', function () {
+                            renderSameNamedChecks(<%- JSON.stringify(check) %>, <%- JSON.stringify(lastChecksWithSameName) %>);
+                        });
             </script>
         </div>
 
@@ -63,14 +50,6 @@
                 <div name="shapshoot" id='snapshoot'
                      class="col-12 float-left w-100 border border-dark mb-3 pt-0 mr-0 ml-2 pl-0 pr-0 mt-3 mh-100 shadow"
                      style="height: 3500px;">
-
-                    <div class="toolbar-wrapper sticky-top float-right pt-1 pr-4">
-                        <div class="diff-toolbar vcenter border border-secondary rounded mt-1 pr-0 row d-flex align-content-center bg-light"
-                             style="font-size: 1.4em; line-height: 27px;"
-                        >
-                            <%- include('components/checkview_toolbar') %>
-                        </div>
-                    </div>
 
                     <canvas class="snapshoot-canvas pb-1" id="2d">
                     </canvas>
@@ -105,7 +84,7 @@
                             </li>
                         </ul>
                         <!--TAB CONTENT-->
-                        <div class="tab-content mb-3" style="max-height: 550px; overflow-y: auto">
+                        <div class="tab-content mb-3" style="max-height: 550px;">
 
                             <div id="check_info" class="active tab-pane fade in show">
                                 <div id="check-info-table" class="w-100"></div>
@@ -289,8 +268,6 @@
         const checkTableData = mergedCheckData.filter((x) => {
             return !['result', '__v', 'dimensionDifference'].includes(x.property);
         });
-        console.log({ compareResult });
-        console.log({ checkTableData });    //define data
 
         //create Tabulator on DOM element with id "example-table"
         var checkInfoTable = new Tabulator('#check-info-table', {
@@ -364,7 +341,6 @@
         function transformHistory(arr) {
             const result = [];
             for (const item of arr) {
-                console.log({ item });
                 item.user = item?.meta?.user;
                 item.itemType = item?.meta?.itemType;
                 item.msgType = item?.meta?.msgType;
@@ -380,7 +356,6 @@
         getCheckHistory()
                 .then(async (result) => {
                     historyArr = JSON.parse(await result.text());
-                    console.log({ historyArr });
                     var historyTable = new Tabulator('#history-table', {
                         data: transformHistory(historyArr),
                         layout: 'fitData',

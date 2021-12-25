@@ -2,8 +2,8 @@
 const { When, Then } = require('cucumber');
 const YAML = require('yaml');
 const fs = require('fs');
-const { TableVRSComp } = require('../../../src/PO/vrs/tableVRS.comp');
-const { default: checkVRS } = require('../../../src/support/check/checkVrs');
+const { TableVRSComp } = require('../../src/PO/vrs/tableVRS.comp');
+const { default: checkVRS } = require('../../src/support/check/checkVrs');
 
 When(/^I click on "([^"]*)" VRS test$/, (testName) => {
     TableVRSComp.init();

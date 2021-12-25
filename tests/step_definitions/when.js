@@ -1,20 +1,20 @@
 /* eslint-disable prefer-arrow-callback,func-names */
-import clearInputField from '../../src/support/action/clearInputField';
-import clickElement from '../../src/support/action/clickElement';
-import closeLastOpenedWindow from '../../src/support/action/closeLastOpenedWindow';
-import deleteCookies from '../../src/support/action/deleteCookies';
-import dragElement from '../../src/support/action/dragElement';
-import focusLastOpenedWindow from '../../src/support/action/focusLastOpenedWindow';
-import handleModal from '../../src/support/action/handleModal';
-import moveTo from '../../src/support/action/moveTo';
-import pause from '../../src/support/action/pause';
-import pressButton from '../../src/support/action/pressButton';
-import scroll from '../../src/support/action/scroll';
-import selectOption from '../../src/support/action/selectOption';
-import selectOptionByIndex from '../../src/support/action/selectOptionByIndex';
-import setCookie from '../../src/support/action/setCookie';
-import setInputField from '../../src/support/action/setInputField';
-import setPromptText from '../../src/support/action/setPromptText';
+import clearInputField from '../src/support/action/clearInputField';
+import clickElement from '../src/support/action/clickElement';
+import closeLastOpenedWindow from '../src/support/action/closeLastOpenedWindow';
+import deleteCookies from '../src/support/action/deleteCookies';
+import dragElement from '../src/support/action/dragElement';
+import focusLastOpenedWindow from '../src/support/action/focusLastOpenedWindow';
+import handleModal from '../src/support/action/handleModal';
+import moveTo from '../src/support/action/moveTo';
+import pause from '../src/support/action/pause';
+import pressButton from '../src/support/action/pressButton';
+import scroll from '../src/support/action/scroll';
+import selectOption from '../src/support/action/selectOption';
+import selectOptionByIndex from '../src/support/action/selectOptionByIndex';
+import setCookie from '../src/support/action/setCookie';
+import setInputField from '../src/support/action/setInputField';
+import setPromptText from '../src/support/action/setPromptText';
 
 const { When } = require('cucumber');
 

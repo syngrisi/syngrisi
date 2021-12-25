@@ -1,7 +1,8 @@
+
 <div name="logo-and-link"
-     class="col-8 ml-3"
+     class="col ml-3"
      id="logo-and-label-container">
-    <div class="row align-items-center1">
+    <div class="row">
         <div class="col-auto ml-4 pl-0 pr-0 pt-0 toggle-sidebar-button-wrapper no-highlight vcenter">
             <%- include('sidebar_switcher') %>
         </div>
@@ -9,58 +10,59 @@
             <%- include('logo') %>
         </div>
         <!--HEADER TITLE-->
-        <% const checkResult = JSON.parse(check.result) %>
-        <% const misMatchPercentage = checkResult.misMatchPercentage ? ('(' + checkResult.misMatchPercentage + '%)') : '' %>
+        <%
+        const checkResult = JSON.parse(check.result);
+        const misMatchPercentage = checkResult.misMatchPercentage ? ('(' + checkResult.misMatchPercentage + '%)') : '';
+        const commonTitle = `${misMatchPercentage} ${suite.name} / ${test.name} / ${check.name}`;
+        %>
         <div name="title"
              class="col pl-2 ml-2 pt-0 h6 mb-0 d-flex align-items-center text-truncate"
-        <% if(misMatchPercentage !== '(0.00%)') { %>
-             title="this check mismatch percentage: <%= misMatchPercentage %>"
-        <% } else{ %>
-             title="success"
-                <% } %>
+             title="<%= commonTitle; %>"
         >
             <!--BACK LINK-->
             <a class="diff-back-button back-button unlink small" href="javascript:void(0)"
-               onclick="backToTest('<%= test.id %>')">
+               onclick="backToTest('<%= test.id; %>')">
                 <img src="../../../static/icons/back-button.svg" alt="navigation button" class="navigation-button">
             </a>
             <!--STATUS-->
-            <span class="status d-inline-block ml-2 mr-2 rounded border border-light bg-item-<%= check.status[0] %>"
+            <% const statusTitle = (misMatchPercentage !== '(0.00%)')
+                    ? `this check mismatch percentage is ${misMatchPercentage}`
+                    : 'there is no difference between baseline and actual' %>
+            <span class="status d-inline-block ml-2 mr-2 rounded border border-light bg-item-<%= check.status[0]; %>"
+                  title="<%= statusTitle %>"
                   style="padding: 2px"
             >
 
-                <%= check.status[0] %>
+                <%= check.status[0]; %>
                 <% if(misMatchPercentage !== '(0.00%)') { %>
-                    <span><%= misMatchPercentage %></span>
+                    <span><%= misMatchPercentage; %></span>
                 <% } %>
             </span>
             <!--LINKS TO SUITE / CHECK-->
             <a class="unlink" name="suite-link"
-               href="/?filter_suitename_eq=<%= suite.name %>"><%= suite.name %></a>
+               href="/?filter_suitename_eq=<%= suite.name; %>"><%= suite.name; %></a>
             <span>&nbsp;/&nbsp;</span>
             <a class="unlink" name="check-link"
-               href='/?filter_suitename_eq=<%= suite.name %>&unfoldTestId=<%= test.id %>'><%= test.name %></a>
+               href='/?filter_suitename_eq=<%= suite.name; %>&unfoldTestId=<%= test.id; %>'><%= test.name; %></a>
             <span>&nbsp;/&nbsp;</span>
-            <span><a href="" class="unlink"><%= check.name %></a></span>
+            <span><a href="" class="unlink"><%= check.name; %></a></span>
         </div>
     </div>
 </div>
 
 <div name="suite-menu-toolbar" class="col mr-3">
-    <div class="row all-header light-purple">
-        <div class="tests-toolbar col text-light p-0 pt-0 bg-olive align-self-end">
-            <div class="row d-flex flex-row pr-0 justify-content-end">
-                <!--NAV BUTTON ICON-->
-                <div class="user-icon-wrapper col-auto  pl-1 pr-0 mr-1 vcenter">
-                    <%- include('nav_button', {user: user}) %>
-                </div>
-                <!--NAV BUTTON ICON-->
-                <!--USER ICON-->
-                <div class="user-icon-wrapper col-auto pl-1 pr-0 mr-3 vcenter">
-                    <%- include('user_icon', {user: user}) %>
-                </div>
-                <!--/USER ICON-->
-            </div>
+    <div class="row pr-0 justify-content-end">
+        <!--OPERATION TOOLBAR-->
+        <div class="col-auto  pl-1 pr-0 mr-1 vcenter">
+            <%- include('checkview_operations_toolbar') %>
+        </div>
+        <!--NAV BUTTON ICON-->
+        <div class="col-auto  pl-1 pr-0 mr-1 vcenter">
+            <%- include('nav_button', {user: user}) %>
+        </div>
+        <!--USER ICON-->
+        <div class="user-icon-wrapper col-auto pl-1 pr-0 mr-3 vcenter">
+            <%- include('user_icon', {user: user}) %>
         </div>
     </div>
 </div>

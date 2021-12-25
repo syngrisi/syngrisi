@@ -75,7 +75,7 @@ exports.config = {
         source: true,
         profile: [],
         require: [
-            './features/step_definitions/**/*.js',
+            './step_definitions/**/*.js',
             './src/support/world.js',
         ],
         snippetSyntax: undefined,
