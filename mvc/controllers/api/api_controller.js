@@ -220,11 +220,11 @@ exports.getSnapshot = async function (req, res) {
         try {
             const opts = removeEmptyProperties(req.body);
             id = req.params.id;
-            log.debug(`get snapshot with id: '${id}', params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`,
-                $this, {
-                    scope: 'getSnapshot',
-                    msgType: 'GET',
-                });
+            // log.debug(`get snapshot with id: '${id}', params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`,
+            //     $this, {
+            //         scope: 'getSnapshot',
+            //         msgType: 'GET',
+            //     });
             const snp = await Snapshot.findById(id);
             res.json(snp);
             return resolve(snp);
@@ -806,10 +806,12 @@ async function getBaseline(params) {
     const identFields = buildIdentObject(params);
     const identFieldsAccepted = Object.assign(buildIdentObject(params), { markedAs: 'accepted' });
     const acceptedBaseline = await Baseline.findOne(identFieldsAccepted, {}, { sort: { createdDate: -1 } });
-    log.debug(JSON.stringify(acceptedBaseline), $this);
+    log.debug(`acceptedBaseline: '${JSON.stringify(acceptedBaseline)}'`, $this);
+    if (acceptedBaseline) return acceptedBaseline;
     const simpleBaseline = await Baseline.findOne(identFields, {}, { sort: { createdDate: -1 } });
-    log.debug(JSON.stringify(simpleBaseline), $this);
-    return acceptedBaseline || simpleBaseline;
+    log.debug(`simpleBaseline: '${JSON.stringify(simpleBaseline)}'`, $this);
+    if (simpleBaseline) return simpleBaseline;
+    return null;
 }
 
 async function createNewBaseline(params) {

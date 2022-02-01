@@ -26,9 +26,10 @@ jQuery('#subheader-search')
     viewport.use('bs4', bootstrapDivs);
 
     // on resize
-    $(window).resize(
-        viewport.changed(() => {
-            console.log('Current breakpoint: ', viewport.current());
-        })
-    );
+    $(window)
+        .resize(
+            viewport.changed(() => {
+                console.log('Current breakpoint: ', viewport.current());
+            })
+        );
 }(jQuery, ResponsiveBootstrapToolkit));

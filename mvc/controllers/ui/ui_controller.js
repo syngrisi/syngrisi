@@ -240,7 +240,7 @@ exports.index = async function (req, res) {
                     .exec();
 
                 const query = buildQuery(opts);
-                // console.log({query, opts});
+                console.log({query, opts});
                 if (req.user.role === 'user') {
                     query.creatorUsername = req.user.username;
                 }
