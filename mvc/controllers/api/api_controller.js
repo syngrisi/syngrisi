@@ -116,7 +116,7 @@ async function compareSnapshots(baseline, actual) {
         msgType: 'COMPARE',
     };
     log.debug(`compare baseline and actual snapshots with ids: [${baseline.id}, ${actual.id}]`, $this, logOpts);
-    log.debug(`BASELINE: ${JSON.stringify(baseline)}`, $this, logOpts);
+    log.debug(`current baseline: ${JSON.stringify(baseline)}`, $this, logOpts);
     let diff;
     if (baseline.imghash === actual.imghash) {
         log.debug(`baseline and actual snapshot have the identical image hashes: '${baseline.imghash}'`, $this, logOpts);
@@ -140,7 +140,9 @@ async function compareSnapshots(baseline, actual) {
         log.debug(`baseline path: ${config.defaultBaselinePath}${baseline.id}.png`, $this, logOpts);
         log.debug(`actual path: ${config.defaultBaselinePath}${actual.id}.png`, $this, logOpts);
         let opts = {};
-        log.debug(`ignore regions: '${baseline.ignoreRegions}', type: '${typeof baseline.ignoreRegions}'`);
+        if (baseline.ignoreRegions) {
+            log.debug(`ignore regions: '${baseline.ignoreRegions}', type: '${typeof baseline.ignoreRegions}'`);
+        }
         // if (baseline.ignoreRegions === 'undefined') {
         //     delete baseline.ignoreRegions;
         //     log.debug(`remove ignore regions: ${baseline.ignoreRegions}`);
@@ -157,7 +159,7 @@ async function compareSnapshots(baseline, actual) {
 
     log.silly(diff);
     if (parseFloat(diff.misMatchPercentage) !== 0) {
-        log.debug(`images are different, ids: [${baseline.id}, ${actual.id}]`);
+        log.debug(`images are different, ids: [${baseline.id}, ${actual.id}], misMatchPercentage: '${diff.misMatchPercentage}'`);
     }
     if (diff.stabMethod && diff.vOffset) {
         if (diff.stabMethod === 'downup') {
@@ -806,7 +808,7 @@ async function getBaseline(params) {
     const identFields = buildIdentObject(params);
     const identFieldsAccepted = Object.assign(buildIdentObject(params), { markedAs: 'accepted' });
     const acceptedBaseline = await Baseline.findOne(identFieldsAccepted, {}, { sort: { createdDate: -1 } });
-    log.debug(`acceptedBaseline: '${JSON.stringify(acceptedBaseline)}'`, $this);
+    log.debug(`acceptedBaseline: '${acceptedBaseline ? JSON.stringify(acceptedBaseline) : 'not found'}'`, $this);
     if (acceptedBaseline) return acceptedBaseline;
     const simpleBaseline = await Baseline.findOne(identFields, {}, { sort: { createdDate: -1 } });
     log.debug(`simpleBaseline: '${JSON.stringify(simpleBaseline)}'`, $this);
@@ -892,7 +894,7 @@ exports.createCheck = async function (req, res) {
                     return reject(errMsg);
                 }
                 const suiteName = req.body.suitename || 'Others';
-                log.debug(`create suite with name '${suiteName}' if not exist`, $this);
+                // log.debug(`create suite with name '${suiteName}' if not exist`, $this);
                 suite = await orm.createSuiteIfNotExist({ name: suiteName });
                 orm.updateItem('VRSTest', { _id: test.id }, {
                     suite: suite.id,
