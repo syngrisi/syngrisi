@@ -46,10 +46,10 @@
 
 
         <div class="col-9" id="snapshot-and-info-wrapPer">
+            <!--SNAPSHOT CANVAS-->
             <div class="row" id="snapshot-wrapper">
                 <div name="shapshoot" id='snapshoot'
-                     class="col-12 float-left w-100 border border-dark mb-3 pt-0 mr-0 ml-2 pl-0 pr-0 mt-3 mh-100 shadow"
-                     style="height: 3500px;">
+                     class="col-12 float-left w-100 border border-dark mb-3 pt-0 mr-0 ml-2 pl-0 pr-0 mt-3 mh-100 shadow">
 
                     <canvas class="snapshoot-canvas pb-1" id="2d">
                     </canvas>
@@ -106,7 +106,6 @@
                 </div>
             </div>
 
-
         </div>
     </div>
 
@@ -122,7 +121,6 @@
                 <rect id="notify-rect" width="100%" height="100%" fill="#2ECC40"></rect>
             </svg>
             <strong id="notify-header" class="mr-auto">Success</strong>
-            <!--        <small>11 mins ago</small>-->
             <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close"
                     onclick="$('#notify').hide()">
                 <span aria-hidden="true">×</span>
@@ -133,7 +131,6 @@
         </div>
     </div>
     <!--TOAST END-->
-    <% const actual = actualSnapshot ? JSON.stringify(actualSnapshot) : null %>
     <script>
         function toggleButtonAsPressed(id) {
             const button = document.getElementById(id);
@@ -141,24 +138,6 @@
                 return button.classList.remove('pressed-toolbar-button');
             }
             button.classList.add('pressed-toolbar-button');
-        }
-
-        function toggleSnapshotToolbarCollapse() {
-            const wrapper = document.getElementsByClassName('toolbar-wrapper')[0];
-            const buttonsEl = document.getElementById('snapshot-toolbar-buttons');
-            const collapseIcon = document.getElementById('snapshot-collapse-icon');
-            if (buttonsEl.style.display === 'none') {
-                wrapper.style.marginRight = '0';
-                buttonsEl.style.display = 'inline-block';
-                collapseIcon.classList.remove('bi-chevron-compact-left');
-                collapseIcon.classList.add('bi-chevron-compact-right');
-                return;
-            }
-            collapseIcon.classList.remove('bi-chevron-compact-right');
-            collapseIcon.classList.add('bi-chevron-compact-left');
-
-            wrapper.style.marginRight = '-41px';
-            buttonsEl.style.display = 'none';
         }
 
         // KEY BINDING
@@ -205,33 +184,41 @@
 
         let baselineImg = new Image();
         baselineImg.src = '/snapshoots/<%= baselineSnapshot.filename || baselineSnapshot.id + '.png'; %>';
-        baselineImg.onload = async function () {
-            // calculate the canvas DOM element height to resize it according the image proportion
-            // the canvas width doesn't not update
-            let coef = document.getElementById('snapshoot').clientWidth / this.width;
-            // console.log({ canvasElementClientWidth: document.getElementById('snapshoot').clientWidth });
-            let calculatedHeight = this.height * coef;
-            // console.log({ canvasElementClientHeight: document.getElementById('snapshoot').clientHeight });
-            // document.getElementById('snapshoot').style.height = '100%';
-            document.getElementById('snapshoot').style.height = calculatedHeight + 'px';
-            // console.log({ canvasElementClientHeight: document.getElementById('snapshoot').clientHeight });
 
-            fabric.Object.prototype.objectCaching = false;
+        <% const actual = actualSnapshot ? JSON.stringify(actualSnapshot) : null %>
+        const actualObj = JSON.parse(`<%- actual %>`)
+        let actualImg = new Image();
+        actualImg.src = `/snapshoots/${actualObj.filename || actualObj.id + '.png'}`;
 
-            mainView = new MainView(
-                    {
-                        canvasId: '2d',
-                        canvasElementWidth: document.getElementById('snapshoot').clientWidth,
-                        canvasElementHeight: document.getElementById('snapshoot').clientHeight,
-                        url: baselineImg.src,
-                        diffId: '<%= diffSnapshot?.id; %>',
-                        <% if(actual) { %>
-                        actual: <%- actual %>,
-                        <% } %>
-                    }
-            );
-            mainView.getSnapshotIgnoreRegionsDataAndDrawRegions('<%= baselineSnapshot.id; %>');
-        };
+        if ((baselineImg.height !== actualImg.height) || (baselineImg.width !== actualImg.width)) {
+            document.getElementById('not-equal-resolution-char')
+                    .classList
+                    .add('d-inline');
+        }
+
+        const largestSnapshotsHeight = (baselineImg.height > actualImg.height) ? baselineImg.height : actualImg.height;
+        const largestSnapshotsWidth = (baselineImg.width > actualImg.width) ? baselineImg.width : actualImg.width;
+
+        let coef = document.getElementById('snapshoot').clientWidth / largestSnapshotsWidth;
+
+        let calculatedHeight = largestSnapshotsHeight * coef;
+
+        document.getElementById('snapshoot').style.height = calculatedHeight + 'px';
+        fabric.Object.prototype.objectCaching = false;
+
+        mainView = new MainView(
+                {
+                    canvasId: '2d',
+                    canvasElementWidth: document.getElementById('snapshoot').clientWidth,
+                    canvasElementHeight: document.getElementById('snapshoot').clientHeight,
+                    url: baselineImg.src,
+                    diffId: '<%= diffSnapshot?.id; %>',
+                    <% if(actual) { %>
+                    actual: <%- actual %>,
+                    <% } %>
+                }
+        );
+        mainView.getSnapshotIgnoreRegionsDataAndDrawRegions('<%= baselineSnapshot.id; %>');
     </script>
 
     <script>

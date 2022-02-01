@@ -22,7 +22,7 @@
             <!--BACK LINK-->
             <a class="diff-back-button back-button unlink small" href="javascript:void(0)"
                onclick="backToTest('<%= test.id; %>')">
-                <img src="../../../static/icons/back-button.svg" alt="navigation button" class="navigation-button">
+                <img src="./static/icons/back-button.svg" alt="navigation button" class="navigation-button">
             </a>
             <!--STATUS-->
             <% const statusTitle = (misMatchPercentage !== '(0.00%)')
@@ -32,7 +32,7 @@
                   title="<%= statusTitle %>"
                   style="padding: 2px"
             >
-
+                <span id='not-equal-resolution-char' class="d-none text-danger" title="the resolutions of snapshots are not equal">≠</span>
                 <%= check.status[0]; %>
                 <% if(misMatchPercentage !== '(0.00%)') { %>
                     <span><%= misMatchPercentage; %></span>
