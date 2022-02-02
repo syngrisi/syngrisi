@@ -182,43 +182,68 @@
 
         var mainView = {};
 
-        let baselineImg = new Image();
-        baselineImg.src = '/snapshoots/<%= baselineSnapshot.filename || baselineSnapshot.id + '.png'; %>';
+        // wait for image loading, throw an error on timeout
+        function createImageAndWaitForLoad(src) {
+            const timeout = 90000;
+            const img = new Image();
+            img.src = src;
+            return Promise.race([
+                new Promise((resolve, reject) => {
+                    img.onload = () => resolve(img);
+                    img.onerror = (e) => reject(e);
 
-        <% const actual = actualSnapshot ? JSON.stringify(actualSnapshot) : null %>
-        const actualObj = JSON.parse(`<%- actual %>`)
-        let actualImg = new Image();
-        actualImg.src = `/snapshoots/${actualObj.filename || actualObj.id + '.png'}`;
-
-        if ((baselineImg.height !== actualImg.height) || (baselineImg.width !== actualImg.width)) {
-            document.getElementById('not-equal-resolution-char')
-                    .classList
-                    .add('d-inline');
+                }),
+                new Promise((_, reject) => {
+                    setTimeout(() => {
+                        return reject(`The image loading timeout is exceeded: '${timeout}' milliseconds, src: '${src}'`);
+                    }, timeout)
+                })
+            ])
         }
 
-        const largestSnapshotsHeight = (baselineImg.height > actualImg.height) ? baselineImg.height : actualImg.height;
-        const largestSnapshotsWidth = (baselineImg.width > actualImg.width) ? baselineImg.width : actualImg.width;
+        (async () => {
 
-        let coef = document.getElementById('snapshoot').clientWidth / largestSnapshotsWidth;
+            let baselineImg = await createImageAndWaitForLoad('/snapshoots/<%= baselineSnapshot.filename || baselineSnapshot.id + '.png'; %>')
 
-        let calculatedHeight = largestSnapshotsHeight * coef;
+            <% const actual = actualSnapshot ? JSON.stringify(actualSnapshot) : null %>
+            const actualObj = JSON.parse(`<%- actual %>`)
 
-        document.getElementById('snapshoot').style.height = calculatedHeight + 'px';
-        fabric.Object.prototype.objectCaching = false;
+            let actualImg = await createImageAndWaitForLoad(`/snapshoots/${actualObj.filename || actualObj.id + '.png'}`)
 
-        mainView = new MainView(
-                {
-                    canvasId: '2d',
-                    canvasElementWidth: document.getElementById('snapshoot').clientWidth,
-                    canvasElementHeight: document.getElementById('snapshoot').clientHeight,
-                    url: baselineImg.src,
-                    diffId: '<%= diffSnapshot?.id; %>',
-                    <% if(actual) { %>
-                    actual: <%- actual %>,
-                    <% } %>
-                }
-        );
-        mainView.getSnapshotIgnoreRegionsDataAndDrawRegions('<%= baselineSnapshot.id; %>');
+            // make visible the ≠ charset in header if baseline/actual resolution are different
+            if ((baselineImg.height !== actualImg.height) || (baselineImg.width !== actualImg.width)) {
+                const notEqualResolutionChar = document.getElementById('not-equal-resolution-char');
+                notEqualResolutionChar.classList
+                        .add('d-inline');
+                notEqualResolutionChar.title = notEqualResolutionChar.title
+                        + `baseline: ${baselineImg.width}x${baselineImg.height}, actual: ${actualImg.width}x${actualImg.height}`
+            }
+
+            const largestSnapshotsHeight = (baselineImg.height > actualImg.height) ? baselineImg.height : actualImg.height;
+            const largestSnapshotsWidth = (baselineImg.width > actualImg.width) ? baselineImg.width : actualImg.width;
+
+            let coef = document.getElementById('snapshoot').clientWidth / largestSnapshotsWidth;
+
+            let calculatedHeight = largestSnapshotsHeight * coef;
+
+            document.getElementById('snapshoot').style.height = calculatedHeight + 'px';
+            fabric.Object.prototype.objectCaching = false;
+
+            mainView = new MainView(
+                    {
+                        canvasId: '2d',
+                        canvasElementWidth: document.getElementById('snapshoot').clientWidth,
+                        canvasElementHeight: document.getElementById('snapshoot').clientHeight,
+                        url: baselineImg.src,
+                        diffId: '<%= diffSnapshot?.id; %>',
+                        <% if(actual) { %>
+                        actual: <%- actual %>,
+                        <% } %>
+                    }
+            );
+            mainView.getSnapshotIgnoreRegionsDataAndDrawRegions('<%= baselineSnapshot.id; %>');
+        })()
+
     </script>
 
     <script>
