@@ -32,7 +32,7 @@
                   title="<%= statusTitle %>"
                   style="padding: 2px"
             >
-                <span id='not-equal-resolution-char' class="d-none text-danger" title="the resolutions of snapshots are not equal">≠</span>
+                <span id='not-equal-resolution-char' class="d-none text-danger bg-warning rounded" title="the resolutions of snapshots are not equal">≠</span>
                 <%= check.status[0]; %>
                 <% if(misMatchPercentage !== '(0.00%)') { %>
                     <span><%= misMatchPercentage; %></span>
