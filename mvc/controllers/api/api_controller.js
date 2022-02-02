@@ -157,7 +157,7 @@ async function compareSnapshots(baseline, actual) {
         diff = await getDiff(baselineData, actualData, opts);
     }
 
-    log.silly(diff);
+    log.silly(`the diff is: '${JSON.stringify(diff, null, 2)}'`);
     if (parseFloat(diff.misMatchPercentage) !== 0) {
         log.debug(`images are different, ids: [${baseline.id}, ${actual.id}], misMatchPercentage: '${diff.misMatchPercentage}'`);
     }
@@ -1027,7 +1027,9 @@ exports.createCheck = async function (req, res) {
                     try {
                         log.debug('the check isn\'t new, make comparing', $this);
                         compareResult = await compareSnapshots(currentBaseline, currentSnapshot);
-                        if (compareResult.misMatchPercentage !== '0.00') {
+                        if ((compareResult.misMatchPercentage !== '0.00') || !compareResult.isSameDimensions) {
+                            const logMsg = !compareResult.isSameDimensions ? 'snapshots have different dimensions' : 'snapshots have differences';
+                            log.debug(logMsg, $this);
                             log.debug(`saving diff snapshot for check with Id: '${check.id}'`, $this);
                             const diffSnapshot = await createSnapshot({
                                 params: req.body,
@@ -1045,7 +1047,6 @@ exports.createCheck = async function (req, res) {
                             .toString();
 
                         compareResult['totalCheckHandleTime'] = totalCheckHandleTime;
-                        log.silly(compareResult, $this);
                         updateParams['result'] = JSON.stringify(compareResult, null, '\t');
 
                         log.debug(`update check with params: '${JSON.stringify(updateParams)}'`, $this, { ref: check._id });
