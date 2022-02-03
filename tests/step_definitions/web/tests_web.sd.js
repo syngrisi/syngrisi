@@ -50,6 +50,36 @@ When(/^I expect that(:? (\d)th)? VRS test "([^"]*)" has "([^"]*)" (status|browse
         }
     });
 
+When(/^I expect that(:? (\d)th)? test "([^"]*)" has "([^"]*)" (status|browser|platform|viewport|accepted status)$/,
+    function (number, testName, fieldValue, fieldName) {
+        const row = $(`//span[contains(text(),"${testName}")]/ancestor::div[@name="testinfo"]`);
+        const selectors = {
+            status: '.cell-status',
+            browser: 'span[name="browser-name"]',
+            viewport: 'span[name="cell-viewport"]',
+            // ||platform||accepted status
+        };
+        const selector = selectors[fieldName];
+        if (!selector) {
+            throw new Error('Selector is empty, you need extend the step definition logic');
+        }
+        const el = row.$(selector);
+        if (fieldName === 'status') {
+            const statusClasses = {
+                Failed: 'bg-item-failed',
+                Passed: 'bg-item-passed',
+                Unresolved: 'bg-warning',
+                Running: 'bg-item-running',
+                New: 'bg-item-new',
+            };
+            expect(el)
+                .toHaveAttributeContaining('class', statusClasses[fieldValue]);
+            return;
+        }
+        expect(el)
+            .toHaveTextContaining(fieldValue);
+    });
+
 When(/^I expect that(:? (\d)th)? VRS test "([^"]*)" has blink icon$/,
     (number, testName) => {
         const intNumber = number ? parseInt(number, 10) : 1;
@@ -87,6 +117,7 @@ When(/^I create "([^"]*)" tests with params:$/, { timeout: 600000 }, async funct
             test: `${params.testName} - ${i + 1}`,
             run: process.env.RUN_NAME || 'integration_run_name',
             runident: process.env.RUN_IDENT || 'integration_run_ident',
+            branch: 'integration',
         }, browser.config.apiKey);
         browser.pause(300);
         const filePath = params.filePath || 'files/A.png';
@@ -114,6 +145,7 @@ When(/^I create "([^"]*)" tests with few checks:$/, { timeout: 60000000 }, async
         console.log(`Create test # ${i}`);
         await browser.vDriver.startTestSession({
             app: 'Test App',
+            branch: 'integration',
             test: params.testName.includes('-') ? (`${params.testName}${i + 1}`) : params.testName,
             run: process.env.RUN_NAME || 'integration_run_name',
             runident: process.env.RUN_IDENT || 'integration_run_ident',

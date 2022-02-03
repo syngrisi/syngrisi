@@ -275,10 +275,13 @@
         // CHECK TABLE
         const check = <%- JSON.stringify(check) %>;
         const checkData = formTableData(check);
-        const compareResult = formTableData(JSON.parse(check.result));
+        const compareResultObj = JSON.parse(check.result);
+        compareResultObj.dimensionDifference = JSON.stringify(compareResultObj.dimensionDifference)
+
+        const compareResult = formTableData(compareResultObj);
         const mergedCheckData = checkData.concat(compareResult);
         const checkTableData = mergedCheckData.filter((x) => {
-            return !['result', '__v', 'dimensionDifference'].includes(x.property);
+            return !['result', '__v'].includes(x.property);
         });
 
         //create Tabulator on DOM element with id "example-table"

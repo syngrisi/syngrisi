@@ -35,7 +35,7 @@
                 <span id='not-equal-resolution-char' class="d-none text-danger bg-warning rounded" title="the resolutions of snapshots are not equal">≠</span>
                 <%= check.status[0]; %>
                 <% if(misMatchPercentage !== '(0.00%)') { %>
-                    <span><%= misMatchPercentage; %></span>
+                    <span id="mismatch_percentage"><%= misMatchPercentage; %></span>
                 <% } %>
             </span>
             <!--LINKS TO SUITE / CHECK-->
