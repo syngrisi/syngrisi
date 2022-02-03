@@ -17,7 +17,7 @@ Feature: Checks with different resolutions
     #                   │oooooooooooo│
     #                   └────────────┘
     # in the case ressemlejs count such images identical and return mishmash percentage as '0'
-    # in previous versions of Syngrisi such cheks was marked a 'Passed', this is the wrong behaviour
+    # in previous versions of Syngrisi such checks was marked a 'Passed', this is the wrong behaviour
     # expected results: check marked as 'Failed' and has '≠' character in the checkview header
     # and the '≠' character 'span' element has title attribute with baseline and actual attribute
     Scenario: Two checks with identical image parts but different resolutions
