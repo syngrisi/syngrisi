@@ -58,3 +58,12 @@ When(/^I create via http user as:"([^"]*)" with params:$/, async function (user,
         });
     console.log({ respBody: res.json });
 });
+
+When(/^I generate via http API key for the User$/, async function () {
+    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/apikey`;
+    const res = await requestWithLastSessionSid(uri, this);
+    console.log({ respBodyJSON: res.json });
+    const apiKey = res.json.apikey;
+    console.log({ apiKey });
+    this.saveItem('apiKey', apiKey);
+});

@@ -1,24 +1,9 @@
 /* eslint-disable no-console */
-const { When } = require('cucumber');
-const { execSync } = require('child_process');
-const { killServer } = require('../src/utills/common');
-const { startServer } = require('../src/utills/common');
-
-When(/^I stop the Syngrisi server$/, () => {
-    try {
-        console.log(`THE SYNGRISI SERVER PID: '${browser.syngrisiServer.pid}'`);
-        if (process.platform === 'win32') {
-            killServer(browser.config.serverPort);
-            return;
-        }
-        if (browser.syngrisiServer) {
-            browser.syngrisiServer.kill();
-        }
-    } catch (e) {
-        console.log('WARNING: cannot stop te Syngrisi server via child, try to kill process');
-        killServer(browser.config.serverPort);
-    }
-});
+const { When, Given } = require('cucumber');
+const YAML = require('yaml');
+const {
+    startServer, stopServer, killServer, clearDatabase, startDriver, startSession
+} = require('../src/utills/common');
 
 When(/^I kill process which used port: "([^"]*)"$/, (port) => {
     killServer(port);
@@ -32,10 +17,44 @@ When(/^I start VRS server$/, { timeout: 600000 }, () => {
     startServer('');
 });
 
+When(/^I start Server and start Driver$/, { timeout: 600000 }, () => {
+    startServer('');
+    startDriver('');
+});
+
+When(/^I stop the Syngrisi server$/, () => {
+    stopServer();
+});
+
 When(/^I clear test VRS database$/, () => {
-    // const cmdPath = browser.config.rootPath + '/vrs/';
-    const cmdPath = '../';
-    const result = execSync('npm run clear_test', { cwd: cmdPath })
-        .toString('utf8');
-    console.log({ result });
+    clearDatabase();
+});
+
+When(/^I clear Database and stop Server$/, () => {
+    clearDatabase();
+    stopServer();
+});
+
+When(/^I set env variables:$/, (yml) => {
+    const params = YAML.parse(yml);
+    for (const key in params) {
+        process.env[key] = params[key];
+    }
+});
+
+Given(/^I stop VRS session$/, async () => {
+    await browser.vDriver.stopTestSession(browser.config.apiKey);
+});
+
+Given(/^I setup VRS driver with parameters:$/, async (params) => {
+    startDriver(params);
+});
+
+Given(/^I setup VRS driver$/, async () => {
+    startDriver('');
+});
+
+Given(/^I start VRS session with parameters:$/, async (params) => {
+    const sessOpts = YAML.parse(params);
+    await startSession(sessOpts);
 });

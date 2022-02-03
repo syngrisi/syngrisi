@@ -1,27 +1,17 @@
 /* eslint-disable */
 const hasha = require('hasha');
 const YAML = require('yaml');
-const {
-    spawn,
-    execSync,
-} = require('child_process');
+const { spawn, execSync, } = require('child_process');
 const got = require('got');
 const frisby = require('frisby');
 const path = require('path');
 const fs = require('fs');
-const {
-    Given,
-    When,
-    Then,
-} = require('cucumber');
+const { Given, When, Then, } = require('cucumber');
 const { getDomDump } = require('@syngrisi/syngrisi-wdio-sdk');
 const SyngrisiDriver = require('@syngrisi/syngrisi-wdio-sdk').SyngrisiDriver;
 const checkVRS = require('../src/support/check/checkVrs').default;
 const waitForAndRefresh = require('../src/support/action/waitForAndRefresh').default;
-const {
-    startSession,
-    killServer,
-} = require('../src/utills/common');
+const { startSession, killServer, startDriver } = require('../src/utills/common');
 
 const {
     saveRandomImage,
@@ -31,33 +21,9 @@ const { TableVRSComp } = require('../src/PO/vrs/tableVRS.comp');
 
 const { requestWithLastSessionSid } = require('../src/utills/common');
 
-function startDriver(params) {
-    const drvOpts = YAML.parse(params) || {};
-    browser.vDriver = new SyngrisiDriver({
-        url: drvOpts.url || 'http://vrs:3001/',
-    });
-}
-
-Given(/^I setup VRS driver with parameters:$/, async (params) => {
-    startDriver(params);
-});
-
-Given(/^I setup VRS driver$/, async () => {
-    startDriver('');
-});
-
-Given(/^I start VRS session with parameters:$/, async (params) => {
-    const sessOpts = YAML.parse(params);
-    await startSession(sessOpts);
-});
-
 // for debug purposes ONLY
 Given(/^I update the VRStest$/, async () => {
     await browser.vDriver.updateTest();
-});
-
-Given(/^I stop VRS session$/, async () => {
-    await browser.vDriver.stopTestSession(browser.config.apiKey);
 });
 
 When(/^I parse all affected elements in current and last successful checks from "([^"]*)"$/, async function (baseurl) {
@@ -212,22 +178,6 @@ async function getWithLastSessionSid(uri, $this) {
 }
 
 // COMMON
-When(/^I go to "([^"]*)" page$/, function (str) {
-    if (str === 'main') {
-        browser.url(`http://${browser.config.serverDomain}:${browser.config.serverPort}/`);
-        return;
-    }
-    const pages = {
-        admin: {
-            users: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin?task=users`
-        },
-    };
-
-    const page = str.split('>')[0];
-    const subPage = str.split('>')[1];
-    browser.url(pages[page][subPage]);
-});
-
 When(/^I click on the element "([^"]*)" via js$/, function (selector) {
     $(selector)
         .jsClick();
@@ -248,24 +198,8 @@ When(/^I START DEBUGGER$/, { timeout: 6000000 }, () => {
     browser.debug();
 });
 
-When(/^I refresh page$/, () => {
-    browser.refresh();
-});
-
 When(/^I wait for "([^"]*)" seconds$/, { timeout: 600000 }, (sec) => {
     browser.pause(sec * 1000);
-});
-
-When(/^I execute javascript code:$/, function (js) {
-    const result = browser.execute(js);
-    console.log({ result });
-    this.saveItem('js', result);
-});
-
-When(/^I execute javascript code and save as "([^"]*)":$/, function (itemName, js) {
-    const result = browser.execute(js);
-    console.log({ result });
-    this.saveItem(itemName, result);
 });
 
 Given(/^I set window size: "(1366x768|712x970|880x768|1050x768|1300x768|1300x400|1700x768|500x500)"$/, (viewport) => {
@@ -275,13 +209,6 @@ Given(/^I set window size: "(1366x768|712x970|880x768|1050x768|1300x768|1300x400
 
 Given(/^I generate a random image "([^"]*)"$/, async (filePath) => {
     await saveRandomImage(filePath);
-});
-
-When(/^I set env variables:$/, (yml) => {
-    const params = YAML.parse(yml);
-    for (const key in params) {
-        process.env[key] = params[key];
-    }
 });
 
 Then(/^the "([^"]*)" "([^"]*)" should be "([^"]*)"$/, function (itemType, property, exceptedValue) {
@@ -298,14 +225,6 @@ When(/^I expect that element "([^"]*)" to (contain|have) text "([^"]*)"$/, (sele
         expect($(selector))
             .toHaveText(filledText);
     }
-});
-
-Then(/^the current url contains "([^"]*)"$/, (url) => {
-    const windowHandles = browser.getWindowHandles();
-    const lastWindowHanle = windowHandles[windowHandles.length - 1];
-    browser.switchToWindow(lastWindowHanle);
-    expect(browser)
-        .toHaveUrl(url, { containing: true });
 });
 
 Given(/^I set custom window size: "([^"]*)"$/, (viewport) => {

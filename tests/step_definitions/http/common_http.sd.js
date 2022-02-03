@@ -15,36 +15,19 @@ Then(/^I expect via http that "([^"]*)" (test|check) exist exactly "([^"]*)" tim
         .toBe(parseInt(num, 10));
 });
 
-Then(/^I expect via http ([\d]+)st baseline with:$/, async function (num, yml) {
-    const baselines = (await requestWithLastSessionSid(
-        `http://${browser.config.serverDomain}:${browser.config.serverPort}/baselines`,
+Then(/^I expect via http ([\d]+)st (test|check) filtered as "([^"]*)" matched:$/, async function (num, itemName, filter, yml) {
+    const url = encodeURI(`http://${browser.config.serverDomain}:${browser.config.serverPort}/${itemName}s/byfilter?${filter}`);
+    // console.log({ url });
+    const items = (await requestWithLastSessionSid(
+        url,
         this
     )).json;
-    console.log({ baselines });
-
+    // console.log({ items });
     const params = YAML.parse(yml);
-    const baseline = baselines[parseInt(num, 10) - 1];
-    baseline.markedByUsername = baseline.markedByUsername || '';
-    baseline.markedAs = baseline.markedAs || '';
-    expect(baseline)
+    const item = items[parseInt(num, 10) - 1];
+    expect(item)
         .toMatchObject(params);
 });
 
-When(/^I generate via http API key for the User$/, async function () {
-    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/apikey`;
-    const res = await requestWithLastSessionSid(uri, this);
-    console.log({ respBodyJSON: res.json });
-    const apiKey = res.json.apikey;
-    console.log({ apiKey });
-    this.saveItem('apiKey', apiKey);
-});
 
-Then(/^I expect via http (\d+) baselines$/, async function (num) {
-    const baselines = (await requestWithLastSessionSid(
-        `http://${browser.config.serverDomain}:${browser.config.serverPort}/baselines`,
-        this
-    )).json;
 
-    expect(baselines.length)
-        .toBe(parseInt(num, 10));
-});
