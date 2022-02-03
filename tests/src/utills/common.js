@@ -8,7 +8,8 @@ const {
     subDays,
 } = require('date-fns');
 const got = require('got');
-const { spawn } = require('child_process');
+const { spawn, execSync } = require('child_process');
+const { SyngrisiDriver } = require('@syngrisi/syngrisi-wdio-sdk');
 
 const saveRandomImage = async function saveRandomImage(fullPath) {
     function getRandomInt(max) {
@@ -158,6 +159,36 @@ const startServer = (params) => {
     browser.syngrisiServer = child;
 };
 
+const stopServer = function () {
+    try {
+        console.log(`THE SYNGRISI SERVER PID: '${browser.syngrisiServer.pid}'`);
+        if (process.platform === 'win32') {
+            killServer(browser.config.serverPort);
+            return;
+        }
+        if (browser.syngrisiServer) {
+            browser.syngrisiServer.kill();
+        }
+    } catch (e) {
+        console.log('WARNING: cannot stop te Syngrisi server via child, try to kill process');
+        killServer(browser.config.serverPort);
+    }
+};
+
+const clearDatabase = function () {
+    const cmdPath = '../';
+    const result = execSync('npm run clear_test', { cwd: cmdPath })
+        .toString('utf8');
+    console.log({ result });
+};
+
+const startDriver = function (params) {
+    const drvOpts = YAML.parse(params) || {};
+    browser.vDriver = new SyngrisiDriver({
+        url: drvOpts.url || `http://${browser.config.serverDomain}:${browser.config.serverPort}/`,
+    });
+};
+
 module.exports = {
     saveRandomImage,
     startSession,
@@ -165,4 +196,7 @@ module.exports = {
     killServer,
     requestWithLastSessionSid,
     startServer,
+    stopServer,
+    clearDatabase,
+    startDriver,
 };

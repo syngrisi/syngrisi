@@ -1,57 +1,59 @@
 env:
-  es6: true
-  node: true
+    es6: true
+    node: true
 
 extends:
-  - 'airbnb-base'
-  - "eslint:recommended"
+    - 'airbnb-base'
+    - "eslint:recommended"
 parser: "babel-eslint"
 
 globals:
-  assert: true
-  expect: true
-  document: readonly
+    assert: true
+    expect: true
+    document: readonly
 
 overrides:
-  - files: "mvc/controllers/*.js"
+    -   files: "mvc/controllers/*.js"
 
 parserOptions:
-  ecmaVersion: 8
-  ecmaFeatures:
-    experimentalObjectRestSpread: true
+    ecmaVersion: 8
+    ecmaFeatures:
+        experimentalObjectRestSpread: true
 
 root: true
 
 rules:
-  linebreak-style: off
-  comma-dangle:
-    - 'error'
-    - arrays: 'always-multiline'
-      objects: 'always-multiline'
-      imports: 'never'
-      exports: 'never'
-      functions: 'ignore'
-  global-require: 'off'
-  import/no-extraneous-dependencies: 0
-  indent:
-    - 'error'
-    - 4
-    - SwitchCase: 1
-  max-len:
-    - 'error'
-    - 150
-    - ignorePattern: '\s*\/\^(.*)\$\/,$'
-  new-cap:
-    - 'error'
-    - newIsCap: true
-  require-jsdoc:
-    - 'error'
-    - require:
-        FunctionDeclaration: false
-        MethodDefinition: false
-        ClassDeclaration: false
-  strict: 'off'
-  valid-jsdoc:
-    - 'error'
-    - requireReturn: false
-      matchDescription: '.+'
+    linebreak-style: off
+    comma-dangle:
+        - 'error'
+        -   arrays: 'always-multiline'
+            objects: 'always-multiline'
+            imports: 'never'
+            exports: 'never'
+            functions: 'ignore'
+    global-require: 'off'
+    import/no-extraneous-dependencies: 0
+    indent:
+        - 'error'
+        - 4
+        -   SwitchCase: 1
+    max-len:
+        - 'error'
+        - 150
+        -   ignorePattern: '\s*\/\^(.*)\$\/,$'
+    new-cap:
+        - 'error'
+        -   newIsCap: true
+    require-jsdoc:
+        - 'error'
+        -   require:
+                FunctionDeclaration: false
+                MethodDefinition: false
+                ClassDeclaration: false
+    strict: 'off'
+    valid-jsdoc:
+        - 'error'
+        -   requireReturn: false
+            matchDescription: '.+'
+    object-curly-newline:
+        -  'off'

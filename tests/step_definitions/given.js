@@ -26,11 +26,6 @@ Given(
     openWebsite
 );
 
-Given(/^I open the app$/, () => {
-    browser.url(browser.config.syngrisiUrl);
-    browser.pause(2000);
-});
-
 Given(
     /^the element "([^"]*)?" is( not)* displayed$/,
     isDisplayed

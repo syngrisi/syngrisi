@@ -60,3 +60,6 @@ rules:
         - 'error'
         -   requireReturn: false
             matchDescription: '.+'
+    object-curly-newline:
+        - 'off'
+        -   "ObjectExpression": "never"
