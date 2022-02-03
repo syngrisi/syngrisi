@@ -19,7 +19,7 @@
                     Failed: 'bg-item-failed',
                     Passed: 'bg-item-passed',
                     Unresolved: 'bg-warning',
-                    Running: 'bg-item-partially',
+                    Running: 'bg-item-running',
                     New: 'bg-item-new'
                 }
      ?>
@@ -45,6 +45,7 @@
     <div class="cell-status-expand border-bottom border-top bg-warning col-auto pr-0 text-truncate">
         <?
         function calculatecheckGroupStatus(group) {
+        if(test.status==='Running') return 'running';
         const statuses = group.map( x => x.status[0] );
         if(statuses.includes('new')) return 'new';
         if(statuses.includes('passed')) return 'passed';
@@ -72,11 +73,12 @@
     </div>
 
     <!--NAME-->
-    <div class="cell-name cell col-10 col-sm-9 col-md-3 col-lg-4-5 pl-3 pr-1 pt-3-2 pb-3-2 text-truncate align-middle" style="  position: relative">
+    <div class="cell-name cell col-10 col-sm-9 col-md-3 col-lg-4-5 pl-3 pr-1 pt-3-2 pb-3-2 text-truncate align-middle"
+         style="  position: relative">
         <!--NAME:tags-->
         <div
-             class="test-tags"
-             title="Test tags">
+                class="test-tags"
+                title="Test tags">
             <?
             if(test.tags && (test.tags.length > 0)) {
             ?>
@@ -161,7 +163,8 @@
     </div>
 
     <!--BROWSER-->
-    <div class="cell-browser cell pt-3 pb-3 col-1-3 d-none d-md-block pl-2 pr-1 text-truncate" id="<?= test.id ?>_cell-browser">
+    <div class="cell-browser cell pt-3 pb-3 col-1-3 d-none d-md-block pl-2 pr-1 text-truncate"
+         id="<?= test.id ?>_cell-browser">
         <? const browserIconMap =  {
             chrome: 'fab fa-chrome',
             'chrome [HEADLESS]': 'fab fa-chrome',
@@ -180,7 +183,7 @@
            data-toggle="tooltip"
            data-placement="top"
         ></i>
-        <span class="small text-secondary"><?= test.browserName ?></span>
+        <span name="browser-name" class="small text-secondary"><?= test.browserName ?></span>
         <sup class="text-secondary" style="margin-left: -2  px;"><?= browserVersion ?></sup>
     </div>
 

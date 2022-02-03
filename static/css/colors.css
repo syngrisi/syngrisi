@@ -114,6 +114,10 @@
     background-color: #fbb61c;
 }
 
+.bg-item-running {
+    background-color: #b81bc9;
+}
+
 .bg-item-other {
     background-color: #575858;
 }

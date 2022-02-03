@@ -13,7 +13,7 @@ When(/^I start VRS server with parameters:$/, { timeout: 600000 }, (params) => {
     startServer(params);
 });
 
-When(/^I start VRS server$/, { timeout: 600000 }, () => {
+When(/^(?:I start VRS server|I start Server)$/, { timeout: 600000 }, () => {
     startServer('');
 });
 

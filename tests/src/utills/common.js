@@ -54,6 +54,7 @@ const startSession = async function (sessOpts) {
     sessOpts.suiteName = sessOpts.suiteName || 'Integration suite';
     sessOpts.suiteId = sessOpts.suiteId || sessOpts.suiteName.replace(' ', '_');
     sessOpts.appName = sessOpts.appName || 'Integration Test App';
+    sessOpts.branch = sessOpts.branch || 'integration';
 
     const currentSuite = {
         name: sessOpts.suiteName || 'Integration suite',
@@ -69,6 +70,7 @@ const startSession = async function (sessOpts) {
         test: sessOpts.testName,
         run: process.env.RUN_NAME || 'integration_run_name',
         runident: process.env.RUN_IDENT || 'integration_run_ident',
+        branch: sessOpts.branch,
     }, browser.config.apiKey);
 };
 
