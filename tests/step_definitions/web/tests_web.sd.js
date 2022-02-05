@@ -4,6 +4,7 @@ const YAML = require('yaml');
 const fs = require('fs');
 const { TableVRSComp } = require('../../src/PO/vrs/tableVRS.comp');
 const { default: checkVRS } = require('../../src/support/check/checkVrs');
+const { fillCommonPlaceholders } = require('../../src/utills/common');
 
 When(/^I click on "([^"]*)" VRS test$/, (testName) => {
     TableVRSComp.init();
@@ -50,14 +51,20 @@ When(/^I expect that(:? (\d)th)? VRS test "([^"]*)" has "([^"]*)" (status|browse
         }
     });
 
-When(/^I expect that(:? (\d)th)? test "([^"]*)" has "([^"]*)" (status|browser|platform|viewport|accepted status)$/,
-    function (number, testName, fieldValue, fieldName) {
-        const row = $(`//span[contains(text(),"${testName}")]/ancestor::div[@name="testinfo"]`);
+When(/^I expect that (\d)th test "([^"]*)" (has|contains) "([^"]*)" (status|browser|platform|viewport|accepted status|date|branch|created by)$/,
+    function (number, testName, method, fieldValue, fieldName) {
+        fieldValue = this.fillItemsPlaceHolders(fillCommonPlaceholders(fieldValue));
+        console.log({ fieldValue });
+        const row = $(`(//span[contains(text(),"${testName}")]/ancestor::div[@name="testinfo"])[${number}]`);
         const selectors = {
             status: '.cell-status',
             browser: 'span[name="browser-name"]',
+            date: 'span[name="cell-date"]',
             viewport: 'span[name="cell-viewport"]',
-            // ||platform||accepted status
+            platform: '.cell-platform',
+            branch: 'span.branch > a',
+            'created by': 'div.cell-creator > div',
+            'accepted status': 'div.cell-accepted-state > span',
         };
         const selector = selectors[fieldName];
         if (!selector) {
@@ -74,6 +81,16 @@ When(/^I expect that(:? (\d)th)? test "([^"]*)" has "([^"]*)" (status|browser|pl
             };
             expect(el)
                 .toHaveAttributeContaining('class', statusClasses[fieldValue]);
+            return;
+        }
+        if (fieldName === 'platform') {
+            expect(el)
+                .toHaveAttributeContaining('title', fieldValue);
+            return;
+        }
+        if (method === 'has') {
+            expect(el)
+                .toHaveText(fieldValue);
             return;
         }
         expect(el)
@@ -113,13 +130,14 @@ When(/^I create "([^"]*)" tests with params:$/, { timeout: 600000 }, async funct
         .keys())) {
         console.log(`Create test # ${i}`);
         await browser.vDriver.startTestSession({
-            app: 'Test App',
+            app: params.appName || 'Test App',
             test: `${params.testName} - ${i + 1}`,
             run: process.env.RUN_NAME || 'integration_run_name',
             runident: process.env.RUN_IDENT || 'integration_run_ident',
-            branch: 'integration',
+            branch: params.branch || 'integration',
         }, browser.config.apiKey);
         browser.pause(300);
+
         const filePath = params.filePath || 'files/A.png';
         const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${filePath}`);
         const checkName = params.checkName || `Check - ${Math.random()

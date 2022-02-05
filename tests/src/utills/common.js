@@ -92,6 +92,7 @@ const fillCommonPlaceholders = function fillPlaceholders(str) {
             Slug: faker.lorem.slug(),
             Uuid: faker.datatype.uuid(),
             'currentDate-10': subDays(new Date(), 10),
+            testPlatform: browser.config.testPlatform,
         }
     );
 };

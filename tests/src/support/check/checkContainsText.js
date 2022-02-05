@@ -37,7 +37,7 @@ export default (elementType, selector, falseCase, expectedText) => {
      * @type {String}
      */
     const elem = $(selector);
-    elem.waitForDisplayed();
+    // elem.waitForDisplayed();
     const text = elem[command]();
 
     if (typeof expectedText === 'undefined') {

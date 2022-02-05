@@ -1,135 +1,148 @@
-@integration
+@integration @e2e
 Feature: VRS One Suite, One test, One check
 
-  Background:
-    Given I clear test VRS database
-    Given I kill process which used port: "3001"
-    Given I start VRS server with parameters:
-    """
-      port: 3001
-      databaseName: VRSdbTest
-      baseLineFolder: ./baselinesTest/
-    """
-    Given I setup VRS driver with parameters:
-    """
-      url: "http://vrs:3001/"
-    """
+    Background:
+        Given I clear Database and stop Server
+        Given I start Server and start Driver
 
-  @withEndSession
-  Scenario: VRS create new check - with session ending
-    Given I set window size: "1366x768"
-    Given I start VRS session with parameters:
-    """
-      appName: "Integration Test App"
-      testName: "With session ending"
-    """
-    When I check image with path: "files/A.png" as "new int check 2"
+    Scenario: Create one check - [new, without session ending]
+        Given I start VRS session with parameters:
+        """
+        testName: "Without session ending"
+        """
+        When I check image with path: "files/A.png" as "new int check"
+        When I open the app
+        Then I wait and refresh page on element "span=Without session ending" for "3" seconds to exist
+        Then I expect that 1th test "Without session ending" has "Running" status
+        Then I expect that 1th test "Without session ending" contains "chrome" browser
+        Then I expect that 1th test "Without session ending" has "≠" viewport
 
-    When I stop VRS session
-    When I open the url "http://vrs:3001/"
-    Then I wait and refresh page on element "span=With session ending" for "3" seconds to exist
-    Then I expect that VRS test "With session ending" has "New" status
-    Then I expect that VRS test "With session ending" has "chrome" browser
-    Then I expect that VRS test "With session ending" has "1366x768" viewport
+        When I click on "Without session ending" VRS test
+        Then I expect that VRS test "Without session ending" is unfolded
+        Then I expect that VRS check "1/1 new int check" has "New" status
 
-    When I click on "With session ending" VRS test
-    Then I expect that VRS test "With session ending" is unfolded
-    Then I expect that VRS check "1/1 new int check 2" has "New" status
+    # descriptive e2e test
+    Scenario: Create one check [new, with session ending]
+        Given I set window size: "1366x768"
+        When I create "1" tests with params:
+        """
+          appName: Integration Test App
+          testName: With session ending
+          checkName: Check - 1
+          filePath: files/A.png
+          branch: onebranch
+        """
 
-  @newPassed
-  Scenario: VRS create new check - passed
-    Given I set window size: "1366x768"
+        When I open the app
+        When I wait and refresh page on element "span=With session ending - 1" for "3" seconds to exist
+        Then I expect that 1th test "With session ending - 1" has "New" status
+        Then I expect that 1th test "With session ending - 1" has "onebranch" branch
+        Then I expect that 1th test "With session ending - 1" has "Guest" created by
+        Then I expect that 1th test "With session ending - 1" has "Unaccepted" accepted status
+        Then I expect that 1th test "With session ending - 1" contains "<YYYY-MM-DD>" date
+        Then I expect that 1th test "With session ending - 1" contains "chrome" browser
+        Then I expect that 1th test "With session ending - 1" has "<testPlatform>" platform
+        Then I expect that 1th test "With session ending - 1" has "1366x768" viewport
 
-    Given I start VRS session with parameters:
-    """
-      testName: "Passed test"
-    """
-    When I check image with path: "files/A.png" as "new int check 3"
-    When I stop VRS session
-    Given I start VRS session with parameters:
-    """
-      testName: "Passed test"
-    """
-    When I check image with path: "files/A.png" as "new int check 3"
-    When I stop VRS session
-#
-    When I open the url "http://vrs:3001/"
+        When I click on "With session ending - 1" VRS test
+        Then I expect that VRS test "With session ending - 1" is unfolded
+        Then I expect that VRS check "1/1 Check - 1" has "New" status
+        Then I expect the "1/1 Check - 1" check has "not accept" acceptance status
 
-    Then I wait and refresh page on element "span=Passed" for "3" seconds to exist
-    Then I expect that 1th VRS test "Passed test" has "Passed" status
-    Then I expect that 1th VRS test "Passed test" has "chrome" browser
-    Then I expect that 1th VRS test "Passed test" has "1366x768" viewport
+        When I open "Check - 1" view
+        When I wait for "2" seconds
+        Then I expect the element "#not-equal-resolution-char" contains the text "≠" via js
+        Then I expect that element "#not-equal-resolution-char" does not have the class "d-inline"
 
-    Then I expect that 2th VRS test "Passed test" has "New" status
 
-    When I click on "Passed test" VRS test
-    Then I expect that VRS test "Passed test" is unfolded
-    Then I expect that VRS check "1/1 new int check 3" has "Passed" status
+    Scenario: VRS create two checks - [new, passed]
+        Given I set window size: "1366x768"
+        When I create "2" tests with params:
+        """
+          appName: Integration Test App
+          testName: "Created two: new, passed"
+          checkName: Check - 1
+          filePath: files/A.png
+          branch: onebranch
+        """
+        When I open the app
+        When I wait and refresh page on element "span=Created two: new, passed - 1" for "3" seconds to exist
+        Then I expect that 1th test "Created two: new, passed - 2" has "Passed" status
+        Then I expect that 1th test "Created two: new, passed - 2" has "onebranch" branch
+        Then I expect that 1th test "Created two: new, passed - 2" has "Guest" created by
+        Then I expect that 1th test "Created two: new, passed - 2" has "Unaccepted" accepted status
+        Then I expect that 1th test "Created two: new, passed - 2" contains "<YYYY-MM-DD>" date
+        Then I expect that 1th test "Created two: new, passed - 2" contains "chrome" browser
+        Then I expect that 1th test "Created two: new, passed - 2" has "<testPlatform>" platform
+        Then I expect that 1th test "Created two: new, passed - 2" has "1366x768" viewport
 
-  Scenario: VRS create new check - failed after new
-    Given I set window size: "1366x768"
+        When I click on "Created two: new, passed - 2" VRS test
+        Then I expect that VRS test "Created two: new, passed - 2" is unfolded
+        Then I expect that VRS check "1/1 Check - 1" has "Passed" status
+        Then I expect the "1/1 Check - 1" check has "not accept" acceptance status
 
-    Given I start VRS session with parameters:
-    """
-      testName: "Failed test"
-    """
-    When I check image with path: "files/A.png" as "new int check 4"
-    When I stop VRS session
+        Then I expect that 1th test "Created two: new, passed - 1" has "New" status
 
-    Given I start VRS session with parameters:
-    """
-      testName: "Failed test"
-    """
-    When I check image with path: "files/B.png" as "new int check 4"
-    When I stop VRS session
+    Scenario: VRS create two checks - [new, failed]
+        Given I set window size: "1366x768"
+        When I create "1" tests with params:
+        """
+          appName: Integration Test App
+          testName: "Created two: new, failed"
+          checkName: Check - 1
+          filePath: files/A.png
+          branch: onebranch
+        """
 
-    When I open the url "http://vrs:3001/"
+        When I create "1" tests with params:
+        """
+          appName: Integration Test App
+          testName: "Created two: new, failed"
+          checkName: Check - 1
+          filePath: files/B.png
+          branch: onebranch
+        """
+        When I open the app
+        When I wait and refresh page on element "span=Created two: new, failed - 1" for "3" seconds to exist
+        Then I expect that 1th test "Created two: new, failed - 1" has "Failed" status
+        Then I expect that 1th test "Created two: new, failed - 1" has "onebranch" branch
+        Then I expect that 1th test "Created two: new, failed - 1" has "Guest" created by
+        Then I expect that 1th test "Created two: new, failed - 1" has "Unaccepted" accepted status
+        Then I expect that 1th test "Created two: new, failed - 1" contains "<YYYY-MM-DD>" date
+        Then I expect that 1th test "Created two: new, failed - 1" contains "chrome" browser
+        Then I expect that 1th test "Created two: new, failed - 1" has "<testPlatform>" platform
+        Then I expect that 1th test "Created two: new, failed - 1" has "1366x768" viewport
 
-    Then I wait and refresh page on element "span=Failed" for "3" seconds to exist
-    Then I expect that 1th VRS test "Failed test" has "Failed" status
-    Then I expect that 1th VRS test "Failed test" has "chrome" browser
-    Then I expect that 1th VRS test "Failed test" has "1366x768" viewport
+        When I click on "Created two: new, failed - 1" VRS test
+        Then I expect that VRS test "Created two: new, failed - 1" is unfolded
+        Then I expect that VRS check "1/1 Check - 1" has "Failed" status
+        Then I expect the "1/1 Check - 1" check has "not accept" acceptance status
 
-    Then I expect that 2th VRS test "Failed test" has "New" status
+        Then I expect that 2th test "Created two: new, failed - 1" has "New" status
 
-    When I click on "Failed test" VRS test
-    Then I expect that VRS test "Failed test" is unfolded
-    Then I expect that VRS check "1/1 new int check 4" has "Failed" status
+    Scenario: VRS create three checks - [new, passed, failed]
+        Given I set window size: "1366x768"
+        When I create "2" tests with params:
+        """
+          appName: Integration Test App
+          testName: "Created three: new, passed, failed"
+          checkName: Check - 1
+          filePath: files/A.png
+          branch: onebranch
+        """
 
-  Scenario: VRS create new check - failed after success
-    Given I set window size: "1366x768"
+        When I create "1" tests with params:
+        """
+          appName: Integration Test App
+          testName: "Created three: new, passed, failed"
+          checkName: Check - 1
+          filePath: files/B.png
+          branch: onebranch
+        """
+        When I open the app
+        When I wait and refresh page on element "span=Created three: new, passed, failed - 1" for "3" seconds to exist
+        Then I expect that 1th test "Created three: new, passed, failed - 1" has "Failed" status
+        Then I expect that 1th test "Created three: new, passed, failed - 2" has "Passed" status
+        Then I expect that 2th test "Created three: new, passed, failed - 1" has "New" status
 
-    Given I start VRS session with parameters:
-    """
-      testName: "Failed test"
-    """
-    When I check image with path: "files/A.png" as "new int check 5"
-    When I stop VRS session
-
-    Given I start VRS session with parameters:
-    """
-      testName: "Failed test"
-    """
-    When I check image with path: "files/A.png" as "new int check 5"
-    When I stop VRS session
-
-    Given I start VRS session with parameters:
-    """
-      testName: "Failed test"
-    """
-    When I check image with path: "files/B.png" as "new int check 5"
-    When I stop VRS session
-
-    When I open the url "http://vrs:3001/"
-
-    Then I wait and refresh page on element "span=Failed" for "3" seconds to exist
-    Then I expect that 1th VRS test "Failed test" has "Failed" status
-    Then I expect that 1th VRS test "Failed test" has "chrome" browser
-    Then I expect that 1th VRS test "Failed test" has "1366x768" viewport
-
-    Then I expect that 2th VRS test "Failed test" has "Passed" status
-
-    When I click on "Failed test" VRS test
-    Then I expect that VRS test "Failed test" is unfolded
-    Then I expect that VRS check "1/1 new int check 5" has "Failed" status
 

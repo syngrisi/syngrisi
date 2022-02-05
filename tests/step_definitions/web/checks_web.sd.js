@@ -27,13 +27,15 @@ When(/^I delete the "([^"]*)" check$/, (checkName) => {
         .click();
 });
 
-When(/^I expect the "([^"]*)" check has "([^"]*)" acceptance status$/, (checkName, acceptStatus) => {
+When(/^I expect the(:? (\d)th)? "([^"]*)" check has "([^"]*)" acceptance status$/, (number, checkName, acceptStatus) => {
+    number = number || 1;
     const acceptStatusMap = {
         accept: 'accepted-button-icon',
         'previously accept': 'prev-accepted-button-icon',
         'not accept': 'not-accepted-button-icon',
     };
-    const icon = $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//a[contains(@class, 'accept-button')]/i`);
+
+    const icon = $(`(.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//a[contains(@class, 'accept-button')]/i)[${number}]`);
 
     const classesList = icon
         .getAttribute('class')
@@ -105,8 +107,9 @@ Then(/^I expect that "([^"]*)" check has Created "([^"]*)" equal to "([^"]*)"$/,
         .toContain(value);
 });
 
-Then(/^I expect that VRS check "([^"]*)" has "([^"]*)" status$/, (checkName, expectedStatus) => {
-    expect($(`.//div[contains(normalize-space(.), '${checkName}')]/../..`))
+Then(/^I expect that(:? (\d)th)? VRS check "([^"]*)" has "([^"]*)" status$/, (number, checkName, expectedStatus) => {
+    number = number || 1;
+    expect($(`(.//div[contains(normalize-space(.), '${checkName}')]/../..)[${number}]`))
         .toBeExisting();
 
     const border = $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//div[@name='check-status']`);

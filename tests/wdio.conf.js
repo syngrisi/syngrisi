@@ -6,6 +6,7 @@ const { hooks } = require('./src/support/hooks');
 
 exports.config = {
     rootPath: process.cwd(),
+    testPlatform: process.env.TEST_PLATFORM || 'macOS',
     serverPort: 3001,
     serverDomain: 'vrs',
     syngrisiUrl: 'http://vrs:3001/',

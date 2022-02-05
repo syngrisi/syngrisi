@@ -283,3 +283,10 @@ Then(/^I expect "([^"]*)" occurrences of (Visible|Clickable|Enabled|Existig|Sele
     expect(actualNum)
         .toEqual(parseInt(num));
 });
+
+Then(/^I expect the element "([^"]*)" contains the text "([^"]*)" via js$/, function (selector, expectedText) {
+    const text = $(selector)
+        .jsGetText();
+    expect(text)
+        .toContain(expectedText);
+});

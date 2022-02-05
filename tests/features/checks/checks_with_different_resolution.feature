@@ -2,8 +2,7 @@ Feature: Checks with different resolutions
 
     Background:
         Given I clear Database and stop Server
-        Given I start VRS server
-        When I setup VRS driver
+        Given I start Server and start Driver
 
     # the things is - if we have two snapshots with identical top part but
     # different resolution e.q.:
