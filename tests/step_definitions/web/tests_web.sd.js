@@ -51,8 +51,9 @@ When(/^I expect that(:? (\d)th)? VRS test "([^"]*)" has "([^"]*)" (status|browse
         }
     });
 
-When(/^I expect that (\d)th test "([^"]*)" (has|contains) "([^"]*)" (status|browser|platform|viewport|accepted status|date|branch|created by)$/,
+When(/^I expect that(:? (\d)th)? test "([^"]*)" (has|contains) "([^"]*)" (status|browser|platform|viewport|accepted status|date|branch|created by)$/,
     function (number, testName, method, fieldValue, fieldName) {
+        number = number ? parseInt(number, 10) : 1;
         fieldValue = this.fillItemsPlaceHolders(fillCommonPlaceholders(fieldValue));
         console.log({ fieldValue });
         const row = $(`(//span[contains(text(),"${testName}")]/ancestor::div[@name="testinfo"])[${number}]`);

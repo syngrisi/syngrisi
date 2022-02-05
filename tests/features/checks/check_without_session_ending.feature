@@ -14,7 +14,7 @@ Feature: One Check without session ending
         When I open the app
         Then I wait and refresh page on element "span=Without session ending" for "3" seconds to exist
         Then I expect that test "Without session ending" has "Running" status
-        Then I expect that test "Without session ending" has "chrome" browser
+        Then I expect that test "Without session ending" contains "chrome" browser
         Then I expect that test "Without session ending" has "≠" viewport
 
         When I click on "Without session ending" VRS test

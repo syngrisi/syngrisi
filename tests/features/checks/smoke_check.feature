@@ -1,4 +1,4 @@
-@integration @e2e
+@integration @e2e @smoke
 Feature: VRS One Suite, One test, One check
 
     Background:
