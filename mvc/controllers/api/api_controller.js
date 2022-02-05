@@ -1026,8 +1026,8 @@ exports.createCheck = async function (req, res) {
 
                 // check if we can ignore 1 px dimensions difference from the bottom
                 const ignoreDifferentResolutions = (dimensionDifference) => {
-                    if ((dimensionDifference.width === -1) && (dimensionDifference.height === -1)) return true;
                     if ((dimensionDifference.width === 0) && (dimensionDifference.height === -1)) return true;
+                    if ((dimensionDifference.width === 0) && (dimensionDifference.height === 1)) return true;
                     return false;
                 };
 
@@ -1035,6 +1035,8 @@ exports.createCheck = async function (req, res) {
                     try {
                         log.debug('the check isn\'t new, make comparing', $this);
                         compareResult = await compareSnapshots(currentBaseline, currentSnapshot);
+                        log.debug(`ignoreDifferentResolutions: '${ignoreDifferentResolutions(compareResult.dimensionDifference)}'`);
+                        log.debug(`dimensionDifference: '${JSON.stringify(compareResult.dimensionDifference)}`);
                         if ((compareResult.misMatchPercentage !== '0.00')
                             || ((!compareResult.isSameDimensions) && !ignoreDifferentResolutions(compareResult.dimensionDifference))) {
                             const logMsg = !compareResult.isSameDimensions ? 'snapshots have different dimensions' : 'snapshots have differences';

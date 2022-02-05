@@ -11,8 +11,7 @@ Feature: Checks with different resolutions 1px
 
     Background:
         Given I clear Database and stop Server
-        Given I start VRS server
-        When I setup VRS driver
+        Given I start Server and start Driver
 
     Scenario: Two checks with identical image parts but different resolutions [1px, bottom]
         When I create "1" tests with params:

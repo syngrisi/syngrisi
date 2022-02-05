@@ -54,7 +54,7 @@
     "@wdio/static-server-service": "^6.10.10",
     "@wdio/sync": "^6.11.0",
     "babel-jest": "^26.0.1",
-    "chromedriver": "^96.0.0",
+    "chromedriver": "^97.0.4",
     "cross-env": "^7.0.3",
     "eslint": "^7.24.0",
     "eslint-config-airbnb-base": "^14.1.0",
