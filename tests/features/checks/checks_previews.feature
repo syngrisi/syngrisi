@@ -2,31 +2,21 @@
 Feature: Checks previews
 
     Background:
-        Given I clear test VRS database
-        Given I stop the Syngrisi server
-        Given I start VRS server with parameters:
-        """
-          port: 3001
-          databaseName: VRSdbTest
-          baseLineFolder: ./baselinesTest/
-        """
-        Given I setup VRS driver with parameters:
-        """
-          url: "http://vrs:3001/"
-        """
+        Given I clear Database and stop Server
+        Given I start Server and start Driver
 
         Given I start VRS session with parameters:
         """
           testName: "region check"
         """
-        When I open the url "http://vrs:3001/"
+        When I open the app
         When I check image with path: "files/A.png" as "region"
         Then the "check" "status" should be "new"
 
         When I stop VRS session
 
     Scenario: Create Ignore Region check if it present on Main Grid
-        When I open the url "http://vrs:3001/"
+        When I open the app
         When I wait for "3" seconds
         When I click on "region check" VRS test
         Then I expect that VRS test "region check" is unfolded
@@ -56,7 +46,7 @@ Feature: Checks previews
 
         When I click on the element "#save-baseline"
 
-        When I open the url "http://vrs:3001/"
+        When I open the app
         When I wait for "3" seconds
         When I execute javascript code:
         """

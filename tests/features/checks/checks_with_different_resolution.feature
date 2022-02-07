@@ -41,6 +41,10 @@ Feature: Checks with different resolutions
         """
         status: [failed]
         """
+        Then I expect "check" saved object:
+        """
+          failReasons: [ 'wrong_dimensions' ]
+        """
         When I open the app
         When I click on "Checks with different resolutions - 1" VRS test
         When I open "Check - 1" view
@@ -68,6 +72,10 @@ Feature: Checks with different resolutions
         When I expect via http 2st check filtered as "Check - 1" matched:
         """
         status: [failed]
+        """
+        Then I expect "check" saved object:
+        """
+          failReasons: [ 'wrong_dimensions', 'different_images' ]
         """
         When I open the app
         When I click on "Checks with different resolutions - 1" VRS test

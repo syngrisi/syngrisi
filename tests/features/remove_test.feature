@@ -1,8 +1,7 @@
 Feature: Remove tests
 
     Background:
-        Given I stop the Syngrisi server
-        Given I clear test VRS database
+        Given I clear Database and stop Server
         When I set env variables:
         """
           TEST: 1
@@ -17,9 +16,7 @@ Feature: Remove tests
         TEST: 0
         SYNGRISI_AUTH: 1
         """
-        Given I start VRS server
-
-        Given I setup VRS driver
+        Given I start Server and start Driver
 
         # create user
         When I login via http with user:"Test" password "123"
@@ -37,7 +34,7 @@ Feature: Remove tests
         When I generate via http API key for the User
         When I set the API key in config
 
-    @e2e
+    @e2e @smoke
     Scenario: Remove One unaccepted test
         # create check
         When I create "1" tests with params:
@@ -65,6 +62,7 @@ Feature: Remove tests
         Then I expect that the snapshoot filename is not exists
         Then I expect via http 0 baselines
 
+    @smoke
     Scenario: Remove One accepted test
         # create check
         When I create "1" tests with params:

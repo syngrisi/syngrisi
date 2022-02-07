@@ -32,7 +32,6 @@ Then(/^I expect the stored "([^"]*)" object is( not|) (equal|contain):$/, functi
     if (condition === ' not') {
         expect(itemValue.trim())
             .not[assertMethod](expected.trim());
-        // .toEqual(expected.trim());
     } else {
         expect(itemValue.trim())[assertMethod](expected.trim());
     }

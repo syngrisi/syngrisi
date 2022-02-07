@@ -35,9 +35,10 @@ const {
     waitUntil,
     removeEmptyProperties,
     buildQuery,
-    getSuitesByTestsQuery,
     buildIdentObject,
 } = require('../utils');
+const { createItemIfNotExistAsync } = require('../../../lib/dbItems');
+
 const $this = this;
 $this.logMeta = {
     scope: 'api_controllers',
@@ -59,53 +60,48 @@ async function getLastSuccessCheck(identifier) {
         .limit(1))[0];
 }
 
-// API
-
 // snapshots
 async function getSnapshotByImgHash(hash) {
-    return (await Snapshot.findOne({ imghash: hash }));
+    return Snapshot.findOne({ imghash: hash });
 }
 
 async function createSnapshot(parameters) {
     const {
-        params,
+        name,
         fileData,
         hashCode,
-        filename,
     } = parameters;
-    const opts = {
-        name: params.name,
-    };
-    if (filename) {
-        (opts.filename = filename);
-    }
 
-    if (!fileData && !hashCode) {
-        throw new Error('Error: the \'fileData\' nor \'hashCode\' is set, you should provide at least one parameter');
-    }
+    const opts = {
+        name: name,
+    };
+    $this.logMeta = {
+        scope: 'createSnapshot',
+        itemType: 'snapshot',
+    };
+    if (!fileData) throw new Error(`cannot create the snapshot, the 'fileData' is not set, name: '${name}'`);
 
     opts.imghash = hashCode || hasha(fileData);
-    // const equalSnapshot = await getSnapshotByImgHash(opts['imghash']);
-    // if (equalSnapshot) {
-    //     console.log(`Snapshot with hash: '${opts['imghash']}' is already exist.`);
-    //     return equalSnapshot;
-    // }
-    // console.log(`Snapshot with hash: '${opts['imghash']}' doesn't exists creating new one...`);
+    const snapshot = new Snapshot(opts);
+    const path = `${config.defaultBaselinePath}${snapshot.id}.png`;
+    log.debug(`save screenshot for: '${name}' snapshot to: '${path}'`, $this);
+    await fs.writeFile(path, fileData);
+    snapshot.filename = `${snapshot._id}.png`;
+    await snapshot.save();
+    log.debug(`snapshot was saved: '${JSON.stringify(snapshot)}'`, $this, { ref: snapshot._id });
+    return snapshot;
+}
 
-    const snapshoot = new Snapshot(opts);
-    if (!filename) (snapshoot.filename = `${snapshoot._id}.png`);
-    snapshoot.save((err, result) => {
-        if (err) {
-            throw err;
-        }
+async function cloneSnapshot(sourceSnapshot, name) {
+    const filename = sourceSnapshot.filename ? sourceSnapshot.filename : `${sourceSnapshot._id}.png`;
+    const hashCode = sourceSnapshot.imghash;
+    const newSnapshot = new Snapshot({
+        name,
+        filename,
+        imghash: hashCode,
     });
-    if (fileData) {
-        log.debug(`snapshot was saved: '${JSON.stringify(snapshoot)}'`, $this, { scope: 'createSnapshot' });
-        const path = `${config.defaultBaselinePath}${snapshoot.id}.png`;
-        log.debug(`save screenshot to: '${path}'`, $this, { scope: 'createSnapshot' });
-        await fs.writeFile(path, fileData);
-    }
-    return snapshoot;
+    await newSnapshot.save();
+    return newSnapshot;
 }
 
 async function compareSnapshots(baseline, actual) {
@@ -143,10 +139,6 @@ async function compareSnapshots(baseline, actual) {
         if (baseline.ignoreRegions) {
             log.debug(`ignore regions: '${baseline.ignoreRegions}', type: '${typeof baseline.ignoreRegions}'`);
         }
-        // if (baseline.ignoreRegions === 'undefined') {
-        //     delete baseline.ignoreRegions;
-        //     log.debug(`remove ignore regions: ${baseline.ignoreRegions}`);
-        // }
 
         // back compatibility
         if ((baseline.ignoreRegions !== 'undefined') && baseline.ignoreRegions) {
@@ -185,121 +177,81 @@ exports.updateSnapshot = async function (req, res) {
         itemType: 'snapshot',
         msgType: 'UPDATE',
     };
-    return new Promise(async (resolve, reject) => {
-        try {
-            const opts = removeEmptyProperties(req.body);
-            const { id } = req.params;
-            opts['updatedDate'] = Date.now();
-            log.debug(`start update snapshot with id: '${id}', params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`, $this, logOpts);
-            const snp = await Snapshot.findByIdAndUpdate(id, opts)
-                .exec()
-                .catch(
-                    (e) => {
-                        log.error(`cannot update a snapshot with id: '${id}', error: ${e}`, $this, logOpts);
-                        fatalError(req, res, e);
-                        return reject(e);
-                    }
-                );
-            await snp.save();
-            log.debug(`snapshot with id: '${id}' and opts: '${JSON.stringify(opts)}' was updated`, $this, logOpts);
-            res.status(200)
-                .json({
-                    item: 'Snapshot',
-                    action: 'update',
-                    id,
-                    opts,
-                });
-        } catch (e) {
-            fatalError(req, res, e);
-            return reject(e);
-        }
-    });
+    try {
+        const opts = removeEmptyProperties(req.body);
+        const { id } = req.params;
+        opts['updatedDate'] = Date.now();
+        // eslint-disable-next-line max-len
+        log.debug(`start update snapshot with id: '${id}', params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`, $this, logOpts);
+        const snp = await Snapshot.findByIdAndUpdate(id, opts)
+            .exec();
+        await snp.save();
+        log.debug(`snapshot with id: '${id}' and opts: '${JSON.stringify(opts)}' was updated`, $this, logOpts);
+        res.status(200)
+            .json({
+                item: 'Snapshot',
+                action: 'update',
+                id,
+                opts,
+            });
+    } catch (e) {
+        fatalError(req, res, e);
+    }
 };
 
 exports.getSnapshot = async function (req, res) {
-    return new Promise(async (resolve, reject) => {
-        let id;
-        try {
-            const opts = removeEmptyProperties(req.body);
-            id = req.params.id;
-            // log.debug(`get snapshot with id: '${id}', params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`,
-            //     $this, {
-            //         scope: 'getSnapshot',
-            //         msgType: 'GET',
-            //     });
-            const snp = await Snapshot.findById(id);
-            res.json(snp);
-            return resolve(snp);
-        } catch (e) {
-            log.error((`cannot get a snapshot with id: '${id}', error: ${e}`, $this, {
-                scope: 'getSnapshot',
-                msgType: 'GET',
-            }));
-            fatalError(req, res, e);
-            return reject(e);
-        }
-    });
+    let id;
+    try {
+        id = req.params.id;
+        const snp = await Snapshot.findById(id);
+        res.json(snp);
+        return snp;
+    } catch (e) {
+        log.error((`cannot get a snapshot with id: '${id}', error: ${e}`, $this, {
+            scope: 'getSnapshot',
+            msgType: 'GET',
+        }));
+        fatalError(req, res, e);
+    }
+    return null;
 };
 
-function cloneSnapshoot(sourceSnapshoot, params, fileData) {
-    return new Promise(async (resolve, reject) => {
-        const filename = sourceSnapshoot.filename ? sourceSnapshoot.filename : `${sourceSnapshoot._id}.png`;
-        const newSnapshoot = await createSnapshot({
-            filename,
-            params,
-            // fileData: fileData,
-            hashCode: params.hashcode,
-        });
-        resolve(newSnapshoot);
-    });
-}
-
 const checksGroupByIdent = async function (req, res) {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const testId = req.params.testid;
-            res.json(await checksGroupedByIdent({ test: testId })
-                .catch((e) => {
-                    fatalError(req, res, e);
-                    return reject(e);
-                }));
-        } catch (e) {
-            fatalError(req, res, e);
-            return reject(e);
-        }
-    });
+    try {
+        const testId = req.params.testid;
+        res.json(await checksGroupedByIdent({ test: testId }));
+    } catch (e) {
+        fatalError(req, res, e);
+    }
 };
 
 exports.checksGroupByIdent = checksGroupByIdent;
 
 exports.affectedElements = async function (req, res) {
-    return new Promise(async (resolve, reject) => {
-        try {
-            if (!req.query.checktid || !req.query.diffid) {
-                const e = 'checktid|diffid query values are empty';
-                fatalError(req, res, e);
-                return reject(e);
-            }
-            const chk = await Check.findById(req.query.checktid)
-                .exec()
-                .catch((e) => {
-                    fatalError(req, res, e);
-                    return reject(e);
-                });
-            if (!chk) {
-                fatalError(req, res, `Cannot find check with such id: '${req.query.checktid}'`);
-            }
-
-            const imDiffData = await fs.readFile(`${config.defaultBaselinePath}${req.query.diffid}.png`);
-            const positions = parseDiff(imDiffData);
-            const result = await getAllElementsByPositionFromDump(JSON.parse(chk.domDump), positions);
-            console.table(Array.from(result), ['tag', 'id', 'x', 'y', 'width', 'height', 'domPath']);
-            res.json(result);
-            return resolve(result);
-        } catch (e) {
+    try {
+        if (!req.query.checktid || !req.query.diffid) {
+            const e = 'checktid|diffid query values are empty';
             fatalError(req, res, e);
         }
-    });
+        const chk = await Check.findById(req.query.checktid)
+            .exec()
+            .catch((e) => {
+                fatalError(req, res, e);
+            });
+        if (!chk) {
+            fatalError(req, res, `Cannot find check with such id: '${req.query.checktid}'`);
+        }
+
+        const imDiffData = await fs.readFile(`${config.defaultBaselinePath}${req.query.diffid}.png`);
+        const positions = parseDiff(imDiffData);
+        const result = await getAllElementsByPositionFromDump(JSON.parse(chk.domDump), positions);
+        console.table(Array.from(result), ['tag', 'id', 'x', 'y', 'width', 'height', 'domPath']);
+        res.json(result);
+        return result;
+    } catch (e) {
+        fatalError(req, res, e);
+    }
+    return null;
 };
 
 function parseSorting(params) {
@@ -344,47 +296,29 @@ exports.createUser = async function (req, res) {
         user: req?.user?.username,
         scope: 'createUser',
     };
-    return new Promise(
-        async (resolve, reject) => {
-            try {
-                log.debug(`create the user with name '${params.username}', params: '${JSON.stringify(params)}'`,
-                    $this, logOpts);
+    try {
+        log.debug(`create the user with name '${params.username}', params: '${JSON.stringify(params)}'`,
+            $this, logOpts);
 
-                const opts = removeEmptyProperties(Object.assign(params, { updatedDate: new Date() }));
-                orm.createUser(opts)
-                    .then((user) => {
-                        user.setPassword(opts.password)
-                            .then(async (usr) => {
-                                await usr.save();
-                                log.debug(`password for user: '${user.username}' set successfully`, $this, logOpts);
-                                res.json(user);
-                                return resolve([req, res, user]);
-                            })
-                            .catch((e) => {
-                                fatalError(req, res, e);
-                                return reject(e);
-                            });
-                    })
-                    .catch((e) => {
-                        fatalError(req, res, e);
-                        return reject(e);
-                    });
-            } catch (e) {
-                fatalError(req, res, e);
-                return reject(e);
-            }
-        }
-    );
+        const opts = removeEmptyProperties(Object.assign(params, { updatedDate: new Date() }));
+        const user = await orm.createUser(opts);
+        const updatedUser = await user.setPassword(opts.password);
+        await updatedUser.save();
+        log.debug(`password for user: '${user.username}' set successfully`, $this, logOpts);
+        res.json(user);
+        return [req, res, user];
+    } catch (e) {
+        fatalError(req, res, e);
+    }
+    return null;
 };
 
 exports.getUsers = async function (req, res) {
-    return new Promise(async (resolve, reject) => {
-        const users = await User.find()
-            .exec();
-        res.status(200)
-            .json(users);
-        return resolve(users);
-    });
+    const users = await User.find()
+        .exec();
+    res.status(200)
+        .json(users);
+    return users;
 };
 
 const updateUser = async function (req, res) {
@@ -396,48 +330,42 @@ const updateUser = async function (req, res) {
         user: req?.user?.username,
         scope: 'updateUser',
     };
-    return new Promise(
-        async (resolve, reject) => {
-            try {
-                log.debug(`update user with id: '${params.id}' name '${params.username}', params: '${JSON.stringify(params)}'`,
-                    $this, logOpts);
 
-                const opts = removeEmptyProperties(Object.assign(params, { updatedDate: new Date() }));
+    try {
+        log.debug(`update user with id: '${params.id}' name '${params.username}', params: '${JSON.stringify(params)}'`,
+            $this, logOpts);
 
-                const user = await User.findById(opts.id);
-                if (!user) {
-                    res.status(500)
-                        .json({
-                            status: 'Error',
-                            message: `Cannot find user with id: '${opts.id}'`,
-                        });
-                    return reject;
-                }
-                const { password } = opts;
+        const opts = removeEmptyProperties(Object.assign(params, { updatedDate: new Date() }));
 
-                await User.findByIdAndUpdate(user._id, params)
-                    .catch((e) => {
-                        fatalError(req, res, e);
-                        return reject(e);
-                    });
-                if (password) {
-                    await user.setPassword(password);
-                    await user.save();
-                }
-                log.debug(`user '${user.username}' was updated successfully`, $this, logOpts);
-                res.json(user);
-                return resolve([req, res, user]);
-            } catch (e) {
-                fatalError(req, res, e);
-                return reject(e);
-            }
+        const user = await User.findById(opts.id);
+        if (!user) {
+            res.status(500)
+                .json({
+                    status: 'Error',
+                    message: `Cannot find user with id: '${opts.id}'`,
+                });
+            throw new Error(`cannot find the user with id: ${opts.id}`);
         }
-    );
+        const { password } = opts;
+
+        await User.findByIdAndUpdate(user._id, params);
+
+        if (password) {
+            await user.setPassword(password);
+            await user.save();
+        }
+        log.debug(`user '${user.username}' was updated successfully`, $this, logOpts);
+        res.json(user);
+        return [req, res, user];
+    } catch (e) {
+        fatalError(req, res, e);
+    }
+    return null;
 };
 
 exports.updateUser = updateUser;
 
-exports.removeUser = function (req, res) {
+exports.removeUser = async function (req, res) {
     const params = req.body;
     const logOpts = {
         msgType: 'REMOVE',
@@ -446,21 +374,17 @@ exports.removeUser = function (req, res) {
         user: req?.user?.username,
         scope: 'removeUser',
     };
-    return new Promise(async (resolve, reject) => {
-        try {
-            const { id } = req.params;
-            log.debug(`remove the user with id: '${id}'`, $this, logOpts);
-            const user = await User.findByIdAndDelete(id);
-            log.debug(`user with id: '${user._id}' and username: '${user.username}' was removed`,
-                $this, logOpts);
-            res.status(200)
-                .send({ message: `user with id: '${user._id}' and username: '${user.username}' was removed` });
-            return resolve();
-        } catch (e) {
-            fatalError(req, res, e);
-            return reject(e);
-        }
-    });
+    try {
+        const { id } = req.params;
+        log.debug(`remove the user with id: '${id}'`, $this, logOpts);
+        const user = await User.findByIdAndDelete(id);
+        log.debug(`user with id: '${user._id}' and username: '${user.username}' was removed`, $this, logOpts);
+        res.status(200)
+            .send({ message: `user with id: '${user._id}' and username: '${user.username}' was removed` });
+        return;
+    } catch (e) {
+        fatalError(req, res, e);
+    }
 };
 
 exports.changePassword = function (req, res) {
@@ -486,38 +410,22 @@ exports.changePassword = function (req, res) {
 };
 
 // tests
-function updateTest(opts) {
-    return new Promise(async (resolve, reject) => {
-        const { id } = opts;
-        const logOpts = {
-            msgType: 'UPDATE',
-            itemType: 'test',
-            scope: 'updateTest',
-        };
-        try {
-            opts['updatedDate'] = Date.now();
-            log.debug(`update test id '${id}' with params '${JSON.stringify(opts)}'`, $this, logOpts);
+async function updateTest(opts) {
+    const { id } = opts;
+    const logOpts = {
+        msgType: 'UPDATE',
+        itemType: 'test',
+        scope: 'updateTest',
+    };
+    opts['updatedDate'] = Date.now();
+    log.debug(`update test id '${id}' with params '${JSON.stringify(opts)}'`, $this, logOpts);
 
-            const tst = await Test.findByIdAndUpdate(id, opts)
-                .exec()
-                .catch(
-                    (e) => {
-                        log.error(`cannot update the test, error: '${e}'`, $this, logOpts);
-                        return reject(e);
-                    }
-                );
-            tst.save()
-                .catch(
-                    (e) => {
-                        log.error(`cannot save the test, error: '${e}'`, $this, logOpts);
-                        return reject(e);
-                    }
-                );
-            return resolve(tst);
-        } catch (e) {
-            reject(e);
-        }
-    });
+    const test = await Test.findByIdAndUpdate(id, opts)
+        .exec();
+
+    test.save();
+
+    return test;
 }
 
 exports.updateTest = async function (req, res) {
@@ -530,27 +438,21 @@ exports.updateTest = async function (req, res) {
         user: req?.user?.username,
         scope: 'updateTest',
     };
-    return new Promise(
-        async (resolve, reject) => {
-            try {
+    try {
+        log.debug(`update test with id '${id}' with params '${JSON.stringify(opts, null, 2)}'`,
+            $this, logOpts);
 
-                // console.log({ id });
-                log.debug(`update test with id '${id}' with params '${JSON.stringify(opts, null, 2)}'`,
-                    $this, logOpts);
-
-                const tst = await Test.findOneAndUpdate({ _id: id }, opts, { new: true });
-                res.status(200)
-                    .json({
-                        message: `Test with id: '${id}' was updated`,
-                        test: tst.toObject(),
-                    });
-                return resolve(tst);
-            } catch (e) {
-                fatalError(req, res, e);
-                return reject(e);
-            }
-        }
-    );
+        const test = await Test.findOneAndUpdate({ _id: id }, opts, { new: true });
+        res.status(200)
+            .json({
+                message: `Test with id: '${id}' was updated`,
+                test: test.toObject(),
+            });
+        return test;
+    } catch (e) {
+        fatalError(req, res, e);
+    }
+    return null;
 };
 
 function removeCheck(id) {
@@ -585,17 +487,17 @@ function removeCheck(id) {
                 };
                 if (check.baselineId ?? true) {
                     log.debug(`try to remove the snapshot, baseline: ${check.baselineId}`, $this, logOpts);
-                    await removeSnapshoot('baseline', allCheckIds);
+                    await removeSnapshot('baseline', allCheckIds);
                 }
 
                 if (check.actualSnapshotId ?? true) {
                     log.debug(`try to remove the snapshot, actual: ${check.actualSnapshotId}`, $this, logOpts);
-                    await removeSnapshoot('actual', allCheckIds);
+                    await removeSnapshot('actual', allCheckIds);
                 }
 
                 if (check.diffId ?? true) {
                     log.debug(`try to remove snapshot, diff: ${check.diffId}`, $this, logOpts);
-                    await removeSnapshoot('diff', allCheckIds);
+                    await removeSnapshot('diff', allCheckIds);
                 }
                 return resolve();
             })
@@ -608,48 +510,40 @@ function removeCheck(id) {
     });
 }
 
-function removeTest(id) {
-    return new Promise(async (resolve, reject) => {
-        try {
-            log.debug(`try to delete all checks associated to test with ID: '${id}'`, $this,
-                {
-                    itemType: 'test',
-                    msgType: 'REMOVE',
-                    ref: id,
-                });
-            const checks = await Check.find({ test: id });
-            const checksRemoveResult = [];
-            checks.forEach((check) => {
-                checksRemoveResult.push(removeCheck(check._id));
-            });
-            await Promise.all(checksRemoveResult);
+async function removeTest(id) {
+    const logOpts = {
+        itemType: 'test',
+        msgType: 'REMOVE',
+        ref: id,
+    };
+    try {
+        log.debug(`try to delete all checks associated to test with ID: '${id}'`, $this, logOpts);
+        const checks = await Check.find({ test: id });
+        const checksRemoveResult = [];
+        checks.forEach((check) => {
+            checksRemoveResult.push(removeCheck(check._id));
+        });
+        await Promise.all(checksRemoveResult);
 
-            await Test.findByIdAndDelete(id);
-
-            return resolve();
-        } catch (e) {
-            return reject(e);
-        }
-    });
+        await Test.findByIdAndDelete(id);
+    } catch (e) {
+        log.error(`cannot remove test with id: ${id} error: ${e}`, $this, logOpts);
+        throw new Error();
+    }
 }
 
-exports.removeTest = function (req, res) {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const { id } = req.params;
-            removeTest(id)
-                .then(() => {
-                    res.status(200)
-                        .json({
-                            message: `Test with id: '${id}' and all related checks were removed`,
-                        });
-                    return resolve();
-                });
-        } catch (e) {
-            fatalError(req, res, e);
-            return reject(e);
-        }
-    });
+exports.removeTest = async function (req, res) {
+    try {
+        const { id } = req.params;
+        await removeTest(id);
+        res.status(200)
+            .json({
+                message: `Test with id: '${id}' and all related checks were removed`,
+            });
+        return;
+    } catch (e) {
+        fatalError(req, res, e);
+    }
 };
 
 exports.createTest = async function (req, res) {
@@ -660,62 +554,58 @@ exports.createTest = async function (req, res) {
         itemType: 'test',
         msgType: 'CREATE',
     };
-    return new Promise(
-        async (resolve, reject) => {
-            try {
-                const params = req.body;
 
-                log.info(`create test with name '${params.name}', params: '${JSON.stringify(params)}'`, $this);
+    try {
+        const params = req.body;
 
-                const opts = removeEmptyProperties({
-                    name: params.name,
-                    status: params.status,
-                    app: params.app,
-                    tags: params.tags && JSON.parse(params.tags),
-                    branch: params.branch,
-                    viewport: params.viewport,
-                    browserName: params.browser,
-                    browserVersion: params.browserVersion,
-                    browserFullVersion: params.browserFullVersion,
-                    os: params.os,
-                    startDate: new Date(),
-                    updatedDate: new Date(),
-                });
+        log.info(`create test with name '${params.name}', params: '${JSON.stringify(params)}'`, $this);
+        const opts = removeEmptyProperties({
+            name: params.name,
+            status: params.status,
+            app: params.app,
+            tags: params.tags && JSON.parse(params.tags),
+            branch: params.branch,
+            viewport: params.viewport,
+            browserName: params.browser,
+            browserVersion: params.browserVersion,
+            browserFullVersion: params.browserFullVersion,
+            os: params.os,
+            startDate: new Date(),
+            updatedDate: new Date(),
+        });
 
-                let run;
-                if (params.run) {
-                    run = await orm.createRunIfNotExist({
-                        name: params.run,
-                        ident: params.runident,
-                    });
-                    opts.run = run.id;
-                }
-                const test = await orm.createTest(opts);
-
-                res.json(test);
-                return resolve([req, res, test]);
-            } catch (e) {
-                fatalError(req, res, e);
-                return reject(e);
-            }
+        let run;
+        if (params.run) {
+            run = await createItemIfNotExistAsync('VRSRun',
+                {
+                    name: params.run,
+                    ident: params.runident,
+                },
+                { user: req?.user?.username, itemType: 'run' });
+            opts.run = run.id;
         }
-    );
+        const test = await orm.createTest(opts);
+
+        res.json(test);
+        return [req, res, test];
+    } catch (e) {
+        fatalError(req, res, e);
+    }
+    return null;
 };
 
-function calculateTestStatus(testId) {
-    return new Promise(async (resolve, reject) => {
-        const checksInTest = await Check.find({ test: testId });
-        const statuses = checksInTest.map((x) => x.status[0]);
-        let testCalculatedStatus = 'Failed';
-        if (statuses.every((x) => (x === 'new') || (x === 'passed'))) {
-            testCalculatedStatus = 'Passed';
-        }
-        if (statuses.every((x) => (x === 'new'))) {
-            testCalculatedStatus = 'New';
-        }
-        // console.log({ testCalculatedStatus });
-        return resolve(testCalculatedStatus);
-    });
+async function calculateTestStatus(testId) {
+    const checksInTest = await Check.find({ test: testId });
+    const statuses = checksInTest.map((x) => x.status[0]);
+    let testCalculatedStatus = 'Failed';
+    if (statuses.every((x) => (x === 'new') || (x === 'passed'))) {
+        testCalculatedStatus = 'Passed';
+    }
+    if (statuses.every((x) => (x === 'new'))) {
+        testCalculatedStatus = 'New';
+    }
+    // console.log({ testCalculatedStatus });
+    return testCalculatedStatus;
 }
 
 // suites
@@ -727,68 +617,55 @@ exports.removeSuite = async function (req, res) {
         itemType: 'suite',
         msgType: 'REMOVE',
     };
-    return new Promise(async (resolve, reject) => {
-        try {
-            const { id } = req.params;
-            const suite = await Suite.findOne({ _id: id });
-            log.info(`remove suite with name: '${suite.name}'`, $this, { ref: id });
-            const tests = await Test.find({ suite: id });
+    const { id } = req.params;
+    try {
+        const suite = await Suite.findOne({ _id: id });
+        log.info(`remove suite with name: '${suite.name}'`, $this, { ref: id });
+        const tests = await Test.find({ suite: id });
 
-            const results = [];
-            for (const test of tests) {
-                results.push(removeTest(test._id));
-            }
-
-            Promise.all(results)
-                .then((result) => {
-                    Suite.findByIdAndDelete(id)
-                        .then((out) => {
-                            res.status(200)
-                                .send(`Suite with id: '${id}' and all related tests and checks were removed
-                    output: '${JSON.stringify(out)}'`);
-                            return resolve();
-                        });
-                });
-        } catch (e) {
-            return reject(e);
+        const results = [];
+        for (const test of tests) {
+            results.push(removeTest(test._id));
         }
-    });
+
+        await Promise.all(results);
+        const out = await Suite.findByIdAndDelete(id);
+        res.status(200)
+            .send(`Suite with id: '${id}' and all related tests and checks were removed
+                    output: '${JSON.stringify(out)}'`);
+    } catch (e) {
+        log.error(`cannot remove the suite with id: '${id}', error: '${e}'`, $this);
+        throw new Error(`cannot remove the suite with id: '${id}', error: '${e}'`);
+    }
 };
 
 exports.removeRun = async function (req, res) {
-    return new Promise(async (resolve, reject) => {
-        const $this = this;
-        $this.logMeta = {
-            scope: 'removeRun',
-            user: req?.user?.username,
-            itemType: 'run',
-            msgType: 'REMOVE',
-        };
-        try {
-            const { id } = req.params;
-            const run = await Run.findOne({ _id: id });
-            log.info(`delete run and checks which associate with the run: '${run.name}'`, this, { ref: id });
-            const tests = await Test.find({ run: id });
+    const $this = this;
+    $this.logMeta = {
+        scope: 'removeRun',
+        user: req?.user?.username,
+        itemType: 'run',
+        msgType: 'REMOVE',
+    };
+    const { id } = req.params;
+    try {
+        const run = await Run.findOne({ _id: id });
+        log.info(`delete run and checks which associate with the run: '${run.name}'`, this, { ref: id });
+        const tests = await Test.find({ run: id });
 
-            const results = [];
-            for (const test of tests) {
-                results.push(removeTest(test._id));
-            }
-
-            Promise.all(results)
-                .then((result) => {
-                    Run.findByIdAndDelete(id)
-                        .then((out) => {
-                            res.status(200)
-                                .send(`Run with id: '${id}' and all related tests and checks were removed
-                    output: '${JSON.stringify(out)}'`);
-                            return resolve();
-                        });
-                });
-        } catch (e) {
-            return reject(e);
+        const results = [];
+        for (const test of tests) {
+            results.push(removeTest(test._id));
         }
-    });
+        await Promise.all(results);
+        const out = await Run.findByIdAndDelete(id);
+        res.status(200)
+            .send(`Run with id: '${id}' and all related tests and checks were removed
+                    output: '${JSON.stringify(out)}'`);
+    } catch (e) {
+        log.error(`cannot remove the run with id: '${id}', error: '${e}'`, $this);
+        throw new Error(`cannot remove the run with id: '${id}', error: '${e}'`);
+    }
 };
 
 // checks
@@ -808,10 +685,10 @@ async function getBaseline(params) {
     const identFields = buildIdentObject(params);
     const identFieldsAccepted = Object.assign(buildIdentObject(params), { markedAs: 'accepted' });
     const acceptedBaseline = await Baseline.findOne(identFieldsAccepted, {}, { sort: { createdDate: -1 } });
-    log.debug(`acceptedBaseline: '${acceptedBaseline ? JSON.stringify(acceptedBaseline) : 'not found'}'`, $this);
+    log.debug(`acceptedBaseline: '${acceptedBaseline ? JSON.stringify(acceptedBaseline) : 'not found'}'`, $this, { itemType: 'baseline' });
     if (acceptedBaseline) return acceptedBaseline;
     const simpleBaseline = await Baseline.findOne(identFields, {}, { sort: { createdDate: -1 } });
-    log.debug(`simpleBaseline: '${JSON.stringify(simpleBaseline)}'`, $this);
+    log.debug(`simpleBaseline: '${simpleBaseline ? JSON.stringify(simpleBaseline) : 'not found'}'`, $this, { itemType: 'baseline' });
     if (simpleBaseline) return simpleBaseline;
     return null;
 }
@@ -837,461 +714,481 @@ async function createBaselineifNotExist(params) {
     return createNewBaseline(params);
 }
 
+const lackOfParamsGuard = (req, res) => {
+    let errMsg = null;
+    if (!req.body.testid) {
+        errMsg = `Cannot create check without 'testid' parameter, `
+            + `try to initialize the session at first. parameters: '${JSON.stringify(req.body)}'`;
+    }
+    if (!req.body.hashcode) {
+        errMsg = `Cannot create check without 'hashcode' parameter, parameters: '${JSON.stringify(req.body)}'`;
+    }
+
+    if (!req.body.name) {
+        errMsg = `Cannot create check without check name parameter, `
+            + ` parameters: '${JSON.stringify(req.body)}'`;
+    }
+    if (errMsg) {
+        res.status(400)
+            .send({
+                status: 'paramNotFound',
+                message: errMsg,
+            });
+        throw new Error(errMsg);
+    }
+};
+
+async function createCheck(
+    checkParam,
+    test,
+    suite,
+    currentUser
+) {
+    const executionTimer = process.hrtime();
+    const app = await createItemIfNotExistAsync('VRSApp',
+        { name: checkParam.appName || 'Unknown' },
+        { user: currentUser.username, itemType: 'app' });
+
+    /** define params for new check */
+    const newCheckParams = {
+        test: checkParam.testId,
+        name: checkParam.name,
+        viewport: checkParam.viewport,
+        browserName: checkParam.browserName,
+        browserVersion: checkParam.browserVersion,
+        browserFullVersion: checkParam.browserFullVersion,
+        os: checkParam.os,
+        updatedDate: Date.now(),
+        suite: suite.id,
+        app: app.id,
+        branch: checkParam.branch,
+        domDump: checkParam.domDump,
+        run: test.run,
+        creatorId: currentUser._id,
+        creatorUsername: currentUser.username,
+    };
+
+    /**
+     * Usually there is two stage of checking request:
+     * Phase 1
+     *   1. Client sends request with 'req.body.hashcode' value but without 'req.files.file.data'
+     *   2. Server finds for snapshot with this image 'hashcode' and if found - go to Step 3 of Phase2,
+     *      if not - sends response "{status: 'requiredFileData', message: 'cannot found an image
+     *      with this hashcode,
+     *      please add image file data and resend request'}"
+     * Phase 2
+     *   1. Client receives response with incomplete status and resend the same request but,
+     *   with 'req.files.file.data' parameter
+     *   2. Server create a new snapshot based on parameters
+     *   3. Server handle checking the snapshoot and return to client check response
+     *   with one of 'complete` status (eq:. new, failed, passed)
+     */
+
+    /** look up the snapshot with same hashcode if didn't find, ask for file data */
+
+    const snapshotFoundedByHashcode = await getSnapshotByImgHash(checkParam.hashCode);
+    if (!checkParam.hashCode && !checkParam.files) {
+        log.debug('hashCode or files parameters should be present', $this);
+        return { status: 'needFiles' };
+    }
+
+    if (!checkParam.files && !snapshotFoundedByHashcode) {
+        log.debug(`cannot find the snapshot with hash: '${checkParam.hashCode}'`, $this);
+        return { status: 'needFiles' };
+    }
+    if (snapshotFoundedByHashcode) {
+        log.debug(`snapshot was found by hashcode: '${checkParam.hashCode}'`, $this);
+    }
+
+    /** ASSIGN BASELINE */
+    let currentSnapshot;
+    let currentBaselineSnapshot;
+
+    const checkIdent = buildIdentObject(newCheckParams);
+
+    const fileData = checkParam.files ? checkParam.files.file.data : false;
+
+    if (snapshotFoundedByHashcode) {
+        log.debug(`snapshot with such hashcode: '${checkParam.hashCode}' is already exists, will clone it`, $this);
+        currentSnapshot = await cloneSnapshot(snapshotFoundedByHashcode, checkParam.name);
+    } else {
+        log.debug(`snapshot with such hashcode: '${checkParam.hashCode}' does not exists, will create it`, $this);
+        currentSnapshot = await createSnapshot({
+            name: checkParam.name,
+            fileData,
+            hashCode: checkParam.hashCode,
+        });
+    }
+
+    log.info(`find a baseline for the check with identifier: '${JSON.stringify(checkIdent)}'`, $this);
+    const storedBaseline = await getBaseline(newCheckParams);
+
+    let check;
+    // if last check has baseline id copy properties from last check
+    // and set it as `currentBaseline` to make diff
+    if (storedBaseline !== null) {
+        log.debug(`a baseline for check name: '${checkParam.name}', id: '${storedBaseline.snapshootId}' is already exists`, $this);
+        newCheckParams.baselineId = storedBaseline.snapshootId;
+
+        // log.debug(`creating an actual snapshot for check with name: '${checkParam.name}'`, $this);
+        newCheckParams.actualSnapshotId = currentSnapshot.id;
+        newCheckParams.status = 'pending';
+        if (storedBaseline.markedAs) {
+            newCheckParams.markedAs = storedBaseline.markedAs;
+            newCheckParams.markedDate = storedBaseline.lastMarkedDate;
+            newCheckParams.markedByUsername = storedBaseline.markedByUsername;
+        }
+
+        currentBaselineSnapshot = await Snapshot.findById(storedBaseline.snapshootId);
+        log.debug(`create the new check document with params: '${prettyCheckParams(newCheckParams)}'`, $this);
+        check = await Check.create(newCheckParams);
+    } else {
+        // since the `storedBaseline` does not exist set current snapshot as currentBaseline to make diff
+        log.debug(`a baseline snapshot for previous check with name: '${checkParam.name}', does not exist creating new one`, this);
+        newCheckParams.baselineId = currentSnapshot.id;
+        newCheckParams.actualSnapshotId = currentSnapshot.id;
+        newCheckParams.status = 'new';
+        currentBaselineSnapshot = currentSnapshot;
+        log.debug(`create the new check with params: '${prettyCheckParams(newCheckParams)}'`, $this);
+        check = await Check.create(newCheckParams);
+        await createNewBaseline(check.toObject());
+    }
+    let savedCheck = await check.save();
+    log.debug(`the check with id: '${check.id}', was successfully created!`, $this, { ref: check.id }, $this);
+
+    // check if we can ignore 1 px dimensions difference from the bottom
+    const ignoreDifferentResolutions = (dimensionDifference) => {
+        if ((dimensionDifference.width === 0) && (dimensionDifference.height === -1)) return true;
+        if ((dimensionDifference.width === 0) && (dimensionDifference.height === 1)) return true;
+        return false;
+    };
+    const areSnapshotsDifferent = (compareResult) => compareResult.misMatchPercentage !== '0.00';
+    const areSnapshotsWrongDimensions = (compareResult) => !compareResult.isSameDimensions
+        && !ignoreDifferentResolutions(compareResult.dimensionDifference);
+
+    const checkUpdateParams = {};
+    let totalCheckHandleTime;
+    let compareResult;
+    const failReasons = [];
+    /** compare actual with baseline if a check isn't new */
+    if (check.status.toString() !== 'new') {
+        try {
+            log.debug(`'the check with name: '${checkParam.name}' isn't new, make comparing'`, $this);
+            compareResult = await compareSnapshots(currentBaselineSnapshot, currentSnapshot);
+            log.silly(`ignoreDifferentResolutions: '${ignoreDifferentResolutions(compareResult.dimensionDifference)}'`);
+            log.silly(`dimensionDifference: '${JSON.stringify(compareResult.dimensionDifference)}`);
+            if (areSnapshotsDifferent(compareResult) || areSnapshotsWrongDimensions(compareResult)) {
+                let logMsg;
+                if (areSnapshotsWrongDimensions(compareResult)) {
+                    logMsg = 'snapshots have different dimensions';
+                    failReasons.push('wrong_dimensions');
+                }
+                if (areSnapshotsDifferent(compareResult)) {
+                    logMsg = 'snapshots have differences';
+                    failReasons.push('different_images');
+                }
+                checkUpdateParams.failReasons = failReasons;
+
+                log.debug(logMsg, $this);
+                log.debug(`saving diff snapshot for check with Id: '${check.id}'`, $this, { ref: check.id });
+                const diffSnapshot = await createSnapshot({
+                    name: checkParam.name,
+                    fileData: compareResult.getBuffer(),
+                });
+                checkUpdateParams['diffId'] = diffSnapshot.id;
+                checkUpdateParams['status'] = 'failed';
+            } else {
+                await createBaselineifNotExist(check.toObject());
+                checkUpdateParams['status'] = 'passed';
+            }
+
+            checkUpdateParams['updatedDate'] = Date.now();
+            totalCheckHandleTime = process.hrtime(executionTimer)
+                .toString();
+
+            compareResult['totalCheckHandleTime'] = totalCheckHandleTime;
+            checkUpdateParams['result'] = JSON.stringify(compareResult, null, '\t');
+        } catch (e) {
+            checkUpdateParams['status'] = 'failed';
+            checkUpdateParams['result'] = `{ "server error": "error during comparing - ${e}" }`;
+            checkUpdateParams.failReasons = ['internal_server_error'];
+            await Check.findByIdAndUpdate(check._id, checkUpdateParams);
+            throw e;
+        }
+    }
+
+    log.debug(`update check with params: '${JSON.stringify(checkUpdateParams)}'`, $this, { ref: check._id });
+    await Check.findByIdAndUpdate(check._id, checkUpdateParams);
+    savedCheck = await Check.findById(check._id);
+    // update test and suite
+    test.markedAs = await calculateAcceptedStatus(check.test);
+    test.updatedDate = new Date();
+    log.debug('update suite', $this);
+    await orm.updateItemDate('VRSSuite', check.suite);
+    await test.save();
+
+    const lastSuccessCheck = await getLastSuccessCheck(checkIdent);
+    const result = {
+        ...savedCheck.toObject(),
+        executeTime: totalCheckHandleTime,
+        lastSuccess: lastSuccessCheck ? (lastSuccessCheck).id : null,
+    };
+    return result;
+}
+
 exports.createCheck = async function (req, res) {
-    const $this = this;
-    $this.logMeta = {
+    lackOfParamsGuard(req, res);
+    this.logMeta = {
         scope: 'createCheck',
         user: req?.user?.username,
         itemType: 'check',
         msgType: 'CREATE',
     };
-    return new Promise(
-        async (resolve, reject) => {
-            let test;
-            let suite;
-            let currentUser;
-            try {
-                const executionTimer = process.hrtime();
-                currentUser = await User.findOne({ apiKey: req.headers.apikey })
-                    .exec();
-                // if (!currentUser) {
-                //     throw new Error(`the user with API key: '${req.headers?.apikey}' is not found`);
-                // }
-                log.info(`start create check: '${prettyCheckParams(req.body.name)}'`, $this);
+    try {
+        const apiKey = req.headers.apikey;
+        const currentUser = await User.findOne({ apiKey: apiKey })
+            .exec();
 
-                /** validate request */
-                if (!req.body.testid) {
-                    const errMsg = `Cannot create check without 'testid' parameter, `
-                        + `try to initialize the session at first. parameters: '${JSON.stringify(req.body)}'`;
-                    res.status(400)
-                        .send({
-                            status: 'paramNotFound',
-                            message: errMsg,
-                        });
-                    reject(errMsg);
-                    return;
-                }
-                if (!req.body.hashcode) {
-                    const errMsg = `Cannot create check without 'hashcode' parameter, parameters: '${JSON.stringify(req.body)}'`;
-                    res.status(400)
-                        .send({
-                            status: 'paramNotFound',
-                            message: errMsg,
-                        });
-                    reject(errMsg);
-                    return;
-                }
+        log.info(`start create check: '${prettyCheckParams(req.body.name)}'`, $this);
 
-                /** look for or create test and suite */
-                log.debug(`try to find test with id: '${req.body.testid}'`, $this);
-                test = await Test.findById(req.body.testid)
-                    .exec();
-                if (!test) {
-                    const errMsg = `Error: Can not find test with id: '${req.body.testid}', parameters: '${JSON.stringify(req.body)}'`;
-                    res.status(400)
-                        .send({ status: 'testNotFound', message: errMsg });
-
-                    return reject(errMsg);
-                }
-                const suiteName = req.body.suitename || 'Others';
-                // log.debug(`create suite with name '${suiteName}' if not exist`, $this);
-                suite = await orm.createSuiteIfNotExist({ name: suiteName });
-                orm.updateItem('VRSTest', { _id: test.id }, {
-                    suite: suite.id,
-                    creatorId: currentUser._id,
-                    creatorUsername: currentUser.username,
-                });
-
-                /** define params for new check */
-                const params = {
-                    testname: req.body.testname,
-                    test: req.body.testid,
-                    name: req.body.name,
-                    viewport: req.body.viewport,
-                    browserName: req.body.browserName,
-                    browserVersion: req.body.browserVersion,
-                    browserFullVersion: req.body.browserFullVersion,
-                    os: req.body.os,
-                    updatedDate: Date.now(),
-                    suite: suite.id,
-                    app: (await orm.createAppIfNotExist({ name: req.body.appName || 'Unknown' })).id,
-                    branch: req.body.branch,
-                    domDump: req.body.domdump,
-                    run: test.run,
-                    creatorId: currentUser._id,
-                    creatorUsername: currentUser.username,
-                };
-
-                /**
-                 * Usually there is two stage of checking request:
-                 * Phase 1
-                 *   1. Client sends request with 'req.body.hashcode' value but without 'req.files.file.data'
-                 *   2. Server finds for snapshot with this image 'hashcode' and if found - go to Step 3 of Phase2,
-                 *      if not - sends response "{status: 'requiredFileData', message: 'cannot found an image
-                 *      with this hashcode,
-                 *      please add image file data and resend request'}"
-                 * Phase 2
-                 *   1. Client receives response with incomplete status and resend the same request but,
-                 *   with 'req.files.file.data' parameter
-                 *   2. Server create a new snapshot based on parameters
-                 *   3. Server handle checking the snapshoot and return to client check response
-                 *   with one of 'complete` status (eq:. new, failed, passed)
-                 */
-
-                /** look up the snapshot with same hashcode if didn't find, ask for file data */
-                const snapshotFoundedByHashcode = await getSnapshotByImgHash(req.body.hashcode);
-                if (!req.files && !snapshotFoundedByHashcode) {
-                    log.debug(`cannot find the snapshot with hash: '${req.body.hashcode}'`, $this);
-                    return resolve(res.status(206)
-                        .json({
-                            status: 'requiredFileData',
-                            message: 'could not find a snapshot with such a hash code, please add image file data and resend request',
-                            hashCode: req.body.hashcode,
-                        }));
-                }
-                if (snapshotFoundedByHashcode) {
-                    log.debug(`FOUND: snapshot by hashcode: '${JSON.stringify(snapshotFoundedByHashcode)}'`, $this);
-                }
-
-                /** ASSIGN BASELINE */
-                let currentSnapshot;
-                let currentBaseline;
-
-                const checkIdent = buildIdentObject(params);
-
-                const fileData = req.files ? req.files.file.data : false;
-
-                if (snapshotFoundedByHashcode) {
-                    currentSnapshot = await cloneSnapshoot(snapshotFoundedByHashcode, req.body, fileData);
-                } else {
-                    currentSnapshot = await createSnapshot({
-                        params: req.body,
-                        fileData,
-                        hashCode: req.body.hashcode,
-                    });
-                }
-
-                log.info(`find a baseline for the check with identifier: '${JSON.stringify(checkIdent)}'`, $this);
-
-                const storedBaseline = await getBaseline(params);
-
-                let check;
-                // if last check has baseline id copy properties from last check
-                // and set it as `currentBaseline` to make diff
-                if (storedBaseline !== null) {
-                    log.debug(`a baseline for check name: '${req.body.name}', id: '${storedBaseline.snapshootId}' is already exists`, $this);
-                    params.baselineId = storedBaseline.snapshootId;
-
-                    log.debug(`creating an actual snapshot for check with name: '${req.body.name}'`, $this);
-
-                    params.actualSnapshotId = currentSnapshot.id;
-                    params.status = 'pending';
-                    if (storedBaseline.markedAs) {
-                        params.markedAs = storedBaseline.markedAs;
-                        params.markedDate = storedBaseline.lastMarkedDate;
-                        params.markedByUsername = storedBaseline.markedByUsername;
-                    }
-
-                    currentBaseline = await Snapshot.findById(storedBaseline.snapshootId);
-                    log.debug(`create the new check with params: '${prettyCheckParams(params)}'`, $this);
-                    check = await Check.create(params);
-                } else {
-                    // since the `storedBaseline` does not exist set current snapshot as currentBaseline to make diff
-                    log.debug(`a baseline snapshot for previous check with name: '${req.body.name}', does not exist creating new one`, this);
-                    params.baselineId = currentSnapshot.id;
-                    params.actualSnapshotId = currentSnapshot.id;
-                    params.status = 'new';
-                    currentBaseline = currentSnapshot;
-                    log.debug(`create the new check with params: '${prettyCheckParams(params)}'`, $this);
-                    check = await Check.create(params);
-                    await createNewBaseline(check.toObject());
-                }
-                /** create check related items (test and suite) */
-
-                let resultResponse;
-                await check.save()
-                    .then((chk) => {
-                        resultResponse = chk;
-                        log.debug(`the check with id: '${check.id}', was successfully created!`, $this, { ref: check.id }, $this);
-                    })
-                    .catch((error) => {
-                        res.send(error);
-                        log.error(`cannot save the check, error: '${error}'`, $this);
-                    });
-
-                /** compare actual with baseline if a check isn't new */
-                const updateParams = {};
-                let totalCheckHandleTime;
-                let compareResult;
-
-                // check if we can ignore 1 px dimensions difference from the bottom
-                const ignoreDifferentResolutions = (dimensionDifference) => {
-                    if ((dimensionDifference.width === 0) && (dimensionDifference.height === -1)) return true;
-                    if ((dimensionDifference.width === 0) && (dimensionDifference.height === 1)) return true;
-                    return false;
-                };
-
-                if (check.status.toString() !== 'new') {
-                    try {
-                        log.debug('the check isn\'t new, make comparing', $this);
-                        compareResult = await compareSnapshots(currentBaseline, currentSnapshot);
-                        log.debug(`ignoreDifferentResolutions: '${ignoreDifferentResolutions(compareResult.dimensionDifference)}'`);
-                        log.debug(`dimensionDifference: '${JSON.stringify(compareResult.dimensionDifference)}`);
-                        if ((compareResult.misMatchPercentage !== '0.00')
-                            || ((!compareResult.isSameDimensions) && !ignoreDifferentResolutions(compareResult.dimensionDifference))) {
-                            const logMsg = !compareResult.isSameDimensions ? 'snapshots have different dimensions' : 'snapshots have differences';
-                            log.debug(logMsg, $this);
-                            log.debug(`saving diff snapshot for check with Id: '${check.id}'`, $this);
-                            const diffSnapshot = await createSnapshot({
-                                params: req.body,
-                                fileData: compareResult.getBuffer(),
-                            });
-                            updateParams['diffId'] = diffSnapshot.id;
-                            updateParams['status'] = 'failed';
-                        } else {
-                            await createBaselineifNotExist(check.toObject());
-                            updateParams['status'] = 'passed';
-                        }
-
-                        updateParams['updatedDate'] = Date.now();
-                        totalCheckHandleTime = process.hrtime(executionTimer)
-                            .toString();
-
-                        compareResult['totalCheckHandleTime'] = totalCheckHandleTime;
-                        updateParams['result'] = JSON.stringify(compareResult, null, '\t');
-
-                        log.debug(`update check with params: '${JSON.stringify(updateParams)}'`, $this, { ref: check._id });
-                    } catch (e) {
-                        updateParams['status'] = 'failed';
-                        updateParams['result'] = `{ error: "Server error - '${e}'" }`;
-                        await Check.findByIdAndUpdate(check._id, updateParams);
-                        resultResponse = await Check.findById(check.id);
-                        throw e;
-                    }
-                    await Check.findByIdAndUpdate(check._id, updateParams);
-                    resultResponse = await Check.findById(check.id);
-                }
-
-                // update test and suite
-                test.markedAs = await calculateAcceptedStatus(check.test);
-                test.updatedDate = new Date();
-                log.debug('update suite', $this);
-                await orm.updateItemDate('VRSSuite', check.suite);
-                await test.save();
-
-                const lastSuccessCheck = await getLastSuccessCheck(checkIdent);
-                const result = {
-                    ...resultResponse.toObject(),
-                    executeTime: totalCheckHandleTime,
-                    lastSuccess: lastSuccessCheck ? (lastSuccessCheck).id : null,
-                };
-                res.json(result);
-                return resolve([req, res, result]);
-            } catch (e) {
-                fatalError(req, res, e);
-                return reject(e);
-            }
+        /** look for or create test and suite */
+        log.debug(`try to find test with id: '${req.body.testid}'`, $this);
+        const test = await Test.findById(req.body.testid)
+            .exec();
+        if (!test) {
+            const errMsg = `can't find test with id: '${req.body.testid}', `
+                + `parameters: '${JSON.stringify(req.body)}', username: '${currentUser.username}', apiKey: ${apiKey}`;
+            res.status(400)
+                .send({ status: 'testNotFound', message: errMsg });
+            throw new Error(errMsg);
         }
-    );
+        const suite = await createItemIfNotExistAsync('VRSSuite',
+            { name: req.body.suitename || 'Others' },
+            { user: currentUser.username, itemType: 'suite' });
+
+        // const suite = await orm.createSuiteIfNotExist({ name: req.body.suitename || 'Others' });
+
+        await orm.updateItem('VRSTest', { _id: test.id }, {
+            suite: suite.id,
+            creatorId: currentUser._id,
+            creatorUsername: currentUser.username,
+        });
+
+        const result = await createCheck(
+            {
+                branch: req.body.branch,
+                appName: req.body.appName,
+                // suiteName: req.body.suiteName,
+                hashCode: req.body.hashcode,
+                testId: req.body.testid,
+                name: req.body.name,
+                viewport: req.body.viewport,
+                browserName: req.body.browserName,
+                browserVersion: req.body.browserVersion,
+                browserFullVersion: req.body.browserFullVersion,
+                os: req.body.os,
+                files: req.files,
+                domDump: req.body.domdump,
+            },
+            test,
+            suite,
+            currentUser
+        );
+        if (result.status === 'needFiles') {
+            res.status(206)
+                .json({
+                    status: 'requiredFileData',
+                    message: 'could not find a snapshot with such a hash code, please add image file data and resend request',
+                    hashCode: req.body.hashcode,
+                });
+            return;
+        }
+        res.json(result);
+    } catch (e) {
+        fatalError(req, res, e);
+    }
 };
 
-exports.getChecks2 = function (req, res) {
-    return new Promise(async (resolve, reject) => {
-        const opts = req.query;
+exports.getChecks2 = async function (req, res) {
+    const opts = req.query;
 
-        const pageSize = parseInt(process.env['PAGE_SIZE'], 10) || 50;
+    const pageSize = parseInt(process.env['PAGE_SIZE'], 10) || 50;
 
-        const skip = opts.page ? ((parseInt(opts.page, 10)) * pageSize - pageSize) : 0;
+    const skip = opts.page ? ((parseInt(opts.page, 10)) * pageSize - pageSize) : 0;
 
-        let sortFilter = parseSorting(opts);
-        if (Object.keys(sortFilter).length < 1) {
-            sortFilter = { updatedDate: -1 };
-        }
+    let sortFilter = parseSorting(opts);
+    if (Object.keys(sortFilter).length < 1) {
+        sortFilter = { updatedDate: -1 };
+    }
 
-        const query = buildQuery(opts);
-        // console.log({ query });
-        // console.log({opts})
-        if (opts.filter_suitename_eq) {
-            const decodedQuerystringSuiteName = Object.keys(querystring.decode(opts.filter_suitename_eq))[0];
-            const suite = await Suite.findOne({ name: { $eq: decodedQuerystringSuiteName } })
-                .exec();
-            if (opts.filter_suitename_eq && !suite) {
-                res.status(200)
-                    .json({});
-                return resolve({});
-            }
-            if (suite) {
-                query.suite = suite.id;
-                delete query.suitename;
-            }
-        }
-
-        if (req.user.role === 'user') {
-            query.creatorUsername = req.user.username;
-        }
-        // console.log({ query });
-        const tests = await Test
-            .find(query)
-            .sort(sortFilter)
-            .skip(skip)
-            .limit(pageSize)
+    const query = buildQuery(opts);
+    // console.log({ query });
+    // console.log({opts})
+    if (opts.filter_suitename_eq) {
+        const decodedQuerystringSuiteName = Object.keys(querystring.decode(opts.filter_suitename_eq))[0];
+        const suite = await Suite.findOne({ name: { $eq: decodedQuerystringSuiteName } })
             .exec();
-        // console.log({ tests });
-        // const suites = await getSuitesByTestsQuery(query);
-        const checksByTestGroupedByIdent = [];
-
-        for (const test of tests) {
-            const groups = await checksGroupedByIdent2(test.id);
-            // console.log(Object.keys(groups).length);
-            if (Object.keys(groups).length < 1) {
-                continue;
-            }
-            // console.log({groups})
-            checksByTestGroupedByIdent.push({
-                id: test.id,
-                creatorId: test.creatorId,
-                creatorUsername: test.creatorUsername,
-                markedAs: test.markedAs,
-                markedByUsername: test.markedByUsername,
-                markedDate: test.markedDate,
-                name: test.name,
-                status: test.status,
-                browserName: test.browserName,
-                browserVersion: test.browserVersion,
-                browserFullVersion: test.browserFullVersion,
-                viewport: test.viewport,
-                calculatedViewport: test.calculatedViewport,
-                os: test.os,
-                blinking: test.blinking,
-                updatedDate: test.updatedDate,
-                createdDate: test.createdDate,
-                suite: test.suite,
-                run: test.run,
-                tags: test.tags,
-                branch: test.branch,
-                app: test.app,
-                groups: groups,
-            });
+        if (opts.filter_suitename_eq && !suite) {
+            res.status(200)
+                .json({});
         }
-        // console.log(Object.keys(checksByTestGroupedByIdent).length);
-        res.status(200)
-            .json(checksByTestGroupedByIdent);
-        return resolve(checksByTestGroupedByIdent);
-    });
+        if (suite) {
+            query.suite = suite.id;
+            delete query.suitename;
+        }
+    }
+
+    if (req.user.role === 'user') {
+        query.creatorUsername = req.user.username;
+    }
+    // console.log({ query });
+    const tests = await Test
+        .find(query)
+        .sort(sortFilter)
+        .skip(skip)
+        .limit(pageSize)
+        .exec();
+    // console.log({ tests });
+    // const suites = await getSuitesByTestsQuery(query);
+    const checksByTestGroupedByIdent = [];
+
+    for (const test of tests) {
+        const groups = await checksGroupedByIdent2(test.id);
+        // console.log(Object.keys(groups).length);
+        if (Object.keys(groups).length < 1) {
+            continue;
+        }
+        // console.log({groups})
+        checksByTestGroupedByIdent.push({
+            id: test.id,
+            creatorId: test.creatorId,
+            creatorUsername: test.creatorUsername,
+            markedAs: test.markedAs,
+            markedByUsername: test.markedByUsername,
+            markedDate: test.markedDate,
+            name: test.name,
+            status: test.status,
+            browserName: test.browserName,
+            browserVersion: test.browserVersion,
+            browserFullVersion: test.browserFullVersion,
+            viewport: test.viewport,
+            calculatedViewport: test.calculatedViewport,
+            os: test.os,
+            blinking: test.blinking,
+            updatedDate: test.updatedDate,
+            createdDate: test.createdDate,
+            suite: test.suite,
+            run: test.run,
+            tags: test.tags,
+            branch: test.branch,
+            app: test.app,
+            groups: groups,
+        });
+    }
+    // console.log(Object.keys(checksByTestGroupedByIdent).length);
+    res.status(200)
+        .json(checksByTestGroupedByIdent);
 };
 
 exports.getChecks = async function (req, res) {
-    return new Promise(async (resolve, reject) => {
-        const opts = req.query;
+    const opts = req.query;
 
-        const pageSize = parseInt(process.env['PAGE_SIZE'], 10) || 50;
+    const pageSize = parseInt(process.env['PAGE_SIZE'], 10) || 50;
 
-        const skip = opts.page ? ((parseInt(opts.page, 10)) * pageSize - pageSize) : 0;
+    const skip = opts.page ? ((parseInt(opts.page, 10)) * pageSize - pageSize) : 0;
 
-        let sortFilter = parseSorting(opts);
-        if (Object.keys(sortFilter).length < 1) {
-            sortFilter = { updatedDate: -1 };
-        }
+    let sortFilter = parseSorting(opts);
+    if (Object.keys(sortFilter).length < 1) {
+        sortFilter = { updatedDate: -1 };
+    }
 
-        const query = buildQuery(opts);
-        // console.log({ query });
-        // console.log({opts})
-        if (opts.filter_suitename_eq) {
-            const decodedQuerystringSuiteName = Object.keys(querystring.decode(opts.filter_suitename_eq))[0];
-            const suite = await Suite.findOne({ name: { $eq: decodedQuerystringSuiteName } })
-                .exec();
-            if (opts.filter_suitename_eq && !suite) {
-                res.status(200)
-                    .json({});
-                return resolve({});
-            }
-            if (suite) {
-                query.suite = suite.id;
-                delete query.suitename;
-            }
-        }
-
-        if (req.user.role === 'user') {
-            query.creatorUsername = req.user.username;
-        }
-        // console.log({ query });
-        const tests = await Test
-            .find(query)
-            .sort(sortFilter)
-            .skip(skip)
-            .limit(pageSize)
+    const query = buildQuery(opts);
+    // console.log({ query });
+    // console.log({opts})
+    if (opts.filter_suitename_eq) {
+        const decodedQuerystringSuiteName = Object.keys(querystring.decode(opts.filter_suitename_eq))[0];
+        const suite = await Suite.findOne({ name: { $eq: decodedQuerystringSuiteName } })
             .exec();
-        // console.log({ tests });
-        // const suites = await getSuitesByTestsQuery(query);
-        const checksByTestGroupedByIdent = {};
-
-        for (const test of tests) {
-            const checkFilter = { test: test.id };
-            const groups = await checksGroupedByIdent(checkFilter);
-            // console.log(groups.length);
-            if (Object.keys(groups).length < 1) {
-                continue;
-            }
-            // console.log({groups})
-            checksByTestGroupedByIdent[test.id] = groups;
-            checksByTestGroupedByIdent[test.id]['id'] = test.id;
-            checksByTestGroupedByIdent[test.id]['creatorId'] = test.creatorId;
-            checksByTestGroupedByIdent[test.id]['creatorUsername'] = test.creatorUsername;
-            checksByTestGroupedByIdent[test.id]['markedAs'] = test.markedAs;
-            checksByTestGroupedByIdent[test.id]['markedByUsername'] = test.markedByUsername;
-            checksByTestGroupedByIdent[test.id]['markedDate'] = test.markedDate;
-            checksByTestGroupedByIdent[test.id]['markedAs'] = test.markedAs;
-            checksByTestGroupedByIdent[test.id]['name'] = test.name;
-            checksByTestGroupedByIdent[test.id]['status'] = test.status;
-            checksByTestGroupedByIdent[test.id]['browserName'] = test.browserName;
-            checksByTestGroupedByIdent[test.id]['browserVersion'] = test.browserVersion;
-            checksByTestGroupedByIdent[test.id]['browserFullVersion'] = test.browserFullVersion;
-            checksByTestGroupedByIdent[test.id]['viewport'] = test.viewport;
-            checksByTestGroupedByIdent[test.id]['calculatedViewport'] = test.calculatedViewport;
-            checksByTestGroupedByIdent[test.id]['os'] = test.os;
-            checksByTestGroupedByIdent[test.id]['blinking'] = test.blinking;
-            checksByTestGroupedByIdent[test.id]['updatedDate'] = test.updatedDate;
-            checksByTestGroupedByIdent[test.id]['createdDate'] = test.createdDate;
-            checksByTestGroupedByIdent[test.id]['suite'] = test.suite;
-            checksByTestGroupedByIdent[test.id]['run'] = test.run;
-            checksByTestGroupedByIdent[test.id]['tags'] = test.tags;
-            checksByTestGroupedByIdent[test.id]['branch'] = test.branch;
-            checksByTestGroupedByIdent[test.id]['app'] = test.app;
+        if (opts.filter_suitename_eq && !suite) {
+            res.status(200)
+                .json({});
+            return;
         }
-        // console.log(Object.keys(checksByTestGroupedByIdent).length);
-        res.status(200)
-            .json(checksByTestGroupedByIdent);
-        return resolve(checksByTestGroupedByIdent);
-    });
+        if (suite) {
+            query.suite = suite.id;
+            delete query.suitename;
+        }
+    }
+
+    if (req.user.role === 'user') {
+        query.creatorUsername = req.user.username;
+    }
+    // console.log({ query });
+    const tests = await Test
+        .find(query)
+        .sort(sortFilter)
+        .skip(skip)
+        .limit(pageSize)
+        .exec();
+    // console.log({ tests });
+    // const suites = await getSuitesByTestsQuery(query);
+    const checksByTestGroupedByIdent = {};
+
+    for (const test of tests) {
+        const checkFilter = { test: test.id };
+        const groups = await checksGroupedByIdent(checkFilter);
+        // console.log(groups.length);
+        if (Object.keys(groups).length < 1) {
+            continue;
+        }
+        // console.log({groups})
+        checksByTestGroupedByIdent[test.id] = groups;
+        checksByTestGroupedByIdent[test.id]['id'] = test.id;
+        checksByTestGroupedByIdent[test.id]['creatorId'] = test.creatorId;
+        checksByTestGroupedByIdent[test.id]['creatorUsername'] = test.creatorUsername;
+        checksByTestGroupedByIdent[test.id]['markedAs'] = test.markedAs;
+        checksByTestGroupedByIdent[test.id]['markedByUsername'] = test.markedByUsername;
+        checksByTestGroupedByIdent[test.id]['markedDate'] = test.markedDate;
+        checksByTestGroupedByIdent[test.id]['markedAs'] = test.markedAs;
+        checksByTestGroupedByIdent[test.id]['name'] = test.name;
+        checksByTestGroupedByIdent[test.id]['status'] = test.status;
+        checksByTestGroupedByIdent[test.id]['browserName'] = test.browserName;
+        checksByTestGroupedByIdent[test.id]['browserVersion'] = test.browserVersion;
+        checksByTestGroupedByIdent[test.id]['browserFullVersion'] = test.browserFullVersion;
+        checksByTestGroupedByIdent[test.id]['viewport'] = test.viewport;
+        checksByTestGroupedByIdent[test.id]['calculatedViewport'] = test.calculatedViewport;
+        checksByTestGroupedByIdent[test.id]['os'] = test.os;
+        checksByTestGroupedByIdent[test.id]['blinking'] = test.blinking;
+        checksByTestGroupedByIdent[test.id]['updatedDate'] = test.updatedDate;
+        checksByTestGroupedByIdent[test.id]['createdDate'] = test.createdDate;
+        checksByTestGroupedByIdent[test.id]['suite'] = test.suite;
+        checksByTestGroupedByIdent[test.id]['run'] = test.run;
+        checksByTestGroupedByIdent[test.id]['tags'] = test.tags;
+        checksByTestGroupedByIdent[test.id]['branch'] = test.branch;
+        checksByTestGroupedByIdent[test.id]['app'] = test.app;
+    }
+    // console.log(Object.keys(checksByTestGroupedByIdent).length);
+    res.status(200)
+        .json(checksByTestGroupedByIdent);
 };
 
 exports.getCheck = async function (req, res) {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const opts = removeEmptyProperties(req.body);
-            const { id } = req.params;
-            log.debug(`get check with id: '${id}',  params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`,
-                $this, {
-                    msgType: 'GET',
-                    itemType: 'check',
-                    scope: 'getCheck',
-                });
-            await Check.findById(id)
-                .then(async (snp) => {
-                    res.json(snp);
-                })
-                .catch(
-                    (err) => {
-                        res.status(400)
-                            .send(`Cannot GET a check with id: '${id}', error: ${err}`);
-                        return resolve(err);
-                    }
-                );
-        } catch (e) {
-            fatalError(req, res, e);
-            return reject(e);
-        }
-    });
+    try {
+        const opts = removeEmptyProperties(req.body);
+        const { id } = req.params;
+        log.debug(`get check with id: '${id}',  params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`,
+            $this, {
+                msgType: 'GET',
+                itemType: 'check',
+                scope: 'getCheck',
+            });
+        const snp = await Check.findById(id)
+            .exec();
+
+        res.json(snp);
+    } catch (e) {
+        fatalError(req, res, e);
+    }
 };
 
 function addMarkedAsOptions(opts, user, mark) {
@@ -1312,64 +1209,60 @@ exports.updateCheck = async function updateCheck(req, res) {
         user: req?.user?.username,
         scope: 'updateCheck',
     };
-    return new Promise(async (resolve, reject) => {
-        try {
-            const check = await Check.findById(checkId)
+    try {
+        const check = await Check.findById(checkId)
+            .exec();
+        const test = await Test.findById(check.test)
+            .exec();
+
+        if (opts.accept === 'true') {
+            log.debug(`ACCEPT check: ${checkId}`, $this, logOpts);
+            opts = addMarkedAsOptions(opts, req.user, 'accepted');
+        } else {
+            await test.updateOne({
+                status: 'Running',
+                updatedDate: new Date(),
+                // .format('YYYY-MM-DD hh:mm'),
+            })
                 .exec();
-            const test = await Test.findById(check.test)
-                .exec();
-
-            if (opts.accept === 'true') {
-                log.debug(`ACCEPT check: ${checkId}`, $this, logOpts);
-                opts = addMarkedAsOptions(opts, req.user, 'accepted');
-            } else {
-                await test.updateOne({
-                    status: 'Running',
-                    updatedDate: new Date(),
-                    // .format('YYYY-MM-DD hh:mm'),
-                })
-                    .exec();
-            }
-            delete opts.id;
-            delete opts.accept;
-            // await Check.findByIdAndUpdate(check._id, opts);
-            Object.assign(check, opts);
-            log.debug({ NEW_BASELINE_OPTS: check.toObject() }, $this, logOpts);
-            await createNewBaseline(check.toObject());
-            await check.save();
-            const testCalculatedStatus = await calculateTestStatus(check.test);
-            const testCalculatedAcceptedStatus = await calculateAcceptedStatus(check.test);
-
-            opts['updatedDate'] = Date.now();
-
-            log.debug(`update check id: '${checkId}' with params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`,
-                $this, logOpts);
-
-            test.status = testCalculatedStatus;
-            test.markedAs = testCalculatedAcceptedStatus;
-            test.updatedDate = new Date();
-
-            await orm.updateItemDate('VRSSuite', check.suite);
-            log.debug(`update test with status: '${testCalculatedStatus}', marked: '${testCalculatedAcceptedStatus}'`, $this,
-                {
-                    msgType: 'UPDATE',
-                    itemType: 'test',
-                    ref: test._id
-                });
-            await test.save();
-            await check.save();
-            log.debug(`check with id: '${checkId}' was updated`, $this, logOpts);
-
-            res.status(200)
-                .json({
-                    message: `Check with id: '${checkId}' was updated`,
-                });
-            resolve();
-        } catch (e) {
-            fatalError(req, res, e);
-            return reject(e);
         }
-    });
+        delete opts.id;
+        delete opts.accept;
+        // await Check.findByIdAndUpdate(check._id, opts);
+        Object.assign(check, opts);
+        log.debug({ NEW_BASELINE_OPTS: check.toObject() }, $this, logOpts);
+        await createNewBaseline(check.toObject());
+        await check.save();
+        const testCalculatedStatus = await calculateTestStatus(check.test);
+        const testCalculatedAcceptedStatus = await calculateAcceptedStatus(check.test);
+
+        opts['updatedDate'] = Date.now();
+
+        log.debug(`update check id: '${checkId}' with params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`,
+            $this, logOpts);
+
+        test.status = testCalculatedStatus;
+        test.markedAs = testCalculatedAcceptedStatus;
+        test.updatedDate = new Date();
+
+        await orm.updateItemDate('VRSSuite', check.suite);
+        log.debug(`update test with status: '${testCalculatedStatus}', marked: '${testCalculatedAcceptedStatus}'`, $this,
+            {
+                msgType: 'UPDATE',
+                itemType: 'test',
+                ref: test._id,
+            });
+        await test.save();
+        await check.save();
+        log.debug(`check with id: '${checkId}' was updated`, $this, logOpts);
+
+        res.status(200)
+            .json({
+                message: `Check with id: '${checkId}' was updated`,
+            });
+    } catch (e) {
+        fatalError(req, res, e);
+    }
 };
 
 exports.getBaselines = (req, res) => {
@@ -1389,7 +1282,7 @@ async function isLastLinkToSnapshoot(id) {
     return (baselines.length === 0) && (actuals.length === 0);
 }
 
-const removeSnapshootFile = (snapshoot, allChecksIds) => new Promise(async (resolve, reject) => {
+const removeSnapshotFile = async (snapshoot, allChecksIds) => {
     log.debug(`find all snapshots with same filename`, $this);
     const snapshoots = await Snapshot.find({ filename: snapshoot.filename });
     // eslint-disable-next-line arrow-body-style
@@ -1412,13 +1305,12 @@ const removeSnapshootFile = (snapshoot, allChecksIds) => new Promise(async (reso
         }
     }
     log.debug(`there is '${snapshoots.length}' snapshots with such filename`, $this);
-    return resolve();
-});
+};
 
-const removeSnapshoot = (snapshootName, allCheckIds) => new Promise(async (resolve, reject) => {
-    const id = allCheckIds[snapshootName];
+const removeSnapshot = async (snapshotName, allCheckIds) => {
+    const id = allCheckIds[snapshotName];
     const logOpts = {
-        scope: 'removeSnapshoot',
+        scope: 'removeSnapshot',
         msgType: 'REMOVE',
         itemType: 'snapshot',
         ref: id,
@@ -1427,85 +1319,74 @@ const removeSnapshoot = (snapshootName, allCheckIds) => new Promise(async (resol
     log.debug(`check if the snapshot:'${id}' is baseline`, $this, logOpts);
     if (!id) {
         log.warn('id is empty');
-        return resolve();
+        return;
     }
-    const snapshoot = await Snapshot.findById(id);
+    const snapshot = await Snapshot.findById(id);
 
-    if (snapshoot === null) {
-        log.info(`cannot find the snapshoot with id: '${id}'`);
-        return resolve();
+    if (snapshot === null) {
+        log.info(`cannot find the snapshot with id: '${id}'`);
+        return;
     }
 
     const baselines = await Baseline.find({ snapshootId: id })
         .sort({ createdDate: -1 });
     if (baselines.length > 0) {
-        // remove snapshoot and baselines
-        // console.log({ markedAs: baselines[0].markedAs });
+        // remove snapshot and baselines
         if (baselines[0].markedAs === undefined && (await isLastLinkToSnapshoot(id))) {
             await Snapshot.findByIdAndDelete(id);
 
             await Baseline.deleteMany({ snapshootId: id });
-            log.debug(`snapshot: '${id}' and related baselines was removed because it was last unaccepted snapshoot`);
-            log.debug(`try to remove snapshoot file, id: '${snapshoot._id}', filename: '${snapshoot.filename}'`);
-            await removeSnapshootFile(snapshoot, allCheckIds);
-            return resolve();
+            log.debug(`snapshot: '${id}' and related baselines was removed because it was last unaccepted snapshot`);
+            log.debug(`try to remove snapshot file, id: '${snapshot._id}', filename: '${snapshot.filename}'`);
+            await removeSnapshotFile(snapshot, allCheckIds);
         } else {
-            log.debug(`cannot remove the snapshoot because it is accepted or not last baseline`);
-            return resolve();
+            log.debug(`cannot remove the snapshot because it is accepted or not last baseline`);
+            return;
         }
     }
 
     log.debug(`snapshot: '${id}' is not a baseline, try to remove it`, $this, logOpts);
     await Snapshot.findByIdAndDelete(id);
     log.debug(`snapshot: '${id}' was removed`, $this, logOpts);
-    log.debug(`try to remove snapshot file, id: '${snapshoot._id}', filename: '${snapshoot.filename}'`, $this, logOpts);
-    await removeSnapshootFile(snapshoot, allCheckIds);
-    return resolve();
-});
+    log.debug(`try to remove snapshot file, id: '${snapshot._id}', filename: '${snapshot.filename}'`, $this, logOpts);
+    await removeSnapshotFile(snapshot, allCheckIds);
+};
 
 exports.removeCheck = function (req, res) {
-    return new Promise((resolve, reject) => {
-        const { id } = req.params;
-        log.info(`DELETE CHECK, id: '${id}', user: '${req.user.username}', params: '${JSON.stringify(req.params)}'`);
-        removeCheck(id)
-            .then(() => {
-                res.status(200)
-                    .json({ message: `check with id: '${id}' was removed` });
-                return resolve();
-            })
-            .catch((e) => {
-                fatalError(req, res, e);
-                return reject(e);
-            });
-    });
+    const { id } = req.params;
+    log.info(`DELETE CHECK, id: '${id}', user: '${req.user.username}', params: '${JSON.stringify(req.params)}'`);
+    removeCheck(id)
+        .then(() => {
+            res.status(200)
+                .json({ message: `check with id: '${id}' was removed` });
+        })
+        .catch((e) => {
+            fatalError(req, res, e);
+        });
 };
 
 exports.getTestById = async function (req, res) {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const opts = removeEmptyProperties(req.body);
-            const { id } = req.params;
-            log.debug(`get test with id: '${id}',  params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`,
-                $this, {
-                    msgType: 'GET',
-                    itemType: 'test',
-                });
-            await Test.findById(id)
-                .then(async (snp) => {
-                    res.json(snp);
-                })
-                .catch(
-                    (err) => {
-                        res.status(400)
-                            .send(`Cannot GET a test with id: '${id}', error: ${err}`);
-                        return resolve(err);
-                    }
-                );
-        } catch (e) {
-            fatalError(req, res, e);
-            return reject(e);
-        }
-    });
+    try {
+        const opts = removeEmptyProperties(req.body);
+        const { id } = req.params;
+        log.debug(`get test with id: '${id}',  params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`,
+            $this, {
+                msgType: 'GET',
+                itemType: 'test',
+            });
+        await Test.findById(id)
+            .then(async (snp) => {
+                res.json(snp);
+            })
+            .catch(
+                (err) => {
+                    res.status(400)
+                        .send(`Cannot GET a test with id: '${id}', error: ${err}`);
+                }
+            );
+    } catch (e) {
+        fatalError(req, res, e);
+    }
 };
 
 exports.getCheckHistory = async function (req, res) {
@@ -1539,74 +1420,72 @@ exports.getCheckHistory = async function (req, res) {
 };
 
 exports.stopSession = async function (req, res) {
-    return new Promise(async (resolve, reject) => {
-        const testId = req.params.testid;
-        const logOpts = {
-            msgType: 'END_SESSION',
-            itemType: 'test',
-            scope: 'stopSession',
-            ref: testId
-        };
-        try {
-            if (!testId || testId === 'undefined') {
-                return reject(fatalError(req, res, 'Cannot stop test Session testId is empty'));
-            }
-            await waitUntil(async () => (await Check.find({ test: testId })
-                .exec())
-                .filter((ch) => ch.status.toString() !== 'pending').length > 0);
-            const checksGroup = await checksGroupedByIdent({ test: testId });
-            const groupStatuses = Object.keys(checksGroup)
-                .map((group) => checksGroup[group].status);
-            // console.log(JSON.stringify(checksGroup, null, "\t"));
-            const groupViewPorts = Object.keys(checksGroup)
-                .map((group) => checksGroup[group].viewport);
-            // console.log({groupViewPorts});
-            const uniqueGroupViewports = Array.from(new Set(groupViewPorts));
-            let testViewport;
-            if (uniqueGroupViewports.length === 1) {
-                testViewport = uniqueGroupViewports[0];
-            } else {
-                testViewport = uniqueGroupViewports.length;
-            }
-
-            let testStatus = 'not set';
-            if (groupStatuses.some((st) => st === 'failed')) {
-                testStatus = 'Failed';
-            }
-            if (groupStatuses.some((st) => st === 'passed')
-                && !groupStatuses.some((st) => st === 'failed')) {
-                testStatus = 'Passed';
-            }
-            if (groupStatuses.some((st) => st === 'new')
-                && !groupStatuses.some((st) => st === 'failed')) {
-                testStatus = 'Passed';
-            }
-            if (groupStatuses.some((st) => st === 'blinking')
-                && !groupStatuses.some((st) => st === 'failed')) {
-                testStatus = 'Passed';
-            }
-            if (groupStatuses.every((st) => st === 'new')) {
-                testStatus = 'New';
-            }
-            const blinkingCount = groupStatuses.filter((g) => g === 'blinking').length;
-            const testParams = {
-                id: testId,
-                status: testStatus,
-                blinking: blinkingCount,
-                calculatedViewport: testViewport,
-            };
-            log.info(`the session is over, the test will be updated with parameters: '${JSON.stringify(testParams)}'`,
-                $this, logOpts);
-            const updatedTest = await updateTest(testParams);
-            const result = updatedTest.toObject();
-            result.calculatedStatus = testStatus;
-            res.json(result);
-            return resolve(result);
-        } catch (e) {
-            fatalError(req, res, e);
-            return reject(e);
+    const testId = req.params.testid;
+    const logOpts = {
+        msgType: 'END_SESSION',
+        itemType: 'test',
+        scope: 'stopSession',
+        ref: testId,
+    };
+    try {
+        if (!testId || testId === 'undefined') {
+            return fatalError(req, res, 'Cannot stop test Session testId is empty');
         }
-    });
+        await waitUntil(async () => (await Check.find({ test: testId })
+            .exec())
+            .filter((ch) => ch.status.toString() !== 'pending').length > 0);
+        const checksGroup = await checksGroupedByIdent({ test: testId });
+        const groupStatuses = Object.keys(checksGroup)
+            .map((group) => checksGroup[group].status);
+        // console.log(JSON.stringify(checksGroup, null, "\t"));
+        const groupViewPorts = Object.keys(checksGroup)
+            .map((group) => checksGroup[group].viewport);
+        // console.log({groupViewPorts});
+        const uniqueGroupViewports = Array.from(new Set(groupViewPorts));
+        let testViewport;
+        if (uniqueGroupViewports.length === 1) {
+            // eslint-disable-next-line prefer-destructuring
+            testViewport = uniqueGroupViewports[0];
+        } else {
+            testViewport = uniqueGroupViewports.length;
+        }
+
+        let testStatus = 'not set';
+        if (groupStatuses.some((st) => st === 'failed')) {
+            testStatus = 'Failed';
+        }
+        if (groupStatuses.some((st) => st === 'passed')
+            && !groupStatuses.some((st) => st === 'failed')) {
+            testStatus = 'Passed';
+        }
+        if (groupStatuses.some((st) => st === 'new')
+            && !groupStatuses.some((st) => st === 'failed')) {
+            testStatus = 'Passed';
+        }
+        if (groupStatuses.some((st) => st === 'blinking')
+            && !groupStatuses.some((st) => st === 'failed')) {
+            testStatus = 'Passed';
+        }
+        if (groupStatuses.every((st) => st === 'new')) {
+            testStatus = 'New';
+        }
+        const blinkingCount = groupStatuses.filter((g) => g === 'blinking').length;
+        const testParams = {
+            id: testId,
+            status: testStatus,
+            blinking: blinkingCount,
+            calculatedViewport: testViewport,
+        };
+        log.info(`the session is over, the test will be updated with parameters: '${JSON.stringify(testParams)}'`,
+            $this, logOpts);
+        const updatedTest = await updateTest(testParams);
+        const result = updatedTest.toObject();
+        result.calculatedStatus = testStatus;
+        res.json(result);
+        return result;
+    } catch (e) {
+        fatalError(req, res, e);
+    }
 };
 
 // TESTABILITY
@@ -1654,28 +1533,26 @@ exports.status = async function (req, res) {
 };
 
 exports.loadTestUser = async function (req, res) {
-    return new Promise(async (resolve, reject) => {
-        const logOpts = {
-            itemType: 'user',
-            msgType: 'LOAD',
-            ref: 'Administrator',
-        };
-        if (process.env.TEST !== '1') {
-            return res.json({ message: 'the feature works only in test mode' });
-        }
-        const testAdmin = await User.findOne({ username: 'Test' });
-        if (!testAdmin) {
-            log.info('create the test Administrator', $this, logOpts);
-            const adminData = JSON.parse(fss.readFileSync('./lib/testAdmin.json'));
-            const admin = await User.create(adminData);
-            log.info(`test Administrator with id: '${admin._id}' was created`, $this, logOpts);
-            res.json(admin);
-            return resolve(admin);
-        }
+    const logOpts = {
+        itemType: 'user',
+        msgType: 'LOAD',
+        ref: 'Administrator',
+    };
+    if (process.env.TEST !== '1') {
+        return res.json({ message: 'the feature works only in test mode' });
+    }
+    const testAdmin = await User.findOne({ username: 'Test' });
+    if (!testAdmin) {
+        log.info('create the test Administrator', $this, logOpts);
+        const adminData = JSON.parse(fss.readFileSync('./lib/testAdmin.json'));
+        const admin = await User.create(adminData);
+        log.info(`test Administrator with id: '${admin._id}' was created`, $this, logOpts);
+        res.json(admin);
+        return admin;
+    }
 
-        log.info(`test admin is exists: ${JSON.stringify(testAdmin, null, 2)}`, $this, logOpts);
-        res.json({ msg: `already exist '${testAdmin}'` });
-    });
+    log.info(`test admin is exists: ${JSON.stringify(testAdmin, null, 2)}`, $this, logOpts);
+    res.json({ msg: `already exist '${testAdmin}'` });
 };
 
 function taskOutput(msg, res) {
@@ -1683,128 +1560,123 @@ function taskOutput(msg, res) {
     log.debug(msg.toString(), $this);
 }
 
-exports.task_remove_empty_tests = function (req, res) {
-    return new Promise((resolve, reject) => {
-        // this header to response with chunks data
-        res.writeHead(200, {
-            'Content-Type': 'text/event-stream',
-            'Cache-Control': 'no-cache',
-            'Content-Encoding': 'none',
-        });
-        res.write('- query all tests\n');
-        log.debug('- query all tests\n', $this);
-
-        Test.find({})
-            .then((tests) => {
-                res.write(`- all tests count: '${tests.length}'\n`);
-                log.debug(`- all tests count: '${tests.length}'\n`, $this);
-                res.write('- remove empty tests\n');
-                log.debug('- remove empty tests\n', $this);
-
-                let count = 0;
-                Promise.all(tests.map((test) => {
-                    const checkFilter = { test: test.id };
-                    return checksGroupedByIdent(checkFilter)
-                        .then((checkGroups) => {
-                            if (Object.keys(checkGroups).length < 1) {
-                                count += 1;
-                                const targetToRemove = {
-                                    id: test._id,
-                                    name: test.name,
-                                };
-                                console.log({ targetToRemove });
-                                res.write(`${JSON.stringify(targetToRemove)}\n`);
-
-                                return Test.findByIdAndDelete(test._id,)
-                                    .then(() => targetToRemove);
-                            }
-                        });
-                }))
-                    .then((x) => {
-                        res.write(`- removed tests count: '${count}'\n`);
-                        log.info(`- removed tests count: '${count}'\n`, $this);
-                        res.write('- done\n');
-                        log.info('- done\n', $this);
-                        return resolve(res.end());
-                    });
-            });
+exports.task_remove_empty_tests = async function (req, res) {
+    // this header to response with chunks data
+    res.writeHead(200, {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Content-Encoding': 'none',
     });
+    res.write('- query all tests\n');
+    log.debug('- query all tests\n', $this);
+
+    Test.find({})
+        .then((tests) => {
+            res.write(`- all tests count: '${tests.length}'\n`);
+            log.debug(`- all tests count: '${tests.length}'\n`, $this);
+            res.write('- remove empty tests\n');
+            log.debug('- remove empty tests\n', $this);
+
+            let count = 0;
+            Promise.all(tests.map((test) => {
+                const checkFilter = { test: test.id };
+                return checksGroupedByIdent(checkFilter)
+                    .then((checkGroups) => {
+                        if (Object.keys(checkGroups).length < 1) {
+                            count += 1;
+                            const targetToRemove = {
+                                id: test._id,
+                                name: test.name,
+                            };
+                            console.log({ targetToRemove });
+                            res.write(`${JSON.stringify(targetToRemove)}\n`);
+
+                            return Test.findByIdAndDelete(test._id,)
+                                .then(() => targetToRemove);
+                        }
+                    });
+            }))
+                // eslint-disable-next-line no-unused-vars
+                .then((x) => {
+                    res.write(`- removed tests count: '${count}'\n`);
+                    log.info(`- removed tests count: '${count}'\n`, $this);
+                    res.write('- done\n');
+                    log.info('- done\n', $this);
+                    return res.end();
+                });
+        });
 };
 
-exports.task_remove_empty_runs = function (req, res) {
-    return new Promise((resolve, reject) => {
-        // this header to response with chunks data
-        res.writeHead(200, {
-            'Content-Type': 'text/event-stream',
-            'Cache-Control': 'no-cache',
-            'Content-Encoding': 'none',
-        });
-        res.write('- query all runs\n');
-        log.info('- query all runs\n', $this);
-
-        Run.find({})
-            .then((runs) => {
-                res.write(`- all runs count: '${runs.length}'\n`);
-                log.info(`- all runs count: '${runs.length}'\n`, $this);
-                res.write('- remove empty runs\n');
-                log.info('- remove empty runs\n', $this);
-
-                let count = 0;
-                Promise.all(runs.map((run) => {
-                    const checkFilter = { run: run.id };
-                    return checksGroupedByIdent(checkFilter)
-                        .then((checkGroups) => {
-                            if (Object.keys(checkGroups).length < 1) {
-                                count += 1;
-                                const targetToRemove = {
-                                    id: run._id,
-                                    name: run.name,
-                                };
-                                console.log({ targetToRemove });
-                                res.write(`${JSON.stringify(targetToRemove)}\n`);
-
-                                return Run.findByIdAndDelete(run.id,)
-                                    .then(() => targetToRemove);
-                            }
-                        });
-                }))
-                    .then((x) => {
-                        res.write(`- removed runs count: '${count}'\n`);
-                        log.info(`- removed runs count: '${count}'\n`, $this);
-                        res.write('- done\n');
-                        log.info('- done\n', $this);
-                        return resolve(res.end());
-                    });
-            });
+exports.task_remove_empty_runs = async function (req, res) {
+    // this header to response with chunks data
+    res.writeHead(200, {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Content-Encoding': 'none',
     });
+    res.write('- query all runs\n');
+    log.info('- query all runs\n', $this);
+
+    Run.find({})
+        .then((runs) => {
+            res.write(`- all runs count: '${runs.length}'\n`);
+            log.info(`- all runs count: '${runs.length}'\n`, $this);
+            res.write('- remove empty runs\n');
+            log.info('- remove empty runs\n', $this);
+
+            let count = 0;
+            Promise.all(runs.map((run) => {
+                const checkFilter = { run: run.id };
+                return checksGroupedByIdent(checkFilter)
+                    .then((checkGroups) => {
+                        if (Object.keys(checkGroups).length < 1) {
+                            count += 1;
+                            const targetToRemove = {
+                                id: run._id,
+                                name: run.name,
+                            };
+                            console.log({ targetToRemove });
+                            res.write(`${JSON.stringify(targetToRemove)}\n`);
+
+                            return Run.findByIdAndDelete(run.id,)
+                                .then(() => targetToRemove);
+                        }
+                    });
+            }))
+                .then(() => {
+                    res.write(`- removed runs count: '${count}'\n`);
+                    log.info(`- removed runs count: '${count}'\n`, $this);
+                    res.write('- done\n');
+                    log.info('- done\n', $this);
+                    res.end();
+                });
+        });
 };
 
-exports.task_remove_old_tests = function (req, res) {
-    return new Promise(async (resolve, reject) => {
-        // this header to response with chunks data
-        res.writeHead(200, {
-            'Content-Type': 'text/event-stream',
-            'Cache-Control': 'no-cache',
-            'Content-Encoding': 'none',
-        });
-        const trashHoldDate = subDays(new Date(), parseInt(req.query.days, 10));
-        taskOutput(
-            `- will remove all tests older that: '${req.query.days}' days,`
-            + ` '${format(trashHoldDate, 'yyyy-MM-dd')}'\n`,
-            res
-        );
-
-        const oldTestsCount = await Test.find({ startDate: { $lt: trashHoldDate } })
-            .countDocuments();
-        const oldTests = await Test.find({ startDate: { $lt: trashHoldDate } });
-        taskOutput(`- the count of documents is: '${oldTestsCount}'\n`, res);
-        oldTests.forEach((test) => {
-            taskOutput(`{\n\tid: ${test._id},\n\tname: ${test.name},\n\tdate:${test.startDate}\n}`, res);
-            removeTest(test._id);
-        });
-
-        return resolve(res.end());
+exports.task_remove_old_tests = async function (req, res) {
+    // this header to response with chunks data
+    res.writeHead(200, {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Content-Encoding': 'none',
     });
+    const trashHoldDate = subDays(new Date(), parseInt(req.query.days, 10));
+    taskOutput(
+        `- will remove all tests older that: '${req.query.days}' days,`
+        + ` '${format(trashHoldDate, 'yyyy-MM-dd')}'\n`,
+        res
+    );
+
+    const oldTestsCount = await Test.find({ startDate: { $lt: trashHoldDate } })
+        .countDocuments();
+    const oldTests = await Test.find({ startDate: { $lt: trashHoldDate } });
+    taskOutput(`- the count of documents is: '${oldTestsCount}'\n`, res);
+    oldTests.forEach((test) => {
+        taskOutput(`{\n\tid: ${test._id},\n\tname: ${test.name},\n\tdate:${test.startDate}\n}`, res);
+        removeTest(test._id);
+    });
+
+    res.end();
 };
 
 // const fixDocumentsTypes = async function (req, res) {
@@ -1865,7 +1737,7 @@ exports.task_migration_1_1_0 = async function (req, res) {
     }
     for (const test of tests) {
         log.info(test.name);
-        res.write(test.name + '\n');
+        res.write(`${test.name}\n`);
         test.branch = 'master';
         test.save();
     }

@@ -2,15 +2,13 @@
 Feature: Regions - Copy regions data after acceptance
 
     Background:
-        Given I stop the Syngrisi server
-        Given I clear test VRS database
+        Given I clear Database and stop Server
         When I set env variables:
         """
           TEST: 1
           SYNGRISI_AUTH: 0
         """
-        Given I start VRS server
-        Given I setup VRS driver
+        Given I start Server and start Driver
 
     Scenario: Regions - Copy regions data after acceptance
         When I create "1" tests with params:
@@ -20,7 +18,7 @@ Feature: Regions - Copy regions data after acceptance
           checkName: Check - 1
         """
 
-        When I open the url "http://vrs:3001/"
+        When I open the app
         Then I wait and refresh page on element "span=Copy region - 1" for "3" seconds to exist
         When I click on "Copy region - 1" VRS test
         When I wait for "2" seconds
@@ -69,7 +67,7 @@ Feature: Regions - Copy regions data after acceptance
           checkName: Check - 1
         """
 
-        When I open the url "http://vrs:3001/"
+        When I open the app
 
         When I wait for "3" seconds
         Then I expect that VRS test "Copy region - 1" has "Failed" status
@@ -112,7 +110,7 @@ Feature: Regions - Copy regions data after acceptance
           checkName: Check - 1
         """
 
-        When I open the url "http://vrs:3001/"
+        When I open the app
         When I wait for "3" seconds
         Then I expect that VRS test "Copy region - 1" has "Failed" status
 

@@ -1,6 +1,6 @@
 /* eslint-disable */
 const { When } = require('cucumber');
-const { requestWithLastSessionSid } =  require('../../src/utills/common');
+const { requestWithLastSessionSid } = require('../../src/utills/common');
 const fs = require('fs');
 const { default: checkVRS } = require('../../src/support/check/checkVrs');
 
@@ -91,6 +91,7 @@ When(/^I check image with path: "([^"]*)" as "([^"]*)"$/, async function (filePa
     browser.pause(300);
     const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${filePath}`);
     const checkResult = await checkVRS(checkName, imageBuffer);
+    console.log({ checkResult });
     this.STATE.check = checkResult;
 });
 

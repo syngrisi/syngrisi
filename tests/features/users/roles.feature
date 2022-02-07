@@ -6,8 +6,7 @@ Feature: User roles
     - reviewer: can see and accept all tests
 
     Background:
-        Given I clear test VRS database
-        Given I stop the Syngrisi server
+        Given I clear Database and stop Server
         When I set env variables:
         """
         TEST: 1
@@ -21,8 +20,7 @@ Feature: User roles
         TEST: 0
         SYNGRISI_AUTH: 1
         """
-        Given I start VRS server
-        Given I setup VRS driver
+        Given I start Server and start Driver
 
     @e2e
     Scenario: User - roles

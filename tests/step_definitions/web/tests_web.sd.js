@@ -51,7 +51,7 @@ When(/^I expect that(:? (\d)th)? VRS test "([^"]*)" has "([^"]*)" (status|browse
         }
     });
 
-When(/^I expect that(:? (\d)th)? test "([^"]*)" (has|contains) "([^"]*)" (status|browser|platform|viewport|accepted status|date|branch|created by)$/,
+When(/^I expect that(:? (\d)th)? test "([^"]*)" (has|contains) "([^"]*)" (status|browser|platform|viewport|accepted status|date|branch|created by|tags)$/,
     function (number, testName, method, fieldValue, fieldName) {
         number = number ? parseInt(number, 10) : 1;
         fieldValue = this.fillItemsPlaceHolders(fillCommonPlaceholders(fieldValue));
@@ -66,6 +66,7 @@ When(/^I expect that(:? (\d)th)? test "([^"]*)" (has|contains) "([^"]*)" (status
             branch: 'span.branch > a',
             'created by': 'div.cell-creator > div',
             'accepted status': 'div.cell-accepted-state > span',
+            tags: '//div[@class=\'test-tags\']',
         };
         const selector = selectors[fieldName];
         if (!selector) {
@@ -82,6 +83,12 @@ When(/^I expect that(:? (\d)th)? test "([^"]*)" (has|contains) "([^"]*)" (status
             };
             expect(el)
                 .toHaveAttributeContaining('class', statusClasses[fieldValue]);
+            return;
+        }
+        if (fieldName === 'tags') {
+            expect(el.getHTML()
+                .includes(fieldValue))
+                .toBeTruthy();
             return;
         }
         if (fieldName === 'platform') {
@@ -136,6 +143,7 @@ When(/^I create "([^"]*)" tests with params:$/, { timeout: 600000 }, async funct
             run: process.env.RUN_NAME || 'integration_run_name',
             runident: process.env.RUN_IDENT || 'integration_run_ident',
             branch: params.branch || 'integration',
+            tags: params.tags || [],
         }, browser.config.apiKey);
         browser.pause(300);
 

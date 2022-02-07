@@ -2,8 +2,7 @@
 Feature: Create User
 
     Background:
-        Given I clear test VRS database
-        Given I kill process which used port: "3001"
+        Given I clear Database and stop Server
         When I set env variables:
         """
         TEST: 1
@@ -37,6 +36,7 @@ Feature: Create User
         When I login with user:"Test" password "123"
         Then I wait on element "*=TA" to be displayed
 
+    @smoke
     Scenario: Create User - Success
         When I open the url "http://vrs:3001/admin?task=users"
         When I wait for "3" seconds

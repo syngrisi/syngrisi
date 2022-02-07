@@ -2,18 +2,8 @@
 Feature: Runs Smoke
 
     Background:
-        Given I clear test VRS database
-        Given I kill process which used port: "3001"
-        Given I start VRS server with parameters:
-        """
-          port: 3001
-          databaseName: VRSdbTest
-          baseLineFolder: ./baselinesTest/
-        """
-        Given I setup VRS driver with parameters:
-        """
-          url: "http://vrs:3001/"
-        """
+        Given I clear Database and stop Server
+        Given I start Server and start Driver
         Given I set window size: "1300x768"
 
     Scenario: Runs - create single TEST
@@ -112,6 +102,12 @@ Feature: Runs Smoke
         Then the "check" "status" should be "new"
         When I stop VRS session
 
+         # third
+        When I set env variables:
+        """
+        RUN_NAME: RUN-02
+        RUN_IDENT: RUN-Ident-3
+        """
         Given I start VRS session with parameters:
         """
           testName: "Runs integration test - 02"
@@ -302,7 +298,7 @@ Feature: Runs Smoke
         Then I wait on element "span=TO-DELETE" to not exist
 
         # check if disappears on the index page
-        When I open the url "http://vrs:3001/"
+        When I open the app
         When I wait for "2" seconds
         Then I expect that element "span*=Keep me" does appear exactly "4" times
         Then I expect that element "span*=Delete me" is not displayed

@@ -2,31 +2,21 @@
 Feature: Pagination
 
     Background:
-        Given I clear test VRS database
-        Given I kill process which used port: "3001"
+        Given I clear Database and stop Server
 
     Scenario: Pagination - no duplicated tests
         When I set env variables:
         """
           PAGE_SIZE: 10
         """
-        Given I start VRS server with parameters:
-        """
-          port: 3001
-          databaseName: VRSdbTest
-          baseLineFolder: ./baselinesTest/
-        """
-        Given I setup VRS driver with parameters:
-        """
-          url: "http://vrs:3001/"
-        """
+        Given I start Server and start Driver
 
         When I create "5" tests with params:
         """
         filePath: files/A.png
         testName: Pagination Test
         """
-        When I open the url "http://vrs:3001/"
+        When I open the app
         When I wait for "3" seconds
 
         Then I expect that element "span*=Pagination Test" does appear exactly "5" times
@@ -57,7 +47,7 @@ Feature: Pagination
         filePath: files/A.png
         testName: Pagination Test
         """
-        When I open the url "http://vrs:3001/"
+        When I open the app
         When I click on the element "span=Integration suite"
         When I wait for "3" seconds
 
@@ -89,7 +79,7 @@ Feature: Pagination
         filePath: files/A.png
         testName: Pagination Test
         """
-        When I open the url "http://vrs:3001/"
+        When I open the app
         When I wait for "3" seconds
 
         Then I expect that element "span*=Pagination Test" does appear exactly "30" times
@@ -116,7 +106,7 @@ Feature: Pagination
         testName: Pagination Test
         """
         When I wait for "5" seconds
-        When I open the url "http://vrs:3001/"
+        When I open the app
         When I wait for "5" seconds
 
         Then I expect that element "span*=Pagination Test" does appear exactly "30" times

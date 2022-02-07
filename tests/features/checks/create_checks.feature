@@ -1,10 +1,11 @@
-@integration @e2e @smoke
+@integration @e2e
 Feature: VRS One Suite, One test, One check
 
     Background:
         Given I clear Database and stop Server
         Given I start Server and start Driver
 
+    @smoke
     Scenario: Create one check - [new, without session ending]
         Given I start VRS session with parameters:
         """
@@ -22,6 +23,7 @@ Feature: VRS One Suite, One test, One check
         Then I expect that VRS check "1/1 new int check" has "New" status
 
     # descriptive e2e test
+    @smoke
     Scenario: Create one check [new, with session ending]
         Given I set window size: "1366x768"
         When I create "1" tests with params:
@@ -31,6 +33,7 @@ Feature: VRS One Suite, One test, One check
           checkName: Check - 1
           filePath: files/A.png
           branch: onebranch
+          tags: ["@tag11", "@tag22"]
         """
 
         When I open the app
@@ -43,6 +46,8 @@ Feature: VRS One Suite, One test, One check
         Then I expect that 1th test "With session ending - 1" contains "chrome" browser
         Then I expect that 1th test "With session ending - 1" has "<testPlatform>" platform
         Then I expect that 1th test "With session ending - 1" has "1366x768" viewport
+        Then I expect that 1th test "With session ending - 1" contains "tag11" tags
+        Then I expect that 1th test "With session ending - 1" contains "tag22" tags
 
         When I click on "With session ending - 1" VRS test
         Then I expect that VRS test "With session ending - 1" is unfolded
@@ -54,7 +59,13 @@ Feature: VRS One Suite, One test, One check
         Then I expect the element "#not-equal-resolution-char" contains the text "≠" via js
         Then I expect that element "#not-equal-resolution-char" does not have the class "d-inline"
 
+        # suite and run
+        When I go to "main" page
+        Then I expect that element "span=Integration suite" is displayed
+        When I go to "runs" page
+        Then I expect that element "span=integration_run_name" is displayed
 
+    @smoke
     Scenario: VRS create two checks - [new, passed]
         Given I set window size: "1366x768"
         When I create "2" tests with params:
@@ -83,6 +94,7 @@ Feature: VRS One Suite, One test, One check
 
         Then I expect that 1th test "Created two: new, passed - 1" has "New" status
 
+    @smoke
     Scenario: VRS create two checks - [new, failed]
         Given I set window size: "1366x768"
         When I create "1" tests with params:
@@ -120,6 +132,7 @@ Feature: VRS One Suite, One test, One check
 
         Then I expect that 2th test "Created two: new, failed - 1" has "New" status
 
+    @smoke
     Scenario: VRS create three checks - [new, passed, failed]
         Given I set window size: "1366x768"
         When I create "2" tests with params:

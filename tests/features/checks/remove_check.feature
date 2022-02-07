@@ -2,8 +2,7 @@
 Feature: Baseline - Remove checks
 
     Background:
-        Given I stop the Syngrisi server
-        Given I clear test VRS database
+        Given I clear Database and stop Server
         When I set env variables:
         """
           TEST: 1

@@ -2,18 +2,8 @@
 Feature: VRS One Suite, One test, Few checks
 
   Background:
-    Given I clear test VRS database
-    Given I kill process which used port: "3001"
-    Given I start VRS server with parameters:
-    """
-      port: 3001
-      databaseName: VRSdbTest
-      baseLineFolder: ./baselinesTest/
-    """
-    Given I setup VRS driver with parameters:
-    """
-      url: "http://vrs:3001/"
-    """
+    Given I clear Database and stop Server
+    Given I start Server and start Driver
     Given I set window size: "1366x768"
 
   Scenario: VRS two checks - new
@@ -29,7 +19,7 @@ Feature: VRS One Suite, One test, Few checks
     When I check image with path: "files/B.png" as "check 2"
 
     When I stop VRS session
-    When I open the url "http://vrs:3001/"
+    When I open the app
     Then I wait and refresh page on element "span=Two checks - new" for "3" seconds to exist
     Then I expect that VRS test "Two checks - new" has "New" status
 
@@ -63,7 +53,7 @@ Feature: VRS One Suite, One test, Few checks
 
     When I stop VRS session
 
-    When I open the url "http://vrs:3001/"
+    When I open the app
     Then I wait and refresh page on element "span=Two checks - new, passed" for "3" seconds to exist
     Then I expect that 1th VRS test "Two checks - new, passed" has "Passed" status
     Then I expect that 2th VRS test "Two checks - new, passed" has "New" status
@@ -99,7 +89,7 @@ Feature: VRS One Suite, One test, Few checks
 
     When I stop VRS session
 
-    When I open the url "http://vrs:3001/"
+    When I open the app
     Then I wait and refresh page on element "span=Two checks - passed, passed" for "3" seconds to exist
     Then I expect that 1th VRS test "Two checks - passed, passed" has "Passed" status
     Then I expect that 2th VRS test "Two checks - passed, passed" has "New" status
@@ -130,7 +120,7 @@ Feature: VRS One Suite, One test, Few checks
 
     When I stop VRS session
 
-    When I open the url "http://vrs:3001/"
+    When I open the app
     Then I wait and refresh page on element "span=Two checks - failed, failed" for "3" seconds to exist
     Then I expect that 1th VRS test "Two checks - failed, failed" has "Failed" status
     Then I expect that 2th VRS test "Two checks - failed, failed" has "New" status
@@ -161,7 +151,7 @@ Feature: VRS One Suite, One test, Few checks
 
     When I stop VRS session
 
-    When I open the url "http://vrs:3001/"
+    When I open the app
     Then I wait and refresh page on element "span=Two checks - passed, failed" for "3" seconds to exist
     Then I expect that 1th VRS test "Two checks - passed, failed" has "Failed" status
     Then I expect that 2th VRS test "Two checks - passed, failed" has "New" status

@@ -2,18 +2,8 @@
 Feature: VRS Viewport
 
     Background:
-        Given I clear test VRS database
-        Given I kill process which used port: "3001"
-        Given I start VRS server with parameters:
-        """
-          port: 3001
-          databaseName: VRSdbTest
-          baseLineFolder: ./baselinesTest/
-        """
-        Given I setup VRS driver with parameters:
-        """
-          url: "http://vrs:3001/"
-        """
+        Given I clear Database and stop Server
+        Given I start Server and start Driver
 
     Scenario: VRS ViewPort - create single check
         When I set env variables:
@@ -30,7 +20,7 @@ Feature: VRS Viewport
 
         When I stop VRS session
 
-        When I open the url "http://vrs:3001/"
+        When I open the app
         When I wait for "2" seconds
         Then I expect that VRS test "Viewport integration test" has "1366x768" viewport
         When I click on "Viewport integration test" VRS test
@@ -56,7 +46,7 @@ Feature: VRS Viewport
         When I visually check page as "viewport - two checks same viewports 02"
 
         When I stop VRS session
-        When I open the url "http://vrs:3001/"
+        When I open the app
 
         When I wait for "2" seconds
         Then I expect that VRS test "Viewport integration test" has "1366x768" viewport
@@ -79,7 +69,7 @@ Feature: VRS Viewport
         When I visually check page as "viewport - two checks same viewports 02"
 
         When I stop VRS session
-        When I open the url "http://vrs:3001/"
+        When I open the app
         When I wait for "2" seconds
 
         Then I expect that VRS test "Viewport integration test" has "≠" viewport

@@ -2,8 +2,7 @@
 Feature: Default Users
 
     Background:
-        Given I clear test VRS database
-        Given I kill process which used port: "3001"
+        Given I clear Database and stop Server
         When I set env variables:
         """
         TEST: 1

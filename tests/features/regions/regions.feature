@@ -2,31 +2,20 @@
 Feature: Regions works properly
 
     Background:
-        Given I clear test VRS database
-        Given I kill process which used port: "3001"
-        Given I start VRS server with parameters:
-        """
-          port: 3001
-          databaseName: VRSdbTest
-          baseLineFolder: ./baselinesTest/
-        """
-        Given I setup VRS driver with parameters:
-        """
-          url: "http://vrs:3001/"
-        """
+        Given I clear Database and stop Server
+        Given I start Server and start Driver
 
         Given I start VRS session with parameters:
         """
           testName: "region check"
         """
-        When I open the url "http://vrs:3001/"
+        When I open the app
         When I check image with path: "files/A.png" as "region"
         Then the "check" "status" should be "new"
-
         When I stop VRS session
 
     Scenario: Create Region without saving
-        When I open the url "http://vrs:3001/"
+        When I open the app
         When I wait for "3" seconds
         When I click on "region check" VRS test
         Then I expect that VRS test "region check" is unfolded
@@ -78,7 +67,7 @@ Feature: Regions works properly
         """
 
     Scenario: Create Region with saving
-        When I open the url "http://vrs:3001/"
+        When I open the app
         When I wait for "3" seconds
         When I click on "region check" VRS test
         Then I expect that VRS test "region check" is unfolded
@@ -131,7 +120,7 @@ Feature: Regions works properly
         """
 
     Scenario: Create Region with saving after change position
-        When I open the url "http://vrs:3001/"
+        When I open the app
         When I wait for "3" seconds
         When I click on "region check" VRS test
         Then I expect that VRS test "region check" is unfolded
@@ -200,7 +189,7 @@ Feature: Regions works properly
         """
 
     Scenario: Create Region with saving - two regions
-        When I open the url "http://vrs:3001/"
+        When I open the app
         When I wait for "3" seconds
         When I click on "region check" VRS test
         Then I expect that VRS test "region check" is unfolded
@@ -223,7 +212,7 @@ Feature: Regions works properly
         """
 
     Scenario: Delete Region with saving
-        When I open the url "http://vrs:3001/"
+        When I open the app
         When I wait for "3" seconds
         When I click on "region check" VRS test
         Then I expect that VRS test "region check" is unfolded
