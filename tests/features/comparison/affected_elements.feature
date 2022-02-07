@@ -2,18 +2,8 @@
 Feature: Affected elements
   Based on DOM dump and diff
   Background:
-    Given I clear test VRS database
-    Given I kill process which used port: "3001"
-    Given I start VRS server with parameters:
-    """
-      port: 3001
-      databaseName: VRSdbTest
-      baseLineFolder: ./baselinesTest/
-    """
-    Given I setup VRS driver with parameters:
-    """
-      url: "http://vrs:3001/"
-    """
+    Given I clear Database and stop Server
+    Given I start Server and start Driver
 
   Scenario: Get Affected elements without offset
     Given I start VRS session with parameters:

@@ -2,23 +2,14 @@
 Feature: VRS Assert Smoke
 
     Background:
-        Given I clear test VRS database
-        Given I kill process which used port: "3001"
+        Given I clear Database and stop Server
         When I set env variables:
         """
         TEST: 1
         SYNGRISI_AUTH: 0
         """
-        Given I start VRS server with parameters:
-        """
-          port: 3001
-          databaseName: VRSdbTest
-          baseLineFolder: ./baselinesTest/
-        """
-        Given I setup VRS driver with parameters:
-        """
-          url: "http://vrs:3001/"
-        """
+
+        Given I start Server and start Driver
 
     Scenario: VRS passed assert
         Given I set window size: "1366x768"
@@ -26,7 +17,7 @@ Feature: VRS Assert Smoke
         """
           testName: "Passed Assert"
         """
-        When I open the url "http://vrs:3001/"
+        When I open the app
         When I assert image with path: "files/A.png" as "new int assert_1"
         Then the "check" "status" should be "new"
 
@@ -41,7 +32,7 @@ Feature: VRS Assert Smoke
         Then the "check" "status" should be "passed"
         When I stop VRS session
 
-        When I open the url "http://vrs:3001/"
+        When I open the app
 
         Then I wait and refresh page on element "span=Passed" for "3" seconds to exist
         Then I expect that 1th VRS test "Passed Assert" has "Passed" status
@@ -73,7 +64,7 @@ Feature: VRS Assert Smoke
         Then the "check" "status" should be "failed"
         When I stop VRS session
 
-        When I open the url "http://vrs:3001/"
+        When I open the app
 
         Then I wait and refresh page on element "span=Failed" for "3" seconds to exist
         Then I expect that 1th VRS test "Failed Assert" has "Failed" status

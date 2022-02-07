@@ -4,23 +4,12 @@ Feature: Crashed check
     to enable the library, issue link: https://github.com/Automattic/node-canvas/issues/1735
 
     Background:
-        Given I clear test VRS database
-        Given I kill process which used port: "3001"
+        Given I clear Database and stop Server
         When I set env variables:
         """
         COMPARE_METHOD: "2"
         """
-        Given I start VRS server with parameters:
-        """
-        port: 3001
-        databaseName: VRSdbTest
-        baseLineFolder: ./baselinesTest/
-        """
-
-        Given I setup VRS driver with parameters:
-        """
-        url: "http://vrs:3001/"
-        """
+        Given I start Server and start Driver
 
     Scenario: Crashed
         Given I set window size: "1366x768"
@@ -43,7 +32,7 @@ Feature: Crashed check
         """
         When I stop VRS session
 
-        When I open the url "http://vrs:3001/"
+        When I open the app
 
         Then I wait and refresh page on element "span=Failed" for "3" seconds to exist
         Then I expect that 1th VRS test "Crashed test" has "Failed" status
@@ -63,4 +52,6 @@ Feature: Crashed check
         """
         When I click on the element "//div[contains(., 'crashed') and @name='check-name']/../../../..//div[@class='group-links-view']"
         When I wait for "2" seconds
-        Then I expect that element "[title='diff snapshoot']" is not displayed
+
+        Then the element "//div[contains(text(), 'failReasons')]/../div[2]" contains the text "internal_server_error"
+        Then I expect that element "//*[@title='toggle diff (D)']" is not displayed

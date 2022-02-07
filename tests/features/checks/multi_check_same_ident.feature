@@ -4,18 +4,8 @@ Feature: VRS Few checks with same identification
     ident is a combination of checks ['name', 'viewport', 'browserName', 'browserVersion', 'os'] the system group few checks to group with same ident
 
     Background:
-        Given I clear test VRS database
-        Given I kill process which used port: "3001"
-        Given I start VRS server with parameters:
-        """
-          port: 3001
-          databaseName: VRSdbTest
-          baseLineFolder: ./baselinesTest/
-        """
-        Given I setup VRS driver with parameters:
-        """
-          url: "http://vrs:3001/"
-        """
+        Given I clear Database and stop Server
+        Given I start Server and start Driver
         Given I set window size: "1366x768"
 
     Scenario: VRS two passed checks with same ident - passed ident group, passed test
@@ -28,7 +18,7 @@ Feature: VRS Few checks with same identification
         When I check image with path: "files/A.png" as "check 1"
 
         When I stop VRS session
-        When I open the url "http://vrs:3001/"
+        When I open the app
         Then I wait and refresh page on element "span=two passed checks" for "3" seconds to exist
         Then I expect that VRS test "two passed checks" has "New" status
 
@@ -43,7 +33,7 @@ Feature: VRS Few checks with same identification
         When I check image with path: "files/A.png" as "check 1"
 
         When I stop VRS session
-        When I open the url "http://vrs:3001/"
+        When I open the app
         Then I wait and refresh page on element "span=two passed checks" for "3" seconds to exist
         Then I expect that VRS test "two passed checks" has "Passed" status
 
@@ -68,7 +58,7 @@ Feature: VRS Few checks with same identification
         When I check image with path: "files/A.png" as "check 1"
 
         When I stop VRS session
-        When I open the url "http://vrs:3001/"
+        When I open the app
         Then I wait and refresh page on element "span=two failed checks" for "3" seconds to exist
         Then I expect that VRS test "two failed checks" has "New" status
 
@@ -83,7 +73,7 @@ Feature: VRS Few checks with same identification
         When I check image with path: "files/B.png" as "check 1"
 
         When I stop VRS session
-        When I open the url "http://vrs:3001/"
+        When I open the app
         Then I wait and refresh page on element "span=two failed checks" for "3" seconds to exist
         Then I expect that VRS test "two failed checks" has "Failed" status
 
@@ -108,7 +98,7 @@ Feature: VRS Few checks with same identification
         When I check image with path: "files/A.png" as "check 1"
 
         When I stop VRS session
-        When I open the url "http://vrs:3001/"
+        When I open the app
         Then I wait and refresh page on element "span=failed and passed" for "3" seconds to exist
         Then I expect that VRS test "failed and passed" has "New" status
 
@@ -123,7 +113,7 @@ Feature: VRS Few checks with same identification
         When I check image with path: "files/A.png" as "check 1"
 
         When I stop VRS session
-        When I open the url "http://vrs:3001/"
+        When I open the app
         Then I wait and refresh page on element "span=failed and passed" for "3" seconds to exist
         Then I expect that VRS test "failed and passed" has "Passed" status
         Then I expect that 1th VRS test "failed and passed" has blink icon
@@ -150,7 +140,7 @@ Feature: VRS Few checks with same identification
         When I check image with path: "files/A.png" as "check 1"
 
         When I stop VRS session
-        When I open the url "http://vrs:3001/"
+        When I open the app
         Then I wait and refresh page on element "span=passed and failed" for "3" seconds to exist
         Then I expect that VRS test "passed and failed" has "New" status
 
@@ -165,7 +155,7 @@ Feature: VRS Few checks with same identification
         When I check image with path: "files/B.png" as "check 1"
         When I stop VRS session
 
-        When I open the url "http://vrs:3001/"
+        When I open the app
         Then I wait and refresh page on element "span=passed and failed" for "3" seconds to exist
         Then I expect that VRS test "passed and failed" has "Failed" status
 

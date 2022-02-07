@@ -1,22 +1,12 @@
 Feature: Checks with same Hash
 
     Background:
-        Given I clear test VRS database
-        Given I kill process which used port: "3001"
+        Given I clear Database and stop Server
         When I set env variables:
         """
           RUN_NAME: RUN-01
         """
-        Given I start VRS server with parameters:
-        """
-          port: 3001
-          databaseName: VRSdbTest
-          baseLineFolder: ./baselinesTest/
-        """
-        Given I setup VRS driver with parameters:
-        """
-          url: "http://vrs:3001/"
-        """
+        Given I start Server and start Driver
         Given I set window size: "1366x768"
 
     Scenario: Checks with same Hash with different Test name but same Check name
@@ -25,7 +15,7 @@ Feature: Checks with same Hash
         """
           testName: "Test Same Hash - 1"
         """
-        When I open the url "http://vrs:3001/"
+        When I open the app
         When I check image with path: "files/A.png" as "Check Same Hash - 1"
         Then the "check" "status" should be "new"
         When I stop VRS session
@@ -35,13 +25,13 @@ Feature: Checks with same Hash
         """
           testName: "Test Same Hash - 2"
         """
-        When I open the url "http://vrs:3001/"
+        When I open the app
         When I check image with path: "files/A.png" as "Check Same Hash - 1"
         Then the "check" "status" should be "passed"
         When I stop VRS session
 
         # check baseline name
-        When I open the url "http://vrs:3001/"
+        When I open the app
         When I wait for "1" seconds
 
         # go to test 2
@@ -76,7 +66,7 @@ Feature: Checks with same Hash
         """
           testName: "Test Same Hash - 1"
         """
-        When I open the url "http://vrs:3001/"
+        When I open the app
         When I check image with path: "files/A.png" as "Check Same Hash - 1"
         When I stop VRS session
         When I wait for "2" seconds
@@ -87,7 +77,7 @@ Feature: Checks with same Hash
         """
           testName: "Test Same Hash - 2"
         """
-        When I open the url "http://vrs:3001/"
+        When I open the app
         When I check image with path: "files/A.png" as "Check Same Hash - 2"
         When I stop VRS session
         When I wait for "2" seconds
@@ -95,7 +85,7 @@ Feature: Checks with same Hash
 
         ## check baseline and actual names
         # go to into Test 2
-        When I open the url "http://vrs:3001/"
+        When I open the app
         When I wait for "2" seconds
         When I click on "Test Same Hash - 2" VRS test
         When I wait for "1" seconds
@@ -111,7 +101,7 @@ Feature: Checks with same Hash
 
         ## check file names
         # probe Test 1
-        When I open the url "http://vrs:3001/"
+        When I open the app
         When I wait for "2" seconds
         When I click on "Test Same Hash - 1" VRS test
         When I wait for "1" seconds
@@ -126,7 +116,7 @@ Feature: Checks with same Hash
          return document.querySelector("#baseline-label").dataset.filename
         """
         # go to into Test 2
-        When I open the url "http://vrs:3001/"
+        When I open the app
         When I wait for "2" seconds
         When I click on "Test Same Hash - 2" VRS test
         When I wait for "1" seconds

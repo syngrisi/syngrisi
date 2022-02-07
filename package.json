@@ -1,84 +1,85 @@
 {
-  "name": "syngrisi",
-  "version": "1.2.16",
-  "description": "Syngrisi - Visual Testing Tool",
-  "main": "server.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/viktor-silakov/syngrisi"
-  },
-  "homepage": "https://github.com/viktor-silakov/syngrisi",
-  "keywords": [
-    "testing",
-    "regression",
-    "visual",
-    "screenshots",
-    "comparison"
-  ],
-  "scripts": {
-    "test": "cd tests && npm run test",
-    "pub": "np --yolo --no-publish",
-    "startdebug": "nodemon --ignore 'mvc/views/lib/*.js' --ignore 'tests' server.js",
-    "starttest": "node server.js",
-    "tasks:reindex": "node tasks/reindex.js",
-    "startservice": "forever start -l forever.log -o out.log -e err.log server.js",
-    "start": "nodemon --ignore 'mvc/views/lib/*.js' --ignore 'tests' server.js",
-    "clear": "mongo VRSdb --eval 'db.vrschecks.drop();db.vrssnapshots.drop();db.vrstests.drop();db.vrsapps.drop();db.vrssuites.drop();db.vrsusers.drop();db.vrslogs.drop();db.vrsruns.drop();db.vrsbaselines.drop();'; rm ./baselines/*.png",
-    "start_test": "cross-env VRT_CONN_STRING='mongodb://localhost/VRSdbTest' VRT_PORT=3001 VRT_BASELINE_PATH='./baselinesTest/' nodemon server.js",
-    "clear_test": "mongo VRSdbTest --eval \"db.vrschecks.drop();db.vrssnapshots.drop();db.vrstests.drop();db.vrsapps.drop();db.vrssuites.drop();db.vrsusers.drop();db.vrslogs.drop();db.vrsruns.drop();db.vrsbaselines.drop();\" && rm -f ./baselinesTest/*.png"
-  },
-  "author": {
-    "name": "Viktar Silakou",
-    "email": "1105714@gmail.com"
-  },
-  "bugs": {
-    "url": "https://github.com/viktor-silakov/syngrisi/issues"
-  },
-  "license": "MIT",
-  "dependencies": {
-    "async-lock": "^1.2.2",
-    "body-parser": "^1.19.0",
-    "canvas": "^2.8.0",
-    "chalk": "^4.1.2",
-    "compression": "^1.7.4",
-    "connect-busboy": "0.0.2",
-    "connect-ensure-login": "^0.1.1",
-    "date-fns": "^2.21.3",
-    "ejs": "^3.0.1",
-    "express": "^4.17.1",
-    "express-fileupload": "^1.2.1",
-    "express-session": "^1.17.1",
-    "got": "^10.2.1",
-    "hasha": "^5.1.0",
-    "memorystore": "^1.6.6",
-    "moment": "^2.25.3",
-    "mongodb": "^3.4.1",
-    "mongoose": "^6.1.3",
-    "node-libpng": "^0.2.16",
-    "nodejs-resemble": "^0.3.0",
-    "nodemon": "^2.0.15",
-    "p-queue": "^6.4.0",
-    "passport": "^0.4.1",
-    "passport-local": "^1.0.0",
-    "passport-local-mongoose": "^6.1.0",
-    "pino": "^6.11.3",
-    "pino-http": "^5.2.0",
-    "prettier": "^2.2.1",
-    "querystring": "^0.2.1",
-    "request": "^2.88.0",
-    "resemblejs": "^4.0.0",
-    "responsive-toolkit": "^2.6.3",
-    "uuid-apikey": "^1.5.2",
-    "winston": "^3.3.3",
-    "winston-mongodb": "^5.0.7"
-  },
-  "devDependencies": {
-    "babel-eslint": "^10.1.0",
-    "cross-env": "^7.0.3",
-    "eslint": "^7.32.0",
-    "eslint-config-airbnb-base": "^14.1.0",
-    "eslint-plugin-import": "^2.20.2",
-    "form-data": "^4.0.0",
-    "node-fetch": "^2.6.1"
-  }
+    "name": "syngrisi",
+    "version": "1.2.16",
+    "description": "Syngrisi - Visual Testing Tool",
+    "main": "server.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/viktor-silakov/syngrisi"
+    },
+    "homepage": "https://github.com/viktor-silakov/syngrisi",
+    "keywords": [
+        "testing",
+        "regression",
+        "visual",
+        "screenshots",
+        "comparison"
+    ],
+    "scripts": {
+        "test": "cd tests && npm run test",
+        "smoke": "cd tests && npm run smoke",
+        "pub": "np --yolo --no-publish",
+        "startdebug": "nodemon --ignore 'mvc/views/lib/*.js' --ignore 'tests' server.js",
+        "starttest": "node server.js",
+        "tasks:reindex": "node tasks/reindex.js",
+        "startservice": "forever start -l forever.log -o out.log -e err.log server.js",
+        "start": "nodemon --ignore 'mvc/views/lib/*.js' --ignore 'tests' server.js",
+        "clear": "mongo VRSdb --eval 'db.vrschecks.drop();db.vrssnapshots.drop();db.vrstests.drop();db.vrsapps.drop();db.vrssuites.drop();db.vrsusers.drop();db.vrslogs.drop();db.vrsruns.drop();db.vrsbaselines.drop();'; rm ./baselines/*.png",
+        "start_test": "cross-env VRT_CONN_STRING='mongodb://localhost/VRSdbTest' VRT_PORT=3001 VRT_BASELINE_PATH='./baselinesTest/' nodemon server.js",
+        "clear_test": "mongo VRSdbTest --eval \"db.vrschecks.drop();db.vrssnapshots.drop();db.vrstests.drop();db.vrsapps.drop();db.vrssuites.drop();db.vrsusers.drop();db.vrslogs.drop();db.vrsruns.drop();db.vrsbaselines.drop();\" && rm -f ./baselinesTest/*.png"
+    },
+    "author": {
+        "name": "Viktar Silakou",
+        "email": "1105714@gmail.com"
+    },
+    "bugs": {
+        "url": "https://github.com/viktor-silakov/syngrisi/issues"
+    },
+    "license": "MIT",
+    "dependencies": {
+        "async-lock": "^1.2.2",
+        "body-parser": "^1.19.0",
+        "canvas": "^2.8.0",
+        "chalk": "^4.1.2",
+        "compression": "^1.7.4",
+        "connect-busboy": "0.0.2",
+        "connect-ensure-login": "^0.1.1",
+        "date-fns": "^2.21.3",
+        "ejs": "^3.0.1",
+        "express": "^4.17.1",
+        "express-fileupload": "^1.2.1",
+        "express-session": "^1.17.1",
+        "got": "^10.2.1",
+        "hasha": "^5.1.0",
+        "memorystore": "^1.6.6",
+        "moment": "^2.25.3",
+        "mongodb": "^3.4.1",
+        "mongoose": "^6.1.3",
+        "node-libpng": "^0.2.16",
+        "nodejs-resemble": "^0.3.0",
+        "nodemon": "^2.0.15",
+        "p-queue": "^6.4.0",
+        "passport": "^0.4.1",
+        "passport-local": "^1.0.0",
+        "passport-local-mongoose": "^6.1.0",
+        "pino": "^6.11.3",
+        "pino-http": "^5.2.0",
+        "prettier": "^2.2.1",
+        "querystring": "^0.2.1",
+        "request": "^2.88.0",
+        "resemblejs": "^4.0.0",
+        "responsive-toolkit": "^2.6.3",
+        "uuid-apikey": "^1.5.2",
+        "winston": "^3.3.3",
+        "winston-mongodb": "^5.0.7"
+    },
+    "devDependencies": {
+        "babel-eslint": "^10.1.0",
+        "cross-env": "^7.0.3",
+        "eslint": "^7.32.0",
+        "eslint-config-airbnb-base": "^14.1.0",
+        "eslint-plugin-import": "^2.20.2",
+        "form-data": "^4.0.0",
+        "node-fetch": "^2.6.1"
+    }
 }

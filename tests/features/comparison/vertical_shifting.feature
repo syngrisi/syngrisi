@@ -1,22 +1,12 @@
 @visual @comparison @shifting @Pending
 Feature: Vertical Shifting
   Background:
-    Given I clear test VRS database
-    Given I kill process which used port: "3001"
+    Given I clear Database and stop Server
     When I set env variables:
     """
     V_SHIFTING:1
     """
-    Given I start VRS server with parameters:
-    """
-      port: 3001
-      databaseName: VRSdbTest
-      baseLineFolder: ./baselinesTest/
-    """
-    Given I setup VRS driver with parameters:
-    """
-      url: "http://vrs:3001/"
-    """
+    Given I start Server and start Driver
 
   Scenario: Down-Up 1 pix
     Down-Up - because before make a comparison we crop bottom pixels of baseline and top pixels of actual image

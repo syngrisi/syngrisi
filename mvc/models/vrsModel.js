@@ -143,6 +143,9 @@ const VRSCheckSchema = new Schema({
     creatorUsername: {
         type: String,
     },
+    failReasons: {
+        type: [String],
+    },
 });
 
 const VRSBaselineSchema = new Schema({

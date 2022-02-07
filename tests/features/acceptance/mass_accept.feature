@@ -2,15 +2,13 @@
 Feature: Mass Check Acceptance
 
     Background:
-        Given I stop the Syngrisi server
-        Given I clear test VRS database
+        Given I clear Database and stop Server
         When I set env variables:
         """
           TEST: 1
           SYNGRISI_AUTH: 0
         """
-        Given I start VRS server
-        Given I setup VRS driver
+        Given I start Server and start Driver
 
     Scenario: Mass Check Acceptance
         When I create "2" tests with few checks:

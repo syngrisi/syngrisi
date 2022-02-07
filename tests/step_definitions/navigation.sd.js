@@ -1,18 +1,19 @@
 const { When, Then, Given } = require('cucumber');
 When(/^I go to "([^"]*)" page$/, function (str) {
-    if (str === 'main') {
-        browser.url(`http://${browser.config.serverDomain}:${browser.config.serverPort}/`);
-        return;
-    }
     const pages = {
+        main: `http://${browser.config.serverDomain}:${browser.config.serverPort}/`,
+        runs: `http://${browser.config.serverDomain}:${browser.config.serverPort}/runs`,
         admin: {
             users: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin?task=users`,
         },
     };
-
-    const page = str.split('>')[0];
-    const subPage = str.split('>')[1];
-    browser.url(pages[page][subPage]);
+    if (str.includes('>')) {
+        const page = str.split('>')[0];
+        const subPage = str.split('>')[1];
+        browser.url(pages[page][subPage]);
+        return;
+    }
+    browser.url(pages[str]);
 });
 
 When(/^I refresh page$/, () => {

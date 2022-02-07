@@ -2,8 +2,7 @@
 Feature: Update User
 
     Background:
-        Given I clear test VRS database
-        Given I kill process which used port: "3001"
+        Given I clear Database and stop Server
         When I set env variables:
         """
         TEST: 1
@@ -23,17 +22,7 @@ Feature: Update User
         TEST: 0
         SYNGRISI_AUTH: 1
         """
-        Given I start VRS server with parameters:
-        """
-        port: 3001
-        databaseName: VRSdbTest
-        baseLineFolder: ./baselinesTest/
-        """
-
-        Given I setup VRS driver with parameters:
-        """
-        url: "http://vrs:3001/"
-        """
+        Given I start Server and start Driver
         When I login with user:"Test" password "123"
         Then I wait on element "*=TA" to be displayed
 

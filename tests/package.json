@@ -1,31 +1,20 @@
 {
-  "author": "Christian Bromann <christian@saucelabs.com>",
+  "author": {
+    "name": "Viktar Silakou",
+    "email": "1105714@gmail.com"
+  },
   "license": "MIT",
-  "name": "cucumber-boilerplate",
+  "name": "syngrisi-test-solution",
   "version": "2.0.0",
-  "description": "Boilerplate project to run WebdriverIO tests with Cucumber",
-  "homepage": "https://github.com/webdriverio/cucumber-boilerplate",
-  "contributors": [
-    "W. van Kuipers <github@pwnd.nl>"
-  ],
+  "description": "Syngrisi test solution",
+  "homepage": "https://github.com/viktor-silakov/syngrisi/tree/master/tests",
   "repository": {
     "type": "git",
-    "getUrl": "https://github.com/webdriverio/cucumber-boilerplate.git"
+    "getUrl": "https://github.com/viktor-silakov/syngrisi.git"
   },
-  "bugs": {
-    "getUrl": "https://github.com/webdriverio/cucumber-boilerplate/issues"
-  },
-  "keywords": [
-    "wdio",
-    "webdriver",
-    "webdriverio",
-    "cucumber",
-    "test",
-    "boilerplate",
-    "selenium"
-  ],
   "scripts": {
     "test": "cross-env LOG=1 HL=1 npx wdio --spec 'features/**/*.feature'",
+    "smoke": "cross-env LOG=1 HL=1 npx wdio --spec 'features/**/*.feature' --cucumberOpts.tagExpression='@smoke'",
     "testui": "cross-env LOG=1 HL=0 npx wdio --spec 'features/**/*.feature'"
   },
   "dependencies": {

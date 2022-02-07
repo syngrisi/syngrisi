@@ -2,18 +2,8 @@
 Feature: VRS Postfix
 
   Background:
-    Given I clear test VRS database
-    Given I kill process which used port: "3001"
-    Given I start VRS server with parameters:
-    """
-      port: 3001
-      databaseName: VRSdbTest
-      baseLineFolder: ./baselinesTest/
-    """
-    Given I setup VRS driver with parameters:
-    """
-      url: "http://vrs:3001/"
-    """
+    Given I clear Database and stop Server
+    Given I start Server and start Driver
 
   Scenario: VRS ViewPort - postfix
     When I set env variables:
@@ -29,7 +19,7 @@ Feature: VRS Postfix
     When I visually check page as "postfix check"
 
     When I stop VRS session
-    When I open the url "http://vrs:3001/"
+    When I open the app
     When I wait for "2" seconds
     Then I expect that VRS test "Postfix integration test" has "MacIntel_Integration" platform
 
