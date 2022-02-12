@@ -20,7 +20,7 @@ const saveRandomImage = async function saveRandomImage(fullPath) {
     return new Promise((resolve) => {
         const bitmap = new ImageJS.Bitmap({
             width: size,
-            height: size
+            height: size,
         });
         for (const val of [...Array(size)]) {
             bitmap.setPixel(getRandomInt(size), getRandomInt(size), 255, 1, 1, 255);
