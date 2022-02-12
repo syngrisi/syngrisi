@@ -66,7 +66,7 @@ exports.checksGroupView = async function (req, res) {
             res.render('pages/checkgroup', {
                 checks: transGroups,
                 test: test,
-                suite: suite
+                suite: suite,
             });
         } catch (e) {
             fatalError(req, res, e);
@@ -89,12 +89,22 @@ exports.checkView = function (req, res) {
             const check = await Check.findById(opts.id);
             const test = await Test.findById(`${check.test}`);
             const suite = await Suite.findById(`${check.suite}`);
-            const baselineSnapshot = await Snapshot.findById(`${check.baselineId}`);
-            let actualSnapshot;
+            let baselineSnapshot;
+            if (check.baselineId) {
+                baselineSnapshot = await Snapshot.findById(`${check.baselineId}`)
+                    .exec();
+                baselineSnapshot.formattedCreatedDate = moment(baselineSnapshot.createdDate)
+                    .format('YYYY-MM-DD hh:mm');
+            } else {
+                baselineSnapshot = null;
+            }
 
+            let actualSnapshot;
             if (check.actualSnapshotId) {
                 actualSnapshot = await Snapshot.findById(`${check.actualSnapshotId}`);
                 actualSnapshot.formattedCreatedDate = moment(actualSnapshot.createdDate);
+            } else {
+                actualSnapshot = null;
             }
             const diffId = check.diffId ? check.diffId : '';
 
@@ -103,8 +113,6 @@ exports.checkView = function (req, res) {
                 diffSnapshot = await Snapshot.findById(`${check.diffId}`);
                 diffSnapshot.formattedCreatedDate = moment(diffSnapshot.createdDate);
             }
-            baselineSnapshot.formattedCreatedDate = moment(baselineSnapshot.createdDate)
-                .format('YYYY-MM-DD hh:mm');
 
             const checksWithSameName = await checksGroupedByIdent({ name: check.name });
 

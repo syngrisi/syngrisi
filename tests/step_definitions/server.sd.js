@@ -22,7 +22,7 @@ When(/^I start Server and start Driver$/, { timeout: 600000 }, () => {
     startDriver('');
 });
 
-When(/^I stop the Syngrisi server$/, () => {
+When(/^I stop the Syngrisi server|I stop Server$/, () => {
     stopServer();
 });
 

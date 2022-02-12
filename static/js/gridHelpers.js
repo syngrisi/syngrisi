@@ -1,3 +1,5 @@
+/* eslint-disable no-underscore-dangle */
+
 /* global baselines $ document XMLHttpRequest fabric window */
 
 function uuidv4() {
@@ -256,27 +258,27 @@ function sendIgnoreRegions(id, regionsData) {
     // NEED TO ADD UPDATE BASELINE LOGIC TO .onload EVENT!!!
     xhr.onload = function () {
         if (xhr.status === 200) {
-            console.log(`Successful send regions data, id: '${id}'  resp: '${xhr.responseText}'`);
+            console.log(`successful send regions data, id: '${id}'  resp: '${xhr.responseText}'`);
             classThis.showNotification('Regions were saved');
         } else {
-            console.error(`Cannot send regions data, status: '${xhr.status}',  resp: '${xhr.responseText}'`);
+            console.error(`cannot send regions data, status: '${xhr.status}',  resp: '${xhr.responseText}'`);
             classThis.showNotification('Cannot save regions', 'Error');
         }
     };
     xhr.send(params);
 }
 
-function getRegionsData(snapshootId) {
+function getRegionsData(snapshotId) {
     return new Promise((resolve, reject) => {
-        console.log(`get snapshoot data id: ${snapshootId}`);
+        console.log(`get snapshot data id: ${snapshotId}`);
         const xhr = new XMLHttpRequest();
-        xhr.open('GET', `/snapshot/${snapshootId}/`, true);
+        xhr.open('GET', `/snapshot/${snapshotId}/`, true);
         xhr.onload = function () {
             if (xhr.status === 200) {
-                console.log(`Successful got regions data, id: '${snapshootId}'  resp: '${xhr.responseText}'`);
+                console.log(`successful got regions data, id: '${snapshotId}'  resp: '${xhr.responseText}'`);
                 return resolve(JSON.parse(xhr.responseText));
             }
-            console.error(`Cannot get regions data, status: '${xhr.status}',  resp: '${xhr.responseText}'`);
+            console.error(`cannot get regions data, status: '${xhr.status}',  resp: '${xhr.responseText}'`);
             return reject(xhr);
         };
         xhr.send('');
@@ -324,34 +326,23 @@ function redirectToNewDiffAfterAccept(id, newBaselineId, diffId) {
     window.location.href = newUri;
 }
 
-function acceptCheck(check, newBaselineId, callback) {
-    return new Promise((resolve, reject) => {
-        try {
-            const xhr = new XMLHttpRequest();
+async function acceptCheck(check, newBaselineId) {
+    try {
+        const xhr = new XMLHttpRequest();
 
-            const status = (check.status[0] === 'new') ? 'new' : 'passed';
-            // send empty diffid
-            const params = `id=${check._id}&baselineId=${newBaselineId}&diffId&status=${status}&accept=true`;
-            console.log({ params });
-            xhr.open('PUT', `/checks/${check._id}`, true);
-            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        const params = `id=${check._id}&baselineId=${newBaselineId}&diffId&status`;
 
-            xhr.onload = function () {
-                if (xhr.status === 200) {
-                    console.log(`Success check: '${check._id}' response text: '${xhr.responseText}'`);
-                    if (callback) {
-                        callback();
-                    }
-                    return resolve(xhr);
-                }
-                console.error(`Request failed. Returned status of: '${xhr.status}' resp: '${xhr.responseText}'`);
-                return reject(xhr);
-            };
-            xhr.send(params);
-        } catch (e) {
-            return reject(e);
-        }
-    });
+        const result = await fetch(`/checks/${check._id}`, {
+            headers: {
+                'content-type': 'application/x-www-form-urlencoded',
+            },
+            body: params,
+            method: 'PUT',
+        });
+        console.log(`success check: '${check._id}' response text: '${xhr.responseText}'`);
+    } catch (e) {
+        console.error(`cannot accept check: ${JSON.stringify(check)}, error: '${e}'}`);
+    }
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -367,12 +358,11 @@ async function acceptOneCheck(id, newBaselineId, oldBaselineId, testId, redraw =
         const confirm = confirmation('The previous baseline contains regions. Doy you want to copy them?');
         if (confirm) {
             sendIgnoreRegions(newBaselineId, JSON.parse(regionData.ignoreRegions));
-            console.log(`ignore region data was sent to new baseline snapshoot: ${JSON.parse(regionData.ignoreRegions)}`);
+            console.log(`ignore region data was sent to new baseline snapshot: ${JSON.parse(regionData.ignoreRegions)}`);
         }
     }
     const check = JSON.parse(await getRequest(`check/${id}`));
-    acceptCheck(check, newBaselineId, () => {
-    })
+    await acceptCheck(check, newBaselineId)
         .then(async () => {
             showNotification(`The check '${id}' was accepted`);
             if (redraw) {
@@ -402,16 +392,12 @@ function acceptChecksByTestId(testId) {
                 const regionData = await getRegionsData(oldBaselineId);
                 if (regionData.ignoreRegions && regionData.ignoreRegions !== 'undefined') {
                     sendIgnoreRegions(newBaselineId, JSON.parse(regionData.ignoreRegions));
-                    console.log(`ignore region data was sent to new baseline snapshoot: ${JSON.parse(regionData.ignoreRegions)}`);
+                    console.log(`ignore region data was sent to new baseline snapshot: ${JSON.parse(regionData.ignoreRegions)}`);
                 }
 
                 const checkObj = JSON.parse(await getRequest(`check/${id}`));
-
-                const result = await acceptCheck(checkObj, newBaselineId, () => {
-                });
-
+                const result = await acceptCheck(checkObj, newBaselineId);
                 const acceptedcheckObj = JSON.parse(await getRequest(`check/${id}`));
-
                 await redrawCheckAcceptedStatus(acceptedcheckObj);
 
                 return result;
@@ -636,13 +622,16 @@ function getRequest(path, verbose) {
     });
 }
 
-function drawTestChecksPreviews(testId) {
+async function drawTestChecksPreviews(testId) {
     const checksDivs = Array.prototype.slice.call(document.getElementById(`testchecks_${testId}`).children);
     const checksIds = [];
     checksDivs.forEach((el) => checksIds.push(el.id.replace('check_', '')));
 
     const baselineIds = [];
     checksDivs.forEach((el) => baselineIds.push(el.getAttribute('baselineId')));
+
+    const actualIds = [];
+    checksDivs.forEach((el) => actualIds.push(el.getAttribute('actualsnapshotid')));
 
     const diffsIds = [];
     checksDivs.forEach((el) => diffsIds.push(el.getAttribute('diffId')));
@@ -651,17 +640,18 @@ function drawTestChecksPreviews(testId) {
     checksDivs.forEach((el) => statuses.push(el.getAttribute('checkStatus')));
     // console.log({ statuses });
 
-    checksIds.forEach(async (id, index) => {
+    for (const id of checksIds) {
+        const index = checksIds.indexOf(id);
         let baseline = {};
         fabric.Object.prototype.objectCaching = false;
-        const snapshotId = ((statuses[index] === 'new') || (statuses[index] === 'passed') || (statuses[index] === 'blinking')) ? baselineIds[index] : diffsIds[index];
-        const snapshoot = JSON.parse(await getRequest(`/snapshot/${snapshotId}`));
+        let snapshotId = baselineIds[index]; // new and other implicit
+        if ((statuses[index] === 'passed') || (statuses[index] === 'blinking')) snapshotId = baselineIds[index];
+        if (statuses[index] === 'failed') snapshotId = diffsIds[index].toString() === '' ? actualIds[index] : diffsIds[index];
+        const snapshot = JSON.parse(await getRequest(`/snapshot/${snapshotId}`));
         const baselineObj = JSON.parse(await getRequest(`/snapshot/${baselineIds[index]}`));
-        // console.log({snapshoot})
         const weight = document.getElementById(`canvas_snapshoot_${id}`).parentElement.offsetWidth;
-        // const weight = document.getElementById(`canvas_snapshoot_60b62f0085f8ac444887ead5`).offsetWidth;
 
-        fabric.Image.fromURL(`/snapshoots/${snapshoot.filename || `${snapshotId}.png`}`, (oImg) => {
+        fabric.Image.fromURL(`/snapshoots/${snapshot.filename || `${snapshotId}.png`}`, (oImg) => {
             baseline = new BaselineView(`canvas_snapshoot_${id}`,
                 oImg,
                 {
@@ -673,14 +663,14 @@ function drawTestChecksPreviews(testId) {
             baseline.canvas.upperCanvasEl.classList.add('preview-upper-canvas');
             baselines[id] = baseline;
         });
-    });
+    }
 }
 
 function search() {
     const searchString = document.getElementById('subheader-search')
         .value
         .trim();
-    (searchString !== '') && (document.location.href = `/?filter_name_regex=${searchString}`);
+    if (searchString !== '') (document.location.href = `/?filter_name_regex=${searchString}`);
 }
 
 function clearSearch() {
@@ -752,8 +742,7 @@ function toggleRemoveButton(checkboxClass, buttonsClass = 'mass-tests-actions') 
 async function higlightElement(text, context) {
     const instance = new Mark(context);
     instance.mark(text,
-        { "exclude": [".test-tag"] }
-    );
+        { exclude: ['.test-tag'] });
 }
 
 function higlightSearshResult(text) {

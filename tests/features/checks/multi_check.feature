@@ -1,162 +1,149 @@
 @integration
-Feature: VRS One Suite, One test, Few checks
+Feature: Few Checks into the same Test
 
-  Background:
-    Given I clear Database and stop Server
-    Given I start Server and start Driver
-    Given I set window size: "1366x768"
+    Background:
+        Given I clear Database and stop Server
+        Given I start Server and start Driver
 
-  Scenario: VRS two checks - new
-    Given I start VRS session with parameters:
-    """
-      suiteName: "Integration multi suite"
-      suiteId: "integration_multi_suite"
-      appName: "Integration Test App"
-      testName: "Two checks - new"
-    """
+    Scenario: Tho checks with different images [new, new]
+        When I create "1" tests with::
+        """
+          testName: "Test"
+          checks:
+            - filePath: files/A.png
+              checkName: Check - 1
+            - filePath: files/B.png
+              checkName: Check - 2
+        """
 
-    When I check image with path: "files/A.png" as "check 1"
-    When I check image with path: "files/B.png" as "check 2"
+        When I expect via http 1st test filtered as "name=Test" matched:
+        """
+          markedAs: Unaccepted
+          status: New
+        """
+        When I expect via http 1st check filtered as "name=Check - 1" matched:
+        """
+         status: [new]
+        """
+        When I expect via http 1st check filtered as "name=Check - 2" matched:
+        """
+         status: [new]
+        """
 
-    When I stop VRS session
-    When I open the app
-    Then I wait and refresh page on element "span=Two checks - new" for "3" seconds to exist
-    Then I expect that VRS test "Two checks - new" has "New" status
+    Scenario: Tho checks with different images [new, new, -> new, passed]
+        When I create "1" tests with::
+        """
+          testName: "Test"
+          checks:
+            - filePath: files/A.png
+              checkName: Check - 1
+            - filePath: files/B.png
+              checkName: Check - 2
+        """
+        When I accept via http the 1st check with name "Check - 1"
+        When I create "1" tests with::
+        """
+          testName: "Test"
+          checks:
+            - filePath: files/A.png
+              checkName: Check - 1
+        """
+        When I expect via http 2st test filtered as "name=Test" matched:
+        """
+          markedAs: Accepted
+          status: Passed
+        """
+        When I expect via http 2st check filtered as "name=Check - 1" matched:
+        """
+         status: [passed]
+        """
+        When I expect via http 1st check filtered as "name=Check - 2" matched:
+        """
+         status: [new]
+        """
 
-    When I click on "Two checks - new" VRS test
-    Then I expect that VRS check "1/2 check 1" has "New" status
-    Then I expect that VRS check "2/2 check 2" has "New" status
+    Scenario: Tho checks with different images [new, new, -> passed, passed]
+        When I create "1" tests with::
+        """
+          testName: "Test"
+          checks:
+            - filePath: files/A.png
+              checkName: Check - 1
+            - filePath: files/B.png
+              checkName: Check - 2
+        """
+        When I accept via http the 1st check with name "Check - 1"
+        When I accept via http the 1st check with name "Check - 2"
+        When I create "1" tests with::
+        """
+          testName: "Test"
+          checks:
+            - filePath: files/A.png
+              checkName: Check - 1
+            - filePath: files/B.png
+              checkName: Check - 2
+        """
+        When I expect via http 2st test filtered as "name=Test" matched:
+        """
+          markedAs: Accepted
+          status: Passed
+        """
+        When I expect via http 1st test filtered as "name=Test" matched:
+        """
+          markedAs: Accepted
+          status: New
+        """
 
-  Scenario: VRS two checks - new, passed
-    Given I start VRS session with parameters:
-    """
-      suiteName: "Integration multi suite"
-      suiteId: "integration_multi_suite"
-      appName: "Integration Test App"
-      testName: "Two checks - new, passed"
-    """
+        When I expect via http 2st check filtered as "name=Check - 1" matched:
+        """
+          markedAs: accepted
+          status: [passed]
+        """
+        When I expect via http 2st check filtered as "name=Check - 2" matched:
+        """
+          markedAs: accepted
+          status: [passed]
+        """
 
-    When I check image with path: "files/A.png" as "check 1"
-    When I check image with path: "files/B.png" as "check 2"
+    Scenario: Tho checks with different images [new, new, -> failed, failed]
+        When I create "1" tests with::
+        """
+          testName: "Test"
+          checks:
+            - filePath: files/A.png
+              checkName: Check - 1
+            - filePath: files/A.png
+              checkName: Check - 2
+        """
+        When I accept via http the 1st check with name "Check - 1"
+        When I accept via http the 1st check with name "Check - 2"
+        When I create "1" tests with::
+        """
+          testName: "Test"
+          checks:
+            - filePath: files/B.png
+              checkName: Check - 1
+            - filePath: files/B.png
+              checkName: Check - 2
+        """
+        When I expect via http 2st test filtered as "name=Test" matched:
+        """
+          markedAs: Accepted
+          status: Failed
+        """
+        When I expect via http 1st test filtered as "name=Test" matched:
+        """
+          markedAs: Accepted
+          status: New
+        """
 
-    When I stop VRS session
-
-    Given I start VRS session with parameters:
-    """
-      suiteName: "Integration multi suite"
-      suiteId: "integration_multi_suite"
-      appName: "Integration Test App"
-      testName: "Two checks - new, passed"
-    """
-
-    When I check image with path: "files/A.png" as "check 1"
-
-    When I stop VRS session
-
-    When I open the app
-    Then I wait and refresh page on element "span=Two checks - new, passed" for "3" seconds to exist
-    Then I expect that 1th VRS test "Two checks - new, passed" has "Passed" status
-    Then I expect that 2th VRS test "Two checks - new, passed" has "New" status
-
-    When I click on "Two checks - new, passed" VRS test
-    Then I expect that VRS test "Two checks - new, passed" is unfolded
-    Then I expect that VRS check "1/1 check 1" has "Passed" status
-
-  Scenario: VRS two checks - passed, passed
-    Given I start VRS session with parameters:
-    """
-      suiteName: "Integration multi suite"
-      suiteId: "integration_multi_suite"
-      appName: "Integration Test App"
-      testName: "Two checks - passed, passed"
-    """
-
-    When I check image with path: "files/A.png" as "check 1"
-    When I check image with path: "files/B.png" as "check 2"
-
-    When I stop VRS session
-
-    Given I start VRS session with parameters:
-    """
-      suiteName: "Integration multi suite"
-      suiteId: "integration_multi_suite"
-      appName: "Integration Test App"
-      testName: "Two checks - passed, passed"
-    """
-
-    When I check image with path: "files/A.png" as "check 1"
-    When I check image with path: "files/B.png" as "check 2"
-
-    When I stop VRS session
-
-    When I open the app
-    Then I wait and refresh page on element "span=Two checks - passed, passed" for "3" seconds to exist
-    Then I expect that 1th VRS test "Two checks - passed, passed" has "Passed" status
-    Then I expect that 2th VRS test "Two checks - passed, passed" has "New" status
-
-    When I click on "Two checks - passed, passed" VRS test
-    Then I expect that VRS test "Two checks - passed, passed" is unfolded
-    Then I expect that VRS check "1/2 check 1" has "Passed" status
-    Then I expect that VRS check "2/2 check 2" has "Passed" status
-
-  Scenario: VRS two checks - failed, failed
-    Given I start VRS session with parameters:
-    """
-      testName: "Two checks - failed, failed"
-    """
-
-    When I check image with path: "files/A.png" as "check 1"
-    When I check image with path: "files/B.png" as "check 2"
-
-    When I stop VRS session
-
-    Given I start VRS session with parameters:
-    """
-      testName: "Two checks - failed, failed"
-    """
-
-    When I check image with path: "files/B.png" as "check 1"
-    When I check image with path: "files/A.png" as "check 2"
-
-    When I stop VRS session
-
-    When I open the app
-    Then I wait and refresh page on element "span=Two checks - failed, failed" for "3" seconds to exist
-    Then I expect that 1th VRS test "Two checks - failed, failed" has "Failed" status
-    Then I expect that 2th VRS test "Two checks - failed, failed" has "New" status
-
-    When I click on "Two checks - failed, failed" VRS test
-    Then I expect that VRS test "Two checks - failed, failed" is unfolded
-    Then I expect that VRS check "1/2 check 1" has "Failed" status
-    Then I expect that VRS check "2/2 check 2" has "Failed" status
-
-  Scenario: VRS two checks - passed, failed
-    Given I start VRS session with parameters:
-    """
-      testName: "Two checks - passed, failed"
-    """
-
-    When I check image with path: "files/A.png" as "check 1"
-    When I check image with path: "files/B.png" as "check 2"
-
-    When I stop VRS session
-
-    Given I start VRS session with parameters:
-    """
-      testName: "Two checks - passed, failed"
-    """
-
-    When I check image with path: "files/A.png" as "check 1"
-    When I check image with path: "files/A.png" as "check 2"
-
-    When I stop VRS session
-
-    When I open the app
-    Then I wait and refresh page on element "span=Two checks - passed, failed" for "3" seconds to exist
-    Then I expect that 1th VRS test "Two checks - passed, failed" has "Failed" status
-    Then I expect that 2th VRS test "Two checks - passed, failed" has "New" status
-
-    When I click on "Two checks - passed, failed" VRS test
-    Then I expect that VRS test "Two checks - passed, failed" is unfolded
-    Then I expect that VRS check "1/2 check 1" has "Passed" status
-    Then I expect that VRS check "2/2 check 2" has "Failed" status
+        When I expect via http 2st check filtered as "name=Check - 1" matched:
+        """
+          markedAs: accepted
+          status: [failed]
+        """
+        When I expect via http 2st check filtered as "name=Check - 2" matched:
+        """
+          markedAs: accepted
+          status: [failed]
+        """

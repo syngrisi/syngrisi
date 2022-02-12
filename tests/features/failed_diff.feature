@@ -20,6 +20,7 @@ Feature: Crashed check
         """
         When I check image with path: "files/crash_0.png" as "crashed"
         When I stop VRS session
+        When I accept via http the 1st check with name "crashed"
 
         Given I start VRS session with parameters:
         """

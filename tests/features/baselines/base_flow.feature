@@ -26,96 +26,59 @@ Feature: Base baseline flow
         When I create via http user as:"Test" with params:
         """
         {
-            "username": "i_ivanov@gmail.com",
-            "firstName": "Ivan",
-            "lastName": "Ivanov",
+            "username": "j_doe@gmail.com",
+            "firstName": "John",
+            "lastName": "Doe",
             "role": "user",
             "password": "Password-123"
         }
         """
-         # login by user
-        When I login via http with user:"i_ivanov@gmail.com" password "Password-123"
+        # login by user
+        When I login via http with user:"j_doe@gmail.com" password "Password-123"
         When I generate via http API key for the User
         When I set the API key in config
 
     @e2e
-    Scenario: Baseline, base flow: 2 accepted checks
+    Scenario: Baseline, base flow: 2 accepted checks with same image
         When I create "1" tests with params:
         """
           testName: Baseline Base Flow
           checkName: Check - 1
+          filePath: files/A.png
         """
 
         # check baseline without acceptance
+        Then I expect via http 0 baselines
+
+        When I login with user:"j_doe@gmail.com" password "Password-123"
+
+        When I accept via http the 1st check with name "Check - 1"
+
         Then I expect via http 1 baselines
         Then I expect via http 1st baseline with:
         """
-          name: 'Check - 1'
-          markedByUsername: ''
-          markedAs: ''
-        """
-
-        When I login with user:"i_ivanov@gmail.com" password "Password-123"
-
-        # accept check, check baselines
-        When I go to "main" page
-        When I wait for "2" seconds
-        Then I expect that VRS test "Baseline Base Flow - 1" has "New" status
-        Then I expect that VRS test "Baseline Base Flow - 1" has "Unaccepted" accepted status
-
-        When I click on "Baseline Base Flow - 1" VRS test
-        When I wait for "2" seconds
-        Then I expect that VRS test "Baseline Base Flow - 1" is unfolded
-        When I click on the element "a.accept-button"
-        When I click on the element "a.accept-option"
-        When I wait for "3" seconds
-
-        Then I expect via http 2 baselines
-        Then I expect via http 1st baseline with:
-        """
         name: 'Check - 1'
-        markedByUsername: ''
-        markedAs: ''
-        """
-
-        Then I expect via http 2st baseline with:
-        """
-        name: 'Check - 1'
-        markedByUsername: 'i_ivanov@gmail.com'
+        markedByUsername: 'j_doe@gmail.com'
         markedAs: 'accepted'
         """
 
         # create check - 2
         When I create "1" tests with params:
         """
-          filePath: files/A.png
           testName: Baseline Base Flow
           checkName: Check - 1
+          filePath: files/A.png
         """
 
-        Then I expect via http 2 baselines
+        Then I expect via http 1 baselines
+        When I accept via http the 1st check with name "Check - 1"
 
-        # accept check, check baselines - 2
-        When I go to "main" page
-        When I wait for "2" seconds
-        Then I expect that VRS test "Baseline Base Flow - 1" has "Passed" status
-        Then I expect that VRS test "Baseline Base Flow - 1" has "Accepted" accepted status
-
-        Then I expect via http 2 baselines
         Then I expect via http 1st baseline with:
-        """
+       """
         name: 'Check - 1'
-        markedByUsername: ''
-        markedAs: ''
-        """
-
-        Then I expect via http 2st baseline with:
-        """
-        name: 'Check - 1'
-        markedByUsername: 'i_ivanov@gmail.com'
+        markedByUsername: 'j_doe@gmail.com'
         markedAs: 'accepted'
         """
-        When I stop the Syngrisi server
 
     Scenario: Baseline, base flow: 2 unaccepted checks
         When I create "1" tests with params:
@@ -123,28 +86,12 @@ Feature: Base baseline flow
           testName: Baseline Base Flow
           checkName: Check - 1
         """
+        Then I expect via http 0 baselines
 
-        # check baseline without acceptance
-        Then I expect via http 1 baselines
-        Then I expect via http 1st baseline with:
-        """
-        name: 'Check - 1'
-        markedByUsername: ''
-        markedAs: ''
-        """
-
-        # create check - 2
         When I create "1" tests with params:
         """
           testName: Baseline Base Flow
           checkName: Check - 1
         """
-
-        Then I expect via http 1 baselines
-        Then I expect via http 1st baseline with:
-        """
-        name: 'Check - 1'
-        markedByUsername: ''
-        markedAs: ''
-        """
+        Then I expect via http 0 baselines
 

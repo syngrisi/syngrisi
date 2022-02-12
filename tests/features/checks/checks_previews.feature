@@ -4,7 +4,11 @@ Feature: Checks previews
     Background:
         Given I clear Database and stop Server
         Given I start Server and start Driver
-
+        When I create "2" tests with params:
+        """
+          testName: "region check"
+          checkName: Check - 1
+        """
         Given I start VRS session with parameters:
         """
           testName: "region check"

@@ -23,14 +23,14 @@ Feature: Remove tests
         When I create via http user as:"Test" with params:
         """
         {
-            "username": "i_ivanov@gmail.com",
-            "firstName": "Ivan",
-            "lastName": "Ivanov",
+            "username": "j_doe@gmail.com",
+            "firstName": "John",
+            "lastName": "Doe",
             "role": "user",
             "password": "Password-123"
         }
         """
-        When I login via http with user:"i_ivanov@gmail.com" password "Password-123"
+        When I login via http with user:"j_doe@gmail.com" password "Password-123"
         When I generate via http API key for the User
         When I set the API key in config
 
@@ -44,10 +44,10 @@ Feature: Remove tests
         """
         When I wait for "2" seconds
         When I parse via http "actual" snapshot for 1st check with name "Check - 1"
-        Then I expect that the snapshoot filename is exists
+        Then I expect that the snapshot filename is exists
 
         # delete single test
-        When I login with user:"i_ivanov@gmail.com" password "Password-123"
+        When I login with user:"j_doe@gmail.com" password "Password-123"
         When I wait for "2" seconds
         When I click on the element "[name='test']"
         When I wait for "1" seconds
@@ -56,10 +56,12 @@ Feature: Remove tests
         When I accept the confirmbox
 
         Then I expect that element "span=Remove tests - 1" does not exist
+        When I refresh page
+        Then I expect that element "span=Remove tests - 1" does not exist
         Then I expect via http that "Check - 1" check exist exactly "0" times
         Then I expect via http that "Remove tests - 1" test exist exactly "0" times
         When I wait for "3" seconds
-        Then I expect that the snapshoot filename is not exists
+        Then I expect that the snapshot filename is not exists
         Then I expect via http 0 baselines
 
     @smoke
@@ -71,16 +73,16 @@ Feature: Remove tests
           checkName: Check - 1
         """
         When I wait for "2" seconds
-        When I login via http with user:"Test" password "123"
+#        When I login via http with user:"Test" password "123"
         When I accept via http the 1st check with name "Check - 1"
 
         # remove last
-        When I remove via http 1st test with name "Remove tests - 1"
+        When I remove via http the 1st test with name "Remove tests - 1"
         When I wait for "2" seconds
         Then I expect via http that "Check - 1" check exist exactly "0" times
         Then I expect via http that "Remove tests - 1" test exist exactly "0" times
-        Then I expect exact "1" snapshoot files
-        Then I expect via http 2 baselines
+        Then I expect exact "1" snapshot files
+        Then I expect via http 1 baselines
 
     Scenario: Remove Two unaccepted tests with same ident, remove order: [last, first]
         # create check
@@ -93,24 +95,24 @@ Feature: Remove tests
         Then I expect via http that "Check - 1" check exist exactly "2" times
         Then I expect via http that "Remove tests - 1" test exist exactly "1" times
         Then I expect via http that "Remove tests - 2" test exist exactly "1" times
-        Then I expect exact "1" snapshoot files
+        Then I expect exact "1" snapshot files
 
         # remove last
-        When I remove via http 1st test with name "Remove tests - 2"
+        When I remove via http the 1st test with name "Remove tests - 2"
         When I wait for "2" seconds
         Then I expect via http that "Check - 1" check exist exactly "1" times
         Then I expect via http that "Remove tests - 1" test exist exactly "1" times
         Then I expect via http that "Remove tests - 2" test exist exactly "0" times
-        Then I expect exact "1" snapshoot files
-        Then I expect via http 1 baselines
+        Then I expect exact "1" snapshot files
+        Then I expect via http 0 baselines
 
         # remove first
-        When I remove via http 1st test with name "Remove tests - 1"
+        When I remove via http the 1st test with name "Remove tests - 1"
         When I wait for "2" seconds
         Then I expect via http that "Check - 1" check exist exactly "0" times
         Then I expect via http that "Remove tests - 1" test exist exactly "0" times
         Then I expect via http that "Remove tests - 2" test exist exactly "0" times
-        Then I expect exact "0" snapshoot files
+        Then I expect exact "0" snapshot files
         Then I expect via http 0 baselines
 
     Scenario: Remove Two unaccepted tests with same ident, remove order: [first, last]
@@ -124,24 +126,24 @@ Feature: Remove tests
         Then I expect via http that "Check - 1" check exist exactly "2" times
         Then I expect via http that "Remove tests - 1" test exist exactly "1" times
         Then I expect via http that "Remove tests - 2" test exist exactly "1" times
-        Then I expect exact "1" snapshoot files
+        Then I expect exact "1" snapshot files
 
         # remove first
-        When I remove via http 1st test with name "Remove tests - 1"
+        When I remove via http the 1st test with name "Remove tests - 1"
         When I wait for "2" seconds
         Then I expect via http that "Check - 1" check exist exactly "1" times
         Then I expect via http that "Remove tests - 2" test exist exactly "1" times
         Then I expect via http that "Remove tests - 1" test exist exactly "0" times
-        Then I expect exact "1" snapshoot files
-        Then I expect via http 1 baselines
+        Then I expect exact "1" snapshot files
+        Then I expect via http 0 baselines
 
         # remove second
-        When I remove via http 1st test with name "Remove tests - 2"
+        When I remove via http the 1st test with name "Remove tests - 2"
         When I wait for "2" seconds
         Then I expect via http that "Check - 1" check exist exactly "0" times
         Then I expect via http that "Remove tests - 1" test exist exactly "0" times
         Then I expect via http that "Remove tests - 2" test exist exactly "0" times
-        Then I expect exact "0" snapshoot files
+        Then I expect exact "0" snapshot files
         Then I expect via http 0 baselines
 
     Scenario: Remove Two tests with same ident: [accepted, unaccepted], order: [last, first]
@@ -156,19 +158,19 @@ Feature: Remove tests
         When I accept via http the 1st check with name "Check - 1"
 
         # remove last
-        When I remove via http 1st test with name "Remove tests - 2"
+        When I remove via http the 1st test with name "Remove tests - 2"
         When I wait for "2" seconds
         Then I expect via http that "Check - 1" check exist exactly "1" times
         Then I expect via http that "Remove tests - 1" test exist exactly "1" times
         Then I expect via http that "Remove tests - 2" test exist exactly "0" times
-        Then I expect exact "1" snapshoot files
-        Then I expect via http 2 baselines
+        Then I expect exact "1" snapshot files
+        Then I expect via http 1 baselines
 
         # remove first
-        When I remove via http 1st test with name "Remove tests - 1"
+        When I remove via http the 1st test with name "Remove tests - 1"
         When I wait for "2" seconds
         Then I expect via http that "Check - 1" check exist exactly "0" times
         Then I expect via http that "Remove tests - 1" test exist exactly "0" times
         Then I expect via http that "Remove tests - 2" test exist exactly "0" times
-        Then I expect exact "1" snapshoot files
-        Then I expect via http 2 baselines
+        Then I expect exact "1" snapshot files
+        Then I expect via http 1 baselines

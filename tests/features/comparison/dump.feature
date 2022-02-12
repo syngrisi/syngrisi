@@ -10,7 +10,7 @@ Feature: DOM dump
       testName: Create Check with Dom Dump
       suiteName: Dom Dump
     """
-    When I open the url "http://localhost:3001/static/shift.html"
+    When I open the url "<syngrisiUrl>static/shift.html"
     When I visually check page with DOM as "Dom dump check"
     When I stop VRS session
 
@@ -30,44 +30,3 @@ Feature: DOM dump
         - "body"
         - "div#rectangle"
     """
-
-#    Given I start VRS session with parameters:
-#    """
-#      testName: Down-Up
-#      suiteName: Vertical Shifting
-#    """
-#    When I open the url "http://localhost:3001/static/shift.html"
-#    When I execute javascript code:
-#    """
-#    document.getElementById('rectangle').style['margin-top']='1px'
-#    """
-#    When I visually assert page as "Top - Down Shifting"
-#    When I stop VRS session
-#
-#  Scenario: Up-Down 1 pix
-#   Up-Down - because before make a comparison we crop top pixels of baseline and bottom pixels of actual image
-#
-#    Given I start VRS session with parameters:
-#    """
-#      testName: Down-Up
-#      suiteName: Vertical Shifting
-#    """
-#    When I open the url "http://localhost:3001/static/shift.html"
-#    When I execute javascript code:
-#    """
-#    document.getElementById('rectangle').style['margin-top']='1px'
-#    """
-#
-#    Then I visually assert page as "Top - Down Shifting"
-#    When I stop VRS session
-#
-#    Given I start VRS session with parameters:
-#    """
-#      testName: Down-Up
-#      suiteName: Vertical Shifting
-#    """
-#    When I open the url "http://localhost:3001/static/shift.html"
-#
-#    Then I visually assert page as "Top - Down Shifting"
-#    When I stop VRS session
-#

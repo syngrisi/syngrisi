@@ -36,7 +36,7 @@ When(/^I remove via http tests that older than "([^"]*)" days$/, async function 
         .toBe(200);
 });
 
-When(/^I remove via http (\d+)st test with name "([^"]*)"$/, async function (num, name) {
+When(/^I remove via http the (\d+)st test with name "([^"]*)"$/, async function (num, name) {
     const testUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
         + `tests/byfilter?name=${name}`;
     console.log({ uri: testUri });

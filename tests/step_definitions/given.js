@@ -20,10 +20,13 @@ import isEnabled from '../src/support/check/isEnabled';
 import isDisplayed from '../src/support/check/isDisplayed';
 import openWebsite from '../src/support/action/openWebsite';
 import setWindowSize from '../src/support/action/setWindowSize';
+import { fillCommonPlaceholders } from '../src/utills/common';
 
 Given(
-    /^I open the (url|site) "([^"]*)?"$/,
-    openWebsite
+    /^I open the (url|site) "([^"]*)?"$/, function (type, url) {
+        const url2 = this.fillItemsPlaceHolders(fillCommonPlaceholders(url));
+        openWebsite(type, url2);
+    }
 );
 
 Given(

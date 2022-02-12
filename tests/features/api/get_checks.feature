@@ -7,16 +7,7 @@ Feature: Get Checks
         """
         PAGE_SIZE: 3
         """
-        Given I start VRS server with parameters:
-        """
-          port: 3001
-          databaseName: VRSdbTest
-          baseLineFolder: ./baselinesTest/
-        """
-        Given I setup VRS driver with parameters:
-        """
-          url: "http://vrs:3001/"
-        """
+        Given I start Server and start Driver
 
     Scenario: Pagination - without parameters
         Given I start VRS session with parameters:

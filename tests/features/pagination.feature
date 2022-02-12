@@ -31,16 +31,7 @@ Feature: Pagination
         """
           PAGE_SIZE: 10
         """
-        Given I start VRS server with parameters:
-        """
-          port: 3001
-          databaseName: VRSdbTest
-          baseLineFolder: ./baselinesTest/
-        """
-        Given I setup VRS driver with parameters:
-        """
-          url: "http://vrs:3001/"
-        """
+        Given I start Server and start Driver
 
         When I create "5" tests with params:
         """
@@ -63,16 +54,7 @@ Feature: Pagination
         """
           PAGE_SIZE: 10
         """
-        Given I start VRS server with parameters:
-        """
-          port: 3001
-          databaseName: VRSdbTest
-          baseLineFolder: ./baselinesTest/
-        """
-        Given I setup VRS driver with parameters:
-        """
-          url: "http://vrs:3001/"
-        """
+        Given I start Server and start Driver
 
         When I create "40" tests with params:
         """
@@ -89,16 +71,7 @@ Feature: Pagination
         """
           PAGE_SIZE: 10
         """
-        Given I start VRS server with parameters:
-        """
-          port: 3001
-          databaseName: VRSdbTest
-          baseLineFolder: ./baselinesTest/
-        """
-        Given I setup VRS driver with parameters:
-        """
-          url: "http://vrs:3001/"
-        """
+        Given I start Server and start Driver
 
         When I create "40" tests with params:
         """

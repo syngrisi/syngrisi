@@ -26,12 +26,13 @@ Given(/^I update the VRStest$/, async () => {
     await browser.vDriver.updateTest();
 });
 
-When(/^I parse all affected elements in current and last successful checks from "([^"]*)"$/, async function (baseurl) {
+When(/^I get all affected elements in current and last successful checks from the server$/, async function () {
     const result = this.getSavedItem('checkDumpResult');
-    console.log(result);
-    const affectResp = await got(`${baseurl}affectedelements?checktid=${result._id}&diffid=${result.diffId}`,
-        { headers: { apikey: browser.config.apiKey } });
-    const prevAffectResp = await got(`${baseurl}affectedelements?checktid=${result.lastSuccess}&diffid=${result.diffId}`,
+    console.log({ result });
+    const uri = `${browser.config.syngrisiUrl}affectedelements?checktid=${result._id}&diffid=${result.diffId}`;
+    console.log({ uri });
+    const affectResp = await got(uri, { headers: { apikey: browser.config.apiKey } });
+    const prevAffectResp = await got(`${browser.config.syngrisiUrl}affectedelements?checktid=${result.lastSuccess}&diffid=${result.diffId}`,
         { headers: { apikey: browser.config.apiKey } });
     console.log(affectResp.body);
     console.log(prevAffectResp.body);

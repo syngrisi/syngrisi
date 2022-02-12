@@ -3,11 +3,6 @@ Feature: Regions - Copy regions data after acceptance
 
     Background:
         Given I clear Database and stop Server
-        When I set env variables:
-        """
-          TEST: 1
-          SYNGRISI_AUTH: 0
-        """
         Given I start Server and start Driver
 
     Scenario: Regions - Copy regions data after acceptance
@@ -17,7 +12,7 @@ Feature: Regions - Copy regions data after acceptance
           testName: Copy region
           checkName: Check - 1
         """
-
+        When I accept via http the 1st check with name "Check - 1"
         When I open the app
         Then I wait and refresh page on element "span=Copy region - 1" for "3" seconds to exist
         When I click on "Copy region - 1" VRS test

@@ -20,6 +20,8 @@ Feature: Checks with different resolutions 1px
           checkName: Check - 1
           filePath: files/A_cropped_bottom_1_px.png
         """
+        When I accept via http the 1st check with name "Check - 1"
+
         When I create "1" tests with params:
         """
           testName: Checks with different resolutions 1px
@@ -31,7 +33,7 @@ Feature: Checks with different resolutions 1px
         status: Passed
         """
 
-        When I expect via http 2st check filtered as "Check - 1" matched:
+        When I expect via http 2st check filtered as "name=Check - 1" matched:
         """
         status: [passed]
         """
