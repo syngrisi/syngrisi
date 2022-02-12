@@ -93,6 +93,7 @@ const fillCommonPlaceholders = function fillPlaceholders(str) {
             Uuid: faker.datatype.uuid(),
             'currentDate-10': subDays(new Date(), 10),
             testPlatform: browser.config.testPlatform,
+            syngrisiUrl: browser.config.syngrisiUrl,
         }
     );
 };

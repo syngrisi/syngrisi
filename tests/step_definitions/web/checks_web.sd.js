@@ -1,6 +1,7 @@
 /* eslint-disable prefer-arrow-callback,no-console,func-names */
 const { When, Then } = require('cucumber');
 const got = require('got');
+const { fillCommonPlaceholders } = require('../../src/utills/common');
 
 When(/^I accept the "([^"]*)" check$/, (checkName) => {
     expect($(`.//div[contains(normalize-space(.), '${checkName}')]/../..`))
@@ -95,7 +96,8 @@ Then(/^I expect that last "([^"]*)" checks with ident contains "([^"]*)" has (no
         .toBe(true);
 });
 
-Then(/^I expect that "([^"]*)" check has Created "([^"]*)" equal to "([^"]*)"$/, function (checkNum, field, value) {
+Then(/^I expect that "([^"]*)" check preview tooltip "([^"]*)" field equal to "([^"]*)"$/, function (checkNum, field, value) {
+    const value2 = fillCommonPlaceholders(value);
     const checkTitle = $(`(//canvas[contains(@class, 'snapshoot-canvas')])[${checkNum}]`)
         .getAttribute('title');
     console.log({ checkTitle });
@@ -104,7 +106,7 @@ Then(/^I expect that "([^"]*)" check has Created "([^"]*)" equal to "([^"]*)"$/,
     const match = regex.exec(checkTitle);
     console.log({ match });
     expect(match[0])
-        .toContain(value);
+        .toContain(value2);
 });
 
 Then(/^I expect that(:? (\d)th)? VRS check "([^"]*)" has "([^"]*)" status$/, (number, checkName, expectedStatus) => {

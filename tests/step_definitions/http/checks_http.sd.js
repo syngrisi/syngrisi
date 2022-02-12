@@ -34,11 +34,12 @@ When(/^I accept via http the (\d+)st check with name "([^"]*)"$/, async function
     const checkUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
         + `checks/byfilter?name=${name}`;
     console.log({ uri: checkUri });
-    const check = (await requestWithLastSessionSid(
+    const checks = (await requestWithLastSessionSid(
         checkUri,
         this
-    )).json[num - 1];
-    console.log({ check });
+    )).json;
+    const check = checks[num - 1];
+    console.log(JSON.stringify(checks, null, '\t'));
     const checkId = check._id;
     const checkAcceptUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
         + `checks/${checkId}`;
@@ -51,7 +52,6 @@ When(/^I accept via http the (\d+)st check with name "([^"]*)"$/, async function
             form: {
                 id: checkId,
                 baselineId: check.baselineId,
-                status: 'new',
                 accept: 'true',
             }
         }
@@ -75,16 +75,16 @@ When(/^I parse via http "([^"]*)" snapshot for (\d)st check with name "([^"]*)"$
 
     const snapshotId = check[transformType[type]];
     console.log({ snapshotId });
-    const snapshootUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
+    const snapshotUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
         + `snapshot/${snapshotId}`;
-    console.log({ snapshootUri });
-    const snapshoot = (await requestWithLastSessionSid(
-        snapshootUri,
+    console.log({ snapshotUri: snapshotUri });
+    const snapshot = (await requestWithLastSessionSid(
+        snapshotUri,
         this
     )).json;
-    console.log({ snapshoot });
+    console.log({ snapshot: snapshot });
 
-    this.saveItem('snapshot', snapshoot);
+    this.saveItem('snapshot', snapshot);
 });
 
 When(/^I check image with path: "([^"]*)" as "([^"]*)"$/, async function (filePath, checkName) {

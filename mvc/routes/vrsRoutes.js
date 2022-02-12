@@ -24,7 +24,7 @@ module.exports = async function (app) {
                 .catch(next);
         })
         .put('/checks/:id', ensureLoggedIn(), async (req, res, next) => {
-            await queue.add(() => API.updateCheck(req, res)
+            await queue.add(() => API.acceptCheck(req, res)
                 .catch(next));
         })
         .put('/snapshots/:id', ensureLoggedIn(), async (req, res, next) => {

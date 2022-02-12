@@ -32,11 +32,20 @@
                   title="<%= statusTitle %>"
                   style="padding: 2px"
             >
-                <span id='not-equal-resolution-char' class="d-none text-danger bg-warning rounded" title="the resolutions of snapshots are not equal">≠</span>
                 <%= check.status[0]; %>
-                <% if(misMatchPercentage !== '(0.00%)') { %>
-                    <span id="mismatch_percentage"><%= misMatchPercentage; %></span>
+                <% if(check.failReasons.includes('wrong_dimensions')) { %>
+                    <span id='not-equal-resolution-char' class="text-danger bg-warning rounded" title="the resolutions of snapshots are not equal">≠</span>
+                <% } else { %>
+                    <span id='not-equal-resolution-char' class="text-danger bg-warning rounded d-none" title="the resolutions of snapshots are not equal">≠</span>
                 <% } %>
+
+                <% if(check.failReasons.includes('not_accepted')) { %>
+                <span id='not-accepted-checks-char' class="text-danger bg-warning rounded" title="the check isn't new and doesn't have accepted snapshots, accept one of them and rerun tests">×</span>
+                <% } %>
+
+            <% if(misMatchPercentage !== '(0.00%)') { %>
+                    <span id="mismatch_percentage"><%= misMatchPercentage; %></span>
+            <% } %>
             </span>
             <!--LINKS TO SUITE / CHECK-->
             <a class="unlink" name="suite-link"

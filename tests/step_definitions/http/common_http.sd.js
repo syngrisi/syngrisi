@@ -17,12 +17,12 @@ Then(/^I expect via http that "([^"]*)" (test|check) exist exactly "([^"]*)" tim
 
 Then(/^I expect via http ([\d]+)st (test|check) filtered as "([^"]*)" matched:$/, async function (num, itemName, filter, yml) {
     const url = encodeURI(`http://${browser.config.serverDomain}:${browser.config.serverPort}/${itemName}s/byfilter?${filter}`);
-    // console.log({ url });
+    console.log({ url });
     const items = (await requestWithLastSessionSid(
         url,
         this
     )).json;
-    // console.log({ items });
+    console.log({ items });
     const params = YAML.parse(yml);
     const item = items[parseInt(num, 10) - 1];
     expect(item)

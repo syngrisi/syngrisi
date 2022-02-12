@@ -4,36 +4,19 @@ Feature: Userinfo
         Given I clear Database and stop Server
         When I set env variables:
         """
-        TEST: 1
-        SYNGRISI_AUTH: 0
+          TEST: 1
+          SYNGRISI_AUTH: 0
         """
-        Given I start VRS server with parameters:
-        """
-        port: 3001
-        databaseName: VRSdbTest
-        baseLineFolder: ./baselinesTest/
-        """
-        When I wait for "5" seconds
-        When I open the url "http://vrs:3001/loadTestUser"
-
-        Given I kill process which used port: "3001"
+        Given I start Server
+        When I create via http test user
+        When I stop Server
 
         When I set env variables:
         """
         TEST: 0
         SYNGRISI_AUTH: 1
         """
-        Given I start VRS server with parameters:
-        """
-        port: 3001
-        databaseName: VRSdbTest
-        baseLineFolder: ./baselinesTest/
-        """
-
-        Given I setup VRS driver with parameters:
-        """
-        url: "http://vrs:3001/"
-        """
+        Given I start Server and start Driver
 
     Scenario: Userinfo - Logged User
         When I login with user:"Test" password "123"

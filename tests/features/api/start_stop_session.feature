@@ -4,16 +4,7 @@ Feature: Start/Stop session
   Background:
     Given I clear test VRS database
     Given I kill process which used port: "3001"
-    Given I start VRS server with parameters:
-    """
-      port: 3001
-      databaseName: VRSdbTest
-      baseLineFolder: ./baselinesTest/
-    """
-    Given I setup VRS driver with parameters:
-    """
-      url: "http://vrs:3001/"
-    """
+    Given I start Server and start Driver
 
   Scenario: Start/Stop Session - New
     # Start

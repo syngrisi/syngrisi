@@ -213,8 +213,7 @@
             // make visible the ≠ charset in header if baseline/actual resolution are different
             if ((baselineImg.height !== actualImg.height) || (baselineImg.width !== actualImg.width)) {
                 const notEqualResolutionChar = document.getElementById('not-equal-resolution-char');
-                notEqualResolutionChar.classList
-                        .add('d-inline');
+                notEqualResolutionChar.classList.add('d-inline')
                 notEqualResolutionChar.title = notEqualResolutionChar.title
                         + ` baseline: ${baselineImg.width}x${baselineImg.height}, actual: ${actualImg.width}x${actualImg.height}`
             }

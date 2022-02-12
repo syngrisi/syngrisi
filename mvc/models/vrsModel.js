@@ -66,7 +66,7 @@ const VRSCheckSchema = new Schema({
     baselineId: {
         type: Schema.Types.ObjectId,
         ref: 'VRSSnapshot',
-        required: 'baselineId cannot be empty empty',
+        // required: 'baselineId cannot be empty empty',
     },
     actualSnapshotId: {
         type: Schema.Types.ObjectId,

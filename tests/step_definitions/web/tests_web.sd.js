@@ -159,7 +159,7 @@ When(/^I create "([^"]*)" tests with params:$/, { timeout: 600000 }, async funct
     }
 });
 
-When(/^I create "([^"]*)" tests with few checks:$/, { timeout: 60000000 }, async function (num, yml) {
+When(/^I create "([^"]*)" tests with::$/, { timeout: 60000000 }, async function (num, yml) {
     const params = YAML.parse(yml);
 
     browser.vDriver.setCurrentSuite({

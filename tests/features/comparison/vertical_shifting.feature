@@ -16,8 +16,8 @@ Feature: Vertical Shifting
       testName: Down-Up
       suiteName: Vertical Shifting
     """
-    When I open the url "http://localhost:3001/static/shift.html"
-    When I visually assert page as "Top - Down Shifting"
+    When I open the url "<syngrisiUrl>static/shift.html"
+    When I visually check page as "Top - Down Shifting"
     When I stop VRS session
 
     Given I start VRS session with parameters:
@@ -25,12 +25,12 @@ Feature: Vertical Shifting
       testName: Down-Up
       suiteName: Vertical Shifting
     """
-    When I open the url "http://localhost:3001/static/shift.html"
+    When I open the url "<syngrisiUrl>static/shift.html"
     When I execute javascript code:
     """
     document.getElementById('rectangle').style['margin-top']='1px'
     """
-    When I visually assert page as "Top - Down Shifting"
+    When I visually check page as "Top - Down Shifting"
     When I stop VRS session
 
   Scenario: Up-Down 1 pix
@@ -41,13 +41,13 @@ Feature: Vertical Shifting
       testName: Down-Up
       suiteName: Vertical Shifting
     """
-    When I open the url "http://localhost:3001/static/shift.html"
+    When I open the url "<syngrisiUrl>static/shift.html"
     When I execute javascript code:
     """
     document.getElementById('rectangle').style['margin-top']='1px'
     """
 
-    Then I visually assert page as "Top - Down Shifting"
+    Then I visually check page as "Top - Down Shifting"
     When I stop VRS session
 
     Given I start VRS session with parameters:
@@ -55,8 +55,8 @@ Feature: Vertical Shifting
       testName: Down-Up
       suiteName: Vertical Shifting
     """
-    When I open the url "http://localhost:3001/static/shift.html"
+    When I open the url "<syngrisiUrl>static/shift.html"
 
-    Then I visually assert page as "Top - Down Shifting"
+    Then I visually check page as "Top - Down Shifting"
     When I stop VRS session
 

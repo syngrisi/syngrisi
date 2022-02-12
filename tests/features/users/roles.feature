@@ -9,69 +9,66 @@ Feature: User roles
         Given I clear Database and stop Server
         When I set env variables:
         """
-        TEST: 1
-        SYNGRISI_AUTH: 0
+          TEST: 1
+          SYNGRISI_AUTH: 0
         """
         Given I start VRS server
         When I create via http test user
         Given I stop the Syngrisi server
         When I set env variables:
         """
-        TEST: 0
-        SYNGRISI_AUTH: 1
+          TEST: 0
+          SYNGRISI_AUTH: 1
         """
         Given I start Server and start Driver
 
     @e2e
     Scenario: User - roles
         # login as test admin
-        When I login with user:"Test" password "123"
-        Then I wait on element "*=TA" to be displayed
+        When I login via http with user:"Test" password "123"
 
         ## create user
         # user
-        When I open the url "http://vrs:3001/admin?task=users"
-        When I wait for "3" seconds
-        When I click on the element "#add-user"
-        When I set "user@gmail.com" to the inputfield "//input[@placeholder='Username']"
-        When I set "Ivan" to the inputfield "//input[@placeholder='First Name']"
-        When I set "Ivanov" to the inputfield "//input[@placeholder='Last Name']"
-        When I select the option with the text "user" for element "//select[@new-user-role]"
-        When I set "Password-123" to the inputfield "//input[@placeholder='password']"
-        When I click on the element "a.send-new-user-button"
-
+        When I create via http user as:"Test" with params:
+        """
+        {
+            "username": "user@gmail.com",
+            "firstName": "John",
+            "lastName": "Doe",
+            "role": "user",
+            "password": "Password-123"
+        }
+        """
         # reviewer
-        When I open the url "http://vrs:3001/admin?task=users"
-        When I wait for "3" seconds
-        When I click on the element "#add-user"
-        When I set "reviewer@gmail.com" to the inputfield "//input[@placeholder='Username']"
-        When I set "Petr" to the inputfield "//input[@placeholder='First Name']"
-        When I set "Petrov" to the inputfield "//input[@placeholder='Last Name']"
-        When I select the option with the text "reviewer" for element "//select[@new-user-role]"
-        When I set "Password-123" to the inputfield "//input[@placeholder='password']"
-        When I click on the element "a.send-new-user-button"
+        When I create via http user as:"Test" with params:
+        """
+        {
+            "username": "reviewer@gmail.com",
+            "firstName": "Richard",
+            "lastName": "Roe",
+            "role": "reviewer",
+            "password": "Password-123"
+        }
+        """
 
         # admin
-        When I open the url "http://vrs:3001/admin?task=users"
-        When I wait for "3" seconds
-        When I click on the element "#add-user"
-        When I set "superadmin@gmail.com" to the inputfield "//input[@placeholder='Username']"
-        When I set "Sidor" to the inputfield "//input[@placeholder='First Name']"
-        When I set "Sidorov" to the inputfield "//input[@placeholder='Last Name']"
-        When I select the option with the text "admin" for element "//select[@new-user-role]"
-        When I set "Password-123" to the inputfield "//input[@placeholder='password']"
-        When I click on the element "a.send-new-user-button"
+        When I create via http user as:"Test" with params:
+        """
+        {
+            "username": "superadmin@gmail.com",
+            "firstName": "Johnny",
+            "lastName": "Doe",
+            "role": "admin",
+            "password": "Password-123"
+        }
+        """
 
-        When I wait for "2" seconds
-        When I click on the element "#user-icon"
-        When I click on the element "=Sign Out"
-        When I wait for "2" seconds
 
         ### create checks
         ## user
         # login
         When I login with user:"user@gmail.com" password "Password-123"
-        Then I wait on element "*=II" to be displayed
+        Then I wait on element "*=JD" to be displayed
 
         # generate and parse API key
         When I click on the element "a#user-icon"
@@ -94,7 +91,7 @@ Feature: User roles
         ## reviewer
         # login
         When I login with user:"reviewer@gmail.com" password "Password-123"
-        Then I wait on element "*=PP" to be displayed
+        Then I wait on element "*=RR" to be displayed
 
         # generate and parse API key
         When I click on the element "a#user-icon"
@@ -119,7 +116,7 @@ Feature: User roles
         ## admin
         # login
         When I login with user:"superadmin@gmail.com" password "Password-123"
-        Then I wait on element "*=SS" to be displayed
+        Then I wait on element "*=JD" to be displayed
 
         # generate and parse API key
         When I click on the element "a#user-icon"
@@ -145,7 +142,7 @@ Feature: User roles
         ## user
         # login
         When I login with user:"user@gmail.com" password "Password-123"
-        Then I wait on element "*=II" to be displayed
+        Then I wait on element "*=JD" to be displayed
         # checks
         When I wait for "3" seconds
         Then I expect that element "//span[contains(text(), 'User test')]/../../..//span[@name='cell-creator' and contains(text(), 'user@gmail.com')]" does appear exactly "5" times
@@ -159,7 +156,7 @@ Feature: User roles
         ## reviewer
         # login
         When I login with user:"reviewer@gmail.com" password "Password-123"
-        Then I wait on element "*=PP" to be displayed
+        Then I wait on element "*=RR" to be displayed
         # checks
         When I wait for "3" seconds
         Then I expect that element "//span[contains(text(), 'User test')]/../../..//span[@name='cell-creator']" does appear exactly "5" times
@@ -175,7 +172,7 @@ Feature: User roles
         ## admin
         # login
         When I login with user:"superadmin@gmail.com" password "Password-123"
-        Then I wait on element "*=SS" to be displayed
+        Then I wait on element "*=JD" to be displayed
         # checks
         When I wait for "3" seconds
         Then I expect that element "//span[contains(text(), 'User test')]/../../..//span[@name='cell-creator']" does appear exactly "5" times
@@ -188,12 +185,12 @@ Feature: User roles
         Then I wait on element "*=TA" to be displayed
 
         # create admin
-        When I open the url "http://vrs:3001/admin?task=users"
+        When I go to "admin>users" page
         When I wait for "3" seconds
         When I click on the element "#add-user"
         When I set "superadmin@gmail.com" to the inputfield "//input[@placeholder='Username']"
-        When I set "Sidor" to the inputfield "//input[@placeholder='First Name']"
-        When I set "Sidorov" to the inputfield "//input[@placeholder='Last Name']"
+        When I set "Alex" to the inputfield "//input[@placeholder='First Name']"
+        When I set "Jons" to the inputfield "//input[@placeholder='Last Name']"
         When I select the option with the text "admin" for element "//select[@new-user-role]"
         When I set "Password-123" to the inputfield "//input[@placeholder='password']"
         When I click on the element "a.send-new-user-button"
@@ -205,7 +202,7 @@ Feature: User roles
 
         # login as created admin
         When I login with user:"superadmin@gmail.com" password "Password-123"
-        Then I wait on element "*=SS" to be displayed
+        Then I wait on element "*=AJ" to be displayed
 
         # go to admin panel
         When I click on the element "a#user-icon"

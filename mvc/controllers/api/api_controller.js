@@ -60,6 +60,17 @@ async function getLastSuccessCheck(identifier) {
         .limit(1))[0];
 }
 
+async function getNotPendingChecksByIdent(identifier) {
+    return Check.find({
+        ...identifier,
+        status: {
+            $ne: 'pending',
+        },
+    })
+        .sort({ updatedDate: -1 })
+        .exec();
+}
+
 // snapshots
 async function getSnapshotByImgHash(hash) {
     return Snapshot.findOne({ imghash: hash });
@@ -75,7 +86,7 @@ async function createSnapshot(parameters) {
     const opts = {
         name: name,
     };
-    $this.logMeta = {
+    const logOpts = {
         scope: 'createSnapshot',
         itemType: 'snapshot',
     };
@@ -84,11 +95,11 @@ async function createSnapshot(parameters) {
     opts.imghash = hashCode || hasha(fileData);
     const snapshot = new Snapshot(opts);
     const path = `${config.defaultBaselinePath}${snapshot.id}.png`;
-    log.debug(`save screenshot for: '${name}' snapshot to: '${path}'`, $this);
+    log.debug(`save screenshot for: '${name}' snapshot to: '${path}'`, $this, logOpts);
     await fs.writeFile(path, fileData);
     snapshot.filename = `${snapshot._id}.png`;
     await snapshot.save();
-    log.debug(`snapshot was saved: '${JSON.stringify(snapshot)}'`, $this, { ref: snapshot._id });
+    log.debug(`snapshot was saved: '${JSON.stringify(snapshot)}'`, $this, { ...logOpts, ...{ ref: snapshot._id } });
     return snapshot;
 }
 
@@ -455,59 +466,50 @@ exports.updateTest = async function (req, res) {
     return null;
 };
 
-function removeCheck(id) {
-    return new Promise((resolve, reject) => {
-        let logOpts = {};
-        Check.findByIdAndDelete(id)
-            .then(async (check) => {
-                logOpts = {
-                    scope: 'removeCheck',
-                    msgType: 'REMOVE',
-                    itemType: 'check',
-                    ref: id,
-                };
-                log.debug(`check with id: '${id}' was removed, update test: ${check.test}`, $this, logOpts);
+async function removeCheck(id) {
+    const logOpts = {
+        scope: 'removeCheck',
+        itemType: 'check',
+        ref: id,
+        msgType: 'REMOVE',
+    };
 
-                const test = await Test.findById(check.test)
-                    .exec();
-                const testCalculatedStatus = await calculateTestStatus(check.test);
-                const testCalculatedAcceptedStatus = await calculateAcceptedStatus(check.test);
+    try {
+        const check = await Check.findByIdAndDelete(id)
+            .exec();
 
-                test.status = testCalculatedStatus;
-                test.markedAs = testCalculatedAcceptedStatus;
-                test.updatedDate = new Date();
+        log.debug(`check with id: '${id}' was removed, update test: ${check.test}`, $this, logOpts);
 
-                await orm.updateItemDate('VRSSuite', check.suite);
-                test.save();
+        const test = await Test.findById(check.test)
+            .exec();
+        const testCalculatedStatus = await calculateTestStatus(check.test);
+        const testCalculatedAcceptedStatus = await calculateAcceptedStatus(check.test);
+        test.status = testCalculatedStatus;
+        test.markedAs = testCalculatedAcceptedStatus;
+        test.updatedDate = new Date();
+        await orm.updateItemDate('VRSSuite', check.suite);
+        test.save();
 
-                const allCheckIds = {
-                    baseline: check.baselineId?.toString(),
-                    actual: check.actualSnapshotId?.toString(),
-                    diff: check.diffId?.toString(),
-                };
-                if (check.baselineId ?? true) {
-                    log.debug(`try to remove the snapshot, baseline: ${check.baselineId}`, $this, logOpts);
-                    await removeSnapshot('baseline', allCheckIds);
-                }
+        if (check.baselineId ?? true) {
+            log.debug(`try to remove the snapshot, baseline: ${check.baselineId}`, $this, logOpts);
+            await removeSnapshot(check.baselineId?.toString());
+        }
 
-                if (check.actualSnapshotId ?? true) {
-                    log.debug(`try to remove the snapshot, actual: ${check.actualSnapshotId}`, $this, logOpts);
-                    await removeSnapshot('actual', allCheckIds);
-                }
+        if (check.actualSnapshotId ?? true) {
+            log.debug(`try to remove the snapshot, actual: ${check.actualSnapshotId}`, $this, logOpts);
+            await removeSnapshot(check.actualSnapshotId?.toString());
+        }
 
-                if (check.diffId ?? true) {
-                    log.debug(`try to remove snapshot, diff: ${check.diffId}`, $this, logOpts);
-                    await removeSnapshot('diff', allCheckIds);
-                }
-                return resolve();
-            })
-            .catch(
-                (e) => {
-                    log.error(`cannot remove a check with id: '${id}', error: '${e}'`, $this, logOpts);
-                    return reject(e);
-                }
-            );
-    });
+        if (check.diffId ?? true) {
+            log.debug(`try to remove snapshot, diff: ${check.diffId}`, $this, logOpts);
+            await removeSnapshot(check.diffId?.toString());
+        }
+        return;
+    } catch (e) {
+        const errMsg = `cannot remove a check with id: '${id}', error: '${e}'`;
+        log.error(errMsg, $this, logOpts);
+        throw new Error(errMsg);
+    }
 }
 
 async function removeTest(id) {
@@ -547,8 +549,7 @@ exports.removeTest = async function (req, res) {
 };
 
 exports.createTest = async function (req, res) {
-    const $this = this;
-    $this.logMeta = {
+    const logOpts = {
         scope: 'createTest',
         user: req?.user?.username,
         itemType: 'test',
@@ -558,7 +559,7 @@ exports.createTest = async function (req, res) {
     try {
         const params = req.body;
 
-        log.info(`create test with name '${params.name}', params: '${JSON.stringify(params)}'`, $this);
+        log.info(`create test with name '${params.name}', params: '${JSON.stringify(params)}'`, $this, logOpts);
         const opts = removeEmptyProperties({
             name: params.name,
             status: params.status,
@@ -610,8 +611,7 @@ async function calculateTestStatus(testId) {
 
 // suites
 exports.removeSuite = async function (req, res) {
-    const $this = this;
-    $this.logMeta = {
+    const logOpts = {
         scope: 'removeSuite',
         user: req?.user?.username,
         itemType: 'suite',
@@ -620,7 +620,7 @@ exports.removeSuite = async function (req, res) {
     const { id } = req.params;
     try {
         const suite = await Suite.findOne({ _id: id });
-        log.info(`remove suite with name: '${suite.name}'`, $this, { ref: id });
+        log.info(`remove suite with name: '${suite.name}'`, $this, { ...logOpts, ...{ ref: id } });
         const tests = await Test.find({ suite: id });
 
         const results = [];
@@ -634,14 +634,14 @@ exports.removeSuite = async function (req, res) {
             .send(`Suite with id: '${id}' and all related tests and checks were removed
                     output: '${JSON.stringify(out)}'`);
     } catch (e) {
-        log.error(`cannot remove the suite with id: '${id}', error: '${e}'`, $this);
-        throw new Error(`cannot remove the suite with id: '${id}', error: '${e}'`);
+        const errMsg = `cannot remove the suite with id: '${id}', error: '${e}'`;
+        log.error(errMsg, $this, logOpts);
+        throw new Error(errMsg);
     }
 };
 
 exports.removeRun = async function (req, res) {
-    const $this = this;
-    $this.logMeta = {
+    const logOpts = {
         scope: 'removeRun',
         user: req?.user?.username,
         itemType: 'run',
@@ -650,7 +650,7 @@ exports.removeRun = async function (req, res) {
     const { id } = req.params;
     try {
         const run = await Run.findOne({ _id: id });
-        log.info(`delete run and checks which associate with the run: '${run.name}'`, this, { ref: id });
+        log.info(`delete run and checks which associate with the run: '${run.name}'`, $this, { ...logOpts, ...{ ref: id } });
         const tests = await Test.find({ run: id });
 
         const results = [];
@@ -663,8 +663,9 @@ exports.removeRun = async function (req, res) {
             .send(`Run with id: '${id}' and all related tests and checks were removed
                     output: '${JSON.stringify(out)}'`);
     } catch (e) {
-        log.error(`cannot remove the run with id: '${id}', error: '${e}'`, $this);
-        throw new Error(`cannot remove the run with id: '${id}', error: '${e}'`);
+        const errMsg = `cannot remove the run with id: '${id}', error: '${e}'`;
+        log.error(errMsg, $this, logOpts);
+        throw new Error(errMsg);
     }
 };
 
@@ -682,36 +683,59 @@ function prettyCheckParams(result) {
 }
 
 async function getBaseline(params) {
-    const identFields = buildIdentObject(params);
     const identFieldsAccepted = Object.assign(buildIdentObject(params), { markedAs: 'accepted' });
     const acceptedBaseline = await Baseline.findOne(identFieldsAccepted, {}, { sort: { createdDate: -1 } });
     log.debug(`acceptedBaseline: '${acceptedBaseline ? JSON.stringify(acceptedBaseline) : 'not found'}'`, $this, { itemType: 'baseline' });
     if (acceptedBaseline) return acceptedBaseline;
-    const simpleBaseline = await Baseline.findOne(identFields, {}, { sort: { createdDate: -1 } });
-    log.debug(`simpleBaseline: '${simpleBaseline ? JSON.stringify(simpleBaseline) : 'not found'}'`, $this, { itemType: 'baseline' });
-    if (simpleBaseline) return simpleBaseline;
     return null;
 }
 
+const validateBaselineParam = (params) => {
+    const mandatoryParams = ['markedAs', 'markedById', 'markedByUsername', 'markedDate'];
+    for (const param of mandatoryParams) {
+        if (!param) {
+            const errMsg = `invalid baseline parameters, '${param}' is empty, params: ${JSON.stringify(params)}`;
+            log.error(errMsg);
+            throw new Error(errMsg);
+        }
+    }
+};
+
 async function createNewBaseline(params) {
+    validateBaselineParam(params);
+
     const identFields = buildIdentObject(params);
+    const sameBaseline = await Baseline.findOne({ ...identFields, ...{ snapshootId: params.actualSnapshotId } })
+        .exec();
 
-    const newBaseline = await Baseline.create(identFields);
-    if (params.markedAs) newBaseline.markedAs = params.markedAs;
-    if (params.markedById) newBaseline.markedById = params.markedById;
-    if (params.markedByUsername) newBaseline.markedByUsername = params.markedByUsername;
-    if (params.markedDate) newBaseline.lastMarkedDate = params.markedDate;
-    newBaseline.createdDate = new Date();
-    newBaseline.snapshootId = params.actualSnapshotId || params.baselineId;
+    if (sameBaseline) {
+        log.debug(`the baseline with same ident and snapshot id: ${params.actualSnapshotId} already exist`, $this);
+    } else {
+        log.debug(`the baseline with same ident and snapshot id: ${params.actualSnapshotId} does not exist, create new one`, $this);
+    }
 
-    return Promise.resolve(await newBaseline.save());
+    log.silly({ sameBaseline });
+
+    const resultedBaseline = sameBaseline || await Baseline.create(identFields);
+
+    resultedBaseline.markedAs = params.markedAs;
+    resultedBaseline.markedById = params.markedById;
+    resultedBaseline.markedByUsername = params.markedByUsername;
+    resultedBaseline.lastMarkedDate = params.markedDate;
+    resultedBaseline.createdDate = new Date();
+    resultedBaseline.snapshootId = params.actualSnapshotId;
+
+    return resultedBaseline.save();
 }
 
-async function createBaselineifNotExist(params) {
+async function createBaselineIfNotExist(params) {
     // find if baseline already exist
     const baseline = await getBaseline(params);
     if (baseline) return Promise.resolve(baseline);
-    return createNewBaseline(params);
+    const identFields = buildIdentObject(params);
+
+    const resultedBaseline = await Baseline.create(identFields);
+    return resultedBaseline.save();
 }
 
 const lackOfParamsGuard = (req, res) => {
@@ -742,31 +766,16 @@ async function createCheck(
     checkParam,
     test,
     suite,
+    app,
     currentUser
 ) {
-    const executionTimer = process.hrtime();
-    const app = await createItemIfNotExistAsync('VRSApp',
-        { name: checkParam.appName || 'Unknown' },
-        { user: currentUser.username, itemType: 'app' });
-
-    /** define params for new check */
-    const newCheckParams = {
-        test: checkParam.testId,
-        name: checkParam.name,
-        viewport: checkParam.viewport,
-        browserName: checkParam.browserName,
-        browserVersion: checkParam.browserVersion,
-        browserFullVersion: checkParam.browserFullVersion,
-        os: checkParam.os,
-        updatedDate: Date.now(),
-        suite: suite.id,
-        app: app.id,
-        branch: checkParam.branch,
-        domDump: checkParam.domDump,
-        run: test.run,
-        creatorId: currentUser._id,
-        creatorUsername: currentUser.username,
+    const logOpts = {
+        scope: 'createCheck',
+        user: currentUser.username,
+        itemType: 'check',
+        msgType: 'CREATE',
     };
+    const executionTimer = process.hrtime();
 
     /**
      * Usually there is two stage of checking request:
@@ -784,35 +793,32 @@ async function createCheck(
      *   with one of 'complete` status (eq:. new, failed, passed)
      */
 
+    /** PREPARE ACTUAL SNAPSHOT */
     /** look up the snapshot with same hashcode if didn't find, ask for file data */
-
     const snapshotFoundedByHashcode = await getSnapshotByImgHash(checkParam.hashCode);
     if (!checkParam.hashCode && !checkParam.files) {
-        log.debug('hashCode or files parameters should be present', $this);
+        log.debug('hashCode or files parameters should be present', $this, logOpts);
         return { status: 'needFiles' };
     }
 
     if (!checkParam.files && !snapshotFoundedByHashcode) {
-        log.debug(`cannot find the snapshot with hash: '${checkParam.hashCode}'`, $this);
+        log.debug(`cannot find the snapshot with hash: '${checkParam.hashCode}'`, $this, logOpts);
         return { status: 'needFiles' };
     }
     if (snapshotFoundedByHashcode) {
-        log.debug(`snapshot was found by hashcode: '${checkParam.hashCode}'`, $this);
+        log.debug(`snapshot was found by hashcode: '${checkParam.hashCode}'`, $this, logOpts);
     }
 
-    /** ASSIGN BASELINE */
     let currentSnapshot;
     let currentBaselineSnapshot;
-
-    const checkIdent = buildIdentObject(newCheckParams);
 
     const fileData = checkParam.files ? checkParam.files.file.data : false;
 
     if (snapshotFoundedByHashcode) {
-        log.debug(`snapshot with such hashcode: '${checkParam.hashCode}' is already exists, will clone it`, $this);
+        log.debug(`snapshot with such hashcode: '${checkParam.hashCode}' is already exists, will clone it`, $this, logOpts);
         currentSnapshot = await cloneSnapshot(snapshotFoundedByHashcode, checkParam.name);
     } else {
-        log.debug(`snapshot with such hashcode: '${checkParam.hashCode}' does not exists, will create it`, $this);
+        log.debug(`snapshot with such hashcode: '${checkParam.hashCode}' does not exists, will create it`, $this, logOpts);
         currentSnapshot = await createSnapshot({
             name: checkParam.name,
             fileData,
@@ -820,43 +826,91 @@ async function createCheck(
         });
     }
 
-    log.info(`find a baseline for the check with identifier: '${JSON.stringify(checkIdent)}'`, $this);
-    const storedBaseline = await getBaseline(newCheckParams);
+    /** PREPARE DUMMY CHECK */
+    const newCheckParams = {
+        test: checkParam.testId,
+        name: checkParam.name,
+        status: 'pending',
+        viewport: checkParam.viewport,
+        browserName: checkParam.browserName,
+        browserVersion: checkParam.browserVersion,
+        browserFullVersion: checkParam.browserFullVersion,
+        os: checkParam.os,
+        updatedDate: Date.now(),
+        suite: suite.id,
+        app: app.id,
+        branch: checkParam.branch,
+        domDump: checkParam.domDump,
+        run: test.run,
+        creatorId: currentUser._id,
+        creatorUsername: currentUser.username,
+    };
+    const check = await Check.create(newCheckParams);
+    log.debug(`create the new check document with params: '${prettyCheckParams(newCheckParams)}'`, $this, logOpts);
+    let savedCheck = await check.save();
+    log.debug(`the check with id: '${check.id}', was created, will updated with data during creating process`, $this, logOpts);
 
-    let check;
+    logOpts.ref = check.id;
+
+    /** HANDLE BASELINE */
+    const checkIdent = buildIdentObject(newCheckParams);
+    log.info(`find a baseline for the check with identifier: '${JSON.stringify(checkIdent)}'`, $this, logOpts);
+    const storedBaseline = await getBaseline(newCheckParams);
+    const isBaselineValid = (baseline) => {
+        const keys = [
+            'name', 'app', 'branch', 'browserName', 'viewport', 'os',
+            'createdDate', 'lastMarkedDate', 'markedAs', 'markedById', 'markedByUsername', 'snapshootId',
+        ];
+        for (const key of keys) {
+            if (!baseline[key]) {
+                log.error(`invalid baseline, the '${key}' property is empty`, $this, logOpts);
+                return false;
+            }
+        }
+        return true;
+    };
+    // copy marked* properties from baseline and baseline.snapshotId
+    const updateCheckParamsFromBaseline = (params, baseline) => {
+        const updatedParams = { ...params };
+        updatedParams.baselineId = baseline.snapshootId;
+        updatedParams.markedAs = baseline.markedAs;
+        updatedParams.markedDate = baseline.lastMarkedDate;
+        updatedParams.markedByUsername = baseline.markedByUsername;
+        return updatedParams;
+    };
+    let checkUpdateParams = {};
+    checkUpdateParams.failReasons = [];
+    checkUpdateParams.actualSnapshotId = currentSnapshot.id;
+
+    // let check;
     // if last check has baseline id copy properties from last check
     // and set it as `currentBaseline` to make diff
     if (storedBaseline !== null) {
-        log.debug(`a baseline for check name: '${checkParam.name}', id: '${storedBaseline.snapshootId}' is already exists`, $this);
-        newCheckParams.baselineId = storedBaseline.snapshootId;
-
-        // log.debug(`creating an actual snapshot for check with name: '${checkParam.name}'`, $this);
-        newCheckParams.actualSnapshotId = currentSnapshot.id;
-        newCheckParams.status = 'pending';
-        if (storedBaseline.markedAs) {
-            newCheckParams.markedAs = storedBaseline.markedAs;
-            newCheckParams.markedDate = storedBaseline.lastMarkedDate;
-            newCheckParams.markedByUsername = storedBaseline.markedByUsername;
+        log.debug(`a baseline for check name: '${checkParam.name}', id: '${storedBaseline.snapshootId}' is already exists`, $this, logOpts);
+        if (!isBaselineValid(storedBaseline)) {
+            checkUpdateParams.failReasons.push('invalid_baseline');
         }
-
+        checkUpdateParams = updateCheckParamsFromBaseline(checkUpdateParams, storedBaseline);
         currentBaselineSnapshot = await Snapshot.findById(storedBaseline.snapshootId);
-        log.debug(`create the new check document with params: '${prettyCheckParams(newCheckParams)}'`, $this);
-        check = await Check.create(newCheckParams);
     } else {
-        // since the `storedBaseline` does not exist set current snapshot as currentBaseline to make diff
-        log.debug(`a baseline snapshot for previous check with name: '${checkParam.name}', does not exist creating new one`, this);
-        newCheckParams.baselineId = currentSnapshot.id;
-        newCheckParams.actualSnapshotId = currentSnapshot.id;
-        newCheckParams.status = 'new';
-        currentBaselineSnapshot = currentSnapshot;
-        log.debug(`create the new check with params: '${prettyCheckParams(newCheckParams)}'`, $this);
-        check = await Check.create(newCheckParams);
-        await createNewBaseline(check.toObject());
+        const checksWithSameIdent = await getNotPendingChecksByIdent(checkIdent);
+        if (checksWithSameIdent.length > 0) {
+            log.error(`checks with ident'${JSON.stringify(checkIdent)}' exist, but baseline is absent`, $this, logOpts);
+            checkUpdateParams.failReasons.push('not_accepted');
+            checkUpdateParams.baselineId = currentSnapshot.id;
+            currentBaselineSnapshot = currentSnapshot;
+        } else {
+            checkUpdateParams.baselineId = currentSnapshot.id;
+            checkUpdateParams.status = 'new';
+            currentBaselineSnapshot = currentSnapshot;
+            log.debug(`create the new check with params: '${prettyCheckParams(checkUpdateParams)}'`, $this, logOpts);
+        }
     }
-    let savedCheck = await check.save();
-    log.debug(`the check with id: '${check.id}', was successfully created!`, $this, { ref: check.id }, $this);
+    await Check.findByIdAndUpdate(check._id, checkUpdateParams);
 
-    // check if we can ignore 1 px dimensions difference from the bottom
+    /** COMPARING SECTION */
+
+    /* check if we can ignore 1 px dimensions difference from the bottom */
     const ignoreDifferentResolutions = (dimensionDifference) => {
         if ((dimensionDifference.width === 0) && (dimensionDifference.height === -1)) return true;
         if ((dimensionDifference.width === 0) && (dimensionDifference.height === 1)) return true;
@@ -866,14 +920,12 @@ async function createCheck(
     const areSnapshotsWrongDimensions = (compareResult) => !compareResult.isSameDimensions
         && !ignoreDifferentResolutions(compareResult.dimensionDifference);
 
-    const checkUpdateParams = {};
     let totalCheckHandleTime;
     let compareResult;
-    const failReasons = [];
     /** compare actual with baseline if a check isn't new */
-    if (check.status.toString() !== 'new') {
+    if ((checkUpdateParams.status !== 'new') && (!checkUpdateParams.failReasons.includes('not_accepted'))) {
         try {
-            log.debug(`'the check with name: '${checkParam.name}' isn't new, make comparing'`, $this);
+            log.debug(`'the check with name: '${checkParam.name}' isn't new, make comparing'`, $this, logOpts);
             compareResult = await compareSnapshots(currentBaselineSnapshot, currentSnapshot);
             log.silly(`ignoreDifferentResolutions: '${ignoreDifferentResolutions(compareResult.dimensionDifference)}'`);
             log.silly(`dimensionDifference: '${JSON.stringify(compareResult.dimensionDifference)}`);
@@ -881,16 +933,15 @@ async function createCheck(
                 let logMsg;
                 if (areSnapshotsWrongDimensions(compareResult)) {
                     logMsg = 'snapshots have different dimensions';
-                    failReasons.push('wrong_dimensions');
+                    checkUpdateParams.failReasons.push('wrong_dimensions');
                 }
                 if (areSnapshotsDifferent(compareResult)) {
                     logMsg = 'snapshots have differences';
-                    failReasons.push('different_images');
+                    checkUpdateParams.failReasons.push('different_images');
                 }
-                checkUpdateParams.failReasons = failReasons;
 
-                log.debug(logMsg, $this);
-                log.debug(`saving diff snapshot for check with Id: '${check.id}'`, $this, { ref: check.id });
+                log.debug(logMsg, $this, logOpts);
+                log.debug(`saving diff snapshot for check with Id: '${check.id}'`, $this, logOpts);
                 const diffSnapshot = await createSnapshot({
                     name: checkParam.name,
                     fileData: compareResult.getBuffer(),
@@ -898,7 +949,7 @@ async function createCheck(
                 checkUpdateParams['diffId'] = diffSnapshot.id;
                 checkUpdateParams['status'] = 'failed';
             } else {
-                await createBaselineifNotExist(check.toObject());
+                await createBaselineIfNotExist(check.toObject());
                 checkUpdateParams['status'] = 'passed';
             }
 
@@ -909,21 +960,25 @@ async function createCheck(
             compareResult['totalCheckHandleTime'] = totalCheckHandleTime;
             checkUpdateParams['result'] = JSON.stringify(compareResult, null, '\t');
         } catch (e) {
+            checkUpdateParams['updatedDate'] = Date.now();
             checkUpdateParams['status'] = 'failed';
             checkUpdateParams['result'] = `{ "server error": "error during comparing - ${e}" }`;
-            checkUpdateParams.failReasons = ['internal_server_error'];
+            checkUpdateParams.failReasons.push('internal_server_error');
             await Check.findByIdAndUpdate(check._id, checkUpdateParams);
             throw e;
         }
     }
 
-    log.debug(`update check with params: '${JSON.stringify(checkUpdateParams)}'`, $this, { ref: check._id });
+    log.debug(`update check with params: '${JSON.stringify(checkUpdateParams)}'`, $this, logOpts);
+    if (checkUpdateParams.failReasons.length > 0) {
+        checkUpdateParams.status = 'failed';
+    }
     await Check.findByIdAndUpdate(check._id, checkUpdateParams);
     savedCheck = await Check.findById(check._id);
     // update test and suite
     test.markedAs = await calculateAcceptedStatus(check.test);
     test.updatedDate = new Date();
-    log.debug('update suite', $this);
+    log.debug('update suite', $this, logOpts);
     await orm.updateItemDate('VRSSuite', check.suite);
     await test.save();
 
@@ -938,7 +993,7 @@ async function createCheck(
 
 exports.createCheck = async function (req, res) {
     lackOfParamsGuard(req, res);
-    this.logMeta = {
+    const logOpts = {
         scope: 'createCheck',
         user: req?.user?.username,
         itemType: 'check',
@@ -949,10 +1004,10 @@ exports.createCheck = async function (req, res) {
         const currentUser = await User.findOne({ apiKey: apiKey })
             .exec();
 
-        log.info(`start create check: '${prettyCheckParams(req.body.name)}'`, $this);
+        log.info(`start create check: '${prettyCheckParams(req.body.name)}'`, $this, logOpts);
 
         /** look for or create test and suite */
-        log.debug(`try to find test with id: '${req.body.testid}'`, $this);
+        log.debug(`try to find test with id: '${req.body.testid}'`, $this, logOpts);
         const test = await Test.findById(req.body.testid)
             .exec();
         if (!test) {
@@ -974,11 +1029,13 @@ exports.createCheck = async function (req, res) {
             creatorUsername: currentUser.username,
         });
 
+        const app = await createItemIfNotExistAsync('VRSApp',
+            { name: req.body.appName || 'Unknown' },
+            { user: currentUser.username, itemType: 'app' });
+
         const result = await createCheck(
             {
                 branch: req.body.branch,
-                appName: req.body.appName,
-                // suiteName: req.body.suiteName,
                 hashCode: req.body.hashcode,
                 testId: req.body.testid,
                 name: req.body.name,
@@ -992,6 +1049,7 @@ exports.createCheck = async function (req, res) {
             },
             test,
             suite,
+            app,
             currentUser
         );
         if (result.status === 'needFiles') {
@@ -1131,7 +1189,6 @@ exports.getChecks = async function (req, res) {
         .limit(pageSize)
         .exec();
     // console.log({ tests });
-    // const suites = await getSuitesByTestsQuery(query);
     const checksByTestGroupedByIdent = {};
 
     for (const test of tests) {
@@ -1199,8 +1256,7 @@ function addMarkedAsOptions(opts, user, mark) {
     return opts;
 }
 
-exports.updateCheck = async function updateCheck(req, res) {
-    let opts = removeEmptyProperties(req.body);
+exports.acceptCheck = async function acceptCheck(req, res) {
     const checkId = req.params.id;
     const logOpts = {
         msgType: 'UPDATE',
@@ -1210,43 +1266,40 @@ exports.updateCheck = async function updateCheck(req, res) {
         scope: 'updateCheck',
     };
     try {
+        log.debug(`accept check: ${checkId}`, $this, logOpts);
         const check = await Check.findById(checkId)
             .exec();
         const test = await Test.findById(check.test)
             .exec();
 
-        if (opts.accept === 'true') {
-            log.debug(`ACCEPT check: ${checkId}`, $this, logOpts);
-            opts = addMarkedAsOptions(opts, req.user, 'accepted');
-        } else {
-            await test.updateOne({
-                status: 'Running',
-                updatedDate: new Date(),
-                // .format('YYYY-MM-DD hh:mm'),
-            })
-                .exec();
-        }
+        /** update check */
+        let opts = removeEmptyProperties(req.body);
+        opts = addMarkedAsOptions(opts, req.user, 'accepted');
+        opts.status = (check.status[0] === 'new') ? 'new' : 'passed';
         delete opts.id;
         delete opts.accept;
-        // await Check.findByIdAndUpdate(check._id, opts);
-        Object.assign(check, opts);
-        log.debug({ NEW_BASELINE_OPTS: check.toObject() }, $this, logOpts);
-        await createNewBaseline(check.toObject());
-        await check.save();
-        const testCalculatedStatus = await calculateTestStatus(check.test);
-        const testCalculatedAcceptedStatus = await calculateAcceptedStatus(check.test);
-
         opts['updatedDate'] = Date.now();
 
-        log.debug(`update check id: '${checkId}' with params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`,
+        log.debug(`update check id: '${checkId}' with opts: '${JSON.stringify(opts)}'`,
             $this, logOpts);
+
+        Object.assign(check, opts);
+        log.debug(`update check with options: '${JSON.stringify(check.toObject())}'`, $this, logOpts);
+
+        await createNewBaseline(check.toObject());
+        await check.save();
+
+        /** update test statuses and date, suite date */
+        const testCalculatedStatus = await calculateTestStatus(check.test);
+        const testCalculatedAcceptedStatus = await calculateAcceptedStatus(check.test);
 
         test.status = testCalculatedStatus;
         test.markedAs = testCalculatedAcceptedStatus;
         test.updatedDate = new Date();
 
         await orm.updateItemDate('VRSSuite', check.suite);
-        log.debug(`update test with status: '${testCalculatedStatus}', marked: '${testCalculatedAcceptedStatus}'`, $this,
+        log.debug(`update test with status: '${testCalculatedStatus}', marked: '${testCalculatedAcceptedStatus}'`,
+            $this,
             {
                 msgType: 'UPDATE',
                 itemType: 'test',
@@ -1258,7 +1311,7 @@ exports.updateCheck = async function updateCheck(req, res) {
 
         res.status(200)
             .json({
-                message: `Check with id: '${checkId}' was updated`,
+                message: `check with id: '${checkId}' was accepted`,
             });
     } catch (e) {
         fatalError(req, res, e);
@@ -1272,30 +1325,18 @@ exports.getBaselines = (req, res) => {
         });
 };
 
-async function isLastLinkToSnapshoot(id) {
-    const baselines = await Check.find({ baselineId: id });
-    const actuals = await Check.find({ actualSnapshotId: id });
-
-    // console.log({ BL: baselines.length });
-    // console.log({ AL: actuals.length });
-    if (!baselines && !actuals) return false;
-    return (baselines.length === 0) && (actuals.length === 0);
-}
-
-const removeSnapshotFile = async (snapshoot, allChecksIds) => {
+const removeSnapshotFile = async (snapshot) => {
     log.debug(`find all snapshots with same filename`, $this);
-    const snapshoots = await Snapshot.find({ filename: snapshoot.filename });
+    const relatedSnapshots = await Snapshot.find({ filename: snapshot.filename });
+    log.debug(`there is '${relatedSnapshots.length}' snapshots with such filename`, $this);
     // eslint-disable-next-line arrow-body-style
     const isLastSnapshotFile = () => {
-        return (snapshoots.length === 0)
-            || (
-                (snapshoots.length === 1)
-                && (Object.values(allChecksIds)
-                    .includes(snapshoots[0]?._id?.toString()))
-            );
+        return (relatedSnapshots.length === 0);
     };
+    console.log({ isLastSnapshotFile: isLastSnapshotFile() });
     if (isLastSnapshotFile()) {
-        const path = snapshoot.filename ? `${config.defaultBaselinePath}${snapshoot.id}.png` : `${config.defaultBaselinePath}${snapshoot.id}.png`;
+        const path = snapshot.filename ? `${config.defaultBaselinePath}${snapshot.filename}` : `${config.defaultBaselinePath}${snapshot.id}.png`;
+        log.silly(`path: ${path}`, $this);
         if (fss.existsSync(path)) {
             log.debug(`remove file: '${path}'`, $this, {
                 msgType: 'REMOVE',
@@ -1304,11 +1345,9 @@ const removeSnapshotFile = async (snapshoot, allChecksIds) => {
             fss.unlinkSync(path);
         }
     }
-    log.debug(`there is '${snapshoots.length}' snapshots with such filename`, $this);
 };
 
-const removeSnapshot = async (snapshotName, allCheckIds) => {
-    const id = allCheckIds[snapshotName];
+const removeSnapshot = async (id) => {
     const logOpts = {
         scope: 'removeSnapshot',
         msgType: 'REMOVE',
@@ -1316,7 +1355,7 @@ const removeSnapshot = async (snapshotName, allCheckIds) => {
         ref: id,
     };
     log.info(`delete snapshot with id: '${id}'`, $this, logOpts);
-    log.debug(`check if the snapshot:'${id}' is baseline`, $this, logOpts);
+    log.debug(`check if the snapshot: '${id}' is baseline`, $this, logOpts);
     if (!id) {
         log.warn('id is empty');
         return;
@@ -1324,45 +1363,41 @@ const removeSnapshot = async (snapshotName, allCheckIds) => {
     const snapshot = await Snapshot.findById(id);
 
     if (snapshot === null) {
-        log.info(`cannot find the snapshot with id: '${id}'`);
+        log.warn(`cannot find the snapshot with id: '${id}'`);
         return;
     }
 
     const baselines = await Baseline.find({ snapshootId: id })
         .sort({ createdDate: -1 });
-    if (baselines.length > 0) {
-        // remove snapshot and baselines
-        if (baselines[0].markedAs === undefined && (await isLastLinkToSnapshoot(id))) {
-            await Snapshot.findByIdAndDelete(id);
 
-            await Baseline.deleteMany({ snapshootId: id });
-            log.debug(`snapshot: '${id}' and related baselines was removed because it was last unaccepted snapshot`);
-            log.debug(`try to remove snapshot file, id: '${snapshot._id}', filename: '${snapshot.filename}'`);
-            await removeSnapshotFile(snapshot, allCheckIds);
-        } else {
-            log.debug(`cannot remove the snapshot because it is accepted or not last baseline`);
-            return;
-        }
+    if (baselines.length > 0) {
+        return;
     }
 
-    log.debug(`snapshot: '${id}' is not a baseline, try to remove it`, $this, logOpts);
+    log.debug(`snapshot: '${id}' is not related to baseline, try to remove it`, $this, logOpts);
     await Snapshot.findByIdAndDelete(id);
     log.debug(`snapshot: '${id}' was removed`, $this, logOpts);
     log.debug(`try to remove snapshot file, id: '${snapshot._id}', filename: '${snapshot.filename}'`, $this, logOpts);
-    await removeSnapshotFile(snapshot, allCheckIds);
+    await removeSnapshotFile(snapshot);
 };
 
-exports.removeCheck = function (req, res) {
+exports.removeCheck = async function (req, res) {
     const { id } = req.params;
-    log.info(`DELETE CHECK, id: '${id}', user: '${req.user.username}', params: '${JSON.stringify(req.params)}'`);
-    removeCheck(id)
-        .then(() => {
-            res.status(200)
-                .json({ message: `check with id: '${id}' was removed` });
-        })
-        .catch((e) => {
-            fatalError(req, res, e);
-        });
+    const logOpts = {
+        scope: 'removeCheck',
+        itemType: 'check',
+        ref: id,
+        msgType: 'REMOVE',
+    };
+    try {
+        log.info(`remove check with, id: '${id}', user: '${req.user.username}', params: '${JSON.stringify(req.params)}'`, $this, logOpts);
+        await removeCheck(id);
+        res.status(200)
+            .json({ message: `check with id: '${id}' was removed` });
+    } catch (e) {
+        log.error(`cannot remove the check with id: '${id}', error: '${e}'`, $this, logOpts);
+        fatalError(req, res, e);
+    }
 };
 
 exports.getTestById = async function (req, res) {
@@ -1476,8 +1511,7 @@ exports.stopSession = async function (req, res) {
             blinking: blinkingCount,
             calculatedViewport: testViewport,
         };
-        log.info(`the session is over, the test will be updated with parameters: '${JSON.stringify(testParams)}'`,
-            $this, logOpts);
+        log.info(`the session is over, the test will be updated with parameters: '${JSON.stringify(testParams)}'`, $this, logOpts);
         const updatedTest = await updateTest(testParams);
         const result = updatedTest.toObject();
         result.calculatedStatus = testStatus;
@@ -1678,12 +1712,6 @@ exports.task_remove_old_tests = async function (req, res) {
 
     res.end();
 };
-
-// const fixDocumentsTypes = async function (req, res) {
-//
-// };
-//
-// exports.fixDocumentsTypes = fixDocumentsTypes;
 
 exports.task_migration_1_1_0 = async function (req, res) {
     if (req.user.role !== 'admin') {
