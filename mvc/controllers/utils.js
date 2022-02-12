@@ -149,30 +149,27 @@ exports.checksGroupedByIdent = function checksGroupedByIdent(checkFilter) {
 };
 
 exports.checksGroupedByIdent2 = function checksGroupedByIdent2(testId) {
-    return new Promise((resolve, reject) => {
-        Check.find({ test: testId })
-            .sort({ updatedDate: 1 })
-            .then((checks) => {
-                const result = {};
-                checks.forEach((check) => {
-                    if (result[checkIdent(check)] === undefined) {
-                        result[checkIdent(check)] = {};
-                        result[checkIdent(check)]['checks'] = [];
-                    }
-                    result[checkIdent(check)]['checks'].push(check);
-                });
-                // transform ident group object to array
-                const result2 = Object.keys(result)
-                    .map((idnt) => ({
-                        ident: idnt,
-                        checks: result[idnt].checks,
-                        status: groupStatus(result[idnt].checks),
-                        viewport: groupViewPort(result[idnt].checks),
-                    }));
-                return resolve(result2);
-            })
-            .catch((e) => reject(e));
-    });
+    Check.find({ test: testId })
+        .sort({ updatedDate: 1 })
+        .then((checks) => {
+            const result = {};
+            checks.forEach((check) => {
+                if (result[checkIdent(check)] === undefined) {
+                    result[checkIdent(check)] = {};
+                    result[checkIdent(check)]['checks'] = [];
+                }
+                result[checkIdent(check)]['checks'].push(check);
+            });
+            // transform ident group object to array
+            const result2 = Object.keys(result)
+                .map((idnt) => ({
+                    ident: idnt,
+                    checks: result[idnt].checks,
+                    status: groupStatus(result[idnt].checks),
+                    viewport: groupViewPort(result[idnt].checks),
+                }));
+            return result2;
+        });
 };
 
 exports.waitUntil = async function waitUntil(cb, attempts = 5, interval = 700) {
@@ -190,21 +187,19 @@ exports.waitUntil = async function waitUntil(cb, attempts = 5, interval = 700) {
     return result;
 };
 
-exports.calculateAcceptedStatus = function calculateAcceptedStatus(testId) {
-    return new Promise(async (resolve, reject) => {
-        const checksInTest = await Check.find({ test: testId });
-        const statuses = checksInTest.map((x) => x.markedAs);
-        if (statuses.length < 1) {
-            return resolve('Unaccepted');
-        }
-        let testCalculatedStatus = 'Unaccepted';
-        if (statuses.some((x) => x === 'accepted')) {
-            testCalculatedStatus = 'Partially';
-        }
-        if (statuses.every((x) => x === 'accepted')) {
-            testCalculatedStatus = 'Accepted';
-        }
-        // console.log({ testCalculatedStatus });
-        return resolve(testCalculatedStatus);
-    });
+exports.calculateAcceptedStatus = async function calculateAcceptedStatus(testId) {
+    const checksInTest = await Check.find({ test: testId });
+    const statuses = checksInTest.map((x) => x.markedAs);
+    if (statuses.length < 1) {
+        return 'Unaccepted';
+    }
+    let testCalculatedStatus = 'Unaccepted';
+    if (statuses.some((x) => x === 'accepted')) {
+        testCalculatedStatus = 'Partially';
+    }
+    if (statuses.every((x) => x === 'accepted')) {
+        testCalculatedStatus = 'Accepted';
+    }
+    // console.log({ testCalculatedStatus });
+    return testCalculatedStatus;
 };
