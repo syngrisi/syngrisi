@@ -21,9 +21,9 @@
                 </div>
                 <div class="card fat content">
                     <div class="card-body">
-                        <h4 class="card-title">Change Password</h4>
-                        <form method="POST" class="my-login-validation" novalidate="" action="/password">
-                            <div id="old_password_group" class="form-group">
+                        <h4 class="card-title">Change Administrator Password</h4>
+                        <form method="POST" class="my-login-validation" novalidate="" action="/first_run_password">
+                            <div id="old_password_group" class="form-group <%= displayOldPassword %>">
                                 <label for="email">Old password</label>
                                 <input id="old-password" type="password" class="form-control" name="old-password"
                                        value="" required

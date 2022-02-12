@@ -12,10 +12,11 @@ const passport = require('passport');
 const {
     ensureLoggedIn,
     ensureApiKey,
+    ensureLoggedInOrApiKey,
 } = require('../../lib/ensureLogin/ensureLoggedIn');
+const UI = require('../controllers/ui/ui_controller');
 
 module.exports = async function (app) {
-    const UI = require('../controllers/ui/ui_controller');
     const API = require('../controllers/api/api_controller');
 
     await app
@@ -34,18 +35,15 @@ module.exports = async function (app) {
         .get('/', ensureLoggedIn(),
             (req, res, next) => {
                 UI.index(req, res)
-                    .catch(next)
                     .catch(next);
             })
         .get('/runs', ensureLoggedIn(),
             (req, res, next) => {
                 UI.runs(req, res)
-                    .catch(next)
                     .catch(next);
             })
         .get('/affectedelements', ensureApiKey(), async function (req, res, next) {
             API.affectedElements(req, res)
-                .catch(next)
                 .catch(next);
         })
         .get('/checksgroupview', ensureLoggedIn(), async function (req, res, next) {
@@ -66,6 +64,12 @@ module.exports = async function (app) {
         })
         .get('/changepassword', ensureLoggedIn(), (req, res) => {
             UI.changePasswordPage(req, res);
+        })
+        .get('/first_run_password', (req, res) => {
+            UI.firstRunPage(req, res);
+        })
+        .post('/first_run_password', (req, res) => {
+            API.firstRunAdminPassword(req, res);
         })
         .get('/users', ensureLoggedIn(), async function (req, res, next) {
             API.getUsers(req, res)
@@ -223,17 +227,17 @@ module.exports = async function (app) {
             API.task_migration_1_1_0(req, res)
                 .catch(next);
         })
-        .get('/task_remove_empty_tests', ensureLoggedIn(), async (req, res, next) => {
+        .get('/task_remove_empty_tests', ensureLoggedInOrApiKey(), async (req, res, next) => {
             req.log.trace(`get '/task_remove_empty_tests' queue pending count: `, queue.pending);
             await queue.add(() => API.task_remove_empty_tests(req, res)
                 .catch(next));
         })
-        .get('/task_remove_old_tests', ensureLoggedIn(), async (req, res, next) => {
+        .get('/task_remove_old_tests', ensureLoggedInOrApiKey(), async (req, res, next) => {
             req.log.trace(`get '/task_remove_old_tests' queue pending count: `, queue.pending);
             await queue.add(() => API.task_remove_old_tests(req, res)
                 .catch(next));
         })
-        .get('/task_remove_empty_runs', ensureLoggedIn(), async (req, res, next) => {
+        .get('/task_remove_empty_runs', ensureLoggedInOrApiKey(), async (req, res, next) => {
             req.log.trace(`get '/task_remove_empty_runs' queue pending count: `, queue.pending);
             await queue.add(() => API.task_remove_empty_runs(req, res)
                 .catch(next));

@@ -4,9 +4,9 @@ const { When } = require('cucumber');
 When(/^I parse the API key$/, function () {
     const apiKey = $('#notification-textarea')
         .getValue();
-    this.saveItem('apiKey', apiKey);
+    this.saveItem('apiKey', { value: apiKey });
 });
 
 When(/^I set the API key in config$/, function () {
-    browser.config.apiKey = this.getSavedItem('apiKey');
+    browser.config.apiKey = this.getSavedItem('apiKey').value;
 });

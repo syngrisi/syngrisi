@@ -398,6 +398,33 @@ exports.removeUser = async function (req, res) {
     }
 };
 
+exports.firstRunAdminPassword = async function (req, res) {
+    const params = req.body;
+    console.log(req.body);
+    const logOpts = {
+        scope: 'firstRunAdminPassword',
+        msgType: 'CHANGE PWD',
+        itemType: 'administrator',
+    };
+    if (process.env.SYNGRISI_AUTH === '1' && (await global.appSettings.get('firstRun'))) {
+        try {
+            log.debug(`first run, change password for default 'Administrator', params: '${JSON.stringify(params)}'`, $this, logOpts);
+            const user = await User.findOne({ username: 'Administrator' })
+                .exec();
+            await user.setPassword(params['new-password']);
+            await user.save();
+            log.debug('password was successfully changed for default Administrator', $this, logOpts);
+            await global.appSettings.set('firstRun', false);
+            return res.redirect('/logout');
+        } catch (e) {
+            fatalError(req, res, e);
+        }
+    } else {
+        res.status(403)
+            .json({ error: 'Forbidden' });
+    }
+};
+
 exports.changePassword = function (req, res) {
     const params = req.body;
     const logOpts = {
@@ -1259,11 +1286,11 @@ function addMarkedAsOptions(opts, user, mark) {
 exports.acceptCheck = async function acceptCheck(req, res) {
     const checkId = req.params.id;
     const logOpts = {
-        msgType: 'UPDATE',
+        msgType: 'ACCEPT',
         itemType: 'check',
         ref: checkId,
         user: req?.user?.username,
-        scope: 'updateCheck',
+        scope: 'acceptCheck',
     };
     try {
         log.debug(`accept check: ${checkId}`, $this, logOpts);

@@ -26,7 +26,8 @@
         "start": "nodemon --ignore 'mvc/views/lib/*.js' --ignore 'tests' server.js",
         "clear": "mongo VRSdb --eval 'db.vrschecks.drop();db.vrssnapshots.drop();db.vrstests.drop();db.vrsapps.drop();db.vrssuites.drop();db.vrsusers.drop();db.vrslogs.drop();db.vrsruns.drop();db.vrsbaselines.drop();'; rm ./baselines/*.png",
         "start_test": "cross-env VRT_CONN_STRING='mongodb://localhost/VRSdbTest' VRT_PORT=3001 VRT_BASELINE_PATH='./baselinesTest/' nodemon server.js",
-        "clear_test": "mongo VRSdbTest --eval \"db.vrschecks.drop();db.vrssnapshots.drop();db.vrstests.drop();db.vrsapps.drop();db.vrssuites.drop();db.vrsusers.drop();db.vrslogs.drop();db.vrsruns.drop();db.vrsbaselines.drop();\" && rm -f ./baselinesTest/*.png"
+        "clear_test": "mongo VRSdbTest --eval \"db.dropDatabase();\" && rm -f ./baselinesTest/*.png",
+        "clear_test2": "mongo VRSdbTest --eval \"db.vrschecks.drop();db.vrssnapshots.drop();db.vrstests.drop();db.vrsapps.drop();db.vrssuites.drop();db.vrsusers.drop();db.vrslogs.drop();db.vrsruns.drop();db.vrsbaselines.drop();\" && rm -f ./baselinesTest/*.png"
     },
     "author": {
         "name": "Viktar Silakou",
