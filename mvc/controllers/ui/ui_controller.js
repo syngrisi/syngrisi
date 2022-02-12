@@ -349,3 +349,16 @@ exports.changePasswordPage = function (req, res) {
         return fatalError(req, res, e);
     }
 };
+
+exports.firstRunPage = function (req, res) {
+    try {
+        const { version } = require('../../../package.json');
+        const displayOldPassword = req.query.admin ? 'd-none' : '';
+        return res.render('pages/firstRun', {
+            version,
+            displayOldPassword,
+        });
+    } catch (e) {
+        return fatalError(req, res, e);
+    }
+};

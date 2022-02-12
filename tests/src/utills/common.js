@@ -94,6 +94,8 @@ const fillCommonPlaceholders = function fillPlaceholders(str) {
             'currentDate-10': subDays(new Date(), 10),
             testPlatform: browser.config.testPlatform,
             syngrisiUrl: browser.config.syngrisiUrl,
+            serverDomain: browser.config.serverDomain,
+            serverPort: browser.config.serverPort,
         }
     );
 };
@@ -131,6 +133,8 @@ const startServer = (params) => {
     const databaseName = srvOpts.databaseName || 'VRSdbTest';
     const cmdPath = '../';
     const env = Object.create(process.env);
+    env.SYNGRISI_DISABLE_FIRST_RUN = process.env.SYNGRISI_DISABLE_FIRST_RUN || '1';
+    env.SYNGRISI_AUTH = process.env.SYNGRISI_AUTH || '0';
     env.VRS_PORT = srvOpts.port || browser.config.serverPort;
     env.VRS_BASELINE_PATH = srvOpts.baseLineFolder || './baselinesTest/';
     env.VRS_CONN_STRING = `mongodb://localhost/${databaseName}`;

@@ -19,6 +19,7 @@ Feature: Creation by User
         SYNGRISI_AUTH: 1
         """
         Given I start Server and start Driver
+        When I wait for "5" seconds
 
     Scenario: Create as User
         # login as test admin

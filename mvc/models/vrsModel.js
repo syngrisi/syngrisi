@@ -379,6 +379,10 @@ const VRSUserSchema = new Schema({
     },
 });
 
+const VRSSettings = new Schema({
+    firstRun: Boolean,
+});
+
 const passportLocalMongoose = require('passport-local-mongoose');
 
 VRSUserSchema.plugin(passportLocalMongoose, { hashField: 'password' });
@@ -392,3 +396,4 @@ module.exports = mongoose.model('VRSApp', VRSAppSchema);
 module.exports = mongoose.model('VRSRun', VRSRunSchema);
 module.exports = mongoose.model('VRSUser', VRSUserSchema);
 module.exports = mongoose.model('VRSBaseline', VRSBaselineSchema);
+module.exports = mongoose.model('VRSSettings', VRSSettings);

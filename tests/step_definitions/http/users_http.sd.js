@@ -65,5 +65,5 @@ When(/^I generate via http API key for the User$/, async function () {
     console.log({ respBodyJSON: res.json });
     const apiKey = res.json.apikey;
     console.log({ apiKey });
-    this.saveItem('apiKey', apiKey);
+    this.saveItem('apiKey', { value: apiKey });
 });

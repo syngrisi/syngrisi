@@ -101,3 +101,36 @@ Feature: Remove old tests
         Then I expect via http that "Check - 1" check exist exactly "1" times
         Then I expect via http 0 baselines
         Then I expect exact "1" snapshot files
+
+    Scenario: Remove old tests via api [accepted_old, accepted_fresh]
+        When I create "1" tests with params:
+        """
+          testName: Test1
+          checkName: Check - 1
+        """
+        When I accept via http the 1st check with name "Check - 1"
+        When I update via http test with params:
+        """
+          startDate: <currentDate-10>
+        """
+        When I create "1" tests with params:
+        """
+          testName: Test2
+          checkName: Check - 1
+        """
+        When I accept via http the 2st check with name "Check - 1"
+
+        When I wait for "2" seconds
+        Then I expect via http that "Test1 - 1" test exist exactly "1" times
+        Then I expect via http that "Test2 - 1" test exist exactly "1" times
+        Then I expect via http that "Check - 1" check exist exactly "2" times
+        Then I expect via http 2 baselines
+        Then I expect exact "1" snapshot files
+
+        When I open the url "http://<serverDomain>:<serverPort>/task_remove_old_tests?days=9&apikey=<apiKey:value>"
+        When I wait for "2" seconds
+        Then I expect via http that "Test1 - 1" test exist exactly "0" times
+        Then I expect via http that "Test2 - 1" test exist exactly "1" times
+        Then I expect via http that "Check - 1" check exist exactly "1" times
+        Then I expect via http 2 baselines
+        Then I expect exact "1" snapshot files
