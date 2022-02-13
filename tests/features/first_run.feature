@@ -20,3 +20,19 @@ Feature: First run
         When I set "Password-123" to the inputfield "#password"
         When I click on the element "#submit"
         Then I wait on element "*=SA" to be displayed
+
+        # after Administrator password is set this operation should be Forbidden
+        When I open the url "<syngrisiUrl>first_run_password?admin=true"
+        Then I expect HTML contains:
+        """
+        Forbidden
+        """
+
+        # logout and try 'first run' again
+        When I open the url "<syngrisiUrl>logout"
+        Then the current url contains "login"
+        When I open the url "<syngrisiUrl>first_run_password?admin=true"
+        Then I expect HTML contains:
+        """
+        Forbidden
+        """
