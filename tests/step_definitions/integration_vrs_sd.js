@@ -184,9 +184,15 @@ When(/^I click on the element "([^"]*)" via js$/, function (selector) {
         .jsClick();
 });
 
-Then(/^I expect HTML does not contains:$/, function (text) {
-    const source = $('html')
-        .getHTML();
+Then(/^I expect HTML( does not|) contains:$/, function (mode, text) {
+    if (mode === '') {
+        const source = browser
+            .getPageSource();
+        expect(source)
+            .toContain(text);
+    }
+    const source = browser
+        .getPageSource();
     expect(source)
         .not
         .toContain(text);
