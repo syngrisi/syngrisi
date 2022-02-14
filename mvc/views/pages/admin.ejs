@@ -367,11 +367,25 @@
             remove_empty_runs: ` <a class="btn btn-sm btn-dark text-light" onclick="runAndRenderTask('remove_empty_runs');">Start</a>`,
             migration_1_1_0: ` <a class="btn btn-sm btn-dark text-light" onclick="runAndRenderTask('${taskName}');">Start</a>`,
             remove_old_tests: `<label for="test">Remove older that (days): </label>
-                               <input type="text" id="days" name="days" value="30">
-                               <a class="btn btn-sm btn-dark text-light" onclick="runAndRenderTask('remove_old_tests');">Start</a>`,
+                               <input type="text" id="days" name="days" value="30"><br>
+                               <label for="test">Only statistics (maybe slow): </label>
+                               <input type="checkbox" id="statistics" name="statistics" ><br>
+                               <a class="btn btn-sm btn-dark text-light" onclick="runAndRenderTask('remove_old_tests');">Start</a>
+                                <a class="btn btn-sm btn-dark text-light" onclick="clearLogs();">Clear</a>`,
+            remove_old_logs: `<label for="test">Remove older that (days): </label>
+                               <input type="text" id="days" name="days" value="30"><br>
+                               <label for="test">Only statistics: </label>
+                               <input type="checkbox" id="statistics" name="statistics" ><br>
+                               <a class="btn btn-sm btn-dark text-light" onclick="runAndRenderTask('remove_old_logs');">Start</a>
+                               <a class="btn btn-sm btn-dark text-light" onclick="clearLogs();">Clear</a>`,
         };
         const form = document.getElementById('params-form');
         form.innerHTML = allParams[taskName];
+    }
+
+    function clearLogs() {
+        const outputPre = document.getElementById('tasks-output');
+        outputPre.innerText = '';
     }
 
     async function runAndRenderTask(taskName) {
@@ -399,6 +413,7 @@
             last_index = curr_index;
             console.log('PROGRESS:', s);
             outputPre.innerText += s;
+            outputPre.scrollTop = outputPre.scrollHeight;
         };
         xhr.send();
     }

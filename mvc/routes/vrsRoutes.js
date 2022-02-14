@@ -237,6 +237,11 @@ module.exports = async function (app) {
             await queue.add(() => API.task_remove_old_tests(req, res)
                 .catch(next));
         })
+        .get('/task_remove_old_logs', ensureLoggedInOrApiKey(), async (req, res, next) => {
+            req.log.trace(`get '/task_remove_old_logs' queue pending count: `, queue.pending);
+            await queue.add(() => API.task_remove_old_logs(req, res)
+                .catch(next));
+        })
         .get('/task_remove_empty_runs', ensureLoggedInOrApiKey(), async (req, res, next) => {
             req.log.trace(`get '/task_remove_empty_runs' queue pending count: `, queue.pending);
             await queue.add(() => API.task_remove_empty_runs(req, res)

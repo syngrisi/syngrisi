@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-const bsPath = process.env.VRS_BASELINE_PATH || './baselines/'
+const bsPath = process.env.VRS_BASELINE_PATH || './baselines/';
 if (!fs.existsSync(bsPath)){
     fs.mkdirSync(bsPath);
 }
