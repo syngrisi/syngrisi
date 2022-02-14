@@ -26,7 +26,7 @@ npm start
 
 ### Example Project Based on Syngrisi
 
-You can set up the example TA Solution based on [WebdriverIO Cucumber Boilerplate](https://github.com/webdriverio/cucumber-boilerplate) project, it also can be good point to start new TA project from scratch.
+You can set up the [example TA Solution](https://github.com/viktor-silakov/syngrisi-cucumber-example) based on [WebdriverIO Cucumber Boilerplate](https://github.com/webdriverio/cucumber-boilerplate) project, it also can be good point to start new TA project from scratch.
 
 ### Features
 
