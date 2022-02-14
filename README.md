@@ -5,31 +5,28 @@ Syngrisi helps to implement Automated Visual Regression Testing along with your 
 ### Prerequisites
  * [NodeJS](https://nodejs.org/en/download/) `v12` or above, it is preferably to use [nvm](https://github.com/nvm-sh/nvm);
  * [MongoDB Community Edition](https://docs.mongodb.com/manual/administration/install-community/)
- 
+
 ### Quick start
 
 >⚠️ Make sure MongoDB started before run Syngrisi
-
 
 Clone this project:
 ```shell script
 git clone git@github.com:viktor-silakov/syngrisi.git
 ```
-Go to application folder and install Dependencies 
+Go to application folder and install Dependencies
 ```shell script
-npm i
+npm install
 ```
 
 Run Syngrisi server
 ```shell script
-npm run start
+npm start
 ```
 
-### Main concept
+### Example Project Based on Syngrisi
 
-![concept](img/concept.png)
-
-More descriptive flow (with DOM part) see [here](img/flow.png) 
+You can set up the example TA Solution based on [WebdriverIO Cucumber Boilerplate](https://github.com/webdriverio/cucumber-boilerplate) project, it also can be good point to start new TA project from scratch.
 
 ### Features
 
@@ -44,30 +41,23 @@ More descriptive flow (with DOM part) see [here](img/flow.png)
 * Affected elements analyse based on DOM dump and diff image.
 * UI panel to observe results and manage test data (baselines, regions, test, suites, runs. etc.) )
 
-### Advance run options
 
-```shell script
-npm run start # as detached from current shell process
-npm run startdebug # attached to current shell process
-npm run startservice # start like service, required forever module globally (https://www.npmjs.com/package/forever) 
-```
-
-### Clear database
+### Clear database and screenshots files
 
 ```shell script
 npm run clear
 ```
 
 ### Environment variables
- 
+
  `VRS_BASELINE_PATH` - path to baseline images, default value is `./baselines/`
- 
- `VRS_CONN_STRING` - MongoDB connection string, default value is `mongodb://localhost/VRSdb` 
- 
+
+ `VRS_CONN_STRING` - MongoDB connection string, default value is `mongodb://localhost/VRSdb`
+
  `VRS_PORT` - tcp port for application server, default value is `3000`
- 
+
  `V_SHIFTING` - value for vertical page shifting, default value is `0`
- 
+
  `PAGE_SIZE` - number of tests items on that return `/checks?page={page_num}` API
 
  `SYNGRISI_AUTH` - enables authentication if equal `1`
