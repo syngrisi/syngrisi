@@ -15,5 +15,4 @@ coverage
 !.vscode/extensions.json
 yarn.lock
 /.tmp/
-features/debug/debug_1.feature
-features/debug/debug.feature
+/features/debug/
