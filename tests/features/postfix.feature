@@ -15,7 +15,7 @@ Feature: VRS Postfix
     """
       testName: "Postfix integration test"
     """
-    When I open the url "http://vrs:3001/static/app_1.html"
+    When I open the url "http://<serverDomain>:<serverPort>/static/app_1.html"
     When I visually check page as "postfix check"
 
     When I stop VRS session

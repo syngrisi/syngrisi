@@ -47,7 +47,7 @@ Feature: Baseline - Remove checks
         """
         # check baseline without acceptance
         When I parse via http "actual" snapshot for 1st check with name "Check - 1"
-        Then I expect that the snapshot filename is exists
+        Then I expect exact "1" snapshot files
 
         # delete single check
         When I login with user:"j_doe@gmail.com" password "Password-123"
@@ -65,7 +65,7 @@ Feature: Baseline - Remove checks
 
         Then I expect via http that "Check - 1" check exist exactly "0" times
         Then I expect via http that "Baseline Base Flow - 1" test exist exactly "1" times
-        Then I expect that the snapshot filename is not exists
+        Then I expect exact "0" snapshot files
         Then I expect via http 0 baselines
 
     Scenario: Remove Checks, [accepted]

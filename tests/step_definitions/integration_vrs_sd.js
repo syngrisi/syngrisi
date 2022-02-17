@@ -28,11 +28,11 @@ Given(/^I update the VRStest$/, async () => {
 
 When(/^I get all affected elements in current and last successful checks from the server$/, async function () {
     const result = this.getSavedItem('checkDumpResult');
-    console.log({ result });
-    const uri = `${browser.config.syngrisiUrl}affectedelements?checktid=${result._id}&diffid=${result.diffId}`;
+    // console.log({ result });
+    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/affectedelements?checktid=${result._id}&diffid=${result.diffId}`;
     console.log({ uri });
     const affectResp = await got(uri, { headers: { apikey: browser.config.apiKey } });
-    const prevAffectResp = await got(`${browser.config.syngrisiUrl}affectedelements?checktid=${result.lastSuccess}&diffid=${result.diffId}`,
+    const prevAffectResp = await got(`http://${browser.config.serverDomain}:${browser.config.serverPort}/affectedelements?checktid=${result.lastSuccess}&diffid=${result.diffId}`,
         { headers: { apikey: browser.config.apiKey } });
     console.log(affectResp.body);
     console.log(prevAffectResp.body);
@@ -53,7 +53,7 @@ When(/^I visually check page with DOM as "([^"]*)"$/, async function (checkName)
     browser.pause(300);
     const imageBuffer = new Buffer((await browser.saveDocumentScreenshot()), 'base64');
     const checkResult = await checkVRS(checkName, imageBuffer, domDump);
-    console.log({ checkResult });
+    // console.log({ checkResult });
     this.saveItem('checkDump', JSON.parse(checkResult.domDump)[0]);
     this.saveItem('checkDumpResult', checkResult);
 });

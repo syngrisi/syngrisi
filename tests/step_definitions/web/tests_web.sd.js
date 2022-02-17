@@ -136,7 +136,7 @@ When(/^I create "([^"]*)" tests with params:$/, { timeout: 600000 }, async funct
 
     for (const i of Array.from(Array(parseInt(num, 10))
         .keys())) {
-        console.log(`Create test # ${i}`);
+        // console.log(`Create test # ${i}`);
         await browser.vDriver.startTestSession({
             app: params.appName || 'Test App',
             test: `${params.testName} - ${i + 1}`,
@@ -153,7 +153,7 @@ When(/^I create "([^"]*)" tests with params:$/, { timeout: 600000 }, async funct
             .toString(36)
             .substring(7)}`;
         const checkResult = await checkVRS(checkName, imageBuffer);
-        console.log({ checkResult });
+        // console.log({ checkResult });
         this.STATE.check = checkResult;
         await browser.vDriver.stopTestSession(browser.config.apiKey);
     }
@@ -169,7 +169,7 @@ When(/^I create "([^"]*)" tests with::$/, { timeout: 60000000 }, async function 
 
     for (const i of Array.from(Array(parseInt(num, 10))
         .keys())) {
-        console.log(`Create test # ${i}`);
+        // console.log(`Create test # ${i}`);
         await browser.vDriver.startTestSession({
             app: 'Test App',
             branch: 'integration',

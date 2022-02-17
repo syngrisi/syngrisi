@@ -23,7 +23,7 @@ Feature: Logout
         Then I wait on element "*=TA" to be displayed
         When I wait for "2" seconds
 
-        When I open the url "http://vrs:3001/logout"
+        When I go to "logout" page
 
         When I wait for "2" seconds
         When I go to "main" page

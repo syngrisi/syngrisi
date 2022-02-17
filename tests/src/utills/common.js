@@ -39,7 +39,7 @@ const killServer = function (port) {
         try {
             const output = execSync(`npx kill-port ${port}`)
                 .toString();
-            console.log({ output });
+            // console.log({ output });
             return true;
         } catch (e) {
             console.log({ error: e.stdout.toString() });
@@ -93,7 +93,7 @@ const fillCommonPlaceholders = function fillPlaceholders(str) {
             Uuid: faker.datatype.uuid(),
             'currentDate-10': subDays(new Date(), 10),
             testPlatform: browser.config.testPlatform,
-            syngrisiUrl: browser.config.syngrisiUrl,
+            syngrisiUrl: `http://${browser.config.serverDomain}:${browser.config.serverPort}/`,
             serverDomain: browser.config.serverDomain,
             serverPort: browser.config.serverPort,
         }
@@ -127,19 +127,27 @@ const requestWithLastSessionSid = async function requestWithLastSessionSid(uri, 
     };
 };
 
+function getCid() {
+    return parseInt(process.argv.filter((x) => x.includes('CID'))[0].split('-')[1], 10);
+}
+
 const startServer = (params) => {
     const srvOpts = YAML.parse(params) || {};
-
+    const cid = getCid();
     const databaseName = srvOpts.databaseName || 'VRSdbTest';
     const cmdPath = '../';
+    const cidPort = 3001 + cid;
     const env = Object.create(process.env);
     env.SYNGRISI_DISABLE_FIRST_RUN = process.env.SYNGRISI_DISABLE_FIRST_RUN || '1';
     env.SYNGRISI_AUTH = process.env.SYNGRISI_AUTH || '0';
-    env.VRS_PORT = srvOpts.port || browser.config.serverPort;
-    env.VRS_BASELINE_PATH = srvOpts.baseLineFolder || './baselinesTest/';
-    env.VRS_CONN_STRING = `mongodb://localhost/${databaseName}`;
+    // env.VRS_PORT = srvOpts.port || browser.config.serverPort;
+    env.VRS_PORT = cidPort;
+    browser.config.serverPort = cidPort;
+    browser.config.testScreenshotsFolder = `./baselinesTest/${cid}/`;
+    env.VRS_BASELINE_PATH = srvOpts.baseLineFolder || browser.config.testScreenshotsFolder;
+    env.VRS_CONN_STRING = `mongodb://localhost/${databaseName}${cid}`;
     const child = spawn('node',
-        ['server.js'], {
+        ['server.js', 'syngrisi_test_server'], {
             env,
             shell: process.platform === 'win32',
             cwd: cmdPath,
@@ -158,25 +166,21 @@ const startServer = (params) => {
     browser.pause(2500);
     browser.waitUntil(async () => {
         const res = (await got.get(`http://${browser.config.serverDomain}:`
-            + `${srvOpts.port || browser.config.serverPort}/status`, { throwHttpErrors: false })
+            + `${cidPort}/status`, { throwHttpErrors: false })
             .json());
         console.log({ isAlive: res.alive });
         return (res.alive === true);
     });
-    console.log(`SERVER IS STARTED, PID: '${child.pid}'`);
+    console.log(`SERVER IS STARTED, PID: '${child.pid}' port: '${cidPort}'`);
     browser.syngrisiServer = child;
 };
 
 const stopServer = function () {
     try {
-        console.log(`THE SYNGRISI SERVER PID: '${browser.syngrisiServer.pid}'`);
-        if (process.platform === 'win32') {
-            killServer(browser.config.serverPort);
-            return;
-        }
-        if (browser.syngrisiServer) {
-            browser.syngrisiServer.kill();
-        }
+        console.log('try to kill server');
+        const output = execSync('pkill -f syngrisi_test_server')
+            .toString();
+        // console.log({ output });
     } catch (e) {
         console.log('WARNING: cannot stop te Syngrisi server via child, try to kill process');
         killServer(browser.config.serverPort);
@@ -187,7 +191,7 @@ const clearDatabase = function () {
     const cmdPath = '../';
     const result = execSync('npm run clear_test', { cwd: cmdPath })
         .toString('utf8');
-    console.log({ result });
+    // console.log({ result });
 };
 
 const startDriver = function (params) {

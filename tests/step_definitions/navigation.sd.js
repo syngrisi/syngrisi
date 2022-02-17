@@ -3,6 +3,8 @@ When(/^I go to "([^"]*)" page$/, function (str) {
     const pages = {
         main: `http://${browser.config.serverDomain}:${browser.config.serverPort}/`,
         runs: `http://${browser.config.serverDomain}:${browser.config.serverPort}/runs`,
+        changepassword: `http://${browser.config.serverDomain}:${browser.config.serverPort}/changepassword`,
+        logout: `http://${browser.config.serverDomain}:${browser.config.serverPort}/logout`,
         admin: {
             users: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin?task=users`,
         },
@@ -29,7 +31,7 @@ Then(/^the current url contains "([^"]*)"$/, (url) => {
 });
 
 Given(/^I open the app$/, () => {
-    browser.url(browser.config.syngrisiUrl);
+    browser.url(`http://${browser.config.serverDomain}:${browser.config.serverPort}/`);
     browser.pause(2000);
 });
 

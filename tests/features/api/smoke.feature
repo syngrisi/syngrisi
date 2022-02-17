@@ -8,7 +8,7 @@ Feature: Smoke VRS API
         Given I setup VRS driver
 
     Scenario: New test
-        When I send "post" request to "http://vrs:3001/tests" with:
+        When I send "post" request to "http://<serverDomain>:<serverPort>/tests" with:
         """
         form:
           name: Test VRS API Smoke
@@ -33,7 +33,7 @@ Feature: Smoke VRS API
     Scenario: Check Phase 1
         When I create via http new VRS Test with:
           """
-            url: http://vrs:3001/tests
+            url: http://<serverDomain>:<serverPort>/tests
             params:
               name: Test Check Phase 1
               status: passed
@@ -44,7 +44,7 @@ Feature: Smoke VRS API
         Given I generate a random image "./files/randomImg.png"
         Given I create via http new VRS Check with:
           """
-            url: http://vrs:3001/checks
+            url: http://<serverDomain>:<serverPort>/checks
             hashFilePath: ./files/randomImg.png
             params:
               testname: Test Check Phase 1
@@ -67,7 +67,7 @@ Feature: Smoke VRS API
 
         When I create via http new VRS Test with:
           """
-            url: http://vrs:3001/tests
+            url: http://<serverDomain>:<serverPort>/tests
             params:
               name: Test Check Phase 1-2
               status: passed
@@ -78,7 +78,7 @@ Feature: Smoke VRS API
         Given I generate a random image "./files/randomImg.png"
         Given I create via http new VRS Check with:
           """
-            url: http://vrs:3001/checks
+            url: http://<serverDomain>:<serverPort>/checks
             hashFilePath: ./files/randomImg.png
             params:
               testname: Test Check Phase 1-2
@@ -91,7 +91,7 @@ Feature: Smoke VRS API
           """
         Given I create via http new VRS Check with:
           """
-            url: http://vrs:3001/checks
+            url: http://<serverDomain>:<serverPort>/checks
             hashFilePath: ./files/randomImg.png
             file: ./files/randomImg.png
             params:
@@ -118,7 +118,7 @@ Feature: Smoke VRS API
     # this section is needed to create snapshoot with test with other name
         When I create via http new VRS Test with:
           """
-            url: http://vrs:3001/tests
+            url: http://<serverDomain>:<serverPort>/tests
             params:
               name: Test Check Phase 1-2 already exist - 1
               status: passed
@@ -129,7 +129,7 @@ Feature: Smoke VRS API
         Given I generate a random image "./files/randomImg.png"
         Given I create via http new VRS Check with:
           """
-            url: http://vrs:3001/checks
+            url: http://<serverDomain>:<serverPort>/checks
             hashFilePath: ./files/randomImg.png
             params:
               testname: Test Check Phase 1-2 already exist - 1
@@ -153,7 +153,7 @@ Feature: Smoke VRS API
 
         Given I create via http new VRS Check with:
           """
-            url: http://vrs:3001/checks
+            url: http://<serverDomain>:<serverPort>/checks
             hashFilePath: ./files/randomImg.png
             file: ./files/randomImg.png
             params:
@@ -182,7 +182,7 @@ Feature: Smoke VRS API
 
         When I create via http new VRS Test with:
           """
-            url: http://vrs:3001/tests
+            url: http://<serverDomain>:<serverPort>/tests
             params:
               name: Test Check Phase 1-2 already exist - 2
               status: passed
@@ -193,7 +193,7 @@ Feature: Smoke VRS API
 
         When I create via http new VRS Check with:
           """
-            url: http://vrs:3001/checks
+            url: http://<serverDomain>:<serverPort>/checks
             hashFilePath: ./files/randomImg.png
             params:
               testname: Test Check Phase 1-2 already exist - 2

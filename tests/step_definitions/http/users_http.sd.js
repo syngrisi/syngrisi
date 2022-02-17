@@ -5,9 +5,9 @@ const { requestWithLastSessionSid } = require('../../src/utills/common');
 
 When(/^I create via http test user$/, async function () {
     const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/loadTestUser`;
-    console.log({ uri });
+    // console.log({ uri });
     const res = await got.get(uri);
-    console.log({ response: res.body });
+    // console.log({ response: res.body });
     expect(JSON.parse(res.body).username)
         .toBe('Test');
 });
@@ -29,7 +29,7 @@ When(/^I login via http with user:"([^"]*)" password "([^"]*)"$/, async function
     // console.log({ Body: res.body });
     const sessionSid = res.headers['set-cookie'][0].split(';')
         .filter((x) => x.includes('connect.sid'))[0].split('=')[1];
-    console.log({ sessionSid });
+    // console.log({ sessionSid });
 
     this.saveItem('users', {
         [login]: { sessionSid },
@@ -42,7 +42,7 @@ When(/^I create via http user as:"([^"]*)" with params:$/, async function (user,
     const params = JSON.parse(json);
     const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/users`;
     const { sessionSid } = this.getSavedItem('users')[user];
-    console.log({ sessionSid });
+    // console.log({ sessionSid });
 
     const res = await requestWithLastSessionSid(`${uri}`,
         this,
@@ -56,14 +56,14 @@ When(/^I create via http user as:"([^"]*)" with params:$/, async function (user,
                 password: params.password,
             },
         });
-    console.log({ respBody: res.json });
+    // console.log({ respBody: res.json });
 });
 
 When(/^I generate via http API key for the User$/, async function () {
     const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/apikey`;
     const res = await requestWithLastSessionSid(uri, this);
-    console.log({ respBodyJSON: res.json });
+    // console.log({ respBodyJSON: res.json });
     const apiKey = res.json.apikey;
-    console.log({ apiKey });
+    // console.log({ apiKey });
     this.saveItem('apiKey', { value: apiKey });
 });

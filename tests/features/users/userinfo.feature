@@ -23,7 +23,7 @@ Feature: Userinfo
         Then I wait on element "*=TA" to be displayed
 
         When I wait for "5" seconds
-        When I open the url "http://vrs:3001/userinfo"
+        When I open the url "http://<serverDomain>:<serverPort>/userinfo"
         When I wait for "1" seconds
         Then page source match:
         """

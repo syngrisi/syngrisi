@@ -2,7 +2,7 @@
 const { When, Given } = require('cucumber');
 const YAML = require('yaml');
 const {
-    startServer, stopServer, killServer, clearDatabase, startDriver, startSession
+    startServer, stopServer, killServer, clearDatabase, startDriver, startSession,
 } = require('../src/utills/common');
 
 When(/^I kill process which used port: "([^"]*)"$/, (port) => {

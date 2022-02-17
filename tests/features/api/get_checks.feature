@@ -46,8 +46,8 @@ Feature: Get Checks
         When I stop VRS session
 
         # check 1st page response
-        When I open the url "http://vrs:3001/checks?page=1"
-        When I send "get" request to "http://vrs:3001/checks?page=1" with:
+        When I open the url "http://<serverDomain>:<serverPort>/checks?page=1"
+        When I send "get" request to "http://<serverDomain>:<serverPort>/checks?page=1" with:
         """
         """
         When I expect the "get" 1st value response with:
@@ -67,8 +67,8 @@ Feature: Get Checks
         """
 
         # check 2nd page response
-        When I open the url "http://vrs:3001/checks?page=2"
-        When I send "get" request to "http://vrs:3001/checks?page=2" with:
+        When I open the url "http://<serverDomain>:<serverPort>/checks?page=2"
+        When I send "get" request to "http://<serverDomain>:<serverPort>/checks?page=2" with:
         """
         """
 #        When I START DEBUGGER
@@ -120,7 +120,7 @@ Feature: Get Checks
         When I stop VRS session
 
         # check 1st page response
-        When I send "get" request to "http://vrs:3001/checks?page=1&sort_name_1" with:
+        When I send "get" request to "http://<serverDomain>:<serverPort>/checks?page=1&sort_name_1" with:
         """
         """
         When I expect the "get" 1st value response with:
@@ -140,7 +140,7 @@ Feature: Get Checks
         """
 
         # check 2nd page response
-        When I send "get" request to "http://vrs:3001/checks?page=2&sort_name_1" with:
+        When I send "get" request to "http://<serverDomain>:<serverPort>/checks?page=2&sort_name_1" with:
         """
         """
         When I expect the "get" 1st value response with:
@@ -191,8 +191,7 @@ Feature: Get Checks
         When I stop VRS session
 
         # check 1st page response
-#        When I send "get" request to "http://vrs:3001/checks?page=1&sortprop=name&sortorder=-1" with:
-        When I send "get" request to "http://vrs:3001/checks?page=1&sort_name_-1" with:
+        When I send "get" request to "http://<serverDomain>:<serverPort>/checks?page=1&sort_name_-1" with:
         """
         """
         When I expect the "get" 1st value response with:
@@ -212,7 +211,7 @@ Feature: Get Checks
         """
 
         # check 2nd page response
-        When I send "get" request to "http://vrs:3001/checks?page=2&sort_name_-1" with:
+        When I send "get" request to "http://<serverDomain>:<serverPort>/checks?page=2&sort_name_-1" with:
         """
         """
         When I expect the "get" 1st value response with:
@@ -263,7 +262,7 @@ Feature: Get Checks
         When I stop VRS session
 
         # check 1st page response
-        When I send "get" request to "http://vrs:3001/checks?page=1&sort_updatedDate_-1" with:
+        When I send "get" request to "http://<serverDomain>:<serverPort>/checks?page=1&sort_updatedDate_-1" with:
         """
         """
         When I expect the "get" 1st value response with:
@@ -283,7 +282,7 @@ Feature: Get Checks
         """
 
         # check 2nd page response
-        When I send "get" request to "http://vrs:3001/checks?page=2&sort_updatedDate_-1" with:
+        When I send "get" request to "http://<serverDomain>:<serverPort>/checks?page=2&sort_updatedDate_-1" with:
         """
         """
         When I expect the "get" 1st value response with:
@@ -339,7 +338,7 @@ Feature: Get Checks
         When I stop VRS session
 
         # Suite1 - check 1st page response
-        When I send "get" request to "http://vrs:3001/checks?page=1&filter_suitename_eq=Suite1" with:
+        When I send "get" request to "http://<serverDomain>:<serverPort>/checks?page=1&filter_suitename_eq=Suite1" with:
         """
         """
         When I expect the "get" 1st value response with:
@@ -359,7 +358,7 @@ Feature: Get Checks
         """
 
         # Suite1 - check 2nd page response
-        When I send "get" request to "http://vrs:3001/checks?page=2&filter_suitename_eq=Suite1" with:
+        When I send "get" request to "http://<serverDomain>:<serverPort>/checks?page=2&filter_suitename_eq=Suite1" with:
         """
         """
         When I expect the "get" 1st value response with:
@@ -369,7 +368,7 @@ Feature: Get Checks
         """
 
         # Suite2 - check 1st page response
-        When I send "get" request to "http://vrs:3001/checks?page=1&filter_suitename_eq=Suite2" with:
+        When I send "get" request to "http://<serverDomain>:<serverPort>/checks?page=1&filter_suitename_eq=Suite2" with:
         """
         """
         When I expect the "get" 1st value response with:
@@ -421,7 +420,7 @@ Feature: Get Checks
         When I stop VRS session
 
         # Suite1 - check 1st page response
-        When I send "get" request to "http://vrs:3001/checks?page=1&sort_name_1&filter_suitename_eq=Suite1" with:
+        When I send "get" request to "http://<serverDomain>:<serverPort>/checks?page=1&sort_name_1&filter_suitename_eq=Suite1" with:
         """
         """
         When I expect the "get" 1st value response with:
@@ -441,7 +440,7 @@ Feature: Get Checks
         """
 
         # Suite1 - check 2nd page response
-        When I send "get" request to "http://vrs:3001/checks?page=2&sort_name_1&filter_suitename_eq=Suite1" with:
+        When I send "get" request to "http://<serverDomain>:<serverPort>/checks?page=2&sort_name_1&filter_suitename_eq=Suite1" with:
         """
         """
         When I expect the "get" 1st value response with:
@@ -451,7 +450,7 @@ Feature: Get Checks
         """
 
         # Suite2 - check 1st page response
-        When I send "get" request to "http://vrs:3001/checks?page=1&sort_name_1&filter_suitename_eq=Suite2" with:
+        When I send "get" request to "http://<serverDomain>:<serverPort>/checks?page=1&sort_name_1&filter_suitename_eq=Suite2" with:
         """
         """
         When I expect the "get" 1st value response with:
