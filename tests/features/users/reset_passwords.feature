@@ -47,7 +47,7 @@ Feature: Reset Password
         Then I wait on element "*=JD" to be displayed
 
         # change password
-        When I open the url "http://vrs:3001/changepassword"
+        When I go to "changepassword" page
         When I set "Password-123" to the inputfield "#old-password"
         When I set "Password-456" to the inputfield "#new-password"
         When I set "Password-456" to the inputfield "#new-password2"

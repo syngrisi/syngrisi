@@ -41,7 +41,7 @@ Feature: Creation by User
         When I wait for "3" seconds
         Then I expect that element "//input[@name='username' and @value='j_doe@gmail.com']/../..//input[@name='firstName' and @value='John']/../..//input[@name='lastName' and @value='Doe']" is displayed
 
-        When I open the url "http://vrs:3001/logout"
+        When I go to "logout" page
         When I wait for "1" seconds
 
         # login by user
@@ -72,7 +72,7 @@ Feature: Creation by User
         Then I expect that "1" check preview tooltip "created by" field equal to "j_doe@gmail.com"
 
         # the check validation as test admin
-        When I open the url "http://vrs:3001/logout"
+        When I go to "logout" page
         When I wait for "2" seconds
 
         When I login with user:"Test" password "123"

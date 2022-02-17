@@ -8,7 +8,7 @@ Feature: Start/Stop session
 
   Scenario: Start/Stop Session - New
     # Start
-    When I send "post" request to "http://vrs:3001/tests" with:
+    When I send "post" request to "http://<serverDomain>:<serverPort>/tests" with:
     """
     form:
       name: Test VRS API Smoke - Start/Stop Session
@@ -48,7 +48,7 @@ Feature: Start/Stop session
 
 
     # Stop
-    When I send "post" request to "http://vrs:3001/session/<post: _id>" with:
+    When I send "post" request to "http://<serverDomain>:<serverPort>/session/<post: _id>" with:
     """
     form:
       testId: <post: _id>
@@ -70,7 +70,7 @@ Feature: Start/Stop session
 
   Scenario: Start/Stop Session - New, Passed
     # Start - New
-    When I send "post" request to "http://vrs:3001/tests" with:
+    When I send "post" request to "http://<serverDomain>:<serverPort>/tests" with:
     """
     form:
       name: Test VRS API Smoke - Start/Stop Session
@@ -111,7 +111,7 @@ Feature: Start/Stop session
 
 
     # Stop - New
-    When I send "post" request to "http://vrs:3001/session/<post: _id>" with:
+    When I send "post" request to "http://<serverDomain>:<serverPort>/session/<post: _id>" with:
     """
     form:
       testId: <post: _id>
@@ -131,7 +131,7 @@ Feature: Start/Stop session
     """
 
     # Start - Passed
-    When I send "post" request to "http://vrs:3001/tests" with:
+    When I send "post" request to "http://<serverDomain>:<serverPort>/tests" with:
     """
     form:
       name: Test VRS API Smoke - Start/Stop Session
@@ -170,7 +170,7 @@ Feature: Start/Stop session
     When I check image with path: "files/A.png" as "stop session check_01"
 
     # Stop - Passed
-    When I send "post" request to "http://vrs:3001/session/<post: _id>" with:
+    When I send "post" request to "http://<serverDomain>:<serverPort>/session/<post: _id>" with:
     """
     form:
       testId: <post: _id>
@@ -191,7 +191,7 @@ Feature: Start/Stop session
 
   Scenario: Start/Stop Session - New, Failed
     # Start - New
-    When I send "post" request to "http://vrs:3001/tests" with:
+    When I send "post" request to "http://<serverDomain>:<serverPort>/tests" with:
     """
     form:
       name: Test VRS API Smoke - Start/Stop Session
@@ -231,7 +231,7 @@ Feature: Start/Stop session
 
 
     # Stop - New
-    When I send "post" request to "http://vrs:3001/session/<post: _id>" with:
+    When I send "post" request to "http://<serverDomain>:<serverPort>/session/<post: _id>" with:
     """
     form:
       testId: <post: _id>
@@ -251,7 +251,7 @@ Feature: Start/Stop session
     """
 
     # Start - Failed
-    When I send "post" request to "http://vrs:3001/tests" with:
+    When I send "post" request to "http://<serverDomain>:<serverPort>/tests" with:
     """
     form:
       name: Test VRS API Smoke - Start/Stop Session
@@ -290,7 +290,7 @@ Feature: Start/Stop session
     When I check image with path: "files/B.png" as "stop session check_01"
 
     # Stop - Failed
-    When I send "post" request to "http://vrs:3001/session/<post: _id>" with:
+    When I send "post" request to "http://<serverDomain>:<serverPort>/session/<post: _id>" with:
     """
     form:
       testId: <post: _id>
@@ -312,7 +312,7 @@ Feature: Start/Stop session
 
   Scenario: Start/Stop Session - New, Passed, Failed
     # Start - New
-    When I send "post" request to "http://vrs:3001/tests" with:
+    When I send "post" request to "http://<serverDomain>:<serverPort>/tests" with:
     """
     form:
       name: Test VRS API Smoke - Start/Stop Session
@@ -352,7 +352,7 @@ Feature: Start/Stop session
 
 
     # Stop - New
-    When I send "post" request to "http://vrs:3001/session/<post: _id>" with:
+    When I send "post" request to "http://<serverDomain>:<serverPort>/session/<post: _id>" with:
     """
     form:
       testId: <post: _id>
@@ -372,7 +372,7 @@ Feature: Start/Stop session
     """
 
     # Start - Passed
-    When I send "post" request to "http://vrs:3001/tests" with:
+    When I send "post" request to "http://<serverDomain>:<serverPort>/tests" with:
     """
     form:
       name: Test VRS API Smoke - Start/Stop Session
@@ -411,7 +411,7 @@ Feature: Start/Stop session
     When I check image with path: "files/A.png" as "stop session check_01"
 
     # Stop - Passed
-    When I send "post" request to "http://vrs:3001/session/<post: _id>" with:
+    When I send "post" request to "http://<serverDomain>:<serverPort>/session/<post: _id>" with:
     """
     form:
       testId: <post: _id>
@@ -431,7 +431,7 @@ Feature: Start/Stop session
     """
 
      # Start - Failed
-    When I send "post" request to "http://vrs:3001/tests" with:
+    When I send "post" request to "http://<serverDomain>:<serverPort>/tests" with:
     """
     form:
       name: Test VRS API Smoke - Start/Stop Session
@@ -470,7 +470,7 @@ Feature: Start/Stop session
     When I check image with path: "files/B.png" as "stop session check_01"
 
     # Stop - Failed
-    When I send "post" request to "http://vrs:3001/session/<post: _id>" with:
+    When I send "post" request to "http://<serverDomain>:<serverPort>/session/<post: _id>" with:
     """
     form:
       testId: <post: _id>

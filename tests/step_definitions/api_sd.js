@@ -2,6 +2,7 @@
 const frisby = require('frisby');
 const { When } = require('cucumber');
 const YAML = require('yaml');
+const { fillCommonPlaceholders } = require('../src/utills/common');
 
 When(/^I send "([^"]*)" request to "([^"]*)"$/, async function (reqType, url) {
     const responce = frisby[reqType](url);
@@ -9,9 +10,9 @@ When(/^I send "([^"]*)" request to "([^"]*)"$/, async function (reqType, url) {
 });
 
 When(/^I send "([^"]*)" request to "([^"]*)" with:$/, async function (reqType, url, yml) {
-    url = YAML.parse(this.fillItemsPlaceHolders(url));
+    url = YAML.parse(this.fillItemsPlaceHolders(fillCommonPlaceholders(url)));
     let params;
-    if (yml) params = YAML.parse(this.fillItemsPlaceHolders(yml));
+    if (yml) params = YAML.parse(this.fillItemsPlaceHolders(fillCommonPlaceholders(yml)));
     let response;
     switch (reqType) {
         case 'post': {

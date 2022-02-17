@@ -7,17 +7,17 @@ const { default: checkVRS } = require('../../src/support/check/checkVrs');
 When(/^I remove via http (\d+)st check with name "([^"]*)"$/, async function (num, name) {
     const testUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
         + `checks/byfilter?name=${name}`;
-    console.log({ uri: testUri });
+    // console.log({ uri: testUri });
     const check = (await requestWithLastSessionSid(
         testUri,
         this
     )).json[num - 1];
-    console.log({ check });
+    // console.log({ check });
     const id = check._id;
 
     const removeCheckUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
         + `checks/${id}`;
-    console.log({ uri: removeCheckUri });
+    // console.log({ uri: removeCheckUri });
     const result = (await requestWithLastSessionSid(
         removeCheckUri,
         this,
@@ -26,20 +26,20 @@ When(/^I remove via http (\d+)st check with name "([^"]*)"$/, async function (nu
             form: { id: id }
         }
     )).json;
-    console.log({ result });
+    // console.log({ result });
 });
 
 When(/^I accept via http the (\d+)st check with name "([^"]*)"$/, async function (num, name) {
 
     const checkUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
         + `checks/byfilter?name=${name}`;
-    console.log({ uri: checkUri });
+    // console.log({ uri: checkUri });
     const checks = (await requestWithLastSessionSid(
         checkUri,
         this
     )).json;
     const check = checks[num - 1];
-    console.log(JSON.stringify(checks, null, '\t'));
+    // console.log(JSON.stringify(checks, null, '\t'));
     const checkId = check._id;
     const checkAcceptUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
         + `checks/${checkId}`;
@@ -56,13 +56,13 @@ When(/^I accept via http the (\d+)st check with name "([^"]*)"$/, async function
             }
         }
     )).json;
-    console.log({ result });
+    // console.log({ result });
 });
 
 When(/^I parse via http "([^"]*)" snapshot for (\d)st check with name "([^"]*)"$/, async function (type, num, name) {
     const checkUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
         + `checks/byfilter?name=${name}`;
-    console.log({ uri: checkUri });
+    // console.log({ uri: checkUri });
     const check = (await requestWithLastSessionSid(
         checkUri,
         this
@@ -71,7 +71,7 @@ When(/^I parse via http "([^"]*)" snapshot for (\d)st check with name "([^"]*)"$
         actual: 'baselineId',
         baseline: 'actualSnapshotId'
     };
-    console.log({ check });
+    // console.log({ check });
 
     const snapshotId = check[transformType[type]];
     console.log({ snapshotId });
@@ -91,7 +91,7 @@ When(/^I check image with path: "([^"]*)" as "([^"]*)"$/, async function (filePa
     browser.pause(300);
     const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${filePath}`);
     const checkResult = await checkVRS(checkName, imageBuffer);
-    console.log({ checkResult });
+    // console.log({ checkResult });
     this.STATE.check = checkResult;
 });
 

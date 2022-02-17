@@ -13,8 +13,8 @@ Feature: Remove tests
         Given I stop the Syngrisi server
         When I set env variables:
         """
-        TEST: 0
-        SYNGRISI_AUTH: 1
+          TEST: 0
+          SYNGRISI_AUTH: 1
         """
         Given I start Server and start Driver
 
@@ -44,7 +44,7 @@ Feature: Remove tests
         """
         When I wait for "2" seconds
         When I parse via http "actual" snapshot for 1st check with name "Check - 1"
-        Then I expect that the snapshot filename is exists
+        Then I expect exact "1" snapshot files
 
         # delete single test
         When I login with user:"j_doe@gmail.com" password "Password-123"
@@ -61,7 +61,7 @@ Feature: Remove tests
         Then I expect via http that "Check - 1" check exist exactly "0" times
         Then I expect via http that "Remove tests - 1" test exist exactly "0" times
         When I wait for "3" seconds
-        Then I expect that the snapshot filename is not exists
+        Then I expect exact "0" snapshot files
         Then I expect via http 0 baselines
 
     @smoke

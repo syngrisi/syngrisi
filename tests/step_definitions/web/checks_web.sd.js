@@ -100,11 +100,11 @@ Then(/^I expect that "([^"]*)" check preview tooltip "([^"]*)" field equal to "(
     const value2 = fillCommonPlaceholders(value);
     const checkTitle = $(`(//canvas[contains(@class, 'snapshoot-canvas')])[${checkNum}]`)
         .getAttribute('title');
-    console.log({ checkTitle });
+    // console.log({ checkTitle });
     const regex = new RegExp(`${field}: (.+?)[<]`, 'gm');
-    console.log({ regex });
+    // console.log({ regex });
     const match = regex.exec(checkTitle);
-    console.log({ match });
+    // console.log({ match });
     expect(match[0])
         .toContain(value2);
 });

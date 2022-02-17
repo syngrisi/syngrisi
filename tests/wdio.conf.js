@@ -9,7 +9,8 @@ exports.config = {
     testPlatform: process.env.TEST_PLATFORM || 'macOS',
     serverPort: 3001,
     serverDomain: 'vrs',
-    syngrisiUrl: 'http://vrs:3001/',
+    // syngrisiUrl: 'http://vrs:3001/',
+    testScreenshotsFolder: '',
     apiKey: process.env.SYNGRISI_API_KEY ? hasha(process.env.SYNGRISI_API_KEY) : '123',
     runner: 'local',
     specs: [
@@ -57,7 +58,7 @@ exports.config = {
     connectionRetryTimeout: 90000,
     connectionRetryCount: 3,
     services: [
-        [WdioScreenshot], ['chromedriver',
+        [WdioScreenshot], 'shared-store', ['chromedriver',
             {
                 port: 7777,
             }]],

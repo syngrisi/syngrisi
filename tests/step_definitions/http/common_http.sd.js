@@ -6,7 +6,7 @@ const { requestWithLastSessionSid } = require('../../src/utills/common');
 Then(/^I expect via http that "([^"]*)" (test|check) exist exactly "([^"]*)" times$/, async function (name, itemName, num) {
     const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
         + `${itemName}s/byfilter?name=${name}`;
-    console.log({ uri: uri });
+    // console.log({ uri: uri });
     const items = (await requestWithLastSessionSid(
         uri,
         this
@@ -17,17 +17,14 @@ Then(/^I expect via http that "([^"]*)" (test|check) exist exactly "([^"]*)" tim
 
 Then(/^I expect via http ([\d]+)st (test|check) filtered as "([^"]*)" matched:$/, async function (num, itemName, filter, yml) {
     const url = encodeURI(`http://${browser.config.serverDomain}:${browser.config.serverPort}/${itemName}s/byfilter?${filter}`);
-    console.log({ url });
+    // console.log({ url });
     const items = (await requestWithLastSessionSid(
         url,
         this
     )).json;
-    console.log({ items });
+    // console.log({ items });
     const params = YAML.parse(yml);
     const item = items[parseInt(num, 10) - 1];
     expect(item)
         .toMatchObject(params);
 });
-
-
-

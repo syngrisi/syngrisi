@@ -20,7 +20,7 @@ Feature: Runs Smoke
         Then the "check" "status" should be "new"
 
         When I stop VRS session
-        When I open the url "http://vrs:3001/runs"
+        When I go to "runs" page
 
         Then I wait and refresh page on element "span=RUN-01" for "3" seconds to exist
         When I click on the element "span=RUN-01"
@@ -61,7 +61,7 @@ Feature: Runs Smoke
         When I stop VRS session
 
         # assert
-        When I open the url "http://vrs:3001/runs"
+        When I go to "runs" page
 
         Then I wait and refresh page on element "span=RUN-02" for "3" seconds to exist
         Then I expect that element "//span[text()='RUN-02']/../..//span[@class='new-run-test-status']" to have text "2"
@@ -117,7 +117,7 @@ Feature: Runs Smoke
         When I stop VRS session
 
         # assert
-        When I open the url "http://vrs:3001/runs"
+        When I go to "runs" page
 
         Then I wait and refresh page on element "span=RUN-02" for "3" seconds to exist
         Then I expect that element "//span[text()='RUN-02']/../..//span[@class='new-run-test-status']" to have text "2"
@@ -176,7 +176,7 @@ Feature: Runs Smoke
         When I stop VRS session
 
         # ASSERT
-        When I open the url "http://vrs:3001/runs"
+        When I go to "runs" page
 
         # first run
         Then I wait and refresh page on element "span=RUN-03" for "3" seconds to exist
@@ -225,7 +225,7 @@ Feature: Runs Smoke
           filePath: files/A.png
           testName: test1
         """
-        When I open the url "http://vrs:3001/runs"
+        When I go to "runs" page
 
 
         When I set env variables:
@@ -238,7 +238,7 @@ Feature: Runs Smoke
           filePath: files/A.png
           testName: test2
         """
-        When I open the url "http://vrs:3001/runs"
+        When I go to "runs" page
 
         # check tests quantities
         When I click on the element "(//span[text()='SAME NAME'])[1]"
@@ -263,7 +263,7 @@ Feature: Runs Smoke
           filePath: files/A.png
           testName: Delete me
         """
-        When I open the url "http://vrs:3001/runs"
+        When I go to "runs" page
 
 
         When I set env variables:
@@ -276,7 +276,7 @@ Feature: Runs Smoke
           filePath: files/A.png
           testName: Keep me
         """
-        When I open the url "http://vrs:3001/runs"
+        When I go to "runs" page
 
         # check if tests present in their runs
         When I click on the element "span=TO-DELETE"

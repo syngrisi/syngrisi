@@ -21,7 +21,7 @@ When(/^I update via http test with params:$/, async function (str) {
             form: params,
         },
     )).json;
-    console.log({ result });
+    // console.log({ result });
 });
 
 When(/^I remove via http tests that older than "([^"]*)" days$/, async function (days) {
@@ -39,7 +39,7 @@ When(/^I remove via http tests that older than "([^"]*)" days$/, async function 
 When(/^I remove via http the (\d+)st test with name "([^"]*)"$/, async function (num, name) {
     const testUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
         + `tests/byfilter?name=${name}`;
-    console.log({ uri: testUri });
+    // console.log({ uri: testUri });
     const test = (await requestWithLastSessionSid(
         testUri,
         this
@@ -49,7 +49,7 @@ When(/^I remove via http the (\d+)st test with name "([^"]*)"$/, async function 
 
     const removeTestUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
         + `tests/${id}`;
-    console.log({ uri: removeTestUri });
+    // console.log({ uri: removeTestUri });
     const result = (await requestWithLastSessionSid(
         removeTestUri,
         this,
@@ -58,7 +58,7 @@ When(/^I remove via http the (\d+)st test with name "([^"]*)"$/, async function 
             form: { id: id },
         }
     )).json;
-    console.log({ result });
+    // console.log({ result });
 });
 
 When(/^I create via http new VRS Test with:$/, async function (yml) {
