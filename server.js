@@ -1,5 +1,6 @@
 /* global log */
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const expressSession = require('express-session')({
     secret: 'secret-sss',
     resave: true,
@@ -41,7 +42,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(logger);
 app.use(compression());
-
+app.use(cookieParser());
 
 app.use(fileUpload({
     limits: { fileSize: 50 * 1024 * 1024 },
@@ -49,8 +50,7 @@ app.use(fileUpload({
 
 // mongoose instance connection url connection
 mongoose.Promise = global.Promise;
-mongoose.connect(config.connectionString, {
-});
+mongoose.connect(config.connectionString, {});
 
 const viewPath = path.join(__dirname, 'mvc/views');
 

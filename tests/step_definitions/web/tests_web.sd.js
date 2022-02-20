@@ -138,7 +138,7 @@ When(/^I create "([^"]*)" tests with params:$/, { timeout: 600000 }, async funct
         .keys())) {
         // console.log(`Create test # ${i}`);
         await browser.vDriver.startTestSession({
-            app: params.appName || 'Test App',
+            app: params.appName || params.project || 'Test App',
             test: `${params.testName} - ${i + 1}`,
             run: process.env.RUN_NAME || 'integration_run_name',
             runident: process.env.RUN_IDENT || 'integration_run_ident',

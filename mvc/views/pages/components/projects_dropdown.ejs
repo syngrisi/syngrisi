@@ -1,0 +1,33 @@
+<% if(apps){ %>
+<div name="dropdown-block"
+     class="col-auto d-sm-none d-none  d-lg-inline-block col-flex pl-0 pr-0 align-self-end"
+     title="apply to the baseline one of ignore strategy"
+>
+    <div class="dropdown">
+        <button class="btn dropdown-toggle btn-sm text-light" type="button"
+                id="dropdownProjects" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                style="box-shadow: none; opacity: 1 !important;"
+        >
+            Projects
+        </button>
+
+        <div class="dropdown-menu" aria-labelledby="dropdownMenu" style="z-index: 8888">
+            <% for (const app of apps) {
+                let activeClass = (currentAppId?.toString() === app._id?.toString()) ? 'active' : '';
+            %>
+
+            <a class="dropdown-item small <%= activeClass; %>" href="javascript:void(0)"
+               onclick="setProject('<%= app._id; %>')" title="<%= app.name; %>"><%= app.name; %></a>
+            <% }; %>
+
+            <div class="dropdown-divider"></div>
+            <%
+                activeClass = (!currentAppId || (currentAppId?.toString() === '')) ? 'active' : '';
+            %>
+            <a class="dropdown-item small  <%= activeClass; %>" title="All projects" href="javascript:void(0)"
+               onclick="setProject('')">All projects</a>
+        </div>
+    </div>
+</div>
+
+<% } %>
