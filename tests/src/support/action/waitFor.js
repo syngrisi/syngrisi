@@ -1,6 +1,6 @@
 /**
  * Wait for the given element to be enabled, displayed, or to exist
-* @param  {String}   selector                  Element selector
+ * @param  {String}   selector                  Element selector
  * @param  {String}   ms                       Wait duration (optional)
  * @param  {String}   falseState               Check for opposite state
  * @param  {String}   state                    State to check for (default
@@ -45,6 +45,5 @@ export default (selector, ms, falseState, state) => {
     if (typeof falseState === 'undefined') {
         boolFalseState = false;
     }
-
-    $(selector)[command](intMs, boolFalseState);
+    $(selector)[command]({ reverse: boolFalseState, timeout: intMs });
 };

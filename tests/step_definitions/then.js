@@ -177,7 +177,7 @@ Then(
 );
 
 Then(
-    /^I wait on element "([^"]*)?"(?: for (\d+)ms)*(?: to( not)* (be checked|be enabled|be selected|be displayed|contain a text|contain a value|exist))*$/,
+    /^I wait on element "([^"]*)?"(?: for (\d+)ms)*(?: to( not)* (be checked|be enabled|be selected|be displayed|not be displayed|contain a text|contain a value|exist))*$/,
     {
         wrapperOptions: {
             retry: 3,

@@ -321,6 +321,7 @@ const VRSLogSchema = new Schema({
     },
 });
 
+// this is the Projects Schema `VRSAppSchema` name is for historical reason
 const VRSAppSchema = new Schema({
     name: {
         type: String,

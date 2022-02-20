@@ -15,6 +15,9 @@ const {
     ensureLoggedInOrApiKey,
 } = require('../../lib/ensureLogin/ensureLoggedIn');
 const UI = require('../controllers/ui/ui_controller');
+const { index } = require('../controllers/ui/index');
+const { admin } = require('../controllers/ui/admin');
+const { runs } = require('../controllers/ui/runs');
 
 module.exports = async function (app) {
     const API = require('../controllers/api/api_controller');
@@ -34,12 +37,12 @@ module.exports = async function (app) {
         })
         .get('/', ensureLoggedIn(),
             (req, res, next) => {
-                UI.index(req, res)
+                index(req, res)
                     .catch(next);
             })
         .get('/runs', ensureLoggedIn(),
             (req, res, next) => {
-                UI.runs(req, res)
+                runs(req, res)
                     .catch(next);
             })
         .get('/affectedelements', ensureApiKey(), async function (req, res, next) {
@@ -59,7 +62,7 @@ module.exports = async function (app) {
                 .catch(next);
         })
         .get('/admin', ensureLoggedIn(), async function (req, res, next) {
-            UI.admin(req, res)
+            admin(req, res)
                 .catch(next);
         })
         .get('/changepassword', ensureLoggedIn(), (req, res) => {
