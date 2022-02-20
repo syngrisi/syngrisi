@@ -36,6 +36,7 @@ Feature: Delete User
         Then I wait on element "*=TA" to be displayed
 
         When I go to "admin>users" page
+        When I wait for "2" seconds
         When I click on the element "//input[@value='j_doe@gmail.com']/../..//a[@title='Remove the User']"
         When I accept the confirmbox
         When I wait for "3" seconds
