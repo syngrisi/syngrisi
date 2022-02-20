@@ -2,7 +2,6 @@
 
 /* global log:readonly */
 const mongoose = require('mongoose');
-
 const Snapshot = mongoose.model('VRSSnapshot');
 const Check = mongoose.model('VRSCheck');
 const Test = mongoose.model('VRSTest');
@@ -231,6 +230,7 @@ exports.index = async function (req, res) {
             .exec();
 
         const query = buildQuery(opts);
+
         if (req.user.role === 'user') {
             query.creatorUsername = req.user.username;
         }

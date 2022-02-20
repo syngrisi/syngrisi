@@ -16,3 +16,4 @@ node_modules
 /baselineProd/
 /static/debug.html
 /debug.html
+/logs/*

@@ -14,12 +14,16 @@
   },
   "scripts": {
     "test": "cross-env LOG=1 HL=1 npx wdio --spec 'features/**/*.feature'",
+    "report": "cp  -R ./allure-report/history ./allure-results/; allure generate -c && allure open",
     "smoke": "cross-env LOG=1 HL=1 npx wdio --spec 'features/**/*.feature' --cucumberOpts.tagExpression='@smoke'",
     "testui": "cross-env LOG=1 HL=0 npx wdio --spec 'features/**/*.feature'"
   },
   "dependencies": {
     "@syngrisi/syngrisi-wdio-sdk": "../../syngrisi-sdk",
+    "@wdio/allure-reporter": "^7.16.14",
     "@wdio/local-runner": "file:src/support/local-runner-patched",
+    "allure-commandline": "^2.17.2",
+    "chalk": "^4.1.0",
     "compression": "^1.7.4",
     "faker": "^5.5.3",
     "frisby": "^2.1.3",

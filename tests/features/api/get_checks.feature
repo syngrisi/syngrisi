@@ -2,7 +2,7 @@ Feature: Get Checks
 
     Background:
         Given I clear test VRS database
-        Given I kill process which used port: "3001"
+        Given I stop Server
         When I set env variables:
         """
         PAGE_SIZE: 3

@@ -600,16 +600,21 @@ exports.createTest = async function (req, res) {
             updatedDate: new Date(),
         });
 
-        let run;
-        if (params.run) {
-            run = await createItemIfNotExistAsync('VRSRun',
-                {
-                    name: params.run,
-                    ident: params.runident,
-                },
-                { user: req?.user?.username, itemType: 'run' });
-            opts.run = run.id;
-        }
+        const run = await createItemIfNotExistAsync('VRSRun',
+            {
+                name: params.run,
+                ident: params.runident,
+            },
+            { user: req?.user?.username, itemType: 'run' });
+        opts.run = run.id;
+
+        const app = await createItemIfNotExistAsync('VRSApp',
+            {
+                name: params.app,
+            },
+            { user: req?.user?.username, itemType: 'app' });
+        opts.app = app.id;
+        // console.log({ opts });
         const test = await orm.createTest(opts);
 
         res.json(test);

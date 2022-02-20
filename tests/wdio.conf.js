@@ -17,9 +17,9 @@ exports.config = {
         './src/features/**/*.feature',
     ],
     exclude: [],
-    maxInstances: 1,
+    maxInstances: parseInt(process.env.STREAMS, 10) || 3,
     capabilities: [{
-        maxInstances: 1,
+        maxInstances: parseInt(process.env.STREAMS, 10) || 3,
         browserName: 'chrome',
         'goog:chromeOptions': {
             args: process.env.HL === '1' ? ['--headless', '--enable-automation'] : ['--enable-automation'],
@@ -63,10 +63,19 @@ exports.config = {
                 port: 7777,
             }]],
     framework: 'cucumber',
-    reporters: ['spec'],
+    reporters: ['spec',
+        [
+            'allure',
+            {
+                outputDir: 'allure-results',
+                disableWebdriverStepsReporting: true,
+                disableWebdriverScreenshotsReporting: true,
+            },
+        ],
+    ],
     cucumberOpts: {
         scenarioLevelReporter: true,
-        retry: process.env.RETRY || 0,
+        retry: parseInt(process.env.RETRY, 10) || 1,
         backtrace: false,
         requireModule: ['@babel/register'],
         failAmbiguousDefinitions: true,
@@ -90,7 +99,7 @@ exports.config = {
     beforeStep({ uri, feature, step }, context) {
         if (process.env.LOG === '1' || process.env.DBG === '1') {
             // eslint-disable-next-line no-console
-            console.log(`STEP BEFORE: ${step.step.text}: ${step.sourceLocation.uri.split(path.sep)
+            console.log(`STEP BEFORE: ${step.step.keyword} ${step.step.text}: ${step.sourceLocation.uri.split(path.sep)
                 .join(path.posix.sep)}:${step.step.location.line}, ${step.step.location.column}`);
         }
     },

@@ -22,3 +22,8 @@ There is two types of placeholders: `common` and `stored`
 For more details look at `fillCommonPlaceholders` function in common.js
  
 - `Store` - replace the placeholders that contain colon e.g.: <post: _id> (when user is the item name and name is the item property) to some item property that was stored in som of previous steps, using `this.saveItem(itemType, itemObject);` method
+
+## Environment variables
+
+`STREAMS` - number of browser instance 
+`RETRY` - number of retries
