@@ -65,7 +65,7 @@ Feature: Acceptance by User
         Then I expect that VRS test "Accept by User - 1" is unfolded
         When I accept the "Check - 1" check
 
-        When I wait for "2" seconds
+        When I wait for "3" seconds
         Then I expect that VRS test "Accept by User - 1" has "New" status
         Then I expect that VRS test "Accept by User - 1" has "Accepted" accepted status
 
@@ -76,7 +76,7 @@ Feature: Acceptance by User
         Then I expect that the element "(//i[contains(@class, 'accept-button-icon')])[1]" to have attribute "title" containing "Accepted date: <YYYY-MM-DD>"
 
         When I refresh page
-        When I wait for "2" seconds
+        When I wait for "3" seconds
         Then I expect that VRS test "Accept by User - 1" has "Accepted" accepted status
 
         When I click on "Accept by User - 1" VRS test
@@ -123,7 +123,7 @@ Feature: Acceptance by User
         # first check accept and validation
         When I accept the "Check - 1" check
 
-        When I wait for "2" seconds
+        When I wait for "3" seconds
         Then I expect that VRS test "Accept by User - 1" has "Passed" status
         Then I expect that VRS test "Accept by User - 1" has "Accepted" accepted status
 

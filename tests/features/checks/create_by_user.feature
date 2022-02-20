@@ -11,12 +11,12 @@ Feature: Creation by User
         Given I start Server
 
         When I create via http test user
-        Given I kill process which used port: "3001"
+        Given I stop Server
 
         When I set env variables:
         """
-        TEST: 0
-        SYNGRISI_AUTH: 1
+          TEST: 0
+          SYNGRISI_AUTH: 1
         """
         Given I start Server and start Driver
         When I wait for "5" seconds

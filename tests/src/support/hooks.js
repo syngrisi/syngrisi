@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation,no-unused-vars */
 //
 // =====
 // Hooks
@@ -7,14 +8,20 @@
 // an array of methods. If one of them returns with a promise,
 // WebdriverIO will wait until that promise is resolved to continue.
 //
+const child = require('child_process');
+const chalk = require('chalk');
+const { getCid } = require('../utills/common');
+
 exports.hooks = {
     /**
      * Gets executed once before all workers get launched.
      * @param {Object} config wdio configuration object
      * @param {Array.<Object>} capabilities list of capabilities details
      */
-    // onPrepare: function (config, capabilities) {
-    // },
+    onPrepare: function (config, capabilities) {
+        const result = child.execSync('rm -f ./logs/*');
+        // console.log({ logsRemove: result.toString() });
+    },
     /**
      * Gets executed before a worker process is spawned & can be used to initialize specific service
      * for that worker as well as modify runtime environments in an async fashion.
@@ -42,8 +49,10 @@ exports.hooks = {
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {Array.<String>} specs List of spec file paths that are to be run
      */
-    // before: function (capabilities, specs) {
-    // },
+    before: function (capabilities, specs) {
+        console.error = ((msg) => console.log(chalk.red(msg)));
+        console.warn = ((msg) => console.log(chalk.yellow(msg)));
+    },
     /**
      * Gets executed before the suite starts.
      * @param {Object} suite suite details
@@ -145,12 +154,24 @@ exports.hooks = {
     // beforeStep: function ({uri, feature, step}, context) {
     // },
     afterStep: function ({ uri, feature, step }, context, { error, result, duration, passed }) {
+        // console.log({ step });
         if (!passed) {
+            const cid = getCid();
+            const text = `${cid}_${step.step.keyword.toLowerCase()}_${step.scenario.name} -- ${step.step.text}`.toLowerCase();
+            const baseFileName = `./logs/${text.replace(/\s/g, '_')
+                .replace(/"/g, '@')
+                .replace(/:/g, '')
+                .replace(/\//g, '_')
+            }`;
+            browser.saveScreenshot(`${baseFileName}.png`);
+            const errMsg = `${cid}# error in: /${step.step.text}:${step.sourceLocation.uri}:${step.step.location.line}, ${step.step.location.column}\n`
+                + error + '\n'
+                + error?.stack;
+            const fs = require('fs');
+            fs.writeFileSync(`${baseFileName}.log`, errMsg);
+            console.error(errMsg);
 
             if (process.env['DBG'] === '1') {
-                console.error(`Error in: /${step.step.text}:${step.sourceLocation.uri}:${step.step.location.line}, ${step.step.location.column}`);
-
-                console.error(error);
                 if (error.stack) {
                     console.error(error.stack);
                 }

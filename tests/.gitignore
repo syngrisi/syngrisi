@@ -16,3 +16,6 @@ coverage
 yarn.lock
 /.tmp/
 /features/debug/
+/logs/*
+/allure-report/
+/allure-results/

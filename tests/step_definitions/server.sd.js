@@ -2,12 +2,8 @@
 const { When, Given } = require('cucumber');
 const YAML = require('yaml');
 const {
-    startServer, stopServer, killServer, clearDatabase, startDriver, startSession,
+    startServer, stopServer, clearDatabase, startDriver, startSession,
 } = require('../src/utills/common');
-
-When(/^I kill process which used port: "([^"]*)"$/, (port) => {
-    killServer(port);
-});
 
 When(/^I start VRS server with parameters:$/, { timeout: 600000 }, (params) => {
     startServer(params);

@@ -28,3 +28,7 @@ Then(/^I expect via http ([\d]+)st (test|check) filtered as "([^"]*)" matched:$/
     expect(item)
         .toMatchObject(params);
 });
+
+When(/^I debug$/, function () {
+    throw new Error('!!!');
+});

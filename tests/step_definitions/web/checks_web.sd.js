@@ -61,41 +61,6 @@ When(/^I expect the(:? (\d)th)? "([^"]*)" check has "([^"]*)" acceptance status$
     }
 });
 
-// eslint-disable-next-line max-len
-Then(/^I expect that last "([^"]*)" checks with ident contains "([^"]*)" has (not |)the same "([^"]*)"$/, async function (num, ident, negative, prop) {
-    const checksGroups = JSON.parse((await got('http://vrs:3001/checks')).body);
-    console.log({ checksGroups });
-    const checks = Object.values(checksGroups)
-        .map((x) => {
-            const identKey = Object.keys(x)
-                .filter((key) => key.startsWith('ident'))[0];
-            console.log({ x });
-            console.log({ identKey });
-            const identParts = identKey.split('.');
-            identParts.pop();
-            const cuttedIdent = identParts.join('.');
-            // eslint-disable-next-line no-param-reassign
-            x[cuttedIdent] = x[identKey];
-            return x;
-        });
-    console.log({ checks });
-    const values = checks.map((x) => x[ident].checks)
-        .flat()
-        .slice(0, num)
-        .map((x) => x[prop]);
-    expect(values.length)
-        .toBeGreaterThan(0);
-    console.log({ values });
-    if (negative) {
-        console.log('NEGATIVE');
-        expect(values.every((val, i, arr) => (val) === arr[0]))
-            .toBe(false);
-        return;
-    }
-    expect(values.every((val, i, arr) => (val) === arr[0]))
-        .toBe(true);
-});
-
 Then(/^I expect that "([^"]*)" check preview tooltip "([^"]*)" field equal to "([^"]*)"$/, function (checkNum, field, value) {
     const value2 = fillCommonPlaceholders(value);
     const checkTitle = $(`(//canvas[contains(@class, 'snapshoot-canvas')])[${checkNum}]`)

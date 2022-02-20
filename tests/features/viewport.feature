@@ -15,7 +15,7 @@ Feature: VRS Viewport
         """
           testName: "Viewport integration test"
         """
-        When I open the url "http://`<serverDomain>:<serverPort>`/static/app_1.html"
+        When I open the url "http://<serverDomain>:<serverPort>/static/app_1.html"
         When I visually check page as "viewport - single check"
 
         When I stop VRS session

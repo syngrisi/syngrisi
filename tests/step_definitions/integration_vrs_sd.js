@@ -90,35 +90,14 @@ When(/^I login with user:"([^"]*)" password "([^"]*)"$/, (login, password) => {
     browser.url(`http://${browser.config.serverDomain}:${browser.config.serverPort}/`);
     browser.pause(2000);
     $('#password')
-        .waitForDisplayed();
+        .waitForDisplayed({ timeout: 7000 });
+
     $('#email')
         .setValue(login);
     $('#password')
         .setValue(password);
     $('button*=Login')
         .click();
-});
-
-Then(/^I expect ([\d]+) baselines$/, function (num) {
-    browser.url('http://vrs:3001/baselines');
-    const baselines = JSON.parse($('pre')
-        .getHTML(false));
-    expect(baselines.length)
-        .toBe(parseInt(num, 10));
-});
-
-Then(/^I expect ([\d]+)st baseline with:$/, function (num, yml) {
-    browser.url('http://vrs:3001/baselines');
-    const baselines = JSON.parse($('pre')
-        .getHTML(false));
-    console.log({ baselines });
-
-    const params = YAML.parse(yml);
-    const baseline = baselines[parseInt(num) - 1];
-    baseline.markedByUsername = baseline.markedByUsername || '';
-    baseline.markedAs = baseline.markedAs || '';
-    expect(baseline)
-        .toMatchObject(params);
 });
 
 When(/^I select the test "([^"]*)"$/, function (testName) {

@@ -230,7 +230,7 @@ const VRSTestSchema = new Schema(
             type: String,
         },
         app: {
-            type: String,
+            type: Schema.Types.ObjectId,
         },
         blinking: {
             type: Number,
