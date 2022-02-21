@@ -140,8 +140,8 @@ When(/^I create "([^"]*)" tests with params:$/, { timeout: 600000 }, async funct
         await browser.vDriver.startTestSession({
             app: params.appName || params.project || 'Test App',
             test: `${params.testName} - ${i + 1}`,
-            run: process.env.RUN_NAME || 'integration_run_name',
-            runident: process.env.RUN_IDENT || 'integration_run_ident',
+            run: params.run || process.env.RUN_NAME || 'integration_run_name',
+            runident: params.runident || process.env.RUN_IDENT || 'integration_run_ident',
             branch: params.branch || 'integration',
             tags: params.tags || [],
         }, browser.config.apiKey);
