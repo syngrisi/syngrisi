@@ -8,8 +8,7 @@ import checkDimension from '../src/support/check/checkDimension';
 import checkEqualsText from '../src/support/check/checkEqualsText';
 import checkFocus from '../src/support/check/checkFocus';
 import checkInURLPath from '../src/support/check/checkInURLPath';
-import checkIsOpenedInNewWindow from
-    '../src/support/check/checkIsOpenedInNewWindow';
+import checkIsOpenedInNewWindow from '../src/support/check/checkIsOpenedInNewWindow';
 import checkModal from '../src/support/check/checkModal';
 import checkModalText from '../src/support/check/checkModalText';
 import checkNewWindow from '../src/support/check/checkNewWindow';
@@ -177,7 +176,7 @@ Then(
 );
 
 Then(
-    /^I wait on element "([^"]*)?"(?: for (\d+)ms)*(?: to( not)* (be checked|be enabled|be selected|be displayed|not be displayed|contain a text|contain a value|exist))*$/,
+    /^I wait on element "([^"]*)?"(?: for (\d+)ms)*(?: to( not)* (be checked|be enabled|be selected|be displayed|not be displayed|contain a text|contain a value|exist|clickable))*$/,
     {
         wrapperOptions: {
             retry: 3,

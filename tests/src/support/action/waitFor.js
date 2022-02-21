@@ -45,5 +45,6 @@ export default (selector, ms, falseState, state) => {
     if (typeof falseState === 'undefined') {
         boolFalseState = false;
     }
+    console.log({ command });
     $(selector)[command]({ reverse: boolFalseState, timeout: intMs });
 };
