@@ -14,6 +14,7 @@
         <% itemClass = item.id === currentItem.id ? 'current-menu-item' : '' %>
     <% } %>
     <li name="run-menu-item-container"
+        title="<%= item.name %>"
         class="row border-bottom run-menu-item-container pl-0 w-100 btn-light border-silver pt-3 pb-3 mr-0 ml-0 <%= itemClass %>"
         onclick="window.location.href='/runs?filter_run_eq=<%= item._id %>'"
     >

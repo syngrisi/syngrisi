@@ -44,14 +44,14 @@
                     <%- include('components/runs_toolbar.ejs') %>
                 </div>
             </div>
-            <!--   SUITES LIST-->
+            <!-- RUNS LIST -->
             <div class="suites-list m-0 row pl-0 pt-0 bg-light text-secondary" style="height: 100vh">
                 <ul class="col pr-0 pl-0">
                     <% let items = runs; %>
-                    <%- include('components/sidebar_items_runs2', {items: runs, currentItem: currentRun}) %>
+                    <%- include('components/sidebar_items_runs', {items: runs, currentItem: currentRun}) %>
                 </ul>
             </div>
-            <!--  /SUITES LIST-->
+            <!-- /RUNS LIST -->
         </div>
         <!--   TESTS TABLE-->
         <div name class="table-rows content col float-right pr-0-5 pl-0" id="wrapper">
