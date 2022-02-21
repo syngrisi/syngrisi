@@ -2,6 +2,7 @@
 
 <!--TEST_INFO START-->
 <div name="testinfo"
+     data-id="<?= test.id ?>"
      class="testinfo row justify-content-between testinfo_<?= test.id ?> row test-row pr-0 pt-0 pb-0 m-0 w-100"
 
      data-toggle="collapse" style="cursor: pointer"
@@ -230,7 +231,8 @@
 <!--/TEST_INFO-->
 
 <!-- CHECKS START -->
-<div name="checks-previews" class="all-checks row w-100 m-0 collapsing pl-3" id="testchecks_<?= test.id ?>">
+<div name="checks-previews" data-test_id="<?= test.id ?>" class="all-checks row w-100 m-0 collapsing pl-3"
+     id="testchecks_<?= test.id ?>">
 
     <!--  foreach checks start-->
     <?

@@ -9,7 +9,7 @@
             <a href="/" class="unlink text-secondary pr-1"><i class="bi bi-x-lg"></i></a>
             <span>Search results for <b> <%= opts.filter_name_regex %> </b></span>
             <script>
-                setTimeout(()=>{
+                setTimeout(() => {
                     higlightSearshResult('<%= opts.filter_name_regex %>');
                 }, 1000)
             </script>
@@ -31,7 +31,7 @@
                    onclick="acceptTests()"
                    id="mass-test-accept-button"
                    title="accept selected checks">
-                    <i class="far fa-check-circle fa-sm"></i>
+                    <i class="tests-toolbar-icons bi bi-check2-circle"></i>
                 </a>
             </div>
             <div class="col-auto pl-1 pr-1 pt-2">
@@ -40,21 +40,31 @@
                    id="mass-test-remove-button"
                    onclick="removeTests()"
                    title="remove checked tests">
-                    <i class="fas fa-trash fa-sm"></i>
+                    <i class="tests-toolbar-icons bi bi-trash"></i>
                 </a>
             </div>
             <div class="col-auto pl-1 pr-1 pt-2">
                 <a name="colorize-tests" type="button" class="btn btn-secondary bg-light border-0 pr-1 pl-1 pt-0 pb-1"
                    onclick="colorizeRuns()"
                    title="mark different runs with different random colors">
-                    <i class="fas fa-paint-brush fa-sm"></i>
+                    <i class="tests-toolbar-icons bi bi-palette"></i>
                 </a>
             </div>
+
+            <div class="col-auto pl-1 pr-1 pt-2">
+                <a id="toggle-visible-test" type="button"
+                   class="btn btn-secondary bg-light border-0 pr-1 pl-1 pt-0 pb-1"
+                   onclick="toggleVisibleTest()"
+                   title="unfold/fold all visible tests">
+                    <i id="toggle-visible-test-icon" class="tests-toolbar-icons bi bi-arrows-expand"></i>
+                </a>
+            </div>
+
             <div class="col-auto pl-1 pr-1 pt-2">
                 <a name="reload-tests" type="button" class="btn btn-secondary bg-light border-0 pr-1 pl-1 pt-0 pb-1"
                    onclick="location.reload()"
                    title="reload page">
-                    <i class="fas fa-sync-alt fa-sm"></i>
+                    <i class="tests-toolbar-icons bi bi-arrow-repeat"></i>
                 </a>
             </div>
         </div>
