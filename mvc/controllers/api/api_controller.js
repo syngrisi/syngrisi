@@ -1269,10 +1269,29 @@ exports.getCheck = async function (req, res) {
                 itemType: 'check',
                 scope: 'getCheck',
             });
-        const snp = await Check.findById(id)
+        const check = await Check.findById(id)
             .exec();
 
-        res.json(snp);
+        res.json(check);
+    } catch (e) {
+        fatalError(req, res, e);
+    }
+};
+
+exports.getRun = async function (req, res) {
+    try {
+        const opts = removeEmptyProperties(req.body);
+        const { id } = req.params;
+        log.debug(`get run with id: '${id}',  params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`,
+            $this, {
+                msgType: 'GET',
+                itemType: 'run',
+                scope: 'getRun',
+            });
+        const run = await Run.findById(id)
+            .exec();
+
+        res.json(run);
     } catch (e) {
         fatalError(req, res, e);
     }

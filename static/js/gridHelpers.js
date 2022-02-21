@@ -711,8 +711,16 @@ function colorizeRuns() {
     );
     for (const [i, id] of uniqueIds.entries()) {
         for (const run of runsDivs) {
-            if (run.getAttribute('run') === id) {
+            const runId = run.getAttribute('run');
+            if (runId === id) {
                 run.style.backgroundColor = colors[i];
+                jQuery(run)
+                    .one('mouseover', async (event) => {
+                        run.setAttribute('title', 'Loading...');
+                        const resp = await fetch(`/run/${runId}`);
+                        const runData = await resp.json();
+                        run.setAttribute('title', runData.name);
+                    });
             }
         }
     }

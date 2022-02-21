@@ -18,10 +18,9 @@ const UI = require('../controllers/ui/ui_controller');
 const { index } = require('../controllers/ui/index');
 const { admin } = require('../controllers/ui/admin');
 const { runs } = require('../controllers/ui/runs');
+const API = require('../controllers/api/api_controller');
 
 module.exports = async function (app) {
-    const API = require('../controllers/api/api_controller');
-
     await app
         .delete('/checks/:id', ensureLoggedIn(), async (req, res, next) => {
             API.removeCheck(req, res)
@@ -45,6 +44,10 @@ module.exports = async function (app) {
                 runs(req, res)
                     .catch(next);
             })
+        .get('/run/:id', ensureLoggedIn(), async (req, res, next) => {
+            API.getRun(req, res)
+                .catch(next);
+        })
         .get('/affectedelements', ensureApiKey(), async function (req, res, next) {
             API.affectedElements(req, res)
                 .catch(next);
