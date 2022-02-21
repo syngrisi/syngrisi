@@ -615,8 +615,11 @@ mark {
     border-color: #518162 !important;
 }
 
-
-
 .dropdown-item.active, .dropdown-item:active {
     background-color: #649D77;
+}
+
+.tests-toolbar-icons {
+    font-size: 20px;
+    font-weight: bold;
 }

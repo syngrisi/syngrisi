@@ -163,3 +163,39 @@ async function generateApiKey() {
             return showNotification(e, 'Error', 1000 * 60);
         });
 }
+
+function unfoldVisibleTests() {
+    const testEls = jQuery('[name="testinfo"]');
+    for (const test of testEls) {
+        drawTestChecksPreviews(test.dataset.id)
+            .then(() => {
+                Array.from(jQuery(`[data-test_id='${test.dataset.id}']`))
+                    .forEach((x) => x.classList.add('show'));
+                Array.from(jQuery(`[data-test_id='${test.dataset.id}']`))
+                    .forEach((x) => x.classList.remove('collapsing'));
+            });
+    }
+}
+
+function foldVisibleTests() {
+    const testEls = jQuery('[name="testinfo"]');
+    for (const test of testEls) {
+        Array.from(jQuery(`[data-test_id='${test.dataset.id}']`))
+            .forEach((x) => x.classList.remove('show'));
+        Array.from(jQuery(`[data-test_id='${test.dataset.id}']`))
+            .forEach((x) => x.classList.add('collapsing'));
+    }
+}
+
+function toggleVisibleTest() {
+    const icon = document.getElementById('toggle-visible-test-icon');
+    if (icon.classList.contains('bi-arrows-expand')) {
+        icon.classList.remove('bi-arrows-expand');
+        icon.classList.add('bi-arrows-collapse');
+        unfoldVisibleTests();
+        return;
+    }
+    icon.classList.remove('bi-arrows-collapse');
+    icon.classList.add('bi-arrows-expand');
+    foldVisibleTests();
+}
