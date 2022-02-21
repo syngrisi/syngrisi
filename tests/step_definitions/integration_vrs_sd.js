@@ -276,3 +276,6 @@ Then(/^I expect the element "([^"]*)" contains the text "([^"]*)" via js$/, func
     expect(text)
         .toContain(expectedText);
 });
+When(/^I maximize window$/, function () {
+    browser.maximizeWindow();
+});
