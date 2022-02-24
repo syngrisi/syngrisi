@@ -36,6 +36,7 @@ const {
     removeEmptyProperties,
     buildQuery,
     buildIdentObject,
+    ident,
 } = require('../utils');
 const { createItemIfNotExistAsync } = require('../../../lib/dbItems');
 
@@ -1278,6 +1279,10 @@ exports.getCheck = async function (req, res) {
     }
 };
 
+exports.getIdent = async function (req, res) {
+    res.json(ident);
+};
+
 exports.getRun = async function (req, res) {
     try {
         const opts = removeEmptyProperties(req.body);
@@ -1372,6 +1377,48 @@ exports.getBaselines = (req, res) => {
         .then((baselines) => {
             res.json(baselines);
         });
+};
+
+exports.checkIfScreenshotHasBaselines = async (req, res) => {
+    const logOpts = {
+        scope: 'checkIfScreenshotHasBaselines',
+        itemType: 'baseline',
+        msgType: 'GET',
+    };
+    try {
+        log.debug(`check is baseline exist: '${JSON.stringify(req.query, null, ' ')}'`, logOpts);
+        if (!req.query.imghash) {
+            res.status(400)
+                .json({ respStatus: 'imghash is empty' });
+            return;
+        }
+        const lastBaseline = await Baseline.findOne(req.query)
+            .sort({ updatedDate: -1 })
+            .exec();
+
+        if (!lastBaseline) {
+            log.warn(`such baseline does not exists: ${JSON.stringify(req.query, null, ' ')}`, logOpts);
+            res.status(404)
+                .json({ respStatus: 'baseline not found' });
+            return;
+        }
+        const snapshot = await Snapshot.findOne({ id: lastBaseline.snapshootId })
+            .exec();
+        const snapshotObj = snapshot.toObject();
+        if (snapshotObj
+            && (snapshotObj?.imghash.toString() === req.query.imghash)) {
+            console.log(snapshotObj?.imghash.toString());
+            console.log(req.query.imghash);
+            res.json({ ...snapshotObj, ...{ respStatus: 'success' } });
+            return;
+        }
+        log.warn(`such snapshot does not exists: ${JSON.stringify(req.query, null, ' ')}`, logOpts);
+        res.status(404)
+            .json({ respStatus: 'snapshot not found' });
+    } catch (e) {
+        log.error(e);
+        fatalError(req, res, e);
+    }
 };
 
 const removeSnapshotFile = async (snapshot) => {

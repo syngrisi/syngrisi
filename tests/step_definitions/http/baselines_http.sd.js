@@ -1,7 +1,8 @@
 /* eslint-disable object-shorthand,no-console,func-names */
 const { Then, When } = require('cucumber');
 const YAML = require('yaml');
-const { requestWithLastSessionSid } = require('../../src/utills/common');
+const fs = require('fs');
+const { requestWithLastSessionSid, fillCommonPlaceholders } = require('../../src/utills/common');
 
 Then(/^I expect via http (\d+) baselines$/, async function (num) {
     const baselines = (await requestWithLastSessionSid(
@@ -26,4 +27,14 @@ Then(/^I expect via http ([\d]+)st baseline with:$/, async function (num, yml) {
     baseline.markedAs = baseline.markedAs || '';
     expect(baseline)
         .toMatchObject(params);
+});
+
+When(/^I check if baseline exist:$/, async function (yml) {
+    const params = YAML.parse(this.fillItemsPlaceHolders(fillCommonPlaceholders(yml)));
+    const filePath = params.filePath || 'files/A.png';
+    const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${filePath}`);
+    delete params.filePath;
+    const result = await browser.vDriver.checkIfBaselineExist(imageBuffer, params.name, this.getSavedItem('apiKey').value, params);
+    console.log({ result });
+    this.saveItem('checkedBaseline', result?.respStatus);
 });

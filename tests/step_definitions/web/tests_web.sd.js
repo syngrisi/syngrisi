@@ -133,11 +133,11 @@ When(/^I create "([^"]*)" tests with params:$/, { timeout: 600000 }, async funct
         name: 'Integration suite',
         id: 'Integration_suite',
     });
-
+    let test;
     for (const i of Array.from(Array(parseInt(num, 10))
         .keys())) {
         // console.log(`Create test # ${i}`);
-        await browser.vDriver.startTestSession({
+        test = await browser.vDriver.startTestSession({
             app: params.appName || params.project || 'Test App',
             test: `${params.testName} - ${i + 1}`,
             run: params.run || process.env.RUN_NAME || 'integration_run_name',
@@ -154,6 +154,8 @@ When(/^I create "([^"]*)" tests with params:$/, { timeout: 600000 }, async funct
             .substring(7)}`;
         const checkResult = await checkVRS(checkName, imageBuffer);
         // console.log({ checkResult });
+        // console.log({ test });
+        this.STATE.test = test;
         this.STATE.check = checkResult;
         await browser.vDriver.stopTestSession(browser.config.apiKey);
     }

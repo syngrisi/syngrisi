@@ -35,7 +35,7 @@ Feature: Regions - Copy regions data after acceptance
          return mainView.allRects.length.toString()
         """
         When I wait for "1" seconds
-        Then I expect the stored "js" object is equal:
+        Then I expect the stored "js" string is equal:
         """
           1
         """
@@ -48,7 +48,7 @@ Feature: Regions - Copy regions data after acceptance
          return [Math.round(left), Math.round(top1), Math.round(width), Math.round(height), fill, stroke, opacity].toString();
 
         """
-        Then I expect the stored "js" object is equal:
+        Then I expect the stored "js" string is equal:
         """
           20,50,202,102,MediumVioletRed,black,0.5
         """
@@ -82,7 +82,7 @@ Feature: Regions - Copy regions data after acceptance
          return mainView.allRects.length.toString()
         """
         When I wait for "1" seconds
-        Then I expect the stored "js" object is equal:
+        Then I expect the stored "js" string is equal:
         """
           1
         """
@@ -92,7 +92,7 @@ Feature: Regions - Copy regions data after acceptance
          const { left, top: top1, width, height, fill, stroke, opacity } = mainView.getLastRegion()
          return [Math.round(left), Math.round(top1), Math.round(width), Math.round(height), fill, stroke, opacity].toString()
         """
-        Then I expect the stored "js" object is equal:
+        Then I expect the stored "js" string is equal:
         """
           20,50,202,102,MediumVioletRed,black,0.5
         """
@@ -124,7 +124,7 @@ Feature: Regions - Copy regions data after acceptance
          return mainView.allRects.length.toString()
         """
         When I wait for "1" seconds
-        Then I expect the stored "js" object is equal:
+        Then I expect the stored "js" string is equal:
         """
           1
         """
@@ -134,7 +134,7 @@ Feature: Regions - Copy regions data after acceptance
          const { left, top: top1, width, height, fill, stroke, opacity } = mainView.getLastRegion()
          return [Math.round(left), Math.round(top1), Math.round(width), Math.round(height), fill, stroke, opacity].toString()
         """
-        Then I expect the stored "js" object is equal:
+        Then I expect the stored "js" string is equal:
         """
           20,50,202,102,MediumVioletRed,black,0.5
         """
