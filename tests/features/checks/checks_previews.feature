@@ -33,7 +33,7 @@ Feature: Checks previews
          return mainView.allRects.length.toString();
         """
         When I wait for "1" seconds
-        Then I expect the stored "js" object is equal:
+        Then I expect the stored "js" string is equal:
         """
           1
         """
@@ -43,7 +43,7 @@ Feature: Checks previews
          const { left, top: top1, width, height, fill, stroke, opacity } = mainView.getLastRegion()
          return [left, top1, width, height, fill, stroke, opacity].toString()
         """
-        Then I expect the stored "js" object is equal:
+        Then I expect the stored "js" string is equal:
         """
           20,50,200,100,MediumVioletRed,black,0.5
         """
@@ -56,7 +56,7 @@ Feature: Checks previews
         """
           return Object.keys(baselines).length.toString();
         """
-        Then I expect the stored "js" object is equal:
+        Then I expect the stored "js" string is equal:
         """
           0
         """
@@ -68,7 +68,7 @@ Feature: Checks previews
         """
           return Object.keys(baselines).length.toString();
         """
-        Then I expect the stored "js" object is equal:
+        Then I expect the stored "js" string is equal:
         """
           1
         """
@@ -78,7 +78,7 @@ Feature: Checks previews
           const { left, top: top1, width, height, fill, stroke, opacity } = baselines[Object.keys(baselines)[0]].getLastRegion();
           return [left, top1, width, height, fill, stroke, opacity].toString();
         """
-        Then I expect the stored "js" object is equal:
+        Then I expect the stored "js" string is equal:
         """
         6.349206349206349,15.873015873015872,64.12698412698413,32.38095238095239,MediumVioletRed,rgba(100,200,200,0.5),0.5
         """

@@ -16,7 +16,7 @@ Then(/^I expect "([^"]*)" saved object:$/, function (itemName, yml) {
         .toMatchObject(params);
 });
 
-Then(/^I expect the stored "([^"]*)" object is( not|) (equal|contain):$/, function (itemName, condition, type, expected) {
+Then(/^I expect the stored "([^"]*)" string is( not|) (equal|contain):$/, function (itemName, condition, type, expected) {
     const itemValue = this.getSavedItem(itemName);
 
     // up first letter in string

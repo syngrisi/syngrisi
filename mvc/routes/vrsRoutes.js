@@ -84,6 +84,12 @@ module.exports = async function (app) {
         .get('/baselines', ensureLoggedIn(), (req, res) => {
             API.getBaselines(req, res);
         })
+        .get('/ident', ensureLoggedInOrApiKey(), (req, res) => {
+            API.getIdent(req, res);
+        })
+        .get('/check_if_screenshot_has_baselines', ensureLoggedInOrApiKey(), (req, res) => {
+            API.checkIfScreenshotHasBaselines(req, res);
+        })
         .post('/password', ensureLoggedIn(), (req, res) => {
             API.changePassword(req, res);
         })

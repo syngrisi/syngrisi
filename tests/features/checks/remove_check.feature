@@ -17,9 +17,7 @@ Feature: Baseline - Remove checks
           TEST: 0
           SYNGRISI_AUTH: 1
         """
-        Given I start VRS server
-
-        Given I setup VRS driver
+        Given I start Server and start Driver
 
         # create user
         When I login via http with user:"Test" password "123"

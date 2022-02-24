@@ -52,7 +52,7 @@ When(/^I visually check page with DOM as "([^"]*)"$/, async function (checkName)
     domDump = await browser.executeAsync(getDomDump);
     browser.pause(300);
     const imageBuffer = new Buffer((await browser.saveDocumentScreenshot()), 'base64');
-    const checkResult = await checkVRS(checkName, imageBuffer, domDump);
+    const checkResult = await checkVRS(checkName, imageBuffer, {}, domDump);
     // console.log({ checkResult });
     this.saveItem('checkDump', JSON.parse(checkResult.domDump)[0]);
     this.saveItem('checkDumpResult', checkResult);

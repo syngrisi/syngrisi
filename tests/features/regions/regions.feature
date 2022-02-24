@@ -26,7 +26,7 @@ Feature: Regions works properly
            return(mainView.allRects.length.toString());
         """
         When I wait for "1" seconds
-        Then I expect the stored "js" object is equal:
+        Then I expect the stored "js" string is equal:
         """
           0
         """
@@ -38,7 +38,7 @@ Feature: Regions works properly
         """
 
         When I wait for "1" seconds
-        Then I expect the stored "js" object is equal:
+        Then I expect the stored "js" string is equal:
         """
           1
         """
@@ -48,7 +48,7 @@ Feature: Regions works properly
          const { left, top: top1, width, height, fill, stroke, opacity } = mainView.getLastRegion();
          return([left, top1, width, height, fill, stroke, opacity].toString());
         """
-        Then I expect the stored "js" object is equal:
+        Then I expect the stored "js" string is equal:
         """
           20,50,200,100,MediumVioletRed,black,0.5
         """
@@ -61,7 +61,7 @@ Feature: Regions works properly
         """
 
         When I wait for "1" seconds
-        Then I expect the stored "js" object is equal:
+        Then I expect the stored "js" string is equal:
         """
           0
         """
@@ -80,7 +80,7 @@ Feature: Regions works properly
          return mainView.allRects.length.toString();
         """
         When I wait for "1" seconds
-        Then I expect the stored "js" object is equal:
+        Then I expect the stored "js" string is equal:
         """
           1
         """
@@ -90,7 +90,7 @@ Feature: Regions works properly
          const { left, top: top1, width, height, fill, stroke, opacity } = mainView.getLastRegion()
          return [left, top1, width, height, fill, stroke, opacity].toString()
         """
-        Then I expect the stored "js" object is equal:
+        Then I expect the stored "js" string is equal:
         """
           20,50,200,100,MediumVioletRed,black,0.5
         """
@@ -104,7 +104,7 @@ Feature: Regions works properly
          return mainView.allRects.length.toString()
         """
         When I wait for "1" seconds
-        Then I expect the stored "js" object is equal:
+        Then I expect the stored "js" string is equal:
         """
           1
         """
@@ -114,7 +114,7 @@ Feature: Regions works properly
          const { left, top: top1, width, height, fill, stroke, opacity } = mainView.getLastRegion()
          return [Math.round(left), Math.round(top1), Math.round(width), Math.round(height), fill, stroke, opacity].toString()
         """
-        Then I expect the stored "js" object is equal:
+        Then I expect the stored "js" string is equal:
         """
           20,50,202,102,MediumVioletRed,black,0.5
         """
@@ -132,7 +132,7 @@ Feature: Regions works properly
         """
          return mainView.allRects.length.toString();
         """
-        Then I expect the stored "js" object is equal:
+        Then I expect the stored "js" string is equal:
         """
           1
         """
@@ -142,7 +142,7 @@ Feature: Regions works properly
          const { left, top: top1, width, height, fill, stroke, opacity } = mainView.getLastRegion()
          return [left, top1, width, height, fill, stroke, opacity].toString()
         """
-        Then I expect the stored "js" object is equal:
+        Then I expect the stored "js" string is equal:
         """
           20,50,200,100,MediumVioletRed,black,0.5
         """
@@ -155,7 +155,7 @@ Feature: Regions works properly
           const { left, top: top1, width, height, fill, stroke, opacity } = mainView.getLastRegion()
           return [Math.round(left), Math.round(top1), Math.round(width), Math.round(height), fill, stroke, opacity].toString()
         """
-        Then I expect the stored "js" object is equal:
+        Then I expect the stored "js" string is equal:
         """
           300,500,200,100,MediumVioletRed,black,0.5
         """
@@ -169,7 +169,7 @@ Feature: Regions works properly
         """
          return mainView.canvas.getObjects().filter(x=>x.name==='ignore_rect').length.toString()
         """
-        Then I expect the stored "js" object is equal:
+        Then I expect the stored "js" string is equal:
         """
           1
         """
@@ -183,7 +183,7 @@ Feature: Regions works properly
          return [Math.round(left), Math.round(top1), Math.round(width), Math.round(height), fill, stroke, opacity].toString()
         """
 
-        Then I expect the stored "js" object is equal:
+        Then I expect the stored "js" string is equal:
         """
           300,500,202,102,MediumVioletRed,black,0.5
         """
@@ -206,7 +206,7 @@ Feature: Regions works properly
          return mainView.canvas.getObjects().filter(x=>x.name==='ignore_rect').length.toString()
         """
         When I wait for "1" seconds
-        Then I expect the stored "js" object is equal:
+        Then I expect the stored "js" string is equal:
         """
           2
         """
@@ -235,7 +235,7 @@ Feature: Regions works properly
          return mainView.canvas.getObjects().filter(x=>x.name==='ignore_rect').length.toString()
         """
         When I wait for "1" seconds
-        Then I expect the stored "js" object is equal:
+        Then I expect the stored "js" string is equal:
         """
           0
         """
