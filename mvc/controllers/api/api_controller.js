@@ -1379,6 +1379,16 @@ exports.getBaselines = (req, res) => {
         });
 };
 
+function removeNonIdentProperties(params) {
+    const opts = { ...params };
+    for (const prop of Object.keys(opts)) {
+        if (!(ident.includes(prop.toString()))) {
+            delete opts[prop];
+        }
+    }
+    return opts;
+}
+
 exports.checkIfScreenshotHasBaselines = async (req, res) => {
     const logOpts = {
         scope: 'checkIfScreenshotHasBaselines',
@@ -1392,29 +1402,37 @@ exports.checkIfScreenshotHasBaselines = async (req, res) => {
                 .json({ respStatus: 'imghash is empty' });
             return;
         }
-        const lastBaseline = await Baseline.findOne(req.query)
+        const app = await App.findOne({ name: req.query.app });
+        const opts = removeNonIdentProperties(req.query);
+        opts.app = app._id;
+        const lastBaseline = await Baseline.findOne(opts)
             .sort({ updatedDate: -1 })
             .exec();
-
         if (!lastBaseline) {
-            log.warn(`such baseline does not exists: ${JSON.stringify(req.query, null, ' ')}`, logOpts);
+            log.warn(`such baseline does not exists: ${JSON.stringify(opts, null, ' ')}`, logOpts);
             res.status(404)
-                .json({ respStatus: 'baseline not found' });
+                .json({
+                    respStatus: 'baseline not found',
+                    params: opts,
+                });
             return;
         }
-        const snapshot = await Snapshot.findOne({ id: lastBaseline.snapshootId })
+        const snapshot = await Snapshot.findOne({ _id: lastBaseline.toObject().snapshootId })
             .exec();
         const snapshotObj = snapshot.toObject();
         if (snapshotObj
             && (snapshotObj?.imghash.toString() === req.query.imghash)) {
-            console.log(snapshotObj?.imghash.toString());
-            console.log(req.query.imghash);
-            res.json({ ...snapshotObj, ...{ respStatus: 'success' } });
+            // console.log(snapshotObj?.imghash.toString());
+            // console.log(req.query.imghash);
+            res.json({ ...snapshotObj, ...{ respStatus: 'success', params: opts, } });
             return;
         }
         log.warn(`such snapshot does not exists: ${JSON.stringify(req.query, null, ' ')}`, logOpts);
         res.status(404)
-            .json({ respStatus: 'snapshot not found' });
+            .json({
+                respStatus: 'snapshot not found',
+                params: req.query,
+            });
     } catch (e) {
         log.error(e);
         fatalError(req, res, e);

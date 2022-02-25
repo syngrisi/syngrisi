@@ -51,34 +51,21 @@ const killServer = function (port) {
 };
 
 const startSession = async function (sessOpts) {
-    sessOpts.suiteName = sessOpts.suiteName || 'Integration suite';
-    sessOpts.suiteId = sessOpts.suiteId || sessOpts.suiteName.replace(' ', '_');
     sessOpts.appName = sessOpts.appName || 'Integration Test App';
     sessOpts.branch = sessOpts.branch || 'integration';
-
-    const currentSuite = {
-        name: sessOpts.suiteName || 'Integration suite',
-        id: sessOpts.suiteId || sessOpts.suiteName.replace(' ', '_'),
-    };
-
-    if ((sessOpts.suiteName !== 'EMPTY')) {
-        browser.vDriver.setCurrentSuite(currentSuite);
-    }
-
-    await browser.vDriver.startTestSession({
+    const opts = {
         app: sessOpts.appName,
         test: sessOpts.testName,
+        suite: sessOpts.suiteName,
         run: process.env.RUN_NAME || 'integration_run_name',
         runident: process.env.RUN_IDENT || 'integration_run_ident',
         branch: sessOpts.branch,
-    }, browser.config.apiKey);
+    };
+    if (sessOpts.suiteName === 'EMPTY') {
+        delete opts.suite;
+    }
+    await browser.vDriver.startTestSession(opts, browser.config.apiKey);
 };
-
-// const checkWithFile = async function () {
-//     browser.pause(300);
-//     const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${filePath}`);
-//     const checkResult = await checkVRS(checkName, imageBuffer);
-// };
 
 const fillCommonPlaceholders = function fillPlaceholders(str) {
     require('./extendString');
