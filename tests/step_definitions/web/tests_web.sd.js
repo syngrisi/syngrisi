@@ -129,10 +129,6 @@ Then(/^I expect that(:? (\d)th)? VRS test "([^"]*)" is unfolded$/, (number, test
 When(/^I create "([^"]*)" tests with params:$/, { timeout: 600000 }, async function (num, yml) {
     const params = YAML.parse(yml);
 
-    browser.vDriver.setCurrentSuite({
-        name: 'Integration suite',
-        id: 'Integration_suite',
-    });
     let test;
     for (const i of Array.from(Array(parseInt(num, 10))
         .keys())) {
@@ -144,6 +140,7 @@ When(/^I create "([^"]*)" tests with params:$/, { timeout: 600000 }, async funct
             runident: params.runident || process.env.RUN_IDENT || 'integration_run_ident',
             branch: params.branch || 'integration',
             tags: params.tags || [],
+            suite: 'Integration suite',
         }, browser.config.apiKey);
         browser.pause(300);
 
@@ -164,11 +161,6 @@ When(/^I create "([^"]*)" tests with params:$/, { timeout: 600000 }, async funct
 When(/^I create "([^"]*)" tests with::$/, { timeout: 60000000 }, async function (num, yml) {
     const params = YAML.parse(yml);
 
-    browser.vDriver.setCurrentSuite({
-        name: 'Integration suite',
-        id: 'Integration_suite',
-    });
-
     for (const i of Array.from(Array(parseInt(num, 10))
         .keys())) {
         // console.log(`Create test # ${i}`);
@@ -178,6 +170,7 @@ When(/^I create "([^"]*)" tests with::$/, { timeout: 60000000 }, async function 
             test: params.testName.includes('-') ? (`${params.testName}${i + 1}`) : params.testName,
             run: process.env.RUN_NAME || 'integration_run_name',
             runident: process.env.RUN_IDENT || 'integration_run_ident',
+            suite: 'Integration suite',
         }, browser.config.apiKey);
         browser.pause(300);
         const checkResult = [];
