@@ -13,7 +13,7 @@
     "getUrl": "https://github.com/viktor-silakov/syngrisi.git"
   },
   "scripts": {
-    "test": "cross-env LOG=1 HL=1 npx wdio --spec 'features/**/*.feature'",
+    "test": "cross-env STREAMS=5 LOG=1 HL=1 npx wdio --spec 'features/**/*.feature'",
     "report": "cp  -R ./allure-report/history ./allure-results/; allure generate -c && allure open",
     "smoke": "cross-env LOG=1 HL=1 npx wdio --spec 'features/**/*.feature' --cucumberOpts.tagExpression='@smoke'",
     "testui": "cross-env LOG=1 HL=0 npx wdio --spec 'features/**/*.feature'"
