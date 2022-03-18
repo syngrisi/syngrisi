@@ -123,63 +123,69 @@ async function compareSnapshots(baseline, actual) {
         itemType: 'snapshot',
         msgType: 'COMPARE',
     };
-    log.debug(`compare baseline and actual snapshots with ids: [${baseline.id}, ${actual.id}]`, $this, logOpts);
-    log.debug(`current baseline: ${JSON.stringify(baseline)}`, $this, logOpts);
-    let diff;
-    if (baseline.imghash === actual.imghash) {
-        log.debug(`baseline and actual snapshot have the identical image hashes: '${baseline.imghash}'`, $this, logOpts);
-        // stub for diff object
-        diff = {
-            isSameDimensions: true,
-            dimensionDifference: {
-                width: 0,
-                height: 0,
-            },
-            rawMisMatchPercentage: 0,
-            misMatchPercentage: '0.00',
-            analysisTime: 0,
-            executionTotalTime: '0',
-        };
-    } else {
-        const baselinePath = `${config.defaultBaselinePath}${baseline.filename || `${baseline.id}.png`}`;
-        const actualPath = `${config.defaultBaselinePath}${actual.filename || `${actual.id}.png`}`;
-        const baselineData = fs.readFile(baselinePath);
-        const actualData = fs.readFile(actualPath);
-        log.debug(`baseline path: ${config.defaultBaselinePath}${baseline.id}.png`, $this, logOpts);
-        log.debug(`actual path: ${config.defaultBaselinePath}${actual.id}.png`, $this, logOpts);
-        let opts = {};
-        if (baseline.ignoreRegions) {
-            log.debug(`ignore regions: '${baseline.ignoreRegions}', type: '${typeof baseline.ignoreRegions}'`);
+    try {
+        log.debug(`compare baseline and actual snapshots with ids: [${baseline.id}, ${actual.id}]`, $this, logOpts);
+        log.debug(`current baseline: ${JSON.stringify(baseline)}`, $this, logOpts);
+        let diff;
+        if (baseline.imghash === actual.imghash) {
+            log.debug(`baseline and actual snapshot have the identical image hashes: '${baseline.imghash}'`, $this, logOpts);
+            // stub for diff object
+            diff = {
+                isSameDimensions: true,
+                dimensionDifference: {
+                    width: 0,
+                    height: 0,
+                },
+                rawMisMatchPercentage: 0,
+                misMatchPercentage: '0.00',
+                analysisTime: 0,
+                executionTotalTime: '0',
+            };
+        } else {
+            const baselinePath = `${config.defaultBaselinePath}${baseline.filename || `${baseline.id}.png`}`;
+            const actualPath = `${config.defaultBaselinePath}${actual.filename || `${actual.id}.png`}`;
+            const baselineData = await fs.readFile(baselinePath);
+            const actualData = await fs.readFile(actualPath);
+            log.debug(`baseline path: ${config.defaultBaselinePath}${baseline.id}.png`, $this, logOpts);
+            log.debug(`actual path: ${config.defaultBaselinePath}${actual.id}.png`, $this, logOpts);
+            let opts = {};
+            if (baseline.ignoreRegions) {
+                log.debug(`ignore regions: '${baseline.ignoreRegions}', type: '${typeof baseline.ignoreRegions}'`);
+            }
+
+            // back compatibility
+            if ((baseline.ignoreRegions !== 'undefined') && baseline.ignoreRegions) {
+                const ignored = JSON.parse(JSON.parse(baseline.ignoreRegions));
+                opts = { ignoredBoxes: ignored };
+            }
+            opts.ignore = baseline.matchType || 'nothing';
+            diff = await getDiff(baselineData, actualData, opts);
         }
 
-        // back compatibility
-        if ((baseline.ignoreRegions !== 'undefined') && baseline.ignoreRegions) {
-            const ignored = JSON.parse(JSON.parse(baseline.ignoreRegions));
-            opts = { ignoredBoxes: ignored };
+        log.silly(`the diff is: '${JSON.stringify(diff, null, 2)}'`);
+        if (parseFloat(diff.misMatchPercentage) !== 0) {
+            log.debug(`images are different, ids: [${baseline.id}, ${actual.id}], misMatchPercentage: '${diff.misMatchPercentage}'`);
         }
-        opts.ignore = baseline.matchType || 'nothing';
-        diff = await getDiff(baselineData, actualData, opts);
-    }
-
-    log.silly(`the diff is: '${JSON.stringify(diff, null, 2)}'`);
-    if (parseFloat(diff.misMatchPercentage) !== 0) {
-        log.debug(`images are different, ids: [${baseline.id}, ${actual.id}], misMatchPercentage: '${diff.misMatchPercentage}'`);
-    }
-    if (diff.stabMethod && diff.vOffset) {
-        if (diff.stabMethod === 'downup') {
-            // this mean that we delete first 'diff.vOffset' line of pixels from actual
-            // then we will use this during parse actual page DOM dump
-            actual.vOffset = -diff.vOffset;
-            await actual.save();
+        if (diff.stabMethod && diff.vOffset) {
+            if (diff.stabMethod === 'downup') {
+                // this mean that we delete first 'diff.vOffset' line of pixels from actual
+                // then we will use this during parse actual page DOM dump
+                actual.vOffset = -diff.vOffset;
+                await actual.save();
+            }
+            if (diff.stabMethod === 'updown') {
+                // this mean that we delete first 'diff.vOffset' line of pixels from baseline
+                // then we will use this during parse actual page DOM dump
+                baseline.vOffset = -diff.vOffset;
+                await baseline.save();
+            }
         }
-        if (diff.stabMethod === 'updown') {
-            // this mean that we delete first 'diff.vOffset' line of pixels from baseline
-            // then we will use this during parse actual page DOM dump
-            baseline.vOffset = -diff.vOffset;
-            await baseline.save();
-        }
+        return diff;
+    } catch (e) {
+        const errMsg = `cannot compare snapshots: ${e}\n ${e?.stack}`;
+        log.error(errMsg, $this, logOpts);
+        throw new Error(e);
     }
-    return diff;
 }
 
 exports.updateSnapshot = async function (req, res) {
