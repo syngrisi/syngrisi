@@ -7,7 +7,7 @@ const {
     format,
     subDays,
 } = require('date-fns');
-const got = require('got');
+const { got } = require('got-cjs');
 const { spawn, execSync } = require('child_process');
 const { SyngrisiDriver } = require('@syngrisi/syngrisi-wdio-sdk');
 

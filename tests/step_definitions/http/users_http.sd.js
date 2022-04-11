@@ -1,6 +1,6 @@
 /* eslint-disable prefer-arrow-callback,no-console */
 const { When } = require('cucumber');
-const got = require('got');
+const { got } = require('got-cjs');
 const { requestWithLastSessionSid } = require('../../src/utills/common');
 
 When(/^I create via http test user$/, async function () {

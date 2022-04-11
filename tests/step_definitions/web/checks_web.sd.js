@@ -1,6 +1,6 @@
 /* eslint-disable prefer-arrow-callback,no-console,func-names */
 const { When, Then } = require('cucumber');
-const got = require('got');
+// const { got } = require('got-cjs');
 const { fillCommonPlaceholders } = require('../../src/utills/common');
 
 When(/^I accept the "([^"]*)" check$/, (checkName) => {

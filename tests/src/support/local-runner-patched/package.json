@@ -26,7 +26,7 @@
   "_requiredBy": [
     "#DEV:/"
   ],
-  "_resolved": "https://registry.npmjs.org/@wdio/local-runner/-/local-runner-6.12.1.tgz",
+  "_resolved": "src/support/local-runner-patched",
   "_spec": "6.12.1",
   "_where": "/Users/exadel/Projects/syngrisi/tests",
   "author": {

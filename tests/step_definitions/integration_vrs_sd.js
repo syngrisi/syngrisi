@@ -2,7 +2,7 @@
 const hasha = require('hasha');
 const YAML = require('yaml');
 const { spawn, execSync, } = require('child_process');
-const got = require('got');
+const { got } = require('got-cjs');
 const frisby = require('frisby');
 const path = require('path');
 const fs = require('fs');

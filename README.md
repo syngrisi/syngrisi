@@ -3,7 +3,7 @@
 Syngrisi helps to implement Automated Visual Regression Testing along with your new or existing Test Automation Kit, it provides API for Test Automated solutions and a convenient UI tool to review and Visual Test data.
 
 ### Prerequisites
- * [NodeJS](https://nodejs.org/en/download/) `v12` or above, it is preferably to use [nvm](https://github.com/nvm-sh/nvm);
+ * [NodeJS](https://nodejs.org/en/download/) `v14.16` or above, it is preferably to use [nvm](https://github.com/nvm-sh/nvm);
  * [MongoDB Community Edition](https://docs.mongodb.com/manual/administration/install-community/)
 
 ### Quick start
