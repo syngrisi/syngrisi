@@ -13,7 +13,7 @@
     "getUrl": "https://github.com/viktor-silakov/syngrisi.git"
   },
   "scripts": {
-    "test": "cross-env STREAMS=5 LOG=1 HL=1 npx wdio --spec 'features/**/*.feature'",
+    "test": "cross-env STREAMS=4 LOG=1 HL=1 npx wdio --spec 'features/**/*.feature'",
     "report": "cp  -R ./allure-report/history ./allure-results/; allure generate -c && allure open",
     "smoke": "cross-env LOG=1 HL=1 npx wdio --spec 'features/**/*.feature' --cucumberOpts.tagExpression='@smoke'",
     "testui": "cross-env LOG=1 HL=0 npx wdio --spec 'features/**/*.feature'"
@@ -27,6 +27,7 @@
     "compression": "^1.7.4",
     "faker": "^5.5.3",
     "frisby": "^2.1.3",
+    "got-cjs": "^12.0.1",
     "imagejs": "0.0.9",
     "nodemon": "^2.0.7",
     "wdio-screenshot-v5": "^1.0.0",
@@ -48,7 +49,7 @@
     "@wdio/static-server-service": "^6.10.10",
     "@wdio/sync": "^6.11.0",
     "babel-jest": "^26.0.1",
-    "chromedriver": "100.0.0",
+    "chromedriver": "98.0.1",
     "cross-env": "^7.0.3",
     "eslint": "^7.24.0",
     "eslint-config-airbnb-base": "^14.1.0",

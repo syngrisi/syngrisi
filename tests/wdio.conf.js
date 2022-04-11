@@ -23,6 +23,7 @@ exports.config = {
         browserName: 'chrome',
         'goog:chromeOptions': {
             args: process.env.HL === '1' ? ['--headless', '--enable-automation'] : ['--enable-automation'],
+            // binary: './chromium/Chromium.app/Contents/MacOS/Chromium',
             prefs: {
                 credentials_enable_service: false,
                 download: {
