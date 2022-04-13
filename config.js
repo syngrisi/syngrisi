@@ -1,4 +1,5 @@
 const fs = require('fs');
+require('dotenv').config();
 
 const bsPath = process.env.VRS_BASELINE_PATH || './baselines/';
 if (!fs.existsSync(bsPath)) {
