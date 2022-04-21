@@ -163,8 +163,8 @@ async function compareSnapshots(baseline, actual) {
         }
 
         log.silly(`the diff is: '${JSON.stringify(diff, null, 2)}'`);
-        if (parseFloat(diff.misMatchPercentage) !== 0) {
-            log.debug(`images are different, ids: [${baseline.id}, ${actual.id}], misMatchPercentage: '${diff.misMatchPercentage}'`);
+        if (parseFloat(diff.rawMisMatchPercentage) !== 0) {
+            log.debug(`images are different, ids: [${baseline.id}, ${actual.id}], rawMisMatchPercentage: '${diff.rawMisMatchPercentage}'`);
         }
         if (diff.stabMethod && diff.vOffset) {
             if (diff.stabMethod === 'downup') {
