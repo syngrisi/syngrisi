@@ -163,7 +163,7 @@ async function compareSnapshots(baseline, actual) {
         }
 
         log.silly(`the diff is: '${JSON.stringify(diff, null, 2)}'`);
-        if (parseFloat(diff.rawMisMatchPercentage) !== 0) {
+        if (diff.rawMisMatchPercentage.toString() !== '0') {
             log.debug(`images are different, ids: [${baseline.id}, ${actual.id}], rawMisMatchPercentage: '${diff.rawMisMatchPercentage}'`);
         }
         if (diff.stabMethod && diff.vOffset) {
@@ -953,7 +953,7 @@ async function createCheck(
         if ((dimensionDifference.width === 0) && (dimensionDifference.height === 1)) return true;
         return false;
     };
-    const areSnapshotsDifferent = (compareResult) => compareResult.misMatchPercentage !== '0.00';
+    const areSnapshotsDifferent = (compareResult) => compareResult.rawMisMatchPercentage.toString() !== '0';
     const areSnapshotsWrongDimensions = (compareResult) => !compareResult.isSameDimensions
         && !ignoreDifferentResolutions(compareResult.dimensionDifference);
 
