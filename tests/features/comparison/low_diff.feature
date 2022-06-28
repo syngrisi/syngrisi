@@ -34,3 +34,8 @@ Feature: Low images difference
 
         Then I expect that 2th test "Low difference - 1" has "New" status
 
+        When I open "Check - 1" view
+        Then I expect that element "#mismatch_percentage" is displayed
+        Then the element "#mismatch_percentage" contains the text "(0.0005228758169934641%)"
+        Then the element "//div[contains(text(), 'rawMisMatchPercentage')]/../div[2]" contains the text "0.0005228758169934641"
+        Then the element "//div[contains(text(), 'misMatchPercentage')]/../div[2]" contains the text "0.00"

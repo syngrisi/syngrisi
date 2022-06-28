@@ -116,7 +116,7 @@ async function cloneSnapshot(sourceSnapshot, name) {
     return newSnapshot;
 }
 
-async function compareSnapshots(baseline, actual) {
+async function compareSnapshots(baseline, actual, opts = {}) {
     const logOpts = {
         scope: 'compareSnapshots',
         ref: baseline.id,
@@ -148,7 +148,7 @@ async function compareSnapshots(baseline, actual) {
             const actualData = await fs.readFile(actualPath);
             log.debug(`baseline path: ${config.defaultBaselinePath}${baseline.id}.png`, $this, logOpts);
             log.debug(`actual path: ${config.defaultBaselinePath}${actual.id}.png`, $this, logOpts);
-            let opts = {};
+            const options = opts;
             if (baseline.ignoreRegions) {
                 log.debug(`ignore regions: '${baseline.ignoreRegions}', type: '${typeof baseline.ignoreRegions}'`);
             }
@@ -156,10 +156,10 @@ async function compareSnapshots(baseline, actual) {
             // back compatibility
             if ((baseline.ignoreRegions !== 'undefined') && baseline.ignoreRegions) {
                 const ignored = JSON.parse(JSON.parse(baseline.ignoreRegions));
-                opts = { ignoredBoxes: ignored };
+                options.ignoredBoxes = ignored;
             }
-            opts.ignore = baseline.matchType || 'nothing';
-            diff = await getDiff(baselineData, actualData, opts);
+            options.ignore = baseline.matchType || 'nothing';
+            diff = await getDiff(baselineData, actualData, options);
         }
 
         log.silly(`the diff is: '${JSON.stringify(diff, null, 2)}'`);
@@ -963,7 +963,7 @@ async function createCheck(
     if ((checkUpdateParams.status !== 'new') && (!checkUpdateParams.failReasons.includes('not_accepted'))) {
         try {
             log.debug(`'the check with name: '${checkParam.name}' isn't new, make comparing'`, $this, logOpts);
-            compareResult = await compareSnapshots(currentBaselineSnapshot, currentSnapshot);
+            compareResult = await compareSnapshots(currentBaselineSnapshot, currentSnapshot, { vShifting: checkParam.vShifting });
             log.silly(`ignoreDifferentResolutions: '${ignoreDifferentResolutions(compareResult.dimensionDifference)}'`);
             log.silly(`dimensionDifference: '${JSON.stringify(compareResult.dimensionDifference)}`);
             if (areSnapshotsDifferent(compareResult) || areSnapshotsWrongDimensions(compareResult)) {
@@ -1083,6 +1083,7 @@ exports.createCheck = async function (req, res) {
                 os: req.body.os,
                 files: req.files,
                 domDump: req.body.domdump,
+                vShifting: req.body.vShifting,
             },
             test,
             suite,

@@ -30,5 +30,7 @@ Then(/^I expect via http ([\d]+)st (test|check) filtered as "([^"]*)" matched:$/
 });
 
 When(/^I debug$/, function () {
-    throw new Error('!!!');
+    browser.logToViewport('❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️')
+
+    // throw new Error('!!!');
 });

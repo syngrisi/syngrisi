@@ -44,7 +44,7 @@ When(/^I accept via http the (\d+)st check with name "([^"]*)"$/, async function
     const checkAcceptUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
         + `checks/${checkId}`;
 
-    const result = (await requestWithLastSessionSid(
+    const result = await (await requestWithLastSessionSid(
         checkAcceptUri,
         this,
         {

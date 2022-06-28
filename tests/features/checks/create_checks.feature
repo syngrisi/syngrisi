@@ -174,7 +174,7 @@ Feature: VRS One Suite, One test, One check
         Then I expect that 2th test "Created two: new, failed - 1" has "New" status
 
         When I open "Check - 1" view
-        Then the element "#mismatch_percentage" contains the text "1.34"
+        Then the element "#mismatch_percentage" contains the text "(1.34%)"
         Then the element "//div[contains(text(), 'failReasons')]/../div[2]" contains the text "different_images"
 
     @smoke

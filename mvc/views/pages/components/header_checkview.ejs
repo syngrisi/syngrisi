@@ -1,4 +1,3 @@
-
 <div name="logo-and-link"
      class="col ml-3"
      id="logo-and-label-container">
@@ -12,8 +11,12 @@
         <!--HEADER TITLE-->
         <%
         const checkResult = JSON.parse(check.result);
-        const misMatchPercentage = checkResult.misMatchPercentage ? ('(' + checkResult.misMatchPercentage + '%)') : '';
-        const commonTitle = `${misMatchPercentage} ${suite.name} / ${test.name} / ${check.name}`;
+        let diffPercent = checkResult.misMatchPercentage ? (checkResult.misMatchPercentage) : ''
+        diffPercent = ((diffPercent === '0.00' || diffPercent === '') && checkResult.rawMisMatchPercentage?.toString()?.length > 0) ?
+                checkResult.rawMisMatchPercentage :
+                checkResult.misMatchPercentage;
+        const diffPercentText = diffPercent ? "(" + diffPercent + "%)" : '';
+        const commonTitle = `${diffPercentText} ${suite.name} / ${test.name} / ${check.name}`;
         %>
         <div name="title"
              class="col pl-2 ml-2 pt-0 h6 mb-0 d-flex align-items-center text-truncate"
@@ -25,8 +28,8 @@
                 <img src="./static/icons/back-button.svg" alt="navigation button" class="navigation-button">
             </a>
             <!--STATUS-->
-            <% const statusTitle = (misMatchPercentage !== '(0.00%)')
-                    ? `this check mismatch percentage is ${misMatchPercentage}`
+            <% const statusTitle = (diffPercent !== '0.00%')
+                    ? `this check mismatch percentage is ${diffPercentText}`
                     : 'there is no difference between baseline and actual' %>
             <span class="status d-inline-block ml-2 mr-2 rounded border border-light bg-item-<%= check.status[0]; %>"
                   title="<%= statusTitle %>"
@@ -34,18 +37,27 @@
             >
                 <%= check.status[0]; %>
                 <% if(check.failReasons.includes('wrong_dimensions')) { %>
-                    <span id='not-equal-resolution-char' class="text-danger bg-warning rounded" title="the resolutions of snapshots are not equal">≠</span>
+                    <span id='not-equal-resolution-char' class="text-danger bg-warning rounded"
+                          title="the resolutions of snapshots are not equal">≠</span>
                 <% } else { %>
-                    <span id='not-equal-resolution-char' class="text-danger bg-warning rounded d-none" title="the resolutions of snapshots are not equal">≠</span>
+                    <span id='not-equal-resolution-char' class="text-danger bg-warning rounded d-none"
+                          title="the resolutions of snapshots are not equal">≠</span>
                 <% } %>
 
                 <% if(check.failReasons.includes('not_accepted')) { %>
-                <span id='not-accepted-checks-char' class="text-danger bg-warning rounded" title="the check isn't new and doesn't have accepted snapshots, accept one of them and rerun tests">×</span>
+                    <span id='not-accepted-checks-char' class="text-danger bg-warning rounded"
+                          title="the check isn't new and doesn't have accepted snapshots, accept one of them and rerun tests">×</span>
                 <% } %>
 
-            <% if(misMatchPercentage !== '(0.00%)') { %>
-                    <span id="mismatch_percentage"><%= misMatchPercentage; %></span>
-            <% } %>
+                <% const result = JSON.parse(check.result) %>
+                <% if(result.vOffset) { %>
+                    <span id='vertical-shifting-char' class="text-danger bg-warning rounded"
+                          title="the check has vertical shifting parameter: <%= result.vOffset %> pixels">⇅</span>
+                <% } %>
+
+                <% if(diffPercent !== '0.00' || diffPercent !== '') { %>
+                    <span id="mismatch_percentage"><%= diffPercentText; %></span>
+                <% } %>
             </span>
             <!--LINKS TO SUITE / CHECK-->
             <a class="unlink" name="suite-link"
