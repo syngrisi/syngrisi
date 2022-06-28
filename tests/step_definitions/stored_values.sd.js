@@ -12,6 +12,7 @@ Then(/^I expect that the "([^"]*)" saved value equal the "([^"]*)" saved value$/
 Then(/^I expect "([^"]*)" saved object:$/, function (itemName, yml) {
     const params = YAML.parse(yml);
     const item = this.getSavedItem(itemName);
+    if (item.result) Object.assign(item, JSON.parse(item.result));
     expect(item)
         .toMatchObject(params);
 });

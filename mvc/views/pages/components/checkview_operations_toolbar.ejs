@@ -39,7 +39,7 @@
         <!--TOGGLE DIFF-->
         <% if (actualSnapshot && diffSnapshot) { %>
             <div class="col-auto btn-check pl-1 pr-1 pt-0 border-left border-header" id="diff-wrapper"
-                 onclick="mainView.toggleDiff({filename: '<%= diffSnapshot.filename; %>', id: '<%= diffSnapshot.id; %>', name: '<%= diffSnapshot.name; %>',createdDate: '<%= diffSnapshot.formattedCreatedDate; %>' })"
+                 onclick="mainView.toggleDiff({ filename: '<%= diffSnapshot.filename; %>' })"
             >
 
                 <a id="toggle-diff" type="button"

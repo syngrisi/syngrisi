@@ -149,7 +149,9 @@ When(/^I create "([^"]*)" tests with params:$/, { timeout: 600000 }, async funct
         const checkName = params.checkName || `Check - ${Math.random()
             .toString(36)
             .substring(7)}`;
-        const checkResult = await checkVRS(checkName, imageBuffer);
+        const opts = {};
+        if (params.vShifting) opts.vShifting = params.vShifting;
+        const checkResult = await checkVRS(checkName, imageBuffer, opts);
         // console.log({ checkResult });
         // console.log({ test });
         this.STATE.test = test;

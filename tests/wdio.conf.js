@@ -59,6 +59,7 @@ exports.config = {
     connectionRetryTimeout: 90000,
     connectionRetryCount: 3,
     services: [
+        ['cucumber-viewport-logger', { enabled: false }],
         [WdioScreenshot], 'shared-store', ['chromedriver',
             {
                 port: 7777,
@@ -76,7 +77,7 @@ exports.config = {
     ],
     cucumberOpts: {
         scenarioLevelReporter: true,
-        retry: parseInt(process.env.RETRY, 10) || 1,
+        retry: parseInt(process.env.RETRY, 10) || 0,
         backtrace: false,
         requireModule: ['@babel/register'],
         failAmbiguousDefinitions: true,

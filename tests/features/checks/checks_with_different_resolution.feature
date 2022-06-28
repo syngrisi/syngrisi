@@ -33,12 +33,12 @@ Feature: Checks with different resolutions
           checkName: Check - 1
           filePath: files/A.png
         """
-        When I expect via http 2st test filtered as "name=Checks with different resolutions - 1" matched:
+        Then I expect via http 2st test filtered as "name=Checks with different resolutions - 1" matched:
         """
         status: Failed
         """
 
-        When I expect via http 2st check filtered as "name=Check - 1" matched:
+        Then I expect via http 2st check filtered as "name=Check - 1" matched:
         """
         status: [failed]
         """

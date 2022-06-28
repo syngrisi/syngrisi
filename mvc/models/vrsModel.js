@@ -146,6 +146,12 @@ const VRSCheckSchema = new Schema({
     failReasons: {
         type: [String],
     },
+    vOffset: {
+        type: String,
+    },
+    topStablePixels: {
+        type: String,
+    },
 });
 
 const VRSBaselineSchema = new Schema({
