@@ -196,35 +196,38 @@
                 new Promise((_, reject) => {
                     setTimeout(() => {
                         return reject(`The image loading timeout is exceeded: '${timeout}' milliseconds, src: '${src}'`);
-                    }, timeout)
+                    }, timeout);
                 })
-            ])
+            ]);
         }
 
         (async () => {
 
-            let baselineImg = await createImageAndWaitForLoad('/snapshoots/<%= baselineSnapshot.filename || baselineSnapshot.id + '.png'; %>')
+            let baselineImg = await createImageAndWaitForLoad('/snapshoots/<%= baselineSnapshot.filename || baselineSnapshot.id + '.png'; %>');
 
             <% const actual = actualSnapshot ? JSON.stringify(actualSnapshot) : null %>
             const actualObj = <%- actual %>;
 
-            let actualImg = await createImageAndWaitForLoad(`/snapshoots/${actualObj.filename || actualObj.id + '.png'}`)
+            let actualImg = await createImageAndWaitForLoad(`/snapshoots/${actualObj.filename || actualObj.id + '.png'}`);
 
             // make visible the ≠ charset in header if baseline/actual resolution are different
             if ((baselineImg.height !== actualImg.height) || (baselineImg.width !== actualImg.width)) {
                 const notEqualResolutionChar = document.getElementById('not-equal-resolution-char');
-                notEqualResolutionChar.classList.add('d-inline')
+                notEqualResolutionChar.classList.add('d-inline');
                 notEqualResolutionChar.title = notEqualResolutionChar.title
-                        + ` baseline: ${baselineImg.width}x${baselineImg.height}, actual: ${actualImg.width}x${actualImg.height}`
+                        + ` baseline: ${baselineImg.width}x${baselineImg.height}, actual: ${actualImg.width}x${actualImg.height}`;
             }
 
             const largestSnapshotsHeight = (baselineImg.height > actualImg.height) ? baselineImg.height : actualImg.height;
             const largestSnapshotsWidth = (baselineImg.width > actualImg.width) ? baselineImg.width : actualImg.width;
 
-            let coef = document.getElementById('snapshoot').clientWidth / largestSnapshotsWidth;
+            let resizeCoeff = document.getElementById('snapshoot').clientWidth / largestSnapshotsWidth;
 
-            let calculatedHeight = largestSnapshotsHeight * coef;
+            let calculatedHeight = largestSnapshotsHeight * resizeCoeff;
 
+            if (calculatedHeight < MainView.calculateExpectedCanvasViewportAreaSize().height) {
+                calculatedHeight = MainView.calculateExpectedCanvasViewportAreaSize().height;
+            }
             document.getElementById('snapshoot').style.height = calculatedHeight + 'px';
             fabric.Object.prototype.objectCaching = false;
 
@@ -241,7 +244,7 @@
                     }
             );
             mainView.getSnapshotIgnoreRegionsDataAndDrawRegions('<%= baselineSnapshot.id; %>');
-        })()
+        })();
 
     </script>
 
@@ -275,7 +278,7 @@
         const check = <%- JSON.stringify(check) %>;
         const checkData = formTableData(check);
         const compareResultObj = JSON.parse(check.result);
-        compareResultObj.dimensionDifference = JSON.stringify(compareResultObj.dimensionDifference)
+        compareResultObj.dimensionDifference = JSON.stringify(compareResultObj.dimensionDifference);
 
         const compareResult = formTableData(compareResultObj);
         const mergedCheckData = checkData.concat(compareResult);
@@ -381,5 +384,6 @@
 
     <script src="./static/js/bootstrap-toolkit.min.js"></script>
     <script src="./static/js/commonEvents.min.js"></script>
+</div>
 </body>
 </html>

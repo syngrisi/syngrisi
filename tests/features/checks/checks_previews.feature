@@ -80,5 +80,5 @@ Feature: Checks previews
         """
         Then I expect the stored "js" string is equal:
         """
-        6.349206349206349,15.873015873015872,64.12698412698413,32.38095238095239,MediumVioletRed,rgba(100,200,200,0.5),0.5
+        8.602150537634408,21.50537634408602,86.88172043010752,43.87096774193548,MediumVioletRed,rgba(100,200,200,0.5),0.5
         """
