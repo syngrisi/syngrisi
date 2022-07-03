@@ -1,5 +1,5 @@
 /* eslint-disable dot-notation,no-underscore-dangle */
-/* global XMLHttpRequest fabric $ document window */
+/* global XMLHttpRequest fabric $ window */
 
 // eslint-disable-next-line no-unused-vars
 class MainView {
@@ -14,19 +14,21 @@ class MainView {
             uniformScaling: false,
         });
 
+        this.expectedCanvasViewportAreaSize = MainView.calculateExpectedCanvasViewportAreaSize();
+
         this.defaultMode = '';
         this.currentMode = {
             mode: '',
-            set: function (value) {
+            set(value) {
                 this.mode = value;
             },
-            toggle: function (mode) {
+            toggle(mode) {
                 if (this.mode === mode) {
                     return this.set(this.defaultMode);
                 }
                 return this.set(mode);
             },
-            isPan: function () {
+            isPan() {
                 return this.mode === 'pan';
             },
         };
@@ -41,6 +43,30 @@ class MainView {
         this.panEvents();
         // render view
         this.renderBaselineView();
+    }
+
+    // this is the area from the left top canvas corner till the end of the viewport
+    // ┌──────┬─────────────┐
+    // │      │xxxxxxxx     │
+    // │      │xxxxxxxx     │
+    // │      │xxxxxxxx     │
+    // │      │xxxxxxxx     │
+    // │      │             │
+    // │      │             │
+    // │      │  the area   │
+    // │      │             │
+    // │      │             │
+    // └──────┴─────────────┘
+
+    static calculateExpectedCanvasViewportAreaSize() {
+        const viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+        const viewportHeight = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+        const canvasDimensions = document.getElementById('snapshoot')
+            .getBoundingClientRect();
+        return {
+            width: viewportWidth - canvasDimensions.x,
+            height: viewportHeight - canvasDimensions.y,
+        };
     }
 
     panEvents() {
@@ -59,7 +85,7 @@ class MainView {
         );
 
         this.canvas.on(
-            'mouse:down', (e) => {
+            'mouse:down', () => {
                 this.mouseDown = true;
 
                 if (this.currentMode.isPan()) {
@@ -70,7 +96,7 @@ class MainView {
             }
         );
         this.canvas.on(
-            'mouse:up', (e) => {
+            'mouse:up', () => {
                 this.mouseDown = false;
                 this.canvas.setCursor('default');
                 this.canvas.renderAll();
@@ -92,7 +118,6 @@ class MainView {
         // disable rotation point for selections
         this.canvas.on('selection:created', (e) => {
             const activeSelection = e.target;
-            console.log(activeSelection?._objects?.length);
             if (!activeSelection?._objects?.length || (activeSelection?._objects?.length < 2)) return;
             activeSelection.hasControls = false;
             this.canvas.renderAll();
@@ -191,6 +216,23 @@ class MainView {
         });
     }
 
+    calculateImageWidth() {
+        let { width } = this.image;
+        const isHigh = () => (this.image.height > this.expectedCanvasViewportAreaSize.height)
+            && ((this.image.height / this.expectedCanvasViewportAreaSize.height) < 10);
+
+        if (isHigh()) {
+            width = this.image.width * (this.expectedCanvasViewportAreaSize.height / this.image.height);
+        }
+        const isExtraSmall = () => this.image.height < 50;
+        if (isExtraSmall()) width *= 2;
+
+        if (width > this.canvas.width) {
+            width = this.canvas.width;
+        }
+        return width;
+    }
+
     // RENDER VIEWS
     async renderBaselineView() {
         this.currentView = 'BaselineView';
@@ -200,7 +242,7 @@ class MainView {
         this.canvas.add(this.image);
 
         this.image.sendToBack();
-        this.image.scaleToWidth(this.canvas.width * this.canvas.getZoom());
+        this.image.scaleToWidth(this.calculateImageWidth() * this.canvas.getZoom());
         this.canvas.renderAll();
     }
 
@@ -272,10 +314,11 @@ class MainView {
 
     removeActiveIgnoreRegions() {
         const els = this.canvas.getActiveObjects()
-            .filter(x => x.name === 'ignore_rect');
+            .filter((x) => x.name === 'ignore_rect');
         this.canvas.discardActiveObject()
             .renderAll();
         if (els.length === 0) {
+            // eslint-disable-next-line no-undef,no-alert
             alert('there is no active regions for removing');
             return;
         }
@@ -327,7 +370,6 @@ class MainView {
     }
 
     addIgnoreRegion(params) {
-        const classThis = this;
         Object.assign(params, { fill: 'MediumVioletRed' });
         const r = this.addRect(params);
         r.setControlsVisibility({
@@ -420,11 +462,11 @@ class MainView {
         }
         $('#notify')
             .show();
-        setTimeout(() => {
-                $('#notify')
-                    .hide();
-            },
-            4000);
+        setTimeout(
+            () => $('#notify')
+                .hide(),
+            4000
+        );
     }
 
     sendIgnoreRegions(id, regionsData) {
@@ -434,7 +476,7 @@ class MainView {
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         const classThis = this;
         // NEED TO ADD UPDATE BASELINE LOGIC TO .onload EVENT!!!
-        xhr.onload = function () {
+        xhr.onload = function regNotification() {
             if (xhr.status === 200) {
                 console.log(`Successful send regions data, id: '${id}'  resp: '${xhr.responseText}'`);
                 classThis.showNotification('Regions were saved');
@@ -447,6 +489,7 @@ class MainView {
     }
 
     /**
+     * convert json to fabric.js format
      * @param {string} regions       JSON string that contain data about regions in resemble.js format
      * @returns {object}             region data in fabric.js format
      */
@@ -495,9 +538,8 @@ class MainView {
             // console.log(`get snapshoot data id: ${snapshootId}`);
             const xhr = new XMLHttpRequest();
             xhr.open('GET', `/snapshot/${snapshootId}/`, true);
-            xhr.onload = function () {
+            xhr.onload = () => {
                 if (xhr.status === 200) {
-                    // console.log(`Successful got regions data, id: '${snapshootId}'  resp: '${xhr.responseText}'`);
                     return resolve(JSON.parse(xhr.responseText));
                 }
                 console.error(`Cannot get regions data, status: '${xhr.status}',  resp: '${xhr.responseText}'`);
@@ -516,7 +558,7 @@ class MainView {
         return new Promise(
             (resolve, reject) => {
                 try {
-                    fabric.Image.fromURL(url,
+                    return fabric.Image.fromURL(url,
                         (img) => resolve(img));
                 } catch (e) {
                     console.error(`cannot create image from url, error: '${e}'`);
