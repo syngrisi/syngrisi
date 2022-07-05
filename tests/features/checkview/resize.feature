@@ -22,6 +22,15 @@ Feature: Resize checkview
           checkName: Check - High
           filePath: files/high_image.png
         """
+
+        When I accept via http the 1st check with name "Check - High"
+        When I create "1" tests with params:
+        """
+          testName: "Test - High"
+          checkName: Check - High
+          filePath: files/high_image_broken.png
+        """
+
         When I open the app
         When I wait and refresh page on element "span=Test - High - 1" for "5" seconds to exist
         When I click on "Test - High - 1" VRS test
@@ -32,6 +41,45 @@ Feature: Resize checkview
         """
            return (parseInt(mainView.image.getScaledWidth()) === 397 // for headless mode
            || parseInt(mainView.image.getScaledWidth()) === 328).toString()
+        """
+        When I wait for "1" seconds
+        Then I expect the stored "js" string is equal:
+        """
+          true
+        """
+
+        When I click on the element "#toggle-actual-baseline"
+        When I wait for "2" seconds
+        When I execute javascript code:
+        """
+           return (parseInt(mainView.actualImage.getScaledWidth()) === 397 // for headless mode
+           || parseInt(mainView.actualImage.getScaledWidth()) === 328).toString()
+        """
+        When I wait for "1" seconds
+        Then I expect the stored "js" string is equal:
+        """
+          true
+        """
+
+        When I click on the element "#diff-wrapper"
+        When I wait for "2" seconds
+        When I execute javascript code:
+        """
+           return (parseInt(mainView.diffImage.getScaledWidth()) === 397 // for headless mode
+           || parseInt(mainView.diffImage.getScaledWidth()) === 328).toString()
+        """
+        When I wait for "1" seconds
+        Then I expect the stored "js" string is equal:
+        """
+          true
+        """
+
+        When I click on the element "#toggle-side"
+        When I wait for "2" seconds
+        When I execute javascript code:
+        """
+           return (parseInt(mainView.sideToSideView.baselineImg.getScaledWidth()) === 397 // for headless mode
+           || parseInt(mainView.sideToSideView.baselineImg.getScaledWidth()) === 328).toString()
         """
         When I wait for "1" seconds
         Then I expect the stored "js" string is equal:

@@ -40,6 +40,7 @@
                 $(window)
                         .on('load', function () {
                             renderSameNamedChecks(<%- JSON.stringify(check) %>, <%- JSON.stringify(lastChecksWithSameName) %>);
+                            renderNextAndPrevButtons('<%= prevCheckId %>', '<%= nextCheckId %>');
                         });
             </script>
         </div>
@@ -143,6 +144,19 @@
         // KEY BINDING
         document.addEventListener('keydown', function (event) {
             console.log(event.code);
+
+            if (event.code === 'ArrowRight') {
+                if (event.altKey) {
+                    document.location.href = document.getElementById('next')
+                            .getAttribute('href');
+                }
+            }
+            if (event.code === 'ArrowLeft') {
+                if (event.altKey) {
+                    document.location.href = document.getElementById('previous')
+                            .getAttribute('href');
+                }
+            }
             if (event.code === 'KeyA') {
                 mainView.addIgnoreRegion({
                     name: 'ignore_rect',
@@ -201,6 +215,7 @@
             ]);
         }
 
+        // RENDER CANVAS
         (async () => {
 
             let baselineImg = await createImageAndWaitForLoad('/snapshoots/<%= baselineSnapshot.filename || baselineSnapshot.id + '.png'; %>');
@@ -274,6 +289,7 @@
                 hozAlign: 'left',
             },
         ];
+        // RENDER TABLES
         // CHECK TABLE
         const check = <%- JSON.stringify(check) %>;
         const checkData = formTableData(check);
@@ -354,7 +370,6 @@
             },
         ];
 
-        // "ref":"61941a32512d107490675a3e","timestamp":"2021-11-17T13:56:01.915Z"},"hostname":"TBSL00003"}'
         function transformHistory(arr) {
             const result = [];
             for (const item of arr) {

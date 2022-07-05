@@ -51,6 +51,7 @@ When(/^I expect that(:? (\d)th)? VRS test "([^"]*)" has "([^"]*)" (status|browse
         }
     });
 
+// eslint-disable-next-line max-len
 When(/^I expect that(:? (\d)th)? test "([^"]*)" (has|contains) "([^"]*)" (status|browser|platform|viewport|accepted status|date|branch|created by|tags)$/,
     function (number, testName, method, fieldValue, fieldName) {
         number = number ? parseInt(number, 10) : 1;
@@ -160,7 +161,7 @@ When(/^I create "([^"]*)" tests with params:$/, { timeout: 600000 }, async funct
     }
 });
 
-When(/^I create "([^"]*)" tests with::$/, { timeout: 60000000 }, async function (num, yml) {
+When(/^I create "([^"]*)" tests with:$/, { timeout: 60000000 }, async function (num, yml) {
     const params = YAML.parse(yml);
 
     for (const i of Array.from(Array(parseInt(num, 10))

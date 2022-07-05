@@ -237,22 +237,22 @@ class SideToSideView {
         });
         this.actualImg.clipPath = this.rectClip;
 
-        // LOCATION AND SIZE
-        this.divider.left = this.canvas.getWidth() / 2 - this.divider.width / 2;
-        this.baselineLabel.top = this.canvas.getHeight() / 2 - 15;
-        this.baselineLabel.left = (this.divider.left) - this.canvas.getWidth() / 10;
-
-        this.actualLabel.top = this.canvas.getHeight() / 2 - 15;
-        this.actualLabel.left = this.divider.left + this.canvas.getWidth() / 10;
+        // // LOCATION AND SIZE <-- see this in the mainView for now
+        // this.divider.left = this.canvas.getWidth() / 2 - this.divider.width / 2;
+        // this.baselineLabel.top = this.canvas.getHeight() / 2 - 15;
+        // this.baselineLabel.left = (this.divider.left) - this.canvas.getWidth() / 10;
+        //
+        // this.actualLabel.top = this.canvas.getHeight() / 2 - 15;
+        // this.actualLabel.left = this.divider.left + this.canvas.getWidth() / 10;
 
         // this.rectClip.width = this.canvas.getWidth();
         this.rectClip.width = 10000;
         this.rectClip.height = this.canvas.getHeight();
 
-        // SCALING
-        this.baselineImg.scaleToWidth(this.canvas.width);
-        const ratio = (this.canvas.width / this.baselineImg._element.width);
-        this.actualImg.scaleToWidth(this.actualImg._element.width * ratio);
+        // SCALING <-- see this in the mainView for now
+        // this.baselineImg.scaleToWidth(this.canvas.width);
+        // const ratio = (this.canvas.width / this.baselineImg._element.width);
+        // this.actualImg.scaleToWidth(this.actualImg._element.width * 11);
 
         // RENDER
         this.canvas.add(this.baselineImg);
