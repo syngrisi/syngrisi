@@ -118,7 +118,6 @@ exports.checksGroupedByIdent = function checksGroupedByIdent(checkFilter) {
     return new Promise(async (resolve, reject) => {
         try {
             const chs = await Check.find(checkFilter)
-                .sort({ updatedDate: 1 })
                 .exec();
             const checks = chs.map((ch) => {
                 ch.formattedCreatedDate = moment(ch.createdDate)
