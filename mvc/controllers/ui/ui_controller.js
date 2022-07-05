@@ -112,21 +112,21 @@ exports.checkView = async function checkView(req, res) {
         const currentCheckIndex = checksWithSameTestId.map((x) => x._id.toString())
             .indexOf(check._id.toString());
         const countOfChecksWithSameTestId = checksWithSameTestId.length;
-        const prevItem = async (modelName, id) => {
+        const prevCheck = async (modelName, id) => {
             const model = mongoose.model(modelName);
-            return model.findOne({ _id: { $lt: id } })
+            return model.findOne({ test: test._id, _id: { $lt: id } })
                 .sort({ _id: -1 })
                 .exec();
         };
-        const nextItem = async (modelName, id) => {
+        const nextCheck = async (modelName, id) => {
             const model = mongoose.model(modelName);
-            return model.findOne({ _id: { $gt: id } })
+            return model.findOne({ test: test._id, _id: { $gt: id } })
                 .sort({ _id: 1 })
                 .exec();
         };
 
-        const prevCheckId = currentCheckIndex !== 0 ? (await prevItem('VRSCheck', check._id))?._id : null;
-        const nextCheckId = currentCheckIndex + 1 !== checksWithSameTestId.length ? (await nextItem('VRSCheck', check._id))?._id : null;
+        const prevCheckId = currentCheckIndex !== 0 ? (await prevCheck('VRSCheck', check._id))?._id : null;
+        const nextCheckId = currentCheckIndex + 1 !== checksWithSameTestId.length ? (await nextCheck('VRSCheck', check._id))?._id : null;
 
         let lastChecksWithSameName = [];
         for (const group of Object.values(checksWithSameName)) {
