@@ -502,6 +502,21 @@ a.btn-check:hover {
     background: rgba(86, 61, 124, 0.3);
 }
 
+div.btn-check[disabled=true] {
+    color:#727272; !important;
+    opacity: 0.6;
+}
+
+div.btn-check[disabled=true]:hover {
+    cursor: none;
+    background: rgba(86, 61, 124, 0);
+
+}
+
+div.btn-check[disabled=true]>a:hover {
+    cursor: default;
+}
+
 div.btn-check:hover {
     background: rgba(216, 202, 239, 0.2);
     cursor: pointer;

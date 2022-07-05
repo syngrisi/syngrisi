@@ -6,7 +6,7 @@ Feature: Few Checks into the same Test
         Given I start Server and start Driver
 
     Scenario: Tho checks with different images [new, new]
-        When I create "1" tests with::
+        When I create "1" tests with:
         """
           testName: "Test"
           checks:
@@ -31,7 +31,7 @@ Feature: Few Checks into the same Test
         """
 
     Scenario: Tho checks with different images [new, new, -> new, passed]
-        When I create "1" tests with::
+        When I create "1" tests with:
         """
           testName: "Test"
           checks:
@@ -41,7 +41,7 @@ Feature: Few Checks into the same Test
               checkName: Check - 2
         """
         When I accept via http the 1st check with name "Check - 1"
-        When I create "1" tests with::
+        When I create "1" tests with:
         """
           testName: "Test"
           checks:
@@ -63,7 +63,7 @@ Feature: Few Checks into the same Test
         """
 
     Scenario: Tho checks with different images [new, new, -> passed, passed]
-        When I create "1" tests with::
+        When I create "1" tests with:
         """
           testName: "Test"
           checks:
@@ -74,7 +74,7 @@ Feature: Few Checks into the same Test
         """
         When I accept via http the 1st check with name "Check - 1"
         When I accept via http the 1st check with name "Check - 2"
-        When I create "1" tests with::
+        When I create "1" tests with:
         """
           testName: "Test"
           checks:
@@ -106,7 +106,7 @@ Feature: Few Checks into the same Test
         """
 
     Scenario: Tho checks with different images [new, new, -> failed, failed]
-        When I create "1" tests with::
+        When I create "1" tests with:
         """
           testName: "Test"
           checks:
@@ -117,7 +117,7 @@ Feature: Few Checks into the same Test
         """
         When I accept via http the 1st check with name "Check - 1"
         When I accept via http the 1st check with name "Check - 2"
-        When I create "1" tests with::
+        When I create "1" tests with:
         """
           testName: "Test"
           checks:

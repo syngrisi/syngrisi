@@ -1,11 +1,44 @@
 <div class="col-auto text-light">
     <div class="row align-items-center justify-content-end vcenter" style="font-size: 1.2rem">
+        <!--PREVIOUS ARROW-->
+        <div class="col-auto btn-check pl-1 pr-1 pt-0 d-lg-none d-md-none d-xl-inline-block" disabled="true"
+             style="margin-top: 2px;"
+        >
+            <a id="previous" type="button"
+               class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-0 border-0 unlink"
+               title="previous check in the test (Alt + Left arrow)"
+               href="javascript:void(0)"
+            >
+                <i class="bi bi-caret-left"></i>
+            </a>
+        </div>
+
+        <!--COUNT-->
+        <div class="col-auto btn-check pl-0 pr-0 pt-0 d-lg-none d-md-none d-xl-inline-block small"
+             style="margin-top: 2px;"
+        >
+           <span id="check_count" style="font-weight: 200"><%=currentCheckIndex + 1 %>/<%=countOfChecksWithSameTestId%></span>
+        </div>
+
+        <!--NEXT ARROW-->
+        <div class="col-auto btn-check pl-1 pr-1 border-right border-header d-lg-none d-md-none d-xl-inline-block" disabled="true"
+             style="margin-top: 2px;"
+        >
+            <a id="next" type="button"
+               title="next check in the test (Alt + Right arrow)"
+               class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-0 unlink"
+               href="javascript:void(0)"
+               >
+                <i class="bi bi-caret-right"></i>
+            </a>
+        </div>
+
         <!--ZOOM IN-->
-        <div class="col-auto btn-check pl-1 pr-1 vcenter-item1"
+        <div class="col-auto btn-check pl-1 pr-1 d-lg-none d-md-none d-xl-inline-block"
              onclick="mainView.zoom(15)"
              style="margin-top: 2px;"
         >
-            <a name="zoom in" type="button"
+            <a id="zoom_in" type="button"
                class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-0 border-0 rounded"
                title="zoom in (+ or use Ctrl + mouse wheel)"
             >
@@ -13,10 +46,10 @@
             </a>
         </div>
         <!--ZOOM OUT-->
-        <div class="col-auto btn-check pl-1 pr-1"
+        <div class="col-auto btn-check pl-1 pr-1 d-lg-none d-md-none d-xl-inline-block"
              style="margin-top: 2px;"
         >
-            <a name="zoom-out" type="button"
+            <a id="zoom_out" type="button"
                title="zoom out (- or use Ctrl + mouse wheel)"
                class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-0 border-0 rounded"
                onclick="mainView.zoom(-15)">
@@ -59,7 +92,7 @@
                 <a id="toggle-actual-baseline" type="button"
                    title="switch to actual snapshot (current is baseline)"
                    class="vcenter-item pl-1 pr-1 pt-0 pb-0 border-0 noselect"
-                   style="margin-top: -2px;"
+                   style="margin-top: -2px; font-weight: 200"
                 >
                     B
                 </a>
@@ -198,7 +231,7 @@
 
                 <!--DROPDOWN ITEMS-->
                 <!--GROUP VIEW-->
-                <a name="group view" type="button"
+                <a id="group_view" type="button"
                    class="btn btn-check vcenter-item pl-3 pr-1 pt-0 pb-0 mb-0 border-0 rounded-0"
                    onclick="window.location.href = '/checksgroupview?id=<%= check.id %>'"
                    title="Group view (checks with same idents in the same session)">

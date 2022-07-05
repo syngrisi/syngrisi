@@ -9,7 +9,7 @@
      data-target="#testchecks_<?= test.id ?>">
     <!--TEST CHECKBOX-->
     <div class="cell-input cell col-1 col-lg-auto col-sm-1 text-truncate small d-flex align-items-center"
-         onclick="toggleRemoveButton('test-input', 'mass-tests-actions'), event.stopPropagation();">
+         onclick="toggleRemoveButton('test-input', 'mass-tests-actions'); event.stopPropagation();">
         <input id="<?= test.id ?>"
                class="test-input"
                name="test"
@@ -183,7 +183,7 @@
            data-placement="top"
         ></i>
         <span name="browser-name" class="small text-secondary"><?= test.browserName ?></span>
-        <sup class="text-secondary" style="margin-left: -2  px;"><?= browserVersion ?></sup>
+        <sup class="text-secondary" style="margin-left: -2px;"><?= browserVersion ?></sup>
     </div>
 
     <!--PLATFORM-->
@@ -337,13 +337,12 @@
                 `(${checksByTestGroupedByIdent[test.id][groupName].checks.length})`
                 : '' ?>
                 <div name="check-name"
-                     class="col-8 ml-0 mr-0 pt-2 pb-0 float-right1 align-middle text-truncate  small p-0"
+                     class="check-name col-8 ml-0 mr-0 pt-2 pb-0 float-right1 align-middle text-truncate small p-0"
                      data-toggle="tooltip"
                      data-placement="top"
                      title='<?= check.name ?>'
                 ><?- (index + 1) -?>/<?= checksCount ?><?- groupChecksCount ? `<sup name="group-count"><a
                             class="text-secondary"
-                            name="group-count-link"
                             href='/checksgroupview?id=${check._id}'>${groupChecksCount}</a></sup>` : ''
                     -?> <?= check.name ?>
                 </div>
@@ -359,7 +358,7 @@
                                     <a
                                             class="remove-button btn-check btn-mini-toolbar btn-sm ml-1 mr-1 rounded-0 border-0"
                                             check-name="<?= check.name ?>"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                            aria-haspopup="true" aria-expanded="false"
                                             style="line-height: 0.1; padding: 2px;"
                                             id="checkbutton_<?= check._id ?>"
                                             data-toggle="tooltip"
@@ -386,12 +385,9 @@
                                     <a
                                             class="accept-button btn-mini-toolbar btn-check btn-sm rounded ml-1 rounded-0 border-0"
                                             style="line-height: 0.1; padding: 2px;"
-
                                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-
                                             check-name="<?= check.name ?>"
                                             id="acceptbutton_<?= check._id ?>"
-                                            data-toggle="tooltip"
                                             data-placement="top"
                                     >
 
@@ -407,7 +403,6 @@
                                         ?>
                                         <i class="check-accept-button-check-id_<?= check._id ?> <?= acceptButtonClass ?> accept-button-icon"
                                            data-toggle="tooltip"
-                                           name="accept-button-icon"
                                            data-html="true"
                                            data-placement="right"
                                            title="<div class='text-left'><?= check.markedByUsername ? `Accepted by: ${check.markedByUsername} </br> Accepted date: ${moment(check.markedDate).format('YYYY-MM-DD hh:mm.ss')}` : 'Click here to accept this check'?></div>"

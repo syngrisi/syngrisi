@@ -1,28 +1,27 @@
+/* eslint-disable no-underscore-dangle */
+
 'use strict';
 
 /* global log:readonly */
 const mongoose = require('mongoose');
+
 const Snapshot = mongoose.model('VRSSnapshot');
 const Check = mongoose.model('VRSCheck');
 const Test = mongoose.model('VRSTest');
 const Suite = mongoose.model('VRSSuite');
-const Run = mongoose.model('VRSRun');
 const moment = require('moment');
 const {
     fatalError,
     checkIdent,
     checksGroupedByIdent,
     removeEmptyProperties,
-    buildQuery,
-    getSuitesByTestsQuery,
-    getRunsByTestsQuery,
 } = require('../utils');
 
 // async function getSnapshotByImgHash(hash) {
 //     return (await Snapshot.find({ imghash: hash }))[0];
 // }
 
-exports.checksGroupView = async function (req, res) {
+exports.checksGroupView = async function checksGroupView(req, res) {
     try {
         const opts = removeEmptyProperties(req.query);
 
@@ -70,7 +69,7 @@ exports.checksGroupView = async function (req, res) {
     }
 };
 
-exports.checkView = async function (req, res) {
+exports.checkView = async function checkView(req, res) {
     try {
         const opts = removeEmptyProperties(req.query);
 
@@ -108,6 +107,26 @@ exports.checkView = async function (req, res) {
         }
 
         const checksWithSameName = await checksGroupedByIdent({ name: check.name });
+        const checksWithSameTestId = Array.from(await Check.find({ test: test._id }));
+
+        const currentCheckIndex = checksWithSameTestId.map((x) => x._id.toString())
+            .indexOf(check._id.toString());
+        const countOfChecksWithSameTestId = checksWithSameTestId.length;
+        const prevItem = async (modelName, id) => {
+            const model = mongoose.model(modelName);
+            return model.findOne({ _id: { $lt: id } })
+                .sort({ _id: -1 })
+                .exec();
+        };
+        const nextItem = async (modelName, id) => {
+            const model = mongoose.model(modelName);
+            return model.findOne({ _id: { $gt: id } })
+                .sort({ _id: 1 })
+                .exec();
+        };
+
+        const prevCheckId = currentCheckIndex !== 0 ? (await prevItem('VRSCheck', check._id))?._id : null;
+        const nextCheckId = currentCheckIndex + 1 !== checksWithSameTestId.length ? (await nextItem('VRSCheck', check._id))?._id : null;
 
         let lastChecksWithSameName = [];
         for (const group of Object.values(checksWithSameName)) {
@@ -123,6 +142,10 @@ exports.checkView = async function (req, res) {
             test,
             suite,
             lastChecksWithSameName,
+            prevCheckId,
+            nextCheckId,
+            currentCheckIndex,
+            countOfChecksWithSameTestId,
             user: req.user,
         });
     } catch (e) {
@@ -130,7 +153,7 @@ exports.checkView = async function (req, res) {
     }
 };
 
-exports.diffView = async function (req, res) {
+exports.diffView = async function diffView(req, res) {
     try {
         const opts = removeEmptyProperties(req.query);
         // redirect to new view
@@ -208,7 +231,7 @@ exports.diffView = async function (req, res) {
     }
 };
 
-exports.userinfo = async function (req, res) {
+exports.userinfo = async function userinfo(req, res) {
     try {
         const { user } = req;
         res.json({ user });
@@ -217,7 +240,7 @@ exports.userinfo = async function (req, res) {
     }
 };
 
-exports.login = function (req, res) {
+exports.login = function login(req, res) {
     try {
         if (req.user) {
             if (req.user.username !== 'Test') return res.redirect('/');
@@ -232,7 +255,7 @@ exports.login = function (req, res) {
     }
 };
 
-exports.changePasswordPage = function (req, res) {
+exports.changePasswordPage = function changePasswordPage(req, res) {
     try {
         const { version } = require('../../../package.json');
         return res.render('pages/changePassword', {
@@ -243,7 +266,7 @@ exports.changePasswordPage = function (req, res) {
     }
 };
 
-exports.firstRunPage = function (req, res) {
+exports.firstRunPage = function firstRunPage(req, res) {
     try {
         const { version } = require('../../../package.json');
         const displayOldPassword = req.query.admin ? 'd-none' : '';

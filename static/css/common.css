@@ -13963,10 +13963,6 @@ div:hover > .preview-overlay-text {
   position: relative;
 }
 
-.suite-menu-item-container {
-  cursor: pointer;
-}
-
 .run-menu-item-container {
   cursor: pointer;
 }
@@ -14115,6 +14111,8 @@ img.navigation-button {
 
 .suite-menu-item-container {
   border-top: 1px solid #dee2e6 !important;
+  cursor: pointer !important;
+  font-width: 300 !important;
 }
 
 .snapshoot-canvas {

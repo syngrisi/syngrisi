@@ -45,18 +45,20 @@ class MainView {
         this.renderBaselineView();
     }
 
-    // this is the area from the left top canvas corner till the end of the viewport
-    // ┌──────┬─────────────┐
-    // │      │xxxxxxxx     │
-    // │      │xxxxxxxx     │
-    // │      │xxxxxxxx     │
-    // │      │xxxxxxxx     │
-    // │      │             │
-    // │      │             │
-    // │      │  the area   │
-    // │      │             │
-    // │      │             │
-    // └──────┴─────────────┘
+    /*
+     this is the area from the left top canvas corner till the end of the viewport
+     ┌──────┬─────────────┐
+     │      │xxxxxxxx     │
+     │      │xxxxxxxx     │
+     │      │xxxxxxxx     │
+     │      │xxxxxxxx     │
+     │      │             │
+     │      │             │
+     │      │  the area   │
+     │      │             │
+     │      │             │
+     └──────┴─────────────┘
+    */
 
     static calculateExpectedCanvasViewportAreaSize() {
         const viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
@@ -216,21 +218,25 @@ class MainView {
         });
     }
 
-    calculateImageWidth() {
-        let { width } = this.image;
-        const isHigh = () => (this.image.height > this.expectedCanvasViewportAreaSize.height)
-            && ((this.image.height / this.expectedCanvasViewportAreaSize.height) < 10);
+    calculateImageWidth(image) {
+        let { width } = image;
+        const isHigh = () => (image.height > this.expectedCanvasViewportAreaSize.height)
+            && ((image.height / this.expectedCanvasViewportAreaSize.height) < 10);
 
         if (isHigh()) {
-            width = this.image.width * (this.expectedCanvasViewportAreaSize.height / this.image.height);
+            width = image.width * (this.expectedCanvasViewportAreaSize.height / image.height);
         }
-        const isExtraSmall = () => this.image.height < 50;
+        const isExtraSmall = () => image.height < 50;
         if (isExtraSmall()) width *= 2;
 
         if (width > this.canvas.width) {
             width = this.canvas.width;
         }
         return width;
+    }
+
+    async initResize(image) {
+        image.scaleToWidth(this.calculateImageWidth(image) * this.canvas.getZoom());
     }
 
     // RENDER VIEWS
@@ -242,7 +248,7 @@ class MainView {
         this.canvas.add(this.image);
 
         this.image.sendToBack();
-        this.image.scaleToWidth(this.calculateImageWidth() * this.canvas.getZoom());
+        this.initResize(this.image);
         this.canvas.renderAll();
     }
 
@@ -255,7 +261,7 @@ class MainView {
         this.canvas.add(this.actualImage);
 
         this.actualImage.sendToBack();
-        this.actualImage.scaleToWidth(this.canvas.width * this.canvas.getZoom());
+        this.initResize(this.actualImage);
         const button = document.getElementById('toggle-actual-baseline');
         button.innerText = 'A';
         button.title = 'switch to baseline snapshot (current is actual)';
@@ -268,16 +274,25 @@ class MainView {
 
         this.canvas.add(this.diffImage);
         this.diffImage.sendToBack();
-        this.diffImage.scaleToWidth(this.canvas.width * this.canvas.getZoom());
-
+        this.initResize(this.diffImage);
         this.pressedButton('diff-wrapper');
     }
 
-    renderSideToSideView() {
+    async renderSideToSideView() {
         this.currentView = 'SideToSideView';
 
-        this.sideToSideView.render();
-        this.pressedButton('side-wrapper');
+        await this.sideToSideView.render(this.initResize);
+        this.initResize(this.sideToSideView.actualImg);
+        this.initResize(this.sideToSideView.baselineImg);
+        this.sideToSideView.divider.left = this.sideToSideView.baselineImg.getScaledWidth() / 2 - this.sideToSideView.divider.width / 2;
+        this.sideToSideView.baselineLabel.top = this.sideToSideView.canvas.getHeight() / 2 - 15;
+        this.sideToSideView.baselineLabel.left = (this.sideToSideView.divider.left) - this.sideToSideView.canvas.getWidth() / 10;
+
+        this.sideToSideView.actualLabel.top = this.sideToSideView.canvas.getHeight() / 2 - 15;
+        this.sideToSideView.actualLabel.left = this.sideToSideView.divider.left + this.sideToSideView.canvas.getWidth() / 10;
+
+        this.canvas.requestRenderAll();
+        await this.pressedButton('side-wrapper');
     }
 
     toggleSideToSideView() {

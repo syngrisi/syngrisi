@@ -20,6 +20,7 @@
         %>
         <div name="title"
              class="col pl-2 ml-2 pt-0 h6 mb-0 d-flex align-items-center text-truncate"
+             style="font-weight: 300"
              title="<%= commonTitle; %>"
         >
             <!--BACK LINK-->
@@ -33,7 +34,7 @@
                     : 'there is no difference between baseline and actual' %>
             <span class="status d-inline-block ml-2 mr-2 rounded border border-light bg-item-<%= check.status[0]; %>"
                   title="<%= statusTitle %>"
-                  style="padding: 2px"
+                  style="padding: 2px; font-weight: 200"
             >
                 <%= check.status[0]; %>
                 <% if(check.failReasons.includes('wrong_dimensions')) { %>
@@ -59,14 +60,14 @@
                     <span id="mismatch_percentage"><%= diffPercentText; %></span>
                 <% } %>
             </span>
-            <!--LINKS TO SUITE / CHECK-->
-            <a class="unlink" name="suite-link"
+            <!--LINKS TO SUITE / TEST / CHECK-->
+            <a class="unlink" id="suite_link"
                href="/?filter_suitename_eq=<%= suite.name; %>"><%= suite.name; %></a>
             <span>&nbsp;/&nbsp;</span>
-            <a class="unlink" name="check-link"
+            <a class="unlink" id="check_link"
                href='/?filter_suitename_eq=<%= suite.name; %>&unfoldTestId=<%= test.id; %>'><%= test.name; %></a>
             <span>&nbsp;/&nbsp;</span>
-            <span><a href="" class="unlink"><%= check.name; %></a></span>
+            <span id="head_check_name"><a href="" class="unlink"><%= check.name; %></a></span>
         </div>
     </div>
 </div>

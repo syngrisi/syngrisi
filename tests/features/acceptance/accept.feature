@@ -75,7 +75,7 @@ Feature: Check Acceptance
         """
 
     Scenario: Acceptance - test acceptance statuses [Unaccepted, Partially, Accepted]
-        When I create "1" tests with::
+        When I create "1" tests with:
         """
           testName: "Acceptance"
           checks:

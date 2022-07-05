@@ -6,7 +6,7 @@ Feature: Mass Check Acceptance
         Given I start Server and start Driver
 
     Scenario: Mass Check Acceptance
-        When I create "2" tests with::
+        When I create "2" tests with:
         """
           testName: "Mass Accept - "
           checks:

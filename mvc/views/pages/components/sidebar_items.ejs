@@ -3,7 +3,7 @@
     <% if(currentItem){ %>
         <% itemClass = item.id === currentItem.id ? 'current-menu-item' : '' %>
     <% } %>
-    <li name="suite-menu-item-container"
+    <li
          class="row suite-menu-item-container pl-0 w-100 btn-light border-silver border-bottom pt-2 pb-2 mr-0 ml-0 <%= itemClass %>"
          onclick="window.location.href='/?filter_suitename_eq=<%= item.name %>'"
     >

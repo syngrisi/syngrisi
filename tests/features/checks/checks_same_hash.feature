@@ -34,7 +34,7 @@ Feature: Checks with same Hash
         # check baseline and actual name (should be as check name)
         When I click on the element "div[name='Check Same Hash - 1']"
         When I click on the element "#navigation"
-        When I click on the element "a[name='group view']"
+        When I click on the element "#group_view"
         When I wait for "2" seconds
 
         Then the element "#baseline-label" matches the text "Check Same Hash - 1"
@@ -89,7 +89,7 @@ Feature: Checks with same Hash
         # baseline and actual name should be as check name
         When I click on the element "div[name='Check Same Hash - 2']"
         When I click on the element "#navigation"
-        When I click on the element "a[name='group view']"
+        When I click on the element "#group_view"
         When I wait for "2" seconds
 
         Then the element "#baseline-label" matches the text "Check Same Hash - 2"
@@ -105,7 +105,7 @@ Feature: Checks with same Hash
         # baseline and actual name should be as check name
         When I click on the element "div[name='Check Same Hash - 1']"
         When I click on the element "#navigation"
-        When I click on the element "a[name='group view']"
+        When I click on the element "#group_view"
         When I wait for "2" seconds
         When I execute javascript code and save as "filename - test-1, check-1":
         """
@@ -120,7 +120,7 @@ Feature: Checks with same Hash
         # baseline and actual name should be as check name
         When I click on the element "div[name='Check Same Hash - 2']"
         When I click on the element "#navigation"
-        When I click on the element "a[name='group view']"
+        When I click on the element "#group_view"
         When I wait for "2" seconds
 
         When I execute javascript code and save as "filename - test-2, check-1":
