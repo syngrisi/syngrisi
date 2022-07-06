@@ -35,11 +35,6 @@ const VRSSnapshotSchema = new Schema({
     hOffset: {
         type: Number,
     },
-    matchType: {
-        type: String,
-        // enum: ['antialiasing', 'nothing', 'less', 'colors', 'alpha'],
-        enum: ['antialiasing', 'nothing', 'colors'],
-    },
 });
 
 const VRSCheckSchema = new Schema({
@@ -198,6 +193,17 @@ const VRSBaselineSchema = new Schema({
     },
     markedByUsername: {
         type: String,
+    },
+    ignoreRegions: {
+        type: String,
+    },
+    boundRegions: {
+        type: String,
+    },
+    matchType: {
+        type: String,
+        // enum: ['antialiasing', 'nothing', 'less', 'colors', 'alpha'],
+        enum: ['antialiasing', 'nothing', 'colors'],
     },
 });
 

@@ -17,18 +17,20 @@
         <div class="col-auto btn-check pl-0 pr-0 pt-0 d-lg-none d-md-none d-xl-inline-block small"
              style="margin-top: 2px;"
         >
-           <span id="check_count" style="font-weight: 200"><%=currentCheckIndex + 1 %>/<%=countOfChecksWithSameTestId%></span>
+            <span id="check_count"
+                  style="font-weight: 200"><%= currentCheckIndex + 1 %>/<%= countOfChecksWithSameTestId %></span>
         </div>
 
         <!--NEXT ARROW-->
-        <div class="col-auto btn-check pl-1 pr-1 border-right border-header d-lg-none d-md-none d-xl-inline-block" disabled="true"
+        <div class="col-auto btn-check pl-1 pr-1 border-right border-header d-lg-none d-md-none d-xl-inline-block"
+             disabled="true"
              style="margin-top: 2px;"
         >
             <a id="next" type="button"
                title="next check in the test (Alt + Right arrow)"
                class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-0 unlink"
                href="javascript:void(0)"
-               >
+            >
                 <i class="bi bi-caret-right"></i>
             </a>
         </div>
@@ -195,27 +197,29 @@
         </div>
 
         <!--IGNORE MENU-->
-        <div name="ignore-menu"
-             class="col-auto d-lg-none d-md-none d-xl-inline-block col-flex pl-0 pr-0 align-self-end"
-             title="apply to the baseline one of ignore strategy"
-        >
-            <div class="dropdown">
-                <button class="btn dropdown-toggle btn-sm text-light" type="button"
-                        id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                        style="box-shadow: none; opacity: 1 !important;"
-                >
-                    <%= baselineSnapshot.matchType ? baselineSnapshot.matchType : 'nothing'; %>
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenu" style="z-index: 8888">
-                    <a class="dropdown-item small" href="#"
-                       onclick="setMatchType('nothing',  '<%= baselineSnapshot.id; %>'); setTimeout(() => location.reload(), 500)">nothing</a>
-                    <a class="dropdown-item small" href="#"
-                       onclick="setMatchType('antialiasing', '<%= baselineSnapshot.id; %>'); setTimeout(() => location.reload(), 500)">antialiasing</a>
-                    <a class="dropdown-item small" href="#"
-                       onclick="setMatchType('colors',  '<%= baselineSnapshot.id; %>'); setTimeout(() => location.reload(), 500)">colors</a>
+        <% if(baseline) { %>
+            <div id="ignore_menu"
+                 class="col-auto d-lg-none d-md-none d-xl-inline-block col-flex pl-0 pr-0 align-self-end"
+                 title="apply to the baseline one of ignore strategy"
+            >
+                <div class="dropdown">
+                    <button class="btn dropdown-toggle btn-sm text-light" type="button"
+                            id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                            style="box-shadow: none; opacity: 1 !important;"
+                    >
+                        <%= baseline.matchType || 'nothing'; %>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenu" style="z-index: 8888">
+                        <a class="dropdown-item small" href="#"
+                           onclick="setMatchType('nothing',  '<%= check.baselineId; %>'); setTimeout(() => location.reload(), 500)">nothing</a>
+                        <a class="dropdown-item small" href="#"
+                           onclick="setMatchType('antialiasing', '<%= check.baselineId; %>'); //setTimeout(() => location.reload(), 500)">antialiasing</a>
+                        <a class="dropdown-item small" href="#"
+                           onclick="setMatchType('colors',  '<%= check.baselineId; %>'); setTimeout(() => location.reload(), 500)">colors</a>
+                    </div>
                 </div>
             </div>
-        </div>
+        <% } %>
 
         <!--NAVIGATION-->
         <div class="col-auto btn-check pl-1 pr-1">

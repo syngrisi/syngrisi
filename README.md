@@ -32,7 +32,7 @@ You can set up the [example TA Solution](https://github.com/viktor-silakov/syngr
 
 * Pix-to-pix comparison
 * Perceptual comparison:
-    * Offset stabilization
+    * Vertical Offset stabilization
     * Ignore Alpha
     * Ignore Colors
     * Ignore Antialiasing
