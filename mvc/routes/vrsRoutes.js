@@ -33,6 +33,10 @@ module.exports = async function (app) {
         .put('/snapshots/:id', ensureLoggedIn(), async (req, res, next) => {
             API.updateSnapshot(req, res)
                 .catch(next);
+        }).
+        put('/baselines/:id', ensureLoggedIn(), async (req, res, next) => {
+            API.updateBaseline(req, res)
+                .catch(next);
         })
         .get('/', ensureLoggedIn(),
             (req, res, next) => {

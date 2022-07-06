@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 
 const Snapshot = mongoose.model('VRSSnapshot');
 const Check = mongoose.model('VRSCheck');
+const Baseline = mongoose.model('VRSBaseline');
 const Test = mongoose.model('VRSTest');
 const Suite = mongoose.model('VRSSuite');
 const moment = require('moment');
@@ -87,8 +88,6 @@ exports.checkView = async function checkView(req, res) {
                 .exec();
             baselineSnapshot.formattedCreatedDate = moment(baselineSnapshot.createdDate)
                 .format('YYYY-MM-DD hh:mm');
-        } else {
-            baselineSnapshot = null;
         }
 
         let actualSnapshot;
@@ -133,11 +132,13 @@ exports.checkView = async function checkView(req, res) {
             lastChecksWithSameName.push(group.checks[group.checks.length - 1]);
         }
         lastChecksWithSameName = lastChecksWithSameName.sort((a, b) => Number(new Date(b.updatedDate) - Number(new Date(a.updatedDate))));
+        const baseline = await Baseline.findOne({ snapshootId: baselineSnapshot._id })
+            .exec();
         res.render('pages/checkview', {
             baselineSnapshot,
-            diffId,
             actualSnapshot,
             diffSnapshot,
+            baseline,
             check,
             test,
             suite,

@@ -41,20 +41,23 @@ function setMatchType(type, id) {
     buttonElement.innerText = 'Ignore ' + type;
 }
 
-function sendMatchType(id, type) {
-    const xhr = new XMLHttpRequest();
-    const params = `id=${id}&matchType=${type}`;
-    xhr.open('PUT', `/snapshots/${id}`, true);
-    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-
-    xhr.onload = function () {
-        if (xhr.status === 200) {
-            console.log(`Successful send snapshot match type data, id: '${id}'  resp: '${xhr.responseText}'`);
+async function sendMatchType(id, type) {
+    try {
+        const response = await fetch(`/baselines/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, matchType: type }),
+        });
+        const text = await response.text();
+        if (response.status === 200) {
+            console.log(`Successful send baseline match type data, id: '${id}'  resp: '${text}'`);
             showNotification('Match type was saved');
-        } else {
-            console.error(`Cannot set snapshot match type , status: '${xhr.status}',  resp: '${xhr.responseText}'`);
-            showNotification('Cannot set snapshot match type', 'Error');
+            return;
         }
-    };
-    xhr.send(params);
+        console.error(`Cannot set baseline match type , status: '${response.status}',  resp: '${text}'`);
+        showNotification('Cannot set baseline match type', 'Error');
+    } catch (e) {
+        console.error(`Cannot set baseline match type: ${e.stack || e}`);
+        showNotification('Cannot set baseline match type', 'Error');
+    }
 }

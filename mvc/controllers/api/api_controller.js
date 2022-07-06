@@ -116,19 +116,19 @@ async function cloneSnapshot(sourceSnapshot, name) {
     return newSnapshot;
 }
 
-async function compareSnapshots(baseline, actual, opts = {}) {
+async function compareSnapshots(baselineSnapshot, actual, opts = {}) {
     const logOpts = {
         scope: 'compareSnapshots',
-        ref: baseline.id,
+        ref: baselineSnapshot.id,
         itemType: 'snapshot',
         msgType: 'COMPARE',
     };
     try {
-        log.debug(`compare baseline and actual snapshots with ids: [${baseline.id}, ${actual.id}]`, $this, logOpts);
-        log.debug(`current baseline: ${JSON.stringify(baseline)}`, $this, logOpts);
+        log.debug(`compare baseline and actual snapshots with ids: [${baselineSnapshot.id}, ${actual.id}]`, $this, logOpts);
+        log.debug(`current baseline snapshot: ${JSON.stringify(baselineSnapshot)}`, $this, logOpts);
         let diff;
-        if (baseline.imghash === actual.imghash) {
-            log.debug(`baseline and actual snapshot have the identical image hashes: '${baseline.imghash}'`, $this, logOpts);
+        if (baselineSnapshot.imghash === actual.imghash) {
+            log.debug(`baseline and actual snapshot have the identical image hashes: '${baselineSnapshot.imghash}'`, $this, logOpts);
             // stub for diff object
             diff = {
                 isSameDimensions: true,
@@ -142,29 +142,31 @@ async function compareSnapshots(baseline, actual, opts = {}) {
                 executionTotalTime: '0',
             };
         } else {
-            const baselinePath = `${config.defaultBaselinePath}${baseline.filename || `${baseline.id}.png`}`;
+            const baselinePath = `${config.defaultBaselinePath}${baselineSnapshot.filename || `${baselineSnapshot.id}.png`}`;
             const actualPath = `${config.defaultBaselinePath}${actual.filename || `${actual.id}.png`}`;
             const baselineData = await fs.readFile(baselinePath);
             const actualData = await fs.readFile(actualPath);
-            log.debug(`baseline path: ${config.defaultBaselinePath}${baseline.id}.png`, $this, logOpts);
+            log.debug(`baseline path: ${config.defaultBaselinePath}${baselineSnapshot.id}.png`, $this, logOpts);
             log.debug(`actual path: ${config.defaultBaselinePath}${actual.id}.png`, $this, logOpts);
             const options = opts;
-            if (baseline.ignoreRegions) {
-                log.debug(`ignore regions: '${baseline.ignoreRegions}', type: '${typeof baseline.ignoreRegions}'`);
+            if (baselineSnapshot.ignoreRegions) {
+                log.debug(`ignore regions: '${baselineSnapshot.ignoreRegions}', type: '${typeof baselineSnapshot.ignoreRegions}'`);
             }
 
             // back compatibility
-            if ((baseline.ignoreRegions !== 'undefined') && baseline.ignoreRegions) {
-                const ignored = JSON.parse(JSON.parse(baseline.ignoreRegions));
+            if ((baselineSnapshot.ignoreRegions !== 'undefined') && baselineSnapshot.ignoreRegions) {
+                const ignored = JSON.parse(JSON.parse(baselineSnapshot.ignoreRegions));
                 options.ignoredBoxes = ignored;
             }
+            const baseline = await Baseline.findOne({ snapshootId: baselineSnapshot._id })
+                .exec();
             options.ignore = baseline.matchType || 'nothing';
             diff = await getDiff(baselineData, actualData, options);
         }
 
         log.silly(`the diff is: '${JSON.stringify(diff, null, 2)}'`);
         if (diff.rawMisMatchPercentage.toString() !== '0') {
-            log.debug(`images are different, ids: [${baseline.id}, ${actual.id}], rawMisMatchPercentage: '${diff.rawMisMatchPercentage}'`);
+            log.debug(`images are different, ids: [${baselineSnapshot.id}, ${actual.id}], rawMisMatchPercentage: '${diff.rawMisMatchPercentage}'`);
         }
         if (diff.stabMethod && diff.vOffset) {
             if (diff.stabMethod === 'downup') {
@@ -176,8 +178,8 @@ async function compareSnapshots(baseline, actual, opts = {}) {
             if (diff.stabMethod === 'updown') {
                 // this mean that we delete first 'diff.vOffset' line of pixels from baseline
                 // then we will use this during parse actual page DOM dump
-                baseline.vOffset = -diff.vOffset;
-                await baseline.save();
+                baselineSnapshot.vOffset = -diff.vOffset;
+                await baselineSnapshot.save();
             }
         }
         return diff;
@@ -208,6 +210,34 @@ exports.updateSnapshot = async function (req, res) {
         res.status(200)
             .json({
                 item: 'Snapshot',
+                action: 'update',
+                id,
+                opts,
+            });
+    } catch (e) {
+        fatalError(req, res, e);
+    }
+};
+
+exports.updateBaseline = async function (req, res) {
+    const logOpts = {
+        scope: 'updateBaseline',
+        ref: req.id,
+        itemType: 'baseline',
+        msgType: 'UPDATE',
+    };
+    try {
+        const opts = removeEmptyProperties(req.body);
+        const { id } = req.params;
+        // eslint-disable-next-line max-len
+        log.debug(`start update baseline with id: '${id}', params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`, $this, logOpts);
+        const baseline = await Baseline.findOneAndUpdate({ snapshootId: id }, opts)
+            .exec();
+        await baseline.save();
+        log.debug(`baseline with id: '${id}' and opts: '${JSON.stringify(opts)}' was updated`, $this, logOpts);
+        res.status(200)
+            .json({
+                item: 'Baseline',
                 action: 'update',
                 id,
                 opts,
