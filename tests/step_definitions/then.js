@@ -27,7 +27,6 @@ import isExisting from '../src/support/check/isExisting';
 import isVisible from '../src/support/check/isDisplayed';
 import waitFor from '../src/support/action/waitFor';
 import waitForVisible from '../src/support/action/waitForDisplayed';
-import checkIfElementExists from '../src/support/lib/checkIfElementExists';
 
 const { Then } = require('cucumber');
 
@@ -176,6 +175,7 @@ Then(
 );
 
 Then(
+    // eslint-disable-next-line max-len
     /^I wait on element "([^"]*)?"(?: for (\d+)ms)*(?: to( not)* (be checked|be enabled|be selected|be displayed|not be displayed|contain a text|contain a value|exist|clickable))*$/,
     {
         wrapperOptions: {

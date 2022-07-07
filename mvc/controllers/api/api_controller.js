@@ -154,8 +154,7 @@ async function compareSnapshots(baselineSnapshot, actual, opts = {}) {
 
             if (baseline.ignoreRegions) {
                 log.debug(`ignore regions: '${baseline.ignoreRegions}', type: '${typeof baseline.ignoreRegions}'`);
-                const ignored = JSON.parse(baseline.ignoreRegions);
-                options.ignoredBoxes = ignored;
+                options.ignoredBoxes = JSON.parse(baseline.ignoreRegions);
             }
             options.ignore = baseline.matchType || 'nothing';
             diff = await getDiff(baselineData, actualData, options);
@@ -335,17 +334,14 @@ exports.affectedElements = async function (req, res) {
 };
 
 function parseSorting(params) {
-    const sortObj = Object.keys(params)
+    return Object.keys(params)
         .filter((key) => key.startsWith('sort_'))
         .reduce((obj, key) => {
             const props = key.split('_');
             const sortBy = props[1];
-            const sortDirection = parseInt(props[2], 10);
-            obj[sortBy] = sortDirection;
+            obj[sortBy] = parseInt(props[2], 10);
             return obj;
         }, {});
-
-    return sortObj;
 }
 
 // users
@@ -461,7 +457,6 @@ exports.removeUser = async function (req, res) {
         log.debug(`user with id: '${user._id}' and username: '${user.username}' was removed`, $this, logOpts);
         res.status(200)
             .send({ message: `user with id: '${user._id}' and username: '${user.username}' was removed` });
-        return;
     } catch (e) {
         fatalError(req, res, e);
     }
@@ -469,7 +464,6 @@ exports.removeUser = async function (req, res) {
 
 exports.firstRunAdminPassword = async function (req, res) {
     const params = req.body;
-    console.log(req.body);
     const logOpts = {
         scope: 'firstRunAdminPassword',
         msgType: 'CHANGE PWD',
@@ -600,7 +594,6 @@ async function removeCheck(id) {
             log.debug(`try to remove snapshot, diff: ${check.diffId}`, $this, logOpts);
             await removeSnapshot(check.diffId?.toString());
         }
-        return;
     } catch (e) {
         const errMsg = `cannot remove a check with id: '${id}', error: '${e}'`;
         log.error(errMsg, $this, logOpts);
@@ -617,7 +610,7 @@ async function removeTest(id) {
     try {
         log.debug(`try to delete all checks associated to test with ID: '${id}'`, $this, logOpts);
         const checks = await Check.find({ test: id });
-        const checksRemoveResult = [];
+        // const checksRemoveResult = [];
         for (const check of checks) {
             await removeCheck(check._id);
         }
@@ -636,7 +629,6 @@ exports.removeTest = async function (req, res) {
             .json({
                 message: `Test with id: '${id}' and all related checks were removed`,
             });
-        return;
     } catch (e) {
         fatalError(req, res, e);
     }
@@ -1010,9 +1002,9 @@ async function createCheck(
     /** COMPARING SECTION */
 
     /* check if we can ignore 1 px dimensions difference from the bottom */
-    const ignoreDifferentResolutions = (dimensionDifference) => {
-        if ((dimensionDifference.width === 0) && (dimensionDifference.height === -1)) return true;
-        if ((dimensionDifference.width === 0) && (dimensionDifference.height === 1)) return true;
+    const ignoreDifferentResolutions = ({ height, width }) => {
+        if ((width === 0) && (height === -1)) return true;
+        if ((width === 0) && (height === 1)) return true;
         return false;
     };
     const areSnapshotsDifferent = (compareResult) => compareResult.rawMisMatchPercentage.toString() !== '0';
@@ -1082,12 +1074,11 @@ async function createCheck(
     await test.save();
 
     const lastSuccessCheck = await getLastSuccessCheck(checkIdent);
-    const result = {
+    return {
         ...savedCheck.toObject(),
         executeTime: totalCheckHandleTime,
         lastSuccess: lastSuccessCheck ? (lastSuccessCheck).id : null,
     };
-    return result;
 }
 
 exports.createCheck = async function (req, res) {
@@ -1493,7 +1484,7 @@ exports.checkIfScreenshotHasBaselines = async (req, res) => {
             && (snapshotObj?.imghash.toString() === req.query.imghash)) {
             // console.log(snapshotObj?.imghash.toString());
             // console.log(req.query.imghash);
-            res.json({ ...snapshotObj, ...{ respStatus: 'success', params: opts, } });
+            res.json({ ...snapshotObj, ...{ respStatus: 'success', params: opts } });
             return;
         }
         log.warn(`such snapshot does not exists: ${JSON.stringify(req.query, null, ' ')}`, logOpts);
@@ -1876,32 +1867,6 @@ exports.task_remove_empty_runs = async function (req, res) {
                 });
         });
 };
-
-async function getAllTestsSnapshotsFiles(id) {
-    const checks = await Check.find({ test: id })
-        .exec();
-    const snapshotsProm = [];
-    checks.forEach((check) => {
-        console.log({ check });
-        const { actualSnapshotId } = check;
-        const { baselineId } = check;
-        const { diffId } = check;
-        snapshotsProm.push(Snapshot.findById(actualSnapshotId)
-            .exec());
-        snapshotsProm.push(Snapshot.findById(baselineId)
-            .exec());
-        snapshotsProm.push(Snapshot.findById(diffId)
-            .exec());
-    });
-    const snapshots = await Promise.all(snapshotsProm);
-    // console.log(snapshots.length);
-    const filteredSnapshots = snapshots.filter((x) => x !== null);
-    // console.log(filteredSnapshots.length);
-    const files = filteredSnapshots.map((x) => x.filename)
-        .filter((x) => x);
-    // console.log(files);
-    return files;
-}
 
 function parseHrtimeToSeconds(hrtime) {
     return (hrtime[0] + (hrtime[1] / 1e9)).toFixed(3);

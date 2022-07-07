@@ -44,6 +44,7 @@ rules:
     new-cap:
         - 'error'
         -   newIsCap: true
+            capIsNewExceptions: [ 'ObjectId' ]
     require-jsdoc:
         - 'error'
         -   require:
@@ -56,4 +57,4 @@ rules:
         -   requireReturn: false
             matchDescription: '.+'
     object-curly-newline:
-        -  'off'
+        - 'off'
