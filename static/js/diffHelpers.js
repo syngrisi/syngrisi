@@ -1,4 +1,5 @@
-/* global window document */
+/* global window mainView fetch */
+
 function backToTest(id) {
     window.location = `${document.referrer}&unfoldTestId=${id}`;
 }
@@ -17,7 +18,7 @@ async function acceptAndRedirect2(params) {
     await acceptOneCheck(params.checkId, params.actualId, params.expectedId, params.testId, false);
     setTimeout(() => {
         redirectToUpdatedCheckAfterAccept(params.checkId);
-    }, 300);
+    }, 500);
 }
 
 function toggleDiffToolbarCollapse() {
@@ -43,7 +44,7 @@ function setMatchType(type, id) {
 
 async function sendMatchType(id, type) {
     try {
-        const response = await fetch(`/baselines/${id}`, {
+        const response = await fetch(`/baselines_by_snapshot_id/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id, matchType: type }),
@@ -51,13 +52,13 @@ async function sendMatchType(id, type) {
         const text = await response.text();
         if (response.status === 200) {
             console.log(`Successful send baseline match type data, id: '${id}'  resp: '${text}'`);
-            showNotification('Match type was saved');
+            mainView.showNotification('Match type was saved');
             return;
         }
         console.error(`Cannot set baseline match type , status: '${response.status}',  resp: '${text}'`);
-        showNotification('Cannot set baseline match type', 'Error');
+        mainView.showNotification('Cannot set baseline match type', 'Error');
     } catch (e) {
         console.error(`Cannot set baseline match type: ${e.stack || e}`);
-        showNotification('Cannot set baseline match type', 'Error');
+        mainView.showNotification('Cannot set baseline match type', 'Error');
     }
 }

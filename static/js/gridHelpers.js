@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 
-/* global baselines $ document XMLHttpRequest fabric window */
+/* global baselines $ MainView XMLHttpRequest fabric window */
 
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
@@ -249,42 +249,6 @@ function showNotification(msg, status = 'Success', timeout = 7000) {
     );
 }
 
-function sendIgnoreRegions(id, regionsData) {
-    const xhr = new XMLHttpRequest();
-    const params = `id=${id}&ignoreRegions=${JSON.stringify(regionsData)}`;
-    xhr.open('PUT', `/snapshots/${id}`, true);
-    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    const classThis = this;
-    // NEED TO ADD UPDATE BASELINE LOGIC TO .onload EVENT!!!
-    xhr.onload = function () {
-        if (xhr.status === 200) {
-            console.log(`successful send regions data, id: '${id}'  resp: '${xhr.responseText}'`);
-            classThis.showNotification('Regions were saved');
-        } else {
-            console.error(`cannot send regions data, status: '${xhr.status}',  resp: '${xhr.responseText}'`);
-            classThis.showNotification('Cannot save regions', 'Error');
-        }
-    };
-    xhr.send(params);
-}
-
-function getRegionsData(snapshotId) {
-    return new Promise((resolve, reject) => {
-        console.log(`get snapshot data id: ${snapshotId}`);
-        const xhr = new XMLHttpRequest();
-        xhr.open('GET', `/snapshot/${snapshotId}/`, true);
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                console.log(`successful got regions data, id: '${snapshotId}'  resp: '${xhr.responseText}'`);
-                return resolve(JSON.parse(xhr.responseText));
-            }
-            console.error(`cannot get regions data, status: '${xhr.status}',  resp: '${xhr.responseText}'`);
-            return reject(xhr);
-        };
-        xhr.send('');
-    });
-}
-
 async function removeOneCheck(id, testId) {
     await removeCheck(id, testId);
     await removeTestFromDomIfEmpty(testId);
@@ -346,38 +310,43 @@ async function acceptCheck(check, newBaselineId) {
 }
 
 // eslint-disable-next-line no-unused-vars
-async function acceptOneCheck(id, newBaselineId, oldBaselineId, testId, redraw = true) {
+async function acceptOneCheck(id, newBaselineSnapshotId, oldBaselineSnapshotId, testId, redraw = true) {
     let regionData;
     try {
-        regionData = await getRegionsData(oldBaselineId);
+        const check = JSON.parse(await getRequest(`check/${id}`));
+        await acceptCheck(check, newBaselineSnapshotId);
+
+        const newBaseline = JSON.parse(await (await fetch(`baselines?snapshootId=${newBaselineSnapshotId}`))
+            .text())[0];
+
+        const oldBaseline = JSON.parse(await (await fetch(`baselines?snapshootId=${oldBaselineSnapshotId}`))
+            .text())[0];
+
+        regionData = (await MainView.getRegionsData(oldBaseline._id)).ignoreRegions;
+
+        if (regionData) {
+            const confirm = confirmation('The previous baseline contains regions. Doy you want to copy them?');
+            if (confirm) {
+                MainView.sendIgnoreRegions(newBaseline._id, regionData);
+                console.log(`ignore region data was sent to new baseline snapshot: ${JSON.parse(regionData)}`);
+            }
+        }
+
+        showNotification(`The check '${id}' was accepted`);
+
+        if (redraw) {
+            const acceptedCheck = JSON.parse(await getRequest(`check/${id}`));
+            const checkStatus = (acceptedCheck.status[0] === 'new') ? 'new' : 'passed';
+            await redrawCheckAcceptedStatus(acceptedCheck);
+            await redrawCheckStatus(id, checkStatus);
+            const test = JSON.parse(await getRequest(`test/${testId}`));
+            await redrawTestAcceptedStatus(test);
+            await redrawTestStatus(test);
+        }
     } catch (e) {
+        console.error(`${e}\n${e?.stack}`);
         showNotification(`Cannot accept check: '${id}', cannot get region data`, 'Error');
     }
-    //  !== 'undefined' - is for back compatibility
-    if (regionData.ignoreRegions && regionData.ignoreRegions !== 'undefined') {
-        const confirm = confirmation('The previous baseline contains regions. Doy you want to copy them?');
-        if (confirm) {
-            sendIgnoreRegions(newBaselineId, JSON.parse(regionData.ignoreRegions));
-            console.log(`ignore region data was sent to new baseline snapshot: ${JSON.parse(regionData.ignoreRegions)}`);
-        }
-    }
-    const check = JSON.parse(await getRequest(`check/${id}`));
-    await acceptCheck(check, newBaselineId)
-        .then(async () => {
-            showNotification(`The check '${id}' was accepted`);
-            if (redraw) {
-                const acceptedCheck = JSON.parse(await getRequest(`check/${id}`));
-                const checkStatus = (acceptedCheck.status[0] === 'new') ? 'new' : 'passed';
-                await redrawCheckAcceptedStatus(acceptedCheck);
-                await redrawCheckStatus(id, checkStatus);
-                const test = JSON.parse(await getRequest(`test/${testId}`));
-                await redrawTestAcceptedStatus(test);
-                await redrawTestStatus(test);
-            }
-        })
-        .catch(() => {
-            showNotification(`Cannot accept check: '${id}'`, 'Error');
-        });
 }
 
 function acceptChecksByTestId(testId) {
@@ -385,20 +354,22 @@ function acceptChecksByTestId(testId) {
         const checks = Array.from(document.querySelectorAll(`div[name="check-wrapper"][testid="${testId}"]`));
         const checkProm = checks.map(
             async (check) => {
-                const oldBaselineId = check.getAttribute('baselineId');
-                const newBaselineId = check.getAttribute('actualSnapshotId');
+                const realBaselineId = check.getAttribute('realBaselineId');
+                const newBaselineSnapshotId = check.getAttribute('actualSnapshotId');
                 const id = check.id.replace('check_', '');
 
-                const regionData = await getRegionsData(oldBaselineId);
+                const checkObj = JSON.parse(await getRequest(`check/${id}`));
+                const result = await acceptCheck(checkObj, newBaselineSnapshotId);
+                const acceptedCheckObj = JSON.parse(await getRequest(`check/${id}`));
+                await redrawCheckAcceptedStatus(acceptedCheckObj);
+
+                const regionData = await MainView.getRegionsData(realBaselineId);
+                const newBaseline = JSON.parse(await (await fetch(`baselines?snapshootId=${newBaselineSnapshotId}`))
+                    .text())[0];
                 if (regionData.ignoreRegions && regionData.ignoreRegions !== 'undefined') {
-                    sendIgnoreRegions(newBaselineId, JSON.parse(regionData.ignoreRegions));
+                    MainView.sendIgnoreRegions(newBaseline._id, regionData.ignoreRegions);
                     console.log(`ignore region data was sent to new baseline snapshot: ${JSON.parse(regionData.ignoreRegions)}`);
                 }
-
-                const checkObj = JSON.parse(await getRequest(`check/${id}`));
-                const result = await acceptCheck(checkObj, newBaselineId);
-                const acceptedcheckObj = JSON.parse(await getRequest(`check/${id}`));
-                await redrawCheckAcceptedStatus(acceptedcheckObj);
 
                 return result;
             }
@@ -630,6 +601,9 @@ async function drawTestChecksPreviews(testId) {
     const baselineIds = [];
     checksDivs.forEach((el) => baselineIds.push(el.getAttribute('baselineId')));
 
+    const realBaselineIds = [];
+    checksDivs.forEach((el) => realBaselineIds.push(el.getAttribute('realBaselineId')));
+
     const actualIds = [];
     checksDivs.forEach((el) => actualIds.push(el.getAttribute('actualsnapshotid')));
 
@@ -659,7 +633,7 @@ async function drawTestChecksPreviews(testId) {
                     weight,
                     backimageId: baselineObj.filename ? baselineObj.filename : `${baselineObj.id}.png`,
                 });
-            baseline.getSnapshotIgnoreRegionsDataAndDrawRegions(baselineIds[index]);
+            baseline.getSnapshotIgnoreRegionsDataAndDrawRegions(realBaselineIds[index]);
             baseline.canvas.upperCanvasEl.classList.add('preview-upper-canvas');
             baselines[id] = baseline;
         });

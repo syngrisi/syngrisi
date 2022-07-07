@@ -116,15 +116,17 @@
         <% } %>
 
         <!--ADD IGNORE REGION-->
-        <div class="col-auto btn-check pl-1 pr-1 pt-0"
-             onclick="mainView.addIgnoreRegion( {name: 'ignore_rect', strokeWidth: 0,})">
-            <a id="ignore-regions" type="button"
-               title="add ignore region (A)"
-               class="vcenter-item pl-1 pr-1 pt-0 pb-0 border-0 rounded"
-            >
-                <i class="bi bi-bounding-box"></i>
-            </a>
-        </div>
+        <% if(baseline) { %>
+            <div class="col-auto btn-check pl-1 pr-1 pt-0"
+                 onclick="mainView.addIgnoreRegion( {name: 'ignore_rect', strokeWidth: 0,})">
+                <a id="ignore-regions" type="button"
+                   title="add ignore region (A)"
+                   class="vcenter-item pl-1 pr-1 pt-0 pb-0 border-0 rounded"
+                >
+                    <i class="bi bi-bounding-box"></i>
+                </a>
+            </div>
+        <% } %>
         <!--ADD BOUND REGIONS-->
         <!--        <div class="col-auto btn-check pl-1 pr-1 border-header"-->
         <!--             style="padding-top: 1px"-->
@@ -175,15 +177,17 @@
         </div>
 
         <!--SAVE-->
-        <div class="col-auto btn-check pl-1 pr-1 pr-1 border-left border-header"
-             onclick="mainView.sendIgnoreRegions('<%= baselineSnapshot.id; %>' ,mainView.getRectData())">
-            <a id="save-baseline" type="button"
-               class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-0 border-0 rounded"
-               title="save the baseline (S)"
-            >
-                <i class="bi bi-check2"></i>
-            </a>
-        </div>
+        <% if(baseline) { %>
+            <div class="col-auto btn-check pl-1 pr-1 pr-1 border-left border-header"
+                 onclick="MainView.sendIgnoreRegions('<%= baseline._id; %>' ,mainView.getRectData())">
+                <a id="save-baseline" type="button"
+                   class="vcenter-item pl-1 pr-1 pt-0 pb-0 mb-0 border-0 rounded"
+                   title="save the baseline (S)"
+                >
+                    <i class="bi bi-check2"></i>
+                </a>
+            </div>
+        <% } %>
 
         <!--INFO-->
         <div class="col-auto btn-check pl-1 pr-1 pr-1 border-left border-right border-header">

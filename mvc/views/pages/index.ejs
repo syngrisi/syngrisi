@@ -16,8 +16,10 @@
     <script src="./static/js/indexHelper.min.js"></script>
     <script src="./static/js/jquery-3.3.1.slim.min.js"></script>
     <script src="./static/js/bootstrap-toolkit.min.js"></script>
+    <script src="./static/js/checkview/mainView.min.js"></script>
 
-    <% if(currentSuite) { %>
+
+<% if(currentSuite) { %>
         <title>Syngrisi list of checks - <%= currentSuite.name; %> </title>
     <% } else if (opts.filter_name_regex) { %>
         <title>Syngrisi search results for - <%= opts.filter_name_regex; %> </title>

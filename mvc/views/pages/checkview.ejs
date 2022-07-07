@@ -188,10 +188,12 @@
                     createdDate: '<%= diffSnapshot?.formattedCreatedDate %>'
                 });
             }
+            <% if(baseline) { %>
 
             if ((event.code === 'KeyS')) {
-                mainView.sendIgnoreRegions('<%= baselineSnapshot.id %>', mainView.getRectData());
+                MainView.sendIgnoreRegions('<%= baseline?._id %>', mainView.getRectData());
             }
+            <% } %>
         });
 
         var mainView = {};
@@ -258,7 +260,7 @@
                         <% } %>
                     }
             );
-            mainView.getSnapshotIgnoreRegionsDataAndDrawRegions('<%= baselineSnapshot.id; %>');
+            mainView.getSnapshotIgnoreRegionsDataAndDrawRegions('<%= baseline?._id %>');
         })();
 
     </script>

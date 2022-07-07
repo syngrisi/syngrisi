@@ -1,5 +1,5 @@
 /* eslint-disable dot-notation */
-/* global XMLHttpRequest fabric $ document window */
+/* global fabric $ window */
 
 // eslint-disable-next-line no-unused-vars
 class BaselineView {
@@ -241,30 +241,13 @@ class BaselineView {
         }
         $('#notify')
             .show();
-        setTimeout(() => {
+        setTimeout(
+            () => {
                 $('#notify')
                     .hide();
             },
-            4000);
-    }
-
-    sendIgnoreRegions(id, regionsData) {
-        const xhr = new XMLHttpRequest();
-        const params = `id=${id}&ignoreRegions=${JSON.stringify(regionsData)}`;
-        xhr.open('PUT', `/snapshots/${id}`, true);
-        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        const classThis = this;
-        // NEED TO ADD UPDATE BASELINE LOGIC TO .onload EVENT!!!
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                console.log(`Successful send regions data, id: '${id}'  resp: '${xhr.responseText}'`);
-                classThis.showNotification('Regions were saved');
-            } else {
-                console.error(`Cannot send regions data, status: '${xhr.status}',  resp: '${xhr.responseText}'`);
-                classThis.showNotification('Cannot save regions', 'Error');
-            }
-        };
-        xhr.send(params);
+            4000
+        );
     }
 
     /**
@@ -274,7 +257,7 @@ class BaselineView {
     convertRegionsDataFromServer(regions) {
         const data = [];
         const coef = parseFloat(this.coef);
-        JSON.parse(regions)
+        regions
             .forEach((reg) => {
                 const width = reg.right - reg.left;
                 const height = reg.bottom - reg.top;
@@ -311,25 +294,8 @@ class BaselineView {
         });
     }
 
-    getRegionsData(snapshootId) {
-        return new Promise((resolve, reject) => {
-            // console.log(`get snapshoot data id: ${snapshootId}`);
-            const xhr = new XMLHttpRequest();
-            xhr.open('GET', `/snapshot/${snapshootId}/`, true);
-            xhr.onload = function () {
-                if (xhr.status === 200) {
-                    // console.log(`Successful got regions data, id: '${snapshootId}'  resp: '${xhr.responseText}'`);
-                    return resolve(JSON.parse(xhr.responseText));
-                }
-                console.error(`Cannot get regions data, status: '${xhr.status}',  resp: '${xhr.responseText}'`);
-                return reject(xhr);
-            };
-            xhr.send('');
-        });
-    }
-
     async getSnapshotIgnoreRegionsDataAndDrawRegions(id) {
-        const regionData = await this.getRegionsData(id);
+        const regionData = await MainView.getRegionsData(id);
         this.drawRegions(regionData.ignoreRegions);
     }
 
