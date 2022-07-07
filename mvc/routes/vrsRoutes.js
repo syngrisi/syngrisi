@@ -33,9 +33,13 @@ module.exports = async function (app) {
         .put('/snapshots/:id', ensureLoggedIn(), async (req, res, next) => {
             API.updateSnapshot(req, res)
                 .catch(next);
-        }).
-        put('/baselines/:id', ensureLoggedIn(), async (req, res, next) => {
+        })
+        .put('/baselines/:id', ensureLoggedIn(), async (req, res, next) => {
             API.updateBaseline(req, res)
+                .catch(next);
+        })
+        .put('/baselines_by_snapshot_id/:id', ensureLoggedIn(), async (req, res, next) => {
+            API.updateBaselineBySnapshotId(req, res)
                 .catch(next);
         })
         .get('/', ensureLoggedIn(),
@@ -152,6 +156,10 @@ module.exports = async function (app) {
         })
         .get('/snapshot/:id', ensureLoggedIn(), async (req, res, next) => {
             API.getSnapshot(req, res)
+                .catch(next);
+        })
+        .get('/baselines/:id', ensureLoggedIn(), async (req, res, next) => {
+            API.getBaseline(req, res)
                 .catch(next);
         })
         .get('/checkhistory/:id', ensureLoggedIn(), async (req, res, next) => {

@@ -12,6 +12,8 @@ const Run = mongoose.model('VRSRun');
 
 const Suite = mongoose.model('VRSSuite');
 
+const Baseline = mongoose.model('VRSBaseline');
+
 const ident = ['name', 'viewport', 'browserName', 'os', 'app', 'branch'];
 exports.ident = ident;
 
@@ -119,11 +121,16 @@ exports.checksGroupedByIdent = function checksGroupedByIdent(checkFilter) {
         try {
             const chs = await Check.find(checkFilter)
                 .exec();
-            const checks = chs.map((ch) => {
-                ch.formattedCreatedDate = moment(ch.createdDate)
-                    .format('YYYY-MM-DD hh:mm');
-                return ch;
-            });
+            const checks = await Promise.all(
+                chs.map(async (ch) => {
+                    const baseline = await Baseline.findOne({ snapshootId: ch.baselineId })
+                        .exec();
+                    ch.realBaselineId = baseline?._id;
+                    ch.formattedCreatedDate = moment(ch.createdDate)
+                        .format('YYYY-MM-DD hh:mm');
+                    return ch;
+                })
+            );
             const result = {};
             checks.forEach((check) => {
                 if (result[checkIdent(check)] === undefined) {

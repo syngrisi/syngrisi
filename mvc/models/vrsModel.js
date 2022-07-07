@@ -23,12 +23,6 @@ const VRSSnapshotSchema = new Schema({
         type: Date,
         default: Date.now,
     },
-    ignoreRegions: {
-        type: String,
-    },
-    boundRegions: {
-        type: String,
-    },
     vOffset: {
         type: Number,
     },
@@ -61,7 +55,10 @@ const VRSCheckSchema = new Schema({
     baselineId: {
         type: Schema.Types.ObjectId,
         ref: 'VRSSnapshot',
-        // required: 'baselineId cannot be empty empty',
+    },
+    realBaselineId: {
+        type: Schema.Types.ObjectId,
+        ref: 'VRSBaseline',
     },
     actualSnapshotId: {
         type: Schema.Types.ObjectId,

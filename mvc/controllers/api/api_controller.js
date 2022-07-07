@@ -149,17 +149,14 @@ async function compareSnapshots(baselineSnapshot, actual, opts = {}) {
             log.debug(`baseline path: ${config.defaultBaselinePath}${baselineSnapshot.id}.png`, $this, logOpts);
             log.debug(`actual path: ${config.defaultBaselinePath}${actual.id}.png`, $this, logOpts);
             const options = opts;
-            if (baselineSnapshot.ignoreRegions) {
-                log.debug(`ignore regions: '${baselineSnapshot.ignoreRegions}', type: '${typeof baselineSnapshot.ignoreRegions}'`);
-            }
-
-            // back compatibility
-            if ((baselineSnapshot.ignoreRegions !== 'undefined') && baselineSnapshot.ignoreRegions) {
-                const ignored = JSON.parse(JSON.parse(baselineSnapshot.ignoreRegions));
-                options.ignoredBoxes = ignored;
-            }
             const baseline = await Baseline.findOne({ snapshootId: baselineSnapshot._id })
                 .exec();
+
+            if (baseline.ignoreRegions) {
+                log.debug(`ignore regions: '${baseline.ignoreRegions}', type: '${typeof baseline.ignoreRegions}'`);
+                const ignored = JSON.parse(baseline.ignoreRegions);
+                options.ignoredBoxes = ignored;
+            }
             options.ignore = baseline.matchType || 'nothing';
             diff = await getDiff(baselineData, actualData, options);
         }
@@ -231,7 +228,7 @@ exports.updateBaseline = async function (req, res) {
         const { id } = req.params;
         // eslint-disable-next-line max-len
         log.debug(`start update baseline with id: '${id}', params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`, $this, logOpts);
-        const baseline = await Baseline.findOneAndUpdate({ snapshootId: id }, opts)
+        const baseline = await Baseline.findByIdAndUpdate(id, opts)
             .exec();
         await baseline.save();
         log.debug(`baseline with id: '${id}' and opts: '${JSON.stringify(opts)}' was updated`, $this, logOpts);
@@ -247,21 +244,56 @@ exports.updateBaseline = async function (req, res) {
     }
 };
 
-exports.getSnapshot = async function (req, res) {
-    let id;
+exports.updateBaselineBySnapshotId = async function (req, res) {
+    const logOpts = {
+        scope: 'updateBaseline',
+        ref: req.id,
+        itemType: 'baseline',
+        msgType: 'UPDATE',
+    };
     try {
-        id = req.params.id;
-        const snp = await Snapshot.findById(id);
-        res.json(snp);
-        return snp;
+        const opts = removeEmptyProperties(req.body);
+        const { id: snapshotId } = req.params;
+        // eslint-disable-next-line max-len
+        log.debug(`start update baseline with snapshot id: '${snapshotId}', params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`, $this, logOpts);
+        const baseline = await Baseline.findOneAndUpdate({ snapshootId: snapshotId }, opts)
+            .exec();
+        await baseline.save();
+        log.debug(`baseline with id: '${snapshotId}' and opts: '${JSON.stringify(opts)}' was updated`, $this, logOpts);
+        res.status(200)
+            .json({
+                item: 'Baseline',
+                action: 'update',
+                snapshotId,
+                opts,
+            });
     } catch (e) {
-        log.error((`cannot get a snapshot with id: '${id}', error: ${e}`, $this, {
+        fatalError(req, res, e);
+    }
+};
+
+exports.getBaseline = async function (req, res) {
+    try {
+        res.json(await Baseline.findById(req.params.id));
+    } catch (e) {
+        log.error((`cannot get a snapshot with id: '${req.params.id}', error: ${e}`, $this, {
             scope: 'getSnapshot',
             msgType: 'GET',
         }));
         fatalError(req, res, e);
     }
-    return null;
+};
+
+exports.getSnapshot = async function (req, res) {
+    try {
+        res.json(await Snapshot.findById(req.params.id));
+    } catch (e) {
+        log.error((`cannot get a snapshot with id: '${req.params.id}', error: ${e}`, $this, {
+            scope: 'getSnapshot',
+            msgType: 'GET',
+        }));
+        fatalError(req, res, e);
+    }
 };
 
 const checksGroupByIdent = async function (req, res) {
@@ -1410,7 +1442,7 @@ exports.acceptCheck = async function acceptCheck(req, res) {
 };
 
 exports.getBaselines = (req, res) => {
-    Baseline.find()
+    Baseline.find(req.query)
         .then((baselines) => {
             res.json(baselines);
         });

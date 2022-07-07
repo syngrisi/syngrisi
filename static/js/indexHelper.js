@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+/* global ejs Cookies location window jQuery */
 function wideSearchInput() {
     const el = document.getElementById('search-wrapper');
     el.style.setProperty('width', '75%', 'important');
@@ -40,7 +41,7 @@ function renderNextPage(page) {
         const searchObject = searchToObject(window.location.search);
 
         if (page) {
-            searchObject.page = parseInt(page);
+            searchObject.page = parseInt(page, 10);
         }
         const project = Cookies.get('project');
         if (project) searchObject.filter_app_eq = project;
@@ -55,11 +56,11 @@ function renderNextPage(page) {
         // prepare testHTML using ejs template and obtained json data
         const checksByTestGroupedByIdent = JSON.parse(json);
         // console.log({ checksByTestGroupedByIdent });
-        let options = { delimiter: '?' };
+        const options = { delimiter: '?' };
         const pageTemplate = await getRequest('../../../static/ejs/tests_table_rows.ejs');
-        let testsHtml = '<div class="test-page-wrapper row ml-0 mr-0">' + ejs.render(pageTemplate, {
-            checksByTestGroupedByIdent: checksByTestGroupedByIdent
-        }, options) + '</div>';
+        const testsHtml = `<div class="test-page-wrapper row ml-0 mr-0">${ejs.render(pageTemplate, {
+            checksByTestGroupedByIdent,
+        }, options)}</div>`;
 
         // insert HTML
         document.getElementById('tests-table-end')

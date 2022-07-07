@@ -15,6 +15,7 @@ Feature: Regions works properly
         When I stop VRS session
 
     Scenario: Create Region without saving
+        When I accept via http the 1st check with name "region"
         When I open the app
         When I wait for "3" seconds
         When I click on "region check" VRS test
@@ -66,6 +67,7 @@ Feature: Regions works properly
           0
         """
 
+    @smoke
     Scenario: Create Region with saving
         When I open the app
         When I wait for "3" seconds
@@ -73,6 +75,14 @@ Feature: Regions works properly
         Then I expect that VRS test "region check" is unfolded
         When I click on the element "[name=region]"
         When I wait for "2" seconds
+        Then I expect that element "#ignore-regions" is not displayed
+        Then I expect that element "#save-baseline" is not displayed
+        When I accept via http the 1st check with name "region"
+        When I refresh page
+        When I wait for "2" seconds
+        Then I expect that element "#ignore-regions" is displayed
+        Then I expect that element "#save-baseline" is displayed
+
         When I click on the element "#ignore-regions"
         When I wait for "1" seconds
         When I execute javascript code:
@@ -120,6 +130,7 @@ Feature: Regions works properly
         """
 
     Scenario: Create Region with saving after change position
+        When I accept via http the 1st check with name "region"
         When I open the app
         When I wait for "3" seconds
         When I click on "region check" VRS test
@@ -189,6 +200,7 @@ Feature: Regions works properly
         """
 
     Scenario: Create Region with saving - two regions
+        When I accept via http the 1st check with name "region"
         When I open the app
         When I wait for "3" seconds
         When I click on "region check" VRS test
@@ -212,6 +224,7 @@ Feature: Regions works properly
         """
 
     Scenario: Delete Region with saving
+        When I accept via http the 1st check with name "region"
         When I open the app
         When I wait for "3" seconds
         When I click on "region check" VRS test

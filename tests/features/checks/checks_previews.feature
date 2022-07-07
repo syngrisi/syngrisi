@@ -4,26 +4,18 @@ Feature: Checks previews
     Background:
         Given I clear Database and stop Server
         Given I start Server and start Driver
-        When I create "2" tests with params:
+        When I create "1" tests with params:
         """
           testName: "region check"
-          checkName: Check - 1
+          checkName: region
         """
-        Given I start VRS session with parameters:
-        """
-          testName: "region check"
-        """
-        When I open the app
-        When I check image with path: "files/A.png" as "region"
-        Then the "check" "status" should be "new"
-
-        When I stop VRS session
 
     Scenario: Create Ignore Region check if it present on Main Grid
+        When I accept via http the 1st check with name "region"
         When I open the app
         When I wait for "3" seconds
-        When I click on "region check" VRS test
-        Then I expect that VRS test "region check" is unfolded
+        When I click on "region check - 1" VRS test
+        When I wait for "2" seconds
         When I click on the element "[name=region]"
         When I wait for "2" seconds
         When I click on the element "#ignore-regions"
@@ -61,9 +53,8 @@ Feature: Checks previews
           0
         """
 
-        When I click on "region check" VRS test
-        Then I expect that VRS test "region check" is unfolded
-
+        When I click on "region check - 1" VRS test
+        When I wait for "2" seconds
         When I execute javascript code:
         """
           return Object.keys(baselines).length.toString();

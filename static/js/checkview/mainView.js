@@ -1,5 +1,5 @@
 /* eslint-disable dot-notation,no-underscore-dangle */
-/* global XMLHttpRequest fabric $ window */
+/* global fabric $ window fetch SideToSideView */
 
 // eslint-disable-next-line no-unused-vars
 class MainView {
@@ -484,23 +484,43 @@ class MainView {
         );
     }
 
-    sendIgnoreRegions(id, regionsData) {
-        const xhr = new XMLHttpRequest();
-        const params = `id=${id}&ignoreRegions=${JSON.stringify(regionsData)}`;
-        xhr.open('PUT', `/snapshots/${id}`, true);
-        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-        const classThis = this;
-        // NEED TO ADD UPDATE BASELINE LOGIC TO .onload EVENT!!!
-        xhr.onload = function regNotification() {
-            if (xhr.status === 200) {
-                console.log(`Successful send regions data, id: '${id}'  resp: '${xhr.responseText}'`);
-                classThis.showNotification('Regions were saved');
-            } else {
-                console.error(`Cannot send regions data, status: '${xhr.status}',  resp: '${xhr.responseText}'`);
-                classThis.showNotification('Cannot save regions', 'Error');
+    static showToaster(msg, status = 'Success') {
+        document.getElementById('notify-header').textContent = status;
+        document.getElementById('notify-message').textContent = msg;
+        document.getElementById('notify-rect')
+            .setAttribute('fill', '#2ECC40');
+        if (status === 'Error') {
+            document.getElementById('notify-rect')
+                .setAttribute('fill', '#FF4136');
+        }
+        $('#notify')
+            .show();
+        setTimeout(
+            () => $('#notify')
+                .hide(),
+            4000
+        );
+    }
+
+    static async sendIgnoreRegions(id, regionsData) {
+        try {
+            const response = await fetch(`/baselines/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, ignoreRegions: regionsData }),
+            });
+            const text = await response.text();
+            if (response.status === 200) {
+                console.log(`Successful send baseline ignored regions, id: '${id}'  resp: '${text}'`);
+                MainView.showToaster('ignored regions was saved');
+                return;
             }
-        };
-        xhr.send(params);
+            console.error(`Cannot set baseline ignored regions , status: '${response.status}',  resp: '${text}'`);
+            MainView.showToaster('Cannot set baseline ignored regions', 'Error');
+        } catch (e) {
+            console.error(`Cannot set baseline ignored regions: ${e.stack || e}`);
+            MainView.showToaster('Cannot set baseline ignored regions', 'Error');
+        }
     }
 
     /**
@@ -511,7 +531,7 @@ class MainView {
     convertRegionsDataFromServer(regions) {
         const data = [];
         const coef = parseFloat(this.coef);
-        JSON.parse(regions)
+        regions
             .forEach((reg) => {
                 const width = reg.right - reg.left;
                 const height = reg.bottom - reg.top;
@@ -548,24 +568,25 @@ class MainView {
         });
     }
 
-    getRegionsData(snapshootId) {
-        return new Promise((resolve, reject) => {
-            // console.log(`get snapshoot data id: ${snapshootId}`);
-            const xhr = new XMLHttpRequest();
-            xhr.open('GET', `/snapshot/${snapshootId}/`, true);
-            xhr.onload = () => {
-                if (xhr.status === 200) {
-                    return resolve(JSON.parse(xhr.responseText));
-                }
-                console.error(`Cannot get regions data, status: '${xhr.status}',  resp: '${xhr.responseText}'`);
-                return reject(xhr);
-            };
-            xhr.send('');
-        });
+    static async getRegionsData(baselineId) {
+        try {
+            const response = await fetch(`/baselines/${baselineId}`);
+            const text = await response.text();
+            if (response.status === 200) {
+                console.log(`Successful get baseline ignored regions, id: '${baselineId}'  resp: '${text}'`);
+                return JSON.parse(text);
+            }
+            console.error(`Cannot get baseline ignored regions , status: '${response.status}',  resp: '${text}'`);
+            MainView.showToaster('Cannot get baseline ignored regions', 'Error');
+        } catch (e) {
+            console.error(`Cannot get baseline ignored regions: ${e.stack || e}`);
+            MainView.showToaster('Cannot get baseline ignored regions', 'Error');
+        }
+        return null;
     }
 
     async getSnapshotIgnoreRegionsDataAndDrawRegions(id) {
-        const regionData = await this.getRegionsData(id);
+        const regionData = await MainView.getRegionsData(id);
         this.drawRegions(regionData.ignoreRegions);
     }
 
