@@ -14284,4 +14284,8 @@ mark {
   font-weight: bold;
 }
 
+[type=button], button {
+  -webkit-appearance: none;
+}
+
 /*# sourceMappingURL=common.css.map */

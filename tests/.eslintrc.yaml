@@ -63,3 +63,7 @@ rules:
     object-curly-newline:
         - 'off'
         -   "ObjectExpression": "never"
+
+    no-underscore-dangle:
+        - 'error'
+        -   allow: '_id'
