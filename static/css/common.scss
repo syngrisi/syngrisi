@@ -625,3 +625,7 @@ mark {
     font-size: 20px;
     font-weight: bold;
 }
+
+[type=button], button {
+     -webkit-appearance: none;
+}

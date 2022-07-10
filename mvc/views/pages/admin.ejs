@@ -372,6 +372,10 @@
                                <input type="checkbox" id="statistics" name="statistics" ><br>
                                <a class="btn btn-sm btn-dark text-light" onclick="runAndRenderTask('remove_old_tests');">Start</a>
                                 <a class="btn btn-sm btn-dark text-light" onclick="clearLogs();">Clear</a>`,
+
+            task_check_database_consistency: `
+                               <a class="btn btn-sm btn-dark text-light" onclick="runAndRenderTask('check_database_consistency');">Start</a>
+                                <a class="btn btn-sm btn-dark text-light" onclick="clearLogs();">Clear</a>`,
             remove_old_logs: `<label for="test">Remove older that (days): </label>
                                <input type="text" id="days" name="days" value="30"><br>
                                <label for="test">Only statistics: </label>

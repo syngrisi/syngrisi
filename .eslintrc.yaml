@@ -11,6 +11,8 @@ globals:
     assert: true
     expect: true
     document: readonly
+    window: readonly
+    log: readonly
 
 overrides:
     -   files: "mvc/controllers/*.js"
@@ -58,3 +60,6 @@ rules:
             matchDescription: '.+'
     object-curly-newline:
         - 'off'
+    no-underscore-dangle:
+        - 'error'
+        -   allow: ['_id']

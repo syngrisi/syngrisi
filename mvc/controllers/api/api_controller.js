@@ -1,6 +1,5 @@
 /* eslint-disable dot-notation,no-underscore-dangle,quotes,object-shorthand */
 // eslint-disable-next-line no-unused-vars
-/* global log:readonly */
 const querystring = require('querystring');
 const mongoose = require('mongoose');
 const hasha = require('hasha');
@@ -15,6 +14,8 @@ const { getDiff } = require('../../../lib/comparator');
 const orm = require('../../../lib/dbItems');
 const { parseDiff } = require('../../../lib/parseDiff');
 const { getAllElementsByPositionFromDump } = require('../../../lib/getElementsByPixPositionsFromDump');
+const testUtil = require('./utils/tests');
+const checkUtil = require('./utils/check');
 
 const Snapshot = mongoose.model('VRSSnapshot');
 const Check = mongoose.model('VRSCheck');
@@ -556,75 +557,10 @@ exports.updateTest = async function (req, res) {
     return null;
 };
 
-async function removeCheck(id) {
-    const logOpts = {
-        scope: 'removeCheck',
-        itemType: 'check',
-        ref: id,
-        msgType: 'REMOVE',
-    };
-
-    try {
-        const check = await Check.findByIdAndDelete(id)
-            .exec();
-
-        log.debug(`check with id: '${id}' was removed, update test: ${check.test}`, $this, logOpts);
-
-        const test = await Test.findById(check.test)
-            .exec();
-        const testCalculatedStatus = await calculateTestStatus(check.test);
-        const testCalculatedAcceptedStatus = await calculateAcceptedStatus(check.test);
-        test.status = testCalculatedStatus;
-        test.markedAs = testCalculatedAcceptedStatus;
-        test.updatedDate = new Date();
-        await orm.updateItemDate('VRSSuite', check.suite);
-        test.save();
-
-        if ((check.baselineId) && (check.baselineId !== 'undefined')) {
-            log.debug(`try to remove the snapshot, baseline: ${check.baselineId}`, $this, logOpts);
-            await removeSnapshot(check.baselineId?.toString());
-        }
-
-        if ((check.actualSnapshotId) && (check.baselineId !== 'undefined')) {
-            log.debug(`try to remove the snapshot, actual: ${check.actualSnapshotId}`, $this, logOpts);
-            await removeSnapshot(check.actualSnapshotId?.toString());
-        }
-
-        if ((check.diffId) && (check.baselineId !== 'undefined')) {
-            log.debug(`try to remove snapshot, diff: ${check.diffId}`, $this, logOpts);
-            await removeSnapshot(check.diffId?.toString());
-        }
-    } catch (e) {
-        const errMsg = `cannot remove a check with id: '${id}', error: '${e}'`;
-        log.error(errMsg, $this, logOpts);
-        throw new Error(errMsg);
-    }
-}
-
-async function removeTest(id) {
-    const logOpts = {
-        itemType: 'test',
-        msgType: 'REMOVE',
-        ref: id,
-    };
-    try {
-        log.debug(`try to delete all checks associated to test with ID: '${id}'`, $this, logOpts);
-        const checks = await Check.find({ test: id });
-        // const checksRemoveResult = [];
-        for (const check of checks) {
-            await removeCheck(check._id);
-        }
-        await Test.findByIdAndDelete(id);
-    } catch (e) {
-        log.error(`cannot remove test with id: ${id} error: ${e}`, $this, logOpts);
-        throw new Error();
-    }
-}
-
 exports.removeTest = async function (req, res) {
     try {
         const { id } = req.params;
-        await removeTest(id);
+        await testUtil.removeTest(id);
         res.status(200)
             .json({
                 message: `Test with id: '${id}' and all related checks were removed`,
@@ -686,20 +622,6 @@ exports.createTest = async function (req, res) {
     return null;
 };
 
-async function calculateTestStatus(testId) {
-    const checksInTest = await Check.find({ test: testId });
-    const statuses = checksInTest.map((x) => x.status[0]);
-    let testCalculatedStatus = 'Failed';
-    if (statuses.every((x) => (x === 'new') || (x === 'passed'))) {
-        testCalculatedStatus = 'Passed';
-    }
-    if (statuses.every((x) => (x === 'new'))) {
-        testCalculatedStatus = 'New';
-    }
-    // console.log({ testCalculatedStatus });
-    return testCalculatedStatus;
-}
-
 // suites
 exports.removeSuite = async function (req, res) {
     const logOpts = {
@@ -716,7 +638,7 @@ exports.removeSuite = async function (req, res) {
 
         const results = [];
         for (const test of tests) {
-            results.push(removeTest(test._id));
+            results.push(testUtil.removeTest(test._id));
         }
 
         await Promise.all(results);
@@ -746,7 +668,7 @@ exports.removeRun = async function (req, res) {
 
         const results = [];
         for (const test of tests) {
-            results.push(removeTest(test._id));
+            results.push(testUtil.removeTest(test._id));
         }
         await Promise.all(results);
         const out = await Run.findByIdAndDelete(id);
@@ -1404,7 +1326,7 @@ exports.acceptCheck = async function acceptCheck(req, res) {
         await check.save();
 
         /** update test statuses and date, suite date */
-        const testCalculatedStatus = await calculateTestStatus(check.test);
+        const testCalculatedStatus = await testUtil.calculateTestStatus(check.test);
         const testCalculatedAcceptedStatus = await calculateAcceptedStatus(check.test);
 
         test.status = testCalculatedStatus;
@@ -1499,69 +1421,6 @@ exports.checkIfScreenshotHasBaselines = async (req, res) => {
     }
 };
 
-const removeSnapshotFile = async (snapshot) => {
-    let relatedSnapshots;
-    if (snapshot.filename) {
-        relatedSnapshots = await Snapshot.find({ filename: snapshot.filename });
-        log.debug(`there is '${relatedSnapshots.length}' snapshots with such filename: '${snapshot.filename}'`, $this);
-    }
-
-    // eslint-disable-next-line arrow-body-style
-    const isLastSnapshotFile = () => {
-        if (snapshot.filename === undefined) {
-            return true;
-        }
-        return (relatedSnapshots.length === 0);
-    };
-    console.log({ isLastSnapshotFile: isLastSnapshotFile() });
-    if (isLastSnapshotFile()) {
-        const path = snapshot.filename ? `${config.defaultBaselinePath}${snapshot.filename}` : `${config.defaultBaselinePath}${snapshot.id}.png`;
-        log.silly(`path: ${path}`, $this);
-        if (fss.existsSync(path)) {
-            log.debug(`remove file: '${path}'`, $this, {
-                msgType: 'REMOVE',
-                itemType: 'file',
-            });
-            fss.unlinkSync(path);
-        }
-    }
-};
-
-const removeSnapshot = async (id) => {
-    const logOpts = {
-        scope: 'removeSnapshot',
-        msgType: 'REMOVE',
-        itemType: 'snapshot',
-        ref: id,
-    };
-    // log.info(`delete snapshot with id: '${id}'`, $this, logOpts);
-    if (!id) {
-        log.warn('id is empty');
-        return;
-    }
-    const snapshot = await Snapshot.findById(id);
-
-    if (snapshot === null) {
-        log.warn(`cannot find the snapshot with id: '${id}'`);
-        return;
-    }
-    const baselines = await Baseline.find({ snapshootId: id })
-        .sort({ createdDate: -1 });
-
-    if (baselines.length > 0) {
-        log.debug(`snapshot: '${id}' related to baseline baseline, skip`, $this, logOpts);
-        return;
-    }
-
-    log.debug(`snapshot: '${id}' is not related to baseline, try to remove it`, $this, logOpts);
-    await Snapshot.findByIdAndDelete(id);
-    log.debug(`snapshot: '${id}' was removed`, $this, logOpts);
-    const path = snapshot.filename ? `${config.defaultBaselinePath}${snapshot.filename}` : `${config.defaultBaselinePath}${snapshot.id}.png`;
-
-    log.debug(`try to remove snapshot file, id: '${snapshot._id}', filename: '${path}'`, $this, logOpts);
-    await removeSnapshotFile(snapshot);
-};
-
 exports.removeCheck = async function (req, res) {
     const { id } = req.params;
     const logOpts = {
@@ -1572,7 +1431,7 @@ exports.removeCheck = async function (req, res) {
     };
     try {
         log.info(`remove check with, id: '${id}', user: '${req.user.username}', params: '${JSON.stringify(req.params)}'`, $this, logOpts);
-        await removeCheck(id);
+        await checkUtil.removeCheck(id);
         res.status(200)
             .json({ message: `check with id: '${id}' was removed` });
     } catch (e) {
@@ -1870,7 +1729,6 @@ exports.task_remove_empty_runs = async function (req, res) {
 
 function parseHrtimeToSeconds(hrtime) {
     return (hrtime[0] + (hrtime[1] / 1e9)).toFixed(3);
-
 }
 
 exports.task_remove_old_tests = async function (req, res) {
@@ -1936,7 +1794,7 @@ exports.task_remove_old_tests = async function (req, res) {
 
         const percent = oldTests.length / 100;
         for (const test of oldTests) {
-            await removeTest(test._id);
+            await testUtil.removeTest(test._id);
             const floor = parseInt(i / percent, 10);
             if (floor !== prevResult) {
                 progressBar += '#';
@@ -1954,6 +1812,93 @@ exports.task_remove_old_tests = async function (req, res) {
     const elapsedSeconds = parseHrtimeToSeconds(process.hrtime(startTime));
 
     taskOutput(`> Done in ${elapsedSeconds} seconds ${elapsedSeconds / 60} min`, res);
+    res.end();
+};
+
+exports.task_check_database_consistency = async function (req, res) {
+    // this header to response with chunks data
+    res.writeHead(200, {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Content-Encoding': 'none',
+    });
+    const startTime = process.hrtime();
+    taskOutput(`- starting...\n`, res);
+    taskOutput(`> looking for all files that are not related to any snapshot`);
+
+
+    // const trashHoldDate = subDays(new Date(), parseInt(req.query.days, 10));
+    // taskOutput(
+    //     `- will remove all tests older that: '${req.query.days}' days,`
+    //     + ` '${format(trashHoldDate, 'yyyy-MM-dd')}'\n`,
+    //     res
+    // );
+    //
+    // const oldTestsCount = await Test.find({ startDate: { $lt: trashHoldDate } })
+    //     .countDocuments();
+    // const allTestsCountBefore = await Test.find()
+    //     .countDocuments();
+    // const oldTests = await Test.find({ startDate: { $lt: trashHoldDate } });
+    // taskOutput(`- the count of all documents is: '${allTestsCountBefore}'\n`, res);
+    // taskOutput(`- the count of documents that be removed is: '${oldTestsCount}'\n`, res);
+    // // if (req.query.statistics) {
+    // //     let files = [];
+    // //     for (const test of oldTests) {
+    // //         files = [...files, ...await getAllTestsSnapshotsFiles(test._id)];
+    // //     }
+    // //
+    // //     taskOutput(`- all files count: '${files.length}'\n`, res);
+    // //     const uniqueFiles = Array.from(new Set(files));
+    // //     taskOutput(`- unique files count: '${uniqueFiles.length}'\n`, res);
+    // //     taskOutput(`- the deduplication rate: '${files.length / uniqueFiles.length}'\n`, res);
+    // //
+    // //     const statsProm = [];
+    // //
+    // //     for (const file of uniqueFiles) {
+    // //         statsProm.push(fs.stat(`${config.defaultBaselinePath}${file}`));
+    // //     }
+    // //
+    // //     const sizes = (await Promise.all(statsProm)).map(x => x.size);
+    // //     const size = sizes.reduce((a, b) => a + b, 0);
+    // //     taskOutput(`- all files size B: '${size}'\n`, res);
+    // //     taskOutput(`- all files size KB: '${size / 1024}'\n`, res);
+    // //     taskOutput(`- all files size MB: '${size / (1024 * 1024)}'\n`, res);
+    // //     taskOutput(`- all files size GB: '${size / (1024 * 1024 * 1024)}'\n`, res);
+    // //
+    // // }
+    //
+    // if (!req.query.statistics) {
+    //     // const result = [];
+    //     // oldTests.forEach((test) => {
+    //     //     taskOutput(`{\n\tid: ${test._id},\n\tname: ${test.name},\n\tdate:${test.startDate}\n}`, res);
+    //     //     // result.push(removeTest(test._id));
+    //     //     await removeTest(test._id);
+    //     // });
+    //     let i = 0;
+    //     let progressBar = '';
+    //     let prevResult = 0;
+    //
+    //     const percent = oldTests.length / 100;
+    //     for (const test of oldTests) {
+    //         await removeTest(test._id);
+    //         const floor = parseInt(i / percent, 10);
+    //         if (floor !== prevResult) {
+    //             progressBar += '#';
+    //             taskOutput(`${progressBar} ${parseInt(i / percent, 10)}%`, res);
+    //             prevResult = floor;
+    //         }
+    //         i += 1;
+    //     }
+    //     taskOutput(`${progressBar}# 100%`, res);
+    //
+    //     const allTestsCountAfter = await Test.find()
+    //         .countDocuments();
+    //     taskOutput(`- the count of all documents now is: '${allTestsCountAfter}'\n`, res);
+    // }
+    const elapsedSeconds = parseHrtimeToSeconds(process.hrtime(startTime));
+
+    taskOutput(`> Done in ${elapsedSeconds} seconds ${elapsedSeconds / 60} min`, res);
+    taskOutput(`- end...\n`, res);
     res.end();
 };
 
