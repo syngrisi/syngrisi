@@ -2,8 +2,7 @@
 Feature: Base baseline flow
 
     Background:
-        Given I clear test VRS database
-        When I stop the Syngrisi server
+        Given I clear Database and stop Server
         When I set env variables:
         """
         TEST: 1

@@ -54,10 +54,10 @@
         <% for(const check of checks) { %>
             <div class="row w-100 pb-3">
                 <div class="col-3">
-                    <a href="/snapshoots/<%= check.baseline.filename || check.baseline._id + '.png'; %>"
+                    <a href="/snapshoots/<%= check.baseline.filename %>"
                        class=""
                        name="baseline_link">
-                        <img src="/snapshoots/<%= check.baseline.filename || check.baseline._id + '.png'; %>"
+                        <img src="/snapshoots/<%= check.baseline.filename %>"
                              alt="baseline snapshoot"
                              title="baseline snapshoot"
                              class="snapshoot-image w-100">
@@ -65,9 +65,9 @@
                 </div>
                 <div class="col-3">
                     <% if (check.actualSnapshotId) { %>
-                        <a href="/snapshoots/<%= check.actual.filename || check.actual._id + '.png'; %>"
+                        <a href="/snapshoots/<%= check.actual.filename %>"
                            name="actual_link">
-                            <img src="/snapshoots/<%= check.actual.filename || check.actual._id + '.png'; %>"
+                            <img src="/snapshoots/<%= check.actual.filename  %>"
                                  alt="actual snapshoot"
                                  title="actual snapshoot"
                                  class="snapshoot-image w-100">

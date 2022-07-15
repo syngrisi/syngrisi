@@ -26,7 +26,6 @@ module.exports.removeTest = async function removeTest(id) {
     try {
         log.debug(`try to delete all checks associated to test with ID: '${id}'`, logOpts);
         const checks = await Check.find({ test: id });
-        // const checksRemoveResult = [];
         for (const check of checks) {
             await checkUtil.removeCheck(check._id);
         }

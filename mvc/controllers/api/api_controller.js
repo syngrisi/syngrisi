@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const hasha = require('hasha');
 const fs = require('fs').promises;
 const fss = require('fs');
+const stringTable = require('string-table');
 const {
     format,
     subDays,
@@ -30,6 +31,7 @@ const {
     checksGroupedByIdent,
     checksGroupedByIdent2,
     calculateAcceptedStatus,
+    ProgressBar,
 } = require('../utils');
 const {
     fatalError,
@@ -96,17 +98,18 @@ async function createSnapshot(parameters) {
 
     opts.imghash = hashCode || hasha(fileData);
     const snapshot = new Snapshot(opts);
-    const path = `${config.defaultBaselinePath}${snapshot.id}.png`;
+    const filename = `${snapshot.id}.png`;
+    const path = `${config.defaultBaselinePath}${filename}`;
     log.debug(`save screenshot for: '${name}' snapshot to: '${path}'`, $this, logOpts);
     await fs.writeFile(path, fileData);
-    snapshot.filename = `${snapshot._id}.png`;
+    snapshot.filename = filename;
     await snapshot.save();
     log.debug(`snapshot was saved: '${JSON.stringify(snapshot)}'`, $this, { ...logOpts, ...{ ref: snapshot._id } });
     return snapshot;
 }
 
 async function cloneSnapshot(sourceSnapshot, name) {
-    const filename = sourceSnapshot.filename ? sourceSnapshot.filename : `${sourceSnapshot._id}.png`;
+    const { filename } = sourceSnapshot;
     const hashCode = sourceSnapshot.imghash;
     const newSnapshot = new Snapshot({
         name,
@@ -143,12 +146,12 @@ async function compareSnapshots(baselineSnapshot, actual, opts = {}) {
                 executionTotalTime: '0',
             };
         } else {
-            const baselinePath = `${config.defaultBaselinePath}${baselineSnapshot.filename || `${baselineSnapshot.id}.png`}`;
-            const actualPath = `${config.defaultBaselinePath}${actual.filename || `${actual.id}.png`}`;
+            const baselinePath = `${config.defaultBaselinePath}${baselineSnapshot.filename}`;
+            const actualPath = `${config.defaultBaselinePath}${actual.filename}`;
             const baselineData = await fs.readFile(baselinePath);
             const actualData = await fs.readFile(actualPath);
-            log.debug(`baseline path: ${config.defaultBaselinePath}${baselineSnapshot.id}.png`, $this, logOpts);
-            log.debug(`actual path: ${config.defaultBaselinePath}${actual.id}.png`, $this, logOpts);
+            log.debug(`baseline path: ${baselinePath}`, $this, logOpts);
+            log.debug(`actual path: ${actualPath}`, $this, logOpts);
             const options = opts;
             const baseline = await Baseline.findOne({ snapshootId: baselineSnapshot._id })
                 .exec();
@@ -683,6 +686,43 @@ exports.removeRun = async function (req, res) {
 };
 
 // checks
+exports.updateCheck = async function (req, res) {
+    const opts = removeEmptyProperties(req.body);
+    const { id } = req.params;
+    const logOpts = {
+        msgType: 'UPDATE',
+        itemType: 'check',
+        ref: id,
+        user: req?.user?.username,
+        scope: 'updateCheck',
+    };
+    try {
+        log.debug(`update check with id '${id}' with params '${JSON.stringify(opts, null, 2)}'`,
+            $this, logOpts);
+
+        const check = await Check.findOneAndUpdate({ _id: id }, opts, { new: true })
+            .exec();
+        const test = await Test.findOne({ _id: check.test })
+            .exec();
+
+        test.status = await testUtil.calculateTestStatus(check.test);
+
+        await orm.updateItemDate('VRSCheck', check);
+        await orm.updateItemDate('VRSTest', test);
+        test.save();
+        check.save();
+        res.status(200)
+            .json({
+                message: `Check with id: '${id}' was updated`,
+                check: check.toObject(),
+            });
+        return check;
+    } catch (e) {
+        fatalError(req, res, e);
+    }
+    return null;
+};
+
 function prettyCheckParams(result) {
     if (!result.domDump) {
         return JSON.stringify(result);
@@ -1310,10 +1350,17 @@ exports.acceptCheck = async function acceptCheck(req, res) {
 
         /** update check */
         let opts = removeEmptyProperties(req.body);
+        if (!opts.baselineId) {
+            const errMsg = `fail to accept check with id: '${checkId}' - the baselineId is empty`;
+            log.error(errMsg);
+            res.status(400)
+                .json({
+                    message: errMsg,
+                });
+            return;
+        }
         opts = addMarkedAsOptions(opts, req.user, 'accepted');
         opts.status = (check.status[0] === 'new') ? 'new' : 'passed';
-        delete opts.id;
-        delete opts.accept;
         opts['updatedDate'] = Date.now();
 
         log.debug(`update check id: '${checkId}' with opts: '${JSON.stringify(opts)}'`,
@@ -1570,7 +1617,19 @@ exports.checksByFilter = function (req, res) {
             .json({ error: 'the query is empty' });
     }
     Check.find(req.query)
-        .limit(100)
+        // .limit(100)
+        .then((result) => {
+            res.json(result);
+        });
+};
+
+exports.shapshotsByFilter = function (req, res) {
+    log.debug(JSON.stringify(req.query, null, 2));
+    if (Object.keys(req.query).length === 0) {
+        res.status(400)
+            .json({ error: 'the query is empty' });
+    }
+    Snapshot.find(req.query)
         .then((result) => {
             res.json(result);
         });
@@ -1583,7 +1642,6 @@ exports.testsByFilter = function (req, res) {
             .json({ error: 'the query is empty' });
     }
     Test.find(req.query)
-        .limit(100)
         .then((result) => {
             res.json(result);
         });
@@ -1632,6 +1690,10 @@ exports.loadTestUser = async function (req, res) {
 function taskOutput(msg, res) {
     res.write(`${msg.toString()}\n`);
     log.silly(msg.toString(), $this);
+}
+
+function parseHrtimeToSeconds(hrtime) {
+    return (hrtime[0] + (hrtime[1] / 1e9)).toFixed(3);
 }
 
 exports.task_remove_empty_tests = async function (req, res) {
@@ -1727,179 +1789,289 @@ exports.task_remove_empty_runs = async function (req, res) {
         });
 };
 
-function parseHrtimeToSeconds(hrtime) {
-    return (hrtime[0] + (hrtime[1] / 1e9)).toFixed(3);
-}
-
-exports.task_remove_old_tests = async function (req, res) {
+exports.task_handle_old_checks = async function (req, res) {
     // this header to response with chunks data
     res.writeHead(200, {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
         'Content-Encoding': 'none',
     });
-    const startTime = process.hrtime();
-    taskOutput(`- starting...\n`, res);
+    try {
+        const startTime = process.hrtime();
+        taskOutput(`- starting...\n`, res);
 
-    const trashHoldDate = subDays(new Date(), parseInt(req.query.days, 10));
-    taskOutput(
-        `- will remove all tests older that: '${req.query.days}' days,`
-        + ` '${format(trashHoldDate, 'yyyy-MM-dd')}'\n`,
-        res
-    );
+        taskOutput('STAGE #1 Calculate common stats', res);
 
-    const oldTestsCount = await Test.find({ startDate: { $lt: trashHoldDate } })
-        .countDocuments();
-    const allTestsCountBefore = await Test.find()
-        .countDocuments();
-    const oldTests = await Test.find({ startDate: { $lt: trashHoldDate } });
-    taskOutput(`- the count of all documents is: '${allTestsCountBefore}'\n`, res);
-    taskOutput(`- the count of documents that be removed is: '${oldTestsCount}'\n`, res);
-    // if (req.query.statistics) {
-    //     let files = [];
-    //     for (const test of oldTests) {
-    //         files = [...files, ...await getAllTestsSnapshotsFiles(test._id)];
-    //     }
-    //
-    //     taskOutput(`- all files count: '${files.length}'\n`, res);
-    //     const uniqueFiles = Array.from(new Set(files));
-    //     taskOutput(`- unique files count: '${uniqueFiles.length}'\n`, res);
-    //     taskOutput(`- the deduplication rate: '${files.length / uniqueFiles.length}'\n`, res);
-    //
-    //     const statsProm = [];
-    //
-    //     for (const file of uniqueFiles) {
-    //         statsProm.push(fs.stat(`${config.defaultBaselinePath}${file}`));
-    //     }
-    //
-    //     const sizes = (await Promise.all(statsProm)).map(x => x.size);
-    //     const size = sizes.reduce((a, b) => a + b, 0);
-    //     taskOutput(`- all files size B: '${size}'\n`, res);
-    //     taskOutput(`- all files size KB: '${size / 1024}'\n`, res);
-    //     taskOutput(`- all files size MB: '${size / (1024 * 1024)}'\n`, res);
-    //     taskOutput(`- all files size GB: '${size / (1024 * 1024 * 1024)}'\n`, res);
-    //
-    // }
+        const trashHoldDate = subDays(new Date(), parseInt(req.query.days, 10));
 
-    if (!req.query.statistics) {
-        // const result = [];
-        // oldTests.forEach((test) => {
-        //     taskOutput(`{\n\tid: ${test._id},\n\tname: ${test.name},\n\tdate:${test.startDate}\n}`, res);
-        //     // result.push(removeTest(test._id));
-        //     await removeTest(test._id);
-        // });
-        let i = 0;
-        let progressBar = '';
-        let prevResult = 0;
+        taskOutput('> get all checks data', res);
+        const allChecksBefore = await Check.find()
+            .exec();
+        taskOutput('> get snapshots data', res);
+        const allSnapshotsBefore = await Snapshot.find()
+            .exec();
+        taskOutput('> get files data', res);
+        const allFilesBefore = (await fs.readdir(config.defaultBaselinePath, { withFileTypes: true }))
+            .filter((item) => !item.isDirectory())
+            .map(((x) => x.name))
+            .filter((x) => x.includes('.png'));
 
-        const percent = oldTests.length / 100;
-        for (const test of oldTests) {
-            await testUtil.removeTest(test._id);
-            const floor = parseInt(i / percent, 10);
-            if (floor !== prevResult) {
-                progressBar += '#';
-                taskOutput(`${progressBar} ${parseInt(i / percent, 10)}%`, res);
-                prevResult = floor;
+        taskOutput('> get old checks data', res);
+        const oldChecks = await Check.find({ createdDate: { $lt: trashHoldDate } });
+
+        const outTable = stringTable.create(
+            [
+                { item: 'all checks', count: allChecksBefore.length },
+                { item: 'all snapshots', count: allSnapshotsBefore.length },
+                { item: 'all files', count: allFilesBefore.length },
+                { item: `checks older than: '${req.query.days}' days`, count: oldChecks.length },
+            ]
+        );
+
+        taskOutput(outTable, res);
+
+        if (req.query.remove) {
+            taskOutput(
+                `- will remove all tests older that: '${req.query.days}' days,`
+                + ` '${format(trashHoldDate, 'yyyy-MM-dd')}'\n`,
+                res
+            );
+
+            const progress = new ProgressBar(oldChecks.length);
+
+            // eslint-disable-next-line no-restricted-syntax
+            for (const [index, check] of oldChecks.entries()) {
+                progress.writeIfChange(index, oldChecks.length, taskOutput, res);
+                await checkUtil.removeCheck(check._id);
             }
-            i += 1;
+
+            taskOutput('STAGE #2 Calculate common stats after Removing', res);
+
+            taskOutput('> get all checks data', res);
+            const allChecksAfter = await Check.find()
+                .exec();
+            taskOutput('> get snapshots data', res);
+            const allSnapshotsAfter = await Snapshot.find()
+                .exec();
+            taskOutput('> get files data', res);
+            const allFilesAfter = (await fs.readdir(config.defaultBaselinePath, { withFileTypes: true }))
+                .filter((item) => !item.isDirectory())
+                .map(((x) => x.name))
+                .filter((x) => x.includes('.png'));
+
+            const outTableAfter = stringTable.create(
+                [
+                    { item: 'all checks', count: allChecksAfter.length },
+                    { item: 'all snapshots', count: allSnapshotsAfter.length },
+                    { item: 'all files', count: allFilesAfter.length },
+                ]
+            );
+
+            taskOutput(outTableAfter, res);
         }
-        taskOutput(`${progressBar}# 100%`, res);
+        const elapsedSeconds = parseHrtimeToSeconds(process.hrtime(startTime));
 
-        const allTestsCountAfter = await Test.find()
-            .countDocuments();
-        taskOutput(`- the count of all documents now is: '${allTestsCountAfter}'\n`, res);
+        taskOutput(`> Done in ${elapsedSeconds} seconds ${elapsedSeconds / 60} min`, res);
+    } catch (e) {
+        log.error(e.stack.toString() || e);
+        taskOutput(e.stack || e, res);
+    } finally {
+        res.end();
     }
-    const elapsedSeconds = parseHrtimeToSeconds(process.hrtime(startTime));
-
-    taskOutput(`> Done in ${elapsedSeconds} seconds ${elapsedSeconds / 60} min`, res);
-    res.end();
 };
 
-exports.task_check_database_consistency = async function (req, res) {
+exports.task_handle_database_consistency = async function (req, res) {
     // this header to response with chunks data
     res.writeHead(200, {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
         'Content-Encoding': 'none',
+        'x-no-compression': 'true',
     });
-    const startTime = process.hrtime();
-    taskOutput(`- starting...\n`, res);
-    taskOutput(`> looking for all files that are not related to any snapshot`);
+    // res.setHeader('x-no-compression', 'true');
+    try {
+        const startTime = process.hrtime();
+        taskOutput(`- starting...\n`, res);
+        taskOutput(`---------------------------------`, res);
+        taskOutput(`STAGE #1: Calculate Common stats`, res);
+        taskOutput('get runs data', res);
+        const allRunsBefore = await Run.find()
+            .exec();
+        taskOutput('get suites data', res);
+        const allSuitesBefore = await Suite.find()
+            .exec();
+        taskOutput('get tests data', res);
+        const allTestsBefore = await Test.find()
+            .exec();
+        taskOutput('get checks data', res);
+        const allChecksBefore = await Check.find()
+            .exec();
+        taskOutput('get snapshots data', res);
+        const allSnapshotsBefore = await Snapshot.find()
+            .exec();
+        taskOutput('get files data', res);
+        const allFilesBefore = (await fs.readdir(config.defaultBaselinePath, { withFileTypes: true }))
+            .filter((item) => !item.isDirectory())
+            .map(((x) => x.name))
+            .filter((x) => x.includes('.png'));
 
+        taskOutput(`-----------------------------`, res);
+        const beforeStatTable = stringTable.create(
+            [
+                { item: 'suites', count: allSuitesBefore.length },
+                { item: 'runs', count: allRunsBefore.length },
+                { item: 'tests', count: allTestsBefore.length },
+                { item: 'checks', count: allChecksBefore.length },
+                { item: 'snapshots', count: allSnapshotsBefore.length },
+                // { item: 'snapshots with unique files', count: snapshotsUniqueFiles.length },
+                { item: 'files', count: allFilesBefore.length },
+            ]
+        );
+        res.flush();
+        taskOutput(beforeStatTable, res);
 
-    // const trashHoldDate = subDays(new Date(), parseInt(req.query.days, 10));
-    // taskOutput(
-    //     `- will remove all tests older that: '${req.query.days}' days,`
-    //     + ` '${format(trashHoldDate, 'yyyy-MM-dd')}'\n`,
-    //     res
-    // );
-    //
-    // const oldTestsCount = await Test.find({ startDate: { $lt: trashHoldDate } })
-    //     .countDocuments();
-    // const allTestsCountBefore = await Test.find()
-    //     .countDocuments();
-    // const oldTests = await Test.find({ startDate: { $lt: trashHoldDate } });
-    // taskOutput(`- the count of all documents is: '${allTestsCountBefore}'\n`, res);
-    // taskOutput(`- the count of documents that be removed is: '${oldTestsCount}'\n`, res);
-    // // if (req.query.statistics) {
-    // //     let files = [];
-    // //     for (const test of oldTests) {
-    // //         files = [...files, ...await getAllTestsSnapshotsFiles(test._id)];
-    // //     }
-    // //
-    // //     taskOutput(`- all files count: '${files.length}'\n`, res);
-    // //     const uniqueFiles = Array.from(new Set(files));
-    // //     taskOutput(`- unique files count: '${uniqueFiles.length}'\n`, res);
-    // //     taskOutput(`- the deduplication rate: '${files.length / uniqueFiles.length}'\n`, res);
-    // //
-    // //     const statsProm = [];
-    // //
-    // //     for (const file of uniqueFiles) {
-    // //         statsProm.push(fs.stat(`${config.defaultBaselinePath}${file}`));
-    // //     }
-    // //
-    // //     const sizes = (await Promise.all(statsProm)).map(x => x.size);
-    // //     const size = sizes.reduce((a, b) => a + b, 0);
-    // //     taskOutput(`- all files size B: '${size}'\n`, res);
-    // //     taskOutput(`- all files size KB: '${size / 1024}'\n`, res);
-    // //     taskOutput(`- all files size MB: '${size / (1024 * 1024)}'\n`, res);
-    // //     taskOutput(`- all files size GB: '${size / (1024 * 1024 * 1024)}'\n`, res);
-    // //
-    // // }
-    //
-    // if (!req.query.statistics) {
-    //     // const result = [];
-    //     // oldTests.forEach((test) => {
-    //     //     taskOutput(`{\n\tid: ${test._id},\n\tname: ${test.name},\n\tdate:${test.startDate}\n}`, res);
-    //     //     // result.push(removeTest(test._id));
-    //     //     await removeTest(test._id);
-    //     // });
-    //     let i = 0;
-    //     let progressBar = '';
-    //     let prevResult = 0;
-    //
-    //     const percent = oldTests.length / 100;
-    //     for (const test of oldTests) {
-    //         await removeTest(test._id);
-    //         const floor = parseInt(i / percent, 10);
-    //         if (floor !== prevResult) {
-    //             progressBar += '#';
-    //             taskOutput(`${progressBar} ${parseInt(i / percent, 10)}%`, res);
-    //             prevResult = floor;
-    //         }
-    //         i += 1;
-    //     }
-    //     taskOutput(`${progressBar}# 100%`, res);
-    //
-    //     const allTestsCountAfter = await Test.find()
-    //         .countDocuments();
-    //     taskOutput(`- the count of all documents now is: '${allTestsCountAfter}'\n`, res);
-    // }
-    const elapsedSeconds = parseHrtimeToSeconds(process.hrtime(startTime));
+        taskOutput(`---------------------------------`, res);
+        taskOutput(`STAGE #2: Calculate Inconsistent items`, res);
+        taskOutput(`> calculate abandoned snapshots`, res);
+        // eslint-disable-next-line
+        const abandonedSnapshots = allSnapshotsBefore.filter((sn) => {
+            return !fss.existsSync(`${config.defaultBaselinePath}/${sn.filename}`);
+        });
 
-    taskOutput(`> Done in ${elapsedSeconds} seconds ${elapsedSeconds / 60} min`, res);
-    taskOutput(`- end...\n`, res);
-    res.end();
+        taskOutput(`> calculate abandoned files`, res);
+        const snapshotsUniqueFiles = Array.from(new Set(allSnapshotsBefore.map((x) => x.filename)));
+        const abandonedFiles = [];
+        const progress = new ProgressBar(allFilesBefore.length);
+        // eslint-disable-next-line no-restricted-syntax
+        for (const [index, file] of allFilesBefore.entries()) {
+            progress.writeIfChange(index, allFilesBefore.length, taskOutput, res);
+            if (!(snapshotsUniqueFiles.includes(file.toString()))) {
+                abandonedFiles.push(file);
+            }
+        }
+        // we don't remove the abandoned checks yet, need more statistics
+        taskOutput(`> calculate abandoned checks`, res);
+        const allSnapshotsBeforeIds = allSnapshotsBefore.map((x) => x._id.valueOf());
+
+        const allChecksBeforeLight = allChecksBefore.map((x) => {
+            return {
+                _id: x._id.valueOf(), baselineId: x.baselineId.valueOf(), actualSnapshotId: x.actualSnapshotId.valueOf()
+            };
+        });
+        const abandonedChecks = [];
+        const progressChecks = new ProgressBar(allChecksBefore.length);
+        for (const [index, check] of allChecksBeforeLight.entries()) {
+
+            progressChecks.writeIfChange(index, allChecksBeforeLight.length, taskOutput, res);
+            if (
+                !(allSnapshotsBeforeIds.includes(check.baselineId))
+                || !(allSnapshotsBeforeIds.includes(check.actualSnapshotId.valueOf()))
+            ) {
+                abandonedChecks.push(check);
+            }
+        }
+
+        taskOutput(`> calculate empty tests`, res);
+        const checksUniqueTests = (await Check.find()
+            .distinct('test')
+            .exec()).map((x) => x.valueOf());
+
+        const emptyTests = [];
+
+        // eslint-disable-next-line no-restricted-syntax
+        for (const [index, test] of allTestsBefore.entries()) {
+            if (!checksUniqueTests.includes(test._id.valueOf())) {
+                emptyTests.push(test);
+            }
+        }
+
+        taskOutput(`> calculate empty runs`, res);
+
+        const checksUniqueRuns = (await Check.find()
+            .distinct('run')
+            .exec()).map((x) => x.valueOf());
+
+        const emptyRuns = [];
+        // eslint-disable-next-line no-restricted-syntax
+        for (const run of allRunsBefore) {
+            // eslint-disable-next-line no-await-in-loop
+            if (!checksUniqueRuns.includes(run._id.valueOf())) {
+                emptyRuns.push(run);
+            }
+        }
+
+        taskOutput(`> calculate empty suites`, res);
+
+        const checksUniqueSuites = (await Check.find()
+            .distinct('suite')
+            .exec()).map((x) => x.valueOf());
+
+        const emptySuites = [];
+        // eslint-disable-next-line no-restricted-syntax
+        for (const suite of allSuitesBefore) {
+            // eslint-disable-next-line no-await-in-loop
+            if (!checksUniqueSuites.includes(suite._id.valueOf())) {
+                emptySuites.push(suite);
+            }
+        }
+        taskOutput(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`, res);
+        taskOutput(`Current inconsistent items:`, res);
+        const inconsistentStatTable = stringTable.create(
+            [
+                { item: 'empty suites', count: emptySuites.length },
+                { item: 'empty runs', count: emptyRuns.length },
+                { item: 'empty tests', count: emptyTests.length },
+                { item: 'abandoned checks', count: abandonedChecks.length },
+                { item: 'abandoned snapshots', count: abandonedSnapshots.length },
+                { item: 'abandoned files', count: abandonedFiles.length },
+            ]
+        );
+        taskOutput(inconsistentStatTable, res);
+
+        if (req.query.clean) {
+            taskOutput(`---------------------------------`, res);
+            taskOutput(`STAGE #3: Remove non consistent items`, res);
+
+            taskOutput(`> remove empty suites`, res);
+            await Promise.all(emptySuites.map((x) => x.delete()));
+            taskOutput(`> remove empty runs`, res);
+            await Promise.all(emptyRuns.map((x) => x.delete()));
+            taskOutput(`> remove empty tests`, res);
+            await Promise.all(emptyTests.map((x) => x.delete()));
+            taskOutput(`> remove abandoned snapshots`, res);
+            await Promise.all(abandonedSnapshots.map((x) => x.delete()));
+            taskOutput(`> remove abandoned files`, res);
+            await Promise.all(abandonedFiles.map((filename) => fs.unlink(`${config.defaultBaselinePath}/${filename}`)));
+            const allFilesAfter = fss.readdirSync(config.defaultBaselinePath, { withFileTypes: true })
+                .filter((item) => !item.isDirectory())
+                .map(((x) => x.name))
+                .filter((x) => x.includes('.png'));
+
+            taskOutput(`STAGE #4: Calculate Common stats after cleaning`, res);
+            taskOutput(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`, res);
+            taskOutput(`Current items:`, res);
+            const afterStatTable = stringTable.create(
+                [
+                    { item: 'suites', count: (await Suite.find()).length },
+                    { item: 'runs', count: (await Run.find()).length },
+                    { item: 'tests', count: (await Test.find()).length },
+                    { item: 'checks', count: (await Check.find()).length },
+                    { item: 'snapshots', count: (await Snapshot.find()).length },
+                    { item: 'files', count: allFilesAfter.length },
+                ]
+            );
+            taskOutput(afterStatTable, res);
+        }
+
+        const elapsedSeconds = parseHrtimeToSeconds(process.hrtime(startTime));
+        taskOutput(`> Done in ${elapsedSeconds} seconds, ${elapsedSeconds / 60} min`, res);
+        taskOutput(`- end...\n`, res);
+    } catch (e) {
+        log.error(e.stack.toString() || e);
+        taskOutput(e.stack || e, res);
+    } finally {
+        res.end();
+    }
 };
 
 exports.task_remove_old_logs = async function (req, res) {

@@ -3,7 +3,7 @@ const { Then, When } = require('cucumber');
 const YAML = require('yaml');
 const { requestWithLastSessionSid } = require('../../src/utills/common');
 
-Then(/^I expect via http that "([^"]*)" (test|check) exist exactly "([^"]*)" times$/, async function (name, itemName, num) {
+Then(/^I expect via http that "([^"]*)" (test|check|snapshot) exist exactly "([^"]*)" times$/, async function (name, itemName, num) {
     const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
         + `${itemName}s/byfilter?name=${name}`;
     // console.log({ uri: uri });

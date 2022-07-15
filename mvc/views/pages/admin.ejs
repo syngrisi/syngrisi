@@ -18,7 +18,8 @@
 </head>
 <body>
 <div name="main" class="main container-fluid pl-3 pr-0 ml-0 mh-100">
-    <div name="page-head" class="row pb-1 bg-olive sticky-top1 mr-0 justify-content-between d-flex" style="margin-right: -16px; margin-left: -16px">
+    <div name="page-head" class="row pb-1 bg-olive sticky-top1 mr-0 justify-content-between d-flex"
+         style="margin-right: -16px; margin-left: -16px">
         <%- include('components/header') %>
     </div>
     <div class="all-table row mh-100">
@@ -366,16 +367,31 @@
                                  <a class="btn btn-sm btn-dark text-light" onclick="runAndRenderTask('remove_empty_tests');">Start</a>`,
             remove_empty_runs: ` <a class="btn btn-sm btn-dark text-light" onclick="runAndRenderTask('remove_empty_runs');">Start</a>`,
             migration_1_1_0: ` <a class="btn btn-sm btn-dark text-light" onclick="runAndRenderTask('${taskName}');">Start</a>`,
-            remove_old_tests: `<label for="test">Remove older that (days): </label>
-                               <input type="text" id="days" name="days" value="30"><br>
-                               <label for="test">Only statistics (maybe slow): </label>
-                               <input type="checkbox" id="statistics" name="statistics" ><br>
-                               <a class="btn btn-sm btn-dark text-light" onclick="runAndRenderTask('remove_old_tests');">Start</a>
-                                <a class="btn btn-sm btn-dark text-light" onclick="clearLogs();">Clear</a>`,
+            handle_old_checks: `
+                                <div>
+                                   <label for="test">Check older that (days): </label>
+                                   <input type="text" id="days" name="days" value="180"><br>
+                                   <label for="test">Remove: </label>
+                                   <input type="checkbox" id="remove" name="remove" >
+                               </div>
+                               <div>
+                                   <a class="btn btn-sm btn-dark text-light" onclick="runAndRenderTask('handle_old_checks');">Start</a>
+                                   <a class="btn btn-sm btn-dark text-light" onclick="clearLogs();">Clear</a>
+                               </div>
+                               <div style="margin: 5px">
+                               <span style="color: red">⚠️We strongly recommended doing the remove inconsistent items procedure <b>Before</b> and <b>After</b> removing checks via this task.</span>
+                               </div>
+                               `,
 
-            task_check_database_consistency: `
-                               <a class="btn btn-sm btn-dark text-light" onclick="runAndRenderTask('check_database_consistency');">Start</a>
-                                <a class="btn btn-sm btn-dark text-light" onclick="clearLogs();">Clear</a>`,
+            task_handle_database_consistency: `
+                            <div>
+                               <a class="btn btn-sm btn-dark text-light" onclick="runAndRenderTask('handle_database_consistency');">Start</a>
+                               <a class="btn btn-sm btn-dark text-light" onclick="clearLogs();">Clear</a>
+                            </div>
+                            <div>
+                                <label for="test">Remove non-consistent-items: </label>
+                                <input type="checkbox" id="clean" name="clean" >
+                            </div>`,
             remove_old_logs: `<label for="test">Remove older that (days): </label>
                                <input type="text" id="days" name="days" value="30"><br>
                                <label for="test">Only statistics: </label>
@@ -410,6 +426,7 @@
         let last_index = 0;
         const xhr = new XMLHttpRequest();
         xhr.open('GET', path);
+        xhr.setRequestHeader('x-no-compression', 'true');
         xhr.onprogress = function () {
             const curr_index = xhr.responseText.length;
             if (last_index === curr_index) return;

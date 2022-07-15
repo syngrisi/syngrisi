@@ -2,14 +2,14 @@
 const { When, Given } = require('cucumber');
 const YAML = require('yaml');
 const {
-    startServer, stopServer, clearDatabase, startDriver, startSession,
+    startServer, stopServer, clearDatabase, startDriver, startSession, clearScreenshotsFolder,
 } = require('../src/utills/common');
 
 When(/^I start VRS server with parameters:$/, { timeout: 600000 }, (params) => {
     startServer(params);
 });
 
-When(/^(?:I start VRS server|I start Server)$/, { timeout: 600000 }, () => {
+When(/^I start VRS server|I start Server$/, { timeout: 600000 }, () => {
     startServer('');
 });
 
@@ -22,8 +22,12 @@ When(/^I stop the Syngrisi server|I stop Server$/, () => {
     stopServer();
 });
 
-When(/^I clear test VRS database$/, () => {
-    clearDatabase();
+When(/^I clear test VRS database|I clear database$/, () => {
+    clearDatabase(false);
+});
+
+When(/^I clear screenshots folder$/, () => {
+    clearScreenshotsFolder();
 });
 
 When(/^I clear Database and stop Server$/, () => {
@@ -33,9 +37,10 @@ When(/^I clear Database and stop Server$/, () => {
 
 When(/^I set env variables:$/, (yml) => {
     const params = YAML.parse(yml);
-    for (const key in params) {
-        process.env[key] = params[key];
-    }
+    Object.keys(params)
+        .forEach((key) => {
+            process.env[key] = params[key];
+        });
 });
 
 Given(/^I stop VRS session$/, async () => {

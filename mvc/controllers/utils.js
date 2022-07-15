@@ -1,5 +1,4 @@
 /* eslint-disable dot-notation,object-shorthand */
-/* global log:readonly */
 const mongoose = require('mongoose');
 
 const moment = require('moment');
@@ -33,18 +32,18 @@ const checkIdent = function checkIdent(check) {
 exports.checkIdent = checkIdent;
 
 // parse uniques suites that are in the tests with particular find query
-exports.getSuitesByTestsQuery = async function (query) {
-    const sutesIds = await Test
+exports.getSuitesByTestsQuery = async (query) => {
+    const suitesIds = await Test
         .find(query)
         .distinct('suite');
     const suites = await Suite.find(
-        { _id: { $in: sutesIds } }
+        { _id: { $in: suitesIds } }
     )
         .sort({ name: 'asc' });
     return suites;
 };
 
-exports.getRunsByTestsQuery = async function (query, limit = 150) {
+exports.getRunsByTestsQuery = async (query, limit = 150) => {
     const runsIds = await Test
         .find(query)
         .distinct('run');
@@ -54,7 +53,7 @@ exports.getRunsByTestsQuery = async function (query, limit = 150) {
     return runs;
 };
 
-exports.buildQuery = function buildQuery(params) {
+exports.buildQuery = (params) => {
     const querystring = require('querystring');
     const query = Object.keys(params)
         .filter((key) => key.startsWith('filter_'))
@@ -208,4 +207,35 @@ exports.calculateAcceptedStatus = async function calculateAcceptedStatus(testId)
     }
     // console.log({ testCalculatedStatus });
     return testCalculatedStatus;
+};
+
+module.exports.ProgressBar = class ProgressBar {
+    constructor(length) {
+        this.length = length;
+        this.percentLenght = parseFloat(length / 100);
+        this.prevPercent = 0;
+        this.currentPercent = 0;
+        this.progressString = '';
+    }
+
+    isChange(current) {
+        this.currentPercent = parseInt(current / this.percentLenght, 10);
+        if (this.prevPercent === this.currentPercent) {
+            return false;
+        }
+        this.prevPercent = this.currentPercent;
+        this.progressString += '#';
+        return true;
+    }
+
+    writeIfChange(index, count, fn, res) {
+        if (this.isChange(index)) {
+            const placeholderString = Array.from(new Array(99 - this.currentPercent))
+                .reduce(
+                    (accum) => accum += '.',
+                    ''
+                );
+            fn(`[${this.progressString}${placeholderString}](${index}/${count})`, res);
+        }
+    }
 };

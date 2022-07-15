@@ -52,13 +52,13 @@ const VRSCheckSchema = new Schema({
     branch: {
         type: String,
     },
-    baselineId: {
-        type: Schema.Types.ObjectId,
-        ref: 'VRSSnapshot',
-    },
     realBaselineId: {
         type: Schema.Types.ObjectId,
         ref: 'VRSBaseline',
+    },
+    baselineId: {
+        type: Schema.Types.ObjectId,
+        ref: 'VRSSnapshot',
     },
     actualSnapshotId: {
         type: Schema.Types.ObjectId,

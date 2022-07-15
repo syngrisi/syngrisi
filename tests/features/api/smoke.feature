@@ -2,8 +2,7 @@
 Feature: Smoke VRS API
 
     Background:
-        Given I clear test VRS database
-        Given I stop Server
+        Given I clear Database and stop Server
         Given I start VRS server
         Given I setup VRS driver
 
