@@ -13,6 +13,8 @@ globals:
     document: readonly
     window: readonly
     log: readonly
+    fetch: readonly
+    jQuery: readonly
 
 overrides:
     -   files: "mvc/controllers/*.js"

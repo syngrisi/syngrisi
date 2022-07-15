@@ -241,17 +241,17 @@ When(/^I expect that element "([^"]*)" contain text "([^"]*)"$/, (selector, val)
 
 Then(/^page source match:$/, (source) => {
     const parsedExpectedObj = JSON.parse(source);
-    let parseActualdObj = {};
+    let parseActualObj = {};
     if ($('pre')
         .isExisting()) {
-        parseActualdObj = JSON.parse($('pre')
+        parseActualObj = JSON.parse($('pre')
             .getText());
     } else {
-        parseActualdObj = JSON.parse(browser.getPageSource());
+        parseActualObj = JSON.parse(browser.getPageSource());
     }
     console.log({ parsedExpectedObj });
-    console.log({ parseActualdObj });
-    expect(parseActualdObj.user)
+    console.log({ parseActualdObj: parseActualObj });
+    expect(parseActualObj.user)
         .toMatchObject(parsedExpectedObj);
 });
 
@@ -263,7 +263,7 @@ Then(/^page source match:$/, (source) => {
 //         .toMatchObject(expectedObject);
 // });
 
-Then(/^I expect "([^"]*)" occurrences of (Visible|Clickable|Enabled|Existig|Selected) "([^"]*)"$/, (num, verb, selector) => {
+Then(/^I expect "([^"]*)" occurrences of (Visible|Clickable|Enabled|Existing|Selected) "([^"]*)"$/, (num, verb, selector) => {
     const actualNum = $$(selector)
         .filter((el) => el[`is${verb}`]()).length;
     expect(actualNum)

@@ -1,8 +1,7 @@
 Feature: Get Checks
 
     Background:
-        Given I clear test VRS database
-        Given I stop Server
+        Given I clear Database and stop Server
         When I set env variables:
         """
         PAGE_SIZE: 3

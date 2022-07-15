@@ -25,7 +25,9 @@
         "start": "nodemon --ignore 'mvc/views/lib/*.js' --ignore 'tests' server.js",
         "clean": "read -p \"Are you sure you want to clean the project? [y/n] \" REPLY; if [[ $REPLY =~ ^[Yy]$ ]]; then mongo VRSdb --eval \"db.dropDatabase();\" && rm -f ./baselines/*.png; fi",
         "start_test": "cross-env VRT_CONN_STRING='mongodb://localhost/VRSdbTest' nodemon server.js",
-        "clear_test": "mongo VRSdbTest$CID --eval \"db.dropDatabase();\" && rm -rf ./baselinesTest/$CID"
+        "clear_test": "mongo VRSdbTest$CID --eval \"db.dropDatabase();\" && rm -rf ./baselinesTest/$CID",
+        "clear_test_db_only": "mongo VRSdbTest$CID --eval \"db.dropDatabase();\"",
+        "clear_test_screenshots_only": "rm -rf ./baselinesTest/$CID/*"
     },
     "author": {
         "name": "Viktar Silakou",
@@ -62,6 +64,7 @@
         "prettier": "^2.2.1",
         "querystring": "^0.2.1",
         "resemblejs": "^4.0.0",
+        "string-table": "^0.1.5",
         "uuid-apikey": "^1.5.2",
         "winston": "^3.3.3",
         "winston-mongodb": "^5.0.7"

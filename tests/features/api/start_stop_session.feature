@@ -2,8 +2,7 @@
 Feature: Start/Stop session
 
   Background:
-    Given I clear test VRS database
-    Given I stop Server
+    Given I clear Database and stop Server
     Given I start Server and start Driver
 
   Scenario: Start/Stop Session - New

@@ -4,7 +4,6 @@ const faker = require('faker');
 const moment = require('moment');
 /* eslint-disable no-console */
 const {
-    format,
     subDays,
 } = require('date-fns');
 const { got } = require('got-cjs');
@@ -32,8 +31,7 @@ const saveRandomImage = async function saveRandomImage(fullPath) {
     });
 };
 
-const killServer = function (port) {
-    const { execSync } = require('child_process');
+const killServer = (port) => {
     browser.waitUntil(() => {
         console.log(`Try to kill apps on port: '${port}'`);
         try {
@@ -50,7 +48,7 @@ const killServer = function (port) {
     });
 };
 
-const startSession = async function (sessOpts) {
+const startSession = async (sessOpts) => {
     sessOpts.appName = sessOpts.appName || 'Integration Test App';
     sessOpts.branch = sessOpts.branch || 'integration';
     const opts = {
@@ -87,7 +85,7 @@ const fillCommonPlaceholders = function fillPlaceholders(str) {
     );
 };
 
-const requestWithLastSessionSid = async function requestWithLastSessionSid(uri, $this, opts = { method: 'GET' }, body,) {
+const requestWithLastSessionSid = async function requestWithLastSessionSid(uri, $this, opts = { method: 'GET' }, body) {
     const sessionSid = $this.getSavedItem('lastSessionId');
 
     const res = await got(
@@ -97,6 +95,7 @@ const requestWithLastSessionSid = async function requestWithLastSessionSid(uri, 
                 cookie: `connect.sid=${sessionSid}`,
             },
             form: opts.form,
+            json: opts.json,
             method: opts.method,
             body,
         },
@@ -126,6 +125,7 @@ module.exports.removeConsoleColors = (string) => {
 const startServer = (params) => {
     const srvOpts = YAML.parse(params) || {};
     const cid = getCid();
+
     const databaseName = srvOpts.databaseName || 'VRSdbTest';
     const cmdPath = '../';
     const cidPort = 3002 + cid;
@@ -139,7 +139,7 @@ const startServer = (params) => {
     env.VRS_BASELINE_PATH = srvOpts.baseLineFolder || browser.config.testScreenshotsFolder;
     env.VRS_CONN_STRING = `mongodb://localhost/${databaseName}${cid}`;
     const fs = require('fs');
-    let stream = fs.createWriteStream(`./logs/server_log_${cid}.log`);
+    const stream = fs.createWriteStream(`./logs/server_log_${cid}.log`);
     const child = spawn('node',
         ['server.js', `syngrisi_test_server_${cid}`], {
             env,
@@ -151,7 +151,9 @@ const startServer = (params) => {
     child.stdout.on('data', (data) => {
         // stream.write(removeConsoleColors(data));
         stream.write(data);
-        // console.log(`#: ${data}`);
+        if (process.env.DBG === '1') {
+            console.log(`SERVER_${cid}: ${data}`);
+        }
     });
 
     child.stderr.setEncoding('utf8');
@@ -177,7 +179,7 @@ const startServer = (params) => {
     browser.syngrisiServer = child;
 };
 
-const stopServer = function () {
+const stopServer = () => {
     try {
         console.log('try to kill server');
         const output = execSync(`pkill -f syngrisi_test_server_${getCid()}`)
@@ -190,15 +192,28 @@ const stopServer = function () {
     }
 };
 
-const clearDatabase = function () {
+const clearDatabase = (removeBaselines = true) => {
     const cmdPath = '../';
+    let result;
+    if (removeBaselines) {
+        result = execSync(`CID=${getCid()} npm run clear_test`, { cwd: cmdPath })
+            .toString('utf8');
+    } else {
+        result = execSync(`CID=${getCid()} npm run clear_test_db_only`, { cwd: cmdPath })
+            .toString('utf8');
+    }
 
-    const result = execSync(`CID=${getCid()} npm run clear_test`, { cwd: cmdPath })
+    console.log({ result });
+};
+
+const clearScreenshotsFolder = () => {
+    const cmdPath = '../';
+    const result = execSync(`CID=${getCid()} npm run clear_test_screenshots_only`, { cwd: cmdPath })
         .toString('utf8');
     console.log({ result });
 };
 
-const startDriver = function (params) {
+const startDriver = (params) => {
     const drvOpts = YAML.parse(params) || {};
     browser.vDriver = new SyngrisiDriver({
         url: drvOpts.url || `http://${browser.config.serverDomain}:${browser.config.serverPort}/`,
@@ -216,4 +231,5 @@ module.exports = {
     clearDatabase,
     startDriver,
     getCid,
+    clearScreenshotsFolder,
 };

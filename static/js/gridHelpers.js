@@ -1,7 +1,5 @@
 /* eslint-disable no-underscore-dangle */
 
-/* global baselines $ MainView XMLHttpRequest fabric window */
-
 function uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
         const r = Math.random() * 16 | 0;
@@ -11,8 +9,7 @@ function uuidv4() {
 }
 
 function confirmation(text = 'are you sure?') {
-    const answer = window.confirm(text);
-    return answer;
+    return window.confirm(text);
 }
 
 async function redrawCheckStatus(id, status = 'passed') {
@@ -292,18 +289,14 @@ function redirectToNewDiffAfterAccept(id, newBaselineId, diffId) {
 
 async function acceptCheck(check, newBaselineId) {
     try {
-        const xhr = new XMLHttpRequest();
-
-        const params = `id=${check._id}&baselineId=${newBaselineId}&diffId&status`;
-
-        const result = await fetch(`/checks/${check._id}`, {
-            headers: {
-                'content-type': 'application/x-www-form-urlencoded',
-            },
-            body: params,
+        const result = await fetch(`/acceptChecks/${check._id}`, {
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                baselineId: newBaselineId,
+            }),
             method: 'PUT',
         });
-        console.log(`success check: '${check._id}' response text: '${xhr.responseText}'`);
+        console.log(`success accepted check: '${check._id}' response text: '${JSON.stringify(await result.json())}'`);
     } catch (e) {
         console.error(`cannot accept check: ${JSON.stringify(check)}, error: '${e}'}`);
     }
@@ -577,9 +570,9 @@ function getRequest(path, verbose) {
             const xhr = new XMLHttpRequest();
             xhr.open('GET', path, true);
 
-            xhr.onload = function () {
+            xhr.onload = () => {
                 if (xhr.status === 200) {
-                    verbose && console.log(`Successfully finish get request for: '${path}', resp: '${xhr.responseText}'`);
+                    if (verbose) console.log(`Successfully finish get request for: '${path}', resp: '${xhr.responseText}'`);
                     // console.log(`Successfully finish get request for: '${path}'`);
                     return resolve(xhr.responseText);
                 }
@@ -625,13 +618,13 @@ async function drawTestChecksPreviews(testId) {
         const baselineObj = JSON.parse(await getRequest(`/snapshot/${baselineIds[index]}`));
         const weight = document.getElementById(`canvas_snapshoot_${id}`).parentElement.offsetWidth;
 
-        fabric.Image.fromURL(`/snapshoots/${snapshot.filename || `${snapshotId}.png`}`, (oImg) => {
+        fabric.Image.fromURL(`/snapshoots/${snapshot.filename}`, (oImg) => {
             baseline = new BaselineView(`canvas_snapshoot_${id}`,
                 oImg,
                 {
                     // weight: document.getElementById(`canvas_snapshoot_${id}`).offsetWidth,
                     weight,
-                    backimageId: baselineObj.filename ? baselineObj.filename : `${baselineObj.id}.png`,
+                    backimageId: baselineObj.filename,
                 });
             baseline.getSnapshotIgnoreRegionsDataAndDrawRegions(realBaselineIds[index]);
             baseline.canvas.upperCanvasEl.classList.add('preview-upper-canvas');
@@ -677,6 +670,7 @@ function colorizeRuns() {
     const runsIds = Array.from(runsDivs)
         .map((run) => run.getAttribute('run'));
     const uniqueIds = [...new Set(runsIds)];
+    // eslint-disable-next-line no-undef
     const colors = Please.make_color(
         {
             format: 'hex',
@@ -689,7 +683,7 @@ function colorizeRuns() {
             if (runId === id) {
                 run.style.backgroundColor = colors[i];
                 jQuery(run)
-                    .one('mouseover', async (event) => {
+                    .one('mouseover', async () => {
                         run.setAttribute('title', 'Loading...');
                         const resp = await fetch(`/run/${runId}`);
                         const runData = await resp.json();

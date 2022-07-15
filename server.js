@@ -1,4 +1,3 @@
-/* global log */
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const expressSession = require('express-session')({
@@ -29,19 +28,27 @@ const logger = require('pino-http')(
     },
     pino.destination('./application.log')
 );
-const { config } = require('./config.js');
+const { config } = require('./config');
 const { Logger } = require('./lib/logger');
 
 global.log = new Logger({ dbConnectionString: config.connectionString });
 this.logMeta = { scope: 'entrypoint' };
 
+function compressionFilter(req, res) {
+    if (req.headers['x-no-compression']) {
+        return false;
+    }
+    return compression.filter(req, res);
+}
+
+app.use(compression({ filter: compressionFilter }));
 app.use(expressSession);
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(logger);
-app.use(compression());
+
 app.use(cookieParser());
 
 app.use(fileUpload({

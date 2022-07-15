@@ -24,9 +24,9 @@ When(/^I update via http test with params:$/, async function (str) {
     // console.log({ result });
 });
 
-When(/^I remove via http tests that older than "([^"]*)" days$/, async function (days) {
+When(/^I remove via http checks that older than "([^"]*)" days$/, async function (days) {
     const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}`
-        + `/task_remove_old_tests?days=${days}`;
+        + `/task_handle_old_checks?days=${days}&remove=true`;
     const result = (await requestWithLastSessionSid(
         uri,
         this,
@@ -94,4 +94,16 @@ Given(/^I create via http new VRS Check with:$/, async function (yml) {
     const resp = response.json;
     resp.statusCode = response.status;
     this.saveItem('VRSCheck', resp);
+});
+
+When(/^I remove via http Inconsistent items$/, async function () {
+    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}`
+        + '/task_handle_database_consistency?clean=true';
+    const result = (await requestWithLastSessionSid(
+        uri,
+        this,
+    ));
+    // console.log({ STATUS: result.raw.statusCode });
+    expect(result.raw.statusCode)
+        .toBe(200);
 });

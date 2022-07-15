@@ -15,7 +15,7 @@
   "scripts": {
     "test": "cross-env RETRY=1 STREAMS=4 LOG=1 HL=1 npx wdio --spec 'features/**/*.feature'",
     "report": "cp  -R ./allure-report/history ./allure-results/; allure generate -c && allure open",
-    "smoke": "cross-env LOG=1 HL=1 npx wdio --spec 'features/**/*.feature' --cucumberOpts.tagExpression='@smoke'",
+    "smoke": "cross-env STREAMS=4 LOG=1 HL=1 npx wdio --spec 'features/**/*.feature' --cucumberOpts.tagExpression='@smoke'",
     "testui": "cross-env LOG=1 HL=0 npx wdio --spec 'features/**/*.feature'"
   },
   "dependencies": {

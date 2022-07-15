@@ -1,9 +1,4 @@
-/* eslint-disable quotes */
-
 'use strict';
-
-// eslint-disable-next-line no-unused-vars
-/* global log:readonly */
 
 const { default: PQueue } = require('p-queue');
 
@@ -26,8 +21,13 @@ module.exports = async function (app) {
             API.removeCheck(req, res)
                 .catch(next);
         })
-        .put('/checks/:id', ensureLoggedIn(), async (req, res, next) => {
+        // use only for accept
+        .put('/acceptChecks/:id', ensureLoggedIn(), async (req, res, next) => {
             await queue.add(() => API.acceptCheck(req, res)
+                .catch(next));
+        })
+        .put('/checksupdate/:id', ensureLoggedIn(), async (req, res, next) => {
+            await queue.add(() => API.updateCheck(req, res)
                 .catch(next));
         })
         .put('/snapshots/:id', ensureLoggedIn(), async (req, res, next) => {
@@ -56,15 +56,15 @@ module.exports = async function (app) {
             API.getRun(req, res)
                 .catch(next);
         })
-        .get('/affectedelements', ensureApiKey(), async function (req, res, next) {
+        .get('/affectedelements', ensureApiKey(), async (req, res, next) => {
             API.affectedElements(req, res)
                 .catch(next);
         })
-        .get('/checksgroupview', ensureLoggedIn(), async function (req, res, next) {
+        .get('/checksgroupview', ensureLoggedIn(), async (req, res, next) => {
             UI.checksGroupView(req, res)
                 .catch(next);
         })
-        .get('/checkview', ensureLoggedIn(), async function (req, res, next) {
+        .get('/checkview', ensureLoggedIn(), (req, res, next) => {
             UI.checkView(req, res)
                 .catch(next);
         })
@@ -72,7 +72,7 @@ module.exports = async function (app) {
             UI.diffView(req, res)
                 .catch(next);
         })
-        .get('/admin', ensureLoggedIn(), async function (req, res, next) {
+        .get('/admin', ensureLoggedIn(), (req, res, next) => {
             admin(req, res)
                 .catch(next);
         })
@@ -85,7 +85,7 @@ module.exports = async function (app) {
         .post('/first_run_password', (req, res) => {
             API.firstRunAdminPassword(req, res);
         })
-        .get('/users', ensureLoggedIn(), async function (req, res, next) {
+        .get('/users', ensureLoggedIn(), async (req, res, next) => {
             API.getUsers(req, res)
                 .catch(next);
         })
@@ -102,22 +102,22 @@ module.exports = async function (app) {
             API.changePassword(req, res);
         })
         .post('/checks', ensureApiKey(), async (req, res, next) => {
-            req.log.trace(`post '/checks' queue pending count: `, queue.pending);
+            req.log.trace('post \'/checks\' queue pending count: ', queue.pending);
             await queue.add(() => API.createCheck(req, res)
                 .catch(next));
         })
         .post('/users', ensureLoggedIn(), async (req, res, next) => {
-            req.log.trace(`post '/users' queue pending count: `, queue.pending);
+            req.log.trace('post \'/users\' queue pending count: ', queue.pending);
             await queue.add(() => API.createUser(req, res)
                 .catch(next));
         })
         .put('/users', ensureLoggedIn(), async (req, res, next) => {
-            req.log.trace(`put '/users' queue pending count: `, queue.pending);
+            req.log.trace('put \'/users\' queue pending count: ', queue.pending);
             await queue.add(() => API.updateUser(req, res)
                 .catch(next));
         })
         .post('/tests', ensureApiKey(), async (req, res, next) => {
-            req.log.trace(`post '/tests' queue pending count: `, queue.pending);
+            req.log.trace('post \'/tests\' queue pending count: ', queue.pending);
             await queue.add(() => API.createTest(req, res)
                 .catch(next));
         })
@@ -179,13 +179,19 @@ module.exports = async function (app) {
                 .catch(next);
         })
         .get('/checks/byfilter', ensureLoggedIn(), async (req, res, next) => {
-            API.checksByFilter(req, res);
+            API.checksByFilter(req, res)
+                .catch(next);
+        })
+        .get('/snapshots/byfilter', ensureLoggedIn(), async (req, res, next) => {
+            API.shapshotsByFilter(req, res)
+                .catch(next);
         })
         .get('/tests/byfilter', ensureLoggedIn(), async (req, res, next) => {
-            API.testsByFilter(req, res);
+            API.testsByFilter(req, res)
+                .catch(next);
         })
         .put('/tests/:id', async (req, res, next) => {
-            if (process.env['TEST'] !== '1') {
+            if (process.env.TEST !== '1') {
                 res.status('400')
                     .json({ error: 'only in test mode' });
                 return next;
@@ -194,7 +200,8 @@ module.exports = async function (app) {
                 .catch(next);
         })
         .get('/screenshots', ensureLoggedIn(), async (req, res, next) => {
-            API.getScreenshotList(req, res);
+            API.getScreenshotList(req, res)
+                .catch(next);
         })
         .get('/logout', async (req, res) => {
             await req.logout();
@@ -210,7 +217,7 @@ module.exports = async function (app) {
         .post('/login', (req, res, next) => {
             const origin = req.query.origin ? req.query.origin : '/';
             const $this = {};
-            $this['logMeta'] = { scope: 'login' };
+            $this.logMeta = { scope: 'login' };
             passport.authenticate('local',
                 (err, user, info) => {
                     if (err) {
@@ -218,12 +225,12 @@ module.exports = async function (app) {
                     }
 
                     if (!user) {
-                        return res.redirect('/login?info=' + JSON.stringify(info));
+                        return res.redirect(`/login?info=${JSON.stringify(info)}`);
                     }
 
-                    req.logIn(user, (err) => {
-                        if (err) {
-                            return next(err);
+                    req.logIn(user, (e) => {
+                        if (e) {
+                            return next(e);
                         }
 
                         log.info('user was logged in', $this, { user: user.username });
@@ -252,28 +259,23 @@ module.exports = async function (app) {
                 .catch(next);
         })
         .get('/task_remove_empty_tests', ensureLoggedInOrApiKey(), async (req, res, next) => {
-            req.log.trace(`get '/task_remove_empty_tests' queue pending count: `, queue.pending);
-            await queue.add(() => API.task_remove_empty_tests(req, res)
-                .catch(next));
+            API.task_remove_empty_tests(req, res)
+                .catch(next);
         })
-        .get('/task_remove_old_tests', ensureLoggedInOrApiKey(), async (req, res, next) => {
-            req.log.trace(`get '/task_remove_old_tests' queue pending count: `, queue.pending);
-            await queue.add(() => API.task_remove_old_tests(req, res)
-                .catch(next));
+        .get('/task_handle_old_checks', ensureLoggedInOrApiKey(), async (req, res, next) => {
+            API.task_handle_old_checks(req, res)
+                .catch(next);
         })
-        .get('/task_check_database_consistency', ensureLoggedInOrApiKey(), async (req, res, next) => {
-            req.log.trace(`get '/task_check_database_consistency' queue pending count: `, queue.pending);
-            await queue.add(() => API.task_check_database_consistency(req, res)
-                .catch(next));
+        .get('/task_handle_database_consistency', ensureLoggedInOrApiKey(), async (req, res, next) => {
+            API.task_handle_database_consistency(req, res)
+                .catch(next);
         })
         .get('/task_remove_old_logs', ensureLoggedInOrApiKey(), async (req, res, next) => {
-            req.log.trace(`get '/task_remove_old_logs' queue pending count: `, queue.pending);
-            await queue.add(() => API.task_remove_old_logs(req, res)
-                .catch(next));
+            API.task_remove_old_logs(req, res)
+                .catch(next);
         })
         .get('/task_remove_empty_runs', ensureLoggedInOrApiKey(), async (req, res, next) => {
-            req.log.trace(`get '/task_remove_empty_runs' queue pending count: `, queue.pending);
-            await queue.add(() => API.task_remove_empty_runs(req, res)
-                .catch(next));
+            API.task_remove_empty_runs(req, res)
+                .catch(next);
         });
 };

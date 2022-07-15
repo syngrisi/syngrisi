@@ -141,7 +141,7 @@ When(/^I create "([^"]*)" tests with params:$/, { timeout: 600000 }, async funct
             runident: params.runident || process.env.RUN_IDENT || 'integration_run_ident',
             branch: params.branch || 'integration',
             tags: params.tags || [],
-            suite: 'Integration suite',
+            suite: params.suite || 'Integration suite',
         }, browser.config.apiKey);
         browser.pause(300);
 
@@ -177,13 +177,13 @@ When(/^I create "([^"]*)" tests with:$/, { timeout: 60000000 }, async function (
         }, browser.config.apiKey);
         browser.pause(300);
         const checkResult = [];
-
         for (const check of params.checks) {
-            const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${check.filePath}`);
+            const filepath = check.filePath || 'files/A.png';
+            const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${filepath}`);
             checkResult.push(await checkVRS(check.checkName, imageBuffer));
         }
 
-        this.STATE.check = checkResult;
+        this.STATE.check = checkResult[0];
         await browser.vDriver.stopTestSession(browser.config.apiKey);
     }
 });

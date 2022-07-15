@@ -251,10 +251,10 @@
 
                 <!--SCREENSHOTS-->
                 <a target="_blank"
-                   href="/snapshoots/<%= baselineSnapshot.filename ? baselineSnapshot.filename : (baselineSnapshot.id + '.png'); %>"
+                   href="/snapshoots/<%= baselineSnapshot.filename  %>"
                    title="open the baseline screenshot file">
                     <img class="w-100 preview shadow mt-2"
-                         src="/snapshoots/<%= baselineSnapshot.filename ? baselineSnapshot.filename : baselineSnapshot.id + '.png' %>"
+                         src="/snapshoots/<%= baselineSnapshot.filename  %>"
                          alt="baseline">
                 </a>
                 <a class="dropdown-item text-center" style="font-size: 90%;"
@@ -264,15 +264,15 @@
 
                 <% if(actualSnapshot) { %>
                     <a target="_blank"
-                       href="/snapshoots/<%= actualSnapshot.filename ? actualSnapshot.filename : (actualSnapshot.id + '.png'); %>"
+                       href="/snapshoots/<%= actualSnapshot.filename  %>"
                        title="open the baseline screenshot file">
                         <img class="w-100 preview shadow"
-                             src="/snapshoots/<%= actualSnapshot.filename ? actualSnapshot.filename : actualSnapshot.id + '.png' %>"
+                             src="/snapshoots/<%= actualSnapshot.filename %>"
                              alt="actual">
                     </a>
                     <a class="dropdown-item text-center" style="font-size: 90%;"
                        target="_blank"
-                       href="/snapshoots/<%= actualSnapshot.filename ? actualSnapshot.filename : (actualSnapshot.id + '.png'); %>"
+                       href="/snapshoots/<%= actualSnapshot.filename %>"
                     >actual file</a>
                 <% } %>
             </div>

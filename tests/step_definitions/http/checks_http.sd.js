@@ -1,8 +1,10 @@
 /* eslint-disable */
 const { When } = require('cucumber');
-const { requestWithLastSessionSid } = require('../../src/utills/common');
+const { requestWithLastSessionSid, fillCommonPlaceholders } = require('../../src/utills/common');
 const fs = require('fs');
 const { default: checkVRS } = require('../../src/support/check/checkVrs');
+const YAML = require('yaml');
+const { error } = require('winston');
 
 When(/^I remove via http (\d+)st check with name "([^"]*)"$/, async function (num, name) {
     const testUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
@@ -42,21 +44,18 @@ When(/^I accept via http the (\d+)st check with name "([^"]*)"$/, async function
     // console.log(JSON.stringify(checks, null, '\t'));
     const checkId = check._id;
     const checkAcceptUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
-        + `checks/${checkId}`;
+        + `acceptChecks/${checkId}`;
 
     const result = await (await requestWithLastSessionSid(
         checkAcceptUri,
         this,
         {
             method: 'PUT',
-            form: {
-                id: checkId,
-                baselineId: check.baselineId,
-                accept: 'true',
+            json: {
+                baselineId: check.actualSnapshotId,
             }
         }
     )).json;
-    // console.log({ result });
 });
 
 When(/^I parse via http "([^"]*)" snapshot for (\d)st check with name "([^"]*)"$/, async function (type, num, name) {
@@ -106,3 +105,54 @@ When(/^I check image with path: "([^"]*)" as "([^"]*)" and suppress exceptions$/
         this.saveItem('error', e.message);
     }
 });
+
+When(/^I update via http last "([^"]*)" checks with params:$/, async function (num, str) {
+    const params = YAML.parse(this.fillItemsPlaceHolders(fillCommonPlaceholders(str)));
+
+    const checkUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
+        + `checks/byfilter?name=${params.name}`;
+
+    const checks = (await requestWithLastSessionSid(
+        checkUri,
+        this
+    )).json;
+
+    const lastChecks = checks.slice(num * -1, checks.length);
+
+    for (const check of lastChecks) {
+        const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
+            + `checksupdate/${check._id}`;
+
+        const result = (await requestWithLastSessionSid(
+            uri,
+            this,
+            {
+                method: 'PUT',
+                form: params,
+            },
+        )).json;
+    }
+});
+When(/^I update via http check with params:$/, async function (str) {
+    const params = YAML.parse(this.fillItemsPlaceHolders(fillCommonPlaceholders(str)));
+    console.log('!!!!!!!!!!');
+    console.log(this.STATE.check);
+    const checkId = this.STATE.check._id;
+
+    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
+        + `checksupdate/${checkId}`;
+    try {
+        const result = (await requestWithLastSessionSid(
+            uri,
+            this,
+            {
+                method: 'PUT',
+                form: params,
+            },
+        )).json;
+    } catch (e) {
+        console.log(e.stack || e);
+        throw e;
+    }
+});
+
