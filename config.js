@@ -1,5 +1,6 @@
 const fs = require('fs');
-require('dotenv').config();
+require('dotenv')
+    .config();
 
 const bsPath = process.env.VRS_BASELINE_PATH || './baselines/';
 if (!fs.existsSync(bsPath)) {
@@ -8,6 +9,7 @@ if (!fs.existsSync(bsPath)) {
 
 exports.config = {
     defaultBaselinePath: bsPath,
-    connectionString: process.env.VRS_CONN_STRING || 'mongodb://localhost/VRSdb',
+    connectionString: process.env.VRS_CONN_STRING || 'mongodb://localhost:27017/VRSdb',
     port: process.env.VRS_PORT || 3000,
+    backupsFolder: './backups',
 };
