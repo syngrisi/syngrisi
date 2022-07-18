@@ -15,7 +15,7 @@ const { admin } = require('../controllers/ui/admin');
 const { runs } = require('../controllers/ui/runs');
 const API = require('../controllers/api/api_controller');
 
-module.exports = async function (app) {
+module.exports = async (app) => {
     await app
         .delete('/checks/:id', ensureLoggedIn(), async (req, res, next) => {
             API.removeCheck(req, res)
@@ -178,13 +178,13 @@ module.exports = async function (app) {
             API.getTestById(req, res)
                 .catch(next);
         })
-        .get('/checks/byfilter', ensureLoggedIn(), async (req, res, next) => {
+        .get('/checks/byfilter', ensureLoggedIn(), async (req, res) => {
             API.checksByFilter(req, res);
         })
-        .get('/snapshots/byfilter', ensureLoggedIn(), async (req, res, next) => {
+        .get('/snapshots/byfilter', ensureLoggedIn(), async (req, res) => {
             API.shapshotsByFilter(req, res);
         })
-        .get('/tests/byfilter', ensureLoggedIn(), async (req, res, next) => {
+        .get('/tests/byfilter', ensureLoggedIn(), async (req, res) => {
             API.testsByFilter(req, res);
         })
         .put('/tests/:id', async (req, res, next) => {
@@ -194,9 +194,9 @@ module.exports = async function (app) {
                 return next;
             }
             API.updateTest(req, res)
-                .catch(next);
+                .catch(() => next);
         })
-        .get('/screenshots', ensureLoggedIn(), async (req, res, next) => {
+        .get('/screenshots', ensureLoggedIn(), async (req, res) => {
             API.getScreenshotList(req, res);
         })
         .get('/logout', async (req, res) => {
