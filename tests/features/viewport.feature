@@ -11,14 +11,14 @@ Feature: VRS Viewport
         RUN_NAME: RUN-01
         """
         Given I set window size: "1366x768"
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "Viewport integration test"
         """
         When I open the url "http://<serverDomain>:<serverPort>/static/app_1.html"
         When I visually check page as "viewport - single check"
 
-        When I stop VRS session
+        When I stop session
 
         When I open the app
         When I wait for "2" seconds
@@ -35,7 +35,7 @@ Feature: VRS Viewport
         """
         RUN_NAME: RUN-01
         """
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "Viewport integration test"
         """
@@ -45,7 +45,7 @@ Feature: VRS Viewport
 
         When I visually check page as "viewport - two checks same viewports 02"
 
-        When I stop VRS session
+        When I stop session
         When I open the app
 
         When I wait for "2" seconds
@@ -56,7 +56,7 @@ Feature: VRS Viewport
         """
         RUN_NAME: RUN-01
         """
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "Viewport integration test"
         """
@@ -68,7 +68,7 @@ Feature: VRS Viewport
         When I refresh page
         When I visually check page as "viewport - two checks same viewports 02"
 
-        When I stop VRS session
+        When I stop session
         When I open the app
         When I wait for "2" seconds
 

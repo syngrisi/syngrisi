@@ -1689,7 +1689,7 @@ exports.loadTestUser = async function (req, res) {
 
 function taskOutput(msg, res) {
     res.write(`${msg.toString()}\n`);
-    log.silly(msg.toString(), $this);
+    log.debug(msg.toString(), $this);
 }
 
 function parseHrtimeToSeconds(hrtime) {
@@ -1819,33 +1819,133 @@ exports.task_handle_old_checks = async function (req, res) {
         taskOutput('> get old checks data', res);
         const oldChecks = await Check.find({ createdDate: { $lt: trashHoldDate } });
 
+        taskOutput('>>> collect all baselineIds for old Checks ', res);
+        const oldSnapshotsBaselineIdIds = oldChecks.map((x) => x.baselineId)
+            .filter((x) => x);
+
+        taskOutput('>>> collect all actualSnapshotId for old Checks ', res);
+        const oldSnapshotsActualSnapshotIdIds = oldChecks.map((x) => x.actualSnapshotId)
+            .filter((x) => x);
+
+        taskOutput('>>> collect all diffId for old Checks ', res);
+        const oldSnapshotsDiffIds = oldChecks.map((x) => x.diffId)
+            .filter((x) => x);
+
+        taskOutput('>>> calculate all unique snapshots ids for old Checks ', res);
+
+        const allOldSnapshotsUniqueIds = Array.from(
+            new Set([...oldSnapshotsBaselineIdIds, ...oldSnapshotsActualSnapshotIdIds, ...oldSnapshotsDiffIds])
+        )
+            .map((x) => x.valueOf());
+
+        taskOutput('>>> collect all old snapshots', res);
+        const oldSnapshots = await Snapshot.find({ _id: { $in: allOldSnapshotsUniqueIds } });
+
         const outTable = stringTable.create(
             [
                 { item: 'all checks', count: allChecksBefore.length },
                 { item: 'all snapshots', count: allSnapshotsBefore.length },
                 { item: 'all files', count: allFilesBefore.length },
                 { item: `checks older than: '${req.query.days}' days`, count: oldChecks.length },
+                { item: 'old snapshots baseline ids', count: oldSnapshotsBaselineIdIds.length },
+                { item: 'old snapshots actual snapshotId', count: oldSnapshotsActualSnapshotIdIds.length },
+                { item: 'old snapshots diffIds', count: oldSnapshotsDiffIds.length },
+                { item: 'all old snapshots unique Ids', count: allOldSnapshotsUniqueIds.length },
+                { item: 'all old snapshots', count: oldSnapshots.length },
             ]
         );
 
         taskOutput(outTable, res);
 
         if (req.query.remove) {
-            taskOutput(
-                `- will remove all tests older that: '${req.query.days}' days,`
-                + ` '${format(trashHoldDate, 'yyyy-MM-dd')}'\n`,
-                res
-            );
 
-            const progress = new ProgressBar(oldChecks.length);
+            taskOutput(`STAGE #2 Remove checks that older that: '${req.query.days}' days,`
+                + ` '${format(trashHoldDate, 'yyyy-MM-dd')}'\n`, res);
 
-            // eslint-disable-next-line no-restricted-syntax
-            for (const [index, check] of oldChecks.entries()) {
-                progress.writeIfChange(index, oldChecks.length, taskOutput, res);
-                await checkUtil.removeCheck(check._id);
-            }
+            taskOutput('> remove checks', res);
+            const checkRemovingResult = await Check.deleteMany({ createdDate: { $lt: trashHoldDate } });
+            taskOutput(`>>> removed: '${checkRemovingResult.deletedCount}'`, res);
 
-            taskOutput('STAGE #2 Calculate common stats after Removing', res);
+            taskOutput('> remove snapshots', res);
+
+            taskOutput('>> collect data to removing', res);
+            taskOutput('>>> get all baselines snapshots id`s', res);
+            const baselinesSnapshotsIds = (await Baseline.find({})
+                .distinct('snapshootId'));
+
+            // get baselineIds after removing
+            taskOutput('>>> get all checks snapshots baselineId', res);
+            const checksSnapshotsBaselineId = (await Check.find({})
+                .distinct('baselineId'));
+
+            taskOutput('>>> get all checks snapshots actualSnapshotId', res);
+            const checksSnapshotsActualSnapshotId = (await Check.find({})
+                .distinct('actualSnapshotId'));
+
+            taskOutput('>> remove baselines snapshots', res);
+
+            taskOutput('>> remove all old snapshots that not related to new baseline and check items', res);
+            const removedByBaselineSnapshotsResult = await Snapshot.deleteMany({
+                $and: [
+                    { _id: { $nin: checksSnapshotsBaselineId } },
+                    { _id: { $nin: checksSnapshotsActualSnapshotId } },
+                    { _id: { $nin: baselinesSnapshotsIds } },
+                    { _id: { $in: oldSnapshotsBaselineIdIds } },
+                ],
+            });
+            taskOutput(`>>> removed: '${removedByBaselineSnapshotsResult.deletedCount}'`, res);
+
+            taskOutput('>> remove actual snapshots', res);
+            // here we give all old checks and then exclude all baselines
+            // and all checks related to new checks with actual and baseline snapshots with such baselineId
+            taskOutput('>> remove all old snapshots that not related to new baseline and check items', res);
+            const removedByActualSnapshotsResult = await Snapshot.deleteMany({
+                $and: [
+                    { _id: { $nin: checksSnapshotsBaselineId } },
+                    { _id: { $nin: checksSnapshotsActualSnapshotId } },
+                    { _id: { $nin: baselinesSnapshotsIds } },
+                    { _id: { $in: oldSnapshotsActualSnapshotIdIds } },
+                ],
+            });
+            taskOutput(`>>> removed: '${removedByActualSnapshotsResult.deletedCount}'`, res);
+
+            taskOutput('>> remove all old diff snapshots', res);
+            const removedByDiffSnapshotsResult = await Snapshot.deleteMany({
+                $and: [
+                    { _id: { $in: oldSnapshotsDiffIds } },
+                ],
+            });
+            taskOutput(`>>> removed: '${removedByDiffSnapshotsResult.deletedCount}'`, res);
+
+            taskOutput('> remove files', res);
+            taskOutput('>>> collect all old snapshots filenames', res);
+            const oldSnapshotsUniqueFilenames = Array.from(new Set(oldSnapshots.map((x) => x.filename)));
+            taskOutput(`>> found: ${oldSnapshotsUniqueFilenames.length}`, res);
+
+            taskOutput('> get all current snapshots filenames', res);
+            const allCurrentSnapshotsFilenames = await Snapshot.find()
+                .distinct('filename')
+                .exec();
+
+            taskOutput('>> calculate interception between all current snapshot filenames and old shapshots filenames', res);
+            const arrayIntersection = (arr1, arr2) => {
+                return arr1.filter((x) => arr2.includes(x));
+            };
+            const filesInterception = arrayIntersection(allCurrentSnapshotsFilenames, oldSnapshotsUniqueFilenames);
+            taskOutput(`>> found: ${filesInterception.length}`, res);
+
+            taskOutput('>> calculate filenames to remove', res);
+            const arrayDiff = (arr1, arr2) => {
+                return arr1.filter((x) => !arr2.includes(x));
+            };
+            const filesToDelete = arrayDiff(oldSnapshotsUniqueFilenames, filesInterception);
+            taskOutput(`>> found: ${filesToDelete.length}`, res);
+
+            taskOutput(`>> remove these files: ${filesToDelete.length}`, res);
+            await Promise.all(filesToDelete.map((filename) => fs.unlink(`${config.defaultBaselinePath}/${filename}`)));
+            taskOutput(`>> done: ${filesToDelete.length}`, res);
+
+            taskOutput('STAGE #3 Calculate common stats after Removing', res);
 
             taskOutput('> get all checks data', res);
             const allChecksAfter = await Check.find()
@@ -1871,7 +1971,7 @@ exports.task_handle_old_checks = async function (req, res) {
         }
         const elapsedSeconds = parseHrtimeToSeconds(process.hrtime(startTime));
 
-        taskOutput(`> Done in ${elapsedSeconds} seconds ${elapsedSeconds / 60} min`, res);
+        taskOutput(`> done in ${elapsedSeconds} seconds ${elapsedSeconds / 60} min`, res);
     } catch (e) {
         log.error(e.stack.toString() || e);
         taskOutput(e.stack || e, res);
@@ -1923,7 +2023,6 @@ exports.task_handle_database_consistency = async function (req, res) {
                 { item: 'tests', count: allTestsBefore.length },
                 { item: 'checks', count: allChecksBefore.length },
                 { item: 'snapshots', count: allSnapshotsBefore.length },
-                // { item: 'snapshots with unique files', count: snapshotsUniqueFiles.length },
                 { item: 'files', count: allFilesBefore.length },
             ]
         );
@@ -1931,7 +2030,7 @@ exports.task_handle_database_consistency = async function (req, res) {
         taskOutput(beforeStatTable, res);
 
         taskOutput(`---------------------------------`, res);
-        taskOutput(`STAGE #2: Calculate Inconsistent items`, res);
+        taskOutput(`STAGE #2: Calculate Inconsistent Items`, res);
         taskOutput(`> calculate abandoned snapshots`, res);
         // eslint-disable-next-line
         const abandonedSnapshots = allSnapshotsBefore.filter((sn) => {
@@ -1944,7 +2043,10 @@ exports.task_handle_database_consistency = async function (req, res) {
         const progress = new ProgressBar(allFilesBefore.length);
         // eslint-disable-next-line no-restricted-syntax
         for (const [index, file] of allFilesBefore.entries()) {
-            progress.writeIfChange(index, allFilesBefore.length, taskOutput, res);
+            setTimeout(() => {
+                progress.writeIfChange(index, allFilesBefore.length, taskOutput, res);
+            }, 10);
+
             if (!(snapshotsUniqueFiles.includes(file.toString()))) {
                 abandonedFiles.push(file);
             }

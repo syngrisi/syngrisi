@@ -7,14 +7,14 @@ Feature: Suites
 
   @withEndSession
   Scenario: VRS create check - with empty suite
-    Given I start VRS session with parameters:
+    Given I start session with parameters:
     """
       testName: Unnamed Suite Test
       suiteName: EMPTY
     """
     When I check image with path: "files/A.png" as "new int check suites 1"
 
-    When I stop VRS session
+    When I stop session
     When I open the app
     Then I wait and refresh page on element "span=Unnamed Suite Test" for "3" seconds to exist
     When I click on the element "span=Others"
@@ -23,14 +23,14 @@ Feature: Suites
 
   @withEndSession
   Scenario: VRS create check - with suite
-    Given I start VRS session with parameters:
+    Given I start session with parameters:
     """
       testName: Named Suite Test
       suiteName: NotEmptySuite
     """
     When I check image with path: "files/A.png" as "new int check suites 1"
 
-    When I stop VRS session
+    When I stop session
     When I open the app
     Then I expect that element "span=NotEmptySuite" is displayed
     Then I wait and refresh page on element "span=Named Suite Test" for "3" seconds to exist

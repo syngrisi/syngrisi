@@ -14,15 +14,15 @@ Feature: Crashed check
     Scenario: Crashed
         Given I set window size: "1366x768"
 
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
         testName: "Crashed test"
         """
         When I check image with path: "files/crash_0.png" as "crashed"
-        When I stop VRS session
+        When I stop session
         When I accept via http the 1st check with name "crashed"
 
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
         testName: "Crashed test"
         """
@@ -31,7 +31,7 @@ Feature: Crashed check
         """
         Response code 500 (Internal Server Error)
         """
-        When I stop VRS session
+        When I stop session
 
         When I open the app
 

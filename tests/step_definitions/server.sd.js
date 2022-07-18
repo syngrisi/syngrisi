@@ -5,11 +5,11 @@ const {
     startServer, stopServer, clearDatabase, startDriver, startSession, clearScreenshotsFolder,
 } = require('../src/utills/common');
 
-When(/^I start VRS server with parameters:$/, { timeout: 600000 }, (params) => {
+When(/^I start Server with parameters:$/, { timeout: 600000 }, (params) => {
     startServer(params);
 });
 
-When(/^I start VRS server|I start Server$/, { timeout: 600000 }, () => {
+When(/^I start Server$/, { timeout: 600000 }, () => {
     startServer('');
 });
 
@@ -22,7 +22,7 @@ When(/^I stop the Syngrisi server|I stop Server$/, () => {
     stopServer();
 });
 
-When(/^I clear test VRS database|I clear database$/, () => {
+When(/^I clear database$/, () => {
     clearDatabase(false);
 });
 
@@ -43,19 +43,19 @@ When(/^I set env variables:$/, (yml) => {
         });
 });
 
-Given(/^I stop VRS session$/, async () => {
+Given(/^I stop session$/, async () => {
     await browser.vDriver.stopTestSession(browser.config.apiKey);
 });
 
-Given(/^I setup VRS driver with parameters:$/, async (params) => {
+Given(/^I setup driver with parameters:$/, async (params) => {
     startDriver(params);
 });
 
-Given(/^I setup VRS driver$/, async () => {
+Given(/^I setup driver$/, async () => {
     startDriver('');
 });
 
-Given(/^I start VRS session with parameters:$/, async (params) => {
+Given(/^I start session with parameters:$/, async (params) => {
     const sessOpts = YAML.parse(params);
     await startSession(sessOpts);
 });

@@ -77,6 +77,8 @@ const fillCommonPlaceholders = function fillPlaceholders(str) {
             Slug: faker.lorem.slug(),
             Uuid: faker.datatype.uuid(),
             'currentDate-10': subDays(new Date(), 10),
+            'currentDate-20': subDays(new Date(), 20),
+            'currentDate-30': subDays(new Date(), 30),
             testPlatform: browser.config.testPlatform,
             syngrisiUrl: `http://${browser.config.serverDomain}:${browser.config.serverPort}/`,
             serverDomain: browser.config.serverDomain,

@@ -8,7 +8,7 @@ Feature: Base baseline flow
         TEST: 1
         SYNGRISI_AUTH: 0
         """
-        Given I start VRS server
+        Given I start Server
         When I create via http test user
 
         When I stop the Syngrisi server
@@ -18,8 +18,8 @@ Feature: Base baseline flow
         TEST: 0
         SYNGRISI_AUTH: 1
         """
-        Given I start VRS server
-        Given I setup VRS driver
+        Given I start Server
+        Given I setup driver
 
         When I login via http with user:"Test" password "123"
         When I create via http user as:"Test" with params:

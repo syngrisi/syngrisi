@@ -7,7 +7,7 @@ Feature: VRS One Suite, One test, One check
 
     @smoke
     Scenario: Create one check - [new, without session ending]
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
         testName: "Without session ending"
         """

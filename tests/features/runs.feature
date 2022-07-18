@@ -12,14 +12,14 @@ Feature: Runs Smoke
         RUN_NAME: RUN-01
         RUN_IDENT: RUN-Ident-1
         """
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "Runs integration test"
         """
         When I assert image with path: "files/A.png" as "new int assert_1"
         Then the "check" "status" should be "new"
 
-        When I stop VRS session
+        When I stop session
         When I go to "runs" page
 
         Then I wait and refresh page on element "span=RUN-01" for "3" seconds to exist
@@ -38,13 +38,13 @@ Feature: Runs Smoke
         RUN_NAME: RUN-02
         RUN_IDENT: RUN-Ident-2
         """
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "Runs integration test - 01"
         """
         When I assert image with path: "files/A.png" as "new int assert_1"
         Then the "check" "status" should be "new"
-        When I stop VRS session
+        When I stop session
 
         # second
         When I set env variables:
@@ -52,13 +52,13 @@ Feature: Runs Smoke
         RUN_NAME: RUN-02
         RUN_IDENT: RUN-Ident-2
         """
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "Runs integration test - 02"
         """
         When I assert image with path: "files/A.png" as "new int assert_2"
         Then the "check" "status" should be "new"
-        When I stop VRS session
+        When I stop session
 
         # assert
         When I go to "runs" page
@@ -80,13 +80,13 @@ Feature: Runs Smoke
         RUN_NAME: RUN-02
         RUN_IDENT: RUN-Ident-3
         """
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "Runs integration test - 01"
         """
         When I assert image with path: "files/A.png" as "new int assert_1"
         Then the "check" "status" should be "new"
-        When I stop VRS session
+        When I stop session
 
         # second
         When I set env variables:
@@ -94,13 +94,13 @@ Feature: Runs Smoke
         RUN_NAME: RUN-02
         RUN_IDENT: RUN-Ident-3
         """
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "Runs integration test - 02"
         """
         When I assert image with path: "files/A.png" as "new int assert_2"
         Then the "check" "status" should be "new"
-        When I stop VRS session
+        When I stop session
 
          # third
         When I set env variables:
@@ -108,13 +108,13 @@ Feature: Runs Smoke
         RUN_NAME: RUN-02
         RUN_IDENT: RUN-Ident-3
         """
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "Runs integration test - 02"
         """
         When I check image with path: "files/B.png" as "new int assert_2"
         Then the "check" "status" should be "failed"
-        When I stop VRS session
+        When I stop session
 
         # assert
         When I go to "runs" page
@@ -137,33 +137,33 @@ Feature: Runs Smoke
         """
         RUN_NAME: RUN-03
         """
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "Runs integration test - 01"
         """
         When I assert image with path: "files/A.png" as "new int assert_1"
         Then the "check" "status" should be "new"
-        When I stop VRS session
+        When I stop session
 
         # second
         When I set env variables:
         """
         RUN_NAME: RUN-03
         """
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "Runs integration test - 02"
         """
         When I assert image with path: "files/A.png" as "new int assert_2"
         Then the "check" "status" should be "new"
-        When I stop VRS session
+        When I stop session
 
         # SECOND RUN
         When I set env variables:
         """
         RUN_NAME: RUN-04
         """
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "Runs integration test - 03"
         """
@@ -173,7 +173,7 @@ Feature: Runs Smoke
         When I assert image with path: "files/A.png" as "new int assert_4"
         Then the "check" "status" should be "new"
 
-        When I stop VRS session
+        When I stop session
 
         # ASSERT
         When I go to "runs" page

@@ -7,6 +7,7 @@ When(/^I go to "([^"]*)" page$/, function (str) {
         logout: `http://${browser.config.serverDomain}:${browser.config.serverPort}/logout`,
         admin: {
             users: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin?task=users`,
+            tasks: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin?task=tasks`,
         },
     };
     if (str.includes('>')) {
