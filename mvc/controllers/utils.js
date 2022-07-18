@@ -112,45 +112,46 @@ exports.fatalError = fatalError;
 
 exports.removeEmptyProperties = function removeEmptyProperties(obj) {
     return Object.fromEntries(Object.entries(obj)
+        // eslint-disable-next-line no-unused-vars
         .filter(([_, v]) => (v != null) && (v !== '')));
 };
 
-exports.checksGroupedByIdent = function checksGroupedByIdent(checkFilter) {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const chs = await Check.find(checkFilter)
-                .exec();
-            const checks = await Promise.all(
-                chs.map(async (ch) => {
-                    const baseline = await Baseline.findOne({ snapshootId: ch.baselineId })
-                        .exec();
-                    ch.realBaselineId = baseline?._id;
-                    ch.formattedCreatedDate = moment(ch.createdDate)
-                        .format('YYYY-MM-DD hh:mm');
-                    return ch;
-                })
-            );
-            const result = {};
-            checks.forEach((check) => {
-                if (result[checkIdent(check)] === undefined) {
-                    result[checkIdent(check)] = {};
-                    result[checkIdent(check)]['checks'] = [];
-                }
-                result[checkIdent(check)]['checks'].push(check);
-            });
-            for (const groupIdent in result) {
-                result[groupIdent].status = groupStatus(result[groupIdent].checks);
+exports.checksGroupedByIdent = async function checksGroupedByIdent(checkFilter) {
+    // return new Promise(async (resolve, reject) => {
+    try {
+        const chs = await Check.find(checkFilter)
+            .exec();
+        const checks = await Promise.all(
+            chs.map(async (ch) => {
+                const baseline = await Baseline.findOne({ snapshootId: ch.baselineId })
+                    .exec();
+                ch.realBaselineId = baseline?._id;
+                ch.formattedCreatedDate = moment(ch.createdDate)
+                    .format('YYYY-MM-DD hh:mm');
+                return ch;
+            })
+        );
+        const result = {};
+        checks.forEach((check) => {
+            if (result[checkIdent(check)] === undefined) {
+                result[checkIdent(check)] = {};
+                result[checkIdent(check)]['checks'] = [];
             }
-            for (const groupIdent in result) {
-                result[groupIdent].viewport = groupViewPort(result[groupIdent].checks);
-            }
-            resolve(result);
-        } catch (e) {
-            console.error(e);
-            // fatalError(req, res, e);
-            return reject(e);
+            result[checkIdent(check)]['checks'].push(check);
+        });
+        for (const groupIdent in result) {
+            result[groupIdent].status = groupStatus(result[groupIdent].checks);
         }
-    });
+        for (const groupIdent in result) {
+            result[groupIdent].viewport = groupViewPort(result[groupIdent].checks);
+        }
+        return result;
+    } catch (e) {
+        log.error(e.trace || e);
+        throw new Error(e);
+        // fatalError(req, res, e);
+        // return reject(e);
+    }
 };
 
 exports.checksGroupedByIdent2 = function checksGroupedByIdent2(testId) {

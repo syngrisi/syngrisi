@@ -2,7 +2,6 @@
 
 'use strict';
 
-/* global log:readonly */
 const mongoose = require('mongoose');
 
 const Snapshot = mongoose.model('VRSSnapshot');
@@ -97,7 +96,7 @@ exports.checkView = async function checkView(req, res) {
         } else {
             actualSnapshot = null;
         }
-        const diffId = check.diffId ? check.diffId : '';
+        // const diffId = check.diffId ? check.diffId : '';
 
         let diffSnapshot;
         if (check.diffId) {
