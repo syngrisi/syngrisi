@@ -250,14 +250,6 @@ module.exports = async function (app) {
             API.status(req, res)
                 .catch(next);
         })
-        .get('/task_migration_1_1_0', ensureLoggedIn(), async (req, res, next) => {
-            API.task_migration_1_1_0(req, res)
-                .catch(next);
-        })
-        .get('/task_remove_empty_tests', ensureLoggedInOrApiKey(), async (req, res, next) => {
-            API.task_remove_empty_tests(req, res)
-                .catch(next);
-        })
         .get('/task_handle_old_checks', ensureLoggedInOrApiKey(), async (req, res, next) => {
             API.task_handle_old_checks(req, res)
                 .catch(next);
@@ -268,10 +260,6 @@ module.exports = async function (app) {
         })
         .get('/task_remove_old_logs', ensureLoggedInOrApiKey(), async (req, res, next) => {
             API.task_remove_old_logs(req, res)
-                .catch(next);
-        })
-        .get('/task_remove_empty_runs', ensureLoggedInOrApiKey(), async (req, res, next) => {
-            API.task_remove_empty_runs(req, res)
                 .catch(next);
         });
 };

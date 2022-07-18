@@ -361,12 +361,6 @@
     function renderParams(taskName) {
         clearConsole();
         const allParams = {
-            remove_empty_tests: `<label for="test">Test label</label>
-                                 <input id="test" name="test">
-                                 <input id="test1" name="test1">
-                                 <a class="btn btn-sm btn-dark text-light" onclick="runAndRenderTask('remove_empty_tests');">Start</a>`,
-            remove_empty_runs: ` <a class="btn btn-sm btn-dark text-light" onclick="runAndRenderTask('remove_empty_runs');">Start</a>`,
-            migration_1_1_0: ` <a class="btn btn-sm btn-dark text-light" onclick="runAndRenderTask('${taskName}');">Start</a>`,
             handle_old_checks: `
                                 <div>
                                    <label for="test">Check older that (days): </label>
@@ -376,7 +370,7 @@
                                </div>
                                <div>
                                    <a class="btn btn-sm btn-dark text-light" onclick="runAndRenderTask('handle_old_checks');">Start</a>
-                                   <a class="btn btn-sm btn-dark text-light" onclick="clearLogs();">Clear</a>
+                                   <a class="btn btn-sm btn-dark text-light" onclick="clearLogs();">Clear Output</a>
                                </div>
                                <div style="margin: 5px">
                                <span style="color: red">⚠️We strongly recommended doing the remove inconsistent items procedure <b>Before</b> and <b>After</b> removing checks via this task.</span>
@@ -386,7 +380,7 @@
             task_handle_database_consistency: `
                             <div>
                                <a class="btn btn-sm btn-dark text-light" onclick="runAndRenderTask('handle_database_consistency');">Start</a>
-                               <a class="btn btn-sm btn-dark text-light" onclick="clearLogs();">Clear</a>
+                               <a class="btn btn-sm btn-dark text-light" onclick="clearLogs();">Clear Output</a>
                             </div>
                             <div>
                                 <label for="test">Remove non-consistent-items: </label>
@@ -397,7 +391,7 @@
                                <label for="test">Only statistics: </label>
                                <input type="checkbox" id="statistics" name="statistics" ><br>
                                <a class="btn btn-sm btn-dark text-light" onclick="runAndRenderTask('remove_old_logs');">Start</a>
-                               <a class="btn btn-sm btn-dark text-light" onclick="clearLogs();">Clear</a>`,
+                               <a class="btn btn-sm btn-dark text-light" onclick="clearLogs();">Clear Output</a>`,
         };
         const form = document.getElementById('params-form');
         form.innerHTML = allParams[taskName];
