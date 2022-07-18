@@ -190,7 +190,7 @@ async function compareSnapshots(baselineSnapshot, actual, opts = {}) {
     }
 }
 
-exports.updateSnapshot = async function (req, res) {
+exports.updateSnapshot = async (req, res) => {
     const logOpts = {
         scope: 'updateSnapshot',
         ref: req.id,
@@ -219,7 +219,7 @@ exports.updateSnapshot = async function (req, res) {
     }
 };
 
-exports.updateBaseline = async function (req, res) {
+exports.updateBaseline = async (req, res) => {
     const logOpts = {
         scope: 'updateBaseline',
         ref: req.id,
@@ -279,10 +279,12 @@ exports.getBaseline = async function (req, res) {
     try {
         res.json(await Baseline.findById(req.params.id));
     } catch (e) {
-        log.error((`cannot get a snapshot with id: '${req.params.id}', error: ${e}`, $this, {
-            scope: 'getSnapshot',
-            msgType: 'GET',
-        }));
+        log.error(`cannot get a snapshot with id: '${req.params.id}', error: ${e}`,
+            $this,
+            {
+                scope: 'getSnapshot',
+                msgType: 'GET',
+            });
         fatalError(req, res, e);
     }
 };
@@ -291,10 +293,12 @@ exports.getSnapshot = async function (req, res) {
     try {
         res.json(await Snapshot.findById(req.params.id));
     } catch (e) {
-        log.error((`cannot get a snapshot with id: '${req.params.id}', error: ${e}`, $this, {
-            scope: 'getSnapshot',
-            msgType: 'GET',
-        }));
+        log.error(`cannot get a snapshot with id: '${req.params.id}', error: ${e}`,
+            $this,
+            {
+                scope: 'getSnapshot',
+                msgType: 'GET',
+            });
         fatalError(req, res, e);
     }
 };
@@ -482,7 +486,7 @@ exports.firstRunAdminPassword = async function (req, res) {
             await user.save();
             log.debug('password was successfully changed for default Administrator', $this, logOpts);
             await global.appSettings.set('firstRun', false);
-            return res.redirect('/logout');
+            res.redirect('/logout');
         } catch (e) {
             fatalError(req, res, e);
         }
@@ -515,21 +519,20 @@ exports.changePassword = function (req, res) {
 };
 
 // tests
-async function updateTest(opts) {
-    const { id } = opts;
+async function updateTest(params) {
+    const opts = { ...params };
     const logOpts = {
         msgType: 'UPDATE',
         itemType: 'test',
         scope: 'updateTest',
     };
     opts['updatedDate'] = Date.now();
-    log.debug(`update test id '${id}' with params '${JSON.stringify(opts)}'`, $this, logOpts);
+    log.debug(`update test id '${opts.id}' with params '${JSON.stringify(opts)}'`, $this, logOpts);
 
-    const test = await Test.findByIdAndUpdate(id, opts)
+    const test = await Test.findByIdAndUpdate(opts.id, opts)
         .exec();
 
-    test.save();
-
+    await test.save();
     return test;
 }
 
@@ -1248,34 +1251,33 @@ exports.getChecks = async function (req, res) {
         const checkFilter = { test: test.id };
         const groups = await checksGroupedByIdent(checkFilter);
         // console.log(groups.length);
-        if (Object.keys(groups).length < 1) {
-            continue;
+        if (Object.keys(groups).length > 0) {
+            // console.log({groups})
+            checksByTestGroupedByIdent[test.id] = groups;
+            checksByTestGroupedByIdent[test.id]['id'] = test.id;
+            checksByTestGroupedByIdent[test.id]['creatorId'] = test.creatorId;
+            checksByTestGroupedByIdent[test.id]['creatorUsername'] = test.creatorUsername;
+            checksByTestGroupedByIdent[test.id]['markedAs'] = test.markedAs;
+            checksByTestGroupedByIdent[test.id]['markedByUsername'] = test.markedByUsername;
+            checksByTestGroupedByIdent[test.id]['markedDate'] = test.markedDate;
+            checksByTestGroupedByIdent[test.id]['markedAs'] = test.markedAs;
+            checksByTestGroupedByIdent[test.id]['name'] = test.name;
+            checksByTestGroupedByIdent[test.id]['status'] = test.status;
+            checksByTestGroupedByIdent[test.id]['browserName'] = test.browserName;
+            checksByTestGroupedByIdent[test.id]['browserVersion'] = test.browserVersion;
+            checksByTestGroupedByIdent[test.id]['browserFullVersion'] = test.browserFullVersion;
+            checksByTestGroupedByIdent[test.id]['viewport'] = test.viewport;
+            checksByTestGroupedByIdent[test.id]['calculatedViewport'] = test.calculatedViewport;
+            checksByTestGroupedByIdent[test.id]['os'] = test.os;
+            checksByTestGroupedByIdent[test.id]['blinking'] = test.blinking;
+            checksByTestGroupedByIdent[test.id]['updatedDate'] = test.updatedDate;
+            checksByTestGroupedByIdent[test.id]['createdDate'] = test.createdDate;
+            checksByTestGroupedByIdent[test.id]['suite'] = test.suite;
+            checksByTestGroupedByIdent[test.id]['run'] = test.run;
+            checksByTestGroupedByIdent[test.id]['tags'] = test.tags;
+            checksByTestGroupedByIdent[test.id]['branch'] = test.branch;
+            checksByTestGroupedByIdent[test.id]['app'] = test.app;
         }
-        // console.log({groups})
-        checksByTestGroupedByIdent[test.id] = groups;
-        checksByTestGroupedByIdent[test.id]['id'] = test.id;
-        checksByTestGroupedByIdent[test.id]['creatorId'] = test.creatorId;
-        checksByTestGroupedByIdent[test.id]['creatorUsername'] = test.creatorUsername;
-        checksByTestGroupedByIdent[test.id]['markedAs'] = test.markedAs;
-        checksByTestGroupedByIdent[test.id]['markedByUsername'] = test.markedByUsername;
-        checksByTestGroupedByIdent[test.id]['markedDate'] = test.markedDate;
-        checksByTestGroupedByIdent[test.id]['markedAs'] = test.markedAs;
-        checksByTestGroupedByIdent[test.id]['name'] = test.name;
-        checksByTestGroupedByIdent[test.id]['status'] = test.status;
-        checksByTestGroupedByIdent[test.id]['browserName'] = test.browserName;
-        checksByTestGroupedByIdent[test.id]['browserVersion'] = test.browserVersion;
-        checksByTestGroupedByIdent[test.id]['browserFullVersion'] = test.browserFullVersion;
-        checksByTestGroupedByIdent[test.id]['viewport'] = test.viewport;
-        checksByTestGroupedByIdent[test.id]['calculatedViewport'] = test.calculatedViewport;
-        checksByTestGroupedByIdent[test.id]['os'] = test.os;
-        checksByTestGroupedByIdent[test.id]['blinking'] = test.blinking;
-        checksByTestGroupedByIdent[test.id]['updatedDate'] = test.updatedDate;
-        checksByTestGroupedByIdent[test.id]['createdDate'] = test.createdDate;
-        checksByTestGroupedByIdent[test.id]['suite'] = test.suite;
-        checksByTestGroupedByIdent[test.id]['run'] = test.run;
-        checksByTestGroupedByIdent[test.id]['tags'] = test.tags;
-        checksByTestGroupedByIdent[test.id]['branch'] = test.branch;
-        checksByTestGroupedByIdent[test.id]['app'] = test.app;
     }
     // console.log(Object.keys(checksByTestGroupedByIdent).length);
     res.status(200)
@@ -1324,7 +1326,8 @@ exports.getRun = async function (req, res) {
     }
 };
 
-function addMarkedAsOptions(opts, user, mark) {
+function addMarkedAsOptions(params, user, mark) {
+    const opts = { ...params };
     opts.markedById = user._id;
     opts.markedByUsername = user.username;
     opts.markedDate = new Date();
@@ -1551,7 +1554,8 @@ exports.stopSession = async function (req, res) {
     };
     try {
         if (!testId || testId === 'undefined') {
-            return fatalError(req, res, 'Cannot stop test Session testId is empty');
+            fatalError(req, res, 'Cannot stop test Session testId is empty');
+            return;
         }
         await waitUntil(async () => (await Check.find({ test: testId })
             .exec())
@@ -1559,10 +1563,8 @@ exports.stopSession = async function (req, res) {
         const checksGroup = await checksGroupedByIdent({ test: testId });
         const groupStatuses = Object.keys(checksGroup)
             .map((group) => checksGroup[group].status);
-        // console.log(JSON.stringify(checksGroup, null, "\t"));
         const groupViewPorts = Object.keys(checksGroup)
             .map((group) => checksGroup[group].viewport);
-        // console.log({groupViewPorts});
         const uniqueGroupViewports = Array.from(new Set(groupViewPorts));
         let testViewport;
         if (uniqueGroupViewports.length === 1) {
@@ -1603,7 +1605,6 @@ exports.stopSession = async function (req, res) {
         const result = updatedTest.toObject();
         result.calculatedStatus = testStatus;
         res.json(result);
-        return result;
     } catch (e) {
         fatalError(req, res, e);
     }
@@ -1671,7 +1672,8 @@ exports.loadTestUser = async function (req, res) {
         ref: 'Administrator',
     };
     if (process.env.TEST !== '1') {
-        return res.json({ message: 'the feature works only in test mode' });
+        res.json({ message: 'the feature works only in test mode' });
+        return;
     }
     const testAdmin = await User.findOne({ username: 'Test' });
     if (!testAdmin) {
@@ -1680,7 +1682,7 @@ exports.loadTestUser = async function (req, res) {
         const admin = await User.create(adminData);
         log.info(`test Administrator with id: '${admin._id}' was created`, $this, logOpts);
         res.json(admin);
-        return admin;
+        return;
     }
 
     log.info(`test admin is exists: ${JSON.stringify(testAdmin, null, 2)}`, $this, logOpts);
@@ -1695,99 +1697,6 @@ function taskOutput(msg, res) {
 function parseHrtimeToSeconds(hrtime) {
     return (hrtime[0] + (hrtime[1] / 1e9)).toFixed(3);
 }
-
-exports.task_remove_empty_tests = async function (req, res) {
-    // this header to response with chunks data
-    res.writeHead(200, {
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        'Content-Encoding': 'none',
-    });
-    res.write('- query all tests\n');
-    log.debug('- query all tests\n', $this);
-
-    Test.find({})
-        .then((tests) => {
-            res.write(`- all tests count: '${tests.length}'\n`);
-            log.debug(`- all tests count: '${tests.length}'\n`, $this);
-            res.write('- remove empty tests\n');
-            log.debug('- remove empty tests\n', $this);
-
-            let count = 0;
-            Promise.all(tests.map((test) => {
-                const checkFilter = { test: test.id };
-                return checksGroupedByIdent(checkFilter)
-                    .then((checkGroups) => {
-                        if (Object.keys(checkGroups).length < 1) {
-                            count += 1;
-                            const targetToRemove = {
-                                id: test._id,
-                                name: test.name,
-                            };
-                            console.log({ targetToRemove });
-                            res.write(`${JSON.stringify(targetToRemove)}\n`);
-
-                            return Test.findByIdAndDelete(test._id,)
-                                .then(() => targetToRemove);
-                        }
-                    });
-            }))
-                // eslint-disable-next-line no-unused-vars
-                .then((x) => {
-                    res.write(`- removed tests count: '${count}'\n`);
-                    log.info(`- removed tests count: '${count}'\n`, $this);
-                    res.write('- done\n');
-                    log.info('- done\n', $this);
-                    return res.end();
-                });
-        });
-};
-
-exports.task_remove_empty_runs = async function (req, res) {
-    // this header to response with chunks data
-    res.writeHead(200, {
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        'Content-Encoding': 'none',
-    });
-    res.write('- query all runs\n');
-    log.info('- query all runs\n', $this);
-
-    Run.find({})
-        .then((runs) => {
-            res.write(`- all runs count: '${runs.length}'\n`);
-            log.info(`- all runs count: '${runs.length}'\n`, $this);
-            res.write('- remove empty runs\n');
-            log.info('- remove empty runs\n', $this);
-
-            let count = 0;
-            Promise.all(runs.map((run) => {
-                const checkFilter = { run: run.id };
-                return checksGroupedByIdent(checkFilter)
-                    .then((checkGroups) => {
-                        if (Object.keys(checkGroups).length < 1) {
-                            count += 1;
-                            const targetToRemove = {
-                                id: run._id,
-                                name: run.name,
-                            };
-                            console.log({ targetToRemove });
-                            res.write(`${JSON.stringify(targetToRemove)}\n`);
-
-                            return Run.findByIdAndDelete(run.id,)
-                                .then(() => targetToRemove);
-                        }
-                    });
-            }))
-                .then(() => {
-                    res.write(`- removed runs count: '${count}'\n`);
-                    log.info(`- removed runs count: '${count}'\n`, $this);
-                    res.write('- done\n');
-                    log.info('- done\n', $this);
-                    res.end();
-                });
-        });
-};
 
 exports.task_handle_old_checks = async function (req, res) {
     // this header to response with chunks data
@@ -1858,7 +1767,6 @@ exports.task_handle_old_checks = async function (req, res) {
         taskOutput(outTable, res);
 
         if (req.query.remove) {
-
             taskOutput(`STAGE #2 Remove checks that older that: '${req.query.days}' days,`
                 + ` '${format(trashHoldDate, 'yyyy-MM-dd')}'\n`, res);
 
@@ -1935,9 +1843,7 @@ exports.task_handle_old_checks = async function (req, res) {
             taskOutput(`>> found: ${filesInterception.length}`, res);
 
             taskOutput('>> calculate filenames to remove', res);
-            const arrayDiff = (arr1, arr2) => {
-                return arr1.filter((x) => !arr2.includes(x));
-            };
+            const arrayDiff = (arr1, arr2) => arr1.filter((x) => !arr2.includes(x));
             const filesToDelete = arrayDiff(oldSnapshotsUniqueFilenames, filesInterception);
             taskOutput(`>> found: ${filesToDelete.length}`, res);
 
@@ -2055,15 +1961,12 @@ exports.task_handle_database_consistency = async function (req, res) {
         taskOutput(`> calculate abandoned checks`, res);
         const allSnapshotsBeforeIds = allSnapshotsBefore.map((x) => x._id.valueOf());
 
-        const allChecksBeforeLight = allChecksBefore.map((x) => {
-            return {
-                _id: x._id.valueOf(), baselineId: x.baselineId.valueOf(), actualSnapshotId: x.actualSnapshotId.valueOf()
-            };
-        });
+        const allChecksBeforeLight = allChecksBefore.map((x) => ({
+            _id: x._id.valueOf(), baselineId: x.baselineId.valueOf(), actualSnapshotId: x.actualSnapshotId.valueOf(),
+        }));
         const abandonedChecks = [];
         const progressChecks = new ProgressBar(allChecksBefore.length);
         for (const [index, check] of allChecksBeforeLight.entries()) {
-
             progressChecks.writeIfChange(index, allChecksBeforeLight.length, taskOutput, res);
             if (
                 !(allSnapshotsBeforeIds.includes(check.baselineId))
@@ -2080,7 +1983,7 @@ exports.task_handle_database_consistency = async function (req, res) {
 
         const emptyTests = [];
 
-        // eslint-disable-next-line no-restricted-syntax
+        // eslint-disable-next-line no-restricted-syntax,no-unused-vars
         for (const [index, test] of allTestsBefore.entries()) {
             if (!checksUniqueTests.includes(test._id.valueOf())) {
                 emptyTests.push(test);
@@ -2207,105 +2110,105 @@ exports.task_remove_old_logs = async function (req, res) {
     res.end();
 };
 
-exports.task_migration_1_1_0 = async function (req, res) {
-    if (req.user.role !== 'admin') {
-        res.status(401)
-            .json({ error: 'You need to have \'admin\' role to access the page' });
-        return;
-    }
-    // this header to response with chunks data
-    res.writeHead(200, {
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        'Content-Encoding': 'none',
-    });
-
-    const checks = await Check.find({});
-    const tests = await Test.find({});
-    const snapshoots = await Snapshot.find({});
-    res.write('\n0. Resync indexes\n');
-
-    await Check.syncIndexes();
-    log.info('Check');
-    res.write('\nCheck\n');
-
-    await Test.syncIndexes();
-    log.info('Test');
-    res.write('\nTest\n');
-
-    await Snapshot.syncIndexes();
-    log.info('Snapshot');
-    res.write('\nSnapshot\n');
-    await Run.syncIndexes();
-    log.info('Run');
-    res.write('\nRun\n');
-    await User.syncIndexes();
-    log.info('User');
-    res.write('\nUser\n');
-    await Baseline.syncIndexes();
-    log.info('Baseline');
-    res.write('\nBaseline\n');
-    await App.syncIndexes();
-    log.info('App');
-    res.write('\nApp\n');
-    // await Log.syncIndexes();
-    // log.info('Log');
-    // res.write('\nLog\n');
-
-    res.write('\n0. Update all check & tests to master branch\n');
-    for (const check of checks) {
-        check.branch = 'master';
-        check.save();
-    }
-    for (const test of tests) {
-        log.info(test.name);
-        res.write(`${test.name}\n`);
-        test.branch = 'master';
-        test.save();
-    }
-    res.write('\n1. Fix empty diffs\n');
-    for (const check of checks) {
-        if (!check.diffId) {
-            log.info({ DIFF: check.diffId });
-            delete check.diffId;
-            const tempCheck = check.toObject();
-            await check.remove();
-            delete tempCheck.diffId;
-            Check.create(tempCheck);
-        }
-    }
-    res.write('\n2. Fix docs types\n');
-    for (const check of checks) {
-        log.info({ check });
-        res.write(`${JSON.stringify(check)}\n\n`);
-        if (check.baselineId) (check.baselineId = mongoose.Types.ObjectId(check.baselineId));
-        if (check.actualSnapshotId) (check.actualSnapshotId = mongoose.Types.ObjectId(check.actualSnapshotId));
-        if (check.actualSnapshotId) (check.diffId = mongoose.Types.ObjectId(check.diffId));
-        await check.save();
-    }
-
-    res.write(`\n2. Change 'The Test App' => 'HPE'`);
-    const app = await orm.createAppIfNotExist({ name: 'HPE' });
-    // const checks = await Check.find({});
-    for (const check of checks) {
-        check.app = app.id;
-        check.save();
-        res.write(`\n${check._id}`);
-    }
-
-    res.write('\n3. Fix undefined regions\n');
-    for (const snp of snapshoots) {
-        if ((snp.ignoreRegions === 'undefined') || (snp.boundRegions === 'undefined')) {
-            log.info({ Snp: snp.name });
-            res.write(`\n${snp.name}`);
-            // delete snp.ignoreRegions;
-            // delete snp.boundRegions;
-            const tempSnp = snp.toObject();
-            await snp.remove();
-            delete tempSnp.ignoreRegions;
-            delete tempSnp.boundRegions;
-            Snapshot.create(tempSnp);
-        }
-    }
-    res.end('\nDone\n');
-};
+// exports.task_migration_1_1_0 = async function (req, res) {
+//     if (req.user.role !== 'admin') {
+//         res.status(401)
+//             .json({ error: 'You need to have \'admin\' role to access the page' });
+//         return;
+//     }
+//     // this header to response with chunks data
+//     res.writeHead(200, {
+//         'Content-Type': 'text/event-stream',
+//         'Cache-Control': 'no-cache',
+//         'Content-Encoding': 'none',
+//     });
+//
+//     const checks = await Check.find({});
+//     const tests = await Test.find({});
+//     const snapshoots = await Snapshot.find({});
+//     res.write('\n0. Resync indexes\n');
+//
+//     await Check.syncIndexes();
+//     log.info('Check');
+//     res.write('\nCheck\n');
+//
+//     await Test.syncIndexes();
+//     log.info('Test');
+//     res.write('\nTest\n');
+//
+//     await Snapshot.syncIndexes();
+//     log.info('Snapshot');
+//     res.write('\nSnapshot\n');
+//     await Run.syncIndexes();
+//     log.info('Run');
+//     res.write('\nRun\n');
+//     await User.syncIndexes();
+//     log.info('User');
+//     res.write('\nUser\n');
+//     await Baseline.syncIndexes();
+//     log.info('Baseline');
+//     res.write('\nBaseline\n');
+//     await App.syncIndexes();
+//     log.info('App');
+//     res.write('\nApp\n');
+//     // await Log.syncIndexes();
+//     // log.info('Log');
+//     // res.write('\nLog\n');
+//
+//     res.write('\n0. Update all check & tests to master branch\n');
+//     for (const check of checks) {
+//         check.branch = 'master';
+//         check.save();
+//     }
+//     for (const test of tests) {
+//         log.info(test.name);
+//         res.write(`${test.name}\n`);
+//         test.branch = 'master';
+//         test.save();
+//     }
+//     res.write('\n1. Fix empty diffs\n');
+//     for (const check of checks) {
+//         if (!check.diffId) {
+//             log.info({ DIFF: check.diffId });
+//             delete check.diffId;
+//             const tempCheck = check.toObject();
+//             await check.remove();
+//             delete tempCheck.diffId;
+//             Check.create(tempCheck);
+//         }
+//     }
+//     res.write('\n2. Fix docs types\n');
+//     for (const check of checks) {
+//         log.info({ check });
+//         res.write(`${JSON.stringify(check)}\n\n`);
+//         if (check.baselineId) (check.baselineId = mongoose.Types.ObjectId(check.baselineId));
+//         if (check.actualSnapshotId) (check.actualSnapshotId = mongoose.Types.ObjectId(check.actualSnapshotId));
+//         if (check.actualSnapshotId) (check.diffId = mongoose.Types.ObjectId(check.diffId));
+//         await check.save();
+//     }
+//
+//     res.write(`\n2. Change 'The Test App' => 'HPE'`);
+//     const app = await orm.createAppIfNotExist({ name: 'HPE' });
+//     // const checks = await Check.find({});
+//     for (const check of checks) {
+//         check.app = app.id;
+//         check.save();
+//         res.write(`\n${check._id}`);
+//     }
+//
+//     res.write('\n3. Fix undefined regions\n');
+//     for (const snp of snapshoots) {
+//         if ((snp.ignoreRegions === 'undefined') || (snp.boundRegions === 'undefined')) {
+//             log.info({ Snp: snp.name });
+//             res.write(`\n${snp.name}`);
+//             // delete snp.ignoreRegions;
+//             // delete snp.boundRegions;
+//             const tempSnp = snp.toObject();
+//             await snp.remove();
+//             delete tempSnp.ignoreRegions;
+//             delete tempSnp.boundRegions;
+//             Snapshot.create(tempSnp);
+//         }
+//     }
+//     res.end('\nDone\n');
+// };
