@@ -247,7 +247,7 @@ exports.updateBaseline = async (req, res) => {
     }
 };
 
-exports.updateBaselineBySnapshotId = async function (req, res) {
+exports.updateBaselineBySnapshotId = async (req, res) => {
     const logOpts = {
         scope: 'updateBaseline',
         ref: req.id,
@@ -275,7 +275,7 @@ exports.updateBaselineBySnapshotId = async function (req, res) {
     }
 };
 
-exports.getBaseline = async function (req, res) {
+exports.getBaseline = async (req, res) => {
     try {
         res.json(await Baseline.findById(req.params.id));
     } catch (e) {
@@ -289,7 +289,7 @@ exports.getBaseline = async function (req, res) {
     }
 };
 
-exports.getSnapshot = async function (req, res) {
+exports.getSnapshot = async (req, res) => {
     try {
         res.json(await Snapshot.findById(req.params.id));
     } catch (e) {
@@ -303,7 +303,7 @@ exports.getSnapshot = async function (req, res) {
     }
 };
 
-const checksGroupByIdent = async function (req, res) {
+const checksGroupByIdent = async (req, res) => {
     try {
         const testId = req.params.testid;
         res.json(await checksGroupedByIdent({ test: testId }));
@@ -314,7 +314,7 @@ const checksGroupByIdent = async function (req, res) {
 
 exports.checksGroupByIdent = checksGroupByIdent;
 
-exports.affectedElements = async function (req, res) {
+exports.affectedElements = async (req, res) => {
     try {
         if (!req.query.checktid || !req.query.diffid) {
             const e = 'checktid|diffid query values are empty';
@@ -360,7 +360,7 @@ function getApiKey() {
     return uuidAPIKey.create().apiKey;
 }
 
-exports.generateApiKey = async function (req, res) {
+exports.generateApiKey = async (req, res) => {
     const apiKey = getApiKey();
     log.debug(`generate API Key for user: '${req.user.username}'`, $this, { user: req.user.username });
     const hash = hasha(apiKey);
@@ -371,7 +371,7 @@ exports.generateApiKey = async function (req, res) {
         .json({ apikey: apiKey });
 };
 
-exports.createUser = async function (req, res) {
+exports.createUser = async (req, res) => {
     const params = req.body;
     const logOpts = {
         msgType: 'CREATE',
@@ -397,7 +397,7 @@ exports.createUser = async function (req, res) {
     return null;
 };
 
-exports.getUsers = async function (req, res) {
+exports.getUsers = async (req, res) => {
     const users = await User.find()
         .exec();
     res.status(200)
@@ -405,7 +405,7 @@ exports.getUsers = async function (req, res) {
     return users;
 };
 
-const updateUser = async function (req, res) {
+const updateUser = async (req, res) => {
     const params = req.body;
     const logOpts = {
         msgType: 'UPDATE',
@@ -449,7 +449,7 @@ const updateUser = async function (req, res) {
 
 exports.updateUser = updateUser;
 
-exports.removeUser = async function (req, res) {
+exports.removeUser = async (req, res) => {
     const params = req.body;
     const logOpts = {
         msgType: 'REMOVE',
@@ -470,7 +470,7 @@ exports.removeUser = async function (req, res) {
     }
 };
 
-exports.firstRunAdminPassword = async function (req, res) {
+exports.firstRunAdminPassword = async (req, res) => {
     const params = req.body;
     const logOpts = {
         scope: 'firstRunAdminPassword',
@@ -496,7 +496,7 @@ exports.firstRunAdminPassword = async function (req, res) {
     }
 };
 
-exports.changePassword = function (req, res) {
+exports.changePassword = (req, res) => {
     const params = req.body;
     const logOpts = {
         scope: 'changePassword',
@@ -536,7 +536,7 @@ async function updateTest(params) {
     return test;
 }
 
-exports.updateTest = async function (req, res) {
+exports.updateTest = async (req, res) => {
     const opts = removeEmptyProperties(req.body);
     const { id } = req.params;
     const logOpts = {
@@ -563,7 +563,7 @@ exports.updateTest = async function (req, res) {
     return null;
 };
 
-exports.removeTest = async function (req, res) {
+exports.removeTest = async (req, res) => {
     try {
         const { id } = req.params;
         await testUtil.removeTest(id);
@@ -576,7 +576,7 @@ exports.removeTest = async function (req, res) {
     }
 };
 
-exports.createTest = async function (req, res) {
+exports.createTest = async (req, res) => {
     const logOpts = {
         scope: 'createTest',
         user: req?.user?.username,
@@ -629,7 +629,7 @@ exports.createTest = async function (req, res) {
 };
 
 // suites
-exports.removeSuite = async function (req, res) {
+exports.removeSuite = async (req, res) => {
     const logOpts = {
         scope: 'removeSuite',
         user: req?.user?.username,
@@ -659,7 +659,7 @@ exports.removeSuite = async function (req, res) {
     }
 };
 
-exports.removeRun = async function (req, res) {
+exports.removeRun = async (req, res) => {
     const logOpts = {
         scope: 'removeRun',
         user: req?.user?.username,
@@ -689,7 +689,7 @@ exports.removeRun = async function (req, res) {
 };
 
 // checks
-exports.updateCheck = async function (req, res) {
+exports.updateCheck = async (req, res) => {
     const opts = removeEmptyProperties(req.body);
     const { id } = req.params;
     const logOpts = {
@@ -1046,7 +1046,7 @@ async function createCheck(
     };
 }
 
-exports.createCheck = async function (req, res) {
+exports.createCheck = async (req, res) => {
     lackOfParamsGuard(req, res);
     const logOpts = {
         scope: 'createCheck',
@@ -1123,7 +1123,7 @@ exports.createCheck = async function (req, res) {
     }
 };
 
-exports.getChecks2 = async function (req, res) {
+exports.getChecks2 = async (req, res) => {
     const opts = req.query;
 
     const pageSize = parseInt(process.env['PAGE_SIZE'], 10) || 50;
@@ -1169,42 +1169,41 @@ exports.getChecks2 = async function (req, res) {
     for (const test of tests) {
         const groups = await checksGroupedByIdent2(test.id);
         // console.log(Object.keys(groups).length);
-        if (Object.keys(groups).length < 1) {
-            continue;
+        if (Object.keys(groups).length > 0) {
+            // console.log({groups})
+            checksByTestGroupedByIdent.push({
+                id: test.id,
+                creatorId: test.creatorId,
+                creatorUsername: test.creatorUsername,
+                markedAs: test.markedAs,
+                markedByUsername: test.markedByUsername,
+                markedDate: test.markedDate,
+                name: test.name,
+                status: test.status,
+                browserName: test.browserName,
+                browserVersion: test.browserVersion,
+                browserFullVersion: test.browserFullVersion,
+                viewport: test.viewport,
+                calculatedViewport: test.calculatedViewport,
+                os: test.os,
+                blinking: test.blinking,
+                updatedDate: test.updatedDate,
+                createdDate: test.createdDate,
+                suite: test.suite,
+                run: test.run,
+                tags: test.tags,
+                branch: test.branch,
+                app: test.app,
+                groups: groups,
+            });
         }
-        // console.log({groups})
-        checksByTestGroupedByIdent.push({
-            id: test.id,
-            creatorId: test.creatorId,
-            creatorUsername: test.creatorUsername,
-            markedAs: test.markedAs,
-            markedByUsername: test.markedByUsername,
-            markedDate: test.markedDate,
-            name: test.name,
-            status: test.status,
-            browserName: test.browserName,
-            browserVersion: test.browserVersion,
-            browserFullVersion: test.browserFullVersion,
-            viewport: test.viewport,
-            calculatedViewport: test.calculatedViewport,
-            os: test.os,
-            blinking: test.blinking,
-            updatedDate: test.updatedDate,
-            createdDate: test.createdDate,
-            suite: test.suite,
-            run: test.run,
-            tags: test.tags,
-            branch: test.branch,
-            app: test.app,
-            groups: groups,
-        });
     }
     // console.log(Object.keys(checksByTestGroupedByIdent).length);
     res.status(200)
         .json(checksByTestGroupedByIdent);
 };
 
-exports.getChecks = async function (req, res) {
+exports.getChecks = async (req, res) => {
     const opts = req.query;
 
     const pageSize = parseInt(process.env['PAGE_SIZE'], 10) || 50;
@@ -1284,7 +1283,7 @@ exports.getChecks = async function (req, res) {
         .json(checksByTestGroupedByIdent);
 };
 
-exports.getCheck = async function (req, res) {
+exports.getCheck = async (req, res) => {
     try {
         const opts = removeEmptyProperties(req.body);
         const { id } = req.params;
@@ -1303,11 +1302,11 @@ exports.getCheck = async function (req, res) {
     }
 };
 
-exports.getIdent = async function (req, res) {
+exports.getIdent = async (req, res) => {
     res.json(ident);
 };
 
-exports.getRun = async function (req, res) {
+exports.getRun = async (req, res) => {
     try {
         const opts = removeEmptyProperties(req.body);
         const { id } = req.params;
@@ -1471,7 +1470,7 @@ exports.checkIfScreenshotHasBaselines = async (req, res) => {
     }
 };
 
-exports.removeCheck = async function (req, res) {
+exports.removeCheck = async (req, res) => {
     const { id } = req.params;
     const logOpts = {
         scope: 'removeCheck',
@@ -1490,7 +1489,7 @@ exports.removeCheck = async function (req, res) {
     }
 };
 
-exports.getTestById = async function (req, res) {
+exports.getTestById = async (req, res) => {
     try {
         const opts = removeEmptyProperties(req.body);
         const { id } = req.params;
@@ -1514,7 +1513,7 @@ exports.getTestById = async function (req, res) {
     }
 };
 
-exports.getCheckHistory = async function (req, res) {
+exports.getCheckHistory = async (req, res) => {
     try {
         const opts = removeEmptyProperties(req.body);
         const { id } = req.params;
@@ -1544,7 +1543,7 @@ exports.getCheckHistory = async function (req, res) {
     }
 };
 
-exports.stopSession = async function (req, res) {
+exports.stopSession = async (req, res) => {
     const testId = req.params.testid;
     const logOpts = {
         msgType: 'END_SESSION',
@@ -1611,7 +1610,7 @@ exports.stopSession = async function (req, res) {
 };
 
 // TESTABILITY
-exports.checksByFilter = function (req, res) {
+exports.checksByFilter = (req, res) => {
     log.debug(JSON.stringify(req.query, null, 2));
     if (Object.keys(req.query).length === 0) {
         res.status(400)
@@ -1624,7 +1623,7 @@ exports.checksByFilter = function (req, res) {
         });
 };
 
-exports.shapshotsByFilter = function (req, res) {
+exports.shapshotsByFilter = (req, res) => {
     log.debug(JSON.stringify(req.query, null, 2));
     if (Object.keys(req.query).length === 0) {
         res.status(400)
@@ -1636,7 +1635,7 @@ exports.shapshotsByFilter = function (req, res) {
         });
 };
 
-exports.testsByFilter = function (req, res) {
+exports.testsByFilter = (req, res) => {
     log.debug(JSON.stringify(req.query, null, 2));
     if (Object.keys(req.query).length === 0) {
         res.status(400)
@@ -1648,13 +1647,13 @@ exports.testsByFilter = function (req, res) {
         });
 };
 
-exports.getScreenshotList = function (req, res) {
+exports.getScreenshotList = (req, res) => {
     const files = fss.readdirSync(config.defaultBaselinePath);
     res.json(files);
 };
 
 // TASKS
-exports.status = async function (req, res) {
+exports.status = async (req, res) => {
     const count = await User.countDocuments();
     log.info(`server status: check users counts: ${count}`);
     // log.debug({ count });
@@ -1665,7 +1664,7 @@ exports.status = async function (req, res) {
     res.json({ alive: false });
 };
 
-exports.loadTestUser = async function (req, res) {
+exports.loadTestUser = async (req, res) => {
     const logOpts = {
         itemType: 'user',
         msgType: 'LOAD',
@@ -1698,7 +1697,7 @@ function parseHrtimeToSeconds(hrtime) {
     return (hrtime[0] + (hrtime[1] / 1e9)).toFixed(3);
 }
 
-exports.task_handle_old_checks = async function (req, res) {
+exports.task_handle_old_checks = async (req, res) => {
     // this header to response with chunks data
     res.writeHead(200, {
         'Content-Type': 'text/event-stream',
@@ -1836,9 +1835,7 @@ exports.task_handle_old_checks = async function (req, res) {
                 .exec();
 
             taskOutput('>> calculate interception between all current snapshot filenames and old shapshots filenames', res);
-            const arrayIntersection = (arr1, arr2) => {
-                return arr1.filter((x) => arr2.includes(x));
-            };
+            const arrayIntersection = (arr1, arr2) => arr1.filter((x) => arr2.includes(x));
             const filesInterception = arrayIntersection(allCurrentSnapshotsFilenames, oldSnapshotsUniqueFilenames);
             taskOutput(`>> found: ${filesInterception.length}`, res);
 
@@ -1886,7 +1883,7 @@ exports.task_handle_old_checks = async function (req, res) {
     }
 };
 
-exports.task_handle_database_consistency = async function (req, res) {
+exports.task_handle_database_consistency = async (req, res) => {
     // this header to response with chunks data
     res.writeHead(200, {
         'Content-Type': 'text/event-stream',
@@ -2079,7 +2076,7 @@ exports.task_handle_database_consistency = async function (req, res) {
     }
 };
 
-exports.task_remove_old_logs = async function (req, res) {
+exports.task_remove_old_logs = async (req, res) => {
     // this header to response with chunks data
     res.writeHead(200, {
         'Content-Type': 'text/event-stream',
