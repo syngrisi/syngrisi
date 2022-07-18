@@ -9,40 +9,40 @@ Feature: Get Checks
         Given I start Server and start Driver
 
     Scenario: Pagination - without parameters
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "GetChecks1"
         """
         When I assert image with path: "files/A.png" as "GetChecks_1"
-        When I stop VRS session
+        When I stop session
 
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "GetChecks2"
         """
         When I assert image with path: "files/A.png" as "GetChecks_2"
-        When I stop VRS session
+        When I stop session
 
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "GetChecks3"
         """
         When I assert image with path: "files/A.png" as "GetChecks_3"
-        When I stop VRS session
+        When I stop session
 
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "GetChecks4"
         """
         When I assert image with path: "files/A.png" as "GetChecks_4"
-        When I stop VRS session
+        When I stop session
 
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "GetChecks5"
         """
         When I assert image with path: "files/A.png" as "GetChecks_5"
-        When I stop VRS session
+        When I stop session
 
         # check 1st page response
         When I open the url "http://<serverDomain>:<serverPort>/checks?page=1"
@@ -83,40 +83,40 @@ Feature: Get Checks
         """
 
     Scenario: Pagination - sort by name, ascending
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "B_GetChecks2"
         """
         When I assert image with path: "files/A.png" as "B_GetChecks_2"
-        When I stop VRS session
+        When I stop session
 
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "C_GetChecks3"
         """
         When I assert image with path: "files/A.png" as "C_GetChecks_3"
-        When I stop VRS session
+        When I stop session
 
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "A_GetChecks1"
         """
         When I assert image with path: "files/A.png" as "A_GetChecks_1"
-        When I stop VRS session
+        When I stop session
 
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "E_GetChecks5"
         """
         When I assert image with path: "files/A.png" as "E_GetChecks_5"
-        When I stop VRS session
+        When I stop session
 
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "D_GetChecks4"
         """
         When I assert image with path: "files/A.png" as "D_GetChecks_4"
-        When I stop VRS session
+        When I stop session
 
         # check 1st page response
         When I send "get" request to "http://<serverDomain>:<serverPort>/checks?page=1&sort_name_1" with:
@@ -154,40 +154,40 @@ Feature: Get Checks
         """
 
     Scenario: Pagination - sort by name, descending
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "B_GetChecks2"
         """
         When I assert image with path: "files/A.png" as "B_GetChecks_2"
-        When I stop VRS session
+        When I stop session
 
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "C_GetChecks3"
         """
         When I assert image with path: "files/A.png" as "C_GetChecks_3"
-        When I stop VRS session
+        When I stop session
 
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "A_GetChecks1"
         """
         When I assert image with path: "files/A.png" as "A_GetChecks_1"
-        When I stop VRS session
+        When I stop session
 
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "E_GetChecks5"
         """
         When I assert image with path: "files/A.png" as "E_GetChecks_5"
-        When I stop VRS session
+        When I stop session
 
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "D_GetChecks4"
         """
         When I assert image with path: "files/A.png" as "D_GetChecks_4"
-        When I stop VRS session
+        When I stop session
 
         # check 1st page response
         When I send "get" request to "http://<serverDomain>:<serverPort>/checks?page=1&sort_name_-1" with:
@@ -225,40 +225,40 @@ Feature: Get Checks
         """
 
     Scenario: Pagination - sort by date, descending
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "B_GetChecks2"
         """
         When I assert image with path: "files/A.png" as "B_GetChecks_2"
-        When I stop VRS session
+        When I stop session
 
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "C_GetChecks3"
         """
         When I assert image with path: "files/A.png" as "C_GetChecks_3"
-        When I stop VRS session
+        When I stop session
 
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "A_GetChecks1"
         """
         When I assert image with path: "files/A.png" as "A_GetChecks_1"
-        When I stop VRS session
+        When I stop session
 
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "E_GetChecks5"
         """
         When I assert image with path: "files/A.png" as "E_GetChecks_5"
-        When I stop VRS session
+        When I stop session
 
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "D_GetChecks4"
         """
         When I assert image with path: "files/A.png" as "D_GetChecks_4"
-        When I stop VRS session
+        When I stop session
 
         # check 1st page response
         When I send "get" request to "http://<serverDomain>:<serverPort>/checks?page=1&sort_updatedDate_-1" with:
@@ -296,45 +296,45 @@ Feature: Get Checks
         """
 
     Scenario: Pagination - filter by suite name
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "A_GetChecks1"
           suiteName: Suite1
         """
         When I assert image with path: "files/A.png" as "A_GetChecks_1"
-        When I stop VRS session
+        When I stop session
 
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "B_GetChecks2"
           suiteName: Suite1
         """
         When I assert image with path: "files/A.png" as "B_GetChecks_2"
-        When I stop VRS session
+        When I stop session
 
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "C_GetChecks3"
           suiteName: Suite1
         """
         When I assert image with path: "files/A.png" as "C_GetChecks_3"
-        When I stop VRS session
+        When I stop session
 
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "D_GetChecks4"
           suiteName: Suite1
         """
         When I assert image with path: "files/A.png" as "D_GetChecks_4"
-        When I stop VRS session
+        When I stop session
 
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "E_GetChecks5"
           suiteName: Suite2
         """
         When I assert image with path: "files/A.png" as "E_GetChecks_5"
-        When I stop VRS session
+        When I stop session
 
         # Suite1 - check 1st page response
         When I send "get" request to "http://<serverDomain>:<serverPort>/checks?page=1&filter_suitename_eq=Suite1" with:
@@ -378,45 +378,45 @@ Feature: Get Checks
 
     Scenario: Pagination - filter by suite name, sort by name
 
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "B_GetChecks2"
           suiteName: Suite1
         """
         When I assert image with path: "files/A.png" as "B_GetChecks_2"
-        When I stop VRS session
+        When I stop session
 
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "C_GetChecks3"
           suiteName: Suite1
         """
         When I assert image with path: "files/A.png" as "C_GetChecks_3"
-        When I stop VRS session
+        When I stop session
 
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "D_GetChecks4"
           suiteName: Suite1
         """
         When I assert image with path: "files/A.png" as "D_GetChecks_4"
-        When I stop VRS session
+        When I stop session
 
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "A_GetChecks1"
           suiteName: Suite1
         """
         When I assert image with path: "files/A.png" as "A_GetChecks_1"
-        When I stop VRS session
+        When I stop session
 
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "E_GetChecks5"
           suiteName: Suite2
         """
         When I assert image with path: "files/A.png" as "E_GetChecks_5"
-        When I stop VRS session
+        When I stop session
 
         # Suite1 - check 1st page response
         When I send "get" request to "http://<serverDomain>:<serverPort>/checks?page=1&sort_name_1&filter_suitename_eq=Suite1" with:

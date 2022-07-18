@@ -8,19 +8,19 @@ Feature: Affected elements
 
     Scenario: Get Affected elements without offset
         # first check
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: Get Affected elements
           suiteName: Affected elements
         """
         When I open the url "<syngrisiUrl>static/affected.html"
         When I visually check page with DOM as "Affected without shifting"
-        When I stop VRS session
+        When I stop session
         When I accept via http the 1st check with name "Affected without shifting"
         When I wait for "1" seconds
 
         # second check
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: Get Affected elements
           suiteName: Affected elements
@@ -31,7 +31,7 @@ Feature: Affected elements
         document.getElementById('child').style['height']='90px'
         """
         When I visually check page with DOM as "Affected without shifting"
-        When I stop VRS session
+        When I stop session
 
         When I get all affected elements in current and last successful checks from the server
         Then I expect "actualElements" saved object:

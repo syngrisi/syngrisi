@@ -5,14 +5,14 @@ Feature: Regions works properly
         Given I clear Database and stop Server
         Given I start Server and start Driver
 
-        Given I start VRS session with parameters:
+        Given I start session with parameters:
         """
           testName: "region check"
         """
         When I open the app
         When I check image with path: "files/A.png" as "region"
         Then the "check" "status" should be "new"
-        When I stop VRS session
+        When I stop session
 
     Scenario: Create Region without saving
         When I accept via http the 1st check with name "region"

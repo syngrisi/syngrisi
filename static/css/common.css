@@ -13707,6 +13707,10 @@ html {
     margin-left: auto !important;
   }
 }
+body {
+  font-family: "Inter", sans-serif;
+}
+
 body::-webkit-scrollbar {
   display: none;
 }

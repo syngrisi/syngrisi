@@ -5,14 +5,14 @@ Feature: DOM dump
       Given I start Server and start Driver
 
   Scenario: Create check with DOM dump
-    Given I start VRS session with parameters:
+    Given I start session with parameters:
     """
       testName: Create Check with Dom Dump
       suiteName: Dom Dump
     """
     When I open the url "<syngrisiUrl>static/shift.html"
     When I visually check page with DOM as "Dom dump check"
-    When I stop VRS session
+    When I stop session
 
     Then I expect "checkDump" saved object:
     """

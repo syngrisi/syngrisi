@@ -179,16 +179,13 @@ module.exports = async function (app) {
                 .catch(next);
         })
         .get('/checks/byfilter', ensureLoggedIn(), async (req, res, next) => {
-            API.checksByFilter(req, res)
-                .catch(next);
+            API.checksByFilter(req, res);
         })
         .get('/snapshots/byfilter', ensureLoggedIn(), async (req, res, next) => {
-            API.shapshotsByFilter(req, res)
-                .catch(next);
+            API.shapshotsByFilter(req, res);
         })
         .get('/tests/byfilter', ensureLoggedIn(), async (req, res, next) => {
-            API.testsByFilter(req, res)
-                .catch(next);
+            API.testsByFilter(req, res);
         })
         .put('/tests/:id', async (req, res, next) => {
             if (process.env.TEST !== '1') {
@@ -200,8 +197,7 @@ module.exports = async function (app) {
                 .catch(next);
         })
         .get('/screenshots', ensureLoggedIn(), async (req, res, next) => {
-            API.getScreenshotList(req, res)
-                .catch(next);
+            API.getScreenshotList(req, res);
         })
         .get('/logout', async (req, res) => {
             await req.logout();

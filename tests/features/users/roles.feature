@@ -12,7 +12,7 @@ Feature: User roles
           TEST: 1
           SYNGRISI_AUTH: 0
         """
-        Given I start VRS server
+        Given I start Server
         When I create via http test user
         Given I stop the Syngrisi server
         When I set env variables:

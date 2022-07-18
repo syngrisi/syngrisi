@@ -3,8 +3,8 @@ Feature: Smoke VRS API
 
     Background:
         Given I clear Database and stop Server
-        Given I start VRS server
-        Given I setup VRS driver
+        Given I start Server
+        Given I setup driver
 
     Scenario: New test
         When I send "post" request to "http://<serverDomain>:<serverPort>/tests" with:
