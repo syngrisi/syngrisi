@@ -1,4 +1,3 @@
-@smoke
 Feature: Task - Remove old checks
 
     Background:
@@ -24,6 +23,7 @@ Feature: Task - Remove old checks
         When I generate via http API key for the User
         When I set the API key in config
 
+    @smoke
     Scenario: Remove old checks [unaccepted]
         When I create "1" tests with:
         """
@@ -83,8 +83,9 @@ Feature: Task - Remove old checks
         Then I expect via http 0 baselines
         Then I expect exact "0" snapshot files
 
+    @smoke
     Scenario: Remove old checks [unaccepted_old_A, accepted_new_B]
-    The old unaccepted check should be removed since it have another ident (name),
+    The old unaccepted check(and related items) should be removed since it have another ident (name),
     not have any baseline and related to new checks snapshots
 
         When I create "1" tests with:
