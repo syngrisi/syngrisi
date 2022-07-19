@@ -1,3 +1,4 @@
+@smoke
 Feature: Remove Inconsistent items
 
     Background:
