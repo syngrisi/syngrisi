@@ -77,7 +77,8 @@ async function getNotPendingChecksByIdent(identifier) {
 
 // snapshots
 async function getSnapshotByImgHash(hash) {
-    return Snapshot.findOne({ imghash: hash });
+    return Snapshot.findOne({ imghash: hash })
+        .exec();
 }
 
 async function createSnapshot(parameters) {
@@ -861,9 +862,6 @@ async function createCheck(
         log.debug(`cannot find the snapshot with hash: '${checkParam.hashCode}'`, $this, logOpts);
         return { status: 'needFiles' };
     }
-    if (snapshotFoundedByHashcode) {
-        log.debug(`snapshot was found by hashcode: '${checkParam.hashCode}'`, $this, logOpts);
-    }
 
     let currentSnapshot;
     let currentBaselineSnapshot;
@@ -871,6 +869,11 @@ async function createCheck(
     const fileData = checkParam.files ? checkParam.files.file.data : false;
 
     if (snapshotFoundedByHashcode) {
+        const fullFilename = `${config.defaultBaselinePath}${snapshotFoundedByHashcode.filename}`;
+        if (!fss.existsSync(fullFilename)) {
+            throw new Error(`Cannot found the baseline file: '${fullFilename}'`);
+        }
+
         log.debug(`snapshot with such hashcode: '${checkParam.hashCode}' is already exists, will clone it`, $this, logOpts);
         currentSnapshot = await cloneSnapshot(snapshotFoundedByHashcode, checkParam.name);
     } else {

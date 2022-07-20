@@ -28,7 +28,7 @@ const removeSnapshotFile = async (snapshot) => {
     };
     log.debug({ isLastSnapshotFile: isLastSnapshotFile() });
     if (isLastSnapshotFile()) {
-        const path = snapshot.filename ? `${config.defaultBaselinePath}${snapshot.filename}` : `${config.defaultBaselinePath}${snapshot.id}.png`;
+        const path = `${config.defaultBaselinePath}${snapshot.filename}`;
         log.silly(`path: ${path}`, $this);
         if (fss.existsSync(path)) {
             log.debug(`remove file: '${path}'`, $this, {
