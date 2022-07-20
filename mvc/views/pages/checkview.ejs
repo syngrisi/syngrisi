@@ -198,10 +198,19 @@
 
         var mainView = {};
 
+        function onImageErrorHandler(...e) {
+            console.log(e);
+            const imgSrc = e[0].path[0].src
+            const msg = `Cannot load image: '${imgSrc}'`
+            console.error(msg);
+            MainView.showToaster(msg, 'Error');
+        }
+
         // wait for image loading, throw an error on timeout
         function createImageAndWaitForLoad(src) {
             const timeout = 90000;
             const img = new Image();
+            img.addEventListener('error', onImageErrorHandler);
             img.src = src;
             return Promise.race([
                 new Promise((resolve, reject) => {
