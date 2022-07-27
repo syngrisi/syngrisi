@@ -73,6 +73,6 @@ npm run clear
 | `SYNGRISI_DOCKER_DB_PATH`      | - | + |  Host Path to Syngrisi Database files   | `./data/db_data` |
 | `LOGLEVEL`                     | + | - | log level (`error`|`warn`|`info`|`verbose`|`debug`|`silly`) default   | `debug` |
 | `PAGE_SIZE`                    | + | - | number of tests items on that return `/checks?page={page_num}` API   | `50` |
-| `SYNGRISI_APP_PORT`                         | + | - | tcp port for application server |`3000`|
-| `TEST`                         | + | - | enables test admin user if equal `1`, used only for tests purposes   | `0` |
+| `SYNGRISI_APP_PORT`            | + | - | tcp port for application server |`3000`|
+| `SYNGRISI_TEST_MODE`           | + | - | enables test admin user if equal `1`, used only for tests purposes   | `0` |
 

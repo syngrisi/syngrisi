@@ -1673,7 +1673,7 @@ exports.loadTestUser = async (req, res) => {
         msgType: 'LOAD',
         ref: 'Administrator',
     };
-    if (process.env.TEST !== '1') {
+    if (process.env.SYNGRISI_TEST_MODE !== '1') {
         res.json({ message: 'the feature works only in test mode' });
         return;
     }

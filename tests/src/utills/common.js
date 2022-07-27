@@ -194,7 +194,6 @@ const startServer = (params) => {
 
 const stopServer = () => {
     try {
-        console.log('try to kill server');
         let output;
         if (process.env.DOCKER === '1') {
             output = execSync('docker-compose stop')

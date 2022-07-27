@@ -192,7 +192,7 @@ module.exports = async (app) => {
             API.testsByFilter(req, res);
         })
         .put('/tests/:id', async (req, res, next) => {
-            if (process.env.TEST !== '1') {
+            if (process.env.SYNGRISI_TEST_MODE !== '1') {
                 res.status('400')
                     .json({ error: 'only in test mode' });
                 return next;

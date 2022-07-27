@@ -26,6 +26,7 @@ services:
             SYNGRISI_DB_URI: "${SYNGRISI_DB_URI:-mongodb://syngrisi-db/VRSdb}"
             SYNGRISI_IMAGES_PATH: "${SYNGRISI_IMAGES_PATH:-./baselines/}"
             SYNGRISI_AUTH: "${SYNGRISI_AUTH:-1}"
+            SYNGRISI_TEST_MODE: "${SYNGRISI_TEST_MODE:0}"
             SYNGRISI_APP_PORT: 3000
 
         healthcheck:
