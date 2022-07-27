@@ -7,7 +7,7 @@ When(/^I create via http test user$/, async function () {
     const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/loadTestUser`;
     // console.log({ uri });
     const res = await got.get(uri);
-    // console.log({ response: res.body });
+    console.log({ response: res.body });
     expect(JSON.parse(res.body).username)
         .toBe('Test');
 });
