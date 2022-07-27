@@ -14045,7 +14045,7 @@ div[name=testinfo]:nth-of-type(4n+1) {
   display: inline-block;
   background-size: cover;
   background-repeat: no-repeat;
-  background-image: url(/static/icons/not-accepted-button-icon.svg);
+  background-image: url(/static/images/icons/not-accepted-button-icon.svg);
 }
 
 .prev-accepted-button-icon {
@@ -14054,7 +14054,7 @@ div[name=testinfo]:nth-of-type(4n+1) {
   display: inline-block;
   background-size: cover;
   background-repeat: no-repeat;
-  background-image: url(/static/icons/prev-accepted-button-icon.svg);
+  background-image: url(/static/images/icons/prev-accepted-button-icon.svg);
 }
 
 .accepted-button-icon {
@@ -14063,7 +14063,7 @@ div[name=testinfo]:nth-of-type(4n+1) {
   display: inline-block;
   background-size: cover;
   background-repeat: no-repeat;
-  background-image: url(/static/icons/accepted-button-icon.svg);
+  background-image: url(/static/images/icons/accepted-button-icon.svg);
 }
 
 .remove-button-icon {
@@ -14072,7 +14072,7 @@ div[name=testinfo]:nth-of-type(4n+1) {
   display: inline-block;
   background-size: cover;
   background-repeat: no-repeat;
-  background-image: url(/static/icons/remove-button-icon.svg);
+  background-image: url(/static/images/icons/remove-button-icon.svg);
 }
 
 .login-logo {

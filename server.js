@@ -68,6 +68,7 @@ app.set('view engine', 'ejs');
 app.use(express.json({ limit: '50mb' }));
 app.use('/snapshoots', express.static(config.defaultBaselinePath));
 app.use('/static', express.static('./static'));
+app.use('/public', express.static('./public'));
 app.use('/lib', express.static('./mvc/views/lib'));
 const routes = require('./mvc/routes/vrsRoutes');
 

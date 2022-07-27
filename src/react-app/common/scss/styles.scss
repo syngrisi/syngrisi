@@ -1,0 +1,47 @@
+@use "sass:color";
+
+//variables overwriting should be before the import statement
+$main-green: #649D77;
+$main-light: #f8f9fa;
+$navbar-light-toggler-border-color: rgba(0, 0, 0, 0);
+
+@import "../../../../node_modules/bootstrap/scss/bootstrap";
+
+body {
+    font-family: Inter, sans-serif;
+}
+
+#logo--img {
+    width: 36px;
+}
+
+#logo--text {
+    font-size: 1.2em;
+    color: $main-green;
+    font-weight: 500;
+    letter-spacing: -1px;
+}
+
+
+//.bg-navbar {
+//    background-color: $main-green;
+//}
+
+//.navbar-brand:hover {
+//    color: $main-light;
+//}
+//
+//.navbar-brand {
+//    color: $main-light;
+//    background-color: $main-green;
+//}
+
+.unlink {
+    color: inherit;
+    text-decoration: none;
+}
+
+.unlink:hover {
+    color: inherit;
+    text-decoration: none;
+}

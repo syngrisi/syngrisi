@@ -92,8 +92,9 @@
 </div>
 
 <div name="footer" class="row footer bg-black text-light">
-    <div class="col-auto pl-4 pt-1"><img id="logoImg" src="./imgs/test-logo.png" alt="logo"
-                                         style="width: 40px; display: block"></div>
+    <div class="col-auto pl-4 pt-1">
+        <img id="logoImg" src="images/logos/test-logo.png" alt="logo"
+             style="width: 40px; display: block"></div>
     <div class="col-6 pt-3 pl-0 pb-2">
         2020-2999 All rights are reserved
     </div>
@@ -117,26 +118,37 @@
     function login() {
         const login = document.getElementById('inputEmail');
         const password = document.getElementById('inputPassword');
-        console.log(login.value)
-        console.log(password.value)
-        if (login.value == 'admin@admin.com' && password.value == 'password'){
-            document.location.href = "app_1.html";
-        }
-        else{
-            alert('Wrong creds')
+        console.log(login.value);
+        console.log(password.value);
+        if (login.value == 'admin@admin.com' && password.value == 'password') {
+            document.location.href = 'app_1.html';
+        } else {
+            alert('Wrong creds');
         }
     }
 
     function broke() {
-        document.getElementById('userIcon').classList.remove('fa-2x');
-        document.getElementById('userIcon').classList.add('fa-5x');
-        document.getElementById('logoImg').src = "asd.png";
-        document.getElementById('btn-signup').classList.add('bg-light');
-        document.getElementById('btn-signup').classList.add('pt-5');
+        document.getElementById('userIcon')
+                .classList
+                .remove('fa-2x');
+        document.getElementById('userIcon')
+                .classList
+                .add('fa-5x');
+        document.getElementById('logoImg').src = 'asd.png';
+        document.getElementById('btn-signup')
+                .classList
+                .add('bg-light');
+        document.getElementById('btn-signup')
+                .classList
+                .add('pt-5');
         document.getElementById('inputEmail').style.width = '60px';
-        document.getElementById('signInIcon').remove();
-        document.getElementById('googgleBtn').classList.add('text-danger');
-        document.getElementById('inputPassword').setAttribute('placeholder', 'PWD');
+        document.getElementById('signInIcon')
+                .remove();
+        document.getElementById('googgleBtn')
+                .classList
+                .add('text-danger');
+        document.getElementById('inputPassword')
+                .setAttribute('placeholder', 'PWD');
     }
 </script>
 </body>
