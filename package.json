@@ -17,6 +17,7 @@
     ],
     "scripts": {
         "test": "cd tests && npm run test",
+        "test:docker": "docker-compose build && cd tests && DOCKER=1 SYNGRISI_DOCKER_PORT=3102 SYNGRISI_DB_DOCKER_PORT=27018 SYNGRISI_DOCKER_IMAGES_PATH=./baselines_docker SYNGRISI_DB_URI=mongodb://syngrisi-db:27017/VRSdb npm run test",
         "smoke": "cd tests && npm run smoke",
         "pub": "np --yolo --no-publish",
         "starttest": "node server.js",
@@ -26,9 +27,11 @@
         "startservice": "forever start -l forever.log -o out.log -e err.log server.js",
         "start": "nodemon --ignore 'mvc/views/lib/*.js' --ignore 'tests' server.js",
         "clean": "read -p \"Are you sure you want to clean the project? [y/n] \" REPLY; if [[ $REPLY =~ ^[Yy]$ ]]; then mongo VRSdb --eval \"db.dropDatabase();\" && rm -f ./baselines/*.png; fi",
-        "start_test": "cross-env VRT_CONN_STRING='mongodb://localhost/VRSdbTest' nodemon server.js",
+        "start_test": "cross-env SYNGRISI_DB_URI='mongodb://localhost/VRSdbTest' nodemon server.js",
         "clear_test": "mongo VRSdbTest$CID --eval \"db.dropDatabase();\" && rm -rf ./baselinesTest/$CID",
         "clear_test_db_only": "mongo VRSdbTest$CID --eval \"db.dropDatabase();\"",
+        "docker_clear_test": "rm -rf ./data/db_data && rm -rf ./baselinesTest/$CID",
+        "docker_clear_test_db_only": "rm -rf ./data/db_data",
         "clear_test_screenshots_only": "rm -rf ./baselinesTest/$CID/*"
     },
     "author": {
