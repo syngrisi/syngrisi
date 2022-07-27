@@ -116,6 +116,7 @@ const requestWithLastSessionSid = async function requestWithLastSessionSid(uri, 
 };
 
 const getCid = function getCid() {
+    if (process.env.DOCKER === '1') return 100;
     return parseInt(process.argv.filter((x) => x.includes('CID'))[0].split('-')[1], 10);
 };
 
@@ -128,27 +129,37 @@ const startServer = (params) => {
     const srvOpts = YAML.parse(params) || {};
     const cid = getCid();
 
-    const databaseName = srvOpts.databaseName || 'VRSdbTest';
+    const databaseName = 'VRSdbTest';
     const cmdPath = '../';
     const cidPort = 3002 + cid;
-    const env = Object.create(process.env);
+    const env = { ...process.env };
     env.SYNGRISI_DISABLE_FIRST_RUN = process.env.SYNGRISI_DISABLE_FIRST_RUN || '1';
     env.SYNGRISI_AUTH = process.env.SYNGRISI_AUTH || '0';
-    // env.VRS_PORT = srvOpts.port || browser.config.serverPort;
-    env.VRS_PORT = cidPort;
+    env.SYNGRISI_APP_PORT = cidPort;
     browser.config.serverPort = cidPort;
     browser.config.testScreenshotsFolder = `./baselinesTest/${cid}/`;
-    env.VRS_BASELINE_PATH = srvOpts.baseLineFolder || browser.config.testScreenshotsFolder;
-    env.VRS_CONN_STRING = `mongodb://localhost/${databaseName}${cid}`;
+    if (process.env.DOCKER !== '1') env.SYNGRISI_IMAGES_PATH = browser.config.testScreenshotsFolder;
+
+    if (process.env.DOCKER !== '1') env.SYNGRISI_DB_URI = `mongodb://localhost/${databaseName}${cid}`;
+
     const fs = require('fs');
     const stream = fs.createWriteStream(`./logs/server_log_${cid}.log`);
-    const child = spawn('node',
-        ['server.js', `syngrisi_test_server_${cid}`], {
-            env,
-            shell: process.platform === 'win32',
-            cwd: cmdPath,
-        });
-
+    let child;
+    if (process.env.DOCKER === '1') {
+        child = spawn('docker-compose',
+            ['up', '-d'], {
+                env,
+                shell: process.platform === 'win32',
+                cwd: cmdPath,
+            });
+    } else {
+        child = spawn('node',
+            ['server.js', `syngrisi_test_server_${cid}`], {
+                env,
+                shell: process.platform === 'win32',
+                cwd: cmdPath,
+            });
+    }
     child.stdout.setEncoding('utf8');
     child.stdout.on('data', (data) => {
         // stream.write(removeConsoleColors(data));
@@ -184,9 +195,16 @@ const startServer = (params) => {
 const stopServer = () => {
     try {
         console.log('try to kill server');
-        const output = execSync(`pkill -f syngrisi_test_server_${getCid()}`)
-            .toString();
-        // console.log({ output });
+        let output;
+        if (process.env.DOCKER === '1') {
+            output = execSync('docker-compose stop')
+                .toString();
+        } else {
+            output = execSync(`pkill -f syngrisi_test_server_${getCid()}`)
+                .toString();
+        }
+
+        console.log({ output });
     } catch (e) {
         console.log('WARNING: cannot stop te Syngrisi server');
         // console.log('WARNING: cannot stop te Syngrisi server via child, try to kill process');
@@ -197,11 +215,12 @@ const stopServer = () => {
 const clearDatabase = (removeBaselines = true) => {
     const cmdPath = '../';
     let result;
+    const taskNamePefix = `${process.env.DOCKER === '1' ? 'docker_' : ''}`;
     if (removeBaselines) {
-        result = execSync(`CID=${getCid()} npm run clear_test`, { cwd: cmdPath })
+        result = execSync(`CID=${getCid()} npm run ${taskNamePefix}clear_test`, { cwd: cmdPath })
             .toString('utf8');
     } else {
-        result = execSync(`CID=${getCid()} npm run clear_test_db_only`, { cwd: cmdPath })
+        result = execSync(`CID=${getCid()} npm run ${taskNamePefix}clear_test_db_only`, { cwd: cmdPath })
             .toString('utf8');
     }
 

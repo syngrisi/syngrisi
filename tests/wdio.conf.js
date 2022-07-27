@@ -3,7 +3,7 @@ const path = require('path');
 const WdioScreenshot = require('wdio-screenshot-v5');
 const hasha = require('hasha');
 const { hooks } = require('./src/support/hooks');
-
+const streams = process.env.DOCKER === '1' ? 1 : (parseInt(process.env.STREAMS, 10) || 3);
 exports.config = {
     rootPath: process.cwd(),
     testPlatform: process.env.TEST_PLATFORM || 'macOS',
@@ -17,9 +17,9 @@ exports.config = {
         './src/features/**/*.feature',
     ],
     exclude: [],
-    maxInstances: parseInt(process.env.STREAMS, 10) || 3,
+    maxInstances: streams,
     capabilities: [{
-        maxInstances: parseInt(process.env.STREAMS, 10) || 3,
+        maxInstances: streams,
         browserName: 'chrome',
         'goog:chromeOptions': {
             args: process.env.HL === '1' ? ['--headless', '--enable-automation'] : ['--enable-automation'],

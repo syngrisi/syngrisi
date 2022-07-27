@@ -18,3 +18,4 @@ node_modules
 /debug.html
 /logs/*
 /backups
+/data

@@ -31,8 +31,8 @@ When(/^I clear screenshots folder$/, () => {
 });
 
 When(/^I clear Database and stop Server$/, () => {
-    clearDatabase();
     stopServer();
+    clearDatabase();
 });
 
 When(/^I set env variables:$/, (yml) => {
