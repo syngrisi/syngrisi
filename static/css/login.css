@@ -17,7 +17,7 @@ body::before {
 }
 
 body {
-    background-image: url("../imgs/blur_login_background3.jpg");
+    background-image: url("../images/backgroungs/blur_login_background3.jpg");
     opacity: 1;
     width: 101%;
     height: 101%;
