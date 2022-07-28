@@ -1,3 +1,4 @@
+@exclude_docker
 Feature: Crashed check
     This feature check if test is failed when comparison is failed and server gives the 500 error.
     This test use Resemble.Js issue when library crashed with specific images and env variable COMPARE_METHOD=2

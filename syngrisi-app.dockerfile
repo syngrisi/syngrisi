@@ -4,7 +4,7 @@ WORKDIR /usr/src/syngrisi
 
 ENV PYTHONUNBUFFERED=1
 
-COPY ../../package*.json ./
+COPY ./package*.json ./
 
 # 1. node canvas
 RUN apk  --no-cache --virtual .canvas-build-deps add \
@@ -28,10 +28,10 @@ RUN apk  --no-cache --virtual .canvas-build-deps add \
     && apk add --no-cache --virtual .g++ \
     && npm install canvas --build-from-source\
     && apk del .gyp \
-    # 2. npm install \
-    && npm install \
-    # 3. mongodb-tools && rsync \
+    # 2. mongodb-tools && rsync \
     && apk add rsync \
-    && apk add mongodb-tools
+    && apk add mongodb-tools \
+    # 3. npm install \
+    && npm install
 
-COPY ../.. .
+COPY . ./

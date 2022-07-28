@@ -17,7 +17,7 @@
     ],
     "scripts": {
         "test": "cd tests && npm run test",
-        "test:docker": "docker-compose build && cd tests && DOCKER=1 SYNGRISI_DOCKER_PORT=3102 SYNGRISI_DB_DOCKER_PORT=27018 SYNGRISI_DOCKER_IMAGES_PATH=./baselines_docker SYNGRISI_DB_URI=mongodb://syngrisi-db:27017/VRSdb npm run test",
+        "test:docker": "cd tests && npm run test:docker",
         "smoke": "cd tests && npm run smoke",
         "pub": "np --yolo --no-publish",
         "starttest": "node server.js",
