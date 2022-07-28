@@ -10,7 +10,8 @@ When(/^I send "([^"]*)" request to "([^"]*)"$/, async function (reqType, url) {
 });
 
 When(/^I send "([^"]*)" request to "([^"]*)" with:$/, async function (reqType, url, yml) {
-    url = YAML.parse(this.fillItemsPlaceHolders(fillCommonPlaceholders(url)));
+    const parsedUrl = YAML.parse(this.fillItemsPlaceHolders(fillCommonPlaceholders(url)));
+    console.log({ parsedUrl });
     let params;
     if (yml) params = YAML.parse(this.fillItemsPlaceHolders(fillCommonPlaceholders(yml)));
     let response;
@@ -21,12 +22,12 @@ When(/^I send "([^"]*)" request to "([^"]*)" with:$/, async function (reqType, u
                 for (const key in params.form) {
                     form.append(key, params.form[key]);
                 }
-                response = frisby[reqType](url, { body: form });
+                response = frisby[reqType](parsedUrl, { body: form });
             }
             break;
         }
         case 'get': {
-            response = frisby[reqType](url);
+            response = frisby[reqType](parsedUrl);
             break;
         }
         default:
