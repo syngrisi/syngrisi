@@ -1129,7 +1129,7 @@ exports.createCheck = async (req, res) => {
 exports.getChecks2 = async (req, res) => {
     const opts = req.query;
 
-    const pageSize = parseInt(process.env['PAGE_SIZE'], 10) || 50;
+    const pageSize = parseInt(process.env['SYNGRISI_PAGINATION_SIZE'], 10) || 50;
 
     const skip = opts.page ? ((parseInt(opts.page, 10)) * pageSize - pageSize) : 0;
 
@@ -1209,7 +1209,7 @@ exports.getChecks2 = async (req, res) => {
 exports.getChecks = async (req, res) => {
     const opts = req.query;
 
-    const pageSize = parseInt(process.env['PAGE_SIZE'], 10) || 50;
+    const pageSize = parseInt(process.env['SYNGRISI_PAGINATION_SIZE'], 10) || 50;
 
     const skip = opts.page ? ((parseInt(opts.page, 10)) * pageSize - pageSize) : 0;
 

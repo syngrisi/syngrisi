@@ -7,7 +7,7 @@ Feature: Pagination
     Scenario: Pagination - no duplicated tests
         When I set env variables:
         """
-          PAGE_SIZE: 10
+          SYNGRISI_PAGINATION_SIZE: 10
         """
         Given I start Server and start Driver
 
@@ -29,7 +29,7 @@ Feature: Pagination
     Scenario: Pagination, suite - no duplicated tests
         When I set env variables:
         """
-          PAGE_SIZE: 10
+          SYNGRISI_PAGINATION_SIZE: 10
         """
         Given I start Server and start Driver
 
@@ -52,7 +52,7 @@ Feature: Pagination
     Scenario: Pagination - 3 pages appears from start
         When I set env variables:
         """
-          PAGE_SIZE: 10
+          SYNGRISI_PAGINATION_SIZE: 10
         """
         Given I start Server and start Driver
 
@@ -69,7 +69,7 @@ Feature: Pagination
     Scenario: Pagination - scrolling
         When I set env variables:
         """
-          PAGE_SIZE: 10
+          SYNGRISI_PAGINATION_SIZE: 10
         """
         Given I start Server and start Driver
 

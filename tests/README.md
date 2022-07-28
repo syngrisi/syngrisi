@@ -31,4 +31,4 @@ generated value. There is two types of placeholders: `common` and `stored`
 
 `STREAMS` - number of browser instance
 `RETRY` - number of retries
-`DOCKER` - run test in docker-compose when equal `1`
+`DOCKER` - run test in docker-compose when equal `1`, this need to be sure that docker-compose option works properly (e.g.: the image in dockerfile was updated), this operation cannot be paralleled at this time and takes a lot of time, also there is a few features that nor working with docker that marked with the `@exclude_docker` tag
