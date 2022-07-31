@@ -254,6 +254,11 @@ module.exports = async (app) => {
             API.status(req, res)
                 .catch(next);
         })
+        // just for testing purposes
+        .get('/status_with_api_key', ensureApiKey(), async (req, res, next) => {
+            API.status(req, res)
+                .catch(next);
+        })
         .get('/task_handle_old_checks', ensureLoggedInOrApiKey(), async (req, res, next) => {
             API.task_handle_old_checks(req, res)
                 .catch(next);

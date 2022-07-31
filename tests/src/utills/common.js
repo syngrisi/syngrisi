@@ -21,6 +21,7 @@ const saveRandomImage = async function saveRandomImage(fullPath) {
             width: size,
             height: size,
         });
+        // eslint-disable-next-line no-unused-vars
         for (const val of [...Array(size)]) {
             bitmap.setPixel(getRandomInt(size), getRandomInt(size), 255, 1, 1, 255);
         }
@@ -37,7 +38,7 @@ const killServer = (port) => {
         try {
             const output = execSync(`npx kill-port ${port}`)
                 .toString();
-            // console.log({ output });
+            console.log({ output });
             return true;
         } catch (e) {
             console.log({ error: e.stdout.toString() });
@@ -122,11 +123,12 @@ const getCid = function getCid() {
 
 module.exports.removeConsoleColors = (string) => {
     return string.replace(
-        /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
+        /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, ''
+    );
 };
 
 const startServer = (params) => {
-    const srvOpts = YAML.parse(params) || {};
+    // const srvOpts = YAML.parse(params) || {};
     const cid = getCid();
 
     const databaseName = 'VRSdbTest';
@@ -214,12 +216,12 @@ const stopServer = () => {
 const clearDatabase = (removeBaselines = true) => {
     const cmdPath = '../';
     let result;
-    const taskNamePefix = `${process.env.DOCKER === '1' ? 'docker_' : ''}`;
+    const taskNamePrefix = `${process.env.DOCKER === '1' ? 'docker_' : ''}`;
     if (removeBaselines) {
-        result = execSync(`CID=${getCid()} npm run ${taskNamePefix}clear_test`, { cwd: cmdPath })
+        result = execSync(`CID=${getCid()} npm run ${taskNamePrefix}clear_test`, { cwd: cmdPath })
             .toString('utf8');
     } else {
-        result = execSync(`CID=${getCid()} npm run ${taskNamePefix}clear_test_db_only`, { cwd: cmdPath })
+        result = execSync(`CID=${getCid()} npm run ${taskNamePrefix}clear_test_db_only`, { cwd: cmdPath })
             .toString('utf8');
     }
 
