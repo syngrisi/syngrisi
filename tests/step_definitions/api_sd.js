@@ -51,8 +51,8 @@ When(/^I expect the "([^"]*)" response with:$/, async function (requestType, yml
 
 When(/^I expect the "([^"]*)" ([\d]+)st value response with:$/, async function (requestType, itemNum, yml) {
     const params = YAML.parse(yml);
-    const TMP = await this.getSavedItem(requestType);
-    console.log({ TMP });
+    const result = await this.getSavedItem(requestType);
+    console.log({ result });
     const response = Object.values(await this.getSavedItem(requestType))[parseInt(itemNum, 10) - 1];
     console.log({ response });
     expect(response)
