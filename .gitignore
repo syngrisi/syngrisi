@@ -19,3 +19,4 @@ node_modules
 /logs/*
 /backups
 /data
+.env
