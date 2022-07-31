@@ -266,8 +266,12 @@ exports.changePasswordPage = function changePasswordPage(req, res) {
     }
 };
 
-exports.firstRunPage = function firstRunPage(req, res) {
+exports.firstRunPage = async function firstRunPage(req, res) {
     try {
+        if (await global.appSettings.get('firstRun') !== true) {
+            res.status(403)
+                .json({ error: 'Forbidden' });
+        }
         const { version } = require('../../../package.json');
         const displayOldPassword = req.query.admin ? 'd-none' : '';
         return res.render('pages/firstRun', {

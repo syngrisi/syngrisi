@@ -66,6 +66,7 @@ Feature: Authentication on
         statusCode: 200
         json:
           alive: true
+          currentUser: j_doe@gmail.com
         """
 
     # redirect to login page
@@ -81,7 +82,11 @@ Feature: Authentication on
         When I wait for "2" seconds
         Then I expect HTML contains:
         """
-        "alive": true
+        "alive":true
+        """
+        Then I expect HTML contains:
+        """
+        "currentUser":"j_doe@gmail.com"
         """
 
 #    Scenario: Log In or Api Key - Authorized

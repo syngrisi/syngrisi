@@ -1658,10 +1658,11 @@ exports.getScreenshotList = (req, res) => {
 // TASKS
 exports.status = async (req, res) => {
     const count = await User.countDocuments();
+    const currentUser = req.user || await User.findOne({ apiKey: req.apiKey });
     log.info(`server status: check users counts: ${count}`);
     // log.debug({ count });
     if (count > 1) {
-        res.json({ alive: true });
+        res.json({ alive: true, currentUser: currentUser.username });
         return;
     }
     res.json({ alive: false });

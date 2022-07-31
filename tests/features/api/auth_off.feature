@@ -32,5 +32,9 @@ Feature: Authentication Off
         When I wait for "2" seconds
         Then I expect HTML contains:
         """
-        "alive": true
+        "alive":true
+        """
+        Then I expect HTML contains:
+        """
+        "currentUser":"Guest"
         """
