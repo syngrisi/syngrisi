@@ -164,16 +164,17 @@ When(/^I click on the element "([^"]*)" via js$/, function (selector) {
 });
 
 Then(/^I expect HTML( does not|) contains:$/, function (mode, text) {
-    if (mode === '') {
+    if (mode === ' does not') {
         const source = browser
             .getPageSource();
         expect(source)
+            .not
             .toContain(text);
+        return;
     }
     const source = browser
         .getPageSource();
     expect(source)
-        .not
         .toContain(text);
 });
 
@@ -250,7 +251,7 @@ Then(/^page source match:$/, (source) => {
         parseActualObj = JSON.parse(browser.getPageSource());
     }
     console.log({ parsedExpectedObj });
-    console.log({ parseActualdObj: parseActualObj });
+    console.log({ parseActualObj });
     expect(parseActualObj.user)
         .toMatchObject(parsedExpectedObj);
 });
