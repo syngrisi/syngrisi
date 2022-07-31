@@ -259,6 +259,14 @@ module.exports = async (app) => {
             API.status(req, res)
                 .catch(next);
         })
+        .get('/status_with_logged_in', ensureLoggedIn(), async (req, res, next) => {
+            API.status(req, res)
+                .catch(next);
+        })
+        .get('/status_with_api_key_or_logged_in', ensureLoggedInOrApiKey(), async (req, res, next) => {
+            API.status(req, res)
+                .catch(next);
+        })
         .get('/task_handle_old_checks', ensureLoggedInOrApiKey(), async (req, res, next) => {
             API.task_handle_old_checks(req, res)
                 .catch(next);
