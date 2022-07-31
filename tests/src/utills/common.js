@@ -9,6 +9,7 @@ const {
 const { got } = require('got-cjs');
 const { spawn, execSync } = require('child_process');
 const { SyngrisiDriver } = require('@syngrisi/syngrisi-wdio-sdk');
+const hasha = require('hasha');
 
 const saveRandomImage = async function saveRandomImage(fullPath) {
     function getRandomInt(max) {
@@ -84,6 +85,7 @@ const fillCommonPlaceholders = function fillPlaceholders(str) {
             syngrisiUrl: `http://${browser.config.serverDomain}:${browser.config.serverPort}/`,
             serverDomain: browser.config.serverDomain,
             serverPort: browser.config.serverPort,
+            hashedApiKey: hasha(browser.config.apiKey),
         }
     );
 };
