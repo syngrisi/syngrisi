@@ -21,17 +21,6 @@ Feature: Authentication on
 
         # create user
         When I login via http with user:"Test" password "123"
-        When I create via http user as:"Test" with params:
-        """
-        {
-            "username": "j_doe@gmail.com",
-            "firstName": "John",
-            "lastName": "Doe",
-            "role": "user",
-            "password": "Password-123"
-        }
-        """
-        When I login via http with user:"j_doe@gmail.com" password "Password-123"
         When I generate via http API key for the User
         When I set the API key in config
 
@@ -66,7 +55,7 @@ Feature: Authentication on
         statusCode: 200
         json:
           alive: true
-          currentUser: j_doe@gmail.com
+          currentUser: Test
         """
 
     # redirect to login page
@@ -77,7 +66,7 @@ Feature: Authentication on
         When I expect that element "button*=Login" is displayed
 
     Scenario: Log In - Authorized
-        When I login with user:"j_doe@gmail.com" password "Password-123"
+        When I login with user:"Test" password "123"
         When I open the url "http://<serverDomain>:<serverPort>/status_with_logged_in"
         When I wait for "2" seconds
         Then I expect HTML contains:
@@ -86,21 +75,49 @@ Feature: Authentication on
         """
         Then I expect HTML contains:
         """
-        "currentUser":"j_doe@gmail.com"
+        "currentUser":"Test"
         """
 
-#    Scenario: Log In or Api Key - Authorized
-#        When I send "get" request to "http://<serverDomain>:<serverPort>/status_with_api_key_or_logged_in?apikey=<hashedApiKey>" with:
-#        """
-#        """
-#        When I expect the "get" response with:
-#        """
-#        statusCode: 401
-#        json:
-#          error: 'API key missing'
-#        """
-#
-#        When I open the url "http://<serverDomain>:<serverPort>/status_with_logged_in"
-#        When I wait for "2" seconds
-#        When the current url contains "login?origin"
-#        When I expect that element "button*=Login" is displayed
+    Scenario: Basic or Api Key - Unauthorized
+        When I send "get" request to "http://<serverDomain>:<serverPort>/status_with_api_key_or_logged_in?apikey=123" with:
+        """
+        """
+        When I expect the "get" response with:
+        """
+        statusCode: 401
+        json:
+          error: 'Unauthorized - /status_with_api_key_or_logged_in?apikey=123'
+        """
+
+        When I open the url "http://<serverDomain>:<serverPort>/status_with_api_key_or_logged_in"
+        When I wait for "2" seconds
+        Then I expect HTML contains:
+        """
+        Unauthorized - /status_with_api_key_or_logged_in
+        """
+
+    Scenario: Basic or Api Key - Proper Api Key
+        When I send "get" request to "http://<serverDomain>:<serverPort>/status_with_api_key_or_logged_in?apikey=<hashedApiKey>" with:
+        """
+        """
+        When I wait for "2" seconds
+        When I expect the "get" response with:
+        """
+        statusCode: 200
+        json:
+          alive: true
+          currentUser: Test
+        """
+
+    Scenario: Basic or Api Key - Success Login
+        When I login with user:"Test" password "123"
+        When I open the url "http://<serverDomain>:<serverPort>/status_with_api_key_or_logged_in"
+        When I wait for "2" seconds
+        Then I expect HTML contains:
+        """
+        "alive":true
+        """
+        Then I expect HTML contains:
+        """
+        "currentUser":"Test"
+        """
