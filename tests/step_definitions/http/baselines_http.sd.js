@@ -6,7 +6,7 @@ const { requestWithLastSessionSid, fillCommonPlaceholders } = require('../../src
 
 Then(/^I expect via http (\d+) baselines$/, async function (num) {
     const baselines = (await requestWithLastSessionSid(
-        `http://${browser.config.serverDomain}:${browser.config.serverPort}/baselines`,
+        `http://${browser.config.serverDomain}:${browser.config.serverPort}/all_baselines`,
         this
     )).json;
 
@@ -16,7 +16,7 @@ Then(/^I expect via http (\d+) baselines$/, async function (num) {
 
 Then(/^I expect via http ([\d]+)st baseline with:$/, async function (num, yml) {
     const baselines = (await requestWithLastSessionSid(
-        `http://${browser.config.serverDomain}:${browser.config.serverPort}/baselines`,
+        `http://${browser.config.serverDomain}:${browser.config.serverPort}/all_baselines`,
         this
     )).json;
     console.log({ baselines });

@@ -309,10 +309,10 @@ async function acceptOneCheck(id, newBaselineSnapshotId, oldBaselineSnapshotId, 
         const check = JSON.parse(await getRequest(`check/${id}`));
         await acceptCheck(check, newBaselineSnapshotId);
 
-        const newBaseline = JSON.parse(await (await fetch(`baselines?snapshootId=${newBaselineSnapshotId}`))
+        const newBaseline = JSON.parse(await (await fetch(`all_baselines?snapshootId=${newBaselineSnapshotId}`))
             .text())[0];
 
-        const oldBaseline = JSON.parse(await (await fetch(`baselines?snapshootId=${oldBaselineSnapshotId}`))
+        const oldBaseline = JSON.parse(await (await fetch(`all_baselines?snapshootId=${oldBaselineSnapshotId}`))
             .text())[0];
 
         regionData = (await MainView.getRegionsData(oldBaseline._id)).ignoreRegions;
@@ -357,7 +357,7 @@ function acceptChecksByTestId(testId) {
                 await redrawCheckAcceptedStatus(acceptedCheckObj);
 
                 const regionData = await MainView.getRegionsData(realBaselineId);
-                const newBaseline = JSON.parse(await (await fetch(`baselines?snapshootId=${newBaselineSnapshotId}`))
+                const newBaseline = JSON.parse(await (await fetch(`all_baselines?snapshootId=${newBaselineSnapshotId}`))
                     .text())[0];
                 if (regionData.ignoreRegions && regionData.ignoreRegions !== 'undefined') {
                     MainView.sendIgnoreRegions(newBaseline._id, regionData.ignoreRegions);

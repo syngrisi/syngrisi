@@ -1,19 +1,23 @@
+/* eslint-disable indent */
+import { defineConfig } from 'vite';
 import * as path from 'path';
 import react from '@vitejs/plugin-react';
 
-export default {
+const config = {
     plugins: [react()],
-    root: path.resolve(__dirname, './src/react-app'),
+    root: path.resolve(__dirname, './src/ui-app/auth'),
     base: '',
     resolve: {},
     build: {
         minify: false,
-        outDir: '../../public/react-app',
+        outDir: '../../public/ui-app',
         rollupOptions: {
             input: {
                 // just mvp stub
-                root: path.resolve(__dirname, 'src/react-app/index.html'),
-                admin: path.resolve(__dirname, 'src/react-app/admin/index.html'),
+                stub: path.resolve(__dirname, 'src/ui-app/index.html'),
+                root: path.resolve(__dirname, 'src/ui-app/index/index.html'),
+                admin: path.resolve(__dirname, 'src/ui-app/admin/index.html'),
+                auth: path.resolve(__dirname, 'src/ui-app/auth/index.html'),
             },
         },
         // rollupOptions: {
@@ -27,5 +31,8 @@ export default {
     server: {
         port: 8080,
         hot: true,
+        open: '/',
     },
 };
+
+export default defineConfig(config);
