@@ -93,9 +93,6 @@ module.exports = async (app) => {
             API.getUsers(req, res)
                 .catch(next);
         })
-        .get('/baselines', ensureLoggedIn(), (req, res) => {
-            API.getBaselines(req, res);
-        })
         .get('/ident', ensureLoggedInOrApiKey(), (req, res) => {
             API.getIdent(req, res);
         })
@@ -165,6 +162,9 @@ module.exports = async (app) => {
         .get('/baselines/:id', ensureLoggedIn(), async (req, res, next) => {
             API.getBaseline(req, res)
                 .catch(next);
+        })
+        .get('/all_baselines', ensureLoggedIn(), (req, res) => {
+            API.getBaselines(req, res);
         })
         .get('/checkhistory/:id', ensureLoggedIn(), async (req, res, next) => {
             API.getCheckHistory(req, res)

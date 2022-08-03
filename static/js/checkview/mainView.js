@@ -570,11 +570,20 @@ class MainView {
 
     static async getRegionsData(baselineId) {
         try {
+            if (!baselineId) {
+                // console.log('Cannot get regions, baseline id is empty');
+                return [];
+            }
+
             const response = await fetch(`/baselines/${baselineId}`);
             const text = await response.text();
             if (response.status === 200) {
-                console.log(`Successful get baseline ignored regions, id: '${baselineId}'  resp: '${text}'`);
+                // console.log(`Successfully got ignored regions, id: '${baselineId}'  resp: '${text}'`);
                 return JSON.parse(text);
+            }
+            if (response.status === 202) {
+                console.log('No regions');
+                return [];
             }
             console.error(`Cannot get baseline ignored regions , status: '${response.status}',  resp: '${text}'`);
             MainView.showToaster('Cannot get baseline ignored regions', 'Error');

@@ -278,7 +278,13 @@ exports.updateBaselineBySnapshotId = async (req, res) => {
 
 exports.getBaseline = async (req, res) => {
     try {
-        res.json(await Baseline.findById(req.params.id));
+        console.log(req.params.id);
+        console.log(await Baseline.findById(req.params.id));
+        if (!req.params.id) {
+            return res.status(204)
+                .json([]);
+        }
+        return res.json(await Baseline.findById(req.params.id));
     } catch (e) {
         log.error(`cannot get a snapshot with id: '${req.params.id}', error: ${e}`,
             $this,
@@ -286,7 +292,7 @@ exports.getBaseline = async (req, res) => {
                 scope: 'getSnapshot',
                 msgType: 'GET',
             });
-        fatalError(req, res, e);
+        return fatalError(req, res, e);
     }
 };
 
