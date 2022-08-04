@@ -245,10 +245,9 @@ exports.login = function login(req, res) {
         if (req.user) {
             if (req.user.username !== 'Test') return res.redirect('/');
         }
-        const { version } = require('../../../package.json');
         return res.render('pages/login', {
             origin: req.query.origin,
-            version,
+            version: global.version,
         });
     } catch (e) {
         return fatalError(req, res, e);

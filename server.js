@@ -7,6 +7,8 @@ const expressSession = require('express-session')({
     cookie: { secure: false },
 });
 
+const fs = require('fs');
+
 const app = express();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -33,6 +35,7 @@ const { Logger } = require('./lib/logger');
 
 global.log = new Logger({ dbConnectionString: config.connectionString });
 this.logMeta = { scope: 'entrypoint' };
+log.info('Init the application', this);
 
 function compressionFilter(req, res) {
     if (req.headers['x-no-compression']) {
@@ -55,6 +58,7 @@ app.use(fileUpload({
     limits: { fileSize: 50 * 1024 * 1024 },
 }));
 
+log.info('Connect to database', this);
 // mongoose instance connection url connection
 mongoose.Promise = global.Promise;
 mongoose.connect(config.connectionString, {});
@@ -71,6 +75,8 @@ app.use('/static', express.static('./static'));
 app.use('/public', express.static('./public'));
 app.use('/lib', express.static('./mvc/views/lib'));
 const routes = require('./mvc/routes/vrsRoutes');
+// const routes2 = require('./src/routes/v1');
+// app.use('/v1', routes2);
 
 routes(app); // register the route
 
@@ -88,7 +94,16 @@ app.listen(config.port, async () => {
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
-const { version } = require('./package.json');
 
-log.info(`Syngrisi version: ${version} started at 'http://localhost:${config.port}'`, this);
+log.info('Get Application version', this);
+global.version = require('./package.json').version;
+
+log.info('Load devices list', this);
+global.devices = require('./src/data/devices.json');
+
+if (fs.existsSync('./src/data/custom_devices.json')) {
+    [...global.devices, ...require('./src/data/custom_devices.json')];
+}
+
+log.info(`Syngrisi version: ${global.version} started at 'http://localhost:${config.port}'`, this);
 log.info('Press <Ctrl+C> to exit', this);
