@@ -20,3 +20,4 @@ node_modules
 /backups
 /data
 .env
+/src/data/custom_devices.json

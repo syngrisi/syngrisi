@@ -1277,6 +1277,7 @@ exports.getChecks = async (req, res) => {
             checksByTestGroupedByIdent[test.id]['viewport'] = test.viewport;
             checksByTestGroupedByIdent[test.id]['calculatedViewport'] = test.calculatedViewport;
             checksByTestGroupedByIdent[test.id]['os'] = test.os;
+            checksByTestGroupedByIdent[test.id]['platform'] = global.devices.filter((x) => x.device === test.os)[0]?.os || test.os;
             checksByTestGroupedByIdent[test.id]['blinking'] = test.blinking;
             checksByTestGroupedByIdent[test.id]['updatedDate'] = test.updatedDate;
             checksByTestGroupedByIdent[test.id]['createdDate'] = test.createdDate;
