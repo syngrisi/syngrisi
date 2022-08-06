@@ -76,6 +76,7 @@ npm run clear
 | `SYNGRISI_PAGINATION_SIZE`     | + | - | Number of tests items on that return `/checks?page={page_num}` API       | `50` |
 | `SYNGRISI_TEST_MODE`           | + | + | Enables test admin user if equal `1`, used only for tests purposes       | `0` |
 | `SYNGRISI_DISABLE_FIRST_RUN`   | + | + | Disable first run procedure, disabled if equal `1`, used only for tests purposes   | `0` |
+| `SYNGRISI_DISABLE_DEV_CORS`    | + | - | Disable CORS for vite dev server, only for dev and test purposes  | `-` |
 
 ## Devices list
 

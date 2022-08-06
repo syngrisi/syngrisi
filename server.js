@@ -33,6 +33,8 @@ const logger = require('pino-http')(
 const { config } = require('./config');
 const { Logger } = require('./lib/logger');
 
+const { disableCors } = require('./src/utils/middlewares/disableCors');
+
 global.log = new Logger({ dbConnectionString: config.connectionString });
 this.logMeta = { scope: 'entrypoint' };
 log.info('Init the application', this);
@@ -45,6 +47,9 @@ function compressionFilter(req, res) {
 }
 
 app.use(compression({ filter: compressionFilter }));
+
+app.use(disableCors);
+
 app.use(expressSession);
 app.use(passport.initialize());
 app.use(passport.session());
@@ -72,11 +77,15 @@ app.set('view engine', 'ejs');
 app.use(express.json({ limit: '50mb' }));
 app.use('/snapshoots', express.static(config.defaultBaselinePath));
 app.use('/static', express.static('./static'));
-app.use('/public', express.static('./public'));
+app.use('/assets', express.static('./mvc/views/react/assets'));
 app.use('/lib', express.static('./mvc/views/lib'));
 const routes = require('./mvc/routes/vrsRoutes');
-// const routes2 = require('./src/routes/v1');
-// app.use('/v1', routes2);
+const routes2 = require('./src/routes/v1');
+app.use('/v1', routes2);
+
+const routesUI = require('./src/routes/ui');
+
+app.use('/auth', routesUI);
 
 routes(app); // register the route
 
@@ -84,6 +93,7 @@ app.use((req, res) => {
     res.status(404)
         .json({ url: `${req.originalUrl} not found` });
 });
+
 app.listen(config.port, async () => {
     log.debug('run onStart jobs', this);
     const startUp = await require('./lib/onStart');
