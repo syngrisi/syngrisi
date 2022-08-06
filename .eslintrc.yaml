@@ -36,7 +36,7 @@ rules:
             exports: 'never'
             functions: 'ignore'
     global-require: 'off'
-    import/no-extraneous-dependencies: 0
+    import/no-extraneous-dependencies: [ "error", { "devDependencies": true } ]
     indent:
         - 'error'
         - 4
@@ -48,7 +48,7 @@ rules:
     new-cap:
         - 'error'
         -   newIsCap: true
-            capIsNewExceptions: [ 'ObjectId' ]
+            capIsNewExceptions: [ 'ObjectId', 'Router' ]
     require-jsdoc:
         - 'error'
         -   require:
@@ -64,4 +64,4 @@ rules:
         - 'off'
     no-underscore-dangle:
         - 'error'
-        -   allow: ['_id']
+        -   allow: [ '_id' ]

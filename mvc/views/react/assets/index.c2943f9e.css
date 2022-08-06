@@ -1,0 +1,25 @@
+
+body {
+    --before-opacity: 1;
+    opacity: 1;
+    width: 101%;
+    height: 101%;
+    position: fixed;
+
+    /*filter: blur(3px);*/
+}
+
+body::before {
+    font-family: 'Roboto', sans-serif;
+    content: "";
+    z-index: -1;
+    position: inherit;
+    left: inherit;
+    top: inherit;
+    width: inherit;
+    height: inherit;
+    background-image: url("./background.db3c16e4.jpg");
+    background-size: cover;
+    opacity: var(--before-opacity);
+    /*opacity: 0.1;*/
+}

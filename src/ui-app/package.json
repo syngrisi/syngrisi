@@ -19,7 +19,12 @@
         "@mantine/styles": "^5.0.2",
         "@tabler/icons": "^1.78.1",
         "react": "^18.2.0",
-        "react-dom": "^18.2.0"
+        "react-dom": "^18.2.0",
+        "ky": "^0.31.1",
+        "@popperjs/core": "^2.11.5",
+        "@tanstack/react-query": "^4.0.10",
+        "@types/bootstrap": "^5.2.0",
+        "react-router-dom": "^6.3.0"
     },
     "devDependencies": {
         "@types/react": "^18.0.15",
@@ -35,6 +40,7 @@
         "eslint-plugin-react": "^7.30.1",
         "eslint-plugin-react-hooks": "^4.6.0",
         "typescript": "^4.6.4",
+        "@types/node": "^18.6.0",
         "vite": "^3.0.0"
     }
 }
