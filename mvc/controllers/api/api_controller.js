@@ -841,19 +841,18 @@ async function createCheck(
     const executionTimer = process.hrtime();
 
     /**
-     * Usually there is two stage of checking request:
+     * Usually there are two stages of checking the creating Check request:
      * Phase 1
      *   1. Client sends request with 'req.body.hashcode' value but without 'req.files.file.data'
-     *   2. Server finds for snapshot with this image 'hashcode' and if found - go to Step 3 of Phase2,
+     *   2. The server finds for a snapshot with this image 'hashcode' and if found - go to Step 3 of Phase2,
      *      if not - sends response "{status: 'requiredFileData', message: 'cannot found an image
-     *      with this hashcode,
-     *      please add image file data and resend request'}"
+     *      with this hashcode, please add image file data and resend request'}"
      * Phase 2
-     *   1. Client receives response with incomplete status and resend the same request but,
+     *   1. The client receives a response with incomplete status and resends the same request but,
      *   with 'req.files.file.data' parameter
-     *   2. Server create a new snapshot based on parameters
-     *   3. Server handle checking the snapshoot and return to client check response
-     *   with one of 'complete` status (eq:. new, failed, passed)
+     *   2. The server creates a new snapshot based on these parameters
+     *   3. The server makes the comparison and returns to the check  response the the client
+     *   with one of 'complete` status (eq: new, failed, passed)
      */
 
     /** PREPARE ACTUAL SNAPSHOT */
@@ -916,6 +915,10 @@ async function createCheck(
     log.debug(`the check with id: '${check.id}', was created, will updated with data during creating process`, $this, logOpts);
 
     logOpts.ref = check.id;
+
+    log.debug('update test with check id', $this, logOpts);
+    test.checks.push(check.id);
+    test.save();
 
     /** HANDLE BASELINE */
     const checkIdent = buildIdentObject(newCheckParams);

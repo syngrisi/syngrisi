@@ -1,5 +1,3 @@
-'use strict';
-
 const { default: PQueue } = require('p-queue');
 
 const queue = new PQueue({ concurrency: 1 });

@@ -1,10 +1,9 @@
-'use strict';
-
 const mongoose = require('mongoose');
+const { toJSON, paginate } = require('./plugins');
 
 const { Schema } = mongoose;
 
-const VRSSnapshotSchema = new Schema({
+const SnapshotSchema = new Schema({
     name: {
         type: String,
         required: 'the name of the snapshot entity is empty',
@@ -31,7 +30,7 @@ const VRSSnapshotSchema = new Schema({
     },
 });
 
-const VRSCheckSchema = new Schema({
+const CheckSchema = new Schema({
     name: {
         type: String,
         required: 'the name of the check entity is empty',
@@ -146,7 +145,7 @@ const VRSCheckSchema = new Schema({
     },
 });
 
-const VRSBaselineSchema = new Schema({
+const BaselineSchema = new Schema({
     snapshootId: Schema.Types.ObjectId,
     name: {
         type: String,
@@ -204,7 +203,7 @@ const VRSBaselineSchema = new Schema({
     },
 });
 
-const VRSTestSchema = new Schema(
+const TestSchema = new Schema(
     {
         name: {
             type: String,
@@ -251,6 +250,12 @@ const VRSTestSchema = new Schema(
         startDate: {
             type: Date,
         },
+        checks: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'VRSCheck',
+            },
+        ],
         suite: {
             type: Schema.Types.ObjectId,
         },
@@ -272,7 +277,10 @@ const VRSTestSchema = new Schema(
     { strictQuery: true }
 ); // remove filters that not exist in schema
 
-const VRSSuiteSchema = new Schema({
+TestSchema.plugin(toJSON);
+TestSchema.plugin(paginate);
+
+const SuiteSchema = new Schema({
     name: {
         type: String,
         default: 'Others',
@@ -291,7 +299,7 @@ const VRSSuiteSchema = new Schema({
     },
 });
 
-const VRSRunSchema = new Schema({
+const RunSchema = new Schema({
     name: {
         type: String,
         required: 'the run name cannot be empty',
@@ -312,7 +320,7 @@ const VRSRunSchema = new Schema({
     },
 });
 
-const VRSLogSchema = new Schema({
+const LogSchema = new Schema({
     timestamp: {
         type: Date,
     },
@@ -331,7 +339,7 @@ const VRSLogSchema = new Schema({
 });
 
 // this is the Projects Schema `VRSAppSchema` name is for historical reason
-const VRSAppSchema = new Schema({
+const AppSchema = new Schema({
     name: {
         type: String,
         default: 'Others',
@@ -350,7 +358,7 @@ const VRSAppSchema = new Schema({
     },
 });
 
-const VRSUserSchema = new Schema({
+const UserSchema = new Schema({
     username: {
         type: String,
         unique: true,
@@ -389,21 +397,21 @@ const VRSUserSchema = new Schema({
     },
 });
 
-const VRSSettings = new Schema({
+const Settings = new Schema({
     firstRun: Boolean,
 });
 
 const passportLocalMongoose = require('passport-local-mongoose');
 
-VRSUserSchema.plugin(passportLocalMongoose, { hashField: 'password' });
+UserSchema.plugin(passportLocalMongoose, { hashField: 'password' });
 
-module.exports = mongoose.model('VRSSnapshot', VRSSnapshotSchema);
-module.exports = mongoose.model('VRSCheck', VRSCheckSchema);
-module.exports = mongoose.model('VRSTest', VRSTestSchema);
-module.exports = mongoose.model('VRSLog', VRSLogSchema);
-module.exports = mongoose.model('VRSSuite', VRSSuiteSchema);
-module.exports = mongoose.model('VRSApp', VRSAppSchema);
-module.exports = mongoose.model('VRSRun', VRSRunSchema);
-module.exports = mongoose.model('VRSUser', VRSUserSchema);
-module.exports = mongoose.model('VRSBaseline', VRSBaselineSchema);
-module.exports = mongoose.model('VRSSettings', VRSSettings);
+module.exports = mongoose.model('VRSSnapshot', SnapshotSchema);
+module.exports = mongoose.model('VRSCheck', CheckSchema);
+module.exports = mongoose.model('VRSTest', TestSchema);
+module.exports = mongoose.model('VRSLog', LogSchema);
+module.exports = mongoose.model('VRSSuite', SuiteSchema);
+module.exports = mongoose.model('VRSApp', AppSchema);
+module.exports = mongoose.model('VRSRun', RunSchema);
+module.exports = mongoose.model('VRSUser', UserSchema);
+module.exports = mongoose.model('VRSBaseline', BaselineSchema);
+module.exports = mongoose.model('VRSSettings', Settings);
