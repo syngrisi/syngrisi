@@ -29,6 +29,7 @@ services:
             SYNGRISI_TEST_MODE: "${SYNGRISI_TEST_MODE:-0}"
             SYNGRISI_DISABLE_FIRST_RUN: "${SYNGRISI_DISABLE_FIRST_RUN:-0}"
             SYNGRISI_PAGINATION_SIZE: "${SYNGRISI_PAGINATION_SIZE:-50}"
+            SYNGRISI_SESSION_STORE_KEY: "${SYNGRISI_SESSION_STORE_KEY}"
             SYNGRISI_APP_PORT: 3000
         healthcheck:
             test: wget -q -O - http://syngrisi-app:3000/status | grep alive:true

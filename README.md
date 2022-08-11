@@ -77,6 +77,7 @@ npm run clear
 | `SYNGRISI_TEST_MODE`           | + | + | Enables test admin user if equal `1`, used only for tests purposes       | `0` |
 | `SYNGRISI_DISABLE_FIRST_RUN`   | + | + | Disable first run procedure, disabled if equal `1`, used only for tests purposes   | `0` |
 | `SYNGRISI_DISABLE_DEV_CORS`    | + | - | Disable CORS for vite dev server, only for dev and test purposes  | `-` |
+| `SYNGRISI_SESSION_STORE_KEY`   | + | + | A Secret for session storage  | random generated |
 
 ## Devices list
 

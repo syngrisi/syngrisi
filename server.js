@@ -1,11 +1,8 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
-const expressSession = require('express-session')({
-    secret: 'secret-sss',
-    resave: true,
-    saveUninitialized: false,
-    cookie: { secure: false },
-});
+const MongoStore = require('connect-mongo');
+
+const session = require('express-session');
 
 const fs = require('fs');
 
@@ -50,8 +47,21 @@ app.use(compression({ filter: compressionFilter }));
 
 app.use(disableCors);
 
+const expressSession = session({
+    secret: process.env.SYNGRISI_SESSION_STORE_KEY || require('crypto')
+        .randomBytes(64)
+        .toString('hex'),
+    resave: true,
+    saveUninitialized: false,
+    cookie: { secure: false },
+    store: MongoStore.create({ mongoUrl: config.connectionString }),
+});
+
 app.use(expressSession);
 app.use(passport.initialize());
+app.use(session({
+    store: MongoStore.create({ mongoUrl: 'mongodb://localhost/test-app' })
+}));
 app.use(passport.session());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -71,7 +81,6 @@ mongoose.connect(config.connectionString, {});
 const viewPath = path.join(__dirname, 'mvc/views');
 
 app.set('views', viewPath);
-
 app.set('view engine', 'ejs');
 
 app.use(express.json({ limit: '50mb' }));
@@ -81,6 +90,7 @@ app.use('/assets', express.static('./mvc/views/react/assets'));
 app.use('/lib', express.static('./mvc/views/lib'));
 const routes = require('./mvc/routes/vrsRoutes');
 const routes2 = require('./src/routes/v1');
+
 app.use('/v1', routes2);
 
 const routesUI = require('./src/routes/ui');
