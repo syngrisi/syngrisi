@@ -477,54 +477,6 @@ exports.removeUser = async (req, res) => {
     }
 };
 
-exports.firstRunAdminPassword = async (req, res) => {
-    const params = req.body;
-    const logOpts = {
-        scope: 'firstRunAdminPassword',
-        msgType: 'CHANGE PWD',
-        itemType: 'administrator',
-    };
-    if (process.env.SYNGRISI_AUTH === '1' && (await global.appSettings.get('firstRun'))) {
-        try {
-            log.debug(`first run, change password for default 'Administrator', params: '${JSON.stringify(params)}'`, $this, logOpts);
-            const user = await User.findOne({ username: 'Administrator' })
-                .exec();
-            await user.setPassword(params['new-password']);
-            await user.save();
-            log.debug('password was successfully changed for default Administrator', $this, logOpts);
-            await global.appSettings.set('firstRun', false);
-            res.redirect('/logout');
-        } catch (e) {
-            fatalError(req, res, e);
-        }
-    } else {
-        res.status(403)
-            .json({ error: 'Forbidden' });
-    }
-};
-
-exports.changePassword = (req, res) => {
-    const params = req.body;
-    const logOpts = {
-        scope: 'changePassword',
-        msgType: 'CHANGE PWD',
-        itemType: 'user',
-        ref: req?.user?.username,
-    };
-    log.debug(`change password for  '${req.user.username}', params: '${JSON.stringify(params)}'`, $this, logOpts);
-    User.findOne({ username: req.user.username })
-        .then((foundUser) => {
-            foundUser.changePassword(params['old-password'], params['new-password'])
-                .then(
-                    () => {
-                        log.debug(`password was successfully changed for user: ${req.user.username}`, $this, logOpts);
-                        return res.redirect('/logout');
-                    },
-                    (e) => fatalError(req, res, e)
-                );
-        });
-};
-
 // tests
 async function updateTest(params) {
     const opts = { ...params };

@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
-import React, { useEffect, useRef } from 'react';
-import './index.css';
+import '../asserts/css/auth/index.css';
+import * as React from 'react';
 
 import {
     Link,
@@ -8,19 +8,18 @@ import {
 } from 'react-router-dom';
 import {
     Box,
-    Center, ColorScheme,
+    ColorScheme,
     ColorSchemeProvider,
-    Container,
-    MantineProvider, MantineTheme,
+    MantineProvider,
     NavLink,
 } from '@mantine/core';
 
+import { useHotkeys, useLocalStorage } from '@mantine/hooks';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import AuthFooter from './components/AuthFooter';
 import AuthLogo from './components/AuthLogo';
 import routesItems from './routes';
-import { useHotkeys, useLocalStorage } from '@mantine/hooks';
 import ToggleThemeButton from './components/ToggleThemeButton';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 function App() {
     const routes = useRoutes(routesItems);
@@ -40,7 +39,6 @@ function App() {
         }
         document.body.style.backgroundColor = '#000000';
         document.body.style.setProperty('--before-opacity', '0.5');
-        console.log('toggle', colorScheme);
     };
 
     useHotkeys([['mod+J', () => toggleColorScheme()]]);
@@ -54,14 +52,15 @@ function App() {
                 <MantineProvider
                     withGlobalStyles
                     withNormalizeCSS
-                    theme={{ fontSizes: { md: 24 }, colorScheme }}
-                >
-                    <Box sx={(theme: MantineTheme) => {
-                        return {
-                            display: 'flex',
-                            justifyContent: 'center',
-                        };
+                    theme={{
+                        fontSizes: { md: 24 },
+                        colorScheme,
                     }}
+                >
+                    <Box sx={() => ({
+                        display: 'flex',
+                        justifyContent: 'center',
+                    })}
                     >
                         <AuthLogo />
                     </Box>
@@ -71,11 +70,6 @@ function App() {
                     </Box>
                     <Box>
                         <AuthFooter />
-                    </Box>
-                    <Box sx={{ width: 240 }}>
-                        <NavLink label="Login" component={Link} to="/auth" />
-                        <NavLink label="Logout" component={Link} to="/auth/logout" />
-                        <NavLink label="Reset" component={Link} to="/auth/reset" />
                     </Box>
                 </MantineProvider>
             </ColorSchemeProvider>

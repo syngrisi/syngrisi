@@ -9,20 +9,18 @@ import log from '../../common/utils/Logger';
 
 function AuthFooter() {
     const { classes } = useStyle();
-    log.debug('AuthFooter');
-
     const {
         isLoading,
         isError,
         data,
         error,
-    } = useQuery(
+    }: { isLoading: boolean, isError: boolean, data: any, error: any } = useQuery(
         ['version'],
-        () => ky(`${config.baseUri}./v1/app/info`).then((res) => res.json()),
+        () => ky(`${config.baseUri}/v1/app/info`).then((res) => res.json()),
     );
 
     if (isError) {
-        console.log(error);
+        log.error(error);
         return null;
     }
     if (isLoading) return null;

@@ -20,6 +20,8 @@
         "test:docker": "cd tests && npm run test:docker",
         "smoke": "cd tests && npm run smoke",
         "build": "cross-env VITE_ROOT_PATH='./src/ui-app/' vite build",
+        "dev": "cross-env VITE_SYNGRISY_BASED_URL='http://localhost:3000' vite",
+        "build:watch": "cross-env VITE_ROOT_PATH='./src/ui-app/' vite build --watch",
         "pub": "np --yolo --no-publish",
         "starttest": "node server.js",
         "tasks:reindex": "node tasks/reindex.js",

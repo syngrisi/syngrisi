@@ -1,7 +1,6 @@
 const { default: PQueue } = require('p-queue');
 
 const queue = new PQueue({ concurrency: 1 });
-const passport = require('passport');
 const {
     ensureLoggedIn,
     ensureApiKey,
@@ -77,15 +76,6 @@ module.exports = async (app) => {
         .get('/admin2', ensureLoggedIn(), (req, res, next) => {
             admin2(req, res)
                 .catch(next);
-        })
-        .get('/changepassword', ensureLoggedIn(), (req, res) => {
-            UI.changePasswordPage(req, res);
-        })
-        .get('/first_run_password', (req, res) => {
-            UI.firstRunPage(req, res);
-        })
-        .post('/first_run_password', (req, res) => {
-            API.firstRunAdminPassword(req, res);
         })
         .get('/users', ensureLoggedIn(), async (req, res, next) => {
             API.getUsers(req, res)
@@ -201,48 +191,44 @@ module.exports = async (app) => {
         .get('/screenshots', ensureLoggedIn(), async (req, res) => {
             API.getScreenshotList(req, res);
         })
-        .get('/logout', async (req, res) => {
-            await req.logout();
-            return res.redirect('/login');
-        })
         .get('/userinfo', ensureLoggedIn(), async (req, res, next) => {
             UI.userinfo(req, res)
                 .catch(next);
         })
-        .get('/login', (req, res) => {
-            UI.login(req, res);
-        })
-        .post('/login', (req, res, next) => {
-            const origin = req.query.origin ? req.query.origin : '/';
-            const $this = {};
-            $this.logMeta = { scope: 'login' };
-            passport.authenticate('local',
-                (err, user, info) => {
-                    if (err) {
-                        return next(err);
-                    }
-
-                    if (!user) {
-                        return res.redirect(`/login?info=${JSON.stringify(info)}`);
-                    }
-
-                    req.logIn(user, (e) => {
-                        if (e) {
-                            return next(e);
-                        }
-
-                        log.info('user was logged in', $this, { user: user.username });
-                        // this is for tests http login purpose
-                        if (req.query.noredirect) {
-                            return res.status(200)
-                                .json({
-                                    autoTests: true,
-                                });
-                        }
-                        return res.redirect(origin);
-                    });
-                })(req, res, next);
-        })
+        // .get('/login', (req, res) => {
+        //     UI.login(req, res);
+        // })
+        // .post('/login', (req, res, next) => {
+        //     const origin = req.query.origin ? req.query.origin : '/';
+        //     const $this = {};
+        //     $this.logMeta = { scope: 'login' };
+        //     passport.authenticate('local',
+        //         (err, user, info) => {
+        //             if (err) {
+        //                 return next(err);
+        //             }
+        //
+        //             if (!user) {
+        //                 return res.redirect(`/login?info=${JSON.stringify(info)}`);
+        //             }
+        //
+        //             req.logIn(user, (e) => {
+        //                 if (e) {
+        //                     return next(e);
+        //                 }
+        //
+        //                 log.info('user was logged in', $this, { user: user.username });
+        //                 // this is for tests http login purpose
+        //                 if (req.query.noredirect) {
+        //                     return res.status(200)
+        //                         .json({
+        //                             autoTests: true,
+        //                         });
+        //                 }
+        //                 return res.redirect(origin);
+        //             });
+        //         })(req, res, next);
+        // })
         // maintenance
         .get('/loadTestUser', ensureLoggedIn(), async (req, res, next) => {
             API.loadTestUser(req, res)

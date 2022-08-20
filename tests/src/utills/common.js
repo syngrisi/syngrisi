@@ -147,7 +147,7 @@ const startServer = (params) => {
     if (process.env.DOCKER !== '1') env.SYNGRISI_DB_URI = `mongodb://localhost/${databaseName}${cid}`;
 
     const fs = require('fs');
-    const stream = fs.createWriteStream(`./logs/server_log_${cid}.log`);
+    const stream = fs.createWriteStream(`./logs/${cid}_server_log.log`);
     let child;
     if (process.env.DOCKER === '1') {
         child = spawn('docker-compose',

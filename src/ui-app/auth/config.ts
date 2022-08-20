@@ -1,4 +1,6 @@
-// only for local development
+// this config is only used for local development
+// @ts-ignore
+const baseUrl = import.meta.env.VITE_SYNGRISY_BASED_URL;
 export default {
-    baseUri: 'http://localhost:3000/',
+    baseUri: baseUrl || '',
 };

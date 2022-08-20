@@ -78,6 +78,7 @@ Feature: Creation by User
         When I login with user:"Test" password "123"
         Then I wait on element "*=TA" to be displayed
 
+        When I wait for "2" seconds
         Then I expect that VRS test "Create by User - 1" has "New" status
         When I click on "Create by User - 1" VRS test
 

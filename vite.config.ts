@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react';
 
 const config = {
     plugins: [react()],
-    root: path.resolve(__dirname, process.env.VITE_ROOT_PATH || './src/ui-app/auth'),
+    root: path.resolve(__dirname, './src/ui-app/'),
     base: '',
     resolve: {},
     build: {
@@ -14,8 +14,7 @@ const config = {
         // 'public/ui-app',
         rollupOptions: {
             input: {
-                // just mvp stub
-                auth: path.resolve(__dirname, 'src/ui-app/auth/index.html'),
+                auth: path.resolve(__dirname, './src/ui-app/auth/index.html'),
                 // root: path.resolve(__dirname, 'src/ui-app/index/index.html'),
                 // admin: path.resolve(__dirname, 'src/ui-app/admin/index.html'),
                 // stub: path.resolve(__dirname, 'src/ui-app/stub.html'),
@@ -25,7 +24,7 @@ const config = {
     server: {
         port: 8080,
         hot: true,
-        open: 'http://localhost:8080',
+        open: 'http://localhost:8080/auth/',
     },
 };
 

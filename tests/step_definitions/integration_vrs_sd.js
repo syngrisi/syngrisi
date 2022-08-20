@@ -96,7 +96,7 @@ When(/^I login with user:"([^"]*)" password "([^"]*)"$/, (login, password) => {
         .setValue(login);
     $('#password')
         .setValue(password);
-    $('button*=Login')
+    $('#submit')
         .click();
 });
 
@@ -136,9 +136,15 @@ Then(/^I expect the (\d)st "([^"]*)" check has "([^"]*)" acceptance status$/, fu
 });
 
 Then(/^I expect that the element "([^"]*)" to have attribute "([^"]*)" containing "([^"]*)"$/, function (selector, attr, value) {
-    const value2 = fillCommonPlaceholders(value);
+    let value2 = (value === null) ? '' : value;
+    value2 = fillCommonPlaceholders(value2);
     expect($(selector))
         .toHaveAttrContaining(attr, value2);
+});
+
+Then(/^I expect that the element "([^"]*)" to have attribute "([^"]*)"$/, function (selector, attr) {
+    expect($(selector))
+        .toHaveAttr(attr);
 });
 
 async function getWithLastSessionSid(uri, $this) {

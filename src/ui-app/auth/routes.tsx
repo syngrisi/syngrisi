@@ -1,7 +1,8 @@
 import React from 'react';
 import LogoutForm from './components/LogoutForm';
-import ResetPasswordForm from './components/ResetPasswordForm';
+import ChangePasswordForm from './components/ChangePasswordForm';
 import LoginForm from './components/LoginForm';
+import ChangePasswordSuccessForm from './components/ChangePasswordSuccessForm';
 
 const routesItems = [
     {
@@ -9,8 +10,12 @@ const routesItems = [
         element: <LogoutForm />,
     },
     {
-        path: '/auth/reset',
-        element: <ResetPasswordForm />,
+        path: '/auth/change',
+        element: <ChangePasswordForm />,
+    },
+    {
+        path: '/auth/changeSuccess',
+        element: <ChangePasswordSuccessForm />,
     },
     {
         path: '/auth/',
