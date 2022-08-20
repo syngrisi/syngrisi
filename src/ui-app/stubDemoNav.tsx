@@ -3,7 +3,7 @@ import * as React from 'react';
 import {
     Title,
     createStyles,
-    NavLink
+    NavLink,
 } from '@mantine/core';
 
 import { IconFingerprint } from '@tabler/icons';
