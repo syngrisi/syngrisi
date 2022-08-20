@@ -1,9 +1,10 @@
-const Logger: any = function () {
+/* eslint-disable no-console */
+const Logger: any = function Logger() {
 };
 
-Logger.prototype.debug = (msg: string): void => console.debug(msg);
-Logger.prototype.info = (msg: string): void => console.info(msg);
-Logger.prototype.warn = (msg: string): void => console.warn(msg);
-Logger.prototype.error = (msg: string): void => console.error(msg);
+Logger.prototype.debug = (...msg: any): void => console.debug(...msg);
+Logger.prototype.info = (...msg: any): void => console.info(...msg);
+Logger.prototype.warn = (...msg: any): void => console.warn(...msg);
+Logger.prototype.error = (...msg: any): void => console.error(...msg);
 
 export default new Logger();

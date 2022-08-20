@@ -17,13 +17,12 @@ When(/^I login via http with user:"([^"]*)" password "([^"]*)"$/, async function
     console.log({ uri });
 
     const res = (await got.post(
-        `${uri}/login?origin=%2F&noredirect=1`,
+        `${uri}/v1/auth/login`,
         {
             headers: {
                 'upgrade-insecure-requests': '1',
-                'content-type': 'application/x-www-form-urlencoded',
             },
-            body: `username=${login}&password=${password}`,
+            json: { username: login, password, },
         }
     ));
     // console.log({ Body: res.body });

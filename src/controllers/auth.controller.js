@@ -1,6 +1,15 @@
 const httpStatus = require('http-status');
 const passport = require('passport');
+const mongoose = require('mongoose');
+
+const User = mongoose.model('VRSUser');
 const catchAsync = require('../utils/catchAsync');
+
+const $this = this;
+$this.logMeta = {
+    scope: 'authentication',
+    msgType: 'AUTHENTICATION',
+};
 // const { authService, userService, tokenService, emailService } = require('../services');
 
 const login = catchAsync(async (req, res, next) => {
@@ -8,67 +17,104 @@ const login = catchAsync(async (req, res, next) => {
         scope: 'login',
         msgType: 'AUTHENTICATION',
     };
-    const { email, password } = req.body;
-    console.log(email, password);
-
     passport.authenticate('local',
         (err, user, info) => {
-            console.log({ user });
-            console.log({ err });
-            console.log({ info });
-
             if (err) {
-                log.error(`authentication error: '${err}'`, this, logOpts);
+                log.error(`Authentication error: '${err}'`, this, logOpts);
                 return res.status(httpStatus.UNAUTHORIZED)
-                    .json({ error: 'authentication error' });
+                    .json({ message: 'authentication error' });
             }
-            // req.login()
             if (!user) {
+                log.error(`Authentication error: '${info.message}'`, this, logOpts);
                 return res.status(httpStatus.UNAUTHORIZED)
-                    .json({ error: 'authentication error' });
+                    .json({ message: `Authentication error: '${info.message}'` });
             }
-            //
 
             req.logIn(user, (e) => {
                 if (e) {
+                    log.error(e.stack || e);
                     return next(e);
                 }
-
-                console.log(req.cookies);
-                console.log(res.headers);
-
-                console.log(req.session.passport);
-                // console.log(req.session.passport.user);
                 log.info('user is logged in', this, { user: user.username });
-                res.status(200)
-                    .json({ message: 'user is logged in' });
-                // this is for tests http login purpose
-                // if (req.query.noredirect) {
-                //     return res.status(200)
-                //         .json({
-                //             autoTests: true,
-                //         });
-                // }
-                // return res.redirect(origin);
+                return res.status(200)
+                    .json({ message: 'success' });
             });
-
         })(req, res, next);
-
-    // res.send({ message: '!!!!!!!!!!' });
 });
-//
-// const logout = catchAsync(async (req, res) => {
-//     await authService.logout(req.body.refreshToken);
-//     res.status(httpStatus.NO_CONTENT).send();
-// });
-//
-// const resetPassword = catchAsync(async (req, res) => {
-//     await authService.resetPassword(req.query.token, req.body.password);
-//     res.status(httpStatus.NO_CONTENT).send();
-// });
+
+const logout = catchAsync(async (req, res) => {
+    const logOpts = {
+        scope: 'logout',
+        msgType: 'AUTHENTICATION',
+    };
+    try {
+        log.debug(`try to log out user: '${req?.user?.username}'`, $this, logOpts);
+        await req.logout();
+        res.status(httpStatus.OK)
+            .json({ message: 'success' });
+    } catch (e) {
+        log.error(e);
+        res.status(httpStatus.INTERNAL_SERVER_ERROR)
+            .json({ message: 'fail' });
+    }
+});
+
+const changePassword = catchAsync(async (req, res) => {
+    const logOpts = {
+        scope: 'changePassword',
+        msgType: 'CHANGE_PASSWORD',
+        itemType: 'user',
+        ref: req?.user?.username,
+    };
+
+    const { currentPassword, newPassword, newPasswordConfirmation, isFirstRun } = req.body;
+
+    if (process.env.SYNGRISI_AUTH === '1' && isFirstRun && (await global.appSettings.get('firstRun'))) {
+        log.debug(`first run, change password for default 'Administrator', params: '${JSON.stringify(req.body)}'`, $this, logOpts);
+        const user = await User.findOne({ username: 'Administrator' })
+            .exec();
+        logOpts.ref = user?.username;
+
+        await user.setPassword(newPassword);
+        await user.save();
+        log.debug('password was successfully changed for default Administrator', $this, logOpts);
+        await global.appSettings.set('firstRun', false);
+        return res.status(200)
+            .json({ message: 'success' });
+    }
+    if (isFirstRun) {
+        log.error(`trying to use first run API with no first run state, auth: '${process.env.SYNGRISI_AUTH === '1'}', `
+            + `global settings: '${(await global.appSettings.get('firstRun'))}'`, $this, logOpts);
+        return res.status(httpStatus.FORBIDDEN)
+            .json({ message: 'forbidden' });
+    }
+
+    const username = req?.user?.username;
+
+    log.debug(`change password for '${username}', params: '${JSON.stringify(req.body)}'`, this, logOpts);
+
+    const user = await User.findOne({ username });
+    if (!user) {
+        log.error('user is not logged in', this, logOpts);
+        return res.status(httpStatus.UNAUTHORIZED)
+            .json({ message: 'user is not logged in' });
+    }
+
+    try {
+        await user.changePassword(currentPassword, newPassword);
+    } catch (e) {
+        log.error(e.toString(), this, logOpts);
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR)
+            .json({ message: e.toString() });
+    }
+
+    log.debug(`password was successfully changed for user: ${req.user.username}`, this, logOpts);
+    return res.status(200)
+        .json({ message: 'success' });
+});
 
 module.exports = {
     login,
-    // logout,
-    // resetPassword,
+    changePassword,
+    logout,
 };

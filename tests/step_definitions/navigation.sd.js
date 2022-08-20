@@ -2,9 +2,10 @@ const { When, Then, Given } = require('cucumber');
 When(/^I go to "([^"]*)" page$/, function (str) {
     const pages = {
         main: `http://${browser.config.serverDomain}:${browser.config.serverPort}/`,
+        first_run: `http://${browser.config.serverDomain}:${browser.config.serverPort}/auth/change?first_run=true`,
         runs: `http://${browser.config.serverDomain}:${browser.config.serverPort}/runs`,
-        changepassword: `http://${browser.config.serverDomain}:${browser.config.serverPort}/changepassword`,
-        logout: `http://${browser.config.serverDomain}:${browser.config.serverPort}/logout`,
+        change_password: `http://${browser.config.serverDomain}:${browser.config.serverPort}/auth/change`,
+        logout: `http://${browser.config.serverDomain}:${browser.config.serverPort}/auth/logout`,
         admin: {
             users: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin?task=users`,
             tasks: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin?task=tasks`,

@@ -58,11 +58,17 @@ const expressSession = session({
 });
 
 app.use(expressSession);
+
+log.info('Init passport', this);
 app.use(passport.initialize());
 app.use(session({
     store: MongoStore.create({ mongoUrl: 'mongodb://localhost/test-app' })
 }));
 app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(logger);
@@ -110,10 +116,6 @@ app.listen(config.port, async () => {
     startUp.createTempDir();
     await startUp.createBasicUsers();
 });
-
-passport.use(new LocalStrategy(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
 
 log.info('Get Application version', this);
 global.version = require('./package.json').version;

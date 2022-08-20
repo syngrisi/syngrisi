@@ -1,0 +1,23 @@
+:root {
+    --before-opacity: 1;
+}
+
+body {
+    opacity: 1;
+    width: 101%;
+    height: 101%;
+    position: fixed;
+}
+
+body::before {
+    content: "";
+    z-index: -1;
+    position: inherit;
+    left: inherit;
+    top: inherit;
+    width: inherit;
+    height: inherit;
+    background-image: url("../../images/background.jpg");
+    background-size: cover;
+    opacity: var(--before-opacity);
+}

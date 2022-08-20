@@ -62,11 +62,12 @@ Feature: Authentication on
     Scenario: Log In - Unauthorized
         When I open the url "http://<serverDomain>:<serverPort>/status_with_logged_in"
         When I wait for "2" seconds
-        When the current url contains "login?origin"
-        When I expect that element "button*=Login" is displayed
+        When the current url contains "auth?origin"
+        When I expect that element "#submit" is displayed
 
     Scenario: Log In - Authorized
         When I login with user:"Test" password "123"
+        When I wait for "3" seconds
         When I open the url "http://<serverDomain>:<serverPort>/status_with_logged_in"
         When I wait for "2" seconds
         Then I expect HTML contains:
@@ -111,6 +112,7 @@ Feature: Authentication on
 
     Scenario: Basic or Api Key - Success Login
         When I login with user:"Test" password "123"
+        When I wait for "2" seconds
         When I open the url "http://<serverDomain>:<serverPort>/status_with_api_key_or_logged_in"
         When I wait for "2" seconds
         Then I expect HTML contains:
