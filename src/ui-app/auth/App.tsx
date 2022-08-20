@@ -3,7 +3,6 @@ import '../asserts/css/auth/index.css';
 import * as React from 'react';
 
 import {
-    Link,
     useRoutes,
 } from 'react-router-dom';
 import {
@@ -11,7 +10,6 @@ import {
     ColorScheme,
     ColorSchemeProvider,
     MantineProvider,
-    NavLink,
 } from '@mantine/core';
 
 import { useHotkeys, useLocalStorage } from '@mantine/hooks';

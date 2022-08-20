@@ -13,7 +13,6 @@ import {
 import DemoNav from './stubDemoNav';
 import DemoColors from './stubDemoColors';
 
-
 const syngrisiTheme: MantineThemeOverride = {
     colors: {
         // https://maketintsandshades.com/#06ba0e
@@ -24,9 +23,13 @@ const syngrisiTheme: MantineThemeOverride = {
 };
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-    <MantineProvider withNormalizeCSS withGlobalStyles theme={
-        syngrisiTheme
-    }>
+    <MantineProvider
+        withNormalizeCSS
+        withGlobalStyles
+        theme={
+            syngrisiTheme
+        }
+    >
         <Paper>
             <h1>Vite, React, Mantine Stub Page</h1>
             <Text>

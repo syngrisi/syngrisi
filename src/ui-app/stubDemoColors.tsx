@@ -1,4 +1,5 @@
 /* eslint-disable max-len */
+
 import * as React from 'react';
 import {
     useMantineTheme,
@@ -9,15 +10,16 @@ import { useEffect, useRef } from 'react';
 
 function DemoColors() {
     const theme = useMantineTheme();
-    console.log(theme);
 
     const greenButtonRef = useRef<HTMLInputElement>(null);
     useEffect(() => {
         setTimeout(() => {
+            // @ts-ignore
             greenButtonRef.current.remove();
         }, 5000);
     }, []);
 
+    // @ts-ignore
     return (
         <>
             <Text color="s_success">
