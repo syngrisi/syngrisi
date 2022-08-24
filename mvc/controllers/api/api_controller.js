@@ -2072,3 +2072,34 @@ exports.task_remove_old_logs = async (req, res) => {
     taskOutput('> Done', res);
     res.end();
 };
+
+exports.task_test = async (req, res, next) => {
+    // this header to response with chunks data
+    res.writeHead(200, {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Content-Encoding': 'none',
+    });
+
+    const x = 1000;
+    const interval = 30;
+    let isAborted = false;
+
+    req.on(
+        'close',
+        () => {
+            isAborted = true;
+        }
+    );
+
+    for (let i = 0; i < x; i += 1) {
+        await new Promise(r => setTimeout(() => r(), interval));
+        taskOutput(`- Task Output - '${i}'\n`, res);
+        if (isAborted) {
+            taskOutput(`the task was aborted\n`, res);
+            log.warn('the task was aborted', $this);
+            res.flush();
+            return res.end();
+        }
+    }
+};

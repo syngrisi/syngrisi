@@ -6,6 +6,7 @@ When(/^I go to "([^"]*)" page$/, function (str) {
         runs: `http://${browser.config.serverDomain}:${browser.config.serverPort}/runs`,
         change_password: `http://${browser.config.serverDomain}:${browser.config.serverPort}/auth/change`,
         logout: `http://${browser.config.serverDomain}:${browser.config.serverPort}/auth/logout`,
+        admin2: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin2`,
         admin: {
             users: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin?task=users`,
             tasks: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin?task=tasks`,

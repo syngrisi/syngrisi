@@ -73,8 +73,8 @@ module.exports = async (app) => {
             admin(req, res)
                 .catch(next);
         })
-        .get('/admin2', ensureLoggedIn(), (req, res, next) => {
-            admin2(req, res)
+        .get('/admin2/*', ensureLoggedIn(), (req, res, next) => {
+            admin2(req, res, next)
                 .catch(next);
         })
         .get('/users', ensureLoggedIn(), async (req, res, next) => {
@@ -179,11 +179,12 @@ module.exports = async (app) => {
         .get('/tests/byfilter', ensureLoggedIn(), async (req, res) => {
             API.testsByFilter(req, res);
         })
+        // eslint-disable-next-line consistent-return
         .put('/tests/:id', async (req, res, next) => {
             if (process.env.SYNGRISI_TEST_MODE !== '1') {
                 res.status('400')
                     .json({ error: 'only in test mode' });
-                return next;
+                return next();
             }
             API.updateTest(req, res)
                 .catch(() => next);
@@ -191,45 +192,6 @@ module.exports = async (app) => {
         .get('/screenshots', ensureLoggedIn(), async (req, res) => {
             API.getScreenshotList(req, res);
         })
-        .get('/userinfo', ensureLoggedIn(), async (req, res, next) => {
-            UI.userinfo(req, res)
-                .catch(next);
-        })
-        // .get('/login', (req, res) => {
-        //     UI.login(req, res);
-        // })
-        // .post('/login', (req, res, next) => {
-        //     const origin = req.query.origin ? req.query.origin : '/';
-        //     const $this = {};
-        //     $this.logMeta = { scope: 'login' };
-        //     passport.authenticate('local',
-        //         (err, user, info) => {
-        //             if (err) {
-        //                 return next(err);
-        //             }
-        //
-        //             if (!user) {
-        //                 return res.redirect(`/login?info=${JSON.stringify(info)}`);
-        //             }
-        //
-        //             req.logIn(user, (e) => {
-        //                 if (e) {
-        //                     return next(e);
-        //                 }
-        //
-        //                 log.info('user was logged in', $this, { user: user.username });
-        //                 // this is for tests http login purpose
-        //                 if (req.query.noredirect) {
-        //                     return res.status(200)
-        //                         .json({
-        //                             autoTests: true,
-        //                         });
-        //                 }
-        //                 return res.redirect(origin);
-        //             });
-        //         })(req, res, next);
-        // })
-        // maintenance
         .get('/loadTestUser', ensureLoggedIn(), async (req, res, next) => {
             API.loadTestUser(req, res)
                 .catch(next);
@@ -252,15 +214,19 @@ module.exports = async (app) => {
                 .catch(next);
         })
         .get('/task_handle_old_checks', ensureLoggedInOrApiKey(), async (req, res, next) => {
-            API.task_handle_old_checks(req, res)
+            API.task_handle_old_checks(req, res, next)
                 .catch(next);
         })
         .get('/task_handle_database_consistency', ensureLoggedInOrApiKey(), async (req, res, next) => {
-            API.task_handle_database_consistency(req, res)
+            API.task_handle_database_consistency(req, res, next)
                 .catch(next);
         })
         .get('/task_remove_old_logs', ensureLoggedInOrApiKey(), async (req, res, next) => {
-            API.task_remove_old_logs(req, res)
+            API.task_remove_old_logs(req, res, next)
+                .catch(next);
+        })
+        .get('/task_test', ensureLoggedInOrApiKey(), async (req, res, next) => {
+            await API.task_test(req, res, next)
                 .catch(next);
         });
 };

@@ -8,8 +8,8 @@ import {
 import { IconCircleCheck, IconCircleX } from '@tabler/icons';
 import * as React from 'react';
 import { useEffect } from 'react';
-import log from '../../common/utils/Logger';
-import config from '../config';
+import { log } from '../../shared/utils';
+import config from '../../config';
 
 function LogoutForm() {
     interface Query {
