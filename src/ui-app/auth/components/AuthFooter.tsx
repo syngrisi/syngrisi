@@ -4,8 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import * as React from 'react';
 import ky from 'ky';
 import useStyle from '../commonStyles';
-import config from '../config';
-import log from '../../common/utils/Logger';
+import config from '../../config';
+import { log } from '../../shared/utils';
 
 function AuthFooter() {
     const { classes } = useStyle();

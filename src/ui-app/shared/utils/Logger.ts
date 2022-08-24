@@ -7,4 +7,6 @@ Logger.prototype.info = (...msg: any): void => console.info(...msg);
 Logger.prototype.warn = (...msg: any): void => console.warn(...msg);
 Logger.prototype.error = (...msg: any): void => console.error(...msg);
 
-export default new Logger();
+const log = new Logger();
+export { log };
+export default log;

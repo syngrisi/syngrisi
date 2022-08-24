@@ -62,7 +62,7 @@ app.use(expressSession);
 log.info('Init passport', this);
 app.use(passport.initialize());
 app.use(session({
-    store: MongoStore.create({ mongoUrl: 'mongodb://localhost/test-app' })
+    store: MongoStore.create({ mongoUrl: 'mongodb://localhost/test-app' }),
 }));
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
@@ -99,9 +99,8 @@ const routes2 = require('./src/routes/v1');
 
 app.use('/v1', routes2);
 
-const routesUI = require('./src/routes/ui');
-
-app.use('/auth', routesUI);
+app.use('/auth', require('./src/routes/ui/auth'));
+app.use('/admin2', require('./src/routes/ui/admin'));
 
 routes(app); // register the route
 

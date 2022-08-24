@@ -34,26 +34,3 @@
     url('./roboto-v30-latin-700.f5aebdfe.woff2') format('woff2'), 
     url('./roboto-v30-latin-700.e0fd57c0.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }
-:root {
-    --before-opacity: 1;
-}
-
-body {
-    opacity: 1;
-    width: 101%;
-    height: 101%;
-    position: fixed;
-}
-
-body::before {
-    content: "";
-    z-index: -1;
-    position: inherit;
-    left: inherit;
-    top: inherit;
-    width: inherit;
-    height: inherit;
-    background-image: url("./background.db3c16e4.jpg");
-    background-size: cover;
-    opacity: var(--before-opacity);
-}

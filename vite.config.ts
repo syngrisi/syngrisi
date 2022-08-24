@@ -16,7 +16,7 @@ const config = {
             input: {
                 auth: path.resolve(__dirname, './src/ui-app/auth/index.html'),
                 // root: path.resolve(__dirname, 'src/ui-app/index/index.html'),
-                // admin: path.resolve(__dirname, 'src/ui-app/admin/index.html'),
+                admin: path.resolve(__dirname, 'src/ui-app/admin/index.html'),
                 // stub: path.resolve(__dirname, 'src/ui-app/stub.html'),
             },
         },
