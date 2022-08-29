@@ -1,6 +1,8 @@
 /* eslint-disable max-len */
 import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+
 import {
     MantineProvider,
     Paper,
@@ -22,31 +24,35 @@ const syngrisiTheme: MantineThemeOverride = {
     // primaryColor: 'success',
 };
 
+document.location.href = '/admin2/';
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-    <MantineProvider
-        withNormalizeCSS
-        withGlobalStyles
-        theme={
-            syngrisiTheme
-        }
-    >
-        <Paper>
-            <h1>Vite, React, Mantine Stub Page</h1>
-            <Text>
-                <TypographyStylesProvider>
-                    <div dangerouslySetInnerHTML={{
-                        __html:
-                            `This file is for Vite builder, the tool parse it and build corresponding asserts in
+    <BrowserRouter>
+        <MantineProvider
+            withNormalizeCSS
+            withGlobalStyles
+            theme={
+                syngrisiTheme
+            }
+        >
+            <Paper>
+                <h1>Vite, React, Mantine Stub Page</h1>
+                <Text>
+                    <TypographyStylesProvider>
+                        <div dangerouslySetInnerHTML={{
+                            __html:
+                                `This file is for Vite builder, the tool parse it and build corresponding asserts in
                          the <b>xdist/assert</b> folder read more at <a href="https://vitejs.dev/guide/stub.html#index-html-and-project-root">vite doc</a>
                          run 'vite build' to perform asserts building`,
-                    }}
-                    />
-                </TypographyStylesProvider>
-            </Text>
-        </Paper>
-        <DemoColors />
-        <Container style={{ padding: '30px' }}>
-            <DemoNav />
-        </Container>
-    </MantineProvider>,
+                        }}
+                        />
+                    </TypographyStylesProvider>
+                </Text>
+            </Paper>
+            <DemoColors />
+            <Container style={{ padding: '30px' }}>
+                <DemoNav />
+            </Container>
+        </MantineProvider>
+    </BrowserRouter>,
 );

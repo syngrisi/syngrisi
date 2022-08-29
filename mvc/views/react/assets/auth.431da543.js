@@ -1,4 +1,4 @@
-import { c as createStyles, u as useQuery, l as log, j as jsxs, C as Center, A as Anchor, a as jsx, I as IconExternalLink, T as Text, k as ky, b as config, d as useMantineTheme, e as Container, P as Paper, B as Box, f as useDocumentTitle, r as react, L as LoadingOverlay, g as IconCircleCheck, h as IconCircleX, i as Title, m as Button, n as Progress, G as Group, o as IconCheck, p as IconX, q as useSearchParams, s as useForm, t as PasswordInput, v as TextInput, w as Checkbox, x as ActionIcon, y as IconSun, z as IconMoonStars, D as useRoutes, E as useLocalStorage, F as useHotkeys, Q as QueryClient, H as QueryClientProvider, J as ColorSchemeProvider, M as MantineProvider, K as createRoot, N as BrowserRouter } from "./use-form.fc865571.js";
+import { c as createStyles, u as useQuery, l as log, j as jsxs, C as Center, A as Anchor, a as jsx, I as IconExternalLink, T as Text, k as ky, b as config, d as useMantineTheme, e as Container, P as Paper, B as Box, f as useDocumentTitle, r as react, L as LoadingOverlay, g as IconCircleCheck, h as IconCircleX, i as Title, m as Button, n as Progress, G as Group, o as IconCheck, p as IconX, q as useSearchParams, s as useForm, t as PasswordInput, v as TextInput, w as Checkbox, x as ActionIcon, y as IconSun, z as IconMoonStars, Q as QueryClient, D as useRoutes, E as useLocalStorage, F as useHotkeys, H as QueryClientProvider, J as ColorSchemeProvider, M as MantineProvider, K as createRoot, N as BrowserRouter } from "./use-form.12b28c95.js";
 const index = "";
 const useStyle = createStyles((theme) => ({
   footer: {
@@ -354,15 +354,18 @@ function ChangePasswordForm() {
           error: form.errors.currentPassword && "Invalid password",
           disabled: isFirstRun || false,
           required: true
-        }), /* @__PURE__ */ jsx(PasswordInput, {
-          value: form.values.newPassword,
-          onChange: (event) => handleNewPasswordFields(event, "newPassword"),
-          placeholder: "New Password",
-          id: "new-password",
-          label: "New Password",
-          error: form.errors.newPassword,
-          required: true
-        }), /* @__PURE__ */ jsx(PasswordInput, {
+        }), /* @__PURE__ */ jsx(
+          PasswordInput,
+          {
+            value: form.values.newPassword,
+            onChange: (event) => handleNewPasswordFields(event, "newPassword"),
+            placeholder: "New Password",
+            id: "new-password",
+            label: "New Password",
+            error: form.errors.newPassword,
+            required: true
+          }
+        ), /* @__PURE__ */ jsx(PasswordInput, {
           value: form.values.newPasswordConfirmation,
           onChange: (event) => handleNewPasswordFields(event, "newPasswordConfirmation"),
           placeholder: "New Password",
@@ -590,6 +593,7 @@ function ToggleThemeButton({
     })
   });
 }
+const queryClient = new QueryClient();
 function App() {
   const routes = useRoutes(routesItems);
   const [colorScheme, setColorScheme] = useLocalStorage({
@@ -609,7 +613,6 @@ function App() {
     document.body.style.setProperty("--before-opacity", "0.5");
   };
   useHotkeys([["mod+J", () => toggleColorScheme()]]);
-  const queryClient = new QueryClient();
   return /* @__PURE__ */ jsx(QueryClientProvider, {
     client: queryClient,
     children: /* @__PURE__ */ jsxs(ColorSchemeProvider, {

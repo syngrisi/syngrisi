@@ -57,7 +57,7 @@ const useStyles = createStyles((theme) => ({
 
 const links = [
     { label: 'Dashboard', link: '/' },
-    { label: 'Admin Panel', link: '/admin' },
+    { label: 'Admin Panel', link: '/admin2/' },
 ];
 
 export default function AdminHeader() {
@@ -71,7 +71,6 @@ export default function AdminHeader() {
             key={link.label}
             href={link.link}
             className={classes.link}
-            onClick={(event) => event.preventDefault()}
         >
             {link.label}
         </a>

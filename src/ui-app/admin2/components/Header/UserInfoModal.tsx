@@ -36,19 +36,33 @@ export function UserInfoModal({ opened, setOpened }: { opened: boolean, setOpene
                                 <IconUser stroke={1} size={120} radius="md" />
                             </Avatar>
                             <div>
-                                <Text size="xs" sx={{ textTransform: 'uppercase' }} weight={700} color="dimmed">
+                                <Text
+                                    size="xs"
+                                    sx={{ textTransform: 'uppercase' }}
+                                    weight={700} color="dimmed"
+                                    data-test="userinfo-role"
+                                >
                                     {user.data.role}
                                 </Text>
 
-                                <Text size="lg" weight={500} className={classes.name}>
+                                <Text
+                                    size="lg"
+                                    weight={500}
+                                    className={classes.name}
+                                    data-test="userinfo-name"
+                                >
                                     {user.data.firstName}
                                     {' '}
                                     {user.data.lastName}
                                 </Text>
 
-                                <Group noWrap spacing={5} mt={3}>
+                                <Group
+                                    noWrap
+                                    spacing={5}
+                                    mt={3}
+                                >
                                     <IconAt stroke={1.5} size={16} className={classes.icon} />
-                                    <Text size="xs" color="dimmed">
+                                    <Text size="xs" color="dimmed" data-test="userinfo-username">
                                         {user.data.username}
                                     </Text>
                                 </Group>

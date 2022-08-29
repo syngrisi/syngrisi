@@ -1,3 +1,5 @@
+/* eslint-disable valid-jsdoc */
+const passportLocalMongoose = require('passport-local-mongoose');
 const mongoose = require('mongoose');
 const { toJSON, paginate } = require('./plugins');
 
@@ -389,6 +391,9 @@ const UserSchema = new Schema({
     apiKey: {
         type: String,
     },
+    createdDate: {
+        type: Date,
+    },
     updatedDate: {
         type: Date,
     },
@@ -397,11 +402,24 @@ const UserSchema = new Schema({
     },
 });
 
+UserSchema.plugin(toJSON);
+UserSchema.plugin(paginate);
+
+/**
+ * Check if email is taken
+ * @param {string} username - The user's email
+ * @param {ObjectId} [excludeUserId] - The id of the user to be excluded
+ * @returns {Promise<boolean>}
+ */
+UserSchema.statics.isEmailTaken = async function (username, excludeUserId) {
+    const user = await this.findOne({ username, _id: { $ne: excludeUserId } });
+    log.warn(user);
+    return !!user;
+};
+
 const Settings = new Schema({
     firstRun: Boolean,
 });
-
-const passportLocalMongoose = require('passport-local-mongoose');
 
 UserSchema.plugin(passportLocalMongoose, { hashField: 'password' });
 

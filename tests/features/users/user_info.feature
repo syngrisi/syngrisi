@@ -18,8 +18,6 @@ Feature: User Information
         Given I start Server and start Driver
         When I login via http with user:"Test" password "123"
 
-        ## create user
-        # user
         When I create via http user as:"Test" with params:
         """
         {
@@ -43,4 +41,7 @@ Feature: User Information
         When I wait for "3" seconds
         Then I expect that element "[data-test='user-short-details']" contain text "John Doe"
         When I click on the element "[data-test='userinfo']"
-        When I START DEBUGGER
+
+        Then I expect that element "[data-test=userinfo-username]" to contain text "user@gmail.com"
+        Then I expect that element "[data-test=userinfo-role]" to contain text "USER"
+        Then I expect that element "[data-test=userinfo-name]" to contain text "John Doe"

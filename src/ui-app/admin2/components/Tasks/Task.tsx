@@ -5,10 +5,14 @@ import * as React from 'react';
 import queryString from 'query-string';
 import { useForm } from '@mantine/form';
 import { useRef, useState } from 'react';
+
 import { isDark, log } from '../../../shared/utils';
 import { IInput, ITask } from './tasksList';
+import { useSubpageEffect } from '../../../shared/hooks/useSubpageEffect';
 
 export default function Task({ item }: { item: ITask }) {
+    useSubpageEffect(`Task: ${item.label}`, [item.label]);
+
     const [outputField, setOutputField] = useState('');
     const [autoScrollChecked, setAutoScrollChecked] = useState(true);
     const outputRef = useRef<HTMLTextAreaElement>(null);
@@ -82,6 +86,7 @@ export default function Task({ item }: { item: ITask }) {
             {
                 label: input.label,
                 name: input.name,
+                key: input.name,
                 mt: 10,
                 ...form.getInputProps(input.name),
             },
@@ -111,6 +116,7 @@ export default function Task({ item }: { item: ITask }) {
                     </Group>
                 </form>
                 <textarea
+                    readOnly
                     ref={outputRef}
                     style={
                         {

@@ -23,70 +23,75 @@ Feature: Create User
 
     @smoke
     Scenario: Create User - Success
-        When I go to "admin>users" page
+        When I go to "admin2" page
         When I wait for "3" seconds
-        When I click on the element "#add-user"
-        When I set "j_doe@gmail.com" to the inputfield "//input[@placeholder='Username']"
-        When I set "John" to the inputfield "//input[@placeholder='First Name']"
-        When I set "Doe" to the inputfield "//input[@placeholder='Last Name']"
-        When I select the option with the text "user" for element "//select[@new-user-role]"
-        When I set "Password-123" to the inputfield "//input[@placeholder='password']"
-        When I click on the element "a.send-new-user-button"
-        When I wait for "3" seconds
-        When I refresh page
-        When I wait for "3" seconds
-        Then I expect that element "//input[@name='username' and @value='j_doe@gmail.com']/../..//input[@name='firstName' and @value='John']/../..//input[@name='lastName' and @value='Doe']" is displayed
+        When I click on the element "#add-new-user"
+        When I set "j_doe@gmail.com" to the inputfield "[data-test=user-add-email]"
+        When I set "John" to the inputfield "[data-test=user-add-first-name]"
+        When I set "Doe" to the inputfield "[data-test=user-add-last-name]"
+        When I select the option with the text "Reviewer" for element "select[data-test=user-add-role]"
+        When I set "Password-123" to the inputfield "[data-test=user-add-password]"
+        When I click on the element "#create"
 
-    Scenario: Create User - Duplicate
-        When I go to "admin>users" page
         When I wait for "3" seconds
-        When I click on the element "#add-user"
-        When I set "j_doe@gmail.com" to the inputfield "//input[@placeholder='Username']"
-        When I set "John" to the inputfield "//input[@placeholder='First Name']"
-        When I set "Doe" to the inputfield "//input[@placeholder='Last Name']"
-        When I select the option with the text "user" for element "//select[@new-user-role]"
-        When I set "Password-123" to the inputfield "//input[@placeholder='password']"
-        When I click on the element "a.send-new-user-button"
-        When I wait for "3" seconds
-        When I refresh page
-        When I wait for "3" seconds
-        Then I expect that element "//input[@name='username' and @value='j_doe@gmail.com']/../..//input[@name='firstName' and @value='John']/../..//input[@name='lastName' and @value='Doe']" is displayed
+        Then I expect that element "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-email']" contain value "j_doe@gmail.com"
+        Then I expect that element "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-first-name']" contain value "John"
+        Then I expect that element "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-last-name']" contain value "Doe"
+        Then I expect that element "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-role']" contain value "Reviewer"
 
-        When I click on the element "#add-user"
-        When I set "j_doe@gmail.com" to the inputfield "//input[@placeholder='Username']"
-        When I set "John" to the inputfield "//input[@placeholder='First Name']"
-        When I set "Doe" to the inputfield "//input[@placeholder='Last Name']"
-        When I select the option with the text "user" for element "//select[@new-user-role]"
-        When I set "Password-123" to the inputfield "//input[@placeholder='password']"
-        When I click on the element "a.send-new-user-button"
+        When I go to "logout" page
         When I wait for "3" seconds
-        When I refresh page
-        When I wait for "3" seconds
-        Then I expect that element "//input[@name='username' and @value='j_doe@gmail.com']/../..//input[@name='firstName' and @value='John']/../..//input[@name='lastName' and @value='Doe']" does appear exactly "1" times
+        When I login with user:"j_doe@gmail.com" password "Password-123"
+        Then I wait on element "*=JD" to be displayed
 
-    Scenario: Create User - without Password
-        When I go to "admin>users" page
+    Scenario: Create User - User Already Exist
+        When I go to "admin2" page
         When I wait for "3" seconds
-        When I click on the element "#add-user"
-        When I set "j_smith@gmail.com" to the inputfield "//input[@placeholder='Username']"
-        When I set "John" to the inputfield "//input[@placeholder='First Name']"
-        When I set "Smith" to the inputfield "//input[@placeholder='Last Name']"
-        When I select the option with the text "user" for element "//select[@new-user-role]"
-        When I click on the element "a.send-new-user-button"
-        When I wait for "3" seconds
-        When I refresh page
-        When I wait for "3" seconds
-        Then I expect that element "//input[@name='username' and @value='j_smith@gmail.com']/../..//input[@name='firstName' and @value='John']/../..//input[@name='lastName' and @value='Smith']" is displayed
+        When I click on the element "#add-new-user"
+        When I set "j_doe@gmail.com" to the inputfield "[data-test=user-add-email]"
+        When I set "John" to the inputfield "[data-test=user-add-first-name]"
+        When I set "Doe" to the inputfield "[data-test=user-add-last-name]"
+        When I select the option with the text "Reviewer" for element "select[data-test=user-add-role]"
+        When I set "Password-123" to the inputfield "[data-test=user-add-password]"
+        When I click on the element "#create"
 
-    Scenario: Create User - without Username
-        When I go to "admin>users" page
         When I wait for "3" seconds
-        When I click on the element "#add-user"
-        When I set "John" to the inputfield "//input[@placeholder='First Name']"
-        When I set "Smith" to the inputfield "//input[@placeholder='Last Name']"
-        When I select the option with the text "user" for element "//select[@new-user-role]"
-        When I click on the element "a.send-new-user-button"
+        Then I expect that element "//*[@data-test='j_doe@gmail.com']" does appear exactly "1" times
+        Then I expect that element "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-email']" contain value "j_doe@gmail.com"
+
+        When I click on the element "#add-new-user"
+        When I set "j_doe@gmail.com" to the inputfield "[data-test=user-add-email]"
+
+        Then I expect that element "//input[@data-test='user-add-email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" contain text "user with this email already exists"
+
+        When I click on the element "#create"
         When I wait for "3" seconds
+        Then I expect that element "//*[@data-test='j_doe@gmail.com']" does appear exactly "1" times
+
+    Scenario: Create User - Invalid fields
+        When I go to "admin2" page
+        When I wait for "3" seconds
+
+        # invalid email - disabled fields
+        When I click on the element "#add-new-user"
+        When I set "j_doe@" to the inputfield "[data-test=user-add-email]"
+        Then I expect that element "//input[@data-test='user-add-email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" contain text "Invalid email format"
+
+        Then I expect that the element "//input[@data-test='user-add-first-name']" to have attribute "disabled"
+        Then I expect that the element "//input[@data-test='user-add-last-name']" to have attribute "disabled"
+        Then I expect that the element "//input[@data-test='user-add-role']" to have attribute "disabled"
+
+        When I click on the element "#create"
+        When I wait for "1" seconds
+        Then I expect that element "//input[@data-test='user-add-email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" contain text "Invalid email format"
+
+        # valid email - enabled fields
         When I refresh page
         When I wait for "3" seconds
-        Then I expect that element "//input[@name='username']/../..//input[@name='firstName' and @value='John']/../..//input[@name='lastName' and @value='Smith']" is not displayed
+        When I click on the element "#add-new-user"
+        When I set "j_doe@xxx" to the inputfield "[data-test=user-add-email]"
+        And I expect that element "//input[@data-test='user-add-email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" does not exist
+
+        Then I expect that the element "//input[@data-test='user-add-first-name']" to not have attribute "disabled"
+        Then I expect that the element "//input[@data-test='user-add-last-name']" to not have attribute "disabled"
+        Then I expect that the element "//input[@data-test='user-add-role']" to not have attribute "disabled"

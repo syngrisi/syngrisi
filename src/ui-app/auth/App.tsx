@@ -19,6 +19,8 @@ import AuthLogo from './components/AuthLogo';
 import routesItems from './routes';
 import ToggleThemeButton from './components/ToggleThemeButton';
 
+const queryClient = new QueryClient();
+
 function App() {
     const routes = useRoutes(routesItems);
     const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
@@ -40,8 +42,6 @@ function App() {
     };
 
     useHotkeys([['mod+J', () => toggleColorScheme()]]);
-
-    const queryClient = new QueryClient();
 
     return (
         <QueryClientProvider client={queryClient}>

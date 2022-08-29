@@ -14,4 +14,10 @@ export const UserHooks = {
         );
         return { isLoading, error, data, refetch, isSuccess };
     },
+    useAllUsers() {
+        const { isLoading, error, data, refetch, isSuccess, isFetching }: any = useQuery(
+            ['allUsers'], () => UserService.getUsers(),
+        );
+        return { isLoading, error, data, refetch, isSuccess, isFetching };
+    },
 };
