@@ -48,7 +48,10 @@
     "rules": {
         "max-len": [
             "error",
-            120
+            120,
+            {
+                "ignoreComments": true
+            }
         ],
         "import/extensions": [
             "error",
@@ -88,16 +91,17 @@
             }
         ],
         "object-curly-newline": [
-            "error",
+            "off",
             {
-                "multiline": true,
-                "minProperties": 10
+                "multiline": true
             }
         ],
         "function-paren-newline": [
             "error",
             "consistent"
         ],
-        "import/prefer-default-export": "off"
+        "import/prefer-default-export": "off",
+        "react/require-default-props": "warn",
+        "valid-jsdoc": "off"
     }
 }

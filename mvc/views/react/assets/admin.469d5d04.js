@@ -1,4 +1,4 @@
-import { r as react, a as jsx, R as React, d as useMantineTheme, O as Global$1, S as css, U as transitions$1, V as useDidUpdate, W as useUncontrolled, X as useReducedMotion, Y as useWindowEvent, Z as useId$1, c as createStyles, B as Box, j as jsxs, _ as UnstyledButton, $ as reactDom, a0 as useComponentDefaultProps, a1 as extractSystemStyles, a2 as useIsomorphicEffect$1, a3 as Fragment, a4 as packSx, a5 as getDefaultZIndex, x as ActionIcon, a6 as createPolymorphicComponent, T as Text, a7 as _extends, a8 as React$1, a9 as clsx, aa as Transition, ab as useInputProps, ac as Input, P as Paper, G as Group, ad as CheckIcon, ae as useTransition, af as getTransitionStyles, ag as Overlay, ah as MANTINE_SIZES, ai as useDisclosure, aj as sizes$f, ak as Loader, v as TextInput, al as InputsGroup, am as keyframes, A as Anchor, an as CheckboxIcon, ao as GROUP_POSITIONS, w as Checkbox, m as Button, C as Center, e as Container, L as LoadingOverlay, t as PasswordInput, n as Progress, ap as Stack, i as Title, aq as DEFAULT_THEME, ar as MANTINE_COLORS, M as MantineProvider, J as ColorSchemeProvider, as as useMantineColorScheme, at as GlobalStyles, au as NormalizeCSS, av as useCss, aw as defaultMantineEmotionCache, ax as useEmotionCache, ay as createCache, E as useLocalStorage, F as useHotkeys, y as IconSun, z as IconMoonStars, k as ky, b as config, u as useQuery, l as log, az as IconKey, o as IconCheck, aA as IconCopy, aB as IconUser, aC as IconAt, aD as IconId, aE as IconSettings, aF as IconTool, aG as IconLogout, aH as IconSearch, aI as useLocation, aJ as Link, aK as IconUsers, aL as IconArticle, aM as IconListDetails, s as useForm, aN as useParams, D as useRoutes, f as useDocumentTitle, aO as Routes, aP as Route, Q as QueryClient, H as QueryClientProvider, K as createRoot, N as BrowserRouter } from "./use-form.fc865571.js";
+import { r as react, a as jsx, R as React, d as useMantineTheme, O as Global$1, S as css, U as transitions$1, V as useDidUpdate, W as useUncontrolled, X as useReducedMotion, Y as useWindowEvent, Z as useId$1, c as createStyles, B as Box, j as jsxs, _ as UnstyledButton, $ as reactDom, a0 as useComponentDefaultProps, a1 as extractSystemStyles, a2 as useIsomorphicEffect$2, a3 as Fragment, a4 as packSx, a5 as getDefaultZIndex, x as ActionIcon, a6 as createPolymorphicComponent, T as Text, a7 as _extends, a8 as React$1, a9 as clsx, aa as Transition, ab as useInputProps, ac as Input, P as Paper, G as Group, ad as CheckIcon, ae as useTransition, af as getTransitionStyles, ag as Overlay, ah as MANTINE_SIZES, ai as useDisclosure, aj as sizes$f, ak as Loader, v as TextInput, al as InputsGroup, am as keyframes, A as Anchor, an as CheckboxIcon, ao as GROUP_POSITIONS, w as Checkbox, m as Button, C as Center, e as Container, L as LoadingOverlay, t as PasswordInput, n as Progress, ap as Stack, i as Title, aq as DEFAULT_THEME, ar as MANTINE_COLORS, M as MantineProvider, J as ColorSchemeProvider, as as useMantineColorScheme, at as GlobalStyles, au as NormalizeCSS, av as useCss, aw as defaultMantineEmotionCache, ax as useEmotionCache, ay as createCache, E as useLocalStorage, F as useHotkeys, y as IconSun, z as IconMoonStars, k as ky, b as config, u as useQuery, l as log, az as IconKey, o as IconCheck, aA as IconCopy, aB as IconUser, aC as IconAt, aD as IconId, aE as IconSettings, aF as IconTool, aG as IconLogout, aH as IconSearch, aI as useLocation, aJ as Link, aK as IconUsers, aL as IconArticle, aM as IconListDetails, s as useForm, aN as useParams, p as IconX, aO as useMutation, aP as IconSend, aQ as IconEdit, aR as Routes, aS as Route, Q as QueryClient, f as useDocumentTitle, H as QueryClientProvider, K as createRoot, N as BrowserRouter } from "./use-form.12b28c95.js";
 function findElementAncestor(element, selector) {
   let _element = element;
   while ((_element = _element.parentElement) && !_element.matches(selector))
@@ -445,6 +445,34 @@ function useFocusTrap(active = true) {
   }, [active]);
   return setRef;
 }
+function useInterval(fn, interval) {
+  const [active, setActive] = react.exports.useState(false);
+  const intervalRef = react.exports.useRef();
+  const fnRef = react.exports.useRef();
+  react.exports.useEffect(() => {
+    fnRef.current = fn;
+  }, [fn]);
+  const start = () => {
+    setActive((old) => {
+      if (!old) {
+        intervalRef.current = window.setInterval(fnRef.current, interval);
+      }
+      return true;
+    });
+  };
+  const stop = () => {
+    setActive(false);
+    window.clearInterval(intervalRef.current);
+  };
+  const toggle = () => {
+    if (active) {
+      stop();
+    } else {
+      start();
+    }
+  };
+  return { start, stop, toggle, active };
+}
 function assignRef(ref, value) {
   if (typeof ref === "function") {
     ref(value);
@@ -887,6 +915,22 @@ function useScrollLock(lock, options = {
     }
   }, [setScrollLocked]);
   return [scrollLocked, setScrollLocked];
+}
+function useToggle(options) {
+  const [state, setState] = react.exports.useState(options[0]);
+  const toggle = (value) => {
+    if (typeof value !== "undefined") {
+      setState(value);
+    } else {
+      setState((current) => {
+        if (current === options[0]) {
+          return options[1];
+        }
+        return options[0];
+      });
+    }
+  };
+  return [state, toggle];
 }
 function getOS() {
   const { userAgent } = window.navigator;
@@ -1770,7 +1814,7 @@ function Portal(props) {
   const theme = useMantineTheme();
   const [mounted, setMounted] = react.exports.useState(false);
   const ref = react.exports.useRef();
-  useIsomorphicEffect$1(() => {
+  useIsomorphicEffect$2(() => {
     setMounted(true);
     ref.current = !target ? document.createElement("div") : typeof target === "string" ? document.querySelector(target) : target;
     if (!target) {
@@ -1783,11 +1827,14 @@ function Portal(props) {
   if (!mounted) {
     return null;
   }
-  return reactDom.exports.createPortal(/* @__PURE__ */ jsx("div", {
-    className,
-    dir: theme.dir,
-    children
-  }), ref.current);
+  return reactDom.exports.createPortal(
+    /* @__PURE__ */ jsx("div", {
+      className,
+      dir: theme.dir,
+      children
+    }),
+    ref.current
+  );
 }
 Portal.displayName = "@mantine/core/Portal";
 var __defProp$2t = Object.defineProperty;
@@ -3252,15 +3299,17 @@ function SelectItems({
     } else {
       if (groupName !== item.group) {
         groupName = item.group;
-        groupedItems.push(/* @__PURE__ */ jsx("div", {
-          className: classes.separator,
-          children: /* @__PURE__ */ jsx(Divider, {
-            classNames: {
-              label: classes.separatorLabel
-            },
-            label: item.group
-          })
-        }, `__mantine-divider-${index2}`));
+        groupedItems.push(
+          /* @__PURE__ */ jsx("div", {
+            className: classes.separator,
+            children: /* @__PURE__ */ jsx(Divider, {
+              classNames: {
+                label: classes.separatorLabel
+              },
+              label: item.group
+            })
+          }, `__mantine-divider-${index2}`)
+        );
       }
       groupedItems.push(constructItemComponent(item, index2));
     }
@@ -3268,29 +3317,33 @@ function SelectItems({
   if (creatable) {
     const creatableDataItem = data[creatableDataIndex];
     const selected = typeof isItemSelected === "function" ? isItemSelected(data[creatableDataIndex].value) : false;
-    unGroupedItems.push(/* @__PURE__ */ jsx("div", {
-      className: classes.item,
-      "data-selected": selected || void 0,
-      "data-hovered": hovered === creatableDataIndex || void 0,
-      onMouseEnter: () => onItemHover(creatableDataIndex),
-      onMouseDown: (event) => {
-        event.preventDefault();
-        onItemSelect(creatableDataItem);
-      },
-      tabIndex: -1,
-      ref: (node) => {
-        if (itemsRefs && itemsRefs.current) {
-          itemsRefs.current[creatableDataItem.value] = node;
-        }
-      },
-      children: createLabel
-    }, creatableDataItem.value));
+    unGroupedItems.push(
+      /* @__PURE__ */ jsx("div", {
+        className: classes.item,
+        "data-selected": selected || void 0,
+        "data-hovered": hovered === creatableDataIndex || void 0,
+        onMouseEnter: () => onItemHover(creatableDataIndex),
+        onMouseDown: (event) => {
+          event.preventDefault();
+          onItemSelect(creatableDataItem);
+        },
+        tabIndex: -1,
+        ref: (node) => {
+          if (itemsRefs && itemsRefs.current) {
+            itemsRefs.current[creatableDataItem.value] = node;
+          }
+        },
+        children: createLabel
+      }, creatableDataItem.value)
+    );
   }
   if (groupedItems.length > 0 && unGroupedItems.length > 0) {
-    unGroupedItems.unshift(/* @__PURE__ */ jsx("div", {
-      className: classes.separator,
-      children: /* @__PURE__ */ jsx(Divider, {})
-    }));
+    unGroupedItems.unshift(
+      /* @__PURE__ */ jsx("div", {
+        className: classes.separator,
+        children: /* @__PURE__ */ jsx(Divider, {})
+      })
+    );
   }
   return groupedItems.length > 0 || unGroupedItems.length > 0 ? /* @__PURE__ */ jsxs(Fragment, {
     children: [groupedItems, unGroupedItems]
@@ -3355,7 +3408,9 @@ function $6ed0406888f73fc4$var$setRef(ref, value) {
     ref.current = value;
 }
 function $6ed0406888f73fc4$export$43e446d32b3d21af(...refs) {
-  return (node) => refs.forEach((ref) => $6ed0406888f73fc4$var$setRef(ref, node));
+  return (node) => refs.forEach(
+    (ref) => $6ed0406888f73fc4$var$setRef(ref, node)
+  );
 }
 function $6ed0406888f73fc4$export$c7b2cbe3552a0d05(...refs) {
   return react.exports.useCallback($6ed0406888f73fc4$export$43e446d32b3d21af(...refs), refs);
@@ -3536,7 +3591,9 @@ function $921a889cee6df7e8$var$usePresence(present) {
         const currentAnimationName = $921a889cee6df7e8$var$getAnimationName(stylesRef.current);
         const isCurrentAnimation = currentAnimationName.includes(event.animationName);
         if (event.target === node1 && isCurrentAnimation)
-          reactDom.exports.flushSync(() => send("ANIMATION_END"));
+          reactDom.exports.flushSync(
+            () => send("ANIMATION_END")
+          );
       };
       const handleAnimationStart = (event) => {
         if (event.target === node1)
@@ -3583,7 +3640,10 @@ function $c512c27ab02ef895$export$50c7b4e9d9f19c1(scopeName, createContextScopeD
     function Provider(props) {
       const { scope, children, ...context } = props;
       const Context = (scope === null || scope === void 0 ? void 0 : scope[scopeName][index2]) || BaseContext;
-      const value = react.exports.useMemo(() => context, Object.values(context));
+      const value = react.exports.useMemo(
+        () => context,
+        Object.values(context)
+      );
       return /* @__PURE__ */ react.exports.createElement(Context.Provider, {
         value
       }, children);
@@ -3609,15 +3669,18 @@ function $c512c27ab02ef895$export$50c7b4e9d9f19c1(scopeName, createContextScopeD
     });
     return function useScope(scope) {
       const contexts = (scope === null || scope === void 0 ? void 0 : scope[scopeName]) || scopeContexts;
-      return react.exports.useMemo(() => ({
-        [`__scope${scopeName}`]: {
-          ...scope,
-          [scopeName]: contexts
-        }
-      }), [
-        scope,
-        contexts
-      ]);
+      return react.exports.useMemo(
+        () => ({
+          [`__scope${scopeName}`]: {
+            ...scope,
+            [scopeName]: contexts
+          }
+        }),
+        [
+          scope,
+          contexts
+        ]
+      );
     };
   };
   createScope.scopeName = scopeName;
@@ -3631,10 +3694,12 @@ function $c512c27ab02ef895$var$composeContextScopes(...scopes) {
   if (scopes.length === 1)
     return baseScope;
   const createScope1 = () => {
-    const scopeHooks = scopes.map((createScope) => ({
-      useScope: createScope(),
-      scopeName: createScope.scopeName
-    }));
+    const scopeHooks = scopes.map(
+      (createScope) => ({
+        useScope: createScope(),
+        scopeName: createScope.scopeName
+      })
+    );
     return function useComposedScopes(overrideScopes) {
       const nextScopes1 = scopeHooks.reduce((nextScopes, { useScope, scopeName }) => {
         const scopeProps = useScope(overrideScopes);
@@ -3644,11 +3709,14 @@ function $c512c27ab02ef895$var$composeContextScopes(...scopes) {
           ...currentScope
         };
       }, {});
-      return react.exports.useMemo(() => ({
-        [`__scope${baseScope.scopeName}`]: nextScopes1
-      }), [
-        nextScopes1
-      ]);
+      return react.exports.useMemo(
+        () => ({
+          [`__scope${baseScope.scopeName}`]: nextScopes1
+        }),
+        [
+          nextScopes1
+        ]
+      );
     };
   };
   createScope1.scopeName = baseScope.scopeName;
@@ -3659,10 +3727,13 @@ function $b1b2314f5f9a1d84$export$25bec8c6f54ee79a(callback) {
   react.exports.useEffect(() => {
     callbackRef.current = callback;
   });
-  return react.exports.useMemo(() => (...args) => {
-    var _callbackRef$current;
-    return (_callbackRef$current = callbackRef.current) === null || _callbackRef$current === void 0 ? void 0 : _callbackRef$current.call(callbackRef, ...args);
-  }, []);
+  return react.exports.useMemo(
+    () => (...args) => {
+      var _callbackRef$current;
+      return (_callbackRef$current = callbackRef.current) === null || _callbackRef$current === void 0 ? void 0 : _callbackRef$current.call(callbackRef, ...args);
+    },
+    []
+  );
 }
 const $f631663db3294ace$var$DirectionContext = /* @__PURE__ */ react.exports.createContext(void 0);
 function $f631663db3294ace$export$b39126d51d94e6f3(localDir) {
@@ -3699,7 +3770,10 @@ const $57acba87d6e25586$export$ccf8d8d7bbf3c2cc = /* @__PURE__ */ react.exports.
   const [cornerHeight, setCornerHeight] = react.exports.useState(0);
   const [scrollbarXEnabled, setScrollbarXEnabled] = react.exports.useState(false);
   const [scrollbarYEnabled, setScrollbarYEnabled] = react.exports.useState(false);
-  const composedRefs = $6ed0406888f73fc4$export$c7b2cbe3552a0d05(forwardedRef, (node) => setScrollArea(node));
+  const composedRefs = $6ed0406888f73fc4$export$c7b2cbe3552a0d05(
+    forwardedRef,
+    (node) => setScrollArea(node)
+  );
   const direction = $f631663db3294ace$export$b39126d51d94e6f3(dir);
   return /* @__PURE__ */ react.exports.createElement($57acba87d6e25586$var$ScrollAreaProvider, {
     scope: __scopeScrollArea,
@@ -3802,7 +3876,10 @@ const $57acba87d6e25586$var$ScrollAreaScrollbarHover = /* @__PURE__ */ react.exp
         setVisible(true);
       };
       const handlePointerLeave = () => {
-        hideTimer = window.setTimeout(() => setVisible(false), context.scrollHideDelay);
+        hideTimer = window.setTimeout(
+          () => setVisible(false),
+          context.scrollHideDelay
+        );
       };
       scrollArea.addEventListener("pointerenter", handlePointerEnter);
       scrollArea.addEventListener("pointerleave", handlePointerLeave);
@@ -3828,7 +3905,10 @@ const $57acba87d6e25586$var$ScrollAreaScrollbarScroll = /* @__PURE__ */ react.ex
   const { forceMount, ...scrollbarProps } = props;
   const context = $57acba87d6e25586$var$useScrollAreaContext($57acba87d6e25586$var$SCROLLBAR_NAME, props.__scopeScrollArea);
   const isHorizontal = props.orientation === "horizontal";
-  const debounceScrollEnd = $57acba87d6e25586$var$useDebounceCallback(() => send("SCROLL_END"), 100);
+  const debounceScrollEnd = $57acba87d6e25586$var$useDebounceCallback(
+    () => send("SCROLL_END"),
+    100
+  );
   const [state, send] = $6c2e24571c90391f$export$3e6543de14f8614f("hidden", {
     hidden: {
       SCROLL: "scrolling"
@@ -3849,7 +3929,10 @@ const $57acba87d6e25586$var$ScrollAreaScrollbarScroll = /* @__PURE__ */ react.ex
   });
   react.exports.useEffect(() => {
     if (state === "idle") {
-      const hideTimer = window.setTimeout(() => send("HIDE"), context.scrollHideDelay);
+      const hideTimer = window.setTimeout(
+        () => send("HIDE"),
+        context.scrollHideDelay
+      );
       return () => window.clearTimeout(hideTimer);
     }
   }, [
@@ -3886,8 +3969,14 @@ const $57acba87d6e25586$var$ScrollAreaScrollbarScroll = /* @__PURE__ */ react.ex
     "data-state": state === "hidden" ? "hidden" : "visible"
   }, scrollbarProps, {
     ref: forwardedRef,
-    onPointerEnter: $e42e1063c40fb3ef$export$b9ecd428b558ff10(props.onPointerEnter, () => send("POINTER_ENTER")),
-    onPointerLeave: $e42e1063c40fb3ef$export$b9ecd428b558ff10(props.onPointerLeave, () => send("POINTER_LEAVE"))
+    onPointerEnter: $e42e1063c40fb3ef$export$b9ecd428b558ff10(
+      props.onPointerEnter,
+      () => send("POINTER_ENTER")
+    ),
+    onPointerLeave: $e42e1063c40fb3ef$export$b9ecd428b558ff10(
+      props.onPointerLeave,
+      () => send("POINTER_LEAVE")
+    )
   })));
 });
 const $57acba87d6e25586$var$ScrollAreaScrollbarAuto = /* @__PURE__ */ react.exports.forwardRef((props, forwardedRef) => {
@@ -4081,7 +4170,10 @@ const $57acba87d6e25586$var$ScrollAreaScrollbarImpl = /* @__PURE__ */ react.expo
   const { __scopeScrollArea, sizes: sizes2, hasThumb, onThumbChange, onThumbPointerUp, onThumbPointerDown, onThumbPositionChange, onDragScroll, onWheelScroll, onResize, ...scrollbarProps } = props;
   const context = $57acba87d6e25586$var$useScrollAreaContext($57acba87d6e25586$var$SCROLLBAR_NAME, __scopeScrollArea);
   const [scrollbar, setScrollbar] = react.exports.useState(null);
-  const composeRefs = $6ed0406888f73fc4$export$c7b2cbe3552a0d05(forwardedRef, (node) => setScrollbar(node));
+  const composeRefs = $6ed0406888f73fc4$export$c7b2cbe3552a0d05(
+    forwardedRef,
+    (node) => setScrollbar(node)
+  );
   const rectRef = react.exports.useRef(null);
   const prevWebkitUserSelectRef = react.exports.useRef("");
   const viewport = context.viewport;
@@ -4173,7 +4265,10 @@ const $57acba87d6e25586$var$ScrollAreaThumbImpl = /* @__PURE__ */ react.exports.
   const scrollAreaContext = $57acba87d6e25586$var$useScrollAreaContext($57acba87d6e25586$var$THUMB_NAME, __scopeScrollArea);
   const scrollbarContext = $57acba87d6e25586$var$useScrollbarContext($57acba87d6e25586$var$THUMB_NAME, __scopeScrollArea);
   const { onThumbPositionChange } = scrollbarContext;
-  const composedRef = $6ed0406888f73fc4$export$c7b2cbe3552a0d05(forwardedRef, (node) => scrollbarContext.onThumbChange(node));
+  const composedRef = $6ed0406888f73fc4$export$c7b2cbe3552a0d05(
+    forwardedRef,
+    (node) => scrollbarContext.onThumbChange(node)
+  );
   const removeUnlinkedScrollListenerRef = react.exports.useRef();
   const debounceScrollEnd = $57acba87d6e25586$var$useDebounceCallback(() => {
     if (removeUnlinkedScrollListenerRef.current) {
@@ -4355,7 +4450,10 @@ const $57acba87d6e25586$var$addUnlinkedScrollListener = (node, handler = () => {
 function $57acba87d6e25586$var$useDebounceCallback(callback, delay) {
   const handleCallback = $b1b2314f5f9a1d84$export$25bec8c6f54ee79a(callback);
   const debounceTimerRef = react.exports.useRef(0);
-  react.exports.useEffect(() => () => window.clearTimeout(debounceTimerRef.current), []);
+  react.exports.useEffect(
+    () => () => window.clearTimeout(debounceTimerRef.current),
+    []
+  );
   return react.exports.useCallback(() => {
     window.clearTimeout(debounceTimerRef.current);
     debounceTimerRef.current = window.setTimeout(handleCallback, delay);
@@ -5318,7 +5416,11 @@ function isScaled(element) {
 function getRectRelativeToOffsetParent(element, offsetParent, strategy) {
   const isOffsetParentAnElement = isHTMLElement$1(offsetParent);
   const documentElement = getDocumentElement(offsetParent);
-  const rect = getBoundingClientRect(element, isOffsetParentAnElement && isScaled(offsetParent), strategy === "fixed");
+  const rect = getBoundingClientRect(
+    element,
+    isOffsetParentAnElement && isScaled(offsetParent),
+    strategy === "fixed"
+  );
   let scroll = {
     scrollLeft: 0,
     scrollTop: 0
@@ -8362,11 +8464,13 @@ const Breadcrumbs = react.exports.forwardRef((props, ref) => {
     }, index2);
     acc.push(item);
     if (index2 !== array.length - 1) {
-      acc.push(/* @__PURE__ */ jsx(Text, {
-        size: "sm",
-        className: classes.separator,
-        children: separator
-      }, `separator-${index2}`));
+      acc.push(
+        /* @__PURE__ */ jsx(Text, {
+          size: "sm",
+          className: classes.separator,
+          children: separator
+        }, `separator-${index2}`)
+      );
     }
     return acc;
   }, []);
@@ -14927,12 +15031,14 @@ const NativeSelect = react.exports.forwardRef((props, ref) => {
     children: item.label
   }, item.value));
   if (placeholder) {
-    options.unshift(/* @__PURE__ */ jsx("option", {
-      value: "",
-      disabled: true,
-      hidden: true,
-      children: placeholder
-    }, "placeholder"));
+    options.unshift(
+      /* @__PURE__ */ jsx("option", {
+        value: "",
+        disabled: true,
+        hidden: true,
+        children: placeholder
+      }, "placeholder")
+    );
   }
   return /* @__PURE__ */ jsx(Input.Wrapper, {
     ...__spreadProps$x(__spreadValues$X({}, wrapperProps), {
@@ -17065,7 +17171,7 @@ const SegmentedControl = react.exports.forwardRef((props, ref) => {
   const uuid = useId$1(name);
   const refs = react.exports.useRef({});
   const [observerRef, containerRect] = useResizeObserver();
-  useIsomorphicEffect$1(() => {
+  useIsomorphicEffect$2(() => {
     if (!mounted.current) {
       mounted.current = true;
       setShouldAnimate(false);
@@ -19541,11 +19647,13 @@ const Stepper = react.exports.forwardRef((props, ref) => {
       unstyled
     }));
     if (index2 !== _children.length - 1) {
-      acc.push(/* @__PURE__ */ jsx("div", {
-        className: cx(classes.separator, {
-          [classes.separatorActive]: index2 < active
-        })
-      }, `separator-${index2}`));
+      acc.push(
+        /* @__PURE__ */ jsx("div", {
+          className: cx(classes.separator, {
+            [classes.separatorActive]: index2 < active
+          })
+        }, `separator-${index2}`)
+      );
     }
     return acc;
   }, []);
@@ -21580,29 +21688,33 @@ function RenderList({
     } else {
       if (groupName !== item.group) {
         groupName = item.group;
-        groupedItems.push(/* @__PURE__ */ jsx("div", {
-          className: classes.separator,
-          children: /* @__PURE__ */ jsx(Divider, {
-            classNames: {
-              label: classes.separatorLabel
-            },
-            label: groupName
-          })
-        }, groupName));
+        groupedItems.push(
+          /* @__PURE__ */ jsx("div", {
+            className: classes.separator,
+            children: /* @__PURE__ */ jsx(Divider, {
+              classNames: {
+                label: classes.separatorLabel
+              },
+              label: groupName
+            })
+          }, groupName)
+        );
       }
       groupedItems.push(itemComponent);
     }
   });
   if (groupedItems.length > 0 && unGroupedItems.length > 0) {
-    unGroupedItems.unshift(/* @__PURE__ */ jsx("div", {
-      className: classes.separator,
-      children: /* @__PURE__ */ jsx(Divider, {
-        unstyled,
-        classNames: {
-          label: classes.separatorLabel
-        }
+    unGroupedItems.unshift(
+      /* @__PURE__ */ jsx("div", {
+        className: classes.separator,
+        children: /* @__PURE__ */ jsx(Divider, {
+          unstyled,
+          classNames: {
+            label: classes.separatorLabel
+          }
+        })
       })
-    }));
+    );
   }
   const handleSearchKeydown = (event) => {
     switch (event.key) {
@@ -22368,17 +22480,17 @@ function modalsReducer(state, action) {
     }
   }
 }
-function dispatchEvent(type, detail) {
+function dispatchEvent$1(type, detail) {
   window.dispatchEvent(new CustomEvent(type, { detail }));
 }
-const useIsomorphicEffect = typeof window !== "undefined" ? react.exports.useLayoutEffect : react.exports.useEffect;
-function createUseExternalEvents(prefix) {
+const useIsomorphicEffect$1 = typeof window !== "undefined" ? react.exports.useLayoutEffect : react.exports.useEffect;
+function createUseExternalEvents$1(prefix) {
   function _useExternalEvents(events) {
     const handlers = Object.keys(events).reduce((acc, eventKey) => {
       acc[`${prefix}:${eventKey}`] = (event) => events[eventKey](event.detail);
       return acc;
     }, {});
-    useIsomorphicEffect(() => {
+    useIsomorphicEffect$1(() => {
       Object.keys(handlers).forEach((eventKey) => {
         window.removeEventListener(eventKey, handlers[eventKey]);
         window.addEventListener(eventKey, handlers[eventKey]);
@@ -22389,16 +22501,16 @@ function createUseExternalEvents(prefix) {
     }, []);
   }
   function createEvent2(event) {
-    return (...payload) => dispatchEvent(`${prefix}:${String(event)}`, payload[0]);
+    return (...payload) => dispatchEvent$1(`${prefix}:${String(event)}`, payload[0]);
   }
   return [_useExternalEvents, createEvent2];
 }
-const [useModalsEvents, createEvent] = createUseExternalEvents("mantine-modals");
-createEvent("openModal");
-createEvent("closeModal");
-createEvent("closeAllModals");
-createEvent("openConfirmModal");
-createEvent("openContextModal");
+const [useModalsEvents, createEvent$1] = createUseExternalEvents$1("mantine-modals");
+createEvent$1("openModal");
+createEvent$1("closeModal");
+createEvent$1("closeAllModals");
+createEvent$1("openConfirmModal");
+createEvent$1("openContextModal");
 var __defProp = Object.defineProperty;
 var __defProps = Object.defineProperties;
 var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
@@ -22642,6 +22754,169 @@ function ModalsProvider({
     }), children]
   });
 }
+function dispatchEvent(type, detail) {
+  window.dispatchEvent(new CustomEvent(type, { detail }));
+}
+const useIsomorphicEffect = typeof window !== "undefined" ? react.exports.useLayoutEffect : react.exports.useEffect;
+function createUseExternalEvents(prefix) {
+  function _useExternalEvents(events) {
+    const handlers = Object.keys(events).reduce((acc, eventKey) => {
+      acc[`${prefix}:${eventKey}`] = (event) => events[eventKey](event.detail);
+      return acc;
+    }, {});
+    useIsomorphicEffect(() => {
+      Object.keys(handlers).forEach((eventKey) => {
+        window.removeEventListener(eventKey, handlers[eventKey]);
+        window.addEventListener(eventKey, handlers[eventKey]);
+      });
+      return () => Object.keys(handlers).forEach((eventKey) => {
+        window.removeEventListener(eventKey, handlers[eventKey]);
+      });
+    }, []);
+  }
+  function createEvent2(event) {
+    return (...payload) => dispatchEvent(`${prefix}:${String(event)}`, payload[0]);
+  }
+  return [_useExternalEvents, createEvent2];
+}
+const [useNavigationProgressEvents, createEvent] = createUseExternalEvents("mantine-nprogress");
+const startNavigationProgress = createEvent("start");
+const stopNavigationProgress = createEvent("stop");
+const resetNavigationProgress = createEvent("reset");
+const setNavigationProgress = createEvent("set");
+createEvent("increment");
+createEvent("decrement");
+function NavigationProgress({
+  initialProgress = 0,
+  color,
+  size: size2 = 3,
+  stepInterval = 500,
+  transitionDuration = 300,
+  exitTimeout = 500,
+  exitTransitionDuration = 400,
+  onFinish,
+  autoReset = false,
+  withinPortal = true,
+  zIndex = getDefaultZIndex("max")
+}) {
+  const theme = useMantineTheme();
+  const shouldReduceMotion = useReducedMotion();
+  const reducedMotion = theme.respectReducedMotion ? shouldReduceMotion : false;
+  const [_progress, setProgress] = react.exports.useState(initialProgress);
+  const [mounted, setMounted] = react.exports.useState(true);
+  const [unmountProgress, setUnmountProgress] = react.exports.useState(false);
+  const resetRef = react.exports.useRef();
+  const unmountRef = react.exports.useRef();
+  const interval = useInterval(() => {
+    setProgress((amount) => {
+      let next = 0;
+      if (amount >= 0 && amount <= 20) {
+        next = 10;
+      } else if (amount >= 20 && amount <= 50) {
+        next = 4;
+      } else if (amount >= 50 && amount <= 80) {
+        next = 2;
+      } else if (amount >= 80 && amount <= 99) {
+        next = 0.5;
+      }
+      return amount + next;
+    });
+  }, stepInterval);
+  const set = (value) => setProgress(value);
+  const increment = (value) => setProgress((c) => Math.min(c + value, 100));
+  const decrement = (value) => setProgress((c) => Math.max(c - value, 0));
+  const start = () => {
+    interval.stop();
+    interval.start();
+  };
+  const stop = () => interval.stop();
+  const reset = () => {
+    setUnmountProgress(true);
+    stop();
+    setProgress(0);
+    window.setTimeout(() => setUnmountProgress(false), 0);
+  };
+  const cancelUnmount = () => {
+    if (unmountRef.current) {
+      window.clearTimeout(unmountRef.current);
+      unmountRef.current = null;
+    }
+    if (resetRef.current) {
+      window.clearTimeout(resetRef.current);
+      resetRef.current = null;
+    }
+    setMounted(true);
+  };
+  useDidUpdate(() => {
+    if (_progress >= 100) {
+      stop();
+      onFinish == null ? void 0 : onFinish();
+      unmountRef.current = window.setTimeout(() => {
+        unmountRef.current = null;
+        setMounted(false);
+        if (autoReset) {
+          resetRef.current = window.setTimeout(() => {
+            resetRef.current = null;
+            reset();
+          }, reducedMotion ? 0 : exitTransitionDuration);
+        }
+      }, exitTimeout);
+    } else if (!mounted) {
+      cancelUnmount();
+    }
+  }, [_progress]);
+  useNavigationProgressEvents({
+    start,
+    stop,
+    set,
+    increment,
+    decrement,
+    reset
+  });
+  return /* @__PURE__ */ jsx(OptionalPortal, {
+    withinPortal,
+    children: !unmountProgress && /* @__PURE__ */ jsx(Progress, {
+      radius: 0,
+      value: _progress,
+      size: size2,
+      color,
+      styles: {
+        root: {
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex,
+          backgroundColor: "transparent",
+          transitionProperty: "opacity",
+          transitionTimingFunction: theme.transitionTimingFunction,
+          transitionDuration: `${reducedMotion || _progress !== 100 ? 0 : exitTransitionDuration}ms`,
+          opacity: mounted ? 1 : 0
+        },
+        bar: {
+          position: "relative",
+          transitionProperty: "width",
+          transitionTimingFunction: theme.transitionTimingFunction,
+          transitionDuration: `${reducedMotion || !mounted ? 0 : transitionDuration}ms`
+        }
+      }
+    })
+  });
+}
+const AppContext = react.exports.createContext({});
+/**
+ * react-query-devtools-noop
+ *
+ * Copyright (c) TanStack
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE.md file in the root directory of this source tree.
+ *
+ * @license MIT
+ */
+function ReactQueryDevtools() {
+  return null;
+}
 function useColorScheme() {
   const [colorScheme, setColorScheme] = useLocalStorage({
     key: "mantine-color-scheme",
@@ -22755,634 +23030,6 @@ function HeaderLogo({
     })
   });
 }
-const UserService = {
-  async getApiKey() {
-    const resp = await ky(`${config.baseUri}/apikey`);
-    if (resp.ok) {
-      return resp.json();
-    }
-    throw new Error(`cannot get resource, resp: '${JSON.stringify(resp)}'`);
-  },
-  async getCurrentUser() {
-    const resp = await ky(`${config.baseUri}/v1/users/current`);
-    if (resp.ok) {
-      return resp.json();
-    }
-    throw new Error(`cannot get resource, resp: '${JSON.stringify(resp)}'`);
-  }
-};
-const UserHooks = {
-  useApiKey() {
-    const { isLoading, error, data, isError, refetch, isFetching, isRefetching, isSuccess, status } = useQuery(["apiKey"], () => UserService.getApiKey(), { enabled: false });
-    return { isLoading, isFetching, isRefetching, isSuccess, error, data, isError, refetch, status };
-  },
-  useCurrentUser() {
-    const { isLoading, error, data, refetch, isSuccess } = useQuery(["currentUser"], () => UserService.getCurrentUser());
-    return { isLoading, error, data, refetch, isSuccess };
-  }
-};
-function ApiKeyModalAsk({
-  opened,
-  setOpened,
-  apiKey,
-  setResultOpened
-}) {
-  return /* @__PURE__ */ jsxs(Modal, {
-    opened,
-    onClose: () => setOpened(false),
-    title: "Generate a new API key?",
-    children: [/* @__PURE__ */ jsx(Text, {
-      size: "sm",
-      children: "Are you sure you want to generate a new API key? After generation, you must add corresponding changes in your test solution."
-    }), /* @__PURE__ */ jsxs(Group, {
-      position: "right",
-      children: [/* @__PURE__ */ jsx(Button, {
-        onClick: () => {
-          apiKey.refetch();
-          setResultOpened(true);
-          setOpened(false);
-        },
-        children: "Generate"
-      }), /* @__PURE__ */ jsx(Button, {
-        variant: "outline",
-        onClick: () => setOpened(false),
-        children: "Cancel"
-      })]
-    })]
-  });
-}
-function ApiKeyModalResult({
-  opened,
-  setOpened,
-  apiKey
-}) {
-  const [successCopy, setSuccessCopy] = react.exports.useState(false);
-  if (apiKey.isError) {
-    log.error(apiKey.error);
-  }
-  const copyHandler = () => {
-    const input = document.getElementById("api-key");
-    input.focus();
-    input.select();
-    const successful = document.execCommand("copy");
-    const msg = successful ? "successful" : "unsuccessful";
-    log.debug(`copy result: ${msg}`);
-    if (msg === "successful") {
-      setSuccessCopy(true);
-    }
-    window.getSelection().removeAllRanges();
-  };
-  const CopyIcon = successCopy ? IconCheck : IconCopy;
-  return /* @__PURE__ */ jsxs(Modal, {
-    opened,
-    onClose: () => {
-      setSuccessCopy(false);
-      setOpened(false);
-    },
-    title: "New API key",
-    children: [!apiKey.isLoading && apiKey.data ? /* @__PURE__ */ jsxs(Fragment, {
-      children: [/* @__PURE__ */ jsx(Group, {
-        ml: 20,
-        mb: 20,
-        children: /* @__PURE__ */ jsx(Text, {
-          size: "sm",
-          children: "Copy the New API key to Clipboard"
-        })
-      }), /* @__PURE__ */ jsxs(Group, {
-        position: "center",
-        children: [/* @__PURE__ */ jsx(TextInput, {
-          "data-test": "api-key",
-          id: "api-key",
-          value: apiKey.data.apikey,
-          sx: {
-            width: "340px",
-            display: "inline"
-          },
-          icon: /* @__PURE__ */ jsx(IconKey, {}),
-          style: {
-            display: "inline"
-          }
-        }), /* @__PURE__ */ jsx(ActionIcon, {
-          ml: -10,
-          children: /* @__PURE__ */ jsx(CopyIcon, {
-            size: 18,
-            onClick: copyHandler,
-            color: successCopy ? "green" : "gray"
-          })
-        })]
-      })]
-    }) : /* @__PURE__ */ jsx(Fragment, {
-      children: apiKey.isError && /* @__PURE__ */ jsx(Text, {
-        color: "red",
-        size: "sm",
-        children: " Error loading API key"
-      })
-    }), /* @__PURE__ */ jsx(Group, {
-      position: "center",
-      children: (apiKey.isFetching || apiKey.isRefetching) && /* @__PURE__ */ jsx(Loader, {})
-    }), /* @__PURE__ */ jsx(Group, {
-      position: "center",
-      pt: 30,
-      children: /* @__PURE__ */ jsx(Button, {
-        onClick: () => {
-          setOpened(false);
-          setTimeout(() => {
-            setSuccessCopy(false);
-          }, 300);
-        },
-        children: "Close"
-      })
-    })]
-  });
-}
-function UserInfoModal({
-  opened,
-  setOpened
-}) {
-  const user = UserHooks.useCurrentUser();
-  const useStyles2 = createStyles((theme) => ({
-    icon: {
-      color: theme.colorScheme === "dark" ? theme.colors.dark[3] : theme.colors.gray[5]
-    },
-    name: {
-      fontFamily: `Greycliff CF, ${theme.fontFamily}`
-    }
-  }));
-  const {
-    classes
-  } = useStyles2();
-  return /* @__PURE__ */ jsxs(Modal, {
-    size: 350,
-    opened,
-    onClose: () => {
-      setOpened(false);
-    },
-    title: "User Details",
-    children: [user.isSuccess && user.data ? /* @__PURE__ */ jsxs(Group, {
-      noWrap: true,
-      children: [/* @__PURE__ */ jsx(Avatar, {
-        src: null,
-        color: "white",
-        size: 120,
-        radius: 70,
-        children: /* @__PURE__ */ jsx(IconUser, {
-          stroke: 1,
-          size: 120,
-          radius: "md"
-        })
-      }), /* @__PURE__ */ jsxs("div", {
-        children: [/* @__PURE__ */ jsx(Text, {
-          size: "xs",
-          sx: {
-            textTransform: "uppercase"
-          },
-          weight: 700,
-          color: "dimmed",
-          children: user.data.role
-        }), /* @__PURE__ */ jsxs(Text, {
-          size: "lg",
-          weight: 500,
-          className: classes.name,
-          children: [user.data.firstName, " ", user.data.lastName]
-        }), /* @__PURE__ */ jsxs(Group, {
-          noWrap: true,
-          spacing: 5,
-          mt: 3,
-          children: [/* @__PURE__ */ jsx(IconAt, {
-            stroke: 1.5,
-            size: 16,
-            className: classes.icon
-          }), /* @__PURE__ */ jsx(Text, {
-            size: "xs",
-            color: "dimmed",
-            children: user.data.username
-          })]
-        })]
-      })]
-    }) : /* @__PURE__ */ jsx(Fragment, {
-      children: /* @__PURE__ */ jsx(Loader, {})
-    }), /* @__PURE__ */ jsx(Group, {
-      position: "center",
-      pt: 30,
-      children: /* @__PURE__ */ jsx(Button, {
-        onClick: () => {
-          setOpened(false);
-        },
-        children: "Close"
-      })
-    })]
-  });
-}
-function UserMenu() {
-  var _a, _b, _c, _d;
-  const theme = useMantineTheme();
-  const apiKey = UserHooks.useApiKey();
-  const [apiKeyModalAskOpened, setApiKeyModalAskOpened] = react.exports.useState(false);
-  const [apiKeyModalResultOpened, setApiKeyModalResultOpened] = react.exports.useState(false);
-  const [userInfoModalOpened, setUserInfoModalOpened] = react.exports.useState(false);
-  const currentUser = UserHooks.useCurrentUser();
-  const userInitials = currentUser.isSuccess && currentUser.data ? `${(_a = currentUser == null ? void 0 : currentUser.data) == null ? void 0 : _a.firstName[0]}${(_b = currentUser == null ? void 0 : currentUser.data) == null ? void 0 : _b.lastName[0]}` : "";
-  return /* @__PURE__ */ jsxs(Fragment, {
-    children: [/* @__PURE__ */ jsxs(Menu, {
-      shadow: "md",
-      width: "20%",
-      children: [/* @__PURE__ */ jsx(Menu.Target, {
-        children: /* @__PURE__ */ jsx(Button, {
-          "data-test": "user-icon",
-          p: 0,
-          radius: "xl",
-          size: "md",
-          color: isDark() ? "dark" : "#ffffff",
-          sx: {
-            color: isDark() ? "#ffffff" : "#1a1b1e",
-            backgroundColor: isDark() ? "#1a1b1e" : theme.colors.gray[0],
-            fontWeight: 600,
-            fontSize: "1rem",
-            display: "flex",
-            width: "2.6rem",
-            justifyContent: "center",
-            "&:hover": {
-              backgroundColor: isDark() ? "#000000" : "#ffffff"
-            }
-          },
-          children: userInitials
-        })
-      }), /* @__PURE__ */ jsxs(Menu.Dropdown, {
-        children: [/* @__PURE__ */ jsxs(Menu.Label, {
-          "data-test": "user-short-details",
-          sx: {
-            fontSize: "14px",
-            fontWeight: 700,
-            display: "flex",
-            alignItems: "center",
-            color: theme.colors.blue[5]
-          },
-          children: [/* @__PURE__ */ jsx(IconUser, {
-            size: "14px",
-            stroke: 3,
-            style: {
-              marginRight: "10px"
-            }
-          }), (_c = currentUser == null ? void 0 : currentUser.data) == null ? void 0 : _c.firstName, " ", (_d = currentUser == null ? void 0 : currentUser.data) == null ? void 0 : _d.lastName]
-        }), /* @__PURE__ */ jsx(Menu.Divider, {}), /* @__PURE__ */ jsx(Menu.Item, {
-          "data-test": "userinfo",
-          icon: /* @__PURE__ */ jsx(IconId, {
-            size: 14
-          }),
-          onClick: () => {
-            setUserInfoModalOpened(true);
-          },
-          children: "User Details"
-        }), /* @__PURE__ */ jsx(Menu.Item, {
-          icon: /* @__PURE__ */ jsx(IconSettings, {
-            size: 14
-          }),
-          component: "a",
-          href: "/admin/",
-          children: "Admin Panel"
-        }), /* @__PURE__ */ jsx(Menu.Item, {
-          icon: /* @__PURE__ */ jsx(IconKey, {
-            size: 14
-          }),
-          component: "a",
-          href: "/auth/change",
-          children: "Change Password"
-        }), /* @__PURE__ */ jsx(Menu.Item, {
-          id: "generate-api",
-          icon: /* @__PURE__ */ jsx(IconTool, {
-            size: 14
-          }),
-          onClick: () => {
-            setApiKeyModalAskOpened(true);
-          },
-          children: "Generate API key"
-        }), /* @__PURE__ */ jsx(Menu.Divider, {}), /* @__PURE__ */ jsx(Menu.Item, {
-          icon: /* @__PURE__ */ jsx(IconLogout, {
-            size: 14
-          }),
-          component: "a",
-          href: "/auth/logout",
-          children: "Sign out"
-        })]
-      })]
-    }), /* @__PURE__ */ jsx(ApiKeyModalAsk, {
-      opened: apiKeyModalAskOpened,
-      setOpened: setApiKeyModalAskOpened,
-      apiKey,
-      setResultOpened: setApiKeyModalResultOpened
-    }), /* @__PURE__ */ jsx(ApiKeyModalResult, {
-      opened: apiKeyModalResultOpened,
-      setOpened: setApiKeyModalResultOpened,
-      apiKey
-    }), /* @__PURE__ */ jsx(UserInfoModal, {
-      opened: userInfoModalOpened,
-      setOpened: setUserInfoModalOpened
-    })]
-  });
-}
-const useStyles$2 = createStyles((theme) => ({
-  header: {
-    paddingLeft: theme.spacing.md,
-    paddingRight: theme.spacing.md
-  },
-  inner: {
-    height: 56,
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center"
-  },
-  links: {
-    [theme.fn.smallerThan("md")]: {
-      display: "none"
-    }
-  },
-  search: {
-    [theme.fn.smallerThan("xs")]: {
-      display: "none"
-    }
-  },
-  link: {
-    display: "block",
-    lineHeight: 1,
-    padding: "8px 12px",
-    borderRadius: theme.radius.sm,
-    textDecoration: "none",
-    color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.colors.gray[7],
-    fontSize: theme.fontSizes.sm,
-    fontWeight: 500,
-    "&:hover": {
-      backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0]
-    }
-  }
-}));
-const links = [{
-  label: "Dashboard",
-  link: "/"
-}, {
-  label: "Admin Panel",
-  link: "/admin"
-}];
-function AdminHeader() {
-  const [colorScheme, toggleColorScheme] = useColorScheme();
-  const [opened, {
-    toggle
-  }] = useDisclosure(false);
-  const {
-    classes
-  } = useStyles$2();
-  const items = links.map((link) => /* @__PURE__ */ jsx("a", {
-    href: link.link,
-    className: classes.link,
-    onClick: (event) => event.preventDefault(),
-    children: link.label
-  }, link.label));
-  const theme = useMantineTheme();
-  return /* @__PURE__ */ jsx(Header, {
-    height: 56,
-    className: classes.header,
-    mb: 120,
-    sx: {
-      backgroundColor: isDark() ? theme.colors.dark[5] : theme.colors.gray[2]
-    },
-    children: /* @__PURE__ */ jsxs("div", {
-      className: classes.inner,
-      children: [/* @__PURE__ */ jsxs(Group, {
-        children: [/* @__PURE__ */ jsx(Burger, {
-          opened,
-          onClick: toggle,
-          size: "sm"
-        }), /* @__PURE__ */ jsx(HeaderLogo, {})]
-      }), /* @__PURE__ */ jsxs(Group, {
-        children: [/* @__PURE__ */ jsx(Group, {
-          ml: 50,
-          spacing: 5,
-          className: classes.links,
-          children: items
-        }), /* @__PURE__ */ jsx(Autocomplete, {
-          className: classes.search,
-          placeholder: "Search",
-          icon: /* @__PURE__ */ jsx(IconSearch, {
-            size: 16,
-            stroke: 1.5
-          }),
-          data: ["React", "Angular", "Vue", "Next.js", "Riot.js", "Svelte", "Blitz.js"]
-        }), /* @__PURE__ */ jsx(Group, {
-          spacing: 7,
-          children: /* @__PURE__ */ jsx(UserMenu, {})
-        }), /* @__PURE__ */ jsx(Group, {
-          children: /* @__PURE__ */ jsx(ToggleThemeButton, {
-            colorScheme,
-            toggleColorScheme
-          })
-        })]
-      })]
-    })
-  });
-}
-const useStyles$1 = createStyles((theme) => ({
-  control: {
-    fontWeight: 500,
-    display: "block",
-    width: "100%",
-    color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
-    fontSize: theme.fontSizes.sm,
-    "&:hover": {
-      backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.colors.gray[0],
-      color: theme.colorScheme === "dark" ? theme.white : theme.black
-    }
-  },
-  link: {
-    display: "block",
-    textDecoration: "none",
-    fontSize: theme.fontSizes.sm,
-    color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.colors.gray[7],
-    borderLeft: `1px solid ${theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]}`,
-    "&:hover": {
-      backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.colors.gray[0],
-      color: theme.colorScheme === "dark" ? theme.white : theme.black
-    }
-  },
-  rootLink: {
-    display: "block",
-    textDecoration: "none",
-    color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
-    "&:hover": {
-      backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.colors.gray[0],
-      color: theme.colorScheme === "dark" ? theme.white : theme.black
-    },
-    "&:active": {
-      backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.colors.gray[0],
-      color: theme.colorScheme === "dark" ? theme.white : theme.black
-    }
-  },
-  chevron: {
-    transition: "transform 200ms ease"
-  }
-}));
-function LinksGroup({
-  icon: Icon,
-  label,
-  links: links2,
-  link
-}) {
-  const location = useLocation();
-  const {
-    classes
-  } = useStyles$1();
-  const hasLinks = Array.isArray(links2);
-  const items = (hasLinks ? links2 : []).map((item) => /* @__PURE__ */ jsx(NavLink, {
-    label: item.label,
-    component: Link,
-    className: classes.link,
-    to: item.link,
-    active: location.pathname === item.link
-  }, item.label));
-  return /* @__PURE__ */ jsx(NavLink, {
-    label,
-    component: Link,
-    styles: () => ({
-      body: {
-        display: "flex"
-      }
-    }),
-    to: link || "/",
-    active: location.pathname === link,
-    icon: /* @__PURE__ */ jsx(ThemeIcon, {
-      variant: "light",
-      size: 30,
-      children: /* @__PURE__ */ jsx(Icon, {
-        size: 18
-      })
-    }),
-    childrenOffset: 26,
-    children: items.length > 0 ? items : ""
-  });
-}
-const tasksList = [
-  {
-    label: "Handle old Checks",
-    name: "handle_old_checks",
-    description: "\u26A0\uFE0FWe strongly recommended doing the remove inconsistent items procedure Before and After removing checks via this task.",
-    inputs: [
-      { name: "days", label: "Check older that (days)", type: "TextInput", default: 180 },
-      { name: "remove", label: "Remove", type: "Checkbox", default: false }
-    ]
-  },
-  {
-    label: "Test",
-    name: "task_test",
-    description: "\u26A0\uFE0FTest description",
-    inputs: [
-      { name: "days", label: "Check older that (days)", type: "TextInput", default: 180 },
-      { name: "remove", label: "Remove", type: "Checkbox", default: false }
-    ]
-  },
-  {
-    label: "Handle Database Consistency",
-    name: "handle_database_consistency",
-    description: "Checks and removes non-consistent items",
-    inputs: [
-      { name: "clean", label: "Remove", type: "Checkbox", default: false }
-    ]
-  },
-  {
-    label: "Remove old logs",
-    name: "remove_old_logs",
-    description: "Remove logs that older particular threshold",
-    inputs: [
-      { name: "days", label: "Remove older that (days)", type: "TextInput", default: 30 },
-      { name: "statistics", label: "Only statistics", type: "Checkbox", default: false }
-    ]
-  }
-];
-const taskLinks = tasksList.map((task) => ({
-  label: task.label,
-  link: `/admin2/tasks/${task.name}`
-}));
-const navbarItems = [{
-  label: "Users",
-  icon: IconUsers,
-  link: "/admin/users"
-}, {
-  label: "Logs",
-  icon: IconArticle,
-  link: "/admin/logs"
-}, {
-  label: "Tasks",
-  icon: IconListDetails,
-  links: taskLinks
-}, {
-  label: "Settings",
-  icon: IconSettings,
-  link: "/admin/settings"
-}];
-const useStyles = createStyles((theme) => ({
-  navbar: {
-    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.white,
-    paddingBottom: 0
-  },
-  links: {
-    marginLeft: -theme.spacing.md,
-    marginRight: -theme.spacing.md
-  },
-  linksInner: {
-    paddingBottom: theme.spacing.md
-  }
-}));
-function AdminNavbar() {
-  const {
-    classes
-  } = useStyles();
-  const links2 = navbarItems.map((item) => /* @__PURE__ */ react.exports.createElement(LinksGroup, {
-    ...item,
-    key: item.label
-  }));
-  return /* @__PURE__ */ jsx(Navbar, {
-    height: "100%",
-    width: {
-      sm: 300
-    },
-    pl: "md",
-    pr: "md",
-    pt: "sm",
-    pb: "md",
-    className: classes.navbar,
-    children: /* @__PURE__ */ jsx(Navbar.Section, {
-      grow: true,
-      className: classes.links,
-      component: ScrollArea,
-      children: /* @__PURE__ */ jsx("div", {
-        className: classes.linksInner,
-        children: links2
-      })
-    })
-  });
-}
-function AdminSettings() {
-  return /* @__PURE__ */ jsx(Title, {
-    children: "Admin Settings"
-  });
-}
-function AdminUsers() {
-  return /* @__PURE__ */ jsx(Title, {
-    children: "Admin Users"
-  });
-}
-function AdminLogs() {
-  return /* @__PURE__ */ jsx(Title, {
-    children: "Admin Logs"
-  });
-}
-const routesItems = [{
-  path: "/admin/settings",
-  element: /* @__PURE__ */ jsx(AdminSettings, {})
-}, {
-  path: "/admin/users",
-  element: /* @__PURE__ */ jsx(AdminUsers, {})
-}, {
-  path: "/admin/logs",
-  element: /* @__PURE__ */ jsx(AdminLogs, {})
-}];
 var queryString = {};
 var strictUriEncode = (str) => encodeURIComponent(str).replace(/[!'()*]/g, (x) => `%${x.charCodeAt(0).toString(16).toUpperCase()}`);
 var token = "%[a-f0-9]{2}";
@@ -23780,10 +23427,13 @@ var filterObj = function(obj, predicate) {
       decode: true
     }, options);
     const [url_, hash2] = splitOnFirst$1(url, "#");
-    return Object.assign({
-      url: url_.split("?")[0] || "",
-      query: parse(extract(url), options)
-    }, options && options.parseFragmentIdentifier && hash2 ? { fragmentIdentifier: decode2(hash2, options) } : {});
+    return Object.assign(
+      {
+        url: url_.split("?")[0] || "",
+        query: parse(extract(url), options)
+      },
+      options && options.parseFragmentIdentifier && hash2 ? { fragmentIdentifier: decode2(hash2, options) } : {}
+    );
   };
   exports.stringifyUrl = (object, options) => {
     options = Object.assign({
@@ -23822,9 +23472,678 @@ var filterObj = function(obj, predicate) {
     return exports.pick(input, exclusionFilter, options);
   };
 })(queryString);
+const UserService = {
+  async getApiKey() {
+    const resp = await ky(`${config.baseUri}/apikey`);
+    if (resp.ok) {
+      return resp.json();
+    }
+    throw new Error(`cannot get resource, resp: '${JSON.stringify(resp)}'`);
+  },
+  async getCurrentUser() {
+    const resp = await ky(`${config.baseUri}/v1/users/current`);
+    if (resp.ok) {
+      return resp.json();
+    }
+    throw new Error(`cannot get resource, resp: '${JSON.stringify(resp)}'`);
+  },
+  async getUsers(filter = {}, options = {}) {
+    const queryOptions = { ...options, limit: options.limit || 0 };
+    const queryOptionsString = queryString.stringify(queryOptions);
+    const queryFilterString = queryString.stringify(filter);
+    const uri = `${config.baseUri}/v1/users?${queryOptionsString}&${queryFilterString}`;
+    const resp = await ky(uri);
+    const result = await resp.json();
+    if (resp.ok) {
+      return result;
+    }
+    throw new Error(`cannot get resource, resp: '${JSON.stringify(resp)}'`);
+  },
+  async create(data) {
+    const resp = await ky.post(
+      `${config.baseUri}/v1/users`,
+      { json: data }
+    );
+    if (resp.ok) {
+      return resp.json();
+    }
+    throw new Error(`cannot create user, resp: '${JSON.stringify(resp)}'`);
+  },
+  async update(data) {
+    const resp = await ky.patch(
+      `${config.baseUri}/v1/users/${data.id}`,
+      { json: data }
+    );
+    if (resp.ok) {
+      return resp.json();
+    }
+    throw new Error(`cannot update user, resp: '${JSON.stringify(resp)}'`);
+  },
+  async delete(id) {
+    const resp = await ky.delete(
+      `${config.baseUri}/v1/users/${id}`
+    );
+    if (resp.ok) {
+      return;
+    }
+    throw new Error(`cannot delete user, resp: '${JSON.stringify(resp)}'`);
+  }
+};
+const UserHooks = {
+  useApiKey() {
+    const { isLoading, error, data, isError, refetch, isFetching, isRefetching, isSuccess, status } = useQuery(
+      ["apiKey"],
+      () => UserService.getApiKey(),
+      { enabled: false }
+    );
+    return { isLoading, isFetching, isRefetching, isSuccess, error, data, isError, refetch, status };
+  },
+  useCurrentUser() {
+    const { isLoading, error, data, refetch, isSuccess } = useQuery(
+      ["currentUser"],
+      () => UserService.getCurrentUser()
+    );
+    return { isLoading, error, data, refetch, isSuccess };
+  },
+  useAllUsers() {
+    const { isLoading, error, data, refetch, isSuccess, isFetching } = useQuery(
+      ["allUsers"],
+      () => UserService.getUsers()
+    );
+    return { isLoading, error, data, refetch, isSuccess, isFetching };
+  }
+};
+function ApiKeyModalAsk({
+  opened,
+  setOpened,
+  apiKey,
+  setResultOpened
+}) {
+  return /* @__PURE__ */ jsxs(Modal, {
+    opened,
+    onClose: () => setOpened(false),
+    title: "Generate a new API key?",
+    children: [/* @__PURE__ */ jsx(Text, {
+      size: "sm",
+      children: "Are you sure you want to generate a new API key? After generation, you must add corresponding changes in your test solution."
+    }), /* @__PURE__ */ jsxs(Group, {
+      position: "right",
+      children: [/* @__PURE__ */ jsx(Button, {
+        onClick: () => {
+          apiKey.refetch();
+          setResultOpened(true);
+          setOpened(false);
+        },
+        children: "Generate"
+      }), /* @__PURE__ */ jsx(Button, {
+        variant: "outline",
+        onClick: () => setOpened(false),
+        children: "Cancel"
+      })]
+    })]
+  });
+}
+function ApiKeyModalResult({
+  opened,
+  setOpened,
+  apiKey
+}) {
+  const [successCopy, setSuccessCopy] = react.exports.useState(false);
+  if (apiKey.isError) {
+    log.error(apiKey.error);
+  }
+  const copyHandler = () => {
+    const input = document.getElementById("api-key");
+    input.focus();
+    input.select();
+    const successful = document.execCommand("copy");
+    const msg = successful ? "successful" : "unsuccessful";
+    log.debug(`copy result: ${msg}`);
+    if (msg === "successful") {
+      setSuccessCopy(true);
+    }
+    window.getSelection().removeAllRanges();
+  };
+  const CopyIcon = successCopy ? IconCheck : IconCopy;
+  return /* @__PURE__ */ jsxs(Modal, {
+    opened,
+    onClose: () => {
+      setSuccessCopy(false);
+      setOpened(false);
+    },
+    title: "New API key",
+    children: [!apiKey.isLoading && apiKey.data ? /* @__PURE__ */ jsxs(Fragment, {
+      children: [/* @__PURE__ */ jsx(Group, {
+        ml: 20,
+        mb: 20,
+        children: /* @__PURE__ */ jsx(Text, {
+          size: "sm",
+          children: "Copy the New API key to Clipboard"
+        })
+      }), /* @__PURE__ */ jsxs(Group, {
+        position: "center",
+        children: [/* @__PURE__ */ jsx(TextInput, {
+          "data-test": "api-key",
+          id: "api-key",
+          value: apiKey.data.apikey,
+          sx: {
+            width: "340px",
+            display: "inline"
+          },
+          icon: /* @__PURE__ */ jsx(IconKey, {}),
+          style: {
+            display: "inline"
+          }
+        }), /* @__PURE__ */ jsx(ActionIcon, {
+          ml: -10,
+          children: /* @__PURE__ */ jsx(CopyIcon, {
+            size: 18,
+            onClick: copyHandler,
+            color: successCopy ? "green" : "gray"
+          })
+        })]
+      })]
+    }) : /* @__PURE__ */ jsx(Fragment, {
+      children: apiKey.isError && /* @__PURE__ */ jsx(Text, {
+        color: "red",
+        size: "sm",
+        children: " Error loading API key"
+      })
+    }), /* @__PURE__ */ jsx(Group, {
+      position: "center",
+      children: (apiKey.isFetching || apiKey.isRefetching) && /* @__PURE__ */ jsx(Loader, {})
+    }), /* @__PURE__ */ jsx(Group, {
+      position: "center",
+      pt: 30,
+      children: /* @__PURE__ */ jsx(Button, {
+        onClick: () => {
+          setOpened(false);
+          setTimeout(() => {
+            setSuccessCopy(false);
+          }, 300);
+        },
+        children: "Close"
+      })
+    })]
+  });
+}
+function UserInfoModal({
+  opened,
+  setOpened
+}) {
+  const user = UserHooks.useCurrentUser();
+  const useStyles2 = createStyles((theme) => ({
+    icon: {
+      color: theme.colorScheme === "dark" ? theme.colors.dark[3] : theme.colors.gray[5]
+    },
+    name: {
+      fontFamily: `Greycliff CF, ${theme.fontFamily}`
+    }
+  }));
+  const {
+    classes
+  } = useStyles2();
+  return /* @__PURE__ */ jsxs(Modal, {
+    size: 350,
+    opened,
+    onClose: () => {
+      setOpened(false);
+    },
+    title: "User Details",
+    children: [user.isSuccess && user.data ? /* @__PURE__ */ jsxs(Group, {
+      noWrap: true,
+      children: [/* @__PURE__ */ jsx(Avatar, {
+        src: null,
+        color: "white",
+        size: 120,
+        radius: 70,
+        children: /* @__PURE__ */ jsx(IconUser, {
+          stroke: 1,
+          size: 120,
+          radius: "md"
+        })
+      }), /* @__PURE__ */ jsxs("div", {
+        children: [/* @__PURE__ */ jsx(Text, {
+          size: "xs",
+          sx: {
+            textTransform: "uppercase"
+          },
+          weight: 700,
+          color: "dimmed",
+          children: user.data.role
+        }), /* @__PURE__ */ jsxs(Text, {
+          size: "lg",
+          weight: 500,
+          className: classes.name,
+          children: [user.data.firstName, " ", user.data.lastName]
+        }), /* @__PURE__ */ jsxs(Group, {
+          noWrap: true,
+          spacing: 5,
+          mt: 3,
+          children: [/* @__PURE__ */ jsx(IconAt, {
+            stroke: 1.5,
+            size: 16,
+            className: classes.icon
+          }), /* @__PURE__ */ jsx(Text, {
+            size: "xs",
+            color: "dimmed",
+            children: user.data.username
+          })]
+        })]
+      })]
+    }) : /* @__PURE__ */ jsx(Fragment, {
+      children: /* @__PURE__ */ jsx(Loader, {})
+    }), /* @__PURE__ */ jsx(Group, {
+      position: "center",
+      pt: 30,
+      children: /* @__PURE__ */ jsx(Button, {
+        onClick: () => {
+          setOpened(false);
+        },
+        children: "Close"
+      })
+    })]
+  });
+}
+function UserMenu() {
+  var _a, _b, _c, _d;
+  const theme = useMantineTheme();
+  const apiKey = UserHooks.useApiKey();
+  const [apiKeyModalAskOpened, setApiKeyModalAskOpened] = react.exports.useState(false);
+  const [apiKeyModalResultOpened, setApiKeyModalResultOpened] = react.exports.useState(false);
+  const [userInfoModalOpened, setUserInfoModalOpened] = react.exports.useState(false);
+  const currentUser = UserHooks.useCurrentUser();
+  const userInitials = currentUser.isSuccess && currentUser.data.firstName ? `${(_a = currentUser == null ? void 0 : currentUser.data) == null ? void 0 : _a.firstName[0]}${(_b = currentUser == null ? void 0 : currentUser.data) == null ? void 0 : _b.lastName[0]}` : "";
+  return /* @__PURE__ */ jsxs(Fragment, {
+    children: [/* @__PURE__ */ jsxs(Menu, {
+      shadow: "md",
+      width: "20%",
+      children: [/* @__PURE__ */ jsx(Menu.Target, {
+        children: /* @__PURE__ */ jsx(Button, {
+          "data-test": "user-icon",
+          p: 0,
+          radius: "xl",
+          size: "md",
+          color: isDark() ? "dark" : "#ffffff",
+          sx: {
+            color: isDark() ? "#ffffff" : "#1a1b1e",
+            backgroundColor: isDark() ? "#1a1b1e" : theme.colors.gray[0],
+            fontWeight: 600,
+            fontSize: "1rem",
+            display: "flex",
+            width: "2.6rem",
+            justifyContent: "center",
+            "&:hover": {
+              backgroundColor: isDark() ? "#000000" : "#ffffff"
+            }
+          },
+          children: userInitials
+        })
+      }), /* @__PURE__ */ jsxs(Menu.Dropdown, {
+        children: [/* @__PURE__ */ jsxs(Menu.Label, {
+          "data-test": "user-short-details",
+          sx: {
+            fontSize: "14px",
+            fontWeight: 700,
+            display: "flex",
+            alignItems: "center",
+            color: theme.colors.blue[5]
+          },
+          children: [/* @__PURE__ */ jsx(IconUser, {
+            size: "14px",
+            stroke: 3,
+            style: {
+              marginRight: "10px"
+            }
+          }), (_c = currentUser == null ? void 0 : currentUser.data) == null ? void 0 : _c.firstName, " ", (_d = currentUser == null ? void 0 : currentUser.data) == null ? void 0 : _d.lastName]
+        }), /* @__PURE__ */ jsx(Menu.Divider, {}), /* @__PURE__ */ jsx(Menu.Item, {
+          "data-test": "userinfo",
+          icon: /* @__PURE__ */ jsx(IconId, {
+            size: 14
+          }),
+          onClick: () => {
+            setUserInfoModalOpened(true);
+          },
+          children: "User Details"
+        }), /* @__PURE__ */ jsx(Menu.Item, {
+          icon: /* @__PURE__ */ jsx(IconSettings, {
+            size: 14
+          }),
+          component: "a",
+          href: "/admin/",
+          children: "Admin Panel"
+        }), /* @__PURE__ */ jsx(Menu.Item, {
+          icon: /* @__PURE__ */ jsx(IconKey, {
+            size: 14
+          }),
+          component: "a",
+          href: "/auth/change",
+          children: "Change Password"
+        }), /* @__PURE__ */ jsx(Menu.Item, {
+          id: "generate-api",
+          icon: /* @__PURE__ */ jsx(IconTool, {
+            size: 14
+          }),
+          onClick: () => {
+            setApiKeyModalAskOpened(true);
+          },
+          children: "Generate API key"
+        }), /* @__PURE__ */ jsx(Menu.Divider, {}), /* @__PURE__ */ jsx(Menu.Item, {
+          icon: /* @__PURE__ */ jsx(IconLogout, {
+            size: 14
+          }),
+          component: "a",
+          href: "/auth/logout",
+          children: "Sign out"
+        })]
+      })]
+    }), /* @__PURE__ */ jsx(ApiKeyModalAsk, {
+      opened: apiKeyModalAskOpened,
+      setOpened: setApiKeyModalAskOpened,
+      apiKey,
+      setResultOpened: setApiKeyModalResultOpened
+    }), /* @__PURE__ */ jsx(ApiKeyModalResult, {
+      opened: apiKeyModalResultOpened,
+      setOpened: setApiKeyModalResultOpened,
+      apiKey
+    }), /* @__PURE__ */ jsx(UserInfoModal, {
+      opened: userInfoModalOpened,
+      setOpened: setUserInfoModalOpened
+    })]
+  });
+}
+const useStyles$2 = createStyles((theme) => ({
+  header: {
+    paddingLeft: theme.spacing.md,
+    paddingRight: theme.spacing.md
+  },
+  inner: {
+    height: 56,
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center"
+  },
+  links: {
+    [theme.fn.smallerThan("md")]: {
+      display: "none"
+    }
+  },
+  search: {
+    [theme.fn.smallerThan("xs")]: {
+      display: "none"
+    }
+  },
+  link: {
+    display: "block",
+    lineHeight: 1,
+    padding: "8px 12px",
+    borderRadius: theme.radius.sm,
+    textDecoration: "none",
+    color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.colors.gray[7],
+    fontSize: theme.fontSizes.sm,
+    fontWeight: 500,
+    "&:hover": {
+      backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0]
+    }
+  }
+}));
+const links = [{
+  label: "Dashboard",
+  link: "/"
+}, {
+  label: "Admin Panel",
+  link: "/admin2/"
+}];
+function AdminHeader() {
+  const [colorScheme, toggleColorScheme] = useColorScheme();
+  const [opened, {
+    toggle
+  }] = useDisclosure(false);
+  const {
+    classes
+  } = useStyles$2();
+  const items = links.map((link) => /* @__PURE__ */ jsx("a", {
+    href: link.link,
+    className: classes.link,
+    children: link.label
+  }, link.label));
+  const theme = useMantineTheme();
+  return /* @__PURE__ */ jsx(Header, {
+    height: 56,
+    className: classes.header,
+    mb: 120,
+    sx: {
+      backgroundColor: isDark() ? theme.colors.dark[5] : theme.colors.gray[2]
+    },
+    children: /* @__PURE__ */ jsxs("div", {
+      className: classes.inner,
+      children: [/* @__PURE__ */ jsxs(Group, {
+        children: [/* @__PURE__ */ jsx(Burger, {
+          opened,
+          onClick: toggle,
+          size: "sm"
+        }), /* @__PURE__ */ jsx(HeaderLogo, {})]
+      }), /* @__PURE__ */ jsxs(Group, {
+        children: [/* @__PURE__ */ jsx(Group, {
+          ml: 50,
+          spacing: 5,
+          className: classes.links,
+          children: items
+        }), /* @__PURE__ */ jsx(Autocomplete, {
+          className: classes.search,
+          placeholder: "Search",
+          icon: /* @__PURE__ */ jsx(IconSearch, {
+            size: 16,
+            stroke: 1.5
+          }),
+          data: ["React", "Angular", "Vue", "Next.js", "Riot.js", "Svelte", "Blitz.js"]
+        }), /* @__PURE__ */ jsx(Group, {
+          spacing: 7,
+          children: /* @__PURE__ */ jsx(UserMenu, {})
+        }), /* @__PURE__ */ jsx(Group, {
+          children: /* @__PURE__ */ jsx(ToggleThemeButton, {
+            colorScheme,
+            toggleColorScheme
+          })
+        })]
+      })]
+    })
+  });
+}
+const useStyles$1 = createStyles((theme) => ({
+  control: {
+    fontWeight: 500,
+    display: "block",
+    width: "100%",
+    color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
+    fontSize: theme.fontSizes.sm,
+    "&:hover": {
+      backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.colors.gray[0],
+      color: theme.colorScheme === "dark" ? theme.white : theme.black
+    }
+  },
+  link: {
+    display: "block",
+    textDecoration: "none",
+    fontSize: theme.fontSizes.sm,
+    color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.colors.gray[7],
+    borderLeft: `1px solid ${theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]}`,
+    "&:hover": {
+      backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.colors.gray[0],
+      color: theme.colorScheme === "dark" ? theme.white : theme.black
+    }
+  },
+  rootLink: {
+    display: "block",
+    textDecoration: "none",
+    color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
+    "&:hover": {
+      backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.colors.gray[0],
+      color: theme.colorScheme === "dark" ? theme.white : theme.black
+    },
+    "&:active": {
+      backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.colors.gray[0],
+      color: theme.colorScheme === "dark" ? theme.white : theme.black
+    }
+  },
+  chevron: {
+    transition: "transform 200ms ease"
+  }
+}));
+function LinksGroup({
+  icon: Icon,
+  label,
+  links: links2,
+  link
+}) {
+  const location = useLocation();
+  const {
+    classes
+  } = useStyles$1();
+  const hasLinks = Array.isArray(links2);
+  const items = (hasLinks ? links2 : []).map((item) => /* @__PURE__ */ jsx(NavLink, {
+    label: item.label,
+    component: Link,
+    className: classes.link,
+    to: item.link,
+    active: location.pathname === item.link
+  }, item.label));
+  return /* @__PURE__ */ jsx(NavLink, {
+    label,
+    component: Link,
+    styles: () => ({
+      body: {
+        display: "flex"
+      }
+    }),
+    to: link || "/",
+    active: location.pathname === link,
+    icon: /* @__PURE__ */ jsx(ThemeIcon, {
+      variant: "light",
+      size: 30,
+      children: /* @__PURE__ */ jsx(Icon, {
+        size: 18
+      })
+    }),
+    childrenOffset: 26,
+    children: items.length > 0 ? items : ""
+  });
+}
+const tasksList = [
+  {
+    label: "Handle old Checks",
+    name: "handle_old_checks",
+    description: "\u26A0\uFE0FWe strongly recommended doing the remove inconsistent items procedure Before and After removing checks via this task.",
+    inputs: [
+      { name: "days", label: "Check older that (days)", type: "TextInput", default: 180 },
+      { name: "remove", label: "Remove", type: "Checkbox", default: false }
+    ]
+  },
+  {
+    label: "Test",
+    name: "task_test",
+    description: "\u26A0\uFE0FTest description",
+    inputs: [
+      { name: "days", label: "Check older that (days)", type: "TextInput", default: 180 },
+      { name: "remove", label: "Remove", type: "Checkbox", default: false }
+    ]
+  },
+  {
+    label: "Handle Database Consistency",
+    name: "handle_database_consistency",
+    description: "Checks and removes non-consistent items",
+    inputs: [
+      { name: "clean", label: "Remove", type: "Checkbox", default: false }
+    ]
+  },
+  {
+    label: "Remove old logs",
+    name: "remove_old_logs",
+    description: "Remove logs that older particular threshold",
+    inputs: [
+      { name: "days", label: "Remove older that (days)", type: "TextInput", default: 30 },
+      { name: "statistics", label: "Only statistics", type: "Checkbox", default: false }
+    ]
+  }
+];
+const taskLinks = tasksList.map(
+  (task) => ({
+    label: task.label,
+    link: `/admin2/tasks/${task.name}`
+  })
+);
+const navbarItems = [{
+  label: "Users",
+  icon: IconUsers,
+  link: "/admin2/users"
+}, {
+  label: "Logs",
+  icon: IconArticle,
+  link: "/admin2/logs"
+}, {
+  label: "Tasks",
+  icon: IconListDetails,
+  links: taskLinks
+}, {
+  label: "Settings",
+  icon: IconSettings,
+  link: "/admin2/settings"
+}];
+const useStyles = createStyles((theme) => ({
+  navbar: {
+    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.white,
+    paddingBottom: 0
+  },
+  links: {
+    marginLeft: -theme.spacing.md,
+    marginRight: -theme.spacing.md
+  },
+  linksInner: {
+    paddingBottom: theme.spacing.md
+  }
+}));
+function AdminNavbar() {
+  const {
+    classes
+  } = useStyles();
+  const links2 = navbarItems.map((item) => /* @__PURE__ */ react.exports.createElement(LinksGroup, {
+    ...item,
+    key: item.label
+  }));
+  return /* @__PURE__ */ jsx(Navbar, {
+    height: "100%",
+    width: {
+      sm: 300
+    },
+    pl: "md",
+    pr: "md",
+    pt: "sm",
+    pb: "md",
+    className: classes.navbar,
+    children: /* @__PURE__ */ jsx(Navbar.Section, {
+      grow: true,
+      className: classes.links,
+      component: ScrollArea,
+      children: /* @__PURE__ */ jsx("div", {
+        className: classes.linksInner,
+        children: links2
+      })
+    })
+  });
+}
+const useSubpageEffect = (title, deps) => {
+  const {
+    setAppTitle
+  } = react.exports.useContext(AppContext);
+  react.exports.useEffect(() => {
+    setAppTitle(title);
+    stopNavigationProgress();
+  }, deps || []);
+};
 function Task({
   item
 }) {
+  useSubpageEffect(`Task: ${item.label}`, [item.label]);
   const [outputField, setOutputField] = react.exports.useState("");
   const [autoScrollChecked, setAutoScrollChecked] = react.exports.useState(true);
   const outputRef = react.exports.useRef(null);
@@ -23877,12 +24196,16 @@ Task Aborted`);
   const form = useForm({
     initialValues: formInitialValues
   });
-  const Inputs = item.inputs.map((input) => react.exports.createElement(mCore[input.type], {
-    label: input.label,
-    name: input.name,
-    mt: 10,
-    ...form.getInputProps(input.name)
-  }));
+  const Inputs = item.inputs.map((input) => react.exports.createElement(
+    mCore[input.type],
+    {
+      label: input.label,
+      name: input.name,
+      key: input.name,
+      mt: 10,
+      ...form.getInputProps(input.name)
+    }
+  ));
   return /* @__PURE__ */ jsxs(Paper, {
     p: 10,
     children: [/* @__PURE__ */ jsx(Title, {
@@ -23920,6 +24243,7 @@ Task Aborted`);
           })]
         })]
       }), /* @__PURE__ */ jsx("textarea", {
+        readOnly: true,
         ref: outputRef,
         style: {
           marginTop: "0px",
@@ -23942,10 +24266,691 @@ function TaskWrapper() {
     item: tasksList.find((x) => x.name === params.task)
   });
 }
+const Password = {
+  Requirement({
+    meets,
+    label
+  }) {
+    return /* @__PURE__ */ jsxs(Text, {
+      color: meets ? "teal" : "red",
+      sx: {
+        display: "flex",
+        alignItems: "center"
+      },
+      mt: 7,
+      size: "sm",
+      children: [meets ? /* @__PURE__ */ jsx(IconCheck, {
+        size: 14
+      }) : /* @__PURE__ */ jsx(IconX, {
+        size: 14
+      }), /* @__PURE__ */ jsx(Box, {
+        ml: 10,
+        children: label
+      })]
+    });
+  },
+  Popover({
+    disabled,
+    form,
+    label = "",
+    ...rest
+  }) {
+    const [popoverOpened, setPopoverOpened] = react.exports.useState(false);
+    const [checks, setChecks] = react.exports.useState([]);
+    react.exports.useEffect(() => {
+      if (checks.length) {
+        setPopoverOpened(true);
+      }
+    }, [form.errors.password]);
+    return /* @__PURE__ */ jsxs(Popover, {
+      opened: popoverOpened,
+      position: "bottom",
+      width: 200,
+      transition: "pop",
+      children: [/* @__PURE__ */ jsx(Popover.Target, {
+        children: /* @__PURE__ */ jsx(PasswordInput, {
+          onFocusCapture: (e) => {
+            if (e.target.value !== "")
+              setPopoverOpened(true);
+          },
+          onBlurCapture: () => setPopoverOpened(false),
+          onChange: (event) => {
+            setPopoverOpened(true);
+            form.getInputProps("password").onChange(event);
+            setChecks(() => Password.passwordsRequirementsForPopOver(event.target.value).result);
+          },
+          error: form.getInputProps("password").error,
+          value: form.getInputProps("password").value,
+          sx: {
+            width: "16%"
+          },
+          placeholder: "Your password",
+          disabled,
+          autoComplete: "off",
+          required: true,
+          ...rest,
+          label
+        })
+      }), /* @__PURE__ */ jsx(Popover.Dropdown, {
+        children: checks
+      })]
+    });
+  },
+  passwordsRequirementsForPopOver(password) {
+    const passwordRequirements = [{
+      index: 0,
+      re: /.{6}/,
+      label: "Includes at least 6 characters"
+    }, {
+      index: 1,
+      re: /[0-9]/,
+      label: "Includes number"
+    }, {
+      index: 2,
+      re: /[a-z]/,
+      label: "Includes lowercase letter"
+    }, {
+      index: 3,
+      re: /[A-Z]/,
+      label: "Includes uppercase letter"
+    }, {
+      index: 4,
+      re: /[$&+,:;=?@#|'<>.^*()%!-]/,
+      label: "Includes special symbol"
+    }];
+    const result = [];
+    passwordRequirements.forEach((requirement) => {
+      result.push(/* @__PURE__ */ jsx(Password.Requirement, {
+        meets: requirement.re.test(password),
+        label: requirement.label
+      }, requirement.index));
+    });
+    const isFail = result.filter((x) => !x.props.meets).length > 0 ? true : null;
+    return {
+      result,
+      isFail
+    };
+  }
+};
+function ActionPopoverIcon({
+  icon,
+  color = "red",
+  action,
+  confirmLabel,
+  title,
+  testAttr,
+  loading
+}) {
+  const [openPopover, toggleOpenPopover] = useToggle([false, true]);
+  return /* @__PURE__ */ jsxs(Popover, {
+    opened: openPopover,
+    position: "bottom",
+    withArrow: true,
+    shadow: "md",
+    children: [/* @__PURE__ */ jsx(Popover.Target, {
+      children: /* @__PURE__ */ jsx(ActionIcon, {
+        "data-test": testAttr,
+        variant: "light",
+        color,
+        onClick: () => toggleOpenPopover(),
+        title,
+        loading,
+        children: icon
+      })
+    }), /* @__PURE__ */ jsx(Popover.Dropdown, {
+      p: 4,
+      onBlurCapture: () => toggleOpenPopover(),
+      children: /* @__PURE__ */ jsx(Button, {
+        "data-test": `${testAttr}-confirm`,
+        color,
+        onClick: action,
+        children: confirmLabel
+      })
+    })]
+  });
+}
+function SafeSelect({
+  optionsData,
+  ...rest
+}) {
+  console.log({
+    rest
+  });
+  const changeHandler = (event) => {
+    rest.onChange(event.target.value);
+  };
+  return /* @__PURE__ */ jsxs(Fragment, {
+    children: [/* @__PURE__ */ jsx(Select, {
+      data: optionsData,
+      required: true,
+      ...rest
+    }), /* @__PURE__ */ jsx("select", {
+      name: rest.name,
+      style: {
+        width: 0,
+        opacity: 0,
+        position: "fixed"
+      },
+      ...rest,
+      onChange: changeHandler,
+      children: optionsData.map((option) => {
+        return /* @__PURE__ */ jsx("option", {
+          value: option.value,
+          children: option.label
+        }, option.value);
+      })
+    })]
+  });
+}
+function UserForm({
+  id,
+  username,
+  firstName,
+  lastName,
+  role,
+  apiKey,
+  updatedDate,
+  createdDate,
+  refetch
+}) {
+  const [editMode, setEditMode] = react.exports.useState(false);
+  const [error, setError] = react.exports.useState("");
+  const form = useForm({
+    initialValues: {
+      id,
+      username,
+      firstName,
+      lastName,
+      role,
+      password: "",
+      apiKey,
+      updatedDate,
+      createdDate
+    },
+    validate: {
+      password: (value) => value === "" ? null : Password.passwordsRequirementsForPopOver(value).isFail
+    }
+  });
+  const updateUser = useMutation((data) => UserService.update(data), {
+    onSuccess: async () => {
+      refetch();
+    },
+    onError: (e) => {
+      log.error(e);
+      return setError(`Cannot update user - ${e.toString()}`);
+    }
+  });
+  const deleteUser = useMutation((userId) => UserService.delete(userId), {
+    onSuccess: () => {
+      refetch();
+    },
+    onError: (e) => {
+      log.error(e);
+      return setError(`Cannot delete user - ${e.toString()}`);
+    }
+  });
+  const update = () => {
+    if (form.validate().hasErrors)
+      return;
+    updateUser.mutate(form.values);
+    setEditMode(false);
+  };
+  const removeUser = () => {
+    deleteUser.mutate(form.values.id);
+  };
+  return /* @__PURE__ */ jsx(Group, {
+    children: /* @__PURE__ */ jsxs("form", {
+      children: [/* @__PURE__ */ jsxs(Group, {
+        noWrap: true,
+        spacing: "xs",
+        align: "center",
+        "data-test": username,
+        children: [/* @__PURE__ */ jsx(TextInput, {
+          "data-test": "user-list-id",
+          value: id,
+          disabled: true
+        }), /* @__PURE__ */ jsx(TextInput, {
+          "data-test": "user-list-email",
+          value: username,
+          disabled: true,
+          ...form.getInputProps("username")
+        }), /* @__PURE__ */ jsx(TextInput, {
+          "data-test": "user-list-first-name",
+          value: firstName,
+          disabled: !editMode,
+          ...form.getInputProps("firstName")
+        }), /* @__PURE__ */ jsx(TextInput, {
+          "data-test": "user-list-last-name",
+          value: lastName,
+          disabled: !editMode,
+          ...form.getInputProps("lastName")
+        }), /* @__PURE__ */ jsx(SafeSelect, {
+          "data-test": "user-list-role",
+          optionsData: [{
+            value: "user",
+            label: "User"
+          }, {
+            value: "reviewer",
+            label: "Reviewer"
+          }, {
+            value: "admin",
+            label: "Admin"
+          }],
+          required: true,
+          disabled: !editMode,
+          ...form.getInputProps("role")
+        }), /* @__PURE__ */ jsx(Password.Popover, {
+          "data-test": "user-list-password",
+          disabled: !editMode,
+          form,
+          testAttr: "password"
+        }), /* @__PURE__ */ jsx(TextInput, {
+          "data-test": "user-list-api-key",
+          value: apiKey,
+          disabled: true
+        }), /* @__PURE__ */ jsx(TextInput, {
+          "data-test": "user-list-created-date",
+          value: createdDate,
+          disabled: true
+        }), /* @__PURE__ */ jsx(TextInput, {
+          "data-test": "user-list-updated-date",
+          value: updatedDate,
+          disabled: true
+        }), username !== "Administrator" && username !== "Guest" ? /* @__PURE__ */ jsxs(Group, {
+          noWrap: true,
+          spacing: 4,
+          align: "center",
+          children: [/* @__PURE__ */ jsx(ActionIcon, {
+            name: "editUser",
+            "data-test": !editMode ? "user-list-update-button" : "user-list-send-button",
+            onClick: !editMode ? () => setEditMode(true) : update,
+            variant: "light",
+            color: "green",
+            title: editMode ? "Send changes" : "Edit User",
+            loading: updateUser.isLoading,
+            children: editMode ? /* @__PURE__ */ jsx(IconSend, {
+              size: 18
+            }) : /* @__PURE__ */ jsx(IconEdit, {
+              size: 18
+            })
+          }), /* @__PURE__ */ jsx(ActionPopoverIcon, {
+            testAttr: "user-list-remove-button",
+            icon: /* @__PURE__ */ jsx(IconX, {
+              size: 18
+            }),
+            action: removeUser,
+            title: "Remove user",
+            loading: deleteUser.isLoading,
+            confirmLabel: "Delete"
+          })]
+        }) : /* @__PURE__ */ jsx(ActionIcon, {
+          sx: {
+            minWidth: "60px"
+          }
+        })]
+      }), error && /* @__PURE__ */ jsx(Group, {
+        align: "center",
+        children: /* @__PURE__ */ jsx(Text, {
+          color: "red",
+          size: "xs",
+          children: error
+        })
+      })]
+    })
+  });
+}
+const Email = {
+  DuplicationFree({
+    form,
+    setEmailError,
+    setEmailIsFetchingStatus,
+    disabled = false,
+    label = "Email",
+    setErrorOnRuntime = true,
+    ...rest
+  }) {
+    const useEmailCheckQuery = () => useQuery(
+      ["userByEmail", form.values.username],
+      async () => {
+        return UserService.getUsers({
+          username: form.values.username
+        });
+      },
+      {
+        enabled: !!form.values.username && /^\S+@\S+$/.test(form.values.username),
+        refetchOnWindowFocus: false,
+        onSuccess: (data) => {
+          const {
+            results
+          } = data;
+          if (results.length > 0) {
+            setEmailError("user with this email already exists");
+            if (setErrorOnRuntime)
+              form.setFieldError("username", "user with this email already exists");
+            return;
+          }
+          setEmailError(null);
+          if (setErrorOnRuntime)
+            form.setFieldError("username", null);
+        },
+        onError: () => {
+          setEmailError("cannot check the field, connection error");
+          if (setErrorOnRuntime)
+            form.setFieldError("username", "cannot check the field, connection error");
+        }
+      }
+    );
+    const userByEmailQuery = useEmailCheckQuery();
+    react.exports.useEffect(() => {
+      setEmailIsFetchingStatus(userByEmailQuery.isFetching);
+    }, [userByEmailQuery.isFetching]);
+    return /* @__PURE__ */ jsx(TextInput, {
+      label,
+      placeholder: "j.smith@example.com",
+      ...form.getInputProps("username"),
+      required: true,
+      rightSection: userByEmailQuery.isFetching && /* @__PURE__ */ jsx(Loader, {
+        size: "xs"
+      }),
+      icon: /* @__PURE__ */ jsx(IconAt, {
+        size: 16
+      }),
+      autoComplete: "nope",
+      disabled,
+      id: "email",
+      styles: () => ({
+        input: {
+          paddingRight: 36
+        }
+      }),
+      ...rest
+    });
+  }
+};
+function UserAddForm({
+  setAddUser,
+  refetch
+}) {
+  useSubpageEffect("Users");
+  const [emailError, setEmailError] = react.exports.useState("");
+  const [emailIsFetchingStatus, setEmailIsFetchingStatus] = react.exports.useState(false);
+  const [error, setError] = react.exports.useState("");
+  const form = useForm({
+    initialValues: {
+      id: "",
+      username: "",
+      firstName: "",
+      lastName: "",
+      role: "user",
+      password: "",
+      apiKey: "",
+      updatedDate: "",
+      createdDate: ""
+    },
+    validateInputOnChange: ["username"],
+    validate: {
+      username: (value) => {
+        if (!/^\S+@\S+$/.test(value)) {
+          return "Invalid email format";
+        }
+        if (emailError)
+          return emailError;
+        return null;
+      },
+      password: (value) => Password.passwordsRequirementsForPopOver(value).isFail
+    }
+  });
+  const addUser = useMutation((data) => UserService.create(data), {
+    onSuccess: () => {
+      setAddUser(false);
+      refetch();
+    },
+    onError: (e) => {
+      log.error(e);
+      return setError(`Cannot create user - ${e.toString()}`);
+    }
+  });
+  const formSubmitHandler = (values) => {
+    addUser.mutate(values);
+  };
+  return /* @__PURE__ */ jsxs("form", {
+    onSubmit: form.onSubmit((values) => formSubmitHandler(values)),
+    children: [/* @__PURE__ */ jsxs(Group, {
+      noWrap: true,
+      spacing: "xs",
+      position: "right",
+      align: "start",
+      sx: {
+        width: "100%"
+      },
+      mt: "lg",
+      children: [/* @__PURE__ */ jsx(Email.DuplicationFree, {
+        "data-test": "user-add-email",
+        form,
+        setEmailError,
+        setEmailIsFetchingStatus
+      }), /* @__PURE__ */ jsx(TextInput, {
+        label: "First Name",
+        "data-test": "user-add-first-name",
+        placeholder: "John",
+        ...form.getInputProps("firstName"),
+        icon: /* @__PURE__ */ jsx(IconUser, {
+          size: 16
+        }),
+        disabled: !!form.errors.username || emailIsFetchingStatus,
+        required: true
+      }), /* @__PURE__ */ jsx(TextInput, {
+        label: "Last Name",
+        "data-test": "user-add-last-name",
+        placeholder: "Smith",
+        ...form.getInputProps("lastName"),
+        icon: /* @__PURE__ */ jsx(IconUser, {
+          size: 16
+        }),
+        disabled: !!form.errors.username || emailIsFetchingStatus,
+        required: true
+      }), /* @__PURE__ */ jsx(SafeSelect, {
+        label: "Role",
+        "data-test": "user-add-role",
+        optionsData: [{
+          value: "user",
+          label: "User"
+        }, {
+          value: "reviewer",
+          label: "Reviewer"
+        }, {
+          value: "admin",
+          label: "Admin"
+        }],
+        required: true,
+        disabled: !!form.errors.username || emailIsFetchingStatus,
+        ...form.getInputProps("role")
+      }), /* @__PURE__ */ jsx(Password.Popover, {
+        "data-test": "user-add-password",
+        disabled: !!form.errors.username || emailIsFetchingStatus,
+        form,
+        label: "Password"
+      })]
+    }), error && /* @__PURE__ */ jsx(Group, {
+      align: "center",
+      children: /* @__PURE__ */ jsx(Text, {
+        color: "red",
+        size: "xs",
+        children: error
+      })
+    }), /* @__PURE__ */ jsxs(Group, {
+      spacing: "xs",
+      align: "flex-end",
+      position: "center",
+      mt: "lg",
+      noWrap: true,
+      children: [/* @__PURE__ */ jsx(Button, {
+        id: "create",
+        type: "submit",
+        title: "Create new User",
+        leftIcon: /* @__PURE__ */ jsx(IconSend, {
+          size: 18
+        }),
+        children: "Create"
+      }), /* @__PURE__ */ jsx(Button, {
+        onClick: () => setAddUser(false),
+        leftIcon: /* @__PURE__ */ jsx(IconX, {
+          size: 18
+        }),
+        children: "Cancel"
+      })]
+    })]
+  });
+}
+function AdminUsers() {
+  useSubpageEffect("Users");
+  const {
+    isLoading,
+    error,
+    data,
+    refetch,
+    isSuccess,
+    isFetching
+  } = UserHooks.useAllUsers();
+  const [addUser, setAddUser] = react.exports.useState(false);
+  const useStyles2 = createStyles((theme) => ({
+    headInput: {
+      paddingLeft: "12px",
+      paddingRight: "12px"
+    }
+  }));
+  const {
+    classes
+  } = useStyles2();
+  react.exports.useEffect(() => {
+    if (isFetching) {
+      resetNavigationProgress();
+      startNavigationProgress();
+    } else {
+      setNavigationProgress(100);
+    }
+  }, [isFetching]);
+  if (isLoading) {
+    return /* @__PURE__ */ jsx(LoadingOverlay, {
+      visible: true
+    });
+  }
+  if (error) {
+    return /* @__PURE__ */ jsxs(Text, {
+      color: "red",
+      children: ["Error:", " ", error.toString()]
+    });
+  }
+  if (isSuccess && data) {
+    return /* @__PURE__ */ jsxs(Box, {
+      p: 20,
+      children: [/* @__PURE__ */ jsx(Title, {
+        children: "Edit Users"
+      }), /* @__PURE__ */ jsxs(Group, {
+        spacing: "xs",
+        noWrap: true,
+        mt: 40,
+        children: [/* @__PURE__ */ jsx(TextInput, {
+          readOnly: true,
+          className: classes.headInput,
+          variant: "unstyled",
+          value: "Id"
+        }), /* @__PURE__ */ jsx(TextInput, {
+          readOnly: true,
+          className: classes.headInput,
+          variant: "unstyled",
+          value: "Username"
+        }), /* @__PURE__ */ jsx(TextInput, {
+          readOnly: true,
+          className: classes.headInput,
+          variant: "unstyled",
+          value: "First Name"
+        }), /* @__PURE__ */ jsx(TextInput, {
+          readOnly: true,
+          className: classes.headInput,
+          variant: "unstyled",
+          value: "Last Name"
+        }), /* @__PURE__ */ jsx(TextInput, {
+          readOnly: true,
+          className: classes.headInput,
+          variant: "unstyled",
+          value: "Role"
+        }), /* @__PURE__ */ jsx(TextInput, {
+          readOnly: true,
+          className: classes.headInput,
+          variant: "unstyled",
+          value: "Password"
+        }), /* @__PURE__ */ jsx(TextInput, {
+          readOnly: true,
+          className: classes.headInput,
+          variant: "unstyled",
+          value: "API Key"
+        }), /* @__PURE__ */ jsx(TextInput, {
+          readOnly: true,
+          className: classes.headInput,
+          variant: "unstyled",
+          value: "Created"
+        }), /* @__PURE__ */ jsx(TextInput, {
+          readOnly: true,
+          className: classes.headInput,
+          variant: "unstyled",
+          value: "Updated"
+        }), /* @__PURE__ */ jsx(Box, {
+          component: "div",
+          sx: {
+            width: "71px"
+          }
+        })]
+      }), /* @__PURE__ */ jsx(Group, {
+        children: data.results.map((user) => /* @__PURE__ */ jsx(UserForm, {
+          id: user.id,
+          username: user.username,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role,
+          password: "",
+          apiKey: user.apiKey,
+          updatedDate: user.updatedDate,
+          createdDate: user.createdDate,
+          refetch
+        }, user.id))
+      }), /* @__PURE__ */ jsx(Group, {
+        position: "center",
+        children: addUser && /* @__PURE__ */ jsx(UserAddForm, {
+          setAddUser,
+          refetch
+        })
+      }), /* @__PURE__ */ jsx(Group, {
+        position: "center",
+        mt: 40,
+        children: !addUser && /* @__PURE__ */ jsx(Button, {
+          onClick: () => setAddUser(true),
+          id: "add-new-user",
+          children: "Add New User"
+        })
+      })]
+    });
+  }
+  return /* @__PURE__ */ jsx(Text, {
+    color: "red",
+    children: "Unknown Error"
+  });
+}
+function AdminSettings() {
+  useSubpageEffect("Setting");
+  return /* @__PURE__ */ jsx(Title, {
+    children: "Admin Settings"
+  });
+}
+function AdminLogs() {
+  useSubpageEffect("Logs");
+  return /* @__PURE__ */ jsx(Title, {
+    children: "Admin Logs"
+  });
+}
 function AdminLayout() {
-  const routes = useRoutes(routesItems);
-  useDocumentTitle("Admin panel");
-  return /* @__PURE__ */ jsx(AppShell, {
+  useSubpageEffect("Admin Panel");
+  return /* @__PURE__ */ jsxs(AppShell, {
     padding: "md",
     navbar: /* @__PURE__ */ jsx(AdminNavbar, {}),
     header: /* @__PURE__ */ jsx(AdminHeader, {}),
@@ -23954,39 +24959,69 @@ function AdminLayout() {
         backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[0]
       }
     }),
-    children: /* @__PURE__ */ jsxs(Paper, {
-      children: [routes, /* @__PURE__ */ jsx(Routes, {
+    children: [/* @__PURE__ */ jsx(ReactQueryDevtools, {
+      initialIsOpen: false
+    }), /* @__PURE__ */ jsxs(Paper, {
+      children: [/* @__PURE__ */ jsxs(Routes, {
+        children: [/* @__PURE__ */ jsx(Route, {
+          path: "",
+          element: /* @__PURE__ */ jsx(AdminUsers, {})
+        }), /* @__PURE__ */ jsx(Route, {
+          path: "users",
+          element: /* @__PURE__ */ jsx(AdminUsers, {})
+        }), /* @__PURE__ */ jsx(Route, {
+          path: "settings",
+          element: /* @__PURE__ */ jsx(AdminSettings, {})
+        }), /* @__PURE__ */ jsx(Route, {
+          path: "logs",
+          element: /* @__PURE__ */ jsx(AdminLogs, {})
+        })]
+      }), /* @__PURE__ */ jsx(Routes, {
         children: /* @__PURE__ */ jsx(Route, {
-          path: "/admin2/tasks/",
+          path: "/tasks/",
           children: /* @__PURE__ */ jsx(Route, {
             path: ":task",
             element: /* @__PURE__ */ jsx(TaskWrapper, {})
           })
         })
       })]
-    })
+    })]
   });
 }
+const queryClient = new QueryClient();
 function App() {
   const [colorScheme, toggleColorScheme] = useColorScheme();
-  const queryClient = new QueryClient();
-  return /* @__PURE__ */ jsx(QueryClientProvider, {
-    client: queryClient,
-    children: /* @__PURE__ */ jsx(ColorSchemeProvider, {
-      colorScheme,
-      toggleColorScheme,
-      children: /* @__PURE__ */ jsx(MantineProvider, {
-        withGlobalStyles: true,
-        withNormalizeCSS: true,
-        theme: {
-          fontSizes: {
-            md: 24
+  const [appTitle, setAppTitle] = react.exports.useState("Syngrisi");
+  const appProviderValue = react.exports.useMemo(() => ({
+    appTitle,
+    setAppTitle
+  }), [appTitle]);
+  useDocumentTitle(appTitle);
+  return /* @__PURE__ */ jsx(AppContext.Provider, {
+    value: appProviderValue,
+    children: /* @__PURE__ */ jsx(QueryClientProvider, {
+      client: queryClient,
+      children: /* @__PURE__ */ jsx(ColorSchemeProvider, {
+        colorScheme,
+        toggleColorScheme,
+        children: /* @__PURE__ */ jsxs(MantineProvider, {
+          withGlobalStyles: true,
+          withNormalizeCSS: true,
+          theme: {
+            fontSizes: {
+              md: 24
+            },
+            colorScheme,
+            primaryColor: "green"
           },
-          colorScheme,
-          primaryColor: "green"
-        },
-        children: /* @__PURE__ */ jsx(ModalsProvider, {
-          children: /* @__PURE__ */ jsx(AdminLayout, {})
+          children: [/* @__PURE__ */ jsx(NavigationProgress, {}), /* @__PURE__ */ jsx(ModalsProvider, {
+            children: /* @__PURE__ */ jsx(Routes, {
+              children: /* @__PURE__ */ jsx(Route, {
+                path: "/admin2/*",
+                element: /* @__PURE__ */ jsx(AdminLayout, {})
+              })
+            })
+          })]
         })
       })
     })

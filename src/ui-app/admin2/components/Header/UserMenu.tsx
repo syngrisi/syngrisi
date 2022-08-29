@@ -20,7 +20,7 @@ import ApiKeyModalAsk from './ApiKeyModalAsk';
 import { ApiKeyModalResult } from './ApiKeyModalResult';
 import { UserInfoModal } from './UserInfoModal';
 
-export default function UserMenu() {
+function UserMenu() {
     const theme = useMantineTheme();
     const apiKey = UserHooks.useApiKey();
     const [apiKeyModalAskOpened, setApiKeyModalAskOpened] = useState(false);
@@ -28,7 +28,7 @@ export default function UserMenu() {
     const [userInfoModalOpened, setUserInfoModalOpened] = useState(false);
     const currentUser: any = UserHooks.useCurrentUser();
 
-    const userInitials = (currentUser.isSuccess && currentUser.data)
+    const userInitials = (currentUser.isSuccess && currentUser.data.firstName)
         ? `${currentUser?.data?.firstName[0]}${currentUser?.data?.lastName[0]}`
         : '';
 
@@ -137,3 +137,5 @@ export default function UserMenu() {
         </>
     );
 }
+
+export default UserMenu;

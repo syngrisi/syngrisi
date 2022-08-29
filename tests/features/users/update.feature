@@ -20,8 +20,6 @@ Feature: Update User
         Given I start Server and start Driver
         When I login with user:"Test" password "123"
         Then I wait on element "*=TA" to be displayed
-
-    Scenario: Update User - Success
         When I login via http with user:"Test" password "123"
         When I create via http user as:"Test" with params:
         """
@@ -34,18 +32,19 @@ Feature: Update User
         }
         """
 
-        When I go to "admin>users" page
-        When I set "John_1" to the inputfield "//input[@name='username' and @value='j_doe@gmail.com']/../..//input[@name='firstName']"
+    @smoke
+    Scenario: Update User - Success
+        When I open the app
+        When I go to "admin2" page
+        When I click on the element "//*[@data-test='j_doe@gmail.com']//button[@data-test='user-list-update-button']"
+        When I set "Alex" to the inputfield "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-first-name']"
+        When I set "Jonson" to the inputfield "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-last-name']"
+        When I select the option with the text "Reviewer" for element "//*[@data-test='j_doe@gmail.com']//select[@data-test='user-list-role']"
 
-        When I set "Doe_1" to the inputfield "//input[@name='username' and @value='j_doe@gmail.com']/../..//input[@name='lastName']"
-        When I select the option with the text "admin" for element "//input[@name='username' and @value='j_doe@gmail.com']/../..//select[@name='role']"
-        When I set "Password-1234" to the inputfield "//input[@name='username' and @value='j_doe@gmail.com']/../..//input[@name='password']"
-        When I wait for "1" seconds
-        When I click on the element "a[update-button-username='j_doe@gmail.com']"
-        When I wait for "1" seconds
-        When I accept the confirmbox
-        When I wait for "5" seconds
-        When I refresh page
-        When I wait for "3" seconds
-        Then I expect that element "//input[@name='username' and @value='j_doe@gmail.com']/../..//input[@name='firstName' and @value='John_1']/../..//input[@name='lastName' and @value='Doe_1']" is displayed
-        When I expect that element "//input[@name='username' and @value='j_doe@gmail.com']/../..//input[@name='firstName' and @value='John_1']/../..//input[@name='lastName' and @value='Doe_1']/../..//select[@name='role']" contain value "admin"
+        When I click on the element "//*[@data-test='j_doe@gmail.com']//button[@data-test='user-list-send-button']"
+        When I wait for "2" seconds
+
+        Then I expect that element "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-email']" contain value "j_doe@gmail.com"
+        Then I expect that element "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-first-name']" contain value "Alex"
+        Then I expect that element "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-last-name']" contain value "Jonson"
+        Then I expect that element "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-role']" contain value "Reviewer"

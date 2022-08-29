@@ -17,7 +17,7 @@ function _mergeNamespaces(n2, m2) {
   }
   return Object.freeze(Object.defineProperty(n2, Symbol.toStringTag, { value: "Module" }));
 }
-const p$5 = function polyfill() {
+(function polyfill() {
   const relList = document.createElement("link").relList;
   if (relList && relList.supports && relList.supports("modulepreload")) {
     return;
@@ -57,8 +57,7 @@ const p$5 = function polyfill() {
     const fetchOpts = getFetchOpts(link);
     fetch(link.href, fetchOpts);
   }
-};
-p$5();
+})();
 const styles$1 = "";
 function getDefaultExportFromCjs(x2) {
   return x2 && x2.__esModule && Object.prototype.hasOwnProperty.call(x2, "default") ? x2["default"] : x2;
@@ -737,7 +736,10 @@ function sa(a) {
   return a[1].toUpperCase();
 }
 "accent-height alignment-baseline arabic-form baseline-shift cap-height clip-path clip-rule color-interpolation color-interpolation-filters color-profile color-rendering dominant-baseline enable-background fill-opacity fill-rule flood-color flood-opacity font-family font-size font-size-adjust font-stretch font-style font-variant font-weight glyph-name glyph-orientation-horizontal glyph-orientation-vertical horiz-adv-x horiz-origin-x image-rendering letter-spacing lighting-color marker-end marker-mid marker-start overline-position overline-thickness paint-order panose-1 pointer-events rendering-intent shape-rendering stop-color stop-opacity strikethrough-position strikethrough-thickness stroke-dasharray stroke-dashoffset stroke-linecap stroke-linejoin stroke-miterlimit stroke-opacity stroke-width text-anchor text-decoration text-rendering underline-position underline-thickness unicode-bidi unicode-range units-per-em v-alphabetic v-hanging v-ideographic v-mathematical vector-effect vert-adv-y vert-origin-x vert-origin-y word-spacing writing-mode xmlns:xlink x-height".split(" ").forEach(function(a) {
-  var b2 = a.replace(ra, sa);
+  var b2 = a.replace(
+    ra,
+    sa
+  );
   z$1[b2] = new v$1(b2, 1, false, a, null, false, false);
 });
 "xlink:actuate xlink:arcrole xlink:role xlink:show xlink:title xlink:type".split(" ").forEach(function(a) {
@@ -2305,7 +2307,10 @@ function Oe(a) {
         d2 = void 0 === d2.end ? f2 : Math.min(d2.end, e2);
         !a.extend && f2 > d2 && (e2 = d2, d2 = f2, f2 = e2);
         e2 = Ke(c2, f2);
-        var g2 = Ke(c2, d2);
+        var g2 = Ke(
+          c2,
+          d2
+        );
         e2 && g2 && (1 !== a.rangeCount || a.anchorNode !== e2.node || a.anchorOffset !== e2.offset || a.focusNode !== g2.node || a.focusOffset !== g2.offset) && (b2 = b2.createRange(), b2.setStart(e2.node, e2.offset), a.removeAllRanges(), f2 > d2 ? (a.addRange(b2), a.extend(g2.node, g2.offset)) : (b2.setEnd(g2.node, g2.offset), a.addRange(b2)));
       }
     }
@@ -3506,7 +3511,12 @@ function vh(a) {
         case wa:
           return c3.key === e3 ? l2(a2, b3, c3, d3) : null;
         case Ha:
-          return e3 = c3._init, r2(a2, b3, e3(c3._payload), d3);
+          return e3 = c3._init, r2(
+            a2,
+            b3,
+            e3(c3._payload),
+            d3
+          );
       }
       if (eb(c3) || Ka(c3))
         return null !== e3 ? null : m2(a2, b3, c3, d3, null);
@@ -3584,7 +3594,10 @@ function vh(a) {
       m3 = x2;
     }
     if (n3.done)
-      return c2(e3, m3), I && tg(e3, w2), l3;
+      return c2(
+        e3,
+        m3
+      ), I && tg(e3, w2), l3;
     if (null === m3) {
       for (; !n3.done; w2++, n3 = h3.next())
         n3 = q2(e3, n3.value, k3), null !== n3 && (g3 = f2(n3, g3, w2), null === u2 ? l3 = n3 : u2.sibling = n3, u2 = n3);
@@ -4096,7 +4109,12 @@ var ai = { readContext: Vg, useCallback: Q, useContext: Q, useEffect: Q, useImpe
   return a;
 }, useContext: Vg, useEffect: vi, useImperativeHandle: function(a, b2, c2) {
   c2 = null !== c2 && void 0 !== c2 ? c2.concat([a]) : null;
-  return ti(4194308, 4, yi.bind(null, b2, a), c2);
+  return ti(
+    4194308,
+    4,
+    yi.bind(null, b2, a),
+    c2
+  );
 }, useLayoutEffect: function(a, b2) {
   return ti(4194308, 4, a, b2);
 }, useInsertionEffect: function(a, b2) {
@@ -4142,7 +4160,12 @@ var ai = { readContext: Vg, useCallback: Q, useContext: Q, useEffect: Q, useImpe
   e2.memoizedState = c2;
   var f2 = { value: c2, getSnapshot: b2 };
   e2.queue = f2;
-  vi(ki.bind(null, d2, f2, a), [a]);
+  vi(ki.bind(
+    null,
+    d2,
+    f2,
+    a
+  ), [a]);
   d2.flags |= 2048;
   li(9, mi.bind(null, d2, f2, c2, b2), void 0, null);
   return c2;
@@ -4818,7 +4841,10 @@ Cj = function(a, b2, c2, d2) {
             for (g2 in k2)
               k2.hasOwnProperty(g2) && h2[g2] !== k2[g2] && (c2 || (c2 = {}), c2[g2] = k2[g2]);
           } else
-            c2 || (f2 || (f2 = []), f2.push(l2, c2)), c2 = k2;
+            c2 || (f2 || (f2 = []), f2.push(
+              l2,
+              c2
+            )), c2 = k2;
         else
           "dangerouslySetInnerHTML" === l2 ? (k2 = k2 ? k2.__html : void 0, h2 = h2 ? h2.__html : void 0, null != k2 && h2 !== k2 && (f2 = f2 || []).push(l2, k2)) : "children" === l2 ? "string" !== typeof k2 && "number" !== typeof k2 || (f2 = f2 || []).push(l2, "" + k2) : "suppressContentEditableWarning" !== l2 && "suppressHydrationWarning" !== l2 && (ea.hasOwnProperty(l2) ? (null != k2 && "onScroll" === l2 && D("scroll", a), f2 || h2 === k2 || (f2 = [])) : (f2 = f2 || []).push(l2, k2));
     }
@@ -4930,7 +4956,10 @@ function Fj(a, b2, c2) {
             case "img":
             case "image":
             case "link":
-              D("error", d2);
+              D(
+                "error",
+                d2
+              );
               D("load", d2);
               break;
             case "details":
@@ -4952,7 +4981,11 @@ function Fj(a, b2, c2) {
           for (var g2 in f2)
             if (f2.hasOwnProperty(g2)) {
               var h2 = f2[g2];
-              "children" === g2 ? "string" === typeof h2 ? d2.textContent !== h2 && (true !== f2.suppressHydrationWarning && Af(d2.textContent, h2, a), e2 = ["children", h2]) : "number" === typeof h2 && d2.textContent !== "" + h2 && (true !== f2.suppressHydrationWarning && Af(d2.textContent, h2, a), e2 = ["children", "" + h2]) : ea.hasOwnProperty(g2) && null != h2 && "onScroll" === g2 && D("scroll", d2);
+              "children" === g2 ? "string" === typeof h2 ? d2.textContent !== h2 && (true !== f2.suppressHydrationWarning && Af(d2.textContent, h2, a), e2 = ["children", h2]) : "number" === typeof h2 && d2.textContent !== "" + h2 && (true !== f2.suppressHydrationWarning && Af(
+                d2.textContent,
+                h2,
+                a
+              ), e2 = ["children", "" + h2]) : ea.hasOwnProperty(g2) && null != h2 && "onScroll" === g2 && D("scroll", d2);
             }
           switch (c2) {
             case "input":
@@ -5007,7 +5040,10 @@ function Fj(a, b2, c2) {
               case "img":
               case "image":
               case "link":
-                D("error", a);
+                D(
+                  "error",
+                  a
+                );
                 D("load", a);
                 e2 = d2;
                 break;
@@ -5058,7 +5094,12 @@ function Fj(a, b2, c2) {
               case "select":
                 a.multiple = !!d2.multiple;
                 f2 = d2.value;
-                null != f2 ? fb(a, !!d2.multiple, f2, false) : null != d2.defaultValue && fb(a, !!d2.multiple, d2.defaultValue, true);
+                null != f2 ? fb(a, !!d2.multiple, f2, false) : null != d2.defaultValue && fb(
+                  a,
+                  !!d2.multiple,
+                  d2.defaultValue,
+                  true
+                );
                 break;
               default:
                 "function" === typeof e2.onClick && (a.onclick = Bf);
@@ -5638,7 +5679,12 @@ function ek(a, b2) {
                 var r2 = e2._wrapperState.wasMultiple;
                 e2._wrapperState.wasMultiple = !!f2.multiple;
                 var y2 = f2.value;
-                null != y2 ? fb(e2, !!f2.multiple, y2, false) : r2 !== !!f2.multiple && (null != f2.defaultValue ? fb(e2, !!f2.multiple, f2.defaultValue, true) : fb(e2, !!f2.multiple, f2.multiple ? [] : "", false));
+                null != y2 ? fb(e2, !!f2.multiple, y2, false) : r2 !== !!f2.multiple && (null != f2.defaultValue ? fb(
+                  e2,
+                  !!f2.multiple,
+                  f2.defaultValue,
+                  true
+                ) : fb(e2, !!f2.multiple, f2.multiple ? [] : "", false));
             }
             e2[Pf] = f2;
           } catch (t2) {
@@ -5771,7 +5817,10 @@ function ek(a, b2) {
     case 21:
       break;
     default:
-      dk(b2, a), fk(a);
+      dk(
+        b2,
+        a
+      ), fk(a);
   }
 }
 function fk(a) {
@@ -6846,7 +6895,11 @@ Wk = function(a, b2, c2) {
             b2 = aj(null, b2, d2, Lg(d2.type, a), c2);
             break a;
         }
-        throw Error(p$3(306, d2, ""));
+        throw Error(p$3(
+          306,
+          d2,
+          ""
+        ));
       }
       return b2;
     case 0:
@@ -6939,7 +6992,11 @@ Wk = function(a, b2, c2) {
                     f2.lanes |= c2;
                     k2 = f2.alternate;
                     null !== k2 && (k2.lanes |= c2);
-                    Sg(f2.return, c2, b2);
+                    Sg(
+                      f2.return,
+                      c2,
+                      b2
+                    );
                     h2.lanes |= c2;
                     break;
                   }
@@ -7471,7 +7528,10 @@ reactDom_production_min.hydrateRoot = function(a, b2, c2) {
   sf(a);
   if (d2)
     for (a = 0; a < d2.length; a++)
-      c2 = d2[a], e2 = c2._getVersion, e2 = e2(c2._source), null == b2.mutableSourceEagerHydrationData ? b2.mutableSourceEagerHydrationData = [c2, e2] : b2.mutableSourceEagerHydrationData.push(c2, e2);
+      c2 = d2[a], e2 = c2._getVersion, e2 = e2(c2._source), null == b2.mutableSourceEagerHydrationData ? b2.mutableSourceEagerHydrationData = [c2, e2] : b2.mutableSourceEagerHydrationData.push(
+        c2,
+        e2
+      );
   return new nl(b2);
 };
 reactDom_production_min.render = function(a, b2, c2) {
@@ -9657,13 +9717,16 @@ var createCache = function createCache2(options) {
   var nodesToHydrate = [];
   {
     container = options.container || document.head;
-    Array.prototype.forEach.call(document.querySelectorAll('style[data-emotion^="' + key + ' "]'), function(node2) {
-      var attrib = node2.getAttribute("data-emotion").split(" ");
-      for (var i = 1; i < attrib.length; i++) {
-        inserted[attrib[i]] = true;
+    Array.prototype.forEach.call(
+      document.querySelectorAll('style[data-emotion^="' + key + ' "]'),
+      function(node2) {
+        var attrib = node2.getAttribute("data-emotion").split(" ");
+        for (var i = 1; i < attrib.length; i++) {
+          inserted[attrib[i]] = true;
+        }
+        nodesToHydrate.push(node2);
       }
-      nodesToHydrate.push(node2);
-    });
+    );
   }
   var _insert;
   var omnipresentPlugins = [compat, removeLabel];
@@ -10087,9 +10150,11 @@ var serializeStyles = function serializeStyles2(args, registered, mergedProps) {
     next: cursor
   };
 };
-var EmotionCacheContext = /* @__PURE__ */ react.exports.createContext(typeof HTMLElement !== "undefined" ? /* @__PURE__ */ createCache$1({
-  key: "css"
-}) : null);
+var EmotionCacheContext = /* @__PURE__ */ react.exports.createContext(
+  typeof HTMLElement !== "undefined" ? /* @__PURE__ */ createCache$1({
+    key: "css"
+  }) : null
+);
 EmotionCacheContext.Provider;
 var withEmotionCache = function withEmotionCache2(func) {
   return /* @__PURE__ */ react.exports.forwardRef(function(props, ref) {
@@ -15207,6 +15272,30 @@ function parseQueryArgs(arg1, arg2, arg3) {
     queryKey: arg1
   };
 }
+function parseMutationArgs(arg1, arg2, arg3) {
+  if (isQueryKey(arg1)) {
+    if (typeof arg2 === "function") {
+      return {
+        ...arg3,
+        mutationKey: arg1,
+        mutationFn: arg2
+      };
+    }
+    return {
+      ...arg2,
+      mutationKey: arg1
+    };
+  }
+  if (typeof arg1 === "function") {
+    return {
+      ...arg2,
+      mutationFn: arg1
+    };
+  }
+  return {
+    ...arg1
+  };
+}
 function parseFilterArgs(arg1, arg2, arg3) {
   return isQueryKey(arg1) ? [{
     ...arg2,
@@ -15378,6 +15467,8 @@ function getAbortController() {
 function replaceData(prevData, data, options) {
   if (options.isDataEqual != null && options.isDataEqual(prevData, data)) {
     return prevData;
+  } else if (typeof options.structuralSharing === "function") {
+    return options.structuralSharing(prevData, data);
   } else if (options.structuralSharing !== false) {
     return replaceEqualDeep(prevData, data);
   }
@@ -16843,6 +16934,13 @@ class QueryObserver extends Subscribable {
     const prevOptions = this.options;
     const prevQuery = this.currentQuery;
     this.options = this.client.defaultQueryOptions(options);
+    if (!shallowEqualObjects(prevOptions, this.options)) {
+      this.client.getQueryCache().notify({
+        type: "observerOptionsUpdated",
+        query: this.currentQuery,
+        observer: this
+      });
+    }
     if (typeof this.options.enabled !== "undefined" && typeof this.options.enabled !== "boolean") {
       throw new Error("Expected enabled to be a boolean");
     }
@@ -17194,6 +17292,103 @@ function shouldFetchOptionally(query, prevQuery, options, prevOptions) {
 function isStale(query, options) {
   return query.isStaleByTime(options.staleTime);
 }
+class MutationObserver$1 extends Subscribable {
+  constructor(client, options) {
+    super();
+    this.client = client;
+    this.setOptions(options);
+    this.bindMethods();
+    this.updateResult();
+  }
+  bindMethods() {
+    this.mutate = this.mutate.bind(this);
+    this.reset = this.reset.bind(this);
+  }
+  setOptions(options) {
+    const prevOptions = this.options;
+    this.options = this.client.defaultMutationOptions(options);
+    if (!shallowEqualObjects(prevOptions, this.options)) {
+      this.client.getMutationCache().notify({
+        type: "observerOptionsUpdated",
+        mutation: this.currentMutation,
+        observer: this
+      });
+    }
+  }
+  onUnsubscribe() {
+    if (!this.listeners.length) {
+      var _this$currentMutation;
+      (_this$currentMutation = this.currentMutation) == null ? void 0 : _this$currentMutation.removeObserver(this);
+    }
+  }
+  onMutationUpdate(action) {
+    this.updateResult();
+    const notifyOptions = {
+      listeners: true
+    };
+    if (action.type === "success") {
+      notifyOptions.onSuccess = true;
+    } else if (action.type === "error") {
+      notifyOptions.onError = true;
+    }
+    this.notify(notifyOptions);
+  }
+  getCurrentResult() {
+    return this.currentResult;
+  }
+  reset() {
+    this.currentMutation = void 0;
+    this.updateResult();
+    this.notify({
+      listeners: true
+    });
+  }
+  mutate(variables, options) {
+    this.mutateOptions = options;
+    if (this.currentMutation) {
+      this.currentMutation.removeObserver(this);
+    }
+    this.currentMutation = this.client.getMutationCache().build(this.client, {
+      ...this.options,
+      variables: typeof variables !== "undefined" ? variables : this.options.variables
+    });
+    this.currentMutation.addObserver(this);
+    return this.currentMutation.execute();
+  }
+  updateResult() {
+    const state = this.currentMutation ? this.currentMutation.state : getDefaultState();
+    const result = {
+      ...state,
+      isLoading: state.status === "loading",
+      isSuccess: state.status === "success",
+      isError: state.status === "error",
+      isIdle: state.status === "idle",
+      mutate: this.mutate,
+      reset: this.reset
+    };
+    this.currentResult = result;
+  }
+  notify(options) {
+    notifyManager.batch(() => {
+      if (this.mutateOptions) {
+        if (options.onSuccess) {
+          var _this$mutateOptions$o, _this$mutateOptions, _this$mutateOptions$o2, _this$mutateOptions2;
+          (_this$mutateOptions$o = (_this$mutateOptions = this.mutateOptions).onSuccess) == null ? void 0 : _this$mutateOptions$o.call(_this$mutateOptions, this.currentResult.data, this.currentResult.variables, this.currentResult.context);
+          (_this$mutateOptions$o2 = (_this$mutateOptions2 = this.mutateOptions).onSettled) == null ? void 0 : _this$mutateOptions$o2.call(_this$mutateOptions2, this.currentResult.data, null, this.currentResult.variables, this.currentResult.context);
+        } else if (options.onError) {
+          var _this$mutateOptions$o3, _this$mutateOptions3, _this$mutateOptions$o4, _this$mutateOptions4;
+          (_this$mutateOptions$o3 = (_this$mutateOptions3 = this.mutateOptions).onError) == null ? void 0 : _this$mutateOptions$o3.call(_this$mutateOptions3, this.currentResult.error, this.currentResult.variables, this.currentResult.context);
+          (_this$mutateOptions$o4 = (_this$mutateOptions4 = this.mutateOptions).onSettled) == null ? void 0 : _this$mutateOptions$o4.call(_this$mutateOptions4, void 0, this.currentResult.error, this.currentResult.variables, this.currentResult.context);
+        }
+      }
+      if (options.listeners) {
+        this.listeners.forEach((listener) => {
+          listener(this.currentResult);
+        });
+      }
+    });
+  }
+}
 const defaultContext = /* @__PURE__ */ react.exports.createContext(void 0);
 const QueryClientSharingContext = /* @__PURE__ */ react.exports.createContext(false);
 function getQueryClientContext(context, contextSharing) {
@@ -17322,6 +17517,30 @@ function useQuery(arg1, arg2, arg3) {
   const parsedOptions = parseQueryArgs(arg1, arg2, arg3);
   return useBaseQuery(parsedOptions, QueryObserver);
 }
+function useMutation(arg1, arg2, arg3) {
+  const options = parseMutationArgs(arg1, arg2, arg3);
+  const queryClient = useQueryClient({
+    context: options.context
+  });
+  const [observer] = react.exports.useState(() => new MutationObserver$1(queryClient, options));
+  react.exports.useEffect(() => {
+    observer.setOptions(options);
+  }, [observer, options]);
+  const result = shim.exports.useSyncExternalStore(react.exports.useCallback((onStoreChange) => observer.subscribe(notifyManager.batchCalls(onStoreChange)), [observer]), () => observer.getCurrentResult(), () => observer.getCurrentResult());
+  const mutate = react.exports.useCallback((variables, mutateOptions) => {
+    observer.mutate(variables, mutateOptions).catch(noop);
+  }, [observer]);
+  if (result.error && shouldThrowError(observer.options.useErrorBoundary, [result.error])) {
+    throw result.error;
+  }
+  return {
+    ...result,
+    mutate,
+    mutateAsync: result.mutate
+  };
+}
+function noop() {
+}
 function _objectWithoutPropertiesLoose(source, excluded) {
   if (source == null)
     return {};
@@ -17384,6 +17603,11 @@ function IconCopy(_ref) {
   var _ref$size = _ref.size, size2 = _ref$size === void 0 ? 24 : _ref$size, _ref$color = _ref.color, color = _ref$color === void 0 ? "currentColor" : _ref$color, _ref$stroke = _ref.stroke, stroke = _ref$stroke === void 0 ? 2 : _ref$stroke, props = _objectWithoutProperties(_ref, _excluded$lQ);
   return /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-copy", width: size2, height: size2, viewBox: "0 0 24 24", strokeWidth: stroke, stroke: color, fill: "none", strokeLinecap: "round", strokeLinejoin: "round", ...props, children: [/* @__PURE__ */ jsx("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), /* @__PURE__ */ jsx("rect", { x: 8, y: 8, width: 12, height: 12, rx: 2 }), /* @__PURE__ */ jsx("path", { d: "M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" })] });
 }
+var _excluded$iM = ["size", "color", "stroke"];
+function IconEdit(_ref) {
+  var _ref$size = _ref.size, size2 = _ref$size === void 0 ? 24 : _ref$size, _ref$color = _ref.color, color = _ref$color === void 0 ? "currentColor" : _ref$color, _ref$stroke = _ref.stroke, stroke = _ref$stroke === void 0 ? 2 : _ref$stroke, props = _objectWithoutProperties(_ref, _excluded$iM);
+  return /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-edit", width: size2, height: size2, viewBox: "0 0 24 24", strokeWidth: stroke, stroke: color, fill: "none", strokeLinecap: "round", strokeLinejoin: "round", ...props, children: [/* @__PURE__ */ jsx("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), /* @__PURE__ */ jsx("path", { d: "M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" }), /* @__PURE__ */ jsx("path", { d: "M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" }), /* @__PURE__ */ jsx("path", { d: "M16 5l3 3" })] });
+}
 var _excluded$ir = ["size", "color", "stroke"];
 function IconExternalLink(_ref) {
   var _ref$size = _ref.size, size2 = _ref$size === void 0 ? 24 : _ref$size, _ref$color = _ref.color, color = _ref$color === void 0 ? "currentColor" : _ref$color, _ref$stroke = _ref.stroke, stroke = _ref$stroke === void 0 ? 2 : _ref$stroke, props = _objectWithoutProperties(_ref, _excluded$ir);
@@ -17418,6 +17642,11 @@ var _excluded$6a = ["size", "color", "stroke"];
 function IconSearch(_ref) {
   var _ref$size = _ref.size, size2 = _ref$size === void 0 ? 24 : _ref$size, _ref$color = _ref.color, color = _ref$color === void 0 ? "currentColor" : _ref$color, _ref$stroke = _ref.stroke, stroke = _ref$stroke === void 0 ? 2 : _ref$stroke, props = _objectWithoutProperties(_ref, _excluded$6a);
   return /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-search", width: size2, height: size2, viewBox: "0 0 24 24", strokeWidth: stroke, stroke: color, fill: "none", strokeLinecap: "round", strokeLinejoin: "round", ...props, children: [/* @__PURE__ */ jsx("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), /* @__PURE__ */ jsx("circle", { cx: 10, cy: 10, r: 7 }), /* @__PURE__ */ jsx("line", { x1: 21, y1: 21, x2: 15, y2: 15 })] });
+}
+var _excluded$63 = ["size", "color", "stroke"];
+function IconSend(_ref) {
+  var _ref$size = _ref.size, size2 = _ref$size === void 0 ? 24 : _ref$size, _ref$color = _ref.color, color = _ref$color === void 0 ? "currentColor" : _ref$color, _ref$stroke = _ref.stroke, stroke = _ref$stroke === void 0 ? 2 : _ref$stroke, props = _objectWithoutProperties(_ref, _excluded$63);
+  return /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-send", width: size2, height: size2, viewBox: "0 0 24 24", strokeWidth: stroke, stroke: color, fill: "none", strokeLinecap: "round", strokeLinejoin: "round", ...props, children: [/* @__PURE__ */ jsx("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), /* @__PURE__ */ jsx("line", { x1: 10, y1: 14, x2: 21, y2: 3 }), /* @__PURE__ */ jsx("path", { d: "M21 3l-6.5 18a0.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a0.55 .55 0 0 1 0 -1l18 -6.5" })] });
 }
 var _excluded$5U = ["size", "color", "stroke"];
 function IconSettings(_ref) {
@@ -18301,8 +18530,11 @@ export {
   IconArticle as aL,
   IconListDetails as aM,
   useParams as aN,
-  Routes as aO,
-  Route as aP,
+  useMutation as aO,
+  IconSend as aP,
+  IconEdit as aQ,
+  Routes as aR,
+  Route as aS,
   Transition as aa,
   useInputProps as ab,
   Input as ac,

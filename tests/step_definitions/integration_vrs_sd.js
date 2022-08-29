@@ -142,8 +142,14 @@ Then(/^I expect that the element "([^"]*)" to have attribute "([^"]*)" containin
         .toHaveAttrContaining(attr, value2);
 });
 
-Then(/^I expect that the element "([^"]*)" to have attribute "([^"]*)"$/, function (selector, attr) {
+Then(/^I expect that the element "([^"]*)" to (not |)have attribute "([^"]*)"$/, function (selector, cond, attr) {
+    if (!cond) {
+        expect($(selector))
+            .toHaveAttr(attr);
+        return
+    }
     expect($(selector))
+        .not
         .toHaveAttr(attr);
 });
 
@@ -238,12 +244,19 @@ When(/^I expect that element "([^"]*)" contain value "([^"]*)"$/, (selector, val
         .toContain(val);
 });
 
-When(/^I expect that element "([^"]*)" contain text "([^"]*)"$/, (selector, val) => {
+When(/^I expect that element "([^"]*)" (not |)contain text "([^"]*)"$/, (selector, cond, val) => {
     const actualValue = $(selector)
         .getText();
     console.log({ actualValue });
+    if (!cond) {
+        expect(actualValue)
+            .toContain(val);
+        return;
+    }
     expect(actualValue)
+        .not
         .toContain(val);
+
 });
 
 Then(/^page source match:$/, (source) => {

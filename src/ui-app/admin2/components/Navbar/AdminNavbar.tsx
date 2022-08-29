@@ -10,14 +10,14 @@ import { LinksGroup } from './NavbarLinksGroup';
 import { taskLinks } from '../Tasks/tasksList';
 
 const navbarItems = [
-    { label: 'Users', icon: IconUsers, link: '/admin/users' },
-    { label: 'Logs', icon: IconArticle, link: '/admin/logs' },
+    { label: 'Users', icon: IconUsers, link: '/admin2/users' },
+    { label: 'Logs', icon: IconArticle, link: '/admin2/logs' },
     {
         label: 'Tasks',
         icon: IconListDetails,
         links: taskLinks,
     },
-    { label: 'Settings', icon: IconSettings, link: '/admin/settings' },
+    { label: 'Settings', icon: IconSettings, link: '/admin2/settings' },
 ];
 const useStyles = createStyles((theme) => ({
     navbar: {
