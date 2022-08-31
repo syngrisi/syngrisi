@@ -22,9 +22,10 @@ function App() {
     const [colorScheme, toggleColorScheme]: any = useColorScheme();
 
     const [appTitle, setAppTitle] = useState('Syngrisi');
+    const [toolbar, setToolbar] = useState('');
     const appProviderValue = React.useMemo(() => ({
-        appTitle, setAppTitle,
-    }), [appTitle]);
+        appTitle, setAppTitle, toolbar, setToolbar,
+    }), [appTitle, toolbar]);
     useDocumentTitle(appTitle);
 
     return (

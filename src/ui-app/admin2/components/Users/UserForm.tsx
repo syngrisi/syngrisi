@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { log } from '../../../shared/utils';
 import { Password } from '../../../shared/components/Password';
 import ActionPopoverIcon from '../../../shared/components/ActionPopoverIcon';
-import { UserService } from '../../../shared/services';
+import { UsersService } from '../../../shared/services';
 import SafeSelect from '../../../shared/components/SafeSelect';
 import IUser from '../../../shared/interfaces/IUser';
 
@@ -48,7 +48,7 @@ export default function UserForm(
     });
 
     const updateUser = useMutation(
-        (data: IUser) => UserService.update(data),
+        (data: IUser) => UsersService.update(data),
         {
             onSuccess: async () => {
                 refetch();
@@ -61,7 +61,7 @@ export default function UserForm(
     );
 
     const deleteUser = useMutation(
-        (userId: string) => UserService.delete(userId),
+        (userId: string) => UsersService.delete(userId),
         {
             onSuccess: () => {
                 refetch();
@@ -127,7 +127,6 @@ export default function UserForm(
                         data-test="user-list-password"
                         disabled={!editMode}
                         form={form}
-                        testAttr="password"
                     />
 
                     <TextInput data-test="user-list-api-key" value={apiKey} disabled />

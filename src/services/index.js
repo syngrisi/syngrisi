@@ -1,2 +1,3 @@
 module.exports.testService = require('./test.service');
-module.exports.userService = require('./user.service');
+module.exports.usersService = require('./user.service');
+module.exports.logsService = require('./logs.service');

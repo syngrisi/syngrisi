@@ -10,7 +10,6 @@ interface IOption {
 
 // select component for selenium
 function SafeSelect({ optionsData, ...rest }: any): ReactElement {
-    console.log({ rest })
     const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         rest.onChange(event.target.value);
     }

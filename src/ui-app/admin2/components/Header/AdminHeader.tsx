@@ -1,18 +1,24 @@
 import {
+    Anchor,
     Autocomplete,
+    Breadcrumbs,
     Burger,
+    Container,
     Group,
-    Header, useMantineTheme,
+    Header,
+    Paper,
 } from '@mantine/core';
 import * as React from 'react';
 import { useDisclosure } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons';
 import { createStyles } from '@mantine/styles';
+import { useContext } from 'react';
 import useColorScheme from '../../../shared/hooks/useColorSheme';
 import ToggleThemeButton from '../../../shared/components/ToggleThemeButton';
 import HeaderLogo from './HeaderLogo';
 import { isDark } from '../../../shared/utils';
 import UserMenu from './UserMenu';
+import { AppContext } from '../../AppContext';
 
 const useStyles = createStyles((theme) => ({
     header: {
@@ -25,6 +31,7 @@ const useStyles = createStyles((theme) => ({
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
+        backgroundColor: isDark() ? theme.colors.dark[5] : theme.colors.gray[2],
     },
 
     links: {
@@ -53,6 +60,13 @@ const useStyles = createStyles((theme) => ({
             backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
         },
     },
+    subheader: {
+        height: 42,
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingLeft: 25,
+    },
 }));
 
 const links = [
@@ -75,19 +89,27 @@ export default function AdminHeader() {
             {link.label}
         </a>
     ));
-    const theme = useMantineTheme();
+
+    const breadCrumbsItems = [
+        { title: 'Home', href: '#' },
+        { title: 'Admin panel', href: '#' },
+    ].map((item) => (
+        <Anchor href={item.href} key={`${item.title}_nav`} size="sm" color="green">
+            {item.title}
+        </Anchor>
+    ));
+
+    const { toolbar }: any = useContext(AppContext);
+
     return (
         <Header
-            height={56}
+            height={100}
             className={classes.header}
             mb={120}
-            sx={
-                {
-                    backgroundColor: isDark() ? theme.colors.dark[5] : theme.colors.gray[2],
-                }
-            }
+            pr={0}
+            pl={0}
         >
-            <div className={classes.inner}>
+            <Container className={classes.inner} fluid>
                 <Group>
                     <Burger opened={opened} onClick={toggle} size="sm" />
                     <HeaderLogo />
@@ -112,7 +134,17 @@ export default function AdminHeader() {
                         <ToggleThemeButton colorScheme={colorScheme} toggleColorScheme={toggleColorScheme} />
                     </Group>
                 </Group>
-            </div>
+            </Container>
+            <Paper shadow="">
+                <Container className={classes.subheader} fluid>
+                    <Group>
+                        <Breadcrumbs>{breadCrumbsItems}</Breadcrumbs>
+                    </Group>
+                    <Group>
+                        {toolbar}
+                    </Group>
+                </Container>
+            </Paper>
         </Header>
     );
 }

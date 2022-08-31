@@ -31,7 +31,8 @@
     },
     "extends": [
         "plugin:react/recommended",
-        "airbnb"
+        "airbnb",
+        "plugin:react-hooks/recommended"
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
@@ -102,6 +103,14 @@
         ],
         "import/prefer-default-export": "off",
         "react/require-default-props": "warn",
-        "valid-jsdoc": "off"
+        "valid-jsdoc": "off",
+        "react/jsx-one-expression-per-line": [
+            "error",
+            {
+                "allow": "single-child"
+            }
+        ],
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn"
     }
 }

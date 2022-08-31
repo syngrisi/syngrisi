@@ -32,7 +32,7 @@ const paginate = (schema) => {
                 });
             sort = sortingCriteria.join(' ');
         } else {
-            sort = 'createdAt';
+            sort = { _id: -1 };
         }
 
         const limit = options.limit && parseInt(options.limit, 10) >= 0 ? parseInt(options.limit, 10) : 10;

@@ -1,22 +1,22 @@
 import { useQuery } from '@tanstack/react-query';
-import { UserService } from '../services';
+import { UsersService } from '../services';
 
 export const UserHooks = {
     useApiKey() {
         const { isLoading, error, data, isError, refetch, isFetching, isRefetching, isSuccess, status }: any = useQuery(
-            ['apiKey'], () => UserService.getApiKey(), { enabled: false },
+            ['apiKey'], () => UsersService.getApiKey(), { enabled: false },
         );
         return { isLoading, isFetching, isRefetching, isSuccess, error, data, isError, refetch, status };
     },
     useCurrentUser() {
         const { isLoading, error, data, refetch, isSuccess }: any = useQuery(
-            ['currentUser'], () => UserService.getCurrentUser(),
+            ['currentUser'], () => UsersService.getCurrentUser(),
         );
         return { isLoading, error, data, refetch, isSuccess };
     },
     useAllUsers() {
         const { isLoading, error, data, refetch, isSuccess, isFetching }: any = useQuery(
-            ['allUsers'], () => UserService.getUsers(),
+            ['allUsers'], () => UsersService.getUsers(),
         );
         return { isLoading, error, data, refetch, isSuccess, isFetching };
     },
