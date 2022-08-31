@@ -279,9 +279,6 @@ const TestSchema = new Schema(
     { strictQuery: true }
 ); // remove filters that not exist in schema
 
-TestSchema.plugin(toJSON);
-TestSchema.plugin(paginate);
-
 const SuiteSchema = new Schema({
     name: {
         type: String,
@@ -402,8 +399,18 @@ const UserSchema = new Schema({
     },
 });
 
+const Settings = new Schema({
+    firstRun: Boolean,
+});
+
+LogSchema.plugin(toJSON);
+LogSchema.plugin(paginate);
+
 UserSchema.plugin(toJSON);
 UserSchema.plugin(paginate);
+
+TestSchema.plugin(toJSON);
+TestSchema.plugin(paginate);
 
 /**
  * Check if email is taken
@@ -416,10 +423,6 @@ UserSchema.statics.isEmailTaken = async function (username, excludeUserId) {
     log.warn(user);
     return !!user;
 };
-
-const Settings = new Schema({
-    firstRun: Boolean,
-});
 
 UserSchema.plugin(passportLocalMongoose, { hashField: 'password' });
 

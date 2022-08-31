@@ -1,4 +1,4 @@
-import { c as createStyles, u as useQuery, l as log, j as jsxs, C as Center, A as Anchor, a as jsx, I as IconExternalLink, T as Text, k as ky, b as config, d as useMantineTheme, e as Container, P as Paper, B as Box, f as useDocumentTitle, r as react, L as LoadingOverlay, g as IconCircleCheck, h as IconCircleX, i as Title, m as Button, n as Progress, G as Group, o as IconCheck, p as IconX, q as useSearchParams, s as useForm, t as PasswordInput, v as TextInput, w as Checkbox, x as ActionIcon, y as IconSun, z as IconMoonStars, Q as QueryClient, D as useRoutes, E as useLocalStorage, F as useHotkeys, H as QueryClientProvider, J as ColorSchemeProvider, M as MantineProvider, K as createRoot, N as BrowserRouter } from "./use-form.12b28c95.js";
+import { c as createStyles, u as useQuery, k as ky, a as config, l as log, j as jsxs, C as Center, A as Anchor, b as jsx, z as zA, T as Text, d as useMantineTheme, e as Container, P as Paper, B as Box, f as useDocumentTitle, r as react, L as LoadingOverlay, X as XL, g as zy, h as Title, i as Button, m as Progress, G as Group, N as Nb, n as aze, o as useSearchParams, p as useForm, q as PasswordInput, s as TextInput, t as Checkbox, v as ActionIcon, D as Dme, w as l6, Q as QueryClient, x as useRoutes, y as useLocalStorage, E as useHotkeys, F as QueryClientProvider, H as ColorSchemeProvider, M as MantineProvider, I as createRoot, J as BrowserRouter } from "./use-form.9cddd102.js";
 const index = "";
 const useStyle = createStyles((theme) => ({
   footer: {
@@ -41,7 +41,7 @@ function AuthFooter() {
       href: "https://github.com/viktor-silakov/syngrisi",
       target: "_blank",
       className: classes.footerLink,
-      children: [/* @__PURE__ */ jsx(IconExternalLink, {
+      children: [/* @__PURE__ */ jsx(zA, {
         size: "1rem",
         stroke: 1
       }), "GitHub"]
@@ -150,13 +150,13 @@ function LogoutForm() {
       children: [success ? /* @__PURE__ */ jsx(Text, {
         align: "center",
         color: "green",
-        children: /* @__PURE__ */ jsx(IconCircleCheck, {
+        children: /* @__PURE__ */ jsx(XL, {
           size: "6rem"
         })
       }) : /* @__PURE__ */ jsx(Text, {
         align: "center",
         color: "red",
-        children: /* @__PURE__ */ jsx(IconCircleX, {
+        children: /* @__PURE__ */ jsx(zy, {
           size: "6rem"
         })
       }), /* @__PURE__ */ jsx(Title, {
@@ -240,10 +240,10 @@ function PasswordRequirement({
     id,
     children: /* @__PURE__ */ jsxs(Center, {
       inline: true,
-      children: [meets ? /* @__PURE__ */ jsx(IconCheck, {
+      children: [meets ? /* @__PURE__ */ jsx(Nb, {
         size: 14,
         stroke: 1.5
-      }) : /* @__PURE__ */ jsx(IconX, {
+      }) : /* @__PURE__ */ jsx(aze, {
         size: 14,
         stroke: 1.5
       }), /* @__PURE__ */ jsx(Box, {
@@ -536,7 +536,7 @@ function ChangePasswordSuccessForm() {
       children: [/* @__PURE__ */ jsx(Text, {
         align: "center",
         color: "green",
-        children: /* @__PURE__ */ jsx(IconCircleCheck, {
+        children: /* @__PURE__ */ jsx(XL, {
           size: "6rem"
         })
       }), /* @__PURE__ */ jsx(Title, {
@@ -585,9 +585,9 @@ function ToggleThemeButton({
       color: dark ? "yellow" : "blue",
       onClick: () => toggleColorScheme(),
       title: "Toggle color scheme",
-      children: dark ? /* @__PURE__ */ jsx(IconSun, {
+      children: dark ? /* @__PURE__ */ jsx(Dme, {
         size: 18
-      }) : /* @__PURE__ */ jsx(IconMoonStars, {
+      }) : /* @__PURE__ */ jsx(l6, {
         size: 18
       })
     })

@@ -19,7 +19,7 @@ interface IRequestOptions {
 
 }
 
-export const UserService = {
+export const UsersService = {
     async getApiKey(): Promise<{ apikey: string }> {
         const resp = await ky(`${config.baseUri}/apikey`);
         if (resp.ok) {

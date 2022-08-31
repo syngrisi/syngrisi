@@ -73,7 +73,7 @@ var react_production_min = {};
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-var l$3 = Symbol.for("react.element"), n$3 = Symbol.for("react.portal"), p$4 = Symbol.for("react.fragment"), q$3 = Symbol.for("react.strict_mode"), r$2 = Symbol.for("react.profiler"), t$2 = Symbol.for("react.provider"), u$1 = Symbol.for("react.context"), v$2 = Symbol.for("react.forward_ref"), w$1 = Symbol.for("react.suspense"), x$1 = Symbol.for("react.memo"), y$1 = Symbol.for("react.lazy"), z$2 = Symbol.iterator;
+var l$3 = Symbol.for("react.element"), n$3 = Symbol.for("react.portal"), p$4 = Symbol.for("react.fragment"), q$3 = Symbol.for("react.strict_mode"), r$2 = Symbol.for("react.profiler"), t$3 = Symbol.for("react.provider"), u$1 = Symbol.for("react.context"), v$2 = Symbol.for("react.forward_ref"), w$1 = Symbol.for("react.suspense"), x$1 = Symbol.for("react.memo"), y$1 = Symbol.for("react.lazy"), z$2 = Symbol.iterator;
 function A$2(a) {
   if (null === a || "object" !== typeof a)
     return null;
@@ -266,7 +266,7 @@ react_production_min.cloneElement = function(a, b2, e2) {
 };
 react_production_min.createContext = function(a) {
   a = { $$typeof: u$1, _currentValue: a, _currentValue2: a, _threadCount: 0, Provider: null, Consumer: null, _defaultValue: null, _globalName: null };
-  a.Provider = { $$typeof: t$2, _context: a };
+  a.Provider = { $$typeof: t$3, _context: a };
   return a.Consumer = a;
 };
 react_production_min.createElement = M$1;
@@ -413,9 +413,9 @@ var scheduler_production_min = {};
       return l2.now();
     };
   } else {
-    var p2 = Date, q2 = p2.now();
+    var p2 = Date, q3 = p2.now();
     exports.unstable_now = function() {
-      return p2.now() - q2;
+      return p2.now() - q3;
     };
   }
   var r2 = [], t2 = [], u2 = 1, v2 = null, y2 = 3, z2 = false, A2 = false, B2 = false, D2 = "function" === typeof setTimeout ? setTimeout : null, E2 = "function" === typeof clearTimeout ? clearTimeout : null, F2 = "undefined" !== typeof setImmediate ? setImmediate : null;
@@ -645,14 +645,14 @@ function ha(a, b2) {
   for (a = 0; a < b2.length; a++)
     da.add(b2[a]);
 }
-var ia = !("undefined" === typeof window || "undefined" === typeof window.document || "undefined" === typeof window.document.createElement), ja = Object.prototype.hasOwnProperty, ka = /^[:A-Z_a-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD][:A-Z_a-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\-.0-9\u00B7\u0300-\u036F\u203F-\u2040]*$/, la = {}, ma = {};
+var ia = !("undefined" === typeof window || "undefined" === typeof window.document || "undefined" === typeof window.document.createElement), ja = Object.prototype.hasOwnProperty, ka$1 = /^[:A-Z_a-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD][:A-Z_a-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\-.0-9\u00B7\u0300-\u036F\u203F-\u2040]*$/, la = {}, ma$1 = {};
 function oa(a) {
-  if (ja.call(ma, a))
+  if (ja.call(ma$1, a))
     return true;
   if (ja.call(la, a))
     return false;
-  if (ka.test(a))
-    return ma[a] = true;
+  if (ka$1.test(a))
+    return ma$1[a] = true;
   la[a] = true;
   return false;
 }
@@ -1293,7 +1293,7 @@ function Fb() {
 function Gb(a, b2) {
   return a(b2);
 }
-function Hb() {
+function Hb$1() {
 }
 var Ib = false;
 function Jb(a, b2, c2) {
@@ -1304,7 +1304,7 @@ function Jb(a, b2, c2) {
     return Gb(a, b2, c2);
   } finally {
     if (Ib = false, null !== zb || null !== Ab)
-      Hb(), Fb();
+      Hb$1(), Fb();
   }
 }
 function Kb(a, b2) {
@@ -1352,7 +1352,7 @@ if (ia)
   } catch (a) {
     Lb = false;
   }
-function Nb(a, b2, c2, d2, e2, f2, g2, h2, k2) {
+function Nb$1(a, b2, c2, d2, e2, f2, g2, h2, k2) {
   var l2 = Array.prototype.slice.call(arguments, 3);
   try {
     b2.apply(c2, l2);
@@ -1367,7 +1367,7 @@ var Ob = false, Pb = null, Qb = false, Rb = null, Sb = { onError: function(a) {
 function Tb(a, b2, c2, d2, e2, f2, g2, h2, k2) {
   Ob = false;
   Pb = null;
-  Nb.apply(Sb, arguments);
+  Nb$1.apply(Sb, arguments);
 }
 function Ub(a, b2, c2, d2, e2, f2, g2, h2, k2) {
   Tb.apply(this, arguments);
@@ -3220,7 +3220,7 @@ function gh(a, b2, c2, d2) {
     null !== m2 && (m2 = m2.updateQueue, h2 = m2.lastBaseUpdate, h2 !== g2 && (null === h2 ? m2.firstBaseUpdate = l2 : h2.next = l2, m2.lastBaseUpdate = k2));
   }
   if (null !== f2) {
-    var q2 = e2.baseState;
+    var q3 = e2.baseState;
     g2 = 0;
     m2 = l2 = k2 = null;
     h2 = f2;
@@ -3243,19 +3243,19 @@ function gh(a, b2, c2, d2) {
             case 1:
               n2 = t2.payload;
               if ("function" === typeof n2) {
-                q2 = n2.call(y2, q2, r2);
+                q3 = n2.call(y2, q3, r2);
                 break a;
               }
-              q2 = n2;
+              q3 = n2;
               break a;
             case 3:
               n2.flags = n2.flags & -65537 | 128;
             case 0:
               n2 = t2.payload;
-              r2 = "function" === typeof n2 ? n2.call(y2, q2, r2) : n2;
+              r2 = "function" === typeof n2 ? n2.call(y2, q3, r2) : n2;
               if (null === r2 || void 0 === r2)
                 break a;
-              q2 = A$1({}, q2, r2);
+              q3 = A$1({}, q3, r2);
               break a;
             case 2:
               $g = true;
@@ -3263,7 +3263,7 @@ function gh(a, b2, c2, d2) {
         }
         null !== h2.callback && 0 !== h2.lane && (a.flags |= 64, r2 = e2.effects, null === r2 ? e2.effects = [h2] : r2.push(h2));
       } else
-        y2 = { eventTime: y2, lane: r2, tag: h2.tag, payload: h2.payload, callback: h2.callback, next: null }, null === m2 ? (l2 = m2 = y2, k2 = q2) : m2 = m2.next = y2, g2 |= r2;
+        y2 = { eventTime: y2, lane: r2, tag: h2.tag, payload: h2.payload, callback: h2.callback, next: null }, null === m2 ? (l2 = m2 = y2, k2 = q3) : m2 = m2.next = y2, g2 |= r2;
       h2 = h2.next;
       if (null === h2)
         if (h2 = e2.shared.pending, null === h2)
@@ -3271,7 +3271,7 @@ function gh(a, b2, c2, d2) {
         else
           r2 = h2, h2 = r2.next, r2.next = null, e2.lastBaseUpdate = r2, e2.shared.pending = null;
     } while (1);
-    null === m2 && (k2 = q2);
+    null === m2 && (k2 = q3);
     e2.baseState = k2;
     e2.firstBaseUpdate = l2;
     e2.lastBaseUpdate = m2;
@@ -3285,7 +3285,7 @@ function gh(a, b2, c2, d2) {
       null === f2 && (e2.shared.lanes = 0);
     hh |= g2;
     a.lanes = g2;
-    a.memoizedState = q2;
+    a.memoizedState = q3;
   }
 }
 function ih(a, b2, c2) {
@@ -3481,7 +3481,7 @@ function vh(a) {
     b3.return = a2;
     return b3;
   }
-  function q2(a2, b3, c3) {
+  function q3(a2, b3, c3) {
     if ("string" === typeof b3 && "" !== b3 || "number" === typeof b3)
       return b3 = xh("" + b3, a2.mode, c3), b3.return = a2, b3;
     if ("object" === typeof b3 && null !== b3) {
@@ -3492,7 +3492,7 @@ function vh(a) {
           return b3 = zh(b3, a2.mode, c3), b3.return = a2, b3;
         case Ha:
           var d3 = b3._init;
-          return q2(a2, d3(b3._payload), c3);
+          return q3(a2, d3(b3._payload), c3);
       }
       if (eb(b3) || Ka(b3))
         return b3 = Ah(b3, a2.mode, c3, null), b3.return = a2, b3;
@@ -3561,7 +3561,7 @@ function vh(a) {
       return c2(e3, u2), I && tg(e3, w2), l3;
     if (null === u2) {
       for (; w2 < h3.length; w2++)
-        u2 = q2(e3, h3[w2], k3), null !== u2 && (g3 = f2(u2, g3, w2), null === m3 ? l3 = u2 : m3.sibling = u2, m3 = u2);
+        u2 = q3(e3, h3[w2], k3), null !== u2 && (g3 = f2(u2, g3, w2), null === m3 ? l3 = u2 : m3.sibling = u2, m3 = u2);
       I && tg(e3, w2);
       return l3;
     }
@@ -3600,7 +3600,7 @@ function vh(a) {
       ), I && tg(e3, w2), l3;
     if (null === m3) {
       for (; !n3.done; w2++, n3 = h3.next())
-        n3 = q2(e3, n3.value, k3), null !== n3 && (g3 = f2(n3, g3, w2), null === u2 ? l3 = n3 : u2.sibling = n3, u2 = n3);
+        n3 = q3(e3, n3.value, k3), null !== n3 && (g3 = f2(n3, g3, w2), null === u2 ? l3 = n3 : u2.sibling = n3, u2 = n3);
       I && tg(e3, w2);
       return l3;
     }
@@ -3849,14 +3849,14 @@ function fi(a) {
       if ((Rh & m2) === m2)
         null !== k2 && (k2 = k2.next = { lane: 0, action: l2.action, hasEagerState: l2.hasEagerState, eagerState: l2.eagerState, next: null }), d2 = l2.hasEagerState ? l2.eagerState : a(d2, l2.action);
       else {
-        var q2 = {
+        var q3 = {
           lane: m2,
           action: l2.action,
           hasEagerState: l2.hasEagerState,
           eagerState: l2.eagerState,
           next: null
         };
-        null === k2 ? (h2 = k2 = q2, g2 = d2) : k2 = k2.next = q2;
+        null === k2 ? (h2 = k2 = q3, g2 = d2) : k2 = k2.next = q3;
         N.lanes |= m2;
         hh |= m2;
       }
@@ -4308,14 +4308,14 @@ var Xi = ua.ReactCurrentOwner, Ug = false;
 function Yi(a, b2, c2, d2) {
   b2.child = null === a ? Ch(b2, null, c2, d2) : Bh(b2, a.child, c2, d2);
 }
-function Zi(a, b2, c2, d2, e2) {
+function Zi$1(a, b2, c2, d2, e2) {
   c2 = c2.render;
   var f2 = b2.ref;
   Tg(b2, e2);
   d2 = Xh(a, b2, c2, d2, f2, e2);
   c2 = bi();
   if (null !== a && !Ug)
-    return b2.updateQueue = a.updateQueue, b2.flags &= -2053, a.lanes &= ~e2, $i(a, b2, e2);
+    return b2.updateQueue = a.updateQueue, b2.flags &= -2053, a.lanes &= ~e2, $i$1(a, b2, e2);
   I && c2 && vg(b2);
   b2.flags |= 1;
   Yi(a, b2, d2, e2);
@@ -4337,7 +4337,7 @@ function aj(a, b2, c2, d2, e2) {
     c2 = c2.compare;
     c2 = null !== c2 ? c2 : Ie;
     if (c2(g2, d2) && a.ref === b2.ref)
-      return $i(a, b2, e2);
+      return $i$1(a, b2, e2);
   }
   b2.flags |= 1;
   a = wh(f2, d2);
@@ -4352,7 +4352,7 @@ function cj(a, b2, c2, d2, e2) {
       if (Ug = false, b2.pendingProps = d2 = f2, 0 !== (a.lanes & e2))
         0 !== (a.flags & 131072) && (Ug = true);
       else
-        return b2.lanes = a.lanes, $i(a, b2, e2);
+        return b2.lanes = a.lanes, $i$1(a, b2, e2);
   }
   return dj(a, b2, c2, d2, e2);
 }
@@ -4386,7 +4386,7 @@ function dj(a, b2, c2, d2, e2) {
   c2 = Xh(a, b2, c2, d2, f2, e2);
   d2 = bi();
   if (null !== a && !Ug)
-    return b2.updateQueue = a.updateQueue, b2.flags &= -2053, a.lanes &= ~e2, $i(a, b2, e2);
+    return b2.updateQueue = a.updateQueue, b2.flags &= -2053, a.lanes &= ~e2, $i$1(a, b2, e2);
   I && d2 && vg(b2);
   b2.flags |= 1;
   Yi(a, b2, c2, e2);
@@ -4406,32 +4406,32 @@ function ij(a, b2, c2, d2, e2) {
     g2.props = h2;
     var k2 = g2.context, l2 = c2.contextType;
     "object" === typeof l2 && null !== l2 ? l2 = Vg(l2) : (l2 = Zf(c2) ? Xf : H.current, l2 = Yf(b2, l2));
-    var m2 = c2.getDerivedStateFromProps, q2 = "function" === typeof m2 || "function" === typeof g2.getSnapshotBeforeUpdate;
-    q2 || "function" !== typeof g2.UNSAFE_componentWillReceiveProps && "function" !== typeof g2.componentWillReceiveProps || (h2 !== d2 || k2 !== l2) && qh(b2, g2, d2, l2);
+    var m2 = c2.getDerivedStateFromProps, q3 = "function" === typeof m2 || "function" === typeof g2.getSnapshotBeforeUpdate;
+    q3 || "function" !== typeof g2.UNSAFE_componentWillReceiveProps && "function" !== typeof g2.componentWillReceiveProps || (h2 !== d2 || k2 !== l2) && qh(b2, g2, d2, l2);
     $g = false;
     var r2 = b2.memoizedState;
     g2.state = r2;
     gh(b2, d2, g2, e2);
     k2 = b2.memoizedState;
-    h2 !== d2 || r2 !== k2 || Wf.current || $g ? ("function" === typeof m2 && (kh(b2, c2, m2, d2), k2 = b2.memoizedState), (h2 = $g || oh(b2, c2, h2, d2, r2, k2, l2)) ? (q2 || "function" !== typeof g2.UNSAFE_componentWillMount && "function" !== typeof g2.componentWillMount || ("function" === typeof g2.componentWillMount && g2.componentWillMount(), "function" === typeof g2.UNSAFE_componentWillMount && g2.UNSAFE_componentWillMount()), "function" === typeof g2.componentDidMount && (b2.flags |= 4194308)) : ("function" === typeof g2.componentDidMount && (b2.flags |= 4194308), b2.memoizedProps = d2, b2.memoizedState = k2), g2.props = d2, g2.state = k2, g2.context = l2, d2 = h2) : ("function" === typeof g2.componentDidMount && (b2.flags |= 4194308), d2 = false);
+    h2 !== d2 || r2 !== k2 || Wf.current || $g ? ("function" === typeof m2 && (kh(b2, c2, m2, d2), k2 = b2.memoizedState), (h2 = $g || oh(b2, c2, h2, d2, r2, k2, l2)) ? (q3 || "function" !== typeof g2.UNSAFE_componentWillMount && "function" !== typeof g2.componentWillMount || ("function" === typeof g2.componentWillMount && g2.componentWillMount(), "function" === typeof g2.UNSAFE_componentWillMount && g2.UNSAFE_componentWillMount()), "function" === typeof g2.componentDidMount && (b2.flags |= 4194308)) : ("function" === typeof g2.componentDidMount && (b2.flags |= 4194308), b2.memoizedProps = d2, b2.memoizedState = k2), g2.props = d2, g2.state = k2, g2.context = l2, d2 = h2) : ("function" === typeof g2.componentDidMount && (b2.flags |= 4194308), d2 = false);
   } else {
     g2 = b2.stateNode;
     bh(a, b2);
     h2 = b2.memoizedProps;
     l2 = b2.type === b2.elementType ? h2 : Lg(b2.type, h2);
     g2.props = l2;
-    q2 = b2.pendingProps;
+    q3 = b2.pendingProps;
     r2 = g2.context;
     k2 = c2.contextType;
     "object" === typeof k2 && null !== k2 ? k2 = Vg(k2) : (k2 = Zf(c2) ? Xf : H.current, k2 = Yf(b2, k2));
     var y2 = c2.getDerivedStateFromProps;
-    (m2 = "function" === typeof y2 || "function" === typeof g2.getSnapshotBeforeUpdate) || "function" !== typeof g2.UNSAFE_componentWillReceiveProps && "function" !== typeof g2.componentWillReceiveProps || (h2 !== q2 || r2 !== k2) && qh(b2, g2, d2, k2);
+    (m2 = "function" === typeof y2 || "function" === typeof g2.getSnapshotBeforeUpdate) || "function" !== typeof g2.UNSAFE_componentWillReceiveProps && "function" !== typeof g2.componentWillReceiveProps || (h2 !== q3 || r2 !== k2) && qh(b2, g2, d2, k2);
     $g = false;
     r2 = b2.memoizedState;
     g2.state = r2;
     gh(b2, d2, g2, e2);
     var n2 = b2.memoizedState;
-    h2 !== q2 || r2 !== n2 || Wf.current || $g ? ("function" === typeof y2 && (kh(b2, c2, y2, d2), n2 = b2.memoizedState), (l2 = $g || oh(b2, c2, l2, d2, r2, n2, k2) || false) ? (m2 || "function" !== typeof g2.UNSAFE_componentWillUpdate && "function" !== typeof g2.componentWillUpdate || ("function" === typeof g2.componentWillUpdate && g2.componentWillUpdate(d2, n2, k2), "function" === typeof g2.UNSAFE_componentWillUpdate && g2.UNSAFE_componentWillUpdate(d2, n2, k2)), "function" === typeof g2.componentDidUpdate && (b2.flags |= 4), "function" === typeof g2.getSnapshotBeforeUpdate && (b2.flags |= 1024)) : ("function" !== typeof g2.componentDidUpdate || h2 === a.memoizedProps && r2 === a.memoizedState || (b2.flags |= 4), "function" !== typeof g2.getSnapshotBeforeUpdate || h2 === a.memoizedProps && r2 === a.memoizedState || (b2.flags |= 1024), b2.memoizedProps = d2, b2.memoizedState = n2), g2.props = d2, g2.state = n2, g2.context = k2, d2 = l2) : ("function" !== typeof g2.componentDidUpdate || h2 === a.memoizedProps && r2 === a.memoizedState || (b2.flags |= 4), "function" !== typeof g2.getSnapshotBeforeUpdate || h2 === a.memoizedProps && r2 === a.memoizedState || (b2.flags |= 1024), d2 = false);
+    h2 !== q3 || r2 !== n2 || Wf.current || $g ? ("function" === typeof y2 && (kh(b2, c2, y2, d2), n2 = b2.memoizedState), (l2 = $g || oh(b2, c2, l2, d2, r2, n2, k2) || false) ? (m2 || "function" !== typeof g2.UNSAFE_componentWillUpdate && "function" !== typeof g2.componentWillUpdate || ("function" === typeof g2.componentWillUpdate && g2.componentWillUpdate(d2, n2, k2), "function" === typeof g2.UNSAFE_componentWillUpdate && g2.UNSAFE_componentWillUpdate(d2, n2, k2)), "function" === typeof g2.componentDidUpdate && (b2.flags |= 4), "function" === typeof g2.getSnapshotBeforeUpdate && (b2.flags |= 1024)) : ("function" !== typeof g2.componentDidUpdate || h2 === a.memoizedProps && r2 === a.memoizedState || (b2.flags |= 4), "function" !== typeof g2.getSnapshotBeforeUpdate || h2 === a.memoizedProps && r2 === a.memoizedState || (b2.flags |= 1024), b2.memoizedProps = d2, b2.memoizedState = n2), g2.props = d2, g2.state = n2, g2.context = k2, d2 = l2) : ("function" !== typeof g2.componentDidUpdate || h2 === a.memoizedProps && r2 === a.memoizedState || (b2.flags |= 4), "function" !== typeof g2.getSnapshotBeforeUpdate || h2 === a.memoizedProps && r2 === a.memoizedState || (b2.flags |= 1024), d2 = false);
   }
   return kj(a, b2, c2, d2, f2, e2);
 }
@@ -4439,7 +4439,7 @@ function kj(a, b2, c2, d2, e2, f2) {
   hj(a, b2);
   var g2 = 0 !== (b2.flags & 128);
   if (!d2 && !g2)
-    return e2 && dg(b2, c2, false), $i(a, b2, f2);
+    return e2 && dg(b2, c2, false), $i$1(a, b2, f2);
   d2 = b2.stateNode;
   Xi.current = b2;
   var h2 = g2 && "function" !== typeof c2.getDerivedStateFromError ? null : d2.render();
@@ -4701,7 +4701,7 @@ function yj(a, b2, c2) {
 function jj(a, b2) {
   0 === (b2.mode & 1) && null !== a && (a.alternate = null, b2.alternate = null, b2.flags |= 2);
 }
-function $i(a, b2, c2) {
+function $i$1(a, b2, c2) {
   null !== a && (b2.dependencies = a.dependencies);
   hh |= b2.lanes;
   if (0 === (c2 & b2.childLanes))
@@ -4746,7 +4746,7 @@ function zj(a, b2, c2) {
         if (0 !== (c2 & b2.child.childLanes))
           return pj(a, b2, c2);
         G(M, M.current & 1);
-        a = $i(a, b2, c2);
+        a = $i$1(a, b2, c2);
         return null !== a ? a.sibling : null;
       }
       G(M, M.current & 1);
@@ -4769,7 +4769,7 @@ function zj(a, b2, c2) {
     case 23:
       return b2.lanes = 0, ej(a, b2, c2);
   }
-  return $i(a, b2, c2);
+  return $i$1(a, b2, c2);
 }
 var Aj, Bj, Cj, Dj;
 Aj = function(a, b2) {
@@ -5317,29 +5317,29 @@ function Pj(a, b2) {
             c2 = null;
             break a;
           }
-          var g2 = 0, h2 = -1, k2 = -1, l2 = 0, m2 = 0, q2 = a, r2 = null;
+          var g2 = 0, h2 = -1, k2 = -1, l2 = 0, m2 = 0, q3 = a, r2 = null;
           b:
             for (; ; ) {
               for (var y2; ; ) {
-                q2 !== c2 || 0 !== e2 && 3 !== q2.nodeType || (h2 = g2 + e2);
-                q2 !== f2 || 0 !== d2 && 3 !== q2.nodeType || (k2 = g2 + d2);
-                3 === q2.nodeType && (g2 += q2.nodeValue.length);
-                if (null === (y2 = q2.firstChild))
+                q3 !== c2 || 0 !== e2 && 3 !== q3.nodeType || (h2 = g2 + e2);
+                q3 !== f2 || 0 !== d2 && 3 !== q3.nodeType || (k2 = g2 + d2);
+                3 === q3.nodeType && (g2 += q3.nodeValue.length);
+                if (null === (y2 = q3.firstChild))
                   break;
-                r2 = q2;
-                q2 = y2;
+                r2 = q3;
+                q3 = y2;
               }
               for (; ; ) {
-                if (q2 === a)
+                if (q3 === a)
                   break b;
                 r2 === c2 && ++l2 === e2 && (h2 = g2);
                 r2 === f2 && ++m2 === d2 && (k2 = g2);
-                if (null !== (y2 = q2.nextSibling))
+                if (null !== (y2 = q3.nextSibling))
                   break;
-                q2 = r2;
-                r2 = q2.parentNode;
+                q3 = r2;
+                r2 = q3.parentNode;
               }
-              q2 = y2;
+              q3 = y2;
             }
           c2 = -1 === h2 || -1 === k2 ? null : { start: h2, end: k2 };
         } else
@@ -5665,8 +5665,8 @@ function ek(a, b2) {
             vb(h2, g2);
             var l2 = vb(h2, f2);
             for (g2 = 0; g2 < k2.length; g2 += 2) {
-              var m2 = k2[g2], q2 = k2[g2 + 1];
-              "style" === m2 ? sb(e2, q2) : "dangerouslySetInnerHTML" === m2 ? nb(e2, q2) : "children" === m2 ? ob(e2, q2) : ta(e2, m2, q2, l2);
+              var m2 = k2[g2], q3 = k2[g2 + 1];
+              "style" === m2 ? sb(e2, q3) : "dangerouslySetInnerHTML" === m2 ? nb(e2, q3) : "children" === m2 ? ob(e2, q3) : ta(e2, m2, q3, l2);
             }
             switch (h2) {
               case "input":
@@ -5736,7 +5736,7 @@ function ek(a, b2) {
         l2 = null !== a.memoizedState;
         if ((a.stateNode.isHidden = l2) && !m2 && 0 !== (a.mode & 1))
           for (V = a, m2 = a.child; null !== m2; ) {
-            for (q2 = V = m2; null !== V; ) {
+            for (q3 = V = m2; null !== V; ) {
               r2 = V;
               y2 = r2.child;
               switch (r2.tag) {
@@ -5764,48 +5764,48 @@ function ek(a, b2) {
                   break;
                 case 22:
                   if (null !== r2.memoizedState) {
-                    hk(q2);
+                    hk(q3);
                     continue;
                   }
               }
-              null !== y2 ? (y2.return = r2, V = y2) : hk(q2);
+              null !== y2 ? (y2.return = r2, V = y2) : hk(q3);
             }
             m2 = m2.sibling;
           }
         a:
-          for (m2 = null, q2 = a; ; ) {
-            if (5 === q2.tag) {
+          for (m2 = null, q3 = a; ; ) {
+            if (5 === q3.tag) {
               if (null === m2) {
-                m2 = q2;
+                m2 = q3;
                 try {
-                  e2 = q2.stateNode, l2 ? (f2 = e2.style, "function" === typeof f2.setProperty ? f2.setProperty("display", "none", "important") : f2.display = "none") : (h2 = q2.stateNode, k2 = q2.memoizedProps.style, g2 = void 0 !== k2 && null !== k2 && k2.hasOwnProperty("display") ? k2.display : null, h2.style.display = rb("display", g2));
+                  e2 = q3.stateNode, l2 ? (f2 = e2.style, "function" === typeof f2.setProperty ? f2.setProperty("display", "none", "important") : f2.display = "none") : (h2 = q3.stateNode, k2 = q3.memoizedProps.style, g2 = void 0 !== k2 && null !== k2 && k2.hasOwnProperty("display") ? k2.display : null, h2.style.display = rb("display", g2));
                 } catch (t2) {
                   W(a, a.return, t2);
                 }
               }
-            } else if (6 === q2.tag) {
+            } else if (6 === q3.tag) {
               if (null === m2)
                 try {
-                  q2.stateNode.nodeValue = l2 ? "" : q2.memoizedProps;
+                  q3.stateNode.nodeValue = l2 ? "" : q3.memoizedProps;
                 } catch (t2) {
                   W(a, a.return, t2);
                 }
-            } else if ((22 !== q2.tag && 23 !== q2.tag || null === q2.memoizedState || q2 === a) && null !== q2.child) {
-              q2.child.return = q2;
-              q2 = q2.child;
+            } else if ((22 !== q3.tag && 23 !== q3.tag || null === q3.memoizedState || q3 === a) && null !== q3.child) {
+              q3.child.return = q3;
+              q3 = q3.child;
               continue;
             }
-            if (q2 === a)
+            if (q3 === a)
               break a;
-            for (; null === q2.sibling; ) {
-              if (null === q2.return || q2.return === a)
+            for (; null === q3.sibling; ) {
+              if (null === q3.return || q3.return === a)
                 break a;
-              m2 === q2 && (m2 = null);
-              q2 = q2.return;
+              m2 === q3 && (m2 = null);
+              q3 = q3.return;
             }
-            m2 === q2 && (m2 = null);
-            q2.sibling.return = q2.return;
-            q2 = q2.sibling;
+            m2 === q3 && (m2 = null);
+            q3.sibling.return = q3.return;
+            q3 = q3.sibling;
           }
       }
       break;
@@ -5956,8 +5956,8 @@ function lk(a) {
                 if (null !== l2) {
                   var m2 = l2.memoizedState;
                   if (null !== m2) {
-                    var q2 = m2.dehydrated;
-                    null !== q2 && bd(q2);
+                    var q3 = m2.dehydrated;
+                    null !== q3 && bd(q3);
                   }
                 }
               }
@@ -6417,8 +6417,8 @@ function Nk(a, b2) {
         b2 = Z;
         h2.flags |= 32768;
         if (null !== k2 && "object" === typeof k2 && "function" === typeof k2.then) {
-          var l2 = k2, m2 = h2, q2 = m2.tag;
-          if (0 === (m2.mode & 1) && (0 === q2 || 11 === q2 || 15 === q2)) {
+          var l2 = k2, m2 = h2, q3 = m2.tag;
+          if (0 === (m2.mode & 1) && (0 === q3 || 11 === q3 || 15 === q3)) {
             var r2 = m2.alternate;
             r2 ? (m2.updateQueue = r2.updateQueue, m2.memoizedState = r2.memoizedState, m2.lanes = r2.lanes) : (m2.updateQueue = null, m2.memoizedState = null);
           }
@@ -6673,9 +6673,9 @@ function Ik() {
                     case 15:
                       Qj(8, m2, f2);
                   }
-                  var q2 = m2.child;
-                  if (null !== q2)
-                    q2.return = m2, V = q2;
+                  var q3 = m2.child;
+                  if (null !== q3)
+                    q3.return = m2, V = q3;
                   else
                     for (; null !== V; ) {
                       m2 = V;
@@ -6889,7 +6889,7 @@ Wk = function(a, b2, c2) {
             b2 = ij(null, b2, d2, a, c2);
             break a;
           case 11:
-            b2 = Zi(null, b2, d2, a, c2);
+            b2 = Zi$1(null, b2, d2, a, c2);
             break a;
           case 14:
             b2 = aj(null, b2, d2, Lg(d2.type, a), c2);
@@ -6933,7 +6933,7 @@ Wk = function(a, b2, c2) {
         else {
           Ig();
           if (d2 === e2) {
-            b2 = $i(a, b2, c2);
+            b2 = $i$1(a, b2, c2);
             break a;
           }
           Yi(a, b2, d2, c2);
@@ -6950,7 +6950,7 @@ Wk = function(a, b2, c2) {
     case 4:
       return Ih(b2, b2.stateNode.containerInfo), d2 = b2.pendingProps, null === a ? b2.child = Bh(b2, null, d2, c2) : Yi(a, b2, d2, c2), b2.child;
     case 11:
-      return d2 = b2.type, e2 = b2.pendingProps, e2 = b2.elementType === d2 ? e2 : Lg(d2, e2), Zi(a, b2, d2, e2, c2);
+      return d2 = b2.type, e2 = b2.pendingProps, e2 = b2.elementType === d2 ? e2 : Lg(d2, e2), Zi$1(a, b2, d2, e2, c2);
     case 7:
       return Yi(a, b2, b2.pendingProps, c2), b2.child;
     case 8:
@@ -6968,7 +6968,7 @@ Wk = function(a, b2, c2) {
         if (null !== f2)
           if (He(f2.value, g2)) {
             if (f2.children === e2.children && !Wf.current) {
-              b2 = $i(a, b2, c2);
+              b2 = $i$1(a, b2, c2);
               break a;
             }
           } else
@@ -7463,7 +7463,7 @@ yb = function(a, b2, c2) {
   }
 };
 Gb = Rk;
-Hb = Sk;
+Hb$1 = Sk;
 var tl = { usingClientEntryPoint: false, Events: [Cb, ue, Db, Eb, Fb, Rk] }, ul = { findFiberByHostInstance: Wc, bundleType: 0, version: "18.2.0", rendererPackageName: "react-dom" };
 var vl = { bundleType: ul.bundleType, version: ul.version, rendererPackageName: ul.rendererPackageName, rendererConfig: ul.rendererConfig, overrideHookState: null, overrideHookStateDeletePath: null, overrideHookStateRenamePath: null, overrideProps: null, overridePropsDeletePath: null, overridePropsRenamePath: null, setErrorHandler: null, setSuspenseHandler: null, scheduleUpdate: null, currentDispatcherRef: ua.ReactCurrentDispatcher, findHostInstanceByFiber: function(a) {
   a = Zb(a);
@@ -7632,7 +7632,7 @@ function createBrowserHistory(options) {
       var _getIndexAndLocation = getIndexAndLocation(), nextIndex = _getIndexAndLocation[0], nextLocation = _getIndexAndLocation[1];
       if (blockers.length) {
         if (nextIndex != null) {
-          var delta = index - nextIndex;
+          var delta = index2 - nextIndex;
           if (delta) {
             blockedPopTx = {
               action: nextAction,
@@ -7651,13 +7651,13 @@ function createBrowserHistory(options) {
   }
   window2.addEventListener(PopStateEventType, handlePop);
   var action = Action.Pop;
-  var _getIndexAndLocation2 = getIndexAndLocation(), index = _getIndexAndLocation2[0], location = _getIndexAndLocation2[1];
+  var _getIndexAndLocation2 = getIndexAndLocation(), index2 = _getIndexAndLocation2[0], location = _getIndexAndLocation2[1];
   var listeners = createEvents();
   var blockers = createEvents();
-  if (index == null) {
-    index = 0;
+  if (index2 == null) {
+    index2 = 0;
     globalHistory.replaceState(_extends$1({}, globalHistory.state, {
-      idx: index
+      idx: index2
     }), "");
   }
   function createHref(to) {
@@ -7676,11 +7676,11 @@ function createBrowserHistory(options) {
       key: createKey()
     }));
   }
-  function getHistoryStateAndUrl(nextLocation, index2) {
+  function getHistoryStateAndUrl(nextLocation, index3) {
     return [{
       usr: nextLocation.state,
       key: nextLocation.key,
-      idx: index2
+      idx: index3
     }, createHref(nextLocation)];
   }
   function allowTx(action2, location2, retry) {
@@ -7693,7 +7693,7 @@ function createBrowserHistory(options) {
   function applyTx(nextAction) {
     action = nextAction;
     var _getIndexAndLocation3 = getIndexAndLocation();
-    index = _getIndexAndLocation3[0];
+    index2 = _getIndexAndLocation3[0];
     location = _getIndexAndLocation3[1];
     listeners.call({
       action,
@@ -7707,7 +7707,7 @@ function createBrowserHistory(options) {
       push(to, state);
     }
     if (allowTx(nextAction, nextLocation, retry)) {
-      var _getHistoryStateAndUr = getHistoryStateAndUrl(nextLocation, index + 1), historyState = _getHistoryStateAndUr[0], url = _getHistoryStateAndUr[1];
+      var _getHistoryStateAndUr = getHistoryStateAndUrl(nextLocation, index2 + 1), historyState = _getHistoryStateAndUr[0], url = _getHistoryStateAndUr[1];
       try {
         globalHistory.pushState(historyState, "", url);
       } catch (error) {
@@ -7723,7 +7723,7 @@ function createBrowserHistory(options) {
       replace2(to, state);
     }
     if (allowTx(nextAction, nextLocation, retry)) {
-      var _getHistoryStateAndUr2 = getHistoryStateAndUrl(nextLocation, index), historyState = _getHistoryStateAndUr2[0], url = _getHistoryStateAndUr2[1];
+      var _getHistoryStateAndUr2 = getHistoryStateAndUrl(nextLocation, index2), historyState = _getHistoryStateAndUr2[0], url = _getHistoryStateAndUr2[1];
       globalHistory.replaceState(historyState, "", url);
       applyTx(nextAction);
     }
@@ -7868,11 +7868,11 @@ function flattenRoutes(routes, branches, parentsMeta, parentPath) {
   if (parentPath === void 0) {
     parentPath = "";
   }
-  routes.forEach((route, index) => {
+  routes.forEach((route, index2) => {
     let meta = {
       relativePath: route.path || "",
       caseSensitive: route.caseSensitive === true,
-      childrenIndex: index,
+      childrenIndex: index2,
       route
     };
     if (meta.relativePath.startsWith("/")) {
@@ -7906,13 +7906,13 @@ const emptySegmentValue = 1;
 const staticSegmentValue = 10;
 const splatPenalty = -2;
 const isSplat = (s) => s === "*";
-function computeScore(path, index) {
+function computeScore(path, index2) {
   let segments = path.split("/");
   let initialScore = segments.length;
   if (segments.some(isSplat)) {
     initialScore += splatPenalty;
   }
-  if (index) {
+  if (index2) {
     initialScore += indexRouteValue;
   }
   return segments.filter((s) => !isSplat(s)).reduce((score, segment) => score + (paramRe.test(segment) ? dynamicSegmentValue : segment === "" ? emptySegmentValue : staticSegmentValue), initialScore);
@@ -7968,12 +7968,12 @@ function matchPath(pattern, pathname) {
   let matchedPathname = match2[0];
   let pathnameBase = matchedPathname.replace(/(.)\/+$/, "$1");
   let captureGroups = match2.slice(1);
-  let params = paramNames.reduce((memo, paramName, index) => {
+  let params = paramNames.reduce((memo, paramName, index2) => {
     if (paramName === "*") {
-      let splatValue = captureGroups[index] || "";
+      let splatValue = captureGroups[index2] || "";
       pathnameBase = matchedPathname.slice(0, matchedPathname.length - splatValue.length).replace(/(.)\/+$/, "$1");
     }
-    memo[paramName] = safelyDecodeURIComponent(captureGroups[index] || "");
+    memo[paramName] = safelyDecodeURIComponent(captureGroups[index2] || "");
     return memo;
   }, {});
   return {
@@ -8202,12 +8202,12 @@ function _renderMatches(matches, parentMatches) {
   }
   if (matches == null)
     return null;
-  return matches.reduceRight((outlet, match2, index) => {
+  return matches.reduceRight((outlet, match2, index2) => {
     return /* @__PURE__ */ react.exports.createElement(RouteContext.Provider, {
       children: match2.route.element !== void 0 ? match2.route.element : outlet,
       value: {
         outlet,
-        matches: parentMatches.concat(matches.slice(0, index + 1))
+        matches: parentMatches.concat(matches.slice(0, index2 + 1))
       }
     });
   }, null);
@@ -8322,7 +8322,7 @@ function _extends() {
   };
   return _extends.apply(this, arguments);
 }
-function _objectWithoutPropertiesLoose$1(source, excluded) {
+function _objectWithoutPropertiesLoose(source, excluded) {
   if (source == null)
     return {};
   var target = {};
@@ -8374,7 +8374,7 @@ const Link = /* @__PURE__ */ react.exports.forwardRef(function LinkWithRef(_ref4
     state,
     target,
     to
-  } = _ref4, rest = _objectWithoutPropertiesLoose$1(_ref4, _excluded);
+  } = _ref4, rest = _objectWithoutPropertiesLoose(_ref4, _excluded);
   let href = useHref(to);
   let internalOnClick = useLinkClickHandler(to, {
     replace: replace2,
@@ -8484,6 +8484,18 @@ const jsx = jsxRuntime.exports.jsx;
 const jsxs = jsxRuntime.exports.jsxs;
 function packSx(sx) {
   return Array.isArray(sx) ? sx : [sx];
+}
+function isElement$2(value) {
+  if (Array.isArray(value) || value === null) {
+    return false;
+  }
+  if (typeof value === "object") {
+    if (value.type === React.Fragment) {
+      return false;
+    }
+    return true;
+  }
+  return false;
 }
 function toVal(mix) {
   var k2, y2, str = "";
@@ -8707,18 +8719,26 @@ function focusStyles(theme) {
     }
   });
 }
-function themeColor(theme) {
-  return (color, shade, primaryFallback = true) => {
-    const primaryShades = theme.colors[theme.primaryColor];
-    return color in theme.colors ? theme.colors[color][shade] : primaryFallback ? primaryShades[shade] : color;
-  };
-}
 function primaryShade(theme) {
   return (colorScheme) => {
     if (typeof theme.primaryShade === "number") {
       return theme.primaryShade;
     }
     return theme.primaryShade[colorScheme || theme.colorScheme];
+  };
+}
+function themeColor(theme) {
+  const getPrimaryShade = primaryShade(theme);
+  return (color, shade, primaryFallback = true, useSplittedShade = true) => {
+    if (typeof color === "string" && color.includes(".")) {
+      const [splitterColor, _splittedShade] = color.split(".");
+      const splittedShade = parseInt(_splittedShade, 10);
+      if (splitterColor in theme.colors && splittedShade >= 0 && splittedShade < 10) {
+        return theme.colors[splitterColor][typeof shade === "number" && !useSplittedShade ? shade : splittedShade];
+      }
+    }
+    const _shade = typeof shade === "number" ? shade : getPrimaryShade();
+    return color in theme.colors ? theme.colors[color][_shade] : primaryFallback ? theme.colors[theme.primaryColor][_shade] : color;
   };
 }
 function getGradientColorStops(colors) {
@@ -8746,17 +8766,18 @@ function gradient(theme) {
     return `linear-gradient(${merged.deg}deg, ${getThemeColor(merged.from, getPrimaryShade(), false)} 0%, ${getThemeColor(merged.to, getPrimaryShade(), false)} 100%)`;
   };
 }
-function size(props) {
+function size$1(props) {
   if (typeof props.size === "number") {
     return props.size;
   }
-  return props.sizes[props.size] || props.size || props.sizes.md;
+  const computedSize = props.sizes[props.size];
+  return computedSize !== void 0 ? computedSize : props.size || props.sizes.md;
 }
 function largerThan(theme) {
-  return (breakpoint) => `@media (min-width: ${size({ size: breakpoint, sizes: theme.breakpoints }) + 1}px)`;
+  return (breakpoint) => `@media (min-width: ${size$1({ size: breakpoint, sizes: theme.breakpoints }) + 1}px)`;
 }
 function smallerThan(theme) {
-  return (breakpoint) => `@media (max-width: ${size({ size: breakpoint, sizes: theme.breakpoints })}px)`;
+  return (breakpoint) => `@media (max-width: ${size$1({ size: breakpoint, sizes: theme.breakpoints })}px)`;
 }
 function isHexColor(hex) {
   const HEX_REGEXP = /^#?([0-9A-F]{3}){1,2}$/i;
@@ -8811,13 +8832,13 @@ function rgba(color, alpha) {
   const { r: r2, g: g2, b: b2 } = toRgba(color);
   return `rgba(${r2}, ${g2}, ${b2}, ${alpha})`;
 }
-function cover(offset = 0) {
+function cover(offset2 = 0) {
   return {
     position: "absolute",
-    top: offset,
-    right: offset,
-    left: offset,
-    bottom: offset
+    top: offset2,
+    right: offset2,
+    left: offset2,
+    bottom: offset2
   };
 }
 function darken(color, alpha) {
@@ -8840,17 +8861,28 @@ function radius(theme) {
     return theme.radius[size2] || size2 || defaultRadius;
   };
 }
+function getColorIndexInfo(color, theme) {
+  if (typeof color === "string" && color.includes(".")) {
+    const [splittedColor, _splittedShade] = color.split(".");
+    const splittedShade = parseInt(_splittedShade, 10);
+    if (splittedColor in theme.colors && splittedShade >= 0 && splittedShade < 10) {
+      return { isSplittedColor: true, key: splittedColor, shade: splittedShade };
+    }
+  }
+  return { isSplittedColor: false };
+}
 function variant(theme) {
   const getThemeColor = themeColor(theme);
   const getPrimaryShade = primaryShade(theme);
   const getGradient = gradient(theme);
   return ({ variant: variant2, color, gradient: gradient2, primaryFallback }) => {
+    const colorInfo = getColorIndexInfo(color, theme);
     if (variant2 === "light") {
       return {
         border: "transparent",
-        background: rgba(getThemeColor(color, theme.colorScheme === "dark" ? 8 : 0), theme.colorScheme === "dark" ? 0.2 : 1),
+        background: rgba(getThemeColor(color, theme.colorScheme === "dark" ? 8 : 0, primaryFallback, false), theme.colorScheme === "dark" ? 0.2 : 1),
         color: color === "dark" ? theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.colors.dark[9] : getThemeColor(color, theme.colorScheme === "dark" ? 2 : getPrimaryShade("light")),
-        hover: rgba(getThemeColor(color, theme.colorScheme === "dark" ? 7 : 1), theme.colorScheme === "dark" ? 0.25 : 0.65)
+        hover: rgba(getThemeColor(color, theme.colorScheme === "dark" ? 7 : 1, primaryFallback, false), theme.colorScheme === "dark" ? 0.25 : 0.65)
       };
     }
     if (variant2 === "default") {
@@ -8874,7 +8906,7 @@ function variant(theme) {
         border: getThemeColor(color, theme.colorScheme === "dark" ? 5 : getPrimaryShade("light")),
         background: "transparent",
         color: getThemeColor(color, theme.colorScheme === "dark" ? 5 : getPrimaryShade("light")),
-        hover: theme.colorScheme === "dark" ? rgba(getThemeColor(color, 5), 0.05) : rgba(getThemeColor(color, 0), 0.35)
+        hover: theme.colorScheme === "dark" ? rgba(getThemeColor(color, 5, primaryFallback, false), 0.05) : rgba(getThemeColor(color, 0, primaryFallback, false), 0.35)
       };
     }
     if (variant2 === "gradient") {
@@ -8890,15 +8922,24 @@ function variant(theme) {
         border: "transparent",
         background: "transparent",
         color: color === "dark" ? theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.colors.dark[9] : getThemeColor(color, theme.colorScheme === "dark" ? 2 : getPrimaryShade("light")),
-        hover: rgba(getThemeColor(color, theme.colorScheme === "dark" ? 8 : 0), theme.colorScheme === "dark" ? 0.2 : 1)
+        hover: rgba(getThemeColor(color, theme.colorScheme === "dark" ? 8 : 0, primaryFallback, false), theme.colorScheme === "dark" ? 0.2 : 1)
       };
     }
+    const _primaryShade = getPrimaryShade();
+    const _shade = colorInfo.isSplittedColor ? colorInfo.shade : _primaryShade;
+    const _color = colorInfo.isSplittedColor ? colorInfo.key : color;
     return {
       border: "transparent",
-      background: getThemeColor(color, getPrimaryShade(), primaryFallback),
+      background: getThemeColor(_color, _shade, primaryFallback),
       color: theme.white,
-      hover: getThemeColor(color, getPrimaryShade() === 9 ? 8 : getPrimaryShade() + 1)
+      hover: getThemeColor(_color, _shade === 9 ? 8 : _shade + 1)
     };
+  };
+}
+function primaryColor(theme) {
+  return (colorScheme) => {
+    const shade = primaryShade(theme)(colorScheme);
+    return theme.colors[theme.primaryColor][shade];
   };
 }
 function hover(hoverStyle) {
@@ -8920,7 +8961,7 @@ const fns = {
   smallerThan,
   largerThan,
   rgba,
-  size,
+  size: size$1,
   cover,
   darken,
   lighten,
@@ -8928,29 +8969,30 @@ const fns = {
   variant,
   primaryShade,
   hover,
-  gradient
+  gradient,
+  primaryColor
 };
-var __defProp$O = Object.defineProperty;
-var __defProps$m = Object.defineProperties;
-var __getOwnPropDescs$m = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$P = Object.getOwnPropertySymbols;
-var __hasOwnProp$P = Object.prototype.hasOwnProperty;
-var __propIsEnum$P = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$O = (obj, key, value) => key in obj ? __defProp$O(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$O = (a, b2) => {
+var __defProp$U = Object.defineProperty;
+var __defProps$r = Object.defineProperties;
+var __getOwnPropDescs$r = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$V = Object.getOwnPropertySymbols;
+var __hasOwnProp$V = Object.prototype.hasOwnProperty;
+var __propIsEnum$V = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$U = (obj, key, value) => key in obj ? __defProp$U(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$U = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$P.call(b2, prop))
-      __defNormalProp$O(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$P)
-    for (var prop of __getOwnPropSymbols$P(b2)) {
-      if (__propIsEnum$P.call(b2, prop))
-        __defNormalProp$O(a, prop, b2[prop]);
+    if (__hasOwnProp$V.call(b2, prop))
+      __defNormalProp$U(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$V)
+    for (var prop of __getOwnPropSymbols$V(b2)) {
+      if (__propIsEnum$V.call(b2, prop))
+        __defNormalProp$U(a, prop, b2[prop]);
     }
   return a;
 };
-var __spreadProps$m = (a, b2) => __defProps$m(a, __getOwnPropDescs$m(b2));
+var __spreadProps$r = (a, b2) => __defProps$r(a, __getOwnPropDescs$r(b2));
 function attachFunctions(themeBase) {
-  return __spreadProps$m(__spreadValues$O({}, themeBase), {
+  return __spreadProps$r(__spreadValues$U({}, themeBase), {
     fn: {
       fontStyles: fns.fontStyles(themeBase),
       themeColor: fns.themeColor(themeBase),
@@ -8968,7 +9010,8 @@ function attachFunctions(themeBase) {
       primaryShade: fns.primaryShade(themeBase),
       radius: fns.radius(themeBase),
       variant: fns.variant(themeBase),
-      hover: fns.hover
+      hover: fns.hover,
+      primaryColor: fns.primaryColor(themeBase)
     }
   });
 }
@@ -9142,7 +9185,7 @@ var KEYFRAMES = "@keyframes";
 var abs = Math.abs;
 var from = String.fromCharCode;
 var assign = Object.assign;
-function hash(value, length2) {
+function hash$2(value, length2) {
   return (((length2 << 2 ^ charat(value, 0)) << 2 ^ charat(value, 1)) << 2 ^ charat(value, 2)) << 2 ^ charat(value, 3);
 }
 function trim(value) {
@@ -9157,8 +9200,8 @@ function replace(value, pattern, replacement) {
 function indexof(value, search) {
   return value.indexOf(search);
 }
-function charat(value, index) {
-  return value.charCodeAt(index) | 0;
+function charat(value, index2) {
+  return value.charCodeAt(index2) | 0;
 }
 function substr(value, begin, end) {
   return value.slice(begin, end);
@@ -9211,7 +9254,7 @@ function caret() {
 function slice(begin, end) {
   return substr(characters, begin, end);
 }
-function token(type) {
+function token$1(type) {
   switch (type) {
     case 0:
     case 9:
@@ -9258,13 +9301,13 @@ function whitespace(type) {
       next();
     else
       break;
-  return token(type) > 2 || token(character) > 3 ? "" : " ";
+  return token$1(type) > 2 || token$1(character) > 3 ? "" : " ";
 }
-function escaping(index, count) {
-  while (--count && next())
+function escaping(index2, count2) {
+  while (--count2 && next())
     if (character < 48 || character > 102 || character > 57 && character < 65 || character > 70 && character < 97)
       break;
-  return slice(index, caret() + (count < 6 && peek() == 32 && next() == 32));
+  return slice(index2, caret() + (count2 < 6 && peek() == 32 && next() == 32));
 }
 function delimiter(type) {
   while (next())
@@ -9286,25 +9329,25 @@ function delimiter(type) {
     }
   return position;
 }
-function commenter(type, index) {
+function commenter(type, index2) {
   while (next())
     if (type + character === 47 + 10)
       break;
     else if (type + character === 42 + 42 && peek() === 47)
       break;
-  return "/*" + slice(index, position - 1) + "*" + from(type === 47 ? type : next());
+  return "/*" + slice(index2, position - 1) + "*" + from(type === 47 ? type : next());
 }
-function identifier(index) {
-  while (!token(peek()))
+function identifier(index2) {
+  while (!token$1(peek()))
     next();
-  return slice(index, position);
+  return slice(index2, position);
 }
 function compile(value) {
   return dealloc(parse("", null, null, null, [""], value = alloc(value), 0, [0], value));
 }
 function parse(value, root, parent, rule, rules, rulesets, pseudo, points, declarations) {
-  var index = 0;
-  var offset = 0;
+  var index2 = 0;
+  var offset2 = 0;
   var length2 = pseudo;
   var atrule = 0;
   var property = 0;
@@ -9351,7 +9394,7 @@ function parse(value, root, parent, rule, rules, rulesets, pseudo, points, decla
         }
         break;
       case 123 * variable:
-        points[index++] = strlen(characters2) * ampersand;
+        points[index2++] = strlen(characters2) * ampersand;
       case 125 * variable:
       case 59:
       case 0:
@@ -9359,16 +9402,16 @@ function parse(value, root, parent, rule, rules, rulesets, pseudo, points, decla
           case 0:
           case 125:
             scanning = 0;
-          case 59 + offset:
+          case 59 + offset2:
             if (property > 0 && strlen(characters2) - length2)
               append(property > 32 ? declaration(characters2 + ";", rule, parent, length2 - 1) : declaration(replace(characters2, " ", "") + ";", rule, parent, length2 - 2), declarations);
             break;
           case 59:
             characters2 += ";";
           default:
-            append(reference = ruleset(characters2, root, parent, index, offset, rules, points, type, props = [], children = [], length2), rulesets);
+            append(reference = ruleset(characters2, root, parent, index2, offset2, rules, points, type, props = [], children = [], length2), rulesets);
             if (character2 === 123)
-              if (offset === 0)
+              if (offset2 === 0)
                 parse(characters2, root, reference, reference, props, rulesets, length2, points, children);
               else
                 switch (atrule) {
@@ -9381,7 +9424,7 @@ function parse(value, root, parent, rule, rules, rulesets, pseudo, points, decla
                     parse(characters2, reference, reference, reference, [""], children, 0, points, children);
                 }
         }
-        index = offset = property = 0, variable = ampersand = 1, type = characters2 = "", length2 = pseudo;
+        index2 = offset2 = property = 0, variable = ampersand = 1, type = characters2 = "", length2 = pseudo;
         break;
       case 58:
         length2 = 1 + strlen(characters2), property = previous;
@@ -9394,15 +9437,15 @@ function parse(value, root, parent, rule, rules, rulesets, pseudo, points, decla
         }
         switch (characters2 += from(character2), character2 * variable) {
           case 38:
-            ampersand = offset > 0 ? 1 : (characters2 += "\f", -1);
+            ampersand = offset2 > 0 ? 1 : (characters2 += "\f", -1);
             break;
           case 44:
-            points[index++] = (strlen(characters2) - 1) * ampersand, ampersand = 1;
+            points[index2++] = (strlen(characters2) - 1) * ampersand, ampersand = 1;
             break;
           case 64:
             if (peek() === 45)
               characters2 += delimit(next());
-            atrule = peek(), offset = length2 = strlen(type = characters2 += identifier(caret())), character2++;
+            atrule = peek(), offset2 = length2 = strlen(type = characters2 += identifier(caret())), character2++;
             break;
           case 45:
             if (previous === 45 && strlen(characters2) == 2)
@@ -9411,15 +9454,15 @@ function parse(value, root, parent, rule, rules, rulesets, pseudo, points, decla
     }
   return rulesets;
 }
-function ruleset(value, root, parent, index, offset, rules, points, type, props, children, length2) {
-  var post = offset - 1;
-  var rule = offset === 0 ? rules : [""];
+function ruleset(value, root, parent, index2, offset2, rules, points, type, props, children, length2) {
+  var post = offset2 - 1;
+  var rule = offset2 === 0 ? rules : [""];
   var size2 = sizeof(rule);
-  for (var i = 0, j = 0, k2 = 0; i < index; ++i)
+  for (var i = 0, j = 0, k2 = 0; i < index2; ++i)
     for (var x2 = 0, y2 = substr(value, post + 1, post = abs(j = points[i])), z2 = value; x2 < size2; ++x2)
       if (z2 = trim(j > 0 ? rule[x2] + " " + y2 : replace(y2, /&\f/g, rule[x2])))
         props[k2++] = z2;
-  return node(value, root, parent, offset === 0 ? RULESET : type, props, children, length2);
+  return node(value, root, parent, offset2 === 0 ? RULESET : type, props, children, length2);
 }
 function comment(value, root, parent) {
   return node(value, root, parent, COMMENT, from(char()), substr(value, 2, -2), 0);
@@ -9428,7 +9471,7 @@ function declaration(value, root, parent, length2) {
   return node(value, root, parent, DECLARATION, substr(value, 0, length2), substr(value, length2 + 1, -1), length2);
 }
 function prefix(value, length2) {
-  switch (hash(value, length2)) {
+  switch (hash$2(value, length2)) {
     case 5103:
       return WEBKIT + "print-" + value + value;
     case 5737:
@@ -9548,7 +9591,7 @@ function serialize(children, callback) {
     output += callback(children[i], i, children, callback) || "";
   return output;
 }
-function stringify(element, index, children, callback) {
+function stringify(element, index2, children, callback) {
   switch (element.type) {
     case IMPORT:
     case DECLARATION:
@@ -9564,10 +9607,10 @@ function stringify(element, index, children, callback) {
 }
 function middleware(collection) {
   var length2 = sizeof(collection);
-  return function(element, index, children, callback) {
+  return function(element, index2, children, callback) {
     var output = "";
     for (var i = 0; i < length2; i++)
-      output += collection[i](element, index, children, callback) || "";
+      output += collection[i](element, index2, children, callback) || "";
     return output;
   };
 }
@@ -9579,7 +9622,7 @@ function rulesheet(callback) {
     }
   };
 }
-function prefixer(element, index, children, callback) {
+function prefixer(element, index2, children, callback) {
   if (element.length > -1) {
     if (!element.return)
       switch (element.type) {
@@ -9607,6 +9650,17 @@ function prefixer(element, index, children, callback) {
       }
   }
 }
+var weakMemoize = function weakMemoize2(func) {
+  var cache = /* @__PURE__ */ new WeakMap();
+  return function(arg) {
+    if (cache.has(arg)) {
+      return cache.get(arg);
+    }
+    var ret = func(arg);
+    cache.set(arg, ret);
+    return ret;
+  };
+};
 function memoize(fn) {
   var cache = /* @__PURE__ */ Object.create(null);
   return function(arg) {
@@ -9615,16 +9669,16 @@ function memoize(fn) {
     return cache[arg];
   };
 }
-var identifierWithPointTracking = function identifierWithPointTracking2(begin, points, index) {
+var identifierWithPointTracking = function identifierWithPointTracking2(begin, points, index2) {
   var previous = 0;
   var character2 = 0;
   while (true) {
     previous = character2;
     character2 = peek();
     if (previous === 38 && character2 === 12) {
-      points[index] = 1;
+      points[index2] = 1;
     }
-    if (token(character2)) {
+    if (token$1(character2)) {
       break;
     }
     next();
@@ -9632,27 +9686,27 @@ var identifierWithPointTracking = function identifierWithPointTracking2(begin, p
   return slice(begin, position);
 };
 var toRules = function toRules2(parsed, points) {
-  var index = -1;
+  var index2 = -1;
   var character2 = 44;
   do {
-    switch (token(character2)) {
+    switch (token$1(character2)) {
       case 0:
         if (character2 === 38 && peek() === 12) {
-          points[index] = 1;
+          points[index2] = 1;
         }
-        parsed[index] += identifierWithPointTracking(position - 1, points, index);
+        parsed[index2] += identifierWithPointTracking(position - 1, points, index2);
         break;
       case 2:
-        parsed[index] += delimit(character2);
+        parsed[index2] += delimit(character2);
         break;
       case 4:
         if (character2 === 44) {
-          parsed[++index] = peek() === 58 ? "&\f" : "";
-          points[index] = parsed[index].length;
+          parsed[++index2] = peek() === 58 ? "&\f" : "";
+          points[index2] = parsed[index2].length;
           break;
         }
       default:
-        parsed[index] += from(character2);
+        parsed[index2] += from(character2);
     }
   } while (character2 = next());
   return parsed;
@@ -9776,7 +9830,7 @@ var reactIs_production_min = {};
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-var b = "function" === typeof Symbol && Symbol.for, c = b ? Symbol.for("react.element") : 60103, d = b ? Symbol.for("react.portal") : 60106, e$1 = b ? Symbol.for("react.fragment") : 60107, f = b ? Symbol.for("react.strict_mode") : 60108, g = b ? Symbol.for("react.profiler") : 60114, h$1 = b ? Symbol.for("react.provider") : 60109, k$1 = b ? Symbol.for("react.context") : 60110, l$1 = b ? Symbol.for("react.async_mode") : 60111, m$1 = b ? Symbol.for("react.concurrent_mode") : 60111, n$1 = b ? Symbol.for("react.forward_ref") : 60112, p$1 = b ? Symbol.for("react.suspense") : 60113, q$1 = b ? Symbol.for("react.suspense_list") : 60120, r$1 = b ? Symbol.for("react.memo") : 60115, t$1 = b ? Symbol.for("react.lazy") : 60116, v = b ? Symbol.for("react.block") : 60121, w = b ? Symbol.for("react.fundamental") : 60117, x = b ? Symbol.for("react.responder") : 60118, y = b ? Symbol.for("react.scope") : 60119;
+var b = "function" === typeof Symbol && Symbol.for, c = b ? Symbol.for("react.element") : 60103, d = b ? Symbol.for("react.portal") : 60106, e$1 = b ? Symbol.for("react.fragment") : 60107, f = b ? Symbol.for("react.strict_mode") : 60108, g = b ? Symbol.for("react.profiler") : 60114, h$1 = b ? Symbol.for("react.provider") : 60109, k$1 = b ? Symbol.for("react.context") : 60110, l$1 = b ? Symbol.for("react.async_mode") : 60111, m$1 = b ? Symbol.for("react.concurrent_mode") : 60111, n$1 = b ? Symbol.for("react.forward_ref") : 60112, p$1 = b ? Symbol.for("react.suspense") : 60113, q$1 = b ? Symbol.for("react.suspense_list") : 60120, r$1 = b ? Symbol.for("react.memo") : 60115, t$2 = b ? Symbol.for("react.lazy") : 60116, v = b ? Symbol.for("react.block") : 60121, w = b ? Symbol.for("react.fundamental") : 60117, x = b ? Symbol.for("react.responder") : 60118, y = b ? Symbol.for("react.scope") : 60119;
 function z(a) {
   if ("object" === typeof a && null !== a) {
     var u2 = a.$$typeof;
@@ -9794,7 +9848,7 @@ function z(a) {
             switch (a = a && a.$$typeof, a) {
               case k$1:
               case n$1:
-              case t$1:
+              case t$2:
               case r$1:
               case h$1:
                 return a;
@@ -9817,7 +9871,7 @@ reactIs_production_min.ContextProvider = h$1;
 reactIs_production_min.Element = c;
 reactIs_production_min.ForwardRef = n$1;
 reactIs_production_min.Fragment = e$1;
-reactIs_production_min.Lazy = t$1;
+reactIs_production_min.Lazy = t$2;
 reactIs_production_min.Memo = r$1;
 reactIs_production_min.Portal = d;
 reactIs_production_min.Profiler = g;
@@ -9843,7 +9897,7 @@ reactIs_production_min.isFragment = function(a) {
   return z(a) === e$1;
 };
 reactIs_production_min.isLazy = function(a) {
-  return z(a) === t$1;
+  return z(a) === t$2;
 };
 reactIs_production_min.isMemo = function(a) {
   return z(a) === r$1;
@@ -9861,7 +9915,7 @@ reactIs_production_min.isSuspense = function(a) {
   return z(a) === p$1;
 };
 reactIs_production_min.isValidElementType = function(a) {
-  return "string" === typeof a || "function" === typeof a || a === e$1 || a === m$1 || a === g || a === f || a === p$1 || a === q$1 || "object" === typeof a && null !== a && (a.$$typeof === t$1 || a.$$typeof === r$1 || a.$$typeof === h$1 || a.$$typeof === k$1 || a.$$typeof === n$1 || a.$$typeof === w || a.$$typeof === x || a.$$typeof === y || a.$$typeof === v);
+  return "string" === typeof a || "function" === typeof a || a === e$1 || a === m$1 || a === g || a === f || a === p$1 || a === q$1 || "object" === typeof a && null !== a && (a.$$typeof === t$2 || a.$$typeof === r$1 || a.$$typeof === h$1 || a.$$typeof === k$1 || a.$$typeof === n$1 || a.$$typeof === w || a.$$typeof === x || a.$$typeof === y || a.$$typeof === v);
 };
 reactIs_production_min.typeOf = z;
 (function(module) {
@@ -10163,6 +10217,27 @@ var withEmotionCache = function withEmotionCache2(func) {
   });
 };
 var ThemeContext = /* @__PURE__ */ react.exports.createContext({});
+var getTheme = function getTheme2(outerTheme, theme) {
+  if (typeof theme === "function") {
+    var mergedTheme = theme(outerTheme);
+    return mergedTheme;
+  }
+  return _extends$1({}, outerTheme, theme);
+};
+var createCacheWithTheme = /* @__PURE__ */ weakMemoize(function(outerTheme) {
+  return weakMemoize(function(theme) {
+    return getTheme(outerTheme, theme);
+  });
+});
+var ThemeProvider = function ThemeProvider2(props) {
+  var theme = react.exports.useContext(ThemeContext);
+  if (props.theme !== theme) {
+    theme = createCacheWithTheme(theme)(props.theme);
+  }
+  return /* @__PURE__ */ react.exports.createElement(ThemeContext.Provider, {
+    value: theme
+  }, props.children);
+};
 React$1["useInsertionEffect"] ? React$1["useInsertionEffect"] : function useInsertionEffect(create) {
   create();
 };
@@ -10231,30 +10306,30 @@ var keyframes = function keyframes2() {
     }
   };
 };
-var __defProp$N = Object.defineProperty;
-var __defProps$l = Object.defineProperties;
-var __getOwnPropDescs$l = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$O = Object.getOwnPropertySymbols;
-var __hasOwnProp$O = Object.prototype.hasOwnProperty;
-var __propIsEnum$O = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$N = (obj, key, value) => key in obj ? __defProp$N(obj, key, {
+var __defProp$T = Object.defineProperty;
+var __defProps$q = Object.defineProperties;
+var __getOwnPropDescs$q = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$U = Object.getOwnPropertySymbols;
+var __hasOwnProp$U = Object.prototype.hasOwnProperty;
+var __propIsEnum$U = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$T = (obj, key, value) => key in obj ? __defProp$T(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$N = (a, b2) => {
+var __spreadValues$T = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$O.call(b2, prop))
-      __defNormalProp$N(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$O)
-    for (var prop of __getOwnPropSymbols$O(b2)) {
-      if (__propIsEnum$O.call(b2, prop))
-        __defNormalProp$N(a, prop, b2[prop]);
+    if (__hasOwnProp$U.call(b2, prop))
+      __defNormalProp$T(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$U)
+    for (var prop of __getOwnPropSymbols$U(b2)) {
+      if (__propIsEnum$U.call(b2, prop))
+        __defNormalProp$T(a, prop, b2[prop]);
     }
   return a;
 };
-var __spreadProps$l = (a, b2) => __defProps$l(a, __getOwnPropDescs$l(b2));
+var __spreadProps$q = (a, b2) => __defProps$q(a, __getOwnPropDescs$q(b2));
 function GlobalStyles({
   theme
 }) {
@@ -10263,7 +10338,7 @@ function GlobalStyles({
       "*, *::before, *::after": {
         boxSizing: "border-box"
       },
-      body: __spreadProps$l(__spreadValues$N({}, theme.fn.fontStyles()), {
+      body: __spreadProps$q(__spreadValues$T({}, theme.fn.fontStyles()), {
         backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
         color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
         lineHeight: theme.lineHeight,
@@ -10297,8 +10372,8 @@ function MantineCssVariables({
   assignSizeVariables(variables, theme.radius, "radius");
   assignSizeVariables(variables, theme.spacing, "spacing");
   Object.keys(theme.colors).forEach((color) => {
-    theme.colors[color].forEach((shade, index) => {
-      variables[`--mantine-color-${color}-${index}`] = shade;
+    theme.colors[color].forEach((shade, index2) => {
+      variables[`--mantine-color-${color}-${index2}`] = shade;
     });
   });
   const headings = theme.headings.sizes;
@@ -10312,25 +10387,25 @@ function MantineCssVariables({
     }
   });
 }
-var __defProp$M = Object.defineProperty;
-var __defProps$k = Object.defineProperties;
-var __getOwnPropDescs$k = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$N = Object.getOwnPropertySymbols;
-var __hasOwnProp$N = Object.prototype.hasOwnProperty;
-var __propIsEnum$N = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$M = (obj, key, value) => key in obj ? __defProp$M(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$M = (a, b2) => {
+var __defProp$S = Object.defineProperty;
+var __defProps$p = Object.defineProperties;
+var __getOwnPropDescs$p = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$T = Object.getOwnPropertySymbols;
+var __hasOwnProp$T = Object.prototype.hasOwnProperty;
+var __propIsEnum$T = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$S = (obj, key, value) => key in obj ? __defProp$S(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$S = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$N.call(b2, prop))
-      __defNormalProp$M(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$N)
-    for (var prop of __getOwnPropSymbols$N(b2)) {
-      if (__propIsEnum$N.call(b2, prop))
-        __defNormalProp$M(a, prop, b2[prop]);
+    if (__hasOwnProp$T.call(b2, prop))
+      __defNormalProp$S(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$T)
+    for (var prop of __getOwnPropSymbols$T(b2)) {
+      if (__propIsEnum$T.call(b2, prop))
+        __defNormalProp$S(a, prop, b2[prop]);
     }
   return a;
 };
-var __spreadProps$k = (a, b2) => __defProps$k(a, __getOwnPropDescs$k(b2));
+var __spreadProps$p = (a, b2) => __defProps$p(a, __getOwnPropDescs$p(b2));
 function mergeTheme(currentTheme, themeOverride) {
   if (!themeOverride) {
     return currentTheme;
@@ -10338,16 +10413,16 @@ function mergeTheme(currentTheme, themeOverride) {
   return Object.keys(currentTheme).reduce((acc, key) => {
     if (key === "headings" && themeOverride.headings) {
       const sizes2 = themeOverride.headings.sizes ? Object.keys(currentTheme.headings.sizes).reduce((headingsAcc, h2) => {
-        headingsAcc[h2] = __spreadValues$M(__spreadValues$M({}, currentTheme.headings.sizes[h2]), themeOverride.headings.sizes[h2]);
+        headingsAcc[h2] = __spreadValues$S(__spreadValues$S({}, currentTheme.headings.sizes[h2]), themeOverride.headings.sizes[h2]);
         return headingsAcc;
       }, {}) : currentTheme.headings.sizes;
-      return __spreadProps$k(__spreadValues$M({}, acc), {
-        headings: __spreadProps$k(__spreadValues$M(__spreadValues$M({}, currentTheme.headings), themeOverride.headings), {
+      return __spreadProps$p(__spreadValues$S({}, acc), {
+        headings: __spreadProps$p(__spreadValues$S(__spreadValues$S({}, currentTheme.headings), themeOverride.headings), {
           sizes: sizes2
         })
       });
     }
-    acc[key] = typeof themeOverride[key] === "object" ? __spreadValues$M(__spreadValues$M({}, currentTheme[key]), themeOverride[key]) : typeof themeOverride[key] === "number" || typeof themeOverride[key] === "boolean" ? themeOverride[key] : themeOverride[key] || currentTheme[key];
+    acc[key] = typeof themeOverride[key] === "object" ? __spreadValues$S(__spreadValues$S({}, currentTheme[key]), themeOverride[key]) : typeof themeOverride[key] === "number" || typeof themeOverride[key] === "boolean" ? themeOverride[key] : themeOverride[key] || currentTheme[key];
     return acc;
   }, {});
 }
@@ -10515,24 +10590,24 @@ function NormalizeCSS() {
     styles
   });
 }
-var __defProp$L = Object.defineProperty;
-var __getOwnPropSymbols$M = Object.getOwnPropertySymbols;
-var __hasOwnProp$M = Object.prototype.hasOwnProperty;
-var __propIsEnum$M = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$L = (obj, key, value) => key in obj ? __defProp$L(obj, key, {
+var __defProp$R = Object.defineProperty;
+var __getOwnPropSymbols$S = Object.getOwnPropertySymbols;
+var __hasOwnProp$S = Object.prototype.hasOwnProperty;
+var __propIsEnum$S = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$R = (obj, key, value) => key in obj ? __defProp$R(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$L = (a, b2) => {
+var __spreadValues$R = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$M.call(b2, prop))
-      __defNormalProp$L(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$M)
-    for (var prop of __getOwnPropSymbols$M(b2)) {
-      if (__propIsEnum$M.call(b2, prop))
-        __defNormalProp$L(a, prop, b2[prop]);
+    if (__hasOwnProp$S.call(b2, prop))
+      __defNormalProp$R(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$S)
+    for (var prop of __getOwnPropSymbols$S(b2)) {
+      if (__propIsEnum$S.call(b2, prop))
+        __defNormalProp$R(a, prop, b2[prop]);
     }
   return a;
 };
@@ -10565,7 +10640,7 @@ function useComponentDefaultProps(component, defaultProps2, props) {
   var _a;
   const theme = useMantineTheme();
   const contextProps = (_a = theme.components[component]) == null ? void 0 : _a.defaultProps;
-  return __spreadValues$L(__spreadValues$L(__spreadValues$L({}, defaultProps2), contextProps), filterProps(props));
+  return __spreadValues$R(__spreadValues$R(__spreadValues$R({}, defaultProps2), contextProps), filterProps(props));
 }
 function MantineProvider({
   theme,
@@ -10577,17 +10652,20 @@ function MantineProvider({
   children
 }) {
   const ctx = react.exports.useContext(MantineProviderContext);
-  const mergedTheme = mergeThemeWithFunctions(DEFAULT_THEME, inherit ? __spreadValues$L(__spreadValues$L({}, ctx.theme), theme) : theme);
-  return /* @__PURE__ */ jsxs(MantineProviderContext.Provider, {
-    value: {
-      theme: mergedTheme,
-      emotionCache
-    },
-    children: [withNormalizeCSS && /* @__PURE__ */ jsx(NormalizeCSS, {}), withGlobalStyles && /* @__PURE__ */ jsx(GlobalStyles, {
-      theme: mergedTheme
-    }), withCSSVariables && /* @__PURE__ */ jsx(MantineCssVariables, {
-      theme: mergedTheme
-    }), children]
+  const mergedTheme = mergeThemeWithFunctions(DEFAULT_THEME, inherit ? __spreadValues$R(__spreadValues$R({}, ctx.theme), theme) : theme);
+  return /* @__PURE__ */ jsx(ThemeProvider, {
+    theme: mergedTheme,
+    children: /* @__PURE__ */ jsxs(MantineProviderContext.Provider, {
+      value: {
+        theme: mergedTheme,
+        emotionCache
+      },
+      children: [withNormalizeCSS && /* @__PURE__ */ jsx(NormalizeCSS, {}), withGlobalStyles && /* @__PURE__ */ jsx(GlobalStyles, {
+        theme: mergedTheme
+      }), withCSSVariables && /* @__PURE__ */ jsx(MantineCssVariables, {
+        theme: mergedTheme
+      }), children]
+    })
   });
 }
 MantineProvider.displayName = "@mantine/core/MantineProvider";
@@ -10623,38 +10701,25 @@ const elevations = {
 function getDefaultZIndex(level) {
   return elevations[level];
 }
-var __getOwnPropSymbols$L = Object.getOwnPropertySymbols;
-var __hasOwnProp$L = Object.prototype.hasOwnProperty;
-var __propIsEnum$L = Object.prototype.propertyIsEnumerable;
-var __objRest$v = (source, exclude) => {
+var __getOwnPropSymbols$R = Object.getOwnPropertySymbols;
+var __hasOwnProp$R = Object.prototype.hasOwnProperty;
+var __propIsEnum$R = Object.prototype.propertyIsEnumerable;
+var __objRest$z = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$L.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$R.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$L)
-    for (var prop of __getOwnPropSymbols$L(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$L.call(source, prop))
+  if (source != null && __getOwnPropSymbols$R)
+    for (var prop of __getOwnPropSymbols$R(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$R.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
 };
 function extractSystemStyles(others) {
-  const _a = others, { m: m2, mx, my, mt, mb: mb2, ml: ml2, mr, p: p2, px, py, pt, pb: pb2, pl: pl2, pr } = _a, rest = __objRest$v(_a, ["m", "mx", "my", "mt", "mb", "ml", "mr", "p", "px", "py", "pt", "pb", "pl", "pr"]);
-  const systemStyles = { m: m2, mx, my, mt, mb: mb2, ml: ml2, mr, p: p2, px, py, pt, pb: pb2, pl: pl2, pr };
-  Object.keys(systemStyles).forEach((key) => {
-    if (systemStyles[key] === void 0) {
-      delete systemStyles[key];
-    }
-  });
+  const _a = others, { m: m2, mx, my, mt, mb: mb2, ml: ml2, mr, p: p2, px, py, pt, pb: pb2, pl: pl2, pr } = _a, rest = __objRest$z(_a, ["m", "mx", "my", "mt", "mb", "ml", "mr", "p", "px", "py", "pt", "pb", "pl", "pr"]);
+  const systemStyles = filterProps({ m: m2, mx, my, mt, mb: mb2, ml: ml2, mr, p: p2, px, py, pt, pb: pb2, pl: pl2, pr });
   return { systemStyles, rest };
-}
-function fromEntries(entries) {
-  const o = {};
-  Object.keys(entries).forEach((key) => {
-    const [k2, v2] = entries[key];
-    o[k2] = v2;
-  });
-  return o;
 }
 function useGuaranteedMemo(fn, deps) {
   const ref = react.exports.useRef();
@@ -10671,19 +10736,19 @@ function useEmotionCache() {
   const cache = useMantineEmotionCache();
   return cache || defaultMantineEmotionCache;
 }
-var __defProp$K = Object.defineProperty;
-var __getOwnPropSymbols$K = Object.getOwnPropertySymbols;
-var __hasOwnProp$K = Object.prototype.hasOwnProperty;
-var __propIsEnum$K = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$K = (obj, key, value) => key in obj ? __defProp$K(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$K = (a, b2) => {
+var __defProp$Q = Object.defineProperty;
+var __getOwnPropSymbols$Q = Object.getOwnPropertySymbols;
+var __hasOwnProp$Q = Object.prototype.hasOwnProperty;
+var __propIsEnum$Q = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$Q = (obj, key, value) => key in obj ? __defProp$Q(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$Q = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$K.call(b2, prop))
-      __defNormalProp$K(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$K)
-    for (var prop of __getOwnPropSymbols$K(b2)) {
-      if (__propIsEnum$K.call(b2, prop))
-        __defNormalProp$K(a, prop, b2[prop]);
+    if (__hasOwnProp$Q.call(b2, prop))
+      __defNormalProp$Q(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$Q)
+    for (var prop of __getOwnPropSymbols$Q(b2)) {
+      if (__propIsEnum$Q.call(b2, prop))
+        __defNormalProp$Q(a, prop, b2[prop]);
     }
   return a;
 };
@@ -10701,7 +10766,7 @@ function getRef(args) {
     return { args, ref };
   }
   ref = arg[refPropertyName];
-  const argCopy = __spreadValues$K({}, arg);
+  const argCopy = __spreadValues$Q({}, arg);
   delete argCopy[refPropertyName];
   return { args: [argCopy], ref };
 }
@@ -10753,19 +10818,19 @@ function mergeClassNames({
     return acc;
   }, {});
 }
-var __defProp$J = Object.defineProperty;
-var __getOwnPropSymbols$J = Object.getOwnPropertySymbols;
-var __hasOwnProp$J = Object.prototype.hasOwnProperty;
-var __propIsEnum$J = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$J = (obj, key, value) => key in obj ? __defProp$J(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$J = (a, b2) => {
+var __defProp$P = Object.defineProperty;
+var __getOwnPropSymbols$P = Object.getOwnPropertySymbols;
+var __hasOwnProp$P = Object.prototype.hasOwnProperty;
+var __propIsEnum$P = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$P = (obj, key, value) => key in obj ? __defProp$P(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$P = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$J.call(b2, prop))
-      __defNormalProp$J(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$J)
-    for (var prop of __getOwnPropSymbols$J(b2)) {
-      if (__propIsEnum$J.call(b2, prop))
-        __defNormalProp$J(a, prop, b2[prop]);
+    if (__hasOwnProp$P.call(b2, prop))
+      __defNormalProp$P(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$P)
+    for (var prop of __getOwnPropSymbols$P(b2)) {
+      if (__propIsEnum$P.call(b2, prop))
+        __defNormalProp$P(a, prop, b2[prop]);
     }
   return a;
 };
@@ -10778,9 +10843,9 @@ function getStyles(styles2, theme, params) {
     return styles2.map((item) => extractStyles(item.styles)).reduce((acc, item) => {
       Object.keys(item).forEach((key) => {
         if (!acc[key]) {
-          acc[key] = __spreadValues$J({}, item[key]);
+          acc[key] = __spreadValues$P({}, item[key]);
         } else {
-          acc[key] = __spreadValues$J(__spreadValues$J({}, acc[key]), item[key]);
+          acc[key] = __spreadValues$P(__spreadValues$P({}, acc[key]), item[key]);
         }
       });
       return acc;
@@ -10797,7 +10862,7 @@ function createStyles(input) {
     const cssObject = getCssObject(theme, params, createRef);
     const componentStyles = getStyles(options == null ? void 0 : options.styles, theme, params);
     const providerStyles = getStyles(context, theme, params);
-    const classes = fromEntries(Object.keys(cssObject).map((key) => {
+    const classes = Object.fromEntries(Object.keys(cssObject).map((key) => {
       const mergedStyles = cx({ [css2(cssObject[key])]: !(options == null ? void 0 : options.unstyled) }, css2(providerStyles[key]), css2(componentStyles[key]));
       return [key, mergedStyles];
     }));
@@ -10815,25 +10880,25 @@ function createStyles(input) {
   }
   return useStyles2;
 }
-var __defProp$I = Object.defineProperty;
-var __defProps$j = Object.defineProperties;
-var __getOwnPropDescs$j = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$I = Object.getOwnPropertySymbols;
-var __hasOwnProp$I = Object.prototype.hasOwnProperty;
-var __propIsEnum$I = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$I = (obj, key, value) => key in obj ? __defProp$I(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$I = (a, b2) => {
+var __defProp$O = Object.defineProperty;
+var __defProps$o = Object.defineProperties;
+var __getOwnPropDescs$o = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$O = Object.getOwnPropertySymbols;
+var __hasOwnProp$O = Object.prototype.hasOwnProperty;
+var __propIsEnum$O = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$O = (obj, key, value) => key in obj ? __defProp$O(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$O = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$I.call(b2, prop))
-      __defNormalProp$I(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$I)
-    for (var prop of __getOwnPropSymbols$I(b2)) {
-      if (__propIsEnum$I.call(b2, prop))
-        __defNormalProp$I(a, prop, b2[prop]);
+    if (__hasOwnProp$O.call(b2, prop))
+      __defNormalProp$O(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$O)
+    for (var prop of __getOwnPropSymbols$O(b2)) {
+      if (__propIsEnum$O.call(b2, prop))
+        __defNormalProp$O(a, prop, b2[prop]);
     }
   return a;
 };
-var __spreadProps$j = (a, b2) => __defProps$j(a, __getOwnPropDescs$j(b2));
+var __spreadProps$o = (a, b2) => __defProps$o(a, __getOwnPropDescs$o(b2));
 const popIn = {
   in: { opacity: 1, transform: "scale(1)" },
   out: { opacity: 0, transform: "scale(.9) translateY(10px)" },
@@ -10911,19 +10976,19 @@ const transitions = {
     common: { transformOrigin: "right" },
     transitionProperty: "transform, opacity"
   },
-  pop: __spreadProps$j(__spreadValues$I({}, popIn), {
+  pop: __spreadProps$o(__spreadValues$O({}, popIn), {
     common: { transformOrigin: "center center" }
   }),
-  "pop-bottom-left": __spreadProps$j(__spreadValues$I({}, popIn), {
+  "pop-bottom-left": __spreadProps$o(__spreadValues$O({}, popIn), {
     common: { transformOrigin: "bottom left" }
   }),
-  "pop-bottom-right": __spreadProps$j(__spreadValues$I({}, popIn), {
+  "pop-bottom-right": __spreadProps$o(__spreadValues$O({}, popIn), {
     common: { transformOrigin: "bottom right" }
   }),
-  "pop-top-left": __spreadProps$j(__spreadValues$I({}, popIn), {
+  "pop-top-left": __spreadProps$o(__spreadValues$O({}, popIn), {
     common: { transformOrigin: "top left" }
   }),
-  "pop-top-right": __spreadProps$j(__spreadValues$I({}, popIn), {
+  "pop-top-right": __spreadProps$o(__spreadValues$O({}, popIn), {
     common: { transformOrigin: "top right" }
   })
 };
@@ -10937,7 +11002,7 @@ function attachMediaListener(query, callback) {
   }
 }
 function getInitialValue(query, initialValue) {
-  if (initialValue !== void 0) {
+  if (typeof initialValue === "boolean") {
     return initialValue;
   }
   if (typeof window !== "undefined" && "matchMedia" in window) {
@@ -10945,8 +11010,10 @@ function getInitialValue(query, initialValue) {
   }
   return false;
 }
-function useMediaQuery(query, initialValue) {
-  const [matches, setMatches] = react.exports.useState(getInitialValue(query, initialValue));
+function useMediaQuery(query, initialValue, { getInitialValueInEffect } = {
+  getInitialValueInEffect: true
+}) {
+  const [matches, setMatches] = react.exports.useState(getInitialValueInEffect ? false : getInitialValue(query, initialValue));
   const queryRef = react.exports.useRef();
   react.exports.useEffect(() => {
     if ("matchMedia" in window) {
@@ -10958,9 +11025,9 @@ function useMediaQuery(query, initialValue) {
   }, [query]);
   return matches;
 }
-const useIsomorphicEffect$1 = typeof document !== "undefined" ? react.exports.useLayoutEffect : react.exports.useEffect;
+const useIsomorphicEffect = typeof document !== "undefined" ? react.exports.useLayoutEffect : react.exports.useEffect;
 function useDocumentTitle(title) {
-  useIsomorphicEffect$1(() => {
+  useIsomorphicEffect(() => {
     if (typeof title === "string" && title.trim().length > 0) {
       document.title = title.trim();
     }
@@ -10968,17 +11035,19 @@ function useDocumentTitle(title) {
 }
 function useDidUpdate(fn, dependencies) {
   const mounted = react.exports.useRef(false);
+  react.exports.useEffect(() => () => {
+    mounted.current = false;
+  }, []);
   react.exports.useEffect(() => {
     if (mounted.current) {
-      fn();
-    } else {
-      mounted.current = true;
+      return fn();
     }
+    mounted.current = true;
+    return void 0;
   }, dependencies);
 }
 const randomId = () => `mantine-${Math.random().toString(36).slice(2, 11)}`;
-const useIsomorphicEffect = typeof document !== "undefined" ? react.exports.useLayoutEffect : react.exports.useEffect;
-const useReactId = React["useId".toString()] || (() => void 0);
+const useReactId$1 = React["useId".toString()] || (() => void 0);
 function useClientId() {
   const [uuid, setUuid] = react.exports.useState("");
   useIsomorphicEffect(() => {
@@ -10987,10 +11056,10 @@ function useClientId() {
   return uuid;
 }
 function getReactId() {
-  const id2 = useReactId();
-  return id2 ? `mantine-${id2.replaceAll(":", "")}` : "";
+  const id2 = useReactId$1();
+  return id2 ? `mantine-${id2.replace(/:/g, "")}` : "";
 }
-function useId(staticId) {
+function useId$1(staticId) {
   return typeof staticId === "string" ? staticId : getReactId() || useClientId();
 }
 function useWindowEvent(type, listener, options) {
@@ -11016,12 +11085,18 @@ function deserializeJSON(value) {
 function useLocalStorage({
   key,
   defaultValue = void 0,
-  getInitialValueInEffect = false,
+  getInitialValueInEffect = true,
   deserialize = deserializeJSON,
   serialize: serialize2 = serializeJSON
 }) {
-  var _a;
-  const [value, setValue] = react.exports.useState(typeof window !== "undefined" && "localStorage" in window && !getInitialValueInEffect ? deserialize((_a = window.localStorage.getItem(key)) != null ? _a : void 0) : defaultValue != null ? defaultValue : "");
+  const readLocalStorageValue = react.exports.useCallback((skipStorage) => {
+    if (typeof window === "undefined" || !("localStorage" in window) || skipStorage) {
+      return defaultValue != null ? defaultValue : "";
+    }
+    const storageValue = window.localStorage.getItem(key);
+    return storageValue !== null ? deserialize(storageValue) : defaultValue != null ? defaultValue : "";
+  }, [key, defaultValue]);
+  const [value, setValue] = react.exports.useState(readLocalStorageValue(getInitialValueInEffect));
   const setLocalStorageValue = react.exports.useCallback((val) => {
     if (val instanceof Function) {
       setValue((current) => {
@@ -11037,9 +11112,9 @@ function useLocalStorage({
     }
   }, [key]);
   useWindowEvent("storage", (event) => {
-    var _a2;
+    var _a;
     if (event.storageArea === window.localStorage && event.key === key) {
-      setValue(deserialize((_a2 = event.newValue) != null ? _a2 : void 0));
+      setValue(deserialize((_a = event.newValue) != null ? _a : void 0));
     }
   });
   useWindowEvent("mantine-local-storage", (event) => {
@@ -11053,12 +11128,26 @@ function useLocalStorage({
     }
   }, [defaultValue, value, setLocalStorageValue]);
   react.exports.useEffect(() => {
-    var _a2;
     if (getInitialValueInEffect) {
-      setValue(deserialize((_a2 = window.localStorage.getItem(key)) != null ? _a2 : void 0) || (defaultValue != null ? defaultValue : ""));
+      setValue(readLocalStorageValue());
     }
   }, []);
   return [value === void 0 ? defaultValue : value, setLocalStorageValue];
+}
+function assignRef(ref, value) {
+  if (typeof ref === "function") {
+    ref(value);
+  } else if (typeof ref === "object" && ref !== null && "current" in ref) {
+    ref.current = value;
+  }
+}
+function mergeRefs(...refs) {
+  return (node2) => {
+    refs.forEach((ref) => assignRef(ref, node2));
+  };
+}
+function useMergedRef(...refs) {
+  return react.exports.useCallback(mergeRefs(...refs), refs);
 }
 function useUncontrolled({
   value,
@@ -11077,28 +11166,28 @@ function useUncontrolled({
   }
   return [uncontrolledValue, handleUncontrolledChange, false];
 }
-function useReducedMotion(initialValue) {
-  return useMediaQuery("(prefers-reduced-motion: reduce)", initialValue);
+function useReducedMotion(initialValue, options) {
+  return useMediaQuery("(prefers-reduced-motion: reduce)", initialValue, options);
 }
-var __defProp$H = Object.defineProperty;
-var __defProps$i = Object.defineProperties;
-var __getOwnPropDescs$i = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$H = Object.getOwnPropertySymbols;
-var __hasOwnProp$H = Object.prototype.hasOwnProperty;
-var __propIsEnum$H = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$H = (obj, key, value) => key in obj ? __defProp$H(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$H = (a, b2) => {
+var __defProp$N = Object.defineProperty;
+var __defProps$n = Object.defineProperties;
+var __getOwnPropDescs$n = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$N = Object.getOwnPropertySymbols;
+var __hasOwnProp$N = Object.prototype.hasOwnProperty;
+var __propIsEnum$N = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$N = (obj, key, value) => key in obj ? __defProp$N(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$N = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$H.call(b2, prop))
-      __defNormalProp$H(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$H)
-    for (var prop of __getOwnPropSymbols$H(b2)) {
-      if (__propIsEnum$H.call(b2, prop))
-        __defNormalProp$H(a, prop, b2[prop]);
+    if (__hasOwnProp$N.call(b2, prop))
+      __defNormalProp$N(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$N)
+    for (var prop of __getOwnPropSymbols$N(b2)) {
+      if (__propIsEnum$N.call(b2, prop))
+        __defNormalProp$N(a, prop, b2[prop]);
     }
   return a;
 };
-var __spreadProps$i = (a, b2) => __defProps$i(a, __getOwnPropDescs$i(b2));
+var __spreadProps$n = (a, b2) => __defProps$n(a, __getOwnPropDescs$n(b2));
 function parseHotkey(hotkey) {
   const keys = hotkey.toLowerCase().split("+").map((part) => part.trim());
   const modifiers = {
@@ -11110,12 +11199,12 @@ function parseHotkey(hotkey) {
   };
   const reservedKeys = ["alt", "ctrl", "meta", "shift", "mod"];
   const freeKey = keys.find((key) => !reservedKeys.includes(key));
-  return __spreadProps$i(__spreadValues$H({}, modifiers), {
+  return __spreadProps$n(__spreadValues$N({}, modifiers), {
     key: freeKey
   });
 }
 function isExactHotkey(hotkey, event) {
-  const { alt, ctrl, meta, mod, shift, key } = hotkey;
+  const { alt, ctrl, meta, mod, shift: shift2, key } = hotkey;
   const { altKey, ctrlKey, metaKey, shiftKey, key: pressedKey } = event;
   if (alt !== altKey) {
     return false;
@@ -11132,7 +11221,7 @@ function isExactHotkey(hotkey, event) {
       return false;
     }
   }
-  if (shift !== shiftKey) {
+  if (shift2 !== shiftKey) {
     return false;
   }
   if (key && (pressedKey.toLowerCase() === key.toLowerCase() || event.code.replace("Key", "").toLowerCase() === key.toLowerCase())) {
@@ -11195,14 +11284,14 @@ const SYSTEM_PROPS = {
   pr: "paddingRight"
 };
 const NEGATIVE_VALUES = ["-xs", "-sm", "-md", "-lg", "-xl"];
-function isValidSizeValue(margin) {
-  return typeof margin === "string" || typeof margin === "number";
+function isValidSizeValue(size2) {
+  return typeof size2 === "string" || typeof size2 === "number";
 }
-function getSizeValue(margin, theme) {
-  if (NEGATIVE_VALUES.includes(margin)) {
-    return theme.fn.size({ size: margin.replace("-", ""), sizes: theme.spacing }) * -1;
+function getSizeValue(size2, theme) {
+  if (NEGATIVE_VALUES.includes(size2)) {
+    return theme.fn.size({ size: size2.replace("-", ""), sizes: theme.spacing }) * -1;
   }
-  return theme.fn.size({ size: margin, sizes: theme.spacing });
+  return theme.fn.size({ size: size2, sizes: theme.spacing });
 }
 function getSystemStyles(systemStyles, theme) {
   const styles2 = {};
@@ -11255,35 +11344,35 @@ function useSx(sx, systemProps, className) {
   }
   return cx(className, css2(extractSx(sx, theme)), css2(getSystemStyles(systemProps, theme)));
 }
-var __defProp$G = Object.defineProperty;
-var __getOwnPropSymbols$G = Object.getOwnPropertySymbols;
-var __hasOwnProp$G = Object.prototype.hasOwnProperty;
-var __propIsEnum$G = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$G = (obj, key, value) => key in obj ? __defProp$G(obj, key, {
+var __defProp$M = Object.defineProperty;
+var __getOwnPropSymbols$M = Object.getOwnPropertySymbols;
+var __hasOwnProp$M = Object.prototype.hasOwnProperty;
+var __propIsEnum$M = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$M = (obj, key, value) => key in obj ? __defProp$M(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$G = (a, b2) => {
+var __spreadValues$M = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$G.call(b2, prop))
-      __defNormalProp$G(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$G)
-    for (var prop of __getOwnPropSymbols$G(b2)) {
-      if (__propIsEnum$G.call(b2, prop))
-        __defNormalProp$G(a, prop, b2[prop]);
+    if (__hasOwnProp$M.call(b2, prop))
+      __defNormalProp$M(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$M)
+    for (var prop of __getOwnPropSymbols$M(b2)) {
+      if (__propIsEnum$M.call(b2, prop))
+        __defNormalProp$M(a, prop, b2[prop]);
     }
   return a;
 };
-var __objRest$u = (source, exclude) => {
+var __objRest$y = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$G.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$M.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$G)
-    for (var prop of __getOwnPropSymbols$G(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$G.call(source, prop))
+  if (source != null && __getOwnPropSymbols$M)
+    for (var prop of __getOwnPropSymbols$M(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$M.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -11294,14 +11383,14 @@ const _Box = react.exports.forwardRef((_a, ref) => {
     component,
     style,
     sx
-  } = _b, others = __objRest$u(_b, ["className", "component", "style", "sx"]);
+  } = _b, others = __objRest$y(_b, ["className", "component", "style", "sx"]);
   const {
     systemStyles,
     rest
   } = extractSystemStyles(others);
   const Element = component || "div";
   return /* @__PURE__ */ jsx(Element, {
-    ...__spreadValues$G({
+    ...__spreadValues$M({
       ref,
       className: useSx(sx, systemStyles, className),
       style
@@ -11310,27 +11399,27 @@ const _Box = react.exports.forwardRef((_a, ref) => {
 });
 _Box.displayName = "@mantine/core/Box";
 const Box = createPolymorphicComponent(_Box);
-var __defProp$F = Object.defineProperty;
-var __defProps$h = Object.defineProperties;
-var __getOwnPropDescs$h = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$F = Object.getOwnPropertySymbols;
-var __hasOwnProp$F = Object.prototype.hasOwnProperty;
-var __propIsEnum$F = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$F = (obj, key, value) => key in obj ? __defProp$F(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$F = (a, b2) => {
+var __defProp$L = Object.defineProperty;
+var __defProps$m = Object.defineProperties;
+var __getOwnPropDescs$m = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$L = Object.getOwnPropertySymbols;
+var __hasOwnProp$L = Object.prototype.hasOwnProperty;
+var __propIsEnum$L = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$L = (obj, key, value) => key in obj ? __defProp$L(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$L = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$F.call(b2, prop))
-      __defNormalProp$F(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$F)
-    for (var prop of __getOwnPropSymbols$F(b2)) {
-      if (__propIsEnum$F.call(b2, prop))
-        __defNormalProp$F(a, prop, b2[prop]);
+    if (__hasOwnProp$L.call(b2, prop))
+      __defNormalProp$L(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$L)
+    for (var prop of __getOwnPropSymbols$L(b2)) {
+      if (__propIsEnum$L.call(b2, prop))
+        __defNormalProp$L(a, prop, b2[prop]);
     }
   return a;
 };
-var __spreadProps$h = (a, b2) => __defProps$h(a, __getOwnPropDescs$h(b2));
-var useStyles$D = createStyles((theme) => ({
-  root: __spreadProps$h(__spreadValues$F(__spreadValues$F({}, theme.fn.focusStyles()), theme.fn.fontStyles()), {
+var __spreadProps$m = (a, b2) => __defProps$m(a, __getOwnPropDescs$m(b2));
+var useStyles$F = createStyles((theme) => ({
+  root: __spreadProps$m(__spreadValues$L(__spreadValues$L({}, theme.fn.focusStyles()), theme.fn.fontStyles()), {
     cursor: "pointer",
     border: 0,
     padding: 0,
@@ -11343,36 +11432,36 @@ var useStyles$D = createStyles((theme) => ({
     boxSizing: "border-box"
   })
 }));
-const useStyles$E = useStyles$D;
-var __defProp$E = Object.defineProperty;
-var __getOwnPropSymbols$E = Object.getOwnPropertySymbols;
-var __hasOwnProp$E = Object.prototype.hasOwnProperty;
-var __propIsEnum$E = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$E = (obj, key, value) => key in obj ? __defProp$E(obj, key, {
+const useStyles$G = useStyles$F;
+var __defProp$K = Object.defineProperty;
+var __getOwnPropSymbols$K = Object.getOwnPropertySymbols;
+var __hasOwnProp$K = Object.prototype.hasOwnProperty;
+var __propIsEnum$K = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$K = (obj, key, value) => key in obj ? __defProp$K(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$E = (a, b2) => {
+var __spreadValues$K = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$E.call(b2, prop))
-      __defNormalProp$E(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$E)
-    for (var prop of __getOwnPropSymbols$E(b2)) {
-      if (__propIsEnum$E.call(b2, prop))
-        __defNormalProp$E(a, prop, b2[prop]);
+    if (__hasOwnProp$K.call(b2, prop))
+      __defNormalProp$K(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$K)
+    for (var prop of __getOwnPropSymbols$K(b2)) {
+      if (__propIsEnum$K.call(b2, prop))
+        __defNormalProp$K(a, prop, b2[prop]);
     }
   return a;
 };
-var __objRest$t = (source, exclude) => {
+var __objRest$x = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$E.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$K.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$E)
-    for (var prop of __getOwnPropSymbols$E(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$E.call(source, prop))
+  if (source != null && __getOwnPropSymbols$K)
+    for (var prop of __getOwnPropSymbols$K(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$K.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -11382,16 +11471,16 @@ const _UnstyledButton = react.exports.forwardRef((props, ref) => {
     className,
     component = "button",
     unstyled
-  } = _a, others = __objRest$t(_a, ["className", "component", "unstyled"]);
+  } = _a, others = __objRest$x(_a, ["className", "component", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$E(null, {
+  } = useStyles$G(null, {
     name: "UnstyledButton",
     unstyled
   });
   return /* @__PURE__ */ jsx(Box, {
-    ...__spreadValues$E({
+    ...__spreadValues$K({
       component,
       ref,
       className: cx(classes.root, className),
@@ -11401,25 +11490,25 @@ const _UnstyledButton = react.exports.forwardRef((props, ref) => {
 });
 _UnstyledButton.displayName = "@mantine/core/UnstyledButton";
 const UnstyledButton = createPolymorphicComponent(_UnstyledButton);
-var __defProp$D = Object.defineProperty;
-var __defProps$g = Object.defineProperties;
-var __getOwnPropDescs$g = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$D = Object.getOwnPropertySymbols;
-var __hasOwnProp$D = Object.prototype.hasOwnProperty;
-var __propIsEnum$D = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$D = (obj, key, value) => key in obj ? __defProp$D(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$D = (a, b2) => {
+var __defProp$J = Object.defineProperty;
+var __defProps$l = Object.defineProperties;
+var __getOwnPropDescs$l = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$J = Object.getOwnPropertySymbols;
+var __hasOwnProp$J = Object.prototype.hasOwnProperty;
+var __propIsEnum$J = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$J = (obj, key, value) => key in obj ? __defProp$J(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$J = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$D.call(b2, prop))
-      __defNormalProp$D(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$D)
-    for (var prop of __getOwnPropSymbols$D(b2)) {
-      if (__propIsEnum$D.call(b2, prop))
-        __defNormalProp$D(a, prop, b2[prop]);
+    if (__hasOwnProp$J.call(b2, prop))
+      __defNormalProp$J(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$J)
+    for (var prop of __getOwnPropSymbols$J(b2)) {
+      if (__propIsEnum$J.call(b2, prop))
+        __defNormalProp$J(a, prop, b2[prop]);
     }
   return a;
 };
-var __spreadProps$g = (a, b2) => __defProps$g(a, __getOwnPropDescs$g(b2));
+var __spreadProps$l = (a, b2) => __defProps$l(a, __getOwnPropDescs$l(b2));
 const sizes$5 = {
   xs: 18,
   sm: 22,
@@ -11427,23 +11516,35 @@ const sizes$5 = {
   lg: 34,
   xl: 44
 };
-function getVariantStyles$2({ variant: variant2, theme, color }) {
+function getVariantStyles$2({ variant: variant2, theme, color, gradient: gradient2 }) {
   if (variant2 === "transparent") {
     return {
       border: "1px solid transparent",
-      color: theme.fn.themeColor(color, theme.colorScheme === "dark" ? 4 : 7),
+      color: theme.fn.variant({ variant: "subtle", color }).color,
       backgroundColor: "transparent"
     };
   }
-  const colors = theme.fn.variant({ color, variant: variant2 });
-  return __spreadValues$D({
+  const colors = theme.fn.variant({ color, variant: variant2, gradient: gradient2 });
+  if (variant2 === "gradient") {
+    return {
+      border: 0,
+      backgroundImage: colors.background,
+      color: colors.color,
+      "&:hover": theme.fn.hover({
+        backgroundSize: "200%"
+      })
+    };
+  }
+  return __spreadValues$J({
+    border: `1px solid ${colors.border}`,
     backgroundColor: colors.background,
-    color: colors.color,
-    border: `1px solid ${colors.border}`
-  }, theme.fn.hover({ backgroundColor: colors.hover }));
+    color: colors.color
+  }, theme.fn.hover({
+    backgroundColor: colors.hover
+  }));
 }
-var useStyles$B = createStyles((theme, { color, size: size2, radius: radius2, variant: variant2 }) => ({
-  root: __spreadProps$g(__spreadValues$D({}, getVariantStyles$2({ variant: variant2, theme, color })), {
+var useStyles$D = createStyles((theme, { color, size: size2, radius: radius2, variant: variant2, gradient: gradient2 }) => ({
+  root: __spreadProps$l(__spreadValues$J({}, getVariantStyles$2({ variant: variant2, theme, color, gradient: gradient2 })), {
     position: "relative",
     height: theme.fn.size({ size: size2, sizes: sizes$5 }),
     minHeight: theme.fn.size({ size: size2, sizes: sizes$5 }),
@@ -11459,8 +11560,8 @@ var useStyles$B = createStyles((theme, { color, size: size2, radius: radius2, va
     "&[data-disabled]": {
       color: theme.colors.gray[theme.colorScheme === "dark" ? 6 : 4],
       cursor: "not-allowed",
-      backgroundColor: theme.fn.themeColor("gray", theme.colorScheme === "dark" ? 8 : 1),
-      borderColor: theme.fn.themeColor("gray", theme.colorScheme === "dark" ? 8 : 1),
+      backgroundColor: variant2 === "transparent" ? void 0 : theme.fn.themeColor("gray", theme.colorScheme === "dark" ? 8 : 1),
+      borderColor: variant2 === "transparent" ? void 0 : theme.fn.themeColor("gray", theme.colorScheme === "dark" ? 8 : 1),
       "&:active": {
         transform: "none"
       }
@@ -11481,36 +11582,36 @@ var useStyles$B = createStyles((theme, { color, size: size2, radius: radius2, va
     }
   })
 }));
-const useStyles$C = useStyles$B;
-var __defProp$C = Object.defineProperty;
-var __getOwnPropSymbols$C = Object.getOwnPropertySymbols;
-var __hasOwnProp$C = Object.prototype.hasOwnProperty;
-var __propIsEnum$C = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$C = (obj, key, value) => key in obj ? __defProp$C(obj, key, {
+const useStyles$E = useStyles$D;
+var __defProp$I = Object.defineProperty;
+var __getOwnPropSymbols$I = Object.getOwnPropertySymbols;
+var __hasOwnProp$I = Object.prototype.hasOwnProperty;
+var __propIsEnum$I = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$I = (obj, key, value) => key in obj ? __defProp$I(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$C = (a, b2) => {
+var __spreadValues$I = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$C.call(b2, prop))
-      __defNormalProp$C(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$C)
-    for (var prop of __getOwnPropSymbols$C(b2)) {
-      if (__propIsEnum$C.call(b2, prop))
-        __defNormalProp$C(a, prop, b2[prop]);
+    if (__hasOwnProp$I.call(b2, prop))
+      __defNormalProp$I(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$I)
+    for (var prop of __getOwnPropSymbols$I(b2)) {
+      if (__propIsEnum$I.call(b2, prop))
+        __defNormalProp$I(a, prop, b2[prop]);
     }
   return a;
 };
-var __objRest$s = (source, exclude) => {
+var __objRest$w = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$C.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$I.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$C)
-    for (var prop of __getOwnPropSymbols$C(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$C.call(source, prop))
+  if (source != null && __getOwnPropSymbols$I)
+    for (var prop of __getOwnPropSymbols$I(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$I.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -11519,9 +11620,9 @@ function Bars(_a) {
   var _b = _a, {
     size: size2,
     color
-  } = _b, others = __objRest$s(_b, ["size", "color"]);
+  } = _b, others = __objRest$w(_b, ["size", "color"]);
   return /* @__PURE__ */ jsxs("svg", {
-    ...__spreadValues$C({
+    ...__spreadValues$I({
       viewBox: "0 0 135 140",
       xmlns: "http://www.w3.org/2000/svg",
       fill: color,
@@ -11633,35 +11734,35 @@ function Bars(_a) {
     })]
   });
 }
-var __defProp$B = Object.defineProperty;
-var __getOwnPropSymbols$B = Object.getOwnPropertySymbols;
-var __hasOwnProp$B = Object.prototype.hasOwnProperty;
-var __propIsEnum$B = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$B = (obj, key, value) => key in obj ? __defProp$B(obj, key, {
+var __defProp$H = Object.defineProperty;
+var __getOwnPropSymbols$H = Object.getOwnPropertySymbols;
+var __hasOwnProp$H = Object.prototype.hasOwnProperty;
+var __propIsEnum$H = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$H = (obj, key, value) => key in obj ? __defProp$H(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$B = (a, b2) => {
+var __spreadValues$H = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$B.call(b2, prop))
-      __defNormalProp$B(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$B)
-    for (var prop of __getOwnPropSymbols$B(b2)) {
-      if (__propIsEnum$B.call(b2, prop))
-        __defNormalProp$B(a, prop, b2[prop]);
+    if (__hasOwnProp$H.call(b2, prop))
+      __defNormalProp$H(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$H)
+    for (var prop of __getOwnPropSymbols$H(b2)) {
+      if (__propIsEnum$H.call(b2, prop))
+        __defNormalProp$H(a, prop, b2[prop]);
     }
   return a;
 };
-var __objRest$r = (source, exclude) => {
+var __objRest$v = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$B.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$H.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$B)
-    for (var prop of __getOwnPropSymbols$B(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$B.call(source, prop))
+  if (source != null && __getOwnPropSymbols$H)
+    for (var prop of __getOwnPropSymbols$H(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$H.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -11670,9 +11771,9 @@ function Oval(_a) {
   var _b = _a, {
     size: size2,
     color
-  } = _b, others = __objRest$r(_b, ["size", "color"]);
+  } = _b, others = __objRest$v(_b, ["size", "color"]);
   return /* @__PURE__ */ jsx("svg", {
-    ...__spreadValues$B({
+    ...__spreadValues$H({
       width: `${size2}px`,
       height: `${size2}px`,
       viewBox: "0 0 38 38",
@@ -11705,35 +11806,35 @@ function Oval(_a) {
     })
   });
 }
-var __defProp$A = Object.defineProperty;
-var __getOwnPropSymbols$A = Object.getOwnPropertySymbols;
-var __hasOwnProp$A = Object.prototype.hasOwnProperty;
-var __propIsEnum$A = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$A = (obj, key, value) => key in obj ? __defProp$A(obj, key, {
+var __defProp$G = Object.defineProperty;
+var __getOwnPropSymbols$G = Object.getOwnPropertySymbols;
+var __hasOwnProp$G = Object.prototype.hasOwnProperty;
+var __propIsEnum$G = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$G = (obj, key, value) => key in obj ? __defProp$G(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$A = (a, b2) => {
+var __spreadValues$G = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$A.call(b2, prop))
-      __defNormalProp$A(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$A)
-    for (var prop of __getOwnPropSymbols$A(b2)) {
-      if (__propIsEnum$A.call(b2, prop))
-        __defNormalProp$A(a, prop, b2[prop]);
+    if (__hasOwnProp$G.call(b2, prop))
+      __defNormalProp$G(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$G)
+    for (var prop of __getOwnPropSymbols$G(b2)) {
+      if (__propIsEnum$G.call(b2, prop))
+        __defNormalProp$G(a, prop, b2[prop]);
     }
   return a;
 };
-var __objRest$q = (source, exclude) => {
+var __objRest$u = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$A.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$G.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$A)
-    for (var prop of __getOwnPropSymbols$A(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$A.call(source, prop))
+  if (source != null && __getOwnPropSymbols$G)
+    for (var prop of __getOwnPropSymbols$G(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$G.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -11742,9 +11843,9 @@ function Dots(_a) {
   var _b = _a, {
     size: size2,
     color
-  } = _b, others = __objRest$q(_b, ["size", "color"]);
+  } = _b, others = __objRest$u(_b, ["size", "color"]);
   return /* @__PURE__ */ jsxs("svg", {
-    ...__spreadValues$A({
+    ...__spreadValues$G({
       width: `${size2}px`,
       height: `${size2 / 4}px`,
       viewBox: "0 0 120 30",
@@ -11824,35 +11925,35 @@ function Dots(_a) {
     })]
   });
 }
-var __defProp$z = Object.defineProperty;
-var __getOwnPropSymbols$z = Object.getOwnPropertySymbols;
-var __hasOwnProp$z = Object.prototype.hasOwnProperty;
-var __propIsEnum$z = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$z = (obj, key, value) => key in obj ? __defProp$z(obj, key, {
+var __defProp$F = Object.defineProperty;
+var __getOwnPropSymbols$F = Object.getOwnPropertySymbols;
+var __hasOwnProp$F = Object.prototype.hasOwnProperty;
+var __propIsEnum$F = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$F = (obj, key, value) => key in obj ? __defProp$F(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$z = (a, b2) => {
+var __spreadValues$F = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$z.call(b2, prop))
-      __defNormalProp$z(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$z)
-    for (var prop of __getOwnPropSymbols$z(b2)) {
-      if (__propIsEnum$z.call(b2, prop))
-        __defNormalProp$z(a, prop, b2[prop]);
+    if (__hasOwnProp$F.call(b2, prop))
+      __defNormalProp$F(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$F)
+    for (var prop of __getOwnPropSymbols$F(b2)) {
+      if (__propIsEnum$F.call(b2, prop))
+        __defNormalProp$F(a, prop, b2[prop]);
     }
   return a;
 };
-var __objRest$p = (source, exclude) => {
+var __objRest$t = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$z.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$F.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$z)
-    for (var prop of __getOwnPropSymbols$z(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$z.call(source, prop))
+  if (source != null && __getOwnPropSymbols$F)
+    for (var prop of __getOwnPropSymbols$F(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$F.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -11869,92 +11970,97 @@ const sizes$4 = {
   lg: 44,
   xl: 58
 };
-const defaultProps$j = {
+const defaultProps$l = {
   size: "md"
 };
 function Loader(props) {
-  const _a = useComponentDefaultProps("Loader", defaultProps$j, props), {
+  const _a = useComponentDefaultProps("Loader", defaultProps$l, props), {
     size: size2,
     color,
     variant: variant2
-  } = _a, others = __objRest$p(_a, ["size", "color", "variant"]);
+  } = _a, others = __objRest$t(_a, ["size", "color", "variant"]);
   const theme = useMantineTheme();
   const defaultLoader = variant2 in LOADERS ? variant2 : theme.loader;
-  const _color = color || theme.primaryColor;
   return /* @__PURE__ */ jsx(Box, {
-    ...__spreadValues$z({
+    ...__spreadValues$F({
       role: "presentation",
       component: LOADERS[defaultLoader] || LOADERS.bars,
       size: theme.fn.size({
         size: size2,
         sizes: sizes$4
       }),
-      color: _color in theme.colors ? theme.fn.themeColor(_color, theme.fn.primaryShade()) : color
+      color: theme.fn.variant({
+        variant: "filled",
+        primaryFallback: false,
+        color: color || theme.primaryColor
+      }).background
     }, others)
   });
 }
 Loader.displayName = "@mantine/core/Loader";
-var __defProp$y = Object.defineProperty;
-var __getOwnPropSymbols$y = Object.getOwnPropertySymbols;
-var __hasOwnProp$y = Object.prototype.hasOwnProperty;
-var __propIsEnum$y = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$y = (obj, key, value) => key in obj ? __defProp$y(obj, key, {
+var __defProp$E = Object.defineProperty;
+var __getOwnPropSymbols$E = Object.getOwnPropertySymbols;
+var __hasOwnProp$E = Object.prototype.hasOwnProperty;
+var __propIsEnum$E = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$E = (obj, key, value) => key in obj ? __defProp$E(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$y = (a, b2) => {
+var __spreadValues$E = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$y.call(b2, prop))
-      __defNormalProp$y(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$y)
-    for (var prop of __getOwnPropSymbols$y(b2)) {
-      if (__propIsEnum$y.call(b2, prop))
-        __defNormalProp$y(a, prop, b2[prop]);
+    if (__hasOwnProp$E.call(b2, prop))
+      __defNormalProp$E(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$E)
+    for (var prop of __getOwnPropSymbols$E(b2)) {
+      if (__propIsEnum$E.call(b2, prop))
+        __defNormalProp$E(a, prop, b2[prop]);
     }
   return a;
 };
-var __objRest$o = (source, exclude) => {
+var __objRest$s = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$y.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$E.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$y)
-    for (var prop of __getOwnPropSymbols$y(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$y.call(source, prop))
+  if (source != null && __getOwnPropSymbols$E)
+    for (var prop of __getOwnPropSymbols$E(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$E.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
 };
-const defaultProps$i = {
+const defaultProps$k = {
   color: "gray",
   size: "md",
   variant: "subtle",
   loading: false
 };
 const _ActionIcon = react.exports.forwardRef((props, ref) => {
-  const _a = useComponentDefaultProps("ActionIcon", defaultProps$i, props), {
+  const _a = useComponentDefaultProps("ActionIcon", defaultProps$k, props), {
     className,
     color,
     children,
     radius: radius2,
     size: size2,
     variant: variant2,
+    gradient: gradient2,
     disabled,
     loaderProps,
     loading,
     unstyled
-  } = _a, others = __objRest$o(_a, ["className", "color", "children", "radius", "size", "variant", "disabled", "loaderProps", "loading", "unstyled"]);
+  } = _a, others = __objRest$s(_a, ["className", "color", "children", "radius", "size", "variant", "gradient", "disabled", "loaderProps", "loading", "unstyled"]);
   const {
     classes,
     cx,
     theme
-  } = useStyles$C({
+  } = useStyles$E({
     size: size2,
     radius: radius2,
     color,
-    variant: variant2
+    variant: variant2,
+    gradient: gradient2
   }, {
     name: "ActionIcon",
     unstyled
@@ -11964,7 +12070,7 @@ const _ActionIcon = react.exports.forwardRef((props, ref) => {
     variant: "light"
   });
   const loader = /* @__PURE__ */ jsx(Loader, {
-    ...__spreadValues$y({
+    ...__spreadValues$E({
       color: colors.color,
       size: theme.fn.size({
         size: size2,
@@ -11973,7 +12079,7 @@ const _ActionIcon = react.exports.forwardRef((props, ref) => {
     }, loaderProps)
   });
   return /* @__PURE__ */ jsx(UnstyledButton, {
-    ...__spreadValues$y({
+    ...__spreadValues$E({
       className: cx(classes.root, className),
       ref,
       disabled: disabled || loading,
@@ -11986,30 +12092,124 @@ const _ActionIcon = react.exports.forwardRef((props, ref) => {
 });
 _ActionIcon.displayName = "@mantine/core/ActionIcon";
 const ActionIcon = createPolymorphicComponent(_ActionIcon);
-var __defProp$x = Object.defineProperty;
-var __defProps$f = Object.defineProperties;
-var __getOwnPropDescs$f = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$x = Object.getOwnPropertySymbols;
-var __hasOwnProp$x = Object.prototype.hasOwnProperty;
-var __propIsEnum$x = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$x = (obj, key, value) => key in obj ? __defProp$x(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$x = (a, b2) => {
+function Portal(props) {
+  const {
+    children,
+    target,
+    className
+  } = useComponentDefaultProps("Portal", {}, props);
+  const theme = useMantineTheme();
+  const [mounted, setMounted] = react.exports.useState(false);
+  const ref = react.exports.useRef();
+  useIsomorphicEffect(() => {
+    setMounted(true);
+    ref.current = !target ? document.createElement("div") : typeof target === "string" ? document.querySelector(target) : target;
+    if (!target) {
+      document.body.appendChild(ref.current);
+    }
+    return () => {
+      !target && document.body.removeChild(ref.current);
+    };
+  }, [target]);
+  if (!mounted) {
+    return null;
+  }
+  return reactDom.exports.createPortal(
+    /* @__PURE__ */ jsx("div", {
+      className,
+      dir: theme.dir,
+      children
+    }),
+    ref.current
+  );
+}
+Portal.displayName = "@mantine/core/Portal";
+var __defProp$D = Object.defineProperty;
+var __getOwnPropSymbols$D = Object.getOwnPropertySymbols;
+var __hasOwnProp$D = Object.prototype.hasOwnProperty;
+var __propIsEnum$D = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$D = (obj, key, value) => key in obj ? __defProp$D(obj, key, {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  value
+}) : obj[key] = value;
+var __spreadValues$D = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$x.call(b2, prop))
-      __defNormalProp$x(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$x)
-    for (var prop of __getOwnPropSymbols$x(b2)) {
-      if (__propIsEnum$x.call(b2, prop))
-        __defNormalProp$x(a, prop, b2[prop]);
+    if (__hasOwnProp$D.call(b2, prop))
+      __defNormalProp$D(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$D)
+    for (var prop of __getOwnPropSymbols$D(b2)) {
+      if (__propIsEnum$D.call(b2, prop))
+        __defNormalProp$D(a, prop, b2[prop]);
     }
   return a;
 };
-var __spreadProps$f = (a, b2) => __defProps$f(a, __getOwnPropDescs$f(b2));
+var __objRest$r = (source, exclude) => {
+  var target = {};
+  for (var prop in source)
+    if (__hasOwnProp$D.call(source, prop) && exclude.indexOf(prop) < 0)
+      target[prop] = source[prop];
+  if (source != null && __getOwnPropSymbols$D)
+    for (var prop of __getOwnPropSymbols$D(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$D.call(source, prop))
+        target[prop] = source[prop];
+    }
+  return target;
+};
+function OptionalPortal(_a) {
+  var _b = _a, {
+    withinPortal = true,
+    children
+  } = _b, others = __objRest$r(_b, ["withinPortal", "children"]);
+  if (withinPortal) {
+    return /* @__PURE__ */ jsx(Portal, {
+      ...__spreadValues$D({}, others),
+      children
+    });
+  }
+  return /* @__PURE__ */ jsx(Fragment, {
+    children
+  });
+}
+OptionalPortal.displayName = "@mantine/core/OptionalPortal";
+var __defProp$C = Object.defineProperty;
+var __defProps$k = Object.defineProperties;
+var __getOwnPropDescs$k = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$C = Object.getOwnPropertySymbols;
+var __hasOwnProp$C = Object.prototype.hasOwnProperty;
+var __propIsEnum$C = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$C = (obj, key, value) => key in obj ? __defProp$C(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$C = (a, b2) => {
+  for (var prop in b2 || (b2 = {}))
+    if (__hasOwnProp$C.call(b2, prop))
+      __defNormalProp$C(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$C)
+    for (var prop of __getOwnPropSymbols$C(b2)) {
+      if (__propIsEnum$C.call(b2, prop))
+        __defNormalProp$C(a, prop, b2[prop]);
+    }
+  return a;
+};
+var __spreadProps$k = (a, b2) => __defProps$k(a, __getOwnPropDescs$k(b2));
+function getTextDecoration({
+  underline,
+  strikethrough
+}) {
+  const styles2 = [];
+  if (underline) {
+    styles2.push("underline");
+  }
+  if (strikethrough) {
+    styles2.push("line-through");
+  }
+  return styles2.length > 0 ? styles2.join(" ") : "none";
+}
 function getTextColor({ theme, color, variant: variant2 }) {
   if (color === "dimmed") {
     return theme.colorScheme === "dark" ? theme.colors.dark[2] : theme.colors.gray[6];
   }
-  return color in theme.colors ? theme.fn.variant({ variant: "filled", color }).background : variant2 === "link" ? theme.colors[theme.primaryColor][theme.colorScheme === "dark" ? 4 : 7] : color || "inherit";
+  return typeof color === "string" && (color in theme.colors || color.split(".")[0] in theme.colors) ? theme.fn.variant({ variant: "filled", color }).background : variant2 === "link" ? theme.colors[theme.primaryColor][theme.colorScheme === "dark" ? 4 : 7] : color || "inherit";
 }
 function getLineClamp(lineClamp) {
   if (typeof lineClamp === "number") {
@@ -12023,7 +12223,7 @@ function getLineClamp(lineClamp) {
   }
   return null;
 }
-var useStyles$z = createStyles((theme, {
+var useStyles$B = createStyles((theme, {
   color,
   variant: variant2,
   size: size2,
@@ -12034,20 +12234,23 @@ var useStyles$z = createStyles((theme, {
   gradient: gradient2,
   weight,
   transform,
-  align
+  align,
+  strikethrough,
+  italic
 }) => {
   const colors = theme.fn.variant({ variant: "gradient", gradient: gradient2 });
   return {
-    root: __spreadValues$x(__spreadProps$f(__spreadValues$x(__spreadValues$x(__spreadValues$x({}, theme.fn.fontStyles()), theme.fn.focusStyles()), getLineClamp(lineClamp)), {
+    root: __spreadValues$C(__spreadProps$k(__spreadValues$C(__spreadValues$C(__spreadValues$C({}, theme.fn.fontStyles()), theme.fn.focusStyles()), getLineClamp(lineClamp)), {
       color: getTextColor({ color, theme, variant: variant2 }),
       fontFamily: inherit ? "inherit" : theme.fontFamily,
       fontSize: inherit || size2 === void 0 ? "inherit" : theme.fn.size({ size: size2, sizes: theme.fontSizes }),
       lineHeight: inherit ? "inherit" : inline ? 1 : theme.lineHeight,
-      textDecoration: underline ? "underline" : "none",
+      textDecoration: getTextDecoration({ underline, strikethrough }),
       WebkitTapHighlightColor: "transparent",
       fontWeight: inherit ? "inherit" : weight,
       textTransform: transform,
-      textAlign: align
+      textAlign: align,
+      fontStyle: italic ? "italic" : void 0
     }), theme.fn.hover(variant2 === "link" && underline === void 0 ? {
       textDecoration: "underline"
     } : void 0)),
@@ -12058,45 +12261,45 @@ var useStyles$z = createStyles((theme, {
     }
   };
 });
-const useStyles$A = useStyles$z;
-var __defProp$w = Object.defineProperty;
-var __getOwnPropSymbols$w = Object.getOwnPropertySymbols;
-var __hasOwnProp$w = Object.prototype.hasOwnProperty;
-var __propIsEnum$w = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$w = (obj, key, value) => key in obj ? __defProp$w(obj, key, {
+const useStyles$C = useStyles$B;
+var __defProp$B = Object.defineProperty;
+var __getOwnPropSymbols$B = Object.getOwnPropertySymbols;
+var __hasOwnProp$B = Object.prototype.hasOwnProperty;
+var __propIsEnum$B = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$B = (obj, key, value) => key in obj ? __defProp$B(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$w = (a, b2) => {
+var __spreadValues$B = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$w.call(b2, prop))
-      __defNormalProp$w(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$w)
-    for (var prop of __getOwnPropSymbols$w(b2)) {
-      if (__propIsEnum$w.call(b2, prop))
-        __defNormalProp$w(a, prop, b2[prop]);
+    if (__hasOwnProp$B.call(b2, prop))
+      __defNormalProp$B(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$B)
+    for (var prop of __getOwnPropSymbols$B(b2)) {
+      if (__propIsEnum$B.call(b2, prop))
+        __defNormalProp$B(a, prop, b2[prop]);
     }
   return a;
 };
-var __objRest$n = (source, exclude) => {
+var __objRest$q = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$w.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$B.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$w)
-    for (var prop of __getOwnPropSymbols$w(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$w.call(source, prop))
+  if (source != null && __getOwnPropSymbols$B)
+    for (var prop of __getOwnPropSymbols$B(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$B.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
 };
-const defaultProps$h = {
+const defaultProps$j = {
   variant: "text"
 };
 const _Text = react.exports.forwardRef((props, ref) => {
-  const _a = useComponentDefaultProps("Text", defaultProps$h, props), {
+  const _a = useComponentDefaultProps("Text", defaultProps$j, props), {
     className,
     size: size2,
     weight,
@@ -12109,14 +12312,17 @@ const _Text = react.exports.forwardRef((props, ref) => {
     inline,
     inherit,
     underline,
+    strikethrough,
+    italic,
     classNames,
     styles: styles2,
-    unstyled
-  } = _a, others = __objRest$n(_a, ["className", "size", "weight", "transform", "color", "align", "variant", "lineClamp", "gradient", "inline", "inherit", "underline", "classNames", "styles", "unstyled"]);
+    unstyled,
+    span
+  } = _a, others = __objRest$q(_a, ["className", "size", "weight", "transform", "color", "align", "variant", "lineClamp", "gradient", "inline", "inherit", "underline", "strikethrough", "italic", "classNames", "styles", "unstyled", "span"]);
   const {
     classes,
     cx
-  } = useStyles$A({
+  } = useStyles$C({
     variant: variant2,
     color,
     size: size2,
@@ -12124,6 +12330,8 @@ const _Text = react.exports.forwardRef((props, ref) => {
     inline,
     inherit,
     underline,
+    strikethrough,
+    italic,
     weight,
     transform,
     align,
@@ -12133,17 +12341,18 @@ const _Text = react.exports.forwardRef((props, ref) => {
     name: "Text"
   });
   return /* @__PURE__ */ jsx(Box, {
-    ...__spreadValues$w({
+    ...__spreadValues$B({
       ref,
       className: cx(classes.root, {
         [classes.gradient]: variant2 === "gradient"
-      }, className)
+      }, className),
+      component: span ? "span" : "div"
     }, others)
   });
 });
 _Text.displayName = "@mantine/core/Text";
 const Text = createPolymorphicComponent(_Text);
-var useStyles$x = createStyles(() => ({
+var useStyles$z = createStyles(() => ({
   root: {
     backgroundColor: "transparent",
     cursor: "pointer",
@@ -12151,51 +12360,51 @@ var useStyles$x = createStyles(() => ({
     border: 0
   }
 }));
-const useStyles$y = useStyles$x;
-var __defProp$v = Object.defineProperty;
-var __getOwnPropSymbols$v = Object.getOwnPropertySymbols;
-var __hasOwnProp$v = Object.prototype.hasOwnProperty;
-var __propIsEnum$v = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$v = (obj, key, value) => key in obj ? __defProp$v(obj, key, {
+const useStyles$A = useStyles$z;
+var __defProp$A = Object.defineProperty;
+var __getOwnPropSymbols$A = Object.getOwnPropertySymbols;
+var __hasOwnProp$A = Object.prototype.hasOwnProperty;
+var __propIsEnum$A = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$A = (obj, key, value) => key in obj ? __defProp$A(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$v = (a, b2) => {
+var __spreadValues$A = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$v.call(b2, prop))
-      __defNormalProp$v(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$v)
-    for (var prop of __getOwnPropSymbols$v(b2)) {
-      if (__propIsEnum$v.call(b2, prop))
-        __defNormalProp$v(a, prop, b2[prop]);
+    if (__hasOwnProp$A.call(b2, prop))
+      __defNormalProp$A(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$A)
+    for (var prop of __getOwnPropSymbols$A(b2)) {
+      if (__propIsEnum$A.call(b2, prop))
+        __defNormalProp$A(a, prop, b2[prop]);
     }
   return a;
 };
-var __objRest$m = (source, exclude) => {
+var __objRest$p = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$v.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$A.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$v)
-    for (var prop of __getOwnPropSymbols$v(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$v.call(source, prop))
+  if (source != null && __getOwnPropSymbols$A)
+    for (var prop of __getOwnPropSymbols$A(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$A.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
 };
-const defaultProps$g = {};
+const defaultProps$i = {};
 const _Anchor = react.exports.forwardRef((props, ref) => {
-  const _a = useComponentDefaultProps("Anchor", defaultProps$g, props), {
+  const _a = useComponentDefaultProps("Anchor", defaultProps$i, props), {
     component,
     className,
     unstyled
-  } = _a, others = __objRest$m(_a, ["component", "className", "unstyled"]);
+  } = _a, others = __objRest$p(_a, ["component", "className", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$y(null, {
+  } = useStyles$A(null, {
     name: "Anchor",
     unstyled
   });
@@ -12203,7 +12412,7 @@ const _Anchor = react.exports.forwardRef((props, ref) => {
     type: "button"
   } : null;
   return /* @__PURE__ */ jsx(Text, {
-    ...__spreadValues$v(__spreadValues$v({
+    ...__spreadValues$A(__spreadValues$A({
       component: component || "a",
       variant: "link",
       ref,
@@ -12213,19 +12422,1916 @@ const _Anchor = react.exports.forwardRef((props, ref) => {
 });
 _Anchor.displayName = "@mantine/core/Anchor";
 const Anchor = createPolymorphicComponent(_Anchor);
-var __defProp$u = Object.defineProperty;
-var __getOwnPropSymbols$u = Object.getOwnPropertySymbols;
-var __hasOwnProp$u = Object.prototype.hasOwnProperty;
-var __propIsEnum$u = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$u = (obj, key, value) => key in obj ? __defProp$u(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$u = (a, b2) => {
+function getSide(placement) {
+  return placement.split("-")[0];
+}
+function getAlignment(placement) {
+  return placement.split("-")[1];
+}
+function getMainAxisFromPlacement(placement) {
+  return ["top", "bottom"].includes(getSide(placement)) ? "x" : "y";
+}
+function getLengthFromAxis(axis) {
+  return axis === "y" ? "height" : "width";
+}
+function computeCoordsFromPlacement(_ref, placement, rtl) {
+  let {
+    reference,
+    floating
+  } = _ref;
+  const commonX = reference.x + reference.width / 2 - floating.width / 2;
+  const commonY = reference.y + reference.height / 2 - floating.height / 2;
+  const mainAxis = getMainAxisFromPlacement(placement);
+  const length2 = getLengthFromAxis(mainAxis);
+  const commonAlign = reference[length2] / 2 - floating[length2] / 2;
+  const side = getSide(placement);
+  const isVertical = mainAxis === "x";
+  let coords;
+  switch (side) {
+    case "top":
+      coords = {
+        x: commonX,
+        y: reference.y - floating.height
+      };
+      break;
+    case "bottom":
+      coords = {
+        x: commonX,
+        y: reference.y + reference.height
+      };
+      break;
+    case "right":
+      coords = {
+        x: reference.x + reference.width,
+        y: commonY
+      };
+      break;
+    case "left":
+      coords = {
+        x: reference.x - floating.width,
+        y: commonY
+      };
+      break;
+    default:
+      coords = {
+        x: reference.x,
+        y: reference.y
+      };
+  }
+  switch (getAlignment(placement)) {
+    case "start":
+      coords[mainAxis] -= commonAlign * (rtl && isVertical ? -1 : 1);
+      break;
+    case "end":
+      coords[mainAxis] += commonAlign * (rtl && isVertical ? -1 : 1);
+      break;
+  }
+  return coords;
+}
+const computePosition$1 = async (reference, floating, config2) => {
+  const {
+    placement = "bottom",
+    strategy = "absolute",
+    middleware: middleware2 = [],
+    platform: platform2
+  } = config2;
+  const rtl = await (platform2.isRTL == null ? void 0 : platform2.isRTL(floating));
+  let rects = await platform2.getElementRects({
+    reference,
+    floating,
+    strategy
+  });
+  let {
+    x: x2,
+    y: y2
+  } = computeCoordsFromPlacement(rects, placement, rtl);
+  let statefulPlacement = placement;
+  let middlewareData = {};
+  let resetCount = 0;
+  for (let i = 0; i < middleware2.length; i++) {
+    const {
+      name,
+      fn
+    } = middleware2[i];
+    const {
+      x: nextX,
+      y: nextY,
+      data,
+      reset
+    } = await fn({
+      x: x2,
+      y: y2,
+      initialPlacement: placement,
+      placement: statefulPlacement,
+      strategy,
+      middlewareData,
+      rects,
+      platform: platform2,
+      elements: {
+        reference,
+        floating
+      }
+    });
+    x2 = nextX != null ? nextX : x2;
+    y2 = nextY != null ? nextY : y2;
+    middlewareData = {
+      ...middlewareData,
+      [name]: {
+        ...middlewareData[name],
+        ...data
+      }
+    };
+    if (reset && resetCount <= 50) {
+      resetCount++;
+      if (typeof reset === "object") {
+        if (reset.placement) {
+          statefulPlacement = reset.placement;
+        }
+        if (reset.rects) {
+          rects = reset.rects === true ? await platform2.getElementRects({
+            reference,
+            floating,
+            strategy
+          }) : reset.rects;
+        }
+        ({
+          x: x2,
+          y: y2
+        } = computeCoordsFromPlacement(rects, statefulPlacement, rtl));
+      }
+      i = -1;
+      continue;
+    }
+  }
+  return {
+    x: x2,
+    y: y2,
+    placement: statefulPlacement,
+    strategy,
+    middlewareData
+  };
+};
+function expandPaddingObject(padding) {
+  return {
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    ...padding
+  };
+}
+function getSideObjectFromPadding(padding) {
+  return typeof padding !== "number" ? expandPaddingObject(padding) : {
+    top: padding,
+    right: padding,
+    bottom: padding,
+    left: padding
+  };
+}
+function rectToClientRect(rect) {
+  return {
+    ...rect,
+    top: rect.y,
+    left: rect.x,
+    right: rect.x + rect.width,
+    bottom: rect.y + rect.height
+  };
+}
+async function detectOverflow(middlewareArguments, options) {
+  var _await$platform$isEle;
+  if (options === void 0) {
+    options = {};
+  }
+  const {
+    x: x2,
+    y: y2,
+    platform: platform2,
+    rects,
+    elements,
+    strategy
+  } = middlewareArguments;
+  const {
+    boundary = "clippingAncestors",
+    rootBoundary = "viewport",
+    elementContext = "floating",
+    altBoundary = false,
+    padding = 0
+  } = options;
+  const paddingObject = getSideObjectFromPadding(padding);
+  const altContext = elementContext === "floating" ? "reference" : "floating";
+  const element = elements[altBoundary ? altContext : elementContext];
+  const clippingClientRect = rectToClientRect(await platform2.getClippingRect({
+    element: ((_await$platform$isEle = await (platform2.isElement == null ? void 0 : platform2.isElement(element))) != null ? _await$platform$isEle : true) ? element : element.contextElement || await (platform2.getDocumentElement == null ? void 0 : platform2.getDocumentElement(elements.floating)),
+    boundary,
+    rootBoundary,
+    strategy
+  }));
+  const elementClientRect = rectToClientRect(platform2.convertOffsetParentRelativeRectToViewportRelativeRect ? await platform2.convertOffsetParentRelativeRectToViewportRelativeRect({
+    rect: elementContext === "floating" ? {
+      ...rects.floating,
+      x: x2,
+      y: y2
+    } : rects.reference,
+    offsetParent: await (platform2.getOffsetParent == null ? void 0 : platform2.getOffsetParent(elements.floating)),
+    strategy
+  }) : rects[elementContext]);
+  return {
+    top: clippingClientRect.top - elementClientRect.top + paddingObject.top,
+    bottom: elementClientRect.bottom - clippingClientRect.bottom + paddingObject.bottom,
+    left: clippingClientRect.left - elementClientRect.left + paddingObject.left,
+    right: elementClientRect.right - clippingClientRect.right + paddingObject.right
+  };
+}
+const min$1 = Math.min;
+const max$1 = Math.max;
+function within(min$1$1, value, max$1$1) {
+  return max$1(min$1$1, min$1(value, max$1$1));
+}
+const hash$1 = {
+  left: "right",
+  right: "left",
+  bottom: "top",
+  top: "bottom"
+};
+function getOppositePlacement(placement) {
+  return placement.replace(/left|right|bottom|top/g, (matched) => hash$1[matched]);
+}
+function getAlignmentSides(placement, rects, rtl) {
+  if (rtl === void 0) {
+    rtl = false;
+  }
+  const alignment = getAlignment(placement);
+  const mainAxis = getMainAxisFromPlacement(placement);
+  const length2 = getLengthFromAxis(mainAxis);
+  let mainAlignmentSide = mainAxis === "x" ? alignment === (rtl ? "end" : "start") ? "right" : "left" : alignment === "start" ? "bottom" : "top";
+  if (rects.reference[length2] > rects.floating[length2]) {
+    mainAlignmentSide = getOppositePlacement(mainAlignmentSide);
+  }
+  return {
+    main: mainAlignmentSide,
+    cross: getOppositePlacement(mainAlignmentSide)
+  };
+}
+const hash = {
+  start: "end",
+  end: "start"
+};
+function getOppositeAlignmentPlacement(placement) {
+  return placement.replace(/start|end/g, (matched) => hash[matched]);
+}
+function getExpandedPlacements(placement) {
+  const oppositePlacement = getOppositePlacement(placement);
+  return [getOppositeAlignmentPlacement(placement), oppositePlacement, getOppositeAlignmentPlacement(oppositePlacement)];
+}
+const flip = function(options) {
+  if (options === void 0) {
+    options = {};
+  }
+  return {
+    name: "flip",
+    options,
+    async fn(middlewareArguments) {
+      var _middlewareData$flip;
+      const {
+        placement,
+        middlewareData,
+        rects,
+        initialPlacement,
+        platform: platform2,
+        elements
+      } = middlewareArguments;
+      const {
+        mainAxis: checkMainAxis = true,
+        crossAxis: checkCrossAxis = true,
+        fallbackPlacements: specifiedFallbackPlacements,
+        fallbackStrategy = "bestFit",
+        flipAlignment = true,
+        ...detectOverflowOptions
+      } = options;
+      const side = getSide(placement);
+      const isBasePlacement = side === initialPlacement;
+      const fallbackPlacements = specifiedFallbackPlacements || (isBasePlacement || !flipAlignment ? [getOppositePlacement(initialPlacement)] : getExpandedPlacements(initialPlacement));
+      const placements = [initialPlacement, ...fallbackPlacements];
+      const overflow = await detectOverflow(middlewareArguments, detectOverflowOptions);
+      const overflows = [];
+      let overflowsData = ((_middlewareData$flip = middlewareData.flip) == null ? void 0 : _middlewareData$flip.overflows) || [];
+      if (checkMainAxis) {
+        overflows.push(overflow[side]);
+      }
+      if (checkCrossAxis) {
+        const {
+          main,
+          cross
+        } = getAlignmentSides(placement, rects, await (platform2.isRTL == null ? void 0 : platform2.isRTL(elements.floating)));
+        overflows.push(overflow[main], overflow[cross]);
+      }
+      overflowsData = [...overflowsData, {
+        placement,
+        overflows
+      }];
+      if (!overflows.every((side2) => side2 <= 0)) {
+        var _middlewareData$flip$, _middlewareData$flip2;
+        const nextIndex = ((_middlewareData$flip$ = (_middlewareData$flip2 = middlewareData.flip) == null ? void 0 : _middlewareData$flip2.index) != null ? _middlewareData$flip$ : 0) + 1;
+        const nextPlacement = placements[nextIndex];
+        if (nextPlacement) {
+          return {
+            data: {
+              index: nextIndex,
+              overflows: overflowsData
+            },
+            reset: {
+              placement: nextPlacement
+            }
+          };
+        }
+        let resetPlacement = "bottom";
+        switch (fallbackStrategy) {
+          case "bestFit": {
+            var _overflowsData$map$so;
+            const placement2 = (_overflowsData$map$so = overflowsData.map((d2) => [d2, d2.overflows.filter((overflow2) => overflow2 > 0).reduce((acc, overflow2) => acc + overflow2, 0)]).sort((a, b2) => a[1] - b2[1])[0]) == null ? void 0 : _overflowsData$map$so[0].placement;
+            if (placement2) {
+              resetPlacement = placement2;
+            }
+            break;
+          }
+          case "initialPlacement":
+            resetPlacement = initialPlacement;
+            break;
+        }
+        if (placement !== resetPlacement) {
+          return {
+            reset: {
+              placement: resetPlacement
+            }
+          };
+        }
+      }
+      return {};
+    }
+  };
+};
+async function convertValueToCoords(middlewareArguments, value) {
+  const {
+    placement,
+    platform: platform2,
+    elements
+  } = middlewareArguments;
+  const rtl = await (platform2.isRTL == null ? void 0 : platform2.isRTL(elements.floating));
+  const side = getSide(placement);
+  const alignment = getAlignment(placement);
+  const isVertical = getMainAxisFromPlacement(placement) === "x";
+  const mainAxisMulti = ["left", "top"].includes(side) ? -1 : 1;
+  const crossAxisMulti = rtl && isVertical ? -1 : 1;
+  const rawValue = typeof value === "function" ? value(middlewareArguments) : value;
+  let {
+    mainAxis,
+    crossAxis,
+    alignmentAxis
+  } = typeof rawValue === "number" ? {
+    mainAxis: rawValue,
+    crossAxis: 0,
+    alignmentAxis: null
+  } : {
+    mainAxis: 0,
+    crossAxis: 0,
+    alignmentAxis: null,
+    ...rawValue
+  };
+  if (alignment && typeof alignmentAxis === "number") {
+    crossAxis = alignment === "end" ? alignmentAxis * -1 : alignmentAxis;
+  }
+  return isVertical ? {
+    x: crossAxis * crossAxisMulti,
+    y: mainAxis * mainAxisMulti
+  } : {
+    x: mainAxis * mainAxisMulti,
+    y: crossAxis * crossAxisMulti
+  };
+}
+const offset = function(value) {
+  if (value === void 0) {
+    value = 0;
+  }
+  return {
+    name: "offset",
+    options: value,
+    async fn(middlewareArguments) {
+      const {
+        x: x2,
+        y: y2
+      } = middlewareArguments;
+      const diffCoords = await convertValueToCoords(middlewareArguments, value);
+      return {
+        x: x2 + diffCoords.x,
+        y: y2 + diffCoords.y,
+        data: diffCoords
+      };
+    }
+  };
+};
+function getCrossAxis(axis) {
+  return axis === "x" ? "y" : "x";
+}
+const shift = function(options) {
+  if (options === void 0) {
+    options = {};
+  }
+  return {
+    name: "shift",
+    options,
+    async fn(middlewareArguments) {
+      const {
+        x: x2,
+        y: y2,
+        placement
+      } = middlewareArguments;
+      const {
+        mainAxis: checkMainAxis = true,
+        crossAxis: checkCrossAxis = false,
+        limiter = {
+          fn: (_ref) => {
+            let {
+              x: x3,
+              y: y3
+            } = _ref;
+            return {
+              x: x3,
+              y: y3
+            };
+          }
+        },
+        ...detectOverflowOptions
+      } = options;
+      const coords = {
+        x: x2,
+        y: y2
+      };
+      const overflow = await detectOverflow(middlewareArguments, detectOverflowOptions);
+      const mainAxis = getMainAxisFromPlacement(getSide(placement));
+      const crossAxis = getCrossAxis(mainAxis);
+      let mainAxisCoord = coords[mainAxis];
+      let crossAxisCoord = coords[crossAxis];
+      if (checkMainAxis) {
+        const minSide = mainAxis === "y" ? "top" : "left";
+        const maxSide = mainAxis === "y" ? "bottom" : "right";
+        const min2 = mainAxisCoord + overflow[minSide];
+        const max2 = mainAxisCoord - overflow[maxSide];
+        mainAxisCoord = within(min2, mainAxisCoord, max2);
+      }
+      if (checkCrossAxis) {
+        const minSide = crossAxis === "y" ? "top" : "left";
+        const maxSide = crossAxis === "y" ? "bottom" : "right";
+        const min2 = crossAxisCoord + overflow[minSide];
+        const max2 = crossAxisCoord - overflow[maxSide];
+        crossAxisCoord = within(min2, crossAxisCoord, max2);
+      }
+      const limitedCoords = limiter.fn({
+        ...middlewareArguments,
+        [mainAxis]: mainAxisCoord,
+        [crossAxis]: crossAxisCoord
+      });
+      return {
+        ...limitedCoords,
+        data: {
+          x: limitedCoords.x - x2,
+          y: limitedCoords.y - y2
+        }
+      };
+    }
+  };
+};
+const size = function(options) {
+  if (options === void 0) {
+    options = {};
+  }
+  return {
+    name: "size",
+    options,
+    async fn(middlewareArguments) {
+      const {
+        placement,
+        rects,
+        platform: platform2,
+        elements
+      } = middlewareArguments;
+      const {
+        apply,
+        ...detectOverflowOptions
+      } = options;
+      const overflow = await detectOverflow(middlewareArguments, detectOverflowOptions);
+      const side = getSide(placement);
+      const alignment = getAlignment(placement);
+      let heightSide;
+      let widthSide;
+      if (side === "top" || side === "bottom") {
+        heightSide = side;
+        widthSide = alignment === (await (platform2.isRTL == null ? void 0 : platform2.isRTL(elements.floating)) ? "start" : "end") ? "left" : "right";
+      } else {
+        widthSide = side;
+        heightSide = alignment === "end" ? "top" : "bottom";
+      }
+      const xMin = max$1(overflow.left, 0);
+      const xMax = max$1(overflow.right, 0);
+      const yMin = max$1(overflow.top, 0);
+      const yMax = max$1(overflow.bottom, 0);
+      const dimensions = {
+        availableHeight: rects.floating.height - (["left", "right"].includes(placement) ? 2 * (yMin !== 0 || yMax !== 0 ? yMin + yMax : max$1(overflow.top, overflow.bottom)) : overflow[heightSide]),
+        availableWidth: rects.floating.width - (["top", "bottom"].includes(placement) ? 2 * (xMin !== 0 || xMax !== 0 ? xMin + xMax : max$1(overflow.left, overflow.right)) : overflow[widthSide])
+      };
+      const prevDimensions = await platform2.getDimensions(elements.floating);
+      apply == null ? void 0 : apply({
+        ...middlewareArguments,
+        ...dimensions
+      });
+      const nextDimensions = await platform2.getDimensions(elements.floating);
+      if (prevDimensions.width !== nextDimensions.width || prevDimensions.height !== nextDimensions.height) {
+        return {
+          reset: {
+            rects: true
+          }
+        };
+      }
+      return {};
+    }
+  };
+};
+function isWindow(value) {
+  return value && value.document && value.location && value.alert && value.setInterval;
+}
+function getWindow$1(node2) {
+  if (node2 == null) {
+    return window;
+  }
+  if (!isWindow(node2)) {
+    const ownerDocument = node2.ownerDocument;
+    return ownerDocument ? ownerDocument.defaultView || window : window;
+  }
+  return node2;
+}
+function getComputedStyle$1(element) {
+  return getWindow$1(element).getComputedStyle(element);
+}
+function getNodeName(node2) {
+  return isWindow(node2) ? "" : node2 ? (node2.nodeName || "").toLowerCase() : "";
+}
+function getUAString() {
+  const uaData = navigator.userAgentData;
+  if (uaData != null && uaData.brands) {
+    return uaData.brands.map((item) => item.brand + "/" + item.version).join(" ");
+  }
+  return navigator.userAgent;
+}
+function isHTMLElement$1(value) {
+  return value instanceof getWindow$1(value).HTMLElement;
+}
+function isElement$1(value) {
+  return value instanceof getWindow$1(value).Element;
+}
+function isNode(value) {
+  return value instanceof getWindow$1(value).Node;
+}
+function isShadowRoot(node2) {
+  if (typeof ShadowRoot === "undefined") {
+    return false;
+  }
+  const OwnElement = getWindow$1(node2).ShadowRoot;
+  return node2 instanceof OwnElement || node2 instanceof ShadowRoot;
+}
+function isOverflowElement(element) {
+  const {
+    overflow,
+    overflowX,
+    overflowY
+  } = getComputedStyle$1(element);
+  return /auto|scroll|overlay|hidden/.test(overflow + overflowY + overflowX);
+}
+function isTableElement(element) {
+  return ["table", "td", "th"].includes(getNodeName(element));
+}
+function isContainingBlock(element) {
+  const isFirefox = /firefox/i.test(getUAString());
+  const css2 = getComputedStyle$1(element);
+  return css2.transform !== "none" || css2.perspective !== "none" || css2.contain === "paint" || ["transform", "perspective"].includes(css2.willChange) || isFirefox && css2.willChange === "filter" || isFirefox && (css2.filter ? css2.filter !== "none" : false);
+}
+function isLayoutViewport() {
+  return !/^((?!chrome|android).)*safari/i.test(getUAString());
+}
+const min = Math.min;
+const max = Math.max;
+const round = Math.round;
+function getBoundingClientRect(element, includeScale, isFixedStrategy) {
+  var _win$visualViewport$o, _win$visualViewport, _win$visualViewport$o2, _win$visualViewport2;
+  if (includeScale === void 0) {
+    includeScale = false;
+  }
+  if (isFixedStrategy === void 0) {
+    isFixedStrategy = false;
+  }
+  const clientRect = element.getBoundingClientRect();
+  let scaleX = 1;
+  let scaleY = 1;
+  if (includeScale && isHTMLElement$1(element)) {
+    scaleX = element.offsetWidth > 0 ? round(clientRect.width) / element.offsetWidth || 1 : 1;
+    scaleY = element.offsetHeight > 0 ? round(clientRect.height) / element.offsetHeight || 1 : 1;
+  }
+  const win = isElement$1(element) ? getWindow$1(element) : window;
+  const addVisualOffsets = !isLayoutViewport() && isFixedStrategy;
+  const x2 = (clientRect.left + (addVisualOffsets ? (_win$visualViewport$o = (_win$visualViewport = win.visualViewport) == null ? void 0 : _win$visualViewport.offsetLeft) != null ? _win$visualViewport$o : 0 : 0)) / scaleX;
+  const y2 = (clientRect.top + (addVisualOffsets ? (_win$visualViewport$o2 = (_win$visualViewport2 = win.visualViewport) == null ? void 0 : _win$visualViewport2.offsetTop) != null ? _win$visualViewport$o2 : 0 : 0)) / scaleY;
+  const width = clientRect.width / scaleX;
+  const height = clientRect.height / scaleY;
+  return {
+    width,
+    height,
+    top: y2,
+    right: x2 + width,
+    bottom: y2 + height,
+    left: x2,
+    x: x2,
+    y: y2
+  };
+}
+function getDocumentElement(node2) {
+  return ((isNode(node2) ? node2.ownerDocument : node2.document) || window.document).documentElement;
+}
+function getNodeScroll(element) {
+  if (isElement$1(element)) {
+    return {
+      scrollLeft: element.scrollLeft,
+      scrollTop: element.scrollTop
+    };
+  }
+  return {
+    scrollLeft: element.pageXOffset,
+    scrollTop: element.pageYOffset
+  };
+}
+function getWindowScrollBarX(element) {
+  return getBoundingClientRect(getDocumentElement(element)).left + getNodeScroll(element).scrollLeft;
+}
+function isScaled(element) {
+  const rect = getBoundingClientRect(element);
+  return round(rect.width) !== element.offsetWidth || round(rect.height) !== element.offsetHeight;
+}
+function getRectRelativeToOffsetParent(element, offsetParent, strategy) {
+  const isOffsetParentAnElement = isHTMLElement$1(offsetParent);
+  const documentElement = getDocumentElement(offsetParent);
+  const rect = getBoundingClientRect(
+    element,
+    isOffsetParentAnElement && isScaled(offsetParent),
+    strategy === "fixed"
+  );
+  let scroll = {
+    scrollLeft: 0,
+    scrollTop: 0
+  };
+  const offsets = {
+    x: 0,
+    y: 0
+  };
+  if (isOffsetParentAnElement || !isOffsetParentAnElement && strategy !== "fixed") {
+    if (getNodeName(offsetParent) !== "body" || isOverflowElement(documentElement)) {
+      scroll = getNodeScroll(offsetParent);
+    }
+    if (isHTMLElement$1(offsetParent)) {
+      const offsetRect = getBoundingClientRect(offsetParent, true);
+      offsets.x = offsetRect.x + offsetParent.clientLeft;
+      offsets.y = offsetRect.y + offsetParent.clientTop;
+    } else if (documentElement) {
+      offsets.x = getWindowScrollBarX(documentElement);
+    }
+  }
+  return {
+    x: rect.left + scroll.scrollLeft - offsets.x,
+    y: rect.top + scroll.scrollTop - offsets.y,
+    width: rect.width,
+    height: rect.height
+  };
+}
+function getParentNode(node2) {
+  if (getNodeName(node2) === "html") {
+    return node2;
+  }
+  return node2.assignedSlot || node2.parentNode || (isShadowRoot(node2) ? node2.host : null) || getDocumentElement(node2);
+}
+function getTrueOffsetParent(element) {
+  if (!isHTMLElement$1(element) || getComputedStyle(element).position === "fixed") {
+    return null;
+  }
+  return element.offsetParent;
+}
+function getContainingBlock(element) {
+  let currentNode = getParentNode(element);
+  if (isShadowRoot(currentNode)) {
+    currentNode = currentNode.host;
+  }
+  while (isHTMLElement$1(currentNode) && !["html", "body"].includes(getNodeName(currentNode))) {
+    if (isContainingBlock(currentNode)) {
+      return currentNode;
+    } else {
+      currentNode = currentNode.parentNode;
+    }
+  }
+  return null;
+}
+function getOffsetParent(element) {
+  const window2 = getWindow$1(element);
+  let offsetParent = getTrueOffsetParent(element);
+  while (offsetParent && isTableElement(offsetParent) && getComputedStyle(offsetParent).position === "static") {
+    offsetParent = getTrueOffsetParent(offsetParent);
+  }
+  if (offsetParent && (getNodeName(offsetParent) === "html" || getNodeName(offsetParent) === "body" && getComputedStyle(offsetParent).position === "static" && !isContainingBlock(offsetParent))) {
+    return window2;
+  }
+  return offsetParent || getContainingBlock(element) || window2;
+}
+function getDimensions(element) {
+  if (isHTMLElement$1(element)) {
+    return {
+      width: element.offsetWidth,
+      height: element.offsetHeight
+    };
+  }
+  const rect = getBoundingClientRect(element);
+  return {
+    width: rect.width,
+    height: rect.height
+  };
+}
+function convertOffsetParentRelativeRectToViewportRelativeRect(_ref) {
+  let {
+    rect,
+    offsetParent,
+    strategy
+  } = _ref;
+  const isOffsetParentAnElement = isHTMLElement$1(offsetParent);
+  const documentElement = getDocumentElement(offsetParent);
+  if (offsetParent === documentElement) {
+    return rect;
+  }
+  let scroll = {
+    scrollLeft: 0,
+    scrollTop: 0
+  };
+  const offsets = {
+    x: 0,
+    y: 0
+  };
+  if (isOffsetParentAnElement || !isOffsetParentAnElement && strategy !== "fixed") {
+    if (getNodeName(offsetParent) !== "body" || isOverflowElement(documentElement)) {
+      scroll = getNodeScroll(offsetParent);
+    }
+    if (isHTMLElement$1(offsetParent)) {
+      const offsetRect = getBoundingClientRect(offsetParent, true);
+      offsets.x = offsetRect.x + offsetParent.clientLeft;
+      offsets.y = offsetRect.y + offsetParent.clientTop;
+    }
+  }
+  return {
+    ...rect,
+    x: rect.x - scroll.scrollLeft + offsets.x,
+    y: rect.y - scroll.scrollTop + offsets.y
+  };
+}
+function getViewportRect(element, strategy) {
+  const win = getWindow$1(element);
+  const html = getDocumentElement(element);
+  const visualViewport = win.visualViewport;
+  let width = html.clientWidth;
+  let height = html.clientHeight;
+  let x2 = 0;
+  let y2 = 0;
+  if (visualViewport) {
+    width = visualViewport.width;
+    height = visualViewport.height;
+    const layoutViewport = isLayoutViewport();
+    if (layoutViewport || !layoutViewport && strategy === "fixed") {
+      x2 = visualViewport.offsetLeft;
+      y2 = visualViewport.offsetTop;
+    }
+  }
+  return {
+    width,
+    height,
+    x: x2,
+    y: y2
+  };
+}
+function getDocumentRect(element) {
+  var _element$ownerDocumen;
+  const html = getDocumentElement(element);
+  const scroll = getNodeScroll(element);
+  const body = (_element$ownerDocumen = element.ownerDocument) == null ? void 0 : _element$ownerDocumen.body;
+  const width = max(html.scrollWidth, html.clientWidth, body ? body.scrollWidth : 0, body ? body.clientWidth : 0);
+  const height = max(html.scrollHeight, html.clientHeight, body ? body.scrollHeight : 0, body ? body.clientHeight : 0);
+  let x2 = -scroll.scrollLeft + getWindowScrollBarX(element);
+  const y2 = -scroll.scrollTop;
+  if (getComputedStyle$1(body || html).direction === "rtl") {
+    x2 += max(html.clientWidth, body ? body.clientWidth : 0) - width;
+  }
+  return {
+    width,
+    height,
+    x: x2,
+    y: y2
+  };
+}
+function getNearestOverflowAncestor(node2) {
+  const parentNode = getParentNode(node2);
+  if (["html", "body", "#document"].includes(getNodeName(parentNode))) {
+    return node2.ownerDocument.body;
+  }
+  if (isHTMLElement$1(parentNode) && isOverflowElement(parentNode)) {
+    return parentNode;
+  }
+  return getNearestOverflowAncestor(parentNode);
+}
+function getOverflowAncestors(node2, list) {
+  var _node$ownerDocument;
+  if (list === void 0) {
+    list = [];
+  }
+  const scrollableAncestor = getNearestOverflowAncestor(node2);
+  const isBody = scrollableAncestor === ((_node$ownerDocument = node2.ownerDocument) == null ? void 0 : _node$ownerDocument.body);
+  const win = getWindow$1(scrollableAncestor);
+  const target = isBody ? [win].concat(win.visualViewport || [], isOverflowElement(scrollableAncestor) ? scrollableAncestor : []) : scrollableAncestor;
+  const updatedList = list.concat(target);
+  return isBody ? updatedList : updatedList.concat(getOverflowAncestors(target));
+}
+function contains(parent, child) {
+  const rootNode = child.getRootNode == null ? void 0 : child.getRootNode();
+  if (parent.contains(child)) {
+    return true;
+  } else if (rootNode && isShadowRoot(rootNode)) {
+    let next2 = child;
+    do {
+      if (next2 && parent === next2) {
+        return true;
+      }
+      next2 = next2.parentNode || next2.host;
+    } while (next2);
+  }
+  return false;
+}
+function getInnerBoundingClientRect(element, strategy) {
+  const clientRect = getBoundingClientRect(element, false, strategy === "fixed");
+  const top = clientRect.top + element.clientTop;
+  const left = clientRect.left + element.clientLeft;
+  return {
+    top,
+    left,
+    x: left,
+    y: top,
+    right: left + element.clientWidth,
+    bottom: top + element.clientHeight,
+    width: element.clientWidth,
+    height: element.clientHeight
+  };
+}
+function getClientRectFromClippingAncestor(element, clippingParent, strategy) {
+  if (clippingParent === "viewport") {
+    return rectToClientRect(getViewportRect(element, strategy));
+  }
+  if (isElement$1(clippingParent)) {
+    return getInnerBoundingClientRect(clippingParent, strategy);
+  }
+  return rectToClientRect(getDocumentRect(getDocumentElement(element)));
+}
+function getClippingAncestors(element) {
+  const clippingAncestors = getOverflowAncestors(element);
+  const canEscapeClipping = ["absolute", "fixed"].includes(getComputedStyle$1(element).position);
+  const clipperElement = canEscapeClipping && isHTMLElement$1(element) ? getOffsetParent(element) : element;
+  if (!isElement$1(clipperElement)) {
+    return [];
+  }
+  return clippingAncestors.filter((clippingAncestors2) => isElement$1(clippingAncestors2) && contains(clippingAncestors2, clipperElement) && getNodeName(clippingAncestors2) !== "body");
+}
+function getClippingRect(_ref) {
+  let {
+    element,
+    boundary,
+    rootBoundary,
+    strategy
+  } = _ref;
+  const mainClippingAncestors = boundary === "clippingAncestors" ? getClippingAncestors(element) : [].concat(boundary);
+  const clippingAncestors = [...mainClippingAncestors, rootBoundary];
+  const firstClippingAncestor = clippingAncestors[0];
+  const clippingRect = clippingAncestors.reduce((accRect, clippingAncestor) => {
+    const rect = getClientRectFromClippingAncestor(element, clippingAncestor, strategy);
+    accRect.top = max(rect.top, accRect.top);
+    accRect.right = min(rect.right, accRect.right);
+    accRect.bottom = min(rect.bottom, accRect.bottom);
+    accRect.left = max(rect.left, accRect.left);
+    return accRect;
+  }, getClientRectFromClippingAncestor(element, firstClippingAncestor, strategy));
+  return {
+    width: clippingRect.right - clippingRect.left,
+    height: clippingRect.bottom - clippingRect.top,
+    x: clippingRect.left,
+    y: clippingRect.top
+  };
+}
+const platform = {
+  getClippingRect,
+  convertOffsetParentRelativeRectToViewportRelativeRect,
+  isElement: isElement$1,
+  getDimensions,
+  getOffsetParent,
+  getDocumentElement,
+  getElementRects: (_ref) => {
+    let {
+      reference,
+      floating,
+      strategy
+    } = _ref;
+    return {
+      reference: getRectRelativeToOffsetParent(reference, getOffsetParent(floating), strategy),
+      floating: {
+        ...getDimensions(floating),
+        x: 0,
+        y: 0
+      }
+    };
+  },
+  getClientRects: (element) => Array.from(element.getClientRects()),
+  isRTL: (element) => getComputedStyle$1(element).direction === "rtl"
+};
+function autoUpdate(reference, floating, update, options) {
+  if (options === void 0) {
+    options = {};
+  }
+  const {
+    ancestorScroll: _ancestorScroll = true,
+    ancestorResize: _ancestorResize = true,
+    elementResize = true,
+    animationFrame = false
+  } = options;
+  const ancestorScroll = _ancestorScroll && !animationFrame;
+  const ancestorResize = _ancestorResize && !animationFrame;
+  const ancestors = ancestorScroll || ancestorResize ? [...isElement$1(reference) ? getOverflowAncestors(reference) : [], ...getOverflowAncestors(floating)] : [];
+  ancestors.forEach((ancestor) => {
+    ancestorScroll && ancestor.addEventListener("scroll", update, {
+      passive: true
+    });
+    ancestorResize && ancestor.addEventListener("resize", update);
+  });
+  let observer = null;
+  if (elementResize) {
+    let initialUpdate = true;
+    observer = new ResizeObserver(() => {
+      if (!initialUpdate) {
+        update();
+      }
+      initialUpdate = false;
+    });
+    isElement$1(reference) && !animationFrame && observer.observe(reference);
+    observer.observe(floating);
+  }
+  let frameId;
+  let prevRefRect = animationFrame ? getBoundingClientRect(reference) : null;
+  if (animationFrame) {
+    frameLoop();
+  }
+  function frameLoop() {
+    const nextRefRect = getBoundingClientRect(reference);
+    if (prevRefRect && (nextRefRect.x !== prevRefRect.x || nextRefRect.y !== prevRefRect.y || nextRefRect.width !== prevRefRect.width || nextRefRect.height !== prevRefRect.height)) {
+      update();
+    }
+    prevRefRect = nextRefRect;
+    frameId = requestAnimationFrame(frameLoop);
+  }
+  update();
+  return () => {
+    var _observer;
+    ancestors.forEach((ancestor) => {
+      ancestorScroll && ancestor.removeEventListener("scroll", update);
+      ancestorResize && ancestor.removeEventListener("resize", update);
+    });
+    (_observer = observer) == null ? void 0 : _observer.disconnect();
+    observer = null;
+    if (animationFrame) {
+      cancelAnimationFrame(frameId);
+    }
+  };
+}
+const computePosition = (reference, floating, options) => computePosition$1(reference, floating, {
+  platform,
+  ...options
+});
+var index$1 = typeof document !== "undefined" ? react.exports.useLayoutEffect : react.exports.useEffect;
+function deepEqual(a, b2) {
+  if (a === b2) {
+    return true;
+  }
+  if (typeof a !== typeof b2) {
+    return false;
+  }
+  if (typeof a === "function" && a.toString() === b2.toString()) {
+    return true;
+  }
+  let length2, i, keys;
+  if (a && b2 && typeof a == "object") {
+    if (Array.isArray(a)) {
+      length2 = a.length;
+      if (length2 != b2.length)
+        return false;
+      for (i = length2; i-- !== 0; ) {
+        if (!deepEqual(a[i], b2[i])) {
+          return false;
+        }
+      }
+      return true;
+    }
+    keys = Object.keys(a);
+    length2 = keys.length;
+    if (length2 !== Object.keys(b2).length) {
+      return false;
+    }
+    for (i = length2; i-- !== 0; ) {
+      if (!Object.prototype.hasOwnProperty.call(b2, keys[i])) {
+        return false;
+      }
+    }
+    for (i = length2; i-- !== 0; ) {
+      const key = keys[i];
+      if (key === "_owner" && a.$$typeof) {
+        continue;
+      }
+      if (!deepEqual(a[key], b2[key])) {
+        return false;
+      }
+    }
+    return true;
+  }
+  return a !== a && b2 !== b2;
+}
+function useLatestRef$1(value) {
+  const ref = react.exports.useRef(value);
+  index$1(() => {
+    ref.current = value;
+  });
+  return ref;
+}
+function useFloating$1(_temp) {
+  let {
+    middleware: middleware2,
+    placement = "bottom",
+    strategy = "absolute",
+    whileElementsMounted
+  } = _temp === void 0 ? {} : _temp;
+  const reference = react.exports.useRef(null);
+  const floating = react.exports.useRef(null);
+  const whileElementsMountedRef = useLatestRef$1(whileElementsMounted);
+  const cleanupRef = react.exports.useRef(null);
+  const [data, setData] = react.exports.useState({
+    x: null,
+    y: null,
+    strategy,
+    placement,
+    middlewareData: {}
+  });
+  const [latestMiddleware, setLatestMiddleware] = react.exports.useState(middleware2);
+  if (!deepEqual(latestMiddleware == null ? void 0 : latestMiddleware.map((_ref) => {
+    let {
+      options
+    } = _ref;
+    return options;
+  }), middleware2 == null ? void 0 : middleware2.map((_ref2) => {
+    let {
+      options
+    } = _ref2;
+    return options;
+  }))) {
+    setLatestMiddleware(middleware2);
+  }
+  const update = react.exports.useCallback(() => {
+    if (!reference.current || !floating.current) {
+      return;
+    }
+    computePosition(reference.current, floating.current, {
+      middleware: latestMiddleware,
+      placement,
+      strategy
+    }).then((data2) => {
+      if (isMountedRef.current) {
+        reactDom.exports.flushSync(() => {
+          setData(data2);
+        });
+      }
+    });
+  }, [latestMiddleware, placement, strategy]);
+  index$1(() => {
+    if (isMountedRef.current) {
+      update();
+    }
+  }, [update]);
+  const isMountedRef = react.exports.useRef(false);
+  index$1(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+  const runElementMountCallback = react.exports.useCallback(() => {
+    if (typeof cleanupRef.current === "function") {
+      cleanupRef.current();
+      cleanupRef.current = null;
+    }
+    if (reference.current && floating.current) {
+      if (whileElementsMountedRef.current) {
+        const cleanupFn = whileElementsMountedRef.current(reference.current, floating.current, update);
+        cleanupRef.current = cleanupFn;
+      } else {
+        update();
+      }
+    }
+  }, [update, whileElementsMountedRef]);
+  const setReference = react.exports.useCallback((node2) => {
+    reference.current = node2;
+    runElementMountCallback();
+  }, [runElementMountCallback]);
+  const setFloating = react.exports.useCallback((node2) => {
+    floating.current = node2;
+    runElementMountCallback();
+  }, [runElementMountCallback]);
+  const refs = react.exports.useMemo(() => ({
+    reference,
+    floating
+  }), []);
+  return react.exports.useMemo(() => ({
+    ...data,
+    update,
+    refs,
+    reference: setReference,
+    floating: setFloating
+  }), [data, update, refs, setReference, setFloating]);
+}
+var index = typeof document !== "undefined" ? react.exports.useLayoutEffect : react.exports.useEffect;
+function createPubSub() {
+  const map = /* @__PURE__ */ new Map();
+  return {
+    emit(event, data) {
+      var _map$get;
+      (_map$get = map.get(event)) == null ? void 0 : _map$get.forEach((handler) => handler(data));
+    },
+    on(event, listener) {
+      map.set(event, [...map.get(event) || [], listener]);
+    },
+    off(event, listener) {
+      map.set(event, (map.get(event) || []).filter((l2) => l2 !== listener));
+    }
+  };
+}
+let serverHandoffComplete = false;
+let count = 0;
+const genId = () => "floating-ui-" + count++;
+function useFloatingId() {
+  const [id2, setId] = react.exports.useState(() => serverHandoffComplete ? genId() : void 0);
+  index(() => {
+    if (id2 == null) {
+      setId(genId());
+    }
+  }, []);
+  react.exports.useEffect(() => {
+    if (!serverHandoffComplete) {
+      serverHandoffComplete = true;
+    }
+  }, []);
+  return id2;
+}
+const useReactId = React$1[/* @__PURE__ */ "useId".toString()];
+const useId = useReactId != null ? useReactId : useFloatingId;
+const FloatingNodeContext = /* @__PURE__ */ react.exports.createContext(null);
+const FloatingTreeContext = /* @__PURE__ */ react.exports.createContext(null);
+const useFloatingParentNodeId = () => {
+  var _React$useContext$id, _React$useContext;
+  return (_React$useContext$id = (_React$useContext = react.exports.useContext(FloatingNodeContext)) == null ? void 0 : _React$useContext.id) != null ? _React$useContext$id : null;
+};
+const useFloatingTree = () => react.exports.useContext(FloatingTreeContext);
+function getDocument(floating) {
+  var _floating$ownerDocume;
+  return (_floating$ownerDocume = floating == null ? void 0 : floating.ownerDocument) != null ? _floating$ownerDocume : document;
+}
+function getWindow(value) {
+  var _getDocument$defaultV;
+  return (_getDocument$defaultV = getDocument(value).defaultView) != null ? _getDocument$defaultV : window;
+}
+function isElement(value) {
+  return value ? value instanceof getWindow(value).Element : false;
+}
+function isHTMLElement(value) {
+  return value ? value instanceof getWindow(value).HTMLElement : false;
+}
+function useFloating(_temp) {
+  let {
+    open = false,
+    onOpenChange = () => {
+    },
+    whileElementsMounted,
+    placement,
+    middleware: middleware2,
+    strategy,
+    nodeId
+  } = _temp === void 0 ? {} : _temp;
+  const tree = useFloatingTree();
+  const domReferenceRef = react.exports.useRef(null);
+  const dataRef = react.exports.useRef({});
+  const events = react.exports.useState(() => createPubSub())[0];
+  const floating = useFloating$1({
+    placement,
+    middleware: middleware2,
+    strategy,
+    whileElementsMounted
+  });
+  const refs = react.exports.useMemo(() => ({
+    ...floating.refs,
+    domReference: domReferenceRef
+  }), [floating.refs]);
+  const context = react.exports.useMemo(() => ({
+    ...floating,
+    refs,
+    dataRef,
+    nodeId,
+    events,
+    open,
+    onOpenChange
+  }), [floating, nodeId, events, open, onOpenChange, refs]);
+  index(() => {
+    const node2 = tree == null ? void 0 : tree.nodesRef.current.find((node3) => node3.id === nodeId);
+    if (node2) {
+      node2.context = context;
+    }
+  });
+  const {
+    reference
+  } = floating;
+  const setReference = react.exports.useCallback((node2) => {
+    if (isElement(node2) || node2 === null) {
+      context.refs.domReference.current = node2;
+    }
+    reference(node2);
+  }, [reference, context.refs]);
+  return react.exports.useMemo(() => ({
+    ...floating,
+    context,
+    refs,
+    reference: setReference
+  }), [floating, refs, context, setReference]);
+}
+function mergeProps(userProps, propsList, elementKey) {
+  const map = /* @__PURE__ */ new Map();
+  return {
+    ...elementKey === "floating" && {
+      tabIndex: -1
+    },
+    ...userProps,
+    ...propsList.map((value) => value ? value[elementKey] : null).concat(userProps).reduce((acc, props) => {
+      if (!props) {
+        return acc;
+      }
+      Object.entries(props).forEach((_ref) => {
+        let [key, value] = _ref;
+        if (key.indexOf("on") === 0) {
+          if (!map.has(key)) {
+            map.set(key, []);
+          }
+          if (typeof value === "function") {
+            var _map$get;
+            (_map$get = map.get(key)) == null ? void 0 : _map$get.push(value);
+          }
+          acc[key] = function() {
+            var _map$get2;
+            for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+              args[_key] = arguments[_key];
+            }
+            (_map$get2 = map.get(key)) == null ? void 0 : _map$get2.forEach((fn) => fn(...args));
+          };
+        } else {
+          acc[key] = value;
+        }
+      });
+      return acc;
+    }, {})
+  };
+}
+const useInteractions = function(propsList) {
+  if (propsList === void 0) {
+    propsList = [];
+  }
+  return {
+    getReferenceProps: (userProps) => mergeProps(userProps, propsList, "reference"),
+    getFloatingProps: (userProps) => mergeProps(userProps, propsList, "floating"),
+    getItemProps: (userProps) => mergeProps(userProps, propsList, "item")
+  };
+};
+function getChildren(nodes, id2) {
+  var _nodes$filter;
+  let allChildren = (_nodes$filter = nodes.filter((node2) => {
+    var _node$context;
+    return node2.parentId === id2 && ((_node$context = node2.context) == null ? void 0 : _node$context.open);
+  })) != null ? _nodes$filter : [];
+  let currentChildren = allChildren;
+  while (currentChildren.length) {
+    var _nodes$filter2;
+    currentChildren = (_nodes$filter2 = nodes.filter((node2) => {
+      var _currentChildren;
+      return (_currentChildren = currentChildren) == null ? void 0 : _currentChildren.some((n2) => {
+        var _node$context2;
+        return node2.parentId === n2.id && ((_node$context2 = node2.context) == null ? void 0 : _node$context2.open);
+      });
+    })) != null ? _nodes$filter2 : [];
+    allChildren = allChildren.concat(currentChildren);
+  }
+  return allChildren;
+}
+function activeElement(doc) {
+  let activeElement2 = doc.activeElement;
+  while (((_activeElement = activeElement2) == null ? void 0 : (_activeElement$shadow = _activeElement.shadowRoot) == null ? void 0 : _activeElement$shadow.activeElement) != null) {
+    var _activeElement, _activeElement$shadow;
+    activeElement2 = activeElement2.shadowRoot.activeElement;
+  }
+  return activeElement2;
+}
+function useLatestRef(value) {
+  const ref = react.exports.useRef(value);
+  index(() => {
+    ref.current = value;
+  });
+  return ref;
+}
+function usePrevious(value) {
+  const ref = react.exports.useRef();
+  index(() => {
+    ref.current = value;
+  }, [value]);
+  return ref.current;
+}
+function getDelay(value, prop, pointerType) {
+  if (pointerType && pointerType !== "mouse") {
+    return 0;
+  }
+  if (typeof value === "number") {
+    return value;
+  }
+  return value == null ? void 0 : value[prop];
+}
+const useHover = function(context, _temp) {
+  let {
+    enabled = true,
+    delay: delay2 = 0,
+    handleClose = null,
+    mouseOnly = false,
+    restMs = 0
+  } = _temp === void 0 ? {} : _temp;
+  const {
+    open,
+    onOpenChange,
+    dataRef,
+    events,
+    refs
+  } = context;
+  const tree = useFloatingTree();
+  const parentId = useFloatingParentNodeId();
+  const onOpenChangeRef = useLatestRef(onOpenChange);
+  const handleCloseRef = useLatestRef(handleClose);
+  const previousOpen = usePrevious(open);
+  const pointerTypeRef = react.exports.useRef();
+  const timeoutRef = react.exports.useRef();
+  const handlerRef = react.exports.useRef();
+  const restTimeoutRef = react.exports.useRef();
+  const blockMouseMoveRef = react.exports.useRef(true);
+  const performedPointerEventsMutationRef = react.exports.useRef(false);
+  react.exports.useEffect(() => {
+    if (!enabled) {
+      return;
+    }
+    function onDismiss() {
+      clearTimeout(timeoutRef.current);
+      clearTimeout(restTimeoutRef.current);
+      blockMouseMoveRef.current = true;
+    }
+    events.on("dismiss", onDismiss);
+    return () => {
+      events.off("dismiss", onDismiss);
+    };
+  }, [enabled, events, refs]);
+  react.exports.useEffect(() => {
+    if (!enabled || !handleCloseRef.current) {
+      return;
+    }
+    function onLeave() {
+      var _dataRef$current$open;
+      if ((_dataRef$current$open = dataRef.current.openEvent) != null && _dataRef$current$open.type.includes("mouse")) {
+        onOpenChangeRef.current(false);
+      }
+    }
+    const html = getDocument(refs.floating.current).documentElement;
+    html.addEventListener("mouseleave", onLeave);
+    return () => {
+      html.removeEventListener("mouseleave", onLeave);
+    };
+  }, [refs, onOpenChangeRef, enabled, handleCloseRef, dataRef]);
+  const closeWithDelay = react.exports.useCallback(function(runElseBranch) {
+    if (runElseBranch === void 0) {
+      runElseBranch = true;
+    }
+    const closeDelay = getDelay(delay2, "close", pointerTypeRef.current);
+    if (closeDelay && !handlerRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(() => onOpenChangeRef.current(false), closeDelay);
+    } else if (runElseBranch) {
+      clearTimeout(timeoutRef.current);
+      onOpenChangeRef.current(false);
+    }
+  }, [delay2, onOpenChangeRef]);
+  const cleanupPointerMoveHandler = react.exports.useCallback(() => {
+    if (handlerRef.current) {
+      getDocument(refs.floating.current).removeEventListener("pointermove", handlerRef.current);
+      handlerRef.current = void 0;
+    }
+  }, [refs]);
+  const clearPointerEvents = react.exports.useCallback(() => {
+    getDocument(refs.floating.current).body.style.pointerEvents = "";
+    performedPointerEventsMutationRef.current = false;
+  }, [refs]);
+  react.exports.useEffect(() => {
+    if (!enabled) {
+      return;
+    }
+    function onMouseEnter(event) {
+      clearTimeout(timeoutRef.current);
+      blockMouseMoveRef.current = false;
+      if (open || mouseOnly && pointerTypeRef.current !== "mouse" || restMs > 0 && getDelay(delay2, "open") === 0) {
+        return;
+      }
+      dataRef.current.openEvent = event;
+      const openDelay = getDelay(delay2, "open", pointerTypeRef.current);
+      if (openDelay) {
+        timeoutRef.current = setTimeout(() => {
+          onOpenChangeRef.current(true);
+        }, openDelay);
+      } else {
+        onOpenChangeRef.current(true);
+      }
+    }
+    function onMouseLeave(event) {
+      var _dataRef$current$open2, _dataRef$current$open3;
+      if (((_dataRef$current$open2 = dataRef.current.openEvent) == null ? void 0 : _dataRef$current$open2.type) === "click" || ((_dataRef$current$open3 = dataRef.current.openEvent) == null ? void 0 : _dataRef$current$open3.type) === "pointerdown") {
+        return;
+      }
+      const doc = getDocument(refs.floating.current);
+      clearTimeout(restTimeoutRef.current);
+      if (handleCloseRef.current) {
+        clearTimeout(timeoutRef.current);
+        handlerRef.current && doc.removeEventListener("pointermove", handlerRef.current);
+        handlerRef.current = handleCloseRef.current({
+          ...context,
+          tree,
+          x: event.clientX,
+          y: event.clientY,
+          onClose() {
+            cleanupPointerMoveHandler();
+            closeWithDelay();
+          }
+        });
+        doc.addEventListener("pointermove", handlerRef.current);
+        return;
+      }
+      closeWithDelay();
+    }
+    function onScrollMouseLeave(event) {
+      handleCloseRef.current == null ? void 0 : handleCloseRef.current({
+        ...context,
+        tree,
+        x: event.clientX,
+        y: event.clientY,
+        leave: true,
+        onClose() {
+          cleanupPointerMoveHandler();
+          closeWithDelay();
+        }
+      })(event);
+    }
+    const floating = refs.floating.current;
+    const reference = refs.domReference.current;
+    if (isElement(reference)) {
+      open && reference.addEventListener("mouseleave", onScrollMouseLeave);
+      floating == null ? void 0 : floating.addEventListener("mouseleave", onScrollMouseLeave);
+      reference.addEventListener("mousemove", onMouseEnter, {
+        once: true
+      });
+      reference.addEventListener("mouseenter", onMouseEnter);
+      reference.addEventListener("mouseleave", onMouseLeave);
+      return () => {
+        open && reference.removeEventListener("mouseleave", onScrollMouseLeave);
+        floating == null ? void 0 : floating.removeEventListener("mouseleave", onScrollMouseLeave);
+        reference.removeEventListener("mousemove", onMouseEnter);
+        reference.removeEventListener("mouseenter", onMouseEnter);
+        reference.removeEventListener("mouseleave", onMouseLeave);
+      };
+    }
+  }, [enabled, closeWithDelay, context, delay2, handleCloseRef, dataRef, mouseOnly, onOpenChangeRef, open, tree, restMs, cleanupPointerMoveHandler, refs]);
+  index(() => {
+    if (!enabled) {
+      return;
+    }
+    if (open && handleCloseRef.current) {
+      getDocument(refs.floating.current).body.style.pointerEvents = "none";
+      performedPointerEventsMutationRef.current = true;
+      const reference = refs.domReference.current;
+      const floating = refs.floating.current;
+      if (isHTMLElement(reference) && floating) {
+        var _tree$nodesRef$curren, _tree$nodesRef$curren2;
+        const parentFloating = tree == null ? void 0 : (_tree$nodesRef$curren = tree.nodesRef.current.find((node2) => node2.id === parentId)) == null ? void 0 : (_tree$nodesRef$curren2 = _tree$nodesRef$curren.context) == null ? void 0 : _tree$nodesRef$curren2.refs.floating.current;
+        if (parentFloating) {
+          parentFloating.style.pointerEvents = "";
+        }
+        reference.style.pointerEvents = "auto";
+        floating.style.pointerEvents = "auto";
+        return () => {
+          reference.style.pointerEvents = "";
+          floating.style.pointerEvents = "";
+        };
+      }
+    }
+  }, [enabled, open, parentId, refs, tree, handleCloseRef, dataRef]);
+  index(() => {
+    if (previousOpen && !open) {
+      pointerTypeRef.current = void 0;
+      cleanupPointerMoveHandler();
+      clearPointerEvents();
+    }
+  });
+  react.exports.useEffect(() => {
+    return () => {
+      cleanupPointerMoveHandler();
+      clearTimeout(timeoutRef.current);
+      clearTimeout(restTimeoutRef.current);
+      if (performedPointerEventsMutationRef.current) {
+        clearPointerEvents();
+      }
+    };
+  }, [cleanupPointerMoveHandler, clearPointerEvents]);
+  if (!enabled) {
+    return {};
+  }
+  function setPointerRef(event) {
+    pointerTypeRef.current = event.pointerType;
+  }
+  return {
+    reference: {
+      onPointerDown: setPointerRef,
+      onPointerEnter: setPointerRef,
+      onMouseMove() {
+        if (open || restMs === 0) {
+          return;
+        }
+        clearTimeout(restTimeoutRef.current);
+        restTimeoutRef.current = setTimeout(() => {
+          if (!blockMouseMoveRef.current) {
+            onOpenChange(true);
+          }
+        }, restMs);
+      }
+    },
+    floating: {
+      onMouseEnter() {
+        clearTimeout(timeoutRef.current);
+      },
+      onMouseLeave() {
+        closeWithDelay(false);
+      }
+    }
+  };
+};
+const FloatingDelayGroupContext = /* @__PURE__ */ react.exports.createContext({
+  delay: 1e3,
+  initialDelay: 1e3,
+  currentId: null,
+  setCurrentId: () => {
+  },
+  setState: () => {
+  }
+});
+const useDelayGroupContext = () => react.exports.useContext(FloatingDelayGroupContext);
+const FloatingDelayGroup = (_ref) => {
+  let {
+    children,
+    delay: delay2
+  } = _ref;
+  const [state, setState] = react.exports.useState({
+    delay: delay2,
+    initialDelay: delay2,
+    currentId: null
+  });
+  const setCurrentId = react.exports.useCallback((currentId) => {
+    setState((state2) => ({
+      ...state2,
+      currentId
+    }));
+  }, []);
+  return /* @__PURE__ */ jsx(FloatingDelayGroupContext.Provider, {
+    value: react.exports.useMemo(() => ({
+      ...state,
+      setState,
+      setCurrentId
+    }), [state, setState, setCurrentId]),
+    children
+  });
+};
+const useDelayGroup = (_ref2, _ref3) => {
+  let {
+    open,
+    onOpenChange
+  } = _ref2;
+  let {
+    id: id2
+  } = _ref3;
+  const {
+    currentId,
+    initialDelay,
+    setState
+  } = useDelayGroupContext();
+  const onOpenChangeRef = useLatestRef(onOpenChange);
+  react.exports.useEffect(() => {
+    if (currentId && onOpenChangeRef.current) {
+      setState((state) => ({
+        ...state,
+        delay: {
+          open: 1,
+          close: getDelay(initialDelay, "close")
+        }
+      }));
+      if (currentId !== id2) {
+        onOpenChangeRef.current(false);
+      }
+    }
+  }, [id2, onOpenChangeRef, setState, currentId, initialDelay]);
+  react.exports.useEffect(() => {
+    if (!open && currentId === id2 && onOpenChangeRef.current) {
+      onOpenChangeRef.current(false);
+      setState((state) => ({
+        ...state,
+        delay: initialDelay,
+        currentId: null
+      }));
+    }
+  }, [open, setState, currentId, id2, onOpenChangeRef, initialDelay]);
+};
+const useRole = function(_ref, _temp) {
+  let {
+    open
+  } = _ref;
+  let {
+    enabled = true,
+    role = "dialog"
+  } = _temp === void 0 ? {} : _temp;
+  const rootId = useId();
+  const referenceId = useId();
+  const floatingProps = {
+    id: rootId,
+    role
+  };
+  if (!enabled) {
+    return {};
+  }
+  if (role === "tooltip") {
+    return {
+      reference: {
+        "aria-describedby": open ? rootId : void 0
+      },
+      floating: floatingProps
+    };
+  }
+  return {
+    reference: {
+      "aria-expanded": open ? "true" : "false",
+      "aria-haspopup": role,
+      "aria-controls": open ? rootId : void 0,
+      ...role === "listbox" && {
+        role: "combobox"
+      },
+      ...role === "menu" && {
+        id: referenceId
+      }
+    },
+    floating: {
+      ...floatingProps,
+      ...role === "menu" && {
+        "aria-labelledby": referenceId
+      }
+    }
+  };
+};
+function isEventTargetWithin(event, node2) {
+  if (node2 == null) {
+    return false;
+  }
+  if ("composedPath" in event) {
+    return event.composedPath().includes(node2);
+  }
+  const e2 = event;
+  return e2.target != null && node2.contains(e2.target);
+}
+const useDismiss = function(_ref, _temp) {
+  let {
+    open,
+    onOpenChange,
+    refs,
+    events,
+    nodeId
+  } = _ref;
+  let {
+    enabled = true,
+    escapeKey = true,
+    outsidePointerDown = true,
+    referencePointerDown = false,
+    ancestorScroll = false,
+    bubbles = true
+  } = _temp === void 0 ? {} : _temp;
+  const tree = useFloatingTree();
+  const onOpenChangeRef = useLatestRef(onOpenChange);
+  const isFocusInsideFloating = react.exports.useCallback(() => {
+    var _refs$floating$curren;
+    return (_refs$floating$curren = refs.floating.current) == null ? void 0 : _refs$floating$curren.contains(activeElement(getDocument(refs.floating.current)));
+  }, [refs]);
+  react.exports.useEffect(() => {
+    if (!open || !enabled) {
+      return;
+    }
+    function onKeyDown(event) {
+      if (event.key === "Escape") {
+        if (!bubbles && !isFocusInsideFloating()) {
+          return;
+        }
+        events.emit("dismiss");
+        onOpenChangeRef.current(false);
+        if (isHTMLElement(refs.domReference.current)) {
+          refs.domReference.current.focus();
+        }
+      }
+    }
+    function onPointerDown(event) {
+      const targetIsInsideChildren = tree && getChildren(tree.nodesRef.current, nodeId).some((node2) => {
+        var _node$context;
+        return isEventTargetWithin(event, (_node$context = node2.context) == null ? void 0 : _node$context.refs.floating.current);
+      });
+      if (isEventTargetWithin(event, refs.floating.current) || isEventTargetWithin(event, refs.domReference.current) || targetIsInsideChildren) {
+        return;
+      }
+      if (!bubbles && !isFocusInsideFloating()) {
+        return;
+      }
+      events.emit("dismiss");
+      onOpenChangeRef.current(false);
+    }
+    function onScroll() {
+      onOpenChangeRef.current(false);
+    }
+    const doc = getDocument(refs.floating.current);
+    escapeKey && doc.addEventListener("keydown", onKeyDown);
+    outsidePointerDown && doc.addEventListener("mousedown", onPointerDown);
+    const ancestors = (ancestorScroll ? [...isElement(refs.reference.current) ? getOverflowAncestors(refs.reference.current) : [], ...isElement(refs.floating.current) ? getOverflowAncestors(refs.floating.current) : []] : []).filter((ancestor) => {
+      var _doc$defaultView;
+      return ancestor !== ((_doc$defaultView = doc.defaultView) == null ? void 0 : _doc$defaultView.visualViewport);
+    });
+    ancestors.forEach((ancestor) => ancestor.addEventListener("scroll", onScroll, {
+      passive: true
+    }));
+    return () => {
+      escapeKey && doc.removeEventListener("keydown", onKeyDown);
+      outsidePointerDown && doc.removeEventListener("mousedown", onPointerDown);
+      ancestors.forEach((ancestor) => ancestor.removeEventListener("scroll", onScroll));
+    };
+  }, [escapeKey, outsidePointerDown, events, tree, nodeId, open, onOpenChangeRef, ancestorScroll, enabled, bubbles, isFocusInsideFloating, refs]);
+  if (!enabled) {
+    return {};
+  }
+  return {
+    reference: {
+      onPointerDown() {
+        if (referencePointerDown) {
+          events.emit("dismiss");
+          onOpenChange(false);
+        }
+      }
+    }
+  };
+};
+const useFocus = function(_ref, _temp) {
+  let {
+    open,
+    onOpenChange,
+    dataRef,
+    refs,
+    events
+  } = _ref;
+  let {
+    enabled = true,
+    keyboardOnly = true
+  } = _temp === void 0 ? {} : _temp;
+  const pointerTypeRef = react.exports.useRef("");
+  const blockFocusRef = react.exports.useRef(false);
+  react.exports.useEffect(() => {
+    var _doc$defaultView;
+    if (!enabled) {
+      return;
+    }
+    const doc = getDocument(refs.floating.current);
+    const win = (_doc$defaultView = doc.defaultView) != null ? _doc$defaultView : window;
+    function onBlur() {
+      if (pointerTypeRef.current && refs.domReference.current === activeElement(doc)) {
+        blockFocusRef.current = !open;
+      }
+    }
+    function onFocus() {
+      setTimeout(() => {
+        blockFocusRef.current = false;
+        pointerTypeRef.current = "";
+      });
+    }
+    win.addEventListener("focus", onFocus);
+    win.addEventListener("blur", onBlur);
+    return () => {
+      win.removeEventListener("focus", onFocus);
+      win.removeEventListener("blur", onBlur);
+    };
+  }, [refs, open, enabled]);
+  react.exports.useEffect(() => {
+    if (!enabled) {
+      return;
+    }
+    function onDismiss() {
+      blockFocusRef.current = true;
+    }
+    events.on("dismiss", onDismiss);
+    return () => {
+      events.off("dismiss", onDismiss);
+    };
+  }, [events, enabled]);
+  if (!enabled) {
+    return {};
+  }
+  return {
+    reference: {
+      onPointerDown(_ref2) {
+        let {
+          pointerType
+        } = _ref2;
+        pointerTypeRef.current = pointerType;
+        blockFocusRef.current = !!(pointerType && keyboardOnly);
+      },
+      onFocus(event) {
+        var _dataRef$current$open, _refs$domReference$cu, _dataRef$current$open2;
+        if (blockFocusRef.current) {
+          return;
+        }
+        if (event.type === "focus" && ((_dataRef$current$open = dataRef.current.openEvent) == null ? void 0 : _dataRef$current$open.type) === "mousedown" && (_refs$domReference$cu = refs.domReference.current) != null && _refs$domReference$cu.contains((_dataRef$current$open2 = dataRef.current.openEvent) == null ? void 0 : _dataRef$current$open2.target)) {
+          return;
+        }
+        dataRef.current.openEvent = event.nativeEvent;
+        onOpenChange(true);
+      },
+      onBlur(event) {
+        var _refs$floating$curren, _refs$domReference$cu2;
+        const target = event.relatedTarget;
+        if ((_refs$floating$curren = refs.floating.current) != null && _refs$floating$curren.contains(target) || (_refs$domReference$cu2 = refs.domReference.current) != null && _refs$domReference$cu2.contains(target)) {
+          return;
+        }
+        blockFocusRef.current = false;
+        onOpenChange(false);
+      }
+    }
+  };
+};
+function useFloatingAutoUpdate({ opened, floating, positionDependencies }) {
+  const [delayedUpdate, setDelayedUpdate] = react.exports.useState(0);
+  react.exports.useEffect(() => {
+    if (floating.refs.reference.current && floating.refs.floating.current) {
+      return autoUpdate(floating.refs.reference.current, floating.refs.floating.current, floating.update);
+    }
+    return void 0;
+  }, [floating.refs.reference, floating.refs.floating, opened, delayedUpdate]);
+  useDidUpdate(() => {
+    floating.update();
+  }, positionDependencies);
+  useDidUpdate(() => {
+    setDelayedUpdate((c2) => c2 + 1);
+  }, [opened]);
+}
+var __defProp$z = Object.defineProperty;
+var __getOwnPropSymbols$z = Object.getOwnPropertySymbols;
+var __hasOwnProp$z = Object.prototype.hasOwnProperty;
+var __propIsEnum$z = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$z = (obj, key, value) => key in obj ? __defProp$z(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$z = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$u.call(b2, prop))
-      __defNormalProp$u(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$u)
-    for (var prop of __getOwnPropSymbols$u(b2)) {
-      if (__propIsEnum$u.call(b2, prop))
-        __defNormalProp$u(a, prop, b2[prop]);
+    if (__hasOwnProp$z.call(b2, prop))
+      __defNormalProp$z(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$z)
+    for (var prop of __getOwnPropSymbols$z(b2)) {
+      if (__propIsEnum$z.call(b2, prop))
+        __defNormalProp$z(a, prop, b2[prop]);
     }
   return a;
 };
@@ -12251,11 +14357,11 @@ function getTransitionStyles({
     if (!(transition in transitions)) {
       return null;
     }
-    return __spreadValues$u(__spreadValues$u(__spreadValues$u({
+    return __spreadValues$z(__spreadValues$z(__spreadValues$z({
       transitionProperty: transitions[transition].transitionProperty
     }, shared), transitions[transition].common), transitions[transition][transitionStatuses[state]]);
   }
-  return __spreadValues$u(__spreadValues$u(__spreadValues$u({
+  return __spreadValues$z(__spreadValues$z(__spreadValues$z({
     transitionProperty: transition.transitionProperty
   }, shared), transition.common), transition[transitionStatuses[state]]);
 }
@@ -12348,33 +14454,190 @@ function Transition({
   });
 }
 Transition.displayName = "@mantine/core/Transition";
-var __defProp$t = Object.defineProperty;
-var __defProps$e = Object.defineProperties;
-var __getOwnPropDescs$e = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$t = Object.getOwnPropertySymbols;
-var __hasOwnProp$t = Object.prototype.hasOwnProperty;
-var __propIsEnum$t = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$t = (obj, key, value) => key in obj ? __defProp$t(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$t = (a, b2) => {
+var __defProp$y = Object.defineProperty;
+var __defProps$j = Object.defineProperties;
+var __getOwnPropDescs$j = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$y = Object.getOwnPropertySymbols;
+var __hasOwnProp$y = Object.prototype.hasOwnProperty;
+var __propIsEnum$y = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$y = (obj, key, value) => key in obj ? __defProp$y(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$y = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$t.call(b2, prop))
-      __defNormalProp$t(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$t)
-    for (var prop of __getOwnPropSymbols$t(b2)) {
-      if (__propIsEnum$t.call(b2, prop))
-        __defNormalProp$t(a, prop, b2[prop]);
+    if (__hasOwnProp$y.call(b2, prop))
+      __defNormalProp$y(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$y)
+    for (var prop of __getOwnPropSymbols$y(b2)) {
+      if (__propIsEnum$y.call(b2, prop))
+        __defNormalProp$y(a, prop, b2[prop]);
     }
   return a;
 };
-var __spreadProps$e = (a, b2) => __defProps$e(a, __getOwnPropDescs$e(b2));
-var __objRest$l = (source, exclude) => {
+var __spreadProps$j = (a, b2) => __defProps$j(a, __getOwnPropDescs$j(b2));
+function horizontalSide(placement, arrowSize, arrowOffset) {
+  if (placement === "center") {
+    return { top: `calc(50% - ${arrowSize / 2}px)` };
+  }
+  if (placement === "end") {
+    return { bottom: arrowOffset };
+  }
+  if (placement === "start") {
+    return { top: arrowOffset };
+  }
+  return {};
+}
+function verticalSide(placement, arrowSize, arrowOffset, dir) {
+  if (placement === "center") {
+    return { left: `calc(50% - ${arrowSize / 2}px)` };
+  }
+  if (placement === "end") {
+    return { [dir === "ltr" ? "right" : "left"]: arrowOffset };
+  }
+  if (placement === "start") {
+    return { [dir === "ltr" ? "left" : "right"]: arrowOffset };
+  }
+  return {};
+}
+function getArrowPositionStyles({
+  position: position2,
+  withBorder,
+  arrowSize,
+  arrowOffset,
+  dir
+}) {
+  const [side, placement = "center"] = position2.split("-");
+  const baseStyles = {
+    width: arrowSize,
+    height: arrowSize,
+    transform: "rotate(45deg)",
+    position: "absolute"
+  };
+  const arrowPosition = withBorder ? -arrowSize / 2 - 1 : -arrowSize / 2;
+  if (side === "left") {
+    return __spreadProps$j(__spreadValues$y(__spreadValues$y({}, baseStyles), horizontalSide(placement, arrowSize, arrowOffset)), {
+      right: arrowPosition,
+      borderLeft: 0,
+      borderBottom: 0
+    });
+  }
+  if (side === "right") {
+    return __spreadProps$j(__spreadValues$y(__spreadValues$y({}, baseStyles), horizontalSide(placement, arrowSize, arrowOffset)), {
+      left: arrowPosition,
+      borderRight: 0,
+      borderTop: 0
+    });
+  }
+  if (side === "top") {
+    return __spreadProps$j(__spreadValues$y(__spreadValues$y({}, baseStyles), verticalSide(placement, arrowSize, arrowOffset, dir)), {
+      bottom: arrowPosition,
+      borderTop: 0,
+      [dir === "ltr" ? "borderLeft" : "borderRight"]: 0
+    });
+  }
+  if (side === "bottom") {
+    return __spreadProps$j(__spreadValues$y(__spreadValues$y({}, baseStyles), verticalSide(placement, arrowSize, arrowOffset, dir)), {
+      top: arrowPosition,
+      borderBottom: 0,
+      [dir === "ltr" ? "borderRight" : "borderLeft"]: 0
+    });
+  }
+  return {};
+}
+var __defProp$x = Object.defineProperty;
+var __defProps$i = Object.defineProperties;
+var __getOwnPropDescs$i = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$x = Object.getOwnPropertySymbols;
+var __hasOwnProp$x = Object.prototype.hasOwnProperty;
+var __propIsEnum$x = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$x = (obj, key, value) => key in obj ? __defProp$x(obj, key, {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  value
+}) : obj[key] = value;
+var __spreadValues$x = (a, b2) => {
+  for (var prop in b2 || (b2 = {}))
+    if (__hasOwnProp$x.call(b2, prop))
+      __defNormalProp$x(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$x)
+    for (var prop of __getOwnPropSymbols$x(b2)) {
+      if (__propIsEnum$x.call(b2, prop))
+        __defNormalProp$x(a, prop, b2[prop]);
+    }
+  return a;
+};
+var __spreadProps$i = (a, b2) => __defProps$i(a, __getOwnPropDescs$i(b2));
+var __objRest$o = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$t.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$x.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$t)
-    for (var prop of __getOwnPropSymbols$t(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$t.call(source, prop))
+  if (source != null && __getOwnPropSymbols$x)
+    for (var prop of __getOwnPropSymbols$x(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$x.call(source, prop))
+        target[prop] = source[prop];
+    }
+  return target;
+};
+function FloatingArrow(_a) {
+  var _b = _a, {
+    withBorder,
+    position: position2,
+    arrowSize,
+    arrowOffset,
+    visible
+  } = _b, others = __objRest$o(_b, ["withBorder", "position", "arrowSize", "arrowOffset", "visible"]);
+  const theme = useMantineTheme();
+  if (!visible) {
+    return null;
+  }
+  return /* @__PURE__ */ jsx("div", {
+    ...__spreadProps$i(__spreadValues$x({}, others), {
+      style: getArrowPositionStyles({
+        withBorder,
+        position: position2,
+        arrowSize,
+        arrowOffset,
+        dir: theme.dir
+      })
+    })
+  });
+}
+FloatingArrow.displayName = "@mantine/core/FloatingArrow";
+function getFloatingPosition(dir, position2) {
+  if (dir === "rtl" && (position2.includes("right") || position2.includes("left"))) {
+    const [side, placement] = position2.split("-");
+    const flippedPosition = side === "right" ? "left" : "right";
+    return placement === void 0 ? flippedPosition : `${flippedPosition}-${placement}`;
+  }
+  return position2;
+}
+var __defProp$w = Object.defineProperty;
+var __defProps$h = Object.defineProperties;
+var __getOwnPropDescs$h = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$w = Object.getOwnPropertySymbols;
+var __hasOwnProp$w = Object.prototype.hasOwnProperty;
+var __propIsEnum$w = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$w = (obj, key, value) => key in obj ? __defProp$w(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$w = (a, b2) => {
+  for (var prop in b2 || (b2 = {}))
+    if (__hasOwnProp$w.call(b2, prop))
+      __defNormalProp$w(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$w)
+    for (var prop of __getOwnPropSymbols$w(b2)) {
+      if (__propIsEnum$w.call(b2, prop))
+        __defNormalProp$w(a, prop, b2[prop]);
+    }
+  return a;
+};
+var __spreadProps$h = (a, b2) => __defProps$h(a, __getOwnPropDescs$h(b2));
+var __objRest$n = (source, exclude) => {
+  var target = {};
+  for (var prop in source)
+    if (__hasOwnProp$w.call(source, prop) && exclude.indexOf(prop) < 0)
+      target[prop] = source[prop];
+  if (source != null && __getOwnPropSymbols$w)
+    for (var prop of __getOwnPropSymbols$w(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$w.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -12399,8 +14662,9 @@ function useInputProps(component, defaultProps2, props) {
     size: size2,
     style,
     inputContainer,
-    inputWrapperOrder
-  } = _a, others = __objRest$l(_a, [
+    inputWrapperOrder,
+    withAsterisk
+  } = _a, others = __objRest$n(_a, [
     "label",
     "description",
     "error",
@@ -12419,15 +14683,16 @@ function useInputProps(component, defaultProps2, props) {
     "size",
     "style",
     "inputContainer",
-    "inputWrapperOrder"
+    "inputWrapperOrder",
+    "withAsterisk"
   ]);
-  const uid = useId(id2);
+  const uid = useId$1(id2);
   const { systemStyles, rest } = extractSystemStyles(others);
-  return __spreadProps$e(__spreadValues$t({}, rest), {
+  return __spreadProps$h(__spreadValues$w({}, rest), {
     classNames,
     styles: styles2,
     unstyled,
-    wrapperProps: __spreadValues$t(__spreadValues$t({
+    wrapperProps: __spreadValues$w(__spreadValues$w({
       label,
       description,
       error,
@@ -12445,7 +14710,8 @@ function useInputProps(component, defaultProps2, props) {
       size: size2,
       style,
       inputContainer,
-      inputWrapperOrder
+      inputWrapperOrder,
+      withAsterisk
     }, wrapperProps), systemStyles),
     inputProps: {
       required,
@@ -12459,7 +14725,7 @@ function useInputProps(component, defaultProps2, props) {
     }
   });
 }
-var useStyles$v = createStyles((theme, { size: size2 }) => ({
+var useStyles$x = createStyles((theme, { size: size2 }) => ({
   label: {
     display: "inline-block",
     fontSize: theme.fn.size({ size: size2, sizes: theme.fontSizes }),
@@ -12473,36 +14739,36 @@ var useStyles$v = createStyles((theme, { size: size2 }) => ({
     color: theme.fn.variant({ variant: "filled", color: "red" }).background
   }
 }));
-const useStyles$w = useStyles$v;
-var __defProp$s = Object.defineProperty;
-var __getOwnPropSymbols$s = Object.getOwnPropertySymbols;
-var __hasOwnProp$s = Object.prototype.hasOwnProperty;
-var __propIsEnum$s = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$s = (obj, key, value) => key in obj ? __defProp$s(obj, key, {
+const useStyles$y = useStyles$x;
+var __defProp$v = Object.defineProperty;
+var __getOwnPropSymbols$v = Object.getOwnPropertySymbols;
+var __hasOwnProp$v = Object.prototype.hasOwnProperty;
+var __propIsEnum$v = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$v = (obj, key, value) => key in obj ? __defProp$v(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$s = (a, b2) => {
+var __spreadValues$v = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$s.call(b2, prop))
-      __defNormalProp$s(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$s)
-    for (var prop of __getOwnPropSymbols$s(b2)) {
-      if (__propIsEnum$s.call(b2, prop))
-        __defNormalProp$s(a, prop, b2[prop]);
+    if (__hasOwnProp$v.call(b2, prop))
+      __defNormalProp$v(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$v)
+    for (var prop of __getOwnPropSymbols$v(b2)) {
+      if (__propIsEnum$v.call(b2, prop))
+        __defNormalProp$v(a, prop, b2[prop]);
     }
   return a;
 };
-var __objRest$k = (source, exclude) => {
+var __objRest$m = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$s.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$v.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$s)
-    for (var prop of __getOwnPropSymbols$s(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$s.call(source, prop))
+  if (source != null && __getOwnPropSymbols$v)
+    for (var prop of __getOwnPropSymbols$v(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$v.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -12519,11 +14785,11 @@ const InputLabel = react.exports.forwardRef((_a, ref) => {
     className,
     htmlFor,
     __staticSelector
-  } = _b, others = __objRest$k(_b, ["labelElement", "children", "required", "size", "classNames", "styles", "unstyled", "className", "htmlFor", "__staticSelector"]);
+  } = _b, others = __objRest$m(_b, ["labelElement", "children", "required", "size", "classNames", "styles", "unstyled", "className", "htmlFor", "__staticSelector"]);
   const {
     classes,
     cx
-  } = useStyles$w({
+  } = useStyles$y({
     size: size2
   }, {
     name: ["InputWrapper", __staticSelector],
@@ -12532,7 +14798,7 @@ const InputLabel = react.exports.forwardRef((_a, ref) => {
     unstyled
   });
   return /* @__PURE__ */ jsxs(Box, {
-    ...__spreadValues$s({
+    ...__spreadValues$v({
       component: labelElement,
       ref,
       className: cx(classes.label, className),
@@ -12546,7 +14812,7 @@ const InputLabel = react.exports.forwardRef((_a, ref) => {
   });
 });
 InputLabel.displayName = "@mantine/core/InputLabel";
-var useStyles$t = createStyles((theme, { size: size2 }) => ({
+var useStyles$v = createStyles((theme, { size: size2 }) => ({
   error: {
     wordBreak: "break-word",
     color: theme.fn.variant({ variant: "filled", color: "red" }).background,
@@ -12555,8 +14821,188 @@ var useStyles$t = createStyles((theme, { size: size2 }) => ({
     display: "block"
   }
 }));
+const useStyles$w = useStyles$v;
+var __defProp$u = Object.defineProperty;
+var __getOwnPropSymbols$u = Object.getOwnPropertySymbols;
+var __hasOwnProp$u = Object.prototype.hasOwnProperty;
+var __propIsEnum$u = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$u = (obj, key, value) => key in obj ? __defProp$u(obj, key, {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  value
+}) : obj[key] = value;
+var __spreadValues$u = (a, b2) => {
+  for (var prop in b2 || (b2 = {}))
+    if (__hasOwnProp$u.call(b2, prop))
+      __defNormalProp$u(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$u)
+    for (var prop of __getOwnPropSymbols$u(b2)) {
+      if (__propIsEnum$u.call(b2, prop))
+        __defNormalProp$u(a, prop, b2[prop]);
+    }
+  return a;
+};
+var __objRest$l = (source, exclude) => {
+  var target = {};
+  for (var prop in source)
+    if (__hasOwnProp$u.call(source, prop) && exclude.indexOf(prop) < 0)
+      target[prop] = source[prop];
+  if (source != null && __getOwnPropSymbols$u)
+    for (var prop of __getOwnPropSymbols$u(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$u.call(source, prop))
+        target[prop] = source[prop];
+    }
+  return target;
+};
+const InputError = react.exports.forwardRef((_a, ref) => {
+  var _b = _a, {
+    children,
+    className,
+    classNames,
+    styles: styles2,
+    unstyled,
+    size: size2 = "sm",
+    __staticSelector
+  } = _b, others = __objRest$l(_b, ["children", "className", "classNames", "styles", "unstyled", "size", "__staticSelector"]);
+  const {
+    classes,
+    cx
+  } = useStyles$w({
+    size: size2
+  }, {
+    name: ["InputWrapper", __staticSelector],
+    classNames,
+    styles: styles2,
+    unstyled
+  });
+  return /* @__PURE__ */ jsx(Text, {
+    ...__spreadValues$u({
+      className: cx(classes.error, className),
+      ref,
+      role: "alert"
+    }, others),
+    children
+  });
+});
+InputError.displayName = "@mantine/core/InputError";
+var useStyles$t = createStyles((theme, { size: size2 }) => ({
+  description: {
+    wordBreak: "break-word",
+    color: theme.colorScheme === "dark" ? theme.colors.dark[2] : theme.colors.gray[6],
+    fontSize: theme.fn.size({ size: size2, sizes: theme.fontSizes }) - 2,
+    lineHeight: 1.2,
+    display: "block"
+  }
+}));
 const useStyles$u = useStyles$t;
+var __defProp$t = Object.defineProperty;
+var __getOwnPropSymbols$t = Object.getOwnPropertySymbols;
+var __hasOwnProp$t = Object.prototype.hasOwnProperty;
+var __propIsEnum$t = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$t = (obj, key, value) => key in obj ? __defProp$t(obj, key, {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  value
+}) : obj[key] = value;
+var __spreadValues$t = (a, b2) => {
+  for (var prop in b2 || (b2 = {}))
+    if (__hasOwnProp$t.call(b2, prop))
+      __defNormalProp$t(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$t)
+    for (var prop of __getOwnPropSymbols$t(b2)) {
+      if (__propIsEnum$t.call(b2, prop))
+        __defNormalProp$t(a, prop, b2[prop]);
+    }
+  return a;
+};
+var __objRest$k = (source, exclude) => {
+  var target = {};
+  for (var prop in source)
+    if (__hasOwnProp$t.call(source, prop) && exclude.indexOf(prop) < 0)
+      target[prop] = source[prop];
+  if (source != null && __getOwnPropSymbols$t)
+    for (var prop of __getOwnPropSymbols$t(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$t.call(source, prop))
+        target[prop] = source[prop];
+    }
+  return target;
+};
+const InputDescription = react.exports.forwardRef((_a, ref) => {
+  var _b = _a, {
+    children,
+    className,
+    classNames,
+    styles: styles2,
+    unstyled,
+    size: size2 = "sm",
+    __staticSelector
+  } = _b, others = __objRest$k(_b, ["children", "className", "classNames", "styles", "unstyled", "size", "__staticSelector"]);
+  const {
+    classes,
+    cx
+  } = useStyles$u({
+    size: size2
+  }, {
+    name: ["InputWrapper", __staticSelector],
+    classNames,
+    styles: styles2,
+    unstyled
+  });
+  return /* @__PURE__ */ jsx(Text, {
+    ...__spreadValues$t({
+      color: "dimmed",
+      className: cx(classes.description, className),
+      ref,
+      unstyled
+    }, others),
+    children
+  });
+});
+InputDescription.displayName = "@mantine/core/InputDescription";
+const InputWrapperContext = react.exports.createContext({
+  offsetBottom: false,
+  offsetTop: false
+});
+const InputWrapperProvider = InputWrapperContext.Provider;
+const useInputWrapperContext = () => react.exports.useContext(InputWrapperContext);
+function getInputOffsets(inputWrapperOrder, { hasDescription, hasError }) {
+  const inputIndex = inputWrapperOrder.findIndex((part) => part === "input");
+  const aboveInput = inputWrapperOrder[inputIndex - 1];
+  const belowInput = inputWrapperOrder[inputIndex + 1];
+  const offsetTop = hasDescription && aboveInput === "description" || hasError && aboveInput === "error";
+  const offsetBottom = hasDescription && belowInput === "description" || hasError && belowInput === "error";
+  return { offsetBottom, offsetTop };
+}
+var __defProp$s = Object.defineProperty;
+var __defProps$g = Object.defineProperties;
+var __getOwnPropDescs$g = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$s = Object.getOwnPropertySymbols;
+var __hasOwnProp$s = Object.prototype.hasOwnProperty;
+var __propIsEnum$s = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$s = (obj, key, value) => key in obj ? __defProp$s(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$s = (a, b2) => {
+  for (var prop in b2 || (b2 = {}))
+    if (__hasOwnProp$s.call(b2, prop))
+      __defNormalProp$s(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$s)
+    for (var prop of __getOwnPropSymbols$s(b2)) {
+      if (__propIsEnum$s.call(b2, prop))
+        __defNormalProp$s(a, prop, b2[prop]);
+    }
+  return a;
+};
+var __spreadProps$g = (a, b2) => __defProps$g(a, __getOwnPropDescs$g(b2));
+var useStyles$r = createStyles((theme) => ({
+  root: __spreadProps$g(__spreadValues$s({}, theme.fn.fontStyles()), {
+    lineHeight: theme.lineHeight
+  })
+}));
+const useStyles$s = useStyles$r;
 var __defProp$r = Object.defineProperty;
+var __defProps$f = Object.defineProperties;
+var __getOwnPropDescs$f = Object.getOwnPropertyDescriptors;
 var __getOwnPropSymbols$r = Object.getOwnPropertySymbols;
 var __hasOwnProp$r = Object.prototype.hasOwnProperty;
 var __propIsEnum$r = Object.prototype.propertyIsEnumerable;
@@ -12577,6 +15023,7 @@ var __spreadValues$r = (a, b2) => {
     }
   return a;
 };
+var __spreadProps$f = (a, b2) => __defProps$f(a, __getOwnPropDescs$f(b2));
 var __objRest$j = (source, exclude) => {
   var target = {};
   for (var prop in source)
@@ -12589,193 +15036,14 @@ var __objRest$j = (source, exclude) => {
     }
   return target;
 };
-const InputError = react.exports.forwardRef((_a, ref) => {
-  var _b = _a, {
-    children,
-    className,
-    classNames,
-    styles: styles2,
-    unstyled,
-    size: size2 = "sm",
-    __staticSelector
-  } = _b, others = __objRest$j(_b, ["children", "className", "classNames", "styles", "unstyled", "size", "__staticSelector"]);
-  const {
-    classes,
-    cx
-  } = useStyles$u({
-    size: size2
-  }, {
-    name: ["InputWrapper", __staticSelector],
-    classNames,
-    styles: styles2,
-    unstyled
-  });
-  return /* @__PURE__ */ jsx(Text, {
-    ...__spreadValues$r({
-      className: cx(classes.error, className),
-      ref
-    }, others),
-    children
-  });
-});
-InputError.displayName = "@mantine/core/InputError";
-var useStyles$r = createStyles((theme, { size: size2 }) => ({
-  description: {
-    wordBreak: "break-word",
-    color: theme.colorScheme === "dark" ? theme.colors.dark[2] : theme.colors.gray[6],
-    fontSize: theme.fn.size({ size: size2, sizes: theme.fontSizes }) - 2,
-    lineHeight: 1.2,
-    display: "block"
-  }
-}));
-const useStyles$s = useStyles$r;
-var __defProp$q = Object.defineProperty;
-var __getOwnPropSymbols$q = Object.getOwnPropertySymbols;
-var __hasOwnProp$q = Object.prototype.hasOwnProperty;
-var __propIsEnum$q = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$q = (obj, key, value) => key in obj ? __defProp$q(obj, key, {
-  enumerable: true,
-  configurable: true,
-  writable: true,
-  value
-}) : obj[key] = value;
-var __spreadValues$q = (a, b2) => {
-  for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$q.call(b2, prop))
-      __defNormalProp$q(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$q)
-    for (var prop of __getOwnPropSymbols$q(b2)) {
-      if (__propIsEnum$q.call(b2, prop))
-        __defNormalProp$q(a, prop, b2[prop]);
-    }
-  return a;
-};
-var __objRest$i = (source, exclude) => {
-  var target = {};
-  for (var prop in source)
-    if (__hasOwnProp$q.call(source, prop) && exclude.indexOf(prop) < 0)
-      target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$q)
-    for (var prop of __getOwnPropSymbols$q(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$q.call(source, prop))
-        target[prop] = source[prop];
-    }
-  return target;
-};
-const InputDescription = react.exports.forwardRef((_a, ref) => {
-  var _b = _a, {
-    children,
-    className,
-    classNames,
-    styles: styles2,
-    unstyled,
-    size: size2 = "sm",
-    __staticSelector
-  } = _b, others = __objRest$i(_b, ["children", "className", "classNames", "styles", "unstyled", "size", "__staticSelector"]);
-  const {
-    classes,
-    cx
-  } = useStyles$s({
-    size: size2
-  }, {
-    name: ["InputWrapper", __staticSelector],
-    classNames,
-    styles: styles2,
-    unstyled
-  });
-  return /* @__PURE__ */ jsx(Text, {
-    ...__spreadValues$q({
-      color: "dimmed",
-      className: cx(classes.description, className),
-      ref
-    }, others),
-    children
-  });
-});
-InputDescription.displayName = "@mantine/core/InputDescription";
-const InputWrapperContext = react.exports.createContext({
-  offsetBottom: false,
-  offsetTop: false
-});
-const InputWrapperProvider = InputWrapperContext.Provider;
-const useInputWrapperContext = () => react.exports.useContext(InputWrapperContext);
-function getInputOffsets(inputWrapperOrder, { hasDescription, hasError }) {
-  const inputIndex = inputWrapperOrder.findIndex((part) => part === "input");
-  const aboveInput = inputWrapperOrder[inputIndex - 1];
-  const belowInput = inputWrapperOrder[inputIndex + 1];
-  const offsetTop = hasDescription && aboveInput === "description" || hasError && aboveInput === "error";
-  const offsetBottom = hasDescription && belowInput === "description" || hasError && belowInput === "error";
-  return { offsetBottom, offsetTop };
-}
-var __defProp$p = Object.defineProperty;
-var __defProps$d = Object.defineProperties;
-var __getOwnPropDescs$d = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$p = Object.getOwnPropertySymbols;
-var __hasOwnProp$p = Object.prototype.hasOwnProperty;
-var __propIsEnum$p = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$p = (obj, key, value) => key in obj ? __defProp$p(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$p = (a, b2) => {
-  for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$p.call(b2, prop))
-      __defNormalProp$p(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$p)
-    for (var prop of __getOwnPropSymbols$p(b2)) {
-      if (__propIsEnum$p.call(b2, prop))
-        __defNormalProp$p(a, prop, b2[prop]);
-    }
-  return a;
-};
-var __spreadProps$d = (a, b2) => __defProps$d(a, __getOwnPropDescs$d(b2));
-var useStyles$p = createStyles((theme) => ({
-  root: __spreadProps$d(__spreadValues$p({}, theme.fn.fontStyles()), {
-    lineHeight: theme.lineHeight
-  })
-}));
-const useStyles$q = useStyles$p;
-var __defProp$o = Object.defineProperty;
-var __defProps$c = Object.defineProperties;
-var __getOwnPropDescs$c = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$o = Object.getOwnPropertySymbols;
-var __hasOwnProp$o = Object.prototype.hasOwnProperty;
-var __propIsEnum$o = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$o = (obj, key, value) => key in obj ? __defProp$o(obj, key, {
-  enumerable: true,
-  configurable: true,
-  writable: true,
-  value
-}) : obj[key] = value;
-var __spreadValues$o = (a, b2) => {
-  for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$o.call(b2, prop))
-      __defNormalProp$o(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$o)
-    for (var prop of __getOwnPropSymbols$o(b2)) {
-      if (__propIsEnum$o.call(b2, prop))
-        __defNormalProp$o(a, prop, b2[prop]);
-    }
-  return a;
-};
-var __spreadProps$c = (a, b2) => __defProps$c(a, __getOwnPropDescs$c(b2));
-var __objRest$h = (source, exclude) => {
-  var target = {};
-  for (var prop in source)
-    if (__hasOwnProp$o.call(source, prop) && exclude.indexOf(prop) < 0)
-      target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$o)
-    for (var prop of __getOwnPropSymbols$o(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$o.call(source, prop))
-        target[prop] = source[prop];
-    }
-  return target;
-};
-const defaultProps$f = {
+const defaultProps$h = {
   labelElement: "label",
   size: "sm",
   inputContainer: (children) => children,
   inputWrapperOrder: ["label", "description", "input", "error"]
 };
 const InputWrapper = react.exports.forwardRef((props, ref) => {
-  const _a = useComponentDefaultProps("InputWrapper", defaultProps$f, props), {
+  const _a = useComponentDefaultProps("InputWrapper", defaultProps$h, props), {
     className,
     label,
     children,
@@ -12793,12 +15061,13 @@ const InputWrapper = react.exports.forwardRef((props, ref) => {
     inputContainer,
     __staticSelector,
     unstyled,
-    inputWrapperOrder
-  } = _a, others = __objRest$h(_a, ["className", "label", "children", "required", "id", "error", "description", "labelElement", "labelProps", "descriptionProps", "errorProps", "classNames", "styles", "size", "inputContainer", "__staticSelector", "unstyled", "inputWrapperOrder"]);
+    inputWrapperOrder,
+    withAsterisk
+  } = _a, others = __objRest$j(_a, ["className", "label", "children", "required", "id", "error", "description", "labelElement", "labelProps", "descriptionProps", "errorProps", "classNames", "styles", "size", "inputContainer", "__staticSelector", "unstyled", "inputWrapperOrder", "withAsterisk"]);
   const {
     classes,
     cx
-  } = useStyles$q(null, {
+  } = useStyles$s(null, {
     classNames,
     styles: styles2,
     name: ["InputWrapper", __staticSelector],
@@ -12811,18 +15080,19 @@ const InputWrapper = react.exports.forwardRef((props, ref) => {
     size: size2,
     __staticSelector
   };
+  const isRequired = typeof withAsterisk === "boolean" ? withAsterisk : required;
   const _label = label && /* @__PURE__ */ jsx(InputLabel, {
-    ...__spreadValues$o(__spreadValues$o({
+    ...__spreadValues$r(__spreadValues$r({
       key: "label",
       labelElement,
       id: id2 ? `${id2}-label` : void 0,
       htmlFor: id2,
-      required
+      required: isRequired
     }, sharedProps), labelProps),
     children: label
   });
   const _description = description && /* @__PURE__ */ jsx(InputDescription, {
-    ...__spreadValues$o(__spreadValues$o({
+    ...__spreadValues$r(__spreadValues$r({
       key: "description"
     }, sharedProps), descriptionProps),
     children: description
@@ -12831,7 +15101,7 @@ const InputWrapper = react.exports.forwardRef((props, ref) => {
     children: inputContainer(children)
   });
   const _error = typeof error !== "boolean" && error && /* @__PURE__ */ jsx(InputError, {
-    ...__spreadValues$o(__spreadProps$c(__spreadValues$o({}, errorProps), {
+    ...__spreadValues$r(__spreadProps$f(__spreadValues$r({}, errorProps), {
       key: "error"
     }), sharedProps),
     children: error
@@ -12856,7 +15126,7 @@ const InputWrapper = react.exports.forwardRef((props, ref) => {
       hasError: !!_error
     }),
     children: /* @__PURE__ */ jsx(Box, {
-      ...__spreadValues$o({
+      ...__spreadValues$r({
         className: cx(classes.root, className),
         ref
       }, others),
@@ -12865,25 +15135,25 @@ const InputWrapper = react.exports.forwardRef((props, ref) => {
   });
 });
 InputWrapper.displayName = "@mantine/core/InputWrapper";
-var __defProp$n = Object.defineProperty;
-var __defProps$b = Object.defineProperties;
-var __getOwnPropDescs$b = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$n = Object.getOwnPropertySymbols;
-var __hasOwnProp$n = Object.prototype.hasOwnProperty;
-var __propIsEnum$n = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$n = (obj, key, value) => key in obj ? __defProp$n(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$n = (a, b2) => {
+var __defProp$q = Object.defineProperty;
+var __defProps$e = Object.defineProperties;
+var __getOwnPropDescs$e = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$q = Object.getOwnPropertySymbols;
+var __hasOwnProp$q = Object.prototype.hasOwnProperty;
+var __propIsEnum$q = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$q = (obj, key, value) => key in obj ? __defProp$q(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$q = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$n.call(b2, prop))
-      __defNormalProp$n(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$n)
-    for (var prop of __getOwnPropSymbols$n(b2)) {
-      if (__propIsEnum$n.call(b2, prop))
-        __defNormalProp$n(a, prop, b2[prop]);
+    if (__hasOwnProp$q.call(b2, prop))
+      __defNormalProp$q(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$q)
+    for (var prop of __getOwnPropSymbols$q(b2)) {
+      if (__propIsEnum$q.call(b2, prop))
+        __defNormalProp$q(a, prop, b2[prop]);
     }
   return a;
 };
-var __spreadProps$b = (a, b2) => __defProps$b(a, __getOwnPropDescs$b(b2));
+var __spreadProps$e = (a, b2) => __defProps$e(a, __getOwnPropDescs$e(b2));
 const sizes$3 = {
   xs: 30,
   sm: 36,
@@ -12932,7 +15202,7 @@ function getVariantStyles$1({ theme, variant: variant2 }) {
     }
   };
 }
-var useStyles$o = createStyles((theme, {
+var useStyles$q = createStyles((theme, {
   size: size2,
   multiline,
   radius: radius2,
@@ -12958,7 +15228,7 @@ var useStyles$o = createStyles((theme, {
       marginTop: offsetTop ? theme.spacing.xs / 2 : void 0,
       marginBottom: offsetBottom ? theme.spacing.xs / 2 : void 0
     },
-    input: __spreadValues$n(__spreadProps$b(__spreadValues$n(__spreadProps$b(__spreadValues$n({}, theme.fn.fontStyles()), {
+    input: __spreadValues$q(__spreadProps$e(__spreadValues$q(__spreadProps$e(__spreadValues$q({}, theme.fn.fontStyles()), {
       height: multiline ? variant2 === "unstyled" ? void 0 : "auto" : theme.fn.size({ size: size2, sizes: sizes$3 }),
       WebkitTapHighlightColor: "transparent",
       lineHeight: multiline ? theme.lineHeight : `${theme.fn.size({ size: size2, sizes: sizes$3 }) - 2}px`,
@@ -13038,49 +15308,49 @@ var useStyles$o = createStyles((theme, {
     }
   };
 });
-var __defProp$m = Object.defineProperty;
-var __defProps$a = Object.defineProperties;
-var __getOwnPropDescs$a = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$m = Object.getOwnPropertySymbols;
-var __hasOwnProp$m = Object.prototype.hasOwnProperty;
-var __propIsEnum$m = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$m = (obj, key, value) => key in obj ? __defProp$m(obj, key, {
+var __defProp$p = Object.defineProperty;
+var __defProps$d = Object.defineProperties;
+var __getOwnPropDescs$d = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$p = Object.getOwnPropertySymbols;
+var __hasOwnProp$p = Object.prototype.hasOwnProperty;
+var __propIsEnum$p = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$p = (obj, key, value) => key in obj ? __defProp$p(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$m = (a, b2) => {
+var __spreadValues$p = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$m.call(b2, prop))
-      __defNormalProp$m(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$m)
-    for (var prop of __getOwnPropSymbols$m(b2)) {
-      if (__propIsEnum$m.call(b2, prop))
-        __defNormalProp$m(a, prop, b2[prop]);
+    if (__hasOwnProp$p.call(b2, prop))
+      __defNormalProp$p(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$p)
+    for (var prop of __getOwnPropSymbols$p(b2)) {
+      if (__propIsEnum$p.call(b2, prop))
+        __defNormalProp$p(a, prop, b2[prop]);
     }
   return a;
 };
-var __spreadProps$a = (a, b2) => __defProps$a(a, __getOwnPropDescs$a(b2));
-var __objRest$g = (source, exclude) => {
+var __spreadProps$d = (a, b2) => __defProps$d(a, __getOwnPropDescs$d(b2));
+var __objRest$i = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$m.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$p.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$m)
-    for (var prop of __getOwnPropSymbols$m(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$m.call(source, prop))
+  if (source != null && __getOwnPropSymbols$p)
+    for (var prop of __getOwnPropSymbols$p(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$p.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
 };
-const defaultProps$e = {
+const defaultProps$g = {
   rightSectionWidth: 36,
   size: "sm",
   variant: "default"
 };
 const _Input = react.exports.forwardRef((props, ref) => {
-  const _a = useComponentDefaultProps("Input", defaultProps$e, props), {
+  const _a = useComponentDefaultProps("Input", defaultProps$g, props), {
     className,
     invalid,
     required,
@@ -13102,7 +15372,7 @@ const _Input = react.exports.forwardRef((props, ref) => {
     sx,
     unstyled,
     pointer
-  } = _a, others = __objRest$g(_a, ["className", "invalid", "required", "disabled", "variant", "icon", "style", "rightSectionWidth", "iconWidth", "rightSection", "rightSectionProps", "radius", "size", "wrapperProps", "classNames", "styles", "__staticSelector", "multiline", "sx", "unstyled", "pointer"]);
+  } = _a, others = __objRest$i(_a, ["className", "invalid", "required", "disabled", "variant", "icon", "style", "rightSectionWidth", "iconWidth", "rightSection", "rightSectionProps", "radius", "size", "wrapperProps", "classNames", "styles", "__staticSelector", "multiline", "sx", "unstyled", "pointer"]);
   const {
     offsetBottom,
     offsetTop
@@ -13110,7 +15380,7 @@ const _Input = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$o({
+  } = useStyles$q({
     radius: radius2,
     size: size2,
     multiline,
@@ -13133,7 +15403,7 @@ const _Input = react.exports.forwardRef((props, ref) => {
     rest
   } = extractSystemStyles(others);
   return /* @__PURE__ */ jsxs(Box, {
-    ...__spreadValues$m(__spreadValues$m({
+    ...__spreadValues$p(__spreadValues$p({
       className: cx(classes.wrapper, className),
       sx,
       style
@@ -13142,7 +15412,7 @@ const _Input = react.exports.forwardRef((props, ref) => {
       className: classes.icon,
       children: icon
     }), /* @__PURE__ */ jsx(Box, {
-      ...__spreadProps$a(__spreadValues$m({
+      ...__spreadProps$d(__spreadValues$p({
         component: "input"
       }, rest), {
         ref,
@@ -13156,7 +15426,7 @@ const _Input = react.exports.forwardRef((props, ref) => {
         })
       })
     }), rightSection && /* @__PURE__ */ jsx("div", {
-      ...__spreadProps$a(__spreadValues$m({}, rightSectionProps), {
+      ...__spreadProps$d(__spreadValues$p({}, rightSectionProps), {
         className: classes.rightSection
       }),
       children: rightSection
@@ -13169,7 +15439,7 @@ _Input.Label = InputLabel;
 _Input.Description = InputDescription;
 _Input.Error = InputError;
 const Input = createPolymorphicComponent(_Input);
-var useStyles$m = createStyles((_theme, { orientation, buttonBorderWidth }) => ({
+var useStyles$o = createStyles((_theme, { orientation, buttonBorderWidth }) => ({
   root: {
     display: "flex",
     flexDirection: orientation === "vertical" ? "column" : "row",
@@ -13188,59 +15458,65 @@ var useStyles$m = createStyles((_theme, { orientation, buttonBorderWidth }) => (
         borderRadius: 0,
         [orientation === "vertical" ? "borderTopWidth" : "borderLeftWidth"]: buttonBorderWidth / 2,
         [orientation === "vertical" ? "borderBottomWidth" : "borderRightWidth"]: buttonBorderWidth / 2
+      },
+      "& + [data-button]": {
+        [orientation === "vertical" ? "marginTop" : "marginLeft"]: -buttonBorderWidth,
+        "@media (min-resolution: 192dpi)": {
+          [orientation === "vertical" ? "marginTop" : "marginLeft"]: 0
+        }
       }
     }
   }
 }));
-const useStyles$n = useStyles$m;
-var __defProp$l = Object.defineProperty;
-var __getOwnPropSymbols$l = Object.getOwnPropertySymbols;
-var __hasOwnProp$l = Object.prototype.hasOwnProperty;
-var __propIsEnum$l = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$l = (obj, key, value) => key in obj ? __defProp$l(obj, key, {
+const useStyles$p = useStyles$o;
+var __defProp$o = Object.defineProperty;
+var __getOwnPropSymbols$o = Object.getOwnPropertySymbols;
+var __hasOwnProp$o = Object.prototype.hasOwnProperty;
+var __propIsEnum$o = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$o = (obj, key, value) => key in obj ? __defProp$o(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$l = (a, b2) => {
+var __spreadValues$o = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$l.call(b2, prop))
-      __defNormalProp$l(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$l)
-    for (var prop of __getOwnPropSymbols$l(b2)) {
-      if (__propIsEnum$l.call(b2, prop))
-        __defNormalProp$l(a, prop, b2[prop]);
+    if (__hasOwnProp$o.call(b2, prop))
+      __defNormalProp$o(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$o)
+    for (var prop of __getOwnPropSymbols$o(b2)) {
+      if (__propIsEnum$o.call(b2, prop))
+        __defNormalProp$o(a, prop, b2[prop]);
     }
   return a;
 };
-var __objRest$f = (source, exclude) => {
+var __objRest$h = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$l.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$o.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$l)
-    for (var prop of __getOwnPropSymbols$l(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$l.call(source, prop))
+  if (source != null && __getOwnPropSymbols$o)
+    for (var prop of __getOwnPropSymbols$o(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$o.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
 };
-const defaultProps$d = {
+const defaultProps$f = {
   orientation: "horizontal",
   buttonBorderWidth: 1
 };
 const ButtonGroup = react.exports.forwardRef((props, ref) => {
-  const _a = useComponentDefaultProps("ButtonGroup", defaultProps$d, props), {
+  const _a = useComponentDefaultProps("ButtonGroup", defaultProps$f, props), {
     className,
     orientation,
     buttonBorderWidth,
     unstyled
-  } = _a, others = __objRest$f(_a, ["className", "orientation", "buttonBorderWidth", "unstyled"]);
+  } = _a, others = __objRest$h(_a, ["className", "orientation", "buttonBorderWidth", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$n({
+  } = useStyles$p({
     orientation,
     buttonBorderWidth
   }, {
@@ -13248,32 +15524,32 @@ const ButtonGroup = react.exports.forwardRef((props, ref) => {
     unstyled
   });
   return /* @__PURE__ */ jsx(Box, {
-    ...__spreadValues$l({
+    ...__spreadValues$o({
       className: cx(classes.root, className),
       ref
     }, others)
   });
 });
 ButtonGroup.displayName = "@mantine/core/ButtonGroup";
-var __defProp$k = Object.defineProperty;
-var __defProps$9 = Object.defineProperties;
-var __getOwnPropDescs$9 = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$k = Object.getOwnPropertySymbols;
-var __hasOwnProp$k = Object.prototype.hasOwnProperty;
-var __propIsEnum$k = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$k = (obj, key, value) => key in obj ? __defProp$k(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$k = (a, b2) => {
+var __defProp$n = Object.defineProperty;
+var __defProps$c = Object.defineProperties;
+var __getOwnPropDescs$c = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$n = Object.getOwnPropertySymbols;
+var __hasOwnProp$n = Object.prototype.hasOwnProperty;
+var __propIsEnum$n = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$n = (obj, key, value) => key in obj ? __defProp$n(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$n = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$k.call(b2, prop))
-      __defNormalProp$k(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$k)
-    for (var prop of __getOwnPropSymbols$k(b2)) {
-      if (__propIsEnum$k.call(b2, prop))
-        __defNormalProp$k(a, prop, b2[prop]);
+    if (__hasOwnProp$n.call(b2, prop))
+      __defNormalProp$n(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$n)
+    for (var prop of __getOwnPropSymbols$n(b2)) {
+      if (__propIsEnum$n.call(b2, prop))
+        __defNormalProp$n(a, prop, b2[prop]);
     }
   return a;
 };
-var __spreadProps$9 = (a, b2) => __defProps$9(a, __getOwnPropDescs$9(b2));
+var __spreadProps$c = (a, b2) => __defProps$c(a, __getOwnPropDescs$c(b2));
 const sizes$2 = {
   xs: { height: sizes$3.xs, paddingLeft: 14, paddingRight: 14 },
   sm: { height: sizes$3.sm, paddingLeft: 18, paddingRight: 18 },
@@ -13291,7 +15567,7 @@ function getSizeStyles({ compact, size: size2, withLeftIcon, withRightIcon }) {
     return sizes$2[`compact-${size2}`];
   }
   const _sizes = sizes$2[size2];
-  return __spreadProps$9(__spreadValues$k({}, _sizes), {
+  return __spreadProps$c(__spreadValues$n({}, _sizes), {
     paddingLeft: withLeftIcon ? _sizes.paddingLeft / 1.5 : _sizes.paddingLeft,
     paddingRight: withRightIcon ? _sizes.paddingRight / 1.5 : _sizes.paddingRight
   });
@@ -13312,16 +15588,15 @@ function getVariantStyles({ variant: variant2, theme, color, gradient: gradient2
       })
     };
   }
-  return __spreadValues$k({
+  return __spreadValues$n({
     border: `1px solid ${colors.border}`,
     backgroundColor: colors.background,
-    backgroundImage: colors.background,
     color: colors.color
   }, theme.fn.hover({
     backgroundColor: colors.hover
   }));
 }
-var useStyles$k = createStyles((theme, {
+var useStyles$m = createStyles((theme, {
   color,
   size: size2,
   radius: radius2,
@@ -13332,7 +15607,7 @@ var useStyles$k = createStyles((theme, {
   withLeftIcon,
   withRightIcon
 }) => ({
-  root: __spreadProps$9(__spreadValues$k(__spreadProps$9(__spreadValues$k(__spreadValues$k(__spreadValues$k(__spreadValues$k({}, getSizeStyles({ compact, size: size2, withLeftIcon, withRightIcon })), theme.fn.fontStyles()), theme.fn.focusStyles()), getWidthStyles(fullWidth)), {
+  root: __spreadProps$c(__spreadValues$n(__spreadProps$c(__spreadValues$n(__spreadValues$n(__spreadValues$n(__spreadValues$n({}, getSizeStyles({ compact, size: size2, withLeftIcon, withRightIcon })), theme.fn.fontStyles()), theme.fn.focusStyles()), getWidthStyles(fullWidth)), {
     borderRadius: theme.fn.radius(radius2),
     fontWeight: 600,
     position: "relative",
@@ -13391,48 +15666,48 @@ var useStyles$k = createStyles((theme, {
     alignItems: "center"
   }
 }));
-const useStyles$l = useStyles$k;
-var __defProp$j = Object.defineProperty;
-var __getOwnPropSymbols$j = Object.getOwnPropertySymbols;
-var __hasOwnProp$j = Object.prototype.hasOwnProperty;
-var __propIsEnum$j = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$j = (obj, key, value) => key in obj ? __defProp$j(obj, key, {
+const useStyles$n = useStyles$m;
+var __defProp$m = Object.defineProperty;
+var __getOwnPropSymbols$m = Object.getOwnPropertySymbols;
+var __hasOwnProp$m = Object.prototype.hasOwnProperty;
+var __propIsEnum$m = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$m = (obj, key, value) => key in obj ? __defProp$m(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$j = (a, b2) => {
+var __spreadValues$m = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$j.call(b2, prop))
-      __defNormalProp$j(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$j)
-    for (var prop of __getOwnPropSymbols$j(b2)) {
-      if (__propIsEnum$j.call(b2, prop))
-        __defNormalProp$j(a, prop, b2[prop]);
+    if (__hasOwnProp$m.call(b2, prop))
+      __defNormalProp$m(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$m)
+    for (var prop of __getOwnPropSymbols$m(b2)) {
+      if (__propIsEnum$m.call(b2, prop))
+        __defNormalProp$m(a, prop, b2[prop]);
     }
   return a;
 };
-var __objRest$e = (source, exclude) => {
+var __objRest$g = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$j.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$m.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$j)
-    for (var prop of __getOwnPropSymbols$j(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$j.call(source, prop))
+  if (source != null && __getOwnPropSymbols$m)
+    for (var prop of __getOwnPropSymbols$m(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$m.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
 };
-const defaultProps$c = {
+const defaultProps$e = {
   size: "sm",
   type: "button",
   variant: "filled",
   loaderPosition: "left"
 };
 const _Button = react.exports.forwardRef((props, ref) => {
-  const _a = useComponentDefaultProps("Button", defaultProps$c, props), {
+  const _a = useComponentDefaultProps("Button", defaultProps$e, props), {
     className,
     size: size2,
     color,
@@ -13453,12 +15728,12 @@ const _Button = react.exports.forwardRef((props, ref) => {
     classNames,
     styles: styles2,
     unstyled
-  } = _a, others = __objRest$e(_a, ["className", "size", "color", "type", "disabled", "children", "leftIcon", "rightIcon", "fullWidth", "variant", "radius", "uppercase", "compact", "loading", "loaderPosition", "loaderProps", "gradient", "classNames", "styles", "unstyled"]);
+  } = _a, others = __objRest$g(_a, ["className", "size", "color", "type", "disabled", "children", "leftIcon", "rightIcon", "fullWidth", "variant", "radius", "uppercase", "compact", "loading", "loaderPosition", "loaderProps", "gradient", "classNames", "styles", "unstyled"]);
   const {
     classes,
     cx,
     theme
-  } = useStyles$l({
+  } = useStyles$n({
     radius: radius2,
     color,
     size: size2,
@@ -13479,7 +15754,7 @@ const _Button = react.exports.forwardRef((props, ref) => {
     variant: variant2
   });
   const loader = /* @__PURE__ */ jsx(Loader, {
-    ...__spreadValues$j({
+    ...__spreadValues$m({
       color: colors.color,
       size: theme.fn.size({
         size: size2,
@@ -13488,7 +15763,7 @@ const _Button = react.exports.forwardRef((props, ref) => {
     }, loaderProps)
   });
   return /* @__PURE__ */ jsx(UnstyledButton, {
-    ...__spreadValues$j({
+    ...__spreadValues$m({
       className: cx(classes.root, className),
       type,
       disabled: disabled || loading,
@@ -13519,7 +15794,7 @@ const _Button = react.exports.forwardRef((props, ref) => {
 _Button.displayName = "@mantine/core/Button";
 _Button.Group = ButtonGroup;
 const Button = createPolymorphicComponent(_Button);
-var useStyles$i = createStyles((theme, { radius: radius2, shadow, withBorder }) => ({
+var useStyles$k = createStyles((theme, { radius: radius2, shadow, withBorder }) => ({
   root: {
     outline: 0,
     WebkitTapHighlightColor: "transparent",
@@ -13531,6 +15806,218 @@ var useStyles$i = createStyles((theme, { radius: radius2, shadow, withBorder }) 
     borderRadius: theme.fn.radius(radius2),
     boxShadow: theme.shadows[shadow] || shadow || "none",
     border: withBorder ? `1px solid ${theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]}` : void 0
+  }
+}));
+const useStyles$l = useStyles$k;
+var __defProp$l = Object.defineProperty;
+var __getOwnPropSymbols$l = Object.getOwnPropertySymbols;
+var __hasOwnProp$l = Object.prototype.hasOwnProperty;
+var __propIsEnum$l = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$l = (obj, key, value) => key in obj ? __defProp$l(obj, key, {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  value
+}) : obj[key] = value;
+var __spreadValues$l = (a, b2) => {
+  for (var prop in b2 || (b2 = {}))
+    if (__hasOwnProp$l.call(b2, prop))
+      __defNormalProp$l(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$l)
+    for (var prop of __getOwnPropSymbols$l(b2)) {
+      if (__propIsEnum$l.call(b2, prop))
+        __defNormalProp$l(a, prop, b2[prop]);
+    }
+  return a;
+};
+var __objRest$f = (source, exclude) => {
+  var target = {};
+  for (var prop in source)
+    if (__hasOwnProp$l.call(source, prop) && exclude.indexOf(prop) < 0)
+      target[prop] = source[prop];
+  if (source != null && __getOwnPropSymbols$l)
+    for (var prop of __getOwnPropSymbols$l(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$l.call(source, prop))
+        target[prop] = source[prop];
+    }
+  return target;
+};
+const defaultProps$d = {};
+const _Paper = react.exports.forwardRef((props, ref) => {
+  const _a = useComponentDefaultProps("Paper", defaultProps$d, props), {
+    className,
+    children,
+    radius: radius2,
+    withBorder,
+    shadow,
+    unstyled
+  } = _a, others = __objRest$f(_a, ["className", "children", "radius", "withBorder", "shadow", "unstyled"]);
+  const {
+    classes,
+    cx
+  } = useStyles$l({
+    radius: radius2,
+    shadow,
+    withBorder
+  }, {
+    name: "Paper",
+    unstyled
+  });
+  return /* @__PURE__ */ jsx(Box, {
+    ...__spreadValues$l({
+      className: cx(classes.root, className),
+      ref
+    }, others),
+    children
+  });
+});
+_Paper.displayName = "@mantine/core/Paper";
+const Paper = createPolymorphicComponent(_Paper);
+var __defProp$k = Object.defineProperty;
+var __getOwnPropSymbols$k = Object.getOwnPropertySymbols;
+var __hasOwnProp$k = Object.prototype.hasOwnProperty;
+var __propIsEnum$k = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$k = (obj, key, value) => key in obj ? __defProp$k(obj, key, {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  value
+}) : obj[key] = value;
+var __spreadValues$k = (a, b2) => {
+  for (var prop in b2 || (b2 = {}))
+    if (__hasOwnProp$k.call(b2, prop))
+      __defNormalProp$k(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$k)
+    for (var prop of __getOwnPropSymbols$k(b2)) {
+      if (__propIsEnum$k.call(b2, prop))
+        __defNormalProp$k(a, prop, b2[prop]);
+    }
+  return a;
+};
+var __objRest$e = (source, exclude) => {
+  var target = {};
+  for (var prop in source)
+    if (__hasOwnProp$k.call(source, prop) && exclude.indexOf(prop) < 0)
+      target[prop] = source[prop];
+  if (source != null && __getOwnPropSymbols$k)
+    for (var prop of __getOwnPropSymbols$k(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$k.call(source, prop))
+        target[prop] = source[prop];
+    }
+  return target;
+};
+const _Center = react.exports.forwardRef((props, ref) => {
+  const _a = useComponentDefaultProps("Center", {}, props), {
+    inline,
+    sx
+  } = _a, others = __objRest$e(_a, ["inline", "sx"]);
+  return /* @__PURE__ */ jsx(Box, {
+    ...__spreadValues$k({
+      ref,
+      sx: [{
+        display: inline ? "inline-flex" : "flex",
+        alignItems: "center",
+        justifyContent: "center"
+      }, ...packSx(sx)]
+    }, others)
+  });
+});
+_Center.displayName = "@mantine/core/Center";
+const Center = createPolymorphicComponent(_Center);
+var __defProp$j = Object.defineProperty;
+var __getOwnPropSymbols$j = Object.getOwnPropertySymbols;
+var __hasOwnProp$j = Object.prototype.hasOwnProperty;
+var __propIsEnum$j = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$j = (obj, key, value) => key in obj ? __defProp$j(obj, key, {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  value
+}) : obj[key] = value;
+var __spreadValues$j = (a, b2) => {
+  for (var prop in b2 || (b2 = {}))
+    if (__hasOwnProp$j.call(b2, prop))
+      __defNormalProp$j(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$j)
+    for (var prop of __getOwnPropSymbols$j(b2)) {
+      if (__propIsEnum$j.call(b2, prop))
+        __defNormalProp$j(a, prop, b2[prop]);
+    }
+  return a;
+};
+var __objRest$d = (source, exclude) => {
+  var target = {};
+  for (var prop in source)
+    if (__hasOwnProp$j.call(source, prop) && exclude.indexOf(prop) < 0)
+      target[prop] = source[prop];
+  if (source != null && __getOwnPropSymbols$j)
+    for (var prop of __getOwnPropSymbols$j(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$j.call(source, prop))
+        target[prop] = source[prop];
+    }
+  return target;
+};
+function CheckIcon(props) {
+  return /* @__PURE__ */ jsx("svg", {
+    ...__spreadValues$j({
+      viewBox: "0 0 10 7",
+      fill: "none",
+      xmlns: "http://www.w3.org/2000/svg"
+    }, props),
+    children: /* @__PURE__ */ jsx("path", {
+      d: "M4 4.586L1.707 2.293A1 1 0 1 0 .293 3.707l3 3a.997.997 0 0 0 1.414 0l5-5A1 1 0 1 0 8.293.293L4 4.586z",
+      fill: "currentColor",
+      fillRule: "evenodd",
+      clipRule: "evenodd"
+    })
+  });
+}
+function CheckboxIcon(_a) {
+  var _b = _a, {
+    indeterminate
+  } = _b, others = __objRest$d(_b, ["indeterminate"]);
+  if (indeterminate) {
+    return /* @__PURE__ */ jsx("svg", {
+      ...__spreadValues$j({
+        xmlns: "http://www.w3.org/2000/svg",
+        fill: "none",
+        viewBox: "0 0 32 6"
+      }, others),
+      children: /* @__PURE__ */ jsx("rect", {
+        width: "32",
+        height: "6",
+        fill: "currentColor",
+        rx: "3"
+      })
+    });
+  }
+  return /* @__PURE__ */ jsx(CheckIcon, {
+    ...__spreadValues$j({}, others)
+  });
+}
+function filterFalsyChildren(children) {
+  return react.exports.Children.toArray(children).filter(Boolean);
+}
+const GROUP_POSITIONS = {
+  left: "flex-start",
+  center: "center",
+  right: "flex-end",
+  apart: "space-between"
+};
+var useStyles$i = createStyles((theme, { spacing, position: position2, noWrap, grow, align, count: count2 }) => ({
+  root: {
+    boxSizing: "border-box",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: align || "center",
+    flexWrap: noWrap ? "nowrap" : "wrap",
+    justifyContent: GROUP_POSITIONS[position2],
+    gap: theme.fn.size({ size: spacing, sizes: theme.spacing })
+  },
+  child: {
+    boxSizing: "border-box",
+    maxWidth: grow ? `calc(${100 / count2}% - ${theme.fn.size({ size: spacing, sizes: theme.spacing }) - theme.fn.size({ size: spacing, sizes: theme.spacing }) / count2}px)` : void 0,
+    flexGrow: grow ? 1 : 0
   }
 }));
 const useStyles$j = useStyles$i;
@@ -13555,7 +16042,7 @@ var __spreadValues$i = (a, b2) => {
     }
   return a;
 };
-var __objRest$d = (source, exclude) => {
+var __objRest$c = (source, exclude) => {
   var target = {};
   for (var prop in source)
     if (__hasOwnProp$i.call(source, prop) && exclude.indexOf(prop) < 0)
@@ -13567,37 +16054,64 @@ var __objRest$d = (source, exclude) => {
     }
   return target;
 };
-const defaultProps$b = {};
-const _Paper = react.exports.forwardRef((props, ref) => {
-  const _a = useComponentDefaultProps("Paper", defaultProps$b, props), {
+const defaultProps$c = {
+  position: "left",
+  spacing: "md"
+};
+const Group = react.exports.forwardRef((props, ref) => {
+  const _a = useComponentDefaultProps("Group", defaultProps$c, props), {
     className,
+    position: position2,
+    align,
     children,
-    radius: radius2,
-    withBorder,
-    shadow,
+    noWrap,
+    grow,
+    spacing,
     unstyled
-  } = _a, others = __objRest$d(_a, ["className", "children", "radius", "withBorder", "shadow", "unstyled"]);
+  } = _a, others = __objRest$c(_a, ["className", "position", "align", "children", "noWrap", "grow", "spacing", "unstyled"]);
+  const filteredChildren = filterFalsyChildren(children);
   const {
     classes,
     cx
   } = useStyles$j({
-    radius: radius2,
-    shadow,
-    withBorder
+    align,
+    grow,
+    noWrap,
+    spacing,
+    position: position2,
+    count: filteredChildren.length
   }, {
-    name: "Paper",
-    unstyled
+    unstyled,
+    name: "Group"
+  });
+  const items = filteredChildren.map((child) => {
+    var _a2;
+    if (typeof child === "object" && child !== null && "props" in child) {
+      return React.cloneElement(child, {
+        className: cx(classes.child, (_a2 = child.props) == null ? void 0 : _a2.className)
+      });
+    }
+    return child;
   });
   return /* @__PURE__ */ jsx(Box, {
     ...__spreadValues$i({
       className: cx(classes.root, className),
       ref
     }, others),
-    children
+    children: items
   });
 });
-_Paper.displayName = "@mantine/core/Paper";
-const Paper = createPolymorphicComponent(_Paper);
+Group.displayName = "@mantine/core/Group";
+var useStyles$g = createStyles((theme, { spacing, align, justify }) => ({
+  root: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: align,
+    justifyContent: justify,
+    gap: theme.fn.size({ size: spacing, sizes: theme.spacing })
+  }
+}));
+const useStyles$h = useStyles$g;
 var __defProp$h = Object.defineProperty;
 var __getOwnPropSymbols$h = Object.getOwnPropertySymbols;
 var __hasOwnProp$h = Object.prototype.hasOwnProperty;
@@ -13619,7 +16133,7 @@ var __spreadValues$h = (a, b2) => {
     }
   return a;
 };
-var __objRest$c = (source, exclude) => {
+var __objRest$b = (source, exclude) => {
   var target = {};
   for (var prop in source)
     if (__hasOwnProp$h.call(source, prop) && exclude.indexOf(prop) < 0)
@@ -13631,24 +16145,66 @@ var __objRest$c = (source, exclude) => {
     }
   return target;
 };
-const _Center = react.exports.forwardRef((props, ref) => {
-  const _a = useComponentDefaultProps("Center", {}, props), {
-    inline,
-    sx
-  } = _a, others = __objRest$c(_a, ["inline", "sx"]);
+const defaultProps$b = {
+  spacing: "md",
+  align: "stretch",
+  justify: "top"
+};
+const Stack = react.exports.forwardRef((props, ref) => {
+  const _a = useComponentDefaultProps("Stack", defaultProps$b, props), {
+    spacing,
+    className,
+    align,
+    justify,
+    unstyled
+  } = _a, others = __objRest$b(_a, ["spacing", "className", "align", "justify", "unstyled"]);
+  const {
+    classes,
+    cx
+  } = useStyles$h({
+    spacing,
+    align,
+    justify
+  }, {
+    name: "Stack",
+    unstyled
+  });
   return /* @__PURE__ */ jsx(Box, {
     ...__spreadValues$h({
-      ref,
-      sx: [{
-        display: inline ? "inline-flex" : "flex",
-        alignItems: "center",
-        justifyContent: "center"
-      }, ...packSx(sx)]
+      className: cx(classes.root, className),
+      ref
     }, others)
   });
 });
-_Center.displayName = "@mantine/core/Center";
-const Center = createPolymorphicComponent(_Center);
+Stack.displayName = "@mantine/core/Stack";
+function InputsGroup({
+  spacing,
+  offset: offset2,
+  orientation,
+  children,
+  role,
+  unstyled
+}) {
+  if (orientation === "horizontal") {
+    return /* @__PURE__ */ jsx(Group, {
+      pt: offset2,
+      spacing,
+      role,
+      unstyled,
+      children
+    });
+  }
+  return /* @__PURE__ */ jsx(Stack, {
+    pt: offset2,
+    spacing,
+    role,
+    unstyled,
+    children
+  });
+}
+const CheckboxGroupContext = react.exports.createContext(null);
+const CheckboxGroupProvider = CheckboxGroupContext.Provider;
+const useCheckboxGroupContext = () => react.exports.useContext(CheckboxGroupContext);
 var __defProp$g = Object.defineProperty;
 var __getOwnPropSymbols$g = Object.getOwnPropertySymbols;
 var __hasOwnProp$g = Object.prototype.hasOwnProperty;
@@ -13670,7 +16226,7 @@ var __spreadValues$g = (a, b2) => {
     }
   return a;
 };
-var __objRest$b = (source, exclude) => {
+var __objRest$a = (source, exclude) => {
   var target = {};
   for (var prop in source)
     if (__hasOwnProp$g.call(source, prop) && exclude.indexOf(prop) < 0)
@@ -13682,80 +16238,64 @@ var __objRest$b = (source, exclude) => {
     }
   return target;
 };
-function CheckIcon(props) {
-  return /* @__PURE__ */ jsx("svg", {
-    ...__spreadValues$g({
-      viewBox: "0 0 10 7",
-      fill: "none",
-      xmlns: "http://www.w3.org/2000/svg"
-    }, props),
-    children: /* @__PURE__ */ jsx("path", {
-      d: "M4 4.586L1.707 2.293A1 1 0 1 0 .293 3.707l3 3a.997.997 0 0 0 1.414 0l5-5A1 1 0 1 0 8.293.293L4 4.586z",
-      fill: "currentColor",
-      fillRule: "evenodd",
-      clipRule: "evenodd"
+const defaultProps$a = {
+  orientation: "horizontal",
+  spacing: "lg",
+  size: "sm",
+  offset: "xs"
+};
+const CheckboxGroup = react.exports.forwardRef((props, ref) => {
+  const _a = useComponentDefaultProps("CheckboxGroup", defaultProps$a, props), {
+    children,
+    value,
+    defaultValue,
+    onChange,
+    orientation,
+    spacing,
+    size: size2,
+    wrapperProps,
+    offset: offset2
+  } = _a, others = __objRest$a(_a, ["children", "value", "defaultValue", "onChange", "orientation", "spacing", "size", "wrapperProps", "offset"]);
+  const [_value, setValue] = useUncontrolled({
+    value,
+    defaultValue,
+    finalValue: [],
+    onChange
+  });
+  const handleChange = (event) => {
+    const itemValue = event.currentTarget.value;
+    setValue(_value.includes(itemValue) ? _value.filter((item) => item !== itemValue) : [..._value, itemValue]);
+  };
+  return /* @__PURE__ */ jsx(CheckboxGroupProvider, {
+    value: {
+      value: _value,
+      onChange: handleChange,
+      size: size2
+    },
+    children: /* @__PURE__ */ jsx(Input.Wrapper, {
+      ...__spreadValues$g(__spreadValues$g({
+        labelElement: "div",
+        size: size2,
+        __staticSelector: "CheckboxGroup",
+        ref
+      }, wrapperProps), others),
+      children: /* @__PURE__ */ jsx(InputsGroup, {
+        spacing,
+        orientation,
+        offset: offset2,
+        children
+      })
     })
   });
-}
-function CheckboxIcon(_a) {
-  var _b = _a, {
-    indeterminate
-  } = _b, others = __objRest$b(_b, ["indeterminate"]);
-  if (indeterminate) {
-    return /* @__PURE__ */ jsx("svg", {
-      ...__spreadValues$g({
-        xmlns: "http://www.w3.org/2000/svg",
-        fill: "none",
-        viewBox: "0 0 32 6"
-      }, others),
-      children: /* @__PURE__ */ jsx("rect", {
-        width: "32",
-        height: "6",
-        fill: "currentColor",
-        rx: "3"
-      })
-    });
-  }
-  return /* @__PURE__ */ jsx(CheckIcon, {
-    ...__spreadValues$g({}, others)
-  });
-}
-function filterFalsyChildren(children) {
-  return react.exports.Children.toArray(children).filter(Boolean);
-}
-const GROUP_POSITIONS = {
-  left: "flex-start",
-  center: "center",
-  right: "flex-end",
-  apart: "space-between"
-};
-var useStyles$g = createStyles((theme, { spacing, position: position2, noWrap, grow, align, count }) => ({
-  root: {
-    boxSizing: "border-box",
-    display: "flex",
-    flexDirection: "row",
-    alignItems: align || "center",
-    flexWrap: noWrap ? "nowrap" : "wrap",
-    justifyContent: GROUP_POSITIONS[position2],
-    gap: theme.fn.size({ size: spacing, sizes: theme.spacing })
-  },
-  child: {
-    boxSizing: "border-box",
-    maxWidth: grow ? `calc(${100 / count}% - ${theme.fn.size({ size: spacing, sizes: theme.spacing }) - theme.fn.size({ size: spacing, sizes: theme.spacing }) / count}px)` : void 0,
-    flexGrow: grow ? 1 : 0
-  }
-}));
-const useStyles$h = useStyles$g;
+});
+CheckboxGroup.displayName = "@mantine/core/CheckboxGroup";
 var __defProp$f = Object.defineProperty;
+var __defProps$b = Object.defineProperties;
+var __getOwnPropDescs$b = Object.getOwnPropertyDescriptors;
 var __getOwnPropSymbols$f = Object.getOwnPropertySymbols;
 var __hasOwnProp$f = Object.prototype.hasOwnProperty;
 var __propIsEnum$f = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$f = (obj, key, value) => key in obj ? __defProp$f(obj, key, {
-  enumerable: true,
-  configurable: true,
-  writable: true,
-  value
-}) : obj[key] = value;
+var __defNormalProp$f = (obj, key, value) => key in obj ? __defProp$f(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __spreadValues$f = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
     if (__hasOwnProp$f.call(b2, prop))
@@ -13767,75 +16307,94 @@ var __spreadValues$f = (a, b2) => {
     }
   return a;
 };
-var __objRest$a = (source, exclude) => {
-  var target = {};
-  for (var prop in source)
-    if (__hasOwnProp$f.call(source, prop) && exclude.indexOf(prop) < 0)
-      target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$f)
-    for (var prop of __getOwnPropSymbols$f(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$f.call(source, prop))
-        target[prop] = source[prop];
-    }
-  return target;
+var __spreadProps$b = (a, b2) => __defProps$b(a, __getOwnPropDescs$b(b2));
+const sizes$1 = {
+  xs: 16,
+  sm: 20,
+  md: 24,
+  lg: 30,
+  xl: 36
 };
-const defaultProps$a = {
-  position: "left",
-  spacing: "md"
+const iconSizes$1 = {
+  xs: 8,
+  sm: 10,
+  md: 14,
+  lg: 16,
+  xl: 20
 };
-const Group = react.exports.forwardRef((props, ref) => {
-  const _a = useComponentDefaultProps("Group", defaultProps$a, props), {
-    className,
-    position: position2,
-    align,
-    children,
-    noWrap,
-    grow,
-    spacing,
-    unstyled
-  } = _a, others = __objRest$a(_a, ["className", "position", "align", "children", "noWrap", "grow", "spacing", "unstyled"]);
-  const filteredChildren = filterFalsyChildren(children);
-  const {
-    classes,
-    cx
-  } = useStyles$h({
-    align,
-    grow,
-    noWrap,
-    spacing,
-    position: position2,
-    count: filteredChildren.length
-  }, {
-    unstyled,
-    name: "Group"
-  });
-  const items = filteredChildren.map((child) => {
-    var _a2;
-    if (typeof child === "object" && child !== null && "props" in child) {
-      return React.cloneElement(child, {
-        className: cx(classes.child, (_a2 = child.props) == null ? void 0 : _a2.className)
-      });
-    }
-    return child;
-  });
-  return /* @__PURE__ */ jsx(Box, {
-    ...__spreadValues$f({
-      className: cx(classes.root, className),
-      ref
-    }, others),
-    children: items
-  });
+var useStyles$e = createStyles((theme, { size: size2, radius: radius2, color, transitionDuration }, getRef2) => {
+  const _size = theme.fn.size({ size: size2, sizes: sizes$1 });
+  const colors = theme.fn.variant({ variant: "filled", color });
+  return {
+    icon: {
+      ref: getRef2("icon"),
+      color: theme.white,
+      transform: "translateY(5px) scale(0.5)",
+      opacity: 0,
+      transitionProperty: "opacity, transform",
+      transitionTimingFunction: "ease",
+      transitionDuration: `${transitionDuration}ms`,
+      pointerEvents: "none",
+      width: theme.fn.size({ size: size2, sizes: iconSizes$1 }),
+      position: "absolute",
+      zIndex: 1,
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
+      margin: "auto",
+      "@media (prefers-reduced-motion)": {
+        transitionDuration: theme.respectReducedMotion ? "0ms" : void 0
+      }
+    },
+    root: {
+      display: "flex",
+      alignItems: "center"
+    },
+    inner: {
+      position: "relative",
+      width: _size,
+      height: _size
+    },
+    label: __spreadProps$b(__spreadValues$f({}, theme.fn.fontStyles()), {
+      WebkitTapHighlightColor: "transparent",
+      paddingLeft: theme.spacing.sm,
+      fontSize: theme.fn.size({ size: size2, sizes: theme.fontSizes }),
+      lineHeight: `${_size}px`,
+      color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
+      cursor: theme.cursorType
+    }),
+    input: __spreadProps$b(__spreadValues$f({}, theme.fn.focusStyles()), {
+      appearance: "none",
+      backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.white,
+      border: `1px solid ${theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[4]}`,
+      width: _size,
+      height: _size,
+      borderRadius: theme.fn.radius(radius2),
+      padding: 0,
+      display: "block",
+      margin: 0,
+      transition: `border-color ${transitionDuration}ms ease, background-color ${transitionDuration}ms ease`,
+      cursor: theme.cursorType,
+      "&:checked": {
+        backgroundColor: colors.background,
+        borderColor: colors.background,
+        [`& + .${getRef2("icon")}`]: {
+          opacity: 1,
+          transform: "translateY(0) scale(1)"
+        }
+      },
+      "&:disabled": {
+        backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[2],
+        borderColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[3],
+        cursor: "not-allowed",
+        [`& + .${getRef2("icon")}`]: {
+          color: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[5]
+        }
+      }
+    })
+  };
 });
-Group.displayName = "@mantine/core/Group";
-var useStyles$e = createStyles((theme, { spacing, align, justify }) => ({
-  root: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: align,
-    justifyContent: justify,
-    gap: theme.fn.size({ size: spacing, sizes: theme.spacing })
-  }
-}));
 const useStyles$f = useStyles$e;
 var __defProp$e = Object.defineProperty;
 var __getOwnPropSymbols$e = Object.getOwnPropertySymbols;
@@ -13871,65 +16430,93 @@ var __objRest$9 = (source, exclude) => {
   return target;
 };
 const defaultProps$9 = {
-  spacing: "md",
-  align: "stretch",
-  justify: "top"
+  size: "sm",
+  transitionDuration: 100,
+  icon: CheckboxIcon
 };
-const Stack = react.exports.forwardRef((props, ref) => {
-  const _a = useComponentDefaultProps("Stack", defaultProps$9, props), {
-    spacing,
+const Checkbox = react.exports.forwardRef((props, ref) => {
+  const _a = useComponentDefaultProps("Checkbox", defaultProps$9, props), {
     className,
-    align,
-    justify,
+    style,
+    sx,
+    checked,
+    color,
+    label,
+    indeterminate,
+    id: id2,
+    size: size2,
+    radius: radius2,
+    wrapperProps,
+    children,
+    classNames,
+    styles: styles2,
+    transitionDuration,
+    icon: Icon,
     unstyled
-  } = _a, others = __objRest$9(_a, ["spacing", "className", "align", "justify", "unstyled"]);
+  } = _a, others = __objRest$9(_a, ["className", "style", "sx", "checked", "color", "label", "indeterminate", "id", "size", "radius", "wrapperProps", "children", "classNames", "styles", "transitionDuration", "icon", "unstyled"]);
+  const ctx = useCheckboxGroupContext();
+  const uuid = useId$1(id2);
+  const {
+    systemStyles,
+    rest
+  } = extractSystemStyles(others);
   const {
     classes,
     cx
   } = useStyles$f({
-    spacing,
-    align,
-    justify
+    size: (ctx == null ? void 0 : ctx.size) || size2,
+    radius: radius2,
+    color,
+    transitionDuration
   }, {
-    name: "Stack",
+    name: "Checkbox",
+    classNames,
+    styles: styles2,
     unstyled
   });
-  return /* @__PURE__ */ jsx(Box, {
-    ...__spreadValues$e({
+  const contextProps = ctx ? {
+    checked: ctx.value.includes(rest.value),
+    onChange: ctx.onChange
+  } : {};
+  return /* @__PURE__ */ jsxs(Box, {
+    ...__spreadValues$e(__spreadValues$e({
       className: cx(classes.root, className),
-      ref
-    }, others)
+      style,
+      sx
+    }, systemStyles), wrapperProps),
+    children: [/* @__PURE__ */ jsxs("div", {
+      className: classes.inner,
+      children: [/* @__PURE__ */ jsx("input", {
+        ...__spreadValues$e(__spreadValues$e({
+          id: uuid,
+          ref,
+          type: "checkbox",
+          className: classes.input,
+          checked: indeterminate || checked
+        }, rest), contextProps)
+      }), /* @__PURE__ */ jsx(Icon, {
+        indeterminate,
+        className: classes.icon
+      })]
+    }), label && /* @__PURE__ */ jsx("label", {
+      className: classes.label,
+      htmlFor: uuid,
+      children: label
+    })]
   });
 });
-Stack.displayName = "@mantine/core/Stack";
-function InputsGroup({
-  spacing,
-  offset,
-  orientation,
-  children,
-  role,
-  unstyled
-}) {
-  if (orientation === "horizontal") {
-    return /* @__PURE__ */ jsx(Group, {
-      pt: offset,
-      spacing,
-      role,
-      unstyled,
-      children
-    });
+Checkbox.displayName = "@mantine/core/Checkbox";
+Checkbox.Group = CheckboxGroup;
+var useStyles$c = createStyles((theme, { fluid, size: size2, sizes: sizes2 }) => ({
+  root: {
+    paddingLeft: theme.spacing.md,
+    paddingRight: theme.spacing.md,
+    maxWidth: fluid ? "100%" : theme.fn.size({ size: size2, sizes: sizes2 }),
+    marginLeft: "auto",
+    marginRight: "auto"
   }
-  return /* @__PURE__ */ jsx(Stack, {
-    pt: offset,
-    spacing,
-    role,
-    unstyled,
-    children
-  });
-}
-const CheckboxGroupContext = react.exports.createContext(null);
-const CheckboxGroupProvider = CheckboxGroupContext.Provider;
-const useCheckboxGroupContext = () => react.exports.useContext(CheckboxGroupContext);
+}));
+const useStyles$d = useStyles$c;
 var __defProp$d = Object.defineProperty;
 var __getOwnPropSymbols$d = Object.getOwnPropertySymbols;
 var __hasOwnProp$d = Object.prototype.hasOwnProperty;
@@ -13964,77 +16551,64 @@ var __objRest$8 = (source, exclude) => {
   return target;
 };
 const defaultProps$8 = {
-  orientation: "horizontal",
-  spacing: "lg",
-  size: "sm",
-  offset: "xs"
+  sizes: {
+    xs: 540,
+    sm: 720,
+    md: 960,
+    lg: 1140,
+    xl: 1320
+  }
 };
-const CheckboxGroup = react.exports.forwardRef((props, ref) => {
-  const _a = useComponentDefaultProps("CheckboxGroup", defaultProps$8, props), {
-    children,
-    value,
-    defaultValue,
-    onChange,
-    orientation,
-    spacing,
+const Container = react.exports.forwardRef((props, ref) => {
+  const _a = useComponentDefaultProps("Container", defaultProps$8, props), {
+    className,
+    fluid,
     size: size2,
-    classNames,
-    styles: styles2,
-    wrapperProps,
-    errorProps,
-    labelProps,
-    descriptionProps,
-    inputContainer,
-    inputWrapperOrder,
-    offset
-  } = _a, others = __objRest$8(_a, ["children", "value", "defaultValue", "onChange", "orientation", "spacing", "size", "classNames", "styles", "wrapperProps", "errorProps", "labelProps", "descriptionProps", "inputContainer", "inputWrapperOrder", "offset"]);
-  const [_value, setValue] = useUncontrolled({
-    value,
-    defaultValue,
-    finalValue: [],
-    onChange
+    unstyled,
+    sizes: sizes2
+  } = _a, others = __objRest$8(_a, ["className", "fluid", "size", "unstyled", "sizes"]);
+  const {
+    classes,
+    cx
+  } = useStyles$d({
+    fluid,
+    size: size2,
+    sizes: sizes2
+  }, {
+    unstyled,
+    name: "Container"
   });
-  const handleChange = (event) => {
-    const itemValue = event.currentTarget.value;
-    setValue(_value.includes(itemValue) ? _value.filter((item) => item !== itemValue) : [..._value, itemValue]);
-  };
-  return /* @__PURE__ */ jsx(CheckboxGroupProvider, {
-    value: {
-      value: _value,
-      onChange: handleChange,
-      size: size2
-    },
-    children: /* @__PURE__ */ jsx(Input.Wrapper, {
-      ...__spreadValues$d(__spreadValues$d({
-        labelElement: "div",
-        size: size2,
-        __staticSelector: "CheckboxGroup",
-        classNames,
-        styles: styles2,
-        ref,
-        errorProps,
-        descriptionProps,
-        labelProps,
-        inputContainer,
-        inputWrapperOrder
-      }, wrapperProps), others),
-      children: /* @__PURE__ */ jsx(InputsGroup, {
-        spacing,
-        orientation,
-        offset,
-        children
-      })
-    })
+  return /* @__PURE__ */ jsx(Box, {
+    ...__spreadValues$d({
+      className: cx(classes.root, className),
+      ref
+    }, others)
   });
 });
-CheckboxGroup.displayName = "@mantine/core/CheckboxGroup";
+Container.displayName = "@mantine/core/Container";
+var useStyles$a = createStyles((theme, { zIndex }) => ({
+  root: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex
+  }
+}));
+const useStyles$b = useStyles$a;
 var __defProp$c = Object.defineProperty;
-var __defProps$8 = Object.defineProperties;
-var __getOwnPropDescs$8 = Object.getOwnPropertyDescriptors;
+var __defProps$a = Object.defineProperties;
+var __getOwnPropDescs$a = Object.getOwnPropertyDescriptors;
 var __getOwnPropSymbols$c = Object.getOwnPropertySymbols;
 var __hasOwnProp$c = Object.prototype.hasOwnProperty;
 var __propIsEnum$c = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$c = (obj, key, value) => key in obj ? __defProp$c(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __defNormalProp$c = (obj, key, value) => key in obj ? __defProp$c(obj, key, {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  value
+}) : obj[key] = value;
 var __spreadValues$c = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
     if (__hasOwnProp$c.call(b2, prop))
@@ -14046,96 +16620,97 @@ var __spreadValues$c = (a, b2) => {
     }
   return a;
 };
-var __spreadProps$8 = (a, b2) => __defProps$8(a, __getOwnPropDescs$8(b2));
-const sizes$1 = {
-  xs: 16,
-  sm: 20,
-  md: 24,
-  lg: 30,
-  xl: 36
+var __spreadProps$a = (a, b2) => __defProps$a(a, __getOwnPropDescs$a(b2));
+var __objRest$7 = (source, exclude) => {
+  var target = {};
+  for (var prop in source)
+    if (__hasOwnProp$c.call(source, prop) && exclude.indexOf(prop) < 0)
+      target[prop] = source[prop];
+  if (source != null && __getOwnPropSymbols$c)
+    for (var prop of __getOwnPropSymbols$c(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$c.call(source, prop))
+        target[prop] = source[prop];
+    }
+  return target;
 };
-const iconSizes$1 = {
-  xs: 8,
-  sm: 10,
-  md: 14,
-  lg: 16,
-  xl: 20
+const defaultProps$7 = {
+  opacity: 0.6,
+  color: "#fff",
+  zIndex: getDefaultZIndex("modal"),
+  radius: 0,
+  blur: 0
 };
-var useStyles$c = createStyles((theme, { size: size2, radius: radius2, color, transitionDuration }, getRef2) => {
-  const _size = theme.fn.size({ size: size2, sizes: sizes$1 });
-  const colors = theme.fn.variant({ variant: "filled", color });
-  return {
-    icon: {
-      ref: getRef2("icon"),
-      color: theme.white,
-      transform: "translateY(5px) scale(0.5)",
-      opacity: 0,
-      transitionProperty: "opacity, transform",
-      transitionTimingFunction: "ease",
-      transitionDuration: `${transitionDuration}ms`,
-      pointerEvents: "none",
-      width: theme.fn.size({ size: size2, sizes: iconSizes$1 }),
-      position: "absolute",
-      zIndex: 1,
-      top: 0,
-      bottom: 0,
-      left: 0,
-      right: 0,
-      margin: "auto",
-      "@media (prefers-reduced-motion)": {
-        transitionDuration: theme.respectReducedMotion ? "0ms" : void 0
-      }
-    },
-    root: {
-      display: "flex",
-      alignItems: "center"
-    },
-    inner: {
-      position: "relative",
-      width: _size,
-      height: _size
-    },
-    label: __spreadProps$8(__spreadValues$c({}, theme.fn.fontStyles()), {
-      WebkitTapHighlightColor: "transparent",
-      paddingLeft: theme.spacing.sm,
-      fontSize: theme.fn.size({ size: size2, sizes: theme.fontSizes }),
-      lineHeight: `${_size}px`,
-      color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
-      cursor: theme.cursorType
-    }),
-    input: __spreadProps$8(__spreadValues$c({}, theme.fn.focusStyles()), {
-      appearance: "none",
-      backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.white,
-      border: `1px solid ${theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[4]}`,
-      width: _size,
-      height: _size,
-      borderRadius: theme.fn.radius(radius2),
-      padding: 0,
-      display: "block",
-      margin: 0,
-      transition: `border-color ${transitionDuration}ms ease, background-color ${transitionDuration}ms ease`,
-      cursor: theme.cursorType,
-      "&:checked": {
-        backgroundColor: colors.background,
-        borderColor: colors.background,
-        [`& + .${getRef2("icon")}`]: {
-          opacity: 1,
-          transform: "translateY(0) scale(1)"
-        }
-      },
-      "&:disabled": {
-        backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[2],
-        borderColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[3],
-        cursor: "not-allowed",
-        [`& + .${getRef2("icon")}`]: {
-          color: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[5]
-        }
-      }
-    })
+const _Overlay = react.exports.forwardRef((props, ref) => {
+  const _a = useComponentDefaultProps("Overlay", defaultProps$7, props), {
+    opacity,
+    blur,
+    color,
+    gradient: gradient2,
+    zIndex,
+    radius: radius2,
+    sx,
+    unstyled,
+    className
+  } = _a, others = __objRest$7(_a, ["opacity", "blur", "color", "gradient", "zIndex", "radius", "sx", "unstyled", "className"]);
+  const {
+    classes,
+    cx
+  } = useStyles$b({
+    zIndex
+  }, {
+    name: "Overlay",
+    unstyled
+  });
+  const background = gradient2 ? {
+    backgroundImage: gradient2
+  } : {
+    backgroundColor: color
   };
+  const innerOverlay = (otherProps) => /* @__PURE__ */ jsx(Box, {
+    ...__spreadValues$c({
+      ref,
+      className: cx(classes.root, className),
+      sx: [(theme) => __spreadProps$a(__spreadValues$c({}, background), {
+        opacity,
+        borderRadius: theme.fn.size({
+          size: radius2,
+          sizes: theme.radius
+        })
+      }), ...packSx(sx)]
+    }, otherProps)
+  });
+  if (blur) {
+    return /* @__PURE__ */ jsx(Box, {
+      ...__spreadValues$c({
+        className: cx(classes.root, className),
+        sx: [{
+          backdropFilter: `blur(${blur}px)`
+        }, ...packSx(sx)]
+      }, others),
+      children: innerOverlay()
+    });
+  }
+  return innerOverlay(others);
 });
-const useStyles$d = useStyles$c;
+_Overlay.displayName = "@mantine/core/Overlay";
+const Overlay = createPolymorphicComponent(_Overlay);
+var useStyles$8 = createStyles({
+  root: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden"
+  }
+});
+const useStyles$9 = useStyles$8;
 var __defProp$b = Object.defineProperty;
+var __defProps$9 = Object.defineProperties;
+var __getOwnPropDescs$9 = Object.getOwnPropertyDescriptors;
 var __getOwnPropSymbols$b = Object.getOwnPropertySymbols;
 var __hasOwnProp$b = Object.prototype.hasOwnProperty;
 var __propIsEnum$b = Object.prototype.propertyIsEnumerable;
@@ -14156,7 +16731,8 @@ var __spreadValues$b = (a, b2) => {
     }
   return a;
 };
-var __objRest$7 = (source, exclude) => {
+var __spreadProps$9 = (a, b2) => __defProps$9(a, __getOwnPropDescs$9(b2));
+var __objRest$6 = (source, exclude) => {
   var target = {};
   for (var prop in source)
     if (__hasOwnProp$b.call(source, prop) && exclude.indexOf(prop) < 0)
@@ -14168,95 +16744,75 @@ var __objRest$7 = (source, exclude) => {
     }
   return target;
 };
-const defaultProps$7 = {
-  size: "sm",
-  transitionDuration: 100,
-  icon: CheckboxIcon
+const defaultProps$6 = {
+  overlayOpacity: 0.75,
+  transitionDuration: 0,
+  zIndex: getDefaultZIndex("overlay")
 };
-const Checkbox = react.exports.forwardRef((props, ref) => {
-  const _a = useComponentDefaultProps("Checkbox", defaultProps$7, props), {
+const LoadingOverlay = react.exports.forwardRef((props, ref) => {
+  const _a = useComponentDefaultProps("LoadingOverlay", defaultProps$6, props), {
     className,
-    style,
-    sx,
-    checked,
-    color,
-    label,
-    indeterminate,
-    id: id2,
-    size: size2,
-    radius: radius2,
-    wrapperProps,
-    children,
-    classNames,
-    styles: styles2,
+    visible,
+    loaderProps,
+    overlayOpacity,
+    overlayColor,
     transitionDuration,
-    icon: Icon,
+    exitTransitionDuration,
+    zIndex,
+    style,
+    loader,
+    radius: radius2,
+    overlayBlur,
     unstyled
-  } = _a, others = __objRest$7(_a, ["className", "style", "sx", "checked", "color", "label", "indeterminate", "id", "size", "radius", "wrapperProps", "children", "classNames", "styles", "transitionDuration", "icon", "unstyled"]);
-  const ctx = useCheckboxGroupContext();
-  const uuid = useId(id2);
-  const {
-    systemStyles,
-    rest
-  } = extractSystemStyles(others);
+  } = _a, others = __objRest$6(_a, ["className", "visible", "loaderProps", "overlayOpacity", "overlayColor", "transitionDuration", "exitTransitionDuration", "zIndex", "style", "loader", "radius", "overlayBlur", "unstyled"]);
   const {
     classes,
-    cx
-  } = useStyles$d({
-    size: (ctx == null ? void 0 : ctx.size) || size2,
-    radius: radius2,
-    color,
-    transitionDuration
-  }, {
-    name: "Checkbox",
-    classNames,
-    styles: styles2,
+    cx,
+    theme
+  } = useStyles$9(null, {
+    name: "LoadingOverlay",
     unstyled
   });
-  const contextProps = ctx ? {
-    checked: ctx.value.includes(rest.value),
-    onChange: ctx.onChange
-  } : {};
-  return /* @__PURE__ */ jsxs(Box, {
-    ...__spreadValues$b(__spreadValues$b({
-      className: cx(classes.root, className),
-      style,
-      sx
-    }, systemStyles), wrapperProps),
-    children: [/* @__PURE__ */ jsxs("div", {
-      className: classes.inner,
-      children: [/* @__PURE__ */ jsx("input", {
-        ...__spreadValues$b(__spreadValues$b({
-          id: uuid,
-          ref,
-          type: "checkbox",
-          className: classes.input,
-          checked: indeterminate || checked
-        }, rest), contextProps)
-      }), /* @__PURE__ */ jsx(Icon, {
-        indeterminate,
-        className: classes.icon
+  const _zIndex = `calc(${zIndex} + 1)`;
+  return /* @__PURE__ */ jsx(Transition, {
+    duration: transitionDuration,
+    exitDuration: exitTransitionDuration,
+    mounted: visible,
+    transition: "fade",
+    children: (transitionStyles) => /* @__PURE__ */ jsxs(Box, {
+      ...__spreadValues$b({
+        className: cx(classes.root, className),
+        style: __spreadProps$9(__spreadValues$b(__spreadValues$b({}, transitionStyles), style), {
+          zIndex
+        }),
+        ref
+      }, others),
+      children: [loader ? /* @__PURE__ */ jsx("div", {
+        style: {
+          zIndex: _zIndex
+        },
+        children: loader
+      }) : /* @__PURE__ */ jsx(Loader, {
+        ...__spreadValues$b({
+          style: {
+            zIndex: _zIndex
+          }
+        }, loaderProps)
+      }), /* @__PURE__ */ jsx(Overlay, {
+        opacity: overlayOpacity,
+        zIndex,
+        radius: radius2,
+        blur: overlayBlur,
+        unstyled,
+        color: overlayColor || (theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.white)
       })]
-    }), label && /* @__PURE__ */ jsx("label", {
-      className: classes.label,
-      htmlFor: uuid,
-      children: label
-    })]
+    })
   });
 });
-Checkbox.displayName = "@mantine/core/Checkbox";
-Checkbox.Group = CheckboxGroup;
-var useStyles$a = createStyles((theme, { fluid, size: size2, sizes: sizes2 }) => ({
-  root: {
-    paddingLeft: theme.spacing.md,
-    paddingRight: theme.spacing.md,
-    maxWidth: fluid ? "100%" : theme.fn.size({ size: size2, sizes: sizes2 }),
-    marginLeft: "auto",
-    marginRight: "auto"
-  }
-}));
-const useStyles$b = useStyles$a;
+LoadingOverlay.displayName = "@mantine/core/LoadingOverlay";
 var __defProp$a = Object.defineProperty;
+var __defProps$8 = Object.defineProperties;
+var __getOwnPropDescs$8 = Object.getOwnPropertyDescriptors;
 var __getOwnPropSymbols$a = Object.getOwnPropertySymbols;
 var __hasOwnProp$a = Object.prototype.hasOwnProperty;
 var __propIsEnum$a = Object.prototype.propertyIsEnumerable;
@@ -14277,7 +16833,8 @@ var __spreadValues$a = (a, b2) => {
     }
   return a;
 };
-var __objRest$6 = (source, exclude) => {
+var __spreadProps$8 = (a, b2) => __defProps$8(a, __getOwnPropDescs$8(b2));
+var __objRest$5 = (source, exclude) => {
   var target = {};
   for (var prop in source)
     if (__hasOwnProp$a.call(source, prop) && exclude.indexOf(prop) < 0)
@@ -14289,316 +16846,20 @@ var __objRest$6 = (source, exclude) => {
     }
   return target;
 };
-const defaultProps$6 = {
-  sizes: {
-    xs: 540,
-    sm: 720,
-    md: 960,
-    lg: 1140,
-    xl: 1320
-  }
-};
-const Container = react.exports.forwardRef((props, ref) => {
-  const _a = useComponentDefaultProps("Container", defaultProps$6, props), {
-    className,
-    fluid,
-    size: size2,
-    unstyled,
-    sizes: sizes2
-  } = _a, others = __objRest$6(_a, ["className", "fluid", "size", "unstyled", "sizes"]);
-  const {
-    classes,
-    cx
-  } = useStyles$b({
-    fluid,
-    size: size2,
-    sizes: sizes2
-  }, {
-    unstyled,
-    name: "Container"
-  });
-  return /* @__PURE__ */ jsx(Box, {
-    ...__spreadValues$a({
-      className: cx(classes.root, className),
-      ref
-    }, others)
-  });
-});
-Container.displayName = "@mantine/core/Container";
-var useStyles$8 = createStyles((theme, { zIndex }) => ({
-  root: {
-    position: "absolute",
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    zIndex
-  }
-}));
-const useStyles$9 = useStyles$8;
-var __defProp$9 = Object.defineProperty;
-var __defProps$7 = Object.defineProperties;
-var __getOwnPropDescs$7 = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$9 = Object.getOwnPropertySymbols;
-var __hasOwnProp$9 = Object.prototype.hasOwnProperty;
-var __propIsEnum$9 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$9 = (obj, key, value) => key in obj ? __defProp$9(obj, key, {
-  enumerable: true,
-  configurable: true,
-  writable: true,
-  value
-}) : obj[key] = value;
-var __spreadValues$9 = (a, b2) => {
-  for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$9.call(b2, prop))
-      __defNormalProp$9(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$9)
-    for (var prop of __getOwnPropSymbols$9(b2)) {
-      if (__propIsEnum$9.call(b2, prop))
-        __defNormalProp$9(a, prop, b2[prop]);
-    }
-  return a;
-};
-var __spreadProps$7 = (a, b2) => __defProps$7(a, __getOwnPropDescs$7(b2));
-var __objRest$5 = (source, exclude) => {
-  var target = {};
-  for (var prop in source)
-    if (__hasOwnProp$9.call(source, prop) && exclude.indexOf(prop) < 0)
-      target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$9)
-    for (var prop of __getOwnPropSymbols$9(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$9.call(source, prop))
-        target[prop] = source[prop];
-    }
-  return target;
-};
 const defaultProps$5 = {
-  opacity: 0.6,
-  color: "#fff",
-  zIndex: getDefaultZIndex("modal"),
-  radius: 0,
-  blur: 0
-};
-const _Overlay = react.exports.forwardRef((props, ref) => {
-  const _a = useComponentDefaultProps("Overlay", defaultProps$5, props), {
-    opacity,
-    blur,
-    color,
-    gradient: gradient2,
-    zIndex,
-    radius: radius2,
-    sx,
-    unstyled,
-    className
-  } = _a, others = __objRest$5(_a, ["opacity", "blur", "color", "gradient", "zIndex", "radius", "sx", "unstyled", "className"]);
-  const {
-    classes,
-    cx
-  } = useStyles$9({
-    zIndex
-  }, {
-    name: "Overlay",
-    unstyled
-  });
-  const background = gradient2 ? {
-    backgroundImage: gradient2
-  } : {
-    backgroundColor: color
-  };
-  const innerOverlay = (otherProps) => /* @__PURE__ */ jsx(Box, {
-    ...__spreadValues$9({
-      ref,
-      className: cx(classes.root, className),
-      sx: [(theme) => __spreadProps$7(__spreadValues$9({}, background), {
-        opacity,
-        borderRadius: theme.fn.size({
-          size: radius2,
-          sizes: theme.radius
-        })
-      }), ...packSx(sx)]
-    }, otherProps)
-  });
-  if (blur) {
-    return /* @__PURE__ */ jsx(Box, {
-      ...__spreadValues$9({
-        className: cx(classes.root, className),
-        sx: [{
-          backdropFilter: `blur(${blur}px)`
-        }, ...packSx(sx)]
-      }, others),
-      children: innerOverlay()
-    });
-  }
-  return innerOverlay(others);
-});
-_Overlay.displayName = "@mantine/core/Overlay";
-const Overlay = createPolymorphicComponent(_Overlay);
-var useStyles$6 = createStyles({
-  root: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    overflow: "hidden"
-  }
-});
-const useStyles$7 = useStyles$6;
-var __defProp$8 = Object.defineProperty;
-var __defProps$6 = Object.defineProperties;
-var __getOwnPropDescs$6 = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$8 = Object.getOwnPropertySymbols;
-var __hasOwnProp$8 = Object.prototype.hasOwnProperty;
-var __propIsEnum$8 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$8 = (obj, key, value) => key in obj ? __defProp$8(obj, key, {
-  enumerable: true,
-  configurable: true,
-  writable: true,
-  value
-}) : obj[key] = value;
-var __spreadValues$8 = (a, b2) => {
-  for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$8.call(b2, prop))
-      __defNormalProp$8(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$8)
-    for (var prop of __getOwnPropSymbols$8(b2)) {
-      if (__propIsEnum$8.call(b2, prop))
-        __defNormalProp$8(a, prop, b2[prop]);
-    }
-  return a;
-};
-var __spreadProps$6 = (a, b2) => __defProps$6(a, __getOwnPropDescs$6(b2));
-var __objRest$4 = (source, exclude) => {
-  var target = {};
-  for (var prop in source)
-    if (__hasOwnProp$8.call(source, prop) && exclude.indexOf(prop) < 0)
-      target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$8)
-    for (var prop of __getOwnPropSymbols$8(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$8.call(source, prop))
-        target[prop] = source[prop];
-    }
-  return target;
-};
-const defaultProps$4 = {
-  overlayOpacity: 0.75,
-  transitionDuration: 0,
-  zIndex: getDefaultZIndex("overlay")
-};
-const LoadingOverlay = react.exports.forwardRef((props, ref) => {
-  const _a = useComponentDefaultProps("LoadingOverlay", defaultProps$4, props), {
-    className,
-    visible,
-    loaderProps,
-    overlayOpacity,
-    overlayColor,
-    transitionDuration,
-    exitTransitionDuration,
-    zIndex,
-    style,
-    loader,
-    radius: radius2,
-    overlayBlur,
-    unstyled
-  } = _a, others = __objRest$4(_a, ["className", "visible", "loaderProps", "overlayOpacity", "overlayColor", "transitionDuration", "exitTransitionDuration", "zIndex", "style", "loader", "radius", "overlayBlur", "unstyled"]);
-  const {
-    classes,
-    cx,
-    theme
-  } = useStyles$7(null, {
-    name: "LoadingOverlay",
-    unstyled
-  });
-  const _zIndex = `calc(${zIndex} + 1)`;
-  return /* @__PURE__ */ jsx(Transition, {
-    duration: transitionDuration,
-    exitDuration: exitTransitionDuration,
-    mounted: visible,
-    transition: "fade",
-    children: (transitionStyles) => /* @__PURE__ */ jsxs(Box, {
-      ...__spreadValues$8({
-        className: cx(classes.root, className),
-        style: __spreadProps$6(__spreadValues$8(__spreadValues$8({}, transitionStyles), style), {
-          zIndex
-        }),
-        ref
-      }, others),
-      children: [loader ? /* @__PURE__ */ jsx("div", {
-        style: {
-          zIndex: _zIndex
-        },
-        children: loader
-      }) : /* @__PURE__ */ jsx(Loader, {
-        ...__spreadValues$8({
-          style: {
-            zIndex: _zIndex
-          }
-        }, loaderProps)
-      }), /* @__PURE__ */ jsx(Overlay, {
-        opacity: overlayOpacity,
-        zIndex,
-        radius: radius2,
-        blur: overlayBlur,
-        unstyled,
-        color: overlayColor || (theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.white)
-      })]
-    })
-  });
-});
-LoadingOverlay.displayName = "@mantine/core/LoadingOverlay";
-var __defProp$7 = Object.defineProperty;
-var __defProps$5 = Object.defineProperties;
-var __getOwnPropDescs$5 = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$7 = Object.getOwnPropertySymbols;
-var __hasOwnProp$7 = Object.prototype.hasOwnProperty;
-var __propIsEnum$7 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$7 = (obj, key, value) => key in obj ? __defProp$7(obj, key, {
-  enumerable: true,
-  configurable: true,
-  writable: true,
-  value
-}) : obj[key] = value;
-var __spreadValues$7 = (a, b2) => {
-  for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$7.call(b2, prop))
-      __defNormalProp$7(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$7)
-    for (var prop of __getOwnPropSymbols$7(b2)) {
-      if (__propIsEnum$7.call(b2, prop))
-        __defNormalProp$7(a, prop, b2[prop]);
-    }
-  return a;
-};
-var __spreadProps$5 = (a, b2) => __defProps$5(a, __getOwnPropDescs$5(b2));
-var __objRest$3 = (source, exclude) => {
-  var target = {};
-  for (var prop in source)
-    if (__hasOwnProp$7.call(source, prop) && exclude.indexOf(prop) < 0)
-      target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$7)
-    for (var prop of __getOwnPropSymbols$7(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$7.call(source, prop))
-        target[prop] = source[prop];
-    }
-  return target;
-};
-const defaultProps$3 = {
   type: "text",
   size: "sm",
   __staticSelector: "TextInput"
 };
 const TextInput = react.exports.forwardRef((props, ref) => {
-  const _a = useInputProps("TextInput", defaultProps$3, props), {
+  const _a = useInputProps("TextInput", defaultProps$5, props), {
     inputProps,
     wrapperProps
-  } = _a, others = __objRest$3(_a, ["inputProps", "wrapperProps"]);
+  } = _a, others = __objRest$5(_a, ["inputProps", "wrapperProps"]);
   return /* @__PURE__ */ jsx(Input.Wrapper, {
-    ...__spreadValues$7({}, wrapperProps),
+    ...__spreadValues$a({}, wrapperProps),
     children: /* @__PURE__ */ jsx(Input, {
-      ...__spreadProps$5(__spreadValues$7(__spreadValues$7({}, inputProps), others), {
+      ...__spreadProps$8(__spreadValues$a(__spreadValues$a({}, inputProps), others), {
         ref
       })
     })
@@ -14621,32 +16882,32 @@ const PasswordToggleIcon = ({
     clipRule: "evenodd"
   })
 });
-var __defProp$6 = Object.defineProperty;
-var __defProps$4 = Object.defineProperties;
-var __getOwnPropDescs$4 = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$6 = Object.getOwnPropertySymbols;
-var __hasOwnProp$6 = Object.prototype.hasOwnProperty;
-var __propIsEnum$6 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$6 = (obj, key, value) => key in obj ? __defProp$6(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$6 = (a, b2) => {
+var __defProp$9 = Object.defineProperty;
+var __defProps$7 = Object.defineProperties;
+var __getOwnPropDescs$7 = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$9 = Object.getOwnPropertySymbols;
+var __hasOwnProp$9 = Object.prototype.hasOwnProperty;
+var __propIsEnum$9 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$9 = (obj, key, value) => key in obj ? __defProp$9(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$9 = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$6.call(b2, prop))
-      __defNormalProp$6(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$6)
-    for (var prop of __getOwnPropSymbols$6(b2)) {
-      if (__propIsEnum$6.call(b2, prop))
-        __defNormalProp$6(a, prop, b2[prop]);
+    if (__hasOwnProp$9.call(b2, prop))
+      __defNormalProp$9(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$9)
+    for (var prop of __getOwnPropSymbols$9(b2)) {
+      if (__propIsEnum$9.call(b2, prop))
+        __defNormalProp$9(a, prop, b2[prop]);
     }
   return a;
 };
-var __spreadProps$4 = (a, b2) => __defProps$4(a, __getOwnPropDescs$4(b2));
-var useStyles$4 = createStyles((theme, { size: size2, rightSectionWidth }) => ({
+var __spreadProps$7 = (a, b2) => __defProps$7(a, __getOwnPropDescs$7(b2));
+var useStyles$6 = createStyles((theme, { size: size2, rightSectionWidth }) => ({
   visibilityToggle: {},
   input: {
     position: "relative",
     overflow: "hidden"
   },
-  innerInput: __spreadProps$4(__spreadValues$6({}, theme.fn.fontStyles()), {
+  innerInput: __spreadProps$7(__spreadValues$9({}, theme.fn.fontStyles()), {
     backgroundColor: "transparent",
     border: 0,
     boxSizing: "border-box",
@@ -14685,39 +16946,39 @@ var useStyles$4 = createStyles((theme, { size: size2, rightSectionWidth }) => ({
     paddingLeft: `${theme.fn.size({ size: size2, sizes: sizes$3 })}px !important`
   }
 }));
-const useStyles$5 = useStyles$4;
-var __defProp$5 = Object.defineProperty;
-var __defProps$3 = Object.defineProperties;
-var __getOwnPropDescs$3 = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$5 = Object.getOwnPropertySymbols;
-var __hasOwnProp$5 = Object.prototype.hasOwnProperty;
-var __propIsEnum$5 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$5 = (obj, key, value) => key in obj ? __defProp$5(obj, key, {
+const useStyles$7 = useStyles$6;
+var __defProp$8 = Object.defineProperty;
+var __defProps$6 = Object.defineProperties;
+var __getOwnPropDescs$6 = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$8 = Object.getOwnPropertySymbols;
+var __hasOwnProp$8 = Object.prototype.hasOwnProperty;
+var __propIsEnum$8 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$8 = (obj, key, value) => key in obj ? __defProp$8(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$5 = (a, b2) => {
+var __spreadValues$8 = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
-    if (__hasOwnProp$5.call(b2, prop))
-      __defNormalProp$5(a, prop, b2[prop]);
-  if (__getOwnPropSymbols$5)
-    for (var prop of __getOwnPropSymbols$5(b2)) {
-      if (__propIsEnum$5.call(b2, prop))
-        __defNormalProp$5(a, prop, b2[prop]);
+    if (__hasOwnProp$8.call(b2, prop))
+      __defNormalProp$8(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$8)
+    for (var prop of __getOwnPropSymbols$8(b2)) {
+      if (__propIsEnum$8.call(b2, prop))
+        __defNormalProp$8(a, prop, b2[prop]);
     }
   return a;
 };
-var __spreadProps$3 = (a, b2) => __defProps$3(a, __getOwnPropDescs$3(b2));
-var __objRest$2 = (source, exclude) => {
+var __spreadProps$6 = (a, b2) => __defProps$6(a, __getOwnPropDescs$6(b2));
+var __objRest$4 = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$5.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$8.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$5)
-    for (var prop of __getOwnPropSymbols$5(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$5.call(source, prop))
+  if (source != null && __getOwnPropSymbols$8)
+    for (var prop of __getOwnPropSymbols$8(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$8.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -14743,14 +17004,14 @@ const rightSectionSizes = {
   lg: 44,
   xl: 54
 };
-const defaultProps$2 = {
+const defaultProps$4 = {
   size: "sm",
   toggleTabIndex: -1,
   visibilityToggleIcon: PasswordToggleIcon,
   __staticSelector: "PasswordInput"
 };
 const PasswordInput = react.exports.forwardRef((props, ref) => {
-  const _a = useComponentDefaultProps("PasswordInput", defaultProps$2, props), {
+  const _a = useComponentDefaultProps("PasswordInput", defaultProps$4, props), {
     radius: radius2,
     disabled,
     size: size2,
@@ -14777,8 +17038,9 @@ const PasswordInput = react.exports.forwardRef((props, ref) => {
     descriptionProps,
     errorProps,
     unstyled,
-    visibilityToggleLabel
-  } = _a, others = __objRest$2(_a, ["radius", "disabled", "size", "toggleTabIndex", "className", "id", "label", "error", "required", "style", "icon", "description", "wrapperProps", "classNames", "styles", "variant", "visibilityToggleIcon", "__staticSelector", "rightSection", "rightSectionWidth", "rightSectionProps", "sx", "labelProps", "descriptionProps", "errorProps", "unstyled", "visibilityToggleLabel"]);
+    visibilityToggleLabel,
+    withAsterisk
+  } = _a, others = __objRest$4(_a, ["radius", "disabled", "size", "toggleTabIndex", "className", "id", "label", "error", "required", "style", "icon", "description", "wrapperProps", "classNames", "styles", "variant", "visibilityToggleIcon", "__staticSelector", "rightSection", "rightSectionWidth", "rightSectionProps", "sx", "labelProps", "descriptionProps", "errorProps", "unstyled", "visibilityToggleLabel", "withAsterisk"]);
   const theme = useMantineTheme();
   const rightSectionWidth = theme.fn.size({
     size: size2,
@@ -14787,7 +17049,7 @@ const PasswordInput = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$5({
+  } = useStyles$7({
     size: size2,
     rightSectionWidth
   }, {
@@ -14796,7 +17058,7 @@ const PasswordInput = react.exports.forwardRef((props, ref) => {
     styles: styles2,
     unstyled
   });
-  const uuid = useId(id2);
+  const uuid = useId$1(id2);
   const {
     systemStyles,
     rest
@@ -14834,7 +17096,7 @@ const PasswordInput = react.exports.forwardRef((props, ref) => {
     })
   });
   return /* @__PURE__ */ jsx(Input.Wrapper, {
-    ...__spreadValues$5(__spreadValues$5({
+    ...__spreadValues$8(__spreadValues$8({
       required,
       id: uuid,
       label,
@@ -14850,14 +17112,15 @@ const PasswordInput = react.exports.forwardRef((props, ref) => {
       errorProps,
       descriptionProps,
       labelProps,
-      unstyled
+      unstyled,
+      withAsterisk
     }, systemStyles), wrapperProps),
     children: /* @__PURE__ */ jsx(Input, {
       component: "div",
       invalid: !!error,
       icon,
       size: size2,
-      classNames: __spreadProps$3(__spreadValues$5({}, classNames), {
+      classNames: __spreadProps$6(__spreadValues$8({}, classNames), {
         input: classes.input
       }),
       styles: styles2,
@@ -14869,7 +17132,7 @@ const PasswordInput = react.exports.forwardRef((props, ref) => {
       variant: variant2,
       unstyled,
       children: /* @__PURE__ */ jsx("input", {
-        ...__spreadValues$5({
+        ...__spreadValues$8({
           type: reveal ? "text" : "password",
           required,
           className: cx(classes.innerInput, {
@@ -14896,7 +17159,7 @@ const stripesAnimation = keyframes({
   from: { backgroundPosition: "0 0" },
   to: { backgroundPosition: "40px 0" }
 });
-var useStyles$2 = createStyles((theme, { color, radius: radius2, size: size2, striped, animate }) => ({
+var useStyles$4 = createStyles((theme, { color, radius: radius2, size: size2, striped, animate }) => ({
   root: {
     position: "relative",
     height: theme.fn.size({ size: size2, sizes }),
@@ -14913,7 +17176,11 @@ var useStyles$2 = createStyles((theme, { color, radius: radius2, size: size2, st
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: theme.fn.themeColor(color || theme.primaryColor, theme.fn.primaryShade(), false),
+    backgroundColor: theme.fn.variant({
+      variant: "filled",
+      primaryFallback: false,
+      color: color || theme.primaryColor
+    }).background,
     transition: "width 100ms linear",
     animation: animate ? `${stripesAnimation} 1000ms linear infinite` : "none",
     backgroundSize: "20px 20px",
@@ -14939,7 +17206,479 @@ var useStyles$2 = createStyles((theme, { color, radius: radius2, size: size2, st
     whiteSpace: "nowrap"
   }
 }));
+const useStyles$5 = useStyles$4;
+const TooltipGroupContext = react.exports.createContext(false);
+const TooltipGroupProvider = TooltipGroupContext.Provider;
+const useTooltipGroupContext = () => react.exports.useContext(TooltipGroupContext);
+function TooltipGroup({
+  children,
+  openDelay = 0,
+  closeDelay = 0
+}) {
+  return /* @__PURE__ */ jsx(TooltipGroupProvider, {
+    value: true,
+    children: /* @__PURE__ */ jsx(FloatingDelayGroup, {
+      delay: {
+        open: openDelay,
+        close: closeDelay
+      },
+      children
+    })
+  });
+}
+TooltipGroup.displayName = "@mantine/core/TooltipGroup";
+var __defProp$7 = Object.defineProperty;
+var __defProps$5 = Object.defineProperties;
+var __getOwnPropDescs$5 = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$7 = Object.getOwnPropertySymbols;
+var __hasOwnProp$7 = Object.prototype.hasOwnProperty;
+var __propIsEnum$7 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$7 = (obj, key, value) => key in obj ? __defProp$7(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$7 = (a, b2) => {
+  for (var prop in b2 || (b2 = {}))
+    if (__hasOwnProp$7.call(b2, prop))
+      __defNormalProp$7(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$7)
+    for (var prop of __getOwnPropSymbols$7(b2)) {
+      if (__propIsEnum$7.call(b2, prop))
+        __defNormalProp$7(a, prop, b2[prop]);
+    }
+  return a;
+};
+var __spreadProps$5 = (a, b2) => __defProps$5(a, __getOwnPropDescs$5(b2));
+function getColors(theme, color) {
+  if (!color) {
+    return {
+      backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[9],
+      color: theme.white
+    };
+  }
+  const colors = theme.fn.variant({ variant: "filled", color, primaryFallback: false });
+  return {
+    backgroundColor: colors.background,
+    color: colors.color
+  };
+}
+var useStyles$2 = createStyles((theme, { color, radius: radius2, width, multiline }) => ({
+  tooltip: __spreadProps$5(__spreadValues$7(__spreadValues$7({}, theme.fn.fontStyles()), getColors(theme, color)), {
+    lineHeight: theme.lineHeight,
+    fontSize: theme.fontSizes.sm,
+    borderRadius: theme.fn.radius(radius2),
+    padding: `${theme.spacing.xs / 2}px ${theme.spacing.xs}px`,
+    position: "absolute",
+    whiteSpace: multiline ? "unset" : "nowrap",
+    pointerEvents: "none",
+    width
+  }),
+  arrow: {
+    backgroundColor: "inherit",
+    border: 0,
+    zIndex: 1
+  }
+}));
 const useStyles$3 = useStyles$2;
+const TOOLTIP_ERRORS = {
+  children: "Tooltip component children should be an element or a component that accepts ref, fragments, strings, numbers and other primitive values are not supported"
+};
+function useFloatingTooltip({
+  offset: offset2,
+  position: position2
+}) {
+  const [opened, setOpened] = react.exports.useState(false);
+  const boundaryRef = react.exports.useRef();
+  const { x: x2, y: y2, reference, floating, refs, update, placement } = useFloating({
+    placement: position2,
+    middleware: [
+      shift({
+        crossAxis: true,
+        padding: 5,
+        rootBoundary: "document"
+      })
+    ]
+  });
+  const horizontalOffset = placement.includes("right") ? offset2 : position2.includes("left") ? offset2 * -1 : 0;
+  const verticalOffset = placement.includes("bottom") ? offset2 : position2.includes("top") ? offset2 * -1 : 0;
+  const handleMouseMove = react.exports.useCallback(({ clientX, clientY }) => {
+    reference({
+      getBoundingClientRect() {
+        return {
+          width: 0,
+          height: 0,
+          x: clientX,
+          y: clientY,
+          left: clientX + horizontalOffset,
+          top: clientY + verticalOffset,
+          right: clientX,
+          bottom: clientY
+        };
+      }
+    });
+  }, [reference]);
+  react.exports.useEffect(() => {
+    if (refs.floating.current) {
+      const boundary = boundaryRef.current;
+      boundary.addEventListener("mousemove", handleMouseMove);
+      const parents = getOverflowAncestors(refs.floating.current);
+      parents.forEach((parent) => {
+        parent.addEventListener("scroll", update);
+      });
+      return () => {
+        boundary.removeEventListener("mousemove", handleMouseMove);
+        parents.forEach((parent) => {
+          parent.removeEventListener("scroll", update);
+        });
+      };
+    }
+    return void 0;
+  }, [reference, refs.floating, update, handleMouseMove, opened]);
+  return { handleMouseMove, x: x2, y: y2, opened, setOpened, boundaryRef, floating };
+}
+var __defProp$6 = Object.defineProperty;
+var __defProps$4 = Object.defineProperties;
+var __getOwnPropDescs$4 = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$6 = Object.getOwnPropertySymbols;
+var __hasOwnProp$6 = Object.prototype.hasOwnProperty;
+var __propIsEnum$6 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$6 = (obj, key, value) => key in obj ? __defProp$6(obj, key, {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  value
+}) : obj[key] = value;
+var __spreadValues$6 = (a, b2) => {
+  for (var prop in b2 || (b2 = {}))
+    if (__hasOwnProp$6.call(b2, prop))
+      __defNormalProp$6(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$6)
+    for (var prop of __getOwnPropSymbols$6(b2)) {
+      if (__propIsEnum$6.call(b2, prop))
+        __defNormalProp$6(a, prop, b2[prop]);
+    }
+  return a;
+};
+var __spreadProps$4 = (a, b2) => __defProps$4(a, __getOwnPropDescs$4(b2));
+var __objRest$3 = (source, exclude) => {
+  var target = {};
+  for (var prop in source)
+    if (__hasOwnProp$6.call(source, prop) && exclude.indexOf(prop) < 0)
+      target[prop] = source[prop];
+  if (source != null && __getOwnPropSymbols$6)
+    for (var prop of __getOwnPropSymbols$6(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$6.call(source, prop))
+        target[prop] = source[prop];
+    }
+  return target;
+};
+const defaultProps$3 = {
+  refProp: "ref",
+  withinPortal: true,
+  offset: 10,
+  position: "right",
+  zIndex: getDefaultZIndex("popover")
+};
+function TooltipFloating(props) {
+  var _b;
+  const _a = useComponentDefaultProps("TooltipFloating", defaultProps$3, props), {
+    children,
+    refProp,
+    withinPortal,
+    style,
+    className,
+    classNames,
+    styles: styles2,
+    unstyled,
+    radius: radius2,
+    color,
+    label,
+    offset: offset2,
+    position: position2,
+    multiline,
+    width,
+    zIndex,
+    disabled
+  } = _a, others = __objRest$3(_a, ["children", "refProp", "withinPortal", "style", "className", "classNames", "styles", "unstyled", "radius", "color", "label", "offset", "position", "multiline", "width", "zIndex", "disabled"]);
+  const {
+    handleMouseMove,
+    x: x2,
+    y: y2,
+    opened,
+    boundaryRef,
+    floating,
+    setOpened
+  } = useFloatingTooltip({
+    offset: offset2,
+    position: position2
+  });
+  const {
+    classes,
+    cx
+  } = useStyles$3({
+    radius: radius2,
+    color,
+    multiline,
+    width
+  }, {
+    name: "Tooltip",
+    classNames,
+    styles: styles2,
+    unstyled
+  });
+  if (!isElement$2(children)) {
+    throw new Error(TOOLTIP_ERRORS.children);
+  }
+  const targetRef = useMergedRef(boundaryRef, children.ref);
+  const onMouseEnter = (event) => {
+    var _a2, _b2;
+    (_b2 = (_a2 = children.props).onMouseEnter) == null ? void 0 : _b2.call(_a2, event);
+    handleMouseMove(event);
+    setOpened(true);
+  };
+  const onMouseLeave = (event) => {
+    var _a2, _b2;
+    (_b2 = (_a2 = children.props).onMouseLeave) == null ? void 0 : _b2.call(_a2, event);
+    setOpened(false);
+  };
+  if (disabled) {
+    return /* @__PURE__ */ jsx(Fragment, {
+      children
+    });
+  }
+  return /* @__PURE__ */ jsxs(Fragment, {
+    children: [/* @__PURE__ */ jsx(OptionalPortal, {
+      withinPortal,
+      children: /* @__PURE__ */ jsx(Box, {
+        ...__spreadProps$4(__spreadValues$6({}, others), {
+          ref: floating,
+          className: cx(classes.tooltip, className),
+          style: __spreadProps$4(__spreadValues$6({}, style), {
+            zIndex,
+            display: opened ? "block" : "none",
+            top: y2 != null ? y2 : "",
+            left: (_b = Math.round(x2)) != null ? _b : ""
+          })
+        }),
+        children: label
+      })
+    }), react.exports.cloneElement(children, __spreadProps$4(__spreadValues$6({}, children.props), {
+      [refProp]: targetRef,
+      onMouseEnter,
+      onMouseLeave
+    }))]
+  });
+}
+TooltipFloating.displayName = "@mantine/core/TooltipFloating";
+function useTooltip(settings) {
+  const [uncontrolledOpened, setUncontrolledOpened] = react.exports.useState(false);
+  const controlled = typeof settings.opened === "boolean";
+  const opened = controlled ? settings.opened : uncontrolledOpened;
+  const withinGroup = useTooltipGroupContext();
+  const uid = useId$1();
+  const { delay: groupDelay, currentId, setCurrentId } = useDelayGroupContext();
+  const onChange = react.exports.useCallback((_opened) => {
+    setUncontrolledOpened(_opened);
+    if (_opened) {
+      setCurrentId(uid);
+    }
+  }, [setCurrentId, uid]);
+  const { x: x2, y: y2, reference, floating, context, refs, update, placement } = useFloating({
+    placement: settings.position,
+    open: opened,
+    onOpenChange: onChange,
+    middleware: [offset(settings.offset), shift({ padding: 8 }), flip()]
+  });
+  const { getReferenceProps, getFloatingProps } = useInteractions([
+    useHover(context, {
+      enabled: settings.events.hover,
+      delay: withinGroup ? groupDelay : { open: settings.openDelay, close: settings.closeDelay },
+      mouseOnly: !settings.events.touch
+    }),
+    useFocus(context, { enabled: settings.events.focus, keyboardOnly: true }),
+    useRole(context, { role: "tooltip" }),
+    useDismiss(context, { enabled: typeof settings.opened === void 0 }),
+    useDelayGroup(context, { id: uid })
+  ]);
+  useFloatingAutoUpdate({
+    opened,
+    positionDependencies: settings.positionDependencies,
+    floating: { refs, update }
+  });
+  useDidUpdate(() => {
+    var _a;
+    (_a = settings.onPositionChange) == null ? void 0 : _a.call(settings, placement);
+  }, [placement]);
+  const isGroupPhase = opened && currentId && currentId !== uid;
+  return {
+    x: x2,
+    y: y2,
+    reference,
+    floating,
+    getFloatingProps,
+    getReferenceProps,
+    isGroupPhase,
+    opened,
+    placement
+  };
+}
+var __defProp$5 = Object.defineProperty;
+var __defProps$3 = Object.defineProperties;
+var __getOwnPropDescs$3 = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$5 = Object.getOwnPropertySymbols;
+var __hasOwnProp$5 = Object.prototype.hasOwnProperty;
+var __propIsEnum$5 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$5 = (obj, key, value) => key in obj ? __defProp$5(obj, key, {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  value
+}) : obj[key] = value;
+var __spreadValues$5 = (a, b2) => {
+  for (var prop in b2 || (b2 = {}))
+    if (__hasOwnProp$5.call(b2, prop))
+      __defNormalProp$5(a, prop, b2[prop]);
+  if (__getOwnPropSymbols$5)
+    for (var prop of __getOwnPropSymbols$5(b2)) {
+      if (__propIsEnum$5.call(b2, prop))
+        __defNormalProp$5(a, prop, b2[prop]);
+    }
+  return a;
+};
+var __spreadProps$3 = (a, b2) => __defProps$3(a, __getOwnPropDescs$3(b2));
+var __objRest$2 = (source, exclude) => {
+  var target = {};
+  for (var prop in source)
+    if (__hasOwnProp$5.call(source, prop) && exclude.indexOf(prop) < 0)
+      target[prop] = source[prop];
+  if (source != null && __getOwnPropSymbols$5)
+    for (var prop of __getOwnPropSymbols$5(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$5.call(source, prop))
+        target[prop] = source[prop];
+    }
+  return target;
+};
+const defaultProps$2 = {
+  position: "top",
+  refProp: "ref",
+  withinPortal: false,
+  arrowSize: 4,
+  arrowOffset: 5,
+  offset: 5,
+  transition: "fade",
+  transitionDuration: 100,
+  width: "auto",
+  events: {
+    hover: true,
+    focus: false,
+    touch: false
+  },
+  zIndex: getDefaultZIndex("popover"),
+  positionDependencies: []
+};
+const _Tooltip = react.exports.forwardRef((props, ref) => {
+  const _a = useComponentDefaultProps("Tooltip", defaultProps$2, props), {
+    children,
+    position: position2,
+    refProp,
+    label,
+    openDelay,
+    closeDelay,
+    onPositionChange,
+    opened,
+    withinPortal,
+    radius: radius2,
+    color,
+    classNames,
+    styles: styles2,
+    unstyled,
+    style,
+    className,
+    withArrow,
+    arrowSize,
+    arrowOffset,
+    offset: offset2,
+    transition,
+    transitionDuration,
+    multiline,
+    width,
+    events,
+    zIndex,
+    disabled,
+    positionDependencies,
+    onClick,
+    onMouseEnter,
+    onMouseLeave
+  } = _a, others = __objRest$2(_a, ["children", "position", "refProp", "label", "openDelay", "closeDelay", "onPositionChange", "opened", "withinPortal", "radius", "color", "classNames", "styles", "unstyled", "style", "className", "withArrow", "arrowSize", "arrowOffset", "offset", "transition", "transitionDuration", "multiline", "width", "events", "zIndex", "disabled", "positionDependencies", "onClick", "onMouseEnter", "onMouseLeave"]);
+  const {
+    classes,
+    cx,
+    theme
+  } = useStyles$3({
+    radius: radius2,
+    color,
+    width,
+    multiline
+  }, {
+    name: "Tooltip",
+    classNames,
+    styles: styles2,
+    unstyled
+  });
+  const tooltip = useTooltip({
+    position: getFloatingPosition(theme.dir, position2),
+    closeDelay,
+    openDelay,
+    onPositionChange,
+    opened,
+    events,
+    offset: offset2 + (withArrow ? arrowSize / 2 : 0),
+    positionDependencies: [...positionDependencies, children]
+  });
+  if (!isElement$2(children)) {
+    throw new Error(TOOLTIP_ERRORS.children);
+  }
+  const targetRef = useMergedRef(tooltip.reference, children.ref, ref);
+  return /* @__PURE__ */ jsxs(Fragment, {
+    children: [/* @__PURE__ */ jsx(OptionalPortal, {
+      withinPortal,
+      children: /* @__PURE__ */ jsx(Transition, {
+        mounted: !disabled && tooltip.opened,
+        transition,
+        duration: tooltip.isGroupPhase ? 10 : transitionDuration,
+        children: (transitionStyles) => {
+          var _a2, _b;
+          return /* @__PURE__ */ jsxs(Box, {
+            ...__spreadValues$5(__spreadValues$5({}, others), tooltip.getFloatingProps({
+              ref: tooltip.floating,
+              className: classes.tooltip,
+              style: __spreadProps$3(__spreadValues$5(__spreadValues$5({}, style), transitionStyles), {
+                zIndex,
+                top: (_a2 = tooltip.y) != null ? _a2 : "",
+                left: (_b = tooltip.x) != null ? _b : ""
+              })
+            })),
+            children: [label, /* @__PURE__ */ jsx(FloatingArrow, {
+              visible: withArrow,
+              withBorder: false,
+              position: tooltip.placement,
+              arrowSize,
+              arrowOffset,
+              className: classes.arrow
+            })]
+          });
+        }
+      })
+    }), react.exports.cloneElement(children, tooltip.getReferenceProps(__spreadValues$5({
+      onClick,
+      onMouseEnter,
+      onMouseLeave,
+      [refProp]: targetRef,
+      className: cx(className, children.props.className)
+    }, children.props)))]
+  });
+});
+_Tooltip.Group = TooltipGroup;
+_Tooltip.Floating = TooltipFloating;
+_Tooltip.displayName = "@mantine/core/Tooltip";
+const Tooltip = _Tooltip;
 var __defProp$4 = Object.defineProperty;
 var __defProps$2 = Object.defineProperties;
 var __getOwnPropDescs$2 = Object.getOwnPropertyDescriptors;
@@ -15015,7 +17754,7 @@ const Progress = react.exports.forwardRef((props, ref) => {
     classes,
     cx,
     theme
-  } = useStyles$3({
+  } = useStyles$5({
     color,
     size: size2,
     radius: radius2,
@@ -15027,18 +17766,26 @@ const Progress = react.exports.forwardRef((props, ref) => {
     unstyled,
     name: "Progress"
   });
-  const segments = Array.isArray(sections) ? getCumulativeSections(sections).map((section, index) => /* @__PURE__ */ jsx(Box, {
-    className: classes.bar,
-    sx: {
-      width: `${section.value}%`,
-      left: `${section.accumulated}%`,
-      backgroundColor: theme.fn.themeColor(section.color, theme.fn.primaryShade(), false)
-    },
-    children: section.label && /* @__PURE__ */ jsx(Text, {
-      className: classes.label,
-      children: section.label
+  const segments = Array.isArray(sections) ? getCumulativeSections(sections).map((section, index2) => /* @__PURE__ */ jsx(Tooltip.Floating, {
+    label: section.tooltip,
+    disabled: !section.tooltip,
+    children: /* @__PURE__ */ jsx(Box, {
+      className: classes.bar,
+      sx: {
+        width: `${section.value}%`,
+        left: `${section.accumulated}%`,
+        backgroundColor: theme.fn.variant({
+          variant: "filled",
+          primaryFallback: false,
+          color: section.color || theme.primaryColor
+        }).background
+      },
+      children: section.label && /* @__PURE__ */ jsx(Text, {
+        className: classes.label,
+        children: section.label
+      })
     })
-  }, index)) : null;
+  }, index2)) : null;
   return /* @__PURE__ */ jsx(Box, {
     ...__spreadValues$4({
       className: cx(classes.root, className),
@@ -15081,15 +17828,25 @@ var __spreadValues$3 = (a, b2) => {
   return a;
 };
 var __spreadProps$1 = (a, b2) => __defProps$1(a, __getOwnPropDescs$1(b2));
-var useStyles = createStyles((theme, { element, align }) => ({
+function getFontSize(size2, element, theme) {
+  if (typeof size2 !== "undefined") {
+    return size2 in theme.headings.sizes ? theme.headings.sizes[size2].fontSize : size2;
+  }
+  return theme.headings.sizes[element].fontSize;
+}
+function getLineHeight(size2, element, theme) {
+  if (typeof size2 !== "undefined" && size2 in theme.headings.sizes) {
+    return theme.headings.sizes[size2].lineHeight;
+  }
+  return theme.headings.sizes[element].lineHeight;
+}
+var useStyles = createStyles((theme, { element, weight, size: size2, inline }) => ({
   root: __spreadProps$1(__spreadValues$3({}, theme.fn.fontStyles()), {
     fontFamily: theme.headings.fontFamily,
-    fontWeight: theme.headings.sizes[element].fontWeight || theme.headings.fontWeight,
-    fontSize: theme.headings.sizes[element].fontSize,
-    lineHeight: theme.headings.sizes[element].lineHeight,
-    margin: 0,
-    color: "inherit",
-    textAlign: align
+    fontWeight: weight || theme.headings.sizes[element].fontWeight || theme.headings.fontWeight,
+    fontSize: getFontSize(size2, element, theme),
+    lineHeight: inline ? 1 : getLineHeight(size2, element, theme),
+    margin: 0
   })
 }));
 const useStyles$1 = useStyles;
@@ -15134,15 +17891,19 @@ const Title = react.exports.forwardRef((props, ref) => {
     className,
     order,
     children,
-    align,
-    unstyled
-  } = _a, others = __objRest(_a, ["className", "order", "children", "align", "unstyled"]);
+    unstyled,
+    size: size2,
+    weight,
+    inline
+  } = _a, others = __objRest(_a, ["className", "order", "children", "unstyled", "size", "weight", "inline"]);
   const {
     classes,
     cx
   } = useStyles$1({
     element: `h${order}`,
-    align
+    weight,
+    size: size2,
+    inline
   }, {
     name: "Title",
     unstyled
@@ -15150,7 +17911,7 @@ const Title = react.exports.forwardRef((props, ref) => {
   if (![1, 2, 3, 4, 5, 6].includes(order)) {
     return null;
   }
-  return /* @__PURE__ */ jsx(Box, {
+  return /* @__PURE__ */ jsx(Text, {
     ...__spreadValues$2({
       component: `h${order}`,
       ref,
@@ -15202,10 +17963,10 @@ function r(a) {
     return true;
   }
 }
-function t(a, b2) {
+function t$1(a, b2) {
   return b2();
 }
-var u = "undefined" === typeof window || "undefined" === typeof window.document || "undefined" === typeof window.document.createElement ? t : q;
+var u = "undefined" === typeof window || "undefined" === typeof window.document || "undefined" === typeof window.document.createElement ? t$1 : q;
 useSyncExternalStoreShim_production_min.useSyncExternalStore = void 0 !== e.useSyncExternalStore ? e.useSyncExternalStore : u;
 (function(module) {
   {
@@ -15428,11 +18189,11 @@ function shallowEqualObjects(a, b2) {
 function isPlainArray(value) {
   return Array.isArray(value) && value.length === Object.keys(value).length;
 }
-function isPlainObject(o) {
-  if (!hasObjectPrototype(o)) {
+function isPlainObject(o2) {
+  if (!hasObjectPrototype(o2)) {
     return false;
   }
-  const ctor = o.constructor;
+  const ctor = o2.constructor;
   if (typeof ctor === "undefined") {
     return true;
   }
@@ -15445,8 +18206,8 @@ function isPlainObject(o) {
   }
   return true;
 }
-function hasObjectPrototype(o) {
-  return Object.prototype.toString.call(o) === "[object Object]";
+function hasObjectPrototype(o2) {
+  return Object.prototype.toString.call(o2) === "[object Object]";
 }
 function isQueryKey(value) {
   return Array.isArray(value);
@@ -16638,6 +19399,18 @@ function getNextPageParam(options, pages) {
 function getPreviousPageParam(options, pages) {
   return options.getPreviousPageParam == null ? void 0 : options.getPreviousPageParam(pages[0], pages);
 }
+function hasNextPage(options, pages) {
+  if (options.getNextPageParam && Array.isArray(pages)) {
+    const nextPageParam = getNextPageParam(options, pages);
+    return typeof nextPageParam !== "undefined" && nextPageParam !== null && nextPageParam !== false;
+  }
+}
+function hasPreviousPage(options, pages) {
+  if (options.getPreviousPageParam && Array.isArray(pages)) {
+    const previousPageParam = getPreviousPageParam(options, pages);
+    return typeof previousPageParam !== "undefined" && previousPageParam !== null && previousPageParam !== false;
+  }
+}
 class QueryClient {
   constructor(config2 = {}) {
     this.queryCache = config2.queryCache || new QueryCache();
@@ -17292,6 +20065,70 @@ function shouldFetchOptionally(query, prevQuery, options, prevOptions) {
 function isStale(query, options) {
   return query.isStaleByTime(options.staleTime);
 }
+class InfiniteQueryObserver extends QueryObserver {
+  constructor(client, options) {
+    super(client, options);
+  }
+  bindMethods() {
+    super.bindMethods();
+    this.fetchNextPage = this.fetchNextPage.bind(this);
+    this.fetchPreviousPage = this.fetchPreviousPage.bind(this);
+  }
+  setOptions(options, notifyOptions) {
+    super.setOptions({
+      ...options,
+      behavior: infiniteQueryBehavior()
+    }, notifyOptions);
+  }
+  getOptimisticResult(options) {
+    options.behavior = infiniteQueryBehavior();
+    return super.getOptimisticResult(options);
+  }
+  fetchNextPage({
+    pageParam,
+    ...options
+  } = {}) {
+    return this.fetch({
+      ...options,
+      meta: {
+        fetchMore: {
+          direction: "forward",
+          pageParam
+        }
+      }
+    });
+  }
+  fetchPreviousPage({
+    pageParam,
+    ...options
+  } = {}) {
+    return this.fetch({
+      ...options,
+      meta: {
+        fetchMore: {
+          direction: "backward",
+          pageParam
+        }
+      }
+    });
+  }
+  createResult(query, options) {
+    var _state$data, _state$data2, _state$fetchMeta, _state$fetchMeta$fetc, _state$fetchMeta2, _state$fetchMeta2$fet;
+    const {
+      state
+    } = query;
+    const result = super.createResult(query, options);
+    return {
+      ...result,
+      fetchNextPage: this.fetchNextPage,
+      fetchPreviousPage: this.fetchPreviousPage,
+      hasNextPage: hasNextPage(options, (_state$data = state.data) == null ? void 0 : _state$data.pages),
+      hasPreviousPage: hasPreviousPage(options, (_state$data2 = state.data) == null ? void 0 : _state$data2.pages),
+      isFetchingNextPage: state.fetchStatus === "fetching" && ((_state$fetchMeta = state.fetchMeta) == null ? void 0 : (_state$fetchMeta$fetc = _state$fetchMeta.fetchMore) == null ? void 0 : _state$fetchMeta$fetc.direction) === "forward",
+      isFetchingPreviousPage: state.fetchStatus === "fetching" && ((_state$fetchMeta2 = state.fetchMeta) == null ? void 0 : (_state$fetchMeta2$fet = _state$fetchMeta2.fetchMore) == null ? void 0 : _state$fetchMeta2$fet.direction) === "backward"
+    };
+  }
+}
 class MutationObserver$1 extends Subscribable {
   constructor(client, options) {
     super();
@@ -17541,142 +20378,147 @@ function useMutation(arg1, arg2, arg3) {
 }
 function noop() {
 }
-function _objectWithoutPropertiesLoose(source, excluded) {
-  if (source == null)
-    return {};
-  var target = {};
-  var sourceKeys = Object.keys(source);
-  var key, i;
-  for (i = 0; i < sourceKeys.length; i++) {
-    key = sourceKeys[i];
-    if (excluded.indexOf(key) >= 0)
-      continue;
-    target[key] = source[key];
-  }
-  return target;
+function useInfiniteQuery(arg1, arg2, arg3) {
+  const options = parseQueryArgs(arg1, arg2, arg3);
+  return useBaseQuery(options, InfiniteQueryObserver);
 }
-function _objectWithoutProperties(source, excluded) {
-  if (source == null)
-    return {};
-  var target = _objectWithoutPropertiesLoose(source, excluded);
-  var key, i;
-  if (Object.getOwnPropertySymbols) {
-    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
-    for (i = 0; i < sourceSymbolKeys.length; i++) {
-      key = sourceSymbolKeys[i];
-      if (excluded.indexOf(key) >= 0)
-        continue;
-      if (!Object.prototype.propertyIsEnumerable.call(source, key))
-        continue;
-      target[key] = source[key];
+function t() {
+  return t = Object.assign ? Object.assign.bind() : function(e2) {
+    for (var t2 = 1; t2 < arguments.length; t2++) {
+      var o2 = arguments[t2];
+      for (var r2 in o2)
+        Object.prototype.hasOwnProperty.call(o2, r2) && (e2[r2] = o2[r2]);
     }
+    return e2;
+  }, t.apply(this, arguments);
+}
+function o(e2, t2) {
+  if (null == e2)
+    return {};
+  var o2, r2, n2 = function(e3, t3) {
+    if (null == e3)
+      return {};
+    var o3, r3, n3 = {}, l3 = Object.keys(e3);
+    for (r3 = 0; r3 < l3.length; r3++)
+      o3 = l3[r3], t3.indexOf(o3) >= 0 || (n3[o3] = e3[o3]);
+    return n3;
+  }(e2, t2);
+  if (Object.getOwnPropertySymbols) {
+    var l2 = Object.getOwnPropertySymbols(e2);
+    for (r2 = 0; r2 < l2.length; r2++)
+      o2 = l2[r2], t2.indexOf(o2) >= 0 || Object.prototype.propertyIsEnumerable.call(e2, o2) && (n2[o2] = e2[o2]);
   }
-  return target;
+  return n2;
 }
-var _excluded$uy = ["size", "color", "stroke"];
-function IconArticle(_ref) {
-  var _ref$size = _ref.size, size2 = _ref$size === void 0 ? 24 : _ref$size, _ref$color = _ref.color, color = _ref$color === void 0 ? "currentColor" : _ref$color, _ref$stroke = _ref.stroke, stroke = _ref$stroke === void 0 ? 2 : _ref$stroke, props = _objectWithoutProperties(_ref, _excluded$uy);
-  return /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-article", width: size2, height: size2, viewBox: "0 0 24 24", strokeWidth: stroke, stroke: color, fill: "none", strokeLinecap: "round", strokeLinejoin: "round", ...props, children: [/* @__PURE__ */ jsx("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), /* @__PURE__ */ jsx("rect", { x: 3, y: 4, width: 18, height: 16, rx: 2 }), /* @__PURE__ */ jsx("path", { d: "M7 8h10" }), /* @__PURE__ */ jsx("path", { d: "M7 12h10" }), /* @__PURE__ */ jsx("path", { d: "M7 16h10" })] });
+var Zi = ["size", "color", "stroke"];
+function $i(r2) {
+  var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, Zi);
+  return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-article", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("rect", { x: 3, y: 4, width: 18, height: 16, rx: 2 }), react.exports.createElement("path", { d: "M7 8h10" }), react.exports.createElement("path", { d: "M7 12h10" }), react.exports.createElement("path", { d: "M7 16h10" }));
 }
-var _excluded$uq = ["size", "color", "stroke"];
-function IconAt(_ref) {
-  var _ref$size = _ref.size, size2 = _ref$size === void 0 ? 24 : _ref$size, _ref$color = _ref.color, color = _ref$color === void 0 ? "currentColor" : _ref$color, _ref$stroke = _ref.stroke, stroke = _ref$stroke === void 0 ? 2 : _ref$stroke, props = _objectWithoutProperties(_ref, _excluded$uq);
-  return /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-at", width: size2, height: size2, viewBox: "0 0 24 24", strokeWidth: stroke, stroke: color, fill: "none", strokeLinecap: "round", strokeLinejoin: "round", ...props, children: [/* @__PURE__ */ jsx("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), /* @__PURE__ */ jsx("circle", { cx: 12, cy: 12, r: 4 }), /* @__PURE__ */ jsx("path", { d: "M16 12v1.5a2.5 2.5 0 0 0 5 0v-1.5a9 9 0 1 0 -5.5 8.28" })] });
+var ma = ["size", "color", "stroke"];
+function ka(r2) {
+  var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, ma);
+  return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-at", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("circle", { cx: 12, cy: 12, r: 4 }), react.exports.createElement("path", { d: "M16 12v1.5a2.5 2.5 0 0 0 5 0v-1.5a9 9 0 1 0 -5.5 8.28" }));
 }
-var _excluded$nT = ["size", "color", "stroke"];
-function IconCheck(_ref) {
-  var _ref$size = _ref.size, size2 = _ref$size === void 0 ? 24 : _ref$size, _ref$color = _ref.color, color = _ref$color === void 0 ? "currentColor" : _ref$color, _ref$stroke = _ref.stroke, stroke = _ref$stroke === void 0 ? 2 : _ref$stroke, props = _objectWithoutProperties(_ref, _excluded$nT);
-  return /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-check", width: size2, height: size2, viewBox: "0 0 24 24", strokeWidth: stroke, stroke: color, fill: "none", strokeLinecap: "round", strokeLinejoin: "round", ...props, children: [/* @__PURE__ */ jsx("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), /* @__PURE__ */ jsx("path", { d: "M5 12l5 5l10 -10" })] });
+var Hb = ["size", "color", "stroke"];
+function Nb(r2) {
+  var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, Hb);
+  return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-check", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("path", { d: "M5 12l5 5l10 -10" }));
 }
-var _excluded$nl = ["size", "color", "stroke"];
-function IconCircleCheck(_ref) {
-  var _ref$size = _ref.size, size2 = _ref$size === void 0 ? 24 : _ref$size, _ref$color = _ref.color, color = _ref$color === void 0 ? "currentColor" : _ref$color, _ref$stroke = _ref.stroke, stroke = _ref$stroke === void 0 ? 2 : _ref$stroke, props = _objectWithoutProperties(_ref, _excluded$nl);
-  return /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-circle-check", width: size2, height: size2, viewBox: "0 0 24 24", strokeWidth: stroke, stroke: color, fill: "none", strokeLinecap: "round", strokeLinejoin: "round", ...props, children: [/* @__PURE__ */ jsx("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), /* @__PURE__ */ jsx("circle", { cx: 12, cy: 12, r: 9 }), /* @__PURE__ */ jsx("path", { d: "M9 12l2 2l4 -4" })] });
+var VL = ["size", "color", "stroke"];
+function XL(r2) {
+  var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, VL);
+  return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-circle-check", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("circle", { cx: 12, cy: 12, r: 9 }), react.exports.createElement("path", { d: "M9 12l2 2l4 -4" }));
 }
-var _excluded$n7 = ["size", "color", "stroke"];
-function IconCircleX(_ref) {
-  var _ref$size = _ref.size, size2 = _ref$size === void 0 ? 24 : _ref$size, _ref$color = _ref.color, color = _ref$color === void 0 ? "currentColor" : _ref$color, _ref$stroke = _ref.stroke, stroke = _ref$stroke === void 0 ? 2 : _ref$stroke, props = _objectWithoutProperties(_ref, _excluded$n7);
-  return /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-circle-x", width: size2, height: size2, viewBox: "0 0 24 24", strokeWidth: stroke, stroke: color, fill: "none", strokeLinecap: "round", strokeLinejoin: "round", ...props, children: [/* @__PURE__ */ jsx("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), /* @__PURE__ */ jsx("circle", { cx: 12, cy: 12, r: 9 }), /* @__PURE__ */ jsx("path", { d: "M10 10l4 4m0 -4l-4 4" })] });
+var fy = ["size", "color", "stroke"];
+function zy(r2) {
+  var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, fy);
+  return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-circle-x", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("circle", { cx: 12, cy: 12, r: 9 }), react.exports.createElement("path", { d: "M10 10l4 4m0 -4l-4 4" }));
 }
-var _excluded$lQ = ["size", "color", "stroke"];
-function IconCopy(_ref) {
-  var _ref$size = _ref.size, size2 = _ref$size === void 0 ? 24 : _ref$size, _ref$color = _ref.color, color = _ref$color === void 0 ? "currentColor" : _ref$color, _ref$stroke = _ref.stroke, stroke = _ref$stroke === void 0 ? 2 : _ref$stroke, props = _objectWithoutProperties(_ref, _excluded$lQ);
-  return /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-copy", width: size2, height: size2, viewBox: "0 0 24 24", strokeWidth: stroke, stroke: color, fill: "none", strokeLinecap: "round", strokeLinejoin: "round", ...props, children: [/* @__PURE__ */ jsx("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), /* @__PURE__ */ jsx("rect", { x: 8, y: 8, width: 12, height: 12, rx: 2 }), /* @__PURE__ */ jsx("path", { d: "M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" })] });
+var pH = ["size", "color", "stroke"];
+function EH(r2) {
+  var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, pH);
+  return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-copy", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("rect", { x: 8, y: 8, width: 12, height: 12, rx: 2 }), react.exports.createElement("path", { d: "M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" }));
 }
-var _excluded$iM = ["size", "color", "stroke"];
-function IconEdit(_ref) {
-  var _ref$size = _ref.size, size2 = _ref$size === void 0 ? 24 : _ref$size, _ref$color = _ref.color, color = _ref$color === void 0 ? "currentColor" : _ref$color, _ref$stroke = _ref.stroke, stroke = _ref$stroke === void 0 ? 2 : _ref$stroke, props = _objectWithoutProperties(_ref, _excluded$iM);
-  return /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-edit", width: size2, height: size2, viewBox: "0 0 24 24", strokeWidth: stroke, stroke: color, fill: "none", strokeLinecap: "round", strokeLinejoin: "round", ...props, children: [/* @__PURE__ */ jsx("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), /* @__PURE__ */ jsx("path", { d: "M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" }), /* @__PURE__ */ jsx("path", { d: "M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" }), /* @__PURE__ */ jsx("path", { d: "M16 5l3 3" })] });
+var uI = ["size", "color", "stroke"];
+function gI(r2) {
+  var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, uI);
+  return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-edit", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("path", { d: "M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" }), react.exports.createElement("path", { d: "M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" }), react.exports.createElement("path", { d: "M16 5l3 3" }));
 }
-var _excluded$ir = ["size", "color", "stroke"];
-function IconExternalLink(_ref) {
-  var _ref$size = _ref.size, size2 = _ref$size === void 0 ? 24 : _ref$size, _ref$color = _ref.color, color = _ref$color === void 0 ? "currentColor" : _ref$color, _ref$stroke = _ref.stroke, stroke = _ref$stroke === void 0 ? 2 : _ref$stroke, props = _objectWithoutProperties(_ref, _excluded$ir);
-  return /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-external-link", width: size2, height: size2, viewBox: "0 0 24 24", strokeWidth: stroke, stroke: color, fill: "none", strokeLinecap: "round", strokeLinejoin: "round", ...props, children: [/* @__PURE__ */ jsx("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), /* @__PURE__ */ jsx("path", { d: "M11 7h-5a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-5" }), /* @__PURE__ */ jsx("line", { x1: 10, y1: 14, x2: 20, y2: 4 }), /* @__PURE__ */ jsx("polyline", { points: "15 4 20 4 20 9" })] });
+var fA = ["size", "color", "stroke"];
+function zA(r2) {
+  var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, fA);
+  return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-external-link", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("path", { d: "M11 7h-5a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-5" }), react.exports.createElement("line", { x1: 10, y1: 14, x2: 20, y2: 4 }), react.exports.createElement("polyline", { points: "15 4 20 4 20 9" }));
 }
-var _excluded$es = ["size", "color", "stroke"];
-function IconId(_ref) {
-  var _ref$size = _ref.size, size2 = _ref$size === void 0 ? 24 : _ref$size, _ref$color = _ref.color, color = _ref$color === void 0 ? "currentColor" : _ref$color, _ref$stroke = _ref.stroke, stroke = _ref$stroke === void 0 ? 2 : _ref$stroke, props = _objectWithoutProperties(_ref, _excluded$es);
-  return /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-id", width: size2, height: size2, viewBox: "0 0 24 24", strokeWidth: stroke, stroke: color, fill: "none", strokeLinecap: "round", strokeLinejoin: "round", ...props, children: [/* @__PURE__ */ jsx("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), /* @__PURE__ */ jsx("rect", { x: 3, y: 4, width: 18, height: 16, rx: 3 }), /* @__PURE__ */ jsx("circle", { cx: 9, cy: 10, r: 2 }), /* @__PURE__ */ jsx("line", { x1: 15, y1: 8, x2: 17, y2: 8 }), /* @__PURE__ */ jsx("line", { x1: 15, y1: 12, x2: 17, y2: 12 }), /* @__PURE__ */ jsx("line", { x1: 7, y1: 16, x2: 17, y2: 16 })] });
+var YX = ["size", "color", "stroke"];
+function ZX(r2) {
+  var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, YX);
+  return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-id", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("rect", { x: 3, y: 4, width: 18, height: 16, rx: 3 }), react.exports.createElement("circle", { cx: 9, cy: 10, r: 2 }), react.exports.createElement("line", { x1: 15, y1: 8, x2: 17, y2: 8 }), react.exports.createElement("line", { x1: 15, y1: 12, x2: 17, y2: 12 }), react.exports.createElement("line", { x1: 7, y1: 16, x2: 17, y2: 16 }));
 }
-var _excluded$ed = ["size", "color", "stroke"];
-function IconKey(_ref) {
-  var _ref$size = _ref.size, size2 = _ref$size === void 0 ? 24 : _ref$size, _ref$color = _ref.color, color = _ref$color === void 0 ? "currentColor" : _ref$color, _ref$stroke = _ref.stroke, stroke = _ref$stroke === void 0 ? 2 : _ref$stroke, props = _objectWithoutProperties(_ref, _excluded$ed);
-  return /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-key", width: size2, height: size2, viewBox: "0 0 24 24", strokeWidth: stroke, stroke: color, fill: "none", strokeLinecap: "round", strokeLinejoin: "round", ...props, children: [/* @__PURE__ */ jsx("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), /* @__PURE__ */ jsx("circle", { cx: 8, cy: 15, r: 4 }), /* @__PURE__ */ jsx("line", { x1: 10.85, y1: 12.15, x2: 19, y2: 4 }), /* @__PURE__ */ jsx("line", { x1: 18, y1: 5, x2: 20, y2: 7 }), /* @__PURE__ */ jsx("line", { x1: 15, y1: 8, x2: 17, y2: 10 })] });
+var FY = ["size", "color", "stroke"];
+function GY(r2) {
+  var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, FY);
+  return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-key", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("circle", { cx: 8, cy: 15, r: 4 }), react.exports.createElement("line", { x1: 10.85, y1: 12.15, x2: 19, y2: 4 }), react.exports.createElement("line", { x1: 18, y1: 5, x2: 20, y2: 7 }), react.exports.createElement("line", { x1: 15, y1: 8, x2: 17, y2: 10 }));
 }
-var _excluded$cD = ["size", "color", "stroke"];
-function IconListDetails(_ref) {
-  var _ref$size = _ref.size, size2 = _ref$size === void 0 ? 24 : _ref$size, _ref$color = _ref.color, color = _ref$color === void 0 ? "currentColor" : _ref$color, _ref$stroke = _ref.stroke, stroke = _ref$stroke === void 0 ? 2 : _ref$stroke, props = _objectWithoutProperties(_ref, _excluded$cD);
-  return /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-list-details", width: size2, height: size2, viewBox: "0 0 24 24", strokeWidth: stroke, stroke: color, fill: "none", strokeLinecap: "round", strokeLinejoin: "round", ...props, children: [/* @__PURE__ */ jsx("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), /* @__PURE__ */ jsx("path", { d: "M13 5h8" }), /* @__PURE__ */ jsx("path", { d: "M13 9h5" }), /* @__PURE__ */ jsx("path", { d: "M13 15h8" }), /* @__PURE__ */ jsx("path", { d: "M13 19h5" }), /* @__PURE__ */ jsx("rect", { x: 3, y: 4, width: 6, height: 6, rx: 1 }), /* @__PURE__ */ jsx("rect", { x: 3, y: 14, width: 6, height: 6, rx: 1 })] });
+var W0 = ["size", "color", "stroke"];
+function q0(r2) {
+  var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, W0);
+  return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-list-details", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("path", { d: "M13 5h8" }), react.exports.createElement("path", { d: "M13 9h5" }), react.exports.createElement("path", { d: "M13 15h8" }), react.exports.createElement("path", { d: "M13 19h5" }), react.exports.createElement("rect", { x: 3, y: 4, width: 6, height: 6, rx: 1 }), react.exports.createElement("rect", { x: 3, y: 14, width: 6, height: 6, rx: 1 }));
 }
-var _excluded$cd = ["size", "color", "stroke"];
-function IconLogout(_ref) {
-  var _ref$size = _ref.size, size2 = _ref$size === void 0 ? 24 : _ref$size, _ref$color = _ref.color, color = _ref$color === void 0 ? "currentColor" : _ref$color, _ref$stroke = _ref.stroke, stroke = _ref$stroke === void 0 ? 2 : _ref$stroke, props = _objectWithoutProperties(_ref, _excluded$cd);
-  return /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-logout", width: size2, height: size2, viewBox: "0 0 24 24", strokeWidth: stroke, stroke: color, fill: "none", strokeLinecap: "round", strokeLinejoin: "round", ...props, children: [/* @__PURE__ */ jsx("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), /* @__PURE__ */ jsx("path", { d: "M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" }), /* @__PURE__ */ jsx("path", { d: "M7 12h14l-3 -3m0 6l3 -3" })] });
+var W2 = ["size", "color", "stroke"];
+function q2(r2) {
+  var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, W2);
+  return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-logout", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("path", { d: "M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" }), react.exports.createElement("path", { d: "M7 12h14l-3 -3m0 6l3 -3" }));
 }
-var _excluded$aH = ["size", "color", "stroke"];
-function IconMoonStars(_ref) {
-  var _ref$size = _ref.size, size2 = _ref$size === void 0 ? 24 : _ref$size, _ref$color = _ref.color, color = _ref$color === void 0 ? "currentColor" : _ref$color, _ref$stroke = _ref.stroke, stroke = _ref$stroke === void 0 ? 2 : _ref$stroke, props = _objectWithoutProperties(_ref, _excluded$aH);
-  return /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-moon-stars", width: size2, height: size2, viewBox: "0 0 24 24", strokeWidth: stroke, stroke: color, fill: "none", strokeLinecap: "round", strokeLinejoin: "round", ...props, children: [/* @__PURE__ */ jsx("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), /* @__PURE__ */ jsx("path", { d: "M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" }), /* @__PURE__ */ jsx("path", { d: "M17 4a2 2 0 0 0 2 2a2 2 0 0 0 -2 2a2 2 0 0 0 -2 -2a2 2 0 0 0 2 -2" }), /* @__PURE__ */ jsx("path", { d: "M19 11h2m-1 -1v2" })] });
+var n6 = ["size", "color", "stroke"];
+function l6(r2) {
+  var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, n6);
+  return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-moon-stars", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("path", { d: "M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" }), react.exports.createElement("path", { d: "M17 4a2 2 0 0 0 2 2a2 2 0 0 0 -2 2a2 2 0 0 0 -2 -2a2 2 0 0 0 2 -2" }), react.exports.createElement("path", { d: "M19 11h2m-1 -1v2" }));
 }
-var _excluded$6a = ["size", "color", "stroke"];
-function IconSearch(_ref) {
-  var _ref$size = _ref.size, size2 = _ref$size === void 0 ? 24 : _ref$size, _ref$color = _ref.color, color = _ref$color === void 0 ? "currentColor" : _ref$color, _ref$stroke = _ref.stroke, stroke = _ref$stroke === void 0 ? 2 : _ref$stroke, props = _objectWithoutProperties(_ref, _excluded$6a);
-  return /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-search", width: size2, height: size2, viewBox: "0 0 24 24", strokeWidth: stroke, stroke: color, fill: "none", strokeLinecap: "round", strokeLinejoin: "round", ...props, children: [/* @__PURE__ */ jsx("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), /* @__PURE__ */ jsx("circle", { cx: 10, cy: 10, r: 7 }), /* @__PURE__ */ jsx("line", { x1: 21, y1: 21, x2: 15, y2: 15 })] });
+var Vne = ["size", "color", "stroke"];
+function Xne(r2) {
+  var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, Vne);
+  return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-refresh", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("path", { d: "M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" }), react.exports.createElement("path", { d: "M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" }));
 }
-var _excluded$63 = ["size", "color", "stroke"];
-function IconSend(_ref) {
-  var _ref$size = _ref.size, size2 = _ref$size === void 0 ? 24 : _ref$size, _ref$color = _ref.color, color = _ref$color === void 0 ? "currentColor" : _ref$color, _ref$stroke = _ref.stroke, stroke = _ref$stroke === void 0 ? 2 : _ref$stroke, props = _objectWithoutProperties(_ref, _excluded$63);
-  return /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-send", width: size2, height: size2, viewBox: "0 0 24 24", strokeWidth: stroke, stroke: color, fill: "none", strokeLinecap: "round", strokeLinejoin: "round", ...props, children: [/* @__PURE__ */ jsx("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), /* @__PURE__ */ jsx("line", { x1: 10, y1: 14, x2: 21, y2: 3 }), /* @__PURE__ */ jsx("path", { d: "M21 3l-6.5 18a0.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a0.55 .55 0 0 1 0 -1l18 -6.5" })] });
+var Iae = ["size", "color", "stroke"];
+function Aae(r2) {
+  var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, Iae);
+  return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-search", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("circle", { cx: 10, cy: 10, r: 7 }), react.exports.createElement("line", { x1: 21, y1: 21, x2: 15, y2: 15 }));
 }
-var _excluded$5U = ["size", "color", "stroke"];
-function IconSettings(_ref) {
-  var _ref$size = _ref.size, size2 = _ref$size === void 0 ? 24 : _ref$size, _ref$color = _ref.color, color = _ref$color === void 0 ? "currentColor" : _ref$color, _ref$stroke = _ref.stroke, stroke = _ref$stroke === void 0 ? 2 : _ref$stroke, props = _objectWithoutProperties(_ref, _excluded$5U);
-  return /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-settings", width: size2, height: size2, viewBox: "0 0 24 24", strokeWidth: stroke, stroke: color, fill: "none", strokeLinecap: "round", strokeLinejoin: "round", ...props, children: [/* @__PURE__ */ jsx("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), /* @__PURE__ */ jsx("path", { d: "M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z" }), /* @__PURE__ */ jsx("circle", { cx: 12, cy: 12, r: 3 })] });
+var $ae = ["size", "color", "stroke"];
+function _ae(r2) {
+  var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, $ae);
+  return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-send", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("line", { x1: 10, y1: 14, x2: 21, y2: 3 }), react.exports.createElement("path", { d: "M21 3l-6.5 18a0.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a0.55 .55 0 0 1 0 -1l18 -6.5" }));
 }
-var _excluded$3L = ["size", "color", "stroke"];
-function IconSun(_ref) {
-  var _ref$size = _ref.size, size2 = _ref$size === void 0 ? 24 : _ref$size, _ref$color = _ref.color, color = _ref$color === void 0 ? "currentColor" : _ref$color, _ref$stroke = _ref.stroke, stroke = _ref$stroke === void 0 ? 2 : _ref$stroke, props = _objectWithoutProperties(_ref, _excluded$3L);
-  return /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-sun", width: size2, height: size2, viewBox: "0 0 24 24", strokeWidth: stroke, stroke: color, fill: "none", strokeLinecap: "round", strokeLinejoin: "round", ...props, children: [/* @__PURE__ */ jsx("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), /* @__PURE__ */ jsx("circle", { cx: 12, cy: 12, r: 4 }), /* @__PURE__ */ jsx("path", { d: "M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" })] });
+var bce = ["size", "color", "stroke"];
+function Lce(r2) {
+  var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, bce);
+  return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-settings", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("path", { d: "M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z" }), react.exports.createElement("circle", { cx: 12, cy: 12, r: 3 }));
 }
-var _excluded$2C = ["size", "color", "stroke"];
-function IconTool(_ref) {
-  var _ref$size = _ref.size, size2 = _ref$size === void 0 ? 24 : _ref$size, _ref$color = _ref.color, color = _ref$color === void 0 ? "currentColor" : _ref$color, _ref$stroke = _ref.stroke, stroke = _ref$stroke === void 0 ? 2 : _ref$stroke, props = _objectWithoutProperties(_ref, _excluded$2C);
-  return /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-tool", width: size2, height: size2, viewBox: "0 0 24 24", strokeWidth: stroke, stroke: color, fill: "none", strokeLinecap: "round", strokeLinejoin: "round", ...props, children: [/* @__PURE__ */ jsx("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), /* @__PURE__ */ jsx("path", { d: "M7 10h3v-3l-3.5 -3.5a6 6 0 0 1 8 8l6 6a2 2 0 0 1 -3 3l-6 -6a6 6 0 0 1 -8 -8l3.5 3.5" })] });
+var Ome = ["size", "color", "stroke"];
+function Dme(r2) {
+  var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, Ome);
+  return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-sun", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("circle", { cx: 12, cy: 12, r: 4 }), react.exports.createElement("path", { d: "M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" }));
 }
-var _excluded$1F = ["size", "color", "stroke"];
-function IconUser(_ref) {
-  var _ref$size = _ref.size, size2 = _ref$size === void 0 ? 24 : _ref$size, _ref$color = _ref.color, color = _ref$color === void 0 ? "currentColor" : _ref$color, _ref$stroke = _ref.stroke, stroke = _ref$stroke === void 0 ? 2 : _ref$stroke, props = _objectWithoutProperties(_ref, _excluded$1F);
-  return /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-user", width: size2, height: size2, viewBox: "0 0 24 24", strokeWidth: stroke, stroke: color, fill: "none", strokeLinecap: "round", strokeLinejoin: "round", ...props, children: [/* @__PURE__ */ jsx("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), /* @__PURE__ */ jsx("circle", { cx: 12, cy: 7, r: 4 }), /* @__PURE__ */ jsx("path", { d: "M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" })] });
+var jpe = ["size", "color", "stroke"];
+function Bpe(r2) {
+  var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, jpe);
+  return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-tool", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("path", { d: "M7 10h3v-3l-3.5 -3.5a6 6 0 0 1 8 8l6 6a2 2 0 0 1 -3 3l-6 -6a6 6 0 0 1 -8 -8l3.5 3.5" }));
 }
-var _excluded$1E = ["size", "color", "stroke"];
-function IconUsers(_ref) {
-  var _ref$size = _ref.size, size2 = _ref$size === void 0 ? 24 : _ref$size, _ref$color = _ref.color, color = _ref$color === void 0 ? "currentColor" : _ref$color, _ref$stroke = _ref.stroke, stroke = _ref$stroke === void 0 ? 2 : _ref$stroke, props = _objectWithoutProperties(_ref, _excluded$1E);
-  return /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-users", width: size2, height: size2, viewBox: "0 0 24 24", strokeWidth: stroke, stroke: color, fill: "none", strokeLinecap: "round", strokeLinejoin: "round", ...props, children: [/* @__PURE__ */ jsx("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), /* @__PURE__ */ jsx("circle", { cx: 9, cy: 7, r: 4 }), /* @__PURE__ */ jsx("path", { d: "M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" }), /* @__PURE__ */ jsx("path", { d: "M16 3.13a4 4 0 0 1 0 7.75" }), /* @__PURE__ */ jsx("path", { d: "M21 21v-2a4 4 0 0 0 -3 -3.85" })] });
+var ige = ["size", "color", "stroke"];
+function age(r2) {
+  var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, ige);
+  return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-user", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("circle", { cx: 12, cy: 7, r: 4 }), react.exports.createElement("path", { d: "M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" }));
 }
-var _excluded$s = ["size", "color", "stroke"];
-function IconX(_ref) {
-  var _ref$size = _ref.size, size2 = _ref$size === void 0 ? 24 : _ref$size, _ref$color = _ref.color, color = _ref$color === void 0 ? "currentColor" : _ref$color, _ref$stroke = _ref.stroke, stroke = _ref$stroke === void 0 ? 2 : _ref$stroke, props = _objectWithoutProperties(_ref, _excluded$s);
-  return /* @__PURE__ */ jsxs("svg", { xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-x", width: size2, height: size2, viewBox: "0 0 24 24", strokeWidth: stroke, stroke: color, fill: "none", strokeLinecap: "round", strokeLinejoin: "round", ...props, children: [/* @__PURE__ */ jsx("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), /* @__PURE__ */ jsx("line", { x1: 18, y1: 6, x2: 6, y2: 18 }), /* @__PURE__ */ jsx("line", { x1: 6, y1: 6, x2: 18, y2: 18 })] });
+var cge = ["size", "color", "stroke"];
+function sge(r2) {
+  var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, cge);
+  return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-users", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("circle", { cx: 9, cy: 7, r: 4 }), react.exports.createElement("path", { d: "M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" }), react.exports.createElement("path", { d: "M16 3.13a4 4 0 0 1 0 7.75" }), react.exports.createElement("path", { d: "M21 21v-2a4 4 0 0 0 -3 -3.85" }));
+}
+var ize = ["size", "color", "stroke"];
+function aze(r2) {
+  var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, ize);
+  return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-x", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("line", { x1: 18, y1: 6, x2: 6, y2: 18 }), react.exports.createElement("line", { x1: 6, y1: 6, x2: 18, y2: 18 }));
 }
 class HTTPError extends Error {
   constructor(response, request, options) {
@@ -18099,6 +20941,448 @@ const baseUrl = { "VITE_ROOT_PATH": "./src/ui-app/", "BASE_URL": "./", "MODE": "
 const config = {
   baseUri: baseUrl || ""
 };
+var queryString = {};
+var strictUriEncode = (str) => encodeURIComponent(str).replace(/[!'()*]/g, (x2) => `%${x2.charCodeAt(0).toString(16).toUpperCase()}`);
+var token = "%[a-f0-9]{2}";
+var singleMatcher = new RegExp(token, "gi");
+var multiMatcher = new RegExp("(" + token + ")+", "gi");
+function decodeComponents(components, split) {
+  try {
+    return decodeURIComponent(components.join(""));
+  } catch (err) {
+  }
+  if (components.length === 1) {
+    return components;
+  }
+  split = split || 1;
+  var left = components.slice(0, split);
+  var right = components.slice(split);
+  return Array.prototype.concat.call([], decodeComponents(left), decodeComponents(right));
+}
+function decode(input) {
+  try {
+    return decodeURIComponent(input);
+  } catch (err) {
+    var tokens = input.match(singleMatcher);
+    for (var i = 1; i < tokens.length; i++) {
+      input = decodeComponents(tokens, i).join("");
+      tokens = input.match(singleMatcher);
+    }
+    return input;
+  }
+}
+function customDecodeURIComponent(input) {
+  var replaceMap = {
+    "%FE%FF": "\uFFFD\uFFFD",
+    "%FF%FE": "\uFFFD\uFFFD"
+  };
+  var match2 = multiMatcher.exec(input);
+  while (match2) {
+    try {
+      replaceMap[match2[0]] = decodeURIComponent(match2[0]);
+    } catch (err) {
+      var result = decode(match2[0]);
+      if (result !== match2[0]) {
+        replaceMap[match2[0]] = result;
+      }
+    }
+    match2 = multiMatcher.exec(input);
+  }
+  replaceMap["%C2"] = "\uFFFD";
+  var entries = Object.keys(replaceMap);
+  for (var i = 0; i < entries.length; i++) {
+    var key = entries[i];
+    input = input.replace(new RegExp(key, "g"), replaceMap[key]);
+  }
+  return input;
+}
+var decodeUriComponent = function(encodedURI) {
+  if (typeof encodedURI !== "string") {
+    throw new TypeError("Expected `encodedURI` to be of type `string`, got `" + typeof encodedURI + "`");
+  }
+  try {
+    encodedURI = encodedURI.replace(/\+/g, " ");
+    return decodeURIComponent(encodedURI);
+  } catch (err) {
+    return customDecodeURIComponent(encodedURI);
+  }
+};
+var splitOnFirst = (string, separator) => {
+  if (!(typeof string === "string" && typeof separator === "string")) {
+    throw new TypeError("Expected the arguments to be of type `string`");
+  }
+  if (separator === "") {
+    return [string];
+  }
+  const separatorIndex = string.indexOf(separator);
+  if (separatorIndex === -1) {
+    return [string];
+  }
+  return [
+    string.slice(0, separatorIndex),
+    string.slice(separatorIndex + separator.length)
+  ];
+};
+var filterObj = function(obj, predicate) {
+  var ret = {};
+  var keys = Object.keys(obj);
+  var isArr = Array.isArray(predicate);
+  for (var i = 0; i < keys.length; i++) {
+    var key = keys[i];
+    var val = obj[key];
+    if (isArr ? predicate.indexOf(key) !== -1 : predicate(key, val, obj)) {
+      ret[key] = val;
+    }
+  }
+  return ret;
+};
+(function(exports) {
+  const strictUriEncode$1 = strictUriEncode;
+  const decodeComponent = decodeUriComponent;
+  const splitOnFirst$1 = splitOnFirst;
+  const filterObject = filterObj;
+  const isNullOrUndefined = (value) => value === null || value === void 0;
+  const encodeFragmentIdentifier = Symbol("encodeFragmentIdentifier");
+  function encoderForArrayFormat(options) {
+    switch (options.arrayFormat) {
+      case "index":
+        return (key) => (result, value) => {
+          const index2 = result.length;
+          if (value === void 0 || options.skipNull && value === null || options.skipEmptyString && value === "") {
+            return result;
+          }
+          if (value === null) {
+            return [...result, [encode(key, options), "[", index2, "]"].join("")];
+          }
+          return [
+            ...result,
+            [encode(key, options), "[", encode(index2, options), "]=", encode(value, options)].join("")
+          ];
+        };
+      case "bracket":
+        return (key) => (result, value) => {
+          if (value === void 0 || options.skipNull && value === null || options.skipEmptyString && value === "") {
+            return result;
+          }
+          if (value === null) {
+            return [...result, [encode(key, options), "[]"].join("")];
+          }
+          return [...result, [encode(key, options), "[]=", encode(value, options)].join("")];
+        };
+      case "colon-list-separator":
+        return (key) => (result, value) => {
+          if (value === void 0 || options.skipNull && value === null || options.skipEmptyString && value === "") {
+            return result;
+          }
+          if (value === null) {
+            return [...result, [encode(key, options), ":list="].join("")];
+          }
+          return [...result, [encode(key, options), ":list=", encode(value, options)].join("")];
+        };
+      case "comma":
+      case "separator":
+      case "bracket-separator": {
+        const keyValueSep = options.arrayFormat === "bracket-separator" ? "[]=" : "=";
+        return (key) => (result, value) => {
+          if (value === void 0 || options.skipNull && value === null || options.skipEmptyString && value === "") {
+            return result;
+          }
+          value = value === null ? "" : value;
+          if (result.length === 0) {
+            return [[encode(key, options), keyValueSep, encode(value, options)].join("")];
+          }
+          return [[result, encode(value, options)].join(options.arrayFormatSeparator)];
+        };
+      }
+      default:
+        return (key) => (result, value) => {
+          if (value === void 0 || options.skipNull && value === null || options.skipEmptyString && value === "") {
+            return result;
+          }
+          if (value === null) {
+            return [...result, encode(key, options)];
+          }
+          return [...result, [encode(key, options), "=", encode(value, options)].join("")];
+        };
+    }
+  }
+  function parserForArrayFormat(options) {
+    let result;
+    switch (options.arrayFormat) {
+      case "index":
+        return (key, value, accumulator) => {
+          result = /\[(\d*)\]$/.exec(key);
+          key = key.replace(/\[\d*\]$/, "");
+          if (!result) {
+            accumulator[key] = value;
+            return;
+          }
+          if (accumulator[key] === void 0) {
+            accumulator[key] = {};
+          }
+          accumulator[key][result[1]] = value;
+        };
+      case "bracket":
+        return (key, value, accumulator) => {
+          result = /(\[\])$/.exec(key);
+          key = key.replace(/\[\]$/, "");
+          if (!result) {
+            accumulator[key] = value;
+            return;
+          }
+          if (accumulator[key] === void 0) {
+            accumulator[key] = [value];
+            return;
+          }
+          accumulator[key] = [].concat(accumulator[key], value);
+        };
+      case "colon-list-separator":
+        return (key, value, accumulator) => {
+          result = /(:list)$/.exec(key);
+          key = key.replace(/:list$/, "");
+          if (!result) {
+            accumulator[key] = value;
+            return;
+          }
+          if (accumulator[key] === void 0) {
+            accumulator[key] = [value];
+            return;
+          }
+          accumulator[key] = [].concat(accumulator[key], value);
+        };
+      case "comma":
+      case "separator":
+        return (key, value, accumulator) => {
+          const isArray = typeof value === "string" && value.includes(options.arrayFormatSeparator);
+          const isEncodedArray = typeof value === "string" && !isArray && decode2(value, options).includes(options.arrayFormatSeparator);
+          value = isEncodedArray ? decode2(value, options) : value;
+          const newValue = isArray || isEncodedArray ? value.split(options.arrayFormatSeparator).map((item) => decode2(item, options)) : value === null ? value : decode2(value, options);
+          accumulator[key] = newValue;
+        };
+      case "bracket-separator":
+        return (key, value, accumulator) => {
+          const isArray = /(\[\])$/.test(key);
+          key = key.replace(/\[\]$/, "");
+          if (!isArray) {
+            accumulator[key] = value ? decode2(value, options) : value;
+            return;
+          }
+          const arrayValue = value === null ? [] : value.split(options.arrayFormatSeparator).map((item) => decode2(item, options));
+          if (accumulator[key] === void 0) {
+            accumulator[key] = arrayValue;
+            return;
+          }
+          accumulator[key] = [].concat(accumulator[key], arrayValue);
+        };
+      default:
+        return (key, value, accumulator) => {
+          if (accumulator[key] === void 0) {
+            accumulator[key] = value;
+            return;
+          }
+          accumulator[key] = [].concat(accumulator[key], value);
+        };
+    }
+  }
+  function validateArrayFormatSeparator(value) {
+    if (typeof value !== "string" || value.length !== 1) {
+      throw new TypeError("arrayFormatSeparator must be single character string");
+    }
+  }
+  function encode(value, options) {
+    if (options.encode) {
+      return options.strict ? strictUriEncode$1(value) : encodeURIComponent(value);
+    }
+    return value;
+  }
+  function decode2(value, options) {
+    if (options.decode) {
+      return decodeComponent(value);
+    }
+    return value;
+  }
+  function keysSorter(input) {
+    if (Array.isArray(input)) {
+      return input.sort();
+    }
+    if (typeof input === "object") {
+      return keysSorter(Object.keys(input)).sort((a, b2) => Number(a) - Number(b2)).map((key) => input[key]);
+    }
+    return input;
+  }
+  function removeHash(input) {
+    const hashStart = input.indexOf("#");
+    if (hashStart !== -1) {
+      input = input.slice(0, hashStart);
+    }
+    return input;
+  }
+  function getHash(url) {
+    let hash2 = "";
+    const hashStart = url.indexOf("#");
+    if (hashStart !== -1) {
+      hash2 = url.slice(hashStart);
+    }
+    return hash2;
+  }
+  function extract(input) {
+    input = removeHash(input);
+    const queryStart = input.indexOf("?");
+    if (queryStart === -1) {
+      return "";
+    }
+    return input.slice(queryStart + 1);
+  }
+  function parseValue(value, options) {
+    if (options.parseNumbers && !Number.isNaN(Number(value)) && (typeof value === "string" && value.trim() !== "")) {
+      value = Number(value);
+    } else if (options.parseBooleans && value !== null && (value.toLowerCase() === "true" || value.toLowerCase() === "false")) {
+      value = value.toLowerCase() === "true";
+    }
+    return value;
+  }
+  function parse2(query, options) {
+    options = Object.assign({
+      decode: true,
+      sort: true,
+      arrayFormat: "none",
+      arrayFormatSeparator: ",",
+      parseNumbers: false,
+      parseBooleans: false
+    }, options);
+    validateArrayFormatSeparator(options.arrayFormatSeparator);
+    const formatter = parserForArrayFormat(options);
+    const ret = /* @__PURE__ */ Object.create(null);
+    if (typeof query !== "string") {
+      return ret;
+    }
+    query = query.trim().replace(/^[?#&]/, "");
+    if (!query) {
+      return ret;
+    }
+    for (const param of query.split("&")) {
+      if (param === "") {
+        continue;
+      }
+      let [key, value] = splitOnFirst$1(options.decode ? param.replace(/\+/g, " ") : param, "=");
+      value = value === void 0 ? null : ["comma", "separator", "bracket-separator"].includes(options.arrayFormat) ? value : decode2(value, options);
+      formatter(decode2(key, options), value, ret);
+    }
+    for (const key of Object.keys(ret)) {
+      const value = ret[key];
+      if (typeof value === "object" && value !== null) {
+        for (const k2 of Object.keys(value)) {
+          value[k2] = parseValue(value[k2], options);
+        }
+      } else {
+        ret[key] = parseValue(value, options);
+      }
+    }
+    if (options.sort === false) {
+      return ret;
+    }
+    return (options.sort === true ? Object.keys(ret).sort() : Object.keys(ret).sort(options.sort)).reduce((result, key) => {
+      const value = ret[key];
+      if (Boolean(value) && typeof value === "object" && !Array.isArray(value)) {
+        result[key] = keysSorter(value);
+      } else {
+        result[key] = value;
+      }
+      return result;
+    }, /* @__PURE__ */ Object.create(null));
+  }
+  exports.extract = extract;
+  exports.parse = parse2;
+  exports.stringify = (object, options) => {
+    if (!object) {
+      return "";
+    }
+    options = Object.assign({
+      encode: true,
+      strict: true,
+      arrayFormat: "none",
+      arrayFormatSeparator: ","
+    }, options);
+    validateArrayFormatSeparator(options.arrayFormatSeparator);
+    const shouldFilter = (key) => options.skipNull && isNullOrUndefined(object[key]) || options.skipEmptyString && object[key] === "";
+    const formatter = encoderForArrayFormat(options);
+    const objectCopy = {};
+    for (const key of Object.keys(object)) {
+      if (!shouldFilter(key)) {
+        objectCopy[key] = object[key];
+      }
+    }
+    const keys = Object.keys(objectCopy);
+    if (options.sort !== false) {
+      keys.sort(options.sort);
+    }
+    return keys.map((key) => {
+      const value = object[key];
+      if (value === void 0) {
+        return "";
+      }
+      if (value === null) {
+        return encode(key, options);
+      }
+      if (Array.isArray(value)) {
+        if (value.length === 0 && options.arrayFormat === "bracket-separator") {
+          return encode(key, options) + "[]";
+        }
+        return value.reduce(formatter(key), []).join("&");
+      }
+      return encode(key, options) + "=" + encode(value, options);
+    }).filter((x2) => x2.length > 0).join("&");
+  };
+  exports.parseUrl = (url, options) => {
+    options = Object.assign({
+      decode: true
+    }, options);
+    const [url_, hash2] = splitOnFirst$1(url, "#");
+    return Object.assign(
+      {
+        url: url_.split("?")[0] || "",
+        query: parse2(extract(url), options)
+      },
+      options && options.parseFragmentIdentifier && hash2 ? { fragmentIdentifier: decode2(hash2, options) } : {}
+    );
+  };
+  exports.stringifyUrl = (object, options) => {
+    options = Object.assign({
+      encode: true,
+      strict: true,
+      [encodeFragmentIdentifier]: true
+    }, options);
+    const url = removeHash(object.url).split("?")[0] || "";
+    const queryFromUrl = exports.extract(object.url);
+    const parsedQueryFromUrl = exports.parse(queryFromUrl, { sort: false });
+    const query = Object.assign(parsedQueryFromUrl, object.query);
+    let queryString2 = exports.stringify(query, options);
+    if (queryString2) {
+      queryString2 = `?${queryString2}`;
+    }
+    let hash2 = getHash(object.url);
+    if (object.fragmentIdentifier) {
+      hash2 = `#${options[encodeFragmentIdentifier] ? encode(object.fragmentIdentifier, options) : object.fragmentIdentifier}`;
+    }
+    return `${url}${queryString2}${hash2}`;
+  };
+  exports.pick = (input, filter, options) => {
+    options = Object.assign({
+      parseFragmentIdentifier: true,
+      [encodeFragmentIdentifier]: false
+    }, options);
+    const { url, query, fragmentIdentifier } = exports.parseUrl(input, options);
+    return exports.stringifyUrl({
+      url,
+      query: filterObject(query, filter),
+      fragmentIdentifier
+    }, options);
+  };
+  exports.exclude = (input, filter, options) => {
+    const exclusionFilter = Array.isArray(filter) ? (key) => !filter.includes(key) : (key, value) => !filter(key, value);
+    return exports.pick(input, exclusionFilter, options);
+  };
+})(queryString);
 const Logger = function Logger2() {
 };
 Logger.prototype.debug = (...msg) => console.debug(...msg);
@@ -18106,6 +21390,44 @@ Logger.prototype.info = (...msg) => console.info(...msg);
 Logger.prototype.warn = (...msg) => console.warn(...msg);
 Logger.prototype.error = (...msg) => console.error(...msg);
 const log = new Logger();
+var fastDeepEqual = function equal(a, b2) {
+  if (a === b2)
+    return true;
+  if (a && b2 && typeof a == "object" && typeof b2 == "object") {
+    if (a.constructor !== b2.constructor)
+      return false;
+    var length2, i, keys;
+    if (Array.isArray(a)) {
+      length2 = a.length;
+      if (length2 != b2.length)
+        return false;
+      for (i = length2; i-- !== 0; )
+        if (!equal(a[i], b2[i]))
+          return false;
+      return true;
+    }
+    if (a.constructor === RegExp)
+      return a.source === b2.source && a.flags === b2.flags;
+    if (a.valueOf !== Object.prototype.valueOf)
+      return a.valueOf() === b2.valueOf();
+    if (a.toString !== Object.prototype.toString)
+      return a.toString() === b2.toString();
+    keys = Object.keys(a);
+    length2 = keys.length;
+    if (length2 !== Object.keys(b2).length)
+      return false;
+    for (i = length2; i-- !== 0; )
+      if (!Object.prototype.hasOwnProperty.call(b2, keys[i]))
+        return false;
+    for (i = length2; i-- !== 0; ) {
+      var key = keys[i];
+      if (!equal(a[key], b2[key]))
+        return false;
+    }
+    return true;
+  }
+  return a !== a && b2 !== b2;
+};
 function filterErrors(errors) {
   if (errors === null || typeof errors !== "object") {
     return {};
@@ -18129,6 +21451,26 @@ function shouldValidateOnChange(path, validateInputOnChange) {
     return validateInputOnChange.includes(path);
   }
   return false;
+}
+function getSplittedPath(path) {
+  if (typeof path !== "string") {
+    return [];
+  }
+  return path.split(".");
+}
+function getPath(path, values) {
+  const splittedPath = getSplittedPath(path);
+  if (splittedPath.length === 0 || typeof values !== "object" || values === null) {
+    return void 0;
+  }
+  let value = values[splittedPath[0]];
+  for (let i = 1; i < splittedPath.length; i += 1) {
+    if (value === void 0) {
+      break;
+    }
+    value = value[splittedPath[i]];
+  }
+  return value;
 }
 function klona(x2) {
   if (typeof x2 !== "object")
@@ -18199,12 +21541,6 @@ function klona(x2) {
   }
   return x2;
 }
-function getSplittedPath(path) {
-  if (typeof path !== "string") {
-    return [];
-  }
-  return path.split(".");
-}
 function setPath(path, value, values) {
   const splittedPath = getSplittedPath(path);
   if (splittedPath.length === 0) {
@@ -18225,20 +21561,6 @@ function setPath(path, value, values) {
   val[splittedPath[splittedPath.length - 1]] = value;
   return cloned;
 }
-function getPath(path, values) {
-  const splittedPath = getSplittedPath(path);
-  if (splittedPath.length === 0) {
-    return void 0;
-  }
-  let value = values[splittedPath[0]];
-  for (let i = 1; i < splittedPath.length; i += 1) {
-    if (value === void 0) {
-      break;
-    }
-    value = value[splittedPath[i]];
-  }
-  return value;
-}
 function getValidationResults(errors) {
   const filteredErrors = filterErrors(errors);
   return { hasErrors: Object.keys(filteredErrors).length > 0, errors: filteredErrors };
@@ -18253,11 +21575,11 @@ function validateRulesRecord(rules, values, path = "", errors = {}) {
     const value = getPath(rulePath, values);
     let arrayValidation = false;
     if (typeof rule === "function") {
-      acc[rulePath] = rule(value, values);
+      acc[rulePath] = rule(value, values, rulePath);
     }
     if (typeof rule === "object" && Array.isArray(value)) {
       arrayValidation = true;
-      value.forEach((_item, index) => validateRulesRecord(rule, values, `${rulePath}.${index}`, acc));
+      value.forEach((_item, index2) => validateRulesRecord(rule, values, `${rulePath}.${index2}`, acc));
     }
     if (typeof rule === "object" && typeof value === "object" && value !== null) {
       if (!arrayValidation) {
@@ -18292,12 +21614,12 @@ function reorderPath(path, { from: from2, to }, values) {
   cloned.splice(to, 0, item);
   return setPath(path, cloned, values);
 }
-function removePath(path, index, values) {
+function removePath(path, index2, values) {
   const currentValue = getPath(path, values);
   if (!Array.isArray(currentValue)) {
     return values;
   }
-  return setPath(path, currentValue.filter((_, itemIndex) => itemIndex !== index), values);
+  return setPath(path, currentValue.filter((_, itemIndex) => itemIndex !== index2), values);
 }
 var __defProp$1 = Object.defineProperty;
 var __getOwnPropSymbols$1 = Object.getOwnPropertySymbols;
@@ -18315,26 +21637,34 @@ var __spreadValues$1 = (a, b2) => {
     }
   return a;
 };
-function clearListErrors(field, errors) {
-  if (errors === null || typeof errors !== "object") {
+function clearListState(field, state) {
+  if (state === null || typeof state !== "object") {
     return {};
   }
-  const clone = __spreadValues$1({}, errors);
-  Object.keys(errors).forEach((errorKey) => {
+  const clone = __spreadValues$1({}, state);
+  Object.keys(state).forEach((errorKey) => {
     if (errorKey.includes(`${String(field)}.`)) {
       delete clone[errorKey];
     }
   });
   return clone;
 }
-function insertPath(path, value, index, values) {
+function insertPath(path, value, index2, values) {
   const currentValue = getPath(path, values);
   if (!Array.isArray(currentValue)) {
     return values;
   }
   const cloned = [...currentValue];
-  cloned.splice(typeof index === "number" ? index : cloned.length, 0, value);
+  cloned.splice(typeof index2 === "number" ? index2 : cloned.length, 0, value);
   return setPath(path, cloned, values);
+}
+function getStatus(status, path) {
+  const paths = Object.keys(status);
+  if (typeof path === "string") {
+    const nestedPaths = paths.filter((statusPath) => statusPath.includes(`${path}.`));
+    return status[path] || nestedPaths.some((statusPath) => status[statusPath]) || false;
+  }
+  return paths.some((statusPath) => status[statusPath]);
 }
 function getInputOnChange(setValue) {
   return (val) => {
@@ -18344,14 +21674,14 @@ function getInputOnChange(setValue) {
       setValue(val);
     } else if (typeof val === "object" && "nativeEvent" in val) {
       const { currentTarget } = val;
-      if (currentTarget instanceof HTMLTextAreaElement) {
-        setValue(currentTarget.value);
-      } else if (currentTarget instanceof HTMLInputElement) {
+      if (currentTarget instanceof HTMLInputElement) {
         if (currentTarget.type === "checkbox") {
           setValue(currentTarget.checked);
         } else {
           setValue(currentTarget.value);
         }
+      } else if (currentTarget instanceof HTMLTextAreaElement || currentTarget instanceof HTMLSelectElement) {
+        setValue(currentTarget.value);
       }
     } else {
       setValue(val);
@@ -18380,17 +21710,32 @@ var __spreadProps = (a, b2) => __defProps(a, __getOwnPropDescs(b2));
 function useForm({
   initialValues = {},
   initialErrors = {},
+  initialDirty = {},
+  initialTouched = {},
   clearInputErrorOnChange = true,
   validateInputOnChange = false,
   validate: rules
 } = {}) {
+  const [touched, setTouched] = react.exports.useState(initialTouched);
+  const [dirty, setDirty] = react.exports.useState(initialDirty);
   const [values, _setValues] = react.exports.useState(initialValues);
   const [errors, _setErrors] = react.exports.useState(filterErrors(initialErrors));
+  const _dirtyValues = react.exports.useRef(initialValues);
+  const _setDirtyValues = (_values) => {
+    _dirtyValues.current = _values;
+  };
+  const resetTouched = react.exports.useCallback(() => setTouched({}), []);
+  const resetDirty = (_values) => {
+    _setDirtyValues(_values || values);
+    setDirty({});
+  };
   const setErrors = react.exports.useCallback((errs) => _setErrors((current) => filterErrors(typeof errs === "function" ? errs(current) : errs)), []);
   const clearErrors = react.exports.useCallback(() => _setErrors({}), []);
   const reset = react.exports.useCallback(() => {
     _setValues(initialValues);
     clearErrors();
+    resetDirty(initialValues);
+    resetTouched();
   }, []);
   const setFieldError = react.exports.useCallback((path, error) => setErrors((current) => __spreadProps(__spreadValues({}, current), { [path]: error })), []);
   const clearFieldError = react.exports.useCallback((path) => setErrors((current) => {
@@ -18404,6 +21749,10 @@ function useForm({
   const setFieldValue = react.exports.useCallback((path, value) => {
     const shouldValidate = shouldValidateOnChange(path, validateInputOnChange);
     _setValues((current) => {
+      const initialValue = getPath(path, _dirtyValues.current);
+      const isFieldDirty = !fastDeepEqual(initialValue, value);
+      setDirty((currentDirty) => __spreadProps(__spreadValues({}, currentDirty), { [path]: isFieldDirty }));
+      setTouched((currentTouched) => __spreadProps(__spreadValues({}, currentTouched), { [path]: true }));
       const result = setPath(path, value, current);
       if (shouldValidate) {
         const validationResults = validateFieldValue(path, rules, result);
@@ -18418,11 +21767,12 @@ function useForm({
     clearInputErrorOnChange && clearErrors();
   }, []);
   const reorderListItem = react.exports.useCallback((path, payload) => _setValues((current) => reorderPath(path, payload, current)), []);
-  const removeListItem = react.exports.useCallback((path, index) => {
-    _setValues((current) => removePath(path, index, current));
-    _setErrors((errs) => clearListErrors(path, errs));
+  const removeListItem = react.exports.useCallback((path, index2) => {
+    _setValues((current) => removePath(path, index2, current));
+    _setErrors((errs) => clearListState(path, errs));
+    setDirty((current) => clearListState(`${String(path)}.${index2}`, current));
   }, []);
-  const insertListItem = react.exports.useCallback((path, item, index) => _setValues((current) => insertPath(path, item, index, current)), []);
+  const insertListItem = react.exports.useCallback((path, item, index2) => _setValues((current) => insertPath(path, item, index2, current)), []);
   const validate = react.exports.useCallback(() => {
     const results = validateValues(rules, values);
     _setErrors(results.errors);
@@ -18433,15 +21783,21 @@ function useForm({
     results.hasError ? setFieldError(path, results.error) : clearFieldError(path);
     return results;
   }, [values, rules]);
-  const getInputProps = (path, { type = "input", withError = type === "input" } = {}) => {
+  const getInputProps = (path, { type = "input", withError = type === "input", withFocus = true } = {}) => {
     const onChange = getInputOnChange((value) => setFieldValue(path, value));
-    const withOptionalError = (payload) => {
-      if (withError) {
-        payload.error = errors[path];
-      }
-      return payload;
-    };
-    return type === "checkbox" ? withOptionalError({ checked: getPath(path, values), onChange }) : withOptionalError({ value: getPath(path, values), onChange });
+    const payload = { onChange };
+    if (withError) {
+      payload.error = errors[path];
+    }
+    if (type === "checkbox") {
+      payload.checked = getPath(path, values);
+    } else {
+      payload.value = getPath(path, values);
+    }
+    if (withFocus) {
+      payload.onFocus = () => setTouched((current) => __spreadProps(__spreadValues({}, current), { [path]: true }));
+    }
+    return payload;
   };
   const onSubmit = (handleSubmit, handleValidationFailure) => (event) => {
     event.preventDefault();
@@ -18456,6 +21812,9 @@ function useForm({
     event.preventDefault();
     reset();
   }, []);
+  const isDirty = react.exports.useCallback((path) => getStatus(dirty, path), [dirty]);
+  const isTouched = react.exports.useCallback((path) => getStatus(touched, path), [touched]);
+  const isValid = react.exports.useCallback((path) => path ? !validateFieldValue(path, rules, values).hasError : !validateValues(rules, values).hasErrors, [values, rules]);
   return {
     values,
     errors,
@@ -18473,7 +21832,14 @@ function useForm({
     insertListItem,
     getInputProps,
     onSubmit,
-    onReset
+    onReset,
+    isDirty,
+    isTouched,
+    setTouched,
+    setDirty,
+    resetTouched,
+    resetDirty,
+    isValid
   };
 }
 export {
@@ -18481,109 +21847,126 @@ export {
   Anchor as A,
   Box as B,
   Center as C,
-  useRoutes as D,
-  useLocalStorage as E,
-  useHotkeys as F,
+  Dme as D,
+  useHotkeys as E,
+  QueryClientProvider as F,
   Group as G,
-  QueryClientProvider as H,
-  IconExternalLink as I,
-  ColorSchemeProvider as J,
-  createRoot as K,
+  ColorSchemeProvider as H,
+  createRoot as I,
+  BrowserRouter as J,
+  Global as K,
   LoadingOverlay as L,
   MantineProvider as M,
-  BrowserRouter as N,
-  Global as O,
+  Nb as N,
+  css as O,
   Paper as P,
   QueryClient as Q,
-  React as R,
-  css as S,
+  transitions as R,
+  useDidUpdate as S,
   Text as T,
-  transitions as U,
-  useDidUpdate as V,
-  useUncontrolled as W,
-  useReducedMotion as X,
-  useWindowEvent as Y,
-  useId as Z,
-  UnstyledButton as _,
-  jsx as a,
+  useUncontrolled as U,
+  useReducedMotion as V,
+  useWindowEvent as W,
+  XL as X,
+  useId$1 as Y,
+  UnstyledButton as Z,
+  mergeRefs as _,
+  config as a,
+  q0 as a$,
   useComponentDefaultProps as a0,
   extractSystemStyles as a1,
-  useIsomorphicEffect$1 as a2,
-  Fragment as a3,
-  packSx as a4,
-  getDefaultZIndex as a5,
-  createPolymorphicComponent as a6,
+  OptionalPortal as a2,
+  packSx as a3,
+  getDefaultZIndex as a4,
+  createPolymorphicComponent as a5,
+  Fragment as a6,
   _extends$1 as a7,
-  React$1 as a8,
-  clsx as a9,
-  IconCopy as aA,
-  IconUser as aB,
-  IconAt as aC,
-  IconId as aD,
-  IconSettings as aE,
-  IconTool as aF,
-  IconLogout as aG,
-  IconSearch as aH,
-  useLocation as aI,
-  Link as aJ,
-  IconUsers as aK,
-  IconArticle as aL,
-  IconListDetails as aM,
-  useParams as aN,
-  useMutation as aO,
-  IconSend as aP,
-  IconEdit as aQ,
-  Routes as aR,
-  Route as aS,
-  Transition as aa,
-  useInputProps as ab,
-  Input as ac,
-  CheckIcon as ad,
-  useTransition as ae,
-  getTransitionStyles as af,
-  Overlay as ag,
-  MANTINE_SIZES as ah,
-  useDisclosure as ai,
-  sizes$3 as aj,
-  Loader as ak,
-  InputsGroup as al,
-  keyframes as am,
-  CheckboxIcon as an,
-  GROUP_POSITIONS as ao,
-  Stack as ap,
-  DEFAULT_THEME as aq,
-  MANTINE_COLORS as ar,
-  useMantineColorScheme as as,
-  GlobalStyles as at,
-  NormalizeCSS as au,
-  useCss as av,
-  defaultMantineEmotionCache as aw,
-  useEmotionCache as ax,
-  createCache$1 as ay,
-  IconKey as az,
-  config as b,
+  React as a8,
+  useFloating as a9,
+  CheckboxIcon as aA,
+  GROUP_POSITIONS as aB,
+  Portal as aC,
+  Stack as aD,
+  DEFAULT_THEME as aE,
+  MANTINE_COLORS as aF,
+  useMantineColorScheme as aG,
+  GlobalStyles as aH,
+  NormalizeCSS as aI,
+  useCss as aJ,
+  useEmotionCache as aK,
+  defaultMantineEmotionCache as aL,
+  createCache$1 as aM,
+  queryString as aN,
+  GY as aO,
+  EH as aP,
+  age as aQ,
+  ka as aR,
+  ZX as aS,
+  Lce as aT,
+  Bpe as aU,
+  q2 as aV,
+  Aae as aW,
+  useLocation as aX,
+  Link as aY,
+  sge as aZ,
+  $i as a_,
+  size as aa,
+  useFloatingAutoUpdate as ab,
+  offset as ac,
+  shift as ad,
+  flip as ae,
+  isElement$2 as af,
+  useMergedRef as ag,
+  clsx as ah,
+  Transition as ai,
+  FloatingArrow as aj,
+  getFloatingPosition as ak,
+  useInputProps as al,
+  Input as am,
+  CheckIcon as an,
+  useTransition as ao,
+  getTransitionStyles as ap,
+  Overlay as aq,
+  assignRef as ar,
+  MANTINE_SIZES as as,
+  useDisclosure as at,
+  sizes$3 as au,
+  Loader as av,
+  InputsGroup as aw,
+  Tooltip as ax,
+  useIsomorphicEffect as ay,
+  keyframes as az,
+  jsx as b,
+  useParams as b0,
+  useMutation as b1,
+  _ae as b2,
+  gI as b3,
+  useInfiniteQuery as b4,
+  Xne as b5,
+  Routes as b6,
+  Route as b7,
   createStyles as c,
   useMantineTheme as d,
   Container as e,
   useDocumentTitle as f,
-  IconCircleCheck as g,
-  IconCircleX as h,
-  Title as i,
+  zy as g,
+  Title as h,
+  Button as i,
   jsxs as j,
   ky$1 as k,
   log as l,
-  Button as m,
-  Progress as n,
-  IconCheck as o,
-  IconX as p,
-  useSearchParams as q,
+  Progress as m,
+  aze as n,
+  useSearchParams as o,
+  useForm as p,
+  PasswordInput as q,
   react as r,
-  useForm as s,
-  PasswordInput as t,
+  TextInput as s,
+  Checkbox as t,
   useQuery as u,
-  TextInput as v,
-  Checkbox as w,
-  ActionIcon as x,
-  IconSun as y,
-  IconMoonStars as z
+  ActionIcon as v,
+  l6 as w,
+  useRoutes as x,
+  useLocalStorage as y,
+  zA as z
 };
