@@ -1,4 +1,4 @@
-import { r as react, b as jsx, d as useMantineTheme, K as Global$1, O as css, R as transitions$1, S as useDidUpdate, U as useUncontrolled, V as useReducedMotion, W as useWindowEvent, Y as useId, c as createStyles, B as Box, j as jsxs, Z as UnstyledButton, _ as mergeRefs, $ as reactDom, a0 as useComponentDefaultProps, a1 as extractSystemStyles, a2 as OptionalPortal, a3 as packSx, a4 as getDefaultZIndex, v as ActionIcon, a5 as createPolymorphicComponent, T as Text, a6 as Fragment, a7 as _extends, a8 as React, a9 as useFloating, aa as size, ab as useFloatingAutoUpdate, ac as offset, ad as shift, ae as flip, af as isElement, ag as useMergedRef, ah as clsx, ai as Transition, aj as FloatingArrow, ak as getFloatingPosition, al as useInputProps, am as Input, P as Paper, G as Group, an as CheckIcon, ao as useTransition, ap as getTransitionStyles, aq as Overlay, ar as assignRef, as as MANTINE_SIZES, at as useDisclosure, au as sizes$f, av as Loader, s as TextInput, aw as InputsGroup, ax as Tooltip, ay as useIsomorphicEffect$1, az as keyframes, A as Anchor, aA as CheckboxIcon, aB as GROUP_POSITIONS, t as Checkbox, i as Button, C as Center, e as Container, L as LoadingOverlay, q as PasswordInput, aC as Portal, m as Progress, aD as Stack, h as Title, aE as DEFAULT_THEME, aF as MANTINE_COLORS, M as MantineProvider, H as ColorSchemeProvider, aG as useMantineColorScheme, aH as GlobalStyles, aI as NormalizeCSS, aJ as useCss, aK as useEmotionCache, aL as defaultMantineEmotionCache, aM as createCache, aN as queryString, y as useLocalStorage, E as useHotkeys, D as Dme, w as l6, k as ky, a as config, u as useQuery, l as log, aO as GY, N as Nb, aP as EH, aQ as age, aR as ka, aS as ZX, aT as Lce, aU as Bpe, aV as q2, aW as Aae, aX as useLocation, aY as Link, aZ as sge, a_ as $i, a$ as q0, p as useForm, b0 as useParams, n as aze, b1 as useMutation, b2 as _ae, b3 as gI, o as useSearchParams, b4 as useInfiniteQuery, b5 as Xne, b6 as Routes, b7 as Route, Q as QueryClient, f as useDocumentTitle, F as QueryClientProvider, I as createRoot, J as BrowserRouter } from "./use-form.9cddd102.js";
+import { r as react, b as jsx, d as useMantineTheme, K as Global$1, O as css, R as transitions$1, S as useDidUpdate, U as useUncontrolled, V as useReducedMotion, W as useWindowEvent, Y as useId, c as createStyles, B as Box, j as jsxs, Z as UnstyledButton, _ as mergeRefs, $ as reactDom, a0 as useComponentDefaultProps, a1 as extractSystemStyles, a2 as OptionalPortal, a3 as packSx, a4 as getDefaultZIndex, v as ActionIcon, a5 as createPolymorphicComponent, T as Text, a6 as Fragment, a7 as _extends, a8 as React, a9 as useFloating, aa as size, ab as useFloatingAutoUpdate, ac as offset, ad as shift, ae as flip, af as isElement, ag as useMergedRef, ah as clsx, ai as Transition, aj as FloatingArrow, ak as getFloatingPosition, al as useInputProps, am as Input, P as Paper, G as Group, an as CheckIcon, ao as useTransition, ap as getTransitionStyles, aq as Overlay, ar as assignRef, as as MANTINE_SIZES, at as useDisclosure, au as sizes$f, av as Loader, s as TextInput, aw as InputsGroup, ax as Tooltip, ay as useIsomorphicEffect$1, az as keyframes, A as Anchor, aA as CheckboxIcon, aB as GROUP_POSITIONS, t as Checkbox, i as Button, C as Center, e as Container, L as LoadingOverlay, q as PasswordInput, aC as Portal, m as Progress, aD as Stack, h as Title, aE as DEFAULT_THEME, aF as MANTINE_COLORS, M as MantineProvider, H as ColorSchemeProvider, aG as useMantineColorScheme, aH as GlobalStyles, aI as NormalizeCSS, aJ as useCss, aK as useEmotionCache, aL as defaultMantineEmotionCache, aM as createCache, aN as queryString, y as useLocalStorage, E as useHotkeys, D as Dme, w as l6, k as ky, a as config, u as useQuery, l as log, aO as GY, N as Nb, aP as EH, aQ as age, aR as ka, aS as ZX, aT as Lce, aU as Bpe, aV as q2, aW as Aae, aX as useLocation, aY as Link, aZ as sge, a_ as $i, a$ as q0, p as useForm, b0 as useParams, n as aze, b1 as useMutation, b2 as _ae, b3 as gI, b4 as hl, b5 as Xne, o as useSearchParams, b6 as useInfiniteQuery, b7 as Routes, b8 as Route, Q as QueryClient, f as useDocumentTitle, F as QueryClientProvider, I as createRoot, J as BrowserRouter } from "./use-form.ff13928d.js";
 function findElementAncestor(element, selector) {
   let _element = element;
   while ((_element = _element.parentElement) && !_element.matches(selector))
@@ -938,6 +938,30 @@ function useToggle(options = [false, true]) {
     }
   };
   return [state, toggle];
+}
+function getScrollPosition() {
+  return typeof window !== "undefined" ? { x: window.pageXOffset, y: window.pageYOffset } : { x: 0, y: 0 };
+}
+function scrollTo({ x, y }) {
+  if (typeof window !== "undefined") {
+    const scrollOptions = { behavior: "smooth" };
+    if (typeof x === "number") {
+      scrollOptions.left = x;
+    }
+    if (typeof y === "number") {
+      scrollOptions.top = y;
+    }
+    window.scrollTo(scrollOptions);
+  }
+}
+function useWindowScroll() {
+  const [position, setPosition] = react.exports.useState({ x: 0, y: 0 });
+  useWindowEvent("scroll", () => setPosition(getScrollPosition()));
+  useWindowEvent("resize", () => setPosition(getScrollPosition()));
+  react.exports.useEffect(() => {
+    setPosition(getScrollPosition());
+  }, []);
+  return [position, scrollTo];
 }
 function getOS() {
   const { userAgent } = window.navigator;
@@ -3994,7 +4018,7 @@ const $57acba87d6e25586$var$ScrollAreaScrollbarVisible = /* @__PURE__ */ react.e
     onThumbPointerUp: () => pointerOffsetRef.current = 0,
     onThumbPointerDown: (pointerPos) => pointerOffsetRef.current = pointerPos
   };
-  function getScrollPosition(pointerPos, dir) {
+  function getScrollPosition2(pointerPos, dir) {
     return $57acba87d6e25586$var$getScrollPositionFromPointer(pointerPos, pointerOffsetRef.current, sizes2, dir);
   }
   if (orientation === "horizontal")
@@ -4013,7 +4037,7 @@ const $57acba87d6e25586$var$ScrollAreaScrollbarVisible = /* @__PURE__ */ react.e
       },
       onDragScroll: (pointerPos) => {
         if (context.viewport)
-          context.viewport.scrollLeft = getScrollPosition(pointerPos, context.dir);
+          context.viewport.scrollLeft = getScrollPosition2(pointerPos, context.dir);
       }
     }));
   if (orientation === "vertical")
@@ -4032,7 +4056,7 @@ const $57acba87d6e25586$var$ScrollAreaScrollbarVisible = /* @__PURE__ */ react.e
       },
       onDragScroll: (pointerPos) => {
         if (context.viewport)
-          context.viewport.scrollTop = getScrollPosition(pointerPos);
+          context.viewport.scrollTop = getScrollPosition2(pointerPos);
       }
     }));
   return null;
@@ -21164,10 +21188,10 @@ function AdminHeader() {
     children: link.label
   }, link.label));
   const breadCrumbsItems = [{
-    title: "Home",
+    title: "Admin panel",
     href: "#"
   }, {
-    title: "Admin panel",
+    title: "Logs",
     href: "#"
   }].map((item) => /* @__PURE__ */ jsx(Anchor, {
     href: item.href,
@@ -21418,9 +21442,13 @@ function useSubpageEffect(title, deps) {
   const {
     setAppTitle
   } = react.exports.useContext(AppContext);
+  const {
+    setToolbar
+  } = react.exports.useContext(AppContext);
   react.exports.useEffect(() => {
     setAppTitle(title);
     stopNavigationProgress();
+    setToolbar("");
   }, deps || []);
 }
 function Task({
@@ -22389,8 +22417,99 @@ const LogsService = {
     throw new Error(`cannot get resource, resp: '${JSON.stringify(resp)}'`);
   }
 };
+function PagesCountAffix({
+  loaded,
+  total
+}) {
+  const [scroll, scrollTo2] = useWindowScroll();
+  return /* @__PURE__ */ jsx(Affix, {
+    position: {
+      bottom: 20,
+      right: 20
+    },
+    children: /* @__PURE__ */ jsx(Transition, {
+      transition: "slide-up",
+      mounted: scroll.y > 0,
+      children: (transitionStyles) => /* @__PURE__ */ jsxs(Button, {
+        size: "lg",
+        color: "dark",
+        style: transitionStyles,
+        title: "Scroll to top",
+        rightIcon: /* @__PURE__ */ jsx(hl, {
+          size: 16
+        }),
+        onClick: () => scrollTo2({
+          y: 0
+        }),
+        children: [/* @__PURE__ */ jsx(Text, {
+          size: "sm",
+          p: 3,
+          title: "Loaded",
+          children: loaded
+        }), /* @__PURE__ */ jsx(Text, {
+          size: "sm",
+          p: 3,
+          children: " / "
+        }), /* @__PURE__ */ jsx(Text, {
+          size: "sm",
+          p: 3,
+          title: "Total",
+          children: total
+        })]
+      })
+    })
+  });
+}
+const Toolbar = ({
+  newestItemsQuery,
+  firstPageQuery,
+  infinityQuery
+}) => {
+  var _a, _b, _c, _d, _e, _f;
+  const theme = useMantineTheme();
+  const newestItems = ((_a = newestItemsQuery == null ? void 0 : newestItemsQuery.data) == null ? void 0 : _a.results.length) > 50 ? "50+" : (_b = newestItemsQuery == null ? void 0 : newestItemsQuery.data) == null ? void 0 : _b.results.length;
+  const pluralCharset = newestItems > 1 ? "s" : "";
+  return /* @__PURE__ */ jsx(Fragment, {
+    children: /* @__PURE__ */ jsx(Group, {
+      position: "right",
+      spacing: 1,
+      pr: 16,
+      children: /* @__PURE__ */ jsxs(ActionIcon, {
+        color: theme.colorScheme === "dark" ? "green.8" : "green.6",
+        variant: "subtle",
+        onClick: () => firstPageQuery.refetch(),
+        children: [/* @__PURE__ */ jsx(Xne, {
+          size: 24
+        }), ((_d = (_c = newestItemsQuery == null ? void 0 : newestItemsQuery.data) == null ? void 0 : _c.results) == null ? void 0 : _d.length) !== void 0 && ((_f = (_e = newestItemsQuery == null ? void 0 : newestItemsQuery.data) == null ? void 0 : _e.results) == null ? void 0 : _f.length) > 0 && /* @__PURE__ */ jsx(Badge, {
+          component: "div",
+          title: ` You have ${newestItems} new item${pluralCharset}, refresh the page to see them`,
+          pl: 4,
+          pr: 4,
+          pt: 6,
+          pb: 6,
+          color: "red",
+          variant: "filled",
+          radius: "xl",
+          sx: {
+            fontSize: "12px",
+            position: "absolute",
+            bottom: 11,
+            left: 14,
+            lineHeight: "16px",
+            fontWeight: 400,
+            fontFamily: '"Roboto","Arial",sans-serif',
+            border: `2px`,
+            borderStyle: "solid",
+            borderColor: theme.colorScheme === "dark" ? theme.colors.dark[7] : "white"
+          },
+          children: newestItems
+        })]
+      })
+    })
+  });
+};
 function AdminLogs() {
-  var _a, _b, _c;
+  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k;
   const theme = useMantineTheme();
   useSubpageEffect("Logs");
   console.count("LOGS RENDER");
@@ -22404,27 +22523,25 @@ function AdminLogs() {
     ref,
     inView
   } = useInView();
-  const firstPageQuery = useQuery(["first_log_page"], () => {
+  const firstPageQuery = useQuery(["logs_infinity_first_page"], () => {
     return LogsService.getLogs({}, {
       page: "1",
       limit: "1"
     });
   }, {
     enabled: false,
-    staleTime: Infinity
+    staleTime: Infinity,
+    refetchOnWindowFocus: false
   });
-  console.log({
-    firstPageQuery
-  });
+  const lastLogTimestamp = ((_b = (_a = firstPageQuery == null ? void 0 : firstPageQuery.data) == null ? void 0 : _a.results) == null ? void 0 : _b.length) ? (_c = firstPageQuery == null ? void 0 : firstPageQuery.data) == null ? void 0 : _c.results[0].timestamp : void 0;
   const firstPageData = react.exports.useMemo(() => {
-    var _a2, _b2, _c2;
-    const results = (_a2 = firstPageQuery == null ? void 0 : firstPageQuery.data) == null ? void 0 : _a2.results;
+    var _a2, _b2;
     return {
-      lastLogTimestamp: (results == null ? void 0 : results.length) ? results[0].timestamp : void 0,
-      totalPages: (_b2 = firstPageQuery == null ? void 0 : firstPageQuery.data) == null ? void 0 : _b2.totalPages,
-      totalResults: (_c2 = firstPageQuery == null ? void 0 : firstPageQuery.data) == null ? void 0 : _c2.totalResults
+      lastLogTimestamp,
+      totalPages: (_a2 = firstPageQuery == null ? void 0 : firstPageQuery.data) == null ? void 0 : _a2.totalPages,
+      totalResults: (_b2 = firstPageQuery == null ? void 0 : firstPageQuery.data) == null ? void 0 : _b2.totalResults
     };
-  }, [firstPageQuery.status]);
+  }, [lastLogTimestamp]);
   const timestampUpdatedFilter = react.exports.useMemo(() => {
     const prevFilterObj = JSON.parse(searchParams.get("filter"));
     return {
@@ -22434,16 +22551,8 @@ function AdminLogs() {
         }
       }, prevFilterObj || {}]
     };
-  }, [firstPageData.lastLogTimestamp, filter]);
-  const {
-    status,
-    data,
-    error,
-    isFetching,
-    isFetchingNextPage,
-    fetchNextPage,
-    hasNextPage
-  } = useInfiniteQuery(["log_pages"], ({
+  }, [firstPageData.lastLogTimestamp, firstPageQuery.status, filter]);
+  const infinityQuery = useInfiniteQuery(["logs_infinity_pages", firstPageData.lastLogTimestamp], ({
     pageParam = 1
   }) => LogsService.getLogs(timestampUpdatedFilter, {
     limit: String(20),
@@ -22455,51 +22564,35 @@ function AdminLogs() {
         return void 0;
       return lastPage.page + 1;
     },
+    refetchOnWindowFocus: false,
     enabled: !!firstPageData.lastLogTimestamp && !!timestampUpdatedFilter
   });
   console.log({
-    data
+    DATA: infinityQuery.data
   });
-  const newestItemsQuery = useQuery(["newest_pages"], () => LogsService.getLogs({
+  const newestItemsQuery = useQuery(["logs_infinity_newest_pages", firstPageData.lastLogTimestamp], () => LogsService.getLogs({
     timestamp: {
       $gt: firstPageData.lastLogTimestamp
     }
   }, {
     limit: String(0)
   }), {
-    enabled: ((_a = data == null ? void 0 : data.pages) == null ? void 0 : _a.length) > 0,
-    refetchInterval: 1e4
+    enabled: ((_e = (_d = infinityQuery.data) == null ? void 0 : _d.pages) == null ? void 0 : _e.length) > 0,
+    refetchInterval: 3e3
   });
   react.exports.useEffect(() => {
-    var _a2, _b2, _c2, _d, _e, _f;
-    setToolbar(((_b2 = (_a2 = newestItemsQuery == null ? void 0 : newestItemsQuery.data) == null ? void 0 : _a2.results) == null ? void 0 : _b2.length) !== void 0 && ((_d = (_c2 = newestItemsQuery == null ? void 0 : newestItemsQuery.data) == null ? void 0 : _c2.results) == null ? void 0 : _d.length) > 0 && /* @__PURE__ */ jsxs(Fragment, {
-      children: [/* @__PURE__ */ jsxs(Text, {
-        size: "sm",
-        p: 3,
-        color: theme.colorScheme === "dark" ? theme.colors.green[2] : "green",
-        title: ` You have ${(_e = newestItemsQuery == null ? void 0 : newestItemsQuery.data) == null ? void 0 : _e.results.length} new items, refresh the page to see them`,
-        children: [(_f = newestItemsQuery == null ? void 0 : newestItemsQuery.data) == null ? void 0 : _f.results.length, " new items"]
-      }), /* @__PURE__ */ jsx(ActionIcon, {
-        color: "green",
-        variant: "subtle",
-        onClick: () => firstPageQuery.refetch(),
-        children: /* @__PURE__ */ jsx(Xne, {
-          size: 18
-        })
-      })]
+    setToolbar(/* @__PURE__ */ jsx(Toolbar, {
+      newestItemsQuery,
+      firstPageQuery,
+      infinityQuery
     }));
-    return async () => {
-      console.log("UNMOUNT!!!");
-      await setToolbar("");
-    };
-  }, [(_b = newestItemsQuery == null ? void 0 : newestItemsQuery.data) == null ? void 0 : _b.results.length, theme.colorScheme]);
+  }, [(_f = newestItemsQuery == null ? void 0 : newestItemsQuery.data) == null ? void 0 : _f.results.length, newestItemsQuery.status, theme.colorScheme]);
   react.exports.useEffect(() => {
-    console.log("EFFECT");
     firstPageQuery.refetch();
   }, []);
   react.exports.useEffect(() => {
     if (inView) {
-      fetchNextPage();
+      infinityQuery.fetchNextPage();
     }
   }, [inView]);
   return /* @__PURE__ */ jsxs(Fragment, {
@@ -22535,13 +22628,13 @@ function AdminLogs() {
       })]
     }), /* @__PURE__ */ jsx(Group, {
       children: /* @__PURE__ */ jsxs("div", {
-        children: [status === "loading" ? /* @__PURE__ */ jsx(LoadingOverlay, {
+        children: [infinityQuery.status === "loading" ? /* @__PURE__ */ jsx(LoadingOverlay, {
           visible: true
-        }) : status === "error" ? /* @__PURE__ */ jsxs(Text, {
+        }) : infinityQuery.status === "error" ? /* @__PURE__ */ jsxs(Text, {
           color: "red",
-          children: ["Error: ", error.message]
+          children: ["Error: ", infinityQuery.error.message]
         }) : /* @__PURE__ */ jsxs(Fragment, {
-          children: [data == null ? void 0 : data.pages.map((page) => {
+          children: [(_g = infinityQuery.data) == null ? void 0 : _g.pages.map((page) => {
             var _a2;
             return /* @__PURE__ */ jsxs(react.exports.Fragment, {
               children: [/* @__PURE__ */ jsx(Title, {
@@ -22553,43 +22646,19 @@ function AdminLogs() {
           }), /* @__PURE__ */ jsx("div", {
             children: /* @__PURE__ */ jsx(Button, {
               ref,
-              onClick: () => fetchNextPage(),
-              disabled: !hasNextPage || isFetchingNextPage,
-              loading: isFetchingNextPage,
-              children: isFetchingNextPage ? "Loading..." : hasNextPage ? "Load Newer" : "Nothing more to load"
+              onClick: () => infinityQuery.fetchNextPage(),
+              disabled: !infinityQuery.hasNextPage || infinityQuery.isFetchingNextPage,
+              loading: infinityQuery.isFetchingNextPage,
+              children: infinityQuery.isFetchingNextPage ? "Loading..." : infinityQuery.hasNextPage ? "Load Newer" : "Nothing more to load"
             })
           }), /* @__PURE__ */ jsx("div", {
-            children: isFetching && !isFetchingNextPage ? "Background Updating..." : null
+            children: infinityQuery.isFetching && !infinityQuery.isFetchingNextPage ? "Background Updating..." : null
           })]
         }), /* @__PURE__ */ jsx("hr", {})]
       })
-    }), /* @__PURE__ */ jsx(Affix, {
-      position: {
-        bottom: 20,
-        right: 20
-      },
-      children: /* @__PURE__ */ jsx(Button, {
-        size: "xl",
-        color: "dark",
-        onClick: () => document.location.reload(),
-        children: /* @__PURE__ */ jsxs(Group, {
-          children: [/* @__PURE__ */ jsxs(Text, {
-            size: "sm",
-            p: 3,
-            title: "Loaded",
-            children: ["Pages: ", (_c = data == null ? void 0 : data.pages) == null ? void 0 : _c.length]
-          }), /* @__PURE__ */ jsxs(Text, {
-            size: "sm",
-            p: 3,
-            children: [" ", " / ", " "]
-          }), /* @__PURE__ */ jsx(Text, {
-            size: "sm",
-            p: 3,
-            title: "Total",
-            children: (data == null ? void 0 : data.pages) && (data == null ? void 0 : data.pages[0].totalPages)
-          })]
-        })
-      })
+    }), /* @__PURE__ */ jsx(PagesCountAffix, {
+      loaded: (_i = (_h = infinityQuery.data) == null ? void 0 : _h.pages) == null ? void 0 : _i.length.toString(),
+      total: ((_j = infinityQuery.data) == null ? void 0 : _j.pages) && ((_k = infinityQuery.data) == null ? void 0 : _k.pages[0].totalPages)
     })]
   });
 }

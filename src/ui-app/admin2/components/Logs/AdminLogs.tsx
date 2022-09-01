@@ -7,8 +7,6 @@ import {
     Button,
     Group,
     Box,
-    Affix,
-    ActionIcon,
     LoadingOverlay,
     useMantineTheme,
 } from '@mantine/core';
@@ -20,21 +18,20 @@ import {
     useQuery,
 } from '@tanstack/react-query';
 import { useMemo, useEffect, useContext } from 'react';
-import { IconRefresh } from '@tabler/icons';
 // eslint-disable-next-line import/named
-import { SearchParams, SortEnum } from '../../shared/utils';
-import { useSubpageEffect } from '../../shared/hooks/useSubpageEffect';
-import { LogsService } from '../../shared/services/logs.service';
-import { AppContext } from '../AppContext';
-import ILog from '../../shared/interfaces/ILog';
+import { SearchParams, SortEnum } from '../../../shared/utils';
+import { useSubpageEffect } from '../../../shared/hooks/useSubpageEffect';
+import { LogsService } from '../../../shared/services/logs.service';
+import { AppContext } from '../../AppContext';
+import ILog from '../../../shared/interfaces/ILog';
+import PagesCountAffix from './PagesCountAffix';
+import Toolbar from './Toolbar';
 
 
 export default function AdminLogs() {
     const theme = useMantineTheme();
     useSubpageEffect('Logs');
 
-    console.count('LOGS RENDER');
-    // params
     const [searchParams, setSearchParams] = useSearchParams('');
     const [sort, setSort] = useInputState('');
     const [filter, setFilter] = useInputState('{}');
@@ -73,7 +70,7 @@ export default function AdminLogs() {
     }
 
     const firstPageQuery = useQuery(
-        ['first_log_page'],
+        ['logs_infinity_first_page'],
         () => {
             return LogsService.getLogs(
                 {},
@@ -86,19 +83,21 @@ export default function AdminLogs() {
         {
             enabled: false,
             staleTime: Infinity,
+            refetchOnWindowFocus: false,
         },
     ) as IFirstPagesQuery;
 
-    console.log({ firstPageQuery });
+    const lastLogTimestamp = firstPageQuery?.data?.results?.length
+        ? firstPageQuery?.data?.results[0].timestamp
+        : undefined;
 
     const firstPageData: { [key: string]: string | undefined } = useMemo(() => {
-        const results = firstPageQuery?.data?.results;
         return {
-            lastLogTimestamp: results?.length ? results[0].timestamp : undefined,
+            lastLogTimestamp: lastLogTimestamp,
             totalPages: firstPageQuery?.data?.totalPages,
             totalResults: firstPageQuery?.data?.totalResults,
         };
-    }, [firstPageQuery.status]);
+    }, [lastLogTimestamp]);
 
     const timestampUpdatedFilter = useMemo(() => {
         const prevFilterObj = JSON.parse(searchParams.get('filter')!);
@@ -108,18 +107,10 @@ export default function AdminLogs() {
                 prevFilterObj || {},
             ],
         };
-    }, [firstPageData.lastLogTimestamp, filter]);
+    }, [firstPageData.lastLogTimestamp, firstPageQuery.status, filter]);
 
-    const {
-        status,
-        data,
-        error,
-        isFetching,
-        isFetchingNextPage,
-        fetchNextPage,
-        hasNextPage,
-    }: IPagesQuery = useInfiniteQuery(
-        ['log_pages'],
+    const infinityQuery: IPagesQuery = useInfiniteQuery(
+        ['logs_infinity_pages', firstPageData.lastLogTimestamp],
         ({ pageParam = 1 }) => LogsService.getLogs(
             timestampUpdatedFilter,
             {
@@ -133,14 +124,15 @@ export default function AdminLogs() {
                 if (lastPage.page >= lastPage.totalPages) return undefined;
                 return lastPage.page + 1;
             },
+            refetchOnWindowFocus: false,
             enabled: !!firstPageData.lastLogTimestamp && !!timestampUpdatedFilter,
         },
     ) as IPagesQuery;
 
-    console.log({ data });
+    console.log({ DATA: infinityQuery.data });
 
     const newestItemsQuery = useQuery(
-        ['newest_pages'],
+        ['logs_infinity_newest_pages', firstPageData.lastLogTimestamp],
         () => LogsService.getLogs(
             { timestamp: { $gt: firstPageData.lastLogTimestamp } },
             {
@@ -148,51 +140,25 @@ export default function AdminLogs() {
             },
         ),
         {
-            enabled: data?.pages?.length! > 0,
-            refetchInterval: 10000,
+            enabled: infinityQuery.data?.pages?.length! > 0,
+            refetchInterval: 3000,
         },
     );
 
     useEffect(() => {
-        setToolbar(
-            newestItemsQuery?.data?.results?.length !== undefined && newestItemsQuery?.data?.results?.length > 0
-            && (
-                <>
-                    <Text
-                        size="sm"
-                        p={3}
-                        color={theme.colorScheme === 'dark' ? theme.colors.green[2] : 'green'}
-                        title={` You have ${newestItemsQuery?.data?.results.length} new items, refresh the page to see them`}
-                    >
-                        {newestItemsQuery?.data?.results.length} new items
-                    </Text>
-                    <ActionIcon
-                        color="green"
-                        variant="subtle"
-                        // onClick={() => document.location.reload()}
-                        onClick={() => firstPageQuery.refetch()}
-                    >
-                        <IconRefresh size={18} />
-                    </ActionIcon>
-
-                </>
-            ),
-        );
-        return async () => {
-            console.log('UNMOUNT!!!');
-            // await newestItemsQuery.refetch();
-            await setToolbar('');
-        };
-    }, [newestItemsQuery?.data?.results.length, theme.colorScheme]);
-
-    useEffect(() => {
-        console.log('EFFECT');
         firstPageQuery.refetch();
     }, []);
 
     useEffect(() => {
+        setToolbar(
+            <Toolbar newestItemsQuery={newestItemsQuery} firstPageQuery={firstPageQuery}
+                     infinityQuery={infinityQuery} />
+        );
+    }, [newestItemsQuery?.data?.results.length, newestItemsQuery.status, theme.colorScheme]);
+
+    useEffect(() => {
         if (inView) {
-            fetchNextPage();
+            infinityQuery.fetchNextPage();
         }
     }, [inView]);
 
@@ -235,13 +201,13 @@ export default function AdminLogs() {
 
             <Group>
                 <div>
-                    {status === 'loading'
+                    {infinityQuery.status === 'loading'
                         ? (<LoadingOverlay visible={true} />)
-                        : status === 'error'
-                            ? (<Text color="red">Error: {error.message}</Text>)
+                        : infinityQuery.status === 'error'
+                            ? (<Text color="red">Error: {infinityQuery.error.message}</Text>)
                             : (
                                 <>
-                                    {data?.pages.map((page) => (
+                                    {infinityQuery.data?.pages.map((page) => (
                                         <React.Fragment key={page.page}>
                                             <Title>{page.page}</Title>
                                             {
@@ -261,20 +227,19 @@ export default function AdminLogs() {
                                     <div>
                                         <Button
                                             ref={ref}
-                                            // color="dark"
-                                            onClick={() => fetchNextPage()}
-                                            disabled={!hasNextPage || isFetchingNextPage}
-                                            loading={isFetchingNextPage}
+                                            onClick={() => infinityQuery.fetchNextPage()}
+                                            disabled={!infinityQuery.hasNextPage || infinityQuery.isFetchingNextPage}
+                                            loading={infinityQuery.isFetchingNextPage}
                                         >
-                                            {isFetchingNextPage
+                                            {infinityQuery.isFetchingNextPage
                                                 ? 'Loading...'
-                                                : hasNextPage
+                                                : infinityQuery.hasNextPage
                                                     ? 'Load Newer'
                                                     : 'Nothing more to load'}
                                         </Button>
                                     </div>
                                     <div>
-                                        {isFetching && !isFetchingNextPage
+                                        {infinityQuery.isFetching && !infinityQuery.isFetchingNextPage
                                             ? 'Background Updating...'
                                             : null}
                                     </div>
@@ -283,20 +248,11 @@ export default function AdminLogs() {
                     <hr />
                 </div>
             </Group>
-            <Affix position={{ bottom: 20, right: 20 }}>
-                <Button
-                    size="xl"
-                    color="dark"
-                    onClick={() => document.location.reload()}
-                >
-                    <Group>
-                        <Text size="sm" p={3} title="Loaded">Pages: {data?.pages?.length}</Text>
-                        <Text size="sm" p={3}> {' / '} </Text>
-                        <Text size="sm" p={3} title="Total">{data?.pages && data?.pages[0].totalPages}</Text>
-                    </Group>
 
-                </Button>
-            </Affix>
+            <PagesCountAffix
+                loaded={infinityQuery.data?.pages?.length.toString()}
+                total={infinityQuery.data?.pages && infinityQuery.data?.pages[0].totalPages}
+            />
         </>
     );
 }
