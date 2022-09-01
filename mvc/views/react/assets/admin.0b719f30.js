@@ -22512,7 +22512,6 @@ function AdminLogs() {
   var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k;
   const theme = useMantineTheme();
   useSubpageEffect("Logs");
-  console.count("LOGS RENDER");
   const [searchParams, setSearchParams] = useSearchParams("");
   const [sort, setSort] = useInputState("");
   const [filter, setFilter] = useInputState("{}");
@@ -22581,15 +22580,15 @@ function AdminLogs() {
     refetchInterval: 3e3
   });
   react.exports.useEffect(() => {
+    firstPageQuery.refetch();
+  }, []);
+  react.exports.useEffect(() => {
     setToolbar(/* @__PURE__ */ jsx(Toolbar, {
       newestItemsQuery,
       firstPageQuery,
       infinityQuery
     }));
   }, [(_f = newestItemsQuery == null ? void 0 : newestItemsQuery.data) == null ? void 0 : _f.results.length, newestItemsQuery.status, theme.colorScheme]);
-  react.exports.useEffect(() => {
-    firstPageQuery.refetch();
-  }, []);
   react.exports.useEffect(() => {
     if (inView) {
       infinityQuery.fetchNextPage();
