@@ -91,8 +91,8 @@ export default function AdminHeader() {
     ));
 
     const breadCrumbsItems = [
-        { title: 'Home', href: '#' },
         { title: 'Admin panel', href: '#' },
+        { title: 'Logs', href: '#' },
     ].map((item) => (
         <Anchor href={item.href} key={`${item.title}_nav`} size="sm" color="green">
             {item.title}
