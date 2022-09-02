@@ -1,4 +1,4 @@
-import { r as react, b as jsx, d as useMantineTheme, K as Global$1, O as css, R as transitions$1, S as useDidUpdate, U as useUncontrolled, V as useReducedMotion, W as useWindowEvent, Y as useId, c as createStyles, B as Box, j as jsxs, Z as UnstyledButton, _ as mergeRefs, $ as reactDom, a0 as useComponentDefaultProps, a1 as extractSystemStyles, a2 as OptionalPortal, a3 as packSx, a4 as getDefaultZIndex, v as ActionIcon, a5 as createPolymorphicComponent, T as Text, a6 as Fragment, a7 as _extends, a8 as React, a9 as useFloating, aa as size, ab as useFloatingAutoUpdate, ac as offset, ad as shift, ae as flip, af as isElement, ag as useMergedRef, ah as clsx, ai as Transition, aj as FloatingArrow, ak as getFloatingPosition, al as useInputProps, am as Input, P as Paper, G as Group, an as CheckIcon, ao as useTransition, ap as getTransitionStyles, aq as Overlay, ar as assignRef, as as MANTINE_SIZES, at as useDisclosure, au as sizes$f, av as Loader, s as TextInput, aw as InputsGroup, ax as Tooltip, ay as useIsomorphicEffect$1, az as keyframes, A as Anchor, aA as CheckboxIcon, aB as GROUP_POSITIONS, t as Checkbox, i as Button, C as Center, e as Container, L as LoadingOverlay, q as PasswordInput, aC as Portal, m as Progress, aD as Stack, h as Title, aE as DEFAULT_THEME, aF as MANTINE_COLORS, M as MantineProvider, H as ColorSchemeProvider, aG as useMantineColorScheme, aH as GlobalStyles, aI as NormalizeCSS, aJ as useCss, aK as useEmotionCache, aL as defaultMantineEmotionCache, aM as createCache, aN as queryString, y as useLocalStorage, E as useHotkeys, D as Dme, w as l6, k as ky, a as config, u as useQuery, l as log, aO as GY, N as Nb, aP as EH, aQ as age, aR as ka, aS as ZX, aT as Lce, aU as Bpe, aV as q2, aW as Aae, aX as useLocation, aY as Link, aZ as sge, a_ as $i, a$ as q0, p as useForm, b0 as useParams, n as aze, b1 as useMutation, b2 as _ae, b3 as gI, b4 as hl, b5 as Xne, o as useSearchParams, b6 as useInfiniteQuery, b7 as Routes, b8 as Route, Q as QueryClient, f as useDocumentTitle, F as QueryClientProvider, I as createRoot, J as BrowserRouter } from "./use-form.ff13928d.js";
+import { r as react, b as jsx, d as useMantineTheme, K as Global$1, O as css, R as transitions$1, S as useDidUpdate, U as useUncontrolled, V as useReducedMotion, W as useWindowEvent, Y as useId, c as createStyles, B as Box, j as jsxs, Z as UnstyledButton, _ as mergeRefs, $ as reactDom, a0 as useComponentDefaultProps, a1 as extractSystemStyles, a2 as OptionalPortal, a3 as packSx, a4 as getDefaultZIndex, v as ActionIcon, a5 as createPolymorphicComponent, T as Text, a6 as Fragment, a7 as _extends, a8 as React, a9 as useFloating, aa as size, ab as useFloatingAutoUpdate, ac as offset, ad as shift, ae as flip, af as isElement, ag as useMergedRef, ah as clsx, ai as Transition, aj as FloatingArrow, ak as getFloatingPosition, al as useInputProps, am as Input, P as Paper, G as Group, an as CheckIcon, ao as useTransition, ap as getTransitionStyles, aq as Overlay, ar as assignRef, as as MANTINE_SIZES, at as useDisclosure, au as sizes$f, av as Loader, s as TextInput, aw as InputsGroup, ax as Tooltip, ay as useIsomorphicEffect$1, az as keyframes, A as Anchor, aA as CheckboxIcon, aB as GROUP_POSITIONS, t as Checkbox, i as Button, C as Center, e as Container, L as LoadingOverlay, q as PasswordInput, aC as Portal, m as Progress, aD as Stack, h as Title, aE as DEFAULT_THEME, aF as MANTINE_COLORS, M as MantineProvider, H as ColorSchemeProvider, aG as useMantineColorScheme, aH as GlobalStyles, aI as NormalizeCSS, aJ as useCss, aK as useEmotionCache, aL as defaultMantineEmotionCache, aM as createCache, aN as queryString, y as useLocalStorage, E as useHotkeys, D as Dme, w as l6, k as ky, a as config, u as useQuery, l as log, aO as GY, N as Nb, aP as EH, aQ as age, aR as ka, aS as ZX, aT as Lce, aU as Bpe, aV as q2, aW as Aae, aX as useLocation, aY as Link, aZ as sge, a_ as $i, a$ as q0, p as useForm, b0 as useParams, n as aze, b1 as useMutation, b2 as _ae, b3 as gI, b4 as hl, b5 as Xne, b6 as useInfiniteQuery, o as useSearchParams, b7 as Routes, b8 as Route, Q as QueryClient, f as useDocumentTitle, F as QueryClientProvider, I as createRoot, J as BrowserRouter } from "./use-form.ff13928d.js";
 function findElementAncestor(element, selector) {
   let _element = element;
   while ((_element = _element.parentElement) && !_element.matches(selector))
@@ -22404,19 +22404,6 @@ function useInView(_temp) {
   result.entry = result[2];
   return result;
 }
-const LogsService = {
-  async getLogs(filter = {}, options = {}) {
-    const queryOptions = { ...options, limit: options.limit || 10 };
-    const queryOptionsString = queryString.stringify(queryOptions);
-    const uri = `${config.baseUri}/v1/logs?${queryOptionsString}&filter=${JSON.stringify(filter)}`;
-    const resp = await ky(uri);
-    const result = await resp.json();
-    if (resp.ok) {
-      return result;
-    }
-    throw new Error(`cannot get resource, resp: '${JSON.stringify(resp)}'`);
-  }
-};
 function PagesCountAffix({
   loaded,
   total
@@ -22508,26 +22495,25 @@ const Toolbar = ({
     })
   });
 };
-function AdminLogs() {
-  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k;
-  const theme = useMantineTheme();
-  useSubpageEffect("Logs");
-  const [searchParams, setSearchParams] = useSearchParams("");
-  const [sort, setSort] = useInputState("");
-  const [filter, setFilter] = useInputState("{}");
-  const {
-    setToolbar
-  } = react.exports.useContext(AppContext);
-  const {
-    ref,
-    inView
-  } = useInView();
-  const firstPageQuery = useQuery(["logs_infinity_first_page"], () => {
-    return LogsService.getLogs({}, {
-      page: "1",
-      limit: "1"
-    });
-  }, {
+const LogsService = {
+  async getLogs(filter = {}, options = {}) {
+    const queryOptions = { ...options, limit: options.limit || 10 };
+    const queryOptionsString = queryString.stringify(queryOptions);
+    const uri = `${config.baseUri}/v1/logs?${queryOptionsString}&filter=${JSON.stringify(filter)}`;
+    const resp = await ky(uri);
+    const result = await resp.json();
+    if (resp.ok) {
+      return result;
+    }
+    throw new Error(`cannot get resource, resp: '${JSON.stringify(resp)}'`);
+  }
+};
+function useInfinityScroll(searchParams, filter) {
+  var _a, _b, _c, _d, _e;
+  const firstPageQuery = useQuery(["logs_infinity_first_page"], () => LogsService.getLogs({}, {
+    page: "1",
+    limit: "1"
+  }), {
     enabled: false,
     staleTime: Infinity,
     refetchOnWindowFocus: false
@@ -22566,9 +22552,6 @@ function AdminLogs() {
     refetchOnWindowFocus: false,
     enabled: !!firstPageData.lastLogTimestamp && !!timestampUpdatedFilter
   });
-  console.log({
-    DATA: infinityQuery.data
-  });
   const newestItemsQuery = useQuery(["logs_infinity_newest_pages", firstPageData.lastLogTimestamp], () => LogsService.getLogs({
     timestamp: {
       $gt: firstPageData.lastLogTimestamp
@@ -22579,6 +22562,31 @@ function AdminLogs() {
     enabled: ((_e = (_d = infinityQuery.data) == null ? void 0 : _d.pages) == null ? void 0 : _e.length) > 0,
     refetchInterval: 3e3
   });
+  return {
+    firstPageQuery,
+    infinityQuery,
+    newestItemsQuery
+  };
+}
+function AdminLogs() {
+  var _a, _b, _c, _d, _e, _f;
+  const theme = useMantineTheme();
+  useSubpageEffect("Logs");
+  const [searchParams, setSearchParams] = useSearchParams("");
+  const [sort, setSort] = useInputState("");
+  const [filter, setFilter] = useInputState("{}");
+  const {
+    setToolbar
+  } = react.exports.useContext(AppContext);
+  const {
+    ref,
+    inView
+  } = useInView();
+  const {
+    firstPageQuery,
+    infinityQuery,
+    newestItemsQuery
+  } = useInfinityScroll(searchParams, filter);
   react.exports.useEffect(() => {
     firstPageQuery.refetch();
   }, []);
@@ -22588,7 +22596,7 @@ function AdminLogs() {
       firstPageQuery,
       infinityQuery
     }));
-  }, [(_f = newestItemsQuery == null ? void 0 : newestItemsQuery.data) == null ? void 0 : _f.results.length, newestItemsQuery.status, theme.colorScheme]);
+  }, [(_a = newestItemsQuery == null ? void 0 : newestItemsQuery.data) == null ? void 0 : _a.results.length, newestItemsQuery.status, theme.colorScheme]);
   react.exports.useEffect(() => {
     if (inView) {
       infinityQuery.fetchNextPage();
@@ -22633,7 +22641,7 @@ function AdminLogs() {
           color: "red",
           children: ["Error: ", infinityQuery.error.message]
         }) : /* @__PURE__ */ jsxs(Fragment, {
-          children: [(_g = infinityQuery.data) == null ? void 0 : _g.pages.map((page) => {
+          children: [(_b = infinityQuery.data) == null ? void 0 : _b.pages.map((page) => {
             var _a2;
             return /* @__PURE__ */ jsxs(react.exports.Fragment, {
               children: [/* @__PURE__ */ jsx(Title, {
@@ -22656,8 +22664,8 @@ function AdminLogs() {
         }), /* @__PURE__ */ jsx("hr", {})]
       })
     }), /* @__PURE__ */ jsx(PagesCountAffix, {
-      loaded: (_i = (_h = infinityQuery.data) == null ? void 0 : _h.pages) == null ? void 0 : _i.length.toString(),
-      total: ((_j = infinityQuery.data) == null ? void 0 : _j.pages) && ((_k = infinityQuery.data) == null ? void 0 : _k.pages[0].totalPages)
+      loaded: (_d = (_c = infinityQuery.data) == null ? void 0 : _c.pages) == null ? void 0 : _d.length.toString(),
+      total: ((_e = infinityQuery.data) == null ? void 0 : _e.pages) && ((_f = infinityQuery.data) == null ? void 0 : _f.pages[0].totalPages)
     })]
   });
 }
