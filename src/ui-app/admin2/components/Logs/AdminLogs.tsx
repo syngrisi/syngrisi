@@ -13,19 +13,14 @@ import {
 import { useSearchParams } from 'react-router-dom';
 import { useInputState } from '@mantine/hooks';
 import { useInView } from 'react-intersection-observer';
-import {
-    useInfiniteQuery,
-    useQuery,
-} from '@tanstack/react-query';
-import { useMemo, useEffect, useContext } from 'react';
+import { useEffect, useContext } from 'react';
 // eslint-disable-next-line import/named
 import { SearchParams, SortEnum } from '../../../shared/utils';
 import { useSubpageEffect } from '../../../shared/hooks/useSubpageEffect';
-import { LogsService } from '../../../shared/services/logs.service';
 import { AppContext } from '../../AppContext';
-import ILog from '../../../shared/interfaces/ILog';
 import PagesCountAffix from './PagesCountAffix';
 import Toolbar from './Toolbar';
+import useInfinityScroll from '../../../shared/hooks/useInfinityScroll';
 
 
 export default function AdminLogs() {
@@ -38,113 +33,7 @@ export default function AdminLogs() {
     const { setToolbar }: any = useContext(AppContext);
     const { ref, inView } = useInView();
 
-    interface IPage {
-        limit: string
-        page: string
-        totalPages: string
-        totalResults: string
-        results: ILog[]
-    }
-
-    interface IPagesQuery {
-        isLoading: boolean
-        isError: boolean
-        data: {
-            pages: IPage[]
-        }
-        error: any
-        isFetching: boolean
-        isFetchingNextPage: boolean
-        fetchNextPage: () => {}
-        hasNextPage: boolean
-        status: string
-    }
-
-    interface IFirstPagesQuery {
-        isLoading: boolean
-        isError: boolean
-        status: string
-        data: IPage
-        error: any
-        refetch: () => {}
-    }
-
-    const firstPageQuery = useQuery(
-        ['logs_infinity_first_page'],
-        () => {
-            return LogsService.getLogs(
-                {},
-                {
-                    page: '1',
-                    limit: '1',
-                },
-            );
-        },
-        {
-            enabled: false,
-            staleTime: Infinity,
-            refetchOnWindowFocus: false,
-        },
-    ) as IFirstPagesQuery;
-
-    const lastLogTimestamp = firstPageQuery?.data?.results?.length
-        ? firstPageQuery?.data?.results[0].timestamp
-        : undefined;
-
-    const firstPageData: { [key: string]: string | undefined } = useMemo(() => {
-        return {
-            lastLogTimestamp: lastLogTimestamp,
-            totalPages: firstPageQuery?.data?.totalPages,
-            totalResults: firstPageQuery?.data?.totalResults,
-        };
-    }, [lastLogTimestamp]);
-
-    const timestampUpdatedFilter = useMemo(() => {
-        const prevFilterObj = JSON.parse(searchParams.get('filter')!);
-        return {
-            $and: [
-                { timestamp: { $lte: new Date(firstPageData.lastLogTimestamp!) } },
-                prevFilterObj || {},
-            ],
-        };
-    }, [firstPageData.lastLogTimestamp, firstPageQuery.status, filter]);
-
-    const infinityQuery: IPagesQuery = useInfiniteQuery(
-        ['logs_infinity_pages', firstPageData.lastLogTimestamp],
-        ({ pageParam = 1 }) => LogsService.getLogs(
-            timestampUpdatedFilter,
-            {
-                limit: String(20),
-                page: pageParam,
-                sortBy: searchParams.get('sortBy') || undefined,
-            },
-        ),
-        {
-            getNextPageParam: (lastPage) => {
-                if (lastPage.page >= lastPage.totalPages) return undefined;
-                return lastPage.page + 1;
-            },
-            refetchOnWindowFocus: false,
-            enabled: !!firstPageData.lastLogTimestamp && !!timestampUpdatedFilter,
-        },
-    ) as IPagesQuery;
-
-    console.log({ DATA: infinityQuery.data });
-
-    const newestItemsQuery = useQuery(
-        ['logs_infinity_newest_pages', firstPageData.lastLogTimestamp],
-        () => LogsService.getLogs(
-            { timestamp: { $gt: firstPageData.lastLogTimestamp } },
-            {
-                limit: String(0),
-            },
-        ),
-        {
-            enabled: infinityQuery.data?.pages?.length! > 0,
-            refetchInterval: 3000,
-        },
-    );
-
+    const { firstPageQuery, infinityQuery, newestItemsQuery } = useInfinityScroll(searchParams, filter)
     useEffect(() => {
         firstPageQuery.refetch();
     }, []);

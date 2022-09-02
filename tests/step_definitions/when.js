@@ -105,3 +105,7 @@ When(/^I scroll to the bottom of page$/, { timeout: 180000 }, function () {
 When(/^I click on browser back button$/, function () {
     browser.back();
 });
+
+When(/^I fail$/, function () {
+    throw new Error('Failed step');
+});
