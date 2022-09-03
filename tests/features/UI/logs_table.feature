@@ -14,3 +14,6 @@ Feature: Logs table
 
     Scenario: Remove fields
         When I fail
+
+    Scenario: Mass unfold
+        When I fail
