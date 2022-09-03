@@ -1,19 +1,21 @@
 import React from 'react';
 import { Affix, Button, Text, Transition } from '@mantine/core';
-import { useWindowScroll } from '@mantine/hooks';
 import { IconArrowUp } from '@tabler/icons';
 
 interface Props {
     loaded: string
     total: string
+    scrollAreaRef: any
 }
 
-function PagesCountAffix({ loaded, total }: Props) {
-    const [scroll, scrollTo] = useWindowScroll();
-
+function PagesCountAffix({ loaded, total, scrollAreaRef }: Props) {
+    const isMounted = !!scrollAreaRef?.current?.querySelector('.mantine-ScrollArea-viewport')?.scrollTop;
     return (
         <Affix position={{ bottom: 20, right: 20 }}>
-            <Transition transition="slide-up" mounted={scroll.y > 0}>
+            <Transition
+                transition="slide-up"
+                mounted={isMounted}
+            >
                 {(transitionStyles) => (
                     <Button
                         size="lg"
@@ -21,7 +23,9 @@ function PagesCountAffix({ loaded, total }: Props) {
                         style={transitionStyles}
                         title="Scroll to top"
                         rightIcon={<IconArrowUp size={16} />}
-                        onClick={() => scrollTo({ y: 0 })}
+                        onClick={
+                            () => scrollAreaRef?.current?.querySelector('.mantine-ScrollArea-viewport').scroll(0, 0)
+                        }
                     >
                         <Text size="sm" p={3} title="Loaded">{loaded}</Text>
                         <Text size="sm" p={3}>{' / '}</Text>

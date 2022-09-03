@@ -16,7 +16,7 @@ export default function AdminLayout() {
 
     return (
         <AppShell
-            padding="md"
+            padding={8}
             navbar={<AdminNavBar />}
             header={<AdminHeader />}
             styles={(theme) => ({
