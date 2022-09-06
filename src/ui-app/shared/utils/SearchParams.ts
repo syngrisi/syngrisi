@@ -1,21 +1,16 @@
 import queryString from 'query-string';
 
-/* eslint-disable no-unused-vars, no-shadow */
-export enum SortEnum {
-    ASC = 'asc',
-    DESC = 'desc',
-}
 /* eslint-enable no-unused-vars, no-shadow */
 
 const getSearchParamsObject = (params: any) => queryString.parse(params.toString());
 
 export const SearchParams = {
-    changeSorting: (params: URLSearchParams, setParams: any, sortField: string, sortDirection: SortEnum) => {
-        const currentObj = getSearchParamsObject(params);
-        setParams(queryString.stringify({ ...currentObj, sortBy: `${sortField}:${sortDirection}` }));
+    changeSorting: (searchParams: URLSearchParams, setParams: any, sortItemName: string, sortDirection: string) => {
+        const currentObj = getSearchParamsObject(searchParams);
+        setParams(queryString.stringify({ ...currentObj, sortBy: `${sortItemName}:${sortDirection}` }));
     },
-    changeFiltering: (params: URLSearchParams, setParams: any, filter: any) => {
-        const currentObj = getSearchParamsObject(params);
+    changeFiltering: (searchParams: URLSearchParams, setParams: any, filter: any) => {
+        const currentObj = getSearchParamsObject(searchParams);
         const newParamsObj = { ...currentObj, filter };
         setParams(queryString.stringify(newParamsObj));
     },

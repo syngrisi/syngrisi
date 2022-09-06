@@ -22,9 +22,24 @@ function App() {
     const [colorScheme, toggleColorScheme]: any = useColorScheme();
 
     const [appTitle, setAppTitle] = useState('Syngrisi');
-    const [toolbar, setToolbar] = useState('');
+    const [toolbar, setToolbar]: [any[], any] = useState([]);
+    const updateToolbar = (newItem: any, index: number = 0) => {
+        setToolbar((prevArr: any[]) => {
+            const newArray = [...prevArr];
+            newArray[index] = <React.Fragment key={index}>{newItem}</React.Fragment>;
+            return newArray;
+        });
+    };
+    const clearToolbar = () => {
+        setToolbar(() => []);
+    };
     const appProviderValue = React.useMemo(() => ({
-        appTitle, setAppTitle, toolbar, setToolbar,
+        appTitle,
+        setAppTitle,
+        toolbar,
+        setToolbar,
+        updateToolbar,
+        clearToolbar,
     }), [appTitle, toolbar]);
     useDocumentTitle(appTitle);
 
