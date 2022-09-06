@@ -42,7 +42,7 @@ export default function useInfinityScroll(searchParams: URLSearchParams, filter:
     }, [firstPageData.lastLogTimestamp, firstPageQuery.status, filter]);
 
     const infinityQuery: IPagesQuery<ILog> = useInfiniteQuery(
-        ['logs_infinity_pages', firstPageData.lastLogTimestamp],
+        ['logs_infinity_pages', firstPageData.lastLogTimestamp, searchParams.toString()],
         ({ pageParam = 1 }) => LogsService.getLogs(
             timestampUpdatedFilter,
             {

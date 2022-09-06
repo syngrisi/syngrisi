@@ -1,4 +1,4 @@
-import { r as react, b as jsx, d as useMantineTheme, K as Global$1, O as css, R as transitions$1, S as useDidUpdate, U as useUncontrolled, V as useReducedMotion, W as useWindowEvent, Y as useId, c as createStyles, B as Box, j as jsxs, Z as UnstyledButton, _ as mergeRefs, $ as reactDom, a0 as useComponentDefaultProps, a1 as extractSystemStyles, a2 as OptionalPortal, a3 as packSx, a4 as getDefaultZIndex, v as ActionIcon, a5 as createPolymorphicComponent, T as Text, a6 as Fragment, a7 as _extends, a8 as React, a9 as useFloating, aa as size, ab as useFloatingAutoUpdate, ac as offset, ad as shift, ae as flip, af as isElement, ag as useMergedRef, ah as clsx, ai as Transition, aj as FloatingArrow, ak as getFloatingPosition, al as useInputProps, am as Input, P as Paper, G as Group, an as CheckIcon, ao as useTransition, ap as getTransitionStyles, aq as Overlay, ar as assignRef, as as MANTINE_SIZES, at as useDisclosure, au as sizes$f, av as Loader, s as TextInput, aw as InputsGroup, ax as Tooltip, ay as useIsomorphicEffect$1, az as keyframes, A as Anchor, aA as CheckboxIcon, aB as GROUP_POSITIONS, t as Checkbox, i as Button, C as Center, e as Container, L as LoadingOverlay, q as PasswordInput, aC as Portal, m as Progress, aD as Stack, h as Title, aE as DEFAULT_THEME, aF as MANTINE_COLORS, M as MantineProvider, H as ColorSchemeProvider, aG as useMantineColorScheme, aH as GlobalStyles, aI as NormalizeCSS, aJ as useCss, aK as useEmotionCache, aL as defaultMantineEmotionCache, aM as createCache, y as useLocalStorage, E as useHotkeys, D as Dme, w as l6, k as ky, a as config, aN as queryString, u as useQuery, l as log, aO as GY, N as Nb, aP as EH, aQ as age, aR as ka, aS as ZX, aT as Lce, aU as Bpe, aV as q2, aW as Aae, aX as useLocation, aY as Link, aZ as sge, a_ as $i, a$ as q0, p as useForm, b0 as useParams, n as aze, b1 as useMutation, b2 as _ae, b3 as gI, b4 as Xne, b5 as useInfiniteQuery, b6 as hl, o as useSearchParams, b7 as Routes, b8 as Route, Q as QueryClient, f as useDocumentTitle, F as QueryClientProvider, I as createRoot, J as BrowserRouter } from "./use-form.5a8e3875.js";
+import { r as react, b as jsx, d as useMantineTheme, K as Global$1, O as css, R as transitions$1, S as useDidUpdate, U as useUncontrolled, V as useReducedMotion, W as useWindowEvent, Y as useId, c as createStyles, B as Box, j as jsxs, Z as UnstyledButton, _ as mergeRefs, $ as reactDom, a0 as useComponentDefaultProps, a1 as extractSystemStyles, a2 as OptionalPortal, a3 as packSx, a4 as getDefaultZIndex, v as ActionIcon, a5 as createPolymorphicComponent, T as Text, a6 as Fragment, a7 as _extends, a8 as React, a9 as useFloating, aa as size, ab as useFloatingAutoUpdate, ac as offset, ad as shift, ae as flip, af as isElement, ag as useMergedRef, ah as clsx, ai as Transition, aj as FloatingArrow, ak as getFloatingPosition, al as useInputProps, am as Input, P as Paper, G as Group, an as CheckIcon, ao as useTransition, ap as getTransitionStyles, aq as Overlay, ar as assignRef, as as MANTINE_SIZES, at as useDisclosure, au as sizes$f, av as Loader, s as TextInput, aw as InputsGroup, ax as Tooltip, ay as useIsomorphicEffect$1, az as keyframes, A as Anchor, aA as CheckboxIcon, aB as GROUP_POSITIONS, t as Checkbox, i as Button, C as Center, e as Container, L as LoadingOverlay, q as PasswordInput, aC as Portal, m as Progress, aD as Stack, h as Title, aE as DEFAULT_THEME, aF as MANTINE_COLORS, M as MantineProvider, H as ColorSchemeProvider, aG as useMantineColorScheme, aH as GlobalStyles, aI as NormalizeCSS, aJ as useCss, aK as useEmotionCache, aL as defaultMantineEmotionCache, aM as createCache, aN as queryString, y as useLocalStorage, E as useHotkeys, D as Dme, w as l6, k as ky, a as config, u as useQuery, l as log, aO as GY, N as Nb, aP as EH, aQ as age, aR as ka, aS as ZX, aT as Lce, aU as Bpe, aV as q2, aW as Aae, aX as useLocation, aY as Link, aZ as sge, a_ as $i, a$ as q0, p as useForm, b0 as useParams, n as aze, b1 as useMutation, b2 as _ae, b3 as gI, b4 as Xne, b5 as useInfiniteQuery, b6 as hl, b7 as Ti, b8 as zK, b9 as Uhe, ba as Ahe, o as useSearchParams, bb as sJ, bc as Routes, bd as Route, Q as QueryClient, f as useDocumentTitle, F as QueryClientProvider, I as createRoot, J as BrowserRouter } from "./use-form.75864932.js";
 function findElementAncestor(element, selector) {
   let _element = element;
   while ((_element = _element.parentElement) && !_element.matches(selector))
@@ -1110,10 +1110,10 @@ function getVariantStyles$5(theme, { variant, radius }) {
   }
   return {};
 }
-var useStyles$2t = createStyles((theme, params) => ({
+var useStyles$2u = createStyles((theme, params) => ({
   item: getVariantStyles$5(theme, params)
 }));
-const useStyles$2u = useStyles$2t;
+const useStyles$2v = useStyles$2u;
 var __defProp$2z = Object.defineProperty;
 var __getOwnPropSymbols$2A = Object.getOwnPropertySymbols;
 var __hasOwnProp$2A = Object.prototype.hasOwnProperty;
@@ -1162,7 +1162,7 @@ const AccordionItem = react.exports.forwardRef((_a, ref) => {
   const {
     classes,
     cx
-  } = useStyles$2u({
+  } = useStyles$2v({
     variant: ctx.variant,
     radius: ctx.radius
   }, {
@@ -1225,7 +1225,7 @@ function getVariantStyles$4(theme, { variant }) {
   }
   return {};
 }
-var useStyles$2r = createStyles((theme, _a) => {
+var useStyles$2s = createStyles((theme, _a) => {
   var _b = _a, { transitionDuration, chevronPosition, chevronSize } = _b, params = __objRest$1F(_b, ["transitionDuration", "chevronPosition", "chevronSize"]);
   return {
     icon: {
@@ -1275,7 +1275,7 @@ var useStyles$2r = createStyles((theme, _a) => {
     })
   };
 });
-const useStyles$2s = useStyles$2r;
+const useStyles$2t = useStyles$2s;
 var __defProp$2x = Object.defineProperty;
 var __defProps$1b = Object.defineProperties;
 var __getOwnPropDescs$1b = Object.getOwnPropertyDescriptors;
@@ -1334,7 +1334,7 @@ const AccordionControl = react.exports.forwardRef((_a, ref) => {
   const {
     classes,
     cx
-  } = useStyles$2s({
+  } = useStyles$2t({
     transitionDuration: ctx.transitionDuration,
     chevronPosition: ctx.chevronPosition,
     chevronSize: ctx.chevronSize,
@@ -1411,7 +1411,7 @@ var __spreadValues$2w = (a, b) => {
   return a;
 };
 var __spreadProps$1a = (a, b) => __defProps$1a(a, __getOwnPropDescs$1a(b));
-var useStyles$2p = createStyles((theme, _params) => ({
+var useStyles$2q = createStyles((theme, _params) => ({
   panel: __spreadProps$1a(__spreadValues$2w({}, theme.fn.fontStyles()), {
     wordBreak: "break-word",
     lineHeight: theme.lineHeight
@@ -1421,7 +1421,7 @@ var useStyles$2p = createStyles((theme, _params) => ({
     paddingTop: theme.spacing.xs / 2
   }
 }));
-const useStyles$2q = useStyles$2p;
+const useStyles$2r = useStyles$2q;
 var __defProp$2v = Object.defineProperty;
 var __defProps$19 = Object.defineProperties;
 var __getOwnPropDescs$19 = Object.getOwnPropertyDescriptors;
@@ -1674,7 +1674,7 @@ function AccordionPanel(_a) {
   const {
     classes,
     cx
-  } = useStyles$2q({
+  } = useStyles$2r({
     variant: ctx.variant,
     radius: ctx.radius
   }, {
@@ -1940,7 +1940,7 @@ function getVariantStyles$3({ variant, color, theme }) {
     color: colors.color
   };
 }
-var useStyles$2n = createStyles((theme, { color, radius, variant }) => ({
+var useStyles$2o = createStyles((theme, { color, radius, variant }) => ({
   root: __spreadValues$2p(__spreadProps$16(__spreadValues$2p({}, theme.fn.fontStyles()), {
     position: "relative",
     overflow: "hidden",
@@ -1997,7 +1997,7 @@ var useStyles$2n = createStyles((theme, { color, radius, variant }) => ({
     color: "inherit"
   }
 }));
-const useStyles$2o = useStyles$2n;
+const useStyles$2p = useStyles$2o;
 var __defProp$2o = Object.defineProperty;
 var __getOwnPropSymbols$2p = Object.getOwnPropertySymbols;
 var __hasOwnProp$2p = Object.prototype.hasOwnProperty;
@@ -2156,7 +2156,7 @@ const Alert = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$2o({
+  } = useStyles$2p({
     color,
     radius,
     variant
@@ -2245,7 +2245,7 @@ var __spreadValues$2l = (a, b) => {
   return a;
 };
 var __spreadProps$15 = (a, b) => __defProps$15(a, __getOwnPropDescs$15(b));
-var useStyles$2l = createStyles((theme, {
+var useStyles$2m = createStyles((theme, {
   height,
   width,
   fixed,
@@ -2289,7 +2289,7 @@ var useStyles$2l = createStyles((theme, {
     })
   };
 });
-const useStyles$2m = useStyles$2l;
+const useStyles$2n = useStyles$2m;
 var __defProp$2k = Object.defineProperty;
 var __getOwnPropSymbols$2l = Object.getOwnPropertySymbols;
 var __hasOwnProp$2l = Object.prototype.hasOwnProperty;
@@ -2346,7 +2346,7 @@ const HorizontalSection = react.exports.forwardRef((_a, ref) => {
     classes,
     cx,
     theme
-  } = useStyles$2m({
+  } = useStyles$2n({
     width,
     height,
     fixed: ctx.fixed || fixed,
@@ -2498,7 +2498,7 @@ var __spreadValues$2h = (a, b) => {
   return a;
 };
 var __spreadProps$14 = (a, b) => __defProps$14(a, __getOwnPropDescs$14(b));
-var useStyles$2j = createStyles((theme, { height, fixed, position, zIndex, borderPosition }) => ({
+var useStyles$2k = createStyles((theme, { height, fixed, position, zIndex, borderPosition }) => ({
   root: __spreadProps$14(__spreadValues$2h(__spreadValues$2h({}, theme.fn.fontStyles()), position), {
     zIndex,
     height,
@@ -2510,7 +2510,7 @@ var useStyles$2j = createStyles((theme, { height, fixed, position, zIndex, borde
     borderTop: borderPosition === "top" ? `1px solid ${theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[2]}` : void 0
   })
 }));
-const useStyles$2k = useStyles$2j;
+const useStyles$2l = useStyles$2k;
 var __defProp$2g = Object.defineProperty;
 var __getOwnPropSymbols$2h = Object.getOwnPropertySymbols;
 var __hasOwnProp$2h = Object.prototype.hasOwnProperty;
@@ -2563,7 +2563,7 @@ const VerticalSection = react.exports.forwardRef((_a, ref) => {
   const {
     classes,
     cx
-  } = useStyles$2k({
+  } = useStyles$2l({
     height,
     fixed: ctx.fixed || fixed,
     position,
@@ -2761,7 +2761,7 @@ function getPositionStyles$2(props, theme) {
     }
   };
 }
-var useStyles$2h = createStyles((theme, props) => ({
+var useStyles$2i = createStyles((theme, props) => ({
   root: {
     boxSizing: "border-box"
   },
@@ -2775,7 +2775,7 @@ var useStyles$2h = createStyles((theme, props) => ({
     boxSizing: "border-box"
   }, getPositionStyles$2(props, theme))
 }));
-const useStyles$2i = useStyles$2h;
+const useStyles$2j = useStyles$2i;
 var __defProp$2b = Object.defineProperty;
 var __getOwnPropSymbols$2c = Object.getOwnPropertySymbols;
 var __hasOwnProp$2c = Object.prototype.hasOwnProperty;
@@ -2834,7 +2834,7 @@ const AppShell = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$2i({
+  } = useStyles$2j({
     padding: padding2,
     fixed,
     navbarOffsetBreakpoint,
@@ -2866,7 +2866,7 @@ const AppShell = react.exports.forwardRef((props, ref) => {
   });
 });
 AppShell.displayName = "@mantine/core/AppShell";
-var useStyles$2f = createStyles((theme, { ratio }) => ({
+var useStyles$2g = createStyles((theme, { ratio }) => ({
   root: {
     position: "relative",
     maxWidth: "100%",
@@ -2899,7 +2899,7 @@ var useStyles$2f = createStyles((theme, { ratio }) => ({
     }
   }
 }));
-const useStyles$2g = useStyles$2f;
+const useStyles$2h = useStyles$2g;
 var __defProp$2a = Object.defineProperty;
 var __getOwnPropSymbols$2b = Object.getOwnPropertySymbols;
 var __hasOwnProp$2b = Object.prototype.hasOwnProperty;
@@ -2943,7 +2943,7 @@ const AspectRatio = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$2g({
+  } = useStyles$2h({
     ratio
   }, {
     name: "AspectRatio",
@@ -2969,7 +2969,7 @@ function getColor(theme, color) {
   const themeColor = theme.fn.variant({ variant: "outline", color }).border;
   return typeof color === "string" && (color in theme.colors || color.split(".")[0] in theme.colors) ? themeColor : color === void 0 ? theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[4] : color;
 }
-var useStyles$2d = createStyles((theme, { size: size2, variant, color }) => ({
+var useStyles$2e = createStyles((theme, { size: size2, variant, color }) => ({
   root: {},
   withLabel: {
     borderTop: "0 !important"
@@ -3020,7 +3020,7 @@ var useStyles$2d = createStyles((theme, { size: size2, variant, color }) => ({
     borderLeftStyle: variant
   }
 }));
-const useStyles$2e = useStyles$2d;
+const useStyles$2f = useStyles$2e;
 var __defProp$29 = Object.defineProperty;
 var __defProps$11 = Object.defineProperties;
 var __getOwnPropDescs$11 = Object.getOwnPropertyDescriptors;
@@ -3080,7 +3080,7 @@ const Divider = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$2e({
+  } = useStyles$2f({
     color,
     size: size2,
     variant
@@ -3135,7 +3135,7 @@ var __spreadValues$28 = (a, b) => {
     }
   return a;
 };
-var useStyles$2b = createStyles((theme, { size: size2 }) => ({
+var useStyles$2c = createStyles((theme, { size: size2 }) => ({
   item: {
     boxSizing: "border-box",
     textAlign: "left",
@@ -3180,7 +3180,7 @@ var useStyles$2b = createStyles((theme, { size: size2 }) => ({
     color: theme.colorScheme === "dark" ? theme.colors.dark[3] : theme.colors.gray[5]
   }
 }));
-const useStyles$2c = useStyles$2b;
+const useStyles$2d = useStyles$2c;
 var __defProp$27 = Object.defineProperty;
 var __getOwnPropSymbols$28 = Object.getOwnPropertySymbols;
 var __hasOwnProp$28 = Object.prototype.hasOwnProperty;
@@ -3222,7 +3222,7 @@ function SelectItems({
 }) {
   const {
     classes
-  } = useStyles$2c({
+  } = useStyles$2d({
     size: size2
   }, {
     classNames,
@@ -4456,7 +4456,7 @@ const $57acba87d6e25586$export$d5c6c08dc2d3ca7 = $57acba87d6e25586$export$a21cbf
 const $57acba87d6e25586$export$9a4e88b92edfce6b = $57acba87d6e25586$export$2fabd85d0eba3c57;
 const $57acba87d6e25586$export$6521433ed15a34db = $57acba87d6e25586$export$9fba1154677d7cd2;
 const $57acba87d6e25586$export$ac61190d9fc311a9 = $57acba87d6e25586$export$56969d565df7cc4b;
-var useStyles$29 = createStyles((theme, { scrollbarSize, offsetScrollbars, scrollbarHovered, hidden: hidden2 }, getRef) => ({
+var useStyles$2a = createStyles((theme, { scrollbarSize, offsetScrollbars, scrollbarHovered, hidden: hidden2 }, getRef) => ({
   root: {
     overflow: "hidden"
   },
@@ -4517,7 +4517,7 @@ var useStyles$29 = createStyles((theme, { scrollbarSize, offsetScrollbars, scrol
     display: hidden2 ? "none" : void 0
   }
 }));
-const useStyles$2a = useStyles$29;
+const useStyles$2b = useStyles$2a;
 var __defProp$25 = Object.defineProperty;
 var __defProps$10 = Object.defineProperties;
 var __getOwnPropDescs$10 = Object.getOwnPropertyDescriptors;
@@ -4580,7 +4580,7 @@ const _ScrollArea = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$2a({
+  } = useStyles$2b({
     scrollbarSize,
     offsetScrollbars,
     scrollbarHovered,
@@ -4731,7 +4731,7 @@ const SelectScrollArea = react.exports.forwardRef((_a, ref) => {
   });
 });
 SelectScrollArea.displayName = "@mantine/core/SelectScrollArea";
-var useStyles$27 = createStyles(() => ({
+var useStyles$28 = createStyles(() => ({
   dropdown: {},
   itemsWrapper: {
     padding: 4,
@@ -4739,7 +4739,7 @@ var useStyles$27 = createStyles(() => ({
     width: "100%"
   }
 }));
-const useStyles$28 = useStyles$27;
+const useStyles$29 = useStyles$28;
 function getPopoverMiddlewares(options) {
   const middlewares = [offset(options.offset)];
   if (options.middlewares.shift) {
@@ -4861,7 +4861,7 @@ const PopoverTarget = react.exports.forwardRef((_a, ref) => {
   }), !ctx.controlled ? { onClick: ctx.onToggle } : null));
 });
 PopoverTarget.displayName = "@mantine/core/PopoverTarget";
-var useStyles$25 = createStyles((theme, { radius, shadow }) => ({
+var useStyles$26 = createStyles((theme, { radius, shadow }) => ({
   dropdown: {
     position: "absolute",
     backgroundColor: theme.white,
@@ -4880,7 +4880,7 @@ var useStyles$25 = createStyles((theme, { radius, shadow }) => ({
     zIndex: 1
   }
 }));
-const useStyles$26 = useStyles$25;
+const useStyles$27 = useStyles$26;
 function FocusTrap({
   children,
   active = true,
@@ -4946,7 +4946,7 @@ function PopoverDropdown(_a) {
   const {
     classes,
     cx
-  } = useStyles$26({
+  } = useStyles$27({
     radius: ctx.radius,
     shadow: ctx.shadow
   }, {
@@ -5183,7 +5183,7 @@ function SelectPopoverDropdown(_a) {
   } = _b, others = __objRest$1k(_b, ["children", "component", "maxHeight", "direction", "id", "innerRef", "__staticSelector", "styles", "classNames", "unstyled"]);
   const {
     classes
-  } = useStyles$28(null, {
+  } = useStyles$29(null, {
     name: __staticSelector,
     styles,
     classNames,
@@ -5276,7 +5276,7 @@ function filterData$2({ data, limit, value, filter }) {
   }
   return result;
 }
-var useStyles$23 = createStyles((theme, { size: size2 }) => {
+var useStyles$24 = createStyles((theme, { size: size2 }) => {
   const spacing = theme.fn.size({ size: size2, sizes: theme.spacing });
   return {
     wrapper: {
@@ -5301,7 +5301,7 @@ var useStyles$23 = createStyles((theme, { size: size2 }) => {
     }
   };
 });
-const useStyles$24 = useStyles$23;
+const useStyles$25 = useStyles$24;
 var __defProp$20 = Object.defineProperty;
 var __defProps$Y = Object.defineProperties;
 var __getOwnPropDescs$Y = Object.getOwnPropertyDescriptors;
@@ -5394,7 +5394,7 @@ const Autocomplete = react.exports.forwardRef((props, ref) => {
   } = _a, others = __objRest$1j(_a, ["inputProps", "wrapperProps", "shadow", "data", "limit", "value", "defaultValue", "onChange", "unstyled", "itemComponent", "onItemSubmit", "onKeyDown", "onFocus", "onBlur", "onClick", "transition", "transitionDuration", "initiallyOpened", "transitionTimingFunction", "classNames", "styles", "filter", "nothingFound", "onDropdownClose", "onDropdownOpen", "withinPortal", "switchDirectionOnFlip", "zIndex", "dropdownPosition", "maxDropdownHeight", "dropdownComponent", "positionDependencies"]);
   const {
     classes
-  } = useStyles$24({
+  } = useStyles$25({
     size: inputProps.size
   }, {
     classNames,
@@ -5659,13 +5659,13 @@ function useAvatarGroupContext() {
     withinGroup: false
   };
 }
-var useStyles$21 = createStyles((theme, { spacing }) => ({
+var useStyles$22 = createStyles((theme, { spacing }) => ({
   root: {
     display: "flex",
     paddingLeft: theme.fn.size({ size: spacing, sizes: theme.spacing })
   }
 }));
-const useStyles$22 = useStyles$21;
+const useStyles$23 = useStyles$22;
 var __defProp$1Z = Object.defineProperty;
 var __getOwnPropSymbols$1Z = Object.getOwnPropertySymbols;
 var __hasOwnProp$1Z = Object.prototype.hasOwnProperty;
@@ -5710,7 +5710,7 @@ const AvatarGroup = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$22({
+  } = useStyles$23({
     spacing
   }, {
     name: "AvatarGroup",
@@ -5764,7 +5764,7 @@ function getGroupStyles({ withinGroup, spacing, theme }) {
     border: `2px solid ${theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white}`
   };
 }
-var useStyles$1$ = createStyles((theme, { size: size2, radius, color, withinGroup, spacing, variant, gradient }) => {
+var useStyles$20 = createStyles((theme, { size: size2, radius, color, withinGroup, spacing, variant, gradient }) => {
   const colors = theme.fn.variant({ variant, color, gradient });
   return {
     root: __spreadValues$1Y(__spreadProps$V(__spreadValues$1Y({}, theme.fn.focusStyles()), {
@@ -5811,7 +5811,7 @@ var useStyles$1$ = createStyles((theme, { size: size2, radius, color, withinGrou
     }
   };
 });
-const useStyles$20 = useStyles$1$;
+const useStyles$21 = useStyles$20;
 var __defProp$1X = Object.defineProperty;
 var __defProps$U = Object.defineProperties;
 var __getOwnPropDescs$U = Object.getOwnPropertyDescriptors;
@@ -5879,7 +5879,7 @@ const _Avatar = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$20({
+  } = useStyles$21({
     color,
     radius,
     size: size2,
@@ -6044,7 +6044,7 @@ function getVariantStyles$2({ theme, variant, color, size: size2, gradient }) {
     border: `${variant === "gradient" ? 0 : 1}px solid ${colors.border}`
   };
 }
-var useStyles$1Z = createStyles((theme, { color, size: size2, radius, gradient, fullWidth, variant }) => {
+var useStyles$1_ = createStyles((theme, { color, size: size2, radius, gradient, fullWidth, variant }) => {
   const { fontSize, height } = size2 in sizes$c ? sizes$c[size2] : sizes$c.md;
   return {
     leftSection: {
@@ -6080,7 +6080,7 @@ var useStyles$1Z = createStyles((theme, { color, size: size2, radius, gradient, 
     }), getVariantStyles$2({ theme, variant, color, size: size2, gradient }))
   };
 });
-const useStyles$1_ = useStyles$1Z;
+const useStyles$1$ = useStyles$1_;
 var __defProp$1U = Object.defineProperty;
 var __getOwnPropSymbols$1U = Object.getOwnPropertySymbols;
 var __hasOwnProp$1U = Object.prototype.hasOwnProperty;
@@ -6138,7 +6138,7 @@ const _Badge = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$1_({
+  } = useStyles$1$({
     size: size2,
     fullWidth,
     color,
@@ -6224,7 +6224,7 @@ var __spreadValues$1S = (a, b) => {
   return a;
 };
 var __spreadProps$R = (a, b) => __defProps$R(a, __getOwnPropDescs$R(b));
-var useStyles$1X = createStyles((theme, { color }) => ({
+var useStyles$1Y = createStyles((theme, { color }) => ({
   root: __spreadProps$R(__spreadValues$1S({}, theme.fn.fontStyles()), {
     fontSize: theme.fontSizes.lg,
     lineHeight: theme.lineHeight,
@@ -6257,7 +6257,7 @@ var useStyles$1X = createStyles((theme, { color }) => ({
     textOverflow: "ellipsis"
   }
 }));
-const useStyles$1Y = useStyles$1X;
+const useStyles$1Z = useStyles$1Y;
 var __defProp$1R = Object.defineProperty;
 var __getOwnPropSymbols$1R = Object.getOwnPropertySymbols;
 var __hasOwnProp$1R = Object.prototype.hasOwnProperty;
@@ -6309,7 +6309,7 @@ const Blockquote = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$1Y({
+  } = useStyles$1Z({
     color
   }, {
     classNames,
@@ -6339,7 +6339,7 @@ const Blockquote = react.exports.forwardRef((props, ref) => {
   });
 });
 Blockquote.displayName = "@mantine/core/Blockquote";
-var useStyles$1V = createStyles((theme) => ({
+var useStyles$1W = createStyles((theme) => ({
   root: {
     display: "flex",
     alignItems: "center"
@@ -6359,7 +6359,7 @@ var useStyles$1V = createStyles((theme) => ({
     justifyContent: "center"
   }
 }));
-const useStyles$1W = useStyles$1V;
+const useStyles$1X = useStyles$1W;
 var __defProp$1Q = Object.defineProperty;
 var __getOwnPropSymbols$1Q = Object.getOwnPropertySymbols;
 var __hasOwnProp$1Q = Object.prototype.hasOwnProperty;
@@ -6408,7 +6408,7 @@ const Breadcrumbs = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$1W(null, {
+  } = useStyles$1X(null, {
     classNames,
     styles,
     unstyled,
@@ -6451,7 +6451,7 @@ const sizes$b = {
   lg: 34,
   xl: 42
 };
-var useStyles$1T = createStyles((theme, { size: size2, color, transitionDuration }) => {
+var useStyles$1U = createStyles((theme, { size: size2, color, transitionDuration }) => {
   const sizeValue = theme.fn.size({ size: size2, sizes: sizes$b });
   const _color = color || (theme.colorScheme === "dark" ? theme.white : theme.black);
   return {
@@ -6501,7 +6501,7 @@ var useStyles$1T = createStyles((theme, { size: size2, color, transitionDuration
     }
   };
 });
-const useStyles$1U = useStyles$1T;
+const useStyles$1V = useStyles$1U;
 var __defProp$1P = Object.defineProperty;
 var __getOwnPropSymbols$1P = Object.getOwnPropertySymbols;
 var __hasOwnProp$1P = Object.prototype.hasOwnProperty;
@@ -6552,7 +6552,7 @@ const Burger = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$1U({
+  } = useStyles$1V({
     color,
     size: size2,
     transitionDuration
@@ -6576,7 +6576,7 @@ Burger.displayName = "@mantine/core/Burger";
 const CardContext = react.exports.createContext({ padding: 0 });
 const CardProvider = CardContext.Provider;
 const useCardPadding = () => react.exports.useContext(CardContext).padding;
-var useStyles$1R = createStyles((theme, { padding: padding2, withBorder, inheritPadding }) => {
+var useStyles$1S = createStyles((theme, { padding: padding2, withBorder, inheritPadding }) => {
   const spacing = theme.fn.size({ size: padding2, sizes: theme.spacing });
   const offset2 = -1 * spacing;
   const borderColor = theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3];
@@ -6604,7 +6604,7 @@ var useStyles$1R = createStyles((theme, { padding: padding2, withBorder, inherit
     }
   };
 });
-const useStyles$1S = useStyles$1R;
+const useStyles$1T = useStyles$1S;
 var __defProp$1O = Object.defineProperty;
 var __getOwnPropSymbols$1O = Object.getOwnPropertySymbols;
 var __hasOwnProp$1O = Object.prototype.hasOwnProperty;
@@ -6648,7 +6648,7 @@ const _CardSection = react.exports.forwardRef((_a, ref) => {
   const {
     classes,
     cx
-  } = useStyles$1S({
+  } = useStyles$1T({
     padding: useCardPadding(),
     withBorder,
     inheritPadding
@@ -6665,14 +6665,14 @@ const _CardSection = react.exports.forwardRef((_a, ref) => {
 });
 _CardSection.displayName = "@mantine/core/CardSection";
 const CardSection = createPolymorphicComponent(_CardSection);
-var useStyles$1P = createStyles((theme) => ({
+var useStyles$1Q = createStyles((theme) => ({
   root: {
     position: "relative",
     overflow: "hidden",
     backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.white
   }
 }));
-const useStyles$1Q = useStyles$1P;
+const useStyles$1R = useStyles$1Q;
 var __defProp$1N = Object.defineProperty;
 var __getOwnPropSymbols$1N = Object.getOwnPropertySymbols;
 var __hasOwnProp$1N = Object.prototype.hasOwnProperty;
@@ -6720,7 +6720,7 @@ const _Card = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$1Q(null, {
+  } = useStyles$1R(null, {
     name: "Card",
     unstyled
   });
@@ -6880,7 +6880,7 @@ const checkedPadding = {
   lg: 13,
   xl: 15
 };
-var useStyles$1N = createStyles((theme, { radius, size: size2, color }, getRef) => ({
+var useStyles$1O = createStyles((theme, { radius, size: size2, color }, getRef) => ({
   root: {},
   label: __spreadProps$Q(__spreadValues$1L({
     ref: getRef("label")
@@ -6972,7 +6972,7 @@ var useStyles$1N = createStyles((theme, { radius, size: size2, color }, getRef) 
     }
   }
 }));
-const useStyles$1O = useStyles$1N;
+const useStyles$1P = useStyles$1O;
 var __defProp$1K = Object.defineProperty;
 var __getOwnPropSymbols$1K = Object.getOwnPropertySymbols;
 var __hasOwnProp$1K = Object.prototype.hasOwnProperty;
@@ -7043,7 +7043,7 @@ const Chip = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$1O({
+  } = useStyles$1P({
     radius,
     size: size2,
     color
@@ -7118,7 +7118,7 @@ var __spreadValues$1J = (a, b) => {
   return a;
 };
 var __spreadProps$P = (a, b) => __defProps$P(a, __getOwnPropDescs$P(b));
-var useStyles$1L = createStyles((theme, { color: _color }) => {
+var useStyles$1M = createStyles((theme, { color: _color }) => {
   const color = _color || (theme.colorScheme === "dark" ? "dark" : "gray");
   const colors = theme.fn.variant({ color, variant: "light" });
   return {
@@ -7138,7 +7138,7 @@ var useStyles$1L = createStyles((theme, { color: _color }) => {
     }
   };
 });
-const useStyles$1M = useStyles$1L;
+const useStyles$1N = useStyles$1M;
 var __defProp$1I = Object.defineProperty;
 var __getOwnPropSymbols$1I = Object.getOwnPropertySymbols;
 var __hasOwnProp$1I = Object.prototype.hasOwnProperty;
@@ -7183,7 +7183,7 @@ const Code = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$1M({
+  } = useStyles$1N({
     color
   }, {
     name: "Code",
@@ -7230,7 +7230,7 @@ var __spreadValues$1H = (a, b) => {
   return a;
 };
 var __spreadProps$O = (a, b) => __defProps$O(a, __getOwnPropDescs$O(b));
-var useStyles$1J = createStyles((theme, { size: size2, radius }) => {
+var useStyles$1K = createStyles((theme, { size: size2, radius }) => {
   const overlayColor = theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3];
   return {
     root: __spreadProps$O(__spreadValues$1H({}, theme.fn.focusStyles()), {
@@ -7269,7 +7269,7 @@ var useStyles$1J = createStyles((theme, { size: size2, radius }) => {
     }
   };
 });
-const useStyles$1K = useStyles$1J;
+const useStyles$1L = useStyles$1K;
 var __defProp$1G = Object.defineProperty;
 var __getOwnPropSymbols$1G = Object.getOwnPropertySymbols;
 var __hasOwnProp$1G = Object.prototype.hasOwnProperty;
@@ -7321,7 +7321,7 @@ const _ColorSwatch = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$1K({
+  } = useStyles$1L({
     radius,
     size: size2
   }, {
@@ -7359,7 +7359,7 @@ const THUMB_SIZES = {
   lg: 20,
   xl: 22
 };
-var useStyles$1H = createStyles((theme, { size: size2 }) => {
+var useStyles$1I = createStyles((theme, { size: size2 }) => {
   const _size = theme.fn.size({ size: size2, sizes: THUMB_SIZES });
   return {
     thumb: {
@@ -7375,7 +7375,7 @@ var useStyles$1H = createStyles((theme, { size: size2 }) => {
     }
   };
 });
-const useStyles$1I = useStyles$1H;
+const useStyles$1J = useStyles$1I;
 var __defProp$1F = Object.defineProperty;
 var __getOwnPropSymbols$1F = Object.getOwnPropertySymbols;
 var __hasOwnProp$1F = Object.prototype.hasOwnProperty;
@@ -7410,7 +7410,7 @@ function Thumb$1({
   const {
     classes,
     cx
-  } = useStyles$1I({
+  } = useStyles$1J({
     size: size2
   }, {
     classNames,
@@ -7427,7 +7427,7 @@ function Thumb$1({
   });
 }
 Thumb$1.displayName = "@mantine/core/Thumb";
-var useStyles$1F = createStyles((theme, { size: size2 }, getRef) => ({
+var useStyles$1G = createStyles((theme, { size: size2 }, getRef) => ({
   sliderThumb: {
     ref: getRef("sliderThumb")
   },
@@ -7456,7 +7456,7 @@ var useStyles$1F = createStyles((theme, { size: size2 }, getRef) => ({
     borderRadius: 1e3
   }
 }));
-const useStyles$1G = useStyles$1F;
+const useStyles$1H = useStyles$1G;
 var __defProp$1E = Object.defineProperty;
 var __defProps$N = Object.defineProperties;
 var __getOwnPropDescs$N = Object.getOwnPropertyDescriptors;
@@ -7512,7 +7512,7 @@ const ColorSlider = react.exports.forwardRef((_a, ref) => {
   const {
     classes,
     cx
-  } = useStyles$1G({
+  } = useStyles$1H({
     size: size2
   }, {
     classNames,
@@ -7845,7 +7845,7 @@ const SATURATION_HEIGHTS = {
   lg: 140,
   xl: 160
 };
-var useStyles$1D = createStyles((theme, { size: size2 }, getRef) => ({
+var useStyles$1E = createStyles((theme, { size: size2 }, getRef) => ({
   saturationThumb: {
     ref: getRef("saturationThumb")
   },
@@ -7869,7 +7869,7 @@ var useStyles$1D = createStyles((theme, { size: size2 }, getRef) => ({
     borderRadius: theme.radius.sm
   }, theme.fn.cover(-theme.fn.size({ size: size2, sizes: THUMB_SIZES }) / 2 - 1))
 }));
-const useStyles$1E = useStyles$1D;
+const useStyles$1F = useStyles$1E;
 function hsvaToRgbaObject({ h, s, v, a }) {
   const _h = h / 360 * 6;
   const _s = s / 100;
@@ -7943,7 +7943,7 @@ function Saturation({
 }) {
   const {
     classes
-  } = useStyles$1E({
+  } = useStyles$1F({
     size: size2
   }, {
     classNames,
@@ -8050,7 +8050,7 @@ function Saturation({
   });
 }
 Saturation.displayName = "@mantine/core/Saturation";
-var useStyles$1B = createStyles((_theme, { swatchesPerRow }) => ({
+var useStyles$1C = createStyles((_theme, { swatchesPerRow }) => ({
   swatch: {
     width: `calc(${100 / swatchesPerRow}% - 4px)`,
     height: 0,
@@ -8066,7 +8066,7 @@ var useStyles$1B = createStyles((_theme, { swatchesPerRow }) => ({
     flexWrap: "wrap"
   }
 }));
-const useStyles$1C = useStyles$1B;
+const useStyles$1D = useStyles$1C;
 var __defProp$1A = Object.defineProperty;
 var __getOwnPropSymbols$1A = Object.getOwnPropertySymbols;
 var __hasOwnProp$1A = Object.prototype.hasOwnProperty;
@@ -8113,7 +8113,7 @@ function Swatches(_a) {
   } = _b, others = __objRest$12(_b, ["data", "swatchesPerRow", "focusable", "classNames", "styles", "__staticSelector", "unstyled", "setValue"]);
   const {
     classes
-  } = useStyles$1C({
+  } = useStyles$1D({
     swatchesPerRow
   }, {
     classNames,
@@ -8149,7 +8149,7 @@ const sizes$9 = {
   lg: 280,
   xl: 320
 };
-var useStyles$1A = createStyles((theme, { size: size2, fullWidth }) => ({
+var useStyles$1B = createStyles((theme, { size: size2, fullWidth }) => ({
   preview: {},
   wrapper: {
     boxSizing: "border-box",
@@ -8250,7 +8250,7 @@ const ColorPicker = react.exports.forwardRef((props, ref) => {
     classes,
     cx,
     theme
-  } = useStyles$1A({
+  } = useStyles$1B({
     size: size2,
     fullWidth
   }, {
@@ -8623,7 +8623,7 @@ const sizes$8 = {
   lg: 400,
   xl: 500
 };
-var useStyles$1y = createStyles((theme, { size: size2 }) => ({
+var useStyles$1z = createStyles((theme, { size: size2 }) => ({
   root: __spreadProps$J(__spreadValues$1w({}, theme.fn.fontStyles()), {
     color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
     position: "relative",
@@ -8637,7 +8637,7 @@ var useStyles$1y = createStyles((theme, { size: size2 }) => ({
     right: theme.spacing.md / 2
   }
 }));
-const useStyles$1z = useStyles$1y;
+const useStyles$1A = useStyles$1z;
 var __defProp$1v = Object.defineProperty;
 var __getOwnPropSymbols$1v = Object.getOwnPropertySymbols;
 var __hasOwnProp$1v = Object.prototype.hasOwnProperty;
@@ -8701,7 +8701,7 @@ function DialogBody(props) {
   const {
     classes,
     cx
-  } = useStyles$1z({
+  } = useStyles$1A({
     size: size2
   }, {
     classNames,
@@ -8792,7 +8792,7 @@ function getPositionStyles$1({
       return null;
   }
 }
-var useStyles$1w = createStyles((theme, { position, size: size2, zIndex }) => ({
+var useStyles$1x = createStyles((theme, { position, size: size2, zIndex }) => ({
   closeButton: {},
   overlay: {},
   root: {
@@ -8823,7 +8823,7 @@ var useStyles$1w = createStyles((theme, { position, size: size2, zIndex }) => ({
     marginBottom: theme.spacing.md
   }
 }));
-const useStyles$1x = useStyles$1w;
+const useStyles$1y = useStyles$1x;
 function GroupedTransition({
   transitions: transitions2,
   duration = 250,
@@ -8971,7 +8971,7 @@ function Drawer(props) {
     classes,
     cx,
     theme
-  } = useStyles$1x({
+  } = useStyles$1y({
     size: size2,
     position,
     zIndex
@@ -9151,7 +9151,7 @@ const FileButton = react.exports.forwardRef((props, ref) => {
   });
 });
 FileButton.displayName = "@mantine/core/FileButton";
-var useStyles$1u = createStyles((theme) => ({
+var useStyles$1v = createStyles((theme) => ({
   placeholder: {
     color: theme.colorScheme === "dark" ? theme.colors.dark[3] : theme.colors.gray[5]
   },
@@ -9159,7 +9159,7 @@ var useStyles$1u = createStyles((theme) => ({
     cursor: "pointer"
   }
 }));
-const useStyles$1v = useStyles$1u;
+const useStyles$1w = useStyles$1v;
 var __defProp$1r = Object.defineProperty;
 var __defProps$H = Object.defineProperties;
 var __getOwnPropDescs$H = Object.getOwnPropertyDescriptors;
@@ -9240,7 +9240,7 @@ const _FileInput = react.exports.forwardRef((props, ref) => {
     classes,
     theme,
     cx
-  } = useStyles$1v(null, {
+  } = useStyles$1w(null, {
     name: "FileInput",
     classNames,
     styles,
@@ -9325,28 +9325,28 @@ var __spreadValues$1q = (a, b) => {
     }
   return a;
 };
-const getColumnWidth = (colSpan, columns2) => colSpan ? `${100 / (columns2 / colSpan)}%` : void 0;
-const getColumnOffset = (offset2, columns2) => offset2 ? `${100 / (columns2 / offset2)}%` : void 0;
+const getColumnWidth = (colSpan, columns) => colSpan ? `${100 / (columns / colSpan)}%` : void 0;
+const getColumnOffset = (offset2, columns) => offset2 ? `${100 / (columns / offset2)}%` : void 0;
 function getBreakpointsStyles({
   sizes: sizes2,
   offsets,
   orders,
   theme,
-  columns: columns2,
+  columns,
   grow
 }) {
   return MANTINE_SIZES.reduce((acc, size2) => {
     acc[`@media (min-width: ${theme.breakpoints[size2] + 1}px)`] = {
       order: orders[size2],
-      flexBasis: getColumnWidth(sizes2[size2], columns2),
+      flexBasis: getColumnWidth(sizes2[size2], columns),
       flexShrink: 0,
-      maxWidth: grow ? "unset" : getColumnWidth(sizes2[size2], columns2),
-      marginLeft: getColumnOffset(offsets[size2], columns2)
+      maxWidth: grow ? "unset" : getColumnWidth(sizes2[size2], columns),
+      marginLeft: getColumnOffset(offsets[size2], columns)
     };
     return acc;
   }, {});
 }
-var useStyles$1s = createStyles((theme, {
+var useStyles$1t = createStyles((theme, {
   gutter,
   grow,
   offset: offset2,
@@ -9355,7 +9355,7 @@ var useStyles$1s = createStyles((theme, {
   offsetMd,
   offsetLg,
   offsetXl,
-  columns: columns2,
+  columns,
   span,
   xs,
   sm,
@@ -9374,20 +9374,20 @@ var useStyles$1s = createStyles((theme, {
     flexGrow: grow ? 1 : 0,
     order,
     padding: theme.fn.size({ size: gutter, sizes: theme.spacing }) / 2,
-    marginLeft: getColumnOffset(offset2, columns2),
-    flexBasis: getColumnWidth(span, columns2),
+    marginLeft: getColumnOffset(offset2, columns),
+    flexBasis: getColumnWidth(span, columns),
     flexShrink: 0,
-    maxWidth: grow ? "unset" : getColumnWidth(span, columns2)
+    maxWidth: grow ? "unset" : getColumnWidth(span, columns)
   }, getBreakpointsStyles({
     sizes: { xs, sm, md, lg, xl },
     offsets: { xs: offsetXs, sm: offsetSm, md: offsetMd, lg: offsetLg, xl: offsetXl },
     orders: { xs: orderXs, sm: orderSm, md: orderMd, lg: orderLg, xl: orderXl },
     theme,
-    columns: columns2,
+    columns,
     grow
   }))
 }));
-const useStyles$1t = useStyles$1s;
+const useStyles$1u = useStyles$1t;
 var __defProp$1p = Object.defineProperty;
 var __getOwnPropSymbols$1p = Object.getOwnPropertySymbols;
 var __hasOwnProp$1p = Object.prototype.hasOwnProperty;
@@ -9465,7 +9465,7 @@ const Col = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$1t({
+  } = useStyles$1u({
     gutter: ctx.gutter,
     offset: offset2,
     offsetXs,
@@ -9503,7 +9503,7 @@ const Col = react.exports.forwardRef((props, ref) => {
   });
 });
 Col.displayName = "@mantine/core/Col";
-var useStyles$1q = createStyles((theme, { justify, align, gutter }) => ({
+var useStyles$1r = createStyles((theme, { justify, align, gutter }) => ({
   root: {
     margin: -theme.fn.size({ size: gutter, sizes: theme.spacing }) / 2,
     display: "flex",
@@ -9512,7 +9512,7 @@ var useStyles$1q = createStyles((theme, { justify, align, gutter }) => ({
     alignItems: align
   }
 }));
-const useStyles$1r = useStyles$1q;
+const useStyles$1s = useStyles$1r;
 var __defProp$1o = Object.defineProperty;
 var __getOwnPropSymbols$1o = Object.getOwnPropertySymbols;
 var __hasOwnProp$1o = Object.prototype.hasOwnProperty;
@@ -9559,7 +9559,7 @@ const Grid = react.exports.forwardRef((props, ref) => {
     grow,
     justify,
     align,
-    columns: columns2,
+    columns,
     className,
     id,
     unstyled
@@ -9567,7 +9567,7 @@ const Grid = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$1r({
+  } = useStyles$1s({
     gutter,
     justify,
     align
@@ -9579,7 +9579,7 @@ const Grid = react.exports.forwardRef((props, ref) => {
     value: {
       gutter,
       grow,
-      columns: columns2
+      columns
     },
     children: /* @__PURE__ */ jsx(Box, {
       ...__spreadValues$1o({
@@ -9592,13 +9592,13 @@ const Grid = react.exports.forwardRef((props, ref) => {
 });
 Grid.Col = Col;
 Grid.displayName = "@mantine/core/Grid";
-var useStyles$1o = createStyles((theme, { color }) => ({
+var useStyles$1p = createStyles((theme, { color }) => ({
   root: {
     backgroundColor: theme.fn.themeColor(color, theme.colorScheme === "dark" ? 5 : 2),
     color: theme.colorScheme === "dark" ? theme.colors.dark[9] : "inherit"
   }
 }));
-const useStyles$1p = useStyles$1o;
+const useStyles$1q = useStyles$1p;
 var __defProp$1n = Object.defineProperty;
 var __getOwnPropSymbols$1n = Object.getOwnPropertySymbols;
 var __hasOwnProp$1n = Object.prototype.hasOwnProperty;
@@ -9644,7 +9644,7 @@ const Mark = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$1p({
+  } = useStyles$1q({
     color
   }, {
     unstyled,
@@ -10016,7 +10016,7 @@ var __spreadValues$1h = (a, b) => {
   return a;
 };
 var __spreadProps$G = (a, b) => __defProps$G(a, __getOwnPropDescs$G(b));
-var useStyles$1m = createStyles((theme, { radius }) => ({
+var useStyles$1n = createStyles((theme, { radius }) => ({
   root: {},
   imageWrapper: {
     position: "relative"
@@ -10044,7 +10044,7 @@ var useStyles$1m = createStyles((theme, { radius }) => ({
     borderRadius: theme.fn.size({ size: radius, sizes: theme.radius })
   })
 }));
-const useStyles$1n = useStyles$1m;
+const useStyles$1o = useStyles$1n;
 var __defProp$1g = Object.defineProperty;
 var __getOwnPropSymbols$1g = Object.getOwnPropertySymbols;
 var __hasOwnProp$1g = Object.prototype.hasOwnProperty;
@@ -10106,7 +10106,7 @@ const Image = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$1n({
+  } = useStyles$1o({
     radius
   }, {
     classNames,
@@ -10226,7 +10226,7 @@ function getPositionStyles(_position, offset2 = 0) {
   styles.transform = `translate(${translateX}, ${translateY})`;
   return styles;
 }
-var useStyles$1k = createStyles((theme, {
+var useStyles$1l = createStyles((theme, {
   radius,
   size: size2,
   color,
@@ -10263,7 +10263,7 @@ var useStyles$1k = createStyles((theme, {
     whiteSpace: "nowrap"
   })
 }));
-const useStyles$1l = useStyles$1k;
+const useStyles$1m = useStyles$1l;
 var __defProp$1e = Object.defineProperty;
 var __getOwnPropSymbols$1e = Object.getOwnPropertySymbols;
 var __hasOwnProp$1e = Object.prototype.hasOwnProperty;
@@ -10328,7 +10328,7 @@ const Indicator = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$1l({
+  } = useStyles$1m({
     position,
     offset: offset2,
     size: size2,
@@ -10423,13 +10423,13 @@ function validateJson(value) {
     return false;
   }
 }
-var useStyles$1i = createStyles((theme, { size: size2 }) => ({
+var useStyles$1j = createStyles((theme, { size: size2 }) => ({
   input: {
     fontFamily: theme.fontFamilyMonospace,
     fontSize: theme.fn.size({ size: size2, sizes: theme.fontSizes }) - 2
   }
 }));
-const useStyles$1j = useStyles$1i;
+const useStyles$1k = useStyles$1j;
 function _objectWithoutPropertiesLoose(source, excluded) {
   if (source == null)
     return {};
@@ -10641,13 +10641,13 @@ var TextareaAutosize = function TextareaAutosize2(_ref, userRef) {
 };
 var index = /* @__PURE__ */ react.exports.forwardRef(TextareaAutosize);
 const TextareaAutosize$1 = index;
-var useStyles$1g = createStyles((theme) => ({
+var useStyles$1h = createStyles((theme) => ({
   input: {
     paddingTop: theme.spacing.xs,
     paddingBottom: theme.spacing.xs
   }
 }));
-const useStyles$1h = useStyles$1g;
+const useStyles$1i = useStyles$1h;
 var __defProp$1c = Object.defineProperty;
 var __defProps$D = Object.defineProperties;
 var __getOwnPropDescs$D = Object.getOwnPropertyDescriptors;
@@ -10719,7 +10719,7 @@ const Textarea = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$1h();
+  } = useStyles$1i();
   const {
     systemStyles,
     rest
@@ -10832,7 +10832,7 @@ const JsonInput = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$1j({
+  } = useStyles$1k({
     size: size2
   }, {
     name: "JsonInput",
@@ -10873,7 +10873,7 @@ const JsonInput = react.exports.forwardRef((props, ref) => {
   });
 });
 JsonInput.displayName = "@mantine/core/JsonInput";
-var useStyles$1e = createStyles((theme) => ({
+var useStyles$1f = createStyles((theme) => ({
   root: {
     lineHeight: theme.lineHeight,
     fontFamily: theme.fontFamilyMonospace,
@@ -10887,7 +10887,7 @@ var useStyles$1e = createStyles((theme) => ({
     borderBottom: `3px solid ${theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]}`
   }
 }));
-const useStyles$1f = useStyles$1e;
+const useStyles$1g = useStyles$1f;
 var __defProp$1a = Object.defineProperty;
 var __getOwnPropSymbols$1a = Object.getOwnPropertySymbols;
 var __hasOwnProp$1a = Object.prototype.hasOwnProperty;
@@ -10930,7 +10930,7 @@ const Kbd = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$1f(null, {
+  } = useStyles$1g(null, {
     name: "Kbd",
     unstyled
   });
@@ -10948,7 +10948,7 @@ const ListContext = react.exports.createContext(null);
 function useListContext() {
   return react.exports.useContext(ListContext) || {};
 }
-var useStyles$1c = createStyles((theme, { spacing, center }, getRef) => ({
+var useStyles$1d = createStyles((theme, { spacing, center }, getRef) => ({
   itemWrapper: {
     ref: getRef("itemWrapper"),
     display: "inline"
@@ -10972,7 +10972,7 @@ var useStyles$1c = createStyles((theme, { spacing, center }, getRef) => ({
     marginRight: theme.spacing.sm
   }
 }));
-const useStyles$1d = useStyles$1c;
+const useStyles$1e = useStyles$1d;
 var __defProp$19 = Object.defineProperty;
 var __getOwnPropSymbols$19 = Object.getOwnPropertySymbols;
 var __hasOwnProp$19 = Object.prototype.hasOwnProperty;
@@ -11026,7 +11026,7 @@ function ListItem(_a) {
   const {
     classes,
     cx
-  } = useStyles$1d({
+  } = useStyles$1e({
     spacing,
     center
   }, {
@@ -11073,7 +11073,7 @@ var __spreadValues$18 = (a, b) => {
   return a;
 };
 var __spreadProps$B = (a, b) => __defProps$B(a, __getOwnPropDescs$B(b));
-var useStyles$1a = createStyles((theme, { withPadding, size: size2, listStyleType }) => ({
+var useStyles$1b = createStyles((theme, { withPadding, size: size2, listStyleType }) => ({
   root: __spreadProps$B(__spreadValues$18({}, theme.fn.fontStyles()), {
     listStyleType,
     color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
@@ -11084,7 +11084,7 @@ var useStyles$1a = createStyles((theme, { withPadding, size: size2, listStyleTyp
     listStylePosition: "inside"
   })
 }));
-const useStyles$1b = useStyles$1a;
+const useStyles$1c = useStyles$1b;
 var __defProp$17 = Object.defineProperty;
 var __getOwnPropSymbols$17 = Object.getOwnPropertySymbols;
 var __hasOwnProp$17 = Object.prototype.hasOwnProperty;
@@ -11141,7 +11141,7 @@ const List = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$1b({
+  } = useStyles$1c({
     withPadding,
     size: size2,
     listStyleType
@@ -11174,7 +11174,7 @@ const List = react.exports.forwardRef((props, ref) => {
 });
 List.Item = ListItem;
 List.displayName = "@mantine/core/List";
-var useStyles$18 = createStyles((theme, { smallerThan, largerThan, query, styles }) => {
+var useStyles$19 = createStyles((theme, { smallerThan, largerThan, query, styles }) => {
   const media = {};
   const minWidth = theme.fn.size({ size: largerThan, sizes: theme.breakpoints }) + 1;
   const maxWidth = theme.fn.size({ size: smallerThan, sizes: theme.breakpoints });
@@ -11193,11 +11193,11 @@ var useStyles$18 = createStyles((theme, { smallerThan, largerThan, query, styles
   }
   return { media };
 });
-const useStyles$19 = useStyles$18;
+const useStyles$1a = useStyles$19;
 function MediaQuery(props) {
   var _a;
   const { children, smallerThan, largerThan, query, styles, className } = useComponentDefaultProps("MediaQuery", {}, props);
-  const { classes, cx } = useStyles$19({ smallerThan, largerThan, query, styles }, { name: "MediaQuery" });
+  const { classes, cx } = useStyles$1a({ smallerThan, largerThan, query, styles }, { name: "MediaQuery" });
   const child = react.exports.Children.only(children);
   if (typeof child === "object" && child !== null && "props" in child) {
     return React.cloneElement(child, {
@@ -11207,13 +11207,13 @@ function MediaQuery(props) {
   return child;
 }
 MediaQuery.displayName = "@mantine/core/MediaQuery";
-var useStyles$16 = createStyles((theme) => ({
+var useStyles$17 = createStyles((theme) => ({
   divider: {
     margin: `${theme.spacing.xs / 2}px -5px`,
     borderTop: `1px solid ${theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[2]}`
   }
 }));
-const useStyles$17 = useStyles$16;
+const useStyles$18 = useStyles$17;
 var __defProp$16 = Object.defineProperty;
 var __getOwnPropSymbols$16 = Object.getOwnPropertySymbols;
 var __hasOwnProp$16 = Object.prototype.hasOwnProperty;
@@ -11260,7 +11260,7 @@ function MenuDivider(_a) {
   const {
     classes,
     cx
-  } = useStyles$17(null, {
+  } = useStyles$18(null, {
     name: "Menu",
     classNames,
     styles,
@@ -11367,7 +11367,7 @@ var __spreadValues$14 = (a, b) => {
   return a;
 };
 var __spreadProps$A = (a, b) => __defProps$A(a, __getOwnPropDescs$A(b));
-var useStyles$14 = createStyles((theme, { color, radius }) => ({
+var useStyles$15 = createStyles((theme, { color, radius }) => ({
   item: __spreadProps$A(__spreadValues$14({}, theme.fn.fontStyles()), {
     WebkitTapHighlightColor: "transparent",
     fontSize: theme.fontSizes.sm,
@@ -11404,7 +11404,7 @@ var useStyles$14 = createStyles((theme, { color, radius }) => ({
   },
   itemRightSection: {}
 }));
-const useStyles$15 = useStyles$14;
+const useStyles$16 = useStyles$15;
 var __defProp$13 = Object.defineProperty;
 var __defProps$z = Object.defineProperties;
 var __getOwnPropDescs$z = Object.getOwnPropertyDescriptors;
@@ -11460,7 +11460,7 @@ const _MenuItem = react.exports.forwardRef((_a, ref) => {
     classes,
     cx,
     theme
-  } = useStyles$15({
+  } = useStyles$16({
     radius: ctx.radius,
     color
   }, {
@@ -11521,7 +11521,7 @@ const _MenuItem = react.exports.forwardRef((_a, ref) => {
 });
 _MenuItem.displayName = "@mantine/core/MenuItem";
 const MenuItem = createPolymorphicComponent(_MenuItem);
-var useStyles$12 = createStyles((theme) => ({
+var useStyles$13 = createStyles((theme) => ({
   label: {
     color: theme.colorScheme === "dark" ? theme.colors.dark[2] : theme.colors.gray[6],
     fontWeight: 500,
@@ -11530,7 +11530,7 @@ var useStyles$12 = createStyles((theme) => ({
     cursor: "default"
   }
 }));
-const useStyles$13 = useStyles$12;
+const useStyles$14 = useStyles$13;
 var __defProp$12 = Object.defineProperty;
 var __getOwnPropSymbols$12 = Object.getOwnPropertySymbols;
 var __hasOwnProp$12 = Object.prototype.hasOwnProperty;
@@ -11577,7 +11577,7 @@ function MenuLabel(_a) {
   const {
     classes,
     cx
-  } = useStyles$13(null, {
+  } = useStyles$14(null, {
     name: "Menu",
     classNames,
     styles,
@@ -11651,10 +11651,10 @@ const MenuTarget = react.exports.forwardRef((_a, ref) => {
   });
 });
 MenuTarget.displayName = "@mantine/core/MenuTarget";
-var useStyles$10 = createStyles({
+var useStyles$11 = createStyles({
   dropdown: { padding: 4 }
 });
-const useStyles$11 = useStyles$10;
+const useStyles$12 = useStyles$11;
 var __defProp$10 = Object.defineProperty;
 var __defProps$y = Object.defineProperties;
 var __getOwnPropDescs$y = Object.getOwnPropertyDescriptors;
@@ -11720,7 +11720,7 @@ function Menu(props) {
   const {
     classes,
     cx
-  } = useStyles$11();
+  } = useStyles$12();
   const [hovered, {
     setHovered,
     resetHovered
@@ -11832,7 +11832,7 @@ function getFullScreenStyles(fullScreen) {
     overflowY: "auto"
   };
 }
-var useStyles$_ = createStyles((theme, { overflow, size: size2, centered, zIndex, fullScreen }) => ({
+var useStyles$$ = createStyles((theme, { overflow, size: size2, centered, zIndex, fullScreen }) => ({
   close: {},
   overlay: {
     display: fullScreen ? "none" : void 0
@@ -11887,7 +11887,7 @@ var useStyles$_ = createStyles((theme, { overflow, size: size2, centered, zIndex
     wordBreak: "break-word"
   }
 }));
-const useStyles$$ = useStyles$_;
+const useStyles$10 = useStyles$$;
 var __defProp$_ = Object.defineProperty;
 var __getOwnPropSymbols$_ = Object.getOwnPropertySymbols;
 var __hasOwnProp$_ = Object.prototype.hasOwnProperty;
@@ -11979,7 +11979,7 @@ function Modal(props) {
     classes,
     cx,
     theme
-  } = useStyles$$({
+  } = useStyles$10({
     size: size2,
     overflow,
     centered,
@@ -12108,7 +12108,7 @@ const fontSizes = {
   lg: 16,
   xl: 18
 };
-var useStyles$Y = createStyles((theme, { size: size2, disabled, radius, readOnly }) => ({
+var useStyles$Z = createStyles((theme, { size: size2, disabled, radius, readOnly }) => ({
   defaultValue: {
     display: "flex",
     alignItems: "center",
@@ -12135,7 +12135,7 @@ var useStyles$Y = createStyles((theme, { size: size2, disabled, radius, readOnly
     whiteSpace: "nowrap"
   }
 }));
-const useStyles$Z = useStyles$Y;
+const useStyles$_ = useStyles$Z;
 var __defProp$Z = Object.defineProperty;
 var __getOwnPropSymbols$Z = Object.getOwnPropertySymbols;
 var __hasOwnProp$Z = Object.prototype.hasOwnProperty;
@@ -12191,7 +12191,7 @@ function DefaultValue(_a) {
   const {
     classes,
     cx
-  } = useStyles$Z({
+  } = useStyles$_({
     size: size2,
     disabled,
     readOnly,
@@ -12429,7 +12429,7 @@ var __spreadValues$W = (a, b) => {
   return a;
 };
 var __spreadProps$w = (a, b) => __defProps$w(a, __getOwnPropDescs$w(b));
-var useStyles$W = createStyles((theme, { size: size2, invalid }) => ({
+var useStyles$X = createStyles((theme, { size: size2, invalid }) => ({
   wrapper: {
     position: "relative"
   },
@@ -12486,7 +12486,7 @@ var useStyles$W = createStyles((theme, { size: size2, invalid }) => ({
     }
   }
 }));
-const useStyles$X = useStyles$W;
+const useStyles$Y = useStyles$X;
 var __defProp$V = Object.defineProperty;
 var __defProps$v = Object.defineProperties;
 var __getOwnPropDescs$v = Object.getOwnPropertyDescriptors;
@@ -12641,7 +12641,7 @@ const MultiSelect = react.exports.forwardRef((props, ref) => {
     classes,
     cx,
     theme
-  } = useStyles$X({
+  } = useStyles$Y({
     size: size2,
     invalid: !!error
   }, {
@@ -13217,7 +13217,7 @@ var __spreadValues$T = (a, b) => {
   return a;
 };
 var __spreadProps$t = (a, b) => __defProps$t(a, __getOwnPropDescs$t(b));
-var useStyles$U = createStyles((theme, { color, variant, noWrap, childrenOffset, alignIcon }) => {
+var useStyles$V = createStyles((theme, { color, variant, noWrap, childrenOffset, alignIcon }) => {
   const colors = theme.fn.variant({ variant, color });
   return {
     root: __spreadProps$t(__spreadValues$T({
@@ -13274,7 +13274,7 @@ var useStyles$U = createStyles((theme, { color, variant, noWrap, childrenOffset,
     }
   };
 });
-const useStyles$V = useStyles$U;
+const useStyles$W = useStyles$V;
 var __defProp$S = Object.defineProperty;
 var __getOwnPropSymbols$S = Object.getOwnPropertySymbols;
 var __hasOwnProp$S = Object.prototype.hasOwnProperty;
@@ -13338,7 +13338,7 @@ const _NavLink = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$V({
+  } = useStyles$W({
     color,
     variant,
     noWrap,
@@ -13418,7 +13418,7 @@ const _NavLink = react.exports.forwardRef((props, ref) => {
 });
 _NavLink.displayName = "@mantine/core/NavLink";
 const NavLink = createPolymorphicComponent(_NavLink);
-var useStyles$S = createStyles((theme, { color, radius, withTitle }, getRef) => {
+var useStyles$T = createStyles((theme, { color, radius, withTitle }, getRef) => {
   const _radius = theme.fn.radius(radius);
   const topBottom = Math.min(Math.max(_radius / 1.2, 4), 30);
   const colors = theme.fn.variant({ variant: "filled", color });
@@ -13497,7 +13497,7 @@ var useStyles$S = createStyles((theme, { color, radius, withTitle }, getRef) => 
     }
   };
 });
-const useStyles$T = useStyles$S;
+const useStyles$U = useStyles$T;
 var __defProp$R = Object.defineProperty;
 var __defProps$s = Object.defineProperties;
 var __getOwnPropDescs$s = Object.getOwnPropertyDescriptors;
@@ -13553,7 +13553,7 @@ const Notification = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$T({
+  } = useStyles$U({
     color,
     radius,
     withTitle: !!title
@@ -13648,7 +13648,7 @@ const CONTROL_SIZES = {
   lg: 34,
   xl: 36
 };
-var useStyles$Q = createStyles((theme, { radius, size: size2 }) => ({
+var useStyles$R = createStyles((theme, { radius, size: size2 }) => ({
   rightSection: {
     display: "flex",
     flexDirection: "column",
@@ -13689,7 +13689,7 @@ var useStyles$Q = createStyles((theme, { radius, size: size2 }) => ({
     borderBottom: 0
   }
 }));
-const useStyles$R = useStyles$Q;
+const useStyles$S = useStyles$R;
 var __defProp$Q = Object.defineProperty;
 var __defProps$r = Object.defineProperties;
 var __getOwnPropDescs$r = Object.getOwnPropertyDescriptors;
@@ -13794,7 +13794,7 @@ const NumberInput = react.exports.forwardRef((props, ref) => {
     classes,
     cx,
     theme
-  } = useStyles$R({
+  } = useStyles$S({
     radius,
     size: size2
   }, {
@@ -14307,7 +14307,7 @@ const sizes$4 = {
   lg: 38,
   xl: 44
 };
-var useStyles$O = createStyles((theme, { size: size2, radius, color }) => {
+var useStyles$P = createStyles((theme, { size: size2, radius, color }) => {
   const colors = theme.fn.variant({ color, variant: "filled" });
   return {
     item: __spreadProps$q(__spreadValues$J({}, theme.fn.focusStyles()), {
@@ -14345,7 +14345,7 @@ var useStyles$O = createStyles((theme, { size: size2, radius, color }) => {
     })
   };
 });
-const useStyles$P = useStyles$O;
+const useStyles$Q = useStyles$P;
 var __defProp$I = Object.defineProperty;
 var __getOwnPropSymbols$I = Object.getOwnPropertySymbols;
 var __hasOwnProp$I = Object.prototype.hasOwnProperty;
@@ -14413,7 +14413,7 @@ const Pagination = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     theme
-  } = useStyles$P({
+  } = useStyles$Q({
     color,
     size: size2,
     radius
@@ -14648,7 +14648,7 @@ const iconSizes$1 = {
   lg: 14,
   xl: 16
 };
-var useStyles$M = createStyles((theme, { size: size2, color, transitionDuration }, getRef) => {
+var useStyles$N = createStyles((theme, { size: size2, color, transitionDuration }, getRef) => {
   const colors = theme.fn.variant({ variant: "filled", color });
   return {
     radioWrapper: {
@@ -14718,7 +14718,7 @@ var useStyles$M = createStyles((theme, { size: size2, color, transitionDuration 
     })
   };
 });
-const useStyles$N = useStyles$M;
+const useStyles$O = useStyles$N;
 var __defProp$E = Object.defineProperty;
 var __getOwnPropSymbols$E = Object.getOwnPropertySymbols;
 var __hasOwnProp$E = Object.prototype.hasOwnProperty;
@@ -14779,7 +14779,7 @@ const Radio = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$N({
+  } = useStyles$O({
     color,
     size: (ctx == null ? void 0 : ctx.size) || size2,
     transitionDuration
@@ -14939,7 +14939,7 @@ function getCurves({ size: size2, thickness, sections, renderRoundedLineCaps }) 
   }
   return curvesInOrder;
 }
-var useStyles$K = createStyles({
+var useStyles$L = createStyles({
   root: {
     position: "relative"
   },
@@ -14949,7 +14949,7 @@ var useStyles$K = createStyles({
     transform: "translateY(-50%)"
   }
 });
-const useStyles$L = useStyles$K;
+const useStyles$M = useStyles$L;
 var __defProp$B = Object.defineProperty;
 var __getOwnPropSymbols$B = Object.getOwnPropertySymbols;
 var __hasOwnProp$B = Object.prototype.hasOwnProperty;
@@ -15003,7 +15003,7 @@ const RingProgress = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$L(null, {
+  } = useStyles$M(null, {
     classNames,
     styles,
     unstyled,
@@ -15082,7 +15082,7 @@ const sizes$2 = {
   lg: "9px 16px",
   xl: "12px 20px"
 };
-var useStyles$I = createStyles((theme, {
+var useStyles$J = createStyles((theme, {
   fullWidth,
   color,
   radius,
@@ -15192,7 +15192,7 @@ var useStyles$I = createStyles((theme, {
     }
   };
 });
-const useStyles$J = useStyles$I;
+const useStyles$K = useStyles$J;
 var __defProp$z = Object.defineProperty;
 var __getOwnPropSymbols$z = Object.getOwnPropertySymbols;
 var __hasOwnProp$z = Object.prototype.hasOwnProperty;
@@ -15270,7 +15270,7 @@ const SegmentedControl = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$J({
+  } = useStyles$K({
     size: size2,
     fullWidth,
     color,
@@ -15386,7 +15386,7 @@ function filterData({
   }
   return result;
 }
-var useStyles$G = createStyles(() => ({
+var useStyles$H = createStyles(() => ({
   input: {
     "&:not(:disabled)": {
       cursor: "pointer",
@@ -15396,7 +15396,7 @@ var useStyles$G = createStyles(() => ({
     }
   }
 }));
-const useStyles$H = useStyles$G;
+const useStyles$I = useStyles$H;
 var __defProp$y = Object.defineProperty;
 var __defProps$m = Object.defineProperties;
 var __getOwnPropDescs$m = Object.getOwnPropertyDescriptors;
@@ -15519,7 +15519,7 @@ const Select = react.exports.forwardRef((props, ref) => {
     classes,
     cx,
     theme
-  } = useStyles$H();
+  } = useStyles$I();
   const [dropdownOpened, _setDropdownOpened] = react.exports.useState(initiallyOpened);
   const [hovered, setHovered] = react.exports.useState(-1);
   const inputRef = react.exports.useRef();
@@ -15932,7 +15932,7 @@ var __spreadValues$x = (a, b) => {
     }
   return a;
 };
-var useStyles$E = createStyles((theme, { spacing, breakpoints, cols }) => {
+var useStyles$F = createStyles((theme, { spacing, breakpoints, cols }) => {
   const gridBreakpoints = getSortedBreakpoints(theme, breakpoints).reduce((acc, breakpoint) => {
     const property = "maxWidth" in breakpoint ? "max-width" : "min-width";
     const breakpointSize = theme.fn.size({
@@ -15957,7 +15957,7 @@ var useStyles$E = createStyles((theme, { spacing, breakpoints, cols }) => {
     }, gridBreakpoints)
   };
 });
-const useStyles$F = useStyles$E;
+const useStyles$G = useStyles$F;
 var __defProp$w = Object.defineProperty;
 var __getOwnPropSymbols$w = Object.getOwnPropertySymbols;
 var __hasOwnProp$w = Object.prototype.hasOwnProperty;
@@ -16008,7 +16008,7 @@ const SimpleGrid = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$F({
+  } = useStyles$G({
     breakpoints,
     cols,
     spacing
@@ -16029,7 +16029,7 @@ const fade = keyframes({
   "from, to": { opacity: 0.4 },
   "50%": { opacity: 1 }
 });
-var useStyles$C = createStyles((theme, { height, width, radius, circle, animate }) => ({
+var useStyles$D = createStyles((theme, { height, width, radius, circle, animate }) => ({
   root: {
     height,
     width: circle ? height : width,
@@ -16062,7 +16062,7 @@ var useStyles$C = createStyles((theme, { height, width, radius, circle, animate 
     }
   }
 }));
-const useStyles$D = useStyles$C;
+const useStyles$E = useStyles$D;
 var __defProp$v = Object.defineProperty;
 var __getOwnPropSymbols$v = Object.getOwnPropertySymbols;
 var __hasOwnProp$v = Object.prototype.hasOwnProperty;
@@ -16116,7 +16116,7 @@ const Skeleton = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$D({
+  } = useStyles$E({
     height,
     width,
     circle,
@@ -16182,7 +16182,7 @@ const sizes$1 = {
   lg: 10,
   xl: 12
 };
-var useStyles$A = createStyles((theme, { size: size2, disabled }) => ({
+var useStyles$B = createStyles((theme, { size: size2, disabled }) => ({
   root: __spreadProps$l(__spreadValues$u({}, theme.fn.fontStyles()), {
     WebkitTapHighlightColor: "transparent",
     outline: 0,
@@ -16193,7 +16193,7 @@ var useStyles$A = createStyles((theme, { size: size2, disabled }) => ({
     touchAction: "none"
   })
 }));
-const useStyles$B = useStyles$A;
+const useStyles$C = useStyles$B;
 var __defProp$t = Object.defineProperty;
 var __defProps$k = Object.defineProperties;
 var __getOwnPropDescs$k = Object.getOwnPropertyDescriptors;
@@ -16213,7 +16213,7 @@ var __spreadValues$t = (a, b) => {
   return a;
 };
 var __spreadProps$k = (a, b) => __defProps$k(a, __getOwnPropDescs$k(b));
-var useStyles$y = createStyles((theme, { color, size: size2, disabled, thumbSize }) => ({
+var useStyles$z = createStyles((theme, { color, size: size2, disabled, thumbSize }) => ({
   label: {
     position: "absolute",
     top: -36,
@@ -16254,7 +16254,7 @@ var useStyles$y = createStyles((theme, { color, size: size2, disabled, thumbSize
     boxShadow: theme.shadows.sm
   }
 }));
-const useStyles$z = useStyles$y;
+const useStyles$A = useStyles$z;
 const Thumb = react.exports.forwardRef(({
   max,
   min,
@@ -16284,7 +16284,7 @@ const Thumb = react.exports.forwardRef(({
     classes,
     cx,
     theme
-  } = useStyles$z({
+  } = useStyles$A({
     color,
     size: size2,
     disabled,
@@ -16339,7 +16339,7 @@ Thumb.displayName = "@mantine/core/SliderThumb";
 function isMarkFilled({ mark, offset: offset2, value }) {
   return typeof offset2 === "number" ? mark.value >= offset2 && mark.value <= value : mark.value <= value;
 }
-var useStyles$w = createStyles((theme, { size: size2, color, disabled }) => ({
+var useStyles$x = createStyles((theme, { size: size2, color, disabled }) => ({
   markWrapper: {
     position: "absolute",
     top: 0,
@@ -16365,7 +16365,7 @@ var useStyles$w = createStyles((theme, { size: size2, color, disabled }) => ({
     whiteSpace: "nowrap"
   }
 }));
-const useStyles$x = useStyles$w;
+const useStyles$y = useStyles$x;
 function Marks({
   marks,
   color,
@@ -16383,7 +16383,7 @@ function Marks({
   const {
     classes,
     cx
-  } = useStyles$x({
+  } = useStyles$y({
     size: size2,
     color,
     disabled
@@ -16428,7 +16428,7 @@ function Marks({
   });
 }
 Marks.displayName = "@mantine/core/SliderMarks";
-var useStyles$u = createStyles((theme, { radius, size: size2, color, disabled }) => ({
+var useStyles$v = createStyles((theme, { radius, size: size2, color, disabled }) => ({
   track: {
     position: "relative",
     height: theme.fn.size({ sizes: sizes$1, size: size2 }),
@@ -16456,7 +16456,7 @@ var useStyles$u = createStyles((theme, { radius, size: size2, color, disabled })
     borderRadius: theme.fn.size({ size: radius, sizes: theme.radius })
   }
 }));
-const useStyles$v = useStyles$u;
+const useStyles$w = useStyles$v;
 var __defProp$s = Object.defineProperty;
 var __defProps$j = Object.defineProperties;
 var __getOwnPropDescs$j = Object.getOwnPropertyDescriptors;
@@ -16511,7 +16511,7 @@ function Track(_a) {
   } = _b, others = __objRest$j(_b, ["filled", "size", "color", "classNames", "styles", "radius", "children", "offset", "onMouseLeave", "onMouseEnter", "disabled", "marksOffset", "unstyled"]);
   const {
     classes
-  } = useStyles$v({
+  } = useStyles$w({
     color,
     size: size2,
     radius,
@@ -16600,7 +16600,7 @@ const SliderRoot = react.exports.forwardRef((_a, ref) => {
   const {
     classes,
     cx
-  } = useStyles$B({
+  } = useStyles$C({
     size: size2,
     disabled
   }, {
@@ -17248,7 +17248,7 @@ const Space = react.exports.forwardRef((props, ref) => {
   });
 });
 Space.displayName = "@mantine/core/Space";
-var useStyles$s = createStyles((theme, { transitionDuration }) => ({
+var useStyles$t = createStyles((theme, { transitionDuration }) => ({
   control: {},
   root: {
     position: "relative"
@@ -17265,7 +17265,7 @@ var useStyles$s = createStyles((theme, { transitionDuration }) => ({
     }
   }
 }));
-const useStyles$t = useStyles$s;
+const useStyles$u = useStyles$t;
 var __defProp$n = Object.defineProperty;
 var __getOwnPropSymbols$n = Object.getOwnPropertySymbols;
 var __hasOwnProp$n = Object.prototype.hasOwnProperty;
@@ -17321,7 +17321,7 @@ const Spoiler = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$t({
+  } = useStyles$u({
     transitionDuration
   }, {
     classNames,
@@ -17389,7 +17389,7 @@ const iconSizes = {
   lg: 48,
   xl: 52
 };
-var useStyles$q = createStyles((theme, { color, iconSize, size: size2, radius, allowStepClick, iconPosition, orientation }) => {
+var useStyles$r = createStyles((theme, { color, iconSize, size: size2, radius, allowStepClick, iconPosition, orientation }) => {
   const _iconSize = iconSize || theme.fn.size({ size: size2, sizes: iconSizes });
   const iconMargin = size2 === "xl" || size2 === "lg" ? theme.spacing.md : theme.spacing.sm;
   const _radius = theme.fn.size({ size: radius, sizes: theme.radius });
@@ -17485,7 +17485,7 @@ var useStyles$q = createStyles((theme, { color, iconSize, size: size2, radius, a
     }
   };
 });
-const useStyles$r = useStyles$q;
+const useStyles$s = useStyles$r;
 var __defProp$l = Object.defineProperty;
 var __getOwnPropSymbols$l = Object.getOwnPropertySymbols;
 var __hasOwnProp$l = Object.prototype.hasOwnProperty;
@@ -17554,7 +17554,7 @@ const Step = react.exports.forwardRef((_a, ref) => {
     classes,
     cx,
     theme
-  } = useStyles$r({
+  } = useStyles$s({
     color,
     iconSize,
     size: size2,
@@ -17652,7 +17652,7 @@ var __spreadValues$k = (a, b) => {
   return a;
 };
 var __spreadProps$e = (a, b) => __defProps$e(a, __getOwnPropDescs$e(b));
-var useStyles$o = createStyles((theme, {
+var useStyles$p = createStyles((theme, {
   contentPadding,
   color,
   orientation,
@@ -17710,7 +17710,7 @@ var useStyles$o = createStyles((theme, {
     })
   };
 });
-const useStyles$p = useStyles$o;
+const useStyles$q = useStyles$p;
 var __defProp$j = Object.defineProperty;
 var __getOwnPropSymbols$j = Object.getOwnPropertySymbols;
 var __hasOwnProp$j = Object.prototype.hasOwnProperty;
@@ -17775,7 +17775,7 @@ const Stepper = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$p({
+  } = useStyles$q({
     contentPadding,
     color,
     orientation,
@@ -17891,7 +17891,7 @@ const labelFontSizes = {
   lg: 9,
   xl: 11
 };
-var useStyles$m = createStyles((theme, { size: size2, radius, color, offLabel, onLabel }) => {
+var useStyles$n = createStyles((theme, { size: size2, radius, color, offLabel, onLabel }) => {
   const handleSize = theme.fn.size({ size: size2, sizes: handleSizes });
   const borderRadius = theme.fn.size({ size: radius, sizes: theme.radius });
   const colors = theme.fn.variant({ variant: "filled", color });
@@ -17991,7 +17991,7 @@ var useStyles$m = createStyles((theme, { size: size2, radius, color, offLabel, o
     })
   };
 });
-const useStyles$n = useStyles$m;
+const useStyles$o = useStyles$n;
 var __defProp$h = Object.defineProperty;
 var __defProps$c = Object.defineProperties;
 var __getOwnPropDescs$c = Object.getOwnPropertyDescriptors;
@@ -18055,7 +18055,7 @@ const Switch = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$n({
+  } = useStyles$o({
     size: size2,
     color,
     radius,
@@ -18112,7 +18112,7 @@ var __spreadValues$g = (a, b) => {
   return a;
 };
 var __spreadProps$b = (a, b) => __defProps$b(a, __getOwnPropDescs$b(b));
-var useStyles$k = createStyles((theme, { captionSide, horizontalSpacing, verticalSpacing, fontSize }) => ({
+var useStyles$l = createStyles((theme, { captionSide, horizontalSpacing, verticalSpacing, fontSize }) => ({
   root: __spreadProps$b(__spreadValues$g({}, theme.fn.fontStyles()), {
     width: "100%",
     borderCollapse: "collapse",
@@ -18160,7 +18160,7 @@ var useStyles$k = createStyles((theme, { captionSide, horizontalSpacing, vertica
     })
   })
 }));
-const useStyles$l = useStyles$k;
+const useStyles$m = useStyles$l;
 var __defProp$f = Object.defineProperty;
 var __defProps$a = Object.defineProperties;
 var __getOwnPropDescs$a = Object.getOwnPropertyDescriptors;
@@ -18220,7 +18220,7 @@ const Table = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$l({
+  } = useStyles$m({
     captionSide,
     verticalSpacing,
     horizontalSpacing,
@@ -18281,7 +18281,7 @@ function getVariantStyles$1({ variant, orientation, inverted }, theme) {
   }
   return {};
 }
-var useStyles$i = createStyles((theme, params) => {
+var useStyles$j = createStyles((theme, params) => {
   const vertical = params.orientation === "vertical";
   return {
     tabsList: __spreadValues$e({
@@ -18294,7 +18294,7 @@ var useStyles$i = createStyles((theme, params) => {
     }, getVariantStyles$1(params, theme))
   };
 });
-const useStyles$j = useStyles$i;
+const useStyles$k = useStyles$j;
 var __defProp$d = Object.defineProperty;
 var __defProps$9 = Object.defineProperties;
 var __getOwnPropDescs$9 = Object.getOwnPropertyDescriptors;
@@ -18353,7 +18353,7 @@ const TabsList = react.exports.forwardRef((_a, ref) => {
   const {
     classes,
     cx
-  } = useStyles$j({
+  } = useStyles$k({
     orientation,
     grow,
     variant,
@@ -18378,12 +18378,12 @@ const TabsList = react.exports.forwardRef((_a, ref) => {
   });
 });
 TabsList.displayName = "@mantine/core/TabsList";
-var useStyles$g = createStyles((_theme, { orientation }) => ({
+var useStyles$h = createStyles((_theme, { orientation }) => ({
   panel: {
     flex: orientation === "vertical" ? 1 : void 0
   }
 }));
-const useStyles$h = useStyles$g;
+const useStyles$i = useStyles$h;
 var __defProp$c = Object.defineProperty;
 var __defProps$8 = Object.defineProperties;
 var __getOwnPropDescs$8 = Object.getOwnPropertyDescriptors;
@@ -18436,7 +18436,7 @@ const TabsPanel = react.exports.forwardRef((_a, ref) => {
   const {
     classes,
     cx
-  } = useStyles$h({
+  } = useStyles$i({
     orientation: ctx.orientation,
     variant: ctx.variant,
     color: ctx.color,
@@ -18538,7 +18538,7 @@ function getVariantStyles(theme, { variant, orientation, color, radius, inverted
   }
   return {};
 }
-var useStyles$e = createStyles((theme, params) => ({
+var useStyles$f = createStyles((theme, params) => ({
   tabLabel: {},
   tab: __spreadValues$b({
     position: "relative",
@@ -18577,7 +18577,7 @@ var useStyles$e = createStyles((theme, params) => ({
     }
   }
 }));
-const useStyles$f = useStyles$e;
+const useStyles$g = useStyles$f;
 var __defProp$a = Object.defineProperty;
 var __defProps$6 = Object.defineProperties;
 var __getOwnPropDescs$6 = Object.getOwnPropertyDescriptors;
@@ -18637,7 +18637,7 @@ const Tab = react.exports.forwardRef((_a, ref) => {
     theme,
     classes,
     cx
-  } = useStyles$f({
+  } = useStyles$g({
     withIcon: hasIcon || hasRightSection && !children,
     withRightSection: hasRightSection || hasIcon && !children,
     orientation: ctx.orientation,
@@ -18736,12 +18736,12 @@ function TabsProvider({
   });
 }
 TabsProvider.displayName = "@mantine/core/TabsProvider";
-var useStyles$c = createStyles((theme, { orientation }) => ({
+var useStyles$d = createStyles((theme, { orientation }) => ({
   root: {
     display: orientation === "vertical" ? "flex" : void 0
   }
 }));
-const useStyles$d = useStyles$c;
+const useStyles$e = useStyles$d;
 var __defProp$9 = Object.defineProperty;
 var __defProps$5 = Object.defineProperties;
 var __getOwnPropDescs$5 = Object.getOwnPropertyDescriptors;
@@ -18811,7 +18811,7 @@ const Tabs = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$d({
+  } = useStyles$e({
     orientation,
     color,
     variant,
@@ -18882,7 +18882,7 @@ const sizes = {
   lg: 32,
   xl: 40
 };
-var useStyles$a = createStyles((theme, { color, size: size2, radius, gradient, variant }) => {
+var useStyles$b = createStyles((theme, { color, size: size2, radius, gradient, variant }) => {
   const colors = theme.fn.variant({
     variant,
     color: color || theme.primaryColor,
@@ -18908,7 +18908,7 @@ var useStyles$a = createStyles((theme, { color, size: size2, radius, gradient, v
     })
   };
 });
-const useStyles$b = useStyles$a;
+const useStyles$c = useStyles$b;
 var __defProp$7 = Object.defineProperty;
 var __getOwnPropSymbols$7 = Object.getOwnPropertySymbols;
 var __hasOwnProp$7 = Object.prototype.hasOwnProperty;
@@ -18965,7 +18965,7 @@ const ThemeIcon = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$b({
+  } = useStyles$c({
     variant,
     radius,
     color,
@@ -18984,7 +18984,7 @@ const ThemeIcon = react.exports.forwardRef((props, ref) => {
   });
 });
 ThemeIcon.displayName = "@mantine/core/ThemeIcon";
-var useStyles$8 = createStyles((theme, { bulletSize, color, radius, align, lineVariant, lineWidth }) => {
+var useStyles$9 = createStyles((theme, { bulletSize, color, radius, align, lineVariant, lineWidth }) => {
   const colors = theme.fn.variant({ variant: "filled", color });
   return {
     itemBody: {},
@@ -19056,7 +19056,7 @@ var useStyles$8 = createStyles((theme, { bulletSize, color, radius, align, lineV
     }
   };
 });
-const useStyles$9 = useStyles$8;
+const useStyles$a = useStyles$9;
 var __defProp$6 = Object.defineProperty;
 var __getOwnPropSymbols$6 = Object.getOwnPropertySymbols;
 var __hasOwnProp$6 = Object.prototype.hasOwnProperty;
@@ -19111,7 +19111,7 @@ function TimelineItem(_a) {
   const {
     classes,
     cx
-  } = useStyles$9({
+  } = useStyles$a({
     bulletSize,
     color,
     radius,
@@ -19233,7 +19233,7 @@ const Timeline = react.exports.forwardRef((props, ref) => {
 Timeline.Item = TimelineItem;
 Timeline.displayName = "@mantine/core/Timeline";
 const ITEM_PADDING = 7;
-var useStyles$6 = createStyles((theme, { reversed, native, radius }) => ({
+var useStyles$7 = createStyles((theme, { reversed, native, radius }) => ({
   transferList: {
     flex: 1,
     display: "flex",
@@ -19305,7 +19305,7 @@ var useStyles$6 = createStyles((theme, { reversed, native, radius }) => ({
     color: theme.colorScheme === "dark" ? theme.colors.dark[3] : theme.colors.gray[5]
   }
 }));
-const useStyles$7 = useStyles$6;
+const useStyles$8 = useStyles$7;
 const icons = {
   Prev: PrevIcon,
   Next: NextIcon,
@@ -19344,7 +19344,7 @@ function RenderList({
     classes,
     cx,
     theme
-  } = useStyles$7({
+  } = useStyles$8({
     reversed,
     native: listComponent !== SelectScrollArea,
     radius
@@ -19750,7 +19750,7 @@ var __spreadValues$3 = (a, b) => {
   return a;
 };
 var __spreadProps$2 = (a, b) => __defProps$2(a, __getOwnPropDescs$2(b));
-var useStyles$4 = createStyles((theme) => {
+var useStyles$5 = createStyles((theme) => {
   const headings = keys(theme.headings.sizes).reduce((acc, h) => {
     const values = theme.headings.sizes[h];
     acc[`& ${h}`] = __spreadProps$2(__spreadValues$3({
@@ -19894,7 +19894,7 @@ var useStyles$4 = createStyles((theme) => {
     })
   };
 });
-const useStyles$5 = useStyles$4;
+const useStyles$6 = useStyles$5;
 var __defProp$2 = Object.defineProperty;
 var __getOwnPropSymbols$2 = Object.getOwnPropertySymbols;
 var __hasOwnProp$2 = Object.prototype.hasOwnProperty;
@@ -19936,7 +19936,7 @@ const TypographyStylesProvider = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$5(null, {
+  } = useStyles$6(null, {
     name: "TypographyStylesProvider",
     unstyled
   });
@@ -20087,6 +20087,18 @@ const mCore = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.definePropert
   defaultMantineEmotionCache,
   createEmotionCache: createCache
 }, Symbol.toStringTag, { value: "Module" }));
+const getSearchParamsObject = (params) => queryString.parse(params.toString());
+const SearchParams = {
+  changeSorting: (searchParams, setParams, sortItemName, sortDirection) => {
+    const currentObj = getSearchParamsObject(searchParams);
+    setParams(queryString.stringify({ ...currentObj, sortBy: `${sortItemName}:${sortDirection}` }));
+  },
+  changeFiltering: (searchParams, setParams, filter) => {
+    const currentObj = getSearchParamsObject(searchParams);
+    const newParamsObj = { ...currentObj, filter };
+    setParams(queryString.stringify(newParamsObj));
+  }
+};
 const isDark = () => useMantineTheme().colorScheme === "dark";
 const ModalsContext = react.exports.createContext(null);
 ModalsContext.displayName = "@mantine/modals/ModalsContext";
@@ -21083,7 +21095,7 @@ function UserMenu() {
     })]
   });
 }
-const useStyles$3 = createStyles((theme) => ({
+const useStyles$4 = createStyles((theme) => ({
   header: {
     paddingLeft: theme.spacing.md,
     paddingRight: theme.spacing.md
@@ -21140,7 +21152,7 @@ function AdminHeader() {
   }] = useDisclosure(false);
   const {
     classes
-  } = useStyles$3();
+  } = useStyles$4();
   const items = links.map((link) => /* @__PURE__ */ jsx("a", {
     href: link.link,
     className: classes.link,
@@ -21210,13 +21222,15 @@ function AdminHeader() {
             children: breadCrumbsItems
           })
         }), /* @__PURE__ */ jsx(Group, {
+          spacing: 4,
+          position: "right",
           children: toolbar
         })]
       })
     })]
   });
 }
-const useStyles$2 = createStyles((theme) => ({
+const useStyles$3 = createStyles((theme) => ({
   control: {
     fontWeight: 500,
     display: "block",
@@ -21265,7 +21279,7 @@ function LinksGroup({
   const location = useLocation();
   const {
     classes
-  } = useStyles$2();
+  } = useStyles$3();
   const hasLinks = Array.isArray(links2);
   const items = (hasLinks ? links2 : []).map((item) => /* @__PURE__ */ jsx(NavLink, {
     label: item.label,
@@ -21355,7 +21369,7 @@ const navbarItems = [{
   icon: Lce,
   link: "/admin2/settings"
 }];
-const useStyles$1 = createStyles((theme) => ({
+const useStyles$2 = createStyles((theme) => ({
   navbar: {
     backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.white,
     paddingBottom: 0
@@ -21371,7 +21385,7 @@ const useStyles$1 = createStyles((theme) => ({
 function AdminNavbar() {
   const {
     classes
-  } = useStyles$1();
+  } = useStyles$2();
   const links2 = navbarItems.map((item) => /* @__PURE__ */ react.exports.createElement(LinksGroup, {
     ...item,
     key: item.label
@@ -21402,12 +21416,12 @@ function useSubpageEffect(title, deps) {
     setAppTitle
   } = react.exports.useContext(AppContext);
   const {
-    setToolbar
+    clearToolbar
   } = react.exports.useContext(AppContext);
   react.exports.useEffect(() => {
     setAppTitle(title);
     stopNavigationProgress();
-    setToolbar("");
+    clearToolbar();
   }, deps || []);
 }
 function Task({
@@ -21681,6 +21695,7 @@ function ActionPopoverIcon({
 }
 function SafeSelect({
   optionsData,
+  required,
   ...rest
 }) {
   const changeHandler = (event) => {
@@ -21689,7 +21704,7 @@ function SafeSelect({
   return /* @__PURE__ */ jsxs(Fragment, {
     children: [/* @__PURE__ */ jsx(Select, {
       data: optionsData,
-      required: true,
+      required,
       ...rest
     }), /* @__PURE__ */ jsx("select", {
       name: rest.name,
@@ -22108,93 +22123,99 @@ function AdminUsers() {
     });
   }
   if (isSuccess && data) {
-    return /* @__PURE__ */ jsxs(Box, {
-      p: 20,
-      children: [/* @__PURE__ */ jsx(Title, {
-        children: "Edit Users"
-      }), /* @__PURE__ */ jsxs(Group, {
-        spacing: "xs",
-        noWrap: true,
-        mt: 40,
-        children: [/* @__PURE__ */ jsx(TextInput, {
-          readOnly: true,
-          className: classes.headInput,
-          variant: "unstyled",
-          value: "Id"
-        }), /* @__PURE__ */ jsx(TextInput, {
-          readOnly: true,
-          className: classes.headInput,
-          variant: "unstyled",
-          value: "Username"
-        }), /* @__PURE__ */ jsx(TextInput, {
-          readOnly: true,
-          className: classes.headInput,
-          variant: "unstyled",
-          value: "First Name"
-        }), /* @__PURE__ */ jsx(TextInput, {
-          readOnly: true,
-          className: classes.headInput,
-          variant: "unstyled",
-          value: "Last Name"
-        }), /* @__PURE__ */ jsx(TextInput, {
-          readOnly: true,
-          className: classes.headInput,
-          variant: "unstyled",
-          value: "Role"
-        }), /* @__PURE__ */ jsx(TextInput, {
-          readOnly: true,
-          className: classes.headInput,
-          variant: "unstyled",
-          value: "Password"
-        }), /* @__PURE__ */ jsx(TextInput, {
-          readOnly: true,
-          className: classes.headInput,
-          variant: "unstyled",
-          value: "API Key"
-        }), /* @__PURE__ */ jsx(TextInput, {
-          readOnly: true,
-          className: classes.headInput,
-          variant: "unstyled",
-          value: "Created"
-        }), /* @__PURE__ */ jsx(TextInput, {
-          readOnly: true,
-          className: classes.headInput,
-          variant: "unstyled",
-          value: "Updated"
-        }), /* @__PURE__ */ jsx(Box, {
-          component: "div",
-          sx: {
-            width: "71px"
-          }
+    return /* @__PURE__ */ jsx(ScrollArea.Autosize, {
+      maxHeight: "90vh",
+      sx: {
+        width: "100%"
+      },
+      children: /* @__PURE__ */ jsxs(Box, {
+        p: 20,
+        children: [/* @__PURE__ */ jsx(Title, {
+          children: "Edit Users"
+        }), /* @__PURE__ */ jsxs(Group, {
+          spacing: "xs",
+          noWrap: true,
+          mt: 40,
+          children: [/* @__PURE__ */ jsx(TextInput, {
+            readOnly: true,
+            className: classes.headInput,
+            variant: "unstyled",
+            value: "Id"
+          }), /* @__PURE__ */ jsx(TextInput, {
+            readOnly: true,
+            className: classes.headInput,
+            variant: "unstyled",
+            value: "Username"
+          }), /* @__PURE__ */ jsx(TextInput, {
+            readOnly: true,
+            className: classes.headInput,
+            variant: "unstyled",
+            value: "First Name"
+          }), /* @__PURE__ */ jsx(TextInput, {
+            readOnly: true,
+            className: classes.headInput,
+            variant: "unstyled",
+            value: "Last Name"
+          }), /* @__PURE__ */ jsx(TextInput, {
+            readOnly: true,
+            className: classes.headInput,
+            variant: "unstyled",
+            value: "Role"
+          }), /* @__PURE__ */ jsx(TextInput, {
+            readOnly: true,
+            className: classes.headInput,
+            variant: "unstyled",
+            value: "Password"
+          }), /* @__PURE__ */ jsx(TextInput, {
+            readOnly: true,
+            className: classes.headInput,
+            variant: "unstyled",
+            value: "API Key"
+          }), /* @__PURE__ */ jsx(TextInput, {
+            readOnly: true,
+            className: classes.headInput,
+            variant: "unstyled",
+            value: "Created"
+          }), /* @__PURE__ */ jsx(TextInput, {
+            readOnly: true,
+            className: classes.headInput,
+            variant: "unstyled",
+            value: "Updated"
+          }), /* @__PURE__ */ jsx(Box, {
+            component: "div",
+            sx: {
+              width: "71px"
+            }
+          })]
+        }), /* @__PURE__ */ jsx(Group, {
+          children: data.results.map((user) => /* @__PURE__ */ jsx(UserForm, {
+            id: user.id,
+            username: user.username,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            role: user.role,
+            password: "",
+            apiKey: user.apiKey,
+            updatedDate: user.updatedDate,
+            createdDate: user.createdDate,
+            refetch
+          }, user.id))
+        }), /* @__PURE__ */ jsx(Group, {
+          position: "center",
+          children: addUser && /* @__PURE__ */ jsx(UserAddForm, {
+            setAddUser,
+            refetch
+          })
+        }), /* @__PURE__ */ jsx(Group, {
+          position: "center",
+          mt: 40,
+          children: !addUser && /* @__PURE__ */ jsx(Button, {
+            onClick: () => setAddUser(true),
+            id: "add-new-user",
+            children: "Add New User"
+          })
         })]
-      }), /* @__PURE__ */ jsx(Group, {
-        children: data.results.map((user) => /* @__PURE__ */ jsx(UserForm, {
-          id: user.id,
-          username: user.username,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          role: user.role,
-          password: "",
-          apiKey: user.apiKey,
-          updatedDate: user.updatedDate,
-          createdDate: user.createdDate,
-          refetch
-        }, user.id))
-      }), /* @__PURE__ */ jsx(Group, {
-        position: "center",
-        children: addUser && /* @__PURE__ */ jsx(UserAddForm, {
-          setAddUser,
-          refetch
-        })
-      }), /* @__PURE__ */ jsx(Group, {
-        position: "center",
-        mt: 40,
-        children: !addUser && /* @__PURE__ */ jsx(Button, {
-          onClick: () => setAddUser(true),
-          id: "add-new-user",
-          children: "Add New User"
-        })
-      })]
+      })
     });
   }
   return /* @__PURE__ */ jsx(Text, {
@@ -22208,7 +22229,7 @@ function AdminSettings() {
     children: "Admin Settings"
   });
 }
-const Toolbar = ({
+const RefreshActionIcon = ({
   newestItemsQuery,
   firstPageQuery,
   infinityQuery
@@ -22218,41 +22239,37 @@ const Toolbar = ({
   const newestItems = ((_a = newestItemsQuery == null ? void 0 : newestItemsQuery.data) == null ? void 0 : _a.results.length) > 50 ? "50+" : (_b = newestItemsQuery == null ? void 0 : newestItemsQuery.data) == null ? void 0 : _b.results.length;
   const pluralCharset = newestItems > 1 ? "s" : "";
   return /* @__PURE__ */ jsx(Fragment, {
-    children: /* @__PURE__ */ jsx(Group, {
-      position: "right",
-      spacing: 1,
-      pr: 16,
-      children: /* @__PURE__ */ jsxs(ActionIcon, {
-        color: theme.colorScheme === "dark" ? "green.8" : "green.6",
-        variant: "subtle",
-        onClick: () => firstPageQuery.refetch(),
-        children: [/* @__PURE__ */ jsx(Xne, {
-          size: 24
-        }), ((_d = (_c = newestItemsQuery == null ? void 0 : newestItemsQuery.data) == null ? void 0 : _c.results) == null ? void 0 : _d.length) !== void 0 && ((_f = (_e = newestItemsQuery == null ? void 0 : newestItemsQuery.data) == null ? void 0 : _e.results) == null ? void 0 : _f.length) > 0 && /* @__PURE__ */ jsx(Badge, {
-          component: "div",
-          title: ` You have ${newestItems} new item${pluralCharset}, refresh the page to see them`,
-          pl: 4,
-          pr: 4,
-          pt: 6,
-          pb: 6,
-          color: "red",
-          variant: "filled",
-          radius: "xl",
-          sx: {
-            fontSize: "12px",
-            position: "absolute",
-            bottom: 11,
-            left: 14,
-            lineHeight: "16px",
-            fontWeight: 400,
-            fontFamily: '"Roboto","Arial",sans-serif',
-            border: `2px`,
-            borderStyle: "solid",
-            borderColor: theme.colorScheme === "dark" ? theme.colors.dark[7] : "white"
-          },
-          children: newestItems
-        })]
-      })
+    children: /* @__PURE__ */ jsxs(ActionIcon, {
+      color: theme.colorScheme === "dark" ? "green.8" : "green.6",
+      variant: "subtle",
+      onClick: () => firstPageQuery.refetch(),
+      children: [/* @__PURE__ */ jsx(Xne, {
+        size: 24,
+        stroke: 1
+      }), ((_d = (_c = newestItemsQuery == null ? void 0 : newestItemsQuery.data) == null ? void 0 : _c.results) == null ? void 0 : _d.length) !== void 0 && ((_f = (_e = newestItemsQuery == null ? void 0 : newestItemsQuery.data) == null ? void 0 : _e.results) == null ? void 0 : _f.length) > 0 && /* @__PURE__ */ jsx(Badge, {
+        component: "div",
+        title: ` You have ${newestItems} new item${pluralCharset}, refresh the page to see them`,
+        pl: 4,
+        pr: 4,
+        pt: 6,
+        pb: 6,
+        color: "red",
+        variant: "filled",
+        radius: "xl",
+        sx: {
+          fontSize: "12px",
+          position: "absolute",
+          bottom: 11,
+          left: 14,
+          lineHeight: "16px",
+          fontWeight: 400,
+          fontFamily: '"Roboto","Arial",sans-serif',
+          border: `2px`,
+          borderStyle: "solid",
+          borderColor: theme.colorScheme === "dark" ? theme.colors.dark[7] : "white"
+        },
+        children: newestItems
+      })]
     })
   });
 };
@@ -22298,7 +22315,7 @@ function useInfinityScroll(searchParams, filter) {
       }, prevFilterObj || {}]
     };
   }, [firstPageData.lastLogTimestamp, firstPageQuery.status, filter]);
-  const infinityQuery = useInfiniteQuery(["logs_infinity_pages", firstPageData.lastLogTimestamp], ({
+  const infinityQuery = useInfiniteQuery(["logs_infinity_pages", firstPageData.lastLogTimestamp, searchParams.toString()], ({
     pageParam = 1
   }) => LogsService.getLogs(timestampUpdatedFilter, {
     limit: String(20),
@@ -22484,33 +22501,33 @@ function useInView(_temp) {
   result.entry = result[2];
   return result;
 }
-const columns = {
+const adminLogsTableColumns = {
   id: {
-    visible: true,
     headStyle: { width: "15%" },
-    cellStyle: { width: "15%" }
+    cellStyle: { width: "15%" },
+    type: "string"
   },
   hostname: {
-    visible: true,
     headStyle: { width: "10%" },
-    cellStyle: { width: "10%" }
+    cellStyle: { width: "10%" },
+    type: "string"
   },
   level: {
-    visible: true,
     headStyle: { width: "5%" },
-    cellStyle: { width: "5%" }
+    cellStyle: { width: "5%" },
+    type: "string"
   },
   message: {
-    visible: true,
     headStyle: { width: "auto" },
     cellStyle: {
       width: "auto"
-    }
+    },
+    type: "string"
   },
   timestamp: {
-    visible: true,
     headStyle: { width: "15%" },
-    cellStyle: { width: "15%" }
+    cellStyle: { width: "15%" },
+    type: "date"
   }
 };
 const InfinityScrollSkeleton = ({
@@ -22540,13 +22557,13 @@ const InfinityScrollSkeleton = ({
           height: 20,
           radius: "sm"
         })
-      }), Object.keys(columns).map((name) => {
-        if (!columns[name].visible)
+      }), Object.keys(adminLogsTableColumns).map((name) => {
+        if (!adminLogsTableColumns[name].visible)
           return;
         if (name === "level")
           return /* @__PURE__ */ jsx("td", {
             style: {
-              ...columns[name].cellStyle,
+              ...adminLogsTableColumns[name].cellStyle,
               paddingLeft: "8px"
             },
             children: /* @__PURE__ */ jsx(Skeleton, {
@@ -22557,7 +22574,7 @@ const InfinityScrollSkeleton = ({
           }, name);
         return /* @__PURE__ */ jsx("td", {
           style: {
-            ...columns[name].cellStyle,
+            ...adminLogsTableColumns[name].cellStyle,
             paddingLeft: 5,
             paddingRight: 25
           },
@@ -22616,7 +22633,7 @@ function PagesCountAffix({
     })
   });
 }
-const useStyles = createStyles((theme) => ({
+const adminLogsCreateStyle = (theme) => ({
   rowSelected: {
     backgroundColor: theme.colorScheme === "dark" ? theme.fn.rgba(theme.colors[theme.primaryColor][7], 0.2) : theme.colors[theme.primaryColor][0]
   },
@@ -22638,80 +22655,137 @@ const useStyles = createStyles((theme) => ({
     boxShadow: theme.shadows.sm
   },
   tableBody: {}
-}));
+});
+function UnfoldActionIcon({
+  expandSelected,
+  collapseSelected
+}) {
+  const theme = useMantineTheme();
+  const [foldMode, toggleFoldMode] = useToggle([true, false]);
+  return /* @__PURE__ */ jsx(ActionIcon, {
+    color: theme.colorScheme === "dark" ? "green.8" : "green.6",
+    variant: "subtle",
+    onClick: () => {
+      if (foldMode) {
+        expandSelected();
+      } else {
+        collapseSelected();
+      }
+      toggleFoldMode();
+    },
+    children: foldMode ? /* @__PURE__ */ jsx(Ti, {
+      size: 24,
+      stroke: 1
+    }) : /* @__PURE__ */ jsx(zK, {
+      size: 24
+    })
+  });
+}
+const useStyles$1 = createStyles(adminLogsCreateStyle);
 const logLevelColorMap = {
   debug: "blue",
   info: "green",
   warn: "orange",
   error: "red"
 };
-function TableLogs({
-  infinityQuery
-}) {
-  var _a, _b, _c, _d;
-  const data = infinityQuery.data;
-  console.log({
-    data
-  });
-  const flatData = data.pages.flat().map((x) => x.results).flat();
-  const [scrolled, setScrolled] = react.exports.useState(false);
+const AdminLogsTableRows = ({
+  data,
+  selection,
+  setSelection,
+  visibleFields
+}) => {
   const {
     classes,
     cx
-  } = useStyles();
-  const [selection, setSelection] = react.exports.useState([]);
+  } = useStyles$1();
   const [collapse, setCollapse] = react.exports.useState([]);
-  const scrollAreaRef = react.exports.useRef(null);
+  const {
+    updateToolbar
+  } = react.exports.useContext(AppContext);
   const toggleCollapse = (id) => {
     setCollapse((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
   };
+  const expand = (id) => {
+    setCollapse((current) => {
+      if (!current.includes(id)) {
+        return [...current, id];
+      }
+      return current;
+    });
+  };
+  const fold = (id) => {
+    setCollapse((current) => {
+      if (current.includes(id)) {
+        return current.filter((item) => item !== id);
+      }
+      return current;
+    });
+  };
+  function expandSelected() {
+    selection.forEach((item) => expand(item));
+  }
+  function collapseSelected() {
+    selection.forEach((item) => fold(item));
+  }
+  react.exports.useEffect(() => {
+    if (selection.length > 0) {
+      updateToolbar(/* @__PURE__ */ jsx(UnfoldActionIcon, {
+        expandSelected,
+        collapseSelected
+      }), 4);
+    } else {
+      updateToolbar("", 4);
+    }
+  }, [selection.length]);
   const toggleRow = (id) => setSelection((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
-  const toggleAllRows = () => setSelection((current) => current.length === flatData.length ? [] : flatData.map((item) => item.id));
-  const rows = data.pages.map((page) => {
-    return page.results.map((item) => {
-      const selected = selection.includes(item.id);
-      return /* @__PURE__ */ jsxs(React.Fragment, {
-        children: [/* @__PURE__ */ jsxs("tr", {
-          className: cx({
-            [classes.rowSelected]: selected
-          }),
-          style: {
-            cursor: "pointer"
-          },
-          onClick: () => toggleCollapse(item.id),
-          children: [/* @__PURE__ */ jsx("td", {
-            children: /* @__PURE__ */ jsx(Checkbox, {
-              checked: selected,
-              onChange: (event) => {
-                event.stopPropagation();
-                toggleRow(item.id);
-              },
-              onClick: (event) => {
-                event.stopPropagation();
-              }
-            })
-          }), Object.keys(columns).map((label) => {
-            if (!columns[label].visible)
-              return;
-            console.log(item);
-            if (label === "level")
-              return /* @__PURE__ */ jsx("td", {
-                style: {
-                  ...columns[label].cellStyle,
-                  paddingLeft: "2px"
-                },
-                children: /* @__PURE__ */ jsx(RingProgress, {
-                  sections: [{
-                    value: 100,
-                    color: logLevelColorMap[item.level]
-                  }],
-                  size: 48
-                })
-              }, label);
+  return data.pages.map((page) => page.results.map((item) => {
+    const selected = selection.includes(item.id);
+    return /* @__PURE__ */ jsxs(React.Fragment, {
+      children: [/* @__PURE__ */ jsxs("tr", {
+        className: cx({
+          [classes.rowSelected]: selected
+        }),
+        style: {
+          cursor: "pointer"
+        },
+        onClick: () => toggleCollapse(item.id),
+        children: [/* @__PURE__ */ jsx("td", {
+          children: /* @__PURE__ */ jsx(Checkbox, {
+            checked: selected,
+            onChange: (event) => {
+              event.stopPropagation();
+              toggleRow(item.id);
+            },
+            onClick: (event) => {
+              event.stopPropagation();
+            }
+          })
+        }), Object.keys(adminLogsTableColumns).map((label) => {
+          if (!visibleFields.includes(label))
+            return void 0;
+          if (label === "level") {
             return /* @__PURE__ */ jsx("td", {
+              title: label,
               style: {
-                ...columns[label].cellStyle
+                ...adminLogsTableColumns[label].cellStyle,
+                paddingLeft: "2px"
               },
+              children: /* @__PURE__ */ jsx(RingProgress, {
+                sections: [{
+                  value: 100,
+                  color: logLevelColorMap[item.level]
+                }],
+                size: 48
+              })
+            }, label);
+          }
+          return /* @__PURE__ */ jsx("td", {
+            style: {
+              ...adminLogsTableColumns[label].cellStyle
+            },
+            children: /* @__PURE__ */ jsx(Tooltip, {
+              label: item[label],
+              multiline: true,
               children: /* @__PURE__ */ jsx(Text, {
                 lineClamp: 1,
                 sx: {
@@ -22719,45 +22793,96 @@ function TableLogs({
                 },
                 children: item[label]
               })
-            }, label);
-          })]
-        }), /* @__PURE__ */ jsx("tr", {
-          children: /* @__PURE__ */ jsx("td", {
-            style: {
-              padding: 0,
-              border: 0,
-              width: "auto"
-            },
-            colSpan: 0,
-            children: /* @__PURE__ */ jsx(Collapse, {
-              in: collapse.includes(item.id),
-              pl: 10,
-              pr: 10,
-              pt: 10,
-              pb: 10,
-              children: /* @__PURE__ */ jsxs(Paper, {
-                p: 10,
-                children: [/* @__PURE__ */ jsxs(Text, {
-                  size: "md",
-                  color: logLevelColorMap[item.level],
-                  component: "span",
-                  children: [item.level, ": "]
-                }), /* @__PURE__ */ jsx(Text, {
-                  size: "md",
-                  sx: {
-                    wordBreak: "break-all"
-                  },
-                  color: logLevelColorMap[item.level],
-                  component: "span",
-                  children: item["message"]
-                })]
-              })
+            })
+          }, label);
+        })]
+      }), /* @__PURE__ */ jsx("tr", {
+        children: /* @__PURE__ */ jsx("td", {
+          style: {
+            padding: 0,
+            border: 0,
+            width: "auto"
+          },
+          colSpan: 1e3,
+          children: /* @__PURE__ */ jsx(Collapse, {
+            in: collapse.includes(item.id),
+            pl: 10,
+            pr: 10,
+            pt: 10,
+            pb: 10,
+            children: /* @__PURE__ */ jsxs(Paper, {
+              p: 10,
+              children: [/* @__PURE__ */ jsxs(Text, {
+                size: "md",
+                color: logLevelColorMap[item.level],
+                component: "span",
+                children: [item.level, ": "]
+              }), /* @__PURE__ */ jsx(Text, {
+                size: "md",
+                sx: {
+                  wordBreak: "break-all"
+                },
+                color: logLevelColorMap[item.level],
+                component: "span",
+                children: item.message
+              })]
             })
           })
-        })]
-      }, item.id);
-    });
+        })
+      })]
+    }, item.id);
+  }));
+};
+function AdminLogsTableHeads({
+  data,
+  toggleAllRows,
+  selection,
+  visibleFields
+}) {
+  return /* @__PURE__ */ jsxs("tr", {
+    children: [/* @__PURE__ */ jsx("th", {
+      style: {
+        width: "1%"
+      },
+      children: /* @__PURE__ */ jsx(Checkbox, {
+        onChange: toggleAllRows,
+        checked: selection.length === data.length,
+        indeterminate: selection.length > 0 && selection.length !== data.length,
+        transitionDuration: 0
+      })
+    }), Object.keys(adminLogsTableColumns).map((name) => {
+      if (visibleFields.includes(name)) {
+        return /* @__PURE__ */ jsx("th", {
+          style: {
+            ...adminLogsTableColumns[name].headStyle
+          },
+          children: /* @__PURE__ */ jsx(Text, {
+            transform: "capitalize",
+            children: name
+          })
+        }, name);
+      }
+      return void 0;
+    })]
   });
+}
+const useStyles = createStyles(adminLogsCreateStyle);
+function AdminLogsTable({
+  infinityQuery,
+  visibleFields
+}) {
+  var _a, _b, _c, _d;
+  const data = infinityQuery.data;
+  const flatData = data.pages.flat().map((x) => x.results).flat();
+  const [scrolled, setScrolled] = react.exports.useState(false);
+  const {
+    classes,
+    cx
+  } = useStyles();
+  const [selection, setSelection] = react.exports.useState([]);
+  const scrollAreaRef = react.exports.useRef(null);
+  react.exports.useContext(AppContext);
+  const toggleAllRows = () => setSelection((current) => current.length === flatData.length ? [] : flatData.map((item) => item.id));
   return /* @__PURE__ */ jsxs(Fragment, {
     children: [/* @__PURE__ */ jsx(ScrollArea.Autosize, {
       ref: scrollAreaRef,
@@ -22765,12 +22890,16 @@ function TableLogs({
       sx: {
         width: "100%"
       },
+      styles: {
+        scrollbar: {
+          marginTop: "46px"
+        }
+      },
       children: /* @__PURE__ */ jsxs(Table, {
         sx: {
           width: "100%"
         },
         verticalSpacing: "sm",
-        mt: "xs",
         highlightOnHover: true,
         children: [/* @__PURE__ */ jsx("thead", {
           style: {
@@ -22779,34 +22908,20 @@ function TableLogs({
           className: cx(classes.header, {
             [classes.scrolled]: scrolled
           }),
-          children: /* @__PURE__ */ jsxs("tr", {
-            children: [/* @__PURE__ */ jsx("th", {
-              style: {
-                width: 40
-              },
-              children: /* @__PURE__ */ jsx(Checkbox, {
-                onChange: toggleAllRows,
-                checked: selection.length === data.length,
-                indeterminate: selection.length > 0 && selection.length !== data.length,
-                transitionDuration: 0
-              })
-            }), Object.keys(columns).map((name) => {
-              if (columns[name].visible) {
-                return /* @__PURE__ */ jsx("th", {
-                  style: {
-                    ...columns[name].headStyle
-                  },
-                  children: /* @__PURE__ */ jsx(Text, {
-                    transform: "capitalize",
-                    children: name
-                  })
-                }, name);
-              }
-            })]
+          children: /* @__PURE__ */ jsx(AdminLogsTableHeads, {
+            data,
+            toggleAllRows,
+            selection,
+            visibleFields
           })
         }), /* @__PURE__ */ jsx("tbody", {
           className: classes.tableBody,
-          children: rows
+          children: /* @__PURE__ */ jsx(AdminLogsTableRows, {
+            data,
+            selection,
+            setSelection,
+            visibleFields
+          })
         }), /* @__PURE__ */ jsx(InfinityScrollSkeleton, {
           infinityQuery
         })]
@@ -22818,43 +22933,317 @@ function TableLogs({
     })]
   });
 }
+function RelativeDrawer({
+  children,
+  title = "",
+  open = false,
+  setOpen,
+  width = 300
+}) {
+  return /* @__PURE__ */ jsx(Transition, {
+    mounted: open,
+    transition: "slide-left",
+    duration: 200,
+    timingFunction: "ease",
+    children: (styles) => /* @__PURE__ */ jsx(Box, {
+      sx: {
+        ...styles,
+        minWidth: width,
+        maxWidth: Number(width) + 60
+      },
+      children: /* @__PURE__ */ jsxs(Paper, {
+        p: "lg",
+        m: 8,
+        shadow: "sm",
+        radius: "xs",
+        withBorder: true,
+        children: [/* @__PURE__ */ jsxs(Group, {
+          position: "apart",
+          align: "start",
+          noWrap: true,
+          children: [/* @__PURE__ */ jsx(Text, {
+            size: "sm",
+            pb: 24,
+            children: title
+          }), /* @__PURE__ */ jsx(ActionIcon, {
+            size: "sm",
+            onClick: () => setOpen(false),
+            children: /* @__PURE__ */ jsx(aze, {
+              stroke: 1,
+              size: 16
+            })
+          })]
+        }), /* @__PURE__ */ jsx(Text, {
+          size: "sm",
+          children
+        })]
+      })
+    })
+  });
+}
+function AdminLogsTableSettings({
+  open,
+  setSortOpen,
+  visibleFields,
+  setVisibleFields,
+  searchParams,
+  setSearchParams
+}) {
+  const [sortOrder, toggleSortOrder] = useToggle(["desc", "asc"]);
+  const [selectOptionsData] = react.exports.useState(() => Object.keys(adminLogsTableColumns).map((item) => ({
+    value: item,
+    label: item.charAt(0).toUpperCase() + item.slice(1)
+  })));
+  const [sortItemValue, setSortItemValue] = useInputState("timestamp");
+  react.exports.useEffect(() => {
+    SearchParams.changeSorting(searchParams, setSearchParams, sortItemValue, sortOrder);
+  }, [sortItemValue, sortOrder]);
+  return /* @__PURE__ */ jsxs(RelativeDrawer, {
+    open,
+    setOpen: setSortOpen,
+    title: "Settings",
+    width: 260,
+    children: [/* @__PURE__ */ jsxs(Group, {
+      align: "end",
+      spacing: "sm",
+      noWrap: true,
+      children: [/* @__PURE__ */ jsx(SafeSelect, {
+        label: "Sort by",
+        "data-test": "user-add-role",
+        optionsData: selectOptionsData,
+        required: false,
+        value: sortItemValue,
+        onChange: setSortItemValue
+      }), /* @__PURE__ */ jsx(ActionIcon, {
+        size: 36,
+        title: `sort order is ${sortOrder === "desc" ? "descendant" : "ascendant"}`,
+        onClick: () => {
+          toggleSortOrder();
+        },
+        children: sortOrder === "desc" ? /* @__PURE__ */ jsx(Uhe, {
+          stroke: 1
+        }) : /* @__PURE__ */ jsx(Ahe, {
+          stroke: 1
+        })
+      })]
+    }), /* @__PURE__ */ jsx(Text, {
+      pt: "xl",
+      weight: 500,
+      children: "Visible fields"
+    }), /* @__PURE__ */ jsx(Chip.Group, {
+      align: "self-start",
+      p: 8,
+      value: visibleFields,
+      onChange: setVisibleFields,
+      multiple: true,
+      children: Object.keys(adminLogsTableColumns).map((field) => /* @__PURE__ */ jsx(Chip, {
+        value: field,
+        children: field.charAt(0).toUpperCase() + field.slice(1)
+      }, field))
+    })]
+  });
+}
+var DefaultContext = {
+  color: void 0,
+  size: void 0,
+  className: void 0,
+  style: void 0,
+  attr: void 0
+};
+var IconContext = React.createContext && React.createContext(DefaultContext);
+var __assign = globalThis && globalThis.__assign || function() {
+  __assign = Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+      for (var p in s)
+        if (Object.prototype.hasOwnProperty.call(s, p))
+          t[p] = s[p];
+    }
+    return t;
+  };
+  return __assign.apply(this, arguments);
+};
+var __rest = globalThis && globalThis.__rest || function(s, e) {
+  var t = {};
+  for (var p in s)
+    if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+      t[p] = s[p];
+  if (s != null && typeof Object.getOwnPropertySymbols === "function")
+    for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+      if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+        t[p[i]] = s[p[i]];
+    }
+  return t;
+};
+function Tree2Element(tree) {
+  return tree && tree.map(function(node, i) {
+    return React.createElement(node.tag, __assign({
+      key: i
+    }, node.attr), Tree2Element(node.child));
+  });
+}
+function GenIcon(data) {
+  return function(props) {
+    return /* @__PURE__ */ jsx(IconBase, {
+      ...__assign({
+        attr: __assign({}, data.attr)
+      }, props),
+      children: Tree2Element(data.child)
+    });
+  };
+}
+function IconBase(props) {
+  var elem = function(conf) {
+    var attr = props.attr, size2 = props.size, title = props.title, svgProps = __rest(props, ["attr", "size", "title"]);
+    var computedSize = size2 || conf.size || "1em";
+    var className;
+    if (conf.className)
+      className = conf.className;
+    if (props.className)
+      className = (className ? className + " " : "") + props.className;
+    return /* @__PURE__ */ jsxs("svg", {
+      ...__assign({
+        stroke: "currentColor",
+        fill: "currentColor",
+        strokeWidth: "0"
+      }, conf.attr, attr, svgProps, {
+        className,
+        style: __assign(__assign({
+          color: props.color || conf.color
+        }, conf.style), props.style),
+        height: computedSize,
+        width: computedSize,
+        xmlns: "http://www.w3.org/2000/svg"
+      }),
+      children: [title && /* @__PURE__ */ jsx("title", {
+        children: title
+      }), props.children]
+    });
+  };
+  return IconContext !== void 0 ? /* @__PURE__ */ jsx(IconContext.Consumer, {
+    children: function(conf) {
+      return elem(conf);
+    }
+  }) : elem(DefaultContext);
+}
+function MdSort(props) {
+  return GenIcon({ "tag": "svg", "attr": { "viewBox": "0 0 24 24" }, "child": [{ "tag": "path", "attr": { "fill": "none", "d": "M0 0h24v24H0z" } }, { "tag": "path", "attr": { "d": "M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z" } }] })(props);
+}
+function AdminLogsTableFilter({
+  open,
+  setOpen,
+  searchParams,
+  setSearchParams
+}) {
+  return /* @__PURE__ */ jsxs(RelativeDrawer, {
+    open,
+    setOpen,
+    title: "Filter",
+    width: 260,
+    children: [/* @__PURE__ */ jsx(Text, {
+      children: "!!!!"
+    }), /* @__PURE__ */ jsxs(Group, {
+      position: "center",
+      children: [/* @__PURE__ */ jsx(Button, {
+        children: "Apply"
+      }), /* @__PURE__ */ jsx(Button, {
+        onClick: () => setOpen(false),
+        children: "Cancel"
+      })]
+    })]
+  });
+}
 function AdminLogs() {
   var _a;
   const theme = useMantineTheme();
   useSubpageEffect("Logs");
   const [searchParams, setSearchParams] = useSearchParams("");
-  useInputState("");
+  const [sortOpen, setSortOpen] = react.exports.useState(false);
+  const [filterOpen, setFilterOpen] = react.exports.useState(false);
   const [filter, setFilter] = useInputState("{}");
+  const [filterObject, setFilterObject] = useInputState({});
   const {
-    setToolbar
+    toolbar,
+    setToolbar,
+    updateToolbar
   } = react.exports.useContext(AppContext);
   const {
     firstPageQuery,
     infinityQuery,
     newestItemsQuery
   } = useInfinityScroll(searchParams, filter);
+  react.exports.useEffect(function syncFilterObject() {
+    console.log("\u{1F479}", filterObject);
+  }, [JSON.stringify(filterObject)]);
   react.exports.useEffect(() => {
     firstPageQuery.refetch();
+    updateToolbar(/* @__PURE__ */ jsx(ActionIcon, {
+      title: "Sort table",
+      color: theme.colorScheme === "dark" ? "green.8" : "green.6",
+      variant: "subtle",
+      onClick: () => {
+        setSortOpen((prev) => !prev);
+      },
+      children: /* @__PURE__ */ jsx(MdSort, {
+        size: 24
+      })
+    }), 3);
+    updateToolbar(/* @__PURE__ */ jsx(ActionIcon, {
+      title: "Sort table",
+      color: theme.colorScheme === "dark" ? "green.8" : "green.6",
+      variant: "subtle",
+      onClick: () => {
+        setFilterOpen((prev) => !prev);
+      },
+      children: /* @__PURE__ */ jsx(sJ, {
+        size: 24,
+        stroke: 1
+      })
+    }), 2);
   }, []);
   react.exports.useEffect(() => {
-    setToolbar(/* @__PURE__ */ jsx(Toolbar, {
+    updateToolbar(/* @__PURE__ */ jsx(RefreshActionIcon, {
       newestItemsQuery,
       firstPageQuery,
       infinityQuery
-    }));
+    }, "reload"), 5);
   }, [(_a = newestItemsQuery == null ? void 0 : newestItemsQuery.data) == null ? void 0 : _a.results.length, newestItemsQuery.status, theme.colorScheme]);
+  react.exports.useEffect(() => {
+    console.log("CHANGE PARAMS");
+    firstPageQuery.refetch();
+  }, [searchParams]);
+  const [visibleFields, setVisibleFields] = useLocalStorage({
+    key: "visibleFields",
+    defaultValue: ["hostname", "level", "message", "timestamp"]
+  });
   return /* @__PURE__ */ jsx(Fragment, {
     children: /* @__PURE__ */ jsxs(Group, {
+      position: "apart",
+      align: "start",
+      noWrap: true,
       children: [infinityQuery.status === "loading" ? /* @__PURE__ */ jsx(LoadingOverlay, {
         visible: true
       }) : infinityQuery.status === "error" ? /* @__PURE__ */ jsxs(Text, {
         color: "red",
         children: ["Error: ", infinityQuery.error.message]
       }) : /* @__PURE__ */ jsx(Fragment, {
-        children: /* @__PURE__ */ jsx(TableLogs, {
-          infinityQuery
+        children: /* @__PURE__ */ jsx(AdminLogsTable, {
+          infinityQuery,
+          visibleFields
         })
-      }), /* @__PURE__ */ jsx("hr", {})]
+      }), /* @__PURE__ */ jsx(AdminLogsTableSettings, {
+        open: sortOpen,
+        setSortOpen,
+        visibleFields,
+        setVisibleFields,
+        searchParams,
+        setSearchParams
+      }), /* @__PURE__ */ jsx(AdminLogsTableFilter, {
+        open: filterOpen,
+        setOpen: setFilterOpen,
+        searchParams,
+        setSearchParams
+      })]
     })
   });
 }
@@ -22902,12 +23291,26 @@ const queryClient = new QueryClient();
 function App() {
   const [colorScheme, toggleColorScheme] = useColorScheme();
   const [appTitle, setAppTitle] = react.exports.useState("Syngrisi");
-  const [toolbar, setToolbar] = react.exports.useState("");
+  const [toolbar, setToolbar] = react.exports.useState([]);
+  const updateToolbar = (newItem, index2 = 0) => {
+    setToolbar((prevArr) => {
+      const newArray = [...prevArr];
+      newArray[index2] = /* @__PURE__ */ jsx(react.exports.Fragment, {
+        children: newItem
+      }, index2);
+      return newArray;
+    });
+  };
+  const clearToolbar = () => {
+    setToolbar(() => []);
+  };
   const appProviderValue = react.exports.useMemo(() => ({
     appTitle,
     setAppTitle,
     toolbar,
-    setToolbar
+    setToolbar,
+    updateToolbar,
+    clearToolbar
   }), [appTitle, toolbar]);
   useDocumentTitle(appTitle);
   return /* @__PURE__ */ jsx(AppContext.Provider, {
