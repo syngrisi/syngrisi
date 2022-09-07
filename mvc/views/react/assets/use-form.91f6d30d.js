@@ -20495,6 +20495,11 @@ function l6(r2) {
   var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, n6);
   return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-moon-stars", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("path", { d: "M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" }), react.exports.createElement("path", { d: "M17 4a2 2 0 0 0 2 2a2 2 0 0 0 -2 2a2 2 0 0 0 -2 -2a2 2 0 0 0 2 -2" }), react.exports.createElement("path", { d: "M19 11h2m-1 -1v2" }));
 }
+var joe = ["size", "color", "stroke"];
+function Boe(r2) {
+  var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, joe);
+  return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-plus", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("line", { x1: 12, y1: 5, x2: 12, y2: 19 }), react.exports.createElement("line", { x1: 5, y1: 12, x2: 19, y2: 12 }));
+}
 var Vne = ["size", "color", "stroke"];
 function Xne(r2) {
   var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, Vne);
@@ -21978,9 +21983,10 @@ export {
   zK as b8,
   Uhe as b9,
   Ahe as ba,
-  sJ as bb,
-  Routes as bc,
-  Route as bd,
+  Boe as bb,
+  sJ as bc,
+  Routes as bd,
+  Route as be,
   createStyles as c,
   useMantineTheme as d,
   Container as e,

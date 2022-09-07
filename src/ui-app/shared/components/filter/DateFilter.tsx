@@ -8,8 +8,8 @@ import { useEffect } from 'react';
 interface Props {
     label: string
     filtersSet: { [key: string]: any }
-    updateFilterSet: any
-};
+    setFiltersSet: any
+}
 
 function generateItemFilter(label: string, operator: string, value: string) {
     function escapeRegExp(text: string) {
@@ -26,7 +26,7 @@ function generateItemFilter(label: string, operator: string, value: string) {
     return { [label]: transform[operator] };
 }
 
-export function StringFilter({ label, filtersSet, updateFilterSet, }: Props) {
+export function DateFilter({ label, filter, updateFilter }: Props) {
 
     const form = useForm({
         initialValues: {
@@ -34,25 +34,24 @@ export function StringFilter({ label, filtersSet, updateFilterSet, }: Props) {
             Value: '',
             Label: label,
         },
+
+        // validate: {
+        //     email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+        // },
     });
 
     useEffect(function valuesChanges() {
-        console.log('VALUES CHANGE')
-        console.log(label)
         console.log(generateItemFilter(label, form.values.Operator, form.values.Value));
-        updateFilterSet(generateItemFilter(label, form.values.Operator, form.values.Value));
     }, [form.values.Value, form.values.Operator]);
-
-
     return (
         <form>
             <Group noWrap>
                 <SafeSelect
                     label="Operator"
                     data-test="string-filter-operators"
-                    sx={{ width: '130px' }}
+                    sx={{ width: '170px' }}
                     optionsData={[
-                        { value: 'eq', label: 'equals' },
+                        { value: 'eq', label: 'equals!!!' },
                         { value: 'ne', label: 'not equals' },
                         { value: 'contains', label: 'contains' },
                         { value: 'not_contains', label: 'not contains' },
@@ -66,4 +65,4 @@ export function StringFilter({ label, filtersSet, updateFilterSet, }: Props) {
             </Group>
         </form>
     );
-};
+}
