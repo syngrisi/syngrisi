@@ -20,6 +20,18 @@ import { MdSort } from 'react-icons/all';
 import { IconFilter } from '@tabler/icons';
 import AdminLogsTableFilter from './Table/AdminLogsTableFilter';
 
+/**
+ * example:
+ * [
+ *    level: {$eq, 'debug'},
+ *    level: {$ne, 'warn'},
+ *    message: {$regex, 'test'}
+ * ]
+ */
+interface IFilterSet {
+    [key: string]: any
+}
+
 export default function AdminLogs() {
     const theme = useMantineTheme();
     useSubpageEffect('Logs');
@@ -28,27 +40,21 @@ export default function AdminLogs() {
     const [sortOpen, setSortOpen] = useState(false);
     const [filterOpen, setFilterOpen] = useState(false);
     const [filter, setFilter] = useInputState('{}');
-    const [filterObject, setFilterObject] = useInputState({});
+    const [filterSet, setFilterSet] = useInputState(new Set<IFilterSet>([]));
     const { toolbar, setToolbar, updateToolbar }: any = useContext(AppContext);
     const { firstPageQuery, infinityQuery, newestItemsQuery } = useInfinityScroll(searchParams, filter)
 
-
-    interface IFilterObject {
-        [key: string]: any
-    }
-
-    const updateFilterObject: IFilterObject = (
-        filterItemName: string,
-        filterItemObject: { [key: string]: any }
+    const updateFilterSet = (
+        value: { [key: string]: any }
     ) => {
-        setFilterObject((current: IFilterObject) => ({
-            ...current,
-            [filterItemName]: JSON.stringify(filterItemObject)
-        }))
+        setFilterSet((current) => {
+            const newSet = new Set(Array.from(current));
+            newSet.add(value);
+        })
     }
     useEffect(function syncFilterObject() {
-        console.log('👹', filterObject);
-    }, [JSON.stringify(filterObject)]);
+        // console.log('👹', filterSet);
+    }, [JSON.stringify(filterSet)]);
 
 
     useEffect(() => {
@@ -131,6 +137,8 @@ export default function AdminLogs() {
                 <AdminLogsTableFilter
                     open={filterOpen}
                     setOpen={setFilterOpen}
+                    filterObject={filterSet}
+                    updateFilterObject={updateFilterSet}
                     searchParams={searchParams}
                     setSearchParams={setSearchParams}
                 />

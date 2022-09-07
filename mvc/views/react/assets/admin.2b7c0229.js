@@ -1,4 +1,4 @@
-import { r as react, b as jsx, d as useMantineTheme, K as Global$1, O as css, R as transitions$1, S as useDidUpdate, U as useUncontrolled, V as useReducedMotion, W as useWindowEvent, Y as useId, c as createStyles, B as Box, j as jsxs, Z as UnstyledButton, _ as mergeRefs, $ as reactDom, a0 as useComponentDefaultProps, a1 as extractSystemStyles, a2 as OptionalPortal, a3 as packSx, a4 as getDefaultZIndex, v as ActionIcon, a5 as createPolymorphicComponent, T as Text, a6 as Fragment, a7 as _extends, a8 as React, a9 as useFloating, aa as size, ab as useFloatingAutoUpdate, ac as offset, ad as shift, ae as flip, af as isElement, ag as useMergedRef, ah as clsx, ai as Transition, aj as FloatingArrow, ak as getFloatingPosition, al as useInputProps, am as Input, P as Paper, G as Group, an as CheckIcon, ao as useTransition, ap as getTransitionStyles, aq as Overlay, ar as assignRef, as as MANTINE_SIZES, at as useDisclosure, au as sizes$f, av as Loader, s as TextInput, aw as InputsGroup, ax as Tooltip, ay as useIsomorphicEffect$1, az as keyframes, A as Anchor, aA as CheckboxIcon, aB as GROUP_POSITIONS, t as Checkbox, i as Button, C as Center, e as Container, L as LoadingOverlay, q as PasswordInput, aC as Portal, m as Progress, aD as Stack, h as Title, aE as DEFAULT_THEME, aF as MANTINE_COLORS, M as MantineProvider, H as ColorSchemeProvider, aG as useMantineColorScheme, aH as GlobalStyles, aI as NormalizeCSS, aJ as useCss, aK as useEmotionCache, aL as defaultMantineEmotionCache, aM as createCache, aN as queryString, y as useLocalStorage, E as useHotkeys, D as Dme, w as l6, k as ky, a as config, u as useQuery, l as log, aO as GY, N as Nb, aP as EH, aQ as age, aR as ka, aS as ZX, aT as Lce, aU as Bpe, aV as q2, aW as Aae, aX as useLocation, aY as Link, aZ as sge, a_ as $i, a$ as q0, p as useForm, b0 as useParams, n as aze, b1 as useMutation, b2 as _ae, b3 as gI, b4 as Xne, b5 as useInfiniteQuery, b6 as hl, b7 as Ti, b8 as zK, b9 as Uhe, ba as Ahe, o as useSearchParams, bb as sJ, bc as Routes, bd as Route, Q as QueryClient, f as useDocumentTitle, F as QueryClientProvider, I as createRoot, J as BrowserRouter } from "./use-form.75864932.js";
+import { r as react, b as jsx, d as useMantineTheme, K as Global$1, O as css, R as transitions$1, S as useDidUpdate, U as useUncontrolled, V as useReducedMotion, W as useWindowEvent, Y as useId, c as createStyles, B as Box, j as jsxs, Z as UnstyledButton, _ as mergeRefs, $ as reactDom, a0 as useComponentDefaultProps, a1 as extractSystemStyles, a2 as OptionalPortal, a3 as packSx, a4 as getDefaultZIndex, v as ActionIcon, a5 as createPolymorphicComponent, T as Text, a6 as Fragment, a7 as _extends, a8 as React, a9 as useFloating, aa as size, ab as useFloatingAutoUpdate, ac as offset, ad as shift, ae as flip, af as isElement, ag as useMergedRef, ah as clsx, ai as Transition, aj as FloatingArrow, ak as getFloatingPosition, al as useInputProps, am as Input, P as Paper, G as Group, an as CheckIcon, ao as useTransition, ap as getTransitionStyles, aq as Overlay, ar as assignRef, as as MANTINE_SIZES, at as useDisclosure, au as sizes$f, av as Loader, s as TextInput, aw as InputsGroup, ax as Tooltip, ay as useIsomorphicEffect$1, az as keyframes, A as Anchor, aA as CheckboxIcon, aB as GROUP_POSITIONS, t as Checkbox, i as Button, C as Center, e as Container, L as LoadingOverlay, q as PasswordInput, aC as Portal, m as Progress, aD as Stack, h as Title, aE as DEFAULT_THEME, aF as MANTINE_COLORS, M as MantineProvider, H as ColorSchemeProvider, aG as useMantineColorScheme, aH as GlobalStyles, aI as NormalizeCSS, aJ as useCss, aK as useEmotionCache, aL as defaultMantineEmotionCache, aM as createCache, aN as queryString, y as useLocalStorage, E as useHotkeys, D as Dme, w as l6, k as ky, a as config, u as useQuery, l as log, aO as GY, N as Nb, aP as EH, aQ as age, aR as ka, aS as ZX, aT as Lce, aU as Bpe, aV as q2, aW as Aae, aX as useLocation, aY as Link, aZ as sge, a_ as $i, a$ as q0, p as useForm, b0 as useParams, n as aze, b1 as useMutation, b2 as _ae, b3 as gI, b4 as Xne, b5 as useInfiniteQuery, b6 as hl, b7 as Ti, b8 as zK, b9 as Uhe, ba as Ahe, bb as Boe, o as useSearchParams, bc as sJ, bd as Routes, be as Route, Q as QueryClient, f as useDocumentTitle, F as QueryClientProvider, I as createRoot, J as BrowserRouter } from "./use-form.91f6d30d.js";
 function findElementAncestor(element, selector) {
   let _element = element;
   while ((_element = _element.parentElement) && !_element.matches(selector))
@@ -22505,29 +22505,29 @@ const adminLogsTableColumns = {
   id: {
     headStyle: { width: "15%" },
     cellStyle: { width: "15%" },
-    type: "string"
+    type: "StringFilter"
   },
   hostname: {
     headStyle: { width: "10%" },
     cellStyle: { width: "10%" },
-    type: "string"
+    type: "StringFilter"
   },
   level: {
     headStyle: { width: "5%" },
     cellStyle: { width: "5%" },
-    type: "string"
+    type: "StringFilter"
   },
   message: {
     headStyle: { width: "auto" },
     cellStyle: {
       width: "auto"
     },
-    type: "string"
+    type: "StringFilter"
   },
   timestamp: {
     headStyle: { width: "15%" },
     cellStyle: { width: "15%" },
-    type: "date"
+    type: "DateFilter"
   }
 };
 const InfinityScrollSkeleton = ({
@@ -23129,22 +23129,268 @@ function IconBase(props) {
 function MdSort(props) {
   return GenIcon({ "tag": "svg", "attr": { "viewBox": "0 0 24 24" }, "child": [{ "tag": "path", "attr": { "fill": "none", "d": "M0 0h24v24H0z" } }, { "tag": "path", "attr": { "d": "M3 18h6v-2H3v2zM3 6v2h18V6H3zm0 7h12v-2H3v2z" } }] })(props);
 }
+function generateItemFilter$1(label, operator, value) {
+  function escapeRegExp(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+  }
+  const transform = {
+    eq: {
+      $eq: value
+    },
+    ne: {
+      $ne: value
+    },
+    contains: {
+      $regex: new RegExp(escapeRegExp(value), "im")
+    },
+    not_contains: {
+      $regex: new RegExp(`$^((?!${escapeRegExp(value)}).)*$`, "im")
+    }
+  };
+  return {
+    [label]: transform[operator]
+  };
+}
+function DateFilter({
+  label,
+  filter,
+  updateFilter
+}) {
+  const form = useForm({
+    initialValues: {
+      Operator: "eq",
+      Value: "",
+      Label: label
+    }
+  });
+  react.exports.useEffect(function valuesChanges() {
+    console.log(generateItemFilter$1(label, form.values.Operator, form.values.Value));
+  }, [form.values.Value, form.values.Operator]);
+  return /* @__PURE__ */ jsx("form", {
+    children: /* @__PURE__ */ jsxs(Group, {
+      noWrap: true,
+      children: [/* @__PURE__ */ jsx(SafeSelect, {
+        label: "Operator",
+        "data-test": "string-filter-operators",
+        sx: {
+          width: "170px"
+        },
+        optionsData: [{
+          value: "eq",
+          label: "equals!!!"
+        }, {
+          value: "ne",
+          label: "not equals"
+        }, {
+          value: "contains",
+          label: "contains"
+        }, {
+          value: "not_contains",
+          label: "not contains"
+        }],
+        ...form.getInputProps("Operator")
+      }), /* @__PURE__ */ jsx(TextInput, {
+        label: "Value",
+        ...form.getInputProps("Value")
+      })]
+    })
+  });
+}
+function generateItemFilter(label, operator, value) {
+  function escapeRegExp(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+  }
+  const transform = {
+    eq: {
+      $eq: value
+    },
+    ne: {
+      $ne: value
+    },
+    contains: {
+      $regex: new RegExp(escapeRegExp(value), "im")
+    },
+    not_contains: {
+      $regex: new RegExp(`$^((?!${escapeRegExp(value)}).)*$`, "im")
+    }
+  };
+  return {
+    [label]: transform[operator]
+  };
+}
+function StringFilter({
+  label,
+  filtersSet,
+  updateFilterSet
+}) {
+  const form = useForm({
+    initialValues: {
+      Operator: "eq",
+      Value: "",
+      Label: label
+    }
+  });
+  react.exports.useEffect(function valuesChanges() {
+    console.log("VALUES CHANGE");
+    console.log(label);
+    console.log(generateItemFilter(label, form.values.Operator, form.values.Value));
+    updateFilterSet(generateItemFilter(label, form.values.Operator, form.values.Value));
+  }, [form.values.Value, form.values.Operator]);
+  return /* @__PURE__ */ jsx("form", {
+    children: /* @__PURE__ */ jsxs(Group, {
+      noWrap: true,
+      children: [/* @__PURE__ */ jsx(SafeSelect, {
+        label: "Operator",
+        "data-test": "string-filter-operators",
+        sx: {
+          width: "130px"
+        },
+        optionsData: [{
+          value: "eq",
+          label: "equals"
+        }, {
+          value: "ne",
+          label: "not equals"
+        }, {
+          value: "contains",
+          label: "contains"
+        }, {
+          value: "not_contains",
+          label: "not contains"
+        }],
+        ...form.getInputProps("Operator")
+      }), /* @__PURE__ */ jsx(TextInput, {
+        label: "Value",
+        ...form.getInputProps("Value")
+      })]
+    })
+  });
+}
+const Filters = {
+  DateFilter,
+  StringFilter
+};
+function FilterWrapper({
+  filtersSet,
+  updateFilterSet,
+  fields
+}) {
+  const optionsData = Object.keys(fields).map((item) => {
+    return {
+      value: item,
+      label: item.charAt(0).toUpperCase() + item.slice(1)
+    };
+  });
+  const [selectValue, setSelectValue] = useInputState(optionsData[0].value);
+  const Filter = Filters[fields[selectValue].type];
+  return /* @__PURE__ */ jsxs(Group, {
+    noWrap: true,
+    children: [/* @__PURE__ */ jsx(SafeSelect, {
+      label: "Field",
+      "data-test": "string-filter-operators",
+      sx: {
+        width: "130px"
+      },
+      optionsData,
+      value: selectValue,
+      onChange: setSelectValue
+    }), /* @__PURE__ */ jsx(Filter, {
+      label: selectValue,
+      filtersSet,
+      updateFilterSet
+    })]
+  });
+}
+const initGroupSet = /* @__PURE__ */ new Set([{}, {}]);
+function LogicalGroup({
+  operator = "$and",
+  fields
+}) {
+  const [filtersSet, setFiltersSet] = react.exports.useState(initGroupSet);
+  const updateFilterSet = (value) => {
+    setFiltersSet((prev) => {
+      const newSet = new Set(Array.from(prev));
+      newSet.add(value);
+      return newSet;
+    });
+  };
+  react.exports.useEffect(function filterSetChanged() {
+    console.log("filterSetChanged");
+    console.log(filtersSet);
+  }, [filtersSet]);
+  const filters = Array.from(initGroupSet).map((item) => /* @__PURE__ */ jsx(FilterWrapper, {
+    fields,
+    filtersSet,
+    updateFilterSet
+  }));
+  const theme = useMantineTheme();
+  return /* @__PURE__ */ jsx(Fragment, {
+    children: /* @__PURE__ */ jsxs(Paper, {
+      withBorder: true,
+      p: 16,
+      sx: {
+        position: "relative"
+      },
+      children: [/* @__PURE__ */ jsx(Box, {
+        pl: 4,
+        pr: 4,
+        sx: {
+          backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[7] : "white",
+          display: "inline-block",
+          fontSize: "2rem",
+          position: "absolute",
+          top: "-30px",
+          left: "5%"
+        },
+        children: operator
+      }), filters, /* @__PURE__ */ jsx(Group, {
+        position: "right",
+        pt: 24,
+        children: /* @__PURE__ */ jsx(ThemeIcon, {
+          variant: "light",
+          children: /* @__PURE__ */ jsx(Boe, {})
+        })
+      })]
+    })
+  });
+}
 function AdminLogsTableFilter({
   open,
   setOpen,
   searchParams,
-  setSearchParams
+  setSearchParams,
+  filterObject,
+  updateFilterObject,
+  fields
 }) {
+  Object.keys(adminLogsTableColumns).map((key) => {
+    return /* @__PURE__ */ jsx(Fragment, {
+      children: /* @__PURE__ */ jsx(Title, {
+        mt: 8,
+        mb: 8,
+        size: 16,
+        children: key
+      })
+    });
+  });
   return /* @__PURE__ */ jsxs(RelativeDrawer, {
     open,
     setOpen,
     title: "Filter",
-    width: 260,
-    children: [/* @__PURE__ */ jsx(Text, {
-      children: "!!!!"
-    }), /* @__PURE__ */ jsxs(Group, {
+    width: 560,
+    children: [/* @__PURE__ */ jsx(Group, {
+      mt: 24,
       position: "center",
+      noWrap: true,
+      children: /* @__PURE__ */ jsx(LogicalGroup, {
+        fields: adminLogsTableColumns
+      })
+    }), /* @__PURE__ */ jsxs(Group, {
+      mt: 24,
       children: [/* @__PURE__ */ jsx(Button, {
+        color: "red",
+        children: "Reset"
+      }), /* @__PURE__ */ jsx(Button, {
         children: "Apply"
       }), /* @__PURE__ */ jsx(Button, {
         onClick: () => setOpen(false),
@@ -23161,7 +23407,7 @@ function AdminLogs() {
   const [sortOpen, setSortOpen] = react.exports.useState(false);
   const [filterOpen, setFilterOpen] = react.exports.useState(false);
   const [filter, setFilter] = useInputState("{}");
-  const [filterObject, setFilterObject] = useInputState({});
+  const [filterSet, setFilterSet] = useInputState(/* @__PURE__ */ new Set([]));
   const {
     toolbar,
     setToolbar,
@@ -23172,9 +23418,14 @@ function AdminLogs() {
     infinityQuery,
     newestItemsQuery
   } = useInfinityScroll(searchParams, filter);
+  const updateFilterSet = (value) => {
+    setFilterSet((current) => {
+      const newSet = new Set(Array.from(current));
+      newSet.add(value);
+    });
+  };
   react.exports.useEffect(function syncFilterObject() {
-    console.log("\u{1F479}", filterObject);
-  }, [JSON.stringify(filterObject)]);
+  }, [JSON.stringify(filterSet)]);
   react.exports.useEffect(() => {
     firstPageQuery.refetch();
     updateToolbar(/* @__PURE__ */ jsx(ActionIcon, {
@@ -23241,6 +23492,8 @@ function AdminLogs() {
       }), /* @__PURE__ */ jsx(AdminLogsTableFilter, {
         open: filterOpen,
         setOpen: setFilterOpen,
+        filterObject: filterSet,
+        updateFilterObject: updateFilterSet,
         searchParams,
         setSearchParams
       })]
