@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { Select } from '@mantine/core';
+import { Loader, Select } from '@mantine/core';
 
 import React, { ReactElement } from 'react';
 
@@ -9,7 +9,7 @@ interface IOption {
 }
 
 // select component for selenium
-function SafeSelect({ optionsData, required, ...rest }: any): ReactElement {
+function SafeSelect({ optionsData, required, loaded=false, ...rest  }: any): ReactElement {
     const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         rest.onChange(event.target.value);
     }
@@ -18,6 +18,8 @@ function SafeSelect({ optionsData, required, ...rest }: any): ReactElement {
             <Select
                 data={optionsData}
                 required={required}
+                dropdownPosition="bottom"
+                icon={loaded && <Loader size={24} />}
                 {...rest}
 
             />

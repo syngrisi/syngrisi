@@ -29,6 +29,16 @@ export const LogsService = {
         if (resp.ok) {
             return result;
         }
-        throw new Error(`cannot get resource, resp: '${JSON.stringify(resp)}'`);
+        throw new Error(`cannot get resource: ${uri}, resp: '${JSON.stringify(resp)}'`);
+    },
+
+    async distinct(field: string): Promise<string[]> {
+        const uri = `${config.baseUri}/v1/logs/distinct?field=${field}`;
+        const resp = await ky(uri);
+        const result: string[] = await resp.json();
+        if (resp.ok) {
+            return result;
+        }
+        throw new Error(`cannot get resource: ${uri}, resp: '${JSON.stringify(resp)}'`);
     },
 };

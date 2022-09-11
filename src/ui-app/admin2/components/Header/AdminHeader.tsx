@@ -140,7 +140,7 @@ export default function AdminHeader() {
                     <Group>
                         <Breadcrumbs>{breadCrumbsItems}</Breadcrumbs>
                     </Group>
-                    <Group spacing={4} position="right">
+                    <Group spacing={4} mr="md" position="right">
                         {toolbar}
                     </Group>
                 </Container>

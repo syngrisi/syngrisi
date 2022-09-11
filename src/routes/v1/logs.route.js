@@ -7,5 +7,8 @@ const router = express.Router();
 router
     .route('/')
     .get(ensureLoggedIn(), logsController.getLogs);
+router
+    .route('/distinct')
+    .get(ensureLoggedIn(), logsController.distinct);
 
 module.exports = router;

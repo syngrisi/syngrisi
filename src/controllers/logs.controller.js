@@ -9,6 +9,13 @@ const getLogs = catchAsync(async (req, res) => {
     res.send(result);
 });
 
+const distinct = catchAsync(async (req, res) => {
+    const { field } = pick(req.query, ['field']);
+    const result = await logsService.distinct(field);
+    res.send(result);
+});
+
 module.exports = {
     getLogs,
+    distinct,
 };

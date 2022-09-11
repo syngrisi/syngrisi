@@ -4,7 +4,7 @@ import { LogsService } from '../services/logs.service';
 import { IFirstPagesQuery, IPagesQuery } from '../interfaces/logQueries';
 import ILog from '../interfaces/ILog';
 
-export default function useInfinityScroll(searchParams: URLSearchParams, filter: string) {
+export default function useInfinityScroll(searchParams: URLSearchParams) {
     const firstPageQuery = useQuery(
         ['logs_infinity_first_page'],
         () => LogsService.getLogs(
@@ -39,7 +39,7 @@ export default function useInfinityScroll(searchParams: URLSearchParams, filter:
                 prevFilterObj || {},
             ],
         };
-    }, [firstPageData.lastLogTimestamp, firstPageQuery.status, filter]);
+    }, [firstPageData.lastLogTimestamp, firstPageQuery.status, searchParams.toString()]);
 
     const infinityQuery: IPagesQuery<ILog> = useInfiniteQuery(
         ['logs_infinity_pages', firstPageData.lastLogTimestamp, searchParams.toString()],

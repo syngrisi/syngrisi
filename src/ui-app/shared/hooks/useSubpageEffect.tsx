@@ -9,6 +9,8 @@ export function useSubpageEffect(title: string, deps?: any[]) {
     useEffect(() => {
         setAppTitle(title);
         stopNavigationProgress();
-        clearToolbar();
+        return () => {
+            clearToolbar();
+        };
     }, deps || []);
 }

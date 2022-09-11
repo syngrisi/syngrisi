@@ -1,8 +1,8 @@
 export const adminLogsTableColumns: { [key: string]: any } = {
-    id: {
+    _id: {
         headStyle: { width: '15%' },
         cellStyle: { width: '15%' },
-        type: 'StringFilter',
+        type: 'IdFilter',
     },
     hostname: {
         headStyle: { width: '10%' },
@@ -12,7 +12,7 @@ export const adminLogsTableColumns: { [key: string]: any } = {
     level: {
         headStyle: { width: '5%' },
         cellStyle: { width: '5%' },
-        type: 'StringFilter',
+        type: 'LogLevelFilter',
     },
     message: {
         headStyle: { width: 'auto' },
