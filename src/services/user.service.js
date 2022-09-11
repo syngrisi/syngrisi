@@ -79,7 +79,7 @@ const updateUserById = async (userId, updateBody) => {
         scope: 'updateUserById',
     };
 
-    log.debug(
+    log.info(
         `update user with id: '${updateBody.id}' name '${updateBody.username}', params: '${JSON.stringify(updateBody)}'`,
         $this,
         logOpts

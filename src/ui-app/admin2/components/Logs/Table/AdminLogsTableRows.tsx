@@ -55,13 +55,13 @@ const AdminLogsTableRows = ({ data, selection, setSelection, visibleFields }: Pr
         );
     };
 
-    function expandSelected() {
+    const expandSelected = () => {
         selection.forEach((item: string) => expand(item));
-    }
+    };
 
-    function collapseSelected() {
+    const collapseSelected = () => {
         selection.forEach((item: string) => fold(item));
-    }
+    };
 
     useEffect(() => {
         if (selection.length > 0) {
@@ -115,7 +115,7 @@ const AdminLogsTableRows = ({ data, selection, setSelection, visibleFields }: Pr
                                         return (
                                             <td
                                                 key={label}
-                                                title={label}
+                                                title={item.level}
                                                 style={{
                                                     ...adminLogsTableColumns[label].cellStyle,
                                                     paddingLeft: '2px',

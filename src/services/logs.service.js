@@ -25,6 +25,12 @@ const queryLogs = async (filter, options) => {
     return users;
 };
 
+const distinct = async (field) => {
+    const result = await Log.distinct(field);
+    return result;
+};
+
 module.exports = {
     queryLogs,
+    distinct,
 };

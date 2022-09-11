@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { ActionIcon, Box, Group, Paper, Text, Transition } from '@mantine/core';
 import { IconX } from '@tabler/icons';
 
@@ -21,8 +21,8 @@ function RelativeDrawer(
 ) {
     return (
         <Transition mounted={open} transition="slide-left" duration={200} timingFunction="ease">
-            {(styles: React.CSSProperties) => (
-                <Box sx={{ ...styles, minWidth: width, maxWidth: Number(width) + 60 }}>
+            {(styles: CSSProperties) => (
+                <Box sx={{ ...styles as any, minWidth: width, maxWidth: Number(width) + 60 }}>
                     <Paper p="lg" m={8} shadow="sm" radius="xs" withBorder>
                         <Group position="apart" align="start" noWrap>
                             <Text size="sm" pb={24}>{title}</Text>
@@ -37,7 +37,6 @@ function RelativeDrawer(
                 </Box>
             )}
         </Transition>
-
     );
 }
 

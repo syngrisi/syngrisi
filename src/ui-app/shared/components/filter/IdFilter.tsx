@@ -13,7 +13,8 @@ interface Props {
     id: string
 }
 
-export function StringFilter({ label, groupRules, updateGroupRules, id }: Props) {
+export function IdFilter({ label, groupRules, updateGroupRules, id }: Props) {
+
     const form = useForm({
         initialValues: {
             operator: 'eq',
@@ -21,6 +22,11 @@ export function StringFilter({ label, groupRules, updateGroupRules, id }: Props)
             label: label,
         },
         validateInputOnChange: true,
+        validate: {
+            value: (value) => {
+                return /^[0-9a-fA-F]{24,24}$/.test(value) ? null : 'Invalid id'
+            },
+        },
     });
 
     useEffect(function valuesChanges() {
@@ -37,8 +43,8 @@ export function StringFilter({ label, groupRules, updateGroupRules, id }: Props)
                     optionsData={[
                         { value: 'eq', label: 'equals' },
                         { value: 'ne', label: 'not equals' },
-                        { value: 'contains', label: 'contains' },
-                        { value: 'not_contains', label: 'not contains' },
+                        { value: 'lt', label: 'less than' },
+                        { value: 'gt', label: 'more than' },
                     ]}
                     {...form.getInputProps('operator')}
                 />

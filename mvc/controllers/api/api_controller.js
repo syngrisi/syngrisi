@@ -423,7 +423,7 @@ const updateUser = async (req, res) => {
     };
 
     try {
-        log.debug(`update user with id: '${params.id}' name '${params.username}', params: '${JSON.stringify(params)}'`,
+        log.info(`update user with id: '${params.id}' name '${params.username}', params: '${JSON.stringify(params)}'`,
             $this, logOpts);
 
         const opts = removeEmptyProperties(Object.assign(params, { updatedDate: new Date() }));
