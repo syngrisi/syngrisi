@@ -26836,7 +26836,7 @@ function LogLevelFilter({
   const form = useForm({
     initialValues: {
       operator: "eq",
-      value: "",
+      value: distinctQuery.data ? distinctQuery.data[0] : "",
       label
     },
     validateInputOnChange: true
@@ -26994,65 +26994,67 @@ function FilterWrapper({
   });
 }
 const initGroupObject = {
+  operator: "$and",
   rules: {
-    initialFilterKey1: {},
-    initialFilterKey2: {}
+    initialFilterKey1: {}
   }
 };
 function LogicalGroup({
   fields,
   id,
-  updateGroupsData,
+  setGroupsData,
+  groupsData,
   removeGroupsData,
-  updateMainGroupData,
   children = ""
 }) {
-  const [groupData, setGroupData] = react.exports.useState(initGroupObject);
-  const [groupOperator, setGroupOperator] = react.exports.useState("$and");
   const updateGroupRules = (key, value) => {
-    setGroupData((prev) => {
-      const newObject = {
+    setGroupsData((prev) => {
+      const newGroupsObject = {
         ...prev
       };
-      newObject["rules"] = {
-        ...newObject["rules"]
+      const groupObject = newGroupsObject[id];
+      groupObject["rules"] = {
+        ...groupObject["rules"]
       };
-      newObject["rules"][key] = value;
-      return newObject;
+      groupObject["rules"][key] = value;
+      newGroupsObject[id] = groupObject;
+      return newGroupsObject;
     });
   };
-  const updateObjectGroupOperator = () => {
-    setGroupData((prev) => {
-      const newObj = {
+  const updateGroupOperator = (operator) => {
+    setGroupsData((prev) => {
+      const newGroupsObject = {
         ...prev
       };
-      newObj["operator"] = groupOperator;
-      return newObj;
+      const groupObject = newGroupsObject[id];
+      groupObject["operator"] = operator;
+      newGroupsObject[id] = groupObject;
+      return newGroupsObject;
     });
   };
   const removeGroupRule = (key) => {
-    setGroupData((prev) => {
-      const newObject = {
+    setGroupsData((prev) => {
+      const newGroupsObject = {
         ...prev
       };
-      delete newObject["rules"][key];
-      return newObject;
+      const groupObject = newGroupsObject[id];
+      groupObject["rules"] = {
+        ...groupObject["rules"]
+      };
+      delete groupObject["rules"][key];
+      newGroupsObject[id] = groupObject;
+      return newGroupsObject;
     });
   };
-  const addNewFilter = () => updateGroupRules(uuid(), {});
-  react.exports.useEffect(function groupRulesChange() {
-    if (id === "mainGroup") {
-      updateMainGroupData(id, groupData);
-      return;
-    }
-    updateGroupsData(id, groupData);
-  }, [JSON.stringify(groupData)]);
-  react.exports.useEffect(function updateGroupOperator() {
-    updateObjectGroupOperator();
-  }, [groupOperator]);
-  const filters = Object.keys(groupData["rules"]).map((key) => /* @__PURE__ */ jsx(FilterWrapper, {
+  const updateGroupsData = (key, value) => {
+    setGroupsData((prev) => ({
+      ...prev,
+      [key]: value
+    }));
+  };
+  const rules = Object.keys(groupsData[id]["rules"]).map((key) => /* @__PURE__ */ jsx(FilterWrapper, {
     fields,
-    groupRules: groupData["rules"],
+    groupRules: groupsData[id]["rules"],
     updateGroupRules,
     removeGroupRule,
     id: key
@@ -27078,18 +27080,18 @@ function LogicalGroup({
       },
       children: /* @__PURE__ */ jsxs(Chip.Group, {
         multiple: false,
-        value: groupOperator,
-        onChange: setGroupOperator,
+        value: groupsData[id]["operator"],
+        onChange: updateGroupOperator,
         spacing: 6,
         children: [/* @__PURE__ */ jsx(Chip, {
           size: "sm",
-          checked: groupOperator === "and",
+          checked: groupsData[id]["operator"] === "and",
           value: "$and",
           children: "And"
         }), /* @__PURE__ */ jsx(Chip, {
           size: "sm",
           ml: 0,
-          checked: groupOperator === "or",
+          checked: groupsData[id]["operator"] === "or",
           value: "$or",
           children: "Or"
         })]
@@ -27118,7 +27120,7 @@ function LogicalGroup({
       children: [/* @__PURE__ */ jsx(Button, {
         title: "Add filter rule",
         compact: true,
-        onClick: addNewFilter,
+        onClick: () => updateGroupRules(uuid(), {}),
         variant: "subtle",
         leftIcon: /* @__PURE__ */ jsx(Boe, {
           size: 16
@@ -27132,7 +27134,7 @@ function LogicalGroup({
       }), id === "mainGroup" && /* @__PURE__ */ jsx(Button, {
         size: "sm",
         compact: true,
-        onClick: () => updateGroupsData(uuid(), {}),
+        onClick: () => updateGroupsData(uuid(), initGroupObject),
         title: "Add another group",
         variant: "subtle",
         leftIcon: /* @__PURE__ */ jsx(Boe, {
@@ -27145,25 +27147,28 @@ function LogicalGroup({
         },
         children: "Group"
       })]
-    }), filters, /* @__PURE__ */ jsx(Group, {
+    }), rules, /* @__PURE__ */ jsx(Group, {
       mt: 24,
       children
     })]
   });
 }
+const mainGroupInit = {
+  mainGroup: {
+    operator: "$and",
+    rules: {
+      initialFilterKey1: {},
+      initialFilterKey2: {}
+    }
+  }
+};
 function AdminLogsTableFilter({
   open,
   setOpen,
   searchParams,
   setSearchParams
 }) {
-  const [groupsData, setGroupsData] = react.exports.useState({});
-  const updateGroupsData = (key, value) => {
-    setGroupsData((prev) => ({
-      ...prev,
-      [key]: value
-    }));
-  };
+  const [groupsData, setGroupsData] = react.exports.useState(mainGroupInit);
   const removeGroupsData = (key) => {
     setGroupsData((prev) => {
       const {
@@ -27173,22 +27178,20 @@ function AdminLogsTableFilter({
       return rest;
     });
   };
-  const [mainGroupData, setMainGroupData] = react.exports.useState([]);
-  const updateMainGroupData = (key, value) => {
-    setMainGroupData(() => value);
-  };
-  const removeMainGroupData = () => {
-    setMainGroupData({});
-  };
-  const resetGroupsData = () => setGroupsData(() => ({}));
-  const resetFilter = () => {
-    resetGroupsData();
-    removeMainGroupData();
+  const resetAll = () => {
+    setGroupsData(() => ({
+      mainGroup: {
+        operator: "$and",
+        rules: {
+          [uuid()]: {}
+        }
+      }
+    }));
   };
   const createFilterObject = () => {
     const filterValue2 = (x) => Object.values(Object.values(x)[0])[0];
-    const mainGroupRootRules = Object.values(mainGroupData.rules).filter((x) => filterValue2(x));
-    const mainGroupRules = [...mainGroupRootRules, ...Object.keys(groupsData).map((groupKey) => {
+    const mainGroupRootRules = Object.values(groupsData["mainGroup"].rules).filter((x) => filterValue2(x));
+    const mainGroupRules = [...mainGroupRootRules, ...Object.keys(groupsData).filter((x) => x !== "mainGroup").map((groupKey) => {
       const groupRules = Object.values(groupsData[groupKey]["rules"]).filter((x) => filterValue2(x));
       if (groupRules.length < 1)
         return {};
@@ -27199,26 +27202,21 @@ function AdminLogsTableFilter({
     if (mainGroupRules.length < 1)
       return {};
     return {
-      [mainGroupData.operator]: mainGroupRules
+      [groupsData["mainGroup"].operator]: mainGroupRules
     };
   };
   const applyFilter = () => {
     SearchParams.changeFiltering(searchParams, setSearchParams, JSON.stringify(createFilterObject()));
   };
-  const groups = Object.keys(groupsData).map((key) => /* @__PURE__ */ jsx(LogicalGroup, {
+  const groups = Object.keys(groupsData).filter((x) => x !== "mainGroup").map((key) => /* @__PURE__ */ jsx(LogicalGroup, {
     fields: adminLogsTableColumns,
-    updateGroupsData,
+    setGroupsData,
+    groupsData,
     removeGroupsData,
     id: key
   }, key));
   react.exports.useEffect(function groupsDataChange() {
   }, [JSON.stringify(groupsData)]);
-  react.exports.useEffect(function mainGroupDataChange() {
-    console.log("mainGroupDataChange");
-    console.log({
-      mainGroupData
-    });
-  }, [JSON.stringify(mainGroupData)]);
   return /* @__PURE__ */ jsx(RelativeDrawer, {
     open,
     setOpen,
@@ -27239,16 +27237,16 @@ function AdminLogsTableFilter({
           children: /* @__PURE__ */ jsx(LogicalGroup, {
             id: "mainGroup",
             fields: adminLogsTableColumns,
-            updateGroupsData,
-            updateMainGroupData,
-            removeGroupsData: removeMainGroupData,
+            groupsData,
+            setGroupsData,
+            removeGroupsData,
             children: groups
           })
         }), /* @__PURE__ */ jsxs(Group, {
           mt: 24,
           position: "right",
           children: [/* @__PURE__ */ jsx(Button, {
-            onClick: () => resetFilter(),
+            onClick: () => resetAll(),
             variant: "light",
             color: "red",
             children: "Reset"

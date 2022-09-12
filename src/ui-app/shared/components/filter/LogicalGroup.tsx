@@ -1,6 +1,6 @@
 /* eslint-disable dot-notation,prefer-arrow-callback */
 import { ActionIcon, Box, Button, Chip, Group, Paper, useMantineTheme } from '@mantine/core';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { IconPlus, IconX } from '@tabler/icons';
 import { FilterWrapper } from './FilterWrapper';
 import { uuid } from '../../utils';
@@ -8,67 +8,61 @@ import { uuid } from '../../utils';
 interface Props {
     fields: any
     id: string
-    updateGroupsData: any
+    setGroupsData: any
+    groupsData: any
     removeGroupsData: any
-    updateMainGroupData?: any
     children?: any
 }
 
 const initGroupObject: { [key: string]: any } = {
+    operator: '$and',
     rules: {
         initialFilterKey1: {},
-        initialFilterKey2: {},
     },
 };
 
-function LogicalGroup({ fields, id, updateGroupsData, removeGroupsData, updateMainGroupData, children = '' }: Props) {
-    const [groupData, setGroupData] = useState(initGroupObject);
-    const [groupOperator, setGroupOperator] = useState('$and');
-
+function LogicalGroup({ fields, id, setGroupsData, groupsData, removeGroupsData, children = '' }: Props) {
     const updateGroupRules = (key: string, value: any) => {
-        setGroupData((prev) => {
-            const newObject = { ...prev };
-            newObject['rules'] = { ...newObject['rules'] };
-            newObject['rules'][key] = value;
-            return newObject;
+        setGroupsData((prev: any) => {
+            const newGroupsObject = { ...prev };
+            const groupObject = newGroupsObject[id];
+            groupObject['rules'] = { ...groupObject['rules'] };
+            groupObject['rules'][key] = value;
+            newGroupsObject[id] = groupObject;
+            return newGroupsObject;
         });
     };
 
-    const updateObjectGroupOperator = () => {
-        setGroupData((prev) => {
-            const newObj = { ...prev };
-            newObj['operator'] = groupOperator;
-            return newObj;
+    const updateGroupOperator = (operator: string) => {
+        setGroupsData((prev: any) => {
+            const newGroupsObject = { ...prev };
+            const groupObject = newGroupsObject[id];
+            groupObject['operator'] = operator;
+            newGroupsObject[id] = groupObject;
+            return newGroupsObject;
         });
     };
 
     const removeGroupRule = (key: string) => {
-        setGroupData((prev) => {
-            const newObject = { ...prev };
-            delete newObject['rules'][key];
-            return newObject;
+        setGroupsData((prev: any) => {
+            const newGroupsObject = { ...prev };
+            const groupObject = newGroupsObject[id];
+            groupObject['rules'] = { ...groupObject['rules'] };
+            delete groupObject['rules'][key];
+            newGroupsObject[id] = groupObject;
+            return newGroupsObject;
         });
     };
 
-    const addNewFilter = () => updateGroupRules(uuid(), {});
+    const updateGroupsData = (key: string, value: any) => {
+        setGroupsData((prev: any) => ({ ...prev, [key]: value }));
+    };
 
-    useEffect(function groupRulesChange() {
-        if (id === 'mainGroup') {
-            updateMainGroupData(id, groupData);
-            return;
-        }
-        updateGroupsData(id, groupData);
-    }, [JSON.stringify(groupData)]);
-
-    useEffect(function updateGroupOperator() {
-        updateObjectGroupOperator();
-    }, [groupOperator]);
-
-    const filters = Object.keys(groupData['rules']).map(
+    const rules = Object.keys(groupsData[id]['rules']).map(
         (key: string) => (
             <FilterWrapper
                 fields={fields}
-                groupRules={groupData['rules']}
+                groupRules={groupsData[id]['rules']}
                 updateGroupRules={updateGroupRules}
                 removeGroupRule={removeGroupRule}
                 id={key}
@@ -91,9 +85,14 @@ function LogicalGroup({ fields, id, updateGroupsData, removeGroupsData, updateMa
                     left: '5%',
                 }}
             >
-                <Chip.Group multiple={false} value={groupOperator} onChange={setGroupOperator} spacing={6}>
-                    <Chip size="sm" checked={groupOperator === 'and'} value="$and">And</Chip>
-                    <Chip size="sm" ml={0} checked={groupOperator === 'or'} value="$or">Or</Chip>
+                <Chip.Group
+                    multiple={false}
+                    value={groupsData[id]['operator']}
+                    onChange={updateGroupOperator}
+                    spacing={6}
+                >
+                    <Chip size="sm" checked={groupsData[id]['operator'] === 'and'} value="$and">And</Chip>
+                    <Chip size="sm" ml={0} checked={groupsData[id]['operator'] === 'or'} value="$or">Or</Chip>
                 </Chip.Group>
             </Box>
 
@@ -116,7 +115,7 @@ function LogicalGroup({ fields, id, updateGroupsData, removeGroupsData, updateMa
                 <Button
                     title="Add filter rule"
                     compact
-                    onClick={addNewFilter}
+                    onClick={() => updateGroupRules(uuid(), {})}
                     variant="subtle"
                     leftIcon={<IconPlus size={16} />}
                     styles={
@@ -131,7 +130,7 @@ function LogicalGroup({ fields, id, updateGroupsData, removeGroupsData, updateMa
                         <Button
                             size="sm"
                             compact
-                            onClick={() => updateGroupsData(uuid(), {})}
+                            onClick={() => updateGroupsData(uuid(), initGroupObject)}
                             title="Add another group"
                             variant="subtle"
                             leftIcon={<IconPlus size={16} />}
@@ -144,7 +143,7 @@ function LogicalGroup({ fields, id, updateGroupsData, removeGroupsData, updateMa
                     )
                 }
             </Group>
-            {filters}
+            {rules}
             <Group mt={24}>
                 {children}
             </Group>
