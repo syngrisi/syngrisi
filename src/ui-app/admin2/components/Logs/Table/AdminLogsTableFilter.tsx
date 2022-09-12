@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 import RelativeDrawer from '../../../../shared/components/RelativeDrawer';
 import { adminLogsTableColumns } from './adminLogsTableColumns';
 import LogicalGroup from '../../../../shared/components/filter/LogicalGroup';
-import { SearchParams } from '../../../../shared/utils';
+import { SearchParams, uuid } from '../../../../shared/utils';
 
 interface Props {
     open: boolean
@@ -19,6 +19,16 @@ interface Props {
     searchParams: any
     setSearchParams: any
 }
+
+const mainGroupInit = {
+    mainGroup: {
+        operator: '$and',
+        rules: {
+            initialFilterKey1: {},
+            initialFilterKey2: {},
+        },
+    },
+};
 
 function AdminLogsTableFilter(
     {
@@ -28,13 +38,7 @@ function AdminLogsTableFilter(
         setSearchParams,
     }: Props,
 ) {
-    const [groupsData, setGroupsData] = useState<{ [key: string]: any }>({
-        // initialGroupKey: {},
-    });
-
-    const updateGroupsData = (key: string, value: any) => {
-        setGroupsData((prev) => ({ ...prev, [key]: value }));
-    };
+    const [groupsData, setGroupsData] = useState<{ [key: string]: any }>(mainGroupInit);
 
     const removeGroupsData = (key: string) => {
         setGroupsData((prev) => {
@@ -43,21 +47,15 @@ function AdminLogsTableFilter(
         });
     };
 
-    const [mainGroupData, setMainGroupData] = useState<{ [key: string]: any }>([]);
-
-    const updateMainGroupData = (key: undefined, value: { [key: string]: { [key: string]: string } }) => {
-        setMainGroupData(() => value);
-    };
-
-    const removeMainGroupData = () => {
-        setMainGroupData({});
-    };
-
-    const resetGroupsData = () => setGroupsData(() => ({}));
-
-    const resetFilter = () => {
-        resetGroupsData();
-        removeMainGroupData();
+    const resetAll = () => {
+        setGroupsData(() => ({
+            mainGroup: {
+                operator: '$and',
+                rules: {
+                    [uuid()]: {},
+                },
+            },
+        }));
     };
 
     /**
@@ -73,22 +71,25 @@ function AdminLogsTableFilter(
      */
     const createFilterObject = () => {
         const filterValue = (x: { [key: string]: { [key: string]: string } }) => Object.values(Object.values(x)[0])[0];
-        const mainGroupRootRules = Object.values(mainGroupData.rules).filter((x: any) => filterValue(x));
+        const mainGroupRootRules = Object.values(groupsData['mainGroup'].rules).filter((x: any) => filterValue(x));
         const mainGroupRules = [
             ...mainGroupRootRules,
-            ...Object.keys(groupsData).map(
-                (groupKey) => {
-                    const groupRules = Object.values(groupsData[groupKey]['rules']).filter((x: any) => filterValue(x));
-                    if (groupRules.length < 1) return {};
-                    return {
-                        [groupsData[groupKey]['operator']]: groupRules,
-                    };
-                },
-            ),
+            ...Object.keys(groupsData)
+                .filter((x) => x !== 'mainGroup')
+                .map(
+                    (groupKey) => {
+                        const groupRules = Object
+                            .values(groupsData[groupKey]['rules']).filter((x: any) => filterValue(x));
+                        if (groupRules.length < 1) return {};
+                        return {
+                            [groupsData[groupKey]['operator']]: groupRules,
+                        };
+                    },
+                ),
         ];
         if (mainGroupRules.length < 1) return {};
         return {
-            [mainGroupData.operator]: mainGroupRules,
+            [groupsData['mainGroup'].operator]: mainGroupRules,
         };
     };
 
@@ -98,11 +99,13 @@ function AdminLogsTableFilter(
 
     /* eslint-disable indent, react/jsx-indent */
     const groups = Object.keys(groupsData)
+        .filter((x) => x !== 'mainGroup')
         .map(
             (key) => (
                 <LogicalGroup
                     fields={adminLogsTableColumns}
-                    updateGroupsData={updateGroupsData}
+                    setGroupsData={setGroupsData}
+                    groupsData={groupsData}
                     removeGroupsData={removeGroupsData}
                     key={key}
                     id={key}
@@ -114,12 +117,6 @@ function AdminLogsTableFilter(
     // eslint-disable-next-line prefer-arrow-callback
     useEffect(function groupsDataChange() {
     }, [JSON.stringify(groupsData)]);
-
-    // eslint-disable-next-line prefer-arrow-callback
-    useEffect(function mainGroupDataChange() {
-        console.log('mainGroupDataChange');
-        console.log({ mainGroupData });
-    }, [JSON.stringify(mainGroupData)]);
 
     return (
         <RelativeDrawer
@@ -134,16 +131,16 @@ function AdminLogsTableFilter(
                         <LogicalGroup
                             id="mainGroup"
                             fields={adminLogsTableColumns}
-                            updateGroupsData={updateGroupsData}
-                            updateMainGroupData={updateMainGroupData}
-                            removeGroupsData={removeMainGroupData}
+                            groupsData={groupsData}
+                            setGroupsData={setGroupsData}
+                            removeGroupsData={removeGroupsData}
                         >
                             {groups}
                         </LogicalGroup>
                     </Stack>
 
                     <Group mt={24} position="right">
-                        <Button onClick={() => resetFilter()} variant="light" color="red">Reset</Button>
+                        <Button onClick={() => resetAll()} variant="light" color="red">Reset</Button>
                         <Button variant="light" color="gray" onClick={() => setOpen(false)}>Cancel</Button>
                         <Button onClick={() => {
                             applyFilter();

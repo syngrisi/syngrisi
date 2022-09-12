@@ -41,7 +41,7 @@ export function LogLevelFilter({ label, groupRules, updateGroupRules, id }: Prop
     const form = useForm({
         initialValues: {
             operator: 'eq',
-            value: '',
+            value: distinctQuery.data ? distinctQuery.data[0] : '',
             label: label,
         },
         validateInputOnChange: true,
