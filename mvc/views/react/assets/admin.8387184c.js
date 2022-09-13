@@ -21358,7 +21358,7 @@ const tasksList = [
   },
   {
     label: "Test",
-    name: "task_test",
+    name: "test",
     description: "\u26A0\uFE0FTest description",
     inputs: [
       { name: "days", label: "Check older that (days)", type: "TextInput", default: 180 },
@@ -21476,7 +21476,7 @@ function Task({
   async function handleTask(name, opts) {
     const queryParams = queryString.stringify(opts);
     const ctrl = new AbortController();
-    fetch(`/${name}?${queryParams}`, {
+    fetch(`/task_${name}?${queryParams}`, {
       signal: ctrl.signal
     }).then((response) => response.body).then((rs) => {
       const reader = rs.getReader();
