@@ -25,7 +25,7 @@ export const tasksList: ITask[] = [
     },
     {
         label: 'Test',
-        name: 'task_test',
+        name: 'test',
         description: '⚠️Test description',
         inputs: [
             { name: 'days', label: 'Check older that (days)', type: 'TextInput', default: 180 },

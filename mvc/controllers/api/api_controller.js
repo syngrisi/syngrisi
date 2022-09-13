@@ -1731,7 +1731,7 @@ exports.task_handle_old_checks = async (req, res) => {
 
         taskOutput(outTable, res);
 
-        if (req.query.remove) {
+        if (req.query.remove === 'true') {
             taskOutput(`STAGE #2 Remove checks that older that: '${req.query.days}' days,`
                 + ` '${format(trashHoldDate, 'yyyy-MM-dd')}'\n`, res);
 
@@ -2057,7 +2057,7 @@ exports.task_remove_old_logs = async (req, res) => {
         .countDocuments();
     taskOutput(`- the count of all documents is: '${allLogsCountBefore}'\n`, res);
     taskOutput(`- the count of documents to be removed is: '${oldLogsCount}'\n`, res);
-    if (!req.query.statistics) {
+    if (req.query.statistics === 'false') {
         taskOutput(
             `- will remove all logs older that: '${req.query.days}' days,`
             + ` '${format(trashHoldDate, 'yyyy-MM-dd')}'\n`,
