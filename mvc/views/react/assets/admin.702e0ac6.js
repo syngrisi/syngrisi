@@ -22267,10 +22267,151 @@ function AdminUsers() {
     children: "Unknown Error"
   });
 }
+const SettingsService = {
+  async getSettings() {
+    const uri = `${config.baseUri}/v1/settings`;
+    const resp = await ky(uri);
+    const result = await resp.json();
+    if (resp.ok) {
+      return result;
+    }
+    throw new Error(`cannot get resource: ${uri}, resp: '${JSON.stringify(resp)}'`);
+  },
+  async update(data) {
+    const url = `${config.baseUri}/v1/settings/${data.name}`;
+    const resp = await ky.patch(
+      url,
+      { json: data }
+    );
+    if (resp.ok) {
+      return resp.json();
+    }
+    throw new Error(`cannot update resource: '${url}', resp: '${JSON.stringify(resp)}'`);
+  }
+};
+function Boolean$1({
+  name,
+  value,
+  label,
+  description,
+  enabled,
+  updateSetting
+}) {
+  const form = useForm({
+    initialValues: {
+      value,
+      enabled
+    },
+    validate: {}
+  });
+  const handleSubmit = (values) => {
+    updateSetting.mutate(values);
+  };
+  return /* @__PURE__ */ jsxs("form", {
+    onSubmit: form.onSubmit((values) => handleSubmit({
+      ...values,
+      name
+    })),
+    children: [/* @__PURE__ */ jsx(Title, {
+      pb: 20,
+      children: label
+    }), /* @__PURE__ */ jsxs(Group, {
+      spacing: "xl",
+      children: [/* @__PURE__ */ jsx(SafeSelect, {
+        sx: {
+          width: "130px"
+        },
+        withAsterisk: true,
+        size: "lg",
+        optionsData: [{
+          value: true,
+          label: "true"
+        }, {
+          value: false,
+          label: "false"
+        }],
+        ...form.getInputProps("value")
+      }), /* @__PURE__ */ jsx(Checkbox, {
+        size: "xl",
+        label: "enabled",
+        ...form.getInputProps("enabled", {
+          type: "checkbox"
+        })
+      })]
+    }), /* @__PURE__ */ jsx(Text, {
+      children: description
+    }), /* @__PURE__ */ jsx(Group, {
+      position: "right",
+      mt: "md",
+      children: /* @__PURE__ */ jsx(Button, {
+        type: "submit",
+        children: "Update"
+      })
+    })]
+  });
+}
+const SettingsForms = {
+  Boolean: Boolean$1
+};
+function FormWrapper({
+  name,
+  value,
+  label,
+  description,
+  enabled,
+  type
+}) {
+  const Form = SettingsForms[type];
+  const updateSetting = useMutation((data) => SettingsService.update(data), {});
+  return /* @__PURE__ */ jsx(Paper, {
+    withBorder: true,
+    p: 20,
+    m: 15,
+    sx: {
+      width: "90%"
+    },
+    children: /* @__PURE__ */ jsx(Form, {
+      name,
+      description,
+      label,
+      value,
+      enabled,
+      updateSetting
+    })
+  });
+}
 function AdminSettings() {
   useSubpageEffect("Setting");
-  return /* @__PURE__ */ jsx(Title, {
-    children: "Admin Settings"
+  const settingsQuery = useQuery(["settings"], () => SettingsService.getSettings(), {
+    enabled: true,
+    onSuccess: (data) => {
+      console.log({
+        data
+      });
+    },
+    onError: (err) => {
+      log.error(err);
+    }
+  });
+  return /* @__PURE__ */ jsxs(Box, {
+    p: 10,
+    children: [/* @__PURE__ */ jsx(Title, {
+      children: "Admin Settings"
+    }), settingsQuery.isLoading ? /* @__PURE__ */ jsx(LoadingOverlay, {
+      visible: settingsQuery.isLoading
+    }) : settingsQuery.isSuccess ? settingsQuery.data.map((item) => {
+      return /* @__PURE__ */ jsx(FormWrapper, {
+        name: item.name,
+        description: item.description,
+        label: item.label,
+        value: item.value,
+        enabled: item.enabled,
+        type: item.type
+      }, item.name);
+    }) : /* @__PURE__ */ jsxs(Text, {
+      color: "red",
+      children: [" Cannot load data: ", settingsQuery.error.toString()]
+    })]
   });
 }
 const RefreshActionIcon = ({
@@ -26978,7 +27119,7 @@ function FilterWrapper({
       id
     }, selectValue), !id.includes("initialFilterKey1") ? /* @__PURE__ */ jsx(ActionIcon, {
       color: "red",
-      variant: "subtle",
+      variant: "light",
       onClick: () => removeGroupRule(id),
       size: 24,
       mt: 4,
@@ -27112,7 +27253,7 @@ function LogicalGroup({
       })
     }), /* @__PURE__ */ jsxs(Group, {
       position: "right",
-      spacing: 2,
+      spacing: 8,
       mt: 2,
       sx: {
         width: "100%"
@@ -27121,7 +27262,7 @@ function LogicalGroup({
         title: "Add filter rule",
         compact: true,
         onClick: () => updateGroupRules(uuid(), {}),
-        variant: "subtle",
+        variant: "light",
         leftIcon: /* @__PURE__ */ jsx(Boe, {
           size: 16
         }),
@@ -27136,7 +27277,7 @@ function LogicalGroup({
         compact: true,
         onClick: () => updateGroupsData(uuid(), initGroupObject),
         title: "Add another group",
-        variant: "subtle",
+        variant: "light",
         leftIcon: /* @__PURE__ */ jsx(Boe, {
           size: 16
         }),

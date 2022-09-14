@@ -58,6 +58,8 @@ npm run clear
 
 ## Environment variables
 
+The System Environment variables have priority more than correspondent Syngrisi Admin Settings if they exist.
+
 | Variable      | Host | Container |Description | Default Value |
 | ------------- | ------------- |---------------- |------------- | ------------- |
 | `SYNGRISI_DOCKER_IMAGES_PATH`  | - | + | Docker internal folder for Syngrisi Images (screenshots and diffs)      | `./baselines` |

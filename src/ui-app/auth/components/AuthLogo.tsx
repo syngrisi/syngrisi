@@ -47,7 +47,7 @@ function AuthLogo() {
             }}
             >
                 <Paper style={{ backgroundColor: 'rgba(0, 0, 0, 0)' }}>
-                    <Text color={(colorScheme === 'dark' ? '' : 'white')}>Syngrisi</Text>
+                    <Text color={(colorScheme === 'dark' ? 'gray.4' : 'white')}>Syngrisi</Text>
                 </Paper>
             </Box>
 
