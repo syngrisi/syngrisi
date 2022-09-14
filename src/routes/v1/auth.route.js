@@ -7,5 +7,6 @@ const router = express.Router();
 router.get('/logout', authController.logout);
 router.post('/login', authController.login);
 router.post('/change', ensureLoggedIn(), authController.changePassword);
+router.post('/change_first_run', authController.changePasswordFirstRun);
 
 module.exports = router;

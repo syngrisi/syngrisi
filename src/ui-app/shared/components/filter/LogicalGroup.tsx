@@ -111,12 +111,12 @@ function LogicalGroup({ fields, id, setGroupsData, groupsData, removeGroupsData,
                 )
             }
 
-            <Group position="right" spacing={2} mt={2} sx={{ width: '100%' }}>
+            <Group position="right" spacing={8} mt={2} sx={{ width: '100%' }}>
                 <Button
                     title="Add filter rule"
                     compact
                     onClick={() => updateGroupRules(uuid(), {})}
-                    variant="subtle"
+                    variant="light"
                     leftIcon={<IconPlus size={16} />}
                     styles={
                         { leftIcon: { marginRight: 4 } }
@@ -132,7 +132,7 @@ function LogicalGroup({ fields, id, setGroupsData, groupsData, removeGroupsData,
                             compact
                             onClick={() => updateGroupsData(uuid(), initGroupObject)}
                             title="Add another group"
-                            variant="subtle"
+                            variant="light"
                             leftIcon={<IconPlus size={16} />}
                             styles={
                                 { leftIcon: { marginRight: 4 } }

@@ -1,4 +1,4 @@
-/* eslint-disable max-len */
+/* eslint-disable max-len,prefer-arrow-callback */
 import '../asserts/css/auth/index.css';
 import * as React from 'react';
 
@@ -14,6 +14,7 @@ import {
 
 import { useHotkeys, useLocalStorage } from '@mantine/hooks';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import AuthFooter from './components/AuthFooter';
 import AuthLogo from './components/AuthLogo';
 import routesItems from './routes';
@@ -28,17 +29,20 @@ function App() {
         defaultValue: 'light',
         getInitialValueInEffect: true,
     });
+    const isDark = () => colorScheme === 'dark';
 
-    const toggleColorScheme = (value?: ColorScheme) => {
-        const isDark = () => colorScheme === 'dark';
-        setColorScheme(value || (isDark() ? 'light' : 'dark'));
-        if (isDark()) {
+    useEffect(function onColorSchemeChange() {
+        if (!isDark()) {
             document.body.style.backgroundColor = '#ffffff';
             document.body.style.setProperty('--before-opacity', '1');
             return;
         }
         document.body.style.backgroundColor = '#000000';
         document.body.style.setProperty('--before-opacity', '0.5');
+    }, [colorScheme]);
+
+    const toggleColorScheme = (value?: ColorScheme) => {
+        setColorScheme(value || (isDark() ? 'light' : 'dark'));
     };
 
     useHotkeys([['mod+J', () => toggleColorScheme()]]);

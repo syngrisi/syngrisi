@@ -27,6 +27,10 @@ const logger = require('pino-http')(
     },
     pino.destination('./application.log')
 );
+const { AppSettings } = require('./lib/AppSettings');
+
+global.AppSettings = new AppSettings();
+
 const { config } = require('./config');
 const { Logger } = require('./lib/logger');
 
@@ -114,6 +118,7 @@ app.listen(config.port, async () => {
     const startUp = await require('./lib/onStart');
     startUp.createTempDir();
     await startUp.createBasicUsers();
+    await startUp.createInitialSettings();
 });
 
 log.info('Get Application version', this);
