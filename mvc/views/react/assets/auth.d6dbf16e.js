@@ -108,7 +108,7 @@ function AuthLogo() {
           backgroundColor: "rgba(0, 0, 0, 0)"
         },
         children: /* @__PURE__ */ jsx(Text, {
-          color: colorScheme === "dark" ? "" : "white",
+          color: colorScheme === "dark" ? "gray.4" : "white",
           children: "Syngrisi"
         })
       })
@@ -299,7 +299,8 @@ function ChangePasswordForm() {
     try {
       setErrorMessage("");
       setLoader(true);
-      const resp = await ky(`${config.baseUri}/v1/auth/change`, {
+      const url = isFirstRun ? `${config.baseUri}/v1/auth/change_first_run` : `${config.baseUri}/v1/auth/change`;
+      const resp = await ky(url, {
         throwHttpErrors: false,
         method: "POST",
         credentials: "include",
@@ -601,16 +602,18 @@ function App() {
     defaultValue: "light",
     getInitialValueInEffect: true
   });
-  const toggleColorScheme = (value) => {
-    const isDark = () => colorScheme === "dark";
-    setColorScheme(value || (isDark() ? "light" : "dark"));
-    if (isDark()) {
+  const isDark = () => colorScheme === "dark";
+  react.exports.useEffect(function onColorSchemeChange() {
+    if (!isDark()) {
       document.body.style.backgroundColor = "#ffffff";
       document.body.style.setProperty("--before-opacity", "1");
       return;
     }
     document.body.style.backgroundColor = "#000000";
     document.body.style.setProperty("--before-opacity", "0.5");
+  }, [colorScheme]);
+  const toggleColorScheme = (value) => {
+    setColorScheme(value || (isDark() ? "light" : "dark"));
   };
   useHotkeys([["mod+J", () => toggleColorScheme()]]);
   return /* @__PURE__ */ jsx(QueryClientProvider, {

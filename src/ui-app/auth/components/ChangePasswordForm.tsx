@@ -96,8 +96,9 @@ export default function ChangePasswordForm() {
         try {
             setErrorMessage('');
             setLoader(true);
+            const url = isFirstRun ? `${config.baseUri}/v1/auth/change_first_run` : `${config.baseUri}/v1/auth/change`;
             const resp = await ky(
-                `${config.baseUri}/v1/auth/change`,
+                url,
                 {
                     throwHttpErrors: false,
                     method: 'POST',

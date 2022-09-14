@@ -6,7 +6,7 @@ import AdminHeader from './components/Header/AdminHeader';
 import AdminNavBar from './components/Navbar/AdminNavbar';
 import TaskWrapper from './components/Tasks/TaskWrapper';
 import AdminUsers from './components/Users/AdminUsers';
-import AdminSettings from './components/AdminSettings';
+import AdminSettings from './components/Settings/AdminSettings';
 import AdminLogs from './components/Logs/AdminLogs';
 
 import { useSubpageEffect } from '../shared/hooks/useSubpageEffect';

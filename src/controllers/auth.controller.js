@@ -67,27 +67,11 @@ const changePassword = catchAsync(async (req, res) => {
         ref: req?.user?.username,
     };
 
-    const { currentPassword, newPassword, newPasswordConfirmation, isFirstRun } = req.body;
-
-    if (process.env.SYNGRISI_AUTH === '1' && isFirstRun && (await global.appSettings.get('firstRun'))) {
-        log.debug(`first run, change password for default 'Administrator', params: '${JSON.stringify(req.body)}'`, $this, logOpts);
-        const user = await User.findOne({ username: 'Administrator' })
-            .exec();
-        logOpts.ref = user?.username;
-
-        await user.setPassword(newPassword);
-        await user.save();
-        log.debug('password was successfully changed for default Administrator', $this, logOpts);
-        await global.appSettings.set('firstRun', false);
-        return res.status(200)
-            .json({ message: 'success' });
-    }
-    if (isFirstRun) {
-        log.error(`trying to use first run API with no first run state, auth: '${process.env.SYNGRISI_AUTH === '1'}', `
-            + `global settings: '${(await global.appSettings.get('firstRun'))}'`, $this, logOpts);
-        return res.status(httpStatus.FORBIDDEN)
-            .json({ message: 'forbidden' });
-    }
+    const {
+        currentPassword,
+        newPassword,
+        // newPasswordConfirmation,
+    } = req.body;
 
     const username = req?.user?.username;
 
@@ -113,8 +97,38 @@ const changePassword = catchAsync(async (req, res) => {
         .json({ message: 'success' });
 });
 
+const changePasswordFirstRun = catchAsync(async (req, res) => {
+    const logOpts = {
+        scope: 'changePasswordFirstRun',
+        msgType: 'CHANGE_PASSWORD_FIRST_RUN',
+        itemType: 'user',
+        ref: req?.user?.username,
+    };
+
+    const { newPassword, newPasswordConfirmation } = req.body;
+
+    if (process.env.SYNGRISI_AUTH === '1' && ((await global.AppSettings.get('first_run')).value === 'true')) {
+        log.debug(`first run, change password for default 'Administrator', params: '${JSON.stringify(req.body)}'`, $this, logOpts);
+        const user = await User.findOne({ username: 'Administrator' })
+            .exec();
+        logOpts.ref = user?.username;
+
+        await user.setPassword(newPassword);
+        await user.save();
+        log.debug('password was successfully changed for default Administrator', $this, logOpts);
+        await global.AppSettings.set('first_run', 'false');
+        return res.status(200)
+            .json({ message: 'success' });
+    }
+    log.error(`trying to use first run API with no first run state, auth: '${process.env.SYNGRISI_AUTH === '1'}', `
+        + `global settings: '${(await global.AppSettings.get('first_run'))}'`, $this, logOpts);
+    return res.status(httpStatus.FORBIDDEN)
+        .json({ message: 'forbidden' });
+});
+
 module.exports = {
     login,
     changePassword,
+    changePasswordFirstRun,
     logout,
 };

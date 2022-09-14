@@ -403,6 +403,37 @@ const Settings = new Schema({
     firstRun: Boolean,
 });
 
+const AppSettingsSchema = new Schema({
+    name: {
+        type: String,
+        unique: true,
+        required: 'the name is empty',
+    },
+    label: {
+        type: String,
+        required: 'the label is empty',
+    },
+    description: {
+        type: String,
+    },
+    type: {
+        type: String,
+        required: 'the type is empty',
+    },
+    value: {
+        type: Schema.Types.Mixed,
+        required: 'the value is empty',
+    },
+    env_variable: {
+        type: String,
+    },
+    enabled: {
+        type: Boolean,
+    },
+});
+
+AppSettingsSchema.plugin(toJSON);
+
 LogSchema.plugin(toJSON);
 LogSchema.plugin(paginate);
 
@@ -436,3 +467,4 @@ module.exports = mongoose.model('VRSRun', RunSchema);
 module.exports = mongoose.model('VRSUser', UserSchema);
 module.exports = mongoose.model('VRSBaseline', BaselineSchema);
 module.exports = mongoose.model('VRSSettings', Settings);
+module.exports = mongoose.model('VRSAppSettings', AppSettingsSchema);
