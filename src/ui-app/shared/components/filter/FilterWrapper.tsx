@@ -53,7 +53,7 @@ export function FilterWrapper(
                     ? (
                         <ActionIcon
                             color="red"
-                            variant="subtle"
+                            variant="light"
                             onClick={() => removeGroupRule(id)}
                             size={24}
                             mt={4}
