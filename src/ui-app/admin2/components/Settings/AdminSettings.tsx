@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useSubpageEffect } from '../../../shared/hooks/useSubpageEffect';
 import { SettingsService } from '../../../shared/services/settings.service';
 import { ISettingForm } from './Forms/interfaces';
-import { log } from '../../../shared/utils/index';
+import { errorMsg, log } from '../../../shared/utils/index';
 import { FormWrapper } from './Forms/FormWrapper';
 
 export default function AdminSettings() {
@@ -15,11 +15,9 @@ export default function AdminSettings() {
         () => SettingsService.getSettings(),
         {
             enabled: true,
-            // onSuccess: (data) => {
-            //     console.log({ data });
-            // },
-            onError: (err) => {
-                log.error(err);
+            onError: (err: any) => {
+                errorMsg({ message: err.toString() });
+                log.warn(err);
             },
         },
     );
@@ -41,6 +39,7 @@ export default function AdminSettings() {
                                     value={item.value}
                                     enabled={item.enabled}
                                     type={item.type}
+                                    settingsQuery={settingsQuery}
                                 />
                             ),
                         )

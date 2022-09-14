@@ -15,7 +15,7 @@
         "@mantine/form": "^5.2.4",
         "@mantine/hooks": "^5.2.4",
         "@mantine/modals": "^5.2.4",
-        "@mantine/notifications": "^5.2.4",
+        "@mantine/notifications": "^5.3.0",
         "@mantine/nprogress": "^5.2.4",
         "@mantine/spotlight": "^5.2.4",
         "@mantine/styles": "^5.2.4",

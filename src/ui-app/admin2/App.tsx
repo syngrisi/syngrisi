@@ -11,6 +11,8 @@ import { Route, Routes } from 'react-router-dom';
 import { useState } from 'react';
 import { useDocumentTitle } from '@mantine/hooks';
 import { NavigationProgress } from '@mantine/nprogress';
+import { NotificationsProvider } from '@mantine/notifications';
+
 import { AppContext } from './AppContext';
 
 import AdminLayout from './AdminLayout';
@@ -59,12 +61,14 @@ function App() {
                             primaryColor: 'green',
                         }}
                     >
-                        <NavigationProgress />
-                        <ModalsProvider>
-                            <Routes>
-                                <Route path="/admin2/*" element={<AdminLayout />} />
-                            </Routes>
-                        </ModalsProvider>
+                        <NotificationsProvider autoClose={5000} limit={5}>
+                            <NavigationProgress />
+                            <ModalsProvider>
+                                <Routes>
+                                    <Route path="/admin2/*" element={<AdminLayout />} />
+                                </Routes>
+                            </ModalsProvider>
+                        </NotificationsProvider>
                     </MantineProvider>
                 </ColorSchemeProvider>
             </QueryClientProvider>
