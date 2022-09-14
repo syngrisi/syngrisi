@@ -27,7 +27,6 @@ function Boolean({ name, value, label, description, enabled, updateSetting }: IS
             <Group spacing="xl">
                 <SafeSelect
                     sx={{ width: '130px' }}
-                    withAsterisk
                     size="lg"
                     optionsData={[
                         { value: true, label: 'true' },

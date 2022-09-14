@@ -7,6 +7,7 @@ export interface ISettingForm {
     // setFormData?: any
     updateSetting?: any
     type?: string
+    settingsQuery?: any
 }
 
 export interface ISettingFormUpdateData {

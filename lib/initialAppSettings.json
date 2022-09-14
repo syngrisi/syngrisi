@@ -8,11 +8,11 @@
         "enabled": true
     },
     {
-        "name": "first_run_2",
-        "label": "First Run 2",
-        "description": "Indicates if the application is running the first time",
+        "name": "authentication",
+        "label": "authentication",
+        "description": "Enable application authentication",
         "type": "Boolean",
-        "value": true,
+        "value": false,
         "enabled": true
     }
 ]
