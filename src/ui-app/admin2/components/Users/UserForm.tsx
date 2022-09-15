@@ -1,16 +1,17 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import * as React from 'react';
 import { useForm } from '@mantine/form';
-import { ActionIcon, Group, Text, TextInput } from '@mantine/core';
+import { ActionIcon, Group, TextInput } from '@mantine/core';
 import { IconEdit, IconSend, IconX } from '@tabler/icons';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
-import { log } from '../../../shared/utils';
+import { errorMsg, log } from '../../../shared/utils';
 import { Password } from '../../../shared/components/Password';
 import ActionPopoverIcon from '../../../shared/components/ActionPopoverIcon';
 import { UsersService } from '../../../shared/services';
 import SafeSelect from '../../../shared/components/SafeSelect';
 import IUser from '../../../shared/interfaces/IUser';
+import { successMsg } from '../../../shared/utils/utils';
 
 export default function UserForm(
     {
@@ -26,7 +27,6 @@ export default function UserForm(
     }: IUser,
 ) {
     const [editMode, setEditMode] = useState(false);
-    const [error, setError] = useState('');
 
     const form = useForm({
         initialValues: {
@@ -36,7 +36,7 @@ export default function UserForm(
             lastName,
             role,
             password: '',
-            apiKey,
+            apiKey: '',
             updatedDate,
             createdDate,
         },
@@ -50,12 +50,14 @@ export default function UserForm(
     const updateUser = useMutation(
         (data: IUser) => UsersService.update(data),
         {
-            onSuccess: async () => {
+            onSuccess: async (result: any) => {
+                successMsg({ message: `User: '${result.username}' has been successfully updated` });
+                log.debug({ result });
                 refetch();
             },
             onError: (e: any) => {
+                errorMsg({ error: `Cannot update the user, ${String(e)}` });
                 log.error(e);
-                return setError(`Cannot update user - ${e.toString()}`);
             },
         },
     );
@@ -63,12 +65,13 @@ export default function UserForm(
     const deleteUser = useMutation(
         (userId: string) => UsersService.delete(userId),
         {
-            onSuccess: () => {
+            onSuccess: async () => {
+                successMsg({ message: 'User has been successfully removed' });
                 refetch();
             },
             onError: (e: any) => {
+                errorMsg({ error: `Cannot delete the user, ${String(e)}` });
                 log.error(e);
-                return setError(`Cannot delete user - ${e.toString()}`);
             },
         },
     );
@@ -88,29 +91,34 @@ export default function UserForm(
             <form>
                 <Group noWrap spacing="xs" align="center" data-test={username}>
                     <TextInput
+                        sx={{ width: '11%' }}
                         data-test="user-list-id"
                         value={id}
                         disabled
                     />
                     <TextInput
+                        sx={{ width: '11%' }}
                         data-test="user-list-email"
                         value={username}
                         disabled
                         {...form.getInputProps('username')}
                     />
                     <TextInput
+                        sx={{ width: '11%' }}
                         data-test="user-list-first-name"
                         value={firstName}
                         disabled={!editMode}
                         {...form.getInputProps('firstName')}
                     />
                     <TextInput
+                        sx={{ width: '11%' }}
                         data-test="user-list-last-name"
                         value={lastName}
                         disabled={!editMode}
                         {...form.getInputProps('lastName')}
                     />
                     <SafeSelect
+                        sx={{ width: '11%' }}
                         data-test="user-list-role"
                         optionsData={[
                             { value: 'user', label: 'User' },
@@ -124,14 +132,29 @@ export default function UserForm(
                     />
 
                     <Password.Popover
+                        sx={{ width: '11%' }}
                         data-test="user-list-password"
                         disabled={!editMode}
                         form={form}
                     />
-
-                    <TextInput data-test="user-list-api-key" value={apiKey} disabled />
-                    <TextInput data-test="user-list-created-date" value={createdDate} disabled />
-                    <TextInput data-test="user-list-updated-date" value={updatedDate} disabled />
+                    <TextInput
+                        sx={{ width: '11%' }}
+                        data-test="user-list-api-key"
+                        value={apiKey}
+                        disabled
+                    />
+                    <TextInput
+                        sx={{ width: '11%' }}
+                        data-test="user-list-created-date"
+                        value={createdDate}
+                        disabled
+                    />
+                    <TextInput
+                        sx={{ width: '11%' }}
+                        data-test="user-list-updated-date"
+                        value={updatedDate}
+                        disabled
+                    />
                     {
                         ((username !== 'Administrator') && (username !== 'Guest'))
                             ? (
@@ -165,13 +188,6 @@ export default function UserForm(
                             : (<ActionIcon sx={{ minWidth: '60px' }} />)
                     }
                 </Group>
-                {
-                    error && (
-                        <Group align="center">
-                            <Text color="red" size="xs">{error}</Text>
-                        </Group>
-                    )
-                }
             </form>
         </Group>
     );

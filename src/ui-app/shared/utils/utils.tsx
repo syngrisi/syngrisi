@@ -12,10 +12,11 @@ export function uuid() {
     );
 }
 
-export function errorMsg(params: Required<{ message: string }>) {
+export function errorMsg(params: Required<{ error: any }>) {
+    log.error(params.error);
     showNotification({
         ...params,
-        onOpen: () => log.error(params.message),
+        message: String(params.error),
         autoClose: 7000,
         title: 'Error',
         color: 'red',
@@ -23,9 +24,9 @@ export function errorMsg(params: Required<{ message: string }>) {
 }
 
 export function successMsg(params: Required<{ message: string }>) {
+    log.debug(params.message);
     showNotification({
         ...params,
-        onOpen: () => log.debug(params.message),
         autoClose: 4000,
         title: 'Success',
         color: 'green',

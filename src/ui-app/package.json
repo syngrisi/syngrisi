@@ -17,7 +17,7 @@
         "@mantine/modals": "^5.2.4",
         "@mantine/notifications": "^5.3.0",
         "@mantine/nprogress": "^5.2.4",
-        "@mantine/spotlight": "^5.2.4",
+        "@mantine/spotlight": "^5.3.1",
         "@mantine/styles": "^5.2.4",
         "@popperjs/core": "^2.11.6",
         "@tabler/icons": "^1.91.0",

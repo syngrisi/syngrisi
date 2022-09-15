@@ -4,7 +4,7 @@ import * as React from 'react';
 import { useEffect } from 'react';
 import SafeSelect from '../SafeSelect';
 import { useForm } from '@mantine/form';
-import { generateItemFilter } from '../../utils';
+import { errorMsg, generateItemFilter } from '../../utils';
 import { useQuery } from '@tanstack/react-query';
 import { LogsService } from '../../services/logs.service';
 
@@ -26,6 +26,9 @@ export function LogLevelFilter({ label, groupRules, updateGroupRules, id }: Prop
             refetchOnReconnect: false,
             onSuccess: (data) => {
                 form.values.value = data[0];
+            },
+            onError: (e) => {
+                errorMsg({ error: e })
             }
         },
     )

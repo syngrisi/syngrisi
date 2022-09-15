@@ -9,11 +9,7 @@ import AdminUsers from './components/Users/AdminUsers';
 import AdminSettings from './components/Settings/AdminSettings';
 import AdminLogs from './components/Logs/AdminLogs';
 
-import { useSubpageEffect } from '../shared/hooks/useSubpageEffect';
-
 export default function AdminLayout() {
-    useSubpageEffect('Admin Panel');
-
     return (
         <AppShell
             padding={8}

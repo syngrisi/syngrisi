@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { LogsService } from '../services/logs.service';
 import { IFirstPagesQuery, IPagesQuery } from '../interfaces/logQueries';
 import ILog from '../interfaces/ILog';
+import { errorMsg } from '../utils';
 
 export default function useInfinityScroll(searchParams: URLSearchParams) {
     const firstPageQuery = useQuery(
@@ -18,6 +19,9 @@ export default function useInfinityScroll(searchParams: URLSearchParams) {
             enabled: false,
             staleTime: Infinity,
             refetchOnWindowFocus: false,
+            onError: (e) => {
+                errorMsg({ error: e });
+            },
         },
     ) as IFirstPagesQuery<ILog>;
 
@@ -58,6 +62,9 @@ export default function useInfinityScroll(searchParams: URLSearchParams) {
             },
             refetchOnWindowFocus: false,
             enabled: !!firstPageData.lastLogTimestamp && !!timestampUpdatedFilter,
+            onError: (e) => {
+                errorMsg({ error: e });
+            },
         },
     ) as IPagesQuery<ILog>;
 
@@ -72,6 +79,9 @@ export default function useInfinityScroll(searchParams: URLSearchParams) {
         {
             enabled: infinityQuery.data?.pages?.length! > 0,
             refetchInterval: 3000,
+            onError: (e) => {
+                errorMsg({ error: e });
+            },
         },
     );
     return { firstPageQuery, infinityQuery, newestItemsQuery };
