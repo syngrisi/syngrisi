@@ -1,23 +1,23 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import * as React from 'react';
 import { useForm } from '@mantine/form';
-import { Button, Group, TextInput, Text } from '@mantine/core';
+import { Button, Group, TextInput } from '@mantine/core';
 import { IconSend, IconUser, IconX } from '@tabler/icons';
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { log } from '../../../shared/utils';
+import { errorMsg, log } from '../../../shared/utils';
 import { Password } from '../../../shared/components/Password';
 import { Email } from '../../../shared/components/Email';
-import { useSubpageEffect } from '../../../shared/hooks/useSubpageEffect';
+import { useSubpageEffect } from '../../../shared/hooks';
 import { UsersService } from '../../../shared/services';
 import SafeSelect from '../../../shared/components/SafeSelect';
 import IUser from '../../../shared/interfaces/IUser';
+import { successMsg } from '../../../shared/utils/utils';
 
 export default function UserAddForm({ setAddUser, refetch }: any) {
     useSubpageEffect('Users');
     const [emailError, setEmailError] = useState('');
     const [emailIsFetchingStatus, setEmailIsFetchingStatus] = useState(false);
-    const [error, setError] = useState('');
     const form = useForm({
         initialValues: {
             id: '',
@@ -46,13 +46,15 @@ export default function UserAddForm({ setAddUser, refetch }: any) {
     const addUser = useMutation(
         (data: IUser) => UsersService.create(data),
         {
-            onSuccess: () => {
+            onSuccess: async (result: any) => {
+                successMsg({ message: `User: '${result.username}' has been successfully created` });
+                log.debug({ result });
                 setAddUser(false);
                 refetch();
             },
             onError: (e: any) => {
+                errorMsg({ error: `Cannot create the user, ${String(e)}` });
                 log.error(e);
-                return setError(`Cannot create user - ${e.toString()}`);
             },
         },
     );
@@ -110,13 +112,7 @@ export default function UserAddForm({ setAddUser, refetch }: any) {
                     label="Password"
                 />
             </Group>
-            {
-                error && (
-                    <Group align="center">
-                        <Text color="red" size="xs">{error}</Text>
-                    </Group>
-                )
-            }
+
             <Group spacing="xs" align="flex-end" position="center" mt="lg" noWrap>
                 <Button
                     id="create"

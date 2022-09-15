@@ -13,10 +13,13 @@ import { useDocumentTitle } from '@mantine/hooks';
 import { NavigationProgress } from '@mantine/nprogress';
 import { NotificationsProvider } from '@mantine/notifications';
 
+import { IconSearch } from '@tabler/icons';
+import { SpotlightProvider } from '@mantine/spotlight';
 import { AppContext } from './AppContext';
 
 import AdminLayout from './AdminLayout';
 import useColorScheme from '../shared/hooks/useColorSheme';
+import { navigationData } from '../shared/navigation/navigationData';
 
 const queryClient = new QueryClient();
 
@@ -24,6 +27,7 @@ function App() {
     const [colorScheme, toggleColorScheme]: any = useColorScheme();
 
     const [appTitle, setAppTitle] = useState('Syngrisi');
+    const [breadCrumbs, setBreadCrumbs] = useState([]);
     const [toolbar, setToolbar]: [any[], any] = useState([]);
     const updateToolbar = (newItem: any, index: number = 0) => {
         setToolbar((prevArr: any[]) => {
@@ -42,7 +46,9 @@ function App() {
         setToolbar,
         updateToolbar,
         clearToolbar,
-    }), [appTitle, toolbar]);
+        breadCrumbs,
+        setBreadCrumbs,
+    }), [appTitle, toolbar, JSON.stringify(breadCrumbs)]);
     useDocumentTitle(appTitle);
 
     return (
@@ -61,14 +67,23 @@ function App() {
                             primaryColor: 'green',
                         }}
                     >
-                        <NotificationsProvider autoClose={5000} limit={5}>
-                            <NavigationProgress />
-                            <ModalsProvider>
-                                <Routes>
-                                    <Route path="/admin2/*" element={<AdminLayout />} />
-                                </Routes>
-                            </ModalsProvider>
-                        </NotificationsProvider>
+                        <SpotlightProvider
+                            actions={navigationData}
+                            highlightQuery
+                            searchIcon={<IconSearch size={18} />}
+                            searchPlaceholder="Search..."
+                            shortcut={['mod + k', 'mod + K']}
+                            nothingFoundMessage="Nothing found..."
+                        >
+                            <NotificationsProvider autoClose={5000} limit={5}>
+                                <NavigationProgress />
+                                <ModalsProvider>
+                                    <Routes>
+                                        <Route path="/admin2/*" element={<AdminLayout />} />
+                                    </Routes>
+                                </ModalsProvider>
+                            </NotificationsProvider>
+                        </SpotlightProvider>
                     </MantineProvider>
                 </ColorSchemeProvider>
             </QueryClientProvider>

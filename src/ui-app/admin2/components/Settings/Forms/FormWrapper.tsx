@@ -17,7 +17,7 @@ function FormWrapper({ name, value, label, description, enabled, type, settingsQ
                 successMsg({ message: `Parameter '${name}' saved` });
             },
             onError: (e: any) => {
-                errorMsg({ message: e.toString() });
+                errorMsg({ error: e });
             },
             onSettled: () => settingsQuery.refetch(),
         },

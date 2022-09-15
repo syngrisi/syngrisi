@@ -20458,6 +20458,11 @@ function EH(r2) {
   var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, pH);
   return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-copy", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("rect", { x: 8, y: 8, width: 12, height: 12, rx: 2 }), react.exports.createElement("path", { d: "M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" }));
 }
+var pO = ["size", "color", "stroke"];
+function EO(r2) {
+  var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, pO);
+  return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-dashboard", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("circle", { cx: 12, cy: 13, r: 2 }), react.exports.createElement("line", { x1: 13.45, y1: 11.55, x2: 15.5, y2: 9.5 }), react.exports.createElement("path", { d: "M6.4 20a9 9 0 1 1 11.2 0z" }));
+}
 var uI = ["size", "color", "stroke"];
 function gI(r2) {
   var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, uI);
@@ -20492,6 +20497,11 @@ var W0 = ["size", "color", "stroke"];
 function q0(r2) {
   var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, W0);
   return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-list-details", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("path", { d: "M13 5h8" }), react.exports.createElement("path", { d: "M13 9h5" }), react.exports.createElement("path", { d: "M13 15h8" }), react.exports.createElement("path", { d: "M13 19h5" }), react.exports.createElement("rect", { x: 3, y: 4, width: 6, height: 6, rx: 1 }), react.exports.createElement("rect", { x: 3, y: 14, width: 6, height: 6, rx: 1 }));
+}
+var I0 = ["size", "color", "stroke"];
+function A0(r2) {
+  var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, I0);
+  return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-list", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("line", { x1: 9, y1: 6, x2: 20, y2: 6 }), react.exports.createElement("line", { x1: 9, y1: 12, x2: 20, y2: 12 }), react.exports.createElement("line", { x1: 9, y1: 18, x2: 20, y2: 18 }), react.exports.createElement("line", { x1: 5, y1: 6, x2: 5, y2: 6.01 }), react.exports.createElement("line", { x1: 5, y1: 12, x2: 5, y2: 12.01 }), react.exports.createElement("line", { x1: 5, y1: 18, x2: 5, y2: 18.01 }));
 }
 var W2 = ["size", "color", "stroke"];
 function q2(r2) {
@@ -20552,6 +20562,11 @@ var jpe = ["size", "color", "stroke"];
 function Bpe(r2) {
   var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, jpe);
   return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-tool", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("path", { d: "M7 10h3v-3l-3.5 -3.5a6 6 0 0 1 8 8l6 6a2 2 0 0 1 -3 3l-6 -6a6 6 0 0 1 -8 -8l3.5 3.5" }));
+}
+var Vue = ["size", "color", "stroke"];
+function Xue(r2) {
+  var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, Vue);
+  return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-user-exclamation", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("circle", { cx: 9, cy: 7, r: 4 }), react.exports.createElement("path", { d: "M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" }), react.exports.createElement("line", { x1: 19, y1: 7, x2: 19, y2: 10 }), react.exports.createElement("line", { x1: 19, y1: 14, x2: 19, y2: 14.01 }));
 }
 var ige = ["size", "color", "stroke"];
 function age(r2) {
@@ -21920,7 +21935,7 @@ export {
   UnstyledButton as Z,
   mergeRefs as _,
   config as a,
-  $i as a$,
+  Aae as a$,
   useComponentDefaultProps as a0,
   extractSystemStyles as a1,
   getDefaultZIndex as a2,
@@ -21946,18 +21961,18 @@ export {
   createCache$1 as aM,
   queryString as aN,
   ReactDOM as aO,
-  GY as aP,
-  EH as aQ,
+  EO as aP,
+  Xue as aQ,
   age as aR,
-  ka as aS,
-  ZX as aT,
-  Lce as aU,
-  Bpe as aV,
-  q2 as aW,
-  Aae as aX,
-  useLocation as aY,
-  Link as aZ,
-  sge as a_,
+  A0 as aS,
+  q0 as aT,
+  GY as aU,
+  EH as aV,
+  ka as aW,
+  ZX as aX,
+  Lce as aY,
+  Bpe as aZ,
+  q2 as a_,
   size as aa,
   useFloatingAutoUpdate as ab,
   offset as ac,
@@ -21985,25 +22000,28 @@ export {
   useIsomorphicEffect as ay,
   keyframes as az,
   jsx as b,
-  q0 as b0,
-  useParams as b1,
-  useMutation as b2,
-  _ae as b3,
-  gI as b4,
-  Xne as b5,
-  useInfiniteQuery as b6,
-  hl as b7,
-  Ti as b8,
-  zK as b9,
-  Uhe as ba,
-  Ahe as bb,
-  commonjsGlobal as bc,
-  D3 as bd,
-  Boe as be,
-  J as bf,
-  sJ as bg,
-  Routes as bh,
-  Route as bi,
+  useLocation as b0,
+  Link as b1,
+  sge as b2,
+  $i as b3,
+  useParams as b4,
+  useMutation as b5,
+  _ae as b6,
+  gI as b7,
+  Xne as b8,
+  useInfiniteQuery as b9,
+  hl as ba,
+  Ti as bb,
+  zK as bc,
+  Uhe as bd,
+  Ahe as be,
+  commonjsGlobal as bf,
+  D3 as bg,
+  Boe as bh,
+  J as bi,
+  sJ as bj,
+  Routes as bk,
+  Route as bl,
   createStyles as c,
   useMantineTheme as d,
   Container as e,

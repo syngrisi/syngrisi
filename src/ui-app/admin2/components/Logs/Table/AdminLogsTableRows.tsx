@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-one-expression-per-line */
 import { Checkbox, Collapse, createStyles, Paper, RingProgress, Text, Tooltip } from '@mantine/core';
 import React, { useContext, useEffect, useState } from 'react';
 import { IPage } from '../../../../shared/interfaces/logQueries';
@@ -162,8 +163,7 @@ const AdminLogsTableRows = ({ data, selection, setSelection, visibleFields }: Pr
                                             // sx={{ display: 'inline-block' }}
 
                                         >
-                                            {item.level}
-                                            {': '}
+                                            {item.level}{': '}
                                         </Text>
                                         <Text
                                             size="md"
@@ -171,7 +171,9 @@ const AdminLogsTableRows = ({ data, selection, setSelection, visibleFields }: Pr
                                             color={logLevelColorMap[item.level!]}
                                             component="span"
                                         >
-                                            {item.message}
+                                            <pre>
+                                                {item.message}
+                                            </pre>
                                         </Text>
                                     </Paper>
                                 </Collapse>

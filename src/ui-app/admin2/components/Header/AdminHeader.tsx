@@ -1,5 +1,4 @@
 import {
-    Anchor,
     Autocomplete,
     Breadcrumbs,
     Burger,
@@ -90,16 +89,7 @@ export default function AdminHeader() {
         </a>
     ));
 
-    const breadCrumbsItems = [
-        { title: 'Admin panel', href: '#' },
-        { title: 'Logs', href: '#' },
-    ].map((item) => (
-        <Anchor href={item.href} key={`${item.title}_nav`} size="sm" color="green">
-            {item.title}
-        </Anchor>
-    ));
-
-    const { toolbar }: any = useContext(AppContext);
+    const { toolbar, breadCrumbs }: any = useContext(AppContext);
 
     return (
         <Header
@@ -138,7 +128,7 @@ export default function AdminHeader() {
             <Paper shadow="">
                 <Container className={classes.subheader} fluid>
                     <Group>
-                        <Breadcrumbs>{breadCrumbsItems}</Breadcrumbs>
+                        <Breadcrumbs>{breadCrumbs}</Breadcrumbs>
                     </Group>
                     <Group spacing={4} mr="md" position="right">
                         {toolbar}

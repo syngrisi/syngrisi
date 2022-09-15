@@ -1,4 +1,4 @@
-import { r as react, b as jsx, d as useMantineTheme, K as Global$1, O as css, R as transitions$1, S as useDidUpdate, U as useUncontrolled, V as useReducedMotion, W as useWindowEvent, Y as useId, c as createStyles, B as Box, j as jsxs, Z as UnstyledButton, _ as mergeRefs, $ as reactDom, a0 as useComponentDefaultProps, a1 as extractSystemStyles, a2 as getDefaultZIndex, a3 as OptionalPortal, a4 as packSx, v as ActionIcon, a5 as createPolymorphicComponent, T as Text, a6 as Fragment, a7 as _extends, a8 as React, a9 as useFloating, aa as size, ab as useFloatingAutoUpdate, ac as offset, ad as shift, ae as flip, af as isElement, ag as useMergedRef, ah as clsx, ai as Transition$2, aj as FloatingArrow, ak as getFloatingPosition, al as useInputProps, am as Input, P as Paper, G as Group, an as CheckIcon, ao as useTransition, ap as getTransitionStyles, aq as Overlay, ar as assignRef, as as MANTINE_SIZES, at as useDisclosure, au as sizes$j, av as Loader, s as TextInput, aw as InputsGroup, ax as Tooltip, ay as useIsomorphicEffect$2, az as keyframes, A as Anchor, aA as CheckboxIcon, aB as GROUP_POSITIONS, t as Checkbox, i as Button, C as Center, e as Container, L as LoadingOverlay, q as PasswordInput, aC as Portal, m as Progress, aD as Stack, h as Title, aE as DEFAULT_THEME, aF as MANTINE_COLORS, M as MantineProvider, H as ColorSchemeProvider, aG as useMantineColorScheme, aH as GlobalStyles, aI as NormalizeCSS, aJ as useCss, aK as useEmotionCache, aL as defaultMantineEmotionCache, aM as createCache, aN as queryString, aO as ReactDOM, l as log, y as useLocalStorage, E as useHotkeys, D as Dme, w as l6, k as ky, a as config$1, u as useQuery, aP as GY, N as Nb, aQ as EH, aR as age, aS as ka, aT as ZX, aU as Lce, aV as Bpe, aW as q2, aX as Aae, aY as useLocation, aZ as Link, a_ as sge, a$ as $i, b0 as q0, p as useForm, b1 as useParams, n as aze, b2 as useMutation, b3 as _ae, b4 as gI, b5 as Xne, b6 as useInfiniteQuery, b7 as hl, b8 as Ti, b9 as zK, ba as Uhe, bb as Ahe, bc as commonjsGlobal, bd as D3, be as Boe, o as useSearchParams, bf as J, bg as sJ, bh as Routes, bi as Route, Q as QueryClient, f as useDocumentTitle, F as QueryClientProvider, I as createRoot, J as BrowserRouter } from "./use-form.e805a8ae.js";
+import { r as react, b as jsx, d as useMantineTheme, K as Global$1, O as css, R as transitions$1, S as useDidUpdate, U as useUncontrolled, V as useReducedMotion, W as useWindowEvent, Y as useId, c as createStyles, B as Box, j as jsxs, Z as UnstyledButton, _ as mergeRefs, $ as reactDom, a0 as useComponentDefaultProps, a1 as extractSystemStyles, a2 as getDefaultZIndex, a3 as OptionalPortal, a4 as packSx, v as ActionIcon, a5 as createPolymorphicComponent, T as Text, a6 as Fragment, a7 as _extends, a8 as React, a9 as useFloating, aa as size, ab as useFloatingAutoUpdate, ac as offset, ad as shift, ae as flip, af as isElement, ag as useMergedRef, ah as clsx, ai as Transition$2, aj as FloatingArrow, ak as getFloatingPosition, al as useInputProps, am as Input, P as Paper, G as Group, an as CheckIcon, ao as useTransition, ap as getTransitionStyles, aq as Overlay, ar as assignRef, as as MANTINE_SIZES, at as useDisclosure, au as sizes$j, av as Loader, s as TextInput, aw as InputsGroup, ax as Tooltip, ay as useIsomorphicEffect$3, az as keyframes, A as Anchor, aA as CheckboxIcon, aB as GROUP_POSITIONS, t as Checkbox, i as Button, C as Center, e as Container, L as LoadingOverlay, q as PasswordInput, aC as Portal, m as Progress, aD as Stack, h as Title, aE as DEFAULT_THEME, aF as MANTINE_COLORS, M as MantineProvider, H as ColorSchemeProvider, aG as useMantineColorScheme, aH as GlobalStyles, aI as NormalizeCSS, aJ as useCss, aK as useEmotionCache, aL as defaultMantineEmotionCache, aM as createCache, aN as queryString, aO as ReactDOM, l as log, E as useHotkeys, y as useLocalStorage, D as Dme, w as l6, k as ky, a as config$1, u as useQuery, aP as EO, aQ as Xue, aR as age, aS as A0, aT as q0, aU as GY, N as Nb, aV as EH, aW as ka, aX as ZX, aY as Lce, aZ as Bpe, a_ as q2, a$ as Aae, b0 as useLocation, b1 as Link, b2 as sge, b3 as $i, p as useForm, b4 as useParams, n as aze, b5 as useMutation, b6 as _ae, b7 as gI, b8 as Xne, b9 as useInfiniteQuery, ba as hl, bb as Ti, bc as zK, bd as Uhe, be as Ahe, bf as commonjsGlobal, bg as D3, bh as Boe, o as useSearchParams, bi as J, bj as sJ, bk as Routes, bl as Route, Q as QueryClient, f as useDocumentTitle, F as QueryClientProvider, I as createRoot, J as BrowserRouter } from "./use-form.87bcf95b.js";
 function findElementAncestor(element, selector) {
   let _element = element;
   while ((_element = _element.parentElement) && !_element.matches(selector))
@@ -170,7 +170,7 @@ function useHovered() {
   const resetHovered = () => setHovered(-1);
   return [hovered, { setHovered, resetHovered }];
 }
-function groupOptions({ data }) {
+function groupOptions$1({ data }) {
   const sortedData = [];
   const unGroupedData = [];
   const groupedData = data.reduce((acc, item, index2) => {
@@ -190,17 +190,17 @@ function groupOptions({ data }) {
   sortedData.push(...unGroupedData.map((itemIndex) => data[itemIndex]));
   return sortedData;
 }
-function dispatchEvent$1(type, detail) {
+function dispatchEvent$2(type, detail) {
   window.dispatchEvent(new CustomEvent(type, { detail }));
 }
-const useIsomorphicEffect$1 = typeof window !== "undefined" ? react.exports.useLayoutEffect : react.exports.useEffect;
-function createUseExternalEvents$1(prefix) {
+const useIsomorphicEffect$2 = typeof window !== "undefined" ? react.exports.useLayoutEffect : react.exports.useEffect;
+function createUseExternalEvents$2(prefix) {
   function _useExternalEvents(events) {
     const handlers = Object.keys(events).reduce((acc, eventKey) => {
       acc[`${prefix}:${eventKey}`] = (event) => events[eventKey](event.detail);
       return acc;
     }, {});
-    useIsomorphicEffect$1(() => {
+    useIsomorphicEffect$2(() => {
       Object.keys(handlers).forEach((eventKey) => {
         window.removeEventListener(eventKey, handlers[eventKey]);
         window.addEventListener(eventKey, handlers[eventKey]);
@@ -211,7 +211,7 @@ function createUseExternalEvents$1(prefix) {
     }, []);
   }
   function createEvent2(event) {
-    return (...payload) => dispatchEvent$1(`${prefix}:${String(event)}`, payload[0]);
+    return (...payload) => dispatchEvent$2(`${prefix}:${String(event)}`, payload[0]);
   }
   return [_useExternalEvents, createEvent2];
 }
@@ -1146,39 +1146,39 @@ function getVariantStyles$5(theme, { variant, radius }) {
   }
   return {};
 }
-var useStyles$2G = createStyles((theme, params) => ({
+var useStyles$2M = createStyles((theme, params) => ({
   item: getVariantStyles$5(theme, params)
 }));
-const useStyles$2H = useStyles$2G;
-var __defProp$2$ = Object.defineProperty;
-var __getOwnPropSymbols$30 = Object.getOwnPropertySymbols;
-var __hasOwnProp$30 = Object.prototype.hasOwnProperty;
-var __propIsEnum$30 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2$ = (obj, key, value) => key in obj ? __defProp$2$(obj, key, {
+const useStyles$2N = useStyles$2M;
+var __defProp$34 = Object.defineProperty;
+var __getOwnPropSymbols$35 = Object.getOwnPropertySymbols;
+var __hasOwnProp$35 = Object.prototype.hasOwnProperty;
+var __propIsEnum$35 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$34 = (obj, key, value) => key in obj ? __defProp$34(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2$ = (a, b) => {
+var __spreadValues$34 = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$30.call(b, prop))
-      __defNormalProp$2$(a, prop, b[prop]);
-  if (__getOwnPropSymbols$30)
-    for (var prop of __getOwnPropSymbols$30(b)) {
-      if (__propIsEnum$30.call(b, prop))
-        __defNormalProp$2$(a, prop, b[prop]);
+    if (__hasOwnProp$35.call(b, prop))
+      __defNormalProp$34(a, prop, b[prop]);
+  if (__getOwnPropSymbols$35)
+    for (var prop of __getOwnPropSymbols$35(b)) {
+      if (__propIsEnum$35.call(b, prop))
+        __defNormalProp$34(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1Z = (source, exclude) => {
+var __objRest$20 = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$30.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$35.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$30)
-    for (var prop of __getOwnPropSymbols$30(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$30.call(source, prop))
+  if (source != null && __getOwnPropSymbols$35)
+    for (var prop of __getOwnPropSymbols$35(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$35.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -1188,7 +1188,7 @@ const AccordionItem = react.exports.forwardRef((_a, ref) => {
     children,
     className,
     value
-  } = _b, others = __objRest$1Z(_b, ["children", "className", "value"]);
+  } = _b, others = __objRest$20(_b, ["children", "className", "value"]);
   const {
     classNames,
     styles,
@@ -1198,7 +1198,7 @@ const AccordionItem = react.exports.forwardRef((_a, ref) => {
   const {
     classes,
     cx
-  } = useStyles$2H({
+  } = useStyles$2N({
     variant: ctx.variant,
     radius: ctx.radius
   }, {
@@ -1212,7 +1212,7 @@ const AccordionItem = react.exports.forwardRef((_a, ref) => {
       value
     },
     children: /* @__PURE__ */ jsx(Box, {
-      ...__spreadValues$2$({
+      ...__spreadValues$34({
         ref,
         className: cx(classes.item, className),
         "data-active": ctx.isItemActive(value) || void 0
@@ -1222,33 +1222,33 @@ const AccordionItem = react.exports.forwardRef((_a, ref) => {
   });
 });
 AccordionItem.displayName = "@mantine/core/AccordionItem";
-var __defProp$2_ = Object.defineProperty;
-var __defProps$1p = Object.defineProperties;
-var __getOwnPropDescs$1p = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$2$ = Object.getOwnPropertySymbols;
-var __hasOwnProp$2$ = Object.prototype.hasOwnProperty;
-var __propIsEnum$2$ = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2_ = (obj, key, value) => key in obj ? __defProp$2_(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$2_ = (a, b) => {
+var __defProp$33 = Object.defineProperty;
+var __defProps$1s = Object.defineProperties;
+var __getOwnPropDescs$1s = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$34 = Object.getOwnPropertySymbols;
+var __hasOwnProp$34 = Object.prototype.hasOwnProperty;
+var __propIsEnum$34 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$33 = (obj, key, value) => key in obj ? __defProp$33(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$33 = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2$.call(b, prop))
-      __defNormalProp$2_(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2$)
-    for (var prop of __getOwnPropSymbols$2$(b)) {
-      if (__propIsEnum$2$.call(b, prop))
-        __defNormalProp$2_(a, prop, b[prop]);
+    if (__hasOwnProp$34.call(b, prop))
+      __defNormalProp$33(a, prop, b[prop]);
+  if (__getOwnPropSymbols$34)
+    for (var prop of __getOwnPropSymbols$34(b)) {
+      if (__propIsEnum$34.call(b, prop))
+        __defNormalProp$33(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$1p = (a, b) => __defProps$1p(a, __getOwnPropDescs$1p(b));
-var __objRest$1Y = (source, exclude) => {
+var __spreadProps$1s = (a, b) => __defProps$1s(a, __getOwnPropDescs$1s(b));
+var __objRest$1$ = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2$.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$34.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2$)
-    for (var prop of __getOwnPropSymbols$2$(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2$.call(source, prop))
+  if (source != null && __getOwnPropSymbols$34)
+    for (var prop of __getOwnPropSymbols$34(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$34.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -1261,8 +1261,8 @@ function getVariantStyles$4(theme, { variant }) {
   }
   return {};
 }
-var useStyles$2E = createStyles((theme, _a) => {
-  var _b = _a, { transitionDuration, chevronPosition, chevronSize } = _b, params = __objRest$1Y(_b, ["transitionDuration", "chevronPosition", "chevronSize"]);
+var useStyles$2K = createStyles((theme, _a) => {
+  var _b = _a, { transitionDuration, chevronPosition, chevronSize } = _b, params = __objRest$1$(_b, ["transitionDuration", "chevronPosition", "chevronSize"]);
   return {
     icon: {
       display: "flex",
@@ -1295,7 +1295,7 @@ var useStyles$2E = createStyles((theme, _a) => {
       margin: 0,
       padding: 0
     },
-    control: __spreadProps$1p(__spreadValues$2_(__spreadValues$2_(__spreadValues$2_({}, theme.fn.focusStyles()), theme.fn.fontStyles()), getVariantStyles$4(theme, params)), {
+    control: __spreadProps$1s(__spreadValues$33(__spreadValues$33(__spreadValues$33({}, theme.fn.focusStyles()), theme.fn.fontStyles()), getVariantStyles$4(theme, params)), {
       width: "100%",
       display: "flex",
       alignItems: "center",
@@ -1304,46 +1304,46 @@ var useStyles$2E = createStyles((theme, _a) => {
       paddingLeft: chevronPosition === "right" ? theme.spacing.sm + 4 : null,
       textAlign: "left",
       color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
-      "&:disabled": __spreadValues$2_({
+      "&:disabled": __spreadValues$33({
         opacity: 0.4,
         cursor: "not-allowed"
       }, theme.fn.hover({ backgroundColor: "transparent" }))
     })
   };
 });
-const useStyles$2F = useStyles$2E;
-var __defProp$2Z = Object.defineProperty;
-var __defProps$1o = Object.defineProperties;
-var __getOwnPropDescs$1o = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$2_ = Object.getOwnPropertySymbols;
-var __hasOwnProp$2_ = Object.prototype.hasOwnProperty;
-var __propIsEnum$2_ = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2Z = (obj, key, value) => key in obj ? __defProp$2Z(obj, key, {
+const useStyles$2L = useStyles$2K;
+var __defProp$32 = Object.defineProperty;
+var __defProps$1r = Object.defineProperties;
+var __getOwnPropDescs$1r = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$33 = Object.getOwnPropertySymbols;
+var __hasOwnProp$33 = Object.prototype.hasOwnProperty;
+var __propIsEnum$33 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$32 = (obj, key, value) => key in obj ? __defProp$32(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2Z = (a, b) => {
+var __spreadValues$32 = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2_.call(b, prop))
-      __defNormalProp$2Z(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2_)
-    for (var prop of __getOwnPropSymbols$2_(b)) {
-      if (__propIsEnum$2_.call(b, prop))
-        __defNormalProp$2Z(a, prop, b[prop]);
+    if (__hasOwnProp$33.call(b, prop))
+      __defNormalProp$32(a, prop, b[prop]);
+  if (__getOwnPropSymbols$33)
+    for (var prop of __getOwnPropSymbols$33(b)) {
+      if (__propIsEnum$33.call(b, prop))
+        __defNormalProp$32(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$1o = (a, b) => __defProps$1o(a, __getOwnPropDescs$1o(b));
-var __objRest$1X = (source, exclude) => {
+var __spreadProps$1r = (a, b) => __defProps$1r(a, __getOwnPropDescs$1r(b));
+var __objRest$1_ = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2_.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$33.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2_)
-    for (var prop of __getOwnPropSymbols$2_(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2_.call(source, prop))
+  if (source != null && __getOwnPropSymbols$33)
+    for (var prop of __getOwnPropSymbols$33(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$33.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -1357,7 +1357,7 @@ const AccordionControl = react.exports.forwardRef((_a, ref) => {
     children,
     className,
     icon
-  } = _b, others = __objRest$1X(_b, ["disabled", "onKeyDown", "onClick", "chevron", "children", "className", "icon"]);
+  } = _b, others = __objRest$1_(_b, ["disabled", "onKeyDown", "onClick", "chevron", "children", "className", "icon"]);
   const ctx = useAccordionContext();
   const {
     value
@@ -1370,7 +1370,7 @@ const AccordionControl = react.exports.forwardRef((_a, ref) => {
   const {
     classes,
     cx
-  } = useStyles$2F({
+  } = useStyles$2L({
     transitionDuration: ctx.transitionDuration,
     chevronPosition: ctx.chevronPosition,
     chevronSize: ctx.chevronSize,
@@ -1386,7 +1386,7 @@ const AccordionControl = react.exports.forwardRef((_a, ref) => {
   const shouldWrapWithHeading = typeof ctx.order === "number";
   const Heading = `h${ctx.order}`;
   const content = /* @__PURE__ */ jsxs(UnstyledButton, {
-    ...__spreadProps$1o(__spreadValues$2Z({}, others), {
+    ...__spreadProps$1r(__spreadValues$32({}, others), {
       ref,
       "data-accordion-control": true,
       disabled,
@@ -1428,27 +1428,27 @@ const AccordionControl = react.exports.forwardRef((_a, ref) => {
   }) : content;
 });
 AccordionControl.displayName = "@mantine/core/AccordionControl";
-var __defProp$2Y = Object.defineProperty;
-var __defProps$1n = Object.defineProperties;
-var __getOwnPropDescs$1n = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$2Z = Object.getOwnPropertySymbols;
-var __hasOwnProp$2Z = Object.prototype.hasOwnProperty;
-var __propIsEnum$2Z = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2Y = (obj, key, value) => key in obj ? __defProp$2Y(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$2Y = (a, b) => {
+var __defProp$31 = Object.defineProperty;
+var __defProps$1q = Object.defineProperties;
+var __getOwnPropDescs$1q = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$32 = Object.getOwnPropertySymbols;
+var __hasOwnProp$32 = Object.prototype.hasOwnProperty;
+var __propIsEnum$32 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$31 = (obj, key, value) => key in obj ? __defProp$31(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$31 = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2Z.call(b, prop))
-      __defNormalProp$2Y(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2Z)
-    for (var prop of __getOwnPropSymbols$2Z(b)) {
-      if (__propIsEnum$2Z.call(b, prop))
-        __defNormalProp$2Y(a, prop, b[prop]);
+    if (__hasOwnProp$32.call(b, prop))
+      __defNormalProp$31(a, prop, b[prop]);
+  if (__getOwnPropSymbols$32)
+    for (var prop of __getOwnPropSymbols$32(b)) {
+      if (__propIsEnum$32.call(b, prop))
+        __defNormalProp$31(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$1n = (a, b) => __defProps$1n(a, __getOwnPropDescs$1n(b));
-var useStyles$2C = createStyles((theme, _params) => ({
-  panel: __spreadProps$1n(__spreadValues$2Y({}, theme.fn.fontStyles()), {
+var __spreadProps$1q = (a, b) => __defProps$1q(a, __getOwnPropDescs$1q(b));
+var useStyles$2I = createStyles((theme, _params) => ({
+  panel: __spreadProps$1q(__spreadValues$31({}, theme.fn.fontStyles()), {
     wordBreak: "break-word",
     lineHeight: theme.lineHeight
   }),
@@ -1457,34 +1457,34 @@ var useStyles$2C = createStyles((theme, _params) => ({
     paddingTop: theme.spacing.xs / 2
   }
 }));
-const useStyles$2D = useStyles$2C;
-var __defProp$2X = Object.defineProperty;
-var __defProps$1m = Object.defineProperties;
-var __getOwnPropDescs$1m = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$2Y = Object.getOwnPropertySymbols;
-var __hasOwnProp$2Y = Object.prototype.hasOwnProperty;
-var __propIsEnum$2Y = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2X = (obj, key, value) => key in obj ? __defProp$2X(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$2X = (a, b) => {
+const useStyles$2J = useStyles$2I;
+var __defProp$30 = Object.defineProperty;
+var __defProps$1p = Object.defineProperties;
+var __getOwnPropDescs$1p = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$31 = Object.getOwnPropertySymbols;
+var __hasOwnProp$31 = Object.prototype.hasOwnProperty;
+var __propIsEnum$31 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$30 = (obj, key, value) => key in obj ? __defProp$30(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$30 = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2Y.call(b, prop))
-      __defNormalProp$2X(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2Y)
-    for (var prop of __getOwnPropSymbols$2Y(b)) {
-      if (__propIsEnum$2Y.call(b, prop))
-        __defNormalProp$2X(a, prop, b[prop]);
+    if (__hasOwnProp$31.call(b, prop))
+      __defNormalProp$30(a, prop, b[prop]);
+  if (__getOwnPropSymbols$31)
+    for (var prop of __getOwnPropSymbols$31(b)) {
+      if (__propIsEnum$31.call(b, prop))
+        __defNormalProp$30(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$1m = (a, b) => __defProps$1m(a, __getOwnPropDescs$1m(b));
-var __objRest$1W = (source, exclude) => {
+var __spreadProps$1p = (a, b) => __defProps$1p(a, __getOwnPropDescs$1p(b));
+var __objRest$1Z = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2Y.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$31.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2Y)
-    for (var prop of __getOwnPropSymbols$2Y(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2Y.call(source, prop))
+  if (source != null && __getOwnPropSymbols$31)
+    for (var prop of __getOwnPropSymbols$31(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$31.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -1519,7 +1519,7 @@ function useCollapse({
     reactDom.exports.flushSync(() => setStylesRaw(newStyles));
   };
   const mergeStyles = (newStyles) => {
-    setStyles((oldStyles) => __spreadValues$2X(__spreadValues$2X({}, oldStyles), newStyles));
+    setStyles((oldStyles) => __spreadValues$30(__spreadValues$30({}, oldStyles), newStyles));
   };
   function getTransitionStyles2(height) {
     const _duration = transitionDuration || getAutoHeightDuration(height);
@@ -1533,13 +1533,13 @@ function useCollapse({
         mergeStyles({ willChange: "height", display: "block", overflow: "hidden" });
         raf(() => {
           const height = getElementHeight(el);
-          mergeStyles(__spreadProps$1m(__spreadValues$2X({}, getTransitionStyles2(height)), { height }));
+          mergeStyles(__spreadProps$1p(__spreadValues$30({}, getTransitionStyles2(height)), { height }));
         });
       });
     } else {
       raf(() => {
         const height = getElementHeight(el);
-        mergeStyles(__spreadProps$1m(__spreadValues$2X({}, getTransitionStyles2(height)), { willChange: "height", height }));
+        mergeStyles(__spreadProps$1p(__spreadValues$30({}, getTransitionStyles2(height)), { willChange: "height", height }));
         raf(() => mergeStyles({ height: collapsedHeight, overflow: "hidden" }));
       });
     }
@@ -1562,47 +1562,47 @@ function useCollapse({
     }
   };
   function getCollapseProps(_a = {}) {
-    var _b = _a, { style = {}, refKey = "ref" } = _b, rest = __objRest$1W(_b, ["style", "refKey"]);
+    var _b = _a, { style = {}, refKey = "ref" } = _b, rest = __objRest$1Z(_b, ["style", "refKey"]);
     const theirRef = rest[refKey];
-    return __spreadProps$1m(__spreadValues$2X({
+    return __spreadProps$1p(__spreadValues$30({
       "aria-hidden": !opened
     }, rest), {
       [refKey]: mergeRefs(el, theirRef),
       onTransitionEnd: handleTransitionEnd,
-      style: __spreadValues$2X(__spreadValues$2X({ boxSizing: "border-box" }, style), styles)
+      style: __spreadValues$30(__spreadValues$30({ boxSizing: "border-box" }, style), styles)
     });
   }
   return getCollapseProps;
 }
-var __defProp$2W = Object.defineProperty;
-var __getOwnPropSymbols$2X = Object.getOwnPropertySymbols;
-var __hasOwnProp$2X = Object.prototype.hasOwnProperty;
-var __propIsEnum$2X = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2W = (obj, key, value) => key in obj ? __defProp$2W(obj, key, {
+var __defProp$2$ = Object.defineProperty;
+var __getOwnPropSymbols$30 = Object.getOwnPropertySymbols;
+var __hasOwnProp$30 = Object.prototype.hasOwnProperty;
+var __propIsEnum$30 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2$ = (obj, key, value) => key in obj ? __defProp$2$(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2W = (a, b) => {
+var __spreadValues$2$ = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2X.call(b, prop))
-      __defNormalProp$2W(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2X)
-    for (var prop of __getOwnPropSymbols$2X(b)) {
-      if (__propIsEnum$2X.call(b, prop))
-        __defNormalProp$2W(a, prop, b[prop]);
+    if (__hasOwnProp$30.call(b, prop))
+      __defNormalProp$2$(a, prop, b[prop]);
+  if (__getOwnPropSymbols$30)
+    for (var prop of __getOwnPropSymbols$30(b)) {
+      if (__propIsEnum$30.call(b, prop))
+        __defNormalProp$2$(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1V = (source, exclude) => {
+var __objRest$1Y = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2X.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$30.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2X)
-    for (var prop of __getOwnPropSymbols$2X(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2X.call(source, prop))
+  if (source != null && __getOwnPropSymbols$30)
+    for (var prop of __getOwnPropSymbols$30(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$30.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -1621,7 +1621,7 @@ const Collapse = react.exports.forwardRef((props, ref) => {
     style,
     onTransitionEnd,
     animateOpacity
-  } = _a, others = __objRest$1V(_a, ["children", "in", "transitionDuration", "transitionTimingFunction", "style", "onTransitionEnd", "animateOpacity"]);
+  } = _a, others = __objRest$1Y(_a, ["children", "in", "transitionDuration", "transitionTimingFunction", "style", "onTransitionEnd", "animateOpacity"]);
   const theme = useMantineTheme();
   const shouldReduceMotion = useReducedMotion();
   const reduceMotion = theme.respectReducedMotion ? shouldReduceMotion : false;
@@ -1638,12 +1638,12 @@ const Collapse = react.exports.forwardRef((props, ref) => {
   });
   if (duration === 0) {
     return opened ? /* @__PURE__ */ jsx(Box, {
-      ...__spreadValues$2W({}, rest),
+      ...__spreadValues$2$({}, rest),
       children
     }) : null;
   }
   return /* @__PURE__ */ jsx(Box, {
-    ...__spreadValues$2W({}, getCollapseProps(__spreadValues$2W(__spreadValues$2W({
+    ...__spreadValues$2$({}, getCollapseProps(__spreadValues$2$(__spreadValues$2$({
       style,
       ref
     }, rest), systemStyles))),
@@ -1657,38 +1657,38 @@ const Collapse = react.exports.forwardRef((props, ref) => {
   });
 });
 Collapse.displayName = "@mantine/core/Collapse";
-var __defProp$2V = Object.defineProperty;
-var __defProps$1l = Object.defineProperties;
-var __getOwnPropDescs$1l = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$2W = Object.getOwnPropertySymbols;
-var __hasOwnProp$2W = Object.prototype.hasOwnProperty;
-var __propIsEnum$2W = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2V = (obj, key, value) => key in obj ? __defProp$2V(obj, key, {
+var __defProp$2_ = Object.defineProperty;
+var __defProps$1o = Object.defineProperties;
+var __getOwnPropDescs$1o = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$2$ = Object.getOwnPropertySymbols;
+var __hasOwnProp$2$ = Object.prototype.hasOwnProperty;
+var __propIsEnum$2$ = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2_ = (obj, key, value) => key in obj ? __defProp$2_(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2V = (a, b) => {
+var __spreadValues$2_ = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2W.call(b, prop))
-      __defNormalProp$2V(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2W)
-    for (var prop of __getOwnPropSymbols$2W(b)) {
-      if (__propIsEnum$2W.call(b, prop))
-        __defNormalProp$2V(a, prop, b[prop]);
+    if (__hasOwnProp$2$.call(b, prop))
+      __defNormalProp$2_(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2$)
+    for (var prop of __getOwnPropSymbols$2$(b)) {
+      if (__propIsEnum$2$.call(b, prop))
+        __defNormalProp$2_(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$1l = (a, b) => __defProps$1l(a, __getOwnPropDescs$1l(b));
-var __objRest$1U = (source, exclude) => {
+var __spreadProps$1o = (a, b) => __defProps$1o(a, __getOwnPropDescs$1o(b));
+var __objRest$1X = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2W.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$2$.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2W)
-    for (var prop of __getOwnPropSymbols$2W(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2W.call(source, prop))
+  if (source != null && __getOwnPropSymbols$2$)
+    for (var prop of __getOwnPropSymbols$2$(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2$.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -1697,7 +1697,7 @@ function AccordionPanel(_a) {
   var _b = _a, {
     children,
     className
-  } = _b, others = __objRest$1U(_b, ["children", "className"]);
+  } = _b, others = __objRest$1X(_b, ["children", "className"]);
   const ctx = useAccordionContext();
   const {
     value
@@ -1710,7 +1710,7 @@ function AccordionPanel(_a) {
   const {
     classes,
     cx
-  } = useStyles$2D({
+  } = useStyles$2J({
     variant: ctx.variant,
     radius: ctx.radius
   }, {
@@ -1720,7 +1720,7 @@ function AccordionPanel(_a) {
     unstyled
   });
   return /* @__PURE__ */ jsx(Collapse, {
-    ...__spreadProps$1l(__spreadValues$2V({}, others), {
+    ...__spreadProps$1o(__spreadValues$2_({}, others), {
       className: cx(classes.panel, className),
       in: ctx.isItemActive(value),
       transitionDuration: ctx.transitionDuration,
@@ -1735,30 +1735,30 @@ function AccordionPanel(_a) {
   });
 }
 AccordionPanel.displayName = "@mantine/core/AccordionPanel";
-var __defProp$2U = Object.defineProperty;
-var __getOwnPropSymbols$2V = Object.getOwnPropertySymbols;
-var __hasOwnProp$2V = Object.prototype.hasOwnProperty;
-var __propIsEnum$2V = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2U = (obj, key, value) => key in obj ? __defProp$2U(obj, key, {
+var __defProp$2Z = Object.defineProperty;
+var __getOwnPropSymbols$2_ = Object.getOwnPropertySymbols;
+var __hasOwnProp$2_ = Object.prototype.hasOwnProperty;
+var __propIsEnum$2_ = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2Z = (obj, key, value) => key in obj ? __defProp$2Z(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2U = (a, b) => {
+var __spreadValues$2Z = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2V.call(b, prop))
-      __defNormalProp$2U(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2V)
-    for (var prop of __getOwnPropSymbols$2V(b)) {
-      if (__propIsEnum$2V.call(b, prop))
-        __defNormalProp$2U(a, prop, b[prop]);
+    if (__hasOwnProp$2_.call(b, prop))
+      __defNormalProp$2Z(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2_)
+    for (var prop of __getOwnPropSymbols$2_(b)) {
+      if (__propIsEnum$2_.call(b, prop))
+        __defNormalProp$2Z(a, prop, b[prop]);
     }
   return a;
 };
 function ChevronIcon$1(props) {
   return /* @__PURE__ */ jsx("svg", {
-    ...__spreadValues$2U({
+    ...__spreadValues$2Z({
       viewBox: "0 0 15 15",
       fill: "none",
       xmlns: "http://www.w3.org/2000/svg",
@@ -1773,38 +1773,38 @@ function ChevronIcon$1(props) {
     })
   });
 }
-var __defProp$2T = Object.defineProperty;
-var __defProps$1k = Object.defineProperties;
-var __getOwnPropDescs$1k = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$2U = Object.getOwnPropertySymbols;
-var __hasOwnProp$2U = Object.prototype.hasOwnProperty;
-var __propIsEnum$2U = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2T = (obj, key, value) => key in obj ? __defProp$2T(obj, key, {
+var __defProp$2Y = Object.defineProperty;
+var __defProps$1n = Object.defineProperties;
+var __getOwnPropDescs$1n = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$2Z = Object.getOwnPropertySymbols;
+var __hasOwnProp$2Z = Object.prototype.hasOwnProperty;
+var __propIsEnum$2Z = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2Y = (obj, key, value) => key in obj ? __defProp$2Y(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2T = (a, b) => {
+var __spreadValues$2Y = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2U.call(b, prop))
-      __defNormalProp$2T(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2U)
-    for (var prop of __getOwnPropSymbols$2U(b)) {
-      if (__propIsEnum$2U.call(b, prop))
-        __defNormalProp$2T(a, prop, b[prop]);
+    if (__hasOwnProp$2Z.call(b, prop))
+      __defNormalProp$2Y(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2Z)
+    for (var prop of __getOwnPropSymbols$2Z(b)) {
+      if (__propIsEnum$2Z.call(b, prop))
+        __defNormalProp$2Y(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$1k = (a, b) => __defProps$1k(a, __getOwnPropDescs$1k(b));
-var __objRest$1T = (source, exclude) => {
+var __spreadProps$1n = (a, b) => __defProps$1n(a, __getOwnPropDescs$1n(b));
+var __objRest$1W = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2U.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$2Z.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2U)
-    for (var prop of __getOwnPropSymbols$2U(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2U.call(source, prop))
+  if (source != null && __getOwnPropSymbols$2Z)
+    for (var prop of __getOwnPropSymbols$2Z(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2Z.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -1838,7 +1838,7 @@ function Accordion(props) {
     unstyled,
     variant,
     radius
-  } = _a, others = __objRest$1T(_a, ["id", "loop", "children", "multiple", "value", "defaultValue", "onChange", "transitionDuration", "disableChevronRotation", "chevronPosition", "chevronSize", "order", "chevron", "classNames", "styles", "unstyled", "variant", "radius"]);
+  } = _a, others = __objRest$1W(_a, ["id", "loop", "children", "multiple", "value", "defaultValue", "onChange", "transitionDuration", "disableChevronRotation", "chevronPosition", "chevronSize", "order", "chevron", "classNames", "styles", "unstyled", "variant", "radius"]);
   return /* @__PURE__ */ jsx(AccordionProvider, {
     id,
     multiple,
@@ -1859,7 +1859,7 @@ function Accordion(props) {
       styles,
       unstyled,
       children: /* @__PURE__ */ jsx(Box, {
-        ...__spreadProps$1k(__spreadValues$2T({}, others), {
+        ...__spreadProps$1n(__spreadValues$2Y({}, others), {
           "data-accordion": true
         }),
         children
@@ -1871,35 +1871,35 @@ Accordion.Item = AccordionItem;
 Accordion.Control = AccordionControl;
 Accordion.Panel = AccordionPanel;
 Accordion.displayName = "@mantine/core/Accordion";
-var __defProp$2S = Object.defineProperty;
-var __getOwnPropSymbols$2T = Object.getOwnPropertySymbols;
-var __hasOwnProp$2T = Object.prototype.hasOwnProperty;
-var __propIsEnum$2T = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2S = (obj, key, value) => key in obj ? __defProp$2S(obj, key, {
+var __defProp$2X = Object.defineProperty;
+var __getOwnPropSymbols$2Y = Object.getOwnPropertySymbols;
+var __hasOwnProp$2Y = Object.prototype.hasOwnProperty;
+var __propIsEnum$2Y = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2X = (obj, key, value) => key in obj ? __defProp$2X(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2S = (a, b) => {
+var __spreadValues$2X = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2T.call(b, prop))
-      __defNormalProp$2S(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2T)
-    for (var prop of __getOwnPropSymbols$2T(b)) {
-      if (__propIsEnum$2T.call(b, prop))
-        __defNormalProp$2S(a, prop, b[prop]);
+    if (__hasOwnProp$2Y.call(b, prop))
+      __defNormalProp$2X(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2Y)
+    for (var prop of __getOwnPropSymbols$2Y(b)) {
+      if (__propIsEnum$2Y.call(b, prop))
+        __defNormalProp$2X(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1S = (source, exclude) => {
+var __objRest$1V = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2T.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$2Y.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2T)
-    for (var prop of __getOwnPropSymbols$2T(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2T.call(source, prop))
+  if (source != null && __getOwnPropSymbols$2Y)
+    for (var prop of __getOwnPropSymbols$2Y(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2Y.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -1919,13 +1919,13 @@ const Affix = react.exports.forwardRef((props, ref) => {
     zIndex,
     sx,
     withinPortal
-  } = _a, others = __objRest$1S(_a, ["target", "position", "zIndex", "sx", "withinPortal"]);
+  } = _a, others = __objRest$1V(_a, ["target", "position", "zIndex", "sx", "withinPortal"]);
   return /* @__PURE__ */ jsx(OptionalPortal, {
     withinPortal,
     target,
     children: /* @__PURE__ */ jsx(Box, {
-      ...__spreadValues$2S({
-        sx: [__spreadValues$2S({
+      ...__spreadValues$2X({
+        sx: [__spreadValues$2X({
           position: "fixed",
           zIndex
         }, position), ...packSx(sx)],
@@ -1935,25 +1935,25 @@ const Affix = react.exports.forwardRef((props, ref) => {
   });
 });
 Affix.displayName = "@mantine/core/Affix";
-var __defProp$2R = Object.defineProperty;
-var __defProps$1j = Object.defineProperties;
-var __getOwnPropDescs$1j = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$2S = Object.getOwnPropertySymbols;
-var __hasOwnProp$2S = Object.prototype.hasOwnProperty;
-var __propIsEnum$2S = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2R = (obj, key, value) => key in obj ? __defProp$2R(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$2R = (a, b) => {
+var __defProp$2W = Object.defineProperty;
+var __defProps$1m = Object.defineProperties;
+var __getOwnPropDescs$1m = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$2X = Object.getOwnPropertySymbols;
+var __hasOwnProp$2X = Object.prototype.hasOwnProperty;
+var __propIsEnum$2X = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2W = (obj, key, value) => key in obj ? __defProp$2W(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$2W = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2S.call(b, prop))
-      __defNormalProp$2R(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2S)
-    for (var prop of __getOwnPropSymbols$2S(b)) {
-      if (__propIsEnum$2S.call(b, prop))
-        __defNormalProp$2R(a, prop, b[prop]);
+    if (__hasOwnProp$2X.call(b, prop))
+      __defNormalProp$2W(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2X)
+    for (var prop of __getOwnPropSymbols$2X(b)) {
+      if (__propIsEnum$2X.call(b, prop))
+        __defNormalProp$2W(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$1j = (a, b) => __defProps$1j(a, __getOwnPropDescs$1j(b));
+var __spreadProps$1m = (a, b) => __defProps$1m(a, __getOwnPropDescs$1m(b));
 function getVariantStyles$3({ variant, color, theme }) {
   if (variant === "filled") {
     const colors2 = theme.fn.variant({ variant: "filled", color });
@@ -1976,8 +1976,8 @@ function getVariantStyles$3({ variant, color, theme }) {
     color: colors.color
   };
 }
-var useStyles$2A = createStyles((theme, { color, radius, variant }) => ({
-  root: __spreadValues$2R(__spreadProps$1j(__spreadValues$2R({}, theme.fn.fontStyles()), {
+var useStyles$2G = createStyles((theme, { color, radius, variant }) => ({
+  root: __spreadValues$2W(__spreadProps$1m(__spreadValues$2W({}, theme.fn.fontStyles()), {
     position: "relative",
     overflow: "hidden",
     padding: `${theme.spacing.sm}px ${theme.spacing.md}px`,
@@ -2019,7 +2019,7 @@ var useStyles$2A = createStyles((theme, { color, radius, variant }) => ({
     marginRight: theme.spacing.md,
     marginTop: 1
   },
-  message: __spreadProps$1j(__spreadValues$2R({}, theme.fn.fontStyles()), {
+  message: __spreadProps$1m(__spreadValues$2W({}, theme.fn.fontStyles()), {
     lineHeight: theme.lineHeight,
     textOverflow: "ellipsis",
     overflow: "hidden",
@@ -2033,31 +2033,31 @@ var useStyles$2A = createStyles((theme, { color, radius, variant }) => ({
     color: "inherit"
   }
 }));
-const useStyles$2B = useStyles$2A;
-var __defProp$2Q = Object.defineProperty;
-var __getOwnPropSymbols$2R = Object.getOwnPropertySymbols;
-var __hasOwnProp$2R = Object.prototype.hasOwnProperty;
-var __propIsEnum$2R = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2Q = (obj, key, value) => key in obj ? __defProp$2Q(obj, key, {
+const useStyles$2H = useStyles$2G;
+var __defProp$2V = Object.defineProperty;
+var __getOwnPropSymbols$2W = Object.getOwnPropertySymbols;
+var __hasOwnProp$2W = Object.prototype.hasOwnProperty;
+var __propIsEnum$2W = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2V = (obj, key, value) => key in obj ? __defProp$2V(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2Q = (a, b) => {
+var __spreadValues$2V = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2R.call(b, prop))
-      __defNormalProp$2Q(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2R)
-    for (var prop of __getOwnPropSymbols$2R(b)) {
-      if (__propIsEnum$2R.call(b, prop))
-        __defNormalProp$2Q(a, prop, b[prop]);
+    if (__hasOwnProp$2W.call(b, prop))
+      __defNormalProp$2V(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2W)
+    for (var prop of __getOwnPropSymbols$2W(b)) {
+      if (__propIsEnum$2W.call(b, prop))
+        __defNormalProp$2V(a, prop, b[prop]);
     }
   return a;
 };
 function CloseIcon(props) {
   return /* @__PURE__ */ jsx("svg", {
-    ...__spreadValues$2Q({
+    ...__spreadValues$2V({
       viewBox: "0 0 15 15",
       fill: "none",
       xmlns: "http://www.w3.org/2000/svg"
@@ -2071,35 +2071,35 @@ function CloseIcon(props) {
   });
 }
 CloseIcon.displayName = "@mantine/core/CloseIcon";
-var __defProp$2P = Object.defineProperty;
-var __getOwnPropSymbols$2Q = Object.getOwnPropertySymbols;
-var __hasOwnProp$2Q = Object.prototype.hasOwnProperty;
-var __propIsEnum$2Q = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2P = (obj, key, value) => key in obj ? __defProp$2P(obj, key, {
+var __defProp$2U = Object.defineProperty;
+var __getOwnPropSymbols$2V = Object.getOwnPropertySymbols;
+var __hasOwnProp$2V = Object.prototype.hasOwnProperty;
+var __propIsEnum$2V = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2U = (obj, key, value) => key in obj ? __defProp$2U(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2P = (a, b) => {
+var __spreadValues$2U = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2Q.call(b, prop))
-      __defNormalProp$2P(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2Q)
-    for (var prop of __getOwnPropSymbols$2Q(b)) {
-      if (__propIsEnum$2Q.call(b, prop))
-        __defNormalProp$2P(a, prop, b[prop]);
+    if (__hasOwnProp$2V.call(b, prop))
+      __defNormalProp$2U(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2V)
+    for (var prop of __getOwnPropSymbols$2V(b)) {
+      if (__propIsEnum$2V.call(b, prop))
+        __defNormalProp$2U(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1R = (source, exclude) => {
+var __objRest$1U = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2Q.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$2V.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2Q)
-    for (var prop of __getOwnPropSymbols$2Q(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2Q.call(source, prop))
+  if (source != null && __getOwnPropSymbols$2V)
+    for (var prop of __getOwnPropSymbols$2V(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2V.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -2118,14 +2118,14 @@ const CloseButton = react.exports.forwardRef((props, ref) => {
   const _a = useComponentDefaultProps("CloseButton", defaultProps$18, props), {
     iconSize,
     size: size2 = "md"
-  } = _a, others = __objRest$1R(_a, ["iconSize", "size"]);
+  } = _a, others = __objRest$1U(_a, ["iconSize", "size"]);
   const theme = useMantineTheme();
   const _iconSize = iconSize || theme.fn.size({
     size: size2,
     sizes: iconSizes$5
   });
   return /* @__PURE__ */ jsx(ActionIcon, {
-    ...__spreadValues$2P({
+    ...__spreadValues$2U({
       size: size2,
       ref
     }, others),
@@ -2136,35 +2136,35 @@ const CloseButton = react.exports.forwardRef((props, ref) => {
   });
 });
 CloseButton.displayName = "@mantine/core/CloseButton";
-var __defProp$2O = Object.defineProperty;
-var __getOwnPropSymbols$2P = Object.getOwnPropertySymbols;
-var __hasOwnProp$2P = Object.prototype.hasOwnProperty;
-var __propIsEnum$2P = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2O = (obj, key, value) => key in obj ? __defProp$2O(obj, key, {
+var __defProp$2T = Object.defineProperty;
+var __getOwnPropSymbols$2U = Object.getOwnPropertySymbols;
+var __hasOwnProp$2U = Object.prototype.hasOwnProperty;
+var __propIsEnum$2U = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2T = (obj, key, value) => key in obj ? __defProp$2T(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2O = (a, b) => {
+var __spreadValues$2T = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2P.call(b, prop))
-      __defNormalProp$2O(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2P)
-    for (var prop of __getOwnPropSymbols$2P(b)) {
-      if (__propIsEnum$2P.call(b, prop))
-        __defNormalProp$2O(a, prop, b[prop]);
+    if (__hasOwnProp$2U.call(b, prop))
+      __defNormalProp$2T(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2U)
+    for (var prop of __getOwnPropSymbols$2U(b)) {
+      if (__propIsEnum$2U.call(b, prop))
+        __defNormalProp$2T(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1Q = (source, exclude) => {
+var __objRest$1T = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2P.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$2U.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2P)
-    for (var prop of __getOwnPropSymbols$2P(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2P.call(source, prop))
+  if (source != null && __getOwnPropSymbols$2U)
+    for (var prop of __getOwnPropSymbols$2U(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2U.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -2188,11 +2188,11 @@ const Alert = react.exports.forwardRef((props, ref) => {
     withCloseButton,
     closeButtonLabel,
     unstyled
-  } = _a, others = __objRest$1Q(_a, ["id", "className", "title", "variant", "children", "color", "classNames", "icon", "styles", "onClose", "radius", "withCloseButton", "closeButtonLabel", "unstyled"]);
+  } = _a, others = __objRest$1T(_a, ["id", "className", "title", "variant", "children", "color", "classNames", "icon", "styles", "onClose", "radius", "withCloseButton", "closeButtonLabel", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$2B({
+  } = useStyles$2H({
     color,
     radius,
     variant
@@ -2206,7 +2206,7 @@ const Alert = react.exports.forwardRef((props, ref) => {
   const titleId = title && `${rootId2}-title`;
   const bodyId = `${rootId2}-body`;
   return /* @__PURE__ */ jsx(Box, {
-    ...__spreadValues$2O({
+    ...__spreadValues$2T({
       id: rootId2,
       role: "alert",
       "aria-labelledby": titleId,
@@ -2262,26 +2262,26 @@ function getSortedBreakpoints$1(breakpoints, theme) {
   values2.sort((a, b) => a[0] - b[0]);
   return values2;
 }
-var __defProp$2N = Object.defineProperty;
-var __defProps$1i = Object.defineProperties;
-var __getOwnPropDescs$1i = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$2O = Object.getOwnPropertySymbols;
-var __hasOwnProp$2O = Object.prototype.hasOwnProperty;
-var __propIsEnum$2O = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2N = (obj, key, value) => key in obj ? __defProp$2N(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$2N = (a, b) => {
+var __defProp$2S = Object.defineProperty;
+var __defProps$1l = Object.defineProperties;
+var __getOwnPropDescs$1l = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$2T = Object.getOwnPropertySymbols;
+var __hasOwnProp$2T = Object.prototype.hasOwnProperty;
+var __propIsEnum$2T = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2S = (obj, key, value) => key in obj ? __defProp$2S(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$2S = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2O.call(b, prop))
-      __defNormalProp$2N(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2O)
-    for (var prop of __getOwnPropSymbols$2O(b)) {
-      if (__propIsEnum$2O.call(b, prop))
-        __defNormalProp$2N(a, prop, b[prop]);
+    if (__hasOwnProp$2T.call(b, prop))
+      __defNormalProp$2S(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2T)
+    for (var prop of __getOwnPropSymbols$2T(b)) {
+      if (__propIsEnum$2T.call(b, prop))
+        __defNormalProp$2S(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$1i = (a, b) => __defProps$1i(a, __getOwnPropDescs$1i(b));
-var useStyles$2y = createStyles((theme, {
+var __spreadProps$1l = (a, b) => __defProps$1l(a, __getOwnPropDescs$1l(b));
+var useStyles$2E = createStyles((theme, {
   height,
   width,
   fixed,
@@ -2302,7 +2302,7 @@ var useStyles$2y = createStyles((theme, {
     [section === "navbar" ? "borderRight" : "borderLeft"]: `1px solid ${theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[2]}`
   } : {};
   return {
-    root: __spreadProps$1i(__spreadValues$2N(__spreadValues$2N(__spreadProps$1i(__spreadValues$2N(__spreadValues$2N({}, theme.fn.fontStyles()), position), {
+    root: __spreadProps$1l(__spreadValues$2S(__spreadValues$2S(__spreadProps$1l(__spreadValues$2S(__spreadValues$2S({}, theme.fn.fontStyles()), position), {
       top: (position == null ? void 0 : position.top) || "var(--mantine-header-height)",
       bottom: 0,
       zIndex,
@@ -2325,36 +2325,36 @@ var useStyles$2y = createStyles((theme, {
     })
   };
 });
-const useStyles$2z = useStyles$2y;
-var __defProp$2M = Object.defineProperty;
-var __getOwnPropSymbols$2N = Object.getOwnPropertySymbols;
-var __hasOwnProp$2N = Object.prototype.hasOwnProperty;
-var __propIsEnum$2N = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2M = (obj, key, value) => key in obj ? __defProp$2M(obj, key, {
+const useStyles$2F = useStyles$2E;
+var __defProp$2R = Object.defineProperty;
+var __getOwnPropSymbols$2S = Object.getOwnPropertySymbols;
+var __hasOwnProp$2S = Object.prototype.hasOwnProperty;
+var __propIsEnum$2S = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2R = (obj, key, value) => key in obj ? __defProp$2R(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2M = (a, b) => {
+var __spreadValues$2R = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2N.call(b, prop))
-      __defNormalProp$2M(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2N)
-    for (var prop of __getOwnPropSymbols$2N(b)) {
-      if (__propIsEnum$2N.call(b, prop))
-        __defNormalProp$2M(a, prop, b[prop]);
+    if (__hasOwnProp$2S.call(b, prop))
+      __defNormalProp$2R(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2S)
+    for (var prop of __getOwnPropSymbols$2S(b)) {
+      if (__propIsEnum$2S.call(b, prop))
+        __defNormalProp$2R(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1P = (source, exclude) => {
+var __objRest$1S = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2N.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$2S.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2N)
-    for (var prop of __getOwnPropSymbols$2N(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2N.call(source, prop))
+  if (source != null && __getOwnPropSymbols$2S)
+    for (var prop of __getOwnPropSymbols$2S(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2S.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -2376,13 +2376,13 @@ const HorizontalSection = react.exports.forwardRef((_a, ref) => {
     section,
     __staticSelector,
     unstyled
-  } = _b, others = __objRest$1P(_b, ["width", "height", "fixed", "position", "zIndex", "hiddenBreakpoint", "hidden", "withBorder", "className", "classNames", "styles", "children", "section", "__staticSelector", "unstyled"]);
+  } = _b, others = __objRest$1S(_b, ["width", "height", "fixed", "position", "zIndex", "hiddenBreakpoint", "hidden", "withBorder", "className", "classNames", "styles", "children", "section", "__staticSelector", "unstyled"]);
   const ctx = useAppShellContext();
   const {
     classes,
     cx,
     theme
-  } = useStyles$2z({
+  } = useStyles$2F({
     width,
     height,
     fixed: ctx.fixed || fixed,
@@ -2404,7 +2404,7 @@ const HorizontalSection = react.exports.forwardRef((_a, ref) => {
     return acc;
   }, {});
   return /* @__PURE__ */ jsxs(Box, {
-    ...__spreadValues$2M({
+    ...__spreadValues$2R({
       component: section === "navbar" ? "nav" : "aside",
       ref,
       "data-hidden": hidden2 || void 0,
@@ -2412,7 +2412,7 @@ const HorizontalSection = react.exports.forwardRef((_a, ref) => {
     }, others),
     children: [children, /* @__PURE__ */ jsx(Global, {
       styles: () => ({
-        ":root": __spreadValues$2M({
+        ":root": __spreadValues$2R({
           [`--mantine-${section}-width`]: (width == null ? void 0 : width.base) ? `${width.base}px` : "0px"
         }, breakpoints)
       })
@@ -2420,6 +2420,258 @@ const HorizontalSection = react.exports.forwardRef((_a, ref) => {
   });
 });
 HorizontalSection.displayName = "@mantine/core/HorizontalSection";
+var __defProp$2Q = Object.defineProperty;
+var __getOwnPropSymbols$2R = Object.getOwnPropertySymbols;
+var __hasOwnProp$2R = Object.prototype.hasOwnProperty;
+var __propIsEnum$2R = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2Q = (obj, key, value) => key in obj ? __defProp$2Q(obj, key, {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  value
+}) : obj[key] = value;
+var __spreadValues$2Q = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp$2R.call(b, prop))
+      __defNormalProp$2Q(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2R)
+    for (var prop of __getOwnPropSymbols$2R(b)) {
+      if (__propIsEnum$2R.call(b, prop))
+        __defNormalProp$2Q(a, prop, b[prop]);
+    }
+  return a;
+};
+var __objRest$1R = (source, exclude) => {
+  var target = {};
+  for (var prop in source)
+    if (__hasOwnProp$2R.call(source, prop) && exclude.indexOf(prop) < 0)
+      target[prop] = source[prop];
+  if (source != null && __getOwnPropSymbols$2R)
+    for (var prop of __getOwnPropSymbols$2R(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2R.call(source, prop))
+        target[prop] = source[prop];
+    }
+  return target;
+};
+const _Section = react.exports.forwardRef((_a, ref) => {
+  var _b = _a, {
+    children,
+    grow = false,
+    sx
+  } = _b, others = __objRest$1R(_b, ["children", "grow", "sx"]);
+  return /* @__PURE__ */ jsx(Box, {
+    ...__spreadValues$2Q({
+      ref,
+      sx: [{
+        flex: grow ? 1 : 0,
+        boxSizing: "border-box"
+      }, ...packSx(sx)]
+    }, others),
+    children
+  });
+});
+_Section.displayName = "@mantine/core/Section";
+const Section = createPolymorphicComponent(_Section);
+var __defProp$2P = Object.defineProperty;
+var __getOwnPropSymbols$2Q = Object.getOwnPropertySymbols;
+var __hasOwnProp$2Q = Object.prototype.hasOwnProperty;
+var __propIsEnum$2Q = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2P = (obj, key, value) => key in obj ? __defProp$2P(obj, key, {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  value
+}) : obj[key] = value;
+var __spreadValues$2P = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp$2Q.call(b, prop))
+      __defNormalProp$2P(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2Q)
+    for (var prop of __getOwnPropSymbols$2Q(b)) {
+      if (__propIsEnum$2Q.call(b, prop))
+        __defNormalProp$2P(a, prop, b[prop]);
+    }
+  return a;
+};
+const defaultProps$16 = {
+  fixed: false,
+  position: {
+    top: 0,
+    left: 0
+  },
+  zIndex: getDefaultZIndex("app"),
+  hiddenBreakpoint: "md",
+  hidden: false
+};
+const Navbar = react.exports.forwardRef((props, ref) => {
+  const _props = useComponentDefaultProps("Navbar", defaultProps$16, props);
+  return /* @__PURE__ */ jsx(HorizontalSection, {
+    ...__spreadValues$2P({
+      section: "navbar",
+      __staticSelector: "Navbar",
+      ref
+    }, _props)
+  });
+});
+Navbar.Section = Section;
+Navbar.displayName = "@mantine/core/Navbar";
+var __defProp$2O = Object.defineProperty;
+var __defProps$1k = Object.defineProperties;
+var __getOwnPropDescs$1k = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$2P = Object.getOwnPropertySymbols;
+var __hasOwnProp$2P = Object.prototype.hasOwnProperty;
+var __propIsEnum$2P = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2O = (obj, key, value) => key in obj ? __defProp$2O(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$2O = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp$2P.call(b, prop))
+      __defNormalProp$2O(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2P)
+    for (var prop of __getOwnPropSymbols$2P(b)) {
+      if (__propIsEnum$2P.call(b, prop))
+        __defNormalProp$2O(a, prop, b[prop]);
+    }
+  return a;
+};
+var __spreadProps$1k = (a, b) => __defProps$1k(a, __getOwnPropDescs$1k(b));
+var useStyles$2C = createStyles((theme, { height, fixed, position, zIndex, borderPosition }) => ({
+  root: __spreadProps$1k(__spreadValues$2O(__spreadValues$2O({}, theme.fn.fontStyles()), position), {
+    zIndex,
+    height,
+    maxHeight: height,
+    position: fixed ? "fixed" : "static",
+    boxSizing: "border-box",
+    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
+    borderBottom: borderPosition === "bottom" ? `1px solid ${theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[2]}` : void 0,
+    borderTop: borderPosition === "top" ? `1px solid ${theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[2]}` : void 0
+  })
+}));
+const useStyles$2D = useStyles$2C;
+var __defProp$2N = Object.defineProperty;
+var __getOwnPropSymbols$2O = Object.getOwnPropertySymbols;
+var __hasOwnProp$2O = Object.prototype.hasOwnProperty;
+var __propIsEnum$2O = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2N = (obj, key, value) => key in obj ? __defProp$2N(obj, key, {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  value
+}) : obj[key] = value;
+var __spreadValues$2N = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp$2O.call(b, prop))
+      __defNormalProp$2N(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2O)
+    for (var prop of __getOwnPropSymbols$2O(b)) {
+      if (__propIsEnum$2O.call(b, prop))
+        __defNormalProp$2N(a, prop, b[prop]);
+    }
+  return a;
+};
+var __objRest$1Q = (source, exclude) => {
+  var target = {};
+  for (var prop in source)
+    if (__hasOwnProp$2O.call(source, prop) && exclude.indexOf(prop) < 0)
+      target[prop] = source[prop];
+  if (source != null && __getOwnPropSymbols$2O)
+    for (var prop of __getOwnPropSymbols$2O(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2O.call(source, prop))
+        target[prop] = source[prop];
+    }
+  return target;
+};
+const VerticalSection = react.exports.forwardRef((_a, ref) => {
+  var _b = _a, {
+    children,
+    className,
+    classNames,
+    styles,
+    height,
+    fixed = false,
+    withBorder = true,
+    position,
+    zIndex = getDefaultZIndex("app"),
+    section,
+    unstyled,
+    __staticSelector
+  } = _b, others = __objRest$1Q(_b, ["children", "className", "classNames", "styles", "height", "fixed", "withBorder", "position", "zIndex", "section", "unstyled", "__staticSelector"]);
+  const ctx = useAppShellContext();
+  const {
+    classes,
+    cx
+  } = useStyles$2D({
+    height,
+    fixed: ctx.fixed || fixed,
+    position,
+    zIndex: ctx.zIndex || zIndex,
+    borderPosition: withBorder ? section === "header" ? "bottom" : "top" : "none"
+  }, {
+    name: __staticSelector,
+    classNames,
+    styles,
+    unstyled
+  });
+  return /* @__PURE__ */ jsxs(Box, {
+    ...__spreadValues$2N({
+      component: section === "header" ? "header" : "footer",
+      className: cx(classes.root, className),
+      ref
+    }, others),
+    children: [children, /* @__PURE__ */ jsx(Global, {
+      styles: () => ({
+        ":root": {
+          [`--mantine-${section}-height`]: `${height}px`
+        }
+      })
+    })]
+  });
+});
+VerticalSection.displayName = "@mantine/core/VerticalSection";
+var __defProp$2M = Object.defineProperty;
+var __defProps$1j = Object.defineProperties;
+var __getOwnPropDescs$1j = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$2N = Object.getOwnPropertySymbols;
+var __hasOwnProp$2N = Object.prototype.hasOwnProperty;
+var __propIsEnum$2N = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2M = (obj, key, value) => key in obj ? __defProp$2M(obj, key, {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  value
+}) : obj[key] = value;
+var __spreadValues$2M = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp$2N.call(b, prop))
+      __defNormalProp$2M(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2N)
+    for (var prop of __getOwnPropSymbols$2N(b)) {
+      if (__propIsEnum$2N.call(b, prop))
+        __defNormalProp$2M(a, prop, b[prop]);
+    }
+  return a;
+};
+var __spreadProps$1j = (a, b) => __defProps$1j(a, __getOwnPropDescs$1j(b));
+const defaultProps$15 = {
+  fixed: false,
+  position: {
+    top: 0,
+    left: 0,
+    right: 0
+  },
+  zIndex: getDefaultZIndex("app")
+};
+const Header = react.exports.forwardRef((props, ref) => {
+  const _props = useComponentDefaultProps("Header", defaultProps$15, props);
+  return /* @__PURE__ */ jsx(VerticalSection, {
+    ...__spreadProps$1j(__spreadValues$2M({
+      section: "header",
+      __staticSelector: "Header"
+    }, _props), {
+      ref
+    })
+  });
+});
+Header.displayName = "@mantine/core/Header";
 var __defProp$2L = Object.defineProperty;
 var __getOwnPropSymbols$2M = Object.getOwnPropertySymbols;
 var __hasOwnProp$2M = Object.prototype.hasOwnProperty;
@@ -2441,38 +2693,31 @@ var __spreadValues$2L = (a, b) => {
     }
   return a;
 };
-var __objRest$1O = (source, exclude) => {
-  var target = {};
-  for (var prop in source)
-    if (__hasOwnProp$2M.call(source, prop) && exclude.indexOf(prop) < 0)
-      target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2M)
-    for (var prop of __getOwnPropSymbols$2M(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2M.call(source, prop))
-        target[prop] = source[prop];
-    }
-  return target;
+const defaultProps$14 = {
+  fixed: false,
+  position: {
+    top: 0,
+    right: 0
+  },
+  zIndex: getDefaultZIndex("app"),
+  hiddenBreakpoint: "md",
+  hidden: false
 };
-const _Section = react.exports.forwardRef((_a, ref) => {
-  var _b = _a, {
-    children,
-    grow = false,
-    sx
-  } = _b, others = __objRest$1O(_b, ["children", "grow", "sx"]);
-  return /* @__PURE__ */ jsx(Box, {
+const Aside = react.exports.forwardRef((props, ref) => {
+  const _props = useComponentDefaultProps("Aside", defaultProps$14, props);
+  return /* @__PURE__ */ jsx(HorizontalSection, {
     ...__spreadValues$2L({
-      ref,
-      sx: [{
-        flex: grow ? 1 : 0,
-        boxSizing: "border-box"
-      }, ...packSx(sx)]
-    }, others),
-    children
+      section: "aside",
+      __staticSelector: "Aside",
+      ref
+    }, _props)
   });
 });
-_Section.displayName = "@mantine/core/Section";
-const Section = createPolymorphicComponent(_Section);
+Aside.Section = Section;
+Aside.displayName = "@mantine/core/Aside";
 var __defProp$2K = Object.defineProperty;
+var __defProps$1i = Object.defineProperties;
+var __getOwnPropDescs$1i = Object.getOwnPropertyDescriptors;
 var __getOwnPropSymbols$2L = Object.getOwnPropertySymbols;
 var __hasOwnProp$2L = Object.prototype.hasOwnProperty;
 var __propIsEnum$2L = Object.prototype.propertyIsEnumerable;
@@ -2493,252 +2738,7 @@ var __spreadValues$2K = (a, b) => {
     }
   return a;
 };
-const defaultProps$16 = {
-  fixed: false,
-  position: {
-    top: 0,
-    left: 0
-  },
-  zIndex: getDefaultZIndex("app"),
-  hiddenBreakpoint: "md",
-  hidden: false
-};
-const Navbar = react.exports.forwardRef((props, ref) => {
-  const _props = useComponentDefaultProps("Navbar", defaultProps$16, props);
-  return /* @__PURE__ */ jsx(HorizontalSection, {
-    ...__spreadValues$2K({
-      section: "navbar",
-      __staticSelector: "Navbar",
-      ref
-    }, _props)
-  });
-});
-Navbar.Section = Section;
-Navbar.displayName = "@mantine/core/Navbar";
-var __defProp$2J = Object.defineProperty;
-var __defProps$1h = Object.defineProperties;
-var __getOwnPropDescs$1h = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$2K = Object.getOwnPropertySymbols;
-var __hasOwnProp$2K = Object.prototype.hasOwnProperty;
-var __propIsEnum$2K = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2J = (obj, key, value) => key in obj ? __defProp$2J(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$2J = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (__hasOwnProp$2K.call(b, prop))
-      __defNormalProp$2J(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2K)
-    for (var prop of __getOwnPropSymbols$2K(b)) {
-      if (__propIsEnum$2K.call(b, prop))
-        __defNormalProp$2J(a, prop, b[prop]);
-    }
-  return a;
-};
-var __spreadProps$1h = (a, b) => __defProps$1h(a, __getOwnPropDescs$1h(b));
-var useStyles$2w = createStyles((theme, { height, fixed, position, zIndex, borderPosition }) => ({
-  root: __spreadProps$1h(__spreadValues$2J(__spreadValues$2J({}, theme.fn.fontStyles()), position), {
-    zIndex,
-    height,
-    maxHeight: height,
-    position: fixed ? "fixed" : "static",
-    boxSizing: "border-box",
-    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
-    borderBottom: borderPosition === "bottom" ? `1px solid ${theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[2]}` : void 0,
-    borderTop: borderPosition === "top" ? `1px solid ${theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[2]}` : void 0
-  })
-}));
-const useStyles$2x = useStyles$2w;
-var __defProp$2I = Object.defineProperty;
-var __getOwnPropSymbols$2J = Object.getOwnPropertySymbols;
-var __hasOwnProp$2J = Object.prototype.hasOwnProperty;
-var __propIsEnum$2J = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2I = (obj, key, value) => key in obj ? __defProp$2I(obj, key, {
-  enumerable: true,
-  configurable: true,
-  writable: true,
-  value
-}) : obj[key] = value;
-var __spreadValues$2I = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (__hasOwnProp$2J.call(b, prop))
-      __defNormalProp$2I(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2J)
-    for (var prop of __getOwnPropSymbols$2J(b)) {
-      if (__propIsEnum$2J.call(b, prop))
-        __defNormalProp$2I(a, prop, b[prop]);
-    }
-  return a;
-};
-var __objRest$1N = (source, exclude) => {
-  var target = {};
-  for (var prop in source)
-    if (__hasOwnProp$2J.call(source, prop) && exclude.indexOf(prop) < 0)
-      target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2J)
-    for (var prop of __getOwnPropSymbols$2J(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2J.call(source, prop))
-        target[prop] = source[prop];
-    }
-  return target;
-};
-const VerticalSection = react.exports.forwardRef((_a, ref) => {
-  var _b = _a, {
-    children,
-    className,
-    classNames,
-    styles,
-    height,
-    fixed = false,
-    withBorder = true,
-    position,
-    zIndex = getDefaultZIndex("app"),
-    section,
-    unstyled,
-    __staticSelector
-  } = _b, others = __objRest$1N(_b, ["children", "className", "classNames", "styles", "height", "fixed", "withBorder", "position", "zIndex", "section", "unstyled", "__staticSelector"]);
-  const ctx = useAppShellContext();
-  const {
-    classes,
-    cx
-  } = useStyles$2x({
-    height,
-    fixed: ctx.fixed || fixed,
-    position,
-    zIndex: ctx.zIndex || zIndex,
-    borderPosition: withBorder ? section === "header" ? "bottom" : "top" : "none"
-  }, {
-    name: __staticSelector,
-    classNames,
-    styles,
-    unstyled
-  });
-  return /* @__PURE__ */ jsxs(Box, {
-    ...__spreadValues$2I({
-      component: section === "header" ? "header" : "footer",
-      className: cx(classes.root, className),
-      ref
-    }, others),
-    children: [children, /* @__PURE__ */ jsx(Global, {
-      styles: () => ({
-        ":root": {
-          [`--mantine-${section}-height`]: `${height}px`
-        }
-      })
-    })]
-  });
-});
-VerticalSection.displayName = "@mantine/core/VerticalSection";
-var __defProp$2H = Object.defineProperty;
-var __defProps$1g = Object.defineProperties;
-var __getOwnPropDescs$1g = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$2I = Object.getOwnPropertySymbols;
-var __hasOwnProp$2I = Object.prototype.hasOwnProperty;
-var __propIsEnum$2I = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2H = (obj, key, value) => key in obj ? __defProp$2H(obj, key, {
-  enumerable: true,
-  configurable: true,
-  writable: true,
-  value
-}) : obj[key] = value;
-var __spreadValues$2H = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (__hasOwnProp$2I.call(b, prop))
-      __defNormalProp$2H(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2I)
-    for (var prop of __getOwnPropSymbols$2I(b)) {
-      if (__propIsEnum$2I.call(b, prop))
-        __defNormalProp$2H(a, prop, b[prop]);
-    }
-  return a;
-};
-var __spreadProps$1g = (a, b) => __defProps$1g(a, __getOwnPropDescs$1g(b));
-const defaultProps$15 = {
-  fixed: false,
-  position: {
-    top: 0,
-    left: 0,
-    right: 0
-  },
-  zIndex: getDefaultZIndex("app")
-};
-const Header = react.exports.forwardRef((props, ref) => {
-  const _props = useComponentDefaultProps("Header", defaultProps$15, props);
-  return /* @__PURE__ */ jsx(VerticalSection, {
-    ...__spreadProps$1g(__spreadValues$2H({
-      section: "header",
-      __staticSelector: "Header"
-    }, _props), {
-      ref
-    })
-  });
-});
-Header.displayName = "@mantine/core/Header";
-var __defProp$2G = Object.defineProperty;
-var __getOwnPropSymbols$2H = Object.getOwnPropertySymbols;
-var __hasOwnProp$2H = Object.prototype.hasOwnProperty;
-var __propIsEnum$2H = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2G = (obj, key, value) => key in obj ? __defProp$2G(obj, key, {
-  enumerable: true,
-  configurable: true,
-  writable: true,
-  value
-}) : obj[key] = value;
-var __spreadValues$2G = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (__hasOwnProp$2H.call(b, prop))
-      __defNormalProp$2G(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2H)
-    for (var prop of __getOwnPropSymbols$2H(b)) {
-      if (__propIsEnum$2H.call(b, prop))
-        __defNormalProp$2G(a, prop, b[prop]);
-    }
-  return a;
-};
-const defaultProps$14 = {
-  fixed: false,
-  position: {
-    top: 0,
-    right: 0
-  },
-  zIndex: getDefaultZIndex("app"),
-  hiddenBreakpoint: "md",
-  hidden: false
-};
-const Aside = react.exports.forwardRef((props, ref) => {
-  const _props = useComponentDefaultProps("Aside", defaultProps$14, props);
-  return /* @__PURE__ */ jsx(HorizontalSection, {
-    ...__spreadValues$2G({
-      section: "aside",
-      __staticSelector: "Aside",
-      ref
-    }, _props)
-  });
-});
-Aside.Section = Section;
-Aside.displayName = "@mantine/core/Aside";
-var __defProp$2F = Object.defineProperty;
-var __defProps$1f = Object.defineProperties;
-var __getOwnPropDescs$1f = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$2G = Object.getOwnPropertySymbols;
-var __hasOwnProp$2G = Object.prototype.hasOwnProperty;
-var __propIsEnum$2G = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2F = (obj, key, value) => key in obj ? __defProp$2F(obj, key, {
-  enumerable: true,
-  configurable: true,
-  writable: true,
-  value
-}) : obj[key] = value;
-var __spreadValues$2F = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (__hasOwnProp$2G.call(b, prop))
-      __defNormalProp$2F(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2G)
-    for (var prop of __getOwnPropSymbols$2G(b)) {
-      if (__propIsEnum$2G.call(b, prop))
-        __defNormalProp$2F(a, prop, b[prop]);
-    }
-  return a;
-};
-var __spreadProps$1f = (a, b) => __defProps$1f(a, __getOwnPropDescs$1f(b));
+var __spreadProps$1i = (a, b) => __defProps$1i(a, __getOwnPropDescs$1i(b));
 const defaultProps$13 = {
   fixed: false,
   position: {
@@ -2751,7 +2751,7 @@ const defaultProps$13 = {
 const Footer = react.exports.forwardRef((props, ref) => {
   const _props = useComponentDefaultProps("Footer", defaultProps$13, props);
   return /* @__PURE__ */ jsx(VerticalSection, {
-    ...__spreadProps$1f(__spreadValues$2F({
+    ...__spreadProps$1i(__spreadValues$2K({
       section: "footer",
       __staticSelector: "Footer"
     }, _props), {
@@ -2760,19 +2760,19 @@ const Footer = react.exports.forwardRef((props, ref) => {
   });
 });
 Footer.displayName = "@mantine/core/Footer";
-var __defProp$2E = Object.defineProperty;
-var __getOwnPropSymbols$2F = Object.getOwnPropertySymbols;
-var __hasOwnProp$2F = Object.prototype.hasOwnProperty;
-var __propIsEnum$2F = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2E = (obj, key, value) => key in obj ? __defProp$2E(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$2E = (a, b) => {
+var __defProp$2J = Object.defineProperty;
+var __getOwnPropSymbols$2K = Object.getOwnPropertySymbols;
+var __hasOwnProp$2K = Object.prototype.hasOwnProperty;
+var __propIsEnum$2K = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2J = (obj, key, value) => key in obj ? __defProp$2J(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$2J = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2F.call(b, prop))
-      __defNormalProp$2E(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2F)
-    for (var prop of __getOwnPropSymbols$2F(b)) {
-      if (__propIsEnum$2F.call(b, prop))
-        __defNormalProp$2E(a, prop, b[prop]);
+    if (__hasOwnProp$2K.call(b, prop))
+      __defNormalProp$2J(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2K)
+    for (var prop of __getOwnPropSymbols$2K(b)) {
+      if (__propIsEnum$2K.call(b, prop))
+        __defNormalProp$2J(a, prop, b[prop]);
     }
   return a;
 };
@@ -2797,7 +2797,7 @@ function getPositionStyles$3(props, theme) {
     }
   };
 }
-var useStyles$2u = createStyles((theme, props) => ({
+var useStyles$2A = createStyles((theme, props) => ({
   root: {
     boxSizing: "border-box"
   },
@@ -2805,42 +2805,42 @@ var useStyles$2u = createStyles((theme, props) => ({
     display: "flex",
     boxSizing: "border-box"
   },
-  main: __spreadValues$2E({
+  main: __spreadValues$2J({
     flex: 1,
     width: "100vw",
     boxSizing: "border-box"
   }, getPositionStyles$3(props, theme))
 }));
-const useStyles$2v = useStyles$2u;
-var __defProp$2D = Object.defineProperty;
-var __getOwnPropSymbols$2E = Object.getOwnPropertySymbols;
-var __hasOwnProp$2E = Object.prototype.hasOwnProperty;
-var __propIsEnum$2E = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2D = (obj, key, value) => key in obj ? __defProp$2D(obj, key, {
+const useStyles$2B = useStyles$2A;
+var __defProp$2I = Object.defineProperty;
+var __getOwnPropSymbols$2J = Object.getOwnPropertySymbols;
+var __hasOwnProp$2J = Object.prototype.hasOwnProperty;
+var __propIsEnum$2J = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2I = (obj, key, value) => key in obj ? __defProp$2I(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2D = (a, b) => {
+var __spreadValues$2I = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2E.call(b, prop))
-      __defNormalProp$2D(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2E)
-    for (var prop of __getOwnPropSymbols$2E(b)) {
-      if (__propIsEnum$2E.call(b, prop))
-        __defNormalProp$2D(a, prop, b[prop]);
+    if (__hasOwnProp$2J.call(b, prop))
+      __defNormalProp$2I(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2J)
+    for (var prop of __getOwnPropSymbols$2J(b)) {
+      if (__propIsEnum$2J.call(b, prop))
+        __defNormalProp$2I(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1M = (source, exclude) => {
+var __objRest$1P = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2E.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$2J.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2E)
-    for (var prop of __getOwnPropSymbols$2E(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2E.call(source, prop))
+  if (source != null && __getOwnPropSymbols$2J)
+    for (var prop of __getOwnPropSymbols$2J(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2J.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -2866,11 +2866,11 @@ const AppShell = react.exports.forwardRef((props, ref) => {
     styles,
     classNames,
     unstyled
-  } = _a, others = __objRest$1M(_a, ["children", "navbar", "header", "footer", "aside", "fixed", "zIndex", "padding", "navbarOffsetBreakpoint", "asideOffsetBreakpoint", "className", "styles", "classNames", "unstyled"]);
+  } = _a, others = __objRest$1P(_a, ["children", "navbar", "header", "footer", "aside", "fixed", "zIndex", "padding", "navbarOffsetBreakpoint", "asideOffsetBreakpoint", "className", "styles", "classNames", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$2v({
+  } = useStyles$2B({
     padding: padding2,
     fixed,
     navbarOffsetBreakpoint,
@@ -2887,7 +2887,7 @@ const AppShell = react.exports.forwardRef((props, ref) => {
       zIndex
     },
     children: /* @__PURE__ */ jsxs(Box, {
-      ...__spreadValues$2D({
+      ...__spreadValues$2I({
         className: cx(classes.root, className),
         ref
       }, others),
@@ -2902,7 +2902,7 @@ const AppShell = react.exports.forwardRef((props, ref) => {
   });
 });
 AppShell.displayName = "@mantine/core/AppShell";
-var useStyles$2s = createStyles((theme, { ratio }) => ({
+var useStyles$2y = createStyles((theme, { ratio }) => ({
   root: {
     position: "relative",
     maxWidth: "100%",
@@ -2935,36 +2935,36 @@ var useStyles$2s = createStyles((theme, { ratio }) => ({
     }
   }
 }));
-const useStyles$2t = useStyles$2s;
-var __defProp$2C = Object.defineProperty;
-var __getOwnPropSymbols$2D = Object.getOwnPropertySymbols;
-var __hasOwnProp$2D = Object.prototype.hasOwnProperty;
-var __propIsEnum$2D = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2C = (obj, key, value) => key in obj ? __defProp$2C(obj, key, {
+const useStyles$2z = useStyles$2y;
+var __defProp$2H = Object.defineProperty;
+var __getOwnPropSymbols$2I = Object.getOwnPropertySymbols;
+var __hasOwnProp$2I = Object.prototype.hasOwnProperty;
+var __propIsEnum$2I = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2H = (obj, key, value) => key in obj ? __defProp$2H(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2C = (a, b) => {
+var __spreadValues$2H = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2D.call(b, prop))
-      __defNormalProp$2C(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2D)
-    for (var prop of __getOwnPropSymbols$2D(b)) {
-      if (__propIsEnum$2D.call(b, prop))
-        __defNormalProp$2C(a, prop, b[prop]);
+    if (__hasOwnProp$2I.call(b, prop))
+      __defNormalProp$2H(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2I)
+    for (var prop of __getOwnPropSymbols$2I(b)) {
+      if (__propIsEnum$2I.call(b, prop))
+        __defNormalProp$2H(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1L = (source, exclude) => {
+var __objRest$1O = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2D.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$2I.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2D)
-    for (var prop of __getOwnPropSymbols$2D(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2D.call(source, prop))
+  if (source != null && __getOwnPropSymbols$2I)
+    for (var prop of __getOwnPropSymbols$2I(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2I.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -2975,18 +2975,18 @@ const AspectRatio = react.exports.forwardRef((props, ref) => {
     ratio,
     children,
     unstyled
-  } = _a, others = __objRest$1L(_a, ["className", "ratio", "children", "unstyled"]);
+  } = _a, others = __objRest$1O(_a, ["className", "ratio", "children", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$2t({
+  } = useStyles$2z({
     ratio
   }, {
     name: "AspectRatio",
     unstyled
   });
   return /* @__PURE__ */ jsx(Box, {
-    ...__spreadValues$2C({
+    ...__spreadValues$2H({
       ref,
       className: cx(classes.root, className)
     }, others),
@@ -3005,7 +3005,7 @@ function getColor(theme, color) {
   const themeColor = theme.fn.variant({ variant: "outline", color }).border;
   return typeof color === "string" && (color in theme.colors || color.split(".")[0] in theme.colors) ? themeColor : color === void 0 ? theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[4] : color;
 }
-var useStyles$2q = createStyles((theme, { size: size2, variant, color }) => ({
+var useStyles$2w = createStyles((theme, { size: size2, variant, color }) => ({
   root: {},
   withLabel: {
     borderTop: "0 !important"
@@ -3056,39 +3056,39 @@ var useStyles$2q = createStyles((theme, { size: size2, variant, color }) => ({
     borderLeftStyle: variant
   }
 }));
-const useStyles$2r = useStyles$2q;
-var __defProp$2B = Object.defineProperty;
-var __defProps$1e = Object.defineProperties;
-var __getOwnPropDescs$1e = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$2C = Object.getOwnPropertySymbols;
-var __hasOwnProp$2C = Object.prototype.hasOwnProperty;
-var __propIsEnum$2C = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2B = (obj, key, value) => key in obj ? __defProp$2B(obj, key, {
+const useStyles$2x = useStyles$2w;
+var __defProp$2G = Object.defineProperty;
+var __defProps$1h = Object.defineProperties;
+var __getOwnPropDescs$1h = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$2H = Object.getOwnPropertySymbols;
+var __hasOwnProp$2H = Object.prototype.hasOwnProperty;
+var __propIsEnum$2H = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2G = (obj, key, value) => key in obj ? __defProp$2G(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2B = (a, b) => {
+var __spreadValues$2G = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2C.call(b, prop))
-      __defNormalProp$2B(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2C)
-    for (var prop of __getOwnPropSymbols$2C(b)) {
-      if (__propIsEnum$2C.call(b, prop))
-        __defNormalProp$2B(a, prop, b[prop]);
+    if (__hasOwnProp$2H.call(b, prop))
+      __defNormalProp$2G(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2H)
+    for (var prop of __getOwnPropSymbols$2H(b)) {
+      if (__propIsEnum$2H.call(b, prop))
+        __defNormalProp$2G(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$1e = (a, b) => __defProps$1e(a, __getOwnPropDescs$1e(b));
-var __objRest$1K = (source, exclude) => {
+var __spreadProps$1h = (a, b) => __defProps$1h(a, __getOwnPropDescs$1h(b));
+var __objRest$1N = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2C.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$2H.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2C)
-    for (var prop of __getOwnPropSymbols$2C(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2C.call(source, prop))
+  if (source != null && __getOwnPropSymbols$2H)
+    for (var prop of __getOwnPropSymbols$2H(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2H.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -3112,11 +3112,11 @@ const Divider = react.exports.forwardRef((props, ref) => {
     styles,
     classNames,
     unstyled
-  } = _a, others = __objRest$1K(_a, ["className", "color", "orientation", "size", "label", "labelPosition", "labelProps", "variant", "styles", "classNames", "unstyled"]);
+  } = _a, others = __objRest$1N(_a, ["className", "color", "orientation", "size", "label", "labelPosition", "labelProps", "variant", "styles", "classNames", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$2r({
+  } = useStyles$2x({
     color,
     size: size2,
     variant
@@ -3131,7 +3131,7 @@ const Divider = react.exports.forwardRef((props, ref) => {
   const withLabel = !!label && horizontal;
   const useLabelDefaultStyles = !(labelProps == null ? void 0 : labelProps.color);
   return /* @__PURE__ */ jsx(Box, {
-    ...__spreadValues$2B({
+    ...__spreadValues$2G({
       ref,
       className: cx(classes.root, {
         [classes.vertical]: vertical,
@@ -3141,7 +3141,7 @@ const Divider = react.exports.forwardRef((props, ref) => {
       role: "separator"
     }, others),
     children: withLabel && /* @__PURE__ */ jsx(Text, {
-      ...__spreadProps$1e(__spreadValues$2B({}, labelProps), {
+      ...__spreadProps$1h(__spreadValues$2G({}, labelProps), {
         size: (labelProps == null ? void 0 : labelProps.size) || "xs",
         sx: {
           marginTop: 2
@@ -3155,23 +3155,23 @@ const Divider = react.exports.forwardRef((props, ref) => {
   });
 });
 Divider.displayName = "@mantine/core/Divider";
-var __defProp$2A = Object.defineProperty;
-var __getOwnPropSymbols$2B = Object.getOwnPropertySymbols;
-var __hasOwnProp$2B = Object.prototype.hasOwnProperty;
-var __propIsEnum$2B = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2A = (obj, key, value) => key in obj ? __defProp$2A(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$2A = (a, b) => {
+var __defProp$2F = Object.defineProperty;
+var __getOwnPropSymbols$2G = Object.getOwnPropertySymbols;
+var __hasOwnProp$2G = Object.prototype.hasOwnProperty;
+var __propIsEnum$2G = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2F = (obj, key, value) => key in obj ? __defProp$2F(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$2F = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2B.call(b, prop))
-      __defNormalProp$2A(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2B)
-    for (var prop of __getOwnPropSymbols$2B(b)) {
-      if (__propIsEnum$2B.call(b, prop))
-        __defNormalProp$2A(a, prop, b[prop]);
+    if (__hasOwnProp$2G.call(b, prop))
+      __defNormalProp$2F(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2G)
+    for (var prop of __getOwnPropSymbols$2G(b)) {
+      if (__propIsEnum$2G.call(b, prop))
+        __defNormalProp$2F(a, prop, b[prop]);
     }
   return a;
 };
-var useStyles$2o = createStyles((theme, { size: size2 }) => ({
+var useStyles$2u = createStyles((theme, { size: size2 }) => ({
   item: {
     boxSizing: "border-box",
     textAlign: "left",
@@ -3187,7 +3187,7 @@ var useStyles$2o = createStyles((theme, { size: size2 }) => ({
     "&[data-hovered]": {
       backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[1]
     },
-    "&[data-selected]": __spreadValues$2A({
+    "&[data-selected]": __spreadValues$2F({
       backgroundColor: theme.fn.variant({ variant: "filled" }).background,
       color: theme.fn.variant({ variant: "filled" }).color
     }, theme.fn.hover({ backgroundColor: theme.fn.variant({ variant: "filled" }).hover })),
@@ -3216,25 +3216,25 @@ var useStyles$2o = createStyles((theme, { size: size2 }) => ({
     color: theme.colorScheme === "dark" ? theme.colors.dark[3] : theme.colors.gray[5]
   }
 }));
-const useStyles$2p = useStyles$2o;
-var __defProp$2z = Object.defineProperty;
-var __getOwnPropSymbols$2A = Object.getOwnPropertySymbols;
-var __hasOwnProp$2A = Object.prototype.hasOwnProperty;
-var __propIsEnum$2A = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2z = (obj, key, value) => key in obj ? __defProp$2z(obj, key, {
+const useStyles$2v = useStyles$2u;
+var __defProp$2E = Object.defineProperty;
+var __getOwnPropSymbols$2F = Object.getOwnPropertySymbols;
+var __hasOwnProp$2F = Object.prototype.hasOwnProperty;
+var __propIsEnum$2F = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2E = (obj, key, value) => key in obj ? __defProp$2E(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2z = (a, b) => {
+var __spreadValues$2E = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2A.call(b, prop))
-      __defNormalProp$2z(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2A)
-    for (var prop of __getOwnPropSymbols$2A(b)) {
-      if (__propIsEnum$2A.call(b, prop))
-        __defNormalProp$2z(a, prop, b[prop]);
+    if (__hasOwnProp$2F.call(b, prop))
+      __defNormalProp$2E(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2F)
+    for (var prop of __getOwnPropSymbols$2F(b)) {
+      if (__propIsEnum$2F.call(b, prop))
+        __defNormalProp$2E(a, prop, b[prop]);
     }
   return a;
 };
@@ -3258,7 +3258,7 @@ function SelectItems({
 }) {
   const {
     classes
-  } = useStyles$2p({
+  } = useStyles$2v({
     size: size2
   }, {
     classNames,
@@ -3272,7 +3272,7 @@ function SelectItems({
   const constructItemComponent = (item, index2) => {
     const selected = typeof isItemSelected === "function" ? isItemSelected(item.value) : false;
     return /* @__PURE__ */ jsx(Item, {
-      ...__spreadValues$2z({
+      ...__spreadValues$2E({
         key: item.value,
         className: classes.item,
         "data-disabled": item.disabled || void 0,
@@ -3360,35 +3360,35 @@ function SelectItems({
   });
 }
 SelectItems.displayName = "@mantine/core/SelectItems";
-var __defProp$2y = Object.defineProperty;
-var __getOwnPropSymbols$2z = Object.getOwnPropertySymbols;
-var __hasOwnProp$2z = Object.prototype.hasOwnProperty;
-var __propIsEnum$2z = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2y = (obj, key, value) => key in obj ? __defProp$2y(obj, key, {
+var __defProp$2D = Object.defineProperty;
+var __getOwnPropSymbols$2E = Object.getOwnPropertySymbols;
+var __hasOwnProp$2E = Object.prototype.hasOwnProperty;
+var __propIsEnum$2E = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2D = (obj, key, value) => key in obj ? __defProp$2D(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2y = (a, b) => {
+var __spreadValues$2D = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2z.call(b, prop))
-      __defNormalProp$2y(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2z)
-    for (var prop of __getOwnPropSymbols$2z(b)) {
-      if (__propIsEnum$2z.call(b, prop))
-        __defNormalProp$2y(a, prop, b[prop]);
+    if (__hasOwnProp$2E.call(b, prop))
+      __defNormalProp$2D(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2E)
+    for (var prop of __getOwnPropSymbols$2E(b)) {
+      if (__propIsEnum$2E.call(b, prop))
+        __defNormalProp$2D(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1J = (source, exclude) => {
+var __objRest$1M = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2z.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$2E.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2z)
-    for (var prop of __getOwnPropSymbols$2z(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2z.call(source, prop))
+  if (source != null && __getOwnPropSymbols$2E)
+    for (var prop of __getOwnPropSymbols$2E(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2E.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -3397,9 +3397,9 @@ const DefaultItem$2 = react.exports.forwardRef((_a, ref) => {
   var _b = _a, {
     label,
     value
-  } = _b, others = __objRest$1J(_b, ["label", "value"]);
+  } = _b, others = __objRest$1M(_b, ["label", "value"]);
   return /* @__PURE__ */ jsx("div", {
-    ...__spreadValues$2y({
+    ...__spreadValues$2D({
       ref
     }, others),
     children: label || value
@@ -4492,7 +4492,7 @@ const $57acba87d6e25586$export$d5c6c08dc2d3ca7 = $57acba87d6e25586$export$a21cbf
 const $57acba87d6e25586$export$9a4e88b92edfce6b = $57acba87d6e25586$export$2fabd85d0eba3c57;
 const $57acba87d6e25586$export$6521433ed15a34db = $57acba87d6e25586$export$9fba1154677d7cd2;
 const $57acba87d6e25586$export$ac61190d9fc311a9 = $57acba87d6e25586$export$56969d565df7cc4b;
-var useStyles$2m = createStyles((theme, { scrollbarSize, offsetScrollbars, scrollbarHovered, hidden: hidden2 }, getRef) => ({
+var useStyles$2s = createStyles((theme, { scrollbarSize, offsetScrollbars, scrollbarHovered, hidden: hidden2 }, getRef) => ({
   root: {
     overflow: "hidden"
   },
@@ -4553,39 +4553,39 @@ var useStyles$2m = createStyles((theme, { scrollbarSize, offsetScrollbars, scrol
     display: hidden2 ? "none" : void 0
   }
 }));
-const useStyles$2n = useStyles$2m;
-var __defProp$2x = Object.defineProperty;
-var __defProps$1d = Object.defineProperties;
-var __getOwnPropDescs$1d = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$2y = Object.getOwnPropertySymbols;
-var __hasOwnProp$2y = Object.prototype.hasOwnProperty;
-var __propIsEnum$2y = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2x = (obj, key, value) => key in obj ? __defProp$2x(obj, key, {
+const useStyles$2t = useStyles$2s;
+var __defProp$2C = Object.defineProperty;
+var __defProps$1g = Object.defineProperties;
+var __getOwnPropDescs$1g = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$2D = Object.getOwnPropertySymbols;
+var __hasOwnProp$2D = Object.prototype.hasOwnProperty;
+var __propIsEnum$2D = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2C = (obj, key, value) => key in obj ? __defProp$2C(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2x = (a, b) => {
+var __spreadValues$2C = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2y.call(b, prop))
-      __defNormalProp$2x(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2y)
-    for (var prop of __getOwnPropSymbols$2y(b)) {
-      if (__propIsEnum$2y.call(b, prop))
-        __defNormalProp$2x(a, prop, b[prop]);
+    if (__hasOwnProp$2D.call(b, prop))
+      __defNormalProp$2C(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2D)
+    for (var prop of __getOwnPropSymbols$2D(b)) {
+      if (__propIsEnum$2D.call(b, prop))
+        __defNormalProp$2C(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$1d = (a, b) => __defProps$1d(a, __getOwnPropDescs$1d(b));
-var __objRest$1I = (source, exclude) => {
+var __spreadProps$1g = (a, b) => __defProps$1g(a, __getOwnPropDescs$1g(b));
+var __objRest$1L = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2y.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$2D.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2y)
-    for (var prop of __getOwnPropSymbols$2y(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2y.call(source, prop))
+  if (source != null && __getOwnPropSymbols$2D)
+    for (var prop of __getOwnPropSymbols$2D(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2D.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -4610,13 +4610,13 @@ const _ScrollArea = react.exports.forwardRef((props, ref) => {
     viewportRef,
     onScrollPositionChange,
     unstyled
-  } = _a, others = __objRest$1I(_a, ["children", "className", "classNames", "styles", "scrollbarSize", "scrollHideDelay", "type", "dir", "offsetScrollbars", "viewportRef", "onScrollPositionChange", "unstyled"]);
+  } = _a, others = __objRest$1L(_a, ["children", "className", "classNames", "styles", "scrollbarSize", "scrollHideDelay", "type", "dir", "offsetScrollbars", "viewportRef", "onScrollPositionChange", "unstyled"]);
   const [scrollbarHovered, setScrollbarHovered] = react.exports.useState(false);
   const theme = useMantineTheme();
   const {
     classes,
     cx
-  } = useStyles$2n({
+  } = useStyles$2t({
     scrollbarSize,
     offsetScrollbars,
     scrollbarHovered,
@@ -4634,7 +4634,7 @@ const _ScrollArea = react.exports.forwardRef((props, ref) => {
     ref,
     asChild: true,
     children: /* @__PURE__ */ jsxs(Box, {
-      ...__spreadValues$2x({
+      ...__spreadValues$2C({
         className: cx(classes.root, className)
       }, others),
       children: [/* @__PURE__ */ jsx($57acba87d6e25586$export$d5c6c08dc2d3ca7, {
@@ -4686,8 +4686,8 @@ const ScrollAreaAutosize = react.exports.forwardRef((props, ref) => {
     onScrollPositionChange,
     unstyled,
     sx
-  } = _a, others = __objRest$1I(_a, ["maxHeight", "children", "classNames", "styles", "scrollbarSize", "scrollHideDelay", "type", "dir", "offsetScrollbars", "viewportRef", "onScrollPositionChange", "unstyled", "sx"]);
-  return /* @__PURE__ */ React.createElement(Box, __spreadProps$1d(__spreadValues$2x({}, others), {
+  } = _a, others = __objRest$1L(_a, ["maxHeight", "children", "classNames", "styles", "scrollbarSize", "scrollHideDelay", "type", "dir", "offsetScrollbars", "viewportRef", "onScrollPositionChange", "unstyled", "sx"]);
+  return /* @__PURE__ */ React.createElement(Box, __spreadProps$1g(__spreadValues$2C({}, others), {
     ref,
     sx: [{
       display: "flex",
@@ -4716,38 +4716,38 @@ ScrollAreaAutosize.displayName = "@mantine/core/ScrollAreaAutosize";
 _ScrollArea.displayName = "@mantine/core/ScrollArea";
 _ScrollArea.Autosize = ScrollAreaAutosize;
 const ScrollArea = _ScrollArea;
-var __defProp$2w = Object.defineProperty;
-var __defProps$1c = Object.defineProperties;
-var __getOwnPropDescs$1c = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$2x = Object.getOwnPropertySymbols;
-var __hasOwnProp$2x = Object.prototype.hasOwnProperty;
-var __propIsEnum$2x = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2w = (obj, key, value) => key in obj ? __defProp$2w(obj, key, {
+var __defProp$2B = Object.defineProperty;
+var __defProps$1f = Object.defineProperties;
+var __getOwnPropDescs$1f = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$2C = Object.getOwnPropertySymbols;
+var __hasOwnProp$2C = Object.prototype.hasOwnProperty;
+var __propIsEnum$2C = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2B = (obj, key, value) => key in obj ? __defProp$2B(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2w = (a, b) => {
+var __spreadValues$2B = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2x.call(b, prop))
-      __defNormalProp$2w(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2x)
-    for (var prop of __getOwnPropSymbols$2x(b)) {
-      if (__propIsEnum$2x.call(b, prop))
-        __defNormalProp$2w(a, prop, b[prop]);
+    if (__hasOwnProp$2C.call(b, prop))
+      __defNormalProp$2B(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2C)
+    for (var prop of __getOwnPropSymbols$2C(b)) {
+      if (__propIsEnum$2C.call(b, prop))
+        __defNormalProp$2B(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$1c = (a, b) => __defProps$1c(a, __getOwnPropDescs$1c(b));
-var __objRest$1H = (source, exclude) => {
+var __spreadProps$1f = (a, b) => __defProps$1f(a, __getOwnPropDescs$1f(b));
+var __objRest$1K = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2x.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$2C.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2x)
-    for (var prop of __getOwnPropSymbols$2x(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2x.call(source, prop))
+  if (source != null && __getOwnPropSymbols$2C)
+    for (var prop of __getOwnPropSymbols$2C(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2C.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -4755,10 +4755,10 @@ var __objRest$1H = (source, exclude) => {
 const SelectScrollArea = react.exports.forwardRef((_a, ref) => {
   var _b = _a, {
     style
-  } = _b, others = __objRest$1H(_b, ["style"]);
+  } = _b, others = __objRest$1K(_b, ["style"]);
   return /* @__PURE__ */ jsx(ScrollArea, {
-    ...__spreadProps$1c(__spreadValues$2w({}, others), {
-      style: __spreadValues$2w({
+    ...__spreadProps$1f(__spreadValues$2B({}, others), {
+      style: __spreadValues$2B({
         width: "100%"
       }, style),
       viewportRef: ref
@@ -4767,7 +4767,7 @@ const SelectScrollArea = react.exports.forwardRef((_a, ref) => {
   });
 });
 SelectScrollArea.displayName = "@mantine/core/SelectScrollArea";
-var useStyles$2k = createStyles(() => ({
+var useStyles$2q = createStyles(() => ({
   dropdown: {},
   itemsWrapper: {
     padding: 4,
@@ -4775,7 +4775,7 @@ var useStyles$2k = createStyles(() => ({
     width: "100%"
   }
 }));
-const useStyles$2l = useStyles$2k;
+const useStyles$2r = useStyles$2q;
 function getPopoverMiddlewares(options) {
   const middlewares = [offset(options.offset)];
   if (options.middlewares.shift) {
@@ -4846,39 +4846,39 @@ const POPOVER_ERRORS = {
   children: "Popover.Target component children should be an element or a component that accepts ref, fragments, strings, numbers and other primitive values are not supported"
 };
 const [PopoverContextProvider, usePopoverContext] = createSafeContext(POPOVER_ERRORS.context);
-var __defProp$2v = Object.defineProperty;
-var __defProps$1b = Object.defineProperties;
-var __getOwnPropDescs$1b = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$2w = Object.getOwnPropertySymbols;
-var __hasOwnProp$2w = Object.prototype.hasOwnProperty;
-var __propIsEnum$2w = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2v = (obj, key, value) => key in obj ? __defProp$2v(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$2v = (a, b) => {
+var __defProp$2A = Object.defineProperty;
+var __defProps$1e = Object.defineProperties;
+var __getOwnPropDescs$1e = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$2B = Object.getOwnPropertySymbols;
+var __hasOwnProp$2B = Object.prototype.hasOwnProperty;
+var __propIsEnum$2B = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2A = (obj, key, value) => key in obj ? __defProp$2A(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$2A = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2w.call(b, prop))
-      __defNormalProp$2v(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2w)
-    for (var prop of __getOwnPropSymbols$2w(b)) {
-      if (__propIsEnum$2w.call(b, prop))
-        __defNormalProp$2v(a, prop, b[prop]);
+    if (__hasOwnProp$2B.call(b, prop))
+      __defNormalProp$2A(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2B)
+    for (var prop of __getOwnPropSymbols$2B(b)) {
+      if (__propIsEnum$2B.call(b, prop))
+        __defNormalProp$2A(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$1b = (a, b) => __defProps$1b(a, __getOwnPropDescs$1b(b));
-var __objRest$1G = (source, exclude) => {
+var __spreadProps$1e = (a, b) => __defProps$1e(a, __getOwnPropDescs$1e(b));
+var __objRest$1J = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2w.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$2B.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2w)
-    for (var prop of __getOwnPropSymbols$2w(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2w.call(source, prop))
+  if (source != null && __getOwnPropSymbols$2B)
+    for (var prop of __getOwnPropSymbols$2B(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2B.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
 };
 const PopoverTarget = react.exports.forwardRef((_a, ref) => {
-  var _b = _a, { children, refProp = "ref", popupType = "dialog" } = _b, others = __objRest$1G(_b, ["children", "refProp", "popupType"]);
+  var _b = _a, { children, refProp = "ref", popupType = "dialog" } = _b, others = __objRest$1J(_b, ["children", "refProp", "popupType"]);
   if (!isElement(children)) {
     throw new Error(POPOVER_ERRORS.children);
   }
@@ -4891,13 +4891,13 @@ const PopoverTarget = react.exports.forwardRef((_a, ref) => {
     "aria-controls": ctx.getDropdownId(),
     id: ctx.getTargetId()
   } : {};
-  return react.exports.cloneElement(children, __spreadValues$2v(__spreadProps$1b(__spreadValues$2v(__spreadValues$2v(__spreadValues$2v({}, forwardedProps), accessibleProps), ctx.targetProps), {
+  return react.exports.cloneElement(children, __spreadValues$2A(__spreadProps$1e(__spreadValues$2A(__spreadValues$2A(__spreadValues$2A({}, forwardedProps), accessibleProps), ctx.targetProps), {
     className: clsx(ctx.targetProps.className, forwardedProps.className, children.props.className),
     [refProp]: targetRef
   }), !ctx.controlled ? { onClick: ctx.onToggle } : null));
 });
 PopoverTarget.displayName = "@mantine/core/PopoverTarget";
-var useStyles$2i = createStyles((theme, { radius, shadow }) => ({
+var useStyles$2o = createStyles((theme, { radius, shadow }) => ({
   dropdown: {
     position: "absolute",
     backgroundColor: theme.white,
@@ -4916,7 +4916,7 @@ var useStyles$2i = createStyles((theme, { radius, shadow }) => ({
     zIndex: 1
   }
 }));
-const useStyles$2j = useStyles$2i;
+const useStyles$2p = useStyles$2o;
 function FocusTrap({
   children,
   active = true,
@@ -4930,38 +4930,38 @@ function FocusTrap({
   return react.exports.cloneElement(children, { [refProp]: ref });
 }
 FocusTrap.displayName = "@mantine/core/FocusTrap";
-var __defProp$2u = Object.defineProperty;
-var __defProps$1a = Object.defineProperties;
-var __getOwnPropDescs$1a = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$2v = Object.getOwnPropertySymbols;
-var __hasOwnProp$2v = Object.prototype.hasOwnProperty;
-var __propIsEnum$2v = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2u = (obj, key, value) => key in obj ? __defProp$2u(obj, key, {
+var __defProp$2z = Object.defineProperty;
+var __defProps$1d = Object.defineProperties;
+var __getOwnPropDescs$1d = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$2A = Object.getOwnPropertySymbols;
+var __hasOwnProp$2A = Object.prototype.hasOwnProperty;
+var __propIsEnum$2A = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2z = (obj, key, value) => key in obj ? __defProp$2z(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2u = (a, b) => {
+var __spreadValues$2z = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2v.call(b, prop))
-      __defNormalProp$2u(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2v)
-    for (var prop of __getOwnPropSymbols$2v(b)) {
-      if (__propIsEnum$2v.call(b, prop))
-        __defNormalProp$2u(a, prop, b[prop]);
+    if (__hasOwnProp$2A.call(b, prop))
+      __defNormalProp$2z(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2A)
+    for (var prop of __getOwnPropSymbols$2A(b)) {
+      if (__propIsEnum$2A.call(b, prop))
+        __defNormalProp$2z(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$1a = (a, b) => __defProps$1a(a, __getOwnPropDescs$1a(b));
-var __objRest$1F = (source, exclude) => {
+var __spreadProps$1d = (a, b) => __defProps$1d(a, __getOwnPropDescs$1d(b));
+var __objRest$1I = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2v.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$2A.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2v)
-    for (var prop of __getOwnPropSymbols$2v(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2v.call(source, prop))
+  if (source != null && __getOwnPropSymbols$2A)
+    for (var prop of __getOwnPropSymbols$2A(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2A.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -4971,7 +4971,7 @@ function PopoverDropdown(_a) {
     style,
     className,
     children
-  } = _b, others = __objRest$1F(_b, ["style", "className", "children"]);
+  } = _b, others = __objRest$1I(_b, ["style", "className", "children"]);
   const {
     classNames,
     styles,
@@ -4982,7 +4982,7 @@ function PopoverDropdown(_a) {
   const {
     classes,
     cx
-  } = useStyles$2j({
+  } = useStyles$2p({
     radius: ctx.radius,
     shadow: ctx.shadow
   }, {
@@ -5012,10 +5012,10 @@ function PopoverDropdown(_a) {
         return /* @__PURE__ */ jsx(FocusTrap, {
           active: ctx.trapFocus,
           children: /* @__PURE__ */ jsxs(Box, {
-            ...__spreadValues$2u(__spreadProps$1a(__spreadValues$2u({}, accessibleProps), {
+            ...__spreadValues$2z(__spreadProps$1d(__spreadValues$2z({}, accessibleProps), {
               tabIndex: -1,
               ref: ctx.floating,
-              style: __spreadProps$1a(__spreadValues$2u(__spreadValues$2u({}, style), transitionStyles), {
+              style: __spreadProps$1d(__spreadValues$2z(__spreadValues$2z({}, style), transitionStyles), {
                 zIndex: ctx.zIndex,
                 top: (_a2 = ctx.y) != null ? _a2 : "",
                 left: (_b2 = ctx.x) != null ? _b2 : "",
@@ -5043,17 +5043,17 @@ function PopoverDropdown(_a) {
   });
 }
 PopoverDropdown.displayName = "@mantine/core/PopoverDropdown";
-var __getOwnPropSymbols$2u = Object.getOwnPropertySymbols;
-var __hasOwnProp$2u = Object.prototype.hasOwnProperty;
-var __propIsEnum$2u = Object.prototype.propertyIsEnumerable;
-var __objRest$1E = (source, exclude) => {
+var __getOwnPropSymbols$2z = Object.getOwnPropertySymbols;
+var __hasOwnProp$2z = Object.prototype.hasOwnProperty;
+var __propIsEnum$2z = Object.prototype.propertyIsEnumerable;
+var __objRest$1H = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2u.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$2z.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2u)
-    for (var prop of __getOwnPropSymbols$2u(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2u.call(source, prop))
+  if (source != null && __getOwnPropSymbols$2z)
+    for (var prop of __getOwnPropSymbols$2z(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2z.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -5113,7 +5113,7 @@ function Popover(props) {
     exitTransitionDuration,
     __staticSelector,
     withRoles
-  } = _a, others = __objRest$1E(_a, ["children", "position", "offset", "onPositionChange", "positionDependencies", "opened", "transition", "transitionDuration", "width", "middlewares", "withArrow", "arrowSize", "arrowOffset", "unstyled", "classNames", "styles", "closeOnClickOutside", "withinPortal", "closeOnEscape", "clickOutsideEvents", "trapFocus", "onClose", "onOpen", "onChange", "zIndex", "radius", "shadow", "id", "defaultOpened", "exitTransitionDuration", "__staticSelector", "withRoles"]);
+  } = _a, others = __objRest$1H(_a, ["children", "position", "offset", "onPositionChange", "positionDependencies", "opened", "transition", "transitionDuration", "width", "middlewares", "withArrow", "arrowSize", "arrowOffset", "unstyled", "classNames", "styles", "closeOnClickOutside", "withinPortal", "closeOnEscape", "clickOutsideEvents", "trapFocus", "onClose", "onOpen", "onChange", "zIndex", "radius", "shadow", "id", "defaultOpened", "exitTransitionDuration", "__staticSelector", "withRoles"]);
   const uid = useId(id);
   const theme = useMantineTheme();
   const popover = usePopover({
@@ -5171,35 +5171,35 @@ function Popover(props) {
 Popover.Target = PopoverTarget;
 Popover.Dropdown = PopoverDropdown;
 Popover.displayName = "@mantine/core/Popover";
-var __defProp$2t = Object.defineProperty;
-var __getOwnPropSymbols$2t = Object.getOwnPropertySymbols;
-var __hasOwnProp$2t = Object.prototype.hasOwnProperty;
-var __propIsEnum$2t = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2t = (obj, key, value) => key in obj ? __defProp$2t(obj, key, {
+var __defProp$2y = Object.defineProperty;
+var __getOwnPropSymbols$2y = Object.getOwnPropertySymbols;
+var __hasOwnProp$2y = Object.prototype.hasOwnProperty;
+var __propIsEnum$2y = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2y = (obj, key, value) => key in obj ? __defProp$2y(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2t = (a, b) => {
+var __spreadValues$2y = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2t.call(b, prop))
-      __defNormalProp$2t(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2t)
-    for (var prop of __getOwnPropSymbols$2t(b)) {
-      if (__propIsEnum$2t.call(b, prop))
-        __defNormalProp$2t(a, prop, b[prop]);
+    if (__hasOwnProp$2y.call(b, prop))
+      __defNormalProp$2y(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2y)
+    for (var prop of __getOwnPropSymbols$2y(b)) {
+      if (__propIsEnum$2y.call(b, prop))
+        __defNormalProp$2y(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1D = (source, exclude) => {
+var __objRest$1G = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2t.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$2y.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2t)
-    for (var prop of __getOwnPropSymbols$2t(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2t.call(source, prop))
+  if (source != null && __getOwnPropSymbols$2y)
+    for (var prop of __getOwnPropSymbols$2y(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2y.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -5216,17 +5216,17 @@ function SelectPopoverDropdown(_a) {
     styles,
     classNames,
     unstyled
-  } = _b, others = __objRest$1D(_b, ["children", "component", "maxHeight", "direction", "id", "innerRef", "__staticSelector", "styles", "classNames", "unstyled"]);
+  } = _b, others = __objRest$1G(_b, ["children", "component", "maxHeight", "direction", "id", "innerRef", "__staticSelector", "styles", "classNames", "unstyled"]);
   const {
     classes
-  } = useStyles$2l(null, {
+  } = useStyles$2r(null, {
     name: __staticSelector,
     styles,
     classNames,
     unstyled
   });
   return /* @__PURE__ */ jsx(Popover.Dropdown, {
-    ...__spreadValues$2t({
+    ...__spreadValues$2y({
       p: 0,
       onMouseDown: (event) => event.preventDefault()
     }, others),
@@ -5312,7 +5312,7 @@ function filterData$2({ data, limit, value, filter }) {
   }
   return result;
 }
-var useStyles$2g = createStyles((theme, { size: size2 }) => {
+var useStyles$2m = createStyles((theme, { size: size2 }) => {
   const spacing = theme.fn.size({ size: size2, sizes: theme.spacing });
   return {
     wrapper: {
@@ -5337,39 +5337,39 @@ var useStyles$2g = createStyles((theme, { size: size2 }) => {
     }
   };
 });
-const useStyles$2h = useStyles$2g;
-var __defProp$2s = Object.defineProperty;
-var __defProps$19 = Object.defineProperties;
-var __getOwnPropDescs$19 = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$2s = Object.getOwnPropertySymbols;
-var __hasOwnProp$2s = Object.prototype.hasOwnProperty;
-var __propIsEnum$2s = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2s = (obj, key, value) => key in obj ? __defProp$2s(obj, key, {
+const useStyles$2n = useStyles$2m;
+var __defProp$2x = Object.defineProperty;
+var __defProps$1c = Object.defineProperties;
+var __getOwnPropDescs$1c = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$2x = Object.getOwnPropertySymbols;
+var __hasOwnProp$2x = Object.prototype.hasOwnProperty;
+var __propIsEnum$2x = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2x = (obj, key, value) => key in obj ? __defProp$2x(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2s = (a, b) => {
+var __spreadValues$2x = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2s.call(b, prop))
-      __defNormalProp$2s(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2s)
-    for (var prop of __getOwnPropSymbols$2s(b)) {
-      if (__propIsEnum$2s.call(b, prop))
-        __defNormalProp$2s(a, prop, b[prop]);
+    if (__hasOwnProp$2x.call(b, prop))
+      __defNormalProp$2x(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2x)
+    for (var prop of __getOwnPropSymbols$2x(b)) {
+      if (__propIsEnum$2x.call(b, prop))
+        __defNormalProp$2x(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$19 = (a, b) => __defProps$19(a, __getOwnPropDescs$19(b));
-var __objRest$1C = (source, exclude) => {
+var __spreadProps$1c = (a, b) => __defProps$1c(a, __getOwnPropDescs$1c(b));
+var __objRest$1F = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2s.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$2x.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2s)
-    for (var prop of __getOwnPropSymbols$2s(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2s.call(source, prop))
+  if (source != null && __getOwnPropSymbols$2x)
+    for (var prop of __getOwnPropSymbols$2x(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2x.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -5427,10 +5427,10 @@ const Autocomplete = react.exports.forwardRef((props, ref) => {
     maxDropdownHeight,
     dropdownComponent,
     positionDependencies
-  } = _a, others = __objRest$1C(_a, ["inputProps", "wrapperProps", "shadow", "data", "limit", "value", "defaultValue", "onChange", "unstyled", "itemComponent", "onItemSubmit", "onKeyDown", "onFocus", "onBlur", "onClick", "transition", "transitionDuration", "initiallyOpened", "transitionTimingFunction", "classNames", "styles", "filter", "nothingFound", "onDropdownClose", "onDropdownOpen", "withinPortal", "switchDirectionOnFlip", "zIndex", "dropdownPosition", "maxDropdownHeight", "dropdownComponent", "positionDependencies"]);
+  } = _a, others = __objRest$1F(_a, ["inputProps", "wrapperProps", "shadow", "data", "limit", "value", "defaultValue", "onChange", "unstyled", "itemComponent", "onItemSubmit", "onKeyDown", "onFocus", "onBlur", "onClick", "transition", "transitionDuration", "initiallyOpened", "transitionTimingFunction", "classNames", "styles", "filter", "nothingFound", "onDropdownClose", "onDropdownOpen", "withinPortal", "switchDirectionOnFlip", "zIndex", "dropdownPosition", "maxDropdownHeight", "dropdownComponent", "positionDependencies"]);
   const {
     classes
-  } = useStyles$2h({
+  } = useStyles$2n({
     size: inputProps.size
   }, {
     classNames,
@@ -5525,7 +5525,7 @@ const Autocomplete = react.exports.forwardRef((props, ref) => {
   };
   const shouldRenderDropdown = dropdownOpened && (filteredData.length > 0 || filteredData.length === 0 && !!nothingFound);
   return /* @__PURE__ */ jsx(Input.Wrapper, {
-    ...__spreadProps$19(__spreadValues$2s({}, wrapperProps), {
+    ...__spreadProps$1c(__spreadValues$2x({}, wrapperProps), {
       __staticSelector: "Autocomplete"
     }),
     children: /* @__PURE__ */ jsxs(SelectPopover, {
@@ -5554,7 +5554,7 @@ const Autocomplete = react.exports.forwardRef((props, ref) => {
           onMouseLeave: () => setHovered(-1),
           tabIndex: -1,
           children: /* @__PURE__ */ jsx(Input, {
-            ...__spreadProps$19(__spreadValues$2s(__spreadValues$2s({
+            ...__spreadProps$1c(__spreadValues$2x(__spreadValues$2x({
               type: "search",
               autoComplete: "off"
             }, inputProps), others), {
@@ -5606,33 +5606,33 @@ const Autocomplete = react.exports.forwardRef((props, ref) => {
   });
 });
 Autocomplete.displayName = "@mantine/core/Autocomplete";
-var __defProp$2r = Object.defineProperty;
-var __defProps$18 = Object.defineProperties;
-var __getOwnPropDescs$18 = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$2r = Object.getOwnPropertySymbols;
-var __hasOwnProp$2r = Object.prototype.hasOwnProperty;
-var __propIsEnum$2r = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2r = (obj, key, value) => key in obj ? __defProp$2r(obj, key, {
+var __defProp$2w = Object.defineProperty;
+var __defProps$1b = Object.defineProperties;
+var __getOwnPropDescs$1b = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$2w = Object.getOwnPropertySymbols;
+var __hasOwnProp$2w = Object.prototype.hasOwnProperty;
+var __propIsEnum$2w = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2w = (obj, key, value) => key in obj ? __defProp$2w(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2r = (a, b) => {
+var __spreadValues$2w = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2r.call(b, prop))
-      __defNormalProp$2r(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2r)
-    for (var prop of __getOwnPropSymbols$2r(b)) {
-      if (__propIsEnum$2r.call(b, prop))
-        __defNormalProp$2r(a, prop, b[prop]);
+    if (__hasOwnProp$2w.call(b, prop))
+      __defNormalProp$2w(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2w)
+    for (var prop of __getOwnPropSymbols$2w(b)) {
+      if (__propIsEnum$2w.call(b, prop))
+        __defNormalProp$2w(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$18 = (a, b) => __defProps$18(a, __getOwnPropDescs$18(b));
+var __spreadProps$1b = (a, b) => __defProps$1b(a, __getOwnPropDescs$1b(b));
 function AvatarPlaceholderIcon(props) {
   return /* @__PURE__ */ jsx("svg", {
-    ...__spreadProps$18(__spreadValues$2r({}, props), {
+    ...__spreadProps$1b(__spreadValues$2w({}, props), {
       width: "15",
       height: "15",
       viewBox: "0 0 15 15",
@@ -5647,30 +5647,30 @@ function AvatarPlaceholderIcon(props) {
     })
   });
 }
-var __defProp$2q = Object.defineProperty;
-var __defProps$17 = Object.defineProperties;
-var __getOwnPropDescs$17 = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$2q = Object.getOwnPropertySymbols;
-var __hasOwnProp$2q = Object.prototype.hasOwnProperty;
-var __propIsEnum$2q = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2q = (obj, key, value) => key in obj ? __defProp$2q(obj, key, {
+var __defProp$2v = Object.defineProperty;
+var __defProps$1a = Object.defineProperties;
+var __getOwnPropDescs$1a = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$2v = Object.getOwnPropertySymbols;
+var __hasOwnProp$2v = Object.prototype.hasOwnProperty;
+var __propIsEnum$2v = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2v = (obj, key, value) => key in obj ? __defProp$2v(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2q = (a, b) => {
+var __spreadValues$2v = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2q.call(b, prop))
-      __defNormalProp$2q(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2q)
-    for (var prop of __getOwnPropSymbols$2q(b)) {
-      if (__propIsEnum$2q.call(b, prop))
-        __defNormalProp$2q(a, prop, b[prop]);
+    if (__hasOwnProp$2v.call(b, prop))
+      __defNormalProp$2v(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2v)
+    for (var prop of __getOwnPropSymbols$2v(b)) {
+      if (__propIsEnum$2v.call(b, prop))
+        __defNormalProp$2v(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$17 = (a, b) => __defProps$17(a, __getOwnPropDescs$17(b));
+var __spreadProps$1a = (a, b) => __defProps$1a(a, __getOwnPropDescs$1a(b));
 const AvatarGroupContext = react.exports.createContext(null);
 function AvatarGroupProvider({
   spacing,
@@ -5686,7 +5686,7 @@ function AvatarGroupProvider({
 function useAvatarGroupContext() {
   const ctx = react.exports.useContext(AvatarGroupContext);
   if (ctx) {
-    return __spreadProps$17(__spreadValues$2q({}, ctx), {
+    return __spreadProps$1a(__spreadValues$2v({}, ctx), {
       withinGroup: true
     });
   }
@@ -5695,42 +5695,42 @@ function useAvatarGroupContext() {
     withinGroup: false
   };
 }
-var useStyles$2e = createStyles((theme, { spacing }) => ({
+var useStyles$2k = createStyles((theme, { spacing }) => ({
   root: {
     display: "flex",
     paddingLeft: theme.fn.size({ size: spacing, sizes: theme.spacing })
   }
 }));
-const useStyles$2f = useStyles$2e;
-var __defProp$2p = Object.defineProperty;
-var __getOwnPropSymbols$2p = Object.getOwnPropertySymbols;
-var __hasOwnProp$2p = Object.prototype.hasOwnProperty;
-var __propIsEnum$2p = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2p = (obj, key, value) => key in obj ? __defProp$2p(obj, key, {
+const useStyles$2l = useStyles$2k;
+var __defProp$2u = Object.defineProperty;
+var __getOwnPropSymbols$2u = Object.getOwnPropertySymbols;
+var __hasOwnProp$2u = Object.prototype.hasOwnProperty;
+var __propIsEnum$2u = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2u = (obj, key, value) => key in obj ? __defProp$2u(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2p = (a, b) => {
+var __spreadValues$2u = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2p.call(b, prop))
-      __defNormalProp$2p(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2p)
-    for (var prop of __getOwnPropSymbols$2p(b)) {
-      if (__propIsEnum$2p.call(b, prop))
-        __defNormalProp$2p(a, prop, b[prop]);
+    if (__hasOwnProp$2u.call(b, prop))
+      __defNormalProp$2u(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2u)
+    for (var prop of __getOwnPropSymbols$2u(b)) {
+      if (__propIsEnum$2u.call(b, prop))
+        __defNormalProp$2u(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1B = (source, exclude) => {
+var __objRest$1E = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2p.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$2u.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2p)
-    for (var prop of __getOwnPropSymbols$2p(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2p.call(source, prop))
+  if (source != null && __getOwnPropSymbols$2u)
+    for (var prop of __getOwnPropSymbols$2u(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2u.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -5742,11 +5742,11 @@ const AvatarGroup = react.exports.forwardRef((props, ref) => {
     spacing = "sm",
     unstyled,
     className
-  } = _a, others = __objRest$1B(_a, ["children", "spacing", "unstyled", "className"]);
+  } = _a, others = __objRest$1E(_a, ["children", "spacing", "unstyled", "className"]);
   const {
     classes,
     cx
-  } = useStyles$2f({
+  } = useStyles$2l({
     spacing
   }, {
     name: "AvatarGroup",
@@ -5755,7 +5755,7 @@ const AvatarGroup = react.exports.forwardRef((props, ref) => {
   return /* @__PURE__ */ jsx(AvatarGroupProvider, {
     spacing,
     children: /* @__PURE__ */ jsx(Box, {
-      ...__spreadValues$2p({
+      ...__spreadValues$2u({
         ref,
         className: cx(classes.root, className)
       }, others),
@@ -5764,25 +5764,25 @@ const AvatarGroup = react.exports.forwardRef((props, ref) => {
   });
 });
 AvatarGroup.displayName = "@mantine/core/AvatarGroup";
-var __defProp$2o = Object.defineProperty;
-var __defProps$16 = Object.defineProperties;
-var __getOwnPropDescs$16 = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$2o = Object.getOwnPropertySymbols;
-var __hasOwnProp$2o = Object.prototype.hasOwnProperty;
-var __propIsEnum$2o = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2o = (obj, key, value) => key in obj ? __defProp$2o(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$2o = (a, b) => {
+var __defProp$2t = Object.defineProperty;
+var __defProps$19 = Object.defineProperties;
+var __getOwnPropDescs$19 = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$2t = Object.getOwnPropertySymbols;
+var __hasOwnProp$2t = Object.prototype.hasOwnProperty;
+var __propIsEnum$2t = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2t = (obj, key, value) => key in obj ? __defProp$2t(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$2t = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2o.call(b, prop))
-      __defNormalProp$2o(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2o)
-    for (var prop of __getOwnPropSymbols$2o(b)) {
-      if (__propIsEnum$2o.call(b, prop))
-        __defNormalProp$2o(a, prop, b[prop]);
+    if (__hasOwnProp$2t.call(b, prop))
+      __defNormalProp$2t(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2t)
+    for (var prop of __getOwnPropSymbols$2t(b)) {
+      if (__propIsEnum$2t.call(b, prop))
+        __defNormalProp$2t(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$16 = (a, b) => __defProps$16(a, __getOwnPropDescs$16(b));
+var __spreadProps$19 = (a, b) => __defProps$19(a, __getOwnPropDescs$19(b));
 const sizes$h = {
   xs: 16,
   sm: 26,
@@ -5800,10 +5800,10 @@ function getGroupStyles({ withinGroup, spacing, theme }) {
     border: `2px solid ${theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white}`
   };
 }
-var useStyles$2c = createStyles((theme, { size: size2, radius, color, withinGroup, spacing, variant, gradient }) => {
+var useStyles$2i = createStyles((theme, { size: size2, radius, color, withinGroup, spacing, variant, gradient }) => {
   const colors = theme.fn.variant({ variant, color, gradient });
   return {
-    root: __spreadValues$2o(__spreadProps$16(__spreadValues$2o({}, theme.fn.focusStyles()), {
+    root: __spreadValues$2t(__spreadProps$19(__spreadValues$2t({}, theme.fn.focusStyles()), {
       WebkitTapHighlightColor: "transparent",
       boxSizing: "border-box",
       position: "relative",
@@ -5825,7 +5825,7 @@ var useStyles$2c = createStyles((theme, { size: size2, radius, color, withinGrou
       height: "100%",
       display: "block"
     },
-    placeholder: __spreadProps$16(__spreadValues$2o({}, theme.fn.fontStyles()), {
+    placeholder: __spreadProps$19(__spreadValues$2t({}, theme.fn.fontStyles()), {
       fontSize: theme.fn.size({ size: size2, sizes: sizes$h }) / 2.5,
       color: colors.color,
       fontWeight: 700,
@@ -5847,39 +5847,39 @@ var useStyles$2c = createStyles((theme, { size: size2, radius, color, withinGrou
     }
   };
 });
-const useStyles$2d = useStyles$2c;
-var __defProp$2n = Object.defineProperty;
-var __defProps$15 = Object.defineProperties;
-var __getOwnPropDescs$15 = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$2n = Object.getOwnPropertySymbols;
-var __hasOwnProp$2n = Object.prototype.hasOwnProperty;
-var __propIsEnum$2n = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2n = (obj, key, value) => key in obj ? __defProp$2n(obj, key, {
+const useStyles$2j = useStyles$2i;
+var __defProp$2s = Object.defineProperty;
+var __defProps$18 = Object.defineProperties;
+var __getOwnPropDescs$18 = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$2s = Object.getOwnPropertySymbols;
+var __hasOwnProp$2s = Object.prototype.hasOwnProperty;
+var __propIsEnum$2s = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2s = (obj, key, value) => key in obj ? __defProp$2s(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2n = (a, b) => {
+var __spreadValues$2s = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2n.call(b, prop))
-      __defNormalProp$2n(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2n)
-    for (var prop of __getOwnPropSymbols$2n(b)) {
-      if (__propIsEnum$2n.call(b, prop))
-        __defNormalProp$2n(a, prop, b[prop]);
+    if (__hasOwnProp$2s.call(b, prop))
+      __defNormalProp$2s(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2s)
+    for (var prop of __getOwnPropSymbols$2s(b)) {
+      if (__propIsEnum$2s.call(b, prop))
+        __defNormalProp$2s(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$15 = (a, b) => __defProps$15(a, __getOwnPropDescs$15(b));
-var __objRest$1A = (source, exclude) => {
+var __spreadProps$18 = (a, b) => __defProps$18(a, __getOwnPropDescs$18(b));
+var __objRest$1D = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2n.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$2s.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2n)
-    for (var prop of __getOwnPropSymbols$2n(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2n.call(source, prop))
+  if (source != null && __getOwnPropSymbols$2s)
+    for (var prop of __getOwnPropSymbols$2s(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2s.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -5909,13 +5909,13 @@ const _Avatar = react.exports.forwardRef((props, ref) => {
     styles,
     imageProps,
     unstyled
-  } = _a, others = __objRest$1A(_a, ["className", "size", "src", "alt", "radius", "children", "color", "variant", "gradient", "classNames", "styles", "imageProps", "unstyled"]);
+  } = _a, others = __objRest$1D(_a, ["className", "size", "src", "alt", "radius", "children", "color", "variant", "gradient", "classNames", "styles", "imageProps", "unstyled"]);
   const ctx = useAvatarGroupContext();
   const [error, setError] = react.exports.useState(!src);
   const {
     classes,
     cx
-  } = useStyles$2d({
+  } = useStyles$2j({
     color,
     radius,
     size: size2,
@@ -5933,7 +5933,7 @@ const _Avatar = react.exports.forwardRef((props, ref) => {
     !src ? setError(true) : setError(false);
   }, [src]);
   return /* @__PURE__ */ jsx(Box, {
-    ...__spreadValues$2n({
+    ...__spreadValues$2s({
       component: "div",
       className: cx(classes.root, className),
       ref
@@ -5945,7 +5945,7 @@ const _Avatar = react.exports.forwardRef((props, ref) => {
         className: classes.placeholderIcon
       })
     }) : /* @__PURE__ */ jsx("img", {
-      ...__spreadProps$15(__spreadValues$2n({}, imageProps), {
+      ...__spreadProps$18(__spreadValues$2s({}, imageProps), {
         className: classes.image,
         src,
         alt,
@@ -5957,38 +5957,38 @@ const _Avatar = react.exports.forwardRef((props, ref) => {
 _Avatar.displayName = "@mantine/core/Avatar";
 _Avatar.Group = AvatarGroup;
 const Avatar = createPolymorphicComponent(_Avatar);
-var __defProp$2m = Object.defineProperty;
-var __defProps$14 = Object.defineProperties;
-var __getOwnPropDescs$14 = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$2m = Object.getOwnPropertySymbols;
-var __hasOwnProp$2m = Object.prototype.hasOwnProperty;
-var __propIsEnum$2m = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2m = (obj, key, value) => key in obj ? __defProp$2m(obj, key, {
+var __defProp$2r = Object.defineProperty;
+var __defProps$17 = Object.defineProperties;
+var __getOwnPropDescs$17 = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$2r = Object.getOwnPropertySymbols;
+var __hasOwnProp$2r = Object.prototype.hasOwnProperty;
+var __propIsEnum$2r = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2r = (obj, key, value) => key in obj ? __defProp$2r(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2m = (a, b) => {
+var __spreadValues$2r = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2m.call(b, prop))
-      __defNormalProp$2m(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2m)
-    for (var prop of __getOwnPropSymbols$2m(b)) {
-      if (__propIsEnum$2m.call(b, prop))
-        __defNormalProp$2m(a, prop, b[prop]);
+    if (__hasOwnProp$2r.call(b, prop))
+      __defNormalProp$2r(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2r)
+    for (var prop of __getOwnPropSymbols$2r(b)) {
+      if (__propIsEnum$2r.call(b, prop))
+        __defNormalProp$2r(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$14 = (a, b) => __defProps$14(a, __getOwnPropDescs$14(b));
-var __objRest$1z = (source, exclude) => {
+var __spreadProps$17 = (a, b) => __defProps$17(a, __getOwnPropDescs$17(b));
+var __objRest$1C = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2m.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$2r.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2m)
-    for (var prop of __getOwnPropSymbols$2m(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2m.call(source, prop))
+  if (source != null && __getOwnPropSymbols$2r)
+    for (var prop of __getOwnPropSymbols$2r(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2r.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -6001,11 +6001,11 @@ const _BackgroundImage = react.exports.forwardRef((props, ref) => {
     src,
     radius,
     sx
-  } = _a, others = __objRest$1z(_a, ["src", "radius", "sx"]);
+  } = _a, others = __objRest$1C(_a, ["src", "radius", "sx"]);
   return /* @__PURE__ */ jsx(Box, {
-    ...__spreadProps$14(__spreadValues$2m({}, others), {
+    ...__spreadProps$17(__spreadValues$2r({}, others), {
       ref,
-      sx: [(theme) => __spreadProps$14(__spreadValues$2m({}, theme.fn.focusStyles()), {
+      sx: [(theme) => __spreadProps$17(__spreadValues$2r({}, theme.fn.focusStyles()), {
         backgroundSize: "cover",
         backgroundPosition: "center",
         display: "block",
@@ -6021,25 +6021,25 @@ const _BackgroundImage = react.exports.forwardRef((props, ref) => {
 });
 _BackgroundImage.displayName = "@mantine/core/BackgroundImage";
 const BackgroundImage = createPolymorphicComponent(_BackgroundImage);
-var __defProp$2l = Object.defineProperty;
-var __defProps$13 = Object.defineProperties;
-var __getOwnPropDescs$13 = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$2l = Object.getOwnPropertySymbols;
-var __hasOwnProp$2l = Object.prototype.hasOwnProperty;
-var __propIsEnum$2l = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2l = (obj, key, value) => key in obj ? __defProp$2l(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$2l = (a, b) => {
+var __defProp$2q = Object.defineProperty;
+var __defProps$16 = Object.defineProperties;
+var __getOwnPropDescs$16 = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$2q = Object.getOwnPropertySymbols;
+var __hasOwnProp$2q = Object.prototype.hasOwnProperty;
+var __propIsEnum$2q = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2q = (obj, key, value) => key in obj ? __defProp$2q(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$2q = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2l.call(b, prop))
-      __defNormalProp$2l(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2l)
-    for (var prop of __getOwnPropSymbols$2l(b)) {
-      if (__propIsEnum$2l.call(b, prop))
-        __defNormalProp$2l(a, prop, b[prop]);
+    if (__hasOwnProp$2q.call(b, prop))
+      __defNormalProp$2q(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2q)
+    for (var prop of __getOwnPropSymbols$2q(b)) {
+      if (__propIsEnum$2q.call(b, prop))
+        __defNormalProp$2q(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$13 = (a, b) => __defProps$13(a, __getOwnPropDescs$13(b));
+var __spreadProps$16 = (a, b) => __defProps$16(a, __getOwnPropDescs$16(b));
 const sizes$g = {
   xs: { fontSize: 9, height: 16 },
   sm: { fontSize: 10, height: 18 },
@@ -6080,7 +6080,7 @@ function getVariantStyles$2({ theme, variant, color, size: size2, gradient }) {
     border: `${variant === "gradient" ? 0 : 1}px solid ${colors.border}`
   };
 }
-var useStyles$2a = createStyles((theme, { color, size: size2, radius, gradient, fullWidth, variant }) => {
+var useStyles$2g = createStyles((theme, { color, size: size2, radius, gradient, fullWidth, variant }) => {
   const { fontSize, height } = size2 in sizes$g ? sizes$g[size2] : sizes$g.md;
   return {
     leftSection: {
@@ -6094,7 +6094,7 @@ var useStyles$2a = createStyles((theme, { color, size: size2, radius, gradient, 
       overflow: "hidden",
       textOverflow: "ellipsis"
     },
-    root: __spreadValues$2l(__spreadProps$13(__spreadValues$2l(__spreadValues$2l({}, theme.fn.focusStyles()), theme.fn.fontStyles()), {
+    root: __spreadValues$2q(__spreadProps$16(__spreadValues$2q(__spreadValues$2q({}, theme.fn.focusStyles()), theme.fn.fontStyles()), {
       fontSize,
       height,
       WebkitTapHighlightColor: "transparent",
@@ -6116,36 +6116,36 @@ var useStyles$2a = createStyles((theme, { color, size: size2, radius, gradient, 
     }), getVariantStyles$2({ theme, variant, color, size: size2, gradient }))
   };
 });
-const useStyles$2b = useStyles$2a;
-var __defProp$2k = Object.defineProperty;
-var __getOwnPropSymbols$2k = Object.getOwnPropertySymbols;
-var __hasOwnProp$2k = Object.prototype.hasOwnProperty;
-var __propIsEnum$2k = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2k = (obj, key, value) => key in obj ? __defProp$2k(obj, key, {
+const useStyles$2h = useStyles$2g;
+var __defProp$2p = Object.defineProperty;
+var __getOwnPropSymbols$2p = Object.getOwnPropertySymbols;
+var __hasOwnProp$2p = Object.prototype.hasOwnProperty;
+var __propIsEnum$2p = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2p = (obj, key, value) => key in obj ? __defProp$2p(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2k = (a, b) => {
+var __spreadValues$2p = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2k.call(b, prop))
-      __defNormalProp$2k(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2k)
-    for (var prop of __getOwnPropSymbols$2k(b)) {
-      if (__propIsEnum$2k.call(b, prop))
-        __defNormalProp$2k(a, prop, b[prop]);
+    if (__hasOwnProp$2p.call(b, prop))
+      __defNormalProp$2p(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2p)
+    for (var prop of __getOwnPropSymbols$2p(b)) {
+      if (__propIsEnum$2p.call(b, prop))
+        __defNormalProp$2p(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1y = (source, exclude) => {
+var __objRest$1B = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2k.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$2p.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2k)
-    for (var prop of __getOwnPropSymbols$2k(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2k.call(source, prop))
+  if (source != null && __getOwnPropSymbols$2p)
+    for (var prop of __getOwnPropSymbols$2p(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2p.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -6170,11 +6170,11 @@ const _Badge = react.exports.forwardRef((props, ref) => {
     classNames,
     styles,
     unstyled
-  } = _a, others = __objRest$1y(_a, ["className", "color", "variant", "fullWidth", "children", "size", "leftSection", "rightSection", "radius", "gradient", "classNames", "styles", "unstyled"]);
+  } = _a, others = __objRest$1B(_a, ["className", "color", "variant", "fullWidth", "children", "size", "leftSection", "rightSection", "radius", "gradient", "classNames", "styles", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$2b({
+  } = useStyles$2h({
     size: size2,
     fullWidth,
     color,
@@ -6188,7 +6188,7 @@ const _Badge = react.exports.forwardRef((props, ref) => {
     unstyled
   });
   return /* @__PURE__ */ jsxs(Box, {
-    ...__spreadValues$2k({
+    ...__spreadValues$2p({
       className: cx(classes.root, className),
       ref
     }, others),
@@ -6206,30 +6206,30 @@ const _Badge = react.exports.forwardRef((props, ref) => {
 });
 _Badge.displayName = "@mantine/core/Badge";
 const Badge = createPolymorphicComponent(_Badge);
-var __defProp$2j = Object.defineProperty;
-var __getOwnPropSymbols$2j = Object.getOwnPropertySymbols;
-var __hasOwnProp$2j = Object.prototype.hasOwnProperty;
-var __propIsEnum$2j = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2j = (obj, key, value) => key in obj ? __defProp$2j(obj, key, {
+var __defProp$2o = Object.defineProperty;
+var __getOwnPropSymbols$2o = Object.getOwnPropertySymbols;
+var __hasOwnProp$2o = Object.prototype.hasOwnProperty;
+var __propIsEnum$2o = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2o = (obj, key, value) => key in obj ? __defProp$2o(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2j = (a, b) => {
+var __spreadValues$2o = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2j.call(b, prop))
-      __defNormalProp$2j(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2j)
-    for (var prop of __getOwnPropSymbols$2j(b)) {
-      if (__propIsEnum$2j.call(b, prop))
-        __defNormalProp$2j(a, prop, b[prop]);
+    if (__hasOwnProp$2o.call(b, prop))
+      __defNormalProp$2o(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2o)
+    for (var prop of __getOwnPropSymbols$2o(b)) {
+      if (__propIsEnum$2o.call(b, prop))
+        __defNormalProp$2o(a, prop, b[prop]);
     }
   return a;
 };
 function QuoteIcon(props) {
   return /* @__PURE__ */ jsx("svg", {
-    ...__spreadValues$2j({
+    ...__spreadValues$2o({
       width: "20",
       height: "20",
       viewBox: "0 0 409.294 409.294",
@@ -6241,27 +6241,27 @@ function QuoteIcon(props) {
     })
   });
 }
-var __defProp$2i = Object.defineProperty;
-var __defProps$12 = Object.defineProperties;
-var __getOwnPropDescs$12 = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$2i = Object.getOwnPropertySymbols;
-var __hasOwnProp$2i = Object.prototype.hasOwnProperty;
-var __propIsEnum$2i = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2i = (obj, key, value) => key in obj ? __defProp$2i(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$2i = (a, b) => {
+var __defProp$2n = Object.defineProperty;
+var __defProps$15 = Object.defineProperties;
+var __getOwnPropDescs$15 = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$2n = Object.getOwnPropertySymbols;
+var __hasOwnProp$2n = Object.prototype.hasOwnProperty;
+var __propIsEnum$2n = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2n = (obj, key, value) => key in obj ? __defProp$2n(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$2n = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2i.call(b, prop))
-      __defNormalProp$2i(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2i)
-    for (var prop of __getOwnPropSymbols$2i(b)) {
-      if (__propIsEnum$2i.call(b, prop))
-        __defNormalProp$2i(a, prop, b[prop]);
+    if (__hasOwnProp$2n.call(b, prop))
+      __defNormalProp$2n(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2n)
+    for (var prop of __getOwnPropSymbols$2n(b)) {
+      if (__propIsEnum$2n.call(b, prop))
+        __defNormalProp$2n(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$12 = (a, b) => __defProps$12(a, __getOwnPropDescs$12(b));
-var useStyles$28 = createStyles((theme, { color }) => ({
-  root: __spreadProps$12(__spreadValues$2i({}, theme.fn.fontStyles()), {
+var __spreadProps$15 = (a, b) => __defProps$15(a, __getOwnPropDescs$15(b));
+var useStyles$2e = createStyles((theme, { color }) => ({
+  root: __spreadProps$15(__spreadValues$2n({}, theme.fn.fontStyles()), {
     fontSize: theme.fontSizes.lg,
     lineHeight: theme.lineHeight,
     color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
@@ -6293,36 +6293,36 @@ var useStyles$28 = createStyles((theme, { color }) => ({
     textOverflow: "ellipsis"
   }
 }));
-const useStyles$29 = useStyles$28;
-var __defProp$2h = Object.defineProperty;
-var __getOwnPropSymbols$2h = Object.getOwnPropertySymbols;
-var __hasOwnProp$2h = Object.prototype.hasOwnProperty;
-var __propIsEnum$2h = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2h = (obj, key, value) => key in obj ? __defProp$2h(obj, key, {
+const useStyles$2f = useStyles$2e;
+var __defProp$2m = Object.defineProperty;
+var __getOwnPropSymbols$2m = Object.getOwnPropertySymbols;
+var __hasOwnProp$2m = Object.prototype.hasOwnProperty;
+var __propIsEnum$2m = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2m = (obj, key, value) => key in obj ? __defProp$2m(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2h = (a, b) => {
+var __spreadValues$2m = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2h.call(b, prop))
-      __defNormalProp$2h(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2h)
-    for (var prop of __getOwnPropSymbols$2h(b)) {
-      if (__propIsEnum$2h.call(b, prop))
-        __defNormalProp$2h(a, prop, b[prop]);
+    if (__hasOwnProp$2m.call(b, prop))
+      __defNormalProp$2m(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2m)
+    for (var prop of __getOwnPropSymbols$2m(b)) {
+      if (__propIsEnum$2m.call(b, prop))
+        __defNormalProp$2m(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1x = (source, exclude) => {
+var __objRest$1A = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2h.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$2m.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2h)
-    for (var prop of __getOwnPropSymbols$2h(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2h.call(source, prop))
+  if (source != null && __getOwnPropSymbols$2m)
+    for (var prop of __getOwnPropSymbols$2m(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2m.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -6341,11 +6341,11 @@ const Blockquote = react.exports.forwardRef((props, ref) => {
     classNames,
     styles,
     unstyled
-  } = _a, others = __objRest$1x(_a, ["className", "color", "icon", "cite", "children", "classNames", "styles", "unstyled"]);
+  } = _a, others = __objRest$1A(_a, ["className", "color", "icon", "cite", "children", "classNames", "styles", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$29({
+  } = useStyles$2f({
     color
   }, {
     classNames,
@@ -6354,7 +6354,7 @@ const Blockquote = react.exports.forwardRef((props, ref) => {
     name: "Blockquote"
   });
   return /* @__PURE__ */ jsx(Box, {
-    ...__spreadValues$2h({
+    ...__spreadValues$2m({
       component: "blockquote",
       className: cx(classes.root, className),
       ref
@@ -6375,7 +6375,7 @@ const Blockquote = react.exports.forwardRef((props, ref) => {
   });
 });
 Blockquote.displayName = "@mantine/core/Blockquote";
-var useStyles$26 = createStyles((theme) => ({
+var useStyles$2c = createStyles((theme) => ({
   root: {
     display: "flex",
     alignItems: "center"
@@ -6395,36 +6395,36 @@ var useStyles$26 = createStyles((theme) => ({
     justifyContent: "center"
   }
 }));
-const useStyles$27 = useStyles$26;
-var __defProp$2g = Object.defineProperty;
-var __getOwnPropSymbols$2g = Object.getOwnPropertySymbols;
-var __hasOwnProp$2g = Object.prototype.hasOwnProperty;
-var __propIsEnum$2g = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2g = (obj, key, value) => key in obj ? __defProp$2g(obj, key, {
+const useStyles$2d = useStyles$2c;
+var __defProp$2l = Object.defineProperty;
+var __getOwnPropSymbols$2l = Object.getOwnPropertySymbols;
+var __hasOwnProp$2l = Object.prototype.hasOwnProperty;
+var __propIsEnum$2l = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2l = (obj, key, value) => key in obj ? __defProp$2l(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2g = (a, b) => {
+var __spreadValues$2l = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2g.call(b, prop))
-      __defNormalProp$2g(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2g)
-    for (var prop of __getOwnPropSymbols$2g(b)) {
-      if (__propIsEnum$2g.call(b, prop))
-        __defNormalProp$2g(a, prop, b[prop]);
+    if (__hasOwnProp$2l.call(b, prop))
+      __defNormalProp$2l(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2l)
+    for (var prop of __getOwnPropSymbols$2l(b)) {
+      if (__propIsEnum$2l.call(b, prop))
+        __defNormalProp$2l(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1w = (source, exclude) => {
+var __objRest$1z = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2g.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$2l.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2g)
-    for (var prop of __getOwnPropSymbols$2g(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2g.call(source, prop))
+  if (source != null && __getOwnPropSymbols$2l)
+    for (var prop of __getOwnPropSymbols$2l(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2l.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -6440,11 +6440,11 @@ const Breadcrumbs = react.exports.forwardRef((props, ref) => {
     classNames,
     styles,
     unstyled
-  } = _a, others = __objRest$1w(_a, ["className", "children", "separator", "classNames", "styles", "unstyled"]);
+  } = _a, others = __objRest$1z(_a, ["className", "children", "separator", "classNames", "styles", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$27(null, {
+  } = useStyles$2d(null, {
     classNames,
     styles,
     unstyled,
@@ -6472,7 +6472,7 @@ const Breadcrumbs = react.exports.forwardRef((props, ref) => {
     return acc;
   }, []);
   return /* @__PURE__ */ jsx(Box, {
-    ...__spreadValues$2g({
+    ...__spreadValues$2l({
       className: cx(classes.root, className),
       ref
     }, others),
@@ -6487,7 +6487,7 @@ const sizes$f = {
   lg: 34,
   xl: 42
 };
-var useStyles$24 = createStyles((theme, { size: size2, color, transitionDuration }) => {
+var useStyles$2a = createStyles((theme, { size: size2, color, transitionDuration }) => {
   const sizeValue = theme.fn.size({ size: size2, sizes: sizes$f });
   const _color = color || (theme.colorScheme === "dark" ? theme.white : theme.black);
   return {
@@ -6537,36 +6537,36 @@ var useStyles$24 = createStyles((theme, { size: size2, color, transitionDuration
     }
   };
 });
-const useStyles$25 = useStyles$24;
-var __defProp$2f = Object.defineProperty;
-var __getOwnPropSymbols$2f = Object.getOwnPropertySymbols;
-var __hasOwnProp$2f = Object.prototype.hasOwnProperty;
-var __propIsEnum$2f = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2f = (obj, key, value) => key in obj ? __defProp$2f(obj, key, {
+const useStyles$2b = useStyles$2a;
+var __defProp$2k = Object.defineProperty;
+var __getOwnPropSymbols$2k = Object.getOwnPropertySymbols;
+var __hasOwnProp$2k = Object.prototype.hasOwnProperty;
+var __propIsEnum$2k = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2k = (obj, key, value) => key in obj ? __defProp$2k(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2f = (a, b) => {
+var __spreadValues$2k = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2f.call(b, prop))
-      __defNormalProp$2f(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2f)
-    for (var prop of __getOwnPropSymbols$2f(b)) {
-      if (__propIsEnum$2f.call(b, prop))
-        __defNormalProp$2f(a, prop, b[prop]);
+    if (__hasOwnProp$2k.call(b, prop))
+      __defNormalProp$2k(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2k)
+    for (var prop of __getOwnPropSymbols$2k(b)) {
+      if (__propIsEnum$2k.call(b, prop))
+        __defNormalProp$2k(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1v = (source, exclude) => {
+var __objRest$1y = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2f.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$2k.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2f)
-    for (var prop of __getOwnPropSymbols$2f(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2f.call(source, prop))
+  if (source != null && __getOwnPropSymbols$2k)
+    for (var prop of __getOwnPropSymbols$2k(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2k.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -6584,11 +6584,11 @@ const Burger = react.exports.forwardRef((props, ref) => {
     classNames,
     styles,
     transitionDuration
-  } = _a, others = __objRest$1v(_a, ["className", "opened", "color", "size", "classNames", "styles", "transitionDuration"]);
+  } = _a, others = __objRest$1y(_a, ["className", "opened", "color", "size", "classNames", "styles", "transitionDuration"]);
   const {
     classes,
     cx
-  } = useStyles$25({
+  } = useStyles$2b({
     color,
     size: size2,
     transitionDuration
@@ -6598,7 +6598,7 @@ const Burger = react.exports.forwardRef((props, ref) => {
     name: "Burger"
   });
   return /* @__PURE__ */ jsx(UnstyledButton, {
-    ...__spreadValues$2f({
+    ...__spreadValues$2k({
       className: cx(classes.root, className),
       ref
     }, others),
@@ -6612,7 +6612,7 @@ Burger.displayName = "@mantine/core/Burger";
 const CardContext = react.exports.createContext({ padding: 0 });
 const CardProvider = CardContext.Provider;
 const useCardPadding = () => react.exports.useContext(CardContext).padding;
-var useStyles$22 = createStyles((theme, { padding: padding2, withBorder, inheritPadding }) => {
+var useStyles$28 = createStyles((theme, { padding: padding2, withBorder, inheritPadding }) => {
   const spacing = theme.fn.size({ size: padding2, sizes: theme.spacing });
   const offset2 = -1 * spacing;
   const borderColor = theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3];
@@ -6640,36 +6640,36 @@ var useStyles$22 = createStyles((theme, { padding: padding2, withBorder, inherit
     }
   };
 });
-const useStyles$23 = useStyles$22;
-var __defProp$2e = Object.defineProperty;
-var __getOwnPropSymbols$2e = Object.getOwnPropertySymbols;
-var __hasOwnProp$2e = Object.prototype.hasOwnProperty;
-var __propIsEnum$2e = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2e = (obj, key, value) => key in obj ? __defProp$2e(obj, key, {
+const useStyles$29 = useStyles$28;
+var __defProp$2j = Object.defineProperty;
+var __getOwnPropSymbols$2j = Object.getOwnPropertySymbols;
+var __hasOwnProp$2j = Object.prototype.hasOwnProperty;
+var __propIsEnum$2j = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2j = (obj, key, value) => key in obj ? __defProp$2j(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2e = (a, b) => {
+var __spreadValues$2j = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2e.call(b, prop))
-      __defNormalProp$2e(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2e)
-    for (var prop of __getOwnPropSymbols$2e(b)) {
-      if (__propIsEnum$2e.call(b, prop))
-        __defNormalProp$2e(a, prop, b[prop]);
+    if (__hasOwnProp$2j.call(b, prop))
+      __defNormalProp$2j(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2j)
+    for (var prop of __getOwnPropSymbols$2j(b)) {
+      if (__propIsEnum$2j.call(b, prop))
+        __defNormalProp$2j(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1u = (source, exclude) => {
+var __objRest$1x = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2e.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$2j.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2e)
-    for (var prop of __getOwnPropSymbols$2e(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2e.call(source, prop))
+  if (source != null && __getOwnPropSymbols$2j)
+    for (var prop of __getOwnPropSymbols$2j(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2j.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -6680,11 +6680,11 @@ const _CardSection = react.exports.forwardRef((_a, ref) => {
     withBorder = false,
     inheritPadding = false,
     unstyled
-  } = _b, others = __objRest$1u(_b, ["className", "withBorder", "inheritPadding", "unstyled"]);
+  } = _b, others = __objRest$1x(_b, ["className", "withBorder", "inheritPadding", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$23({
+  } = useStyles$29({
     padding: useCardPadding(),
     withBorder,
     inheritPadding
@@ -6693,7 +6693,7 @@ const _CardSection = react.exports.forwardRef((_a, ref) => {
     unstyled
   });
   return /* @__PURE__ */ jsx(Box, {
-    ...__spreadValues$2e({
+    ...__spreadValues$2j({
       className: cx(classes.cardSection, className),
       ref
     }, others)
@@ -6701,43 +6701,43 @@ const _CardSection = react.exports.forwardRef((_a, ref) => {
 });
 _CardSection.displayName = "@mantine/core/CardSection";
 const CardSection = createPolymorphicComponent(_CardSection);
-var useStyles$20 = createStyles((theme) => ({
+var useStyles$26 = createStyles((theme) => ({
   root: {
     position: "relative",
     overflow: "hidden",
     backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.white
   }
 }));
-const useStyles$21 = useStyles$20;
-var __defProp$2d = Object.defineProperty;
-var __getOwnPropSymbols$2d = Object.getOwnPropertySymbols;
-var __hasOwnProp$2d = Object.prototype.hasOwnProperty;
-var __propIsEnum$2d = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2d = (obj, key, value) => key in obj ? __defProp$2d(obj, key, {
+const useStyles$27 = useStyles$26;
+var __defProp$2i = Object.defineProperty;
+var __getOwnPropSymbols$2i = Object.getOwnPropertySymbols;
+var __hasOwnProp$2i = Object.prototype.hasOwnProperty;
+var __propIsEnum$2i = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2i = (obj, key, value) => key in obj ? __defProp$2i(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2d = (a, b) => {
+var __spreadValues$2i = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2d.call(b, prop))
-      __defNormalProp$2d(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2d)
-    for (var prop of __getOwnPropSymbols$2d(b)) {
-      if (__propIsEnum$2d.call(b, prop))
-        __defNormalProp$2d(a, prop, b[prop]);
+    if (__hasOwnProp$2i.call(b, prop))
+      __defNormalProp$2i(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2i)
+    for (var prop of __getOwnPropSymbols$2i(b)) {
+      if (__propIsEnum$2i.call(b, prop))
+        __defNormalProp$2i(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1t = (source, exclude) => {
+var __objRest$1w = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2d.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$2i.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2d)
-    for (var prop of __getOwnPropSymbols$2d(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2d.call(source, prop))
+  if (source != null && __getOwnPropSymbols$2i)
+    for (var prop of __getOwnPropSymbols$2i(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2i.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -6752,11 +6752,11 @@ const _Card = react.exports.forwardRef((props, ref) => {
     radius,
     children,
     unstyled
-  } = _a, others = __objRest$1t(_a, ["className", "p", "radius", "children", "unstyled"]);
+  } = _a, others = __objRest$1w(_a, ["className", "p", "radius", "children", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$21(null, {
+  } = useStyles$27(null, {
     name: "Card",
     unstyled
   });
@@ -6776,7 +6776,7 @@ const _Card = react.exports.forwardRef((props, ref) => {
       padding: p
     },
     children: /* @__PURE__ */ jsx(Paper, {
-      ...__spreadValues$2d({
+      ...__spreadValues$2i({
         className: cx(classes.root, className),
         radius,
         p,
@@ -6792,35 +6792,35 @@ const Card = createPolymorphicComponent(_Card);
 const ChipGroupContext = react.exports.createContext(null);
 const ChipGroupProvider = ChipGroupContext.Provider;
 const useChipGroup = () => react.exports.useContext(ChipGroupContext);
-var __defProp$2c = Object.defineProperty;
-var __getOwnPropSymbols$2c = Object.getOwnPropertySymbols;
-var __hasOwnProp$2c = Object.prototype.hasOwnProperty;
-var __propIsEnum$2c = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2c = (obj, key, value) => key in obj ? __defProp$2c(obj, key, {
+var __defProp$2h = Object.defineProperty;
+var __getOwnPropSymbols$2h = Object.getOwnPropertySymbols;
+var __hasOwnProp$2h = Object.prototype.hasOwnProperty;
+var __propIsEnum$2h = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2h = (obj, key, value) => key in obj ? __defProp$2h(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2c = (a, b) => {
+var __spreadValues$2h = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2c.call(b, prop))
-      __defNormalProp$2c(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2c)
-    for (var prop of __getOwnPropSymbols$2c(b)) {
-      if (__propIsEnum$2c.call(b, prop))
-        __defNormalProp$2c(a, prop, b[prop]);
+    if (__hasOwnProp$2h.call(b, prop))
+      __defNormalProp$2h(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2h)
+    for (var prop of __getOwnPropSymbols$2h(b)) {
+      if (__propIsEnum$2h.call(b, prop))
+        __defNormalProp$2h(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1s = (source, exclude) => {
+var __objRest$1v = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2c.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$2h.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2c)
-    for (var prop of __getOwnPropSymbols$2c(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2c.call(source, prop))
+  if (source != null && __getOwnPropSymbols$2h)
+    for (var prop of __getOwnPropSymbols$2h(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2h.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -6837,7 +6837,7 @@ function ChipGroup(props) {
     multiple,
     children,
     unstyled
-  } = _a, others = __objRest$1s(_a, ["value", "defaultValue", "onChange", "spacing", "multiple", "children", "unstyled"]);
+  } = _a, others = __objRest$1v(_a, ["value", "defaultValue", "onChange", "spacing", "multiple", "children", "unstyled"]);
   const [_value, setValue] = useUncontrolled({
     value,
     defaultValue,
@@ -6860,7 +6860,7 @@ function ChipGroup(props) {
       multiple
     },
     children: /* @__PURE__ */ jsx(Group, {
-      ...__spreadValues$2c({
+      ...__spreadValues$2h({
         spacing,
         unstyled
       }, others),
@@ -6869,25 +6869,25 @@ function ChipGroup(props) {
   });
 }
 ChipGroup.displayName = "@mantine/core/ChipGroup";
-var __defProp$2b = Object.defineProperty;
-var __defProps$11 = Object.defineProperties;
-var __getOwnPropDescs$11 = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$2b = Object.getOwnPropertySymbols;
-var __hasOwnProp$2b = Object.prototype.hasOwnProperty;
-var __propIsEnum$2b = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2b = (obj, key, value) => key in obj ? __defProp$2b(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$2b = (a, b) => {
+var __defProp$2g = Object.defineProperty;
+var __defProps$14 = Object.defineProperties;
+var __getOwnPropDescs$14 = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$2g = Object.getOwnPropertySymbols;
+var __hasOwnProp$2g = Object.prototype.hasOwnProperty;
+var __propIsEnum$2g = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2g = (obj, key, value) => key in obj ? __defProp$2g(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$2g = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2b.call(b, prop))
-      __defNormalProp$2b(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2b)
-    for (var prop of __getOwnPropSymbols$2b(b)) {
-      if (__propIsEnum$2b.call(b, prop))
-        __defNormalProp$2b(a, prop, b[prop]);
+    if (__hasOwnProp$2g.call(b, prop))
+      __defNormalProp$2g(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2g)
+    for (var prop of __getOwnPropSymbols$2g(b)) {
+      if (__propIsEnum$2g.call(b, prop))
+        __defNormalProp$2g(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$11 = (a, b) => __defProps$11(a, __getOwnPropDescs$11(b));
+var __spreadProps$14 = (a, b) => __defProps$14(a, __getOwnPropDescs$14(b));
 const sizes$e = {
   xs: 24,
   sm: 28,
@@ -6916,9 +6916,9 @@ const checkedPadding = {
   lg: 13,
   xl: 15
 };
-var useStyles$1_ = createStyles((theme, { radius, size: size2, color }, getRef) => ({
+var useStyles$24 = createStyles((theme, { radius, size: size2, color }, getRef) => ({
   root: {},
-  label: __spreadProps$11(__spreadValues$2b({
+  label: __spreadProps$14(__spreadValues$2g({
     ref: getRef("label")
   }, theme.fn.fontStyles()), {
     boxSizing: "border-box",
@@ -6937,18 +6937,18 @@ var useStyles$1_ = createStyles((theme, { radius, size: size2, color }, getRef) 
     whiteSpace: "nowrap",
     transition: "background-color 100ms ease",
     WebkitTapHighlightColor: "transparent",
-    '&[data-variant="filled"]': __spreadValues$2b({
+    '&[data-variant="filled"]': __spreadValues$2g({
       backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[1]
     }, theme.fn.hover({
       backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[0]
     })),
-    '&[data-variant="outline"]': __spreadValues$2b({
+    '&[data-variant="outline"]': __spreadValues$2g({
       backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.white,
       borderColor: theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[4]
     }, theme.fn.hover({
       backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[0]
     })),
-    "&[data-disabled]": __spreadProps$11(__spreadValues$2b({
+    "&[data-disabled]": __spreadProps$14(__spreadValues$2g({
       backgroundColor: `${theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[1]} !important`,
       borderColor: `${theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[1]} !important`,
       color: theme.colorScheme === "dark" ? theme.colors.dark[3] : theme.colors.gray[5],
@@ -7008,36 +7008,36 @@ var useStyles$1_ = createStyles((theme, { radius, size: size2, color }, getRef) 
     }
   }
 }));
-const useStyles$1$ = useStyles$1_;
-var __defProp$2a = Object.defineProperty;
-var __getOwnPropSymbols$2a = Object.getOwnPropertySymbols;
-var __hasOwnProp$2a = Object.prototype.hasOwnProperty;
-var __propIsEnum$2a = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$2a = (obj, key, value) => key in obj ? __defProp$2a(obj, key, {
+const useStyles$25 = useStyles$24;
+var __defProp$2f = Object.defineProperty;
+var __getOwnPropSymbols$2f = Object.getOwnPropertySymbols;
+var __hasOwnProp$2f = Object.prototype.hasOwnProperty;
+var __propIsEnum$2f = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2f = (obj, key, value) => key in obj ? __defProp$2f(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$2a = (a, b) => {
+var __spreadValues$2f = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$2a.call(b, prop))
-      __defNormalProp$2a(a, prop, b[prop]);
-  if (__getOwnPropSymbols$2a)
-    for (var prop of __getOwnPropSymbols$2a(b)) {
-      if (__propIsEnum$2a.call(b, prop))
-        __defNormalProp$2a(a, prop, b[prop]);
+    if (__hasOwnProp$2f.call(b, prop))
+      __defNormalProp$2f(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2f)
+    for (var prop of __getOwnPropSymbols$2f(b)) {
+      if (__propIsEnum$2f.call(b, prop))
+        __defNormalProp$2f(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1r = (source, exclude) => {
+var __objRest$1u = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$2a.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$2f.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$2a)
-    for (var prop of __getOwnPropSymbols$2a(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$2a.call(source, prop))
+  if (source != null && __getOwnPropSymbols$2f)
+    for (var prop of __getOwnPropSymbols$2f(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2f.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -7069,7 +7069,7 @@ const Chip = react.exports.forwardRef((props, ref) => {
     wrapperProps,
     value,
     unstyled
-  } = _a, others = __objRest$1r(_a, ["radius", "type", "size", "variant", "disabled", "id", "color", "children", "className", "classNames", "style", "styles", "checked", "defaultChecked", "onChange", "sx", "wrapperProps", "value", "unstyled"]);
+  } = _a, others = __objRest$1u(_a, ["radius", "type", "size", "variant", "disabled", "id", "color", "children", "className", "classNames", "style", "styles", "checked", "defaultChecked", "onChange", "sx", "wrapperProps", "value", "unstyled"]);
   const ctx = useChipGroup();
   const uuid2 = useId(id);
   const {
@@ -7079,7 +7079,7 @@ const Chip = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$1$({
+  } = useStyles$25({
     radius,
     size: size2,
     color
@@ -7102,13 +7102,13 @@ const Chip = react.exports.forwardRef((props, ref) => {
   } : {};
   const _checked = contextProps.checked || _value;
   return /* @__PURE__ */ jsxs(Box, {
-    ...__spreadValues$2a(__spreadValues$2a({
+    ...__spreadValues$2f(__spreadValues$2f({
       className: cx(classes.root, className),
       style,
       sx
     }, systemStyles), wrapperProps),
     children: [/* @__PURE__ */ jsx("input", {
-      ...__spreadValues$2a(__spreadValues$2a({
+      ...__spreadValues$2f(__spreadValues$2f({
         type,
         className: classes.input,
         checked: _checked,
@@ -7135,30 +7135,30 @@ const Chip = react.exports.forwardRef((props, ref) => {
 });
 Chip.displayName = "@mantine/core/Chip";
 Chip.Group = ChipGroup;
-var __defProp$29 = Object.defineProperty;
-var __defProps$10 = Object.defineProperties;
-var __getOwnPropDescs$10 = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$29 = Object.getOwnPropertySymbols;
-var __hasOwnProp$29 = Object.prototype.hasOwnProperty;
-var __propIsEnum$29 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$29 = (obj, key, value) => key in obj ? __defProp$29(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$29 = (a, b) => {
+var __defProp$2e = Object.defineProperty;
+var __defProps$13 = Object.defineProperties;
+var __getOwnPropDescs$13 = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$2e = Object.getOwnPropertySymbols;
+var __hasOwnProp$2e = Object.prototype.hasOwnProperty;
+var __propIsEnum$2e = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2e = (obj, key, value) => key in obj ? __defProp$2e(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$2e = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$29.call(b, prop))
-      __defNormalProp$29(a, prop, b[prop]);
-  if (__getOwnPropSymbols$29)
-    for (var prop of __getOwnPropSymbols$29(b)) {
-      if (__propIsEnum$29.call(b, prop))
-        __defNormalProp$29(a, prop, b[prop]);
+    if (__hasOwnProp$2e.call(b, prop))
+      __defNormalProp$2e(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2e)
+    for (var prop of __getOwnPropSymbols$2e(b)) {
+      if (__propIsEnum$2e.call(b, prop))
+        __defNormalProp$2e(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$10 = (a, b) => __defProps$10(a, __getOwnPropDescs$10(b));
-var useStyles$1Y = createStyles((theme, { color: _color }) => {
+var __spreadProps$13 = (a, b) => __defProps$13(a, __getOwnPropDescs$13(b));
+var useStyles$22 = createStyles((theme, { color: _color }) => {
   const color = _color || (theme.colorScheme === "dark" ? "dark" : "gray");
   const colors = theme.fn.variant({ color, variant: "light" });
   return {
-    root: __spreadProps$10(__spreadValues$29({}, theme.fn.fontStyles()), {
+    root: __spreadProps$13(__spreadValues$2e({}, theme.fn.fontStyles()), {
       lineHeight: theme.lineHeight,
       padding: `2px ${theme.spacing.xs / 2}px`,
       borderRadius: theme.radius.sm,
@@ -7174,36 +7174,36 @@ var useStyles$1Y = createStyles((theme, { color: _color }) => {
     }
   };
 });
-const useStyles$1Z = useStyles$1Y;
-var __defProp$28 = Object.defineProperty;
-var __getOwnPropSymbols$28 = Object.getOwnPropertySymbols;
-var __hasOwnProp$28 = Object.prototype.hasOwnProperty;
-var __propIsEnum$28 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$28 = (obj, key, value) => key in obj ? __defProp$28(obj, key, {
+const useStyles$23 = useStyles$22;
+var __defProp$2d = Object.defineProperty;
+var __getOwnPropSymbols$2d = Object.getOwnPropertySymbols;
+var __hasOwnProp$2d = Object.prototype.hasOwnProperty;
+var __propIsEnum$2d = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2d = (obj, key, value) => key in obj ? __defProp$2d(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$28 = (a, b) => {
+var __spreadValues$2d = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$28.call(b, prop))
-      __defNormalProp$28(a, prop, b[prop]);
-  if (__getOwnPropSymbols$28)
-    for (var prop of __getOwnPropSymbols$28(b)) {
-      if (__propIsEnum$28.call(b, prop))
-        __defNormalProp$28(a, prop, b[prop]);
+    if (__hasOwnProp$2d.call(b, prop))
+      __defNormalProp$2d(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2d)
+    for (var prop of __getOwnPropSymbols$2d(b)) {
+      if (__propIsEnum$2d.call(b, prop))
+        __defNormalProp$2d(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1q = (source, exclude) => {
+var __objRest$1t = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$28.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$2d.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$28)
-    for (var prop of __getOwnPropSymbols$28(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$28.call(source, prop))
+  if (source != null && __getOwnPropSymbols$2d)
+    for (var prop of __getOwnPropSymbols$2d(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2d.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -7215,11 +7215,11 @@ const Code = react.exports.forwardRef((props, ref) => {
     block,
     color,
     unstyled
-  } = _a, others = __objRest$1q(_a, ["className", "children", "block", "color", "unstyled"]);
+  } = _a, others = __objRest$1t(_a, ["className", "children", "block", "color", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$1Z({
+  } = useStyles$23({
     color
   }, {
     name: "Code",
@@ -7227,7 +7227,7 @@ const Code = react.exports.forwardRef((props, ref) => {
   });
   if (block) {
     return /* @__PURE__ */ jsx(Box, {
-      ...__spreadValues$28({
+      ...__spreadValues$2d({
         component: "pre",
         dir: "ltr",
         className: cx(classes.root, classes.block, className),
@@ -7237,7 +7237,7 @@ const Code = react.exports.forwardRef((props, ref) => {
     });
   }
   return /* @__PURE__ */ jsx(Box, {
-    ...__spreadValues$28({
+    ...__spreadValues$2d({
       component: "code",
       className: cx(classes.root, className),
       ref,
@@ -7247,29 +7247,29 @@ const Code = react.exports.forwardRef((props, ref) => {
   });
 });
 Code.displayName = "@mantine/core/Code";
-var __defProp$27 = Object.defineProperty;
-var __defProps$$ = Object.defineProperties;
-var __getOwnPropDescs$$ = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$27 = Object.getOwnPropertySymbols;
-var __hasOwnProp$27 = Object.prototype.hasOwnProperty;
-var __propIsEnum$27 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$27 = (obj, key, value) => key in obj ? __defProp$27(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$27 = (a, b) => {
+var __defProp$2c = Object.defineProperty;
+var __defProps$12 = Object.defineProperties;
+var __getOwnPropDescs$12 = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$2c = Object.getOwnPropertySymbols;
+var __hasOwnProp$2c = Object.prototype.hasOwnProperty;
+var __propIsEnum$2c = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2c = (obj, key, value) => key in obj ? __defProp$2c(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$2c = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$27.call(b, prop))
-      __defNormalProp$27(a, prop, b[prop]);
-  if (__getOwnPropSymbols$27)
-    for (var prop of __getOwnPropSymbols$27(b)) {
-      if (__propIsEnum$27.call(b, prop))
-        __defNormalProp$27(a, prop, b[prop]);
+    if (__hasOwnProp$2c.call(b, prop))
+      __defNormalProp$2c(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2c)
+    for (var prop of __getOwnPropSymbols$2c(b)) {
+      if (__propIsEnum$2c.call(b, prop))
+        __defNormalProp$2c(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$$ = (a, b) => __defProps$$(a, __getOwnPropDescs$$(b));
-var useStyles$1W = createStyles((theme, { size: size2, radius }) => {
+var __spreadProps$12 = (a, b) => __defProps$12(a, __getOwnPropDescs$12(b));
+var useStyles$20 = createStyles((theme, { size: size2, radius }) => {
   const overlayColor = theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3];
   return {
-    root: __spreadProps$$(__spreadValues$27({}, theme.fn.focusStyles()), {
+    root: __spreadProps$12(__spreadValues$2c({}, theme.fn.focusStyles()), {
       width: size2,
       height: size2,
       WebkitTapHighlightColor: "transparent",
@@ -7305,36 +7305,36 @@ var useStyles$1W = createStyles((theme, { size: size2, radius }) => {
     }
   };
 });
-const useStyles$1X = useStyles$1W;
-var __defProp$26 = Object.defineProperty;
-var __getOwnPropSymbols$26 = Object.getOwnPropertySymbols;
-var __hasOwnProp$26 = Object.prototype.hasOwnProperty;
-var __propIsEnum$26 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$26 = (obj, key, value) => key in obj ? __defProp$26(obj, key, {
+const useStyles$21 = useStyles$20;
+var __defProp$2b = Object.defineProperty;
+var __getOwnPropSymbols$2b = Object.getOwnPropertySymbols;
+var __hasOwnProp$2b = Object.prototype.hasOwnProperty;
+var __propIsEnum$2b = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2b = (obj, key, value) => key in obj ? __defProp$2b(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$26 = (a, b) => {
+var __spreadValues$2b = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$26.call(b, prop))
-      __defNormalProp$26(a, prop, b[prop]);
-  if (__getOwnPropSymbols$26)
-    for (var prop of __getOwnPropSymbols$26(b)) {
-      if (__propIsEnum$26.call(b, prop))
-        __defNormalProp$26(a, prop, b[prop]);
+    if (__hasOwnProp$2b.call(b, prop))
+      __defNormalProp$2b(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2b)
+    for (var prop of __getOwnPropSymbols$2b(b)) {
+      if (__propIsEnum$2b.call(b, prop))
+        __defNormalProp$2b(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1p = (source, exclude) => {
+var __objRest$1s = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$26.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$2b.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$26)
-    for (var prop of __getOwnPropSymbols$26(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$26.call(source, prop))
+  if (source != null && __getOwnPropSymbols$2b)
+    for (var prop of __getOwnPropSymbols$2b(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$2b.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -7353,11 +7353,11 @@ const _ColorSwatch = react.exports.forwardRef((props, ref) => {
     classNames,
     styles,
     unstyled
-  } = _a, others = __objRest$1p(_a, ["color", "size", "radius", "className", "children", "classNames", "styles", "unstyled"]);
+  } = _a, others = __objRest$1s(_a, ["color", "size", "radius", "className", "children", "classNames", "styles", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$1X({
+  } = useStyles$21({
     radius,
     size: size2
   }, {
@@ -7367,7 +7367,7 @@ const _ColorSwatch = react.exports.forwardRef((props, ref) => {
     name: "ColorSwatch"
   });
   return /* @__PURE__ */ jsxs(Box, {
-    ...__spreadValues$26({
+    ...__spreadValues$2b({
       className: cx(classes.root, className),
       ref
     }, others),
@@ -7395,7 +7395,7 @@ const THUMB_SIZES = {
   lg: 20,
   xl: 22
 };
-var useStyles$1U = createStyles((theme, { size: size2 }) => {
+var useStyles$1_ = createStyles((theme, { size: size2 }) => {
   const _size = theme.fn.size({ size: size2, sizes: THUMB_SIZES });
   return {
     thumb: {
@@ -7411,25 +7411,25 @@ var useStyles$1U = createStyles((theme, { size: size2 }) => {
     }
   };
 });
-const useStyles$1V = useStyles$1U;
-var __defProp$25 = Object.defineProperty;
-var __getOwnPropSymbols$25 = Object.getOwnPropertySymbols;
-var __hasOwnProp$25 = Object.prototype.hasOwnProperty;
-var __propIsEnum$25 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$25 = (obj, key, value) => key in obj ? __defProp$25(obj, key, {
+const useStyles$1$ = useStyles$1_;
+var __defProp$2a = Object.defineProperty;
+var __getOwnPropSymbols$2a = Object.getOwnPropertySymbols;
+var __hasOwnProp$2a = Object.prototype.hasOwnProperty;
+var __propIsEnum$2a = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$2a = (obj, key, value) => key in obj ? __defProp$2a(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$25 = (a, b) => {
+var __spreadValues$2a = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$25.call(b, prop))
-      __defNormalProp$25(a, prop, b[prop]);
-  if (__getOwnPropSymbols$25)
-    for (var prop of __getOwnPropSymbols$25(b)) {
-      if (__propIsEnum$25.call(b, prop))
-        __defNormalProp$25(a, prop, b[prop]);
+    if (__hasOwnProp$2a.call(b, prop))
+      __defNormalProp$2a(a, prop, b[prop]);
+  if (__getOwnPropSymbols$2a)
+    for (var prop of __getOwnPropSymbols$2a(b)) {
+      if (__propIsEnum$2a.call(b, prop))
+        __defNormalProp$2a(a, prop, b[prop]);
     }
   return a;
 };
@@ -7446,7 +7446,7 @@ function Thumb$1({
   const {
     classes,
     cx
-  } = useStyles$1V({
+  } = useStyles$1$({
     size: size2
   }, {
     classNames,
@@ -7456,14 +7456,14 @@ function Thumb$1({
   });
   return /* @__PURE__ */ jsx("div", {
     className: cx(classes.thumb, className),
-    style: __spreadValues$25({
+    style: __spreadValues$2a({
       left: `calc(${position.x * 100}% - ${THUMB_SIZES[size2] / 2}px)`,
       top: `calc(${position.y * 100}% - ${THUMB_SIZES[size2] / 2}px)`
     }, style)
   });
 }
 Thumb$1.displayName = "@mantine/core/Thumb";
-var useStyles$1S = createStyles((theme, { size: size2 }, getRef) => ({
+var useStyles$1Y = createStyles((theme, { size: size2 }, getRef) => ({
   sliderThumb: {
     ref: getRef("sliderThumb")
   },
@@ -7492,39 +7492,39 @@ var useStyles$1S = createStyles((theme, { size: size2 }, getRef) => ({
     borderRadius: 1e3
   }
 }));
-const useStyles$1T = useStyles$1S;
-var __defProp$24 = Object.defineProperty;
-var __defProps$_ = Object.defineProperties;
-var __getOwnPropDescs$_ = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$24 = Object.getOwnPropertySymbols;
-var __hasOwnProp$24 = Object.prototype.hasOwnProperty;
-var __propIsEnum$24 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$24 = (obj, key, value) => key in obj ? __defProp$24(obj, key, {
+const useStyles$1Z = useStyles$1Y;
+var __defProp$29 = Object.defineProperty;
+var __defProps$11 = Object.defineProperties;
+var __getOwnPropDescs$11 = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$29 = Object.getOwnPropertySymbols;
+var __hasOwnProp$29 = Object.prototype.hasOwnProperty;
+var __propIsEnum$29 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$29 = (obj, key, value) => key in obj ? __defProp$29(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$24 = (a, b) => {
+var __spreadValues$29 = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$24.call(b, prop))
-      __defNormalProp$24(a, prop, b[prop]);
-  if (__getOwnPropSymbols$24)
-    for (var prop of __getOwnPropSymbols$24(b)) {
-      if (__propIsEnum$24.call(b, prop))
-        __defNormalProp$24(a, prop, b[prop]);
+    if (__hasOwnProp$29.call(b, prop))
+      __defNormalProp$29(a, prop, b[prop]);
+  if (__getOwnPropSymbols$29)
+    for (var prop of __getOwnPropSymbols$29(b)) {
+      if (__propIsEnum$29.call(b, prop))
+        __defNormalProp$29(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$_ = (a, b) => __defProps$_(a, __getOwnPropDescs$_(b));
-var __objRest$1o = (source, exclude) => {
+var __spreadProps$11 = (a, b) => __defProps$11(a, __getOwnPropDescs$11(b));
+var __objRest$1r = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$24.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$29.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$24)
-    for (var prop of __getOwnPropSymbols$24(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$24.call(source, prop))
+  if (source != null && __getOwnPropSymbols$29)
+    for (var prop of __getOwnPropSymbols$29(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$29.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -7544,11 +7544,11 @@ const ColorSlider = react.exports.forwardRef((_a, ref) => {
     styles,
     className,
     unstyled
-  } = _b, others = __objRest$1o(_b, ["value", "onChange", "maxValue", "round", "size", "thumbColor", "__staticSelector", "focusable", "overlays", "classNames", "styles", "className", "unstyled"]);
+  } = _b, others = __objRest$1r(_b, ["value", "onChange", "maxValue", "round", "size", "thumbColor", "__staticSelector", "focusable", "overlays", "classNames", "styles", "className", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$1T({
+  } = useStyles$1Z({
     size: size2
   }, {
     classNames,
@@ -7600,7 +7600,7 @@ const ColorSlider = react.exports.forwardRef((_a, ref) => {
     style: overlay
   }, index2));
   return /* @__PURE__ */ jsxs(Box, {
-    ...__spreadProps$_(__spreadValues$24({}, others), {
+    ...__spreadProps$11(__spreadValues$29({}, others), {
       ref: useMergedRef(sliderRef, ref),
       className: cx(classes.slider, className),
       role: "slider",
@@ -7625,38 +7625,38 @@ const ColorSlider = react.exports.forwardRef((_a, ref) => {
   });
 });
 ColorSlider.displayName = "@mantine/core/ColorSlider";
-var __defProp$23 = Object.defineProperty;
-var __defProps$Z = Object.defineProperties;
-var __getOwnPropDescs$Z = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$23 = Object.getOwnPropertySymbols;
-var __hasOwnProp$23 = Object.prototype.hasOwnProperty;
-var __propIsEnum$23 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$23 = (obj, key, value) => key in obj ? __defProp$23(obj, key, {
+var __defProp$28 = Object.defineProperty;
+var __defProps$10 = Object.defineProperties;
+var __getOwnPropDescs$10 = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$28 = Object.getOwnPropertySymbols;
+var __hasOwnProp$28 = Object.prototype.hasOwnProperty;
+var __propIsEnum$28 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$28 = (obj, key, value) => key in obj ? __defProp$28(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$23 = (a, b) => {
+var __spreadValues$28 = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$23.call(b, prop))
-      __defNormalProp$23(a, prop, b[prop]);
-  if (__getOwnPropSymbols$23)
-    for (var prop of __getOwnPropSymbols$23(b)) {
-      if (__propIsEnum$23.call(b, prop))
-        __defNormalProp$23(a, prop, b[prop]);
+    if (__hasOwnProp$28.call(b, prop))
+      __defNormalProp$28(a, prop, b[prop]);
+  if (__getOwnPropSymbols$28)
+    for (var prop of __getOwnPropSymbols$28(b)) {
+      if (__propIsEnum$28.call(b, prop))
+        __defNormalProp$28(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$Z = (a, b) => __defProps$Z(a, __getOwnPropDescs$Z(b));
-var __objRest$1n = (source, exclude) => {
+var __spreadProps$10 = (a, b) => __defProps$10(a, __getOwnPropDescs$10(b));
+var __objRest$1q = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$23.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$28.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$23)
-    for (var prop of __getOwnPropSymbols$23(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$23.call(source, prop))
+  if (source != null && __getOwnPropSymbols$28)
+    for (var prop of __getOwnPropSymbols$28(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$28.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -7665,9 +7665,9 @@ const HueSlider = react.exports.forwardRef((_a, ref) => {
   var _b = _a, {
     value,
     onChange
-  } = _b, others = __objRest$1n(_b, ["value", "onChange"]);
+  } = _b, others = __objRest$1q(_b, ["value", "onChange"]);
   return /* @__PURE__ */ jsx(ColorSlider, {
-    ...__spreadProps$Z(__spreadValues$23({}, others), {
+    ...__spreadProps$10(__spreadValues$28({}, others), {
       ref,
       value,
       onChange,
@@ -7794,38 +7794,38 @@ function parseColor(color) {
   }
   return { h: 0, s: 0, v: 0, a: 1 };
 }
-var __defProp$22 = Object.defineProperty;
-var __defProps$Y = Object.defineProperties;
-var __getOwnPropDescs$Y = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$22 = Object.getOwnPropertySymbols;
-var __hasOwnProp$22 = Object.prototype.hasOwnProperty;
-var __propIsEnum$22 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$22 = (obj, key, value) => key in obj ? __defProp$22(obj, key, {
+var __defProp$27 = Object.defineProperty;
+var __defProps$$ = Object.defineProperties;
+var __getOwnPropDescs$$ = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$27 = Object.getOwnPropertySymbols;
+var __hasOwnProp$27 = Object.prototype.hasOwnProperty;
+var __propIsEnum$27 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$27 = (obj, key, value) => key in obj ? __defProp$27(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$22 = (a, b) => {
+var __spreadValues$27 = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$22.call(b, prop))
-      __defNormalProp$22(a, prop, b[prop]);
-  if (__getOwnPropSymbols$22)
-    for (var prop of __getOwnPropSymbols$22(b)) {
-      if (__propIsEnum$22.call(b, prop))
-        __defNormalProp$22(a, prop, b[prop]);
+    if (__hasOwnProp$27.call(b, prop))
+      __defNormalProp$27(a, prop, b[prop]);
+  if (__getOwnPropSymbols$27)
+    for (var prop of __getOwnPropSymbols$27(b)) {
+      if (__propIsEnum$27.call(b, prop))
+        __defNormalProp$27(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$Y = (a, b) => __defProps$Y(a, __getOwnPropDescs$Y(b));
-var __objRest$1m = (source, exclude) => {
+var __spreadProps$$ = (a, b) => __defProps$$(a, __getOwnPropDescs$$(b));
+var __objRest$1p = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$22.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$27.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$22)
-    for (var prop of __getOwnPropSymbols$22(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$22.call(source, prop))
+  if (source != null && __getOwnPropSymbols$27)
+    for (var prop of __getOwnPropSymbols$27(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$27.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -7835,11 +7835,11 @@ const AlphaSlider = react.exports.forwardRef((_a, ref) => {
     value,
     onChange,
     color
-  } = _b, others = __objRest$1m(_b, ["value", "onChange", "color"]);
+  } = _b, others = __objRest$1p(_b, ["value", "onChange", "color"]);
   const theme = useMantineTheme();
   const _color = theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3];
   return /* @__PURE__ */ jsx(ColorSlider, {
-    ...__spreadProps$Y(__spreadValues$22({}, others), {
+    ...__spreadProps$$(__spreadValues$27({}, others), {
       ref,
       value,
       onChange: (val) => onChange(round(val, 2)),
@@ -7858,19 +7858,19 @@ const AlphaSlider = react.exports.forwardRef((_a, ref) => {
   });
 });
 AlphaSlider.displayName = "@mantine/core/AlphaSlider";
-var __defProp$21 = Object.defineProperty;
-var __getOwnPropSymbols$21 = Object.getOwnPropertySymbols;
-var __hasOwnProp$21 = Object.prototype.hasOwnProperty;
-var __propIsEnum$21 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$21 = (obj, key, value) => key in obj ? __defProp$21(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$21 = (a, b) => {
+var __defProp$26 = Object.defineProperty;
+var __getOwnPropSymbols$26 = Object.getOwnPropertySymbols;
+var __hasOwnProp$26 = Object.prototype.hasOwnProperty;
+var __propIsEnum$26 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$26 = (obj, key, value) => key in obj ? __defProp$26(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$26 = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$21.call(b, prop))
-      __defNormalProp$21(a, prop, b[prop]);
-  if (__getOwnPropSymbols$21)
-    for (var prop of __getOwnPropSymbols$21(b)) {
-      if (__propIsEnum$21.call(b, prop))
-        __defNormalProp$21(a, prop, b[prop]);
+    if (__hasOwnProp$26.call(b, prop))
+      __defNormalProp$26(a, prop, b[prop]);
+  if (__getOwnPropSymbols$26)
+    for (var prop of __getOwnPropSymbols$26(b)) {
+      if (__propIsEnum$26.call(b, prop))
+        __defNormalProp$26(a, prop, b[prop]);
     }
   return a;
 };
@@ -7881,7 +7881,7 @@ const SATURATION_HEIGHTS = {
   lg: 140,
   xl: 160
 };
-var useStyles$1Q = createStyles((theme, { size: size2 }, getRef) => ({
+var useStyles$1W = createStyles((theme, { size: size2 }, getRef) => ({
   saturationThumb: {
     ref: getRef("saturationThumb")
   },
@@ -7900,12 +7900,12 @@ var useStyles$1Q = createStyles((theme, { size: size2 }, getRef) => ({
       boxShadow: theme.focusRing === "auto" || theme.focusRing === "never" ? "none" : void 0
     }
   },
-  saturationOverlay: __spreadValues$21({
+  saturationOverlay: __spreadValues$26({
     boxSizing: "border-box",
     borderRadius: theme.radius.sm
   }, theme.fn.cover(-theme.fn.size({ size: size2, sizes: THUMB_SIZES }) / 2 - 1))
 }));
-const useStyles$1R = useStyles$1Q;
+const useStyles$1X = useStyles$1W;
 function hsvaToRgbaObject({ h, s, v, a }) {
   const _h = h / 360 * 6;
   const _s = s / 100;
@@ -7979,7 +7979,7 @@ function Saturation({
 }) {
   const {
     classes
-  } = useStyles$1R({
+  } = useStyles$1X({
     size: size2
   }, {
     classNames,
@@ -8086,7 +8086,7 @@ function Saturation({
   });
 }
 Saturation.displayName = "@mantine/core/Saturation";
-var useStyles$1O = createStyles((_theme, { swatchesPerRow }) => ({
+var useStyles$1U = createStyles((_theme, { swatchesPerRow }) => ({
   swatch: {
     width: `calc(${100 / swatchesPerRow}% - 4px)`,
     height: 0,
@@ -8102,36 +8102,36 @@ var useStyles$1O = createStyles((_theme, { swatchesPerRow }) => ({
     flexWrap: "wrap"
   }
 }));
-const useStyles$1P = useStyles$1O;
-var __defProp$20 = Object.defineProperty;
-var __getOwnPropSymbols$20 = Object.getOwnPropertySymbols;
-var __hasOwnProp$20 = Object.prototype.hasOwnProperty;
-var __propIsEnum$20 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$20 = (obj, key, value) => key in obj ? __defProp$20(obj, key, {
+const useStyles$1V = useStyles$1U;
+var __defProp$25 = Object.defineProperty;
+var __getOwnPropSymbols$25 = Object.getOwnPropertySymbols;
+var __hasOwnProp$25 = Object.prototype.hasOwnProperty;
+var __propIsEnum$25 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$25 = (obj, key, value) => key in obj ? __defProp$25(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$20 = (a, b) => {
+var __spreadValues$25 = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$20.call(b, prop))
-      __defNormalProp$20(a, prop, b[prop]);
-  if (__getOwnPropSymbols$20)
-    for (var prop of __getOwnPropSymbols$20(b)) {
-      if (__propIsEnum$20.call(b, prop))
-        __defNormalProp$20(a, prop, b[prop]);
+    if (__hasOwnProp$25.call(b, prop))
+      __defNormalProp$25(a, prop, b[prop]);
+  if (__getOwnPropSymbols$25)
+    for (var prop of __getOwnPropSymbols$25(b)) {
+      if (__propIsEnum$25.call(b, prop))
+        __defNormalProp$25(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1l = (source, exclude) => {
+var __objRest$1o = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$20.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$25.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$20)
-    for (var prop of __getOwnPropSymbols$20(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$20.call(source, prop))
+  if (source != null && __getOwnPropSymbols$25)
+    for (var prop of __getOwnPropSymbols$25(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$25.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -8146,10 +8146,10 @@ function Swatches(_a) {
     __staticSelector = "color-picker",
     unstyled,
     setValue
-  } = _b, others = __objRest$1l(_b, ["data", "swatchesPerRow", "focusable", "classNames", "styles", "__staticSelector", "unstyled", "setValue"]);
+  } = _b, others = __objRest$1o(_b, ["data", "swatchesPerRow", "focusable", "classNames", "styles", "__staticSelector", "unstyled", "setValue"]);
   const {
     classes
-  } = useStyles$1P({
+  } = useStyles$1V({
     swatchesPerRow
   }, {
     classNames,
@@ -8171,7 +8171,7 @@ function Swatches(_a) {
     tabIndex: focusable2 ? 0 : -1
   }, index2));
   return /* @__PURE__ */ jsx("div", {
-    ...__spreadValues$20({
+    ...__spreadValues$25({
       className: classes.swatches
     }, others),
     children: colors
@@ -8185,7 +8185,7 @@ const sizes$d = {
   lg: 280,
   xl: 320
 };
-var useStyles$1N = createStyles((theme, { size: size2, fullWidth }) => ({
+var useStyles$1T = createStyles((theme, { size: size2, fullWidth }) => ({
   preview: {},
   wrapper: {
     boxSizing: "border-box",
@@ -8214,35 +8214,35 @@ var useStyles$1N = createStyles((theme, { size: size2, fullWidth }) => ({
     cursor: "pointer"
   }
 }));
-var __defProp$1$ = Object.defineProperty;
-var __getOwnPropSymbols$1$ = Object.getOwnPropertySymbols;
-var __hasOwnProp$1$ = Object.prototype.hasOwnProperty;
-var __propIsEnum$1$ = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1$ = (obj, key, value) => key in obj ? __defProp$1$(obj, key, {
+var __defProp$24 = Object.defineProperty;
+var __getOwnPropSymbols$24 = Object.getOwnPropertySymbols;
+var __hasOwnProp$24 = Object.prototype.hasOwnProperty;
+var __propIsEnum$24 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$24 = (obj, key, value) => key in obj ? __defProp$24(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1$ = (a, b) => {
+var __spreadValues$24 = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1$.call(b, prop))
-      __defNormalProp$1$(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1$)
-    for (var prop of __getOwnPropSymbols$1$(b)) {
-      if (__propIsEnum$1$.call(b, prop))
-        __defNormalProp$1$(a, prop, b[prop]);
+    if (__hasOwnProp$24.call(b, prop))
+      __defNormalProp$24(a, prop, b[prop]);
+  if (__getOwnPropSymbols$24)
+    for (var prop of __getOwnPropSymbols$24(b)) {
+      if (__propIsEnum$24.call(b, prop))
+        __defNormalProp$24(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1k = (source, exclude) => {
+var __objRest$1n = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1$.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$24.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1$)
-    for (var prop of __getOwnPropSymbols$1$(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1$.call(source, prop))
+  if (source != null && __getOwnPropSymbols$24)
+    for (var prop of __getOwnPropSymbols$24(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$24.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -8281,12 +8281,12 @@ const ColorPicker = react.exports.forwardRef((props, ref) => {
     styles,
     classNames,
     unstyled
-  } = _a, others = __objRest$1k(_a, ["value", "defaultValue", "onChange", "format", "swatches", "swatchesPerRow", "size", "withPicker", "fullWidth", "focusable", "__staticSelector", "saturationLabel", "hueLabel", "alphaLabel", "className", "styles", "classNames", "unstyled"]);
+  } = _a, others = __objRest$1n(_a, ["value", "defaultValue", "onChange", "format", "swatches", "swatchesPerRow", "size", "withPicker", "fullWidth", "focusable", "__staticSelector", "saturationLabel", "hueLabel", "alphaLabel", "className", "styles", "classNames", "unstyled"]);
   const {
     classes,
     cx,
     theme
-  } = useStyles$1N({
+  } = useStyles$1T({
     size: size2,
     fullWidth
   }, {
@@ -8309,7 +8309,7 @@ const ColorPicker = react.exports.forwardRef((props, ref) => {
   const handleChange = (color) => {
     updateRef3.current = false;
     setParsed((current) => {
-      const next = __spreadValues$1$(__spreadValues$1$({}, current), color);
+      const next = __spreadValues$24(__spreadValues$24({}, current), color);
       valueRef.current = convertHsvaTo(formatRef.current, next);
       return next;
     });
@@ -8329,7 +8329,7 @@ const ColorPicker = react.exports.forwardRef((props, ref) => {
     setValue(convertHsvaTo(format, parsed));
   }, [format]);
   return /* @__PURE__ */ jsxs(Box, {
-    ...__spreadValues$1$({
+    ...__spreadValues$24({
       className: cx(classes.wrapper, className),
       ref
     }, others),
@@ -8400,38 +8400,38 @@ const ColorPicker = react.exports.forwardRef((props, ref) => {
   });
 });
 ColorPicker.displayName = "@mantine/core/ColorPicker";
-var __defProp$1_ = Object.defineProperty;
-var __defProps$X = Object.defineProperties;
-var __getOwnPropDescs$X = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$1_ = Object.getOwnPropertySymbols;
-var __hasOwnProp$1_ = Object.prototype.hasOwnProperty;
-var __propIsEnum$1_ = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1_ = (obj, key, value) => key in obj ? __defProp$1_(obj, key, {
+var __defProp$23 = Object.defineProperty;
+var __defProps$_ = Object.defineProperties;
+var __getOwnPropDescs$_ = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$23 = Object.getOwnPropertySymbols;
+var __hasOwnProp$23 = Object.prototype.hasOwnProperty;
+var __propIsEnum$23 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$23 = (obj, key, value) => key in obj ? __defProp$23(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1_ = (a, b) => {
+var __spreadValues$23 = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1_.call(b, prop))
-      __defNormalProp$1_(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1_)
-    for (var prop of __getOwnPropSymbols$1_(b)) {
-      if (__propIsEnum$1_.call(b, prop))
-        __defNormalProp$1_(a, prop, b[prop]);
+    if (__hasOwnProp$23.call(b, prop))
+      __defNormalProp$23(a, prop, b[prop]);
+  if (__getOwnPropSymbols$23)
+    for (var prop of __getOwnPropSymbols$23(b)) {
+      if (__propIsEnum$23.call(b, prop))
+        __defNormalProp$23(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$X = (a, b) => __defProps$X(a, __getOwnPropDescs$X(b));
-var __objRest$1j = (source, exclude) => {
+var __spreadProps$_ = (a, b) => __defProps$_(a, __getOwnPropDescs$_(b));
+var __objRest$1m = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1_.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$23.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1_)
-    for (var prop of __getOwnPropSymbols$1_(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1_.call(source, prop))
+  if (source != null && __getOwnPropSymbols$23)
+    for (var prop of __getOwnPropSymbols$23(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$23.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -8482,7 +8482,7 @@ const ColorInput = react.exports.forwardRef((props, ref) => {
     classNames,
     styles,
     unstyled
-  } = _a, others = __objRest$1j(_a, ["wrapperProps", "inputProps", "format", "onChange", "onFocus", "onBlur", "value", "defaultValue", "disallowInput", "fixOnBlur", "withPreview", "swatchesPerRow", "withPicker", "icon", "transition", "dropdownZIndex", "transitionDuration", "transitionTimingFunction", "withinPortal", "swatches", "shadow", "classNames", "styles", "unstyled"]);
+  } = _a, others = __objRest$1m(_a, ["wrapperProps", "inputProps", "format", "onChange", "onFocus", "onBlur", "value", "defaultValue", "disallowInput", "fixOnBlur", "withPreview", "swatchesPerRow", "withPicker", "icon", "transition", "dropdownZIndex", "transitionDuration", "transitionTimingFunction", "withinPortal", "swatches", "shadow", "classNames", "styles", "unstyled"]);
   const theme = useMantineTheme();
   const [dropdownOpened, setDropdownOpened] = react.exports.useState(false);
   const [lastValidValue, setLastValidValue] = react.exports.useState("");
@@ -8512,7 +8512,7 @@ const ColorInput = react.exports.forwardRef((props, ref) => {
     }
   }, [format]);
   return /* @__PURE__ */ jsx(Input.Wrapper, {
-    ...__spreadProps$X(__spreadValues$1_({}, wrapperProps), {
+    ...__spreadProps$_(__spreadValues$23({}, wrapperProps), {
       __staticSelector: "ColorInput"
     }),
     children: /* @__PURE__ */ jsxs(Popover, {
@@ -8531,7 +8531,7 @@ const ColorInput = react.exports.forwardRef((props, ref) => {
       children: [/* @__PURE__ */ jsx(Popover.Target, {
         children: /* @__PURE__ */ jsx("div", {
           children: /* @__PURE__ */ jsx(Input, {
-            ...__spreadProps$X(__spreadValues$1_(__spreadValues$1_({}, others), inputProps), {
+            ...__spreadProps$_(__spreadValues$23(__spreadValues$23({}, others), inputProps), {
               ref,
               __staticSelector: "ColorInput",
               onFocus: handleInputFocus,
@@ -8579,35 +8579,35 @@ const ColorInput = react.exports.forwardRef((props, ref) => {
   });
 });
 ColorInput.displayName = "@mantine/core/ColorInput";
-var __defProp$1Z = Object.defineProperty;
-var __getOwnPropSymbols$1Z = Object.getOwnPropertySymbols;
-var __hasOwnProp$1Z = Object.prototype.hasOwnProperty;
-var __propIsEnum$1Z = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1Z = (obj, key, value) => key in obj ? __defProp$1Z(obj, key, {
+var __defProp$22 = Object.defineProperty;
+var __getOwnPropSymbols$22 = Object.getOwnPropertySymbols;
+var __hasOwnProp$22 = Object.prototype.hasOwnProperty;
+var __propIsEnum$22 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$22 = (obj, key, value) => key in obj ? __defProp$22(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1Z = (a, b) => {
+var __spreadValues$22 = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1Z.call(b, prop))
-      __defNormalProp$1Z(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1Z)
-    for (var prop of __getOwnPropSymbols$1Z(b)) {
-      if (__propIsEnum$1Z.call(b, prop))
-        __defNormalProp$1Z(a, prop, b[prop]);
+    if (__hasOwnProp$22.call(b, prop))
+      __defNormalProp$22(a, prop, b[prop]);
+  if (__getOwnPropSymbols$22)
+    for (var prop of __getOwnPropSymbols$22(b)) {
+      if (__propIsEnum$22.call(b, prop))
+        __defNormalProp$22(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1i = (source, exclude) => {
+var __objRest$1l = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1Z.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$22.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1Z)
-    for (var prop of __getOwnPropSymbols$1Z(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1Z.call(source, prop))
+  if (source != null && __getOwnPropSymbols$22)
+    for (var prop of __getOwnPropSymbols$22(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$22.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -8620,38 +8620,38 @@ function CopyButton(props) {
     children,
     timeout,
     value
-  } = _a, others = __objRest$1i(_a, ["children", "timeout", "value"]);
+  } = _a, others = __objRest$1l(_a, ["children", "timeout", "value"]);
   const clipboard = useClipboard({
     timeout
   });
   const copy = () => clipboard.copy(value);
   return /* @__PURE__ */ jsx(Fragment, {
-    children: children(__spreadValues$1Z({
+    children: children(__spreadValues$22({
       copy,
       copied: clipboard.copied
     }, others))
   });
 }
 CopyButton.displayName = "@mantine/core/CopyButton";
-var __defProp$1Y = Object.defineProperty;
-var __defProps$W = Object.defineProperties;
-var __getOwnPropDescs$W = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$1Y = Object.getOwnPropertySymbols;
-var __hasOwnProp$1Y = Object.prototype.hasOwnProperty;
-var __propIsEnum$1Y = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1Y = (obj, key, value) => key in obj ? __defProp$1Y(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$1Y = (a, b) => {
+var __defProp$21 = Object.defineProperty;
+var __defProps$Z = Object.defineProperties;
+var __getOwnPropDescs$Z = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$21 = Object.getOwnPropertySymbols;
+var __hasOwnProp$21 = Object.prototype.hasOwnProperty;
+var __propIsEnum$21 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$21 = (obj, key, value) => key in obj ? __defProp$21(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$21 = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1Y.call(b, prop))
-      __defNormalProp$1Y(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1Y)
-    for (var prop of __getOwnPropSymbols$1Y(b)) {
-      if (__propIsEnum$1Y.call(b, prop))
-        __defNormalProp$1Y(a, prop, b[prop]);
+    if (__hasOwnProp$21.call(b, prop))
+      __defNormalProp$21(a, prop, b[prop]);
+  if (__getOwnPropSymbols$21)
+    for (var prop of __getOwnPropSymbols$21(b)) {
+      if (__propIsEnum$21.call(b, prop))
+        __defNormalProp$21(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$W = (a, b) => __defProps$W(a, __getOwnPropDescs$W(b));
+var __spreadProps$Z = (a, b) => __defProps$Z(a, __getOwnPropDescs$Z(b));
 const sizes$c = {
   xs: 160,
   sm: 200,
@@ -8659,8 +8659,8 @@ const sizes$c = {
   lg: 400,
   xl: 500
 };
-var useStyles$1L = createStyles((theme, { size: size2 }) => ({
-  root: __spreadProps$W(__spreadValues$1Y({}, theme.fn.fontStyles()), {
+var useStyles$1R = createStyles((theme, { size: size2 }) => ({
+  root: __spreadProps$Z(__spreadValues$21({}, theme.fn.fontStyles()), {
     color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
     position: "relative",
     width: theme.fn.size({ size: size2, sizes: sizes$c }),
@@ -8673,36 +8673,36 @@ var useStyles$1L = createStyles((theme, { size: size2 }) => ({
     right: theme.spacing.md / 2
   }
 }));
-const useStyles$1M = useStyles$1L;
-var __defProp$1X = Object.defineProperty;
-var __getOwnPropSymbols$1X = Object.getOwnPropertySymbols;
-var __hasOwnProp$1X = Object.prototype.hasOwnProperty;
-var __propIsEnum$1X = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1X = (obj, key, value) => key in obj ? __defProp$1X(obj, key, {
+const useStyles$1S = useStyles$1R;
+var __defProp$20 = Object.defineProperty;
+var __getOwnPropSymbols$20 = Object.getOwnPropertySymbols;
+var __hasOwnProp$20 = Object.prototype.hasOwnProperty;
+var __propIsEnum$20 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$20 = (obj, key, value) => key in obj ? __defProp$20(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1X = (a, b) => {
+var __spreadValues$20 = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1X.call(b, prop))
-      __defNormalProp$1X(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1X)
-    for (var prop of __getOwnPropSymbols$1X(b)) {
-      if (__propIsEnum$1X.call(b, prop))
-        __defNormalProp$1X(a, prop, b[prop]);
+    if (__hasOwnProp$20.call(b, prop))
+      __defNormalProp$20(a, prop, b[prop]);
+  if (__getOwnPropSymbols$20)
+    for (var prop of __getOwnPropSymbols$20(b)) {
+      if (__propIsEnum$20.call(b, prop))
+        __defNormalProp$20(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1h = (source, exclude) => {
+var __objRest$1k = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1X.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$20.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1X)
-    for (var prop of __getOwnPropSymbols$1X(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1X.call(source, prop))
+  if (source != null && __getOwnPropSymbols$20)
+    for (var prop of __getOwnPropSymbols$20(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$20.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -8733,11 +8733,11 @@ function DialogBody(props) {
     transitionDuration,
     transitionTimingFunction,
     unstyled
-  } = _a, others = __objRest$1h(_a, ["withCloseButton", "onClose", "position", "shadow", "children", "className", "style", "classNames", "styles", "opened", "withBorder", "size", "transition", "transitionDuration", "transitionTimingFunction", "unstyled"]);
+  } = _a, others = __objRest$1k(_a, ["withCloseButton", "onClose", "position", "shadow", "children", "className", "style", "classNames", "styles", "opened", "withBorder", "size", "transition", "transitionDuration", "transitionTimingFunction", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$1M({
+  } = useStyles$1S({
     size: size2
   }, {
     classNames,
@@ -8751,9 +8751,9 @@ function DialogBody(props) {
     duration: transitionDuration,
     timingFunction: transitionTimingFunction,
     children: (transitionStyles) => /* @__PURE__ */ jsxs(Paper, {
-      ...__spreadValues$1X({
+      ...__spreadValues$20({
         className: cx(classes.root, className),
-        style: __spreadValues$1X(__spreadValues$1X({}, style), transitionStyles),
+        style: __spreadValues$20(__spreadValues$20({}, style), transitionStyles),
         shadow,
         withBorder,
         unstyled
@@ -8768,7 +8768,7 @@ function DialogBody(props) {
 const Dialog = react.exports.forwardRef((_a, ref) => {
   var _b = _a, {
     zIndex = getDefaultZIndex("modal")
-  } = _b, props = __objRest$1h(_b, ["zIndex"]);
+  } = _b, props = __objRest$1k(_b, ["zIndex"]);
   const theme = useMantineTheme();
   return /* @__PURE__ */ jsx(Affix, {
     zIndex,
@@ -8778,30 +8778,30 @@ const Dialog = react.exports.forwardRef((_a, ref) => {
     },
     ref,
     children: /* @__PURE__ */ jsx(DialogBody, {
-      ...__spreadValues$1X({}, props)
+      ...__spreadValues$20({}, props)
     })
   });
 });
 Dialog.displayName = "@mantine/core/Dialog";
-var __defProp$1W = Object.defineProperty;
-var __defProps$V = Object.defineProperties;
-var __getOwnPropDescs$V = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$1W = Object.getOwnPropertySymbols;
-var __hasOwnProp$1W = Object.prototype.hasOwnProperty;
-var __propIsEnum$1W = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1W = (obj, key, value) => key in obj ? __defProp$1W(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$1W = (a, b) => {
+var __defProp$1$ = Object.defineProperty;
+var __defProps$Y = Object.defineProperties;
+var __getOwnPropDescs$Y = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$1$ = Object.getOwnPropertySymbols;
+var __hasOwnProp$1$ = Object.prototype.hasOwnProperty;
+var __propIsEnum$1$ = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1$ = (obj, key, value) => key in obj ? __defProp$1$(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$1$ = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1W.call(b, prop))
-      __defNormalProp$1W(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1W)
-    for (var prop of __getOwnPropSymbols$1W(b)) {
-      if (__propIsEnum$1W.call(b, prop))
-        __defNormalProp$1W(a, prop, b[prop]);
+    if (__hasOwnProp$1$.call(b, prop))
+      __defNormalProp$1$(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1$)
+    for (var prop of __getOwnPropSymbols$1$(b)) {
+      if (__propIsEnum$1$.call(b, prop))
+        __defNormalProp$1$(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$V = (a, b) => __defProps$V(a, __getOwnPropDescs$V(b));
+var __spreadProps$Y = (a, b) => __defProps$Y(a, __getOwnPropDescs$Y(b));
 const sizes$b = {
   xs: 180,
   sm: 240,
@@ -8828,7 +8828,7 @@ function getPositionStyles$2({
       return null;
   }
 }
-var useStyles$1J = createStyles((theme, { position, size: size2, zIndex }) => ({
+var useStyles$1P = createStyles((theme, { position, size: size2, zIndex }) => ({
   closeButton: {},
   overlay: {},
   root: {
@@ -8839,7 +8839,7 @@ var useStyles$1J = createStyles((theme, { position, size: size2, zIndex }) => ({
     right: 0,
     bottom: 0
   },
-  drawer: __spreadProps$V(__spreadValues$1W({}, getPositionStyles$2({ position, size: size2, theme })), {
+  drawer: __spreadProps$Y(__spreadValues$1$({}, getPositionStyles$2({ position, size: size2, theme })), {
     maxWidth: "100%",
     maxHeight: "100vh",
     position: "fixed",
@@ -8859,7 +8859,7 @@ var useStyles$1J = createStyles((theme, { position, size: size2, zIndex }) => ({
     marginBottom: theme.spacing.md
   }
 }));
-const useStyles$1K = useStyles$1J;
+const useStyles$1Q = useStyles$1P;
 function GroupedTransition({
   transitions: transitions2,
   duration = 250,
@@ -8908,35 +8908,35 @@ function GroupedTransition({
   });
 }
 GroupedTransition.displayName = "@mantine/core/GroupedTransition";
-var __defProp$1V = Object.defineProperty;
-var __getOwnPropSymbols$1V = Object.getOwnPropertySymbols;
-var __hasOwnProp$1V = Object.prototype.hasOwnProperty;
-var __propIsEnum$1V = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1V = (obj, key, value) => key in obj ? __defProp$1V(obj, key, {
+var __defProp$1_ = Object.defineProperty;
+var __getOwnPropSymbols$1_ = Object.getOwnPropertySymbols;
+var __hasOwnProp$1_ = Object.prototype.hasOwnProperty;
+var __propIsEnum$1_ = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1_ = (obj, key, value) => key in obj ? __defProp$1_(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1V = (a, b) => {
+var __spreadValues$1_ = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1V.call(b, prop))
-      __defNormalProp$1V(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1V)
-    for (var prop of __getOwnPropSymbols$1V(b)) {
-      if (__propIsEnum$1V.call(b, prop))
-        __defNormalProp$1V(a, prop, b[prop]);
+    if (__hasOwnProp$1_.call(b, prop))
+      __defNormalProp$1_(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1_)
+    for (var prop of __getOwnPropSymbols$1_(b)) {
+      if (__propIsEnum$1_.call(b, prop))
+        __defNormalProp$1_(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1g = (source, exclude) => {
+var __objRest$1j = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1V.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1_.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1V)
-    for (var prop of __getOwnPropSymbols$1V(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1V.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1_)
+    for (var prop of __getOwnPropSymbols$1_(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1_.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -9002,12 +9002,12 @@ function Drawer(props) {
     overlayBlur,
     unstyled,
     withFocusReturn
-  } = _a, others = __objRest$1g(_a, ["className", "opened", "onClose", "position", "size", "trapFocus", "lockScroll", "closeOnClickOutside", "closeOnEscape", "transition", "transitionDuration", "transitionTimingFunction", "zIndex", "overlayColor", "overlayOpacity", "children", "withOverlay", "shadow", "padding", "title", "withCloseButton", "closeButtonLabel", "classNames", "styles", "target", "withinPortal", "overlayBlur", "unstyled", "withFocusReturn"]);
+  } = _a, others = __objRest$1j(_a, ["className", "opened", "onClose", "position", "size", "trapFocus", "lockScroll", "closeOnClickOutside", "closeOnEscape", "transition", "transitionDuration", "transitionTimingFunction", "zIndex", "overlayColor", "overlayOpacity", "children", "withOverlay", "shadow", "padding", "title", "withCloseButton", "closeButtonLabel", "classNames", "styles", "target", "withinPortal", "overlayBlur", "unstyled", "withFocusReturn"]);
   const {
     classes,
     cx,
     theme
-  } = useStyles$1K({
+  } = useStyles$1Q({
     size: size2,
     position,
     zIndex
@@ -9058,7 +9058,7 @@ function Drawer(props) {
         }
       },
       children: (transitionStyles) => /* @__PURE__ */ jsxs(Box, {
-        ...__spreadValues$1V({
+        ...__spreadValues$1_({
           className: cx(classes.root, className),
           role: "dialog",
           "aria-modal": true
@@ -9108,35 +9108,35 @@ function Drawer(props) {
   });
 }
 Drawer.displayName = "@mantine/core/Drawer";
-var __defProp$1U = Object.defineProperty;
-var __getOwnPropSymbols$1U = Object.getOwnPropertySymbols;
-var __hasOwnProp$1U = Object.prototype.hasOwnProperty;
-var __propIsEnum$1U = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1U = (obj, key, value) => key in obj ? __defProp$1U(obj, key, {
+var __defProp$1Z = Object.defineProperty;
+var __getOwnPropSymbols$1Z = Object.getOwnPropertySymbols;
+var __hasOwnProp$1Z = Object.prototype.hasOwnProperty;
+var __propIsEnum$1Z = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1Z = (obj, key, value) => key in obj ? __defProp$1Z(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1U = (a, b) => {
+var __spreadValues$1Z = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1U.call(b, prop))
-      __defNormalProp$1U(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1U)
-    for (var prop of __getOwnPropSymbols$1U(b)) {
-      if (__propIsEnum$1U.call(b, prop))
-        __defNormalProp$1U(a, prop, b[prop]);
+    if (__hasOwnProp$1Z.call(b, prop))
+      __defNormalProp$1Z(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1Z)
+    for (var prop of __getOwnPropSymbols$1Z(b)) {
+      if (__propIsEnum$1Z.call(b, prop))
+        __defNormalProp$1Z(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1f = (source, exclude) => {
+var __objRest$1i = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1U.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1Z.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1U)
-    for (var prop of __getOwnPropSymbols$1U(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1U.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1Z)
+    for (var prop of __getOwnPropSymbols$1Z(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1Z.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -9153,7 +9153,7 @@ const FileButton = react.exports.forwardRef((props, ref) => {
     name,
     form,
     resetRef
-  } = _a, others = __objRest$1f(_a, ["onChange", "children", "multiple", "accept", "name", "form", "resetRef"]);
+  } = _a, others = __objRest$1i(_a, ["onChange", "children", "multiple", "accept", "name", "form", "resetRef"]);
   const inputRef = react.exports.useRef();
   const onClick = () => {
     inputRef.current.click();
@@ -9170,7 +9170,7 @@ const FileButton = react.exports.forwardRef((props, ref) => {
   };
   assignRef(resetRef, reset);
   return /* @__PURE__ */ jsxs(Fragment, {
-    children: [children(__spreadValues$1U({
+    children: [children(__spreadValues$1Z({
       onClick
     }, others)), /* @__PURE__ */ jsx("input", {
       style: {
@@ -9187,7 +9187,7 @@ const FileButton = react.exports.forwardRef((props, ref) => {
   });
 });
 FileButton.displayName = "@mantine/core/FileButton";
-var useStyles$1H = createStyles((theme) => ({
+var useStyles$1N = createStyles((theme) => ({
   placeholder: {
     color: theme.colorScheme === "dark" ? theme.colors.dark[3] : theme.colors.gray[5]
   },
@@ -9195,39 +9195,39 @@ var useStyles$1H = createStyles((theme) => ({
     cursor: "pointer"
   }
 }));
-const useStyles$1I = useStyles$1H;
-var __defProp$1T = Object.defineProperty;
-var __defProps$U = Object.defineProperties;
-var __getOwnPropDescs$U = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$1T = Object.getOwnPropertySymbols;
-var __hasOwnProp$1T = Object.prototype.hasOwnProperty;
-var __propIsEnum$1T = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1T = (obj, key, value) => key in obj ? __defProp$1T(obj, key, {
+const useStyles$1O = useStyles$1N;
+var __defProp$1Y = Object.defineProperty;
+var __defProps$X = Object.defineProperties;
+var __getOwnPropDescs$X = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$1Y = Object.getOwnPropertySymbols;
+var __hasOwnProp$1Y = Object.prototype.hasOwnProperty;
+var __propIsEnum$1Y = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1Y = (obj, key, value) => key in obj ? __defProp$1Y(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1T = (a, b) => {
+var __spreadValues$1Y = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1T.call(b, prop))
-      __defNormalProp$1T(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1T)
-    for (var prop of __getOwnPropSymbols$1T(b)) {
-      if (__propIsEnum$1T.call(b, prop))
-        __defNormalProp$1T(a, prop, b[prop]);
+    if (__hasOwnProp$1Y.call(b, prop))
+      __defNormalProp$1Y(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1Y)
+    for (var prop of __getOwnPropSymbols$1Y(b)) {
+      if (__propIsEnum$1Y.call(b, prop))
+        __defNormalProp$1Y(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$U = (a, b) => __defProps$U(a, __getOwnPropDescs$U(b));
-var __objRest$1e = (source, exclude) => {
+var __spreadProps$X = (a, b) => __defProps$X(a, __getOwnPropDescs$X(b));
+var __objRest$1h = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1T.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1Y.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1T)
-    for (var prop of __getOwnPropSymbols$1T(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1T.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1Y)
+    for (var prop of __getOwnPropSymbols$1Y(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1Y.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -9270,13 +9270,13 @@ const _FileInput = react.exports.forwardRef((props, ref) => {
     clearable,
     clearButtonLabel,
     clearButtonTabIndex
-  } = _a, others = __objRest$1e(_a, ["inputProps", "wrapperProps", "placeholder", "value", "defaultValue", "onChange", "multiple", "accept", "name", "form", "classNames", "styles", "unstyled", "valueComponent", "rightSection", "rightSectionWidth", "clearable", "clearButtonLabel", "clearButtonTabIndex"]);
+  } = _a, others = __objRest$1h(_a, ["inputProps", "wrapperProps", "placeholder", "value", "defaultValue", "onChange", "multiple", "accept", "name", "form", "classNames", "styles", "unstyled", "valueComponent", "rightSection", "rightSectionWidth", "clearable", "clearButtonLabel", "clearButtonTabIndex"]);
   const resetRef = react.exports.useRef();
   const {
     classes,
     theme,
     cx
-  } = useStyles$1I(null, {
+  } = useStyles$1O(null, {
     name: "FileInput",
     classNames,
     styles,
@@ -9303,7 +9303,7 @@ const _FileInput = react.exports.forwardRef((props, ref) => {
     }
   }, [_value]);
   return /* @__PURE__ */ jsx(Input.Wrapper, {
-    ...__spreadProps$U(__spreadValues$1T({}, wrapperProps), {
+    ...__spreadProps$X(__spreadValues$1Y({}, wrapperProps), {
       __staticSelector: "FileInput"
     }),
     children: /* @__PURE__ */ jsx(FileButton, {
@@ -9314,7 +9314,7 @@ const _FileInput = react.exports.forwardRef((props, ref) => {
       form,
       resetRef,
       children: (fileButtonProps) => /* @__PURE__ */ jsx(Input, {
-        ...__spreadProps$U(__spreadValues$1T(__spreadValues$1T(__spreadValues$1T({
+        ...__spreadProps$X(__spreadValues$1Y(__spreadValues$1Y(__spreadValues$1Y({
           multiline: true
         }, fileButtonProps), inputProps), others), {
           component: "button",
@@ -9326,7 +9326,7 @@ const _FileInput = react.exports.forwardRef((props, ref) => {
             size: inputProps.size,
             sizes: RIGHT_SECTION_WIDTH$4
           }),
-          classNames: __spreadProps$U(__spreadValues$1T({}, classNames), {
+          classNames: __spreadProps$X(__spreadValues$1Y({}, classNames), {
             input: cx(classes.input, classNames == null ? void 0 : classNames.input)
           })
         }),
@@ -9345,19 +9345,19 @@ const FileInput = _FileInput;
 const GridContext = react.exports.createContext(null);
 const GridProvider = GridContext.Provider;
 const useGridContext = () => react.exports.useContext(GridContext);
-var __defProp$1S = Object.defineProperty;
-var __getOwnPropSymbols$1S = Object.getOwnPropertySymbols;
-var __hasOwnProp$1S = Object.prototype.hasOwnProperty;
-var __propIsEnum$1S = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1S = (obj, key, value) => key in obj ? __defProp$1S(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$1S = (a, b) => {
+var __defProp$1X = Object.defineProperty;
+var __getOwnPropSymbols$1X = Object.getOwnPropertySymbols;
+var __hasOwnProp$1X = Object.prototype.hasOwnProperty;
+var __propIsEnum$1X = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1X = (obj, key, value) => key in obj ? __defProp$1X(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$1X = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1S.call(b, prop))
-      __defNormalProp$1S(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1S)
-    for (var prop of __getOwnPropSymbols$1S(b)) {
-      if (__propIsEnum$1S.call(b, prop))
-        __defNormalProp$1S(a, prop, b[prop]);
+    if (__hasOwnProp$1X.call(b, prop))
+      __defNormalProp$1X(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1X)
+    for (var prop of __getOwnPropSymbols$1X(b)) {
+      if (__propIsEnum$1X.call(b, prop))
+        __defNormalProp$1X(a, prop, b[prop]);
     }
   return a;
 };
@@ -9382,7 +9382,7 @@ function getBreakpointsStyles({
     return acc;
   }, {});
 }
-var useStyles$1F = createStyles((theme, {
+var useStyles$1L = createStyles((theme, {
   gutter,
   grow,
   offset: offset2,
@@ -9405,7 +9405,7 @@ var useStyles$1F = createStyles((theme, {
   orderLg,
   orderXl
 }) => ({
-  root: __spreadValues$1S({
+  root: __spreadValues$1X({
     boxSizing: "border-box",
     flexGrow: grow ? 1 : 0,
     order,
@@ -9423,36 +9423,36 @@ var useStyles$1F = createStyles((theme, {
     grow
   }))
 }));
-const useStyles$1G = useStyles$1F;
-var __defProp$1R = Object.defineProperty;
-var __getOwnPropSymbols$1R = Object.getOwnPropertySymbols;
-var __hasOwnProp$1R = Object.prototype.hasOwnProperty;
-var __propIsEnum$1R = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1R = (obj, key, value) => key in obj ? __defProp$1R(obj, key, {
+const useStyles$1M = useStyles$1L;
+var __defProp$1W = Object.defineProperty;
+var __getOwnPropSymbols$1W = Object.getOwnPropertySymbols;
+var __hasOwnProp$1W = Object.prototype.hasOwnProperty;
+var __propIsEnum$1W = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1W = (obj, key, value) => key in obj ? __defProp$1W(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1R = (a, b) => {
+var __spreadValues$1W = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1R.call(b, prop))
-      __defNormalProp$1R(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1R)
-    for (var prop of __getOwnPropSymbols$1R(b)) {
-      if (__propIsEnum$1R.call(b, prop))
-        __defNormalProp$1R(a, prop, b[prop]);
+    if (__hasOwnProp$1W.call(b, prop))
+      __defNormalProp$1W(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1W)
+    for (var prop of __getOwnPropSymbols$1W(b)) {
+      if (__propIsEnum$1W.call(b, prop))
+        __defNormalProp$1W(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1d = (source, exclude) => {
+var __objRest$1g = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1R.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1W.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1R)
-    for (var prop of __getOwnPropSymbols$1R(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1R.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1W)
+    for (var prop of __getOwnPropSymbols$1W(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1W.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -9492,7 +9492,7 @@ const Col = react.exports.forwardRef((props, ref) => {
     className,
     id,
     unstyled
-  } = _a, others = __objRest$1d(_a, ["children", "span", "offset", "offsetXs", "offsetSm", "offsetMd", "offsetLg", "offsetXl", "xs", "sm", "md", "lg", "xl", "order", "orderXs", "orderSm", "orderMd", "orderLg", "orderXl", "className", "id", "unstyled"]);
+  } = _a, others = __objRest$1g(_a, ["children", "span", "offset", "offsetXs", "offsetSm", "offsetMd", "offsetLg", "offsetXl", "xs", "sm", "md", "lg", "xl", "order", "orderXs", "orderSm", "orderMd", "orderLg", "orderXl", "className", "id", "unstyled"]);
   const ctx = useGridContext();
   if (!ctx) {
     throw new Error("[@mantine/core] Grid.Col was used outside of Grid context");
@@ -9501,7 +9501,7 @@ const Col = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$1G({
+  } = useStyles$1M({
     gutter: ctx.gutter,
     offset: offset2,
     offsetXs,
@@ -9531,7 +9531,7 @@ const Col = react.exports.forwardRef((props, ref) => {
     return null;
   }
   return /* @__PURE__ */ jsx(Box, {
-    ...__spreadValues$1R({
+    ...__spreadValues$1W({
       className: cx(classes.root, className),
       ref
     }, others),
@@ -9539,7 +9539,7 @@ const Col = react.exports.forwardRef((props, ref) => {
   });
 });
 Col.displayName = "@mantine/core/Col";
-var useStyles$1D = createStyles((theme, { justify, align, gutter }) => ({
+var useStyles$1J = createStyles((theme, { justify, align, gutter }) => ({
   root: {
     margin: -theme.fn.size({ size: gutter, sizes: theme.spacing }) / 2,
     display: "flex",
@@ -9548,36 +9548,36 @@ var useStyles$1D = createStyles((theme, { justify, align, gutter }) => ({
     alignItems: align
   }
 }));
-const useStyles$1E = useStyles$1D;
-var __defProp$1Q = Object.defineProperty;
-var __getOwnPropSymbols$1Q = Object.getOwnPropertySymbols;
-var __hasOwnProp$1Q = Object.prototype.hasOwnProperty;
-var __propIsEnum$1Q = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1Q = (obj, key, value) => key in obj ? __defProp$1Q(obj, key, {
+const useStyles$1K = useStyles$1J;
+var __defProp$1V = Object.defineProperty;
+var __getOwnPropSymbols$1V = Object.getOwnPropertySymbols;
+var __hasOwnProp$1V = Object.prototype.hasOwnProperty;
+var __propIsEnum$1V = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1V = (obj, key, value) => key in obj ? __defProp$1V(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1Q = (a, b) => {
+var __spreadValues$1V = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1Q.call(b, prop))
-      __defNormalProp$1Q(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1Q)
-    for (var prop of __getOwnPropSymbols$1Q(b)) {
-      if (__propIsEnum$1Q.call(b, prop))
-        __defNormalProp$1Q(a, prop, b[prop]);
+    if (__hasOwnProp$1V.call(b, prop))
+      __defNormalProp$1V(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1V)
+    for (var prop of __getOwnPropSymbols$1V(b)) {
+      if (__propIsEnum$1V.call(b, prop))
+        __defNormalProp$1V(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1c = (source, exclude) => {
+var __objRest$1f = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1Q.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1V.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1Q)
-    for (var prop of __getOwnPropSymbols$1Q(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1Q.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1V)
+    for (var prop of __getOwnPropSymbols$1V(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1V.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -9599,11 +9599,11 @@ const Grid = react.exports.forwardRef((props, ref) => {
     className,
     id,
     unstyled
-  } = _a, others = __objRest$1c(_a, ["gutter", "children", "grow", "justify", "align", "columns", "className", "id", "unstyled"]);
+  } = _a, others = __objRest$1f(_a, ["gutter", "children", "grow", "justify", "align", "columns", "className", "id", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$1E({
+  } = useStyles$1K({
     gutter,
     justify,
     align
@@ -9618,7 +9618,7 @@ const Grid = react.exports.forwardRef((props, ref) => {
       columns
     },
     children: /* @__PURE__ */ jsx(Box, {
-      ...__spreadValues$1Q({
+      ...__spreadValues$1V({
         className: cx(classes.root, className),
         ref
       }, others),
@@ -9628,42 +9628,42 @@ const Grid = react.exports.forwardRef((props, ref) => {
 });
 Grid.Col = Col;
 Grid.displayName = "@mantine/core/Grid";
-var useStyles$1B = createStyles((theme, { color }) => ({
+var useStyles$1H = createStyles((theme, { color }) => ({
   root: {
     backgroundColor: theme.fn.themeColor(color, theme.colorScheme === "dark" ? 5 : 2),
     color: theme.colorScheme === "dark" ? theme.colors.dark[9] : "inherit"
   }
 }));
-const useStyles$1C = useStyles$1B;
-var __defProp$1P = Object.defineProperty;
-var __getOwnPropSymbols$1P = Object.getOwnPropertySymbols;
-var __hasOwnProp$1P = Object.prototype.hasOwnProperty;
-var __propIsEnum$1P = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1P = (obj, key, value) => key in obj ? __defProp$1P(obj, key, {
+const useStyles$1I = useStyles$1H;
+var __defProp$1U = Object.defineProperty;
+var __getOwnPropSymbols$1U = Object.getOwnPropertySymbols;
+var __hasOwnProp$1U = Object.prototype.hasOwnProperty;
+var __propIsEnum$1U = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1U = (obj, key, value) => key in obj ? __defProp$1U(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1P = (a, b) => {
+var __spreadValues$1U = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1P.call(b, prop))
-      __defNormalProp$1P(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1P)
-    for (var prop of __getOwnPropSymbols$1P(b)) {
-      if (__propIsEnum$1P.call(b, prop))
-        __defNormalProp$1P(a, prop, b[prop]);
+    if (__hasOwnProp$1U.call(b, prop))
+      __defNormalProp$1U(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1U)
+    for (var prop of __getOwnPropSymbols$1U(b)) {
+      if (__propIsEnum$1U.call(b, prop))
+        __defNormalProp$1U(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1b = (source, exclude) => {
+var __objRest$1e = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1P.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1U.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1P)
-    for (var prop of __getOwnPropSymbols$1P(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1P.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1U)
+    for (var prop of __getOwnPropSymbols$1U(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1U.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -9676,18 +9676,18 @@ const Mark = react.exports.forwardRef((props, ref) => {
     color,
     className,
     unstyled
-  } = _a, others = __objRest$1b(_a, ["color", "className", "unstyled"]);
+  } = _a, others = __objRest$1e(_a, ["color", "className", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$1C({
+  } = useStyles$1I({
     color
   }, {
     unstyled,
     name: "Mark"
   });
   return /* @__PURE__ */ jsx(Box, {
-    ...__spreadValues$1P({
+    ...__spreadValues$1U({
       component: "mark",
       ref,
       className: cx(classes.root, className)
@@ -9712,35 +9712,35 @@ function highlighter(value, _highlight) {
   const chunks = value.split(re).map((part) => ({ chunk: part, highlighted: re.test(part) })).filter(({ chunk }) => chunk);
   return chunks;
 }
-var __defProp$1O = Object.defineProperty;
-var __getOwnPropSymbols$1O = Object.getOwnPropertySymbols;
-var __hasOwnProp$1O = Object.prototype.hasOwnProperty;
-var __propIsEnum$1O = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1O = (obj, key, value) => key in obj ? __defProp$1O(obj, key, {
+var __defProp$1T = Object.defineProperty;
+var __getOwnPropSymbols$1T = Object.getOwnPropertySymbols;
+var __hasOwnProp$1T = Object.prototype.hasOwnProperty;
+var __propIsEnum$1T = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1T = (obj, key, value) => key in obj ? __defProp$1T(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1O = (a, b) => {
+var __spreadValues$1T = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1O.call(b, prop))
-      __defNormalProp$1O(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1O)
-    for (var prop of __getOwnPropSymbols$1O(b)) {
-      if (__propIsEnum$1O.call(b, prop))
-        __defNormalProp$1O(a, prop, b[prop]);
+    if (__hasOwnProp$1T.call(b, prop))
+      __defNormalProp$1T(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1T)
+    for (var prop of __getOwnPropSymbols$1T(b)) {
+      if (__propIsEnum$1T.call(b, prop))
+        __defNormalProp$1T(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$1a = (source, exclude) => {
+var __objRest$1d = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1O.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1T.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1O)
-    for (var prop of __getOwnPropSymbols$1O(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1O.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1T)
+    for (var prop of __getOwnPropSymbols$1T(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1T.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -9755,10 +9755,10 @@ const _Highlight = react.exports.forwardRef((props, ref) => {
     highlightColor,
     highlightStyles,
     unstyled
-  } = _a, others = __objRest$1a(_a, ["children", "highlight", "highlightColor", "highlightStyles", "unstyled"]);
+  } = _a, others = __objRest$1d(_a, ["children", "highlight", "highlightColor", "highlightStyles", "unstyled"]);
   const highlightChunks = highlighter(children, highlight);
   return /* @__PURE__ */ jsx(Text, {
-    ...__spreadValues$1O({
+    ...__spreadValues$1T({
       unstyled,
       ref
     }, others),
@@ -9782,35 +9782,35 @@ const HOVER_CARD_ERRORS = {
   children: "HoverCard.Target component children should be an element or a component that accepts ref, fragments, strings, numbers and other primitive values are not supported"
 };
 const [HoverCardContextProvider, useHoverCardContext] = createSafeContext(HOVER_CARD_ERRORS.context);
-var __defProp$1N = Object.defineProperty;
-var __getOwnPropSymbols$1N = Object.getOwnPropertySymbols;
-var __hasOwnProp$1N = Object.prototype.hasOwnProperty;
-var __propIsEnum$1N = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1N = (obj, key, value) => key in obj ? __defProp$1N(obj, key, {
+var __defProp$1S = Object.defineProperty;
+var __getOwnPropSymbols$1S = Object.getOwnPropertySymbols;
+var __hasOwnProp$1S = Object.prototype.hasOwnProperty;
+var __propIsEnum$1S = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1S = (obj, key, value) => key in obj ? __defProp$1S(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1N = (a, b) => {
+var __spreadValues$1S = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1N.call(b, prop))
-      __defNormalProp$1N(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1N)
-    for (var prop of __getOwnPropSymbols$1N(b)) {
-      if (__propIsEnum$1N.call(b, prop))
-        __defNormalProp$1N(a, prop, b[prop]);
+    if (__hasOwnProp$1S.call(b, prop))
+      __defNormalProp$1S(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1S)
+    for (var prop of __getOwnPropSymbols$1S(b)) {
+      if (__propIsEnum$1S.call(b, prop))
+        __defNormalProp$1S(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$19 = (source, exclude) => {
+var __objRest$1c = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1N.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1S.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1N)
-    for (var prop of __getOwnPropSymbols$1N(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1N.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1S)
+    for (var prop of __getOwnPropSymbols$1S(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1S.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -9820,12 +9820,12 @@ function HoverCardDropdown(_a) {
     children,
     onMouseEnter,
     onMouseLeave
-  } = _b, others = __objRest$19(_b, ["children", "onMouseEnter", "onMouseLeave"]);
+  } = _b, others = __objRest$1c(_b, ["children", "onMouseEnter", "onMouseLeave"]);
   const ctx = useHoverCardContext();
   const handleMouseEnter = createEventHandler(onMouseEnter, ctx.openDropdown);
   const handleMouseLeave = createEventHandler(onMouseLeave, ctx.closeDropdown);
   return /* @__PURE__ */ jsx(Popover.Dropdown, {
-    ...__spreadValues$1N({
+    ...__spreadValues$1S({
       onMouseEnter: handleMouseEnter,
       onMouseLeave: handleMouseLeave
     }, others),
@@ -9833,35 +9833,35 @@ function HoverCardDropdown(_a) {
   });
 }
 HoverCardDropdown.displayName = "@mantine/core/HoverCardDropdown";
-var __defProp$1M = Object.defineProperty;
-var __getOwnPropSymbols$1M = Object.getOwnPropertySymbols;
-var __hasOwnProp$1M = Object.prototype.hasOwnProperty;
-var __propIsEnum$1M = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1M = (obj, key, value) => key in obj ? __defProp$1M(obj, key, {
+var __defProp$1R = Object.defineProperty;
+var __getOwnPropSymbols$1R = Object.getOwnPropertySymbols;
+var __hasOwnProp$1R = Object.prototype.hasOwnProperty;
+var __propIsEnum$1R = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1R = (obj, key, value) => key in obj ? __defProp$1R(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1M = (a, b) => {
+var __spreadValues$1R = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1M.call(b, prop))
-      __defNormalProp$1M(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1M)
-    for (var prop of __getOwnPropSymbols$1M(b)) {
-      if (__propIsEnum$1M.call(b, prop))
-        __defNormalProp$1M(a, prop, b[prop]);
+    if (__hasOwnProp$1R.call(b, prop))
+      __defNormalProp$1R(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1R)
+    for (var prop of __getOwnPropSymbols$1R(b)) {
+      if (__propIsEnum$1R.call(b, prop))
+        __defNormalProp$1R(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$18 = (source, exclude) => {
+var __objRest$1b = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1M.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1R.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1M)
-    for (var prop of __getOwnPropSymbols$1M(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1M.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1R)
+    for (var prop of __getOwnPropSymbols$1R(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1R.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -9870,7 +9870,7 @@ const HoverCardTarget = react.exports.forwardRef((_a, ref) => {
   var _b = _a, {
     children,
     refProp
-  } = _b, others = __objRest$18(_b, ["children", "refProp"]);
+  } = _b, others = __objRest$1b(_b, ["children", "refProp"]);
   if (!isElement(children)) {
     throw new Error(HOVER_CARD_ERRORS.children);
   }
@@ -9878,7 +9878,7 @@ const HoverCardTarget = react.exports.forwardRef((_a, ref) => {
   const onMouseEnter = createEventHandler(children.props.onMouseEnter, ctx.openDropdown);
   const onMouseLeave = createEventHandler(children.props.onMouseLeave, ctx.closeDropdown);
   return /* @__PURE__ */ jsx(Popover.Target, {
-    ...__spreadValues$1M({
+    ...__spreadValues$1R({
       refProp,
       ref
     }, others),
@@ -9915,35 +9915,35 @@ function useDelayedHover({ open, close, openDelay, closeDelay }) {
   react.exports.useEffect(() => clearTimeouts, []);
   return { openDropdown, closeDropdown };
 }
-var __defProp$1L = Object.defineProperty;
-var __getOwnPropSymbols$1L = Object.getOwnPropertySymbols;
-var __hasOwnProp$1L = Object.prototype.hasOwnProperty;
-var __propIsEnum$1L = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1L = (obj, key, value) => key in obj ? __defProp$1L(obj, key, {
+var __defProp$1Q = Object.defineProperty;
+var __getOwnPropSymbols$1Q = Object.getOwnPropertySymbols;
+var __hasOwnProp$1Q = Object.prototype.hasOwnProperty;
+var __propIsEnum$1Q = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1Q = (obj, key, value) => key in obj ? __defProp$1Q(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1L = (a, b) => {
+var __spreadValues$1Q = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1L.call(b, prop))
-      __defNormalProp$1L(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1L)
-    for (var prop of __getOwnPropSymbols$1L(b)) {
-      if (__propIsEnum$1L.call(b, prop))
-        __defNormalProp$1L(a, prop, b[prop]);
+    if (__hasOwnProp$1Q.call(b, prop))
+      __defNormalProp$1Q(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1Q)
+    for (var prop of __getOwnPropSymbols$1Q(b)) {
+      if (__propIsEnum$1Q.call(b, prop))
+        __defNormalProp$1Q(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$17 = (source, exclude) => {
+var __objRest$1a = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1L.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1Q.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1L)
-    for (var prop of __getOwnPropSymbols$1L(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1L.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1Q)
+    for (var prop of __getOwnPropSymbols$1Q(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1Q.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -9961,7 +9961,7 @@ function HoverCard(props) {
     openDelay,
     closeDelay,
     initiallyOpened
-  } = _a, others = __objRest$17(_a, ["children", "onOpen", "onClose", "openDelay", "closeDelay", "initiallyOpened"]);
+  } = _a, others = __objRest$1a(_a, ["children", "onOpen", "onClose", "openDelay", "closeDelay", "initiallyOpened"]);
   const [opened, {
     open,
     close
@@ -9984,7 +9984,7 @@ function HoverCard(props) {
       closeDropdown
     },
     children: /* @__PURE__ */ jsx(Popover, {
-      ...__spreadValues$1L({
+      ...__spreadValues$1Q({
         opened,
         __staticSelector: "HoverCard"
       }, others),
@@ -9995,30 +9995,30 @@ function HoverCard(props) {
 HoverCard.displayName = "@mantine/core/HoverCard";
 HoverCard.Target = HoverCardTarget;
 HoverCard.Dropdown = HoverCardDropdown;
-var __defProp$1K = Object.defineProperty;
-var __getOwnPropSymbols$1K = Object.getOwnPropertySymbols;
-var __hasOwnProp$1K = Object.prototype.hasOwnProperty;
-var __propIsEnum$1K = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1K = (obj, key, value) => key in obj ? __defProp$1K(obj, key, {
+var __defProp$1P = Object.defineProperty;
+var __getOwnPropSymbols$1P = Object.getOwnPropertySymbols;
+var __hasOwnProp$1P = Object.prototype.hasOwnProperty;
+var __propIsEnum$1P = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1P = (obj, key, value) => key in obj ? __defProp$1P(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1K = (a, b) => {
+var __spreadValues$1P = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1K.call(b, prop))
-      __defNormalProp$1K(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1K)
-    for (var prop of __getOwnPropSymbols$1K(b)) {
-      if (__propIsEnum$1K.call(b, prop))
-        __defNormalProp$1K(a, prop, b[prop]);
+    if (__hasOwnProp$1P.call(b, prop))
+      __defNormalProp$1P(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1P)
+    for (var prop of __getOwnPropSymbols$1P(b)) {
+      if (__propIsEnum$1P.call(b, prop))
+        __defNormalProp$1P(a, prop, b[prop]);
     }
   return a;
 };
 function ImageIcon(props) {
   return /* @__PURE__ */ jsx("svg", {
-    ...__spreadValues$1K({
+    ...__spreadValues$1P({
       width: "15",
       height: "15",
       viewBox: "0 0 15 15",
@@ -10033,26 +10033,26 @@ function ImageIcon(props) {
     })
   });
 }
-var __defProp$1J = Object.defineProperty;
-var __defProps$T = Object.defineProperties;
-var __getOwnPropDescs$T = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$1J = Object.getOwnPropertySymbols;
-var __hasOwnProp$1J = Object.prototype.hasOwnProperty;
-var __propIsEnum$1J = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1J = (obj, key, value) => key in obj ? __defProp$1J(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$1J = (a, b) => {
+var __defProp$1O = Object.defineProperty;
+var __defProps$W = Object.defineProperties;
+var __getOwnPropDescs$W = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$1O = Object.getOwnPropertySymbols;
+var __hasOwnProp$1O = Object.prototype.hasOwnProperty;
+var __propIsEnum$1O = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1O = (obj, key, value) => key in obj ? __defProp$1O(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$1O = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1J.call(b, prop))
-      __defNormalProp$1J(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1J)
-    for (var prop of __getOwnPropSymbols$1J(b)) {
-      if (__propIsEnum$1J.call(b, prop))
-        __defNormalProp$1J(a, prop, b[prop]);
+    if (__hasOwnProp$1O.call(b, prop))
+      __defNormalProp$1O(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1O)
+    for (var prop of __getOwnPropSymbols$1O(b)) {
+      if (__propIsEnum$1O.call(b, prop))
+        __defNormalProp$1O(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$T = (a, b) => __defProps$T(a, __getOwnPropDescs$T(b));
-var useStyles$1z = createStyles((theme, { radius }) => ({
+var __spreadProps$W = (a, b) => __defProps$W(a, __getOwnPropDescs$W(b));
+var useStyles$1F = createStyles((theme, { radius }) => ({
   root: {},
   imageWrapper: {
     position: "relative"
@@ -10060,7 +10060,7 @@ var useStyles$1z = createStyles((theme, { radius }) => ({
   figure: {
     margin: 0
   },
-  image: __spreadProps$T(__spreadValues$1J({}, theme.fn.fontStyles()), {
+  image: __spreadProps$W(__spreadValues$1O({}, theme.fn.fontStyles()), {
     display: "block",
     width: "100%",
     height: "100%",
@@ -10071,7 +10071,7 @@ var useStyles$1z = createStyles((theme, { radius }) => ({
     color: theme.colorScheme === "dark" ? theme.colors.dark[2] : theme.colors.gray[7],
     marginTop: theme.spacing.xs
   },
-  placeholder: __spreadProps$T(__spreadValues$1J({}, theme.fn.cover()), {
+  placeholder: __spreadProps$W(__spreadValues$1O({}, theme.fn.cover()), {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -10080,36 +10080,36 @@ var useStyles$1z = createStyles((theme, { radius }) => ({
     borderRadius: theme.fn.size({ size: radius, sizes: theme.radius })
   })
 }));
-const useStyles$1A = useStyles$1z;
-var __defProp$1I = Object.defineProperty;
-var __getOwnPropSymbols$1I = Object.getOwnPropertySymbols;
-var __hasOwnProp$1I = Object.prototype.hasOwnProperty;
-var __propIsEnum$1I = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1I = (obj, key, value) => key in obj ? __defProp$1I(obj, key, {
+const useStyles$1G = useStyles$1F;
+var __defProp$1N = Object.defineProperty;
+var __getOwnPropSymbols$1N = Object.getOwnPropertySymbols;
+var __hasOwnProp$1N = Object.prototype.hasOwnProperty;
+var __propIsEnum$1N = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1N = (obj, key, value) => key in obj ? __defProp$1N(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1I = (a, b) => {
+var __spreadValues$1N = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1I.call(b, prop))
-      __defNormalProp$1I(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1I)
-    for (var prop of __getOwnPropSymbols$1I(b)) {
-      if (__propIsEnum$1I.call(b, prop))
-        __defNormalProp$1I(a, prop, b[prop]);
+    if (__hasOwnProp$1N.call(b, prop))
+      __defNormalProp$1N(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1N)
+    for (var prop of __getOwnPropSymbols$1N(b)) {
+      if (__propIsEnum$1N.call(b, prop))
+        __defNormalProp$1N(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$16 = (source, exclude) => {
+var __objRest$19 = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1I.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1N.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1I)
-    for (var prop of __getOwnPropSymbols$1I(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1I.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1N)
+    for (var prop of __getOwnPropSymbols$1N(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1N.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -10138,11 +10138,11 @@ const Image = react.exports.forwardRef((props, ref) => {
     caption,
     unstyled,
     style
-  } = _a, others = __objRest$16(_a, ["className", "alt", "src", "fit", "width", "height", "radius", "imageProps", "withPlaceholder", "placeholder", "imageRef", "classNames", "styles", "caption", "unstyled", "style"]);
+  } = _a, others = __objRest$19(_a, ["className", "alt", "src", "fit", "width", "height", "radius", "imageProps", "withPlaceholder", "placeholder", "imageRef", "classNames", "styles", "caption", "unstyled", "style"]);
   const {
     classes,
     cx
-  } = useStyles$1A({
+  } = useStyles$1G({
     radius
   }, {
     classNames,
@@ -10158,10 +10158,10 @@ const Image = react.exports.forwardRef((props, ref) => {
     setError(false);
   }, [src]);
   return /* @__PURE__ */ jsx(Box, {
-    ...__spreadValues$1I({
+    ...__spreadValues$1N({
       className: cx(classes.root, className),
       ref,
-      style: __spreadValues$1I({
+      style: __spreadValues$1N({
         width,
         height
       }, style)
@@ -10171,7 +10171,7 @@ const Image = react.exports.forwardRef((props, ref) => {
       children: [/* @__PURE__ */ jsxs("div", {
         className: classes.imageWrapper,
         children: [/* @__PURE__ */ jsx("img", {
-          ...__spreadValues$1I({
+          ...__spreadValues$1N({
             className: classes.image,
             src,
             alt,
@@ -10211,25 +10211,25 @@ const Image = react.exports.forwardRef((props, ref) => {
   });
 });
 Image.displayName = "@mantine/core/Image";
-var __defProp$1H = Object.defineProperty;
-var __defProps$S = Object.defineProperties;
-var __getOwnPropDescs$S = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$1H = Object.getOwnPropertySymbols;
-var __hasOwnProp$1H = Object.prototype.hasOwnProperty;
-var __propIsEnum$1H = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1H = (obj, key, value) => key in obj ? __defProp$1H(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$1H = (a, b) => {
+var __defProp$1M = Object.defineProperty;
+var __defProps$V = Object.defineProperties;
+var __getOwnPropDescs$V = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$1M = Object.getOwnPropertySymbols;
+var __hasOwnProp$1M = Object.prototype.hasOwnProperty;
+var __propIsEnum$1M = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1M = (obj, key, value) => key in obj ? __defProp$1M(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$1M = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1H.call(b, prop))
-      __defNormalProp$1H(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1H)
-    for (var prop of __getOwnPropSymbols$1H(b)) {
-      if (__propIsEnum$1H.call(b, prop))
-        __defNormalProp$1H(a, prop, b[prop]);
+    if (__hasOwnProp$1M.call(b, prop))
+      __defNormalProp$1M(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1M)
+    for (var prop of __getOwnPropSymbols$1M(b)) {
+      if (__propIsEnum$1M.call(b, prop))
+        __defNormalProp$1M(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$S = (a, b) => __defProps$S(a, __getOwnPropDescs$S(b));
+var __spreadProps$V = (a, b) => __defProps$V(a, __getOwnPropDescs$V(b));
 function getPositionStyles$1(_position, offset2 = 0) {
   const styles = {};
   const [position, placement] = _position.split("-");
@@ -10262,7 +10262,7 @@ function getPositionStyles$1(_position, offset2 = 0) {
   styles.transform = `translate(${translateX}, ${translateY})`;
   return styles;
 }
-var useStyles$1x = createStyles((theme, {
+var useStyles$1D = createStyles((theme, {
   radius,
   size: size2,
   color,
@@ -10277,7 +10277,7 @@ var useStyles$1x = createStyles((theme, {
     position: "relative",
     display: inline ? "inline-block" : "block"
   },
-  indicator: __spreadProps$S(__spreadValues$1H({}, getPositionStyles$1(position, offset2)), {
+  indicator: __spreadProps$V(__spreadValues$1M({}, getPositionStyles$1(position, offset2)), {
     zIndex,
     position: "absolute",
     [withLabel ? "minWidth" : "width"]: size2,
@@ -10299,36 +10299,36 @@ var useStyles$1x = createStyles((theme, {
     whiteSpace: "nowrap"
   })
 }));
-const useStyles$1y = useStyles$1x;
-var __defProp$1G = Object.defineProperty;
-var __getOwnPropSymbols$1G = Object.getOwnPropertySymbols;
-var __hasOwnProp$1G = Object.prototype.hasOwnProperty;
-var __propIsEnum$1G = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1G = (obj, key, value) => key in obj ? __defProp$1G(obj, key, {
+const useStyles$1E = useStyles$1D;
+var __defProp$1L = Object.defineProperty;
+var __getOwnPropSymbols$1L = Object.getOwnPropertySymbols;
+var __hasOwnProp$1L = Object.prototype.hasOwnProperty;
+var __propIsEnum$1L = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1L = (obj, key, value) => key in obj ? __defProp$1L(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1G = (a, b) => {
+var __spreadValues$1L = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1G.call(b, prop))
-      __defNormalProp$1G(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1G)
-    for (var prop of __getOwnPropSymbols$1G(b)) {
-      if (__propIsEnum$1G.call(b, prop))
-        __defNormalProp$1G(a, prop, b[prop]);
+    if (__hasOwnProp$1L.call(b, prop))
+      __defNormalProp$1L(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1L)
+    for (var prop of __getOwnPropSymbols$1L(b)) {
+      if (__propIsEnum$1L.call(b, prop))
+        __defNormalProp$1L(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$15 = (source, exclude) => {
+var __objRest$18 = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1G.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1L.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1G)
-    for (var prop of __getOwnPropSymbols$1G(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1G.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1L)
+    for (var prop of __getOwnPropSymbols$1L(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1L.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -10360,11 +10360,11 @@ const Indicator = react.exports.forwardRef((props, ref) => {
     disabled,
     zIndex,
     unstyled
-  } = _a, others = __objRest$15(_a, ["children", "position", "offset", "size", "radius", "inline", "withBorder", "className", "color", "styles", "label", "classNames", "disabled", "zIndex", "unstyled"]);
+  } = _a, others = __objRest$18(_a, ["children", "position", "offset", "size", "radius", "inline", "withBorder", "className", "color", "styles", "label", "classNames", "disabled", "zIndex", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$1y({
+  } = useStyles$1E({
     position,
     offset: offset2,
     size: size2,
@@ -10381,7 +10381,7 @@ const Indicator = react.exports.forwardRef((props, ref) => {
     unstyled
   });
   return /* @__PURE__ */ jsxs(Box, {
-    ...__spreadValues$1G({
+    ...__spreadValues$1L({
       ref,
       className: cx(classes.root, className)
     }, others),
@@ -10392,38 +10392,38 @@ const Indicator = react.exports.forwardRef((props, ref) => {
   });
 });
 Indicator.displayName = "@mantine/core/Indicator";
-var __defProp$1F = Object.defineProperty;
-var __defProps$R = Object.defineProperties;
-var __getOwnPropDescs$R = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$1F = Object.getOwnPropertySymbols;
-var __hasOwnProp$1F = Object.prototype.hasOwnProperty;
-var __propIsEnum$1F = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1F = (obj, key, value) => key in obj ? __defProp$1F(obj, key, {
+var __defProp$1K = Object.defineProperty;
+var __defProps$U = Object.defineProperties;
+var __getOwnPropDescs$U = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$1K = Object.getOwnPropertySymbols;
+var __hasOwnProp$1K = Object.prototype.hasOwnProperty;
+var __propIsEnum$1K = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1K = (obj, key, value) => key in obj ? __defProp$1K(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1F = (a, b) => {
+var __spreadValues$1K = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1F.call(b, prop))
-      __defNormalProp$1F(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1F)
-    for (var prop of __getOwnPropSymbols$1F(b)) {
-      if (__propIsEnum$1F.call(b, prop))
-        __defNormalProp$1F(a, prop, b[prop]);
+    if (__hasOwnProp$1K.call(b, prop))
+      __defNormalProp$1K(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1K)
+    for (var prop of __getOwnPropSymbols$1K(b)) {
+      if (__propIsEnum$1K.call(b, prop))
+        __defNormalProp$1K(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$R = (a, b) => __defProps$R(a, __getOwnPropDescs$R(b));
-var __objRest$14 = (source, exclude) => {
+var __spreadProps$U = (a, b) => __defProps$U(a, __getOwnPropDescs$U(b));
+var __objRest$17 = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1F.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1K.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1F)
-    for (var prop of __getOwnPropSymbols$1F(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1F.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1K)
+    for (var prop of __getOwnPropSymbols$1K(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1K.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -10436,11 +10436,11 @@ const _InputBase = react.exports.forwardRef((props, ref) => {
   const _a = useInputProps("InputBase", defaultProps$A, props), {
     inputProps,
     wrapperProps
-  } = _a, others = __objRest$14(_a, ["inputProps", "wrapperProps"]);
+  } = _a, others = __objRest$17(_a, ["inputProps", "wrapperProps"]);
   return /* @__PURE__ */ jsx(Input.Wrapper, {
-    ...__spreadValues$1F({}, wrapperProps),
+    ...__spreadValues$1K({}, wrapperProps),
     children: /* @__PURE__ */ jsx(Input, {
-      ...__spreadProps$R(__spreadValues$1F(__spreadValues$1F({}, inputProps), others), {
+      ...__spreadProps$U(__spreadValues$1K(__spreadValues$1K({}, inputProps), others), {
         ref
       })
     })
@@ -10459,13 +10459,13 @@ function validateJson(value) {
     return false;
   }
 }
-var useStyles$1v = createStyles((theme, { size: size2 }) => ({
+var useStyles$1B = createStyles((theme, { size: size2 }) => ({
   input: {
     fontFamily: theme.fontFamilyMonospace,
     fontSize: theme.fn.size({ size: size2, sizes: theme.fontSizes }) - 2
   }
 }));
-const useStyles$1w = useStyles$1v;
+const useStyles$1C = useStyles$1B;
 function _objectWithoutPropertiesLoose(source, excluded) {
   if (source == null)
     return {};
@@ -10677,45 +10677,45 @@ var TextareaAutosize = function TextareaAutosize2(_ref, userRef) {
 };
 var index = /* @__PURE__ */ react.exports.forwardRef(TextareaAutosize);
 const TextareaAutosize$1 = index;
-var useStyles$1t = createStyles((theme) => ({
+var useStyles$1z = createStyles((theme) => ({
   input: {
     paddingTop: theme.spacing.xs,
     paddingBottom: theme.spacing.xs
   }
 }));
-const useStyles$1u = useStyles$1t;
-var __defProp$1E = Object.defineProperty;
-var __defProps$Q = Object.defineProperties;
-var __getOwnPropDescs$Q = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$1E = Object.getOwnPropertySymbols;
-var __hasOwnProp$1E = Object.prototype.hasOwnProperty;
-var __propIsEnum$1E = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1E = (obj, key, value) => key in obj ? __defProp$1E(obj, key, {
+const useStyles$1A = useStyles$1z;
+var __defProp$1J = Object.defineProperty;
+var __defProps$T = Object.defineProperties;
+var __getOwnPropDescs$T = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$1J = Object.getOwnPropertySymbols;
+var __hasOwnProp$1J = Object.prototype.hasOwnProperty;
+var __propIsEnum$1J = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1J = (obj, key, value) => key in obj ? __defProp$1J(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1E = (a, b) => {
+var __spreadValues$1J = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1E.call(b, prop))
-      __defNormalProp$1E(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1E)
-    for (var prop of __getOwnPropSymbols$1E(b)) {
-      if (__propIsEnum$1E.call(b, prop))
-        __defNormalProp$1E(a, prop, b[prop]);
+    if (__hasOwnProp$1J.call(b, prop))
+      __defNormalProp$1J(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1J)
+    for (var prop of __getOwnPropSymbols$1J(b)) {
+      if (__propIsEnum$1J.call(b, prop))
+        __defNormalProp$1J(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$Q = (a, b) => __defProps$Q(a, __getOwnPropDescs$Q(b));
-var __objRest$13 = (source, exclude) => {
+var __spreadProps$T = (a, b) => __defProps$T(a, __getOwnPropDescs$T(b));
+var __objRest$16 = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1E.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1J.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1E)
-    for (var prop of __getOwnPropSymbols$1E(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1E.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1J)
+    for (var prop of __getOwnPropSymbols$1J(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1J.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -10750,22 +10750,22 @@ const Textarea = react.exports.forwardRef((props, ref) => {
     inputContainer,
     unstyled,
     withAsterisk
-  } = _a, others = __objRest$13(_a, ["autosize", "maxRows", "minRows", "label", "error", "description", "id", "className", "required", "style", "wrapperProps", "classNames", "styles", "size", "__staticSelector", "sx", "errorProps", "descriptionProps", "labelProps", "inputWrapperOrder", "inputContainer", "unstyled", "withAsterisk"]);
+  } = _a, others = __objRest$16(_a, ["autosize", "maxRows", "minRows", "label", "error", "description", "id", "className", "required", "style", "wrapperProps", "classNames", "styles", "size", "__staticSelector", "sx", "errorProps", "descriptionProps", "labelProps", "inputWrapperOrder", "inputContainer", "unstyled", "withAsterisk"]);
   const uuid2 = useId(id);
   const {
     classes,
     cx
-  } = useStyles$1u();
+  } = useStyles$1A();
   const {
     systemStyles,
     rest
   } = extractSystemStyles(others);
-  const sharedProps = __spreadValues$1E({
+  const sharedProps = __spreadValues$1J({
     required,
     ref,
     invalid: !!error,
     id: uuid2,
-    classNames: __spreadProps$Q(__spreadValues$1E({}, classNames), {
+    classNames: __spreadProps$T(__spreadValues$1J({}, classNames), {
       input: cx(classes.input, classNames == null ? void 0 : classNames.input)
     }),
     styles,
@@ -10775,7 +10775,7 @@ const Textarea = react.exports.forwardRef((props, ref) => {
     unstyled
   }, rest);
   return /* @__PURE__ */ jsx(Input.Wrapper, {
-    ...__spreadValues$1E(__spreadValues$1E({
+    ...__spreadValues$1J(__spreadValues$1J({
       label,
       error,
       id: uuid2,
@@ -10797,13 +10797,13 @@ const Textarea = react.exports.forwardRef((props, ref) => {
       withAsterisk
     }, systemStyles), wrapperProps),
     children: autosize ? /* @__PURE__ */ jsx(Input, {
-      ...__spreadProps$Q(__spreadValues$1E({}, sharedProps), {
+      ...__spreadProps$T(__spreadValues$1J({}, sharedProps), {
         component: TextareaAutosize$1,
         maxRows,
         minRows
       })
     }) : /* @__PURE__ */ jsx(Input, {
-      ...__spreadProps$Q(__spreadValues$1E({}, sharedProps), {
+      ...__spreadProps$T(__spreadValues$1J({}, sharedProps), {
         component: "textarea",
         rows: minRows
       })
@@ -10811,38 +10811,38 @@ const Textarea = react.exports.forwardRef((props, ref) => {
   });
 });
 Textarea.displayName = "@mantine/core/Textarea";
-var __defProp$1D = Object.defineProperty;
-var __defProps$P = Object.defineProperties;
-var __getOwnPropDescs$P = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$1D = Object.getOwnPropertySymbols;
-var __hasOwnProp$1D = Object.prototype.hasOwnProperty;
-var __propIsEnum$1D = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1D = (obj, key, value) => key in obj ? __defProp$1D(obj, key, {
+var __defProp$1I = Object.defineProperty;
+var __defProps$S = Object.defineProperties;
+var __getOwnPropDescs$S = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$1I = Object.getOwnPropertySymbols;
+var __hasOwnProp$1I = Object.prototype.hasOwnProperty;
+var __propIsEnum$1I = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1I = (obj, key, value) => key in obj ? __defProp$1I(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1D = (a, b) => {
+var __spreadValues$1I = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1D.call(b, prop))
-      __defNormalProp$1D(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1D)
-    for (var prop of __getOwnPropSymbols$1D(b)) {
-      if (__propIsEnum$1D.call(b, prop))
-        __defNormalProp$1D(a, prop, b[prop]);
+    if (__hasOwnProp$1I.call(b, prop))
+      __defNormalProp$1I(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1I)
+    for (var prop of __getOwnPropSymbols$1I(b)) {
+      if (__propIsEnum$1I.call(b, prop))
+        __defNormalProp$1I(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$P = (a, b) => __defProps$P(a, __getOwnPropDescs$P(b));
-var __objRest$12 = (source, exclude) => {
+var __spreadProps$S = (a, b) => __defProps$S(a, __getOwnPropDescs$S(b));
+var __objRest$15 = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1D.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1I.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1D)
-    for (var prop of __getOwnPropSymbols$1D(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1D.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1I)
+    for (var prop of __getOwnPropSymbols$1I(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1I.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -10864,11 +10864,11 @@ const JsonInput = react.exports.forwardRef((props, ref) => {
     validationError,
     classNames,
     unstyled
-  } = _a, others = __objRest$12(_a, ["value", "defaultValue", "onChange", "onFocus", "onBlur", "error", "formatOnBlur", "size", "validationError", "classNames", "unstyled"]);
+  } = _a, others = __objRest$15(_a, ["value", "defaultValue", "onChange", "onFocus", "onBlur", "error", "formatOnBlur", "size", "validationError", "classNames", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$1w({
+  } = useStyles$1C({
     size: size2
   }, {
     name: "JsonInput",
@@ -10892,14 +10892,14 @@ const JsonInput = react.exports.forwardRef((props, ref) => {
     setValid(isValid);
   };
   return /* @__PURE__ */ jsx(Textarea, {
-    ...__spreadValues$1D({
+    ...__spreadValues$1I({
       value: _value,
       onChange: (event) => setValue(event.currentTarget.value),
       onFocus: handleFocus,
       onBlur: handleBlur,
       error: valid ? error : validationError || true,
       __staticSelector: "JsonInput",
-      classNames: __spreadProps$P(__spreadValues$1D({}, classNames), {
+      classNames: __spreadProps$S(__spreadValues$1I({}, classNames), {
         input: cx(classes.input, classNames == null ? void 0 : classNames.input)
       }),
       autoComplete: "nope",
@@ -10909,7 +10909,7 @@ const JsonInput = react.exports.forwardRef((props, ref) => {
   });
 });
 JsonInput.displayName = "@mantine/core/JsonInput";
-var useStyles$1r = createStyles((theme) => ({
+var useStyles$1x = createStyles((theme) => ({
   root: {
     lineHeight: theme.lineHeight,
     fontFamily: theme.fontFamilyMonospace,
@@ -10923,36 +10923,36 @@ var useStyles$1r = createStyles((theme) => ({
     borderBottom: `3px solid ${theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]}`
   }
 }));
-const useStyles$1s = useStyles$1r;
-var __defProp$1C = Object.defineProperty;
-var __getOwnPropSymbols$1C = Object.getOwnPropertySymbols;
-var __hasOwnProp$1C = Object.prototype.hasOwnProperty;
-var __propIsEnum$1C = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1C = (obj, key, value) => key in obj ? __defProp$1C(obj, key, {
+const useStyles$1y = useStyles$1x;
+var __defProp$1H = Object.defineProperty;
+var __getOwnPropSymbols$1H = Object.getOwnPropertySymbols;
+var __hasOwnProp$1H = Object.prototype.hasOwnProperty;
+var __propIsEnum$1H = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1H = (obj, key, value) => key in obj ? __defProp$1H(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1C = (a, b) => {
+var __spreadValues$1H = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1C.call(b, prop))
-      __defNormalProp$1C(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1C)
-    for (var prop of __getOwnPropSymbols$1C(b)) {
-      if (__propIsEnum$1C.call(b, prop))
-        __defNormalProp$1C(a, prop, b[prop]);
+    if (__hasOwnProp$1H.call(b, prop))
+      __defNormalProp$1H(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1H)
+    for (var prop of __getOwnPropSymbols$1H(b)) {
+      if (__propIsEnum$1H.call(b, prop))
+        __defNormalProp$1H(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$11 = (source, exclude) => {
+var __objRest$14 = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1C.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1H.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1C)
-    for (var prop of __getOwnPropSymbols$1C(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1C.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1H)
+    for (var prop of __getOwnPropSymbols$1H(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1H.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -10962,16 +10962,16 @@ const Kbd = react.exports.forwardRef((props, ref) => {
     className,
     children,
     unstyled
-  } = _a, others = __objRest$11(_a, ["className", "children", "unstyled"]);
+  } = _a, others = __objRest$14(_a, ["className", "children", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$1s(null, {
+  } = useStyles$1y(null, {
     name: "Kbd",
     unstyled
   });
   return /* @__PURE__ */ jsx(Box, {
-    ...__spreadValues$1C({
+    ...__spreadValues$1H({
       component: "kbd",
       className: cx(classes.root, className),
       ref
@@ -10984,7 +10984,7 @@ const ListContext = react.exports.createContext(null);
 function useListContext() {
   return react.exports.useContext(ListContext) || {};
 }
-var useStyles$1p = createStyles((theme, { spacing, center }, getRef) => ({
+var useStyles$1v = createStyles((theme, { spacing, center }, getRef) => ({
   itemWrapper: {
     ref: getRef("itemWrapper"),
     display: "inline"
@@ -11008,36 +11008,36 @@ var useStyles$1p = createStyles((theme, { spacing, center }, getRef) => ({
     marginRight: theme.spacing.sm
   }
 }));
-const useStyles$1q = useStyles$1p;
-var __defProp$1B = Object.defineProperty;
-var __getOwnPropSymbols$1B = Object.getOwnPropertySymbols;
-var __hasOwnProp$1B = Object.prototype.hasOwnProperty;
-var __propIsEnum$1B = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1B = (obj, key, value) => key in obj ? __defProp$1B(obj, key, {
+const useStyles$1w = useStyles$1v;
+var __defProp$1G = Object.defineProperty;
+var __getOwnPropSymbols$1G = Object.getOwnPropertySymbols;
+var __hasOwnProp$1G = Object.prototype.hasOwnProperty;
+var __propIsEnum$1G = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1G = (obj, key, value) => key in obj ? __defProp$1G(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1B = (a, b) => {
+var __spreadValues$1G = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1B.call(b, prop))
-      __defNormalProp$1B(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1B)
-    for (var prop of __getOwnPropSymbols$1B(b)) {
-      if (__propIsEnum$1B.call(b, prop))
-        __defNormalProp$1B(a, prop, b[prop]);
+    if (__hasOwnProp$1G.call(b, prop))
+      __defNormalProp$1G(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1G)
+    for (var prop of __getOwnPropSymbols$1G(b)) {
+      if (__propIsEnum$1G.call(b, prop))
+        __defNormalProp$1G(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$10 = (source, exclude) => {
+var __objRest$13 = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1B.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1G.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1B)
-    for (var prop of __getOwnPropSymbols$1B(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1B.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1G)
+    for (var prop of __getOwnPropSymbols$1G(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1G.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -11047,7 +11047,7 @@ function ListItem(_a) {
     className,
     children,
     icon
-  } = _b, others = __objRest$10(_b, ["className", "children", "icon"]);
+  } = _b, others = __objRest$13(_b, ["className", "children", "icon"]);
   const {
     icon: ctxIcon,
     spacing,
@@ -11062,7 +11062,7 @@ function ListItem(_a) {
   const {
     classes,
     cx
-  } = useStyles$1q({
+  } = useStyles$1w({
     spacing,
     center
   }, {
@@ -11072,7 +11072,7 @@ function ListItem(_a) {
     name: "List"
   });
   return /* @__PURE__ */ jsx(Box, {
-    ...__spreadValues$1B({
+    ...__spreadValues$1G({
       component: "li",
       className: cx(classes.item, {
         [classes.withIcon]: _icon
@@ -11090,27 +11090,27 @@ function ListItem(_a) {
   });
 }
 ListItem.displayName = "@mantine/core/ListItem";
-var __defProp$1A = Object.defineProperty;
-var __defProps$O = Object.defineProperties;
-var __getOwnPropDescs$O = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$1A = Object.getOwnPropertySymbols;
-var __hasOwnProp$1A = Object.prototype.hasOwnProperty;
-var __propIsEnum$1A = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1A = (obj, key, value) => key in obj ? __defProp$1A(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$1A = (a, b) => {
+var __defProp$1F = Object.defineProperty;
+var __defProps$R = Object.defineProperties;
+var __getOwnPropDescs$R = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$1F = Object.getOwnPropertySymbols;
+var __hasOwnProp$1F = Object.prototype.hasOwnProperty;
+var __propIsEnum$1F = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1F = (obj, key, value) => key in obj ? __defProp$1F(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$1F = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1A.call(b, prop))
-      __defNormalProp$1A(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1A)
-    for (var prop of __getOwnPropSymbols$1A(b)) {
-      if (__propIsEnum$1A.call(b, prop))
-        __defNormalProp$1A(a, prop, b[prop]);
+    if (__hasOwnProp$1F.call(b, prop))
+      __defNormalProp$1F(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1F)
+    for (var prop of __getOwnPropSymbols$1F(b)) {
+      if (__propIsEnum$1F.call(b, prop))
+        __defNormalProp$1F(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$O = (a, b) => __defProps$O(a, __getOwnPropDescs$O(b));
-var useStyles$1n = createStyles((theme, { withPadding, size: size2, listStyleType }) => ({
-  root: __spreadProps$O(__spreadValues$1A({}, theme.fn.fontStyles()), {
+var __spreadProps$R = (a, b) => __defProps$R(a, __getOwnPropDescs$R(b));
+var useStyles$1t = createStyles((theme, { withPadding, size: size2, listStyleType }) => ({
+  root: __spreadProps$R(__spreadValues$1F({}, theme.fn.fontStyles()), {
     listStyleType,
     color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
     fontSize: theme.fn.size({ size: size2, sizes: theme.fontSizes }),
@@ -11120,36 +11120,36 @@ var useStyles$1n = createStyles((theme, { withPadding, size: size2, listStyleTyp
     listStylePosition: "inside"
   })
 }));
-const useStyles$1o = useStyles$1n;
-var __defProp$1z = Object.defineProperty;
-var __getOwnPropSymbols$1z = Object.getOwnPropertySymbols;
-var __hasOwnProp$1z = Object.prototype.hasOwnProperty;
-var __propIsEnum$1z = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1z = (obj, key, value) => key in obj ? __defProp$1z(obj, key, {
+const useStyles$1u = useStyles$1t;
+var __defProp$1E = Object.defineProperty;
+var __getOwnPropSymbols$1E = Object.getOwnPropertySymbols;
+var __hasOwnProp$1E = Object.prototype.hasOwnProperty;
+var __propIsEnum$1E = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1E = (obj, key, value) => key in obj ? __defProp$1E(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1z = (a, b) => {
+var __spreadValues$1E = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1z.call(b, prop))
-      __defNormalProp$1z(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1z)
-    for (var prop of __getOwnPropSymbols$1z(b)) {
-      if (__propIsEnum$1z.call(b, prop))
-        __defNormalProp$1z(a, prop, b[prop]);
+    if (__hasOwnProp$1E.call(b, prop))
+      __defNormalProp$1E(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1E)
+    for (var prop of __getOwnPropSymbols$1E(b)) {
+      if (__propIsEnum$1E.call(b, prop))
+        __defNormalProp$1E(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$$ = (source, exclude) => {
+var __objRest$12 = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1z.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1E.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1z)
-    for (var prop of __getOwnPropSymbols$1z(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1z.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1E)
+    for (var prop of __getOwnPropSymbols$1E(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1E.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -11173,11 +11173,11 @@ const List = react.exports.forwardRef((props, ref) => {
     styles,
     classNames,
     unstyled
-  } = _a, others = __objRest$$(_a, ["children", "type", "size", "listStyleType", "withPadding", "center", "spacing", "icon", "className", "styles", "classNames", "unstyled"]);
+  } = _a, others = __objRest$12(_a, ["children", "type", "size", "listStyleType", "withPadding", "center", "spacing", "icon", "className", "styles", "classNames", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$1o({
+  } = useStyles$1u({
     withPadding,
     size: size2,
     listStyleType
@@ -11198,7 +11198,7 @@ const List = react.exports.forwardRef((props, ref) => {
         icon
       },
       children: /* @__PURE__ */ jsx(Box, {
-        ...__spreadValues$1z({
+        ...__spreadValues$1E({
           component: type === "unordered" ? "ul" : "ol",
           className: cx(classes.root, className),
           ref
@@ -11210,7 +11210,7 @@ const List = react.exports.forwardRef((props, ref) => {
 });
 List.Item = ListItem;
 List.displayName = "@mantine/core/List";
-var useStyles$1l = createStyles((theme, { smallerThan, largerThan, query, styles }) => {
+var useStyles$1r = createStyles((theme, { smallerThan, largerThan, query, styles }) => {
   const media = {};
   const minWidth = theme.fn.size({ size: largerThan, sizes: theme.breakpoints }) + 1;
   const maxWidth = theme.fn.size({ size: smallerThan, sizes: theme.breakpoints });
@@ -11229,11 +11229,11 @@ var useStyles$1l = createStyles((theme, { smallerThan, largerThan, query, styles
   }
   return { media };
 });
-const useStyles$1m = useStyles$1l;
+const useStyles$1s = useStyles$1r;
 function MediaQuery(props) {
   var _a;
   const { children, smallerThan, largerThan, query, styles, className } = useComponentDefaultProps("MediaQuery", {}, props);
-  const { classes, cx } = useStyles$1m({ smallerThan, largerThan, query, styles }, { name: "MediaQuery" });
+  const { classes, cx } = useStyles$1s({ smallerThan, largerThan, query, styles }, { name: "MediaQuery" });
   const child = react.exports.Children.only(children);
   if (typeof child === "object" && child !== null && "props" in child) {
     return React.cloneElement(child, {
@@ -11243,42 +11243,42 @@ function MediaQuery(props) {
   return child;
 }
 MediaQuery.displayName = "@mantine/core/MediaQuery";
-var useStyles$1j = createStyles((theme) => ({
+var useStyles$1p = createStyles((theme) => ({
   divider: {
     margin: `${theme.spacing.xs / 2}px -5px`,
     borderTop: `1px solid ${theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[2]}`
   }
 }));
-const useStyles$1k = useStyles$1j;
-var __defProp$1y = Object.defineProperty;
-var __getOwnPropSymbols$1y = Object.getOwnPropertySymbols;
-var __hasOwnProp$1y = Object.prototype.hasOwnProperty;
-var __propIsEnum$1y = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1y = (obj, key, value) => key in obj ? __defProp$1y(obj, key, {
+const useStyles$1q = useStyles$1p;
+var __defProp$1D = Object.defineProperty;
+var __getOwnPropSymbols$1D = Object.getOwnPropertySymbols;
+var __hasOwnProp$1D = Object.prototype.hasOwnProperty;
+var __propIsEnum$1D = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1D = (obj, key, value) => key in obj ? __defProp$1D(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1y = (a, b) => {
+var __spreadValues$1D = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1y.call(b, prop))
-      __defNormalProp$1y(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1y)
-    for (var prop of __getOwnPropSymbols$1y(b)) {
-      if (__propIsEnum$1y.call(b, prop))
-        __defNormalProp$1y(a, prop, b[prop]);
+    if (__hasOwnProp$1D.call(b, prop))
+      __defNormalProp$1D(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1D)
+    for (var prop of __getOwnPropSymbols$1D(b)) {
+      if (__propIsEnum$1D.call(b, prop))
+        __defNormalProp$1D(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$_ = (source, exclude) => {
+var __objRest$11 = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1y.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1D.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1y)
-    for (var prop of __getOwnPropSymbols$1y(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1y.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1D)
+    for (var prop of __getOwnPropSymbols$1D(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1D.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -11287,7 +11287,7 @@ function MenuDivider(_a) {
   var _b = _a, {
     children,
     className
-  } = _b, others = __objRest$_(_b, ["children", "className"]);
+  } = _b, others = __objRest$11(_b, ["children", "className"]);
   const {
     classNames,
     styles,
@@ -11296,14 +11296,14 @@ function MenuDivider(_a) {
   const {
     classes,
     cx
-  } = useStyles$1k(null, {
+  } = useStyles$1q(null, {
     name: "Menu",
     classNames,
     styles,
     unstyled
   });
   return /* @__PURE__ */ jsx(Box, {
-    ...__spreadValues$1y({
+    ...__spreadValues$1D({
       className: cx(classes.divider, className)
     }, others)
   });
@@ -11314,35 +11314,35 @@ const MENU_ERRORS = {
   children: "Menu.Target component children should be an element or a component that accepts ref, fragments, strings, numbers and other primitive values are not supported"
 };
 const [MenuContextProvider, useMenuContext] = createSafeContext(MENU_ERRORS.context);
-var __defProp$1x = Object.defineProperty;
-var __getOwnPropSymbols$1x = Object.getOwnPropertySymbols;
-var __hasOwnProp$1x = Object.prototype.hasOwnProperty;
-var __propIsEnum$1x = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1x = (obj, key, value) => key in obj ? __defProp$1x(obj, key, {
+var __defProp$1C = Object.defineProperty;
+var __getOwnPropSymbols$1C = Object.getOwnPropertySymbols;
+var __hasOwnProp$1C = Object.prototype.hasOwnProperty;
+var __propIsEnum$1C = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1C = (obj, key, value) => key in obj ? __defProp$1C(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1x = (a, b) => {
+var __spreadValues$1C = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1x.call(b, prop))
-      __defNormalProp$1x(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1x)
-    for (var prop of __getOwnPropSymbols$1x(b)) {
-      if (__propIsEnum$1x.call(b, prop))
-        __defNormalProp$1x(a, prop, b[prop]);
+    if (__hasOwnProp$1C.call(b, prop))
+      __defNormalProp$1C(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1C)
+    for (var prop of __getOwnPropSymbols$1C(b)) {
+      if (__propIsEnum$1C.call(b, prop))
+        __defNormalProp$1C(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$Z = (source, exclude) => {
+var __objRest$10 = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1x.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1C.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1x)
-    for (var prop of __getOwnPropSymbols$1x(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1x.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1C)
+    for (var prop of __getOwnPropSymbols$1C(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1C.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -11352,7 +11352,7 @@ function MenuDropdown(_a) {
     children,
     onMouseEnter,
     onMouseLeave
-  } = _b, others = __objRest$Z(_b, ["children", "onMouseEnter", "onMouseLeave"]);
+  } = _b, others = __objRest$10(_b, ["children", "onMouseEnter", "onMouseLeave"]);
   const wrapperRef = react.exports.useRef();
   const ctx = useMenuContext();
   const handleKeyDown = (event) => {
@@ -11364,7 +11364,7 @@ function MenuDropdown(_a) {
   const handleMouseEnter = createEventHandler(onMouseEnter, () => ctx.trigger === "hover" && ctx.openDropdown());
   const handleMouseLeave = createEventHandler(onMouseLeave, () => ctx.trigger === "hover" && ctx.closeDropdown());
   return /* @__PURE__ */ jsx(Popover.Dropdown, {
-    ...__spreadValues$1x({
+    ...__spreadValues$1C({
       onMouseEnter: handleMouseEnter,
       onMouseLeave: handleMouseLeave,
       role: "menu",
@@ -11384,27 +11384,27 @@ function MenuDropdown(_a) {
   });
 }
 MenuDropdown.displayName = "@mantine/core/MenuDropdown";
-var __defProp$1w = Object.defineProperty;
-var __defProps$N = Object.defineProperties;
-var __getOwnPropDescs$N = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$1w = Object.getOwnPropertySymbols;
-var __hasOwnProp$1w = Object.prototype.hasOwnProperty;
-var __propIsEnum$1w = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1w = (obj, key, value) => key in obj ? __defProp$1w(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$1w = (a, b) => {
+var __defProp$1B = Object.defineProperty;
+var __defProps$Q = Object.defineProperties;
+var __getOwnPropDescs$Q = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$1B = Object.getOwnPropertySymbols;
+var __hasOwnProp$1B = Object.prototype.hasOwnProperty;
+var __propIsEnum$1B = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1B = (obj, key, value) => key in obj ? __defProp$1B(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$1B = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1w.call(b, prop))
-      __defNormalProp$1w(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1w)
-    for (var prop of __getOwnPropSymbols$1w(b)) {
-      if (__propIsEnum$1w.call(b, prop))
-        __defNormalProp$1w(a, prop, b[prop]);
+    if (__hasOwnProp$1B.call(b, prop))
+      __defNormalProp$1B(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1B)
+    for (var prop of __getOwnPropSymbols$1B(b)) {
+      if (__propIsEnum$1B.call(b, prop))
+        __defNormalProp$1B(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$N = (a, b) => __defProps$N(a, __getOwnPropDescs$N(b));
-var useStyles$1h = createStyles((theme, { color, radius }) => ({
-  item: __spreadProps$N(__spreadValues$1w({}, theme.fn.fontStyles()), {
+var __spreadProps$Q = (a, b) => __defProps$Q(a, __getOwnPropDescs$Q(b));
+var useStyles$1n = createStyles((theme, { color, radius }) => ({
+  item: __spreadProps$Q(__spreadValues$1B({}, theme.fn.fontStyles()), {
     WebkitTapHighlightColor: "transparent",
     fontSize: theme.fontSizes.sm,
     border: 0,
@@ -11440,39 +11440,39 @@ var useStyles$1h = createStyles((theme, { color, radius }) => ({
   },
   itemRightSection: {}
 }));
-const useStyles$1i = useStyles$1h;
-var __defProp$1v = Object.defineProperty;
-var __defProps$M = Object.defineProperties;
-var __getOwnPropDescs$M = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$1v = Object.getOwnPropertySymbols;
-var __hasOwnProp$1v = Object.prototype.hasOwnProperty;
-var __propIsEnum$1v = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1v = (obj, key, value) => key in obj ? __defProp$1v(obj, key, {
+const useStyles$1o = useStyles$1n;
+var __defProp$1A = Object.defineProperty;
+var __defProps$P = Object.defineProperties;
+var __getOwnPropDescs$P = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$1A = Object.getOwnPropertySymbols;
+var __hasOwnProp$1A = Object.prototype.hasOwnProperty;
+var __propIsEnum$1A = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1A = (obj, key, value) => key in obj ? __defProp$1A(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1v = (a, b) => {
+var __spreadValues$1A = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1v.call(b, prop))
-      __defNormalProp$1v(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1v)
-    for (var prop of __getOwnPropSymbols$1v(b)) {
-      if (__propIsEnum$1v.call(b, prop))
-        __defNormalProp$1v(a, prop, b[prop]);
+    if (__hasOwnProp$1A.call(b, prop))
+      __defNormalProp$1A(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1A)
+    for (var prop of __getOwnPropSymbols$1A(b)) {
+      if (__propIsEnum$1A.call(b, prop))
+        __defNormalProp$1A(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$M = (a, b) => __defProps$M(a, __getOwnPropDescs$M(b));
-var __objRest$Y = (source, exclude) => {
+var __spreadProps$P = (a, b) => __defProps$P(a, __getOwnPropDescs$P(b));
+var __objRest$$ = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1v.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1A.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1v)
-    for (var prop of __getOwnPropSymbols$1v(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1v.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1A)
+    for (var prop of __getOwnPropSymbols$1A(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1A.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -11485,7 +11485,7 @@ const _MenuItem = react.exports.forwardRef((_a, ref) => {
     closeMenuOnClick,
     icon,
     rightSection
-  } = _b, others = __objRest$Y(_b, ["children", "className", "color", "closeMenuOnClick", "icon", "rightSection"]);
+  } = _b, others = __objRest$$(_b, ["children", "className", "color", "closeMenuOnClick", "icon", "rightSection"]);
   const ctx = useMenuContext();
   const {
     classNames,
@@ -11496,7 +11496,7 @@ const _MenuItem = react.exports.forwardRef((_a, ref) => {
     classes,
     cx,
     theme
-  } = useStyles$1i({
+  } = useStyles$1o({
     radius: ctx.radius,
     color
   }, {
@@ -11519,7 +11519,7 @@ const _MenuItem = react.exports.forwardRef((_a, ref) => {
   });
   const handleFocus = createEventHandler(_others.onFocus, () => ctx.setHovered(ctx.getItemIndex(itemRef.current)));
   return /* @__PURE__ */ jsxs(Box, {
-    ...__spreadProps$M(__spreadValues$1v({
+    ...__spreadProps$P(__spreadValues$1A({
       component: "button"
     }, others), {
       type: "button",
@@ -11557,7 +11557,7 @@ const _MenuItem = react.exports.forwardRef((_a, ref) => {
 });
 _MenuItem.displayName = "@mantine/core/MenuItem";
 const MenuItem = createPolymorphicComponent(_MenuItem);
-var useStyles$1f = createStyles((theme) => ({
+var useStyles$1l = createStyles((theme) => ({
   label: {
     color: theme.colorScheme === "dark" ? theme.colors.dark[2] : theme.colors.gray[6],
     fontWeight: 500,
@@ -11566,36 +11566,36 @@ var useStyles$1f = createStyles((theme) => ({
     cursor: "default"
   }
 }));
-const useStyles$1g = useStyles$1f;
-var __defProp$1u = Object.defineProperty;
-var __getOwnPropSymbols$1u = Object.getOwnPropertySymbols;
-var __hasOwnProp$1u = Object.prototype.hasOwnProperty;
-var __propIsEnum$1u = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1u = (obj, key, value) => key in obj ? __defProp$1u(obj, key, {
+const useStyles$1m = useStyles$1l;
+var __defProp$1z = Object.defineProperty;
+var __getOwnPropSymbols$1z = Object.getOwnPropertySymbols;
+var __hasOwnProp$1z = Object.prototype.hasOwnProperty;
+var __propIsEnum$1z = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1z = (obj, key, value) => key in obj ? __defProp$1z(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1u = (a, b) => {
+var __spreadValues$1z = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1u.call(b, prop))
-      __defNormalProp$1u(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1u)
-    for (var prop of __getOwnPropSymbols$1u(b)) {
-      if (__propIsEnum$1u.call(b, prop))
-        __defNormalProp$1u(a, prop, b[prop]);
+    if (__hasOwnProp$1z.call(b, prop))
+      __defNormalProp$1z(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1z)
+    for (var prop of __getOwnPropSymbols$1z(b)) {
+      if (__propIsEnum$1z.call(b, prop))
+        __defNormalProp$1z(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$X = (source, exclude) => {
+var __objRest$_ = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1u.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1z.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1u)
-    for (var prop of __getOwnPropSymbols$1u(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1u.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1z)
+    for (var prop of __getOwnPropSymbols$1z(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1z.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -11604,7 +11604,7 @@ function MenuLabel(_a) {
   var _b = _a, {
     children,
     className
-  } = _b, others = __objRest$X(_b, ["children", "className"]);
+  } = _b, others = __objRest$_(_b, ["children", "className"]);
   const {
     classNames,
     styles,
@@ -11613,49 +11613,49 @@ function MenuLabel(_a) {
   const {
     classes,
     cx
-  } = useStyles$1g(null, {
+  } = useStyles$1m(null, {
     name: "Menu",
     classNames,
     styles,
     unstyled
   });
   return /* @__PURE__ */ jsx(Text, {
-    ...__spreadValues$1u({
+    ...__spreadValues$1z({
       className: cx(classes.label, className)
     }, others),
     children
   });
 }
 MenuLabel.displayName = "@mantine/core/MenuLabel";
-var __defProp$1t = Object.defineProperty;
-var __getOwnPropSymbols$1t = Object.getOwnPropertySymbols;
-var __hasOwnProp$1t = Object.prototype.hasOwnProperty;
-var __propIsEnum$1t = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1t = (obj, key, value) => key in obj ? __defProp$1t(obj, key, {
+var __defProp$1y = Object.defineProperty;
+var __getOwnPropSymbols$1y = Object.getOwnPropertySymbols;
+var __hasOwnProp$1y = Object.prototype.hasOwnProperty;
+var __propIsEnum$1y = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1y = (obj, key, value) => key in obj ? __defProp$1y(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1t = (a, b) => {
+var __spreadValues$1y = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1t.call(b, prop))
-      __defNormalProp$1t(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1t)
-    for (var prop of __getOwnPropSymbols$1t(b)) {
-      if (__propIsEnum$1t.call(b, prop))
-        __defNormalProp$1t(a, prop, b[prop]);
+    if (__hasOwnProp$1y.call(b, prop))
+      __defNormalProp$1y(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1y)
+    for (var prop of __getOwnPropSymbols$1y(b)) {
+      if (__propIsEnum$1y.call(b, prop))
+        __defNormalProp$1y(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$W = (source, exclude) => {
+var __objRest$Z = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1t.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1y.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1t)
-    for (var prop of __getOwnPropSymbols$1t(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1t.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1y)
+    for (var prop of __getOwnPropSymbols$1y(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1y.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -11664,7 +11664,7 @@ const MenuTarget = react.exports.forwardRef((_a, ref) => {
   var _b = _a, {
     children,
     refProp = "ref"
-  } = _b, others = __objRest$W(_b, ["children", "refProp"]);
+  } = _b, others = __objRest$Z(_b, ["children", "refProp"]);
   if (!isElement(children)) {
     throw new Error(MENU_ERRORS.children);
   }
@@ -11673,7 +11673,7 @@ const MenuTarget = react.exports.forwardRef((_a, ref) => {
   const onMouseEnter = createEventHandler(children.props.onMouseEnter, () => ctx.trigger === "hover" && ctx.openDropdown());
   const onMouseLeave = createEventHandler(children.props.onMouseLeave, () => ctx.trigger === "hover" && ctx.closeDropdown());
   return /* @__PURE__ */ jsx(Popover.Target, {
-    ...__spreadValues$1t({
+    ...__spreadValues$1y({
       refProp,
       popupType: "menu",
       ref
@@ -11687,42 +11687,42 @@ const MenuTarget = react.exports.forwardRef((_a, ref) => {
   });
 });
 MenuTarget.displayName = "@mantine/core/MenuTarget";
-var useStyles$1d = createStyles({
+var useStyles$1j = createStyles({
   dropdown: { padding: 4 }
 });
-const useStyles$1e = useStyles$1d;
-var __defProp$1s = Object.defineProperty;
-var __defProps$L = Object.defineProperties;
-var __getOwnPropDescs$L = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$1s = Object.getOwnPropertySymbols;
-var __hasOwnProp$1s = Object.prototype.hasOwnProperty;
-var __propIsEnum$1s = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1s = (obj, key, value) => key in obj ? __defProp$1s(obj, key, {
+const useStyles$1k = useStyles$1j;
+var __defProp$1x = Object.defineProperty;
+var __defProps$O = Object.defineProperties;
+var __getOwnPropDescs$O = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$1x = Object.getOwnPropertySymbols;
+var __hasOwnProp$1x = Object.prototype.hasOwnProperty;
+var __propIsEnum$1x = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1x = (obj, key, value) => key in obj ? __defProp$1x(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1s = (a, b) => {
+var __spreadValues$1x = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1s.call(b, prop))
-      __defNormalProp$1s(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1s)
-    for (var prop of __getOwnPropSymbols$1s(b)) {
-      if (__propIsEnum$1s.call(b, prop))
-        __defNormalProp$1s(a, prop, b[prop]);
+    if (__hasOwnProp$1x.call(b, prop))
+      __defNormalProp$1x(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1x)
+    for (var prop of __getOwnPropSymbols$1x(b)) {
+      if (__propIsEnum$1x.call(b, prop))
+        __defNormalProp$1x(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$L = (a, b) => __defProps$L(a, __getOwnPropDescs$L(b));
-var __objRest$V = (source, exclude) => {
+var __spreadProps$O = (a, b) => __defProps$O(a, __getOwnPropDescs$O(b));
+var __objRest$Y = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1s.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1x.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1s)
-    for (var prop of __getOwnPropSymbols$1s(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1s.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1x)
+    for (var prop of __getOwnPropSymbols$1x(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1x.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -11752,11 +11752,11 @@ function Menu(props) {
     styles,
     unstyled,
     radius
-  } = _a, others = __objRest$V(_a, ["children", "onOpen", "onClose", "opened", "defaultOpened", "onChange", "closeOnItemClick", "loop", "closeOnEscape", "trigger", "openDelay", "closeDelay", "classNames", "styles", "unstyled", "radius"]);
+  } = _a, others = __objRest$Y(_a, ["children", "onOpen", "onClose", "opened", "defaultOpened", "onChange", "closeOnItemClick", "loop", "closeOnEscape", "trigger", "openDelay", "closeDelay", "classNames", "styles", "unstyled", "radius"]);
   const {
     classes,
     cx
-  } = useStyles$1e();
+  } = useStyles$1k();
   const [hovered, {
     setHovered,
     resetHovered
@@ -11805,7 +11805,7 @@ function Menu(props) {
       radius
     },
     children: /* @__PURE__ */ jsx(Popover, {
-      ...__spreadProps$L(__spreadValues$1s({}, others), {
+      ...__spreadProps$O(__spreadValues$1x({}, others), {
         radius,
         opened: _opened,
         onChange: setOpened,
@@ -11813,7 +11813,7 @@ function Menu(props) {
         trapFocus: trigger === "click",
         closeOnEscape: closeOnEscape2 && trigger === "click",
         __staticSelector: "Menu",
-        classNames: __spreadProps$L(__spreadValues$1s({}, classNames), {
+        classNames: __spreadProps$O(__spreadValues$1x({}, classNames), {
           dropdown: cx(classes.dropdown, classNames == null ? void 0 : classNames.dropdown)
         }),
         styles,
@@ -11831,19 +11831,19 @@ Menu.Label = MenuLabel;
 Menu.Dropdown = MenuDropdown;
 Menu.Target = MenuTarget;
 Menu.Divider = MenuDivider;
-var __defProp$1r = Object.defineProperty;
-var __getOwnPropSymbols$1r = Object.getOwnPropertySymbols;
-var __hasOwnProp$1r = Object.prototype.hasOwnProperty;
-var __propIsEnum$1r = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1r = (obj, key, value) => key in obj ? __defProp$1r(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$1r = (a, b) => {
+var __defProp$1w = Object.defineProperty;
+var __getOwnPropSymbols$1w = Object.getOwnPropertySymbols;
+var __hasOwnProp$1w = Object.prototype.hasOwnProperty;
+var __propIsEnum$1w = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1w = (obj, key, value) => key in obj ? __defProp$1w(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$1w = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1r.call(b, prop))
-      __defNormalProp$1r(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1r)
-    for (var prop of __getOwnPropSymbols$1r(b)) {
-      if (__propIsEnum$1r.call(b, prop))
-        __defNormalProp$1r(a, prop, b[prop]);
+    if (__hasOwnProp$1w.call(b, prop))
+      __defNormalProp$1w(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1w)
+    for (var prop of __getOwnPropSymbols$1w(b)) {
+      if (__propIsEnum$1w.call(b, prop))
+        __defNormalProp$1w(a, prop, b[prop]);
     }
   return a;
 };
@@ -11868,7 +11868,7 @@ function getFullScreenStyles(fullScreen) {
     overflowY: "auto"
   };
 }
-var useStyles$1b = createStyles((theme, { overflow, size: size2, centered, zIndex, fullScreen }) => ({
+var useStyles$1h = createStyles((theme, { overflow, size: size2, centered, zIndex, fullScreen }) => ({
   close: {},
   overlay: {
     display: fullScreen ? "none" : void 0
@@ -11899,7 +11899,7 @@ var useStyles$1b = createStyles((theme, { overflow, size: size2, centered, zInde
     display: "block",
     wordBreak: "break-word"
   },
-  modal: __spreadValues$1r({
+  modal: __spreadValues$1w({
     position: "relative",
     width: fullScreen ? void 0 : theme.fn.size({ sizes: sizes$a, size: size2 }),
     borderRadius: fullScreen ? 0 : void 0,
@@ -11923,36 +11923,36 @@ var useStyles$1b = createStyles((theme, { overflow, size: size2, centered, zInde
     wordBreak: "break-word"
   }
 }));
-const useStyles$1c = useStyles$1b;
-var __defProp$1q = Object.defineProperty;
-var __getOwnPropSymbols$1q = Object.getOwnPropertySymbols;
-var __hasOwnProp$1q = Object.prototype.hasOwnProperty;
-var __propIsEnum$1q = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1q = (obj, key, value) => key in obj ? __defProp$1q(obj, key, {
+const useStyles$1i = useStyles$1h;
+var __defProp$1v = Object.defineProperty;
+var __getOwnPropSymbols$1v = Object.getOwnPropertySymbols;
+var __hasOwnProp$1v = Object.prototype.hasOwnProperty;
+var __propIsEnum$1v = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1v = (obj, key, value) => key in obj ? __defProp$1v(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1q = (a, b) => {
+var __spreadValues$1v = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1q.call(b, prop))
-      __defNormalProp$1q(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1q)
-    for (var prop of __getOwnPropSymbols$1q(b)) {
-      if (__propIsEnum$1q.call(b, prop))
-        __defNormalProp$1q(a, prop, b[prop]);
+    if (__hasOwnProp$1v.call(b, prop))
+      __defNormalProp$1v(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1v)
+    for (var prop of __getOwnPropSymbols$1v(b)) {
+      if (__propIsEnum$1v.call(b, prop))
+        __defNormalProp$1v(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$U = (source, exclude) => {
+var __objRest$X = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1q.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1v.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1q)
-    for (var prop of __getOwnPropSymbols$1q(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1q.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1v)
+    for (var prop of __getOwnPropSymbols$1v(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1v.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -12007,7 +12007,7 @@ function Modal(props) {
     unstyled,
     lockScroll: shouldLockScroll,
     withFocusReturn
-  } = _a, others = __objRest$U(_a, ["className", "opened", "title", "onClose", "children", "withCloseButton", "overlayOpacity", "size", "transitionDuration", "closeButtonLabel", "overlayColor", "overflow", "transition", "padding", "shadow", "radius", "id", "classNames", "styles", "closeOnClickOutside", "trapFocus", "closeOnEscape", "centered", "target", "withinPortal", "zIndex", "overlayBlur", "transitionTimingFunction", "fullScreen", "unstyled", "lockScroll", "withFocusReturn"]);
+  } = _a, others = __objRest$X(_a, ["className", "opened", "title", "onClose", "children", "withCloseButton", "overlayOpacity", "size", "transitionDuration", "closeButtonLabel", "overlayColor", "overflow", "transition", "padding", "shadow", "radius", "id", "classNames", "styles", "closeOnClickOutside", "trapFocus", "closeOnEscape", "centered", "target", "withinPortal", "zIndex", "overlayBlur", "transitionTimingFunction", "fullScreen", "unstyled", "lockScroll", "withFocusReturn"]);
   const baseId = useId(id);
   const titleId = `${baseId}-title`;
   const bodyId = `${baseId}-body`;
@@ -12015,7 +12015,7 @@ function Modal(props) {
     classes,
     cx,
     theme
-  } = useStyles$1c({
+  } = useStyles$1i({
     size: size2,
     overflow,
     centered,
@@ -12068,7 +12068,7 @@ function Modal(props) {
         }
       },
       children: (transitionStyles) => /* @__PURE__ */ jsx(Box, {
-        ...__spreadValues$1q({
+        ...__spreadValues$1v({
           id: baseId,
           className: cx(classes.root, className)
         }, others),
@@ -12144,7 +12144,7 @@ const fontSizes = {
   lg: 16,
   xl: 18
 };
-var useStyles$19 = createStyles((theme, { size: size2, disabled, radius, readOnly }) => ({
+var useStyles$1f = createStyles((theme, { size: size2, disabled, radius, readOnly }) => ({
   defaultValue: {
     display: "flex",
     alignItems: "center",
@@ -12171,36 +12171,36 @@ var useStyles$19 = createStyles((theme, { size: size2, disabled, radius, readOnl
     whiteSpace: "nowrap"
   }
 }));
-const useStyles$1a = useStyles$19;
-var __defProp$1p = Object.defineProperty;
-var __getOwnPropSymbols$1p = Object.getOwnPropertySymbols;
-var __hasOwnProp$1p = Object.prototype.hasOwnProperty;
-var __propIsEnum$1p = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1p = (obj, key, value) => key in obj ? __defProp$1p(obj, key, {
+const useStyles$1g = useStyles$1f;
+var __defProp$1u = Object.defineProperty;
+var __getOwnPropSymbols$1u = Object.getOwnPropertySymbols;
+var __hasOwnProp$1u = Object.prototype.hasOwnProperty;
+var __propIsEnum$1u = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1u = (obj, key, value) => key in obj ? __defProp$1u(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1p = (a, b) => {
+var __spreadValues$1u = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1p.call(b, prop))
-      __defNormalProp$1p(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1p)
-    for (var prop of __getOwnPropSymbols$1p(b)) {
-      if (__propIsEnum$1p.call(b, prop))
-        __defNormalProp$1p(a, prop, b[prop]);
+    if (__hasOwnProp$1u.call(b, prop))
+      __defNormalProp$1u(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1u)
+    for (var prop of __getOwnPropSymbols$1u(b)) {
+      if (__propIsEnum$1u.call(b, prop))
+        __defNormalProp$1u(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$T = (source, exclude) => {
+var __objRest$W = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1p.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1u.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1p)
-    for (var prop of __getOwnPropSymbols$1p(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1p.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1u)
+    for (var prop of __getOwnPropSymbols$1u(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1u.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -12223,11 +12223,11 @@ function DefaultValue(_a) {
     readOnly,
     size: size2,
     radius = "sm"
-  } = _b, others = __objRest$T(_b, ["label", "classNames", "styles", "className", "onRemove", "disabled", "readOnly", "size", "radius"]);
+  } = _b, others = __objRest$W(_b, ["label", "classNames", "styles", "className", "onRemove", "disabled", "readOnly", "size", "radius"]);
   const {
     classes,
     cx
-  } = useStyles$1a({
+  } = useStyles$1g({
     size: size2,
     disabled,
     readOnly,
@@ -12238,7 +12238,7 @@ function DefaultValue(_a) {
     name: "MultiSelect"
   });
   return /* @__PURE__ */ jsxs("div", {
-    ...__spreadValues$1p({
+    ...__spreadValues$1u({
       className: cx(classes.defaultValue, className)
     }, others),
     children: [/* @__PURE__ */ jsx("span", {
@@ -12282,35 +12282,35 @@ function filterData$1({ data, searchable, limit, searchValue, filter, value }) {
   }
   return result;
 }
-var __defProp$1o = Object.defineProperty;
-var __getOwnPropSymbols$1o = Object.getOwnPropertySymbols;
-var __hasOwnProp$1o = Object.prototype.hasOwnProperty;
-var __propIsEnum$1o = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1o = (obj, key, value) => key in obj ? __defProp$1o(obj, key, {
+var __defProp$1t = Object.defineProperty;
+var __getOwnPropSymbols$1t = Object.getOwnPropertySymbols;
+var __hasOwnProp$1t = Object.prototype.hasOwnProperty;
+var __propIsEnum$1t = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1t = (obj, key, value) => key in obj ? __defProp$1t(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1o = (a, b) => {
+var __spreadValues$1t = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1o.call(b, prop))
-      __defNormalProp$1o(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1o)
-    for (var prop of __getOwnPropSymbols$1o(b)) {
-      if (__propIsEnum$1o.call(b, prop))
-        __defNormalProp$1o(a, prop, b[prop]);
+    if (__hasOwnProp$1t.call(b, prop))
+      __defNormalProp$1t(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1t)
+    for (var prop of __getOwnPropSymbols$1t(b)) {
+      if (__propIsEnum$1t.call(b, prop))
+        __defNormalProp$1t(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$S = (source, exclude) => {
+var __objRest$V = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1o.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1t.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1o)
-    for (var prop of __getOwnPropSymbols$1o(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1o.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1t)
+    for (var prop of __getOwnPropSymbols$1t(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1t.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -12327,20 +12327,20 @@ function ChevronIcon(_a) {
     size: size2,
     error,
     style
-  } = _b, others = __objRest$S(_b, ["size", "error", "style"]);
+  } = _b, others = __objRest$V(_b, ["size", "error", "style"]);
   const theme = useMantineTheme();
   const _size = theme.fn.size({
     size: size2,
     sizes: iconSizes$3
   });
   return /* @__PURE__ */ jsx("svg", {
-    ...__spreadValues$1o({
+    ...__spreadValues$1t({
       width: _size,
       height: _size,
       viewBox: "0 0 15 15",
       fill: "none",
       xmlns: "http://www.w3.org/2000/svg",
-      style: __spreadValues$1o({
+      style: __spreadValues$1t({
         color: error ? theme.colors.red[6] : theme.colors.gray[6]
       }, style),
       "data-chevron": true
@@ -12373,38 +12373,38 @@ function SelectRightSection({
   });
 }
 SelectRightSection.displayName = "@mantine/core/SelectRightSection";
-var __defProp$1n = Object.defineProperty;
-var __defProps$K = Object.defineProperties;
-var __getOwnPropDescs$K = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$1n = Object.getOwnPropertySymbols;
-var __hasOwnProp$1n = Object.prototype.hasOwnProperty;
-var __propIsEnum$1n = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1n = (obj, key, value) => key in obj ? __defProp$1n(obj, key, {
+var __defProp$1s = Object.defineProperty;
+var __defProps$N = Object.defineProperties;
+var __getOwnPropDescs$N = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$1s = Object.getOwnPropertySymbols;
+var __hasOwnProp$1s = Object.prototype.hasOwnProperty;
+var __propIsEnum$1s = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1s = (obj, key, value) => key in obj ? __defProp$1s(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1n = (a, b) => {
+var __spreadValues$1s = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1n.call(b, prop))
-      __defNormalProp$1n(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1n)
-    for (var prop of __getOwnPropSymbols$1n(b)) {
-      if (__propIsEnum$1n.call(b, prop))
-        __defNormalProp$1n(a, prop, b[prop]);
+    if (__hasOwnProp$1s.call(b, prop))
+      __defNormalProp$1s(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1s)
+    for (var prop of __getOwnPropSymbols$1s(b)) {
+      if (__propIsEnum$1s.call(b, prop))
+        __defNormalProp$1s(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$K = (a, b) => __defProps$K(a, __getOwnPropDescs$K(b));
-var __objRest$R = (source, exclude) => {
+var __spreadProps$N = (a, b) => __defProps$N(a, __getOwnPropDescs$N(b));
+var __objRest$U = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1n.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1s.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1n)
-    for (var prop of __getOwnPropSymbols$1n(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1n.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1s)
+    for (var prop of __getOwnPropSymbols$1s(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1s.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -12422,7 +12422,7 @@ function getSelectRightSectionProps(_a) {
     rightSection,
     rightSectionWidth,
     theme
-  } = _b, props = __objRest$R(_b, ["styles", "rightSection", "rightSectionWidth", "theme"]);
+  } = _b, props = __objRest$U(_b, ["styles", "rightSection", "rightSectionWidth", "theme"]);
   if (rightSection) {
     return {
       rightSection,
@@ -12437,35 +12437,35 @@ function getSelectRightSectionProps(_a) {
       sizes: RIGHT_SECTION_WIDTH$3
     }),
     rightSection: !props.readOnly && !(props.disabled && props.shouldClear) && /* @__PURE__ */ jsx(SelectRightSection, {
-      ...__spreadValues$1n({}, props)
+      ...__spreadValues$1s({}, props)
     }),
-    styles: __spreadProps$K(__spreadValues$1n({}, _styles), {
-      rightSection: __spreadProps$K(__spreadValues$1n({}, _styles == null ? void 0 : _styles.rightSection), {
+    styles: __spreadProps$N(__spreadValues$1s({}, _styles), {
+      rightSection: __spreadProps$N(__spreadValues$1s({}, _styles == null ? void 0 : _styles.rightSection), {
         pointerEvents: props.shouldClear ? void 0 : "none"
       })
     })
   };
 }
-var __defProp$1m = Object.defineProperty;
-var __defProps$J = Object.defineProperties;
-var __getOwnPropDescs$J = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$1m = Object.getOwnPropertySymbols;
-var __hasOwnProp$1m = Object.prototype.hasOwnProperty;
-var __propIsEnum$1m = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1m = (obj, key, value) => key in obj ? __defProp$1m(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$1m = (a, b) => {
+var __defProp$1r = Object.defineProperty;
+var __defProps$M = Object.defineProperties;
+var __getOwnPropDescs$M = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$1r = Object.getOwnPropertySymbols;
+var __hasOwnProp$1r = Object.prototype.hasOwnProperty;
+var __propIsEnum$1r = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1r = (obj, key, value) => key in obj ? __defProp$1r(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$1r = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1m.call(b, prop))
-      __defNormalProp$1m(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1m)
-    for (var prop of __getOwnPropSymbols$1m(b)) {
-      if (__propIsEnum$1m.call(b, prop))
-        __defNormalProp$1m(a, prop, b[prop]);
+    if (__hasOwnProp$1r.call(b, prop))
+      __defNormalProp$1r(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1r)
+    for (var prop of __getOwnPropSymbols$1r(b)) {
+      if (__propIsEnum$1r.call(b, prop))
+        __defNormalProp$1r(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$J = (a, b) => __defProps$J(a, __getOwnPropDescs$J(b));
-var useStyles$17 = createStyles((theme, { size: size2, invalid }) => ({
+var __spreadProps$M = (a, b) => __defProps$M(a, __getOwnPropDescs$M(b));
+var useStyles$1d = createStyles((theme, { size: size2, invalid }) => ({
   wrapper: {
     position: "relative"
   },
@@ -12480,7 +12480,7 @@ var useStyles$17 = createStyles((theme, { size: size2, invalid }) => ({
   value: {
     margin: `${theme.spacing.xs / 2 - 2}px ${theme.spacing.xs / 2}px`
   },
-  searchInput: __spreadProps$J(__spreadValues$1m({}, theme.fn.fontStyles()), {
+  searchInput: __spreadProps$M(__spreadValues$1r({}, theme.fn.fontStyles()), {
     flex: 1,
     minWidth: 60,
     backgroundColor: "transparent",
@@ -12522,39 +12522,39 @@ var useStyles$17 = createStyles((theme, { size: size2, invalid }) => ({
     }
   }
 }));
-const useStyles$18 = useStyles$17;
-var __defProp$1l = Object.defineProperty;
-var __defProps$I = Object.defineProperties;
-var __getOwnPropDescs$I = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$1l = Object.getOwnPropertySymbols;
-var __hasOwnProp$1l = Object.prototype.hasOwnProperty;
-var __propIsEnum$1l = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1l = (obj, key, value) => key in obj ? __defProp$1l(obj, key, {
+const useStyles$1e = useStyles$1d;
+var __defProp$1q = Object.defineProperty;
+var __defProps$L = Object.defineProperties;
+var __getOwnPropDescs$L = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$1q = Object.getOwnPropertySymbols;
+var __hasOwnProp$1q = Object.prototype.hasOwnProperty;
+var __propIsEnum$1q = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1q = (obj, key, value) => key in obj ? __defProp$1q(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1l = (a, b) => {
+var __spreadValues$1q = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1l.call(b, prop))
-      __defNormalProp$1l(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1l)
-    for (var prop of __getOwnPropSymbols$1l(b)) {
-      if (__propIsEnum$1l.call(b, prop))
-        __defNormalProp$1l(a, prop, b[prop]);
+    if (__hasOwnProp$1q.call(b, prop))
+      __defNormalProp$1q(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1q)
+    for (var prop of __getOwnPropSymbols$1q(b)) {
+      if (__propIsEnum$1q.call(b, prop))
+        __defNormalProp$1q(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$I = (a, b) => __defProps$I(a, __getOwnPropDescs$I(b));
-var __objRest$Q = (source, exclude) => {
+var __spreadProps$L = (a, b) => __defProps$L(a, __getOwnPropDescs$L(b));
+var __objRest$T = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1l.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1q.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1l)
-    for (var prop of __getOwnPropSymbols$1l(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1l.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1q)
+    for (var prop of __getOwnPropSymbols$1q(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1q.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -12672,12 +12672,12 @@ const MultiSelect = react.exports.forwardRef((props, ref) => {
     inputWrapperOrder,
     readOnly,
     withAsterisk
-  } = _a, others = __objRest$Q(_a, ["className", "style", "required", "label", "description", "size", "error", "classNames", "styles", "wrapperProps", "value", "defaultValue", "data", "onChange", "valueComponent", "itemComponent", "id", "transition", "transitionDuration", "transitionTimingFunction", "maxDropdownHeight", "shadow", "nothingFound", "onFocus", "onBlur", "searchable", "placeholder", "filter", "limit", "clearSearchOnChange", "clearable", "clearSearchOnBlur", "clearButtonLabel", "variant", "onSearchChange", "disabled", "initiallyOpened", "radius", "icon", "rightSection", "rightSectionWidth", "creatable", "getCreateLabel", "shouldCreate", "onCreate", "sx", "dropdownComponent", "onDropdownClose", "onDropdownOpen", "maxSelectedValues", "withinPortal", "switchDirectionOnFlip", "zIndex", "selectOnBlur", "name", "dropdownPosition", "errorProps", "labelProps", "descriptionProps", "clearButtonTabIndex", "form", "positionDependencies", "onKeyDown", "unstyled", "inputContainer", "inputWrapperOrder", "readOnly", "withAsterisk"]);
+  } = _a, others = __objRest$T(_a, ["className", "style", "required", "label", "description", "size", "error", "classNames", "styles", "wrapperProps", "value", "defaultValue", "data", "onChange", "valueComponent", "itemComponent", "id", "transition", "transitionDuration", "transitionTimingFunction", "maxDropdownHeight", "shadow", "nothingFound", "onFocus", "onBlur", "searchable", "placeholder", "filter", "limit", "clearSearchOnChange", "clearable", "clearSearchOnBlur", "clearButtonLabel", "variant", "onSearchChange", "disabled", "initiallyOpened", "radius", "icon", "rightSection", "rightSectionWidth", "creatable", "getCreateLabel", "shouldCreate", "onCreate", "sx", "dropdownComponent", "onDropdownClose", "onDropdownOpen", "maxSelectedValues", "withinPortal", "switchDirectionOnFlip", "zIndex", "selectOnBlur", "name", "dropdownPosition", "errorProps", "labelProps", "descriptionProps", "clearButtonTabIndex", "form", "positionDependencies", "onKeyDown", "unstyled", "inputContainer", "inputWrapperOrder", "readOnly", "withAsterisk"]);
   const {
     classes,
     cx,
     theme
-  } = useStyles$18({
+  } = useStyles$1e({
     size: size2,
     invalid: !!error
   }, {
@@ -12724,7 +12724,7 @@ const MultiSelect = react.exports.forwardRef((props, ref) => {
     label: item,
     value: item
   } : item);
-  const sortedData = groupOptions({
+  const sortedData = groupOptions$1({
     data: formattedData
   });
   const [_value, setValue] = useUncontrolled({
@@ -12943,7 +12943,7 @@ const MultiSelect = react.exports.forwardRef((props, ref) => {
     }
     return selectedItem;
   }).filter((val) => !!val).map((item) => /* @__PURE__ */ jsx(Value, {
-    ...__spreadProps$I(__spreadValues$1l({}, item), {
+    ...__spreadProps$L(__spreadValues$1q({}, item), {
       disabled,
       className: classes.value,
       readOnly,
@@ -12981,7 +12981,7 @@ const MultiSelect = react.exports.forwardRef((props, ref) => {
   }
   const shouldRenderDropdown = !readOnly && (filteredData.length > 0 ? dropdownOpened : dropdownOpened && !!nothingFound);
   return /* @__PURE__ */ jsx(Input.Wrapper, {
-    ...__spreadValues$1l(__spreadValues$1l({
+    ...__spreadValues$1q(__spreadValues$1q({
       required,
       id: uuid2,
       label,
@@ -13035,7 +13035,7 @@ const MultiSelect = react.exports.forwardRef((props, ref) => {
             form,
             disabled
           }), /* @__PURE__ */ jsx(Input, {
-            ...__spreadValues$1l({
+            ...__spreadValues$1q({
               __staticSelector: "MultiSelect",
               style: {
                 overflow: "hidden"
@@ -13056,7 +13056,7 @@ const MultiSelect = react.exports.forwardRef((props, ref) => {
                 !disabled && !valuesOverflow.current && setDropdownOpened(!dropdownOpened);
                 (_a2 = inputRef.current) == null ? void 0 : _a2.focus();
               },
-              classNames: __spreadProps$I(__spreadValues$1l({}, classNames), {
+              classNames: __spreadProps$L(__spreadValues$1q({}, classNames), {
                 input: cx({
                   [classes.input]: !searchable
                 }, classNames == null ? void 0 : classNames.input)
@@ -13078,7 +13078,7 @@ const MultiSelect = react.exports.forwardRef((props, ref) => {
             children: /* @__PURE__ */ jsxs("div", {
               className: classes.values,
               children: [selectedItems, /* @__PURE__ */ jsx("input", {
-                ...__spreadValues$1l({
+                ...__spreadValues$1q({
                   ref: useMergedRef(ref, inputRef),
                   type: "search",
                   id: uuid2,
@@ -13135,38 +13135,38 @@ const MultiSelect = react.exports.forwardRef((props, ref) => {
   });
 });
 MultiSelect.displayName = "@mantine/core/MultiSelect";
-var __defProp$1k = Object.defineProperty;
-var __defProps$H = Object.defineProperties;
-var __getOwnPropDescs$H = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$1k = Object.getOwnPropertySymbols;
-var __hasOwnProp$1k = Object.prototype.hasOwnProperty;
-var __propIsEnum$1k = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1k = (obj, key, value) => key in obj ? __defProp$1k(obj, key, {
+var __defProp$1p = Object.defineProperty;
+var __defProps$K = Object.defineProperties;
+var __getOwnPropDescs$K = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$1p = Object.getOwnPropertySymbols;
+var __hasOwnProp$1p = Object.prototype.hasOwnProperty;
+var __propIsEnum$1p = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1p = (obj, key, value) => key in obj ? __defProp$1p(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1k = (a, b) => {
+var __spreadValues$1p = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1k.call(b, prop))
-      __defNormalProp$1k(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1k)
-    for (var prop of __getOwnPropSymbols$1k(b)) {
-      if (__propIsEnum$1k.call(b, prop))
-        __defNormalProp$1k(a, prop, b[prop]);
+    if (__hasOwnProp$1p.call(b, prop))
+      __defNormalProp$1p(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1p)
+    for (var prop of __getOwnPropSymbols$1p(b)) {
+      if (__propIsEnum$1p.call(b, prop))
+        __defNormalProp$1p(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$H = (a, b) => __defProps$H(a, __getOwnPropDescs$H(b));
-var __objRest$P = (source, exclude) => {
+var __spreadProps$K = (a, b) => __defProps$K(a, __getOwnPropDescs$K(b));
+var __objRest$S = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1k.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1p.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1k)
-    for (var prop of __getOwnPropSymbols$1k(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1k.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1p)
+    for (var prop of __getOwnPropSymbols$1p(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1p.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -13186,7 +13186,7 @@ const NativeSelect = react.exports.forwardRef((props, ref) => {
     styles,
     rightSection,
     rightSectionWidth
-  } = _a, others = __objRest$P(_a, ["inputProps", "wrapperProps", "data", "placeholder", "onChange", "value", "classNames", "styles", "rightSection", "rightSectionWidth"]);
+  } = _a, others = __objRest$S(_a, ["inputProps", "wrapperProps", "data", "placeholder", "onChange", "value", "classNames", "styles", "rightSection", "rightSectionWidth"]);
   const theme = useMantineTheme();
   const formattedData = data.map((item) => typeof item === "string" ? {
     label: item,
@@ -13208,11 +13208,11 @@ const NativeSelect = react.exports.forwardRef((props, ref) => {
     );
   }
   return /* @__PURE__ */ jsx(Input.Wrapper, {
-    ...__spreadProps$H(__spreadValues$1k({}, wrapperProps), {
+    ...__spreadProps$K(__spreadValues$1p({}, wrapperProps), {
       __staticSelector: "NativeSelect"
     }),
     children: /* @__PURE__ */ jsx(Input, {
-      ...__spreadValues$1k(__spreadProps$H(__spreadValues$1k(__spreadValues$1k({}, inputProps), others), {
+      ...__spreadValues$1p(__spreadProps$K(__spreadValues$1p(__spreadValues$1p({}, inputProps), others), {
         onChange,
         component: "select",
         ref,
@@ -13234,29 +13234,29 @@ const NativeSelect = react.exports.forwardRef((props, ref) => {
   });
 });
 NativeSelect.displayName = "@mantine/core/NativeSelect";
-var __defProp$1j = Object.defineProperty;
-var __defProps$G = Object.defineProperties;
-var __getOwnPropDescs$G = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$1j = Object.getOwnPropertySymbols;
-var __hasOwnProp$1j = Object.prototype.hasOwnProperty;
-var __propIsEnum$1j = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1j = (obj, key, value) => key in obj ? __defProp$1j(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$1j = (a, b) => {
+var __defProp$1o = Object.defineProperty;
+var __defProps$J = Object.defineProperties;
+var __getOwnPropDescs$J = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$1o = Object.getOwnPropertySymbols;
+var __hasOwnProp$1o = Object.prototype.hasOwnProperty;
+var __propIsEnum$1o = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1o = (obj, key, value) => key in obj ? __defProp$1o(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$1o = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1j.call(b, prop))
-      __defNormalProp$1j(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1j)
-    for (var prop of __getOwnPropSymbols$1j(b)) {
-      if (__propIsEnum$1j.call(b, prop))
-        __defNormalProp$1j(a, prop, b[prop]);
+    if (__hasOwnProp$1o.call(b, prop))
+      __defNormalProp$1o(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1o)
+    for (var prop of __getOwnPropSymbols$1o(b)) {
+      if (__propIsEnum$1o.call(b, prop))
+        __defNormalProp$1o(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$G = (a, b) => __defProps$G(a, __getOwnPropDescs$G(b));
-var useStyles$15 = createStyles((theme, { color, variant, noWrap, childrenOffset, alignIcon }) => {
+var __spreadProps$J = (a, b) => __defProps$J(a, __getOwnPropDescs$J(b));
+var useStyles$1b = createStyles((theme, { color, variant, noWrap, childrenOffset, alignIcon }) => {
   const colors = theme.fn.variant({ variant, color });
   return {
-    root: __spreadProps$G(__spreadValues$1j({
+    root: __spreadProps$J(__spreadValues$1o({
       display: "flex",
       alignItems: "center",
       width: "100%",
@@ -13265,7 +13265,7 @@ var useStyles$15 = createStyles((theme, { color, variant, noWrap, childrenOffset
     }, theme.fn.hover({
       backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0]
     })), {
-      "&[data-active]": __spreadValues$1j({
+      "&[data-active]": __spreadValues$1o({
         backgroundColor: colors.background,
         color: colors.color
       }, theme.fn.hover({ backgroundColor: colors.hover })),
@@ -13310,36 +13310,36 @@ var useStyles$15 = createStyles((theme, { color, variant, noWrap, childrenOffset
     }
   };
 });
-const useStyles$16 = useStyles$15;
-var __defProp$1i = Object.defineProperty;
-var __getOwnPropSymbols$1i = Object.getOwnPropertySymbols;
-var __hasOwnProp$1i = Object.prototype.hasOwnProperty;
-var __propIsEnum$1i = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1i = (obj, key, value) => key in obj ? __defProp$1i(obj, key, {
+const useStyles$1c = useStyles$1b;
+var __defProp$1n = Object.defineProperty;
+var __getOwnPropSymbols$1n = Object.getOwnPropertySymbols;
+var __hasOwnProp$1n = Object.prototype.hasOwnProperty;
+var __propIsEnum$1n = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1n = (obj, key, value) => key in obj ? __defProp$1n(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1i = (a, b) => {
+var __spreadValues$1n = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1i.call(b, prop))
-      __defNormalProp$1i(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1i)
-    for (var prop of __getOwnPropSymbols$1i(b)) {
-      if (__propIsEnum$1i.call(b, prop))
-        __defNormalProp$1i(a, prop, b[prop]);
+    if (__hasOwnProp$1n.call(b, prop))
+      __defNormalProp$1n(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1n)
+    for (var prop of __getOwnPropSymbols$1n(b)) {
+      if (__propIsEnum$1n.call(b, prop))
+        __defNormalProp$1n(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$O = (source, exclude) => {
+var __objRest$R = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1i.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1n.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1i)
-    for (var prop of __getOwnPropSymbols$1i(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1i.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1n)
+    for (var prop of __getOwnPropSymbols$1n(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1n.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -13370,11 +13370,11 @@ const _NavLink = react.exports.forwardRef((props, ref) => {
     childrenOffset,
     disabled,
     onClick
-  } = _a, others = __objRest$O(_a, ["label", "description", "icon", "rightSection", "className", "classNames", "styles", "unstyled", "active", "color", "variant", "noWrap", "children", "opened", "defaultOpened", "onChange", "disableRightSectionRotation", "childrenOffset", "disabled", "onClick"]);
+  } = _a, others = __objRest$R(_a, ["label", "description", "icon", "rightSection", "className", "classNames", "styles", "unstyled", "active", "color", "variant", "noWrap", "children", "opened", "defaultOpened", "onChange", "disableRightSectionRotation", "childrenOffset", "disabled", "onClick"]);
   const {
     classes,
     cx
-  } = useStyles$16({
+  } = useStyles$1c({
     color,
     variant,
     noWrap,
@@ -13404,7 +13404,7 @@ const _NavLink = react.exports.forwardRef((props, ref) => {
   };
   return /* @__PURE__ */ jsxs(Fragment, {
     children: [/* @__PURE__ */ jsxs(UnstyledButton, {
-      ...__spreadValues$1i({
+      ...__spreadValues$1n({
         ref,
         className: cx(classes.root, className),
         "data-active": active || void 0,
@@ -13454,7 +13454,7 @@ const _NavLink = react.exports.forwardRef((props, ref) => {
 });
 _NavLink.displayName = "@mantine/core/NavLink";
 const NavLink = createPolymorphicComponent(_NavLink);
-var useStyles$13 = createStyles((theme, { color, radius, withTitle }, getRef) => {
+var useStyles$19 = createStyles((theme, { color, radius, withTitle }, getRef) => {
   const _radius = theme.fn.radius(radius);
   const topBottom = Math.min(Math.max(_radius / 1.2, 4), 30);
   const colors = theme.fn.variant({ variant: "filled", color });
@@ -13533,39 +13533,39 @@ var useStyles$13 = createStyles((theme, { color, radius, withTitle }, getRef) =>
     }
   };
 });
-const useStyles$14 = useStyles$13;
-var __defProp$1h = Object.defineProperty;
-var __defProps$F = Object.defineProperties;
-var __getOwnPropDescs$F = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$1h = Object.getOwnPropertySymbols;
-var __hasOwnProp$1h = Object.prototype.hasOwnProperty;
-var __propIsEnum$1h = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1h = (obj, key, value) => key in obj ? __defProp$1h(obj, key, {
+const useStyles$1a = useStyles$19;
+var __defProp$1m = Object.defineProperty;
+var __defProps$I = Object.defineProperties;
+var __getOwnPropDescs$I = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$1m = Object.getOwnPropertySymbols;
+var __hasOwnProp$1m = Object.prototype.hasOwnProperty;
+var __propIsEnum$1m = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1m = (obj, key, value) => key in obj ? __defProp$1m(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1h = (a, b) => {
+var __spreadValues$1m = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1h.call(b, prop))
-      __defNormalProp$1h(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1h)
-    for (var prop of __getOwnPropSymbols$1h(b)) {
-      if (__propIsEnum$1h.call(b, prop))
-        __defNormalProp$1h(a, prop, b[prop]);
+    if (__hasOwnProp$1m.call(b, prop))
+      __defNormalProp$1m(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1m)
+    for (var prop of __getOwnPropSymbols$1m(b)) {
+      if (__propIsEnum$1m.call(b, prop))
+        __defNormalProp$1m(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$F = (a, b) => __defProps$F(a, __getOwnPropDescs$F(b));
-var __objRest$N = (source, exclude) => {
+var __spreadProps$I = (a, b) => __defProps$I(a, __getOwnPropDescs$I(b));
+var __objRest$Q = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1h.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1m.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1h)
-    for (var prop of __getOwnPropSymbols$1h(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1h.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1m)
+    for (var prop of __getOwnPropSymbols$1m(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1m.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -13585,11 +13585,11 @@ const Notification = react.exports.forwardRef((props, ref) => {
     classNames,
     styles,
     unstyled
-  } = _a, others = __objRest$N(_a, ["className", "color", "radius", "loading", "disallowClose", "title", "icon", "children", "onClose", "closeButtonProps", "classNames", "styles", "unstyled"]);
+  } = _a, others = __objRest$Q(_a, ["className", "color", "radius", "loading", "disallowClose", "title", "icon", "children", "onClose", "closeButtonProps", "classNames", "styles", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$14({
+  } = useStyles$1a({
     color,
     radius,
     withTitle: !!title
@@ -13601,7 +13601,7 @@ const Notification = react.exports.forwardRef((props, ref) => {
   });
   const withIcon = icon || loading;
   return /* @__PURE__ */ jsxs(Box, {
-    ...__spreadValues$1h({
+    ...__spreadValues$1m({
       className: cx(classes.root, {
         [classes.withIcon]: withIcon
       }, className),
@@ -13629,7 +13629,7 @@ const Notification = react.exports.forwardRef((props, ref) => {
         children
       })]
     }), !disallowClose && /* @__PURE__ */ jsx(CloseButton, {
-      ...__spreadProps$F(__spreadValues$1h({}, closeButtonProps), {
+      ...__spreadProps$I(__spreadValues$1m({}, closeButtonProps), {
         iconSize: 16,
         color: "gray",
         onClick: onClose,
@@ -13684,7 +13684,7 @@ const CONTROL_SIZES = {
   lg: 34,
   xl: 36
 };
-var useStyles$11 = createStyles((theme, { radius, size: size2 }) => ({
+var useStyles$17 = createStyles((theme, { radius, size: size2 }) => ({
   rightSection: {
     display: "flex",
     flexDirection: "column",
@@ -13725,39 +13725,39 @@ var useStyles$11 = createStyles((theme, { radius, size: size2 }) => ({
     borderBottom: 0
   }
 }));
-const useStyles$12 = useStyles$11;
-var __defProp$1g = Object.defineProperty;
-var __defProps$E = Object.defineProperties;
-var __getOwnPropDescs$E = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$1g = Object.getOwnPropertySymbols;
-var __hasOwnProp$1g = Object.prototype.hasOwnProperty;
-var __propIsEnum$1g = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1g = (obj, key, value) => key in obj ? __defProp$1g(obj, key, {
+const useStyles$18 = useStyles$17;
+var __defProp$1l = Object.defineProperty;
+var __defProps$H = Object.defineProperties;
+var __getOwnPropDescs$H = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$1l = Object.getOwnPropertySymbols;
+var __hasOwnProp$1l = Object.prototype.hasOwnProperty;
+var __propIsEnum$1l = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1l = (obj, key, value) => key in obj ? __defProp$1l(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$1g = (a, b) => {
+var __spreadValues$1l = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$1g.call(b, prop))
-      __defNormalProp$1g(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1g)
-    for (var prop of __getOwnPropSymbols$1g(b)) {
-      if (__propIsEnum$1g.call(b, prop))
-        __defNormalProp$1g(a, prop, b[prop]);
+    if (__hasOwnProp$1l.call(b, prop))
+      __defNormalProp$1l(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1l)
+    for (var prop of __getOwnPropSymbols$1l(b)) {
+      if (__propIsEnum$1l.call(b, prop))
+        __defNormalProp$1l(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$E = (a, b) => __defProps$E(a, __getOwnPropDescs$E(b));
-var __objRest$M = (source, exclude) => {
+var __spreadProps$H = (a, b) => __defProps$H(a, __getOwnPropDescs$H(b));
+var __objRest$P = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1g.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1l.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1g)
-    for (var prop of __getOwnPropSymbols$1g(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1g.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1l)
+    for (var prop of __getOwnPropSymbols$1l(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1l.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -13825,12 +13825,12 @@ const NumberInput = react.exports.forwardRef((props, ref) => {
     parser,
     inputMode,
     unstyled
-  } = _a, others = __objRest$M(_a, ["disabled", "value", "onChange", "decimalSeparator", "min", "max", "startValue", "step", "stepHoldInterval", "stepHoldDelay", "onBlur", "onFocus", "onKeyDown", "onKeyUp", "hideControls", "radius", "variant", "precision", "defaultValue", "noClampOnBlur", "handlersRef", "classNames", "styles", "size", "rightSection", "rightSectionWidth", "formatter", "parser", "inputMode", "unstyled"]);
+  } = _a, others = __objRest$P(_a, ["disabled", "value", "onChange", "decimalSeparator", "min", "max", "startValue", "step", "stepHoldInterval", "stepHoldDelay", "onBlur", "onFocus", "onKeyDown", "onKeyUp", "hideControls", "radius", "variant", "precision", "defaultValue", "noClampOnBlur", "handlersRef", "classNames", "styles", "size", "rightSection", "rightSectionWidth", "formatter", "parser", "inputMode", "unstyled"]);
   const {
     classes,
     cx,
     theme
-  } = useStyles$12({
+  } = useStyles$18({
     radius,
     size: size2
   }, {
@@ -14042,7 +14042,7 @@ const NumberInput = react.exports.forwardRef((props, ref) => {
     }
   };
   return /* @__PURE__ */ jsx(TextInput, {
-    ...__spreadProps$E(__spreadValues$1g({}, others), {
+    ...__spreadProps$H(__spreadValues$1l({}, others), {
       variant,
       value: formatNum(tempValue),
       disabled,
@@ -14072,6 +14072,186 @@ const NumberInput = react.exports.forwardRef((props, ref) => {
   });
 });
 NumberInput.displayName = "@mantine/core/NumberInput";
+var __defProp$1k = Object.defineProperty;
+var __getOwnPropSymbols$1k = Object.getOwnPropertySymbols;
+var __hasOwnProp$1k = Object.prototype.hasOwnProperty;
+var __propIsEnum$1k = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1k = (obj, key, value) => key in obj ? __defProp$1k(obj, key, {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  value
+}) : obj[key] = value;
+var __spreadValues$1k = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp$1k.call(b, prop))
+      __defNormalProp$1k(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1k)
+    for (var prop of __getOwnPropSymbols$1k(b)) {
+      if (__propIsEnum$1k.call(b, prop))
+        __defNormalProp$1k(a, prop, b[prop]);
+    }
+  return a;
+};
+function DotsIcon(props) {
+  return /* @__PURE__ */ jsx("svg", {
+    ...__spreadValues$1k({
+      width: 16,
+      height: 16,
+      viewBox: "0 0 16 16",
+      fill: "none",
+      xmlns: "http://www.w3.org/2000/svg"
+    }, props),
+    children: /* @__PURE__ */ jsx("path", {
+      d: "M2 8c0-.733.6-1.333 1.333-1.333.734 0 1.334.6 1.334 1.333s-.6 1.333-1.334 1.333C2.6 9.333 2 8.733 2 8zm9.333 0c0-.733.6-1.333 1.334-1.333C13.4 6.667 14 7.267 14 8s-.6 1.333-1.333 1.333c-.734 0-1.334-.6-1.334-1.333zM6.667 8c0-.733.6-1.333 1.333-1.333s1.333.6 1.333 1.333S8.733 9.333 8 9.333 6.667 8.733 6.667 8z",
+      fill: "currentColor"
+    })
+  });
+}
+var __defProp$1j = Object.defineProperty;
+var __getOwnPropSymbols$1j = Object.getOwnPropertySymbols;
+var __hasOwnProp$1j = Object.prototype.hasOwnProperty;
+var __propIsEnum$1j = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1j = (obj, key, value) => key in obj ? __defProp$1j(obj, key, {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  value
+}) : obj[key] = value;
+var __spreadValues$1j = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp$1j.call(b, prop))
+      __defNormalProp$1j(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1j)
+    for (var prop of __getOwnPropSymbols$1j(b)) {
+      if (__propIsEnum$1j.call(b, prop))
+        __defNormalProp$1j(a, prop, b[prop]);
+    }
+  return a;
+};
+function NextIcon(props) {
+  return /* @__PURE__ */ jsx("svg", {
+    ...__spreadValues$1j({
+      width: 16,
+      height: 16,
+      viewBox: "0 0 16 16",
+      fill: "none",
+      xmlns: "http://www.w3.org/2000/svg"
+    }, props),
+    children: /* @__PURE__ */ jsx("path", {
+      d: "M8.781 8l-3.3-3.3.943-.943L10.667 8l-4.243 4.243-.943-.943 3.3-3.3z",
+      fill: "currentColor"
+    })
+  });
+}
+var __defProp$1i = Object.defineProperty;
+var __getOwnPropSymbols$1i = Object.getOwnPropertySymbols;
+var __hasOwnProp$1i = Object.prototype.hasOwnProperty;
+var __propIsEnum$1i = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1i = (obj, key, value) => key in obj ? __defProp$1i(obj, key, {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  value
+}) : obj[key] = value;
+var __spreadValues$1i = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp$1i.call(b, prop))
+      __defNormalProp$1i(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1i)
+    for (var prop of __getOwnPropSymbols$1i(b)) {
+      if (__propIsEnum$1i.call(b, prop))
+        __defNormalProp$1i(a, prop, b[prop]);
+    }
+  return a;
+};
+function PrevIcon(props) {
+  return /* @__PURE__ */ jsx("svg", {
+    ...__spreadValues$1i({
+      width: 16,
+      height: 16,
+      viewBox: "0 0 16 16",
+      fill: "none",
+      xmlns: "http://www.w3.org/2000/svg"
+    }, props),
+    children: /* @__PURE__ */ jsx("path", {
+      d: "M7.219 8l3.3 3.3-.943.943L5.333 8l4.243-4.243.943.943-3.3 3.3z",
+      fill: "currentColor"
+    })
+  });
+}
+var __defProp$1h = Object.defineProperty;
+var __getOwnPropSymbols$1h = Object.getOwnPropertySymbols;
+var __hasOwnProp$1h = Object.prototype.hasOwnProperty;
+var __propIsEnum$1h = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1h = (obj, key, value) => key in obj ? __defProp$1h(obj, key, {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  value
+}) : obj[key] = value;
+var __spreadValues$1h = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp$1h.call(b, prop))
+      __defNormalProp$1h(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1h)
+    for (var prop of __getOwnPropSymbols$1h(b)) {
+      if (__propIsEnum$1h.call(b, prop))
+        __defNormalProp$1h(a, prop, b[prop]);
+    }
+  return a;
+};
+function FirstIcon(props) {
+  return /* @__PURE__ */ jsx("svg", {
+    ...__spreadValues$1h({
+      width: 16,
+      height: 16,
+      viewBox: "0 0 16 16",
+      fill: "none",
+      xmlns: "http://www.w3.org/2000/svg"
+    }, props),
+    children: /* @__PURE__ */ jsx("path", {
+      d: "M6.85355 3.85355C7.04882 3.65829 7.04882 3.34171 6.85355 3.14645C6.65829 2.95118 6.34171 2.95118 6.14645 3.14645L2.14645 7.14645C1.95118 7.34171 1.95118 7.65829 2.14645 7.85355L6.14645 11.8536C6.34171 12.0488 6.65829 12.0488 6.85355 11.8536C7.04882 11.6583 7.04882 11.3417 6.85355 11.1464L3.20711 7.5L6.85355 3.85355ZM12.8536 3.85355C13.0488 3.65829 13.0488 3.34171 12.8536 3.14645C12.6583 2.95118 12.3417 2.95118 12.1464 3.14645L8.14645 7.14645C7.95118 7.34171 7.95118 7.65829 8.14645 7.85355L12.1464 11.8536C12.3417 12.0488 12.6583 12.0488 12.8536 11.8536C13.0488 11.6583 13.0488 11.3417 12.8536 11.1464L9.20711 7.5L12.8536 3.85355Z",
+      fill: "currentColor"
+    })
+  });
+}
+var __defProp$1g = Object.defineProperty;
+var __getOwnPropSymbols$1g = Object.getOwnPropertySymbols;
+var __hasOwnProp$1g = Object.prototype.hasOwnProperty;
+var __propIsEnum$1g = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1g = (obj, key, value) => key in obj ? __defProp$1g(obj, key, {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  value
+}) : obj[key] = value;
+var __spreadValues$1g = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp$1g.call(b, prop))
+      __defNormalProp$1g(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1g)
+    for (var prop of __getOwnPropSymbols$1g(b)) {
+      if (__propIsEnum$1g.call(b, prop))
+        __defNormalProp$1g(a, prop, b[prop]);
+    }
+  return a;
+};
+function LastIcon(props) {
+  return /* @__PURE__ */ jsx("svg", {
+    ...__spreadValues$1g({
+      width: 16,
+      height: 16,
+      viewBox: "0 0 16 16",
+      fill: "none",
+      xmlns: "http://www.w3.org/2000/svg"
+    }, props),
+    children: /* @__PURE__ */ jsx("path", {
+      d: "M2.14645 11.1464C1.95118 11.3417 1.95118 11.6583 2.14645 11.8536C2.34171 12.0488 2.65829 12.0488 2.85355 11.8536L6.85355 7.85355C7.04882 7.65829 7.04882 7.34171 6.85355 7.14645L2.85355 3.14645C2.65829 2.95118 2.34171 2.95118 2.14645 3.14645C1.95118 3.34171 1.95118 3.65829 2.14645 3.85355L5.79289 7.5L2.14645 11.1464ZM8.14645 11.1464C7.95118 11.3417 7.95118 11.6583 8.14645 11.8536C8.34171 12.0488 8.65829 12.0488 8.85355 11.8536L12.8536 7.85355C13.0488 7.65829 13.0488 7.34171 12.8536 7.14645L8.85355 3.14645C8.65829 2.95118 8.34171 2.95118 8.14645 3.14645C7.95118 3.34171 7.95118 3.65829 8.14645 3.85355L11.7929 7.5L8.14645 11.1464Z",
+      fill: "currentColor"
+    })
+  });
+}
 var __defProp$1f = Object.defineProperty;
 var __getOwnPropSymbols$1f = Object.getOwnPropertySymbols;
 var __hasOwnProp$1f = Object.prototype.hasOwnProperty;
@@ -14093,194 +14273,14 @@ var __spreadValues$1f = (a, b) => {
     }
   return a;
 };
-function DotsIcon(props) {
-  return /* @__PURE__ */ jsx("svg", {
-    ...__spreadValues$1f({
-      width: 16,
-      height: 16,
-      viewBox: "0 0 16 16",
-      fill: "none",
-      xmlns: "http://www.w3.org/2000/svg"
-    }, props),
-    children: /* @__PURE__ */ jsx("path", {
-      d: "M2 8c0-.733.6-1.333 1.333-1.333.734 0 1.334.6 1.334 1.333s-.6 1.333-1.334 1.333C2.6 9.333 2 8.733 2 8zm9.333 0c0-.733.6-1.333 1.334-1.333C13.4 6.667 14 7.267 14 8s-.6 1.333-1.333 1.333c-.734 0-1.334-.6-1.334-1.333zM6.667 8c0-.733.6-1.333 1.333-1.333s1.333.6 1.333 1.333S8.733 9.333 8 9.333 6.667 8.733 6.667 8z",
-      fill: "currentColor"
-    })
-  });
-}
-var __defProp$1e = Object.defineProperty;
-var __getOwnPropSymbols$1e = Object.getOwnPropertySymbols;
-var __hasOwnProp$1e = Object.prototype.hasOwnProperty;
-var __propIsEnum$1e = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1e = (obj, key, value) => key in obj ? __defProp$1e(obj, key, {
-  enumerable: true,
-  configurable: true,
-  writable: true,
-  value
-}) : obj[key] = value;
-var __spreadValues$1e = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (__hasOwnProp$1e.call(b, prop))
-      __defNormalProp$1e(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1e)
-    for (var prop of __getOwnPropSymbols$1e(b)) {
-      if (__propIsEnum$1e.call(b, prop))
-        __defNormalProp$1e(a, prop, b[prop]);
-    }
-  return a;
-};
-function NextIcon(props) {
-  return /* @__PURE__ */ jsx("svg", {
-    ...__spreadValues$1e({
-      width: 16,
-      height: 16,
-      viewBox: "0 0 16 16",
-      fill: "none",
-      xmlns: "http://www.w3.org/2000/svg"
-    }, props),
-    children: /* @__PURE__ */ jsx("path", {
-      d: "M8.781 8l-3.3-3.3.943-.943L10.667 8l-4.243 4.243-.943-.943 3.3-3.3z",
-      fill: "currentColor"
-    })
-  });
-}
-var __defProp$1d = Object.defineProperty;
-var __getOwnPropSymbols$1d = Object.getOwnPropertySymbols;
-var __hasOwnProp$1d = Object.prototype.hasOwnProperty;
-var __propIsEnum$1d = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1d = (obj, key, value) => key in obj ? __defProp$1d(obj, key, {
-  enumerable: true,
-  configurable: true,
-  writable: true,
-  value
-}) : obj[key] = value;
-var __spreadValues$1d = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (__hasOwnProp$1d.call(b, prop))
-      __defNormalProp$1d(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1d)
-    for (var prop of __getOwnPropSymbols$1d(b)) {
-      if (__propIsEnum$1d.call(b, prop))
-        __defNormalProp$1d(a, prop, b[prop]);
-    }
-  return a;
-};
-function PrevIcon(props) {
-  return /* @__PURE__ */ jsx("svg", {
-    ...__spreadValues$1d({
-      width: 16,
-      height: 16,
-      viewBox: "0 0 16 16",
-      fill: "none",
-      xmlns: "http://www.w3.org/2000/svg"
-    }, props),
-    children: /* @__PURE__ */ jsx("path", {
-      d: "M7.219 8l3.3 3.3-.943.943L5.333 8l4.243-4.243.943.943-3.3 3.3z",
-      fill: "currentColor"
-    })
-  });
-}
-var __defProp$1c = Object.defineProperty;
-var __getOwnPropSymbols$1c = Object.getOwnPropertySymbols;
-var __hasOwnProp$1c = Object.prototype.hasOwnProperty;
-var __propIsEnum$1c = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1c = (obj, key, value) => key in obj ? __defProp$1c(obj, key, {
-  enumerable: true,
-  configurable: true,
-  writable: true,
-  value
-}) : obj[key] = value;
-var __spreadValues$1c = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (__hasOwnProp$1c.call(b, prop))
-      __defNormalProp$1c(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1c)
-    for (var prop of __getOwnPropSymbols$1c(b)) {
-      if (__propIsEnum$1c.call(b, prop))
-        __defNormalProp$1c(a, prop, b[prop]);
-    }
-  return a;
-};
-function FirstIcon(props) {
-  return /* @__PURE__ */ jsx("svg", {
-    ...__spreadValues$1c({
-      width: 16,
-      height: 16,
-      viewBox: "0 0 16 16",
-      fill: "none",
-      xmlns: "http://www.w3.org/2000/svg"
-    }, props),
-    children: /* @__PURE__ */ jsx("path", {
-      d: "M6.85355 3.85355C7.04882 3.65829 7.04882 3.34171 6.85355 3.14645C6.65829 2.95118 6.34171 2.95118 6.14645 3.14645L2.14645 7.14645C1.95118 7.34171 1.95118 7.65829 2.14645 7.85355L6.14645 11.8536C6.34171 12.0488 6.65829 12.0488 6.85355 11.8536C7.04882 11.6583 7.04882 11.3417 6.85355 11.1464L3.20711 7.5L6.85355 3.85355ZM12.8536 3.85355C13.0488 3.65829 13.0488 3.34171 12.8536 3.14645C12.6583 2.95118 12.3417 2.95118 12.1464 3.14645L8.14645 7.14645C7.95118 7.34171 7.95118 7.65829 8.14645 7.85355L12.1464 11.8536C12.3417 12.0488 12.6583 12.0488 12.8536 11.8536C13.0488 11.6583 13.0488 11.3417 12.8536 11.1464L9.20711 7.5L12.8536 3.85355Z",
-      fill: "currentColor"
-    })
-  });
-}
-var __defProp$1b = Object.defineProperty;
-var __getOwnPropSymbols$1b = Object.getOwnPropertySymbols;
-var __hasOwnProp$1b = Object.prototype.hasOwnProperty;
-var __propIsEnum$1b = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1b = (obj, key, value) => key in obj ? __defProp$1b(obj, key, {
-  enumerable: true,
-  configurable: true,
-  writable: true,
-  value
-}) : obj[key] = value;
-var __spreadValues$1b = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (__hasOwnProp$1b.call(b, prop))
-      __defNormalProp$1b(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1b)
-    for (var prop of __getOwnPropSymbols$1b(b)) {
-      if (__propIsEnum$1b.call(b, prop))
-        __defNormalProp$1b(a, prop, b[prop]);
-    }
-  return a;
-};
-function LastIcon(props) {
-  return /* @__PURE__ */ jsx("svg", {
-    ...__spreadValues$1b({
-      width: 16,
-      height: 16,
-      viewBox: "0 0 16 16",
-      fill: "none",
-      xmlns: "http://www.w3.org/2000/svg"
-    }, props),
-    children: /* @__PURE__ */ jsx("path", {
-      d: "M2.14645 11.1464C1.95118 11.3417 1.95118 11.6583 2.14645 11.8536C2.34171 12.0488 2.65829 12.0488 2.85355 11.8536L6.85355 7.85355C7.04882 7.65829 7.04882 7.34171 6.85355 7.14645L2.85355 3.14645C2.65829 2.95118 2.34171 2.95118 2.14645 3.14645C1.95118 3.34171 1.95118 3.65829 2.14645 3.85355L5.79289 7.5L2.14645 11.1464ZM8.14645 11.1464C7.95118 11.3417 7.95118 11.6583 8.14645 11.8536C8.34171 12.0488 8.65829 12.0488 8.85355 11.8536L12.8536 7.85355C13.0488 7.65829 13.0488 7.34171 12.8536 7.14645L8.85355 3.14645C8.65829 2.95118 8.34171 2.95118 8.14645 3.14645C7.95118 3.34171 7.95118 3.65829 8.14645 3.85355L11.7929 7.5L8.14645 11.1464Z",
-      fill: "currentColor"
-    })
-  });
-}
-var __defProp$1a = Object.defineProperty;
-var __getOwnPropSymbols$1a = Object.getOwnPropertySymbols;
-var __hasOwnProp$1a = Object.prototype.hasOwnProperty;
-var __propIsEnum$1a = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$1a = (obj, key, value) => key in obj ? __defProp$1a(obj, key, {
-  enumerable: true,
-  configurable: true,
-  writable: true,
-  value
-}) : obj[key] = value;
-var __spreadValues$1a = (a, b) => {
-  for (var prop in b || (b = {}))
-    if (__hasOwnProp$1a.call(b, prop))
-      __defNormalProp$1a(a, prop, b[prop]);
-  if (__getOwnPropSymbols$1a)
-    for (var prop of __getOwnPropSymbols$1a(b)) {
-      if (__propIsEnum$1a.call(b, prop))
-        __defNormalProp$1a(a, prop, b[prop]);
-    }
-  return a;
-};
-var __objRest$L = (source, exclude) => {
+var __objRest$O = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$1a.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1f.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$1a)
-    for (var prop of __getOwnPropSymbols$1a(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$1a.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1f)
+    for (var prop of __getOwnPropSymbols$1f(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1f.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -14304,12 +14304,12 @@ function DefaultItem$1(_a) {
     page,
     active,
     onClick
-  } = _b, others = __objRest$L(_b, ["page", "active", "onClick"]);
+  } = _b, others = __objRest$O(_b, ["page", "active", "onClick"]);
   const theme = useMantineTheme();
   const Item = (theme.dir === "rtl" ? rtlIcons : icons$1)[page];
   const children = Item ? /* @__PURE__ */ jsx(Item, {}) : page;
   return /* @__PURE__ */ jsx("button", {
-    ...__spreadValues$1a({
+    ...__spreadValues$1f({
       type: "button",
       onClick
     }, others),
@@ -14317,25 +14317,25 @@ function DefaultItem$1(_a) {
   });
 }
 DefaultItem$1.displayName = "@mantine/core/Pagination/DefaultItem";
-var __defProp$19 = Object.defineProperty;
-var __defProps$D = Object.defineProperties;
-var __getOwnPropDescs$D = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$19 = Object.getOwnPropertySymbols;
-var __hasOwnProp$19 = Object.prototype.hasOwnProperty;
-var __propIsEnum$19 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$19 = (obj, key, value) => key in obj ? __defProp$19(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$19 = (a, b) => {
+var __defProp$1e = Object.defineProperty;
+var __defProps$G = Object.defineProperties;
+var __getOwnPropDescs$G = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$1e = Object.getOwnPropertySymbols;
+var __hasOwnProp$1e = Object.prototype.hasOwnProperty;
+var __propIsEnum$1e = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1e = (obj, key, value) => key in obj ? __defProp$1e(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$1e = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$19.call(b, prop))
-      __defNormalProp$19(a, prop, b[prop]);
-  if (__getOwnPropSymbols$19)
-    for (var prop of __getOwnPropSymbols$19(b)) {
-      if (__propIsEnum$19.call(b, prop))
-        __defNormalProp$19(a, prop, b[prop]);
+    if (__hasOwnProp$1e.call(b, prop))
+      __defNormalProp$1e(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1e)
+    for (var prop of __getOwnPropSymbols$1e(b)) {
+      if (__propIsEnum$1e.call(b, prop))
+        __defNormalProp$1e(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$D = (a, b) => __defProps$D(a, __getOwnPropDescs$D(b));
+var __spreadProps$G = (a, b) => __defProps$G(a, __getOwnPropDescs$G(b));
 const sizes$8 = {
   xs: 22,
   sm: 26,
@@ -14343,10 +14343,10 @@ const sizes$8 = {
   lg: 38,
   xl: 44
 };
-var useStyles$$ = createStyles((theme, { size: size2, radius, color }) => {
+var useStyles$15 = createStyles((theme, { size: size2, radius, color }) => {
   const colors = theme.fn.variant({ color, variant: "filled" });
   return {
-    item: __spreadProps$D(__spreadValues$19({}, theme.fn.focusStyles()), {
+    item: __spreadProps$G(__spreadValues$1e({}, theme.fn.focusStyles()), {
       cursor: "pointer",
       userSelect: "none",
       display: "flex",
@@ -14381,36 +14381,36 @@ var useStyles$$ = createStyles((theme, { size: size2, radius, color }) => {
     })
   };
 });
-const useStyles$10 = useStyles$$;
-var __defProp$18 = Object.defineProperty;
-var __getOwnPropSymbols$18 = Object.getOwnPropertySymbols;
-var __hasOwnProp$18 = Object.prototype.hasOwnProperty;
-var __propIsEnum$18 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$18 = (obj, key, value) => key in obj ? __defProp$18(obj, key, {
+const useStyles$16 = useStyles$15;
+var __defProp$1d = Object.defineProperty;
+var __getOwnPropSymbols$1d = Object.getOwnPropertySymbols;
+var __hasOwnProp$1d = Object.prototype.hasOwnProperty;
+var __propIsEnum$1d = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1d = (obj, key, value) => key in obj ? __defProp$1d(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$18 = (a, b) => {
+var __spreadValues$1d = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$18.call(b, prop))
-      __defNormalProp$18(a, prop, b[prop]);
-  if (__getOwnPropSymbols$18)
-    for (var prop of __getOwnPropSymbols$18(b)) {
-      if (__propIsEnum$18.call(b, prop))
-        __defNormalProp$18(a, prop, b[prop]);
+    if (__hasOwnProp$1d.call(b, prop))
+      __defNormalProp$1d(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1d)
+    for (var prop of __getOwnPropSymbols$1d(b)) {
+      if (__propIsEnum$1d.call(b, prop))
+        __defNormalProp$1d(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$K = (source, exclude) => {
+var __objRest$N = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$18.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1d.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$18)
-    for (var prop of __getOwnPropSymbols$18(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$18.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1d)
+    for (var prop of __getOwnPropSymbols$1d(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1d.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -14445,11 +14445,11 @@ const Pagination = react.exports.forwardRef((props, ref) => {
     withControls,
     sx,
     unstyled
-  } = _a, others = __objRest$K(_a, ["itemComponent", "classNames", "styles", "page", "initialPage", "color", "total", "siblings", "boundaries", "size", "radius", "onChange", "getItemAriaLabel", "spacing", "withEdges", "withControls", "sx", "unstyled"]);
+  } = _a, others = __objRest$N(_a, ["itemComponent", "classNames", "styles", "page", "initialPage", "color", "total", "siblings", "boundaries", "size", "radius", "onChange", "getItemAriaLabel", "spacing", "withEdges", "withControls", "sx", "unstyled"]);
   const {
     classes,
     theme
-  } = useStyles$10({
+  } = useStyles$16({
     color,
     size: size2,
     radius
@@ -14487,7 +14487,7 @@ const Pagination = react.exports.forwardRef((props, ref) => {
     onClick: pageNumber !== "dots" ? () => setPage(pageNumber) : void 0
   }, index2));
   return /* @__PURE__ */ jsxs(Group, {
-    ...__spreadValues$18({
+    ...__spreadValues$1d({
       role: "navigation",
       spacing: spacing || theme.fn.size({
         size: size2,
@@ -14529,30 +14529,30 @@ const Pagination = react.exports.forwardRef((props, ref) => {
   });
 });
 Pagination.displayName = "@mantine/core/Pagination";
-var __defProp$17 = Object.defineProperty;
-var __getOwnPropSymbols$17 = Object.getOwnPropertySymbols;
-var __hasOwnProp$17 = Object.prototype.hasOwnProperty;
-var __propIsEnum$17 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$17 = (obj, key, value) => key in obj ? __defProp$17(obj, key, {
+var __defProp$1c = Object.defineProperty;
+var __getOwnPropSymbols$1c = Object.getOwnPropertySymbols;
+var __hasOwnProp$1c = Object.prototype.hasOwnProperty;
+var __propIsEnum$1c = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1c = (obj, key, value) => key in obj ? __defProp$1c(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$17 = (a, b) => {
+var __spreadValues$1c = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$17.call(b, prop))
-      __defNormalProp$17(a, prop, b[prop]);
-  if (__getOwnPropSymbols$17)
-    for (var prop of __getOwnPropSymbols$17(b)) {
-      if (__propIsEnum$17.call(b, prop))
-        __defNormalProp$17(a, prop, b[prop]);
+    if (__hasOwnProp$1c.call(b, prop))
+      __defNormalProp$1c(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1c)
+    for (var prop of __getOwnPropSymbols$1c(b)) {
+      if (__propIsEnum$1c.call(b, prop))
+        __defNormalProp$1c(a, prop, b[prop]);
     }
   return a;
 };
 function RadioIcon(props) {
   return /* @__PURE__ */ jsx("svg", {
-    ...__spreadValues$17({
+    ...__spreadValues$1c({
       xmlns: "http://www.w3.org/2000/svg",
       fill: "none",
       viewBox: "0 0 5 5"
@@ -14566,35 +14566,35 @@ function RadioIcon(props) {
 const RadioGroupContext = react.exports.createContext(null);
 const RadioGroupProvider = RadioGroupContext.Provider;
 const useRadioGroupContext = () => react.exports.useContext(RadioGroupContext);
-var __defProp$16 = Object.defineProperty;
-var __getOwnPropSymbols$16 = Object.getOwnPropertySymbols;
-var __hasOwnProp$16 = Object.prototype.hasOwnProperty;
-var __propIsEnum$16 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$16 = (obj, key, value) => key in obj ? __defProp$16(obj, key, {
+var __defProp$1b = Object.defineProperty;
+var __getOwnPropSymbols$1b = Object.getOwnPropertySymbols;
+var __hasOwnProp$1b = Object.prototype.hasOwnProperty;
+var __propIsEnum$1b = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1b = (obj, key, value) => key in obj ? __defProp$1b(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$16 = (a, b) => {
+var __spreadValues$1b = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$16.call(b, prop))
-      __defNormalProp$16(a, prop, b[prop]);
-  if (__getOwnPropSymbols$16)
-    for (var prop of __getOwnPropSymbols$16(b)) {
-      if (__propIsEnum$16.call(b, prop))
-        __defNormalProp$16(a, prop, b[prop]);
+    if (__hasOwnProp$1b.call(b, prop))
+      __defNormalProp$1b(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1b)
+    for (var prop of __getOwnPropSymbols$1b(b)) {
+      if (__propIsEnum$1b.call(b, prop))
+        __defNormalProp$1b(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$J = (source, exclude) => {
+var __objRest$M = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$16.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$1b.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$16)
-    for (var prop of __getOwnPropSymbols$16(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$16.call(source, prop))
+  if (source != null && __getOwnPropSymbols$1b)
+    for (var prop of __getOwnPropSymbols$1b(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$1b.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -14617,7 +14617,7 @@ const RadioGroup = react.exports.forwardRef((props, ref) => {
     wrapperProps,
     unstyled,
     offset: offset2
-  } = _a, others = __objRest$J(_a, ["children", "value", "defaultValue", "onChange", "orientation", "spacing", "size", "wrapperProps", "unstyled", "offset"]);
+  } = _a, others = __objRest$M(_a, ["children", "value", "defaultValue", "onChange", "orientation", "spacing", "size", "wrapperProps", "unstyled", "offset"]);
   const [_value, setValue] = useUncontrolled({
     value,
     defaultValue,
@@ -14632,7 +14632,7 @@ const RadioGroup = react.exports.forwardRef((props, ref) => {
       size: size2
     },
     children: /* @__PURE__ */ jsx(Input.Wrapper, {
-      ...__spreadValues$16(__spreadValues$16({
+      ...__spreadValues$1b(__spreadValues$1b({
         labelElement: "div",
         size: size2,
         __staticSelector: "RadioGroup",
@@ -14651,25 +14651,25 @@ const RadioGroup = react.exports.forwardRef((props, ref) => {
   });
 });
 RadioGroup.displayName = "@mantine/core/RadioGroup";
-var __defProp$15 = Object.defineProperty;
-var __defProps$C = Object.defineProperties;
-var __getOwnPropDescs$C = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$15 = Object.getOwnPropertySymbols;
-var __hasOwnProp$15 = Object.prototype.hasOwnProperty;
-var __propIsEnum$15 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$15 = (obj, key, value) => key in obj ? __defProp$15(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$15 = (a, b) => {
+var __defProp$1a = Object.defineProperty;
+var __defProps$F = Object.defineProperties;
+var __getOwnPropDescs$F = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$1a = Object.getOwnPropertySymbols;
+var __hasOwnProp$1a = Object.prototype.hasOwnProperty;
+var __propIsEnum$1a = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$1a = (obj, key, value) => key in obj ? __defProp$1a(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$1a = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$15.call(b, prop))
-      __defNormalProp$15(a, prop, b[prop]);
-  if (__getOwnPropSymbols$15)
-    for (var prop of __getOwnPropSymbols$15(b)) {
-      if (__propIsEnum$15.call(b, prop))
-        __defNormalProp$15(a, prop, b[prop]);
+    if (__hasOwnProp$1a.call(b, prop))
+      __defNormalProp$1a(a, prop, b[prop]);
+  if (__getOwnPropSymbols$1a)
+    for (var prop of __getOwnPropSymbols$1a(b)) {
+      if (__propIsEnum$1a.call(b, prop))
+        __defNormalProp$1a(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$C = (a, b) => __defProps$C(a, __getOwnPropDescs$C(b));
+var __spreadProps$F = (a, b) => __defProps$F(a, __getOwnPropDescs$F(b));
 const sizes$7 = {
   xs: 16,
   sm: 20,
@@ -14684,7 +14684,7 @@ const iconSizes$2 = {
   lg: 14,
   xl: 16
 };
-var useStyles$Z = createStyles((theme, { size: size2, color, transitionDuration }, getRef) => {
+var useStyles$13 = createStyles((theme, { size: size2, color, transitionDuration }, getRef) => {
   const colors = theme.fn.variant({ variant: "filled", color });
   return {
     radioWrapper: {
@@ -14708,7 +14708,7 @@ var useStyles$Z = createStyles((theme, { size: size2, color, transitionDuration 
       top: `calc(50% - ${theme.fn.size({ sizes: iconSizes$2, size: size2 }) / 2}px)`,
       left: `calc(50% - ${theme.fn.size({ sizes: iconSizes$2, size: size2 }) / 2}px)`
     },
-    radio: __spreadProps$C(__spreadValues$15({}, theme.fn.focusStyles()), {
+    radio: __spreadProps$F(__spreadValues$1a({}, theme.fn.focusStyles()), {
       backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.white,
       border: `1px solid ${theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[4]}`,
       position: "relative",
@@ -14740,7 +14740,7 @@ var useStyles$Z = createStyles((theme, { size: size2, color, transitionDuration 
         }
       }
     }),
-    label: __spreadProps$C(__spreadValues$15({}, theme.fn.fontStyles()), {
+    label: __spreadProps$F(__spreadValues$1a({}, theme.fn.fontStyles()), {
       display: "flex",
       alignItems: "flex-start",
       fontSize: theme.fontSizes[size2] || theme.fontSizes.md,
@@ -14754,36 +14754,36 @@ var useStyles$Z = createStyles((theme, { size: size2, color, transitionDuration 
     })
   };
 });
-const useStyles$_ = useStyles$Z;
-var __defProp$14 = Object.defineProperty;
-var __getOwnPropSymbols$14 = Object.getOwnPropertySymbols;
-var __hasOwnProp$14 = Object.prototype.hasOwnProperty;
-var __propIsEnum$14 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$14 = (obj, key, value) => key in obj ? __defProp$14(obj, key, {
+const useStyles$14 = useStyles$13;
+var __defProp$19 = Object.defineProperty;
+var __getOwnPropSymbols$19 = Object.getOwnPropertySymbols;
+var __hasOwnProp$19 = Object.prototype.hasOwnProperty;
+var __propIsEnum$19 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$19 = (obj, key, value) => key in obj ? __defProp$19(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$14 = (a, b) => {
+var __spreadValues$19 = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$14.call(b, prop))
-      __defNormalProp$14(a, prop, b[prop]);
-  if (__getOwnPropSymbols$14)
-    for (var prop of __getOwnPropSymbols$14(b)) {
-      if (__propIsEnum$14.call(b, prop))
-        __defNormalProp$14(a, prop, b[prop]);
+    if (__hasOwnProp$19.call(b, prop))
+      __defNormalProp$19(a, prop, b[prop]);
+  if (__getOwnPropSymbols$19)
+    for (var prop of __getOwnPropSymbols$19(b)) {
+      if (__propIsEnum$19.call(b, prop))
+        __defNormalProp$19(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$I = (source, exclude) => {
+var __objRest$L = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$14.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$19.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$14)
-    for (var prop of __getOwnPropSymbols$14(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$14.call(source, prop))
+  if (source != null && __getOwnPropSymbols$19)
+    for (var prop of __getOwnPropSymbols$19(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$19.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -14810,12 +14810,12 @@ const Radio = react.exports.forwardRef((props, ref) => {
     transitionDuration,
     wrapperProps,
     unstyled
-  } = _a, others = __objRest$I(_a, ["className", "style", "id", "label", "size", "title", "disabled", "color", "classNames", "styles", "sx", "icon", "transitionDuration", "wrapperProps", "unstyled"]);
+  } = _a, others = __objRest$L(_a, ["className", "style", "id", "label", "size", "title", "disabled", "color", "classNames", "styles", "sx", "icon", "transitionDuration", "wrapperProps", "unstyled"]);
   const ctx = useRadioGroupContext();
   const {
     classes,
     cx
-  } = useStyles$_({
+  } = useStyles$14({
     color,
     size: (ctx == null ? void 0 : ctx.size) || size2,
     transitionDuration
@@ -14835,7 +14835,7 @@ const Radio = react.exports.forwardRef((props, ref) => {
     onChange: ctx.onChange
   } : {};
   return /* @__PURE__ */ jsxs(Box, {
-    ...__spreadValues$14(__spreadValues$14({
+    ...__spreadValues$19(__spreadValues$19({
       className: cx(classes.radioWrapper, className),
       style,
       title,
@@ -14844,7 +14844,7 @@ const Radio = react.exports.forwardRef((props, ref) => {
     children: [/* @__PURE__ */ jsxs("div", {
       className: classes.inner,
       children: [/* @__PURE__ */ jsx("input", {
-        ...__spreadValues$14(__spreadValues$14({
+        ...__spreadValues$19(__spreadValues$19({
           ref,
           className: classes.radio,
           type: "radio",
@@ -14879,24 +14879,24 @@ function getCurveProps({ size: size2, thickness, sum, value, root, offset: offse
     strokeDashoffset: root ? 0 : offset2
   };
 }
-var __defProp$13 = Object.defineProperty;
-var __getOwnPropSymbols$13 = Object.getOwnPropertySymbols;
-var __hasOwnProp$13 = Object.prototype.hasOwnProperty;
-var __propIsEnum$13 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$13 = (obj, key, value) => key in obj ? __defProp$13(obj, key, {
+var __defProp$18 = Object.defineProperty;
+var __getOwnPropSymbols$18 = Object.getOwnPropertySymbols;
+var __hasOwnProp$18 = Object.prototype.hasOwnProperty;
+var __propIsEnum$18 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$18 = (obj, key, value) => key in obj ? __defProp$18(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$13 = (a, b) => {
+var __spreadValues$18 = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$13.call(b, prop))
-      __defNormalProp$13(a, prop, b[prop]);
-  if (__getOwnPropSymbols$13)
-    for (var prop of __getOwnPropSymbols$13(b)) {
-      if (__propIsEnum$13.call(b, prop))
-        __defNormalProp$13(a, prop, b[prop]);
+    if (__hasOwnProp$18.call(b, prop))
+      __defNormalProp$18(a, prop, b[prop]);
+  if (__getOwnPropSymbols$18)
+    for (var prop of __getOwnPropSymbols$18(b)) {
+      if (__propIsEnum$18.call(b, prop))
+        __defNormalProp$18(a, prop, b[prop]);
     }
   return a;
 };
@@ -14917,7 +14917,7 @@ function Curve({
     disabled: !tooltip,
     label: tooltip,
     children: /* @__PURE__ */ jsx("circle", {
-      ...__spreadValues$13({
+      ...__spreadValues$18({
         fill: "none",
         strokeLinecap: lineRoundCaps ? "round" : "butt",
         stroke
@@ -14933,25 +14933,25 @@ function Curve({
   });
 }
 Curve.displayName = "@mantine/core/Curve";
-var __defProp$12 = Object.defineProperty;
-var __defProps$B = Object.defineProperties;
-var __getOwnPropDescs$B = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$12 = Object.getOwnPropertySymbols;
-var __hasOwnProp$12 = Object.prototype.hasOwnProperty;
-var __propIsEnum$12 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$12 = (obj, key, value) => key in obj ? __defProp$12(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$12 = (a, b) => {
+var __defProp$17 = Object.defineProperty;
+var __defProps$E = Object.defineProperties;
+var __getOwnPropDescs$E = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$17 = Object.getOwnPropertySymbols;
+var __hasOwnProp$17 = Object.prototype.hasOwnProperty;
+var __propIsEnum$17 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$17 = (obj, key, value) => key in obj ? __defProp$17(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$17 = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$12.call(b, prop))
-      __defNormalProp$12(a, prop, b[prop]);
-  if (__getOwnPropSymbols$12)
-    for (var prop of __getOwnPropSymbols$12(b)) {
-      if (__propIsEnum$12.call(b, prop))
-        __defNormalProp$12(a, prop, b[prop]);
+    if (__hasOwnProp$17.call(b, prop))
+      __defNormalProp$17(a, prop, b[prop]);
+  if (__getOwnPropSymbols$17)
+    for (var prop of __getOwnPropSymbols$17(b)) {
+      if (__propIsEnum$17.call(b, prop))
+        __defNormalProp$17(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$B = (a, b) => __defProps$B(a, __getOwnPropDescs$B(b));
+var __spreadProps$E = (a, b) => __defProps$E(a, __getOwnPropDescs$E(b));
 function getCurves({ size: size2, thickness, sections, renderRoundedLineCaps }) {
   const sum = sections.reduce((acc, current) => acc + current.value, 0);
   const accumulated = Math.PI * ((size2 * 0.9 - thickness * 2) / 2) * 2;
@@ -14963,19 +14963,19 @@ function getCurves({ size: size2, thickness, sections, renderRoundedLineCaps }) 
     offset2 -= sections[i].value / 100 * accumulated;
   }
   curves.push({ sum, offset: offset2, data: null, root: true });
-  curvesInOrder.push(__spreadProps$B(__spreadValues$12({}, curves[curves.length - 1]), { lineRoundCaps: false }));
+  curvesInOrder.push(__spreadProps$E(__spreadValues$17({}, curves[curves.length - 1]), { lineRoundCaps: false }));
   if (curves.length > 2) {
-    curvesInOrder.push(__spreadProps$B(__spreadValues$12({}, curves[0]), { lineRoundCaps: renderRoundedLineCaps }));
-    curvesInOrder.push(__spreadProps$B(__spreadValues$12({}, curves[curves.length - 2]), { lineRoundCaps: renderRoundedLineCaps }));
+    curvesInOrder.push(__spreadProps$E(__spreadValues$17({}, curves[0]), { lineRoundCaps: renderRoundedLineCaps }));
+    curvesInOrder.push(__spreadProps$E(__spreadValues$17({}, curves[curves.length - 2]), { lineRoundCaps: renderRoundedLineCaps }));
     for (let i = 1; i <= curves.length - 3; i += 1) {
-      curvesInOrder.push(__spreadProps$B(__spreadValues$12({}, curves[i]), { lineRoundCaps: false }));
+      curvesInOrder.push(__spreadProps$E(__spreadValues$17({}, curves[i]), { lineRoundCaps: false }));
     }
   } else {
-    curvesInOrder.push(__spreadProps$B(__spreadValues$12({}, curves[0]), { lineRoundCaps: renderRoundedLineCaps }));
+    curvesInOrder.push(__spreadProps$E(__spreadValues$17({}, curves[0]), { lineRoundCaps: renderRoundedLineCaps }));
   }
   return curvesInOrder;
 }
-var useStyles$X = createStyles({
+var useStyles$11 = createStyles({
   root: {
     position: "relative"
   },
@@ -14985,36 +14985,36 @@ var useStyles$X = createStyles({
     transform: "translateY(-50%)"
   }
 });
-const useStyles$Y = useStyles$X;
-var __defProp$11 = Object.defineProperty;
-var __getOwnPropSymbols$11 = Object.getOwnPropertySymbols;
-var __hasOwnProp$11 = Object.prototype.hasOwnProperty;
-var __propIsEnum$11 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$11 = (obj, key, value) => key in obj ? __defProp$11(obj, key, {
+const useStyles$12 = useStyles$11;
+var __defProp$16 = Object.defineProperty;
+var __getOwnPropSymbols$16 = Object.getOwnPropertySymbols;
+var __hasOwnProp$16 = Object.prototype.hasOwnProperty;
+var __propIsEnum$16 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$16 = (obj, key, value) => key in obj ? __defProp$16(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$11 = (a, b) => {
+var __spreadValues$16 = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$11.call(b, prop))
-      __defNormalProp$11(a, prop, b[prop]);
-  if (__getOwnPropSymbols$11)
-    for (var prop of __getOwnPropSymbols$11(b)) {
-      if (__propIsEnum$11.call(b, prop))
-        __defNormalProp$11(a, prop, b[prop]);
+    if (__hasOwnProp$16.call(b, prop))
+      __defNormalProp$16(a, prop, b[prop]);
+  if (__getOwnPropSymbols$16)
+    for (var prop of __getOwnPropSymbols$16(b)) {
+      if (__propIsEnum$16.call(b, prop))
+        __defNormalProp$16(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$H = (source, exclude) => {
+var __objRest$K = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$11.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$16.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$11)
-    for (var prop of __getOwnPropSymbols$11(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$11.call(source, prop))
+  if (source != null && __getOwnPropSymbols$16)
+    for (var prop of __getOwnPropSymbols$16(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$16.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -15035,11 +15035,11 @@ const RingProgress = react.exports.forwardRef((props, ref) => {
     styles,
     roundCaps,
     unstyled
-  } = _a, others = __objRest$H(_a, ["className", "style", "label", "sections", "size", "thickness", "classNames", "styles", "roundCaps", "unstyled"]);
+  } = _a, others = __objRest$K(_a, ["className", "style", "label", "sections", "size", "thickness", "classNames", "styles", "roundCaps", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$Y(null, {
+  } = useStyles$12(null, {
     classNames,
     styles,
     unstyled,
@@ -15065,8 +15065,8 @@ const RingProgress = react.exports.forwardRef((props, ref) => {
     }, index2);
   });
   return /* @__PURE__ */ jsxs(Box, {
-    ...__spreadValues$11({
-      style: __spreadValues$11({
+    ...__spreadValues$16({
+      style: __spreadValues$16({
         width: size2,
         height: size2
       }, style),
@@ -15091,25 +15091,25 @@ const RingProgress = react.exports.forwardRef((props, ref) => {
   });
 });
 RingProgress.displayName = "@mantine/core/RingProgress";
-var __defProp$10 = Object.defineProperty;
-var __defProps$A = Object.defineProperties;
-var __getOwnPropDescs$A = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$10 = Object.getOwnPropertySymbols;
-var __hasOwnProp$10 = Object.prototype.hasOwnProperty;
-var __propIsEnum$10 = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$10 = (obj, key, value) => key in obj ? __defProp$10(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$10 = (a, b) => {
+var __defProp$15 = Object.defineProperty;
+var __defProps$D = Object.defineProperties;
+var __getOwnPropDescs$D = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$15 = Object.getOwnPropertySymbols;
+var __hasOwnProp$15 = Object.prototype.hasOwnProperty;
+var __propIsEnum$15 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$15 = (obj, key, value) => key in obj ? __defProp$15(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$15 = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$10.call(b, prop))
-      __defNormalProp$10(a, prop, b[prop]);
-  if (__getOwnPropSymbols$10)
-    for (var prop of __getOwnPropSymbols$10(b)) {
-      if (__propIsEnum$10.call(b, prop))
-        __defNormalProp$10(a, prop, b[prop]);
+    if (__hasOwnProp$15.call(b, prop))
+      __defNormalProp$15(a, prop, b[prop]);
+  if (__getOwnPropSymbols$15)
+    for (var prop of __getOwnPropSymbols$15(b)) {
+      if (__propIsEnum$15.call(b, prop))
+        __defNormalProp$15(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$A = (a, b) => __defProps$A(a, __getOwnPropDescs$A(b));
+var __spreadProps$D = (a, b) => __defProps$D(a, __getOwnPropDescs$D(b));
 const WRAPPER_PADDING = 4;
 const sizes$6 = {
   xs: "3px 6px",
@@ -15118,7 +15118,7 @@ const sizes$6 = {
   lg: "9px 16px",
   xl: "12px 20px"
 };
-var useStyles$V = createStyles((theme, {
+var useStyles$$ = createStyles((theme, {
   fullWidth,
   color,
   radius,
@@ -15131,7 +15131,7 @@ var useStyles$V = createStyles((theme, {
   const vertical = orientation === "vertical";
   const colors = theme.fn.variant({ variant: "filled", color });
   return {
-    label: __spreadProps$A(__spreadValues$10(__spreadValues$10({
+    label: __spreadProps$D(__spreadValues$15(__spreadValues$15({
       ref: getRef("label")
     }, theme.fn.focusStyles()), theme.fn.fontStyles()), {
       WebkitTapHighlightColor: "transparent",
@@ -15228,36 +15228,36 @@ var useStyles$V = createStyles((theme, {
     }
   };
 });
-const useStyles$W = useStyles$V;
-var __defProp$$ = Object.defineProperty;
-var __getOwnPropSymbols$$ = Object.getOwnPropertySymbols;
-var __hasOwnProp$$ = Object.prototype.hasOwnProperty;
-var __propIsEnum$$ = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$$ = (obj, key, value) => key in obj ? __defProp$$(obj, key, {
+const useStyles$10 = useStyles$$;
+var __defProp$14 = Object.defineProperty;
+var __getOwnPropSymbols$14 = Object.getOwnPropertySymbols;
+var __hasOwnProp$14 = Object.prototype.hasOwnProperty;
+var __propIsEnum$14 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$14 = (obj, key, value) => key in obj ? __defProp$14(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$$ = (a, b) => {
+var __spreadValues$14 = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$$.call(b, prop))
-      __defNormalProp$$(a, prop, b[prop]);
-  if (__getOwnPropSymbols$$)
-    for (var prop of __getOwnPropSymbols$$(b)) {
-      if (__propIsEnum$$.call(b, prop))
-        __defNormalProp$$(a, prop, b[prop]);
+    if (__hasOwnProp$14.call(b, prop))
+      __defNormalProp$14(a, prop, b[prop]);
+  if (__getOwnPropSymbols$14)
+    for (var prop of __getOwnPropSymbols$14(b)) {
+      if (__propIsEnum$14.call(b, prop))
+        __defNormalProp$14(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$G = (source, exclude) => {
+var __objRest$J = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$$.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$14.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$$)
-    for (var prop of __getOwnPropSymbols$$(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$$.call(source, prop))
+  if (source != null && __getOwnPropSymbols$14)
+    for (var prop of __getOwnPropSymbols$14(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$14.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -15287,7 +15287,7 @@ const SegmentedControl = react.exports.forwardRef((props, ref) => {
     defaultValue,
     orientation,
     unstyled
-  } = _a, others = __objRest$G(_a, ["className", "disabled", "data", "name", "value", "onChange", "color", "fullWidth", "radius", "size", "transitionDuration", "transitionTimingFunction", "classNames", "styles", "defaultValue", "orientation", "unstyled"]);
+  } = _a, others = __objRest$J(_a, ["className", "disabled", "data", "name", "value", "onChange", "color", "fullWidth", "radius", "size", "transitionDuration", "transitionTimingFunction", "classNames", "styles", "defaultValue", "orientation", "unstyled"]);
   const theme = useMantineTheme();
   const shouldReduceMotion = useReducedMotion();
   const reduceMotion = theme.respectReducedMotion ? shouldReduceMotion : false;
@@ -15306,7 +15306,7 @@ const SegmentedControl = react.exports.forwardRef((props, ref) => {
   const {
     classes,
     cx
-  } = useStyles$W({
+  } = useStyles$10({
     size: size2,
     fullWidth,
     color,
@@ -15329,7 +15329,7 @@ const SegmentedControl = react.exports.forwardRef((props, ref) => {
   const uuid2 = useId(name);
   const refs = react.exports.useRef({});
   const [observerRef, containerRect] = useResizeObserver();
-  useIsomorphicEffect$2(() => {
+  useIsomorphicEffect$3(() => {
     if (!mounted.current) {
       mounted.current = true;
       setShouldAnimate(false);
@@ -15379,7 +15379,7 @@ const SegmentedControl = react.exports.forwardRef((props, ref) => {
     })]
   }, item.value));
   return /* @__PURE__ */ jsxs(Box, {
-    ...__spreadValues$$({
+    ...__spreadValues$14({
       className: cx(classes.root, className),
       ref: useMergedRef(observerRef, ref)
     }, others),
@@ -15422,7 +15422,7 @@ function filterData({
   }
   return result;
 }
-var useStyles$T = createStyles(() => ({
+var useStyles$Z = createStyles(() => ({
   input: {
     "&:not(:disabled)": {
       cursor: "pointer",
@@ -15432,39 +15432,39 @@ var useStyles$T = createStyles(() => ({
     }
   }
 }));
-const useStyles$U = useStyles$T;
-var __defProp$_ = Object.defineProperty;
-var __defProps$z = Object.defineProperties;
-var __getOwnPropDescs$z = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$_ = Object.getOwnPropertySymbols;
-var __hasOwnProp$_ = Object.prototype.hasOwnProperty;
-var __propIsEnum$_ = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$_ = (obj, key, value) => key in obj ? __defProp$_(obj, key, {
+const useStyles$_ = useStyles$Z;
+var __defProp$13 = Object.defineProperty;
+var __defProps$C = Object.defineProperties;
+var __getOwnPropDescs$C = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$13 = Object.getOwnPropertySymbols;
+var __hasOwnProp$13 = Object.prototype.hasOwnProperty;
+var __propIsEnum$13 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$13 = (obj, key, value) => key in obj ? __defProp$13(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$_ = (a, b) => {
+var __spreadValues$13 = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$_.call(b, prop))
-      __defNormalProp$_(a, prop, b[prop]);
-  if (__getOwnPropSymbols$_)
-    for (var prop of __getOwnPropSymbols$_(b)) {
-      if (__propIsEnum$_.call(b, prop))
-        __defNormalProp$_(a, prop, b[prop]);
+    if (__hasOwnProp$13.call(b, prop))
+      __defNormalProp$13(a, prop, b[prop]);
+  if (__getOwnPropSymbols$13)
+    for (var prop of __getOwnPropSymbols$13(b)) {
+      if (__propIsEnum$13.call(b, prop))
+        __defNormalProp$13(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$z = (a, b) => __defProps$z(a, __getOwnPropDescs$z(b));
-var __objRest$F = (source, exclude) => {
+var __spreadProps$C = (a, b) => __defProps$C(a, __getOwnPropDescs$C(b));
+var __objRest$I = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$_.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$13.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$_)
-    for (var prop of __getOwnPropSymbols$_(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$_.call(source, prop))
+  if (source != null && __getOwnPropSymbols$13)
+    for (var prop of __getOwnPropSymbols$13(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$13.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -15550,12 +15550,12 @@ const Select = react.exports.forwardRef((props, ref) => {
     form,
     positionDependencies,
     readOnly
-  } = _a, others = __objRest$F(_a, ["inputProps", "wrapperProps", "shadow", "data", "value", "defaultValue", "onChange", "itemComponent", "onKeyDown", "onBlur", "onFocus", "transition", "transitionDuration", "initiallyOpened", "transitionTimingFunction", "unstyled", "classNames", "styles", "filter", "maxDropdownHeight", "searchable", "clearable", "nothingFound", "clearButtonLabel", "limit", "disabled", "onSearchChange", "rightSection", "rightSectionWidth", "creatable", "getCreateLabel", "shouldCreate", "selectOnBlur", "onCreate", "dropdownComponent", "onDropdownClose", "onDropdownOpen", "withinPortal", "switchDirectionOnFlip", "zIndex", "name", "dropdownPosition", "allowDeselect", "placeholder", "filterDataOnExactSearchMatch", "clearButtonTabIndex", "form", "positionDependencies", "readOnly"]);
+  } = _a, others = __objRest$I(_a, ["inputProps", "wrapperProps", "shadow", "data", "value", "defaultValue", "onChange", "itemComponent", "onKeyDown", "onBlur", "onFocus", "transition", "transitionDuration", "initiallyOpened", "transitionTimingFunction", "unstyled", "classNames", "styles", "filter", "maxDropdownHeight", "searchable", "clearable", "nothingFound", "clearButtonLabel", "limit", "disabled", "onSearchChange", "rightSection", "rightSectionWidth", "creatable", "getCreateLabel", "shouldCreate", "selectOnBlur", "onCreate", "dropdownComponent", "onDropdownClose", "onDropdownOpen", "withinPortal", "switchDirectionOnFlip", "zIndex", "name", "dropdownPosition", "allowDeselect", "placeholder", "filterDataOnExactSearchMatch", "clearButtonTabIndex", "form", "positionDependencies", "readOnly"]);
   const {
     classes,
     cx,
     theme
-  } = useStyles$U();
+  } = useStyles$_();
   const [dropdownOpened, _setDropdownOpened] = react.exports.useState(initiallyOpened);
   const [hovered, setHovered] = react.exports.useState(-1);
   const inputRef = react.exports.useRef();
@@ -15586,7 +15586,7 @@ const Select = react.exports.forwardRef((props, ref) => {
     label: item,
     value: item
   } : item);
-  const sortedData = groupOptions({
+  const sortedData = groupOptions$1({
     data: formattedData
   });
   const [_value, handleChange, controlled] = useUncontrolled({
@@ -15836,7 +15836,7 @@ const Select = react.exports.forwardRef((props, ref) => {
   };
   const shouldShowDropdown = !readOnly && (filteredData.length > 0 ? dropdownOpened : dropdownOpened && !!nothingFound);
   return /* @__PURE__ */ jsx(Input.Wrapper, {
-    ...__spreadProps$z(__spreadValues$_({}, wrapperProps), {
+    ...__spreadProps$C(__spreadValues$13({}, wrapperProps), {
       __staticSelector: "Select"
     }),
     children: /* @__PURE__ */ jsxs(SelectPopover, {
@@ -15870,7 +15870,7 @@ const Select = react.exports.forwardRef((props, ref) => {
             form,
             disabled
           }), /* @__PURE__ */ jsx(Input, {
-            ...__spreadValues$_(__spreadProps$z(__spreadValues$_(__spreadValues$_({
+            ...__spreadValues$13(__spreadProps$C(__spreadValues$13(__spreadValues$13({
               autoComplete: "off",
               type: "search"
             }, inputProps), others), {
@@ -15890,7 +15890,7 @@ const Select = react.exports.forwardRef((props, ref) => {
               disabled,
               "data-mantine-stop-propagation": shouldShowDropdown,
               name: null,
-              classNames: __spreadProps$z(__spreadValues$_({}, classNames), {
+              classNames: __spreadProps$C(__spreadValues$13({}, classNames), {
                 input: cx({
                   [classes.input]: !searchable
                 }, classNames == null ? void 0 : classNames.input)
@@ -15952,23 +15952,23 @@ function getSortedBreakpoints(theme, breakpoints) {
   const sorted = [...breakpoints].sort((a, b) => theme.fn.size({ size: b[property], sizes: theme.breakpoints }) - theme.fn.size({ size: a[property], sizes: theme.breakpoints }));
   return property === "minWidth" ? sorted.reverse() : sorted;
 }
-var __defProp$Z = Object.defineProperty;
-var __getOwnPropSymbols$Z = Object.getOwnPropertySymbols;
-var __hasOwnProp$Z = Object.prototype.hasOwnProperty;
-var __propIsEnum$Z = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$Z = (obj, key, value) => key in obj ? __defProp$Z(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$Z = (a, b) => {
+var __defProp$12 = Object.defineProperty;
+var __getOwnPropSymbols$12 = Object.getOwnPropertySymbols;
+var __hasOwnProp$12 = Object.prototype.hasOwnProperty;
+var __propIsEnum$12 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$12 = (obj, key, value) => key in obj ? __defProp$12(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$12 = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$Z.call(b, prop))
-      __defNormalProp$Z(a, prop, b[prop]);
-  if (__getOwnPropSymbols$Z)
-    for (var prop of __getOwnPropSymbols$Z(b)) {
-      if (__propIsEnum$Z.call(b, prop))
-        __defNormalProp$Z(a, prop, b[prop]);
+    if (__hasOwnProp$12.call(b, prop))
+      __defNormalProp$12(a, prop, b[prop]);
+  if (__getOwnPropSymbols$12)
+    for (var prop of __getOwnPropSymbols$12(b)) {
+      if (__propIsEnum$12.call(b, prop))
+        __defNormalProp$12(a, prop, b[prop]);
     }
   return a;
 };
-var useStyles$R = createStyles((theme, { spacing, breakpoints, cols }) => {
+var useStyles$X = createStyles((theme, { spacing, breakpoints, cols }) => {
   const gridBreakpoints = getSortedBreakpoints(theme, breakpoints).reduce((acc, breakpoint) => {
     const property = "maxWidth" in breakpoint ? "max-width" : "min-width";
     const breakpointSize = theme.fn.size({
@@ -15985,7 +15985,7 @@ var useStyles$R = createStyles((theme, { spacing, breakpoints, cols }) => {
     return acc;
   }, {});
   return {
-    root: __spreadValues$Z({
+    root: __spreadValues$12({
       boxSizing: "border-box",
       display: "grid",
       gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
@@ -15993,36 +15993,36 @@ var useStyles$R = createStyles((theme, { spacing, breakpoints, cols }) => {
     }, gridBreakpoints)
   };
 });
-const useStyles$S = useStyles$R;
-var __defProp$Y = Object.defineProperty;
-var __getOwnPropSymbols$Y = Object.getOwnPropertySymbols;
-var __hasOwnProp$Y = Object.prototype.hasOwnProperty;
-var __propIsEnum$Y = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$Y = (obj, key, value) => key in obj ? __defProp$Y(obj, key, {
+const useStyles$Y = useStyles$X;
+var __defProp$11 = Object.defineProperty;
+var __getOwnPropSymbols$11 = Object.getOwnPropertySymbols;
+var __hasOwnProp$11 = Object.prototype.hasOwnProperty;
+var __propIsEnum$11 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$11 = (obj, key, value) => key in obj ? __defProp$11(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$Y = (a, b) => {
+var __spreadValues$11 = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$Y.call(b, prop))
-      __defNormalProp$Y(a, prop, b[prop]);
-  if (__getOwnPropSymbols$Y)
-    for (var prop of __getOwnPropSymbols$Y(b)) {
-      if (__propIsEnum$Y.call(b, prop))
-        __defNormalProp$Y(a, prop, b[prop]);
+    if (__hasOwnProp$11.call(b, prop))
+      __defNormalProp$11(a, prop, b[prop]);
+  if (__getOwnPropSymbols$11)
+    for (var prop of __getOwnPropSymbols$11(b)) {
+      if (__propIsEnum$11.call(b, prop))
+        __defNormalProp$11(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$E = (source, exclude) => {
+var __objRest$H = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$Y.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$11.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$Y)
-    for (var prop of __getOwnPropSymbols$Y(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$Y.call(source, prop))
+  if (source != null && __getOwnPropSymbols$11)
+    for (var prop of __getOwnPropSymbols$11(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$11.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -16040,11 +16040,11 @@ const SimpleGrid = react.exports.forwardRef((props, ref) => {
     spacing,
     children,
     unstyled
-  } = _a, others = __objRest$E(_a, ["className", "breakpoints", "cols", "spacing", "children", "unstyled"]);
+  } = _a, others = __objRest$H(_a, ["className", "breakpoints", "cols", "spacing", "children", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$S({
+  } = useStyles$Y({
     breakpoints,
     cols,
     spacing
@@ -16053,7 +16053,7 @@ const SimpleGrid = react.exports.forwardRef((props, ref) => {
     name: "SimpleGrid"
   });
   return /* @__PURE__ */ jsx(Box, {
-    ...__spreadValues$Y({
+    ...__spreadValues$11({
       className: cx(classes.root, className),
       ref
     }, others),
@@ -16065,7 +16065,7 @@ const fade = keyframes({
   "from, to": { opacity: 0.4 },
   "50%": { opacity: 1 }
 });
-var useStyles$P = createStyles((theme, { height, width, radius, circle, animate }) => ({
+var useStyles$V = createStyles((theme, { height, width, radius, circle, animate }) => ({
   root: {
     height,
     width: circle ? height : width,
@@ -16098,36 +16098,36 @@ var useStyles$P = createStyles((theme, { height, width, radius, circle, animate 
     }
   }
 }));
-const useStyles$Q = useStyles$P;
-var __defProp$X = Object.defineProperty;
-var __getOwnPropSymbols$X = Object.getOwnPropertySymbols;
-var __hasOwnProp$X = Object.prototype.hasOwnProperty;
-var __propIsEnum$X = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$X = (obj, key, value) => key in obj ? __defProp$X(obj, key, {
+const useStyles$W = useStyles$V;
+var __defProp$10 = Object.defineProperty;
+var __getOwnPropSymbols$10 = Object.getOwnPropertySymbols;
+var __hasOwnProp$10 = Object.prototype.hasOwnProperty;
+var __propIsEnum$10 = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$10 = (obj, key, value) => key in obj ? __defProp$10(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$X = (a, b) => {
+var __spreadValues$10 = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$X.call(b, prop))
-      __defNormalProp$X(a, prop, b[prop]);
-  if (__getOwnPropSymbols$X)
-    for (var prop of __getOwnPropSymbols$X(b)) {
-      if (__propIsEnum$X.call(b, prop))
-        __defNormalProp$X(a, prop, b[prop]);
+    if (__hasOwnProp$10.call(b, prop))
+      __defNormalProp$10(a, prop, b[prop]);
+  if (__getOwnPropSymbols$10)
+    for (var prop of __getOwnPropSymbols$10(b)) {
+      if (__propIsEnum$10.call(b, prop))
+        __defNormalProp$10(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$D = (source, exclude) => {
+var __objRest$G = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$X.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$10.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$X)
-    for (var prop of __getOwnPropSymbols$X(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$X.call(source, prop))
+  if (source != null && __getOwnPropSymbols$10)
+    for (var prop of __getOwnPropSymbols$10(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$10.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -16148,11 +16148,11 @@ const Skeleton = react.exports.forwardRef((props, ref) => {
     circle,
     radius,
     unstyled
-  } = _a, others = __objRest$D(_a, ["height", "width", "visible", "animate", "className", "circle", "radius", "unstyled"]);
+  } = _a, others = __objRest$G(_a, ["height", "width", "visible", "animate", "className", "circle", "radius", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$Q({
+  } = useStyles$W({
     height,
     width,
     circle,
@@ -16163,7 +16163,7 @@ const Skeleton = react.exports.forwardRef((props, ref) => {
     name: "Skeleton"
   });
   return /* @__PURE__ */ jsx(Box, {
-    ...__spreadValues$X({
+    ...__spreadValues$10({
       className: cx(classes.root, {
         [classes.visible]: visible2
       }, className),
@@ -16192,25 +16192,25 @@ function getChangeValue({
   }
   return nextValue;
 }
-var __defProp$W = Object.defineProperty;
-var __defProps$y = Object.defineProperties;
-var __getOwnPropDescs$y = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$W = Object.getOwnPropertySymbols;
-var __hasOwnProp$W = Object.prototype.hasOwnProperty;
-var __propIsEnum$W = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$W = (obj, key, value) => key in obj ? __defProp$W(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$W = (a, b) => {
+var __defProp$$ = Object.defineProperty;
+var __defProps$B = Object.defineProperties;
+var __getOwnPropDescs$B = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$$ = Object.getOwnPropertySymbols;
+var __hasOwnProp$$ = Object.prototype.hasOwnProperty;
+var __propIsEnum$$ = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$$ = (obj, key, value) => key in obj ? __defProp$$(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$$ = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$W.call(b, prop))
-      __defNormalProp$W(a, prop, b[prop]);
-  if (__getOwnPropSymbols$W)
-    for (var prop of __getOwnPropSymbols$W(b)) {
-      if (__propIsEnum$W.call(b, prop))
-        __defNormalProp$W(a, prop, b[prop]);
+    if (__hasOwnProp$$.call(b, prop))
+      __defNormalProp$$(a, prop, b[prop]);
+  if (__getOwnPropSymbols$$)
+    for (var prop of __getOwnPropSymbols$$(b)) {
+      if (__propIsEnum$$.call(b, prop))
+        __defNormalProp$$(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$y = (a, b) => __defProps$y(a, __getOwnPropDescs$y(b));
+var __spreadProps$B = (a, b) => __defProps$B(a, __getOwnPropDescs$B(b));
 const sizes$5 = {
   xs: 4,
   sm: 6,
@@ -16218,8 +16218,8 @@ const sizes$5 = {
   lg: 10,
   xl: 12
 };
-var useStyles$N = createStyles((theme, { size: size2, disabled }) => ({
-  root: __spreadProps$y(__spreadValues$W({}, theme.fn.fontStyles()), {
+var useStyles$T = createStyles((theme, { size: size2, disabled }) => ({
+  root: __spreadProps$B(__spreadValues$$({}, theme.fn.fontStyles()), {
     WebkitTapHighlightColor: "transparent",
     outline: 0,
     height: theme.fn.size({ sizes: sizes$5, size: size2 }) * 2,
@@ -16229,27 +16229,27 @@ var useStyles$N = createStyles((theme, { size: size2, disabled }) => ({
     touchAction: "none"
   })
 }));
-const useStyles$O = useStyles$N;
-var __defProp$V = Object.defineProperty;
-var __defProps$x = Object.defineProperties;
-var __getOwnPropDescs$x = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$V = Object.getOwnPropertySymbols;
-var __hasOwnProp$V = Object.prototype.hasOwnProperty;
-var __propIsEnum$V = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$V = (obj, key, value) => key in obj ? __defProp$V(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$V = (a, b) => {
+const useStyles$U = useStyles$T;
+var __defProp$_ = Object.defineProperty;
+var __defProps$A = Object.defineProperties;
+var __getOwnPropDescs$A = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$_ = Object.getOwnPropertySymbols;
+var __hasOwnProp$_ = Object.prototype.hasOwnProperty;
+var __propIsEnum$_ = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$_ = (obj, key, value) => key in obj ? __defProp$_(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$_ = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$V.call(b, prop))
-      __defNormalProp$V(a, prop, b[prop]);
-  if (__getOwnPropSymbols$V)
-    for (var prop of __getOwnPropSymbols$V(b)) {
-      if (__propIsEnum$V.call(b, prop))
-        __defNormalProp$V(a, prop, b[prop]);
+    if (__hasOwnProp$_.call(b, prop))
+      __defNormalProp$_(a, prop, b[prop]);
+  if (__getOwnPropSymbols$_)
+    for (var prop of __getOwnPropSymbols$_(b)) {
+      if (__propIsEnum$_.call(b, prop))
+        __defNormalProp$_(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$x = (a, b) => __defProps$x(a, __getOwnPropDescs$x(b));
-var useStyles$L = createStyles((theme, { color, size: size2, disabled, thumbSize }) => ({
+var __spreadProps$A = (a, b) => __defProps$A(a, __getOwnPropDescs$A(b));
+var useStyles$R = createStyles((theme, { color, size: size2, disabled, thumbSize }) => ({
   label: {
     position: "absolute",
     top: -36,
@@ -16263,7 +16263,7 @@ var useStyles$L = createStyles((theme, { color, size: size2, disabled, thumbSize
     userSelect: "none",
     touchAction: "none"
   },
-  thumb: __spreadProps$x(__spreadValues$V({}, theme.fn.focusStyles()), {
+  thumb: __spreadProps$A(__spreadValues$_({}, theme.fn.focusStyles()), {
     boxSizing: "border-box",
     position: "absolute",
     display: disabled ? "none" : "flex",
@@ -16290,7 +16290,7 @@ var useStyles$L = createStyles((theme, { color, size: size2, disabled, thumbSize
     boxShadow: theme.shadows.sm
   }
 }));
-const useStyles$M = useStyles$L;
+const useStyles$S = useStyles$R;
 const Thumb = react.exports.forwardRef(({
   max,
   min,
@@ -16320,7 +16320,7 @@ const Thumb = react.exports.forwardRef(({
     classes,
     cx,
     theme
-  } = useStyles$M({
+  } = useStyles$S({
     color,
     size: size2,
     disabled,
@@ -16375,7 +16375,7 @@ Thumb.displayName = "@mantine/core/SliderThumb";
 function isMarkFilled({ mark, offset: offset2, value }) {
   return typeof offset2 === "number" ? mark.value >= offset2 && mark.value <= value : mark.value <= value;
 }
-var useStyles$J = createStyles((theme, { size: size2, color, disabled }) => ({
+var useStyles$P = createStyles((theme, { size: size2, color, disabled }) => ({
   markWrapper: {
     position: "absolute",
     top: 0,
@@ -16401,7 +16401,7 @@ var useStyles$J = createStyles((theme, { size: size2, color, disabled }) => ({
     whiteSpace: "nowrap"
   }
 }));
-const useStyles$K = useStyles$J;
+const useStyles$Q = useStyles$P;
 function Marks({
   marks,
   color,
@@ -16419,7 +16419,7 @@ function Marks({
   const {
     classes,
     cx
-  } = useStyles$K({
+  } = useStyles$Q({
     size: size2,
     color,
     disabled
@@ -16464,7 +16464,7 @@ function Marks({
   });
 }
 Marks.displayName = "@mantine/core/SliderMarks";
-var useStyles$H = createStyles((theme, { radius, size: size2, color, disabled }) => ({
+var useStyles$N = createStyles((theme, { radius, size: size2, color, disabled }) => ({
   track: {
     position: "relative",
     height: theme.fn.size({ sizes: sizes$5, size: size2 }),
@@ -16492,39 +16492,39 @@ var useStyles$H = createStyles((theme, { radius, size: size2, color, disabled })
     borderRadius: theme.fn.size({ size: radius, sizes: theme.radius })
   }
 }));
-const useStyles$I = useStyles$H;
-var __defProp$U = Object.defineProperty;
-var __defProps$w = Object.defineProperties;
-var __getOwnPropDescs$w = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$U = Object.getOwnPropertySymbols;
-var __hasOwnProp$U = Object.prototype.hasOwnProperty;
-var __propIsEnum$U = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$U = (obj, key, value) => key in obj ? __defProp$U(obj, key, {
+const useStyles$O = useStyles$N;
+var __defProp$Z = Object.defineProperty;
+var __defProps$z = Object.defineProperties;
+var __getOwnPropDescs$z = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$Z = Object.getOwnPropertySymbols;
+var __hasOwnProp$Z = Object.prototype.hasOwnProperty;
+var __propIsEnum$Z = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$Z = (obj, key, value) => key in obj ? __defProp$Z(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$U = (a, b) => {
+var __spreadValues$Z = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$U.call(b, prop))
-      __defNormalProp$U(a, prop, b[prop]);
-  if (__getOwnPropSymbols$U)
-    for (var prop of __getOwnPropSymbols$U(b)) {
-      if (__propIsEnum$U.call(b, prop))
-        __defNormalProp$U(a, prop, b[prop]);
+    if (__hasOwnProp$Z.call(b, prop))
+      __defNormalProp$Z(a, prop, b[prop]);
+  if (__getOwnPropSymbols$Z)
+    for (var prop of __getOwnPropSymbols$Z(b)) {
+      if (__propIsEnum$Z.call(b, prop))
+        __defNormalProp$Z(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$w = (a, b) => __defProps$w(a, __getOwnPropDescs$w(b));
-var __objRest$C = (source, exclude) => {
+var __spreadProps$z = (a, b) => __defProps$z(a, __getOwnPropDescs$z(b));
+var __objRest$F = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$U.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$Z.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$U)
-    for (var prop of __getOwnPropSymbols$U(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$U.call(source, prop))
+  if (source != null && __getOwnPropSymbols$Z)
+    for (var prop of __getOwnPropSymbols$Z(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$Z.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -16544,10 +16544,10 @@ function Track(_a) {
     disabled,
     marksOffset,
     unstyled
-  } = _b, others = __objRest$C(_b, ["filled", "size", "color", "classNames", "styles", "radius", "children", "offset", "onMouseLeave", "onMouseEnter", "disabled", "marksOffset", "unstyled"]);
+  } = _b, others = __objRest$F(_b, ["filled", "size", "color", "classNames", "styles", "radius", "children", "offset", "onMouseLeave", "onMouseEnter", "disabled", "marksOffset", "unstyled"]);
   const {
     classes
-  } = useStyles$I({
+  } = useStyles$O({
     color,
     size: size2,
     radius,
@@ -16575,7 +16575,7 @@ function Track(_a) {
         })}px)`
       })
     }), children, /* @__PURE__ */ jsx(Marks, {
-      ...__spreadProps$w(__spreadValues$U({}, others), {
+      ...__spreadProps$z(__spreadValues$Z({}, others), {
         size: size2,
         color,
         offset: marksOffset,
@@ -16588,38 +16588,38 @@ function Track(_a) {
   });
 }
 Track.displayName = "@mantine/core/SliderTrack";
-var __defProp$T = Object.defineProperty;
-var __defProps$v = Object.defineProperties;
-var __getOwnPropDescs$v = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$T = Object.getOwnPropertySymbols;
-var __hasOwnProp$T = Object.prototype.hasOwnProperty;
-var __propIsEnum$T = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$T = (obj, key, value) => key in obj ? __defProp$T(obj, key, {
+var __defProp$Y = Object.defineProperty;
+var __defProps$y = Object.defineProperties;
+var __getOwnPropDescs$y = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$Y = Object.getOwnPropertySymbols;
+var __hasOwnProp$Y = Object.prototype.hasOwnProperty;
+var __propIsEnum$Y = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$Y = (obj, key, value) => key in obj ? __defProp$Y(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$T = (a, b) => {
+var __spreadValues$Y = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$T.call(b, prop))
-      __defNormalProp$T(a, prop, b[prop]);
-  if (__getOwnPropSymbols$T)
-    for (var prop of __getOwnPropSymbols$T(b)) {
-      if (__propIsEnum$T.call(b, prop))
-        __defNormalProp$T(a, prop, b[prop]);
+    if (__hasOwnProp$Y.call(b, prop))
+      __defNormalProp$Y(a, prop, b[prop]);
+  if (__getOwnPropSymbols$Y)
+    for (var prop of __getOwnPropSymbols$Y(b)) {
+      if (__propIsEnum$Y.call(b, prop))
+        __defNormalProp$Y(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$v = (a, b) => __defProps$v(a, __getOwnPropDescs$v(b));
-var __objRest$B = (source, exclude) => {
+var __spreadProps$y = (a, b) => __defProps$y(a, __getOwnPropDescs$y(b));
+var __objRest$E = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$T.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$Y.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$T)
-    for (var prop of __getOwnPropSymbols$T(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$T.call(source, prop))
+  if (source != null && __getOwnPropSymbols$Y)
+    for (var prop of __getOwnPropSymbols$Y(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$Y.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -16632,11 +16632,11 @@ const SliderRoot = react.exports.forwardRef((_a, ref) => {
     styles,
     disabled,
     unstyled
-  } = _b, others = __objRest$B(_b, ["className", "size", "classNames", "styles", "disabled", "unstyled"]);
+  } = _b, others = __objRest$E(_b, ["className", "size", "classNames", "styles", "disabled", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$O({
+  } = useStyles$U({
     size: size2,
     disabled
   }, {
@@ -16646,7 +16646,7 @@ const SliderRoot = react.exports.forwardRef((_a, ref) => {
     name: "Slider"
   });
   return /* @__PURE__ */ jsx(Box, {
-    ...__spreadProps$v(__spreadValues$T({}, others), {
+    ...__spreadProps$y(__spreadValues$Y({}, others), {
       tabIndex: -1,
       className: cx(classes.root, className),
       ref
@@ -16654,38 +16654,38 @@ const SliderRoot = react.exports.forwardRef((_a, ref) => {
   });
 });
 SliderRoot.displayName = "@mantine/core/SliderRoot";
-var __defProp$S = Object.defineProperty;
-var __defProps$u = Object.defineProperties;
-var __getOwnPropDescs$u = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$S = Object.getOwnPropertySymbols;
-var __hasOwnProp$S = Object.prototype.hasOwnProperty;
-var __propIsEnum$S = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$S = (obj, key, value) => key in obj ? __defProp$S(obj, key, {
+var __defProp$X = Object.defineProperty;
+var __defProps$x = Object.defineProperties;
+var __getOwnPropDescs$x = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$X = Object.getOwnPropertySymbols;
+var __hasOwnProp$X = Object.prototype.hasOwnProperty;
+var __propIsEnum$X = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$X = (obj, key, value) => key in obj ? __defProp$X(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$S = (a, b) => {
+var __spreadValues$X = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$S.call(b, prop))
-      __defNormalProp$S(a, prop, b[prop]);
-  if (__getOwnPropSymbols$S)
-    for (var prop of __getOwnPropSymbols$S(b)) {
-      if (__propIsEnum$S.call(b, prop))
-        __defNormalProp$S(a, prop, b[prop]);
+    if (__hasOwnProp$X.call(b, prop))
+      __defNormalProp$X(a, prop, b[prop]);
+  if (__getOwnPropSymbols$X)
+    for (var prop of __getOwnPropSymbols$X(b)) {
+      if (__propIsEnum$X.call(b, prop))
+        __defNormalProp$X(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$u = (a, b) => __defProps$u(a, __getOwnPropDescs$u(b));
-var __objRest$A = (source, exclude) => {
+var __spreadProps$x = (a, b) => __defProps$x(a, __getOwnPropDescs$x(b));
+var __objRest$D = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$S.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$X.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$S)
-    for (var prop of __getOwnPropSymbols$S(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$S.call(source, prop))
+  if (source != null && __getOwnPropSymbols$X)
+    for (var prop of __getOwnPropSymbols$X(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$X.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -16733,7 +16733,7 @@ const Slider = react.exports.forwardRef((props, ref) => {
     disabled,
     unstyled,
     thumbSize
-  } = _a, others = __objRest$A(_a, ["classNames", "styles", "color", "value", "onChange", "onChangeEnd", "size", "radius", "min", "max", "step", "precision", "defaultValue", "name", "marks", "label", "labelTransition", "labelTransitionDuration", "labelTransitionTimingFunction", "labelAlwaysOn", "thumbLabel", "showLabelOnHover", "thumbChildren", "disabled", "unstyled", "thumbSize"]);
+  } = _a, others = __objRest$D(_a, ["classNames", "styles", "color", "value", "onChange", "onChangeEnd", "size", "radius", "min", "max", "step", "precision", "defaultValue", "name", "marks", "label", "labelTransition", "labelTransitionDuration", "labelTransitionTimingFunction", "labelAlwaysOn", "thumbLabel", "showLabelOnHover", "thumbChildren", "disabled", "unstyled", "thumbSize"]);
   const theme = useMantineTheme();
   const [hovered, setHovered] = react.exports.useState(false);
   const [_value, setValue] = useUncontrolled({
@@ -16827,7 +16827,7 @@ const Slider = react.exports.forwardRef((props, ref) => {
     }
   };
   return /* @__PURE__ */ jsxs(SliderRoot, {
-    ...__spreadProps$u(__spreadValues$S({}, others), {
+    ...__spreadProps$x(__spreadValues$X({}, others), {
       size: size2,
       ref: useMergedRef(container, ref),
       onKeyDownCapture: handleTrackKeydownCapture,
@@ -16896,38 +16896,38 @@ function getClientPosition(event) {
   }
   return event.clientX;
 }
-var __defProp$R = Object.defineProperty;
-var __defProps$t = Object.defineProperties;
-var __getOwnPropDescs$t = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$R = Object.getOwnPropertySymbols;
-var __hasOwnProp$R = Object.prototype.hasOwnProperty;
-var __propIsEnum$R = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$R = (obj, key, value) => key in obj ? __defProp$R(obj, key, {
+var __defProp$W = Object.defineProperty;
+var __defProps$w = Object.defineProperties;
+var __getOwnPropDescs$w = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$W = Object.getOwnPropertySymbols;
+var __hasOwnProp$W = Object.prototype.hasOwnProperty;
+var __propIsEnum$W = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$W = (obj, key, value) => key in obj ? __defProp$W(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$R = (a, b) => {
+var __spreadValues$W = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$R.call(b, prop))
-      __defNormalProp$R(a, prop, b[prop]);
-  if (__getOwnPropSymbols$R)
-    for (var prop of __getOwnPropSymbols$R(b)) {
-      if (__propIsEnum$R.call(b, prop))
-        __defNormalProp$R(a, prop, b[prop]);
+    if (__hasOwnProp$W.call(b, prop))
+      __defNormalProp$W(a, prop, b[prop]);
+  if (__getOwnPropSymbols$W)
+    for (var prop of __getOwnPropSymbols$W(b)) {
+      if (__propIsEnum$W.call(b, prop))
+        __defNormalProp$W(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$t = (a, b) => __defProps$t(a, __getOwnPropDescs$t(b));
-var __objRest$z = (source, exclude) => {
+var __spreadProps$w = (a, b) => __defProps$w(a, __getOwnPropDescs$w(b));
+var __objRest$C = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$R.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$W.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$R)
-    for (var prop of __getOwnPropSymbols$R(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$R.call(source, prop))
+  if (source != null && __getOwnPropSymbols$W)
+    for (var prop of __getOwnPropSymbols$W(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$W.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -16979,7 +16979,7 @@ const RangeSlider = react.exports.forwardRef((props, ref) => {
     disabled,
     unstyled,
     thumbSize
-  } = _a, others = __objRest$z(_a, ["classNames", "styles", "color", "value", "onChange", "onChangeEnd", "size", "radius", "min", "max", "minRange", "step", "precision", "defaultValue", "name", "marks", "label", "labelTransition", "labelTransitionDuration", "labelTransitionTimingFunction", "labelAlwaysOn", "thumbFromLabel", "thumbToLabel", "showLabelOnHover", "thumbChildren", "disabled", "unstyled", "thumbSize"]);
+  } = _a, others = __objRest$C(_a, ["classNames", "styles", "color", "value", "onChange", "onChangeEnd", "size", "radius", "min", "max", "minRange", "step", "precision", "defaultValue", "name", "marks", "label", "labelTransition", "labelTransitionDuration", "labelTransitionTimingFunction", "labelAlwaysOn", "thumbFromLabel", "thumbToLabel", "showLabelOnHover", "thumbChildren", "disabled", "unstyled", "thumbSize"]);
   const theme = useMantineTheme();
   const [focused, setFocused] = react.exports.useState(-1);
   const [hovered, setHovered] = react.exports.useState(false);
@@ -17129,7 +17129,7 @@ const RangeSlider = react.exports.forwardRef((props, ref) => {
   };
   const hasArrayThumbChildren = Array.isArray(thumbChildren);
   return /* @__PURE__ */ jsxs(SliderRoot, {
-    ...__spreadProps$t(__spreadValues$R({}, others), {
+    ...__spreadProps$w(__spreadValues$W({}, others), {
       size: size2,
       ref: useMergedRef(container, ref),
       onTouchStartCapture: handleTrackMouseDownCapture,
@@ -17170,7 +17170,7 @@ const RangeSlider = react.exports.forwardRef((props, ref) => {
       disabled,
       unstyled,
       children: [/* @__PURE__ */ jsx(Thumb, {
-        ...__spreadProps$t(__spreadValues$R({}, sharedThumbProps), {
+        ...__spreadProps$w(__spreadValues$W({}, sharedThumbProps), {
           value: _value[0],
           position: positions[0],
           dragging: active,
@@ -17188,7 +17188,7 @@ const RangeSlider = react.exports.forwardRef((props, ref) => {
         }),
         children: hasArrayThumbChildren ? thumbChildren[0] : thumbChildren
       }), /* @__PURE__ */ jsx(Thumb, {
-        ...__spreadProps$t(__spreadValues$R({}, sharedThumbProps), {
+        ...__spreadProps$w(__spreadValues$W({}, sharedThumbProps), {
           thumbLabel: thumbToLabel,
           value: _value[1],
           position: positions[1],
@@ -17218,35 +17218,35 @@ const RangeSlider = react.exports.forwardRef((props, ref) => {
   });
 });
 RangeSlider.displayName = "@mantine/core/RangeSlider";
-var __defProp$Q = Object.defineProperty;
-var __getOwnPropSymbols$Q = Object.getOwnPropertySymbols;
-var __hasOwnProp$Q = Object.prototype.hasOwnProperty;
-var __propIsEnum$Q = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$Q = (obj, key, value) => key in obj ? __defProp$Q(obj, key, {
+var __defProp$V = Object.defineProperty;
+var __getOwnPropSymbols$V = Object.getOwnPropertySymbols;
+var __hasOwnProp$V = Object.prototype.hasOwnProperty;
+var __propIsEnum$V = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$V = (obj, key, value) => key in obj ? __defProp$V(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$Q = (a, b) => {
+var __spreadValues$V = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$Q.call(b, prop))
-      __defNormalProp$Q(a, prop, b[prop]);
-  if (__getOwnPropSymbols$Q)
-    for (var prop of __getOwnPropSymbols$Q(b)) {
-      if (__propIsEnum$Q.call(b, prop))
-        __defNormalProp$Q(a, prop, b[prop]);
+    if (__hasOwnProp$V.call(b, prop))
+      __defNormalProp$V(a, prop, b[prop]);
+  if (__getOwnPropSymbols$V)
+    for (var prop of __getOwnPropSymbols$V(b)) {
+      if (__propIsEnum$V.call(b, prop))
+        __defNormalProp$V(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$y = (source, exclude) => {
+var __objRest$B = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$Q.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$V.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$Q)
-    for (var prop of __getOwnPropSymbols$Q(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$Q.call(source, prop))
+  if (source != null && __getOwnPropSymbols$V)
+    for (var prop of __getOwnPropSymbols$V(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$V.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -17260,9 +17260,9 @@ const Space = react.exports.forwardRef((props, ref) => {
     w,
     h,
     sx
-  } = _a, others = __objRest$y(_a, ["w", "h", "sx"]);
+  } = _a, others = __objRest$B(_a, ["w", "h", "sx"]);
   return /* @__PURE__ */ jsx(Box, {
-    ...__spreadValues$Q({
+    ...__spreadValues$V({
       ref,
       sx: [(theme) => {
         const width = theme.fn.size({
@@ -17284,7 +17284,7 @@ const Space = react.exports.forwardRef((props, ref) => {
   });
 });
 Space.displayName = "@mantine/core/Space";
-var useStyles$F = createStyles((theme, { transitionDuration }) => ({
+var useStyles$L = createStyles((theme, { transitionDuration }) => ({
   control: {},
   root: {
     position: "relative"
@@ -17301,36 +17301,36 @@ var useStyles$F = createStyles((theme, { transitionDuration }) => ({
     }
   }
 }));
-const useStyles$G = useStyles$F;
-var __defProp$P = Object.defineProperty;
-var __getOwnPropSymbols$P = Object.getOwnPropertySymbols;
-var __hasOwnProp$P = Object.prototype.hasOwnProperty;
-var __propIsEnum$P = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$P = (obj, key, value) => key in obj ? __defProp$P(obj, key, {
+const useStyles$M = useStyles$L;
+var __defProp$U = Object.defineProperty;
+var __getOwnPropSymbols$U = Object.getOwnPropertySymbols;
+var __hasOwnProp$U = Object.prototype.hasOwnProperty;
+var __propIsEnum$U = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$U = (obj, key, value) => key in obj ? __defProp$U(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$P = (a, b) => {
+var __spreadValues$U = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$P.call(b, prop))
-      __defNormalProp$P(a, prop, b[prop]);
-  if (__getOwnPropSymbols$P)
-    for (var prop of __getOwnPropSymbols$P(b)) {
-      if (__propIsEnum$P.call(b, prop))
-        __defNormalProp$P(a, prop, b[prop]);
+    if (__hasOwnProp$U.call(b, prop))
+      __defNormalProp$U(a, prop, b[prop]);
+  if (__getOwnPropSymbols$U)
+    for (var prop of __getOwnPropSymbols$U(b)) {
+      if (__propIsEnum$U.call(b, prop))
+        __defNormalProp$U(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$x = (source, exclude) => {
+var __objRest$A = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$P.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$U.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$P)
-    for (var prop of __getOwnPropSymbols$P(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$P.call(source, prop))
+  if (source != null && __getOwnPropSymbols$U)
+    for (var prop of __getOwnPropSymbols$U(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$U.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -17353,11 +17353,11 @@ const Spoiler = react.exports.forwardRef((props, ref) => {
     classNames,
     styles,
     unstyled
-  } = _a, others = __objRest$x(_a, ["className", "children", "maxHeight", "hideLabel", "showLabel", "transitionDuration", "controlRef", "initialState", "classNames", "styles", "unstyled"]);
+  } = _a, others = __objRest$A(_a, ["className", "children", "maxHeight", "hideLabel", "showLabel", "transitionDuration", "controlRef", "initialState", "classNames", "styles", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$G({
+  } = useStyles$M({
     transitionDuration
   }, {
     classNames,
@@ -17376,7 +17376,7 @@ const Spoiler = react.exports.forwardRef((props, ref) => {
     setSpoilerState(maxHeight < height);
   }, [height, maxHeight, children]);
   return /* @__PURE__ */ jsxs(Box, {
-    ...__spreadValues$P({
+    ...__spreadValues$U({
       className: cx(classes.root, className),
       ref
     }, others),
@@ -17399,25 +17399,25 @@ const Spoiler = react.exports.forwardRef((props, ref) => {
   });
 });
 Spoiler.displayName = "@mantine/core/Spoiler";
-var __defProp$O = Object.defineProperty;
-var __defProps$s = Object.defineProperties;
-var __getOwnPropDescs$s = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$O = Object.getOwnPropertySymbols;
-var __hasOwnProp$O = Object.prototype.hasOwnProperty;
-var __propIsEnum$O = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$O = (obj, key, value) => key in obj ? __defProp$O(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$O = (a, b) => {
+var __defProp$T = Object.defineProperty;
+var __defProps$v = Object.defineProperties;
+var __getOwnPropDescs$v = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$T = Object.getOwnPropertySymbols;
+var __hasOwnProp$T = Object.prototype.hasOwnProperty;
+var __propIsEnum$T = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$T = (obj, key, value) => key in obj ? __defProp$T(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$T = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$O.call(b, prop))
-      __defNormalProp$O(a, prop, b[prop]);
-  if (__getOwnPropSymbols$O)
-    for (var prop of __getOwnPropSymbols$O(b)) {
-      if (__propIsEnum$O.call(b, prop))
-        __defNormalProp$O(a, prop, b[prop]);
+    if (__hasOwnProp$T.call(b, prop))
+      __defNormalProp$T(a, prop, b[prop]);
+  if (__getOwnPropSymbols$T)
+    for (var prop of __getOwnPropSymbols$T(b)) {
+      if (__propIsEnum$T.call(b, prop))
+        __defNormalProp$T(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$s = (a, b) => __defProps$s(a, __getOwnPropDescs$s(b));
+var __spreadProps$v = (a, b) => __defProps$v(a, __getOwnPropDescs$v(b));
 const iconSizes$1 = {
   xs: 34,
   sm: 36,
@@ -17425,7 +17425,7 @@ const iconSizes$1 = {
   lg: 48,
   xl: 52
 };
-var useStyles$D = createStyles((theme, { color, iconSize, size: size2, radius, allowStepClick, iconPosition, orientation }) => {
+var useStyles$J = createStyles((theme, { color, iconSize, size: size2, radius, allowStepClick, iconPosition, orientation }) => {
   const _iconSize = iconSize || theme.fn.size({ size: size2, sizes: iconSizes$1 });
   const iconMargin = size2 === "xl" || size2 === "lg" ? theme.spacing.md : theme.spacing.sm;
   const _radius = theme.fn.size({ size: radius, sizes: theme.radius });
@@ -17447,7 +17447,7 @@ var useStyles$D = createStyles((theme, { color, iconSize, size: size2, radius, a
   };
   return {
     stepLoader: {},
-    step: __spreadValues$O({
+    step: __spreadValues$T({
       display: "flex",
       flexDirection: iconPosition === "left" ? "row" : "row-reverse",
       cursor: allowStepClick ? "pointer" : "default"
@@ -17492,13 +17492,13 @@ var useStyles$D = createStyles((theme, { color, iconSize, size: size2, radius, a
         color: theme.white
       }
     },
-    stepCompletedIcon: __spreadProps$s(__spreadValues$O({}, theme.fn.cover()), {
+    stepCompletedIcon: __spreadProps$v(__spreadValues$T({}, theme.fn.cover()), {
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
       color: theme.white
     }),
-    stepBody: __spreadValues$O({
+    stepBody: __spreadValues$T({
       display: "flex",
       flexDirection: "column",
       marginLeft: iconPosition === "left" ? iconMargin : void 0,
@@ -17521,36 +17521,36 @@ var useStyles$D = createStyles((theme, { color, iconSize, size: size2, radius, a
     }
   };
 });
-const useStyles$E = useStyles$D;
-var __defProp$N = Object.defineProperty;
-var __getOwnPropSymbols$N = Object.getOwnPropertySymbols;
-var __hasOwnProp$N = Object.prototype.hasOwnProperty;
-var __propIsEnum$N = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$N = (obj, key, value) => key in obj ? __defProp$N(obj, key, {
+const useStyles$K = useStyles$J;
+var __defProp$S = Object.defineProperty;
+var __getOwnPropSymbols$S = Object.getOwnPropertySymbols;
+var __hasOwnProp$S = Object.prototype.hasOwnProperty;
+var __propIsEnum$S = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$S = (obj, key, value) => key in obj ? __defProp$S(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$N = (a, b) => {
+var __spreadValues$S = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$N.call(b, prop))
-      __defNormalProp$N(a, prop, b[prop]);
-  if (__getOwnPropSymbols$N)
-    for (var prop of __getOwnPropSymbols$N(b)) {
-      if (__propIsEnum$N.call(b, prop))
-        __defNormalProp$N(a, prop, b[prop]);
+    if (__hasOwnProp$S.call(b, prop))
+      __defNormalProp$S(a, prop, b[prop]);
+  if (__getOwnPropSymbols$S)
+    for (var prop of __getOwnPropSymbols$S(b)) {
+      if (__propIsEnum$S.call(b, prop))
+        __defNormalProp$S(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$w = (source, exclude) => {
+var __objRest$z = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$N.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$S.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$N)
-    for (var prop of __getOwnPropSymbols$N(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$N.call(source, prop))
+  if (source != null && __getOwnPropSymbols$S)
+    for (var prop of __getOwnPropSymbols$S(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$S.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -17585,12 +17585,12 @@ const Step = react.exports.forwardRef((_a, ref) => {
     styles,
     unstyled,
     orientation
-  } = _b, others = __objRest$w(_b, ["className", "state", "color", "icon", "completedIcon", "progressIcon", "label", "description", "withIcon", "iconSize", "size", "radius", "loading", "allowStepClick", "allowStepSelect", "iconPosition", "__staticSelector", "classNames", "styles", "unstyled", "orientation"]);
+  } = _b, others = __objRest$z(_b, ["className", "state", "color", "icon", "completedIcon", "progressIcon", "label", "description", "withIcon", "iconSize", "size", "radius", "loading", "allowStepClick", "allowStepSelect", "iconPosition", "__staticSelector", "classNames", "styles", "unstyled", "orientation"]);
   const {
     classes,
     cx,
     theme
-  } = useStyles$E({
+  } = useStyles$K({
     color,
     iconSize,
     size: size2,
@@ -17614,7 +17614,7 @@ const Step = react.exports.forwardRef((_a, ref) => {
     "data-completed": state === "stepCompleted" || void 0
   };
   return /* @__PURE__ */ jsxs(UnstyledButton, {
-    ...__spreadValues$N(__spreadValues$N({
+    ...__spreadValues$S(__spreadValues$S({
       className: cx(classes.step, className),
       tabIndex: allowStepClick ? 0 : -1,
       ref
@@ -17622,7 +17622,7 @@ const Step = react.exports.forwardRef((_a, ref) => {
     children: [withIcon && /* @__PURE__ */ jsxs("div", {
       className: classes.stepWrapper,
       children: [/* @__PURE__ */ jsxs("div", {
-        ...__spreadValues$N({
+        ...__spreadValues$S({
           className: classes.stepIcon
         }, dataAttributes),
         children: [/* @__PURE__ */ jsx(Transition$2, {
@@ -17669,26 +17669,26 @@ function StepCompleted(props) {
   return null;
 }
 StepCompleted.displayName = "@mantine/core/StepCompleted";
-var __defProp$M = Object.defineProperty;
-var __defProps$r = Object.defineProperties;
-var __getOwnPropDescs$r = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$M = Object.getOwnPropertySymbols;
-var __hasOwnProp$M = Object.prototype.hasOwnProperty;
-var __propIsEnum$M = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$M = (obj, key, value) => key in obj ? __defProp$M(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$M = (a, b) => {
+var __defProp$R = Object.defineProperty;
+var __defProps$u = Object.defineProperties;
+var __getOwnPropDescs$u = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$R = Object.getOwnPropertySymbols;
+var __hasOwnProp$R = Object.prototype.hasOwnProperty;
+var __propIsEnum$R = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$R = (obj, key, value) => key in obj ? __defProp$R(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$R = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$M.call(b, prop))
-      __defNormalProp$M(a, prop, b[prop]);
-  if (__getOwnPropSymbols$M)
-    for (var prop of __getOwnPropSymbols$M(b)) {
-      if (__propIsEnum$M.call(b, prop))
-        __defNormalProp$M(a, prop, b[prop]);
+    if (__hasOwnProp$R.call(b, prop))
+      __defNormalProp$R(a, prop, b[prop]);
+  if (__getOwnPropSymbols$R)
+    for (var prop of __getOwnPropSymbols$R(b)) {
+      if (__propIsEnum$R.call(b, prop))
+        __defNormalProp$R(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$r = (a, b) => __defProps$r(a, __getOwnPropDescs$r(b));
-var useStyles$B = createStyles((theme, {
+var __spreadProps$u = (a, b) => __defProps$u(a, __getOwnPropDescs$u(b));
+var useStyles$H = createStyles((theme, {
   contentPadding,
   color,
   orientation,
@@ -17724,12 +17724,12 @@ var useStyles$B = createStyles((theme, {
   };
   return {
     root: {},
-    steps: __spreadValues$M(__spreadValues$M({
+    steps: __spreadValues$R(__spreadValues$R({
       display: "flex",
       boxSizing: "border-box",
       alignItems: "center"
     }, orientation === "vertical" ? verticalOrientationStyles.steps : null), shouldBeResponsive ? responsiveStyles.steps : null),
-    separator: __spreadValues$M(__spreadValues$M({
+    separator: __spreadValues$R(__spreadValues$R({
       boxSizing: "border-box",
       transition: "background-color 150ms ease",
       flex: 1,
@@ -17741,41 +17741,41 @@ var useStyles$B = createStyles((theme, {
     separatorActive: {
       backgroundColor: theme.fn.variant({ variant: "filled", color }).background
     },
-    content: __spreadProps$r(__spreadValues$M({}, theme.fn.fontStyles()), {
+    content: __spreadProps$u(__spreadValues$R({}, theme.fn.fontStyles()), {
       paddingTop: theme.fn.size({ size: contentPadding, sizes: theme.spacing })
     })
   };
 });
-const useStyles$C = useStyles$B;
-var __defProp$L = Object.defineProperty;
-var __getOwnPropSymbols$L = Object.getOwnPropertySymbols;
-var __hasOwnProp$L = Object.prototype.hasOwnProperty;
-var __propIsEnum$L = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$L = (obj, key, value) => key in obj ? __defProp$L(obj, key, {
+const useStyles$I = useStyles$H;
+var __defProp$Q = Object.defineProperty;
+var __getOwnPropSymbols$Q = Object.getOwnPropertySymbols;
+var __hasOwnProp$Q = Object.prototype.hasOwnProperty;
+var __propIsEnum$Q = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$Q = (obj, key, value) => key in obj ? __defProp$Q(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$L = (a, b) => {
+var __spreadValues$Q = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$L.call(b, prop))
-      __defNormalProp$L(a, prop, b[prop]);
-  if (__getOwnPropSymbols$L)
-    for (var prop of __getOwnPropSymbols$L(b)) {
-      if (__propIsEnum$L.call(b, prop))
-        __defNormalProp$L(a, prop, b[prop]);
+    if (__hasOwnProp$Q.call(b, prop))
+      __defNormalProp$Q(a, prop, b[prop]);
+  if (__getOwnPropSymbols$Q)
+    for (var prop of __getOwnPropSymbols$Q(b)) {
+      if (__propIsEnum$Q.call(b, prop))
+        __defNormalProp$Q(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$v = (source, exclude) => {
+var __objRest$y = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$L.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$Q.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$L)
-    for (var prop of __getOwnPropSymbols$L(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$L.call(source, prop))
+  if (source != null && __getOwnPropSymbols$Q)
+    for (var prop of __getOwnPropSymbols$Q(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$Q.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -17807,11 +17807,11 @@ const Stepper = react.exports.forwardRef((props, ref) => {
     classNames,
     styles,
     unstyled
-  } = _a, others = __objRest$v(_a, ["className", "children", "onStepClick", "active", "completedIcon", "progressIcon", "color", "iconSize", "contentPadding", "size", "radius", "orientation", "breakpoint", "iconPosition", "classNames", "styles", "unstyled"]);
+  } = _a, others = __objRest$y(_a, ["className", "children", "onStepClick", "active", "completedIcon", "progressIcon", "color", "iconSize", "contentPadding", "size", "radius", "orientation", "breakpoint", "iconPosition", "classNames", "styles", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$C({
+  } = useStyles$I({
     contentPadding,
     color,
     orientation,
@@ -17864,7 +17864,7 @@ const Stepper = react.exports.forwardRef((props, ref) => {
   const completedContent = (_d = completedStep == null ? void 0 : completedStep.props) == null ? void 0 : _d.children;
   const content = active > _children.length - 1 ? completedContent : stepContent;
   return /* @__PURE__ */ jsxs(Box, {
-    ...__spreadValues$L({
+    ...__spreadValues$Q({
       className: cx(classes.root, className),
       ref
     }, others),
@@ -17880,25 +17880,25 @@ const Stepper = react.exports.forwardRef((props, ref) => {
 Stepper.Step = Step;
 Stepper.Completed = StepCompleted;
 Stepper.displayName = "@mantine/core/Stepper";
-var __defProp$K = Object.defineProperty;
-var __defProps$q = Object.defineProperties;
-var __getOwnPropDescs$q = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$K = Object.getOwnPropertySymbols;
-var __hasOwnProp$K = Object.prototype.hasOwnProperty;
-var __propIsEnum$K = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$K = (obj, key, value) => key in obj ? __defProp$K(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$K = (a, b) => {
+var __defProp$P = Object.defineProperty;
+var __defProps$t = Object.defineProperties;
+var __getOwnPropDescs$t = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$P = Object.getOwnPropertySymbols;
+var __hasOwnProp$P = Object.prototype.hasOwnProperty;
+var __propIsEnum$P = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$P = (obj, key, value) => key in obj ? __defProp$P(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$P = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$K.call(b, prop))
-      __defNormalProp$K(a, prop, b[prop]);
-  if (__getOwnPropSymbols$K)
-    for (var prop of __getOwnPropSymbols$K(b)) {
-      if (__propIsEnum$K.call(b, prop))
-        __defNormalProp$K(a, prop, b[prop]);
+    if (__hasOwnProp$P.call(b, prop))
+      __defNormalProp$P(a, prop, b[prop]);
+  if (__getOwnPropSymbols$P)
+    for (var prop of __getOwnPropSymbols$P(b)) {
+      if (__propIsEnum$P.call(b, prop))
+        __defNormalProp$P(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$q = (a, b) => __defProps$q(a, __getOwnPropDescs$q(b));
+var __spreadProps$t = (a, b) => __defProps$t(a, __getOwnPropDescs$t(b));
 const switchHeight = {
   xs: 16,
   sm: 20,
@@ -17927,7 +17927,7 @@ const labelFontSizes = {
   lg: 9,
   xl: 11
 };
-var useStyles$z = createStyles((theme, { size: size2, radius, color, offLabel, onLabel }) => {
+var useStyles$F = createStyles((theme, { size: size2, radius, color, offLabel, onLabel }) => {
   const handleSize = theme.fn.size({ size: size2, sizes: handleSizes });
   const borderRadius = theme.fn.size({ size: radius, sizes: theme.radius });
   const colors = theme.fn.variant({ variant: "filled", color });
@@ -17936,7 +17936,7 @@ var useStyles$z = createStyles((theme, { size: size2, radius, color, offLabel, o
       display: "flex",
       alignItems: "center"
     },
-    input: __spreadProps$q(__spreadValues$K({}, theme.fn.focusStyles()), {
+    input: __spreadProps$t(__spreadValues$P({}, theme.fn.focusStyles()), {
       overflow: "hidden",
       WebkitTapHighlightColor: "transparent",
       position: "relative",
@@ -18017,7 +18017,7 @@ var useStyles$z = createStyles((theme, { size: size2, radius, color, offLabel, o
         }
       }
     }),
-    label: __spreadProps$q(__spreadValues$K({}, theme.fn.fontStyles()), {
+    label: __spreadProps$t(__spreadValues$P({}, theme.fn.fontStyles()), {
       WebkitTapHighlightColor: "transparent",
       fontSize: theme.fn.size({ size: size2, sizes: theme.fontSizes }),
       fontFamily: theme.fontFamily,
@@ -18027,39 +18027,39 @@ var useStyles$z = createStyles((theme, { size: size2, radius, color, offLabel, o
     })
   };
 });
-const useStyles$A = useStyles$z;
-var __defProp$J = Object.defineProperty;
-var __defProps$p = Object.defineProperties;
-var __getOwnPropDescs$p = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$J = Object.getOwnPropertySymbols;
-var __hasOwnProp$J = Object.prototype.hasOwnProperty;
-var __propIsEnum$J = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$J = (obj, key, value) => key in obj ? __defProp$J(obj, key, {
+const useStyles$G = useStyles$F;
+var __defProp$O = Object.defineProperty;
+var __defProps$s = Object.defineProperties;
+var __getOwnPropDescs$s = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$O = Object.getOwnPropertySymbols;
+var __hasOwnProp$O = Object.prototype.hasOwnProperty;
+var __propIsEnum$O = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$O = (obj, key, value) => key in obj ? __defProp$O(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$J = (a, b) => {
+var __spreadValues$O = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$J.call(b, prop))
-      __defNormalProp$J(a, prop, b[prop]);
-  if (__getOwnPropSymbols$J)
-    for (var prop of __getOwnPropSymbols$J(b)) {
-      if (__propIsEnum$J.call(b, prop))
-        __defNormalProp$J(a, prop, b[prop]);
+    if (__hasOwnProp$O.call(b, prop))
+      __defNormalProp$O(a, prop, b[prop]);
+  if (__getOwnPropSymbols$O)
+    for (var prop of __getOwnPropSymbols$O(b)) {
+      if (__propIsEnum$O.call(b, prop))
+        __defNormalProp$O(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$p = (a, b) => __defProps$p(a, __getOwnPropDescs$p(b));
-var __objRest$u = (source, exclude) => {
+var __spreadProps$s = (a, b) => __defProps$s(a, __getOwnPropDescs$s(b));
+var __objRest$x = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$J.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$O.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$J)
-    for (var prop of __getOwnPropSymbols$J(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$J.call(source, prop))
+  if (source != null && __getOwnPropSymbols$O)
+    for (var prop of __getOwnPropSymbols$O(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$O.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -18087,11 +18087,11 @@ const Switch = react.exports.forwardRef((props, ref) => {
     styles,
     classNames,
     sx
-  } = _a, others = __objRest$u(_a, ["className", "color", "label", "offLabel", "onLabel", "id", "style", "size", "radius", "wrapperProps", "children", "unstyled", "styles", "classNames", "sx"]);
+  } = _a, others = __objRest$x(_a, ["className", "color", "label", "offLabel", "onLabel", "id", "style", "size", "radius", "wrapperProps", "children", "unstyled", "styles", "classNames", "sx"]);
   const {
     classes,
     cx
-  } = useStyles$A({
+  } = useStyles$G({
     size: size2,
     color,
     radius,
@@ -18109,13 +18109,13 @@ const Switch = react.exports.forwardRef((props, ref) => {
   } = extractSystemStyles(others);
   const uuid2 = useId(id);
   return /* @__PURE__ */ jsxs(Box, {
-    ...__spreadValues$J(__spreadValues$J({
+    ...__spreadValues$O(__spreadValues$O({
       className: cx(classes.root, className),
       style,
       sx
     }, systemStyles), wrapperProps),
     children: [/* @__PURE__ */ jsx("input", {
-      ...__spreadProps$p(__spreadValues$J({}, rest), {
+      ...__spreadProps$s(__spreadValues$O({}, rest), {
         id: uuid2,
         ref,
         type: "checkbox",
@@ -18129,27 +18129,27 @@ const Switch = react.exports.forwardRef((props, ref) => {
   });
 });
 Switch.displayName = "@mantine/core/Switch";
-var __defProp$I = Object.defineProperty;
-var __defProps$o = Object.defineProperties;
-var __getOwnPropDescs$o = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$I = Object.getOwnPropertySymbols;
-var __hasOwnProp$I = Object.prototype.hasOwnProperty;
-var __propIsEnum$I = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$I = (obj, key, value) => key in obj ? __defProp$I(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$I = (a, b) => {
+var __defProp$N = Object.defineProperty;
+var __defProps$r = Object.defineProperties;
+var __getOwnPropDescs$r = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$N = Object.getOwnPropertySymbols;
+var __hasOwnProp$N = Object.prototype.hasOwnProperty;
+var __propIsEnum$N = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$N = (obj, key, value) => key in obj ? __defProp$N(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$N = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$I.call(b, prop))
-      __defNormalProp$I(a, prop, b[prop]);
-  if (__getOwnPropSymbols$I)
-    for (var prop of __getOwnPropSymbols$I(b)) {
-      if (__propIsEnum$I.call(b, prop))
-        __defNormalProp$I(a, prop, b[prop]);
+    if (__hasOwnProp$N.call(b, prop))
+      __defNormalProp$N(a, prop, b[prop]);
+  if (__getOwnPropSymbols$N)
+    for (var prop of __getOwnPropSymbols$N(b)) {
+      if (__propIsEnum$N.call(b, prop))
+        __defNormalProp$N(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$o = (a, b) => __defProps$o(a, __getOwnPropDescs$o(b));
-var useStyles$x = createStyles((theme, { captionSide, horizontalSpacing, verticalSpacing, fontSize }) => ({
-  root: __spreadProps$o(__spreadValues$I({}, theme.fn.fontStyles()), {
+var __spreadProps$r = (a, b) => __defProps$r(a, __getOwnPropDescs$r(b));
+var useStyles$D = createStyles((theme, { captionSide, horizontalSpacing, verticalSpacing, fontSize }) => ({
+  root: __spreadProps$r(__spreadValues$N({}, theme.fn.fontStyles()), {
     width: "100%",
     borderCollapse: "collapse",
     captionSide,
@@ -18196,39 +18196,39 @@ var useStyles$x = createStyles((theme, { captionSide, horizontalSpacing, vertica
     })
   })
 }));
-const useStyles$y = useStyles$x;
-var __defProp$H = Object.defineProperty;
-var __defProps$n = Object.defineProperties;
-var __getOwnPropDescs$n = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$H = Object.getOwnPropertySymbols;
-var __hasOwnProp$H = Object.prototype.hasOwnProperty;
-var __propIsEnum$H = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$H = (obj, key, value) => key in obj ? __defProp$H(obj, key, {
+const useStyles$E = useStyles$D;
+var __defProp$M = Object.defineProperty;
+var __defProps$q = Object.defineProperties;
+var __getOwnPropDescs$q = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$M = Object.getOwnPropertySymbols;
+var __hasOwnProp$M = Object.prototype.hasOwnProperty;
+var __propIsEnum$M = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$M = (obj, key, value) => key in obj ? __defProp$M(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$H = (a, b) => {
+var __spreadValues$M = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$H.call(b, prop))
-      __defNormalProp$H(a, prop, b[prop]);
-  if (__getOwnPropSymbols$H)
-    for (var prop of __getOwnPropSymbols$H(b)) {
-      if (__propIsEnum$H.call(b, prop))
-        __defNormalProp$H(a, prop, b[prop]);
+    if (__hasOwnProp$M.call(b, prop))
+      __defNormalProp$M(a, prop, b[prop]);
+  if (__getOwnPropSymbols$M)
+    for (var prop of __getOwnPropSymbols$M(b)) {
+      if (__propIsEnum$M.call(b, prop))
+        __defNormalProp$M(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$n = (a, b) => __defProps$n(a, __getOwnPropDescs$n(b));
-var __objRest$t = (source, exclude) => {
+var __spreadProps$q = (a, b) => __defProps$q(a, __getOwnPropDescs$q(b));
+var __objRest$w = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$H.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$M.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$H)
-    for (var prop of __getOwnPropSymbols$H(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$H.call(source, prop))
+  if (source != null && __getOwnPropSymbols$M)
+    for (var prop of __getOwnPropSymbols$M(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$M.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -18252,11 +18252,11 @@ const Table = react.exports.forwardRef((props, ref) => {
     verticalSpacing,
     fontSize,
     unstyled
-  } = _a, others = __objRest$t(_a, ["className", "children", "striped", "highlightOnHover", "captionSide", "horizontalSpacing", "verticalSpacing", "fontSize", "unstyled"]);
+  } = _a, others = __objRest$w(_a, ["className", "children", "striped", "highlightOnHover", "captionSide", "horizontalSpacing", "verticalSpacing", "fontSize", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$y({
+  } = useStyles$E({
     captionSide,
     verticalSpacing,
     horizontalSpacing,
@@ -18266,7 +18266,7 @@ const Table = react.exports.forwardRef((props, ref) => {
     name: "Table"
   });
   return /* @__PURE__ */ jsx(Box, {
-    ...__spreadProps$n(__spreadValues$H({}, others), {
+    ...__spreadProps$q(__spreadValues$M({}, others), {
       component: "table",
       ref,
       className: cx(classes.root, className),
@@ -18282,19 +18282,19 @@ const TABS_ERRORS = {
   value: "Tabs.Tab or Tabs.Panel component was rendered with invalid value or without value"
 };
 const [TabsContextProvider, useTabsContext] = createSafeContext(TABS_ERRORS.context);
-var __defProp$G = Object.defineProperty;
-var __getOwnPropSymbols$G = Object.getOwnPropertySymbols;
-var __hasOwnProp$G = Object.prototype.hasOwnProperty;
-var __propIsEnum$G = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$G = (obj, key, value) => key in obj ? __defProp$G(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$G = (a, b) => {
+var __defProp$L = Object.defineProperty;
+var __getOwnPropSymbols$L = Object.getOwnPropertySymbols;
+var __hasOwnProp$L = Object.prototype.hasOwnProperty;
+var __propIsEnum$L = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$L = (obj, key, value) => key in obj ? __defProp$L(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$L = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$G.call(b, prop))
-      __defNormalProp$G(a, prop, b[prop]);
-  if (__getOwnPropSymbols$G)
-    for (var prop of __getOwnPropSymbols$G(b)) {
-      if (__propIsEnum$G.call(b, prop))
-        __defNormalProp$G(a, prop, b[prop]);
+    if (__hasOwnProp$L.call(b, prop))
+      __defNormalProp$L(a, prop, b[prop]);
+  if (__getOwnPropSymbols$L)
+    for (var prop of __getOwnPropSymbols$L(b)) {
+      if (__propIsEnum$L.call(b, prop))
+        __defNormalProp$L(a, prop, b[prop]);
     }
   return a;
 };
@@ -18317,10 +18317,10 @@ function getVariantStyles$1({ variant, orientation, inverted }, theme) {
   }
   return {};
 }
-var useStyles$v = createStyles((theme, params) => {
+var useStyles$B = createStyles((theme, params) => {
   const vertical = params.orientation === "vertical";
   return {
-    tabsList: __spreadValues$G({
+    tabsList: __spreadValues$L({
       display: "flex",
       flexDirection: vertical ? "column" : "row",
       justifyContent: GROUP_POSITIONS[params.position],
@@ -18330,39 +18330,39 @@ var useStyles$v = createStyles((theme, params) => {
     }, getVariantStyles$1(params, theme))
   };
 });
-const useStyles$w = useStyles$v;
-var __defProp$F = Object.defineProperty;
-var __defProps$m = Object.defineProperties;
-var __getOwnPropDescs$m = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$F = Object.getOwnPropertySymbols;
-var __hasOwnProp$F = Object.prototype.hasOwnProperty;
-var __propIsEnum$F = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$F = (obj, key, value) => key in obj ? __defProp$F(obj, key, {
+const useStyles$C = useStyles$B;
+var __defProp$K = Object.defineProperty;
+var __defProps$p = Object.defineProperties;
+var __getOwnPropDescs$p = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$K = Object.getOwnPropertySymbols;
+var __hasOwnProp$K = Object.prototype.hasOwnProperty;
+var __propIsEnum$K = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$K = (obj, key, value) => key in obj ? __defProp$K(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$F = (a, b) => {
+var __spreadValues$K = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$F.call(b, prop))
-      __defNormalProp$F(a, prop, b[prop]);
-  if (__getOwnPropSymbols$F)
-    for (var prop of __getOwnPropSymbols$F(b)) {
-      if (__propIsEnum$F.call(b, prop))
-        __defNormalProp$F(a, prop, b[prop]);
+    if (__hasOwnProp$K.call(b, prop))
+      __defNormalProp$K(a, prop, b[prop]);
+  if (__getOwnPropSymbols$K)
+    for (var prop of __getOwnPropSymbols$K(b)) {
+      if (__propIsEnum$K.call(b, prop))
+        __defNormalProp$K(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$m = (a, b) => __defProps$m(a, __getOwnPropDescs$m(b));
-var __objRest$s = (source, exclude) => {
+var __spreadProps$p = (a, b) => __defProps$p(a, __getOwnPropDescs$p(b));
+var __objRest$v = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$F.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$K.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$F)
-    for (var prop of __getOwnPropSymbols$F(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$F.call(source, prop))
+  if (source != null && __getOwnPropSymbols$K)
+    for (var prop of __getOwnPropSymbols$K(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$K.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -18373,7 +18373,7 @@ const TabsList = react.exports.forwardRef((_a, ref) => {
     className,
     grow = false,
     position = "left"
-  } = _b, others = __objRest$s(_b, ["children", "className", "grow", "position"]);
+  } = _b, others = __objRest$v(_b, ["children", "className", "grow", "position"]);
   const {
     orientation,
     variant,
@@ -18389,7 +18389,7 @@ const TabsList = react.exports.forwardRef((_a, ref) => {
   const {
     classes,
     cx
-  } = useStyles$w({
+  } = useStyles$C({
     orientation,
     grow,
     variant,
@@ -18404,7 +18404,7 @@ const TabsList = react.exports.forwardRef((_a, ref) => {
     styles
   });
   return /* @__PURE__ */ jsx(Box, {
-    ...__spreadProps$m(__spreadValues$F({}, others), {
+    ...__spreadProps$p(__spreadValues$K({}, others), {
       className: cx(classes.tabsList, className),
       ref,
       role: "tablist",
@@ -18414,44 +18414,44 @@ const TabsList = react.exports.forwardRef((_a, ref) => {
   });
 });
 TabsList.displayName = "@mantine/core/TabsList";
-var useStyles$t = createStyles((_theme, { orientation }) => ({
+var useStyles$z = createStyles((_theme, { orientation }) => ({
   panel: {
     flex: orientation === "vertical" ? 1 : void 0
   }
 }));
-const useStyles$u = useStyles$t;
-var __defProp$E = Object.defineProperty;
-var __defProps$l = Object.defineProperties;
-var __getOwnPropDescs$l = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$E = Object.getOwnPropertySymbols;
-var __hasOwnProp$E = Object.prototype.hasOwnProperty;
-var __propIsEnum$E = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$E = (obj, key, value) => key in obj ? __defProp$E(obj, key, {
+const useStyles$A = useStyles$z;
+var __defProp$J = Object.defineProperty;
+var __defProps$o = Object.defineProperties;
+var __getOwnPropDescs$o = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$J = Object.getOwnPropertySymbols;
+var __hasOwnProp$J = Object.prototype.hasOwnProperty;
+var __propIsEnum$J = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$J = (obj, key, value) => key in obj ? __defProp$J(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$E = (a, b) => {
+var __spreadValues$J = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$E.call(b, prop))
-      __defNormalProp$E(a, prop, b[prop]);
-  if (__getOwnPropSymbols$E)
-    for (var prop of __getOwnPropSymbols$E(b)) {
-      if (__propIsEnum$E.call(b, prop))
-        __defNormalProp$E(a, prop, b[prop]);
+    if (__hasOwnProp$J.call(b, prop))
+      __defNormalProp$J(a, prop, b[prop]);
+  if (__getOwnPropSymbols$J)
+    for (var prop of __getOwnPropSymbols$J(b)) {
+      if (__propIsEnum$J.call(b, prop))
+        __defNormalProp$J(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$l = (a, b) => __defProps$l(a, __getOwnPropDescs$l(b));
-var __objRest$r = (source, exclude) => {
+var __spreadProps$o = (a, b) => __defProps$o(a, __getOwnPropDescs$o(b));
+var __objRest$u = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$E.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$J.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$E)
-    for (var prop of __getOwnPropSymbols$E(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$E.call(source, prop))
+  if (source != null && __getOwnPropSymbols$J)
+    for (var prop of __getOwnPropSymbols$J(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$J.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -18462,7 +18462,7 @@ const TabsPanel = react.exports.forwardRef((_a, ref) => {
     children,
     sx,
     className
-  } = _b, others = __objRest$r(_b, ["value", "children", "sx", "className"]);
+  } = _b, others = __objRest$u(_b, ["value", "children", "sx", "className"]);
   const ctx = useTabsContext();
   const {
     classNames,
@@ -18472,7 +18472,7 @@ const TabsPanel = react.exports.forwardRef((_a, ref) => {
   const {
     classes,
     cx
-  } = useStyles$u({
+  } = useStyles$A({
     orientation: ctx.orientation,
     variant: ctx.variant,
     color: ctx.color,
@@ -18487,7 +18487,7 @@ const TabsPanel = react.exports.forwardRef((_a, ref) => {
   const active = ctx.value === value;
   const content = ctx.keepMounted ? children : active ? children : null;
   return /* @__PURE__ */ jsx(Box, {
-    ...__spreadProps$l(__spreadValues$E({}, others), {
+    ...__spreadProps$o(__spreadValues$J({}, others), {
       ref,
       sx: [{
         display: !active ? "none" : void 0
@@ -18501,32 +18501,32 @@ const TabsPanel = react.exports.forwardRef((_a, ref) => {
   });
 });
 TabsPanel.displayName = "@mantine/core/TabsPanel";
-var __defProp$D = Object.defineProperty;
-var __defProps$k = Object.defineProperties;
-var __getOwnPropDescs$k = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$D = Object.getOwnPropertySymbols;
-var __hasOwnProp$D = Object.prototype.hasOwnProperty;
-var __propIsEnum$D = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$D = (obj, key, value) => key in obj ? __defProp$D(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$D = (a, b) => {
+var __defProp$I = Object.defineProperty;
+var __defProps$n = Object.defineProperties;
+var __getOwnPropDescs$n = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$I = Object.getOwnPropertySymbols;
+var __hasOwnProp$I = Object.prototype.hasOwnProperty;
+var __propIsEnum$I = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$I = (obj, key, value) => key in obj ? __defProp$I(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$I = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$D.call(b, prop))
-      __defNormalProp$D(a, prop, b[prop]);
-  if (__getOwnPropSymbols$D)
-    for (var prop of __getOwnPropSymbols$D(b)) {
-      if (__propIsEnum$D.call(b, prop))
-        __defNormalProp$D(a, prop, b[prop]);
+    if (__hasOwnProp$I.call(b, prop))
+      __defNormalProp$I(a, prop, b[prop]);
+  if (__getOwnPropSymbols$I)
+    for (var prop of __getOwnPropSymbols$I(b)) {
+      if (__propIsEnum$I.call(b, prop))
+        __defNormalProp$I(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$k = (a, b) => __defProps$k(a, __getOwnPropDescs$k(b));
+var __spreadProps$n = (a, b) => __defProps$n(a, __getOwnPropDescs$n(b));
 function getVariantStyles(theme, { variant, orientation, color, radius, inverted }) {
   const vertical = orientation === "vertical";
   const filledScheme = theme.fn.variant({ color, variant: "filled" });
   const radiusValue = theme.fn.radius(radius);
   const borderRadius = orientation === "vertical" ? `${radiusValue}px 0 0 ${radiusValue}px` : inverted ? `0 0 ${radiusValue}px ${radiusValue}px` : `${radiusValue}px ${radiusValue}px 0 0`;
   if (variant === "default") {
-    return __spreadProps$k(__spreadValues$D({
+    return __spreadProps$n(__spreadValues$I({
       [vertical ? "borderRight" : inverted ? "borderTop" : "borderBottom"]: "2px solid transparent",
       [vertical ? "marginRight" : inverted ? "marginTop" : "marginBottom"]: -2,
       borderRadius
@@ -18534,7 +18534,7 @@ function getVariantStyles(theme, { variant, orientation, color, radius, inverted
       backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
       borderColor: theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[3]
     })), {
-      "&[data-active]": __spreadValues$D({
+      "&[data-active]": __spreadValues$I({
         borderColor: filledScheme.background,
         color: theme.colorScheme === "dark" ? theme.white : theme.black
       }, theme.fn.hover({ borderColor: filledScheme.background }))
@@ -18561,12 +18561,12 @@ function getVariantStyles(theme, { variant, orientation, color, radius, inverted
     };
   }
   if (variant === "pills") {
-    return __spreadProps$k(__spreadValues$D({
+    return __spreadProps$n(__spreadValues$I({
       borderRadius: theme.fn.radius(radius)
     }, theme.fn.hover({
       backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0]
     })), {
-      "&[data-active]": __spreadValues$D({
+      "&[data-active]": __spreadValues$I({
         backgroundColor: filledScheme.background,
         color: theme.white
       }, theme.fn.hover({ backgroundColor: filledScheme.background }))
@@ -18574,9 +18574,9 @@ function getVariantStyles(theme, { variant, orientation, color, radius, inverted
   }
   return {};
 }
-var useStyles$r = createStyles((theme, params) => ({
+var useStyles$x = createStyles((theme, params) => ({
   tabLabel: {},
-  tab: __spreadValues$D({
+  tab: __spreadValues$I({
     position: "relative",
     padding: `${theme.spacing.xs}px ${theme.spacing.md}px`,
     paddingLeft: params.withIcon ? theme.spacing.xs : void 0,
@@ -18588,7 +18588,7 @@ var useStyles$r = createStyles((theme, params) => ({
     alignItems: "center",
     justifyContent: params.orientation === "horizontal" ? "center" : void 0,
     lineHeight: 1,
-    "&:disabled": __spreadValues$D({
+    "&:disabled": __spreadValues$I({
       opacity: 0.5,
       cursor: "not-allowed"
     }, theme.fn.hover({ backgroundColor: "transparent" })),
@@ -18613,39 +18613,39 @@ var useStyles$r = createStyles((theme, params) => ({
     }
   }
 }));
-const useStyles$s = useStyles$r;
-var __defProp$C = Object.defineProperty;
-var __defProps$j = Object.defineProperties;
-var __getOwnPropDescs$j = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$C = Object.getOwnPropertySymbols;
-var __hasOwnProp$C = Object.prototype.hasOwnProperty;
-var __propIsEnum$C = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$C = (obj, key, value) => key in obj ? __defProp$C(obj, key, {
+const useStyles$y = useStyles$x;
+var __defProp$H = Object.defineProperty;
+var __defProps$m = Object.defineProperties;
+var __getOwnPropDescs$m = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$H = Object.getOwnPropertySymbols;
+var __hasOwnProp$H = Object.prototype.hasOwnProperty;
+var __propIsEnum$H = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$H = (obj, key, value) => key in obj ? __defProp$H(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$C = (a, b) => {
+var __spreadValues$H = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$C.call(b, prop))
-      __defNormalProp$C(a, prop, b[prop]);
-  if (__getOwnPropSymbols$C)
-    for (var prop of __getOwnPropSymbols$C(b)) {
-      if (__propIsEnum$C.call(b, prop))
-        __defNormalProp$C(a, prop, b[prop]);
+    if (__hasOwnProp$H.call(b, prop))
+      __defNormalProp$H(a, prop, b[prop]);
+  if (__getOwnPropSymbols$H)
+    for (var prop of __getOwnPropSymbols$H(b)) {
+      if (__propIsEnum$H.call(b, prop))
+        __defNormalProp$H(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$j = (a, b) => __defProps$j(a, __getOwnPropDescs$j(b));
-var __objRest$q = (source, exclude) => {
+var __spreadProps$m = (a, b) => __defProps$m(a, __getOwnPropDescs$m(b));
+var __objRest$t = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$C.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$H.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$C)
-    for (var prop of __getOwnPropSymbols$C(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$C.call(source, prop))
+  if (source != null && __getOwnPropSymbols$H)
+    for (var prop of __getOwnPropSymbols$H(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$H.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -18660,7 +18660,7 @@ const Tab = react.exports.forwardRef((_a, ref) => {
     icon,
     rightSection,
     color
-  } = _b, others = __objRest$q(_b, ["value", "children", "onKeyDown", "onClick", "className", "icon", "rightSection", "color"]);
+  } = _b, others = __objRest$t(_b, ["value", "children", "onKeyDown", "onClick", "className", "icon", "rightSection", "color"]);
   const ctx = useTabsContext();
   const {
     classNames,
@@ -18673,7 +18673,7 @@ const Tab = react.exports.forwardRef((_a, ref) => {
     theme,
     classes,
     cx
-  } = useStyles$s({
+  } = useStyles$y({
     withIcon: hasIcon || hasRightSection && !children,
     withRightSection: hasRightSection || hasIcon && !children,
     orientation: ctx.orientation,
@@ -18693,7 +18693,7 @@ const Tab = react.exports.forwardRef((_a, ref) => {
     onClick == null ? void 0 : onClick(event);
   };
   return /* @__PURE__ */ jsxs(UnstyledButton, {
-    ...__spreadProps$j(__spreadValues$C({}, others), {
+    ...__spreadProps$m(__spreadValues$H({}, others), {
       unstyled,
       className: cx(classes.tab, className),
       "data-active": isActive || void 0,
@@ -18772,44 +18772,44 @@ function TabsProvider({
   });
 }
 TabsProvider.displayName = "@mantine/core/TabsProvider";
-var useStyles$p = createStyles((theme, { orientation }) => ({
+var useStyles$v = createStyles((theme, { orientation }) => ({
   root: {
     display: orientation === "vertical" ? "flex" : void 0
   }
 }));
-const useStyles$q = useStyles$p;
-var __defProp$B = Object.defineProperty;
-var __defProps$i = Object.defineProperties;
-var __getOwnPropDescs$i = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$B = Object.getOwnPropertySymbols;
-var __hasOwnProp$B = Object.prototype.hasOwnProperty;
-var __propIsEnum$B = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$B = (obj, key, value) => key in obj ? __defProp$B(obj, key, {
+const useStyles$w = useStyles$v;
+var __defProp$G = Object.defineProperty;
+var __defProps$l = Object.defineProperties;
+var __getOwnPropDescs$l = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$G = Object.getOwnPropertySymbols;
+var __hasOwnProp$G = Object.prototype.hasOwnProperty;
+var __propIsEnum$G = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$G = (obj, key, value) => key in obj ? __defProp$G(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$B = (a, b) => {
+var __spreadValues$G = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$B.call(b, prop))
-      __defNormalProp$B(a, prop, b[prop]);
-  if (__getOwnPropSymbols$B)
-    for (var prop of __getOwnPropSymbols$B(b)) {
-      if (__propIsEnum$B.call(b, prop))
-        __defNormalProp$B(a, prop, b[prop]);
+    if (__hasOwnProp$G.call(b, prop))
+      __defNormalProp$G(a, prop, b[prop]);
+  if (__getOwnPropSymbols$G)
+    for (var prop of __getOwnPropSymbols$G(b)) {
+      if (__propIsEnum$G.call(b, prop))
+        __defNormalProp$G(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$i = (a, b) => __defProps$i(a, __getOwnPropDescs$i(b));
-var __objRest$p = (source, exclude) => {
+var __spreadProps$l = (a, b) => __defProps$l(a, __getOwnPropDescs$l(b));
+var __objRest$s = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$B.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$G.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$B)
-    for (var prop of __getOwnPropSymbols$B(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$B.call(source, prop))
+  if (source != null && __getOwnPropSymbols$G)
+    for (var prop of __getOwnPropSymbols$G(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$G.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -18843,11 +18843,11 @@ const Tabs = react.exports.forwardRef((props, ref) => {
     radius,
     inverted,
     keepMounted
-  } = _a, others = __objRest$p(_a, ["defaultValue", "value", "orientation", "loop", "activateTabWithKeyboard", "allowTabDeactivation", "children", "id", "onTabChange", "variant", "color", "className", "unstyled", "classNames", "styles", "radius", "inverted", "keepMounted"]);
+  } = _a, others = __objRest$s(_a, ["defaultValue", "value", "orientation", "loop", "activateTabWithKeyboard", "allowTabDeactivation", "children", "id", "onTabChange", "variant", "color", "className", "unstyled", "classNames", "styles", "radius", "inverted", "keepMounted"]);
   const {
     classes,
     cx
-  } = useStyles$q({
+  } = useStyles$w({
     orientation,
     color,
     variant,
@@ -18878,7 +18878,7 @@ const Tabs = react.exports.forwardRef((props, ref) => {
       inverted,
       keepMounted,
       children: /* @__PURE__ */ jsx(Box, {
-        ...__spreadProps$i(__spreadValues$B({}, others), {
+        ...__spreadProps$l(__spreadValues$G({}, others), {
           className: cx(classes.root, className),
           id,
           ref
@@ -18892,25 +18892,25 @@ Tabs.List = TabsList;
 Tabs.Tab = Tab;
 Tabs.Panel = TabsPanel;
 Tabs.displayName = "@mantine/core/Tabs";
-var __defProp$A = Object.defineProperty;
-var __defProps$h = Object.defineProperties;
-var __getOwnPropDescs$h = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$A = Object.getOwnPropertySymbols;
-var __hasOwnProp$A = Object.prototype.hasOwnProperty;
-var __propIsEnum$A = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$A = (obj, key, value) => key in obj ? __defProp$A(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$A = (a, b) => {
+var __defProp$F = Object.defineProperty;
+var __defProps$k = Object.defineProperties;
+var __getOwnPropDescs$k = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$F = Object.getOwnPropertySymbols;
+var __hasOwnProp$F = Object.prototype.hasOwnProperty;
+var __propIsEnum$F = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$F = (obj, key, value) => key in obj ? __defProp$F(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$F = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$A.call(b, prop))
-      __defNormalProp$A(a, prop, b[prop]);
-  if (__getOwnPropSymbols$A)
-    for (var prop of __getOwnPropSymbols$A(b)) {
-      if (__propIsEnum$A.call(b, prop))
-        __defNormalProp$A(a, prop, b[prop]);
+    if (__hasOwnProp$F.call(b, prop))
+      __defNormalProp$F(a, prop, b[prop]);
+  if (__getOwnPropSymbols$F)
+    for (var prop of __getOwnPropSymbols$F(b)) {
+      if (__propIsEnum$F.call(b, prop))
+        __defNormalProp$F(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$h = (a, b) => __defProps$h(a, __getOwnPropDescs$h(b));
+var __spreadProps$k = (a, b) => __defProps$k(a, __getOwnPropDescs$k(b));
 const sizes$4 = {
   xs: 16,
   sm: 20,
@@ -18918,7 +18918,7 @@ const sizes$4 = {
   lg: 32,
   xl: 40
 };
-var useStyles$n = createStyles((theme, { color, size: size2, radius, gradient, variant }) => {
+var useStyles$t = createStyles((theme, { color, size: size2, radius, gradient, variant }) => {
   const colors = theme.fn.variant({
     variant,
     color: color || theme.primaryColor,
@@ -18927,7 +18927,7 @@ var useStyles$n = createStyles((theme, { color, size: size2, radius, gradient, v
   });
   const iconSize = theme.fn.size({ size: size2, sizes: sizes$4 });
   return {
-    root: __spreadProps$h(__spreadValues$A({}, theme.fn.fontStyles()), {
+    root: __spreadProps$k(__spreadValues$F({}, theme.fn.fontStyles()), {
       display: "inline-flex",
       alignItems: "center",
       justifyContent: "center",
@@ -18944,36 +18944,36 @@ var useStyles$n = createStyles((theme, { color, size: size2, radius, gradient, v
     })
   };
 });
-const useStyles$o = useStyles$n;
-var __defProp$z = Object.defineProperty;
-var __getOwnPropSymbols$z = Object.getOwnPropertySymbols;
-var __hasOwnProp$z = Object.prototype.hasOwnProperty;
-var __propIsEnum$z = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$z = (obj, key, value) => key in obj ? __defProp$z(obj, key, {
+const useStyles$u = useStyles$t;
+var __defProp$E = Object.defineProperty;
+var __getOwnPropSymbols$E = Object.getOwnPropertySymbols;
+var __hasOwnProp$E = Object.prototype.hasOwnProperty;
+var __propIsEnum$E = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$E = (obj, key, value) => key in obj ? __defProp$E(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$z = (a, b) => {
+var __spreadValues$E = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$z.call(b, prop))
-      __defNormalProp$z(a, prop, b[prop]);
-  if (__getOwnPropSymbols$z)
-    for (var prop of __getOwnPropSymbols$z(b)) {
-      if (__propIsEnum$z.call(b, prop))
-        __defNormalProp$z(a, prop, b[prop]);
+    if (__hasOwnProp$E.call(b, prop))
+      __defNormalProp$E(a, prop, b[prop]);
+  if (__getOwnPropSymbols$E)
+    for (var prop of __getOwnPropSymbols$E(b)) {
+      if (__propIsEnum$E.call(b, prop))
+        __defNormalProp$E(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$o = (source, exclude) => {
+var __objRest$r = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$z.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$E.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$z)
-    for (var prop of __getOwnPropSymbols$z(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$z.call(source, prop))
+  if (source != null && __getOwnPropSymbols$E)
+    for (var prop of __getOwnPropSymbols$E(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$E.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -18997,11 +18997,11 @@ const ThemeIcon = react.exports.forwardRef((props, ref) => {
     children,
     gradient,
     unstyled
-  } = _a, others = __objRest$o(_a, ["className", "size", "radius", "variant", "color", "children", "gradient", "unstyled"]);
+  } = _a, others = __objRest$r(_a, ["className", "size", "radius", "variant", "color", "children", "gradient", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$o({
+  } = useStyles$u({
     variant,
     radius,
     color,
@@ -19012,7 +19012,7 @@ const ThemeIcon = react.exports.forwardRef((props, ref) => {
     unstyled
   });
   return /* @__PURE__ */ jsx(Box, {
-    ...__spreadValues$z({
+    ...__spreadValues$E({
       className: cx(classes.root, className),
       ref
     }, others),
@@ -19020,7 +19020,7 @@ const ThemeIcon = react.exports.forwardRef((props, ref) => {
   });
 });
 ThemeIcon.displayName = "@mantine/core/ThemeIcon";
-var useStyles$l = createStyles((theme, { bulletSize, color, radius, align, lineVariant, lineWidth }) => {
+var useStyles$r = createStyles((theme, { bulletSize, color, radius, align, lineVariant, lineWidth }) => {
   const colors = theme.fn.variant({ variant: "filled", color });
   return {
     itemBody: {},
@@ -19092,36 +19092,36 @@ var useStyles$l = createStyles((theme, { bulletSize, color, radius, align, lineV
     }
   };
 });
-const useStyles$m = useStyles$l;
-var __defProp$y = Object.defineProperty;
-var __getOwnPropSymbols$y = Object.getOwnPropertySymbols;
-var __hasOwnProp$y = Object.prototype.hasOwnProperty;
-var __propIsEnum$y = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$y = (obj, key, value) => key in obj ? __defProp$y(obj, key, {
+const useStyles$s = useStyles$r;
+var __defProp$D = Object.defineProperty;
+var __getOwnPropSymbols$D = Object.getOwnPropertySymbols;
+var __hasOwnProp$D = Object.prototype.hasOwnProperty;
+var __propIsEnum$D = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$D = (obj, key, value) => key in obj ? __defProp$D(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$y = (a, b) => {
+var __spreadValues$D = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$y.call(b, prop))
-      __defNormalProp$y(a, prop, b[prop]);
-  if (__getOwnPropSymbols$y)
-    for (var prop of __getOwnPropSymbols$y(b)) {
-      if (__propIsEnum$y.call(b, prop))
-        __defNormalProp$y(a, prop, b[prop]);
+    if (__hasOwnProp$D.call(b, prop))
+      __defNormalProp$D(a, prop, b[prop]);
+  if (__getOwnPropSymbols$D)
+    for (var prop of __getOwnPropSymbols$D(b)) {
+      if (__propIsEnum$D.call(b, prop))
+        __defNormalProp$D(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$n = (source, exclude) => {
+var __objRest$q = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$y.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$D.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$y)
-    for (var prop of __getOwnPropSymbols$y(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$y.call(source, prop))
+  if (source != null && __getOwnPropSymbols$D)
+    for (var prop of __getOwnPropSymbols$D(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$D.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -19143,11 +19143,11 @@ function TimelineItem(_a) {
     align,
     lineVariant = "solid",
     unstyled
-  } = _b, others = __objRest$n(_b, ["className", "bullet", "title", "bulletSize", "radius", "lineWidth", "active", "lineActive", "classNames", "styles", "children", "color", "align", "lineVariant", "unstyled"]);
+  } = _b, others = __objRest$q(_b, ["className", "bullet", "title", "bulletSize", "radius", "lineWidth", "active", "lineActive", "classNames", "styles", "children", "color", "align", "lineVariant", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$m({
+  } = useStyles$s({
     bulletSize,
     color,
     radius,
@@ -19161,7 +19161,7 @@ function TimelineItem(_a) {
     name: "Timeline"
   });
   return /* @__PURE__ */ jsxs(Box, {
-    ...__spreadValues$y({
+    ...__spreadValues$D({
       className: cx(classes.item, className),
       "data-line-active": lineActive || void 0,
       "data-active": active || void 0
@@ -19184,35 +19184,35 @@ function TimelineItem(_a) {
   });
 }
 TimelineItem.displayName = "@mantine/core/TimelineItem";
-var __defProp$x = Object.defineProperty;
-var __getOwnPropSymbols$x = Object.getOwnPropertySymbols;
-var __hasOwnProp$x = Object.prototype.hasOwnProperty;
-var __propIsEnum$x = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$x = (obj, key, value) => key in obj ? __defProp$x(obj, key, {
+var __defProp$C = Object.defineProperty;
+var __getOwnPropSymbols$C = Object.getOwnPropertySymbols;
+var __hasOwnProp$C = Object.prototype.hasOwnProperty;
+var __propIsEnum$C = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$C = (obj, key, value) => key in obj ? __defProp$C(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$x = (a, b) => {
+var __spreadValues$C = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$x.call(b, prop))
-      __defNormalProp$x(a, prop, b[prop]);
-  if (__getOwnPropSymbols$x)
-    for (var prop of __getOwnPropSymbols$x(b)) {
-      if (__propIsEnum$x.call(b, prop))
-        __defNormalProp$x(a, prop, b[prop]);
+    if (__hasOwnProp$C.call(b, prop))
+      __defNormalProp$C(a, prop, b[prop]);
+  if (__getOwnPropSymbols$C)
+    for (var prop of __getOwnPropSymbols$C(b)) {
+      if (__propIsEnum$C.call(b, prop))
+        __defNormalProp$C(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$m = (source, exclude) => {
+var __objRest$p = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$x.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$C.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$x)
-    for (var prop of __getOwnPropSymbols$x(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$x.call(source, prop))
+  if (source != null && __getOwnPropSymbols$C)
+    for (var prop of __getOwnPropSymbols$C(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$C.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -19239,7 +19239,7 @@ const Timeline = react.exports.forwardRef((props, ref) => {
     sx,
     reverseActive,
     unstyled
-  } = _a, others = __objRest$m(_a, ["children", "active", "color", "radius", "bulletSize", "align", "lineWidth", "classNames", "styles", "sx", "reverseActive", "unstyled"]);
+  } = _a, others = __objRest$p(_a, ["children", "active", "color", "radius", "bulletSize", "align", "lineWidth", "classNames", "styles", "sx", "reverseActive", "unstyled"]);
   const _children = react.exports.Children.toArray(children);
   const items = _children.map((item, index2) => React.cloneElement(item, {
     classNames,
@@ -19259,7 +19259,7 @@ const Timeline = react.exports.forwardRef((props, ref) => {
     paddingRight: bulletSize / 2 + lineWidth / 2
   };
   return /* @__PURE__ */ jsx(Box, {
-    ...__spreadValues$x({
+    ...__spreadValues$C({
       ref,
       sx: [offset2, ...packSx(sx)]
     }, others),
@@ -19269,7 +19269,7 @@ const Timeline = react.exports.forwardRef((props, ref) => {
 Timeline.Item = TimelineItem;
 Timeline.displayName = "@mantine/core/Timeline";
 const ITEM_PADDING = 7;
-var useStyles$j = createStyles((theme, { reversed, native, radius }) => ({
+var useStyles$p = createStyles((theme, { reversed, native, radius }) => ({
   transferList: {
     flex: 1,
     display: "flex",
@@ -19341,7 +19341,7 @@ var useStyles$j = createStyles((theme, { reversed, native, radius }) => ({
     color: theme.colorScheme === "dark" ? theme.colors.dark[3] : theme.colors.gray[5]
   }
 }));
-const useStyles$k = useStyles$j;
+const useStyles$q = useStyles$p;
 const icons = {
   Prev: PrevIcon,
   Next: NextIcon,
@@ -19380,7 +19380,7 @@ function RenderList({
     classes,
     cx,
     theme
-  } = useStyles$k({
+  } = useStyles$q({
     reversed,
     native: listComponent !== SelectScrollArea,
     radius
@@ -19398,7 +19398,7 @@ function RenderList({
   const ListComponent = listComponent || "div";
   const Icons = theme.dir === "rtl" ? rtlIons : icons;
   const itemsRefs = react.exports.useRef({});
-  const sortedData = groupOptions({
+  const sortedData = groupOptions$1({
     data: filteredData
   });
   const {
@@ -19621,38 +19621,38 @@ function useSelectionState(initialSelection = [[], []]) {
   };
   return [selection, handlers];
 }
-var __defProp$w = Object.defineProperty;
-var __defProps$g = Object.defineProperties;
-var __getOwnPropDescs$g = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$w = Object.getOwnPropertySymbols;
-var __hasOwnProp$w = Object.prototype.hasOwnProperty;
-var __propIsEnum$w = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$w = (obj, key, value) => key in obj ? __defProp$w(obj, key, {
+var __defProp$B = Object.defineProperty;
+var __defProps$j = Object.defineProperties;
+var __getOwnPropDescs$j = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$B = Object.getOwnPropertySymbols;
+var __hasOwnProp$B = Object.prototype.hasOwnProperty;
+var __propIsEnum$B = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$B = (obj, key, value) => key in obj ? __defProp$B(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$w = (a, b) => {
+var __spreadValues$B = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$w.call(b, prop))
-      __defNormalProp$w(a, prop, b[prop]);
-  if (__getOwnPropSymbols$w)
-    for (var prop of __getOwnPropSymbols$w(b)) {
-      if (__propIsEnum$w.call(b, prop))
-        __defNormalProp$w(a, prop, b[prop]);
+    if (__hasOwnProp$B.call(b, prop))
+      __defNormalProp$B(a, prop, b[prop]);
+  if (__getOwnPropSymbols$B)
+    for (var prop of __getOwnPropSymbols$B(b)) {
+      if (__propIsEnum$B.call(b, prop))
+        __defNormalProp$B(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$g = (a, b) => __defProps$g(a, __getOwnPropDescs$g(b));
-var __objRest$l = (source, exclude) => {
+var __spreadProps$j = (a, b) => __defProps$j(a, __getOwnPropDescs$j(b));
+var __objRest$o = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$w.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$B.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$w)
-    for (var prop of __getOwnPropSymbols$w(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$w.call(source, prop))
+  if (source != null && __getOwnPropSymbols$B)
+    for (var prop of __getOwnPropSymbols$B(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$B.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -19688,7 +19688,7 @@ const TransferList = react.exports.forwardRef((props, ref) => {
     styles,
     limit,
     unstyled
-  } = _a, others = __objRest$l(_a, ["value", "onChange", "itemComponent", "searchPlaceholder", "filter", "nothingFound", "titles", "initialSelection", "listHeight", "listComponent", "showTransferAll", "breakpoint", "radius", "classNames", "styles", "limit", "unstyled"]);
+  } = _a, others = __objRest$o(_a, ["value", "onChange", "itemComponent", "searchPlaceholder", "filter", "nothingFound", "titles", "initialSelection", "listHeight", "listComponent", "showTransferAll", "breakpoint", "radius", "classNames", "styles", "limit", "unstyled"]);
   const [selection, handlers] = useSelectionState(initialSelection);
   const handleMoveAll = (listIndex) => {
     const items = Array(2);
@@ -19735,7 +19735,7 @@ const TransferList = react.exports.forwardRef((props, ref) => {
     radius
   };
   return /* @__PURE__ */ jsxs(SimpleGrid, {
-    ...__spreadValues$w({
+    ...__spreadValues$B({
       cols: 2,
       spacing: "xl",
       breakpoints,
@@ -19743,7 +19743,7 @@ const TransferList = react.exports.forwardRef((props, ref) => {
       unstyled
     }, others),
     children: [/* @__PURE__ */ jsx(RenderList, {
-      ...__spreadProps$g(__spreadValues$w({}, sharedListProps), {
+      ...__spreadProps$j(__spreadValues$B({}, sharedListProps), {
         data: value[0],
         selection: selection[0],
         onSelect: (val) => handlers.select(0, val),
@@ -19753,7 +19753,7 @@ const TransferList = react.exports.forwardRef((props, ref) => {
         unstyled
       })
     }), /* @__PURE__ */ jsx(RenderList, {
-      ...__spreadProps$g(__spreadValues$w({}, sharedListProps), {
+      ...__spreadProps$j(__spreadValues$B({}, sharedListProps), {
         data: value[1],
         selection: selection[1],
         onSelect: (val) => handlers.select(1, val),
@@ -19767,29 +19767,29 @@ const TransferList = react.exports.forwardRef((props, ref) => {
   });
 });
 TransferList.displayName = "@mantine/core/TransferList";
-var __defProp$v = Object.defineProperty;
-var __defProps$f = Object.defineProperties;
-var __getOwnPropDescs$f = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$v = Object.getOwnPropertySymbols;
-var __hasOwnProp$v = Object.prototype.hasOwnProperty;
-var __propIsEnum$v = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$v = (obj, key, value) => key in obj ? __defProp$v(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$v = (a, b) => {
+var __defProp$A = Object.defineProperty;
+var __defProps$i = Object.defineProperties;
+var __getOwnPropDescs$i = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$A = Object.getOwnPropertySymbols;
+var __hasOwnProp$A = Object.prototype.hasOwnProperty;
+var __propIsEnum$A = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$A = (obj, key, value) => key in obj ? __defProp$A(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$A = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$v.call(b, prop))
-      __defNormalProp$v(a, prop, b[prop]);
-  if (__getOwnPropSymbols$v)
-    for (var prop of __getOwnPropSymbols$v(b)) {
-      if (__propIsEnum$v.call(b, prop))
-        __defNormalProp$v(a, prop, b[prop]);
+    if (__hasOwnProp$A.call(b, prop))
+      __defNormalProp$A(a, prop, b[prop]);
+  if (__getOwnPropSymbols$A)
+    for (var prop of __getOwnPropSymbols$A(b)) {
+      if (__propIsEnum$A.call(b, prop))
+        __defNormalProp$A(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$f = (a, b) => __defProps$f(a, __getOwnPropDescs$f(b));
-var useStyles$h = createStyles((theme) => {
+var __spreadProps$i = (a, b) => __defProps$i(a, __getOwnPropDescs$i(b));
+var useStyles$n = createStyles((theme) => {
   const headings = keys(theme.headings.sizes).reduce((acc, h) => {
     const values2 = theme.headings.sizes[h];
-    acc[`& ${h}`] = __spreadProps$f(__spreadValues$v({
+    acc[`& ${h}`] = __spreadProps$i(__spreadValues$A({
       fontFamily: theme.headings.fontFamily,
       fontWeight: values2.fontWeight || theme.headings.fontWeight,
       marginTop: typeof values2.lineHeight === "number" ? theme.spacing.xl * values2.lineHeight : theme.spacing.xl,
@@ -19802,7 +19802,7 @@ var useStyles$h = createStyles((theme) => {
     return acc;
   }, {});
   return {
-    root: __spreadProps$f(__spreadValues$v(__spreadProps$f(__spreadValues$v({}, theme.fn.fontStyles()), {
+    root: __spreadProps$i(__spreadValues$A(__spreadProps$i(__spreadValues$A({}, theme.fn.fontStyles()), {
       color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
       lineHeight: theme.lineHeight,
       fontSize: theme.fontSizes.md,
@@ -19835,7 +19835,7 @@ var useStyles$h = createStyles((theme) => {
         borderRight: 0,
         borderTop: `1px dashed ${theme.colors.gray[theme.colorScheme === "dark" ? 4 : 6]}`
       },
-      "& a": __spreadProps$f(__spreadValues$v({}, theme.fn.focusStyles()), {
+      "& a": __spreadProps$i(__spreadValues$A({}, theme.fn.focusStyles()), {
         color: theme.colors[theme.primaryColor][theme.colorScheme === "dark" ? 4 : 6],
         textDecoration: "none",
         "&:hover": {
@@ -19930,36 +19930,36 @@ var useStyles$h = createStyles((theme) => {
     })
   };
 });
-const useStyles$i = useStyles$h;
-var __defProp$u = Object.defineProperty;
-var __getOwnPropSymbols$u = Object.getOwnPropertySymbols;
-var __hasOwnProp$u = Object.prototype.hasOwnProperty;
-var __propIsEnum$u = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$u = (obj, key, value) => key in obj ? __defProp$u(obj, key, {
+const useStyles$o = useStyles$n;
+var __defProp$z = Object.defineProperty;
+var __getOwnPropSymbols$z = Object.getOwnPropertySymbols;
+var __hasOwnProp$z = Object.prototype.hasOwnProperty;
+var __propIsEnum$z = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$z = (obj, key, value) => key in obj ? __defProp$z(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$u = (a, b) => {
+var __spreadValues$z = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$u.call(b, prop))
-      __defNormalProp$u(a, prop, b[prop]);
-  if (__getOwnPropSymbols$u)
-    for (var prop of __getOwnPropSymbols$u(b)) {
-      if (__propIsEnum$u.call(b, prop))
-        __defNormalProp$u(a, prop, b[prop]);
+    if (__hasOwnProp$z.call(b, prop))
+      __defNormalProp$z(a, prop, b[prop]);
+  if (__getOwnPropSymbols$z)
+    for (var prop of __getOwnPropSymbols$z(b)) {
+      if (__propIsEnum$z.call(b, prop))
+        __defNormalProp$z(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$k = (source, exclude) => {
+var __objRest$n = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$u.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$z.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$u)
-    for (var prop of __getOwnPropSymbols$u(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$u.call(source, prop))
+  if (source != null && __getOwnPropSymbols$z)
+    for (var prop of __getOwnPropSymbols$z(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$z.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -19968,16 +19968,16 @@ const TypographyStylesProvider = react.exports.forwardRef((props, ref) => {
   const _a = useComponentDefaultProps("TypographyStylesProvider", {}, props), {
     className,
     unstyled
-  } = _a, others = __objRest$k(_a, ["className", "unstyled"]);
+  } = _a, others = __objRest$n(_a, ["className", "unstyled"]);
   const {
     classes,
     cx
-  } = useStyles$i(null, {
+  } = useStyles$o(null, {
     name: "TypographyStylesProvider",
     unstyled
   });
   return /* @__PURE__ */ jsx(Box, {
-    ...__spreadValues$u({
+    ...__spreadValues$z({
       className: cx(classes.root, className),
       ref
     }, others)
@@ -20589,17 +20589,17 @@ var TransitionGroup = /* @__PURE__ */ function(_React$Component) {
 TransitionGroup.propTypes = {};
 TransitionGroup.defaultProps = defaultProps$7;
 const TransitionGroup$1 = TransitionGroup;
-function dispatchEvent(type, detail) {
+function dispatchEvent$1(type, detail) {
   window.dispatchEvent(new CustomEvent(type, { detail }));
 }
-const useIsomorphicEffect = typeof window !== "undefined" ? react.exports.useLayoutEffect : react.exports.useEffect;
-function createUseExternalEvents(prefix) {
+const useIsomorphicEffect$1 = typeof window !== "undefined" ? react.exports.useLayoutEffect : react.exports.useEffect;
+function createUseExternalEvents$1(prefix) {
   function _useExternalEvents(events) {
     const handlers = Object.keys(events).reduce((acc, eventKey) => {
       acc[`${prefix}:${eventKey}`] = (event) => events[eventKey](event.detail);
       return acc;
     }, {});
-    useIsomorphicEffect(() => {
+    useIsomorphicEffect$1(() => {
       Object.keys(handlers).forEach((eventKey) => {
         window.removeEventListener(eventKey, handlers[eventKey]);
         window.addEventListener(eventKey, handlers[eventKey]);
@@ -20610,16 +20610,16 @@ function createUseExternalEvents(prefix) {
     }, []);
   }
   function createEvent2(event) {
-    return (...payload) => dispatchEvent(`${prefix}:${String(event)}`, payload[0]);
+    return (...payload) => dispatchEvent$1(`${prefix}:${String(event)}`, payload[0]);
   }
   return [_useExternalEvents, createEvent2];
 }
-const [useNotificationsEvents, createEvent$2] = createUseExternalEvents("mantine-notifications");
-const showNotification = createEvent$2("show");
-createEvent$2("hide");
-createEvent$2("clean");
-createEvent$2("cleanQueue");
-createEvent$2("update");
+const [useNotificationsEvents, createEvent$3] = createUseExternalEvents$1("mantine-notifications");
+const showNotification = createEvent$3("show");
+createEvent$3("hide");
+createEvent$3("clean");
+createEvent$3("cleanQueue");
+createEvent$3("update");
 function getPositionStyles([vertical, horizontal], containerWidth, spacing) {
   const styles = {};
   vertical === "top" && (styles.top = spacing);
@@ -20629,19 +20629,19 @@ function getPositionStyles([vertical, horizontal], containerWidth, spacing) {
   horizontal === "center" && (styles.left = "50%", styles.transform = "translateX(-50%)");
   return styles;
 }
-var __defProp$t = Object.defineProperty;
-var __getOwnPropSymbols$t = Object.getOwnPropertySymbols;
-var __hasOwnProp$t = Object.prototype.hasOwnProperty;
-var __propIsEnum$t = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$t = (obj, key, value) => key in obj ? __defProp$t(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$t = (a, b) => {
+var __defProp$y = Object.defineProperty;
+var __getOwnPropSymbols$y = Object.getOwnPropertySymbols;
+var __hasOwnProp$y = Object.prototype.hasOwnProperty;
+var __propIsEnum$y = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$y = (obj, key, value) => key in obj ? __defProp$y(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$y = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$t.call(b, prop))
-      __defNormalProp$t(a, prop, b[prop]);
-  if (__getOwnPropSymbols$t)
-    for (var prop of __getOwnPropSymbols$t(b)) {
-      if (__propIsEnum$t.call(b, prop))
-        __defNormalProp$t(a, prop, b[prop]);
+    if (__hasOwnProp$y.call(b, prop))
+      __defNormalProp$y(a, prop, b[prop]);
+  if (__getOwnPropSymbols$y)
+    for (var prop of __getOwnPropSymbols$y(b)) {
+      if (__propIsEnum$y.call(b, prop))
+        __defNormalProp$y(a, prop, b[prop]);
     }
   return a;
 };
@@ -20688,7 +20688,7 @@ function getNotificationStateStyles({
     exiting: outState,
     exited: outState
   };
-  return __spreadValues$t(__spreadValues$t({}, commonStyles), transitionStyles[state]);
+  return __spreadValues$y(__spreadValues$y({}, commonStyles), transitionStyles[state]);
 }
 function getAutoClose(autoClose, notificationAutoClose) {
   if (typeof notificationAutoClose === "number") {
@@ -20699,38 +20699,38 @@ function getAutoClose(autoClose, notificationAutoClose) {
   }
   return autoClose;
 }
-var __defProp$s = Object.defineProperty;
-var __defProps$e = Object.defineProperties;
-var __getOwnPropDescs$e = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$s = Object.getOwnPropertySymbols;
-var __hasOwnProp$s = Object.prototype.hasOwnProperty;
-var __propIsEnum$s = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$s = (obj, key, value) => key in obj ? __defProp$s(obj, key, {
+var __defProp$x = Object.defineProperty;
+var __defProps$h = Object.defineProperties;
+var __getOwnPropDescs$h = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$x = Object.getOwnPropertySymbols;
+var __hasOwnProp$x = Object.prototype.hasOwnProperty;
+var __propIsEnum$x = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$x = (obj, key, value) => key in obj ? __defProp$x(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$s = (a, b) => {
+var __spreadValues$x = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$s.call(b, prop))
-      __defNormalProp$s(a, prop, b[prop]);
-  if (__getOwnPropSymbols$s)
-    for (var prop of __getOwnPropSymbols$s(b)) {
-      if (__propIsEnum$s.call(b, prop))
-        __defNormalProp$s(a, prop, b[prop]);
+    if (__hasOwnProp$x.call(b, prop))
+      __defNormalProp$x(a, prop, b[prop]);
+  if (__getOwnPropSymbols$x)
+    for (var prop of __getOwnPropSymbols$x(b)) {
+      if (__propIsEnum$x.call(b, prop))
+        __defNormalProp$x(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$e = (a, b) => __defProps$e(a, __getOwnPropDescs$e(b));
-var __objRest$j = (source, exclude) => {
+var __spreadProps$h = (a, b) => __defProps$h(a, __getOwnPropDescs$h(b));
+var __objRest$m = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$s.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$x.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$s)
-    for (var prop of __getOwnPropSymbols$s(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$s.call(source, prop))
+  if (source != null && __getOwnPropSymbols$x)
+    for (var prop of __getOwnPropSymbols$x(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$x.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -20741,11 +20741,11 @@ function NotificationContainer(_a) {
     autoClose,
     onHide,
     innerRef
-  } = _b, others = __objRest$j(_b, ["notification", "autoClose", "onHide", "innerRef"]);
+  } = _b, others = __objRest$m(_b, ["notification", "autoClose", "onHide", "innerRef"]);
   const _a2 = notification, {
     autoClose: notificationAutoClose,
     message
-  } = _a2, notificationProps = __objRest$j(_a2, ["autoClose", "message"]);
+  } = _a2, notificationProps = __objRest$m(_a2, ["autoClose", "message"]);
   const autoCloseTimeout = getAutoClose(autoClose, notificationAutoClose);
   const hideTimeout = react.exports.useRef();
   const handleHide = () => {
@@ -20770,7 +20770,7 @@ function NotificationContainer(_a) {
     return cancelDelayedHide;
   }, [autoClose, notification.autoClose]);
   return /* @__PURE__ */ jsx(Notification, {
-    ...__spreadProps$e(__spreadValues$s(__spreadValues$s({}, notificationProps), others), {
+    ...__spreadProps$h(__spreadValues$x(__spreadValues$x({}, notificationProps), others), {
       onClose: handleHide,
       onMouseEnter: cancelDelayedHide,
       onMouseLeave: handleDelayedHide,
@@ -20780,7 +20780,7 @@ function NotificationContainer(_a) {
   });
 }
 NotificationContainer.displayName = "@mantine/notifications/NotificationContainer";
-var useStyles$f = createStyles((theme, { zIndex }) => ({
+var useStyles$l = createStyles((theme, { zIndex }) => ({
   notifications: {
     width: `calc(100% - ${theme.spacing.md * 2}px)`,
     boxSizing: "border-box",
@@ -20793,26 +20793,26 @@ var useStyles$f = createStyles((theme, { zIndex }) => ({
     }
   }
 }));
-const useStyles$g = useStyles$f;
-var __defProp$r = Object.defineProperty;
-var __defProps$d = Object.defineProperties;
-var __getOwnPropDescs$d = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$r = Object.getOwnPropertySymbols;
-var __hasOwnProp$r = Object.prototype.hasOwnProperty;
-var __propIsEnum$r = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$r = (obj, key, value) => key in obj ? __defProp$r(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __spreadValues$r = (a, b) => {
+const useStyles$m = useStyles$l;
+var __defProp$w = Object.defineProperty;
+var __defProps$g = Object.defineProperties;
+var __getOwnPropDescs$g = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$w = Object.getOwnPropertySymbols;
+var __hasOwnProp$w = Object.prototype.hasOwnProperty;
+var __propIsEnum$w = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$w = (obj, key, value) => key in obj ? __defProp$w(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$w = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$r.call(b, prop))
-      __defNormalProp$r(a, prop, b[prop]);
-  if (__getOwnPropSymbols$r)
-    for (var prop of __getOwnPropSymbols$r(b)) {
-      if (__propIsEnum$r.call(b, prop))
-        __defNormalProp$r(a, prop, b[prop]);
+    if (__hasOwnProp$w.call(b, prop))
+      __defNormalProp$w(a, prop, b[prop]);
+  if (__getOwnPropSymbols$w)
+    for (var prop of __getOwnPropSymbols$w(b)) {
+      if (__propIsEnum$w.call(b, prop))
+        __defNormalProp$w(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$d = (a, b) => __defProps$d(a, __getOwnPropDescs$d(b));
+var __spreadProps$g = (a, b) => __defProps$g(a, __getOwnPropDescs$g(b));
 function useNotificationsState({ limit }) {
   const { state, queue, update, cleanQueue } = useQueue({
     initialValues: [],
@@ -20824,7 +20824,7 @@ function useNotificationsState({ limit }) {
       if (notification.id && notifications.some((n) => n.id === notification.id)) {
         return notifications;
       }
-      return [...notifications, __spreadProps$d(__spreadValues$r({}, notification), { id })];
+      return [...notifications, __spreadProps$g(__spreadValues$w({}, notification), { id })];
     });
     return id;
   };
@@ -20855,35 +20855,35 @@ function useNotificationsState({ limit }) {
     clean
   };
 }
-var __defProp$q = Object.defineProperty;
-var __getOwnPropSymbols$q = Object.getOwnPropertySymbols;
-var __hasOwnProp$q = Object.prototype.hasOwnProperty;
-var __propIsEnum$q = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$q = (obj, key, value) => key in obj ? __defProp$q(obj, key, {
+var __defProp$v = Object.defineProperty;
+var __getOwnPropSymbols$v = Object.getOwnPropertySymbols;
+var __hasOwnProp$v = Object.prototype.hasOwnProperty;
+var __propIsEnum$v = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$v = (obj, key, value) => key in obj ? __defProp$v(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$q = (a, b) => {
+var __spreadValues$v = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$q.call(b, prop))
-      __defNormalProp$q(a, prop, b[prop]);
-  if (__getOwnPropSymbols$q)
-    for (var prop of __getOwnPropSymbols$q(b)) {
-      if (__propIsEnum$q.call(b, prop))
-        __defNormalProp$q(a, prop, b[prop]);
+    if (__hasOwnProp$v.call(b, prop))
+      __defNormalProp$v(a, prop, b[prop]);
+  if (__getOwnPropSymbols$v)
+    for (var prop of __getOwnPropSymbols$v(b)) {
+      if (__propIsEnum$v.call(b, prop))
+        __defNormalProp$v(a, prop, b[prop]);
     }
   return a;
 };
-var __objRest$i = (source, exclude) => {
+var __objRest$l = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$q.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$v.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$q)
-    for (var prop of __getOwnPropSymbols$q(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$q.call(source, prop))
+  if (source != null && __getOwnPropSymbols$v)
+    for (var prop of __getOwnPropSymbols$v(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$v.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -20902,7 +20902,7 @@ function NotificationsProvider(_a) {
     style,
     children,
     target
-  } = _b, others = __objRest$i(_b, ["className", "position", "autoClose", "transitionDuration", "containerWidth", "notificationMaxHeight", "limit", "zIndex", "style", "children", "target"]);
+  } = _b, others = __objRest$l(_b, ["className", "position", "autoClose", "transitionDuration", "containerWidth", "notificationMaxHeight", "limit", "zIndex", "style", "children", "target"]);
   const forceUpdate = useForceUpdate();
   const refs = react.exports.useRef({});
   const previousLength = react.exports.useRef(0);
@@ -20921,7 +20921,7 @@ function NotificationsProvider(_a) {
     classes,
     cx,
     theme
-  } = useStyles$g({
+  } = useStyles$m({
     zIndex
   });
   const shouldReduceMotion = useReducedMotion();
@@ -20955,7 +20955,7 @@ function NotificationsProvider(_a) {
       onHide: hideNotification,
       className: classes.notification,
       autoClose,
-      sx: [__spreadValues$q({}, getNotificationStateStyles({
+      sx: [__spreadValues$v({}, getNotificationStateStyles({
         state,
         positioning,
         transitionDuration: duration,
@@ -20971,10 +20971,10 @@ function NotificationsProvider(_a) {
     children: [/* @__PURE__ */ jsx(Portal, {
       target,
       children: /* @__PURE__ */ jsx(Box, {
-        ...__spreadValues$q({
+        ...__spreadValues$v({
           className: cx(classes.notifications, className),
           style,
-          sx: __spreadValues$q({
+          sx: __spreadValues$v({
             maxWidth: containerWidth
           }, getPositionStyles(positioning, containerWidth, theme.spacing.md))
         }, others),
@@ -20991,18 +20991,19 @@ function uuid() {
   return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
 }
 function errorMsg(params) {
+  log.error(params.error);
   showNotification({
     ...params,
-    onOpen: () => log.error(params.message),
+    message: String(params.error),
     autoClose: 7e3,
     title: "Error",
     color: "red"
   });
 }
 function successMsg(params) {
+  log.debug(params.message);
   showNotification({
     ...params,
-    onOpen: () => log.debug(params.message),
     autoClose: 4e3,
     title: "Success",
     color: "green"
@@ -21047,30 +21048,30 @@ function useModals() {
   }
   return ctx;
 }
-var __defProp$p = Object.defineProperty;
-var __defProps$c = Object.defineProperties;
-var __getOwnPropDescs$c = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$p = Object.getOwnPropertySymbols;
-var __hasOwnProp$p = Object.prototype.hasOwnProperty;
-var __propIsEnum$p = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$p = (obj, key, value) => key in obj ? __defProp$p(obj, key, {
+var __defProp$u = Object.defineProperty;
+var __defProps$f = Object.defineProperties;
+var __getOwnPropDescs$f = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$u = Object.getOwnPropertySymbols;
+var __hasOwnProp$u = Object.prototype.hasOwnProperty;
+var __propIsEnum$u = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$u = (obj, key, value) => key in obj ? __defProp$u(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$p = (a, b) => {
+var __spreadValues$u = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$p.call(b, prop))
-      __defNormalProp$p(a, prop, b[prop]);
-  if (__getOwnPropSymbols$p)
-    for (var prop of __getOwnPropSymbols$p(b)) {
-      if (__propIsEnum$p.call(b, prop))
-        __defNormalProp$p(a, prop, b[prop]);
+    if (__hasOwnProp$u.call(b, prop))
+      __defNormalProp$u(a, prop, b[prop]);
+  if (__getOwnPropSymbols$u)
+    for (var prop of __getOwnPropSymbols$u(b)) {
+      if (__propIsEnum$u.call(b, prop))
+        __defNormalProp$u(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$c = (a, b) => __defProps$c(a, __getOwnPropDescs$c(b));
+var __spreadProps$f = (a, b) => __defProps$f(a, __getOwnPropDescs$f(b));
 function ConfirmModal({
   id,
   cancelProps,
@@ -21106,18 +21107,18 @@ function ConfirmModal({
       mb: "md",
       children
     }), /* @__PURE__ */ jsxs(Group, {
-      ...__spreadValues$p({
+      ...__spreadValues$u({
         position: "right"
       }, groupProps),
       children: [/* @__PURE__ */ jsx(Button, {
-        ...__spreadProps$c(__spreadValues$p({
+        ...__spreadProps$f(__spreadValues$u({
           variant: "default"
         }, cancelProps), {
           onClick: handleCancel
         }),
         children: (cancelProps == null ? void 0 : cancelProps.children) || cancelLabel
       }), /* @__PURE__ */ jsx(Button, {
-        ...__spreadProps$c(__spreadValues$p({}, confirmProps), {
+        ...__spreadProps$f(__spreadValues$u({}, confirmProps), {
           onClick: handleConfirm
         }),
         children: (confirmProps == null ? void 0 : confirmProps.children) || confirmLabel
@@ -21150,44 +21151,44 @@ function modalsReducer(state, action) {
     }
   }
 }
-const [useModalsEvents, createEvent$1] = createUseExternalEvents$1("mantine-modals");
-createEvent$1("openModal");
-createEvent$1("closeModal");
-createEvent$1("closeAllModals");
-createEvent$1("openConfirmModal");
-createEvent$1("openContextModal");
-var __defProp$o = Object.defineProperty;
-var __defProps$b = Object.defineProperties;
-var __getOwnPropDescs$b = Object.getOwnPropertyDescriptors;
-var __getOwnPropSymbols$o = Object.getOwnPropertySymbols;
-var __hasOwnProp$o = Object.prototype.hasOwnProperty;
-var __propIsEnum$o = Object.prototype.propertyIsEnumerable;
-var __defNormalProp$o = (obj, key, value) => key in obj ? __defProp$o(obj, key, {
+const [useModalsEvents, createEvent$2] = createUseExternalEvents$2("mantine-modals");
+createEvent$2("openModal");
+createEvent$2("closeModal");
+createEvent$2("closeAllModals");
+createEvent$2("openConfirmModal");
+createEvent$2("openContextModal");
+var __defProp$t = Object.defineProperty;
+var __defProps$e = Object.defineProperties;
+var __getOwnPropDescs$e = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$t = Object.getOwnPropertySymbols;
+var __hasOwnProp$t = Object.prototype.hasOwnProperty;
+var __propIsEnum$t = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$t = (obj, key, value) => key in obj ? __defProp$t(obj, key, {
   enumerable: true,
   configurable: true,
   writable: true,
   value
 }) : obj[key] = value;
-var __spreadValues$o = (a, b) => {
+var __spreadValues$t = (a, b) => {
   for (var prop in b || (b = {}))
-    if (__hasOwnProp$o.call(b, prop))
-      __defNormalProp$o(a, prop, b[prop]);
-  if (__getOwnPropSymbols$o)
-    for (var prop of __getOwnPropSymbols$o(b)) {
-      if (__propIsEnum$o.call(b, prop))
-        __defNormalProp$o(a, prop, b[prop]);
+    if (__hasOwnProp$t.call(b, prop))
+      __defNormalProp$t(a, prop, b[prop]);
+  if (__getOwnPropSymbols$t)
+    for (var prop of __getOwnPropSymbols$t(b)) {
+      if (__propIsEnum$t.call(b, prop))
+        __defNormalProp$t(a, prop, b[prop]);
     }
   return a;
 };
-var __spreadProps$b = (a, b) => __defProps$b(a, __getOwnPropDescs$b(b));
-var __objRest$h = (source, exclude) => {
+var __spreadProps$e = (a, b) => __defProps$e(a, __getOwnPropDescs$e(b));
+var __objRest$k = (source, exclude) => {
   var target = {};
   for (var prop in source)
-    if (__hasOwnProp$o.call(source, prop) && exclude.indexOf(prop) < 0)
+    if (__hasOwnProp$t.call(source, prop) && exclude.indexOf(prop) < 0)
       target[prop] = source[prop];
-  if (source != null && __getOwnPropSymbols$o)
-    for (var prop of __getOwnPropSymbols$o(source)) {
-      if (exclude.indexOf(prop) < 0 && __propIsEnum$o.call(source, prop))
+  if (source != null && __getOwnPropSymbols$t)
+    for (var prop of __getOwnPropSymbols$t(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$t.call(source, prop))
         target[prop] = source[prop];
     }
   return target;
@@ -21210,7 +21211,7 @@ function separateConfirmModalProps(props) {
     confirmProps,
     groupProps,
     labels
-  } = _a, others = __objRest$h(_a, ["id", "children", "onCancel", "onConfirm", "closeOnConfirm", "closeOnCancel", "cancelProps", "confirmProps", "groupProps", "labels"]);
+  } = _a, others = __objRest$k(_a, ["id", "children", "onCancel", "onConfirm", "closeOnConfirm", "closeOnCancel", "cancelProps", "confirmProps", "groupProps", "labels"]);
   return {
     confirmProps: {
       id,
@@ -21224,7 +21225,7 @@ function separateConfirmModalProps(props) {
       groupProps,
       labels
     },
-    modalProps: __spreadValues$o({
+    modalProps: __spreadValues$t({
       id
     }, others)
   };
@@ -21254,7 +21255,7 @@ function ModalsProvider({
   const openModal = (_a) => {
     var _b = _a, {
       modalId
-    } = _b, props = __objRest$h(_b, ["modalId"]);
+    } = _b, props = __objRest$k(_b, ["modalId"]);
     const id = modalId || randomId();
     dispatch({
       type: "OPEN",
@@ -21269,7 +21270,7 @@ function ModalsProvider({
   const openConfirmModal = (_c) => {
     var _d = _c, {
       modalId
-    } = _d, props = __objRest$h(_d, ["modalId"]);
+    } = _d, props = __objRest$k(_d, ["modalId"]);
     const id = modalId || randomId();
     dispatch({
       type: "OPEN",
@@ -21284,7 +21285,7 @@ function ModalsProvider({
   const openContextModal = (modal, _e) => {
     var _f = _e, {
       modalId
-    } = _f, props = __objRest$h(_f, ["modalId"]);
+    } = _f, props = __objRest$k(_f, ["modalId"]);
     const id = modalId || randomId();
     dispatch({
       type: "OPEN",
@@ -21319,7 +21320,7 @@ function ModalsProvider({
     openContextModal: (_g) => {
       var _h = _g, {
         modal
-      } = _h, payload = __objRest$h(_h, ["modal"]);
+      } = _h, payload = __objRest$k(_h, ["modal"]);
       return openContextModal(modal, payload);
     },
     closeModal,
@@ -21339,7 +21340,7 @@ function ModalsProvider({
       case "context": {
         const _b = state.current.props, {
           innerProps
-        } = _b, rest = __objRest$h(_b, ["innerProps"]);
+        } = _b, rest = __objRest$k(_b, ["innerProps"]);
         const ContextModal = modals[state.current.ctx];
         return {
           modalProps: rest,
@@ -21358,7 +21359,7 @@ function ModalsProvider({
         return {
           modalProps: separatedModalProps,
           content: /* @__PURE__ */ jsx(ConfirmModal, {
-            ...__spreadProps$b(__spreadValues$o({}, separatedConfirmProps), {
+            ...__spreadProps$e(__spreadValues$t({}, separatedConfirmProps), {
               id: state.current.id,
               labels: state.current.props.labels || labels
             })
@@ -21368,7 +21369,7 @@ function ModalsProvider({
       case "content": {
         const _c = state.current.props, {
           children: currentModalChildren
-        } = _c, rest = __objRest$h(_c, ["children"]);
+        } = _c, rest = __objRest$k(_c, ["children"]);
         return {
           modalProps: rest,
           content: /* @__PURE__ */ jsx(Fragment, {
@@ -21391,7 +21392,7 @@ function ModalsProvider({
   return /* @__PURE__ */ jsxs(ModalsContext.Provider, {
     value: ctx,
     children: [/* @__PURE__ */ jsx(Modal, {
-      ...__spreadProps$b(__spreadValues$o(__spreadValues$o({}, modalProps), currentModalProps), {
+      ...__spreadProps$e(__spreadValues$t(__spreadValues$t({}, modalProps), currentModalProps), {
         opened: state.modals.length > 0,
         onClose: () => closeModal(state.current.id)
       }),
@@ -21399,13 +21400,13 @@ function ModalsProvider({
     }), children]
   });
 }
-const [useNavigationProgressEvents, createEvent] = createUseExternalEvents$1("mantine-nprogress");
-const startNavigationProgress = createEvent("start");
-const stopNavigationProgress = createEvent("stop");
-const resetNavigationProgress = createEvent("reset");
-const setNavigationProgress = createEvent("set");
-createEvent("increment");
-createEvent("decrement");
+const [useNavigationProgressEvents, createEvent$1] = createUseExternalEvents$2("mantine-nprogress");
+const startNavigationProgress = createEvent$1("start");
+const stopNavigationProgress = createEvent$1("stop");
+const resetNavigationProgress = createEvent$1("reset");
+const setNavigationProgress = createEvent$1("set");
+createEvent$1("increment");
+createEvent$1("decrement");
 function NavigationProgress({
   initialProgress = 0,
   color,
@@ -21523,6 +21524,745 @@ function NavigationProgress({
     })
   });
 }
+const SpotlightContext = react.exports.createContext(null);
+var __defProp$s = Object.defineProperty;
+var __defProps$d = Object.defineProperties;
+var __getOwnPropDescs$d = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$s = Object.getOwnPropertySymbols;
+var __hasOwnProp$s = Object.prototype.hasOwnProperty;
+var __propIsEnum$s = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$s = (obj, key, value) => key in obj ? __defProp$s(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$s = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp$s.call(b, prop))
+      __defNormalProp$s(a, prop, b[prop]);
+  if (__getOwnPropSymbols$s)
+    for (var prop of __getOwnPropSymbols$s(b)) {
+      if (__propIsEnum$s.call(b, prop))
+        __defNormalProp$s(a, prop, b[prop]);
+    }
+  return a;
+};
+var __spreadProps$d = (a, b) => __defProps$d(a, __getOwnPropDescs$d(b));
+function prepareAction(action) {
+  return __spreadProps$d(__spreadValues$s({}, action), { id: action.id || randomId() });
+}
+function filterDuplicateActions(actions) {
+  const ids = [];
+  return actions.reduceRight((acc, action) => {
+    if (!ids.includes(action.id)) {
+      ids.push(action.id);
+      acc.push(action);
+    }
+    return acc;
+  }, []).reverse();
+}
+function prepareActions(initialActions) {
+  return filterDuplicateActions(initialActions.map((action) => prepareAction(action)));
+}
+function useActionsState(initialActions, query) {
+  const [actions, setActions] = react.exports.useState(prepareActions(typeof initialActions === "function" ? initialActions(query) : initialActions));
+  react.exports.useEffect(() => {
+    if (typeof initialActions === "function") {
+      setActions(prepareActions(initialActions(query)));
+    }
+  }, [query]);
+  const updateActions = (payload) => setActions(prepareActions(typeof payload === "function" ? payload(query) : payload));
+  const registerActions = (payload) => setActions((current) => prepareActions([...current, ...payload]));
+  const removeActions = (ids) => setActions((current) => current.filter((action) => !ids.includes(action.id)));
+  const triggerAction = (id) => {
+    var _a;
+    const action = actions.find((item) => item.id === id);
+    (_a = action == null ? void 0 : action.onTrigger) == null ? void 0 : _a.call(action, action);
+  };
+  return [
+    actions,
+    {
+      registerActions,
+      updateActions,
+      removeActions,
+      triggerAction
+    }
+  ];
+}
+function getHotkeysPayload(shortcuts, onToggle) {
+  if (shortcuts === null) {
+    return [];
+  }
+  if (Array.isArray(shortcuts)) {
+    return shortcuts.map((shortcut) => [shortcut, onToggle]);
+  }
+  return [[shortcuts, onToggle]];
+}
+function useSpotlightShortcuts(shortcuts, onToggle) {
+  useHotkeys(getHotkeysPayload(shortcuts, onToggle));
+}
+function groupOptions({ data }) {
+  const sortedData = [];
+  const unGroupedData = [];
+  const groupedData = data.reduce((acc, item, index2) => {
+    if (item.group) {
+      if (acc[item.group])
+        acc[item.group].push(index2);
+      else
+        acc[item.group] = [index2];
+    } else {
+      unGroupedData.push(index2);
+    }
+    return acc;
+  }, {});
+  Object.keys(groupedData).forEach((groupName) => {
+    sortedData.push(...groupedData[groupName].map((index2) => data[index2]));
+  });
+  sortedData.push(...unGroupedData.map((itemIndex) => data[itemIndex]));
+  return sortedData;
+}
+function getGroupedOptions(data) {
+  const sorted = groupOptions({ data });
+  const unGrouped = [];
+  const grouped = [];
+  let groupName = null;
+  sorted.forEach((item, index2) => {
+    if (!item.group) {
+      unGrouped.push({ type: "item", item, index: index2 });
+    } else {
+      if (groupName !== item.group) {
+        groupName = item.group;
+        grouped.push({ type: "label", label: groupName });
+      }
+      grouped.push({ type: "item", item, index: index2 });
+    }
+  });
+  return {
+    grouped,
+    unGrouped,
+    items: [...grouped, ...unGrouped],
+    hasItems: grouped.length > 0 || unGrouped.length > 0
+  };
+}
+function dispatchEvent(type, detail) {
+  window.dispatchEvent(new CustomEvent(type, { detail }));
+}
+const useIsomorphicEffect = typeof window !== "undefined" ? react.exports.useLayoutEffect : react.exports.useEffect;
+function createUseExternalEvents(prefix) {
+  function _useExternalEvents(events) {
+    const handlers = Object.keys(events).reduce((acc, eventKey) => {
+      acc[`${prefix}:${eventKey}`] = (event) => events[eventKey](event.detail);
+      return acc;
+    }, {});
+    useIsomorphicEffect(() => {
+      Object.keys(handlers).forEach((eventKey) => {
+        window.removeEventListener(eventKey, handlers[eventKey]);
+        window.addEventListener(eventKey, handlers[eventKey]);
+      });
+      return () => Object.keys(handlers).forEach((eventKey) => {
+        window.removeEventListener(eventKey, handlers[eventKey]);
+      });
+    }, []);
+  }
+  function createEvent2(event) {
+    return (...payload) => dispatchEvent(`${prefix}:${String(event)}`, payload[0]);
+  }
+  return [_useExternalEvents, createEvent2];
+}
+var useStyles$j = createStyles((theme, { radius }) => ({
+  action: {
+    position: "relative",
+    display: "block",
+    width: "100%",
+    padding: "10px 12px",
+    borderRadius: theme.fn.radius(radius)
+  },
+  actionHovered: {
+    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[1]
+  },
+  actionIcon: {
+    color: theme.colorScheme === "dark" ? theme.colors.dark[2] : theme.colors.gray[6]
+  },
+  actionBody: {
+    flex: 1
+  }
+}));
+const useStyles$k = useStyles$j;
+var __defProp$r = Object.defineProperty;
+var __getOwnPropSymbols$r = Object.getOwnPropertySymbols;
+var __hasOwnProp$r = Object.prototype.hasOwnProperty;
+var __propIsEnum$r = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$r = (obj, key, value) => key in obj ? __defProp$r(obj, key, {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  value
+}) : obj[key] = value;
+var __spreadValues$r = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp$r.call(b, prop))
+      __defNormalProp$r(a, prop, b[prop]);
+  if (__getOwnPropSymbols$r)
+    for (var prop of __getOwnPropSymbols$r(b)) {
+      if (__propIsEnum$r.call(b, prop))
+        __defNormalProp$r(a, prop, b[prop]);
+    }
+  return a;
+};
+var __objRest$j = (source, exclude) => {
+  var target = {};
+  for (var prop in source)
+    if (__hasOwnProp$r.call(source, prop) && exclude.indexOf(prop) < 0)
+      target[prop] = source[prop];
+  if (source != null && __getOwnPropSymbols$r)
+    for (var prop of __getOwnPropSymbols$r(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$r.call(source, prop))
+        target[prop] = source[prop];
+    }
+  return target;
+};
+function DefaultAction(_a) {
+  var _b = _a, {
+    action,
+    styles,
+    classNames,
+    hovered,
+    onTrigger,
+    highlightQuery,
+    highlightColor,
+    query,
+    radius
+  } = _b, others = __objRest$j(_b, ["action", "styles", "classNames", "hovered", "onTrigger", "highlightQuery", "highlightColor", "query", "radius"]);
+  const {
+    classes,
+    cx
+  } = useStyles$k({
+    radius
+  }, {
+    styles,
+    classNames,
+    name: "Spotlight"
+  });
+  return /* @__PURE__ */ jsx(UnstyledButton, {
+    ...__spreadValues$r({
+      className: cx(classes.action, {
+        [classes.actionHovered]: hovered
+      }),
+      tabIndex: -1,
+      onMouseDown: (event) => event.preventDefault(),
+      onClick: onTrigger
+    }, others),
+    children: /* @__PURE__ */ jsxs(Group, {
+      noWrap: true,
+      children: [action.icon && /* @__PURE__ */ jsx(Center, {
+        className: classes.actionIcon,
+        children: action.icon
+      }), /* @__PURE__ */ jsxs("div", {
+        className: classes.actionBody,
+        children: [/* @__PURE__ */ jsx(Highlight, {
+          highlightColor,
+          highlight: highlightQuery ? query : null,
+          children: action.title
+        }), action.description && /* @__PURE__ */ jsx(Text, {
+          color: "dimmed",
+          size: "xs",
+          children: action.description
+        })]
+      })]
+    })
+  });
+}
+DefaultAction.displayName = "@mantine/spotlight/DefaultAction";
+var useStyles$h = createStyles((theme) => ({
+  nothingFound: {},
+  actions: {
+    padding: `calc(${theme.spacing.xs}px / 2)`,
+    borderTop: `1px solid ${theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[2]}`
+  },
+  actionsGroup: {
+    textTransform: "uppercase",
+    fontSize: theme.spacing.xs,
+    fontWeight: 700,
+    padding: "10px 12px",
+    paddingBottom: 0,
+    paddingTop: 15
+  }
+}));
+const useStyles$i = useStyles$h;
+function ActionsList({
+  actions,
+  styles,
+  classNames,
+  actionComponent: Action,
+  hovered,
+  onActionHover,
+  onActionTrigger,
+  query,
+  nothingFoundMessage,
+  highlightQuery,
+  highlightColor,
+  radius
+}) {
+  const {
+    classes
+  } = useStyles$i(null, {
+    classNames,
+    styles,
+    name: "Spotlight"
+  });
+  const items = actions.map((item) => {
+    if (item.type === "item") {
+      return /* @__PURE__ */ jsx(Action, {
+        query,
+        action: item.item,
+        hovered: item.index === hovered,
+        onMouseEnter: () => onActionHover(item.index),
+        classNames,
+        styles,
+        radius,
+        onTrigger: () => onActionTrigger(item.item),
+        highlightQuery,
+        highlightColor
+      }, item.item.id);
+    }
+    return /* @__PURE__ */ jsx(Text, {
+      className: classes.actionsGroup,
+      color: "dimmed",
+      children: item.label
+    }, item.label);
+  });
+  const shouldRenderActions = items.length > 0 || !!nothingFoundMessage && query.trim().length > 0;
+  return /* @__PURE__ */ jsx(Fragment, {
+    children: shouldRenderActions && /* @__PURE__ */ jsx("div", {
+      className: classes.actions,
+      children: items.length > 0 ? items : /* @__PURE__ */ jsx(Text, {
+        color: "dimmed",
+        className: classes.nothingFound,
+        align: "center",
+        size: "lg",
+        py: "md",
+        children: nothingFoundMessage
+      })
+    })
+  });
+}
+ActionsList.displayName = "@mantine/spotlight/ActionsList";
+function getKeywords(keywords) {
+  if (Array.isArray(keywords)) {
+    return keywords.map((keyword) => keyword.trim()).join(",").toLowerCase().trim();
+  }
+  if (typeof keywords === "string") {
+    return keywords.toLowerCase().trim();
+  }
+  return "";
+}
+function filterActions(_query, actions) {
+  const query = _query.trim().toLowerCase();
+  const priorityMatrix = [[], []];
+  actions.forEach((action) => {
+    var _a, _b;
+    if ((_a = action.title) == null ? void 0 : _a.toLowerCase().includes(query)) {
+      priorityMatrix[0].push(action);
+    } else if (((_b = action.description) == null ? void 0 : _b.toLowerCase().includes(query)) || getKeywords(action.keywords).includes(query)) {
+      priorityMatrix[1].push(action);
+    }
+  });
+  return priorityMatrix.flat();
+}
+var __defProp$q = Object.defineProperty;
+var __defProps$c = Object.defineProperties;
+var __getOwnPropDescs$c = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$q = Object.getOwnPropertySymbols;
+var __hasOwnProp$q = Object.prototype.hasOwnProperty;
+var __propIsEnum$q = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$q = (obj, key, value) => key in obj ? __defProp$q(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues$q = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp$q.call(b, prop))
+      __defNormalProp$q(a, prop, b[prop]);
+  if (__getOwnPropSymbols$q)
+    for (var prop of __getOwnPropSymbols$q(b)) {
+      if (__propIsEnum$q.call(b, prop))
+        __defNormalProp$q(a, prop, b[prop]);
+    }
+  return a;
+};
+var __spreadProps$c = (a, b) => __defProps$c(a, __getOwnPropDescs$c(b));
+var useStyles$f = createStyles((theme, { centered, maxWidth, topOffset, radius, zIndex }) => ({
+  root: __spreadProps$c(__spreadValues$q({}, theme.fn.cover()), {
+    position: "fixed",
+    zIndex
+  }),
+  spotlight: {
+    position: "relative",
+    zIndex: 2,
+    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.white,
+    borderRadius: theme.fn.radius(radius),
+    width: "100%",
+    maxWidth,
+    overflow: "hidden",
+    marginLeft: "calc(var(--removed-scroll-width, 0px) * -1)"
+  },
+  overlay: __spreadProps$c(__spreadValues$q({}, theme.fn.cover()), {
+    position: "fixed"
+  }),
+  inner: {
+    height: "100vh",
+    display: "flex",
+    flexDirection: "column",
+    paddingTop: centered ? theme.spacing.md : topOffset,
+    justifyContent: centered ? "center" : "flex-start",
+    alignItems: "center"
+  },
+  searchInput: {
+    border: 0,
+    borderBottomRightRadius: 0,
+    borderBottomLeftRadius: 0,
+    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.white
+  }
+}));
+const useStyles$g = useStyles$f;
+var __defProp$p = Object.defineProperty;
+var __defProps$b = Object.defineProperties;
+var __getOwnPropDescs$b = Object.getOwnPropertyDescriptors;
+var __getOwnPropSymbols$p = Object.getOwnPropertySymbols;
+var __hasOwnProp$p = Object.prototype.hasOwnProperty;
+var __propIsEnum$p = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$p = (obj, key, value) => key in obj ? __defProp$p(obj, key, {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  value
+}) : obj[key] = value;
+var __spreadValues$p = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp$p.call(b, prop))
+      __defNormalProp$p(a, prop, b[prop]);
+  if (__getOwnPropSymbols$p)
+    for (var prop of __getOwnPropSymbols$p(b)) {
+      if (__propIsEnum$p.call(b, prop))
+        __defNormalProp$p(a, prop, b[prop]);
+    }
+  return a;
+};
+var __spreadProps$b = (a, b) => __defProps$b(a, __getOwnPropDescs$b(b));
+var __objRest$i = (source, exclude) => {
+  var target = {};
+  for (var prop in source)
+    if (__hasOwnProp$p.call(source, prop) && exclude.indexOf(prop) < 0)
+      target[prop] = source[prop];
+  if (source != null && __getOwnPropSymbols$p)
+    for (var prop of __getOwnPropSymbols$p(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$p.call(source, prop))
+        target[prop] = source[prop];
+    }
+  return target;
+};
+function Spotlight(_a) {
+  var _b = _a, {
+    query,
+    onQueryChange,
+    actions,
+    onClose,
+    opened,
+    withinPortal,
+    transition = "pop",
+    transitionDuration,
+    classNames,
+    styles,
+    overlayColor = "#000",
+    overlayOpacity = 0.25,
+    overlayBlur = 3,
+    shadow = "md",
+    radius = "sm",
+    centered = false,
+    closeOnActionTrigger = true,
+    highlightQuery = false,
+    highlightColor,
+    maxWidth = 600,
+    topOffset = 120,
+    className,
+    searchPlaceholder,
+    searchIcon,
+    filter = filterActions,
+    nothingFoundMessage,
+    limit = 10,
+    actionComponent = DefaultAction,
+    actionsWrapperComponent: ActionsWrapper = "div",
+    zIndex = getDefaultZIndex("max"),
+    searchInputProps
+  } = _b, others = __objRest$i(_b, ["query", "onQueryChange", "actions", "onClose", "opened", "withinPortal", "transition", "transitionDuration", "classNames", "styles", "overlayColor", "overlayOpacity", "overlayBlur", "shadow", "radius", "centered", "closeOnActionTrigger", "highlightQuery", "highlightColor", "maxWidth", "topOffset", "className", "searchPlaceholder", "searchIcon", "filter", "nothingFoundMessage", "limit", "actionComponent", "actionsWrapperComponent", "zIndex", "searchInputProps"]);
+  const [hovered, setHovered] = react.exports.useState(-1);
+  const [IMEOpen, setIMEOpen] = react.exports.useState(false);
+  const {
+    classes,
+    cx
+  } = useStyles$g({
+    centered,
+    maxWidth,
+    topOffset,
+    radius,
+    zIndex
+  }, {
+    classNames,
+    styles,
+    name: "Spotlight"
+  });
+  const [, lockScroll] = useScrollLock();
+  const focusTrapRef = useFocusTrap(opened);
+  const resetHovered = () => setHovered(-1);
+  const handleClose = () => {
+    resetHovered();
+    onClose();
+  };
+  useFocusReturn({
+    opened
+  });
+  const filteredActions = filter(query, actions).slice(0, limit);
+  const groupedWithLabels = getGroupedOptions(filteredActions).items;
+  const groupedActions = groupedWithLabels.map((item) => item.type === "item" ? item.item : void 0).filter((item) => item);
+  useDidUpdate(() => {
+    if (groupedActions.length - 1 < hovered) {
+      setHovered(groupedActions.length - 1);
+    }
+  }, [groupedActions.length]);
+  const handleInputKeyDown = (event) => {
+    var _a2, _b2;
+    if (IMEOpen) {
+      return;
+    }
+    switch (event.key) {
+      case "ArrowDown": {
+        event.preventDefault();
+        setHovered((current) => current < groupedActions.length - 1 ? current + 1 : 0);
+        break;
+      }
+      case "ArrowUp": {
+        event.preventDefault();
+        setHovered((current) => current > 0 ? current - 1 : groupedActions.length - 1);
+        break;
+      }
+      case "Enter": {
+        event.preventDefault();
+        const action = groupedActions[hovered];
+        (_a2 = action == null ? void 0 : action.onTrigger) == null ? void 0 : _a2.call(action, action);
+        if (((_b2 = action == null ? void 0 : action.closeOnTrigger) != null ? _b2 : closeOnActionTrigger) && (action == null ? void 0 : action.onTrigger)) {
+          handleClose();
+        }
+        break;
+      }
+      case "Escape": {
+        event.preventDefault();
+        handleClose();
+      }
+    }
+  };
+  const handleInputChange = (event) => {
+    onQueryChange(event.currentTarget.value);
+    if (hovered === -1) {
+      setHovered(0);
+    }
+  };
+  return /* @__PURE__ */ jsx(OptionalPortal, {
+    withinPortal,
+    children: /* @__PURE__ */ jsx(GroupedTransition, {
+      onExited: () => lockScroll(false),
+      onEntered: () => lockScroll(true),
+      mounted: opened,
+      transitions: {
+        spotlight: {
+          duration: transitionDuration,
+          transition,
+          timingFunction: "ease"
+        },
+        overlay: {
+          duration: transitionDuration / 2,
+          transition: "fade",
+          timingFunction: "ease"
+        }
+      },
+      children: (transitionStyles) => /* @__PURE__ */ jsx("div", {
+        ...__spreadValues$p({
+          className: cx(classes.root, className)
+        }, others),
+        children: /* @__PURE__ */ jsxs("div", {
+          className: classes.inner,
+          ref: focusTrapRef,
+          children: [/* @__PURE__ */ jsxs(Paper, {
+            style: transitionStyles.spotlight,
+            className: classes.spotlight,
+            shadow,
+            radius,
+            onMouseLeave: resetHovered,
+            children: [/* @__PURE__ */ jsx(TextInput, {
+              ...__spreadProps$b(__spreadValues$p({}, searchInputProps), {
+                value: query,
+                onChange: handleInputChange,
+                onKeyDown: handleInputKeyDown,
+                onCompositionStart: () => setIMEOpen(true),
+                onCompositionEnd: () => setIMEOpen(false),
+                classNames: {
+                  input: classes.searchInput
+                },
+                size: "lg",
+                placeholder: searchPlaceholder,
+                icon: searchIcon,
+                onMouseEnter: resetHovered,
+                autoComplete: "chrome-please-just-do-not-show-it-thanks"
+              })
+            }), /* @__PURE__ */ jsx(ActionsWrapper, {
+              children: /* @__PURE__ */ jsx(ActionsList, {
+                highlightQuery,
+                highlightColor,
+                actions: groupedWithLabels,
+                actionComponent,
+                hovered,
+                query,
+                nothingFoundMessage,
+                onActionHover: setHovered,
+                onActionTrigger: (action) => {
+                  var _a2;
+                  action.onTrigger(action);
+                  ((_a2 = action.closeOnTrigger) != null ? _a2 : closeOnActionTrigger) && handleClose();
+                },
+                styles,
+                classNames,
+                radius
+              })
+            })]
+          }), /* @__PURE__ */ jsx("div", {
+            style: transitionStyles.overlay,
+            children: /* @__PURE__ */ jsx(Overlay, {
+              className: classes.overlay,
+              zIndex: 1,
+              onMouseDown: handleClose,
+              color: overlayColor,
+              opacity: overlayOpacity,
+              blur: overlayBlur
+            })
+          })]
+        })
+      })
+    })
+  });
+}
+Spotlight.displayName = "@mantine/spotlight/Spotlight";
+const [useSpotlightEvents, createEvent] = createUseExternalEvents("mantine-spotlight");
+createEvent("open");
+createEvent("close");
+createEvent("toggle");
+createEvent("triggerAction");
+createEvent("registerActions");
+createEvent("removeActions");
+var __defProp$o = Object.defineProperty;
+var __getOwnPropSymbols$o = Object.getOwnPropertySymbols;
+var __hasOwnProp$o = Object.prototype.hasOwnProperty;
+var __propIsEnum$o = Object.prototype.propertyIsEnumerable;
+var __defNormalProp$o = (obj, key, value) => key in obj ? __defProp$o(obj, key, {
+  enumerable: true,
+  configurable: true,
+  writable: true,
+  value
+}) : obj[key] = value;
+var __spreadValues$o = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp$o.call(b, prop))
+      __defNormalProp$o(a, prop, b[prop]);
+  if (__getOwnPropSymbols$o)
+    for (var prop of __getOwnPropSymbols$o(b)) {
+      if (__propIsEnum$o.call(b, prop))
+        __defNormalProp$o(a, prop, b[prop]);
+    }
+  return a;
+};
+var __objRest$h = (source, exclude) => {
+  var target = {};
+  for (var prop in source)
+    if (__hasOwnProp$o.call(source, prop) && exclude.indexOf(prop) < 0)
+      target[prop] = source[prop];
+  if (source != null && __getOwnPropSymbols$o)
+    for (var prop of __getOwnPropSymbols$o(source)) {
+      if (exclude.indexOf(prop) < 0 && __propIsEnum$o.call(source, prop))
+        target[prop] = source[prop];
+    }
+  return target;
+};
+function SpotlightProvider(_a) {
+  var _b = _a, {
+    actions: initialActions,
+    children,
+    shortcut = "mod + K",
+    onSpotlightClose,
+    onSpotlightOpen,
+    onQueryChange,
+    cleanQueryOnClose = true,
+    transitionDuration = 150,
+    disabled = false
+  } = _b, others = __objRest$h(_b, ["actions", "children", "shortcut", "onSpotlightClose", "onSpotlightOpen", "onQueryChange", "cleanQueryOnClose", "transitionDuration", "disabled"]);
+  const timeoutRef = react.exports.useRef(-1);
+  const [query, setQuery] = react.exports.useState("");
+  const [actions, {
+    registerActions,
+    updateActions,
+    removeActions,
+    triggerAction
+  }] = useActionsState(initialActions, query);
+  useDidUpdate(() => {
+    updateActions(initialActions);
+  }, [initialActions]);
+  const handleQueryChange = (value) => {
+    setQuery(value);
+    onQueryChange == null ? void 0 : onQueryChange(value);
+  };
+  const [opened, {
+    open,
+    close,
+    toggle
+  }] = useDisclosure(false, {
+    onClose: () => {
+      onSpotlightClose == null ? void 0 : onSpotlightClose();
+      if (cleanQueryOnClose) {
+        timeoutRef.current = window.setTimeout(() => {
+          handleQueryChange("");
+        }, transitionDuration);
+      }
+    },
+    onOpen: () => {
+      onSpotlightOpen == null ? void 0 : onSpotlightOpen();
+      window.clearTimeout(timeoutRef.current);
+    }
+  });
+  const ctx = {
+    openSpotlight: open,
+    closeSpotlight: close,
+    toggleSpotlight: toggle,
+    registerActions,
+    removeActions,
+    triggerAction,
+    opened,
+    actions,
+    query
+  };
+  useSpotlightShortcuts(shortcut, open);
+  useSpotlightEvents({
+    open,
+    close,
+    toggle,
+    registerActions,
+    removeActions,
+    triggerAction
+  });
+  return /* @__PURE__ */ jsxs(SpotlightContext.Provider, {
+    value: ctx,
+    children: [!disabled && /* @__PURE__ */ jsx(Spotlight, {
+      ...__spreadValues$o({
+        actions,
+        onClose: close,
+        opened,
+        query,
+        onQueryChange: handleQueryChange,
+        transitionDuration
+      }, others)
+    }), children]
+  });
+}
+SpotlightProvider.displayName = "@mantine/spotlight/SpotlightProvider";
 const AppContext = react.exports.createContext({});
 /**
  * react-query-devtools-noop
@@ -21712,25 +22452,215 @@ const UserHooks = {
     const { isLoading, error, data, isError, refetch, isFetching, isRefetching, isSuccess, status } = useQuery(
       ["apiKey"],
       () => UsersService.getApiKey(),
-      { enabled: false }
+      {
+        enabled: false,
+        onError: (err) => {
+          errorMsg({ error: err });
+        }
+      }
     );
     return { isLoading, isFetching, isRefetching, isSuccess, error, data, isError, refetch, status };
   },
   useCurrentUser() {
     const { isLoading, error, data, refetch, isSuccess } = useQuery(
       ["currentUser"],
-      () => UsersService.getCurrentUser()
+      () => UsersService.getCurrentUser(),
+      {
+        onError: (err) => {
+          errorMsg({ error: err });
+        }
+      }
     );
     return { isLoading, error, data, refetch, isSuccess };
   },
   useAllUsers() {
     const { isLoading, error, data, refetch, isSuccess, isFetching } = useQuery(
       ["allUsers"],
-      () => UsersService.getUsers()
+      () => UsersService.getUsers({}, { sortBy: "id: desc" }),
+      {
+        onError: (err) => {
+          errorMsg({ error: err });
+        }
+      }
     );
     return { isLoading, error, data, refetch, isSuccess, isFetching };
   }
 };
+const navigationData = [
+  {
+    title: "Dashboard",
+    description: "Visit the Test Results Dashboard",
+    group: "main",
+    onTrigger: () => console.log("Dashboard"),
+    icon: /* @__PURE__ */ jsx(EO, {
+      size: 18
+    }),
+    crumbs: [{
+      title: "Dashboard",
+      href: "/"
+    }]
+  },
+  {
+    title: "Admin Panel",
+    description: "Visit Admin Panel",
+    group: "main",
+    onTrigger: () => console.log("Admin Panel"),
+    icon: /* @__PURE__ */ jsx(Xue, {
+      size: 18
+    }),
+    crumbs: [{
+      title: "Admin panel",
+      href: "/admin"
+    }]
+  },
+  {
+    title: "Users",
+    description: "Manage Users",
+    group: "admin",
+    onTrigger: () => console.log("Users"),
+    icon: /* @__PURE__ */ jsx(age, {
+      size: 18
+    }),
+    crumbs: [{
+      title: "Admin",
+      href: "/admin"
+    }, {
+      title: "Users",
+      href: "/admin/users"
+    }]
+  },
+  {
+    title: "Logs",
+    description: "View Logs",
+    group: "admin",
+    onTrigger: () => console.log("Logs"),
+    icon: /* @__PURE__ */ jsx(A0, {
+      size: 18
+    }),
+    crumbs: [{
+      title: "Admin",
+      href: "/admin"
+    }, {
+      title: "Logs",
+      href: "/admin/logs"
+    }]
+  },
+  {
+    title: "Task: Handle old Checks",
+    description: "Old checks statistics and cleaning",
+    group: "tasks",
+    onTrigger: () => console.log("Handle old Checks"),
+    crumbs: [{
+      title: "Admin",
+      href: "/admin"
+    }, {
+      title: "Tasks",
+      href: "/admin/tasks"
+    }, {
+      title: "Handle old Checks",
+      href: "/admin/tasks/handle_old_checks"
+    }]
+  },
+  {
+    title: "Task: Handle Database Consistency",
+    description: "Database Consistency statistics and cleaning",
+    group: "tasks",
+    onTrigger: () => console.log("Handle Database Consistency"),
+    crumbs: [{
+      title: "Admin",
+      href: "/admin"
+    }, {
+      title: "Tasks",
+      href: "/admin/tasks"
+    }, {
+      title: "Handle Database Consistency",
+      href: "/admin/tasks/handle_database_consistency"
+    }]
+  },
+  {
+    title: "Task: Remove old logs",
+    description: "Remove logs older certain date",
+    group: "tasks",
+    onTrigger: () => console.log("Remove logs older certain date"),
+    crumbs: [{
+      title: "Admin",
+      href: "/admin"
+    }, {
+      title: "Tasks",
+      href: "/admin/tasks"
+    }, {
+      title: "Remove old logs",
+      href: "/admin/tasks/remove_old_logs"
+    }]
+  },
+  {
+    title: "Task: Test",
+    description: "test",
+    group: "tasks",
+    onTrigger: () => console.log("Test"),
+    crumbs: [{
+      title: "Admin",
+      href: "/admin"
+    }, {
+      title: "Tasks",
+      href: "/admin/tasks"
+    }, {
+      title: "Test",
+      href: "/admin/tasks/test"
+    }]
+  },
+  {
+    title: "Settings",
+    description: "Manage Admin Settings",
+    group: "tasks",
+    onTrigger: () => console.log("Settings"),
+    icon: /* @__PURE__ */ jsx(q0, {
+      size: 18
+    }),
+    crumbs: [{
+      title: "Admin",
+      href: "/admin"
+    }, {
+      title: "Settings",
+      href: "/admin/settings"
+    }]
+  }
+];
+const getNavigationItem = (title) => navigationData.find((x) => x.title === title);
+function useSubpageEffect(title) {
+  const {
+    setAppTitle
+  } = react.exports.useContext(AppContext);
+  const {
+    clearToolbar,
+    setBreadCrumbs
+  } = react.exports.useContext(AppContext);
+  react.exports.useEffect(() => {
+    const pageData = getNavigationItem(title);
+    setAppTitle(pageData.title);
+    setBreadCrumbs(pageData.crumbs.map((item) => /* @__PURE__ */ jsx(Anchor, {
+      href: item.href,
+      size: "sm",
+      color: "green",
+      children: item.title
+    }, `${item.title}`)));
+    return () => {
+      clearToolbar();
+      stopNavigationProgress();
+      resetNavigationProgress();
+    };
+  }, [title]);
+}
+function useNavProgressFetchEffect(isFetching) {
+  react.exports.useEffect(() => {
+    if (isFetching) {
+      resetNavigationProgress();
+      startNavigationProgress();
+    } else {
+      setNavigationProgress(100);
+    }
+  }, [isFetching]);
+}
 function ApiKeyModalAsk({
   opened,
   setOpened,
@@ -22096,20 +23026,9 @@ function AdminHeader() {
     className: classes.link,
     children: link.label
   }, link.label));
-  const breadCrumbsItems = [{
-    title: "Admin panel",
-    href: "#"
-  }, {
-    title: "Logs",
-    href: "#"
-  }].map((item) => /* @__PURE__ */ jsx(Anchor, {
-    href: item.href,
-    size: "sm",
-    color: "green",
-    children: item.title
-  }, `${item.title}_nav`));
   const {
-    toolbar
+    toolbar,
+    breadCrumbs
   } = react.exports.useContext(AppContext);
   return /* @__PURE__ */ jsxs(Header, {
     height: 100,
@@ -22157,7 +23076,7 @@ function AdminHeader() {
         fluid: true,
         children: [/* @__PURE__ */ jsx(Group, {
           children: /* @__PURE__ */ jsx(Breadcrumbs, {
-            children: breadCrumbsItems
+            children: breadCrumbs
           })
         }), /* @__PURE__ */ jsx(Group, {
           spacing: 4,
@@ -22349,21 +23268,6 @@ function AdminNavbar() {
       })
     })
   });
-}
-function useSubpageEffect(title, deps) {
-  const {
-    setAppTitle
-  } = react.exports.useContext(AppContext);
-  const {
-    clearToolbar
-  } = react.exports.useContext(AppContext);
-  react.exports.useEffect(() => {
-    setAppTitle(title);
-    stopNavigationProgress();
-    return () => {
-      clearToolbar();
-    };
-  }, deps || []);
 }
 function Task({
   item
@@ -22682,7 +23586,6 @@ function UserForm({
   refetch
 }) {
   const [editMode, setEditMode] = react.exports.useState(false);
-  const [error, setError] = react.exports.useState("");
   const form = useForm({
     initialValues: {
       id,
@@ -22691,7 +23594,7 @@ function UserForm({
       lastName,
       role,
       password: "",
-      apiKey,
+      apiKey: "",
       updatedDate,
       createdDate
     },
@@ -22700,21 +23603,34 @@ function UserForm({
     }
   });
   const updateUser = useMutation((data) => UsersService.update(data), {
-    onSuccess: async () => {
+    onSuccess: async (result) => {
+      successMsg({
+        message: `User: '${result.username}' has been successfully updated`
+      });
+      log.debug({
+        result
+      });
       refetch();
     },
     onError: (e) => {
+      errorMsg({
+        error: `Cannot update the user, ${String(e)}`
+      });
       log.error(e);
-      return setError(`Cannot update user - ${e.toString()}`);
     }
   });
   const deleteUser = useMutation((userId) => UsersService.delete(userId), {
-    onSuccess: () => {
+    onSuccess: async () => {
+      successMsg({
+        message: "User has been successfully removed"
+      });
       refetch();
     },
     onError: (e) => {
+      errorMsg({
+        error: `Cannot delete the user, ${String(e)}`
+      });
       log.error(e);
-      return setError(`Cannot delete user - ${e.toString()}`);
     }
   });
   const update = () => {
@@ -22727,32 +23643,47 @@ function UserForm({
     deleteUser.mutate(form.values.id);
   };
   return /* @__PURE__ */ jsx(Group, {
-    children: /* @__PURE__ */ jsxs("form", {
-      children: [/* @__PURE__ */ jsxs(Group, {
+    children: /* @__PURE__ */ jsx("form", {
+      children: /* @__PURE__ */ jsxs(Group, {
         noWrap: true,
         spacing: "xs",
         align: "center",
         "data-test": username,
         children: [/* @__PURE__ */ jsx(TextInput, {
+          sx: {
+            width: "11%"
+          },
           "data-test": "user-list-id",
           value: id,
           disabled: true
         }), /* @__PURE__ */ jsx(TextInput, {
+          sx: {
+            width: "11%"
+          },
           "data-test": "user-list-email",
           value: username,
           disabled: true,
           ...form.getInputProps("username")
         }), /* @__PURE__ */ jsx(TextInput, {
+          sx: {
+            width: "11%"
+          },
           "data-test": "user-list-first-name",
           value: firstName,
           disabled: !editMode,
           ...form.getInputProps("firstName")
         }), /* @__PURE__ */ jsx(TextInput, {
+          sx: {
+            width: "11%"
+          },
           "data-test": "user-list-last-name",
           value: lastName,
           disabled: !editMode,
           ...form.getInputProps("lastName")
         }), /* @__PURE__ */ jsx(SafeSelect, {
+          sx: {
+            width: "11%"
+          },
           "data-test": "user-list-role",
           optionsData: [{
             value: "user",
@@ -22768,18 +23699,30 @@ function UserForm({
           disabled: !editMode,
           ...form.getInputProps("role")
         }), /* @__PURE__ */ jsx(Password.Popover, {
+          sx: {
+            width: "11%"
+          },
           "data-test": "user-list-password",
           disabled: !editMode,
           form
         }), /* @__PURE__ */ jsx(TextInput, {
+          sx: {
+            width: "11%"
+          },
           "data-test": "user-list-api-key",
           value: apiKey,
           disabled: true
         }), /* @__PURE__ */ jsx(TextInput, {
+          sx: {
+            width: "11%"
+          },
           "data-test": "user-list-created-date",
           value: createdDate,
           disabled: true
         }), /* @__PURE__ */ jsx(TextInput, {
+          sx: {
+            width: "11%"
+          },
           "data-test": "user-list-updated-date",
           value: updatedDate,
           disabled: true
@@ -22815,14 +23758,7 @@ function UserForm({
             minWidth: "60px"
           }
         })]
-      }), error && /* @__PURE__ */ jsx(Group, {
-        align: "center",
-        children: /* @__PURE__ */ jsx(Text, {
-          color: "red",
-          size: "xs",
-          children: error
-        })
-      })]
+      })
     })
   });
 }
@@ -22901,7 +23837,6 @@ function UserAddForm({
   useSubpageEffect("Users");
   const [emailError, setEmailError] = react.exports.useState("");
   const [emailIsFetchingStatus, setEmailIsFetchingStatus] = react.exports.useState(false);
-  const [error, setError] = react.exports.useState("");
   const form = useForm({
     initialValues: {
       id: "",
@@ -22928,13 +23863,21 @@ function UserAddForm({
     }
   });
   const addUser = useMutation((data) => UsersService.create(data), {
-    onSuccess: () => {
+    onSuccess: async (result) => {
+      successMsg({
+        message: `User: '${result.username}' has been successfully created`
+      });
+      log.debug({
+        result
+      });
       setAddUser(false);
       refetch();
     },
     onError: (e) => {
+      errorMsg({
+        error: `Cannot create the user, ${String(e)}`
+      });
       log.error(e);
-      return setError(`Cannot create user - ${e.toString()}`);
     }
   });
   const formSubmitHandler = (values2) => {
@@ -22998,13 +23941,6 @@ function UserAddForm({
         form,
         label: "Password"
       })]
-    }), error && /* @__PURE__ */ jsx(Group, {
-      align: "center",
-      children: /* @__PURE__ */ jsx(Text, {
-        color: "red",
-        size: "xs",
-        children: error
-      })
     }), /* @__PURE__ */ jsxs(Group, {
       spacing: "xs",
       align: "flex-end",
@@ -23030,6 +23966,11 @@ function UserAddForm({
   });
 }
 function AdminUsers() {
+  const {
+    toolbar,
+    setToolbar,
+    updateToolbar
+  } = react.exports.useContext(AppContext);
   useSubpageEffect("Users");
   const {
     isLoading,
@@ -23039,8 +23980,24 @@ function AdminUsers() {
     isSuccess,
     isFetching
   } = UserHooks.useAllUsers();
+  useNavProgressFetchEffect(isFetching);
+  const theme = useMantineTheme();
+  react.exports.useEffect(function addReloadIcon() {
+    updateToolbar(/* @__PURE__ */ jsx(ActionIcon, {
+      title: "reload users",
+      color: theme.colorScheme === "dark" ? "green.8" : "green.6",
+      variant: "subtle",
+      onClick: () => {
+        refetch();
+      },
+      children: /* @__PURE__ */ jsx(Xne, {
+        stroke: 1,
+        size: 24
+      })
+    }), 5);
+  }, []);
   const [addUser, setAddUser] = react.exports.useState(false);
-  const useStyles2 = createStyles((theme) => ({
+  const useStyles2 = createStyles((theme2) => ({
     headInput: {
       paddingLeft: "12px",
       paddingRight: "12px"
@@ -23049,14 +24006,6 @@ function AdminUsers() {
   const {
     classes
   } = useStyles2();
-  react.exports.useEffect(() => {
-    if (isFetching) {
-      resetNavigationProgress();
-      startNavigationProgress();
-    } else {
-      setNavigationProgress(100);
-    }
-  }, [isFetching]);
   if (isLoading) {
     return /* @__PURE__ */ jsx(LoadingOverlay, {
       visible: true
@@ -23077,52 +24026,79 @@ function AdminUsers() {
       children: /* @__PURE__ */ jsxs(Box, {
         p: 20,
         children: [/* @__PURE__ */ jsx(Title, {
-          children: "Edit Users"
+          children: "Users"
         }), /* @__PURE__ */ jsxs(Group, {
           spacing: "xs",
           noWrap: true,
           mt: 40,
           children: [/* @__PURE__ */ jsx(TextInput, {
+            sx: {
+              width: "11%"
+            },
             readOnly: true,
             className: classes.headInput,
             variant: "unstyled",
             value: "Id"
           }), /* @__PURE__ */ jsx(TextInput, {
+            sx: {
+              width: "11%"
+            },
             readOnly: true,
             className: classes.headInput,
             variant: "unstyled",
             value: "Username"
           }), /* @__PURE__ */ jsx(TextInput, {
+            sx: {
+              width: "11%"
+            },
             readOnly: true,
             className: classes.headInput,
             variant: "unstyled",
             value: "First Name"
           }), /* @__PURE__ */ jsx(TextInput, {
+            sx: {
+              width: "11%"
+            },
             readOnly: true,
             className: classes.headInput,
             variant: "unstyled",
             value: "Last Name"
           }), /* @__PURE__ */ jsx(TextInput, {
+            sx: {
+              width: "11%"
+            },
             readOnly: true,
             className: classes.headInput,
             variant: "unstyled",
             value: "Role"
           }), /* @__PURE__ */ jsx(TextInput, {
+            sx: {
+              width: "11%"
+            },
             readOnly: true,
             className: classes.headInput,
             variant: "unstyled",
             value: "Password"
           }), /* @__PURE__ */ jsx(TextInput, {
+            sx: {
+              width: "11%"
+            },
             readOnly: true,
             className: classes.headInput,
             variant: "unstyled",
             value: "API Key"
           }), /* @__PURE__ */ jsx(TextInput, {
+            sx: {
+              width: "11%"
+            },
             readOnly: true,
             className: classes.headInput,
             variant: "unstyled",
             value: "Created"
           }), /* @__PURE__ */ jsx(TextInput, {
+            sx: {
+              width: "11%"
+            },
             readOnly: true,
             className: classes.headInput,
             variant: "unstyled",
@@ -23130,7 +24106,7 @@ function AdminUsers() {
           }), /* @__PURE__ */ jsx(Box, {
             component: "div",
             sx: {
-              width: "71px"
+              minWidth: "71px"
             }
           })]
         }), /* @__PURE__ */ jsx(Group, {
@@ -23141,8 +24117,8 @@ function AdminUsers() {
             lastName: user.lastName,
             role: user.role,
             password: "",
-            apiKey: user.apiKey,
-            updatedDate: user.updatedDate,
+            apiKey: user.apiKey || "",
+            updatedDate: user.updatedDate || "",
             createdDate: user.createdDate,
             refetch
           }, user.id))
@@ -23272,7 +24248,7 @@ function FormWrapper({
     },
     onError: (e) => {
       errorMsg({
-        message: e.toString()
+        error: e
       });
     },
     onSettled: () => settingsQuery.refetch()
@@ -23295,16 +24271,17 @@ function FormWrapper({
   });
 }
 function AdminSettings() {
-  useSubpageEffect("Setting");
+  useSubpageEffect("Settings");
   const settingsQuery = useQuery(["settings"], () => SettingsService.getSettings(), {
     enabled: true,
     onError: (err) => {
       errorMsg({
-        message: err.toString()
+        error: err
       });
-      log.warn(err);
+      log.error(err);
     }
   });
+  useNavProgressFetchEffect(settingsQuery.isFetching);
   return /* @__PURE__ */ jsxs(Box, {
     p: 10,
     children: [/* @__PURE__ */ jsx(Title, {
@@ -23399,7 +24376,12 @@ function useInfinityScroll(searchParams) {
   }), {
     enabled: false,
     staleTime: Infinity,
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    onError: (e) => {
+      errorMsg({
+        error: e
+      });
+    }
   });
   const lastLogTimestamp = ((_b = (_a = firstPageQuery == null ? void 0 : firstPageQuery.data) == null ? void 0 : _a.results) == null ? void 0 : _b.length) ? (_c = firstPageQuery == null ? void 0 : firstPageQuery.data) == null ? void 0 : _c.results[0].timestamp : void 0;
   const firstPageData = react.exports.useMemo(() => {
@@ -23433,7 +24415,12 @@ function useInfinityScroll(searchParams) {
       return lastPage.page + 1;
     },
     refetchOnWindowFocus: false,
-    enabled: !!firstPageData.lastLogTimestamp && !!timestampUpdatedFilter
+    enabled: !!firstPageData.lastLogTimestamp && !!timestampUpdatedFilter,
+    onError: (e) => {
+      errorMsg({
+        error: e
+      });
+    }
   });
   const newestItemsQuery = useQuery(["logs_infinity_newest_pages", firstPageData.lastLogTimestamp], () => LogsService.getLogs({
     timestamp: {
@@ -23443,7 +24430,12 @@ function useInfinityScroll(searchParams) {
     limit: String(0)
   }), {
     enabled: ((_e = (_d = infinityQuery.data) == null ? void 0 : _d.pages) == null ? void 0 : _e.length) > 0,
-    refetchInterval: 3e3
+    refetchInterval: 3e3,
+    onError: (e) => {
+      errorMsg({
+        error: e
+      });
+    }
   });
   return {
     firstPageQuery,
@@ -23929,7 +24921,9 @@ const AdminLogsTableRows = ({
                 },
                 color: logLevelColorMap[item.level],
                 component: "span",
-                children: item.message
+                children: /* @__PURE__ */ jsx("pre", {
+                  children: item.message
+                })
               })]
             })
           })
@@ -27870,6 +28864,11 @@ function LogLevelFilter({
     refetchOnReconnect: false,
     onSuccess: (data) => {
       form.values.value = data[0];
+    },
+    onError: (e) => {
+      errorMsg({
+        error: e
+      });
     }
   });
   let levels = [];
@@ -28335,6 +29334,7 @@ function AdminLogs() {
     infinityQuery,
     newestItemsQuery
   } = useInfinityScroll(searchParams);
+  useNavProgressFetchEffect(infinityQuery.isFetching);
   const [visibleFields, setVisibleFields] = useLocalStorage({
     key: "visibleFields",
     defaultValue: ["hostname", "level", "message", "timestamp"]
@@ -28408,7 +29408,6 @@ function AdminLogs() {
   });
 }
 function AdminLayout() {
-  useSubpageEffect("Admin Panel");
   return /* @__PURE__ */ jsxs(AppShell, {
     padding: 8,
     navbar: /* @__PURE__ */ jsx(AdminNavbar, {}),
@@ -28451,6 +29450,7 @@ const queryClient = new QueryClient();
 function App() {
   const [colorScheme, toggleColorScheme] = useColorScheme();
   const [appTitle, setAppTitle] = react.exports.useState("Syngrisi");
+  const [breadCrumbs, setBreadCrumbs] = react.exports.useState([]);
   const [toolbar, setToolbar] = react.exports.useState([]);
   const updateToolbar = (newItem, index2 = 0) => {
     setToolbar((prevArr) => {
@@ -28470,8 +29470,10 @@ function App() {
     toolbar,
     setToolbar,
     updateToolbar,
-    clearToolbar
-  }), [appTitle, toolbar]);
+    clearToolbar,
+    breadCrumbs,
+    setBreadCrumbs
+  }), [appTitle, toolbar, JSON.stringify(breadCrumbs)]);
   useDocumentTitle(appTitle);
   return /* @__PURE__ */ jsx(AppContext.Provider, {
     value: appProviderValue,
@@ -28490,17 +29492,27 @@ function App() {
             colorScheme,
             primaryColor: "green"
           },
-          children: /* @__PURE__ */ jsxs(NotificationsProvider, {
-            autoClose: 5e3,
-            limit: 5,
-            children: [/* @__PURE__ */ jsx(NavigationProgress, {}), /* @__PURE__ */ jsx(ModalsProvider, {
-              children: /* @__PURE__ */ jsx(Routes, {
-                children: /* @__PURE__ */ jsx(Route, {
-                  path: "/admin2/*",
-                  element: /* @__PURE__ */ jsx(AdminLayout, {})
+          children: /* @__PURE__ */ jsx(SpotlightProvider, {
+            actions: navigationData,
+            highlightQuery: true,
+            searchIcon: /* @__PURE__ */ jsx(Aae, {
+              size: 18
+            }),
+            searchPlaceholder: "Search...",
+            shortcut: ["mod + k", "mod + K"],
+            nothingFoundMessage: "Nothing found...",
+            children: /* @__PURE__ */ jsxs(NotificationsProvider, {
+              autoClose: 5e3,
+              limit: 5,
+              children: [/* @__PURE__ */ jsx(NavigationProgress, {}), /* @__PURE__ */ jsx(ModalsProvider, {
+                children: /* @__PURE__ */ jsx(Routes, {
+                  children: /* @__PURE__ */ jsx(Route, {
+                    path: "/admin2/*",
+                    element: /* @__PURE__ */ jsx(AdminLayout, {})
+                  })
                 })
-              })
-            })]
+              })]
+            })
           })
         })
       })

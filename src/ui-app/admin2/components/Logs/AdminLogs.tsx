@@ -10,7 +10,7 @@ import {
 import { useSearchParams } from 'react-router-dom';
 import { useLocalStorage } from '@mantine/hooks';
 import { useEffect, useContext, useState } from 'react';
-import { useSubpageEffect } from '../../../shared/hooks/useSubpageEffect';
+import { useSubpageEffect } from '../../../shared/hooks';
 import { AppContext } from '../../AppContext';
 import RefreshActionIcon from './RefreshActionIcon';
 import useInfinityScroll from '../../../shared/hooks/useInfinityScroll';
@@ -18,6 +18,7 @@ import AdminLogsTable from './Table/AdminLogsTable';
 import AdminLogsTableSettings from './Table/AdminLogsTableSettings';
 import { IconAdjustments, IconFilter } from '@tabler/icons';
 import AdminLogsTableFilter from './Table/AdminLogsTableFilter';
+import { useNavProgressFetchEffect } from '../../../shared/hooks';
 
 /**
  * example:
@@ -40,6 +41,8 @@ export default function AdminLogs() {
     const [filterOpen, setFilterOpen] = useState(false);
     const { toolbar, setToolbar, updateToolbar }: any = useContext(AppContext);
     const { firstPageQuery, infinityQuery, newestItemsQuery } = useInfinityScroll(searchParams)
+    useNavProgressFetchEffect(infinityQuery.isFetching);
+
     const [visibleFields, setVisibleFields] = useLocalStorage({
         key: 'visibleFields', defaultValue: ['hostname', 'level', 'message', 'timestamp'],
     });
