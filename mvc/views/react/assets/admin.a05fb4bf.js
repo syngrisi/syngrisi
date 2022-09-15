@@ -1,4 +1,4 @@
-import { r as react, b as jsx, d as useMantineTheme, K as Global$1, O as css, R as transitions$1, S as useDidUpdate, U as useUncontrolled, V as useReducedMotion, W as useWindowEvent, Y as useId, c as createStyles, B as Box, j as jsxs, Z as UnstyledButton, _ as mergeRefs, $ as reactDom, a0 as useComponentDefaultProps, a1 as extractSystemStyles, a2 as getDefaultZIndex, a3 as OptionalPortal, a4 as packSx, v as ActionIcon, a5 as createPolymorphicComponent, T as Text, a6 as Fragment, a7 as _extends, a8 as React, a9 as useFloating, aa as size, ab as useFloatingAutoUpdate, ac as offset, ad as shift, ae as flip, af as isElement, ag as useMergedRef, ah as clsx, ai as Transition$2, aj as FloatingArrow, ak as getFloatingPosition, al as useInputProps, am as Input, P as Paper, G as Group, an as CheckIcon, ao as useTransition, ap as getTransitionStyles, aq as Overlay, ar as assignRef, as as MANTINE_SIZES, at as useDisclosure, au as sizes$j, av as Loader, s as TextInput, aw as InputsGroup, ax as Tooltip, ay as useIsomorphicEffect$3, az as keyframes, A as Anchor, aA as CheckboxIcon, aB as GROUP_POSITIONS, t as Checkbox, i as Button, C as Center, e as Container, L as LoadingOverlay, q as PasswordInput, aC as Portal, m as Progress, aD as Stack, h as Title, aE as DEFAULT_THEME, aF as MANTINE_COLORS, M as MantineProvider, H as ColorSchemeProvider, aG as useMantineColorScheme, aH as GlobalStyles, aI as NormalizeCSS, aJ as useCss, aK as useEmotionCache, aL as defaultMantineEmotionCache, aM as createCache, aN as queryString, aO as ReactDOM, l as log, E as useHotkeys, y as useLocalStorage, D as Dme, w as l6, k as ky, a as config$1, u as useQuery, aP as EO, aQ as Xue, aR as age, aS as A0, aT as q0, aU as GY, N as Nb, aV as EH, aW as ka, aX as ZX, aY as Lce, aZ as Bpe, a_ as q2, a$ as Aae, b0 as useLocation, b1 as Link, b2 as sge, b3 as $i, p as useForm, b4 as useParams, n as aze, b5 as useMutation, b6 as _ae, b7 as gI, b8 as Xne, b9 as useInfiniteQuery, ba as hl, bb as Ti, bc as zK, bd as Uhe, be as Ahe, bf as commonjsGlobal, bg as D3, bh as Boe, o as useSearchParams, bi as J, bj as sJ, bk as Routes, bl as Route, Q as QueryClient, f as useDocumentTitle, F as QueryClientProvider, I as createRoot, J as BrowserRouter } from "./use-form.87bcf95b.js";
+import { r as react, b as jsx, d as useMantineTheme, K as Global$1, O as css, R as transitions$1, S as useDidUpdate, U as useUncontrolled, V as useReducedMotion, W as useWindowEvent, Y as useId, c as createStyles, B as Box, j as jsxs, Z as UnstyledButton, _ as mergeRefs, $ as reactDom, a0 as useComponentDefaultProps, a1 as extractSystemStyles, a2 as getDefaultZIndex, a3 as OptionalPortal, a4 as packSx, v as ActionIcon, a5 as createPolymorphicComponent, T as Text, a6 as Fragment, a7 as _extends, a8 as React, a9 as useFloating, aa as size, ab as useFloatingAutoUpdate, ac as offset, ad as shift, ae as flip, af as isElement, ag as useMergedRef, ah as clsx, ai as Transition$2, aj as FloatingArrow, ak as getFloatingPosition, al as useInputProps, am as Input, P as Paper, G as Group, an as CheckIcon, ao as useTransition, ap as getTransitionStyles, aq as Overlay, ar as assignRef, as as MANTINE_SIZES, at as useDisclosure, au as sizes$j, av as Loader, s as TextInput, aw as InputsGroup, ax as Tooltip, ay as useIsomorphicEffect$3, az as keyframes, A as Anchor, aA as CheckboxIcon, aB as GROUP_POSITIONS, t as Checkbox, i as Button, C as Center, e as Container, L as LoadingOverlay, q as PasswordInput, aC as Portal, m as Progress, aD as Stack, h as Title, aE as DEFAULT_THEME, aF as MANTINE_COLORS, M as MantineProvider, H as ColorSchemeProvider, aG as useMantineColorScheme, aH as GlobalStyles, aI as NormalizeCSS, aJ as useCss, aK as useEmotionCache, aL as defaultMantineEmotionCache, aM as createCache, aN as queryString, aO as ReactDOM, l as log, E as useHotkeys, y as useLocalStorage, D as Dme, w as l6, k as ky, a as config$1, u as useQuery, aP as EO, aQ as Xue, aR as age, aS as A0, aT as q0, aU as GY, N as Nb, aV as EH, aW as ka, aX as ZX, aY as Lce, aZ as Bpe, a_ as q2, a$ as Aae, b0 as useLocation, b1 as Link, b2 as sge, b3 as $i, p as useForm, b4 as useParams, n as aze, b5 as useMutation, b6 as _ae, b7 as gI, b8 as Xne, b9 as useInfiniteQuery, ba as hl, bb as Ti, bc as zK, bd as Uhe, be as Ahe, bf as commonjsGlobal, bg as D3, bh as Boe, o as useSearchParams, bi as J, bj as sJ, bk as Routes, bl as Route, Q as QueryClient, f as useDocumentTitle, bm as useNavigate, F as QueryClientProvider, I as createRoot, J as BrowserRouter } from "./use-form.b25372da.js";
 function findElementAncestor(element, selector) {
   let _element = element;
   while ((_element = _element.parentElement) && !_element.matches(selector))
@@ -22144,7 +22144,7 @@ function Spotlight(_a) {
 }
 Spotlight.displayName = "@mantine/spotlight/Spotlight";
 const [useSpotlightEvents, createEvent] = createUseExternalEvents("mantine-spotlight");
-createEvent("open");
+const openSpotlight = createEvent("open");
 createEvent("close");
 createEvent("toggle");
 createEvent("triggerAction");
@@ -22486,147 +22486,140 @@ const UserHooks = {
     return { isLoading, error, data, refetch, isSuccess, isFetching };
   }
 };
-const navigationData = [
-  {
-    title: "Dashboard",
-    description: "Visit the Test Results Dashboard",
-    group: "main",
-    onTrigger: () => console.log("Dashboard"),
-    icon: /* @__PURE__ */ jsx(EO, {
-      size: 18
-    }),
-    crumbs: [{
+function navigationData() {
+  return [
+    {
       title: "Dashboard",
-      href: "/"
-    }]
-  },
-  {
-    title: "Admin Panel",
-    description: "Visit Admin Panel",
-    group: "main",
-    onTrigger: () => console.log("Admin Panel"),
-    icon: /* @__PURE__ */ jsx(Xue, {
-      size: 18
-    }),
-    crumbs: [{
-      title: "Admin panel",
-      href: "/admin"
-    }]
-  },
-  {
-    title: "Users",
-    description: "Manage Users",
-    group: "admin",
-    onTrigger: () => console.log("Users"),
-    icon: /* @__PURE__ */ jsx(age, {
-      size: 18
-    }),
-    crumbs: [{
-      title: "Admin",
-      href: "/admin"
-    }, {
+      description: "Visit the Test Results Dashboard",
+      group: "main",
+      icon: /* @__PURE__ */ jsx(EO, {
+        size: 18
+      }),
+      crumbs: [{
+        title: "Dashboard",
+        href: "/"
+      }]
+    },
+    {
+      title: "Admin Panel",
+      description: "Visit Admin Panel",
+      group: "main",
+      icon: /* @__PURE__ */ jsx(Xue, {
+        size: 18
+      }),
+      crumbs: [{
+        title: "Admin panel",
+        href: "/admin"
+      }]
+    },
+    {
       title: "Users",
-      href: "/admin/users"
-    }]
-  },
-  {
-    title: "Logs",
-    description: "View Logs",
-    group: "admin",
-    onTrigger: () => console.log("Logs"),
-    icon: /* @__PURE__ */ jsx(A0, {
-      size: 18
-    }),
-    crumbs: [{
-      title: "Admin",
-      href: "/admin"
-    }, {
+      description: "Manage Users",
+      group: "admin",
+      icon: /* @__PURE__ */ jsx(age, {
+        size: 18
+      }),
+      crumbs: [{
+        title: "Admin",
+        href: "/admin"
+      }, {
+        title: "Users",
+        href: "/admin/users"
+      }]
+    },
+    {
       title: "Logs",
-      href: "/admin/logs"
-    }]
-  },
-  {
-    title: "Task: Handle old Checks",
-    description: "Old checks statistics and cleaning",
-    group: "tasks",
-    onTrigger: () => console.log("Handle old Checks"),
-    crumbs: [{
-      title: "Admin",
-      href: "/admin"
-    }, {
-      title: "Tasks",
-      href: "/admin/tasks"
-    }, {
-      title: "Handle old Checks",
-      href: "/admin/tasks/handle_old_checks"
-    }]
-  },
-  {
-    title: "Task: Handle Database Consistency",
-    description: "Database Consistency statistics and cleaning",
-    group: "tasks",
-    onTrigger: () => console.log("Handle Database Consistency"),
-    crumbs: [{
-      title: "Admin",
-      href: "/admin"
-    }, {
-      title: "Tasks",
-      href: "/admin/tasks"
-    }, {
-      title: "Handle Database Consistency",
-      href: "/admin/tasks/handle_database_consistency"
-    }]
-  },
-  {
-    title: "Task: Remove old logs",
-    description: "Remove logs older certain date",
-    group: "tasks",
-    onTrigger: () => console.log("Remove logs older certain date"),
-    crumbs: [{
-      title: "Admin",
-      href: "/admin"
-    }, {
-      title: "Tasks",
-      href: "/admin/tasks"
-    }, {
-      title: "Remove old logs",
-      href: "/admin/tasks/remove_old_logs"
-    }]
-  },
-  {
-    title: "Task: Test",
-    description: "test",
-    group: "tasks",
-    onTrigger: () => console.log("Test"),
-    crumbs: [{
-      title: "Admin",
-      href: "/admin"
-    }, {
-      title: "Tasks",
-      href: "/admin/tasks"
-    }, {
-      title: "Test",
-      href: "/admin/tasks/test"
-    }]
-  },
-  {
-    title: "Settings",
-    description: "Manage Admin Settings",
-    group: "tasks",
-    onTrigger: () => console.log("Settings"),
-    icon: /* @__PURE__ */ jsx(q0, {
-      size: 18
-    }),
-    crumbs: [{
-      title: "Admin",
-      href: "/admin"
-    }, {
+      description: "View Logs",
+      group: "admin",
+      icon: /* @__PURE__ */ jsx(A0, {
+        size: 18
+      }),
+      crumbs: [{
+        title: "Admin",
+        href: "/admin"
+      }, {
+        title: "Logs",
+        href: "/admin/logs"
+      }]
+    },
+    {
+      title: "Task: Handle old Checks",
+      description: "Old checks statistics and cleaning",
+      group: "tasks",
+      crumbs: [{
+        title: "Admin",
+        href: "/admin"
+      }, {
+        title: "Tasks",
+        href: "/admin/tasks"
+      }, {
+        title: "Handle old Checks",
+        href: "/admin/tasks/handle_old_checks"
+      }]
+    },
+    {
+      title: "Task: Handle Database Consistency",
+      description: "Database Consistency statistics and cleaning",
+      group: "tasks",
+      crumbs: [{
+        title: "Admin",
+        href: "/admin"
+      }, {
+        title: "Tasks",
+        href: "/admin/tasks"
+      }, {
+        title: "Handle Database Consistency",
+        href: "/admin/tasks/handle_database_consistency"
+      }]
+    },
+    {
+      title: "Task: Remove old logs",
+      description: "Remove logs older certain date",
+      group: "tasks",
+      crumbs: [{
+        title: "Admin",
+        href: "/admin"
+      }, {
+        title: "Tasks",
+        href: "/admin/tasks"
+      }, {
+        title: "Remove old logs",
+        href: "/admin/tasks/remove_old_logs"
+      }]
+    },
+    {
+      title: "Task: Test",
+      description: "test",
+      group: "tasks",
+      crumbs: [{
+        title: "Admin",
+        href: "/admin"
+      }, {
+        title: "Tasks",
+        href: "/admin/tasks"
+      }, {
+        title: "Test",
+        href: "/admin/tasks/test"
+      }]
+    },
+    {
       title: "Settings",
-      href: "/admin/settings"
-    }]
-  }
-];
-const getNavigationItem = (title) => navigationData.find((x) => x.title === title);
+      description: "Manage Admin Settings",
+      group: "tasks",
+      icon: /* @__PURE__ */ jsx(q0, {
+        size: 18
+      }),
+      crumbs: [{
+        title: "Admin",
+        href: "/admin"
+      }, {
+        title: "Settings",
+        href: "/admin/settings"
+      }]
+    }
+  ];
+}
+const getNavigationItem = (title) => navigationData().find((x) => x.title === title);
 function useSubpageEffect(title) {
   const {
     setAppTitle
@@ -23011,7 +23004,7 @@ const links = [{
   link: "/"
 }, {
   label: "Admin Panel",
-  link: "/admin2/"
+  link: "/admin/"
 }];
 function AdminHeader() {
   const [colorScheme, toggleColorScheme] = useColorScheme();
@@ -23030,6 +23023,7 @@ function AdminHeader() {
     toolbar,
     breadCrumbs
   } = react.exports.useContext(AppContext);
+  const theme = useMantineTheme();
   return /* @__PURE__ */ jsxs(Header, {
     height: 100,
     className: classes.header,
@@ -23051,14 +23045,45 @@ function AdminHeader() {
           spacing: 5,
           className: classes.links,
           children: items
-        }), /* @__PURE__ */ jsx(Autocomplete, {
-          className: classes.search,
-          placeholder: "Search",
-          icon: /* @__PURE__ */ jsx(Aae, {
-            size: 16,
-            stroke: 1.5
-          }),
-          data: ["React", "Angular", "Vue", "Next.js", "Riot.js", "Svelte", "Blitz.js"]
+        }), /* @__PURE__ */ jsx(Button, {
+          onClick: () => openSpotlight(),
+          variant: "default",
+          sx: {
+            minWidth: 200,
+            display: "flex"
+          },
+          pl: 12,
+          pr: 8,
+          styles: {
+            root: {
+              backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
+              "&:hover": {
+                backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0]
+              }
+            }
+          },
+          children: /* @__PURE__ */ jsxs(Group, {
+            position: "apart",
+            sx: {
+              minWidth: 200
+            },
+            children: [/* @__PURE__ */ jsxs(Group, {
+              children: [/* @__PURE__ */ jsx(Aae, {
+                size: 16,
+                stroke: 1
+              }), /* @__PURE__ */ jsx(Text, {
+                color: "dimmed",
+                weight: 400,
+                children: "Search"
+              })]
+            }), /* @__PURE__ */ jsx(Kbd, {
+              sx: {
+                fontSize: 11,
+                borderBottomWidth: 1
+              },
+              children: "\u2318 + K"
+            })]
+          })
         }), /* @__PURE__ */ jsx(Group, {
           spacing: 7,
           children: /* @__PURE__ */ jsx(UserMenu, {})
@@ -23207,17 +23232,17 @@ const tasksList = [
 const taskLinks = tasksList.map(
   (task) => ({
     label: task.label,
-    link: `/admin2/tasks/${task.name}`
+    link: `/admin/tasks/${task.name}`
   })
 );
 const navbarItems = [{
   label: "Users",
   icon: sge,
-  link: "/admin2/users"
+  link: "/admin/users"
 }, {
   label: "Logs",
   icon: $i,
-  link: "/admin2/logs"
+  link: "/admin/logs"
 }, {
   label: "Tasks",
   icon: q0,
@@ -23225,7 +23250,7 @@ const navbarItems = [{
 }, {
   label: "Settings",
   icon: Lce,
-  link: "/admin2/settings"
+  link: "/admin/settings"
 }];
 const useStyles$c = createStyles((theme) => ({
   navbar: {
@@ -23272,7 +23297,7 @@ function AdminNavbar() {
 function Task({
   item
 }) {
-  useSubpageEffect(`Task: ${item.label}`, [item.label]);
+  useSubpageEffect(`Task: ${item.label}`);
   const [outputField, setOutputField] = react.exports.useState("");
   const [autoScrollChecked, setAutoScrollChecked] = react.exports.useState(true);
   const outputRef = react.exports.useRef(null);
@@ -23967,8 +23992,6 @@ function UserAddForm({
 }
 function AdminUsers() {
   const {
-    toolbar,
-    setToolbar,
     updateToolbar
   } = react.exports.useContext(AppContext);
   useSubpageEffect("Users");
@@ -23997,7 +24020,7 @@ function AdminUsers() {
     }), 5);
   }, []);
   const [addUser, setAddUser] = react.exports.useState(false);
-  const useStyles2 = createStyles((theme2) => ({
+  const useStyles2 = createStyles(() => ({
     headInput: {
       paddingLeft: "12px",
       paddingRight: "12px"
@@ -29408,6 +29431,7 @@ function AdminLogs() {
   });
 }
 function AdminLayout() {
+  console.log("AdminLayout");
   return /* @__PURE__ */ jsxs(AppShell, {
     padding: 8,
     navbar: /* @__PURE__ */ jsx(AdminNavbar, {}),
@@ -29475,6 +29499,11 @@ function App() {
     setBreadCrumbs
   }), [appTitle, toolbar, JSON.stringify(breadCrumbs)]);
   useDocumentTitle(appTitle);
+  const navigate = useNavigate();
+  const spotlightActions = navigationData().map((item) => ({
+    ...item,
+    onTrigger: () => navigate(item.crumbs.slice(-1)[0].href)
+  }));
   return /* @__PURE__ */ jsx(AppContext.Provider, {
     value: appProviderValue,
     children: /* @__PURE__ */ jsx(QueryClientProvider, {
@@ -29493,11 +29522,12 @@ function App() {
             primaryColor: "green"
           },
           children: /* @__PURE__ */ jsx(SpotlightProvider, {
-            actions: navigationData,
+            actions: spotlightActions,
             highlightQuery: true,
             searchIcon: /* @__PURE__ */ jsx(Aae, {
               size: 18
             }),
+            limit: 7,
             searchPlaceholder: "Search...",
             shortcut: ["mod + k", "mod + K"],
             nothingFoundMessage: "Nothing found...",
@@ -29507,7 +29537,7 @@ function App() {
               children: [/* @__PURE__ */ jsx(NavigationProgress, {}), /* @__PURE__ */ jsx(ModalsProvider, {
                 children: /* @__PURE__ */ jsx(Routes, {
                   children: /* @__PURE__ */ jsx(Route, {
-                    path: "/admin2/*",
+                    path: "/admin/*",
                     element: /* @__PURE__ */ jsx(AdminLayout, {})
                   })
                 })

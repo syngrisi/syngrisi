@@ -8,10 +8,10 @@ import { useRef, useState } from 'react';
 
 import { isDark, log } from '../../../shared/utils';
 import { IInput, ITask } from './tasksList';
-import { useSubpageEffect } from '../../../shared/hooks/useSubpageEffect';
+import { useSubpageEffect } from '../../../shared/hooks';
 
 export default function Task({ item }: { item: ITask }) {
-    useSubpageEffect(`Task: ${item.label}`, [item.label]);
+    useSubpageEffect(`Task: ${item.label}`);
 
     const [outputField, setOutputField] = useState('');
     const [autoScrollChecked, setAutoScrollChecked] = useState(true);

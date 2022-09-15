@@ -21000,7 +21000,7 @@ const createInstance = (defaults) => {
 };
 const ky = createInstance();
 const ky$1 = ky;
-const baseUrl = { "VITE_ROOT_PATH": "./src/ui-app/", "BASE_URL": "./", "MODE": "production", "DEV": false, "PROD": true }.VITE_SYNGRISY_BASED_URL;
+const baseUrl = { "VITE_ROOT_PATH": "./src/ui-app/", "BASE_URL": "/", "MODE": "production", "DEV": false, "PROD": true }.VITE_SYNGRISY_BASED_URL;
 const config = {
   baseUri: baseUrl || ""
 };
@@ -22022,6 +22022,7 @@ export {
   sJ as bj,
   Routes as bk,
   Route as bl,
+  useNavigate as bm,
   createStyles as c,
   useMantineTheme as d,
   Container as e,

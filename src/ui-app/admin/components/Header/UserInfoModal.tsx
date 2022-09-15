@@ -39,7 +39,8 @@ export function UserInfoModal({ opened, setOpened }: { opened: boolean, setOpene
                                 <Text
                                     size="xs"
                                     sx={{ textTransform: 'uppercase' }}
-                                    weight={700} color="dimmed"
+                                    weight={700}
+                                    color="dimmed"
                                     data-test="userinfo-role"
                                 >
                                     {user.data.role}

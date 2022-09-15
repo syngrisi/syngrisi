@@ -8,7 +8,7 @@ const router = express.Router();
 
 const adminController = catchAsync(async (req, res) => {
     res.status(httpStatus.OK)
-        .sendFile(path.normalize(path.join(`${__dirname}./../../../mvc/views/react/admin2/index.html`)));
+        .sendFile(path.normalize(path.join(`${__dirname}./../../../mvc/views/react/admin/index.html`)));
 });
 
 router.get('*', adminController);

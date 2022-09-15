@@ -1,12 +1,13 @@
 const { When, Then, Given } = require('cucumber');
-When(/^I go to "([^"]*)" page$/, function (str) {
+
+When(/^I go to "([^"]*)" page$/, (str) => {
     const pages = {
         main: `http://${browser.config.serverDomain}:${browser.config.serverPort}/`,
         first_run: `http://${browser.config.serverDomain}:${browser.config.serverPort}/auth/change?first_run=true`,
         runs: `http://${browser.config.serverDomain}:${browser.config.serverPort}/runs`,
         change_password: `http://${browser.config.serverDomain}:${browser.config.serverPort}/auth/change`,
         logout: `http://${browser.config.serverDomain}:${browser.config.serverPort}/auth/logout`,
-        admin2: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin2`,
+        admin2: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin`,
         admin: {
             users: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin?task=users`,
             tasks: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin?task=tasks`,
@@ -38,7 +39,7 @@ Given(/^I open the app$/, () => {
     browser.pause(2000);
 });
 
-When(/^I open "([^"]*)" view$/, function (name) {
+When(/^I open "([^"]*)" view$/, (name) => {
     browser.waitUntil(
         () => {
             let state = true;

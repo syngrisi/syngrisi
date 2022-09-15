@@ -7,7 +7,7 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ModalsProvider } from '@mantine/modals';
 
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useDocumentTitle } from '@mantine/hooks';
 import { NavigationProgress } from '@mantine/nprogress';
@@ -20,6 +20,7 @@ import { AppContext } from './AppContext';
 import AdminLayout from './AdminLayout';
 import useColorScheme from '../shared/hooks/useColorSheme';
 import { navigationData } from '../shared/navigation/navigationData';
+import { INavDataItem } from '../shared/navigation/interfaces';
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ function App() {
     const [appTitle, setAppTitle] = useState('Syngrisi');
     const [breadCrumbs, setBreadCrumbs] = useState([]);
     const [toolbar, setToolbar]: [any[], any] = useState([]);
+
     const updateToolbar = (newItem: any, index: number = 0) => {
         setToolbar((prevArr: any[]) => {
             const newArray = [...prevArr];
@@ -51,6 +53,11 @@ function App() {
     }), [appTitle, toolbar, JSON.stringify(breadCrumbs)]);
     useDocumentTitle(appTitle);
 
+    const navigate = useNavigate();
+    const spotlightActions = navigationData().map((item: INavDataItem) => ({
+        ...item,
+        onTrigger: () => navigate(item.crumbs.slice(-1)[0].href),
+    }));
     return (
         <AppContext.Provider value={appProviderValue}>
             <QueryClientProvider client={queryClient}>
@@ -68,9 +75,10 @@ function App() {
                         }}
                     >
                         <SpotlightProvider
-                            actions={navigationData}
+                            actions={spotlightActions}
                             highlightQuery
                             searchIcon={<IconSearch size={18} />}
+                            limit={7}
                             searchPlaceholder="Search..."
                             shortcut={['mod + k', 'mod + K']}
                             nothingFoundMessage="Nothing found..."
@@ -79,7 +87,7 @@ function App() {
                                 <NavigationProgress />
                                 <ModalsProvider>
                                     <Routes>
-                                        <Route path="/admin2/*" element={<AdminLayout />} />
+                                        <Route path="/admin/*" element={<AdminLayout />} />
                                     </Routes>
                                 </ModalsProvider>
                             </NotificationsProvider>

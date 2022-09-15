@@ -3,7 +3,7 @@ import { resetNavigationProgress, stopNavigationProgress } from '@mantine/nprogr
 import { useContext, useEffect } from 'react';
 import { Anchor } from '@mantine/core';
 import * as React from 'react';
-import { AppContext } from '../../admin2/AppContext';
+import { AppContext } from '../../admin/AppContext';
 import { getNavigationItem } from '../navigation/navigationData';
 
 export function useSubpageEffect(title: string) {

@@ -8,7 +8,7 @@ const {
 } = require('../../lib/ensureLogin/ensureLoggedIn');
 const UI = require('../controllers/ui/ui_controller');
 const { index } = require('../controllers/ui/index');
-const { admin, admin2 } = require('../controllers/ui/admin');
+// const { admin, admin2 } = require('../controllers/ui/admin');
 const { runs } = require('../controllers/ui/runs');
 const API = require('../controllers/api/api_controller');
 
@@ -69,14 +69,14 @@ module.exports = async (app) => {
             UI.diffView(req, res)
                 .catch(next);
         })
-        .get('/admin', ensureLoggedIn(), (req, res, next) => {
-            admin(req, res)
-                .catch(next);
-        })
-        .get('/admin2/*', ensureLoggedIn(), (req, res, next) => {
-            admin2(req, res, next)
-                .catch(next);
-        })
+        // .get('/admin', ensureLoggedIn(), (req, res, next) => {
+        //     admin(req, res)
+        //         .catch(next);
+        // })
+        // .get('/admin2/*', ensureLoggedIn(), (req, res, next) => {
+        //     admin2(req, res, next)
+        //         .catch(next);
+        // })
         .get('/users', ensureLoggedIn(), async (req, res, next) => {
             API.getUsers(req, res)
                 .catch(next);
