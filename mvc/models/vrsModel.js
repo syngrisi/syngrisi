@@ -451,7 +451,6 @@ TestSchema.plugin(paginate);
  */
 UserSchema.statics.isEmailTaken = async function (username, excludeUserId) {
     const user = await this.findOne({ username, _id: { $ne: excludeUserId } });
-    log.warn(user);
     return !!user;
 };
 
