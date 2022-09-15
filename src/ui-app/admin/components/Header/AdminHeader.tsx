@@ -1,17 +1,21 @@
 import {
-    Autocomplete,
     Breadcrumbs,
     Burger,
     Container,
     Group,
     Header,
+    Kbd,
     Paper,
+    Button,
+    useMantineTheme,
+    Text,
 } from '@mantine/core';
 import * as React from 'react';
 import { useDisclosure } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons';
 import { createStyles } from '@mantine/styles';
 import { useContext } from 'react';
+import { openSpotlight } from '@mantine/spotlight';
 import useColorScheme from '../../../shared/hooks/useColorSheme';
 import ToggleThemeButton from '../../../shared/components/ToggleThemeButton';
 import HeaderLogo from './HeaderLogo';
@@ -70,7 +74,7 @@ const useStyles = createStyles((theme) => ({
 
 const links = [
     { label: 'Dashboard', link: '/' },
-    { label: 'Admin Panel', link: '/admin2/' },
+    { label: 'Admin Panel', link: '/admin/' },
 ];
 
 export default function AdminHeader() {
@@ -90,6 +94,7 @@ export default function AdminHeader() {
     ));
 
     const { toolbar, breadCrumbs }: any = useContext(AppContext);
+    const theme = useMantineTheme();
 
     return (
         <Header
@@ -109,12 +114,41 @@ export default function AdminHeader() {
                     <Group ml={50} spacing={5} className={classes.links}>
                         {items}
                     </Group>
-                    <Autocomplete
-                        className={classes.search}
-                        placeholder="Search"
-                        icon={<IconSearch size={16} stroke={1.5} />}
-                        data={['React', 'Angular', 'Vue', 'Next.js', 'Riot.js', 'Svelte', 'Blitz.js']}
-                    />
+                    <Button
+                        onClick={() => openSpotlight()}
+                        variant="default"
+                        sx={{ minWidth: 200, display: 'flex' }}
+                        pl={12}
+                        pr={8}
+                        styles={
+                            {
+                                root: {
+                                    backgroundColor: theme.colorScheme === 'dark'
+                                        ? theme.colors.dark[6]
+                                        : theme.colors.gray[0],
+                                    '&:hover': {
+                                        backgroundColor: theme.colorScheme === 'dark'
+                                            ? theme.colors.dark[6]
+                                            : theme.colors.gray[0],
+                                    },
+                                },
+                            }
+                        }
+                    >
+                        <Group position="apart" sx={{ minWidth: 200 }}>
+                            <Group>
+                                <IconSearch size={16} stroke={1} />
+                                <Text color="dimmed" weight={400}>Search</Text>
+                            </Group>
+
+                            <Kbd
+                                sx={{ fontSize: 11, borderBottomWidth: 1 }}
+                            >
+                                ⌘ + K
+                            </Kbd>
+                        </Group>
+
+                    </Button>
 
                     <Group spacing={7}>
                         <UserMenu />

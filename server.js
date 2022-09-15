@@ -104,7 +104,7 @@ const routes2 = require('./src/routes/v1');
 app.use('/v1', routes2);
 
 app.use('/auth', require('./src/routes/ui/auth'));
-app.use('/admin2', require('./src/routes/ui/admin'));
+app.use('/admin*', require('./src/routes/ui/admin'));
 
 routes(app); // register the route
 
@@ -128,7 +128,7 @@ log.info('Load devices list', this);
 global.devices = require('./src/data/devices.json');
 
 if (fs.existsSync('./src/data/custom_devices.json')) {
-    [...global.devices, ...require('./src/data/custom_devices.json')];
+    global.devices = [...global.devices, ...require('./src/data/custom_devices.json')];
 }
 
 log.info(`Syngrisi version: ${global.version} started at 'http://localhost:${config.port}'`, this);

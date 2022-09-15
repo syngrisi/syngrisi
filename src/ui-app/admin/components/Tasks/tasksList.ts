@@ -54,6 +54,6 @@ export const tasksList: ITask[] = [
 export const taskLinks = tasksList.map(
     (task) => ({
         label: task.label,
-        link: `/admin2/tasks/${task.name}`,
+        link: `/admin/tasks/${task.name}`,
     }),
 );

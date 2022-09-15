@@ -24,7 +24,7 @@ const syngrisiTheme: MantineThemeOverride = {
     // primaryColor: 'success',
 };
 
-document.location.href = '/admin2/';
+document.location.href = 'admin/';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <BrowserRouter>
