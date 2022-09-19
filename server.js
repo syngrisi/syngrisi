@@ -34,7 +34,7 @@ global.AppSettings = new AppSettings();
 const { config } = require('./config');
 const { Logger } = require('./lib/logger');
 
-const { disableCors } = require('./src/utils/middlewares/disableCors');
+const { disableCors } = require('./src/middlewares/disableCors');
 
 global.log = new Logger({ dbConnectionString: config.connectionString });
 this.logMeta = { scope: 'entrypoint' };
@@ -119,6 +119,7 @@ app.listen(config.port, async () => {
     startUp.createTempDir();
     await startUp.createBasicUsers();
     await startUp.createInitialSettings();
+    if (process.env.SYNGRISI_TEST_MODE === '1') await startUp.createTestsUsers();
 });
 
 log.info('Get Application version', this);

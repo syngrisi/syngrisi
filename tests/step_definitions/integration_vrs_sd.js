@@ -181,13 +181,13 @@ Then(/^I expect HTML( does not|) contains:$/, function (mode, text) {
             .getPageSource();
         expect(source)
             .not
-            .toContain(text);
+            .toContain(text.trim());
         return;
     }
     const source = browser
         .getPageSource();
     expect(source)
-        .toContain(text);
+        .toContain(text.trim());
 });
 
 When(/^I wait and refresh page on element "([^"]*)" for "([^"]*)" seconds to( not)* (exist)$/, { timeout: 600000 },
@@ -261,7 +261,7 @@ When(/^I expect that element "([^"]*)" (not |)contain text "([^"]*)"$/, (selecto
 
 Then(/^page source match:$/, (source) => {
     const parsedExpectedObj = JSON.parse(source);
-    let parseActualObj = {};
+    let parseActualObj;
     if ($('pre')
         .isExisting()) {
         parseActualObj = JSON.parse($('pre')
