@@ -1,6 +1,7 @@
 const express = require('express');
 const { userController } = require('../../controllers');
 const { ensureLoggedIn } = require('../../../lib/ensureLogin/ensureLoggedIn');
+const { authorization } = require('../../middlewares/authorization');
 
 const router = express.Router();
 
@@ -9,12 +10,28 @@ router.get('/current', userController.current);
 
 router
     .route('/')
-    .post(ensureLoggedIn(), userController.createUser)
-    .get(ensureLoggedIn(), userController.getUsers);
+    .post(
+        ensureLoggedIn(),
+        authorization('admin'),
+        userController.createUser
+    )
+    .get(
+        ensureLoggedIn(),
+        authorization('admin'),
+        userController.getUsers
+    );
 
 router
     .route('/:userId')
-    .patch(ensureLoggedIn(), userController.updateUser)
-    .delete(ensureLoggedIn(), userController.deleteUser);
+    .patch(
+        ensureLoggedIn(),
+        authorization('admin'),
+        userController.updateUser
+    )
+    .delete(
+        ensureLoggedIn(),
+        authorization('admin'),
+        userController.deleteUser
+    );
 
 module.exports = router;
