@@ -32,7 +32,7 @@ export function StringFilter({ label, groupRules, updateGroupRules, id }: Props)
             <Group align="start" noWrap>
                 <SafeSelect
                     label=""
-                    data-test="string-filter-operators"
+                    data-test="table-filter-operator"
                     sx={{ width: '130px' }}
                     optionsData={[
                         { value: 'eq', label: 'equals' },
@@ -43,6 +43,7 @@ export function StringFilter({ label, groupRules, updateGroupRules, id }: Props)
                     {...form.getInputProps('operator')}
                 />
                 <TextInput
+                    data-test="table-filter-value"
                     label=""
                     title={form.getInputProps('value').value}
                     placeholder="value"

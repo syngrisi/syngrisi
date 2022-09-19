@@ -34,7 +34,7 @@ export function DateFilter({ label, groupRules, updateGroupRules, id }: Props) {
             <Group align="start" noWrap>
                 <SafeSelect
                     label=""
-                    data-test="string-filter-operators"
+                    data-test="table-filter-operator"
                     sx={{ width: '130px' }}
                     optionsData={[
                         { value: 'lt', label: 'less than' },
@@ -43,6 +43,7 @@ export function DateFilter({ label, groupRules, updateGroupRules, id }: Props) {
                     {...form.getInputProps('operator')}
                 />
                 <DatePicker
+                    data-test="table-filter-value"
                     title={form.getInputProps('value').value}
                     placeholder="value"
                     {...form.getInputProps('value')}

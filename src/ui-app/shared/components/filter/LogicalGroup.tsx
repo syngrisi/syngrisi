@@ -12,6 +12,7 @@ interface Props {
     groupsData: any
     removeGroupsData: any
     children?: any
+    testAttr: string,
 }
 
 const initGroupObject: { [key: string]: any } = {
@@ -21,7 +22,7 @@ const initGroupObject: { [key: string]: any } = {
     },
 };
 
-function LogicalGroup({ fields, id, setGroupsData, groupsData, removeGroupsData, children = '' }: Props) {
+function LogicalGroup({ fields, id, setGroupsData, groupsData, removeGroupsData, testAttr, children = '' }: Props) {
     const updateGroupRules = (key: string, value: any) => {
         setGroupsData((prev: any) => {
             const newGroupsObject = { ...prev };
@@ -59,8 +60,9 @@ function LogicalGroup({ fields, id, setGroupsData, groupsData, removeGroupsData,
     };
 
     const rules = Object.keys(groupsData[id]['rules']).map(
-        (key: string) => (
+        (key: string, index: number) => (
             <FilterWrapper
+                testAttr={`filter-rule-${index}`}
                 fields={fields}
                 groupRules={groupsData[id]['rules']}
                 updateGroupRules={updateGroupRules}
@@ -72,7 +74,13 @@ function LogicalGroup({ fields, id, setGroupsData, groupsData, removeGroupsData,
     );
     const theme = useMantineTheme();
     return (
-        <Paper withBorder mt={24} p={16} sx={{ position: 'relative' }}>
+        <Paper
+            data-test={testAttr}
+            withBorder
+            mt={24}
+            p={16}
+            sx={{ position: 'relative' }}
+        >
             <Box
                 pl={4}
                 pr={4}
@@ -91,8 +99,23 @@ function LogicalGroup({ fields, id, setGroupsData, groupsData, removeGroupsData,
                     onChange={updateGroupOperator}
                     spacing={6}
                 >
-                    <Chip size="sm" checked={groupsData[id]['operator'] === 'and'} value="$and">And</Chip>
-                    <Chip size="sm" ml={0} checked={groupsData[id]['operator'] === 'or'} value="$or">Or</Chip>
+                    <Chip
+                        data-test="filter-group-operator-and"
+                        size="sm"
+                        checked={groupsData[id]['operator'] === 'and'}
+                        value="$and"
+                    >
+                        And
+                    </Chip>
+                    <Chip
+                        data-test="filter-group-operator-or"
+                        size="sm"
+                        ml={0}
+                        checked={groupsData[id]['operator'] === 'or'}
+                        value="$or"
+                    >
+                        Or
+                    </Chip>
                 </Chip.Group>
             </Box>
 
@@ -113,6 +136,7 @@ function LogicalGroup({ fields, id, setGroupsData, groupsData, removeGroupsData,
 
             <Group position="right" spacing={8} mt={2} sx={{ width: '100%' }}>
                 <Button
+                    data-test="table-filter-add-rule-button"
                     title="Add filter rule"
                     compact
                     onClick={() => updateGroupRules(uuid(), {})}
@@ -129,6 +153,7 @@ function LogicalGroup({ fields, id, setGroupsData, groupsData, removeGroupsData,
                     && (
                         <Button
                             size="sm"
+                            data-test="table-filter-add-group-button"
                             compact
                             onClick={() => updateGroupsData(uuid(), initGroupObject)}
                             title="Add another group"

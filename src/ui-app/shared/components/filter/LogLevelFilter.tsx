@@ -18,7 +18,7 @@ interface Props {
 export function LogLevelFilter({ label, groupRules, updateGroupRules, id }: Props) {
 
     const distinctQuery = useQuery(
-        ['logs_level_distinct'],
+        ['logs_level_distinct', id],
         () => LogsService.distinct('level'),
         {
             enabled: true,
@@ -59,7 +59,7 @@ export function LogLevelFilter({ label, groupRules, updateGroupRules, id }: Prop
             <Group align="start" noWrap>
                 <SafeSelect
                     label=""
-                    data-test="string-filter-operators"
+                    data-test="table-filter-operator"
                     sx={{ width: '130px' }}
                     optionsData={[
                         { value: 'eq', label: 'equals' },
@@ -71,8 +71,7 @@ export function LogLevelFilter({ label, groupRules, updateGroupRules, id }: Prop
                 />
 
                 <SafeSelect
-                    label=""
-                    data-test="string-filter-operators"
+                    data-test="table-filter-value"
                     sx={{ width: '130px' }}
                     title={form.getInputProps('value').value}
                     optionsData={levels}

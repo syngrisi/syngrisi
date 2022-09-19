@@ -44,16 +44,16 @@ export default function AdminLogs() {
     useNavProgressFetchEffect(infinityQuery.isFetching);
 
     const [visibleFields, setVisibleFields] = useLocalStorage({
-        key: 'visibleFields', defaultValue: ['hostname', 'level', 'message', 'timestamp'],
+        key: 'visibleFields', defaultValue: ['_id', 'level', 'message', 'timestamp', 'meta.user'],
     });
 
     useEffect(function oneTime() {
         firstPageQuery.refetch();
         updateToolbar(
             <ActionIcon
-                title="Sort table"
+                title="Table settings, sorting, and columns visibility"
                 color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
-
+                data-test="table-sorting"
                 variant="subtle"
                 onClick={() => {
                     setSortOpen((prev) => !prev)
@@ -61,14 +61,14 @@ export default function AdminLogs() {
             >
                 <IconAdjustments stroke={1} size={24} />
             </ActionIcon>,
-            3
+            48
         );
 
         updateToolbar(
             <ActionIcon
-                title="Filter"
+                title="Filter the Table Data"
                 color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
-
+                data-test="table-filtering"
                 variant="subtle"
                 onClick={() => {
                     setFilterOpen((prev) => !prev)
@@ -76,7 +76,7 @@ export default function AdminLogs() {
             >
                 <IconFilter size={24} stroke={1} />
             </ActionIcon>,
-            2
+            47
         );
     }, []);
 
@@ -84,7 +84,7 @@ export default function AdminLogs() {
         updateToolbar(
             <RefreshActionIcon key="reload" newestItemsQuery={newestItemsQuery} firstPageQuery={firstPageQuery}
                                infinityQuery={infinityQuery} />,
-            5
+            50
         );
     }, [newestItemsQuery?.data?.results.length, newestItemsQuery.status, theme.colorScheme]);
 

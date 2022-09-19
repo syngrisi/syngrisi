@@ -23203,15 +23203,6 @@ const tasksList = [
     ]
   },
   {
-    label: "Test",
-    name: "test",
-    description: "\u26A0\uFE0FTest description",
-    inputs: [
-      { name: "days", label: "Check older that (days)", type: "TextInput", default: 180 },
-      { name: "remove", label: "Remove", type: "Checkbox", default: false }
-    ]
-  },
-  {
     label: "Handle Database Consistency",
     name: "handle_database_consistency",
     description: "Checks and removes non-consistent items",
@@ -23973,6 +23964,14 @@ function UserAddForm({
       mt: "lg",
       noWrap: true,
       children: [/* @__PURE__ */ jsx(Button, {
+        onClick: () => setAddUser(false),
+        leftIcon: /* @__PURE__ */ jsx(aze, {
+          size: 18
+        }),
+        color: "red",
+        variant: "light",
+        children: "Cancel"
+      }), /* @__PURE__ */ jsx(Button, {
         id: "create",
         type: "submit",
         title: "Create new User",
@@ -23980,12 +23979,6 @@ function UserAddForm({
           size: 18
         }),
         children: "Create"
-      }), /* @__PURE__ */ jsx(Button, {
-        onClick: () => setAddUser(false),
-        leftIcon: /* @__PURE__ */ jsx(aze, {
-          size: 18
-        }),
-        children: "Cancel"
       })]
     })]
   });
@@ -24017,7 +24010,7 @@ function AdminUsers() {
         stroke: 1,
         size: 24
       })
-    }), 5);
+    }), 50);
   }, []);
   const [addUser, setAddUser] = react.exports.useState(false);
   const useStyles2 = createStyles(() => ({
@@ -24202,8 +24195,7 @@ function Boolean$1({
     initialValues: {
       value,
       enabled
-    },
-    validate: {}
+    }
   });
   const handleSubmit = (values2) => {
     updateSetting.mutate(values2);
@@ -24214,25 +24206,28 @@ function Boolean$1({
       name
     })),
     children: [/* @__PURE__ */ jsx(Title, {
+      size: "sm",
       pb: 20,
       children: label
     }), /* @__PURE__ */ jsxs(Group, {
       spacing: "xl",
       children: [/* @__PURE__ */ jsx(SafeSelect, {
+        "data-test": `settings_value_${name}`,
         sx: {
           width: "130px"
         },
-        size: "lg",
+        size: "md",
         optionsData: [{
-          value: true,
+          value: "true",
           label: "true"
         }, {
-          value: false,
+          value: "false",
           label: "false"
         }],
         ...form.getInputProps("value")
       }), /* @__PURE__ */ jsx(Checkbox, {
-        size: "xl",
+        "data-test": `settings_enabled_${name}`,
+        size: "md",
         label: "enabled",
         ...form.getInputProps("enabled", {
           type: "checkbox"
@@ -24245,6 +24240,7 @@ function Boolean$1({
       mt: "md",
       children: /* @__PURE__ */ jsx(Button, {
         type: "submit",
+        "data-test": `settings_update_button_${name}`,
         children: "Update"
       })
     })]
@@ -24337,6 +24333,7 @@ const RefreshActionIcon = ({
   return /* @__PURE__ */ jsx(Fragment, {
     children: /* @__PURE__ */ jsxs(ActionIcon, {
       color: theme.colorScheme === "dark" ? "green.8" : "green.6",
+      "data-test": "table-refresh-icon",
       variant: "subtle",
       onClick: () => firstPageQuery.refetch(),
       children: [/* @__PURE__ */ jsx(Xne, {
@@ -24352,6 +24349,7 @@ const RefreshActionIcon = ({
         color: "red",
         variant: "filled",
         radius: "xl",
+        "data-test": "table-refresh-icon-badge",
         sx: {
           fontSize: "12px",
           position: "absolute",
@@ -24623,35 +24621,59 @@ function useInView(_temp) {
 }
 const adminLogsTableColumns = {
   _id: {
+    label: "Id",
     headStyle: { width: "15%" },
     cellStyle: { width: "15%" },
     type: "IdFilter"
   },
   hostname: {
+    label: "Hostname",
     headStyle: { width: "10%" },
     cellStyle: { width: "10%" },
     type: "StringFilter"
   },
   level: {
+    label: "Level",
     headStyle: { width: "5%" },
     cellStyle: { width: "5%" },
     type: "LogLevelFilter"
   },
   message: {
+    label: "Message",
     headStyle: { width: "auto" },
     cellStyle: {
       width: "auto"
     },
     type: "StringFilter"
   },
+  "meta.user": {
+    label: "User",
+    headStyle: { width: "10%" },
+    cellStyle: { width: "10%" },
+    type: "StringFilter"
+  },
+  "meta.scope": {
+    label: "Scope",
+    headStyle: { width: "10%" },
+    cellStyle: { width: "10%" },
+    type: "StringFilter"
+  },
+  "meta.msgType": {
+    label: "Type",
+    headStyle: { width: "10%" },
+    cellStyle: { width: "10%" },
+    type: "StringFilter"
+  },
   timestamp: {
+    label: "Timestamp",
     headStyle: { width: "15%" },
     cellStyle: { width: "15%" },
     type: "DateFilter"
   }
 };
 const InfinityScrollSkeleton = ({
-  infinityQuery
+  infinityQuery,
+  visibleFields
 }) => {
   const {
     ref,
@@ -24677,13 +24699,13 @@ const InfinityScrollSkeleton = ({
           height: 20,
           radius: "sm"
         })
-      }), Object.keys(adminLogsTableColumns).map((name) => {
-        if (!adminLogsTableColumns[name].visible)
-          return;
-        if (name === "level")
+      }), Object.keys(adminLogsTableColumns).map((column) => {
+        if (!visibleFields.includes(column))
+          return void 0;
+        if (column === "level")
           return /* @__PURE__ */ jsx("td", {
             style: {
-              ...adminLogsTableColumns[name].cellStyle,
+              ...adminLogsTableColumns[column].cellStyle,
               paddingLeft: "8px"
             },
             children: /* @__PURE__ */ jsx(Skeleton, {
@@ -24691,10 +24713,10 @@ const InfinityScrollSkeleton = ({
               circle: true,
               radius: "xl"
             })
-          }, name);
+          }, column);
         return /* @__PURE__ */ jsx("td", {
           style: {
-            ...adminLogsTableColumns[name].cellStyle,
+            ...adminLogsTableColumns[column].cellStyle,
             paddingLeft: 5,
             paddingRight: 25
           },
@@ -24702,7 +24724,7 @@ const InfinityScrollSkeleton = ({
             height: 16,
             radius: "md"
           })
-        }, name);
+        }, column);
       })]
     }, x))
   });
@@ -24723,6 +24745,7 @@ function PagesCountAffix({
       transition: "slide-up",
       mounted: isMounted,
       children: (transitionStyles) => /* @__PURE__ */ jsxs(Button, {
+        "data-test": "infinity-scroll-affix",
         size: "lg",
         color: "dark",
         style: transitionStyles,
@@ -24736,6 +24759,7 @@ function PagesCountAffix({
         },
         children: [/* @__PURE__ */ jsx(Text, {
           size: "sm",
+          "data-test": "infinity-scroll-affix-loaded-count",
           p: 3,
           title: "Loaded",
           children: loaded
@@ -24745,6 +24769,7 @@ function PagesCountAffix({
           children: " / "
         }), /* @__PURE__ */ jsx(Text, {
           size: "sm",
+          "data-test": "infinity-scroll-affix-total-count",
           p: 3,
           title: "Total",
           children: total
@@ -24778,26 +24803,35 @@ const adminLogsCreateStyle = (theme) => ({
 });
 function UnfoldActionIcon({
   expandSelected,
-  collapseSelected
+  collapseSelected,
+  mounted
 }) {
   const theme = useMantineTheme();
   const [foldMode, toggleFoldMode] = useToggle([true, false]);
-  return /* @__PURE__ */ jsx(ActionIcon, {
-    color: theme.colorScheme === "dark" ? "green.8" : "green.6",
-    variant: "subtle",
-    onClick: () => {
-      if (foldMode) {
-        expandSelected();
-      } else {
-        collapseSelected();
-      }
-      toggleFoldMode();
-    },
-    children: foldMode ? /* @__PURE__ */ jsx(Ti, {
-      size: 24,
-      stroke: 1
-    }) : /* @__PURE__ */ jsx(zK, {
-      size: 24
+  return /* @__PURE__ */ jsx(Transition$2, {
+    mounted,
+    transition: "fade",
+    duration: 400,
+    timingFunction: "ease",
+    children: (styles) => /* @__PURE__ */ jsx(ActionIcon, {
+      color: theme.colorScheme === "dark" ? "green.8" : "green.6",
+      "data-test": "folding-table-items",
+      variant: "subtle",
+      onClick: () => {
+        if (foldMode) {
+          expandSelected();
+        } else {
+          collapseSelected();
+        }
+        toggleFoldMode();
+      },
+      style: styles,
+      children: foldMode ? /* @__PURE__ */ jsx(Ti, {
+        size: 24,
+        stroke: 1
+      }) : /* @__PURE__ */ jsx(zK, {
+        size: 24
+      })
     })
   });
 }
@@ -24848,20 +24882,18 @@ const AdminLogsTableRows = ({
     selection.forEach((item) => fold(item));
   };
   react.exports.useEffect(() => {
-    if (selection.length > 0) {
-      updateToolbar(/* @__PURE__ */ jsx(UnfoldActionIcon, {
-        expandSelected,
-        collapseSelected
-      }), 4);
-    } else {
-      updateToolbar("", 4);
-    }
+    updateToolbar(/* @__PURE__ */ jsx(UnfoldActionIcon, {
+      mounted: selection.length > 0,
+      expandSelected,
+      collapseSelected
+    }), 30);
   }, [selection.length]);
   const toggleRow = (id) => setSelection((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
-  return data.pages.map((page) => page.results.map((item) => {
+  return data.pages.map((page) => page.results.map((item, index2) => {
     const selected = selection.includes(item.id);
     return /* @__PURE__ */ jsxs(React.Fragment, {
       children: [/* @__PURE__ */ jsxs("tr", {
+        "data-test": `table_row_${index2}`,
         className: cx({
           [classes.rowSelected]: selected
         }),
@@ -24871,6 +24903,7 @@ const AdminLogsTableRows = ({
         onClick: () => toggleCollapse(item.id),
         children: [/* @__PURE__ */ jsx("td", {
           children: /* @__PURE__ */ jsx(Checkbox, {
+            "test-data": "table-item-checkbox",
             checked: selected,
             onChange: (event) => {
               event.stopPropagation();
@@ -24880,14 +24913,16 @@ const AdminLogsTableRows = ({
               event.stopPropagation();
             }
           })
-        }), Object.keys(adminLogsTableColumns).map((label) => {
-          if (!visibleFields.includes(label))
+        }), Object.keys(adminLogsTableColumns).map((column) => {
+          if (!visibleFields.includes(column))
             return void 0;
-          if (label === "level") {
+          const itemValue = column.includes(".") ? item[column == null ? void 0 : column.split(".")[0]][column.split(".")[1]] : item[column];
+          if (column === "level") {
             return /* @__PURE__ */ jsx("td", {
               title: item.level,
+              "data-test": `table-row-${adminLogsTableColumns[column].label}`,
               style: {
-                ...adminLogsTableColumns[label].cellStyle,
+                ...adminLogsTableColumns[column].cellStyle,
                 paddingLeft: "2px"
               },
               children: /* @__PURE__ */ jsx(RingProgress, {
@@ -24897,24 +24932,25 @@ const AdminLogsTableRows = ({
                 }],
                 size: 48
               })
-            }, label);
+            }, column);
           }
           return /* @__PURE__ */ jsx("td", {
+            "data-test": `table-row-${adminLogsTableColumns[column].label}`,
             style: {
-              ...adminLogsTableColumns[label].cellStyle
+              ...adminLogsTableColumns[column].cellStyle
             },
             children: /* @__PURE__ */ jsx(Tooltip, {
-              label: item[label],
+              label: item[column],
               multiline: true,
               children: /* @__PURE__ */ jsx(Text, {
                 lineClamp: 1,
                 sx: {
                   wordBreak: "break-all"
                 },
-                children: item[label]
+                children: itemValue
               })
             })
-          }, label);
+          }, column);
         })]
       }), /* @__PURE__ */ jsx("tr", {
         children: /* @__PURE__ */ jsx("td", {
@@ -24930,15 +24966,16 @@ const AdminLogsTableRows = ({
             pr: 10,
             pt: 10,
             pb: 10,
+            "data-test": "table-item-collapsed-row",
             children: /* @__PURE__ */ jsxs(Paper, {
-              p: 10,
+              p: 20,
               children: [/* @__PURE__ */ jsxs(Text, {
-                size: "md",
+                size: 16,
                 color: logLevelColorMap[item.level],
                 component: "span",
                 children: [item.level, ": "]
               }), /* @__PURE__ */ jsx(Text, {
-                size: "md",
+                size: 16,
                 sx: {
                   wordBreak: "break-all"
                 },
@@ -24967,22 +25004,25 @@ function AdminLogsTableHeads({
         width: "1%"
       },
       children: /* @__PURE__ */ jsx(Checkbox, {
+        "data-test": "table-select-all",
+        title: "Select all items",
         onChange: toggleAllRows,
         checked: selection.length === data.length,
         indeterminate: selection.length > 0 && selection.length !== data.length,
         transitionDuration: 0
       })
-    }), Object.keys(adminLogsTableColumns).map((name) => {
-      if (visibleFields.includes(name)) {
+    }), Object.keys(adminLogsTableColumns).map((column) => {
+      if (visibleFields.includes(column)) {
         return /* @__PURE__ */ jsx("th", {
           style: {
-            ...adminLogsTableColumns[name].headStyle
+            ...adminLogsTableColumns[column].headStyle
           },
+          "data-test": `table-header-${adminLogsTableColumns[column].label}`,
           children: /* @__PURE__ */ jsx(Text, {
             transform: "capitalize",
-            children: name
+            children: adminLogsTableColumns[column].label
           })
-        }, name);
+        }, column);
       }
       return void 0;
     })]
@@ -25007,6 +25047,7 @@ function AdminLogsTable({
   const toggleAllRows = () => setSelection((current) => current.length === flatData.length ? [] : flatData.map((item) => item.id));
   return /* @__PURE__ */ jsxs(Fragment, {
     children: [/* @__PURE__ */ jsx(ScrollArea.Autosize, {
+      "data-test": "table-scroll-area",
       ref: scrollAreaRef,
       maxHeight: "100vh",
       sx: {
@@ -25045,7 +25086,8 @@ function AdminLogsTable({
             visibleFields
           })
         }), /* @__PURE__ */ jsx(InfinityScrollSkeleton, {
-          infinityQuery
+          infinityQuery,
+          visibleFields
         })]
       })
     }), /* @__PURE__ */ jsx(PagesCountAffix, {
@@ -25112,9 +25154,9 @@ function AdminLogsTableSettings({
   setSearchParams
 }) {
   const [sortOrder, toggleSortOrder] = useToggle(["desc", "asc"]);
-  const [selectOptionsData] = react.exports.useState(() => Object.keys(adminLogsTableColumns).map((item) => ({
-    value: item,
-    label: item.charAt(0).toUpperCase() + item.slice(1)
+  const [selectOptionsData] = react.exports.useState(() => Object.keys(adminLogsTableColumns).map((column) => ({
+    value: column,
+    label: adminLogsTableColumns[column].label
   })));
   const [sortItemValue, setSortItemValue] = useInputState("timestamp");
   react.exports.useEffect(() => {
@@ -25131,13 +25173,14 @@ function AdminLogsTableSettings({
       noWrap: true,
       children: [/* @__PURE__ */ jsx(SafeSelect, {
         label: "Sort by",
-        "data-test": "user-add-role",
+        "data-test": "table-sort-by-select",
         optionsData: selectOptionsData,
         required: false,
         value: sortItemValue,
         onChange: setSortItemValue
       }), /* @__PURE__ */ jsx(ActionIcon, {
         size: 36,
+        "data-test": "table-sort-order",
         title: `sort order is ${sortOrder === "desc" ? "descendant" : "ascendant"}`,
         onClick: () => {
           toggleSortOrder();
@@ -25158,10 +25201,11 @@ function AdminLogsTableSettings({
       value: visibleFields,
       onChange: setVisibleFields,
       multiple: true,
-      children: Object.keys(adminLogsTableColumns).map((field) => /* @__PURE__ */ jsx(Chip, {
-        value: field,
-        children: field.charAt(0).toUpperCase() + field.slice(1)
-      }, field))
+      children: Object.keys(adminLogsTableColumns).map((column) => /* @__PURE__ */ jsx(Chip, {
+        value: column,
+        "data-test": `settings-visible-columns-${adminLogsTableColumns[column].label}`,
+        children: adminLogsTableColumns[column].label
+      }, column))
     })]
   });
 }
@@ -28805,7 +28849,7 @@ function DateFilter({
       noWrap: true,
       children: [/* @__PURE__ */ jsx(SafeSelect, {
         label: "",
-        "data-test": "string-filter-operators",
+        "data-test": "table-filter-operator",
         sx: {
           width: "130px"
         },
@@ -28818,6 +28862,7 @@ function DateFilter({
         }],
         ...form.getInputProps("operator")
       }), /* @__PURE__ */ jsx(DatePicker, {
+        "data-test": "table-filter-value",
         title: form.getInputProps("value").value,
         placeholder: "value",
         ...form.getInputProps("value")
@@ -28848,7 +28893,7 @@ function StringFilter({
       noWrap: true,
       children: [/* @__PURE__ */ jsx(SafeSelect, {
         label: "",
-        "data-test": "string-filter-operators",
+        "data-test": "table-filter-operator",
         sx: {
           width: "130px"
         },
@@ -28867,6 +28912,7 @@ function StringFilter({
         }],
         ...form.getInputProps("operator")
       }), /* @__PURE__ */ jsx(TextInput, {
+        "data-test": "table-filter-value",
         label: "",
         title: form.getInputProps("value").value,
         placeholder: "value",
@@ -28881,7 +28927,7 @@ function LogLevelFilter({
   updateGroupRules,
   id
 }) {
-  const distinctQuery = useQuery(["logs_level_distinct"], () => LogsService.distinct("level"), {
+  const distinctQuery = useQuery(["logs_level_distinct", id], () => LogsService.distinct("level"), {
     enabled: true,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
@@ -28924,7 +28970,7 @@ function LogLevelFilter({
       noWrap: true,
       children: [/* @__PURE__ */ jsx(SafeSelect, {
         label: "",
-        "data-test": "string-filter-operators",
+        "data-test": "table-filter-operator",
         sx: {
           width: "130px"
         },
@@ -28943,8 +28989,7 @@ function LogLevelFilter({
         }],
         ...form.getInputProps("operator")
       }), /* @__PURE__ */ jsx(SafeSelect, {
-        label: "",
-        "data-test": "string-filter-operators",
+        "data-test": "table-filter-value",
         sx: {
           width: "130px"
         },
@@ -28984,7 +29029,7 @@ function IdFilter({
       noWrap: true,
       children: [/* @__PURE__ */ jsx(SafeSelect, {
         label: "",
-        "data-test": "string-filter-operators",
+        "data-test": "table-filter-operator",
         sx: {
           width: "130px"
         },
@@ -29003,7 +29048,7 @@ function IdFilter({
         }],
         ...form.getInputProps("operator")
       }), /* @__PURE__ */ jsx(TextInput, {
-        label: "",
+        "data-test": "table-filter-value",
         title: form.getInputProps("value").value,
         placeholder: "value",
         ...form.getInputProps("value")
@@ -29022,12 +29067,13 @@ function FilterWrapper({
   updateGroupRules,
   removeGroupRule,
   fields,
-  id
+  id,
+  testAttr
 }) {
-  const optionsData = Object.keys(fields).map((item) => {
+  const optionsData = Object.keys(fields).map((column) => {
     return {
-      value: item,
-      label: item.charAt(0).toUpperCase() + item.slice(1)
+      value: column,
+      label: fields[column].label
     };
   });
   const [selectValue, setSelectValue] = useInputState(optionsData[0].value);
@@ -29036,9 +29082,10 @@ function FilterWrapper({
     pt: 16,
     align: "start",
     noWrap: true,
+    "data-test": testAttr,
     children: [/* @__PURE__ */ jsx(SafeSelect, {
       label: "",
-      "data-test": "string-filter-operators",
+      "data-test": "table-filter-column-name",
       sx: {
         width: "130px"
       },
@@ -29050,7 +29097,7 @@ function FilterWrapper({
       groupRules,
       updateGroupRules,
       id
-    }, selectValue), !id.includes("initialFilterKey1") ? /* @__PURE__ */ jsx(ActionIcon, {
+    }, selectValue), testAttr !== "filter-rule-0" ? /* @__PURE__ */ jsx(ActionIcon, {
       color: "red",
       variant: "light",
       onClick: () => removeGroupRule(id),
@@ -29062,7 +29109,7 @@ function FilterWrapper({
       })
     }) : /* @__PURE__ */ jsx(Box, {
       sx: {
-        width: 22
+        width: 18
       }
     })]
   });
@@ -29079,6 +29126,7 @@ function LogicalGroup({
   setGroupsData,
   groupsData,
   removeGroupsData,
+  testAttr,
   children = ""
 }) {
   const updateGroupRules = (key, value) => {
@@ -29126,7 +29174,8 @@ function LogicalGroup({
       [key]: value
     }));
   };
-  const rules = Object.keys(groupsData[id]["rules"]).map((key) => /* @__PURE__ */ jsx(FilterWrapper, {
+  const rules = Object.keys(groupsData[id]["rules"]).map((key, index2) => /* @__PURE__ */ jsx(FilterWrapper, {
+    testAttr: `filter-rule-${index2}`,
     fields,
     groupRules: groupsData[id]["rules"],
     updateGroupRules,
@@ -29135,6 +29184,7 @@ function LogicalGroup({
   }, key));
   const theme = useMantineTheme();
   return /* @__PURE__ */ jsxs(Paper, {
+    "data-test": testAttr,
     withBorder: true,
     mt: 24,
     p: 16,
@@ -29158,11 +29208,13 @@ function LogicalGroup({
         onChange: updateGroupOperator,
         spacing: 6,
         children: [/* @__PURE__ */ jsx(Chip, {
+          "data-test": "filter-group-operator-and",
           size: "sm",
           checked: groupsData[id]["operator"] === "and",
           value: "$and",
           children: "And"
         }), /* @__PURE__ */ jsx(Chip, {
+          "data-test": "filter-group-operator-or",
           size: "sm",
           ml: 0,
           checked: groupsData[id]["operator"] === "or",
@@ -29192,6 +29244,7 @@ function LogicalGroup({
         width: "100%"
       },
       children: [/* @__PURE__ */ jsx(Button, {
+        "data-test": "table-filter-add-rule-button",
         title: "Add filter rule",
         compact: true,
         onClick: () => updateGroupRules(uuid(), {}),
@@ -29207,6 +29260,7 @@ function LogicalGroup({
         children: "Rule"
       }), id === "mainGroup" && /* @__PURE__ */ jsx(Button, {
         size: "sm",
+        "data-test": "table-filter-add-group-button",
         compact: true,
         onClick: () => updateGroupsData(uuid(), initGroupObject),
         title: "Add another group",
@@ -29282,7 +29336,8 @@ function AdminLogsTableFilter({
   const applyFilter = () => {
     SearchParams.changeFiltering(searchParams, setSearchParams, JSON.stringify(createFilterObject()));
   };
-  const groups = Object.keys(groupsData).filter((x) => x !== "mainGroup").map((key) => /* @__PURE__ */ jsx(LogicalGroup, {
+  const groups = Object.keys(groupsData).filter((x) => x !== "mainGroup").map((key, index2) => /* @__PURE__ */ jsx(LogicalGroup, {
+    testAttr: `filter-group-${index2}`,
     fields: adminLogsTableColumns,
     setGroupsData,
     groupsData,
@@ -29310,6 +29365,7 @@ function AdminLogsTableFilter({
         children: [/* @__PURE__ */ jsx(Stack, {
           children: /* @__PURE__ */ jsx(LogicalGroup, {
             id: "mainGroup",
+            testAttr: "filter-main-group",
             fields: adminLogsTableColumns,
             groupsData,
             setGroupsData,
@@ -29321,15 +29377,18 @@ function AdminLogsTableFilter({
           position: "right",
           children: [/* @__PURE__ */ jsx(Button, {
             onClick: () => resetAll(),
+            "data-test": "table-filter-reset",
             variant: "light",
             color: "red",
             children: "Reset"
           }), /* @__PURE__ */ jsx(Button, {
+            "data-test": "table-filter-cancel",
             variant: "light",
             color: "gray",
             onClick: () => setOpen(false),
             children: "Cancel"
           }), /* @__PURE__ */ jsx(Button, {
+            "data-test": "table-filter-apply",
             onClick: () => {
               applyFilter();
             },
@@ -29360,13 +29419,14 @@ function AdminLogs() {
   useNavProgressFetchEffect(infinityQuery.isFetching);
   const [visibleFields, setVisibleFields] = useLocalStorage({
     key: "visibleFields",
-    defaultValue: ["hostname", "level", "message", "timestamp"]
+    defaultValue: ["_id", "level", "message", "timestamp", "meta.user"]
   });
   react.exports.useEffect(function oneTime() {
     firstPageQuery.refetch();
     updateToolbar(/* @__PURE__ */ jsx(ActionIcon, {
-      title: "Sort table",
+      title: "Table settings, sorting, and columns visibility",
       color: theme.colorScheme === "dark" ? "green.8" : "green.6",
+      "data-test": "table-sorting",
       variant: "subtle",
       onClick: () => {
         setSortOpen((prev) => !prev);
@@ -29375,10 +29435,11 @@ function AdminLogs() {
         stroke: 1,
         size: 24
       })
-    }), 3);
+    }), 48);
     updateToolbar(/* @__PURE__ */ jsx(ActionIcon, {
-      title: "Filter",
+      title: "Filter the Table Data",
       color: theme.colorScheme === "dark" ? "green.8" : "green.6",
+      "data-test": "table-filtering",
       variant: "subtle",
       onClick: () => {
         setFilterOpen((prev) => !prev);
@@ -29387,14 +29448,14 @@ function AdminLogs() {
         size: 24,
         stroke: 1
       })
-    }), 2);
+    }), 47);
   }, []);
   react.exports.useEffect(function addReloadIcon() {
     updateToolbar(/* @__PURE__ */ jsx(RefreshActionIcon, {
       newestItemsQuery,
       firstPageQuery,
       infinityQuery
-    }, "reload"), 5);
+    }, "reload"), 50);
   }, [(_a = newestItemsQuery == null ? void 0 : newestItemsQuery.data) == null ? void 0 : _a.results.length, newestItemsQuery.status, theme.colorScheme]);
   react.exports.useEffect(() => {
     firstPageQuery.refetch();

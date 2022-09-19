@@ -1,5 +1,4 @@
 /* eslint-disable valid-jsdoc */
-// const httpStatus = require('http-status');
 const mongoose = require('mongoose');
 
 const Log = mongoose.model('VRSLog');
@@ -20,17 +19,22 @@ $this.logMeta = {
  * @param {number} [options.page] - Current page (default = 1)
  * @returns {Promise<QueryResult>}
  */
-const queryLogs = async (filter, options) => {
-    const users = await Log.paginate(filter, options);
-    return users;
-};
+const queryLogs = async (filter, options) => Log.paginate(filter, options);
 
-const distinct = async (field) => {
-    const result = await Log.distinct(field);
-    return result;
+const distinct = async (field) => Log.distinct(field);
+
+const createLogs = async (body) => {
+    log[body.level || 'debug'](body.message,
+        {
+            user: body.user,
+            scope: body.scope || 'test_scope',
+            msgType: body.msgType || 'TEST_MSG_TYPE',
+        });
+    return { message: 'success' };
 };
 
 module.exports = {
     queryLogs,
     distinct,
+    createLogs,
 };

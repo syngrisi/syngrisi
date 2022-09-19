@@ -36,6 +36,7 @@ Feature: Update User
     Scenario: Update User - Success
         When I open the app
         When I go to "admin2" page
+        When I wait on element "//*[@data-test='j_doe@gmail.com']//button[@data-test='user-list-update-button']" to be displayed
         When I click on the element "//*[@data-test='j_doe@gmail.com']//button[@data-test='user-list-update-button']"
         When I set "Alex" to the inputfield "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-first-name']"
         When I set "Jonson" to the inputfield "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-last-name']"

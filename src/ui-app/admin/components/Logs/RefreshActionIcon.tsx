@@ -17,7 +17,7 @@ const RefreshActionIcon: FunctionComponent<Props> = ({ newestItemsQuery, firstPa
         <>
             <ActionIcon
                 color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
-
+                data-test="table-refresh-icon"
                 variant="subtle"
                 onClick={() => firstPageQuery.refetch()}
             >
@@ -36,9 +36,9 @@ const RefreshActionIcon: FunctionComponent<Props> = ({ newestItemsQuery, firstPa
                             color="red"
                             variant="filled"
                             radius="xl"
+                            data-test="table-refresh-icon-badge"
                             sx={{
                                 fontSize: '12px',
-                                // height: '16px!important',
                                 position: 'absolute',
                                 bottom: 11,
                                 left: 14,

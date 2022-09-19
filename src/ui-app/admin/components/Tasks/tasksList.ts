@@ -23,15 +23,15 @@ export const tasksList: ITask[] = [
             { name: 'remove', label: 'Remove', type: 'Checkbox', default: false },
         ],
     },
-    {
-        label: 'Test',
-        name: 'test',
-        description: '⚠️Test description',
-        inputs: [
-            { name: 'days', label: 'Check older that (days)', type: 'TextInput', default: 180 },
-            { name: 'remove', label: 'Remove', type: 'Checkbox', default: false },
-        ],
-    },
+    // {
+    //     label: 'Test',
+    //     name: 'test',
+    //     description: '⚠️Test description',
+    //     inputs: [
+    //         { name: 'days', label: 'Check older that (days)', type: 'TextInput', default: 180 },
+    //         { name: 'remove', label: 'Remove', type: 'Checkbox', default: false },
+    //     ],
+    // },
     {
         label: 'Handle Database Consistency',
         name: 'handle_database_consistency',

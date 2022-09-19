@@ -101,8 +101,9 @@ function AdminLogsTableFilter(
     const groups = Object.keys(groupsData)
         .filter((x) => x !== 'mainGroup')
         .map(
-            (key) => (
+            (key, index) => (
                 <LogicalGroup
+                    testAttr={`filter-group-${index}`}
                     fields={adminLogsTableColumns}
                     setGroupsData={setGroupsData}
                     groupsData={groupsData}
@@ -130,6 +131,7 @@ function AdminLogsTableFilter(
                     <Stack>
                         <LogicalGroup
                             id="mainGroup"
+                            testAttr="filter-main-group"
                             fields={adminLogsTableColumns}
                             groupsData={groupsData}
                             setGroupsData={setGroupsData}
@@ -140,11 +142,27 @@ function AdminLogsTableFilter(
                     </Stack>
 
                     <Group mt={24} position="right">
-                        <Button onClick={() => resetAll()} variant="light" color="red">Reset</Button>
-                        <Button variant="light" color="gray" onClick={() => setOpen(false)}>Cancel</Button>
-                        <Button onClick={() => {
-                            applyFilter();
-                        }}
+                        <Button
+                            onClick={() => resetAll()}
+                            data-test="table-filter-reset"
+                            variant="light"
+                            color="red"
+                        >
+                            Reset
+                        </Button>
+                        <Button
+                            data-test="table-filter-cancel"
+                            variant="light"
+                            color="gray"
+                            onClick={() => setOpen(false)}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            data-test="table-filter-apply"
+                            onClick={() => {
+                                applyFilter();
+                            }}
                         >
                             Apply
                         </Button>

@@ -13,6 +13,7 @@ interface Props {
     removeGroupRule: any
     fields: any
     id: string
+    testAttr: string
 }
 
 export function FilterWrapper(
@@ -21,20 +22,26 @@ export function FilterWrapper(
         updateGroupRules,
         removeGroupRule,
         fields,
-        id
+        id,
+        testAttr,
     }: Props
 ) {
-    const optionsData = Object.keys(fields).map((item) => {
-        return { value: item, label: item.charAt(0).toUpperCase() + item.slice(1) }
+    const optionsData = Object.keys(fields).map((column) => {
+        return { value: column, label: fields[column].label }
     })
     const [selectValue, setSelectValue]: [string, any] = useInputState(optionsData[0].value);
     // @ts-ignore
     const Filter = Filters[fields[selectValue].type];
     return (
-        <Group pt={16} align="start" noWrap>
+        <Group
+            pt={16}
+            align="start"
+            noWrap
+            data-test={testAttr}
+        >
             <SafeSelect
                 label=""
-                data-test="string-filter-operators"
+                data-test="table-filter-column-name"
                 sx={{ width: '130px' }}
                 optionsData={optionsData}
                 value={selectValue}
@@ -49,7 +56,7 @@ export function FilterWrapper(
             />
 
             {
-                !id.includes('initialFilterKey1')
+                (testAttr !== 'filter-rule-0')
                     ? (
                         <ActionIcon
                             color="red"
@@ -65,7 +72,7 @@ export function FilterWrapper(
                         </ActionIcon>
                     )
                     : (
-                        <Box sx={{ width: 22 }}>
+                        <Box sx={{ width: 18 }}>
                         </Box>
                     )
             }

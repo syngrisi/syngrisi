@@ -9,7 +9,7 @@ interface IOption {
 }
 
 // select component for selenium
-function SafeSelect({ optionsData, required, loaded=false, ...rest  }: any): ReactElement {
+function SafeSelect({ optionsData, required, loaded = false, ...rest }: any): ReactElement {
     const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         rest.onChange(event.target.value);
     }

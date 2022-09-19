@@ -8,6 +8,8 @@ When(/^I go to "([^"]*)" page$/, (str) => {
         change_password: `http://${browser.config.serverDomain}:${browser.config.serverPort}/auth/change`,
         logout: `http://${browser.config.serverDomain}:${browser.config.serverPort}/auth/logout`,
         admin2: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin`,
+        logs: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin/logs`,
+        settings: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin/settings`,
         admin: {
             users: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin?task=users`,
             tasks: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin?task=tasks`,

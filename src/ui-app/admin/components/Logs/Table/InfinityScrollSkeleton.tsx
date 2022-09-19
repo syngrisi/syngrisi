@@ -5,11 +5,12 @@ import { Skeleton } from '@mantine/core';
 
 interface Props {
     infinityQuery: any,
+    visibleFields: any,
 }
 
 import { adminLogsTableColumns } from './adminLogsTableColumns';
 
-const InfinityScrollSkeleton: FunctionComponent<Props> = ({ infinityQuery }) => {
+const InfinityScrollSkeleton: FunctionComponent<Props> = ({ infinityQuery, visibleFields }) => {
     const { ref, inView } = useInView();
 
     useEffect(() => {
@@ -30,19 +31,20 @@ const InfinityScrollSkeleton: FunctionComponent<Props> = ({ infinityQuery }) => 
 
                     </td>
                     {
-                        Object.keys(adminLogsTableColumns).map((name) => {
-                            if (!adminLogsTableColumns[name].visible) return;
-                            if (name === 'level') return (
-                                <td key={name}
-                                    style={{ ...adminLogsTableColumns[name].cellStyle, paddingLeft: '8px' }}
+                        Object.keys(adminLogsTableColumns).map((column) => {
+                            if (!visibleFields.includes(column)) return undefined;
+
+                            if (column === 'level') return (
+                                <td key={column}
+                                    style={{ ...adminLogsTableColumns[column].cellStyle, paddingLeft: '8px' }}
                                 >
                                     <Skeleton height={34} circle radius="xl" />
                                 </td>
                             )
 
                             return (
-                                <td key={name}
-                                    style={{ ...adminLogsTableColumns[name].cellStyle, paddingLeft: 5, paddingRight: 25 }}
+                                <td key={column}
+                                    style={{ ...adminLogsTableColumns[column].cellStyle, paddingLeft: 5, paddingRight: 25 }}
                                 >
                                     <Skeleton height={16} radius="md" />
                                 </td>

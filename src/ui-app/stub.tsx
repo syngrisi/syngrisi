@@ -1,4 +1,4 @@
-/* eslint-disable max-len */
+/* eslint-disable max-len,react/no-danger */
 import * as React from 'react';
 import * as ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
@@ -24,7 +24,7 @@ const syngrisiTheme: MantineThemeOverride = {
     // primaryColor: 'success',
 };
 
-document.location.href = 'admin/';
+document.location.href = '/admin/';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <BrowserRouter>

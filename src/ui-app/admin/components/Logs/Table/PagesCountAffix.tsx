@@ -18,6 +18,7 @@ function PagesCountAffix({ loaded, total, scrollAreaRef }: Props) {
             >
                 {(transitionStyles) => (
                     <Button
+                        data-test="infinity-scroll-affix"
                         size="lg"
                         color="dark"
                         style={transitionStyles}
@@ -27,9 +28,28 @@ function PagesCountAffix({ loaded, total, scrollAreaRef }: Props) {
                             () => scrollAreaRef?.current?.querySelector('.mantine-ScrollArea-viewport').scroll(0, 0)
                         }
                     >
-                        <Text size="sm" p={3} title="Loaded">{loaded}</Text>
-                        <Text size="sm" p={3}>{' / '}</Text>
-                        <Text size="sm" p={3} title="Total">{total}</Text>
+                        <Text
+                            size="sm"
+                            data-test="infinity-scroll-affix-loaded-count"
+                            p={3}
+                            title="Loaded"
+                        >
+                            {loaded}
+                        </Text>
+                        <Text
+                            size="sm"
+                            p={3}
+                        >
+                            {' / '}
+                        </Text>
+                        <Text
+                            size="sm"
+                            data-test="infinity-scroll-affix-total-count"
+                            p={3}
+                            title="Total"
+                        >
+                            {total}
+                        </Text>
 
                     </Button>
                 )}

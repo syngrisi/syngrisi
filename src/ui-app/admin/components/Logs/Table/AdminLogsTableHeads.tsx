@@ -15,6 +15,8 @@ function AdminLogsTableHeads({ data, toggleAllRows, selection, visibleFields }: 
         <tr>
             <th style={{ width: '1%' }}>
                 <Checkbox
+                    data-test="table-select-all"
+                    title="Select all items"
                     onChange={toggleAllRows}
                     checked={selection.length === data.length}
                     indeterminate={selection.length > 0 && selection.length !== data.length}
@@ -23,15 +25,16 @@ function AdminLogsTableHeads({ data, toggleAllRows, selection, visibleFields }: 
             </th>
             {
                 Object.keys(adminLogsTableColumns).map(
-                    (name) => {
-                        if (visibleFields.includes(name)) {
+                    (column) => {
+                        if (visibleFields.includes(column)) {
                             return (
                                 <th
-                                    key={name}
-                                    style={{ ...adminLogsTableColumns[name].headStyle }}
+                                    key={column}
+                                    style={{ ...adminLogsTableColumns[column].headStyle }}
+                                    data-test={`table-header-${adminLogsTableColumns[column].label}`}
                                 >
                                     <Text transform="capitalize">
-                                        {name}
+                                        {adminLogsTableColumns[column].label}
                                     </Text>
                                 </th>
                             );

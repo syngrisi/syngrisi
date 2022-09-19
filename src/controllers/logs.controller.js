@@ -1,3 +1,4 @@
+const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 const { logsService } = require('../services');
 const pick = require('../utils/pick');
@@ -15,7 +16,14 @@ const distinct = catchAsync(async (req, res) => {
     res.send(result);
 });
 
+const createLog = catchAsync(async (req, res) => {
+    const user = await logsService.createLogs(req.body);
+    res.status(httpStatus.CREATED)
+        .send(user);
+});
+
 module.exports = {
     getLogs,
     distinct,
+    createLog,
 };
