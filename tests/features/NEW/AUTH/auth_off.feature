@@ -13,5 +13,6 @@ Feature: Authentication - off
     Scenario: Login as Guest with redirect
         When I open the url "<syngrisiUrl>admin"
         When I wait for "1" seconds
-        Then I wait on element "*=SG" to be displayed
         Then the current url contains "/admin"
+        When I wait on element "[data-test='user-icon']"
+        Then I expect that element "[data-test='user-icon']" to contain text "SG"

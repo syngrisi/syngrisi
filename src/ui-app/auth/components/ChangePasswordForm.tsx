@@ -43,7 +43,6 @@ export default function ChangePasswordForm() {
         validate: {
             currentPassword: (val) => {
                 if (isFirstRun) return null;
-                // return 'Old password is Empty';
                 return val !== '' ? null : 'Old password is Empty';
             },
             // eslint-disable-next-line no-unused-vars

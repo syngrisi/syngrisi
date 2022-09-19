@@ -30,7 +30,7 @@ export default function UnfoldActionIcon({ expandSelected, collapseSelected, mou
                         }}
                         style={styles}
                     >
-                        {foldMode ? <IconArrowsVertical size={24} stroke={1} /> : <IconFold size={24} />}
+                        {foldMode ? <IconArrowsVertical size={24} stroke={1} /> : <IconFold size={24} stroke={1} />}
                     </ActionIcon>
                 )
             }
