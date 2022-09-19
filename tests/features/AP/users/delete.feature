@@ -36,7 +36,7 @@ Feature: Delete User
     Scenario: Delete User - Success
         When I open the app
         When I go to "admin2" page
-        And I expect that element "//*[@data-test='j_doe@gmail.com']" does exist
+        When I wait on element "//*[@data-test='j_doe@gmail.com']" to be displayed
         When I click on the element "//*[@data-test='j_doe@gmail.com']//button[@data-test='user-list-remove-button']"
         When I click on the element "//*[@data-test='j_doe@gmail.com']//button[@data-test='user-list-remove-button-confirm']"
         When I wait for "2" seconds

@@ -6,7 +6,9 @@ const router = express.Router();
 
 router
     .route('/')
-    .get(ensureLoggedIn(), logsController.getLogs);
+    .get(ensureLoggedIn(), logsController.getLogs)
+    .post(ensureLoggedIn(), logsController.createLog);
+
 router
     .route('/distinct')
     .get(ensureLoggedIn(), logsController.distinct);

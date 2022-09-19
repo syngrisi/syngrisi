@@ -65,17 +65,14 @@ const AdminLogsTableRows = ({ data, selection, setSelection, visibleFields }: Pr
     };
 
     useEffect(() => {
-        if (selection.length > 0) {
-            updateToolbar(
-                <UnfoldActionIcon
-                    expandSelected={expandSelected}
-                    collapseSelected={collapseSelected}
-                />,
-                4,
-            );
-        } else {
-            updateToolbar('', 4);
-        }
+        updateToolbar(
+            <UnfoldActionIcon
+                mounted={selection.length > 0}
+                expandSelected={expandSelected}
+                collapseSelected={collapseSelected}
+            />,
+            30,
+        );
     }, [selection.length]);
 
     const toggleRow = (id: string) => setSelection(
@@ -84,11 +81,12 @@ const AdminLogsTableRows = ({ data, selection, setSelection, visibleFields }: Pr
 
     return data.pages.map((page: IPage<ILog>) => (
         page.results.map(
-            (item: ILog) => {
+            (item: ILog, index: number) => {
                 const selected = selection.includes(item.id!);
                 return (
                     <React.Fragment key={item.id}>
                         <tr
+                            data-test={`table_row_${index}`}
                             className={cx({ [classes.rowSelected]: selected })}
                             style={{ cursor: 'pointer' }}
                             onClick={() => toggleCollapse(item.id!)}
@@ -96,6 +94,7 @@ const AdminLogsTableRows = ({ data, selection, setSelection, visibleFields }: Pr
 
                             <td>
                                 <Checkbox
+                                    test-data="table-item-checkbox"
                                     checked={selected}
                                     onChange={(event) => {
                                         event.stopPropagation();
@@ -109,16 +108,21 @@ const AdminLogsTableRows = ({ data, selection, setSelection, visibleFields }: Pr
                                 />
                             </td>
                             {
-                                Object.keys(adminLogsTableColumns).map((label) => {
-                                    if (!visibleFields.includes(label)) return undefined;
+                                Object.keys(adminLogsTableColumns).map((column: string) => {
+                                    if (!visibleFields.includes(column)) return undefined;
+                                    const itemValue = column.includes('.')
+                                        // @ts-ignore
+                                        ? item[column?.split('.')[0]][column?.split('.')[1]]
+                                        : item[column];
 
-                                    if (label === 'level') {
+                                    if (column === 'level') {
                                         return (
                                             <td
-                                                key={label}
+                                                key={column}
                                                 title={item.level}
+                                                data-test={`table-row-${adminLogsTableColumns[column].label}`}
                                                 style={{
-                                                    ...adminLogsTableColumns[label].cellStyle,
+                                                    ...adminLogsTableColumns[column].cellStyle,
                                                     paddingLeft: '2px',
                                                 }}
                                             >
@@ -135,15 +139,16 @@ const AdminLogsTableRows = ({ data, selection, setSelection, visibleFields }: Pr
 
                                     return (
                                         <td
-                                            key={label}
-                                            style={{ ...adminLogsTableColumns[label].cellStyle }}
+                                            key={column}
+                                            data-test={`table-row-${adminLogsTableColumns[column].label}`}
+                                            style={{ ...adminLogsTableColumns[column].cellStyle }}
                                         >
-                                            <Tooltip label={item[label]} multiline>
+                                            <Tooltip label={item[column]} multiline>
                                                 <Text
                                                     lineClamp={1}
                                                     sx={{ wordBreak: 'break-all' }}
                                                 >
-                                                    {item[label]}
+                                                    {itemValue}
                                                 </Text>
                                             </Tooltip>
                                         </td>
@@ -154,10 +159,17 @@ const AdminLogsTableRows = ({ data, selection, setSelection, visibleFields }: Pr
 
                         <tr>
                             <td style={{ padding: 0, border: 0, width: 'auto' }} colSpan={1000}>
-                                <Collapse in={collapse.includes(item.id!)} pl={10} pr={10} pt={10} pb={10}>
-                                    <Paper p={10}>
+                                <Collapse
+                                    in={collapse.includes(item.id!)}
+                                    pl={10}
+                                    pr={10}
+                                    pt={10}
+                                    pb={10}
+                                    data-test="table-item-collapsed-row"
+                                >
+                                    <Paper p={20}>
                                         <Text
-                                            size="md"
+                                            size={16}
                                             color={logLevelColorMap[item.level!]}
                                             component="span"
                                             // sx={{ display: 'inline-block' }}
@@ -166,7 +178,7 @@ const AdminLogsTableRows = ({ data, selection, setSelection, visibleFields }: Pr
                                             {item.level}{': '}
                                         </Text>
                                         <Text
-                                            size="md"
+                                            size={16}
                                             sx={{ wordBreak: 'break-all' }}
                                             color={logLevelColorMap[item.level!]}
                                             component="span"

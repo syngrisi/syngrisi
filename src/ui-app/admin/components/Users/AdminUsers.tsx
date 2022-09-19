@@ -42,7 +42,7 @@ export default function AdminUsers() {
 
                 <IconRefresh stroke={1} size={24} />
             </ActionIcon>,
-            5,
+            50,
         );
     }, []);
 

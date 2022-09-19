@@ -4,7 +4,8 @@ import { useForm } from '@mantine/form';
 import React from 'react';
 import { ISettingForm, ISettingFormUpdateData } from './interfaces';
 import SafeSelect from '../../../../shared/components/SafeSelect';
-
+// actually this component not represent boolean data,
+// this is string in boolean-like view "true" / "false"
 function Boolean({ name, value, label, description, enabled, updateSetting }: ISettingForm) {
     const form = useForm(
         {
@@ -12,8 +13,6 @@ function Boolean({ name, value, label, description, enabled, updateSetting }: IS
                 value,
                 enabled,
             },
-
-            validate: {},
         },
     );
 
@@ -23,19 +22,21 @@ function Boolean({ name, value, label, description, enabled, updateSetting }: IS
 
     return (
         <form onSubmit={form.onSubmit((values) => handleSubmit({ ...values, name }))}>
-            <Title pb={20}>{label}</Title>
+            <Title size="sm" pb={20}>{label}</Title>
             <Group spacing="xl">
                 <SafeSelect
+                    data-test={`settings_value_${name}`}
                     sx={{ width: '130px' }}
-                    size="lg"
+                    size="md"
                     optionsData={[
-                        { value: true, label: 'true' },
-                        { value: false, label: 'false' },
+                        { value: 'true', label: 'true' },
+                        { value: 'false', label: 'false' },
                     ]}
                     {...form.getInputProps('value')}
                 />
                 <Checkbox
-                    size="xl"
+                    data-test={`settings_enabled_${name}`}
+                    size="md"
                     label="enabled"
                     {...form.getInputProps('enabled', { type: 'checkbox' })}
                 />
@@ -44,7 +45,12 @@ function Boolean({ name, value, label, description, enabled, updateSetting }: IS
             <Text>{description}</Text>
 
             <Group position="right" mt="md">
-                <Button type="submit">Update</Button>
+                <Button
+                    type="submit"
+                    data-test={`settings_update_button_${name}`}
+                >
+                    Update
+                </Button>
             </Group>
         </form>
     );

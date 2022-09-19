@@ -115,15 +115,21 @@ export default function UserAddForm({ setAddUser, refetch }: any) {
 
             <Group spacing="xs" align="flex-end" position="center" mt="lg" noWrap>
                 <Button
+                    onClick={() => setAddUser(false)}
+                    leftIcon={<IconX size={18} />}
+                    color="red"
+                    variant="light"
+                >
+                    Cancel
+                </Button>
+
+                <Button
                     id="create"
                     type="submit"
                     title="Create new User"
                     leftIcon={<IconSend size={18} />}
                 >
                     Create
-                </Button>
-                <Button onClick={() => setAddUser(false)} leftIcon={<IconX size={18} />}>
-                    Cancel
                 </Button>
             </Group>
         </form>

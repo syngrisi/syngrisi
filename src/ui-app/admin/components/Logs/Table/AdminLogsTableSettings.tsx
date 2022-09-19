@@ -34,7 +34,7 @@ function AdminLogsTableSettings(
 ) {
     const [sortOrder, toggleSortOrder] = useToggle(['desc', 'asc']);
     const [selectOptionsData] = useState(() => Object.keys(adminLogsTableColumns)
-        .map((item) => ({ value: item, label: item.charAt(0).toUpperCase() + item.slice(1) })));
+        .map((column) => ({ value: column, label: adminLogsTableColumns[column].label })));
 
     const [sortItemValue, setSortItemValue] = useInputState('timestamp');
 
@@ -52,7 +52,7 @@ function AdminLogsTableSettings(
             <Group align="end" spacing="sm" noWrap>
                 <SafeSelect
                     label="Sort by"
-                    data-test="user-add-role"
+                    data-test="table-sort-by-select"
                     optionsData={selectOptionsData}
                     required={false}
                     value={sortItemValue}
@@ -60,6 +60,7 @@ function AdminLogsTableSettings(
                 />
                 <ActionIcon
                     size={36}
+                    data-test="table-sort-order"
                     title={`sort order is ${sortOrder === 'desc' ? 'descendant' : 'ascendant'}`}
                     onClick={() => {
                         toggleSortOrder();
@@ -78,8 +79,15 @@ function AdminLogsTableSettings(
                 multiple
             >
                 {
-                    Object.keys(adminLogsTableColumns).map((field) => (
-                        <Chip key={field} value={field}>{field.charAt(0).toUpperCase() + field.slice(1)}</Chip>
+                    Object.keys(adminLogsTableColumns).map((column) => (
+                        <Chip
+                            key={column}
+                            value={column}
+                            data-test={`settings-visible-columns-${adminLogsTableColumns[column].label}`}
+
+                        >
+                            {adminLogsTableColumns[column].label}
+                        </Chip>
                     ))
                 }
             </Chip.Group>

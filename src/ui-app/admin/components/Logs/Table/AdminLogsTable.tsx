@@ -40,8 +40,13 @@ export default function AdminLogsTable({ infinityQuery, visibleFields }: any) {
 
     return (
         <>
-            <ScrollArea.Autosize ref={scrollAreaRef} maxHeight={'100vh'} sx={{ width: '100%' }}
-                                 styles={{ scrollbar: { marginTop: '46px' } }}>
+            <ScrollArea.Autosize
+                data-test="table-scroll-area"
+                ref={scrollAreaRef}
+                maxHeight={'100vh'}
+                sx={{ width: '100%' }}
+                styles={{ scrollbar: { marginTop: '46px' } }}
+            >
 
                 <Table sx={{ width: '100%' }} verticalSpacing="sm" highlightOnHover>
                     <thead style={{ zIndex: 100 }}
@@ -62,7 +67,7 @@ export default function AdminLogsTable({ infinityQuery, visibleFields }: any) {
                         visibleFields={visibleFields}
                     />
                     </tbody>
-                    <InfinityScrollSkeleton infinityQuery={infinityQuery} />
+                    <InfinityScrollSkeleton infinityQuery={infinityQuery} visibleFields={visibleFields} />
                 </Table>
             </ScrollArea.Autosize>
             <PagesCountAffix
