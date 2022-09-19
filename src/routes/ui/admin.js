@@ -13,6 +13,8 @@ const adminController = catchAsync(async (req, res) => {
         .sendFile(path.normalize(path.join(`${__dirname}./../../../mvc/views/react/admin/index.html`)));
 });
 
-router.get('*', ensureLoggedIn(), authorization('admin'), adminController);
+router.get('*', ensureLoggedIn(),
+    authorization('admin'),
+    adminController);
 
 module.exports = router;

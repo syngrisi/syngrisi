@@ -10,9 +10,12 @@ $this.logMeta = {
 
 exports.authorization = (type) => {
     const types = {
-        admin: catchAsync((req, res, next) => {
+        admin: catchAsync(async (req, res, next) => {
+            if (!(await global.AppSettings.isAuthEnabled())) {
+                return next();
+            }
             if (req.user?.role === 'admin') {
-                log.warn(`user: '${req.user?.username}' was successfully authorized, type: '${type}'`);
+                log.silly(`user: '${req.user?.username}' was successfully authorized, type: '${type}'`);
                 return next();
             }
             log.warn(`user authorization: '${req.user?.username}' wrong role, type: '${type}'`);
@@ -21,7 +24,7 @@ exports.authorization = (type) => {
     };
     if (types[type]) return types[type];
     return catchAsync(
-        async () => {
+        () => {
             log.error(JSON.stringify(new ApiError(httpStatus.FORBIDDEN, 'Wrong type of authorization')));
             throw new ApiError(httpStatus.FORBIDDEN, 'Authorization Error - wrong type of authorization');
         }
