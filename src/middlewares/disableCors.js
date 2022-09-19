@@ -1,6 +1,6 @@
 // disable CORS for development purposes
 module.exports.disableCors = (req, res, next) => {
-    if (process.env['SYNGRISI_DISABLE_DEV_CORS'] !== '1') return next();
+    if (process.env.SYNGRISI_DISABLE_DEV_CORS !== '1') return next();
     // Website you wish to allow to connect
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
 
@@ -15,5 +15,5 @@ module.exports.disableCors = (req, res, next) => {
     res.setHeader('Access-Control-Allow-Credentials', true);
 
     // Pass to next layer of middleware
-    next();
+    return next();
 };

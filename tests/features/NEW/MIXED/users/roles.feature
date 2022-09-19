@@ -50,7 +50,6 @@ Feature: User roles
             "password": "Password-123"
         }
         """
-
         # admin
         When I create via http user as:"Test" with params:
         """
@@ -62,7 +61,6 @@ Feature: User roles
             "password": "Password-123"
         }
         """
-
 
         ### create checks
         ## user
@@ -111,7 +109,6 @@ Feature: User roles
         When I click on the element "#user-icon"
         When I click on the element "=Sign Out"
         When I wait for "2" seconds
-
 
         ## admin
         # login
@@ -168,7 +165,6 @@ Feature: User roles
         When I click on the element "=Sign Out"
         When I wait for "2" seconds
 
-
         ## admin
         # login
         When I login with user:"superadmin@gmail.com" password "Password-123"
@@ -178,36 +174,3 @@ Feature: User roles
         Then I expect that element "//span[contains(text(), 'User test')]/../../..//span[@name='cell-creator']" does appear exactly "5" times
         Then I expect that element "//span[contains(text(), 'Reviewer test')]/../../..//span[@name='cell-creator']" does appear exactly "7" times
         Then I expect that element "//span[contains(text(), 'Admin test')]/../../..//span[@name='cell-creator' and contains(text(), 'superadmin@gmail.com')]" does appear exactly "3" times
-
-    Scenario: Admin panel access
-        # login as test admin
-        When I login with user:"Test" password "123"
-        Then I wait on element "*=TA" to be displayed
-
-        # create admin
-        When I go to "admin>users" page
-        When I wait for "3" seconds
-        When I click on the element "#add-user"
-        When I set "superadmin@gmail.com" to the inputfield "//input[@placeholder='Username']"
-        When I set "Alex" to the inputfield "//input[@placeholder='First Name']"
-        When I set "Jons" to the inputfield "//input[@placeholder='Last Name']"
-        When I select the option with the text "admin" for element "//select[@new-user-role]"
-        When I set "Password-123" to the inputfield "//input[@placeholder='password']"
-        When I click on the element "a.send-new-user-button"
-
-        When I wait for "2" seconds
-        When I click on the element "#user-icon"
-        When I click on the element "=Sign Out"
-        When I wait for "2" seconds
-
-        # login as created admin
-        When I login with user:"superadmin@gmail.com" password "Password-123"
-        Then I wait on element "*=AJ" to be displayed
-
-        # go to admin panel
-        When I click on the element "a#user-icon"
-        When I wait for "1" seconds
-        When I click on the element "a#admin-panel-link"
-
-        Then the title is "Admin panel"
-        Then the current url contains "/admin?task=users"
