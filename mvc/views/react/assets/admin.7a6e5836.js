@@ -24830,7 +24830,8 @@ function UnfoldActionIcon({
         size: 24,
         stroke: 1
       }) : /* @__PURE__ */ jsx(zK, {
-        size: 24
+        size: 24,
+        stroke: 1
       })
     })
   });
@@ -24916,7 +24917,7 @@ const AdminLogsTableRows = ({
         }), Object.keys(adminLogsTableColumns).map((column) => {
           if (!visibleFields.includes(column))
             return void 0;
-          const itemValue = column.includes(".") ? item[column.split(".")[0]][column.split(".")[1]] : item[column];
+          const itemValue = column.includes(".") ? item[column == null ? void 0 : column.split(".")[0]][column == null ? void 0 : column.split(".")[1]] : item[column];
           if (column === "level") {
             return /* @__PURE__ */ jsx("td", {
               title: item.level,

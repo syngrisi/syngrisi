@@ -6,7 +6,7 @@ Feature: Log Basics
         Given I start Server and start Driver
 
     Scenario: Check Infinity scroll
-        When I create "41" log messages with params:
+        When I create "50" log messages with params:
             """
               message: TESTMSG
               level: info
@@ -21,7 +21,7 @@ Feature: Log Basics
 
         # scroll affix
         Then I expect that element "[data-test='infinity-scroll-affix-loaded-count']" to contain text "2"
-        Then I expect that element "[data-test='infinity-scroll-affix-total-count']" to contain text "3"
+        Then I expect that element "[data-test='infinity-scroll-affix-total-count']" to contain text "4"
 
         When I execute javascript code:
         """
@@ -73,7 +73,7 @@ Feature: Log Basics
         When I wait for "5" seconds
         Then I expect that element "[data-test='folding-table-items]" is not displayed
 
-        When I wait on element "//*[@data-test='table-row-Message' and contains(.,'TESTMSG')]" to be displayed
+        When I wait on element "//*[@data-test='table-row-Message' and contains(.,'TESTMSG')]" for 7000ms to be displayed
         When I click on the element "//*[@data-test='table-row-Message' and contains(.,'TESTMSG')]/..//input"
         When I wait on element "[data-test='folding-table-items']" to be displayed
         When I click on the element "//*[@data-test='table-row-Message' and contains(.,'TESTMSG')]/..//input"

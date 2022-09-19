@@ -671,8 +671,8 @@ exports.updateCheck = async (req, res) => {
 
         await orm.updateItemDate('VRSCheck', check);
         await orm.updateItemDate('VRSTest', test);
-        test.save();
-        check.save();
+        await test.save();
+        await check.save();
         res.status(200)
             .json({
                 message: `Check with id: '${id}' was updated`,
@@ -870,7 +870,7 @@ async function createCheck(
 
     log.debug('update test with check id', $this, logOpts);
     test.checks.push(check.id);
-    test.save();
+    await test.save();
 
     /** HANDLE BASELINE */
     const checkIdent = buildIdentObject(newCheckParams);

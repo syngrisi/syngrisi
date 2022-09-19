@@ -27,6 +27,7 @@ Feature: Create User
         When I wait for "3" seconds
         When I click on the element "#add-new-user"
         When I set "j_doe@gmail.com" to the inputfield "[data-test=user-add-email]"
+        When I wait on element "[data-test=user-add-first-name]" to be enabled
         When I set "John" to the inputfield "[data-test=user-add-first-name]"
         When I set "Doe" to the inputfield "[data-test=user-add-last-name]"
         When I select the option with the text "Reviewer" for element "select[data-test=user-add-role]"
@@ -49,6 +50,7 @@ Feature: Create User
         When I wait for "3" seconds
         When I click on the element "#add-new-user"
         When I set "j_doe@gmail.com" to the inputfield "[data-test=user-add-email]"
+        When I wait on element "[data-test=user-add-first-name]" to be enabled
         When I set "John" to the inputfield "[data-test=user-add-first-name]"
         When I set "Doe" to the inputfield "[data-test=user-add-last-name]"
         When I select the option with the text "Reviewer" for element "select[data-test=user-add-role]"
