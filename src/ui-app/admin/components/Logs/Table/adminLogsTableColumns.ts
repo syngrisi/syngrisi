@@ -11,12 +11,6 @@ export const adminLogsTableColumns: { [key: string]: any } = {
         cellStyle: { width: '10%' },
         type: 'StringFilter',
     },
-    level: {
-        label: 'Level',
-        headStyle: { width: '5%' },
-        cellStyle: { width: '5%' },
-        type: 'LogLevelFilter',
-    },
     message: {
         label: 'Message',
         headStyle: { width: 'auto' },
@@ -24,6 +18,12 @@ export const adminLogsTableColumns: { [key: string]: any } = {
             width: 'auto',
         },
         type: 'StringFilter',
+    },
+    level: {
+        label: 'Level',
+        headStyle: { width: '5%' },
+        cellStyle: { width: '5%' },
+        type: 'LogLevelFilter',
     },
     'meta.user': {
         label: 'User',

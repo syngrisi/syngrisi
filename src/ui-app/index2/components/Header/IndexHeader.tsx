@@ -7,6 +7,7 @@ import {
     Kbd,
     Paper,
     Button,
+    useMantineTheme,
     Text,
 } from '@mantine/core';
 import * as React from 'react';
@@ -17,18 +18,17 @@ import { useContext } from 'react';
 import { openSpotlight } from '@mantine/spotlight';
 import useColorScheme from '../../../shared/hooks/useColorSheme';
 import ToggleThemeButton from '../../../shared/components/ToggleThemeButton';
-import HeaderLogo from '../../../shared/components/Header/HeaderLogo';
+import HeaderLogo from './HeaderLogo';
 import { isDark } from '../../../shared/utils';
-import UserMenu from '../../../shared/components/Header/UserMenu';
+import UserMenu from './UserMenu';
 import { AppContext } from '../../AppContext';
-import { links } from '../../../shared/components/heaserLinks';
 
 const useStyles = createStyles((theme) => ({
     header: {
-        paddingLeft: 0,
-        paddingRight: 0,
-        marginBottom: 120,
+        paddingLeft: theme.spacing.md,
+        paddingRight: theme.spacing.md,
     },
+
     inner: {
         height: 56,
         display: 'flex',
@@ -36,16 +36,19 @@ const useStyles = createStyles((theme) => ({
         alignItems: 'center',
         backgroundColor: isDark() ? theme.colors.dark[5] : theme.colors.gray[2],
     },
+
     links: {
         [theme.fn.smallerThan('md')]: {
             display: 'none',
         },
     },
+
     search: {
         [theme.fn.smallerThan('xs')]: {
             display: 'none',
         },
     },
+
     link: {
         display: 'block',
         lineHeight: 1,
@@ -67,29 +70,20 @@ const useStyles = createStyles((theme) => ({
         alignItems: 'center',
         paddingLeft: 25,
     },
-    spotLight: {
-        minWidth: 200,
-        display: 'flex',
-        paddingLeft: 12,
-        paddingRight: 8,
-        backgroundColor: theme.colorScheme === 'dark'
-            ? theme.colors.dark[6]
-            : theme.colors.gray[0],
-        '&:hover': {
-            backgroundColor: theme.colorScheme === 'dark'
-                ? theme.colors.dark[6]
-                : theme.colors.gray[0],
-        },
-    },
 }));
 
-export default function AdminHeader() {
+const links = [
+    { label: 'Tests Results', link: '/' },
+    { label: 'Admin Panel', link: '/admin/' },
+];
+
+export default function IndexHeader() {
     const [colorScheme, toggleColorScheme] = useColorScheme();
 
     const [opened, { toggle }] = useDisclosure(false);
     const { classes } = useStyles();
 
-    const headerLinks = links.map((link) => (
+    const items = links.map((link) => (
         <a
             key={link.label}
             href={link.link}
@@ -100,11 +94,15 @@ export default function AdminHeader() {
     ));
 
     const { toolbar, breadCrumbs }: any = useContext(AppContext);
+    const theme = useMantineTheme();
 
     return (
         <Header
             height={100}
             className={classes.header}
+            mb={120}
+            pr={0}
+            pl={0}
         >
             <Container className={classes.inner} fluid>
                 <Group>
@@ -114,12 +112,28 @@ export default function AdminHeader() {
 
                 <Group>
                     <Group ml={50} spacing={5} className={classes.links}>
-                        {headerLinks}
+                        {items}
                     </Group>
                     <Button
                         onClick={() => openSpotlight()}
                         variant="default"
-                        className={classes.spotLight}
+                        sx={{ minWidth: 200, display: 'flex' }}
+                        pl={12}
+                        pr={8}
+                        styles={
+                            {
+                                root: {
+                                    backgroundColor: theme.colorScheme === 'dark'
+                                        ? theme.colors.dark[6]
+                                        : theme.colors.gray[0],
+                                    '&:hover': {
+                                        backgroundColor: theme.colorScheme === 'dark'
+                                            ? theme.colors.dark[6]
+                                            : theme.colors.gray[0],
+                                    },
+                                },
+                            }
+                        }
                     >
                         <Group position="apart" sx={{ minWidth: 200 }}>
                             <Group>
