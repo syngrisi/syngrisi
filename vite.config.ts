@@ -18,7 +18,7 @@ const config = {
         rollupOptions: {
             input: {
                 auth: path.resolve(__dirname, './src/ui-app/auth/index.html'),
-                // root: path.resolve(__dirname, 'src/ui-app/index/index.html'),
+                root: path.resolve(__dirname, 'src/ui-app/index2/index.html'),
                 admin: path.resolve(__dirname, 'src/ui-app/admin/index.html'),
                 // stub: path.resolve(__dirname, 'src/ui-app/stub.html'),
             },
@@ -27,7 +27,7 @@ const config = {
     server: {
         port: 8080,
         hot: true,
-        open: 'http://localhost:8080/admin',
+        open: 'http://localhost:8080/index2',
     },
 };
 
