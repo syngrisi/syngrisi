@@ -145,6 +145,9 @@ const CheckSchema = new Schema({
     topStablePixels: {
         type: String,
     },
+    meta: {
+        type: Object,
+    },
 });
 
 const BaselineSchema = new Schema({
@@ -202,6 +205,9 @@ const BaselineSchema = new Schema({
         type: String,
         // enum: ['antialiasing', 'nothing', 'less', 'colors', 'alpha'],
         enum: ['antialiasing', 'nothing', 'colors'],
+    },
+    meta: {
+        type: Object,
     },
 });
 
@@ -275,6 +281,9 @@ const TestSchema = new Schema(
         creatorUsername: {
             type: String,
         },
+        meta: {
+            type: Object,
+        },
     },
     { strictQuery: true }
 ); // remove filters that not exist in schema
@@ -296,6 +305,9 @@ const SuiteSchema = new Schema({
         type: Date,
         default: Date.now,
     },
+    meta: {
+        type: Object,
+    },
 });
 
 const RunSchema = new Schema({
@@ -316,6 +328,9 @@ const RunSchema = new Schema({
     },
     parameters: {
         type: [String],
+    },
+    meta: {
+        type: Object,
     },
 });
 
@@ -354,6 +369,9 @@ const AppSchema = new Schema({
     updatedDate: {
         type: Date,
         default: Date.now,
+    },
+    meta: {
+        type: Object,
     },
 });
 
@@ -397,10 +415,9 @@ const UserSchema = new Schema({
     expiration: {
         type: Date,
     },
-});
-
-const Settings = new Schema({
-    firstRun: Boolean,
+    meta: {
+        type: Object,
+    },
 });
 
 const AppSettingsSchema = new Schema({
@@ -465,5 +482,4 @@ module.exports = mongoose.model('VRSApp', AppSchema);
 module.exports = mongoose.model('VRSRun', RunSchema);
 module.exports = mongoose.model('VRSUser', UserSchema);
 module.exports = mongoose.model('VRSBaseline', BaselineSchema);
-module.exports = mongoose.model('VRSSettings', Settings);
 module.exports = mongoose.model('VRSAppSettings', AppSettingsSchema);

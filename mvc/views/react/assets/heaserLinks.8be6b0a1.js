@@ -1,4 +1,4 @@
-import { r as react, b as jsx, d as useMantineTheme, ac as Global$1, ad as css, ae as useDidUpdate, af as mergeRefs, ag as reactDom, E as useComponentDefaultProps, ah as useReducedMotion, K as extractSystemStyles, B as Box, A as ActionIcon, c as createStyles, L as getDefaultZIndex, j as jsxs, ai as packSx, F as createPolymorphicComponent, aj as _extends, ak as React, H as useUncontrolled, al as useFloating, am as size, an as useFloatingAutoUpdate, ao as offset, ap as shift, aq as flip, ar as isElement, as as useMergedRef, at as clsx, au as OptionalPortal, O as Transition$2, av as FloatingArrow, J as useId, aw as getFloatingPosition, T as Text, ax as UnstyledButton, ay as useTransition, W as Fragment, az as getTransitionStyles, P as Paper, S as Overlay, R as Loader, aA as ReactDOM, aB as Portal, l as log, G as Group, h as Button, i as Progress, t as useHotkeys, C as Center, o as TextInput, V as useDisclosure, s as useLocalStorage, D as Dme, p as l6, k as ky, a as config$1, aC as queryString, u as useQuery, aD as EO, aE as Xue, _ as age, aF as A0, aG as q0 } from "./Logger.785098d6.js";
+import { r as react, b as jsx, d as useMantineTheme, a4 as Global$1, a5 as css, a6 as useDidUpdate, a7 as mergeRefs, a8 as reactDom, E as useComponentDefaultProps, a9 as useReducedMotion, K as extractSystemStyles, B as Box, A as ActionIcon, c as createStyles, L as getDefaultZIndex, j as jsxs, aa as packSx, F as createPolymorphicComponent, ab as _extends, ac as React, H as useUncontrolled, ad as useFloating, ae as size, af as useFloatingAutoUpdate, ag as offset, ah as shift, ai as flip, aj as isElement, ak as useMergedRef, al as clsx, am as OptionalPortal, O as Transition$2, an as FloatingArrow, J as useId, ao as getFloatingPosition, T as Text, ap as UnstyledButton, aq as useTransition, ar as Fragment, as as getTransitionStyles, P as Paper, S as Overlay, R as Loader, at as ReactDOM, au as Portal, l as log, G as Group, h as Button, i as Progress, t as useHotkeys, C as Center, o as TextInput, V as useDisclosure, s as useLocalStorage, D as Dme, p as l6, e as Container, k as ky, a as config$1, av as queryString, u as useQuery, aw as EO, ax as Xue, ay as age, az as A0, aA as q0, aB as GY, N as Nb, aC as EH, aD as ka, aE as ZX, a0 as Lce, aF as Bpe, aG as q2 } from "./Logger.dbf872b1.js";
 function findElementAncestor(element, selector) {
   let _element = element;
   while ((_element = _element.parentElement) && !_element.matches(selector))
@@ -7612,6 +7612,84 @@ function ToggleThemeButton({
     })
   });
 }
+function HeaderLogo({
+  size: size2
+}) {
+  const theme = useMantineTheme();
+  return /* @__PURE__ */ jsx(Container, {
+    pl: 0,
+    pr: 0,
+    style: {
+      display: "flex",
+      justifyItems: "center",
+      alignItems: "center"
+    },
+    children: /* @__PURE__ */ jsxs("a", {
+      href: "/",
+      style: {
+        display: "flex",
+        textDecoration: "none",
+        alignItems: "center"
+      },
+      children: [/* @__PURE__ */ jsx(Paper, {
+        sx: {
+          justifyContent: "center",
+          height: 44,
+          width: 44,
+          display: "flex",
+          alignItems: "center",
+          borderRadius: "2px 20px 2px 20px",
+          "&:hover": {
+            backgroundColor: isDark() ? "#000000" : theme.colors.gray[0]
+          }
+        },
+        children: /* @__PURE__ */ jsxs("svg", {
+          height: size2 || 32,
+          viewBox: "0 0 64 67",
+          fill: "none",
+          xmlns: "http://www.w3.org/2000/svg",
+          children: [/* @__PURE__ */ jsx("path", {
+            d: "M62.245 64.6094L7.36118 36.1968C6.98858 36.0039 6.98859 35.471 7.36118 35.2781L62.245 6.86548C62.5893 6.68725 63 6.93713 63 7.32482V64.1501C63 64.5378 62.5893 64.7876 62.245 64.6094Z",
+            fill: "#2B8A3E",
+            fillOpacity: "0.38",
+            stroke: "#2B8A3E",
+            strokeOpacity: "0.6",
+            strokeWidth: "1.63692"
+          }), /* @__PURE__ */ jsx("path", {
+            d: "M1.74625 59.1348L56.63 30.7222C57.0026 30.5293 57.0026 29.9964 56.63 29.8035L1.74625 1.39087C1.40196 1.21264 0.991211 1.46252 0.991211 1.85021V58.6755C0.991211 59.0631 1.40196 59.313 1.74625 59.1348Z",
+            fill: "#1C7ED6",
+            fillOpacity: "0.4",
+            stroke: "#1C7ED6",
+            strokeOpacity: "0.6",
+            strokeWidth: "1.63692"
+          })]
+        })
+      }), /* @__PURE__ */ jsx(Box, {
+        style: {
+          fontSize: "2.3rem",
+          paddingLeft: "8px",
+          letterSpacing: "-2px",
+          fontFamily: "Roboto, sans-serif",
+          fontWeight: 500
+        },
+        children: /* @__PURE__ */ jsx(Paper, {
+          sx: {
+            backgroundColor: "rgba(0, 0, 0, 0)"
+          },
+          children: /* @__PURE__ */ jsx(Text, {
+            color: isDark() ? "white" : "#262626",
+            sx: {
+              "&:hover": {
+                color: isDark() ? theme.colors.gray[4] : theme.colors.dark[3]
+              }
+            },
+            children: "Syngrisi"
+          })
+        })
+      })]
+    })
+  });
+}
 const UsersService = {
   async getApiKey() {
     const resp = await ky(`${config$1.baseUri}/apikey`);
@@ -7843,62 +7921,374 @@ function navigationData() {
   ];
 }
 const getNavigationItem = (title) => navigationData().find((x) => x.title === title);
+function ApiKeyModalAsk({
+  opened,
+  setOpened,
+  apiKey,
+  setResultOpened
+}) {
+  return /* @__PURE__ */ jsxs(Modal, {
+    opened,
+    onClose: () => setOpened(false),
+    title: "Generate a new API key?",
+    children: [/* @__PURE__ */ jsx(Text, {
+      size: "sm",
+      children: "Are you sure you want to generate a new API key? After generation, you must add corresponding changes in your test solution."
+    }), /* @__PURE__ */ jsxs(Group, {
+      position: "right",
+      children: [/* @__PURE__ */ jsx(Button, {
+        onClick: () => {
+          apiKey.refetch();
+          setResultOpened(true);
+          setOpened(false);
+        },
+        children: "Generate"
+      }), /* @__PURE__ */ jsx(Button, {
+        variant: "outline",
+        onClick: () => setOpened(false),
+        children: "Cancel"
+      })]
+    })]
+  });
+}
+function ApiKeyModalResult({
+  opened,
+  setOpened,
+  apiKey
+}) {
+  const [successCopy, setSuccessCopy] = react.exports.useState(false);
+  if (apiKey.isError) {
+    log.error(apiKey.error);
+  }
+  const copyHandler = () => {
+    const input = document.getElementById("api-key");
+    input.focus();
+    input.select();
+    const successful = document.execCommand("copy");
+    const msg = successful ? "successful" : "unsuccessful";
+    log.debug(`copy result: ${msg}`);
+    if (msg === "successful") {
+      setSuccessCopy(true);
+    }
+    window.getSelection().removeAllRanges();
+  };
+  const CopyIcon = successCopy ? Nb : EH;
+  return /* @__PURE__ */ jsxs(Modal, {
+    opened,
+    onClose: () => {
+      setSuccessCopy(false);
+      setOpened(false);
+    },
+    title: "New API key",
+    children: [!apiKey.isLoading && apiKey.data ? /* @__PURE__ */ jsxs(Fragment, {
+      children: [/* @__PURE__ */ jsx(Group, {
+        ml: 20,
+        mb: 20,
+        children: /* @__PURE__ */ jsx(Text, {
+          size: "sm",
+          children: "Copy the New API key to Clipboard"
+        })
+      }), /* @__PURE__ */ jsxs(Group, {
+        position: "center",
+        children: [/* @__PURE__ */ jsx(TextInput, {
+          "data-test": "api-key",
+          id: "api-key",
+          value: apiKey.data.apikey,
+          sx: {
+            width: "340px",
+            display: "inline"
+          },
+          icon: /* @__PURE__ */ jsx(GY, {}),
+          style: {
+            display: "inline"
+          }
+        }), /* @__PURE__ */ jsx(ActionIcon, {
+          ml: -10,
+          children: /* @__PURE__ */ jsx(CopyIcon, {
+            size: 18,
+            onClick: copyHandler,
+            color: successCopy ? "green" : "gray"
+          })
+        })]
+      })]
+    }) : /* @__PURE__ */ jsx(Fragment, {
+      children: apiKey.isError && /* @__PURE__ */ jsx(Text, {
+        color: "red",
+        size: "sm",
+        children: " Error loading API key"
+      })
+    }), /* @__PURE__ */ jsx(Group, {
+      position: "center",
+      children: (apiKey.isFetching || apiKey.isRefetching) && /* @__PURE__ */ jsx(Loader, {})
+    }), /* @__PURE__ */ jsx(Group, {
+      position: "center",
+      pt: 30,
+      children: /* @__PURE__ */ jsx(Button, {
+        onClick: () => {
+          setOpened(false);
+          setTimeout(() => {
+            setSuccessCopy(false);
+          }, 300);
+        },
+        children: "Close"
+      })
+    })]
+  });
+}
+function UserInfoModal({
+  opened,
+  setOpened
+}) {
+  const user = UserHooks.useCurrentUser();
+  const useStyles2 = createStyles((theme) => ({
+    icon: {
+      color: theme.colorScheme === "dark" ? theme.colors.dark[3] : theme.colors.gray[5]
+    },
+    name: {
+      fontFamily: `Greycliff CF, ${theme.fontFamily}`
+    }
+  }));
+  const {
+    classes
+  } = useStyles2();
+  return /* @__PURE__ */ jsxs(Modal, {
+    size: 350,
+    opened,
+    onClose: () => {
+      setOpened(false);
+    },
+    title: "User Details",
+    children: [user.isSuccess && user.data ? /* @__PURE__ */ jsxs(Group, {
+      noWrap: true,
+      children: [/* @__PURE__ */ jsx(Avatar, {
+        src: null,
+        color: "white",
+        size: 120,
+        radius: 70,
+        children: /* @__PURE__ */ jsx(age, {
+          stroke: 1,
+          size: 120,
+          radius: "md"
+        })
+      }), /* @__PURE__ */ jsxs("div", {
+        children: [/* @__PURE__ */ jsx(Text, {
+          size: "xs",
+          sx: {
+            textTransform: "uppercase"
+          },
+          weight: 700,
+          color: "dimmed",
+          "data-test": "userinfo-role",
+          children: user.data.role
+        }), /* @__PURE__ */ jsxs(Text, {
+          size: "lg",
+          weight: 500,
+          className: classes.name,
+          "data-test": "userinfo-name",
+          children: [user.data.firstName, " ", user.data.lastName]
+        }), /* @__PURE__ */ jsxs(Group, {
+          noWrap: true,
+          spacing: 5,
+          mt: 3,
+          children: [/* @__PURE__ */ jsx(ka, {
+            stroke: 1.5,
+            size: 16,
+            className: classes.icon
+          }), /* @__PURE__ */ jsx(Text, {
+            size: "xs",
+            color: "dimmed",
+            "data-test": "userinfo-username",
+            children: user.data.username
+          })]
+        })]
+      })]
+    }) : /* @__PURE__ */ jsx(Fragment, {
+      children: /* @__PURE__ */ jsx(Loader, {})
+    }), /* @__PURE__ */ jsx(Group, {
+      position: "center",
+      pt: 30,
+      children: /* @__PURE__ */ jsx(Button, {
+        onClick: () => {
+          setOpened(false);
+        },
+        children: "Close"
+      })
+    })]
+  });
+}
+function UserMenu() {
+  var _a, _b, _c, _d;
+  const theme = useMantineTheme();
+  const apiKey = UserHooks.useApiKey();
+  const [apiKeyModalAskOpened, setApiKeyModalAskOpened] = react.exports.useState(false);
+  const [apiKeyModalResultOpened, setApiKeyModalResultOpened] = react.exports.useState(false);
+  const [userInfoModalOpened, setUserInfoModalOpened] = react.exports.useState(false);
+  const currentUser = UserHooks.useCurrentUser();
+  const userInitials = currentUser.isSuccess && currentUser.data.firstName ? `${(_a = currentUser == null ? void 0 : currentUser.data) == null ? void 0 : _a.firstName[0]}${(_b = currentUser == null ? void 0 : currentUser.data) == null ? void 0 : _b.lastName[0]}` : "";
+  return /* @__PURE__ */ jsxs(Fragment, {
+    children: [/* @__PURE__ */ jsxs(Menu, {
+      shadow: "md",
+      width: "20%",
+      children: [/* @__PURE__ */ jsx(Menu.Target, {
+        children: /* @__PURE__ */ jsx(Button, {
+          "data-test": "user-icon",
+          p: 0,
+          radius: "xl",
+          size: "md",
+          color: isDark() ? "dark" : "#ffffff",
+          sx: {
+            color: isDark() ? "#ffffff" : "#1a1b1e",
+            backgroundColor: isDark() ? "#1a1b1e" : theme.colors.gray[0],
+            fontWeight: 600,
+            fontSize: "1rem",
+            display: "flex",
+            width: "2.6rem",
+            justifyContent: "center",
+            "&:hover": {
+              backgroundColor: isDark() ? "#000000" : "#ffffff"
+            }
+          },
+          children: userInitials
+        })
+      }), /* @__PURE__ */ jsxs(Menu.Dropdown, {
+        children: [/* @__PURE__ */ jsxs(Menu.Label, {
+          "data-test": "user-short-details",
+          sx: {
+            fontSize: "14px",
+            fontWeight: 700,
+            display: "flex",
+            alignItems: "center",
+            color: theme.colors.blue[5]
+          },
+          children: [/* @__PURE__ */ jsx(age, {
+            size: "14px",
+            stroke: 3,
+            style: {
+              marginRight: "10px"
+            }
+          }), (_c = currentUser == null ? void 0 : currentUser.data) == null ? void 0 : _c.firstName, " ", (_d = currentUser == null ? void 0 : currentUser.data) == null ? void 0 : _d.lastName]
+        }), /* @__PURE__ */ jsx(Menu.Divider, {}), /* @__PURE__ */ jsx(Menu.Item, {
+          "data-test": "userinfo",
+          icon: /* @__PURE__ */ jsx(ZX, {
+            size: 14
+          }),
+          onClick: () => {
+            setUserInfoModalOpened(true);
+          },
+          children: "User Details"
+        }), /* @__PURE__ */ jsx(Menu.Item, {
+          icon: /* @__PURE__ */ jsx(Lce, {
+            size: 14
+          }),
+          component: "a",
+          href: "/admin/",
+          children: "Admin Panel"
+        }), /* @__PURE__ */ jsx(Menu.Item, {
+          icon: /* @__PURE__ */ jsx(GY, {
+            size: 14
+          }),
+          component: "a",
+          href: "/auth/change",
+          children: "Change Password"
+        }), /* @__PURE__ */ jsx(Menu.Item, {
+          id: "generate-api",
+          icon: /* @__PURE__ */ jsx(Bpe, {
+            size: 14
+          }),
+          onClick: () => {
+            setApiKeyModalAskOpened(true);
+          },
+          children: "Generate API key"
+        }), /* @__PURE__ */ jsx(Menu.Divider, {}), /* @__PURE__ */ jsx(Menu.Item, {
+          icon: /* @__PURE__ */ jsx(q2, {
+            size: 14
+          }),
+          component: "a",
+          href: "/auth/logout",
+          children: "Sign out"
+        })]
+      })]
+    }), /* @__PURE__ */ jsx(ApiKeyModalAsk, {
+      opened: apiKeyModalAskOpened,
+      setOpened: setApiKeyModalAskOpened,
+      apiKey,
+      setResultOpened: setApiKeyModalResultOpened
+    }), /* @__PURE__ */ jsx(ApiKeyModalResult, {
+      opened: apiKeyModalResultOpened,
+      setOpened: setApiKeyModalResultOpened,
+      apiKey
+    }), /* @__PURE__ */ jsx(UserInfoModal, {
+      opened: userInfoModalOpened,
+      setOpened: setUserInfoModalOpened
+    })]
+  });
+}
+const links = [{
+  label: "Dashboard",
+  link: "/"
+}, {
+  label: "Admin Panel",
+  link: "/admin/"
+}];
 export {
-  successMsg as $,
-  Avatar as A,
+  startNavigationProgress as $,
+  AppShell as A,
   Burger as B,
   Collapse as C,
-  useDelayedHover as D,
+  Avatar as D,
   Highlight as E,
   FocusTrap as F,
   GroupedTransition as G,
   Header as H,
   Mark as I,
-  Notification as J,
+  Menu as J,
   Kbd as K,
-  Global as L,
-  Modal as M,
+  Modal as L,
+  ModalsProvider as M,
   NavLink as N,
-  AppContext as O,
+  Notification as O,
   Popover as P,
-  getNavigationItem as Q,
+  Global as Q,
   ReactQueryDevtools as R,
   ScrollArea as S,
   ToggleThemeButton as T,
-  UserHooks as U,
+  UserMenu as U,
   VerticalSection as V,
-  stopNavigationProgress as W,
-  resetNavigationProgress as X,
-  startNavigationProgress as Y,
-  setNavigationProgress as Z,
+  AppContext as W,
+  getNavigationItem as X,
+  stopNavigationProgress as Y,
+  resetNavigationProgress as Z,
   _objectWithoutPropertiesLoose as _,
-  Menu as a,
-  errorMsg as a0,
-  UsersService as a1,
-  uuid as a2,
+  HeaderLogo as a,
+  setNavigationProgress as a0,
+  successMsg as a1,
+  errorMsg as a2,
+  UsersService as a3,
+  UserHooks as a4,
+  uuid as a5,
   Breadcrumbs as b,
   ThemeIcon as c,
   Navbar as d,
-  AppShell as e,
-  SpotlightProvider as f,
-  NotificationsProvider as g,
-  NavigationProgress as h,
+  SpotlightProvider as e,
+  NotificationsProvider as f,
+  NavigationProgress as g,
+  createSafeContext as h,
   isDark as i,
-  ModalsProvider as j,
-  createSafeContext as k,
-  useContextStylesApi as l,
-  createScopedKeydownHandler as m,
+  useContextStylesApi as j,
+  createScopedKeydownHandler as k,
+  links as l,
+  StylesApiProvider as m,
   navigationData as n,
   openSpotlight as o,
-  StylesApiProvider as p,
-  ChevronIcon as q,
-  CloseButton as r,
-  HorizontalSection as s,
-  Section as t,
+  ChevronIcon as p,
+  CloseButton as q,
+  HorizontalSection as r,
+  Section as s,
+  randomId as t,
   useColorScheme as u,
-  randomId as v,
-  useFocusTrap as w,
-  useScrollLock as x,
-  useFocusReturn as y,
-  createEventHandler as z
+  useFocusTrap as v,
+  useScrollLock as w,
+  useFocusReturn as x,
+  createEventHandler as y,
+  useDelayedHover as z
 };

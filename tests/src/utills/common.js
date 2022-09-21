@@ -206,12 +206,9 @@ const stopServer = () => {
             output = execSync(`pkill -f syngrisi_test_server_${getCid()}`)
                 .toString();
         }
-
-        console.log({ output });
     } catch (e) {
         console.log('WARNING: cannot stop te Syngrisi server');
-        // console.log('WARNING: cannot stop te Syngrisi server via child, try to kill process');
-        // killServer(browser.config.serverPort);
+        // console.log(e);
     }
 };
 
