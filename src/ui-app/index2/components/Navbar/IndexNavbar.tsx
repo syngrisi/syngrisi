@@ -3,11 +3,10 @@ import * as React from 'react';
 import {
     IconUsers,
     IconSettings,
-    IconArticle, IconListDetails,
+    IconArticle,
 } from '@tabler/icons';
 import { createStyles } from '@mantine/styles';
 import { LinksGroup } from './NavbarLinksGroup';
-// import { taskLinks } from '../Tasks/tasksList';
 
 const navbarItems = [
     { label: 'Users', icon: IconUsers, link: '/admin/users' },

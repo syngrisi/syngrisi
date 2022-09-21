@@ -1,6 +1,7 @@
 Feature: Logs Table Filter
 
     Background:
+        When I open the url "data:,"
         Given I clear Database and stop Server
         Given I start Server and start Driver
 

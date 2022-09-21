@@ -8,7 +8,7 @@ When(/^I create "([^"]*)" log messages with params:$/, async function (num, json
     const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/v1/logs`;
     const result = [];
     for (const i of (Array.from(new Array(Number(num)).keys()))) {
-        console.log(`log message #${i}`);
+        // console.log(`log message #${i}`);
         result.push(got.post(
             uri,
             {
@@ -17,5 +17,5 @@ When(/^I create "([^"]*)" log messages with params:$/, async function (num, json
         ).json());
     }
     const out = await Promise.all(result);
-    console.log({ out });
+    // console.log({ out });
 });

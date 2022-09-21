@@ -105,6 +105,7 @@ app.use('/v1', routes2);
 
 app.use('/auth', require('./src/routes/ui/auth'));
 app.use('/admin*', require('./src/routes/ui/admin'));
+app.use('/index2', require('./src/routes/ui/index2'));
 
 routes(app); // register the route
 
