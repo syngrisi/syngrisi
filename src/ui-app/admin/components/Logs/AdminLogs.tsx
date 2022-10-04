@@ -3,9 +3,8 @@ import * as React from 'react';
 import {
     Text,
     Group,
-    LoadingOverlay,
     useMantineTheme,
-    ActionIcon,
+    ActionIcon, Table,
 } from '@mantine/core';
 import { useSearchParams } from 'react-router-dom';
 import { useLocalStorage } from '@mantine/hooks';
@@ -19,6 +18,8 @@ import AdminLogsTableSettings from './Table/AdminLogsTableSettings';
 import { IconAdjustments, IconFilter } from '@tabler/icons';
 import AdminLogsTableFilter from './Table/AdminLogsTableFilter';
 import { useNavProgressFetchEffect } from '../../../shared/hooks';
+import InfinityScrollSkeletonFiller from './Table/InfinityScrollSkeletonFIller';
+import { JsonParam, StringParam, useQueryParams } from 'use-query-params';
 
 /**
  * example:
@@ -33,14 +34,26 @@ interface IFilterSet {
 }
 
 export default function AdminLogs() {
+    const { toolbar, setToolbar, updateToolbar }: any = useContext(AppContext);
+    const [query] = useQueryParams({
+        groupBy: StringParam,
+        sortBy: StringParam,
+        filter: JsonParam,
+        base_filter: JsonParam,
+    });
+
     const theme = useMantineTheme();
     useSubpageEffect('Logs');
 
     const [searchParams, setSearchParams] = useSearchParams();
     const [sortOpen, setSortOpen] = useState(false);
-    const [filterOpen, setFilterOpen] = useState(false);
-    const { toolbar, setToolbar, updateToolbar }: any = useContext(AppContext);
-    const { firstPageQuery, infinityQuery, newestItemsQuery } = useInfinityScroll(searchParams)
+    const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+    const { firstPageQuery, infinityQuery, newestItemsQuery } = useInfinityScroll({
+        resourceName: 'logs',
+        filterObj: query['filter'],
+        newestItemsFilterKey: 'timestamp',
+        sortBy: query['sortBy'] || ''
+    })
     useNavProgressFetchEffect(infinityQuery.isFetching);
 
     const [visibleFields, setVisibleFields] = useLocalStorage({
@@ -71,7 +84,7 @@ export default function AdminLogs() {
                 data-test="table-filtering"
                 variant="subtle"
                 onClick={() => {
-                    setFilterOpen((prev) => !prev)
+                    setIsFilterDrawerOpen((prev) => !prev)
                 }}
             >
                 <IconFilter size={24} stroke={1} />
@@ -88,15 +101,23 @@ export default function AdminLogs() {
         );
     }, [newestItemsQuery?.data?.results.length, newestItemsQuery.status, theme.colorScheme]);
 
-    useEffect(() => {
-        firstPageQuery.refetch();
-    }, [searchParams]);
+    useEffect(function filterSortUpdate() {
+            firstPageQuery.refetch();
+        }, [
+            JSON.stringify(query['filter']),
+            JSON.stringify(query['sortBy'])
+        ]
+    );
 
     return (
         <>
             <Group position="apart" align="start" noWrap>
                 {infinityQuery.status === 'loading'
-                    ? (<LoadingOverlay visible={true} />)
+                    ? (
+                        <Table>
+                            <InfinityScrollSkeletonFiller visibleFields={visibleFields} />
+                        </Table>
+                    )
                     : infinityQuery.status === 'error'
                         ? (<Text color="red">Error: {infinityQuery.error.message}</Text>)
                         : (
@@ -112,15 +133,11 @@ export default function AdminLogs() {
                     setSortOpen={setSortOpen}
                     visibleFields={visibleFields}
                     setVisibleFields={setVisibleFields}
-                    searchParams={searchParams}
-                    setSearchParams={setSearchParams}
                 />
 
                 <AdminLogsTableFilter
-                    open={filterOpen}
-                    setOpen={setFilterOpen}
-                    searchParams={searchParams}
-                    setSearchParams={setSearchParams}
+                    open={isFilterDrawerOpen}
+                    setOpen={setIsFilterDrawerOpen}
                 />
             </Group>
         </>

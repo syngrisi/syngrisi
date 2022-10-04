@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import {
     Breadcrumbs,
     Burger,
@@ -8,20 +9,25 @@ import {
     Paper,
     Button,
     Text,
+    useMantineTheme,
 } from '@mantine/core';
 import * as React from 'react';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, useLocalStorage } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons';
 import { createStyles } from '@mantine/styles';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { openSpotlight } from '@mantine/spotlight';
+import { useQuery } from '@tanstack/react-query';
 import useColorScheme from '../../../shared/hooks/useColorSheme';
 import ToggleThemeButton from '../../../shared/components/ToggleThemeButton';
 import HeaderLogo from '../../../shared/components/Header/HeaderLogo';
-import { isDark } from '../../../shared/utils';
+import { errorMsg, isDark } from '../../../shared/utils';
 import UserMenu from '../../../shared/components/Header/UserMenu';
 import { AppContext } from '../../AppContext';
 import { links } from '../../../shared/components/heaserLinks';
+import SafeSelect from '../../../shared/components/SafeSelect';
+import { GenericService } from '../../../shared/services';
+import { useParams } from '../../hooks/useParams';
 
 const useStyles = createStyles((theme) => ({
     header: {
@@ -84,11 +90,18 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export default function IndexHeader() {
-    const [colorScheme, toggleColorScheme] = useColorScheme();
+    const {
+        toolbar,
+        breadCrumbs,
+    }: any = useContext(AppContext);
 
+    const theme = useMantineTheme();
+
+    const [colorScheme, toggleColorScheme] = useColorScheme();
     const [opened, { toggle }] = useDisclosure(false);
     const { classes } = useStyles();
 
+    // eslint-disable-next-line no-unused-vars
     const headerLinks = links.map((link) => (
         <a
             key={link.label}
@@ -99,7 +112,51 @@ export default function IndexHeader() {
         </a>
     ));
 
-    const { toolbar, breadCrumbs }: any = useContext(AppContext);
+    const [
+        currentProjectLS,
+        setCurrentProjectLS,
+    ] = useLocalStorage(
+        {
+            key: 'currentProject',
+            defaultValue: '',
+        },
+    );
+
+    const projectsQuery = useQuery(
+        ['projects'],
+        () => GenericService.get(
+            'app',
+            {},
+            {
+                limit: '0',
+            },
+        ),
+        {
+            enabled: true,
+            staleTime: Infinity,
+            refetchOnWindowFocus: false,
+            onError: (e) => {
+                errorMsg({ error: e });
+            },
+        },
+    );
+
+    let projectSelectData: any = [];
+    if (projectsQuery.data) {
+        projectSelectData = projectsQuery.data?.results.map((item) => ({
+            value: item._id,
+            label: item.name,
+        }));
+    }
+
+    const projectSelectHandler = (value: string) => {
+        setCurrentProjectLS(() => value);
+    };
+
+    const { updateQueryJsonParam } = useParams();
+    useEffect(() => {
+        updateQueryJsonParam('base_filter', 'app', currentProjectLS);
+    }, [currentProjectLS]);
 
     return (
         <Header
@@ -108,13 +165,39 @@ export default function IndexHeader() {
         >
             <Container className={classes.inner} fluid>
                 <Group>
-                    <Burger opened={opened} onClick={toggle} size="sm" />
-                    <HeaderLogo />
+                    <Group>
+                        <Burger opened={opened} onClick={toggle} size="sm" />
+                        <HeaderLogo />
+                    </Group>
+
                 </Group>
 
                 <Group>
-                    <Group ml={50} spacing={5} className={classes.links}>
-                        {headerLinks}
+                    {/*<Group ml={50} spacing={5} className={classes.links}>*/}
+                    {/*    {headerLinks}*/}
+                    {/*</Group>*/}
+                    <Group spacing="sm">
+                        <Text size="sm">Project:</Text>
+                        <SafeSelect
+                            searchable
+                            placeholder="Enter Project Name"
+                            variant="unstiled"
+                            data-test="current_project"
+                            sx={{
+                                minWidth: '150px',
+                                borderWidth: '0px 0 1px 0',
+                                borderStyle: 'solid',
+                                borderColor: theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[4],
+                            }}
+                            styles={{
+                                input: { paddingRight: '20px' },
+                            }}
+                            value={currentProjectLS}
+                            clearable
+                            onChange={projectSelectHandler}
+                            size="sm"
+                            optionsData={projectSelectData}
+                        />
                     </Group>
                     <Button
                         onClick={() => openSpotlight()}

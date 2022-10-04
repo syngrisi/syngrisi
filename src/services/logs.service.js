@@ -7,7 +7,7 @@ const Log = mongoose.model('VRSLog');
 const $this = this;
 $this.logMeta = {
     scope: 'logs_service',
-    msgType: 'LOF',
+    msgType: 'LOG',
 };
 
 /**

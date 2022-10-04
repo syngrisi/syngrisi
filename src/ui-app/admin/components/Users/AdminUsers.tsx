@@ -169,7 +169,7 @@ export default function AdminUsers() {
                     <Group position="center">
                         {addUser && <UserAddForm setAddUser={setAddUser} refetch={refetch} />}
                     </Group>
-                    <Group position="center" mt={40}>
+                    <Group position="center" mt={40} mb={150}>
                         {!addUser && <Button onClick={() => setAddUser(true)} id="add-new-user">Add New User</Button>}
                     </Group>
                 </Box>

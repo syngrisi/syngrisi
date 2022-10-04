@@ -9,7 +9,7 @@ import { errorMsg, log } from '../../../shared/utils';
 import { Password } from '../../../shared/components/Password';
 import { Email } from '../../../shared/components/Email';
 import { useSubpageEffect } from '../../../shared/hooks';
-import { UsersService } from '../../../shared/services';
+import { GenericService } from '../../../shared/services';
 import SafeSelect from '../../../shared/components/SafeSelect';
 import IUser from '../../../shared/interfaces/IUser';
 import { successMsg } from '../../../shared/utils/utils';
@@ -44,7 +44,7 @@ export default function UserAddForm({ setAddUser, refetch }: any) {
     });
 
     const addUser = useMutation(
-        (data: IUser) => UsersService.create(data),
+        (data: IUser) => GenericService.create<IUser>('users', data),
         {
             onSuccess: async (result: any) => {
                 successMsg({ message: `User: '${result.username}' has been successfully created` });

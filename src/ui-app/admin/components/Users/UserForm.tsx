@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { errorMsg, log } from '../../../shared/utils';
 import { Password } from '../../../shared/components/Password';
 import ActionPopoverIcon from '../../../shared/components/ActionPopoverIcon';
-import { UsersService } from '../../../shared/services';
+import { GenericService } from '../../../shared/services';
 import SafeSelect from '../../../shared/components/SafeSelect';
 import IUser from '../../../shared/interfaces/IUser';
 import { successMsg } from '../../../shared/utils/utils';
@@ -48,7 +48,7 @@ export default function UserForm(
     });
 
     const updateUser = useMutation(
-        (data: IUser) => UsersService.update(data),
+        (data: IUser) => GenericService.update('users', data),
         {
             onSuccess: async (result: any) => {
                 successMsg({ message: `User: '${result.username}' has been successfully updated` });
@@ -63,7 +63,7 @@ export default function UserForm(
     );
 
     const deleteUser = useMutation(
-        (userId: string) => UsersService.delete(userId),
+        (userId: string) => GenericService.delete('users', userId),
         {
             onSuccess: async () => {
                 successMsg({ message: 'User has been successfully removed' });

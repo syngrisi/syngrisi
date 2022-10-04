@@ -1,6 +1,5 @@
-const httpStatus = require('http-status');
 const mongoose = require('mongoose');
-const ApiError = require('../utils/ApiError');
+
 const Test = mongoose.model('VRSTest');
 
 /**
@@ -10,10 +9,14 @@ const Test = mongoose.model('VRSTest');
  * @param {string} [options.sortBy] - Sort option in the format: sortField:(desc|asc)
  * @param {number} [options.limit] - Maximum number of results per page (default = 10)
  * @param {number} [options.page] - Current page (default = 1)
- * @returns {Promise<QueryResult>}
+ * @returns {Promise<QueryResult>} - result
  */
 const queryTests = async (filter, options) => {
     const tests = await Test.paginate(filter, options);
+    return tests;
+};
+const queryTestsDistinct = async (filter, options) => {
+    const tests = await Test.paginateDistinct(filter, options);
     return tests;
 };
 
@@ -70,4 +73,5 @@ const queryTests = async (filter, options) => {
 
 module.exports = {
     queryTests,
+    queryTestsDistinct,
 };

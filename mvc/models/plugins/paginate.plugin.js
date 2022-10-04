@@ -21,6 +21,7 @@ const paginate = (schema) => {
      * @param {number} [options.page] - Current page (default = 1)
      * @returns {Promise<QueryResult>}
      */
+    // eslint-disable-next-line func-names
     schema.statics.paginate = async function (filter, options) {
         let sort = '';
         if (options.sortBy) {
@@ -70,6 +71,9 @@ const paginate = (schema) => {
                     limit,
                     totalPages,
                     totalResults,
+                    // microseconds
+                    timestamp: Number(Date.now() + String(process.hrtime()[1])
+                        .slice(3, 6)),
                 };
                 return Promise.resolve(result);
             });

@@ -5,14 +5,23 @@ import { INavDataItem } from './interfaces';
 export function navigationData(): INavDataItem[] {
     return [
         {
-            title: 'Dashboard',
-            description: 'Visit the Test Results Dashboard',
+            title: 'Test Results',
+            description: 'Test Results Main Page',
             group: 'main',
             icon: <IconDashboard size={18} />,
             crumbs: [
-                { title: 'Dashboard', href: '/' },
+                { title: 'Test Results', href: '/index2' },
             ],
         },
+        // {
+        //     title: 'Dashboard',
+        //     description: 'Visit the Test Results Dashboard',
+        //     group: 'main',
+        //     icon: <IconDashboard size={18} />,
+        //     crumbs: [
+        //         { title: 'Dashboard', href: '/' },
+        //     ],
+        // },
         {
             title: 'Admin Panel',
             description: 'Visit Admin Panel',

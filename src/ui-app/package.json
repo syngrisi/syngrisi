@@ -31,7 +31,8 @@
         "react-dom": "^18.2.0",
         "react-icons": "^4.4.0",
         "react-intersection-observer": "^9.4.0",
-        "react-router-dom": "^6.3.0"
+        "react-router-dom": "^6.3.0",
+        "use-query-params": "^2.1.1"
     },
     "devDependencies": {
         "@types/node": "^18.7.14",

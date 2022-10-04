@@ -4,7 +4,7 @@ import { IconAt } from '@tabler/icons';
 import { Loader, TextInput } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { UsersService } from '../services';
+import { GenericService } from '../services';
 
 interface IDuplicationFreeEmail {
     form: any,
@@ -32,7 +32,7 @@ export const Email = {
             ['userByEmail', form.values.username],
             // eslint-disable-next-line arrow-body-style
             async () => {
-                return UsersService.getUsers({ username: form.values.username });
+                return GenericService.get('users', { username: form.values.username });
             },
             {
                 enabled: !!form.values.username && (/^\S+@\S+$/.test(form.values.username)),

@@ -7,4 +7,7 @@ const router = express.Router();
 router.route('/')
     .get(ensureLoggedIn(), testController.getTest);
 
+router.route('/distinct')
+    .get(ensureLoggedIn(), testController.distinct);
+
 module.exports = router;

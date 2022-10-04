@@ -7,17 +7,16 @@ import {
     ScrollArea,
     Stack,
 } from '@mantine/core';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import RelativeDrawer from '../../../../shared/components/RelativeDrawer';
 import { adminLogsTableColumns } from './adminLogsTableColumns';
 import LogicalGroup from '../../../../shared/components/filter/LogicalGroup';
-import { SearchParams, uuid } from '../../../../shared/utils';
+import { uuid } from '../../../../shared/utils';
+import { useParams } from '../../../hooks/useParams';
 
 interface Props {
     open: boolean
     setOpen: any
-    searchParams: any
-    setSearchParams: any
 }
 
 const mainGroupInit = {
@@ -34,10 +33,10 @@ function AdminLogsTableFilter(
     {
         open,
         setOpen,
-        searchParams,
-        setSearchParams,
     }: Props,
 ) {
+    const { setQuery } = useParams();
+
     const [groupsData, setGroupsData] = useState<{ [key: string]: any }>(mainGroupInit);
 
     const removeGroupsData = (key: string) => {
@@ -94,7 +93,7 @@ function AdminLogsTableFilter(
     };
 
     const applyFilter = () => {
-        SearchParams.changeFiltering(searchParams, setSearchParams, JSON.stringify(createFilterObject()));
+        setQuery({ filter: createFilterObject() });
     };
 
     /* eslint-disable indent, react/jsx-indent */
@@ -113,11 +112,6 @@ function AdminLogsTableFilter(
                 />
             ),
         );
-    /* eslint-enable indent , react/jsx-indent */
-
-    // eslint-disable-next-line prefer-arrow-callback
-    useEffect(function groupsDataChange() {
-    }, [JSON.stringify(groupsData)]);
 
     return (
         <RelativeDrawer

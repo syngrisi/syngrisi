@@ -41,6 +41,7 @@ function App() {
     const clearToolbar = () => {
         setToolbar(() => []);
     };
+
     const appProviderValue = React.useMemo(() => ({
         appTitle,
         setAppTitle,

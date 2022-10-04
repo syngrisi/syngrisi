@@ -1,9 +1,9 @@
 import { Paper, AppShell } from '@mantine/core';
 import * as React from 'react';
-import { Route, Routes } from 'react-router-dom';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import IndexHeader from './components/Header/IndexHeader';
 import AdminNavBar from './components/Navbar/IndexNavbar';
+import Tests from './components/Tests/Tests';
 
 export default function IndexLayout() {
     return (
@@ -17,7 +17,7 @@ export default function IndexLayout() {
         >
             <ReactQueryDevtools initialIsOpen={false} />
             <Paper>
-                TESTS RESULTS
+                <Tests />
             </Paper>
         </AppShell>
     );
