@@ -6,7 +6,7 @@ import SafeSelect from '../SafeSelect';
 import { useForm } from '@mantine/form';
 import { errorMsg, generateItemFilter } from '../../utils';
 import { useQuery } from '@tanstack/react-query';
-import { LogsService } from '../../services/logs.service';
+import { GenericService } from '../../services';
 
 interface Props {
     label: string
@@ -19,7 +19,7 @@ export function LogLevelFilter({ label, groupRules, updateGroupRules, id }: Prop
 
     const distinctQuery = useQuery(
         ['logs_level_distinct', id],
-        () => LogsService.distinct('level'),
+        () => GenericService.distinct('logs', 'level'),
         {
             enabled: true,
             refetchOnWindowFocus: false,

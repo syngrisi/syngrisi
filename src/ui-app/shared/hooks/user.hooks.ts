@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { UsersService } from '../services';
+import { GenericService, UsersService } from '../services';
 import { errorMsg } from '../utils';
 
 export const UserHooks = {
@@ -26,7 +26,7 @@ export const UserHooks = {
     },
     useAllUsers() {
         const { isLoading, error, data, refetch, isSuccess, isFetching }: any = useQuery(
-            ['allUsers'], () => UsersService.getUsers({}, { sortBy: 'id: desc' }), {
+            ['allUsers'], () => GenericService.get('users', {}, { sortBy: 'id: desc' }), {
                 onError: (err: unknown) => {
                     errorMsg({ error: err });
                 },

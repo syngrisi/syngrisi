@@ -1,4 +1,5 @@
 export interface IPage<T> {
+    timestamp: string;
     limit: string
     page: string
     totalPages: string

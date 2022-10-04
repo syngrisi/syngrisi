@@ -1,10 +1,34 @@
+/* eslint-disable indent,no-useless-escape */
 const httpStatus = require('http-status');
+const { EJSON } = require('bson');
 const pick = require('../utils/pick');
+// eslint-disable-next-line no-unused-vars
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
-const { userService } = require('../services');
+const { testService } = require('../services');
+
+const isJSON = (text) => (!text ? '' : (/^[\],:{}\s]*$/.test(text.replace(/\\["\\\/bfnrtu]/g, '@')
+    .replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']')
+    .replace(/(?:^|:|,)(?:\s*\[)+/g, ''))));
+
+const deserializeIfJSON = (text) => {
+    if (isJSON(text)) return EJSON.parse(text || null) || undefined;
+    return text;
+};
 
 const getTest = catchAsync(async (req, res) => {
+    const filter = {
+        ...deserializeIfJSON(req.query.base_filter),
+        ...deserializeIfJSON(req.query.filter),
+    };
+
+    const options = pick(req.query, ['sortBy', 'limit', 'page', 'populate']);
+    const result = await testService.queryTests(filter, options);
+    res.status(httpStatus.OK)
+        .send(result);
+});
+
+const distinct = catchAsync(async (req, res) => {
     const filter = pick(req.query, [
         'suite',
         'run',
@@ -21,41 +45,15 @@ const getTest = catchAsync(async (req, res) => {
         'os',
         'app',
         'startDate',
-
+        'filter',
     ]);
-    const options = pick(req.query, ['sortBy', 'limit', 'page', 'populate']);
-    const result = await userService.queryTests(filter, options);
-    res.status(httpStatus.OK).send(result);
+    const options = { ...pick(req.query, ['sortBy', 'limit', 'page', 'populate']), field: req.params.id };
+    const result = await testService.queryTestsDistinct(filter, options);
+    res.status(httpStatus.OK)
+        .send(result);
 });
 
-// const createUser = catchAsync(async (req, res) => {
-//     const user = await userService.createUser(req.body);
-//     res.status(httpStatus.CREATED).send(user);
-// });
-//
-//
-// const getUser = catchAsync(async (req, res) => {
-//     const user = await userService.getUserById(req.params.userId);
-//     if (!user) {
-//         throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
-//     }
-//     res.send(user);
-// });
-//
-// const updateUser = catchAsync(async (req, res) => {
-//     const user = await userService.updateUserById(req.params.userId, req.body);
-//     res.send(user);
-// });
-//
-// const deleteUser = catchAsync(async (req, res) => {
-//     await userService.deleteUserById(req.params.userId);
-//     res.status(httpStatus.NO_CONTENT).send();
-// });
-
 module.exports = {
-    // createUser,
     getTest,
-    // getUser,
-    // updateUser,
-    // deleteUser,
+    distinct,
 };

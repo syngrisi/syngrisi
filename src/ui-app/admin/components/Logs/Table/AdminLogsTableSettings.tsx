@@ -11,15 +11,13 @@ import { useInputState, useToggle } from '@mantine/hooks';
 import { adminLogsTableColumns } from './adminLogsTableColumns';
 import RelativeDrawer from '../../../../shared/components/RelativeDrawer';
 import SafeSelect from '../../../../shared/components/SafeSelect';
-import { SearchParams } from '../../../../shared/utils';
+import { useParams } from '../../../hooks/useParams';
 
 interface Props {
     open: boolean
     setSortOpen: any,
     visibleFields: any
     setVisibleFields: any
-    searchParams: any
-    setSearchParams: any
 }
 
 function AdminLogsTableSettings(
@@ -28,10 +26,9 @@ function AdminLogsTableSettings(
         setSortOpen,
         visibleFields,
         setVisibleFields,
-        searchParams,
-        setSearchParams,
     }: Props,
 ) {
+    const { setQuery } = useParams();
     const [sortOrder, toggleSortOrder] = useToggle(['desc', 'asc']);
     const [selectOptionsData] = useState(() => Object.keys(adminLogsTableColumns)
         .map((column) => ({ value: column, label: adminLogsTableColumns[column].label })));
@@ -39,7 +36,7 @@ function AdminLogsTableSettings(
     const [sortItemValue, setSortItemValue] = useInputState('timestamp');
 
     useEffect(() => {
-        SearchParams.changeSorting(searchParams, setSearchParams, sortItemValue, sortOrder);
+        setTimeout(() => setQuery({ sortBy: `${sortItemValue}:${sortOrder}` }), 0);
     }, [sortItemValue, sortOrder]);
 
     return (

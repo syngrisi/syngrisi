@@ -30,6 +30,7 @@ function App() {
     const [appTitle, setAppTitle] = useState('Syngrisi');
     const [breadCrumbs, setBreadCrumbs] = useState([]);
     const [toolbar, setToolbar]: [any[], any] = useState([]);
+    const [currentProject, setCurrentProject] = useState('');
 
     const updateToolbar = (newItem: any, index: number = 0) => {
         setToolbar((prevArr: any[]) => {
@@ -41,6 +42,7 @@ function App() {
     const clearToolbar = () => {
         setToolbar(() => []);
     };
+
     const appProviderValue = React.useMemo(() => ({
         appTitle,
         setAppTitle,
@@ -50,7 +52,10 @@ function App() {
         clearToolbar,
         breadCrumbs,
         setBreadCrumbs,
-    }), [appTitle, toolbar, JSON.stringify(breadCrumbs)]);
+        currentProject,
+        setCurrentProject,
+    }), [appTitle, toolbar, JSON.stringify(breadCrumbs), currentProject]);
+
     useDocumentTitle(appTitle);
 
     const navigate = useNavigate();

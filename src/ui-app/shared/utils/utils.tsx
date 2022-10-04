@@ -32,3 +32,11 @@ export function successMsg(params: Required<{ message: string }>) {
         color: 'green',
     });
 }
+
+export function escapeRegExp(text: string) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+}
+
+export const isJSON = (text: string) => !text ? '' : (/^[\],:{}\s]*$/.test(text.replace(/\\["\\\/bfnrtu]/g, '@')
+    .replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']')
+    .replace(/(?:^|:|,)(?:\s*\[)+/g, '')));

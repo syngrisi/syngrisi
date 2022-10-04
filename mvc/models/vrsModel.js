@@ -1,14 +1,14 @@
-/* eslint-disable valid-jsdoc */
+/* eslint-disable valid-jsdoc,func-names */
 const passportLocalMongoose = require('passport-local-mongoose');
 const mongoose = require('mongoose');
-const { toJSON, paginate } = require('./plugins');
+const { toJSON, paginate, paginateDistinct } = require('./plugins');
 
 const { Schema } = mongoose;
 
 const SnapshotSchema = new Schema({
     name: {
         type: String,
-        required: 'the name of the snapshot entity is empty',
+        required: 'SnapshotSchema: the name of the snapshot entity is empty',
     },
     path: {
         type: String,
@@ -18,7 +18,7 @@ const SnapshotSchema = new Schema({
     },
     imghash: {
         type: String,
-        required: 'the image hash of the snapshot entity is empty',
+        required: 'SnapshotSchema: the image hash of the snapshot entity is empty',
     },
     createdDate: {
         type: Date,
@@ -35,20 +35,22 @@ const SnapshotSchema = new Schema({
 const CheckSchema = new Schema({
     name: {
         type: String,
-        required: 'the name of the check entity is empty',
+        required: 'CheckSchema: the name of the check entity is empty',
     },
     test: {
         type: Schema.Types.ObjectId,
         ref: 'VRSTest',
-        required: 'the test name of the check entity is empty',
+        required: 'CheckSchema: the test name of the check entity is empty',
     },
     suite: {
         type: Schema.Types.ObjectId,
         ref: 'VRSSuite',
+        required: 'CheckSchema: the app field is empty',
     },
     app: {
         type: Schema.Types.ObjectId,
         ref: 'VRSApp',
+        required: 'CheckSchema: the app field is empty',
     },
     branch: {
         type: String,
@@ -159,6 +161,7 @@ const BaselineSchema = new Schema({
     app: {
         type: Schema.Types.ObjectId,
         ref: 'VRSApp',
+        required: 'VRSBaselineSchema: the app field is empty',
     },
     branch: {
         type: String,
@@ -188,6 +191,9 @@ const BaselineSchema = new Schema({
     createdDate: {
         type: Date,
     },
+    updatedDate: {
+        type: Date,
+    },
     markedById: {
         type: Schema.Types.ObjectId,
         ref: 'VRSUser',
@@ -215,7 +221,7 @@ const TestSchema = new Schema(
     {
         name: {
             type: String,
-            required: 'the test name is empty',
+            required: 'TestSchema: the test name is empty',
         },
         description: {
             type: String,
@@ -247,6 +253,8 @@ const TestSchema = new Schema(
         },
         app: {
             type: Schema.Types.ObjectId,
+            ref: 'VRSApp',
+            required: 'TestSchema: the app field is empty',
         },
         blinking: {
             type: Number,
@@ -266,9 +274,11 @@ const TestSchema = new Schema(
         ],
         suite: {
             type: Schema.Types.ObjectId,
+            ref: 'VRSSuite',
         },
         run: {
             type: Schema.Types.ObjectId,
+            ref: 'VRSRun',
         },
         markedAs: {
             type: String,
@@ -293,10 +303,15 @@ const SuiteSchema = new Schema({
         type: String,
         default: 'Others',
         unique: true,
-        required: 'the suite name is empty',
+        required: 'SuiteSchema: the suite name is empty',
     },
     tags: {
         type: [String],
+    },
+    app: {
+        type: Schema.Types.ObjectId,
+        ref: 'VRSApp',
+        required: 'SuiteSchema: the app field is empty',
     },
     description: {
         type: String,
@@ -304,6 +319,9 @@ const SuiteSchema = new Schema({
     updatedDate: {
         type: Date,
         default: Date.now,
+    },
+    createdDate: {
+        type: Date,
     },
     meta: {
         type: Object,
@@ -313,11 +331,17 @@ const SuiteSchema = new Schema({
 const RunSchema = new Schema({
     name: {
         type: String,
-        required: 'the run name cannot be empty',
+        required: 'RunSchema: the run name cannot be empty',
+    },
+    app: {
+        type: Schema.Types.ObjectId,
+        ref: 'VRSApp',
+        required: 'RunSchema: the app field is empty',
     },
     ident: {
         type: String,
-        required: 'the run ident run cannot be empty',
+        unique: true,
+        required: 'RunSchema: the run ident run cannot be empty',
     },
     description: {
         type: String,
@@ -325,6 +349,9 @@ const RunSchema = new Schema({
     updatedDate: {
         type: Date,
         default: Date.now,
+    },
+    createdDate: {
+        type: Date,
     },
     parameters: {
         type: [String],
@@ -358,7 +385,7 @@ const AppSchema = new Schema({
         type: String,
         default: 'Others',
         unique: true,
-        required: 'the Application name is empty',
+        required: 'AppSchema: the Application name is empty',
     },
     description: {
         type: String,
@@ -368,7 +395,9 @@ const AppSchema = new Schema({
     },
     updatedDate: {
         type: Date,
-        default: Date.now,
+    },
+    createdDate: {
+        type: Date,
     },
     meta: {
         type: Object,
@@ -379,22 +408,22 @@ const UserSchema = new Schema({
     username: {
         type: String,
         unique: true,
-        required: 'the username name is empty',
+        required: 'UserSchema: the username name is empty',
     },
     firstName: {
         type: String,
-        required: 'the firstName name is empty',
+        required: 'UserSchema: the firstName name is empty',
     },
     lastName: {
         type: String,
-        required: 'the lastName name is empty',
+        required: 'UserSchema: the lastName name is empty',
     },
     role: {
         type: String,
         enum: {
             values: ['admin', 'reviewer', 'user'],
-            message: 'role is required',
-            required: 'role is required',
+            message: 'UserSchema: role is required',
+            required: 'UserSchema: role is required',
         },
     },
     password: {
@@ -424,22 +453,22 @@ const AppSettingsSchema = new Schema({
     name: {
         type: String,
         unique: true,
-        required: 'the name is empty',
+        required: 'AppSettingsSchema: the name is empty',
     },
     label: {
         type: String,
-        required: 'the label is empty',
+        required: 'AppSettingsSchema: the label is empty',
     },
     description: {
         type: String,
     },
     type: {
         type: String,
-        required: 'the type is empty',
+        required: 'AppSettingsSchema: the type is empty',
     },
     value: {
         type: Schema.Types.Mixed,
-        required: 'the value is empty',
+        required: 'AppSettingsSchema: the value is empty',
     },
     env_variable: {
         type: String,
@@ -457,8 +486,18 @@ LogSchema.plugin(paginate);
 UserSchema.plugin(toJSON);
 UserSchema.plugin(paginate);
 
+RunSchema.plugin(paginate);
+RunSchema.plugin(toJSON);
+
+SuiteSchema.plugin(paginate);
+SuiteSchema.plugin(toJSON);
+
+AppSchema.plugin(paginate);
+AppSchema.plugin(toJSON);
+
 TestSchema.plugin(toJSON);
 TestSchema.plugin(paginate);
+TestSchema.plugin(paginateDistinct);
 
 /**
  * Check if email is taken

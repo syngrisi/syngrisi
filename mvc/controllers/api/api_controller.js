@@ -41,7 +41,7 @@ const {
     buildIdentObject,
     ident,
 } = require('../utils');
-const { createItemIfNotExistAsync } = require('../../../lib/dbItems');
+const { createItemIfNotExistAsync, createSuiteIfNotExist, createRunIfNotExist } = require('../../../lib/dbItems');
 
 const $this = this;
 $this.logMeta = {
@@ -278,8 +278,6 @@ exports.updateBaselineBySnapshotId = async (req, res) => {
 
 exports.getBaseline = async (req, res) => {
     try {
-        console.log(req.params.id);
-        console.log(await Baseline.findById(req.params.id));
         if (!req.params.id) {
             return res.status(204)
                 .json([]);
@@ -545,7 +543,6 @@ exports.createTest = async (req, res) => {
 
     try {
         const params = req.body;
-
         log.info(`create test with name '${params.name}', params: '${JSON.stringify(params)}'`, $this, logOpts);
         const opts = removeEmptyProperties({
             name: params.name,
@@ -562,23 +559,37 @@ exports.createTest = async (req, res) => {
             updatedDate: new Date(),
         });
 
-        const run = await createItemIfNotExistAsync('VRSRun',
-            {
-                name: params.run,
-                ident: params.runident,
-            },
-            { user: req?.user?.username, itemType: 'run' });
-        opts.run = run.id;
-
-        const app = await createItemIfNotExistAsync('VRSApp',
+        const app = await createItemIfNotExistAsync(
+            'VRSApp',
             {
                 name: params.app,
             },
-            { user: req?.user?.username, itemType: 'app' });
-        opts.app = app.id;
-        // console.log({ opts });
-        const test = await orm.createTest(opts);
+            { user: req?.user?.username, itemType: 'app' }
+        );
+        opts.app = app._id;
 
+        const run = await createRunIfNotExist(
+            {
+                name: params.run,
+                ident: params.runident,
+                app: app._id,
+            },
+            { user: req?.user?.username, itemType: 'run' }
+        );
+        opts.run = run._id;
+
+        const suite = await createSuiteIfNotExist(
+            {
+                name: params.suite || 'Others',
+                app: app._id,
+                createdDate: new Date(),
+            },
+            { user: req?.user?.username, itemType: 'suite' },
+        );
+
+        opts.suite = suite._id;
+
+        const test = await orm.createTest(opts);
         res.json(test);
         return [req, res, test];
     } catch (e) {
@@ -720,13 +731,15 @@ async function createNewBaseline(params) {
     validateBaselineParam(params);
 
     const identFields = buildIdentObject(params);
+
     const sameBaseline = await Baseline.findOne({ ...identFields, ...{ snapshootId: params.actualSnapshotId } })
         .exec();
 
     if (sameBaseline) {
         log.debug(`the baseline with same ident and snapshot id: ${params.actualSnapshotId} already exist`, $this);
     } else {
-        log.debug(`the baseline with same ident and snapshot id: ${params.actualSnapshotId} does not exist, create new one`, $this);
+        log.debug(`the baseline with same ident and snapshot id: ${params.actualSnapshotId} does not exist,
+         create new one, identFields: ${JSON.stringify(identFields)}`, $this);
     }
 
     log.silly({ sameBaseline });
@@ -1036,21 +1049,26 @@ exports.createCheck = async (req, res) => {
                 .send({ status: 'testNotFound', message: errMsg });
             throw new Error(errMsg);
         }
-        const suite = await createItemIfNotExistAsync('VRSSuite',
-            { name: req.body.suitename || 'Others' },
-            { user: currentUser?.username, itemType: 'suite' });
+        const app = await createItemIfNotExistAsync(
+            'VRSApp',
+            { name: req.body.appName || 'Unknown' },
+            { user: currentUser.username, itemType: 'app' }
+        );
 
-        // const suite = await orm.createSuiteIfNotExist({ name: req.body.suitename || 'Others' });
+        const suite = await createSuiteIfNotExist(
+            {
+                name: req.body.suitename || 'Others',
+                app: app._id,
+                createdDate: new Date(),
+            },
+            { user: req?.user?.username, itemType: 'suite' },
+        );
 
         await orm.updateItem('VRSTest', { _id: test.id }, {
             suite: suite.id,
             creatorId: currentUser._id,
             creatorUsername: currentUser.username,
         });
-
-        const app = await createItemIfNotExistAsync('VRSApp',
-            { name: req.body.appName || 'Unknown' },
-            { user: currentUser.username, itemType: 'app' });
 
         const result = await createCheck(
             {

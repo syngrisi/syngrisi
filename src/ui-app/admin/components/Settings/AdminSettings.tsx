@@ -3,16 +3,16 @@ import * as React from 'react';
 import { Title, LoadingOverlay, Text, Box } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { useSubpageEffect, useNavProgressFetchEffect } from '../../../shared/hooks';
-import { SettingsService } from '../../../shared/services/settings.service';
 import { ISettingForm } from './Forms/interfaces';
 import { errorMsg, log } from '../../../shared/utils';
 import { FormWrapper } from './Forms/FormWrapper';
+import { GenericService } from '../../../shared/services';
 
 export default function AdminSettings() {
     useSubpageEffect('Settings');
     const settingsQuery: any = useQuery(
         ['settings'],
-        () => SettingsService.getSettings(),
+        () => GenericService.get('settings'),
         {
             enabled: true,
             onError: (err: any) => {

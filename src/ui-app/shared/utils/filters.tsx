@@ -1,8 +1,6 @@
-export function generateItemFilter(label: string, operator: string, value: string) {
-    function escapeRegExp(text: string) {
-        return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
-    }
+import { escapeRegExp } from './utils';
 
+export function generateItemFilter(label: string, operator: string, value: string) {
     const transform: any = {
         eq: () => ({ $eq: value }),
         ne: () => ({ $ne: value }),
