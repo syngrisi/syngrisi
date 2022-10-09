@@ -76,23 +76,6 @@ Feature: Log Basics
         When I wait for "5" seconds
         Then I expect that element "[data-test='folding-table-items]" is not displayed
 
-        When I wait on element "//*[@data-test='table-row-Message' and contains(.,'TESTMSG')]" for 7000ms to be displayed
-        When I click on the element "//*[@data-test='table-row-Message' and contains(.,'TESTMSG')]/..//input"
-        When I wait on element "[data-test='folding-table-items']" to be displayed
-        When I click on the element "//*[@data-test='table-row-Message' and contains(.,'TESTMSG')]/..//input"
-        When I wait for "5" seconds
-        When I wait on element "[data-test='folding-table-items']" to not be displayed
-
-    Scenario: Select, fold/unfold icon - appear
-        When I create "1" log messages with params:
-            """
-              message: TESTMSG
-              level: info
-            """
-        When I go to "logs" page
-        When I wait for "5" seconds
-        Then I expect that element "[data-test='folding-table-items]" is not displayed
-
         When I wait on element "//*[@data-test='table-row-Message' and contains(.,'TESTMSG')]" to be displayed
         When I click on the element "//*[@data-test='table-row-Message' and contains(.,'TESTMSG')]/..//input"
         When I wait on element "[data-test='folding-table-items']" to be displayed

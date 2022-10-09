@@ -26,6 +26,10 @@ When(/^I clear database$/, () => {
     clearDatabase(false);
 });
 
+When(/^I clear local storage$/, async () => {
+    await browser.execute('localStorage.clear()');
+});
+
 When(/^I clear screenshots folder$/, () => {
     clearScreenshotsFolder();
 });

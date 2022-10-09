@@ -12,7 +12,7 @@ export const adminLogsTableColumns: { [key: string]: any } = {
         type: 'StringFilter',
     },
     creatorUsername: {
-        label: 'Created by',
+        label: 'Created',
         headStyle: { width: '10%' },
         cellStyle: { width: '10%' },
         type: 'StringFilter',

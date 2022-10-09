@@ -50,7 +50,7 @@ export function NavbarItems({ infinityQuery, groupByValue }: Props) {
     const transformResourceToFCName = (value: string) => {
         const transformMap = {
             runs: ListItems.Runs,
-            suites: ListItems.Simple,
+            suites: ListItems.Suite,
         } as { [key: string]: any };
         return transformMap[value] ? transformMap[value] : ListItems.Simple;
     };

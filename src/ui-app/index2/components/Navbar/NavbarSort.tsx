@@ -1,16 +1,15 @@
 import * as React from 'react';
-import { ActionIcon, Group, Popover } from '@mantine/core';
-import { IconArrowsSort, IconSortAscending, IconSortDescending, IconX } from '@tabler/icons';
+import { ActionIcon, Group, Transition } from '@mantine/core';
+import { IconSortAscending, IconSortDescending } from '@tabler/icons';
 import SafeSelect from '../../../shared/components/SafeSelect';
 
 type Props = {
     groupBy: string,
-    sortOpened: any,
-    setSortOpened: any,
     setSortBy: any,
     sortBy: string,
     setSortOrder: any,
     sortOrder: string,
+    openedSort: any,
 };
 
 const sortOptionsData = (type: string) => {
@@ -29,37 +28,25 @@ const sortOptionsData = (type: string) => {
     ];
 };
 
-export function SortPopover(
+export function NavbarSort(
     {
         groupBy,
-        sortOpened,
-        setSortOpened,
         sortBy,
         setSortBy,
         setSortOrder,
         sortOrder,
+        openedSort,
     }: Props,
 ) {
     return (
-        <Popover opened={sortOpened} onChange={setSortOpened} shadow="md" position="bottom-end">
-            <Popover.Target>
-                <ActionIcon
-                    title="Sorting"
-                    mb={4}
-                    onClick={() => setSortOpened((o) => !o)}
-                >
-                    <IconArrowsSort stroke={1} />
-                </ActionIcon>
-            </Popover.Target>
-
-            <Popover.Dropdown>
-                <Group position="right" align="start" sx={{ width: '100%' }} noWrap>
-                    <ActionIcon size="sm" mr={-10} mt={-4} onClick={() => setSortOpened(false)}>
-                        <IconX stroke={1} size={16} />
-                    </ActionIcon>
-                </Group>
-
-                <Group align="end" noWrap>
+        <Transition
+            mounted={openedSort}
+            transition="fade"
+            duration={400}
+            timingFunction="ease"
+        >
+            {(styles) => (
+                <Group align="end" noWrap style={styles}>
                     <SafeSelect
                         label="Sort by"
                         data-test="navbar-sort-by-select"
@@ -70,6 +57,7 @@ export function SortPopover(
                     />
                     <ActionIcon
                         title="Sort Order"
+                        data-test="navbar-sort-by-order"
                         mb={4}
                         onClick={
                             () => {
@@ -88,8 +76,8 @@ export function SortPopover(
                         }
                     </ActionIcon>
                 </Group>
-            </Popover.Dropdown>
-        </Popover>
 
+            )}
+        </Transition>
     );
 }

@@ -8,7 +8,7 @@ Feature: Baseline - Match Type
         When I open the app
         When I create "1" tests with:
         """
-          testName: "Test - "
+          testName: "Test - $"
           checks:
             - filePath: files/anti_off.png
               checkName: Check - 1
@@ -31,7 +31,7 @@ Feature: Baseline - Match Type
 
         When I create "1" tests with:
         """
-          testName: "Test - "
+          testName: "Test - $"
           checks:
             - filePath: files/anti_on.png
               checkName: Check - 1

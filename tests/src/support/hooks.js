@@ -179,8 +179,9 @@ exports.hooks = {
             }
         }
     },
-    afterScenario: function (uri, feature, scenario, result, sourceLocation) {
-        if (browser.syngrisiServer) browser.syngrisiServer.kill();
+    afterScenario: async function (uri, feature, scenario, result, sourceLocation) {
+        if (browser.syngrisiServer) await browser.syngrisiServer.kill();
+        // await browser.execute('localStorage.clear()');
     },
     // afterFeature: function (uri, feature, scenarios) {
     // }

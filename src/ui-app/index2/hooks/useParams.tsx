@@ -4,6 +4,7 @@ export function useParams() {
     const [query, setQuery] = useQueryParams({
         groupBy: StringParam,
         sortBy: StringParam,
+        app: StringParam,
         filter: JsonParam,
         base_filter: JsonParam,
     });
