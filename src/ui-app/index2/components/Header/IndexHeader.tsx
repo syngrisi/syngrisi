@@ -153,9 +153,9 @@ export default function IndexHeader() {
         setCurrentProjectLS(() => value);
     };
 
-    const { updateQueryJsonParam } = useParams();
+    const { setQuery } = useParams();
     useEffect(() => {
-        updateQueryJsonParam('base_filter', 'app', currentProjectLS);
+        setQuery({ app: currentProjectLS });
     }, [currentProjectLS]);
 
     return (
@@ -179,10 +179,11 @@ export default function IndexHeader() {
                     <Group spacing="sm">
                         <Text size="sm">Project:</Text>
                         <SafeSelect
-                            searchable
+                            searchable="true"
+                            clearable="true"
                             placeholder="Enter Project Name"
                             variant="unstiled"
-                            data-test="current_project"
+                            data-test="current-project"
                             sx={{
                                 minWidth: '150px',
                                 borderWidth: '0px 0 1px 0',
@@ -192,8 +193,7 @@ export default function IndexHeader() {
                             styles={{
                                 input: { paddingRight: '20px' },
                             }}
-                            value={currentProjectLS}
-                            clearable
+                            value={currentProjectLS || ''}
                             onChange={projectSelectHandler}
                             size="sm"
                             optionsData={projectSelectData}

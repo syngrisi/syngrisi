@@ -1,5 +1,5 @@
-import { r as react, Y as queryString, d as useMantineTheme, V as useDisclosure, b as jsx, w as useLocalStorage, u as useQuery, j as jsxs, e as Container, G as Group, T as Text, h as Button, Z as Aae, P as Paper, c as createStyles, q as Checkbox, _ as Stack, $ as Tooltip, s as ActionIcon, a0 as ji, m as aze, a1 as Ahe, a2 as Uhe, n as useSearchParams, a3 as sJ, K as Transition, p as TextInput, L as Loader, A as Anchor, a4 as Fragment, a5 as Xne, a6 as hl, a7 as Ti, a8 as zK, a9 as React, B as Box, aa as J, Q as QueryClient, f as useDocumentTitle, ab as useNavigate, y as QueryClientProvider, E as ColorSchemeProvider, M as MantineProvider, ac as Routes, ad as Route, F as createRoot, H as BrowserRouter } from "./use-form.7eb764b8.js";
-import { u as useQueryParams, S as StringParam, J as JsonParam, a as useColorScheme, l as links, H as Header, B as Burger, b as HeaderLogo, c as SafeSelect, o as openSpotlight, K as Kbd, U as UserMenu, T as ToggleThemeButton, d as Breadcrumbs, e as errorMsg, G as GenericService, i as isDark, L as List, R as RingProgress, f as useInView, g as Skeleton, P as Popover, h as escapeRegExp, j as useToggle, k as useInfinityScroll, N as Navbar, m as ScrollArea, F as FocusTrap, n as getNavigationItem, s as stopNavigationProgress, r as resetNavigationProgress, p as Badge, A as Affix, C as Collapse, q as Table, t as useInputState, v as RelativeDrawer, w as Chip, x as LogicalGroup, y as uuid, z as useNavProgressFetchEffect, D as AppShell, E as ReactQueryDevtools, I as navigationData, M as SpotlightProvider, O as NotificationsProvider, Q as NavigationProgress, V as ModalsProvider, W as QueryParamProvider, X as ReactRouter6Adapter } from "./LogicalGroup.220cc91e.js";
+import { r as react, Y as queryString, d as useMantineTheme, V as useDisclosure, b as jsx, w as useLocalStorage, u as useQuery, j as jsxs, e as Container, G as Group, T as Text, h as Button, Z as Aae, P as Paper, c as createStyles, q as Checkbox, _ as Stack, $ as Tooltip, K as Transition, s as ActionIcon, a0 as Ahe, a1 as Uhe, p as TextInput, m as aze, L as Loader, a2 as sJ, a3 as ji, A as Anchor, a4 as Fragment, a5 as Xne, a6 as hl, a7 as Ti, a8 as zK, a9 as React, B as Box, n as useSearchParams, aa as J, Q as QueryClient, f as useDocumentTitle, ab as useNavigate, y as QueryClientProvider, E as ColorSchemeProvider, M as MantineProvider, ac as Routes, ad as Route, F as createRoot, H as BrowserRouter } from "./use-form.113720ef.js";
+import { u as useQueryParams, S as StringParam, J as JsonParam, a as useColorScheme, l as links, H as Header, B as Burger, b as HeaderLogo, c as SafeSelect, o as openSpotlight, K as Kbd, U as UserMenu, T as ToggleThemeButton, d as Breadcrumbs, e as errorMsg, G as GenericService, i as isDark, L as List, R as RingProgress, f as useInView, g as Skeleton, F as FocusTrap, h as escapeRegExp, j as useToggle, k as useInfinityScroll, N as Navbar, m as ScrollArea, n as getNavigationItem, s as stopNavigationProgress, r as resetNavigationProgress, p as Badge, A as Affix, C as Collapse, q as Table, t as useInputState, v as RelativeDrawer, w as Chip, x as LogicalGroup, y as uuid, z as useNavProgressFetchEffect, D as AppShell, E as ReactQueryDevtools, I as navigationData, M as SpotlightProvider, O as NotificationsProvider, P as NavigationProgress, Q as ModalsProvider, V as QueryParamProvider, W as ReactRouter6Adapter } from "./LogicalGroup.6c67dc0f.js";
 function useDebouncedValue(value, wait, options = { leading: false }) {
   const [_value, setValue] = react.exports.useState(value);
   const mountedRef = react.exports.useRef(false);
@@ -43,6 +43,7 @@ function useParams() {
   const [query, setQuery] = useQueryParams({
     groupBy: StringParam,
     sortBy: StringParam,
+    app: StringParam,
     filter: JsonParam,
     base_filter: JsonParam
   });
@@ -162,10 +163,12 @@ function IndexHeader() {
     setCurrentProjectLS(() => value);
   };
   const {
-    updateQueryJsonParam
+    setQuery
   } = useParams();
   react.exports.useEffect(() => {
-    updateQueryJsonParam("base_filter", "app", currentProjectLS);
+    setQuery({
+      app: currentProjectLS
+    });
   }, [currentProjectLS]);
   return /* @__PURE__ */ jsxs(Header, {
     height: 100,
@@ -188,10 +191,11 @@ function IndexHeader() {
             size: "sm",
             children: "Project:"
           }), /* @__PURE__ */ jsx(SafeSelect, {
-            searchable: true,
+            searchable: "true",
+            clearable: "true",
             placeholder: "Enter Project Name",
             variant: "unstiled",
-            "data-test": "current_project",
+            "data-test": "current-project",
             sx: {
               minWidth: "150px",
               borderWidth: "0px 0 1px 0",
@@ -203,8 +207,7 @@ function IndexHeader() {
                 paddingRight: "20px"
               }
             },
-            value: currentProjectLS,
-            clearable: true,
+            value: currentProjectLS || "",
             onChange: projectSelectHandler,
             size: "sm",
             optionsData: projectSelectData
@@ -275,11 +278,15 @@ function Runs({
   setActiveItem
 }) {
   const {
-    updateQueryJsonParam
+    setQuery
   } = useParams();
-  const handlerItemClick = (event) => {
+  const handlerItemClick = () => {
     setActiveItem(() => id);
-    updateQueryJsonParam("base_filter", "run", id);
+    setQuery({
+      base_filter: {
+        run: id
+      }
+    });
   };
   return /* @__PURE__ */ jsx(List.Item, {
     "data-test": `navbar_item_${index}`,
@@ -315,6 +322,7 @@ function Runs({
             label: item.name,
             multiline: true,
             children: /* @__PURE__ */ jsx(Text, {
+              "data-test": "navbar-item-name",
               size: 16,
               lineClamp: 1,
               sx: {
@@ -336,6 +344,75 @@ function Runs({
         }],
         size: 48
       })]
+    })
+  });
+}
+function Suite({
+  item,
+  selected,
+  toggleRowSelection,
+  index,
+  classes,
+  id,
+  activeItem,
+  setActiveItem
+}) {
+  const {
+    setQuery
+  } = useParams();
+  const handlerItemClick = () => {
+    setActiveItem(() => id);
+    setQuery({
+      base_filter: {
+        suite: id
+      }
+    });
+  };
+  return /* @__PURE__ */ jsx(List.Item, {
+    "data-test": `navbar_item_${index}`,
+    onClick: handlerItemClick,
+    className: `${classes.navbarItem} ${activeItem === id && classes.activeNavbarItem}`,
+    style: {
+      cursor: "pointer"
+    },
+    children: /* @__PURE__ */ jsx(Group, {
+      noWrap: true,
+      p: 4,
+      position: "apart",
+      spacing: 0,
+      children: /* @__PURE__ */ jsxs(Group, {
+        noWrap: true,
+        style: {
+          width: "100%"
+        },
+        children: [/* @__PURE__ */ jsx(Checkbox, {
+          "test-data": "navbar-item-checkbox",
+          checked: selected,
+          onChange: (event) => {
+            event.stopPropagation();
+            toggleRowSelection(item.id);
+          },
+          onClick: (event) => event.stopPropagation()
+        }), /* @__PURE__ */ jsx(Stack, {
+          spacing: 0,
+          style: {
+            width: "100%"
+          },
+          children: /* @__PURE__ */ jsx(Tooltip, {
+            label: item.name,
+            multiline: true,
+            children: /* @__PURE__ */ jsx(Text, {
+              "data-test": "navbar-item-name",
+              size: 16,
+              lineClamp: 1,
+              sx: {
+                wordBreak: "break-all"
+              },
+              children: item.name
+            })
+          })
+        })]
+      })
     })
   });
 }
@@ -388,6 +465,7 @@ function Simple({
             label: item.name,
             multiline: true,
             children: /* @__PURE__ */ jsx(Text, {
+              "data-test": "navbar-item-name",
               size: 16,
               lineClamp: 1,
               sx: {
@@ -436,7 +514,7 @@ function NavbarItems({
   const transformResourceToFCName = (value) => {
     const transformMap = {
       runs: Runs,
-      suites: Simple
+      suites: Suite
     };
     return transformMap[value] ? transformMap[value] : Simple;
   };
@@ -506,77 +584,93 @@ const sortOptionsData = (type) => {
     label: "Name"
   }];
 };
-function SortPopover({
+function NavbarSort({
   groupBy,
-  sortOpened,
-  setSortOpened,
   sortBy,
   setSortBy,
   setSortOrder,
-  sortOrder
+  sortOrder,
+  openedSort
 }) {
-  return /* @__PURE__ */ jsxs(Popover, {
-    opened: sortOpened,
-    onChange: setSortOpened,
-    shadow: "md",
-    position: "bottom-end",
-    children: [/* @__PURE__ */ jsx(Popover.Target, {
-      children: /* @__PURE__ */ jsx(ActionIcon, {
-        title: "Sorting",
+  return /* @__PURE__ */ jsx(Transition, {
+    mounted: openedSort,
+    transition: "fade",
+    duration: 400,
+    timingFunction: "ease",
+    children: (styles) => /* @__PURE__ */ jsxs(Group, {
+      align: "end",
+      noWrap: true,
+      style: styles,
+      children: [/* @__PURE__ */ jsx(SafeSelect, {
+        label: "Sort by",
+        "data-test": "navbar-sort-by-select",
+        sx: {
+          width: "230px"
+        },
+        value: sortBy,
+        onChange: (value) => setSortBy(() => value),
+        optionsData: sortOptionsData(groupBy)
+      }), /* @__PURE__ */ jsx(ActionIcon, {
+        title: "Sort Order",
+        "data-test": "navbar-sort-by-order",
         mb: 4,
-        onClick: () => setSortOpened((o) => !o),
-        children: /* @__PURE__ */ jsx(ji, {
+        onClick: () => {
+          if (sortOrder === "asc") {
+            setSortOrder("desc");
+            return;
+          }
+          setSortOrder("asc");
+        },
+        children: sortOrder === "asc" ? /* @__PURE__ */ jsx(Ahe, {
+          stroke: 1
+        }) : /* @__PURE__ */ jsx(Uhe, {
           stroke: 1
         })
-      })
-    }), /* @__PURE__ */ jsxs(Popover.Dropdown, {
-      children: [/* @__PURE__ */ jsx(Group, {
-        position: "right",
-        align: "start",
+      })]
+    })
+  });
+}
+function NavbarFilter({
+  openedFilter,
+  quickFilter,
+  setQuickFilter,
+  debouncedQuickFilter,
+  infinityQuery,
+  toggleOpenedFilter
+}) {
+  return /* @__PURE__ */ jsx(Transition, {
+    mounted: openedFilter,
+    transition: "fade",
+    duration: 400,
+    timingFunction: "ease",
+    children: (styles) => /* @__PURE__ */ jsx(FocusTrap, {
+      active: true,
+      children: /* @__PURE__ */ jsx(TextInput, {
+        label: "Filter by",
+        "data-test": "navbar-quick-filter",
+        style: styles,
         sx: {
           width: "100%"
         },
-        noWrap: true,
-        children: /* @__PURE__ */ jsx(ActionIcon, {
-          size: "sm",
-          mr: -10,
-          mt: -4,
-          onClick: () => setSortOpened(false),
-          children: /* @__PURE__ */ jsx(aze, {
-            stroke: 1,
-            size: 16
-          })
-        })
-      }), /* @__PURE__ */ jsxs(Group, {
-        align: "end",
-        noWrap: true,
-        children: [/* @__PURE__ */ jsx(SafeSelect, {
-          label: "Sort by",
-          "data-test": "navbar-sort-by-select",
-          sx: {
-            width: "230px"
-          },
-          value: sortBy,
-          onChange: (value) => setSortBy(() => value),
-          optionsData: sortOptionsData(groupBy)
-        }), /* @__PURE__ */ jsx(ActionIcon, {
-          title: "Sort Order",
-          mb: 4,
+        placeholder: "Filter",
+        value: quickFilter,
+        onChange: (e) => {
+          setQuickFilter(e.currentTarget.value);
+        },
+        rightSection: quickFilter === debouncedQuickFilter && !infinityQuery.isFetching ? /* @__PURE__ */ jsx(ActionIcon, {
           onClick: () => {
-            if (sortOrder === "asc") {
-              setSortOrder("desc");
-              return;
-            }
-            setSortOrder("asc");
+            if (quickFilter === "")
+              toggleOpenedFilter(false);
+            setQuickFilter("");
           },
-          children: sortOrder === "asc" ? /* @__PURE__ */ jsx(Ahe, {
-            stroke: 1
-          }) : /* @__PURE__ */ jsx(Uhe, {
+          children: /* @__PURE__ */ jsx(aze, {
             stroke: 1
           })
-        })]
-      })]
-    })]
+        }) : /* @__PURE__ */ jsx(Loader, {
+          size: 24
+        })
+      })
+    })
   });
 }
 const useStyles$2 = createStyles((theme) => ({
@@ -589,13 +683,9 @@ const useStyles$2 = createStyles((theme) => ({
   }
 }));
 function IndexNavbar() {
-  var _a, _b, _c;
-  react.exports.useContext(AppContext);
   const {
     classes
   } = useStyles$2();
-  useMantineTheme();
-  const [searchParams, setSearchParams] = useSearchParams();
   const [sortOpened, setSortOpened] = react.exports.useState(false);
   const [sortBy, setSortBy] = react.exports.useState("createdDate");
   const [sortOrder, setSortOrder] = react.exports.useState("desc");
@@ -604,6 +694,12 @@ function IndexNavbar() {
     setQuery
   } = useParams();
   const [groupByValue, setGroupByValue] = react.exports.useState(query.groupBy || "runs");
+  const handleGroupBySelect = (value) => {
+    setGroupByValue(value);
+    setQuery({
+      base_filter: {}
+    });
+  };
   const [quickFilter, setQuickFilter] = react.exports.useState("");
   const [debouncedQuickFilter] = useDebouncedValue(quickFilter, 400);
   const quickFilterKey = (value) => {
@@ -627,13 +723,14 @@ function IndexNavbar() {
       }
     };
   }, [debouncedQuickFilter]);
-  const baseFilter = ((_a = query == null ? void 0 : query.base_filter) == null ? void 0 : _a.app) ? {
+  const baseFilter = (query == null ? void 0 : query.app) ? {
     app: {
-      $oid: ((_b = query == null ? void 0 : query.base_filter) == null ? void 0 : _b.app) || ""
+      $oid: (query == null ? void 0 : query.app) || ""
     },
     ...quickFilterObject
-  } : {};
+  } : quickFilterObject;
   const [openedFilter, toggleOpenedFilter] = useToggle([false, true]);
+  const [openedSort, toggleOpenedSort] = useToggle([false, true]);
   const getNewestFilter = (item) => {
     const transform = {
       runs: "createdDate",
@@ -646,7 +743,7 @@ function IndexNavbar() {
     infinityQuery
   } = useInfinityScroll({
     resourceName: groupByValue,
-    filterObj: JSON.parse(searchParams.get("filter")),
+    filterObj: query.filter,
     newestItemsFilterKey: getNewestFilter(groupByValue),
     baseFilterObj: baseFilter,
     sortBy: `${sortBy}:${sortOrder}`
@@ -664,7 +761,12 @@ function IndexNavbar() {
   }, [groupByValue]);
   react.exports.useEffect(function refetch() {
     firstPageQuery.refetch();
-  }, [query == null ? void 0 : query.groupBy, (_c = query == null ? void 0 : query.base_filter) == null ? void 0 : _c.app, JSON.stringify(quickFilterObject), `${sortBy}:${sortOrder}`]);
+  }, [
+    query == null ? void 0 : query.app,
+    query == null ? void 0 : query.groupBy,
+    JSON.stringify(quickFilterObject),
+    `${sortBy}:${sortOrder}`
+  ]);
   return /* @__PURE__ */ jsx(Group, {
     position: "apart",
     align: "start",
@@ -700,9 +802,9 @@ function IndexNavbar() {
           },
           children: [/* @__PURE__ */ jsx(SafeSelect, {
             label: "Group by",
-            "data-test": "user-add-role",
+            "data-test": "navbar-group-by",
             value: groupByValue,
-            onChange: setGroupByValue,
+            onChange: handleGroupBySelect,
             optionsData: [
               {
                 value: "runs",
@@ -728,64 +830,46 @@ function IndexNavbar() {
                 value: "test-distinct/markedAs",
                 label: "Accept Status"
               }
-            ],
-            required: true
+            ]
           }), /* @__PURE__ */ jsxs(Group, {
             spacing: 4,
             children: [/* @__PURE__ */ jsx(ActionIcon, {
+              "data-test": "navbar-icon-open-filter",
               onClick: () => toggleOpenedFilter(),
               mb: 4,
               children: /* @__PURE__ */ jsx(sJ, {
                 stroke: 1
               })
-            }), /* @__PURE__ */ jsx(SortPopover, {
-              groupBy: groupByValue,
-              sortOpened,
-              setSortOpened,
-              sortBy,
-              setSortBy,
-              setSortOrder,
-              sortOrder
+            }), /* @__PURE__ */ jsx(ActionIcon, {
+              "data-test": "navbar-icon-open-sort",
+              onClick: () => toggleOpenedSort(),
+              mb: 4,
+              children: /* @__PURE__ */ jsx(ji, {
+                stroke: 1
+              })
             })]
           })]
+        }), /* @__PURE__ */ jsx(Group, {
+          children: /* @__PURE__ */ jsx(NavbarSort, {
+            groupBy: groupByValue,
+            setSortOpened,
+            sortBy,
+            setSortBy,
+            setSortOrder,
+            sortOrder,
+            openedSort
+          })
         }), /* @__PURE__ */ jsx(Group, {
           sx: {
             width: "100%"
           },
-          pt: 8,
-          children: /* @__PURE__ */ jsx(Transition, {
-            mounted: openedFilter,
-            transition: "fade",
-            duration: 400,
-            timingFunction: "ease",
-            children: (styles) => {
-              return /* @__PURE__ */ jsx(FocusTrap, {
-                active: true,
-                children: /* @__PURE__ */ jsx(TextInput, {
-                  style: styles,
-                  sx: {
-                    width: "100%"
-                  },
-                  placeholder: "Filter",
-                  value: quickFilter,
-                  onChange: (e) => {
-                    setQuickFilter(e.currentTarget.value);
-                  },
-                  rightSection: quickFilter === debouncedQuickFilter && !infinityQuery.isFetching ? /* @__PURE__ */ jsx(ActionIcon, {
-                    onClick: () => {
-                      if (quickFilter === "")
-                        toggleOpenedFilter(false);
-                      setQuickFilter("");
-                    },
-                    children: /* @__PURE__ */ jsx(aze, {
-                      stroke: 1
-                    })
-                  }) : /* @__PURE__ */ jsx(Loader, {
-                    size: 24
-                  })
-                })
-              });
-            }
+          children: /* @__PURE__ */ jsx(NavbarFilter, {
+            openedFilter,
+            quickFilter,
+            setQuickFilter,
+            debouncedQuickFilter,
+            infinityQuery,
+            toggleOpenedFilter
           })
         }), infinityQuery.status === "loading" ? "" : infinityQuery.status === "error" ? /* @__PURE__ */ jsxs(Text, {
           color: "red",
@@ -888,7 +972,7 @@ const adminLogsTableColumns = {
     type: "StringFilter"
   },
   creatorUsername: {
-    label: "Created by",
+    label: "Created",
     headStyle: { width: "10%" },
     cellStyle: { width: "10%" },
     type: "StringFilter"
@@ -1177,7 +1261,7 @@ const TestsTableRows = ({
         onClick: () => toggleCollapse(item.id),
         children: [/* @__PURE__ */ jsx("td", {
           children: /* @__PURE__ */ jsx(Checkbox, {
-            "test-data": "table-item-checkbox",
+            "data-test": "table-item-checkbox",
             checked: selected,
             onChange: (event) => {
               event.stopPropagation();
@@ -1327,6 +1411,7 @@ function TestsTable({
       sx: {
         width: "100%"
       },
+      pb: 24,
       styles: {
         scrollbar: {
           marginTop: "46px"
@@ -1569,14 +1654,11 @@ function Tests() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [sortOpen, setSortOpen] = react.exports.useState(false);
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = react.exports.useState(false);
-  let baseFilter = query["base_filter"] ? query["base_filter"] : {};
-  if ((baseFilter == null ? void 0 : baseFilter.app) === "" || (baseFilter == null ? void 0 : baseFilter.app) === null) {
-    const {
-      app,
-      ...filter
-    } = baseFilter;
-    baseFilter = filter;
-  }
+  const baseFilter = query["base_filter"] ? query["base_filter"] : {};
+  if (query.app)
+    baseFilter.app = {
+      $oid: (query == null ? void 0 : query.app) || ""
+    };
   const {
     firstPageQuery,
     infinityQuery,
@@ -1631,7 +1713,7 @@ function Tests() {
   }, [(_a = newestItemsQuery == null ? void 0 : newestItemsQuery.data) == null ? void 0 : _a.results.length, newestItemsQuery.status, theme.colorScheme]);
   react.exports.useEffect(function refetch() {
     firstPageQuery.refetch();
-  }, [query["base_filter"], query["filter"], query["sortBy"]]);
+  }, [query.base_filter, query.filter, query.app, query.sortBy]);
   return /* @__PURE__ */ jsx(Fragment, {
     children: /* @__PURE__ */ jsxs(Group, {
       position: "apart",

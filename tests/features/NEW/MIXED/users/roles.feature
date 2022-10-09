@@ -23,7 +23,8 @@ Feature: User roles
         Given I start Server and start Driver
 
     @e2e
-    Scenario: User - roles
+    Scenario: User - roles (pending)
+        When I fail
         # login as test admin
         When I login via http with user:"Test" password "123"
 

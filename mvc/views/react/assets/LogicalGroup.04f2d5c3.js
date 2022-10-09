@@ -1,4 +1,4 @@
-import { r as react, b as jsx, d as useMantineTheme, ae as Global$1, af as css, ag as useDidUpdate, ah as useReducedMotion, ai as useWindowEvent, aj as mergeRefs, ak as reactDom, J as useComponentDefaultProps, U as extractSystemStyles, B as Box, I as getDefaultZIndex, al as OptionalPortal, am as packSx, s as ActionIcon, c as createStyles, j as jsxs, an as createPolymorphicComponent, T as Text, a4 as Fragment, ao as _extends, a9 as React, ap as useUncontrolled, aq as useFloating, ar as size, as as useFloatingAutoUpdate, at as offset, au as shift, av as flip, aw as isElement, ax as useMergedRef, ay as clsx, K as Transition$2, az as FloatingArrow, S as useId, aA as getFloatingPosition, aB as UnstyledButton, G as Group, aC as CheckIcon, aD as useTransition, aE as getTransitionStyles, P as Paper, O as Overlay, L as Loader, $ as Tooltip, aF as useInputProps, W as Input, aG as keyframes, aH as ReactDOM, aI as Portal, l as log, aJ as NavigationContext, ab as useNavigate, aK as useLocation, h as Button, i as Progress, x as useHotkeys, C as Center, p as TextInput, V as useDisclosure, w as useLocalStorage, D as Dme, t as l6, e as Container, k as ky, a as config$1, Y as queryString, u as useQuery, aL as EO, aM as Xue, aN as age, aO as A0, aP as q0, aQ as GY, N as Nb, aR as EH, aS as ka, aT as ZX, aU as Lce, aV as Bpe, aW as q2, aX as useInfiniteQuery, m as aze, aY as commonjsGlobal, R as sizes$a, o as useForm, aZ as D3, a_ as Boe } from "./use-form.7eb764b8.js";
+import { r as react, b as jsx, d as useMantineTheme, ae as Global$1, af as css, ag as useDidUpdate, ah as useReducedMotion, ai as useWindowEvent, aj as mergeRefs, ak as reactDom, J as useComponentDefaultProps, U as extractSystemStyles, B as Box, I as getDefaultZIndex, al as OptionalPortal, am as packSx, s as ActionIcon, c as createStyles, j as jsxs, an as createPolymorphicComponent, T as Text, a4 as Fragment, ao as _extends, a9 as React, ap as useUncontrolled, aq as useFloating, ar as size, as as useFloatingAutoUpdate, at as offset, au as shift, av as flip, aw as isElement, ax as useMergedRef, ay as clsx, K as Transition$2, az as FloatingArrow, S as useId, aA as getFloatingPosition, aB as UnstyledButton, G as Group, aC as CheckIcon, aD as useTransition, aE as getTransitionStyles, P as Paper, O as Overlay, L as Loader, $ as Tooltip, aF as useInputProps, W as Input, aG as keyframes, aH as ReactDOM, aI as Portal, l as log, aJ as NavigationContext, ab as useNavigate, aK as useLocation, h as Button, i as Progress, x as useHotkeys, C as Center, p as TextInput, V as useDisclosure, w as useLocalStorage, D as Dme, t as l6, e as Container, k as ky, a as config$1, Y as queryString, u as useQuery, aL as EO, aM as Xue, aN as age, aO as A0, aP as q0, aQ as GY, N as Nb, aR as EH, aS as ka, aT as ZX, aU as Lce, aV as Bpe, aW as q2, aX as useInfiniteQuery, m as aze, aY as commonjsGlobal, R as sizes$a, o as useForm, aZ as D3, a_ as Boe } from "./use-form.113720ef.js";
 function findElementAncestor(element, selector) {
   let _element = element;
   while ((_element = _element.parentElement) && !_element.matches(selector))
@@ -11490,7 +11490,6 @@ function useInfinityScroll({
     }, "newestItemsQuery");
   }, {
     enabled: ((_c = (_b = infinityQuery.data) == null ? void 0 : _b.pages) == null ? void 0 : _c.length) > 0,
-    refetchInterval: 3e3,
     onError: (e) => {
       errorMsg({
         error: e
@@ -15779,7 +15778,7 @@ function LogicalGroup({
   });
 }
 export {
-  createScopedKeydownHandler as $,
+  StylesApiProvider as $,
   Affix as A,
   Burger as B,
   Collapse as C,
@@ -15795,28 +15794,28 @@ export {
   SpotlightProvider as M,
   Navbar as N,
   NotificationsProvider as O,
-  Popover as P,
-  NavigationProgress as Q,
+  NavigationProgress as P,
+  ModalsProvider as Q,
   RingProgress as R,
   StringParam as S,
   ToggleThemeButton as T,
   UserMenu as U,
-  ModalsProvider as V,
-  QueryParamProvider as W,
-  ReactRouter6Adapter as X,
-  clamp as Y,
-  createSafeContext as Z,
-  useContextStylesApi as _,
+  QueryParamProvider as V,
+  ReactRouter6Adapter as W,
+  clamp as X,
+  createSafeContext as Y,
+  useContextStylesApi as Z,
+  createScopedKeydownHandler as _,
   useColorScheme as a,
-  StylesApiProvider as a0,
-  CloseButton as a1,
-  HorizontalSection as a2,
-  Section as a3,
-  VerticalSection as a4,
-  DefaultItem as a5,
-  SelectPopover as a6,
-  SelectScrollArea as a7,
-  SelectItems as a8,
+  CloseButton as a0,
+  HorizontalSection as a1,
+  Section as a2,
+  VerticalSection as a3,
+  DefaultItem as a4,
+  SelectPopover as a5,
+  SelectScrollArea as a6,
+  SelectItems as a7,
+  Popover as a8,
   useFocusTrap as a9,
   useScrollLock as aa,
   useFocusReturn as ab,

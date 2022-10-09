@@ -8,7 +8,7 @@ Feature: Mass Check Acceptance
     Scenario: Mass Check Acceptance
         When I create "2" tests with:
         """
-          testName: "Mass Accept - "
+          testName: "Mass Accept - $"
           checks:
             - filePath: files/A.png
               checkName: Check - 1

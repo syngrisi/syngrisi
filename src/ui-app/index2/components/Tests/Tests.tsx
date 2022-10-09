@@ -42,12 +42,9 @@ export default function Tests() {
     const [searchParams, setSearchParams] = useSearchParams();
     const [sortOpen, setSortOpen] = useState(false);
     const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
-    let baseFilter = query['base_filter'] ? query['base_filter'] : {};
-    // remove 'app' from filter if 'app' is empty
-    if (baseFilter?.app === '' || baseFilter?.app === null ) {
-        const { app, ...filter } = baseFilter;
-        baseFilter = filter;
-    }
+    const baseFilter = query['base_filter'] ? query['base_filter'] : {};
+    if (query.app) baseFilter.app = { $oid: query?.app || '' }
+
     const { firstPageQuery, infinityQuery, newestItemsQuery } = useInfinityScroll({
         baseFilterObj: baseFilter,
         filterObj: query.filter,
@@ -106,9 +103,10 @@ export default function Tests() {
     useEffect(function refetch() {
         firstPageQuery.refetch();
     }, [
-        query['base_filter'],
-        query['filter'],
-        query['sortBy'],
+        query.base_filter,
+        query.filter,
+        query.app,
+        query.sortBy,
     ]);
 
     return (

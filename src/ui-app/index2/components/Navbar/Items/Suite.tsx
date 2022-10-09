@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Checkbox, Group, List, RingProgress, Stack, Text, Tooltip } from '@mantine/core';
+import { Checkbox, Group, List, Stack, Text, Tooltip } from '@mantine/core';
 import { useParams } from '../../../hooks/useParams';
 
 interface Props {
@@ -13,12 +13,12 @@ interface Props {
     setActiveItem: any
 }
 
-export function Runs({ item, selected, toggleRowSelection, index, classes, id, activeItem, setActiveItem }: Props) {
+export function Suite({ item, selected, toggleRowSelection, index, classes, id, activeItem, setActiveItem }: Props) {
     const { setQuery } = useParams();
 
     const handlerItemClick = () => {
         setActiveItem(() => id);
-        setQuery({ base_filter: { run: id } });
+        setQuery({ base_filter: { suite: id } });
     };
     return (
         <List.Item
@@ -56,17 +56,8 @@ export function Runs({ item, selected, toggleRowSelection, index, classes, id, a
                                 {item.name}
                             </Text>
                         </Tooltip>
-                        <Text align="right" size="xs" color="dimmed">3 hous ago</Text>
                     </Stack>
                 </Group>
-
-                <RingProgress
-                    sections={[{
-                        value: 100,
-                        color: 'green',
-                    }]}
-                    size={48}
-                />
             </Group>
         </List.Item>
     );

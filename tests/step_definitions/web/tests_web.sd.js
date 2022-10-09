@@ -1,4 +1,4 @@
-/* eslint-disable no-console,func-names */
+/* eslint-disable no-console,func-names,no-restricted-syntax,no-await-in-loop */
 const { When, Then } = require('cucumber');
 const YAML = require('yaml');
 const fs = require('fs');
@@ -162,28 +162,40 @@ When(/^I create "([^"]*)" tests with params:$/, { timeout: 600000 }, async funct
 });
 
 When(/^I create "([^"]*)" tests with:$/, { timeout: 60000000 }, async function (num, yml) {
-    const params = YAML.parse(yml);
+    function uuidv4() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+            const r = Math.random() * 16 | 0;
+            const v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
 
-    for (const i of Array.from(Array(parseInt(num, 10))
-        .keys())) {
-        // console.log(`Create test # ${i}`);
+    const createTest = async (params) => {
         await browser.vDriver.startTestSession({
-            app: 'Test App',
+            app: params.project || 'Test App',
             branch: 'integration',
-            test: params.testName.includes('-') ? (`${params.testName}${i + 1}`) : params.testName,
-            run: process.env.RUN_NAME || 'integration_run_name',
-            runident: process.env.RUN_IDENT || 'integration_run_ident',
-            suite: 'Integration suite',
+            // test: params.testName.includes('-') ? (`${params.testName}${i + 1}`) : params.testName,
+            browserName: params.browserName,
+            test: params.testName,
+            run: params.runName || process.env.RUN_NAME || 'integration_run_name',
+            runident: params.runIdent || process.env.RUN_IDENT || uuidv4(),
+            suite: params.suiteName || 'Integration suite',
         }, browser.config.apiKey);
         browser.pause(300);
         const checkResult = [];
         for (const check of params.checks) {
             const filepath = check.filePath || 'files/A.png';
             const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${filepath}`);
-            checkResult.push(await checkVRS(check.checkName, imageBuffer));
+            checkResult.push(await checkVRS(check.checkName, imageBuffer, check));
         }
 
         this.STATE.check = checkResult[0];
         await browser.vDriver.stopTestSession(browser.config.apiKey);
+    };
+    for (const i of Array.from(Array(parseInt(num, 10))
+        .keys())) {
+        const params = YAML.parse(yml.replace(/[$]/gim, i));
+        console.log(`Create test # ${i}`);
+        await createTest(params, i);
     }
 });

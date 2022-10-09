@@ -1,6 +1,6 @@
-import { a$ as transitions$1, r as react, ap as useUncontrolled, S as useId, b as jsx, c as createStyles, B as Box, j as jsxs, aB as UnstyledButton, J as useComponentDefaultProps, I as getDefaultZIndex, aF as useInputProps, ag as useDidUpdate, W as Input, ax as useMergedRef, am as packSx, an as createPolymorphicComponent, P as Paper, d as useMantineTheme, a4 as Fragment, K as Transition, al as OptionalPortal, T as Text, O as Overlay, b0 as assignRef, b1 as MANTINE_SIZES, aw as isElement, V as useDisclosure, ao as _extends, U as extractSystemStyles, a9 as React, R as sizes$9, p as TextInput, G as Group, b2 as InputsGroup, ah as useReducedMotion, b3 as useIsomorphicEffect, A as Anchor, L as Loader, b4 as CheckboxIcon, b5 as GROUP_POSITIONS, s as ActionIcon, q as Checkbox, h as Button, C as Center, aC as CheckIcon, e as Container, aI as Portal, i as Progress, _ as Stack, $ as Tooltip, ay as clsx, b6 as DEFAULT_THEME, b7 as MANTINE_COLORS, M as MantineProvider, E as ColorSchemeProvider, b8 as useMantineColorScheme, b9 as GlobalStyles, ba as NormalizeCSS, aG as keyframes, bb as useCss, bc as useEmotionCache, bd as defaultMantineEmotionCache, be as createCache, Z as Aae, aK as useLocation, bf as Link, bg as sge, bh as $i, aP as q0, aU as Lce, o as useForm, Y as queryString, l as log, bi as useParams$1, N as Nb, m as aze, bj as useMutation, bk as _ae, bl as gI, aS as ka, u as useQuery, aN as age, a5 as Xne, a6 as hl, a7 as Ti, a8 as zK, a2 as Uhe, a1 as Ahe, n as useSearchParams, w as useLocalStorage, aa as J, a3 as sJ, ac as Routes, ad as Route, Q as QueryClient, f as useDocumentTitle, ab as useNavigate, y as QueryClientProvider, F as createRoot, H as BrowserRouter } from "./use-form.7eb764b8.js";
-import { Y as clamp, Z as createSafeContext, _ as useContextStylesApi, $ as createScopedKeydownHandler, C as Collapse, a0 as StylesApiProvider, a1 as CloseButton, a2 as HorizontalSection, a3 as Section, a4 as VerticalSection, a5 as DefaultItem$2, a6 as SelectPopover, a7 as SelectScrollArea, a8 as SelectItems, P as Popover, A as Affix, a9 as useFocusTrap, aa as useScrollLock, ab as useFocusReturn, ac as GroupedTransition, ad as createEventHandler, ae as useDelayedHover, af as _objectWithoutPropertiesLoose, ag as useScrollIntoView, ah as groupOptions, ai as getSelectRightSectionProps, aj as Divider, N as Navbar, H as Header, D as AppShell, ak as Avatar, p as Badge, d as Breadcrumbs, B as Burger, w as Chip, F as FocusTrap, al as Highlight, K as Kbd, L as List, am as Mark, an as Menu, ao as Modal, ap as Notification, R as RingProgress, m as ScrollArea, aq as Select, ar as ChevronIcon$1, g as Skeleton, q as Table, as as Global, at as AppContext, n as getNavigationItem, s as stopNavigationProgress, r as resetNavigationProgress, a as useColorScheme, l as links, b as HeaderLogo, o as openSpotlight, U as UserMenu, T as ToggleThemeButton, i as isDark, j as useToggle, c as SafeSelect, au as successMsg, e as errorMsg, G as GenericService, av as UserHooks, z as useNavProgressFetchEffect, f as useInView, u as useQueryParams, S as StringParam, J as JsonParam, t as useInputState, v as RelativeDrawer, x as LogicalGroup, y as uuid, k as useInfinityScroll, E as ReactQueryDevtools, I as navigationData, M as SpotlightProvider, O as NotificationsProvider, Q as NavigationProgress, V as ModalsProvider, W as QueryParamProvider, X as ReactRouter6Adapter } from "./LogicalGroup.4cfb7bb6.js";
-import { L as LoadingOverlay, P as PasswordInput, T as Title } from "./Title.39c5c9b2.js";
+import { a$ as transitions$1, r as react, ap as useUncontrolled, S as useId, b as jsx, c as createStyles, B as Box, j as jsxs, aB as UnstyledButton, J as useComponentDefaultProps, I as getDefaultZIndex, aF as useInputProps, ag as useDidUpdate, W as Input, ax as useMergedRef, am as packSx, an as createPolymorphicComponent, P as Paper, d as useMantineTheme, a4 as Fragment, K as Transition, al as OptionalPortal, T as Text, O as Overlay, b0 as assignRef, b1 as MANTINE_SIZES, aw as isElement, V as useDisclosure, ao as _extends, U as extractSystemStyles, a9 as React, R as sizes$9, p as TextInput, G as Group, b2 as InputsGroup, ah as useReducedMotion, b3 as useIsomorphicEffect, A as Anchor, L as Loader, b4 as CheckboxIcon, b5 as GROUP_POSITIONS, s as ActionIcon, q as Checkbox, h as Button, C as Center, aC as CheckIcon, e as Container, aI as Portal, i as Progress, _ as Stack, $ as Tooltip, ay as clsx, b6 as DEFAULT_THEME, b7 as MANTINE_COLORS, M as MantineProvider, E as ColorSchemeProvider, b8 as useMantineColorScheme, b9 as GlobalStyles, ba as NormalizeCSS, aG as keyframes, bb as useCss, bc as useEmotionCache, bd as defaultMantineEmotionCache, be as createCache, Z as Aae, aK as useLocation, bf as Link, bg as sge, bh as $i, aP as q0, aU as Lce, o as useForm, Y as queryString, l as log, bi as useParams$1, N as Nb, m as aze, bj as useMutation, bk as _ae, bl as gI, aS as ka, u as useQuery, aN as age, a5 as Xne, a6 as hl, a7 as Ti, a8 as zK, a1 as Uhe, a0 as Ahe, n as useSearchParams, w as useLocalStorage, aa as J, a2 as sJ, ac as Routes, ad as Route, Q as QueryClient, f as useDocumentTitle, ab as useNavigate, y as QueryClientProvider, F as createRoot, H as BrowserRouter } from "./use-form.113720ef.js";
+import { X as clamp, Y as createSafeContext, Z as useContextStylesApi, _ as createScopedKeydownHandler, C as Collapse, $ as StylesApiProvider, a0 as CloseButton, a1 as HorizontalSection, a2 as Section, a3 as VerticalSection, a4 as DefaultItem$2, a5 as SelectPopover, a6 as SelectScrollArea, a7 as SelectItems, a8 as Popover, A as Affix, a9 as useFocusTrap, aa as useScrollLock, ab as useFocusReturn, ac as GroupedTransition, ad as createEventHandler, ae as useDelayedHover, af as _objectWithoutPropertiesLoose, ag as useScrollIntoView, ah as groupOptions, ai as getSelectRightSectionProps, aj as Divider, N as Navbar, H as Header, D as AppShell, ak as Avatar, p as Badge, d as Breadcrumbs, B as Burger, w as Chip, F as FocusTrap, al as Highlight, K as Kbd, L as List, am as Mark, an as Menu, ao as Modal, ap as Notification, R as RingProgress, m as ScrollArea, aq as Select, ar as ChevronIcon$1, g as Skeleton, q as Table, as as Global, at as AppContext, n as getNavigationItem, s as stopNavigationProgress, r as resetNavigationProgress, a as useColorScheme, l as links, b as HeaderLogo, o as openSpotlight, U as UserMenu, T as ToggleThemeButton, i as isDark, j as useToggle, c as SafeSelect, au as successMsg, e as errorMsg, G as GenericService, av as UserHooks, z as useNavProgressFetchEffect, f as useInView, u as useQueryParams, S as StringParam, J as JsonParam, t as useInputState, v as RelativeDrawer, x as LogicalGroup, y as uuid, k as useInfinityScroll, E as ReactQueryDevtools, I as navigationData, M as SpotlightProvider, O as NotificationsProvider, P as NavigationProgress, Q as ModalsProvider, V as QueryParamProvider, W as ReactRouter6Adapter } from "./LogicalGroup.04f2d5c3.js";
+import { L as LoadingOverlay, P as PasswordInput, T as Title } from "./Title.3db663e8.js";
 function getSafeId(uid, errorMessage) {
   return (value) => {
     if (typeof value !== "string" || value.trim().length === 0) {
@@ -12832,26 +12832,23 @@ function UserForm({
       password: (value) => value === "" ? null : Password.passwordsRequirementsForPopOver(value).isFail
     }
   });
-  const updateUser = useMutation(
-    (data) => GenericService.update("users", data),
-    {
-      onSuccess: async (result) => {
-        successMsg({
-          message: `User: '${result.username}' has been successfully updated`
-        });
-        log.debug({
-          result
-        });
-        refetch();
-      },
-      onError: (e) => {
-        errorMsg({
-          error: `Cannot update the user, ${String(e)}`
-        });
-        log.error(e);
-      }
+  const updateUser = useMutation((data) => GenericService.update("users", data), {
+    onSuccess: async (result) => {
+      successMsg({
+        message: `User: '${result.username}' has been successfully updated`
+      });
+      log.debug({
+        result
+      });
+      refetch();
+    },
+    onError: (e) => {
+      errorMsg({
+        error: `Cannot update the user, ${String(e)}`
+      });
+      log.error(e);
     }
-  );
+  });
   const deleteUser = useMutation((userId) => GenericService.delete("users", userId), {
     onSuccess: async () => {
       successMsg({
@@ -13095,27 +13092,24 @@ function UserAddForm({
       password: (value) => Password.passwordsRequirementsForPopOver(value).isFail
     }
   });
-  const addUser = useMutation(
-    (data) => GenericService.create("users", data),
-    {
-      onSuccess: async (result) => {
-        successMsg({
-          message: `User: '${result.username}' has been successfully created`
-        });
-        log.debug({
-          result
-        });
-        setAddUser(false);
-        refetch();
-      },
-      onError: (e) => {
-        errorMsg({
-          error: `Cannot create the user, ${String(e)}`
-        });
-        log.error(e);
-      }
+  const addUser = useMutation((data) => GenericService.create("users", data), {
+    onSuccess: async (result) => {
+      successMsg({
+        message: `User: '${result.username}' has been successfully created`
+      });
+      log.debug({
+        result
+      });
+      setAddUser(false);
+      refetch();
+    },
+    onError: (e) => {
+      errorMsg({
+        error: `Cannot create the user, ${String(e)}`
+      });
+      log.error(e);
     }
-  );
+  });
   const formSubmitHandler = (values) => {
     addUser.mutate(values);
   };
@@ -14367,12 +14361,7 @@ function AdminLogs() {
       infinityQuery
     }, "reload"), 50);
   }, [(_a = newestItemsQuery == null ? void 0 : newestItemsQuery.data) == null ? void 0 : _a.results.length, newestItemsQuery.status, theme.colorScheme]);
-  console.log("FFF:", JSON.stringify(query["filter"]));
   react.exports.useEffect(function filterSortUpdate() {
-    console.log({
-      query
-    });
-    console.log(query["filter"]);
     firstPageQuery.refetch();
   }, [JSON.stringify(query["filter"]), JSON.stringify(query["sortBy"])]);
   return /* @__PURE__ */ jsx(Fragment, {

@@ -8,7 +8,7 @@ Feature: Prev and Next CheckView Button
         When I open the app
         When I create "1" tests with:
         """
-          testName: "Prev and Next - "
+          testName: "Prev and Next - $"
           checks:
             - filePath: files/A.png
               checkName: Check - 1
@@ -20,7 +20,7 @@ Feature: Prev and Next CheckView Button
 
         When I create "1" tests with:
         """
-          testName: "Prev and Next - "
+          testName: "Prev and Next - $"
           checks:
             - filePath: files/A.png
               checkName: Check - 1

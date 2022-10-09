@@ -94,7 +94,7 @@ const TestsTableRows = ({ data, selection, setSelection, visibleFields }: Props)
 
                             <td>
                                 <Checkbox
-                                    test-data="table-item-checkbox"
+                                    data-test="table-item-checkbox"
                                     checked={selected}
                                     onChange={(event) => {
                                         event.stopPropagation();

@@ -44,6 +44,7 @@ export function Simple({ item, selected, toggleRowSelection, index }: Props) {
                     <Stack spacing={0} style={{ width: '100%' }}>
                         <Tooltip label={item.name} multiline>
                             <Text
+                                data-test="navbar-item-name"
                                 size={16}
                                 lineClamp={1}
                                 sx={{ wordBreak: 'break-all' }}

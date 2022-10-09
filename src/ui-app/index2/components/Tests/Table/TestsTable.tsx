@@ -45,6 +45,7 @@ export default function TestsTable({ infinityQuery, visibleFields }: any) {
                 ref={scrollAreaRef}
                 maxHeight={'100vh'}
                 sx={{ width: '100%' }}
+                pb={24}
                 styles={{ scrollbar: { marginTop: '46px' } }}
             >
 

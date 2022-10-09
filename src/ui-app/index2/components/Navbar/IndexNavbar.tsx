@@ -5,15 +5,11 @@ import {
     Navbar,
     ScrollArea,
     Text,
-    Transition,
-    TextInput,
-    FocusTrap,
-    Loader,
 } from '@mantine/core';
 import * as React from 'react';
 import {
+    IconArrowsSort,
     IconFilter,
-    IconX,
 } from '@tabler/icons';
 import { createStyles } from '@mantine/styles';
 import { useEffect, useMemo, useState } from 'react';
@@ -23,9 +19,10 @@ import useInfinityScroll from '../../../shared/hooks/useInfinityScroll';
 import { NavbarItems } from './NavbarItems';
 import InfinityScrollSkeleton from './InfinityScrollSkeleton';
 import SafeSelect from '../../../shared/components/SafeSelect';
-import { SortPopover } from './SortPopover';
+import { NavbarSort } from './NavbarSort';
 import { escapeRegExp } from '../../../shared/utils/utils';
 import { useParams } from '../../hooks/useParams';
+import { NavbarFilter } from './NavbarFilter';
 
 const useStyles = createStyles((theme) => ({
     navbar: {
@@ -48,6 +45,11 @@ export default function IndexNavbar() {
     const { query, setQuery } = useParams();
     const [groupByValue, setGroupByValue] = useState(query.groupBy || 'runs');
 
+    const handleGroupBySelect = (value: string) => {
+        setGroupByValue(value);
+        setQuery({ base_filter: {} });
+    };
+
     const [quickFilter, setQuickFilter] = useState<string>('');
     const [debouncedQuickFilter] = useDebouncedValue(quickFilter, 400);
 
@@ -67,15 +69,22 @@ export default function IndexNavbar() {
         if (!debouncedQuickFilter) return ({});
         return ({ [quickFilterKey(groupByValue)]: { $regex: escapeRegExp(debouncedQuickFilter), $options: 'im' } });
     }, [debouncedQuickFilter]);
+    // const baseFilter = query?.base_filter?.app
+    //     ? {
+    //         app: { $oid: query?.base_filter?.app || '' },
+    //         ...quickFilterObject,
+    //     }
+    //     : {};
 
-    const baseFilter = query?.base_filter?.app
+    const baseFilter = query?.app
         ? {
-            app: { $oid: query?.base_filter?.app || '' },
+            app: { $oid: query?.app || '' },
             ...quickFilterObject,
         }
-        : {};
+        : quickFilterObject;
 
     const [openedFilter, toggleOpenedFilter] = useToggle([false, true]);
+    const [openedSort, toggleOpenedSort] = useToggle([false, true]);
 
     const getNewestFilter = (item: string) => {
         const transform = {
@@ -126,8 +135,9 @@ export default function IndexNavbar() {
     useEffect(function refetch() {
         firstPageQuery.refetch();
     }, [
+        query?.app,
         query?.groupBy,
-        query?.base_filter?.app,
+        // query?.base_filter?.app,
         JSON.stringify(quickFilterObject),
         `${sortBy}:${sortOrder}`,
     ]);
@@ -182,9 +192,9 @@ export default function IndexNavbar() {
                             <Group position="apart" align="end" sx={{ width: '100%' }}>
                                 <SafeSelect
                                     label="Group by"
-                                    data-test="user-add-role"
+                                    data-test="navbar-group-by"
                                     value={groupByValue}
-                                    onChange={setGroupByValue}
+                                    onChange={handleGroupBySelect}
                                     optionsData={[
                                         { value: 'runs', label: 'Runs' },
                                         { value: 'suites', label: 'Suites' },
@@ -194,63 +204,47 @@ export default function IndexNavbar() {
                                         { value: 'test-distinct/status', label: 'Test Status' },
                                         { value: 'test-distinct/markedAs', label: 'Accept Status' },
                                     ]}
-                                    required
                                 />
 
                                 <Group spacing={4}>
-                                    <ActionIcon onClick={() => toggleOpenedFilter()} mb={4}>
+                                    <ActionIcon
+                                        data-test="navbar-icon-open-filter"
+                                        onClick={() => toggleOpenedFilter()}
+                                        mb={4}
+                                    >
                                         <IconFilter stroke={1} />
                                     </ActionIcon>
-
-                                    <SortPopover
-                                        groupBy={groupByValue}
-                                        sortOpened={sortOpened}
-                                        setSortOpened={setSortOpened}
-                                        sortBy={sortBy}
-                                        setSortBy={setSortBy}
-                                        setSortOrder={setSortOrder}
-                                        sortOrder={sortOrder}
-                                    />
+                                    <ActionIcon
+                                        data-test="navbar-icon-open-sort"
+                                        onClick={() => toggleOpenedSort()}
+                                        mb={4}
+                                    >
+                                        <IconArrowsSort stroke={1} />
+                                    </ActionIcon>
                                 </Group>
-
                             </Group>
-                            <Group sx={{ width: '100%' }} pt={8}>
-                                <Transition
-                                    mounted={openedFilter}
-                                    transition="fade"
-                                    duration={400}
-                                    timingFunction="ease"
-                                >
-                                    {(styles) => (
-                                        <FocusTrap active>
-                                            <TextInput
-                                                style={styles}
-                                                sx={{ width: '100%' }}
-                                                placeholder="Filter"
-                                                value={quickFilter}
-                                                onChange={(e) => {
-                                                    setQuickFilter(e.currentTarget.value);
-                                                }}
-                                                rightSection={
-                                                    (
-                                                        (quickFilter === debouncedQuickFilter)
-                                                        && !infinityQuery.isFetching
-                                                    )
-                                                        ? (
-                                                            <ActionIcon onClick={() => {
-                                                                if (quickFilter === '') toggleOpenedFilter(false);
-                                                                setQuickFilter('');
-                                                            }}
-                                                            >
-                                                                <IconX stroke={1} />
-                                                            </ActionIcon>
-                                                        )
-                                                        : (<Loader size={24} />)
-                                                }
-                                            />
-                                        </FocusTrap>
-                                    )}
-                                </Transition>
+
+                            <Group>
+                                <NavbarSort
+                                    groupBy={groupByValue}
+                                    setSortOpened={setSortOpened}
+                                    sortBy={sortBy}
+                                    setSortBy={setSortBy}
+                                    setSortOrder={setSortOrder}
+                                    sortOrder={sortOrder}
+                                    openedSort={openedSort}
+                                />
+                            </Group>
+
+                            <Group sx={{ width: '100%' }}>
+                                <NavbarFilter
+                                    openedFilter={openedFilter}
+                                    quickFilter={quickFilter}
+                                    setQuickFilter={setQuickFilter}
+                                    debouncedQuickFilter={debouncedQuickFilter}
+                                    infinityQuery={infinityQuery}
+                                    toggleOpenedFilter={toggleOpenedFilter}
+                                />
                             </Group>
 
                             {
