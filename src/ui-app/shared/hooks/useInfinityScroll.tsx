@@ -140,6 +140,7 @@ export default function useInfinityScroll(
         },
         {
             enabled: infinityQuery.data?.pages?.length! > 0,
+            // @ts-ignore
             refetchInterval: import.meta.env.MODE === 'development' ? Infinity : 3000,
             onError: (e) => {
                 errorMsg({ error: e });

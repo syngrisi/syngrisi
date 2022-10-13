@@ -1,15 +1,13 @@
-/* eslint-disable */
-import React, { FunctionComponent, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { List, Skeleton } from '@mantine/core';
 
 interface Props {
     infinityQuery: any,
-    itemType?: any,
+    itemType?: string,
 }
 
-
-const InfinityScrollSkeleton: FunctionComponent<Props> = ({ infinityQuery, itemType = 'runs' }) => {
+function InfinityScrollSkeleton({ infinityQuery, itemType }: Props) {
     const { ref, inView } = useInView();
 
     useEffect(() => {
@@ -23,14 +21,16 @@ const InfinityScrollSkeleton: FunctionComponent<Props> = ({ infinityQuery, itemT
 
             {infinityQuery.hasNextPage && (
 
-                Object.keys(new Array(6).fill('')).map(x =>
-                    (<List.Item key={x} style={{ height: 72 }}>
-                        <Skeleton height={20} radius="sm" />
-                    </List.Item>)
+                Object.keys(new Array(6).fill('')).map(
+                    (x) => (
+                        <List.Item key={x} style={{ height: 72 }}>
+                            <Skeleton height={20} radius="sm" />
+                        </List.Item>
+                    ),
                 )
             )}
         </List>
     );
-};
+}
 
 export default InfinityScrollSkeleton;

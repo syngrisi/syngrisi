@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable prefer-arrow-callback */
 const { When } = require('cucumber');
 const YAML = require('yaml');
 const { got } = require('got-cjs');
@@ -16,6 +16,7 @@ When(/^I create "([^"]*)" log messages with params:$/, async function (num, json
             }
         ).json());
     }
+    // eslint-disable-next-line no-unused-vars
     const out = await Promise.all(result);
     // console.log({ out });
 });

@@ -1,9 +1,9 @@
 /* eslint-disable */
 import * as React from 'react';
-import { IPage } from '../../../shared/interfaces/logQueries';
-import ILog from '../../../shared/interfaces/ILog';
 import { useEffect, useState } from 'react';
 import { createStyles } from '@mantine/styles';
+import { IPage } from '../../../shared/interfaces/logQueries';
+import ILog from '../../../shared/interfaces/ILog';
 import * as ListItems from './Items';
 
 type Props = {

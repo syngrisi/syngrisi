@@ -28,6 +28,40 @@ Feature: Test Main Table
         When I wait for "3" seconds
         Then I expect that element "//*[@data-test='table-row-Name']" does appear exactly "30" times
 
+    Scenario: Update Table with new Tests
+    After the user opens the table, the Application store items timestamp on the open the table moment,
+    and then shows the user only items that are older than this timestamp and when the new items continue to arrive,
+    the user should see new items counter indicator on the top right corner of the 'Refresh' icon (which will be
+    updated every 3 seconds) and after clicking on the icon, the table will be refreshed with new items.
+
+        When I create "1" tests with:
+        """
+          testName: "TestName-before"
+          checks:
+            - filePath: files/A.png
+              checkName: CheckName
+        """
+        When I go to "index2" page
+        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName-before')]" to be displayed
+
+        When I wait for "3" seconds
+        When I refresh page
+        When I create "3" tests with:
+        """
+          testName: "TestName-after"
+          checks:
+            - filePath: files/A.png
+              checkName: CheckName
+        """
+        When I wait for "5" seconds
+        Then I expect that element "[data-test='table-refresh-icon-badge']" to contain text "3"
+        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName-before')]" to be displayed
+
+        When I click on the element "[data-test='table-refresh-icon']"
+        When I wait for "3" seconds
+        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName-after')]" for 10000ms to be displayed
+        Then I expect that element "//*[@data-test='table-row-Name' and contains(.,'TestName-after')]" does appear exactly "3" times
+
     Scenario: Select, fold/unfold icon - appear
         When I create "1" tests with:
         """
@@ -177,3 +211,8 @@ Feature: Test Main Table
         When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName Project-2-unfiltered')]" to not be displayed
         When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName Project-2-filter-0')]" to not be displayed
         When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName Project-2-filter-1')]" to be displayed
+
+    Scenario: Check modal
+    Check if open by click and close, check if url params disappeared when modal is close then refresh page and check modal again)
+    Check if open by url
+        When I fail
