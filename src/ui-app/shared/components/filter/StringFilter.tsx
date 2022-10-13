@@ -1,9 +1,9 @@
-/* eslint-disable */
+/* eslint-disable react/jsx-props-no-spreading,prefer-arrow-callback */
 import { Group, TextInput } from '@mantine/core';
 import * as React from 'react';
 import { useEffect } from 'react';
-import SafeSelect from '../SafeSelect';
 import { useForm } from '@mantine/form';
+import SafeSelect from '../SafeSelect';
 import { generateItemFilter } from '../../utils';
 
 interface Props {
@@ -18,7 +18,7 @@ export function StringFilter({ label, groupRules, updateGroupRules, id }: Props)
         initialValues: {
             operator: 'eq',
             value: '',
-            label: label,
+            label,
         },
         validateInputOnChange: true,
     });

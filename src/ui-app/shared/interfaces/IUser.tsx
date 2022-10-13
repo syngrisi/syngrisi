@@ -1,4 +1,3 @@
-/* eslint-disable */
 export default interface IUser {
     id: string | undefined,
     username: string | undefined,

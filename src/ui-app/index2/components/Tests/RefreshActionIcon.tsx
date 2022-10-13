@@ -16,6 +16,7 @@ const RefreshActionIcon: FunctionComponent<Props> = ({ newestItemsQuery, firstPa
     return (
         <>
             <ActionIcon
+                title="Refresh"
                 color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
                 data-test="table-refresh-icon"
                 variant="subtle"

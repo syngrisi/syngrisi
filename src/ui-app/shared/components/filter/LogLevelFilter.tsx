@@ -1,11 +1,11 @@
-/* eslint-disable */
+/* eslint-disable react/jsx-props-no-spreading */
 import { Group } from '@mantine/core';
 import * as React from 'react';
 import { useEffect } from 'react';
-import SafeSelect from '../SafeSelect';
 import { useForm } from '@mantine/form';
-import { errorMsg, generateItemFilter } from '../../utils';
 import { useQuery } from '@tanstack/react-query';
+import SafeSelect from '../SafeSelect';
+import { errorMsg, generateItemFilter } from '../../utils';
 import { GenericService } from '../../services';
 
 interface Props {
@@ -16,7 +16,6 @@ interface Props {
 }
 
 export function LogLevelFilter({ label, groupRules, updateGroupRules, id }: Props) {
-
     const distinctQuery = useQuery(
         ['logs_level_distinct', id],
         () => GenericService.distinct('logs', 'level'),
@@ -25,19 +24,20 @@ export function LogLevelFilter({ label, groupRules, updateGroupRules, id }: Prop
             refetchOnWindowFocus: false,
             refetchOnReconnect: false,
             onSuccess: (data) => {
+                // eslint-disable-next-line no-use-before-define
                 form.values.value = data[0];
             },
             onError: (e) => {
-                errorMsg({ error: e })
-            }
+                errorMsg({ error: e });
+            },
         },
-    )
+    );
     let levels: { value: string, label: string }[] = [];
     if (distinctQuery.isSuccess && distinctQuery.data) {
-        levels = distinctQuery.data.map((item) => ({ value: item, label: item }))
+        levels = distinctQuery.data.map((item) => ({ value: item, label: item }));
     }
 
-    distinctQuery.isLoading ? ['loading'] : distinctQuery.data;
+    // distinctQuery.isLoading ? ['loading'] : distinctQuery.data;
 
     if (distinctQuery.error) levels = [{ value: '', label: 'error loading levels' }];
 
@@ -45,12 +45,12 @@ export function LogLevelFilter({ label, groupRules, updateGroupRules, id }: Prop
         initialValues: {
             operator: 'eq',
             value: distinctQuery.data ? distinctQuery.data[0] : '',
-            label: label,
+            label,
         },
         validateInputOnChange: true,
     });
 
-    useEffect(function valuesChanges() {
+    useEffect(() => {
         updateGroupRules(id, generateItemFilter(label, form.values.operator, form.values.value));
     }, [form.values.value, form.values.operator, label]);
 

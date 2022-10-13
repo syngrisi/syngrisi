@@ -16,6 +16,7 @@ interface IRequestOptions {
     sortBy?: string,
     limit?: string,
     page?: string,
+    populate?: string,
 
 }
 
@@ -23,6 +24,10 @@ export const GenericService = {
     async get(resource: string, filter: any = {}, options: IRequestOptions = {}, queryID = ''): Promise<IApiResult> {
         const queryOptions = { ...options, limit: options.limit || 10 };
         const queryOptionsString = queryString.stringify(queryOptions);
+        // if (resource === 'checks') {
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // await new Promise(resolve => setTimeout(resolve, 2000));
+        // }
         // eslint-disable-next-line max-len
         const uri = `${config.baseUri}/v1/${resource}?${queryOptionsString}&filter=${JSON.stringify(filter)}&queryID=${queryID}`;
         const resp = await ky(uri);

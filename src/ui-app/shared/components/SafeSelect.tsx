@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { Loader, Select } from '@mantine/core';
 
 import React, { ReactElement } from 'react';

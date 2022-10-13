@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable prefer-arrow-callback,react/jsx-one-expression-per-line */
 import * as React from 'react';
 import {
     Text,
@@ -6,20 +6,18 @@ import {
     useMantineTheme,
     ActionIcon, Table,
 } from '@mantine/core';
-import { useSearchParams } from 'react-router-dom';
 import { useLocalStorage } from '@mantine/hooks';
 import { useEffect, useContext, useState } from 'react';
-import { useSubpageEffect } from '../../../shared/hooks';
+import { IconAdjustments, IconFilter } from '@tabler/icons';
+import { JsonParam, StringParam, useQueryParams } from 'use-query-params';
+import { useSubpageEffect, useNavProgressFetchEffect } from '../../../shared/hooks';
 import { AppContext } from '../../AppContext';
 import RefreshActionIcon from './RefreshActionIcon';
 import useInfinityScroll from '../../../shared/hooks/useInfinityScroll';
 import AdminLogsTable from './Table/AdminLogsTable';
 import AdminLogsTableSettings from './Table/AdminLogsTableSettings';
-import { IconAdjustments, IconFilter } from '@tabler/icons';
 import AdminLogsTableFilter from './Table/AdminLogsTableFilter';
-import { useNavProgressFetchEffect } from '../../../shared/hooks';
 import InfinityScrollSkeletonFiller from './Table/InfinityScrollSkeletonFIller';
-import { JsonParam, StringParam, useQueryParams } from 'use-query-params';
 
 /**
  * example:
@@ -29,12 +27,12 @@ import { JsonParam, StringParam, useQueryParams } from 'use-query-params';
  *    message: {$regex, 'test'}
  * ]
  */
-interface IFilterSet {
-    [key: string]: any
-}
+// interface IFilterSet {
+//     [key: string]: any
+// }
 
 export default function AdminLogs() {
-    const { toolbar, setToolbar, updateToolbar }: any = useContext(AppContext);
+    const { updateToolbar }: any = useContext(AppContext);
     const [query] = useQueryParams({
         groupBy: StringParam,
         sortBy: StringParam,
@@ -45,15 +43,14 @@ export default function AdminLogs() {
     const theme = useMantineTheme();
     useSubpageEffect('Logs');
 
-    const [searchParams, setSearchParams] = useSearchParams();
     const [sortOpen, setSortOpen] = useState(false);
     const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
     const { firstPageQuery, infinityQuery, newestItemsQuery } = useInfinityScroll({
         resourceName: 'logs',
-        filterObj: query['filter'],
+        filterObj: query.filter,
         newestItemsFilterKey: 'timestamp',
-        sortBy: query['sortBy'] || ''
-    })
+        sortBy: query.sortBy || '',
+    });
     useNavProgressFetchEffect(infinityQuery.isFetching);
 
     const [visibleFields, setVisibleFields] = useLocalStorage({
@@ -69,12 +66,12 @@ export default function AdminLogs() {
                 data-test="table-sorting"
                 variant="subtle"
                 onClick={() => {
-                    setSortOpen((prev) => !prev)
+                    setSortOpen((prev) => !prev);
                 }}
             >
                 <IconAdjustments stroke={1} size={24} />
             </ActionIcon>,
-            48
+            48,
         );
 
         updateToolbar(
@@ -84,62 +81,62 @@ export default function AdminLogs() {
                 data-test="table-filtering"
                 variant="subtle"
                 onClick={() => {
-                    setIsFilterDrawerOpen((prev) => !prev)
+                    setIsFilterDrawerOpen((prev) => !prev);
                 }}
             >
                 <IconFilter size={24} stroke={1} />
             </ActionIcon>,
-            47
+            47,
         );
     }, []);
 
     useEffect(function addReloadIcon() {
         updateToolbar(
-            <RefreshActionIcon key="reload" newestItemsQuery={newestItemsQuery} firstPageQuery={firstPageQuery}
-                               infinityQuery={infinityQuery} />,
-            50
+            <RefreshActionIcon
+                key="reload"
+                newestItemsQuery={newestItemsQuery}
+                firstPageQuery={firstPageQuery}
+                infinityQuery={infinityQuery}
+            />,
+            50,
         );
     }, [newestItemsQuery?.data?.results.length, newestItemsQuery.status, theme.colorScheme]);
 
     useEffect(function filterSortUpdate() {
-            firstPageQuery.refetch();
-        }, [
-            JSON.stringify(query['filter']),
-            JSON.stringify(query['sortBy'])
-        ]
-    );
+        firstPageQuery.refetch();
+    }, [
+        JSON.stringify(query.filter),
+        JSON.stringify(query.sortBy),
+    ]);
 
     return (
-        <>
-            <Group position="apart" align="start" noWrap>
-                {infinityQuery.status === 'loading'
-                    ? (
-                        <Table>
-                            <InfinityScrollSkeletonFiller visibleFields={visibleFields} />
-                        </Table>
-                    )
-                    : infinityQuery.status === 'error'
-                        ? (<Text color="red">Error: {infinityQuery.error.message}</Text>)
-                        : (
-                            <>
-                                <AdminLogsTable
-                                    infinityQuery={infinityQuery}
-                                    visibleFields={visibleFields}
-                                />
-                            </>
-                        )}
-                <AdminLogsTableSettings
-                    open={sortOpen}
-                    setSortOpen={setSortOpen}
-                    visibleFields={visibleFields}
-                    setVisibleFields={setVisibleFields}
-                />
+        <Group position="apart" align="start" noWrap>
+            {/* eslint-disable-next-line no-nested-ternary */}
+            {infinityQuery.status === 'loading'
+                ? (
+                    <Table>
+                        <InfinityScrollSkeletonFiller visibleFields={visibleFields} />
+                    </Table>
+                )
+                : infinityQuery.status === 'error'
+                    ? (<Text color="red">Error: {infinityQuery.error.message}</Text>)
+                    : (
+                        <AdminLogsTable
+                            infinityQuery={infinityQuery}
+                            visibleFields={visibleFields}
+                        />
+                    )}
+            <AdminLogsTableSettings
+                open={sortOpen}
+                setSortOpen={setSortOpen}
+                visibleFields={visibleFields}
+                setVisibleFields={setVisibleFields}
+            />
 
-                <AdminLogsTableFilter
-                    open={isFilterDrawerOpen}
-                    setOpen={setIsFilterDrawerOpen}
-                />
-            </Group>
-        </>
+            <AdminLogsTableFilter
+                open={isFilterDrawerOpen}
+                setOpen={setIsFilterDrawerOpen}
+            />
+        </Group>
     );
 }

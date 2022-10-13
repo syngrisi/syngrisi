@@ -1,25 +1,23 @@
-/* eslint-disable */
-const hasha = require('hasha');
+/* eslint-disable no-underscore-dangle,prefer-arrow-callback,no-console,func-names */
+// noinspection HttpUrlsUsage
+
 const YAML = require('yaml');
-const { spawn, execSync, } = require('child_process');
 const { got } = require('got-cjs');
-const frisby = require('frisby');
-const path = require('path');
 const fs = require('fs');
-const { Given, When, Then, } = require('cucumber');
+const { Given, When, Then } = require('cucumber');
 const { getDomDump } = require('@syngrisi/syngrisi-wdio-sdk');
-const SyngrisiDriver = require('@syngrisi/syngrisi-wdio-sdk').SyngrisiDriver;
+// const SyngrisiDriver = require('@syngrisi/syngrisi-wdio-sdk').SyngrisiDriver;
 const checkVRS = require('../src/support/check/checkVrs').default;
 const waitForAndRefresh = require('../src/support/action/waitForAndRefresh').default;
-const { startSession, killServer, startDriver } = require('../src/utills/common');
+// const { startSession, killServer, startDriver } = require('../src/utills/common');
 
 const {
     saveRandomImage,
     fillCommonPlaceholders,
 } = require('../src/utills/common');
-const { TableVRSComp } = require('../src/PO/vrs/tableVRS.comp');
+// const { TableVRSComp } = require('../src/PO/vrs/tableVRS.comp');
 
-const { requestWithLastSessionSid } = require('../src/utills/common');
+// const { requestWithLastSessionSid } = require('../src/utills/common');
 
 // for debug purposes ONLY
 Given(/^I update the VRStest$/, async () => {
@@ -48,8 +46,7 @@ When(/^I set properties for VRSDriver:$/, function (yml) {
 });
 
 When(/^I visually check page with DOM as "([^"]*)"$/, async function (checkName) {
-    let domDump;
-    domDump = await browser.executeAsync(getDomDump);
+    const domDump = await browser.executeAsync(getDomDump);
     browser.pause(300);
     const imageBuffer = Buffer.from((await browser.saveDocumentScreenshot()), 'base64');
     const checkResult = await checkVRS(checkName, imageBuffer, {}, domDump);
@@ -83,7 +80,7 @@ Then(/^I expect "([^"]*)" tests for get url "([^"]*)"$/, async (testsNum, url) =
     const jsonBodyObject = JSON.parse((await got(url)).body);
     // console.log({jsonBodyObject});
     expect(Object.keys(jsonBodyObject).length)
-        .toBe(parseInt(testsNum));
+        .toBe(parseInt(testsNum, 10));
 });
 
 When(/^I login with user:"([^"]*)" password "([^"]*)"$/, (login, password) => {
@@ -123,9 +120,10 @@ Then(/^I expect the (\d)st "([^"]*)" check has "([^"]*)" acceptance status$/, fu
         );
 
     const wrongStatuses = Object.keys(acceptStatusMap)
-        .filter(x => x !== acceptStatus);
+        .filter((x) => x !== acceptStatus);
     console.log({ wrongStatuses });
 
+    // eslint-disable-next-line no-restricted-syntax
     for (const wrongStatus of wrongStatuses) {
         expect(classesList)
             .not
@@ -146,28 +144,28 @@ Then(/^I expect that the element "([^"]*)" to (not |)have attribute "([^"]*)"$/,
     if (!cond) {
         expect($(selector))
             .toHaveAttr(attr);
-        return
+        return;
     }
     expect($(selector))
         .not
         .toHaveAttr(attr);
 });
 
-async function getWithLastSessionSid(uri, $this) {
-    // console.log({ uri });
-    const sessionSid = $this.getSavedItem('lastSessionId');
-    // console.log({ sessionSid });
-
-    const res = await got.get(`${uri}`, {
-        'headers': {
-            'cookie': `connect.sid=${sessionSid}`
-        },
-    });
-    return {
-        raw: res,
-        json: JSON.parse(res.body)
-    };
-}
+// async function getWithLastSessionSid(uri, $this) {
+//     // console.log({ uri });
+//     const sessionSid = $this.getSavedItem('lastSessionId');
+//     // console.log({ sessionSid });
+//
+//     const res = await got.get(`${uri}`, {
+//         'headers': {
+//             'cookie': `connect.sid=${sessionSid}`
+//         },
+//     });
+//     return {
+//         raw: res,
+//         json: JSON.parse(res.body)
+//     };
+// }
 
 // COMMON
 When(/^I click on the element "([^"]*)" via js$/, function (selector) {
@@ -203,7 +201,7 @@ When(/^I wait for "([^"]*)" seconds$/, { timeout: 600000 }, (sec) => {
 
 Given(/^I set window size: "(1366x768|712x970|880x768|1050x768|1300x768|1300x400|1700x768|500x500)"$/, (viewport) => {
     const size = viewport.split('x');
-    browser.setWindowSize(parseInt(size[0]), parseInt(size[1]));
+    browser.setWindowSize(parseInt(size[0], 10), parseInt(size[1], 10));
 });
 
 Given(/^I generate a random image "([^"]*)"$/, async (filePath) => {
@@ -228,7 +226,7 @@ When(/^I expect that element "([^"]*)" to (contain|have) text "([^"]*)"$/, (sele
 
 Given(/^I set custom window size: "([^"]*)"$/, (viewport) => {
     const size = viewport.split('x');
-    browser.setWindowSize(parseInt(size[0]), parseInt(size[1]));
+    browser.setWindowSize(parseInt(size[0], 10), parseInt(size[1], 10));
 });
 
 Then(/^I expect that element "([^"]*)" is clickable$/, (selector) => {
@@ -256,7 +254,6 @@ When(/^I expect that element "([^"]*)" (not |)contain text "([^"]*)"$/, (selecto
     expect(actualValue)
         .not
         .toContain(val);
-
 });
 
 Then(/^page source match:$/, (source) => {
@@ -287,7 +284,7 @@ Then(/^I expect "([^"]*)" occurrences of (Visible|Clickable|Enabled|Existing|Sel
     const actualNum = $$(selector)
         .filter((el) => el[`is${verb}`]()).length;
     expect(actualNum)
-        .toEqual(parseInt(num));
+        .toEqual(parseInt(num, 10));
 });
 
 Then(/^I expect the element "([^"]*)" contains the text "([^"]*)" via js$/, function (selector, expectedText) {

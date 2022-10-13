@@ -1,4 +1,3 @@
-/* eslint-disable */
 interface IObjectKeys {
     [key: string]: string | undefined;
 }

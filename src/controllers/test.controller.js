@@ -1,20 +1,11 @@
 /* eslint-disable indent,no-useless-escape */
 const httpStatus = require('http-status');
-const { EJSON } = require('bson');
 const pick = require('../utils/pick');
 // eslint-disable-next-line no-unused-vars
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const { testService } = require('../services');
-
-const isJSON = (text) => (!text ? '' : (/^[\],:{}\s]*$/.test(text.replace(/\\["\\\/bfnrtu]/g, '@')
-    .replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']')
-    .replace(/(?:^|:|,)(?:\s*\[)+/g, ''))));
-
-const deserializeIfJSON = (text) => {
-    if (isJSON(text)) return EJSON.parse(text || null) || undefined;
-    return text;
-};
+const { deserializeIfJSON } = require('../utils');
 
 const getTest = catchAsync(async (req, res) => {
     const filter = {
