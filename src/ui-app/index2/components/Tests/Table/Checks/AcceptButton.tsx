@@ -4,7 +4,7 @@ import { useMantineTheme } from '@mantine/core';
 import { BsHandThumbsUp, BsHandThumbsUpFill } from 'react-icons/all';
 import { useMutation } from '@tanstack/react-query';
 import ActionPopoverIcon from '../../../../../shared/components/ActionPopoverIcon';
-import { ChecksService } from '../../../../../shared/services/checks.service';
+import { ChecksService } from '../../../../../shared/services';
 import { errorMsg, successMsg } from '../../../../../shared/utils/utils';
 import { log } from '../../../../../shared/utils/Logger';
 
@@ -18,7 +18,7 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery }: Props) {
     const theme = useMantineTheme();
 
     const isAccepted = (check.markedAs === 'accepted');// || mutationAcceptCheck.isSuccess;
-    const isCurrentlyAccepted = ((check.baselineId._id === check.actualSnapshotId._id) && isAccepted);
+    const isCurrentlyAccepted = ((check.baselineId?._id === check.actualSnapshotId?._id) && isAccepted);
     // eslint-disable-next-line no-nested-ternary
     const likeIconColor = isAccepted
         ? theme.colorScheme === 'dark'
@@ -32,8 +32,8 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery }: Props) {
             onSuccess: async (result: any) => {
                 successMsg({ message: 'Check has been successfully accepted' });
                 log.debug({ result });
-                testUpdateQuery.refetch();
                 checksQuery.refetch();
+                testUpdateQuery.refetch();
             },
             onError: (e: any) => {
                 errorMsg({ error: 'Cannot accept the check' });

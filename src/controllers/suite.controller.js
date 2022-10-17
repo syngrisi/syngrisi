@@ -2,7 +2,7 @@
 const httpStatus = require('http-status');
 const { EJSON } = require('bson');
 const catchAsync = require('../utils/catchAsync');
-const { genericService } = require('../services');
+const { genericService, suiteService } = require('../services');
 const pick = require('../utils/pick');
 
 const get = catchAsync(async (req, res) => {
@@ -12,6 +12,13 @@ const get = catchAsync(async (req, res) => {
     res.send(result);
 });
 
+const remove = catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const result = await suiteService.remove(id, req?.user);
+    res.send(result);
+});
+
 module.exports = {
     get,
+    remove,
 };

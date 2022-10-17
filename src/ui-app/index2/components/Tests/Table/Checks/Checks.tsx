@@ -11,15 +11,17 @@ import { Check } from './Check';
 interface Props {
     item: any,
     testUpdateQuery: any,
+    infinityQuery: any,
 }
 
-export function Checks({ item, testUpdateQuery }: Props) {
+export function Checks({ item, testUpdateQuery, infinityQuery }: Props) {
     // eslint-disable-next-line no-unused-vars
     const [checksViewMode, setChecksViewMode] = useLocalStorage({ key: 'check-view-mode', defaultValue: 'bounded' });
     const checksQuery = useQuery(
         [
             'checks',
             item._id,
+            infinityQuery?.data?.pages[0]?.timestamp,
         ],
         () => GenericService.get(
             'checks',

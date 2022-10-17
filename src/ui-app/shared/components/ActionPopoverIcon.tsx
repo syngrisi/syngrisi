@@ -71,6 +71,7 @@ export default function ActionPopoverIcon(
                     color={buttonColor || color}
                     onClick={() => {
                         action();
+                        handlers.close();
                     }}
                 >
                     {confirmLabel}

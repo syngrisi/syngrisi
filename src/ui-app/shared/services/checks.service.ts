@@ -6,7 +6,7 @@ export const ChecksService = {
     // eslint-disable-next-line consistent-return
     async acceptCheck({ check, newBaselineId }: { check: any, newBaselineId: string }) {
         try {
-            const resp = await ky(`${config.baseUri}/acceptChecks/${check._id}`, {
+            const resp = await ky(`${config.baseUri}/v1/checks/accept/${check._id}`, {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     baselineId: newBaselineId,
@@ -25,7 +25,7 @@ export const ChecksService = {
     // eslint-disable-next-line consistent-return
     async removeCheck({ id }: { id: string }) {
         try {
-            const resp = await ky(`${config.baseUri}/checks/${id}`, {
+            const resp = await ky(`${config.baseUri}/v1/checks/${id}`, {
                 headers: { 'Content-Type': 'application/json' },
                 method: 'DELETE',
             });

@@ -44,7 +44,23 @@ const distinct = catchAsync(async (req, res) => {
         .send(result);
 });
 
+const remove = catchAsync(async (req, res) => {
+    const { id } = req.params;
+    if (!id) throw new ApiError(httpStatus.BAD_REQUEST, 'Cannot remove the test - Id not found');
+    const result = await testService.remove(id, req?.user);
+    res.send(result);
+});
+
+const accept = catchAsync(async (req, res) => {
+    const { id } = req.params;
+    if (!id) throw new ApiError(httpStatus.BAD_REQUEST, 'Cannot accept the check - Id not found');
+    const result = await testService.accept(id, req?.user);
+    res.send(result);
+});
+
 module.exports = {
     getTest,
     distinct,
+    remove,
+    accept,
 };

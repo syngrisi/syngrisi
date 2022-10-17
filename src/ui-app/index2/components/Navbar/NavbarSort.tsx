@@ -1,16 +1,7 @@
 import * as React from 'react';
 import { ActionIcon, Group, Transition } from '@mantine/core';
-import { IconSortAscending, IconSortDescending } from '@tabler/icons';
+import { IconSortAscending, IconSortDescending, IconX } from '@tabler/icons';
 import SafeSelect from '../../../shared/components/SafeSelect';
-
-type Props = {
-    groupBy: string,
-    setSortBy: any,
-    sortBy: string,
-    setSortOrder: any,
-    sortOrder: string,
-    openedSort: any,
-};
 
 const sortOptionsData = (type: string) => {
     const transform = {
@@ -28,12 +19,23 @@ const sortOptionsData = (type: string) => {
     ];
 };
 
+type Props = {
+    groupBy: string,
+    setSortBy: any,
+    sortBy: string,
+    setSortOrder: any,
+    sortOrder: string,
+    openedSort: any,
+    toggleOpenedSort: any,
+};
+
 export function NavbarSort(
     {
         groupBy,
         sortBy,
         setSortBy,
         setSortOrder,
+        toggleOpenedSort,
         sortOrder,
         openedSort,
     }: Props,
@@ -55,28 +57,35 @@ export function NavbarSort(
                         onChange={(value: string) => setSortBy(() => value)}
                         optionsData={sortOptionsData(groupBy)}
                     />
-                    <ActionIcon
-                        title="Sort Order"
-                        data-test="navbar-sort-by-order"
-                        mb={4}
-                        onClick={
-                            () => {
-                                if (sortOrder === 'asc') {
-                                    setSortOrder('desc');
-                                    return;
+                    <Group spacing={6} position="right">
+                        <ActionIcon
+                            title="Sort Order"
+                            data-test="navbar-sort-by-order"
+                            mb={4}
+                            onClick={
+                                () => {
+                                    if (sortOrder === 'asc') {
+                                        setSortOrder('desc');
+                                        return;
+                                    }
+                                    setSortOrder('asc');
                                 }
-                                setSortOrder('asc');
                             }
-                        }
-                    >
-                        {
-                            (sortOrder === 'asc')
-                                ? <IconSortAscending stroke={1} />
-                                : <IconSortDescending stroke={1} />
-                        }
-                    </ActionIcon>
+                        >
+                            {
+                                (sortOrder === 'asc')
+                                    ? <IconSortAscending stroke={1} />
+                                    : <IconSortDescending stroke={1} />
+                            }
+                        </ActionIcon>
+                        <ActionIcon
+                            mb={4}
+                            onClick={() => toggleOpenedSort()}
+                        >
+                            <IconX stroke={1} />
+                        </ActionIcon>
+                    </Group>
                 </Group>
-
             )}
         </Transition>
     );

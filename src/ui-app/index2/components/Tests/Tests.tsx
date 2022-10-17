@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {
-    Text,
     Group,
     useMantineTheme,
     ActionIcon,
@@ -11,7 +10,7 @@ import { useEffect, useContext, useState } from 'react';
 import { IconAdjustments, IconFilter } from '@tabler/icons';
 import { useSubpageEffect } from '../../hooks/useSubpageEffect';
 import { AppContext } from '../../AppContext';
-import RefreshActionIcon from './RefreshActionIcon';
+import RefreshActionIcon from './Table/RefreshActionIcon';
 import useInfinityScroll from '../../../shared/hooks/useInfinityScroll';
 import TestsTable from './Table/TestsTable';
 import Settings from './Table/Settings';
@@ -139,23 +138,11 @@ export default function Tests() {
 
     return (
         <Group position="apart" align="start" noWrap>
-            {/* eslint-disable-next-line no-nested-ternary */}
-            {infinityQuery.status === 'loading'
-                // ? (<LoadingOverlay visible={true} />)
-                ? ('')
-                : infinityQuery.status === 'error'
-                    ? (
-                        <Text color="red">
-                            Error:
-                            {infinityQuery.error.message}
-                        </Text>
-                    )
-                    : (
-                        <TestsTable
-                            infinityQuery={infinityQuery}
-                            visibleFields={visibleFields}
-                        />
-                    )}
+            <TestsTable
+                firstPageQuery={firstPageQuery}
+                infinityQuery={infinityQuery}
+                visibleFields={visibleFields}
+            />
             <Settings
                 open={sortOpen}
                 setSortOpen={setSortOpen}

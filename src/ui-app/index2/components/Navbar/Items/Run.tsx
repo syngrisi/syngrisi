@@ -1,5 +1,5 @@
-/* eslint-disable no-underscore-dangle */
-import React, { useState } from 'react';
+/* eslint-disable no-underscore-dangle,prefer-arrow-callback */
+import React, { useEffect, useState } from 'react';
 import {
     ActionIcon,
     Group,
@@ -14,26 +14,26 @@ import {
 import { IconDotsVertical } from '@tabler/icons';
 import { useDisclosure } from '@mantine/hooks';
 import { useParams } from '../../../hooks/useParams';
-import RemoveSuiteModalAsk from './RemoveSuiteModalAsk';
+import RemoveRunModalAsk from './RemoveRunModalAsk';
 
 interface Props {
     item: { [key: string]: string }
     index: number
     classes: any
     id: string
-    activeItem: string,
-    setActiveItem: any,
+    activeItemsHandler: any,
     infinityQuery: any,
 }
 
-export function Suite(
+export function Run(
     {
         item,
         index,
         classes,
         id,
-        activeItem,
-        setActiveItem,
+        // activeItem,
+        // setActiveItem,
+        activeItemsHandler,
         infinityQuery,
     }: Props,
 ) {
@@ -46,23 +46,31 @@ export function Suite(
         close();
     };
 
-    const handlerItemClick = () => {
-        setActiveItem(() => id);
-        setQuery({ base_filter: { suite: id } });
+    const handlerItemClick = (e: any) => {
+        if (!e.metaKey) activeItemsHandler.clear();
+        activeItemsHandler.addOrRemove(id);
     };
+    useEffect(function onActiveItemsChange() {
+        if (activeItemsHandler.get()?.length < 1) {
+            setQuery({ base_filter: null });
+            return;
+        }
+        setQuery({ base_filter: { run: { $in: activeItemsHandler.get() } } });
+    }, [JSON.stringify(activeItemsHandler.get())]);
+
     return (
         <>
             <List.Item
                 data-test={`navbar_item_${index}`}
                 onClick={handlerItemClick}
                 className={
-                    `${classes.navbarItem} ${(activeItem === id) && classes.activeNavbarItem}`
+                    `${classes.navbarItem} ${(activeItemsHandler.get().includes(id)) && classes.activeNavbarItem}`
                 }
                 sx={{ cursor: 'pointer', width: '100%' }}
             >
                 <Group
                     noWrap
-                    pl={4}
+                    pl={8}
                     position="apart"
                     spacing={0}
                 >
@@ -82,11 +90,11 @@ export function Suite(
                         </Stack>
                     </Group>
 
-                    <Group position="right" spacing={0}>
+                    <Group position="right" spacing={0} noWrap>
                         <RingProgress
                             sections={[{
                                 value: 100,
-                                color: 'orange',
+                                color: 'green',
                             }]}
                             size={48}
                         />
@@ -99,20 +107,14 @@ export function Suite(
                             </Popover.Target>
                             <Popover.Dropdown>
                                 <Group position="center">
-                                    <Button onClick={() => handleClick()}>Remove suite</Button>
+                                    <Button onClick={() => handleClick()}>Remove run</Button>
                                 </Group>
                             </Popover.Dropdown>
                         </Popover>
                     </Group>
-
                 </Group>
             </List.Item>
-            <RemoveSuiteModalAsk
-                opened={modalOpen}
-                setOpened={setModalOpen}
-                infinityQuery={infinityQuery}
-                item={item}
-            />
+            <RemoveRunModalAsk opened={modalOpen} setOpened={setModalOpen} infinityQuery={infinityQuery} item={item} />
         </>
     );
 }

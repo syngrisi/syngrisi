@@ -14,6 +14,7 @@ function InfinityScrollSkeleton({ infinityQuery, visibleFields }: Props) {
     const { ref, inView } = useInView();
 
     useEffect(() => {
+        if (infinityQuery === null) return;
         if (inView) {
             infinityQuery.fetchNextPage();
         }
@@ -22,7 +23,7 @@ function InfinityScrollSkeleton({ infinityQuery, visibleFields }: Props) {
     return (
         <tfoot ref={ref}>
         {
-            infinityQuery.hasNextPage && (
+            (infinityQuery === null || infinityQuery.hasNextPage) && (
                 Object.keys(new Array(6).fill('')).map(
                     (x) => (
                         <tr key={x} style={{ height: 72 }}>

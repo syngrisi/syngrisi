@@ -52,6 +52,7 @@ module.exports.removeCheck = async function removeCheck(id) {
             log.debug(`try to remove snapshot, diff: ${check.diffId}`, $this, logOpts);
             await snapshotUtil.removeSnapshot(check.diffId?.toString());
         }
+        return check;
     } catch (e) {
         const errMsg = `cannot remove a check with id: '${id}', error: '${e}'`;
         log.error(errMsg, $this, logOpts);
