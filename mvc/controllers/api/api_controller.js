@@ -754,7 +754,9 @@ async function createNewBaseline(params) {
     resultedBaseline.snapshootId = params.actualSnapshotId;
 
     return resultedBaseline.save();
-}
+};
+
+module.exports.createNewBaseline = createNewBaseline;
 
 async function createBaselineIfNotExist(params) {
     // find if baseline already exist

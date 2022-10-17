@@ -29,7 +29,7 @@ module.exports.removeTest = async function removeTest(id) {
         for (const check of checks) {
             await checkUtil.removeCheck(check._id);
         }
-        await Test.findByIdAndDelete(id);
+        return Test.findByIdAndDelete(id);
     } catch (e) {
         log.error(`cannot remove test with id: ${id} error: ${e}`, logOpts);
         throw new Error();

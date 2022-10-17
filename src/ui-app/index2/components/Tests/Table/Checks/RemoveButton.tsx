@@ -3,7 +3,7 @@ import * as React from 'react';
 import { IconTrash } from '@tabler/icons';
 import { useMutation } from '@tanstack/react-query';
 import ActionPopoverIcon from '../../../../../shared/components/ActionPopoverIcon';
-import { ChecksService } from '../../../../../shared/services/checks.service';
+import { ChecksService } from '../../../../../shared/services';
 import { errorMsg, successMsg } from '../../../../../shared/utils/utils';
 import { log } from '../../../../../shared/utils/Logger';
 

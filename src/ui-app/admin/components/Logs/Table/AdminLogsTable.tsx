@@ -49,7 +49,7 @@ export default function AdminLogsTable({ infinityQuery, visibleFields }: Props) 
 
                 <Table sx={{ width: '100%' }} verticalSpacing="sm" highlightOnHover>
                     <thead
-                        style={{ zIndex: 100 }}
+                        style={{ zIndex: 15 }}
                         className={cx(classes.header, { [classes.scrolled]: scrolled })}
                     >
                     <AdminLogsTableHeads

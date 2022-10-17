@@ -9,5 +9,12 @@ router.route('/')
 
 router.route('/distinct')
     .get(ensureLoggedIn(), testController.distinct);
+router
+    .route('/:id')
+    .delete(ensureLoggedIn(), testController.remove);
+
+router
+    .route('/accept/:id')
+    .put(ensureLoggedIn(), testController.accept);
 
 module.exports = router;

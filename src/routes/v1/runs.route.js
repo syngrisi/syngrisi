@@ -8,4 +8,8 @@ router
     .route('/')
     .get(ensureLoggedIn(), runsController.get);
 
+router
+    .route('/:id')
+    .delete(ensureLoggedIn(), runsController.remove);
+
 module.exports = router;

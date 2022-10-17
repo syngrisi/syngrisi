@@ -23,6 +23,7 @@ import {
     SiWindows,
 } from 'react-icons/si';
 
+import queryString from 'query-string';
 import { useParams } from '../../../../hooks/useParams';
 import config from '../../../../../config';
 import { AcceptButton } from './AcceptButton';
@@ -65,7 +66,7 @@ const browserIconMap = (key: string) => {
 };
 
 export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: Props) {
-    const { setQuery } = useParams();
+    const { setQuery, query } = useParams();
     const OsIcon = osIconMap(check.os as string);
     const BrowserIcon = browserIconMap(check.browserName as string);
     const theme = useMantineTheme();
@@ -78,7 +79,21 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
         } as { [key: string]: any };
         return map[status] || 'gray';
     };
-    const src = `${config.baseUri}/snapshoots/${check.baselineId.filename}`;
+
+    const src = `${config.baseUri}/snapshoots/${check.baselineId?.filename}`;
+    const linkToCheckOverlay = `/index2?${queryString.stringify({ ...query, checkId: check._id })}`;
+    const handlePreviewLinkClick = (e: React.MouseEvent) => {
+        if (!e.metaKey) {
+            e.preventDefault();
+        }
+    };
+
+    const handlePreviewImageClick = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!e.metaKey) {
+            setQuery({ checkId: check._id });
+        }
+    };
+
     return (
         <>
             {
@@ -114,6 +129,7 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                                     }}
                                     onClick={() => setQuery({ checkId: check._id })}
                                 />
+
                             </Paper>
                             <Text sx={{ width: '50%' }}>{check.name}</Text>
                             <Group position="right">
@@ -180,22 +196,24 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                             {/* <Divider mb={'sm'} /> */}
 
                             <Card.Section>
-                                <Image
-                                    src={src}
-                                    fit="contain"
-                                    // fit={'scale-down'}
-                                    // fit={'cover'} //default
-                                    // fit={'none'}
-                                    // fit={'fill'}
-                                    width="100%"
-                                    height={checksViewMode === 'bounded' ? 200 : 'auto'}
-                                    withPlaceholder
-                                    alt={check.name}
-                                    sx={{
-                                        cursor: 'pointer',
-                                    }}
-                                    onClick={() => setQuery({ checkId: check._id })}
-                                />
+                                <a href={linkToCheckOverlay} onClick={handlePreviewLinkClick}>
+                                    <Image
+                                        src={src}
+                                        fit="contain"
+                                        // fit={'scale-down'}
+                                        // fit={'cover'} //default
+                                        // fit={'none'}
+                                        // fit={'fill'}
+                                        width="100%"
+                                        height={checksViewMode === 'bounded' ? 200 : 'auto'}
+                                        withPlaceholder
+                                        alt={check.name}
+                                        sx={{
+                                            cursor: 'pointer',
+                                        }}
+                                        onClick={handlePreviewImageClick}
+                                    />
+                                </a>
                             </Card.Section>
 
                             {/* <Divider /> */}

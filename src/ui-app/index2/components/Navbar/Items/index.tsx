@@ -1,3 +1,3 @@
-export { Runs } from './Runs';
+export { Run } from './Run';
 export { Suite } from './Suite';
 export { Simple } from './Simple';

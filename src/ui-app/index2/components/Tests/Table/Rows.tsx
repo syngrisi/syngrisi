@@ -1,18 +1,19 @@
 /* eslint-disable react/jsx-one-expression-per-line */
 import React, { useContext, useEffect, useState } from 'react';
-import UnfoldActionIcon from '../UnfoldActionIcon';
+import UnfoldActionIcon from './UnfoldActionIcon';
 import { AppContext } from '../../../AppContext';
 import { Row } from './Row';
 
 interface Props {
-    data: any,
+    infinityQuery: any,
     selection: any,
     setSelection: any,
     visibleFields: string[]
 }
 
-const Rows = ({ data, selection, setSelection, visibleFields }: Props) => {
+const Rows = ({ infinityQuery, selection, setSelection, visibleFields }: Props) => {
     const [collapse, setCollapse]: [string[], any] = useState([]);
+    const { data } = infinityQuery;
     const { updateToolbar }: any = useContext(AppContext);
 
     const toggleCollapse = (id: string) => {
@@ -71,6 +72,7 @@ const Rows = ({ data, selection, setSelection, visibleFields }: Props) => {
                 <Row
                     key={item.id}
                     item={item}
+                    infinityQuery={infinityQuery}
                     toggleRow={toggleRow}
                     toggleCollapse={toggleCollapse}
                     index={index}

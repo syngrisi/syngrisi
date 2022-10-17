@@ -25,9 +25,21 @@ interface Props {
     visibleFields: any
     selection: any
     collapse: any
+    infinityQuery: any,
 }
 
-export function Row({ item, toggleRow, toggleCollapse, index, visibleFields, selection, collapse }: Props) {
+export function Row(
+    {
+        item,
+        toggleRow,
+        toggleCollapse,
+        index,
+        visibleFields,
+        selection,
+        collapse,
+        infinityQuery,
+    }: Props,
+) {
     const { classes, cx } = useStyles();
     const selected = selection.includes(item.id!);
 
@@ -144,7 +156,7 @@ export function Row({ item, toggleRow, toggleCollapse, index, visibleFields, sel
                         pb={10}
                         data-test="table-test-collapsed-row"
                     >
-                        <Checks item={test} testUpdateQuery={testUpdateQuery} />
+                        <Checks item={test} testUpdateQuery={testUpdateQuery} infinityQuery={infinityQuery} />
                     </Collapse>
                 </td>
             </tr>

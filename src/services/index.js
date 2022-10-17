@@ -1,5 +1,10 @@
-module.exports.testService = require('./test.service');
-module.exports.usersService = require('./user.service');
-module.exports.logsService = require('./logs.service');
-module.exports.genericService = require('./generic.service');
-module.exports.appService = require('./app.service');
+module.exports = {
+    checkService: require('./check.service'),
+    runService: require('./run.service'),
+    suiteService: require('./suite.service'),
+    testService: require('./test.service'),
+    usersService: require('./user.service'),
+    logsService: require('./logs.service'),
+    genericService: require('./generic.service'),
+    appService: require('./app.service'),
+};

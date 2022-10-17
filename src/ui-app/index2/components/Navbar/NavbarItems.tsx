@@ -6,11 +6,6 @@ import { IPage } from '../../../shared/interfaces/logQueries';
 import ILog from '../../../shared/interfaces/ILog';
 import * as ListItems from './Items';
 
-type Props = {
-    infinityQuery: any,
-    groupByValue: string,
-};
-
 const useStyles = createStyles((theme) => ({
     navbarItem: {
         display: 'block',
@@ -35,10 +30,15 @@ const useStyles = createStyles((theme) => ({
 
 }));
 
-export function NavbarItems({ infinityQuery, groupByValue }: Props) {
+type Props = {
+    infinityQuery: any,
+    groupByValue: string,
+    activeItemsHandler: any
+};
+
+export function NavbarItems({ infinityQuery, groupByValue, activeItemsHandler }: Props) {
     const { classes } = useStyles();
     const [selection, setSelection]: [string[], any] = useState([]);
-    const [activeItem, setActiveItem] = useState<string>('');
     const toggleRowSelection = (id: string) => setSelection(
         (current: any) => (current.includes(id) ? current.filter((item: string) => item !== id) : [...current, id]),
     );
@@ -49,7 +49,7 @@ export function NavbarItems({ infinityQuery, groupByValue }: Props) {
 
     const transformResourceToFCName = (value: string) => {
         const transformMap = {
-            runs: ListItems.Runs,
+            runs: ListItems.Run,
             suites: ListItems.Suite,
         } as { [key: string]: any };
         return transformMap[value] ? transformMap[value] : ListItems.Simple;
@@ -57,23 +57,26 @@ export function NavbarItems({ infinityQuery, groupByValue }: Props) {
 
     return infinityQuery.data
         ? (infinityQuery.data.pages.map((page: IPage<ILog>) => (
-                page.results.map(
-                    (item: any, index: number) => {
-                        const selected = selection.includes(item._id!);
-                        const Item = transformResourceToFCName(groupByValue);
-                        return (
-                            <React.Fragment key={item._id}>
-                                <Item
-                                    id={item._id}
-                                    activeItem={activeItem}
-                                    setActiveItem={setActiveItem}
-                                    {...{ item, selected, toggleRowSelection, index, classes }}
-                                />
-                            </React.Fragment>
-                        );
-                    },
+                    page.results.map(
+                        (item: any, index: number) => {
+                            const selected = selection.includes(item._id!);
+                            const Item = transformResourceToFCName(groupByValue);
+                            return (
+                                <React.Fragment key={item._id}>
+                                    <Item
+                                        id={item._id}
+                                        activeItemsHandler={activeItemsHandler}
+                                        infinityQuery={infinityQuery}
+                                        index={index}
+                                        item={item}
+                                        classes={classes}
+                                    />
+                                </React.Fragment>
+                            );
+                        },
+                    )
                 )
-            ))
+            )
         )
         : [];
 }

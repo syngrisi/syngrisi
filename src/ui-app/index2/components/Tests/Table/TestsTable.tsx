@@ -1,9 +1,10 @@
 /* eslint-disable indent,react/jsx-indent */
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import {
     createStyles,
     Table,
     ScrollArea,
+    Text,
 } from '@mantine/core';
 
 import InfinityScrollSkeleton from './InfinityScrollSkeleton';
@@ -13,17 +14,22 @@ import { testsCreateStyle } from './testsCreateStyle';
 import Rows from './Rows';
 import Heads from './Heads';
 import { CheckModal } from './Checks/CheckModal';
+import RemoveTestsButton from './RemoveTestsButton';
+import AcceptTestsButton from './AcceptTestsButton';
+import { AppContext } from '../../../AppContext';
 
 const useStyles = createStyles(testsCreateStyle as any);
 
 interface Props {
     infinityQuery: any
+    firstPageQuery: any,
     visibleFields: any
 }
 
-export default function TestsTable({ infinityQuery, visibleFields }: Props) {
+export default function TestsTable({ infinityQuery, firstPageQuery, visibleFields }: Props) {
+    const { updateToolbar }: any = useContext(AppContext);
     const { data } = infinityQuery;
-    const flatData = data.pages.flat().map((x: any) => x.results).flat();
+    const flatData = data ? data.pages.flat().map((x: any) => x.results).flat() : [];
 
     // eslint-disable-next-line no-unused-vars
     const [scrolled, setScrolled] = useState(false);
@@ -32,6 +38,26 @@ export default function TestsTable({ infinityQuery, visibleFields }: Props) {
     const scrollAreaRef = useRef(null);
     // eslint-disable-next-line max-len
     const toggleAllRows = () => setSelection((current: string) => (current.length === flatData.length ? [] : flatData.map((item: ILog) => item.id)));
+
+    useEffect(() => {
+        updateToolbar(
+            <RemoveTestsButton
+                selection={selection}
+                setSelection={setSelection}
+                infinityQuery={infinityQuery}
+            />,
+            31,
+        );
+        updateToolbar(
+            <AcceptTestsButton
+                selection={selection}
+                setSelection={setSelection}
+                infinityQuery={infinityQuery}
+                // firstPageQuery={firstPageQuery}
+            />,
+            32,
+        );
+    }, [selection.length]);
 
     return (
         <>
@@ -57,14 +83,29 @@ export default function TestsTable({ infinityQuery, visibleFields }: Props) {
                     />
 
                     </thead>
-                    <tbody className={classes.tableBody}>
-                    <Rows
-                        data={data}
-                        selection={selection}
-                        setSelection={setSelection}
-                        visibleFields={visibleFields}
-                    />
-                    </tbody>
+
+                    {
+                        // eslint-disable-next-line no-nested-ternary
+                        infinityQuery.isLoading
+                            ? (<InfinityScrollSkeleton infinityQuery={null} visibleFields={visibleFields} />)
+                            : infinityQuery.isError
+                                ? (
+                                    <Text color="red">
+                                        Error:
+                                        {infinityQuery.error.message}
+                                    </Text>
+                                )
+                                : (
+                                    <tbody className={classes.tableBody}>
+                                    <Rows
+                                        infinityQuery={infinityQuery}
+                                        selection={selection}
+                                        setSelection={setSelection}
+                                        visibleFields={visibleFields}
+                                    />
+                                    </tbody>
+                                )
+                    }
                     <InfinityScrollSkeleton infinityQuery={infinityQuery} visibleFields={visibleFields} />
                 </Table>
             </ScrollArea.Autosize>

@@ -8,4 +8,11 @@ router
     .route('/')
     .get(ensureLoggedIn(), checksController.get);
 
+router
+    .route('/:id')
+    .delete(ensureLoggedIn(), checksController.remove);
+
+router.route('/accept/:id')
+    .put(ensureLoggedIn(), checksController.accept);
+
 module.exports = router;

@@ -18,8 +18,12 @@ function Heads({ data, toggleAllRows, selection, visibleFields }: Props) {
                     data-test="table-select-all"
                     title="Select all items"
                     onChange={toggleAllRows}
-                    checked={selection.length === data.length}
-                    indeterminate={selection.length > 0 && selection.length !== data.length}
+                    checked={selection && data ? (selection.length === data.length) : false}
+                    indeterminate={
+                        (selection && data)
+                            ? (selection.length > 0 && selection.length !== data.length)
+                            : false
+                    }
                     transitionDuration={0}
                 />
             </th>
