@@ -65,6 +65,10 @@ module.exports = async (app) => {
             UI.checkView(req, res)
                 .catch(next);
         })
+        .get('/checkview2', ensureLoggedIn(), (req, res, next) => {
+            UI.checkView2(req, res)
+                .catch(next);
+        })
         .get('/diffview', ensureLoggedIn(), (req, res, next) => {
             UI.diffView(req, res)
                 .catch(next);

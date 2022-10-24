@@ -47,7 +47,7 @@ export function Run(
     };
 
     const handlerItemClick = (e: any) => {
-        if (!e.metaKey) activeItemsHandler.clear();
+        if (!(e.metaKey || e.ctrlKey)) activeItemsHandler.clear();
         activeItemsHandler.addOrRemove(id);
     };
     useEffect(function onActiveItemsChange() {

@@ -1,5 +1,5 @@
 /* eslint-disable dot-notation,no-underscore-dangle */
-/* global fabric $ window fetch SideToSideView */
+/* global fabric $ SideToSideView */
 
 // eslint-disable-next-line no-unused-vars
 class MainView {
@@ -74,8 +74,9 @@ class MainView {
     panEvents() {
         this.canvas.on(
             'mouse:move', (e) => {
+                // console.log(e.e.buttons);
                 const s2sMoving = this.sideToSideView.inMovement;
-                if (this.mouseDown && this.currentMode.isPan() && !s2sMoving) {
+                if ((e.e.buttons === 4 || this.mouseDown) && this.currentMode.isPan() && !s2sMoving) {
                     this.canvas.setCursor('grab');
 
                     const mEvent = e.e;
@@ -248,7 +249,7 @@ class MainView {
         this.canvas.add(this.image);
 
         this.image.sendToBack();
-        this.initResize(this.image);
+        await this.initResize(this.image);
         this.canvas.renderAll();
     }
 
@@ -261,7 +262,7 @@ class MainView {
         this.canvas.add(this.actualImage);
 
         this.actualImage.sendToBack();
-        this.initResize(this.actualImage);
+        await this.initResize(this.actualImage);
         const button = document.getElementById('toggle-actual-baseline');
         button.innerText = 'A';
         button.title = 'switch to baseline snapshot (current is actual)';
@@ -274,7 +275,7 @@ class MainView {
 
         this.canvas.add(this.diffImage);
         this.diffImage.sendToBack();
-        this.initResize(this.diffImage);
+        await this.initResize(this.diffImage);
         this.pressedButton('diff-wrapper');
     }
 
@@ -282,49 +283,50 @@ class MainView {
         this.currentView = 'SideToSideView';
 
         await this.sideToSideView.render(this.initResize);
-        this.initResize(this.sideToSideView.actualImg);
-        this.initResize(this.sideToSideView.baselineImg);
+        await this.initResize(this.sideToSideView.actualImg);
+        await this.initResize(this.sideToSideView.baselineImg);
         this.sideToSideView.divider.left = this.sideToSideView.baselineImg.getScaledWidth() / 2 - this.sideToSideView.divider.width / 2;
         this.sideToSideView.baselineLabel.top = this.sideToSideView.canvas.getHeight() / 2 - 15;
         this.sideToSideView.baselineLabel.left = (this.sideToSideView.divider.left) - this.sideToSideView.canvas.getWidth() / 10;
 
         this.sideToSideView.actualLabel.top = this.sideToSideView.canvas.getHeight() / 2 - 15;
-        this.sideToSideView.actualLabel.left = this.sideToSideView.divider.left + this.sideToSideView.canvas.getWidth() / 10;
+        this.sideToSideView.actualLabel.left = this.sideToSideView.divider.left + (this.sideToSideView.canvas.getWidth() / 10) - 60;
 
         this.canvas.requestRenderAll();
+        this.canvas.renderAll();
         await this.pressedButton('side-wrapper');
     }
 
-    toggleSideToSideView() {
+    async toggleSideToSideView() {
         if (this.currentView === 'SideToSideView') {
             this.destroyAllViews();
-            this.renderBaselineView();
+            await this.renderBaselineView();
             return;
         }
         this.destroyAllViews();
-        this.renderSideToSideView();
+        await this.renderSideToSideView();
     }
 
-    toggleActual(params) {
+    async toggleActual(params) {
         if (this.currentView === 'ActualView') {
-            this.destroyAllViews();
-            this.renderBaselineView();
+            await this.destroyAllViews();
+            await this.renderBaselineView();
             return;
         }
         this.destroyAllViews();
         const uri = `/snapshoots/${params.filename}`;
-        this.renderActualView(uri);
+        await this.renderActualView(uri);
     }
 
-    toggleDiff(params) {
+    async toggleDiff(params) {
         if (this.currentView === 'DiffView') {
             this.destroyAllViews();
-            this.renderBaselineView();
+            await this.renderBaselineView();
             return;
         }
         this.destroyAllViews();
         const uri = `/snapshoots/${params.filename}`;
-        this.renderDiffView(uri);
+        await this.renderDiffView(uri);
     }
 
     removeActiveIgnoreRegions() {

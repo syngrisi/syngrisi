@@ -20,7 +20,7 @@ interface IActionPopoverIcon {
 export default function ActionPopoverIcon(
     {
         icon,
-        color = 'red',
+        color,
         action,
         confirmLabel,
         title,
