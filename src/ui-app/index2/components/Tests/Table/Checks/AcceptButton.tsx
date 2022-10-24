@@ -1,6 +1,6 @@
-/* eslint-disable no-underscore-dangle */
+/* eslint-disable no-underscore-dangle,react/jsx-one-expression-per-line */
 import * as React from 'react';
-import { useMantineTheme } from '@mantine/core';
+import { Badge, useMantineTheme } from '@mantine/core';
 import { BsHandThumbsUp, BsHandThumbsUpFill } from 'react-icons/all';
 import { useMutation } from '@tanstack/react-query';
 import ActionPopoverIcon from '../../../../../shared/components/ActionPopoverIcon';
@@ -42,6 +42,37 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery }: Props) {
         },
     );
 
+    const notAcceptedIcon = check.failReasons.includes('not_accepted')
+        ? (
+            <Badge
+                component="div"
+                title="The check is not accepted"
+                pl={4}
+                pr={4}
+                pt={6}
+                pb={6}
+                // weight={900}
+                color="yellow"
+                variant="filled"
+                radius="xl"
+                data-test="check-wrong-images-size-error-icon"
+                sx={{
+                    fontSize: '12px',
+                    position: 'absolute',
+                    bottom: 11,
+                    left: 14,
+                    lineHeight: '16px',
+                    fontWeight: 600,
+                    fontFamily: '"Roboto","Arial",sans-serif',
+                    border: '2px',
+                    borderStyle: 'solid',
+                    borderColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : 'white',
+                }}
+            >
+                !
+            </Badge>
+        )
+        : '';
     const handleAcceptCheckClick = () => {
         if (isCurrentlyAccepted) return;
         mutationAcceptCheck.mutate(
@@ -66,7 +97,7 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery }: Props) {
             icon={
                 (isCurrentlyAccepted && isAccepted)
                     ? <BsHandThumbsUpFill size={19} />
-                    : <BsHandThumbsUp size={19} />
+                    : (<><BsHandThumbsUp size={19} /> {notAcceptedIcon}</>)
             }
             action={handleAcceptCheckClick}
             title="Accept the check actual screenshot"

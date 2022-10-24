@@ -2,9 +2,8 @@
 import * as React from 'react';
 import { Modal } from '@mantine/core';
 import { useDisclosure, useViewportSize } from '@mantine/hooks';
-import { useParams } from '../../../../hooks/useParams';
 import { useEffect } from 'react';
-
+import { useParams } from '../../../../hooks/useParams';
 
 export function CheckModal() {
     const { query, setQuery } = useParams();
@@ -20,7 +19,7 @@ export function CheckModal() {
             checkModalHandlers.open();
         }
     }, [query.checkId]);
-    const iframeSrc = query.checkId ? `/checkview?id=${query.checkId}` : '';
+    const iframeSrc = query.checkId ? `/checkview2?id=${query.checkId}` : '';
     return (
         <Modal
             opened={checkModalOpened}
@@ -38,4 +37,4 @@ export function CheckModal() {
             />
         </Modal>
     );
-};
+}

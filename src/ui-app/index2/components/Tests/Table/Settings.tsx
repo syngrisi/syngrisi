@@ -34,6 +34,7 @@ function Settings(
     }: Props,
 ) {
     const [checksViewMode, setChecksViewMode] = useLocalStorage({ key: 'check-view-mode', defaultValue: 'bounded' });
+    const [checksViewSize, setChecksViewSize] = useLocalStorage({ key: 'check-view-size', defaultValue: 'medium' });
 
     const [sortOrder, toggleSortOrder] = useToggle(['desc', 'asc']);
     const [selectOptionsData] = useState(() => Object.keys(tableColumns)
@@ -95,12 +96,19 @@ function Settings(
                 }
             </Chip.Group>
 
-            <Text pt="md" weight={500} pb="xs">Check View</Text>
+            <Text mt="md" weight={500} pb="xs">Appearance of Checks</Text>
             <Group position="center">
                 <SegmentedControl
                     data={['bounded', 'normal', 'list']}
                     value={checksViewMode}
                     onChange={setChecksViewMode}
+                />
+            </Group>
+            <Group position="center" mt="md">
+                <SegmentedControl
+                    data={['small', 'medium', 'large', 'xlarge']}
+                    value={checksViewSize}
+                    onChange={setChecksViewSize}
                 />
             </Group>
 

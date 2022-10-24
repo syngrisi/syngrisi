@@ -153,6 +153,90 @@ exports.checkView = async function checkView(req, res) {
     }
 };
 
+exports.checkView2 = async function checkView(req, res) {
+    try {
+        const opts = removeEmptyProperties(req.query);
+
+        if (!opts.id) {
+            res.status(400)
+                .json({ error: 'Cannot return snapshot. There is no "id" field in request query' });
+            return;
+        }
+        const check = await Check.findById(opts.id);
+        const test = await Test.findById(`${check.test}`);
+        const suite = await Suite.findById(`${check.suite}`);
+        let baselineSnapshot;
+        if (check.baselineId) {
+            baselineSnapshot = await Snapshot.findById(`${check.baselineId}`)
+                .exec();
+            baselineSnapshot.formattedCreatedDate = moment(baselineSnapshot.createdDate)
+                .format('YYYY-MM-DD hh:mm');
+        }
+
+        let actualSnapshot;
+        if (check.actualSnapshotId) {
+            actualSnapshot = await Snapshot.findById(`${check.actualSnapshotId}`);
+            actualSnapshot.formattedCreatedDate = moment(actualSnapshot.createdDate);
+        } else {
+            actualSnapshot = null;
+        }
+        // const diffId = check.diffId ? check.diffId : '';
+
+        let diffSnapshot;
+        if (check.diffId) {
+            diffSnapshot = await Snapshot.findById(`${check.diffId}`);
+            diffSnapshot.formattedCreatedDate = moment(diffSnapshot.createdDate);
+        }
+
+        const checksWithSameName = await checksGroupedByIdent({ name: check.name });
+        const checksWithSameTestId = Array.from(await Check.find({ test: test._id }));
+
+        const currentCheckIndex = checksWithSameTestId.map((x) => x._id.toString())
+            .indexOf(check._id.toString());
+        const countOfChecksWithSameTestId = checksWithSameTestId.length;
+        const prevCheck = async (modelName, id) => {
+            const model = mongoose.model(modelName);
+            return model.findOne({ test: test._id, _id: { $lt: id } })
+                .sort({ _id: -1 })
+                .exec();
+        };
+        const nextCheck = async (modelName, id) => {
+            const model = mongoose.model(modelName);
+            return model.findOne({ test: test._id, _id: { $gt: id } })
+                .sort({ _id: 1 })
+                .exec();
+        };
+
+        const prevCheckId = currentCheckIndex !== 0 ? (await prevCheck('VRSCheck', check._id))?._id : null;
+        const nextCheckId = currentCheckIndex + 1 !== checksWithSameTestId.length ? (await nextCheck('VRSCheck', check._id))?._id : null;
+
+        let lastChecksWithSameName = [];
+        for (const group of Object.values(checksWithSameName)) {
+            lastChecksWithSameName.push(group.checks[group.checks.length - 1]);
+        }
+        lastChecksWithSameName = lastChecksWithSameName.sort((a, b) => Number(new Date(b.updatedDate) - Number(new Date(a.updatedDate))));
+        const baseline = await Baseline.findOne({ snapshootId: baselineSnapshot._id })
+            .exec();
+        res.render('pages/checkview2', {
+            baselineSnapshot,
+            actualSnapshot,
+            diffSnapshot,
+            baseline,
+            check,
+            test,
+            suite,
+            lastChecksWithSameName,
+            prevCheckId,
+            nextCheckId,
+            currentCheckIndex,
+            countOfChecksWithSameTestId,
+            user: req.user,
+        });
+    } catch (e) {
+        fatalError(req, res, e);
+    }
+};
+
 exports.diffView = async function diffView(req, res) {
     try {
         const opts = removeEmptyProperties(req.query);

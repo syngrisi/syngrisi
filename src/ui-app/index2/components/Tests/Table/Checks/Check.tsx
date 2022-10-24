@@ -24,10 +24,12 @@ import {
 } from 'react-icons/si';
 
 import queryString from 'query-string';
+import { useLocalStorage } from '@mantine/hooks';
 import { useParams } from '../../../../hooks/useParams';
 import config from '../../../../../config';
 import { AcceptButton } from './AcceptButton';
 import { RemoveButton } from './RemoveButton';
+import { ViewPortLabel } from './ViewPortLabel';
 
 interface Props {
     check: any
@@ -67,6 +69,32 @@ const browserIconMap = (key: string) => {
 
 export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: Props) {
     const { setQuery, query } = useParams();
+    const [checksViewSize, setChecksViewSize] = useLocalStorage({ key: 'check-view-size', defaultValue: 'medium' });
+    const sizes = {
+        small: {
+            coefficient: 0.5,
+            statusBadge: 'xs',
+            viewportText: 'xs',
+        },
+        medium: {
+            coefficient: 0.8,
+            statusBadge: 'sm',
+            viewportText: 'sm',
+        },
+        large: {
+            coefficient: 1.4,
+            statusBadge: 'md',
+            viewportText: 'sm',
+        },
+        xlarge: {
+            coefficient: 2,
+            statusBadge: 'md',
+            viewportText: 'sm',
+        },
+
+    } as { [key: string]: any };
+
+    const imageWeight: number = 24 * sizes[checksViewSize].coefficient;
     const OsIcon = osIconMap(check.os as string);
     const BrowserIcon = browserIconMap(check.browserName as string);
     const theme = useMantineTheme();
@@ -80,18 +108,17 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
         return map[status] || 'gray';
     };
 
-    const src = `${config.baseUri}/snapshoots/${check.baselineId?.filename}`;
+    const imageFilename = check.diffId?.filename || check.actualSnapshotId?.filename || check.baselineId?.filename;
+    const imagePreviewSrc = `${config.baseUri}/snapshoots/${imageFilename}`;
     const linkToCheckOverlay = `/index2?${queryString.stringify({ ...query, checkId: check._id })}`;
     const handlePreviewLinkClick = (e: React.MouseEvent) => {
-        if (!e.metaKey) {
-            e.preventDefault();
-        }
+        if (e.metaKey || e.ctrlKey) return;
+        e.preventDefault();
     };
 
     const handlePreviewImageClick = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (!e.metaKey) {
-            setQuery({ checkId: check._id });
-        }
+        if (e.metaKey || e.ctrlKey) return;
+        setQuery({ checkId: check._id });
     };
 
     return (
@@ -99,6 +126,7 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
             {
                 (checksViewMode === 'list')
                     ? (
+                        // LIST VIEW
                         <Group
                             p="sm"
                             sx={{
@@ -111,22 +139,32 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                             }}
                             position="apart"
                         >
-                            <Paper shadow="md">
+                            <Paper shadow="md" pb={0}>
                                 <Image
-                                    src={src}
-                                    // fit={'contain'}
+                                    src={imagePreviewSrc}
+                                    fit="contain"
                                     // fit={'scale-down'}
                                     // fit={'cover'} //default
                                     // fit={'none'}
                                     // fit={'fill'}
-                                    width="100px"
-                                    height="100px"
+                                    width={imageWeight * 4}
+                                    // height="100px"
                                     withPlaceholder
                                     alt={check.name}
-                                    sx={{
-                                        cursor: 'pointer',
-                                        // border: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[2]}`
-                                    }}
+                                    // sx={{
+                                    //     cursor: 'pointer',
+                                    //     // border: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[2]}`
+                                    // }}
+                                    styles={
+                                        () => ({
+                                            image: {
+                                                // cursor: 'pointer',
+                                                height: 'auto',
+                                                aspectRatio: '1/1',
+                                                // height: '10%!important',
+                                            },
+                                        })
+                                    }
                                     onClick={() => setQuery({ checkId: check._id })}
                                 />
 
@@ -163,16 +201,18 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                         </Group>
                     )
                     : (
+                        // CARD VIEW
                         <Card
                             sx={{
                                 // width: 250,
-                                width: '24%',
+                                width: `${imageWeight}%`,
                                 '&:hover': {
                                     boxShadow: '0 1px 3px rgb(0 0 0 / 15%), rgb(0 0 0 / 15%) 0px 10px 15px -5px, rgb(0 0 0 / 14%) 0px 7px 7px -5px',
                                 },
                             }}
+                            m={1}
                             pt={0}
-                            pb={4}
+                            pb={0}
                             pl={0}
                             pr={0}
                             shadow="sm"
@@ -192,46 +232,59 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                             >
                                 <Text>{check.name}</Text>
                             </Paper>
-                            {/* </Group> */}
-                            {/* <Divider mb={'sm'} /> */}
 
-                            <Card.Section>
-                                <a href={linkToCheckOverlay} onClick={handlePreviewLinkClick}>
-                                    <Image
-                                        src={src}
-                                        fit="contain"
-                                        // fit={'scale-down'}
-                                        // fit={'cover'} //default
-                                        // fit={'none'}
-                                        // fit={'fill'}
-                                        width="100%"
-                                        height={checksViewMode === 'bounded' ? 200 : 'auto'}
-                                        withPlaceholder
-                                        alt={check.name}
-                                        sx={{
-                                            cursor: 'pointer',
-                                        }}
-                                        onClick={handlePreviewImageClick}
-                                    />
-                                </a>
+                            <Card.Section m={2}>
+                                <Group position="center">
+                                    <a
+                                        href={linkToCheckOverlay}
+                                        onClick={handlePreviewLinkClick}
+                                        style={{ display: 'inline-block' }}
+                                    >
+                                        <Image
+                                            src={imagePreviewSrc}
+                                            fit="contain"
+                                            // fit={'scale-down'}
+                                            // fit={'cover'} //default
+                                            // fit={'none'}
+                                            // fit={'fill'}
+                                            width="100%"
+                                            // height={checksViewMode === 'bounded' ? 222 : 'auto'}
+                                            // withPlaceholder
+                                            alt={check.name}
+                                            // sx={{ height: '10px' }}
+                                            styles={
+                                                () => ({
+                                                    image: {
+                                                        // cursor: 'pointer',
+                                                        height: 'auto',
+                                                        aspectRatio: checksViewMode === 'bounded' ? '1/1' : '',
+                                                        // height: '10%!important',
+                                                    },
+                                                })
+                                            }
+                                            onClick={handlePreviewImageClick}
+                                        />
+                                    </a>
+                                </Group>
                             </Card.Section>
 
-                            {/* <Divider /> */}
-                            <Group position="center" mt="xs" mb="xs" noWrap>
-                                <Badge color={statusColor(check.status)} variant="light" size="md" title="Check status">
-                                    {check.status}
-                                </Badge>
-                                <Text
-                                    color="dimmed"
-                                    weight={500}
-                                    size={14}
-                                    title="Screen Viewport"
+                            {/* CHECK TOOLBAR */}
+                            <Group position="apart" pl="xs" pr="xs" mt="xs" mb={8} spacing="xs" align="center" noWrap>
+                                <Badge
+                                    color={statusColor(check.status)}
+                                    variant="light"
+                                    size={sizes[checksViewSize].statusBadge}
+                                    title="Check status"
                                 >
-                                    {check.viewport}
-                                </Text>
+                                    <Group spacing={0} noWrap>
+                                        {check.status}
+                                    </Group>
+                                </Badge>
+
+                                <ViewPortLabel check={check} sizes={sizes} checksViewSize={checksViewSize} />
                                 {/* <OsIcon size={16} title={check.os} /> */}
                                 {/* <BrowserIcon size={16} title={`${check.browserName} ${check.browserFullVersion}`} /> */}
-                                <Group spacing={4} position="left" noWrap>
+                                <Group spacing={4} position="right" noWrap>
                                     <AcceptButton
                                         check={check}
                                         testUpdateQuery={testUpdateQuery}
