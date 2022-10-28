@@ -255,18 +255,6 @@
                     + ` baseline: ${baselineImg.width}x${baselineImg.height}, actual: ${actualImg.width}x${actualImg.height}`;
             }
 
-            // const largestSnapshotsHeight = (baselineImg.height > actualImg.height) ? baselineImg.height : actualImg.height;
-            // const largestSnapshotsWidth = (baselineImg.width > actualImg.width) ? baselineImg.width : actualImg.width;
-
-            // let resizeCoeff = document.getElementById('snapshoot').clientWidth / largestSnapshotsWidth;
-
-            // let calculatedHeight = largestSnapshotsHeight * resizeCoeff;
-            //
-            // if (calculatedHeight < MainView.calculateExpectedCanvasViewportAreaSize().height) {
-            //     calculatedHeight = MainView.calculateExpectedCanvasViewportAreaSize().height;
-            // }
-            // document.getElementById('snapshoot').style.height = calculatedHeight + 'px';
-
             document.getElementById('snapshoot').style.height = (MainView.calculateExpectedCanvasViewportAreaSize().height - 10)
                 + 'px';
             const expectedImage = await imageFromUrl(baselineImg.src);
@@ -290,20 +278,6 @@
                 }
             );
             mainView.getSnapshotIgnoreRegionsDataAndDrawRegions('<%= baseline?._id %>');
-            <!--mainView = new MainView(-->
-            <!--    {-->
-            <!--        canvasId: '2d',-->
-            <!--        canvasElementWidth: document.getElementById('snapshoot').clientWidth,-->
-            <!--        canvasElementHeight: document.getElementById('snapshoot').clientHeight,-->
-            <!--        url: baselineImg.src,-->
-            <!--        diffId: '<%= diffSnapshot?.id; %>',-->
-            <!--        baselineImg: baselineImg,-->
-            <!--        <% if(actual) { %>-->
-            <!--        actual: <%- actual %>,-->
-            <!--        <% } %>-->
-            <!--    }-->
-            <!--);-->
-            <!--mainView.getSnapshotIgnoreRegionsDataAndDrawRegions('<%= baseline?._id %>');-->
         })();
 
     </script>

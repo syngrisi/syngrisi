@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import * as React from 'react';
-import { Checkbox, Collapse, createStyles, RingProgress, Text, Tooltip } from '@mantine/core';
+import { Checkbox, Collapse, createStyles, Text, Tooltip } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { tableColumns } from './tableColumns';
@@ -8,13 +8,13 @@ import { Checks } from './Checks/Checks';
 import { testsCreateStyle } from './testsCreateStyle';
 import { GenericService } from '../../../../shared/services';
 import { errorMsg } from '../../../../shared/utils';
+import { StartDate } from './Cells/StartDate';
+import { Status } from './Cells/Status';
+import { Os } from './Cells/Os';
+import { BrowserName } from './Cells/BrowserName';
+import { Branch } from './Cells/Branch';
+import { Viewport } from './Cells/ViewPort';
 
-const logLevelColorMap: { [key: string]: string } = {
-    debug: 'blue',
-    info: 'green',
-    warn: 'orange',
-    error: 'red',
-};
 const useStyles = createStyles(testsCreateStyle as any);
 
 interface Props {
@@ -26,6 +26,33 @@ interface Props {
     selection: any
     collapse: any
     infinityQuery: any,
+}
+
+function Cell({ type, test, itemValue }: { type: string, test: any, itemValue: string }) {
+    const cellsMap: { [key: string]: any } = {
+        status: (<Status type={type} key={type} test={test} />),
+        startDate: (<StartDate type={type} key={type} test={test} itemValue={itemValue} />),
+        os: (<Os type={type} key={type} test={test} itemValue={itemValue} />),
+        browserName: (<BrowserName type={type} key={type} test={test} itemValue={itemValue} />),
+        branch: (<Branch type={type} key={type} test={test} itemValue={itemValue} />),
+        viewport: (<Viewport type={type} key={type} test={test} itemValue={itemValue} />),
+    };
+    return cellsMap[type] || (
+        <td
+            key={type}
+            data-test={`table-row-${tableColumns[type].label}`}
+            style={{ ...tableColumns[type].cellStyle }}
+        >
+            <Tooltip label={test[type]} multiline>
+                <Text
+                    lineClamp={1}
+                    sx={{ wordBreak: 'break-all' }}
+                >
+                    {itemValue}
+                </Text>
+            </Tooltip>
+        </td>
+    );
 }
 
 export function Row(
@@ -104,43 +131,8 @@ export function Row(
                             ? test[column?.split('.')[0]][column?.split('.')[1]]
                             : test[column];
 
-                        if (column === 'level') {
-                            return (
-                                <td
-                                    key={column}
-                                    title={test.level}
-                                    data-test={`table-row-${tableColumns[column].label}`}
-                                    style={{
-                                        ...tableColumns[column].cellStyle,
-                                        paddingLeft: '2px',
-                                    }}
-                                >
-                                    <RingProgress
-                                        sections={[{
-                                            value: 100,
-                                            color: logLevelColorMap[test.level!],
-                                        }]}
-                                        size={48}
-                                    />
-                                </td>
-                            );
-                        }
-
                         return (
-                            <td
-                                key={column}
-                                data-test={`table-row-${tableColumns[column].label}`}
-                                style={{ ...tableColumns[column].cellStyle }}
-                            >
-                                <Tooltip label={test[column]} multiline>
-                                    <Text
-                                        lineClamp={1}
-                                        sx={{ wordBreak: 'break-all' }}
-                                    >
-                                        {itemValue}
-                                    </Text>
-                                </Tooltip>
-                            </td>
+                            <Cell test={test} type={column} itemValue={itemValue} key={column} />
                         );
                     })
                 }

@@ -11,10 +11,11 @@ import { log } from '../../../../../shared/utils/Logger';
 interface Props {
     check: any
     testUpdateQuery: any
+    size?: number
     checksQuery: any
 }
 
-export function AcceptButton({ check, testUpdateQuery, checksQuery }: Props) {
+export function AcceptButton({ check, testUpdateQuery, checksQuery, size = 19 }: Props) {
     const theme = useMantineTheme();
 
     const isAccepted = (check.markedAs === 'accepted');// || mutationAcceptCheck.isSuccess;
@@ -31,9 +32,8 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery }: Props) {
         {
             onSuccess: async (result: any) => {
                 successMsg({ message: 'Check has been successfully accepted' });
-                log.debug({ result });
                 checksQuery.refetch();
-                testUpdateQuery.refetch();
+                if (testUpdateQuery) testUpdateQuery.refetch();
             },
             onError: (e: any) => {
                 errorMsg({ error: 'Cannot accept the check' });
@@ -96,13 +96,14 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery }: Props) {
             paused={isCurrentlyAccepted}
             icon={
                 (isCurrentlyAccepted && isAccepted)
-                    ? <BsHandThumbsUpFill size={19} />
-                    : (<><BsHandThumbsUp size={19} /> {notAcceptedIcon}</>)
+                    ? <BsHandThumbsUpFill size={size} />
+                    : (<><BsHandThumbsUp size={size} /> {notAcceptedIcon}</>)
             }
             action={handleAcceptCheckClick}
             title="Accept the check actual screenshot"
             loading={mutationAcceptCheck.isLoading}
             confirmLabel="Accept"
+            size={size}
         />
     );
 }

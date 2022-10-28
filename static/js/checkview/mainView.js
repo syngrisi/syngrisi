@@ -75,7 +75,7 @@ class MainView {
         this.canvas.on(
             'mouse:move', (e) => {
                 // console.log(e.e.buttons);
-                const s2sMoving = this.sideToSideView.inMovement;
+                const s2sMoving = this.sliderView.inMovement;
                 if ((e.e.buttons === 4 || this.mouseDown) && this.currentMode.isPan() && !s2sMoving) {
                     this.canvas.setCursor('grab');
 
@@ -191,7 +191,7 @@ class MainView {
     }
 
     destroySideToSideView() {
-        this.sideToSideView.destroy();
+        this.sliderView.destroy();
         this.unpressedButton('side-wrapper');
     }
 
@@ -282,15 +282,15 @@ class MainView {
     async renderSideToSideView() {
         this.currentView = 'SideToSideView';
 
-        await this.sideToSideView.render(this.initResize);
-        await this.initResize(this.sideToSideView.actualImg);
-        await this.initResize(this.sideToSideView.baselineImg);
-        this.sideToSideView.divider.left = this.sideToSideView.baselineImg.getScaledWidth() / 2 - this.sideToSideView.divider.width / 2;
-        this.sideToSideView.baselineLabel.top = this.sideToSideView.canvas.getHeight() / 2 - 15;
-        this.sideToSideView.baselineLabel.left = (this.sideToSideView.divider.left) - this.sideToSideView.canvas.getWidth() / 10;
+        await this.sliderView.render(this.initResize);
+        await this.initResize(this.sliderView.actualImg);
+        await this.initResize(this.sliderView.baselineImg);
+        this.sliderView.divider.left = this.sliderView.baselineImg.getScaledWidth() / 2 - this.sliderView.divider.width / 2;
+        this.sliderView.baselineLabel.top = this.sliderView.canvas.getHeight() / 2 - 15;
+        this.sliderView.baselineLabel.left = (this.sliderView.divider.left) - this.sliderView.canvas.getWidth() / 10;
 
-        this.sideToSideView.actualLabel.top = this.sideToSideView.canvas.getHeight() / 2 - 15;
-        this.sideToSideView.actualLabel.left = this.sideToSideView.divider.left + (this.sideToSideView.canvas.getWidth() / 10) - 60;
+        this.sliderView.actualLabel.top = this.sliderView.canvas.getHeight() / 2 - 15;
+        this.sliderView.actualLabel.left = this.sliderView.divider.left + (this.sliderView.canvas.getWidth() / 10) - 60;
 
         this.canvas.requestRenderAll();
         this.canvas.renderAll();

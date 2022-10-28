@@ -28,6 +28,7 @@ import { links } from '../../../shared/components/heaserLinks';
 import SafeSelect from '../../../shared/components/SafeSelect';
 import { GenericService } from '../../../shared/services';
 import { useParams } from '../../hooks/useParams';
+import { QuickFilter } from './QuickFilter';
 
 const useStyles = createStyles((theme) => ({
     header: {
@@ -173,9 +174,9 @@ export default function IndexHeader() {
                 </Group>
 
                 <Group>
-                    {/*<Group ml={50} spacing={5} className={classes.links}>*/}
-                    {/*    {headerLinks}*/}
-                    {/*</Group>*/}
+                    {/* <Group ml={50} spacing={5} className={classes.links}> */}
+                    {/*    {headerLinks} */}
+                    {/* </Group> */}
                     <Group spacing="sm">
                         <Text size="sm">Project:</Text>
                         <SafeSelect
@@ -231,7 +232,12 @@ export default function IndexHeader() {
             <Paper shadow="">
                 <Container className={classes.subheader} fluid>
                     <Group>
-                        <Breadcrumbs>{breadCrumbs}</Breadcrumbs>
+                        <Group>
+                            <Breadcrumbs>{breadCrumbs}</Breadcrumbs>
+                        </Group>
+                        <Group ml={250}>
+                            <QuickFilter />
+                        </Group>
                     </Group>
                     <Group spacing={4} mr="md" position="right">
                         {toolbar}

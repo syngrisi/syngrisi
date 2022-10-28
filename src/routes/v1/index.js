@@ -6,6 +6,7 @@ const usersRoute = require('./users.route');
 const logsRoute = require('./logs.route');
 const runsRoute = require('./runs.route');
 const checkRoute = require('./checks.route');
+const baselinesRoute = require('./baselines.route');
 const suitesRoute = require('./suites.route');
 const settingsRoute = require('./settings.route');
 const testDistinctRoute = require('./test_distinct.route');
@@ -40,6 +41,10 @@ const defaultRoutes = [
     {
         path: '/checks',
         route: checkRoute,
+    },
+    {
+        path: '/baselines',
+        route: baselinesRoute,
     },
     {
         path: '/suites',
