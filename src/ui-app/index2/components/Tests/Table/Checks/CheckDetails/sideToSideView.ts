@@ -138,9 +138,9 @@ export class SideToSideView {
             // rx: 5,
             // ry: 5,
             fill: '#373A40',
-            width: 180,
-            height: 80,
             opacity: 0.90,
+            width: 180 / this.canvas.getZoom(),
+            height: 80 / this.canvas.getZoom(),
         });
         SideToSideView.lockCommon(frame);
         const text = new fabric.Text(name, {
@@ -149,7 +149,7 @@ export class SideToSideView {
             originY: 'center',
             hoverCursor: 'default',
             fill: 'white',
-            fontSize: 36,
+            fontSize: 36 / this.canvas.getZoom(),
             lockMovementY: true,
             lockMovementX: true,
             lockScalingX: true,
@@ -325,11 +325,22 @@ export class SideToSideView {
         this.rectClip.left = this.baselineImg.getScaledWidth() / 2;
 
         // labels
-        this.expectedLabel.top = (this.canvas.getHeight() / 2) - this.canvasOffsetY() + this.expectedLabel.height / 2;
-        this.expectedLabel.left = (this.canvas.getWidth() / 4) - this.canvasOffsetX();
+        this.expectedLabel.top = (
+            (this.canvas.getHeight() / 2) / this.canvas.getZoom()
+            - this.canvasOffsetY()
+            - (this.expectedLabel.height / 2) * this.canvas.getZoom()
+        );
 
-        this.actualLabel.top = (this.canvas.getHeight() / 2) - this.canvasOffsetY() + this.actualLabel.height / 2;
-        this.actualLabel.left = (this.canvas.getWidth() / 4) * 3 - this.canvasOffsetX();
+        this.expectedLabel.left = ((this.canvas.getWidth() / 4) - this.canvasOffsetX())
+            / this.canvas.getZoom();
+
+        this.actualLabel.top = (
+            (this.canvas.getHeight() / 2) / this.canvas.getZoom()
+            - this.canvasOffsetY()
+            - (this.actualLabel.height / 2) * this.canvas.getZoom()
+        );
+        this.actualLabel.left = ((this.canvas.getWidth() / 4) * 3 - this.canvasOffsetX())
+            / this.canvas.getZoom();
 
         await this.canvas.renderAll();
 
@@ -347,6 +358,12 @@ export class SideToSideView {
             const delta = new fabric.Point(0, 0);
             this.canvas.relativePan(delta);
         }, 0);
+
+        // workaround ro rescale divider
+        setTimeout(() => {
+            mainView.sliderView.zoomEventHandler();
+            mainView.canvas.renderAll();
+        }, 100);
     }
 
     async destroy() {

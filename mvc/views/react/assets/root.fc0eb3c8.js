@@ -5,7 +5,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 import { r as react, W as useWindowEvent, X as queryString, b as jsx, j as jsxs, P as Paper, g as Title, Y as Stack, T as Text, G as Group, h as Button, k as ky, a as config, d as useMantineTheme, Z as Fragment, q as TextInput, t as ActionIcon, n as lAe, _ as Pj, D as useLocalStorage, u as useQuery, e as Container, $ as Dge, c as createStyles, l as log, a0 as Tooltip, a1 as Loader, a2 as CK, s as Checkbox, a3 as React, a4 as Transition, a5 as Xfe, a6 as rze, a7 as zV, a8 as ea, a9 as Epe, A as Anchor, aa as Ol, ab as ua, ac as RX, ad as rWe, ae as UZ, af as getAugmentedNamespace, ag as pi, ah as Lbe, ai as lDe, aj as dDe, ak as DMe, al as qF, am as Cbe, an as Pbe, L as LoadingOverlay, ao as LHe, B as Box, o as useSearchParams, ap as Y, Q as QueryClient, f as useDocumentTitle, aq as useNavigate, F as QueryClientProvider, H as ColorSchemeProvider, M as MantineProvider, ar as Routes, as as Route, I as createRoot, J as BrowserRouter } from "./use-form.72335477.js";
-import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, P as Popover, a as Chip, b as useColorScheme, c as useDisclosure, l as links, H as Header, B as Burger, d as HeaderLogo, e as SafeSelect, o as openSpotlight, K as Kbd, U as UserMenu, T as ToggleThemeButton, f as Breadcrumbs, g as errorMsg, G as GenericService, i as isDark, h as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, j as Skeleton, k as useInView, F as FocusTrap, m as escapeRegExp, n as useToggle, p as useInfinityScroll, N as Navbar, q as ScrollArea, r as getNavigationItem, t as stopNavigationProgress, v as resetNavigationProgress, w as Badge, A as Affix, x as ActionPopoverIcon, I as Image$1, y as Card, z as Collapse, D as Divider, E as SegmentedControl, O as Table, Q as useInputState, V as RelativeDrawer, W as LogicalGroup, X as uuid, Y as useNavProgressFetchEffect, Z as AppShell, $ as ReactQueryDevtools, a0 as navigationData, a1 as SpotlightProvider, a2 as NotificationsProvider, a3 as NavigationProgress, a4 as ModalsProvider, a5 as QueryParamProvider, a6 as ReactRouter6Adapter } from "./LogicalGroup.cc758154.js";
+import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, P as Popover, a as Chip, b as useColorScheme, c as useDisclosure, l as links, H as Header, B as Burger, d as HeaderLogo, e as SafeSelect, o as openSpotlight, K as Kbd, U as UserMenu, T as ToggleThemeButton, f as Breadcrumbs, g as errorMsg, G as GenericService, i as isDark, h as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, j as Skeleton, k as useInView, F as FocusTrap, m as escapeRegExp, n as useToggle, p as useInfinityScroll, N as Navbar, q as ScrollArea, r as getNavigationItem, t as stopNavigationProgress, v as resetNavigationProgress, w as Badge, A as Affix, x as ActionPopoverIcon, I as Image$1, y as Card, z as Collapse, D as Divider, E as SegmentedControl, O as Table, Q as useInputState, V as RelativeDrawer, W as LogicalGroup, X as uuid, Y as useNavProgressFetchEffect, Z as AppShell, $ as ReactQueryDevtools, a0 as navigationData, a1 as SpotlightProvider, a2 as NotificationsProvider, a3 as NavigationProgress, a4 as ModalsProvider, a5 as QueryParamProvider, a6 as ReactRouter6Adapter } from "./LogicalGroup.7fd7cf08.js";
 function useDebouncedValue(value, wait, options = { leading: false }) {
   const [_value, setValue] = react.exports.useState(value);
   const mountedRef = react.exports.useRef(false);
@@ -20796,8 +20796,8 @@ const require$$2 = /* @__PURE__ */ getAugmentedNamespace(__viteBrowserExternal$1
   })();
 })(fabric$1);
 class SimpleView {
-  constructor(mainView, type) {
-    this.mainView = mainView;
+  constructor(mainView2, type) {
+    this.mainView = mainView2;
     this.type = type;
   }
   async render() {
@@ -20810,10 +20810,15 @@ class SimpleView {
   }
 }
 class SideToSideView {
-  constructor({ mainView }) {
-    this.mainView = mainView;
-    this.canvas = mainView.canvas;
-    this.uriBaseline = mainView.uriBaseline;
+  constructor({ mainView: mainView2 }) {
+    __publicField(this, "mainView");
+    __publicField(this, "canvas");
+    __publicField(this, "uriBaseline");
+    __publicField(this, "dividerLine");
+    __publicField(this, "dividerSlider");
+    this.mainView = mainView2;
+    this.canvas = mainView2.canvas;
+    this.uriBaseline = mainView2.uriBaseline;
     this.zoomEventHandler = () => {
       this.dividerLine.scaleX = 1 / this.canvas.getZoom();
       this.dividerSlider.scaleX = 1 / this.canvas.getZoom();
@@ -20910,9 +20915,9 @@ class SideToSideView {
       originY: "center",
       hoverCursor: "default",
       fill: "#373A40",
-      width: 180,
-      height: 80,
-      opacity: 0.9
+      opacity: 0.9,
+      width: 180 / this.canvas.getZoom(),
+      height: 80 / this.canvas.getZoom()
     });
     SideToSideView.lockCommon(frame);
     const text = new fabric$1.fabric.Text(name, {
@@ -20921,7 +20926,7 @@ class SideToSideView {
       originY: "center",
       hoverCursor: "default",
       fill: "white",
-      fontSize: 36,
+      fontSize: 36 / this.canvas.getZoom(),
       lockMovementY: true,
       lockMovementX: true,
       lockScalingX: true,
@@ -21067,10 +21072,10 @@ class SideToSideView {
     await this.canvas.renderAll();
     this.divider.left = this.baselineImg.getScaledWidth() / 2;
     this.rectClip.left = this.baselineImg.getScaledWidth() / 2;
-    this.expectedLabel.top = this.canvas.getHeight() / 2 - this.canvasOffsetY() + this.expectedLabel.height / 2;
-    this.expectedLabel.left = this.canvas.getWidth() / 4 - this.canvasOffsetX();
-    this.actualLabel.top = this.canvas.getHeight() / 2 - this.canvasOffsetY() + this.actualLabel.height / 2;
-    this.actualLabel.left = this.canvas.getWidth() / 4 * 3 - this.canvasOffsetX();
+    this.expectedLabel.top = this.canvas.getHeight() / 2 / this.canvas.getZoom() - this.canvasOffsetY() - this.expectedLabel.height / 2 * this.canvas.getZoom();
+    this.expectedLabel.left = (this.canvas.getWidth() / 4 - this.canvasOffsetX()) / this.canvas.getZoom();
+    this.actualLabel.top = this.canvas.getHeight() / 2 / this.canvas.getZoom() - this.canvasOffsetY() - this.actualLabel.height / 2 * this.canvas.getZoom();
+    this.actualLabel.left = (this.canvas.getWidth() / 4 * 3 - this.canvasOffsetX()) / this.canvas.getZoom();
     await this.canvas.renderAll();
     this.canvasLeft = document.getElementById("snapshoot").getBoundingClientRect().x;
     this.canvasTop = document.getElementById("snapshoot").getBoundingClientRect().y;
@@ -21080,6 +21085,10 @@ class SideToSideView {
       const delta = new fabric$1.fabric.Point(0, 0);
       this.canvas.relativePan(delta);
     }, 0);
+    setTimeout(() => {
+      mainView.sliderView.zoomEventHandler();
+      mainView.canvas.renderAll();
+    }, 100);
   }
   async destroy() {
     var _a;
@@ -21538,21 +21547,21 @@ function CheckDetails({
     height: vHeight,
     width: vWidth
   } = useViewportSize();
-  const [mainView, setMainView] = react.exports.useState(null);
+  const [mainView2, setMainView] = react.exports.useState(null);
   const [zoomPercent, setZoomPercent] = react.exports.useState(100);
   const [openedZoomPopover, zoomPopoverHandler] = useDisclosure(false);
   function zoomEvents() {
-    mainView.canvas.on("mouse:wheel", (opt) => {
+    mainView2.canvas.on("mouse:wheel", (opt) => {
       if (!opt.e.ctrlKey)
         return;
       const delta = opt.e.deltaY;
-      let zoomVal = mainView.canvas.getZoom();
+      let zoomVal = mainView2.canvas.getZoom();
       zoomVal *= 0.999 ** delta;
       if (zoomVal > 20)
         zoomVal = 20;
       if (zoomVal < 0.01)
         zoomVal = 0.01;
-      mainView.canvas.zoomToPoint({
+      mainView2.canvas.zoomToPoint({
         x: opt.e.offsetX,
         y: opt.e.offsetY
       }, zoomVal);
@@ -21563,10 +21572,10 @@ function CheckDetails({
     });
   }
   const zoomByPercent = (percent) => {
-    if (!(mainView == null ? void 0 : mainView.canvas))
+    if (!(mainView2 == null ? void 0 : mainView2.canvas))
       return;
-    mainView.canvas.setZoom(percent / 100);
-    mainView.canvas.renderAll();
+    mainView2.canvas.setZoom(percent / 100);
+    mainView2.canvas.renderAll();
     setZoomPercent(() => percent);
   };
   const zoomByDelta = (delta) => {
@@ -21574,7 +21583,7 @@ function CheckDetails({
       delta
     });
     document.dispatchEvent(new Event("zoom"));
-    let newPercent = Math.round(mainView.canvas.getZoom() * 100) + delta;
+    let newPercent = Math.round(mainView2.canvas.getZoom() * 100) + delta;
     newPercent = newPercent < 2 ? 2 : newPercent;
     newPercent = newPercent > 1e3 ? 1e3 : newPercent;
     zoomByPercent(newPercent);
@@ -21635,78 +21644,78 @@ function CheckDetails({
   react.exports.useEffect(function afterMainViewCreatedHandleRegions() {
     if (!baselineId)
       return;
-    if (mainView) {
-      mainView.getSnapshotIgnoreRegionsDataAndDrawRegions(baselineId);
+    if (mainView2) {
+      mainView2.getSnapshotIgnoreRegionsDataAndDrawRegions(baselineId);
     }
-  }, [JSON.stringify((_b = baselineQuery.data) == null ? void 0 : _b.results), mainView == null ? void 0 : mainView.toString()]);
+  }, [JSON.stringify((_b = baselineQuery.data) == null ? void 0 : _b.results), mainView2 == null ? void 0 : mainView2.toString()]);
   const calculateMaxImagesDimensions = () => {
     const data = [{
       imageName: "expectedImage",
       dimension: "width",
-      value: mainView.expectedImage.width
+      value: mainView2.expectedImage.width
     }, {
       imageName: "expectedImage",
       dimension: "height",
-      value: mainView.expectedImage.height
+      value: mainView2.expectedImage.height
     }, {
       imageName: "actualImage",
       dimension: "width",
-      value: mainView.actualImage.width
+      value: mainView2.actualImage.width
     }, {
       imageName: "actualImage",
       dimension: "height",
-      value: mainView.actualImage.height
+      value: mainView2.actualImage.height
     }];
     const biggestDimensionValue = Math.max(...data.map((x2) => x2.value));
     const result = data.find((x2) => x2.value === biggestDimensionValue);
     return result;
   };
   const zoomTo = (image, dimension) => {
-    const ratio = mainView.canvas[dimension] / image[dimension];
+    const ratio = mainView2.canvas[dimension] / image[dimension];
     const percent = ratio > 9 ? 900 : ratio * 100;
     zoomByPercent(percent);
-    mainView.canvas.renderAll();
+    mainView2.canvas.renderAll();
   };
   const fitGreatestImageIfNeeded = () => {
     const greatestImage = calculateMaxImagesDimensions();
-    zoomTo(mainView[greatestImage.imageName], greatestImage.dimension);
+    zoomTo(mainView2[greatestImage.imageName], greatestImage.dimension);
     const anotherDimension = greatestImage.dimension === "height" ? "width" : "height";
-    if (mainView[greatestImage.imageName][anotherDimension] > mainView.canvas[anotherDimension]) {
-      zoomTo(mainView[greatestImage.imageName], anotherDimension);
+    if (mainView2[greatestImage.imageName][anotherDimension] > mainView2.canvas[anotherDimension]) {
+      zoomTo(mainView2[greatestImage.imageName], anotherDimension);
     }
     setTimeout(() => {
-      mainView.panToCanvasWidthCenter(greatestImage.imageName);
+      mainView2.panToCanvasWidthCenter(greatestImage.imageName);
     }, 10);
   };
   const fitImageIfNeeded = (imageName) => {
-    const image = mainView[imageName];
+    const image = mainView2[imageName];
     const greatestDimension = image.height > image.width ? "height" : "width";
     const anotherDimension = greatestDimension === "height" ? "width" : "height";
     zoomTo(image, greatestDimension);
-    if (mainView[imageName][anotherDimension] > mainView.canvas[anotherDimension]) {
-      zoomTo(mainView[imageName], anotherDimension);
+    if (mainView2[imageName][anotherDimension] > mainView2.canvas[anotherDimension]) {
+      zoomTo(mainView2[imageName], anotherDimension);
     }
     setTimeout(() => {
-      mainView.panToCanvasWidthCenter(imageName);
+      mainView2.panToCanvasWidthCenter(imageName);
     }, 10);
   };
   const fitImageByWith = (imageName) => {
-    const image = mainView[imageName];
+    const image = mainView2[imageName];
     zoomTo(image, "width");
     setTimeout(() => {
-      mainView.panToCanvasWidthCenter(imageName);
+      mainView2.panToCanvasWidthCenter(imageName);
     }, 10);
   };
   react.exports.useEffect(function afterMainViewCreated() {
-    if (mainView) {
+    if (mainView2) {
       zoomEvents();
       fitGreatestImageIfNeeded();
     }
-  }, [mainView == null ? void 0 : mainView.toString()]);
+  }, [mainView2 == null ? void 0 : mainView2.toString()]);
   const [view, setView] = react.exports.useState("actual");
   react.exports.useEffect(() => {
-    if (mainView) {
-      mainView.switchView(view);
+    if (mainView2) {
+      mainView2.switchView(view);
     }
   }, [view]);
   let viewSegmentData = [{
@@ -21804,8 +21813,8 @@ function CheckDetails({
                   variant: "subtle",
                   onClick: () => {
                     zoomByPercent(50);
-                    console.log(mainView[`${view}Image`]);
-                    mainView.panToCanvasWidthCenter(`${view}Image`);
+                    console.log(mainView2[`${view}Image`]);
+                    mainView2.panToCanvasWidthCenter(`${view}Image`);
                     zoomPopoverHandler.close();
                   },
                   children: "50%"
@@ -21813,7 +21822,7 @@ function CheckDetails({
                   variant: "subtle",
                   onClick: () => {
                     zoomByPercent(100);
-                    mainView.panToCanvasWidthCenter(`${view}Image`);
+                    mainView2.panToCanvasWidthCenter(`${view}Image`);
                     zoomPopoverHandler.close();
                   },
                   children: "100%"
@@ -21821,7 +21830,7 @@ function CheckDetails({
                   variant: "subtle",
                   onClick: () => {
                     zoomByPercent(200);
-                    mainView.panToCanvasWidthCenter(`${view}Image`);
+                    mainView2.panToCanvasWidthCenter(`${view}Image`);
                     zoomPopoverHandler.close();
                   },
                   children: "200%"
@@ -21860,7 +21869,7 @@ function CheckDetails({
           orientation: "vertical"
         }), /* @__PURE__ */ jsx(ActionIcon, {
           title: "Add ignore region",
-          onClick: () => mainView.addIgnoreRegion({
+          onClick: () => mainView2.addIgnoreRegion({
             name: "ignore_rect",
             strokeWidth: 0
           }),
@@ -21869,7 +21878,7 @@ function CheckDetails({
             stroke: 1
           })
         }), /* @__PURE__ */ jsx(ActionIcon, {
-          onClick: () => MainView.sendIgnoreRegions(baselineId, mainView.getRectData()),
+          onClick: () => MainView.sendIgnoreRegions(baselineId, mainView2.getRectData()),
           children: /* @__PURE__ */ jsx(qF, {
             size: 24,
             stroke: 1
