@@ -1,19 +1,60 @@
+import { fabric } from 'fabric';
+import { SimpleView } from './simpleView';
+import { SideToSideView } from './sideToSideView';
+import { lockImage } from './helpers';
+import { errorMsg, successMsg } from '../../../../../../shared/utils/utils';
+import config from '../../../../../../config';
+
 /* eslint-disable dot-notation,no-underscore-dangle */
-/* global fabric $ SideToSideView lockImage SimpleView */
-// noinspection SpellCheckingInspection
-// eslint-disable-next-line no-unused-vars
-class MainView {
+
+interface Props {
+    canvasElementWidth: number
+    canvasElementHeight: number
+    canvasId: string
+    // url: string
+    actual: any
+    expectedImage: any
+    actualImage: any
+    diffImage: any
+}
+
+export class MainView {
+    canvasElementWidth: number;
+
+    canvasElementHeight: number;
+
+    sliderView: SideToSideView;
+
+    canvas: fabric.Canvas;
+
+    actualImage: any;
+
+    currentMode: any;
+
+    defaultMode: string;
+
+    currentView: string;
+
+    actualView: SimpleView;
+
+    expectedView: SimpleView;
+
+    diffView: SimpleView;
+
+    expectedImage: any;
+
+    diffImage: any;
+
     constructor(
         {
             canvasElementWidth,
             canvasElementHeight,
             canvasId,
-            url,
             actual,
             expectedImage,
             actualImage,
             diffImage,
-        }
+        }: Props,
     ) {
         // init properties
         this.canvasElementWidth = canvasElementWidth;
@@ -28,7 +69,6 @@ class MainView {
             height: this.canvasElementHeight,
             preserveObjectStacking: true,
             uniformScaling: false,
-
         });
 
         // this.expectedCanvasViewportAreaSize = MainView.calculateExpectedCanvasViewportAreaSize();
@@ -50,32 +90,26 @@ class MainView {
             },
         };
 
-        this.baselineUrl = url;
+        // this.baselineUrl = url;
         if (actual) {
-            this.sideToSideView = new SideToSideView(
+            this.sliderView = new SideToSideView(
                 {
                     mainView: this,
-                    // uriActual: MainView.snapshotUrl(actual.filename),
-                    // uriBaseline, uriActual
-                }
+                },
             );
-            // this.canvas, this.baselineUrl, MainView.snapshotUrl(actual.filename));
         }
 
+        // events
         this.selectionEvents();
-        this.zoomEvents();
+        // this.zoomEvents();
         this.panEvents();
-        // render view
-        // this.renderActualView();
+
+        // views
         this.expectedView = new SimpleView(this, 'expected');
         this.actualView = new SimpleView(this, 'actual');
         this.diffView = new SimpleView(this, 'diff');
-        this.expectedView.render();
-        // this.actualView.render();
-        // this.renderBaselineView();
-        // setTimeout(() => {
-        // this.renderSideToSideView();
-        // }, 1000);
+        this.actualView.render();
+        // this.sideToSideView.render()
     }
 
     /*
@@ -96,11 +130,11 @@ class MainView {
     static calculateExpectedCanvasViewportAreaSize() {
         const viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
         const viewportHeight = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
-        const canvasDimensions = document.getElementById('snapshoot')
+        const canvasDimensions = document.getElementById('snapshoot')!
             .getBoundingClientRect();
         return {
-            width: viewportWidth - canvasDimensions.x,
-            height: viewportHeight - canvasDimensions.y,
+            width: Number(viewportWidth - canvasDimensions.x),
+            height: Number(viewportHeight - canvasDimensions.y),
         };
     }
 
@@ -119,7 +153,7 @@ class MainView {
                     // dispatchEvent(new Event('pan'));
                     this.canvas.renderAll();
                 }
-            }
+            },
         );
 
         this.canvas.on(
@@ -131,7 +165,7 @@ class MainView {
                     this.canvas.selection = false;
                     this.canvas.renderAll();
                 }
-            }
+            },
         );
         this.canvas.on(
             'mouse:up', () => {
@@ -139,7 +173,7 @@ class MainView {
                 this.canvas.setCursor('default');
                 this.canvas.renderAll();
                 this.canvas.selection = true;
-            }
+            },
         );
 
         this.canvas.on('mouse:wheel', (opt) => {
@@ -157,7 +191,7 @@ class MainView {
     selectionEvents() {
         // disable rotation point for selections
         this.canvas.on('selection:created', (e) => {
-            const activeSelection = e.target;
+            const activeSelection: any = e.target;
             if (!activeSelection?._objects?.length || (activeSelection?._objects?.length < 2)) return;
             activeSelection.hasControls = false;
             this.canvas.renderAll();
@@ -166,7 +200,7 @@ class MainView {
         // fired e.g. when you select one object first,
         // then add another via shift+click
         this.canvas.on('selection:updated', (e) => {
-            const activeSelection = e.target;
+            const activeSelection: any = e.target;
             if (!activeSelection?._objects?.length || (activeSelection?._objects?.length < 2)) return;
             if (activeSelection.hasControls) {
                 activeSelection.hasControls = false;
@@ -175,74 +209,44 @@ class MainView {
     }
 
     zoomEvents() {
-        this.canvas.on('mouse:wheel', (opt) => {
-            if (!opt.e.ctrlKey) return;
-            const delta = opt.e.deltaY;
-            let zoom = this.canvas.getZoom();
-            zoom *= 0.999 ** delta;
-            if (zoom > 20) zoom = 20;
-            if (zoom < 0.01) zoom = 0.01;
-            // console.log({zoom: zoom * 100});
-            this.canvas.zoomToPoint({
-                x: opt.e.offsetX,
-                y: opt.e.offsetY,
-            }, zoom);
-            // // !!!!!!!!!!!!!!!
-            // this.canvas.absolutePan(new fabric.Point(0, 0));
-            document.dispatchEvent(new Event('zoom'));
-            opt.e.preventDefault();
-            opt.e.stopPropagation();
-        });
+        // this.canvas.on('mouse:wheel', (opt) => {
+        //     if (!opt.e.ctrlKey) return;
+        //     const delta = opt.e.deltaY;
+        //     console.log({ delta })
+        //     let zoom = this.canvas.getZoom();
+        //     zoom *= 0.999 ** delta;
+        //     console.log({zoom})
+        //     if (zoom > 20) zoom = 20;
+        //     if (zoom < 0.01) zoom = 0.01;
+        //     this.canvas.zoomToPoint({
+        //         x: opt.e.offsetX,
+        //         y: opt.e.offsetY,
+        //     }, zoom);
+        //     document.dispatchEvent(new Event('zoom'));
+        //     opt.e.preventDefault();
+        //     opt.e.stopPropagation();
+        // });
     }
 
     get objects() {
         return this.canvas.getObjects();
     }
 
-    pressedButton(id) {
-        const button = document.getElementById(id);
-        if (!button.classList.contains('pressed-toolbar-button')) {
-            button.classList.add('pressed-toolbar-button');
-        }
-    }
-
-    unpressedButton(id) {
-        const button = document.getElementById(id);
-        if (button && button.classList.contains('pressed-toolbar-button')) {
-            button.classList.remove('pressed-toolbar-button');
-        }
-    }
-
-    // DESTROY VIEWS
-    // destroyActualView() {
-    //     this.canvas.remove(this.actualImage);
-    //     const button = document.getElementById('toggle-actual-baseline');
-    //     button.innerText = 'B';
-    //     button.title = 'switch to actual snapshot (current is baseline)';
-    // }
-
-    // destroyBaselineView() {
-    //     this.canvas.remove(this.expectedImage);
-    // }
-
-    destroyDiffView() {
-        this.canvas.remove(this.diffImage);
-        this.unpressedButton('diff-wrapper');
-    }
-
-    async destroySideToSideView() {
-        await this.sliderView.destroy();
-        this.unpressedButton('side-wrapper');
-    }
-
     async destroyAllViews() {
-        // this.destroyBaselineView();
         this.expectedView.destroy();
         this.actualView.destroy();
-        // this.destroyActualView();
-        this.destroyDiffView();
-        await this.destroySideToSideView();
-        this.currentView = 'none';
+        this.diffView.destroy();
+        await this.sliderView.destroy();
+    }
+
+    async switchView(view) {
+        this.destroyAllViews();
+        this.sliderView = new SideToSideView(
+            {
+                mainView: this,
+            },
+        );
+        this[`${view}View`].render();
     }
 
     static snapshotUrl(filename) {
@@ -261,104 +265,104 @@ class MainView {
         });
     }
 
-    // calculateImageWidth(image) {
-    //     let { width } = image;
-    //     const isHigh = () => (image.height > this.expectedCanvasViewportAreaSize.height)
-    //         && ((image.height / this.expectedCanvasViewportAreaSize.height) < 10);
-    //
-    //     if (isHigh()) {
-    //         width = image.width * (this.expectedCanvasViewportAreaSize.height / image.height);
-    //     }
-    //     const isExtraSmall = () => image.height < 50;
-    //     if (isExtraSmall()) width *= 2;
-    //
-    //     if (width > this.canvas.width) {
-    //         width = this.canvas.width;
-    //     }
-    //     return width;
-    // }
-
-    // async initResize(image, mainThis = this) {
-    //     image.scaleToWidth(mainThis.calculateImageWidth(image) * mainThis.canvas.getZoom());
-    // }
-
     // pan to place the image in the center of canvas
     async panToCenter(image) {
         if (this.pannedOnInit) return;
         this.pannedOnInit = true;
 
+        // const delta = new fabric.Point(
+        //     ((this.canvas.width / 2) - (image.getScaledWidth() / 2)),
+        //     (this.canvas.height > image.getScaledHeight()
+        //         ? (this.canvas.height / 2) - (image.getScaledHeight() / 2)
+        //         : 5),
+        // );
+
         const delta = new fabric.Point(
             ((this.canvas.width / 2) - (image.getScaledWidth() / 2)),
-            (this.canvas.height > image.getScaledHeight()
-                ? (this.canvas.height / 2) - (image.getScaledHeight() / 2)
-                : 5),
+            0,
+        );
+        this.canvas.relativePan(delta);
+        this.canvas.renderAll();
+    }
+
+    panToCanvasWidthCenter(imageName: string) {
+        // if (this.pannedOnInit) return;
+        // this.pannedOnInit = true;
+
+        this.canvas.absolutePan(new fabric.Point(0, 0));
+        const delta = new fabric.Point(
+            ((this.canvas.width / 2)
+                - ((this[imageName].width * this.canvas.getZoom()) / 2)
+            ),
+            // ((this.canvas.width / 2) - (this[imageName].getScaledWidth() / 2)),
+            0,
         );
         this.canvas.relativePan(delta);
         this.canvas.renderAll();
     }
 
     // RENDER VIEWS
-    async renderBaselineView() {
-        await this.expectedView.render();
-    }
-
-    async renderActualView() {
-        await this.actualView.render();
-        // const button = document.getElementById('toggle-actual-baseline');
-        // button.innerText = 'A';
-        // button.title = 'switch to baseline snapshot (current is actual)';
-    }
-
-    async renderDiffView() {
-        await this.diffView.render();
-        this.pressedButton('diff-wrapper');
-    }
-
-    async renderSideToSideView() {
-        this.currentView = 'SideToSideView';
-
-        this.sliderView = new SideToSideView(
-            {
-                mainView: this,
-            }
-        );
-
-        await this.sliderView.render();
-        this.canvas.requestRenderAll();
-        this.canvas.renderAll();
-        await this.pressedButton('side-wrapper');
-    }
-
-    async toggleSideToSideView() {
-        if (this.currentView === 'SideToSideView') {
-            await this.destroyAllViews();
-            await this.renderActualView();
-            return;
-        }
-        await this.destroyAllViews();
-        await this.renderSideToSideView();
-    }
-
-    async toggleActual(params) {
-        if (this.currentView === 'actual') {
-            await this.destroyAllViews();
-            await this.renderBaselineView();
-            return;
-        }
-        await this.destroyAllViews();
-        const uri = `/snapshoots/${params.filename}`;
-        await this.renderActualView(uri);
-    }
-
-    async toggleDiff() {
-        if (this.currentView === 'DiffView') {
-            await this.destroyAllViews();
-            await this.renderBaselineView();
-            return;
-        }
-        await this.destroyAllViews();
-        await this.renderDiffView();
-    }
+    // async renderBaselineView() {
+    //     await this.expectedView.render();
+    // }
+    //
+    // async renderActualView() {
+    //     await this.actualView.render();
+    //     // const button = document.getElementById('toggle-actual-baseline');
+    //     // button.innerText = 'A';
+    //     // button.title = 'switch to baseline snapshot (current is actual)';
+    // }
+    //
+    // async renderDiffView() {
+    //     await this.diffView.render();
+    //     this.pressedButton('diff-wrapper');
+    // }
+    //
+    // async renderSideToSideView() {
+    //     this.currentView = 'SideToSideView';
+    //
+    //     this.sliderView = new SideToSideView(
+    //         {
+    //             mainView: this,
+    //         },
+    //     );
+    //
+    //     await this.sliderView.render();
+    //     this.canvas.requestRenderAll();
+    //     this.canvas.renderAll();
+    //     await this.pressedButton('side-wrapper');
+    // }
+    //
+    // async toggleSideToSideView() {
+    //     if (this.currentView === 'SideToSideView') {
+    //         await this.destroyAllViews();
+    //         await this.renderActualView();
+    //         return;
+    //     }
+    //     await this.destroyAllViews();
+    //     await this.renderSideToSideView();
+    // }
+    //
+    // async toggleActual() {
+    //     if (this.currentView === 'actual') {
+    //         await this.destroyAllViews();
+    //         await this.renderBaselineView();
+    //         return;
+    //     }
+    //     await this.destroyAllViews();
+    //     // const uri = `/snapshoots/${params.filename}`;
+    //     await this.renderActualView();
+    // }
+    //
+    // async toggleDiff() {
+    //     if (this.currentView === 'DiffView') {
+    //         await this.destroyAllViews();
+    //         await this.renderBaselineView();
+    //         return;
+    //     }
+    //     await this.destroyAllViews();
+    //     await this.renderDiffView();
+    // }
 
     removeActiveIgnoreRegions() {
         const els = this.canvas.getActiveObjects()
@@ -459,16 +463,6 @@ class MainView {
         return this.canvas.item(this.canvas.getObjects().length - 1);
     }
 
-    zoom(ratio) {
-        document.dispatchEvent(new Event('zoom'));
-        let newRatio = Math.round(this.canvas.getZoom() * 100) + ratio;
-        newRatio = newRatio < 2 ? 2 : newRatio;
-        newRatio = newRatio > 1000 ? 1000 : newRatio;
-        this.canvas.zoomToPoint(new fabric.Point(this.canvas.width / 2,
-            30), newRatio / 100);
-        this.canvas.renderAll();
-    }
-
     /**
      * 1. collect data about all rects
      * 2. convert the data to resemble.js format
@@ -499,27 +493,9 @@ class MainView {
         return this.expectedImage.height / this.expectedImage.getScaledHeight();
     }
 
-    static showToaster(msg, status = 'Success') {
-        document.getElementById('notify-header').textContent = status;
-        document.getElementById('notify-message').textContent = msg;
-        document.getElementById('notify-rect')
-            .setAttribute('fill', '#2ECC40');
-        if (status === 'Error') {
-            document.getElementById('notify-rect')
-                .setAttribute('fill', '#FF4136');
-        }
-        $('#notify')
-            .show();
-        setTimeout(
-            () => $('#notify')
-                .hide(),
-            4000
-        );
-    }
-
-    static async sendIgnoreRegions(id, regionsData) {
+    static async sendIgnoreRegions(id: string, regionsData) {
         try {
-            const response = await fetch(`/baselines/${id}`, {
+            const response = await fetch(`${config.baseUri}/baselines/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id, ignoreRegions: regionsData }),
@@ -527,14 +503,17 @@ class MainView {
             const text = await response.text();
             if (response.status === 200) {
                 console.log(`Successful send baseline ignored regions, id: '${id}'  resp: '${text}'`);
-                MainView.showToaster('ignored regions was saved');
+                successMsg({ message: 'ignored regions was saved' });
+                // MainView.showToaster('ignored regions was saved');
                 return;
             }
             console.error(`Cannot set baseline ignored regions , status: '${response.status}',  resp: '${text}'`);
-            MainView.showToaster('Cannot set baseline ignored regions', 'Error');
+            errorMsg({ error: 'Cannot set baseline ignored regions' });
+            // MainView.showToaster('Cannot set baseline ignored regions', 'Error');
         } catch (e) {
             console.error(`Cannot set baseline ignored regions: ${e.stack || e}`);
-            MainView.showToaster('Cannot set baseline ignored regions', 'Error');
+            errorMsg({ error: 'Cannot set baseline ignored regions' });
+            // MainView.showToaster('Cannot set baseline ignored regions', 'Error');
         }
     }
 
@@ -584,17 +563,18 @@ class MainView {
         });
     }
 
-    static async getRegionsData(baselineId) {
+    static async getRegionsData(baselineId: string) {
         try {
             if (!baselineId) {
                 // console.log('Cannot get regions, baseline id is empty');
                 return [];
             }
-
-            const response = await fetch(`/baselines/${baselineId}`);
+            const url = `${config.baseUri}/baselines/${baselineId}`;
+            // console.log({ url });
+            const response = await fetch(url);
             const text = await response.text();
             if (response.status === 200) {
-                // console.log(`Successfully got ignored regions, id: '${baselineId}'  resp: '${text}'`);
+                console.log(`Successfully got ignored regions, id: '${baselineId}'  resp: '${text}'`);
                 return JSON.parse(text);
             }
             if (response.status === 202) {
@@ -602,15 +582,18 @@ class MainView {
                 return [];
             }
             console.error(`Cannot get baseline ignored regions , status: '${response.status}',  resp: '${text}'`);
-            MainView.showToaster('Cannot get baseline ignored regions', 'Error');
+            // MainView.showToaster('Cannot get baseline ignored regions', 'Error');
+            errorMsg({ error: 'Cannot get baseline ignored regions' });
+
         } catch (e) {
             console.error(`Cannot get baseline ignored regions: ${e.stack || e}`);
-            MainView.showToaster('Cannot get baseline ignored regions', 'Error');
+            // MainView.showToaster('Cannot get baseline ignored regions', 'Error');
+            errorMsg({ error: 'Cannot get baseline ignored regions' });
         }
         return null;
     }
 
-    async getSnapshotIgnoreRegionsDataAndDrawRegions(id) {
+    async getSnapshotIgnoreRegionsDataAndDrawRegions(id: string) {
         const regionData = await MainView.getRegionsData(id);
         this.drawRegions(regionData.ignoreRegions);
     }

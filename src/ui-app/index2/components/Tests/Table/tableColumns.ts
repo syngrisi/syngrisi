@@ -33,20 +33,20 @@ export const tableColumns: { [key: string]: any } = {
     },
     startDate: {
         label: 'Date',
-        headStyle: { width: '5%' },
-        cellStyle: { width: '5%' },
+        headStyle: { width: '15%' },
+        cellStyle: { width: '15%' },
         type: 'DateFilter',
     },
     browserName: {
         label: 'Browser',
-        headStyle: { width: '15%' },
-        cellStyle: { width: '15%' },
+        headStyle: { width: '10%' },
+        cellStyle: { width: '10%' },
         type: 'StringFilter',
     },
     os: {
         label: 'Platform',
-        headStyle: { width: '15%' },
-        cellStyle: { width: '15%' },
+        headStyle: { width: '10%' },
+        cellStyle: { width: '10%' },
         type: 'StringFilter',
     },
     run: {
@@ -63,14 +63,14 @@ export const tableColumns: { [key: string]: any } = {
     },
     branch: {
         label: 'Branch',
-        headStyle: { width: '15%' },
-        cellStyle: { width: '15%' },
+        headStyle: { width: '10%' },
+        cellStyle: { width: '10%' },
         type: 'StringFilter',
     },
     viewport: {
         label: 'Viewport',
-        headStyle: { width: '15%' },
-        cellStyle: { width: '15%' },
+        headStyle: { width: '10%' },
+        cellStyle: { width: '10%' },
         type: 'StringFilter',
     },
 };

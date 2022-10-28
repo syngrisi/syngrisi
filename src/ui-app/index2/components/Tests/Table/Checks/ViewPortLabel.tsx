@@ -1,13 +1,27 @@
 import * as React from 'react';
-import { Badge, Group, Text, useMantineTheme } from '@mantine/core';
+import { Badge, Group, useMantineTheme } from '@mantine/core';
 
 interface Props {
     check: any
     sizes: any
+    size?: any
     checksViewSize: string
+    fontSize?: string
+    displayed?: boolean
+    color?: string
 }
 
-export function ViewPortLabel({ check, sizes, checksViewSize }: Props) {
+export function ViewPortLabel(
+    {
+        check,
+        sizes,
+        size = '',
+        checksViewSize,
+        fontSize = '12px',
+        displayed = true,
+        color = 'dark',
+    }: Props,
+) {
     const theme = useMantineTheme();
     const wrongSizeIcon = check.failReasons.includes('wrong_dimensions')
         ? (
@@ -42,17 +56,28 @@ export function ViewPortLabel({ check, sizes, checksViewSize }: Props) {
         : '';
 
     return (
-        <Group>
-            <Text
-                color="dimmed"
-                weight={500}
-                size={sizes[checksViewSize].viewportText}
+        <Group
+            sx={
+                {
+                    display: displayed ? 'block' : 'none',
+                    position: 'relative',
+                }
+            }
+        >
+            <Badge
+                color={color}
+                size={size || sizes[checksViewSize].viewportText}
                 title="Screen Viewport"
-                sx={{ display: checksViewSize === 'small' ? 'none' : 'block', position: 'relative' }}
+                sx={
+                    {
+                        fontSize,
+                        display: displayed ? 'block' : 'none',
+                    }
+                }
             >
-                {wrongSizeIcon}
                 {check.viewport}
-            </Text>
+            </Badge>
+            {wrongSizeIcon}
         </Group>
     );
 }

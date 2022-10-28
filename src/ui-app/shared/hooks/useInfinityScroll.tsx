@@ -97,6 +97,7 @@ export default function useInfinityScroll(
                 limit: String(20),
                 page: pageParam,
                 sortBy,
+                populate: 'checks',
             },
             'infinityQuery'
         ),
@@ -141,7 +142,7 @@ export default function useInfinityScroll(
         {
             enabled: infinityQuery.data?.pages?.length! > 0,
             // @ts-ignore
-            refetchInterval: import.meta.env.MODE === 'development' ? Infinity : 3000,
+            refetchInterval: import.meta.env.MODE === 'development' ? Infinity : 7000,
             onError: (e) => {
                 errorMsg({ error: e });
             },

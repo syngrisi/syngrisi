@@ -495,6 +495,9 @@ SuiteSchema.plugin(toJSON);
 AppSchema.plugin(paginate);
 AppSchema.plugin(toJSON);
 
+BaselineSchema.plugin(toJSON);
+BaselineSchema.plugin(paginate);
+
 CheckSchema.plugin(toJSON);
 CheckSchema.plugin(paginate);
 
