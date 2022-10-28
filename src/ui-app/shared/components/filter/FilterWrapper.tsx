@@ -40,7 +40,6 @@ export function FilterWrapper(
             data-test={testAttr}
         >
             <SafeSelect
-                label=""
                 data-test="table-filter-column-name"
                 sx={{ width: '130px' }}
                 optionsData={optionsData}
