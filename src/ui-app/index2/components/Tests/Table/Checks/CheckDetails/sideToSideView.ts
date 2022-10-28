@@ -178,7 +178,7 @@ export class SideToSideView {
         const $this = this;
         const dividerFillColor = '#FFFFFF';
         const dividerStrokeColor = '#878a8c';
-        this.dividerOffset = 50000;
+        this.dividerOffset = 500000;
         this.dividerLine = new fabric.Rect({
             originX: 'center',
             originY: 'top',

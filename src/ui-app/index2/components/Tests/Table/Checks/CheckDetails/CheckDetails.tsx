@@ -83,13 +83,12 @@ export function CheckDetails({ check, checkQuery, firstPageQuery, closeHandler }
             let zoomVal = mainView.canvas.getZoom();
 
             zoomVal *= 0.999 ** delta;
-            if (zoomVal > 20) zoomVal = 20;
-            if (zoomVal < 0.01) zoomVal = 0.01;
+            if (zoomVal > 9) zoomVal = 9;
+            if (zoomVal < 0.10) zoomVal = 0.10;
             mainView.canvas.zoomToPoint({
                 x: opt.e.offsetX,
                 y: opt.e.offsetY,
             }, zoomVal);
-
 
             setZoomPercent(() => zoomVal * 100);
             document.dispatchEvent(new Event('zoom'));
