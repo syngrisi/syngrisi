@@ -376,6 +376,10 @@ export function CheckDetails({ check, checkQuery, firstPageQuery, closeHandler }
                                         onClick={() => {
                                             zoomByPercent(50);
                                             console.log(mainView[`${view}Image`])
+                                            if (view === 'slider') {
+                                                mainView.panToCanvasWidthCenter('actualImage');
+                                                return;
+                                            }
                                             mainView.panToCanvasWidthCenter(`${view}Image`);
                                             zoomPopoverHandler.close();
                                         }}
@@ -386,6 +390,10 @@ export function CheckDetails({ check, checkQuery, firstPageQuery, closeHandler }
                                         variant="subtle"
                                         onClick={() => {
                                             zoomByPercent(100);
+                                            if (view === 'slider') {
+                                                mainView.panToCanvasWidthCenter('actualImage');
+                                                return;
+                                            }
                                             mainView.panToCanvasWidthCenter(`${view}Image`);
                                             zoomPopoverHandler.close();
                                         }}
@@ -396,6 +404,10 @@ export function CheckDetails({ check, checkQuery, firstPageQuery, closeHandler }
                                         variant="subtle"
                                         onClick={() => {
                                             zoomByPercent(200);
+                                            if (view === 'slider') {
+                                                mainView.panToCanvasWidthCenter('actualImage');
+                                                return;
+                                            }
                                             mainView.panToCanvasWidthCenter(`${view}Image`);
                                             zoomPopoverHandler.close();
                                         }}
@@ -406,6 +418,10 @@ export function CheckDetails({ check, checkQuery, firstPageQuery, closeHandler }
                                         variant="subtle"
                                         onClick={() => {
                                             zoomPopoverHandler.close();
+                                            if (view === 'slider') {
+                                                fitImageByWith('actualImage');
+                                                return;
+                                            }
                                             fitImageByWith(`${view}Image`);
                                         }}
                                     >
@@ -414,8 +430,13 @@ export function CheckDetails({ check, checkQuery, firstPageQuery, closeHandler }
                                     <Button
                                         variant="subtle"
                                         onClick={() => {
-                                            fitImageIfNeeded(`${view}Image`);
                                             zoomPopoverHandler.close();
+
+                                            if (view === 'slider') {
+                                                fitImageIfNeeded('actualImage');
+                                                return;
+                                            }
+                                            fitImageIfNeeded(`${view}Image`);
                                         }}
                                     >
                                         Fit co canvas
