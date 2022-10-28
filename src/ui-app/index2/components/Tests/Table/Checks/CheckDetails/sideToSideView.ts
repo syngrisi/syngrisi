@@ -6,14 +6,15 @@ export class SideToSideView {
 
     canvas: any;
 
-    private uriBaseline: any;
+    // private uriBaseline: any;
     private dividerLine: any;
+
     private dividerSlider: any;
 
     constructor({ mainView }: any) {
         this.mainView = mainView;
         this.canvas = mainView.canvas;
-        this.uriBaseline = mainView.uriBaseline;
+        // this.uriBaseline = mainView.uriBaseline;
 
         // event handlers, here - because need arrow function to overstate this and bind problem
         this.zoomEventHandler = () => {
@@ -79,6 +80,7 @@ export class SideToSideView {
             - this.canvasOffsetY() / this.canvas.getZoom()
             - this.canvasTop / this.canvas.getZoom()
             - this.dividerSlider.width / 2
+            // + (48 / this.canvas.getZoom())
         );
 
         // moving the object along with mouse cursor
@@ -258,7 +260,7 @@ export class SideToSideView {
         divider.set({
             originX: 'center',
             originY: 'center',
-            top: (this.canvas.getHeight() / 2) - this.canvasOffsetY(),
+            top: ((this.canvas.getHeight() / 2) / this.canvas.getZoom()) - this.canvasOffsetY() - 48,
             name: 'divider',
             hoverCursor: $this.folowMouse ? 'grab' : 'pointer',
             borderColor: 'transparent',
@@ -320,9 +322,9 @@ export class SideToSideView {
         // await initResize(this.actualImg, this.canvas);
         // await initResize(this.baselineImg, this.canvas);
 
-        this.divider.left = this.baselineImg.getScaledWidth() / 2;
+        this.divider.left = (this.baselineImg.getScaledWidth() / 2);
 
-        this.rectClip.left = this.baselineImg.getScaledWidth() / 2;
+        this.rectClip.left = (this.baselineImg.getScaledWidth() / 2);
 
         // labels
         this.expectedLabel.top = (
