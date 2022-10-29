@@ -57,7 +57,7 @@ export function BaseItemWrapper(
 
     const className = `${activeItemsHandler.navbarItemClass()}`
         + ` ${(activeItemsHandler.get().includes(id)) && activeItemsHandler.activeNavbarItemClass()}`;
-    const itemsComponentsMap = {
+    const itemsComponentsMap: { [key: string]: any } = {
         runs: (
             <RunItem
                 item={item}
@@ -111,7 +111,5 @@ export function BaseItemWrapper(
             />
         ),
     };
-    return (
-        itemsComponentsMap[itemType]
-    );
+    return (itemsComponentsMap[itemType]);
 }

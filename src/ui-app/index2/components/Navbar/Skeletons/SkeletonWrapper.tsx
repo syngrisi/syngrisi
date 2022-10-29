@@ -14,7 +14,7 @@ function SkeletonWrapper({ infinityQuery, itemType, num }: Props) {
     const { ref, inView } = useInView();
 
     const DummySkeletons = (key: string) => {
-        const map = {
+        const map: { [key: string]: any } = {
             runs: RunsDummySkeleton,
             suites: RunsDummySkeleton,
         };
@@ -27,7 +27,7 @@ function SkeletonWrapper({ infinityQuery, itemType, num }: Props) {
         }
     }, [inView]);
 
-    const DummySkeleton = DummySkeletons(itemType);
+    const DummySkeleton = DummySkeletons(itemType!);
     return (
         <Stack ref={ref}>
             {

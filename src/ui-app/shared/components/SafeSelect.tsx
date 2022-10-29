@@ -15,6 +15,7 @@ interface Props {
     loaded?: boolean
     label: string
     onChange: any
+    sx: any
 }
 
 // select component for selenium

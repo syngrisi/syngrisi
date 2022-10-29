@@ -173,7 +173,7 @@ export default function IndexNavbar() {
         'test-distinct/markedAs': 'By Accept Status',
     };
 
-    const title: string = query?.groupBy;
+    const title: string = query?.groupBy as string;
     useIndexSubpageEffect(subpageMap[title] || 'Test Results');
 
     return (
