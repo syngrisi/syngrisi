@@ -5,19 +5,19 @@ import config from '../../config';
 import ILog from '../interfaces/ILog';
 
 export interface IApiResult {
-    results: ILog[],
-    page: number,
-    limit: number,
-    totalPages: number,
-    totalResults: number,
+    results: ILog[]
+    page: number
+    limit: number
+    totalPages: number
+    totalResults: number
+    timestamp: string
 }
 
 interface IRequestOptions {
-    sortBy?: string,
-    limit?: string,
-    page?: string,
-    populate?: string,
-
+    sortBy?: string
+    limit?: string
+    page?: string
+    populate?: string
 }
 
 export const GenericService = {

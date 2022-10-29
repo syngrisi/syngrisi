@@ -8,7 +8,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useLocalStorage } from '@mantine/hooks';
 import { useEffect, useContext, useState } from 'react';
 import { IconAdjustments, IconFilter } from '@tabler/icons';
-import { useSubpageEffect } from '../../hooks/useSubpageEffect';
+import { useIndexSubpageEffect } from '../../hooks/useIndexSubpageEffect';
 import { AppContext } from '../../AppContext';
 import RefreshActionIcon from './Table/RefreshActionIcon';
 import useInfinityScroll from '../../../shared/hooks/useInfinityScroll';
@@ -35,7 +35,7 @@ export default function Tests() {
     const { query } = useParams();
 
     const theme = useMantineTheme();
-    useSubpageEffect('Test Results');
+    useIndexSubpageEffect('By Runs');
 
     const [searchParams, setSearchParams] = useSearchParams();
     const [sortOpen, setSortOpen] = useState(false);
@@ -98,22 +98,7 @@ export default function Tests() {
             </ActionIcon>,
             47,
         );
-
-        // updateToolbar(
-        //     <ActionIcon
-        //         title="View of Checks"
-        //         color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
-        //         data-test="checks-view"
-        //         variant="subtle"
-        //         onClick={() => {
-        //             // setIsFilterDrawerOpen((prev) => !prev)
-        //         }}
-        //     >
-        //         <IconLayout size={24} stroke={1} />
-        //     </ActionIcon>,
-        //     51
-        // );
-    }, []);
+    }, [query.groupBy]);
 
     useEffect(() => {
         updateToolbar(

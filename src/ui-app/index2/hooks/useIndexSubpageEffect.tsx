@@ -6,9 +6,8 @@ import * as React from 'react';
 import { AppContext } from '../AppContext';
 import { getNavigationItem } from '../../shared/navigation/navigationData';
 
-export function useSubpageEffect(title: string) {
-    const { setAppTitle }: any = useContext(AppContext);
-    const { clearToolbar, setBreadCrumbs }: any = useContext(AppContext);
+export function useIndexSubpageEffect(title: string) {
+    const { clearToolbar, setBreadCrumbs, setAppTitle }: any = useContext(AppContext);
 
     useEffect(() => {
         const pageData = getNavigationItem(title);

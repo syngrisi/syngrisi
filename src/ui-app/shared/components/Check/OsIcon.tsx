@@ -29,7 +29,6 @@ const osIconMap = (key: string) => {
 
 export function OsIcon({ os, size = 24, ...rest }: Props) {
     const BIcon = osIconMap(os);
-
     return (
         <BIcon
             title={os}

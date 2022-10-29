@@ -1,4 +1,4 @@
-import { r as react, b as jsx, d as useMantineTheme, at as Global$1, au as css, av as useDidUpdate, aw as useReducedMotion, W as useWindowEvent, ax as mergeRefs, ay as reactDom, O as useComponentDefaultProps, S as extractSystemStyles, B as Box, az as getDefaultZIndex, aA as OptionalPortal, aB as packSx, t as ActionIcon, c as createStyles, j as jsxs, aC as createPolymorphicComponent, Z as Fragment, T as Text, aD as _extends, a3 as React, U as useUncontrolled, aE as useFloating, aF as size, aG as useFloatingAutoUpdate, aH as offset, aI as arrow, aJ as shift, aK as flip, aL as inline, aM as isElement, aN as useMergedRef, aO as clsx, a4 as Transition$2, aP as FloatingArrow, R as useId, aQ as getFloatingPosition, aR as UnstyledButton, P as Paper, G as Group, aS as CheckIcon, aT as useTransition, aU as getTransitionStyles, aV as Overlay, a1 as Loader, a0 as Tooltip, aW as useIsomorphicEffect$1, aX as useInputProps, V as Input, aY as keyframes, aZ as QueryObserver, a_ as infiniteQueryBehavior, a$ as hasNextPage, b0 as hasPreviousPage, b1 as Subscribable, b2 as shallowEqualObjects, b3 as getDefaultState, b4 as notifyManager, b5 as parseMutationArgs, b6 as useQueryClient, b7 as useSyncExternalStore, b8 as shouldThrowError, b9 as parseQueryArgs, ba as useBaseQuery, bb as ReactDOM, bc as Portal, l as log, bd as NavigationContext, aq as useNavigate, be as useLocation, h as Button, i as Progress, E as useHotkeys, C as Center, q as TextInput, D as useLocalStorage, v as GCe, x as Nie, e as Container, k as ky, a as config$1, X as queryString, u as useQuery, bf as RD, bg as Lqe, bh as Iqe, bi as I9, bj as N9, bk as P5, m as dj, bl as NP, bm as Qa, bn as L3, bo as CMe, bp as _He, bq as Iee, n as lAe, br as commonjsGlobal, K as sizes$b, p as useForm, bs as rle, bt as Nme } from "./use-form.72335477.js";
+import { r as react, b as jsx, d as useMantineTheme, at as Global$1, au as css, av as useDidUpdate, aw as useReducedMotion, W as useWindowEvent, ax as mergeRefs, ay as reactDom, O as useComponentDefaultProps, S as extractSystemStyles, B as Box, az as getDefaultZIndex, aA as OptionalPortal, aB as packSx, t as ActionIcon, c as createStyles, j as jsxs, aC as createPolymorphicComponent, Z as Fragment, T as Text, aD as _extends, a3 as React, U as useUncontrolled, aE as useFloating, aF as size, aG as useFloatingAutoUpdate, aH as offset, aI as arrow, aJ as shift, aK as flip, aL as inline, aM as isElement, aN as useMergedRef, aO as clsx, a4 as Transition$2, aP as FloatingArrow, R as useId, aQ as getFloatingPosition, aR as UnstyledButton, P as Paper, G as Group, aS as CheckIcon, aT as useTransition, aU as getTransitionStyles, aV as Overlay, a2 as Loader, a0 as Tooltip, aW as useIsomorphicEffect$1, aX as useInputProps, V as Input, aY as keyframes, aZ as QueryObserver, a_ as infiniteQueryBehavior, a$ as hasNextPage, b0 as hasPreviousPage, b1 as Subscribable, b2 as shallowEqualObjects, b3 as getDefaultState, b4 as notifyManager, b5 as parseMutationArgs, b6 as useQueryClient, b7 as useSyncExternalStore, b8 as shouldThrowError, b9 as parseQueryArgs, ba as useBaseQuery, bb as ReactDOM, bc as Portal, l as log, bd as NavigationContext, aq as useNavigate, be as useLocation, h as Button, i as Progress, E as useHotkeys, C as Center, q as TextInput, D as useLocalStorage, v as GCe, x as Nie, e as Container, k as ky, a as config$1, X as queryString, u as useQuery, bf as B9, bg as wue, bh as gW, bi as wz, bj as mF, bk as Uye, z as zB, bl as Lqe, bm as Iqe, bn as I9, bo as N9, bp as P5, m as dj, bq as NP, br as Qa, bs as L3, bt as CMe, bu as _He, bv as Iee, n as lAe, bw as commonjsGlobal, K as sizes$b, p as useForm, bx as rle, by as Nme } from "./use-form.6818284c.js";
 function findElementAncestor(element, selector) {
   let _element = element;
   while ((_element = _element.parentElement) && !_element.matches(selector))
@@ -11967,12 +11967,102 @@ function navigationData() {
       title: "Test Results",
       description: "Test Results Main Page",
       group: "main",
-      icon: /* @__PURE__ */ jsx(RD, {
+      icon: /* @__PURE__ */ jsx(B9, {
         size: 18
       }),
       crumbs: [{
         title: "Test Results",
         href: "/index2"
+      }]
+    },
+    {
+      title: "By Runs",
+      description: "Test Results by Runs",
+      group: "main",
+      icon: /* @__PURE__ */ jsx(wue, {
+        size: 18
+      }),
+      crumbs: [{
+        title: "Test Results",
+        href: "/index2"
+      }, {
+        title: "By Runs",
+        href: "/index2/?groupBy=runs"
+      }]
+    },
+    {
+      title: "By Suites",
+      description: "Test Results by Suites",
+      group: "main",
+      icon: /* @__PURE__ */ jsx(gW, {
+        size: 18
+      }),
+      crumbs: [{
+        title: "Test Results",
+        href: "/index2"
+      }, {
+        title: "By Suites",
+        href: "/index2/?groupBy=suites"
+      }]
+    },
+    {
+      title: "By Browser",
+      description: "Test Results by Browser",
+      group: "main",
+      icon: /* @__PURE__ */ jsx(wz, {
+        size: 18
+      }),
+      crumbs: [{
+        title: "Test Results",
+        href: "/index2"
+      }, {
+        title: "By Browser",
+        href: "/index2/?groupBy=test-distinct/browserName"
+      }]
+    },
+    {
+      title: "By Platform",
+      description: "Test Results by Platform",
+      group: "main",
+      icon: /* @__PURE__ */ jsx(mF, {
+        size: 18
+      }),
+      crumbs: [{
+        title: "Test Results",
+        href: "/index2"
+      }, {
+        title: "By Platform",
+        href: "/index2/?groupBy=test-distinct/os"
+      }]
+    },
+    {
+      title: "By Test Status",
+      description: "Test Results by Test Status",
+      group: "main",
+      icon: /* @__PURE__ */ jsx(Uye, {
+        size: 18
+      }),
+      crumbs: [{
+        title: "Test Results",
+        href: "/index2"
+      }, {
+        title: "By Test Status",
+        href: "/index2/?groupBy=test-distinct/status"
+      }]
+    },
+    {
+      title: "By Accept Status",
+      description: "Test Results by Accept Status",
+      group: "main",
+      icon: /* @__PURE__ */ jsx(zB, {
+        size: 18
+      }),
+      crumbs: [{
+        title: "Test Results",
+        href: "/index2"
+      }, {
+        title: "By Accept Status",
+        href: "/index2/?groupBy=test-distinct/markedAs"
       }]
     },
     {
@@ -16963,16 +17053,16 @@ export {
   Skeleton as j,
   useInView as k,
   links as l,
-  escapeRegExp as m,
-  useToggle as n,
+  getNavigationItem as m,
+  stopNavigationProgress as n,
   openSpotlight as o,
-  useInfinityScroll as p,
-  ScrollArea as q,
-  getNavigationItem as r,
+  escapeRegExp as p,
+  useToggle as q,
+  resetNavigationProgress as r,
   successMsg as s,
-  stopNavigationProgress as t,
+  useInfinityScroll as t,
   useQueryParams as u,
-  resetNavigationProgress as v,
+  ScrollArea as v,
   Badge as w,
   ActionPopoverIcon as x,
   Card as y,
