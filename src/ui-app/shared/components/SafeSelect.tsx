@@ -9,11 +9,12 @@ interface IOption {
 }
 
 interface Props {
-    optionsData: any,
-    value: any,
-    required?: boolean,
-    loaded?: boolean,
+    optionsData: any
+    value: any
+    required?: boolean
+    loaded?: boolean
     label: string
+    onChange: any
 }
 
 // select component for selenium

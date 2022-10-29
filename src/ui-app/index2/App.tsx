@@ -83,7 +83,7 @@ function App() {
                             actions={spotlightActions}
                             highlightQuery
                             searchIcon={<IconSearch size={18} />}
-                            limit={7}
+                            limit={10}
                             searchPlaceholder="Search..."
                             shortcut={['mod + k', 'mod + K']}
                             nothingFoundMessage="Nothing found..."

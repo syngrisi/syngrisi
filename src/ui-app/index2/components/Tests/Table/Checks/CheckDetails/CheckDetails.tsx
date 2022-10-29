@@ -1,4 +1,4 @@
-/* eslint-disable no-underscore-dangle,react/jsx-one-expression-per-line */
+/* eslint-disable no-underscore-dangle,react/jsx-one-expression-per-line,prefer-arrow-callback */
 import * as React from 'react';
 import { fabric } from 'fabric';
 import {
@@ -13,8 +13,8 @@ import {
     Popover,
     Divider,
 } from '@mantine/core';
-import { useDisclosure, useLocalStorage, useViewportSize } from '@mantine/hooks';
-import { useEffect, useMemo, useState } from 'react';
+import { useDisclosure, useViewportSize } from '@mantine/hooks';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
     IconArrowsExchange2,
@@ -27,16 +27,17 @@ import {
 } from '@tabler/icons';
 import { MainView } from './mainView';
 import { imageFromUrl } from './helpers';
-import { errorMsg } from '../../../../../../shared/utils';
+import { errorMsg, log } from '../../../../../../shared/utils';
 import { GenericService } from '../../../../../../shared/services';
 import config from '../../../../../../config';
 import { AcceptButton } from '../AcceptButton';
 import { RemoveButton } from '../RemoveButton';
+import { AppContext } from '../../../../../AppContext';
 
 function onImageErrorHandler(...e: any) {
     const imgSrc = e[0].path[0].src;
     const msg = `Cannot load image: '${imgSrc}'`;
-    console.error(msg, e);
+    log.error(msg, e);
     errorMsg({ error: msg });
 }
 
@@ -69,8 +70,11 @@ interface Props {
 }
 
 export function CheckDetails({ check, checkQuery, firstPageQuery, closeHandler }: Props) {
+    const { setAppTitle }: any = useContext(AppContext);
+
     const theme = useMantineTheme();
-    const [checksViewSize] = useLocalStorage({ key: 'check-view-size', defaultValue: 'medium' });
+    setAppTitle(check.name);
+
     const { height: vHeight, width: vWidth } = useViewportSize();
     const [mainView, setMainView] = useState(null);
     const [zoomPercent, setZoomPercent] = useState(100);
@@ -107,7 +111,6 @@ export function CheckDetails({ check, checkQuery, firstPageQuery, closeHandler }
     };
 
     const zoomByDelta = (delta: number) => {
-        console.log({ delta })
         document.dispatchEvent(new Event('zoom'));
         let newPercent = Math.round(mainView.canvas.getZoom() * 100) + delta;
         newPercent = newPercent < 2 ? 2 : newPercent;
@@ -344,7 +347,7 @@ export function CheckDetails({ check, checkQuery, firstPageQuery, closeHandler }
     return (
         <Stack>
             <Group position="apart">
-                <Group></Group>
+                <Group />
                 <Group spacing="sm">
                     <Group spacing={4} position="center" align="center">
                         <ActionIcon
@@ -362,7 +365,8 @@ export function CheckDetails({ check, checkQuery, firstPageQuery, closeHandler }
                                         weight={400}
                                         sx={{ minWidth: '3em' }}
                                     >
-                                        {Math.round(zoomPercent)}%</Text>
+                                        {Math.round(zoomPercent)}%
+                                    </Text>
                                     <ActionIcon ml={-10}>
                                         <IconChevronDown />
                                     </ActionIcon>
@@ -374,7 +378,6 @@ export function CheckDetails({ check, checkQuery, firstPageQuery, closeHandler }
                                         variant="subtle"
                                         onClick={() => {
                                             zoomByPercent(50);
-                                            console.log(mainView[`${view}Image`])
                                             if (view === 'slider') {
                                                 mainView.panToCanvasWidthCenter('actualImage');
                                                 return;

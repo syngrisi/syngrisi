@@ -1,5 +1,17 @@
 import React from 'react';
-import { IconDashboard, IconList, IconListDetails, IconUser, IconUserExclamation } from '@tabler/icons';
+import {
+    IconBrowser,
+    IconCircleCheck,
+    IconClipboardList,
+    IconDeviceAnalytics,
+    IconList,
+    IconListCheck,
+    IconListDetails,
+    IconRun,
+    IconStatusChange,
+    IconUser,
+    IconUserExclamation,
+} from '@tabler/icons';
 import { INavDataItem } from './interfaces';
 
 export function navigationData(): INavDataItem[] {
@@ -8,9 +20,69 @@ export function navigationData(): INavDataItem[] {
             title: 'Test Results',
             description: 'Test Results Main Page',
             group: 'main',
-            icon: <IconDashboard size={18} />,
+            icon: <IconListCheck size={18} />,
             crumbs: [
                 { title: 'Test Results', href: '/index2' },
+            ],
+        },
+        {
+            title: 'By Runs',
+            description: 'Test Results by Runs',
+            group: 'main',
+            icon: <IconRun size={18} />,
+            crumbs: [
+                { title: 'Test Results', href: '/index2' },
+                { title: 'By Runs', href: '/index2/?groupBy=runs' },
+            ],
+        },
+        {
+            title: 'By Suites',
+            description: 'Test Results by Suites',
+            group: 'main',
+            icon: <IconClipboardList size={18} />,
+            crumbs: [
+                { title: 'Test Results', href: '/index2' },
+                { title: 'By Suites', href: '/index2/?groupBy=suites' },
+            ],
+        },
+        {
+            title: 'By Browser',
+            description: 'Test Results by Browser',
+            group: 'main',
+            icon: <IconBrowser size={18} />,
+            crumbs: [
+                { title: 'Test Results', href: '/index2' },
+                { title: 'By Browser', href: '/index2/?groupBy=test-distinct/browserName' },
+            ],
+        },
+        {
+            title: 'By Platform',
+            description: 'Test Results by Platform',
+            group: 'main',
+            icon: <IconDeviceAnalytics size={18} />,
+            crumbs: [
+                { title: 'Test Results', href: '/index2' },
+                { title: 'By Platform', href: '/index2/?groupBy=test-distinct/os' },
+            ],
+        },
+        {
+            title: 'By Test Status',
+            description: 'Test Results by Test Status',
+            group: 'main',
+            icon: <IconStatusChange size={18} />,
+            crumbs: [
+                { title: 'Test Results', href: '/index2' },
+                { title: 'By Test Status', href: '/index2/?groupBy=test-distinct/status' },
+            ],
+        },
+        {
+            title: 'By Accept Status',
+            description: 'Test Results by Accept Status',
+            group: 'main',
+            icon: <IconCircleCheck size={18} />,
+            crumbs: [
+                { title: 'Test Results', href: '/index2' },
+                { title: 'By Accept Status', href: '/index2/?groupBy=test-distinct/markedAs' },
             ],
         },
         // {

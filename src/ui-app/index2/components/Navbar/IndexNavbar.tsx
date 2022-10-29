@@ -1,7 +1,8 @@
 /* eslint-disable prefer-arrow-callback,indent,react/jsx-one-expression-per-line,no-nested-ternary */
 import {
     ActionIcon,
-    Group, List,
+    Group,
+    List,
     Navbar,
     ScrollArea,
     Text,
@@ -24,6 +25,7 @@ import { NavbarSort } from './NavbarSort';
 import { escapeRegExp } from '../../../shared/utils/utils';
 import { useParams } from '../../hooks/useParams';
 import { NavbarFilter } from './NavbarFilter';
+import { useIndexSubpageEffect } from '../../hooks/useIndexSubpageEffect';
 
 const useStyles = createStyles((theme) => ({
     navbar: {
@@ -32,6 +34,26 @@ const useStyles = createStyles((theme) => ({
         paddingRight: theme.spacing.xs,
         paddingTop: theme.spacing.sm,
         paddingBottom: theme.spacing.md,
+    },
+    navbarItem: {
+        display: 'block',
+        textDecoration: 'none',
+        color: theme.colorScheme === 'dark' ? theme.colors.red[0] : theme.black,
+        borderBottom: `1px solid ${
+            theme.colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[2]
+        }`,
+        '&:hover': {
+            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[0],
+            color: theme.colorScheme === 'dark' ? theme.white : theme.black,
+        },
+    },
+    activeNavbarItem: {
+        backgroundColor: theme.colorScheme === 'dark' ? 'rgba(47, 158, 68, 0.2)' : 'rgba(235, 251, 238, 1)',
+        color: theme.colorScheme === 'dark' ? theme.colors.green[2] : theme.colors.green[6],
+        '&:hover': {
+            backgroundColor: theme.colorScheme === 'dark' ? 'rgba(47, 158, 68, 0.2)' : 'rgba(235, 251, 238, 1)',
+            color: theme.colorScheme === 'dark' ? theme.colors.green[2] : theme.colors.green[6],
+        },
     },
 }));
 
@@ -54,6 +76,8 @@ export default function IndexNavbar() {
         clear: () => {
             setActiveItems(() => []);
         },
+        navbarItemClass: () => classes.navbarItem,
+        activeNavbarItemClass: () => classes.activeNavbarItem,
     };
 
     const [sortBy, setSortBy] = useState('createdDate');
@@ -63,6 +87,7 @@ export default function IndexNavbar() {
     const [groupByValue, setGroupByValue] = useState(query.groupBy || 'runs');
 
     const handleGroupBySelect = (value: string) => {
+        setActiveItems(() => []);
         setGroupByValue(value);
         setQuery({ base_filter: {} });
     };
@@ -120,6 +145,8 @@ export default function IndexNavbar() {
 
     useEffect(function onGroupByChange() {
         setQuery({ groupBy: groupByValue });
+        setQuery({ base_filter: null });
+        setActiveItems(() => ([]));
     }, [groupByValue]);
 
     useEffect(function refetch() {
@@ -133,8 +160,21 @@ export default function IndexNavbar() {
 
     const refreshIconClickHandler = () => {
         setQuery({ base_filter: null });
+        firstPageQuery.refetch();
         activeItemsHandler.clear();
     };
+
+    const subpageMap: { [key: string]: string } = {
+        runs: 'By Runs',
+        suites: 'By Suites',
+        'test-distinct/browserName': 'By Browser',
+        'test-distinct/os': 'By Platform',
+        'test-distinct/status': 'By Test Status',
+        'test-distinct/markedAs': 'By Accept Status',
+    };
+
+    const title: string = query?.groupBy;
+    useIndexSubpageEffect(subpageMap[title] || 'Test Results');
 
     return (
         <Group position="apart" align="start" noWrap>

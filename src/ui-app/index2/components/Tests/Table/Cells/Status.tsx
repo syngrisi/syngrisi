@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Group } from '@mantine/core';
+import { Group, Text, Tooltip } from '@mantine/core';
 import { useMemo } from 'react';
 import { tableColumns } from '../tableColumns';
 import { StatusesRing } from '../../../../../shared/components/Tests/StatusesRing';
@@ -29,8 +29,16 @@ export function Status({ type, test }: Props) {
                 paddingLeft: '2px',
             }}
         >
-            <Group position="left" pl={6}>
-                <StatusesRing statuses={checkStatuses} key={type} />
+            <Group position="left" spacing={0}>
+                <StatusesRing statuses={checkStatuses} key={type} ml={-4} />
+                <Tooltip label={test[type]} multiline>
+                    <Text
+                        lineClamp={1}
+                        sx={{ wordBreak: 'break-all' }}
+                    >
+                        {test.status}
+                    </Text>
+                </Tooltip>
             </Group>
         </td>
     );
