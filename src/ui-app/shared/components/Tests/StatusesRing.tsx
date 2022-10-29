@@ -32,7 +32,7 @@ export function StatusesRing({ statuses, ...rest }: Props) {
             { value: (statusesObject.group.passed / statusesObject.count) * 100 || 0, color: 'green.7' },
             { value: (statusesObject.group.failed / statusesObject.count) * 100 || 0, color: 'red.7' },
             { value: (statusesObject.group.new / statusesObject.count) * 100 || 0, color: 'blue.7' },
-            { value: (statusesObject.group.running / statusesObject.count) * 100 || 0, color: 'gray.7' },
+            { value: (statusesObject.group.running / statusesObject.count) * 100 || 0, color: 'grape.6' },
             // {
             //     // eslint-disable-next-line max-len
             //     value: ((statusesObject.count - statusesObject.group.Failed + statusesObject.group.Passed + statusesObject.group.New)
@@ -47,7 +47,7 @@ export function StatusesRing({ statuses, ...rest }: Props) {
             {statusesObject.group.new && (<Text color="blue">New: {statusesObject.group.new}</Text>)}
             {statusesObject.group.passed && (<Text color="green">Passed: {statusesObject.group.passed}</Text>)}
             {statusesObject.group.failed && (<Text color="red">Failed: {statusesObject.group.failed}</Text>)}
-            {statusesObject.group.running && (<Text color="gray">Running: {statusesObject.group.running}</Text>)}
+            {statusesObject.group.running && (<Text color="grape.6">Running: {statusesObject.group.running}</Text>)}
         </>
     );
 
