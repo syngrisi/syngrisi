@@ -5,7 +5,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 import { r as react, W as useWindowEvent, X as queryString, b as jsx, j as jsxs, P as Paper, g as Title, Y as Stack, T as Text, G as Group, h as Button, k as ky, a as config, u as useQuery, d as useMantineTheme, Z as Fragment, q as TextInput, t as ActionIcon, n as lAe, _ as Pj, D as useLocalStorage, e as Container, $ as Dge, c as createStyles, l as log, a0 as Tooltip, a1 as CK, a2 as Loader, a3 as React, a4 as Transition, a5 as Xfe, a6 as rze, A as Anchor, a7 as zV, a8 as ea, a9 as Epe, aa as Ol, ab as ua, ac as RX, ad as rWe, ae as UZ, s as Checkbox, af as getAugmentedNamespace, ag as ry, ah as ly, ai as lDe, aj as dDe, ak as DMe, al as qF, am as Cbe, an as Pbe, ao as pi, ap as Lbe, L as LoadingOverlay, aq as LHe, B as Box, o as useSearchParams, ar as Y, Q as QueryClient, f as useDocumentTitle, as as useNavigate, F as QueryClientProvider, H as ColorSchemeProvider, M as MantineProvider, at as Routes, au as Route, I as createRoot, J as BrowserRouter } from "./use-form.5d5d1585.js";
-import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, G as GenericService, e as errorMsg, a as useDisclosure, b as useClickOutside, c as escapeRegExp, P as Popover, d as ScrollArea, f as Chip, g as useColorScheme, l as links, H as Header, B as Burger, h as HeaderLogo, i as SafeSelect, o as openSpotlight, K as Kbd, U as UserMenu, T as ToggleThemeButton, j as Breadcrumbs, k as isDark, m as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, n as Skeleton, p as useInView, F as FocusTrap, q as getNavigationItem, r as stopNavigationProgress, t as resetNavigationProgress, v as useToggle, w as useInfinityScroll, N as Navbar, x as Badge, A as Affix, y as ActionPopoverIcon, I as Image$1, z as Card, D as Collapse, E as Divider, O as SegmentedControl, Q as Table, V as useInputState, W as RelativeDrawer, X as LogicalGroup, Y as uuid, Z as useNavProgressFetchEffect, $ as AppShell, a0 as ReactQueryDevtools, a1 as navigationData, a2 as SpotlightProvider, a3 as NotificationsProvider, a4 as NavigationProgress, a5 as ModalsProvider, a6 as QueryParamProvider, a7 as ReactRouter6Adapter } from "./LogicalGroup.785a897c.js";
+import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, G as GenericService, e as errorMsg, a as useDisclosure, b as useClickOutside, c as escapeRegExp, P as Popover, d as ScrollArea, f as Chip, g as useColorScheme, l as links, H as Header, B as Burger, h as HeaderLogo, i as SafeSelect, o as openSpotlight, K as Kbd, U as UserMenu, T as ToggleThemeButton, j as Breadcrumbs, k as isDark, m as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, n as Skeleton, p as useInView, F as FocusTrap, q as getNavigationItem, r as stopNavigationProgress, t as resetNavigationProgress, v as useToggle, w as useInfinityScroll, N as Navbar, x as Badge, A as Affix, y as ActionPopoverIcon, I as Image$1, z as Card, D as Collapse, E as Divider, O as SegmentedControl, Q as Table, V as useInputState, W as RelativeDrawer, X as LogicalGroup, Y as uuid, Z as useNavProgressFetchEffect, $ as AppShell, a0 as ReactQueryDevtools, a1 as navigationData, a2 as SpotlightProvider, a3 as NotificationsProvider, a4 as NavigationProgress, a5 as ModalsProvider, a6 as QueryParamProvider, a7 as ReactRouter6Adapter } from "./LogicalGroup.9256e2b0.js";
 function useDebouncedValue(value, wait, options = { leading: false }) {
   const [_value, setValue] = react.exports.useState(value);
   const mountedRef = react.exports.useRef(false);
@@ -3286,7 +3286,7 @@ function OsIcon({
   });
   const customDevices = react.exports.useMemo(() => customDevicesQuery.data || [], [(_a = customDevicesQuery == null ? void 0 : customDevicesQuery.data) == null ? void 0 : _a.length]);
   const allDevices = [...config.devices, ...customDevices];
-  const Icon = osIconMap(os) || osIconMap((_b = allDevices.find((x2) => x2.device === os)) == null ? void 0 : _b.os) || TbQuestionMark;
+  const Icon = osIconMap(os) || osIconMap(((_b = allDevices.find((x2) => x2.device === os)) == null ? void 0 : _b.os) || "") || TbQuestionMark;
   return /* @__PURE__ */ jsx(Icon, {
     title: os,
     size,
@@ -22862,6 +22862,7 @@ function CheckDetails({
           }), /* @__PURE__ */ jsx(Divider, {
             orientation: "vertical"
           }), /* @__PURE__ */ jsx(ActionIcon, {
+            disabled: view === "slider",
             title: "Add ignore region",
             onClick: () => mainView2.addIgnoreRegion({
               name: "ignore_rect",
@@ -23271,7 +23272,8 @@ const useStyles = createStyles(testsCreateStyle);
 function TestsTable({
   infinityQuery,
   firstPageQuery,
-  visibleFields
+  visibleFields,
+  size = "100%"
 }) {
   var _a, _b, _c, _d;
   const {
@@ -23307,7 +23309,7 @@ function TestsTable({
       ref: scrollAreaRef,
       maxHeight: "100vh",
       sx: {
-        width: "100%"
+        width: size
       },
       pb: 24,
       styles: {
@@ -23527,7 +23529,7 @@ function Filter({
     open,
     setOpen,
     title: "Filter",
-    width: "25vw",
+    width: "20vw",
     children: /* @__PURE__ */ jsx(ScrollArea.Autosize, {
       maxHeight: "80vh",
       mr: -12,
@@ -23551,7 +23553,7 @@ function Filter({
           })
         }), /* @__PURE__ */ jsxs(Group, {
           mt: 24,
-          spacing: "xs",
+          spacing: "sm",
           position: "right",
           children: [/* @__PURE__ */ jsx(Button, {
             onClick: () => resetAll(),
@@ -23662,7 +23664,8 @@ function Tests() {
     children: [/* @__PURE__ */ jsx(TestsTable, {
       firstPageQuery,
       infinityQuery,
-      visibleFields
+      visibleFields,
+      size: sortOpen || isFilterDrawerOpen ? "80%" : "100%"
     }), /* @__PURE__ */ jsx(Settings, {
       open: sortOpen,
       setSortOpen,
