@@ -3664,46 +3664,127 @@ function NavbarItems({
     }, item._id || item.name);
   })) : [];
 }
-function RunsDummySkeleton({
-  num
+function SuitesDummySkeleton({
+  num,
+  itemClass
 }) {
   return /* @__PURE__ */ jsx(Fragment, {
     children: Object.keys(new Array(num || 6).fill("")).map((x2) => /* @__PURE__ */ jsx(React.Fragment, {
-      children: /* @__PURE__ */ jsxs(Group, {
+      children: /* @__PURE__ */ jsxs(Stack, {
         style: {
           width: "100%"
         },
         pl: "sm",
-        children: [/* @__PURE__ */ jsx(Skeleton, {
-          height: 20,
-          mt: "sm",
-          width: "73%",
-          radius: "sm"
-        }), /* @__PURE__ */ jsx(Skeleton, {
-          height: 30,
-          mt: "sm",
-          width: "10%",
-          radius: "xl"
+        spacing: 0,
+        pt: 0,
+        pb: 8,
+        className: itemClass,
+        children: [/* @__PURE__ */ jsxs(Group, {
+          position: "apart",
+          children: [/* @__PURE__ */ jsx(Skeleton, {
+            height: 20,
+            width: "63%",
+            radius: "md"
+          }), /* @__PURE__ */ jsx(Skeleton, {
+            height: 26,
+            mr: 9,
+            mb: -2,
+            mt: "sm",
+            width: "3%",
+            radius: "xl"
+          })]
+        }), /* @__PURE__ */ jsx(Group, {
+          position: "right",
+          style: {
+            width: "100%"
+          },
+          children: /* @__PURE__ */ jsx(Skeleton, {
+            height: 16,
+            width: "11%",
+            radius: "md",
+            mr: 24
+          })
+        })]
+      })
+    }, x2))
+  });
+}
+function RunsDummySkeleton({
+  num,
+  itemClass
+}) {
+  return /* @__PURE__ */ jsx(Fragment, {
+    children: Object.keys(new Array(num || 6).fill("")).map((x2) => /* @__PURE__ */ jsx(React.Fragment, {
+      children: /* @__PURE__ */ jsxs(Stack, {
+        style: {
+          width: "100%"
+        },
+        pl: "sm",
+        spacing: 0,
+        pt: 0,
+        pb: 8,
+        className: itemClass,
+        children: [/* @__PURE__ */ jsxs(Group, {
+          children: [/* @__PURE__ */ jsx(Skeleton, {
+            height: 20,
+            mt: "sm",
+            width: "63%",
+            radius: "md"
+          }), /* @__PURE__ */ jsx(Skeleton, {
+            height: 30,
+            mt: "sm",
+            ml: 32,
+            width: "10%",
+            radius: "xl"
+          }), /* @__PURE__ */ jsx(Skeleton, {
+            height: 26,
+            mb: -6,
+            mt: "sm",
+            width: "3%",
+            radius: "xl"
+          })]
+        }), /* @__PURE__ */ jsx(Group, {
+          position: "right",
+          style: {
+            width: "100%"
+          },
+          children: /* @__PURE__ */ jsx(Skeleton, {
+            height: 14,
+            width: "13%",
+            radius: "md",
+            mr: 74
+          })
         })]
       })
     }, x2))
   });
 }
 function SimpleDummySkeleton({
-  num = 6
+  num,
+  itemClass
 }) {
   return /* @__PURE__ */ jsx(Fragment, {
     children: Object.keys(new Array(num).fill("")).map((x2) => /* @__PURE__ */ jsx(React.Fragment, {
-      children: /* @__PURE__ */ jsx(Group, {
+      children: /* @__PURE__ */ jsx(Stack, {
+        pb: 6,
+        className: itemClass,
         style: {
           width: "100%"
         },
         pl: "sm",
-        children: /* @__PURE__ */ jsx(Skeleton, {
-          height: 20,
-          mt: "sm",
-          width: "80%",
-          radius: "sm"
+        children: /* @__PURE__ */ jsxs(Group, {
+          children: [/* @__PURE__ */ jsx(Skeleton, {
+            height: 30,
+            mt: "sm",
+            width: "10%",
+            radius: "xl"
+          }), /* @__PURE__ */ jsx(Skeleton, {
+            height: 20,
+            ml: -5,
+            mt: "sm",
+            width: "55%",
+            radius: "sm"
+          })]
         })
       })
     }, x2))
@@ -3712,7 +3793,8 @@ function SimpleDummySkeleton({
 function SkeletonWrapper({
   infinityQuery,
   itemType,
-  num
+  num,
+  itemClass
 }) {
   const {
     ref,
@@ -3721,7 +3803,7 @@ function SkeletonWrapper({
   const DummySkeletons = (key) => {
     const map = {
       runs: RunsDummySkeleton,
-      suites: RunsDummySkeleton
+      suites: SuitesDummySkeleton
     };
     return map[key] || SimpleDummySkeleton;
   };
@@ -3733,8 +3815,10 @@ function SkeletonWrapper({
   const DummySkeleton = DummySkeletons(itemType);
   return /* @__PURE__ */ jsx(Stack, {
     ref,
+    spacing: 0,
     children: (infinityQuery === null || infinityQuery.hasNextPage) && /* @__PURE__ */ jsx(DummySkeleton, {
-      num
+      num,
+      itemClass
     })
   });
 }
@@ -3909,7 +3993,7 @@ const useStyles$2 = createStyles((theme) => ({
     }
   }
 }));
-function IndexNavbar() {
+function NavbarIndex() {
   const {
     classes
   } = useStyles$2();
@@ -4140,7 +4224,8 @@ function IndexNavbar() {
         }), infinityQuery.status === "loading" ? /* @__PURE__ */ jsx(SkeletonWrapper, {
           infinityQuery: null,
           itemType: groupByValue,
-          num: 20
+          num: 20,
+          itemClass: classes.navbarItem
         }) : infinityQuery.status === "error" ? /* @__PURE__ */ jsxs(Text, {
           color: "red",
           children: ["Error: ", infinityQuery.error.message]
@@ -4162,7 +4247,9 @@ function IndexNavbar() {
             activeItemsHandler
           })
         }), /* @__PURE__ */ jsx(SkeletonWrapper, {
-          infinityQuery
+          itemType: groupByValue,
+          infinityQuery,
+          itemClass: classes.navbarItem
         })]
       })
     })
@@ -22064,7 +22151,6 @@ function RelatedChecksSkeleton({
 }
 function RelatedCheckItem({
   checkData,
-  flatChecksData,
   activeCheck,
   setActiveCheck
 }) {
@@ -22077,7 +22163,6 @@ function RelatedCheckItem({
     key: "check-view-size",
     defaultValue: "medium"
   });
-  useParams();
   const handleItemClick = () => {
     setActiveCheck(() => check._id);
   };
@@ -22163,13 +22248,11 @@ function RelatedChecksItems({
   relatedActiveCheck,
   setRelatedActiveCheck
 }) {
-  return infinityQuery.data ? infinityQuery.data.pages.map((page) => page.results.map(
-    (item, index) => /* @__PURE__ */ jsx(RelatedCheckItem, {
-      checkData: item,
-      activeCheck: relatedActiveCheck,
-      setActiveCheck: setRelatedActiveCheck
-    }, item._id)
-  )) : [];
+  return infinityQuery.data ? infinityQuery.data.pages.map((page) => page.results.map((item, index) => /* @__PURE__ */ jsx(RelatedCheckItem, {
+    checkData: item,
+    activeCheck: relatedActiveCheck,
+    setActiveCheck: setRelatedActiveCheck
+  }, item._id))) : [];
 }
 function RelatedCheckSort({
   sortBy,
@@ -22501,7 +22584,7 @@ function CheckDetails({
     };
     setTimeout(() => {
       initMV();
-    }, 100);
+    }, 10);
   }, [related.relatedActiveCheck, relatedChecksOpened]);
   react.exports.useEffect(function afterMainViewCreatedHandleRegions() {
     if (!baselineId)
@@ -22572,14 +22655,10 @@ function CheckDetails({
     if (mainView2) {
       zoomEvents();
       fitGreatestImageIfNeeded();
+      setView("actual");
       if (mainView2.diffImage) {
-        setView("actual");
         setTimeout(() => {
           setView("diff");
-        }, 10);
-      } else {
-        setTimeout(() => {
-          setView("actual");
         }, 10);
       }
     }
@@ -23586,7 +23665,7 @@ function Tests() {
 function IndexLayout() {
   return /* @__PURE__ */ jsxs(AppShell, {
     padding: 8,
-    navbar: /* @__PURE__ */ jsx(IndexNavbar, {}),
+    navbar: /* @__PURE__ */ jsx(NavbarIndex, {}),
     header: /* @__PURE__ */ jsx(IndexHeader, {}),
     styles: (theme) => ({
       main: {

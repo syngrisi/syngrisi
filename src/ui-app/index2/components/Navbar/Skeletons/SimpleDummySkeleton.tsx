@@ -1,16 +1,19 @@
 import React from 'react';
-import { Group, Skeleton } from '@mantine/core';
+import { Group, Skeleton, Stack } from '@mantine/core';
 
-export default function SimpleDummySkeleton({ num = 6 }: { num: number }) {
+export default function SimpleDummySkeleton({ num, itemClass }: { num?: number, itemClass: string }) {
     return (
         <>
             {
                 Object.keys(new Array(num).fill('')).map(
                     (x) => (
                         <React.Fragment key={x}>
-                            <Group style={{ width: '100%' }} pl="sm">
-                                <Skeleton height={20} mt="sm" width="80%" radius="sm" />
-                            </Group>
+                            <Stack pb={6} className={itemClass} style={{ width: '100%' }} pl="sm">
+                                <Group>
+                                    <Skeleton height={30} mt="sm" width="10%" radius="xl" />
+                                    <Skeleton height={20} ml={-5} mt="sm" width="55%" radius="sm" />
+                                </Group>
+                            </Stack>
                         </React.Fragment>
                     ),
                 )
