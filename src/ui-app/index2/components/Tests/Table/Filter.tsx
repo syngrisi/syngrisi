@@ -124,7 +124,7 @@ function Filter(
             open={open}
             setOpen={setOpen}
             title="Filter"
-            width={560}
+            width="20vw"
         >
             <ScrollArea.Autosize maxHeight="80vh" mr={-12} sx={{ height: '80vh' }}>
                 <Box sx={{ paddingRight: 16, marginBottom: 100 }}>
@@ -141,7 +141,7 @@ function Filter(
                         </LogicalGroup>
                     </Stack>
 
-                    <Group mt={24} position="right">
+                    <Group mt={24} spacing="sm" position="right">
                         <Button
                             onClick={() => resetAll()}
                             data-test="table-filter-reset"

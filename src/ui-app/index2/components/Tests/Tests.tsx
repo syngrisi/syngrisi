@@ -76,6 +76,7 @@ export default function Tests() {
                 data-test="table-sorting"
                 variant="subtle"
                 onClick={() => {
+                    setIsFilterDrawerOpen(false);
                     setSortOpen((prev) => !prev);
                 }}
             >
@@ -91,6 +92,7 @@ export default function Tests() {
                 data-test="table-filtering"
                 variant="subtle"
                 onClick={() => {
+                    setSortOpen(false);
                     setIsFilterDrawerOpen((prev) => !prev);
                 }}
             >
@@ -128,6 +130,7 @@ export default function Tests() {
                 firstPageQuery={firstPageQuery}
                 infinityQuery={infinityQuery}
                 visibleFields={visibleFields}
+                size={(sortOpen || isFilterDrawerOpen) ? '80%' : '100%'}
             />
             <Settings
                 open={sortOpen}

@@ -24,9 +24,10 @@ interface Props {
     infinityQuery: any
     firstPageQuery: any,
     visibleFields: any
+    size?: string
 }
 
-export default function TestsTable({ infinityQuery, firstPageQuery, visibleFields }: Props) {
+export default function TestsTable({ infinityQuery, firstPageQuery, visibleFields, size = '100%' }: Props) {
     const { updateToolbar }: any = useContext(AppContext);
     const { data } = infinityQuery;
     const flatData = data ? data.pages.flat().map((x: any) => x.results).flat() : [];
@@ -65,7 +66,7 @@ export default function TestsTable({ infinityQuery, firstPageQuery, visibleField
                 data-test="table-scroll-area"
                 ref={scrollAreaRef}
                 maxHeight="100vh"
-                sx={{ width: '100%' }}
+                sx={{ width: size }}
                 pb={24}
                 styles={{ scrollbar: { marginTop: '46px' } }}
             >

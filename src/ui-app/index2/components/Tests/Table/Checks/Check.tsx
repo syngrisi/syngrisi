@@ -37,10 +37,10 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
     const imageFilename = check.diffId?.filename || check.actualSnapshotId?.filename || check.baselineId?.filename;
     const imagePreviewSrc = `${config.baseUri}/snapshoots/${imageFilename}`;
     const linkToCheckOverlay = `/index2/?${queryString.stringify({ ...query, checkId: check._id })}`;
-    const handlePreviewLinkClick = (e: React.MouseEvent) => {
-        if (e.metaKey || e.ctrlKey) return;
-        e.preventDefault();
-    };
+    // const handlePreviewLinkClick = (e: React.MouseEvent) => {
+    //     if (e.metaKey || e.ctrlKey) return;
+    //     e.preventDefault();
+    // };
 
     const handlePreviewImageClick = (e: React.MouseEvent<HTMLDivElement>) => {
         if (e.metaKey || e.ctrlKey) return;
@@ -125,7 +125,6 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                         // CARD VIEW
                         <Card
                             sx={{
-                                // width: 250,
                                 width: `${imageWeight}%`,
                                 '&:hover': {
                                     boxShadow: '0 1px 3px rgb(0 0 0 / 15%), rgb(0 0 0 / 15%) 0px 10px 15px -5px, rgb(0 0 0 / 14%) 0px 7px 7px -5px',
@@ -138,8 +137,6 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                             pr={0}
                             shadow="sm"
                         >
-
-                            {/* <Group position="apart" mt="xs" mb="xs"> */}
                             <Paper
                                 p="sm"
                                 ml={0}
@@ -153,42 +150,31 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                             >
                                 <Text>{check.name}</Text>
                             </Paper>
-
                             <Card.Section m={2}>
-                                <Group position="center">
-                                    <a
-                                        href={linkToCheckOverlay}
-                                        onClick={handlePreviewLinkClick}
-                                        style={{ display: 'inline-block' }}
+                                <a
+                                    style={{ display: 'inline-block', width: '100%', cursor: 'pointer' }}
+                                    href={linkToCheckOverlay}
+                                >
+                                    <Group
+                                        position="center"
+                                        sx={{ width: '100%', cursor: 'pointer' }}
+                                        onClick={handlePreviewImageClick}
                                     >
+
                                         <Image
                                             src={imagePreviewSrc}
                                             fit="contain"
-                                            // fit={'scale-down'}
-                                            // fit={'cover'} //default
-                                            // fit={'none'}
-                                            // fit={'fill'}
-                                            // width={`${imageWeight * 12}px`}
-                                            // height={checksViewMode === 'bounded' ? 222 : 'auto'}
-                                            // withPlaceholder
                                             alt={check.name}
-                                            // sx={{ height: '10px' }}
                                             styles={
                                                 () => ({
                                                     image: {
-                                                        // cursor: 'pointer',
-                                                        // height: 'auto',
                                                         maxHeight: checksViewMode === 'bounded' ? `${imageWeight * 8}px` : '',
-
-                                                        // aspectRatio: checksViewMode === 'bounded' ? '1/1' : '',
-                                                        // height: '10%!important',
                                                     },
                                                 })
                                             }
-                                            onClick={handlePreviewImageClick}
                                         />
-                                    </a>
-                                </Group>
+                                    </Group>
+                                </a>
                             </Card.Section>
 
                             {/* CHECK TOOLBAR */}
