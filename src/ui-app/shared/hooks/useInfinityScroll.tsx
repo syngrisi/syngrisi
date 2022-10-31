@@ -149,6 +149,7 @@ export default function useInfinityScroll(
         },
         {
             enabled: infinityQuery.data?.pages?.length! > 0,
+            refetchOnWindowFocus: !(import.meta.env.MODE === 'development'),
             // @ts-ignore
             refetchInterval: import.meta.env.MODE === 'development' ? Infinity : 7000,
             onError: (e) => {

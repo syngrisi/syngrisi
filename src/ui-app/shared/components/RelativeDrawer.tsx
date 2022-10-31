@@ -23,7 +23,7 @@ function RelativeDrawer(
         <Transition mounted={open} transition="slide-left" duration={200} timingFunction="ease">
             {(styles: CSSProperties) => (
                 <Box sx={{ ...styles as any, minWidth: width, maxWidth: Number(width) + 60 }}>
-                    <Paper p="lg" m={8} shadow="sm" radius="xs" withBorder>
+                    <Paper p="md" m={8} shadow="sm" radius="xs" withBorder>
                         <Group position="apart" align="start" noWrap>
                             <Text size="sm" pb={24}>{title}</Text>
                             <ActionIcon size="sm" onClick={() => setOpen(false)}>

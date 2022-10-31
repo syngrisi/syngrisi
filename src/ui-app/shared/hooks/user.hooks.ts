@@ -20,6 +20,7 @@ export const UserHooks = {
                 onError: (err: unknown) => {
                     errorMsg({ error: err });
                 },
+                refetchOnWindowFocus: false,
             },
         );
         return { isLoading, error, data, refetch, isSuccess };
