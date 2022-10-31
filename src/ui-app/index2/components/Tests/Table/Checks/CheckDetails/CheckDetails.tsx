@@ -497,6 +497,7 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
                         />
                         <Divider orientation="vertical" />
                         <ActionIcon
+                            disabled={view === 'slider'}
                             title="Add ignore region"
                             onClick={() => mainView.addIgnoreRegion({ name: 'ignore_rect', strokeWidth: 0 })}
                         >
