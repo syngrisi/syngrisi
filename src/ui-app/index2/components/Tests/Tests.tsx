@@ -45,7 +45,7 @@ export default function Tests() {
 
     const { firstPageQuery, infinityQuery, newestItemsQuery } = useInfinityScroll({
         baseFilterObj: baseFilter,
-        filterObj: query.filter,
+        filterObj: { ...query.filter, ...query.quick_filter },
         resourceName: 'tests',
         newestItemsFilterKey: 'startDate',
         sortBy: query.sortBy || '',
@@ -116,6 +116,7 @@ export default function Tests() {
         firstPageQuery.refetch();
     }, [
         query.base_filter,
+        query.quick_filter,
         query.filter,
         query.app,
         query.sortBy,

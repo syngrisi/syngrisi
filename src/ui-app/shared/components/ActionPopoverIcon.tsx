@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { ActionIcon, DefaultMantineColor, Popover, Button } from '@mantine/core';
+import { ActionIcon, DefaultMantineColor, Popover, Button, MantineNumberSize } from '@mantine/core';
 import React, { ReactElement } from 'react';
 import { useDisclosure, useClickOutside } from '@mantine/hooks';
 
@@ -15,6 +15,7 @@ interface IActionPopoverIcon {
     variant?: string
     sx?: any
     paused?: boolean
+    size: MantineNumberSize | undefined
 }
 
 export default function ActionPopoverIcon(
@@ -28,6 +29,7 @@ export default function ActionPopoverIcon(
         loading,
         buttonColor,
         paused,
+        size,
         ...rest
     }: IActionPopoverIcon,
 ): ReactElement {
@@ -55,6 +57,7 @@ export default function ActionPopoverIcon(
                     }}
                     title={title}
                     loading={loading}
+                    size={size}
                     {...rest}
                 >
                     {icon}

@@ -4,8 +4,8 @@ var __publicField = (obj, key, value) => {
   __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
   return value;
 };
-import { r as react, W as useWindowEvent, X as queryString, b as jsx, j as jsxs, P as Paper, g as Title, Y as Stack, T as Text, G as Group, h as Button, k as ky, a as config, d as useMantineTheme, Z as Fragment, q as TextInput, t as ActionIcon, n as lAe, _ as Pj, D as useLocalStorage, u as useQuery, e as Container, $ as Dge, c as createStyles, l as log, a0 as Tooltip, a1 as CK, a2 as Loader, a3 as React, a4 as Transition, a5 as Xfe, a6 as rze, A as Anchor, a7 as zV, a8 as ea, a9 as Epe, aa as Ol, ab as ua, ac as RX, ad as rWe, ae as UZ, s as Checkbox, af as getAugmentedNamespace, ag as pi, ah as Lbe, ai as lDe, aj as dDe, ak as DMe, al as qF, am as Cbe, an as Pbe, L as LoadingOverlay, ao as LHe, B as Box, o as useSearchParams, ap as Y, Q as QueryClient, f as useDocumentTitle, aq as useNavigate, F as QueryClientProvider, H as ColorSchemeProvider, M as MantineProvider, ar as Routes, as as Route, I as createRoot, J as BrowserRouter } from "./use-form.6818284c.js";
-import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, P as Popover, a as Chip, b as useColorScheme, c as useDisclosure, l as links, H as Header, B as Burger, d as HeaderLogo, e as SafeSelect, o as openSpotlight, K as Kbd, U as UserMenu, T as ToggleThemeButton, f as Breadcrumbs, g as errorMsg, G as GenericService, i as isDark, h as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, j as Skeleton, k as useInView, F as FocusTrap, m as getNavigationItem, n as stopNavigationProgress, r as resetNavigationProgress, p as escapeRegExp, q as useToggle, t as useInfinityScroll, N as Navbar, v as ScrollArea, w as Badge, A as Affix, x as ActionPopoverIcon, I as Image$1, y as Card, z as Collapse, D as Divider, E as SegmentedControl, O as Table, Q as useInputState, V as RelativeDrawer, W as LogicalGroup, X as uuid, Y as useNavProgressFetchEffect, Z as AppShell, $ as ReactQueryDevtools, a0 as navigationData, a1 as SpotlightProvider, a2 as NotificationsProvider, a3 as NavigationProgress, a4 as ModalsProvider, a5 as QueryParamProvider, a6 as ReactRouter6Adapter } from "./LogicalGroup.70f02510.js";
+import { r as react, W as useWindowEvent, X as queryString, b as jsx, j as jsxs, P as Paper, g as Title, Y as Stack, T as Text, G as Group, h as Button, k as ky, a as config, u as useQuery, d as useMantineTheme, Z as Fragment, q as TextInput, t as ActionIcon, n as lAe, _ as Pj, D as useLocalStorage, e as Container, $ as Dge, c as createStyles, l as log, a0 as Tooltip, a1 as CK, a2 as Loader, a3 as React, a4 as Transition, a5 as Xfe, a6 as rze, A as Anchor, a7 as zV, a8 as ea, a9 as Epe, aa as Ol, ab as ua, ac as RX, ad as rWe, ae as UZ, s as Checkbox, af as getAugmentedNamespace, ag as ry, ah as ly, ai as lDe, aj as dDe, ak as DMe, al as qF, am as Cbe, an as Pbe, ao as pi, ap as Lbe, L as LoadingOverlay, aq as LHe, B as Box, o as useSearchParams, ar as Y, Q as QueryClient, f as useDocumentTitle, as as useNavigate, F as QueryClientProvider, H as ColorSchemeProvider, M as MantineProvider, at as Routes, au as Route, I as createRoot, J as BrowserRouter } from "./use-form.b4bde58e.js";
+import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, G as GenericService, e as errorMsg, a as useDisclosure, b as useClickOutside, c as escapeRegExp, P as Popover, d as ScrollArea, f as Chip, g as useColorScheme, l as links, H as Header, B as Burger, h as HeaderLogo, i as SafeSelect, o as openSpotlight, K as Kbd, U as UserMenu, T as ToggleThemeButton, j as Breadcrumbs, k as isDark, m as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, n as Skeleton, p as useInView, F as FocusTrap, q as getNavigationItem, r as stopNavigationProgress, t as resetNavigationProgress, v as useToggle, w as useInfinityScroll, N as Navbar, x as Badge, A as Affix, y as ActionPopoverIcon, I as Image$1, z as Card, D as Collapse, E as Divider, O as SegmentedControl, Q as Table, V as useInputState, W as RelativeDrawer, X as LogicalGroup, Y as uuid, Z as useNavProgressFetchEffect, $ as AppShell, a0 as ReactQueryDevtools, a1 as navigationData, a2 as SpotlightProvider, a3 as NotificationsProvider, a4 as NavigationProgress, a5 as ModalsProvider, a6 as QueryParamProvider, a7 as ReactRouter6Adapter } from "./LogicalGroup.ca88f2ba.js";
 function useDebouncedValue(value, wait, options = { leading: false }) {
   const [_value, setValue] = react.exports.useState(value);
   const mountedRef = react.exports.useRef(false);
@@ -309,7 +309,8 @@ function useParams() {
     app: StringParam,
     filter: JsonParam,
     base_filter: JsonParam,
-    checkId: StringParam
+    checkId: StringParam,
+    quick_filter: JsonParam
   });
   const updateQueryJsonParam = (section, key, value) => {
     const current = query[section];
@@ -327,6 +328,24 @@ function useParams() {
     updateQueryJsonParam
   };
 }
+function useDistinctQuery({
+  resource,
+  keys = [],
+  onSuccess,
+  onError = (e2) => errorMsg({
+    error: e2
+  })
+}) {
+  return useQuery([resource, "distinct", ...keys], () => GenericService.get(resource, {}, {
+    limit: "0"
+  }), {
+    enabled: true,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    onSuccess,
+    onError
+  });
+}
 const chipStyles = {
   label: {
     maxWidth: "9em",
@@ -335,18 +354,123 @@ const chipStyles = {
     textOverflow: "ellipsis"
   }
 };
-function QuickFilter(props) {
+function QuickFilter() {
   const theme = useMantineTheme();
+  const {
+    query,
+    setQuery
+  } = useParams();
+  const [opened, {
+    toggle,
+    close
+  }] = useDisclosure(false);
+  const ref = useClickOutside(() => close());
+  const [quickFilter, setQuickFilter] = react.exports.useState("");
+  const [debouncedQuickFilter] = useDebouncedValue(quickFilter, 400);
+  const [browserChipsData, setBrowserChipsData] = react.exports.useState([]);
+  const [viewportChipsData, setViewportChipsData] = react.exports.useState([]);
+  const [platformChipsData, setPlatformChipsData] = react.exports.useState([]);
+  const [statusesChipsData, setStatusesChipsData] = react.exports.useState([]);
+  const [acceptedStatusChipsData, setAcceptedStatusChipsData] = react.exports.useState([]);
+  const [branchChipsData, setBranchChipsData] = react.exports.useState([]);
+  const browsersData = useDistinctQuery({
+    resource: "test-distinct/browserName"
+  }).data;
+  const viewportData = useDistinctQuery({
+    resource: "test-distinct/viewport"
+  }).data;
+  const platformData = useDistinctQuery({
+    resource: "test-distinct/os"
+  }).data;
+  const statusesData = useDistinctQuery({
+    resource: "test-distinct/status"
+  }).data;
+  const acceptStatusesData = useDistinctQuery({
+    resource: "test-distinct/markedAs"
+  }).data;
+  const getDistinctItems = (data) => {
+    var _a, _b;
+    return ((_a = data == null ? void 0 : data.results) == null ? void 0 : _a.length) > 0 ? (_b = data == null ? void 0 : data.results) == null ? void 0 : _b.map((x2) => x2.name) : [];
+  };
+  const browsers = react.exports.useMemo(() => getDistinctItems(browsersData), [browsersData == null ? void 0 : browsersData.results.length]);
+  const viewports = react.exports.useMemo(() => getDistinctItems(viewportData), [viewportData == null ? void 0 : viewportData.results.length]);
+  const platforms = react.exports.useMemo(() => getDistinctItems(platformData), [platformData == null ? void 0 : platformData.results.length]);
+  const statuses = react.exports.useMemo(() => getDistinctItems(statusesData), [statusesData == null ? void 0 : statusesData.results.length]);
+  const acceptStatuses = react.exports.useMemo(() => getDistinctItems(acceptStatusesData), [acceptStatusesData == null ? void 0 : acceptStatusesData.results.length]);
+  const quickFilterObject = react.exports.useMemo(() => {
+    const arr = [];
+    if (debouncedQuickFilter)
+      arr.push({
+        name: {
+          $regex: escapeRegExp(debouncedQuickFilter),
+          $options: "im"
+        }
+      });
+    if (browserChipsData.length > 0)
+      arr.push({
+        browserName: {
+          $in: browserChipsData
+        }
+      });
+    if (platformChipsData.length > 0)
+      arr.push({
+        os: {
+          $in: platformChipsData
+        }
+      });
+    if (viewportChipsData.length > 0)
+      arr.push({
+        viewport: {
+          $in: viewportChipsData
+        }
+      });
+    if (statusesChipsData.length > 0)
+      arr.push({
+        status: {
+          $in: statusesChipsData
+        }
+      });
+    if (acceptedStatusChipsData.length > 0)
+      arr.push({
+        markedAs: {
+          $in: acceptedStatusChipsData
+        }
+      });
+    if (arr.length < 1)
+      return {};
+    return {
+      $and: arr
+    };
+  }, [debouncedQuickFilter, browserChipsData.length, viewportChipsData.length, platformChipsData.length, statusesChipsData.length, acceptedStatusChipsData.length]);
+  react.exports.useEffect(function setQuickFilterQuery() {
+    setQuery({
+      quick_filter: quickFilterObject
+    });
+  }, [JSON.stringify(quickFilterObject)]);
+  const resetQuickFilter = () => {
+    setQuickFilter("");
+    setBrowserChipsData([]);
+    setViewportChipsData([]);
+    setPlatformChipsData([]);
+    setStatusesChipsData([]);
+    setAcceptedStatusChipsData([]);
+    setBranchChipsData([]);
+  };
   return /* @__PURE__ */ jsxs(Fragment, {
     children: [/* @__PURE__ */ jsx(Text, {
       size: 14,
       children: "Quick Filter: "
     }), /* @__PURE__ */ jsx(TextInput, {
+      value: quickFilter,
+      onChange: (event) => setQuickFilter(event.currentTarget.value),
       size: "xs",
       radius: "xs",
       placeholder: "Enter test name",
       rightSection: /* @__PURE__ */ jsx(ActionIcon, {
-        title: "reset filter",
+        title: "clear filter",
+        onClick: () => {
+          resetQuickFilter();
+        },
         children: /* @__PURE__ */ jsx(lAe, {
           stroke: 1,
           color: theme.colors.gray[5]
@@ -357,56 +481,133 @@ function QuickFilter(props) {
           width: "300px"
         }
       }
-    }), /* @__PURE__ */ jsxs(Popover, {
-      width: 330,
-      position: "bottom",
-      withArrow: true,
-      shadow: "md",
-      children: [/* @__PURE__ */ jsx(Popover.Target, {
-        children: /* @__PURE__ */ jsx(Group, {
-          spacing: 0,
-          position: "center",
-          children: /* @__PURE__ */ jsx(ActionIcon, {
-            ml: -14,
-            children: /* @__PURE__ */ jsx(Pj, {
-              size: 16
+    }), /* @__PURE__ */ jsx("div", {
+      ref,
+      children: /* @__PURE__ */ jsxs(Popover, {
+        width: 330,
+        position: "bottom",
+        withArrow: true,
+        shadow: "md",
+        opened,
+        children: [/* @__PURE__ */ jsx(Popover.Target, {
+          children: /* @__PURE__ */ jsx(Group, {
+            spacing: 0,
+            position: "center",
+            children: /* @__PURE__ */ jsx(ActionIcon, {
+              ml: -14,
+              onClick: toggle,
+              children: /* @__PURE__ */ jsx(Pj, {
+                size: 16
+              })
             })
           })
-        })
-      }), /* @__PURE__ */ jsx(Popover.Dropdown, {
-        children: /* @__PURE__ */ jsxs(Stack, {
-          spacing: 8,
-          justify: "flex-start",
-          children: [/* @__PURE__ */ jsx(Text, {
-            size: 10,
-            color: "gray.6",
-            weight: 600,
-            transform: "uppercase",
-            children: "Browsers:"
-          }), /* @__PURE__ */ jsxs(Chip.Group, {
-            spacing: 4,
-            multiple: true,
-            children: [/* @__PURE__ */ jsx(Chip, {
-              value: "1",
-              title: "chrome [HEADLESS]!!!!!!",
-              styles: chipStyles,
-              children: "chrome [HEADLESS]"
-            }), /* @__PURE__ */ jsx(Chip, {
-              value: "2",
-              styles: chipStyles,
-              children: "Chrome"
-            }), /* @__PURE__ */ jsx(Chip, {
-              value: "3",
-              styles: chipStyles,
-              children: "Safari"
-            }), /* @__PURE__ */ jsx(Chip, {
-              value: "4",
-              styles: chipStyles,
-              children: "Firefox"
+        }), /* @__PURE__ */ jsxs(Popover.Dropdown, {
+          p: 10,
+          children: [/* @__PURE__ */ jsx(ScrollArea, {
+            style: {
+              height: "45vh"
+            },
+            children: /* @__PURE__ */ jsx(Paper, {
+              p: 10,
+              children: /* @__PURE__ */ jsxs(Stack, {
+                spacing: 8,
+                justify: "flex-start",
+                children: [/* @__PURE__ */ jsx(Text, {
+                  size: 10,
+                  color: "gray.6",
+                  weight: 600,
+                  transform: "uppercase",
+                  children: "Browsers:"
+                }), /* @__PURE__ */ jsx(Chip.Group, {
+                  spacing: 4,
+                  multiple: true,
+                  value: browserChipsData,
+                  onChange: setBrowserChipsData,
+                  children: browsers.map((item) => /* @__PURE__ */ jsx(Chip, {
+                    value: item,
+                    styles: chipStyles,
+                    children: item
+                  }, item))
+                }), /* @__PURE__ */ jsx(Text, {
+                  size: 10,
+                  color: "gray.6",
+                  weight: 600,
+                  transform: "uppercase",
+                  children: "Platforms:"
+                }), /* @__PURE__ */ jsx(Chip.Group, {
+                  spacing: 4,
+                  multiple: true,
+                  value: platformChipsData,
+                  onChange: setPlatformChipsData,
+                  children: platforms.map((item) => /* @__PURE__ */ jsx(Chip, {
+                    value: item,
+                    styles: chipStyles,
+                    children: item
+                  }, item))
+                }), /* @__PURE__ */ jsx(Text, {
+                  size: 10,
+                  color: "gray.6",
+                  weight: 600,
+                  transform: "uppercase",
+                  children: "Viewports:"
+                }), /* @__PURE__ */ jsx(Chip.Group, {
+                  value: viewportChipsData,
+                  onChange: setViewportChipsData,
+                  spacing: 4,
+                  multiple: true,
+                  children: viewports.map((item) => /* @__PURE__ */ jsx(Chip, {
+                    value: item,
+                    styles: chipStyles,
+                    children: item
+                  }, item))
+                }), /* @__PURE__ */ jsx(Text, {
+                  size: 10,
+                  color: "gray.6",
+                  weight: 600,
+                  transform: "uppercase",
+                  children: "Status:"
+                }), /* @__PURE__ */ jsx(Chip.Group, {
+                  value: statusesChipsData,
+                  onChange: setStatusesChipsData,
+                  spacing: 4,
+                  multiple: true,
+                  children: statuses.map((item) => /* @__PURE__ */ jsx(Chip, {
+                    value: item,
+                    styles: chipStyles,
+                    children: item
+                  }, item))
+                }), /* @__PURE__ */ jsx(Text, {
+                  size: 10,
+                  color: "gray.6",
+                  weight: 600,
+                  transform: "uppercase",
+                  children: "Accepted:"
+                }), /* @__PURE__ */ jsx(Chip.Group, {
+                  value: acceptedStatusChipsData,
+                  onChange: setAcceptedStatusChipsData,
+                  spacing: 4,
+                  multiple: true,
+                  children: acceptStatuses.map((item) => /* @__PURE__ */ jsx(Chip, {
+                    value: item,
+                    styles: chipStyles,
+                    children: item
+                  }, item))
+                })]
+              })
+            })
+          }), /* @__PURE__ */ jsxs(Group, {
+            position: "center",
+            pt: 16,
+            children: [/* @__PURE__ */ jsx(Button, {
+              onClick: resetQuickFilter,
+              children: "Reset"
+            }), /* @__PURE__ */ jsx(Button, {
+              onClick: close,
+              children: "Close"
             })]
           })]
-        })
-      })]
+        })]
+      })
     })]
   });
 }
@@ -2574,7 +2775,7 @@ function StatusesRing({
     },
     {
       value: statusesObject.group.running / statusesObject.count * 100 || 0,
-      color: "gray.7"
+      color: "grape.6"
     }
   ] : [];
   const tooltipLabel = /* @__PURE__ */ jsxs(Fragment, {
@@ -2588,7 +2789,7 @@ function StatusesRing({
       color: "red",
       children: ["Failed: ", statusesObject.group.failed]
     }), statusesObject.group.running && /* @__PURE__ */ jsxs(Text, {
-      color: "gray",
+      color: "grape.6",
       children: ["Running: ", statusesObject.group.running]
     })]
   });
@@ -2665,6 +2866,7 @@ function RunItem({
     limit: String(0)
   }, `${type}_item_tests_query`), {
     enabled: true,
+    refetchOnWindowFocus: false,
     onError: (e2) => {
       errorMsg({
         error: e2
@@ -3487,9 +3689,11 @@ function RunsDummySkeleton({
     }, x2))
   });
 }
-function SimpleDummySkeleton() {
+function SimpleDummySkeleton({
+  num = 6
+}) {
   return /* @__PURE__ */ jsx(Fragment, {
-    children: Object.keys(new Array(6).fill("")).map((x2) => /* @__PURE__ */ jsx(React.Fragment, {
+    children: Object.keys(new Array(num).fill("")).map((x2) => /* @__PURE__ */ jsx(React.Fragment, {
       children: /* @__PURE__ */ jsx(Group, {
         style: {
           width: "100%"
@@ -3664,6 +3868,7 @@ function useIndexSubpageEffect(title) {
   } = react.exports.useContext(AppContext);
   react.exports.useEffect(() => {
     const pageData = getNavigationItem(title);
+    setAppTitle(pageData.title);
     setBreadCrumbs(pageData.crumbs.map((item) => /* @__PURE__ */ jsx(Anchor, {
       href: item.href,
       size: "sm",
@@ -4103,7 +4308,7 @@ function InfinityScrollSkeleton({
   }, [inView]);
   return /* @__PURE__ */ jsx("tfoot", {
     ref,
-    children: (infinityQuery === null || infinityQuery.hasNextPage) && Object.keys(new Array(6).fill("")).map((x2) => /* @__PURE__ */ jsxs("tr", {
+    children: (infinityQuery === null || infinityQuery.hasNextPage) && Object.keys(new Array(12).fill("")).map((x2) => /* @__PURE__ */ jsxs("tr", {
       style: {
         height: 72
       },
@@ -4331,7 +4536,7 @@ function AcceptButton({
       fontSize: "12px",
       position: "absolute",
       bottom: 11,
-      left: 14,
+      left: 12,
       lineHeight: "16px",
       fontWeight: 600,
       fontFamily: '"Roboto","Arial",sans-serif',
@@ -4506,7 +4711,8 @@ const statusColor = (status) => {
 };
 function Status$1({
   check,
-  size
+  size,
+  ...rest
 }) {
   const [checksViewSize] = useLocalStorage({
     key: "check-view-size",
@@ -4517,6 +4723,7 @@ function Status$1({
     variant: "light",
     size: size || sizes[checksViewSize].statusBadge,
     title: "Check status",
+    ...rest,
     children: /* @__PURE__ */ jsx(Group, {
       spacing: 0,
       align: "center",
@@ -4577,12 +4784,11 @@ function Check({
         children: /* @__PURE__ */ jsx(Image$1, {
           src: imagePreviewSrc,
           fit: "contain",
-          width: imageWeight * 4,
+          width: `${imageWeight * 4}px`,
           withPlaceholder: true,
           alt: check.name,
           styles: () => ({
             image: {
-              height: "auto",
               aspectRatio: "1/1"
             }
           }),
@@ -4600,6 +4806,7 @@ function Check({
         children: [/* @__PURE__ */ jsx(Status$1, {
           check
         }), /* @__PURE__ */ jsx(ViewPortLabel, {
+          color: "blue",
           check,
           sizes,
           checksViewSize
@@ -4655,12 +4862,10 @@ function Check({
             children: /* @__PURE__ */ jsx(Image$1, {
               src: imagePreviewSrc,
               fit: "contain",
-              width: "100%",
               alt: check.name,
               styles: () => ({
                 image: {
-                  height: "auto",
-                  aspectRatio: checksViewMode === "bounded" ? "1/1" : ""
+                  maxHeight: checksViewMode === "bounded" ? `${imageWeight * 8}px` : ""
                 }
               }),
               onClick: handlePreviewImageClick
@@ -4669,8 +4874,8 @@ function Check({
         })
       }), /* @__PURE__ */ jsxs(Group, {
         position: "apart",
-        pl: "xs",
-        pr: "xs",
+        pl: "sm",
+        pr: "sm",
         mt: "xs",
         mb: 8,
         spacing: "xs",
@@ -4681,19 +4886,22 @@ function Check({
         }), /* @__PURE__ */ jsx(ViewPortLabel, {
           check,
           sizes,
+          color: "blue",
           size: "sm",
           fontSize: "10px",
           checksViewSize,
           displayed: checksViewSize !== "small"
         }), /* @__PURE__ */ jsxs(Group, {
-          spacing: 4,
+          spacing: 8,
           position: "right",
           noWrap: true,
           children: [/* @__PURE__ */ jsx(AcceptButton, {
+            size: 22,
             check,
             testUpdateQuery,
             checksQuery
           }), /* @__PURE__ */ jsx(RemoveButton, {
+            size: 26,
             checksQuery,
             testUpdateQuery,
             check
@@ -4794,6 +5002,7 @@ function Status({
     children: /* @__PURE__ */ jsxs(Group, {
       position: "left",
       spacing: 0,
+      noWrap: true,
       children: [/* @__PURE__ */ jsx(StatusesRing, {
         statuses: checkStatuses,
         ml: -4
@@ -5533,10 +5742,10 @@ const require$$2 = /* @__PURE__ */ getAugmentedNamespace(__viteBrowserExternal$1
         return new fabric2.Point(v.x, v.y).addEquals(origin);
       },
       rotateVector: function(vector, radians) {
-        var sin = fabric2.util.sin(radians), cos = fabric2.util.cos(radians), rx = vector.x * cos - vector.y * sin, ry = vector.x * sin + vector.y * cos;
+        var sin = fabric2.util.sin(radians), cos = fabric2.util.cos(radians), rx = vector.x * cos - vector.y * sin, ry2 = vector.x * sin + vector.y * cos;
         return {
           x: rx,
-          y: ry
+          y: ry2
         };
       },
       createVector: function(from, to) {
@@ -6135,8 +6344,8 @@ const require$$2 = /* @__PURE__ */ getAugmentedNamespace(__viteBrowserExternal$1
       m: "l",
       M: "L"
     };
-    function segmentToBezier(th2, th3, cosTh, sinTh, rx, ry, cx1, cy1, mT, fromX, fromY) {
-      var costh2 = fabric2.util.cos(th2), sinth2 = fabric2.util.sin(th2), costh3 = fabric2.util.cos(th3), sinth3 = fabric2.util.sin(th3), toX = cosTh * rx * costh3 - sinTh * ry * sinth3 + cx1, toY = sinTh * rx * costh3 + cosTh * ry * sinth3 + cy1, cp1X = fromX + mT * (-cosTh * rx * sinth2 - sinTh * ry * costh2), cp1Y = fromY + mT * (-sinTh * rx * sinth2 + cosTh * ry * costh2), cp2X = toX + mT * (cosTh * rx * sinth3 + sinTh * ry * costh3), cp2Y = toY + mT * (sinTh * rx * sinth3 - cosTh * ry * costh3);
+    function segmentToBezier(th2, th3, cosTh, sinTh, rx, ry2, cx1, cy1, mT, fromX, fromY) {
+      var costh2 = fabric2.util.cos(th2), sinth2 = fabric2.util.sin(th2), costh3 = fabric2.util.cos(th3), sinth3 = fabric2.util.sin(th3), toX = cosTh * rx * costh3 - sinTh * ry2 * sinth3 + cx1, toY = sinTh * rx * costh3 + cosTh * ry2 * sinth3 + cy1, cp1X = fromX + mT * (-cosTh * rx * sinth2 - sinTh * ry2 * costh2), cp1Y = fromY + mT * (-sinTh * rx * sinth2 + cosTh * ry2 * costh2), cp2X = toX + mT * (cosTh * rx * sinth3 + sinTh * ry2 * costh3), cp2Y = toY + mT * (sinTh * rx * sinth3 - cosTh * ry2 * costh3);
       return [
         "C",
         cp1X,
@@ -6147,19 +6356,19 @@ const require$$2 = /* @__PURE__ */ getAugmentedNamespace(__viteBrowserExternal$1
         toY
       ];
     }
-    function arcToSegments(toX, toY, rx, ry, large, sweep, rotateX) {
+    function arcToSegments(toX, toY, rx, ry2, large, sweep, rotateX) {
       var PI = Math.PI, th = rotateX * PI / 180, sinTh = fabric2.util.sin(th), cosTh = fabric2.util.cos(th), fromX = 0, fromY = 0;
       rx = Math.abs(rx);
-      ry = Math.abs(ry);
-      var px = -cosTh * toX * 0.5 - sinTh * toY * 0.5, py = -cosTh * toY * 0.5 + sinTh * toX * 0.5, rx2 = rx * rx, ry2 = ry * ry, py2 = py * py, px2 = px * px, pl = rx2 * ry2 - rx2 * py2 - ry2 * px2, root = 0;
+      ry2 = Math.abs(ry2);
+      var px = -cosTh * toX * 0.5 - sinTh * toY * 0.5, py = -cosTh * toY * 0.5 + sinTh * toX * 0.5, rx2 = rx * rx, ry22 = ry2 * ry2, py2 = py * py, px2 = px * px, pl = rx2 * ry22 - rx2 * py2 - ry22 * px2, root = 0;
       if (pl < 0) {
-        var s3 = Math.sqrt(1 - pl / (rx2 * ry2));
+        var s3 = Math.sqrt(1 - pl / (rx2 * ry22));
         rx *= s3;
-        ry *= s3;
+        ry2 *= s3;
       } else {
-        root = (large === sweep ? -1 : 1) * Math.sqrt(pl / (rx2 * py2 + ry2 * px2));
+        root = (large === sweep ? -1 : 1) * Math.sqrt(pl / (rx2 * py2 + ry22 * px2));
       }
-      var cx = root * rx * py / ry, cy = -root * ry * px / rx, cx1 = cosTh * cx - sinTh * cy + toX * 0.5, cy1 = sinTh * cx + cosTh * cy + toY * 0.5, mTheta = calcVectorAngle(1, 0, (px - cx) / rx, (py - cy) / ry), dtheta = calcVectorAngle((px - cx) / rx, (py - cy) / ry, (-px - cx) / rx, (-py - cy) / ry);
+      var cx = root * rx * py / ry2, cy = -root * ry2 * px / rx, cx1 = cosTh * cx - sinTh * cy + toX * 0.5, cy1 = sinTh * cx + cosTh * cy + toY * 0.5, mTheta = calcVectorAngle(1, 0, (px - cx) / rx, (py - cy) / ry2), dtheta = calcVectorAngle((px - cx) / rx, (py - cy) / ry2, (-px - cx) / rx, (-py - cy) / ry2);
       if (sweep === 0 && dtheta > 0) {
         dtheta -= 2 * PI;
       } else if (sweep === 1 && dtheta < 0) {
@@ -6167,7 +6376,7 @@ const require$$2 = /* @__PURE__ */ getAugmentedNamespace(__viteBrowserExternal$1
       }
       var segments = Math.ceil(Math.abs(dtheta / PI * 2)), result = [], mDelta = dtheta / segments, mT = 8 / 3 * Math.sin(mDelta / 4) * Math.sin(mDelta / 4) / Math.sin(mDelta / 2), th3 = mTheta + mDelta;
       for (var i2 = 0; i2 < segments; i2++) {
-        result[i2] = segmentToBezier(mTheta, th3, cosTh, sinTh, rx, ry, cx1, cy1, mT, fromX, fromY);
+        result[i2] = segmentToBezier(mTheta, th3, cosTh, sinTh, rx, ry2, cx1, cy1, mT, fromX, fromY);
         fromX = result[i2][5];
         fromY = result[i2][6];
         mTheta = th3;
@@ -6254,7 +6463,7 @@ const require$$2 = /* @__PURE__ */ getAugmentedNamespace(__viteBrowserExternal$1
       return result;
     }
     function fromArcToBeziers(fx, fy, coords) {
-      var rx = coords[1], ry = coords[2], rot = coords[3], large = coords[4], sweep = coords[5], tx = coords[6], ty = coords[7], segsNorm = arcToSegments(tx - fx, ty - fy, rx, ry, large, sweep, rot);
+      var rx = coords[1], ry2 = coords[2], rot = coords[3], large = coords[4], sweep = coords[5], tx = coords[6], ty = coords[7], segsNorm = arcToSegments(tx - fx, ty - fy, rx, ry2, large, sweep, rot);
       for (var i2 = 0, len = segsNorm.length; i2 < len; i2++) {
         segsNorm[i2][1] += fx;
         segsNorm[i2][2] += fy;
@@ -14969,17 +15178,17 @@ const require$$2 = /* @__PURE__ */ getAugmentedNamespace(__viteBrowserExternal$1
         }
       },
       _render: function(ctx) {
-        var rx = this.rx ? Math.min(this.rx, this.width / 2) : 0, ry = this.ry ? Math.min(this.ry, this.height / 2) : 0, w2 = this.width, h3 = this.height, x2 = -this.width / 2, y3 = -this.height / 2, isRounded = rx !== 0 || ry !== 0, k2 = 1 - 0.5522847498;
+        var rx = this.rx ? Math.min(this.rx, this.width / 2) : 0, ry2 = this.ry ? Math.min(this.ry, this.height / 2) : 0, w2 = this.width, h3 = this.height, x2 = -this.width / 2, y3 = -this.height / 2, isRounded = rx !== 0 || ry2 !== 0, k2 = 1 - 0.5522847498;
         ctx.beginPath();
         ctx.moveTo(x2 + rx, y3);
         ctx.lineTo(x2 + w2 - rx, y3);
-        isRounded && ctx.bezierCurveTo(x2 + w2 - k2 * rx, y3, x2 + w2, y3 + k2 * ry, x2 + w2, y3 + ry);
-        ctx.lineTo(x2 + w2, y3 + h3 - ry);
-        isRounded && ctx.bezierCurveTo(x2 + w2, y3 + h3 - k2 * ry, x2 + w2 - k2 * rx, y3 + h3, x2 + w2 - rx, y3 + h3);
+        isRounded && ctx.bezierCurveTo(x2 + w2 - k2 * rx, y3, x2 + w2, y3 + k2 * ry2, x2 + w2, y3 + ry2);
+        ctx.lineTo(x2 + w2, y3 + h3 - ry2);
+        isRounded && ctx.bezierCurveTo(x2 + w2, y3 + h3 - k2 * ry2, x2 + w2 - k2 * rx, y3 + h3, x2 + w2 - rx, y3 + h3);
         ctx.lineTo(x2 + rx, y3 + h3);
-        isRounded && ctx.bezierCurveTo(x2 + k2 * rx, y3 + h3, x2, y3 + h3 - k2 * ry, x2, y3 + h3 - ry);
-        ctx.lineTo(x2, y3 + ry);
-        isRounded && ctx.bezierCurveTo(x2, y3 + k2 * ry, x2 + k2 * rx, y3, x2 + rx, y3);
+        isRounded && ctx.bezierCurveTo(x2 + k2 * rx, y3 + h3, x2, y3 + h3 - k2 * ry2, x2, y3 + h3 - ry2);
+        ctx.lineTo(x2, y3 + ry2);
+        isRounded && ctx.bezierCurveTo(x2, y3 + k2 * ry2, x2 + k2 * rx, y3, x2 + rx, y3);
         ctx.closePath();
         this._renderPaintInOrder(ctx);
       },
@@ -21821,10 +22030,344 @@ class MainView {
     this.drawRegions(regionData.ignoreRegions);
   }
 }
+function RelatedChecksSkeleton({
+  num,
+  infinityQuery
+}) {
+  const {
+    ref,
+    inView
+  } = useInView();
+  react.exports.useEffect(() => {
+    if (inView && infinityQuery) {
+      infinityQuery.fetchNextPage();
+    }
+  }, [inView]);
+  return /* @__PURE__ */ jsx(Stack, {
+    ref,
+    children: (infinityQuery === null || infinityQuery.hasNextPage) && Object.keys(new Array(num).fill("")).map((x2) => /* @__PURE__ */ jsx(react.exports.Fragment, {
+      children: /* @__PURE__ */ jsx(Group, {
+        style: {
+          width: "100%"
+        },
+        pl: "xs",
+        pr: "md",
+        children: /* @__PURE__ */ jsx(Skeleton, {
+          height: 120,
+          mt: "sm",
+          width: "125px",
+          radius: "sm"
+        })
+      })
+    }, x2))
+  });
+}
+function RelatedCheckItem({
+  checkData,
+  flatChecksData,
+  activeCheck,
+  setActiveCheck
+}) {
+  var _a, _b, _c;
+  const check = checkData;
+  const theme = useMantineTheme();
+  const imageFilename = ((_a = check.diffId) == null ? void 0 : _a.filename) || ((_b = check.actualSnapshotId) == null ? void 0 : _b.filename) || ((_c = check.baselineId) == null ? void 0 : _c.filename);
+  const imagePreviewSrc = `${config.baseUri}/snapshoots/${imageFilename}`;
+  const [checksViewSize] = useLocalStorage({
+    key: "check-view-size",
+    defaultValue: "medium"
+  });
+  useParams();
+  const handleItemClick = () => {
+    setActiveCheck(() => check._id);
+  };
+  return /* @__PURE__ */ jsx(Group, {
+    onClick: handleItemClick,
+    spacing: 8,
+    p: "sm",
+    sx: {
+      cursor: "pointer",
+      width: "88%",
+      borderBottom: `1px solid ${theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[2]}`,
+      backgroundColor: check._id === activeCheck ? theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[2] : "",
+      "&:hover": {
+        backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[3]
+      }
+    },
+    position: "apart",
+    children: /* @__PURE__ */ jsx(Paper, {
+      shadow: "sm",
+      pb: 0,
+      mr: 22,
+      children: /* @__PURE__ */ jsxs("div", {
+        style: {
+          position: "relative"
+        },
+        children: [/* @__PURE__ */ jsx(Image$1, {
+          src: imagePreviewSrc,
+          width: "125px",
+          fit: "contain",
+          withPlaceholder: true,
+          alt: check.name,
+          styles: () => ({
+            image: {
+              maxHeight: 150
+            }
+          })
+        }), /* @__PURE__ */ jsxs(Group, {
+          pt: 8,
+          pb: 8,
+          align: "center",
+          position: "center",
+          spacing: 4,
+          noWrap: true,
+          children: [/* @__PURE__ */ jsx(ViewPortLabel, {
+            fontSize: "8px",
+            color: "blue",
+            check,
+            sizes,
+            checksViewSize
+          }), /* @__PURE__ */ jsxs(Group, {
+            align: "end",
+            spacing: 4,
+            children: [/* @__PURE__ */ jsx(BrowserIcon, {
+              browser: check.browserName,
+              size: 12
+            }), /* @__PURE__ */ jsx(OsIcon, {
+              os: check.os,
+              size: 14
+            })]
+          })]
+        }), /* @__PURE__ */ jsx("div", {
+          style: {
+            position: "absolute",
+            top: -12,
+            left: 4,
+            opacity: 1
+          },
+          children: /* @__PURE__ */ jsx(Status$1, {
+            check,
+            size: "xs",
+            style: {
+              opacity: 0.9,
+              backgroundColor: theme.colors.dark[9]
+            }
+          })
+        })]
+      })
+    })
+  });
+}
+function RelatedChecksItems({
+  infinityQuery,
+  relatedActiveCheck,
+  setRelatedActiveCheck
+}) {
+  return infinityQuery.data ? infinityQuery.data.pages.map((page) => page.results.map(
+    (item, index) => /* @__PURE__ */ jsx(RelatedCheckItem, {
+      checkData: item,
+      activeCheck: relatedActiveCheck,
+      setActiveCheck: setRelatedActiveCheck
+    }, item._id)
+  )) : [];
+}
+function RelatedCheckSort({
+  sortBy,
+  setSortBy,
+  setSortOrder,
+  toggleOpenedSort,
+  sortOrder,
+  openedSort
+}) {
+  return /* @__PURE__ */ jsx(Transition, {
+    mounted: openedSort,
+    transition: "fade",
+    duration: 400,
+    timingFunction: "ease",
+    children: (styles) => /* @__PURE__ */ jsxs(Group, {
+      align: "end",
+      spacing: 4,
+      pr: 10,
+      noWrap: true,
+      style: styles,
+      children: [/* @__PURE__ */ jsx(SafeSelect, {
+        label: "Sort by",
+        "data-test": "navbar-sort-by-select",
+        value: sortBy,
+        onChange: (value) => setSortBy(() => value),
+        optionsData: [{
+          value: "createdDate",
+          label: "Created Date"
+        }, {
+          value: "Browser",
+          label: "BrowserName"
+        }, {
+          value: "Platform",
+          label: "os"
+        }, {
+          value: "Viewport",
+          label: "viewport"
+        }]
+      }), /* @__PURE__ */ jsxs(Group, {
+        spacing: 2,
+        position: "right",
+        noWrap: true,
+        children: [/* @__PURE__ */ jsx(ActionIcon, {
+          title: "Sort Order",
+          "data-test": "navbar-sort-by-order",
+          mb: 4,
+          onClick: () => {
+            if (sortOrder === "asc") {
+              setSortOrder("desc");
+              return;
+            }
+            setSortOrder("asc");
+          },
+          children: sortOrder === "asc" ? /* @__PURE__ */ jsx(Xfe, {
+            stroke: 1
+          }) : /* @__PURE__ */ jsx(rze, {
+            stroke: 1
+          })
+        }), /* @__PURE__ */ jsx(ActionIcon, {
+          mb: 4,
+          onClick: () => toggleOpenedSort(),
+          children: /* @__PURE__ */ jsx(lAe, {
+            stroke: 1
+          })
+        })]
+      })]
+    })
+  });
+}
+function RelatedChecks({
+  check,
+  related
+}) {
+  const [openedSort, toggleOpenedSort] = useToggle([false, true]);
+  react.exports.useEffect(function onSortChange() {
+    related.relatedChecksQuery.firstPageQuery.refetch();
+  }, [`${related.sortBy}_${related.sortOrder}`]);
+  const hideRelatedChecks = () => {
+    related.handler.toggle();
+  };
+  return /* @__PURE__ */ jsxs(Stack, {
+    spacing: 4,
+    children: [/* @__PURE__ */ jsx(Group, {
+      position: "right",
+      pr: "sm",
+      align: "end",
+      sx: {
+        width: "100%"
+      },
+      children: /* @__PURE__ */ jsxs(Group, {
+        position: "right",
+        spacing: 4,
+        children: [related.opened && /* @__PURE__ */ jsxs(Fragment, {
+          children: [/* @__PURE__ */ jsx(ActionIcon, {
+            "data-test": "related-check-icon-open-sort",
+            onClick: () => toggleOpenedSort(),
+            mb: 4,
+            children: /* @__PURE__ */ jsx(ea, {
+              stroke: 1
+            })
+          }), /* @__PURE__ */ jsx(ActionIcon, {
+            "data-test": "related-check-icon-refresh",
+            onClick: () => related.relatedChecksQuery.firstPageQuery.refetch(),
+            mb: 4,
+            children: /* @__PURE__ */ jsx(Epe, {
+              stroke: 1
+            })
+          })]
+        }), /* @__PURE__ */ jsx(ActionIcon, {
+          "data-test": "hide-related-checks-icon",
+          onClick: () => hideRelatedChecks(),
+          mb: 4,
+          children: related.opened ? /* @__PURE__ */ jsx(ry, {
+            stroke: 1
+          }) : /* @__PURE__ */ jsx(ly, {
+            stroke: 1
+          })
+        })]
+      })
+    }), /* @__PURE__ */ jsx(Group, {
+      sx: {
+        width: "100%"
+      },
+      children: /* @__PURE__ */ jsx(RelatedCheckSort, {
+        toggleOpenedSort,
+        sortBy: related.sortBy,
+        setSortBy: related.setSortBy,
+        setSortOrder: related.setSortOrder,
+        sortOrder: related.sortOrder,
+        openedSort
+      })
+    }), related.opened && /* @__PURE__ */ jsx(Transition, {
+      mounted: related.opened,
+      transition: "fade",
+      duration: 400,
+      timingFunction: "ease",
+      children: (styles) => /* @__PURE__ */ jsxs(ScrollArea, {
+        style: {
+          height: "75vh"
+        },
+        styles,
+        children: [related.relatedChecksQuery.infinityQuery.isLoading ? /* @__PURE__ */ jsx(RelatedChecksSkeleton, {
+          num: 5,
+          infinityQuery: null
+        }) : related.relatedChecksQuery.infinityQuery.isError ? /* @__PURE__ */ jsx(Text, {
+          size: "xs",
+          color: "red",
+          children: " Fail to load"
+        }) : /* @__PURE__ */ jsx(Stack, {
+          spacing: 8,
+          children: /* @__PURE__ */ jsx(RelatedChecksItems, {
+            infinityQuery: related.relatedChecksQuery.infinityQuery,
+            relatedActiveCheck: related.relatedActiveCheck,
+            setRelatedActiveCheck: related.setRelatedActiveCheck
+          })
+        }), /* @__PURE__ */ jsx(RelatedChecksSkeleton, {
+          num: 3,
+          infinityQuery: related.relatedChecksQuery.infinityQuery
+        })]
+      })
+    })]
+  });
+}
+function useRelatedChecks(checkData) {
+  const [relatedActiveCheck, setRelatedActiveCheck] = react.exports.useState(checkData._id);
+  const [sortBy, setSortBy] = react.exports.useState("createdDate");
+  const [sortOrder, setSortOrder] = react.exports.useState("desc");
+  const [relatedFilter, setRelatedFilter] = react.exports.useState({
+    name: checkData.name
+  });
+  const relatedChecksQuery = useInfinityScroll({
+    resourceName: "checks",
+    filterObj: relatedFilter,
+    firstPageQueryUniqueKey: checkData._id,
+    infinityScrollLimit: 10,
+    sortBy: `${sortBy}:${sortOrder}`
+  });
+  const {
+    data
+  } = relatedChecksQuery.infinityQuery;
+  const relatedFlatChecksData = data ? data.pages.flat().map((x2) => x2.results).flat() : [];
+  return {
+    relatedActiveCheck,
+    setRelatedActiveCheck,
+    sortBy,
+    setSortBy,
+    sortOrder,
+    setSortOrder,
+    relatedFlatChecksData,
+    relatedChecksQuery,
+    relatedFilter,
+    setRelatedFilter
+  };
+}
 function onImageErrorHandler(...e2) {
   const imgSrc = e2[0].path[0].src;
   const msg = `Cannot load image: '${imgSrc}'`;
-  console.error(msg, e2);
+  log.error(msg, e2);
   errorMsg({
     error: msg
   });
@@ -21842,7 +22385,7 @@ function createImageAndWaitForLoad(src) {
   })]);
 }
 function CheckDetails({
-  check,
+  checkData,
   checkQuery,
   firstPageQuery,
   closeHandler
@@ -21851,16 +22394,14 @@ function CheckDetails({
   const {
     setAppTitle
   } = react.exports.useContext(AppContext);
+  const [relatedChecksOpened, relatedChecksHandler] = useDisclosure(true);
+  const related = useRelatedChecks(checkData);
+  related.opened = relatedChecksOpened;
+  related.handler = relatedChecksHandler;
+  const currentCheck = react.exports.useMemo(() => related.relatedFlatChecksData.find((x2) => x2._id === related.relatedActiveCheck) || checkData, [related.relatedActiveCheck]);
   const theme = useMantineTheme();
-  setAppTitle(check.name);
-  useLocalStorage({
-    key: "check-view-size",
-    defaultValue: "medium"
-  });
-  const {
-    height: vHeight,
-    width: vWidth
-  } = useViewportSize();
+  setAppTitle(currentCheck.name);
+  useViewportSize();
   const [mainView2, setMainView] = react.exports.useState(null);
   const [zoomPercent, setZoomPercent] = react.exports.useState(100);
   const [openedZoomPopover, zoomPopoverHandler] = useDisclosure(false);
@@ -21893,17 +22434,14 @@ function CheckDetails({
     setZoomPercent(() => percent);
   };
   const zoomByDelta = (delta) => {
-    console.log({
-      delta
-    });
     document.dispatchEvent(new Event("zoom"));
     let newPercent = Math.round(mainView2.canvas.getZoom() * 100) + delta;
     newPercent = newPercent < 2 ? 2 : newPercent;
     newPercent = newPercent > 1e3 ? 1e3 : newPercent;
     zoomByPercent(newPercent);
   };
-  const baselineQuery = useQuery(["baseline_by_snapshot_id", check.baselineId._id], () => GenericService.get("baselines", {
-    snapshootId: check.baselineId._id
+  const baselineQuery = useQuery(["baseline_by_snapshot_id", currentCheck.baselineId._id], () => GenericService.get("baselines", {
+    snapshootId: currentCheck.baselineId._id
   }, {
     populate: "app",
     limit: "1"
@@ -21923,20 +22461,28 @@ function CheckDetails({
     }
     return null;
   }, [JSON.stringify((_a = baselineQuery.data) == null ? void 0 : _a.results)]);
+  react.exports.useEffect(function destroyMainView() {
+    if (mainView2) {
+      mainView2.destroyAllViews();
+      mainView2.canvas.clear();
+      mainView2.canvas.dispose();
+      setMainView(null);
+    }
+  }, [related.relatedActiveCheck, relatedChecksOpened]);
   react.exports.useEffect(() => {
     const initMV = async () => {
       var _a2, _b2, _c2, _d;
       fabric$1.fabric.Object.prototype.objectCaching = false;
-      const baselineImgSrc = `${config.baseUri}/snapshoots/${(_a2 = check == null ? void 0 : check.baselineId) == null ? void 0 : _a2.filename}?expectedImg`;
+      const baselineImgSrc = `${config.baseUri}/snapshoots/${(_a2 = currentCheck == null ? void 0 : currentCheck.baselineId) == null ? void 0 : _a2.filename}?expectedImg`;
       const baselineImg = await createImageAndWaitForLoad(baselineImgSrc);
-      const actual = check.actualSnapshotId || null;
-      const actualImgSrc = `${config.baseUri}/snapshoots/${(_b2 = check == null ? void 0 : check.actualSnapshotId) == null ? void 0 : _b2.filename}?actualImg`;
+      const actual = currentCheck.actualSnapshotId || null;
+      const actualImgSrc = `${config.baseUri}/snapshoots/${(_b2 = currentCheck == null ? void 0 : currentCheck.actualSnapshotId) == null ? void 0 : _b2.filename}?actualImg`;
       const actualImg = await createImageAndWaitForLoad(actualImgSrc);
       document.getElementById("snapshoot").style.height = `${MainView.calculateExpectedCanvasViewportAreaSize().height - 10}px`;
       const expectedImage = await imageFromUrl(baselineImg.src);
       const actualImage = await imageFromUrl(actualImg.src);
-      const diffImgSrc = `${config.baseUri}/snapshoots/${(_c2 = check == null ? void 0 : check.diffId) == null ? void 0 : _c2.filename}?diffImg`;
-      const diffImage = ((_d = check == null ? void 0 : check.diffId) == null ? void 0 : _d.filename) ? await imageFromUrl(diffImgSrc) : null;
+      const diffImgSrc = `${config.baseUri}/snapshoots/${(_c2 = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _c2.filename}?diffImg`;
+      const diffImage = ((_d = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _d.filename) ? await imageFromUrl(diffImgSrc) : null;
       await setMainView((prev) => {
         if (prev)
           return prev;
@@ -21953,8 +22499,10 @@ function CheckDetails({
         return MV;
       });
     };
-    initMV();
-  }, []);
+    setTimeout(() => {
+      initMV();
+    }, 100);
+  }, [related.relatedActiveCheck, relatedChecksOpened]);
   react.exports.useEffect(function afterMainViewCreatedHandleRegions() {
     if (!baselineId)
       return;
@@ -22024,6 +22572,16 @@ function CheckDetails({
     if (mainView2) {
       zoomEvents();
       fitGreatestImageIfNeeded();
+      if (mainView2.diffImage) {
+        setView("actual");
+        setTimeout(() => {
+          setView("diff");
+        }, 10);
+      } else {
+        setTimeout(() => {
+          setView("actual");
+        }, 10);
+      }
     }
   }, [mainView2 == null ? void 0 : mainView2.toString()]);
   const [view, setView] = react.exports.useState("actual");
@@ -22032,7 +22590,7 @@ function CheckDetails({
       mainView2.switchView(view);
     }
   }, [view]);
-  let viewSegmentData = [{
+  const viewSegmentData = [{
     label: /* @__PURE__ */ jsxs(Group, {
       position: "left",
       spacing: 4,
@@ -22054,202 +22612,231 @@ function CheckDetails({
       }), "Expected"]
     }),
     value: "expected"
+  }, {
+    label: /* @__PURE__ */ jsxs(Group, {
+      position: "left",
+      spacing: 4,
+      noWrap: true,
+      children: [/* @__PURE__ */ jsx(pi, {
+        stroke: 1,
+        size: 18
+      }), "Difference"]
+    }),
+    value: "diff",
+    disabled: true
+  }, {
+    label: /* @__PURE__ */ jsxs(Group, {
+      position: "left",
+      spacing: 4,
+      noWrap: true,
+      children: [/* @__PURE__ */ jsx(Lbe, {
+        stroke: 1,
+        size: 18
+      }), "Slider"]
+    }),
+    value: "slider",
+    disabled: true
   }];
-  if ((_c = check == null ? void 0 : check.diffId) == null ? void 0 : _c.filename) {
-    viewSegmentData = [...viewSegmentData, {
-      label: /* @__PURE__ */ jsxs(Group, {
-        position: "left",
-        spacing: 4,
-        noWrap: true,
-        children: [/* @__PURE__ */ jsx(pi, {
-          stroke: 1,
-          size: 18
-        }), "Difference"]
-      }),
-      value: "diff"
-    }, {
-      label: /* @__PURE__ */ jsxs(Group, {
-        position: "left",
-        spacing: 4,
-        noWrap: true,
-        children: [/* @__PURE__ */ jsx(Lbe, {
-          stroke: 1,
-          size: 18
-        }), "Slider"]
-      }),
-      value: "slider"
-    }];
+  if ((_c = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _c.filename) {
+    viewSegmentData[2].disabled = false;
+    viewSegmentData[3].disabled = false;
   }
-  return /* @__PURE__ */ jsxs(Stack, {
-    children: [/* @__PURE__ */ jsxs(Group, {
-      position: "apart",
-      children: [/* @__PURE__ */ jsx(Group, {}), /* @__PURE__ */ jsxs(Group, {
-        spacing: "sm",
-        children: [/* @__PURE__ */ jsxs(Group, {
-          spacing: 4,
-          position: "center",
-          align: "center",
-          children: [/* @__PURE__ */ jsx(ActionIcon, {
-            title: "Zoom in",
-            onClick: () => zoomByDelta(15),
-            children: /* @__PURE__ */ jsx(lDe, {
-              size: 24,
-              stroke: 1
-            })
-          }), /* @__PURE__ */ jsxs(Popover, {
-            width: 130,
-            position: "bottom",
-            withArrow: true,
-            shadow: "md",
-            opened: openedZoomPopover,
-            children: [/* @__PURE__ */ jsx(Popover.Target, {
-              children: /* @__PURE__ */ jsxs(Group, {
-                spacing: 0,
-                position: "center",
-                onClick: zoomPopoverHandler.toggle,
-                children: [/* @__PURE__ */ jsxs(Text, {
-                  size: "lg",
-                  weight: 400,
-                  sx: {
-                    minWidth: "3em"
-                  },
-                  children: [Math.round(zoomPercent), "%"]
-                }), /* @__PURE__ */ jsx(ActionIcon, {
-                  ml: -10,
-                  children: /* @__PURE__ */ jsx(Pj, {})
-                })]
+  return /* @__PURE__ */ jsx(Group, {
+    style: {
+      width: "96vw"
+    },
+    spacing: 4,
+    children: /* @__PURE__ */ jsxs(Stack, {
+      sx: {
+        width: "100%"
+      },
+      children: [/* @__PURE__ */ jsxs(Group, {
+        position: "apart",
+        children: [/* @__PURE__ */ jsx(Group, {}), /* @__PURE__ */ jsxs(Group, {
+          spacing: "sm",
+          children: [/* @__PURE__ */ jsxs(Group, {
+            spacing: 4,
+            position: "center",
+            align: "center",
+            children: [/* @__PURE__ */ jsx(ActionIcon, {
+              title: "Zoom in",
+              onClick: () => zoomByDelta(15),
+              children: /* @__PURE__ */ jsx(lDe, {
+                size: 24,
+                stroke: 1
               })
-            }), /* @__PURE__ */ jsx(Popover.Dropdown, {
-              p: 0,
-              children: /* @__PURE__ */ jsxs(Stack, {
-                spacing: 0,
-                children: [/* @__PURE__ */ jsx(Button, {
-                  variant: "subtle",
-                  onClick: () => {
-                    zoomByPercent(50);
-                    console.log(mainView2[`${view}Image`]);
-                    if (view === "slider") {
-                      mainView2.panToCanvasWidthCenter("actualImage");
-                      return;
-                    }
-                    mainView2.panToCanvasWidthCenter(`${view}Image`);
-                    zoomPopoverHandler.close();
-                  },
-                  children: "50%"
-                }), /* @__PURE__ */ jsx(Button, {
-                  variant: "subtle",
-                  onClick: () => {
-                    zoomByPercent(100);
-                    if (view === "slider") {
-                      mainView2.panToCanvasWidthCenter("actualImage");
-                      return;
-                    }
-                    mainView2.panToCanvasWidthCenter(`${view}Image`);
-                    zoomPopoverHandler.close();
-                  },
-                  children: "100%"
-                }), /* @__PURE__ */ jsx(Button, {
-                  variant: "subtle",
-                  onClick: () => {
-                    zoomByPercent(200);
-                    if (view === "slider") {
-                      mainView2.panToCanvasWidthCenter("actualImage");
-                      return;
-                    }
-                    mainView2.panToCanvasWidthCenter(`${view}Image`);
-                    zoomPopoverHandler.close();
-                  },
-                  children: "200%"
-                }), /* @__PURE__ */ jsx(Button, {
-                  variant: "subtle",
-                  onClick: () => {
-                    zoomPopoverHandler.close();
-                    if (view === "slider") {
-                      fitImageByWith("actualImage");
-                      return;
-                    }
-                    fitImageByWith(`${view}Image`);
-                  },
-                  children: "Fit by width"
-                }), /* @__PURE__ */ jsx(Button, {
-                  variant: "subtle",
-                  onClick: () => {
-                    zoomPopoverHandler.close();
-                    if (view === "slider") {
-                      fitImageIfNeeded("actualImage");
-                      return;
-                    }
-                    fitImageIfNeeded(`${view}Image`);
-                  },
-                  children: "Fit co canvas"
-                })]
+            }), /* @__PURE__ */ jsxs(Popover, {
+              width: 130,
+              position: "bottom",
+              withArrow: true,
+              shadow: "md",
+              opened: openedZoomPopover,
+              children: [/* @__PURE__ */ jsx(Popover.Target, {
+                children: /* @__PURE__ */ jsxs(Group, {
+                  spacing: 0,
+                  position: "center",
+                  onClick: zoomPopoverHandler.toggle,
+                  children: [/* @__PURE__ */ jsxs(Text, {
+                    size: "lg",
+                    weight: 400,
+                    sx: {
+                      minWidth: "3em"
+                    },
+                    children: [Math.round(zoomPercent), "%"]
+                  }), /* @__PURE__ */ jsx(ActionIcon, {
+                    ml: -10,
+                    children: /* @__PURE__ */ jsx(Pj, {})
+                  })]
+                })
+              }), /* @__PURE__ */ jsx(Popover.Dropdown, {
+                p: 0,
+                children: /* @__PURE__ */ jsxs(Stack, {
+                  spacing: 0,
+                  children: [/* @__PURE__ */ jsx(Button, {
+                    variant: "subtle",
+                    onClick: () => {
+                      zoomByPercent(50);
+                      if (view === "slider") {
+                        mainView2.panToCanvasWidthCenter("actualImage");
+                        return;
+                      }
+                      mainView2.panToCanvasWidthCenter(`${view}Image`);
+                      zoomPopoverHandler.close();
+                    },
+                    children: "50%"
+                  }), /* @__PURE__ */ jsx(Button, {
+                    variant: "subtle",
+                    onClick: () => {
+                      zoomByPercent(100);
+                      if (view === "slider") {
+                        mainView2.panToCanvasWidthCenter("actualImage");
+                        return;
+                      }
+                      mainView2.panToCanvasWidthCenter(`${view}Image`);
+                      zoomPopoverHandler.close();
+                    },
+                    children: "100%"
+                  }), /* @__PURE__ */ jsx(Button, {
+                    variant: "subtle",
+                    onClick: () => {
+                      zoomByPercent(200);
+                      if (view === "slider") {
+                        mainView2.panToCanvasWidthCenter("actualImage");
+                        return;
+                      }
+                      mainView2.panToCanvasWidthCenter(`${view}Image`);
+                      zoomPopoverHandler.close();
+                    },
+                    children: "200%"
+                  }), /* @__PURE__ */ jsx(Button, {
+                    variant: "subtle",
+                    onClick: () => {
+                      zoomPopoverHandler.close();
+                      if (view === "slider") {
+                        fitImageByWith("actualImage");
+                        return;
+                      }
+                      fitImageByWith(`${view}Image`);
+                    },
+                    children: "Fit by width"
+                  }), /* @__PURE__ */ jsx(Button, {
+                    variant: "subtle",
+                    onClick: () => {
+                      zoomPopoverHandler.close();
+                      if (view === "slider") {
+                        fitImageIfNeeded("actualImage");
+                        return;
+                      }
+                      fitImageIfNeeded(`${view}Image`);
+                    },
+                    children: "Fit co canvas"
+                  })]
+                })
+              })]
+            }), /* @__PURE__ */ jsx(ActionIcon, {
+              title: "Zoom out",
+              onClick: () => zoomByDelta(-15),
+              children: /* @__PURE__ */ jsx(dDe, {
+                size: 24,
+                stroke: 1
               })
             })]
+          }), /* @__PURE__ */ jsx(Divider, {
+            orientation: "vertical"
+          }), /* @__PURE__ */ jsx(SegmentedControl, {
+            value: view,
+            onChange: setView,
+            data: viewSegmentData
+          }), /* @__PURE__ */ jsx(Divider, {
+            orientation: "vertical"
           }), /* @__PURE__ */ jsx(ActionIcon, {
-            title: "Zoom out",
-            onClick: () => zoomByDelta(-15),
-            children: /* @__PURE__ */ jsx(dDe, {
+            title: "Add ignore region",
+            onClick: () => mainView2.addIgnoreRegion({
+              name: "ignore_rect",
+              strokeWidth: 0
+            }),
+            children: /* @__PURE__ */ jsx(DMe, {
               size: 24,
               stroke: 1
             })
+          }), /* @__PURE__ */ jsx(ActionIcon, {
+            onClick: () => MainView.sendIgnoreRegions(baselineId, mainView2.getRectData()),
+            children: /* @__PURE__ */ jsx(qF, {
+              size: 24,
+              stroke: 1
+            })
+          }), /* @__PURE__ */ jsx(Divider, {
+            orientation: "vertical"
+          }), /* @__PURE__ */ jsx(AcceptButton, {
+            check: currentCheck,
+            checksQuery: checkQuery,
+            size: 24,
+            testUpdateQuery: firstPageQuery
+          }), /* @__PURE__ */ jsx(RemoveButton, {
+            check: currentCheck,
+            checksQuery: checkQuery,
+            size: 30,
+            testUpdateQuery: firstPageQuery,
+            closeHandler
           })]
-        }), /* @__PURE__ */ jsx(Divider, {
-          orientation: "vertical"
-        }), /* @__PURE__ */ jsx(SegmentedControl, {
-          value: view,
-          onChange: setView,
-          data: viewSegmentData
-        }), /* @__PURE__ */ jsx(Divider, {
-          orientation: "vertical"
-        }), /* @__PURE__ */ jsx(ActionIcon, {
-          title: "Add ignore region",
-          onClick: () => mainView2.addIgnoreRegion({
-            name: "ignore_rect",
-            strokeWidth: 0
-          }),
-          children: /* @__PURE__ */ jsx(DMe, {
-            size: 24,
-            stroke: 1
+        })]
+      }), /* @__PURE__ */ jsxs(Group, {
+        spacing: 4,
+        align: "start",
+        sx: {
+          width: "100%"
+        },
+        noWrap: true,
+        children: [/* @__PURE__ */ jsx(Group, {
+          align: "start",
+          noWrap: true,
+          children: /* @__PURE__ */ jsx(RelatedChecks, {
+            check: currentCheck,
+            related
           })
-        }), /* @__PURE__ */ jsx(ActionIcon, {
-          onClick: () => MainView.sendIgnoreRegions(baselineId, mainView2.getRectData()),
-          children: /* @__PURE__ */ jsx(qF, {
-            size: 24,
-            stroke: 1
+        }), /* @__PURE__ */ jsx(Group, {
+          sx: {
+            width: related.opened ? "92%" : "100%"
+          },
+          children: /* @__PURE__ */ jsx(Paper, {
+            shadow: "xl",
+            withBorder: true,
+            id: "snapshoot",
+            style: {
+              backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[1],
+              width: "100%",
+              height: "100%"
+            },
+            children: /* @__PURE__ */ jsx("canvas", {
+              style: {
+                width: "100%"
+              },
+              id: "2d"
+            })
           })
-        }), /* @__PURE__ */ jsx(Divider, {
-          orientation: "vertical"
-        }), /* @__PURE__ */ jsx(AcceptButton, {
-          check,
-          checksQuery: checkQuery,
-          size: 24,
-          testUpdateQuery: firstPageQuery
-        }), /* @__PURE__ */ jsx(RemoveButton, {
-          check,
-          checksQuery: checkQuery,
-          size: 30,
-          testUpdateQuery: firstPageQuery,
-          closeHandler
         })]
       })]
-    }), /* @__PURE__ */ jsx(Group, {
-      children: /* @__PURE__ */ jsx(Paper, {
-        shadow: "xl",
-        withBorder: true,
-        id: "snapshoot",
-        style: {
-          backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[1],
-          width: `${vWidth - 100}px`,
-          height: `${vHeight - 150}px`
-        },
-        children: /* @__PURE__ */ jsx("canvas", {
-          style: {
-            width: "100%"
-          },
-          id: "2d"
-        })
-      })
-    })]
+    })
   });
 }
 function CheckModal({
@@ -22399,7 +22986,7 @@ function CheckModal({
         children: "Error load the check data"
       })
     }) : checkData ? /* @__PURE__ */ jsx(CheckDetails, {
-      check: checkData,
+      checkData,
       checkQuery,
       firstPageQuery,
       closeHandler
@@ -22921,7 +23508,10 @@ function Tests() {
     newestItemsQuery
   } = useInfinityScroll({
     baseFilterObj: baseFilter,
-    filterObj: query.filter,
+    filterObj: {
+      ...query.filter,
+      ...query.quick_filter
+    },
     resourceName: "tests",
     newestItemsFilterKey: "startDate",
     sortBy: query.sortBy || ""
@@ -22969,7 +23559,7 @@ function Tests() {
   }, [(_a = newestItemsQuery == null ? void 0 : newestItemsQuery.data) == null ? void 0 : _a.results.length, newestItemsQuery.status, theme.colorScheme]);
   react.exports.useEffect(() => {
     firstPageQuery.refetch();
-  }, [query.base_filter, query.filter, query.app, query.sortBy]);
+  }, [query.base_filter, query.quick_filter, query.filter, query.app, query.sortBy]);
   return /* @__PURE__ */ jsxs(Group, {
     position: "apart",
     align: "start",

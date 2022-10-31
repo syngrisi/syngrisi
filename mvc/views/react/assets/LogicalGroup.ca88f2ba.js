@@ -1,4 +1,4 @@
-import { r as react, b as jsx, d as useMantineTheme, at as Global$1, au as css, av as useDidUpdate, aw as useReducedMotion, W as useWindowEvent, ax as mergeRefs, ay as reactDom, O as useComponentDefaultProps, S as extractSystemStyles, B as Box, az as getDefaultZIndex, aA as OptionalPortal, aB as packSx, t as ActionIcon, c as createStyles, j as jsxs, aC as createPolymorphicComponent, Z as Fragment, T as Text, aD as _extends, a3 as React, U as useUncontrolled, aE as useFloating, aF as size, aG as useFloatingAutoUpdate, aH as offset, aI as arrow, aJ as shift, aK as flip, aL as inline, aM as isElement, aN as useMergedRef, aO as clsx, a4 as Transition$2, aP as FloatingArrow, R as useId, aQ as getFloatingPosition, aR as UnstyledButton, P as Paper, G as Group, aS as CheckIcon, aT as useTransition, aU as getTransitionStyles, aV as Overlay, a2 as Loader, a0 as Tooltip, aW as useIsomorphicEffect$1, aX as useInputProps, V as Input, aY as keyframes, aZ as QueryObserver, a_ as infiniteQueryBehavior, a$ as hasNextPage, b0 as hasPreviousPage, b1 as Subscribable, b2 as shallowEqualObjects, b3 as getDefaultState, b4 as notifyManager, b5 as parseMutationArgs, b6 as useQueryClient, b7 as useSyncExternalStore, b8 as shouldThrowError, b9 as parseQueryArgs, ba as useBaseQuery, bb as ReactDOM, bc as Portal, l as log, bd as NavigationContext, aq as useNavigate, be as useLocation, h as Button, i as Progress, E as useHotkeys, C as Center, q as TextInput, D as useLocalStorage, v as GCe, x as Nie, e as Container, k as ky, a as config$1, X as queryString, u as useQuery, bf as B9, bg as wue, bh as gW, bi as wz, bj as mF, bk as Uye, z as zB, bl as Lqe, bm as Iqe, bn as I9, bo as N9, bp as P5, m as dj, bq as NP, br as Qa, bs as L3, bt as CMe, bu as _He, bv as Iee, n as lAe, bw as commonjsGlobal, K as sizes$b, p as useForm, bx as rle, by as Nme } from "./use-form.6818284c.js";
+import { r as react, b as jsx, d as useMantineTheme, av as Global$1, aw as css, ax as useDidUpdate, ay as useReducedMotion, W as useWindowEvent, az as mergeRefs, aA as reactDom, O as useComponentDefaultProps, S as extractSystemStyles, B as Box, aB as getDefaultZIndex, aC as OptionalPortal, aD as packSx, t as ActionIcon, c as createStyles, j as jsxs, aE as createPolymorphicComponent, Z as Fragment, T as Text, aF as _extends, a3 as React, U as useUncontrolled, aG as useFloating, aH as size, aI as useFloatingAutoUpdate, aJ as offset, aK as arrow, aL as shift, aM as flip, aN as inline, aO as isElement, aP as useMergedRef, aQ as clsx, a4 as Transition$2, aR as FloatingArrow, R as useId, aS as getFloatingPosition, aT as UnstyledButton, P as Paper, G as Group, aU as CheckIcon, aV as useTransition, aW as getTransitionStyles, aX as Overlay, a2 as Loader, a0 as Tooltip, aY as useIsomorphicEffect$1, aZ as useInputProps, V as Input, a_ as keyframes, a$ as QueryObserver, b0 as infiniteQueryBehavior, b1 as hasNextPage, b2 as hasPreviousPage, b3 as Subscribable, b4 as shallowEqualObjects, b5 as getDefaultState, b6 as notifyManager, b7 as parseMutationArgs, b8 as useQueryClient, b9 as useSyncExternalStore, ba as shouldThrowError, bb as parseQueryArgs, bc as useBaseQuery, bd as ReactDOM, be as Portal, l as log, bf as NavigationContext, as as useNavigate, bg as useLocation, h as Button, i as Progress, E as useHotkeys, C as Center, q as TextInput, D as useLocalStorage, v as GCe, x as Nie, e as Container, k as ky, a as config$1, X as queryString, u as useQuery, bh as B9, bi as wue, bj as gW, bk as wz, bl as mF, bm as Uye, z as zB, bn as Lqe, bo as Iqe, bp as I9, bq as N9, br as P5, m as dj, bs as NP, bt as Qa, bu as L3, bv as CMe, bw as _He, bx as Iee, n as lAe, by as commonjsGlobal, K as sizes$b, p as useForm, bz as rle, bA as Nme } from "./use-form.b4bde58e.js";
 function findElementAncestor(element, selector) {
   let _element = element;
   while ((_element = _element.parentElement) && !_element.matches(selector))
@@ -12542,13 +12542,19 @@ function SafeSelect({
 }
 function useInfinityScroll({
   resourceName,
+  firstPageQueryUniqueKey,
   baseFilterObj = {},
   filterObj = {},
   newestItemsFilterKey,
-  sortBy
+  sortBy,
+  infinityScrollLimit = 20
 }) {
   var _a, _b, _c;
-  const firstPageQuery = useQuery(["logs_infinity_first_page", resourceName], () => GenericService.get(resourceName, baseFilterObj, {
+  const firstPageQueryOptions = ["logs_infinity_first_page", resourceName];
+  if (firstPageQueryUniqueKey) {
+    firstPageQueryOptions.push(firstPageQueryUniqueKey);
+  }
+  const firstPageQuery = useQuery(firstPageQueryOptions, () => GenericService.get(resourceName, baseFilterObj, {
     page: "1",
     limit: "1"
   }, "firstPageQuery"), {
@@ -12587,10 +12593,10 @@ function useInfinityScroll({
   const infinityQuery = useInfiniteQuery(["logs_infinity_pages", resourceName, firstPageData.timestamp], ({
     pageParam = 1
   }) => GenericService.get(resourceName, newRequestFilter, {
-    limit: String(20),
+    limit: String(infinityScrollLimit),
     page: pageParam,
     sortBy,
-    populate: "checks"
+    populate: resourceName === "tests" ? "checks" : "baselineId,actualSnapshotId,diffId"
   }, "infinityQuery"), {
     getNextPageParam: (lastPage) => {
       if (lastPage.page >= lastPage.totalPages)
@@ -12796,6 +12802,7 @@ function ActionPopoverIcon({
   loading,
   buttonColor,
   paused,
+  size: size2,
   ...rest
 }) {
   const [openPopover, handlers] = useDisclosure(false);
@@ -12819,6 +12826,7 @@ function ActionPopoverIcon({
         },
         title,
         loading,
+        size: size2,
         ...rest,
         children: icon
       })
@@ -16612,23 +16620,34 @@ function StringFilter({
     })
   });
 }
+function useDistinctLogQuery({
+  resource,
+  field,
+  keys = [],
+  onSuccess,
+  onError = (e) => errorMsg({
+    error: e
+  })
+}) {
+  return useQuery([resource, field, "distinct", ...keys], () => GenericService.distinct(resource, field), {
+    enabled: true,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    onSuccess,
+    onError
+  });
+}
 function LogLevelFilter({
   label,
   groupRules,
   updateGroupRules,
   id
 }) {
-  const distinctQuery = useQuery(["logs_level_distinct", id], () => GenericService.distinct("logs", "level"), {
-    enabled: true,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
+  const distinctQuery = useDistinctLogQuery({
+    resource: "logs",
+    field: "level",
     onSuccess: (data) => {
       form.values.value = data[0];
-    },
-    onError: (e) => {
-      errorMsg({
-        error: e
-      });
     }
   });
   let levels = [];
@@ -16971,12 +16990,12 @@ function LogicalGroup({
   });
 }
 export {
-  ReactQueryDevtools as $,
+  AppShell as $,
   Affix as A,
   Burger as B,
   CopyButton as C,
-  Divider as D,
-  SegmentedControl as E,
+  Collapse as D,
+  Divider as E,
   FocusTrap as F,
   GenericService as G,
   Header as H,
@@ -16986,85 +17005,86 @@ export {
   List as L,
   Modal as M,
   Navbar as N,
-  Table as O,
+  SegmentedControl as O,
   Popover as P,
-  useInputState as Q,
+  Table as Q,
   RingProgress as R,
   StringParam as S,
   ToggleThemeButton as T,
   UserMenu as U,
-  RelativeDrawer as V,
-  LogicalGroup as W,
-  uuid as X,
-  useNavProgressFetchEffect as Y,
-  AppShell as Z,
+  useInputState as V,
+  RelativeDrawer as W,
+  LogicalGroup as X,
+  uuid as Y,
+  useNavProgressFetchEffect as Z,
   _inheritsLoose as _,
-  Chip as a,
-  navigationData as a0,
-  SpotlightProvider as a1,
-  NotificationsProvider as a2,
-  NavigationProgress as a3,
-  ModalsProvider as a4,
-  QueryParamProvider as a5,
-  ReactRouter6Adapter as a6,
-  clamp as a7,
-  createSafeContext as a8,
-  useContextStylesApi as a9,
-  Notification as aA,
-  Select as aB,
-  ChevronIcon as aC,
-  Global as aD,
-  AppContext as aE,
-  UserHooks as aF,
-  createScopedKeydownHandler as aa,
-  StylesApiProvider as ab,
-  CloseButton as ac,
-  HorizontalSection as ad,
-  Section as ae,
-  VerticalSection as af,
-  DefaultItem as ag,
-  groupOptions as ah,
-  SelectPopover as ai,
-  SelectScrollArea as aj,
-  SelectItems as ak,
-  useFocusTrap as al,
-  useScrollLock as am,
-  useFocusReturn as an,
-  GroupedTransition as ao,
-  createEventHandler as ap,
-  useDelayedHover as aq,
-  _objectWithoutPropertiesLoose as ar,
-  useScrollIntoView as as,
-  getSelectRightSectionProps as at,
-  useElementSize as au,
-  Avatar as av,
-  CardSection as aw,
-  Highlight as ax,
-  Mark as ay,
-  Menu as az,
-  useColorScheme as b,
-  useDisclosure as c,
-  HeaderLogo as d,
-  SafeSelect as e,
-  Breadcrumbs as f,
-  errorMsg as g,
-  useMutation as h,
-  isDark as i,
-  Skeleton as j,
-  useInView as k,
+  useDisclosure as a,
+  ReactQueryDevtools as a0,
+  navigationData as a1,
+  SpotlightProvider as a2,
+  NotificationsProvider as a3,
+  NavigationProgress as a4,
+  ModalsProvider as a5,
+  QueryParamProvider as a6,
+  ReactRouter6Adapter as a7,
+  clamp as a8,
+  createSafeContext as a9,
+  Menu as aA,
+  Notification as aB,
+  Select as aC,
+  ChevronIcon as aD,
+  Global as aE,
+  AppContext as aF,
+  UserHooks as aG,
+  useContextStylesApi as aa,
+  createScopedKeydownHandler as ab,
+  StylesApiProvider as ac,
+  CloseButton as ad,
+  HorizontalSection as ae,
+  Section as af,
+  VerticalSection as ag,
+  DefaultItem as ah,
+  groupOptions as ai,
+  SelectPopover as aj,
+  SelectScrollArea as ak,
+  SelectItems as al,
+  useFocusTrap as am,
+  useScrollLock as an,
+  useFocusReturn as ao,
+  GroupedTransition as ap,
+  createEventHandler as aq,
+  useDelayedHover as ar,
+  _objectWithoutPropertiesLoose as as,
+  useScrollIntoView as at,
+  getSelectRightSectionProps as au,
+  useElementSize as av,
+  Avatar as aw,
+  CardSection as ax,
+  Highlight as ay,
+  Mark as az,
+  useClickOutside as b,
+  escapeRegExp as c,
+  ScrollArea as d,
+  errorMsg as e,
+  Chip as f,
+  useColorScheme as g,
+  HeaderLogo as h,
+  SafeSelect as i,
+  Breadcrumbs as j,
+  isDark as k,
   links as l,
-  getNavigationItem as m,
-  stopNavigationProgress as n,
+  useMutation as m,
+  Skeleton as n,
   openSpotlight as o,
-  escapeRegExp as p,
-  useToggle as q,
-  resetNavigationProgress as r,
+  useInView as p,
+  getNavigationItem as q,
+  stopNavigationProgress as r,
   successMsg as s,
-  useInfinityScroll as t,
+  resetNavigationProgress as t,
   useQueryParams as u,
-  ScrollArea as v,
-  Badge as w,
-  ActionPopoverIcon as x,
-  Card as y,
-  Collapse as z
+  useToggle as v,
+  useInfinityScroll as w,
+  Badge as x,
+  ActionPopoverIcon as y,
+  Card as z
 };

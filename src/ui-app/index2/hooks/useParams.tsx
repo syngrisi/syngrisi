@@ -8,6 +8,7 @@ export function useParams() {
         filter: JsonParam,
         base_filter: JsonParam,
         checkId: StringParam,
+        quick_filter: JsonParam,
     });
     const updateQueryJsonParam = (section: string, key: string, value: string) => {
         const current = query[section as keyof typeof query];

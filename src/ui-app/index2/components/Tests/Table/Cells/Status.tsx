@@ -29,7 +29,7 @@ export function Status({ type, test }: Props) {
                 paddingLeft: '2px',
             }}
         >
-            <Group position="left" spacing={0}>
+            <Group position="left" spacing={0} noWrap>
                 <StatusesRing statuses={checkStatuses} key={type} ml={-4} />
                 <Tooltip label={test[type]} multiline>
                     <Text

@@ -45,7 +45,7 @@ const paginateDistinct = (schema) => {
         const documentsCount = (await this.aggregate([groupAggregateObj])
             .exec()).length;
         const aggregateArr = [
-            { $match: EJSON.parse(filter.filter) },
+            { $match: EJSON.parse(filter.filter || '{}') },
             groupAggregateObj,
             { $sort: sort },
             { $skip: skip },

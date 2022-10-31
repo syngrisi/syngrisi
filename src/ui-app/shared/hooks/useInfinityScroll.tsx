@@ -11,20 +11,31 @@ interface IIScrollParams {
     resourceName: string,
     baseFilterObj?: { [key: string]: any },
     filterObj?: { [key: string]: any },
-    newestItemsFilterKey: string,
+    newestItemsFilterKey?: string,
+    firstPageQueryUniqueKey?: string
+    infinityScrollLimit?: number
     sortBy: string,
 }
 
 export default function useInfinityScroll(
     {
         resourceName,
+        firstPageQueryUniqueKey,
         baseFilterObj = {},
         filterObj = {},
         newestItemsFilterKey,
         sortBy,
+        infinityScrollLimit = 20,
     }: IIScrollParams,
 ) {
 
+    const firstPageQueryOptions: any = [
+        'logs_infinity_first_page',
+        resourceName,
+    ]
+    if (firstPageQueryUniqueKey) {
+        firstPageQueryOptions.push(firstPageQueryUniqueKey);
+    }
     /**
      * this query is for getting info about current first page start position
      * for example particular timestamp, to not to mix records that were at the moment when user to open the page
@@ -32,10 +43,7 @@ export default function useInfinityScroll(
      * also it get metadata, like page counts, current page, etc. to use them for example in inf.scroll affix.
      */
     const firstPageQuery = useQuery(
-        [
-            'logs_infinity_first_page',
-            resourceName,
-        ],
+        firstPageQueryOptions,
         () => GenericService.get(
             resourceName,
             baseFilterObj,
@@ -94,10 +102,10 @@ export default function useInfinityScroll(
             resourceName,
             newRequestFilter,
             {
-                limit: String(20),
+                limit: String(infinityScrollLimit),
                 page: pageParam,
                 sortBy,
-                populate: 'checks',
+                populate: resourceName === 'tests' ? 'checks' : 'baselineId,actualSnapshotId,diffId',
             },
             'infinityQuery'
         ),
