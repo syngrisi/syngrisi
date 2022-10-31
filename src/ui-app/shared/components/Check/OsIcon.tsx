@@ -60,7 +60,7 @@ export function OsIcon({ os, size = 24, ...rest }: Props) {
     const allDevices = [...config.devices, ...customDevices];
 
     const Icon = osIconMap(os)
-        || osIconMap(allDevices.find((x: any) => x.device === os)?.os)
+        || osIconMap(allDevices.find((x: any) => x.device === os)?.os || '')
         || TbQuestionMark;
 
     return (
