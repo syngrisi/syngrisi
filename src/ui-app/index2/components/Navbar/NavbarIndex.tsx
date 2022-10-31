@@ -57,7 +57,7 @@ const useStyles = createStyles((theme) => ({
     },
 }));
 
-export default function IndexNavbar() {
+export default function NavbarIndex() {
     const { classes } = useStyles();
     const [activeItems, setActiveItems] = useState<string[]>([]);
     const activeItemsHandler = {
@@ -269,7 +269,12 @@ export default function IndexNavbar() {
                             {
                                 infinityQuery.status === 'loading'
                                     ? (
-                                        <SkeletonWrapper infinityQuery={null} itemType={groupByValue} num={20} />
+                                        <SkeletonWrapper
+                                            infinityQuery={null}
+                                            itemType={groupByValue}
+                                            num={20}
+                                            itemClass={classes.navbarItem}
+                                        />
                                     )
                                     : infinityQuery.status === 'error'
                                         ? (<Text color="red">Error: {infinityQuery.error.message}</Text>)
@@ -290,7 +295,11 @@ export default function IndexNavbar() {
                                             </List>
                                         )
                             }
-                            <SkeletonWrapper infinityQuery={infinityQuery} />
+                            <SkeletonWrapper
+                                itemType={groupByValue}
+                                infinityQuery={infinityQuery}
+                                itemClass={classes.navbarItem}
+                            />
                         </Navbar.Section>
                     </Navbar>
                 )
