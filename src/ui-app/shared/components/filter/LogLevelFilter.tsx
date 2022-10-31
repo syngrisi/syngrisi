@@ -3,10 +3,9 @@ import { Group } from '@mantine/core';
 import * as React from 'react';
 import { useEffect } from 'react';
 import { useForm } from '@mantine/form';
-import { useQuery } from '@tanstack/react-query';
 import SafeSelect from '../SafeSelect';
-import { errorMsg, generateItemFilter } from '../../utils';
-import { GenericService } from '../../services';
+import { generateItemFilter } from '../../utils';
+import { useDistinctLogQuery } from '../../hooks/useDistinctLogQuery';
 
 interface Props {
     label: string
@@ -16,22 +15,16 @@ interface Props {
 }
 
 export function LogLevelFilter({ label, groupRules, updateGroupRules, id }: Props) {
-    const distinctQuery = useQuery(
-        ['logs_level_distinct', id],
-        () => GenericService.distinct('logs', 'level'),
+    const distinctQuery = useDistinctLogQuery(
         {
-            enabled: true,
-            refetchOnWindowFocus: false,
-            refetchOnReconnect: false,
-            onSuccess: (data) => {
-                // eslint-disable-next-line no-use-before-define
+            resource: 'logs',
+            field: 'level',
+            onSuccess: (data: any) => {
                 form.values.value = data[0];
-            },
-            onError: (e) => {
-                errorMsg({ error: e });
             },
         },
     );
+
     let levels: { value: string, label: string }[] = [];
     if (distinctQuery.isSuccess && distinctQuery.data) {
         levels = distinctQuery.data.map((item) => ({ value: item, label: item }));

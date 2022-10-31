@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import * as React from 'react';
 import { Badge, Group } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
@@ -17,7 +18,7 @@ interface Props {
     size?: number | string,
 }
 
-export function Status({ check, size }: Props) {
+export function Status({ check, size, ...rest }: Props) {
     const [checksViewSize] = useLocalStorage({ key: 'check-view-size', defaultValue: 'medium' });
     return (
         <Badge
@@ -25,6 +26,7 @@ export function Status({ check, size }: Props) {
             variant="light"
             size={size || sizes[checksViewSize].statusBadge}
             title="Check status"
+            {...rest}
         >
             <Group spacing={0} align="center" noWrap>
                 {check.status}

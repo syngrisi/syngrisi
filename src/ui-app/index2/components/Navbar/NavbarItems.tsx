@@ -5,7 +5,6 @@ import { IPage } from '../../../shared/interfaces/logQueries';
 import ILog from '../../../shared/interfaces/ILog';
 import { BaseItemWrapper } from './Items/BaseItemWrapper';
 
-
 type Props = {
     infinityQuery: any,
     groupByValue: string,

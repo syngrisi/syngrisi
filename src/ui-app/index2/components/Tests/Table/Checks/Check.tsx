@@ -73,7 +73,7 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                                     // fit={'cover'} //default
                                     // fit={'none'}
                                     // fit={'fill'}
-                                    width={imageWeight * 4}
+                                    width={`${imageWeight * 4}px`}
                                     // height="100px"
                                     withPlaceholder
                                     alt={check.name}
@@ -85,7 +85,7 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                                         () => ({
                                             image: {
                                                 // cursor: 'pointer',
-                                                height: 'auto',
+                                                // maxHeight: `${imageWeight * 4}px`,
                                                 aspectRatio: '1/1',
                                                 // height: '10%!important',
                                             },
@@ -99,6 +99,7 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                             <Group position="right">
                                 <Status check={check} />
                                 <ViewPortLabel
+                                    color="blue"
                                     check={check}
                                     sizes={sizes}
                                     checksViewSize={checksViewSize}
@@ -167,7 +168,7 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                                             // fit={'cover'} //default
                                             // fit={'none'}
                                             // fit={'fill'}
-                                            width="100%"
+                                            // width={`${imageWeight * 12}px`}
                                             // height={checksViewMode === 'bounded' ? 222 : 'auto'}
                                             // withPlaceholder
                                             alt={check.name}
@@ -176,8 +177,10 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                                                 () => ({
                                                     image: {
                                                         // cursor: 'pointer',
-                                                        height: 'auto',
-                                                        aspectRatio: checksViewMode === 'bounded' ? '1/1' : '',
+                                                        // height: 'auto',
+                                                        maxHeight: checksViewMode === 'bounded' ? `${imageWeight * 8}px` : '',
+
+                                                        // aspectRatio: checksViewMode === 'bounded' ? '1/1' : '',
                                                         // height: '10%!important',
                                                     },
                                                 })
@@ -189,25 +192,28 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                             </Card.Section>
 
                             {/* CHECK TOOLBAR */}
-                            <Group position="apart" pl="xs" pr="xs" mt="xs" mb={8} spacing="xs" align="center" noWrap>
+                            <Group position="apart" pl="sm" pr="sm" mt="xs" mb={8} spacing="xs" align="center" noWrap>
                                 <Status check={check} />
 
                                 <ViewPortLabel
                                     check={check}
                                     sizes={sizes}
+                                    color="blue"
                                     size="sm"
                                     fontSize="10px"
                                     checksViewSize={checksViewSize}
                                     displayed={(checksViewSize !== 'small')}
                                 />
-                                <Group spacing={4} position="right" noWrap>
+                                <Group spacing={8} position="right" noWrap>
                                     <AcceptButton
+                                        size={22}
                                         check={check}
                                         testUpdateQuery={testUpdateQuery}
                                         checksQuery={checksQuery}
                                     />
 
                                     <RemoveButton
+                                        size={26}
                                         checksQuery={checksQuery}
                                         testUpdateQuery={testUpdateQuery}
                                         check={check}

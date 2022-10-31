@@ -12,6 +12,7 @@ import { TbQuestionMark } from 'react-icons/tb';
 interface Props {
     os: string
     size: number
+    color?: string
 }
 
 const osIconMap = (key: string) => {

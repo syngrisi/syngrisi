@@ -193,7 +193,7 @@ export function CheckModal({ firstPageQuery }: Props) {
                         : checkData
                             ? (
                                 <CheckDetails
-                                    check={checkData}
+                                    checkData={checkData}
                                     checkQuery={checkQuery}
                                     firstPageQuery={firstPageQuery}
                                     closeHandler={closeHandler}

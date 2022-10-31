@@ -55,6 +55,7 @@ export function RunItem(
         ),
         {
             enabled: true,
+            refetchOnWindowFocus: false,
             onError: (e) => {
                 errorMsg({ error: e });
             },

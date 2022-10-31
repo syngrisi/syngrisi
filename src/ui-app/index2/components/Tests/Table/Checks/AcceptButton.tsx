@@ -60,7 +60,7 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, size = 19 }:
                     fontSize: '12px',
                     position: 'absolute',
                     bottom: 11,
-                    left: 14,
+                    left: 12,
                     lineHeight: '16px',
                     fontWeight: 600,
                     fontFamily: '"Roboto","Arial",sans-serif',
