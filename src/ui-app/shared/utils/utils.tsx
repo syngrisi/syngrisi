@@ -3,8 +3,6 @@ import { useMantineTheme } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import log from './Logger';
 
-export const isDark = () => useMantineTheme().colorScheme === 'dark';
-
 export function uuid() {
     // @ts-ignore
     return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>

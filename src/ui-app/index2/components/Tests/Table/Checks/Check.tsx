@@ -7,6 +7,7 @@ import {
     Image,
     Paper,
     Text,
+    Tooltip,
     useMantineTheme,
 } from '@mantine/core';
 
@@ -19,6 +20,7 @@ import { RemoveButton } from './RemoveButton';
 import { ViewPortLabel } from './ViewPortLabel';
 import { sizes } from './checkSizes';
 import { Status } from '../../../../../shared/components/Check/Status';
+import { PreviewCheck } from './PreviewCheck';
 
 interface Props {
     check: any
@@ -37,6 +39,7 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
     const imageFilename = check.diffId?.filename || check.actualSnapshotId?.filename || check.baselineId?.filename;
     const imagePreviewSrc = `${config.baseUri}/snapshoots/${imageFilename}`;
     const linkToCheckOverlay = `/index2/?${queryString.stringify({ ...query, checkId: check._id })}`;
+
     // const handlePreviewLinkClick = (e: React.MouseEvent) => {
     //     if (e.metaKey || e.ctrlKey) return;
     //     e.preventDefault();
@@ -151,30 +154,43 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                                 <Text>{check.name}</Text>
                             </Paper>
                             <Card.Section m={2}>
-                                <a
-                                    style={{ display: 'inline-block', width: '100%', cursor: 'pointer' }}
-                                    href={linkToCheckOverlay}
+                                <Tooltip
+                                    multiline
+                                    zIndex={1000}
+                                    withinPortal
+                                    withArrow
+                                    position="right-start"
+                                    color="dark"
+                                    label={
+                                        <PreviewCheck check={check} />
+                                    }
                                 >
-                                    <Group
-                                        position="center"
-                                        sx={{ width: '100%', cursor: 'pointer' }}
-                                        onClick={handlePreviewImageClick}
+                                    <a
+                                        style={{ display: 'inline-block', width: '100%', cursor: 'pointer' }}
+                                        href={linkToCheckOverlay}
                                     >
+                                        <Group
+                                            position="center"
+                                            sx={{ width: '100%', cursor: 'pointer' }}
+                                            onClick={handlePreviewImageClick}
+                                        >
 
-                                        <Image
-                                            src={imagePreviewSrc}
-                                            fit="contain"
-                                            alt={check.name}
-                                            styles={
-                                                () => ({
-                                                    image: {
-                                                        maxHeight: checksViewMode === 'bounded' ? `${imageWeight * 8}px` : '',
-                                                    },
-                                                })
-                                            }
-                                        />
-                                    </Group>
-                                </a>
+                                            <Image
+                                                src={imagePreviewSrc}
+                                                fit="contain"
+                                                alt={check.name}
+                                                styles={
+                                                    () => ({
+                                                        image: {
+                                                            maxHeight: checksViewMode === 'bounded' ? `${imageWeight * 8}px` : '',
+                                                        },
+                                                    })
+                                                }
+                                            />
+                                        </Group>
+                                    </a>
+
+                                </Tooltip>
                             </Card.Section>
 
                             {/* CHECK TOOLBAR */}

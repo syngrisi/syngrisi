@@ -43,6 +43,12 @@ export const tableColumns: { [key: string]: any } = {
         cellStyle: { width: '10%' },
         type: 'StringFilter',
     },
+    browserVersion: {
+        label: 'Browser Ver.',
+        headStyle: { width: '10%' },
+        cellStyle: { width: '10%' },
+        type: 'StringFilter',
+    },
     os: {
         label: 'Platform',
         headStyle: { width: '10%' },

@@ -6,7 +6,7 @@ import queryString from 'query-string';
 import { useForm } from '@mantine/form';
 import { useRef, useState } from 'react';
 
-import { isDark, log } from '../../../shared/utils';
+import { log } from '../../../shared/utils';
 import { IInput, ITask } from './tasksList';
 import { useSubpageEffect } from '../../../shared/hooks';
 
@@ -127,7 +127,7 @@ export default function Task({ item }: { item: ITask }) {
                             color: 'white',
                             fontSize: '1rem',
                             padding: '10px',
-                            backgroundColor: isDark() ? theme.colors.dark[9] : theme.colors.dark[6],
+                            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.colors.dark[6],
                         }
                     }
                     value={outputField}

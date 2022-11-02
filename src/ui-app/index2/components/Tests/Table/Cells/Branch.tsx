@@ -16,7 +16,7 @@ export function Branch({ type, test, itemValue }: Props) {
             data-test={`table-row-${tableColumns[type].label}`}
             style={{ ...tableColumns[type].cellStyle }}
         >
-            <Tooltip label={test[type]} multiline>
+            <Tooltip label={test[type]} multiline withinPortal>
                 <Badge
                     size="sm"
                     color="dark"

@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle,react/jsx-one-expression-per-line */
 import * as React from 'react';
-import { Badge, useMantineTheme } from '@mantine/core';
+import { Badge, Tooltip, useMantineTheme, Text, Stack } from '@mantine/core';
 import { BsHandThumbsUp, BsHandThumbsUpFill } from 'react-icons/all';
 import { useMutation } from '@tanstack/react-query';
 import ActionPopoverIcon from '../../../../../shared/components/ActionPopoverIcon';
@@ -84,26 +84,52 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, size = 19 }:
     };
 
     return (
-        <ActionPopoverIcon
-            color={likeIconColor}
-            buttonColor="green"
-            sx={{
-                cursor: isCurrentlyAccepted ? 'default' : 'pointer',
-                '&:hover': { backgroundColor: isCurrentlyAccepted ? 'rgba(255, 255, 255, 0);' : '' },
-            }}
-            testAttr="check-accept-icon"
-            variant="subtle"
-            paused={isCurrentlyAccepted}
-            icon={
-                (isCurrentlyAccepted && isAccepted)
-                    ? <BsHandThumbsUpFill size={size} />
-                    : (<><BsHandThumbsUp size={size} /> {notAcceptedIcon}</>)
+
+        <Tooltip
+            withinPortal
+            label={
+                check.markedByUsername
+                    ? (
+                        <Stack spacing="xs" p={5}>
+                            <Text>
+                                Accepted by: {check.markedByUsername}
+                            </Text>
+                            <Text>
+                                Accepted Date: {check.markedDate}
+                            </Text>
+                        </Stack>
+                    )
+                    : (
+                        <Text>Not accepted</Text>
+                    )
             }
-            action={handleAcceptCheckClick}
-            title="Accept the check actual screenshot"
-            loading={mutationAcceptCheck.isLoading}
-            confirmLabel="Accept"
-            size={size}
-        />
+        >
+            <div>
+                <ActionPopoverIcon
+                    color={likeIconColor}
+                    buttonColor="green"
+                    sx={{
+                        cursor: isCurrentlyAccepted ? 'default' : 'pointer',
+                        '&:hover': { backgroundColor: isCurrentlyAccepted ? 'rgba(255, 255, 255, 0);' : '' },
+                    }}
+                    testAttr="check-accept-icon"
+                    variant="subtle"
+                    paused={isCurrentlyAccepted}
+                    icon={
+                        (isCurrentlyAccepted && isAccepted)
+                            ? (
+
+                                <BsHandThumbsUpFill size={size} />
+                            )
+                            : (<><BsHandThumbsUp size={size} /> {notAcceptedIcon}</>)
+                    }
+                    action={handleAcceptCheckClick}
+                    title="Accept the check actual screenshot"
+                    loading={mutationAcceptCheck.isLoading}
+                    confirmLabel="Accept"
+                    size={size}
+                />
+            </div>
+        </Tooltip>
     );
 }

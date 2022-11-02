@@ -19,7 +19,7 @@ export function StartDate({ type, test, itemValue }: Props) {
                 paddingLeft: '2px',
             }}
         >
-            <Tooltip label={itemValue}>
+            <Tooltip label={itemValue} withinPortal>
                 <Text
                     lineClamp={1}
                     sx={{ wordBreak: 'break-all' }}

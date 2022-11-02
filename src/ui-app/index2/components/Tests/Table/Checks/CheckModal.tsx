@@ -1,4 +1,4 @@
-/* eslint-disable prefer-arrow-callback,no-nested-ternary,no-underscore-dangle,react/jsx-one-expression-per-line */
+/* eslint-disable prefer-arrow-callback,no-nested-ternary,no-underscore-dangle,react/jsx-one-expression-per-line,max-len */
 import * as React from 'react';
 import {
     ActionIcon,
@@ -7,6 +7,7 @@ import {
     Modal,
     Stack,
     Text,
+    Tooltip,
     useMantineTheme,
 } from '@mantine/core';
 import { useDisclosure, useLocalStorage } from '@mantine/hooks';
@@ -74,44 +75,74 @@ export function CheckModal({ firstPageQuery }: Props) {
     const title = useMemo(() => {
         if (checkData) {
             return (
-                <Group position="apart">
-                    <Group position="left" align="center" spacing="xs" sx={{ position: 'relative' }} noWrap>
-                        <Text>
-                            {checkData.app.name} / {checkData.suite.name} / {checkData.test.name} / {checkData?.name}
-                        </Text>
+                <Group position="apart" sx={{ width: '100%' }} noWrap>
+                    <Group
+                        position="left"
+                        align="center"
+                        spacing="xs"
+                        sx={{ position: 'relative' }}
+                        noWrap
+                    >
+                        <Status size="lg" check={checkData} />
+
+                        <Tooltip
+                            withinPortal
+                            label={
+                                `Created: ${checkData.createdDate}`
+                            }
+                        >
+                            <Text lineClamp={1}>
+                                {checkData.app.name} / {checkData.suite.name} / {checkData.test.name} / {checkData?.name}
+                            </Text>
+                        </Tooltip>
                     </Group>
 
-                    <Group spacing={8}>
-                        <Group spacing={4}>
-                            <Group spacing={2}>
-                                {/* <Status size="lg" check={checkData} /> */}
-
-                                <ActionIcon variant="light" size={32} p={4}>
-                                    <OsIcon
-                                        size={20}
-                                        color={iconsColor}
-                                        os={checkData.os}
-                                    />
-                                </ActionIcon>
-                                <ActionIcon variant="light" size={32} p={4}>
-                                    <BrowserIcon
-                                        size={20}
-                                        color={iconsColor}
-                                        browser={checkData.browserName}
-                                    />
-                                </ActionIcon>
-                            </Group>
-                            <ViewPortLabel
-                                check={checkData}
-                                color={theme.colorScheme === 'dark' ? 'gray.2' : 'gray.8'}
-                                sizes={sizes}
-                                size="lg"
-                                checksViewSize={checksViewSize}
-                                fontSize="14px"
+                    <Group
+                        noWrap
+                        spacing="xs"
+                        // sx={{ width: '50%' }}
+                    >
+                        <ViewPortLabel
+                            check={checkData}
+                            // color={theme.colorScheme === 'dark' ? 'gray.2' : 'gray.8'}
+                            color="blue"
+                            sizes={sizes}
+                            size="lg"
+                            checksViewSize={checksViewSize}
+                            fontSize="12px"
+                        />
+                        {/* <Status size="lg" check={checkData} /> */}
+                        <ActionIcon variant="light" size={32} p={4} ml={4}>
+                            <OsIcon
+                                size={20}
+                                color={iconsColor}
+                                os={checkData.os}
                             />
+                        </ActionIcon>
+                        <Text size={12}>{checkData.os}</Text>
 
-                        </Group>
-                        <Status size="lg" check={checkData} />
+                        <ActionIcon variant="light" size={32} p={4}>
+                            <BrowserIcon
+                                size={20}
+                                color={iconsColor}
+                                browser={checkData.browserName}
+                            />
+                        </ActionIcon>
+                        <Text
+                            size={12}
+                            title={
+                                checkData.browserFullVersion
+                                    ? `${checkData.browserFullVersion}`
+                                    : ''
+                            }
+                        >
+                            {checkData.browserName}
+                            {
+                                checkData.browserVersion
+                                    ? ` - ${checkData.browserVersion}`
+                                    : ''
+                            }
+                        </Text>
                     </Group>
 
                     {/* <Group spacing={8}> */}

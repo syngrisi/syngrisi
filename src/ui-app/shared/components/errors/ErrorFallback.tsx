@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { Group, Title, Button, Text, Paper, Stack, CopyButton } from '@mantine/core';
 import { useState } from 'react';
+import { IconRefresh } from '@tabler/icons';
 
 export function ErrorFallback({ error, resetErrorBoundary }: { error: any, resetErrorBoundary: any }) {
     const [errorDetails] = useState(
@@ -18,6 +19,7 @@ export function ErrorFallback({ error, resetErrorBoundary }: { error: any, reset
 
                 <Group position="center">
                     <Button
+                        leftIcon={<IconRefresh />}
                         variant="outline"
                         size="md"
                         onClick={() => {

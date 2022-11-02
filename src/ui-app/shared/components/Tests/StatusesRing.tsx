@@ -52,7 +52,7 @@ export function StatusesRing({ statuses, ...rest }: Props) {
     );
 
     return (
-        <Tooltip label={tooltipLabel}>
+        <Tooltip label={tooltipLabel} withinPortal>
             <RingProgress
                 sections={ringSectionsData}
                 size={48}

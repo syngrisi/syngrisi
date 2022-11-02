@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Group, Text, Tooltip } from '@mantine/core';
 import { tableColumns } from '../tableColumns';
-import { BrowserIcon } from '../../../../../shared/components/Check/BrowserIcon';
 
 interface Props {
     type: string
@@ -9,7 +8,7 @@ interface Props {
     itemValue: string
 }
 
-export function BrowserName({ type, test, itemValue }: Props) {
+export function BrowserVersion({ type, test, itemValue }: Props) {
     return (
         <td
             key={type}
@@ -18,7 +17,6 @@ export function BrowserName({ type, test, itemValue }: Props) {
         >
             <Tooltip label={test[type]} multiline withinPortal>
                 <Group spacing={6} align="center" noWrap>
-                    <BrowserIcon size={24} browser={itemValue} />
                     <Text
                         lineClamp={1}
                         sx={{ wordBreak: 'break-all' }}

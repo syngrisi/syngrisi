@@ -14,6 +14,7 @@ import { Os } from './Cells/Os';
 import { BrowserName } from './Cells/BrowserName';
 import { Branch } from './Cells/Branch';
 import { Viewport } from './Cells/ViewPort';
+import { BrowserVersion } from './Cells/BrowserVersion';
 
 const useStyles = createStyles(testsCreateStyle as any);
 
@@ -34,6 +35,7 @@ function Cell({ type, test, itemValue }: { type: string, test: any, itemValue: s
         startDate: (<StartDate type={type} key={type} test={test} itemValue={itemValue} />),
         os: (<Os type={type} key={type} test={test} itemValue={itemValue} />),
         browserName: (<BrowserName type={type} key={type} test={test} itemValue={itemValue} />),
+        browserVersion: (<BrowserVersion type={type} key={type} test={test} itemValue={itemValue} />),
         branch: (<Branch type={type} key={type} test={test} itemValue={itemValue} />),
         viewport: (<Viewport type={type} key={type} test={test} itemValue={itemValue} />),
     };
@@ -43,7 +45,7 @@ function Cell({ type, test, itemValue }: { type: string, test: any, itemValue: s
             data-test={`table-row-${tableColumns[type].label}`}
             style={{ ...tableColumns[type].cellStyle }}
         >
-            <Tooltip label={test[type]} multiline>
+            <Tooltip label={test[type]} multiline withinPortal>
                 <Text
                     lineClamp={1}
                     sx={{ wordBreak: 'break-all' }}

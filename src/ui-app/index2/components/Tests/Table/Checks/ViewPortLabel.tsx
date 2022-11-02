@@ -67,7 +67,7 @@ export function ViewPortLabel(
             <Badge
                 color={color}
                 size={size || sizes[checksViewSize].viewportText}
-                title="Screen Viewport"
+                title="Viewport size"
                 sx={
                     {
                         fontSize,
