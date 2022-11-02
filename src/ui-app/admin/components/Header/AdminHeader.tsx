@@ -18,7 +18,7 @@ import { openSpotlight } from '@mantine/spotlight';
 import useColorScheme from '../../../shared/hooks/useColorSheme';
 import ToggleThemeButton from '../../../shared/components/ToggleThemeButton';
 import HeaderLogo from '../../../shared/components/Header/HeaderLogo';
-import { isDark } from '../../../shared/utils';
+// import { isDark } from '../../../shared/utils';
 import UserMenu from '../../../shared/components/Header/UserMenu';
 import { AppContext } from '../../AppContext';
 import { links } from '../../../shared/components/heaserLinks';
@@ -34,7 +34,7 @@ const useStyles = createStyles((theme) => ({
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: isDark() ? theme.colors.dark[5] : theme.colors.gray[2],
+        backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2],
     },
     links: {
         [theme.fn.smallerThan('md')]: {

@@ -21,7 +21,7 @@ export function AcceptStatusItem({ item, index, handlerItemClick, className }: P
             <Group noWrap pl={8} position="apart" spacing={0} sx={{ width: '100%' }}>
                 <Stack spacing={0} sx={{ width: '100%' }}>
                     <Group position="left" sx={{ width: '100%' }}>
-                        <Tooltip label={item.name} multiline>
+                        <Tooltip label={item.name} multiline withinPortal>
                             <Group spacing={8}>
                                 <AcceptedStatusIcon status={item.name} size={44} />
                                 <Text

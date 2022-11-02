@@ -86,7 +86,7 @@ export function RunItem(
                     <Group sx={{ width: '100%' }} noWrap>
                         <Stack spacing={0} sx={{ width: '100%' }}>
                             <Group position="left" sx={{ width: '100%' }}>
-                                <Tooltip label={item.name} multiline>
+                                <Tooltip label={item.name} multiline withinPortal>
                                     <Text
                                         data-test="navbar-item-name"
                                         size={16}
@@ -100,6 +100,7 @@ export function RunItem(
 
                             <Group position="right">
                                 <Tooltip
+                                    withinPortal
                                     label={
                                         dateFns.format(dateFns.parseISO(item.createdDate), 'yyyy-MM-dd HH:mm:ss')
                                     }

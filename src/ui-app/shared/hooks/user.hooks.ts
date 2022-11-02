@@ -25,6 +25,16 @@ export const UserHooks = {
         );
         return { isLoading, error, data, refetch, isSuccess };
     },
+    useUsersByUsername(username: any) {
+        return useQuery(
+            ['useUsersByUsername', username], () => GenericService.get('users', { username }), {
+                onError: (err: unknown) => {
+                    errorMsg({ error: err });
+                },
+            },
+        );
+    },
+
     useAllUsers() {
         const { isLoading, error, data, refetch, isSuccess, isFetching }: any = useQuery(
             ['allUsers'], () => GenericService.get('users', {}, { sortBy: 'id: desc' }), {

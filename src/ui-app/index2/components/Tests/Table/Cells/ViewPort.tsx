@@ -5,17 +5,30 @@ import { tableColumns } from '../tableColumns';
 interface Props {
     type: string
     test: any
-    itemValue: string
 }
 
-export function Viewport({ type, test, itemValue }: Props) {
+export function Viewport({ type, test }: Props) {
+    const uniqueCheckViewports = [...new Set(test.checks.map((x) => x.viewport))];
+
+    // eslint-disable-next-line no-nested-ternary
+    const resultViewport = uniqueCheckViewports.length > 0
+        ? (uniqueCheckViewports.length === 1 ? uniqueCheckViewports[0] : '≠')
+        : test.viewport;
     return (
         <td
             key={type}
             data-test={`table-row-${tableColumns[type].label}`}
             style={{ ...tableColumns[type].cellStyle }}
         >
-            <Tooltip label={test[type]} multiline>
+            <Tooltip
+                withinPortal
+                label={
+                    (uniqueCheckViewports.length !== 1)
+                        ? 'There are checks with different viewports'
+                        : resultViewport
+                }
+                multiline
+            >
                 <Badge
                     size="md"
                     color="blue"
@@ -24,7 +37,7 @@ export function Viewport({ type, test, itemValue }: Props) {
                         lineClamp={1}
                         sx={{ wordBreak: 'break-all' }}
                     >
-                        {itemValue}
+                        {resultViewport}
                     </Text>
                 </Badge>
             </Tooltip>

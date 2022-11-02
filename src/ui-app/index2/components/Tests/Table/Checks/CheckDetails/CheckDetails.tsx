@@ -13,7 +13,10 @@ import {
     Popover,
     Divider,
 } from '@mantine/core';
-import { useDisclosure, useViewportSize } from '@mantine/hooks';
+import {
+    useDisclosure,
+    // useViewportSize
+} from '@mantine/hooks';
 import { useContext, useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -35,6 +38,7 @@ import { RemoveButton } from '../RemoveButton';
 import { AppContext } from '../../../../../AppContext';
 import { RelatedChecks } from './RelatedChecks';
 import { useRelatedChecks } from './hooks/useRelatedChecks';
+import { ScreenshotDetails } from './ScreenshotDetails';
 
 function onImageErrorHandler(...e: any) {
     const imgSrc = e[0].path[0].src;
@@ -78,6 +82,7 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
     const related = useRelatedChecks(checkData);
     related.opened = relatedChecksOpened;
     related.handler = relatedChecksHandler;
+
     const currentCheck = useMemo(
         () => related.relatedFlatChecksData.find((x) => x._id === related.relatedActiveCheck) || checkData,
         [related.relatedActiveCheck],
@@ -86,7 +91,7 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
     const theme = useMantineTheme();
     setAppTitle(currentCheck.name);
 
-    const { height: vHeight, width: vWidth } = useViewportSize();
+    // const { height, width } = useViewportSize();
     const [mainView, setMainView] = useState(null);
     const [zoomPercent, setZoomPercent] = useState(100);
     const [openedZoomPopover, zoomPopoverHandler] = useDisclosure(false);
@@ -171,6 +176,7 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
     }, [related.relatedActiveCheck, relatedChecksOpened]);
 
     useEffect(() => {
+        if (!document.getElementById('snapshoot')) return;
         const initMV = async () => {
             fabric.Object.prototype.objectCaching = false;
             const baselineImgSrc = `${config.baseUri}/snapshoots/${currentCheck?.baselineId?.filename}?expectedImg`;
@@ -208,8 +214,7 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
         };
         setTimeout(() => {
             initMV();
-        }, 10)
-
+        }, 10);
     }, [related.relatedActiveCheck, relatedChecksOpened]);
 
     useEffect(function afterMainViewCreatedHandleRegions() {
@@ -240,6 +245,7 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
         return result;
     };
 
+    // zoom to particular image dimension (weight or height)
     const zoomTo = (image: any, dimension: string) => {
         // console.log(mainView.canvas.getZoom());
         const ratio = mainView.canvas[dimension] / image[dimension];
@@ -254,7 +260,8 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
 
         const anotherDimension = (greatestImage.dimension === 'height') ? 'width' : 'height';
 
-        if (mainView[greatestImage.imageName][anotherDimension] > mainView.canvas[anotherDimension]) {
+        if ((mainView[greatestImage.imageName][anotherDimension] * mainView.canvas.getZoom())
+            > mainView.canvas[anotherDimension]) {
             zoomTo(mainView[greatestImage.imageName], anotherDimension);
         }
 
@@ -272,7 +279,7 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
 
         zoomTo(image, greatestDimension);
 
-        if (mainView[imageName][anotherDimension] > mainView.canvas[anotherDimension]) {
+        if (mainView[imageName][anotherDimension] * mainView.canvas.getZoom() > mainView.canvas[anotherDimension]) {
             zoomTo(mainView[imageName], anotherDimension);
         }
 
@@ -333,7 +340,8 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
         {
             label: (
                 <Group position="left" spacing={4} noWrap>
-                    <IconSquareLetterA stroke={1} size={18} />Actual
+                    <IconSquareLetterA stroke={1} size={18} />
+                    Actual
                 </Group>
             ),
             value: 'actual',
@@ -379,10 +387,12 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
     return (
         <Group style={{ width: '96vw' }} spacing={4}>
 
-            <Stack sx={{ width: '100%', }}>
+            <Stack sx={{ width: '100%' }}>
                 {/* Toolbar */}
-                <Group position="apart">
-                    <Group />
+                <Group position="apart" noWrap>
+                    <Group>
+                        <ScreenshotDetails mainView={mainView} check={checkData} view={view} />
+                    </Group>
                     <Group spacing="sm">
                         <Group spacing={4} position="center" align="center">
                             <ActionIcon
@@ -476,7 +486,7 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
                                                 fitImageIfNeeded(`${view}Image`);
                                             }}
                                         >
-                                            Fit co canvas
+                                            Fit to canvas
                                         </Button>
                                     </Stack>
                                 </Popover.Dropdown>
@@ -556,7 +566,7 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
                     <Group
                         sx={
                             {
-                                width: related.opened ? '92%' : '100%',
+                                width: related.opened ? '90%' : '100%',
                             }
                         }
                     >

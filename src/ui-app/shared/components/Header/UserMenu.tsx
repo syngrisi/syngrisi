@@ -14,7 +14,7 @@ import {
     IconLogout,
 } from '@tabler/icons';
 import { useState } from 'react';
-import { isDark } from '../../utils';
+// import { isDark } from '../../utils';
 import { UserHooks } from '../../hooks';
 import ApiKeyModalAsk from './ApiKeyModalAsk';
 import { ApiKeyModalResult } from './ApiKeyModalResult';
@@ -41,17 +41,17 @@ function UserMenu() {
                         p={0}
                         radius="xl"
                         size="md"
-                        color={isDark() ? 'dark' : '#ffffff'}
+                        color={theme.colorScheme === 'dark' ? 'dark' : '#ffffff'}
                         sx={{
-                            color: isDark() ? '#ffffff' : '#1a1b1e',
-                            backgroundColor: isDark() ? '#1a1b1e' : theme.colors.gray[0],
+                            color: theme.colorScheme === 'dark' ? '#ffffff' : '#1a1b1e',
+                            backgroundColor: theme.colorScheme === 'dark' ? '#1a1b1e' : theme.colors.gray[0],
                             fontWeight: 600,
                             fontSize: '1rem',
                             display: 'flex',
                             width: '2.6rem',
                             justifyContent: 'center',
                             '&:hover': {
-                                backgroundColor: isDark() ? '#000000' : '#ffffff',
+                                backgroundColor: theme.colorScheme === 'dark' ? '#000000' : '#ffffff',
                             },
                         }}
                     >

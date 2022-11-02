@@ -16,7 +16,7 @@ export function Os({ type, test, itemValue }: Props) {
             data-test={`table-row-${tableColumns[type].label}`}
             style={{ ...tableColumns[type].cellStyle }}
         >
-            <Tooltip label={test[type]} multiline>
+            <Tooltip label={test[type]} multiline withinPortal>
                 <Group spacing={6} align="center" noWrap>
                     <OsIcon size={18} os={itemValue} />
                     <Text

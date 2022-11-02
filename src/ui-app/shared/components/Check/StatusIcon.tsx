@@ -9,33 +9,37 @@ interface Props {
 
 const iconMap = ({ key, size = 44, rest }: { key: string, size: number, rest: any }) => {
     const map = {
-        New: (
+        new: (
             <RingProgress
                 size={size}
+                thickness={size / 3.14}
                 sections={[
                     { value: 100, color: 'blue' },
                 ]}
             />
         ),
-        Passed: (
+        passed: (
             <RingProgress
                 size={size}
+                thickness={size / 3.14}
                 sections={[
                     { value: 100, color: 'green' },
                 ]}
             />
         ),
-        Failed: (
+        failed: (
             <RingProgress
                 size={size}
+                thickness={size / 3.14}
                 sections={[
                     { value: 100, color: 'red' },
                 ]}
             />
         ),
-        Running: (
+        running: (
             <RingProgress
                 size={size}
+                thickness={size / 3.14}
                 sections={[
                     { value: 100, color: 'gray' },
                 ]}
@@ -43,10 +47,12 @@ const iconMap = ({ key, size = 44, rest }: { key: string, size: number, rest: an
         ),
 
     } as { [key: string]: any };
-    return map[key] || (
+
+    return map[(key || '').toLowerCase()] || (
         <RingProgress
             title={key}
             size={size}
+            thickness={size / 3.14}
             sections={
                 [{ value: 100, color: 'dark.4' }]
             }

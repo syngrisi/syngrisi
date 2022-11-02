@@ -143,7 +143,7 @@ const AdminLogsTableRows = ({ data, selection, setSelection, visibleFields }: Pr
                                             data-test={`table-row-${adminLogsTableColumns[column].label}`}
                                             style={{ ...adminLogsTableColumns[column].cellStyle }}
                                         >
-                                            <Tooltip label={item[column]} multiline>
+                                            <Tooltip label={item[column]} multiline withinPortal>
                                                 <Text
                                                     lineClamp={1}
                                                     sx={{ wordBreak: 'break-all' }}

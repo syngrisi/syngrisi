@@ -31,7 +31,7 @@ export function Status({ type, test }: Props) {
         >
             <Group position="left" spacing={0} noWrap>
                 <StatusesRing statuses={checkStatuses} key={type} ml={-4} />
-                <Tooltip label={test[type]} multiline>
+                <Tooltip label={test[type]} multiline withinPortal>
                     <Text
                         lineClamp={1}
                         sx={{ wordBreak: 'break-all' }}

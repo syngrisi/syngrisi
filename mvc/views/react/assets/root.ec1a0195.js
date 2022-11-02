@@ -4,8 +4,8 @@ var __publicField = (obj, key, value) => {
   __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
   return value;
 };
-import { r as react, W as useWindowEvent, X as queryString, b as jsx, j as jsxs, P as Paper, g as Title, Y as Stack, T as Text, G as Group, h as Button, k as ky, a as config, u as useQuery, d as useMantineTheme, Z as Fragment, q as TextInput, t as ActionIcon, n as lAe, _ as Pj, D as useLocalStorage, e as Container, $ as Dge, c as createStyles, l as log, a0 as Tooltip, a1 as CK, a2 as Loader, a3 as React, a4 as Transition, a5 as Xfe, a6 as rze, A as Anchor, a7 as zV, a8 as ea, a9 as Epe, aa as Ol, ab as ua, ac as RX, ad as rWe, ae as UZ, s as Checkbox, af as getAugmentedNamespace, ag as ry, ah as ly, ai as lDe, aj as dDe, ak as DMe, al as qF, am as Cbe, an as Pbe, ao as pi, ap as Lbe, L as LoadingOverlay, aq as LHe, B as Box, o as useSearchParams, ar as Y, Q as QueryClient, f as useDocumentTitle, as as useNavigate, F as QueryClientProvider, H as ColorSchemeProvider, M as MantineProvider, at as Routes, au as Route, I as createRoot, J as BrowserRouter } from "./use-form.5d5d1585.js";
-import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, G as GenericService, e as errorMsg, a as useDisclosure, b as useClickOutside, c as escapeRegExp, P as Popover, d as ScrollArea, f as Chip, g as useColorScheme, l as links, H as Header, B as Burger, h as HeaderLogo, i as SafeSelect, o as openSpotlight, K as Kbd, U as UserMenu, T as ToggleThemeButton, j as Breadcrumbs, k as isDark, m as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, n as Skeleton, p as useInView, F as FocusTrap, q as getNavigationItem, r as stopNavigationProgress, t as resetNavigationProgress, v as useToggle, w as useInfinityScroll, N as Navbar, x as Badge, A as Affix, y as ActionPopoverIcon, I as Image$1, z as Card, D as Collapse, E as Divider, O as SegmentedControl, Q as Table, V as useInputState, W as RelativeDrawer, X as LogicalGroup, Y as uuid, Z as useNavProgressFetchEffect, $ as AppShell, a0 as ReactQueryDevtools, a1 as navigationData, a2 as SpotlightProvider, a3 as NotificationsProvider, a4 as NavigationProgress, a5 as ModalsProvider, a6 as QueryParamProvider, a7 as ReactRouter6Adapter } from "./LogicalGroup.9256e2b0.js";
+import { r as react, W as queryString, b as jsx, j as jsxs, P as Paper, g as Title, X as Stack, T as Text, G as Group, h as Button, Y as Epe, k as ky, a as config, u as useQuery, d as useMantineTheme, Z as Fragment, q as TextInput, t as ActionIcon, n as lAe, _ as Pj, D as useLocalStorage, e as Container, $ as Dge, c as createStyles, l as log, a0 as Tooltip, a1 as CK, a2 as Loader, a3 as React, a4 as Transition, a5 as Xfe, a6 as rze, A as Anchor, a7 as zV, a8 as ea, a9 as Ol, aa as ua, ab as RX, ac as rWe, ad as UZ, s as Checkbox, ae as getAugmentedNamespace, af as ry, ag as ly, ah as lDe, ai as dDe, aj as DMe, ak as qF, al as Cbe, am as Pbe, an as pi, ao as Lbe, L as LoadingOverlay, ap as LHe, B as Box, o as useSearchParams, aq as Y, Q as QueryClient, f as useDocumentTitle, ar as useNavigate, F as QueryClientProvider, H as ColorSchemeProvider, M as MantineProvider, as as Routes, at as Route, I as createRoot, J as BrowserRouter } from "./use-form.23538837.js";
+import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, G as GenericService, e as errorMsg, a as useDisclosure, b as useClickOutside, c as escapeRegExp, P as Popover, d as ScrollArea, f as Chip, g as useColorScheme, l as links, H as Header, B as Burger, h as HeaderLogo, i as SafeSelect, o as openSpotlight, K as Kbd, U as UserMenu, T as ToggleThemeButton, j as Breadcrumbs, k as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, m as Skeleton, n as useInView, F as FocusTrap, p as getNavigationItem, q as stopNavigationProgress, r as resetNavigationProgress, t as useToggle, v as useInfinityScroll, N as Navbar, w as Badge, A as Affix, x as ActionPopoverIcon, y as UserHooks, z as ThemeIcon, I as Image$1, D as Card, E as Collapse, O as Divider, Q as SegmentedControl, V as Table, W as useInputState, X as RelativeDrawer, Y as LogicalGroup, Z as uuid, $ as useNavProgressFetchEffect, a0 as AppShell, a1 as ReactQueryDevtools, a2 as navigationData, a3 as SpotlightProvider, a4 as NotificationsProvider, a5 as NavigationProgress, a6 as ModalsProvider, a7 as QueryParamProvider, a8 as ReactRouter6Adapter } from "./LogicalGroup.0336c1b6.js";
 function useDebouncedValue(value, wait, options = { leading: false }) {
   const [_value, setValue] = react.exports.useState(value);
   const mountedRef = react.exports.useRef(false);
@@ -31,22 +31,6 @@ function useDebouncedValue(value, wait, options = { leading: false }) {
     return cancel;
   }, []);
   return [_value, cancel];
-}
-const eventListerOptions = {
-  passive: true
-};
-function useViewportSize() {
-  const [windowSize, setWindowSize] = react.exports.useState({
-    width: 0,
-    height: 0
-  });
-  const setSize = react.exports.useCallback(() => {
-    setWindowSize({ width: window.innerWidth || 0, height: window.innerHeight || 0 });
-  }, []);
-  useWindowEvent("resize", setSize, eventListerOptions);
-  useWindowEvent("orientationchange", setSize, eventListerOptions);
-  react.exports.useEffect(setSize, []);
-  return windowSize;
 }
 const getSearchParamsObject = (params) => queryString.parse(params.toString());
 const SearchParams = {
@@ -161,6 +145,7 @@ Stacktrace: ${error.stack}
       }), /* @__PURE__ */ jsxs(Group, {
         position: "center",
         children: [/* @__PURE__ */ jsx(Button, {
+          leftIcon: /* @__PURE__ */ jsx(Epe, {}),
           variant: "outline",
           size: "md",
           onClick: () => {
@@ -611,7 +596,7 @@ function QuickFilter() {
     })]
   });
 }
-const useStyles$3 = createStyles((theme) => ({
+const useStyles$4 = createStyles((theme) => ({
   header: {
     paddingLeft: 0,
     paddingRight: 0,
@@ -622,7 +607,7 @@ const useStyles$3 = createStyles((theme) => ({
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: isDark() ? theme.colors.dark[5] : theme.colors.gray[2]
+    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[2]
   },
   links: {
     [theme.fn.smallerThan("md")]: {
@@ -678,7 +663,7 @@ function IndexHeader() {
   }] = useDisclosure(false);
   const {
     classes
-  } = useStyles$3();
+  } = useStyles$4();
   links.map((link) => /* @__PURE__ */ jsx("a", {
     href: link.link,
     className: classes.link,
@@ -2795,6 +2780,7 @@ function StatusesRing({
   });
   return /* @__PURE__ */ jsx(Tooltip, {
     label: tooltipLabel,
+    withinPortal: true,
     children: /* @__PURE__ */ jsx(RingProgress, {
       sections: ringSectionsData,
       size: 48,
@@ -2912,6 +2898,7 @@ function RunItem({
               children: /* @__PURE__ */ jsx(Tooltip, {
                 label: item.name,
                 multiline: true,
+                withinPortal: true,
                 children: /* @__PURE__ */ jsx(Text, {
                   "data-test": "navbar-item-name",
                   size: 16,
@@ -2925,6 +2912,7 @@ function RunItem({
             }), /* @__PURE__ */ jsx(Group, {
               position: "right",
               children: /* @__PURE__ */ jsx(Tooltip, {
+                withinPortal: true,
                 label: format(parseISO(item.createdDate), "yyyy-MM-dd HH:mm:ss"),
                 children: /* @__PURE__ */ jsx(Text, {
                   align: "right",
@@ -3011,6 +2999,7 @@ function SuiteItem({
               children: /* @__PURE__ */ jsx(Tooltip, {
                 label: item.name,
                 multiline: true,
+                withinPortal: true,
                 children: /* @__PURE__ */ jsx(Text, {
                   "data-test": "navbar-item-name",
                   size: 16,
@@ -3024,6 +3013,7 @@ function SuiteItem({
             }), /* @__PURE__ */ jsx(Group, {
               position: "right",
               children: /* @__PURE__ */ jsx(Tooltip, {
+                withinPortal: true,
                 label: format(parseISO(item.createdDate), "yyyy-MM-dd HH:mm:ss"),
                 children: /* @__PURE__ */ jsx(Text, {
                   align: "right",
@@ -3235,6 +3225,7 @@ function BrowserItem({
           children: /* @__PURE__ */ jsx(Tooltip, {
             label: item.name,
             multiline: true,
+            withinPortal: true,
             children: /* @__PURE__ */ jsxs(Group, {
               spacing: 8,
               children: [/* @__PURE__ */ jsx(BrowserIcon, {
@@ -3328,6 +3319,7 @@ function PlatformItem({
           children: /* @__PURE__ */ jsx(Tooltip, {
             label: item.name,
             multiline: true,
+            withinPortal: true,
             children: /* @__PURE__ */ jsxs(Group, {
               spacing: 8,
               children: [/* @__PURE__ */ jsx(OsIcon, {
@@ -3355,38 +3347,43 @@ const iconMap$1 = ({
   rest
 }) => {
   const map = {
-    New: /* @__PURE__ */ jsx(RingProgress, {
+    new: /* @__PURE__ */ jsx(RingProgress, {
       size,
+      thickness: size / 3.14,
       sections: [{
         value: 100,
         color: "blue"
       }]
     }),
-    Passed: /* @__PURE__ */ jsx(RingProgress, {
+    passed: /* @__PURE__ */ jsx(RingProgress, {
       size,
+      thickness: size / 3.14,
       sections: [{
         value: 100,
         color: "green"
       }]
     }),
-    Failed: /* @__PURE__ */ jsx(RingProgress, {
+    failed: /* @__PURE__ */ jsx(RingProgress, {
       size,
+      thickness: size / 3.14,
       sections: [{
         value: 100,
         color: "red"
       }]
     }),
-    Running: /* @__PURE__ */ jsx(RingProgress, {
+    running: /* @__PURE__ */ jsx(RingProgress, {
       size,
+      thickness: size / 3.14,
       sections: [{
         value: 100,
         color: "gray"
       }]
     })
   };
-  return map[key] || /* @__PURE__ */ jsx(RingProgress, {
+  return map[(key || "").toLowerCase()] || /* @__PURE__ */ jsx(RingProgress, {
     title: key,
     size,
+    thickness: size / 3.14,
     sections: [{
       value: 100,
       color: "dark.4"
@@ -3440,6 +3437,7 @@ function StatusItem({
           children: /* @__PURE__ */ jsx(Tooltip, {
             label: item.name,
             multiline: true,
+            withinPortal: true,
             children: /* @__PURE__ */ jsxs(Group, {
               spacing: 8,
               children: [/* @__PURE__ */ jsx(StatusIcon, {
@@ -3545,6 +3543,7 @@ function AcceptStatusItem({
           children: /* @__PURE__ */ jsx(Tooltip, {
             label: item.name,
             multiline: true,
+            withinPortal: true,
             children: /* @__PURE__ */ jsxs(Group, {
               spacing: 8,
               children: [/* @__PURE__ */ jsx(AcceptedStatusIcon, {
@@ -3979,7 +3978,7 @@ function useIndexSubpageEffect(title) {
     };
   }, [title]);
 }
-const useStyles$2 = createStyles((theme) => ({
+const useStyles$3 = createStyles((theme) => ({
   navbar: {
     backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.white,
     paddingLeft: theme.spacing.md,
@@ -4009,7 +4008,7 @@ const useStyles$2 = createStyles((theme) => ({
 function NavbarIndex() {
   const {
     classes
-  } = useStyles$2();
+  } = useStyles$3();
   const [activeItems, setActiveItems] = react.exports.useState([]);
   const activeItemsHandler = {
     get: () => activeItems,
@@ -4360,6 +4359,12 @@ const tableColumns = {
     cellStyle: { width: "10%" },
     type: "StringFilter"
   },
+  browserVersion: {
+    label: "Browser Ver.",
+    headStyle: { width: "10%" },
+    cellStyle: { width: "10%" },
+    type: "StringFilter"
+  },
   os: {
     label: "Platform",
     headStyle: { width: "10%" },
@@ -4654,30 +4659,46 @@ function AcceptButton({
       newBaselineId: check.actualSnapshotId._id
     });
   };
-  return /* @__PURE__ */ jsx(ActionPopoverIcon, {
-    color: likeIconColor,
-    buttonColor: "green",
-    sx: {
-      cursor: isCurrentlyAccepted ? "default" : "pointer",
-      "&:hover": {
-        backgroundColor: isCurrentlyAccepted ? "rgba(255, 255, 255, 0);" : ""
-      }
-    },
-    testAttr: "check-accept-icon",
-    variant: "subtle",
-    paused: isCurrentlyAccepted,
-    icon: isCurrentlyAccepted && isAccepted ? /* @__PURE__ */ jsx(BsHandThumbsUpFill, {
-      size
-    }) : /* @__PURE__ */ jsxs(Fragment, {
-      children: [/* @__PURE__ */ jsx(BsHandThumbsUp, {
-        size
-      }), " ", notAcceptedIcon]
+  return /* @__PURE__ */ jsx(Tooltip, {
+    withinPortal: true,
+    label: check.markedByUsername ? /* @__PURE__ */ jsxs(Stack, {
+      spacing: "xs",
+      p: 5,
+      children: [/* @__PURE__ */ jsxs(Text, {
+        children: ["Accepted by: ", check.markedByUsername]
+      }), /* @__PURE__ */ jsxs(Text, {
+        children: ["Accepted Date: ", check.markedDate]
+      })]
+    }) : /* @__PURE__ */ jsx(Text, {
+      children: "Not accepted"
     }),
-    action: handleAcceptCheckClick,
-    title: "Accept the check actual screenshot",
-    loading: mutationAcceptCheck.isLoading,
-    confirmLabel: "Accept",
-    size
+    children: /* @__PURE__ */ jsx("div", {
+      children: /* @__PURE__ */ jsx(ActionPopoverIcon, {
+        color: likeIconColor,
+        buttonColor: "green",
+        sx: {
+          cursor: isCurrentlyAccepted ? "default" : "pointer",
+          "&:hover": {
+            backgroundColor: isCurrentlyAccepted ? "rgba(255, 255, 255, 0);" : ""
+          }
+        },
+        testAttr: "check-accept-icon",
+        variant: "subtle",
+        paused: isCurrentlyAccepted,
+        icon: isCurrentlyAccepted && isAccepted ? /* @__PURE__ */ jsx(BsHandThumbsUpFill, {
+          size
+        }) : /* @__PURE__ */ jsxs(Fragment, {
+          children: [/* @__PURE__ */ jsx(BsHandThumbsUp, {
+            size
+          }), " ", notAcceptedIcon]
+        }),
+        action: handleAcceptCheckClick,
+        title: "Accept the check actual screenshot",
+        loading: mutationAcceptCheck.isLoading,
+        confirmLabel: "Accept",
+        size
+      })
+    })
   });
 }
 function RemoveButton({
@@ -4770,7 +4791,7 @@ function ViewPortLabel({
     children: [/* @__PURE__ */ jsx(Badge, {
       color,
       size: size || sizes2[checksViewSize].viewportText,
-      title: "Screen Viewport",
+      title: "Viewport size",
       sx: {
         fontSize,
         display: displayed ? "block" : "none"
@@ -4830,6 +4851,175 @@ function Status$1({
       noWrap: true,
       children: check.status
     })
+  });
+}
+function LabelUser({
+  username,
+  size = "xs"
+}) {
+  var _a, _b, _c, _d, _e;
+  const theme = useMantineTheme();
+  const userQuery = UserHooks.useUsersByUsername(username);
+  const userInitials = userQuery.isSuccess && userQuery.data.results[0].firstName ? `${(_a = userQuery == null ? void 0 : userQuery.data) == null ? void 0 : _a.results[0].firstName[0]}${(_c = (_b = userQuery == null ? void 0 : userQuery.data) == null ? void 0 : _b.results[0]) == null ? void 0 : _c.lastName[0]}` : "";
+  return userQuery.isLoading ? null : /* @__PURE__ */ jsxs(Group, {
+    spacing: 12,
+    p: 0,
+    position: "apart",
+    children: [/* @__PURE__ */ jsx(ThemeIcon, {
+      "data-test": "user-icon",
+      p: 16,
+      ml: -6,
+      mr: -6,
+      radius: "xl",
+      color: theme.colorScheme === "dark" ? "dark" : "#ffffff",
+      sx: {
+        color: theme.colorScheme === "dark" ? "#ffffff" : "#1a1b1e",
+        backgroundColor: theme.colorScheme === "dark" ? "#1a1b1e" : theme.colors.gray[0],
+        fontWeight: 600,
+        fontSize: "1rem",
+        display: "flex",
+        justifyContent: "center",
+        "&:hover": {
+          backgroundColor: theme.colorScheme === "dark" ? "#000000" : "#ffffff"
+        }
+      },
+      children: userInitials
+    }), /* @__PURE__ */ jsxs(Text, {
+      size,
+      children: [(_d = userQuery == null ? void 0 : userQuery.data) == null ? void 0 : _d.results[0].firstName, "\xA0", (_e = userQuery == null ? void 0 : userQuery.data) == null ? void 0 : _e.results[0].lastName]
+    })]
+  });
+}
+function PreviewCheck({
+  check
+}) {
+  let statusMsg = "";
+  if (check.status[0] === "failed") {
+    if (check.failReasons.includes("different_images"))
+      statusMsg = " - images are different";
+    if (check.failReasons.includes("wrong_dimensions"))
+      statusMsg = " - images have wrong  dimensions";
+    if (check.failReasons.includes("not_accepted"))
+      statusMsg = " - previous check with same parameter is not accepted";
+  }
+  return /* @__PURE__ */ jsxs(Stack, {
+    sx: {
+      maxWidth: "300px"
+    },
+    spacing: 8,
+    p: 8,
+    children: [/* @__PURE__ */ jsxs(Group, {
+      position: "left",
+      spacing: 8,
+      ml: -6,
+      noWrap: true,
+      children: [/* @__PURE__ */ jsx(Group, {
+        children: /* @__PURE__ */ jsx(StatusIcon, {
+          status: check.status[0],
+          size: 55
+        })
+      }), /* @__PURE__ */ jsx(Group, {
+        children: /* @__PURE__ */ jsxs(Text, {
+          size: "lg",
+          children: [check.status[0][0].toUpperCase() + check.status[0].substring(1), statusMsg]
+        })
+      })]
+    }), check.markedByUsername && /* @__PURE__ */ jsxs(Group, {
+      position: "apart",
+      children: [/* @__PURE__ */ jsx(Group, {
+        children: /* @__PURE__ */ jsx(Text, {
+          size: "xs",
+          children: "Accepted by: "
+        })
+      }), /* @__PURE__ */ jsx(Group, {
+        position: "right",
+        children: check.markedByUsername && /* @__PURE__ */ jsx(LabelUser, {
+          username: check.markedByUsername,
+          size: "xs"
+        })
+      })]
+    }), /* @__PURE__ */ jsxs(Group, {
+      position: "apart",
+      children: [/* @__PURE__ */ jsx(Group, {
+        children: /* @__PURE__ */ jsx(Text, {
+          size: "xs",
+          children: "Platform: "
+        })
+      }), /* @__PURE__ */ jsxs(Group, {
+        position: "right",
+        spacing: 6,
+        children: [/* @__PURE__ */ jsx(OsIcon, {
+          os: check.os,
+          size: 24
+        }), /* @__PURE__ */ jsx(Text, {
+          size: "xs",
+          children: check.os
+        })]
+      })]
+    }), /* @__PURE__ */ jsxs(Group, {
+      position: "apart",
+      children: [/* @__PURE__ */ jsx(Group, {
+        children: /* @__PURE__ */ jsx(Text, {
+          size: "xs",
+          children: "Browser: "
+        })
+      }), /* @__PURE__ */ jsxs(Group, {
+        position: "right",
+        spacing: 6,
+        children: [/* @__PURE__ */ jsx(BrowserIcon, {
+          size: 24,
+          browser: check.browserName
+        }), /* @__PURE__ */ jsxs(Text, {
+          size: "xs",
+          children: [check.browserName, "-", check.browserFullVersion]
+        })]
+      })]
+    }), /* @__PURE__ */ jsxs(Group, {
+      position: "apart",
+      children: [/* @__PURE__ */ jsx(Group, {
+        children: /* @__PURE__ */ jsx(Text, {
+          size: "xs",
+          children: "Viewport: "
+        })
+      }), /* @__PURE__ */ jsx(Group, {
+        position: "right",
+        children: /* @__PURE__ */ jsx(ViewPortLabel, {
+          fontSize: "11px",
+          size: "md",
+          color: "blue",
+          check,
+          sizes,
+          checksViewSize: "small"
+        })
+      })]
+    }), /* @__PURE__ */ jsxs(Group, {
+      position: "apart",
+      children: [/* @__PURE__ */ jsx(Group, {
+        children: /* @__PURE__ */ jsx(Text, {
+          size: "xs",
+          children: "Branch: "
+        })
+      }), /* @__PURE__ */ jsx(Group, {
+        position: "right",
+        children: /* @__PURE__ */ jsx(Badge, {
+          color: "blue",
+          children: check.branch
+        })
+      })]
+    }), /* @__PURE__ */ jsxs(Group, {
+      position: "apart",
+      children: [/* @__PURE__ */ jsx(Group, {
+        children: /* @__PURE__ */ jsx(Text, {
+          size: "xs",
+          children: "Created Date: "
+        })
+      }), /* @__PURE__ */ jsx(Group, {
+        children: /* @__PURE__ */ jsx(Badge, {
+          color: "blue",
+          children: format(parseISO(check.createdDate), "yyyy-MM-dd HH:mm:ss")
+        })
+      })]
+    })]
   });
 }
 function Check({
@@ -4946,28 +5136,39 @@ function Check({
         })
       }), /* @__PURE__ */ jsx(Card.Section, {
         m: 2,
-        children: /* @__PURE__ */ jsx("a", {
-          style: {
-            display: "inline-block",
-            width: "100%",
-            cursor: "pointer"
-          },
-          href: linkToCheckOverlay,
-          children: /* @__PURE__ */ jsx(Group, {
-            position: "center",
-            sx: {
+        children: /* @__PURE__ */ jsx(Tooltip, {
+          multiline: true,
+          zIndex: 1e3,
+          withinPortal: true,
+          withArrow: true,
+          position: "right-start",
+          color: "dark",
+          label: /* @__PURE__ */ jsx(PreviewCheck, {
+            check
+          }),
+          children: /* @__PURE__ */ jsx("a", {
+            style: {
+              display: "inline-block",
               width: "100%",
               cursor: "pointer"
             },
-            onClick: handlePreviewImageClick,
-            children: /* @__PURE__ */ jsx(Image$1, {
-              src: imagePreviewSrc,
-              fit: "contain",
-              alt: check.name,
-              styles: () => ({
-                image: {
-                  maxHeight: checksViewMode === "bounded" ? `${imageWeight * 8}px` : ""
-                }
+            href: linkToCheckOverlay,
+            children: /* @__PURE__ */ jsx(Group, {
+              position: "center",
+              sx: {
+                width: "100%",
+                cursor: "pointer"
+              },
+              onClick: handlePreviewImageClick,
+              children: /* @__PURE__ */ jsx(Image$1, {
+                src: imagePreviewSrc,
+                fit: "contain",
+                alt: check.name,
+                styles: () => ({
+                  image: {
+                    maxHeight: checksViewMode === "bounded" ? `${imageWeight * 8}px` : ""
+                  }
+                })
               })
             })
           })
@@ -5072,6 +5273,7 @@ function StartDate({
     },
     children: /* @__PURE__ */ jsx(Tooltip, {
       label: itemValue,
+      withinPortal: true,
       children: /* @__PURE__ */ jsx(Text, {
         lineClamp: 1,
         sx: {
@@ -5109,6 +5311,7 @@ function Status({
       }, type), /* @__PURE__ */ jsx(Tooltip, {
         label: test[type],
         multiline: true,
+        withinPortal: true,
         children: /* @__PURE__ */ jsx(Text, {
           lineClamp: 1,
           sx: {
@@ -5133,6 +5336,7 @@ function Os({
     children: /* @__PURE__ */ jsx(Tooltip, {
       label: test[type],
       multiline: true,
+      withinPortal: true,
       children: /* @__PURE__ */ jsxs(Group, {
         spacing: 6,
         align: "center",
@@ -5164,6 +5368,7 @@ function BrowserName({
     children: /* @__PURE__ */ jsx(Tooltip, {
       label: test[type],
       multiline: true,
+      withinPortal: true,
       children: /* @__PURE__ */ jsxs(Group, {
         spacing: 6,
         align: "center",
@@ -5195,6 +5400,7 @@ function Branch({
     children: /* @__PURE__ */ jsx(Tooltip, {
       label: test[type],
       multiline: true,
+      withinPortal: true,
       children: /* @__PURE__ */ jsx(Badge, {
         size: "sm",
         color: "dark",
@@ -5217,6 +5423,35 @@ function Branch({
 }
 function Viewport({
   type,
+  test
+}) {
+  const uniqueCheckViewports = [...new Set(test.checks.map((x2) => x2.viewport))];
+  const resultViewport = uniqueCheckViewports.length > 0 ? uniqueCheckViewports.length === 1 ? uniqueCheckViewports[0] : "\u2260" : test.viewport;
+  return /* @__PURE__ */ jsx("td", {
+    "data-test": `table-row-${tableColumns[type].label}`,
+    style: {
+      ...tableColumns[type].cellStyle
+    },
+    children: /* @__PURE__ */ jsx(Tooltip, {
+      withinPortal: true,
+      label: uniqueCheckViewports.length !== 1 ? "There are checks with different viewports" : resultViewport,
+      multiline: true,
+      children: /* @__PURE__ */ jsx(Badge, {
+        size: "md",
+        color: "blue",
+        children: /* @__PURE__ */ jsx(Text, {
+          lineClamp: 1,
+          sx: {
+            wordBreak: "break-all"
+          },
+          children: resultViewport
+        })
+      })
+    })
+  }, type);
+}
+function BrowserVersion({
+  type,
   test,
   itemValue
 }) {
@@ -5228,9 +5463,11 @@ function Viewport({
     children: /* @__PURE__ */ jsx(Tooltip, {
       label: test[type],
       multiline: true,
-      children: /* @__PURE__ */ jsx(Badge, {
-        size: "md",
-        color: "blue",
+      withinPortal: true,
+      children: /* @__PURE__ */ jsx(Group, {
+        spacing: 6,
+        align: "center",
+        noWrap: true,
         children: /* @__PURE__ */ jsx(Text, {
           lineClamp: 1,
           sx: {
@@ -5242,7 +5479,7 @@ function Viewport({
     })
   }, type);
 }
-const useStyles$1 = createStyles(testsCreateStyle);
+const useStyles$2 = createStyles(testsCreateStyle);
 function Cell({
   type,
   test,
@@ -5268,6 +5505,11 @@ function Cell({
       test,
       itemValue
     }, type),
+    browserVersion: /* @__PURE__ */ jsx(BrowserVersion, {
+      type,
+      test,
+      itemValue
+    }, type),
     branch: /* @__PURE__ */ jsx(Branch, {
       type,
       test,
@@ -5287,6 +5529,7 @@ function Cell({
     children: /* @__PURE__ */ jsx(Tooltip, {
       label: test[type],
       multiline: true,
+      withinPortal: true,
       children: /* @__PURE__ */ jsx(Text, {
         lineClamp: 1,
         sx: {
@@ -5311,7 +5554,7 @@ function Row({
   const {
     classes,
     cx
-  } = useStyles$1();
+  } = useStyles$2();
   const selected = selection.includes(item.id);
   const testUpdateQuery = useQuery(["testUpdateQuery", item._id], () => GenericService.get("tests", {
     _id: item._id
@@ -22284,6 +22527,8 @@ function RelatedCheckSort({
       align: "end",
       spacing: 4,
       pr: 10,
+      ml: -10,
+      mr: -10,
       noWrap: true,
       style: styles,
       children: [/* @__PURE__ */ jsx(SafeSelect, {
@@ -22339,64 +22584,140 @@ function RelatedChecks({
   check,
   related
 }) {
-  const [openedSort, toggleOpenedSort] = useToggle([false, true]);
+  const [openedSort, sortHandler] = useDisclosure(false);
+  const [openedFilter, filterHandler] = useDisclosure(false);
+  const [filter, setFilter] = react.exports.useState(["name"]);
   react.exports.useEffect(function onSortChange() {
     related.relatedChecksQuery.firstPageQuery.refetch();
   }, [`${related.sortBy}_${related.sortOrder}`]);
   const hideRelatedChecks = () => {
+    sortHandler.close();
+    filterHandler.close();
     related.handler.toggle();
   };
+  react.exports.useEffect(function onFilterChange() {
+    const newFilter = filter.map((item) => ({
+      [item]: check[item]
+    }));
+    related.setRelatedFilter(() => ({
+      $and: newFilter
+    }));
+    related.relatedChecksQuery.firstPageQuery.refetch();
+  }, [filter.length]);
   return /* @__PURE__ */ jsxs(Stack, {
     spacing: 4,
-    children: [/* @__PURE__ */ jsx(Group, {
-      position: "right",
+    pr: 0,
+    children: [/* @__PURE__ */ jsxs(Stack, {
       pr: "sm",
       align: "end",
       sx: {
         width: "100%"
       },
-      children: /* @__PURE__ */ jsxs(Group, {
+      spacing: 8,
+      children: [/* @__PURE__ */ jsxs(Group, {
+        position: "apart",
+        align: "center",
+        sx: {
+          width: "100%"
+        },
+        spacing: 0,
+        children: [/* @__PURE__ */ jsx(Group, {
+          children: /* @__PURE__ */ jsx(ActionIcon, {
+            "data-test": "hide-related-checks-icon",
+            title: "hide/show related checks",
+            onClick: () => hideRelatedChecks(),
+            children: related.opened ? /* @__PURE__ */ jsx(ry, {
+              stroke: 1
+            }) : /* @__PURE__ */ jsx(ly, {
+              stroke: 1
+            })
+          })
+        }), related.opened && /* @__PURE__ */ jsx(Group, {
+          position: "left",
+          ml: -24,
+          children: /* @__PURE__ */ jsx(Text, {
+            size: "sm",
+            children: "Related Checks"
+          })
+        }), /* @__PURE__ */ jsx(Group, {})]
+      }), related.opened && /* @__PURE__ */ jsxs(Group, {
         position: "right",
-        spacing: 4,
-        children: [related.opened && /* @__PURE__ */ jsxs(Fragment, {
-          children: [/* @__PURE__ */ jsx(ActionIcon, {
-            "data-test": "related-check-icon-open-sort",
-            onClick: () => toggleOpenedSort(),
-            mb: 4,
-            children: /* @__PURE__ */ jsx(ea, {
-              stroke: 1
-            })
-          }), /* @__PURE__ */ jsx(ActionIcon, {
-            "data-test": "related-check-icon-refresh",
-            onClick: () => related.relatedChecksQuery.firstPageQuery.refetch(),
-            mb: 4,
-            children: /* @__PURE__ */ jsx(Epe, {
-              stroke: 1
-            })
-          })]
-        }), /* @__PURE__ */ jsx(ActionIcon, {
-          "data-test": "hide-related-checks-icon",
-          onClick: () => hideRelatedChecks(),
+        spacing: "xs",
+        sx: {
+          width: "100%"
+        },
+        mb: 4,
+        children: [/* @__PURE__ */ jsx(ActionIcon, {
+          "data-test": "related-check-icon-open-sort",
+          onClick: () => sortHandler.toggle(),
           mb: 4,
-          children: related.opened ? /* @__PURE__ */ jsx(ry, {
+          children: /* @__PURE__ */ jsx(ea, {
             stroke: 1
-          }) : /* @__PURE__ */ jsx(ly, {
+          })
+        }), /* @__PURE__ */ jsx(ActionIcon, {
+          "data-test": "related-check-icon-open-filter",
+          onClick: () => filterHandler.toggle(),
+          mb: 4,
+          children: /* @__PURE__ */ jsx(zV, {
+            stroke: 1
+          })
+        }), /* @__PURE__ */ jsx(ActionIcon, {
+          "data-test": "related-check-icon-refresh",
+          onClick: () => related.relatedChecksQuery.firstPageQuery.refetch(),
+          mb: 4,
+          children: /* @__PURE__ */ jsx(Epe, {
             stroke: 1
           })
         })]
-      })
-    }), /* @__PURE__ */ jsx(Group, {
-      sx: {
-        width: "100%"
-      },
-      children: /* @__PURE__ */ jsx(RelatedCheckSort, {
-        toggleOpenedSort,
+      }), /* @__PURE__ */ jsx(RelatedCheckSort, {
+        toggleOpenedSort: sortHandler.toggle,
         sortBy: related.sortBy,
         setSortBy: related.setSortBy,
         setSortOrder: related.setSortOrder,
         sortOrder: related.sortOrder,
         openedSort
-      })
+      }), openedFilter && /* @__PURE__ */ jsxs(Group, {
+        mb: "xs",
+        mt: "xs",
+        ml: -10,
+        mr: -10,
+        spacing: 4,
+        children: [/* @__PURE__ */ jsx(Text, {
+          size: "sm",
+          mb: -8,
+          children: "Show checks with same parameters"
+        }), /* @__PURE__ */ jsxs(Chip.Group, {
+          spacing: 6,
+          value: filter,
+          onChange: setFilter,
+          multiple: true,
+          children: [/* @__PURE__ */ jsx(Chip, {
+            size: "xs",
+            value: "name",
+            children: "Name"
+          }), /* @__PURE__ */ jsx(Chip, {
+            size: "xs",
+            value: "Browser",
+            children: "Browser"
+          }), /* @__PURE__ */ jsx(Chip, {
+            size: "xs",
+            value: "browserVersion",
+            children: "Browser ver."
+          }), /* @__PURE__ */ jsx(Chip, {
+            size: "xs",
+            value: "os",
+            children: "Platform"
+          }), /* @__PURE__ */ jsx(Chip, {
+            size: "xs",
+            value: "viewport",
+            children: "Viewport"
+          }), /* @__PURE__ */ jsx(Chip, {
+            size: "xs",
+            value: "branch",
+            children: "Branch"
+          })]
+        })]
+      })]
     }), related.opened && /* @__PURE__ */ jsx(Transition, {
       mounted: related.opened,
       transition: "fade",
@@ -22460,6 +22781,89 @@ function useRelatedChecks(checkData) {
     setRelatedFilter
   };
 }
+const useStyles$1 = createStyles((theme) => ({
+  infoBadges: {
+    marginLeft: 8,
+    paddingLeft: 4,
+    paddingRight: 4
+  }
+}));
+function ScreenshotDetails({
+  mainView: mainView2,
+  view,
+  check
+}) {
+  var _a, _b, _c, _d;
+  const {
+    classes
+  } = useStyles$1();
+  const checkResult = check.result ? JSON.parse(check.result) : null;
+  let diffPercent = checkResult.misMatchPercentage ? checkResult.misMatchPercentage : "";
+  diffPercent = (diffPercent === "0.00" || diffPercent === "") && ((_b = (_a = checkResult.rawMisMatchPercentage) == null ? void 0 : _a.toString()) == null ? void 0 : _b.length) > 0 ? checkResult.rawMisMatchPercentage : checkResult.misMatchPercentage;
+  const imageSize = react.exports.useMemo(() => {
+    if (view === "slider")
+      return null;
+    if (mainView2) {
+      const image = mainView2[`${view}Image`];
+      return /* @__PURE__ */ jsx(Tooltip, {
+        withinPortal: true,
+        label: "Screenshot size, click to open the image in a new tab",
+        children: /* @__PURE__ */ jsx(Badge, {
+          color: "blue",
+          radius: "sm",
+          className: classes.infoBadges,
+          children: /* @__PURE__ */ jsx("a", {
+            href: image.getSrc(),
+            target: "_blank",
+            style: {
+              color: "inherit",
+              textDecoration: "inherit"
+            },
+            rel: "noreferrer",
+            children: `${image.width}x${image.height}`
+          })
+        })
+      });
+    }
+    return /* @__PURE__ */ jsx(Badge, {
+      color: "blue",
+      radius: "sm",
+      className: classes.infoBadges,
+      children: /* @__PURE__ */ jsx(Loader, {
+        size: "xs",
+        color: "blue",
+        variant: "dots"
+      })
+    });
+  }, [mainView2, view]);
+  return /* @__PURE__ */ jsx(Group, {
+    noWrap: true,
+    children: view !== "slider" ? /* @__PURE__ */ jsxs(Fragment, {
+      children: [/* @__PURE__ */ jsxs(Text, {
+        size: "sm",
+        children: ["Image Size:", imageSize]
+      }), /* @__PURE__ */ jsxs(Text, {
+        size: "sm",
+        children: ["Image Date:", /* @__PURE__ */ jsx(Badge, {
+          color: "blue",
+          radius: "sm",
+          className: classes.infoBadges,
+          children: view === "actual" ? format(parseISO((_c = check == null ? void 0 : check.actualSnapshotId) == null ? void 0 : _c.createdDate), "yyyy-MM-dd HH:mm:ss") : format(parseISO((_d = check == null ? void 0 : check.baselineId) == null ? void 0 : _d.createdDate), "yyyy-MM-dd HH:mm:ss")
+        })]
+      }), view === "diff" && /* @__PURE__ */ jsx(Fragment, {
+        children: /* @__PURE__ */ jsxs(Text, {
+          size: "sm",
+          children: ["Difference:", /* @__PURE__ */ jsxs(Badge, {
+            color: "blue",
+            radius: "sm",
+            className: classes.infoBadges,
+            children: [diffPercent, "%"]
+          })]
+        })
+      })]
+    }) : /* @__PURE__ */ jsx(Fragment, {})
+  });
+}
 function onImageErrorHandler(...e2) {
   const imgSrc = e2[0].path[0].src;
   const msg = `Cannot load image: '${imgSrc}'`;
@@ -22497,7 +22901,6 @@ function CheckDetails({
   const currentCheck = react.exports.useMemo(() => related.relatedFlatChecksData.find((x2) => x2._id === related.relatedActiveCheck) || checkData, [related.relatedActiveCheck]);
   const theme = useMantineTheme();
   setAppTitle(currentCheck.name);
-  useViewportSize();
   const [mainView2, setMainView] = react.exports.useState(null);
   const [zoomPercent, setZoomPercent] = react.exports.useState(100);
   const [openedZoomPopover, zoomPopoverHandler] = useDisclosure(false);
@@ -22566,6 +22969,8 @@ function CheckDetails({
     }
   }, [related.relatedActiveCheck, relatedChecksOpened]);
   react.exports.useEffect(() => {
+    if (!document.getElementById("snapshoot"))
+      return;
     const initMV = async () => {
       var _a2, _b2, _c2, _d;
       fabric$1.fabric.Object.prototype.objectCaching = false;
@@ -22638,7 +23043,7 @@ function CheckDetails({
     const greatestImage = calculateMaxImagesDimensions();
     zoomTo(mainView2[greatestImage.imageName], greatestImage.dimension);
     const anotherDimension = greatestImage.dimension === "height" ? "width" : "height";
-    if (mainView2[greatestImage.imageName][anotherDimension] > mainView2.canvas[anotherDimension]) {
+    if (mainView2[greatestImage.imageName][anotherDimension] * mainView2.canvas.getZoom() > mainView2.canvas[anotherDimension]) {
       zoomTo(mainView2[greatestImage.imageName], anotherDimension);
     }
     setTimeout(() => {
@@ -22650,7 +23055,7 @@ function CheckDetails({
     const greatestDimension = image.height > image.width ? "height" : "width";
     const anotherDimension = greatestDimension === "height" ? "width" : "height";
     zoomTo(image, greatestDimension);
-    if (mainView2[imageName][anotherDimension] > mainView2.canvas[anotherDimension]) {
+    if (mainView2[imageName][anotherDimension] * mainView2.canvas.getZoom() > mainView2.canvas[anotherDimension]) {
       zoomTo(mainView2[imageName], anotherDimension);
     }
     setTimeout(() => {
@@ -22744,7 +23149,14 @@ function CheckDetails({
       },
       children: [/* @__PURE__ */ jsxs(Group, {
         position: "apart",
-        children: [/* @__PURE__ */ jsx(Group, {}), /* @__PURE__ */ jsxs(Group, {
+        noWrap: true,
+        children: [/* @__PURE__ */ jsx(Group, {
+          children: /* @__PURE__ */ jsx(ScreenshotDetails, {
+            mainView: mainView2,
+            check: checkData,
+            view
+          })
+        }), /* @__PURE__ */ jsxs(Group, {
           spacing: "sm",
           children: [/* @__PURE__ */ jsxs(Group, {
             spacing: 4,
@@ -22841,7 +23253,7 @@ function CheckDetails({
                       }
                       fitImageIfNeeded(`${view}Image`);
                     },
-                    children: "Fit co canvas"
+                    children: "Fit to canvas"
                   })]
                 })
               })]
@@ -22909,7 +23321,7 @@ function CheckDetails({
           })
         }), /* @__PURE__ */ jsx(Group, {
           sx: {
-            width: related.opened ? "92%" : "100%"
+            width: related.opened ? "90%" : "100%"
           },
           children: /* @__PURE__ */ jsx(Paper, {
             shadow: "xl",
@@ -22978,7 +23390,11 @@ function CheckModal({
     if (checkData) {
       return /* @__PURE__ */ jsxs(Group, {
         position: "apart",
-        children: [/* @__PURE__ */ jsx(Group, {
+        sx: {
+          width: "100%"
+        },
+        noWrap: true,
+        children: [/* @__PURE__ */ jsxs(Group, {
           position: "left",
           align: "center",
           spacing: "xs",
@@ -22986,45 +23402,53 @@ function CheckModal({
             position: "relative"
           },
           noWrap: true,
-          children: /* @__PURE__ */ jsxs(Text, {
-            children: [checkData.app.name, " / ", checkData.suite.name, " / ", checkData.test.name, " / ", checkData == null ? void 0 : checkData.name]
-          })
-        }), /* @__PURE__ */ jsxs(Group, {
-          spacing: 8,
-          children: [/* @__PURE__ */ jsxs(Group, {
-            spacing: 4,
-            children: [/* @__PURE__ */ jsxs(Group, {
-              spacing: 2,
-              children: [/* @__PURE__ */ jsx(ActionIcon, {
-                variant: "light",
-                size: 32,
-                p: 4,
-                children: /* @__PURE__ */ jsx(OsIcon, {
-                  size: 20,
-                  color: iconsColor,
-                  os: checkData.os
-                })
-              }), /* @__PURE__ */ jsx(ActionIcon, {
-                variant: "light",
-                size: 32,
-                p: 4,
-                children: /* @__PURE__ */ jsx(BrowserIcon, {
-                  size: 20,
-                  color: iconsColor,
-                  browser: checkData.browserName
-                })
-              })]
-            }), /* @__PURE__ */ jsx(ViewPortLabel, {
-              check: checkData,
-              color: theme.colorScheme === "dark" ? "gray.2" : "gray.8",
-              sizes,
-              size: "lg",
-              checksViewSize,
-              fontSize: "14px"
-            })]
-          }), /* @__PURE__ */ jsx(Status$1, {
+          children: [/* @__PURE__ */ jsx(Status$1, {
             size: "lg",
             check: checkData
+          }), /* @__PURE__ */ jsx(Tooltip, {
+            withinPortal: true,
+            label: `Created: ${checkData.createdDate}`,
+            children: /* @__PURE__ */ jsxs(Text, {
+              lineClamp: 1,
+              children: [checkData.app.name, " / ", checkData.suite.name, " / ", checkData.test.name, " / ", checkData == null ? void 0 : checkData.name]
+            })
+          })]
+        }), /* @__PURE__ */ jsxs(Group, {
+          noWrap: true,
+          spacing: "xs",
+          children: [/* @__PURE__ */ jsx(ViewPortLabel, {
+            check: checkData,
+            color: "blue",
+            sizes,
+            size: "lg",
+            checksViewSize,
+            fontSize: "12px"
+          }), /* @__PURE__ */ jsx(ActionIcon, {
+            variant: "light",
+            size: 32,
+            p: 4,
+            ml: 4,
+            children: /* @__PURE__ */ jsx(OsIcon, {
+              size: 20,
+              color: iconsColor,
+              os: checkData.os
+            })
+          }), /* @__PURE__ */ jsx(Text, {
+            size: 12,
+            children: checkData.os
+          }), /* @__PURE__ */ jsx(ActionIcon, {
+            variant: "light",
+            size: 32,
+            p: 4,
+            children: /* @__PURE__ */ jsx(BrowserIcon, {
+              size: 20,
+              color: iconsColor,
+              browser: checkData.browserName
+            })
+          }), /* @__PURE__ */ jsxs(Text, {
+            size: 12,
+            title: checkData.browserFullVersion ? `${checkData.browserFullVersion}` : "",
+            children: [checkData.browserName, checkData.browserVersion ? ` - ${checkData.browserVersion}` : ""]
           })]
         })]
       });

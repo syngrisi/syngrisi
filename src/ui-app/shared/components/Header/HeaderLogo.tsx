@@ -6,7 +6,7 @@ import {
     Paper,
     Text, useMantineTheme,
 } from '@mantine/core';
-import { isDark } from '../../utils';
+// import { isDark } from '../../utils';
 
 function HeaderLogo({ size }: { size?: number | undefined }) {
     const theme = useMantineTheme();
@@ -29,9 +29,9 @@ function HeaderLogo({ size }: { size?: number | undefined }) {
                     display: 'flex',
                     alignItems: 'center',
                     borderRadius: '2px 20px 2px 20px',
-                    // backgroundColor: isDark() ? '#262626' : theme.colors.gray[0],
+                    // backgroundColor:theme.colorScheme === 'dark' ? '#262626' : theme.colors.gray[0],
                     '&:hover': {
-                        backgroundColor: isDark() ? '#000000' : theme.colors.gray[0],
+                        backgroundColor: theme.colorScheme === 'dark' ? '#000000' : theme.colors.gray[0],
                     },
                 }}
                 >
@@ -59,11 +59,11 @@ function HeaderLogo({ size }: { size?: number | undefined }) {
                         sx={{ backgroundColor: 'rgba(0, 0, 0, 0)' }}
                     >
                         <Text
-                            color={(isDark() ? 'white' : '#262626')}
+                            color={(theme.colorScheme === 'dark' ? 'white' : '#262626')}
                             sx={
                                 {
                                     '&:hover': {
-                                        color: isDark() ? theme.colors.gray[4] : theme.colors.dark[3],
+                                        color: theme.colorScheme === 'dark' ? theme.colors.gray[4] : theme.colors.dark[3],
                                     },
                                 }
                             }

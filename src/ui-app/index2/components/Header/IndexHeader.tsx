@@ -41,7 +41,7 @@ const useStyles = createStyles((theme) => ({
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: isDark() ? theme.colors.dark[5] : theme.colors.gray[2],
+        backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[2],
     },
     links: {
         [theme.fn.smallerThan('md')]: {
