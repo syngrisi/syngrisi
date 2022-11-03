@@ -12,10 +12,13 @@ import {
     useMantineTheme,
     Popover,
     Divider,
+    Tooltip,
+    Kbd,
 } from '@mantine/core';
 import {
     useDisclosure,
     // useViewportSize
+    useHotkeys,
 } from '@mantine/hooks';
 import { useContext, useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -24,9 +27,12 @@ import {
     IconChevronDown,
     IconDeviceFloppy,
     IconShape,
+    IconShapeOff,
     IconSquareHalf,
     IconSquareLetterA,
-    IconSquareLetterE, IconZoomIn, IconZoomOut,
+    IconSquareLetterE,
+    IconZoomIn,
+    IconZoomOut,
 } from '@tabler/icons';
 import { MainView } from './mainView';
 import { imageFromUrl } from './helpers';
@@ -97,24 +103,24 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
     const [openedZoomPopover, zoomPopoverHandler] = useDisclosure(false);
 
     function zoomEvents() {
-        mainView.canvas.on('mouse:wheel', (opt: any) => {
-            if (!opt.e.ctrlKey) return;
-            const delta = opt.e.deltaY;
-            let zoomVal = mainView.canvas.getZoom();
-
-            zoomVal *= 0.999 ** delta;
-            if (zoomVal > 9) zoomVal = 9;
-            if (zoomVal < 0.10) zoomVal = 0.10;
-            mainView.canvas.zoomToPoint({
-                x: opt.e.offsetX,
-                y: opt.e.offsetY,
-            }, zoomVal);
-
-            setZoomPercent(() => zoomVal * 100);
-            document.dispatchEvent(new Event('zoom'));
-            opt.e.preventDefault();
-            opt.e.stopPropagation();
-        });
+        // mainView.canvas.on('mouse:wheel', (opt: any) => {
+        //     // if (!opt.e.ctrlKey) return;
+        //     // const delta = opt.e.deltaY;
+        //     // let zoomVal = mainView.canvas.getZoom();
+        //     //
+        //     // zoomVal *= 0.999 ** delta;
+        //     // if (zoomVal > 9) zoomVal = 9;
+        //     // if (zoomVal < 0.10) zoomVal = 0.10;
+        //     // mainView.canvas.zoomToPoint({
+        //     //     x: opt.e.offsetX,
+        //     //     y: opt.e.offsetY,
+        //     // }, zoomVal);
+        //     //
+        //     // setZoomPercent(() => zoomVal * 100);
+        //     // document.dispatchEvent(new Event('zoom'));
+        //     // opt.e.preventDefault();
+        //     // opt.e.stopPropagation();
+        // });
     }
 
     const zoomByPercent = (percent) => {
@@ -175,6 +181,57 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
         }
     }, [related.relatedActiveCheck, relatedChecksOpened]);
 
+    useHotkeys([
+        ['mod+H', () => {
+            console.log('Toggle color scheme');
+            console.log(mainView);
+        }],
+
+        // Zoom
+        ['Equal', () => zoomByDelta(15)],
+        ['NumpadAdd', () => zoomByDelta(15)],
+        ['Minus', () => zoomByDelta(-15)],
+        ['NumpadSubtract', () => zoomByDelta(-15)],
+        ['Digit9', () => fitImageByWith(`${view}Image`)],
+        ['Digit0', () => {
+            if (view === 'slider') {
+                fitImageIfNeeded('actualImage');
+                return;
+            }
+            fitImageIfNeeded(`${view}Image`);
+        }],
+
+        // View
+        ['Digit1', () => setView('actual')],
+        ['Digit2', () => setView('expected')],
+        ['Digit3', () => {
+            if (currentCheck?.diffId?.filename) setView('diff');
+        }],
+        ['Digit4', () => {
+            if (currentCheck?.diffId?.filename) setView('slider');
+        }],
+        // Regions
+        ['A', () => {
+            if ((view === 'actual') || (view === 'expected')) {
+                mainView.addIgnoreRegion({ name: 'ignore_rect', strokeWidth: 0 })
+            }
+        }],
+        ['S', () => {
+            MainView.sendIgnoreRegions(baselineId, mainView.getRectData());
+        }],
+        ['Delete', () => mainView.removeActiveIgnoreRegions()],
+        ['Backspace', () => mainView.removeActiveIgnoreRegions()],
+    ]);
+
+    function keyHandler(event) {
+        console.log(event.code);
+    }
+
+    const keyEvents = () => {
+        document.addEventListener('keydown', keyHandler);
+    };
+
+    // init mainView
     useEffect(() => {
         if (!document.getElementById('snapshoot')) return;
         const initMV = async () => {
@@ -209,6 +266,9 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
                     },
                 );
                 window.mainView = MV;
+
+                keyEvents();
+
                 return MV;
             });
         };
@@ -297,6 +357,40 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
         }, 10);
     };
 
+    const [visibleRegionRemoveButton, setVisibleRegionRemoveButton] = useState(false);
+    const regionsSelectionEvents = () => {
+        const handler = () => {
+            const els = mainView.canvas.getActiveObjects()
+                .filter((x: any) => x.name === 'ignore_rect');
+
+            if (els.length > 0) {
+                setVisibleRegionRemoveButton(() => true);
+            } else {
+                setVisibleRegionRemoveButton(() => false);
+            }
+        };
+
+        mainView.canvas.on(
+            {
+                'selection:cleared':
+                    (e: any) => {
+                        console.log('cleared selection');
+                        handler();
+                    },
+                'selection:updated':
+                    (e: any) => {
+                        console.log('update selection');
+                        handler();
+                    },
+                'selection:created':
+                    (e: any) => {
+                        console.log('create selection');
+                        handler();
+                    },
+            },
+        );
+    };
+
     useEffect(function afterMainViewCreated() {
         if (mainView) {
             zoomEvents();
@@ -304,7 +398,7 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
             fitGreatestImageIfNeeded();
 
             setView('actual');
-
+            regionsSelectionEvents();
             if (mainView.diffImage) {
                 setTimeout(() => {
                     setView('diff');
@@ -379,6 +473,7 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
         },
     ];
 
+    // disable the slider and diff if diff not exist
     if (currentCheck?.diffId?.filename) {
         viewSegmentData[2].disabled = false;
         viewSegmentData[3].disabled = false;
@@ -395,14 +490,24 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
                     </Group>
                     <Group spacing="sm">
                         <Group spacing={4} position="center" align="center">
-                            <ActionIcon
-                                title="Zoom in"
-                                onClick={() => zoomByDelta(15)}
+                            <Tooltip
+                                label={
+                                    (
+                                        <Group noWrap>
+                                            <Text>Zoom In</Text>
+                                            <Kbd>+</Kbd>
+                                        </Group>
+                                    )
+                                }
                             >
-                                <IconZoomIn size={24} stroke={1} />
-                            </ActionIcon>
+                                <ActionIcon
+                                    onClick={() => zoomByDelta(15)}
+                                >
+                                    <IconZoomIn size={24} stroke={1} />
+                                </ActionIcon>
+                            </Tooltip>
 
-                            <Popover width={130} position="bottom" withArrow shadow="md" opened={openedZoomPopover}>
+                            <Popover position="bottom" withArrow shadow="md" opened={openedZoomPopover}>
                                 <Popover.Target>
                                     <Group spacing={0} position="center" onClick={zoomPopoverHandler.toggle}>
                                         <Text
@@ -420,6 +525,8 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
                                 <Popover.Dropdown p={0}>
                                     <Stack spacing={0}>
                                         <Button
+                                            pl={8}
+                                            pr={8}
                                             variant="subtle"
                                             onClick={() => {
                                                 zoomByPercent(50);
@@ -431,9 +538,11 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
                                                 zoomPopoverHandler.close();
                                             }}
                                         >
-                                            50%
+                                            <Group position="apart" noWrap>50%</Group>
                                         </Button>
                                         <Button
+                                            pl={8}
+                                            pr={8}
                                             variant="subtle"
                                             onClick={() => {
                                                 zoomByPercent(100);
@@ -445,9 +554,11 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
                                                 zoomPopoverHandler.close();
                                             }}
                                         >
-                                            100%
+                                            <Group position="apart" noWrap>100%</Group>
                                         </Button>
                                         <Button
+                                            pl={8}
+                                            pr={8}
                                             variant="subtle"
                                             onClick={() => {
                                                 zoomByPercent(200);
@@ -459,9 +570,12 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
                                                 zoomPopoverHandler.close();
                                             }}
                                         >
-                                            200%
+                                            <Group position="apart" noWrap>200%</Group>
                                         </Button>
                                         <Button
+                                            sx={{ width: '100%' }}
+                                            pl={8}
+                                            pr={8}
                                             variant="subtle"
                                             onClick={() => {
                                                 zoomPopoverHandler.close();
@@ -472,9 +586,14 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
                                                 fitImageByWith(`${view}Image`);
                                             }}
                                         >
-                                            Fit by width
+                                            <Group sx={{ width: '100%' }} position="left" noWrap>
+                                                Fit by width <Kbd>9</Kbd>
+                                            </Group>
                                         </Button>
+
                                         <Button
+                                            pl={8}
+                                            pr={8}
                                             variant="subtle"
                                             onClick={() => {
                                                 zoomPopoverHandler.close();
@@ -486,18 +605,30 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
                                                 fitImageIfNeeded(`${view}Image`);
                                             }}
                                         >
-                                            Fit to canvas
+                                            <Group sx={{ width: '100%' }} position="left" noWrap>
+                                                Fit to canvas <Kbd>0</Kbd>
+                                            </Group>
                                         </Button>
                                     </Stack>
                                 </Popover.Dropdown>
                             </Popover>
 
-                            <ActionIcon
-                                title="Zoom out"
-                                onClick={() => zoomByDelta(-15)}
+                            <Tooltip
+                                label={
+                                    (
+                                        <Group noWrap>
+                                            <Text>Zoom out</Text>
+                                            <Kbd>-</Kbd>
+                                        </Group>
+                                    )
+                                }
                             >
-                                <IconZoomOut size={24} stroke={1} />
-                            </ActionIcon>
+                                <ActionIcon
+                                    onClick={() => zoomByDelta(-15)}
+                                >
+                                    <IconZoomOut size={24} stroke={1} />
+                                </ActionIcon>
+                            </Tooltip>
                         </Group>
                         <Divider orientation="vertical" />
                         <SegmentedControl
@@ -506,15 +637,49 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
                             data={viewSegmentData}
                         />
                         <Divider orientation="vertical" />
-                        <ActionIcon
-                            disabled={view === 'slider'}
-                            title="Add ignore region"
-                            onClick={() => mainView.addIgnoreRegion({ name: 'ignore_rect', strokeWidth: 0 })}
+                        <Tooltip
+                            label={
+                                (
+                                    <Group noWrap>
+                                        <Text>Remove selected ignore regions</Text>
+                                        <Kbd>Del</Kbd>
+                                        {' or '}
+                                        <Kbd>Backspace</Kbd>
+                                    </Group>
+                                )
+                            }
                         >
-                            <IconShape size={24} stroke={1} />
-                        </ActionIcon>
+                            <ActionIcon
+
+                                disabled={!visibleRegionRemoveButton}
+                                title="remove selected ignore regions"
+                                onClick={() => mainView.removeActiveIgnoreRegions()}
+                            >
+                                <IconShapeOff size={24} stroke={1} />
+                            </ActionIcon>
+                        </Tooltip>
+
+                        <Tooltip
+                            label={
+                                (
+                                    <Group noWrap>
+                                        <Text>Add ignore region</Text>
+                                        <Kbd>A</Kbd>
+                                    </Group>
+                                )
+                            }
+                        >
+                            <ActionIcon
+                                disabled={view === 'slider'}
+                                onClick={() => mainView.addIgnoreRegion({ name: 'ignore_rect', strokeWidth: 0 })}
+                            >
+                                <IconShape size={24} stroke={1} />
+                            </ActionIcon>
+                        </Tooltip>
 
                         <ActionIcon
+                            title="save ignore regions"
+
                             onClick={() => MainView.sendIgnoreRegions(baselineId, mainView.getRectData())}
                         >
                             <IconDeviceFloppy size={24} stroke={1} />
@@ -539,7 +704,6 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
 
                 </Group>
 
-                {/* Main */}
                 <Group
                     spacing={4}
                     align="start"

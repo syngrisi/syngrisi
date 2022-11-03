@@ -18,10 +18,8 @@ import { createStyles } from '@mantine/styles';
 import { useContext, useEffect } from 'react';
 import { openSpotlight } from '@mantine/spotlight';
 import { useQuery } from '@tanstack/react-query';
-import useColorScheme from '../../../shared/hooks/useColorSheme';
-import ToggleThemeButton from '../../../shared/components/ToggleThemeButton';
 import HeaderLogo from '../../../shared/components/Header/HeaderLogo';
-import { errorMsg, isDark } from '../../../shared/utils';
+import { errorMsg } from '../../../shared/utils';
 import UserMenu from '../../../shared/components/Header/UserMenu';
 import { AppContext } from '../../AppContext';
 import { links } from '../../../shared/components/heaserLinks';
@@ -98,7 +96,6 @@ export default function IndexHeader() {
 
     const theme = useMantineTheme();
 
-    const [colorScheme, toggleColorScheme] = useColorScheme();
     const [opened, { toggle }] = useDisclosure(false);
     const { classes } = useStyles();
 
@@ -222,10 +219,6 @@ export default function IndexHeader() {
 
                     <Group spacing={7}>
                         <UserMenu />
-                    </Group>
-
-                    <Group>
-                        <ToggleThemeButton colorScheme={colorScheme} toggleColorScheme={toggleColorScheme} />
                     </Group>
                 </Group>
             </Container>

@@ -11,7 +11,7 @@ import {
     TextInput,
     useMantineTheme,
     Button,
-    Paper,
+    Divider,
 } from '@mantine/core';
 import { IconChevronDown, IconX } from '@tabler/icons';
 import { useEffect, useMemo, useState } from 'react';
@@ -174,116 +174,115 @@ export function QuickFilter() {
                         </Group>
                     </Popover.Target>
                     <Popover.Dropdown
-                        p={10}
+                        p="md"
                     >
                         <ScrollArea
                             style={{ height: '45vh' }}
                         >
-                            <Paper p={10}>
-                                <Stack spacing={8} justify="flex-start">
-                                    <Text size={10} color="gray.6" weight={600} transform="uppercase">Browsers:</Text>
-                                    <Chip.Group
-                                        spacing={4}
-                                        multiple
-                                        value={browserChipsData}
-                                        onChange={setBrowserChipsData}
-                                    >
-                                        {
-                                            browsers.map((item: string) => (
-                                                <Chip
-                                                    value={item}
-                                                    key={item}
-                                                    styles={chipStyles}
-                                                >
-                                                    {item}
-                                                </Chip>
-                                            ))
-                                        }
-                                    </Chip.Group>
+                            <Stack spacing={8} justify="flex-start">
+                                <Text size={10} color="gray.6" weight={600} transform="uppercase">Browsers:</Text>
+                                <Chip.Group
+                                    spacing={4}
+                                    multiple
+                                    value={browserChipsData}
+                                    onChange={setBrowserChipsData}
+                                >
+                                    {
+                                        browsers.map((item: string) => (
+                                            <Chip
+                                                value={item}
+                                                key={item}
+                                                styles={chipStyles}
+                                            >
+                                                {item}
+                                            </Chip>
+                                        ))
+                                    }
+                                </Chip.Group>
 
-                                    <Text size={10} color="gray.6" weight={600} transform="uppercase">Platforms:</Text>
-                                    <Chip.Group
-                                        spacing={4}
-                                        multiple
-                                        value={platformChipsData}
-                                        onChange={setPlatformChipsData}
-                                    >
-                                        {
-                                            platforms.map((item: string) => (
-                                                <Chip
-                                                    key={item}
-                                                    value={item}
-                                                    styles={chipStyles}
-                                                >
-                                                    {item}
-                                                </Chip>
-                                            ))
-                                        }
-                                    </Chip.Group>
+                                <Text size={10} color="gray.6" weight={600} transform="uppercase">Platforms:</Text>
+                                <Chip.Group
+                                    spacing={4}
+                                    multiple
+                                    value={platformChipsData}
+                                    onChange={setPlatformChipsData}
+                                >
+                                    {
+                                        platforms.map((item: string) => (
+                                            <Chip
+                                                key={item}
+                                                value={item}
+                                                styles={chipStyles}
+                                            >
+                                                {item}
+                                            </Chip>
+                                        ))
+                                    }
+                                </Chip.Group>
 
-                                    <Text size={10} color="gray.6" weight={600} transform="uppercase">Viewports:</Text>
-                                    <Chip.Group
-                                        value={viewportChipsData}
-                                        onChange={setViewportChipsData}
-                                        spacing={4}
-                                        multiple
-                                    >
-                                        {
-                                            viewports.map((item: string) => (
-                                                <Chip
-                                                    value={item}
-                                                    key={item}
-                                                    styles={chipStyles}
-                                                >
-                                                    {item}
-                                                </Chip>
-                                            ))
-                                        }
-                                    </Chip.Group>
+                                <Text size={10} color="gray.6" weight={600} transform="uppercase">Viewports:</Text>
+                                <Chip.Group
+                                    value={viewportChipsData}
+                                    onChange={setViewportChipsData}
+                                    spacing={4}
+                                    multiple
+                                >
+                                    {
+                                        viewports.map((item: string) => (
+                                            <Chip
+                                                value={item}
+                                                key={item}
+                                                styles={chipStyles}
+                                            >
+                                                {item}
+                                            </Chip>
+                                        ))
+                                    }
+                                </Chip.Group>
 
-                                    <Text size={10} color="gray.6" weight={600} transform="uppercase">Status:</Text>
-                                    <Chip.Group
-                                        value={statusesChipsData}
-                                        onChange={setStatusesChipsData}
-                                        spacing={4}
-                                        multiple
-                                    >
-                                        {
-                                            statuses.map((item: string) => (
-                                                <Chip
-                                                    value={item}
-                                                    key={item}
-                                                    styles={chipStyles}
-                                                >
-                                                    {item}
-                                                </Chip>
-                                            ))
-                                        }
-                                    </Chip.Group>
+                                <Text size={10} color="gray.6" weight={600} transform="uppercase">Status:</Text>
+                                <Chip.Group
+                                    value={statusesChipsData}
+                                    onChange={setStatusesChipsData}
+                                    spacing={4}
+                                    multiple
+                                >
+                                    {
+                                        statuses.map((item: string) => (
+                                            <Chip
+                                                value={item}
+                                                key={item}
+                                                styles={chipStyles}
+                                            >
+                                                {item}
+                                            </Chip>
+                                        ))
+                                    }
+                                </Chip.Group>
 
-                                    <Text size={10} color="gray.6" weight={600} transform="uppercase">Accepted:</Text>
-                                    <Chip.Group
-                                        value={acceptedStatusChipsData}
-                                        onChange={setAcceptedStatusChipsData}
-                                        spacing={4}
-                                        multiple
-                                    >
-                                        {
-                                            acceptStatuses.map((item: string) => (
-                                                <Chip
-                                                    value={item}
-                                                    key={item}
-                                                    styles={chipStyles}
-                                                >
-                                                    {item}
-                                                </Chip>
-                                            ))
-                                        }
-                                    </Chip.Group>
+                                <Text size={10} color="gray.6" weight={600} transform="uppercase">Accepted:</Text>
+                                <Chip.Group
+                                    value={acceptedStatusChipsData}
+                                    onChange={setAcceptedStatusChipsData}
+                                    spacing={4}
+                                    multiple
+                                >
+                                    {
+                                        acceptStatuses.map((item: string) => (
+                                            <Chip
+                                                value={item}
+                                                key={item}
+                                                styles={chipStyles}
+                                            >
+                                                {item}
+                                            </Chip>
+                                        ))
+                                    }
+                                </Chip.Group>
 
-                                </Stack>
-                            </Paper>
+                            </Stack>
                         </ScrollArea>
+                        <Divider />
                         <Group position="center" pt={16}>
                             <Button onClick={resetQuickFilter}>Reset</Button>
                             <Button onClick={close}>Close</Button>

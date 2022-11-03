@@ -33,7 +33,7 @@ export class MainView {
 
     defaultMode: string;
 
-    currentView: string;
+    // currentView: string;
 
     actualView: SimpleView;
 
@@ -74,21 +74,21 @@ export class MainView {
         // this.expectedCanvasViewportAreaSize = MainView.calculateExpectedCanvasViewportAreaSize();
 
         this.defaultMode = '';
-        this.currentMode = {
-            mode: '',
-            set(value) {
-                this.mode = value;
-            },
-            toggle(mode) {
-                if (this.mode === mode) {
-                    return this.set(this.defaultMode);
-                }
-                return this.set(mode);
-            },
-            isPan() {
-                return this.mode === 'pan';
-            },
-        };
+        // this.currentMode = {
+        //     mode: '',
+        //     set(value) {
+        //         this.mode = value;
+        //     },
+        //     toggle(mode) {
+        //         if (this.mode === mode) {
+        //             return this.set(this.defaultMode);
+        //         }
+        //         return this.set(mode);
+        //     },
+        //     isPan() {
+        //         return this.mode === 'pan';
+        //     },
+        // };
 
         // this.baselineUrl = url;
         if (actual) {
@@ -139,42 +139,42 @@ export class MainView {
     }
 
     panEvents() {
-        this.canvas.on(
-            'mouse:move', (e) => {
-                // console.log(e.e.buttons);
-                const s2sMoving = this.sliderView.inMovement;
-                if ((e.e.buttons === 4 || this.mouseDown) && this.currentMode.isPan() && !s2sMoving) {
-                    this.canvas.setCursor('grab');
+        // this.canvas.on(
+        //     'mouse:move', (e) => {
+        //         // console.log(e.e.buttons);
+        //         const s2sMoving = this.sliderView.inMovement;
+        //         if ((e.e.buttons === 4 || this.mouseDown) && this.currentMode.isPan() && !s2sMoving) {
+        //             this.canvas.setCursor('grab');
+        //
+        //             const mEvent = e.e;
+        //             const delta = new fabric.Point(mEvent.movementX, mEvent.movementY);
+        //             this.canvas.relativePan(delta);
+        //             this.canvas.fire('pan', e);
+        //             // dispatchEvent(new Event('pan'));
+        //             this.canvas.renderAll();
+        //         }
+        //     },
+        // );
 
-                    const mEvent = e.e;
-                    const delta = new fabric.Point(mEvent.movementX, mEvent.movementY);
-                    this.canvas.relativePan(delta);
-                    this.canvas.fire('pan', e);
-                    // dispatchEvent(new Event('pan'));
-                    this.canvas.renderAll();
-                }
-            },
-        );
-
-        this.canvas.on(
-            'mouse:down', () => {
-                this.mouseDown = true;
-
-                if (this.currentMode.isPan()) {
-                    this.canvas.setCursor('grab');
-                    this.canvas.selection = false;
-                    this.canvas.renderAll();
-                }
-            },
-        );
-        this.canvas.on(
-            'mouse:up', () => {
-                this.mouseDown = false;
-                this.canvas.setCursor('default');
-                this.canvas.renderAll();
-                this.canvas.selection = true;
-            },
-        );
+        // this.canvas.on(
+        //     'mouse:down', () => {
+        //         this.mouseDown = true;
+        //
+        //         if (this.currentMode.isPan()) {
+        //             this.canvas.setCursor('grab');
+        //             this.canvas.selection = false;
+        //             this.canvas.renderAll();
+        //         }
+        //     },
+        // );
+        // this.canvas.on(
+        //     'mouse:up', () => {
+        //         this.mouseDown = false;
+        //         this.canvas.setCursor('default');
+        //         this.canvas.renderAll();
+        //         this.canvas.selection = true;
+        //     },
+        // );
 
         this.canvas.on('mouse:wheel', (opt) => {
             if (opt.e.ctrlKey) return;
@@ -208,25 +208,25 @@ export class MainView {
         });
     }
 
-    zoomEvents() {
-        // this.canvas.on('mouse:wheel', (opt) => {
-        //     if (!opt.e.ctrlKey) return;
-        //     const delta = opt.e.deltaY;
-        //     console.log({ delta })
-        //     let zoom = this.canvas.getZoom();
-        //     zoom *= 0.999 ** delta;
-        //     console.log({zoom})
-        //     if (zoom > 20) zoom = 20;
-        //     if (zoom < 0.01) zoom = 0.01;
-        //     this.canvas.zoomToPoint({
-        //         x: opt.e.offsetX,
-        //         y: opt.e.offsetY,
-        //     }, zoom);
-        //     document.dispatchEvent(new Event('zoom'));
-        //     opt.e.preventDefault();
-        //     opt.e.stopPropagation();
-        // });
-    }
+    // zoomEvents() {
+    // this.canvas.on('mouse:wheel', (opt) => {
+    //     if (!opt.e.ctrlKey) return;
+    //     const delta = opt.e.deltaY;
+    //     console.log({ delta })
+    //     let zoom = this.canvas.getZoom();
+    //     zoom *= 0.999 ** delta;
+    //     console.log({zoom})
+    //     if (zoom > 20) zoom = 20;
+    //     if (zoom < 0.01) zoom = 0.01;
+    //     this.canvas.zoomToPoint({
+    //         x: opt.e.offsetX,
+    //         y: opt.e.offsetY,
+    //     }, zoom);
+    //     document.dispatchEvent(new Event('zoom'));
+    //     opt.e.preventDefault();
+    //     opt.e.stopPropagation();
+    // });
+    // }
 
     get objects() {
         return this.canvas.getObjects();
@@ -240,7 +240,7 @@ export class MainView {
     }
 
     async switchView(view) {
-        this.destroyAllViews();
+        await this.destroyAllViews();
         this.sliderView = new SideToSideView(
             {
                 mainView: this,
@@ -265,26 +265,6 @@ export class MainView {
         });
     }
 
-    // pan to place the image in the center of canvas
-    async panToCenter(image) {
-        if (this.pannedOnInit) return;
-        this.pannedOnInit = true;
-
-        // const delta = new fabric.Point(
-        //     ((this.canvas.width / 2) - (image.getScaledWidth() / 2)),
-        //     (this.canvas.height > image.getScaledHeight()
-        //         ? (this.canvas.height / 2) - (image.getScaledHeight() / 2)
-        //         : 5),
-        // );
-
-        const delta = new fabric.Point(
-            ((this.canvas.width / 2) - (image.getScaledWidth() / 2)),
-            0,
-        );
-        this.canvas.relativePan(delta);
-        this.canvas.renderAll();
-    }
-
     panToCanvasWidthCenter(imageName: string) {
         // if (this.pannedOnInit) return;
         // this.pannedOnInit = true;
@@ -300,6 +280,26 @@ export class MainView {
         this.canvas.relativePan(delta);
         this.canvas.renderAll();
     }
+
+    // // pan to place the image in the center of canvas
+    // async panToCenter(image) {
+    //     if (this.pannedOnInit) return;
+    //     this.pannedOnInit = true;
+    //
+    //     // const delta = new fabric.Point(
+    //     //     ((this.canvas.width / 2) - (image.getScaledWidth() / 2)),
+    //     //     (this.canvas.height > image.getScaledHeight()
+    //     //         ? (this.canvas.height / 2) - (image.getScaledHeight() / 2)
+    //     //         : 5),
+    //     // );
+    //
+    //     const delta = new fabric.Point(
+    //         ((this.canvas.width / 2) - (image.getScaledWidth() / 2)),
+    //         0,
+    //     );
+    //     this.canvas.relativePan(delta);
+    //     this.canvas.renderAll();
+    // }
 
     // RENDER VIEWS
     // async renderBaselineView() {
@@ -396,7 +396,8 @@ export class MainView {
                 .getScaledHeight();
         }
         // if last elements fit in current viewport create new region near this region
-        const top = (lastTop > document.documentElement.scrollTop && lastTop < document.documentElement.scrollTop + window.innerHeight)
+        const top = (lastTop > document.documentElement.scrollTop
+            && lastTop < document.documentElement.scrollTop + window.innerHeight)
             ? lastTop + 20
             : document.documentElement.scrollTop + 50;
         const left = (lastLeft < (this.canvas.width - 80)) ? lastLeft + 20 : lastLeft - 50;
@@ -584,7 +585,6 @@ export class MainView {
             console.error(`Cannot get baseline ignored regions , status: '${response.status}',  resp: '${text}'`);
             // MainView.showToaster('Cannot get baseline ignored regions', 'Error');
             errorMsg({ error: 'Cannot get baseline ignored regions' });
-
         } catch (e) {
             console.error(`Cannot get baseline ignored regions: ${e.stack || e}`);
             // MainView.showToaster('Cannot get baseline ignored regions', 'Error');
