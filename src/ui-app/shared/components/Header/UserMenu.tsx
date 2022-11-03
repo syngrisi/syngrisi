@@ -3,6 +3,7 @@ import {
     Menu,
     Button,
     useMantineTheme,
+    Group,
 } from '@mantine/core';
 
 import {
@@ -19,9 +20,12 @@ import { UserHooks } from '../../hooks';
 import ApiKeyModalAsk from './ApiKeyModalAsk';
 import { ApiKeyModalResult } from './ApiKeyModalResult';
 import { UserInfoModal } from './UserInfoModal';
+import ToggleThemeButton from '../ToggleThemeButton';
+import useColorScheme from '../../hooks/useColorSheme';
 
 function UserMenu() {
     const theme = useMantineTheme();
+    const [colorScheme, toggleColorScheme] = useColorScheme();
     const apiKey = UserHooks.useApiKey();
     const [apiKeyModalAskOpened, setApiKeyModalAskOpened] = useState(false);
     const [apiKeyModalResultOpened, setApiKeyModalResultOpened] = useState(false);
@@ -71,10 +75,16 @@ function UserMenu() {
                             color: theme.colors.blue[5],
                         }}
                     >
-                        <IconUser size="14px" stroke={3} style={{ marginRight: '10px' }} />
-                        {currentUser?.data?.firstName}
-                        {' '}
-                        {currentUser?.data?.lastName}
+                        <Group position="apart" sx={{ width: '100%' }}>
+                            <Group spacing={0}>
+                                <IconUser size="14px" stroke={3} style={{ marginRight: '10px' }} />
+                                {currentUser?.data?.firstName}
+                                {' '}
+                                {currentUser?.data?.lastName}
+                            </Group>
+                            <ToggleThemeButton colorScheme={colorScheme} toggleColorScheme={toggleColorScheme} />
+                        </Group>
+
                     </Menu.Label>
                     <Menu.Divider />
                     <Menu.Item

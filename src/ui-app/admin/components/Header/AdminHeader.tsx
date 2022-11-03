@@ -15,10 +15,7 @@ import { IconSearch } from '@tabler/icons';
 import { createStyles } from '@mantine/styles';
 import { useContext } from 'react';
 import { openSpotlight } from '@mantine/spotlight';
-import useColorScheme from '../../../shared/hooks/useColorSheme';
-import ToggleThemeButton from '../../../shared/components/ToggleThemeButton';
 import HeaderLogo from '../../../shared/components/Header/HeaderLogo';
-// import { isDark } from '../../../shared/utils';
 import UserMenu from '../../../shared/components/Header/UserMenu';
 import { AppContext } from '../../AppContext';
 import { links } from '../../../shared/components/heaserLinks';
@@ -84,8 +81,6 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export default function AdminHeader() {
-    const [colorScheme, toggleColorScheme] = useColorScheme();
-
     const [opened, { toggle }] = useDisclosure(false);
     const { classes } = useStyles();
 
@@ -138,10 +133,6 @@ export default function AdminHeader() {
 
                     <Group spacing={7}>
                         <UserMenu />
-                    </Group>
-
-                    <Group>
-                        <ToggleThemeButton colorScheme={colorScheme} toggleColorScheme={toggleColorScheme} />
                     </Group>
                 </Group>
             </Container>

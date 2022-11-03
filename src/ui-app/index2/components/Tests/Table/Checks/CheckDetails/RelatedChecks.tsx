@@ -1,8 +1,8 @@
 /* eslint-disable no-underscore-dangle,no-nested-ternary,prefer-arrow-callback */
 import * as React from 'react';
-import { ActionIcon, Group, ScrollArea, Stack, Text, Transition, Chip } from '@mantine/core';
+import { ActionIcon, Group, ScrollArea, Stack, Text, Transition, Chip, Burger } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconArrowsSort, IconCaretLeft, IconCaretRight, IconFilter, IconRefresh } from '@tabler/icons';
+import { IconArrowsSort, IconFilter, IconRefresh, IconX } from '@tabler/icons';
 import { useEffect, useState } from 'react';
 import { RelatedChecksSkeleton } from './RelatedChecksSkeleton';
 import { RelatedChecksItems } from './RelatedChecksItems';
@@ -22,6 +22,8 @@ export function RelatedChecks(
     const [openedSort, sortHandler] = useDisclosure(false);
     const [openedFilter, filterHandler] = useDisclosure(false);
     const [filter, setFilter] = useState(['name']);
+    const [opened, setOpened] = useState(true);
+    const title = opened ? 'Close related checks' : 'Open related checks';
 
     useEffect(function onSortChange() {
         related.relatedChecksQuery.firstPageQuery.refetch();
@@ -46,31 +48,33 @@ export function RelatedChecks(
             <Stack pr="sm" align="end" sx={{ width: '100%' }} spacing={8}>
 
                 <Group position="apart" align="center" sx={{ width: '100%' }} spacing={0}>
-                    <Group>
-                        <ActionIcon
-                            data-test="hide-related-checks-icon"
-                            title="hide/show related checks"
-                            onClick={() => hideRelatedChecks()}
-                            // mb={4}
-                        >
-
-                            {related.opened ? (<IconCaretLeft stroke={1} />) : (
-                                <IconCaretRight stroke={1} />)}
-                        </ActionIcon>
-                    </Group>
+                    <Group />
                     {
                         related.opened && (
-                            <Group position="left" ml={-24}>
+                            <Group position="left" ml={0}>
                                 <Text size="sm">Related Checks</Text>
                             </Group>
                         )
                     }
-                    <Group />
+                    <Group>
+                        <Burger
+                            opened={opened}
+                            styles={{
+                                // burger
+                            }}
+                            size={16}
+                            onClick={() => {
+                                hideRelatedChecks();
+                                setOpened((o) => !o);
+                            }}
+                            title={title}
+                        />
+                    </Group>
                 </Group>
 
                 {
                     related.opened && (
-                        <Group position="right" spacing="xs" sx={{ width: '100%' }} mb={4}>
+                        <Group position="center" spacing="xs" sx={{ width: '100%' }} mb={4}>
                             <ActionIcon
                                 data-test="related-check-icon-open-sort"
                                 onClick={() => sortHandler.toggle()}
@@ -108,9 +112,14 @@ export function RelatedChecks(
                 {
                     openedFilter && (
                         <Group mb="xs" mt="xs" ml={-10} mr={-10} spacing={4}>
-                            <Text size="sm" mb={-8}>
-                                Show checks with same parameters
-                            </Text>
+                            <Group position="apart" align="center" noWrap>
+                                <Text size="sm" mb={-8}>
+                                    Show checks with same parameters
+                                </Text>
+                                <ActionIcon onClick={filterHandler.close}>
+                                    <IconX size={24} stroke={1} />
+                                </ActionIcon>
+                            </Group>
 
                             <Chip.Group spacing={6} value={filter} onChange={setFilter} multiple>
                                 <Chip size="xs" value="name">Name</Chip>
@@ -123,7 +132,6 @@ export function RelatedChecks(
                         </Group>
                     )
                 }
-
             </Stack>
 
             {
@@ -133,6 +141,7 @@ export function RelatedChecks(
                             (styles: any) => (
 
                                 <ScrollArea
+                                    mt="md"
                                     style={{ height: '75vh' }}
                                     styles={styles}
                                 >

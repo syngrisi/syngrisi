@@ -4,8 +4,8 @@ var __publicField = (obj, key, value) => {
   __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
   return value;
 };
-import { r as react, W as queryString, b as jsx, j as jsxs, P as Paper, g as Title, X as Stack, T as Text, G as Group, h as Button, Y as Epe, k as ky, a as config, u as useQuery, d as useMantineTheme, Z as Fragment, q as TextInput, t as ActionIcon, n as lAe, _ as Pj, D as useLocalStorage, e as Container, $ as Dge, c as createStyles, l as log, a0 as Tooltip, a1 as CK, a2 as Loader, a3 as React, a4 as Transition, a5 as Xfe, a6 as rze, A as Anchor, a7 as zV, a8 as ea, a9 as Ol, aa as ua, ab as RX, ac as rWe, ad as UZ, s as Checkbox, ae as getAugmentedNamespace, af as ry, ag as ly, ah as lDe, ai as dDe, aj as DMe, ak as qF, al as Cbe, am as Pbe, an as pi, ao as Lbe, L as LoadingOverlay, ap as LHe, B as Box, o as useSearchParams, aq as Y, Q as QueryClient, f as useDocumentTitle, ar as useNavigate, F as QueryClientProvider, H as ColorSchemeProvider, M as MantineProvider, as as Routes, at as Route, I as createRoot, J as BrowserRouter } from "./use-form.23538837.js";
-import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, G as GenericService, e as errorMsg, a as useDisclosure, b as useClickOutside, c as escapeRegExp, P as Popover, d as ScrollArea, f as Chip, g as useColorScheme, l as links, H as Header, B as Burger, h as HeaderLogo, i as SafeSelect, o as openSpotlight, K as Kbd, U as UserMenu, T as ToggleThemeButton, j as Breadcrumbs, k as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, m as Skeleton, n as useInView, F as FocusTrap, p as getNavigationItem, q as stopNavigationProgress, r as resetNavigationProgress, t as useToggle, v as useInfinityScroll, N as Navbar, w as Badge, A as Affix, x as ActionPopoverIcon, y as UserHooks, z as ThemeIcon, I as Image$1, D as Card, E as Collapse, O as Divider, Q as SegmentedControl, V as Table, W as useInputState, X as RelativeDrawer, Y as LogicalGroup, Z as uuid, $ as useNavProgressFetchEffect, a0 as AppShell, a1 as ReactQueryDevtools, a2 as navigationData, a3 as SpotlightProvider, a4 as NotificationsProvider, a5 as NavigationProgress, a6 as ModalsProvider, a7 as QueryParamProvider, a8 as ReactRouter6Adapter } from "./LogicalGroup.0336c1b6.js";
+import { r as react, W as queryString, b as jsx, j as jsxs, P as Paper, g as Title, X as Stack, T as Text, G as Group, h as Button, Y as Epe, k as ky, a as config, u as useQuery, d as useMantineTheme, Z as Fragment, q as TextInput, t as ActionIcon, n as lAe, _ as Pj, D as useLocalStorage, e as Container, $ as Dge, c as createStyles, l as log, a0 as Tooltip, a1 as CK, a2 as Loader, a3 as React, a4 as Transition, a5 as Xfe, a6 as rze, A as Anchor, a7 as zV, a8 as ea, a9 as Ol, aa as ua, ab as RX, ac as rWe, ad as UZ, s as Checkbox, ae as getAugmentedNamespace, E as useHotkeys, af as lDe, ag as dDe, ah as IMe, ai as DMe, aj as qF, ak as Cbe, al as Pbe, am as pi, an as Lbe, L as LoadingOverlay, ao as LHe, B as Box, o as useSearchParams, ap as Y, Q as QueryClient, f as useDocumentTitle, aq as useNavigate, F as QueryClientProvider, H as ColorSchemeProvider, M as MantineProvider, ar as Routes, as as Route, I as createRoot, J as BrowserRouter } from "./use-form.b75610e1.js";
+import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, G as GenericService, e as errorMsg, a as useDisclosure, b as useClickOutside, c as escapeRegExp, P as Popover, d as ScrollArea, f as Chip, D as Divider, g as useColorScheme, l as links, H as Header, B as Burger, h as HeaderLogo, i as SafeSelect, o as openSpotlight, K as Kbd, U as UserMenu, j as Breadcrumbs, k as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, m as Skeleton, n as useInView, F as FocusTrap, p as getNavigationItem, q as stopNavigationProgress, r as resetNavigationProgress, t as useToggle, v as useInfinityScroll, N as Navbar, w as Badge, A as Affix, x as ActionPopoverIcon, y as UserHooks, T as ThemeIcon, I as Image$1, z as Card, E as Collapse, O as SegmentedControl, Q as Table, V as useInputState, W as RelativeDrawer, X as LogicalGroup, Y as uuid, Z as useNavProgressFetchEffect, $ as AppShell, a0 as ReactQueryDevtools, a1 as navigationData, a2 as SpotlightProvider, a3 as NotificationsProvider, a4 as NavigationProgress, a5 as ModalsProvider, a6 as QueryParamProvider, a7 as ReactRouter6Adapter } from "./LogicalGroup.3b35475c.js";
 function useDebouncedValue(value, wait, options = { leading: false }) {
   const [_value, setValue] = react.exports.useState(value);
   const mountedRef = react.exports.useRef(false);
@@ -487,100 +487,97 @@ function QuickFilter() {
             })
           })
         }), /* @__PURE__ */ jsxs(Popover.Dropdown, {
-          p: 10,
+          p: "md",
           children: [/* @__PURE__ */ jsx(ScrollArea, {
             style: {
               height: "45vh"
             },
-            children: /* @__PURE__ */ jsx(Paper, {
-              p: 10,
-              children: /* @__PURE__ */ jsxs(Stack, {
-                spacing: 8,
-                justify: "flex-start",
-                children: [/* @__PURE__ */ jsx(Text, {
-                  size: 10,
-                  color: "gray.6",
-                  weight: 600,
-                  transform: "uppercase",
-                  children: "Browsers:"
-                }), /* @__PURE__ */ jsx(Chip.Group, {
-                  spacing: 4,
-                  multiple: true,
-                  value: browserChipsData,
-                  onChange: setBrowserChipsData,
-                  children: browsers.map((item) => /* @__PURE__ */ jsx(Chip, {
-                    value: item,
-                    styles: chipStyles,
-                    children: item
-                  }, item))
-                }), /* @__PURE__ */ jsx(Text, {
-                  size: 10,
-                  color: "gray.6",
-                  weight: 600,
-                  transform: "uppercase",
-                  children: "Platforms:"
-                }), /* @__PURE__ */ jsx(Chip.Group, {
-                  spacing: 4,
-                  multiple: true,
-                  value: platformChipsData,
-                  onChange: setPlatformChipsData,
-                  children: platforms.map((item) => /* @__PURE__ */ jsx(Chip, {
-                    value: item,
-                    styles: chipStyles,
-                    children: item
-                  }, item))
-                }), /* @__PURE__ */ jsx(Text, {
-                  size: 10,
-                  color: "gray.6",
-                  weight: 600,
-                  transform: "uppercase",
-                  children: "Viewports:"
-                }), /* @__PURE__ */ jsx(Chip.Group, {
-                  value: viewportChipsData,
-                  onChange: setViewportChipsData,
-                  spacing: 4,
-                  multiple: true,
-                  children: viewports.map((item) => /* @__PURE__ */ jsx(Chip, {
-                    value: item,
-                    styles: chipStyles,
-                    children: item
-                  }, item))
-                }), /* @__PURE__ */ jsx(Text, {
-                  size: 10,
-                  color: "gray.6",
-                  weight: 600,
-                  transform: "uppercase",
-                  children: "Status:"
-                }), /* @__PURE__ */ jsx(Chip.Group, {
-                  value: statusesChipsData,
-                  onChange: setStatusesChipsData,
-                  spacing: 4,
-                  multiple: true,
-                  children: statuses.map((item) => /* @__PURE__ */ jsx(Chip, {
-                    value: item,
-                    styles: chipStyles,
-                    children: item
-                  }, item))
-                }), /* @__PURE__ */ jsx(Text, {
-                  size: 10,
-                  color: "gray.6",
-                  weight: 600,
-                  transform: "uppercase",
-                  children: "Accepted:"
-                }), /* @__PURE__ */ jsx(Chip.Group, {
-                  value: acceptedStatusChipsData,
-                  onChange: setAcceptedStatusChipsData,
-                  spacing: 4,
-                  multiple: true,
-                  children: acceptStatuses.map((item) => /* @__PURE__ */ jsx(Chip, {
-                    value: item,
-                    styles: chipStyles,
-                    children: item
-                  }, item))
-                })]
-              })
+            children: /* @__PURE__ */ jsxs(Stack, {
+              spacing: 8,
+              justify: "flex-start",
+              children: [/* @__PURE__ */ jsx(Text, {
+                size: 10,
+                color: "gray.6",
+                weight: 600,
+                transform: "uppercase",
+                children: "Browsers:"
+              }), /* @__PURE__ */ jsx(Chip.Group, {
+                spacing: 4,
+                multiple: true,
+                value: browserChipsData,
+                onChange: setBrowserChipsData,
+                children: browsers.map((item) => /* @__PURE__ */ jsx(Chip, {
+                  value: item,
+                  styles: chipStyles,
+                  children: item
+                }, item))
+              }), /* @__PURE__ */ jsx(Text, {
+                size: 10,
+                color: "gray.6",
+                weight: 600,
+                transform: "uppercase",
+                children: "Platforms:"
+              }), /* @__PURE__ */ jsx(Chip.Group, {
+                spacing: 4,
+                multiple: true,
+                value: platformChipsData,
+                onChange: setPlatformChipsData,
+                children: platforms.map((item) => /* @__PURE__ */ jsx(Chip, {
+                  value: item,
+                  styles: chipStyles,
+                  children: item
+                }, item))
+              }), /* @__PURE__ */ jsx(Text, {
+                size: 10,
+                color: "gray.6",
+                weight: 600,
+                transform: "uppercase",
+                children: "Viewports:"
+              }), /* @__PURE__ */ jsx(Chip.Group, {
+                value: viewportChipsData,
+                onChange: setViewportChipsData,
+                spacing: 4,
+                multiple: true,
+                children: viewports.map((item) => /* @__PURE__ */ jsx(Chip, {
+                  value: item,
+                  styles: chipStyles,
+                  children: item
+                }, item))
+              }), /* @__PURE__ */ jsx(Text, {
+                size: 10,
+                color: "gray.6",
+                weight: 600,
+                transform: "uppercase",
+                children: "Status:"
+              }), /* @__PURE__ */ jsx(Chip.Group, {
+                value: statusesChipsData,
+                onChange: setStatusesChipsData,
+                spacing: 4,
+                multiple: true,
+                children: statuses.map((item) => /* @__PURE__ */ jsx(Chip, {
+                  value: item,
+                  styles: chipStyles,
+                  children: item
+                }, item))
+              }), /* @__PURE__ */ jsx(Text, {
+                size: 10,
+                color: "gray.6",
+                weight: 600,
+                transform: "uppercase",
+                children: "Accepted:"
+              }), /* @__PURE__ */ jsx(Chip.Group, {
+                value: acceptedStatusChipsData,
+                onChange: setAcceptedStatusChipsData,
+                spacing: 4,
+                multiple: true,
+                children: acceptStatuses.map((item) => /* @__PURE__ */ jsx(Chip, {
+                  value: item,
+                  styles: chipStyles,
+                  children: item
+                }, item))
+              })]
             })
-          }), /* @__PURE__ */ jsxs(Group, {
+          }), /* @__PURE__ */ jsx(Divider, {}), /* @__PURE__ */ jsxs(Group, {
             position: "center",
             pt: 16,
             children: [/* @__PURE__ */ jsx(Button, {
@@ -657,7 +654,7 @@ function IndexHeader() {
     breadCrumbs
   } = react.exports.useContext(AppContext);
   const theme = useMantineTheme();
-  const [colorScheme, toggleColorScheme] = useColorScheme();
+  useColorScheme();
   const [opened, {
     toggle
   }] = useDisclosure(false);
@@ -774,11 +771,6 @@ function IndexHeader() {
         }), /* @__PURE__ */ jsx(Group, {
           spacing: 7,
           children: /* @__PURE__ */ jsx(UserMenu, {})
-        }), /* @__PURE__ */ jsx(Group, {
-          children: /* @__PURE__ */ jsx(ToggleThemeButton, {
-            colorScheme,
-            toggleColorScheme
-          })
         })]
       })]
     }), /* @__PURE__ */ jsx(Paper, {
@@ -6085,10 +6077,10 @@ const require$$2 = /* @__PURE__ */ getAugmentedNamespace(__viteBrowserExternal$1
         return new fabric2.Point(v.x, v.y).addEquals(origin);
       },
       rotateVector: function(vector, radians) {
-        var sin = fabric2.util.sin(radians), cos = fabric2.util.cos(radians), rx = vector.x * cos - vector.y * sin, ry2 = vector.x * sin + vector.y * cos;
+        var sin = fabric2.util.sin(radians), cos = fabric2.util.cos(radians), rx = vector.x * cos - vector.y * sin, ry = vector.x * sin + vector.y * cos;
         return {
           x: rx,
-          y: ry2
+          y: ry
         };
       },
       createVector: function(from, to) {
@@ -6687,8 +6679,8 @@ const require$$2 = /* @__PURE__ */ getAugmentedNamespace(__viteBrowserExternal$1
       m: "l",
       M: "L"
     };
-    function segmentToBezier(th2, th3, cosTh, sinTh, rx, ry2, cx1, cy1, mT, fromX, fromY) {
-      var costh2 = fabric2.util.cos(th2), sinth2 = fabric2.util.sin(th2), costh3 = fabric2.util.cos(th3), sinth3 = fabric2.util.sin(th3), toX = cosTh * rx * costh3 - sinTh * ry2 * sinth3 + cx1, toY = sinTh * rx * costh3 + cosTh * ry2 * sinth3 + cy1, cp1X = fromX + mT * (-cosTh * rx * sinth2 - sinTh * ry2 * costh2), cp1Y = fromY + mT * (-sinTh * rx * sinth2 + cosTh * ry2 * costh2), cp2X = toX + mT * (cosTh * rx * sinth3 + sinTh * ry2 * costh3), cp2Y = toY + mT * (sinTh * rx * sinth3 - cosTh * ry2 * costh3);
+    function segmentToBezier(th2, th3, cosTh, sinTh, rx, ry, cx1, cy1, mT, fromX, fromY) {
+      var costh2 = fabric2.util.cos(th2), sinth2 = fabric2.util.sin(th2), costh3 = fabric2.util.cos(th3), sinth3 = fabric2.util.sin(th3), toX = cosTh * rx * costh3 - sinTh * ry * sinth3 + cx1, toY = sinTh * rx * costh3 + cosTh * ry * sinth3 + cy1, cp1X = fromX + mT * (-cosTh * rx * sinth2 - sinTh * ry * costh2), cp1Y = fromY + mT * (-sinTh * rx * sinth2 + cosTh * ry * costh2), cp2X = toX + mT * (cosTh * rx * sinth3 + sinTh * ry * costh3), cp2Y = toY + mT * (sinTh * rx * sinth3 - cosTh * ry * costh3);
       return [
         "C",
         cp1X,
@@ -6699,19 +6691,19 @@ const require$$2 = /* @__PURE__ */ getAugmentedNamespace(__viteBrowserExternal$1
         toY
       ];
     }
-    function arcToSegments(toX, toY, rx, ry2, large, sweep, rotateX) {
+    function arcToSegments(toX, toY, rx, ry, large, sweep, rotateX) {
       var PI = Math.PI, th = rotateX * PI / 180, sinTh = fabric2.util.sin(th), cosTh = fabric2.util.cos(th), fromX = 0, fromY = 0;
       rx = Math.abs(rx);
-      ry2 = Math.abs(ry2);
-      var px = -cosTh * toX * 0.5 - sinTh * toY * 0.5, py = -cosTh * toY * 0.5 + sinTh * toX * 0.5, rx2 = rx * rx, ry22 = ry2 * ry2, py2 = py * py, px2 = px * px, pl = rx2 * ry22 - rx2 * py2 - ry22 * px2, root = 0;
+      ry = Math.abs(ry);
+      var px = -cosTh * toX * 0.5 - sinTh * toY * 0.5, py = -cosTh * toY * 0.5 + sinTh * toX * 0.5, rx2 = rx * rx, ry2 = ry * ry, py2 = py * py, px2 = px * px, pl = rx2 * ry2 - rx2 * py2 - ry2 * px2, root = 0;
       if (pl < 0) {
-        var s3 = Math.sqrt(1 - pl / (rx2 * ry22));
+        var s3 = Math.sqrt(1 - pl / (rx2 * ry2));
         rx *= s3;
-        ry2 *= s3;
+        ry *= s3;
       } else {
-        root = (large === sweep ? -1 : 1) * Math.sqrt(pl / (rx2 * py2 + ry22 * px2));
+        root = (large === sweep ? -1 : 1) * Math.sqrt(pl / (rx2 * py2 + ry2 * px2));
       }
-      var cx = root * rx * py / ry2, cy = -root * ry2 * px / rx, cx1 = cosTh * cx - sinTh * cy + toX * 0.5, cy1 = sinTh * cx + cosTh * cy + toY * 0.5, mTheta = calcVectorAngle(1, 0, (px - cx) / rx, (py - cy) / ry2), dtheta = calcVectorAngle((px - cx) / rx, (py - cy) / ry2, (-px - cx) / rx, (-py - cy) / ry2);
+      var cx = root * rx * py / ry, cy = -root * ry * px / rx, cx1 = cosTh * cx - sinTh * cy + toX * 0.5, cy1 = sinTh * cx + cosTh * cy + toY * 0.5, mTheta = calcVectorAngle(1, 0, (px - cx) / rx, (py - cy) / ry), dtheta = calcVectorAngle((px - cx) / rx, (py - cy) / ry, (-px - cx) / rx, (-py - cy) / ry);
       if (sweep === 0 && dtheta > 0) {
         dtheta -= 2 * PI;
       } else if (sweep === 1 && dtheta < 0) {
@@ -6719,7 +6711,7 @@ const require$$2 = /* @__PURE__ */ getAugmentedNamespace(__viteBrowserExternal$1
       }
       var segments = Math.ceil(Math.abs(dtheta / PI * 2)), result = [], mDelta = dtheta / segments, mT = 8 / 3 * Math.sin(mDelta / 4) * Math.sin(mDelta / 4) / Math.sin(mDelta / 2), th3 = mTheta + mDelta;
       for (var i2 = 0; i2 < segments; i2++) {
-        result[i2] = segmentToBezier(mTheta, th3, cosTh, sinTh, rx, ry2, cx1, cy1, mT, fromX, fromY);
+        result[i2] = segmentToBezier(mTheta, th3, cosTh, sinTh, rx, ry, cx1, cy1, mT, fromX, fromY);
         fromX = result[i2][5];
         fromY = result[i2][6];
         mTheta = th3;
@@ -6806,7 +6798,7 @@ const require$$2 = /* @__PURE__ */ getAugmentedNamespace(__viteBrowserExternal$1
       return result;
     }
     function fromArcToBeziers(fx, fy, coords) {
-      var rx = coords[1], ry2 = coords[2], rot = coords[3], large = coords[4], sweep = coords[5], tx = coords[6], ty = coords[7], segsNorm = arcToSegments(tx - fx, ty - fy, rx, ry2, large, sweep, rot);
+      var rx = coords[1], ry = coords[2], rot = coords[3], large = coords[4], sweep = coords[5], tx = coords[6], ty = coords[7], segsNorm = arcToSegments(tx - fx, ty - fy, rx, ry, large, sweep, rot);
       for (var i2 = 0, len = segsNorm.length; i2 < len; i2++) {
         segsNorm[i2][1] += fx;
         segsNorm[i2][2] += fy;
@@ -15521,17 +15513,17 @@ const require$$2 = /* @__PURE__ */ getAugmentedNamespace(__viteBrowserExternal$1
         }
       },
       _render: function(ctx) {
-        var rx = this.rx ? Math.min(this.rx, this.width / 2) : 0, ry2 = this.ry ? Math.min(this.ry, this.height / 2) : 0, w2 = this.width, h3 = this.height, x2 = -this.width / 2, y3 = -this.height / 2, isRounded = rx !== 0 || ry2 !== 0, k2 = 1 - 0.5522847498;
+        var rx = this.rx ? Math.min(this.rx, this.width / 2) : 0, ry = this.ry ? Math.min(this.ry, this.height / 2) : 0, w2 = this.width, h3 = this.height, x2 = -this.width / 2, y3 = -this.height / 2, isRounded = rx !== 0 || ry !== 0, k2 = 1 - 0.5522847498;
         ctx.beginPath();
         ctx.moveTo(x2 + rx, y3);
         ctx.lineTo(x2 + w2 - rx, y3);
-        isRounded && ctx.bezierCurveTo(x2 + w2 - k2 * rx, y3, x2 + w2, y3 + k2 * ry2, x2 + w2, y3 + ry2);
-        ctx.lineTo(x2 + w2, y3 + h3 - ry2);
-        isRounded && ctx.bezierCurveTo(x2 + w2, y3 + h3 - k2 * ry2, x2 + w2 - k2 * rx, y3 + h3, x2 + w2 - rx, y3 + h3);
+        isRounded && ctx.bezierCurveTo(x2 + w2 - k2 * rx, y3, x2 + w2, y3 + k2 * ry, x2 + w2, y3 + ry);
+        ctx.lineTo(x2 + w2, y3 + h3 - ry);
+        isRounded && ctx.bezierCurveTo(x2 + w2, y3 + h3 - k2 * ry, x2 + w2 - k2 * rx, y3 + h3, x2 + w2 - rx, y3 + h3);
         ctx.lineTo(x2 + rx, y3 + h3);
-        isRounded && ctx.bezierCurveTo(x2 + k2 * rx, y3 + h3, x2, y3 + h3 - k2 * ry2, x2, y3 + h3 - ry2);
-        ctx.lineTo(x2, y3 + ry2);
-        isRounded && ctx.bezierCurveTo(x2, y3 + k2 * ry2, x2 + k2 * rx, y3, x2 + rx, y3);
+        isRounded && ctx.bezierCurveTo(x2 + k2 * rx, y3 + h3, x2, y3 + h3 - k2 * ry, x2, y3 + h3 - ry);
+        ctx.lineTo(x2, y3 + ry);
+        isRounded && ctx.bezierCurveTo(x2, y3 + k2 * ry, x2 + k2 * rx, y3, x2 + rx, y3);
         ctx.closePath();
         this._renderPaintInOrder(ctx);
       },
@@ -22014,7 +22006,6 @@ class MainView {
     __publicField(this, "actualImage");
     __publicField(this, "currentMode");
     __publicField(this, "defaultMode");
-    __publicField(this, "currentView");
     __publicField(this, "actualView");
     __publicField(this, "expectedView");
     __publicField(this, "diffView");
@@ -22032,21 +22023,6 @@ class MainView {
       uniformScaling: false
     });
     this.defaultMode = "";
-    this.currentMode = {
-      mode: "",
-      set(value) {
-        this.mode = value;
-      },
-      toggle(mode) {
-        if (this.mode === mode) {
-          return this.set(this.defaultMode);
-        }
-        return this.set(mode);
-      },
-      isPan() {
-        return this.mode === "pan";
-      }
-    };
     if (actual) {
       this.sliderView = new SideToSideView(
         {
@@ -22071,40 +22047,6 @@ class MainView {
     };
   }
   panEvents() {
-    this.canvas.on(
-      "mouse:move",
-      (e2) => {
-        const s2sMoving = this.sliderView.inMovement;
-        if ((e2.e.buttons === 4 || this.mouseDown) && this.currentMode.isPan() && !s2sMoving) {
-          this.canvas.setCursor("grab");
-          const mEvent = e2.e;
-          const delta = new fabric$1.fabric.Point(mEvent.movementX, mEvent.movementY);
-          this.canvas.relativePan(delta);
-          this.canvas.fire("pan", e2);
-          this.canvas.renderAll();
-        }
-      }
-    );
-    this.canvas.on(
-      "mouse:down",
-      () => {
-        this.mouseDown = true;
-        if (this.currentMode.isPan()) {
-          this.canvas.setCursor("grab");
-          this.canvas.selection = false;
-          this.canvas.renderAll();
-        }
-      }
-    );
-    this.canvas.on(
-      "mouse:up",
-      () => {
-        this.mouseDown = false;
-        this.canvas.setCursor("default");
-        this.canvas.renderAll();
-        this.canvas.selection = true;
-      }
-    );
     this.canvas.on("mouse:wheel", (opt) => {
       if (opt.e.ctrlKey)
         return;
@@ -22168,17 +22110,6 @@ class MainView {
       hasControls: false,
       selectable: false
     });
-  }
-  async panToCenter(image) {
-    if (this.pannedOnInit)
-      return;
-    this.pannedOnInit = true;
-    const delta = new fabric$1.fabric.Point(
-      this.canvas.width / 2 - image.getScaledWidth() / 2,
-      0
-    );
-    this.canvas.relativePan(delta);
-    this.canvas.renderAll();
   }
   panToCanvasWidthCenter(imageName) {
     this.canvas.absolutePan(new fabric$1.fabric.Point(0, 0));
@@ -22587,6 +22518,8 @@ function RelatedChecks({
   const [openedSort, sortHandler] = useDisclosure(false);
   const [openedFilter, filterHandler] = useDisclosure(false);
   const [filter, setFilter] = react.exports.useState(["name"]);
+  const [opened, setOpened] = react.exports.useState(true);
+  const title = opened ? "Close related checks" : "Open related checks";
   react.exports.useEffect(function onSortChange() {
     related.relatedChecksQuery.firstPageQuery.refetch();
   }, [`${related.sortBy}_${related.sortOrder}`]);
@@ -22621,27 +22554,27 @@ function RelatedChecks({
           width: "100%"
         },
         spacing: 0,
-        children: [/* @__PURE__ */ jsx(Group, {
-          children: /* @__PURE__ */ jsx(ActionIcon, {
-            "data-test": "hide-related-checks-icon",
-            title: "hide/show related checks",
-            onClick: () => hideRelatedChecks(),
-            children: related.opened ? /* @__PURE__ */ jsx(ry, {
-              stroke: 1
-            }) : /* @__PURE__ */ jsx(ly, {
-              stroke: 1
-            })
-          })
-        }), related.opened && /* @__PURE__ */ jsx(Group, {
+        children: [/* @__PURE__ */ jsx(Group, {}), related.opened && /* @__PURE__ */ jsx(Group, {
           position: "left",
-          ml: -24,
+          ml: 0,
           children: /* @__PURE__ */ jsx(Text, {
             size: "sm",
             children: "Related Checks"
           })
-        }), /* @__PURE__ */ jsx(Group, {})]
+        }), /* @__PURE__ */ jsx(Group, {
+          children: /* @__PURE__ */ jsx(Burger, {
+            opened,
+            styles: {},
+            size: 16,
+            onClick: () => {
+              hideRelatedChecks();
+              setOpened((o) => !o);
+            },
+            title
+          })
+        })]
       }), related.opened && /* @__PURE__ */ jsxs(Group, {
-        position: "right",
+        position: "center",
         spacing: "xs",
         sx: {
           width: "100%"
@@ -22682,10 +22615,21 @@ function RelatedChecks({
         ml: -10,
         mr: -10,
         spacing: 4,
-        children: [/* @__PURE__ */ jsx(Text, {
-          size: "sm",
-          mb: -8,
-          children: "Show checks with same parameters"
+        children: [/* @__PURE__ */ jsxs(Group, {
+          position: "apart",
+          align: "center",
+          noWrap: true,
+          children: [/* @__PURE__ */ jsx(Text, {
+            size: "sm",
+            mb: -8,
+            children: "Show checks with same parameters"
+          }), /* @__PURE__ */ jsx(ActionIcon, {
+            onClick: filterHandler.close,
+            children: /* @__PURE__ */ jsx(lAe, {
+              size: 24,
+              stroke: 1
+            })
+          })]
         }), /* @__PURE__ */ jsxs(Chip.Group, {
           spacing: 6,
           value: filter,
@@ -22724,6 +22668,7 @@ function RelatedChecks({
       duration: 400,
       timingFunction: "ease",
       children: (styles) => /* @__PURE__ */ jsxs(ScrollArea, {
+        mt: "md",
         style: {
           height: "75vh"
         },
@@ -22908,21 +22853,6 @@ function CheckDetails({
     mainView2.canvas.on("mouse:wheel", (opt) => {
       if (!opt.e.ctrlKey)
         return;
-      const delta = opt.e.deltaY;
-      let zoomVal = mainView2.canvas.getZoom();
-      zoomVal *= 0.999 ** delta;
-      if (zoomVal > 9)
-        zoomVal = 9;
-      if (zoomVal < 0.1)
-        zoomVal = 0.1;
-      mainView2.canvas.zoomToPoint({
-        x: opt.e.offsetX,
-        y: opt.e.offsetY
-      }, zoomVal);
-      setZoomPercent(() => zoomVal * 100);
-      document.dispatchEvent(new Event("zoom"));
-      opt.e.preventDefault();
-      opt.e.stopPropagation();
     });
   }
   const zoomByPercent = (percent) => {
@@ -22968,6 +22898,55 @@ function CheckDetails({
       setMainView(null);
     }
   }, [related.relatedActiveCheck, relatedChecksOpened]);
+  useHotkeys([
+    ["mod+H", () => {
+      console.log("Toggle color scheme");
+      console.log(mainView2);
+    }],
+    ["Equal", () => zoomByDelta(15)],
+    ["NumpadAdd", () => zoomByDelta(15)],
+    ["Minus", () => zoomByDelta(-15)],
+    ["NumpadSubtract", () => zoomByDelta(-15)],
+    ["Digit9", () => fitImageByWith(`${view}Image`)],
+    ["Digit0", () => {
+      if (view === "slider") {
+        fitImageIfNeeded("actualImage");
+        return;
+      }
+      fitImageIfNeeded(`${view}Image`);
+    }],
+    ["Digit1", () => setView("actual")],
+    ["Digit2", () => setView("expected")],
+    ["Digit3", () => {
+      var _a2;
+      if ((_a2 = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _a2.filename)
+        setView("diff");
+    }],
+    ["Digit4", () => {
+      var _a2;
+      if ((_a2 = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _a2.filename)
+        setView("slider");
+    }],
+    ["A", () => {
+      if (view === "actual" || view === "expected") {
+        mainView2.addIgnoreRegion({
+          name: "ignore_rect",
+          strokeWidth: 0
+        });
+      }
+    }],
+    ["S", () => {
+      MainView.sendIgnoreRegions(baselineId, mainView2.getRectData());
+    }],
+    ["Delete", () => mainView2.removeActiveIgnoreRegions()],
+    ["Backspace", () => mainView2.removeActiveIgnoreRegions()]
+  ]);
+  function keyHandler(event) {
+    console.log(event.code);
+  }
+  const keyEvents = () => {
+    document.addEventListener("keydown", keyHandler);
+  };
   react.exports.useEffect(() => {
     if (!document.getElementById("snapshoot"))
       return;
@@ -22997,6 +22976,7 @@ function CheckDetails({
           actual
         });
         window.mainView = MV;
+        keyEvents();
         return MV;
       });
     };
@@ -23069,11 +23049,37 @@ function CheckDetails({
       mainView2.panToCanvasWidthCenter(imageName);
     }, 10);
   };
+  const [visibleRegionRemoveButton, setVisibleRegionRemoveButton] = react.exports.useState(false);
+  const regionsSelectionEvents = () => {
+    const handler = () => {
+      const els = mainView2.canvas.getActiveObjects().filter((x2) => x2.name === "ignore_rect");
+      if (els.length > 0) {
+        setVisibleRegionRemoveButton(() => true);
+      } else {
+        setVisibleRegionRemoveButton(() => false);
+      }
+    };
+    mainView2.canvas.on({
+      "selection:cleared": (e2) => {
+        console.log("cleared selection");
+        handler();
+      },
+      "selection:updated": (e2) => {
+        console.log("update selection");
+        handler();
+      },
+      "selection:created": (e2) => {
+        console.log("create selection");
+        handler();
+      }
+    });
+  };
   react.exports.useEffect(function afterMainViewCreated() {
     if (mainView2) {
       zoomEvents();
       fitGreatestImageIfNeeded();
       setView("actual");
+      regionsSelectionEvents();
       if (mainView2.diffImage) {
         setTimeout(() => {
           setView("diff");
@@ -23162,15 +23168,23 @@ function CheckDetails({
             spacing: 4,
             position: "center",
             align: "center",
-            children: [/* @__PURE__ */ jsx(ActionIcon, {
-              title: "Zoom in",
-              onClick: () => zoomByDelta(15),
-              children: /* @__PURE__ */ jsx(lDe, {
-                size: 24,
-                stroke: 1
+            children: [/* @__PURE__ */ jsx(Tooltip, {
+              label: /* @__PURE__ */ jsxs(Group, {
+                noWrap: true,
+                children: [/* @__PURE__ */ jsx(Text, {
+                  children: "Zoom In"
+                }), /* @__PURE__ */ jsx(Kbd, {
+                  children: "+"
+                })]
+              }),
+              children: /* @__PURE__ */ jsx(ActionIcon, {
+                onClick: () => zoomByDelta(15),
+                children: /* @__PURE__ */ jsx(lDe, {
+                  size: 24,
+                  stroke: 1
+                })
               })
             }), /* @__PURE__ */ jsxs(Popover, {
-              width: 130,
               position: "bottom",
               withArrow: true,
               shadow: "md",
@@ -23197,6 +23211,8 @@ function CheckDetails({
                 children: /* @__PURE__ */ jsxs(Stack, {
                   spacing: 0,
                   children: [/* @__PURE__ */ jsx(Button, {
+                    pl: 8,
+                    pr: 8,
                     variant: "subtle",
                     onClick: () => {
                       zoomByPercent(50);
@@ -23207,8 +23223,14 @@ function CheckDetails({
                       mainView2.panToCanvasWidthCenter(`${view}Image`);
                       zoomPopoverHandler.close();
                     },
-                    children: "50%"
+                    children: /* @__PURE__ */ jsx(Group, {
+                      position: "apart",
+                      noWrap: true,
+                      children: "50%"
+                    })
                   }), /* @__PURE__ */ jsx(Button, {
+                    pl: 8,
+                    pr: 8,
                     variant: "subtle",
                     onClick: () => {
                       zoomByPercent(100);
@@ -23219,8 +23241,14 @@ function CheckDetails({
                       mainView2.panToCanvasWidthCenter(`${view}Image`);
                       zoomPopoverHandler.close();
                     },
-                    children: "100%"
+                    children: /* @__PURE__ */ jsx(Group, {
+                      position: "apart",
+                      noWrap: true,
+                      children: "100%"
+                    })
                   }), /* @__PURE__ */ jsx(Button, {
+                    pl: 8,
+                    pr: 8,
                     variant: "subtle",
                     onClick: () => {
                       zoomByPercent(200);
@@ -23231,8 +23259,17 @@ function CheckDetails({
                       mainView2.panToCanvasWidthCenter(`${view}Image`);
                       zoomPopoverHandler.close();
                     },
-                    children: "200%"
+                    children: /* @__PURE__ */ jsx(Group, {
+                      position: "apart",
+                      noWrap: true,
+                      children: "200%"
+                    })
                   }), /* @__PURE__ */ jsx(Button, {
+                    sx: {
+                      width: "100%"
+                    },
+                    pl: 8,
+                    pr: 8,
                     variant: "subtle",
                     onClick: () => {
                       zoomPopoverHandler.close();
@@ -23242,8 +23279,19 @@ function CheckDetails({
                       }
                       fitImageByWith(`${view}Image`);
                     },
-                    children: "Fit by width"
+                    children: /* @__PURE__ */ jsxs(Group, {
+                      sx: {
+                        width: "100%"
+                      },
+                      position: "left",
+                      noWrap: true,
+                      children: ["Fit by width ", /* @__PURE__ */ jsx(Kbd, {
+                        children: "9"
+                      })]
+                    })
                   }), /* @__PURE__ */ jsx(Button, {
+                    pl: 8,
+                    pr: 8,
                     variant: "subtle",
                     onClick: () => {
                       zoomPopoverHandler.close();
@@ -23253,16 +23301,34 @@ function CheckDetails({
                       }
                       fitImageIfNeeded(`${view}Image`);
                     },
-                    children: "Fit to canvas"
+                    children: /* @__PURE__ */ jsxs(Group, {
+                      sx: {
+                        width: "100%"
+                      },
+                      position: "left",
+                      noWrap: true,
+                      children: ["Fit to canvas ", /* @__PURE__ */ jsx(Kbd, {
+                        children: "0"
+                      })]
+                    })
                   })]
                 })
               })]
-            }), /* @__PURE__ */ jsx(ActionIcon, {
-              title: "Zoom out",
-              onClick: () => zoomByDelta(-15),
-              children: /* @__PURE__ */ jsx(dDe, {
-                size: 24,
-                stroke: 1
+            }), /* @__PURE__ */ jsx(Tooltip, {
+              label: /* @__PURE__ */ jsxs(Group, {
+                noWrap: true,
+                children: [/* @__PURE__ */ jsx(Text, {
+                  children: "Zoom out"
+                }), /* @__PURE__ */ jsx(Kbd, {
+                  children: "-"
+                })]
+              }),
+              children: /* @__PURE__ */ jsx(ActionIcon, {
+                onClick: () => zoomByDelta(-15),
+                children: /* @__PURE__ */ jsx(dDe, {
+                  size: 24,
+                  stroke: 1
+                })
               })
             })]
           }), /* @__PURE__ */ jsx(Divider, {
@@ -23273,18 +23339,48 @@ function CheckDetails({
             data: viewSegmentData
           }), /* @__PURE__ */ jsx(Divider, {
             orientation: "vertical"
-          }), /* @__PURE__ */ jsx(ActionIcon, {
-            disabled: view === "slider",
-            title: "Add ignore region",
-            onClick: () => mainView2.addIgnoreRegion({
-              name: "ignore_rect",
-              strokeWidth: 0
+          }), /* @__PURE__ */ jsx(Tooltip, {
+            label: /* @__PURE__ */ jsxs(Group, {
+              noWrap: true,
+              children: [/* @__PURE__ */ jsx(Text, {
+                children: "Remove selected ignore regions"
+              }), /* @__PURE__ */ jsx(Kbd, {
+                children: "Del"
+              }), " or ", /* @__PURE__ */ jsx(Kbd, {
+                children: "Backspace"
+              })]
             }),
-            children: /* @__PURE__ */ jsx(DMe, {
-              size: 24,
-              stroke: 1
+            children: /* @__PURE__ */ jsx(ActionIcon, {
+              disabled: !visibleRegionRemoveButton,
+              title: "remove selected ignore regions",
+              onClick: () => mainView2.removeActiveIgnoreRegions(),
+              children: /* @__PURE__ */ jsx(IMe, {
+                size: 24,
+                stroke: 1
+              })
+            })
+          }), /* @__PURE__ */ jsx(Tooltip, {
+            label: /* @__PURE__ */ jsxs(Group, {
+              noWrap: true,
+              children: [/* @__PURE__ */ jsx(Text, {
+                children: "Add ignore region"
+              }), /* @__PURE__ */ jsx(Kbd, {
+                children: "A"
+              })]
+            }),
+            children: /* @__PURE__ */ jsx(ActionIcon, {
+              disabled: view === "slider",
+              onClick: () => mainView2.addIgnoreRegion({
+                name: "ignore_rect",
+                strokeWidth: 0
+              }),
+              children: /* @__PURE__ */ jsx(DMe, {
+                size: 24,
+                stroke: 1
+              })
             })
           }), /* @__PURE__ */ jsx(ActionIcon, {
+            title: "save ignore regions",
             onClick: () => MainView.sendIgnoreRegions(baselineId, mainView2.getRectData()),
             children: /* @__PURE__ */ jsx(qF, {
               size: 24,
