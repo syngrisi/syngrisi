@@ -5,7 +5,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 import { r as react, W as queryString, b as jsx, j as jsxs, P as Paper, g as Title, X as Stack, T as Text, G as Group, h as Button, Y as Epe, k as ky, a as config, u as useQuery, d as useMantineTheme, Z as Fragment, q as TextInput, t as ActionIcon, n as lAe, _ as Pj, D as useLocalStorage, e as Container, $ as Dge, c as createStyles, l as log, a0 as Tooltip, a1 as CK, a2 as Loader, a3 as React, a4 as Transition, a5 as Xfe, a6 as rze, A as Anchor, a7 as zV, a8 as ea, a9 as Ol, aa as ua, ab as RX, ac as rWe, ad as UZ, s as Checkbox, ae as getAugmentedNamespace, E as useHotkeys, af as lDe, ag as dDe, ah as IMe, ai as DMe, aj as qF, ak as Cbe, al as Pbe, am as pi, an as Lbe, L as LoadingOverlay, ao as LHe, B as Box, o as useSearchParams, ap as Y, Q as QueryClient, f as useDocumentTitle, aq as useNavigate, F as QueryClientProvider, H as ColorSchemeProvider, M as MantineProvider, ar as Routes, as as Route, I as createRoot, J as BrowserRouter } from "./use-form.b75610e1.js";
-import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, G as GenericService, e as errorMsg, a as useDisclosure, b as useClickOutside, c as escapeRegExp, P as Popover, d as ScrollArea, f as Chip, D as Divider, g as useColorScheme, l as links, H as Header, B as Burger, h as HeaderLogo, i as SafeSelect, o as openSpotlight, K as Kbd, U as UserMenu, j as Breadcrumbs, k as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, m as Skeleton, n as useInView, F as FocusTrap, p as getNavigationItem, q as stopNavigationProgress, r as resetNavigationProgress, t as useToggle, v as useInfinityScroll, N as Navbar, w as Badge, A as Affix, x as ActionPopoverIcon, y as UserHooks, T as ThemeIcon, I as Image$1, z as Card, E as Collapse, O as SegmentedControl, Q as Table, V as useInputState, W as RelativeDrawer, X as LogicalGroup, Y as uuid, Z as useNavProgressFetchEffect, $ as AppShell, a0 as ReactQueryDevtools, a1 as navigationData, a2 as SpotlightProvider, a3 as NotificationsProvider, a4 as NavigationProgress, a5 as ModalsProvider, a6 as QueryParamProvider, a7 as ReactRouter6Adapter } from "./LogicalGroup.3b35475c.js";
+import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, G as GenericService, e as errorMsg, a as useDisclosure, b as useClickOutside, c as escapeRegExp, P as Popover, d as ScrollArea, f as Chip, D as Divider, l as links, H as Header, B as Burger, g as HeaderLogo, h as SafeSelect, o as openSpotlight, K as Kbd, U as UserMenu, i as Breadcrumbs, j as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, k as Skeleton, m as useInView, F as FocusTrap, n as getNavigationItem, p as stopNavigationProgress, r as resetNavigationProgress, q as useToggle, t as useInfinityScroll, N as Navbar, v as Badge, A as Affix, w as ActionPopoverIcon, x as UserHooks, T as ThemeIcon, I as Image$1, y as Card, z as Collapse, E as SegmentedControl, O as Table, Q as useInputState, V as RelativeDrawer, W as LogicalGroup, X as uuid, Y as useNavProgressFetchEffect, Z as AppShell, $ as ReactQueryDevtools, a0 as useColorScheme, a1 as navigationData, a2 as SpotlightProvider, a3 as NotificationsProvider, a4 as NavigationProgress, a5 as ModalsProvider, a6 as QueryParamProvider, a7 as ReactRouter6Adapter } from "./LogicalGroup.1771cd44.js";
 function useDebouncedValue(value, wait, options = { leading: false }) {
   const [_value, setValue] = react.exports.useState(value);
   const mountedRef = react.exports.useRef(false);
@@ -654,7 +654,6 @@ function IndexHeader() {
     breadCrumbs
   } = react.exports.useContext(AppContext);
   const theme = useMantineTheme();
-  useColorScheme();
   const [opened, {
     toggle
   }] = useDisclosure(false);
@@ -3579,21 +3578,21 @@ function BaseItemWrapper({
     "test-distinct/markedAs": "markedAs"
   }[itemType] || itemType;
   const {
+    query,
     setQuery
   } = useParams();
+  react.exports.useEffect(function setActiveItemsFromQueryFirstTime() {
+    var _a, _b, _c;
+    if ((query == null ? void 0 : query.base_filter) && ((_b = (_a = query == null ? void 0 : query.base_filter[filterItem]) == null ? void 0 : _a.$in) == null ? void 0 : _b.length) > 0 && activeItemsHandler.get().length < 1) {
+      activeItemsHandler.set((_c = query == null ? void 0 : query.base_filter[filterItem]) == null ? void 0 : _c.$in);
+    }
+  }, []);
   const handlerItemClick = (e2) => {
     if (!(e2.metaKey || e2.ctrlKey))
       activeItemsHandler.clear();
     activeItemsHandler.addOrRemove(id);
   };
   react.exports.useEffect(function onActiveItemsChange() {
-    var _a;
-    if (((_a = activeItemsHandler.get()) == null ? void 0 : _a.length) < 1) {
-      setQuery({
-        base_filter: null
-      });
-      return;
-    }
     setQuery({
       base_filter: {
         [filterItem]: {
@@ -4001,6 +4000,10 @@ function NavbarIndex() {
   const {
     classes
   } = useStyles$3();
+  const {
+    query,
+    setQuery
+  } = useParams();
   const [activeItems, setActiveItems] = react.exports.useState([]);
   const activeItemsHandler = {
     get: () => activeItems,
@@ -4016,15 +4019,14 @@ function NavbarIndex() {
     clear: () => {
       setActiveItems(() => []);
     },
+    set: (items) => {
+      setActiveItems(() => items);
+    },
     navbarItemClass: () => classes.navbarItem,
     activeNavbarItemClass: () => classes.activeNavbarItem
   };
   const [sortBy, setSortBy] = react.exports.useState("createdDate");
   const [sortOrder, setSortOrder] = react.exports.useState("desc");
-  const {
-    query,
-    setQuery
-  } = useParams();
   const [groupByValue, setGroupByValue] = react.exports.useState(query.groupBy || "runs");
   const handleGroupBySelect = (value) => {
     setActiveItems(() => []);
@@ -4081,13 +4083,16 @@ function NavbarIndex() {
     baseFilterObj: navbarFilterObject,
     sortBy: `${sortBy}:${sortOrder}`
   });
+  const firstGroupUpdate = react.exports.useRef(true);
   react.exports.useEffect(function onGroupByChange() {
+    if (firstGroupUpdate.current) {
+      firstGroupUpdate.current = false;
+      return;
+    }
     setQuery({
       groupBy: groupByValue
     });
-    setQuery({
-      base_filter: null
-    });
+    console.log("CLEAR!!!!!!!!!!!!");
     setActiveItems(() => []);
   }, [groupByValue]);
   react.exports.useEffect(function refetch() {
@@ -22077,8 +22082,6 @@ class MainView {
       }
     });
   }
-  zoomEvents() {
-  }
   get objects() {
     return this.canvas.getObjects();
   }
@@ -22089,7 +22092,7 @@ class MainView {
     await this.sliderView.destroy();
   }
   async switchView(view) {
-    this.destroyAllViews();
+    await this.destroyAllViews();
     this.sliderView = new SideToSideView(
       {
         mainView: this
@@ -22849,12 +22852,6 @@ function CheckDetails({
   const [mainView2, setMainView] = react.exports.useState(null);
   const [zoomPercent, setZoomPercent] = react.exports.useState(100);
   const [openedZoomPopover, zoomPopoverHandler] = useDisclosure(false);
-  function zoomEvents() {
-    mainView2.canvas.on("mouse:wheel", (opt) => {
-      if (!opt.e.ctrlKey)
-        return;
-    });
-  }
   const zoomByPercent = (percent) => {
     if (!(mainView2 == null ? void 0 : mainView2.canvas))
       return;
@@ -23076,7 +23073,6 @@ function CheckDetails({
   };
   react.exports.useEffect(function afterMainViewCreated() {
     if (mainView2) {
-      zoomEvents();
       fitGreatestImageIfNeeded();
       setView("actual");
       regionsSelectionEvents();

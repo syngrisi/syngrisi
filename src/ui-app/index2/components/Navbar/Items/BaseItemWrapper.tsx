@@ -40,7 +40,16 @@ export function BaseItemWrapper(
         }[itemType] || itemType
     );
 
-    const { setQuery } = useParams();
+    const { query, setQuery } = useParams();
+
+    useEffect(function setActiveItemsFromQueryFirstTime() {
+        if (
+            (query?.base_filter && query?.base_filter[filterItem]?.$in?.length > 0)
+            && (activeItemsHandler.get().length < 1)
+        ) {
+            activeItemsHandler.set(query?.base_filter[filterItem]?.$in);
+        }
+    }, []);
 
     const handlerItemClick = (e: any) => {
         if (!(e.metaKey || e.ctrlKey)) activeItemsHandler.clear();
@@ -48,10 +57,6 @@ export function BaseItemWrapper(
     };
 
     useEffect(function onActiveItemsChange() {
-        if (activeItemsHandler.get()?.length < 1) {
-            setQuery({ base_filter: null });
-            return;
-        }
         setQuery({ base_filter: { [filterItem]: { $in: activeItemsHandler.get() } } });
     }, [JSON.stringify(activeItemsHandler.get())]);
 
