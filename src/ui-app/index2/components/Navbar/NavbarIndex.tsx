@@ -59,6 +59,8 @@ const useStyles = createStyles((theme) => ({
 
 export default function NavbarIndex() {
     const { classes } = useStyles();
+    const { query, setQuery } = useParams();
+
     const [activeItems, setActiveItems] = useState<string[]>([]);
     const activeItemsHandler = {
         get: () => activeItems,
@@ -76,6 +78,9 @@ export default function NavbarIndex() {
         clear: () => {
             setActiveItems(() => []);
         },
+        set: (items: any) => {
+            setActiveItems(() => items);
+        },
         navbarItemClass: () => classes.navbarItem,
         activeNavbarItemClass: () => classes.activeNavbarItem,
     };
@@ -83,7 +88,6 @@ export default function NavbarIndex() {
     const [sortBy, setSortBy] = useState('createdDate');
     const [sortOrder, setSortOrder] = useState('desc');
 
-    const { query, setQuery } = useParams();
     const [groupByValue, setGroupByValue] = useState(query.groupBy || 'runs');
 
     const handleGroupBySelect = (value: string) => {
@@ -143,9 +147,16 @@ export default function NavbarIndex() {
     //     firstPageQuery.refetch();
     // }, []);
 
+    // const firstGroupUpdate = useRef(true);
+
     useEffect(function onGroupByChange() {
-        setQuery({ groupBy: groupByValue });
-        setQuery({ base_filter: null });
+        // if (firstGroupUpdate.current) {
+        //     firstGroupUpdate.current = false;
+        //     return;
+        // }
+        // setQuery({ groupBy: groupByValue });
+        // console.log('CLEAR!!!!!!!!!!!!')
+        // setQuery({ base_filter: null });
         setActiveItems(() => ([]));
     }, [groupByValue]);
 
