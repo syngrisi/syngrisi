@@ -9,7 +9,7 @@ import { GenericService } from '../services';
 
 interface IIScrollParams {
     resourceName: string,
-    baseFilterObj?: { [key: string]: any },
+    baseFilterObj?: { [key: string]: any } | null,
     filterObj?: { [key: string]: any },
     newestItemsFilterKey?: string,
     firstPageQueryUniqueKey?: string

@@ -1,26 +1,55 @@
+/* eslint-disable prefer-arrow-callback */
 import * as React from 'react';
 import { ActionIcon, FocusTrap, Loader, TextInput, Transition } from '@mantine/core';
 import { IconX } from '@tabler/icons';
+import { useEffect, useState } from 'react';
+import { useDebouncedValue } from '@mantine/hooks';
+import { escapeRegExp } from '../../../shared/utils/utils';
+
+const quickFilterKey = (value: string) => {
+    const transform = {
+        runs: 'name',
+        suites: 'name',
+        'test-distinct/browserName': 'browserName',
+        'test-distinct/os': 'os',
+        'test-distinct/status': 'status',
+        'test-distinct/markedAs': 'markedAs',
+    } as { [key: string]: string };
+    return transform[value] || 'name';
+};
 
 type Props = {
     openedFilter: boolean,
-    quickFilter: string,
-    setQuickFilter: any,
-    debouncedQuickFilter: any,
     infinityQuery: any,
     toggleOpenedFilter: any,
+    setQuickFilterObject: any,
+    groupByValue: string,
 };
 
 export function NavbarFilter(
     {
         openedFilter,
-        quickFilter,
-        setQuickFilter,
-        debouncedQuickFilter,
         infinityQuery,
         toggleOpenedFilter,
+        setQuickFilterObject,
+        groupByValue,
     }: Props,
 ) {
+    const [quickFilter, setQuickFilter] = useState<string>('');
+    const [debouncedQuickFilter] = useDebouncedValue(quickFilter, 400);
+
+    useEffect(function onDebounceQuickFilterUpdate() {
+        if (!debouncedQuickFilter) setQuickFilterObject(null);
+        setQuickFilterObject(() => (
+            {
+                [quickFilterKey(groupByValue)]: {
+                    $regex: escapeRegExp(debouncedQuickFilter),
+                    $options: 'im',
+                },
+            }
+        ));
+    }, [debouncedQuickFilter]);
+
     return (
         <Transition
             mounted={openedFilter}

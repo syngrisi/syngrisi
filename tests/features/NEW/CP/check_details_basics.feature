@@ -1,3 +1,4 @@
+@smoke
 Feature: Check details basics
 
     Scenario: Related checks and project filter

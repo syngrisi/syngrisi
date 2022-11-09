@@ -1,16 +1,38 @@
+/* eslint-disable prefer-arrow-callback */
 import * as React from 'react';
+import { useEffect } from 'react';
 import SafeSelect from '../../../shared/components/SafeSelect';
+import { useIndexSubpageEffect } from '../../hooks/useIndexSubpageEffect';
+import { useParams } from '../../hooks/useParams';
 
 interface Props {
-    setActiveItems: any;
+    clearActiveItems: any;
     groupByValue: string,
     setGroupByValue: any,
 }
 
-export function NavbarGroupBySelect({ setActiveItems, groupByValue, setGroupByValue }: Props) {
+export function NavbarGroupBySelect({ clearActiveItems, groupByValue, setGroupByValue }: Props) {
+    const { query, setQuery } = useParams();
+
+    const subpageMap: { [key: string]: string } = {
+        runs: 'By Runs',
+        suites: 'By Suites',
+        'test-distinct/browserName': 'By Browser',
+        'test-distinct/os': 'By Platform',
+        'test-distinct/status': 'By Test Status',
+        'test-distinct/markedAs': 'By Accept Status',
+    };
+
+    const title: string = query?.groupBy as string;
+    useIndexSubpageEffect(subpageMap[title] || 'Test Results');
+
+    useEffect(function onQueryGroupByUpdated() {
+        setGroupByValue(query.groupBy);
+    }, [query.groupBy]);
+
     const handleGroupBySelect = (value: string) => {
-        setActiveItems(() => []);
-        setGroupByValue(value);
+        clearActiveItems();
+        setQuery({ groupBy: value });
     };
 
     return (
