@@ -97,6 +97,11 @@ Feature: Navbar basics
         When I wait on element "//*[@data-test='navbar-item-name' and contains(., 'msedge')]" to be displayed
         When I wait on element "//*[@data-test='navbar-item-name' and contains(., 'firefox')]" to be displayed
 
+    Scenario: Group by after item select (pending)
+    Check if base filter resetting after change grouping
+        When I fail
+
+
     Scenario: Current item (activate it after click)
         When I create "1" tests with:
         """
@@ -158,6 +163,7 @@ Feature: Navbar basics
         Then I expect that element "//*[@data-test='table-row-Name']" does appear exactly "1" times
 
     Scenario: Select Item (pending)
+    Select multiple items
         When I fail
 
     Scenario: Sorting
