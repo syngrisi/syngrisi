@@ -5,7 +5,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 import { r as react, W as queryString, b as jsx, j as jsxs, P as Paper, g as Title, X as Stack, T as Text, G as Group, h as Button, Y as Epe, k as ky, a as config, u as useQuery, d as useMantineTheme, Z as Fragment, q as TextInput, t as ActionIcon, n as lAe, _ as Pj, D as useLocalStorage, e as Container, $ as Dge, c as createStyles, l as log, a0 as Tooltip, a1 as CK, a2 as Loader, a3 as React, a4 as Transition, a5 as Xfe, a6 as rze, A as Anchor, a7 as zV, a8 as ea, a9 as Ol, aa as ua, ab as RX, ac as rWe, ad as UZ, s as Checkbox, ae as getAugmentedNamespace, E as useHotkeys, af as lDe, ag as dDe, ah as IMe, ai as DMe, aj as qF, ak as Cbe, al as Pbe, am as pi, an as Lbe, L as LoadingOverlay, ao as LHe, B as Box, o as useSearchParams, ap as Y, Q as QueryClient, f as useDocumentTitle, aq as useNavigate, F as QueryClientProvider, H as ColorSchemeProvider, M as MantineProvider, ar as Routes, as as Route, I as createRoot, J as BrowserRouter } from "./use-form.b75610e1.js";
-import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, G as GenericService, e as errorMsg, a as useDisclosure, b as useClickOutside, c as escapeRegExp, P as Popover, d as ScrollArea, f as Chip, D as Divider, l as links, H as Header, B as Burger, g as HeaderLogo, h as SafeSelect, o as openSpotlight, K as Kbd, U as UserMenu, i as Breadcrumbs, j as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, k as Skeleton, m as useInView, F as FocusTrap, n as getNavigationItem, p as stopNavigationProgress, r as resetNavigationProgress, q as useToggle, t as useInfinityScroll, N as Navbar, v as Badge, A as Affix, w as ActionPopoverIcon, x as UserHooks, T as ThemeIcon, I as Image$1, y as Card, z as Collapse, E as SegmentedControl, O as Table, Q as useInputState, V as RelativeDrawer, W as LogicalGroup, X as uuid, Y as useNavProgressFetchEffect, Z as AppShell, $ as ReactQueryDevtools, a0 as useColorScheme, a1 as navigationData, a2 as SpotlightProvider, a3 as NotificationsProvider, a4 as NavigationProgress, a5 as ModalsProvider, a6 as QueryParamProvider, a7 as ReactRouter6Adapter } from "./LogicalGroup.1771cd44.js";
+import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, G as GenericService, e as errorMsg, a as useDisclosure, b as useClickOutside, c as escapeRegExp, P as Popover, d as ScrollArea, f as Chip, D as Divider, l as links, H as Header, B as Burger, g as HeaderLogo, h as SafeSelect, o as openSpotlight, K as Kbd, i as useOs, U as UserMenu, j as Breadcrumbs, k as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, m as Skeleton, n as useInView, F as FocusTrap, p as getNavigationItem, q as stopNavigationProgress, r as resetNavigationProgress, t as useToggle, v as useInfinityScroll, N as Navbar, w as Badge, A as Affix, x as ActionPopoverIcon, y as UserHooks, T as ThemeIcon, z as encodeQueryParams, I as Image$1, E as Card, O as Collapse, Q as SegmentedControl, V as Table, W as useInputState, X as RelativeDrawer, Y as LogicalGroup, Z as uuid, $ as useNavProgressFetchEffect, a0 as AppShell, a1 as ReactQueryDevtools, a2 as useColorScheme, a3 as navigationData, a4 as SpotlightProvider, a5 as NotificationsProvider, a6 as NavigationProgress, a7 as ModalsProvider, a8 as QueryParamProvider, a9 as ReactRouter6Adapter } from "./LogicalGroup.e043d52c.js";
 function useDebouncedValue(value, wait, options = { leading: false }) {
   const [_value, setValue] = react.exports.useState(value);
   const mountedRef = react.exports.useRef(false);
@@ -288,15 +288,17 @@ const TestsService = {
   }
 };
 function useParams() {
-  const [query, setQuery] = useQueryParams({
+  const queryConfig = {
     groupBy: StringParam,
     sortBy: StringParam,
+    sortByNavbar: StringParam,
     app: StringParam,
     filter: JsonParam,
     base_filter: JsonParam,
     checkId: StringParam,
     quick_filter: JsonParam
-  });
+  };
+  const [query, setQuery] = useQueryParams(queryConfig);
   const updateQueryJsonParam = (section, key, value) => {
     const current = query[section];
     const newParam = {
@@ -310,7 +312,8 @@ function useParams() {
   return {
     query,
     setQuery,
-    updateQueryJsonParam
+    updateQueryJsonParam,
+    queryConfig
   };
 }
 function useDistinctQuery({
@@ -764,7 +767,11 @@ function IndexHeader() {
                 fontSize: 11,
                 borderBottomWidth: 1
               },
-              children: "\u2318 + K"
+              children: useOs() === "macos" ? /* @__PURE__ */ jsx(Fragment, {
+                children: "\u2318 + K"
+              }) : /* @__PURE__ */ jsx(Fragment, {
+                children: "Ctrl + K"
+              })
             })]
           })
         }), /* @__PURE__ */ jsx(Group, {
@@ -3569,38 +3576,11 @@ function BaseItemWrapper({
   infinityQuery
 }) {
   const type = itemTypesMap[itemType];
-  const filterItem = {
-    suites: "suite",
-    runs: "run",
-    "test-distinct/browserName": "browserName",
-    "test-distinct/os": "os",
-    "test-distinct/status": "status",
-    "test-distinct/markedAs": "markedAs"
-  }[itemType] || itemType;
-  const {
-    query,
-    setQuery
-  } = useParams();
-  react.exports.useEffect(function setActiveItemsFromQueryFirstTime() {
-    var _a, _b, _c;
-    if ((query == null ? void 0 : query.base_filter) && ((_b = (_a = query == null ? void 0 : query.base_filter[filterItem]) == null ? void 0 : _a.$in) == null ? void 0 : _b.length) > 0 && activeItemsHandler.get().length < 1) {
-      activeItemsHandler.set((_c = query == null ? void 0 : query.base_filter[filterItem]) == null ? void 0 : _c.$in);
-    }
-  }, []);
   const handlerItemClick = (e2) => {
     if (!(e2.metaKey || e2.ctrlKey))
       activeItemsHandler.clear();
     activeItemsHandler.addOrRemove(id);
   };
-  react.exports.useEffect(function onActiveItemsChange() {
-    setQuery({
-      base_filter: {
-        [filterItem]: {
-          $in: activeItemsHandler.get()
-        }
-      }
-    });
-  }, [JSON.stringify(activeItemsHandler.get())]);
   const className = `${activeItemsHandler.navbarItemClass()} ${activeItemsHandler.get().includes(id) && activeItemsHandler.activeNavbarItemClass()}`;
   const itemsComponentsMap = {
     runs: /* @__PURE__ */ jsx(RunItem, {
@@ -3849,13 +3829,20 @@ const sortOptionsData = (type) => {
 };
 function NavbarSort({
   groupBy,
-  sortBy,
-  setSortBy,
-  setSortOrder,
   toggleOpenedSort,
-  sortOrder,
   openedSort
 }) {
+  const {
+    query,
+    setQuery
+  } = useParams();
+  const [sortBy, setSortBy] = react.exports.useState(String(query.sortByNavbar).split(":").length > 1 ? String(query.sortByNavbar).split(":")[0] : "createdDate");
+  const [sortOrder, setSortOrder] = react.exports.useState(String(query.sortByNavbar).split(":").length > 1 ? String(query.sortByNavbar).split(":")[1] : "desc");
+  react.exports.useEffect(function sortUpdate() {
+    setQuery({
+      sortByNavbar: `${sortBy}:${sortOrder}`
+    });
+  }, [`${sortBy}:${sortOrder}`]);
   return /* @__PURE__ */ jsx(Transition, {
     mounted: openedSort,
     transition: "fade",
@@ -3904,14 +3891,36 @@ function NavbarSort({
     })
   });
 }
+const quickFilterKey = (value) => {
+  const transform = {
+    runs: "name",
+    suites: "name",
+    "test-distinct/browserName": "browserName",
+    "test-distinct/os": "os",
+    "test-distinct/status": "status",
+    "test-distinct/markedAs": "markedAs"
+  };
+  return transform[value] || "name";
+};
 function NavbarFilter({
   openedFilter,
-  quickFilter,
-  setQuickFilter,
-  debouncedQuickFilter,
   infinityQuery,
-  toggleOpenedFilter
+  toggleOpenedFilter,
+  setQuickFilterObject,
+  groupByValue
 }) {
+  const [quickFilter, setQuickFilter] = react.exports.useState("");
+  const [debouncedQuickFilter] = useDebouncedValue(quickFilter, 400);
+  react.exports.useEffect(function onDebounceQuickFilterUpdate() {
+    if (!debouncedQuickFilter)
+      setQuickFilterObject(null);
+    setQuickFilterObject(() => ({
+      [quickFilterKey(groupByValue)]: {
+        $regex: escapeRegExp(debouncedQuickFilter),
+        $options: "im"
+      }
+    }));
+  }, [debouncedQuickFilter]);
   return /* @__PURE__ */ jsx(Transition, {
     mounted: openedFilter,
     transition: "fade",
@@ -3949,7 +3958,6 @@ function NavbarFilter({
 }
 function useIndexSubpageEffect(title) {
   const {
-    clearToolbar,
     setBreadCrumbs,
     setAppTitle
   } = react.exports.useContext(AppContext);
@@ -3963,11 +3971,133 @@ function useIndexSubpageEffect(title) {
       children: item.title
     }, `${item.title}`)));
     return () => {
-      clearToolbar();
       stopNavigationProgress();
       resetNavigationProgress();
     };
   }, [title]);
+}
+function NavbarGroupBySelect({
+  clearActiveItems,
+  groupByValue,
+  setGroupByValue
+}) {
+  const {
+    query,
+    setQuery
+  } = useParams();
+  const subpageMap = {
+    runs: "By Runs",
+    suites: "By Suites",
+    "test-distinct/browserName": "By Browser",
+    "test-distinct/os": "By Platform",
+    "test-distinct/status": "By Test Status",
+    "test-distinct/markedAs": "By Accept Status"
+  };
+  const title = query == null ? void 0 : query.groupBy;
+  useIndexSubpageEffect(subpageMap[title] || "Test Results");
+  react.exports.useEffect(function onQueryGroupByUpdated() {
+    if (!query.groupBy)
+      return;
+    setGroupByValue(query.groupBy);
+  }, [query.groupBy]);
+  const handleGroupBySelect = (value) => {
+    clearActiveItems();
+    setQuery({
+      groupBy: value
+    });
+  };
+  return /* @__PURE__ */ jsx(SafeSelect, {
+    label: "Group by",
+    "data-test": "navbar-group-by",
+    value: groupByValue,
+    onChange: handleGroupBySelect,
+    optionsData: [
+      {
+        value: "runs",
+        label: "Runs"
+      },
+      {
+        value: "suites",
+        label: "Suites"
+      },
+      {
+        value: "test-distinct/browserName",
+        label: "Browsers"
+      },
+      {
+        value: "test-distinct/os",
+        label: "Platform"
+      },
+      {
+        value: "test-distinct/status",
+        label: "Test Status"
+      },
+      {
+        value: "test-distinct/markedAs",
+        label: "Accept Status"
+      }
+    ]
+  });
+}
+function useNavbarActiveItems({
+  groupByValue,
+  classes
+}) {
+  const {
+    query,
+    setQuery
+  } = useParams();
+  const [activeItems, setActiveItems] = react.exports.useState([]);
+  const activeItemsHandler = {
+    get: () => activeItems,
+    addOrRemove: (item) => {
+      setActiveItems((prevItems) => {
+        const newItems = [...prevItems];
+        if (newItems.includes(item)) {
+          return newItems.filter((x2) => x2 !== item);
+        }
+        return newItems.concat(item);
+      });
+    },
+    clear: () => {
+      setActiveItems(() => []);
+    },
+    set: (items) => {
+      setActiveItems(() => items);
+    },
+    navbarItemClass: () => classes.navbarItem,
+    activeNavbarItemClass: () => classes.activeNavbarItem
+  };
+  const baseFilterMap = {
+    suites: "suite",
+    runs: "run",
+    "test-distinct/browserName": "browserName",
+    "test-distinct/os": "os",
+    "test-distinct/status": "status",
+    "test-distinct/markedAs": "markedAs"
+  }[groupByValue] || groupByValue;
+  react.exports.useEffect(function setActiveItemsFromQueryFirstTime() {
+    var _a, _b, _c;
+    if ((query == null ? void 0 : query.base_filter) && ((_b = (_a = query == null ? void 0 : query.base_filter[baseFilterMap]) == null ? void 0 : _a.$in) == null ? void 0 : _b.length) > 0 && activeItemsHandler.get().length < 1) {
+      activeItemsHandler.set((_c = query == null ? void 0 : query.base_filter[baseFilterMap]) == null ? void 0 : _c.$in);
+    }
+  }, []);
+  react.exports.useEffect(function onActiveItemsChange() {
+    if (activeItemsHandler.get().length > 0) {
+      setQuery({
+        base_filter: {
+          [baseFilterMap]: {
+            $in: activeItemsHandler.get()
+          }
+        }
+      });
+    } else {
+      setQuery({
+        base_filter: null
+      });
+    }
+  }, [JSON.stringify(activeItemsHandler.get())]);
+  return activeItemsHandler;
 }
 const useStyles$3 = createStyles((theme) => ({
   navbar: {
@@ -4004,60 +4134,12 @@ function NavbarIndex() {
     query,
     setQuery
   } = useParams();
-  const [activeItems, setActiveItems] = react.exports.useState([]);
-  const activeItemsHandler = {
-    get: () => activeItems,
-    addOrRemove: (item) => {
-      setActiveItems((prevItems) => {
-        const newItems = [...prevItems];
-        if (newItems.includes(item)) {
-          return newItems.filter((x2) => x2 !== item);
-        }
-        return newItems.concat(item);
-      });
-    },
-    clear: () => {
-      setActiveItems(() => []);
-    },
-    set: (items) => {
-      setActiveItems(() => items);
-    },
-    navbarItemClass: () => classes.navbarItem,
-    activeNavbarItemClass: () => classes.activeNavbarItem
-  };
-  const [sortBy, setSortBy] = react.exports.useState("createdDate");
-  const [sortOrder, setSortOrder] = react.exports.useState("desc");
   const [groupByValue, setGroupByValue] = react.exports.useState(query.groupBy || "runs");
-  const handleGroupBySelect = (value) => {
-    setActiveItems(() => []);
-    setGroupByValue(value);
-    setQuery({
-      base_filter: {}
-    });
-  };
-  const [quickFilter, setQuickFilter] = react.exports.useState("");
-  const [debouncedQuickFilter] = useDebouncedValue(quickFilter, 400);
-  const quickFilterKey = (value) => {
-    const transform = {
-      runs: "name",
-      suites: "name",
-      "test-distinct/browserName": "browserName",
-      "test-distinct/os": "os",
-      "test-distinct/status": "status",
-      "test-distinct/markedAs": "markedAs"
-    };
-    return transform[value] || "name";
-  };
-  const quickFilterObject = react.exports.useMemo(() => {
-    if (!debouncedQuickFilter)
-      return {};
-    return {
-      [quickFilterKey(groupByValue)]: {
-        $regex: escapeRegExp(debouncedQuickFilter),
-        $options: "im"
-      }
-    };
-  }, [debouncedQuickFilter]);
+  const activeItemsHandler = useNavbarActiveItems({
+    groupByValue,
+    classes
+  });
+  const [quickFilterObject, setQuickFilterObject] = react.exports.useState(null);
   const navbarFilterObject = (query == null ? void 0 : query.app) ? {
     app: {
       $oid: (query == null ? void 0 : query.app) || ""
@@ -4081,23 +4163,11 @@ function NavbarIndex() {
     filterObj: query.filter,
     newestItemsFilterKey: getNewestFilter(groupByValue),
     baseFilterObj: navbarFilterObject,
-    sortBy: `${sortBy}:${sortOrder}`
+    sortBy: query.sortByNavbar
   });
-  const firstGroupUpdate = react.exports.useRef(true);
-  react.exports.useEffect(function onGroupByChange() {
-    if (firstGroupUpdate.current) {
-      firstGroupUpdate.current = false;
-      return;
-    }
-    setQuery({
-      groupBy: groupByValue
-    });
-    console.log("CLEAR!!!!!!!!!!!!");
-    setActiveItems(() => []);
-  }, [groupByValue]);
   react.exports.useEffect(function refetch() {
     firstPageQuery.refetch();
-  }, [query == null ? void 0 : query.app, query == null ? void 0 : query.groupBy, JSON.stringify(quickFilterObject), `${sortBy}:${sortOrder}`]);
+  }, [query == null ? void 0 : query.app, query == null ? void 0 : query.groupBy, JSON.stringify(navbarFilterObject), query.sortByNavbar]);
   const refreshIconClickHandler = () => {
     setQuery({
       base_filter: null
@@ -4105,16 +4175,6 @@ function NavbarIndex() {
     firstPageQuery.refetch();
     activeItemsHandler.clear();
   };
-  const subpageMap = {
-    runs: "By Runs",
-    suites: "By Suites",
-    "test-distinct/browserName": "By Browser",
-    "test-distinct/os": "By Platform",
-    "test-distinct/status": "By Test Status",
-    "test-distinct/markedAs": "By Accept Status"
-  };
-  const title = query == null ? void 0 : query.groupBy;
-  useIndexSubpageEffect(subpageMap[title] || "Test Results");
   return /* @__PURE__ */ jsx(Group, {
     position: "apart",
     align: "start",
@@ -4149,37 +4209,10 @@ function NavbarIndex() {
           sx: {
             width: "100%"
           },
-          children: [/* @__PURE__ */ jsx(SafeSelect, {
-            label: "Group by",
-            "data-test": "navbar-group-by",
-            value: groupByValue,
-            onChange: handleGroupBySelect,
-            optionsData: [
-              {
-                value: "runs",
-                label: "Runs"
-              },
-              {
-                value: "suites",
-                label: "Suites"
-              },
-              {
-                value: "test-distinct/browserName",
-                label: "Browsers"
-              },
-              {
-                value: "test-distinct/os",
-                label: "Platform"
-              },
-              {
-                value: "test-distinct/status",
-                label: "Test Status"
-              },
-              {
-                value: "test-distinct/markedAs",
-                label: "Accept Status"
-              }
-            ]
+          children: [/* @__PURE__ */ jsx(NavbarGroupBySelect, {
+            clearActiveItems: activeItemsHandler.clear,
+            groupByValue,
+            setGroupByValue
           }), /* @__PURE__ */ jsxs(Group, {
             spacing: 4,
             children: [/* @__PURE__ */ jsx(ActionIcon, {
@@ -4212,10 +4245,6 @@ function NavbarIndex() {
           children: /* @__PURE__ */ jsx(NavbarSort, {
             groupBy: groupByValue,
             toggleOpenedSort,
-            sortBy,
-            setSortBy,
-            setSortOrder,
-            sortOrder,
             openedSort
           })
         }), /* @__PURE__ */ jsx(Group, {
@@ -4224,9 +4253,8 @@ function NavbarIndex() {
           },
           children: /* @__PURE__ */ jsx(NavbarFilter, {
             openedFilter,
-            quickFilter,
-            setQuickFilter,
-            debouncedQuickFilter,
+            setQuickFilterObject,
+            groupByValue,
             infinityQuery,
             toggleOpenedFilter
           })
@@ -5028,7 +5056,8 @@ function Check({
   var _a, _b, _c;
   const {
     setQuery,
-    query
+    query,
+    queryConfig
   } = useParams();
   const [checksViewSize] = useLocalStorage({
     key: "check-view-size",
@@ -5038,11 +5067,14 @@ function Check({
   const theme = useMantineTheme();
   const imageFilename = ((_a = check.diffId) == null ? void 0 : _a.filename) || ((_b = check.actualSnapshotId) == null ? void 0 : _b.filename) || ((_c = check.baselineId) == null ? void 0 : _c.filename);
   const imagePreviewSrc = `${config.baseUri}/snapshoots/${imageFilename}`;
-  const linkToCheckOverlay = `/index2/?${queryString.stringify({
+  const overlayParamsString = queryString.stringify(encodeQueryParams(queryConfig, {
     ...query,
-    checkId: check._id
-  })}`;
+    ["checkId"]: check._id
+  }));
+  const linkToCheckOverlay = `/index2/?${overlayParamsString}`;
   const handlePreviewImageClick = (e2) => {
+    if (!e2.metaKey && !e2.ctrlKey)
+      e2.preventDefault();
     if (e2.metaKey || e2.ctrlKey)
       return;
     setQuery({
@@ -5074,9 +5106,7 @@ function Check({
               aspectRatio: "1/1"
             }
           }),
-          onClick: () => setQuery({
-            checkId: check._id
-          })
+          onClick: handlePreviewImageClick
         })
       }), /* @__PURE__ */ jsx(Text, {
         sx: {
@@ -5514,8 +5544,7 @@ function Cell({
     }, type),
     viewport: /* @__PURE__ */ jsx(Viewport, {
       type,
-      test,
-      itemValue
+      test
     }, type)
   };
   return cellsMap[type] || /* @__PURE__ */ jsx("td", {
@@ -23807,7 +23836,7 @@ function TestsTable({
   const [selection, setSelection] = react.exports.useState([]);
   const scrollAreaRef = react.exports.useRef(null);
   const toggleAllRows = () => setSelection((current) => current.length === flatData.length ? [] : flatData.map((item) => item.id));
-  react.exports.useEffect(() => {
+  react.exports.useEffect(function onSelectionUpdate() {
     updateToolbar(/* @__PURE__ */ jsx(RemoveTestsButton, {
       selection,
       setSelection,
@@ -24133,7 +24162,6 @@ function Tests() {
     defaultValue: ["_id", "name", "status", "creatorUsername", "markedAs", "startDate", "browserName", "os", "viewport"]
   });
   react.exports.useEffect(() => {
-    firstPageQuery.refetch();
     updateToolbar(/* @__PURE__ */ jsx(ActionIcon, {
       title: "Table settings, sorting, and columns visibility",
       color: theme.colorScheme === "dark" ? "green.8" : "green.6",
@@ -24162,8 +24190,8 @@ function Tests() {
         stroke: 1
       })
     }), 47);
-  }, [query.groupBy]);
-  react.exports.useEffect(() => {
+  }, []);
+  react.exports.useEffect(function updateRefreshIcon() {
     updateToolbar(/* @__PURE__ */ jsx(RefreshActionIcon, {
       newestItemsQuery,
       firstPageQuery,

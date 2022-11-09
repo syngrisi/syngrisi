@@ -1,5 +1,5 @@
 import { bB as transitions$1, r as react, U as useUncontrolled, R as useId, b as jsx, c as createStyles, B as Box, j as jsxs, aS as UnstyledButton, O as useComponentDefaultProps, aA as getDefaultZIndex, aY as useInputProps, av as useDidUpdate, V as Input, aO as useMergedRef, aC as packSx, aD as createPolymorphicComponent, d as useMantineTheme, Z as Fragment, a4 as Transition, P as Paper, aB as OptionalPortal, T as Text, aW as Overlay, bC as assignRef, bD as MANTINE_SIZES, aN as isElement, aZ as keyframes, aE as _extends, S as extractSystemStyles, a3 as React, K as sizes$7, q as TextInput, G as Group, a_ as InputsGroup, A as Anchor, a2 as Loader, bE as CheckboxIcon, bF as GROUP_POSITIONS, t as ActionIcon, s as Checkbox, h as Button, C as Center, aT as CheckIcon, e as Container, L as LoadingOverlay, be as Portal, i as Progress, X as Stack, g as Title, a0 as Tooltip, aP as clsx, bG as DEFAULT_THEME, bH as MANTINE_COLORS, M as MantineProvider, H as ColorSchemeProvider, bI as useMantineColorScheme, bJ as GlobalStyles, bK as NormalizeCSS, bL as useCss, bM as useEmotionCache, bN as defaultMantineEmotionCache, bO as createCache, $ as Dge, bg as useLocation, bP as Link, bQ as Dqe, bR as ya, bq as N9, bv as CMe, p as useForm, W as queryString, l as log, bS as useParams$1, m as dj, n as lAe, bT as tMe, bU as wQ, bt as Qa, u as useQuery, bo as Iqe, Y as Epe, a9 as Ol, aa as ua, ab as RX, a6 as rze, a5 as Xfe, D as useLocalStorage, ap as Y, a7 as zV, ar as Routes, as as Route, Q as QueryClient, f as useDocumentTitle, aq as useNavigate, F as QueryClientProvider, I as createRoot, J as BrowserRouter } from "./use-form.b75610e1.js";
-import { a8 as clamp, a9 as createSafeContext, aa as useContextStylesApi, ab as createScopedKeydownHandler, z as Collapse, ac as StylesApiProvider, ad as CloseButton, ae as HorizontalSection, af as Section, ag as VerticalSection, ah as DefaultItem$2, ai as groupOptions, aj as SelectPopover, ak as SelectScrollArea, al as SelectItems, P as Popover, A as Affix, am as useFocusTrap, an as useScrollLock, ao as useFocusReturn, ap as GroupedTransition, aq as createEventHandler, a as useDisclosure, ar as useDelayedHover, as as _objectWithoutPropertiesLoose, at as useScrollIntoView, au as getSelectRightSectionProps, av as useElementSize, D as Divider, N as Navbar, H as Header, Z as AppShell, aw as Avatar, v as Badge, i as Breadcrumbs, B as Burger, y as Card, ax as CardSection, f as Chip, C as CopyButton, F as FocusTrap, ay as Highlight, I as Image, K as Kbd, L as List, az as Mark, aA as Menu, M as Modal, aB as Notification, R as RingProgress, d as ScrollArea, E as SegmentedControl, aC as Select, aD as ChevronIcon$1, k as Skeleton, aE as Switch, O as Table, T as ThemeIcon, aF as Global, aG as AppContext, n as getNavigationItem, p as stopNavigationProgress, r as resetNavigationProgress, l as links, g as HeaderLogo, o as openSpotlight, U as UserMenu, j as useMutation, h as SafeSelect, w as ActionPopoverIcon, s as successMsg, e as errorMsg, G as GenericService, x as UserHooks, Y as useNavProgressFetchEffect, m as useInView, q as useToggle, u as useQueryParams, S as StringParam, J as JsonParam, Q as useInputState, V as RelativeDrawer, W as LogicalGroup, X as uuid, t as useInfinityScroll, $ as ReactQueryDevtools, a0 as useColorScheme, a1 as navigationData, a2 as SpotlightProvider, a3 as NotificationsProvider, a4 as NavigationProgress, a5 as ModalsProvider, a6 as QueryParamProvider, a7 as ReactRouter6Adapter } from "./LogicalGroup.1771cd44.js";
+import { aa as clamp, ab as createSafeContext, ac as useContextStylesApi, ad as createScopedKeydownHandler, O as Collapse, ae as StylesApiProvider, af as CloseButton, ag as HorizontalSection, ah as Section, ai as VerticalSection, aj as DefaultItem$2, ak as groupOptions, al as SelectPopover, am as SelectScrollArea, an as SelectItems, P as Popover, A as Affix, ao as useFocusTrap, ap as useScrollLock, aq as useFocusReturn, ar as GroupedTransition, as as createEventHandler, a as useDisclosure, at as useDelayedHover, au as _objectWithoutPropertiesLoose, av as useScrollIntoView, aw as getSelectRightSectionProps, i as useOs, ax as useElementSize, D as Divider, N as Navbar, H as Header, a0 as AppShell, ay as Avatar, w as Badge, j as Breadcrumbs, B as Burger, E as Card, az as CardSection, f as Chip, C as CopyButton, F as FocusTrap, aA as Highlight, I as Image, K as Kbd, L as List, aB as Mark, aC as Menu, M as Modal, aD as Notification, R as RingProgress, d as ScrollArea, Q as SegmentedControl, aE as Select, aF as ChevronIcon$1, m as Skeleton, aG as Switch, V as Table, T as ThemeIcon, aH as Global, aI as AppContext, p as getNavigationItem, q as stopNavigationProgress, r as resetNavigationProgress, l as links, g as HeaderLogo, o as openSpotlight, U as UserMenu, k as useMutation, h as SafeSelect, x as ActionPopoverIcon, s as successMsg, e as errorMsg, G as GenericService, y as UserHooks, $ as useNavProgressFetchEffect, n as useInView, t as useToggle, u as useQueryParams, S as StringParam, J as JsonParam, W as useInputState, X as RelativeDrawer, Y as LogicalGroup, Z as uuid, v as useInfinityScroll, a1 as ReactQueryDevtools, a2 as useColorScheme, a3 as navigationData, a4 as SpotlightProvider, a5 as NotificationsProvider, a6 as NavigationProgress, a7 as ModalsProvider, a8 as QueryParamProvider, a9 as ReactRouter6Adapter } from "./LogicalGroup.e043d52c.js";
 import { P as PasswordInput } from "./PasswordInput.e3f0c0a6.js";
 function getSafeId(uid, errorMessage) {
   return (value) => {
@@ -168,34 +168,6 @@ function usePagination({
     first,
     last
   };
-}
-function getOS() {
-  const { userAgent } = window.navigator;
-  const macosPlatforms = /(Macintosh)|(MacIntel)|(MacPPC)|(Mac68K)/i;
-  const windowsPlatforms = /(Win32)|(Win64)|(Windows)|(WinCE)/i;
-  const iosPlatforms = /(iPhone)|(iPad)|(iPod)/i;
-  if (macosPlatforms.test(userAgent)) {
-    return "macos";
-  }
-  if (iosPlatforms.test(userAgent)) {
-    return "ios";
-  }
-  if (windowsPlatforms.test(userAgent)) {
-    return "windows";
-  }
-  if (/Android/i.test(userAgent)) {
-    return "android";
-  }
-  if (/Linux/i.test(userAgent)) {
-    return "linux";
-  }
-  return "undetermined";
-}
-function useOs() {
-  if (typeof window !== "undefined") {
-    return getOS();
-  }
-  return "undetermined";
 }
 function usePrevious(value) {
   const ref = react.exports.useRef();
