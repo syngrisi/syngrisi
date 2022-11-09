@@ -1,4 +1,4 @@
-/* eslint-disable indent,react/jsx-indent */
+/* eslint-disable indent,react/jsx-indent,prefer-arrow-callback */
 import React, { useState, useRef, useEffect, useContext } from 'react';
 import {
     createStyles,
@@ -40,7 +40,7 @@ export default function TestsTable({ infinityQuery, firstPageQuery, visibleField
     // eslint-disable-next-line max-len
     const toggleAllRows = () => setSelection((current: string) => (current.length === flatData.length ? [] : flatData.map((item: ILog) => item.id)));
 
-    useEffect(() => {
+    useEffect(function onSelectionUpdate() {
         updateToolbar(
             <RemoveTestsButton
                 selection={selection}
@@ -82,7 +82,6 @@ export default function TestsTable({ infinityQuery, firstPageQuery, visibleField
                         selection={selection}
                         visibleFields={visibleFields}
                     />
-
                     </thead>
 
                     {

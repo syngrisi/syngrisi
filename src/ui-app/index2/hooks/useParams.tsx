@@ -1,7 +1,7 @@
 import { JsonParam, StringParam, useQueryParams } from 'use-query-params';
 
 export function useParams() {
-    const [query, setQuery] = useQueryParams({
+    const queryConfig = {
         groupBy: StringParam,
         sortBy: StringParam,
         sortByNavbar: StringParam,
@@ -10,7 +10,8 @@ export function useParams() {
         base_filter: JsonParam,
         checkId: StringParam,
         quick_filter: JsonParam,
-    });
+    };
+    const [query, setQuery] = useQueryParams(queryConfig);
     const updateQueryJsonParam = (section: string, key: string, value: string) => {
         const current = query[section as keyof typeof query];
         const newParam = {
@@ -19,5 +20,5 @@ export function useParams() {
         };
         setQuery({ [section]: (newParam) });
     };
-    return { query, setQuery, updateQueryJsonParam };
+    return { query, setQuery, updateQueryJsonParam, queryConfig };
 }

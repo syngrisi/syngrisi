@@ -1,3 +1,4 @@
+/* eslint-disable prefer-arrow-callback */
 import * as React from 'react';
 import {
     Group,
@@ -52,67 +53,81 @@ export default function Tests() {
     });
     useNavProgressFetchEffect(infinityQuery.isFetching);
 
-    const [visibleFields, setVisibleFields] = useLocalStorage({
-        key: 'visibleFields',
-        defaultValue: [
-            '_id',
-            'name',
-            'status',
-            'creatorUsername',
-            'markedAs',
-            'startDate',
-            'browserName',
-            'os',
-            'viewport',
+    const [visibleFields, setVisibleFields] = useLocalStorage(
+        {
+            key: 'visibleFields',
+            defaultValue: [
+                '_id',
+                'name',
+                'status',
+                'creatorUsername',
+                'markedAs',
+                'startDate',
+                'browserName',
+                'os',
+                'viewport',
+            ],
+        },
+    );
+
+    useEffect(
+        () => {
+            // firstPageQuery.refetch();
+            updateToolbar(
+                <ActionIcon
+                    title="Table settings, sorting, and columns visibility"
+                    color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
+                    data-test="table-sorting"
+                    variant="subtle"
+                    onClick={() => {
+                        setIsFilterDrawerOpen(false);
+                        setSortOpen((prev) => !prev);
+                    }}
+                >
+                    <IconAdjustments stroke={1} size={24} />
+                </ActionIcon>,
+                48,
+            );
+
+            updateToolbar(
+                <ActionIcon
+                    title="Filter the Table Data"
+                    color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
+                    data-test="table-filtering"
+                    variant="subtle"
+                    onClick={() => {
+                        setSortOpen(false);
+                        setIsFilterDrawerOpen((prev) => !prev);
+                    }}
+                >
+                    <IconFilter size={24} stroke={1} />
+                </ActionIcon>,
+                47,
+            );
+        },
+        [
+            // query.groupBy,
         ],
-    });
+    );
 
-    useEffect(() => {
-        firstPageQuery.refetch();
-        updateToolbar(
-            <ActionIcon
-                title="Table settings, sorting, and columns visibility"
-                color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
-                data-test="table-sorting"
-                variant="subtle"
-                onClick={() => {
-                    setIsFilterDrawerOpen(false);
-                    setSortOpen((prev) => !prev);
-                }}
-            >
-                <IconAdjustments stroke={1} size={24} />
-            </ActionIcon>,
-            48,
-        );
-
-        updateToolbar(
-            <ActionIcon
-                title="Filter the Table Data"
-                color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
-                data-test="table-filtering"
-                variant="subtle"
-                onClick={() => {
-                    setSortOpen(false);
-                    setIsFilterDrawerOpen((prev) => !prev);
-                }}
-            >
-                <IconFilter size={24} stroke={1} />
-            </ActionIcon>,
-            47,
-        );
-    }, [query.groupBy]);
-
-    useEffect(() => {
-        updateToolbar(
-            <RefreshActionIcon
-                key="reload"
-                newestItemsQuery={newestItemsQuery}
-                firstPageQuery={firstPageQuery}
-                infinityQuery={infinityQuery}
-            />,
-            52,
-        );
-    }, [newestItemsQuery?.data?.results.length, newestItemsQuery.status, theme.colorScheme]);
+    useEffect(
+        function updateRefreshIcon() {
+            updateToolbar(
+                <RefreshActionIcon
+                    key="reload"
+                    newestItemsQuery={newestItemsQuery}
+                    firstPageQuery={firstPageQuery}
+                    infinityQuery={infinityQuery}
+                />,
+                52,
+            );
+        },
+        [
+            newestItemsQuery?.data?.results.length,
+            newestItemsQuery.status,
+            theme.colorScheme,
+        ],
+    );
 
     useEffect(() => {
         firstPageQuery.refetch();

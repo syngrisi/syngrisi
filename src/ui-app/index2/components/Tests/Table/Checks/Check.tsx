@@ -13,6 +13,7 @@ import {
 
 import queryString from 'query-string';
 import { useLocalStorage } from '@mantine/hooks';
+import { encodeQueryParams } from 'use-query-params';
 import { useParams } from '../../../../hooks/useParams';
 import config from '../../../../../config';
 import { AcceptButton } from './AcceptButton';
@@ -30,7 +31,7 @@ interface Props {
 }
 
 export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: Props) {
-    const { setQuery, query } = useParams();
+    const { setQuery, query, queryConfig } = useParams();
     const [checksViewSize] = useLocalStorage({ key: 'check-view-size', defaultValue: 'medium' });
 
     const imageWeight: number = 24 * sizes[checksViewSize].coefficient;
@@ -38,14 +39,17 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
 
     const imageFilename = check.diffId?.filename || check.actualSnapshotId?.filename || check.baselineId?.filename;
     const imagePreviewSrc = `${config.baseUri}/snapshoots/${imageFilename}`;
-    const linkToCheckOverlay = `/index2/?${queryString.stringify({ ...query, checkId: check._id })}`;
 
-    // const handlePreviewLinkClick = (e: React.MouseEvent) => {
-    //     if (e.metaKey || e.ctrlKey) return;
-    //     e.preventDefault();
-    // };
+    const overlayParamsString = queryString.stringify(
+        encodeQueryParams(
+            queryConfig,
+            { ...query, ['checkId' as string]: check._id },
+        ),
+    );
+    const linkToCheckOverlay = `/index2/?${overlayParamsString}`;
 
     const handlePreviewImageClick = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!e.metaKey && !e.ctrlKey) e.preventDefault();
         if (e.metaKey || e.ctrlKey) return;
         setQuery({ checkId: check._id });
     };
@@ -94,7 +98,7 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                                             },
                                         })
                                     }
-                                    onClick={() => setQuery({ checkId: check._id })}
+                                    onClick={handlePreviewImageClick}
                                 />
 
                             </Paper>
