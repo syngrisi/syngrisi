@@ -12,7 +12,7 @@ import {
     useMantineTheme,
 } from '@mantine/core';
 import * as React from 'react';
-import { useDisclosure, useLocalStorage } from '@mantine/hooks';
+import { useDisclosure, useLocalStorage, useOs } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons';
 import { createStyles } from '@mantine/styles';
 import { useContext, useEffect } from 'react';
@@ -211,7 +211,11 @@ export default function IndexHeader() {
                             <Kbd
                                 sx={{ fontSize: 11, borderBottomWidth: 1 }}
                             >
-                                ⌘ + K
+                                {
+                                    useOs() === 'macos'
+                                        ? (<>⌘ + K</>)
+                                        : (<>Ctrl + K</>)
+                                }
                             </Kbd>
                         </Group>
 
