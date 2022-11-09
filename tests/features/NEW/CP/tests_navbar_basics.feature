@@ -101,6 +101,9 @@ Feature: Navbar basics
     Check if base filter resetting after change grouping
         When I fail
 
+    Scenario: Group by via url
+    Should apply groupBy via url params
+        When I fail
 
     Scenario: Current item (activate it after click)
         When I create "1" tests with:
@@ -166,6 +169,10 @@ Feature: Navbar basics
     Select multiple items
         When I fail
 
+    Scenario: Select Item via Url(pending)
+    Select multiple items via Url
+        When I fail
+
     Scenario: Sorting
         When I create "3" tests with:
         """
@@ -229,6 +236,9 @@ Feature: Navbar basics
               RunName - 2, RunName - 1, RunName - 0
             """
 
+    Scenario: Sorting via url
+        When I fail
+
     Scenario: Quick Filtering
         When I create "2" tests with:
         """
@@ -266,3 +276,5 @@ Feature: Navbar basics
         When I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName - 1')]" to be displayed
         Then I expect that element "//*[@data-test='navbar-item-name']" does appear exactly "2" times
 
+    Scenario: Quick filtering with project
+        When I fail

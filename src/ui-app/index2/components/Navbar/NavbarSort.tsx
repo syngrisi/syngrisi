@@ -1,7 +1,10 @@
+/* eslint-disable prefer-arrow-callback */
 import * as React from 'react';
 import { ActionIcon, Group, Transition } from '@mantine/core';
 import { IconSortAscending, IconSortDescending, IconX } from '@tabler/icons';
+import { useEffect, useState } from 'react';
 import SafeSelect from '../../../shared/components/SafeSelect';
+import { useParams } from '../../hooks/useParams';
 
 const sortOptionsData = (type: string) => {
     const transform = {
@@ -21,10 +24,6 @@ const sortOptionsData = (type: string) => {
 
 type Props = {
     groupBy: string,
-    setSortBy: any,
-    sortBy: string,
-    setSortOrder: any,
-    sortOrder: string,
     openedSort: any,
     toggleOpenedSort: any,
 };
@@ -32,14 +31,27 @@ type Props = {
 export function NavbarSort(
     {
         groupBy,
-        sortBy,
-        setSortBy,
-        setSortOrder,
         toggleOpenedSort,
-        sortOrder,
         openedSort,
     }: Props,
 ) {
+    const { query, setQuery } = useParams();
+    const [sortBy, setSortBy] = useState(
+        String(query.sortByNavbar).split(':').length > 1
+            ? String(query.sortByNavbar).split(':')[0]
+            : 'createdDate',
+    );
+
+    const [sortOrder, setSortOrder] = useState(
+        String(query.sortByNavbar).split(':').length > 1
+            ? String(query.sortByNavbar).split(':')[1]
+            : 'desc',
+    );
+
+    useEffect(function sortUpdate() {
+        setQuery({ sortByNavbar: `${sortBy}:${sortOrder}` });
+    }, [`${sortBy}:${sortOrder}`]);
+
     return (
         <Transition
             mounted={openedSort}

@@ -14,18 +14,17 @@ import {
     IconRefresh,
 } from '@tabler/icons';
 import { createStyles } from '@mantine/styles';
-import { useEffect, useMemo, useState } from 'react';
-import { useDebouncedValue, useToggle } from '@mantine/hooks';
+import { useEffect, useState } from 'react';
+import { useToggle } from '@mantine/hooks';
 import useInfinityScroll from '../../../shared/hooks/useInfinityScroll';
 
 import { NavbarItems } from './NavbarItems';
 import SkeletonWrapper from './Skeletons/SkeletonWrapper';
 import { NavbarSort } from './NavbarSort';
-import { escapeRegExp } from '../../../shared/utils/utils';
 import { useParams } from '../../hooks/useParams';
 import { NavbarFilter } from './NavbarFilter';
-import { useIndexSubpageEffect } from '../../hooks/useIndexSubpageEffect';
 import { NavbarGroupBySelect } from './NavbarGroupBySelect';
+import { useNavbarActiveItems } from '../../hooks/useNavbarActiveItems';
 
 const useStyles = createStyles((theme) => ({
     navbar: {
@@ -61,82 +60,11 @@ export default function NavbarIndex() {
     const { classes } = useStyles();
     const { query, setQuery } = useParams();
 
-    const [sortBy, setSortBy] = useState('createdDate');
-    const [sortOrder, setSortOrder] = useState('desc');
-
     const [groupByValue, setGroupByValue] = useState(query.groupBy || 'runs');
 
-    const [activeItems, setActiveItems] = useState<string[]>([]);
-    const activeItemsHandler = {
-        get: () => activeItems,
-        addOrRemove: (item: string) => {
-            setActiveItems(
-                (prevItems: any[]) => {
-                    const newItems = [...prevItems];
-                    if (newItems.includes(item)) {
-                        return newItems.filter((x) => x !== item);
-                    }
-                    return newItems.concat(item);
-                },
-            );
-        },
-        clear: () => {
-            setActiveItems(() => []);
-        },
-        set: (items: any) => {
-            setActiveItems(() => items);
-        },
-        navbarItemClass: () => classes.navbarItem,
-        activeNavbarItemClass: () => classes.activeNavbarItem,
-    };
+    const activeItemsHandler = useNavbarActiveItems({ groupByValue, classes });
 
-    const baseFilterMap = (
-        {
-            suites: 'suite',
-            runs: 'run',
-            'test-distinct/browserName': 'browserName',
-            'test-distinct/os': 'os',
-            'test-distinct/status': 'status',
-            'test-distinct/markedAs': 'markedAs',
-        }[groupByValue] || groupByValue
-    );
-
-    useEffect(function setActiveItemsFromQueryFirstTime() {
-        if (
-            (query?.base_filter && query?.base_filter[baseFilterMap]?.$in?.length > 0)
-            && (activeItemsHandler.get().length < 1)
-        ) {
-            activeItemsHandler.set(query?.base_filter[baseFilterMap]?.$in);
-        }
-    }, []);
-
-    useEffect(function onActiveItemsChange() {
-        if (activeItemsHandler.get().length > 0) {
-            setQuery({ base_filter: { [baseFilterMap]: { $in: activeItemsHandler.get() } } });
-        } else {
-            setQuery({ base_filter: null });
-        }
-    }, [JSON.stringify(activeItemsHandler.get())]);
-
-    const [quickFilter, setQuickFilter] = useState<string>('');
-    const [debouncedQuickFilter] = useDebouncedValue(quickFilter, 400);
-
-    const quickFilterKey = (value: string) => {
-        const transform = {
-            runs: 'name',
-            suites: 'name',
-            'test-distinct/browserName': 'browserName',
-            'test-distinct/os': 'os',
-            'test-distinct/status': 'status',
-            'test-distinct/markedAs': 'markedAs',
-        } as { [key: string]: string };
-        return transform[value] || 'name';
-    };
-
-    const quickFilterObject = useMemo<{ [key: string]: any } | undefined>(() => {
-        if (!debouncedQuickFilter) return ({});
-        return ({ [quickFilterKey(groupByValue)]: { $regex: escapeRegExp(debouncedQuickFilter), $options: 'im' } });
-    }, [debouncedQuickFilter]);
+    const [quickFilterObject, setQuickFilterObject] = useState<{ [key: string]: any } | null>(null);
 
     const navbarFilterObject = query?.app
         ? {
@@ -161,7 +89,7 @@ export default function NavbarIndex() {
         filterObj: query.filter,
         newestItemsFilterKey: getNewestFilter(groupByValue),
         baseFilterObj: navbarFilterObject,
-        sortBy: `${sortBy}:${sortOrder}`,
+        sortBy: query.sortByNavbar!,
     });
 
     useEffect(function refetch() {
@@ -169,8 +97,8 @@ export default function NavbarIndex() {
     }, [
         query?.app,
         query?.groupBy,
-        JSON.stringify(quickFilterObject),
-        `${sortBy}:${sortOrder}`,
+        JSON.stringify(navbarFilterObject),
+        query.sortByNavbar,
     ]);
 
     const refreshIconClickHandler = () => {
@@ -178,18 +106,6 @@ export default function NavbarIndex() {
         firstPageQuery.refetch();
         activeItemsHandler.clear();
     };
-
-    const subpageMap: { [key: string]: string } = {
-        runs: 'By Runs',
-        suites: 'By Suites',
-        'test-distinct/browserName': 'By Browser',
-        'test-distinct/os': 'By Platform',
-        'test-distinct/status': 'By Test Status',
-        'test-distinct/markedAs': 'By Accept Status',
-    };
-
-    const title: string = query?.groupBy as string;
-    useIndexSubpageEffect(subpageMap[title] || 'Test Results');
 
     return (
         <Group position="apart" align="start" noWrap>
@@ -217,7 +133,7 @@ export default function NavbarIndex() {
                         >
                             <Group position="apart" align="end" sx={{ width: '100%' }}>
                                 <NavbarGroupBySelect
-                                    setActiveItems={setActiveItems}
+                                    clearActiveItems={activeItemsHandler.clear}
                                     groupByValue={groupByValue}
                                     setGroupByValue={setGroupByValue}
                                 />
@@ -252,10 +168,6 @@ export default function NavbarIndex() {
                                 <NavbarSort
                                     groupBy={groupByValue}
                                     toggleOpenedSort={toggleOpenedSort}
-                                    sortBy={sortBy}
-                                    setSortBy={setSortBy}
-                                    setSortOrder={setSortOrder}
-                                    sortOrder={sortOrder}
                                     openedSort={openedSort}
                                 />
                             </Group>
@@ -263,9 +175,8 @@ export default function NavbarIndex() {
                             <Group sx={{ width: '100%' }}>
                                 <NavbarFilter
                                     openedFilter={openedFilter}
-                                    quickFilter={quickFilter}
-                                    setQuickFilter={setQuickFilter}
-                                    debouncedQuickFilter={debouncedQuickFilter}
+                                    setQuickFilterObject={setQuickFilterObject}
+                                    groupByValue={groupByValue}
                                     infinityQuery={infinityQuery}
                                     toggleOpenedFilter={toggleOpenedFilter}
                                 />
