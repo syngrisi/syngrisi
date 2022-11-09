@@ -22,7 +22,8 @@ const createStatusesObj = (arr: string[]): IStatusesObj => {
 };
 
 interface Props {
-    statuses: string[]
+    statuses: string[],
+    ml: any,
 }
 
 export function StatusesRing({ statuses, ...rest }: Props) {

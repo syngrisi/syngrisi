@@ -829,6 +829,34 @@ function useToggle(options = [false, true]) {
   };
   return [state, toggle];
 }
+function getOS() {
+  const { userAgent } = window.navigator;
+  const macosPlatforms = /(Macintosh)|(MacIntel)|(MacPPC)|(Mac68K)/i;
+  const windowsPlatforms = /(Win32)|(Win64)|(Windows)|(WinCE)/i;
+  const iosPlatforms = /(iPhone)|(iPad)|(iPod)/i;
+  if (macosPlatforms.test(userAgent)) {
+    return "macos";
+  }
+  if (iosPlatforms.test(userAgent)) {
+    return "ios";
+  }
+  if (windowsPlatforms.test(userAgent)) {
+    return "windows";
+  }
+  if (/Android/i.test(userAgent)) {
+    return "android";
+  }
+  if (/Linux/i.test(userAgent)) {
+    return "linux";
+  }
+  return "undetermined";
+}
+function useOs() {
+  if (typeof window !== "undefined") {
+    return getOS();
+  }
+  return "undetermined";
+}
 function getInputOnChange(setValue) {
   return (val) => {
     if (!val) {
@@ -17570,12 +17598,12 @@ function LogicalGroup({
   });
 }
 export {
-  ReactQueryDevtools as $,
+  useNavProgressFetchEffect as $,
   Affix as A,
   Burger as B,
   CopyButton as C,
   Divider as D,
-  SegmentedControl as E,
+  Card as E,
   FocusTrap as F,
   GenericService as G,
   Header as H,
@@ -17585,63 +17613,65 @@ export {
   List as L,
   Modal as M,
   Navbar as N,
-  Table as O,
+  Collapse as O,
   Popover as P,
-  useInputState as Q,
+  SegmentedControl as Q,
   RingProgress as R,
   StringParam as S,
   ThemeIcon as T,
   UserMenu as U,
-  RelativeDrawer as V,
-  LogicalGroup as W,
-  uuid as X,
-  useNavProgressFetchEffect as Y,
-  AppShell as Z,
+  Table as V,
+  useInputState as W,
+  RelativeDrawer as X,
+  LogicalGroup as Y,
+  uuid as Z,
   _inheritsLoose as _,
   useDisclosure as a,
-  useColorScheme as a0,
-  navigationData as a1,
-  SpotlightProvider as a2,
-  NotificationsProvider as a3,
-  NavigationProgress as a4,
-  ModalsProvider as a5,
-  QueryParamProvider as a6,
-  ReactRouter6Adapter as a7,
-  clamp as a8,
-  createSafeContext as a9,
-  Menu as aA,
-  Notification as aB,
-  Select as aC,
-  ChevronIcon as aD,
-  Switch as aE,
-  Global as aF,
-  AppContext as aG,
-  useContextStylesApi as aa,
-  createScopedKeydownHandler as ab,
-  StylesApiProvider as ac,
-  CloseButton as ad,
-  HorizontalSection as ae,
-  Section as af,
-  VerticalSection as ag,
-  DefaultItem as ah,
-  groupOptions as ai,
-  SelectPopover as aj,
-  SelectScrollArea as ak,
-  SelectItems as al,
-  useFocusTrap as am,
-  useScrollLock as an,
-  useFocusReturn as ao,
-  GroupedTransition as ap,
-  createEventHandler as aq,
-  useDelayedHover as ar,
-  _objectWithoutPropertiesLoose as as,
-  useScrollIntoView as at,
-  getSelectRightSectionProps as au,
-  useElementSize as av,
-  Avatar as aw,
-  CardSection as ax,
-  Highlight as ay,
-  Mark as az,
+  AppShell as a0,
+  ReactQueryDevtools as a1,
+  useColorScheme as a2,
+  navigationData as a3,
+  SpotlightProvider as a4,
+  NotificationsProvider as a5,
+  NavigationProgress as a6,
+  ModalsProvider as a7,
+  QueryParamProvider as a8,
+  ReactRouter6Adapter as a9,
+  Highlight as aA,
+  Mark as aB,
+  Menu as aC,
+  Notification as aD,
+  Select as aE,
+  ChevronIcon as aF,
+  Switch as aG,
+  Global as aH,
+  AppContext as aI,
+  clamp as aa,
+  createSafeContext as ab,
+  useContextStylesApi as ac,
+  createScopedKeydownHandler as ad,
+  StylesApiProvider as ae,
+  CloseButton as af,
+  HorizontalSection as ag,
+  Section as ah,
+  VerticalSection as ai,
+  DefaultItem as aj,
+  groupOptions as ak,
+  SelectPopover as al,
+  SelectScrollArea as am,
+  SelectItems as an,
+  useFocusTrap as ao,
+  useScrollLock as ap,
+  useFocusReturn as aq,
+  GroupedTransition as ar,
+  createEventHandler as as,
+  useDelayedHover as at,
+  _objectWithoutPropertiesLoose as au,
+  useScrollIntoView as av,
+  getSelectRightSectionProps as aw,
+  useElementSize as ax,
+  Avatar as ay,
+  CardSection as az,
   useClickOutside as b,
   escapeRegExp as c,
   ScrollArea as d,
@@ -17649,22 +17679,22 @@ export {
   Chip as f,
   HeaderLogo as g,
   SafeSelect as h,
-  Breadcrumbs as i,
-  useMutation as j,
-  Skeleton as k,
+  useOs as i,
+  Breadcrumbs as j,
+  useMutation as k,
   links as l,
-  useInView as m,
-  getNavigationItem as n,
+  Skeleton as m,
+  useInView as n,
   openSpotlight as o,
-  stopNavigationProgress as p,
-  useToggle as q,
+  getNavigationItem as p,
+  stopNavigationProgress as q,
   resetNavigationProgress as r,
   successMsg as s,
-  useInfinityScroll as t,
+  useToggle as t,
   useQueryParams as u,
-  Badge as v,
-  ActionPopoverIcon as w,
-  UserHooks as x,
-  Card as y,
-  Collapse as z
+  useInfinityScroll as v,
+  Badge as w,
+  ActionPopoverIcon as x,
+  UserHooks as y,
+  encodeQueryParams as z
 };
