@@ -20,12 +20,12 @@ import useInfinityScroll from '../../../shared/hooks/useInfinityScroll';
 
 import { NavbarItems } from './NavbarItems';
 import SkeletonWrapper from './Skeletons/SkeletonWrapper';
-import SafeSelect from '../../../shared/components/SafeSelect';
 import { NavbarSort } from './NavbarSort';
 import { escapeRegExp } from '../../../shared/utils/utils';
 import { useParams } from '../../hooks/useParams';
 import { NavbarFilter } from './NavbarFilter';
 import { useIndexSubpageEffect } from '../../hooks/useIndexSubpageEffect';
+import { NavbarGroupBySelect } from './NavbarGroupBySelect';
 
 const useStyles = createStyles((theme) => ({
     navbar: {
@@ -61,6 +61,11 @@ export default function NavbarIndex() {
     const { classes } = useStyles();
     const { query, setQuery } = useParams();
 
+    const [sortBy, setSortBy] = useState('createdDate');
+    const [sortOrder, setSortOrder] = useState('desc');
+
+    const [groupByValue, setGroupByValue] = useState(query.groupBy || 'runs');
+
     const [activeItems, setActiveItems] = useState<string[]>([]);
     const activeItemsHandler = {
         get: () => activeItems,
@@ -85,16 +90,33 @@ export default function NavbarIndex() {
         activeNavbarItemClass: () => classes.activeNavbarItem,
     };
 
-    const [sortBy, setSortBy] = useState('createdDate');
-    const [sortOrder, setSortOrder] = useState('desc');
+    const baseFilterMap = (
+        {
+            suites: 'suite',
+            runs: 'run',
+            'test-distinct/browserName': 'browserName',
+            'test-distinct/os': 'os',
+            'test-distinct/status': 'status',
+            'test-distinct/markedAs': 'markedAs',
+        }[groupByValue] || groupByValue
+    );
 
-    const [groupByValue, setGroupByValue] = useState(query.groupBy || 'runs');
+    useEffect(function setActiveItemsFromQueryFirstTime() {
+        if (
+            (query?.base_filter && query?.base_filter[baseFilterMap]?.$in?.length > 0)
+            && (activeItemsHandler.get().length < 1)
+        ) {
+            activeItemsHandler.set(query?.base_filter[baseFilterMap]?.$in);
+        }
+    }, []);
 
-    const handleGroupBySelect = (value: string) => {
-        setActiveItems(() => []);
-        setGroupByValue(value);
-        setQuery({ base_filter: {} });
-    };
+    useEffect(function onActiveItemsChange() {
+        if (activeItemsHandler.get().length > 0) {
+            setQuery({ base_filter: { [baseFilterMap]: { $in: activeItemsHandler.get() } } });
+        } else {
+            setQuery({ base_filter: null });
+        }
+    }, [JSON.stringify(activeItemsHandler.get())]);
 
     const [quickFilter, setQuickFilter] = useState<string>('');
     const [debouncedQuickFilter] = useDebouncedValue(quickFilter, 400);
@@ -141,24 +163,6 @@ export default function NavbarIndex() {
         baseFilterObj: navbarFilterObject,
         sortBy: `${sortBy}:${sortOrder}`,
     });
-
-    // useEffect(function oneTime() {
-    //     setQuery({ groupBy: groupByValue });
-    //     firstPageQuery.refetch();
-    // }, []);
-
-    // const firstGroupUpdate = useRef(true);
-
-    useEffect(function onGroupByChange() {
-        // if (firstGroupUpdate.current) {
-        //     firstGroupUpdate.current = false;
-        //     return;
-        // }
-        // setQuery({ groupBy: groupByValue });
-        // console.log('CLEAR!!!!!!!!!!!!')
-        // setQuery({ base_filter: null });
-        setActiveItems(() => ([]));
-    }, [groupByValue]);
 
     useEffect(function refetch() {
         firstPageQuery.refetch();
@@ -212,20 +216,10 @@ export default function NavbarIndex() {
                             pr={12}
                         >
                             <Group position="apart" align="end" sx={{ width: '100%' }}>
-                                <SafeSelect
-                                    label="Group by"
-                                    data-test="navbar-group-by"
-                                    value={groupByValue}
-                                    onChange={handleGroupBySelect}
-                                    optionsData={[
-                                        { value: 'runs', label: 'Runs' },
-                                        { value: 'suites', label: 'Suites' },
-                                        { value: 'test-distinct/browserName', label: 'Browsers' },
-                                        { value: 'test-distinct/os', label: 'Platform' },
-                                        // { value: 'test-distinct/viewport', label: 'Viewport' },
-                                        { value: 'test-distinct/status', label: 'Test Status' },
-                                        { value: 'test-distinct/markedAs', label: 'Accept Status' },
-                                    ]}
+                                <NavbarGroupBySelect
+                                    setActiveItems={setActiveItems}
+                                    groupByValue={groupByValue}
+                                    setGroupByValue={setGroupByValue}
                                 />
 
                                 <Group spacing={4}>
