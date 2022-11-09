@@ -61,7 +61,6 @@ export default function NavbarIndex() {
     const { query, setQuery } = useParams();
 
     const [groupByValue, setGroupByValue] = useState(query.groupBy || 'runs');
-
     const activeItemsHandler = useNavbarActiveItems({ groupByValue, classes });
 
     const [quickFilterObject, setQuickFilterObject] = useState<{ [key: string]: any } | null>(null);

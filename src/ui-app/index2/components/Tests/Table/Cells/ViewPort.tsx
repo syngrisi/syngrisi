@@ -8,7 +8,7 @@ interface Props {
 }
 
 export function Viewport({ type, test }: Props) {
-    const uniqueCheckViewports = [...new Set(test.checks.map((x) => x.viewport))];
+    const uniqueCheckViewports = [...new Set(test.checks.map((x: any) => x.viewport))];
 
     // eslint-disable-next-line no-nested-ternary
     const resultViewport = uniqueCheckViewports.length > 0

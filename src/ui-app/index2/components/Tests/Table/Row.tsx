@@ -37,7 +37,7 @@ function Cell({ type, test, itemValue }: { type: string, test: any, itemValue: s
         browserName: (<BrowserName type={type} key={type} test={test} itemValue={itemValue} />),
         browserVersion: (<BrowserVersion type={type} key={type} test={test} itemValue={itemValue} />),
         branch: (<Branch type={type} key={type} test={test} itemValue={itemValue} />),
-        viewport: (<Viewport type={type} key={type} test={test} itemValue={itemValue} />),
+        viewport: (<Viewport type={type} key={type} test={test} />),
     };
     return cellsMap[type] || (
         <td
