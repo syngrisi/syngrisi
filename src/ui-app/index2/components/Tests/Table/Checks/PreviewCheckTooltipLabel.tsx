@@ -12,16 +12,30 @@ interface Props {
     check: any
 }
 
-export function PreviewCheck({ check }: Props) {
+export function PreviewCheckTooltipLabel({ check }: Props) {
     let statusMsg = '';
     if (check.status[0] === 'failed') {
-        if (check.failReasons.includes('different_images')) statusMsg = ' - images are different';
-        if (check.failReasons.includes('wrong_dimensions')) statusMsg = ' - images have wrong  dimensions';
-        // eslint-disable-next-line max-len
-        if (check.failReasons.includes('not_accepted')) statusMsg = ' - previous check with same parameter is not accepted';
+        if (check.failReasons.includes('different_images')) {
+            statusMsg = ' - images are different';
+            const checkResult = check.result ? JSON.parse(check.result) : null;
+            let diffPercent = checkResult.misMatchPercentage ? (checkResult.misMatchPercentage) : '';
+            diffPercent = (
+                (diffPercent === '0.00' || diffPercent === '')
+                && (checkResult.rawMisMatchPercentage?.toString()?.length > 0)
+            )
+                ? checkResult.rawMisMatchPercentage
+                : checkResult.misMatchPercentage;
+            statusMsg += ` (${diffPercent}%)`;
+        }
+        if (check.failReasons.includes('wrong_dimensions')) {
+            statusMsg = ' - images have wrong  dimensions';
+        }
+        if (check.failReasons.includes('not_accepted')) {
+            statusMsg = ' - previous check with same parameter is not accepted';
+        }
     }
     return (
-        <Stack sx={{ maxWidth: '300px' }} spacing={8} p={8}>
+        <Stack sx={{ maxWidth: '370px' }} spacing={8} p={8}>
             <Group position="left" spacing={8} ml={-6} noWrap>
                 <Group>
                     <StatusIcon status={check.status[0]} size={55} />
@@ -58,11 +72,11 @@ export function PreviewCheck({ check }: Props) {
                     <Text size="xs">{check.os}</Text>
                 </Group>
             </Group>
-            <Group position="apart">
+            <Group position="apart" noWrap>
                 <Group>
                     <Text size="xs">Browser: </Text>
                 </Group>
-                <Group position="right" spacing={6}>
+                <Group position="right" spacing={6} noWrap>
                     <BrowserIcon size={24} browser={check.browserName} />
                     <Text size="xs">
                         {check.browserName}
