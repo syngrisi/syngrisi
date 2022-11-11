@@ -103,24 +103,24 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
     const [openedZoomPopover, zoomPopoverHandler] = useDisclosure(false);
 
     function zoomEvents() {
-        // mainView.canvas.on('mouse:wheel', (opt: any) => {
-        //     // if (!opt.e.ctrlKey) return;
-        //     // const delta = opt.e.deltaY;
-        //     // let zoomVal = mainView.canvas.getZoom();
-        //     //
-        //     // zoomVal *= 0.999 ** delta;
-        //     // if (zoomVal > 9) zoomVal = 9;
-        //     // if (zoomVal < 0.10) zoomVal = 0.10;
-        //     // mainView.canvas.zoomToPoint({
-        //     //     x: opt.e.offsetX,
-        //     //     y: opt.e.offsetY,
-        //     // }, zoomVal);
-        //     //
-        //     // setZoomPercent(() => zoomVal * 100);
-        //     // document.dispatchEvent(new Event('zoom'));
-        //     // opt.e.preventDefault();
-        //     // opt.e.stopPropagation();
-        // });
+        mainView.canvas.on('mouse:wheel', (opt: any) => {
+            if (!opt.e.ctrlKey) return;
+            const delta = opt.e.deltaY;
+            let zoomVal = mainView.canvas.getZoom();
+
+            zoomVal *= 0.999 ** delta;
+            if (zoomVal > 9) zoomVal = 9;
+            if (zoomVal < 0.10) zoomVal = 0.10;
+            mainView.canvas.zoomToPoint({
+                x: opt.e.offsetX,
+                y: opt.e.offsetY,
+            }, zoomVal);
+
+            setZoomPercent(() => zoomVal * 100);
+            document.dispatchEvent(new Event('zoom'));
+            opt.e.preventDefault();
+            opt.e.stopPropagation();
+        });
     }
 
     const zoomByPercent = (percent) => {
@@ -202,8 +202,8 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
         }],
 
         // View
-        ['Digit1', () => setView('actual')],
-        ['Digit2', () => setView('expected')],
+        ['Digit1', () => setView('expected')],
+        ['Digit2', () => setView('actual')],
         ['Digit3', () => {
             if (currentCheck?.diffId?.filename) setView('diff');
         }],
@@ -236,8 +236,8 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
         if (!document.getElementById('snapshoot')) return;
         const initMV = async () => {
             fabric.Object.prototype.objectCaching = false;
-            const baselineImgSrc = `${config.baseUri}/snapshoots/${currentCheck?.baselineId?.filename}?expectedImg`;
-            const baselineImg = await createImageAndWaitForLoad(baselineImgSrc);
+            const expectedImgSrc = `${config.baseUri}/snapshoots/${currentCheck?.baselineId?.filename}?expectedImg`;
+            const expectedImg = await createImageAndWaitForLoad(expectedImgSrc);
 
             const actual = currentCheck.actualSnapshotId || null;
             const actualImgSrc = `${config.baseUri}/snapshoots/${currentCheck?.actualSnapshotId?.filename}?actualImg`;
@@ -246,7 +246,7 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
             // eslint-disable-next-line max-len
             document.getElementById('snapshoot').style.height = `${MainView.calculateExpectedCanvasViewportAreaSize().height - 10}px`;
 
-            const expectedImage = await imageFromUrl(baselineImg.src);
+            const expectedImage = await imageFromUrl(expectedImg.src);
             const actualImage = await imageFromUrl(actualImg.src);
 
             const diffImgSrc = `${config.baseUri}/snapshoots/${currentCheck?.diffId?.filename}?diffImg`;
@@ -433,29 +433,65 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
     const viewSegmentData = [
         {
             label: (
-                <Group position="left" spacing={4} noWrap>
-                    <IconSquareLetterA stroke={1} size={18} />
-                    Actual
-                </Group>
-            ),
-            value: 'actual',
-        },
-        {
-            label: (
-                <Group position="left" spacing={4} noWrap>
-                    <IconSquareLetterE stroke={1} size={18} />
-                    Expected
-                </Group>
+                <Tooltip
+                    withinPortal
+                    label={
+                        (
+                            <Group noWrap>
+                                <Text>Switch to Expected View</Text>
+                                <Kbd>1</Kbd>
+                            </Group>
+                        )
+                    }
+                >
+                    <Group position="left" spacing={4} noWrap>
+                        <IconSquareLetterE stroke={1} size={18} />
+                        Expected
+                    </Group>
+                </Tooltip>
             ),
             value: 'expected',
         },
         {
+            label: (
+                <Tooltip
+                    withinPortal
+                    label={
+                        (
+                            <Group noWrap>
+                                <Text>Switch to Actual View</Text>
+                                <Kbd>2</Kbd>
+                            </Group>
+                        )
+                    }
+                >
+                    <Group position="left" spacing={4} noWrap>
+                        <IconSquareLetterA stroke={1} size={18} />
+                        Actual
+                    </Group>
+                </Tooltip>
+            ),
+            value: 'actual',
+        },
+        {
             label:
                 (
-                    <Group position="left" spacing={4} noWrap>
-                        <IconArrowsExchange2 stroke={1} size={18} />
-                        Difference
-                    </Group>
+                    <Tooltip
+                        withinPortal
+                        label={
+                            (
+                                <Group noWrap>
+                                    <Text>Switch to Difference View</Text>
+                                    <Kbd>3</Kbd>
+                                </Group>
+                            )
+                        }
+                    >
+                        <Group position="left" spacing={4} noWrap>
+                            <IconArrowsExchange2 stroke={1} size={18} />
+                            Difference
+                        </Group>
+                    </Tooltip>
                 ),
             value: 'diff',
             disabled: true,
@@ -463,10 +499,22 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
         {
             label:
                 (
-                    <Group position="left" spacing={4} noWrap>
-                        <IconSquareHalf stroke={1} size={18} />
-                        Slider
-                    </Group>
+                    <Tooltip
+                        withinPortal
+                        label={
+                            (
+                                <Group noWrap>
+                                    <Text>Switch to Slider View</Text>
+                                    <Kbd>4</Kbd>
+                                </Group>
+                            )
+                        }
+                    >
+                        <Group position="left" spacing={4} noWrap>
+                            <IconSquareHalf stroke={1} size={18} />
+                            Slider
+                        </Group>
+                    </Tooltip>
                 ),
             value: 'slider',
             disabled: true,
@@ -650,9 +698,7 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
                             }
                         >
                             <ActionIcon
-
                                 disabled={!visibleRegionRemoveButton}
-                                title="remove selected ignore regions"
                                 onClick={() => mainView.removeActiveIgnoreRegions()}
                             >
                                 <IconShapeOff size={24} stroke={1} />
@@ -677,13 +723,23 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
                             </ActionIcon>
                         </Tooltip>
 
-                        <ActionIcon
-                            title="save ignore regions"
-
-                            onClick={() => MainView.sendIgnoreRegions(baselineId, mainView.getRectData())}
+                        <Tooltip
+                            withinPortal
+                            label={
+                                (
+                                    <Group noWrap>
+                                        <Text>Save ignore Regions</Text>
+                                        <Kbd>S</Kbd>
+                                    </Group>
+                                )
+                            }
                         >
-                            <IconDeviceFloppy size={24} stroke={1} />
-                        </ActionIcon>
+                            <ActionIcon
+                                onClick={() => MainView.sendIgnoreRegions(baselineId, mainView.getRectData())}
+                            >
+                                <IconDeviceFloppy size={24} stroke={1} />
+                            </ActionIcon>
+                        </Tooltip>
                         <Divider orientation="vertical" />
                         <AcceptButton
                             check={currentCheck}
@@ -699,9 +755,7 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
                             testUpdateQuery={firstPageQuery}
                             closeHandler={closeHandler}
                         />
-
                     </Group>
-
                 </Group>
 
                 <Group

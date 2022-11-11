@@ -1,5 +1,14 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { ActionIcon, DefaultMantineColor, Popover, Button, MantineNumberSize } from '@mantine/core';
+import {
+    ActionIcon,
+    DefaultMantineColor,
+    Popover,
+    Button,
+    MantineNumberSize,
+    Group,
+    Text,
+    Tooltip,
+} from '@mantine/core';
 import React, { ReactElement } from 'react';
 import { useDisclosure, useClickOutside } from '@mantine/hooks';
 
@@ -47,21 +56,32 @@ export default function ActionPopoverIcon(
 
         >
             <Popover.Target>
-                <ActionIcon
-                    data-test={testAttr}
-                    variant={'light' as any}
-                    color={color}
-                    onClick={() => {
-                        if (paused) return;
-                        handlers.toggle();
-                    }}
-                    title={title}
-                    loading={loading}
-                    size={size}
-                    {...rest}
+                <Tooltip
+                    withinPortal
+                    label={
+                        (
+                            <Group noWrap>
+                                <Text>{title}</Text>
+                            </Group>
+                        )
+                    }
                 >
-                    {icon}
-                </ActionIcon>
+                    <ActionIcon
+                        data-test={testAttr}
+                        variant={'light' as any}
+                        color={color}
+                        onClick={() => {
+                            if (paused) return;
+                            handlers.toggle();
+                        }}
+                        title={title}
+                        loading={loading}
+                        size={size}
+                        {...rest}
+                    >
+                        {icon}
+                    </ActionIcon>
+                </Tooltip>
             </Popover.Target>
             <Popover.Dropdown
                 p={4}

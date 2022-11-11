@@ -56,6 +56,7 @@ export class MainView {
             diffImage,
         }: Props,
     ) {
+        fabric.Object.prototype.objectCaching = false;
         // init properties
         this.canvasElementWidth = canvasElementWidth;
         this.canvasElementHeight = canvasElementHeight;
@@ -74,23 +75,7 @@ export class MainView {
         // this.expectedCanvasViewportAreaSize = MainView.calculateExpectedCanvasViewportAreaSize();
 
         this.defaultMode = '';
-        // this.currentMode = {
-        //     mode: '',
-        //     set(value) {
-        //         this.mode = value;
-        //     },
-        //     toggle(mode) {
-        //         if (this.mode === mode) {
-        //             return this.set(this.defaultMode);
-        //         }
-        //         return this.set(mode);
-        //     },
-        //     isPan() {
-        //         return this.mode === 'pan';
-        //     },
-        // };
 
-        // this.baselineUrl = url;
         if (actual) {
             this.sliderView = new SideToSideView(
                 {
@@ -139,43 +124,6 @@ export class MainView {
     }
 
     panEvents() {
-        // this.canvas.on(
-        //     'mouse:move', (e) => {
-        //         // console.log(e.e.buttons);
-        //         const s2sMoving = this.sliderView.inMovement;
-        //         if ((e.e.buttons === 4 || this.mouseDown) && this.currentMode.isPan() && !s2sMoving) {
-        //             this.canvas.setCursor('grab');
-        //
-        //             const mEvent = e.e;
-        //             const delta = new fabric.Point(mEvent.movementX, mEvent.movementY);
-        //             this.canvas.relativePan(delta);
-        //             this.canvas.fire('pan', e);
-        //             // dispatchEvent(new Event('pan'));
-        //             this.canvas.renderAll();
-        //         }
-        //     },
-        // );
-
-        // this.canvas.on(
-        //     'mouse:down', () => {
-        //         this.mouseDown = true;
-        //
-        //         if (this.currentMode.isPan()) {
-        //             this.canvas.setCursor('grab');
-        //             this.canvas.selection = false;
-        //             this.canvas.renderAll();
-        //         }
-        //     },
-        // );
-        // this.canvas.on(
-        //     'mouse:up', () => {
-        //         this.mouseDown = false;
-        //         this.canvas.setCursor('default');
-        //         this.canvas.renderAll();
-        //         this.canvas.selection = true;
-        //     },
-        // );
-
         this.canvas.on('mouse:wheel', (opt) => {
             if (opt.e.ctrlKey) return;
             const delta = new fabric.Point(-opt.e.deltaX / 2, -opt.e.deltaY / 2);
@@ -207,26 +155,6 @@ export class MainView {
             }
         });
     }
-
-    // zoomEvents() {
-    // this.canvas.on('mouse:wheel', (opt) => {
-    //     if (!opt.e.ctrlKey) return;
-    //     const delta = opt.e.deltaY;
-    //     console.log({ delta })
-    //     let zoom = this.canvas.getZoom();
-    //     zoom *= 0.999 ** delta;
-    //     console.log({zoom})
-    //     if (zoom > 20) zoom = 20;
-    //     if (zoom < 0.01) zoom = 0.01;
-    //     this.canvas.zoomToPoint({
-    //         x: opt.e.offsetX,
-    //         y: opt.e.offsetY,
-    //     }, zoom);
-    //     document.dispatchEvent(new Event('zoom'));
-    //     opt.e.preventDefault();
-    //     opt.e.stopPropagation();
-    // });
-    // }
 
     get objects() {
         return this.canvas.getObjects();
@@ -280,89 +208,6 @@ export class MainView {
         this.canvas.relativePan(delta);
         this.canvas.renderAll();
     }
-
-    // // pan to place the image in the center of canvas
-    // async panToCenter(image) {
-    //     if (this.pannedOnInit) return;
-    //     this.pannedOnInit = true;
-    //
-    //     // const delta = new fabric.Point(
-    //     //     ((this.canvas.width / 2) - (image.getScaledWidth() / 2)),
-    //     //     (this.canvas.height > image.getScaledHeight()
-    //     //         ? (this.canvas.height / 2) - (image.getScaledHeight() / 2)
-    //     //         : 5),
-    //     // );
-    //
-    //     const delta = new fabric.Point(
-    //         ((this.canvas.width / 2) - (image.getScaledWidth() / 2)),
-    //         0,
-    //     );
-    //     this.canvas.relativePan(delta);
-    //     this.canvas.renderAll();
-    // }
-
-    // RENDER VIEWS
-    // async renderBaselineView() {
-    //     await this.expectedView.render();
-    // }
-    //
-    // async renderActualView() {
-    //     await this.actualView.render();
-    //     // const button = document.getElementById('toggle-actual-baseline');
-    //     // button.innerText = 'A';
-    //     // button.title = 'switch to baseline snapshot (current is actual)';
-    // }
-    //
-    // async renderDiffView() {
-    //     await this.diffView.render();
-    //     this.pressedButton('diff-wrapper');
-    // }
-    //
-    // async renderSideToSideView() {
-    //     this.currentView = 'SideToSideView';
-    //
-    //     this.sliderView = new SideToSideView(
-    //         {
-    //             mainView: this,
-    //         },
-    //     );
-    //
-    //     await this.sliderView.render();
-    //     this.canvas.requestRenderAll();
-    //     this.canvas.renderAll();
-    //     await this.pressedButton('side-wrapper');
-    // }
-    //
-    // async toggleSideToSideView() {
-    //     if (this.currentView === 'SideToSideView') {
-    //         await this.destroyAllViews();
-    //         await this.renderActualView();
-    //         return;
-    //     }
-    //     await this.destroyAllViews();
-    //     await this.renderSideToSideView();
-    // }
-    //
-    // async toggleActual() {
-    //     if (this.currentView === 'actual') {
-    //         await this.destroyAllViews();
-    //         await this.renderBaselineView();
-    //         return;
-    //     }
-    //     await this.destroyAllViews();
-    //     // const uri = `/snapshoots/${params.filename}`;
-    //     await this.renderActualView();
-    // }
-    //
-    // async toggleDiff() {
-    //     if (this.currentView === 'DiffView') {
-    //         await this.destroyAllViews();
-    //         await this.renderBaselineView();
-    //         return;
-    //     }
-    //     await this.destroyAllViews();
-    //     await this.renderDiffView();
-    // }
 
     removeActiveIgnoreRegions() {
         const els = this.canvas.getActiveObjects()
