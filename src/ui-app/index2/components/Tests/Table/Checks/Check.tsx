@@ -21,7 +21,7 @@ import { RemoveButton } from './RemoveButton';
 import { ViewPortLabel } from './ViewPortLabel';
 import { sizes } from './checkSizes';
 import { Status } from '../../../../../shared/components/Check/Status';
-import { PreviewCheck } from './PreviewCheck';
+import { PreviewCheckTooltipLabel } from './PreviewCheckTooltipLabel';
 
 interface Props {
     check: any
@@ -166,7 +166,7 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                                     position="right-start"
                                     color="dark"
                                     label={
-                                        <PreviewCheck check={check} />
+                                        <PreviewCheckTooltipLabel check={check} />
                                     }
                                 >
                                     <a

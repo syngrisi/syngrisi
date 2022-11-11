@@ -23,7 +23,10 @@ export function ScreenshotDetails({ mainView, view, check }: Props) {
 
     const checkResult = check.result ? JSON.parse(check.result) : null
     let diffPercent = checkResult.misMatchPercentage ? (checkResult.misMatchPercentage) : ''
-    diffPercent = ((diffPercent === '0.00' || diffPercent === '') && checkResult.rawMisMatchPercentage?.toString()?.length > 0) ?
+    diffPercent = (
+        (diffPercent === '0.00' || diffPercent === '')
+        && (checkResult.rawMisMatchPercentage?.toString()?.length > 0)
+    ) ?
         checkResult.rawMisMatchPercentage :
         checkResult.misMatchPercentage;
 
