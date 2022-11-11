@@ -4,8 +4,8 @@ var __publicField = (obj, key, value) => {
   __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
   return value;
 };
-import { r as react, W as queryString, b as jsx, j as jsxs, P as Paper, g as Title, X as Stack, T as Text, G as Group, h as Button, Y as Epe, k as ky, a as config, u as useQuery, d as useMantineTheme, Z as Fragment, q as TextInput, t as ActionIcon, n as lAe, _ as Pj, D as useLocalStorage, e as Container, $ as Dge, c as createStyles, l as log, a0 as Tooltip, a1 as CK, a2 as Loader, a3 as React, a4 as Transition, a5 as Xfe, a6 as rze, A as Anchor, a7 as zV, a8 as ea, a9 as Ol, aa as ua, ab as RX, ac as rWe, ad as UZ, s as Checkbox, ae as getAugmentedNamespace, E as useHotkeys, af as lDe, ag as dDe, ah as IMe, ai as DMe, aj as qF, ak as Cbe, al as Pbe, am as pi, an as Lbe, L as LoadingOverlay, ao as LHe, B as Box, o as useSearchParams, ap as Y, Q as QueryClient, f as useDocumentTitle, aq as useNavigate, F as QueryClientProvider, H as ColorSchemeProvider, M as MantineProvider, ar as Routes, as as Route, I as createRoot, J as BrowserRouter } from "./use-form.b75610e1.js";
-import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, G as GenericService, e as errorMsg, a as useDisclosure, b as useClickOutside, c as escapeRegExp, P as Popover, d as ScrollArea, f as Chip, D as Divider, l as links, H as Header, B as Burger, g as HeaderLogo, h as SafeSelect, o as openSpotlight, K as Kbd, i as useOs, U as UserMenu, j as Breadcrumbs, k as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, m as Skeleton, n as useInView, F as FocusTrap, p as getNavigationItem, q as stopNavigationProgress, r as resetNavigationProgress, t as useToggle, v as useInfinityScroll, N as Navbar, w as Badge, A as Affix, x as ActionPopoverIcon, y as UserHooks, T as ThemeIcon, z as encodeQueryParams, I as Image$1, E as Card, O as Collapse, Q as SegmentedControl, V as Table, W as useInputState, X as RelativeDrawer, Y as LogicalGroup, Z as uuid, $ as useNavProgressFetchEffect, a0 as AppShell, a1 as ReactQueryDevtools, a2 as useColorScheme, a3 as navigationData, a4 as SpotlightProvider, a5 as NotificationsProvider, a6 as NavigationProgress, a7 as ModalsProvider, a8 as QueryParamProvider, a9 as ReactRouter6Adapter } from "./LogicalGroup.e043d52c.js";
+import { r as react, W as queryString, b as jsx, j as jsxs, P as Paper, g as Title, X as Stack, T as Text, G as Group, h as Button, Y as Epe, k as ky, a as config, u as useQuery, d as useMantineTheme, Z as Fragment, q as TextInput, t as ActionIcon, n as lAe, _ as Pj, D as useLocalStorage, e as Container, $ as Dge, c as createStyles, l as log, a0 as Tooltip, a1 as CK, a2 as Loader, a3 as React, a4 as Transition, a5 as Xfe, a6 as rze, A as Anchor, a7 as zV, a8 as ea, a9 as Ol, aa as ua, ab as RX, ac as rWe, ad as UZ, s as Checkbox, ae as getAugmentedNamespace, E as useHotkeys, af as lDe, ag as dDe, ah as IMe, ai as DMe, aj as qF, ak as Pbe, al as Cbe, am as pi, an as Lbe, L as LoadingOverlay, ao as LHe, B as Box, o as useSearchParams, ap as Y, Q as QueryClient, f as useDocumentTitle, aq as useNavigate, F as QueryClientProvider, H as ColorSchemeProvider, M as MantineProvider, ar as Routes, as as Route, I as createRoot, J as BrowserRouter } from "./use-form.0b8d79bb.js";
+import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, G as GenericService, e as errorMsg, a as useDisclosure, b as useClickOutside, c as escapeRegExp, P as Popover, d as ScrollArea, f as Chip, D as Divider, l as links, H as Header, B as Burger, g as HeaderLogo, h as SafeSelect, o as openSpotlight, K as Kbd, i as useOs, U as UserMenu, j as Breadcrumbs, k as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, m as Skeleton, n as useInView, F as FocusTrap, p as getNavigationItem, q as stopNavigationProgress, r as resetNavigationProgress, t as useToggle, v as useInfinityScroll, N as Navbar, w as Badge, A as Affix, x as ActionPopoverIcon, y as UserHooks, T as ThemeIcon, z as encodeQueryParams, I as Image$1, E as Card, O as Collapse, Q as SegmentedControl, V as Table, W as useInputState, X as RelativeDrawer, Y as LogicalGroup, Z as uuid, $ as useNavProgressFetchEffect, a0 as AppShell, a1 as ReactQueryDevtools, a2 as useColorScheme, a3 as navigationData, a4 as SpotlightProvider, a5 as NotificationsProvider, a6 as NavigationProgress, a7 as ModalsProvider, a8 as QueryParamProvider, a9 as ReactRouter6Adapter } from "./LogicalGroup.fd3d4521.js";
 function useDebouncedValue(value, wait, options = { leading: false }) {
   const [_value, setValue] = react.exports.useState(value);
   const mountedRef = react.exports.useRef(false);
@@ -4915,21 +4915,29 @@ function LabelUser({
     })]
   });
 }
-function PreviewCheck({
+function PreviewCheckTooltipLabel({
   check
 }) {
+  var _a, _b;
   let statusMsg = "";
   if (check.status[0] === "failed") {
-    if (check.failReasons.includes("different_images"))
+    if (check.failReasons.includes("different_images")) {
       statusMsg = " - images are different";
-    if (check.failReasons.includes("wrong_dimensions"))
+      const checkResult = check.result ? JSON.parse(check.result) : null;
+      let diffPercent = checkResult.misMatchPercentage ? checkResult.misMatchPercentage : "";
+      diffPercent = (diffPercent === "0.00" || diffPercent === "") && ((_b = (_a = checkResult.rawMisMatchPercentage) == null ? void 0 : _a.toString()) == null ? void 0 : _b.length) > 0 ? checkResult.rawMisMatchPercentage : checkResult.misMatchPercentage;
+      statusMsg += ` (${diffPercent}%)`;
+    }
+    if (check.failReasons.includes("wrong_dimensions")) {
       statusMsg = " - images have wrong  dimensions";
-    if (check.failReasons.includes("not_accepted"))
+    }
+    if (check.failReasons.includes("not_accepted")) {
       statusMsg = " - previous check with same parameter is not accepted";
+    }
   }
   return /* @__PURE__ */ jsxs(Stack, {
     sx: {
-      maxWidth: "300px"
+      maxWidth: "370px"
     },
     spacing: 8,
     p: 8,
@@ -4983,6 +4991,7 @@ function PreviewCheck({
       })]
     }), /* @__PURE__ */ jsxs(Group, {
       position: "apart",
+      noWrap: true,
       children: [/* @__PURE__ */ jsx(Group, {
         children: /* @__PURE__ */ jsx(Text, {
           size: "xs",
@@ -4991,6 +5000,7 @@ function PreviewCheck({
       }), /* @__PURE__ */ jsxs(Group, {
         position: "right",
         spacing: 6,
+        noWrap: true,
         children: [/* @__PURE__ */ jsx(BrowserIcon, {
           size: 24,
           browser: check.browserName
@@ -5170,7 +5180,7 @@ function Check({
           withArrow: true,
           position: "right-start",
           color: "dark",
-          label: /* @__PURE__ */ jsx(PreviewCheck, {
+          label: /* @__PURE__ */ jsx(PreviewCheckTooltipLabel, {
             check
           }),
           children: /* @__PURE__ */ jsx("a", {
@@ -5333,7 +5343,7 @@ function Status({
       spacing: 0,
       noWrap: true,
       children: [/* @__PURE__ */ jsx(StatusesRing, {
-        statuses: checkStatuses,
+        statuses: checkStatuses.length > 0 ? checkStatuses : [test.status],
         ml: -4
       }, type), /* @__PURE__ */ jsx(Tooltip, {
         label: test[type],
@@ -21758,7 +21768,8 @@ class SideToSideView {
     const newLeft = (e2.e.clientX - (this.canvasLeft + this.canvasOffsetX())) / this.canvas.getZoom();
     const newTop = e2.e.clientY / this.canvas.getZoom() - this.canvasOffsetY() / this.canvas.getZoom() - this.canvasTop / this.canvas.getZoom() - this.dividerSlider.width / 2;
     this.divider.left = newLeft - this.divider.width / 2 + this.dividerSlider.width / 2;
-    this.rectClip.left = newLeft;
+    this.actualRectClip.left = newLeft;
+    this.expectedRectClip.left = newLeft - this.expectedRectClip.width;
     this.divider.top = newTop - this.dividerSlider.height / this.canvas.getZoom() / 2;
     this.divider.setCoords();
     this.canvas.renderAll();
@@ -21928,38 +21939,55 @@ class SideToSideView {
     });
     return divider;
   }
-  rectClip() {
+  actualRectClip() {
     return new fabric$1.fabric.Rect({
-      top: this.baselineImg.height * -1,
+      top: this.actualImg.height * -1,
       originX: "left",
       originY: "top",
       absolutePositioned: true,
       lockMovementY: true,
       lockMovementX: true,
-      height: this.baselineImg.height * 3
+      height: this.actualImg.height * 3
+    });
+  }
+  expectedRectClip() {
+    return new fabric$1.fabric.Rect({
+      top: this.expectedImg.height * -1,
+      originX: "left",
+      originY: "top",
+      absolutePositioned: true,
+      lockMovementY: true,
+      lockMovementX: true,
+      height: this.expectedImg.height * 3
     });
   }
   async render() {
-    this.baselineImg = this.mainView.expectedImage;
-    this.baselineImg.evented = false;
-    SideToSideView.lockCommon(this.baselineImg);
+    this.expectedImg = this.mainView.expectedImage;
+    this.expectedImg.evented = false;
+    SideToSideView.lockCommon(this.expectedImg);
     this.actualImg = this.mainView.actualImage;
     this.actualImg.evented = false;
     SideToSideView.lockCommon(this.actualImg);
     this.divider = this.divider();
-    this.rectClip = this.rectClip();
-    this.actualImg.clipPath = this.rectClip;
+    this.actualRectClip = this.actualRectClip();
+    SideToSideView.lockCommon(this.actualRectClip);
+    this.actualImg.clipPath = this.actualRectClip;
+    this.expectedRectClip = this.expectedRectClip();
+    SideToSideView.lockCommon(this.expectedRectClip);
+    this.expectedImg.clipPath = this.expectedRectClip;
+    this.actualRectClip.width = this.canvas.getWidth() / this.canvas.getZoom() * 5;
+    this.expectedRectClip.width = this.canvas.getWidth() / this.canvas.getZoom() * 5;
+    this.actualRectClip.left = this.canvas.width / 2;
+    this.expectedRectClip.left = this.canvas.width / 2 - this.expectedRectClip.width;
+    this.divider.left = this.canvas.width / 2;
     this.expectedLabel = this.snapshotLabel("expected");
     this.actualLabel = this.snapshotLabel("actual");
-    this.rectClip.width = this.canvas.getWidth() * 2;
-    await this.canvas.add(this.baselineImg);
+    await this.canvas.add(this.expectedImg);
     await this.canvas.add(this.actualImg);
     await this.canvas.add(this.actualLabel);
     await this.canvas.add(this.expectedLabel);
     await this.canvas.add(this.divider);
     await this.canvas.renderAll();
-    this.divider.left = this.baselineImg.getScaledWidth() / 2;
-    this.rectClip.left = this.baselineImg.getScaledWidth() / 2;
     this.expectedLabel.top = this.canvas.getHeight() / 2 / this.canvas.getZoom() - this.canvasOffsetY() - this.expectedLabel.height / 2 * this.canvas.getZoom();
     this.expectedLabel.left = (this.canvas.getWidth() / 4 - this.canvasOffsetX()) / this.canvas.getZoom();
     this.actualLabel.top = this.canvas.getHeight() / 2 / this.canvas.getZoom() - this.canvasOffsetY() - this.actualLabel.height / 2 * this.canvas.getZoom();
@@ -21979,15 +22007,17 @@ class SideToSideView {
     }, 100);
   }
   async destroy() {
-    var _a;
+    var _a, _b;
     (_a = this.actualImg) == null ? true : delete _a.clipPath;
+    (_b = this.expectedImg) == null ? true : delete _b.clipPath;
     [
       this.actualImg,
-      this.baselineImg,
+      this.expectedImg,
       this.divider,
       this.actualLabel,
       this.expectedLabel,
-      this.rectClip
+      this.actualRectClip,
+      this.expectedRectClip
     ].forEach((item) => {
       this.canvas.remove(item);
     });
@@ -22045,6 +22075,7 @@ class MainView {
     __publicField(this, "diffView");
     __publicField(this, "expectedImage");
     __publicField(this, "diffImage");
+    fabric$1.fabric.Object.prototype.objectCaching = false;
     this.canvasElementWidth = canvasElementWidth;
     this.canvasElementHeight = canvasElementHeight;
     this.actualImage = lockImage(actualImage);
@@ -22728,15 +22759,24 @@ function RelatedChecks({
   });
 }
 function useRelatedChecks(checkData) {
+  const {
+    query,
+    setQuery
+  } = useParams();
   const [relatedActiveCheck, setRelatedActiveCheck] = react.exports.useState(checkData._id);
   const [sortBy, setSortBy] = react.exports.useState("createdDate");
   const [sortOrder, setSortOrder] = react.exports.useState("desc");
   const [relatedFilter, setRelatedFilter] = react.exports.useState({
     name: checkData.name
   });
+  const filterObj = relatedFilter;
+  if (query.app)
+    filterObj.app = {
+      $oid: (query == null ? void 0 : query.app) || ""
+    };
   const relatedChecksQuery = useInfinityScroll({
     resourceName: "checks",
-    filterObj: relatedFilter,
+    filterObj,
     firstPageQueryUniqueKey: checkData._id,
     infinityScrollLimit: 10,
     sortBy: `${sortBy}:${sortOrder}`
@@ -22868,6 +22908,7 @@ function CheckDetails({
   closeHandler
 }) {
   var _a, _b, _c;
+  const [view, setView] = react.exports.useState("actual");
   const {
     setAppTitle
   } = react.exports.useContext(AppContext);
@@ -22881,6 +22922,27 @@ function CheckDetails({
   const [mainView2, setMainView] = react.exports.useState(null);
   const [zoomPercent, setZoomPercent] = react.exports.useState(100);
   const [openedZoomPopover, zoomPopoverHandler] = useDisclosure(false);
+  function zoomEvents() {
+    mainView2.canvas.on("mouse:wheel", (opt) => {
+      if (!opt.e.ctrlKey)
+        return;
+      const delta = opt.e.deltaY;
+      let zoomVal = mainView2.canvas.getZoom();
+      zoomVal *= 0.999 ** delta;
+      if (zoomVal > 9)
+        zoomVal = 9;
+      if (zoomVal < 0.1)
+        zoomVal = 0.1;
+      mainView2.canvas.zoomToPoint({
+        x: opt.e.offsetX,
+        y: opt.e.offsetY
+      }, zoomVal);
+      setZoomPercent(() => zoomVal * 100);
+      document.dispatchEvent(new Event("zoom"));
+      opt.e.preventDefault();
+      opt.e.stopPropagation();
+    });
+  }
   const zoomByPercent = (percent) => {
     if (!(mainView2 == null ? void 0 : mainView2.canvas))
       return;
@@ -22924,49 +22986,6 @@ function CheckDetails({
       setMainView(null);
     }
   }, [related.relatedActiveCheck, relatedChecksOpened]);
-  useHotkeys([
-    ["mod+H", () => {
-      console.log("Toggle color scheme");
-      console.log(mainView2);
-    }],
-    ["Equal", () => zoomByDelta(15)],
-    ["NumpadAdd", () => zoomByDelta(15)],
-    ["Minus", () => zoomByDelta(-15)],
-    ["NumpadSubtract", () => zoomByDelta(-15)],
-    ["Digit9", () => fitImageByWith(`${view}Image`)],
-    ["Digit0", () => {
-      if (view === "slider") {
-        fitImageIfNeeded("actualImage");
-        return;
-      }
-      fitImageIfNeeded(`${view}Image`);
-    }],
-    ["Digit1", () => setView("actual")],
-    ["Digit2", () => setView("expected")],
-    ["Digit3", () => {
-      var _a2;
-      if ((_a2 = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _a2.filename)
-        setView("diff");
-    }],
-    ["Digit4", () => {
-      var _a2;
-      if ((_a2 = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _a2.filename)
-        setView("slider");
-    }],
-    ["A", () => {
-      if (view === "actual" || view === "expected") {
-        mainView2.addIgnoreRegion({
-          name: "ignore_rect",
-          strokeWidth: 0
-        });
-      }
-    }],
-    ["S", () => {
-      MainView.sendIgnoreRegions(baselineId, mainView2.getRectData());
-    }],
-    ["Delete", () => mainView2.removeActiveIgnoreRegions()],
-    ["Backspace", () => mainView2.removeActiveIgnoreRegions()]
-  ]);
   function keyHandler(event) {
     console.log(event.code);
   }
@@ -22979,13 +22998,13 @@ function CheckDetails({
     const initMV = async () => {
       var _a2, _b2, _c2, _d;
       fabric$1.fabric.Object.prototype.objectCaching = false;
-      const baselineImgSrc = `${config.baseUri}/snapshoots/${(_a2 = currentCheck == null ? void 0 : currentCheck.baselineId) == null ? void 0 : _a2.filename}?expectedImg`;
-      const baselineImg = await createImageAndWaitForLoad(baselineImgSrc);
+      const expectedImgSrc = `${config.baseUri}/snapshoots/${(_a2 = currentCheck == null ? void 0 : currentCheck.baselineId) == null ? void 0 : _a2.filename}?expectedImg`;
+      const expectedImg = await createImageAndWaitForLoad(expectedImgSrc);
       const actual = currentCheck.actualSnapshotId || null;
       const actualImgSrc = `${config.baseUri}/snapshoots/${(_b2 = currentCheck == null ? void 0 : currentCheck.actualSnapshotId) == null ? void 0 : _b2.filename}?actualImg`;
       const actualImg = await createImageAndWaitForLoad(actualImgSrc);
       document.getElementById("snapshoot").style.height = `${MainView.calculateExpectedCanvasViewportAreaSize().height - 10}px`;
-      const expectedImage = await imageFromUrl(baselineImg.src);
+      const expectedImage = await imageFromUrl(expectedImg.src);
       const actualImage = await imageFromUrl(actualImg.src);
       const diffImgSrc = `${config.baseUri}/snapshoots/${(_c2 = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _c2.filename}?diffImg`;
       const diffImage = ((_d = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _d.filename) ? await imageFromUrl(diffImgSrc) : null;
@@ -23102,6 +23121,7 @@ function CheckDetails({
   };
   react.exports.useEffect(function afterMainViewCreated() {
     if (mainView2) {
+      zoomEvents();
       fitGreatestImageIfNeeded();
       setView("actual");
       regionsSelectionEvents();
@@ -23112,55 +23132,98 @@ function CheckDetails({
       }
     }
   }, [mainView2 == null ? void 0 : mainView2.toString()]);
-  const [view, setView] = react.exports.useState("actual");
   react.exports.useEffect(() => {
     if (mainView2) {
       mainView2.switchView(view);
     }
   }, [view]);
   const viewSegmentData = [{
-    label: /* @__PURE__ */ jsxs(Group, {
-      position: "left",
-      spacing: 4,
-      noWrap: true,
-      children: [/* @__PURE__ */ jsx(Cbe, {
-        stroke: 1,
-        size: 18
-      }), "Actual"]
-    }),
-    value: "actual"
-  }, {
-    label: /* @__PURE__ */ jsxs(Group, {
-      position: "left",
-      spacing: 4,
-      noWrap: true,
-      children: [/* @__PURE__ */ jsx(Pbe, {
-        stroke: 1,
-        size: 18
-      }), "Expected"]
+    label: /* @__PURE__ */ jsx(Tooltip, {
+      withinPortal: true,
+      label: /* @__PURE__ */ jsxs(Group, {
+        noWrap: true,
+        children: [/* @__PURE__ */ jsx(Text, {
+          children: "Switch to Expected View"
+        }), /* @__PURE__ */ jsx(Kbd, {
+          children: "1"
+        })]
+      }),
+      children: /* @__PURE__ */ jsxs(Group, {
+        position: "left",
+        spacing: 4,
+        noWrap: true,
+        children: [/* @__PURE__ */ jsx(Pbe, {
+          stroke: 1,
+          size: 18
+        }), "Expected"]
+      })
     }),
     value: "expected"
   }, {
-    label: /* @__PURE__ */ jsxs(Group, {
-      position: "left",
-      spacing: 4,
-      noWrap: true,
-      children: [/* @__PURE__ */ jsx(pi, {
-        stroke: 1,
-        size: 18
-      }), "Difference"]
+    label: /* @__PURE__ */ jsx(Tooltip, {
+      withinPortal: true,
+      label: /* @__PURE__ */ jsxs(Group, {
+        noWrap: true,
+        children: [/* @__PURE__ */ jsx(Text, {
+          children: "Switch to Actual View"
+        }), /* @__PURE__ */ jsx(Kbd, {
+          children: "2"
+        })]
+      }),
+      children: /* @__PURE__ */ jsxs(Group, {
+        position: "left",
+        spacing: 4,
+        noWrap: true,
+        children: [/* @__PURE__ */ jsx(Cbe, {
+          stroke: 1,
+          size: 18
+        }), "Actual"]
+      })
+    }),
+    value: "actual"
+  }, {
+    label: /* @__PURE__ */ jsx(Tooltip, {
+      withinPortal: true,
+      label: /* @__PURE__ */ jsxs(Group, {
+        noWrap: true,
+        children: [/* @__PURE__ */ jsx(Text, {
+          children: "Switch to Difference View"
+        }), /* @__PURE__ */ jsx(Kbd, {
+          children: "3"
+        })]
+      }),
+      children: /* @__PURE__ */ jsxs(Group, {
+        position: "left",
+        spacing: 4,
+        noWrap: true,
+        children: [/* @__PURE__ */ jsx(pi, {
+          stroke: 1,
+          size: 18
+        }), "Difference"]
+      })
     }),
     value: "diff",
     disabled: true
   }, {
-    label: /* @__PURE__ */ jsxs(Group, {
-      position: "left",
-      spacing: 4,
-      noWrap: true,
-      children: [/* @__PURE__ */ jsx(Lbe, {
-        stroke: 1,
-        size: 18
-      }), "Slider"]
+    label: /* @__PURE__ */ jsx(Tooltip, {
+      withinPortal: true,
+      label: /* @__PURE__ */ jsxs(Group, {
+        noWrap: true,
+        children: [/* @__PURE__ */ jsx(Text, {
+          children: "Switch to Slider View"
+        }), /* @__PURE__ */ jsx(Kbd, {
+          children: "4"
+        })]
+      }),
+      children: /* @__PURE__ */ jsxs(Group, {
+        position: "left",
+        spacing: 4,
+        noWrap: true,
+        children: [/* @__PURE__ */ jsx(Lbe, {
+          stroke: 1,
+          size: 18
+        }), "Slider"]
+      })
     }),
     value: "slider",
     disabled: true
@@ -23169,6 +23232,49 @@ function CheckDetails({
     viewSegmentData[2].disabled = false;
     viewSegmentData[3].disabled = false;
   }
+  useHotkeys([
+    ["mod+H", () => {
+      console.log("Toggle color scheme");
+      console.log(mainView2);
+    }],
+    ["Equal", () => zoomByDelta(15)],
+    ["NumpadAdd", () => zoomByDelta(15)],
+    ["Minus", () => zoomByDelta(-15)],
+    ["NumpadSubtract", () => zoomByDelta(-15)],
+    ["Digit9", () => fitImageByWith(`${view}Image`)],
+    ["Digit0", () => {
+      if (view === "slider") {
+        fitImageIfNeeded("actualImage");
+        return;
+      }
+      fitImageIfNeeded(`${view}Image`);
+    }],
+    ["Digit1", () => setView("expected")],
+    ["Digit2", () => setView("actual")],
+    ["Digit3", () => {
+      var _a2;
+      if ((_a2 = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _a2.filename)
+        setView("diff");
+    }],
+    ["Digit4", () => {
+      var _a2;
+      if ((_a2 = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _a2.filename)
+        setView("slider");
+    }],
+    ["A", () => {
+      if (view === "actual" || view === "expected") {
+        mainView2.addIgnoreRegion({
+          name: "ignore_rect",
+          strokeWidth: 0
+        });
+      }
+    }],
+    ["S", () => {
+      MainView.sendIgnoreRegions(baselineId, mainView2.getRectData());
+    }],
+    ["Delete", () => mainView2.removeActiveIgnoreRegions()],
+    ["Backspace", () => mainView2.removeActiveIgnoreRegions()]
+  ]);
   return /* @__PURE__ */ jsx(Group, {
     style: {
       width: "96vw"
@@ -23377,7 +23483,6 @@ function CheckDetails({
             }),
             children: /* @__PURE__ */ jsx(ActionIcon, {
               disabled: !visibleRegionRemoveButton,
-              title: "remove selected ignore regions",
               onClick: () => mainView2.removeActiveIgnoreRegions(),
               children: /* @__PURE__ */ jsx(IMe, {
                 size: 24,
@@ -23404,12 +23509,22 @@ function CheckDetails({
                 stroke: 1
               })
             })
-          }), /* @__PURE__ */ jsx(ActionIcon, {
-            title: "save ignore regions",
-            onClick: () => MainView.sendIgnoreRegions(baselineId, mainView2.getRectData()),
-            children: /* @__PURE__ */ jsx(qF, {
-              size: 24,
-              stroke: 1
+          }), /* @__PURE__ */ jsx(Tooltip, {
+            withinPortal: true,
+            label: /* @__PURE__ */ jsxs(Group, {
+              noWrap: true,
+              children: [/* @__PURE__ */ jsx(Text, {
+                children: "Save ignore Regions"
+              }), /* @__PURE__ */ jsx(Kbd, {
+                children: "S"
+              })]
+            }),
+            children: /* @__PURE__ */ jsx(ActionIcon, {
+              onClick: () => MainView.sendIgnoreRegions(baselineId, mainView2.getRectData()),
+              children: /* @__PURE__ */ jsx(qF, {
+                size: 24,
+                stroke: 1
+              })
             })
           }), /* @__PURE__ */ jsx(Divider, {
             orientation: "vertical"

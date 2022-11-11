@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import * as React from 'react';
-import { Badge, Group } from '@mantine/core';
+import { Badge, BadgeVariant } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
 import { sizes } from '../../../index2/components/Tests/Table/Checks/checkSizes';
 
@@ -15,22 +15,21 @@ const statusColor = (status: string) => {
 
 interface Props {
     check: any,
+    variant?: BadgeVariant
     size?: number | string,
 }
 
-export function Status({ check, size, ...rest }: Props) {
+export function Status({ check, size, variant = 'light', ...rest }: Props) {
     const [checksViewSize] = useLocalStorage({ key: 'check-view-size', defaultValue: 'medium' });
     return (
         <Badge
             color={statusColor(check.status)}
-            variant="light"
+            variant={variant}
             size={size || sizes[checksViewSize].statusBadge}
             title="Check status"
             {...rest}
         >
-            <Group spacing={0} align="center" noWrap>
-                {check.status}
-            </Group>
+            {check.status}
         </Badge>
     );
 }

@@ -36,6 +36,7 @@ export function BrowserIcon({ browser, size = 24, color = '', ...rest }: Props) 
 
     return (
         <BrowIcon
+            style={{ width: size }}
             size={size}
             title={browser}
             color={color}

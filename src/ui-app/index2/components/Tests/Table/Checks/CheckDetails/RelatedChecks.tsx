@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle,no-nested-ternary,prefer-arrow-callback */
 import * as React from 'react';
-import { ActionIcon, Group, ScrollArea, Stack, Text, Transition, Chip, Burger } from '@mantine/core';
+import { ActionIcon, Group, ScrollArea, Stack, Text, Transition, Chip, Burger, Divider } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconArrowsSort, IconFilter, IconRefresh, IconX } from '@tabler/icons';
 import { useEffect, useState } from 'react';
@@ -45,7 +45,7 @@ export function RelatedChecks(
 
     return (
         <Stack spacing={4} pr={0}>
-            <Stack pr="sm" align="end" sx={{ width: '100%' }} spacing={8}>
+            <Stack pr="sm" align="end" sx={{ width: '100%' }} spacing={0}>
 
                 <Group position="apart" align="center" sx={{ width: '100%' }} spacing={0}>
                     <Group />
@@ -70,6 +70,7 @@ export function RelatedChecks(
                             title={title}
                         />
                     </Group>
+
                 </Group>
 
                 {
@@ -101,6 +102,9 @@ export function RelatedChecks(
                         </Group>
                     )
                 }
+
+                <Divider sx={{ width: '100%' }} size="xs" p={1} />
+
                 <RelatedCheckSort
                     toggleOpenedSort={sortHandler.toggle}
                     sortBy={related.sortBy}
@@ -109,6 +113,7 @@ export function RelatedChecks(
                     sortOrder={related.sortOrder}
                     openedSort={openedSort}
                 />
+
                 {
                     openedFilter && (
                         <Group mb="xs" mt="xs" ml={-10} mr={-10} spacing={4}>
@@ -141,7 +146,7 @@ export function RelatedChecks(
                             (styles: any) => (
 
                                 <ScrollArea
-                                    mt="md"
+                                    mt={4}
                                     style={{ height: '75vh' }}
                                     styles={styles}
                                 >
@@ -152,7 +157,7 @@ export function RelatedChecks(
                                                 related.relatedChecksQuery.infinityQuery.isError
                                                     ? (<Text size="xs" color="red"> Fail to load</Text>)
                                                     : (
-                                                        <Stack spacing={8}>
+                                                        <Stack spacing={4}>
                                                             <RelatedChecksItems
                                                                 infinityQuery={related.relatedChecksQuery.infinityQuery}
                                                                 relatedActiveCheck={related.relatedActiveCheck}

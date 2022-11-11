@@ -83,7 +83,7 @@ export function CheckModal({ firstPageQuery }: Props) {
                         sx={{ position: 'relative' }}
                         noWrap
                     >
-                        <Status size="lg" check={checkData} />
+                        <Status size="lg" check={checkData} variant="filled" />
 
                         <Tooltip
                             withinPortal
