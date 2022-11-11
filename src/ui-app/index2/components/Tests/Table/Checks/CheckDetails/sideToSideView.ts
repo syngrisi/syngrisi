@@ -6,7 +6,6 @@ export class SideToSideView {
 
     canvas: any;
 
-    // private uriBaseline: any;
     private dividerLine: any;
 
     private dividerSlider: any;
@@ -14,7 +13,6 @@ export class SideToSideView {
     constructor({ mainView }: any) {
         this.mainView = mainView;
         this.canvas = mainView.canvas;
-        // this.uriBaseline = mainView.uriBaseline;
 
         // event handlers, here - because need arrow function to overstate this and bind problem
         this.zoomEventHandler = () => {
@@ -69,7 +67,7 @@ export class SideToSideView {
         document.removeEventListener('zoom', this.zoomEventHandler, false);
     }
 
-    followCursor(e) {
+    followCursor(e: any) {
         const newLeft = (
             ((e.e.clientX - (this.canvasLeft + this.canvasOffsetX()))
                 / this.canvas.getZoom())
@@ -85,7 +83,9 @@ export class SideToSideView {
 
         // moving the object along with mouse cursor
         this.divider.left = newLeft - (this.divider.width) / 2 + (this.dividerSlider.width / 2);
-        this.rectClip.left = newLeft;
+        // (this.expectedRectClip.width * -1) + this.actualImg.getScaledWidth() / 2;
+        this.actualRectClip.left = newLeft;
+        this.expectedRectClip.left = newLeft - this.expectedRectClip.width;
         this.divider.top = newTop - (this.dividerSlider.height / this.canvas.getZoom()) / 2;
         this.divider.setCoords();
         this.canvas.renderAll();
@@ -274,24 +274,39 @@ export class SideToSideView {
         return divider;
     }
 
-    rectClip() {
+    actualRectClip() {
         return new fabric.Rect({
-            top: this.baselineImg.height * -1,
+            top: this.actualImg.height * -1,
+            originX: 'left',
+            originY: 'top',
+            absolutePositioned: true,
+            lockMovementY: true,
+            lockMovementX: true,
+            // opacity: 0.00001,
+            // width: 70,
+            height: this.actualImg.height * 3,
+        });
+    }
+
+    expectedRectClip() {
+        return new fabric.Rect({
+            top: this.expectedImg.height * -1,
+            // opacity: 0.00001,
             originX: 'left',
             originY: 'top',
             absolutePositioned: true,
             lockMovementY: true,
             lockMovementX: true,
             // width: 70,
-            height: this.baselineImg.height * 3,
+            height: this.expectedImg.height * 3,
         });
     }
 
     async render() {
         // IMAGES
-        this.baselineImg = this.mainView.expectedImage;
-        this.baselineImg.evented = false;
-        SideToSideView.lockCommon(this.baselineImg);
+        this.expectedImg = this.mainView.expectedImage;
+        this.expectedImg.evented = false;
+        SideToSideView.lockCommon(this.expectedImg);
 
         // this.actualImg = await imageFromUrl(this.uriActual);
         this.actualImg = this.mainView.actualImage;
@@ -299,32 +314,49 @@ export class SideToSideView {
         SideToSideView.lockCommon(this.actualImg);
 
         this.divider = this.divider();
-        // CLIP
-        this.rectClip = this.rectClip();
-        this.actualImg.clipPath = this.rectClip;
+        // CLIPS
+        this.actualRectClip = this.actualRectClip();
+        SideToSideView.lockCommon(this.actualRectClip);
+        this.actualImg.clipPath = this.actualRectClip;
+
+        this.expectedRectClip = this.expectedRectClip();
+        SideToSideView.lockCommon(this.expectedRectClip);
+        this.expectedImg.clipPath = this.expectedRectClip;
+
+        this.actualRectClip.width = (this.canvas.getWidth() / this.canvas.getZoom()) * 5;
+        // this.expectedRectClip.width = 500;
+        this.expectedRectClip.width = (this.canvas.getWidth() / this.canvas.getZoom()) * 5;
+
+
+        // this.actualRectClip.left = (this.actualImg.getScaledWidth() / 2);
+        // this.expectedRectClip.left = (this.expectedRectClip.width * -1) + this.actualImg.getScaledWidth() / 2;
+        // this.divider.left = (this.expectedImg.getScaledWidth() / 2);
+
+        this.actualRectClip.left = (this.canvas.width / 2);
+        this.expectedRectClip.left = (this.canvas.width / 2) - this.expectedRectClip.width;
+        this.divider.left = (this.canvas.width / 2);
+
 
         // LABELS
         this.expectedLabel = this.snapshotLabel('expected');
         this.actualLabel = this.snapshotLabel('actual');
 
-        this.rectClip.width = this.canvas.getWidth() * 2;
 
         // RENDER
-        await this.canvas.add(this.baselineImg);
+        await this.canvas.add(this.expectedImg);
         await this.canvas.add(this.actualImg);
         await this.canvas.add(this.actualLabel);
         await this.canvas.add(this.expectedLabel);
         await this.canvas.add(this.divider);
 
+        // await this.canvas.add(this.actualRectClip);
+        // await this.canvas.add(this.expectedRectClip);
+
         await this.canvas.renderAll();
 
         // initial images resize and divider align
         // await initResize(this.actualImg, this.canvas);
-        // await initResize(this.baselineImg, this.canvas);
-
-        this.divider.left = (this.baselineImg.getScaledWidth() / 2);
-
-        this.rectClip.left = (this.baselineImg.getScaledWidth() / 2);
+        // await initResize(this.expectedImg, this.canvas);
 
         // labels
         this.expectedLabel.top = (
@@ -370,14 +402,16 @@ export class SideToSideView {
 
     async destroy() {
         delete this.actualImg?.clipPath;
+        delete this.expectedImg?.clipPath;
 
         [
             this.actualImg,
-            this.baselineImg,
+            this.expectedImg,
             this.divider,
             this.actualLabel,
             this.expectedLabel,
-            this.rectClip,
+            this.actualRectClip,
+            this.expectedRectClip,
         ].forEach((item) => {
             this.canvas.remove(item);
         });
