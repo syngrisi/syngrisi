@@ -82,15 +82,16 @@ interface Props {
 }
 
 export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandler }: Props) {
+    const [view, setView] = useState('actual');
     const { setAppTitle }: any = useContext(AppContext);
     const [relatedChecksOpened, relatedChecksHandler] = useDisclosure(true);
 
-    const related = useRelatedChecks(checkData);
+    const related: any = useRelatedChecks(checkData);
     related.opened = relatedChecksOpened;
     related.handler = relatedChecksHandler;
 
     const currentCheck = useMemo(
-        () => related.relatedFlatChecksData.find((x) => x._id === related.relatedActiveCheck) || checkData,
+        () => related.relatedFlatChecksData.find((x: any) => x._id === related.relatedActiveCheck) || checkData,
         [related.relatedActiveCheck],
     );
 
@@ -98,7 +99,7 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
     setAppTitle(currentCheck.name);
 
     // const { height, width } = useViewportSize();
-    const [mainView, setMainView] = useState(null);
+    const [mainView, setMainView] = useState<any>(null);
     const [zoomPercent, setZoomPercent] = useState(100);
     const [openedZoomPopover, zoomPopoverHandler] = useDisclosure(false);
 
@@ -123,7 +124,7 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
         });
     }
 
-    const zoomByPercent = (percent) => {
+    const zoomByPercent = (percent: number) => {
         if (!mainView?.canvas) return;
         // mainView.canvas.zoomToPoint(new fabric.Point(mainView.canvas.width / 2,
         //     30), zoomPercent / 100);
@@ -181,49 +182,7 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
         }
     }, [related.relatedActiveCheck, relatedChecksOpened]);
 
-    useHotkeys([
-        ['mod+H', () => {
-            console.log('Toggle color scheme');
-            console.log(mainView);
-        }],
-
-        // Zoom
-        ['Equal', () => zoomByDelta(15)],
-        ['NumpadAdd', () => zoomByDelta(15)],
-        ['Minus', () => zoomByDelta(-15)],
-        ['NumpadSubtract', () => zoomByDelta(-15)],
-        ['Digit9', () => fitImageByWith(`${view}Image`)],
-        ['Digit0', () => {
-            if (view === 'slider') {
-                fitImageIfNeeded('actualImage');
-                return;
-            }
-            fitImageIfNeeded(`${view}Image`);
-        }],
-
-        // View
-        ['Digit1', () => setView('expected')],
-        ['Digit2', () => setView('actual')],
-        ['Digit3', () => {
-            if (currentCheck?.diffId?.filename) setView('diff');
-        }],
-        ['Digit4', () => {
-            if (currentCheck?.diffId?.filename) setView('slider');
-        }],
-        // Regions
-        ['A', () => {
-            if ((view === 'actual') || (view === 'expected')) {
-                mainView.addIgnoreRegion({ name: 'ignore_rect', strokeWidth: 0 })
-            }
-        }],
-        ['S', () => {
-            MainView.sendIgnoreRegions(baselineId, mainView.getRectData());
-        }],
-        ['Delete', () => mainView.removeActiveIgnoreRegions()],
-        ['Backspace', () => mainView.removeActiveIgnoreRegions()],
-    ]);
-
-    function keyHandler(event) {
+    function keyHandler(event: any) {
         console.log(event.code);
     }
 
@@ -247,7 +206,7 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
             document.getElementById('snapshoot').style.height = `${MainView.calculateExpectedCanvasViewportAreaSize().height - 10}px`;
 
             const expectedImage = await imageFromUrl(expectedImg.src);
-            const actualImage = await imageFromUrl(actualImg.src);
+            const actualImage = await imageFromUrl((actualImg).src);
 
             const diffImgSrc = `${config.baseUri}/snapshoots/${currentCheck?.diffId?.filename}?diffImg`;
             const diffImage = currentCheck?.diffId?.filename ? await imageFromUrl(diffImgSrc) : null;
@@ -265,6 +224,7 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
                         actual,
                     },
                 );
+                // @ts-ignore
                 window.mainView = MV;
 
                 keyEvents();
@@ -331,7 +291,7 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
         }, 10);
     };
 
-    const fitImageIfNeeded = (imageName) => {
+    const fitImageIfNeeded = (imageName: string) => {
         const image = mainView[imageName];
         const greatestDimension = (image.height > image.width) ? 'height' : 'width';
 
@@ -348,7 +308,7 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
         }, 10);
     };
 
-    const fitImageByWith = (imageName) => {
+    const fitImageByWith = (imageName: string) => {
         const image = mainView[imageName];
         zoomTo(image, 'width');
 
@@ -373,16 +333,19 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
         mainView.canvas.on(
             {
                 'selection:cleared':
+                // eslint-disable-next-line no-unused-vars
                     (e: any) => {
                         console.log('cleared selection');
                         handler();
                     },
                 'selection:updated':
+                // eslint-disable-next-line no-unused-vars
                     (e: any) => {
                         console.log('update selection');
                         handler();
                     },
                 'selection:created':
+                // eslint-disable-next-line no-unused-vars
                     (e: any) => {
                         console.log('create selection');
                         handler();
@@ -421,8 +384,6 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
     }, [
         mainView?.toString(),
     ]);
-
-    const [view, setView] = useState('actual');
 
     useEffect(() => {
         if (mainView) {
@@ -526,6 +487,48 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
         viewSegmentData[2].disabled = false;
         viewSegmentData[3].disabled = false;
     }
+
+    useHotkeys([
+        ['mod+H', () => {
+            console.log('Toggle color scheme');
+            console.log(mainView);
+        }],
+
+        // Zoom
+        ['Equal', () => zoomByDelta(15)],
+        ['NumpadAdd', () => zoomByDelta(15)],
+        ['Minus', () => zoomByDelta(-15)],
+        ['NumpadSubtract', () => zoomByDelta(-15)],
+        ['Digit9', () => fitImageByWith(`${view}Image`)],
+        ['Digit0', () => {
+            if (view === 'slider') {
+                fitImageIfNeeded('actualImage');
+                return;
+            }
+            fitImageIfNeeded(`${view}Image`);
+        }],
+
+        // View
+        ['Digit1', () => setView('expected')],
+        ['Digit2', () => setView('actual')],
+        ['Digit3', () => {
+            if (currentCheck?.diffId?.filename) setView('diff');
+        }],
+        ['Digit4', () => {
+            if (currentCheck?.diffId?.filename) setView('slider');
+        }],
+        // Regions
+        ['A', () => {
+            if ((view === 'actual') || (view === 'expected')) {
+                mainView.addIgnoreRegion({ name: 'ignore_rect', strokeWidth: 0 });
+            }
+        }],
+        ['S', () => {
+            MainView.sendIgnoreRegions(baselineId!, mainView.getRectData());
+        }],
+        ['Delete', () => mainView.removeActiveIgnoreRegions()],
+        ['Backspace', () => mainView.removeActiveIgnoreRegions()],
+    ]);
 
     return (
         <Group style={{ width: '96vw' }} spacing={4}>
@@ -735,7 +738,7 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
                             }
                         >
                             <ActionIcon
-                                onClick={() => MainView.sendIgnoreRegions(baselineId, mainView.getRectData())}
+                                onClick={() => MainView.sendIgnoreRegions(baselineId!, mainView.getRectData())}
                             >
                                 <IconDeviceFloppy size={24} stroke={1} />
                             </ActionIcon>
