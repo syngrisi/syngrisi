@@ -50,6 +50,7 @@ export function RemoveButton({ checksQuery, testUpdateQuery, check, closeHandler
             loading={mutationRemoveCheck.isLoading}
             confirmLabel="Delete"
             size={size}
+            color="red"
         />
     );
 }

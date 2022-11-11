@@ -13,6 +13,7 @@ export function RelatedChecksItems({ infinityQuery, relatedActiveCheck, setRelat
         ? (infinityQuery.data.pages.map(
                 (page: any) => (
                     page.results.map(
+                        // eslint-disable-next-line no-unused-vars
                         (item: any, index: number) => (
                             <RelatedCheckItem
                                 checkData={item}

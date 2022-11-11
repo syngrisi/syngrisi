@@ -198,8 +198,8 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                             </Card.Section>
 
                             {/* CHECK TOOLBAR */}
-                            <Group position="apart" pl="sm" pr="sm" mt="xs" mb={8} spacing="xs" align="center" noWrap>
-                                <Status check={check} />
+                            <Group position="apart" pl="sm" pr="sm" mt="xs" mb={8} spacing={4} align="center" noWrap>
+                                <Status check={check} variant="filled" />
 
                                 <ViewPortLabel
                                     check={check}

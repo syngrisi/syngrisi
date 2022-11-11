@@ -53,7 +53,7 @@ export default function ActionPopoverIcon(
             shadow="md"
             closeOnClickOutside
             closeOnEscape
-
+            withinPortal
         >
             <Popover.Target>
                 <Tooltip
@@ -69,7 +69,7 @@ export default function ActionPopoverIcon(
                     <ActionIcon
                         data-test={testAttr}
                         variant={'light' as any}
-                        color={color}
+                        // color={color}
                         onClick={() => {
                             if (paused) return;
                             handlers.toggle();

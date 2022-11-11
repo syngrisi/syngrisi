@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { Badge, Group, useMantineTheme } from '@mantine/core';
+import { Badge, BadgeVariant, Text, useMantineTheme } from '@mantine/core';
 
 interface Props {
     check: any
     sizes: any
     size?: any
     checksViewSize: string
+    variant?: BadgeVariant
     fontSize?: string
     displayed?: boolean
     color?: string
@@ -20,6 +21,7 @@ export function ViewPortLabel(
         fontSize = '12px',
         displayed = true,
         color = 'dark',
+        variant = 'light',
     }: Props,
 ) {
     const theme = useMantineTheme();
@@ -56,7 +58,8 @@ export function ViewPortLabel(
         : '';
 
     return (
-        <Group
+        <Text
+            lineClamp={1}
             sx={
                 {
                     display: displayed ? 'block' : 'none',
@@ -66,6 +69,7 @@ export function ViewPortLabel(
         >
             <Badge
                 color={color}
+                variant={variant}
                 size={size || sizes[checksViewSize].viewportText}
                 title="Viewport size"
                 sx={
@@ -78,6 +82,6 @@ export function ViewPortLabel(
                 {check.viewport}
             </Badge>
             {wrongSizeIcon}
-        </Group>
+        </Text>
     );
 }
