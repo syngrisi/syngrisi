@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle,no-nested-ternary,prefer-arrow-callback */
 import * as React from 'react';
-import { ActionIcon, Group, ScrollArea, Stack, Text, Transition, Chip, Burger, Divider } from '@mantine/core';
+import { ActionIcon, Group, ScrollArea, Stack, Text, Transition, Chip, Burger, Divider, Tooltip } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconArrowsSort, IconFilter, IconRefresh, IconX } from '@tabler/icons';
 import { useEffect, useState } from 'react';
@@ -57,18 +57,20 @@ export function RelatedChecks(
                         )
                     }
                     <Group>
-                        <Burger
-                            opened={opened}
-                            styles={{
-                                // burger
-                            }}
-                            size={16}
-                            onClick={() => {
-                                hideRelatedChecks();
-                                setOpened((o) => !o);
-                            }}
-                            title={title}
-                        />
+                        <Tooltip label={title} withinPortal>
+                            <Burger
+                                opened={opened}
+                                styles={{
+                                    // burger
+                                }}
+                                size={16}
+                                onClick={() => {
+                                    hideRelatedChecks();
+                                    setOpened((o) => !o);
+                                }}
+                                title={title}
+                            />
+                        </Tooltip>
                     </Group>
 
                 </Group>
@@ -76,29 +78,35 @@ export function RelatedChecks(
                 {
                     related.opened && (
                         <Group position="center" spacing="xs" sx={{ width: '100%' }} mb={4}>
-                            <ActionIcon
-                                data-test="related-check-icon-open-sort"
-                                onClick={() => sortHandler.toggle()}
-                                mb={4}
-                            >
-                                <IconArrowsSort stroke={1} />
-                            </ActionIcon>
+                            <Tooltip label={`${openedSort ? 'Close ' : ' Open'} sorting`} withinPortal>
+                                <ActionIcon
+                                    data-test="related-check-icon-open-sort"
+                                    onClick={() => sortHandler.toggle()}
+                                    mb={4}
+                                >
+                                    <IconArrowsSort stroke={1} />
+                                </ActionIcon>
+                            </Tooltip>
 
-                            <ActionIcon
-                                data-test="related-check-icon-open-filter"
-                                onClick={() => filterHandler.toggle()}
-                                mb={4}
-                            >
-                                <IconFilter stroke={1} />
-                            </ActionIcon>
+                            <Tooltip label={`${openedSort ? 'Close ' : ' Open'} filtering`} withinPortal>
+                                <ActionIcon
+                                    data-test="related-check-icon-open-filter"
+                                    onClick={() => filterHandler.toggle()}
+                                    mb={4}
+                                >
+                                    <IconFilter stroke={1} />
+                                </ActionIcon>
+                            </Tooltip>
 
-                            <ActionIcon
-                                data-test="related-check-icon-refresh"
-                                onClick={() => related.relatedChecksQuery.firstPageQuery.refetch()}
-                                mb={4}
-                            >
-                                <IconRefresh stroke={1} />
-                            </ActionIcon>
+                            <Tooltip label="Refresh items" withinPortal>
+                                <ActionIcon
+                                    data-test="related-check-icon-refresh"
+                                    onClick={() => related.relatedChecksQuery.firstPageQuery.refetch()}
+                                    mb={4}
+                                >
+                                    <IconRefresh stroke={1} />
+                                </ActionIcon>
+                            </Tooltip>
                         </Group>
                     )
                 }
