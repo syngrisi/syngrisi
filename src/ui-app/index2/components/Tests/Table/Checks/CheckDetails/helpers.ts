@@ -68,7 +68,10 @@ function imageFromUrl(url) {
         (resolve, reject) => {
             try {
                 fabric.Image.fromURL(
-                    url, (img) => resolve(img)
+                    url, (img) => {
+                        img.objectCaching = false;
+                        return resolve(img);
+                    },
                 );
             } catch (e) {
                 console.error(`cannot create image from url, error: '${e}'`);
