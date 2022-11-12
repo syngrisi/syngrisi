@@ -282,6 +282,7 @@ export class SideToSideView {
             absolutePositioned: true,
             lockMovementY: true,
             lockMovementX: true,
+            objectCaching: false,
             // opacity: 0.00001,
             // width: 70,
             height: this.actualImg.height * 3,
@@ -297,6 +298,7 @@ export class SideToSideView {
             absolutePositioned: true,
             lockMovementY: true,
             lockMovementX: true,
+            objectCaching: false,
             // width: 70,
             height: this.expectedImg.height * 3,
         });
