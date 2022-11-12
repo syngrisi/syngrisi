@@ -103,6 +103,29 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
     const [zoomPercent, setZoomPercent] = useState(100);
     const [openedZoomPopover, zoomPopoverHandler] = useDisclosure(false);
 
+    function mouseEvents() {
+        // mainView.canvas.on(
+        //     'mouse:move', (e: any) => {
+        //         const pixelRatio = window.devicePixelRatio;
+        //         if (!e.e.ctrlKey) return;
+        //         const mEvent = e.e;
+        //         console.log(e)
+        //         console.log(e.pointer.x, e.pointer.y)
+        //
+        //         // console.log(mEvent)
+        //         console.log(
+        //             mainView.canvas.getContext('2d').getImageData(
+        //                 parseInt(e.pointer.x * pixelRatio),
+        //                 parseInt(e.pointer.y * pixelRatio),
+        //                 1,
+        //                 1,
+        //             ).data,
+        //         )
+        //         // console.log(mainView.canvas.getContext().getImageData(e.offsetX, e.offsetY, 1, 1).data)
+        //     },
+        // );
+    }
+
     function zoomEvents() {
         mainView.canvas.on('mouse:wheel', (opt: any) => {
             if (!opt.e.ctrlKey) return;
@@ -357,6 +380,7 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
     useEffect(function afterMainViewCreated() {
         if (mainView) {
             zoomEvents();
+            mouseEvents();
             // initial zoom
             fitGreatestImageIfNeeded();
 
