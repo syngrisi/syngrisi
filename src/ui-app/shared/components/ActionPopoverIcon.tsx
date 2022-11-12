@@ -1,21 +1,22 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import {
     ActionIcon,
-    DefaultMantineColor,
     Popover,
     Button,
     MantineNumberSize,
     Group,
     Text,
     Tooltip,
+    MantineColor,
 } from '@mantine/core';
 import React, { ReactElement } from 'react';
 import { useDisclosure, useClickOutside } from '@mantine/hooks';
 
 interface IActionPopoverIcon {
     icon: ReactElement
-    color?: DefaultMantineColor | undefined
-    buttonColor?: DefaultMantineColor | undefined
+    color?: MantineColor
+    iconColor?: MantineColor
+    buttonColor?: MantineColor
     action: () => void,
     confirmLabel: string
     title: string
@@ -31,6 +32,7 @@ export default function ActionPopoverIcon(
     {
         icon,
         color,
+        iconColor,
         action,
         confirmLabel,
         title,
@@ -69,7 +71,7 @@ export default function ActionPopoverIcon(
                     <ActionIcon
                         data-test={testAttr}
                         variant={'light' as any}
-                        // color={color}
+                        color={iconColor}
                         onClick={() => {
                             if (paused) return;
                             handlers.toggle();

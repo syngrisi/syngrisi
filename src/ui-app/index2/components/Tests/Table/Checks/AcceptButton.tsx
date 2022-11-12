@@ -30,6 +30,7 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, size = 19 }:
     const mutationAcceptCheck = useMutation(
         (data: { check: any, newBaselineId: string }) => ChecksService.acceptCheck(data),
         {
+            // eslint-disable-next-line no-unused-vars
             onSuccess: async (result: any) => {
                 successMsg({ message: 'Check has been successfully accepted' });
                 checksQuery.refetch();
@@ -106,7 +107,7 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, size = 19 }:
         >
             <div>
                 <ActionPopoverIcon
-                    color={likeIconColor}
+                    iconColor={likeIconColor}
                     buttonColor="green"
                     sx={{
                         cursor: isCurrentlyAccepted ? 'default' : 'pointer',
