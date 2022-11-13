@@ -24,6 +24,7 @@ import { useContext, useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
     IconArrowsExchange2,
+    IconBulb,
     IconChevronDown,
     IconDeviceFloppy,
     IconShape,
@@ -45,6 +46,7 @@ import { AppContext } from '../../../../../AppContext';
 import { RelatedChecks } from './RelatedChecks';
 import { useRelatedChecks } from './hooks/useRelatedChecks';
 import { ScreenshotDetails } from './ScreenshotDetails';
+import { HighlightButton } from './HighlightButton';
 
 function onImageErrorHandler(...e: any) {
     const imgSrc = e[0].path[0].src;
@@ -83,6 +85,7 @@ interface Props {
 
 export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandler }: Props) {
     const [view, setView] = useState('actual');
+    const checkResult = checkData.result ? JSON.parse(checkData.result) : null;
     const { setAppTitle }: any = useContext(AppContext);
     const [relatedChecksOpened, relatedChecksHandler] = useDisclosure(true);
 
@@ -711,6 +714,34 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
                             onChange={setView}
                             data={viewSegmentData}
                         />
+                        <Divider orientation="vertical" />
+                        {
+                            (view === 'diff' && parseFloat(checkResult.rawMisMatchPercentage) < 5)
+                                ? (
+                                    <HighlightButton mainView={mainView} />
+                                )
+                                : (
+                                    <Tooltip
+                                        withinPortal
+                                        label={
+                                            (
+                                                <Group noWrap>
+                                                    <Text>
+                                                        Difference highlighting, active in diff mode when
+                                                        the difference is less than 5%
+                                                    </Text>
+                                                </Group>
+                                            )
+                                        }
+                                    >
+                                        <div>
+                                            <ActionIcon disabled>
+                                                <IconBulb size={24} stroke={1} />
+                                            </ActionIcon>
+                                        </div>
+                                    </Tooltip>
+                                )
+                        }
                         <Divider orientation="vertical" />
                         <Tooltip
                             label={
