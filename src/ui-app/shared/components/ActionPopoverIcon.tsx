@@ -19,13 +19,14 @@ interface IActionPopoverIcon {
     buttonColor?: MantineColor
     action: () => void,
     confirmLabel: string
-    title: string
+    title?: string
     testAttr: string
     loading: boolean
     variant?: string
     sx?: any
     paused?: boolean
     size: MantineNumberSize | undefined
+    disabled?: boolean
 }
 
 export default function ActionPopoverIcon(
@@ -40,6 +41,7 @@ export default function ActionPopoverIcon(
         loading,
         buttonColor,
         paused,
+        disabled = false,
         size,
         ...rest
     }: IActionPopoverIcon,
@@ -69,6 +71,7 @@ export default function ActionPopoverIcon(
                     }
                 >
                     <ActionIcon
+                        disabled={disabled}
                         data-test={testAttr}
                         variant={'light' as any}
                         color={iconColor}

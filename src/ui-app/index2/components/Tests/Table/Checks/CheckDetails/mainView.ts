@@ -45,6 +45,16 @@ export class MainView {
 
     diffImage: any;
 
+    // _currentView: string;
+    //
+    // public get currentView() {
+    //     return this._currentView;
+    // }
+    //
+    // public set currentView(value: string) {
+    //     this._currentView = value;
+    // }
+
     constructor(
         {
             canvasElementWidth,
@@ -72,6 +82,7 @@ export class MainView {
             uniformScaling: false,
         });
 
+        // this._currentView = 'actual';
         // this.expectedCanvasViewportAreaSize = MainView.calculateExpectedCanvasViewportAreaSize();
 
         this.defaultMode = '';
@@ -167,7 +178,8 @@ export class MainView {
         await this.sliderView.destroy();
     }
 
-    async switchView(view) {
+    async switchView(view: string) {
+        // this.currentView = view;
         await this.destroyAllViews();
         this.sliderView = new SideToSideView(
             {

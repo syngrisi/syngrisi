@@ -4,11 +4,11 @@ import { RelatedCheckItem } from './RelatedCheckItem';
 
 interface Props {
     infinityQuery: any
-    relatedActiveCheck: any
-    setRelatedActiveCheck: any
+    relatedActiveCheckId: any
+    setRelatedActiveCheckId: any
 }
 
-export function RelatedChecksItems({ infinityQuery, relatedActiveCheck, setRelatedActiveCheck }: Props) {
+export function RelatedChecksItems({ infinityQuery, relatedActiveCheckId, setRelatedActiveCheckId }: Props) {
     return infinityQuery.data
         ? (infinityQuery.data.pages.map(
                 (page: any) => (
@@ -17,8 +17,8 @@ export function RelatedChecksItems({ infinityQuery, relatedActiveCheck, setRelat
                         (item: any, index: number) => (
                             <RelatedCheckItem
                                 checkData={item}
-                                activeCheck={relatedActiveCheck}
-                                setActiveCheck={setRelatedActiveCheck}
+                                activeCheckId={relatedActiveCheckId}
+                                setActiveCheckId={setRelatedActiveCheckId}
                                 key={item._id}
                             />
                         ),

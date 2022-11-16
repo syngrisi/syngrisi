@@ -14,7 +14,10 @@ export function useIndexSubpageEffect(title: string) {
     }: any = useContext(AppContext);
 
     useEffect(() => {
-        const pageData = getNavigationItem(title);
+        const pageData = getNavigationItem(title) || {
+            title: null,
+            crumbs: [],
+        };
         setAppTitle(pageData!.title);
         setBreadCrumbs(pageData!.crumbs.map((item: any) => (
             <Anchor href={item.href} key={`${item.title}`} size="sm" color="green">

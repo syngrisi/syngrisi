@@ -77,6 +77,13 @@ function App() {
                             fontSizes: { md: 24 },
                             colorScheme,
                             primaryColor: 'green',
+                            breakpoints: {
+                                xs: 500,
+                                sm: 800,
+                                md: 1000,
+                                lg: 1200,
+                                xl: 1400,
+                            },
                         }}
                     >
                         <SpotlightProvider

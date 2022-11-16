@@ -4,8 +4,8 @@ var __publicField = (obj, key, value) => {
   __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
   return value;
 };
-import { r as react, W as queryString, b as jsx, j as jsxs, P as Paper, g as Title, X as Stack, T as Text, G as Group, h as Button, Y as Epe, k as ky, a as config, u as useQuery, d as useMantineTheme, Z as Fragment, q as TextInput, t as ActionIcon, n as lAe, _ as Pj, D as useLocalStorage, e as Container, $ as Dge, c as createStyles, l as log, a0 as Tooltip, a1 as CK, a2 as Loader, a3 as React, a4 as Transition, a5 as Xfe, a6 as rze, A as Anchor, a7 as zV, a8 as ea, a9 as Ol, aa as ua, ab as RX, ac as rWe, ad as UZ, s as Checkbox, ae as getAugmentedNamespace, E as useHotkeys, af as lDe, ag as dDe, ah as IMe, ai as DMe, aj as qF, ak as Pbe, al as Cbe, am as pi, an as Lbe, L as LoadingOverlay, ao as LHe, B as Box, o as useSearchParams, ap as Y, Q as QueryClient, f as useDocumentTitle, aq as useNavigate, F as QueryClientProvider, H as ColorSchemeProvider, M as MantineProvider, ar as Routes, as as Route, I as createRoot, J as BrowserRouter } from "./use-form.0b8d79bb.js";
-import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, G as GenericService, e as errorMsg, a as useDisclosure, b as useClickOutside, c as escapeRegExp, P as Popover, d as ScrollArea, f as Chip, D as Divider, l as links, H as Header, B as Burger, g as HeaderLogo, h as SafeSelect, o as openSpotlight, K as Kbd, i as useOs, U as UserMenu, j as Breadcrumbs, k as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, m as Skeleton, n as useInView, F as FocusTrap, p as getNavigationItem, q as stopNavigationProgress, r as resetNavigationProgress, t as useToggle, v as useInfinityScroll, N as Navbar, w as Badge, A as Affix, x as ActionPopoverIcon, y as UserHooks, T as ThemeIcon, z as encodeQueryParams, I as Image$1, E as Card, O as Collapse, Q as SegmentedControl, V as Table, W as useInputState, X as RelativeDrawer, Y as LogicalGroup, Z as uuid, $ as useNavProgressFetchEffect, a0 as AppShell, a1 as ReactQueryDevtools, a2 as useColorScheme, a3 as navigationData, a4 as SpotlightProvider, a5 as NotificationsProvider, a6 as NavigationProgress, a7 as ModalsProvider, a8 as QueryParamProvider, a9 as ReactRouter6Adapter } from "./LogicalGroup.fd3d4521.js";
+import { r as react, W as queryString, b as jsx, j as jsxs, P as Paper, g as Title, X as Stack, T as Text, G as Group, h as Button, Y as Epe, k as ky, a as config, u as useQuery, d as useMantineTheme, Z as Fragment, q as TextInput, t as ActionIcon, n as lAe, _ as Pj, D as useLocalStorage, e as Container, $ as Dge, c as createStyles, l as log, a0 as Tooltip, a1 as CK, a2 as Loader, a3 as React, a4 as Transition, a5 as Xfe, a6 as rze, A as Anchor, a7 as zV, a8 as ea, a9 as Ol, aa as ua, ab as RX, ac as rWe, ad as UZ, s as Checkbox, ae as getAugmentedNamespace, af as zb, ag as Pbe, ah as Cbe, ai as pi, aj as Lbe, E as useHotkeys, ak as lDe, al as dDe, am as IMe, an as DMe, ao as qF, L as LoadingOverlay, ap as LHe, B as Box, o as useSearchParams, aq as Y, Q as QueryClient, f as useDocumentTitle, ar as useNavigate, F as QueryClientProvider, H as ColorSchemeProvider, M as MantineProvider, as as Routes, at as Route, I as createRoot, J as BrowserRouter } from "./use-form.799991d3.js";
+import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, G as GenericService, e as errorMsg, a as useDisclosure, b as useClickOutside, c as escapeRegExp, P as Popover, d as ScrollArea, f as Chip, D as Divider, l as links, H as Header, B as Burger, g as HeaderLogo, h as SafeSelect, o as openSpotlight, K as Kbd, i as useOs, U as UserMenu, j as Breadcrumbs, k as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, m as Skeleton, n as useInView, F as FocusTrap, p as getNavigationItem, q as stopNavigationProgress, r as resetNavigationProgress, t as useToggle, v as useInfinityScroll, N as Navbar, w as Badge, A as Affix, x as ActionPopoverIcon, y as UserHooks, T as ThemeIcon, z as encodeQueryParams, I as Image$1, E as Card, O as Collapse, Q as SegmentedControl, V as Table, W as useInputState, X as RelativeDrawer, Y as LogicalGroup, Z as uuid, $ as useNavProgressFetchEffect, a0 as AppShell, a1 as ReactQueryDevtools, a2 as useColorScheme, a3 as navigationData, a4 as SpotlightProvider, a5 as NotificationsProvider, a6 as NavigationProgress, a7 as ModalsProvider, a8 as QueryParamProvider, a9 as ReactRouter6Adapter } from "./LogicalGroup.ae2dc560.js";
 function useDebouncedValue(value, wait, options = { leading: false }) {
   const [_value, setValue] = react.exports.useState(value);
   const mountedRef = react.exports.useRef(false);
@@ -596,7 +596,7 @@ function QuickFilter() {
     })]
   });
 }
-const useStyles$4 = createStyles((theme) => ({
+const useStyles$6 = createStyles((theme) => ({
   header: {
     paddingLeft: 0,
     paddingRight: 0,
@@ -662,7 +662,7 @@ function IndexHeader() {
   }] = useDisclosure(false);
   const {
     classes
-  } = useStyles$4();
+  } = useStyles$6();
   links.map((link) => /* @__PURE__ */ jsx("a", {
     href: link.link,
     className: classes.link,
@@ -3182,6 +3182,9 @@ function BrowserIcon({
 }) {
   const BrowIcon = browserIconMap(browser);
   return /* @__PURE__ */ jsx(BrowIcon, {
+    style: {
+      width: size
+    },
     size,
     title: browser,
     color,
@@ -4099,7 +4102,7 @@ function useNavbarActiveItems({
   }, [JSON.stringify(activeItemsHandler.get())]);
   return activeItemsHandler;
 }
-const useStyles$3 = createStyles((theme) => ({
+const useStyles$5 = createStyles((theme) => ({
   navbar: {
     backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.white,
     paddingLeft: theme.spacing.md,
@@ -4129,7 +4132,7 @@ const useStyles$3 = createStyles((theme) => ({
 function NavbarIndex() {
   const {
     classes
-  } = useStyles$3();
+  } = useStyles$5();
   const {
     query,
     setQuery
@@ -4699,7 +4702,7 @@ function AcceptButton({
     }),
     children: /* @__PURE__ */ jsx("div", {
       children: /* @__PURE__ */ jsx(ActionPopoverIcon, {
-        color: likeIconColor,
+        iconColor: likeIconColor,
         buttonColor: "green",
         sx: {
           cursor: isCurrentlyAccepted ? "default" : "pointer",
@@ -4718,7 +4721,6 @@ function AcceptButton({
           }), " ", notAcceptedIcon]
         }),
         action: handleAcceptCheckClick,
-        title: "Accept the check actual screenshot",
         loading: mutationAcceptCheck.isLoading,
         confirmLabel: "Accept",
         size
@@ -4770,7 +4772,8 @@ function RemoveButton({
     title: "Delete check",
     loading: mutationRemoveCheck.isLoading,
     confirmLabel: "Delete",
-    size
+    size,
+    color: "red"
   });
 }
 function ViewPortLabel({
@@ -4780,7 +4783,8 @@ function ViewPortLabel({
   checksViewSize,
   fontSize = "12px",
   displayed = true,
-  color = "dark"
+  color = "dark",
+  variant = "light"
 }) {
   const theme = useMantineTheme();
   const wrongSizeIcon = check.failReasons.includes("wrong_dimensions") ? /* @__PURE__ */ jsx(Badge, {
@@ -4808,13 +4812,15 @@ function ViewPortLabel({
     },
     children: "!"
   }) : "";
-  return /* @__PURE__ */ jsxs(Group, {
+  return /* @__PURE__ */ jsxs(Text, {
+    lineClamp: 1,
     sx: {
       display: displayed ? "block" : "none",
       position: "relative"
     },
     children: [/* @__PURE__ */ jsx(Badge, {
       color,
+      variant,
       size: size || sizes2[checksViewSize].viewportText,
       title: "Viewport size",
       sx: {
@@ -4858,6 +4864,7 @@ const statusColor = (status) => {
 function Status$1({
   check,
   size,
+  variant = "light",
   ...rest
 }) {
   const [checksViewSize] = useLocalStorage({
@@ -4866,16 +4873,11 @@ function Status$1({
   });
   return /* @__PURE__ */ jsx(Badge, {
     color: statusColor(check.status),
-    variant: "light",
+    variant,
     size: size || sizes[checksViewSize].statusBadge,
     title: "Check status",
     ...rest,
-    children: /* @__PURE__ */ jsx(Group, {
-      spacing: 0,
-      align: "center",
-      noWrap: true,
-      children: check.status
-    })
+    children: check.status
   });
 }
 function LabelUser({
@@ -4949,7 +4951,7 @@ function PreviewCheckTooltipLabel({
       children: [/* @__PURE__ */ jsx(Group, {
         children: /* @__PURE__ */ jsx(StatusIcon, {
           status: check.status[0],
-          size: 55
+          size: 72
         })
       }), /* @__PURE__ */ jsx(Group, {
         children: /* @__PURE__ */ jsxs(Text, {
@@ -5216,11 +5218,12 @@ function Check({
         pr: "sm",
         mt: "xs",
         mb: 8,
-        spacing: "xs",
+        spacing: 4,
         align: "center",
         noWrap: true,
         children: [/* @__PURE__ */ jsx(Status$1, {
-          check
+          check,
+          variant: "filled"
         }), /* @__PURE__ */ jsx(ViewPortLabel, {
           check,
           sizes,
@@ -5516,7 +5519,7 @@ function BrowserVersion({
     })
   }, type);
 }
-const useStyles$2 = createStyles(testsCreateStyle);
+const useStyles$4 = createStyles(testsCreateStyle);
 function Cell({
   type,
   test,
@@ -5590,7 +5593,7 @@ function Row({
   const {
     classes,
     cx
-  } = useStyles$2();
+  } = useStyles$4();
   const selected = selection.includes(item.id);
   const testUpdateQuery = useQuery(["testUpdateQuery", item._id], () => GenericService.get("tests", {
     _id: item._id
@@ -21947,6 +21950,7 @@ class SideToSideView {
       absolutePositioned: true,
       lockMovementY: true,
       lockMovementX: true,
+      objectCaching: false,
       height: this.actualImg.height * 3
     });
   }
@@ -21958,6 +21962,7 @@ class SideToSideView {
       absolutePositioned: true,
       lockMovementY: true,
       lockMovementX: true,
+      objectCaching: false,
       height: this.expectedImg.height * 3
     });
   }
@@ -22032,7 +22037,10 @@ function imageFromUrl(url) {
       try {
         fabric.Image.fromURL(
           url,
-          (img) => resolve(img)
+          (img) => {
+            img.objectCaching = false;
+            return resolve(img);
+          }
         );
       } catch (e2) {
         console.error(`cannot create image from url, error: '${e2}'`);
@@ -22075,6 +22083,7 @@ class MainView {
     __publicField(this, "diffView");
     __publicField(this, "expectedImage");
     __publicField(this, "diffImage");
+    __publicField(this, "_currentView");
     fabric$1.fabric.Object.prototype.objectCaching = false;
     this.canvasElementWidth = canvasElementWidth;
     this.canvasElementHeight = canvasElementHeight;
@@ -22087,6 +22096,7 @@ class MainView {
       preserveObjectStacking: true,
       uniformScaling: false
     });
+    this._currentView = "actual";
     this.defaultMode = "";
     if (actual) {
       this.sliderView = new SideToSideView(
@@ -22101,6 +22111,12 @@ class MainView {
     this.actualView = new SimpleView(this, "actual");
     this.diffView = new SimpleView(this, "diff");
     this.actualView.render();
+  }
+  get currentView() {
+    return this._currentView;
+  }
+  set currentView(value) {
+    this._currentView = value;
   }
   static calculateExpectedCanvasViewportAreaSize() {
     const viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
@@ -22152,6 +22168,7 @@ class MainView {
     await this.sliderView.destroy();
   }
   async switchView(view) {
+    this.currentView = view;
     await this.destroyAllViews();
     this.sliderView = new SideToSideView(
       {
@@ -22401,8 +22418,8 @@ function RelatedChecksSkeleton({
 }
 function RelatedCheckItem({
   checkData,
-  activeCheck,
-  setActiveCheck
+  activeCheckId,
+  setActiveCheckId
 }) {
   var _a, _b, _c;
   const check = checkData;
@@ -22414,95 +22431,154 @@ function RelatedCheckItem({
     defaultValue: "medium"
   });
   const handleItemClick = () => {
-    setActiveCheck(() => check._id);
+    setActiveCheckId(() => check._id);
   };
   return /* @__PURE__ */ jsx(Group, {
     onClick: handleItemClick,
-    spacing: 8,
-    p: "sm",
+    spacing: 4,
+    mt: 8,
+    mb: 8,
+    pt: 8,
+    pb: 8,
     sx: {
       cursor: "pointer",
       width: "88%",
       borderBottom: `1px solid ${theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[2]}`,
-      backgroundColor: check._id === activeCheck ? theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[2] : "",
+      backgroundColor: check._id === activeCheckId ? theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[2] : "",
       "&:hover": {
         backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[3]
       }
     },
-    position: "apart",
-    children: /* @__PURE__ */ jsx(Paper, {
-      shadow: "sm",
-      pb: 0,
-      mr: 22,
-      children: /* @__PURE__ */ jsxs("div", {
-        style: {
-          position: "relative"
-        },
-        children: [/* @__PURE__ */ jsx(Image$1, {
-          src: imagePreviewSrc,
-          width: "125px",
-          fit: "contain",
-          withPlaceholder: true,
-          alt: check.name,
-          styles: () => ({
-            image: {
-              maxHeight: 150
-            }
-          })
-        }), /* @__PURE__ */ jsxs(Group, {
-          pt: 8,
-          pb: 8,
-          align: "center",
-          position: "center",
-          spacing: 4,
-          noWrap: true,
-          children: [/* @__PURE__ */ jsx(ViewPortLabel, {
-            fontSize: "8px",
-            color: "blue",
-            check,
-            sizes,
-            checksViewSize
-          }), /* @__PURE__ */ jsxs(Group, {
-            align: "end",
-            spacing: 4,
-            children: [/* @__PURE__ */ jsx(BrowserIcon, {
-              browser: check.browserName,
-              size: 12
-            }), /* @__PURE__ */ jsx(OsIcon, {
-              os: check.os,
-              size: 14
-            })]
-          })]
-        }), /* @__PURE__ */ jsx("div", {
+    position: "center",
+    children: /* @__PURE__ */ jsx(Tooltip.Floating, {
+      multiline: true,
+      zIndex: 1e3,
+      withinPortal: true,
+      position: "right-start",
+      color: "dark",
+      label: /* @__PURE__ */ jsx(PreviewCheckTooltipLabel, {
+        check
+      }),
+      children: /* @__PURE__ */ jsx(Paper, {
+        shadow: "sm",
+        pb: 0,
+        children: /* @__PURE__ */ jsxs("div", {
           style: {
-            position: "absolute",
-            top: -12,
-            left: 4,
-            opacity: 1
+            position: "relative"
           },
-          children: /* @__PURE__ */ jsx(Status$1, {
-            check,
-            size: "xs",
+          children: [/* @__PURE__ */ jsx(Stack, {
+            align: "center",
+            mb: 4,
+            children: /* @__PURE__ */ jsx(Image$1, {
+              src: imagePreviewSrc,
+              width: "125px",
+              fit: "contain",
+              withPlaceholder: true,
+              alt: check.name,
+              styles: () => ({
+                image: {
+                  maxHeight: 150
+                }
+              })
+            })
+          }), /* @__PURE__ */ jsxs(Stack, {
+            p: 8,
+            align: "start",
+            spacing: 8,
+            children: [/* @__PURE__ */ jsxs(Group, {
+              position: "center",
+              spacing: 4,
+              sx: {
+                width: "100%"
+              },
+              noWrap: true,
+              children: [/* @__PURE__ */ jsx(ViewPortLabel, {
+                fontSize: "8px",
+                color: "blue",
+                check,
+                sizes,
+                checksViewSize
+              }), /* @__PURE__ */ jsx(Badge, {
+                leftSection: /* @__PURE__ */ jsx(UZ, {
+                  style: {
+                    marginTop: "4",
+                    marginRight: -2
+                  },
+                  size: 9
+                }),
+                color: "dark",
+                size: "xs",
+                children: check.branch
+              })]
+            }), /* @__PURE__ */ jsxs(Group, {
+              pl: 8,
+              position: "center",
+              spacing: 4,
+              sx: {
+                width: "100%"
+              },
+              noWrap: true,
+              children: [/* @__PURE__ */ jsx(OsIcon, {
+                os: check.os,
+                size: 14
+              }), /* @__PURE__ */ jsx(Text, {
+                size: "xs",
+                lineClamp: 1,
+                children: check.os
+              })]
+            }), /* @__PURE__ */ jsxs(Group, {
+              pl: 8,
+              position: "center",
+              spacing: 4,
+              sx: {
+                width: "100%"
+              },
+              noWrap: true,
+              children: [/* @__PURE__ */ jsx(BrowserIcon, {
+                browser: check.browserName,
+                size: 14
+              }), /* @__PURE__ */ jsx(Text, {
+                size: "xs",
+                lineClamp: 1,
+                children: check.browserName
+              }), /* @__PURE__ */ jsxs(Text, {
+                size: "xs",
+                sx: {
+                  minWidth: "30%"
+                },
+                children: ["- ", check.browserVersion]
+              })]
+            })]
+          }), /* @__PURE__ */ jsx("div", {
             style: {
-              opacity: 0.9,
-              backgroundColor: theme.colors.dark[9]
-            }
-          })
-        })]
+              position: "absolute",
+              top: -14,
+              left: 6,
+              opacity: 1
+            },
+            children: /* @__PURE__ */ jsx(Status$1, {
+              check,
+              size: "xs",
+              variant: "filled"
+            })
+          })]
+        })
       })
     })
   });
 }
 function RelatedChecksItems({
   infinityQuery,
-  relatedActiveCheck,
-  setRelatedActiveCheck
+  relatedActiveCheckId,
+  setRelatedActiveCheckId
 }) {
-  return infinityQuery.data ? infinityQuery.data.pages.map((page) => page.results.map((item, index) => /* @__PURE__ */ jsx(RelatedCheckItem, {
-    checkData: item,
-    activeCheck: relatedActiveCheck,
-    setActiveCheck: setRelatedActiveCheck
-  }, item._id))) : [];
+  return infinityQuery.data ? infinityQuery.data.pages.map((page) => page.results.map(
+    (item, index) => /* @__PURE__ */ jsx(RelatedCheckItem, {
+      checkData: item,
+      activeCheckId: relatedActiveCheckId,
+      setActiveCheckId: setRelatedActiveCheckId
+    }, item._id)
+  )) : [];
 }
 function RelatedCheckSort({
   sortBy,
@@ -22609,7 +22685,7 @@ function RelatedChecks({
       sx: {
         width: "100%"
       },
-      spacing: 8,
+      spacing: 0,
       children: [/* @__PURE__ */ jsxs(Group, {
         position: "apart",
         align: "center",
@@ -22625,15 +22701,19 @@ function RelatedChecks({
             children: "Related Checks"
           })
         }), /* @__PURE__ */ jsx(Group, {
-          children: /* @__PURE__ */ jsx(Burger, {
-            opened,
-            styles: {},
-            size: 16,
-            onClick: () => {
-              hideRelatedChecks();
-              setOpened((o) => !o);
-            },
-            title
+          children: /* @__PURE__ */ jsx(Tooltip, {
+            label: title,
+            withinPortal: true,
+            children: /* @__PURE__ */ jsx(Burger, {
+              opened,
+              styles: {},
+              size: 16,
+              onClick: () => {
+                hideRelatedChecks();
+                setOpened((o) => !o);
+              },
+              title
+            })
           })
         })]
       }), related.opened && /* @__PURE__ */ jsxs(Group, {
@@ -22643,28 +22723,46 @@ function RelatedChecks({
           width: "100%"
         },
         mb: 4,
-        children: [/* @__PURE__ */ jsx(ActionIcon, {
-          "data-test": "related-check-icon-open-sort",
-          onClick: () => sortHandler.toggle(),
-          mb: 4,
-          children: /* @__PURE__ */ jsx(ea, {
-            stroke: 1
+        children: [/* @__PURE__ */ jsx(Tooltip, {
+          label: `${openedSort ? "Close " : " Open"} sorting`,
+          withinPortal: true,
+          children: /* @__PURE__ */ jsx(ActionIcon, {
+            "data-test": "related-check-icon-open-sort",
+            onClick: () => sortHandler.toggle(),
+            mb: 4,
+            children: /* @__PURE__ */ jsx(ea, {
+              stroke: 1
+            })
           })
-        }), /* @__PURE__ */ jsx(ActionIcon, {
-          "data-test": "related-check-icon-open-filter",
-          onClick: () => filterHandler.toggle(),
-          mb: 4,
-          children: /* @__PURE__ */ jsx(zV, {
-            stroke: 1
+        }), /* @__PURE__ */ jsx(Tooltip, {
+          label: `${openedSort ? "Close " : " Open"} filtering`,
+          withinPortal: true,
+          children: /* @__PURE__ */ jsx(ActionIcon, {
+            "data-test": "related-check-icon-open-filter",
+            onClick: () => filterHandler.toggle(),
+            mb: 4,
+            children: /* @__PURE__ */ jsx(zV, {
+              stroke: 1
+            })
           })
-        }), /* @__PURE__ */ jsx(ActionIcon, {
-          "data-test": "related-check-icon-refresh",
-          onClick: () => related.relatedChecksQuery.firstPageQuery.refetch(),
-          mb: 4,
-          children: /* @__PURE__ */ jsx(Epe, {
-            stroke: 1
+        }), /* @__PURE__ */ jsx(Tooltip, {
+          label: "Refresh items",
+          withinPortal: true,
+          children: /* @__PURE__ */ jsx(ActionIcon, {
+            "data-test": "related-check-icon-refresh",
+            onClick: () => related.relatedChecksQuery.firstPageQuery.refetch(),
+            mb: 4,
+            children: /* @__PURE__ */ jsx(Epe, {
+              stroke: 1
+            })
           })
         })]
+      }), /* @__PURE__ */ jsx(Divider, {
+        sx: {
+          width: "100%"
+        },
+        size: "xs",
+        p: 1
       }), /* @__PURE__ */ jsx(RelatedCheckSort, {
         toggleOpenedSort: sortHandler.toggle,
         sortBy: related.sortBy,
@@ -22731,7 +22829,7 @@ function RelatedChecks({
       duration: 400,
       timingFunction: "ease",
       children: (styles) => /* @__PURE__ */ jsxs(ScrollArea, {
-        mt: "md",
+        mt: 4,
         style: {
           height: "75vh"
         },
@@ -22744,11 +22842,11 @@ function RelatedChecks({
           color: "red",
           children: " Fail to load"
         }) : /* @__PURE__ */ jsx(Stack, {
-          spacing: 8,
+          spacing: 4,
           children: /* @__PURE__ */ jsx(RelatedChecksItems, {
             infinityQuery: related.relatedChecksQuery.infinityQuery,
-            relatedActiveCheck: related.relatedActiveCheck,
-            setRelatedActiveCheck: related.setRelatedActiveCheck
+            relatedActiveCheckId: related.relatedActiveCheckId,
+            setRelatedActiveCheckId: related.setRelatedActiveCheckId
           })
         }), /* @__PURE__ */ jsx(RelatedChecksSkeleton, {
           num: 3,
@@ -22760,10 +22858,9 @@ function RelatedChecks({
 }
 function useRelatedChecks(checkData) {
   const {
-    query,
-    setQuery
+    query
   } = useParams();
-  const [relatedActiveCheck, setRelatedActiveCheck] = react.exports.useState(checkData._id);
+  const [relatedActiveCheckId, setRelatedActiveCheckId] = react.exports.useState(checkData._id);
   const [sortBy, setSortBy] = react.exports.useState("createdDate");
   const [sortOrder, setSortOrder] = react.exports.useState("desc");
   const [relatedFilter, setRelatedFilter] = react.exports.useState({
@@ -22786,8 +22883,8 @@ function useRelatedChecks(checkData) {
   } = relatedChecksQuery.infinityQuery;
   const relatedFlatChecksData = data ? data.pages.flat().map((x2) => x2.results).flat() : [];
   return {
-    relatedActiveCheck,
-    setRelatedActiveCheck,
+    relatedActiveCheckId,
+    setRelatedActiveCheckId,
     sortBy,
     setSortBy,
     sortOrder,
@@ -22798,11 +22895,16 @@ function useRelatedChecks(checkData) {
     setRelatedFilter
   };
 }
-const useStyles$1 = createStyles((theme) => ({
+const useStyles$3 = createStyles((theme) => ({
   infoBadges: {
     marginLeft: 8,
     paddingLeft: 4,
     paddingRight: 4
+  },
+  labels: {
+    "@media (max-width: 1070px)": {
+      display: "none"
+    }
   }
 }));
 function ScreenshotDetails({
@@ -22813,7 +22915,7 @@ function ScreenshotDetails({
   var _a, _b, _c, _d;
   const {
     classes
-  } = useStyles$1();
+  } = useStyles$3();
   const checkResult = check.result ? JSON.parse(check.result) : null;
   let diffPercent = checkResult.misMatchPercentage ? checkResult.misMatchPercentage : "";
   diffPercent = (diffPercent === "0.00" || diffPercent === "") && ((_b = (_a = checkResult.rawMisMatchPercentage) == null ? void 0 : _a.toString()) == null ? void 0 : _b.length) > 0 ? checkResult.rawMisMatchPercentage : checkResult.misMatchPercentage;
@@ -22824,7 +22926,7 @@ function ScreenshotDetails({
       const image = mainView2[`${view}Image`];
       return /* @__PURE__ */ jsx(Tooltip, {
         withinPortal: true,
-        label: "Screenshot size, click to open the image in a new tab",
+        label: `Screenshot size: ${image.width}x${image.height}, click to open the image in a new tab`,
         children: /* @__PURE__ */ jsx(Badge, {
           color: "blue",
           radius: "sm",
@@ -22853,75 +22955,415 @@ function ScreenshotDetails({
       })
     });
   }, [mainView2, view]);
+  const createdDate = view === "actual" ? format(parseISO((_c = check == null ? void 0 : check.actualSnapshotId) == null ? void 0 : _c.createdDate), "yyyy-MM-dd HH:mm:ss") : format(parseISO((_d = check == null ? void 0 : check.baselineId) == null ? void 0 : _d.createdDate), "yyyy-MM-dd HH:mm:ss");
   return /* @__PURE__ */ jsx(Group, {
+    spacing: "sm",
     noWrap: true,
     children: view !== "slider" ? /* @__PURE__ */ jsxs(Fragment, {
-      children: [/* @__PURE__ */ jsxs(Text, {
-        size: "sm",
-        children: ["Image Size:", imageSize]
-      }), /* @__PURE__ */ jsxs(Text, {
-        size: "sm",
-        children: ["Image Date:", /* @__PURE__ */ jsx(Badge, {
-          color: "blue",
-          radius: "sm",
-          className: classes.infoBadges,
-          children: view === "actual" ? format(parseISO((_c = check == null ? void 0 : check.actualSnapshotId) == null ? void 0 : _c.createdDate), "yyyy-MM-dd HH:mm:ss") : format(parseISO((_d = check == null ? void 0 : check.baselineId) == null ? void 0 : _d.createdDate), "yyyy-MM-dd HH:mm:ss")
-        })]
-      }), view === "diff" && /* @__PURE__ */ jsx(Fragment, {
-        children: /* @__PURE__ */ jsxs(Text, {
+      children: [/* @__PURE__ */ jsxs(Group, {
+        spacing: 0,
+        noWrap: true,
+        children: [/* @__PURE__ */ jsx(Text, {
           size: "sm",
-          children: ["Difference:", /* @__PURE__ */ jsxs(Badge, {
+          lineClamp: 1,
+          className: classes.labels,
+          title: "Image size",
+          children: "Image Size:"
+        }), /* @__PURE__ */ jsx(Text, {
+          size: "sm",
+          children: imageSize
+        })]
+      }), /* @__PURE__ */ jsxs(Group, {
+        spacing: 0,
+        noWrap: true,
+        children: [/* @__PURE__ */ jsx(Text, {
+          lineClamp: 1,
+          className: classes.labels,
+          size: "sm",
+          children: "Date:"
+        }), /* @__PURE__ */ jsx(Tooltip, {
+          label: `Image Date: ${createdDate}`,
+          withinPortal: true,
+          children: /* @__PURE__ */ jsx(Badge, {
             color: "blue",
             radius: "sm",
             className: classes.infoBadges,
-            children: [diffPercent, "%"]
+            children: createdDate
+          })
+        })]
+      }), view === "diff" && /* @__PURE__ */ jsx(Fragment, {
+        children: /* @__PURE__ */ jsxs(Group, {
+          spacing: 0,
+          noWrap: true,
+          children: [/* @__PURE__ */ jsx(Text, {
+            lineClamp: 1,
+            size: "sm",
+            className: classes.labels,
+            children: "Difference:"
+          }), /* @__PURE__ */ jsx(Tooltip, {
+            label: `Images difference: ${diffPercent} %`,
+            withinPortal: true,
+            children: /* @__PURE__ */ jsxs(Badge, {
+              color: "blue",
+              radius: "sm",
+              sx: {
+                maxWidth: 100
+              },
+              className: classes.infoBadges,
+              children: [diffPercent, "%"]
+            })
           })]
         })
       })]
     }) : /* @__PURE__ */ jsx(Fragment, {})
   });
 }
-function onImageErrorHandler(...e2) {
-  const imgSrc = e2[0].path[0].src;
-  const msg = `Cannot load image: '${imgSrc}'`;
-  log.error(msg, e2);
-  errorMsg({
-    error: msg
+function getDiffImageData(image) {
+  const canvas = document.createElement("canvas");
+  canvas.width = image.width;
+  canvas.height = image.height;
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(image, 0, 0);
+  const imgData = ctx.getImageData(0, 0, image.width, image.height);
+  return imgData;
+}
+function highlightDiff(mainView2, highlightsGroups, imageData) {
+  return new Promise((resolve) => {
+    mainView2.canvas.getObjects().filter((x2) => x2.name === "highlight").forEach((x2) => mainView2.canvas.remove(x2));
+    const urlData = mainView2.diffImage.toDataURL({});
+    const img = new Image();
+    img.src = urlData;
+    img.onload = () => {
+      console.time("get_image_data");
+      const diffImageData = imageData || getDiffImageData(img);
+      console.timeEnd("get_image_data");
+      console.time("process_data");
+      const createNewGroup = (x2, y3) => ({
+        minX: x2,
+        maxX: x2,
+        minY: y3,
+        maxY: y3,
+        members: [{ x: x2, y: y3 }]
+      });
+      const getPixel = (x2, y3, curCount) => diffImageData.data.slice(curCount, curCount + 4).join();
+      const diffColor = "255,0,255,255";
+      const groups = highlightsGroups || [];
+      console.time("group formation");
+      if (groups.length < 1) {
+        let cursorCount = 0;
+        for (let y3 = 0; y3 < diffImageData.height; y3 += 1) {
+          for (let x2 = 0; x2 < diffImageData.width; x2 += 1) {
+            if (getPixel(x2, y3, cursorCount) === diffColor) {
+              const suitableGroup = groups.find((group) => x2 >= group.minX - 1 && x2 <= group.maxX + 1 && y3 >= group.minY && y3 <= group.maxY + 1);
+              if (!suitableGroup) {
+                groups.push(createNewGroup(x2, y3));
+              } else if (getPixel(x2 - 1, y3, cursorCount) === diffColor || getPixel(x2 - 1, y3 - 1, cursorCount) === diffColor || getPixel(x2, y3 - 1, cursorCount) === diffColor || getPixel(x2 + 1, y3 - 1, cursorCount) === diffColor || getPixel(x2 + 1, y3, cursorCount) === diffColor || getPixel(x2 + 1, y3 + 1, cursorCount) === diffColor || getPixel(x2, y3 + 1, cursorCount) === diffColor || getPixel(x2 - 1, y3 + 1, cursorCount) === diffColor) {
+                suitableGroup.members.push({ x: x2, y: y3 });
+                if (x2 < suitableGroup.minX)
+                  suitableGroup.minX = x2;
+                if (x2 > suitableGroup.maxX)
+                  suitableGroup.maxX = x2;
+                if (y3 > suitableGroup.maxY)
+                  suitableGroup.maxY = y3;
+              }
+            }
+            cursorCount += 4;
+          }
+        }
+      }
+      console.timeEnd("group formation");
+      console.time("group handling");
+      for (const group of groups) {
+        const top = group.minY + (group.maxY - group.minY) / 2;
+        const left = group.minX + (group.maxX - group.minX) / 2;
+        const circle = new fabric$1.fabric.Circle({
+          name: "highlight",
+          originX: "center",
+          originY: "center",
+          left,
+          top,
+          data: { group },
+          fill: "#D6336C",
+          opacity: 0.3,
+          strokeWidth: 0,
+          selectable: false
+        });
+        mainView2.canvas.add(circle);
+      }
+      console.timeEnd("group handling");
+      console.timeEnd("process_data");
+      const highlightRemoving = () => {
+        mainView2.canvas.getObjects().filter((x2) => x2.name === "highlight").forEach((x2) => mainView2.canvas.remove(x2));
+      };
+      setTimeout(() => {
+        mainView2.canvas.getObjects().filter((x2) => x2.name === "highlight").forEach((circle) => {
+          const suitableRadius = Math.max(
+            circle.data.group.maxX - circle.data.group.minX,
+            circle.data.group.maxY - circle.data.group.minY
+          );
+          const radius = ((suitableRadius > 25 ? suitableRadius : 25) + Math.floor(Math.random() * 10)) / mainView2.canvas.getZoom();
+          circle.animate("opacity", "0.5", {
+            onChange: mainView2.canvas.renderAll.bind(mainView2.canvas),
+            duration: 500
+          });
+          circle.animate("radius", String(radius), {
+            onChange: mainView2.canvas.renderAll.bind(mainView2.canvas),
+            duration: 500,
+            onComplete: () => {
+              circle.animate("radius", "0.00", {
+                onChange: mainView2.canvas.renderAll.bind(mainView2.canvas),
+                duration: 700,
+                onComplete: highlightRemoving
+              });
+              circle.animate("opacity", "0.30", {
+                onChange: mainView2.canvas.renderAll.bind(mainView2.canvas),
+                duration: 700
+              });
+            }
+          });
+        });
+        mainView2.canvas.renderAll();
+      }, 0);
+      return resolve({ groups, diffImageData });
+    };
   });
 }
-function createImageAndWaitForLoad(src) {
-  const timeout = 9e4;
-  const img = new Image();
-  img.addEventListener("error", onImageErrorHandler);
-  img.src = src;
-  return Promise.race([new Promise((resolve, reject) => {
-    img.onload = () => resolve(img);
-    img.onerror = (e2) => reject(e2);
-  }), new Promise((_, reject) => {
-    setTimeout(() => reject(new Error(`The image loading timeout is exceeded: '${timeout}' milliseconds, src: '${src}'`)), timeout);
-  })]);
-}
-function CheckDetails({
-  checkData,
-  checkQuery,
-  firstPageQuery,
-  closeHandler
+function HighlightButton({
+  mainView: mainView2,
+  disabled = false
 }) {
-  var _a, _b, _c;
-  const [view, setView] = react.exports.useState("actual");
+  const [loadHighlights, setLoadHighlights] = react.exports.useState(false);
+  const [highlightsGroups, setHighlightsGroups] = react.exports.useState(null);
+  const [imageData, setImageData] = react.exports.useState(null);
+  const label = disabled ? /* @__PURE__ */ jsx(Group, {
+    noWrap: true,
+    children: /* @__PURE__ */ jsx(Text, {
+      children: "Difference highlighting, active in diff mode when the difference is less than 5%"
+    })
+  }) : /* @__PURE__ */ jsx(Group, {
+    noWrap: true,
+    children: /* @__PURE__ */ jsx(Text, {
+      children: "Difference highlighting"
+    })
+  });
+  return /* @__PURE__ */ jsx(Tooltip, {
+    withinPortal: true,
+    label,
+    children: /* @__PURE__ */ jsx("div", {
+      children: /* @__PURE__ */ jsx(ActionIcon, {
+        disabled,
+        loading: loadHighlights,
+        onClick: async () => {
+          setLoadHighlights(() => true);
+          const {
+            groups,
+            diffImageData
+          } = await highlightDiff(mainView2, highlightsGroups, imageData);
+          setImageData(() => diffImageData);
+          setHighlightsGroups(() => groups);
+          setLoadHighlights(() => false);
+        },
+        children: /* @__PURE__ */ jsx(zb, {
+          size: 24,
+          stroke: 1
+        })
+      })
+    })
+  });
+}
+const useStyles$2 = createStyles((theme) => ({
+  labelIcon: {
+    minWidth: 18
+  },
+  labelText: {
+    [`@media (max-width: ${theme.breakpoints.lg}px)`]: {
+      display: "none"
+    }
+  }
+}));
+function ViewSegmentedControl({
+  view,
+  setView,
+  currentCheck
+}) {
+  var _a;
   const {
-    setAppTitle
-  } = react.exports.useContext(AppContext);
-  const [relatedChecksOpened, relatedChecksHandler] = useDisclosure(true);
-  const related = useRelatedChecks(checkData);
-  related.opened = relatedChecksOpened;
-  related.handler = relatedChecksHandler;
-  const currentCheck = react.exports.useMemo(() => related.relatedFlatChecksData.find((x2) => x2._id === related.relatedActiveCheck) || checkData, [related.relatedActiveCheck]);
-  const theme = useMantineTheme();
-  setAppTitle(currentCheck.name);
-  const [mainView2, setMainView] = react.exports.useState(null);
+    classes
+  } = useStyles$2();
+  const viewSegmentData = [{
+    label: /* @__PURE__ */ jsx(Tooltip, {
+      withinPortal: true,
+      label: /* @__PURE__ */ jsxs(Group, {
+        noWrap: true,
+        children: [/* @__PURE__ */ jsx(Text, {
+          children: "Switch to Expected View"
+        }), /* @__PURE__ */ jsx(Kbd, {
+          sx: {
+            fontSize: 11,
+            borderBottomWidth: 1
+          },
+          children: "1"
+        })]
+      }),
+      children: /* @__PURE__ */ jsxs(Group, {
+        position: "left",
+        spacing: 4,
+        noWrap: true,
+        children: [/* @__PURE__ */ jsx(Pbe, {
+          stroke: 1,
+          className: classes.labelIcon
+        }), /* @__PURE__ */ jsx(Text, {
+          lineClamp: 1,
+          className: classes.labelText,
+          children: "Expected"
+        })]
+      })
+    }),
+    value: "expected"
+  }, {
+    label: /* @__PURE__ */ jsx(Tooltip, {
+      withinPortal: true,
+      label: /* @__PURE__ */ jsxs(Group, {
+        noWrap: true,
+        children: [/* @__PURE__ */ jsx(Text, {
+          children: "Switch to Actual View"
+        }), /* @__PURE__ */ jsx(Kbd, {
+          sx: {
+            fontSize: 11,
+            borderBottomWidth: 1
+          },
+          children: "2"
+        })]
+      }),
+      children: /* @__PURE__ */ jsxs(Group, {
+        position: "left",
+        spacing: 4,
+        noWrap: true,
+        children: [/* @__PURE__ */ jsx(Cbe, {
+          stroke: 1,
+          className: classes.labelIcon
+        }), /* @__PURE__ */ jsx(Text, {
+          lineClamp: 1,
+          className: classes.labelText,
+          children: "Actual"
+        })]
+      })
+    }),
+    value: "actual"
+  }, {
+    label: /* @__PURE__ */ jsx(Tooltip, {
+      withinPortal: true,
+      label: /* @__PURE__ */ jsxs(Group, {
+        noWrap: true,
+        children: [/* @__PURE__ */ jsx(Text, {
+          children: "Switch to Difference View"
+        }), /* @__PURE__ */ jsx(Kbd, {
+          sx: {
+            fontSize: 11,
+            borderBottomWidth: 1
+          },
+          children: "3"
+        })]
+      }),
+      children: /* @__PURE__ */ jsxs(Group, {
+        position: "left",
+        spacing: 4,
+        noWrap: true,
+        children: [/* @__PURE__ */ jsx(pi, {
+          stroke: 1,
+          className: classes.labelIcon
+        }), /* @__PURE__ */ jsx(Text, {
+          lineClamp: 1,
+          className: classes.labelText,
+          children: "Difference"
+        })]
+      })
+    }),
+    value: "diff",
+    disabled: true
+  }, {
+    label: /* @__PURE__ */ jsx(Tooltip, {
+      withinPortal: true,
+      label: /* @__PURE__ */ jsxs(Group, {
+        noWrap: true,
+        children: [/* @__PURE__ */ jsx(Text, {
+          children: "Switch to Slider View"
+        }), /* @__PURE__ */ jsx(Kbd, {
+          sx: {
+            fontSize: 11,
+            borderBottomWidth: 1
+          },
+          children: "4"
+        })]
+      }),
+      children: /* @__PURE__ */ jsxs(Group, {
+        position: "left",
+        spacing: 4,
+        noWrap: true,
+        children: [/* @__PURE__ */ jsx(Lbe, {
+          stroke: 1,
+          className: classes.labelIcon
+        }), /* @__PURE__ */ jsx(Text, {
+          lineClamp: 1,
+          className: classes.labelText,
+          children: "Slider"
+        })]
+      })
+    }),
+    value: "slider",
+    disabled: true
+  }];
+  if ((_a = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _a.filename) {
+    viewSegmentData[2].disabled = false;
+    viewSegmentData[3].disabled = false;
+  }
+  return /* @__PURE__ */ jsx(SegmentedControl, {
+    sx: {
+      minWidth: 0,
+      minHeight: 0
+    },
+    styles: {
+      label: {
+        minWidth: 0,
+        minHeight: 0,
+        fontSize: "calc(0.1em + 0.55vw)",
+        maxWidth: "7vw",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap"
+      }
+    },
+    value: view,
+    onChange: setView,
+    data: viewSegmentData
+  });
+}
+function ZoomToolbar({
+  view,
+  mainView: mainView2
+}) {
   const [zoomPercent, setZoomPercent] = react.exports.useState(100);
   const [openedZoomPopover, zoomPopoverHandler] = useDisclosure(false);
+  const calculateMaxImagesDimensions = () => {
+    const data = [{
+      imageName: "expectedImage",
+      dimension: "width",
+      value: mainView2.expectedImage.width
+    }, {
+      imageName: "expectedImage",
+      dimension: "height",
+      value: mainView2.expectedImage.height
+    }, {
+      imageName: "actualImage",
+      dimension: "width",
+      value: mainView2.actualImage.width
+    }, {
+      imageName: "actualImage",
+      dimension: "height",
+      value: mainView2.actualImage.height
+    }];
+    const biggestDimensionValue = Math.max(...data.map((x2) => x2.value));
+    return data.find((x2) => x2.value === biggestDimensionValue);
+  };
   function zoomEvents() {
     mainView2.canvas.on("mouse:wheel", (opt) => {
       if (!opt.e.ctrlKey)
@@ -22957,123 +23399,11 @@ function CheckDetails({
     newPercent = newPercent > 1e3 ? 1e3 : newPercent;
     zoomByPercent(newPercent);
   };
-  const baselineQuery = useQuery(["baseline_by_snapshot_id", currentCheck.baselineId._id], () => GenericService.get("baselines", {
-    snapshootId: currentCheck.baselineId._id
-  }, {
-    populate: "app",
-    limit: "1"
-  }, "baseline_by_snapshot_id"), {
-    enabled: true,
-    refetchOnWindowFocus: false,
-    onError: (e2) => {
-      errorMsg({
-        error: e2
-      });
-    }
-  });
-  const baselineId = react.exports.useMemo(() => {
-    var _a2, _b2, _c2;
-    if (((_a2 = baselineQuery.data) == null ? void 0 : _a2.results) && ((_b2 = baselineQuery.data) == null ? void 0 : _b2.results.length) > 0) {
-      return (_c2 = baselineQuery.data) == null ? void 0 : _c2.results[0]._id;
-    }
-    return null;
-  }, [JSON.stringify((_a = baselineQuery.data) == null ? void 0 : _a.results)]);
-  react.exports.useEffect(function destroyMainView() {
-    if (mainView2) {
-      mainView2.destroyAllViews();
-      mainView2.canvas.clear();
-      mainView2.canvas.dispose();
-      setMainView(null);
-    }
-  }, [related.relatedActiveCheck, relatedChecksOpened]);
-  function keyHandler(event) {
-    console.log(event.code);
-  }
-  const keyEvents = () => {
-    document.addEventListener("keydown", keyHandler);
-  };
-  react.exports.useEffect(() => {
-    if (!document.getElementById("snapshoot"))
-      return;
-    const initMV = async () => {
-      var _a2, _b2, _c2, _d;
-      fabric$1.fabric.Object.prototype.objectCaching = false;
-      const expectedImgSrc = `${config.baseUri}/snapshoots/${(_a2 = currentCheck == null ? void 0 : currentCheck.baselineId) == null ? void 0 : _a2.filename}?expectedImg`;
-      const expectedImg = await createImageAndWaitForLoad(expectedImgSrc);
-      const actual = currentCheck.actualSnapshotId || null;
-      const actualImgSrc = `${config.baseUri}/snapshoots/${(_b2 = currentCheck == null ? void 0 : currentCheck.actualSnapshotId) == null ? void 0 : _b2.filename}?actualImg`;
-      const actualImg = await createImageAndWaitForLoad(actualImgSrc);
-      document.getElementById("snapshoot").style.height = `${MainView.calculateExpectedCanvasViewportAreaSize().height - 10}px`;
-      const expectedImage = await imageFromUrl(expectedImg.src);
-      const actualImage = await imageFromUrl(actualImg.src);
-      const diffImgSrc = `${config.baseUri}/snapshoots/${(_c2 = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _c2.filename}?diffImg`;
-      const diffImage = ((_d = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _d.filename) ? await imageFromUrl(diffImgSrc) : null;
-      await setMainView((prev) => {
-        if (prev)
-          return prev;
-        const MV = new MainView({
-          canvasId: "2d",
-          canvasElementWidth: document.getElementById("snapshoot").clientWidth,
-          canvasElementHeight: document.getElementById("snapshoot").clientHeight,
-          expectedImage,
-          actualImage,
-          diffImage,
-          actual
-        });
-        window.mainView = MV;
-        keyEvents();
-        return MV;
-      });
-    };
-    setTimeout(() => {
-      initMV();
-    }, 10);
-  }, [related.relatedActiveCheck, relatedChecksOpened]);
-  react.exports.useEffect(function afterMainViewCreatedHandleRegions() {
-    if (!baselineId)
-      return;
-    if (mainView2) {
-      mainView2.getSnapshotIgnoreRegionsDataAndDrawRegions(baselineId);
-    }
-  }, [JSON.stringify((_b = baselineQuery.data) == null ? void 0 : _b.results), mainView2 == null ? void 0 : mainView2.toString()]);
-  const calculateMaxImagesDimensions = () => {
-    const data = [{
-      imageName: "expectedImage",
-      dimension: "width",
-      value: mainView2.expectedImage.width
-    }, {
-      imageName: "expectedImage",
-      dimension: "height",
-      value: mainView2.expectedImage.height
-    }, {
-      imageName: "actualImage",
-      dimension: "width",
-      value: mainView2.actualImage.width
-    }, {
-      imageName: "actualImage",
-      dimension: "height",
-      value: mainView2.actualImage.height
-    }];
-    const biggestDimensionValue = Math.max(...data.map((x2) => x2.value));
-    const result = data.find((x2) => x2.value === biggestDimensionValue);
-    return result;
-  };
   const zoomTo = (image, dimension) => {
     const ratio = mainView2.canvas[dimension] / image[dimension];
     const percent = ratio > 9 ? 900 : ratio * 100;
     zoomByPercent(percent);
     mainView2.canvas.renderAll();
-  };
-  const fitGreatestImageIfNeeded = () => {
-    const greatestImage = calculateMaxImagesDimensions();
-    zoomTo(mainView2[greatestImage.imageName], greatestImage.dimension);
-    const anotherDimension = greatestImage.dimension === "height" ? "width" : "height";
-    if (mainView2[greatestImage.imageName][anotherDimension] * mainView2.canvas.getZoom() > mainView2.canvas[anotherDimension]) {
-      zoomTo(mainView2[greatestImage.imageName], anotherDimension);
-    }
-    setTimeout(() => {
-      mainView2.panToCanvasWidthCenter(greatestImage.imageName);
-    }, 10);
   };
   const fitImageIfNeeded = (imageName) => {
     const image = mainView2[imageName];
@@ -23094,6 +23424,225 @@ function CheckDetails({
       mainView2.panToCanvasWidthCenter(imageName);
     }, 10);
   };
+  const fitGreatestImageIfNeeded = () => {
+    const greatestImage = calculateMaxImagesDimensions();
+    zoomTo(mainView2[greatestImage.imageName], greatestImage.dimension);
+    const anotherDimension = greatestImage.dimension === "height" ? "width" : "height";
+    if (mainView2[greatestImage.imageName][anotherDimension] * mainView2.canvas.getZoom() > mainView2.canvas[anotherDimension]) {
+      zoomTo(mainView2[greatestImage.imageName], anotherDimension);
+    }
+    setTimeout(() => {
+      mainView2.panToCanvasWidthCenter(greatestImage.imageName);
+    }, 10);
+  };
+  react.exports.useEffect(function initZoom() {
+    if (mainView2) {
+      zoomEvents();
+      fitGreatestImageIfNeeded();
+    }
+  }, [mainView2 == null ? void 0 : mainView2.toString()]);
+  useHotkeys([
+    ["Equal", () => zoomByDelta(15)],
+    ["NumpadAdd", () => zoomByDelta(15)],
+    ["Minus", () => zoomByDelta(-15)],
+    ["NumpadSubtract", () => zoomByDelta(-15)],
+    ["Digit9", () => fitImageByWith(`${view}Image`)],
+    ["Digit0", () => {
+      if (view === "slider") {
+        fitImageIfNeeded("actualImage");
+        return;
+      }
+      fitImageIfNeeded(`${view}Image`);
+    }]
+  ]);
+  return /* @__PURE__ */ jsxs(Fragment, {
+    children: [/* @__PURE__ */ jsx(Tooltip, {
+      label: /* @__PURE__ */ jsxs(Group, {
+        noWrap: true,
+        children: [/* @__PURE__ */ jsx(Text, {
+          children: "Zoom In"
+        }), /* @__PURE__ */ jsx(Kbd, {
+          sx: {
+            fontSize: 11,
+            borderBottomWidth: 1
+          },
+          children: "+"
+        })]
+      }),
+      children: /* @__PURE__ */ jsx(ActionIcon, {
+        onClick: () => zoomByDelta(15),
+        children: /* @__PURE__ */ jsx(lDe, {
+          size: 24,
+          stroke: 1
+        })
+      })
+    }), /* @__PURE__ */ jsxs(Popover, {
+      position: "bottom",
+      withArrow: true,
+      shadow: "md",
+      opened: openedZoomPopover,
+      children: [/* @__PURE__ */ jsx(Popover.Target, {
+        children: /* @__PURE__ */ jsxs(Group, {
+          spacing: 0,
+          position: "center",
+          onClick: zoomPopoverHandler.toggle,
+          noWrap: true,
+          children: [/* @__PURE__ */ jsxs(Text, {
+            size: "lg",
+            weight: 400,
+            sx: {
+              minWidth: "3em"
+            },
+            children: [Math.round(zoomPercent), "%"]
+          }), /* @__PURE__ */ jsx(ActionIcon, {
+            ml: -10,
+            children: /* @__PURE__ */ jsx(Pj, {})
+          })]
+        })
+      }), /* @__PURE__ */ jsx(Popover.Dropdown, {
+        p: 0,
+        children: /* @__PURE__ */ jsxs(Stack, {
+          spacing: 0,
+          children: [/* @__PURE__ */ jsx(Button, {
+            pl: 8,
+            pr: 8,
+            variant: "subtle",
+            onClick: () => {
+              zoomByPercent(50);
+              if (view === "slider") {
+                mainView2.panToCanvasWidthCenter("actualImage");
+                return;
+              }
+              mainView2.panToCanvasWidthCenter(`${view}Image`);
+              zoomPopoverHandler.close();
+            },
+            children: /* @__PURE__ */ jsx(Group, {
+              position: "apart",
+              noWrap: true,
+              children: "50%"
+            })
+          }), /* @__PURE__ */ jsx(Button, {
+            pl: 8,
+            pr: 8,
+            variant: "subtle",
+            onClick: () => {
+              zoomByPercent(100);
+              if (view === "slider") {
+                mainView2.panToCanvasWidthCenter("actualImage");
+                return;
+              }
+              mainView2.panToCanvasWidthCenter(`${view}Image`);
+              zoomPopoverHandler.close();
+            },
+            children: /* @__PURE__ */ jsx(Group, {
+              position: "apart",
+              noWrap: true,
+              children: "100%"
+            })
+          }), /* @__PURE__ */ jsx(Button, {
+            pl: 8,
+            pr: 8,
+            variant: "subtle",
+            onClick: () => {
+              zoomByPercent(200);
+              if (view === "slider") {
+                mainView2.panToCanvasWidthCenter("actualImage");
+                return;
+              }
+              mainView2.panToCanvasWidthCenter(`${view}Image`);
+              zoomPopoverHandler.close();
+            },
+            children: /* @__PURE__ */ jsx(Group, {
+              position: "apart",
+              noWrap: true,
+              children: "200%"
+            })
+          }), /* @__PURE__ */ jsx(Button, {
+            sx: {
+              width: "100%"
+            },
+            pl: 8,
+            pr: 8,
+            variant: "subtle",
+            onClick: () => {
+              zoomPopoverHandler.close();
+              if (view === "slider") {
+                fitImageByWith("actualImage");
+                return;
+              }
+              fitImageByWith(`${view}Image`);
+            },
+            children: /* @__PURE__ */ jsxs(Group, {
+              sx: {
+                width: "100%"
+              },
+              position: "left",
+              noWrap: true,
+              children: ["Fit by width ", /* @__PURE__ */ jsx(Kbd, {
+                sx: {
+                  fontSize: 11,
+                  borderBottomWidth: 1
+                },
+                children: "9"
+              })]
+            })
+          }), /* @__PURE__ */ jsx(Button, {
+            pl: 8,
+            pr: 8,
+            variant: "subtle",
+            onClick: () => {
+              zoomPopoverHandler.close();
+              if (view === "slider") {
+                fitImageIfNeeded("actualImage");
+                return;
+              }
+              fitImageIfNeeded(`${view}Image`);
+            },
+            children: /* @__PURE__ */ jsxs(Group, {
+              sx: {
+                width: "100%"
+              },
+              position: "left",
+              noWrap: true,
+              children: ["Fit to canvas ", /* @__PURE__ */ jsx(Kbd, {
+                sx: {
+                  fontSize: 11,
+                  borderBottomWidth: 1
+                },
+                children: "0"
+              })]
+            })
+          })]
+        })
+      })]
+    }), /* @__PURE__ */ jsx(Tooltip, {
+      label: /* @__PURE__ */ jsxs(Group, {
+        noWrap: true,
+        children: [/* @__PURE__ */ jsx(Text, {
+          children: "Zoom out"
+        }), /* @__PURE__ */ jsx(Kbd, {
+          sx: {
+            fontSize: 11,
+            borderBottomWidth: 1
+          },
+          children: "-"
+        })]
+      }),
+      children: /* @__PURE__ */ jsx(ActionIcon, {
+        onClick: () => zoomByDelta(-15),
+        children: /* @__PURE__ */ jsx(dDe, {
+          size: 24,
+          stroke: 1
+        })
+      })
+    })]
+  });
+}
+function RegionsToolbar({
+  mainView: mainView2,
+  baselineId,
+  view
+}) {
   const [visibleRegionRemoveButton, setVisibleRegionRemoveButton] = react.exports.useState(false);
   const regionsSelectionEvents = () => {
     const handler = () => {
@@ -23119,136 +23668,247 @@ function CheckDetails({
       }
     });
   };
-  react.exports.useEffect(function afterMainViewCreated() {
+  useHotkeys([["alt+S", () => {
+    MainView.sendIgnoreRegions(baselineId, mainView2.getRectData());
+  }], ["Delete", () => mainView2.removeActiveIgnoreRegions()], ["Backspace", () => mainView2.removeActiveIgnoreRegions()]]);
+  react.exports.useEffect(function initView() {
     if (mainView2) {
-      zoomEvents();
-      fitGreatestImageIfNeeded();
-      setView("actual");
       regionsSelectionEvents();
+    }
+  }, [mainView2 == null ? void 0 : mainView2.toString()]);
+  return /* @__PURE__ */ jsxs(Fragment, {
+    children: [/* @__PURE__ */ jsx(Tooltip, {
+      label: /* @__PURE__ */ jsxs(Group, {
+        noWrap: true,
+        children: [/* @__PURE__ */ jsx(Text, {
+          children: "Remove selected ignore regions"
+        }), /* @__PURE__ */ jsx(Kbd, {
+          sx: {
+            fontSize: 11,
+            borderBottomWidth: 1
+          },
+          children: "Del"
+        }), " or ", /* @__PURE__ */ jsx(Kbd, {
+          sx: {
+            fontSize: 11,
+            borderBottomWidth: 1
+          },
+          children: "Backspace"
+        })]
+      }),
+      children: /* @__PURE__ */ jsx(ActionIcon, {
+        disabled: !visibleRegionRemoveButton,
+        onClick: () => mainView2.removeActiveIgnoreRegions(),
+        children: /* @__PURE__ */ jsx(IMe, {
+          size: 24,
+          stroke: 1
+        })
+      })
+    }), /* @__PURE__ */ jsx(Tooltip, {
+      multiline: true,
+      withinPortal: true,
+      label: /* @__PURE__ */ jsxs(Stack, {
+        spacing: 4,
+        children: [/* @__PURE__ */ jsxs(Group, {
+          noWrap: true,
+          spacing: 4,
+          children: [/* @__PURE__ */ jsx(Text, {
+            children: "Add ignore region"
+          }), /* @__PURE__ */ jsx(Kbd, {
+            sx: {
+              fontSize: 11,
+              borderBottomWidth: 1
+            },
+            children: "A"
+          })]
+        }), !baselineId && /* @__PURE__ */ jsxs(Group, {
+          noWrap: true,
+          spacing: 4,
+          children: [/* @__PURE__ */ jsx(Text, {
+            color: "orange",
+            children: "\u26A0"
+          }), /* @__PURE__ */ jsx(Text, {
+            children: " First you need to accept this check"
+          })]
+        })]
+      }),
+      children: /* @__PURE__ */ jsx("div", {
+        children: /* @__PURE__ */ jsx(ActionIcon, {
+          disabled: view === "slider" || !baselineId,
+          onClick: () => mainView2.addIgnoreRegion({
+            name: "ignore_rect",
+            strokeWidth: 0
+          }),
+          children: /* @__PURE__ */ jsx(DMe, {
+            size: 24,
+            stroke: 1
+          })
+        })
+      })
+    }), /* @__PURE__ */ jsx(Tooltip, {
+      withinPortal: true,
+      label: /* @__PURE__ */ jsxs(Group, {
+        noWrap: true,
+        children: [/* @__PURE__ */ jsx(Text, {
+          children: "Save ignore Regions"
+        }), /* @__PURE__ */ jsx(Kbd, {
+          sx: {
+            fontSize: 11,
+            borderBottomWidth: 1
+          },
+          children: "alt+S"
+        })]
+      }),
+      children: /* @__PURE__ */ jsx(ActionIcon, {
+        onClick: () => MainView.sendIgnoreRegions(baselineId, mainView2.getRectData()),
+        children: /* @__PURE__ */ jsx(qF, {
+          size: 24,
+          stroke: 1
+        })
+      })
+    })]
+  });
+}
+const useStyles$1 = createStyles((theme) => ({
+  zoomButtonsWrapper: {
+    "@media (max-width: 1070px)": {
+      display: "none"
+    }
+  }
+}));
+function onImageErrorHandler(...e2) {
+  const imgSrc = e2[0].path[0].src;
+  const msg = `Cannot load image: '${imgSrc}'`;
+  log.error(msg, e2);
+  errorMsg({
+    error: msg
+  });
+}
+function createImageAndWaitForLoad(src) {
+  const timeout = 9e4;
+  const img = new Image();
+  img.addEventListener("error", onImageErrorHandler);
+  img.src = src;
+  return Promise.race([new Promise((resolve, reject) => {
+    img.onload = () => resolve(img);
+    img.onerror = (e2) => reject(e2);
+  }), new Promise((_, reject) => {
+    setTimeout(() => reject(new Error(`The image loading timeout is exceeded: '${timeout}' milliseconds, src: '${src}'`)), timeout);
+  })]);
+}
+function CheckDetails({
+  checkData,
+  checkQuery,
+  firstPageQuery,
+  closeHandler
+}) {
+  var _a, _b;
+  const theme = useMantineTheme();
+  const {
+    classes
+  } = useStyles$1();
+  const [view, setView] = react.exports.useState("actual");
+  const checkResult = checkData.result ? JSON.parse(checkData.result) : null;
+  const {
+    setAppTitle
+  } = react.exports.useContext(AppContext);
+  const [relatedChecksOpened, relatedChecksHandler] = useDisclosure(true);
+  const related = useRelatedChecks(checkData);
+  related.opened = relatedChecksOpened;
+  related.handler = relatedChecksHandler;
+  const currentCheck = react.exports.useMemo(() => related.relatedFlatChecksData.find((x2) => x2._id === related.relatedActiveCheckId) || checkData, [related.relatedActiveCheckId]);
+  console.log("\u{1F479}\u{1F480}\u{1F480}\u{1F480}\u{1F480}\u{1F479}", JSON.stringify(currentCheck));
+  react.exports.useEffect(function changeTitle() {
+    setAppTitle(currentCheck.name);
+  }, [currentCheck.name]);
+  const [mainView2, setMainView] = react.exports.useState(null);
+  const baselineQuery = useQuery(["baseline_by_snapshot_id", currentCheck.baselineId._id], () => GenericService.get("baselines", {
+    snapshootId: currentCheck.baselineId._id
+  }, {
+    populate: "app",
+    limit: "1"
+  }, "baseline_by_snapshot_id"), {
+    enabled: true,
+    refetchOnWindowFocus: false,
+    onError: (e2) => {
+      errorMsg({
+        error: e2
+      });
+    }
+  });
+  const baselineId = react.exports.useMemo(() => {
+    var _a2, _b2, _c;
+    if (((_a2 = baselineQuery.data) == null ? void 0 : _a2.results) && ((_b2 = baselineQuery.data) == null ? void 0 : _b2.results.length) > 0) {
+      return (_c = baselineQuery.data) == null ? void 0 : _c.results[0]._id;
+    }
+    return "";
+  }, [JSON.stringify((_a = baselineQuery.data) == null ? void 0 : _a.results)]);
+  react.exports.useEffect(function destroyMainView() {
+    if (mainView2) {
+      mainView2.destroyAllViews();
+      mainView2.canvas.clear();
+      mainView2.canvas.dispose();
+      setMainView(null);
+    }
+  }, [related.relatedActiveCheckId, relatedChecksOpened]);
+  react.exports.useEffect(() => {
+    const initMV = async () => {
+      var _a2, _b2, _c, _d;
+      fabric$1.fabric.Object.prototype.objectCaching = false;
+      const expectedImgSrc = `${config.baseUri}/snapshoots/${(_a2 = currentCheck == null ? void 0 : currentCheck.baselineId) == null ? void 0 : _a2.filename}?expectedImg`;
+      const expectedImg = await createImageAndWaitForLoad(expectedImgSrc);
+      const actual = currentCheck.actualSnapshotId || null;
+      const actualImgSrc = `${config.baseUri}/snapshoots/${(_b2 = currentCheck == null ? void 0 : currentCheck.actualSnapshotId) == null ? void 0 : _b2.filename}?actualImg`;
+      const actualImg = await createImageAndWaitForLoad(actualImgSrc);
+      const expectedImage = await imageFromUrl(expectedImg.src);
+      const actualImage = await imageFromUrl(actualImg.src);
+      const diffImgSrc = `${config.baseUri}/snapshoots/${(_c = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _c.filename}?diffImg`;
+      const diffImage = ((_d = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _d.filename) ? await imageFromUrl(diffImgSrc) : null;
+      await setMainView((prev) => {
+        if (prev)
+          return prev;
+        const MV = new MainView({
+          canvasId: "2d",
+          canvasElementWidth: document.getElementById("snapshoot").clientWidth,
+          canvasElementHeight: document.getElementById("snapshoot").clientHeight,
+          expectedImage,
+          actualImage,
+          diffImage,
+          actual
+        });
+        window.mainView = MV;
+        return MV;
+      });
+    };
+    setTimeout(() => {
+      initMV();
+    }, 10);
+  }, [related.relatedActiveCheckId, relatedChecksOpened]);
+  react.exports.useEffect(function afterMainViewCreatedHandleRegions() {
+    if (!baselineId)
+      return;
+    if (mainView2) {
+      mainView2.getSnapshotIgnoreRegionsDataAndDrawRegions(baselineId);
+    }
+  }, [JSON.stringify((_b = baselineQuery.data) == null ? void 0 : _b.results), mainView2 == null ? void 0 : mainView2.toString()]);
+  react.exports.useEffect(function initView() {
+    if (mainView2) {
+      setView("actual");
       if (mainView2.diffImage) {
         setTimeout(() => {
           setView("diff");
         }, 10);
       }
     }
-  }, [mainView2 == null ? void 0 : mainView2.toString()]);
-  react.exports.useEffect(() => {
+  }, [
+    mainView2 == null ? void 0 : mainView2.toString()
+  ]);
+  react.exports.useEffect(function SwitchView() {
     if (mainView2) {
       mainView2.switchView(view);
     }
   }, [view]);
-  const viewSegmentData = [{
-    label: /* @__PURE__ */ jsx(Tooltip, {
-      withinPortal: true,
-      label: /* @__PURE__ */ jsxs(Group, {
-        noWrap: true,
-        children: [/* @__PURE__ */ jsx(Text, {
-          children: "Switch to Expected View"
-        }), /* @__PURE__ */ jsx(Kbd, {
-          children: "1"
-        })]
-      }),
-      children: /* @__PURE__ */ jsxs(Group, {
-        position: "left",
-        spacing: 4,
-        noWrap: true,
-        children: [/* @__PURE__ */ jsx(Pbe, {
-          stroke: 1,
-          size: 18
-        }), "Expected"]
-      })
-    }),
-    value: "expected"
-  }, {
-    label: /* @__PURE__ */ jsx(Tooltip, {
-      withinPortal: true,
-      label: /* @__PURE__ */ jsxs(Group, {
-        noWrap: true,
-        children: [/* @__PURE__ */ jsx(Text, {
-          children: "Switch to Actual View"
-        }), /* @__PURE__ */ jsx(Kbd, {
-          children: "2"
-        })]
-      }),
-      children: /* @__PURE__ */ jsxs(Group, {
-        position: "left",
-        spacing: 4,
-        noWrap: true,
-        children: [/* @__PURE__ */ jsx(Cbe, {
-          stroke: 1,
-          size: 18
-        }), "Actual"]
-      })
-    }),
-    value: "actual"
-  }, {
-    label: /* @__PURE__ */ jsx(Tooltip, {
-      withinPortal: true,
-      label: /* @__PURE__ */ jsxs(Group, {
-        noWrap: true,
-        children: [/* @__PURE__ */ jsx(Text, {
-          children: "Switch to Difference View"
-        }), /* @__PURE__ */ jsx(Kbd, {
-          children: "3"
-        })]
-      }),
-      children: /* @__PURE__ */ jsxs(Group, {
-        position: "left",
-        spacing: 4,
-        noWrap: true,
-        children: [/* @__PURE__ */ jsx(pi, {
-          stroke: 1,
-          size: 18
-        }), "Difference"]
-      })
-    }),
-    value: "diff",
-    disabled: true
-  }, {
-    label: /* @__PURE__ */ jsx(Tooltip, {
-      withinPortal: true,
-      label: /* @__PURE__ */ jsxs(Group, {
-        noWrap: true,
-        children: [/* @__PURE__ */ jsx(Text, {
-          children: "Switch to Slider View"
-        }), /* @__PURE__ */ jsx(Kbd, {
-          children: "4"
-        })]
-      }),
-      children: /* @__PURE__ */ jsxs(Group, {
-        position: "left",
-        spacing: 4,
-        noWrap: true,
-        children: [/* @__PURE__ */ jsx(Lbe, {
-          stroke: 1,
-          size: 18
-        }), "Slider"]
-      })
-    }),
-    value: "slider",
-    disabled: true
-  }];
-  if ((_c = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _c.filename) {
-    viewSegmentData[2].disabled = false;
-    viewSegmentData[3].disabled = false;
-  }
   useHotkeys([
-    ["mod+H", () => {
-      console.log("Toggle color scheme");
-      console.log(mainView2);
-    }],
-    ["Equal", () => zoomByDelta(15)],
-    ["NumpadAdd", () => zoomByDelta(15)],
-    ["Minus", () => zoomByDelta(-15)],
-    ["NumpadSubtract", () => zoomByDelta(-15)],
-    ["Digit9", () => fitImageByWith(`${view}Image`)],
-    ["Digit0", () => {
-      if (view === "slider") {
-        fitImageIfNeeded("actualImage");
-        return;
-      }
-      fitImageIfNeeded(`${view}Image`);
-    }],
     ["Digit1", () => setView("expected")],
     ["Digit2", () => setView("actual")],
     ["Digit3", () => {
@@ -23260,20 +23920,7 @@ function CheckDetails({
       var _a2;
       if ((_a2 = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _a2.filename)
         setView("slider");
-    }],
-    ["A", () => {
-      if (view === "actual" || view === "expected") {
-        mainView2.addIgnoreRegion({
-          name: "ignore_rect",
-          strokeWidth: 0
-        });
-      }
-    }],
-    ["S", () => {
-      MainView.sendIgnoreRegions(baselineId, mainView2.getRectData());
-    }],
-    ["Delete", () => mainView2.removeActiveIgnoreRegions()],
-    ["Backspace", () => mainView2.removeActiveIgnoreRegions()]
+    }]
   ]);
   return /* @__PURE__ */ jsx(Group, {
     style: {
@@ -23287,245 +23934,40 @@ function CheckDetails({
       children: [/* @__PURE__ */ jsxs(Group, {
         position: "apart",
         noWrap: true,
-        children: [/* @__PURE__ */ jsx(Group, {
-          children: /* @__PURE__ */ jsx(ScreenshotDetails, {
-            mainView: mainView2,
-            check: checkData,
-            view
-          })
+        children: [/* @__PURE__ */ jsx(ScreenshotDetails, {
+          mainView: mainView2,
+          check: checkData,
+          view
         }), /* @__PURE__ */ jsxs(Group, {
           spacing: "sm",
-          children: [/* @__PURE__ */ jsxs(Group, {
+          noWrap: true,
+          children: [/* @__PURE__ */ jsx(Group, {
             spacing: 4,
+            className: classes.zoomButtonsWrapper,
             position: "center",
             align: "center",
-            children: [/* @__PURE__ */ jsx(Tooltip, {
-              label: /* @__PURE__ */ jsxs(Group, {
-                noWrap: true,
-                children: [/* @__PURE__ */ jsx(Text, {
-                  children: "Zoom In"
-                }), /* @__PURE__ */ jsx(Kbd, {
-                  children: "+"
-                })]
-              }),
-              children: /* @__PURE__ */ jsx(ActionIcon, {
-                onClick: () => zoomByDelta(15),
-                children: /* @__PURE__ */ jsx(lDe, {
-                  size: 24,
-                  stroke: 1
-                })
-              })
-            }), /* @__PURE__ */ jsxs(Popover, {
-              position: "bottom",
-              withArrow: true,
-              shadow: "md",
-              opened: openedZoomPopover,
-              children: [/* @__PURE__ */ jsx(Popover.Target, {
-                children: /* @__PURE__ */ jsxs(Group, {
-                  spacing: 0,
-                  position: "center",
-                  onClick: zoomPopoverHandler.toggle,
-                  children: [/* @__PURE__ */ jsxs(Text, {
-                    size: "lg",
-                    weight: 400,
-                    sx: {
-                      minWidth: "3em"
-                    },
-                    children: [Math.round(zoomPercent), "%"]
-                  }), /* @__PURE__ */ jsx(ActionIcon, {
-                    ml: -10,
-                    children: /* @__PURE__ */ jsx(Pj, {})
-                  })]
-                })
-              }), /* @__PURE__ */ jsx(Popover.Dropdown, {
-                p: 0,
-                children: /* @__PURE__ */ jsxs(Stack, {
-                  spacing: 0,
-                  children: [/* @__PURE__ */ jsx(Button, {
-                    pl: 8,
-                    pr: 8,
-                    variant: "subtle",
-                    onClick: () => {
-                      zoomByPercent(50);
-                      if (view === "slider") {
-                        mainView2.panToCanvasWidthCenter("actualImage");
-                        return;
-                      }
-                      mainView2.panToCanvasWidthCenter(`${view}Image`);
-                      zoomPopoverHandler.close();
-                    },
-                    children: /* @__PURE__ */ jsx(Group, {
-                      position: "apart",
-                      noWrap: true,
-                      children: "50%"
-                    })
-                  }), /* @__PURE__ */ jsx(Button, {
-                    pl: 8,
-                    pr: 8,
-                    variant: "subtle",
-                    onClick: () => {
-                      zoomByPercent(100);
-                      if (view === "slider") {
-                        mainView2.panToCanvasWidthCenter("actualImage");
-                        return;
-                      }
-                      mainView2.panToCanvasWidthCenter(`${view}Image`);
-                      zoomPopoverHandler.close();
-                    },
-                    children: /* @__PURE__ */ jsx(Group, {
-                      position: "apart",
-                      noWrap: true,
-                      children: "100%"
-                    })
-                  }), /* @__PURE__ */ jsx(Button, {
-                    pl: 8,
-                    pr: 8,
-                    variant: "subtle",
-                    onClick: () => {
-                      zoomByPercent(200);
-                      if (view === "slider") {
-                        mainView2.panToCanvasWidthCenter("actualImage");
-                        return;
-                      }
-                      mainView2.panToCanvasWidthCenter(`${view}Image`);
-                      zoomPopoverHandler.close();
-                    },
-                    children: /* @__PURE__ */ jsx(Group, {
-                      position: "apart",
-                      noWrap: true,
-                      children: "200%"
-                    })
-                  }), /* @__PURE__ */ jsx(Button, {
-                    sx: {
-                      width: "100%"
-                    },
-                    pl: 8,
-                    pr: 8,
-                    variant: "subtle",
-                    onClick: () => {
-                      zoomPopoverHandler.close();
-                      if (view === "slider") {
-                        fitImageByWith("actualImage");
-                        return;
-                      }
-                      fitImageByWith(`${view}Image`);
-                    },
-                    children: /* @__PURE__ */ jsxs(Group, {
-                      sx: {
-                        width: "100%"
-                      },
-                      position: "left",
-                      noWrap: true,
-                      children: ["Fit by width ", /* @__PURE__ */ jsx(Kbd, {
-                        children: "9"
-                      })]
-                    })
-                  }), /* @__PURE__ */ jsx(Button, {
-                    pl: 8,
-                    pr: 8,
-                    variant: "subtle",
-                    onClick: () => {
-                      zoomPopoverHandler.close();
-                      if (view === "slider") {
-                        fitImageIfNeeded("actualImage");
-                        return;
-                      }
-                      fitImageIfNeeded(`${view}Image`);
-                    },
-                    children: /* @__PURE__ */ jsxs(Group, {
-                      sx: {
-                        width: "100%"
-                      },
-                      position: "left",
-                      noWrap: true,
-                      children: ["Fit to canvas ", /* @__PURE__ */ jsx(Kbd, {
-                        children: "0"
-                      })]
-                    })
-                  })]
-                })
-              })]
-            }), /* @__PURE__ */ jsx(Tooltip, {
-              label: /* @__PURE__ */ jsxs(Group, {
-                noWrap: true,
-                children: [/* @__PURE__ */ jsx(Text, {
-                  children: "Zoom out"
-                }), /* @__PURE__ */ jsx(Kbd, {
-                  children: "-"
-                })]
-              }),
-              children: /* @__PURE__ */ jsx(ActionIcon, {
-                onClick: () => zoomByDelta(-15),
-                children: /* @__PURE__ */ jsx(dDe, {
-                  size: 24,
-                  stroke: 1
-                })
-              })
-            })]
+            noWrap: true,
+            children: /* @__PURE__ */ jsx(ZoomToolbar, {
+              mainView: mainView2,
+              view
+            })
           }), /* @__PURE__ */ jsx(Divider, {
             orientation: "vertical"
-          }), /* @__PURE__ */ jsx(SegmentedControl, {
-            value: view,
-            onChange: setView,
-            data: viewSegmentData
+          }), /* @__PURE__ */ jsx(ViewSegmentedControl, {
+            view,
+            setView,
+            currentCheck
           }), /* @__PURE__ */ jsx(Divider, {
             orientation: "vertical"
-          }), /* @__PURE__ */ jsx(Tooltip, {
-            label: /* @__PURE__ */ jsxs(Group, {
-              noWrap: true,
-              children: [/* @__PURE__ */ jsx(Text, {
-                children: "Remove selected ignore regions"
-              }), /* @__PURE__ */ jsx(Kbd, {
-                children: "Del"
-              }), " or ", /* @__PURE__ */ jsx(Kbd, {
-                children: "Backspace"
-              })]
-            }),
-            children: /* @__PURE__ */ jsx(ActionIcon, {
-              disabled: !visibleRegionRemoveButton,
-              onClick: () => mainView2.removeActiveIgnoreRegions(),
-              children: /* @__PURE__ */ jsx(IMe, {
-                size: 24,
-                stroke: 1
-              })
-            })
-          }), /* @__PURE__ */ jsx(Tooltip, {
-            label: /* @__PURE__ */ jsxs(Group, {
-              noWrap: true,
-              children: [/* @__PURE__ */ jsx(Text, {
-                children: "Add ignore region"
-              }), /* @__PURE__ */ jsx(Kbd, {
-                children: "A"
-              })]
-            }),
-            children: /* @__PURE__ */ jsx(ActionIcon, {
-              disabled: view === "slider",
-              onClick: () => mainView2.addIgnoreRegion({
-                name: "ignore_rect",
-                strokeWidth: 0
-              }),
-              children: /* @__PURE__ */ jsx(DMe, {
-                size: 24,
-                stroke: 1
-              })
-            })
-          }), /* @__PURE__ */ jsx(Tooltip, {
-            withinPortal: true,
-            label: /* @__PURE__ */ jsxs(Group, {
-              noWrap: true,
-              children: [/* @__PURE__ */ jsx(Text, {
-                children: "Save ignore Regions"
-              }), /* @__PURE__ */ jsx(Kbd, {
-                children: "S"
-              })]
-            }),
-            children: /* @__PURE__ */ jsx(ActionIcon, {
-              onClick: () => MainView.sendIgnoreRegions(baselineId, mainView2.getRectData()),
-              children: /* @__PURE__ */ jsx(qF, {
-                size: 24,
-                stroke: 1
-              })
-            })
+          }), /* @__PURE__ */ jsx(HighlightButton, {
+            mainView: mainView2,
+            disabled: !(view === "diff" && parseFloat(checkResult.rawMisMatchPercentage) < 5)
+          }), /* @__PURE__ */ jsx(Divider, {
+            orientation: "vertical"
+          }), /* @__PURE__ */ jsx(RegionsToolbar, {
+            mainView: mainView2,
+            baselineId,
+            view
           }), /* @__PURE__ */ jsx(Divider, {
             orientation: "vertical"
           }), /* @__PURE__ */ jsx(AcceptButton, {
@@ -23622,6 +24064,14 @@ function CheckModal({
   }, [JSON.stringify((_a = checkQuery == null ? void 0 : checkQuery.data) == null ? void 0 : _a.results)]);
   const theme = useMantineTheme();
   const iconsColor = react.exports.useMemo(() => theme.colorScheme === "dark" ? theme.colors.gray[3] : theme.colors.dark[9], [theme.colorScheme]);
+  const keyEvents = () => {
+    document.addEventListener("keydown", function keyHandler(event) {
+      console.log(event.code);
+    });
+  };
+  react.exports.useEffect(function oneTime() {
+    keyEvents();
+  }, []);
   const title = react.exports.useMemo(() => {
     if (checkData) {
       return /* @__PURE__ */ jsxs(Group, {
@@ -23640,7 +24090,8 @@ function CheckModal({
           noWrap: true,
           children: [/* @__PURE__ */ jsx(Status$1, {
             size: "lg",
-            check: checkData
+            check: checkData,
+            variant: "filled"
           }), /* @__PURE__ */ jsx(Tooltip, {
             withinPortal: true,
             label: `Created: ${checkData.createdDate}`,
@@ -23671,6 +24122,7 @@ function CheckModal({
             })
           }), /* @__PURE__ */ jsx(Text, {
             size: 12,
+            lineClamp: 1,
             children: checkData.os
           }), /* @__PURE__ */ jsx(ActionIcon, {
             variant: "light",
@@ -23682,6 +24134,7 @@ function CheckModal({
               browser: checkData.browserName
             })
           }), /* @__PURE__ */ jsxs(Text, {
+            lineClamp: 1,
             size: 12,
             title: checkData.browserFullVersion ? `${checkData.browserFullVersion}` : "",
             children: [checkData.browserName, checkData.browserVersion ? ` - ${checkData.browserVersion}` : ""]
@@ -24409,7 +24862,14 @@ function App() {
               md: 24
             },
             colorScheme,
-            primaryColor: "green"
+            primaryColor: "green",
+            breakpoints: {
+              xs: 500,
+              sm: 800,
+              md: 1e3,
+              lg: 1200,
+              xl: 1400
+            }
           },
           children: /* @__PURE__ */ jsx(SpotlightProvider, {
             actions: spotlightActions,

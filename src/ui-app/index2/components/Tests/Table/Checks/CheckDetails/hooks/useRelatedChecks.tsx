@@ -5,7 +5,7 @@ import { useParams } from '../../../../../../hooks/useParams';
 
 export function useRelatedChecks(checkData: any) {
     const { query } = useParams();
-    const [relatedActiveCheck, setRelatedActiveCheck] = useState(checkData._id);
+    const [relatedActiveCheckId, setRelatedActiveCheckId] = useState<string>(checkData._id);
     const [sortBy, setSortBy] = useState('createdDate');
     const [sortOrder, setSortOrder] = useState('desc');
     const [relatedFilter, setRelatedFilter] = useState({ name: checkData.name });
@@ -26,8 +26,8 @@ export function useRelatedChecks(checkData: any) {
     const { data } = relatedChecksQuery.infinityQuery;
     const relatedFlatChecksData = data ? data.pages.flat().map((x: any) => x.results).flat() : [];
     return {
-        relatedActiveCheck,
-        setRelatedActiveCheck,
+        relatedActiveCheckId,
+        setRelatedActiveCheckId,
         sortBy,
         setSortBy,
         sortOrder,

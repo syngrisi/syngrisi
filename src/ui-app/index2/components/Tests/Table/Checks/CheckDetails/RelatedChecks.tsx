@@ -1,4 +1,4 @@
-/* eslint-disable no-underscore-dangle,no-nested-ternary,prefer-arrow-callback */
+/* eslint-disable no-underscore-dangle,no-nested-ternary,prefer-arrow-callback,max-len */
 import * as React from 'react';
 import { ActionIcon, Group, ScrollArea, Stack, Text, Transition, Chip, Burger, Divider, Tooltip } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
@@ -168,8 +168,8 @@ export function RelatedChecks(
                                                         <Stack spacing={4}>
                                                             <RelatedChecksItems
                                                                 infinityQuery={related.relatedChecksQuery.infinityQuery}
-                                                                relatedActiveCheck={related.relatedActiveCheck}
-                                                                setRelatedActiveCheck={related.setRelatedActiveCheck}
+                                                                relatedActiveCheckId={related.relatedActiveCheckId}
+                                                                setRelatedActiveCheckId={related.setRelatedActiveCheckId}
                                                             />
                                                         </Stack>
                                                     )
