@@ -1,6 +1,6 @@
 /* eslint-disable prefer-arrow-callback */
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import SafeSelect from '../../../shared/components/SafeSelect';
 import { useIndexSubpageEffect } from '../../hooks/useIndexSubpageEffect';
 import { useParams } from '../../hooks/useParams';
@@ -23,8 +23,12 @@ export function NavbarGroupBySelect({ clearActiveItems, groupByValue, setGroupBy
         'test-distinct/markedAs': 'By Accept Status',
     };
 
-    const title: string = query?.groupBy as string;
-    useIndexSubpageEffect(subpageMap[title] || 'Test Results');
+    const title: string = useMemo<string>(() => {
+        if (!query?.checkId) return String(query?.groupBy);
+        return '';
+    }, [query?.groupBy, query?.checkId]);
+
+    useIndexSubpageEffect(subpageMap[title] || '');
 
     useEffect(function onQueryGroupByUpdated() {
         if (!query.groupBy) return;

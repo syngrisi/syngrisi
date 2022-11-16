@@ -1,4 +1,4 @@
-import { r as react, b as jsx, d as useMantineTheme, at as Global$1, au as css, av as useDidUpdate, aw as useReducedMotion, ax as useWindowEvent, ay as mergeRefs, az as reactDom, O as useComponentDefaultProps, S as extractSystemStyles, B as Box, aA as getDefaultZIndex, aB as OptionalPortal, aC as packSx, t as ActionIcon, c as createStyles, j as jsxs, aD as createPolymorphicComponent, Z as Fragment, T as Text, aE as _extends, a3 as React, U as useUncontrolled, aF as useFloating, aG as size, aH as useFloatingAutoUpdate, aI as offset, aJ as arrow, aK as shift, aL as flip, aM as inline, aN as isElement, aO as useMergedRef, aP as clsx, a4 as Transition$2, aQ as FloatingArrow, R as useId, aR as getFloatingPosition, aS as UnstyledButton, P as Paper, G as Group, aT as CheckIcon, aU as useTransition, aV as getTransitionStyles, aW as Overlay, a2 as Loader, a0 as Tooltip, aX as useIsomorphicEffect$1, aY as useInputProps, V as Input, aZ as keyframes, a_ as InputsGroup, a$ as QueryObserver, b0 as infiniteQueryBehavior, b1 as hasNextPage, b2 as hasPreviousPage, b3 as Subscribable, b4 as shallowEqualObjects, b5 as getDefaultState, b6 as notifyManager, b7 as parseMutationArgs, b8 as useQueryClient, b9 as useSyncExternalStore, ba as shouldThrowError, bb as parseQueryArgs, bc as useBaseQuery, bd as ReactDOM, be as Portal, l as log, bf as NavigationContext, aq as useNavigate, bg as useLocation, h as Button, i as Progress, E as useHotkeys, C as Center, q as TextInput, e as Container, k as ky, a as config$1, W as queryString, u as useQuery, bh as B9, bi as wue, bj as gW, bk as wz, bl as mF, bm as Uye, z as zB, bn as Lqe, bo as Iqe, bp as I9, bq as N9, br as P5, m as dj, bs as NP, bt as Qa, v as GCe, x as Nie, D as useLocalStorage, bu as L3, bv as CMe, bw as _He, bx as Iee, n as lAe, by as commonjsGlobal, K as sizes$c, p as useForm, bz as rle, bA as Nme } from "./use-form.0b8d79bb.js";
+import { r as react, b as jsx, d as useMantineTheme, au as Global$1, av as css, aw as useDidUpdate, ax as useReducedMotion, ay as useWindowEvent, az as mergeRefs, aA as reactDom, O as useComponentDefaultProps, S as extractSystemStyles, B as Box, aB as getDefaultZIndex, aC as OptionalPortal, aD as packSx, t as ActionIcon, c as createStyles, j as jsxs, aE as createPolymorphicComponent, Z as Fragment, T as Text, aF as _extends, a3 as React, U as useUncontrolled, aG as useFloating, aH as size, aI as useFloatingAutoUpdate, aJ as offset, aK as arrow, aL as shift, aM as flip, aN as inline, aO as isElement, aP as useMergedRef, aQ as clsx, a4 as Transition$2, aR as FloatingArrow, R as useId, aS as getFloatingPosition, aT as UnstyledButton, P as Paper, G as Group, aU as CheckIcon, aV as useTransition, aW as getTransitionStyles, aX as Overlay, a2 as Loader, a0 as Tooltip, aY as useIsomorphicEffect$1, aZ as useInputProps, V as Input, a_ as keyframes, a$ as InputsGroup, b0 as QueryObserver, b1 as infiniteQueryBehavior, b2 as hasNextPage, b3 as hasPreviousPage, b4 as Subscribable, b5 as shallowEqualObjects, b6 as getDefaultState, b7 as notifyManager, b8 as parseMutationArgs, b9 as useQueryClient, ba as useSyncExternalStore, bb as shouldThrowError, bc as parseQueryArgs, bd as useBaseQuery, be as ReactDOM, bf as Portal, l as log, bg as NavigationContext, ar as useNavigate, bh as useLocation, h as Button, i as Progress, E as useHotkeys, C as Center, q as TextInput, e as Container, k as ky, a as config$1, W as queryString, u as useQuery, bi as B9, bj as wue, bk as gW, bl as wz, bm as mF, bn as Uye, z as zB, bo as Lqe, bp as Iqe, bq as I9, br as N9, bs as P5, m as dj, bt as NP, bu as Qa, v as GCe, x as Nie, D as useLocalStorage, bv as L3, bw as CMe, bx as _He, by as Iee, n as lAe, bz as commonjsGlobal, K as sizes$c, p as useForm, bA as rle, bB as Nme } from "./use-form.799991d3.js";
 function findElementAncestor(element, selector) {
   let _element = element;
   while ((_element = _element.parentElement) && !_element.matches(selector))
@@ -13403,6 +13403,7 @@ function useInView(_temp) {
 function ActionPopoverIcon({
   icon,
   color,
+  iconColor,
   action,
   confirmLabel,
   title,
@@ -13410,6 +13411,7 @@ function ActionPopoverIcon({
   loading,
   buttonColor,
   paused,
+  disabled = false,
   size: size2,
   ...rest
 }) {
@@ -13422,6 +13424,7 @@ function ActionPopoverIcon({
     shadow: "md",
     closeOnClickOutside: true,
     closeOnEscape: true,
+    withinPortal: true,
     children: [/* @__PURE__ */ jsx(Popover.Target, {
       children: /* @__PURE__ */ jsx(Tooltip, {
         withinPortal: true,
@@ -13432,9 +13435,10 @@ function ActionPopoverIcon({
           })
         }),
         children: /* @__PURE__ */ jsx(ActionIcon, {
+          disabled,
           "data-test": testAttr,
           variant: "light",
-          color,
+          color: iconColor,
           onClick: () => {
             if (paused)
               return;

@@ -10,6 +10,11 @@ const useStyles = createStyles((theme) => ({
         paddingLeft: 4,
         paddingRight: 4,
     },
+    labels:{
+        '@media (max-width: 1070px)': {
+            display: 'none',
+        },
+    }
 }));
 
 interface Props {
@@ -37,7 +42,7 @@ export function ScreenshotDetails({ mainView, view, check }: Props) {
             return (
                 <Tooltip
                     withinPortal
-                    label="Screenshot size, click to open the image in a new tab"
+                    label={`Screenshot size: ${image.width}x${image.height}, click to open the image in a new tab`}
                 >
                     <Badge color="blue" radius={'sm'} className={classes.infoBadges}>
                         <a
@@ -58,37 +63,52 @@ export function ScreenshotDetails({ mainView, view, check }: Props) {
             </Badge>
         );
     }, [mainView, view]);
+    const createdDate = view === 'actual'
+        ? dateFns.format(dateFns.parseISO(check?.actualSnapshotId?.createdDate), 'yyyy-MM-dd HH:mm:ss')
+        : dateFns.format(dateFns.parseISO(check?.baselineId?.createdDate), 'yyyy-MM-dd HH:mm:ss')
 
     return (
-        <Group noWrap>
+        <Group spacing="sm" noWrap>
             {
                 view !== 'slider'
                     ? (
                         <>
-                            <Text size="sm">
-                                Image Size:
-                                {imageSize}
-                            </Text>
-                            <Text size="sm">
-                                Image Date:
-                                <Badge color="blue" radius={'sm'} className={classes.infoBadges}>
-                                    {
-                                        view === 'actual'
-                                            ? dateFns.format(dateFns.parseISO(check?.actualSnapshotId?.createdDate), 'yyyy-MM-dd HH:mm:ss')
-                                            : dateFns.format(dateFns.parseISO(check?.baselineId?.createdDate), 'yyyy-MM-dd HH:mm:ss')
-                                    }
-                                </Badge>
-                            </Text>
+                            <Group spacing={0} noWrap>
+                                <Text size="sm" lineClamp={1} className={classes.labels} title="Image size">
+                                    Image Size:
+                                </Text>
+                                <Text size="sm">
+                                    {imageSize}
+                                </Text>
+                            </Group>
+
+                            <Group spacing={0} noWrap>
+                                <Text lineClamp={1} className={classes.labels} size="sm">
+                                    Date:
+                                </Text>
+                                <Tooltip label={`Image Date: ${createdDate}`} withinPortal>
+
+                                    <Badge color="blue" radius={'sm'} className={classes.infoBadges}>
+                                        {
+                                            createdDate
+                                        }
+                                    </Badge>
+                                </Tooltip>
+                            </Group>
                             {
                                 view === 'diff' && (
                                     <>
-                                        <Text size="sm">
-                                            Difference:
-                                            <Badge color="blue" radius={'sm'}
-                                                   className={classes.infoBadges}>
-                                                {diffPercent}%
-                                            </Badge>
-                                        </Text>
+                                        <Group spacing={0} noWrap>
+                                            <Text lineClamp={1} size="sm" className={classes.labels}>
+                                                Difference:
+                                            </Text>
+                                            <Tooltip label={`Images difference: ${diffPercent} %`} withinPortal>
+                                                <Badge color="blue" radius={'sm'} sx={{ maxWidth: 100 }}
+                                                       className={classes.infoBadges}>
+                                                    {diffPercent}%
+                                                </Badge>
+                                            </Tooltip>
+                                        </Group>
                                     </>
                                 )
                             }

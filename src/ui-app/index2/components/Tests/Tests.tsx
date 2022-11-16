@@ -9,7 +9,6 @@ import { useSearchParams } from 'react-router-dom';
 import { useLocalStorage } from '@mantine/hooks';
 import { useEffect, useContext, useState } from 'react';
 import { IconAdjustments, IconFilter } from '@tabler/icons';
-import { useIndexSubpageEffect } from '../../hooks/useIndexSubpageEffect';
 import { AppContext } from '../../AppContext';
 import RefreshActionIcon from './Table/RefreshActionIcon';
 import useInfinityScroll from '../../../shared/hooks/useInfinityScroll';
@@ -36,7 +35,7 @@ export default function Tests() {
     const { query } = useParams();
 
     const theme = useMantineTheme();
-    useIndexSubpageEffect('By Runs');
+    // useIndexSubpageEffect('By Runs');
 
     const [searchParams, setSearchParams] = useSearchParams();
     const [sortOpen, setSortOpen] = useState(false);

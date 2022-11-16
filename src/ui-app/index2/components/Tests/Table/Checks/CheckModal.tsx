@@ -10,7 +10,7 @@ import {
     Tooltip,
     useMantineTheme,
 } from '@mantine/core';
-import { useDisclosure, useLocalStorage } from '@mantine/hooks';
+import { useDisclosure, useDocumentTitle, useLocalStorage } from '@mantine/hooks';
 import { useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { IconX } from '@tabler/icons';
@@ -32,6 +32,7 @@ export function CheckModal({ firstPageQuery }: Props) {
     const { query, setQuery } = useParams();
     const [checksViewSize] = useLocalStorage({ key: 'check-view-size', defaultValue: 'medium' });
     const [checkModalOpened, checkModalHandlers] = useDisclosure(false);
+
     const closeHandler = () => {
         checkModalHandlers.close();
         setQuery({ checkId: null });
@@ -65,12 +66,35 @@ export function CheckModal({ firstPageQuery }: Props) {
         () => checkQuery?.data?.results[0]!,
         [JSON.stringify(checkQuery?.data?.results)],
     );
+    useDocumentTitle(checkData?.name);
+
     const theme = useMantineTheme();
     const iconsColor = useMemo(
         () => (theme.colorScheme === 'dark'
             ? theme.colors.gray[3]
             : theme.colors.dark[9]), [theme.colorScheme],
     );
+
+    const keyEvents = () => {
+        document.addEventListener('keydown',
+            function keyHandler(event: any) {
+                console.log(event.code);
+            });
+    };
+
+    function mouseEvents() {
+        // mainView.canvas.on(
+        //     'mouse:move', (e: any) => {
+        //         if (!e.e.ctrlKey) return;
+        //         const mEvent = e.e;
+        //     },
+        // );
+    }
+
+    useEffect(function oneTime() {
+        keyEvents();
+        mouseEvents();
+    }, []);
 
     const title = useMemo(() => {
         if (checkData) {
@@ -119,7 +143,7 @@ export function CheckModal({ firstPageQuery }: Props) {
                                 os={checkData.os}
                             />
                         </ActionIcon>
-                        <Text size={12}>{checkData.os}</Text>
+                        <Text size={12} lineClamp={1}>{checkData.os}</Text>
 
                         <ActionIcon variant="light" size={32} p={4}>
                             <BrowserIcon
@@ -129,6 +153,7 @@ export function CheckModal({ firstPageQuery }: Props) {
                             />
                         </ActionIcon>
                         <Text
+                            lineClamp={1}
                             size={12}
                             title={
                                 checkData.browserFullVersion

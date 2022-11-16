@@ -2,39 +2,18 @@
 import * as React from 'react';
 import { fabric } from 'fabric';
 import {
-    ActionIcon,
     Group,
     Paper,
-    SegmentedControl,
     Stack,
-    Text,
-    Button,
     useMantineTheme,
-    Popover,
     Divider,
-    Tooltip,
-    Kbd,
+    createStyles,
 } from '@mantine/core';
 import {
     useDisclosure,
-    // useViewportSize
-    useHotkeys,
 } from '@mantine/hooks';
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import {
-    IconArrowsExchange2,
-    IconBulb,
-    IconChevronDown,
-    IconDeviceFloppy,
-    IconShape,
-    IconShapeOff,
-    IconSquareHalf,
-    IconSquareLetterA,
-    IconSquareLetterE,
-    IconZoomIn,
-    IconZoomOut,
-} from '@tabler/icons';
 import { MainView } from './mainView';
 import { imageFromUrl } from './helpers';
 import { errorMsg, log } from '../../../../../../shared/utils';
@@ -42,11 +21,22 @@ import { GenericService } from '../../../../../../shared/services';
 import config from '../../../../../../config';
 import { AcceptButton } from '../AcceptButton';
 import { RemoveButton } from '../RemoveButton';
-import { AppContext } from '../../../../../AppContext';
 import { RelatedChecks } from './RelatedChecks';
 import { useRelatedChecks } from './hooks/useRelatedChecks';
 import { ScreenshotDetails } from './ScreenshotDetails';
 import { HighlightButton } from './HighlightButton';
+import { ViewSegmentedControl } from './ViewSegmentedControl';
+import { ZoomToolbar } from './ZoomToolbar';
+import { RegionsToolbar } from './RegionsToolbar';
+
+// eslint-disable-next-line no-unused-vars
+const useStyles = createStyles((theme) => ({
+    zoomButtonsWrapper: {
+        '@media (max-width: 1070px)': {
+            display: 'none',
+        },
+    },
+}));
 
 function onImageErrorHandler(...e: any) {
     const imgSrc = e[0].path[0].src;
@@ -84,90 +74,23 @@ interface Props {
 }
 
 export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandler }: Props) {
+    const theme = useMantineTheme();
+    const { classes } = useStyles();
     const [view, setView] = useState('actual');
-    const checkResult = checkData.result ? JSON.parse(checkData.result) : null;
-    const { setAppTitle }: any = useContext(AppContext);
-    const [relatedChecksOpened, relatedChecksHandler] = useDisclosure(true);
+    const [mainView, setMainView] = useState<MainView | null>(null);
 
+    const checkResult = checkData.result ? JSON.parse(checkData.result) : null;
+    const [relatedChecksOpened, relatedChecksHandler] = useDisclosure(true);
     const related: any = useRelatedChecks(checkData);
     related.opened = relatedChecksOpened;
     related.handler = relatedChecksHandler;
 
     const currentCheck = useMemo(
-        () => related.relatedFlatChecksData.find((x: any) => x._id === related.relatedActiveCheck) || checkData,
-        [related.relatedActiveCheck],
+        () => related.relatedFlatChecksData.find((x: any) => x._id === related.relatedActiveCheckId) || checkData,
+        [related.relatedActiveCheckId],
     );
 
-    const theme = useMantineTheme();
-    setAppTitle(currentCheck.name);
-
-    // const { height, width } = useViewportSize();
-    const [mainView, setMainView] = useState<any>(null);
-    const [zoomPercent, setZoomPercent] = useState(100);
-    const [openedZoomPopover, zoomPopoverHandler] = useDisclosure(false);
-
-    function mouseEvents() {
-        // mainView.canvas.on(
-        //     'mouse:move', (e: any) => {
-        //         const pixelRatio = window.devicePixelRatio;
-        //         if (!e.e.ctrlKey) return;
-        //         const mEvent = e.e;
-        //         console.log(e)
-        //         console.log(e.pointer.x, e.pointer.y)
-        //
-        //         // console.log(mEvent)
-        //         console.log(
-        //             mainView.canvas.getContext('2d').getImageData(
-        //                 parseInt(e.pointer.x * pixelRatio),
-        //                 parseInt(e.pointer.y * pixelRatio),
-        //                 1,
-        //                 1,
-        //             ).data,
-        //         )
-        //         // console.log(mainView.canvas.getContext().getImageData(e.offsetX, e.offsetY, 1, 1).data)
-        //     },
-        // );
-    }
-
-    function zoomEvents() {
-        mainView.canvas.on('mouse:wheel', (opt: any) => {
-            if (!opt.e.ctrlKey) return;
-            const delta = opt.e.deltaY;
-            let zoomVal = mainView.canvas.getZoom();
-
-            zoomVal *= 0.999 ** delta;
-            if (zoomVal > 9) zoomVal = 9;
-            if (zoomVal < 0.10) zoomVal = 0.10;
-            mainView.canvas.zoomToPoint({
-                x: opt.e.offsetX,
-                y: opt.e.offsetY,
-            }, zoomVal);
-
-            setZoomPercent(() => zoomVal * 100);
-            document.dispatchEvent(new Event('zoom'));
-            opt.e.preventDefault();
-            opt.e.stopPropagation();
-        });
-    }
-
-    const zoomByPercent = (percent: number) => {
-        if (!mainView?.canvas) return;
-        // mainView.canvas.zoomToPoint(new fabric.Point(mainView.canvas.width / 2,
-        //     30), zoomPercent / 100);
-        mainView.canvas.setZoom(percent / 100);
-        mainView.canvas.renderAll();
-        setZoomPercent(() => percent);
-    };
-
-    const zoomByDelta = (delta: number) => {
-        document.dispatchEvent(new Event('zoom'));
-        let newPercent = Math.round(mainView.canvas.getZoom() * 100) + delta;
-        newPercent = newPercent < 2 ? 2 : newPercent;
-        newPercent = newPercent > 1000 ? 1000 : newPercent;
-        // console.log({ newRatio })
-
-        zoomByPercent(newPercent);
-    };
+    // console.log('👹💀💀💀💀👹', JSON.stringify(currentCheck));
 
     const baselineQuery = useQuery(
         [
@@ -192,11 +115,11 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
         },
     );
 
-    const baselineId = useMemo(() => {
+    const baselineId = useMemo<string>(() => {
         if (baselineQuery.data?.results && baselineQuery.data?.results.length > 0) {
-            return baselineQuery.data?.results[0]._id;
+            return baselineQuery.data?.results[0]._id as string;
         }
-        return null;
+        return '';
     }, [JSON.stringify(baselineQuery.data?.results)]);
 
     useEffect(function destroyMainView() {
@@ -206,19 +129,10 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
             mainView.canvas.dispose();
             setMainView(null);
         }
-    }, [related.relatedActiveCheck, relatedChecksOpened]);
-
-    function keyHandler(event: any) {
-        console.log(event.code);
-    }
-
-    const keyEvents = () => {
-        document.addEventListener('keydown', keyHandler);
-    };
+    }, [related.relatedActiveCheckId, relatedChecksOpened]);
 
     // init mainView
     useEffect(() => {
-        if (!document.getElementById('snapshoot')) return;
         const initMV = async () => {
             fabric.Object.prototype.objectCaching = false;
             const expectedImgSrc = `${config.baseUri}/snapshoots/${currentCheck?.baselineId?.filename}?expectedImg`;
@@ -229,7 +143,7 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
             const actualImg = await createImageAndWaitForLoad(actualImgSrc);
 
             // eslint-disable-next-line max-len
-            document.getElementById('snapshoot').style.height = `${MainView.calculateExpectedCanvasViewportAreaSize().height - 10}px`;
+            // document.getElementById('snapshoot').style.height = `${MainView.calculateExpectedCanvasViewportAreaSize().height - 10}px`;
 
             const expectedImage = await imageFromUrl(expectedImg.src);
             const actualImage = await imageFromUrl((actualImg).src);
@@ -252,16 +166,16 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
                 );
                 // @ts-ignore
                 window.mainView = MV;
-
-                keyEvents();
-
                 return MV;
             });
         };
         setTimeout(() => {
             initMV();
         }, 10);
-    }, [related.relatedActiveCheck, relatedChecksOpened]);
+    }, [
+        related.relatedActiveCheckId,
+        relatedChecksOpened,
+    ]);
 
     useEffect(function afterMainViewCreatedHandleRegions() {
         if (!baselineId) return;
@@ -273,289 +187,49 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
         mainView?.toString(),
     ]);
 
-    /**
-     * Calculates the biggest baseline or actual image dimension
-     * for example: expectedImage {width: 100, height: 200}, actualImage: {width: 200, height: 300}
-     * the function will return ['actualImage', 'height' ]
-     */
-    const calculateMaxImagesDimensions = () => {
-        const data: any = [
-            { imageName: 'expectedImage', dimension: 'width', value: mainView.expectedImage.width },
-            { imageName: 'expectedImage', dimension: 'height', value: mainView.expectedImage.height },
-            { imageName: 'actualImage', dimension: 'width', value: mainView.actualImage.width },
-            { imageName: 'actualImage', dimension: 'height', value: mainView.actualImage.height },
-        ];
-        const biggestDimensionValue = Math.max(...data.map((x: any) => x.value));
-
-        const result = data.find((x: any) => x.value === biggestDimensionValue);
-        return result;
-    };
-
-    // zoom to particular image dimension (weight or height)
-    const zoomTo = (image: any, dimension: string) => {
-        // console.log(mainView.canvas.getZoom());
-        const ratio = mainView.canvas[dimension] / image[dimension];
-        const percent = ratio > 9 ? 900 : ratio * 100;
-        zoomByPercent(percent);
-        mainView.canvas.renderAll();
-    };
-
-    const fitGreatestImageIfNeeded = () => {
-        const greatestImage = calculateMaxImagesDimensions();
-        zoomTo(mainView[greatestImage.imageName], greatestImage.dimension);
-
-        const anotherDimension = (greatestImage.dimension === 'height') ? 'width' : 'height';
-
-        if ((mainView[greatestImage.imageName][anotherDimension] * mainView.canvas.getZoom())
-            > mainView.canvas[anotherDimension]) {
-            zoomTo(mainView[greatestImage.imageName], anotherDimension);
-        }
-
-        // initial pan
-        setTimeout(() => {
-            mainView.panToCanvasWidthCenter(greatestImage.imageName);
-        }, 10);
-    };
-
-    const fitImageIfNeeded = (imageName: string) => {
-        const image = mainView[imageName];
-        const greatestDimension = (image.height > image.width) ? 'height' : 'width';
-
-        const anotherDimension = (greatestDimension === 'height') ? 'width' : 'height';
-
-        zoomTo(image, greatestDimension);
-
-        if (mainView[imageName][anotherDimension] * mainView.canvas.getZoom() > mainView.canvas[anotherDimension]) {
-            zoomTo(mainView[imageName], anotherDimension);
-        }
-
-        setTimeout(() => {
-            mainView.panToCanvasWidthCenter(imageName);
-        }, 10);
-    };
-
-    const fitImageByWith = (imageName: string) => {
-        const image = mainView[imageName];
-        zoomTo(image, 'width');
-
-        setTimeout(() => {
-            mainView.panToCanvasWidthCenter(imageName);
-        }, 10);
-    };
-
-    const [visibleRegionRemoveButton, setVisibleRegionRemoveButton] = useState(false);
-    const regionsSelectionEvents = () => {
-        const handler = () => {
-            const els = mainView.canvas.getActiveObjects()
-                .filter((x: any) => x.name === 'ignore_rect');
-
-            if (els.length > 0) {
-                setVisibleRegionRemoveButton(() => true);
-            } else {
-                setVisibleRegionRemoveButton(() => false);
-            }
-        };
-
-        mainView.canvas.on(
-            {
-                'selection:cleared':
-                // eslint-disable-next-line no-unused-vars
-                    (e: any) => {
-                        console.log('cleared selection');
-                        handler();
-                    },
-                'selection:updated':
-                // eslint-disable-next-line no-unused-vars
-                    (e: any) => {
-                        console.log('update selection');
-                        handler();
-                    },
-                'selection:created':
-                // eslint-disable-next-line no-unused-vars
-                    (e: any) => {
-                        console.log('create selection');
-                        handler();
-                    },
-            },
-        );
-    };
-
-    useEffect(function afterMainViewCreated() {
+    useEffect(function initView() {
         if (mainView) {
-            zoomEvents();
-            mouseEvents();
-            // initial zoom
-            fitGreatestImageIfNeeded();
-
-            setView('actual');
-            regionsSelectionEvents();
+            // setView('actual'); !!!!
             if (mainView.diffImage) {
                 setTimeout(() => {
                     setView('diff');
                 }, 10);
             }
-
-            // zoomTo(mainView[greatestImage.imageName], greatestImage.dimension);
-            //
-            // const anotherDimension = (greatestImage.dimension === 'height') ? 'width' : 'height';
-            //
-            // if (mainView[greatestImage.imageName][anotherDimension] > mainView.canvas[anotherDimension]) {
-            //     zoomTo(mainView[greatestImage.imageName], anotherDimension);
-            // }
-            //
-            // // initial pan
-            // setTimeout(() => {
-            //     mainView.panToCanvasWidthCenter(greatestImage.imageName);
-            // }, 10);
         }
     }, [
         mainView?.toString(),
+        // currentCheck._id,
     ]);
 
-    useEffect(() => {
+    // useEffect(function afterMainViewCreated() {
+    // if (mainView) {
+    //     zoomEvents();
+    //     mouseEvents();
+    //     // initial zoom
+    //     fitGreatestImageIfNeeded();
+    // zoomTo(mainView[greatestImage.imageName], greatestImage.dimension);
+    //
+    // const anotherDimension = (greatestImage.dimension === 'height') ? 'width' : 'height';
+    //
+    // if (mainView[greatestImage.imageName][anotherDimension] > mainView.canvas[anotherDimension]) {
+    //     zoomTo(mainView[greatestImage.imageName], anotherDimension);
+    // }
+    //
+    // // initial pan
+    // setTimeout(() => {
+    //     mainView.panToCanvasWidthCenter(greatestImage.imageName);
+    // }, 10);
+    // }
+    // }, [
+    //     mainView?.toString(),
+    // ]);
+
+    useEffect(function switchView() {
         if (mainView) {
             mainView.switchView(view);
+            // mainView.currentView = view;
         }
     }, [view]);
-
-    const viewSegmentData = [
-        {
-            label: (
-                <Tooltip
-                    withinPortal
-                    label={
-                        (
-                            <Group noWrap>
-                                <Text>Switch to Expected View</Text>
-                                <Kbd>1</Kbd>
-                            </Group>
-                        )
-                    }
-                >
-                    <Group position="left" spacing={4} noWrap>
-                        <IconSquareLetterE stroke={1} size={18} />
-                        Expected
-                    </Group>
-                </Tooltip>
-            ),
-            value: 'expected',
-        },
-        {
-            label: (
-                <Tooltip
-                    withinPortal
-                    label={
-                        (
-                            <Group noWrap>
-                                <Text>Switch to Actual View</Text>
-                                <Kbd>2</Kbd>
-                            </Group>
-                        )
-                    }
-                >
-                    <Group position="left" spacing={4} noWrap>
-                        <IconSquareLetterA stroke={1} size={18} />
-                        Actual
-                    </Group>
-                </Tooltip>
-            ),
-            value: 'actual',
-        },
-        {
-            label:
-                (
-                    <Tooltip
-                        withinPortal
-                        label={
-                            (
-                                <Group noWrap>
-                                    <Text>Switch to Difference View</Text>
-                                    <Kbd>3</Kbd>
-                                </Group>
-                            )
-                        }
-                    >
-                        <Group position="left" spacing={4} noWrap>
-                            <IconArrowsExchange2 stroke={1} size={18} />
-                            Difference
-                        </Group>
-                    </Tooltip>
-                ),
-            value: 'diff',
-            disabled: true,
-        },
-        {
-            label:
-                (
-                    <Tooltip
-                        withinPortal
-                        label={
-                            (
-                                <Group noWrap>
-                                    <Text>Switch to Slider View</Text>
-                                    <Kbd>4</Kbd>
-                                </Group>
-                            )
-                        }
-                    >
-                        <Group position="left" spacing={4} noWrap>
-                            <IconSquareHalf stroke={1} size={18} />
-                            Slider
-                        </Group>
-                    </Tooltip>
-                ),
-            value: 'slider',
-            disabled: true,
-        },
-    ];
-
-    // disable the slider and diff if diff not exist
-    if (currentCheck?.diffId?.filename) {
-        viewSegmentData[2].disabled = false;
-        viewSegmentData[3].disabled = false;
-    }
-
-    useHotkeys([
-        ['mod+H', () => {
-            console.log('Toggle color scheme');
-            console.log(mainView);
-        }],
-
-        // Zoom
-        ['Equal', () => zoomByDelta(15)],
-        ['NumpadAdd', () => zoomByDelta(15)],
-        ['Minus', () => zoomByDelta(-15)],
-        ['NumpadSubtract', () => zoomByDelta(-15)],
-        ['Digit9', () => fitImageByWith(`${view}Image`)],
-        ['Digit0', () => {
-            if (view === 'slider') {
-                fitImageIfNeeded('actualImage');
-                return;
-            }
-            fitImageIfNeeded(`${view}Image`);
-        }],
-
-        // View
-        ['Digit1', () => setView('expected')],
-        ['Digit2', () => setView('actual')],
-        ['Digit3', () => {
-            if (currentCheck?.diffId?.filename) setView('diff');
-        }],
-        ['Digit4', () => {
-            if (currentCheck?.diffId?.filename) setView('slider');
-        }],
-        // Regions
-        ['A', () => {
-            if ((view === 'actual') || (view === 'expected')) {
-                mainView.addIgnoreRegion({ name: 'ignore_rect', strokeWidth: 0 });
-            }
-        }],
-        ['S', () => {
-            MainView.sendIgnoreRegions(baselineId!, mainView.getRectData());
-        }],
-        ['Delete', () => mainView.removeActiveIgnoreRegions()],
-        ['Backspace', () => mainView.removeActiveIgnoreRegions()],
-    ]);
 
     return (
         <Group style={{ width: '96vw' }} spacing={4}>
@@ -563,241 +237,32 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
             <Stack sx={{ width: '100%' }}>
                 {/* Toolbar */}
                 <Group position="apart" noWrap>
-                    <Group>
-                        <ScreenshotDetails mainView={mainView} check={checkData} view={view} />
-                    </Group>
-                    <Group spacing="sm">
-                        <Group spacing={4} position="center" align="center">
-                            <Tooltip
-                                label={
-                                    (
-                                        <Group noWrap>
-                                            <Text>Zoom In</Text>
-                                            <Kbd>+</Kbd>
-                                        </Group>
-                                    )
-                                }
-                            >
-                                <ActionIcon
-                                    onClick={() => zoomByDelta(15)}
-                                >
-                                    <IconZoomIn size={24} stroke={1} />
-                                </ActionIcon>
-                            </Tooltip>
-
-                            <Popover position="bottom" withArrow shadow="md" opened={openedZoomPopover}>
-                                <Popover.Target>
-                                    <Group spacing={0} position="center" onClick={zoomPopoverHandler.toggle}>
-                                        <Text
-                                            size="lg"
-                                            weight={400}
-                                            sx={{ minWidth: '3em' }}
-                                        >
-                                            {Math.round(zoomPercent)}%
-                                        </Text>
-                                        <ActionIcon ml={-10}>
-                                            <IconChevronDown />
-                                        </ActionIcon>
-                                    </Group>
-                                </Popover.Target>
-                                <Popover.Dropdown p={0}>
-                                    <Stack spacing={0}>
-                                        <Button
-                                            pl={8}
-                                            pr={8}
-                                            variant="subtle"
-                                            onClick={() => {
-                                                zoomByPercent(50);
-                                                if (view === 'slider') {
-                                                    mainView.panToCanvasWidthCenter('actualImage');
-                                                    return;
-                                                }
-                                                mainView.panToCanvasWidthCenter(`${view}Image`);
-                                                zoomPopoverHandler.close();
-                                            }}
-                                        >
-                                            <Group position="apart" noWrap>50%</Group>
-                                        </Button>
-                                        <Button
-                                            pl={8}
-                                            pr={8}
-                                            variant="subtle"
-                                            onClick={() => {
-                                                zoomByPercent(100);
-                                                if (view === 'slider') {
-                                                    mainView.panToCanvasWidthCenter('actualImage');
-                                                    return;
-                                                }
-                                                mainView.panToCanvasWidthCenter(`${view}Image`);
-                                                zoomPopoverHandler.close();
-                                            }}
-                                        >
-                                            <Group position="apart" noWrap>100%</Group>
-                                        </Button>
-                                        <Button
-                                            pl={8}
-                                            pr={8}
-                                            variant="subtle"
-                                            onClick={() => {
-                                                zoomByPercent(200);
-                                                if (view === 'slider') {
-                                                    mainView.panToCanvasWidthCenter('actualImage');
-                                                    return;
-                                                }
-                                                mainView.panToCanvasWidthCenter(`${view}Image`);
-                                                zoomPopoverHandler.close();
-                                            }}
-                                        >
-                                            <Group position="apart" noWrap>200%</Group>
-                                        </Button>
-                                        <Button
-                                            sx={{ width: '100%' }}
-                                            pl={8}
-                                            pr={8}
-                                            variant="subtle"
-                                            onClick={() => {
-                                                zoomPopoverHandler.close();
-                                                if (view === 'slider') {
-                                                    fitImageByWith('actualImage');
-                                                    return;
-                                                }
-                                                fitImageByWith(`${view}Image`);
-                                            }}
-                                        >
-                                            <Group sx={{ width: '100%' }} position="left" noWrap>
-                                                Fit by width <Kbd>9</Kbd>
-                                            </Group>
-                                        </Button>
-
-                                        <Button
-                                            pl={8}
-                                            pr={8}
-                                            variant="subtle"
-                                            onClick={() => {
-                                                zoomPopoverHandler.close();
-
-                                                if (view === 'slider') {
-                                                    fitImageIfNeeded('actualImage');
-                                                    return;
-                                                }
-                                                fitImageIfNeeded(`${view}Image`);
-                                            }}
-                                        >
-                                            <Group sx={{ width: '100%' }} position="left" noWrap>
-                                                Fit to canvas <Kbd>0</Kbd>
-                                            </Group>
-                                        </Button>
-                                    </Stack>
-                                </Popover.Dropdown>
-                            </Popover>
-
-                            <Tooltip
-                                label={
-                                    (
-                                        <Group noWrap>
-                                            <Text>Zoom out</Text>
-                                            <Kbd>-</Kbd>
-                                        </Group>
-                                    )
-                                }
-                            >
-                                <ActionIcon
-                                    onClick={() => zoomByDelta(-15)}
-                                >
-                                    <IconZoomOut size={24} stroke={1} />
-                                </ActionIcon>
-                            </Tooltip>
+                    <ScreenshotDetails mainView={mainView} check={checkData} view={view} />
+                    <Group spacing="sm" noWrap>
+                        <Group
+                            spacing={4}
+                            className={classes.zoomButtonsWrapper}
+                            position="center"
+                            align="center"
+                            noWrap
+                        >
+                            <ZoomToolbar mainView={mainView as MainView} view={view} />
                         </Group>
+
                         <Divider orientation="vertical" />
-                        <SegmentedControl
-                            value={view}
-                            onChange={setView}
-                            data={viewSegmentData}
+
+                        <ViewSegmentedControl view={view} setView={setView} currentCheck={currentCheck} />
+
+                        <Divider orientation="vertical" />
+
+                        <HighlightButton
+                            mainView={mainView as MainView}
+                            disabled={!(view === 'diff' && parseFloat(checkResult.rawMisMatchPercentage) < 5)}
                         />
                         <Divider orientation="vertical" />
-                        {
-                            (view === 'diff' && parseFloat(checkResult.rawMisMatchPercentage) < 5)
-                                ? (
-                                    <HighlightButton mainView={mainView} />
-                                )
-                                : (
-                                    <Tooltip
-                                        withinPortal
-                                        label={
-                                            (
-                                                <Group noWrap>
-                                                    <Text>
-                                                        Difference highlighting, active in diff mode when
-                                                        the difference is less than 5%
-                                                    </Text>
-                                                </Group>
-                                            )
-                                        }
-                                    >
-                                        <div>
-                                            <ActionIcon disabled>
-                                                <IconBulb size={24} stroke={1} />
-                                            </ActionIcon>
-                                        </div>
-                                    </Tooltip>
-                                )
-                        }
-                        <Divider orientation="vertical" />
-                        <Tooltip
-                            label={
-                                (
-                                    <Group noWrap>
-                                        <Text>Remove selected ignore regions</Text>
-                                        <Kbd>Del</Kbd>
-                                        {' or '}
-                                        <Kbd>Backspace</Kbd>
-                                    </Group>
-                                )
-                            }
-                        >
-                            <ActionIcon
-                                disabled={!visibleRegionRemoveButton}
-                                onClick={() => mainView.removeActiveIgnoreRegions()}
-                            >
-                                <IconShapeOff size={24} stroke={1} />
-                            </ActionIcon>
-                        </Tooltip>
 
-                        <Tooltip
-                            label={
-                                (
-                                    <Group noWrap>
-                                        <Text>Add ignore region</Text>
-                                        <Kbd>A</Kbd>
-                                    </Group>
-                                )
-                            }
-                        >
-                            <ActionIcon
-                                disabled={view === 'slider'}
-                                onClick={() => mainView.addIgnoreRegion({ name: 'ignore_rect', strokeWidth: 0 })}
-                            >
-                                <IconShape size={24} stroke={1} />
-                            </ActionIcon>
-                        </Tooltip>
+                        <RegionsToolbar mainView={mainView} baselineId={baselineId} view={view} />
 
-                        <Tooltip
-                            withinPortal
-                            label={
-                                (
-                                    <Group noWrap>
-                                        <Text>Save ignore Regions</Text>
-                                        <Kbd>S</Kbd>
-                                    </Group>
-                                )
-                            }
-                        >
-                            <ActionIcon
-                                onClick={() => MainView.sendIgnoreRegions(baselineId!, mainView.getRectData())}
-                            >
-                                <IconDeviceFloppy size={24} stroke={1} />
-                            </ActionIcon>
-                        </Tooltip>
                         <Divider orientation="vertical" />
                         <AcceptButton
                             check={currentCheck}
@@ -819,17 +284,12 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
                 <Group
                     spacing={4}
                     align="start"
-                    sx={{
-                        width: '100%',
-                    }}
+                    sx={{ width: '100%' }}
                     noWrap
                 >
                     {/* Related checks */}
                     <Group
                         align="start"
-                        // style={
-                        //     { width: '10%' }
-                        // }
                         noWrap
                     >
                         <RelatedChecks
@@ -859,8 +319,6 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
                                     ),
                                     width: '100%',
                                     height: '100%',
-                                    // width: `${vWidth - 220}px`,
-                                    // height: `${vHeight - 150}px`,
                                 }
                             }
                         >

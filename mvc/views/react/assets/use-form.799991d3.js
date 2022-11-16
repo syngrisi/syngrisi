@@ -1092,7 +1092,7 @@ function cb(a, b2, c2) {
     null == c2 ? a.defaultValue = "" + a._wrapperState.initialValue : a.defaultValue !== "" + c2 && (a.defaultValue = "" + c2);
 }
 var eb = Array.isArray;
-function fb(a, b2, c2, d2) {
+function fb$1(a, b2, c2, d2) {
   a = a.options;
   if (b2) {
     b2 = {};
@@ -1290,7 +1290,7 @@ function xb(a) {
   a.correspondingUseElement && (a = a.correspondingUseElement);
   return 3 === a.nodeType ? a.parentNode : a;
 }
-var yb = null, zb = null, Ab = null;
+var yb = null, zb$1 = null, Ab = null;
 function Bb(a) {
   if (a = Cb(a)) {
     if ("function" !== typeof yb)
@@ -1300,12 +1300,12 @@ function Bb(a) {
   }
 }
 function Eb(a) {
-  zb ? Ab ? Ab.push(a) : Ab = [a] : zb = a;
+  zb$1 ? Ab ? Ab.push(a) : Ab = [a] : zb$1 = a;
 }
 function Fb() {
-  if (zb) {
-    var a = zb, b2 = Ab;
-    Ab = zb = null;
+  if (zb$1) {
+    var a = zb$1, b2 = Ab;
+    Ab = zb$1 = null;
     Bb(a);
     if (b2)
       for (a = 0; a < b2.length; a++)
@@ -1325,7 +1325,7 @@ function Jb(a, b2, c2) {
   try {
     return Gb(a, b2, c2);
   } finally {
-    if (Ib = false, null !== zb || null !== Ab)
+    if (Ib = false, null !== zb$1 || null !== Ab)
       Hb(), Fb();
   }
 }
@@ -5116,7 +5116,7 @@ function Fj(a, b2, c2) {
               case "select":
                 a.multiple = !!d2.multiple;
                 f2 = d2.value;
-                null != f2 ? fb(a, !!d2.multiple, f2, false) : null != d2.defaultValue && fb(
+                null != f2 ? fb$1(a, !!d2.multiple, f2, false) : null != d2.defaultValue && fb$1(
                   a,
                   !!d2.multiple,
                   d2.defaultValue,
@@ -5701,12 +5701,12 @@ function ek(a, b2) {
                 var r2 = e2._wrapperState.wasMultiple;
                 e2._wrapperState.wasMultiple = !!f2.multiple;
                 var y2 = f2.value;
-                null != y2 ? fb(e2, !!f2.multiple, y2, false) : r2 !== !!f2.multiple && (null != f2.defaultValue ? fb(
+                null != y2 ? fb$1(e2, !!f2.multiple, y2, false) : r2 !== !!f2.multiple && (null != f2.defaultValue ? fb$1(
                   e2,
                   !!f2.multiple,
                   f2.defaultValue,
                   true
-                ) : fb(e2, !!f2.multiple, f2.multiple ? [] : "", false));
+                ) : fb$1(e2, !!f2.multiple, f2.multiple ? [] : "", false));
             }
             e2[Pf] = f2;
           } catch (t2) {
@@ -7481,7 +7481,7 @@ yb = function(a, b2, c2) {
       ib(a, c2);
       break;
     case "select":
-      b2 = c2.value, null != b2 && fb(a, !!c2.multiple, b2, false);
+      b2 = c2.value, null != b2 && fb$1(a, !!c2.multiple, b2, false);
   }
 };
 Gb = Rk;
@@ -20682,6 +20682,11 @@ function wz(r2) {
   var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, kz);
   return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-browser", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("rect", { x: 4, y: 4, width: 16, height: 16, rx: 1 }), react.exports.createElement("line", { x1: 4, y1: 8, x2: 20, y2: 8 }), react.exports.createElement("line", { x1: 8, y1: 4, x2: 8, y2: 8 }));
 }
+var fb = ["size", "color", "stroke"];
+function zb(r2) {
+  var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, fb);
+  return react.exports.createElement("svg", t({ xmlns: "http://www.w3.org/2000/svg", className: "icon icon-tabler icon-tabler-bulb", width: l2, height: l2, viewBox: "0 0 24 24", strokeWidth: s, stroke: a, fill: "none", strokeLinecap: "round", strokeLinejoin: "round" }, h2), react.exports.createElement("path", { stroke: "none", d: "M0 0h24v24H0z", fill: "none" }), react.exports.createElement("path", { d: "M3 12h1m8 -9v1m8 8h1m-15.4 -6.4l.7 .7m12.1 -.7l-.7 .7" }), react.exports.createElement("path", { d: "M9 16a5 5 0 1 1 6 0a3.5 3.5 0 0 0 -1 3a2 2 0 0 1 -4 0a3.5 3.5 0 0 0 -1 -3" }), react.exports.createElement("line", { x1: 9.7, y1: 17, x2: 14.3, y2: 17 }));
+}
 var hj = ["size", "color", "stroke"];
 function dj(r2) {
   var n2 = r2.size, l2 = void 0 === n2 ? 24 : n2, i = r2.color, a = void 0 === i ? "currentColor" : i, c2 = r2.stroke, s = void 0 === c2 ? 2 : c2, h2 = o(r2, hj);
@@ -23160,7 +23165,7 @@ export {
   Fragment as Z,
   Pj as _,
   config as a,
-  QueryObserver as a$,
+  InputsGroup as a$,
   Tooltip as a0,
   CK as a1,
   Loader as a2,
@@ -23171,117 +23176,118 @@ export {
   zV as a7,
   ea as a8,
   Ol as a9,
-  getDefaultZIndex as aA,
-  OptionalPortal as aB,
-  packSx as aC,
-  createPolymorphicComponent as aD,
-  _extends as aE,
-  useFloating as aF,
-  size as aG,
-  useFloatingAutoUpdate as aH,
-  offset as aI,
-  arrow as aJ,
-  shift as aK,
-  flip as aL,
-  inline as aM,
-  isElement$2 as aN,
-  useMergedRef as aO,
-  clsx as aP,
-  FloatingArrow as aQ,
-  getFloatingPosition as aR,
-  UnstyledButton as aS,
-  CheckIcon as aT,
-  useTransition as aU,
-  getTransitionStyles as aV,
-  Overlay as aW,
-  useIsomorphicEffect as aX,
-  useInputProps as aY,
-  keyframes as aZ,
-  InputsGroup as a_,
+  reactDom as aA,
+  getDefaultZIndex as aB,
+  OptionalPortal as aC,
+  packSx as aD,
+  createPolymorphicComponent as aE,
+  _extends as aF,
+  useFloating as aG,
+  size as aH,
+  useFloatingAutoUpdate as aI,
+  offset as aJ,
+  arrow as aK,
+  shift as aL,
+  flip as aM,
+  inline as aN,
+  isElement$2 as aO,
+  useMergedRef as aP,
+  clsx as aQ,
+  FloatingArrow as aR,
+  getFloatingPosition as aS,
+  UnstyledButton as aT,
+  CheckIcon as aU,
+  useTransition as aV,
+  getTransitionStyles as aW,
+  Overlay as aX,
+  useIsomorphicEffect as aY,
+  useInputProps as aZ,
+  keyframes as a_,
   ua as aa,
   RX as ab,
   rWe as ac,
   UZ as ad,
   getAugmentedNamespace as ae,
-  lDe as af,
-  dDe as ag,
-  IMe as ah,
-  DMe as ai,
-  qF as aj,
-  Pbe as ak,
-  Cbe as al,
-  pi as am,
-  Lbe as an,
-  LHe as ao,
-  Y as ap,
-  useNavigate as aq,
-  Routes as ar,
-  Route as as,
-  Global as at,
-  css as au,
-  useDidUpdate as av,
-  useReducedMotion as aw,
-  useWindowEvent as ax,
-  mergeRefs as ay,
-  reactDom as az,
+  zb as af,
+  Pbe as ag,
+  Cbe as ah,
+  pi as ai,
+  Lbe as aj,
+  lDe as ak,
+  dDe as al,
+  IMe as am,
+  DMe as an,
+  qF as ao,
+  LHe as ap,
+  Y as aq,
+  useNavigate as ar,
+  Routes as as,
+  Route as at,
+  Global as au,
+  css as av,
+  useDidUpdate as aw,
+  useReducedMotion as ax,
+  useWindowEvent as ay,
+  mergeRefs as az,
   jsx as b,
-  infiniteQueryBehavior as b0,
-  hasNextPage as b1,
-  hasPreviousPage as b2,
-  Subscribable as b3,
-  shallowEqualObjects as b4,
-  getDefaultState as b5,
-  notifyManager as b6,
-  parseMutationArgs as b7,
-  useQueryClient as b8,
-  useSyncExternalStore as b9,
-  Nme as bA,
-  transitions as bB,
-  assignRef as bC,
-  MANTINE_SIZES as bD,
-  CheckboxIcon as bE,
-  GROUP_POSITIONS as bF,
-  DEFAULT_THEME as bG,
-  MANTINE_COLORS as bH,
-  useMantineColorScheme as bI,
-  GlobalStyles as bJ,
-  NormalizeCSS as bK,
-  useCss as bL,
-  useEmotionCache as bM,
-  defaultMantineEmotionCache as bN,
-  createCache$1 as bO,
-  Link as bP,
-  Dqe as bQ,
-  ya as bR,
-  useParams as bS,
-  tMe as bT,
-  wQ as bU,
-  shouldThrowError as ba,
-  parseQueryArgs as bb,
-  useBaseQuery as bc,
-  ReactDOM as bd,
-  Portal as be,
-  NavigationContext as bf,
-  useLocation as bg,
-  B9 as bh,
-  wue as bi,
-  gW as bj,
-  wz as bk,
-  mF as bl,
-  Uye as bm,
-  Lqe as bn,
-  Iqe as bo,
-  I9 as bp,
-  N9 as bq,
-  P5 as br,
-  NP as bs,
-  Qa as bt,
-  L3 as bu,
-  CMe as bv,
-  _He as bw,
-  Iee as bx,
-  commonjsGlobal as by,
-  rle as bz,
+  QueryObserver as b0,
+  infiniteQueryBehavior as b1,
+  hasNextPage as b2,
+  hasPreviousPage as b3,
+  Subscribable as b4,
+  shallowEqualObjects as b5,
+  getDefaultState as b6,
+  notifyManager as b7,
+  parseMutationArgs as b8,
+  useQueryClient as b9,
+  rle as bA,
+  Nme as bB,
+  transitions as bC,
+  assignRef as bD,
+  MANTINE_SIZES as bE,
+  CheckboxIcon as bF,
+  GROUP_POSITIONS as bG,
+  DEFAULT_THEME as bH,
+  MANTINE_COLORS as bI,
+  useMantineColorScheme as bJ,
+  GlobalStyles as bK,
+  NormalizeCSS as bL,
+  useCss as bM,
+  useEmotionCache as bN,
+  defaultMantineEmotionCache as bO,
+  createCache$1 as bP,
+  Link as bQ,
+  Dqe as bR,
+  ya as bS,
+  useParams as bT,
+  tMe as bU,
+  wQ as bV,
+  useSyncExternalStore as ba,
+  shouldThrowError as bb,
+  parseQueryArgs as bc,
+  useBaseQuery as bd,
+  ReactDOM as be,
+  Portal as bf,
+  NavigationContext as bg,
+  useLocation as bh,
+  B9 as bi,
+  wue as bj,
+  gW as bk,
+  wz as bl,
+  mF as bm,
+  Uye as bn,
+  Lqe as bo,
+  Iqe as bp,
+  I9 as bq,
+  N9 as br,
+  P5 as bs,
+  NP as bt,
+  Qa as bu,
+  L3 as bv,
+  CMe as bw,
+  _He as bx,
+  Iee as by,
+  commonjsGlobal as bz,
   createStyles as c,
   useMantineTheme as d,
   Container as e,

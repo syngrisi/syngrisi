@@ -85,7 +85,6 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, size = 19 }:
     };
 
     return (
-
         <Tooltip
             withinPortal
             label={
@@ -125,7 +124,7 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, size = 19 }:
                             : (<><BsHandThumbsUp size={size} /> {notAcceptedIcon}</>)
                     }
                     action={handleAcceptCheckClick}
-                    title="Accept the check actual screenshot"
+                    // title="Accept the check actual screenshot"
                     loading={mutationAcceptCheck.isLoading}
                     confirmLabel="Accept"
                     size={size}

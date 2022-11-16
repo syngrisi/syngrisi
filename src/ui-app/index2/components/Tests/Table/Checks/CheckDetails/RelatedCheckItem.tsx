@@ -13,11 +13,11 @@ import { PreviewCheckTooltipLabel } from '../PreviewCheckTooltipLabel';
 
 interface Props {
     checkData: any
-    setActiveCheck: any
-    activeCheck: any
+    setActiveCheckId: any
+    activeCheckId: any
 }
 
-export function RelatedCheckItem({ checkData, activeCheck, setActiveCheck }: Props) {
+export function RelatedCheckItem({ checkData, activeCheckId, setActiveCheckId }: Props) {
     const check = checkData;
     const theme = useMantineTheme();
     const imageFilename = check.diffId?.filename || check.actualSnapshotId?.filename || check.baselineId?.filename;
@@ -25,7 +25,7 @@ export function RelatedCheckItem({ checkData, activeCheck, setActiveCheck }: Pro
     const [checksViewSize] = useLocalStorage({ key: 'check-view-size', defaultValue: 'medium' });
 
     const handleItemClick = () => {
-        setActiveCheck(() => check._id);
+        setActiveCheckId(() => check._id);
     };
 
     return (
@@ -41,7 +41,7 @@ export function RelatedCheckItem({ checkData, activeCheck, setActiveCheck }: Pro
                 width: '88%',
                 borderBottom: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[2]}`,
                 // eslint-disable-next-line no-nested-ternary
-                backgroundColor: (check._id === activeCheck)
+                backgroundColor: (check._id === activeCheckId)
                     ? (theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[2])
                     : '',
 
