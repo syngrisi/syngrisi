@@ -124,7 +124,6 @@ export function CheckModal({ firstPageQuery }: Props) {
                     <Group
                         noWrap
                         spacing="xs"
-                        // sx={{ width: '50%' }}
                     >
                         <ViewPortLabel
                             check={checkData}
@@ -169,33 +168,7 @@ export function CheckModal({ firstPageQuery }: Props) {
                             }
                         </Text>
                     </Group>
-
-                    {/* <Group spacing={8}> */}
-
-                    {/*    <ThemeIcon color="gray.3" variant="subtle" size={32} p={4} ml={8}> */}
-                    {/*        <OsIcon */}
-                    {/*            size={20} */}
-                    {/*            os={checkData.os} */}
-                    {/*        /> */}
-                    {/*    </ThemeIcon> */}
-                    {/*    <ThemeIcon color="gray.3" variant="subtle" size={32} p={4}> */}
-                    {/*        <BrowserIcon */}
-                    {/*            size={20} */}
-                    {/*            browser={checkData.browserName} */}
-                    {/*        /> */}
-                    {/*    </ThemeIcon> */}
-                    {/*    <ViewPortLabel */}
-                    {/*        check={checkData} */}
-                    {/*        color="gray.2" */}
-                    {/*        sizes={sizes} */}
-                    {/*        size="lg" */}
-                    {/*        checksViewSize={checksViewSize} */}
-                    {/*        fontSize="14px" */}
-                    {/*    /> */}
-                    {/*    <Status check={checkData} size="lg" /> */}
-                    {/* </Group> */}
                 </Group>
-
             );
         }
         return '';
@@ -206,7 +179,6 @@ export function CheckModal({ firstPageQuery }: Props) {
             checkModalHandlers.open();
         }
     }, [query.checkId]);
-    // const iframeSrc = query.checkId ? `/checkview2?id=${checkId}` : '';
 
     return (
         <Modal

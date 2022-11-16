@@ -69,18 +69,13 @@ export function RelatedCheckItem({ checkData, activeCheckId, setActiveCheckId }:
                             <Image
                                 src={imagePreviewSrc}
                                 width="125px"
-                                // height="200px"
                                 fit="contain"
                                 withPlaceholder
                                 alt={check.name}
                                 styles={
                                     () => ({
                                         image: {
-                                            // cursor: 'pointer',
-                                            // height: 'auto',
-                                            // aspectRatio: '1/1',
                                             maxHeight: 150,
-                                            // height: '10%!important',
                                         },
                                     })
                                 }
@@ -113,13 +108,11 @@ export function RelatedCheckItem({ checkData, activeCheckId, setActiveCheckId }:
                                 <Text
                                     size="xs"
                                     lineClamp={1}
-                                    // sx={{ maxWidth: '70%' }}
                                 >
                                     {check.browserName}
                                 </Text>
                                 <Text
                                     size="xs"
-                                    // lineClamp={1}
                                     sx={{ minWidth: '30%' }}
                                 >
                                     - {check.browserVersion}
@@ -132,13 +125,6 @@ export function RelatedCheckItem({ checkData, activeCheckId, setActiveCheckId }:
                                 check={check}
                                 size="xs"
                                 variant="filled"
-                                // style={
-                                //     {
-                                //         opacity: 0.9,
-                                //         backgroundColor: theme.colors.dark[9],
-                                //
-                                //     }
-                                // }
                             />
                         </div>
                     </div>

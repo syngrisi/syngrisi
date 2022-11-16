@@ -120,7 +120,7 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
             return baselineQuery.data?.results[0]._id as string;
         }
         return '';
-    }, [JSON.stringify(baselineQuery.data?.results)]);
+    }, [baselineQuery.data?.timestamp]);
 
     useEffect(function destroyMainView() {
         if (mainView) {
@@ -183,7 +183,7 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
             mainView.getSnapshotIgnoreRegionsDataAndDrawRegions(baselineId);
         }
     }, [
-        JSON.stringify(baselineQuery.data?.results),
+        baselineQuery.data?.timestamp,
         mainView?.toString(),
     ]);
 

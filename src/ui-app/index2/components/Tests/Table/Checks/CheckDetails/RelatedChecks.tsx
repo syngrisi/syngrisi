@@ -22,8 +22,7 @@ export function RelatedChecks(
     const [openedSort, sortHandler] = useDisclosure(false);
     const [openedFilter, filterHandler] = useDisclosure(false);
     const [filter, setFilter] = useState(['name']);
-    const [opened, setOpened] = useState(true);
-    const title = opened ? 'Close related checks' : 'Open related checks';
+    const title = related.opened ? 'Close related checks' : 'Open related checks';
 
     useEffect(function onSortChange() {
         related.relatedChecksQuery.firstPageQuery.refetch();
@@ -59,14 +58,13 @@ export function RelatedChecks(
                     <Group>
                         <Tooltip label={title} withinPortal>
                             <Burger
-                                opened={opened}
+                                opened={related.opened}
                                 styles={{
                                     // burger
                                 }}
                                 size={16}
                                 onClick={() => {
                                     hideRelatedChecks();
-                                    setOpened((o) => !o);
                                 }}
                                 title={title}
                             />
