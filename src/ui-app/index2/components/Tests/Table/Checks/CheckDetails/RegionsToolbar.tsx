@@ -123,9 +123,14 @@ export function RegionsToolbar({ mainView, baselineId, view }: Props) {
                 withinPortal
                 label={
                     (
-                        <Group noWrap>
+                        <Group>
                             <Text>Save ignore Regions</Text>
-                            <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>alt+S</Kbd>
+                            <Group align="left" spacing={4} noWrap>
+
+                                <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>Alt</Kbd>
+                                +
+                                <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>S</Kbd>
+                            </Group>
                         </Group>
                     )
                 }
