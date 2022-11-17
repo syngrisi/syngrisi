@@ -16,6 +16,7 @@ import {
 import { IconChevronDown, IconX } from '@tabler/icons';
 import { useEffect, useMemo, useState } from 'react';
 import { useClickOutside, useDebouncedValue, useDisclosure } from '@mantine/hooks';
+import { createStyles } from '@mantine/styles';
 import { useDistinctQuery } from '../../../shared/hooks/useDistinctQuery';
 import { escapeRegExp } from '../../../shared/utils/utils';
 import { useParams } from '../../hooks/useParams';
@@ -85,12 +86,14 @@ export function QuickFilter() {
     const quickFilterObject: any = useMemo(
         () => {
             const arr = [];
-            if (debouncedQuickFilter) arr.push({
-                name: {
-                    $regex: escapeRegExp(debouncedQuickFilter),
-                    $options: 'im',
-                },
-            });
+            if (debouncedQuickFilter) {
+                arr.push({
+                    name: {
+                        $regex: escapeRegExp(debouncedQuickFilter),
+                        $options: 'im',
+                    },
+                });
+            }
             if (browserChipsData.length > 0) arr.push({ browserName: { $in: browserChipsData } });
             if (platformChipsData.length > 0) arr.push({ os: { $in: platformChipsData } });
             if (viewportChipsData.length > 0) arr.push({ viewport: { $in: viewportChipsData } });
@@ -124,9 +127,22 @@ export function QuickFilter() {
         setBranchChipsData([]);
     };
 
-    return (
-        <>
+    const useStyles = createStyles(
+        () => (
+            {
+                quickFilter: {
+                    '@media (max-width: 1024px)': {
+                        display: 'none',
+                    },
+                },
+            }
+        ),
+    );
 
+    const { classes } = useStyles();
+
+    return (
+        <Group className={classes.quickFilter}>
             <Text size={14}>Quick Filter: </Text>
             <TextInput
                 value={quickFilter}
@@ -290,6 +306,6 @@ export function QuickFilter() {
                     </Popover.Dropdown>
                 </Popover>
             </div>
-        </>
+        </Group>
     );
 }
