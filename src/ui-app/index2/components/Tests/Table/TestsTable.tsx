@@ -17,6 +17,7 @@ import { CheckModal } from './Checks/CheckModal';
 import RemoveTestsButton from './RemoveTestsButton';
 import AcceptTestsButton from './AcceptTestsButton';
 import { AppContext } from '../../../AppContext';
+import { useParams } from '../../../hooks/useParams';
 
 const useStyles = createStyles(testsCreateStyle as any);
 
@@ -28,6 +29,7 @@ interface Props {
 }
 
 export default function TestsTable({ infinityQuery, firstPageQuery, visibleFields, size = '100%' }: Props) {
+    const { query } = useParams();
     const { updateToolbar }: any = useContext(AppContext);
     const { data } = infinityQuery;
     const flatData = data ? data.pages.flat().map((x: any) => x.results).flat() : [];
@@ -36,6 +38,12 @@ export default function TestsTable({ infinityQuery, firstPageQuery, visibleField
     const [scrolled, setScrolled] = useState(false);
     const { classes, cx } = useStyles();
     const [selection, setSelection]: [string[], any] = useState([]);
+
+    useEffect(function resetSelection() {
+        setSelection(() => ([]));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [JSON.stringify(query.base_filter), query.app]);
+
     const scrollAreaRef = useRef(null);
     // eslint-disable-next-line max-len
     const toggleAllRows = () => setSelection((current: string) => (current.length === flatData.length ? [] : flatData.map((item: ILog) => item.id)));

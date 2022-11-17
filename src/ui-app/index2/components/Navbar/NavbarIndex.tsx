@@ -96,6 +96,7 @@ export default function NavbarIndex() {
     }, [
         query?.app,
         query?.groupBy,
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         JSON.stringify(navbarFilterObject),
         query.sortByNavbar,
     ]);
@@ -129,6 +130,7 @@ export default function NavbarIndex() {
                             component={ScrollArea}
                             styles={{ scrollbar: { marginTop: '74px' } }}
                             pr={12}
+                            pb={90}
                         >
                             <Group position="apart" align="end" sx={{ width: '100%' }}>
                                 <NavbarGroupBySelect

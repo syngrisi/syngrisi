@@ -7,10 +7,8 @@ import {
     Modal,
     Stack,
     Text,
-    Tooltip,
-    useMantineTheme,
 } from '@mantine/core';
-import { useDisclosure, useDocumentTitle, useLocalStorage } from '@mantine/hooks';
+import { useDisclosure, useDocumentTitle } from '@mantine/hooks';
 import { useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { IconX } from '@tabler/icons';
@@ -18,11 +16,6 @@ import { useParams } from '../../../../hooks/useParams';
 import { GenericService } from '../../../../../shared/services';
 import { errorMsg } from '../../../../../shared/utils';
 import { CheckDetails } from './CheckDetails/CheckDetails';
-import { BrowserIcon } from '../../../../../shared/components/Check/BrowserIcon';
-import { OsIcon } from '../../../../../shared/components/Check/OsIcon';
-import { ViewPortLabel } from './ViewPortLabel';
-import { sizes } from './checkSizes';
-import { Status } from '../../../../../shared/components/Check/Status';
 
 interface Props {
     firstPageQuery: any,
@@ -30,7 +23,6 @@ interface Props {
 
 export function CheckModal({ firstPageQuery }: Props) {
     const { query, setQuery } = useParams();
-    const [checksViewSize] = useLocalStorage({ key: 'check-view-size', defaultValue: 'medium' });
     const [checkModalOpened, checkModalHandlers] = useDisclosure(false);
 
     const closeHandler = () => {
@@ -54,7 +46,6 @@ export function CheckModal({ firstPageQuery }: Props) {
         ),
         {
             enabled: checkModalOpened,
-            // enabled: false,
             refetchOnWindowFocus: false,
             onError: (e) => {
                 errorMsg({ error: e });
@@ -64,16 +55,9 @@ export function CheckModal({ firstPageQuery }: Props) {
 
     const checkData: any = useMemo(
         () => checkQuery?.data?.results[0]!,
-        [JSON.stringify(checkQuery?.data?.results)],
+        [checkQuery?.data?.timestamp],
     );
     useDocumentTitle(checkData?.name);
-
-    const theme = useMantineTheme();
-    const iconsColor = useMemo(
-        () => (theme.colorScheme === 'dark'
-            ? theme.colors.gray[3]
-            : theme.colors.dark[9]), [theme.colorScheme],
-    );
 
     const keyEvents = () => {
         document.addEventListener('keydown',
@@ -96,84 +80,6 @@ export function CheckModal({ firstPageQuery }: Props) {
         mouseEvents();
     }, []);
 
-    const title = useMemo(() => {
-        if (checkData) {
-            return (
-                <Group position="apart" sx={{ width: '100%' }} noWrap>
-                    <Group
-                        position="left"
-                        align="center"
-                        spacing="xs"
-                        sx={{ position: 'relative' }}
-                        noWrap
-                    >
-                        <Status size="lg" check={checkData} variant="filled" />
-
-                        <Tooltip
-                            withinPortal
-                            label={
-                                `Created: ${checkData.createdDate}`
-                            }
-                        >
-                            <Text lineClamp={1}>
-                                {checkData.app.name} / {checkData.suite.name} / {checkData.test.name} / {checkData?.name}
-                            </Text>
-                        </Tooltip>
-                    </Group>
-
-                    <Group
-                        noWrap
-                        spacing="xs"
-                    >
-                        <ViewPortLabel
-                            check={checkData}
-                            // color={theme.colorScheme === 'dark' ? 'gray.2' : 'gray.8'}
-                            color="blue"
-                            sizes={sizes}
-                            size="lg"
-                            checksViewSize={checksViewSize}
-                            fontSize="12px"
-                        />
-                        {/* <Status size="lg" check={checkData} /> */}
-                        <ActionIcon variant="light" size={32} p={4} ml={4}>
-                            <OsIcon
-                                size={20}
-                                color={iconsColor}
-                                os={checkData.os}
-                            />
-                        </ActionIcon>
-                        <Text size={12} lineClamp={1}>{checkData.os}</Text>
-
-                        <ActionIcon variant="light" size={32} p={4}>
-                            <BrowserIcon
-                                size={20}
-                                color={iconsColor}
-                                browser={checkData.browserName}
-                            />
-                        </ActionIcon>
-                        <Text
-                            lineClamp={1}
-                            size={12}
-                            title={
-                                checkData.browserFullVersion
-                                    ? `${checkData.browserFullVersion}`
-                                    : ''
-                            }
-                        >
-                            {checkData.browserName}
-                            {
-                                checkData.browserVersion
-                                    ? ` - ${checkData.browserVersion}`
-                                    : ''
-                            }
-                        </Text>
-                    </Group>
-                </Group>
-            );
-        }
-        return '';
-    }, [checkData?._id]);
-
     useEffect(function onCheckIdChange() {
         if (query.checkId) {
             checkModalHandlers.open();
@@ -184,7 +90,6 @@ export function CheckModal({ firstPageQuery }: Props) {
         <Modal
             opened={checkModalOpened}
             centered
-            title={title}
             size="auto"
             onClose={closeHandler}
             sx={{ marginTop: -25 }}

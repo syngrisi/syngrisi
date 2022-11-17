@@ -34,6 +34,8 @@ export function RelatedCheckItem({ checkData, activeCheckId, setActiveCheckId }:
             spacing={4}
             mt={8}
             mb={8}
+            pr={8}
+            pl={8}
             pt={8}
             pb={8}
             sx={{
@@ -63,7 +65,13 @@ export function RelatedCheckItem({ checkData, activeCheckId, setActiveCheckId }:
                     <PreviewCheckTooltipLabel check={check} />
                 }
             >
-                <Paper shadow="sm" pb={0}>
+                <Paper
+                    shadow="sm"
+                    pr={4}
+                    pl={4}
+                    pt={4}
+                    pb={4}
+                >
                     <div style={{ position: 'relative' }}>
                         <Stack align="center" mb={4}>
                             <Image

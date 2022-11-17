@@ -4,7 +4,7 @@ var __publicField = (obj, key, value) => {
   __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
   return value;
 };
-import { r as react, W as queryString, b as jsx, j as jsxs, P as Paper, g as Title, X as Stack, T as Text, G as Group, h as Button, Y as Epe, k as ky, a as config, u as useQuery, d as useMantineTheme, Z as Fragment, q as TextInput, t as ActionIcon, n as lAe, _ as Pj, D as useLocalStorage, e as Container, $ as Dge, c as createStyles, l as log, a0 as Tooltip, a1 as CK, a2 as Loader, a3 as React, a4 as Transition, a5 as Xfe, a6 as rze, A as Anchor, a7 as zV, a8 as ea, a9 as Ol, aa as ua, ab as RX, ac as rWe, ad as UZ, s as Checkbox, ae as getAugmentedNamespace, af as zb, ag as Pbe, ah as Cbe, ai as pi, aj as Lbe, E as useHotkeys, ak as lDe, al as dDe, am as IMe, an as DMe, ao as qF, L as LoadingOverlay, ap as LHe, B as Box, o as useSearchParams, aq as Y, Q as QueryClient, f as useDocumentTitle, ar as useNavigate, F as QueryClientProvider, H as ColorSchemeProvider, M as MantineProvider, as as Routes, at as Route, I as createRoot, J as BrowserRouter } from "./use-form.799991d3.js";
+import { r as react, W as queryString, b as jsx, j as jsxs, P as Paper, g as Title, X as Stack, T as Text, G as Group, h as Button, Y as Epe, k as ky, a as config, u as useQuery, d as useMantineTheme, Z as Fragment, q as TextInput, t as ActionIcon, n as lAe, _ as Pj, D as useLocalStorage, e as Container, $ as Dge, c as createStyles, l as log, a0 as Tooltip, a1 as CK, a2 as Loader, a3 as React, a4 as Transition, a5 as Xfe, a6 as rze, A as Anchor, a7 as zV, a8 as ea, a9 as Ol, aa as ua, ab as RX, ac as rWe, ad as UZ, s as Checkbox, ae as getAugmentedNamespace, af as zb, E as useHotkeys, ag as Pbe, ah as Cbe, ai as pi, aj as Lbe, ak as lDe, al as dDe, am as IMe, an as DMe, ao as qF, f as useDocumentTitle, L as LoadingOverlay, ap as LHe, B as Box, o as useSearchParams, aq as Y, Q as QueryClient, ar as useNavigate, F as QueryClientProvider, H as ColorSchemeProvider, M as MantineProvider, as as Routes, at as Route, I as createRoot, J as BrowserRouter } from "./use-form.799991d3.js";
 import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, G as GenericService, e as errorMsg, a as useDisclosure, b as useClickOutside, c as escapeRegExp, P as Popover, d as ScrollArea, f as Chip, D as Divider, l as links, H as Header, B as Burger, g as HeaderLogo, h as SafeSelect, o as openSpotlight, K as Kbd, i as useOs, U as UserMenu, j as Breadcrumbs, k as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, m as Skeleton, n as useInView, F as FocusTrap, p as getNavigationItem, q as stopNavigationProgress, r as resetNavigationProgress, t as useToggle, v as useInfinityScroll, N as Navbar, w as Badge, A as Affix, x as ActionPopoverIcon, y as UserHooks, T as ThemeIcon, z as encodeQueryParams, I as Image$1, E as Card, O as Collapse, Q as SegmentedControl, V as Table, W as useInputState, X as RelativeDrawer, Y as LogicalGroup, Z as uuid, $ as useNavProgressFetchEffect, a0 as AppShell, a1 as ReactQueryDevtools, a2 as useColorScheme, a3 as navigationData, a4 as SpotlightProvider, a5 as NotificationsProvider, a6 as NavigationProgress, a7 as ModalsProvider, a8 as QueryParamProvider, a9 as ReactRouter6Adapter } from "./LogicalGroup.ae2dc560.js";
 function useDebouncedValue(value, wait, options = { leading: false }) {
   const [_value, setValue] = react.exports.useState(value);
@@ -3965,7 +3965,10 @@ function useIndexSubpageEffect(title) {
     setAppTitle
   } = react.exports.useContext(AppContext);
   react.exports.useEffect(() => {
-    const pageData = getNavigationItem(title);
+    const pageData = getNavigationItem(title) || {
+      title: null,
+      crumbs: []
+    };
     setAppTitle(pageData.title);
     setBreadCrumbs(pageData.crumbs.map((item) => /* @__PURE__ */ jsx(Anchor, {
       href: item.href,
@@ -3996,8 +3999,12 @@ function NavbarGroupBySelect({
     "test-distinct/status": "By Test Status",
     "test-distinct/markedAs": "By Accept Status"
   };
-  const title = query == null ? void 0 : query.groupBy;
-  useIndexSubpageEffect(subpageMap[title] || "Test Results");
+  const title = react.exports.useMemo(() => {
+    if (!(query == null ? void 0 : query.checkId))
+      return String(query == null ? void 0 : query.groupBy);
+    return "";
+  }, [query == null ? void 0 : query.groupBy, query == null ? void 0 : query.checkId]);
+  useIndexSubpageEffect(subpageMap[title] || "");
   react.exports.useEffect(function onQueryGroupByUpdated() {
     if (!query.groupBy)
       return;
@@ -22083,7 +22090,6 @@ class MainView {
     __publicField(this, "diffView");
     __publicField(this, "expectedImage");
     __publicField(this, "diffImage");
-    __publicField(this, "_currentView");
     fabric$1.fabric.Object.prototype.objectCaching = false;
     this.canvasElementWidth = canvasElementWidth;
     this.canvasElementHeight = canvasElementHeight;
@@ -22096,7 +22102,6 @@ class MainView {
       preserveObjectStacking: true,
       uniformScaling: false
     });
-    this._currentView = "actual";
     this.defaultMode = "";
     if (actual) {
       this.sliderView = new SideToSideView(
@@ -22111,12 +22116,6 @@ class MainView {
     this.actualView = new SimpleView(this, "actual");
     this.diffView = new SimpleView(this, "diff");
     this.actualView.render();
-  }
-  get currentView() {
-    return this._currentView;
-  }
-  set currentView(value) {
-    this._currentView = value;
   }
   static calculateExpectedCanvasViewportAreaSize() {
     const viewportWidth = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
@@ -22168,7 +22167,6 @@ class MainView {
     await this.sliderView.destroy();
   }
   async switchView(view) {
-    this.currentView = view;
     await this.destroyAllViews();
     this.sliderView = new SideToSideView(
       {
@@ -22657,8 +22655,7 @@ function RelatedChecks({
   const [openedSort, sortHandler] = useDisclosure(false);
   const [openedFilter, filterHandler] = useDisclosure(false);
   const [filter, setFilter] = react.exports.useState(["name"]);
-  const [opened, setOpened] = react.exports.useState(true);
-  const title = opened ? "Close related checks" : "Open related checks";
+  const title = related.opened ? "Close related checks" : "Open related checks";
   react.exports.useEffect(function onSortChange() {
     related.relatedChecksQuery.firstPageQuery.refetch();
   }, [`${related.sortBy}_${related.sortOrder}`]);
@@ -22705,12 +22702,11 @@ function RelatedChecks({
             label: title,
             withinPortal: true,
             children: /* @__PURE__ */ jsx(Burger, {
-              opened,
+              opened: related.opened,
               styles: {},
               size: 16,
               onClick: () => {
                 hideRelatedChecks();
-                setOpened((o) => !o);
               },
               title
             })
@@ -23190,6 +23186,20 @@ function ViewSegmentedControl({
   const {
     classes
   } = useStyles$2();
+  useHotkeys([
+    ["Digit1", () => setView("expected")],
+    ["Digit2", () => setView("actual")],
+    ["Digit3", () => {
+      var _a2;
+      if ((_a2 = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _a2.filename)
+        setView("diff");
+    }],
+    ["Digit4", () => {
+      var _a2;
+      if ((_a2 = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _a2.filename)
+        setView("slider");
+    }]
+  ]);
   const viewSegmentData = [{
     label: /* @__PURE__ */ jsx(Tooltip, {
       withinPortal: true,
@@ -23748,15 +23758,25 @@ function RegionsToolbar({
     }), /* @__PURE__ */ jsx(Tooltip, {
       withinPortal: true,
       label: /* @__PURE__ */ jsxs(Group, {
-        noWrap: true,
         children: [/* @__PURE__ */ jsx(Text, {
           children: "Save ignore Regions"
-        }), /* @__PURE__ */ jsx(Kbd, {
-          sx: {
-            fontSize: 11,
-            borderBottomWidth: 1
-          },
-          children: "alt+S"
+        }), /* @__PURE__ */ jsxs(Group, {
+          align: "left",
+          spacing: 4,
+          noWrap: true,
+          children: [/* @__PURE__ */ jsx(Kbd, {
+            sx: {
+              fontSize: 11,
+              borderBottomWidth: 1
+            },
+            children: "Alt"
+          }), "+", /* @__PURE__ */ jsx(Kbd, {
+            sx: {
+              fontSize: 11,
+              borderBottomWidth: 1
+            },
+            children: "S"
+          })]
         })]
       }),
       children: /* @__PURE__ */ jsx(ActionIcon, {
@@ -23803,25 +23823,19 @@ function CheckDetails({
   closeHandler
 }) {
   var _a, _b;
+  console.count("CheckDetails");
   const theme = useMantineTheme();
   const {
     classes
   } = useStyles$1();
   const [view, setView] = react.exports.useState("actual");
+  const [mainView2, setMainView] = react.exports.useState(null);
   const checkResult = checkData.result ? JSON.parse(checkData.result) : null;
-  const {
-    setAppTitle
-  } = react.exports.useContext(AppContext);
   const [relatedChecksOpened, relatedChecksHandler] = useDisclosure(true);
   const related = useRelatedChecks(checkData);
   related.opened = relatedChecksOpened;
   related.handler = relatedChecksHandler;
   const currentCheck = react.exports.useMemo(() => related.relatedFlatChecksData.find((x2) => x2._id === related.relatedActiveCheckId) || checkData, [related.relatedActiveCheckId]);
-  console.log("\u{1F479}\u{1F480}\u{1F480}\u{1F480}\u{1F480}\u{1F479}", JSON.stringify(currentCheck));
-  react.exports.useEffect(function changeTitle() {
-    setAppTitle(currentCheck.name);
-  }, [currentCheck.name]);
-  const [mainView2, setMainView] = react.exports.useState(null);
   const baselineQuery = useQuery(["baseline_by_snapshot_id", currentCheck.baselineId._id], () => GenericService.get("baselines", {
     snapshootId: currentCheck.baselineId._id
   }, {
@@ -23842,7 +23856,7 @@ function CheckDetails({
       return (_c = baselineQuery.data) == null ? void 0 : _c.results[0]._id;
     }
     return "";
-  }, [JSON.stringify((_a = baselineQuery.data) == null ? void 0 : _a.results)]);
+  }, [(_a = baselineQuery.data) == null ? void 0 : _a.timestamp]);
   react.exports.useEffect(function destroyMainView() {
     if (mainView2) {
       mainView2.destroyAllViews();
@@ -23890,10 +23904,9 @@ function CheckDetails({
     if (mainView2) {
       mainView2.getSnapshotIgnoreRegionsDataAndDrawRegions(baselineId);
     }
-  }, [JSON.stringify((_b = baselineQuery.data) == null ? void 0 : _b.results), mainView2 == null ? void 0 : mainView2.toString()]);
+  }, [(_b = baselineQuery.data) == null ? void 0 : _b.timestamp, mainView2 == null ? void 0 : mainView2.toString()]);
   react.exports.useEffect(function initView() {
     if (mainView2) {
-      setView("actual");
       if (mainView2.diffImage) {
         setTimeout(() => {
           setView("diff");
@@ -23903,25 +23916,11 @@ function CheckDetails({
   }, [
     mainView2 == null ? void 0 : mainView2.toString()
   ]);
-  react.exports.useEffect(function SwitchView() {
+  react.exports.useEffect(function switchView() {
     if (mainView2) {
       mainView2.switchView(view);
     }
   }, [view]);
-  useHotkeys([
-    ["Digit1", () => setView("expected")],
-    ["Digit2", () => setView("actual")],
-    ["Digit3", () => {
-      var _a2;
-      if ((_a2 = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _a2.filename)
-        setView("diff");
-    }],
-    ["Digit4", () => {
-      var _a2;
-      if ((_a2 = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _a2.filename)
-        setView("slider");
-    }]
-  ]);
   return /* @__PURE__ */ jsx(Group, {
     style: {
       width: "96vw"
@@ -24030,6 +24029,7 @@ function CheckModal({
     query,
     setQuery
   } = useParams();
+  const theme = useMantineTheme();
   const [checksViewSize] = useLocalStorage({
     key: "check-view-size",
     defaultValue: "medium"
@@ -24061,8 +24061,8 @@ function CheckModal({
   const checkData = react.exports.useMemo(() => {
     var _a2;
     return (_a2 = checkQuery == null ? void 0 : checkQuery.data) == null ? void 0 : _a2.results[0];
-  }, [JSON.stringify((_a = checkQuery == null ? void 0 : checkQuery.data) == null ? void 0 : _a.results)]);
-  const theme = useMantineTheme();
+  }, [(_a = checkQuery == null ? void 0 : checkQuery.data) == null ? void 0 : _a.timestamp]);
+  useDocumentTitle(checkData == null ? void 0 : checkData.name);
   const iconsColor = react.exports.useMemo(() => theme.colorScheme === "dark" ? theme.colors.gray[3] : theme.colors.dark[9], [theme.colorScheme]);
   const keyEvents = () => {
     document.addEventListener("keydown", function keyHandler(event) {
@@ -24701,7 +24701,6 @@ function Tests() {
     query
   } = useParams();
   const theme = useMantineTheme();
-  useIndexSubpageEffect("By Runs");
   const [searchParams, setSearchParams] = useSearchParams();
   const [sortOpen, setSortOpen] = react.exports.useState(false);
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = react.exports.useState(false);
