@@ -241,7 +241,12 @@ export function ZoomToolbar(
                             <Group position="apart" noWrap>200%</Group>
                         </Button>
                         <Button
-                            sx={{ width: '100%' }}
+                            styles={{
+                                label: {
+                                    width: '100%',
+                                },
+                            }}
+                            // sx={{ width: '100%' }}
                             pl={8}
                             pr={8}
                             variant="subtle"
@@ -254,12 +259,17 @@ export function ZoomToolbar(
                                 fitImageByWith(`${view}Image`);
                             }}
                         >
-                            <Group sx={{ width: '100%' }} position="left" noWrap>
+                            <Group sx={{ width: '100%' }} position="apart" noWrap>
                                 Fit by width <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>9</Kbd>
                             </Group>
                         </Button>
 
                         <Button
+                            styles={{
+                                label: {
+                                    width: '100%',
+                                },
+                            }}
                             pl={8}
                             pr={8}
                             variant="subtle"
@@ -273,7 +283,7 @@ export function ZoomToolbar(
                                 fitImageIfNeeded(`${view}Image`);
                             }}
                         >
-                            <Group sx={{ width: '100%' }} position="left" noWrap>
+                            <Group sx={{ width: '100%' }} position="apart" noWrap>
                                 Fit to canvas <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>0</Kbd>
                             </Group>
                         </Button>
