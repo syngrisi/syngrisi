@@ -10,7 +10,7 @@ const useStyles = createStyles((theme) => ({
         paddingLeft: 4,
         paddingRight: 4,
     },
-    labels:{
+    labels: {
         '@media (max-width: 1070px)': {
             display: 'none',
         },
@@ -39,6 +39,7 @@ export function ScreenshotDetails({ mainView, view, check }: Props) {
         if (view === 'slider') return null;
         if (mainView) {
             const image = mainView[`${view}Image`];
+            if (view === 'diff' && !mainView?.diffImage) return null;
             return (
                 <Tooltip
                     withinPortal

@@ -1,4 +1,4 @@
-/* eslint-disable no-underscore-dangle,react/jsx-one-expression-per-line,prefer-arrow-callback */
+/* eslint-disable no-underscore-dangle,react/jsx-one-expression-per-line,prefer-arrow-callback,max-len */
 import * as React from 'react';
 import { fabric } from 'fabric';
 import {
@@ -8,9 +8,13 @@ import {
     useMantineTheme,
     Divider,
     createStyles,
+    Tooltip,
+    Text,
+    ActionIcon,
 } from '@mantine/core';
 import {
     useDisclosure,
+    useLocalStorage,
 } from '@mantine/hooks';
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -28,6 +32,11 @@ import { HighlightButton } from './HighlightButton';
 import { ViewSegmentedControl } from './ViewSegmentedControl';
 import { ZoomToolbar } from './ZoomToolbar';
 import { RegionsToolbar } from './RegionsToolbar';
+import { Status } from '../../../../../../shared/components/Check/Status';
+import { ViewPortLabel } from '../ViewPortLabel';
+import { sizes } from '../checkSizes';
+import { OsIcon } from '../../../../../../shared/components/Check/OsIcon';
+import { BrowserIcon } from '../../../../../../shared/components/Check/BrowserIcon';
 
 // eslint-disable-next-line no-unused-vars
 const useStyles = createStyles((theme) => ({
@@ -74,6 +83,7 @@ interface Props {
 }
 
 export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandler }: Props) {
+    const [checksViewSize] = useLocalStorage({ key: 'check-view-size', defaultValue: 'medium' });
     const theme = useMantineTheme();
     const { classes } = useStyles();
     const [view, setView] = useState('actual');
@@ -89,8 +99,6 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
         () => related.relatedFlatChecksData.find((x: any) => x._id === related.relatedActiveCheckId) || checkData,
         [related.relatedActiveCheckId],
     );
-
-    // console.log('👹💀💀💀💀👹', JSON.stringify(currentCheck));
 
     const baselineQuery = useQuery(
         [
@@ -122,18 +130,25 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
         return '';
     }, [baselineQuery.data?.timestamp]);
 
-    useEffect(function destroyMainView() {
-        if (mainView) {
-            mainView.destroyAllViews();
-            mainView.canvas.clear();
-            mainView.canvas.dispose();
-            setMainView(null);
-        }
-    }, [related.relatedActiveCheckId, relatedChecksOpened]);
+    const iconsColor = useMemo(
+        () => (theme.colorScheme === 'dark'
+            ? theme.colors.gray[3]
+            : theme.colors.dark[9]), [theme.colorScheme],
+    );
 
     // init mainView
     useEffect(() => {
+        const destroyMV = async () => {
+            if (mainView) {
+                await mainView.destroyAllViews();
+                mainView.canvas.clear();
+                mainView.canvas.dispose();
+                setMainView(() => null);
+            }
+        };
+
         const initMV = async () => {
+            // init
             fabric.Object.prototype.objectCaching = false;
             const expectedImgSrc = `${config.baseUri}/snapshoots/${currentCheck?.baselineId?.filename}?expectedImg`;
             const expectedImg = await createImageAndWaitForLoad(expectedImgSrc);
@@ -143,7 +158,7 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
             const actualImg = await createImageAndWaitForLoad(actualImgSrc);
 
             // eslint-disable-next-line max-len
-            // document.getElementById('snapshoot').style.height = `${MainView.calculateExpectedCanvasViewportAreaSize().height - 10}px`;
+            document.getElementById('snapshoot').style.height = `${MainView.calculateExpectedCanvasViewportAreaSize().height - 10}px`;
 
             const expectedImage = await imageFromUrl(expectedImg.src);
             const actualImage = await imageFromUrl((actualImg).src);
@@ -151,8 +166,8 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
             const diffImgSrc = `${config.baseUri}/snapshoots/${currentCheck?.diffId?.filename}?diffImg`;
             const diffImage = currentCheck?.diffId?.filename ? await imageFromUrl(diffImgSrc) : null;
 
-            await setMainView((prev: any) => {
-                if (prev) return prev;
+            await setMainView((prev) => {
+                if (prev) return prev; // for dev mode, when components render twice
                 const MV = new MainView(
                     {
                         canvasId: '2d',
@@ -169,13 +184,20 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
                 return MV;
             });
         };
-        setTimeout(() => {
-            initMV();
-        }, 10);
+        // set view
+        destroyMV().then(() => initMV());
     }, [
         related.relatedActiveCheckId,
         relatedChecksOpened,
     ]);
+
+    useEffect(function initView() {
+        if (mainView?.diffImage) {
+            setView(() => 'diff');
+            return;
+        }
+        setView(() => 'actual');
+    }, [mainView?.diffImage]);
 
     useEffect(function afterMainViewCreatedHandleRegions() {
         if (!baselineId) return;
@@ -187,47 +209,9 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
         mainView?.toString(),
     ]);
 
-    useEffect(function initView() {
-        if (mainView) {
-            // setView('actual'); !!!!
-            if (mainView.diffImage) {
-                setTimeout(() => {
-                    setView('diff');
-                }, 10);
-            }
-        }
-    }, [
-        mainView?.toString(),
-        // currentCheck._id,
-    ]);
-
-    // useEffect(function afterMainViewCreated() {
-    // if (mainView) {
-    //     zoomEvents();
-    //     mouseEvents();
-    //     // initial zoom
-    //     fitGreatestImageIfNeeded();
-    // zoomTo(mainView[greatestImage.imageName], greatestImage.dimension);
-    //
-    // const anotherDimension = (greatestImage.dimension === 'height') ? 'width' : 'height';
-    //
-    // if (mainView[greatestImage.imageName][anotherDimension] > mainView.canvas[anotherDimension]) {
-    //     zoomTo(mainView[greatestImage.imageName], anotherDimension);
-    // }
-    //
-    // // initial pan
-    // setTimeout(() => {
-    //     mainView.panToCanvasWidthCenter(greatestImage.imageName);
-    // }, 10);
-    // }
-    // }, [
-    //     mainView?.toString(),
-    // ]);
-
     useEffect(function switchView() {
         if (mainView) {
             mainView.switchView(view);
-            // mainView.currentView = view;
         }
     }, [view]);
 
@@ -235,9 +219,82 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
         <Group style={{ width: '96vw' }} spacing={4}>
 
             <Stack sx={{ width: '100%' }}>
+
+                {/* Title */}
+                <Group position="apart" sx={{ width: '98%' }} noWrap>
+                    <Group
+                        position="left"
+                        align="center"
+                        spacing="xs"
+                        sx={{ position: 'relative' }}
+                        noWrap
+                    >
+                        <Status size="lg" check={currentCheck} variant="filled" />
+
+                        <Tooltip
+                            withinPortal
+                            label={
+                                `Created: ${currentCheck.createdDate}`
+                            }
+                        >
+                            <Text lineClamp={1}>
+                                {currentCheck.app.name} / {currentCheck.suite.name} / {currentCheck.test.name} / {currentCheck?.name}
+                            </Text>
+                        </Tooltip>
+                    </Group>
+
+                    <Group
+                        noWrap
+                        spacing="xs"
+                    >
+                        <ViewPortLabel
+                            check={currentCheck}
+                            // color={theme.colorScheme === 'dark' ? 'gray.2' : 'gray.8'}
+                            color="blue"
+                            sizes={sizes}
+                            size="lg"
+                            checksViewSize={checksViewSize}
+                            fontSize="12px"
+                        />
+                        {/* <Status size="lg" check={checkData} /> */}
+                        <ActionIcon variant="light" size={32} p={4} ml={4}>
+                            <OsIcon
+                                size={20}
+                                color={iconsColor}
+                                os={currentCheck.os}
+                            />
+                        </ActionIcon>
+                        <Text size={12} lineClamp={1}>{currentCheck.os}</Text>
+
+                        <ActionIcon variant="light" size={32} p={4}>
+                            <BrowserIcon
+                                size={20}
+                                color={iconsColor}
+                                browser={currentCheck.browserName}
+                            />
+                        </ActionIcon>
+                        <Text
+                            lineClamp={1}
+                            size={12}
+                            title={
+                                currentCheck.browserFullVersion
+                                    ? `${currentCheck.browserFullVersion}`
+                                    : ''
+                            }
+                        >
+                            {currentCheck.browserName}
+                            {
+                                currentCheck.browserVersion
+                                    ? ` - ${currentCheck.browserVersion}`
+                                    : ''
+                            }
+                        </Text>
+                    </Group>
+                </Group>
+
                 {/* Toolbar */}
                 <Group position="apart" noWrap>
-                    <ScreenshotDetails mainView={mainView} check={checkData} view={view} />
+                    <ScreenshotDetails mainView={mainView} check={currentCheck} view={view} />
                     <Group spacing="sm" noWrap>
                         <Group
                             spacing={4}

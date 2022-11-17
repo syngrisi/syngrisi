@@ -18,14 +18,12 @@ interface Props {
     view: string
     setView: any
     currentCheck: any
-    // viewSegmentData: any
 }
 
 export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
     const { classes } = useStyles();
 
     useHotkeys([
-        // View
         ['Digit1', () => setView('expected')],
         ['Digit2', () => setView('actual')],
         ['Digit3', () => {
@@ -59,6 +57,7 @@ export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
                 </Tooltip>
             ),
             value: 'expected',
+            disabled: currentCheck?.status[0] === 'new',
         },
         {
             label: (
@@ -106,7 +105,7 @@ export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
                     </Tooltip>
                 ),
             value: 'diff',
-            disabled: true,
+            disabled: !currentCheck?.diffId?.filename,
         },
         {
             label:
@@ -131,15 +130,10 @@ export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
                     </Tooltip>
                 ),
             value: 'slider',
-            disabled: true,
+            disabled: !currentCheck?.diffId?.filename,
         },
     ];
 
-    // disable the slider and diff if diff not exist
-    if (currentCheck?.diffId?.filename) {
-        viewSegmentData[2].disabled = false;
-        viewSegmentData[3].disabled = false;
-    }
     return (
         <SegmentedControl
             sx={{ minWidth: 0, minHeight: 0 }}

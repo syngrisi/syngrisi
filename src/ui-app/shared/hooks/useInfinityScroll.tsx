@@ -105,7 +105,7 @@ export default function useInfinityScroll(
                 limit: String(infinityScrollLimit),
                 page: pageParam,
                 sortBy,
-                populate: resourceName === 'tests' ? 'checks' : 'baselineId,actualSnapshotId,diffId',
+                populate: resourceName === 'tests' ? 'checks' : 'suite,app,test,baselineId,actualSnapshotId,diffId',
             },
             'infinityQuery'
         ),
