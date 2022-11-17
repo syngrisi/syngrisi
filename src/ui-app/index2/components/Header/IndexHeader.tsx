@@ -29,6 +29,11 @@ import { useParams } from '../../hooks/useParams';
 import { QuickFilter } from './QuickFilter';
 
 const useStyles = createStyles((theme) => ({
+    quickFilter: {
+        '@media (max-width: 1024px)': {
+            display: 'none',
+        },
+    },
     header: {
         paddingLeft: 0,
         paddingRight: 0,
@@ -70,7 +75,7 @@ const useStyles = createStyles((theme) => ({
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingLeft: 25,
+        // paddingLeft: 25,
     },
     spotLight: {
         minWidth: 200,
@@ -229,14 +234,14 @@ export default function IndexHeader() {
             <Paper shadow="">
                 <Container className={classes.subheader} fluid>
                     <Group>
-                        <Group>
+                        <Group sx={{ paddingLeft: 16, width: 350 }}>
                             <Breadcrumbs>{breadCrumbs}</Breadcrumbs>
                         </Group>
-                        <Group ml={250}>
+                        <Group>
                             <QuickFilter />
                         </Group>
                     </Group>
-                    <Group spacing={4} mr="md" position="right">
+                    <Group spacing={4} mr="md" position="right" noWrap>
                         {toolbar}
                     </Group>
                 </Container>
