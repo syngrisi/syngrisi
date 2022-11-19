@@ -4,8 +4,8 @@ var __publicField = (obj, key, value) => {
   __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
   return value;
 };
-import { r as react, W as queryString, b as jsx, j as jsxs, P as Paper, g as Title, X as Stack, T as Text, G as Group, h as Button, Y as Epe, k as ky, a as config, u as useQuery, d as useMantineTheme, Z as Fragment, q as TextInput, t as ActionIcon, n as lAe, _ as Pj, D as useLocalStorage, e as Container, $ as Dge, c as createStyles, l as log, a0 as Tooltip, a1 as CK, a2 as Loader, a3 as React, a4 as Transition, a5 as Xfe, a6 as rze, A as Anchor, a7 as zV, a8 as ea, a9 as Ol, aa as ua, ab as RX, ac as rWe, ad as UZ, s as Checkbox, ae as getAugmentedNamespace, af as zb, E as useHotkeys, ag as Pbe, ah as Cbe, ai as pi, aj as Lbe, ak as lDe, al as dDe, am as IMe, an as DMe, ao as qF, f as useDocumentTitle, L as LoadingOverlay, ap as LHe, B as Box, o as useSearchParams, aq as Y, Q as QueryClient, ar as useNavigate, F as QueryClientProvider, H as ColorSchemeProvider, M as MantineProvider, as as Routes, at as Route, I as createRoot, J as BrowserRouter } from "./use-form.799991d3.js";
-import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, G as GenericService, e as errorMsg, a as useDisclosure, b as useClickOutside, c as escapeRegExp, P as Popover, d as ScrollArea, f as Chip, D as Divider, l as links, H as Header, B as Burger, g as HeaderLogo, h as SafeSelect, o as openSpotlight, K as Kbd, i as useOs, U as UserMenu, j as Breadcrumbs, k as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, m as Skeleton, n as useInView, F as FocusTrap, p as getNavigationItem, q as stopNavigationProgress, r as resetNavigationProgress, t as useToggle, v as useInfinityScroll, N as Navbar, w as Badge, A as Affix, x as ActionPopoverIcon, y as UserHooks, T as ThemeIcon, z as encodeQueryParams, I as Image$1, E as Card, O as Collapse, Q as SegmentedControl, V as Table, W as useInputState, X as RelativeDrawer, Y as LogicalGroup, Z as uuid, $ as useNavProgressFetchEffect, a0 as AppShell, a1 as ReactQueryDevtools, a2 as useColorScheme, a3 as navigationData, a4 as SpotlightProvider, a5 as NotificationsProvider, a6 as NavigationProgress, a7 as ModalsProvider, a8 as QueryParamProvider, a9 as ReactRouter6Adapter } from "./LogicalGroup.ae2dc560.js";
+import { r as react, W as queryString, b as jsx, j as jsxs, P as Paper, g as Title, X as Stack, T as Text, G as Group, h as Button, Y as Epe, k as ky, a as config, u as useQuery, d as useMantineTheme, q as TextInput, t as ActionIcon, n as lAe, Z as Pj, c as createStyles, D as useLocalStorage, e as Container, _ as Dge, $ as Fragment, l as log, a0 as Tooltip, a1 as CK, a2 as Loader, a3 as React, a4 as Transition, a5 as Xfe, a6 as rze, A as Anchor, a7 as zV, a8 as ea, a9 as Ol, aa as ua, ab as RX, ac as rWe, ad as UZ, s as Checkbox, ae as getAugmentedNamespace, af as zb, E as useHotkeys, ag as Pbe, ah as Cbe, ai as pi, aj as Lbe, ak as lDe, al as dDe, am as IMe, an as DMe, ao as qF, f as useDocumentTitle, L as LoadingOverlay, ap as LHe, B as Box, o as useSearchParams, aq as Y, Q as QueryClient, ar as useNavigate, F as QueryClientProvider, H as ColorSchemeProvider, M as MantineProvider, as as Routes, at as Route, I as createRoot, J as BrowserRouter } from "./use-form.13115231.js";
+import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, G as GenericService, e as errorMsg, a as useDisclosure, b as useClickOutside, c as escapeRegExp, P as Popover, d as ScrollArea, f as Chip, D as Divider, l as links, H as Header, B as Burger, g as HeaderLogo, h as SafeSelect, o as openSpotlight, K as Kbd, i as useOs, U as UserMenu, j as Breadcrumbs, k as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, m as Skeleton, n as useInView, F as FocusTrap, p as getNavigationItem, q as stopNavigationProgress, r as resetNavigationProgress, t as useToggle, v as useInfinityScroll, N as Navbar, w as Badge, A as Affix, x as ActionPopoverIcon, y as UserHooks, T as ThemeIcon, z as encodeQueryParams, I as Image$1, E as Card, O as Collapse, Q as SegmentedControl, V as Table, W as useInputState, X as RelativeDrawer, Y as LogicalGroup, Z as uuid, $ as useNavProgressFetchEffect, a0 as AppShell, a1 as ReactQueryDevtools, a2 as useColorScheme, a3 as navigationData, a4 as SpotlightProvider, a5 as NotificationsProvider, a6 as NavigationProgress, a7 as ModalsProvider, a8 as QueryParamProvider, a9 as ReactRouter6Adapter } from "./LogicalGroup.88ee829b.js";
 function useDebouncedValue(value, wait, options = { leading: false }) {
   const [_value, setValue] = react.exports.useState(value);
   const mountedRef = react.exports.useRef(false);
@@ -387,13 +387,14 @@ function QuickFilter() {
   const acceptStatuses = react.exports.useMemo(() => getDistinctItems(acceptStatusesData), [acceptStatusesData == null ? void 0 : acceptStatusesData.results.length]);
   const quickFilterObject = react.exports.useMemo(() => {
     const arr = [];
-    if (debouncedQuickFilter)
+    if (debouncedQuickFilter) {
       arr.push({
         name: {
           $regex: escapeRegExp(debouncedQuickFilter),
           $options: "im"
         }
       });
+    }
     if (browserChipsData.length > 0)
       arr.push({
         browserName: {
@@ -444,7 +445,18 @@ function QuickFilter() {
     setAcceptedStatusChipsData([]);
     setBranchChipsData([]);
   };
-  return /* @__PURE__ */ jsxs(Fragment, {
+  const useStyles2 = createStyles(() => ({
+    quickFilter: {
+      "@media (max-width: 1024px)": {
+        display: "none"
+      }
+    }
+  }));
+  const {
+    classes
+  } = useStyles2();
+  return /* @__PURE__ */ jsxs(Group, {
+    className: classes.quickFilter,
     children: [/* @__PURE__ */ jsx(Text, {
       size: 14,
       children: "Quick Filter: "
@@ -597,6 +609,11 @@ function QuickFilter() {
   });
 }
 const useStyles$6 = createStyles((theme) => ({
+  quickFilter: {
+    "@media (max-width: 1024px)": {
+      display: "none"
+    }
+  },
   header: {
     paddingLeft: 0,
     paddingRight: 0,
@@ -636,8 +653,7 @@ const useStyles$6 = createStyles((theme) => ({
     height: 42,
     display: "flex",
     justifyContent: "space-between",
-    alignItems: "center",
-    paddingLeft: 25
+    alignItems: "center"
   },
   spotLight: {
     minWidth: 200,
@@ -786,17 +802,21 @@ function IndexHeader() {
         fluid: true,
         children: [/* @__PURE__ */ jsxs(Group, {
           children: [/* @__PURE__ */ jsx(Group, {
+            sx: {
+              paddingLeft: 16,
+              width: 350
+            },
             children: /* @__PURE__ */ jsx(Breadcrumbs, {
               children: breadCrumbs
             })
           }), /* @__PURE__ */ jsx(Group, {
-            ml: 250,
             children: /* @__PURE__ */ jsx(QuickFilter, {})
           })]
         }), /* @__PURE__ */ jsx(Group, {
           spacing: 4,
           mr: "md",
           position: "right",
+          noWrap: true,
           children: toolbar
         })]
       })
@@ -3634,9 +3654,7 @@ function NavbarItems({
   groupByValue,
   activeItemsHandler
 }) {
-  const [selection, setSelection] = react.exports.useState([]);
   return infinityQuery.data ? infinityQuery.data.pages.map((page) => page.results.map((item, index) => {
-    selection.includes(item._id_id || item.name);
     const Item = BaseItemWrapper;
     return /* @__PURE__ */ jsx(react.exports.Fragment, {
       children: /* @__PURE__ */ jsx(Item, {
@@ -4177,7 +4195,12 @@ function NavbarIndex() {
   });
   react.exports.useEffect(function refetch() {
     firstPageQuery.refetch();
-  }, [query == null ? void 0 : query.app, query == null ? void 0 : query.groupBy, JSON.stringify(navbarFilterObject), query.sortByNavbar]);
+  }, [
+    query == null ? void 0 : query.app,
+    query == null ? void 0 : query.groupBy,
+    JSON.stringify(navbarFilterObject),
+    query.sortByNavbar
+  ]);
   const refreshIconClickHandler = () => {
     setQuery({
       base_filter: null
@@ -4213,6 +4236,7 @@ function NavbarIndex() {
           }
         },
         pr: 12,
+        pb: 90,
         children: [/* @__PURE__ */ jsxs(Group, {
           position: "apart",
           align: "end",
@@ -22436,6 +22460,8 @@ function RelatedCheckItem({
     spacing: 4,
     mt: 8,
     mb: 8,
+    pr: 8,
+    pl: 8,
     pt: 8,
     pb: 8,
     sx: {
@@ -22459,7 +22485,10 @@ function RelatedCheckItem({
       }),
       children: /* @__PURE__ */ jsx(Paper, {
         shadow: "sm",
-        pb: 0,
+        pr: 4,
+        pl: 4,
+        pt: 4,
+        pb: 4,
         children: /* @__PURE__ */ jsxs("div", {
           style: {
             position: "relative"
@@ -22920,6 +22949,8 @@ function ScreenshotDetails({
       return null;
     if (mainView2) {
       const image = mainView2[`${view}Image`];
+      if (view === "diff" && !(mainView2 == null ? void 0 : mainView2.diffImage))
+        return null;
       return /* @__PURE__ */ jsx(Tooltip, {
         withinPortal: true,
         label: `Screenshot size: ${image.width}x${image.height}, click to open the image in a new tab`,
@@ -23182,24 +23213,19 @@ function ViewSegmentedControl({
   setView,
   currentCheck
 }) {
-  var _a;
+  var _a, _b;
   const {
     classes
   } = useStyles$2();
-  useHotkeys([
-    ["Digit1", () => setView("expected")],
-    ["Digit2", () => setView("actual")],
-    ["Digit3", () => {
-      var _a2;
-      if ((_a2 = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _a2.filename)
-        setView("diff");
-    }],
-    ["Digit4", () => {
-      var _a2;
-      if ((_a2 = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _a2.filename)
-        setView("slider");
-    }]
-  ]);
+  useHotkeys([["Digit1", () => setView("expected")], ["Digit2", () => setView("actual")], ["Digit3", () => {
+    var _a2;
+    if ((_a2 = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _a2.filename)
+      setView("diff");
+  }], ["Digit4", () => {
+    var _a2;
+    if ((_a2 = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _a2.filename)
+      setView("slider");
+  }]]);
   const viewSegmentData = [{
     label: /* @__PURE__ */ jsx(Tooltip, {
       withinPortal: true,
@@ -23229,7 +23255,8 @@ function ViewSegmentedControl({
         })]
       })
     }),
-    value: "expected"
+    value: "expected",
+    disabled: (currentCheck == null ? void 0 : currentCheck.status[0]) === "new"
   }, {
     label: /* @__PURE__ */ jsx(Tooltip, {
       withinPortal: true,
@@ -23290,7 +23317,7 @@ function ViewSegmentedControl({
       })
     }),
     value: "diff",
-    disabled: true
+    disabled: !((_a = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _a.filename)
   }, {
     label: /* @__PURE__ */ jsx(Tooltip, {
       withinPortal: true,
@@ -23321,12 +23348,8 @@ function ViewSegmentedControl({
       })
     }),
     value: "slider",
-    disabled: true
+    disabled: !((_b = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _b.filename)
   }];
-  if ((_a = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _a.filename) {
-    viewSegmentData[2].disabled = false;
-    viewSegmentData[3].disabled = false;
-  }
   return /* @__PURE__ */ jsx(SegmentedControl, {
     sx: {
       minWidth: 0,
@@ -23568,8 +23591,10 @@ function ZoomToolbar({
               children: "200%"
             })
           }), /* @__PURE__ */ jsx(Button, {
-            sx: {
-              width: "100%"
+            styles: {
+              label: {
+                width: "100%"
+              }
             },
             pl: 8,
             pr: 8,
@@ -23586,7 +23611,7 @@ function ZoomToolbar({
               sx: {
                 width: "100%"
               },
-              position: "left",
+              position: "apart",
               noWrap: true,
               children: ["Fit by width ", /* @__PURE__ */ jsx(Kbd, {
                 sx: {
@@ -23597,6 +23622,11 @@ function ZoomToolbar({
               })]
             })
           }), /* @__PURE__ */ jsx(Button, {
+            styles: {
+              label: {
+                width: "100%"
+              }
+            },
             pl: 8,
             pr: 8,
             variant: "subtle",
@@ -23612,7 +23642,7 @@ function ZoomToolbar({
               sx: {
                 width: "100%"
               },
-              position: "left",
+              position: "apart",
               noWrap: true,
               children: ["Fit to canvas ", /* @__PURE__ */ jsx(Kbd, {
                 sx: {
@@ -23823,7 +23853,10 @@ function CheckDetails({
   closeHandler
 }) {
   var _a, _b;
-  console.count("CheckDetails");
+  const [checksViewSize] = useLocalStorage({
+    key: "check-view-size",
+    defaultValue: "medium"
+  });
   const theme = useMantineTheme();
   const {
     classes
@@ -23857,15 +23890,16 @@ function CheckDetails({
     }
     return "";
   }, [(_a = baselineQuery.data) == null ? void 0 : _a.timestamp]);
-  react.exports.useEffect(function destroyMainView() {
-    if (mainView2) {
-      mainView2.destroyAllViews();
-      mainView2.canvas.clear();
-      mainView2.canvas.dispose();
-      setMainView(null);
-    }
-  }, [related.relatedActiveCheckId, relatedChecksOpened]);
+  const iconsColor = react.exports.useMemo(() => theme.colorScheme === "dark" ? theme.colors.gray[3] : theme.colors.dark[9], [theme.colorScheme]);
   react.exports.useEffect(() => {
+    const destroyMV = async () => {
+      if (mainView2) {
+        await mainView2.destroyAllViews();
+        mainView2.canvas.clear();
+        mainView2.canvas.dispose();
+        setMainView(() => null);
+      }
+    };
     const initMV = async () => {
       var _a2, _b2, _c, _d;
       fabric$1.fabric.Object.prototype.objectCaching = false;
@@ -23874,6 +23908,7 @@ function CheckDetails({
       const actual = currentCheck.actualSnapshotId || null;
       const actualImgSrc = `${config.baseUri}/snapshoots/${(_b2 = currentCheck == null ? void 0 : currentCheck.actualSnapshotId) == null ? void 0 : _b2.filename}?actualImg`;
       const actualImg = await createImageAndWaitForLoad(actualImgSrc);
+      document.getElementById("snapshoot").style.height = `${MainView.calculateExpectedCanvasViewportAreaSize().height - 10}px`;
       const expectedImage = await imageFromUrl(expectedImg.src);
       const actualImage = await imageFromUrl(actualImg.src);
       const diffImgSrc = `${config.baseUri}/snapshoots/${(_c = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _c.filename}?diffImg`;
@@ -23894,10 +23929,15 @@ function CheckDetails({
         return MV;
       });
     };
-    setTimeout(() => {
-      initMV();
-    }, 10);
+    destroyMV().then(() => initMV());
   }, [related.relatedActiveCheckId, relatedChecksOpened]);
+  react.exports.useEffect(function initView() {
+    if (mainView2 == null ? void 0 : mainView2.diffImage) {
+      setView(() => "diff");
+      return;
+    }
+    setView(() => "actual");
+  }, [mainView2 == null ? void 0 : mainView2.diffImage]);
   react.exports.useEffect(function afterMainViewCreatedHandleRegions() {
     if (!baselineId)
       return;
@@ -23905,17 +23945,6 @@ function CheckDetails({
       mainView2.getSnapshotIgnoreRegionsDataAndDrawRegions(baselineId);
     }
   }, [(_b = baselineQuery.data) == null ? void 0 : _b.timestamp, mainView2 == null ? void 0 : mainView2.toString()]);
-  react.exports.useEffect(function initView() {
-    if (mainView2) {
-      if (mainView2.diffImage) {
-        setTimeout(() => {
-          setView("diff");
-        }, 10);
-      }
-    }
-  }, [
-    mainView2 == null ? void 0 : mainView2.toString()
-  ]);
   react.exports.useEffect(function switchView() {
     if (mainView2) {
       mainView2.switchView(view);
@@ -23932,10 +23961,76 @@ function CheckDetails({
       },
       children: [/* @__PURE__ */ jsxs(Group, {
         position: "apart",
+        sx: {
+          width: "98%"
+        },
+        noWrap: true,
+        children: [/* @__PURE__ */ jsxs(Group, {
+          position: "left",
+          align: "center",
+          spacing: "xs",
+          sx: {
+            position: "relative"
+          },
+          noWrap: true,
+          children: [/* @__PURE__ */ jsx(Status$1, {
+            size: "lg",
+            check: currentCheck,
+            variant: "filled"
+          }), /* @__PURE__ */ jsx(Tooltip, {
+            withinPortal: true,
+            label: `Created: ${currentCheck.createdDate}`,
+            children: /* @__PURE__ */ jsxs(Text, {
+              lineClamp: 1,
+              children: [currentCheck.app.name, " / ", currentCheck.suite.name, " / ", currentCheck.test.name, " / ", currentCheck == null ? void 0 : currentCheck.name]
+            })
+          })]
+        }), /* @__PURE__ */ jsxs(Group, {
+          noWrap: true,
+          spacing: "xs",
+          children: [/* @__PURE__ */ jsx(ViewPortLabel, {
+            check: currentCheck,
+            color: "blue",
+            sizes,
+            size: "lg",
+            checksViewSize,
+            fontSize: "12px"
+          }), /* @__PURE__ */ jsx(ActionIcon, {
+            variant: "light",
+            size: 32,
+            p: 4,
+            ml: 4,
+            children: /* @__PURE__ */ jsx(OsIcon, {
+              size: 20,
+              color: iconsColor,
+              os: currentCheck.os
+            })
+          }), /* @__PURE__ */ jsx(Text, {
+            size: 12,
+            lineClamp: 1,
+            children: currentCheck.os
+          }), /* @__PURE__ */ jsx(ActionIcon, {
+            variant: "light",
+            size: 32,
+            p: 4,
+            children: /* @__PURE__ */ jsx(BrowserIcon, {
+              size: 20,
+              color: iconsColor,
+              browser: currentCheck.browserName
+            })
+          }), /* @__PURE__ */ jsxs(Text, {
+            lineClamp: 1,
+            size: 12,
+            title: currentCheck.browserFullVersion ? `${currentCheck.browserFullVersion}` : "",
+            children: [currentCheck.browserName, currentCheck.browserVersion ? ` - ${currentCheck.browserVersion}` : ""]
+          })]
+        })]
+      }), /* @__PURE__ */ jsxs(Group, {
+        position: "apart",
         noWrap: true,
         children: [/* @__PURE__ */ jsx(ScreenshotDetails, {
           mainView: mainView2,
-          check: checkData,
+          check: currentCheck,
           view
         }), /* @__PURE__ */ jsxs(Group, {
           spacing: "sm",
@@ -24029,11 +24124,6 @@ function CheckModal({
     query,
     setQuery
   } = useParams();
-  const theme = useMantineTheme();
-  const [checksViewSize] = useLocalStorage({
-    key: "check-view-size",
-    defaultValue: "medium"
-  });
   const [checkModalOpened, checkModalHandlers] = useDisclosure(false);
   const closeHandler = () => {
     checkModalHandlers.close();
@@ -24063,7 +24153,6 @@ function CheckModal({
     return (_a2 = checkQuery == null ? void 0 : checkQuery.data) == null ? void 0 : _a2.results[0];
   }, [(_a = checkQuery == null ? void 0 : checkQuery.data) == null ? void 0 : _a.timestamp]);
   useDocumentTitle(checkData == null ? void 0 : checkData.name);
-  const iconsColor = react.exports.useMemo(() => theme.colorScheme === "dark" ? theme.colors.gray[3] : theme.colors.dark[9], [theme.colorScheme]);
   const keyEvents = () => {
     document.addEventListener("keydown", function keyHandler(event) {
       console.log(event.code);
@@ -24072,78 +24161,6 @@ function CheckModal({
   react.exports.useEffect(function oneTime() {
     keyEvents();
   }, []);
-  const title = react.exports.useMemo(() => {
-    if (checkData) {
-      return /* @__PURE__ */ jsxs(Group, {
-        position: "apart",
-        sx: {
-          width: "100%"
-        },
-        noWrap: true,
-        children: [/* @__PURE__ */ jsxs(Group, {
-          position: "left",
-          align: "center",
-          spacing: "xs",
-          sx: {
-            position: "relative"
-          },
-          noWrap: true,
-          children: [/* @__PURE__ */ jsx(Status$1, {
-            size: "lg",
-            check: checkData,
-            variant: "filled"
-          }), /* @__PURE__ */ jsx(Tooltip, {
-            withinPortal: true,
-            label: `Created: ${checkData.createdDate}`,
-            children: /* @__PURE__ */ jsxs(Text, {
-              lineClamp: 1,
-              children: [checkData.app.name, " / ", checkData.suite.name, " / ", checkData.test.name, " / ", checkData == null ? void 0 : checkData.name]
-            })
-          })]
-        }), /* @__PURE__ */ jsxs(Group, {
-          noWrap: true,
-          spacing: "xs",
-          children: [/* @__PURE__ */ jsx(ViewPortLabel, {
-            check: checkData,
-            color: "blue",
-            sizes,
-            size: "lg",
-            checksViewSize,
-            fontSize: "12px"
-          }), /* @__PURE__ */ jsx(ActionIcon, {
-            variant: "light",
-            size: 32,
-            p: 4,
-            ml: 4,
-            children: /* @__PURE__ */ jsx(OsIcon, {
-              size: 20,
-              color: iconsColor,
-              os: checkData.os
-            })
-          }), /* @__PURE__ */ jsx(Text, {
-            size: 12,
-            lineClamp: 1,
-            children: checkData.os
-          }), /* @__PURE__ */ jsx(ActionIcon, {
-            variant: "light",
-            size: 32,
-            p: 4,
-            children: /* @__PURE__ */ jsx(BrowserIcon, {
-              size: 20,
-              color: iconsColor,
-              browser: checkData.browserName
-            })
-          }), /* @__PURE__ */ jsxs(Text, {
-            lineClamp: 1,
-            size: 12,
-            title: checkData.browserFullVersion ? `${checkData.browserFullVersion}` : "",
-            children: [checkData.browserName, checkData.browserVersion ? ` - ${checkData.browserVersion}` : ""]
-          })]
-        })]
-      });
-    }
-    return "";
-  }, [checkData == null ? void 0 : checkData._id]);
   react.exports.useEffect(function onCheckIdChange() {
     if (query.checkId) {
       checkModalHandlers.open();
@@ -24152,7 +24169,6 @@ function CheckModal({
   return /* @__PURE__ */ jsxs(Modal, {
     opened: checkModalOpened,
     centered: true,
-    title,
     size: "auto",
     onClose: closeHandler,
     sx: {
@@ -24390,6 +24406,9 @@ function TestsTable({
 }) {
   var _a, _b, _c, _d;
   const {
+    query
+  } = useParams();
+  const {
     updateToolbar
   } = react.exports.useContext(AppContext);
   const {
@@ -24402,6 +24421,9 @@ function TestsTable({
     cx
   } = useStyles();
   const [selection, setSelection] = react.exports.useState([]);
+  react.exports.useEffect(function resetSelection() {
+    setSelection(() => []);
+  }, [JSON.stringify(query.base_filter), query.app]);
   const scrollAreaRef = react.exports.useRef(null);
   const toggleAllRows = () => setSelection((current) => current.length === flatData.length ? [] : flatData.map((item) => item.id));
   react.exports.useEffect(function onSelectionUpdate() {

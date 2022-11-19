@@ -22218,9 +22218,9 @@ const devices = [
     realMobile: true
   }
 ];
-const baseUrl = { "VITE_ROOT_PATH": "./src/ui-app/", "BASE_URL": "/", "MODE": "production", "DEV": false, "PROD": true }.VITE_SYNGRISY_BASED_URL;
+const baseUrl = { "VITE_ROOT_PATH": "./src/ui-app/", "BASE_URL": "/", "MODE": "production", "DEV": false, "PROD": true }.VITE_SYNGRISY_BASED_URL || "";
 const config = {
-  baseUri: baseUrl || "",
+  baseUri: baseUrl,
   devices,
   customDevicesProm: ky$1(`${baseUrl}/static/data/custom_devices.json`).json()
 };
@@ -23136,7 +23136,7 @@ function useForm({
   };
 }
 export {
-  Dge as $,
+  Fragment as $,
   Anchor as A,
   Box as B,
   Center as C,
@@ -23162,8 +23162,8 @@ export {
   queryString as W,
   Stack as X,
   Epe as Y,
-  Fragment as Z,
-  Pj as _,
+  Pj as Z,
+  Dge as _,
   config as a,
   InputsGroup as a$,
   Tooltip as a0,

@@ -35,19 +35,19 @@ export default function AdminLogsTable({ infinityQuery, visibleFields }: Props) 
     const scrollAreaRef = useRef(null);
     // const { updateToolbar }: any = useContext(AppContext);
     const toggleAllRows = () => setSelection(
-            (current: string) => (current.length === flatData.length ? [] : flatData.map((item: ILog) => item.id)),
-        );
+        (current: string) => (current.length === flatData.length ? [] : flatData.map((item: ILog) => item.id)),
+    );
     return (
         <>
             <ScrollArea.Autosize
                 data-test="table-scroll-area"
                 ref={scrollAreaRef}
                 maxHeight="100vh"
-                sx={{ width: '100%' }}
+                sx={{ width: '100%', paddingBottom: 115 }}
                 styles={{ scrollbar: { marginTop: '46px' } }}
             >
 
-                <Table sx={{ width: '100%' }} verticalSpacing="sm" highlightOnHover>
+                <Table sx={{ width: '100%', paddingBottom: 500 }} verticalSpacing="sm" highlightOnHover>
                     <thead
                         style={{ zIndex: 15 }}
                         className={cx(classes.header, { [classes.scrolled]: scrolled })}

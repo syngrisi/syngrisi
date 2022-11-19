@@ -51,8 +51,9 @@ Feature: Log Basics
     updated every 3 seconds) and after clicking on the icon, the table will be refreshed with new logs.
 
         When I go to "logs" page
-        When I wait for "3" seconds
+        When I wait for "5" seconds
         When I refresh page
+
         When I create "5" log messages with params:
             """
               message: TESTMSG

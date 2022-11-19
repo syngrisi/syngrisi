@@ -15,11 +15,21 @@ interface Props {
     loaded?: boolean
     label: string
     onChange: any
+    name: string
     sx: any
 }
 
 // select component for selenium
-function SafeSelect({ optionsData, required = false, loaded = false, value, ...rest }: Partial<Props>): ReactElement {
+function SafeSelect(
+    {
+        optionsData,
+        required = false,
+        loaded = false,
+        value,
+        name,
+        ...rest
+    }: Partial<Props>,
+): ReactElement {
     const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         rest.onChange(event.target.value);
     };
@@ -34,9 +44,11 @@ function SafeSelect({ optionsData, required = false, loaded = false, value, ...r
                 {...rest}
             />
             <select
-                name={rest.name}
+                name={name}
                 style={{ width: 0, opacity: 0, position: 'fixed' }}
-                {...{ ...rest, onChange: changeHandler }}
+                value={value}
+                onChange={changeHandler}
+                {...rest}
             >
                 {
                     optionsData.map((option: IOption) => (

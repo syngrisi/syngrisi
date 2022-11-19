@@ -180,8 +180,10 @@ export default function UserForm(
                                         icon={<IconX size={18} />}
                                         action={removeUser}
                                         title="Remove user"
+                                        size={28}
                                         loading={deleteUser.isLoading}
                                         confirmLabel="Delete"
+                                        withinPortal={false}
                                     />
                                 </Group>
                             )
