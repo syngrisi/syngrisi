@@ -126,13 +126,18 @@ const AdminLogsTableRows = ({ data, selection, setSelection, visibleFields }: Pr
                                                     paddingLeft: '2px',
                                                 }}
                                             >
-                                                <RingProgress
-                                                    sections={[{
-                                                        value: 100,
-                                                        color: logLevelColorMap[item.level!],
-                                                    }]}
-                                                    size={48}
-                                                />
+                                                <Tooltip
+                                                    label={item.level!}
+                                                    withinPortal
+                                                >
+                                                    <RingProgress
+                                                        sections={[{
+                                                            value: 100,
+                                                            color: logLevelColorMap[item.level!],
+                                                        }]}
+                                                        size={48}
+                                                    />
+                                                </Tooltip>
                                             </td>
                                         );
                                     }

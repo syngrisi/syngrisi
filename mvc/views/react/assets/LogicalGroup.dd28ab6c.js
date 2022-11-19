@@ -1,4 +1,4 @@
-import { r as react, b as jsx, d as useMantineTheme, au as Global$1, av as css, aw as useDidUpdate, ax as useReducedMotion, ay as useWindowEvent, az as mergeRefs, aA as reactDom, O as useComponentDefaultProps, S as extractSystemStyles, B as Box, aB as getDefaultZIndex, aC as OptionalPortal, aD as packSx, t as ActionIcon, c as createStyles, j as jsxs, aE as createPolymorphicComponent, Z as Fragment, T as Text, aF as _extends, a3 as React, U as useUncontrolled, aG as useFloating, aH as size, aI as useFloatingAutoUpdate, aJ as offset, aK as arrow, aL as shift, aM as flip, aN as inline, aO as isElement, aP as useMergedRef, aQ as clsx, a4 as Transition$2, aR as FloatingArrow, R as useId, aS as getFloatingPosition, aT as UnstyledButton, P as Paper, G as Group, aU as CheckIcon, aV as useTransition, aW as getTransitionStyles, aX as Overlay, a2 as Loader, a0 as Tooltip, aY as useIsomorphicEffect$1, aZ as useInputProps, V as Input, a_ as keyframes, a$ as InputsGroup, b0 as QueryObserver, b1 as infiniteQueryBehavior, b2 as hasNextPage, b3 as hasPreviousPage, b4 as Subscribable, b5 as shallowEqualObjects, b6 as getDefaultState, b7 as notifyManager, b8 as parseMutationArgs, b9 as useQueryClient, ba as useSyncExternalStore, bb as shouldThrowError, bc as parseQueryArgs, bd as useBaseQuery, be as ReactDOM, bf as Portal, l as log, bg as NavigationContext, ar as useNavigate, bh as useLocation, h as Button, i as Progress, E as useHotkeys, C as Center, q as TextInput, e as Container, k as ky, a as config$1, W as queryString, u as useQuery, bi as B9, bj as wue, bk as gW, bl as wz, bm as mF, bn as Uye, z as zB, bo as Lqe, bp as Iqe, bq as I9, br as N9, bs as P5, m as dj, bt as NP, bu as Qa, v as GCe, x as Nie, D as useLocalStorage, bv as L3, bw as CMe, bx as _He, by as Iee, n as lAe, bz as commonjsGlobal, K as sizes$c, p as useForm, bA as rle, bB as Nme } from "./use-form.799991d3.js";
+import { r as react, b as jsx, d as useMantineTheme, au as Global$1, av as css, aw as useDidUpdate, ax as useReducedMotion, ay as useWindowEvent, az as mergeRefs, aA as reactDom, O as useComponentDefaultProps, S as extractSystemStyles, B as Box, aB as getDefaultZIndex, aC as OptionalPortal, aD as packSx, t as ActionIcon, c as createStyles, j as jsxs, aE as createPolymorphicComponent, $ as Fragment, T as Text, aF as _extends, a3 as React, U as useUncontrolled, aG as useFloating, aH as size, aI as useFloatingAutoUpdate, aJ as offset, aK as arrow, aL as shift, aM as flip, aN as inline, aO as isElement, aP as useMergedRef, aQ as clsx, a4 as Transition$2, aR as FloatingArrow, R as useId, aS as getFloatingPosition, aT as UnstyledButton, P as Paper, G as Group, aU as CheckIcon, aV as useTransition, aW as getTransitionStyles, aX as Overlay, a2 as Loader, a0 as Tooltip, aY as useIsomorphicEffect$1, aZ as useInputProps, V as Input, a_ as keyframes, a$ as InputsGroup, b0 as QueryObserver, b1 as infiniteQueryBehavior, b2 as hasNextPage, b3 as hasPreviousPage, b4 as Subscribable, b5 as shallowEqualObjects, b6 as getDefaultState, b7 as notifyManager, b8 as parseMutationArgs, b9 as useQueryClient, ba as useSyncExternalStore, bb as shouldThrowError, bc as parseQueryArgs, bd as useBaseQuery, be as ReactDOM, bf as Portal, l as log, bg as NavigationContext, ar as useNavigate, bh as useLocation, h as Button, i as Progress, E as useHotkeys, C as Center, q as TextInput, e as Container, k as ky, a as config$1, W as queryString, u as useQuery, bi as B9, bj as wue, bk as gW, bl as wz, bm as mF, bn as Uye, z as zB, bo as Lqe, bp as Iqe, bq as I9, br as N9, bs as P5, m as dj, bt as NP, bu as Qa, v as GCe, x as Nie, D as useLocalStorage, bv as L3, bw as CMe, bx as _He, by as Iee, n as lAe, bz as commonjsGlobal, K as sizes$c, p as useForm, bA as rle, bB as Nme } from "./use-form.13115231.js";
 function findElementAncestor(element, selector) {
   let _element = element;
   while ((_element = _element.parentElement) && !_element.matches(selector))
@@ -13116,6 +13116,7 @@ function SafeSelect({
   required = false,
   loaded = false,
   value,
+  name,
   ...rest
 }) {
   const changeHandler = (event) => {
@@ -13132,14 +13133,15 @@ function SafeSelect({
       value,
       ...rest
     }), /* @__PURE__ */ jsx("select", {
-      name: rest.name,
+      name,
       style: {
         width: 0,
         opacity: 0,
         position: "fixed"
       },
-      ...rest,
+      value,
       onChange: changeHandler,
+      ...rest,
       children: optionsData.map((option) => /* @__PURE__ */ jsx("option", {
         value: option.value,
         children: option.label
@@ -13203,7 +13205,7 @@ function useInfinityScroll({
     limit: String(infinityScrollLimit),
     page: pageParam,
     sortBy,
-    populate: resourceName === "tests" ? "checks" : "baselineId,actualSnapshotId,diffId"
+    populate: resourceName === "tests" ? "checks" : "suite,app,test,baselineId,actualSnapshotId,diffId"
   }, "infinityQuery"), {
     getNextPageParam: (lastPage) => {
       if (lastPage.page >= lastPage.totalPages)
@@ -13412,7 +13414,7 @@ function ActionPopoverIcon({
   buttonColor,
   paused,
   disabled = false,
-  size: size2,
+  size: size2 = 24,
   ...rest
 }) {
   const [openPopover, handlers] = useDisclosure(false);
@@ -17268,7 +17270,6 @@ function LogLevelFilter({
     resource: "logs",
     field: "level",
     onSuccess: (data) => {
-      form.values.value = data[0];
     }
   });
   let levels = [];

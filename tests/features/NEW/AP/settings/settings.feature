@@ -4,7 +4,7 @@ Feature: Admin Settings
         Given I clear Database and stop Server
         Given I start Server and start Driver
 
-    Scenario: Change Admin Settings - First Run
+    Scenario: Change Admin Settings - Enable Auth
         When I go to "settings" page
         When I wait on element "[data-test='settings_value_authentication']" to be displayed
         Then I expect that element "select[data-test='settings_value_authentication']" contain value "false"
@@ -20,7 +20,7 @@ Feature: Admin Settings
         Then I expect the url to contain "/auth"
         Then I expect that the title is "Login Page"
 
-    Scenario: Change Admin Settings - Enable Auth
+    Scenario: Change Admin Settings - First Run
         # check if first_run is enabled by default
         Given I stop Server
         When I set env variables:

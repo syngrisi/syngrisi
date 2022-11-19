@@ -9,7 +9,7 @@
     },
     {
         "name": "authentication",
-        "label": "authentication",
+        "label": "Authentication",
         "description": "Enable application authentication",
         "type": "Boolean",
         "value": "false",

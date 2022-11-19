@@ -19,9 +19,9 @@ export function LogLevelFilter({ label, groupRules, updateGroupRules, id }: Prop
         {
             resource: 'logs',
             field: 'level',
-            onSuccess: (data: any) => {
-                form.values.value = data[0];
-            },
+            // onSuccess: (data: any) => {
+            //     // form.values.value = data[0];
+            // },
         },
     );
 

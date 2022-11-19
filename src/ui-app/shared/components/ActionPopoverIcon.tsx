@@ -25,7 +25,8 @@ interface IActionPopoverIcon {
     variant?: string
     sx?: any
     paused?: boolean
-    size: MantineNumberSize | undefined
+    size?: MantineNumberSize | undefined
+    withinPortal?: boolean
     disabled?: boolean
 }
 
@@ -42,7 +43,8 @@ export default function ActionPopoverIcon(
         buttonColor,
         paused,
         disabled = false,
-        size,
+        withinPortal = true,
+        size = 24,
         ...rest
     }: IActionPopoverIcon,
 ): ReactElement {
@@ -57,11 +59,11 @@ export default function ActionPopoverIcon(
             shadow="md"
             closeOnClickOutside
             closeOnEscape
-            withinPortal
+            withinPortal={withinPortal}
         >
             <Popover.Target>
                 <Tooltip
-                    withinPortal
+                    withinPortal={withinPortal}
                     label={
                         (
                             <Group noWrap>
