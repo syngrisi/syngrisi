@@ -13414,6 +13414,7 @@ function ActionPopoverIcon({
   buttonColor,
   paused,
   disabled = false,
+  withinPortal = true,
   size: size2 = 24,
   ...rest
 }) {
@@ -13426,10 +13427,10 @@ function ActionPopoverIcon({
     shadow: "md",
     closeOnClickOutside: true,
     closeOnEscape: true,
-    withinPortal: true,
+    withinPortal,
     children: [/* @__PURE__ */ jsx(Popover.Target, {
       children: /* @__PURE__ */ jsx(Tooltip, {
-        withinPortal: true,
+        withinPortal,
         label: /* @__PURE__ */ jsx(Group, {
           noWrap: true,
           children: /* @__PURE__ */ jsx(Text, {
@@ -17268,9 +17269,7 @@ function LogLevelFilter({
 }) {
   const distinctQuery = useDistinctLogQuery({
     resource: "logs",
-    field: "level",
-    onSuccess: (data) => {
-    }
+    field: "level"
   });
   let levels = [];
   if (distinctQuery.isSuccess && distinctQuery.data) {

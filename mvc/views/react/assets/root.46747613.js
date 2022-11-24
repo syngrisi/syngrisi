@@ -5,7 +5,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 import { r as react, W as queryString, b as jsx, j as jsxs, P as Paper, g as Title, X as Stack, T as Text, G as Group, h as Button, Y as Epe, k as ky, a as config, u as useQuery, d as useMantineTheme, q as TextInput, t as ActionIcon, n as lAe, Z as Pj, c as createStyles, D as useLocalStorage, e as Container, _ as Dge, $ as Fragment, l as log, a0 as Tooltip, a1 as CK, a2 as Loader, a3 as React, a4 as Transition, a5 as Xfe, a6 as rze, A as Anchor, a7 as zV, a8 as ea, a9 as Ol, aa as ua, ab as RX, ac as rWe, ad as UZ, s as Checkbox, ae as getAugmentedNamespace, af as zb, E as useHotkeys, ag as Pbe, ah as Cbe, ai as pi, aj as Lbe, ak as lDe, al as dDe, am as IMe, an as DMe, ao as qF, f as useDocumentTitle, L as LoadingOverlay, ap as LHe, B as Box, o as useSearchParams, aq as Y, Q as QueryClient, ar as useNavigate, F as QueryClientProvider, H as ColorSchemeProvider, M as MantineProvider, as as Routes, at as Route, I as createRoot, J as BrowserRouter } from "./use-form.13115231.js";
-import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, G as GenericService, e as errorMsg, a as useDisclosure, b as useClickOutside, c as escapeRegExp, P as Popover, d as ScrollArea, f as Chip, D as Divider, l as links, H as Header, B as Burger, g as HeaderLogo, h as SafeSelect, o as openSpotlight, K as Kbd, i as useOs, U as UserMenu, j as Breadcrumbs, k as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, m as Skeleton, n as useInView, F as FocusTrap, p as getNavigationItem, q as stopNavigationProgress, r as resetNavigationProgress, t as useToggle, v as useInfinityScroll, N as Navbar, w as Badge, A as Affix, x as ActionPopoverIcon, y as UserHooks, T as ThemeIcon, z as encodeQueryParams, I as Image$1, E as Card, O as Collapse, Q as SegmentedControl, V as Table, W as useInputState, X as RelativeDrawer, Y as LogicalGroup, Z as uuid, $ as useNavProgressFetchEffect, a0 as AppShell, a1 as ReactQueryDevtools, a2 as useColorScheme, a3 as navigationData, a4 as SpotlightProvider, a5 as NotificationsProvider, a6 as NavigationProgress, a7 as ModalsProvider, a8 as QueryParamProvider, a9 as ReactRouter6Adapter } from "./LogicalGroup.88ee829b.js";
+import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, G as GenericService, e as errorMsg, a as useDisclosure, b as useClickOutside, c as escapeRegExp, P as Popover, d as ScrollArea, f as Chip, D as Divider, l as links, H as Header, B as Burger, g as HeaderLogo, h as SafeSelect, o as openSpotlight, K as Kbd, i as useOs, U as UserMenu, j as Breadcrumbs, k as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, m as Skeleton, n as useInView, F as FocusTrap, p as getNavigationItem, q as stopNavigationProgress, r as resetNavigationProgress, t as useToggle, v as useInfinityScroll, N as Navbar, w as Badge, A as Affix, x as ActionPopoverIcon, y as UserHooks, T as ThemeIcon, z as encodeQueryParams, I as Image$1, E as Card, O as Collapse, Q as SegmentedControl, V as Table, W as useInputState, X as RelativeDrawer, Y as LogicalGroup, Z as uuid, $ as useNavProgressFetchEffect, a0 as AppShell, a1 as ReactQueryDevtools, a2 as useColorScheme, a3 as navigationData, a4 as SpotlightProvider, a5 as NotificationsProvider, a6 as NavigationProgress, a7 as ModalsProvider, a8 as QueryParamProvider, a9 as ReactRouter6Adapter } from "./LogicalGroup.553ff5ab.js";
 function useDebouncedValue(value, wait, options = { leading: false }) {
   const [_value, setValue] = react.exports.useState(value);
   const mountedRef = react.exports.useRef(false);
@@ -4022,7 +4022,7 @@ function NavbarGroupBySelect({
       return String(query == null ? void 0 : query.groupBy);
     return "";
   }, [query == null ? void 0 : query.groupBy, query == null ? void 0 : query.checkId]);
-  useIndexSubpageEffect(subpageMap[title] || "");
+  useIndexSubpageEffect(subpageMap[title] || subpageMap.runs);
   react.exports.useEffect(function onQueryGroupByUpdated() {
     if (!query.groupBy)
       return;
@@ -4167,7 +4167,7 @@ function NavbarIndex() {
     groupByValue,
     classes
   });
-  const [quickFilterObject, setQuickFilterObject] = react.exports.useState(null);
+  const [quickFilterObject, setQuickFilterObject] = react.exports.useState({});
   const navbarFilterObject = (query == null ? void 0 : query.app) ? {
     app: {
       $oid: (query == null ? void 0 : query.app) || ""

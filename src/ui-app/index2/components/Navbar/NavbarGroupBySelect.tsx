@@ -28,7 +28,7 @@ export function NavbarGroupBySelect({ clearActiveItems, groupByValue, setGroupBy
         return '';
     }, [query?.groupBy, query?.checkId]);
 
-    useIndexSubpageEffect(subpageMap[title] || '');
+    useIndexSubpageEffect(subpageMap[title] || subpageMap.runs);
 
     useEffect(function onQueryGroupByUpdated() {
         if (!query.groupBy) return;
