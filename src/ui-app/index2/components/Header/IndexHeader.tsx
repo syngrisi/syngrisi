@@ -235,7 +235,7 @@ export default function IndexHeader() {
                 <Container className={classes.subheader} fluid>
                     <Group>
                         <Group sx={{ paddingLeft: 16, width: 350 }}>
-                            <Breadcrumbs>{breadCrumbs}</Breadcrumbs>
+                            <Breadcrumbs data-test="bread-crumbs">{breadCrumbs}</Breadcrumbs>
                         </Group>
                         <Group>
                             <QuickFilter />

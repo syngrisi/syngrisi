@@ -17,6 +17,7 @@ interface Props {
     onChange: any
     name: string
     sx: any
+    'data-test': string
 }
 
 // select component for selenium
@@ -27,11 +28,12 @@ function SafeSelect(
         loaded = false,
         value,
         name,
-        ...rest
+        onChange,
+        'data-test': dataTest,
     }: Partial<Props>,
 ): ReactElement {
     const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-        rest.onChange(event.target.value);
+        onChange(event.target.value);
     };
     return (
         <>
@@ -41,14 +43,14 @@ function SafeSelect(
                 dropdownPosition="bottom"
                 icon={loaded && <Loader size={24} />}
                 value={value}
-                {...rest}
+                onChange={onChange}
             />
             <select
                 name={name}
                 style={{ width: 0, opacity: 0, position: 'fixed' }}
                 value={value}
+                data-test={dataTest}
                 onChange={changeHandler}
-                {...rest}
             >
                 {
                     optionsData.map((option: IOption) => (
