@@ -79,7 +79,7 @@ export default function TestsTable({ infinityQuery, firstPageQuery, visibleField
                 styles={{ scrollbar: { marginTop: '46px' } }}
             >
 
-                <Table sx={{ width: '100%' }} verticalSpacing="sm" highlightOnHover>
+                <Table sx={{ width: '100%' }} mb={100} verticalSpacing="sm" highlightOnHover>
                     <thead
                         style={{ zIndex: 10 }}
                         className={cx(classes.header, { [classes.scrolled]: scrolled })}

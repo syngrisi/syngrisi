@@ -36,6 +36,7 @@ export function PreviewCheckTooltipLabel({ check }: Props) {
     }
     return (
         <Stack sx={{ maxWidth: '370px' }} spacing={8} p={8}>
+            <Group>{check.name}</Group>
             <Group position="left" spacing={8} ml={-6} noWrap>
                 <Group>
                     <StatusIcon status={check.status[0]} size={72} />
