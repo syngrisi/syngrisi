@@ -67,40 +67,61 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                                 borderBottom: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[2]}`,
                                 '&:hover': {
                                     // border: `1px solid ${theme.colors.gray[3]}`,
-                                    backgroundColor: theme.colors.gray[2],
+                                    backgroundColor: theme.colors.dark[5],
                                 },
                             }}
                             position="apart"
                         >
                             <Paper shadow="md" pb={0}>
-                                <Image
-                                    src={imagePreviewSrc}
-                                    fit="contain"
-                                    // fit={'scale-down'}
-                                    // fit={'cover'} //default
-                                    // fit={'none'}
-                                    // fit={'fill'}
-                                    width={`${imageWeight * 4}px`}
-                                    // height="100px"
-                                    withPlaceholder
-                                    alt={check.name}
-                                    // sx={{
-                                    //     cursor: 'pointer',
-                                    //     // border: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[2]}`
-                                    // }}
-                                    styles={
-                                        () => ({
-                                            image: {
-                                                // cursor: 'pointer',
-                                                // maxHeight: `${imageWeight * 4}px`,
-                                                aspectRatio: '1/1',
-                                                // height: '10%!important',
-                                            },
-                                        })
+                                <Tooltip.Floating
+                                    multiline
+                                    zIndex={1000}
+                                    withinPortal
+                                    position="right-start"
+                                    color="dark"
+                                    label={
+                                        <PreviewCheckTooltipLabel check={check} />
                                     }
-                                    onClick={handlePreviewImageClick}
-                                />
-
+                                >
+                                    <a
+                                        style={{ display: 'inline-block', width: '100%', cursor: 'pointer' }}
+                                        href={linkToCheckOverlay}
+                                    >
+                                        <Group
+                                            position="center"
+                                            sx={{ width: '100%', cursor: 'pointer' }}
+                                            onClick={handlePreviewImageClick}
+                                        >
+                                            <Image
+                                                src={imagePreviewSrc}
+                                                fit="contain"
+                                                // fit={'scale-down'}
+                                                // fit={'cover'} //default
+                                                // fit={'none'}
+                                                // fit={'fill'}
+                                                width={`${imageWeight * 4}px`}
+                                                // height="100px"
+                                                withPlaceholder
+                                                alt={check.name}
+                                                // sx={{
+                                                //     cursor: 'pointer',
+                                                //     // border: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[2]}`
+                                                // }}
+                                                styles={
+                                                    () => ({
+                                                        image: {
+                                                            // cursor: 'pointer',
+                                                            // maxHeight: `${imageWeight * 4}px`,
+                                                            aspectRatio: '1/1',
+                                                            // height: '10%!important',
+                                                        },
+                                                    })
+                                                }
+                                                onClick={handlePreviewImageClick}
+                                            />
+                                        </Group>
+                                    </a>
+                                </Tooltip.Floating>
                             </Paper>
                             <Tooltip label={check.name} multiline withinPortal>
                                 <Text lineClamp={2} sx={{ width: '50%' }}>{check.name}</Text>
@@ -158,16 +179,19 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                                 }}
                                 radius={0}
                             >
-                                <Tooltip label={check.name} multiline withinPortal>
+                                <Tooltip
+                                    label={check.name}
+                                    multiline
+                                    withinPortal
+                                >
                                     <Text lineClamp={1}>{check.name}</Text>
                                 </Tooltip>
                             </Paper>
                             <Card.Section m={2}>
-                                <Tooltip
+                                <Tooltip.Floating
                                     multiline
                                     zIndex={1000}
                                     withinPortal
-                                    withArrow
                                     position="right-start"
                                     color="dark"
                                     label={
@@ -183,7 +207,6 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                                             sx={{ width: '100%', cursor: 'pointer' }}
                                             onClick={handlePreviewImageClick}
                                         >
-
                                             <Image
                                                 src={imagePreviewSrc}
                                                 fit="contain"
@@ -199,7 +222,7 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                                         </Group>
                                     </a>
 
-                                </Tooltip>
+                                </Tooltip.Floating>
                             </Card.Section>
 
                             {/* CHECK TOOLBAR */}
