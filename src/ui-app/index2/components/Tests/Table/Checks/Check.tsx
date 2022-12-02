@@ -102,7 +102,10 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                                 />
 
                             </Paper>
-                            <Text sx={{ width: '50%' }}>{check.name}</Text>
+                            <Tooltip label={check.name} multiline withinPortal>
+                                <Text lineClamp={2} sx={{ width: '50%' }}>{check.name}</Text>
+                            </Tooltip>
+
                             <Group position="right">
                                 <Status check={check} />
                                 <ViewPortLabel
@@ -155,7 +158,9 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                                 }}
                                 radius={0}
                             >
-                                <Text>{check.name}</Text>
+                                <Tooltip label={check.name} multiline withinPortal>
+                                    <Text lineClamp={1}>{check.name}</Text>
+                                </Tooltip>
                             </Paper>
                             <Card.Section m={2}>
                                 <Tooltip
