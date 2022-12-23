@@ -24,6 +24,8 @@ export function Status({ check, size, variant = 'light', ...rest }: Props) {
     return (
         <Badge
             color={statusColor(check.status)}
+            data-test="check-status"
+            data-check-status-name={check.name}
             variant={variant}
             size={size || sizes[checksViewSize].statusBadge}
             title="Check status"

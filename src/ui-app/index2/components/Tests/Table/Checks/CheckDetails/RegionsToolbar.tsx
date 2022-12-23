@@ -80,6 +80,7 @@ export function RegionsToolbar({ mainView, baselineId, view }: Props) {
                 }
             >
                 <ActionIcon
+                    data-check="remove-ignore-region"
                     disabled={!visibleRegionRemoveButton}
                     onClick={() => mainView.removeActiveIgnoreRegions()}
                 >
@@ -111,6 +112,7 @@ export function RegionsToolbar({ mainView, baselineId, view }: Props) {
             >
                 <div>
                     <ActionIcon
+                        data-check="add-ignore-region"
                         disabled={(view === 'slider') || !baselineId}
                         onClick={() => mainView.addIgnoreRegion({ name: 'ignore_rect', strokeWidth: 0 })}
                     >
@@ -136,6 +138,7 @@ export function RegionsToolbar({ mainView, baselineId, view }: Props) {
                 }
             >
                 <ActionIcon
+                    data-check="save-ignore-region"
                     onClick={() => MainView.sendIgnoreRegions(baselineId!, mainView.getRectData())}
                 >
                     <IconDeviceFloppy size={24} stroke={1} />

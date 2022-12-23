@@ -39,14 +39,15 @@ export default (isCSS, attrName, selector, falseCase, expectedValue) => {
     if (attrName.match(/(color|font-weight)/)) {
         attributeValue = attributeValue.value;
     }
+    console.log('👹👹👹👹', attributeValue?.value, attributeValue)
     if (falseCase) {
-        expect(attributeValue).not.toEqual(
+        expect(attributeValue?.value || attributeValue).not.toEqual(
             expectedValue,
             `${attrType}: ${attrName} of element "${selector}" should `
             + `not contain "${attributeValue}"`
         );
     } else {
-        expect(attributeValue).toEqual(
+        expect(attributeValue?.value || attributeValue).toEqual(
             expectedValue,
             `${attrType}: ${attrName} of element "${selector}" should `
             + `contain "${attributeValue}", but "${expectedValue}"`

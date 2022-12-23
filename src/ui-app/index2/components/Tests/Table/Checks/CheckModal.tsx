@@ -98,6 +98,7 @@ export function CheckModal({ firstPageQuery }: Props) {
         >
             {/* Close Button */}
             <ActionIcon
+                data-test="close-check-detail-icon"
                 style={{ position: 'fixed', right: 10, top: 10 }}
                 onClick={
                     () => {

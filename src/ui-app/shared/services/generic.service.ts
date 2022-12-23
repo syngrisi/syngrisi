@@ -3,6 +3,7 @@ import ky from 'ky';
 import queryString from 'query-string';
 import config from '../../config';
 import ILog from '../interfaces/ILog';
+import { log } from '../utils';
 
 export interface IApiResult {
     results: ILog[]
@@ -36,6 +37,30 @@ export const GenericService = {
             return result;
         }
         throw new Error(`cannot get resource: ${uri}, resp: '${JSON.stringify(resp)}'`);
+    },
+
+    // eslint-disable-next-line consistent-return
+    async get_via_post(resource: string, filter: any = {}, options: IRequestOptions = {}, queryID = '') {
+        try {
+            const resp = await ky(`${config.baseUri}/v1/${resource}/get_via_post`, {
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    filter,
+                    options,
+                    queryID,
+                }),
+                method: 'POST',
+            });
+            if (resp.ok) {
+                return resp.json();
+            }
+        } catch (e) {
+            log.error(`cannot get (get_via_post) ${resource},`
+                + `\noptions: '${JSON.stringify(options)}', error: '${e.stack || e}'}`);
+
+            throw new Error(`cannot get (get_via_post) ${resource},`
+                + `\noptions: '${JSON.stringify(options)}', error: '${e}'}`);
+        }
     },
 
     async create<ResType>(resource: string, data: ResType): Promise<ResType[]> {

@@ -19,8 +19,8 @@ Feature: Tests Table Filter
         When I go to "index2" page
 
         When I wait for "1" seconds
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName filter-0')]" to be displayed
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName filter-1')]" to be displayed
+        When I wait on element "[data-table-test-name='TestName filter-0']" to be displayed
+        When I wait on element "[data-table-test-name='TestName filter-1']" to be displayed
 
         # filter contains
         When I click on the element "[data-test='table-filtering']"
@@ -30,8 +30,8 @@ Feature: Tests Table Filter
         When I set "filter-1" to the inputfield "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//input[@data-test='table-filter-value']"
         When I click on the element "[data-test='table-filter-apply']"
 
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName filter-0')]" to not be displayed
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName filter-1')]" to be displayed
+        When I wait on element "[data-table-test-name='TestName filter-0']" to not be displayed
+        When I wait on element "[data-table-test-name='TestName filter-1']" to be displayed
 
     @smoke
     Scenario: Main Group, Single Rule with project Filter
@@ -54,18 +54,18 @@ Feature: Tests Table Filter
         When I go to "index2" page
 
         When I wait for "1" seconds
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName filter-0')]" to be displayed
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName filter-1')]" to be displayed
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName filter-P2')]" to be displayed
+        When I wait on element "[data-table-test-name='TestName filter-0']" to be displayed
+        When I wait on element "[data-table-test-name='TestName filter-1']" to be displayed
+        When I wait on element "[data-table-test-name='TestName filter-P2']" to be displayed
 
         # select project
         When I wait for "3" seconds
         # this is workaround: it's impossible for now to select 'Project-2' straightaway at this moment
         When I select the option with the text "Project-1" for element "select[data-test='current-project']"
 
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName filter-0')]" to be displayed
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName filter-1')]" to be displayed
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName filter-P2')]" to not be displayed
+        When I wait on element "[data-table-test-name='TestName filter-0']" to be displayed
+        When I wait on element "[data-table-test-name='TestName filter-1']" to be displayed
+        When I wait on element "[data-table-test-name='TestName filter-P2']" to not be displayed
 
         # filter contains
         When I click on the element "[data-test='table-filtering']"
@@ -75,9 +75,9 @@ Feature: Tests Table Filter
         When I set "filter-1" to the inputfield "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//input[@data-test='table-filter-value']"
         When I click on the element "[data-test='table-filter-apply']"
 
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName filter-0')]" to not be displayed
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName filter-1')]" to be displayed
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName filter-P2')]" to not be displayed
+        When I wait on element "[data-table-test-name='TestName filter-0']" to not be displayed
+        When I wait on element "[data-table-test-name='TestName filter-1']" to be displayed
+        When I wait on element "[data-table-test-name='TestName filter-P2']" to not be displayed
 
     Scenario: Filter after select navbar item
         When I create "2" tests with:
@@ -104,14 +104,14 @@ Feature: Tests Table Filter
         When I go to "index2" page
 
         When I wait for "1" seconds
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName filter-0')]" to be displayed
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName filter-1')]" to be displayed
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName filter-RunName-2')]" to be displayed
+        When I wait on element "[data-table-test-name='TestName filter-0']" to be displayed
+        When I wait on element "[data-table-test-name='TestName filter-1']" to be displayed
+        When I wait on element "[data-table-test-name='TestName filter-RunName-2']" to be displayed
 
         When I click on the element "//*[@data-test='navbar-item-name' and contains(.,'RunName-1')]"
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName filter-0')]" to be displayed
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName filter-1')]" to be displayed
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName filter-RunName-2')]" to not be displayed
+        When I wait on element "[data-table-test-name='TestName filter-0']" to be displayed
+        When I wait on element "[data-table-test-name='TestName filter-1']" to be displayed
+        When I wait on element "[data-table-test-name='TestName filter-RunName-2']" to not be displayed
 
         # filter contains
         When I click on the element "[data-test='table-filtering']"
@@ -121,9 +121,9 @@ Feature: Tests Table Filter
         When I set "filter-1" to the inputfield "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//input[@data-test='table-filter-value']"
         When I click on the element "[data-test='table-filter-apply']"
 
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName filter-0')]" to not be displayed
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName filter-1')]" to be displayed
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName filter-RunName-2')]" to not be displayed
+        When I wait on element "[data-table-test-name='TestName filter-0']" to not be displayed
+        When I wait on element "[data-table-test-name='TestName filter-1']" to be displayed
+        When I wait on element "[data-table-test-name='TestName filter-RunName-2']" to not be displayed
 
     Scenario: Main Group, Multiple Rules - And
         When I create "1" tests with:
@@ -165,9 +165,9 @@ Feature: Tests Table Filter
         When I go to "index2" page
 
         When I wait for "1" seconds
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName-1')]" to be displayed
-        When I expect that element "//*[@data-test='table-row-Name' and contains(.,'TestName-1')]" does appear exactly "2" times
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName-2')]" to be displayed
+        When I wait on element "[data-table-test-name=TestName-1]" to be displayed
+        When I expect that element "[data-table-test-name=TestName-1]" does appear exactly "2" times
+        When I wait on element "[data-table-test-name=TestName-2]" to be displayed
 
         # filter eq test name
         When I click on the element "[data-test='table-filtering']"
@@ -178,9 +178,9 @@ Feature: Tests Table Filter
         When I click on the element "[data-test='table-filter-apply']"
 
         When I wait for "1" seconds
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName-1')]" to be displayed
-        When I expect that element "//*[@data-test='table-row-Name' and contains(.,'TestName-1')]" does appear exactly "2" times
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName-2')]" to not be displayed
+        When I wait on element "[data-table-test-name=TestName-1]" to be displayed
+        When I expect that element "[data-table-test-name=TestName-1]" does appear exactly "2" times
+        When I wait on element "[data-table-test-name=TestName-2]" to not be displayed
 
         # filter eq browser name
         When I select the option with the text "Browser" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-1']//select[@data-test='table-filter-column-name']"
@@ -190,11 +190,11 @@ Feature: Tests Table Filter
 
         When I wait for "1" seconds
 
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName-1')]" to be displayed
+        When I wait on element "[data-table-test-name=TestName-1]" to be displayed
         When I wait on element "//*[@data-test='table-row-Browser' and contains(.,'firefox')]" to be displayed
         When I wait on element "//*[@data-test='table-row-Browser' and contains(.,'chrome')]" to not be displayed
-        When I expect that element "//*[@data-test='table-row-Name' and contains(.,'TestName-1')]" does appear exactly "1" times
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName-2')]" to not be displayed
+        When I expect that element "[data-table-test-name=TestName-1]" does appear exactly "1" times
+        When I wait on element "[data-table-test-name=TestName-2]" to not be displayed
 
     Scenario: Main Group, Multiple Rules - Or
         When I create "1" tests with:
@@ -237,9 +237,9 @@ Feature: Tests Table Filter
         When I go to "index2" page
 
         When I wait for "1" seconds
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName-chrome')]" to be displayed
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName-firefox')]" to be displayed
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName-msedge')]" to be displayed
+        When I wait on element "[data-table-test-name=TestName-chrome]" to be displayed
+        When I wait on element "[data-table-test-name=TestName-firefox]" to be displayed
+        When I wait on element "[data-table-test-name=TestName-msedge]" to be displayed
 
         # filter eq test name
         When I click on the element "[data-test='table-filtering']"
@@ -259,6 +259,6 @@ Feature: Tests Table Filter
         When I click on the element "[data-test='table-filter-apply']"
 
         When I wait for "3" seconds
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName-firefox')]" to be displayed
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName-chrome')]" to be displayed
-        When I wait on element "//*[@data-test='table-row-Name' and contains(.,'TestName-msedge')]" to not be displayed
+        When I wait on element "[data-table-test-name=TestName-firefox]" to be displayed
+        When I wait on element "[data-table-test-name=TestName-chrome]" to be displayed
+        When I wait on element "[data-table-test-name=TestName-msedge]" to not be displayed

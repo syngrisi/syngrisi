@@ -45,7 +45,7 @@ export function ScreenshotDetails({ mainView, view, check }: Props) {
                     withinPortal
                     label={`Screenshot size: ${image.width}x${image.height}, click to open the image in a new tab`}
                 >
-                    <Badge color="blue" radius={'sm'} className={classes.infoBadges}>
+                    <Badge color="blue" radius={'sm'} className={classes.infoBadges} data-check="image-size">
                         <a
                             href={image.getSrc()}
                             target="_blank"
@@ -89,7 +89,7 @@ export function ScreenshotDetails({ mainView, view, check }: Props) {
                                 </Text>
                                 <Tooltip label={`Image Date: ${createdDate}`} withinPortal>
 
-                                    <Badge color="blue" radius={'sm'} className={classes.infoBadges}>
+                                    <Badge color="blue" radius={'sm'} className={classes.infoBadges} data-check="image-date">
                                         {
                                             createdDate
                                         }
@@ -104,7 +104,11 @@ export function ScreenshotDetails({ mainView, view, check }: Props) {
                                                 Difference:
                                             </Text>
                                             <Tooltip label={`Images difference: ${diffPercent} %`} withinPortal>
-                                                <Badge color="blue" radius={'sm'} sx={{ maxWidth: 100 }}
+                                                <Badge
+                                                    color="blue"
+                                                    radius={'sm'}
+                                                    sx={{ maxWidth: 100 }}
+                                                    data-check="diff-percent"
                                                        className={classes.infoBadges}>
                                                     {diffPercent}%
                                                 </Badge>

@@ -75,11 +75,16 @@ export default function TestsTable({ infinityQuery, firstPageQuery, visibleField
                 ref={scrollAreaRef}
                 maxHeight="100vh"
                 sx={{ width: size }}
-                pb={24}
+                pb={124}
                 styles={{ scrollbar: { marginTop: '46px' } }}
             >
 
-                <Table sx={{ width: '100%' }} mb={100} verticalSpacing="sm" highlightOnHover>
+                <Table
+                    sx={{ width: '100%' }}
+                    // mb={100}
+                    verticalSpacing="sm"
+                    highlightOnHover
+                >
                     <thead
                         style={{ zIndex: 10 }}
                         className={cx(classes.header, { [classes.scrolled]: scrolled })}

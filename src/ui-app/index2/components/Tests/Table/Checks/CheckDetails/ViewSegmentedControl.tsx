@@ -48,7 +48,7 @@ export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
                         )
                     }
                 >
-                    <Group position="left" spacing={4} noWrap>
+                    <Group position="left" spacing={4} noWrap data-check="expected-view">
                         <IconSquareLetterE stroke={1} className={classes.labelIcon} />
                         <Text lineClamp={1} className={classes.labelText}>
                             Expected
@@ -72,7 +72,7 @@ export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
                         )
                     }
                 >
-                    <Group position="left" spacing={4} noWrap>
+                    <Group position="left" spacing={4} noWrap data-check="actual-view">
                         <IconSquareLetterA stroke={1} className={classes.labelIcon} />
                         <Text lineClamp={1} className={classes.labelText}>
                             Actual
@@ -96,7 +96,7 @@ export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
                             )
                         }
                     >
-                        <Group position="left" spacing={4} noWrap>
+                        <Group position="left" spacing={4} noWrap data-check="diff-view">
                             <IconArrowsExchange2 stroke={1} className={classes.labelIcon} />
                             <Text lineClamp={1} className={classes.labelText}>
                                 Difference
@@ -121,7 +121,7 @@ export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
                             )
                         }
                     >
-                        <Group position="left" spacing={4} noWrap>
+                        <Group position="left" spacing={4} noWrap data-check="slider-view">
                             <IconSquareHalf stroke={1} className={classes.labelIcon} />
                             <Text lineClamp={1} className={classes.labelText}>
                                 Slider
@@ -136,6 +136,7 @@ export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
 
     return (
         <SegmentedControl
+            data-check="view-segment"
             sx={{ minWidth: 0, minHeight: 0 }}
             styles={
                 {

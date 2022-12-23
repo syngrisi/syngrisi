@@ -47,6 +47,7 @@ export function RemoveButton({ checksQuery, testUpdateQuery, check, closeHandler
             icon={<IconTrash stroke={1} size={size} />}
             action={handleRemoveCheckClick}
             title="Delete check"
+            testAttrName={check.name}
             loading={mutationRemoveCheck.isLoading}
             confirmLabel="Delete"
             size={size}

@@ -23,7 +23,7 @@ function getDiffImageData(image: any) {
     return imgData;
 }
 
-export function highlightDiff(mainView: MainView, highlightsGroups: IGroup[] | null, imageData)
+export function highlightDiff(mainView: MainView, highlightsGroups: IGroup[] | null, imageData: any)
     : Promise<{ groups: IGroup[], diffImageData: any }> {
     return new Promise((resolve) => {
         // remove highlights
@@ -147,12 +147,12 @@ export function highlightDiff(mainView: MainView, highlightsGroups: IGroup[] | n
                             onComplete: () => {
                                 circle.animate('radius', '0.00', {
                                     onChange: mainView.canvas.renderAll.bind(mainView.canvas),
-                                    duration: 700,
+                                    duration: window?.slowHighlight ? 15000 : 700,
                                     onComplete: highlightRemoving,
                                 });
                                 circle.animate('opacity', '0.30', {
                                     onChange: mainView.canvas.renderAll.bind(mainView.canvas),
-                                    duration: 700,
+                                    duration: window?.slowHighlight ? 3000 : 700,
                                 });
                             },
                         });

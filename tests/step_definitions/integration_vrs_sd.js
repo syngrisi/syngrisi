@@ -213,9 +213,10 @@ Then(/^the "([^"]*)" "([^"]*)" should be "([^"]*)"$/, function (itemType, proper
         .toEqual(exceptedValue);
 });
 
-When(/^I expect that element "([^"]*)" to (contain|have) text "([^"]*)"$/, (selector, matchCase, text) => {
-    const filledText = text;
-    if (matchCase === 'contains') {
+When(/^I expect that element "([^"]*)" to (contain|have) text "([^"]*)"$/, function (selector, matchCase, text) {
+    const filledText = this.fillItemsPlaceHolders(fillCommonPlaceholders(text));
+
+    if (matchCase === 'contain') {
         expect($(selector))
             .toHaveTextContaining(filledText);
     } else {
@@ -223,6 +224,14 @@ When(/^I expect that element "([^"]*)" to (contain|have) text "([^"]*)"$/, (sele
             .toHaveText(filledText);
     }
 });
+
+When(/^I expect that element "([^"]*)" to contain HTML "([^"]*)"$/, function (selector, text) {
+    const filledText = this.fillItemsPlaceHolders(fillCommonPlaceholders(text));
+
+    expect($(selector).getHTML())
+        .toContain(filledText);
+});
+
 
 Given(/^I set custom window size: "([^"]*)"$/, (viewport) => {
     const size = viewport.split('x');

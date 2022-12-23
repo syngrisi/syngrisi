@@ -146,6 +146,7 @@ export function QuickFilter() {
             <Text size={14}>Quick Filter: </Text>
             <TextInput
                 value={quickFilter}
+                data-test="table-quick-filter"
                 onChange={(event) => setQuickFilter(event.currentTarget.value)}
                 size="xs"
                 radius="xs"

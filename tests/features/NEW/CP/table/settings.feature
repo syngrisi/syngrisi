@@ -18,35 +18,37 @@ Feature: Tests Table Settings
         When I wait on element "[data-test='table-header-Id']" to be displayed
         Then I expect that element "[data-test='table-header-Id']" is displayed
         Then I expect that element "[data-test='table-header-Name']" is displayed
+        Then I expect that element "[data-test='table-header-Status']" is displayed
         Then I expect that element "[data-test='table-header-Created']" is displayed
         Then I expect that element "[data-test='table-header-Accepted']" is displayed
         Then I expect that element "[data-test='table-header-Date']" is displayed
         Then I expect that element "[data-test='table-header-Browser']" is displayed
         Then I expect that element "[data-test='table-header-Platform']" is displayed
         Then I expect that element "[data-test='table-header-Viewport']" is displayed
-        Then I expect that element "th" does appear exactly "9" times
+        Then I expect that element "th" does appear exactly "10" times
 
         Then I expect that element "[data-test='table-row-Id']" is displayed
         Then I expect that element "[data-test='table-row-Name']" is displayed
+        Then I expect that element "[data-test='table-row-Status']" is displayed
         Then I expect that element "[data-test='table-row-Created']" is displayed
         Then I expect that element "[data-test='table-row-Accepted']" is displayed
         Then I expect that element "[data-test='table-row-Date']" is displayed
         Then I expect that element "[data-test='table-row-Browser']" is displayed
         Then I expect that element "[data-test='table-row-Platform']" is displayed
         Then I expect that element "[data-test='table-row-Viewport']" is displayed
-        Then I expect that element "tbody tr:first-of-type td" does appear exactly "9" times
+        Then I expect that element "tbody tr:first-of-type td" does appear exactly "10" times
 
         When I click on the element "[data-test='table-sorting']"
         When I wait on element "[data-test='settings-visible-columns-Id']" to exist
         When I click on the element "[data-test='settings-visible-columns-Id']" via js
         When I wait on element "[data-test='table-header-Id']" to not be displayed
-        Then I expect that element "th" does appear exactly "8" times
-        Then I expect that element "tbody tr:first-of-type td" does appear exactly "8" times
+        Then I expect that element "th" does appear exactly "9" times
+        Then I expect that element "tbody tr:first-of-type td" does appear exactly "9" times
 
         When I click on the element "[data-test='settings-visible-columns-Id']" via js
         When I wait on element "[data-test='table-header-Id']" to be displayed
-        Then I expect that element "th" does appear exactly "9" times
-        Then I expect that element "tbody tr:first-of-type td" does appear exactly "9" times
+        Then I expect that element "th" does appear exactly "10" times
+        Then I expect that element "tbody tr:first-of-type td" does appear exactly "10" times
 
 
     Scenario: Sorting
@@ -58,9 +60,9 @@ Feature: Tests Table Settings
               checkName: Check - 1
         """
         When I go to "index2" page
-        When I wait on element "//*[@data-test='table-row-Name' and contains(., 'TestName-0')]" for 10000ms to be displayed
-        When I wait on element "//*[@data-test='table-row-Name' and contains(., 'TestName-1')]" for 10000ms to be displayed
-        When I wait on element "//*[@data-test='table-row-Name' and contains(., 'TestName-2')]" for 10000ms to be displayed
+        When I wait on element "[data-table-test-name=TestName-0]" for 10000ms to be displayed
+        When I wait on element "[data-table-test-name=TestName-1]" for 10000ms to be displayed
+        When I wait on element "[data-table-test-name=TestName-2]" for 10000ms to be displayed
         When I execute javascript code:
             """
             const elements = Array

@@ -4,15 +4,23 @@ const { When, Then } = require('cucumber');
 const { fillCommonPlaceholders } = require('../../src/utills/common');
 
 When(/^I accept the "([^"]*)" check$/, (checkName) => {
-    expect($(`.//div[contains(normalize-space(.), '${checkName}')]/../..`))
-        .toBeExisting();
+    const icon = $(`[data-test='check-accept-icon'][data-accept-icon-name='${checkName}']`);
+    icon.waitForDisplayed();
+    icon.click();
 
-    // eslint-disable-next-line max-len
-    $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//a[contains(@class, 'accept-button')]`)
-        .click();
-    browser.pause(200);
-    $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../div[@name='check-buttons']//a[contains(@class, 'accept-option')]`)
-        .click();
+    const confirmButton = $(`[data-confirm-button-name='${checkName}']`);
+    confirmButton.waitForDisplayed();
+    confirmButton.click();
+
+    // expect($(`.//div[contains(normalize-space(.), '${checkName}')]/../..`))
+    //     .toBeExisting();
+    //
+    // // eslint-disable-next-line max-len
+    // $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//a[contains(@class, 'accept-button')]`)
+    //     .click();
+    // browser.pause(200);
+    // $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../div[@name='check-buttons']//a[contains(@class, 'accept-option')]`)
+    //     .click();
 });
 
 When(/^I delete the "([^"]*)" check$/, (checkName) => {
@@ -89,4 +97,14 @@ Then(/^I expect that(:? (\d)th)? VRS check "([^"]*)" has "([^"]*)" status$/, (nu
     };
     expect(border)
         .toHaveAttrContaining('class', classStatuses[expectedStatus]);
+});
+
+When(/^I remove the "([^"]*)" check$/, function (name) {
+    const removeIcon = $(`[data-check='${name}'] [data-test='check-remove-icon']`);
+    removeIcon.waitForDisplayed();
+    removeIcon.click();
+    const confirmButton = $(`[data-test="check-remove-icon-confirm"][data-confirm-button-name="${name}"]`);
+    confirmButton.waitForDisplayed();
+    browser.pause(500);
+    confirmButton.click();
 });

@@ -169,6 +169,7 @@ export function ZoomToolbar(
                 }
             >
                 <ActionIcon
+                    data-check="zoom-in"
                     onClick={() => zoomByDelta(15)}
                 >
                     <IconZoomIn size={24} stroke={1} />
@@ -185,13 +186,13 @@ export function ZoomToolbar(
                         >
                             {Math.round(zoomPercent)}%
                         </Text>
-                        <ActionIcon ml={-10}>
+                        <ActionIcon ml={-10} data-check="open-zoom-dropdown">
                             <IconChevronDown />
                         </ActionIcon>
                     </Group>
                 </Popover.Target>
                 <Popover.Dropdown p={0}>
-                    <Stack spacing={0}>
+                    <Stack spacing={0} data-check="zoom-dropdown">
                         <Button
                             pl={8}
                             pr={8}
@@ -302,6 +303,7 @@ export function ZoomToolbar(
                 }
             >
                 <ActionIcon
+                    data-check="zoom-out"
                     onClick={() => zoomByDelta(-15)}
                 >
                     <IconZoomOut size={24} stroke={1} />

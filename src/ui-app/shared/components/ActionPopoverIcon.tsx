@@ -28,6 +28,7 @@ interface IActionPopoverIcon {
     size?: MantineNumberSize | undefined
     withinPortal?: boolean
     disabled?: boolean
+    testAttrName?: string
 }
 
 export default function ActionPopoverIcon(
@@ -39,6 +40,7 @@ export default function ActionPopoverIcon(
         confirmLabel,
         title,
         testAttr,
+        testAttrName = '',
         loading,
         buttonColor,
         paused,
@@ -75,6 +77,7 @@ export default function ActionPopoverIcon(
                     <ActionIcon
                         disabled={disabled}
                         data-test={testAttr}
+                        data-accept-icon-name={testAttrName}
                         variant={'light' as any}
                         color={iconColor}
                         onClick={() => {
@@ -99,6 +102,7 @@ export default function ActionPopoverIcon(
                     ref={ref}
                     data-test={`${testAttr}-confirm`}
                     color={buttonColor || color}
+                    data-confirm-button-name={testAttrName}
                     onClick={() => {
                         action();
                         handlers.close();

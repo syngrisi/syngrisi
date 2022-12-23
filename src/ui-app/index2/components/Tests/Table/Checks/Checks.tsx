@@ -23,7 +23,7 @@ export function Checks({ item, testUpdateQuery, infinityQuery }: Props) {
             item._id,
             infinityQuery?.data?.pages[0]?.timestamp,
         ],
-        () => GenericService.get(
+        () => GenericService.get_via_post(
             'checks',
             { _id: { $in: item.checks } },
             {

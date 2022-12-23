@@ -15,4 +15,7 @@ router
 router.route('/accept/:id')
     .put(ensureLoggedIn(), checksController.accept);
 
+router.route('/get_via_post')
+    .post(ensureLoggedIn(), checksController.get_via_post);
+
 module.exports = router;

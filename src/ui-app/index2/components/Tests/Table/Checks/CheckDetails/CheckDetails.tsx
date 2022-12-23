@@ -1,4 +1,4 @@
-/* eslint-disable no-underscore-dangle,react/jsx-one-expression-per-line,prefer-arrow-callback,max-len */
+/* eslint-disable no-underscore-dangle,react/jsx-one-expression-per-line,prefer-arrow-callback,max-len,react/jsx-indent */
 import * as React from 'react';
 import { fabric } from 'fabric';
 import {
@@ -37,6 +37,7 @@ import { ViewPortLabel } from '../ViewPortLabel';
 import { sizes } from '../checkSizes';
 import { OsIcon } from '../../../../../../shared/components/Check/OsIcon';
 import { BrowserIcon } from '../../../../../../shared/components/Check/BrowserIcon';
+import { getStatusMessage } from '../../../../../../shared/utils/utils';
 
 // eslint-disable-next-line no-unused-vars
 const useStyles = createStyles((theme) => ({
@@ -44,6 +45,11 @@ const useStyles = createStyles((theme) => ({
         '@media (max-width: 1070px)': {
             display: 'none',
         },
+    },
+    checkPathFragment: {
+        textOverflow: 'ellipsis',
+        overflow: 'hidden',
+        whiteSpace: 'nowrap',
     },
 }));
 
@@ -122,6 +128,8 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
             },
         },
     );
+
+    const statusMsg = getStatusMessage(checkData);
 
     const baselineId = useMemo<string>(() => {
         if (baselineQuery.data?.results && baselineQuery.data?.results.length > 0) {
@@ -220,80 +228,174 @@ export function CheckDetails({ checkData, checkQuery, firstPageQuery, closeHandl
 
             <Stack sx={{ width: '100%' }}>
 
-                {/* Title */}
-                <Group position="apart" sx={{ width: '98%' }} noWrap>
+                {/* Header */}
+                <Group position="apart" sx={{ width: '98%' }} data-check-header-name={currentCheck.name} noWrap>
                     <Group
                         position="left"
                         align="center"
                         spacing="xs"
                         sx={{ position: 'relative' }}
                         noWrap
+                        data-test="full-check-path"
                     >
-                        <Status size="lg" check={currentCheck} variant="filled" />
-
                         <Tooltip
-                            withinPortal
                             label={
-                                `Created: ${currentCheck.createdDate}`
+                                (
+                                    <Group spacing={4}>
+                                        <Status size="lg" check={currentCheck} variant="filled" />
+                                        {statusMsg}
+                                    </Group>
+                                )
                             }
+                            withinPortal
                         >
-                            <Text lineClamp={1}>
-                                {currentCheck.app.name} / {currentCheck.suite.name} / {currentCheck.test.name} / {currentCheck?.name}
-                            </Text>
+                            <Group align="center" data-check="status">
+                                <Status size="lg" check={currentCheck} variant="filled" />
+                            </Group>
                         </Tooltip>
+
+                        <Group
+                            noWrap
+                            spacing={0}
+                            // sx={{ maxWidth: '90%' }}
+                        >
+                            <Tooltip
+                                withinPortal
+                                label={`Project: ${currentCheck.app.name}`}
+                            >
+                                <Text
+                                    data-check="app-name"
+                                    sx={{ flexShrink: 1 }}
+                                    className={classes.checkPathFragment}
+                                >
+                                    {currentCheck.app.name}
+                                </Text>
+                            </Tooltip>
+                            <Tooltip
+                                withinPortal
+                                label={`Suite: ${currentCheck.suite.name}`}
+                            >
+                                <Text
+                                    data-check="suite-name"
+                                    sx={{ flexShrink: 500 }}
+                                    className={classes.checkPathFragment}
+                                >
+                                    &nbsp;/&nbsp;
+                                    {currentCheck.suite.name}
+                                </Text>
+                            </Tooltip>
+                            <Tooltip
+                                withinPortal
+                                label={`Test: ${currentCheck.test.name}`}
+                            >
+                                <Text
+                                    data-check="test-name"
+                                    sx={{ flexShrink: 5 }}
+                                    className={classes.checkPathFragment}
+                                >
+                                    &nbsp;/&nbsp;
+                                    {currentCheck.test.name}
+                                </Text>
+                            </Tooltip>
+                            <Tooltip
+                                withinPortal
+                                label={`Check: ${currentCheck?.name}`}
+
+                            >
+                                <Text
+                                    data-check="check-name"
+                                    sx={{ flexShrink: 1 }}
+                                    lineClamp={1}
+                                    // className={classes.checkPathFragment}
+                                >
+                                    &nbsp;/&nbsp;
+                                    {currentCheck?.name}
+                                </Text>
+                            </Tooltip>
+                        </Group>
                     </Group>
 
                     <Group
                         noWrap
                         spacing="xs"
                     >
-                        <ViewPortLabel
-                            check={currentCheck}
-                            // color={theme.colorScheme === 'dark' ? 'gray.2' : 'gray.8'}
-                            color="blue"
-                            sizes={sizes}
-                            size="lg"
-                            checksViewSize={checksViewSize}
-                            fontSize="12px"
-                        />
-                        {/* <Status size="lg" check={checkData} /> */}
-                        <ActionIcon variant="light" size={32} p={4} ml={4}>
-                            <OsIcon
-                                size={20}
-                                color={iconsColor}
-                                os={currentCheck.os}
-                            />
-                        </ActionIcon>
-                        <Text size={12} lineClamp={1}>{currentCheck.os}</Text>
+                        <Tooltip
+                            label={
+                                currentCheck.viewport
+                            }
+                            withinPortal
+                        >
+                            <Text lineClamp={1} sx={{ overflow: 'visible' }} data-check="viewport">
+                                <ViewPortLabel
+                                    check={currentCheck}
+                                    // color={theme.colorScheme === 'dark' ? 'gray.2' : 'gray.8'}
+                                    color="blue"
+                                    sizes={sizes}
+                                    size="lg"
+                                    checksViewSize={checksViewSize}
+                                    fontSize="12px"
+                                />
+                            </Text>
+                        </Tooltip>
 
-                        <ActionIcon variant="light" size={32} p={4}>
-                            <BrowserIcon
-                                size={20}
-                                color={iconsColor}
-                                browser={currentCheck.browserName}
-                            />
-                        </ActionIcon>
-                        <Text
-                            lineClamp={1}
-                            size={12}
-                            title={
+                        <Tooltip
+                            data-check="os-label"
+                            label={
+                                currentCheck.os
+                            }
+                            withinPortal
+                        >
+                            <Group spacing={8} noWrap>
+                                <ActionIcon variant="light" size={32} p={4} ml={4}>
+                                    <OsIcon
+                                        data-check="os-icon"
+                                        size={20}
+                                        color={iconsColor}
+                                        os={currentCheck.os}
+                                    />
+                                </ActionIcon>
+                                <Text data-check="os" size={12} lineClamp={1}>{currentCheck.os}</Text>
+                            </Group>
+                        </Tooltip>
+
+                        <Tooltip
+                            label={
                                 currentCheck.browserFullVersion
                                     ? `${currentCheck.browserFullVersion}`
-                                    : ''
+                                    : `${currentCheck.browserVersion}`
                             }
+                            withinPortal
                         >
-                            {currentCheck.browserName}
-                            {
-                                currentCheck.browserVersion
-                                    ? ` - ${currentCheck.browserVersion}`
-                                    : ''
-                            }
-                        </Text>
+                            <Group spacing={8} noWrap>
+                                <ActionIcon variant="light" size={32} p={4}>
+
+                                    <BrowserIcon
+                                        data-check="browser-icon"
+                                        size={20}
+                                        color={iconsColor}
+                                        browser={currentCheck.browserName}
+                                    />
+                                </ActionIcon>
+                                <Text
+                                    data-check="browser"
+                                    lineClamp={1}
+                                    size={12}
+                                >
+
+                                    {currentCheck.browserName}
+                                    {
+                                        currentCheck.browserVersion
+                                            ? ` - ${currentCheck.browserVersion}`
+                                            : ''
+                                    }
+                                </Text>
+                            </Group>
+                        </Tooltip>
                     </Group>
                 </Group>
 
                 {/* Toolbar */}
-                <Group position="apart" noWrap>
+                <Group position="apart" noWrap data-check="toolbar">
                     <ScreenshotDetails mainView={mainView} check={currentCheck} view={view} />
                     <Group spacing="sm" noWrap>
                         <Group

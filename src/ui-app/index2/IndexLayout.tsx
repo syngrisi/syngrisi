@@ -16,9 +16,7 @@ export default function IndexLayout() {
             })}
         >
             <ReactQueryDevtools initialIsOpen={false} />
-            <Paper>
-                <Tests />
-            </Paper>
+            <Tests />
         </AppShell>
     );
 }

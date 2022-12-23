@@ -37,6 +37,7 @@ export function HighlightButton({ mainView, disabled = false }: Props) {
         >
             <div>
                 <ActionIcon
+                    data-check="highlight-icon"
                     disabled={disabled}
                     loading={loadHighlights}
                     onClick={async () => {
