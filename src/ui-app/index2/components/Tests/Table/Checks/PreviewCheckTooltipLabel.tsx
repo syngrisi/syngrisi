@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Badge, Group, Stack, Text } from '@mantine/core';
+import { Badge, Divider, Group, Stack, Text } from '@mantine/core';
 import * as dateFns from 'date-fns';
 import { sizes } from './checkSizes';
 import { StatusIcon } from '../../../../../shared/components/Check/StatusIcon';
@@ -7,42 +7,34 @@ import { LabelUser } from '../../../../../shared/components/Users/LabelUser';
 import { BrowserIcon } from '../../../../../shared/components/Check/BrowserIcon';
 import { OsIcon } from '../../../../../shared/components/Check/OsIcon';
 import { ViewPortLabel } from './ViewPortLabel';
+import { getStatusMessage } from '../../../../../shared/utils/utils';
 
 interface Props {
     check: any
 }
 
 export function PreviewCheckTooltipLabel({ check }: Props) {
-    let statusMsg = '';
-    if (check.status[0] === 'failed') {
-        if (check.failReasons.includes('different_images')) {
-            statusMsg = ' - images are different';
-            const checkResult = check.result ? JSON.parse(check.result) : null;
-            let diffPercent = checkResult.misMatchPercentage ? (checkResult.misMatchPercentage) : '';
-            diffPercent = (
-                (diffPercent === '0.00' || diffPercent === '')
-                && (checkResult.rawMisMatchPercentage?.toString()?.length > 0)
-            )
-                ? checkResult.rawMisMatchPercentage
-                : checkResult.misMatchPercentage;
-            statusMsg += ` (${diffPercent}%)`;
-        }
-        if (check.failReasons.includes('wrong_dimensions')) {
-            statusMsg = ' - images have wrong  dimensions';
-        }
-        if (check.failReasons.includes('not_accepted')) {
-            statusMsg = ' - previous check with same parameter is not accepted';
-        }
-    }
+    const statusMsg = getStatusMessage(check);
+
     return (
-        <Stack sx={{ maxWidth: '370px' }} spacing={8} p={8}>
-            <Group>{check.name}</Group>
+        <Stack
+            sx={{ maxWidth: '370px' }}
+            spacing={8}
+            p={8}
+            data-check-tooltip-name={check.name}
+        >
+            <Group>
+                <Text size={16}>
+                    {check.name}
+                </Text>
+            </Group>
+            <Divider />
             <Group position="left" spacing={8} ml={-6} noWrap>
                 <Group>
                     <StatusIcon status={check.status[0]} size={72} />
                 </Group>
                 <Group>
-                    <Text size="lg">
+                    <Text size="sm" data-test="status-label">
                         {check.status[0][0].toUpperCase() + check.status[0].substring(1)}
                         {statusMsg}
                     </Text>
@@ -57,7 +49,7 @@ export function PreviewCheckTooltipLabel({ check }: Props) {
                         <Group position="right">
                             {
                                 check.markedByUsername && (
-                                    <LabelUser username={check.markedByUsername} size="xs" />
+                                    <LabelUser dataTest="user-label" username={check.markedByUsername} size="xs" />
                                 )
                             }
                         </Group>
@@ -70,7 +62,7 @@ export function PreviewCheckTooltipLabel({ check }: Props) {
                 </Group>
                 <Group position="right" spacing={6}>
                     <OsIcon os={check.os} size={24} />
-                    <Text size="xs">{check.os}</Text>
+                    <Text size="xs" data-test="os-label">{check.os}</Text>
                 </Group>
             </Group>
             <Group position="apart" noWrap>
@@ -79,7 +71,7 @@ export function PreviewCheckTooltipLabel({ check }: Props) {
                 </Group>
                 <Group position="right" spacing={6} noWrap>
                     <BrowserIcon size={24} browser={check.browserName} />
-                    <Text size="xs">
+                    <Text size="xs" data-test="browser-label">
                         {check.browserName}
                         -
                         {check.browserFullVersion}

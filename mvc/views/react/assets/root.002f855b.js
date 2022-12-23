@@ -5,7 +5,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 import { r as react, W as queryString, b as jsx, j as jsxs, P as Paper, g as Title, X as Stack, T as Text, G as Group, h as Button, Y as Epe, k as ky, a as config, u as useQuery, d as useMantineTheme, q as TextInput, t as ActionIcon, n as lAe, Z as Pj, c as createStyles, D as useLocalStorage, e as Container, _ as Dge, $ as Fragment, l as log, a0 as Tooltip, a1 as CK, a2 as Loader, a3 as React, a4 as Transition, a5 as Xfe, a6 as rze, A as Anchor, a7 as zV, a8 as ea, a9 as Ol, aa as ua, ab as RX, ac as rWe, ad as UZ, s as Checkbox, ae as getAugmentedNamespace, af as zb, E as useHotkeys, ag as Pbe, ah as Cbe, ai as pi, aj as Lbe, ak as lDe, al as dDe, am as IMe, an as DMe, ao as qF, f as useDocumentTitle, L as LoadingOverlay, ap as LHe, B as Box, o as useSearchParams, aq as Y, Q as QueryClient, ar as useNavigate, F as QueryClientProvider, H as ColorSchemeProvider, M as MantineProvider, as as Routes, at as Route, I as createRoot, J as BrowserRouter } from "./use-form.13115231.js";
-import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, G as GenericService, e as errorMsg, a as useDisclosure, b as useClickOutside, c as escapeRegExp, P as Popover, d as ScrollArea, f as Chip, D as Divider, l as links, H as Header, B as Burger, g as HeaderLogo, h as SafeSelect, o as openSpotlight, K as Kbd, i as useOs, U as UserMenu, j as Breadcrumbs, k as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, m as Skeleton, n as useInView, F as FocusTrap, p as getNavigationItem, q as stopNavigationProgress, r as resetNavigationProgress, t as useToggle, v as useInfinityScroll, N as Navbar, w as Badge, A as Affix, x as ActionPopoverIcon, y as UserHooks, T as ThemeIcon, z as encodeQueryParams, I as Image$1, E as Card, O as Collapse, Q as SegmentedControl, V as Table, W as useInputState, X as RelativeDrawer, Y as LogicalGroup, Z as uuid, $ as useNavProgressFetchEffect, a0 as AppShell, a1 as ReactQueryDevtools, a2 as useColorScheme, a3 as navigationData, a4 as SpotlightProvider, a5 as NotificationsProvider, a6 as NavigationProgress, a7 as ModalsProvider, a8 as QueryParamProvider, a9 as ReactRouter6Adapter } from "./LogicalGroup.bbed30cf.js";
+import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, G as GenericService, e as errorMsg, a as useDisclosure, b as useClickOutside, c as escapeRegExp, P as Popover, d as ScrollArea, f as Chip, D as Divider, l as links, H as Header, B as Burger, g as HeaderLogo, h as SafeSelect, o as openSpotlight, K as Kbd, i as useOs, U as UserMenu, j as Breadcrumbs, k as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, m as Skeleton, n as useInView, F as FocusTrap, p as getNavigationItem, q as stopNavigationProgress, r as resetNavigationProgress, t as useToggle, v as useInfinityScroll, N as Navbar, w as Badge, A as Affix, x as ActionPopoverIcon, y as UserHooks, T as ThemeIcon, z as getStatusMessage, E as encodeQueryParams, I as Image$1, O as Card, Q as Collapse, V as SegmentedControl, W as Table, X as useInputState, Y as RelativeDrawer, Z as LogicalGroup, $ as uuid, a0 as useNavProgressFetchEffect, a1 as AppShell, a2 as ReactQueryDevtools, a3 as useColorScheme, a4 as navigationData, a5 as SpotlightProvider, a6 as NotificationsProvider, a7 as NavigationProgress, a8 as ModalsProvider, a9 as QueryParamProvider, aa as ReactRouter6Adapter } from "./LogicalGroup.06505dd1.js";
 function useDebouncedValue(value, wait, options = { leading: false }) {
   const [_value, setValue] = react.exports.useState(value);
   const mountedRef = react.exports.useRef(false);
@@ -462,6 +462,7 @@ function QuickFilter() {
       children: "Quick Filter: "
     }), /* @__PURE__ */ jsx(TextInput, {
       value: quickFilter,
+      "data-test": "table-quick-filter",
       onChange: (event) => setQuickFilter(event.currentTarget.value),
       size: "xs",
       radius: "xs",
@@ -2761,6 +2762,7 @@ const createStatusesObj = (arr) => {
 };
 function StatusesRing({
   statuses,
+  name = "",
   ...rest
 }) {
   const statusesObject = createStatusesObj(statuses);
@@ -2801,6 +2803,7 @@ function StatusesRing({
     label: tooltipLabel,
     withinPortal: true,
     children: /* @__PURE__ */ jsx(RingProgress, {
+      "data-statusring-name": name,
       sections: ringSectionsData,
       size: 48,
       ...rest
@@ -2951,7 +2954,8 @@ function RunItem({
             size: "xs",
             mr: 16
           }) : /* @__PURE__ */ jsx(StatusesRing, {
-            statuses: testsStatuses
+            statuses: testsStatuses,
+            name: item.name
           }), /* @__PURE__ */ jsx(RemoveItemPopover, {
             handleRemoveItemClick,
             type,
@@ -3858,6 +3862,7 @@ function NavbarSort({
     query,
     setQuery
   } = useParams();
+  const theme = useMantineTheme();
   const [sortBy, setSortBy] = react.exports.useState(String(query.sortByNavbar).split(":").length > 1 ? String(query.sortByNavbar).split(":")[0] : "createdDate");
   const [sortOrder, setSortOrder] = react.exports.useState(String(query.sortByNavbar).split(":").length > 1 ? String(query.sortByNavbar).split(":")[1] : "desc");
   react.exports.useEffect(function sortUpdate() {
@@ -3872,13 +3877,18 @@ function NavbarSort({
     timingFunction: "ease",
     children: (styles) => /* @__PURE__ */ jsxs(Group, {
       align: "end",
+      position: "apart",
       noWrap: true,
+      sx: {
+        width: "100%"
+      },
       style: styles,
       children: [/* @__PURE__ */ jsx(SafeSelect, {
         label: "Sort by",
         "data-test": "navbar-sort-by-select",
         sx: {
-          width: "230px"
+          minWidth: "230px",
+          marginTop: theme.spacing.md
         },
         value: sortBy,
         onChange: (value) => setSortBy(() => value),
@@ -4730,7 +4740,7 @@ function AcceptButton({
         children: ["Accepted Date: ", check.markedDate]
       })]
     }) : /* @__PURE__ */ jsx(Text, {
-      children: "Not accepted"
+      children: "The check is not accepted"
     }),
     children: /* @__PURE__ */ jsx("div", {
       children: /* @__PURE__ */ jsx(ActionPopoverIcon, {
@@ -4743,14 +4753,17 @@ function AcceptButton({
           }
         },
         testAttr: "check-accept-icon",
+        testAttrName: check.name,
         variant: "subtle",
         paused: isCurrentlyAccepted,
         icon: isCurrentlyAccepted && isAccepted ? /* @__PURE__ */ jsx(BsHandThumbsUpFill, {
-          size
+          size,
+          "data-test-icon-type": "fill"
         }) : /* @__PURE__ */ jsxs(Fragment, {
           children: [/* @__PURE__ */ jsx(BsHandThumbsUp, {
-            size
-          }), " ", notAcceptedIcon]
+            size,
+            "data-test-icon-type": "outline"
+          }), notAcceptedIcon]
         }),
         action: handleAcceptCheckClick,
         loading: mutationAcceptCheck.isLoading,
@@ -4802,6 +4815,7 @@ function RemoveButton({
     }),
     action: handleRemoveCheckClick,
     title: "Delete check",
+    testAttrName: check.name,
     loading: mutationRemoveCheck.isLoading,
     confirmLabel: "Delete",
     size,
@@ -4819,41 +4833,47 @@ function ViewPortLabel({
   variant = "light"
 }) {
   const theme = useMantineTheme();
-  const wrongSizeIcon = check.failReasons.includes("wrong_dimensions") ? /* @__PURE__ */ jsx(Badge, {
-    component: "div",
-    title: "Actual and Expected Screenshots have different size",
-    pl: 4,
-    pr: 4,
-    pt: 6,
-    pb: 6,
-    color: "yellow",
-    variant: "filled",
-    radius: "xl",
-    "data-test": "check-wrong-images-size-error-icon",
-    sx: {
-      fontSize: "12px",
-      position: "absolute",
-      top: -10,
-      right: -10,
-      lineHeight: "16px",
-      fontWeight: 600,
-      fontFamily: '"Roboto","Arial",sans-serif',
-      border: "2px",
-      borderStyle: "solid",
-      borderColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : "white"
-    },
-    children: "!"
+  const wrongSizeIcon = check.failReasons.includes("wrong_dimensions") ? /* @__PURE__ */ jsx(Tooltip, {
+    label: "Actual and Expected Screenshots have different size",
+    withinPortal: true,
+    children: /* @__PURE__ */ jsx(Badge, {
+      component: "div",
+      pl: 4,
+      pr: 4,
+      pt: 6,
+      pb: 6,
+      color: "yellow",
+      variant: "filled",
+      radius: "xl",
+      "data-test": "check-wrong-images-size-error-icon",
+      sx: {
+        zIndex: 100,
+        fontSize: "12px",
+        position: "absolute",
+        top: -10,
+        right: -10,
+        lineHeight: "16px",
+        fontWeight: 600,
+        fontFamily: '"Roboto","Arial",sans-serif',
+        border: "2px",
+        borderStyle: "solid",
+        borderColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : "white"
+      },
+      children: "!"
+    })
   }) : "";
   return /* @__PURE__ */ jsxs(Text, {
     lineClamp: 1,
     sx: {
       display: displayed ? "block" : "none",
-      position: "relative"
+      position: "relative",
+      overflow: "visible"
     },
     children: [/* @__PURE__ */ jsx(Badge, {
       color,
       variant,
       size: size || sizes2[checksViewSize].viewportText,
+      "data-viewport-badge-name": check.name,
       title: "Viewport size",
       sx: {
         fontSize,
@@ -4905,6 +4925,8 @@ function Status$1({
   });
   return /* @__PURE__ */ jsx(Badge, {
     color: statusColor(check.status),
+    "data-test": "check-status",
+    "data-check-status-name": check.name,
     variant,
     size: size || sizes[checksViewSize].statusBadge,
     title: "Check status",
@@ -4914,6 +4936,7 @@ function Status$1({
 }
 function LabelUser({
   username,
+  dataTest = "user-label",
   size = "xs"
 }) {
   var _a, _b, _c, _d, _e;
@@ -4945,6 +4968,7 @@ function LabelUser({
       children: userInitials
     }), /* @__PURE__ */ jsxs(Text, {
       size,
+      "data-test": dataTest,
       children: [(_d = userQuery == null ? void 0 : userQuery.data) == null ? void 0 : _d.results[0].firstName, "\xA0", (_e = userQuery == null ? void 0 : userQuery.data) == null ? void 0 : _e.results[0].lastName]
     })]
   });
@@ -4952,32 +4976,20 @@ function LabelUser({
 function PreviewCheckTooltipLabel({
   check
 }) {
-  var _a, _b;
-  let statusMsg = "";
-  if (check.status[0] === "failed") {
-    if (check.failReasons.includes("different_images")) {
-      statusMsg = " - images are different";
-      const checkResult = check.result ? JSON.parse(check.result) : null;
-      let diffPercent = checkResult.misMatchPercentage ? checkResult.misMatchPercentage : "";
-      diffPercent = (diffPercent === "0.00" || diffPercent === "") && ((_b = (_a = checkResult.rawMisMatchPercentage) == null ? void 0 : _a.toString()) == null ? void 0 : _b.length) > 0 ? checkResult.rawMisMatchPercentage : checkResult.misMatchPercentage;
-      statusMsg += ` (${diffPercent}%)`;
-    }
-    if (check.failReasons.includes("wrong_dimensions")) {
-      statusMsg = " - images have wrong  dimensions";
-    }
-    if (check.failReasons.includes("not_accepted")) {
-      statusMsg = " - previous check with same parameter is not accepted";
-    }
-  }
+  const statusMsg = getStatusMessage(check);
   return /* @__PURE__ */ jsxs(Stack, {
     sx: {
       maxWidth: "370px"
     },
     spacing: 8,
     p: 8,
+    "data-check-tooltip-name": check.name,
     children: [/* @__PURE__ */ jsx(Group, {
-      children: check.name
-    }), /* @__PURE__ */ jsxs(Group, {
+      children: /* @__PURE__ */ jsx(Text, {
+        size: 16,
+        children: check.name
+      })
+    }), /* @__PURE__ */ jsx(Divider, {}), /* @__PURE__ */ jsxs(Group, {
       position: "left",
       spacing: 8,
       ml: -6,
@@ -4989,7 +5001,8 @@ function PreviewCheckTooltipLabel({
         })
       }), /* @__PURE__ */ jsx(Group, {
         children: /* @__PURE__ */ jsxs(Text, {
-          size: "lg",
+          size: "sm",
+          "data-test": "status-label",
           children: [check.status[0][0].toUpperCase() + check.status[0].substring(1), statusMsg]
         })
       })]
@@ -5003,6 +5016,7 @@ function PreviewCheckTooltipLabel({
       }), /* @__PURE__ */ jsx(Group, {
         position: "right",
         children: check.markedByUsername && /* @__PURE__ */ jsx(LabelUser, {
+          dataTest: "user-label",
           username: check.markedByUsername,
           size: "xs"
         })
@@ -5022,6 +5036,7 @@ function PreviewCheckTooltipLabel({
           size: 24
         }), /* @__PURE__ */ jsx(Text, {
           size: "xs",
+          "data-test": "os-label",
           children: check.os
         })]
       })]
@@ -5042,6 +5057,7 @@ function PreviewCheckTooltipLabel({
           browser: check.browserName
         }), /* @__PURE__ */ jsxs(Text, {
           size: "xs",
+          "data-test": "browser-label",
           children: [check.browserName, "-", check.browserFullVersion]
         })]
       })]
@@ -5129,30 +5145,59 @@ function Check({
   };
   return /* @__PURE__ */ jsx(Fragment, {
     children: checksViewMode === "list" ? /* @__PURE__ */ jsxs(Group, {
+      "data-check": check.name,
       p: "sm",
       sx: {
         width: "100%",
         borderBottom: `1px solid ${theme.colorScheme === "dark" ? theme.colors.dark[3] : theme.colors.gray[2]}`,
         "&:hover": {
-          backgroundColor: theme.colors.gray[2]
+          backgroundColor: theme.colors.dark[5]
         }
       },
       position: "apart",
       children: [/* @__PURE__ */ jsx(Paper, {
         shadow: "md",
         pb: 0,
-        children: /* @__PURE__ */ jsx(Image$1, {
-          src: imagePreviewSrc,
-          fit: "contain",
-          width: `${imageWeight * 4}px`,
-          withPlaceholder: true,
-          alt: check.name,
-          styles: () => ({
-            image: {
-              aspectRatio: "1/1"
-            }
+        children: /* @__PURE__ */ jsx(Tooltip.Floating, {
+          multiline: true,
+          zIndex: 1e3,
+          withinPortal: true,
+          position: "right-start",
+          color: "dark",
+          label: /* @__PURE__ */ jsx(PreviewCheckTooltipLabel, {
+            check
           }),
-          onClick: handlePreviewImageClick
+          children: /* @__PURE__ */ jsx("a", {
+            style: {
+              display: "inline-block",
+              width: "100%",
+              cursor: "pointer"
+            },
+            "data-check-previw-link": check.name,
+            href: linkToCheckOverlay,
+            children: /* @__PURE__ */ jsx(Group, {
+              position: "center",
+              sx: {
+                width: "100%",
+                cursor: "pointer"
+              },
+              onClick: handlePreviewImageClick,
+              children: /* @__PURE__ */ jsx(Image$1, {
+                src: imagePreviewSrc,
+                "data-test-preview-image": check.name,
+                fit: "contain",
+                width: `${imageWeight * 4}px`,
+                withPlaceholder: true,
+                alt: check.name,
+                styles: () => ({
+                  image: {
+                    aspectRatio: "1/1"
+                  }
+                }),
+                onClick: handlePreviewImageClick
+              })
+            })
+          })
         })
       }), /* @__PURE__ */ jsx(Tooltip, {
         label: check.name,
@@ -5163,6 +5208,7 @@ function Check({
           sx: {
             width: "50%"
           },
+          "data-table-check-name": check.name,
           children: check.name
         })
       }), /* @__PURE__ */ jsxs(Group, {
@@ -5190,6 +5236,7 @@ function Check({
         })]
       })]
     }) : /* @__PURE__ */ jsxs(Card, {
+      "data-check": check.name,
       sx: {
         width: `${imageWeight}%`,
         "&:hover": {
@@ -5216,16 +5263,16 @@ function Check({
           withinPortal: true,
           children: /* @__PURE__ */ jsx(Text, {
             lineClamp: 1,
+            "data-table-check-name": check.name,
             children: check.name
           })
         })
       }), /* @__PURE__ */ jsx(Card.Section, {
         m: 2,
-        children: /* @__PURE__ */ jsx(Tooltip, {
+        children: /* @__PURE__ */ jsx(Tooltip.Floating, {
           multiline: true,
           zIndex: 1e3,
           withinPortal: true,
-          withArrow: true,
           position: "right-start",
           color: "dark",
           label: /* @__PURE__ */ jsx(PreviewCheckTooltipLabel, {
@@ -5238,6 +5285,7 @@ function Check({
               cursor: "pointer"
             },
             href: linkToCheckOverlay,
+            "data-check-previw-link": check.name,
             children: /* @__PURE__ */ jsx(Group, {
               position: "center",
               sx: {
@@ -5246,6 +5294,7 @@ function Check({
               },
               onClick: handlePreviewImageClick,
               children: /* @__PURE__ */ jsx(Image$1, {
+                "data-test-preview-image": check.name,
                 src: imagePreviewSrc,
                 fit: "contain",
                 alt: check.name,
@@ -5308,7 +5357,7 @@ function Checks({
     key: "check-view-mode",
     defaultValue: "bounded"
   });
-  const checksQuery = useQuery(["checks", item._id, (_b = (_a = infinityQuery == null ? void 0 : infinityQuery.data) == null ? void 0 : _a.pages[0]) == null ? void 0 : _b.timestamp], () => GenericService.get("checks", {
+  const checksQuery = useQuery(["checks", item._id, (_b = (_a = infinityQuery == null ? void 0 : infinityQuery.data) == null ? void 0 : _a.pages[0]) == null ? void 0 : _b.timestamp], () => GenericService.get_via_post("checks", {
     _id: {
       $in: item.checks
     }
@@ -5393,6 +5442,7 @@ function Status({
       noWrap: true,
       children: [/* @__PURE__ */ jsx(StatusesRing, {
         statuses: checkStatuses.length > 0 ? checkStatuses : [test.status],
+        name: test.name,
         ml: -4
       }, type), /* @__PURE__ */ jsx(Tooltip, {
         label: test[type],
@@ -5620,6 +5670,7 @@ function Cell({
         sx: {
           wordBreak: "break-all"
         },
+        [`data-table-test-${type.toLowerCase()}`]: itemValue,
         children: itemValue
       })
     })
@@ -5665,6 +5716,7 @@ function Row({
   return /* @__PURE__ */ jsxs(Fragment, {
     children: [/* @__PURE__ */ jsxs("tr", {
       "data-test": `table_row_${index}`,
+      "data-row-name": test.name,
       className: cx({
         [classes.rowSelected]: selected
       }),
@@ -5675,6 +5727,7 @@ function Row({
       children: [/* @__PURE__ */ jsx("td", {
         children: /* @__PURE__ */ jsx(Checkbox, {
           "data-test": "table-item-checkbox",
+          "data-test-checkbox-name": test.name,
           checked: selected,
           onChange: (event) => {
             event.stopPropagation();
@@ -22166,6 +22219,18 @@ class MainView {
     };
   }
   panEvents() {
+    this.canvas.on(
+      "mouse:move",
+      (e2) => {
+        if (e2.e.buttons === 4) {
+          this.canvas.setCursor("grab");
+          const mEvent = e2.e;
+          const delta = new fabric$1.fabric.Point(mEvent.movementX, mEvent.movementY);
+          this.canvas.relativePan(delta);
+          this.canvas.renderAll();
+        }
+      }
+    );
     this.canvas.on("mouse:wheel", (opt) => {
       if (opt.e.ctrlKey)
         return;
@@ -22973,6 +23038,7 @@ function ScreenshotDetails({
           color: "blue",
           radius: "sm",
           className: classes.infoBadges,
+          "data-check": "image-size",
           children: /* @__PURE__ */ jsx("a", {
             href: image.getSrc(),
             target: "_blank",
@@ -23030,6 +23096,7 @@ function ScreenshotDetails({
             color: "blue",
             radius: "sm",
             className: classes.infoBadges,
+            "data-check": "image-date",
             children: createdDate
           })
         })]
@@ -23051,6 +23118,7 @@ function ScreenshotDetails({
               sx: {
                 maxWidth: 100
               },
+              "data-check": "diff-percent",
               className: classes.infoBadges,
               children: [diffPercent, "%"]
             })
@@ -23154,12 +23222,12 @@ function highlightDiff(mainView2, highlightsGroups, imageData) {
             onComplete: () => {
               circle.animate("radius", "0.00", {
                 onChange: mainView2.canvas.renderAll.bind(mainView2.canvas),
-                duration: 700,
+                duration: (window == null ? void 0 : window.slowHighlight) ? 15e3 : 700,
                 onComplete: highlightRemoving
               });
               circle.animate("opacity", "0.30", {
                 onChange: mainView2.canvas.renderAll.bind(mainView2.canvas),
-                duration: 700
+                duration: (window == null ? void 0 : window.slowHighlight) ? 3e3 : 700
               });
             }
           });
@@ -23193,6 +23261,7 @@ function HighlightButton({
     label,
     children: /* @__PURE__ */ jsx("div", {
       children: /* @__PURE__ */ jsx(ActionIcon, {
+        "data-check": "highlight-icon",
         disabled,
         loading: loadHighlights,
         onClick: async () => {
@@ -23260,6 +23329,7 @@ function ViewSegmentedControl({
         position: "left",
         spacing: 4,
         noWrap: true,
+        "data-check": "expected-view",
         children: [/* @__PURE__ */ jsx(Pbe, {
           stroke: 1,
           className: classes.labelIcon
@@ -23291,6 +23361,7 @@ function ViewSegmentedControl({
         position: "left",
         spacing: 4,
         noWrap: true,
+        "data-check": "actual-view",
         children: [/* @__PURE__ */ jsx(Cbe, {
           stroke: 1,
           className: classes.labelIcon
@@ -23321,6 +23392,7 @@ function ViewSegmentedControl({
         position: "left",
         spacing: 4,
         noWrap: true,
+        "data-check": "diff-view",
         children: [/* @__PURE__ */ jsx(pi, {
           stroke: 1,
           className: classes.labelIcon
@@ -23352,6 +23424,7 @@ function ViewSegmentedControl({
         position: "left",
         spacing: 4,
         noWrap: true,
+        "data-check": "slider-view",
         children: [/* @__PURE__ */ jsx(Lbe, {
           stroke: 1,
           className: classes.labelIcon
@@ -23366,6 +23439,7 @@ function ViewSegmentedControl({
     disabled: !((_b = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _b.filename)
   }];
   return /* @__PURE__ */ jsx(SegmentedControl, {
+    "data-check": "view-segment",
     sx: {
       minWidth: 0,
       minHeight: 0
@@ -23518,6 +23592,7 @@ function ZoomToolbar({
         })]
       }),
       children: /* @__PURE__ */ jsx(ActionIcon, {
+        "data-check": "zoom-in",
         onClick: () => zoomByDelta(15),
         children: /* @__PURE__ */ jsx(lDe, {
           size: 24,
@@ -23544,6 +23619,7 @@ function ZoomToolbar({
             children: [Math.round(zoomPercent), "%"]
           }), /* @__PURE__ */ jsx(ActionIcon, {
             ml: -10,
+            "data-check": "open-zoom-dropdown",
             children: /* @__PURE__ */ jsx(Pj, {})
           })]
         })
@@ -23551,6 +23627,7 @@ function ZoomToolbar({
         p: 0,
         children: /* @__PURE__ */ jsxs(Stack, {
           spacing: 0,
+          "data-check": "zoom-dropdown",
           children: [/* @__PURE__ */ jsx(Button, {
             pl: 8,
             pr: 8,
@@ -23684,6 +23761,7 @@ function ZoomToolbar({
         })]
       }),
       children: /* @__PURE__ */ jsx(ActionIcon, {
+        "data-check": "zoom-out",
         onClick: () => zoomByDelta(-15),
         children: /* @__PURE__ */ jsx(dDe, {
           size: 24,
@@ -23752,6 +23830,7 @@ function RegionsToolbar({
         })]
       }),
       children: /* @__PURE__ */ jsx(ActionIcon, {
+        "data-check": "remove-ignore-region",
         disabled: !visibleRegionRemoveButton,
         onClick: () => mainView2.removeActiveIgnoreRegions(),
         children: /* @__PURE__ */ jsx(IMe, {
@@ -23789,6 +23868,7 @@ function RegionsToolbar({
       }),
       children: /* @__PURE__ */ jsx("div", {
         children: /* @__PURE__ */ jsx(ActionIcon, {
+          "data-check": "add-ignore-region",
           disabled: view === "slider" || !baselineId,
           onClick: () => mainView2.addIgnoreRegion({
             name: "ignore_rect",
@@ -23825,6 +23905,7 @@ function RegionsToolbar({
         })]
       }),
       children: /* @__PURE__ */ jsx(ActionIcon, {
+        "data-check": "save-ignore-region",
         onClick: () => MainView.sendIgnoreRegions(baselineId, mainView2.getRectData()),
         children: /* @__PURE__ */ jsx(qF, {
           size: 24,
@@ -23839,6 +23920,11 @@ const useStyles$1 = createStyles((theme) => ({
     "@media (max-width: 1070px)": {
       display: "none"
     }
+  },
+  checkPathFragment: {
+    textOverflow: "ellipsis",
+    overflow: "hidden",
+    whiteSpace: "nowrap"
   }
 }));
 function onImageErrorHandler(...e2) {
@@ -23898,6 +23984,7 @@ function CheckDetails({
       });
     }
   });
+  const statusMsg = getStatusMessage(checkData);
   const baselineId = react.exports.useMemo(() => {
     var _a2, _b2, _c;
     if (((_a2 = baselineQuery.data) == null ? void 0 : _a2.results) && ((_b2 = baselineQuery.data) == null ? void 0 : _b2.results.length) > 0) {
@@ -23979,6 +24066,7 @@ function CheckDetails({
         sx: {
           width: "98%"
         },
+        "data-check-header-name": currentCheck.name,
         noWrap: true,
         children: [/* @__PURE__ */ jsxs(Group, {
           position: "left",
@@ -23988,61 +24076,150 @@ function CheckDetails({
             position: "relative"
           },
           noWrap: true,
-          children: [/* @__PURE__ */ jsx(Status$1, {
-            size: "lg",
-            check: currentCheck,
-            variant: "filled"
-          }), /* @__PURE__ */ jsx(Tooltip, {
+          "data-test": "full-check-path",
+          children: [/* @__PURE__ */ jsx(Tooltip, {
+            label: /* @__PURE__ */ jsxs(Group, {
+              spacing: 4,
+              children: [/* @__PURE__ */ jsx(Status$1, {
+                size: "lg",
+                check: currentCheck,
+                variant: "filled"
+              }), statusMsg]
+            }),
             withinPortal: true,
-            label: `Created: ${currentCheck.createdDate}`,
-            children: /* @__PURE__ */ jsxs(Text, {
-              lineClamp: 1,
-              children: [currentCheck.app.name, " / ", currentCheck.suite.name, " / ", currentCheck.test.name, " / ", currentCheck == null ? void 0 : currentCheck.name]
+            children: /* @__PURE__ */ jsx(Group, {
+              align: "center",
+              "data-check": "status",
+              children: /* @__PURE__ */ jsx(Status$1, {
+                size: "lg",
+                check: currentCheck,
+                variant: "filled"
+              })
             })
+          }), /* @__PURE__ */ jsxs(Group, {
+            noWrap: true,
+            spacing: 0,
+            children: [/* @__PURE__ */ jsx(Tooltip, {
+              withinPortal: true,
+              label: `Project: ${currentCheck.app.name}`,
+              children: /* @__PURE__ */ jsx(Text, {
+                "data-check": "app-name",
+                sx: {
+                  flexShrink: 1
+                },
+                className: classes.checkPathFragment,
+                children: currentCheck.app.name
+              })
+            }), /* @__PURE__ */ jsx(Tooltip, {
+              withinPortal: true,
+              label: `Suite: ${currentCheck.suite.name}`,
+              children: /* @__PURE__ */ jsxs(Text, {
+                "data-check": "suite-name",
+                sx: {
+                  flexShrink: 500
+                },
+                className: classes.checkPathFragment,
+                children: ["\xA0/\xA0", currentCheck.suite.name]
+              })
+            }), /* @__PURE__ */ jsx(Tooltip, {
+              withinPortal: true,
+              label: `Test: ${currentCheck.test.name}`,
+              children: /* @__PURE__ */ jsxs(Text, {
+                "data-check": "test-name",
+                sx: {
+                  flexShrink: 5
+                },
+                className: classes.checkPathFragment,
+                children: ["\xA0/\xA0", currentCheck.test.name]
+              })
+            }), /* @__PURE__ */ jsx(Tooltip, {
+              withinPortal: true,
+              label: `Check: ${currentCheck == null ? void 0 : currentCheck.name}`,
+              children: /* @__PURE__ */ jsxs(Text, {
+                "data-check": "check-name",
+                sx: {
+                  flexShrink: 1
+                },
+                lineClamp: 1,
+                children: ["\xA0/\xA0", currentCheck == null ? void 0 : currentCheck.name]
+              })
+            })]
           })]
         }), /* @__PURE__ */ jsxs(Group, {
           noWrap: true,
           spacing: "xs",
-          children: [/* @__PURE__ */ jsx(ViewPortLabel, {
-            check: currentCheck,
-            color: "blue",
-            sizes,
-            size: "lg",
-            checksViewSize,
-            fontSize: "12px"
-          }), /* @__PURE__ */ jsx(ActionIcon, {
-            variant: "light",
-            size: 32,
-            p: 4,
-            ml: 4,
-            children: /* @__PURE__ */ jsx(OsIcon, {
-              size: 20,
-              color: iconsColor,
-              os: currentCheck.os
+          children: [/* @__PURE__ */ jsx(Tooltip, {
+            label: currentCheck.viewport,
+            withinPortal: true,
+            children: /* @__PURE__ */ jsx(Text, {
+              lineClamp: 1,
+              sx: {
+                overflow: "visible"
+              },
+              "data-check": "viewport",
+              children: /* @__PURE__ */ jsx(ViewPortLabel, {
+                check: currentCheck,
+                color: "blue",
+                sizes,
+                size: "lg",
+                checksViewSize,
+                fontSize: "12px"
+              })
             })
-          }), /* @__PURE__ */ jsx(Text, {
-            size: 12,
-            lineClamp: 1,
-            children: currentCheck.os
-          }), /* @__PURE__ */ jsx(ActionIcon, {
-            variant: "light",
-            size: 32,
-            p: 4,
-            children: /* @__PURE__ */ jsx(BrowserIcon, {
-              size: 20,
-              color: iconsColor,
-              browser: currentCheck.browserName
+          }), /* @__PURE__ */ jsx(Tooltip, {
+            "data-check": "os-label",
+            label: currentCheck.os,
+            withinPortal: true,
+            children: /* @__PURE__ */ jsxs(Group, {
+              spacing: 8,
+              noWrap: true,
+              children: [/* @__PURE__ */ jsx(ActionIcon, {
+                variant: "light",
+                size: 32,
+                p: 4,
+                ml: 4,
+                children: /* @__PURE__ */ jsx(OsIcon, {
+                  "data-check": "os-icon",
+                  size: 20,
+                  color: iconsColor,
+                  os: currentCheck.os
+                })
+              }), /* @__PURE__ */ jsx(Text, {
+                "data-check": "os",
+                size: 12,
+                lineClamp: 1,
+                children: currentCheck.os
+              })]
             })
-          }), /* @__PURE__ */ jsxs(Text, {
-            lineClamp: 1,
-            size: 12,
-            title: currentCheck.browserFullVersion ? `${currentCheck.browserFullVersion}` : "",
-            children: [currentCheck.browserName, currentCheck.browserVersion ? ` - ${currentCheck.browserVersion}` : ""]
+          }), /* @__PURE__ */ jsx(Tooltip, {
+            label: currentCheck.browserFullVersion ? `${currentCheck.browserFullVersion}` : `${currentCheck.browserVersion}`,
+            withinPortal: true,
+            children: /* @__PURE__ */ jsxs(Group, {
+              spacing: 8,
+              noWrap: true,
+              children: [/* @__PURE__ */ jsx(ActionIcon, {
+                variant: "light",
+                size: 32,
+                p: 4,
+                children: /* @__PURE__ */ jsx(BrowserIcon, {
+                  "data-check": "browser-icon",
+                  size: 20,
+                  color: iconsColor,
+                  browser: currentCheck.browserName
+                })
+              }), /* @__PURE__ */ jsxs(Text, {
+                "data-check": "browser",
+                lineClamp: 1,
+                size: 12,
+                children: [currentCheck.browserName, currentCheck.browserVersion ? ` - ${currentCheck.browserVersion}` : ""]
+              })]
+            })
           })]
         })]
       }), /* @__PURE__ */ jsxs(Group, {
         position: "apart",
         noWrap: true,
+        "data-check": "toolbar",
         children: [/* @__PURE__ */ jsx(ScreenshotDetails, {
           mainView: mainView2,
           check: currentCheck,
@@ -24197,6 +24374,7 @@ function CheckModal({
     },
     withCloseButton: false,
     children: [/* @__PURE__ */ jsx(ActionIcon, {
+      "data-test": "close-check-detail-icon",
       style: {
         position: "fixed",
         right: 10,
@@ -24461,7 +24639,7 @@ function TestsTable({
       sx: {
         width: size
       },
-      pb: 24,
+      pb: 124,
       styles: {
         scrollbar: {
           marginTop: "46px"
@@ -24471,7 +24649,6 @@ function TestsTable({
         sx: {
           width: "100%"
         },
-        mb: 100,
         verticalSpacing: "sm",
         highlightOnHover: true,
         children: [
@@ -24596,6 +24773,7 @@ function Settings({
     }), /* @__PURE__ */ jsx(Group, {
       position: "center",
       children: /* @__PURE__ */ jsx(SegmentedControl, {
+        "data-test": "preview-mode-segment-control",
         data: ["bounded", "normal", "list"],
         value: checksViewMode,
         onChange: setChecksViewMode
@@ -24604,6 +24782,7 @@ function Settings({
       position: "center",
       mt: "md",
       children: /* @__PURE__ */ jsx(SegmentedControl, {
+        "data-test": "preview-size-segment-control",
         data: ["small", "medium", "large", "xlarge"],
         value: checksViewSize,
         onChange: setChecksViewSize
@@ -24842,9 +25021,7 @@ function IndexLayout() {
     }),
     children: [/* @__PURE__ */ jsx(ReactQueryDevtools, {
       initialIsOpen: false
-    }), /* @__PURE__ */ jsx(Paper, {
-      children: /* @__PURE__ */ jsx(Tests, {})
-    })]
+    }), /* @__PURE__ */ jsx(Tests, {})]
   });
 }
 const queryClient = new QueryClient();

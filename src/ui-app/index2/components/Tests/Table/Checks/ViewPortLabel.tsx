@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Badge, BadgeVariant, Text, useMantineTheme } from '@mantine/core';
+import { Badge, BadgeVariant, Text, Tooltip, useMantineTheme } from '@mantine/core';
 
 interface Props {
     check: any
@@ -27,33 +27,38 @@ export function ViewPortLabel(
     const theme = useMantineTheme();
     const wrongSizeIcon = check.failReasons.includes('wrong_dimensions')
         ? (
-            <Badge
-                component="div"
-                title="Actual and Expected Screenshots have different size"
-                pl={4}
-                pr={4}
-                pt={6}
-                pb={6}
-                // weight={900}
-                color="yellow"
-                variant="filled"
-                radius="xl"
-                data-test="check-wrong-images-size-error-icon"
-                sx={{
-                    fontSize: '12px',
-                    position: 'absolute',
-                    top: -10,
-                    right: -10,
-                    lineHeight: '16px',
-                    fontWeight: 600,
-                    fontFamily: '"Roboto","Arial",sans-serif',
-                    border: '2px',
-                    borderStyle: 'solid',
-                    borderColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : 'white',
-                }}
+            <Tooltip
+                label="Actual and Expected Screenshots have different size"
+                withinPortal
             >
-                !
-            </Badge>
+                <Badge
+                    component="div"
+                    pl={4}
+                    pr={4}
+                    pt={6}
+                    pb={6}
+                    // weight={900}
+                    color="yellow"
+                    variant="filled"
+                    radius="xl"
+                    data-test="check-wrong-images-size-error-icon"
+                    sx={{
+                        zIndex: 100,
+                        fontSize: '12px',
+                        position: 'absolute',
+                        top: -10,
+                        right: -10,
+                        lineHeight: '16px',
+                        fontWeight: 600,
+                        fontFamily: '"Roboto","Arial",sans-serif',
+                        border: '2px',
+                        borderStyle: 'solid',
+                        borderColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : 'white',
+                    }}
+                >
+                    !
+                </Badge>
+            </Tooltip>
         )
         : '';
 
@@ -64,6 +69,7 @@ export function ViewPortLabel(
                 {
                     display: displayed ? 'block' : 'none',
                     position: 'relative',
+                    overflow: 'visible',
                 }
             }
         >
@@ -71,6 +77,7 @@ export function ViewPortLabel(
                 color={color}
                 variant={variant}
                 size={size || sizes[checksViewSize].viewportText}
+                data-viewport-badge-name={check.name}
                 title="Viewport size"
                 sx={
                     {

@@ -99,6 +99,7 @@ function Settings(
             <Text mt="md" weight={500} pb="xs">Appearance of Checks</Text>
             <Group position="center">
                 <SegmentedControl
+                    data-test="preview-mode-segment-control"
                     data={['bounded', 'normal', 'list']}
                     value={checksViewMode}
                     onChange={setChecksViewMode}
@@ -106,6 +107,7 @@ function Settings(
             </Group>
             <Group position="center" mt="md">
                 <SegmentedControl
+                    data-test="preview-size-segment-control"
                     data={['small', 'medium', 'large', 'xlarge']}
                     value={checksViewSize}
                     onChange={setChecksViewSize}

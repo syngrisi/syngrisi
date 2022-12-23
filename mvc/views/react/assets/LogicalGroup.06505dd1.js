@@ -10487,6 +10487,32 @@ function successMsg(params) {
 function escapeRegExp(text) {
   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 }
+function getStatusMessage(check) {
+  var _a, _b;
+  let statusMsg = "";
+  if (check.status[0] === "failed") {
+    if (check.failReasons.includes("different_images")) {
+      statusMsg = " - images are different";
+      const checkResult = check.result ? JSON.parse(check.result) : null;
+      let diffPercent = checkResult.misMatchPercentage ? checkResult.misMatchPercentage : "";
+      diffPercent = (diffPercent === "0.00" || diffPercent === "") && ((_b = (_a = checkResult.rawMisMatchPercentage) == null ? void 0 : _a.toString()) == null ? void 0 : _b.length) > 0 ? checkResult.rawMisMatchPercentage : checkResult.misMatchPercentage;
+      statusMsg += ` (${diffPercent}%)`;
+    }
+    if (check.failReasons.includes("wrong_dimensions")) {
+      statusMsg = " - images have wrong  dimensions";
+    }
+    if (check.failReasons.includes("not_accepted")) {
+      statusMsg = " - previous check with same parameter is not accepted";
+    }
+  }
+  if (check.status[0] === "new") {
+    statusMsg = " - first time check";
+  }
+  if (check.status[0] === "passed") {
+    statusMsg = " - successful check";
+  }
+  return statusMsg;
+}
 function generateItemFilter(label, operator, value) {
   const transform = {
     eq: () => ({
@@ -12323,6 +12349,7 @@ function HeaderLogo({
         alignItems: "center"
       },
       children: [/* @__PURE__ */ jsx(Paper, {
+        "data-test": "logo-container",
         sx: {
           justifyContent: "center",
           height: 44,
@@ -12368,6 +12395,7 @@ function HeaderLogo({
             backgroundColor: "rgba(0, 0, 0, 0)"
           },
           children: /* @__PURE__ */ jsx(Text, {
+            "data-test": "logo-text",
             color: theme.colorScheme === "dark" ? "white" : "#262626",
             sx: {
               "&:hover": {
@@ -12408,6 +12436,27 @@ const GenericService = {
       return result;
     }
     throw new Error(`cannot get resource: ${uri}, resp: '${JSON.stringify(resp)}'`);
+  },
+  async get_via_post(resource, filter = {}, options = {}, queryID = "") {
+    try {
+      const resp = await ky(`${config$1.baseUri}/v1/${resource}/get_via_post`, {
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          filter,
+          options,
+          queryID
+        }),
+        method: "POST"
+      });
+      if (resp.ok) {
+        return resp.json();
+      }
+    } catch (e) {
+      log.error(`cannot get (get_via_post) ${resource},
+options: '${JSON.stringify(options)}', error: '${e.stack || e}'}`);
+      throw new Error(`cannot get (get_via_post) ${resource},
+options: '${JSON.stringify(options)}', error: '${e}'}`);
+    }
   },
   async create(resource, data) {
     const url = `${config$1.baseUri}/v1/${resource}`;
@@ -12945,6 +12994,7 @@ function ToggleThemeButton({
   return /* @__PURE__ */ jsx(Group, {
     position: "center",
     children: /* @__PURE__ */ jsx(Switch, {
+      "data-test": "theme-button",
       size: "md",
       color: dark ? "yellow" : "blue",
       checked: colorScheme === "light",
@@ -13118,7 +13168,8 @@ function SafeSelect({
   value,
   name,
   onChange,
-  "data-test": dataTest
+  "data-test": dataTest,
+  sx
 }) {
   const changeHandler = (event) => {
     onChange(event.target.value);
@@ -13132,7 +13183,8 @@ function SafeSelect({
         size: 24
       }),
       value,
-      onChange
+      onChange,
+      sx
     }), /* @__PURE__ */ jsx("select", {
       name,
       style: {
@@ -13411,6 +13463,7 @@ function ActionPopoverIcon({
   confirmLabel,
   title,
   testAttr,
+  testAttrName = "",
   loading,
   buttonColor,
   paused,
@@ -13441,6 +13494,7 @@ function ActionPopoverIcon({
         children: /* @__PURE__ */ jsx(ActionIcon, {
           disabled,
           "data-test": testAttr,
+          "data-accept-icon-name": testAttrName,
           variant: "light",
           color: iconColor,
           onClick: () => {
@@ -13461,6 +13515,7 @@ function ActionPopoverIcon({
         ref,
         "data-test": `${testAttr}-confirm`,
         color: buttonColor || color,
+        "data-confirm-button-name": testAttrName,
         onClick: () => {
           action();
           handlers.close();
@@ -17612,12 +17667,12 @@ function LogicalGroup({
   });
 }
 export {
-  useNavProgressFetchEffect as $,
+  uuid as $,
   Affix as A,
   Burger as B,
   CopyButton as C,
   Divider as D,
-  Card as E,
+  encodeQueryParams as E,
   FocusTrap as F,
   GenericService as G,
   Header as H,
@@ -17627,65 +17682,66 @@ export {
   List as L,
   Modal as M,
   Navbar as N,
-  Collapse as O,
+  Card as O,
   Popover as P,
-  SegmentedControl as Q,
+  Collapse as Q,
   RingProgress as R,
   StringParam as S,
   ThemeIcon as T,
   UserMenu as U,
-  Table as V,
-  useInputState as W,
-  RelativeDrawer as X,
-  LogicalGroup as Y,
-  uuid as Z,
+  SegmentedControl as V,
+  Table as W,
+  useInputState as X,
+  RelativeDrawer as Y,
+  LogicalGroup as Z,
   _inheritsLoose as _,
   useDisclosure as a,
-  AppShell as a0,
-  ReactQueryDevtools as a1,
-  useColorScheme as a2,
-  navigationData as a3,
-  SpotlightProvider as a4,
-  NotificationsProvider as a5,
-  NavigationProgress as a6,
-  ModalsProvider as a7,
-  QueryParamProvider as a8,
-  ReactRouter6Adapter as a9,
-  Highlight as aA,
-  Mark as aB,
-  Menu as aC,
-  Notification as aD,
-  Select as aE,
-  ChevronIcon as aF,
-  Switch as aG,
-  Global as aH,
-  AppContext as aI,
-  clamp as aa,
-  createSafeContext as ab,
-  useContextStylesApi as ac,
-  createScopedKeydownHandler as ad,
-  StylesApiProvider as ae,
-  CloseButton as af,
-  HorizontalSection as ag,
-  Section as ah,
-  VerticalSection as ai,
-  DefaultItem as aj,
-  groupOptions as ak,
-  SelectPopover as al,
-  SelectScrollArea as am,
-  SelectItems as an,
-  useFocusTrap as ao,
-  useScrollLock as ap,
-  useFocusReturn as aq,
-  GroupedTransition as ar,
-  createEventHandler as as,
-  useDelayedHover as at,
-  _objectWithoutPropertiesLoose as au,
-  useScrollIntoView as av,
-  getSelectRightSectionProps as aw,
-  useElementSize as ax,
-  Avatar as ay,
-  CardSection as az,
+  useNavProgressFetchEffect as a0,
+  AppShell as a1,
+  ReactQueryDevtools as a2,
+  useColorScheme as a3,
+  navigationData as a4,
+  SpotlightProvider as a5,
+  NotificationsProvider as a6,
+  NavigationProgress as a7,
+  ModalsProvider as a8,
+  QueryParamProvider as a9,
+  CardSection as aA,
+  Highlight as aB,
+  Mark as aC,
+  Menu as aD,
+  Notification as aE,
+  Select as aF,
+  ChevronIcon as aG,
+  Switch as aH,
+  Global as aI,
+  AppContext as aJ,
+  ReactRouter6Adapter as aa,
+  clamp as ab,
+  createSafeContext as ac,
+  useContextStylesApi as ad,
+  createScopedKeydownHandler as ae,
+  StylesApiProvider as af,
+  CloseButton as ag,
+  HorizontalSection as ah,
+  Section as ai,
+  VerticalSection as aj,
+  DefaultItem as ak,
+  groupOptions as al,
+  SelectPopover as am,
+  SelectScrollArea as an,
+  SelectItems as ao,
+  useFocusTrap as ap,
+  useScrollLock as aq,
+  useFocusReturn as ar,
+  GroupedTransition as as,
+  createEventHandler as at,
+  useDelayedHover as au,
+  _objectWithoutPropertiesLoose as av,
+  useScrollIntoView as aw,
+  getSelectRightSectionProps as ax,
+  useElementSize as ay,
+  Avatar as az,
   useClickOutside as b,
   escapeRegExp as c,
   ScrollArea as d,
@@ -17710,5 +17766,5 @@ export {
   Badge as w,
   ActionPopoverIcon as x,
   UserHooks as y,
-  encodeQueryParams as z
+  getStatusMessage as z
 };

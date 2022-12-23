@@ -5,9 +5,10 @@ import { UserHooks } from '../../hooks';
 interface Props {
     username: string
     size: number | string
+    dataTest?: string
 }
 
-export function LabelUser({ username, size = 'xs' }: Props) {
+export function LabelUser({ username, dataTest = 'user-label', size = 'xs' }: Props) {
     const theme = useMantineTheme();
 
     const userQuery = UserHooks.useUsersByUsername(username);
@@ -43,7 +44,7 @@ export function LabelUser({ username, size = 'xs' }: Props) {
                     >
                         {userInitials}
                     </ThemeIcon>
-                    <Text size={size as any}>
+                    <Text size={size as any} data-test={dataTest}>
                         {userQuery?.data?.results[0].firstName}
                         &nbsp;
                         {userQuery?.data?.results[0].lastName}

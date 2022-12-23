@@ -6,7 +6,6 @@ import {
     Paper,
     Text, useMantineTheme,
 } from '@mantine/core';
-// import { isDark } from '../../utils';
 
 function HeaderLogo({ size }: { size?: number | undefined }) {
     const theme = useMantineTheme();
@@ -22,18 +21,20 @@ function HeaderLogo({ size }: { size?: number | undefined }) {
             }}
         >
             <a href="/" style={{ display: 'flex', textDecoration: 'none', alignItems: 'center' }}>
-                <Paper sx={{
-                    justifyContent: 'center',
-                    height: 44,
-                    width: 44,
-                    display: 'flex',
-                    alignItems: 'center',
-                    borderRadius: '2px 20px 2px 20px',
-                    // backgroundColor:theme.colorScheme === 'dark' ? '#262626' : theme.colors.gray[0],
-                    '&:hover': {
-                        backgroundColor: theme.colorScheme === 'dark' ? '#000000' : theme.colors.gray[0],
-                    },
-                }}
+                <Paper
+                    data-test="logo-container"
+                    sx={{
+                        justifyContent: 'center',
+                        height: 44,
+                        width: 44,
+                        display: 'flex',
+                        alignItems: 'center',
+                        borderRadius: '2px 20px 2px 20px',
+                        // backgroundColor:theme.colorScheme === 'dark' ? '#262626' : theme.colors.gray[0],
+                        '&:hover': {
+                            backgroundColor: theme.colorScheme === 'dark' ? '#000000' : theme.colors.gray[0],
+                        },
+                    }}
                 >
                     <svg height={size || 32} viewBox="0 0 64 67" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
@@ -59,6 +60,7 @@ function HeaderLogo({ size }: { size?: number | undefined }) {
                         sx={{ backgroundColor: 'rgba(0, 0, 0, 0)' }}
                     >
                         <Text
+                            data-test="logo-text"
                             color={(theme.colorScheme === 'dark' ? 'white' : '#262626')}
                             sx={
                                 {

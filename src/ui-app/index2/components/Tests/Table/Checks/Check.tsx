@@ -61,6 +61,7 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                     ? (
                         // LIST VIEW
                         <Group
+                            data-check={check.name}
                             p="sm"
                             sx={{
                                 width: '100%',
@@ -85,6 +86,7 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                                 >
                                     <a
                                         style={{ display: 'inline-block', width: '100%', cursor: 'pointer' }}
+                                        data-check-previw-link={check.name}
                                         href={linkToCheckOverlay}
                                     >
                                         <Group
@@ -94,6 +96,7 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                                         >
                                             <Image
                                                 src={imagePreviewSrc}
+                                                data-test-preview-image={check.name}
                                                 fit="contain"
                                                 // fit={'scale-down'}
                                                 // fit={'cover'} //default
@@ -124,7 +127,13 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                                 </Tooltip.Floating>
                             </Paper>
                             <Tooltip label={check.name} multiline withinPortal>
-                                <Text lineClamp={2} sx={{ width: '50%' }}>{check.name}</Text>
+                                <Text
+                                    lineClamp={2}
+                                    sx={{ width: '50%' }}
+                                    data-table-check-name={check.name}
+                                >
+                                    {check.name}
+                                </Text>
                             </Tooltip>
 
                             <Group position="right">
@@ -155,6 +164,7 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                     : (
                         // CARD VIEW
                         <Card
+                            data-check={check.name}
                             sx={{
                                 width: `${imageWeight}%`,
                                 '&:hover': {
@@ -184,7 +194,12 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                                     multiline
                                     withinPortal
                                 >
-                                    <Text lineClamp={1}>{check.name}</Text>
+                                    <Text
+                                        lineClamp={1}
+                                        data-table-check-name={check.name}
+                                    >
+                                        {check.name}
+                                    </Text>
                                 </Tooltip>
                             </Paper>
                             <Card.Section m={2}>
@@ -201,6 +216,7 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                                     <a
                                         style={{ display: 'inline-block', width: '100%', cursor: 'pointer' }}
                                         href={linkToCheckOverlay}
+                                        data-check-previw-link={check.name}
                                     >
                                         <Group
                                             position="center"
@@ -208,6 +224,7 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                                             onClick={handlePreviewImageClick}
                                         >
                                             <Image
+                                                data-test-preview-image={check.name}
                                                 src={imagePreviewSrc}
                                                 fit="contain"
                                                 alt={check.name}

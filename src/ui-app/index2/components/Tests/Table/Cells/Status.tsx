@@ -32,6 +32,7 @@ export function Status({ type, test }: Props) {
             <Group position="left" spacing={0} noWrap>
                 <StatusesRing
                     statuses={checkStatuses.length > 0 ? checkStatuses : [test.status]}
+                    name={test.name}
                     key={type}
                     ml={-4}
                 />

@@ -38,3 +38,34 @@ export function escapeRegExp(text: string) {
 export const isJSON = (text: string) => !text ? '' : (/^[\],:{}\s]*$/.test(text.replace(/\\["\\\/bfnrtu]/g, '@')
     .replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']')
     .replace(/(?:^|:|,)(?:\s*\[)+/g, '')));
+
+export function getStatusMessage(check: any) {
+    let statusMsg = '';
+    if (check.status[0] === 'failed') {
+        if (check.failReasons.includes('different_images')) {
+            statusMsg = ' - images are different';
+            const checkResult = check.result ? JSON.parse(check.result) : null;
+            let diffPercent = checkResult.misMatchPercentage ? (checkResult.misMatchPercentage) : '';
+            diffPercent = (
+                (diffPercent === '0.00' || diffPercent === '')
+                && (checkResult.rawMisMatchPercentage?.toString()?.length > 0)
+            )
+                ? checkResult.rawMisMatchPercentage
+                : checkResult.misMatchPercentage;
+            statusMsg += ` (${diffPercent}%)`;
+        }
+        if (check.failReasons.includes('wrong_dimensions')) {
+            statusMsg = ' - images have wrong  dimensions';
+        }
+        if (check.failReasons.includes('not_accepted')) {
+            statusMsg = ' - previous check with same parameter is not accepted';
+        }
+    }
+    if (check.status[0] === 'new'){
+        statusMsg = ' - first time check';
+    }
+    if (check.status[0] === 'passed'){
+        statusMsg = ' - successful check';
+    }
+    return statusMsg;
+}

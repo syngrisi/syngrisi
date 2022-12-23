@@ -100,7 +100,7 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, size = 19 }:
                         </Stack>
                     )
                     : (
-                        <Text>Not accepted</Text>
+                        <Text>The check is not accepted</Text>
                     )
             }
         >
@@ -113,15 +113,16 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, size = 19 }:
                         '&:hover': { backgroundColor: isCurrentlyAccepted ? 'rgba(255, 255, 255, 0);' : '' },
                     }}
                     testAttr="check-accept-icon"
+                    testAttrName={check.name}
                     variant="subtle"
                     paused={isCurrentlyAccepted}
                     icon={
                         (isCurrentlyAccepted && isAccepted)
                             ? (
 
-                                <BsHandThumbsUpFill size={size} />
+                                <BsHandThumbsUpFill size={size} data-test-icon-type="fill" />
                             )
-                            : (<><BsHandThumbsUp size={size} /> {notAcceptedIcon}</>)
+                            : (<><BsHandThumbsUp size={size} data-test-icon-type="outline" />{notAcceptedIcon}</>)
                     }
                     action={handleAcceptCheckClick}
                     // title="Accept the check actual screenshot"

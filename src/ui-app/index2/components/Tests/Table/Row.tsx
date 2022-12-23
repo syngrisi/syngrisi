@@ -49,6 +49,11 @@ function Cell({ type, test, itemValue }: { type: string, test: any, itemValue: s
                 <Text
                     lineClamp={1}
                     sx={{ wordBreak: 'break-all' }}
+                    {
+                        ...{
+                            [`data-table-test-${type.toLowerCase()}`]: itemValue,
+                        }
+                    }
                 >
                     {itemValue}
                 </Text>
@@ -105,6 +110,7 @@ export function Row(
         <>
             <tr
                 data-test={`table_row_${index}`}
+                data-row-name={test.name}
                 className={cx({ [classes.rowSelected]: selected })}
                 style={{ cursor: 'pointer' }}
                 onClick={() => toggleCollapse(test.id!)}
@@ -113,6 +119,7 @@ export function Row(
                 <td>
                     <Checkbox
                         data-test="table-item-checkbox"
+                        data-test-checkbox-name={test.name}
                         checked={selected}
                         onChange={(event) => {
                             event.stopPropagation();

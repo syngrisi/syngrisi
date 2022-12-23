@@ -1,5 +1,5 @@
-Feature: Navigation
-    Check Breadcrumbs, Title and Url changes behaviour
+Feature: Group by Navigation
+    Check Breadcrumbs, Title and Url changes behaviour on grouping changes
 
     Background:
         Given I clear Database and stop Server
@@ -9,7 +9,6 @@ Feature: Navigation
 
     @smoke
     Scenario Outline:  Group by - <groupBy>
-
         When I go to "index2" page
         # runs
         When I select the option with the text "<groupBy>" for element "select[data-test='navbar-group-by']"
@@ -29,7 +28,7 @@ Feature: Navigation
             | Accept Status | By Accept Status | /index2/?groupBy=test-distinct/markedAs    |
 
 
-    Scenario: Set Breadcrumbs and title via Url
+    Scenario: Group by via Url
         When I go to "index2" page
         # default
         Then I expect that element "(//*[@data-test='bread-crumbs']//a)[1]" to have text "Test Results"

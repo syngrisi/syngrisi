@@ -9,6 +9,7 @@ function ToggleThemeButton({ colorScheme, toggleColorScheme }: any): ReactElemen
     return (
         <Group position="center">
             <Switch
+                data-test="theme-button"
                 size="md"
                 color={dark ? 'yellow' : 'blue'}
                 // color={theme.colorScheme === 'dark' ? 'gray' : 'dark'}

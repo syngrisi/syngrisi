@@ -125,7 +125,7 @@ export function RunItem(
                         {
                             testsQuery.isLoading
                                 ? (<Loader variant="dots" size="xs" mr={16} />)
-                                : (<StatusesRing statuses={testsStatuses} />)
+                                : (<StatusesRing statuses={testsStatuses} name={item.name} />)
                         }
                         <RemoveItemPopover
                             handleRemoveItemClick={handleRemoveItemClick}

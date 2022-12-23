@@ -135,6 +135,20 @@ export class MainView {
     }
 
     panEvents() {
+        this.canvas.on(
+            'mouse:move', (e) => {
+                // console.log(e.e.buttons);
+                if ((e.e.buttons === 4)) {
+                    this.canvas.setCursor('grab');
+
+                    const mEvent = e.e;
+                    const delta = new fabric.Point(mEvent.movementX, mEvent.movementY);
+                    this.canvas.relativePan(delta);
+                    this.canvas.renderAll();
+                }
+            },
+        );
+
         this.canvas.on('mouse:wheel', (opt) => {
             if (opt.e.ctrlKey) return;
             const delta = new fabric.Point(-opt.e.deltaX / 2, -opt.e.deltaY / 2);

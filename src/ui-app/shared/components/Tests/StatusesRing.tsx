@@ -22,11 +22,12 @@ const createStatusesObj = (arr: string[]): IStatusesObj => {
 };
 
 interface Props {
-    statuses: string[],
-    ml: any,
+    statuses: string[]
+    name?: string
+    ml?: any
 }
 
-export function StatusesRing({ statuses, ...rest }: Props) {
+export function StatusesRing({ statuses, name = '', ...rest }: Props) {
     const statusesObject: any = createStatusesObj(statuses);
     const ringSectionsData = statusesObject.count > 0
         ? [
@@ -55,6 +56,7 @@ export function StatusesRing({ statuses, ...rest }: Props) {
     return (
         <Tooltip label={tooltipLabel} withinPortal>
             <RingProgress
+                data-statusring-name={name}
                 sections={ringSectionsData}
                 size={48}
                 {...rest}

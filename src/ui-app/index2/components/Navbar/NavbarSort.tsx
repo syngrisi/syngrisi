@@ -1,6 +1,6 @@
 /* eslint-disable prefer-arrow-callback */
 import * as React from 'react';
-import { ActionIcon, Group, Transition } from '@mantine/core';
+import { ActionIcon, Group, Transition, useMantineTheme } from '@mantine/core';
 import { IconSortAscending, IconSortDescending, IconX } from '@tabler/icons';
 import { useEffect, useState } from 'react';
 import SafeSelect from '../../../shared/components/SafeSelect';
@@ -36,6 +36,7 @@ export function NavbarSort(
     }: Props,
 ) {
     const { query, setQuery } = useParams();
+    const theme = useMantineTheme();
     const [sortBy, setSortBy] = useState(
         String(query.sortByNavbar).split(':').length > 1
             ? String(query.sortByNavbar).split(':')[0]
@@ -60,11 +61,11 @@ export function NavbarSort(
             timingFunction="ease"
         >
             {(styles) => (
-                <Group align="end" noWrap style={styles}>
+                <Group align="end" position="apart" noWrap sx={{ width: '100%' }} style={styles}>
                     <SafeSelect
                         label="Sort by"
                         data-test="navbar-sort-by-select"
-                        sx={{ width: '230px' }}
+                        sx={{ minWidth: '230px', marginTop: theme.spacing.md }}
                         value={sortBy}
                         onChange={(value: string) => setSortBy(() => value)}
                         optionsData={sortOptionsData(groupBy)}

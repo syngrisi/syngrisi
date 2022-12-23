@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { Loader, Select } from '@mantine/core';
+import { Loader, Select, Sx } from '@mantine/core';
 
 import React, { ReactElement } from 'react';
 
@@ -16,7 +16,7 @@ interface Props {
     label: string
     onChange: any
     name: string
-    sx: any
+    sx: Sx
     'data-test': string
 }
 
@@ -30,6 +30,7 @@ function SafeSelect(
         name,
         onChange,
         'data-test': dataTest,
+        sx,
     }: Partial<Props>,
 ): ReactElement {
     const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,6 +45,7 @@ function SafeSelect(
                 icon={loaded && <Loader size={24} />}
                 value={value}
                 onChange={onChange}
+                sx={sx}
             />
             <select
                 name={name}

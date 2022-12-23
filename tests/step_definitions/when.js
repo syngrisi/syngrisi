@@ -16,7 +16,9 @@ import setCookie from '../src/support/action/setCookie';
 import setInputField from '../src/support/action/setInputField';
 import setPromptText from '../src/support/action/setPromptText';
 
+
 const { When } = require('cucumber');
+const Key = require('webdriverio/build/constants').UNICODE_CHARACTERS;
 
 When(
     /^I (click|doubleclick) on the (link|button|element) "([^"]*)?"$/,
@@ -108,4 +110,41 @@ When(/^I click on browser back button$/, function () {
 
 When(/^I fail$/, function () {
     throw new Error('Failed step');
+});
+
+When(/^I hold key "([^"]*)"$/, async function (key) {
+    await browser.performActions([{
+        type: 'key',
+        id: 'keyboard',
+        actions: [{ type: 'keyDown', value: Key[key] }],
+    }]);
+});
+
+When(/^I release key "([^"]*)"$/, async function (key) {
+    await browser.performActions([{
+        type: 'key',
+        id: 'keyboard',
+        actions: [{ type: 'keyUp', value: Key[key] }],
+    }]);
+});
+
+When(/^I scroll by "([^"]*)"$/, async function (value) {
+    // await browser.scroll(200, 200);
+    await browser.performActions([
+        {
+            type: 'wheel',
+            id: 'wheel123',
+            actions: [
+                {
+                    type: 'scroll',
+                    x: 0,
+                    y: 0,
+                    deltaX: 200,
+                    // deltaY: parseInt(value, 10) * -1,
+                    deltaY: 200,
+                    duration: 200,
+                },
+            ],
+        },
+    ]);
 });
