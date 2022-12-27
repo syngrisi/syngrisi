@@ -134,7 +134,7 @@ export function RelatedChecks(
 
                             <Chip.Group spacing={6} value={filter} onChange={setFilter} multiple>
                                 <Chip size="xs" value="name">Name</Chip>
-                                <Chip size="xs" value="Browser">Browser</Chip>
+                                <Chip size="xs" value="browserName">Browser</Chip>
                                 <Chip size="xs" value="browserVersion">Browser ver.</Chip>
                                 <Chip size="xs" value="os">Platform</Chip>
                                 <Chip size="xs" value="viewport">Viewport</Chip>

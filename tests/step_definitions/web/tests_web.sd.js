@@ -173,8 +173,9 @@ When(/^I create "([^"]*)" tests with:$/, { timeout: 60000000 }, async function (
     const createTest = async (params) => {
         await browser.vDriver.startTestSession({
             app: params.project || 'Test App',
-            branch: 'integration',
+            branch: params.branch || 'integration',
             // test: params.testName.includes('-') ? (`${params.testName}${i + 1}`) : params.testName,
+            os: params.os,
             browserName: params.browserName,
             test: params.testName,
             run: params.runName || process.env.RUN_NAME || 'integration_run_name',

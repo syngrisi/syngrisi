@@ -40,9 +40,9 @@ export function RelatedCheckSort(
                         optionsData={
                             [
                                 { value: 'createdDate', label: 'Created Date' },
-                                { value: 'Browser', label: 'BrowserName' },
-                                { value: 'Platform', label: 'os' },
-                                { value: 'Viewport', label: 'viewport' },
+                                { value: 'browserName', label: 'Browser' },
+                                { value: 'os', label: 'Platform' },
+                                { value: 'viewport', label: 'Viewport' },
                             ]
                         }
                     />
