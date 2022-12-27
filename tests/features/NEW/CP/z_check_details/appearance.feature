@@ -46,7 +46,7 @@ Feature: Check Detail Appearance
 
         # browser
         Then I expect that element "[data-check='browser']" to contain text "chrome"
-        Then I expect that element "[data-check='browser-icon']" to contain HTML "<title>chrome</title>"
+        Then I expect that element "[data-check='browser-icon']" to contain HTML "<title>chrome"
 
         # Toolbar
         # image size

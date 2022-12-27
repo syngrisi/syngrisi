@@ -24,7 +24,7 @@ export function Branch({ type, test, itemValue }: Props) {
                 >
                     <Text
                         lineClamp={1}
-                        sx={{ wordBreak: 'break-all' }}
+                        sx={{ wordBreak: 'break-all', maxWidth: 100 }}
                     >
                         {itemValue}
                     </Text>

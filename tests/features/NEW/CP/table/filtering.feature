@@ -203,9 +203,11 @@ Feature: Tests Table Filter
           testName: "TestName-chrome"
           runName: "RunName-1"
           runIdent: "RunIdent-1"
+          browserName: chrome
           checks:
             - filePath: files/A.png
               checkName: Check - 1
+              browserName: chrome
         """
 
         When I create "1" tests with:

@@ -24,7 +24,7 @@ export function PreviewCheckTooltipLabel({ check }: Props) {
             data-check-tooltip-name={check.name}
         >
             <Group>
-                <Text size={16}>
+                <Text size={16} lineClamp={1}>
                     {check.name}
                 </Text>
             </Group>
@@ -100,7 +100,7 @@ export function PreviewCheckTooltipLabel({ check }: Props) {
                     <Text size="xs">Branch: </Text>
                 </Group>
                 <Group position="right">
-                    <Badge color="blue">
+                    <Badge color="blue" sx={{ maxWidth: 200 }}>
                         {check.branch}
                     </Badge>
                 </Group>

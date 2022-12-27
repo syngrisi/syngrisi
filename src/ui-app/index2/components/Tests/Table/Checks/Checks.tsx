@@ -25,7 +25,7 @@ export function Checks({ item, testUpdateQuery, infinityQuery }: Props) {
         ],
         () => GenericService.get_via_post(
             'checks',
-            { _id: { $in: item.checks } },
+            { _id: { $in: item.checks.map((x: any) => x._id) } },
             {
                 populate: 'baselineId,actualSnapshotId,diffId',
                 limit: '0',

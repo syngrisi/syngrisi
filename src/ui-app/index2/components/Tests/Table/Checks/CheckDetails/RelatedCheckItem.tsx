@@ -57,7 +57,7 @@ export function RelatedCheckItem({ checkData, activeCheckId, setActiveCheckId }:
         >
             <Tooltip.Floating
                 multiline
-                zIndex={1000}
+                zIndex={100}
                 withinPortal
                 position="right-start"
                 color="dark"
@@ -72,9 +72,13 @@ export function RelatedCheckItem({ checkData, activeCheckId, setActiveCheckId }:
                     pt={4}
                     pb={4}
                 >
-                    <div style={{ position: 'relative' }}>
+                    <div
+                        style={{ position: 'relative' }}
+                        data-related-check-item={check.name}
+                    >
                         <Stack align="center" mb={4}>
                             <Image
+                                data-related-check="image"
                                 src={imagePreviewSrc}
                                 width="125px"
                                 fit="contain"
@@ -103,23 +107,27 @@ export function RelatedCheckItem({ checkData, activeCheckId, setActiveCheckId }:
                                     color="dark"
                                     size="xs"
                                 >
-                                    {check.branch}
+                                    <Text lineClamp={1} sx={{ maxWidth: 40 }} data-related-check="branch">
+                                        {check.branch}
+                                    </Text>
                                 </Badge>
                             </Group>
                             <Group pl={8} position="center" spacing={4} sx={{ width: '100%' }} noWrap>
-                                <OsIcon os={check.os} size={14} />
-                                <Text size="xs" lineClamp={1}>{check.os}</Text>
+                                <OsIcon os={check.os} size={14} data-related-check="os-icon" />
+                                <Text size="xs" lineClamp={1} data-related-check="os-label">{check.os}</Text>
                             </Group>
 
                             <Group pl={8} position="center" spacing={4} sx={{ width: '100%' }} noWrap>
-                                <BrowserIcon browser={check.browserName} size={14} />
+                                <BrowserIcon data-related-check="browser-icon" browser={check.browserName} size={14} />
                                 <Text
                                     size="xs"
                                     lineClamp={1}
+                                    data-related-check="browser-name"
                                 >
                                     {check.browserName}
                                 </Text>
                                 <Text
+                                    data-related-check="browser-version"
                                     size="xs"
                                     sx={{ minWidth: '30%' }}
                                 >
@@ -130,6 +138,7 @@ export function RelatedCheckItem({ checkData, activeCheckId, setActiveCheckId }:
 
                         <div style={{ position: 'absolute', top: -14, left: 6, opacity: 1 }}>
                             <Status
+                                data-related-check="status"
                                 check={check}
                                 size="xs"
                                 variant="filled"
