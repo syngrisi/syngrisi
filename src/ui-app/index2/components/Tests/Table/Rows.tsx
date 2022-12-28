@@ -1,20 +1,19 @@
 /* eslint-disable react/jsx-one-expression-per-line */
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import UnfoldActionIcon from './UnfoldActionIcon';
-import { AppContext } from '../../../AppContext';
 import { Row } from './Row';
 
 interface Props {
-    infinityQuery: any,
-    selection: any,
-    setSelection: any,
+    infinityQuery: any
+    selection: any
+    setSelection: any
+    updateToolbar: any
     visibleFields: string[]
 }
 
-const Rows = ({ infinityQuery, selection, setSelection, visibleFields }: Props) => {
+const Rows = ({ infinityQuery, selection, setSelection, visibleFields, updateToolbar }: Props) => {
     const [collapse, setCollapse]: [string[], any] = useState([]);
     const { data } = infinityQuery;
-    const { updateToolbar }: any = useContext(AppContext);
 
     const toggleCollapse = (id: string) => {
         setCollapse(

@@ -7,9 +7,8 @@ import {
 } from '@mantine/core';
 import { useSearchParams } from 'react-router-dom';
 import { useLocalStorage } from '@mantine/hooks';
-import { useEffect, useContext, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IconAdjustments, IconFilter } from '@tabler/icons';
-import { AppContext } from '../../AppContext';
 import RefreshActionIcon from './Table/RefreshActionIcon';
 import useInfinityScroll from '../../../shared/hooks/useInfinityScroll';
 import TestsTable from './Table/TestsTable';
@@ -18,20 +17,11 @@ import Filter from './Table/Filter';
 import { useNavProgressFetchEffect } from '../../../shared/hooks';
 import { useParams } from '../../hooks/useParams';
 
-/**
- * example:
- * [
- *    level: {$eq, 'debug'},
- *    level: {$ne, 'warn'},
- *    message: {$regex, 'test'}
- * ]
- */
-// interface IFilterSet {
-//     [key: string]: any
-// }
+interface Props {
+    updateToolbar: any
+}
 
-export default function Tests() {
-    const { updateToolbar }: any = useContext(AppContext);
+export default function Tests({ updateToolbar }: Props) {
     const { query } = useParams();
 
     const theme = useMantineTheme();
@@ -141,6 +131,7 @@ export default function Tests() {
     return (
         <Group position="apart" align="start" noWrap>
             <TestsTable
+                updateToolbar={updateToolbar}
                 firstPageQuery={firstPageQuery}
                 infinityQuery={infinityQuery}
                 visibleFields={visibleFields}
