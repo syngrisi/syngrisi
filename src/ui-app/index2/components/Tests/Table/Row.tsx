@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import * as React from 'react';
-import { Checkbox, Collapse, createStyles, Text, Tooltip } from '@mantine/core';
+import { Checkbox, Collapse, createStyles } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { tableColumns } from './tableColumns';
@@ -8,13 +8,7 @@ import { Checks } from './Checks/Checks';
 import { testsCreateStyle } from './testsCreateStyle';
 import { GenericService } from '../../../../shared/services';
 import { errorMsg } from '../../../../shared/utils';
-import { StartDate } from './Cells/StartDate';
-import { Status } from './Cells/Status';
-import { Os } from './Cells/Os';
-import { BrowserName } from './Cells/BrowserName';
-import { Branch } from './Cells/Branch';
-import { Viewport } from './Cells/ViewPort';
-import { BrowserVersion } from './Cells/BrowserVersion';
+import { CellWrapper } from './Cells/CellWrapper';
 
 const useStyles = createStyles(testsCreateStyle as any);
 
@@ -27,39 +21,6 @@ interface Props {
     selection: any
     collapse: any
     infinityQuery: any,
-}
-
-function Cell({ type, test, itemValue }: { type: string, test: any, itemValue: string }) {
-    const cellsMap: { [key: string]: any } = {
-        status: (<Status type={type} key={type} test={test} />),
-        startDate: (<StartDate type={type} key={type} test={test} itemValue={itemValue} />),
-        os: (<Os type={type} key={type} test={test} itemValue={itemValue} />),
-        browserName: (<BrowserName type={type} key={type} test={test} itemValue={itemValue} />),
-        browserVersion: (<BrowserVersion type={type} key={type} test={test} itemValue={itemValue} />),
-        branch: (<Branch type={type} key={type} test={test} itemValue={itemValue} />),
-        viewport: (<Viewport type={type} key={type} test={test} />),
-    };
-    return cellsMap[type] || (
-        <td
-            key={type}
-            data-test={`table-row-${tableColumns[type].label}`}
-            style={{ ...tableColumns[type].cellStyle }}
-        >
-            <Tooltip label={test[type]} multiline withinPortal>
-                <Text
-                    lineClamp={1}
-                    sx={{ wordBreak: 'break-all' }}
-                    {
-                        ...{
-                            [`data-table-test-${type.toLowerCase()}`]: itemValue,
-                        }
-                    }
-                >
-                    {itemValue}
-                </Text>
-            </Tooltip>
-        </td>
-    );
 }
 
 export function Row(
@@ -141,7 +102,7 @@ export function Row(
                             : test[column];
 
                         return (
-                            <Cell test={test} type={column} itemValue={itemValue} key={column} />
+                            <CellWrapper test={test} type={column} itemValue={itemValue} key={column} />
                         );
                     })
                 }

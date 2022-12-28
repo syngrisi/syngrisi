@@ -182,10 +182,10 @@ export default function IndexHeader() {
                     <Group spacing="sm">
                         <Text size="sm">Project:</Text>
                         <SafeSelect
-                            searchable="true"
-                            clearable="true"
+                            searchable
+                            clearable
                             placeholder="Enter Project Name"
-                            variant="unstiled"
+                            variant="unstyled"
                             data-test="current-project"
                             sx={{
                                 minWidth: '150px',
@@ -198,7 +198,6 @@ export default function IndexHeader() {
                             }}
                             value={currentProjectLS || ''}
                             onChange={projectSelectHandler}
-                            size="sm"
                             optionsData={projectSelectData}
                         />
                     </Group>
