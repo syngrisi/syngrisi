@@ -1,17 +1,20 @@
 /* eslint-disable prefer-arrow-callback */
 import * as React from 'react';
 import { useEffect, useMemo } from 'react';
+import { useDocumentTitle } from '@mantine/hooks';
+import { Anchor } from '@mantine/core';
 import SafeSelect from '../../../shared/components/SafeSelect';
-import { useIndexSubpageEffect } from '../../hooks/useIndexSubpageEffect';
 import { useParams } from '../../hooks/useParams';
+import { getNavigationItem } from '../../../shared/navigation/navigationData';
 
 interface Props {
     clearActiveItems: any;
     groupByValue: string,
     setGroupByValue: any,
+    setBreadCrumbs: any,
 }
 
-export function NavbarGroupBySelect({ clearActiveItems, groupByValue, setGroupByValue }: Props) {
+export function NavbarGroupBySelect({ clearActiveItems, groupByValue, setGroupByValue, setBreadCrumbs }: Props) {
     const { query, setQuery } = useParams();
 
     const subpageMap: { [key: string]: string } = {
@@ -28,7 +31,21 @@ export function NavbarGroupBySelect({ clearActiveItems, groupByValue, setGroupBy
         return '';
     }, [query?.groupBy, query?.checkId]);
 
-    useIndexSubpageEffect(subpageMap[title] || subpageMap.runs);
+    const updateBreadcrumbs = (pageTitle: string) => {
+        const pageData = getNavigationItem(pageTitle) || {
+            title: null,
+            crumbs: [],
+        };
+        setBreadCrumbs(() => pageData!.crumbs.map((item: any) => (
+            <Anchor href={item.href} key={`${item.title}`} size="sm" color="green">
+                {item.title}
+            </Anchor>
+        )));
+    };
+    useDocumentTitle(subpageMap[title] || subpageMap.runs);
+    useEffect(function changeBreadcrumbs() {
+        updateBreadcrumbs(subpageMap[title] || subpageMap.runs);
+    }, [title]);
 
     useEffect(function onQueryGroupByUpdated() {
         if (!query.groupBy) return;

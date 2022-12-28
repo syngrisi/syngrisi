@@ -93,10 +93,13 @@ const useStyles = createStyles((theme) => ({
     },
 }));
 
-export default function IndexHeader() {
+interface Props {
+    breadCrumbs: any
+}
+
+export default function HeaderIndex({ breadCrumbs }: Props) {
     const {
         toolbar,
-        breadCrumbs,
     }: any = useContext(AppContext);
 
     const theme = useMantineTheme();

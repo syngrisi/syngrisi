@@ -56,7 +56,11 @@ const useStyles = createStyles((theme) => ({
     },
 }));
 
-export default function NavbarIndex() {
+interface Props {
+    setBreadCrumbs: any
+}
+
+export default function NavbarIndex({ setBreadCrumbs }: Props) {
     const { classes } = useStyles();
     const { query, setQuery } = useParams();
 
@@ -90,6 +94,7 @@ export default function NavbarIndex() {
         baseFilterObj: navbarFilterObject,
         sortBy: query.sortByNavbar!,
     });
+
 
     useEffect(function refetch() {
         firstPageQuery.refetch();
@@ -134,6 +139,7 @@ export default function NavbarIndex() {
                         >
                             <Group position="apart" align="end" sx={{ width: '100%' }}>
                                 <NavbarGroupBySelect
+                                    setBreadCrumbs={setBreadCrumbs}
                                     clearActiveItems={activeItemsHandler.clear}
                                     groupByValue={groupByValue}
                                     setGroupByValue={setGroupByValue}
