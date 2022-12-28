@@ -1,5 +1,5 @@
 /* eslint-disable indent,react/jsx-indent,prefer-arrow-callback */
-import React, { useState, useRef, useEffect, useContext } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
     createStyles,
     Table,
@@ -16,7 +16,6 @@ import Heads from './Heads';
 import { CheckModal } from './Checks/CheckModal';
 import RemoveTestsButton from './RemoveTestsButton';
 import AcceptTestsButton from './AcceptTestsButton';
-import { AppContext } from '../../../AppContext';
 import { useParams } from '../../../hooks/useParams';
 
 const useStyles = createStyles(testsCreateStyle as any);
@@ -25,12 +24,14 @@ interface Props {
     infinityQuery: any
     firstPageQuery: any,
     visibleFields: any
+    updateToolbar: any
     size?: string
 }
 
-export default function TestsTable({ infinityQuery, firstPageQuery, visibleFields, size = '100%' }: Props) {
+export default function TestsTable(
+    { infinityQuery, firstPageQuery, visibleFields, updateToolbar, size = '100%' }: Props,
+) {
     const { query } = useParams();
-    const { updateToolbar }: any = useContext(AppContext);
     const { data } = infinityQuery;
     const flatData = data ? data.pages.flat().map((x: any) => x.results).flat() : [];
 
@@ -111,6 +112,7 @@ export default function TestsTable({ infinityQuery, firstPageQuery, visibleField
                                 : (
                                     <tbody className={classes.tableBody}>
                                     <Rows
+                                        updateToolbar={updateToolbar}
                                         infinityQuery={infinityQuery}
                                         selection={selection}
                                         setSelection={setSelection}

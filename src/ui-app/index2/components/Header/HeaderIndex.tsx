@@ -15,13 +15,12 @@ import * as React from 'react';
 import { useDisclosure, useLocalStorage, useOs } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons';
 import { createStyles } from '@mantine/styles';
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { openSpotlight } from '@mantine/spotlight';
 import { useQuery } from '@tanstack/react-query';
 import HeaderLogo from '../../../shared/components/Header/HeaderLogo';
 import { errorMsg } from '../../../shared/utils';
 import UserMenu from '../../../shared/components/Header/UserMenu';
-import { AppContext } from '../../AppContext';
 import { links } from '../../../shared/components/heaserLinks';
 import SafeSelect from '../../../shared/components/SafeSelect';
 import { GenericService } from '../../../shared/services';
@@ -95,13 +94,10 @@ const useStyles = createStyles((theme) => ({
 
 interface Props {
     breadCrumbs: any
+    toolbar: any
 }
 
-export default function HeaderIndex({ breadCrumbs }: Props) {
-    const {
-        toolbar,
-    }: any = useContext(AppContext);
-
+export default function HeaderIndex({ breadCrumbs, toolbar }: Props) {
     const theme = useMantineTheme();
 
     const [opened, { toggle }] = useDisclosure(false);
