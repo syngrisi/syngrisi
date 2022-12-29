@@ -62,11 +62,9 @@ function App() {
                     >
                         <NotificationsProvider autoClose={5000} limit={5}>
                             <NavigationProgress />
-                            <ModalsProvider>
-                                <Routes>
-                                    <Route path="/index2/*" element={<IndexLayout />} />
-                                </Routes>
-                            </ModalsProvider>
+                            <Routes>
+                                <Route path="/index2/*" element={<IndexLayout />} />
+                            </Routes>
                         </NotificationsProvider>
                     </SpotlightProvider>
                 </MantineProvider>

@@ -5,7 +5,6 @@ import {
     MantineProvider,
 } from '@mantine/core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ModalsProvider } from '@mantine/modals';
 
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
@@ -86,11 +85,9 @@ function App() {
                         >
                             <NotificationsProvider autoClose={5000} limit={5}>
                                 <NavigationProgress />
-                                <ModalsProvider>
-                                    <Routes>
-                                        <Route path="/admin/*" element={<AdminLayout />} />
-                                    </Routes>
-                                </ModalsProvider>
+                                <Routes>
+                                    <Route path="/admin/*" element={<AdminLayout />} />
+                                </Routes>
                             </NotificationsProvider>
                         </SpotlightProvider>
                     </MantineProvider>

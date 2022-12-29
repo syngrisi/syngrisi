@@ -25,6 +25,7 @@ interface Props {
     placeholder: string
     styles: Styles<BaseSelectStylesNames, Record<string, any>> | undefined
     variant: InputVariant
+    disabled: boolean
 }
 
 // select component for selenium
@@ -43,6 +44,7 @@ function SafeSelect(
         clearable,
         placeholder,
         variant,
+        disabled,
     }: Partial<Props>,
 ): ReactElement {
     const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,6 +65,8 @@ function SafeSelect(
                 placeholder={placeholder}
                 variant={variant}
                 styles={styles}
+                data-test={dataTest}
+                disabled={disabled}
             />
             <select
                 name={name}
