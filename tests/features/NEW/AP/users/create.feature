@@ -32,6 +32,8 @@ Feature: Create User
         When I set "Doe" to the inputfield "[data-test=user-add-last-name]"
         When I select the option with the text "Reviewer" for element "select[data-test=user-add-role]"
         When I set "Password-123" to the inputfield "[data-test=user-add-password]"
+        When I scroll to element "#create"
+        When I wait for "1" seconds
         When I click on the element "#create"
 
         When I wait for "3" seconds
@@ -55,6 +57,8 @@ Feature: Create User
         When I set "Doe" to the inputfield "[data-test=user-add-last-name]"
         When I select the option with the text "Reviewer" for element "select[data-test=user-add-role]"
         When I set "Password-123" to the inputfield "[data-test=user-add-password]"
+        When I scroll to element "#create"
+        When I wait for "1" seconds
         When I click on the element "#create"
 
         When I wait for "3" seconds
@@ -66,6 +70,8 @@ Feature: Create User
 
         Then I expect that element "//input[@data-test='user-add-email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" contain text "user with this email already exists"
 
+        When I scroll to element "#create"
+        When I wait for "1" seconds
         When I click on the element "#create"
         When I wait for "3" seconds
         Then I expect that element "//*[@data-test='j_doe@gmail.com']" does appear exactly "1" times
@@ -83,6 +89,8 @@ Feature: Create User
         Then I expect that the element "//input[@data-test='user-add-last-name']" to have attribute "disabled"
         Then I expect that the element "//input[@data-test='user-add-role']" to have attribute "disabled"
 
+        When I scroll to element "#create"
+        When I wait for "1" seconds
         When I click on the element "#create"
         When I wait for "1" seconds
         Then I expect that element "//input[@data-test='user-add-email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" contain text "Invalid email format"
