@@ -29,6 +29,7 @@ export default function RemoveTestModalAsk({ opened, setOpened, selection, setSe
     // const [foldMode, toggleFoldMode] = useToggle([true, false]);
     const asyncMutations: Promise<any>[] = [];
     const handleRemoveButtonClick = async () => {
+        // eslint-disable-next-line no-restricted-syntax
         for (const id of selection) {
             asyncMutations.push(mutationRemoveTest.mutateAsync({ id }));
         }
@@ -48,6 +49,7 @@ export default function RemoveTestModalAsk({ opened, setOpened, selection, setSe
             </Text>
             <Group position="right">
                 <Button
+                    data-test="confirm-remove-test-icon"
                     color="red"
                     onClick={
                         async () => {

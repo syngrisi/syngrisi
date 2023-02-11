@@ -28,12 +28,14 @@ Then(/^I expect the stored "([^"]*)" string is( not|) (equal|contain):$/, functi
     const assertMethod = `to${capitalize(type)}`;
     // console.log({ assertMethod });
 
-    console.log('Expect:', expected.trim());
-    console.log('Stored:', itemValue.trim());
+    // eslint-disable-next-line no-console
+    console.log('Expect:', expected.toString().trim());
+    // eslint-disable-next-line no-console
+    console.log('Stored:', itemValue.toString().trim());
     if (condition === ' not') {
         expect(itemValue.trim())
-            .not[assertMethod](expected.trim());
+            .not[assertMethod](expected.toString().trim());
     } else {
-        expect(itemValue.trim())[assertMethod](expected.trim());
+        expect(itemValue.toString().trim())[assertMethod](expected.trim());
     }
 });

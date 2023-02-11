@@ -4,18 +4,19 @@ import { ActionIcon, Group, ScrollArea, Stack, Text, Transition, Chip, Burger, D
 import { useDisclosure } from '@mantine/hooks';
 import { IconArrowsSort, IconFilter, IconRefresh, IconX } from '@tabler/icons';
 import { useEffect, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { RelatedChecksSkeleton } from './RelatedChecksSkeleton';
 import { RelatedChecksItems } from './RelatedChecksItems';
 import { RelatedCheckSort } from './RelatedCheckSort';
 
 interface Props {
-    check: any
+    currentCheck: any
     related: any
 }
 
 export function RelatedChecks(
     {
-        check,
+        currentCheck,
         related,
     }: Props,
 ) {
@@ -23,10 +24,7 @@ export function RelatedChecks(
     const [openedFilter, filterHandler] = useDisclosure(false);
     const [filter, setFilter] = useState(['name']);
     const title = related.opened ? 'Close related checks' : 'Open related checks';
-
-    useEffect(function onSortChange() {
-        related.relatedChecksQuery.firstPageQuery.refetch();
-    }, [`${related.sortBy}_${related.sortOrder}`]);
+    const queryClient = useQueryClient();
 
     const hideRelatedChecks = () => {
         sortHandler.close();
@@ -34,12 +32,18 @@ export function RelatedChecks(
         related.handler.toggle();
     };
 
+    const updateFilter = (value: any) => {
+        setFilter(() => {
+            if (!value.includes('name')) return [...['name'], ...value];
+            return value;
+        });
+    };
+
     useEffect(function onFilterChange() {
-        const newFilter = filter.map((item) => ({ [item]: check[item] }));
+        const newFilter = filter.map((item) => ({ [item]: encodeURIComponent(currentCheck[item]) }));
         related.setRelatedFilter(() => ({
             $and: newFilter,
         }));
-        related.relatedChecksQuery.firstPageQuery.refetch();
     }, [filter.length]);
 
     return (
@@ -99,7 +103,11 @@ export function RelatedChecks(
                             <Tooltip label="Refresh items" withinPortal>
                                 <ActionIcon
                                     data-test="related-check-icon-refresh"
-                                    onClick={() => related.relatedChecksQuery.firstPageQuery.refetch()}
+                                    onClick={
+                                        async () => {
+                                            await queryClient.invalidateQueries({ queryKey: ['related_checks_infinity_pages', currentCheck._id] });
+                                        }
+                                    }
                                     mb={4}
                                 >
                                     <IconRefresh stroke={1} />
@@ -132,8 +140,8 @@ export function RelatedChecks(
                                 </ActionIcon>
                             </Group>
 
-                            <Chip.Group spacing={6} value={filter} onChange={setFilter} multiple>
-                                <Chip size="xs" value="name">Name</Chip>
+                            <Chip.Group spacing={6} value={filter} onChange={updateFilter} multiple>
+                                <Chip size="xs" value="name" disabled>Name</Chip>
                                 <Chip size="xs" value="browserName">Browser</Chip>
                                 <Chip size="xs" value="browserVersion">Browser ver.</Chip>
                                 <Chip size="xs" value="os">Platform</Chip>

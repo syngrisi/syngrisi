@@ -10,46 +10,52 @@ import { sizes } from '../checkSizes';
 import { BrowserIcon } from '../../../../../../shared/components/Check/BrowserIcon';
 import { OsIcon } from '../../../../../../shared/components/Check/OsIcon';
 import { PreviewCheckTooltipLabel } from '../PreviewCheckTooltipLabel';
+import { useParams } from '../../../../../hooks/useParams';
 
 interface Props {
     checkData: any
-    setActiveCheckId: any
+    setRelatedActiveCheckId: any
     activeCheckId: any
+    index: number
 }
 
-export function RelatedCheckItem({ checkData, activeCheckId, setActiveCheckId }: Props) {
+export function RelatedCheckItem({ checkData, activeCheckId, setRelatedActiveCheckId, index }: Props) {
+    const { setQuery } = useParams();
     const check = checkData;
     const theme = useMantineTheme();
     const imageFilename = check.diffId?.filename || check.actualSnapshotId?.filename || check.baselineId?.filename;
     const imagePreviewSrc = `${config.baseUri}/snapshoots/${imageFilename}`;
+
     const [checksViewSize] = useLocalStorage({ key: 'check-view-size', defaultValue: 'medium' });
 
     const handleItemClick = () => {
-        setActiveCheckId(() => check._id);
+        setQuery({ checkId: checkData._id });
+        setRelatedActiveCheckId(() => check._id);
     };
 
     return (
         <Group
+            data-related-check-index={index}
             onClick={handleItemClick}
             spacing={4}
-            mt={8}
+            mt={1}
             mb={8}
             pr={8}
             pl={8}
-            pt={8}
-            pb={8}
+            pt={0}
+            pb={0}
             sx={{
                 cursor: 'pointer',
                 width: '88%',
                 borderBottom: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[2]}`,
                 // eslint-disable-next-line no-nested-ternary
                 backgroundColor: (check._id === activeCheckId)
-                    ? (theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[2])
+                    ? (theme.colorScheme === 'dark' ? theme.colors.blue[9] : theme.colors.blue[3])
                     : '',
 
                 '&:hover': {
                     // border: `1px solid ${theme.colors.gray[3]}`,
-                    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[3],
+                    backgroundColor: theme.colorScheme === 'dark' ? theme.colors.blue[5] : theme.colors.blue[4],
                 },
             }}
             position="center"
@@ -57,7 +63,7 @@ export function RelatedCheckItem({ checkData, activeCheckId, setActiveCheckId }:
         >
             <Tooltip.Floating
                 multiline
-                zIndex={100}
+                zIndex={1000}
                 withinPortal
                 position="right-start"
                 color="dark"
@@ -66,11 +72,15 @@ export function RelatedCheckItem({ checkData, activeCheckId, setActiveCheckId }:
                 }
             >
                 <Paper
+                    radius={0}
                     shadow="sm"
-                    pr={4}
-                    pl={4}
-                    pt={4}
-                    pb={4}
+                    pt={6}
+                    pr={0}
+                    pl={0}
+                    mr={4}
+                    ml={4}
+                    mt={2}
+                    mb={2}
                 >
                     <div
                         style={{ position: 'relative' }}
@@ -93,7 +103,7 @@ export function RelatedCheckItem({ checkData, activeCheckId, setActiveCheckId }:
                                 }
                             />
                         </Stack>
-                        <Stack p={8} align="start" spacing={8}>
+                        <Stack p={4} pt={8} align="start" spacing={8}>
                             <Group position="center" spacing={4} sx={{ width: '100%' }} noWrap>
                                 <ViewPortLabel
                                     fontSize="8px"
@@ -118,7 +128,12 @@ export function RelatedCheckItem({ checkData, activeCheckId, setActiveCheckId }:
                             </Group>
 
                             <Group pl={8} position="center" spacing={4} sx={{ width: '100%' }} noWrap>
-                                <BrowserIcon data-related-check="browser-icon" browser={check.browserName} size={14} />
+                                <BrowserIcon
+                                    data-related-check-browser-name={check.browserName}
+                                    data-related-check="browser-icon"
+                                    browser={check.browserName}
+                                    size={14}
+                                />
                                 <Text
                                     size="xs"
                                     lineClamp={1}

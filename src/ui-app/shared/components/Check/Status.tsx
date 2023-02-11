@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import * as React from 'react';
-import { Badge, BadgeVariant } from '@mantine/core';
+import { Badge, BadgeVariant, Loader } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
 import { sizes } from '../../../index2/components/Tests/Table/Checks/checkSizes';
 
@@ -31,7 +31,7 @@ export function Status({ check, size, variant = 'light', ...rest }: Props) {
             title="Check status"
             {...rest}
         >
-            {check.status}
+            {check.status ? check.status : <Loader size="xs" color="blue" variant="dots" />}
         </Badge>
     );
 }

@@ -4,7 +4,7 @@ const { When, Then } = require('cucumber');
 const { fillCommonPlaceholders } = require('../../src/utills/common');
 
 When(/^I accept the "([^"]*)" check$/, (checkName) => {
-    const icon = $(`[data-test='check-accept-icon'][data-accept-icon-name='${checkName}']`);
+    const icon = $(`[data-test='check-accept-icon'][data-popover-icon-name='${checkName}']`);
     icon.waitForDisplayed();
     icon.click();
 
@@ -19,21 +19,31 @@ When(/^I accept the "([^"]*)" check$/, (checkName) => {
     // $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//a[contains(@class, 'accept-button')]`)
     //     .click();
     // browser.pause(200);
+    // eslint-disable-next-line max-len
     // $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../div[@name='check-buttons']//a[contains(@class, 'accept-option')]`)
     //     .click();
 });
 
 When(/^I delete the "([^"]*)" check$/, (checkName) => {
-    expect($(`.//div[contains(normalize-space(.), '${checkName}')]/../..`))
-        .toBeExisting();
+    const icon = $(`[data-test='check-remove-icon'][data-popover-icon-name='${checkName}']`);
+    icon.waitForDisplayed();
+    icon.click();
 
+    const confirmButton = $(`[data-test='check-remove-icon-confirm'][data-confirm-button-name='${checkName}']`);
+    confirmButton.waitForDisplayed();
+    confirmButton.click();
+
+    // expect($(`.//div[contains(normalize-space(.), '${checkName}')]/../..`))
+    //     .toBeExisting();
+    //
+    // // eslint-disable-next-line max-len
+    // browser.pause(1000);
+    // $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//a[contains(@class, 'remove-button')]`)
+    //     .click();
+    // browser.pause(200);
     // eslint-disable-next-line max-len
-    browser.pause(1000);
-    $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//a[contains(@class, 'remove-button')]`)
-        .click();
-    browser.pause(200);
-    $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../div[@name='check-buttons']//a[contains(@class, 'remove-option')]`)
-        .click();
+    // $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../div[@name='check-buttons']//a[contains(@class, 'remove-option')]`)
+    //     .click();
 });
 
 When(/^I expect the(:? (\d)th)? "([^"]*)" check has "([^"]*)" acceptance status$/, (number, checkName, acceptStatus) => {
@@ -107,4 +117,11 @@ When(/^I remove the "([^"]*)" check$/, function (name) {
     confirmButton.waitForDisplayed();
     browser.pause(500);
     confirmButton.click();
+});
+
+When(/^I open the (\d)st check "([^"]*)"$/, function (num, name) {
+    const check = $(`(//*[@data-test-preview-image='${name}'])[${num}]`);
+    check.waitForDisplayed();
+    check.click();
+    $(`[data-check-header-name='${name}']`).waitForDisplayed();
 });

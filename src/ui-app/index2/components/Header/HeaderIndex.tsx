@@ -1,7 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import {
     Breadcrumbs,
-    Burger,
     Container,
     Group,
     Header,
@@ -12,7 +11,7 @@ import {
     useMantineTheme,
 } from '@mantine/core';
 import * as React from 'react';
-import { useDisclosure, useLocalStorage, useOs } from '@mantine/hooks';
+import { useLocalStorage, useOs } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons';
 import { createStyles } from '@mantine/styles';
 import { useEffect } from 'react';
@@ -100,7 +99,6 @@ interface Props {
 export default function HeaderIndex({ breadCrumbs, toolbar }: Props) {
     const theme = useMantineTheme();
 
-    const [opened, { toggle }] = useDisclosure(false);
     const { classes } = useStyles();
 
     // eslint-disable-next-line no-unused-vars
@@ -168,7 +166,7 @@ export default function HeaderIndex({ breadCrumbs, toolbar }: Props) {
             <Container className={classes.inner} fluid>
                 <Group>
                     <Group>
-                        <Burger opened={opened} onClick={toggle} size="sm" />
+                        {/* <Burger opened={opened} onClick={toggle} size="sm" /> */}
                         <HeaderLogo />
                     </Group>
 
@@ -204,6 +202,7 @@ export default function HeaderIndex({ breadCrumbs, toolbar }: Props) {
                         onClick={() => openSpotlight()}
                         variant="default"
                         className={classes.spotLight}
+                        data-test="spotlight-button"
                     >
                         <Group position="apart" sx={{ minWidth: 200 }}>
                             <Group>

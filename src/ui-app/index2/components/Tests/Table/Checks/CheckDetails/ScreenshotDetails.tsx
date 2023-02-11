@@ -23,7 +23,7 @@ interface Props {
     check: any
 }
 
-export function ScreenshotDetails({ mainView, view, check }: Props) {
+export function ScreenshotDetails({ mainView, view, check = {} }: Props) {
     const { classes } = useStyles();
 
     const checkResult = check.result ? JSON.parse(check.result) : null
@@ -64,9 +64,15 @@ export function ScreenshotDetails({ mainView, view, check }: Props) {
             </Badge>
         );
     }, [mainView, view]);
-    const createdDate = view === 'actual'
+
+    const actualDate = check?.actualSnapshotId?.createdDate
         ? dateFns.format(dateFns.parseISO(check?.actualSnapshotId?.createdDate), 'yyyy-MM-dd HH:mm:ss')
-        : dateFns.format(dateFns.parseISO(check?.baselineId?.createdDate), 'yyyy-MM-dd HH:mm:ss')
+        : ''
+    const baselineDate = check?.baselineId?.createdDate
+        ? dateFns.format(dateFns.parseISO(check?.baselineId?.createdDate), 'yyyy-MM-dd HH:mm:ss')
+        : '';
+
+    const createdDate = view === 'actual' ? actualDate : baselineDate
 
     return (
         <Group spacing="sm" noWrap>
@@ -89,7 +95,8 @@ export function ScreenshotDetails({ mainView, view, check }: Props) {
                                 </Text>
                                 <Tooltip label={`Image Date: ${createdDate}`} withinPortal>
 
-                                    <Badge color="blue" radius={'sm'} className={classes.infoBadges} data-check="image-date">
+                                    <Badge color="blue" radius={'sm'} className={classes.infoBadges}
+                                           data-check="image-date">
                                         {
                                             createdDate
                                         }
@@ -109,7 +116,7 @@ export function ScreenshotDetails({ mainView, view, check }: Props) {
                                                     radius={'sm'}
                                                     sx={{ maxWidth: 100 }}
                                                     data-check="diff-percent"
-                                                       className={classes.infoBadges}>
+                                                    className={classes.infoBadges}>
                                                     {diffPercent}%
                                                 </Badge>
                                             </Tooltip>

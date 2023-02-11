@@ -15,10 +15,7 @@ Feature: Check Preview - Tooltip
               - checkName: CheckName
         """
         When I go to "index2" page
-        When I wait on element "[data-table-test-name=TestName]" to be displayed
-
-        When I click on the element "[data-table-test-name=TestName]"
-        When I wait on element "[data-table-check-name='CheckName']" to be displayed
+        When I unfold the test "TestName"
         When I accept the "CheckName" check
 
         When I wait on element "[data-check-tooltip-name='CheckName']" to not be displayed

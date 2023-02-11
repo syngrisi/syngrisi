@@ -27,7 +27,10 @@ export const TestsService = {
                 method: 'PUT',
             });
             if (resp.ok) {
-                return resp.json();
+                return {
+                    response: resp.json(),
+                    id,
+                };
             }
         } catch (e) {
             throw new Error(`Cannot accept test: '${id}', error: '${e}'`);

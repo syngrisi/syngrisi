@@ -31,6 +31,7 @@ export const UserHooks = {
                 onError: (err: unknown) => {
                     errorMsg({ error: err });
                 },
+                refetchOnWindowFocus: false,
             },
         );
     },

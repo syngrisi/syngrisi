@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { Badge, Tooltip, useMantineTheme, Text, Stack } from '@mantine/core';
 import { BsHandThumbsUp, BsHandThumbsUpFill } from 'react-icons/all';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import ActionPopoverIcon from '../../../../../shared/components/ActionPopoverIcon';
 import { ChecksService } from '../../../../../shared/services';
 import { errorMsg, successMsg } from '../../../../../shared/utils/utils';
@@ -10,14 +10,15 @@ import { log } from '../../../../../shared/utils/Logger';
 
 interface Props {
     check: any
+    initCheck?: any
     testUpdateQuery: any
     size?: number
     checksQuery: any
 }
 
-export function AcceptButton({ check, testUpdateQuery, checksQuery, size = 19 }: Props) {
+export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, size = 19 }: Props) {
+    const queryClient = useQueryClient();
     const theme = useMantineTheme();
-
     const isAccepted = (check.markedAs === 'accepted');// || mutationAcceptCheck.isSuccess;
     const isCurrentlyAccepted = ((check.baselineId?._id === check.actualSnapshotId?._id) && isAccepted);
     // eslint-disable-next-line no-nested-ternary
@@ -28,11 +29,16 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, size = 19 }:
         : 'gray';
 
     const mutationAcceptCheck = useMutation(
-        (data: { check: any, newBaselineId: string }) => ChecksService.acceptCheck(data),
         {
+            mutationFn: (data: { check: any, newBaselineId: string }) => ChecksService.acceptCheck(data),
             // eslint-disable-next-line no-unused-vars
             onSuccess: async (result: any) => {
                 successMsg({ message: 'Check has been successfully accepted' });
+                await queryClient.invalidateQueries({ queryKey: ['preview_checks', check.test._id] });
+                await queryClient.invalidateQueries({ queryKey: ['check_for_modal', check._id] });
+                await queryClient.refetchQueries(
+                    { queryKey: ['related_checks_infinity_pages', initCheck?._id || check._id] },
+                );
                 checksQuery.refetch();
                 if (testUpdateQuery) testUpdateQuery.refetch();
             },
@@ -43,7 +49,7 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, size = 19 }:
         },
     );
 
-    const notAcceptedIcon = check.failReasons.includes('not_accepted')
+    const notAcceptedIcon = check?.failReasons?.includes('not_accepted')
         ? (
             <Badge
                 component="div"
@@ -56,7 +62,7 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, size = 19 }:
                 color="yellow"
                 variant="filled"
                 radius="xl"
-                data-test="check-wrong-images-size-error-icon"
+                data-test="not-accepted-error-icon"
                 sx={{
                     fontSize: '12px',
                     position: 'absolute',

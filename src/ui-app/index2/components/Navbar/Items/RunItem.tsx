@@ -49,7 +49,7 @@ export function RunItem(
                 [type.toLowerCase()]: { $eq: item._id },
             },
             {
-                limit: String(0),
+                limit: '0',
             },
             `${type}_item_tests_query`,
         ),
@@ -73,6 +73,7 @@ export function RunItem(
         <>
             <List.Item
                 data-test={`navbar_item_${index}`}
+                data-item-name={item.name}
                 onClick={handlerItemClick}
                 className={className}
                 sx={{ cursor: 'pointer', width: '100%' }}
@@ -124,7 +125,7 @@ export function RunItem(
                     <Group position="right" spacing={0} noWrap>
                         {
                             testsQuery.isLoading
-                                ? (<Loader variant="dots" size="xs" mr={16} />)
+                                ? (<Loader variant="dots" color="blue" size="xs" mr={16} />)
                                 : (<StatusesRing statuses={testsStatuses} name={item.name} />)
                         }
                         <RemoveItemPopover

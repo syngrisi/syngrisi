@@ -38,6 +38,7 @@ export function SuiteItem(
         <>
             <List.Item
                 data-test={`navbar_item_${index}`}
+                data-item-name={item.name}
                 onClick={handlerItemClick}
                 className={className}
                 sx={{ cursor: 'pointer', width: '100%' }}

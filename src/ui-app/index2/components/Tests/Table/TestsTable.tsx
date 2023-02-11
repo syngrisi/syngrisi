@@ -29,15 +29,20 @@ interface Props {
 }
 
 export default function TestsTable(
-    { infinityQuery, firstPageQuery, visibleFields, updateToolbar, size = '100%' }: Props,
+    {
+        infinityQuery,
+        firstPageQuery,
+        visibleFields,
+        updateToolbar,
+        size = '100%',
+    }: Props,
 ) {
     const { query } = useParams();
     const { data } = infinityQuery;
     const flatData = data ? data.pages.flat().map((x: any) => x.results).flat() : [];
 
     // eslint-disable-next-line no-unused-vars
-    const [scrolled, setScrolled] = useState(false);
-    const { classes, cx } = useStyles();
+    const { classes } = useStyles();
     const [selection, setSelection]: [string[], any] = useState([]);
 
     useEffect(function resetSelection() {
@@ -88,7 +93,7 @@ export default function TestsTable(
                 >
                     <thead
                         style={{ zIndex: 10 }}
-                        className={cx(classes.header, { [classes.scrolled]: scrolled })}
+                        className={classes.header}
                     >
                     <Heads
                         data={data}

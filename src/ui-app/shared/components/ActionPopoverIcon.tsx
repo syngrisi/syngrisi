@@ -77,7 +77,7 @@ export default function ActionPopoverIcon(
                     <ActionIcon
                         disabled={disabled}
                         data-test={testAttr}
-                        data-accept-icon-name={testAttrName}
+                        data-popover-icon-name={testAttrName}
                         variant={'light' as any}
                         color={iconColor}
                         onClick={() => {

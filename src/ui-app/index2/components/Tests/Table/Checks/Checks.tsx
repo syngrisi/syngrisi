@@ -11,17 +11,15 @@ import { Check } from './Check';
 interface Props {
     item: any,
     testUpdateQuery: any,
-    infinityQuery: any,
 }
 
-export function Checks({ item, testUpdateQuery, infinityQuery }: Props) {
+export function Checks({ item, testUpdateQuery }: Props) {
     // eslint-disable-next-line no-unused-vars
     const [checksViewMode, setChecksViewMode] = useLocalStorage({ key: 'check-view-mode', defaultValue: 'bounded' });
     const checksQuery = useQuery(
         [
-            'checks',
+            'preview_checks',
             item._id,
-            infinityQuery?.data?.pages[0]?.timestamp,
         ],
         () => GenericService.get_via_post(
             'checks',
@@ -29,18 +27,20 @@ export function Checks({ item, testUpdateQuery, infinityQuery }: Props) {
             {
                 populate: 'baselineId,actualSnapshotId,diffId',
                 limit: '0',
+                sortBy: 'CreatedDate',
+                sortOrder: -1,
             },
             'checksByIds',
         ),
         {
-            enabled: true,
             refetchOnWindowFocus: false,
+            onSuccess: () => {
+            },
             onError: (e) => {
                 errorMsg({ error: e });
             },
         },
     );
-    // console.log({ checksQuery: checksQuery.data?.results });
     const ChecksContainer = (checksViewMode === 'list') ? Stack : Group;
 
     return (

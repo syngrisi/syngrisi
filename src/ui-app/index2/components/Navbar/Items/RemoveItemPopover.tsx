@@ -7,26 +7,38 @@ interface Props {
     toggle: any
     handleRemoveItemClick: any
     type: string
+    testAttr?: string
 }
 
-export function RemoveItemPopover({ opened, toggle, handleRemoveItemClick, type }: Props) {
+export function RemoveItemPopover(
+    {
+        opened,
+        toggle,
+        handleRemoveItemClick,
+        type,
+        testAttr = 'remove-popover-action-icon',
+
+    }: Props,
+) {
     return (
         <Popover position="bottom" withArrow shadow="md" opened={opened} onChange={toggle}>
             <Popover.Target>
-                <ActionIcon>
-                    <IconDotsVertical onClick={
-                        (e) => {
-                            e.stopPropagation();
-                            e.preventDefault();
-                            toggle();
+                <ActionIcon data-item={testAttr}>
+                    <IconDotsVertical
+                        onClick={
+                            (e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                toggle();
+                            }
                         }
-                    }
                     />
                 </ActionIcon>
             </Popover.Target>
             <Popover.Dropdown p={8}>
                 <Group position="center">
                     <Button
+                        data-item={`${testAttr}_confirm`}
                         onClick={
                             (e: any) => {
                                 e.stopPropagation();

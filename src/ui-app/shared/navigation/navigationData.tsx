@@ -14,6 +14,7 @@ import {
 } from '@tabler/icons';
 import { INavDataItem } from './interfaces';
 
+// used in spotlight
 export function navigationData(): INavDataItem[] {
     return [
         {
