@@ -8,8 +8,8 @@ import {
     Stack,
     Text,
 } from '@mantine/core';
-import { useDisclosure, useDocumentTitle } from '@mantine/hooks';
-import { useEffect, useMemo } from 'react';
+import { useDisclosure } from '@mantine/hooks';
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { IconX } from '@tabler/icons';
 import { useParams } from '../../../../hooks/useParams';
@@ -17,34 +17,40 @@ import { GenericService } from '../../../../../shared/services';
 import { errorMsg } from '../../../../../shared/utils';
 import { CheckDetails } from './CheckDetails/CheckDetails';
 
-interface Props {
-    firstPageQuery: any,
-}
-
-export function CheckModal({ firstPageQuery }: Props) {
+export function CheckModal() {
     const { query, setQuery } = useParams();
     const [checkModalOpened, checkModalHandlers] = useDisclosure(false);
 
+    const [initCheckId, setInitCheckId] = useState<string>('');
+    useEffect(function onCheckIdChange() {
+        if (query.checkId && query.modalIsOpen === 'true') {
+            setInitCheckId(query.checkId);
+            checkModalHandlers.open();
+        }
+    }, [query.modalIsOpen]);
+
     const closeHandler = () => {
         checkModalHandlers.close();
-        setQuery({ checkId: null });
+        setQuery({ checkId: undefined });
+        setQuery({ modalIsOpen: undefined });
+        setInitCheckId('');
     };
-    const { checkId } = query;
+
     const checkQuery = useQuery(
-        [
-            'check_for_modal',
-            checkId,
-        ],
-        () => GenericService.get(
-            'checks',
-            { _id: checkId },
-            {
-                populate: 'baselineId,actualSnapshotId,diffId,test,suite,app',
-                limit: '1',
-            },
-            'check_for_modal',
-        ),
         {
+            queryKey: [
+                'check_for_modal',
+                initCheckId,
+            ],
+            queryFn: () => GenericService.get(
+                'checks',
+                { _id: initCheckId },
+                {
+                    populate: 'baselineId,actualSnapshotId,diffId,test,suite,app',
+                    limit: '1',
+                },
+                'initial_check_for_check_details_modal',
+            ),
             enabled: checkModalOpened,
             refetchOnWindowFocus: false,
             onError: (e) => {
@@ -53,41 +59,10 @@ export function CheckModal({ firstPageQuery }: Props) {
         },
     );
 
-    const checkData: any = useMemo(
-        () => checkQuery?.data?.results[0]!,
-        [checkQuery?.data?.timestamp],
-    );
-    useDocumentTitle(checkData?.name);
-
-    const keyEvents = () => {
-        document.addEventListener('keydown',
-            function keyHandler(event: any) {
-                console.log(event.code);
-            });
-    };
-
-    function mouseEvents() {
-        // mainView.canvas.on(
-        //     'mouse:move', (e: any) => {
-        //         if (!e.e.ctrlKey) return;
-        //         const mEvent = e.e;
-        //     },
-        // );
-    }
-
-    useEffect(function oneTime() {
-        keyEvents();
-        mouseEvents();
-    }, []);
-
-    useEffect(function onCheckIdChange() {
-        if (query.checkId) {
-            checkModalHandlers.open();
-        }
-    }, [query.checkId]);
-
+    const checkData = checkQuery?.data?.results[0]!;
     return (
         <Modal
+            className="modal"
             opened={checkModalOpened}
             centered
             size="auto"
@@ -111,7 +86,7 @@ export function CheckModal({ firstPageQuery }: Props) {
             </ActionIcon>
 
             {
-                checkQuery.isLoading
+                checkQuery.isLoading && !checkData
                     ? (
                         <Stack mt={60}>
                             <LoadingOverlay visible />
@@ -127,9 +102,8 @@ export function CheckModal({ firstPageQuery }: Props) {
                         : checkData
                             ? (
                                 <CheckDetails
-                                    checkData={checkData}
+                                    initCheckData={checkData}
                                     checkQuery={checkQuery}
-                                    firstPageQuery={firstPageQuery}
                                     closeHandler={closeHandler}
                                 />
                             )

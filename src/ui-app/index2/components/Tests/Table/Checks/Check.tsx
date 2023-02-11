@@ -52,6 +52,7 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
         if (!e.metaKey && !e.ctrlKey) e.preventDefault();
         if (e.metaKey || e.ctrlKey) return;
         setQuery({ checkId: check._id });
+        setQuery({ modalIsOpen: 'true' });
     };
 
     return (
@@ -153,9 +154,9 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                                     />
 
                                     <RemoveButton
+                                        check={check}
                                         checksQuery={checksQuery}
                                         testUpdateQuery={testUpdateQuery}
-                                        check={check}
                                     />
                                 </Group>
                             </Group>
@@ -250,7 +251,7 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                                     check={check}
                                     sizes={sizes}
                                     color="blue"
-                                    size="sm"
+                                    size="md"
                                     fontSize="10px"
                                     checksViewSize={checksViewSize}
                                     displayed={(checksViewSize !== 'small')}

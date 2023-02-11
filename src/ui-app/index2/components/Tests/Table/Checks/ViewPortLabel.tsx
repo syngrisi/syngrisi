@@ -76,12 +76,12 @@ export function ViewPortLabel(
             <Badge
                 color={color}
                 variant={variant}
-                size={size || sizes[checksViewSize].viewportText}
+                size={sizes[checksViewSize]?.viewportText || size}
                 data-viewport-badge-name={check.name}
                 title="Viewport size"
                 sx={
                     {
-                        fontSize,
+                        fontSize: sizes[checksViewSize]?.viewportFontSize || fontSize,
                         display: displayed ? 'block' : 'none',
                     }
                 }

@@ -8,13 +8,13 @@ import { errorMsg } from '../utils';
 import { GenericService } from '../services';
 
 interface IIScrollParams {
-    resourceName: string,
-    baseFilterObj?: { [key: string]: any } | null,
-    filterObj?: { [key: string]: any },
-    newestItemsFilterKey?: string,
-    firstPageQueryUniqueKey?: string
+    resourceName: string
+    baseFilterObj?: { [key: string]: any } | null
+    filterObj?: { [key: string]: any }
+    newestItemsFilterKey?: string
+    firstPageQueryUniqueKey?: any // object or something
     infinityScrollLimit?: number
-    sortBy: string,
+    sortBy: string
 }
 
 export default function useInfinityScroll(
@@ -30,7 +30,7 @@ export default function useInfinityScroll(
 ) {
 
     const firstPageQueryOptions: any = [
-        'logs_infinity_first_page',
+        'infinity_first_page',
         resourceName,
     ]
     if (firstPageQueryUniqueKey) {
@@ -43,23 +43,25 @@ export default function useInfinityScroll(
      * also it get metadata, like page counts, current page, etc. to use them for example in inf.scroll affix.
      */
     const firstPageQuery = useQuery(
-        firstPageQueryOptions,
-        () => GenericService.get(
-            resourceName,
-            baseFilterObj,
-            {
-                page: '1',
-                limit: '1',
-            },
-            'firstPageQuery'
-        ),
         {
-            enabled: false,
+            queryKey: firstPageQueryOptions,
+            queryFn: () => GenericService.get(
+                resourceName,
+                baseFilterObj,
+                {
+                    page: '1',
+                    limit: '1',
+                },
+                `firstPageQuery_${firstPageQueryOptions.join('_')}`
+            ),
+            // enabled: false,
             staleTime: Infinity,
             refetchOnWindowFocus: false,
             onError: (e) => {
                 errorMsg({ error: e });
             },
+            onSuccess: (result) => {
+            }
         },
     ) as IFirstPagesQuery<ILog>;
 
@@ -93,23 +95,23 @@ export default function useInfinityScroll(
     );
 
     const infinityQuery: IPagesQuery<ILog> = useInfiniteQuery(
-        [
-            'logs_infinity_pages',
-            resourceName,
-            firstPageData.timestamp,
-        ],
-        ({ pageParam = 1 }) => GenericService.get(
-            resourceName,
-            newRequestFilter,
-            {
-                limit: String(infinityScrollLimit),
-                page: pageParam,
-                sortBy,
-                populate: resourceName === 'tests' ? 'checks' : 'suite,app,test,baselineId,actualSnapshotId,diffId',
-            },
-            'infinityQuery'
-        ),
         {
+            queryKey: [
+                'infinity_pages',
+                resourceName,
+                firstPageData.timestamp,
+            ],
+            queryFn: ({ pageParam = 1 }) => GenericService.get(
+                resourceName,
+                newRequestFilter,
+                {
+                    limit: String(infinityScrollLimit),
+                    page: pageParam,
+                    sortBy,
+                    populate: resourceName === 'tests' ? 'checks' : 'suite,app,test,baselineId,actualSnapshotId,diffId',
+                },
+                `infinity_pages_${resourceName}_${firstPageData.timestamp}`
+            ),
             getNextPageParam: (lastPage) => {
                 if (lastPage.page >= lastPage.totalPages) return undefined;
                 return lastPage.page + 1;

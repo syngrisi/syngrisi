@@ -14,7 +14,8 @@ Feature: Group by Navigation
         When I select the option with the text "<groupBy>" for element "select[data-test='navbar-group-by']"
         Then I expect that element "(//*[@data-test='bread-crumbs']//a)[1]" to have text "Test Results"
         Then I expect that the attribute "href" from element "(//*[@data-test='bread-crumbs']//a)[1]" is "/index2"
-        Then I expect that element "(//*[@data-test='bread-crumbs']//a)[2]" to have text "<title>"
+
+        When I wait on element "(//*[@data-test='bread-crumbs']//a[text()='<title>'])" to be displayed
         Then I expect that the attribute "href" from element "(//*[@data-test='bread-crumbs']//a)[2]" is "<href>"
         Then I expect that the title is "<title>"
 

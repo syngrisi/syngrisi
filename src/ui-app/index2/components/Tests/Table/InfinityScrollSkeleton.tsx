@@ -21,15 +21,14 @@ function InfinityScrollSkeleton({ infinityQuery, visibleFields }: Props) {
     }, [inView]);
 
     return (
-        <tfoot ref={ref}>
+        <tfoot ref={ref} style={{ marginBottom: -100 }}>
         {
             (infinityQuery === null || infinityQuery.hasNextPage) && (
-                Object.keys(new Array(12).fill('')).map(
+                Object.keys(new Array(6).fill('')).map(
                     (x) => (
                         <tr key={x} style={{ height: 72 }}>
                             <td style={{ width: 40, padding: 10 }}>
                                 <Skeleton height={20} radius="sm" />
-
                             </td>
                             {
                                 Object.keys(tableColumns).map((column) => {

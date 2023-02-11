@@ -116,7 +116,7 @@ When(/^I hold key "([^"]*)"$/, async function (key) {
     await browser.performActions([{
         type: 'key',
         id: 'keyboard',
-        actions: [{ type: 'keyDown', value: Key[key] }],
+        actions: [{ type: 'keyDown', value: Key[key] || key }],
     }]);
 });
 

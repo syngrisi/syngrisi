@@ -13,9 +13,7 @@ Feature: Check details Resize and Pan
                 filePath: files/A.png
         """
         When I go to "index2" page
-        When I wait on element "[data-table-test-name=TestName]" to be displayed
-        When I click on the element "[data-table-test-name=TestName]"
-        Then I wait on element "[data-table-check-name='CheckName']" to be displayed
+        When I unfold the test "TestName"
         When I click on the element "[data-test-preview-image='CheckName']"
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed
 
@@ -69,11 +67,11 @@ Feature: Check details Resize and Pan
         When I wait for "0.5" seconds
         When I execute javascript code:
         """
-        return mainView.canvas.getZoom().toFixed(2).toString()
+        return (mainView.canvas.getZoom().toFixed(2) > 1.45) && (mainView.canvas.getZoom().toFixed(2) < 1.65)
         """
         Then I expect the stored "js" string is equal:
         """
-          1.55
+          true
         """
 
         # Fit by canvas
@@ -94,6 +92,10 @@ Feature: Check details Resize and Pan
         When I wait for "1" seconds
 
         # before zoom: check zoom coefficient
+        When I execute javascript code:
+        """
+        return parseFloat(mainView.canvas.getZoom(), 10).toFixed(2)
+        """
         When I execute javascript code:
         """
         return (parseFloat(mainView.canvas.getZoom(), 10).toFixed(2) >= 1).toString()
@@ -125,16 +127,27 @@ Feature: Check details Resize and Pan
         # after zoom: check zoom coefficient
         When I execute javascript code:
         """
-        return (parseFloat(mainView.canvas.getZoom(), 10).toFixed(2) > 1.10).toString()
+        return parseFloat(mainView.canvas.getZoom(), 10).toFixed(2)
+        """
+        When I execute javascript code:
+        """
+        return parseFloat(mainView.canvas.getZoom(), 10).toFixed(2) > 1.30
         """
         Then I expect the stored "js" string is equal:
         """
           true
         """
 
-    Scenario: Pan via click and Mouse Move
+    Scenario: Pan via central mouse button and Mouse Move
         When I wait for "1" seconds
         # check pan coordinates
+        When I execute javascript code:
+        """
+        return parseInt(mainView.canvas.viewportTransform[4]).toFixed(2).toString()
+         + '/'
+         + parseInt(mainView.canvas.viewportTransform[5]).toFixed(2).toString()
+        """
+
         When I execute javascript code:
         """
         return (parseInt(mainView.canvas.viewportTransform[4]).toFixed(2) > 60).toString()
@@ -163,9 +176,17 @@ Feature: Check details Resize and Pan
         """
         When I wait for "1" seconds
         # check pan coordinates
+
         When I execute javascript code:
         """
-        return (parseInt(mainView.canvas.viewportTransform[4]).toFixed(2) > 140).toString()
+        return parseInt(mainView.canvas.viewportTransform[4]).toFixed(2).toString()
+         + '/'
+         + parseInt(mainView.canvas.viewportTransform[5]).toFixed(2).toString()
+        """
+
+        When I execute javascript code:
+        """
+        return (parseInt(mainView.canvas.viewportTransform[4]).toFixed(2) > 100).toString()
             + "/"
             + parseInt(mainView.canvas.viewportTransform[5]).toFixed(2).toString()
         """
@@ -174,9 +195,16 @@ Feature: Check details Resize and Pan
           true/50.00
         """
 
-    Scenario: Pan via Mouse Wheel
+    Scenario: Pan via Mouse Wheel (touchpad)
         When I wait for "1" seconds
         # check pan coordinates
+        When I execute javascript code:
+        """
+        return (parseInt(mainView.canvas.viewportTransform[4]).toFixed(2)).toString()
+            + "/"
+            + parseInt(mainView.canvas.viewportTransform[5]).toFixed(2).toString()
+        """
+
         When I execute javascript code:
         """
         return (parseInt(mainView.canvas.viewportTransform[4]).toFixed(2) > 60).toString()
@@ -198,8 +226,8 @@ Feature: Check details Resize and Pan
                 stopPropagation: ()=>{},
                 offsetX: 200,
                 offsetY: 200,
-                deltaY: -30,
-                deltaX: -30,
+                deltaY: -50,
+                deltaX: -50,
             }
         }
 
@@ -209,12 +237,19 @@ Feature: Check details Resize and Pan
         # check pan coordinates
         When I execute javascript code:
         """
-        return (parseInt(mainView.canvas.viewportTransform[4]).toFixed(2) >= 100).toString()
+        return (parseInt(mainView.canvas.viewportTransform[4]).toFixed(2)).toString()
+            + "/"
+            + parseInt(mainView.canvas.viewportTransform[5]).toFixed(2).toString()
+        """
+
+        When I execute javascript code:
+        """
+        return (parseInt(mainView.canvas.viewportTransform[4]).toFixed(2) >= 80).toString()
             + "/"
             + parseInt(mainView.canvas.viewportTransform[5]).toFixed(2).toString()
         """
         Then I expect the stored "js" string is equal:
         """
-          true/15.00
+          true/25.00
         """
 

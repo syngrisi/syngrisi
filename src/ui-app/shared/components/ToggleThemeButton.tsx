@@ -7,7 +7,10 @@ function ToggleThemeButton({ colorScheme, toggleColorScheme }: any): ReactElemen
     const dark = colorScheme === 'dark';
     const theme = useMantineTheme();
     return (
-        <Group position="center">
+        <Group
+            position="center"
+            title={`Switch to ${dark ? 'light' : 'dark'} theme`}
+        >
             <Switch
                 data-test="theme-button"
                 size="md"

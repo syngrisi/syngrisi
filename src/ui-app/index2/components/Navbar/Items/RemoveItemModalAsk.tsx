@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle,react/jsx-one-expression-per-line */
 import { Button, Group, Modal, Text } from '@mantine/core';
 import * as React from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { errorMsg, successMsg } from '../../../../shared/utils/utils';
 import { log } from '../../../../shared/utils/Logger';
 import { RunsService, SuitesService } from '../../../../shared/services';
@@ -21,12 +21,15 @@ export default function RemoveItemModalAsk({ opened, setOpened, infinityQuery, i
         Suite: SuitesService,
     };
     const { setQuery } = useParams();
+    const queryClient = useQueryClient();
+
     const removingMutation = useMutation(
         (data: { id: string }) => servicesMap[type].remove(data),
         {
             onSuccess: async () => {
                 setQuery({ base_filter: undefined });
                 successMsg({ message: `${type} has been successfully removed` });
+                await queryClient.refetchQueries({ queryKey: ['infinity_first_page', 'tests'] });
             },
             onError: (e: any) => {
                 errorMsg({ error: `Cannot remove the ${type}` });
@@ -41,6 +44,7 @@ export default function RemoveItemModalAsk({ opened, setOpened, infinityQuery, i
     };
     return (
         <Modal
+            data-test="remove-item-modal"
             opened={opened}
             onClose={() => setOpened(false)}
             title={`Remove this ${type}?`}
@@ -50,6 +54,7 @@ export default function RemoveItemModalAsk({ opened, setOpened, infinityQuery, i
             </Text>
             <Group position="right">
                 <Button
+                    data-test="remove-item-modal-button"
                     color="red"
                     onClick={
                         async () => {

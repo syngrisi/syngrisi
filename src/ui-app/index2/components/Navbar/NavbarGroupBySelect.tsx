@@ -1,6 +1,6 @@
 /* eslint-disable prefer-arrow-callback */
 import * as React from 'react';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { useDocumentTitle } from '@mantine/hooks';
 import { Anchor } from '@mantine/core';
 import SafeSelect from '../../../shared/components/SafeSelect';
@@ -26,9 +26,14 @@ export function NavbarGroupBySelect({ clearActiveItems, groupByValue, setGroupBy
         'test-distinct/markedAs': 'By Accept Status',
     };
 
-    const title: string = useMemo<string>(() => {
-        if (!query?.checkId) return String(query?.groupBy);
-        return '';
+    const [title, setTitle] = useState(subpageMap[String('runs')]);
+
+    useEffect(function updateTitle() {
+        if (query?.checkId) {
+            setTitle(() => ''); // this necessary to trigger  useDocumentTitle after modal close
+            return;
+        }
+        setTitle(() => subpageMap[String(query?.groupBy || 'runs')]);
     }, [query?.groupBy, query?.checkId]);
 
     const updateBreadcrumbs = (pageTitle: string) => {
@@ -42,9 +47,10 @@ export function NavbarGroupBySelect({ clearActiveItems, groupByValue, setGroupBy
             </Anchor>
         )));
     };
-    useDocumentTitle(subpageMap[title] || subpageMap.runs);
+
+    useDocumentTitle(title);
     useEffect(function changeBreadcrumbs() {
-        updateBreadcrumbs(subpageMap[title] || subpageMap.runs);
+        updateBreadcrumbs(title);
     }, [title]);
 
     useEffect(function onQueryGroupByUpdated() {

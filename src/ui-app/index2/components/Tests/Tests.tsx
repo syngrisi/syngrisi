@@ -60,8 +60,7 @@ export default function Tests({ updateToolbar }: Props) {
     );
 
     useEffect(
-        () => {
-            // firstPageQuery.refetch();
+        function addToolbarSortAndSettingsIcons() {
             updateToolbar(
                 <ActionIcon
                     title="Table settings, sorting, and columns visibility"
@@ -94,9 +93,7 @@ export default function Tests({ updateToolbar }: Props) {
                 47,
             );
         },
-        [
-            // query.groupBy,
-        ],
+        [],
     );
 
     useEffect(
@@ -118,15 +115,17 @@ export default function Tests({ updateToolbar }: Props) {
         ],
     );
 
-    useEffect(() => {
-        firstPageQuery.refetch();
-    }, [
-        query.base_filter,
-        query.quick_filter,
-        query.filter,
-        query.app,
-        query.sortBy,
-    ]);
+    useEffect(
+        function refetchData() {
+            firstPageQuery.refetch();
+        }, [
+            query.base_filter,
+            query.quick_filter,
+            query.filter,
+            query.app,
+            query.sortBy,
+        ],
+    );
 
     return (
         <Group position="apart" align="start" noWrap>
@@ -137,6 +136,7 @@ export default function Tests({ updateToolbar }: Props) {
                 visibleFields={visibleFields}
                 size={(sortOpen || isFilterDrawerOpen) ? '80%' : '100%'}
             />
+
             <Settings
                 open={sortOpen}
                 setSortOpen={setSortOpen}

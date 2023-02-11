@@ -3,15 +3,15 @@ import * as React from 'react';
 import {
     ColorSchemeProvider,
     MantineProvider,
+    useMantineTheme,
 } from '@mantine/core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ModalsProvider } from '@mantine/modals';
 
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { NavigationProgress } from '@mantine/nprogress';
 import { NotificationsProvider } from '@mantine/notifications';
 
-import { IconSearch } from '@tabler/icons';
+import { IconMoonStars, IconSearch, IconSun } from '@tabler/icons';
 import { SpotlightProvider } from '@mantine/spotlight';
 
 import IndexLayout from './IndexLayout';
@@ -22,13 +22,34 @@ import { INavDataItem } from '../shared/navigation/interfaces';
 const queryClient = new QueryClient();
 
 function App() {
+    const theme = useMantineTheme();
     const [colorScheme, toggleColorScheme]: any = useColorScheme();
 
     const navigate = useNavigate();
     const spotlightActions = navigationData().map((item: INavDataItem) => ({
         ...item,
-        onTrigger: () => navigate(item.crumbs.slice(-1)[0].href),
+        onTrigger: () => {
+            setTimeout(
+                () => {
+                    window.location.reload();
+                },
+                100,
+            );
+            navigate(item.crumbs.slice(-1)[0].href);
+        },
     }));
+
+    spotlightActions.push(
+        {
+            title: `Switch to ${colorScheme === 'dark' ? 'light' : 'dark'} theme`,
+            description: 'Toggle color theme',
+            onTrigger: () => toggleColorScheme(),
+            icon: colorScheme === 'dark'
+                ? <IconSun size={18} color={theme.colors.yellow[4]} />
+                : <IconMoonStars color={theme.colors.blue[6]} size={18} />,
+        } as any,
+    );
+
     return (
         <QueryClientProvider client={queryClient}>
             <ColorSchemeProvider

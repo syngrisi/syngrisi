@@ -16,9 +16,7 @@ Feature: Check details Regions
         When I accept via http the 1st check with name "CheckName"
 
         When I go to "index2" page
-        When I wait on element "[data-table-test-name=TestName]" to be displayed
-        When I click on the element "[data-table-test-name=TestName]"
-        Then I wait on element "[data-table-check-name='CheckName']" to be displayed
+        When I unfold the test "TestName"
         When I click on the element "[data-test-preview-image='CheckName']"
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed
 

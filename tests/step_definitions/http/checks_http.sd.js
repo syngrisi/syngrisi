@@ -91,7 +91,7 @@ When(/^I check image with path: "([^"]*)" as "([^"]*)"$/, async function (filePa
     const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${filePath}`);
     const checkResult = await checkVRS(checkName, imageBuffer);
     // console.log({ checkResult });
-    this.STATE.check = checkResult;
+    this.STATE.currentCheck = checkResult;
 });
 
 When(/^I check image with path: "([^"]*)" as "([^"]*)" and suppress exceptions$/, async function (filePath, checkName) {
@@ -99,9 +99,9 @@ When(/^I check image with path: "([^"]*)" as "([^"]*)" and suppress exceptions$/
         browser.pause(300);
         const imageBuffer = fs.readFileSync(browser.config.rootPath + '/' + filePath);
         const checkResult = await checkVRS(checkName, imageBuffer);
-        this.STATE.check = checkResult;
+        this.STATE.currentCheck = checkResult;
     } catch (e) {
-        this.STATE.check = { error: e };
+        this.STATE.currentCheck = { error: e };
         this.saveItem('error', e.message);
     }
 });

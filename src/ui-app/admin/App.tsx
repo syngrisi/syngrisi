@@ -56,7 +56,15 @@ function App() {
     const navigate = useNavigate();
     const spotlightActions = navigationData().map((item: INavDataItem) => ({
         ...item,
-        onTrigger: () => navigate(item.crumbs.slice(-1)[0].href),
+        onTrigger: () => {
+            setTimeout(
+                () => {
+                    window.location.reload();
+                },
+                100,
+            );
+            navigate(item.crumbs.slice(-1)[0].href);
+        },
     }));
     return (
         <AppContext.Provider value={appProviderValue}>

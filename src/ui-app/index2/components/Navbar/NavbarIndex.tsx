@@ -6,6 +6,7 @@ import {
     Navbar,
     ScrollArea,
     Text,
+    useMantineTheme,
 } from '@mantine/core';
 import * as React from 'react';
 import {
@@ -61,6 +62,7 @@ interface Props {
 }
 
 export default function NavbarIndex({ setBreadCrumbs }: Props) {
+    const theme = useMantineTheme();
     const { classes } = useStyles();
     const { query, setQuery } = useParams();
 
@@ -94,7 +96,6 @@ export default function NavbarIndex({ setBreadCrumbs }: Props) {
         baseFilterObj: navbarFilterObject,
         sortBy: query.sortByNavbar!,
     });
-
 
     useEffect(function refetch() {
         firstPageQuery.refetch();
@@ -137,7 +138,21 @@ export default function NavbarIndex({ setBreadCrumbs }: Props) {
                             pr={12}
                             pb={90}
                         >
-                            <Group position="apart" align="end" sx={{ width: '100%' }}>
+                            <Group
+                                position="apart"
+                                align="end"
+                                sx={
+                                    {
+                                        width: '100%',
+                                        position: 'sticky',
+                                        top: 0,
+                                        zIndex: 20,
+                                        backgroundColor: theme.colorScheme === 'dark'
+                                            ? theme.colors.dark[6]
+                                            : theme.white,
+                                    }
+                                }
+                            >
                                 <NavbarGroupBySelect
                                     setBreadCrumbs={setBreadCrumbs}
                                     clearActiveItems={activeItemsHandler.clear}

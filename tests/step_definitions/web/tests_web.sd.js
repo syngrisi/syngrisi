@@ -156,7 +156,7 @@ When(/^I create "([^"]*)" tests with params:$/, { timeout: 600000 }, async funct
         // console.log({ checkResult });
         // console.log({ test });
         this.STATE.test = test;
-        this.STATE.check = checkResult;
+        this.STATE.currentCheck = checkResult;
         await browser.vDriver.stopTestSession(browser.config.apiKey);
     }
 });
@@ -190,7 +190,7 @@ When(/^I create "([^"]*)" tests with:$/, { timeout: 60000000 }, async function (
             checkResult.push(await checkVRS(check.checkName, imageBuffer, check));
         }
 
-        this.STATE.check = checkResult[0];
+        this.STATE.currentCheck = checkResult[0];
         await browser.vDriver.stopTestSession(browser.config.apiKey);
     };
     for (const i of Array.from(Array(parseInt(num, 10))
@@ -199,4 +199,14 @@ When(/^I create "([^"]*)" tests with:$/, { timeout: 60000000 }, async function (
         console.log(`Create test # ${i}`);
         await createTest(params, i);
     }
+});
+
+When(/^I unfold the test "([^"]*)"$/, function (name) {
+    const testElement = $(`[data-table-test-name=${name}]`);
+    testElement.waitForDisplayed({ timeout: 7000 });
+    testElement.click();
+    browser.waitUntil(
+        () => $$('[data-table-check-name]').find((x) => x.isDisplayed()),
+        { timeout: 7000 }
+    );
 });

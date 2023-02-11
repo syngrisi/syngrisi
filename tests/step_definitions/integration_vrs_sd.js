@@ -59,7 +59,7 @@ When(/^I assert image with path: "([^"]*)" as "([^"]*)"$/, async function (fileP
     browser.pause(300);
     const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${filePath}`);
     const checkResult = await checkVRS(checkName, imageBuffer);
-    this.STATE.check = checkResult;
+    this.STATE.currentCheck = checkResult;
     try {
         expect(checkResult.status[0] === 'new' || checkResult.status[0] === 'passed')
             .toBeTruthy();
@@ -199,7 +199,7 @@ When(/^I wait for "([^"]*)" seconds$/, { timeout: 600000 }, (sec) => {
     browser.pause(sec * 1000);
 });
 
-Given(/^I set window size: "(1366x768|712x970|880x768|1050x768|1300x768|1300x400|1700x768|500x500)"$/, (viewport) => {
+Given(/^I set window size: "(1366x768|712x970|880x768|1050x768|1300x768|1300x400|1700x768|500x500|1440x900)"$/, (viewport) => {
     const size = viewport.split('x');
     browser.setWindowSize(parseInt(size[0], 10), parseInt(size[1], 10));
 });

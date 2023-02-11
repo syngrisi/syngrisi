@@ -18,8 +18,9 @@ export function RelatedChecksItems({ infinityQuery, relatedActiveCheckId, setRel
                             <RelatedCheckItem
                                 checkData={item}
                                 activeCheckId={relatedActiveCheckId}
-                                setActiveCheckId={setRelatedActiveCheckId}
+                                setRelatedActiveCheckId={setRelatedActiveCheckId}
                                 key={item._id}
+                                index={index}
                             />
                         ),
                     )
