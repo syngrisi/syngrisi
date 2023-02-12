@@ -38,7 +38,7 @@ export const UserHooks = {
 
     useAllUsers() {
         const { isLoading, error, data, refetch, isSuccess, isFetching }: any = useQuery(
-            ['allUsers'], () => GenericService.get('users', {}, { sortBy: 'id: desc', limit: "0" }), {
+            ['allUsers'], () => GenericService.get('users', {}, { sortBy: 'id: desc', limit: '0' }), {
                 onError: (err: unknown) => {
                     errorMsg({ error: err });
                 },
