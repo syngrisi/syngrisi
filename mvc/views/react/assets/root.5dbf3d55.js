@@ -5,7 +5,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 import { r as react, W as queryString, b as jsx, j as jsxs, P as Paper, g as Title, X as Stack, T as Text, G as Group, h as Button, Y as Epe, k as ky, a as config, u as useQuery, d as useMantineTheme, q as TextInput, t as ActionIcon, n as lAe, Z as Pj, c as createStyles, D as useLocalStorage, e as Container, _ as Dge, $ as Fragment, a0 as useQueryClient, l as log, a1 as Tooltip, a2 as CK, a3 as Loader, a4 as React, a5 as Transition, a6 as Xfe, a7 as rze, f as useDocumentTitle, A as Anchor, a8 as zV, a9 as ea, aa as Ol, ab as ua, ac as RX, ad as rWe, ae as UZ, s as Checkbox, af as getAugmentedNamespace, ag as zb, E as useHotkeys, ah as Pbe, ai as Cbe, aj as pi, ak as Lbe, al as lDe, am as dDe, an as IMe, ao as DMe, ap as qF, L as LoadingOverlay, aq as LHe, B as Box, o as useSearchParams, ar as Y, Q as QueryClient, as as useNavigate, v as GCe, x as Nie, F as QueryClientProvider, H as ColorSchemeProvider, M as MantineProvider, at as Routes, au as Route, I as createRoot, J as BrowserRouter } from "./use-form.cb849c64.js";
-import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, G as GenericService, e as errorMsg, a as useDisclosure, b as useClickOutside, c as escapeRegExp, P as Popover, d as ScrollArea, f as Chip, D as Divider, l as links, H as Header, g as HeaderLogo, h as SafeSelect, o as openSpotlight, K as Kbd, i as useOs, U as UserMenu, B as Breadcrumbs, j as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, k as Skeleton, m as useInView, F as FocusTrap, n as getNavigationItem, p as useToggle, q as useInfinityScroll, N as Navbar, r as Badge, A as Affix, t as ActionPopoverIcon, v as UserHooks, T as ThemeIcon, w as getStatusMessage, x as encodeQueryParams, I as Image$1, y as Card, z as Collapse, E as Burger, O as useInfiniteQuery, Q as SegmentedControl, V as Table, W as useInputState, X as RelativeDrawer, Y as LogicalGroup, Z as uuid, $ as useNavProgressFetchEffect, a0 as AppShell, a1 as ReactQueryDevtools, a2 as useColorScheme, a3 as navigationData, a4 as SpotlightProvider, a5 as NotificationsProvider, a6 as NavigationProgress, a7 as QueryParamProvider, a8 as ReactRouter6Adapter } from "./LogicalGroup.688c33a5.js";
+import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, G as GenericService, e as errorMsg, a as useDisclosure, b as useClickOutside, c as escapeRegExp, P as Popover, d as ScrollArea, f as Chip, D as Divider, l as links, H as Header, g as HeaderLogo, h as SafeSelect, o as openSpotlight, K as Kbd, i as useOs, U as UserMenu, B as Breadcrumbs, j as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, k as Skeleton, m as useInView, F as FocusTrap, n as getNavigationItem, p as useToggle, q as useInfinityScroll, N as Navbar, r as Badge, A as Affix, t as ActionPopoverIcon, v as UserHooks, T as ThemeIcon, w as getStatusMessage, x as encodeQueryParams, I as Image$1, y as Card, z as Collapse, E as Burger, O as useInfiniteQuery, Q as SegmentedControl, V as Table, W as useInputState, X as RelativeDrawer, Y as LogicalGroup, Z as uuid, $ as useNavProgressFetchEffect, a0 as AppShell, a1 as ReactQueryDevtools, a2 as useColorScheme, a3 as navigationData, a4 as SpotlightProvider, a5 as NotificationsProvider, a6 as NavigationProgress, a7 as QueryParamProvider, a8 as ReactRouter6Adapter } from "./LogicalGroup.5cb44838.js";
 function useDebouncedValue(value, wait, options = { leading: false }) {
   const [_value, setValue] = react.exports.useState(value);
   const mountedRef = react.exports.useRef(false);
@@ -676,7 +676,6 @@ function HeaderIndex({
 }) {
   var _a;
   const theme = useMantineTheme();
-  useDisclosure(false);
   const {
     classes
   } = useStyles$6();
@@ -2876,7 +2875,7 @@ function RunItem({
       $eq: item._id
     }
   }, {
-    limit: String(0)
+    limit: "0"
   }, `${type}_item_tests_query`), {
     enabled: true,
     refetchOnWindowFocus: false,
@@ -4034,7 +4033,6 @@ function NavbarGroupBySelect({
       children: item.title
     }, `${item.title}`)));
   };
-  console.log("--NAVBAR", title, subpageMap[title], subpageMap[String(title)], subpageMap.runs);
   useDocumentTitle(title);
   react.exports.useEffect(function changeBreadcrumbs() {
     updateBreadcrumbs(title);
@@ -4210,8 +4208,7 @@ function NavbarIndex({
     filterObj: query.filter,
     newestItemsFilterKey: getNewestFilter(groupByValue),
     baseFilterObj: navbarFilterObject,
-    sortBy: query.sortByNavbar,
-    infinityUniqueKey: "navbar_items"
+    sortBy: query.sortByNavbar
   });
   react.exports.useEffect(function refetch() {
     firstPageQuery.refetch();
@@ -4803,7 +4800,6 @@ function AcceptButton({
   });
 }
 function RemoveButton({
-  checksQuery,
   testUpdateQuery,
   check,
   closeHandler,
@@ -4812,11 +4808,10 @@ function RemoveButton({
 }) {
   const queryClient2 = useQueryClient();
   const mutationRemoveCheck = useMutation((data) => ChecksService.removeCheck(data), {
-    onSuccess: async (result) => {
+    onSuccess: async () => {
       successMsg({
         message: "Check has been successfully removed"
       });
-      console.log("REMOVE INVALID", ["preview_checks", check.test._id || check.test]);
       await queryClient2.invalidateQueries({
         queryKey: ["preview_checks", check.test._id || check.test]
       });
@@ -5402,18 +5397,14 @@ function Check({
 }
 function Checks({
   item,
-  testUpdateQuery,
-  infinityQuery
+  testUpdateQuery
 }) {
   var _a, _b;
   const [checksViewMode, setChecksViewMode] = useLocalStorage({
     key: "check-view-mode",
     defaultValue: "bounded"
   });
-  const checksQuery = useQuery([
-    "preview_checks",
-    item._id
-  ], () => GenericService.get_via_post("checks", {
+  const checksQuery = useQuery(["preview_checks", item._id], () => GenericService.get_via_post("checks", {
     _id: {
       $in: item.checks.map((x2) => x2._id)
     }
@@ -24086,12 +24077,9 @@ function createImageAndWaitForLoad(src) {
 }
 function CheckDetails({
   initCheckData,
-  checkQuery,
-  closeHandler
+  checkQuery
 }) {
   var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r;
-  console.count("--CheckDetails");
-  console.log("CheckDetails", initCheckData == null ? void 0 : initCheckData.name);
   useDocumentTitle(initCheckData == null ? void 0 : initCheckData.name);
   const {
     query
@@ -25189,7 +25177,6 @@ function Tests({
   });
 }
 function IndexLayout() {
-  console.log("--IndexLayout");
   const [breadCrumbs, setBreadCrumbs] = react.exports.useState([]);
   const [toolbar, setToolbar] = react.exports.useState([]);
   const updateToolbar = (newItem, index = 0) => {
@@ -25224,7 +25211,6 @@ function IndexLayout() {
 }
 const queryClient = new QueryClient();
 function App() {
-  console.log("--App");
   const theme = useMantineTheme();
   const [colorScheme, toggleColorScheme] = useColorScheme();
   const navigate = useNavigate();

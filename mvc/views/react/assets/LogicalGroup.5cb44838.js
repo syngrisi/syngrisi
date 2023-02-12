@@ -12216,7 +12216,7 @@ const UserHooks = {
   useAllUsers() {
     const { isLoading, error, data, refetch, isSuccess, isFetching } = useQuery(
       ["allUsers"],
-      () => GenericService.get("users", {}, { sortBy: "id: desc" }),
+      () => GenericService.get("users", {}, { sortBy: "id: desc", limit: "0" }),
       {
         onError: (err) => {
           errorMsg({ error: err });
