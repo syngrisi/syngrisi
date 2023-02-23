@@ -103,7 +103,7 @@ export default function AdminHeader() {
         >
             <Container className={classes.inner} fluid>
                 <Group>
-                    <Burger opened={opened} onClick={toggle} size="sm" />
+                    {/*<Burger opened={opened} onClick={toggle} size="sm" />*/}
                     <HeaderLogo />
                 </Group>
 
