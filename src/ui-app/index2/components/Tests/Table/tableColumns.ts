@@ -15,7 +15,7 @@ export const tableColumns: { [key: string]: any } = {
         label: 'Status',
         headStyle: { width: '10%' },
         cellStyle: { width: '10%' },
-        type: 'StringFilter',
+        type: 'StatusFilter',
     },
     creatorUsername: {
         label: 'Created',
@@ -29,7 +29,7 @@ export const tableColumns: { [key: string]: any } = {
         cellStyle: {
             width: 'auto',
         },
-        type: 'StringFilter',
+        type: 'AcceptedFilter',
     },
     startDate: {
         label: 'Date',
@@ -41,7 +41,7 @@ export const tableColumns: { [key: string]: any } = {
         label: 'Browser',
         headStyle: { width: '10%' },
         cellStyle: { width: '10%' },
-        type: 'StringFilter',
+        type: 'BrowserNameFilter',
     },
     browserVersion: {
         label: 'Browser Ver.',
@@ -53,7 +53,7 @@ export const tableColumns: { [key: string]: any } = {
         label: 'Platform',
         headStyle: { width: '10%' },
         cellStyle: { width: '10%' },
-        type: 'StringFilter',
+        type: 'OsFilter',
     },
     run: {
         label: 'Run',

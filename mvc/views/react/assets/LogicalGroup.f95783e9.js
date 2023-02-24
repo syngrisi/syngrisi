@@ -12862,6 +12862,7 @@ function RelativeDrawer({
           }), /* @__PURE__ */ jsx(ActionIcon, {
             size: "sm",
             onClick: () => setOpen(false),
+            "data-test": "relative-wrapper-icon",
             children: /* @__PURE__ */ jsx(lAe, {
               stroke: 1,
               size: 16
@@ -15526,11 +15527,149 @@ function IdFilter({
     })
   });
 }
+function CommonDistinctFilter({
+  label,
+  updateGroupRules,
+  id,
+  resource
+}) {
+  var _a, _b, _c, _d, _e, _f;
+  const distinctQuery = useQuery({
+    queryKey: [resource],
+    queryFn: () => GenericService.get(resource, {}, {
+      page: "1",
+      limit: "50"
+    }, resource),
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
+    onError: (e) => {
+      errorMsg({
+        error: e
+      });
+    },
+    onSuccess: (result) => {
+    }
+  });
+  let items = [];
+  if (distinctQuery.isSuccess && ((_a = distinctQuery == null ? void 0 : distinctQuery.data) == null ? void 0 : _a.results)) {
+    items = (_d = (_c = (_b = distinctQuery.data) == null ? void 0 : _b.results) == null ? void 0 : _c.map((item) => item.name)) == null ? void 0 : _d.map((item) => ({
+      value: item,
+      label: item
+    }));
+  }
+  if (distinctQuery.error)
+    items = [{
+      value: "",
+      label: "error loading filter items"
+    }];
+  const form = useForm({
+    initialValues: {
+      operator: "eq",
+      value: distinctQuery.data ? distinctQuery == null ? void 0 : distinctQuery.data.results[0].name : "",
+      label
+    },
+    validateInputOnChange: true
+  });
+  react.exports.useEffect(() => {
+    var _a2, _b2;
+    if ((_b2 = (_a2 = distinctQuery == null ? void 0 : distinctQuery.data) == null ? void 0 : _a2.results[0]) == null ? void 0 : _b2.name) {
+      form.setFieldValue("value", distinctQuery == null ? void 0 : distinctQuery.data.results[0].name);
+    }
+  }, [(_f = (_e = distinctQuery == null ? void 0 : distinctQuery.data) == null ? void 0 : _e.results[0]) == null ? void 0 : _f.name]);
+  react.exports.useEffect(() => {
+    updateGroupRules(id, generateItemFilter(label, form.values.operator, form.values.value));
+  }, [form.values.value, form.values.operator, label]);
+  return /* @__PURE__ */ jsx("form", {
+    children: /* @__PURE__ */ jsxs(Group, {
+      align: "start",
+      noWrap: true,
+      children: [/* @__PURE__ */ jsx(SafeSelect, {
+        label: "",
+        "data-test": "table-filter-operator",
+        sx: {
+          width: "130px"
+        },
+        optionsData: [{
+          value: "eq",
+          label: "equals"
+        }, {
+          value: "ne",
+          label: "not equals"
+        }, {
+          value: "contains",
+          label: "contains"
+        }, {
+          value: "not_contains",
+          label: "not contains"
+        }],
+        ...form.getInputProps("operator")
+      }), /* @__PURE__ */ jsx(SafeSelect, {
+        "data-test": "table-filter-value",
+        title: form.getInputProps("value").value,
+        optionsData: items,
+        loaded: distinctQuery.isLoading,
+        ...form.getInputProps("value")
+      })]
+    })
+  });
+}
+function BrowserNameFilter({
+  label,
+  updateGroupRules,
+  id
+}) {
+  return /* @__PURE__ */ jsx(CommonDistinctFilter, {
+    label,
+    updateGroupRules,
+    id,
+    resource: "test-distinct/browserName"
+  });
+}
+function OsFilter({
+  label,
+  updateGroupRules,
+  id
+}) {
+  return /* @__PURE__ */ jsx(CommonDistinctFilter, {
+    label,
+    updateGroupRules,
+    id,
+    resource: "test-distinct/os"
+  });
+}
+function StatusFilter({
+  label,
+  updateGroupRules,
+  id
+}) {
+  return /* @__PURE__ */ jsx(CommonDistinctFilter, {
+    label,
+    updateGroupRules,
+    id,
+    resource: "test-distinct/status"
+  });
+}
+function AcceptedFilter({
+  label,
+  updateGroupRules,
+  id
+}) {
+  return /* @__PURE__ */ jsx(CommonDistinctFilter, {
+    label,
+    updateGroupRules,
+    id,
+    resource: "test-distinct/markedAs"
+  });
+}
 const Filters = {
   DateFilter,
   StringFilter,
   IdFilter,
-  LogLevelFilter
+  LogLevelFilter,
+  BrowserNameFilter,
+  StatusFilter,
+  OsFilter,
+  AcceptedFilter
 };
 function FilterWrapper({
   groupRules,

@@ -185,7 +185,7 @@ Feature: Tests Table Filter
         # filter eq browser name
         When I select the option with the text "Browser" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-1']//select[@data-test='table-filter-column-name']"
         When I select the option with the text "equals" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-1']//select[@data-test='table-filter-operator']"
-        When I set "firefox" to the inputfield "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-1']//input[@data-test='table-filter-value']"
+        When I select the option with the text "firefox" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-1']//select[@data-test='table-filter-value']"
         When I click on the element "[data-test='table-filter-apply']"
 
         When I wait for "1" seconds
@@ -251,16 +251,19 @@ Feature: Tests Table Filter
         # filter browser name equals chrome
         When I select the option with the text "Browser" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-column-name']"
         When I select the option with the text "equals" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-operator']"
-        When I set "firefox" to the inputfield "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//input[@data-test='table-filter-value']"
+        When I select the option with the text "firefox" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-value']"
+
         When I click on the element "[data-test='table-filter-apply']"
 
         # filter browser name equals firefox
         When I select the option with the text "Browser" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-1']//select[@data-test='table-filter-column-name']"
         When I select the option with the text "equals" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-1']//select[@data-test='table-filter-operator']"
-        When I set "chrome" to the inputfield "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-1']//input[@data-test='table-filter-value']"
+        When I select the option with the text "chrome" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-1']//select[@data-test='table-filter-value']"
+
         When I click on the element "[data-test='table-filter-apply']"
 
         When I wait for "3" seconds
         When I wait on element "[data-table-test-name=TestName-firefox]" to be displayed
         When I wait on element "[data-table-test-name=TestName-chrome]" to be displayed
         When I wait on element "[data-table-test-name=TestName-msedge]" to not be displayed
+
