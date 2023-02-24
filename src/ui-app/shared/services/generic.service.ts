@@ -19,7 +19,7 @@ interface IRequestOptions {
     limit?: string
     page?: string
     populate?: string
-    sortOrder: string | number
+    sortOrder?: string | number
 }
 
 export const GenericService = {

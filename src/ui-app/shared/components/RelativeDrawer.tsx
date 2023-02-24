@@ -26,7 +26,7 @@ function RelativeDrawer(
                     <Paper p="md" m={8} shadow="sm" radius="xs" withBorder>
                         <Group position="apart" align="start" noWrap>
                             <Text size="sm" pb={24}>{title}</Text>
-                            <ActionIcon size="sm" onClick={() => setOpen(false)}>
+                            <ActionIcon size="sm" onClick={() => setOpen(false)} data-test="relative-wrapper-icon">
                                 <IconX stroke={1} size={16} />
                             </ActionIcon>
                         </Group>

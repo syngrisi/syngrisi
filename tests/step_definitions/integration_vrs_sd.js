@@ -243,10 +243,16 @@ Then(/^I expect that element "([^"]*)" is clickable$/, (selector) => {
         .toBeClickable();
 });
 
-When(/^I expect that element "([^"]*)" contain value "([^"]*)"$/, (selector, val) => {
+When(/^I expect that element "([^"]*)" (not |)contain value "([^"]*)"$/, (selector, cond, val) => {
     const actualValue = $(selector)
         .getValue();
     // console.log({ actualValue });
+    if (cond === 'not ') {
+        expect(actualValue)
+            .not
+            .toContain(val);
+        return;
+    }
     expect(actualValue)
         .toContain(val);
 });
