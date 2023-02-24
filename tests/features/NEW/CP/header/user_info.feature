@@ -33,7 +33,7 @@ Feature: User Information
     Scenario: Check User Menu Information
         When I login with user:"user@gmail.com" password "Password-123"
         When I wait for "3" seconds
-        When I go to "index2" page
+        When I go to "main" page
         When I wait for "3" seconds
         Then I expect that element "[data-test='user-icon']" contain text "JD"
         When I click on the element "[data-test='user-icon']"

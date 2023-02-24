@@ -63,7 +63,7 @@ Feature: Runs Ring Statuses
                 filePath: files/A.png
         """
 
-        When I go to "index2" page
+        When I go to "main" page
 
         Then I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName-1')]" to be displayed
 

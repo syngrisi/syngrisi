@@ -13,7 +13,7 @@ Feature: Bulk test Apply
           checks:
               - checkName: CheckName
         """
-        When I go to "index2" page
+        When I go to "main" page
 
         When I wait on element "[data-table-test-name=TestName-0]" to be displayed
         When I wait on element "[data-table-test-name=TestName-1]" to be displayed

@@ -14,12 +14,12 @@ Feature: Default Users
 
         When I set env variables:
         """
-        SYNGRISI_TEST_MODE: 0
+        SYNGRISI_TEST_MODE: 1
         SYNGRISI_AUTH: 1
         """
         Given I start Server and start Driver
         When I login with user:"Test" password "123"
-        Then I wait on element "*=TA" to be displayed
+        Then I wait on element "span*=TA" to be displayed
 
     Scenario: Default Administrator and Guest should be created after first server start
         When I go to "admin>users" page

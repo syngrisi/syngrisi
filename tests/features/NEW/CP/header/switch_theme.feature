@@ -16,7 +16,7 @@ Feature: Switch Color Theme
              - checkName: Check-1
         """
 
-        When I go to "index2" page
+        When I go to "main" page
         When I wait for "3" seconds
 
         # logo label

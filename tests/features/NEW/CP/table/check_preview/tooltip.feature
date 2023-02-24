@@ -14,7 +14,7 @@ Feature: Check Preview - Tooltip
           checks:
               - checkName: CheckName
         """
-        When I go to "index2" page
+        When I go to "main" page
         When I unfold the test "TestName"
         When I accept the "CheckName" check
 

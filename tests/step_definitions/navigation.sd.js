@@ -1,4 +1,6 @@
+/* eslint-disable */
 const { When, Then, Given } = require('cucumber');
+const { fillCommonPlaceholders } = require('../src/utills/common');
 
 When(/^I go to "([^"]*)" page$/, (str) => {
     const pages = {
@@ -8,7 +10,6 @@ When(/^I go to "([^"]*)" page$/, (str) => {
         change_password: `http://${browser.config.serverDomain}:${browser.config.serverPort}/auth/change`,
         logout: `http://${browser.config.serverDomain}:${browser.config.serverPort}/auth/logout`,
         admin2: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin`,
-        index2: `http://${browser.config.serverDomain}:${browser.config.serverPort}/index2`,
         logs: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin/logs`,
         settings: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin/settings`,
         admin: {
@@ -29,12 +30,13 @@ When(/^I refresh page$/, () => {
     browser.refresh();
 });
 
-Then(/^the current url contains "([^"]*)"$/, (url) => {
+Then(/^the current url contains "([^"]*)"$/, function (url) {
+    const url2 = this.fillItemsPlaceHolders(fillCommonPlaceholders(url));
     const windowHandles = browser.getWindowHandles();
-    const lastWindowHanle = windowHandles[windowHandles.length - 1];
-    browser.switchToWindow(lastWindowHanle);
+    const lastWindowHandle = windowHandles[windowHandles.length - 1];
+    browser.switchToWindow(lastWindowHandle);
     expect(browser)
-        .toHaveUrl(url, { containing: true });
+        .toHaveUrl(url2, { containing: true });
 });
 
 Given(/^I open the app$/, () => {

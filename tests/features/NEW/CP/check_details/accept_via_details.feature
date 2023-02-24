@@ -25,7 +25,7 @@ Feature: Check details Related Checks - Navigation and Accept
                 browserName: safari
         """
 
-        When I go to "index2" page
+        When I go to "main" page
         When I unfold the test "TestName"
         When I open the 1st check "CheckName"
 

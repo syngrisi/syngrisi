@@ -15,7 +15,7 @@ Feature: Partially Accepted Test
               - checkName: CheckName-1
               - checkName: CheckName-2
         """
-        When I go to "index2" page
+        When I go to "main" page
 
         # BEFORE ACCEPT
         When I unfold the test "TestName"

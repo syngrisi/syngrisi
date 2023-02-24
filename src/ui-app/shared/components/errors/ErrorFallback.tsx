@@ -38,7 +38,7 @@ export function ErrorFallback({ error, resetErrorBoundary }: { error: any, reset
                         size="md"
                         onClick={() => {
                             resetErrorBoundary();
-                            document.location = '/index2/';
+                            document.location = '/';
                         }}
                     >
                         Go to main page

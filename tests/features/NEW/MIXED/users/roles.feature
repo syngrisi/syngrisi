@@ -67,7 +67,7 @@ Feature: User roles
         ## user
         # login
         When I login with user:"user@gmail.com" password "Password-123"
-        Then I wait on element "*=JD" to be displayed
+        Then I wait on element "span*=JD" to be displayed
 
         # generate and parse API key
         When I click on the element "a#user-icon"
@@ -90,7 +90,7 @@ Feature: User roles
         ## reviewer
         # login
         When I login with user:"reviewer@gmail.com" password "Password-123"
-        Then I wait on element "*=RR" to be displayed
+        Then I wait on element "span*=RR" to be displayed
 
         # generate and parse API key
         When I click on the element "a#user-icon"
@@ -114,7 +114,7 @@ Feature: User roles
         ## admin
         # login
         When I login with user:"superadmin@gmail.com" password "Password-123"
-        Then I wait on element "*=JD" to be displayed
+        Then I wait on element "span*=JD" to be displayed
 
         # generate and parse API key
         When I click on the element "a#user-icon"
@@ -140,7 +140,7 @@ Feature: User roles
         ## user
         # login
         When I login with user:"user@gmail.com" password "Password-123"
-        Then I wait on element "*=JD" to be displayed
+        Then I wait on element "span*=JD" to be displayed
         # checks
         When I wait for "3" seconds
         Then I expect that element "//span[contains(text(), 'User test')]/../../..//span[@name='cell-creator' and contains(text(), 'user@gmail.com')]" does appear exactly "5" times
@@ -154,7 +154,7 @@ Feature: User roles
         ## reviewer
         # login
         When I login with user:"reviewer@gmail.com" password "Password-123"
-        Then I wait on element "*=RR" to be displayed
+        Then I wait on element "span*=RR" to be displayed
         # checks
         When I wait for "3" seconds
         Then I expect that element "//span[contains(text(), 'User test')]/../../..//span[@name='cell-creator']" does appear exactly "5" times
@@ -169,7 +169,7 @@ Feature: User roles
         ## admin
         # login
         When I login with user:"superadmin@gmail.com" password "Password-123"
-        Then I wait on element "*=JD" to be displayed
+        Then I wait on element "span*=JD" to be displayed
         # checks
         When I wait for "3" seconds
         Then I expect that element "//span[contains(text(), 'User test')]/../../..//span[@name='cell-creator']" does appear exactly "5" times

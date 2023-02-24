@@ -1,5 +1,5 @@
-import { c as createStyles, u as useQuery, k as ky, a as config, l as log, j as jsxs, C as Center, A as Anchor, b as jsx, N as NR, T as Text, d as useMantineTheme, e as Container, P as Paper, B as Box, f as useDocumentTitle, r as react, L as LoadingOverlay, z as zB, w as wN, g as Title, h as Button, i as Progress, G as Group, m as dj, n as lAe, o as useSearchParams, p as useForm, q as TextInput, s as Checkbox, t as ActionIcon, v as GCe, x as Nie, Q as QueryClient, y as useRoutes, D as useLocalStorage, E as useHotkeys, F as QueryClientProvider, H as ColorSchemeProvider, M as MantineProvider, I as createRoot, J as BrowserRouter } from "./use-form.cb849c64.js";
-import { P as PasswordInput } from "./PasswordInput.b64add99.js";
+import { c as createStyles, u as useQuery, k as ky, a as config, l as log, j as jsxs, C as Center, A as Anchor, b as jsx, N as NR, T as Text, d as useMantineTheme, e as Container, P as Paper, B as Box, f as useDocumentTitle, r as react, L as LoadingOverlay, z as zB, w as wN, g as Title, h as Button, i as Progress, G as Group, m as dj, n as lAe, o as useSearchParams, p as useForm, q as TextInput, s as Checkbox, S as Switch, t as GCe, v as Nie, Q as QueryClient, x as useRoutes, y as useLocalStorage, D as useHotkeys, E as QueryClientProvider, F as ColorSchemeProvider, M as MantineProvider, H as createRoot, I as BrowserRouter } from "./use-form.ac360b3d.js";
+import { P as PasswordInput } from "./PasswordInput.55b15c7f.js";
 const index = "";
 const useStyle = createStyles((theme) => ({
   footer: {
@@ -580,17 +580,34 @@ function ToggleThemeButton({
   toggleColorScheme
 }) {
   const dark = colorScheme === "dark";
-  return /* @__PURE__ */ jsx("div", {
-    className: "App",
-    children: /* @__PURE__ */ jsx(ActionIcon, {
-      variant: "outline",
-      color: dark ? "yellow" : "blue",
-      onClick: () => toggleColorScheme(),
-      title: "Toggle color scheme",
-      children: dark ? /* @__PURE__ */ jsx(GCe, {
-        size: 18
-      }) : /* @__PURE__ */ jsx(Nie, {
-        size: 18
+  const theme = useMantineTheme();
+  return /* @__PURE__ */ jsx(Group, {
+    mr: 28,
+    position: "right",
+    title: `Switch to ${dark ? "light" : "dark"} theme`,
+    children: /* @__PURE__ */ jsx(Switch, {
+      "data-test": "theme-button",
+      size: "md",
+      styles: () => ({
+        track: {
+          backgroundColor: theme.colors.gray[8],
+          borderColor: theme.colors.gray[8]
+        }
+      }),
+      color: "gray.8",
+      checked: colorScheme === "light",
+      onChange: () => {
+        toggleColorScheme();
+      },
+      onLabel: /* @__PURE__ */ jsx(GCe, {
+        size: 16,
+        stroke: 2.5,
+        color: theme.colors.yellow[4]
+      }),
+      offLabel: /* @__PURE__ */ jsx(Nie, {
+        size: 16,
+        stroke: 2.5,
+        color: theme.colors.blue[6]
       })
     })
   });

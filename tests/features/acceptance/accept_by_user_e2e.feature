@@ -52,7 +52,7 @@ Feature: Acceptance by User
 
         # login by user
         When I login with user:"j_doe@gmail.com" password "Password-123"
-        Then I wait on element "*=JD" to be displayed
+        Then I wait on element "span*=JD" to be displayed
 
         # first check validation before accept
         When I go to "main" page

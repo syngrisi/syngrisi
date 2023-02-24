@@ -24,7 +24,7 @@ Feature: Check Details Difference Highlight
                 filePath: files/B.png
         """
 
-        When I go to "index2" page
+        When I go to "main" page
         When I unfold the test "TestName"
 
         When I click on the element "[data-test-preview-image='CheckName']"

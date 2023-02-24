@@ -14,7 +14,7 @@ Feature: Check Preview - Accept Icons View
           checks:
               - checkName: CheckName
         """
-        When I go to "index2" page
+        When I go to "main" page
         When I unfold the test "TestName"
 
         Then I expect that the attribute "data-test-icon-type" from element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" is "outline"
@@ -35,7 +35,7 @@ Feature: Check Preview - Accept Icons View
               - checkName: CheckName
         """
 
-        When I go to "index2" page
+        When I go to "main" page
         When I unfold the test "TestName"
 
         Then I expect that the attribute "data-test-icon-type" from element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" is "outline"

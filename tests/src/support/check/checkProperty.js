@@ -39,7 +39,6 @@ export default (isCSS, attrName, selector, falseCase, expectedValue) => {
     if (attrName.match(/(color|font-weight)/)) {
         attributeValue = attributeValue.value;
     }
-    console.log('👹👹👹👹', attributeValue?.value, attributeValue)
     if (falseCase) {
         expect(attributeValue?.value || attributeValue).not.toEqual(
             expectedValue,

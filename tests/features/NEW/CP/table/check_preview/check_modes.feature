@@ -13,7 +13,7 @@ Feature: Checks Preview Modes
           checks:
               - checkName: CheckName
         """
-        When I go to "index2" page
+        When I go to "main" page
         When I unfold the test "TestName"
 
         When I click on the element "[data-test='table-sorting']"
@@ -35,7 +35,7 @@ Feature: Checks Preview Modes
           checks:
               - checkName: CheckName
         """
-        When I go to "index2" page
+        When I go to "main" page
         When I unfold the test "TestName"
 
         When I click on the element "[data-test='table-sorting']"

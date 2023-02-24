@@ -14,7 +14,7 @@ Feature: Enabled disabled buttons on Check Details Modal Window
           checks:
               - checkName: CheckName
         """
-        When I go to "index2" page
+        When I go to "main" page
         When I unfold the test "TestName"
 
         When I click on the element "[data-test-preview-image='CheckName']"
@@ -47,7 +47,7 @@ Feature: Enabled disabled buttons on Check Details Modal Window
               - checkName: CheckName
         """
 
-        When I go to "index2" page
+        When I go to "main" page
         When I unfold the test "TestName"
 #        When I wait on element "[data-table-test-name=TestName]" to be displayed
 #        Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
@@ -84,7 +84,7 @@ Feature: Enabled disabled buttons on Check Details Modal Window
               - checkName: CheckName
         """
 
-        When I go to "index2" page
+        When I go to "main" page
         When I wait on element "[data-table-test-name=TestName]" to be displayed
         Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
         When I click on the element "[data-table-test-name=TestName]"
@@ -114,7 +114,7 @@ Feature: Enabled disabled buttons on Check Details Modal Window
                 filePath: files/B.png
         """
 
-        When I go to "index2" page
+        When I go to "main" page
         When I wait on element "[data-table-test-name=TestName]" to be displayed
         Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
         When I click on the element "[data-table-test-name=TestName]"
@@ -152,7 +152,7 @@ Feature: Enabled disabled buttons on Check Details Modal Window
                 filePath: files/C_more_5_percent.png
         """
 
-        When I go to "index2" page
+        When I go to "main" page
         When I wait on element "[data-table-test-name=TestName]" to be displayed
         Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
         When I click on the element "[data-table-test-name=TestName]"

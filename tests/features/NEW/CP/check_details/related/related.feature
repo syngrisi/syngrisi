@@ -71,7 +71,7 @@ Feature: Check details Related Checks
                 viewport: 501x501
                 browserName: safari
         """
-        When I go to "index2" page
+        When I go to "main" page
         When I unfold the test "TestName-1"
         When I open the 3st check "CheckName"
 
@@ -138,7 +138,7 @@ Feature: Check details Related Checks
                 browserName: firefox
         """
 
-        When I go to "index2" page
+        When I go to "main" page
         When I wait on element "[data-table-test-name=TestName]" to be displayed
 
         # filter by project
@@ -175,7 +175,7 @@ Feature: Check details Related Checks
                 browserName: safari$
         """
 
-        When I go to "index2" page
+        When I go to "main" page
         When I unfold the test "TestName-2"
         When I open the 1st check "CheckName"
 
@@ -241,7 +241,7 @@ Feature: Check details Related Checks
                 browserName: firefox
         """
 
-        When I go to "index2" page
+        When I go to "main" page
 
         When I unfold the test "TestName-1"
         When I open the 1st check "CheckName"

@@ -17,9 +17,12 @@ Feature: Create User
         SYNGRISI_TEST_MODE: 0
         SYNGRISI_AUTH: 1
         """
+        When I wait for "3" seconds
         Given I start Server and start Driver
+        When I reload session
         When I login with user:"Test" password "123"
-        Then I wait on element "*=TA" to be displayed
+        Then I wait on element "span*=TA" to be displayed
+        When I set window size: "1700x768"
 
     @smoke
     Scenario: Create User - Success
@@ -45,7 +48,7 @@ Feature: Create User
         When I go to "logout" page
         When I wait for "3" seconds
         When I login with user:"j_doe@gmail.com" password "Password-123"
-        Then I wait on element "*=JD" to be displayed
+        Then I wait on element "span*=JD" to be displayed
 
     Scenario: Create User - User Already Exist
         When I go to "admin2" page

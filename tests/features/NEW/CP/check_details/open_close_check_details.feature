@@ -14,7 +14,7 @@ Feature: Open/Close Check Details
           checks:
               - checkName: CheckName
         """
-        When I go to "index2" page
+        When I go to "main" page
         Then I expect that the title is "By Runs"
         When I wait on element "[data-table-test-name=TestName]" to be displayed
         Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
@@ -37,7 +37,7 @@ Feature: Open/Close Check Details
           checks:
               - checkName: CheckName
         """
-        When I go to "index2" page
+        When I go to "main" page
         When I wait on element "[data-table-test-name=TestName]" to be displayed
         Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
         When I click on the element "[data-table-test-name=TestName]"

@@ -28,7 +28,7 @@ Feature: Filter by Project
             - filePath: files/A.png
               checkName: Check - 1
         """
-        When I go to "index2" page
+        When I go to "main" page
 
         When I wait on element "[data-table-test-name='TestName Project-1']" to be displayed
         When I wait on element "[data-table-test-name='TestName Project-2']" to be displayed

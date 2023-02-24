@@ -20,7 +20,7 @@ Feature: Test Auto Update
             - filePath: files/A.png
               checkName: CheckName
         """
-        When I go to "index2" page
+        When I go to "main" page
         When I wait on element "[data-table-test-name=TestName-before]" to be displayed
 
         When I wait for "3" seconds
