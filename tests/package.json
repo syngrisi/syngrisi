@@ -19,7 +19,8 @@
     "smoke": "cross-env STREAMS=4 LOG=1 HL=1 npx wdio --spec 'features/**/*.feature' --cucumberOpts.tagExpression='@smoke'",
     "testui": "cross-env LOG=1 HL=0 npx wdio --spec 'features/**/*.feature'"
   },
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "@syngrisi/syngrisi-wdio-sdk": "../../syngrisi-sdk",
     "@wdio/allure-reporter": "^7.16.14",
     "@wdio/local-runner": "file:src/support/local-runner-patched",
@@ -33,9 +34,7 @@
     "inquirer": "^9.0.1",
     "nodemon": "^2.0.19",
     "wdio-screenshot-v5": "^1.0.0",
-    "yaml": "^1.10.0"
-  },
-  "devDependencies": {
+    "yaml": "^1.10.0",
     "@babel/cli": "^7.18.9",
     "@babel/core": "^7.9.0",
     "@babel/plugin-proposal-export-default-from": "^7.8.3",

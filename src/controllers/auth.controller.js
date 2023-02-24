@@ -49,9 +49,11 @@ const logout = catchAsync(async (req, res) => {
     };
     try {
         log.debug(`try to log out user: '${req?.user?.username}'`, $this, logOpts);
-        await req.logout();
-        res.status(httpStatus.OK)
-            .json({ message: 'success' });
+        await req.logout(
+            {},
+            () => res.status(httpStatus.OK)
+                .json({ message: 'success' })
+        );
     } catch (e) {
         log.error(e);
         res.status(httpStatus.INTERNAL_SERVER_ERROR)
