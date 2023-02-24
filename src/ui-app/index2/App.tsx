@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 import * as React from 'react';
+
 import {
     ColorSchemeProvider,
     MantineProvider,
@@ -13,6 +14,7 @@ import { NotificationsProvider } from '@mantine/notifications';
 
 import { IconMoonStars, IconSearch, IconSun } from '@tabler/icons';
 import { SpotlightProvider } from '@mantine/spotlight';
+import config from '../config';
 
 import IndexLayout from './IndexLayout';
 import useColorScheme from '../shared/hooks/useColorSheme';
@@ -84,7 +86,7 @@ function App() {
                         <NotificationsProvider autoClose={5000} limit={5}>
                             <NavigationProgress />
                             <Routes>
-                                <Route path="/" element={<IndexLayout />} />
+                                <Route path={config.indexRoute} element={<IndexLayout />} />
                             </Routes>
                         </NotificationsProvider>
                     </SpotlightProvider>

@@ -27,7 +27,7 @@ const config = {
     server: {
         port: 8080,
         hot: true,
-        open: 'http://localhost:8080/index2',
+        open: 'http://localhost:8080/',
     },
 };
 
