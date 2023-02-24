@@ -23343,10 +23343,12 @@ const devices = [
   }
 ];
 const baseUrl = { "VITE_ROOT_PATH": "./src/ui-app/", "BASE_URL": "/", "MODE": "production", "DEV": false, "PROD": true }.VITE_SYNGRISY_BASED_URL || "";
+const indexRoute = { "VITE_ROOT_PATH": "./src/ui-app/", "BASE_URL": "/", "MODE": "production", "DEV": false, "PROD": true }.VITE_INDEX_ROUTE || "/";
 const config = {
   baseUri: baseUrl,
   devices,
-  customDevicesProm: ky$1(`${baseUrl}/static/data/custom_devices.json`).json()
+  customDevicesProm: ky$1(`${baseUrl}/static/data/custom_devices.json`).json(),
+  indexRoute
 };
 var queryString = {};
 var strictUriEncode = (str) => encodeURIComponent(str).replace(/[!'()*]/g, (x2) => `%${x2.charCodeAt(0).toString(16).toUpperCase()}`);
