@@ -1,4 +1,4 @@
-/* eslint-disable dot-notation */
+/* eslint-disable dot-notation,react-hooks/exhaustive-deps */
 import * as React from 'react';
 import {
     Box,
@@ -12,6 +12,7 @@ import RelativeDrawer from '../../../../shared/components/RelativeDrawer';
 import { tableColumns } from './tableColumns';
 import LogicalGroup from '../../../../shared/components/filter/LogicalGroup';
 import { SearchParams, uuid } from '../../../../shared/utils';
+import { useParams } from '../../../hooks/useParams';
 
 interface Props {
     open: boolean
@@ -39,6 +40,7 @@ function Filter(
     }: Props,
 ) {
     const [groupsData, setGroupsData] = useState<{ [key: string]: any }>(mainGroupInit);
+    const { setQuery } = useParams();
 
     const removeGroupsData = (key: string) => {
         setGroupsData((prev) => {
@@ -48,6 +50,7 @@ function Filter(
     };
 
     const resetAll = () => {
+        setQuery({ filter: undefined });
         setGroupsData(() => ({
             mainGroup: {
                 operator: '$and',

@@ -33,6 +33,10 @@ Feature: Tests Table Filter
         When I wait on element "[data-table-test-name='TestName filter-0']" to not be displayed
         When I wait on element "[data-table-test-name='TestName filter-1']" to be displayed
 
+        When I click on the element "[data-test='table-filter-reset']"
+        When I wait on element "[data-table-test-name='TestName filter-0']" to be displayed
+        When I wait on element "[data-table-test-name='TestName filter-1']" to be displayed
+
     @smoke
     Scenario: Main Group, Single Rule with project Filter
         When I create "2" tests with:

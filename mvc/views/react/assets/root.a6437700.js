@@ -24973,6 +24973,9 @@ function Filter({
   setSearchParams
 }) {
   const [groupsData, setGroupsData] = react.exports.useState(mainGroupInit);
+  const {
+    setQuery
+  } = useParams();
   const removeGroupsData = (key) => {
     setGroupsData((prev) => {
       const {
@@ -24983,6 +24986,9 @@ function Filter({
     });
   };
   const resetAll = () => {
+    setQuery({
+      filter: void 0
+    });
     setGroupsData(() => ({
       mainGroup: {
         operator: "$and",
@@ -25212,6 +25218,9 @@ function IndexLayout() {
 const queryClient = new QueryClient();
 function App() {
   const theme = useMantineTheme();
+  const {
+    setQuery
+  } = useParams();
   const [colorScheme, toggleColorScheme] = useColorScheme();
   const navigate = useNavigate();
   const spotlightActions = navigationData().map((item) => ({
@@ -25232,6 +25241,86 @@ function App() {
       color: theme.colors.yellow[4]
     }) : /* @__PURE__ */ jsx(Nie, {
       color: theme.colors.blue[6],
+      size: 18
+    })
+  });
+  spotlightActions.push({
+    title: "Filter: only successful tests",
+    description: "Show only New and Passed tests",
+    onTrigger: () => {
+      setQuery({
+        filter: {
+          $or: [{
+            status: {
+              $eq: "Passed"
+            }
+          }, {
+            status: {
+              $eq: "New"
+            }
+          }]
+        }
+      });
+    },
+    icon: /* @__PURE__ */ jsx(zV, {
+      size: 18
+    })
+  });
+  spotlightActions.push({
+    title: "Filter: only failed tests",
+    description: "Show only Failed tests",
+    onTrigger: () => {
+      setQuery({
+        filter: {
+          $or: [{
+            status: {
+              $eq: "Failed"
+            }
+          }]
+        }
+      });
+    },
+    icon: /* @__PURE__ */ jsx(zV, {
+      size: 18
+    })
+  });
+  spotlightActions.push({
+    title: "Filter: not accepted tests",
+    description: "Show all tests with Unaccepted and Partially accepted status",
+    onTrigger: () => {
+      setQuery({
+        filter: {
+          $or: [{
+            markedAs: {
+              $eq: "Unaccepted"
+            }
+          }, {
+            status: {
+              $eq: "Partially"
+            }
+          }]
+        }
+      });
+    },
+    icon: /* @__PURE__ */ jsx(zV, {
+      size: 18
+    })
+  });
+  spotlightActions.push({
+    title: "Filter: accepted tests",
+    description: "Show all tests with Accepted status",
+    onTrigger: () => {
+      setQuery({
+        filter: {
+          $or: [{
+            markedAs: {
+              $eq: "Accepted"
+            }
+          }]
+        }
+      });
+    },
+    icon: /* @__PURE__ */ jsx(zV, {
       size: 18
     })
   });
