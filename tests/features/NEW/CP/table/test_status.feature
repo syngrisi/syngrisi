@@ -19,7 +19,7 @@ Feature: Calculate Test status based on Checks statuses
         When I accept via http the 1st check with name "CheckName-1"
 
         # [passed, new]
-        When I go to "index2" page
+        When I go to "main" page
         When I wait on element "[data-table-test-name=TestName]" to be displayed
         When I expect that element "[data-row-name='TestName'] td[data-test='table-row-Status']" to contain text "New"
 
@@ -48,7 +48,7 @@ Feature: Calculate Test status based on Checks statuses
                 filePath: files/A.png
         """
 
-        When I go to "index2" page
+        When I go to "main" page
         When I wait on element "[data-table-test-name=TestName]" to be displayed
         When I expect that element "[data-row-name='TestName'] td[data-test='table-row-Status']" to contain text "Passed"
 
@@ -90,7 +90,7 @@ Feature: Calculate Test status based on Checks statuses
         When I accept via http the 1st check with name "CheckName-2"
 
         # [passed, failed]
-        When I go to "index2" page
+        When I go to "main" page
         When I wait on element "[data-table-test-name=TestName]" to be displayed
         When I expect that element "[data-row-name='TestName'] td[data-test='table-row-Status']" to contain text "New"
 
@@ -104,7 +104,7 @@ Feature: Calculate Test status based on Checks statuses
                 filePath: files/B.png
         """
 
-        When I go to "index2" page
+        When I go to "main" page
         When I wait on element "[data-table-test-name=TestName]" to be displayed
         When I expect that element "[data-row-name='TestName'] td[data-test='table-row-Status']" to contain text "Failed"
 

@@ -24,7 +24,7 @@ Feature: Creation by User
     Scenario: Create as User
         # login as test admin
         When I login with user:"Test" password "123"
-        Then I wait on element "*=TA" to be displayed
+        Then I wait on element "span*=TA" to be displayed
 
         # create user
         When I go to "admin>users" page
@@ -46,7 +46,7 @@ Feature: Creation by User
 
         # login by user
         When I login with user:"j_doe@gmail.com" password "Password-123"
-        Then I wait on element "*=JD" to be displayed
+        Then I wait on element "span*=JD" to be displayed
 
         # generate and parse API key
         When I click on the element "a#user-icon"
@@ -76,7 +76,7 @@ Feature: Creation by User
         When I wait for "2" seconds
 
         When I login with user:"Test" password "123"
-        Then I wait on element "*=TA" to be displayed
+        Then I wait on element "span*=TA" to be displayed
 
         When I wait for "2" seconds
         Then I expect that VRS test "Create by User - 1" has "New" status

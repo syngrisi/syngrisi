@@ -8,7 +8,7 @@ const { ensureLoggedIn } = require('../../../lib/ensureLogin/ensureLoggedIn');
 const router = express.Router();
 
 router.get(
-    '*',
+    '',
     ensureLoggedIn(),
     catchAsync(async (req, res) => {
         res.status(httpStatus.OK)

@@ -14,7 +14,7 @@ Feature: Tests Table Settings
             - filePath: files/A.png
               checkName: Check - 1
         """
-        When I go to "index2" page
+        When I go to "main" page
         When I wait on element "[data-test='table-header-Id']" to be displayed
         Then I expect that element "[data-test='table-header-Id']" is displayed
         Then I expect that element "[data-test='table-header-Name']" is displayed
@@ -59,7 +59,7 @@ Feature: Tests Table Settings
             - filePath: files/A.png
               checkName: Check - 1
         """
-        When I go to "index2" page
+        When I go to "main" page
         When I wait on element "[data-table-test-name=TestName-0]" for 10000ms to be displayed
         When I wait on element "[data-table-test-name=TestName-1]" for 10000ms to be displayed
         When I wait on element "[data-table-test-name=TestName-2]" for 10000ms to be displayed

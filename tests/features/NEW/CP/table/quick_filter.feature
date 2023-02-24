@@ -23,7 +23,7 @@ Feature: Quick Filtering
              - checkName: Check - 1
         """
 
-        When I go to "index2" page
+        When I go to "main" page
 
 
         When I wait on element "[data-test='table-quick-filter']" to be displayed
@@ -60,7 +60,7 @@ Feature: Quick Filtering
              - checkName: Check - 1
         """
 
-        When I go to "index2" page
+        When I go to "main" page
         When I wait on element "[data-test='table-quick-filter']" to be displayed
 
         Then I wait on element "[data-table-test-name='TestNameP1-0']" to be displayed

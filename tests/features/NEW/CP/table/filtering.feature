@@ -16,7 +16,7 @@ Feature: Tests Table Filter
             - filePath: files/A.png
               checkName: Check - 1
         """
-        When I go to "index2" page
+        When I go to "main" page
 
         When I wait for "1" seconds
         When I wait on element "[data-table-test-name='TestName filter-0']" to be displayed
@@ -51,7 +51,7 @@ Feature: Tests Table Filter
             - filePath: files/A.png
               checkName: Check - 1
         """
-        When I go to "index2" page
+        When I go to "main" page
 
         When I wait for "1" seconds
         When I wait on element "[data-table-test-name='TestName filter-0']" to be displayed
@@ -101,7 +101,7 @@ Feature: Tests Table Filter
               checkName: Check - 1
         """
 
-        When I go to "index2" page
+        When I go to "main" page
 
         When I wait for "1" seconds
         When I wait on element "[data-table-test-name='TestName filter-0']" to be displayed
@@ -162,7 +162,7 @@ Feature: Tests Table Filter
               checkName: Check - 1
               browserName: firefox
         """
-        When I go to "index2" page
+        When I go to "main" page
 
         When I wait for "1" seconds
         When I wait on element "[data-table-test-name=TestName-1]" to be displayed
@@ -236,7 +236,7 @@ Feature: Tests Table Filter
               browserName: firefox
         """
 
-        When I go to "index2" page
+        When I go to "main" page
 
         When I wait for "1" seconds
         When I wait on element "[data-table-test-name=TestName-chrome]" to be displayed

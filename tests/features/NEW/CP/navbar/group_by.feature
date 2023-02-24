@@ -26,7 +26,7 @@ Feature: Group by
             - filePath: files/A.png
               checkName: Check - 1
         """
-        When I go to "index2" page
+        When I go to "main" page
 
     @smoke
     Scenario: Group by
@@ -57,7 +57,7 @@ Feature: Group by
     Scenario: Group by via Url
     Should apply groupBy via url params
         # suites
-        When I open the url "<syngrisiUrl>index2/?groupBy=suites"
+        When I open the url "<syngrisiUrl>?groupBy=suites"
 
         When I wait on element "//*[@data-test='navbar-item-name' and contains(., 'SuiteName - 1')]" to be displayed
         When I wait on element "//*[@data-test='navbar-item-name' and contains(., 'SuiteName - 2')]" to be displayed

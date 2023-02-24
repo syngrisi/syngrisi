@@ -27,7 +27,7 @@ Feature: Filter by project
             - filePath: files/A.png
               checkName: Check - 1
         """
-        When I go to "index2" page
+        When I go to "main" page
         Then I wait on element "[data-test*='navbar_item_']" to be displayed
         Then I expect that element "//*[@data-test='navbar-item-name' and contains(., 'RunName Project-1')]" does appear exactly "1" times
         Then I expect that element "//*[@data-test='navbar-item-name' and contains(., 'RunName Project-2')]" does appear exactly "1" times

@@ -10,12 +10,12 @@ Feature: Change Password
         """
         Given I start Server
         When I create via http test user
-        When I stop Server
+        Given I stop Server
 
         When I set env variables:
         """
-        SYNGRISI_TEST_MODE: 0
-        SYNGRISI_AUTH: 1
+          SYNGRISI_TEST_MODE: 1
+          SYNGRISI_AUTH: 1
         """
         Given I start Server and start Driver
 
@@ -39,14 +39,16 @@ Feature: Change Password
         SYNGRISI_TEST_MODE: 0
         SYNGRISI_AUTH: 1
         """
+        When I wait for "3" seconds
         Given I start Server and start Driver
-
-        # login
-        When I login with user:"j_doe@gmail.com" password "Password-123"
-        Then I wait on element "*=JD" to be displayed
+        When I wait for "5" seconds
+        When I open the app
 
     @smoke
     Scenario: Change Password - Smoke
+        # login
+        When I login with user:"j_doe@gmail.com" password "Password-123"
+        Then I wait on element "span*=JD" to be displayed
         # change password
         When I go to "change_password" page
         When I set "Password-123" to the inputfield "#current-password"
@@ -61,13 +63,9 @@ Feature: Change Password
         When I go to "logout" page
         When I wait for "2" seconds
         When I login with user:"j_doe@gmail.com" password "Password-456"
-        Then I wait on element "*=JD" to be displayed
+        Then I wait on element "span*=JD" to be displayed
 
     Scenario: Change Password - User not Logged In
-        When I go to "logout" page
-        When I wait for "5" seconds
-#        Then I expect the url to contain "logout"
-
         When I go to "change_password" page
         When I set "Password-123" to the inputfield "#current-password"
         When I set "Password-456" to the inputfield "#new-password"
@@ -76,6 +74,10 @@ Feature: Change Password
         Then I expect that element "#error-message" contain text "user is not logged in"
 
     Scenario: Change Password - Wrong Current Password
+        # login
+        When I login with user:"j_doe@gmail.com" password "Password-123"
+        Then I wait on element "span*=JD" to be displayed
+
         When I go to "change_password" page
         When I set "WRONG-123" to the inputfield "#current-password"
         When I set "Password-456" to the inputfield "#new-password"
@@ -85,8 +87,11 @@ Feature: Change Password
         Then I expect that element "#error-message" contain text "IncorrectPasswordError: Password or username is incorrect"
 
     Scenario: Change Password - Validation
-        When I go to "change_password" page
+        # login
+        When I login with user:"j_doe@gmail.com" password "Password-123"
+        Then I wait on element "span*=JD" to be displayed
 
+        When I go to "change_password" page
         Then I expect that the element "#current-password" to have attribute "required"
         Then I expect that the element "#new-password" to have attribute "required"
         Then I expect that the element "#new-password-confirmation" to have attribute "required"

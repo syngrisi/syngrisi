@@ -15,7 +15,7 @@ Feature: Standard Checks Flow - UI
           checks:
               - checkName: CheckName
         """
-        When I go to "index2" page
+        When I go to "main" page
         # BEFORE ACCEPT
         When I unfold the test "TestName"
         When I expect that element "[data-row-name='TestName'] td[data-test='table-row-Accepted']" to contain text "Unaccepted"
@@ -62,7 +62,7 @@ Feature: Standard Checks Flow - UI
               - filePath: files/A.png
                 checkName: CheckName
         """
-        When I go to "index2" page
+        When I go to "main" page
 
         When I unfold the test "TestName"
         When I expect that element "[data-row-name='TestName'] td[data-test='table-row-Accepted']" to contain text "Accepted"
@@ -91,7 +91,7 @@ Feature: Standard Checks Flow - UI
               - filePath: files/B.png
                 checkName: CheckName
         """
-        When I go to "index2" page
+        When I go to "main" page
         When I unfold the test "TestName"
         When I expect that element "[data-row-name='TestName'] td[data-test='table-row-Accepted']" to contain text "Accepted"
         When I wait for "0.5" seconds
@@ -120,7 +120,7 @@ Feature: Standard Checks Flow - UI
               - filePath: files/A.png
                 checkName: CheckName
         """
-        When I go to "index2" page
+        When I go to "main" page
         When I unfold the test "TestName"
         When I wait on element "[data-test='not-accepted-error-icon']" to not be displayed
         When I wait on element "[data-viewport-badge-name='CheckName']+div[data-test='check-wrong-images-size-error-icon']" to not exist
@@ -132,7 +132,7 @@ Feature: Standard Checks Flow - UI
               - filePath: files/A.png
                 checkName: CheckName
         """
-        When I go to "index2" page
+        When I go to "main" page
         When I unfold the test "TestName"
         When I wait for "0.5" seconds
         Then the element "[data-check-status-name='CheckName'] span" matches the text "FAILED"
@@ -168,7 +168,7 @@ Feature: Standard Checks Flow - UI
               - filePath: files/A.png
                 checkName: CheckName
         """
-        When I go to "index2" page
+        When I go to "main" page
         When I unfold the test "TestName"
 
         When I wait on element "[data-test='not-accepted-error-icon']" to not be displayed
@@ -183,7 +183,7 @@ Feature: Standard Checks Flow - UI
               - filePath: files/A_cropped.png
                 checkName: CheckName
         """
-        When I go to "index2" page
+        When I go to "main" page
         When I unfold the test "TestName"
         When I wait for "0.5" seconds
 

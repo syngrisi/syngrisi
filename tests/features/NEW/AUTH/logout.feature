@@ -20,7 +20,7 @@ Feature: Logout
 
     Scenario: Logout - default Test user
         When I login with user:"Test" password "123"
-        Then I wait on element "*=TA" to be displayed
+        Then I wait on element "span*=TA" to be displayed
         When I wait for "2" seconds
 
         When I go to "logout" page

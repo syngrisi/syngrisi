@@ -19,7 +19,7 @@ Feature: Infinity scroll
             - filePath: files/B.png
               checkName: Check - 2
         """
-        When I go to "index2" page
+        When I go to "main" page
         When I wait on element "[data-table-test-name=TestName-29]" to be displayed
         When I wait for "3" seconds
         Then I expect that element "//*[@data-test='table-row-Name']" does appear exactly "20" times

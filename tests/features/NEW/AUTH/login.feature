@@ -2,6 +2,7 @@ Feature: Login
 
     Background:
         Given I clear Database and stop Server
+
         When I set env variables:
         """
          SYNGRISI_TEST_MODE: 1
@@ -15,11 +16,13 @@ Feature: Login
           SYNGRISI_TEST_MODE: 0
           SYNGRISI_AUTH: 1
         """
+
         Given I start Server and start Driver
+        When I reload session
 
     Scenario: Login - default Test user
         When I login with user:"Test" password "123"
-        Then I wait on element "*=TA" to be displayed
+        Then I wait on element "span*=TA" to be displayed
 
     @smoke
     Scenario: Login - Create user and login
@@ -47,7 +50,7 @@ Feature: Login
 
         # login
         When I login with user:"j_doe@gmail.com" password "Password-123"
-        Then I wait on element "*=JD" to be displayed
+        Then I wait on element "span*=JD" to be displayed
 
     @smoke
     Scenario: Login - Wrong password
@@ -71,13 +74,11 @@ Feature: Login
         Then the element ".mantine-Input-wrapper + div.mantine-InputWrapper-error" contains the text "Invalid email"
 
     Scenario: Redirect via origin url
-        When I open the url "<syngrisiUrl>admin"
-        Then the current url contains "?origin=%2Fadmin"
+        When I open the url "<syngrisiUrl>?groupBy=test-distinct%2FbrowserName"
+        When I wait for "1" seconds
+        Then the current url contains "?origin=%2F%3FgroupBy%3Dtest-distinct%252FbrowserName"
         When I set "Test" to the inputfield "#email"
         When I set "123" to the inputfield "#password"
         When I click on the element "#submit"
         When I wait for "1" seconds
-        Then the current url contains "/admin"
-
-
-    Scenario: User as Guest (check userinfo)
+        Then the current url contains "<syngrisiUrl>?groupBy=test-distinct%2FbrowserName"

@@ -16,7 +16,7 @@ Feature: Check Detail Appearance
               - checkName: CheckName
                 filePath: files/A.png
         """
-        When I go to "index2" page
+        When I go to "main" page
         When I unfold the test "TestName"
         When I click on the element "[data-test-preview-image='CheckName']"
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed
@@ -73,7 +73,7 @@ Feature: Check Detail Appearance
                 filePath: files/A.png
         """
 
-        When I go to "index2" page
+        When I go to "main" page
         When I unfold the test "TestName"
         When I click on the element "[data-test-preview-image='CheckName']"
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed
@@ -102,7 +102,7 @@ Feature: Check Detail Appearance
                 filePath: files/B.png
         """
 
-        When I go to "index2" page
+        When I go to "main" page
         When I unfold the test "TestName"
         When I click on the element "[data-test-preview-image='CheckName']"
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed

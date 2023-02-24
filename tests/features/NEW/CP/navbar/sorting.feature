@@ -16,7 +16,7 @@ Feature: Navbar Sorting
             - filePath: files/A.png
               checkName: Check - 1
         """
-        When I go to "index2" page
+        When I go to "main" page
 
         # without sorting action
         When I wait for "3" seconds

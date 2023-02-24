@@ -84,7 +84,7 @@ function App() {
                         <NotificationsProvider autoClose={5000} limit={5}>
                             <NavigationProgress />
                             <Routes>
-                                <Route path="/index2/*" element={<IndexLayout />} />
+                                <Route path="/" element={<IndexLayout />} />
                             </Routes>
                         </NotificationsProvider>
                     </SpotlightProvider>

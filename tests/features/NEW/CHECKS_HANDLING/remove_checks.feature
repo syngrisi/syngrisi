@@ -15,7 +15,7 @@ Feature: Remove checks
               - checkName: CheckName-1
               - checkName: CheckName-2
         """
-        When I go to "index2" page
+        When I go to "main" page
 
         When I unfold the test "TestName"
         When I wait for "1" seconds
@@ -48,7 +48,7 @@ Feature: Remove checks
               - checkName: CheckName-1
         """
 
-        When I go to "index2" page
+        When I go to "main" page
 
         When I wait on element "[data-table-check-name='CheckName-1']" to not be displayed
 

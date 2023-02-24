@@ -1,3 +1,4 @@
+/* eslint-disable func-names */
 import { Given } from 'cucumber';
 
 import checkContainsAnyText from '../src/support/check/checkContainsAnyText';
@@ -25,11 +26,6 @@ import { fillCommonPlaceholders } from '../src/utills/common';
 Given(
     /^I open the (url|site) "([^"]*)?"$/, function (type, url) {
         const url2 = this.fillItemsPlaceHolders(fillCommonPlaceholders(url));
-        console.log(url2)
-        console.log(url2)
-        console.log(url2)
-        console.log(url2)
-
         openWebsite(type, url2);
     }
 );

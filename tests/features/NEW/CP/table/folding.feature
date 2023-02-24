@@ -15,7 +15,7 @@ Feature: Folding
             - filePath: files/A.png
               checkName: CheckName
         """
-        When I go to "index2" page
+        When I go to "main" page
         When I wait for "5" seconds
         Then I expect that element "[data-test='folding-table-items]" is not displayed
 
@@ -34,7 +34,7 @@ Feature: Folding
           checks:
               - checkName: CheckName
         """
-        When I go to "index2" page
+        When I go to "main" page
         When I wait on element "[data-table-test-name=TestName]" to be displayed
         Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
         When I click on the element "[data-table-test-name=TestName]"
@@ -47,7 +47,7 @@ Feature: Folding
           checks:
             - checkName: Check-$
         """
-        Given I go to "index2" page
+        Given I go to "main" page
         When I wait on element "[data-table-test-name=TestName-0]" to be displayed
         When I wait on element "[data-table-test-name=TestName-1]" to be displayed
         Then I wait on element "[data-table-check-name='Check-0']" to not be displayed
@@ -73,7 +73,7 @@ Feature: Folding
           checks:
             - checkName: Check-$
         """
-        Given I go to "index2" page
+        Given I go to "main" page
         When I wait on element "[data-table-test-name=TestName-0]" to be displayed
         When I wait on element "[data-table-test-name=TestName-1]" to be displayed
         Then I wait on element "[data-table-check-name='Check-0']" to not be displayed
@@ -101,7 +101,7 @@ Feature: Folding
           checks:
             - checkName: Check-$
         """
-        Given I go to "index2" page
+        Given I go to "main" page
         When I wait on element "[data-table-test-name=TestName-0]" to be displayed
         When I wait on element "[data-table-test-name=TestName-1]" to be displayed
         Then I wait on element "[data-table-check-name='Check-0']" to not be displayed

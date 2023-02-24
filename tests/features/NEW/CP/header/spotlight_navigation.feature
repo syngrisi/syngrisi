@@ -5,7 +5,7 @@ Feature: Spotlight
         Given I start Server and start Driver
         When I open the app
         When I clear local storage
-        When I go to "index2" page
+        When I go to "main" page
 
     Scenario: Spotlight Appear
         # using keystrokes

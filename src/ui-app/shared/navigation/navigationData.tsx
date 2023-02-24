@@ -23,7 +23,7 @@ export function navigationData(): INavDataItem[] {
             group: 'main',
             icon: <IconListCheck size={18} />,
             crumbs: [
-                { title: 'Test Results', href: '/index2' },
+                { title: 'Test Results', href: '/' },
             ],
         },
         {
@@ -32,8 +32,8 @@ export function navigationData(): INavDataItem[] {
             group: 'main',
             icon: <IconRun size={18} />,
             crumbs: [
-                { title: 'Test Results', href: '/index2' },
-                { title: 'By Runs', href: '/index2/?groupBy=runs' },
+                { title: 'Test Results', href: '/' },
+                { title: 'By Runs', href: '/?groupBy=runs' },
             ],
         },
         {
@@ -42,8 +42,8 @@ export function navigationData(): INavDataItem[] {
             group: 'main',
             icon: <IconClipboardList size={18} />,
             crumbs: [
-                { title: 'Test Results', href: '/index2' },
-                { title: 'By Suites', href: '/index2/?groupBy=suites' },
+                { title: 'Test Results', href: '/' },
+                { title: 'By Suites', href: '/?groupBy=suites' },
             ],
         },
         {
@@ -52,8 +52,8 @@ export function navigationData(): INavDataItem[] {
             group: 'main',
             icon: <IconBrowser size={18} />,
             crumbs: [
-                { title: 'Test Results', href: '/index2' },
-                { title: 'By Browser', href: '/index2/?groupBy=test-distinct/browserName' },
+                { title: 'Test Results', href: '/' },
+                { title: 'By Browser', href: '/?groupBy=test-distinct/browserName' },
             ],
         },
         {
@@ -62,8 +62,8 @@ export function navigationData(): INavDataItem[] {
             group: 'main',
             icon: <IconDeviceAnalytics size={18} />,
             crumbs: [
-                { title: 'Test Results', href: '/index2' },
-                { title: 'By Platform', href: '/index2/?groupBy=test-distinct/os' },
+                { title: 'Test Results', href: '/' },
+                { title: 'By Platform', href: '/?groupBy=test-distinct/os' },
             ],
         },
         {
@@ -72,8 +72,8 @@ export function navigationData(): INavDataItem[] {
             group: 'main',
             icon: <IconStatusChange size={18} />,
             crumbs: [
-                { title: 'Test Results', href: '/index2' },
-                { title: 'By Test Status', href: '/index2/?groupBy=test-distinct/status' },
+                { title: 'Test Results', href: '/' },
+                { title: 'By Test Status', href: '/?groupBy=test-distinct/status' },
             ],
         },
         {
@@ -82,8 +82,8 @@ export function navigationData(): INavDataItem[] {
             group: 'main',
             icon: <IconCircleCheck size={18} />,
             crumbs: [
-                { title: 'Test Results', href: '/index2' },
-                { title: 'By Accept Status', href: '/index2/?groupBy=test-distinct/markedAs' },
+                { title: 'Test Results', href: '/' },
+                { title: 'By Accept Status', href: '/?groupBy=test-distinct/markedAs' },
             ],
         },
         // {

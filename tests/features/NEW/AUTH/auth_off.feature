@@ -8,7 +8,7 @@ Feature: Authentication - off
     Scenario: Login as Guest
         When I open the url "<syngrisiUrl>"
         When I wait for "1" seconds
-        Then I wait on element "*=SG" to be displayed
+        Then I wait on element "span*=SG" to be displayed
 
     Scenario: Login as Guest with redirect
         When I open the url "<syngrisiUrl>admin"

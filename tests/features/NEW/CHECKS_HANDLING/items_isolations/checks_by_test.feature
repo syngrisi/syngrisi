@@ -23,7 +23,7 @@ Feature: Checks Isolation by Test
         """
 
     Scenario: Checks Isolation by Test
-        When I go to "index2" page
+        When I go to "main" page
         When I wait on element "[data-table-test-name=TestName-1]" to be displayed
         When I click on the element "[data-table-test-name=TestName-1]"
 

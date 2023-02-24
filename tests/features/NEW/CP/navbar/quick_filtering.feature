@@ -17,7 +17,7 @@ Feature: Navbar Quick Filtering
             - filePath: files/A.png
               checkName: Check - 1
         """
-        When I go to "index2" page
+        When I go to "main" page
         When I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName - 0')]" to be displayed
         When I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName - 1')]" to be displayed
         Then I expect that element "//*[@data-test='navbar-item-name']" does appear exactly "2" times
@@ -63,7 +63,7 @@ Feature: Navbar Quick Filtering
              - checkName: Check
         """
 
-        When I go to "index2" page
+        When I go to "main" page
         When I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName_P1-0')]" to be displayed
         When I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName_P1-1')]" to be displayed
         When I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName_P2-0')]" to be displayed

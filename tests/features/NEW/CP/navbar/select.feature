@@ -19,7 +19,7 @@ Feature: Select Navbar Item
               checkName: Check - 1
         """
 
-        When I go to "index2" page
+        When I go to "main" page
         Then I wait on element "[data-test*='navbar_item_']" to be displayed
         Then I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName-0')]" to be displayed
         Then I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName-1')]" to be displayed
@@ -73,7 +73,7 @@ Feature: Select Navbar Item
               checkName: Check - 1
         """
 
-        When I go to "index2" page
+        When I go to "main" page
         Then I wait on element "[data-test*='navbar_item_']" to be displayed
         Then I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName-0')]" to be displayed
 
@@ -125,7 +125,7 @@ Feature: Select Navbar Item
               checkName: Check - 1
         """
 
-        When I go to "index2" page
+        When I go to "main" page
         Then I wait on element "[data-test*='navbar_item_']" to be displayed
         Then I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName-0')]" to be displayed
 
@@ -140,7 +140,7 @@ Feature: Select Navbar Item
         return {url: window.location.href}
         """
 
-        When I go to "index2" page
+        When I go to "main" page
         When I open the url "<js:url>"
 
         When I wait on element "[data-table-test-name=TestName-0]" to be displayed
@@ -163,7 +163,7 @@ Feature: Select Navbar Item
               checkName: Check - 1
         """
 
-        When I go to "index2" page
+        When I go to "main" page
         Then I wait on element "[data-test*='navbar_item_']" to be displayed
         Then I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName-0')]" to be displayed
 
@@ -180,7 +180,7 @@ Feature: Select Navbar Item
         return {url: window.location.href}
         """
 
-        When I go to "index2" page
+        When I go to "main" page
         When I open the url "<js:url>"
 
         When I wait on element "[data-table-test-name=TestName-0]" to be displayed
