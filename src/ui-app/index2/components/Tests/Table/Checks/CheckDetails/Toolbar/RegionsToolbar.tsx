@@ -4,7 +4,8 @@ import { ActionIcon, Group, Kbd, Stack, Text, Tooltip } from '@mantine/core';
 import { IconDeviceFloppy, IconShape, IconShapeOff } from '@tabler/icons';
 import { useEffect, useState } from 'react';
 import { useHotkeys } from '@mantine/hooks';
-import { MainView } from './Canvas/mainView';
+import { MainView } from '../Canvas/mainView';
+import { log } from '../../../../../../../shared/utils/Logger';
 
 interface Props {
     mainView: any
@@ -32,19 +33,19 @@ export function RegionsToolbar({ mainView, baselineId, view }: Props) {
                 'selection:cleared':
                 // eslint-disable-next-line no-unused-vars
                     (e: any) => {
-                        console.log('cleared selection');
+                        log.debug('cleared selection');
                         handler();
                     },
                 'selection:updated':
                 // eslint-disable-next-line no-unused-vars
                     (e: any) => {
-                        console.log('update selection');
+                        log.debug('update selection');
                         handler();
                     },
                 'selection:created':
                 // eslint-disable-next-line no-unused-vars
                     (e: any) => {
-                        console.log('create selection');
+                        log.debug('create selection');
                         handler();
                     },
             },

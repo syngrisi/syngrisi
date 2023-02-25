@@ -3,19 +3,13 @@ import * as React from 'react';
 import { fabric } from 'fabric';
 import {
     Group,
-    Paper,
     Stack,
-    useMantineTheme,
     createStyles,
-    Tooltip,
-    Text,
-    ActionIcon,
     Loader,
 } from '@mantine/core';
 import {
     useDisclosure,
     useDocumentTitle,
-    useLocalStorage,
 } from '@mantine/hooks';
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -26,14 +20,10 @@ import { GenericService } from '../../../../../../shared/services';
 import config from '../../../../../../config';
 import { RelatedChecks } from './RelatedChecks/RelatedChecks';
 import { useRelatedChecks } from './hooks/useRelatedChecks';
-import { Status } from '../../../../../../shared/components/Check/Status';
-import { ViewPortLabel } from '../ViewPortLabel';
-import { sizes } from '../checkSizes';
-import { OsIcon } from '../../../../../../shared/components/Check/OsIcon';
-import { BrowserIcon } from '../../../../../../shared/components/Check/BrowserIcon';
-import { getStatusMessage } from '../../../../../../shared/utils/utils';
 import { useParams } from '../../../../../hooks/useParams';
-import { Toolbar } from './Toolbar';
+import { Toolbar } from './Toolbar/Toolbar';
+import { Header } from './Header';
+import { Canvas } from './Canvas/Canvas';
 
 // eslint-disable-next-line no-unused-vars
 const useStyles = createStyles((theme) => ({
@@ -86,9 +76,7 @@ export function CheckDetails({ initCheckData, checkQuery }: Props) {
     useDocumentTitle(initCheckData?.name);
 
     const { query } = useParams();
-    const theme = useMantineTheme();
     const { classes } = useStyles();
-    const [checksViewSize] = useLocalStorage({ key: 'check-view-size', defaultValue: 'medium' });
     const [mainView, setMainView] = useState<MainView | null>(null);
 
     const [relatedActiveCheckId, setRelatedActiveCheckId] = useState<string>(initCheckData._id);
@@ -104,7 +92,7 @@ export function CheckDetails({ initCheckData, checkQuery }: Props) {
     const currentCheck = related.relatedFlatChecksData.find((x: any) => x._id === relatedActiveCheckId) || initCheckData;
 
     const textLoader = <Loader size="xs" color="blue" variant="dots" />;
-    const curCheck = {
+    const currentCheckSafe = {
         _id: currentCheck?._id,
         name: currentCheck?.name || '',
         status: currentCheck?.status || '',
@@ -160,20 +148,12 @@ export function CheckDetails({ initCheckData, checkQuery }: Props) {
         },
     );
 
-    const statusMsg = currentCheck.status ? getStatusMessage(currentCheck) : textLoader;
-
     const baselineId = useMemo<string>(() => {
         if (baselineQuery.data?.results && baselineQuery.data?.results.length > 0) {
             return baselineQuery.data?.results[0]._id as string;
         }
         return '';
     }, [baselineQuery.data?.timestamp]);
-
-    const iconsColor = useMemo(
-        () => (theme.colorScheme === 'dark'
-            ? theme.colors.gray[3]
-            : theme.colors.dark[9]), [theme.colorScheme],
-    );
 
     // init mainView
     useEffect(() => {
@@ -248,196 +228,15 @@ export function CheckDetails({ initCheckData, checkQuery }: Props) {
             <Stack sx={{ width: '100%' }}>
 
                 {/* Header */}
-                <Group position="apart" sx={{ width: '98%' }} data-check-header-name={curCheck.name} noWrap>
-                    <Group
-                        position="left"
-                        align="center"
-                        spacing="xs"
-                        sx={{ position: 'relative' }}
-                        noWrap
-                        data-test="full-check-path"
-                    >
-                        <Tooltip
-                            label={
-                                (
-                                    <Group spacing={4}>
-                                        {
-                                            curCheck.status
-                                                ? (<Status size="lg" check={curCheck} variant="filled" />)
-                                                : textLoader
-                                        }
-                                        {statusMsg}
-                                    </Group>
-                                )
-                            }
-                            withinPortal
-                        >
-                            <Group align="center" data-check="status">
-                                <Status size="lg" check={curCheck} variant="filled" />
-                            </Group>
-                        </Tooltip>
-
-                        <Group
-                            noWrap
-                            spacing={0}
-                        >
-                            <Tooltip
-                                withinPortal
-                                label={`Project: ${curCheck?.app?.name}`}
-                            >
-                                <Text
-                                    data-check="app-name"
-                                    sx={{ flexShrink: 1 }}
-                                    className={classes.checkPathFragment}
-                                >
-                                    {curCheck?.app?.name}
-                                </Text>
-                            </Tooltip>
-                            <Tooltip
-                                withinPortal
-                                label={`Suite: ${curCheck?.suite?.name}`}
-                            >
-                                <Text
-                                    data-check="suite-name"
-                                    sx={{ flexShrink: 500 }}
-                                    className={classes.checkPathFragment}
-                                >
-                                    &nbsp;/&nbsp;
-                                    {curCheck?.suite?.name}
-                                </Text>
-                            </Tooltip>
-                            <Tooltip
-                                withinPortal
-                                label={`Test: ${curCheck?.test?.name}`}
-                            >
-                                <Text
-                                    data-check="test-name"
-                                    sx={{ flexShrink: 5 }}
-                                    className={classes.checkPathFragment}
-                                >
-                                    &nbsp;/&nbsp;
-                                    {curCheck?.test?.name}
-                                </Text>
-                            </Tooltip>
-                            <Tooltip
-                                withinPortal
-                                label={`Check: ${curCheck.name}`}
-
-                            >
-                                <Text
-                                    data-check="check-name"
-                                    sx={{ flexShrink: 1 }}
-                                    lineClamp={1}
-                                    // className={classes.checkPathFragment}
-                                >
-                                    &nbsp;/&nbsp;
-                                    {curCheck.name || textLoader}
-                                </Text>
-                            </Tooltip>
-                        </Group>
-                    </Group>
-
-                    <Group
-                        noWrap
-                        spacing="xs"
-                    >
-                        <Tooltip
-                            label={
-                                curCheck?.viewport
-                            }
-                            withinPortal
-                        >
-                            <Text lineClamp={1} sx={{ overflow: 'visible' }} data-check="viewport">
-                                {
-                                    curCheck?.viewport
-                                        ? (
-                                            <ViewPortLabel
-                                                check={curCheck}
-                                                color="blue"
-                                                sizes={sizes}
-                                                size="lg"
-                                                checksViewSize={checksViewSize}
-                                                fontSize="12px"
-                                            />
-                                        )
-                                        : textLoader
-                                }
-
-                            </Text>
-                        </Tooltip>
-
-                        <Tooltip
-                            data-check="os-label"
-                            label={
-                                curCheck?.os
-                            }
-                            withinPortal
-                        >
-                            <Group spacing={8} noWrap>
-                                <ActionIcon variant="light" size={32} p={4} ml={4}>
-                                    {
-                                        curCheck?.os
-                                            ? (
-                                                <OsIcon
-                                                    data-check="os-icon"
-                                                    size={20}
-                                                    color={iconsColor}
-                                                    os={curCheck?.os}
-                                                />
-                                            )
-                                            : textLoader
-                                    }
-                                </ActionIcon>
-                                <Text data-check="os" size={12} lineClamp={1}>{curCheck?.os}</Text>
-                            </Group>
-                        </Tooltip>
-
-                        <Tooltip
-                            label={
-                                curCheck?.browserFullVersion
-                                    ? `${curCheck?.browserFullVersion}`
-                                    : `${curCheck?.browserVersion}`
-                            }
-                            withinPortal
-                        >
-                            <Group spacing={8} noWrap>
-                                <ActionIcon variant="light" size={32} p={4}>
-                                    {
-                                        curCheck?.browserName
-                                            ? (
-                                                <BrowserIcon
-                                                    data-check="browser-icon"
-                                                    size={20}
-                                                    color={iconsColor}
-                                                    browser={curCheck?.browserName}
-                                                />
-                                            )
-                                            : textLoader
-                                    }
-                                </ActionIcon>
-                                <Text
-                                    data-check="browser"
-                                    lineClamp={1}
-                                    size={12}
-                                >
-
-                                    {curCheck?.browserName}
-                                    {
-                                        curCheck?.browserVersion
-                                            ? ` - ${curCheck?.browserVersion}`
-                                            : ''
-                                    }
-                                </Text>
-                            </Group>
-                        </Tooltip>
-                    </Group>
-                </Group>
-
+                <Header
+                    classes={classes}
+                    currentCheck={currentCheckSafe}
+                />
                 {/* Toolbar */}
                 <Toolbar
                     mainView={mainView}
                     checkQuery={checkQuery}
-                    curCheck={curCheck}
+                    curCheck={currentCheckSafe}
                     initCheckData={initCheckData}
                     classes={classes}
                     baselineId={baselineId}
@@ -461,32 +260,7 @@ export function CheckDetails({ initCheckData, checkQuery }: Props) {
                     </Group>
 
                     {/* Canvas container */}
-                    <Group
-                        sx={
-                            {
-                                width: related.opened ? '90%' : '100%',
-                            }
-                        }
-                    >
-                        <Paper
-                            shadow="xl"
-                            withBorder
-                            id="snapshoot"
-                            style={
-                                {
-                                    backgroundColor: (
-                                        theme.colorScheme === 'dark'
-                                            ? theme.colors.dark[8]
-                                            : theme.colors.gray[1]
-                                    ),
-                                    width: '100%',
-                                    height: '100%',
-                                }
-                            }
-                        >
-                            <canvas style={{ width: '100%' }} id="2d" />
-                        </Paper>
-                    </Group>
+                    <Canvas related={related} />
                 </Group>
             </Stack>
         </Group>

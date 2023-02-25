@@ -3,7 +3,7 @@ import { ActionIcon, Group, Text, Tooltip } from '@mantine/core';
 import { IconBulb } from '@tabler/icons';
 import { useState } from 'react';
 import { highlightDiff, IGroup } from './highlightDiff';
-import { MainView } from './Canvas/mainView';
+import { MainView } from '../Canvas/mainView';
 
 interface Props {
     mainView: MainView,

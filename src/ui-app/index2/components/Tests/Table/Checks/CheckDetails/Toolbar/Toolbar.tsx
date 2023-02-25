@@ -4,13 +4,13 @@ import { Divider, Group } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { ScreenshotDetails } from './ScreenshotDetails';
 import { ZoomToolbar } from './ZoomToolbar';
-import { MainView } from './Canvas/mainView';
+import { MainView } from '../Canvas/mainView';
 import { ViewSegmentedControl } from './ViewSegmentedControl';
 import { HighlightButton } from './HighlightButton';
 import { RegionsToolbar } from './RegionsToolbar';
-import { AcceptButton } from '../AcceptButton';
-import { RemoveButton } from '../RemoveButton';
-import { useParams } from '../../../../../hooks/useParams';
+import { AcceptButton } from '../../AcceptButton';
+import { RemoveButton } from '../../RemoveButton';
+import { useParams } from '../../../../../../hooks/useParams';
 
 interface Props {
     mainView: any
