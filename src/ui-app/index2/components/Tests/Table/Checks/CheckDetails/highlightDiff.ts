@@ -1,5 +1,5 @@
 import { fabric } from 'fabric';
-import { MainView } from './mainView';
+import { MainView } from './Canvas/mainView';
 
 export interface IGroup {
     minX: number
@@ -147,6 +147,7 @@ export function highlightDiff(mainView: MainView, highlightsGroups: IGroup[] | n
                             onComplete: () => {
                                 circle.animate('radius', '0.00', {
                                     onChange: mainView.canvas.renderAll.bind(mainView.canvas),
+                                    // slowHighlight - for testing purposes
                                     duration: window?.slowHighlight ? 15000 : 700,
                                     onComplete: highlightRemoving,
                                 });

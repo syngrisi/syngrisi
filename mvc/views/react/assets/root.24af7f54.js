@@ -4,8 +4,8 @@ var __publicField = (obj, key, value) => {
   __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
   return value;
 };
-import { r as react, X as queryString, b as jsx, j as jsxs, P as Paper, g as Title, Y as Stack, T as Text, G as Group, h as Button, Z as Epe, k as ky, a as config, u as useQuery, d as useMantineTheme, q as TextInput, V as ActionIcon, n as lAe, _ as Pj, c as createStyles, y as useLocalStorage, e as Container, $ as Dge, a0 as Fragment, a1 as useQueryClient, l as log, a2 as Tooltip, a3 as CK, a4 as Loader, a5 as React, a6 as Transition, a7 as Xfe, a8 as rze, f as useDocumentTitle, A as Anchor, a9 as zV, aa as ea, ab as Ol, ac as ua, ad as RX, ae as rWe, af as UZ, s as Checkbox, ag as getAugmentedNamespace, ah as zb, D as useHotkeys, ai as Pbe, aj as Cbe, ak as pi, al as Lbe, am as lDe, an as dDe, ao as IMe, ap as DMe, aq as qF, L as LoadingOverlay, ar as LHe, B as Box, o as useSearchParams, as as Y, Q as QueryClient, at as useNavigate, t as GCe, v as Nie, E as QueryClientProvider, F as ColorSchemeProvider, M as MantineProvider, au as Routes, av as Route, H as createRoot, I as BrowserRouter } from "./use-form.83d6f5c0.js";
-import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, G as GenericService, e as errorMsg, a as useDisclosure, b as useClickOutside, c as escapeRegExp, P as Popover, d as ScrollArea, f as Chip, D as Divider, l as links, H as Header, g as HeaderLogo, h as SafeSelect, o as openSpotlight, K as Kbd, i as useOs, U as UserMenu, B as Breadcrumbs, j as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, k as Skeleton, m as useInView, F as FocusTrap, n as getNavigationItem, p as useToggle, q as useInfinityScroll, N as Navbar, r as Badge, A as Affix, t as ActionPopoverIcon, v as UserHooks, T as ThemeIcon, w as getStatusMessage, x as encodeQueryParams, I as Image$1, y as Card, z as Collapse, E as Burger, O as useInfiniteQuery, Q as SegmentedControl, V as Table, W as useInputState, X as RelativeDrawer, Y as LogicalGroup, Z as uuid, $ as useNavProgressFetchEffect, a0 as AppShell, a1 as ReactQueryDevtools, a2 as useColorScheme, a3 as navigationData, a4 as SpotlightProvider, a5 as NotificationsProvider, a6 as NavigationProgress, a7 as QueryParamProvider, a8 as ReactRouter6Adapter } from "./LogicalGroup.f95783e9.js";
+import { r as react, X as queryString, b as jsx, j as jsxs, P as Paper, g as Title, Y as Stack, T as Text, G as Group, h as Button, Z as Epe, k as ky, a as config, u as useQuery, d as useMantineTheme, q as TextInput, V as ActionIcon, n as lAe, _ as Pj, c as createStyles, y as useLocalStorage, e as Container, $ as Dge, a0 as Fragment, a1 as useQueryClient, l as log, a2 as Tooltip, a3 as CK, a4 as Loader, a5 as React, a6 as Transition, a7 as Xfe, a8 as rze, f as useDocumentTitle, A as Anchor, a9 as zV, aa as ea, ab as Ol, ac as ua, ad as RX, ae as rWe, af as UZ, s as Checkbox, ag as getAugmentedNamespace, D as useHotkeys, ah as lDe, ai as dDe, aj as Pbe, ak as Cbe, al as pi, am as Lbe, an as zb, ao as IMe, ap as DMe, aq as qF, L as LoadingOverlay, ar as LHe, B as Box, o as useSearchParams, as as Y, Q as QueryClient, at as useNavigate, t as GCe, v as Nie, E as QueryClientProvider, F as ColorSchemeProvider, M as MantineProvider, au as Routes, av as Route, H as createRoot, I as BrowserRouter } from "./use-form.bba2ce1c.js";
+import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, G as GenericService, e as errorMsg, a as useDisclosure, b as useClickOutside, c as escapeRegExp, P as Popover, d as ScrollArea, f as Chip, D as Divider, l as links, H as Header, g as HeaderLogo, h as SafeSelect, o as openSpotlight, K as Kbd, i as useOs, U as UserMenu, B as Breadcrumbs, j as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, k as Skeleton, m as useInView, F as FocusTrap, n as getNavigationItem, p as useToggle, q as useInfinityScroll, N as Navbar, r as Badge, A as Affix, t as ActionPopoverIcon, v as UserHooks, T as ThemeIcon, w as getStatusMessage, x as encodeQueryParams, I as Image$1, y as Card, z as Collapse, E as Burger, O as useInfiniteQuery, Q as SegmentedControl, V as Table, W as useInputState, X as RelativeDrawer, Y as LogicalGroup, Z as uuid, $ as useNavProgressFetchEffect, a0 as AppShell, a1 as ReactQueryDevtools, a2 as useColorScheme, a3 as navigationData, a4 as SpotlightProvider, a5 as NotificationsProvider, a6 as NavigationProgress, a7 as QueryParamProvider, a8 as ReactRouter6Adapter } from "./LogicalGroup.6bc7ad94.js";
 function useDebouncedValue(value, wait, options = { leading: false }) {
   const [_value, setValue] = react.exports.useState(value);
   const mountedRef = react.exports.useRef(false);
@@ -5914,7 +5914,7 @@ function Heads({
     })]
   });
 }
-var fabric$1 = {};
+var fabric = {};
 const __viteBrowserExternal = {};
 const __viteBrowserExternal$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
@@ -21845,7 +21845,7 @@ const require$$2 = /* @__PURE__ */ getAugmentedNamespace(__viteBrowserExternal$1
       });
     }
   })();
-})(fabric$1);
+})(fabric);
 class SimpleView {
   constructor(mainView2, type) {
     this.mainView = mainView2;
@@ -21958,7 +21958,7 @@ class SideToSideView {
     return this.canvas.viewportTransform[5];
   }
   snapshotLabel(name) {
-    const frame = new fabric$1.fabric.Rect({
+    const frame = new fabric.fabric.Rect({
       left: 0,
       top: 0,
       originX: "center",
@@ -21970,7 +21970,7 @@ class SideToSideView {
       height: 80 / this.canvas.getZoom()
     });
     SideToSideView.lockCommon(frame);
-    const text = new fabric$1.fabric.Text(name, {
+    const text = new fabric.fabric.Text(name, {
       textAlign: "left",
       originX: "center",
       originY: "center",
@@ -21982,7 +21982,7 @@ class SideToSideView {
       lockScalingX: true,
       lockScalingY: true
     });
-    const label = new fabric$1.fabric.Group([frame, text]);
+    const label = new fabric.fabric.Group([frame, text]);
     label.set(
       {
         hasControls: false,
@@ -22002,7 +22002,7 @@ class SideToSideView {
     const dividerFillColor = "#FFFFFF";
     const dividerStrokeColor = "#878a8c";
     this.dividerOffset = 5e5;
-    this.dividerLine = new fabric$1.fabric.Rect({
+    this.dividerLine = new fabric.fabric.Rect({
       originX: "center",
       originY: "top",
       left: this.canvas.getWidth() / 2,
@@ -22018,7 +22018,7 @@ class SideToSideView {
       width: 3,
       height: this.canvas.getHeight() + this.dividerOffset
     });
-    this.dividerSliderCircle = new fabric$1.fabric.Circle({
+    this.dividerSliderCircle = new fabric.fabric.Circle({
       originX: "center",
       originY: "top",
       moveCursor: "none",
@@ -22032,7 +22032,7 @@ class SideToSideView {
       strokeUniform: false,
       strokeWidth: 1
     });
-    this.dividerSliderText = new fabric$1.fabric.Text("\u276E   \u276F", {
+    this.dividerSliderText = new fabric.fabric.Text("\u276E   \u276F", {
       top: this.canvas.getHeight() / 2 + this.dividerOffset / 2 + 48,
       left: this.canvas.getWidth() / 2,
       textAlign: "left",
@@ -22046,7 +22046,7 @@ class SideToSideView {
       lockScalingX: true,
       lockScalingY: true
     });
-    this.dividerSlider = new fabric$1.fabric.Group(
+    this.dividerSlider = new fabric.fabric.Group(
       [
         this.dividerSliderCircle,
         this.dividerSliderText
@@ -22068,7 +22068,7 @@ class SideToSideView {
         lockScalingY: true
       }
     );
-    const divider = new fabric$1.fabric.Group(
+    const divider = new fabric.fabric.Group(
       [
         this.dividerLine,
         this.dividerSlider
@@ -22091,7 +22091,7 @@ class SideToSideView {
     return divider;
   }
   actualRectClip() {
-    return new fabric$1.fabric.Rect({
+    return new fabric.fabric.Rect({
       top: this.actualImg.height * -1,
       originX: "left",
       originY: "top",
@@ -22103,7 +22103,7 @@ class SideToSideView {
     });
   }
   expectedRectClip() {
-    return new fabric$1.fabric.Rect({
+    return new fabric.fabric.Rect({
       top: this.expectedImg.height * -1,
       originX: "left",
       originY: "top",
@@ -22151,7 +22151,7 @@ class SideToSideView {
     this.addZoomEvents();
     this.addDividerFollowMouseEvents();
     setTimeout(() => {
-      const delta = new fabric$1.fabric.Point(0, 0);
+      const delta = new fabric.fabric.Point(0, 0);
       this.canvas.relativePan(delta);
     }, 0);
     setTimeout(() => {
@@ -22183,7 +22183,7 @@ function imageFromUrl(url) {
   return new Promise(
     (resolve, reject) => {
       try {
-        fabric.Image.fromURL(
+        fabric.fabric.Image.fromURL(
           url,
           (img) => {
             img.objectCaching = false;
@@ -22231,13 +22231,13 @@ class MainView {
     __publicField(this, "diffView");
     __publicField(this, "expectedImage");
     __publicField(this, "diffImage");
-    fabric$1.fabric.Object.prototype.objectCaching = false;
+    fabric.fabric.Object.prototype.objectCaching = false;
     this.canvasElementWidth = canvasElementWidth;
     this.canvasElementHeight = canvasElementHeight;
     this.actualImage = lockImage(actualImage);
     this.expectedImage = lockImage(expectedImage);
     this.diffImage = diffImage ? lockImage(diffImage) : null;
-    this.canvas = new fabric$1.fabric.Canvas(canvasId, {
+    this.canvas = new fabric.fabric.Canvas(canvasId, {
       width: this.canvasElementWidth,
       height: this.canvasElementHeight,
       preserveObjectStacking: true,
@@ -22274,7 +22274,7 @@ class MainView {
         if (e2.e.buttons === 4) {
           this.canvas.setCursor("grab");
           const mEvent = e2.e;
-          const delta = new fabric$1.fabric.Point(mEvent.movementX, mEvent.movementY);
+          const delta = new fabric.fabric.Point(mEvent.movementX, mEvent.movementY);
           this.canvas.relativePan(delta);
           this.canvas.renderAll();
         }
@@ -22283,7 +22283,7 @@ class MainView {
     this.canvas.on("mouse:wheel", (opt) => {
       if (opt.e.ctrlKey)
         return;
-      const delta = new fabric$1.fabric.Point(-opt.e.deltaX / 2, -opt.e.deltaY / 2);
+      const delta = new fabric.fabric.Point(-opt.e.deltaX / 2, -opt.e.deltaY / 2);
       this.canvas.relativePan(delta);
       this.canvas.fire("pan", opt);
       this.canvas.renderAll();
@@ -22343,8 +22343,8 @@ class MainView {
     });
   }
   panToCanvasWidthCenter(imageName) {
-    this.canvas.absolutePan(new fabric$1.fabric.Point(0, 0));
-    const delta = new fabric$1.fabric.Point(
+    this.canvas.absolutePan(new fabric.fabric.Point(0, 0));
+    const delta = new fabric.fabric.Point(
       this.canvas.width / 2 - this[imageName].width * this.canvas.getZoom() / 2,
       0
     );
@@ -22377,7 +22377,7 @@ class MainView {
     }
     const top = lastTop > document.documentElement.scrollTop && lastTop < document.documentElement.scrollTop + window.innerHeight ? lastTop + 20 : document.documentElement.scrollTop + 50;
     const left = lastLeft < this.canvas.width - 80 ? lastLeft + 20 : lastLeft - 50;
-    return new fabric$1.fabric.Rect({
+    return new fabric.fabric.Rect({
       left: params.left || left,
       top: params.top || top,
       fill: params.fill || "blue",
@@ -23256,337 +23256,6 @@ function ScreenshotDetails({
     }) : /* @__PURE__ */ jsx(Fragment, {})
   });
 }
-function getDiffImageData(image) {
-  const canvas = document.createElement("canvas");
-  canvas.width = image.width;
-  canvas.height = image.height;
-  const ctx = canvas.getContext("2d");
-  ctx.drawImage(image, 0, 0);
-  const imgData = ctx.getImageData(0, 0, image.width, image.height);
-  return imgData;
-}
-function highlightDiff(mainView2, highlightsGroups, imageData) {
-  return new Promise((resolve) => {
-    mainView2.canvas.getObjects().filter((x2) => x2.name === "highlight").forEach((x2) => mainView2.canvas.remove(x2));
-    const urlData = mainView2.diffImage.toDataURL({});
-    const img = new Image();
-    img.src = urlData;
-    img.onload = () => {
-      console.time("get_image_data");
-      const diffImageData = imageData || getDiffImageData(img);
-      console.timeEnd("get_image_data");
-      console.time("process_data");
-      const createNewGroup = (x2, y3) => ({
-        minX: x2,
-        maxX: x2,
-        minY: y3,
-        maxY: y3,
-        members: [{ x: x2, y: y3 }]
-      });
-      const getPixel = (x2, y3, curCount) => diffImageData.data.slice(curCount, curCount + 4).join();
-      const diffColor = "255,0,255,255";
-      const groups = highlightsGroups || [];
-      console.time("group formation");
-      if (groups.length < 1) {
-        let cursorCount = 0;
-        for (let y3 = 0; y3 < diffImageData.height; y3 += 1) {
-          for (let x2 = 0; x2 < diffImageData.width; x2 += 1) {
-            if (getPixel(x2, y3, cursorCount) === diffColor) {
-              const suitableGroup = groups.find((group) => x2 >= group.minX - 1 && x2 <= group.maxX + 1 && y3 >= group.minY && y3 <= group.maxY + 1);
-              if (!suitableGroup) {
-                groups.push(createNewGroup(x2, y3));
-              } else if (getPixel(x2 - 1, y3, cursorCount) === diffColor || getPixel(x2 - 1, y3 - 1, cursorCount) === diffColor || getPixel(x2, y3 - 1, cursorCount) === diffColor || getPixel(x2 + 1, y3 - 1, cursorCount) === diffColor || getPixel(x2 + 1, y3, cursorCount) === diffColor || getPixel(x2 + 1, y3 + 1, cursorCount) === diffColor || getPixel(x2, y3 + 1, cursorCount) === diffColor || getPixel(x2 - 1, y3 + 1, cursorCount) === diffColor) {
-                suitableGroup.members.push({ x: x2, y: y3 });
-                if (x2 < suitableGroup.minX)
-                  suitableGroup.minX = x2;
-                if (x2 > suitableGroup.maxX)
-                  suitableGroup.maxX = x2;
-                if (y3 > suitableGroup.maxY)
-                  suitableGroup.maxY = y3;
-              }
-            }
-            cursorCount += 4;
-          }
-        }
-      }
-      console.timeEnd("group formation");
-      console.time("group handling");
-      for (const group of groups) {
-        const top = group.minY + (group.maxY - group.minY) / 2;
-        const left = group.minX + (group.maxX - group.minX) / 2;
-        const circle = new fabric$1.fabric.Circle({
-          name: "highlight",
-          originX: "center",
-          originY: "center",
-          left,
-          top,
-          data: { group },
-          fill: "#D6336C",
-          opacity: 0.3,
-          strokeWidth: 0,
-          selectable: false
-        });
-        mainView2.canvas.add(circle);
-      }
-      console.timeEnd("group handling");
-      console.timeEnd("process_data");
-      const highlightRemoving = () => {
-        mainView2.canvas.getObjects().filter((x2) => x2.name === "highlight").forEach((x2) => mainView2.canvas.remove(x2));
-      };
-      setTimeout(() => {
-        mainView2.canvas.getObjects().filter((x2) => x2.name === "highlight").forEach((circle) => {
-          const suitableRadius = Math.max(
-            circle.data.group.maxX - circle.data.group.minX,
-            circle.data.group.maxY - circle.data.group.minY
-          );
-          const radius = ((suitableRadius > 25 ? suitableRadius : 25) + Math.floor(Math.random() * 10)) / mainView2.canvas.getZoom();
-          circle.animate("opacity", "0.5", {
-            onChange: mainView2.canvas.renderAll.bind(mainView2.canvas),
-            duration: 500
-          });
-          circle.animate("radius", String(radius), {
-            onChange: mainView2.canvas.renderAll.bind(mainView2.canvas),
-            duration: 500,
-            onComplete: () => {
-              circle.animate("radius", "0.00", {
-                onChange: mainView2.canvas.renderAll.bind(mainView2.canvas),
-                duration: (window == null ? void 0 : window.slowHighlight) ? 15e3 : 700,
-                onComplete: highlightRemoving
-              });
-              circle.animate("opacity", "0.30", {
-                onChange: mainView2.canvas.renderAll.bind(mainView2.canvas),
-                duration: (window == null ? void 0 : window.slowHighlight) ? 3e3 : 700
-              });
-            }
-          });
-        });
-        mainView2.canvas.renderAll();
-      }, 0);
-      return resolve({ groups, diffImageData });
-    };
-  });
-}
-function HighlightButton({
-  mainView: mainView2,
-  disabled = false
-}) {
-  const [loadHighlights, setLoadHighlights] = react.exports.useState(false);
-  const [highlightsGroups, setHighlightsGroups] = react.exports.useState(null);
-  const [imageData, setImageData] = react.exports.useState(null);
-  const label = disabled ? /* @__PURE__ */ jsx(Group, {
-    noWrap: true,
-    children: /* @__PURE__ */ jsx(Text, {
-      children: "Difference highlighting, active in diff mode when the difference is less than 5%"
-    })
-  }) : /* @__PURE__ */ jsx(Group, {
-    noWrap: true,
-    children: /* @__PURE__ */ jsx(Text, {
-      children: "Difference highlighting"
-    })
-  });
-  return /* @__PURE__ */ jsx(Tooltip, {
-    withinPortal: true,
-    label,
-    children: /* @__PURE__ */ jsx("div", {
-      children: /* @__PURE__ */ jsx(ActionIcon, {
-        "data-check": "highlight-icon",
-        disabled,
-        loading: loadHighlights,
-        onClick: async () => {
-          setLoadHighlights(() => true);
-          const {
-            groups,
-            diffImageData
-          } = await highlightDiff(mainView2, highlightsGroups, imageData);
-          setImageData(() => diffImageData);
-          setHighlightsGroups(() => groups);
-          setLoadHighlights(() => false);
-        },
-        children: /* @__PURE__ */ jsx(zb, {
-          size: 24,
-          stroke: 1
-        })
-      })
-    })
-  });
-}
-const useStyles$2 = createStyles((theme) => ({
-  labelIcon: {
-    minWidth: 18
-  },
-  labelText: {
-    [`@media (max-width: ${theme.breakpoints.lg}px)`]: {
-      display: "none"
-    }
-  }
-}));
-function ViewSegmentedControl({
-  view,
-  setView,
-  currentCheck
-}) {
-  var _a, _b;
-  const {
-    classes
-  } = useStyles$2();
-  useHotkeys([["Digit1", () => setView("expected")], ["Digit2", () => setView("actual")], ["Digit3", () => {
-    var _a2;
-    if ((_a2 = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _a2.filename)
-      setView("diff");
-  }], ["Digit4", () => {
-    var _a2;
-    if ((_a2 = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _a2.filename)
-      setView("slider");
-  }]]);
-  const viewSegmentData = [{
-    label: /* @__PURE__ */ jsx(Tooltip, {
-      withinPortal: true,
-      label: /* @__PURE__ */ jsxs(Group, {
-        noWrap: true,
-        children: [/* @__PURE__ */ jsx(Text, {
-          children: "Switch to Expected View"
-        }), /* @__PURE__ */ jsx(Kbd, {
-          sx: {
-            fontSize: 11,
-            borderBottomWidth: 1
-          },
-          children: "1"
-        })]
-      }),
-      children: /* @__PURE__ */ jsxs(Group, {
-        position: "left",
-        spacing: 4,
-        noWrap: true,
-        "data-check": "expected-view",
-        children: [/* @__PURE__ */ jsx(Pbe, {
-          stroke: 1,
-          className: classes.labelIcon
-        }), /* @__PURE__ */ jsx(Text, {
-          lineClamp: 1,
-          className: classes.labelText,
-          children: "Expected"
-        })]
-      })
-    }),
-    value: "expected",
-    disabled: (currentCheck == null ? void 0 : currentCheck.status[0]) === "new"
-  }, {
-    label: /* @__PURE__ */ jsx(Tooltip, {
-      withinPortal: true,
-      label: /* @__PURE__ */ jsxs(Group, {
-        noWrap: true,
-        children: [/* @__PURE__ */ jsx(Text, {
-          children: "Switch to Actual View"
-        }), /* @__PURE__ */ jsx(Kbd, {
-          sx: {
-            fontSize: 11,
-            borderBottomWidth: 1
-          },
-          children: "2"
-        })]
-      }),
-      children: /* @__PURE__ */ jsxs(Group, {
-        position: "left",
-        spacing: 4,
-        noWrap: true,
-        "data-check": "actual-view",
-        children: [/* @__PURE__ */ jsx(Cbe, {
-          stroke: 1,
-          className: classes.labelIcon
-        }), /* @__PURE__ */ jsx(Text, {
-          lineClamp: 1,
-          className: classes.labelText,
-          children: "Actual"
-        })]
-      })
-    }),
-    value: "actual"
-  }, {
-    label: /* @__PURE__ */ jsx(Tooltip, {
-      withinPortal: true,
-      label: /* @__PURE__ */ jsxs(Group, {
-        noWrap: true,
-        children: [/* @__PURE__ */ jsx(Text, {
-          children: "Switch to Difference View"
-        }), /* @__PURE__ */ jsx(Kbd, {
-          sx: {
-            fontSize: 11,
-            borderBottomWidth: 1
-          },
-          children: "3"
-        })]
-      }),
-      children: /* @__PURE__ */ jsxs(Group, {
-        position: "left",
-        spacing: 4,
-        noWrap: true,
-        "data-check": "diff-view",
-        children: [/* @__PURE__ */ jsx(pi, {
-          stroke: 1,
-          className: classes.labelIcon
-        }), /* @__PURE__ */ jsx(Text, {
-          lineClamp: 1,
-          className: classes.labelText,
-          children: "Difference"
-        })]
-      })
-    }),
-    value: "diff",
-    disabled: !((_a = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _a.filename)
-  }, {
-    label: /* @__PURE__ */ jsx(Tooltip, {
-      withinPortal: true,
-      label: /* @__PURE__ */ jsxs(Group, {
-        noWrap: true,
-        children: [/* @__PURE__ */ jsx(Text, {
-          children: "Switch to Slider View"
-        }), /* @__PURE__ */ jsx(Kbd, {
-          sx: {
-            fontSize: 11,
-            borderBottomWidth: 1
-          },
-          children: "4"
-        })]
-      }),
-      children: /* @__PURE__ */ jsxs(Group, {
-        position: "left",
-        spacing: 4,
-        noWrap: true,
-        "data-check": "slider-view",
-        children: [/* @__PURE__ */ jsx(Lbe, {
-          stroke: 1,
-          className: classes.labelIcon
-        }), /* @__PURE__ */ jsx(Text, {
-          lineClamp: 1,
-          className: classes.labelText,
-          children: "Slider"
-        })]
-      })
-    }),
-    value: "slider",
-    disabled: !((_b = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _b.filename)
-  }];
-  return /* @__PURE__ */ jsx(SegmentedControl, {
-    "data-check": "view-segment",
-    sx: {
-      minWidth: 0,
-      minHeight: 0
-    },
-    styles: {
-      label: {
-        minWidth: 0,
-        minHeight: 0,
-        fontSize: "calc(0.1em + 0.55vw)",
-        maxWidth: "7vw",
-        textOverflow: "ellipsis",
-        whiteSpace: "nowrap"
-      }
-    },
-    value: view,
-    onChange: setView,
-    data: viewSegmentData
-  });
-}
 function ZoomToolbar({
   view,
   mainView: mainView2
@@ -23899,6 +23568,337 @@ function ZoomToolbar({
     })]
   });
 }
+const useStyles$2 = createStyles((theme) => ({
+  labelIcon: {
+    minWidth: 18
+  },
+  labelText: {
+    [`@media (max-width: ${theme.breakpoints.lg}px)`]: {
+      display: "none"
+    }
+  }
+}));
+function ViewSegmentedControl({
+  view,
+  setView,
+  currentCheck
+}) {
+  var _a, _b;
+  const {
+    classes
+  } = useStyles$2();
+  useHotkeys([["Digit1", () => setView("expected")], ["Digit2", () => setView("actual")], ["Digit3", () => {
+    var _a2;
+    if ((_a2 = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _a2.filename)
+      setView("diff");
+  }], ["Digit4", () => {
+    var _a2;
+    if ((_a2 = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _a2.filename)
+      setView("slider");
+  }]]);
+  const viewSegmentData = [{
+    label: /* @__PURE__ */ jsx(Tooltip, {
+      withinPortal: true,
+      label: /* @__PURE__ */ jsxs(Group, {
+        noWrap: true,
+        children: [/* @__PURE__ */ jsx(Text, {
+          children: "Switch to Expected View"
+        }), /* @__PURE__ */ jsx(Kbd, {
+          sx: {
+            fontSize: 11,
+            borderBottomWidth: 1
+          },
+          children: "1"
+        })]
+      }),
+      children: /* @__PURE__ */ jsxs(Group, {
+        position: "left",
+        spacing: 4,
+        noWrap: true,
+        "data-check": "expected-view",
+        children: [/* @__PURE__ */ jsx(Pbe, {
+          stroke: 1,
+          className: classes.labelIcon
+        }), /* @__PURE__ */ jsx(Text, {
+          lineClamp: 1,
+          className: classes.labelText,
+          children: "Expected"
+        })]
+      })
+    }),
+    value: "expected",
+    disabled: (currentCheck == null ? void 0 : currentCheck.status[0]) === "new"
+  }, {
+    label: /* @__PURE__ */ jsx(Tooltip, {
+      withinPortal: true,
+      label: /* @__PURE__ */ jsxs(Group, {
+        noWrap: true,
+        children: [/* @__PURE__ */ jsx(Text, {
+          children: "Switch to Actual View"
+        }), /* @__PURE__ */ jsx(Kbd, {
+          sx: {
+            fontSize: 11,
+            borderBottomWidth: 1
+          },
+          children: "2"
+        })]
+      }),
+      children: /* @__PURE__ */ jsxs(Group, {
+        position: "left",
+        spacing: 4,
+        noWrap: true,
+        "data-check": "actual-view",
+        children: [/* @__PURE__ */ jsx(Cbe, {
+          stroke: 1,
+          className: classes.labelIcon
+        }), /* @__PURE__ */ jsx(Text, {
+          lineClamp: 1,
+          className: classes.labelText,
+          children: "Actual"
+        })]
+      })
+    }),
+    value: "actual"
+  }, {
+    label: /* @__PURE__ */ jsx(Tooltip, {
+      withinPortal: true,
+      label: /* @__PURE__ */ jsxs(Group, {
+        noWrap: true,
+        children: [/* @__PURE__ */ jsx(Text, {
+          children: "Switch to Difference View"
+        }), /* @__PURE__ */ jsx(Kbd, {
+          sx: {
+            fontSize: 11,
+            borderBottomWidth: 1
+          },
+          children: "3"
+        })]
+      }),
+      children: /* @__PURE__ */ jsxs(Group, {
+        position: "left",
+        spacing: 4,
+        noWrap: true,
+        "data-check": "diff-view",
+        children: [/* @__PURE__ */ jsx(pi, {
+          stroke: 1,
+          className: classes.labelIcon
+        }), /* @__PURE__ */ jsx(Text, {
+          lineClamp: 1,
+          className: classes.labelText,
+          children: "Difference"
+        })]
+      })
+    }),
+    value: "diff",
+    disabled: !((_a = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _a.filename)
+  }, {
+    label: /* @__PURE__ */ jsx(Tooltip, {
+      withinPortal: true,
+      label: /* @__PURE__ */ jsxs(Group, {
+        noWrap: true,
+        children: [/* @__PURE__ */ jsx(Text, {
+          children: "Switch to Slider View"
+        }), /* @__PURE__ */ jsx(Kbd, {
+          sx: {
+            fontSize: 11,
+            borderBottomWidth: 1
+          },
+          children: "4"
+        })]
+      }),
+      children: /* @__PURE__ */ jsxs(Group, {
+        position: "left",
+        spacing: 4,
+        noWrap: true,
+        "data-check": "slider-view",
+        children: [/* @__PURE__ */ jsx(Lbe, {
+          stroke: 1,
+          className: classes.labelIcon
+        }), /* @__PURE__ */ jsx(Text, {
+          lineClamp: 1,
+          className: classes.labelText,
+          children: "Slider"
+        })]
+      })
+    }),
+    value: "slider",
+    disabled: !((_b = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _b.filename)
+  }];
+  return /* @__PURE__ */ jsx(SegmentedControl, {
+    "data-check": "view-segment",
+    sx: {
+      minWidth: 0,
+      minHeight: 0
+    },
+    styles: {
+      label: {
+        minWidth: 0,
+        minHeight: 0,
+        fontSize: "calc(0.1em + 0.55vw)",
+        maxWidth: "7vw",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap"
+      }
+    },
+    value: view,
+    onChange: setView,
+    data: viewSegmentData
+  });
+}
+function getDiffImageData(image) {
+  const canvas = document.createElement("canvas");
+  canvas.width = image.width;
+  canvas.height = image.height;
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(image, 0, 0);
+  const imgData = ctx.getImageData(0, 0, image.width, image.height);
+  return imgData;
+}
+function highlightDiff(mainView2, highlightsGroups, imageData) {
+  return new Promise((resolve) => {
+    mainView2.canvas.getObjects().filter((x2) => x2.name === "highlight").forEach((x2) => mainView2.canvas.remove(x2));
+    const urlData = mainView2.diffImage.toDataURL({});
+    const img = new Image();
+    img.src = urlData;
+    img.onload = () => {
+      console.time("get_image_data");
+      const diffImageData = imageData || getDiffImageData(img);
+      console.timeEnd("get_image_data");
+      console.time("process_data");
+      const createNewGroup = (x2, y3) => ({
+        minX: x2,
+        maxX: x2,
+        minY: y3,
+        maxY: y3,
+        members: [{ x: x2, y: y3 }]
+      });
+      const getPixel = (x2, y3, curCount) => diffImageData.data.slice(curCount, curCount + 4).join();
+      const diffColor = "255,0,255,255";
+      const groups = highlightsGroups || [];
+      console.time("group formation");
+      if (groups.length < 1) {
+        let cursorCount = 0;
+        for (let y3 = 0; y3 < diffImageData.height; y3 += 1) {
+          for (let x2 = 0; x2 < diffImageData.width; x2 += 1) {
+            if (getPixel(x2, y3, cursorCount) === diffColor) {
+              const suitableGroup = groups.find((group) => x2 >= group.minX - 1 && x2 <= group.maxX + 1 && y3 >= group.minY && y3 <= group.maxY + 1);
+              if (!suitableGroup) {
+                groups.push(createNewGroup(x2, y3));
+              } else if (getPixel(x2 - 1, y3, cursorCount) === diffColor || getPixel(x2 - 1, y3 - 1, cursorCount) === diffColor || getPixel(x2, y3 - 1, cursorCount) === diffColor || getPixel(x2 + 1, y3 - 1, cursorCount) === diffColor || getPixel(x2 + 1, y3, cursorCount) === diffColor || getPixel(x2 + 1, y3 + 1, cursorCount) === diffColor || getPixel(x2, y3 + 1, cursorCount) === diffColor || getPixel(x2 - 1, y3 + 1, cursorCount) === diffColor) {
+                suitableGroup.members.push({ x: x2, y: y3 });
+                if (x2 < suitableGroup.minX)
+                  suitableGroup.minX = x2;
+                if (x2 > suitableGroup.maxX)
+                  suitableGroup.maxX = x2;
+                if (y3 > suitableGroup.maxY)
+                  suitableGroup.maxY = y3;
+              }
+            }
+            cursorCount += 4;
+          }
+        }
+      }
+      console.timeEnd("group formation");
+      console.time("group handling");
+      for (const group of groups) {
+        const top = group.minY + (group.maxY - group.minY) / 2;
+        const left = group.minX + (group.maxX - group.minX) / 2;
+        const circle = new fabric.fabric.Circle({
+          name: "highlight",
+          originX: "center",
+          originY: "center",
+          left,
+          top,
+          data: { group },
+          fill: "#D6336C",
+          opacity: 0.3,
+          strokeWidth: 0,
+          selectable: false
+        });
+        mainView2.canvas.add(circle);
+      }
+      console.timeEnd("group handling");
+      console.timeEnd("process_data");
+      const highlightRemoving = () => {
+        mainView2.canvas.getObjects().filter((x2) => x2.name === "highlight").forEach((x2) => mainView2.canvas.remove(x2));
+      };
+      setTimeout(() => {
+        mainView2.canvas.getObjects().filter((x2) => x2.name === "highlight").forEach((circle) => {
+          const suitableRadius = Math.max(
+            circle.data.group.maxX - circle.data.group.minX,
+            circle.data.group.maxY - circle.data.group.minY
+          );
+          const radius = ((suitableRadius > 25 ? suitableRadius : 25) + Math.floor(Math.random() * 10)) / mainView2.canvas.getZoom();
+          circle.animate("opacity", "0.5", {
+            onChange: mainView2.canvas.renderAll.bind(mainView2.canvas),
+            duration: 500
+          });
+          circle.animate("radius", String(radius), {
+            onChange: mainView2.canvas.renderAll.bind(mainView2.canvas),
+            duration: 500,
+            onComplete: () => {
+              circle.animate("radius", "0.00", {
+                onChange: mainView2.canvas.renderAll.bind(mainView2.canvas),
+                duration: (window == null ? void 0 : window.slowHighlight) ? 15e3 : 700,
+                onComplete: highlightRemoving
+              });
+              circle.animate("opacity", "0.30", {
+                onChange: mainView2.canvas.renderAll.bind(mainView2.canvas),
+                duration: (window == null ? void 0 : window.slowHighlight) ? 3e3 : 700
+              });
+            }
+          });
+        });
+        mainView2.canvas.renderAll();
+      }, 0);
+      return resolve({ groups, diffImageData });
+    };
+  });
+}
+function HighlightButton({
+  mainView: mainView2,
+  disabled = false
+}) {
+  const [loadHighlights, setLoadHighlights] = react.exports.useState(false);
+  const [highlightsGroups, setHighlightsGroups] = react.exports.useState(null);
+  const [imageData, setImageData] = react.exports.useState(null);
+  const label = disabled ? /* @__PURE__ */ jsx(Group, {
+    noWrap: true,
+    children: /* @__PURE__ */ jsx(Text, {
+      children: "Difference highlighting, active in diff mode when the difference is less than 5%"
+    })
+  }) : /* @__PURE__ */ jsx(Group, {
+    noWrap: true,
+    children: /* @__PURE__ */ jsx(Text, {
+      children: "Difference highlighting"
+    })
+  });
+  return /* @__PURE__ */ jsx(Tooltip, {
+    withinPortal: true,
+    label,
+    children: /* @__PURE__ */ jsx("div", {
+      children: /* @__PURE__ */ jsx(ActionIcon, {
+        "data-check": "highlight-icon",
+        disabled,
+        loading: loadHighlights,
+        onClick: async () => {
+          setLoadHighlights(() => true);
+          const {
+            groups,
+            diffImageData
+          } = await highlightDiff(mainView2, highlightsGroups, imageData);
+          setImageData(() => diffImageData);
+          setHighlightsGroups(() => groups);
+          setLoadHighlights(() => false);
+        },
+        children: /* @__PURE__ */ jsx(zb, {
+          size: 24,
+          stroke: 1
+        })
+      })
+    })
+  });
+}
 function RegionsToolbar({
   mainView: mainView2,
   baselineId,
@@ -24043,6 +24043,87 @@ function RegionsToolbar({
     })]
   });
 }
+function Toolbar({
+  mainView: mainView2,
+  classes,
+  curCheck,
+  baselineId,
+  initCheckData,
+  checkQuery
+}) {
+  var _a;
+  const {
+    query
+  } = useParams();
+  const [view, setView] = react.exports.useState("actual");
+  react.exports.useEffect(function initView() {
+    if (mainView2 == null ? void 0 : mainView2.diffImage) {
+      setView(() => "diff");
+      return;
+    }
+    setView(() => "actual");
+  }, [mainView2 == null ? void 0 : mainView2.diffImage, query.checkId]);
+  react.exports.useEffect(function switchView() {
+    if (mainView2) {
+      mainView2.switchView(view);
+    }
+  }, [view]);
+  return /* @__PURE__ */ jsxs(Group, {
+    position: "apart",
+    noWrap: true,
+    "data-check": "toolbar",
+    children: [/* @__PURE__ */ jsx(ScreenshotDetails, {
+      mainView: mainView2,
+      check: curCheck,
+      view
+    }), /* @__PURE__ */ jsxs(Group, {
+      spacing: "sm",
+      noWrap: true,
+      children: [/* @__PURE__ */ jsx(Group, {
+        spacing: 4,
+        className: classes.zoomButtonsWrapper,
+        position: "center",
+        align: "center",
+        noWrap: true,
+        children: /* @__PURE__ */ jsx(ZoomToolbar, {
+          mainView: mainView2,
+          view
+        })
+      }), /* @__PURE__ */ jsx(Divider, {
+        orientation: "vertical"
+      }), /* @__PURE__ */ jsx(ViewSegmentedControl, {
+        view,
+        setView,
+        currentCheck: curCheck
+      }), /* @__PURE__ */ jsx(Divider, {
+        orientation: "vertical"
+      }), /* @__PURE__ */ jsx(HighlightButton, {
+        mainView: mainView2,
+        disabled: !(view === "diff" && parseFloat((_a = curCheck == null ? void 0 : curCheck.parsedResult) == null ? void 0 : _a.rawMisMatchPercentage) < 5)
+      }), /* @__PURE__ */ jsx(Divider, {
+        orientation: "vertical"
+      }), /* @__PURE__ */ jsx(RegionsToolbar, {
+        mainView: mainView2,
+        baselineId,
+        view
+      }), /* @__PURE__ */ jsx(Divider, {
+        orientation: "vertical"
+      }), /* @__PURE__ */ jsx(AcceptButton, {
+        check: curCheck,
+        initCheck: initCheckData,
+        checksQuery: checkQuery,
+        size: 24,
+        testUpdateQuery: checkQuery
+      }), /* @__PURE__ */ jsx(RemoveButton, {
+        check: curCheck,
+        initCheck: initCheckData,
+        checksQuery: checkQuery,
+        testUpdateQuery: checkQuery,
+        size: 30
+      })]
+    })]
+  });
+}
 const useStyles$1 = createStyles((theme) => ({
   zoomButtonsWrapper: {
     "@media (max-width: 1070px)": {
@@ -24079,7 +24160,7 @@ function CheckDetails({
   initCheckData,
   checkQuery
 }) {
-  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r;
+  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q;
   useDocumentTitle(initCheckData == null ? void 0 : initCheckData.name);
   const {
     query
@@ -24092,7 +24173,6 @@ function CheckDetails({
     key: "check-view-size",
     defaultValue: "medium"
   });
-  const [view, setView] = react.exports.useState("actual");
   const [mainView2, setMainView] = react.exports.useState(null);
   const [relatedActiveCheckId, setRelatedActiveCheckId] = react.exports.useState(initCheckData._id);
   const [relatedChecksOpened, relatedChecksHandler] = useDisclosure(true);
@@ -24178,7 +24258,7 @@ function CheckDetails({
     };
     const initMV = async () => {
       var _a2, _b2, _c2, _d2;
-      fabric$1.fabric.Object.prototype.objectCaching = false;
+      fabric.fabric.Object.prototype.objectCaching = false;
       const expectedImgSrc = `${config.baseUri}/snapshoots/${(_a2 = currentCheck == null ? void 0 : currentCheck.baselineId) == null ? void 0 : _a2.filename}?expectedImg`;
       const expectedImg = await createImageAndWaitForLoad(expectedImgSrc);
       const actual = currentCheck.actualSnapshotId || null;
@@ -24207,13 +24287,6 @@ function CheckDetails({
     };
     destroyMV().then(() => initMV());
   }, [relatedActiveCheckId, relatedChecksOpened, query.checkId]);
-  react.exports.useEffect(function initView() {
-    if (mainView2 == null ? void 0 : mainView2.diffImage) {
-      setView(() => "diff");
-      return;
-    }
-    setView(() => "actual");
-  }, [mainView2 == null ? void 0 : mainView2.diffImage, query.checkId]);
   react.exports.useEffect(function afterMainViewCreatedHandleRegions() {
     if (!baselineId)
       return;
@@ -24221,11 +24294,6 @@ function CheckDetails({
       mainView2.getSnapshotIgnoreRegionsDataAndDrawRegions(baselineId);
     }
   }, [(_k = baselineQuery.data) == null ? void 0 : _k.timestamp, mainView2 == null ? void 0 : mainView2.toString(), query.checkId]);
-  react.exports.useEffect(function switchView() {
-    if (mainView2) {
-      mainView2.switchView(view);
-    }
-  }, [view]);
   return /* @__PURE__ */ jsx(Group, {
     style: {
       width: "96vw"
@@ -24390,60 +24458,13 @@ function CheckDetails({
             })
           })]
         })]
-      }), /* @__PURE__ */ jsxs(Group, {
-        position: "apart",
-        noWrap: true,
-        "data-check": "toolbar",
-        children: [/* @__PURE__ */ jsx(ScreenshotDetails, {
-          mainView: mainView2,
-          check: curCheck,
-          view
-        }), /* @__PURE__ */ jsxs(Group, {
-          spacing: "sm",
-          noWrap: true,
-          children: [/* @__PURE__ */ jsx(Group, {
-            spacing: 4,
-            className: classes.zoomButtonsWrapper,
-            position: "center",
-            align: "center",
-            noWrap: true,
-            children: /* @__PURE__ */ jsx(ZoomToolbar, {
-              mainView: mainView2,
-              view
-            })
-          }), /* @__PURE__ */ jsx(Divider, {
-            orientation: "vertical"
-          }), /* @__PURE__ */ jsx(ViewSegmentedControl, {
-            view,
-            setView,
-            currentCheck: curCheck
-          }), /* @__PURE__ */ jsx(Divider, {
-            orientation: "vertical"
-          }), /* @__PURE__ */ jsx(HighlightButton, {
-            mainView: mainView2,
-            disabled: !(view === "diff" && parseFloat((_r = curCheck == null ? void 0 : curCheck.parsedResult) == null ? void 0 : _r.rawMisMatchPercentage) < 5)
-          }), /* @__PURE__ */ jsx(Divider, {
-            orientation: "vertical"
-          }), /* @__PURE__ */ jsx(RegionsToolbar, {
-            mainView: mainView2,
-            baselineId,
-            view
-          }), /* @__PURE__ */ jsx(Divider, {
-            orientation: "vertical"
-          }), /* @__PURE__ */ jsx(AcceptButton, {
-            check: curCheck,
-            initCheck: initCheckData,
-            checksQuery: checkQuery,
-            size: 24,
-            testUpdateQuery: checkQuery
-          }), /* @__PURE__ */ jsx(RemoveButton, {
-            check: curCheck,
-            initCheck: initCheckData,
-            checksQuery: checkQuery,
-            testUpdateQuery: checkQuery,
-            size: 30
-          })]
-        })]
+      }), /* @__PURE__ */ jsx(Toolbar, {
+        mainView: mainView2,
+        checkQuery,
+        curCheck,
+        initCheckData,
+        classes,
+        baselineId
       }), /* @__PURE__ */ jsxs(Group, {
         spacing: 4,
         align: "start",
