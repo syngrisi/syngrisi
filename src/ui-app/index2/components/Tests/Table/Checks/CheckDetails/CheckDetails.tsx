@@ -11,7 +11,7 @@ import {
     useDisclosure,
     useDocumentTitle,
 } from '@mantine/hooks';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { MainView } from './Canvas/mainView';
 import { imageFromUrl } from './Canvas/helpers';
@@ -74,7 +74,7 @@ interface Props {
 
 export function CheckDetails({ initCheckData, checkQuery }: Props) {
     useDocumentTitle(initCheckData?.name);
-
+    const canvasElementRef = useRef(null);
     const { query } = useParams();
     const { classes } = useStyles();
     const [mainView, setMainView] = useState<MainView | null>(null);
@@ -177,7 +177,8 @@ export function CheckDetails({ initCheckData, checkQuery }: Props) {
             const actualImg = await createImageAndWaitForLoad(actualImgSrc);
 
             // eslint-disable-next-line max-len
-            document.getElementById('snapshoot').style.height = `${MainView.calculateExpectedCanvasViewportAreaSize().height - 10}px`;
+            // document.getElementById('snapshoot').style.height = `${MainView.calculateExpectedCanvasViewportAreaSize().height - 10}px`;
+            canvasElementRef.current.style.height = `${MainView.calculateExpectedCanvasViewportAreaSize().height - 10}px`;
 
             const expectedImage = await imageFromUrl(expectedImg.src);
             const actualImage = await imageFromUrl((actualImg).src);
@@ -190,8 +191,10 @@ export function CheckDetails({ initCheckData, checkQuery }: Props) {
                 const MV = new MainView(
                     {
                         canvasId: '2d',
-                        canvasElementWidth: document.getElementById('snapshoot')!.clientWidth,
-                        canvasElementHeight: document.getElementById('snapshoot')!.clientHeight,
+                        // canvasElementWidth: document.getElementById('snapshoot')!.clientWidth,
+                        // canvasElementHeight: document.getElementById('snapshoot')!.clientHeight,
+                        canvasElementWidth: canvasElementRef.current?.clientWidth,
+                        canvasElementHeight: canvasElementRef.current?.clientHeight,
                         expectedImage,
                         actualImage,
                         diffImage,
@@ -260,7 +263,7 @@ export function CheckDetails({ initCheckData, checkQuery }: Props) {
                     </Group>
 
                     {/* Canvas container */}
-                    <Canvas related={related} />
+                    <Canvas related={related} canvasElementRef={canvasElementRef} />
                 </Group>
             </Stack>
         </Group>
