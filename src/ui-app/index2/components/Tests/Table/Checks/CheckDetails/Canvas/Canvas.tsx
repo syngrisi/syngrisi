@@ -2,10 +2,11 @@ import * as React from 'react';
 import { Group, Paper, useMantineTheme } from '@mantine/core';
 
 interface Props {
-    related: any,
+    related: any
+    canvasElementRef: React.MutableRefObject<any>
 }
 
-export function Canvas({ related }: Props) {
+export function Canvas({ related, canvasElementRef }: Props) {
     const theme = useMantineTheme();
 
     return (
@@ -13,6 +14,7 @@ export function Canvas({ related }: Props) {
             <Paper
                 shadow="xl"
                 withBorder
+                ref={canvasElementRef}
                 id="snapshoot"
                 style={
                     {
