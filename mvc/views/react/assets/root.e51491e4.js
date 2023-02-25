@@ -5,7 +5,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 import { r as react, X as queryString, b as jsx, j as jsxs, P as Paper, g as Title, Y as Stack, T as Text, G as Group, h as Button, Z as Epe, k as ky, a as config, u as useQuery, d as useMantineTheme, q as TextInput, V as ActionIcon, n as lAe, _ as Pj, c as createStyles, y as useLocalStorage, e as Container, $ as Dge, a0 as Fragment, a1 as useQueryClient, l as log, a2 as Tooltip, a3 as CK, a4 as Loader, a5 as React, a6 as Transition, a7 as Xfe, a8 as rze, f as useDocumentTitle, A as Anchor, a9 as zV, aa as ea, ab as Ol, ac as ua, ad as RX, ae as rWe, af as UZ, s as Checkbox, ag as getAugmentedNamespace, D as useHotkeys, ah as lDe, ai as dDe, aj as Pbe, ak as Cbe, al as pi, am as Lbe, an as zb, ao as IMe, ap as DMe, aq as qF, L as LoadingOverlay, ar as LHe, B as Box, o as useSearchParams, as as Y, Q as QueryClient, at as useNavigate, t as GCe, v as Nie, E as QueryClientProvider, F as ColorSchemeProvider, M as MantineProvider, au as Routes, av as Route, H as createRoot, I as BrowserRouter } from "./use-form.bba2ce1c.js";
-import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, G as GenericService, e as errorMsg, a as useDisclosure, b as useClickOutside, c as escapeRegExp, P as Popover, d as ScrollArea, f as Chip, D as Divider, l as links, H as Header, g as HeaderLogo, h as SafeSelect, o as openSpotlight, K as Kbd, i as useOs, U as UserMenu, B as Breadcrumbs, j as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, k as Skeleton, m as useInView, F as FocusTrap, n as getNavigationItem, p as useToggle, q as useInfinityScroll, N as Navbar, r as Badge, A as Affix, t as ActionPopoverIcon, v as UserHooks, T as ThemeIcon, w as getStatusMessage, x as encodeQueryParams, I as Image$1, y as Card, z as Collapse, E as Burger, O as useInfiniteQuery, Q as SegmentedControl, V as Table, W as useInputState, X as RelativeDrawer, Y as LogicalGroup, Z as uuid, $ as useNavProgressFetchEffect, a0 as AppShell, a1 as ReactQueryDevtools, a2 as useColorScheme, a3 as navigationData, a4 as SpotlightProvider, a5 as NotificationsProvider, a6 as NavigationProgress, a7 as QueryParamProvider, a8 as ReactRouter6Adapter } from "./LogicalGroup.6bc7ad94.js";
+import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, G as GenericService, e as errorMsg, a as useDisclosure, b as useClickOutside, c as escapeRegExp, P as Popover, d as ScrollArea, f as Chip, D as Divider, l as links, H as Header$1, g as HeaderLogo, h as SafeSelect, o as openSpotlight, K as Kbd, i as useOs, U as UserMenu, B as Breadcrumbs, j as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, k as Skeleton, m as useInView, F as FocusTrap, n as getNavigationItem, p as useToggle, q as useInfinityScroll, N as Navbar, r as Badge, A as Affix, t as ActionPopoverIcon, v as UserHooks, T as ThemeIcon, w as getStatusMessage, x as encodeQueryParams, I as Image$1, y as Card, z as Collapse, E as Burger, O as useInfiniteQuery, Q as SegmentedControl, V as Table, W as useInputState, X as RelativeDrawer, Y as LogicalGroup, Z as uuid, $ as useNavProgressFetchEffect, a0 as AppShell, a1 as ReactQueryDevtools, a2 as useColorScheme, a3 as navigationData, a4 as SpotlightProvider, a5 as NotificationsProvider, a6 as NavigationProgress, a7 as QueryParamProvider, a8 as ReactRouter6Adapter } from "./LogicalGroup.6bc7ad94.js";
 function useDebouncedValue(value, wait, options = { leading: false }) {
   const [_value, setValue] = react.exports.useState(value);
   const mountedRef = react.exports.useRef(false);
@@ -718,7 +718,7 @@ function HeaderIndex({
       app: currentProjectLS
     });
   }, [currentProjectLS]);
-  return /* @__PURE__ */ jsxs(Header, {
+  return /* @__PURE__ */ jsxs(Header$1, {
     height: 100,
     className: classes.header,
     children: [/* @__PURE__ */ jsxs(Container, {
@@ -22463,7 +22463,7 @@ class MainView {
       });
       const text = await response.text();
       if (response.status === 200) {
-        console.log(`Successful send baseline ignored regions, id: '${id}'  resp: '${text}'`);
+        log.debug(`Successful send baseline ignored regions, id: '${id}'  resp: '${text}'`);
         successMsg({ message: "ignored regions was saved" });
         return;
       }
@@ -22515,11 +22515,11 @@ class MainView {
       const response = await fetch(url);
       const text = await response.text();
       if (response.status === 200) {
-        console.log(`Successfully got ignored regions, id: '${baselineId}'  resp: '${text}'`);
+        log.debug(`Successfully got ignored regions, id: '${baselineId}'  resp: '${text}'`);
         return JSON.parse(text);
       }
       if (response.status === 202) {
-        console.log("No regions");
+        log.debug("No regions");
         return [];
       }
       console.error(`Cannot get baseline ignored regions , status: '${response.status}',  resp: '${text}'`);
@@ -24124,6 +24124,206 @@ function Toolbar({
     })]
   });
 }
+function Header({
+  classes,
+  currentCheck
+}) {
+  var _a, _b, _c, _d, _e, _f;
+  const theme = useMantineTheme();
+  const [checksViewSize] = useLocalStorage({
+    key: "check-view-size",
+    defaultValue: "medium"
+  });
+  const textLoader = /* @__PURE__ */ jsx(Loader, {
+    size: "xs",
+    color: "blue",
+    variant: "dots"
+  });
+  const statusMsg = currentCheck.status ? getStatusMessage(currentCheck) : textLoader;
+  const iconsColor = react.exports.useMemo(() => theme.colorScheme === "dark" ? theme.colors.gray[3] : theme.colors.dark[9], [theme.colorScheme]);
+  return /* @__PURE__ */ jsxs(Group, {
+    position: "apart",
+    sx: {
+      width: "98%"
+    },
+    "data-check-header-name": currentCheck.name,
+    noWrap: true,
+    children: [/* @__PURE__ */ jsxs(Group, {
+      position: "left",
+      align: "center",
+      spacing: "xs",
+      sx: {
+        position: "relative"
+      },
+      noWrap: true,
+      "data-test": "full-check-path",
+      children: [/* @__PURE__ */ jsx(Tooltip, {
+        label: /* @__PURE__ */ jsxs(Group, {
+          spacing: 4,
+          children: [currentCheck.status ? /* @__PURE__ */ jsx(Status$1, {
+            size: "lg",
+            check: currentCheck,
+            variant: "filled"
+          }) : textLoader, statusMsg]
+        }),
+        withinPortal: true,
+        children: /* @__PURE__ */ jsx(Group, {
+          align: "center",
+          "data-check": "status",
+          children: /* @__PURE__ */ jsx(Status$1, {
+            size: "lg",
+            check: currentCheck,
+            variant: "filled"
+          })
+        })
+      }), /* @__PURE__ */ jsxs(Group, {
+        noWrap: true,
+        spacing: 0,
+        children: [/* @__PURE__ */ jsx(Tooltip, {
+          withinPortal: true,
+          label: `Project: ${(_a = currentCheck == null ? void 0 : currentCheck.app) == null ? void 0 : _a.name}`,
+          children: /* @__PURE__ */ jsx(Text, {
+            "data-check": "app-name",
+            sx: {
+              flexShrink: 1
+            },
+            className: classes.checkPathFragment,
+            children: (_b = currentCheck == null ? void 0 : currentCheck.app) == null ? void 0 : _b.name
+          })
+        }), /* @__PURE__ */ jsx(Tooltip, {
+          withinPortal: true,
+          label: `Suite: ${(_c = currentCheck == null ? void 0 : currentCheck.suite) == null ? void 0 : _c.name}`,
+          children: /* @__PURE__ */ jsxs(Text, {
+            "data-check": "suite-name",
+            sx: {
+              flexShrink: 500
+            },
+            className: classes.checkPathFragment,
+            children: ["\xA0/\xA0", (_d = currentCheck == null ? void 0 : currentCheck.suite) == null ? void 0 : _d.name]
+          })
+        }), /* @__PURE__ */ jsx(Tooltip, {
+          withinPortal: true,
+          label: `Test: ${(_e = currentCheck == null ? void 0 : currentCheck.test) == null ? void 0 : _e.name}`,
+          children: /* @__PURE__ */ jsxs(Text, {
+            "data-check": "test-name",
+            sx: {
+              flexShrink: 5
+            },
+            className: classes.checkPathFragment,
+            children: ["\xA0/\xA0", (_f = currentCheck == null ? void 0 : currentCheck.test) == null ? void 0 : _f.name]
+          })
+        }), /* @__PURE__ */ jsx(Tooltip, {
+          withinPortal: true,
+          label: `Check: ${currentCheck.name}`,
+          children: /* @__PURE__ */ jsxs(Text, {
+            "data-check": "check-name",
+            sx: {
+              flexShrink: 1
+            },
+            lineClamp: 1,
+            children: ["\xA0/\xA0", currentCheck.name || textLoader]
+          })
+        })]
+      })]
+    }), /* @__PURE__ */ jsxs(Group, {
+      noWrap: true,
+      spacing: "xs",
+      children: [/* @__PURE__ */ jsx(Tooltip, {
+        label: currentCheck == null ? void 0 : currentCheck.viewport,
+        withinPortal: true,
+        children: /* @__PURE__ */ jsx(Text, {
+          lineClamp: 1,
+          sx: {
+            overflow: "visible"
+          },
+          "data-check": "viewport",
+          children: (currentCheck == null ? void 0 : currentCheck.viewport) ? /* @__PURE__ */ jsx(ViewPortLabel, {
+            check: currentCheck,
+            color: "blue",
+            sizes,
+            size: "lg",
+            checksViewSize,
+            fontSize: "12px"
+          }) : textLoader
+        })
+      }), /* @__PURE__ */ jsx(Tooltip, {
+        "data-check": "os-label",
+        label: currentCheck == null ? void 0 : currentCheck.os,
+        withinPortal: true,
+        children: /* @__PURE__ */ jsxs(Group, {
+          spacing: 8,
+          noWrap: true,
+          children: [/* @__PURE__ */ jsx(ActionIcon, {
+            variant: "light",
+            size: 32,
+            p: 4,
+            ml: 4,
+            children: (currentCheck == null ? void 0 : currentCheck.os) ? /* @__PURE__ */ jsx(OsIcon, {
+              "data-check": "os-icon",
+              size: 20,
+              color: iconsColor,
+              os: currentCheck == null ? void 0 : currentCheck.os
+            }) : textLoader
+          }), /* @__PURE__ */ jsx(Text, {
+            "data-check": "os",
+            size: 12,
+            lineClamp: 1,
+            children: currentCheck == null ? void 0 : currentCheck.os
+          })]
+        })
+      }), /* @__PURE__ */ jsx(Tooltip, {
+        label: (currentCheck == null ? void 0 : currentCheck.browserFullVersion) ? `${currentCheck == null ? void 0 : currentCheck.browserFullVersion}` : `${currentCheck == null ? void 0 : currentCheck.browserVersion}`,
+        withinPortal: true,
+        children: /* @__PURE__ */ jsxs(Group, {
+          spacing: 8,
+          noWrap: true,
+          children: [/* @__PURE__ */ jsx(ActionIcon, {
+            variant: "light",
+            size: 32,
+            p: 4,
+            children: (currentCheck == null ? void 0 : currentCheck.browserName) ? /* @__PURE__ */ jsx(BrowserIcon, {
+              "data-check": "browser-icon",
+              size: 20,
+              color: iconsColor,
+              browser: currentCheck == null ? void 0 : currentCheck.browserName
+            }) : textLoader
+          }), /* @__PURE__ */ jsxs(Text, {
+            "data-check": "browser",
+            lineClamp: 1,
+            size: 12,
+            children: [currentCheck == null ? void 0 : currentCheck.browserName, (currentCheck == null ? void 0 : currentCheck.browserVersion) ? ` - ${currentCheck == null ? void 0 : currentCheck.browserVersion}` : ""]
+          })]
+        })
+      })]
+    })]
+  });
+}
+function Canvas({
+  related
+}) {
+  const theme = useMantineTheme();
+  return /* @__PURE__ */ jsx(Group, {
+    sx: {
+      width: related.opened ? "90%" : "100%"
+    },
+    children: /* @__PURE__ */ jsx(Paper, {
+      shadow: "xl",
+      withBorder: true,
+      id: "snapshoot",
+      style: {
+        backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[1],
+        width: "100%",
+        height: "100%"
+      },
+      children: /* @__PURE__ */ jsx("canvas", {
+        style: {
+          width: "100%"
+        },
+        id: "2d"
+      })
+    })
+  });
+}
 const useStyles$1 = createStyles((theme) => ({
   zoomButtonsWrapper: {
     "@media (max-width: 1070px)": {
@@ -24160,19 +24360,14 @@ function CheckDetails({
   initCheckData,
   checkQuery
 }) {
-  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q;
+  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k;
   useDocumentTitle(initCheckData == null ? void 0 : initCheckData.name);
   const {
     query
   } = useParams();
-  const theme = useMantineTheme();
   const {
     classes
   } = useStyles$1();
-  const [checksViewSize] = useLocalStorage({
-    key: "check-view-size",
-    defaultValue: "medium"
-  });
   const [mainView2, setMainView] = react.exports.useState(null);
   const [relatedActiveCheckId, setRelatedActiveCheckId] = react.exports.useState(initCheckData._id);
   const [relatedChecksOpened, relatedChecksHandler] = useDisclosure(true);
@@ -24187,7 +24382,7 @@ function CheckDetails({
     color: "blue",
     variant: "dots"
   });
-  const curCheck = {
+  const currentCheckSafe = {
     _id: currentCheck == null ? void 0 : currentCheck._id,
     name: (currentCheck == null ? void 0 : currentCheck.name) || "",
     status: (currentCheck == null ? void 0 : currentCheck.status) || "",
@@ -24238,7 +24433,6 @@ function CheckDetails({
       });
     }
   });
-  const statusMsg = currentCheck.status ? getStatusMessage(currentCheck) : textLoader;
   const baselineId = react.exports.useMemo(() => {
     var _a2, _b2, _c2;
     if (((_a2 = baselineQuery.data) == null ? void 0 : _a2.results) && ((_b2 = baselineQuery.data) == null ? void 0 : _b2.results.length) > 0) {
@@ -24246,7 +24440,6 @@ function CheckDetails({
     }
     return "";
   }, [(_j = baselineQuery.data) == null ? void 0 : _j.timestamp]);
-  const iconsColor = react.exports.useMemo(() => theme.colorScheme === "dark" ? theme.colors.gray[3] : theme.colors.dark[9], [theme.colorScheme]);
   react.exports.useEffect(() => {
     const destroyMV = async () => {
       if (mainView2) {
@@ -24303,165 +24496,13 @@ function CheckDetails({
       sx: {
         width: "100%"
       },
-      children: [/* @__PURE__ */ jsxs(Group, {
-        position: "apart",
-        sx: {
-          width: "98%"
-        },
-        "data-check-header-name": curCheck.name,
-        noWrap: true,
-        children: [/* @__PURE__ */ jsxs(Group, {
-          position: "left",
-          align: "center",
-          spacing: "xs",
-          sx: {
-            position: "relative"
-          },
-          noWrap: true,
-          "data-test": "full-check-path",
-          children: [/* @__PURE__ */ jsx(Tooltip, {
-            label: /* @__PURE__ */ jsxs(Group, {
-              spacing: 4,
-              children: [curCheck.status ? /* @__PURE__ */ jsx(Status$1, {
-                size: "lg",
-                check: curCheck,
-                variant: "filled"
-              }) : textLoader, statusMsg]
-            }),
-            withinPortal: true,
-            children: /* @__PURE__ */ jsx(Group, {
-              align: "center",
-              "data-check": "status",
-              children: /* @__PURE__ */ jsx(Status$1, {
-                size: "lg",
-                check: curCheck,
-                variant: "filled"
-              })
-            })
-          }), /* @__PURE__ */ jsxs(Group, {
-            noWrap: true,
-            spacing: 0,
-            children: [/* @__PURE__ */ jsx(Tooltip, {
-              withinPortal: true,
-              label: `Project: ${(_l = curCheck == null ? void 0 : curCheck.app) == null ? void 0 : _l.name}`,
-              children: /* @__PURE__ */ jsx(Text, {
-                "data-check": "app-name",
-                sx: {
-                  flexShrink: 1
-                },
-                className: classes.checkPathFragment,
-                children: (_m = curCheck == null ? void 0 : curCheck.app) == null ? void 0 : _m.name
-              })
-            }), /* @__PURE__ */ jsx(Tooltip, {
-              withinPortal: true,
-              label: `Suite: ${(_n = curCheck == null ? void 0 : curCheck.suite) == null ? void 0 : _n.name}`,
-              children: /* @__PURE__ */ jsxs(Text, {
-                "data-check": "suite-name",
-                sx: {
-                  flexShrink: 500
-                },
-                className: classes.checkPathFragment,
-                children: ["\xA0/\xA0", (_o = curCheck == null ? void 0 : curCheck.suite) == null ? void 0 : _o.name]
-              })
-            }), /* @__PURE__ */ jsx(Tooltip, {
-              withinPortal: true,
-              label: `Test: ${(_p = curCheck == null ? void 0 : curCheck.test) == null ? void 0 : _p.name}`,
-              children: /* @__PURE__ */ jsxs(Text, {
-                "data-check": "test-name",
-                sx: {
-                  flexShrink: 5
-                },
-                className: classes.checkPathFragment,
-                children: ["\xA0/\xA0", (_q = curCheck == null ? void 0 : curCheck.test) == null ? void 0 : _q.name]
-              })
-            }), /* @__PURE__ */ jsx(Tooltip, {
-              withinPortal: true,
-              label: `Check: ${curCheck.name}`,
-              children: /* @__PURE__ */ jsxs(Text, {
-                "data-check": "check-name",
-                sx: {
-                  flexShrink: 1
-                },
-                lineClamp: 1,
-                children: ["\xA0/\xA0", curCheck.name || textLoader]
-              })
-            })]
-          })]
-        }), /* @__PURE__ */ jsxs(Group, {
-          noWrap: true,
-          spacing: "xs",
-          children: [/* @__PURE__ */ jsx(Tooltip, {
-            label: curCheck == null ? void 0 : curCheck.viewport,
-            withinPortal: true,
-            children: /* @__PURE__ */ jsx(Text, {
-              lineClamp: 1,
-              sx: {
-                overflow: "visible"
-              },
-              "data-check": "viewport",
-              children: (curCheck == null ? void 0 : curCheck.viewport) ? /* @__PURE__ */ jsx(ViewPortLabel, {
-                check: curCheck,
-                color: "blue",
-                sizes,
-                size: "lg",
-                checksViewSize,
-                fontSize: "12px"
-              }) : textLoader
-            })
-          }), /* @__PURE__ */ jsx(Tooltip, {
-            "data-check": "os-label",
-            label: curCheck == null ? void 0 : curCheck.os,
-            withinPortal: true,
-            children: /* @__PURE__ */ jsxs(Group, {
-              spacing: 8,
-              noWrap: true,
-              children: [/* @__PURE__ */ jsx(ActionIcon, {
-                variant: "light",
-                size: 32,
-                p: 4,
-                ml: 4,
-                children: (curCheck == null ? void 0 : curCheck.os) ? /* @__PURE__ */ jsx(OsIcon, {
-                  "data-check": "os-icon",
-                  size: 20,
-                  color: iconsColor,
-                  os: curCheck == null ? void 0 : curCheck.os
-                }) : textLoader
-              }), /* @__PURE__ */ jsx(Text, {
-                "data-check": "os",
-                size: 12,
-                lineClamp: 1,
-                children: curCheck == null ? void 0 : curCheck.os
-              })]
-            })
-          }), /* @__PURE__ */ jsx(Tooltip, {
-            label: (curCheck == null ? void 0 : curCheck.browserFullVersion) ? `${curCheck == null ? void 0 : curCheck.browserFullVersion}` : `${curCheck == null ? void 0 : curCheck.browserVersion}`,
-            withinPortal: true,
-            children: /* @__PURE__ */ jsxs(Group, {
-              spacing: 8,
-              noWrap: true,
-              children: [/* @__PURE__ */ jsx(ActionIcon, {
-                variant: "light",
-                size: 32,
-                p: 4,
-                children: (curCheck == null ? void 0 : curCheck.browserName) ? /* @__PURE__ */ jsx(BrowserIcon, {
-                  "data-check": "browser-icon",
-                  size: 20,
-                  color: iconsColor,
-                  browser: curCheck == null ? void 0 : curCheck.browserName
-                }) : textLoader
-              }), /* @__PURE__ */ jsxs(Text, {
-                "data-check": "browser",
-                lineClamp: 1,
-                size: 12,
-                children: [curCheck == null ? void 0 : curCheck.browserName, (curCheck == null ? void 0 : curCheck.browserVersion) ? ` - ${curCheck == null ? void 0 : curCheck.browserVersion}` : ""]
-              })]
-            })
-          })]
-        })]
+      children: [/* @__PURE__ */ jsx(Header, {
+        classes,
+        currentCheck: currentCheckSafe
       }), /* @__PURE__ */ jsx(Toolbar, {
         mainView: mainView2,
         checkQuery,
-        curCheck,
+        curCheck: currentCheckSafe,
         initCheckData,
         classes,
         baselineId
@@ -24479,26 +24520,8 @@ function CheckDetails({
             currentCheck: initCheckData,
             related
           })
-        }), /* @__PURE__ */ jsx(Group, {
-          sx: {
-            width: related.opened ? "90%" : "100%"
-          },
-          children: /* @__PURE__ */ jsx(Paper, {
-            shadow: "xl",
-            withBorder: true,
-            id: "snapshoot",
-            style: {
-              backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[1],
-              width: "100%",
-              height: "100%"
-            },
-            children: /* @__PURE__ */ jsx("canvas", {
-              style: {
-                width: "100%"
-              },
-              id: "2d"
-            })
-          })
+        }), /* @__PURE__ */ jsx(Canvas, {
+          related
         })]
       })]
     })
