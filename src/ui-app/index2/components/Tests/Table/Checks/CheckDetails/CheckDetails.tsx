@@ -6,7 +6,6 @@ import {
     Paper,
     Stack,
     useMantineTheme,
-    Divider,
     createStyles,
     Tooltip,
     Text,
@@ -20,20 +19,13 @@ import {
 } from '@mantine/hooks';
 import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { MainView } from './mainView';
-import { imageFromUrl } from './helpers';
+import { MainView } from './Canvas/mainView';
+import { imageFromUrl } from './Canvas/helpers';
 import { errorMsg, log } from '../../../../../../shared/utils';
 import { GenericService } from '../../../../../../shared/services';
 import config from '../../../../../../config';
-import { AcceptButton } from '../AcceptButton';
-import { RemoveButton } from '../RemoveButton';
-import { RelatedChecks } from './RelatedChecks';
+import { RelatedChecks } from './RelatedChecks/RelatedChecks';
 import { useRelatedChecks } from './hooks/useRelatedChecks';
-import { ScreenshotDetails } from './ScreenshotDetails';
-import { HighlightButton } from './HighlightButton';
-import { ViewSegmentedControl } from './ViewSegmentedControl';
-import { ZoomToolbar } from './ZoomToolbar';
-import { RegionsToolbar } from './RegionsToolbar';
 import { Status } from '../../../../../../shared/components/Check/Status';
 import { ViewPortLabel } from '../ViewPortLabel';
 import { sizes } from '../checkSizes';
@@ -41,6 +33,7 @@ import { OsIcon } from '../../../../../../shared/components/Check/OsIcon';
 import { BrowserIcon } from '../../../../../../shared/components/Check/BrowserIcon';
 import { getStatusMessage } from '../../../../../../shared/utils/utils';
 import { useParams } from '../../../../../hooks/useParams';
+import { Toolbar } from './Toolbar';
 
 // eslint-disable-next-line no-unused-vars
 const useStyles = createStyles((theme) => ({
@@ -96,7 +89,6 @@ export function CheckDetails({ initCheckData, checkQuery }: Props) {
     const theme = useMantineTheme();
     const { classes } = useStyles();
     const [checksViewSize] = useLocalStorage({ key: 'check-view-size', defaultValue: 'medium' });
-    const [view, setView] = useState('actual');
     const [mainView, setMainView] = useState<MainView | null>(null);
 
     const [relatedActiveCheckId, setRelatedActiveCheckId] = useState<string>(initCheckData._id);
@@ -239,14 +231,6 @@ export function CheckDetails({ initCheckData, checkQuery }: Props) {
         query.checkId,
     ]);
 
-    useEffect(function initView() {
-        if (mainView?.diffImage) {
-            setView(() => 'diff');
-            return;
-        }
-        setView(() => 'actual');
-    }, [mainView?.diffImage, query.checkId]);
-
     useEffect(function afterMainViewCreatedHandleRegions() {
         if (!baselineId) return;
         if (mainView) {
@@ -257,12 +241,6 @@ export function CheckDetails({ initCheckData, checkQuery }: Props) {
         mainView?.toString(),
         query.checkId,
     ]);
-
-    useEffect(function switchView() {
-        if (mainView) {
-            mainView.switchView(view);
-        }
-    }, [view]);
 
     return (
         <Group style={{ width: '96vw' }} spacing={4}>
@@ -456,51 +434,14 @@ export function CheckDetails({ initCheckData, checkQuery }: Props) {
                 </Group>
 
                 {/* Toolbar */}
-                <Group position="apart" noWrap data-check="toolbar">
-                    <ScreenshotDetails mainView={mainView} check={curCheck} view={view} />
-                    <Group spacing="sm" noWrap>
-                        <Group
-                            spacing={4}
-                            className={classes.zoomButtonsWrapper}
-                            position="center"
-                            align="center"
-                            noWrap
-                        >
-                            <ZoomToolbar mainView={mainView as MainView} view={view} />
-                        </Group>
-
-                        <Divider orientation="vertical" />
-
-                        <ViewSegmentedControl view={view} setView={setView} currentCheck={curCheck} />
-
-                        <Divider orientation="vertical" />
-
-                        <HighlightButton
-                            mainView={mainView as MainView}
-                            disabled={!(view === 'diff' && parseFloat(curCheck?.parsedResult?.rawMisMatchPercentage) < 5)}
-                        />
-                        <Divider orientation="vertical" />
-
-                        <RegionsToolbar mainView={mainView} baselineId={baselineId} view={view} />
-
-                        <Divider orientation="vertical" />
-                        <AcceptButton
-                            check={curCheck}
-                            initCheck={initCheckData}
-                            checksQuery={checkQuery}
-                            size={24}
-                            testUpdateQuery={checkQuery}
-                        />
-
-                        <RemoveButton
-                            check={curCheck}
-                            initCheck={initCheckData}
-                            checksQuery={checkQuery}
-                            testUpdateQuery={checkQuery}
-                            size={30}
-                        />
-                    </Group>
-                </Group>
+                <Toolbar
+                    mainView={mainView}
+                    checkQuery={checkQuery}
+                    curCheck={curCheck}
+                    initCheckData={initCheckData}
+                    classes={classes}
+                    baselineId={baselineId}
+                />
 
                 <Group
                     spacing={4}

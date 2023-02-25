@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ActionIcon, Group, Transition } from '@mantine/core';
 import { IconSortAscending, IconSortDescending, IconX } from '@tabler/icons';
-import SafeSelect from '../../../../../../shared/components/SafeSelect';
+import SafeSelect from '../../../../../../../shared/components/SafeSelect';
 
 type Props = {
     setSortBy: any,

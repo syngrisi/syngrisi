@@ -2,8 +2,9 @@ import { fabric } from 'fabric';
 import { SimpleView } from './simpleView';
 import { SideToSideView } from './sideToSideView';
 import { lockImage } from './helpers';
-import { errorMsg, successMsg } from '../../../../../../shared/utils/utils';
-import config from '../../../../../../config';
+import { errorMsg, successMsg } from '../../../../../../../shared/utils/utils';
+import config from '../../../../../../../config';
+import { log } from '../../../../../../../shared/utils/Logger';
 
 /* eslint-disable dot-notation,no-underscore-dangle */
 
@@ -137,7 +138,7 @@ export class MainView {
     panEvents() {
         this.canvas.on(
             'mouse:move', (e) => {
-                // console.log(e.e.buttons);
+                // log.debug(e.e.buttons);
                 if ((e.e.buttons === 4)) {
                     this.canvas.setCursor('grab');
 
@@ -374,7 +375,7 @@ export class MainView {
             });
             const text = await response.text();
             if (response.status === 200) {
-                console.log(`Successful send baseline ignored regions, id: '${id}'  resp: '${text}'`);
+                log.debug(`Successful send baseline ignored regions, id: '${id}'  resp: '${text}'`);
                 successMsg({ message: 'ignored regions was saved' });
                 // MainView.showToaster('ignored regions was saved');
                 return;
@@ -420,13 +421,13 @@ export class MainView {
     }
 
     drawRegions(data) {
-        // console.log({ data });
+        // log.debug({ data });
         if (!data || data === 'undefined') {
             return;
             // console.error('The regions data is empty')
         }
         const regs = this.convertRegionsDataFromServer(JSON.parse(data));
-        // console.log('converted:', regs.length, regs);
+        // log.debug('converted:', regs.length, regs);
         const classThis = this;
         regs.forEach((regParams) => {
             // eslint-disable-next-line no-param-reassign
@@ -438,19 +439,19 @@ export class MainView {
     static async getRegionsData(baselineId: string) {
         try {
             if (!baselineId) {
-                // console.log('Cannot get regions, baseline id is empty');
+                // log.debug('Cannot get regions, baseline id is empty');
                 return [];
             }
             const url = `${config.baseUri}/baselines/${baselineId}`;
-            // console.log({ url });
+            // log.debug({ url });
             const response = await fetch(url);
             const text = await response.text();
             if (response.status === 200) {
-                console.log(`Successfully got ignored regions, id: '${baselineId}'  resp: '${text}'`);
+                log.debug(`Successfully got ignored regions, id: '${baselineId}'  resp: '${text}'`);
                 return JSON.parse(text);
             }
             if (response.status === 202) {
-                console.log('No regions');
+                log.debug('No regions');
                 return [];
             }
             console.error(`Cannot get baseline ignored regions , status: '${response.status}',  resp: '${text}'`);

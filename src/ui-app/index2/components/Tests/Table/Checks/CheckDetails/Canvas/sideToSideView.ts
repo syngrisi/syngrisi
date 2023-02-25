@@ -329,7 +329,6 @@ export class SideToSideView {
         // this.expectedRectClip.width = 500;
         this.expectedRectClip.width = (this.canvas.getWidth() / this.canvas.getZoom()) * 5;
 
-
         // this.actualRectClip.left = (this.actualImg.getScaledWidth() / 2);
         // this.expectedRectClip.left = (this.expectedRectClip.width * -1) + this.actualImg.getScaledWidth() / 2;
         // this.divider.left = (this.expectedImg.getScaledWidth() / 2);
@@ -338,11 +337,9 @@ export class SideToSideView {
         this.expectedRectClip.left = (this.canvas.width / 2) - this.expectedRectClip.width;
         this.divider.left = (this.canvas.width / 2);
 
-
         // LABELS
         this.expectedLabel = this.snapshotLabel('expected');
         this.actualLabel = this.snapshotLabel('actual');
-
 
         // RENDER
         await this.canvas.add(this.expectedImg);
