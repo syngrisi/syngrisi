@@ -36,27 +36,6 @@ export function ZoomToolbar(
         return data.find((x: any) => x.value === biggestDimensionValue);
     };
 
-    function zoomEvents() {
-        mainView.canvas.on('mouse:wheel', (opt: any) => {
-            if (!opt.e.ctrlKey) return;
-            const delta = opt.e.deltaY;
-            let zoomVal = mainView.canvas.getZoom();
-
-            zoomVal *= 0.999 ** delta;
-            if (zoomVal > 9) zoomVal = 9;
-            if (zoomVal < 0.10) zoomVal = 0.10;
-            mainView.canvas.zoomToPoint({
-                x: opt.e.offsetX,
-                y: opt.e.offsetY,
-            }, zoomVal);
-
-            setZoomPercent(() => zoomVal * 100);
-            document.dispatchEvent(new Event('zoom'));
-            opt.e.preventDefault();
-            opt.e.stopPropagation();
-        });
-    }
-
     const zoomByPercent = (percent: number) => {
         if (!mainView?.canvas) return;
         // mainView.canvas.zoomToPoint(new fabric.Point(mainView.canvas.width / 2,
@@ -130,9 +109,15 @@ export function ZoomToolbar(
         }, 10);
     };
 
+    useEffect(function oneTime() {
+        const zoomEventHandler = () => setZoomPercent(window.mainView.canvas.getZoom() * 100);
+        document.addEventListener('zoom', zoomEventHandler, false);
+        return () => document.removeEventListener('zoom', zoomEventHandler, false);
+    }, []);
+
     useEffect(function initZoom() {
         if (mainView) {
-            zoomEvents();
+            // zoomEvents();
             fitGreatestImageIfNeeded();
         }
     }, [

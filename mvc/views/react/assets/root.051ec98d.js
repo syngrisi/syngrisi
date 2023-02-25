@@ -22191,7 +22191,7 @@ function imageFromUrl(url) {
           }
         );
       } catch (e2) {
-        console.error(`cannot create image from url, error: '${e2}'`);
+        log.error(`cannot create image from url, error: '${e2}'`);
         reject(e2);
       }
     }
@@ -22208,6 +22208,32 @@ function lockImage(image) {
     selectable: false
   });
   return image;
+}
+function onImageErrorHandler(...e2) {
+  const imgSrc = e2[0].path[0].src;
+  const msg = `Cannot load image: '${imgSrc}'`;
+  log.error(msg, e2);
+  errorMsg({ error: msg });
+}
+function createImageAndWaitForLoad(src) {
+  const timeout = 9e4;
+  const img = new Image();
+  img.addEventListener("error", onImageErrorHandler);
+  img.src = src;
+  return Promise.race([
+    new Promise((resolve, reject) => {
+      img.onload = () => resolve(img);
+      img.onerror = (e2) => reject(e2);
+    }),
+    new Promise((_, reject) => {
+      setTimeout(
+        () => reject(
+          new Error(`The image loading timeout is exceeded: '${timeout}' milliseconds, src: '${src}'`)
+        ),
+        timeout
+      );
+    })
+  ]);
 }
 class MainView {
   constructor({
@@ -22252,6 +22278,7 @@ class MainView {
       );
     }
     this.selectionEvents();
+    this.zoomEvents();
     this.panEvents();
     this.expectedView = new SimpleView(this, "expected");
     this.actualView = new SimpleView(this, "actual");
@@ -22266,6 +22293,26 @@ class MainView {
       width: Number(viewportWidth - canvasDimensions.x),
       height: Number(viewportHeight - canvasDimensions.y)
     };
+  }
+  zoomEvents() {
+    this.canvas.on("mouse:wheel", (opt) => {
+      if (!opt.e.ctrlKey)
+        return;
+      const delta = opt.e.deltaY;
+      let zoomVal = this.canvas.getZoom();
+      zoomVal *= 0.999 ** delta;
+      if (zoomVal > 9)
+        zoomVal = 9;
+      if (zoomVal < 0.01)
+        zoomVal = 0.01;
+      this.canvas.zoomToPoint({
+        x: opt.e.offsetX,
+        y: opt.e.offsetY
+      }, zoomVal);
+      document.dispatchEvent(new Event("zoom"));
+      opt.e.preventDefault();
+      opt.e.stopPropagation();
+    });
   }
   panEvents() {
     this.canvas.on(
@@ -22310,9 +22357,6 @@ class MainView {
       }
     });
   }
-  get objects() {
-    return this.canvas.getObjects();
-  }
   async destroyAllViews() {
     this.expectedView.destroy();
     this.actualView.destroy();
@@ -22327,20 +22371,6 @@ class MainView {
       }
     );
     this[`${view}View`].render();
-  }
-  static snapshotUrl(filename) {
-    return `/snapshoots/${filename}`;
-  }
-  static lockImage(image) {
-    image.set({
-      lockScalingX: true,
-      lockScalingY: true,
-      lockMovementX: true,
-      lockMovementY: true,
-      hoverCursor: "default",
-      hasControls: false,
-      selectable: false
-    });
   }
   panToCanvasWidthCenter(imageName) {
     this.canvas.absolutePan(new fabric.fabric.Point(0, 0));
@@ -22429,6 +22459,9 @@ class MainView {
     this.canvas.add(r);
     r.bringToFront();
   }
+  get allRects() {
+    return this.canvas.getObjects().filter((r) => r.name === "ignore_rect" || r.name === "bound_rect");
+  }
   getLastRegion() {
     return this.canvas.item(this.canvas.getObjects().length - 1);
   }
@@ -22467,10 +22500,10 @@ class MainView {
         successMsg({ message: "ignored regions was saved" });
         return;
       }
-      console.error(`Cannot set baseline ignored regions , status: '${response.status}',  resp: '${text}'`);
+      log.error(`Cannot set baseline ignored regions , status: '${response.status}',  resp: '${text}'`);
       errorMsg({ error: "Cannot set baseline ignored regions" });
     } catch (e2) {
-      console.error(`Cannot set baseline ignored regions: ${e2.stack || e2}`);
+      log.error(`Cannot set baseline ignored regions: ${e2.stack || e2}`);
       errorMsg({ error: "Cannot set baseline ignored regions" });
     }
   }
@@ -22491,9 +22524,6 @@ class MainView {
       }
     });
     return data;
-  }
-  get allRects() {
-    return this.canvas.getObjects().filter((r) => r.name === "ignore_rect" || r.name === "bound_rect");
   }
   drawRegions(data) {
     if (!data || data === "undefined") {
@@ -22522,10 +22552,10 @@ class MainView {
         log.debug("No regions");
         return [];
       }
-      console.error(`Cannot get baseline ignored regions , status: '${response.status}',  resp: '${text}'`);
+      log.error(`Cannot get baseline ignored regions , status: '${response.status}',  resp: '${text}'`);
       errorMsg({ error: "Cannot get baseline ignored regions" });
     } catch (e2) {
-      console.error(`Cannot get baseline ignored regions: ${e2.stack || e2}`);
+      log.error(`Cannot get baseline ignored regions: ${e2.stack || e2}`);
       errorMsg({ error: "Cannot get baseline ignored regions" });
     }
     return null;
@@ -23283,27 +23313,6 @@ function ZoomToolbar({
     const biggestDimensionValue = Math.max(...data.map((x2) => x2.value));
     return data.find((x2) => x2.value === biggestDimensionValue);
   };
-  function zoomEvents() {
-    mainView2.canvas.on("mouse:wheel", (opt) => {
-      if (!opt.e.ctrlKey)
-        return;
-      const delta = opt.e.deltaY;
-      let zoomVal = mainView2.canvas.getZoom();
-      zoomVal *= 0.999 ** delta;
-      if (zoomVal > 9)
-        zoomVal = 9;
-      if (zoomVal < 0.1)
-        zoomVal = 0.1;
-      mainView2.canvas.zoomToPoint({
-        x: opt.e.offsetX,
-        y: opt.e.offsetY
-      }, zoomVal);
-      setZoomPercent(() => zoomVal * 100);
-      document.dispatchEvent(new Event("zoom"));
-      opt.e.preventDefault();
-      opt.e.stopPropagation();
-    });
-  }
   const zoomByPercent = (percent) => {
     if (!(mainView2 == null ? void 0 : mainView2.canvas))
       return;
@@ -23354,9 +23363,13 @@ function ZoomToolbar({
       mainView2.panToCanvasWidthCenter(greatestImage.imageName);
     }, 10);
   };
+  react.exports.useEffect(function oneTime() {
+    const zoomEventHandler = () => setZoomPercent(window.mainView.canvas.getZoom() * 100);
+    document.addEventListener("zoom", zoomEventHandler, false);
+    return () => document.removeEventListener("zoom", zoomEventHandler, false);
+  }, []);
   react.exports.useEffect(function initZoom() {
     if (mainView2) {
-      zoomEvents();
       fitGreatestImageIfNeeded();
     }
   }, [mainView2 == null ? void 0 : mainView2.toString()]);
@@ -23916,15 +23929,15 @@ function RegionsToolbar({
     };
     mainView2.canvas.on({
       "selection:cleared": (e2) => {
-        console.log("cleared selection");
+        log.debug("cleared selection");
         handler();
       },
       "selection:updated": (e2) => {
-        console.log("update selection");
+        log.debug("update selection");
         handler();
       },
       "selection:created": (e2) => {
-        console.log("create selection");
+        log.debug("create selection");
         handler();
       }
     });
@@ -24299,7 +24312,8 @@ function Header({
   });
 }
 function Canvas({
-  related
+  related,
+  canvasElementRef
 }) {
   const theme = useMantineTheme();
   return /* @__PURE__ */ jsx(Group, {
@@ -24309,6 +24323,7 @@ function Canvas({
     children: /* @__PURE__ */ jsx(Paper, {
       shadow: "xl",
       withBorder: true,
+      ref: canvasElementRef,
       id: "snapshoot",
       style: {
         backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[1],
@@ -24336,32 +24351,13 @@ const useStyles$1 = createStyles((theme) => ({
     whiteSpace: "nowrap"
   }
 }));
-function onImageErrorHandler(...e2) {
-  const imgSrc = e2[0].path[0].src;
-  const msg = `Cannot load image: '${imgSrc}'`;
-  log.error(msg, e2);
-  errorMsg({
-    error: msg
-  });
-}
-function createImageAndWaitForLoad(src) {
-  const timeout = 9e4;
-  const img = new Image();
-  img.addEventListener("error", onImageErrorHandler);
-  img.src = src;
-  return Promise.race([new Promise((resolve, reject) => {
-    img.onload = () => resolve(img);
-    img.onerror = (e2) => reject(e2);
-  }), new Promise((_, reject) => {
-    setTimeout(() => reject(new Error(`The image loading timeout is exceeded: '${timeout}' milliseconds, src: '${src}'`)), timeout);
-  })]);
-}
 function CheckDetails({
   initCheckData,
   checkQuery
 }) {
   var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k;
   useDocumentTitle(initCheckData == null ? void 0 : initCheckData.name);
+  const canvasElementRef = react.exports.useRef(null);
   const {
     query
   } = useParams();
@@ -24457,18 +24453,19 @@ function CheckDetails({
       const actual = currentCheck.actualSnapshotId || null;
       const actualImgSrc = `${config.baseUri}/snapshoots/${(_b2 = currentCheck == null ? void 0 : currentCheck.actualSnapshotId) == null ? void 0 : _b2.filename}?actualImg`;
       const actualImg = await createImageAndWaitForLoad(actualImgSrc);
-      document.getElementById("snapshoot").style.height = `${MainView.calculateExpectedCanvasViewportAreaSize().height - 10}px`;
+      canvasElementRef.current.style.height = `${MainView.calculateExpectedCanvasViewportAreaSize().height - 10}px`;
       const expectedImage = await imageFromUrl(expectedImg.src);
       const actualImage = await imageFromUrl(actualImg.src);
       const diffImgSrc = `${config.baseUri}/snapshoots/${(_c2 = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _c2.filename}?diffImg`;
       const diffImage = ((_d2 = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _d2.filename) ? await imageFromUrl(diffImgSrc) : null;
       await setMainView((prev) => {
+        var _a3, _b3;
         if (prev)
           return prev;
         const MV = new MainView({
           canvasId: "2d",
-          canvasElementWidth: document.getElementById("snapshoot").clientWidth,
-          canvasElementHeight: document.getElementById("snapshoot").clientHeight,
+          canvasElementWidth: (_a3 = canvasElementRef.current) == null ? void 0 : _a3.clientWidth,
+          canvasElementHeight: (_b3 = canvasElementRef.current) == null ? void 0 : _b3.clientHeight,
           expectedImage,
           actualImage,
           diffImage,
@@ -24521,7 +24518,8 @@ function CheckDetails({
             related
           })
         }), /* @__PURE__ */ jsx(Canvas, {
-          related
+          related,
+          canvasElementRef
         })]
       })]
     })

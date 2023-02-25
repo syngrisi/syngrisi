@@ -7,6 +7,16 @@ import config from '../../../../../../../config';
 import { log } from '../../../../../../../shared/utils/Logger';
 
 /* eslint-disable dot-notation,no-underscore-dangle */
+interface IRectParams {
+    name: any
+    fill: any
+    stroke: any
+    strokeWidth: any
+    top: any
+    left: any
+    width: any
+    height: any
+}
 
 interface Props {
     canvasElementWidth: number
@@ -98,7 +108,7 @@ export class MainView {
 
         // events
         this.selectionEvents();
-        // this.zoomEvents();
+        this.zoomEvents();
         this.panEvents();
 
         // views
@@ -133,6 +143,27 @@ export class MainView {
             width: Number(viewportWidth - canvasDimensions.x),
             height: Number(viewportHeight - canvasDimensions.y),
         };
+    }
+
+    zoomEvents() {
+        this.canvas.on('mouse:wheel', (opt: any) => {
+            if (!opt.e.ctrlKey) return;
+            const delta = opt.e.deltaY;
+            let zoomVal = this.canvas.getZoom();
+
+            zoomVal *= 0.999 ** delta;
+            if (zoomVal > 9) zoomVal = 9;
+            if (zoomVal < 0.01) zoomVal = 0.01;
+            this.canvas.zoomToPoint({
+                x: opt.e.offsetX,
+                y: opt.e.offsetY,
+            }, zoomVal);
+
+            // setZoomPercent(() => zoomVal * 100);
+            document.dispatchEvent(new Event('zoom'));
+            opt.e.preventDefault();
+            opt.e.stopPropagation();
+        });
     }
 
     panEvents() {
@@ -182,9 +213,9 @@ export class MainView {
         });
     }
 
-    get objects() {
-        return this.canvas.getObjects();
-    }
+    // get objects() {
+    //     return this.canvas.getObjects();
+    // }
 
     async destroyAllViews() {
         this.expectedView.destroy();
@@ -202,22 +233,6 @@ export class MainView {
             },
         );
         this[`${view}View`].render();
-    }
-
-    static snapshotUrl(filename) {
-        return `/snapshoots/${filename}`;
-    }
-
-    static lockImage(image) {
-        image.set({
-            lockScalingX: true,
-            lockScalingY: true,
-            lockMovementX: true,
-            lockMovementY: true,
-            hoverCursor: 'default',
-            hasControls: false,
-            selectable: false,
-        });
     }
 
     panToCanvasWidthCenter(imageName: string) {
@@ -252,7 +267,7 @@ export class MainView {
         this.canvas.renderAll();
     }
 
-    addRect(params) {
+    addRect(params: IRectParams) {
         // eslint-disable-next-line no-param-reassign
         params.name = params.name ? params.name : 'default_rect';
         let lastLeft = null;
@@ -332,6 +347,11 @@ export class MainView {
         r.bringToFront();
     }
 
+    get allRects() {
+        return this.canvas.getObjects()
+            .filter((r) => (r.name === 'ignore_rect') || (r.name === 'bound_rect'));
+    }
+
     getLastRegion() {
         return this.canvas.item(this.canvas.getObjects().length - 1);
     }
@@ -380,11 +400,11 @@ export class MainView {
                 // MainView.showToaster('ignored regions was saved');
                 return;
             }
-            console.error(`Cannot set baseline ignored regions , status: '${response.status}',  resp: '${text}'`);
+            log.error(`Cannot set baseline ignored regions , status: '${response.status}',  resp: '${text}'`);
             errorMsg({ error: 'Cannot set baseline ignored regions' });
             // MainView.showToaster('Cannot set baseline ignored regions', 'Error');
         } catch (e) {
-            console.error(`Cannot set baseline ignored regions: ${e.stack || e}`);
+            log.error(`Cannot set baseline ignored regions: ${e.stack || e}`);
             errorMsg({ error: 'Cannot set baseline ignored regions' });
             // MainView.showToaster('Cannot set baseline ignored regions', 'Error');
         }
@@ -415,16 +435,11 @@ export class MainView {
         return data;
     }
 
-    get allRects() {
-        return this.canvas.getObjects()
-            .filter((r) => (r.name === 'ignore_rect') || (r.name === 'bound_rect'));
-    }
-
     drawRegions(data) {
         // log.debug({ data });
         if (!data || data === 'undefined') {
             return;
-            // console.error('The regions data is empty')
+            // log.error('The regions data is empty')
         }
         const regs = this.convertRegionsDataFromServer(JSON.parse(data));
         // log.debug('converted:', regs.length, regs);
@@ -454,11 +469,11 @@ export class MainView {
                 log.debug('No regions');
                 return [];
             }
-            console.error(`Cannot get baseline ignored regions , status: '${response.status}',  resp: '${text}'`);
+            log.error(`Cannot get baseline ignored regions , status: '${response.status}',  resp: '${text}'`);
             // MainView.showToaster('Cannot get baseline ignored regions', 'Error');
             errorMsg({ error: 'Cannot get baseline ignored regions' });
         } catch (e) {
-            console.error(`Cannot get baseline ignored regions: ${e.stack || e}`);
+            log.error(`Cannot get baseline ignored regions: ${e.stack || e}`);
             // MainView.showToaster('Cannot get baseline ignored regions', 'Error');
             errorMsg({ error: 'Cannot get baseline ignored regions' });
         }

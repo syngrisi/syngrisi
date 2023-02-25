@@ -1,21 +1,13 @@
 /* eslint-disable no-underscore-dangle,react/jsx-one-expression-per-line,prefer-arrow-callback,max-len,react/jsx-indent */
 import * as React from 'react';
-import { fabric } from 'fabric';
-import {
-    Group,
-    Stack,
-    createStyles,
-    Loader,
-} from '@mantine/core';
-import {
-    useDisclosure,
-    useDocumentTitle,
-} from '@mantine/hooks';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { fabric } from 'fabric';
+import { createStyles, Group, Loader, Stack } from '@mantine/core';
+import { useDisclosure, useDocumentTitle } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { MainView } from './Canvas/mainView';
-import { imageFromUrl } from './Canvas/helpers';
-import { errorMsg, log } from '../../../../../../shared/utils';
+import { createImageAndWaitForLoad, imageFromUrl } from './Canvas/helpers';
+import { errorMsg } from '../../../../../../shared/utils';
 import { GenericService } from '../../../../../../shared/services';
 import config from '../../../../../../config';
 import { RelatedChecks } from './RelatedChecks/RelatedChecks';
@@ -38,34 +30,6 @@ const useStyles = createStyles((theme) => ({
         whiteSpace: 'nowrap',
     },
 }));
-
-function onImageErrorHandler(...e: any) {
-    const imgSrc = e[0].path[0].src;
-    const msg = `Cannot load image: '${imgSrc}'`;
-    log.error(msg, e);
-    errorMsg({ error: msg });
-}
-
-function createImageAndWaitForLoad(src: string) {
-    const timeout = 90000;
-    const img = new Image();
-    img.addEventListener('error', onImageErrorHandler);
-    img.src = src;
-    return Promise.race([
-        new Promise((resolve, reject) => {
-            img.onload = () => resolve(img);
-            img.onerror = (e) => reject(e);
-        }),
-        new Promise((_, reject) => {
-            setTimeout(
-                () => reject(
-                    new Error(`The image loading timeout is exceeded: '${timeout}' milliseconds, src: '${src}'`),
-                ),
-                timeout,
-            );
-        }),
-    ]);
-}
 
 interface Props {
     initCheckData: any, // initially open check by clicking from table (not from related panel)
