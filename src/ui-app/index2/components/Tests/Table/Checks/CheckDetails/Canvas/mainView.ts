@@ -248,7 +248,7 @@ export class MainView {
             0,
         );
         this.canvas.relativePan(delta);
-        this.canvas.renderAll();
+        // this.canvas.renderAll(); console.log('render!!!');
     }
 
     removeActiveIgnoreRegions() {

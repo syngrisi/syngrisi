@@ -5914,7 +5914,7 @@ function Heads({
     })]
   });
 }
-var fabric = {};
+var fabric$1 = {};
 const __viteBrowserExternal = {};
 const __viteBrowserExternal$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
@@ -21845,7 +21845,7 @@ const require$$2 = /* @__PURE__ */ getAugmentedNamespace(__viteBrowserExternal$1
       });
     }
   })();
-})(fabric);
+})(fabric$1);
 class SimpleView {
   constructor(mainView2, type) {
     this.mainView = mainView2;
@@ -21881,11 +21881,9 @@ class SideToSideView {
         hoverCursor: $this.folowMouse ? "grab" : "pointer"
       });
       if ($this.folowMouse) {
-        $this.disappear($this.actualLabel);
-        $this.disappear($this.expectedLabel);
+        $this.removeLabels();
       } else {
-        $this.appear($this.actualLabel);
-        $this.appear($this.expectedLabel);
+        $this.renderLabels();
       }
     };
     this.canvasMouseMoveHandler = (e2) => {
@@ -21924,18 +21922,7 @@ class SideToSideView {
     this.divider.top = newTop - this.dividerSlider.height / this.canvas.getZoom() / 2;
     this.divider.setCoords();
     this.canvas.renderAll();
-  }
-  disappear(object) {
-    object.animate("opacity", "0.00", {
-      onChange: this.canvas.renderAll.bind(this.canvas),
-      duration: 400
-    });
-  }
-  appear(object) {
-    object.animate("opacity", "1.00", {
-      onChange: this.canvas.renderAll.bind(this.canvas),
-      duration: 400
-    });
+    console.log("render!!!");
   }
   addDividerFollowMouseEvents() {
     this.canvas.on(
@@ -21957,52 +21944,12 @@ class SideToSideView {
   canvasOffsetY() {
     return this.canvas.viewportTransform[5];
   }
-  snapshotLabel(name) {
-    const frame = new fabric.fabric.Rect({
-      left: 0,
-      top: 0,
-      originX: "center",
-      originY: "center",
-      hoverCursor: "default",
-      fill: "#373A40",
-      opacity: 0.9,
-      width: 180 / this.canvas.getZoom(),
-      height: 80 / this.canvas.getZoom()
-    });
-    SideToSideView.lockCommon(frame);
-    const text = new fabric.fabric.Text(name, {
-      textAlign: "left",
-      originX: "center",
-      originY: "center",
-      hoverCursor: "default",
-      fill: "white",
-      fontSize: 36 / this.canvas.getZoom(),
-      lockMovementY: true,
-      lockMovementX: true,
-      lockScalingX: true,
-      lockScalingY: true
-    });
-    const label = new fabric.fabric.Group([frame, text]);
-    label.set(
-      {
-        hasControls: false,
-        lockScalingX: true,
-        lockScalingY: true,
-        lockMovementY: true,
-        lockMovementX: true,
-        hoverCursor: "default",
-        originX: "center",
-        originY: "center"
-      }
-    );
-    return label;
-  }
   divider() {
     const $this = this;
     const dividerFillColor = "#FFFFFF";
     const dividerStrokeColor = "#878a8c";
     this.dividerOffset = 5e5;
-    this.dividerLine = new fabric.fabric.Rect({
+    this.dividerLine = new fabric$1.fabric.Rect({
       originX: "center",
       originY: "top",
       left: this.canvas.getWidth() / 2,
@@ -22018,7 +21965,7 @@ class SideToSideView {
       width: 3,
       height: this.canvas.getHeight() + this.dividerOffset
     });
-    this.dividerSliderCircle = new fabric.fabric.Circle({
+    this.dividerSliderCircle = new fabric$1.fabric.Circle({
       originX: "center",
       originY: "top",
       moveCursor: "none",
@@ -22032,7 +21979,7 @@ class SideToSideView {
       strokeUniform: false,
       strokeWidth: 1
     });
-    this.dividerSliderText = new fabric.fabric.Text("\u276E   \u276F", {
+    this.dividerSliderText = new fabric$1.fabric.Text("\u276E   \u276F", {
       top: this.canvas.getHeight() / 2 + this.dividerOffset / 2 + 48,
       left: this.canvas.getWidth() / 2,
       textAlign: "left",
@@ -22046,7 +21993,7 @@ class SideToSideView {
       lockScalingX: true,
       lockScalingY: true
     });
-    this.dividerSlider = new fabric.fabric.Group(
+    this.dividerSlider = new fabric$1.fabric.Group(
       [
         this.dividerSliderCircle,
         this.dividerSliderText
@@ -22068,7 +22015,7 @@ class SideToSideView {
         lockScalingY: true
       }
     );
-    const divider = new fabric.fabric.Group(
+    const divider = new fabric$1.fabric.Group(
       [
         this.dividerLine,
         this.dividerSlider
@@ -22091,7 +22038,7 @@ class SideToSideView {
     return divider;
   }
   actualRectClip() {
-    return new fabric.fabric.Rect({
+    return new fabric$1.fabric.Rect({
       top: this.actualImg.height * -1,
       originX: "left",
       originY: "top",
@@ -22103,7 +22050,7 @@ class SideToSideView {
     });
   }
   expectedRectClip() {
-    return new fabric.fabric.Rect({
+    return new fabric$1.fabric.Rect({
       top: this.expectedImg.height * -1,
       originX: "left",
       originY: "top",
@@ -22113,6 +22060,52 @@ class SideToSideView {
       objectCaching: false,
       height: this.expectedImg.height * 3
     });
+  }
+  renderLabels() {
+    const style = document.createElement("style");
+    style.innerHTML = `
+          @keyframes fadeIn {
+            from {
+              opacity: 0;
+            }
+            to {
+              opacity: 0.8;
+            }
+          }
+        `;
+    document.head.appendChild(style);
+    const renderCanvasLabel = (label) => {
+      const canvasEl = document.getElementById("snapshoot");
+      const labelEl = document.createElement("div");
+      labelEl.id = `label_${label}`;
+      labelEl.style.position = "absolute";
+      labelEl.style.fontSize = "28px";
+      labelEl.style.zIndex = "100000";
+      labelEl.style.padding = "15px";
+      labelEl.style.textAlign = "center";
+      labelEl.style.transition = "";
+      labelEl.style.opacity = "0.8";
+      labelEl.style.top = `${canvasEl.clientHeight / 2 - 34}px`;
+      labelEl.style.left = `${label === "expected" ? canvasEl.clientWidth / 4 : canvasEl.clientWidth / 4 * 3 - 50}px`;
+      labelEl.style.backgroundColor = "#373A40";
+      labelEl.style.color = "white";
+      labelEl.innerText = label;
+      canvasEl.append(labelEl);
+    };
+    renderCanvasLabel("expected");
+    renderCanvasLabel("actual");
+  }
+  removeLabels() {
+    const removeLabel = (label) => {
+      const labelEl = document.getElementById(`label_${label}`);
+      if (!labelEl)
+        return;
+      labelEl.style.transition = "opacity 0.5s ease-out";
+      labelEl.style.opacity = "0";
+      setTimeout(() => labelEl.remove(), 700);
+    };
+    removeLabel("expected");
+    removeLabel("actual");
   }
   async render() {
     this.expectedImg = this.mainView.expectedImage;
@@ -22132,32 +22125,23 @@ class SideToSideView {
     this.expectedRectClip.width = this.canvas.getWidth() / this.canvas.getZoom() * 5;
     this.actualRectClip.left = this.canvas.width / 2;
     this.expectedRectClip.left = this.canvas.width / 2 - this.expectedRectClip.width;
-    this.divider.left = this.canvas.width / 2;
-    this.expectedLabel = this.snapshotLabel("expected");
-    this.actualLabel = this.snapshotLabel("actual");
+    this.divider.left = Math.max(this.mainView.expectedImage.width, this.mainView.expectedImage.width) / 2;
     await this.canvas.add(this.expectedImg);
     await this.canvas.add(this.actualImg);
-    await this.canvas.add(this.actualLabel);
-    await this.canvas.add(this.expectedLabel);
     await this.canvas.add(this.divider);
-    await this.canvas.renderAll();
-    this.expectedLabel.top = this.canvas.getHeight() / 2 / this.canvas.getZoom() - this.canvasOffsetY() - this.expectedLabel.height / 2 * this.canvas.getZoom();
-    this.expectedLabel.left = (this.canvas.getWidth() / 4 - this.canvasOffsetX()) / this.canvas.getZoom();
-    this.actualLabel.top = this.canvas.getHeight() / 2 / this.canvas.getZoom() - this.canvasOffsetY() - this.actualLabel.height / 2 * this.canvas.getZoom();
-    this.actualLabel.left = (this.canvas.getWidth() / 4 * 3 - this.canvasOffsetX()) / this.canvas.getZoom();
-    await this.canvas.renderAll();
     this.canvasLeft = document.getElementById("snapshoot").getBoundingClientRect().x;
     this.canvasTop = document.getElementById("snapshoot").getBoundingClientRect().y;
     this.addZoomEvents();
     this.addDividerFollowMouseEvents();
     setTimeout(() => {
-      const delta = new fabric.fabric.Point(0, 0);
+      const delta = new fabric$1.fabric.Point(0, 0);
       this.canvas.relativePan(delta);
     }, 0);
     setTimeout(() => {
       mainView.sliderView.zoomEventHandler();
       mainView.canvas.renderAll();
     }, 100);
+    this.renderLabels();
   }
   async destroy() {
     var _a, _b;
@@ -22177,13 +22161,14 @@ class SideToSideView {
     delete this.canvas.backgroundImage;
     this.removeDividerFollowMouseEvents();
     this.removeZoomEvents();
+    this.removeLabels();
   }
 }
 function imageFromUrl(url) {
   return new Promise(
     (resolve, reject) => {
       try {
-        fabric.fabric.Image.fromURL(
+        fabric$1.fabric.Image.fromURL(
           url,
           (img) => {
             img.objectCaching = false;
@@ -22257,13 +22242,13 @@ class MainView {
     __publicField(this, "diffView");
     __publicField(this, "expectedImage");
     __publicField(this, "diffImage");
-    fabric.fabric.Object.prototype.objectCaching = false;
+    fabric$1.fabric.Object.prototype.objectCaching = false;
     this.canvasElementWidth = canvasElementWidth;
     this.canvasElementHeight = canvasElementHeight;
     this.actualImage = lockImage(actualImage);
     this.expectedImage = lockImage(expectedImage);
     this.diffImage = diffImage ? lockImage(diffImage) : null;
-    this.canvas = new fabric.fabric.Canvas(canvasId, {
+    this.canvas = new fabric$1.fabric.Canvas(canvasId, {
       width: this.canvasElementWidth,
       height: this.canvasElementHeight,
       preserveObjectStacking: true,
@@ -22321,19 +22306,21 @@ class MainView {
         if (e2.e.buttons === 4) {
           this.canvas.setCursor("grab");
           const mEvent = e2.e;
-          const delta = new fabric.fabric.Point(mEvent.movementX, mEvent.movementY);
+          const delta = new fabric$1.fabric.Point(mEvent.movementX, mEvent.movementY);
           this.canvas.relativePan(delta);
           this.canvas.renderAll();
+          console.log("render!!!");
         }
       }
     );
     this.canvas.on("mouse:wheel", (opt) => {
       if (opt.e.ctrlKey)
         return;
-      const delta = new fabric.fabric.Point(-opt.e.deltaX / 2, -opt.e.deltaY / 2);
+      const delta = new fabric$1.fabric.Point(-opt.e.deltaX / 2, -opt.e.deltaY / 2);
       this.canvas.relativePan(delta);
       this.canvas.fire("pan", opt);
       this.canvas.renderAll();
+      console.log("render!!!");
       opt.e.preventDefault();
       opt.e.stopPropagation();
     });
@@ -22346,6 +22333,7 @@ class MainView {
         return;
       activeSelection.hasControls = false;
       this.canvas.renderAll();
+      console.log("render!!!");
     });
     this.canvas.on("selection:updated", (e2) => {
       var _a, _b;
@@ -22373,13 +22361,12 @@ class MainView {
     this[`${view}View`].render();
   }
   panToCanvasWidthCenter(imageName) {
-    this.canvas.absolutePan(new fabric.fabric.Point(0, 0));
-    const delta = new fabric.fabric.Point(
+    this.canvas.absolutePan(new fabric$1.fabric.Point(0, 0));
+    const delta = new fabric$1.fabric.Point(
       this.canvas.width / 2 - this[imageName].width * this.canvas.getZoom() / 2,
       0
     );
     this.canvas.relativePan(delta);
-    this.canvas.renderAll();
   }
   removeActiveIgnoreRegions() {
     const els = this.canvas.getActiveObjects().filter((x2) => x2.name === "ignore_rect");
@@ -22392,6 +22379,7 @@ class MainView {
       this.canvas.remove(el);
     });
     this.canvas.renderAll();
+    console.log("render!!!");
   }
   addRect(params) {
     params.name = params.name ? params.name : "default_rect";
@@ -22407,7 +22395,7 @@ class MainView {
     }
     const top = lastTop > document.documentElement.scrollTop && lastTop < document.documentElement.scrollTop + window.innerHeight ? lastTop + 20 : document.documentElement.scrollTop + 50;
     const left = lastLeft < this.canvas.width - 80 ? lastLeft + 20 : lastLeft - 50;
-    return new fabric.fabric.Rect({
+    return new fabric$1.fabric.Rect({
       left: params.left || left,
       top: params.top || top,
       fill: params.fill || "blue",
@@ -23316,8 +23304,11 @@ function ZoomToolbar({
   const zoomByPercent = (percent) => {
     if (!(mainView2 == null ? void 0 : mainView2.canvas))
       return;
-    mainView2.canvas.setZoom(percent / 100);
-    mainView2.canvas.renderAll();
+    mainView2.canvas.zoomToPoint(new fabric.Point(
+      mainView2.canvas.width / 2,
+      mainView2.canvas.viewportTransform[5]
+    ), percent / 100);
+    document.dispatchEvent(new Event("zoom"));
     setZoomPercent(() => percent);
   };
   const zoomByDelta = (delta) => {
@@ -23331,9 +23322,8 @@ function ZoomToolbar({
     const ratio = mainView2.canvas[dimension] / image[dimension];
     const percent = ratio > 9 ? 900 : ratio * 100;
     zoomByPercent(percent);
-    mainView2.canvas.renderAll();
   };
-  const fitImageIfNeeded = (imageName) => {
+  const fitImageToCanvasIfNeeded = (imageName) => {
     const image = mainView2[imageName];
     const greatestDimension = image.height > image.width ? "height" : "width";
     const anotherDimension = greatestDimension === "height" ? "width" : "height";
@@ -23352,16 +23342,28 @@ function ZoomToolbar({
       mainView2.panToCanvasWidthCenter(imageName);
     }, 10);
   };
-  const fitGreatestImageIfNeeded = () => {
+  const resizeImageIfNeeded = () => {
+    const initPan = (imageName) => {
+      setTimeout(() => {
+        mainView2.panToCanvasWidthCenter(imageName);
+      }, 10);
+    };
     const greatestImage = calculateMaxImagesDimensions();
+    if (mainView2.canvas[greatestImage.dimension] / greatestImage.value > 7) {
+      zoomByPercent(350);
+      initPan(greatestImage.imageName);
+      return;
+    }
+    if (greatestImage.value < mainView2.canvas[greatestImage.dimension]) {
+      initPan(greatestImage.imageName);
+      return;
+    }
     zoomTo(mainView2[greatestImage.imageName], greatestImage.dimension);
     const anotherDimension = greatestImage.dimension === "height" ? "width" : "height";
     if (mainView2[greatestImage.imageName][anotherDimension] * mainView2.canvas.getZoom() > mainView2.canvas[anotherDimension]) {
       zoomTo(mainView2[greatestImage.imageName], anotherDimension);
     }
-    setTimeout(() => {
-      mainView2.panToCanvasWidthCenter(greatestImage.imageName);
-    }, 10);
+    initPan(greatestImage.imageName);
   };
   react.exports.useEffect(function oneTime() {
     const zoomEventHandler = () => setZoomPercent(window.mainView.canvas.getZoom() * 100);
@@ -23370,7 +23372,7 @@ function ZoomToolbar({
   }, []);
   react.exports.useEffect(function initZoom() {
     if (mainView2) {
-      fitGreatestImageIfNeeded();
+      resizeImageIfNeeded();
     }
   }, [mainView2 == null ? void 0 : mainView2.toString()]);
   useHotkeys([
@@ -23381,10 +23383,10 @@ function ZoomToolbar({
     ["Digit9", () => fitImageByWith(`${view}Image`)],
     ["Digit0", () => {
       if (view === "slider") {
-        fitImageIfNeeded("actualImage");
+        fitImageToCanvasIfNeeded("actualImage");
         return;
       }
-      fitImageIfNeeded(`${view}Image`);
+      fitImageToCanvasIfNeeded(`${view}Image`);
     }]
   ]);
   return /* @__PURE__ */ jsxs(Fragment, {
@@ -23535,10 +23537,10 @@ function ZoomToolbar({
             onClick: () => {
               zoomPopoverHandler.close();
               if (view === "slider") {
-                fitImageIfNeeded("actualImage");
+                fitImageToCanvasIfNeeded("actualImage");
                 return;
               }
-              fitImageIfNeeded(`${view}Image`);
+              fitImageToCanvasIfNeeded(`${view}Image`);
             },
             children: /* @__PURE__ */ jsxs(Group, {
               sx: {
@@ -23816,7 +23818,7 @@ function highlightDiff(mainView2, highlightsGroups, imageData) {
       for (const group of groups) {
         const top = group.minY + (group.maxY - group.minY) / 2;
         const left = group.minX + (group.maxX - group.minX) / 2;
-        const circle = new fabric.fabric.Circle({
+        const circle = new fabric$1.fabric.Circle({
           name: "highlight",
           originX: "center",
           originY: "center",
@@ -24328,7 +24330,8 @@ function Canvas({
       style: {
         backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[1],
         width: "100%",
-        height: "100%"
+        height: "100%",
+        position: "relative"
       },
       children: /* @__PURE__ */ jsx("canvas", {
         style: {
@@ -24447,7 +24450,7 @@ function CheckDetails({
     };
     const initMV = async () => {
       var _a2, _b2, _c2, _d2;
-      fabric.fabric.Object.prototype.objectCaching = false;
+      fabric$1.fabric.Object.prototype.objectCaching = false;
       const expectedImgSrc = `${config.baseUri}/snapshoots/${(_a2 = currentCheck == null ? void 0 : currentCheck.baselineId) == null ? void 0 : _a2.filename}?expectedImg`;
       const expectedImg = await createImageAndWaitForLoad(expectedImgSrc);
       const actual = currentCheck.actualSnapshotId || null;
