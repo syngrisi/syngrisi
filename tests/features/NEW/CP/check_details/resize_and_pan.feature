@@ -98,11 +98,11 @@ Feature: Check details Resize and Pan
         """
         When I execute javascript code:
         """
-        return (parseFloat(mainView.canvas.getZoom(), 10).toFixed(2) >= 1).toString()
+        return parseFloat(mainView.canvas.getZoom(), 10).toFixed(2)
         """
         Then I expect the stored "js" string is equal:
         """
-          true
+          1.00
         """
 
         # emulate vertical mouse wheels with control key (move right and bottom)
@@ -129,9 +129,10 @@ Feature: Check details Resize and Pan
         """
         return parseFloat(mainView.canvas.getZoom(), 10).toFixed(2)
         """
+
         When I execute javascript code:
         """
-        return parseFloat(mainView.canvas.getZoom(), 10).toFixed(2) > 1.30
+        return parseFloat(mainView.canvas.getZoom(), 10).toFixed(2) > 1.1
         """
         Then I expect the stored "js" string is equal:
         """

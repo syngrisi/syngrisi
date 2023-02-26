@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { ActionIcon, Button, Group, Kbd, Popover, Stack, Text, Tooltip } from '@mantine/core';
 import { IconChevronDown, IconZoomIn, IconZoomOut } from '@tabler/icons';
 import { useDisclosure, useHotkeys } from '@mantine/hooks';
+import { fabric } from 'fabric';
 import { MainView } from '../Canvas/mainView';
 
 interface Props {
@@ -25,7 +26,7 @@ export function ZoomToolbar(
      * for example: expectedImage {width: 100, height: 200}, actualImage: {width: 200, height: 300}
      * the function will return ['actualImage', 'height' ]
      */
-    const calculateMaxImagesDimensions = () => {
+    const calculateMaxImagesDimensions = (): { imageName: string, dimension: string, value: number } => {
         const data: any = [
             { imageName: 'expectedImage', dimension: 'width', value: mainView.expectedImage.width },
             { imageName: 'expectedImage', dimension: 'height', value: mainView.expectedImage.height },
@@ -39,9 +40,18 @@ export function ZoomToolbar(
     const zoomByPercent = (percent: number) => {
         if (!mainView?.canvas) return;
         // mainView.canvas.zoomToPoint(new fabric.Point(mainView.canvas.width / 2,
-        //     30), zoomPercent / 100);
-        mainView.canvas.setZoom(percent / 100);
-        mainView.canvas.renderAll();
+        //     30), percent / 100);
+        //
+        mainView.canvas.zoomToPoint(
+            new fabric.Point(
+                // mainView.canvas.viewportTransform[4],
+                mainView.canvas.width / 2,
+                mainView.canvas.viewportTransform[5],
+            ),
+            percent / 100,
+        );
+        document.dispatchEvent(new Event('zoom'));
+        // mainView.canvas.renderAll(); console.log('render!!!');
         setZoomPercent(() => percent);
     };
 
@@ -58,10 +68,10 @@ export function ZoomToolbar(
         const ratio = mainView.canvas[dimension] / image[dimension];
         const percent = ratio > 9 ? 900 : ratio * 100;
         zoomByPercent(percent);
-        mainView.canvas.renderAll();
+        // mainView.canvas.renderAll(); console.log('render!!!');
     };
 
-    const fitImageIfNeeded = (imageName: string) => {
+    const fitImageToCanvasIfNeeded = (imageName: string) => {
         const image = mainView[imageName as keyof MainView];
         const greatestDimension = (image.height > image.width) ? 'height' : 'width';
 
@@ -90,8 +100,27 @@ export function ZoomToolbar(
         }, 10);
     };
 
-    const fitGreatestImageIfNeeded = () => {
+    const resizeImageIfNeeded = () => {
+        const initPan = (imageName: string) => {
+            setTimeout(() => {
+                mainView.panToCanvasWidthCenter(imageName);
+            }, 10);
+        };
+
         const greatestImage = calculateMaxImagesDimensions();
+        // small images
+        if (mainView.canvas[greatestImage.dimension] / greatestImage.value > 7) {
+            zoomByPercent(350);
+            initPan(greatestImage.imageName);
+            return;
+        }
+        // normal images (less than canvas)
+        if (greatestImage.value < mainView.canvas[greatestImage.dimension]) {
+            initPan(greatestImage.imageName);
+            return;
+        }
+
+        // large images
         zoomTo(mainView[greatestImage.imageName as keyof MainView], greatestImage.dimension);
 
         const anotherDimension = (greatestImage.dimension === 'height') ? 'width' : 'height';
@@ -103,10 +132,7 @@ export function ZoomToolbar(
             zoomTo(mainView[greatestImage.imageName as keyof MainView], anotherDimension);
         }
 
-        // initial pan
-        setTimeout(() => {
-            mainView.panToCanvasWidthCenter(greatestImage.imageName);
-        }, 10);
+        initPan(greatestImage.imageName);
     };
 
     useEffect(function oneTime() {
@@ -115,14 +141,15 @@ export function ZoomToolbar(
         return () => document.removeEventListener('zoom', zoomEventHandler, false);
     }, []);
 
-    useEffect(function initZoom() {
-        if (mainView) {
-            // zoomEvents();
-            fitGreatestImageIfNeeded();
-        }
-    }, [
-        mainView?.toString(),
-    ]);
+    useEffect(
+        function initZoom() {
+            if (mainView) {
+                // zoomEvents();
+                resizeImageIfNeeded();
+            }
+        },
+        [mainView?.toString()],
+    );
 
     useHotkeys([
         // Zoom
@@ -133,10 +160,10 @@ export function ZoomToolbar(
         ['Digit9', () => fitImageByWith(`${view}Image`)],
         ['Digit0', () => {
             if (view === 'slider') {
-                fitImageIfNeeded('actualImage');
+                fitImageToCanvasIfNeeded('actualImage');
                 return;
             }
-            fitImageIfNeeded(`${view}Image`);
+            fitImageToCanvasIfNeeded(`${view}Image`);
         }],
     ]);
 
@@ -263,10 +290,10 @@ export function ZoomToolbar(
                                 zoomPopoverHandler.close();
 
                                 if (view === 'slider') {
-                                    fitImageIfNeeded('actualImage');
+                                    fitImageToCanvasIfNeeded('actualImage');
                                     return;
                                 }
-                                fitImageIfNeeded(`${view}Image`);
+                                fitImageToCanvasIfNeeded(`${view}Image`);
                             }}
                         >
                             <Group sx={{ width: '100%' }} position="apart" noWrap>

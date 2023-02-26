@@ -1,6 +1,24 @@
 /* eslint-disable no-underscore-dangle */
 import { fabric } from 'fabric';
 
+// patching fabric Object transformation
+// @ts-ignore
+// fabric.Object.prototype.ignoreZoom = false;
+// fabric.Object.prototype.transform = function (ctx) {
+//
+//     const needFullTransform = (this.group && !this.group._transformDone)
+//         || (this.group && this.canvas && ctx === this.canvas.contextTop);
+//     const m = this.calcTransformMatrix(!needFullTransform);
+//     ctx.transform(m[0], m[1], m[2], m[3], m[4], m[5]);
+//     // // ignore zoom start
+//     // if (this.ignoreZoom && !this.group && this.canvas) {
+//     //     console.log('111')
+//     //     const zoom = 1 / this.canvas.getZoom();
+//     //     ctx.scale(zoom, zoom);
+//     // }
+//     // // ignore zoom end
+// };
+
 export class SideToSideView {
     private mainView: any;
 
@@ -29,11 +47,9 @@ export class SideToSideView {
                 hoverCursor: $this.folowMouse ? 'grab' : 'pointer',
             });
             if ($this.folowMouse) {
-                $this.disappear($this.actualLabel);
-                $this.disappear($this.expectedLabel);
+                $this.removeLabels();
             } else {
-                $this.appear($this.actualLabel);
-                $this.appear($this.expectedLabel);
+                $this.renderLabels();
             }
         };
 
@@ -91,20 +107,6 @@ export class SideToSideView {
         this.canvas.renderAll();
     }
 
-    disappear(object) {
-        object.animate('opacity', '0.00', {
-            onChange: this.canvas.renderAll.bind(this.canvas),
-            duration: 400,
-        });
-    }
-
-    appear(object) {
-        object.animate('opacity', '1.00', {
-            onChange: this.canvas.renderAll.bind(this.canvas),
-            duration: 400,
-        });
-    }
-
     addDividerFollowMouseEvents() {
         this.canvas.on(
             {
@@ -127,51 +129,6 @@ export class SideToSideView {
 
     canvasOffsetY() {
         return this.canvas.viewportTransform[5];
-    }
-
-    // eslint-disable-next-line class-methods-use-this
-    snapshotLabel(name) {
-        const frame = new fabric.Rect({
-            left: 0,
-            top: 0,
-            originX: 'center',
-            originY: 'center',
-            hoverCursor: 'default',
-            // rx: 5,
-            // ry: 5,
-            fill: '#373A40',
-            opacity: 0.90,
-            width: 180 / this.canvas.getZoom(),
-            height: 80 / this.canvas.getZoom(),
-        });
-        SideToSideView.lockCommon(frame);
-        const text = new fabric.Text(name, {
-            textAlign: 'left',
-            originX: 'center',
-            originY: 'center',
-            hoverCursor: 'default',
-            fill: 'white',
-            fontSize: 36 / this.canvas.getZoom(),
-            lockMovementY: true,
-            lockMovementX: true,
-            lockScalingX: true,
-            lockScalingY: true,
-        });
-
-        const label = new fabric.Group([frame, text]);
-        label.set(
-            {
-                hasControls: false,
-                lockScalingX: true,
-                lockScalingY: true,
-                lockMovementY: true,
-                lockMovementX: true,
-                hoverCursor: 'default',
-                originX: 'center',
-                originY: 'center',
-            },
-        );
-        return label;
     }
 
     divider() {
@@ -304,6 +261,62 @@ export class SideToSideView {
         });
     }
 
+    renderLabels() {
+        const style = document.createElement('style');
+        style.innerHTML = `
+          @keyframes fadeIn {
+            from {
+              opacity: 0;
+            }
+            to {
+              opacity: 0.8;
+            }
+          }
+        `;
+        document.head.appendChild(style);
+
+        const renderCanvasLabel = (label: string) => {
+            const canvasEl = document.getElementById('snapshoot')!;
+            const labelEl = document.createElement('div');
+            labelEl.id = `label_${label}`;
+            labelEl.style.position = 'absolute';
+            labelEl.style.fontSize = '28px';
+            labelEl.style.zIndex = '100000';
+            labelEl.style.padding = '15px';
+            labelEl.style.textAlign = 'center';
+            // labelEl.style.animation = 'fadeIn 0.5s ease-in-out forwards';
+            // labelEl.style.transition = 'opacity 0.5s ease-out';
+            labelEl.style.transition = '';
+            labelEl.style.opacity = '0.8';
+            labelEl.style.top = `${canvasEl.clientHeight / 2 - 34}px`;
+            labelEl.style.left = `${
+                (label === 'expected'
+                    ? canvasEl.clientWidth / 4
+                    : (canvasEl.clientWidth / 4) * 3 - 50)
+            }px`;
+            labelEl.style.backgroundColor = '#373A40';
+            labelEl.style.color = 'white';
+            labelEl.innerText = label;
+
+            canvasEl.append(labelEl);
+        };
+        renderCanvasLabel('expected');
+        renderCanvasLabel('actual');
+    }
+
+    removeLabels() {
+        const removeLabel = (label: string) => {
+            const labelEl = document.getElementById(`label_${label}`)!;
+            if (!labelEl) return;
+            // labelEl.style.animation = '';
+            labelEl.style.transition = 'opacity 0.5s ease-out';
+            labelEl.style.opacity = '0';
+            setTimeout(() => labelEl.remove(), 700);
+        };
+        removeLabel('expected');
+        removeLabel('actual');
+    }
+
     async render() {
         // IMAGES
         this.expectedImg = this.mainView.expectedImage;
@@ -329,53 +342,15 @@ export class SideToSideView {
         // this.expectedRectClip.width = 500;
         this.expectedRectClip.width = (this.canvas.getWidth() / this.canvas.getZoom()) * 5;
 
-        // this.actualRectClip.left = (this.actualImg.getScaledWidth() / 2);
-        // this.expectedRectClip.left = (this.expectedRectClip.width * -1) + this.actualImg.getScaledWidth() / 2;
-        // this.divider.left = (this.expectedImg.getScaledWidth() / 2);
+        this.actualRectClip.left = Math.max(this.mainView.expectedImage.width, this.mainView.expectedImage.width) / 2;
+        this.expectedRectClip.left = Math.max(this.mainView.expectedImage.width, this.mainView.expectedImage.width) / 2
+            - this.expectedRectClip.width;
 
-        this.actualRectClip.left = (this.canvas.width / 2);
-        this.expectedRectClip.left = (this.canvas.width / 2) - this.expectedRectClip.width;
-        this.divider.left = (this.canvas.width / 2);
-
-        // LABELS
-        this.expectedLabel = this.snapshotLabel('expected');
-        this.actualLabel = this.snapshotLabel('actual');
-
+        this.divider.left = Math.max(this.mainView.expectedImage.width, this.mainView.expectedImage.width) / 2;
         // RENDER
         await this.canvas.add(this.expectedImg);
         await this.canvas.add(this.actualImg);
-        await this.canvas.add(this.actualLabel);
-        await this.canvas.add(this.expectedLabel);
         await this.canvas.add(this.divider);
-
-        // await this.canvas.add(this.actualRectClip);
-        // await this.canvas.add(this.expectedRectClip);
-
-        await this.canvas.renderAll();
-
-        // initial images resize and divider align
-        // await initResize(this.actualImg, this.canvas);
-        // await initResize(this.expectedImg, this.canvas);
-
-        // labels
-        this.expectedLabel.top = (
-            (this.canvas.getHeight() / 2) / this.canvas.getZoom()
-            - this.canvasOffsetY()
-            - (this.expectedLabel.height / 2) * this.canvas.getZoom()
-        );
-
-        this.expectedLabel.left = ((this.canvas.getWidth() / 4) - this.canvasOffsetX())
-            / this.canvas.getZoom();
-
-        this.actualLabel.top = (
-            (this.canvas.getHeight() / 2) / this.canvas.getZoom()
-            - this.canvasOffsetY()
-            - (this.actualLabel.height / 2) * this.canvas.getZoom()
-        );
-        this.actualLabel.left = ((this.canvas.getWidth() / 4) * 3 - this.canvasOffsetX())
-            / this.canvas.getZoom();
-
-        await this.canvas.renderAll();
 
         this.canvasLeft = document.getElementById('snapshoot')
             .getBoundingClientRect().x;
@@ -394,9 +369,10 @@ export class SideToSideView {
 
         // workaround ro rescale divider
         setTimeout(() => {
-            mainView.sliderView.zoomEventHandler();
-            mainView.canvas.renderAll();
+            this.mainView.sliderView.zoomEventHandler();
+            this.mainView.canvas.renderAll();
         }, 100);
+        this.renderLabels();
     }
 
     async destroy() {
@@ -417,5 +393,6 @@ export class SideToSideView {
         delete this.canvas.backgroundImage;
         this.removeDividerFollowMouseEvents();
         this.removeZoomEvents();
+        this.removeLabels();
     }
 }
