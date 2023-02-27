@@ -5914,7 +5914,7 @@ function Heads({
     })]
   });
 }
-var fabric$1 = {};
+var fabric = {};
 const __viteBrowserExternal = {};
 const __viteBrowserExternal$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
@@ -21845,10 +21845,10 @@ const require$$2 = /* @__PURE__ */ getAugmentedNamespace(__viteBrowserExternal$1
       });
     }
   })();
-})(fabric$1);
+})(fabric);
 class SimpleView {
-  constructor(mainView2, type) {
-    this.mainView = mainView2;
+  constructor(mainView, type) {
+    this.mainView = mainView;
     this.type = type;
   }
   async render() {
@@ -21861,13 +21861,13 @@ class SimpleView {
   }
 }
 class SideToSideView {
-  constructor({ mainView: mainView2 }) {
+  constructor({ mainView }) {
     __publicField(this, "mainView");
     __publicField(this, "canvas");
     __publicField(this, "dividerLine");
     __publicField(this, "dividerSlider");
-    this.mainView = mainView2;
-    this.canvas = mainView2.canvas;
+    this.mainView = mainView;
+    this.canvas = mainView.canvas;
     this.zoomEventHandler = () => {
       this.dividerLine.scaleX = 1 / this.canvas.getZoom();
       this.dividerSlider.scaleX = 1 / this.canvas.getZoom();
@@ -21922,7 +21922,6 @@ class SideToSideView {
     this.divider.top = newTop - this.dividerSlider.height / this.canvas.getZoom() / 2;
     this.divider.setCoords();
     this.canvas.renderAll();
-    console.log("render!!!");
   }
   addDividerFollowMouseEvents() {
     this.canvas.on(
@@ -21949,7 +21948,7 @@ class SideToSideView {
     const dividerFillColor = "#FFFFFF";
     const dividerStrokeColor = "#878a8c";
     this.dividerOffset = 5e5;
-    this.dividerLine = new fabric$1.fabric.Rect({
+    this.dividerLine = new fabric.fabric.Rect({
       originX: "center",
       originY: "top",
       left: this.canvas.getWidth() / 2,
@@ -21965,7 +21964,7 @@ class SideToSideView {
       width: 3,
       height: this.canvas.getHeight() + this.dividerOffset
     });
-    this.dividerSliderCircle = new fabric$1.fabric.Circle({
+    this.dividerSliderCircle = new fabric.fabric.Circle({
       originX: "center",
       originY: "top",
       moveCursor: "none",
@@ -21979,7 +21978,7 @@ class SideToSideView {
       strokeUniform: false,
       strokeWidth: 1
     });
-    this.dividerSliderText = new fabric$1.fabric.Text("\u276E   \u276F", {
+    this.dividerSliderText = new fabric.fabric.Text("\u276E   \u276F", {
       top: this.canvas.getHeight() / 2 + this.dividerOffset / 2 + 48,
       left: this.canvas.getWidth() / 2,
       textAlign: "left",
@@ -21993,7 +21992,7 @@ class SideToSideView {
       lockScalingX: true,
       lockScalingY: true
     });
-    this.dividerSlider = new fabric$1.fabric.Group(
+    this.dividerSlider = new fabric.fabric.Group(
       [
         this.dividerSliderCircle,
         this.dividerSliderText
@@ -22015,7 +22014,7 @@ class SideToSideView {
         lockScalingY: true
       }
     );
-    const divider = new fabric$1.fabric.Group(
+    const divider = new fabric.fabric.Group(
       [
         this.dividerLine,
         this.dividerSlider
@@ -22038,7 +22037,7 @@ class SideToSideView {
     return divider;
   }
   actualRectClip() {
-    return new fabric$1.fabric.Rect({
+    return new fabric.fabric.Rect({
       top: this.actualImg.height * -1,
       originX: "left",
       originY: "top",
@@ -22050,7 +22049,7 @@ class SideToSideView {
     });
   }
   expectedRectClip() {
-    return new fabric$1.fabric.Rect({
+    return new fabric.fabric.Rect({
       top: this.expectedImg.height * -1,
       originX: "left",
       originY: "top",
@@ -22123,8 +22122,8 @@ class SideToSideView {
     this.expectedImg.clipPath = this.expectedRectClip;
     this.actualRectClip.width = this.canvas.getWidth() / this.canvas.getZoom() * 5;
     this.expectedRectClip.width = this.canvas.getWidth() / this.canvas.getZoom() * 5;
-    this.actualRectClip.left = this.canvas.width / 2;
-    this.expectedRectClip.left = this.canvas.width / 2 - this.expectedRectClip.width;
+    this.actualRectClip.left = Math.max(this.mainView.expectedImage.width, this.mainView.expectedImage.width) / 2;
+    this.expectedRectClip.left = Math.max(this.mainView.expectedImage.width, this.mainView.expectedImage.width) / 2 - this.expectedRectClip.width;
     this.divider.left = Math.max(this.mainView.expectedImage.width, this.mainView.expectedImage.width) / 2;
     await this.canvas.add(this.expectedImg);
     await this.canvas.add(this.actualImg);
@@ -22134,12 +22133,12 @@ class SideToSideView {
     this.addZoomEvents();
     this.addDividerFollowMouseEvents();
     setTimeout(() => {
-      const delta = new fabric$1.fabric.Point(0, 0);
+      const delta = new fabric.fabric.Point(0, 0);
       this.canvas.relativePan(delta);
     }, 0);
     setTimeout(() => {
-      mainView.sliderView.zoomEventHandler();
-      mainView.canvas.renderAll();
+      this.mainView.sliderView.zoomEventHandler();
+      this.mainView.canvas.renderAll();
     }, 100);
     this.renderLabels();
   }
@@ -22168,7 +22167,7 @@ function imageFromUrl(url) {
   return new Promise(
     (resolve, reject) => {
       try {
-        fabric$1.fabric.Image.fromURL(
+        fabric.fabric.Image.fromURL(
           url,
           (img) => {
             img.objectCaching = false;
@@ -22242,13 +22241,13 @@ class MainView {
     __publicField(this, "diffView");
     __publicField(this, "expectedImage");
     __publicField(this, "diffImage");
-    fabric$1.fabric.Object.prototype.objectCaching = false;
+    fabric.fabric.Object.prototype.objectCaching = false;
     this.canvasElementWidth = canvasElementWidth;
     this.canvasElementHeight = canvasElementHeight;
     this.actualImage = lockImage(actualImage);
     this.expectedImage = lockImage(expectedImage);
     this.diffImage = diffImage ? lockImage(diffImage) : null;
-    this.canvas = new fabric$1.fabric.Canvas(canvasId, {
+    this.canvas = new fabric.fabric.Canvas(canvasId, {
       width: this.canvasElementWidth,
       height: this.canvasElementHeight,
       preserveObjectStacking: true,
@@ -22306,21 +22305,19 @@ class MainView {
         if (e2.e.buttons === 4) {
           this.canvas.setCursor("grab");
           const mEvent = e2.e;
-          const delta = new fabric$1.fabric.Point(mEvent.movementX, mEvent.movementY);
+          const delta = new fabric.fabric.Point(mEvent.movementX, mEvent.movementY);
           this.canvas.relativePan(delta);
           this.canvas.renderAll();
-          console.log("render!!!");
         }
       }
     );
     this.canvas.on("mouse:wheel", (opt) => {
       if (opt.e.ctrlKey)
         return;
-      const delta = new fabric$1.fabric.Point(-opt.e.deltaX / 2, -opt.e.deltaY / 2);
+      const delta = new fabric.fabric.Point(-opt.e.deltaX / 2, -opt.e.deltaY / 2);
       this.canvas.relativePan(delta);
       this.canvas.fire("pan", opt);
       this.canvas.renderAll();
-      console.log("render!!!");
       opt.e.preventDefault();
       opt.e.stopPropagation();
     });
@@ -22333,7 +22330,6 @@ class MainView {
         return;
       activeSelection.hasControls = false;
       this.canvas.renderAll();
-      console.log("render!!!");
     });
     this.canvas.on("selection:updated", (e2) => {
       var _a, _b;
@@ -22361,8 +22357,8 @@ class MainView {
     this[`${view}View`].render();
   }
   panToCanvasWidthCenter(imageName) {
-    this.canvas.absolutePan(new fabric$1.fabric.Point(0, 0));
-    const delta = new fabric$1.fabric.Point(
+    this.canvas.absolutePan(new fabric.fabric.Point(0, 0));
+    const delta = new fabric.fabric.Point(
       this.canvas.width / 2 - this[imageName].width * this.canvas.getZoom() / 2,
       0
     );
@@ -22379,7 +22375,6 @@ class MainView {
       this.canvas.remove(el);
     });
     this.canvas.renderAll();
-    console.log("render!!!");
   }
   addRect(params) {
     params.name = params.name ? params.name : "default_rect";
@@ -22395,7 +22390,7 @@ class MainView {
     }
     const top = lastTop > document.documentElement.scrollTop && lastTop < document.documentElement.scrollTop + window.innerHeight ? lastTop + 20 : document.documentElement.scrollTop + 50;
     const left = lastLeft < this.canvas.width - 80 ? lastLeft + 20 : lastLeft - 50;
-    return new fabric$1.fabric.Rect({
+    return new fabric.fabric.Rect({
       left: params.left || left,
       top: params.top || top,
       fill: params.fill || "blue",
@@ -23157,7 +23152,7 @@ const useStyles$3 = createStyles((theme) => ({
   }
 }));
 function ScreenshotDetails({
-  mainView: mainView2,
+  mainView,
   view,
   check = {}
 }) {
@@ -23171,9 +23166,9 @@ function ScreenshotDetails({
   const imageSize = react.exports.useMemo(() => {
     if (view === "slider")
       return null;
-    if (mainView2) {
-      const image = mainView2[`${view}Image`];
-      if (view === "diff" && !(mainView2 == null ? void 0 : mainView2.diffImage))
+    if (mainView) {
+      const image = mainView[`${view}Image`];
+      if (view === "diff" && !(mainView == null ? void 0 : mainView.diffImage))
         return null;
       return /* @__PURE__ */ jsx(Tooltip, {
         withinPortal: true,
@@ -23206,7 +23201,7 @@ function ScreenshotDetails({
         variant: "dots"
       })
     });
-  }, [mainView2, view]);
+  }, [mainView, view]);
   const actualDate = ((_c = check == null ? void 0 : check.actualSnapshotId) == null ? void 0 : _c.createdDate) ? format(parseISO((_d = check == null ? void 0 : check.actualSnapshotId) == null ? void 0 : _d.createdDate), "yyyy-MM-dd HH:mm:ss") : "";
   const baselineDate = ((_e = check == null ? void 0 : check.baselineId) == null ? void 0 : _e.createdDate) ? format(parseISO((_f = check == null ? void 0 : check.baselineId) == null ? void 0 : _f.createdDate), "yyyy-MM-dd HH:mm:ss") : "";
   const createdDate = view === "actual" ? actualDate : baselineDate;
@@ -23276,7 +23271,7 @@ function ScreenshotDetails({
 }
 function ZoomToolbar({
   view,
-  mainView: mainView2
+  mainView
 }) {
   const [zoomPercent, setZoomPercent] = react.exports.useState(100);
   const [openedZoomPopover, zoomPopoverHandler] = useDisclosure(false);
@@ -23284,84 +23279,84 @@ function ZoomToolbar({
     const data = [{
       imageName: "expectedImage",
       dimension: "width",
-      value: mainView2.expectedImage.width
+      value: mainView.expectedImage.width
     }, {
       imageName: "expectedImage",
       dimension: "height",
-      value: mainView2.expectedImage.height
+      value: mainView.expectedImage.height
     }, {
       imageName: "actualImage",
       dimension: "width",
-      value: mainView2.actualImage.width
+      value: mainView.actualImage.width
     }, {
       imageName: "actualImage",
       dimension: "height",
-      value: mainView2.actualImage.height
+      value: mainView.actualImage.height
     }];
     const biggestDimensionValue = Math.max(...data.map((x2) => x2.value));
     return data.find((x2) => x2.value === biggestDimensionValue);
   };
   const zoomByPercent = (percent) => {
-    if (!(mainView2 == null ? void 0 : mainView2.canvas))
+    if (!(mainView == null ? void 0 : mainView.canvas))
       return;
-    mainView2.canvas.zoomToPoint(new fabric.Point(
-      mainView2.canvas.width / 2,
-      mainView2.canvas.viewportTransform[5]
+    mainView.canvas.zoomToPoint(new fabric.fabric.Point(
+      mainView.canvas.width / 2,
+      mainView.canvas.viewportTransform[5]
     ), percent / 100);
     document.dispatchEvent(new Event("zoom"));
     setZoomPercent(() => percent);
   };
   const zoomByDelta = (delta) => {
     document.dispatchEvent(new Event("zoom"));
-    let newPercent = Math.round(mainView2.canvas.getZoom() * 100) + delta;
+    let newPercent = Math.round(mainView.canvas.getZoom() * 100) + delta;
     newPercent = newPercent < 2 ? 2 : newPercent;
     newPercent = newPercent > 1e3 ? 1e3 : newPercent;
     zoomByPercent(newPercent);
   };
   const zoomTo = (image, dimension) => {
-    const ratio = mainView2.canvas[dimension] / image[dimension];
+    const ratio = mainView.canvas[dimension] / image[dimension];
     const percent = ratio > 9 ? 900 : ratio * 100;
     zoomByPercent(percent);
   };
   const fitImageToCanvasIfNeeded = (imageName) => {
-    const image = mainView2[imageName];
+    const image = mainView[imageName];
     const greatestDimension = image.height > image.width ? "height" : "width";
     const anotherDimension = greatestDimension === "height" ? "width" : "height";
     zoomTo(image, greatestDimension);
-    if (mainView2[imageName][anotherDimension] * mainView2.canvas.getZoom() > mainView2.canvas[anotherDimension]) {
-      zoomTo(mainView2[imageName], anotherDimension);
+    if (mainView[imageName][anotherDimension] * mainView.canvas.getZoom() > mainView.canvas[anotherDimension]) {
+      zoomTo(mainView[imageName], anotherDimension);
     }
     setTimeout(() => {
-      mainView2.panToCanvasWidthCenter(imageName);
+      mainView.panToCanvasWidthCenter(imageName);
     }, 10);
   };
   const fitImageByWith = (imageName) => {
-    const image = mainView2[imageName];
+    const image = mainView[imageName];
     zoomTo(image, "width");
     setTimeout(() => {
-      mainView2.panToCanvasWidthCenter(imageName);
+      mainView.panToCanvasWidthCenter(imageName);
     }, 10);
   };
   const resizeImageIfNeeded = () => {
     const initPan = (imageName) => {
       setTimeout(() => {
-        mainView2.panToCanvasWidthCenter(imageName);
+        mainView.panToCanvasWidthCenter(imageName);
       }, 10);
     };
     const greatestImage = calculateMaxImagesDimensions();
-    if (mainView2.canvas[greatestImage.dimension] / greatestImage.value > 7) {
+    if (mainView.canvas[greatestImage.dimension] / greatestImage.value > 7) {
       zoomByPercent(350);
       initPan(greatestImage.imageName);
       return;
     }
-    if (greatestImage.value < mainView2.canvas[greatestImage.dimension]) {
+    if (greatestImage.value < mainView.canvas[greatestImage.dimension]) {
       initPan(greatestImage.imageName);
       return;
     }
-    zoomTo(mainView2[greatestImage.imageName], greatestImage.dimension);
+    zoomTo(mainView[greatestImage.imageName], greatestImage.dimension);
     const anotherDimension = greatestImage.dimension === "height" ? "width" : "height";
-    if (mainView2[greatestImage.imageName][anotherDimension] * mainView2.canvas.getZoom() > mainView2.canvas[anotherDimension]) {
-      zoomTo(mainView2[greatestImage.imageName], anotherDimension);
+    if (mainView[greatestImage.imageName][anotherDimension] * mainView.canvas.getZoom() > mainView.canvas[anotherDimension]) {
+      zoomTo(mainView[greatestImage.imageName], anotherDimension);
     }
     initPan(greatestImage.imageName);
   };
@@ -23371,10 +23366,10 @@ function ZoomToolbar({
     return () => document.removeEventListener("zoom", zoomEventHandler, false);
   }, []);
   react.exports.useEffect(function initZoom() {
-    if (mainView2) {
+    if (mainView) {
       resizeImageIfNeeded();
     }
-  }, [mainView2 == null ? void 0 : mainView2.toString()]);
+  }, [mainView == null ? void 0 : mainView.toString()]);
   useHotkeys([
     ["Equal", () => zoomByDelta(15)],
     ["NumpadAdd", () => zoomByDelta(15)],
@@ -23447,10 +23442,10 @@ function ZoomToolbar({
             onClick: () => {
               zoomByPercent(50);
               if (view === "slider") {
-                mainView2.panToCanvasWidthCenter("actualImage");
+                mainView.panToCanvasWidthCenter("actualImage");
                 return;
               }
-              mainView2.panToCanvasWidthCenter(`${view}Image`);
+              mainView.panToCanvasWidthCenter(`${view}Image`);
               zoomPopoverHandler.close();
             },
             children: /* @__PURE__ */ jsx(Group, {
@@ -23465,10 +23460,10 @@ function ZoomToolbar({
             onClick: () => {
               zoomByPercent(100);
               if (view === "slider") {
-                mainView2.panToCanvasWidthCenter("actualImage");
+                mainView.panToCanvasWidthCenter("actualImage");
                 return;
               }
-              mainView2.panToCanvasWidthCenter(`${view}Image`);
+              mainView.panToCanvasWidthCenter(`${view}Image`);
               zoomPopoverHandler.close();
             },
             children: /* @__PURE__ */ jsx(Group, {
@@ -23483,10 +23478,10 @@ function ZoomToolbar({
             onClick: () => {
               zoomByPercent(200);
               if (view === "slider") {
-                mainView2.panToCanvasWidthCenter("actualImage");
+                mainView.panToCanvasWidthCenter("actualImage");
                 return;
               }
-              mainView2.panToCanvasWidthCenter(`${view}Image`);
+              mainView.panToCanvasWidthCenter(`${view}Image`);
               zoomPopoverHandler.close();
             },
             children: /* @__PURE__ */ jsx(Group, {
@@ -23769,10 +23764,10 @@ function getDiffImageData(image) {
   const imgData = ctx.getImageData(0, 0, image.width, image.height);
   return imgData;
 }
-function highlightDiff(mainView2, highlightsGroups, imageData) {
+function highlightDiff(mainView, highlightsGroups, imageData) {
   return new Promise((resolve) => {
-    mainView2.canvas.getObjects().filter((x2) => x2.name === "highlight").forEach((x2) => mainView2.canvas.remove(x2));
-    const urlData = mainView2.diffImage.toDataURL({});
+    mainView.canvas.getObjects().filter((x2) => x2.name === "highlight").forEach((x2) => mainView.canvas.remove(x2));
+    const urlData = mainView.diffImage.toDataURL({});
     const img = new Image();
     img.src = urlData;
     img.onload = () => {
@@ -23818,7 +23813,7 @@ function highlightDiff(mainView2, highlightsGroups, imageData) {
       for (const group of groups) {
         const top = group.minY + (group.maxY - group.minY) / 2;
         const left = group.minX + (group.maxX - group.minX) / 2;
-        const circle = new fabric$1.fabric.Circle({
+        const circle = new fabric.fabric.Circle({
           name: "highlight",
           originX: "center",
           originY: "center",
@@ -23830,48 +23825,48 @@ function highlightDiff(mainView2, highlightsGroups, imageData) {
           strokeWidth: 0,
           selectable: false
         });
-        mainView2.canvas.add(circle);
+        mainView.canvas.add(circle);
       }
       console.timeEnd("group handling");
       console.timeEnd("process_data");
       const highlightRemoving = () => {
-        mainView2.canvas.getObjects().filter((x2) => x2.name === "highlight").forEach((x2) => mainView2.canvas.remove(x2));
+        mainView.canvas.getObjects().filter((x2) => x2.name === "highlight").forEach((x2) => mainView.canvas.remove(x2));
       };
       setTimeout(() => {
-        mainView2.canvas.getObjects().filter((x2) => x2.name === "highlight").forEach((circle) => {
+        mainView.canvas.getObjects().filter((x2) => x2.name === "highlight").forEach((circle) => {
           const suitableRadius = Math.max(
             circle.data.group.maxX - circle.data.group.minX,
             circle.data.group.maxY - circle.data.group.minY
           );
-          const radius = ((suitableRadius > 25 ? suitableRadius : 25) + Math.floor(Math.random() * 10)) / mainView2.canvas.getZoom();
+          const radius = ((suitableRadius > 25 ? suitableRadius : 25) + Math.floor(Math.random() * 10)) / mainView.canvas.getZoom();
           circle.animate("opacity", "0.5", {
-            onChange: mainView2.canvas.renderAll.bind(mainView2.canvas),
+            onChange: mainView.canvas.renderAll.bind(mainView.canvas),
             duration: 500
           });
           circle.animate("radius", String(radius), {
-            onChange: mainView2.canvas.renderAll.bind(mainView2.canvas),
+            onChange: mainView.canvas.renderAll.bind(mainView.canvas),
             duration: 500,
             onComplete: () => {
               circle.animate("radius", "0.00", {
-                onChange: mainView2.canvas.renderAll.bind(mainView2.canvas),
+                onChange: mainView.canvas.renderAll.bind(mainView.canvas),
                 duration: (window == null ? void 0 : window.slowHighlight) ? 15e3 : 700,
                 onComplete: highlightRemoving
               });
               circle.animate("opacity", "0.30", {
-                onChange: mainView2.canvas.renderAll.bind(mainView2.canvas),
+                onChange: mainView.canvas.renderAll.bind(mainView.canvas),
                 duration: (window == null ? void 0 : window.slowHighlight) ? 3e3 : 700
               });
             }
           });
         });
-        mainView2.canvas.renderAll();
+        mainView.canvas.renderAll();
       }, 0);
       return resolve({ groups, diffImageData });
     };
   });
 }
 function HighlightButton({
-  mainView: mainView2,
+  mainView,
   disabled = false
 }) {
   const [loadHighlights, setLoadHighlights] = react.exports.useState(false);
@@ -23901,7 +23896,7 @@ function HighlightButton({
           const {
             groups,
             diffImageData
-          } = await highlightDiff(mainView2, highlightsGroups, imageData);
+          } = await highlightDiff(mainView, highlightsGroups, imageData);
           setImageData(() => diffImageData);
           setHighlightsGroups(() => groups);
           setLoadHighlights(() => false);
@@ -23915,21 +23910,21 @@ function HighlightButton({
   });
 }
 function RegionsToolbar({
-  mainView: mainView2,
+  mainView,
   baselineId,
   view
 }) {
   const [visibleRegionRemoveButton, setVisibleRegionRemoveButton] = react.exports.useState(false);
   const regionsSelectionEvents = () => {
     const handler = () => {
-      const els = mainView2.canvas.getActiveObjects().filter((x2) => x2.name === "ignore_rect");
+      const els = mainView.canvas.getActiveObjects().filter((x2) => x2.name === "ignore_rect");
       if (els.length > 0) {
         setVisibleRegionRemoveButton(() => true);
       } else {
         setVisibleRegionRemoveButton(() => false);
       }
     };
-    mainView2.canvas.on({
+    mainView.canvas.on({
       "selection:cleared": (e2) => {
         log.debug("cleared selection");
         handler();
@@ -23945,13 +23940,13 @@ function RegionsToolbar({
     });
   };
   useHotkeys([["alt+S", () => {
-    MainView.sendIgnoreRegions(baselineId, mainView2.getRectData());
-  }], ["Delete", () => mainView2.removeActiveIgnoreRegions()], ["Backspace", () => mainView2.removeActiveIgnoreRegions()]]);
+    MainView.sendIgnoreRegions(baselineId, mainView.getRectData());
+  }], ["Delete", () => mainView.removeActiveIgnoreRegions()], ["Backspace", () => mainView.removeActiveIgnoreRegions()]]);
   react.exports.useEffect(function initView() {
-    if (mainView2) {
+    if (mainView) {
       regionsSelectionEvents();
     }
-  }, [mainView2 == null ? void 0 : mainView2.toString()]);
+  }, [mainView == null ? void 0 : mainView.toString()]);
   return /* @__PURE__ */ jsxs(Fragment, {
     children: [/* @__PURE__ */ jsx(Tooltip, {
       label: /* @__PURE__ */ jsxs(Group, {
@@ -23975,7 +23970,7 @@ function RegionsToolbar({
       children: /* @__PURE__ */ jsx(ActionIcon, {
         "data-check": "remove-ignore-region",
         disabled: !visibleRegionRemoveButton,
-        onClick: () => mainView2.removeActiveIgnoreRegions(),
+        onClick: () => mainView.removeActiveIgnoreRegions(),
         children: /* @__PURE__ */ jsx(IMe, {
           size: 24,
           stroke: 1
@@ -24013,7 +24008,7 @@ function RegionsToolbar({
         children: /* @__PURE__ */ jsx(ActionIcon, {
           "data-check": "add-ignore-region",
           disabled: view === "slider" || !baselineId,
-          onClick: () => mainView2.addIgnoreRegion({
+          onClick: () => mainView.addIgnoreRegion({
             name: "ignore_rect",
             strokeWidth: 0
           }),
@@ -24049,7 +24044,7 @@ function RegionsToolbar({
       }),
       children: /* @__PURE__ */ jsx(ActionIcon, {
         "data-check": "save-ignore-region",
-        onClick: () => MainView.sendIgnoreRegions(baselineId, mainView2.getRectData()),
+        onClick: () => MainView.sendIgnoreRegions(baselineId, mainView.getRectData()),
         children: /* @__PURE__ */ jsx(qF, {
           size: 24,
           stroke: 1
@@ -24059,12 +24054,13 @@ function RegionsToolbar({
   });
 }
 function Toolbar({
-  mainView: mainView2,
+  mainView,
   classes,
   curCheck,
   baselineId,
   initCheckData,
-  checkQuery
+  checkQuery,
+  closeHandler
 }) {
   var _a;
   const {
@@ -24072,15 +24068,15 @@ function Toolbar({
   } = useParams();
   const [view, setView] = react.exports.useState("actual");
   react.exports.useEffect(function initView() {
-    if (mainView2 == null ? void 0 : mainView2.diffImage) {
+    if (mainView == null ? void 0 : mainView.diffImage) {
       setView(() => "diff");
       return;
     }
     setView(() => "actual");
-  }, [mainView2 == null ? void 0 : mainView2.diffImage, query.checkId]);
+  }, [mainView == null ? void 0 : mainView.diffImage, query.checkId]);
   react.exports.useEffect(function switchView() {
-    if (mainView2) {
-      mainView2.switchView(view);
+    if (mainView) {
+      mainView.switchView(view);
     }
   }, [view]);
   return /* @__PURE__ */ jsxs(Group, {
@@ -24088,7 +24084,7 @@ function Toolbar({
     noWrap: true,
     "data-check": "toolbar",
     children: [/* @__PURE__ */ jsx(ScreenshotDetails, {
-      mainView: mainView2,
+      mainView,
       check: curCheck,
       view
     }), /* @__PURE__ */ jsxs(Group, {
@@ -24101,7 +24097,7 @@ function Toolbar({
         align: "center",
         noWrap: true,
         children: /* @__PURE__ */ jsx(ZoomToolbar, {
-          mainView: mainView2,
+          mainView,
           view
         })
       }), /* @__PURE__ */ jsx(Divider, {
@@ -24113,12 +24109,12 @@ function Toolbar({
       }), /* @__PURE__ */ jsx(Divider, {
         orientation: "vertical"
       }), /* @__PURE__ */ jsx(HighlightButton, {
-        mainView: mainView2,
+        mainView,
         disabled: !(view === "diff" && parseFloat((_a = curCheck == null ? void 0 : curCheck.parsedResult) == null ? void 0 : _a.rawMisMatchPercentage) < 5)
       }), /* @__PURE__ */ jsx(Divider, {
         orientation: "vertical"
       }), /* @__PURE__ */ jsx(RegionsToolbar, {
-        mainView: mainView2,
+        mainView,
         baselineId,
         view
       }), /* @__PURE__ */ jsx(Divider, {
@@ -24132,9 +24128,9 @@ function Toolbar({
       }), /* @__PURE__ */ jsx(RemoveButton, {
         check: curCheck,
         initCheck: initCheckData,
-        checksQuery: checkQuery,
         testUpdateQuery: checkQuery,
-        size: 30
+        size: 30,
+        closeHandler
       })]
     })]
   });
@@ -24356,7 +24352,8 @@ const useStyles$1 = createStyles((theme) => ({
 }));
 function CheckDetails({
   initCheckData,
-  checkQuery
+  checkQuery,
+  closeHandler
 }) {
   var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k;
   useDocumentTitle(initCheckData == null ? void 0 : initCheckData.name);
@@ -24367,7 +24364,7 @@ function CheckDetails({
   const {
     classes
   } = useStyles$1();
-  const [mainView2, setMainView] = react.exports.useState(null);
+  const [mainView, setMainView] = react.exports.useState(null);
   const [relatedActiveCheckId, setRelatedActiveCheckId] = react.exports.useState(initCheckData._id);
   const [relatedChecksOpened, relatedChecksHandler] = useDisclosure(true);
   const related = useRelatedChecks(initCheckData);
@@ -24441,16 +24438,16 @@ function CheckDetails({
   }, [(_j = baselineQuery.data) == null ? void 0 : _j.timestamp]);
   react.exports.useEffect(() => {
     const destroyMV = async () => {
-      if (mainView2) {
-        await mainView2.destroyAllViews();
-        mainView2.canvas.clear();
-        mainView2.canvas.dispose();
+      if (mainView) {
+        await mainView.destroyAllViews();
+        mainView.canvas.clear();
+        mainView.canvas.dispose();
         setMainView(() => null);
       }
     };
     const initMV = async () => {
       var _a2, _b2, _c2, _d2;
-      fabric$1.fabric.Object.prototype.objectCaching = false;
+      fabric.fabric.Object.prototype.objectCaching = false;
       const expectedImgSrc = `${config.baseUri}/snapshoots/${(_a2 = currentCheck == null ? void 0 : currentCheck.baselineId) == null ? void 0 : _a2.filename}?expectedImg`;
       const expectedImg = await createImageAndWaitForLoad(expectedImgSrc);
       const actual = currentCheck.actualSnapshotId || null;
@@ -24483,10 +24480,10 @@ function CheckDetails({
   react.exports.useEffect(function afterMainViewCreatedHandleRegions() {
     if (!baselineId)
       return;
-    if (mainView2) {
-      mainView2.getSnapshotIgnoreRegionsDataAndDrawRegions(baselineId);
+    if (mainView) {
+      mainView.getSnapshotIgnoreRegionsDataAndDrawRegions(baselineId);
     }
-  }, [(_k = baselineQuery.data) == null ? void 0 : _k.timestamp, mainView2 == null ? void 0 : mainView2.toString(), query.checkId]);
+  }, [(_k = baselineQuery.data) == null ? void 0 : _k.timestamp, mainView == null ? void 0 : mainView.toString(), query.checkId]);
   return /* @__PURE__ */ jsx(Group, {
     style: {
       width: "96vw"
@@ -24500,12 +24497,13 @@ function CheckDetails({
         classes,
         currentCheck: currentCheckSafe
       }), /* @__PURE__ */ jsx(Toolbar, {
-        mainView: mainView2,
+        mainView,
         checkQuery,
         curCheck: currentCheckSafe,
         initCheckData,
         classes,
-        baselineId
+        baselineId,
+        closeHandler
       }), /* @__PURE__ */ jsxs(Group, {
         spacing: 4,
         align: "start",

@@ -34,9 +34,10 @@ const useStyles = createStyles((theme) => ({
 interface Props {
     initCheckData: any, // initially open check by clicking from table (not from related panel)
     checkQuery: any,
+    closeHandler: any,
 }
 
-export function CheckDetails({ initCheckData, checkQuery }: Props) {
+export function CheckDetails({ initCheckData, checkQuery, closeHandler }: Props) {
     useDocumentTitle(initCheckData?.name);
     const canvasElementRef = useRef(null);
     const { query } = useParams();
@@ -207,6 +208,7 @@ export function CheckDetails({ initCheckData, checkQuery }: Props) {
                     initCheckData={initCheckData}
                     classes={classes}
                     baselineId={baselineId}
+                    closeHandler={closeHandler}
                 />
 
                 <Group
