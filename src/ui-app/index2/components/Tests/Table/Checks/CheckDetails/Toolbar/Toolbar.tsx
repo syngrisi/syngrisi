@@ -19,6 +19,7 @@ interface Props {
     baselineId: string
     initCheckData: any
     checkQuery: any
+    closeHandler: any
 }
 
 export function Toolbar(
@@ -29,6 +30,7 @@ export function Toolbar(
         baselineId,
         initCheckData,
         checkQuery,
+        closeHandler,
     }: Props,
 ) {
     const { query } = useParams();
@@ -88,9 +90,9 @@ export function Toolbar(
                 <RemoveButton
                     check={curCheck}
                     initCheck={initCheckData}
-                    checksQuery={checkQuery}
                     testUpdateQuery={checkQuery}
                     size={30}
+                    closeHandler={closeHandler}
                 />
             </Group>
         </Group>

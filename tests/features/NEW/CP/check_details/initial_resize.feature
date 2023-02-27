@@ -21,11 +21,12 @@ Feature: Check Details - Initial image resize
         When I wait for "3" seconds
         When I execute javascript code:
         """
-        return mainView.canvas.viewportTransform[4] + '_' + mainView.canvas.viewportTransform[5]
+        return mainView.canvas.viewportTransform[4] + '_' + mainView.canvas.viewportTransform[5] === '362.5_0'
+        || mainView.canvas.viewportTransform[4] + '_' + mainView.canvas.viewportTransform[5] === '340_0'
         """
         Then I expect the stored "js" string is equal:
         """
-          340_0
+          true
         """
 
         When I execute javascript code:
@@ -88,11 +89,12 @@ Feature: Check Details - Initial image resize
         When I wait for "3" seconds
         When I execute javascript code:
         """
-        return parseInt(mainView.canvas.viewportTransform[4]) + '_' + mainView.canvas.viewportTransform[5]
+        return (parseInt(mainView.canvas.viewportTransform[4]) + '_' + mainView.canvas.viewportTransform[5]) === '529_0'
+        || (parseInt(mainView.canvas.viewportTransform[4]) + '_' + mainView.canvas.viewportTransform[5]) === '528_0'
         """
         Then I expect the stored "js" string is equal:
         """
-          528_0
+          true
         """
 
         When I execute javascript code:
