@@ -11,7 +11,7 @@ const get = catchAsync(async (req, res) => {
     res.send(result);
 });
 
-const get_via_post = catchAsync(async (req, res) => {
+const getViaPost = catchAsync(async (req, res) => {
     const filter = req.body.filter ? pick(req.body, ['filter']).filter : {};
     const options = req.body.options ? pick(req.body, ['options']).options : {};
     const result = await genericService.get('VRSCheck', filter, options);
@@ -34,7 +34,7 @@ const remove = catchAsync(async (req, res) => {
 });
 
 module.exports = {
-    get_via_post,
+    getViaPost,
     get,
     accept,
     remove,

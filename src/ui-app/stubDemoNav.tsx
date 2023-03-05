@@ -9,7 +9,7 @@ import {
 import { IconFingerprint } from '@tabler/icons';
 
 function DemoNav() {
-    const useStyles = createStyles((theme, _params, getRef) => ({
+    const useStyles = createStyles((theme) => ({
         navLink: {
             color: theme.colors.pink[5],
         },

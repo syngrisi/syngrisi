@@ -1,5 +1,4 @@
 /* eslint-disable */
-import { useMantineTheme } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import log from './Logger';
 

@@ -15404,7 +15404,6 @@ function useDistinctLogQuery({
 }
 function LogLevelFilter({
   label,
-  groupRules,
   updateGroupRules,
   id
 }) {

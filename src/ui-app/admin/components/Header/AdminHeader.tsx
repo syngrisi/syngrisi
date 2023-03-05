@@ -1,6 +1,5 @@
 import {
     Breadcrumbs,
-    Burger,
     Container,
     Group,
     Header,
@@ -10,7 +9,6 @@ import {
     Text,
 } from '@mantine/core';
 import * as React from 'react';
-import { useDisclosure } from '@mantine/hooks';
 import { IconSearch } from '@tabler/icons';
 import { createStyles } from '@mantine/styles';
 import { useContext } from 'react';
@@ -81,7 +79,6 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export default function AdminHeader() {
-    const [opened, { toggle }] = useDisclosure(false);
     const { classes } = useStyles();
 
     const headerLinks = links.map((link) => (
@@ -103,7 +100,7 @@ export default function AdminHeader() {
         >
             <Container className={classes.inner} fluid>
                 <Group>
-                    {/*<Burger opened={opened} onClick={toggle} size="sm" />*/}
+                    {/* <Burger opened={opened} onClick={toggle} size="sm" /> */}
                     <HeaderLogo />
                 </Group>
 

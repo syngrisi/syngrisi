@@ -1,4 +1,4 @@
-/* eslint-disable valid-jsdoc */
+/* eslint-disable valid-jsdoc,no-restricted-syntax,no-await-in-loop */
 const mongoose = require('mongoose');
 
 const Test = mongoose.model('VRSTest');
@@ -34,7 +34,6 @@ const remove = async (id, user) => {
     }
     const suite = await Suite.findByIdAndRemove(id)
         .exec();
-    console.log({ suite });
     return suite;
 };
 

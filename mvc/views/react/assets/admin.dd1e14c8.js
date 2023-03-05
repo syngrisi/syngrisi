@@ -1,5 +1,5 @@
 import { bD as transitions$1, r as react, U as useUncontrolled, a$ as useIsomorphicEffect, O as useId, b as jsx, c as createStyles, K as useComponentDefaultProps, B as Box, j as jsxs, aW as UnstyledButton, aF as getDefaultZIndex, b0 as useInputProps, ay as useDidUpdate, W as Input, aS as useMergedRef, aE as packSx, aG as createPolymorphicComponent, d as useMantineTheme, a0 as Fragment, V as ActionIcon, a6 as Transition, P as Paper, aD as OptionalPortal, T as Text, a_ as Overlay, bE as assignRef, bF as getSystemStyles, bG as MANTINE_SIZES, aR as isElement, b1 as keyframes, aH as _extends, R as extractSystemStyles, a5 as React, J as sizes$8, q as TextInput, G as Group, bH as InputsGroup, bI as InlineInput, A as Anchor, a4 as Loader, bJ as CheckboxIcon, bK as GROUP_POSITIONS, s as Checkbox, bL as SYSTEM_PROPS, h as Button, C as Center, aX as CheckIcon, e as Container, L as LoadingOverlay, bg as Portal, i as Progress, Y as Stack, S as Switch, g as Title, a2 as Tooltip, aT as clsx, bM as DEFAULT_THEME, bN as MANTINE_COLORS, M as MantineProvider, F as ColorSchemeProvider, bO as useMantineColorScheme, bP as GlobalStyles, bQ as NormalizeCSS, bR as filterProps, bS as useCss, bT as useEmotionCache, bU as defaultMantineEmotionCache, bV as createCache, $ as Dge, bi as useLocation, bW as Link, bX as Dqe, bY as ya, bs as N9, bx as CMe, p as useForm, X as queryString, l as log, bZ as useParams$1, m as dj, n as lAe, b_ as tMe, b$ as wQ, bv as Qa, u as useQuery, bq as Iqe, Z as Epe, ab as Ol, ac as ua, ad as RX, a8 as rze, a7 as Xfe, y as useLocalStorage, as as Y, a9 as zV, au as Routes, av as Route, Q as QueryClient, f as useDocumentTitle, at as useNavigate, E as QueryClientProvider, H as createRoot, I as BrowserRouter } from "./use-form.bba2ce1c.js";
-import { a9 as createSafeContext, aa as createScopedKeydownHandler, z as Collapse, ab as CloseButton, ac as HorizontalSection, ad as Section, ae as VerticalSection, af as DefaultItem$2, ag as groupOptions, ah as SelectPopover, ai as SelectScrollArea, aj as SelectItems, ak as noop$1, P as Popover, A as Affix, al as useFocusTrap, am as useScrollLock, an as useFocusReturn, ao as GroupedTransition, ap as createEventHandler, a as useDisclosure, aq as useDelayedHover, ar as _objectWithoutPropertiesLoose, as as useScrollIntoView, at as getSelectRightSectionProps, i as useOs, au as useElementSize, D as Divider, N as Navbar, H as Header, a0 as AppShell, av as Avatar, r as Badge, B as Breadcrumbs, E as Burger, y as Card, aw as CardSection, f as Chip, C as CopyButton, F as FocusTrap, ax as Highlight, I as Image, K as Kbd, L as List, ay as Mark, az as Menu, M as Modal, aA as Notification, R as RingProgress, d as ScrollArea, Q as SegmentedControl, aB as Select, aC as ChevronIcon$1, k as Skeleton, V as Table, T as ThemeIcon, aD as Global, aE as AppContext, n as getNavigationItem, aF as stopNavigationProgress, aG as resetNavigationProgress, l as links, g as HeaderLogo, o as openSpotlight, U as UserMenu, j as useMutation, h as SafeSelect, t as ActionPopoverIcon, s as successMsg, e as errorMsg, G as GenericService, v as UserHooks, $ as useNavProgressFetchEffect, m as useInView, p as useToggle, u as useQueryParams, S as StringParam, J as JsonParam, W as useInputState, X as RelativeDrawer, Y as LogicalGroup, Z as uuid, q as useInfinityScroll, a1 as ReactQueryDevtools, a2 as useColorScheme, a3 as navigationData, a4 as SpotlightProvider, a5 as NotificationsProvider, a6 as NavigationProgress, a7 as QueryParamProvider, a8 as ReactRouter6Adapter } from "./LogicalGroup.6bc7ad94.js";
+import { a9 as createSafeContext, aa as createScopedKeydownHandler, z as Collapse, ab as CloseButton, ac as HorizontalSection, ad as Section, ae as VerticalSection, af as DefaultItem$2, ag as groupOptions, ah as SelectPopover, ai as SelectScrollArea, aj as SelectItems, ak as noop$1, P as Popover, A as Affix, al as useFocusTrap, am as useScrollLock, an as useFocusReturn, ao as GroupedTransition, ap as createEventHandler, a as useDisclosure, aq as useDelayedHover, ar as _objectWithoutPropertiesLoose, as as useScrollIntoView, at as getSelectRightSectionProps, i as useOs, au as useElementSize, D as Divider, N as Navbar, H as Header, a0 as AppShell, av as Avatar, r as Badge, B as Breadcrumbs, E as Burger, y as Card, aw as CardSection, f as Chip, C as CopyButton, F as FocusTrap, ax as Highlight, I as Image, K as Kbd, L as List, ay as Mark, az as Menu, M as Modal, aA as Notification, R as RingProgress, d as ScrollArea, Q as SegmentedControl, aB as Select, aC as ChevronIcon$1, k as Skeleton, V as Table, T as ThemeIcon, aD as Global, aE as AppContext, n as getNavigationItem, aF as stopNavigationProgress, aG as resetNavigationProgress, l as links, g as HeaderLogo, o as openSpotlight, U as UserMenu, j as useMutation, h as SafeSelect, t as ActionPopoverIcon, s as successMsg, e as errorMsg, G as GenericService, v as UserHooks, $ as useNavProgressFetchEffect, m as useInView, p as useToggle, u as useQueryParams, S as StringParam, J as JsonParam, W as useInputState, X as RelativeDrawer, Y as LogicalGroup, Z as uuid, q as useInfinityScroll, a1 as ReactQueryDevtools, a2 as useColorScheme, a3 as navigationData, a4 as SpotlightProvider, a5 as NotificationsProvider, a6 as NavigationProgress, a7 as QueryParamProvider, a8 as ReactRouter6Adapter } from "./LogicalGroup.3c060879.js";
 import { P as PasswordInput } from "./PasswordInput.bcd5b37b.js";
 function getSafeId(uid, errorMessage) {
   return (value) => {
@@ -12242,7 +12242,6 @@ const useStyles$4 = createStyles((theme) => ({
   }
 }));
 function AdminHeader() {
-  useDisclosure(false);
   const {
     classes
   } = useStyles$4();
@@ -13437,48 +13436,45 @@ function AdminSettings() {
 }
 const RefreshActionIcon = ({
   newestItemsQuery,
-  firstPageQuery,
-  infinityQuery
+  firstPageQuery
 }) => {
   var _a, _b, _c, _d, _e, _f;
   const theme = useMantineTheme();
   const newestItems = ((_a = newestItemsQuery == null ? void 0 : newestItemsQuery.data) == null ? void 0 : _a.results.length) > 50 ? "50+" : (_b = newestItemsQuery == null ? void 0 : newestItemsQuery.data) == null ? void 0 : _b.results.length;
   const pluralCharset = newestItems > 1 ? "s" : "";
-  return /* @__PURE__ */ jsx(Fragment, {
-    children: /* @__PURE__ */ jsxs(ActionIcon, {
-      color: theme.colorScheme === "dark" ? "green.8" : "green.6",
-      "data-test": "table-refresh-icon",
-      variant: "subtle",
-      onClick: () => firstPageQuery.refetch(),
-      children: [/* @__PURE__ */ jsx(Epe, {
-        size: 24,
-        stroke: 1
-      }), ((_d = (_c = newestItemsQuery == null ? void 0 : newestItemsQuery.data) == null ? void 0 : _c.results) == null ? void 0 : _d.length) !== void 0 && ((_f = (_e = newestItemsQuery == null ? void 0 : newestItemsQuery.data) == null ? void 0 : _e.results) == null ? void 0 : _f.length) > 0 && /* @__PURE__ */ jsx(Badge, {
-        component: "div",
-        title: ` You have ${newestItems} new item${pluralCharset}, refresh the page to see them`,
-        pl: 4,
-        pr: 4,
-        pt: 6,
-        pb: 6,
-        color: "red",
-        variant: "filled",
-        radius: "xl",
-        "data-test": "table-refresh-icon-badge",
-        sx: {
-          fontSize: "12px",
-          position: "absolute",
-          bottom: 11,
-          left: 14,
-          lineHeight: "16px",
-          fontWeight: 400,
-          fontFamily: '"Roboto","Arial",sans-serif',
-          border: `2px`,
-          borderStyle: "solid",
-          borderColor: theme.colorScheme === "dark" ? theme.colors.dark[7] : "white"
-        },
-        children: newestItems
-      })]
-    })
+  return /* @__PURE__ */ jsxs(ActionIcon, {
+    color: theme.colorScheme === "dark" ? "green.8" : "green.6",
+    "data-test": "table-refresh-icon",
+    variant: "subtle",
+    onClick: () => firstPageQuery.refetch(),
+    children: [/* @__PURE__ */ jsx(Epe, {
+      size: 24,
+      stroke: 1
+    }), ((_d = (_c = newestItemsQuery == null ? void 0 : newestItemsQuery.data) == null ? void 0 : _c.results) == null ? void 0 : _d.length) !== void 0 && ((_f = (_e = newestItemsQuery == null ? void 0 : newestItemsQuery.data) == null ? void 0 : _e.results) == null ? void 0 : _f.length) > 0 && /* @__PURE__ */ jsx(Badge, {
+      component: "div",
+      title: ` You have ${newestItems} new item${pluralCharset}, refresh the page to see them`,
+      pl: 4,
+      pr: 4,
+      pt: 6,
+      pb: 6,
+      color: "red",
+      variant: "filled",
+      radius: "xl",
+      "data-test": "table-refresh-icon-badge",
+      sx: {
+        fontSize: "12px",
+        position: "absolute",
+        bottom: 11,
+        left: 14,
+        lineHeight: "16px",
+        fontWeight: 400,
+        fontFamily: '"Roboto","Arial",sans-serif',
+        border: `2px`,
+        borderStyle: "solid",
+        borderColor: theme.colorScheme === "dark" ? theme.colors.dark[7] : "white"
+      },
+      children: newestItems
+    })]
   });
 };
 const adminLogsTableColumns = {
