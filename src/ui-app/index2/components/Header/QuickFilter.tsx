@@ -32,7 +32,7 @@ const chipStyles: any = {
 
 export function QuickFilter() {
     const theme = useMantineTheme();
-    const { query, setQuery } = useParams();
+    const { setQuery } = useParams();
 
     const [opened, { toggle, close }] = useDisclosure(false);
     const ref = useClickOutside(() => close());

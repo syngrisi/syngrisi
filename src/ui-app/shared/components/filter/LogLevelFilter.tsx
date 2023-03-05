@@ -14,7 +14,7 @@ interface Props {
     id: string
 }
 
-export function LogLevelFilter({ label, groupRules, updateGroupRules, id }: Props) {
+export function LogLevelFilter({ label, updateGroupRules, id }: Props) {
     const distinctQuery = useDistinctLogQuery(
         {
             resource: 'logs',

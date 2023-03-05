@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { Group, Skeleton, Stack } from '@mantine/core';
 
-interface Props {
-}
-
-export function ChecksSkeleton(props: Props) {
+export function ChecksSkeleton() {
     return (
         <Group>
             <Stack>

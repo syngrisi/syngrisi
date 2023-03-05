@@ -1,4 +1,4 @@
-/* eslint-disable valid-jsdoc */
+/* eslint-disable valid-jsdoc,no-restricted-syntax,no-await-in-loop */
 const mongoose = require('mongoose');
 
 const Test = mongoose.model('VRSTest');

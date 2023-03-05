@@ -5,7 +5,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 import { r as react, X as queryString, b as jsx, j as jsxs, P as Paper, g as Title, Y as Stack, T as Text, G as Group, h as Button, Z as Epe, k as ky, a as config, u as useQuery, d as useMantineTheme, q as TextInput, V as ActionIcon, n as lAe, _ as Pj, c as createStyles, y as useLocalStorage, e as Container, $ as Dge, a0 as Fragment, a1 as useQueryClient, l as log, a2 as Tooltip, a3 as CK, a4 as Loader, a5 as React, a6 as Transition, a7 as Xfe, a8 as rze, f as useDocumentTitle, A as Anchor, a9 as zV, aa as ea, ab as Ol, ac as ua, ad as RX, ae as rWe, af as UZ, s as Checkbox, ag as getAugmentedNamespace, D as useHotkeys, ah as lDe, ai as dDe, aj as Pbe, ak as Cbe, al as pi, am as Lbe, an as zb, ao as IMe, ap as DMe, aq as qF, L as LoadingOverlay, ar as LHe, B as Box, o as useSearchParams, as as Y, Q as QueryClient, at as useNavigate, t as GCe, v as Nie, E as QueryClientProvider, F as ColorSchemeProvider, M as MantineProvider, au as Routes, av as Route, H as createRoot, I as BrowserRouter } from "./use-form.bba2ce1c.js";
-import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, G as GenericService, e as errorMsg, a as useDisclosure, b as useClickOutside, c as escapeRegExp, P as Popover, d as ScrollArea, f as Chip, D as Divider, l as links, H as Header$1, g as HeaderLogo, h as SafeSelect, o as openSpotlight, K as Kbd, i as useOs, U as UserMenu, B as Breadcrumbs, j as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, k as Skeleton, m as useInView, F as FocusTrap, n as getNavigationItem, p as useToggle, q as useInfinityScroll, N as Navbar, r as Badge, A as Affix, t as ActionPopoverIcon, v as UserHooks, T as ThemeIcon, w as getStatusMessage, x as encodeQueryParams, I as Image$1, y as Card, z as Collapse, E as Burger, O as useInfiniteQuery, Q as SegmentedControl, V as Table, W as useInputState, X as RelativeDrawer, Y as LogicalGroup, Z as uuid, $ as useNavProgressFetchEffect, a0 as AppShell, a1 as ReactQueryDevtools, a2 as useColorScheme, a3 as navigationData, a4 as SpotlightProvider, a5 as NotificationsProvider, a6 as NavigationProgress, a7 as QueryParamProvider, a8 as ReactRouter6Adapter } from "./LogicalGroup.6bc7ad94.js";
+import { _ as _inheritsLoose, C as CopyButton, u as useQueryParams, S as StringParam, J as JsonParam, G as GenericService, e as errorMsg, a as useDisclosure, b as useClickOutside, c as escapeRegExp, P as Popover, d as ScrollArea, f as Chip, D as Divider, l as links, H as Header$1, g as HeaderLogo, h as SafeSelect, o as openSpotlight, K as Kbd, i as useOs, U as UserMenu, B as Breadcrumbs, j as useMutation, s as successMsg, M as Modal, R as RingProgress, L as List, k as Skeleton, m as useInView, F as FocusTrap, n as getNavigationItem, p as useToggle, q as useInfinityScroll, N as Navbar, r as Badge, A as Affix, t as ActionPopoverIcon, v as UserHooks, T as ThemeIcon, w as getStatusMessage, x as encodeQueryParams, I as Image$1, y as Card, z as Collapse, E as Burger, O as useInfiniteQuery, Q as SegmentedControl, V as Table, W as useInputState, X as RelativeDrawer, Y as LogicalGroup, Z as uuid, $ as useNavProgressFetchEffect, a0 as AppShell, a1 as ReactQueryDevtools, a2 as useColorScheme, a3 as navigationData, a4 as SpotlightProvider, a5 as NotificationsProvider, a6 as NavigationProgress, a7 as QueryParamProvider, a8 as ReactRouter6Adapter } from "./LogicalGroup.3c060879.js";
 function useDebouncedValue(value, wait, options = { leading: false }) {
   const [_value, setValue] = react.exports.useState(value);
   const mountedRef = react.exports.useRef(false);
@@ -348,7 +348,6 @@ const chipStyles = {
 function QuickFilter() {
   const theme = useMantineTheme();
   const {
-    query,
     setQuery
   } = useParams();
   const [opened, {
@@ -4648,7 +4647,7 @@ function UnfoldActionIcon({
     })
   });
 }
-function ChecksSkeleton(props) {
+function ChecksSkeleton() {
   return /* @__PURE__ */ jsxs(Group, {
     children: [/* @__PURE__ */ jsxs(Stack, {
       children: [/* @__PURE__ */ jsx(Skeleton, {
