@@ -44,7 +44,7 @@ npm start
 sudo docker-compose up
 ```
 
-## Example Project Based on Syngrisi
+## Syngrisi Cucumber Boilerplate
 
 You can set up the [Syngrisi Cucumber Boilerplate project](https://github.com/viktor-silakov/syngrisi-cucumber-boilerplate) with pre-defined Functional and Visual Syngrisi checks steps.
 
