@@ -5,37 +5,46 @@ provides API for Test Automated solutions and a convenient UI tool to review and
 
 ## Prerequisites
 
-* [NodeJS](https://nodejs.org/en/download/) `v14.16` or above, it is preferably to
+There are two modes in which we could run Syngrisi:
+- Native mode: When you run this with nodejs on your OS, it's usually fine to run the application on the local system.
+- Container mode: using docker and docker-compose, this is more suitable for production use.
+
+### Native Mode
+* [NodeJS](https://nodejs.org/en/download/) `v14.20` or above, it is preferably to
   use [nvm](https://github.com/nvm-sh/nvm);
 * [MongoDB Community Edition](https://docs.mongodb.com/manual/administration/install-community/)
 
+### Container Mode
+* [Docker + Docker Compose](https://docs.docker.com/engine/install/)
+
 ## Quick start
 
+### Native Mode
+Install in current folder
+```bash
+npm init sy@latest
+```
+Install in certain folder
+```bash
+npm init sy@latest <path_to_syngrisi>
+```
 > ⚠️ Make sure MongoDB started before run Syngrisi
 
-Clone this project:
-
-```shell script
-git clone git@github.com:viktor-silakov/syngrisi.git
-```
-
-Go to application folder and install Dependencies
-
-```shell script
-npm install
-```
-
-Run Syngrisi server
+Run the server
 
 ```shell script
 npm start
 ```
 
+### Container Mode
+
+```shell script
+sudo docker-compose up
+```
+
 ## Example Project Based on Syngrisi
 
-You can set up the [example TA Solution](https://github.com/viktor-silakov/syngrisi-cucumber-example) based
-on [WebdriverIO Cucumber Boilerplate](https://github.com/webdriverio/cucumber-boilerplate) project, it also can be good
-point to start new TA project from scratch.
+You can set up the [Syngrisi Cucumber Boilerplate project](https://github.com/viktor-silakov/syngrisi-cucumber-boilerplate) with pre-defined Functional and Visual Syngrisi checks steps.
 
 ## Features
 
@@ -50,11 +59,6 @@ point to start new TA project from scratch.
 * Affected elements analyse based on DOM dump and diff image.
 * UI panel to observe results and manage test data (baselines, regions, test, suites, runs. etc.) )
 
-## Clear database and screenshots files
-
-```shell script
-npm run clear
-```
 
 ## Environment variables
 
