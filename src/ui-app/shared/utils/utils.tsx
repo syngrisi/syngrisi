@@ -54,10 +54,10 @@ export function getStatusMessage(check: any) {
             statusMsg += ` (${diffPercent}%)`;
         }
         if (check.failReasons.includes('wrong_dimensions')) {
-            statusMsg = ' - images have wrong  dimensions';
+            statusMsg = ' - images have the wrong dimensions';
         }
         if (check.failReasons.includes('not_accepted')) {
-            statusMsg = ' - previous check with same parameter is not accepted';
+            statusMsg = ' - the previous check with the same parameter is not accepted';
         }
     }
     if (check.status[0] === 'new'){

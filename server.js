@@ -1,6 +1,7 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const MongoStore = require('connect-mongo');
+const chalk = require('chalk');
 
 const session = require('express-session');
 
@@ -19,14 +20,9 @@ const passport = require('passport');
 const User = mongoose.model('VRSUser');
 const LocalStrategy = require('passport-local').Strategy;
 
-const logger = require('pino-http')(
-    {
-        name: 'vrs',
-        autoLogging: true,
-        useLevel: 'info',
-    },
-    pino.destination('./application.log')
-);
+const logger = require('pino-http')({
+    name: 'vrs', autoLogging: true, useLevel: 'info',
+}, pino.destination('./application.log'));
 const { AppSettings } = require('./lib/AppSettings');
 
 global.AppSettings = new AppSettings();
@@ -54,10 +50,7 @@ app.use(disableCors);
 const expressSession = session({
     secret: process.env.SYNGRISI_SESSION_STORE_KEY || require('crypto')
         .randomBytes(64)
-        .toString('hex'),
-    resave: true,
-    saveUninitialized: false,
-    cookie: { secure: false },
+        .toString('hex'), resave: true, saveUninitialized: false, cookie: { secure: false },
     store: MongoStore.create({ mongoUrl: config.connectionString }),
 });
 
@@ -133,5 +126,5 @@ if (fs.existsSync('./src/data/custom_devices.json')) {
     global.devices = [...global.devices, ...require('./src/data/custom_devices.json')];
 }
 
-log.info(`Syngrisi version: ${global.version} started at 'http://localhost:${config.port}'`, this);
-log.info('Press <Ctrl+C> to exit', this);
+log.info(chalk.green(`Syngrisi version: ${global.version} started at http://localhost:${config.port}`), this);
+log.info(chalk.whiteBright('Press <Ctrl+C> to exit'), this);

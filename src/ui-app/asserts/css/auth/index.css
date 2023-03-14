@@ -17,7 +17,7 @@ body::before {
     top: inherit;
     width: inherit;
     height: inherit;
-    background-image: url("../../images/background.jpg");
+    background-image: url("../../images/bg_2_0_dark_L2.png");
     background-size: cover;
     opacity: var(--before-opacity);
 }

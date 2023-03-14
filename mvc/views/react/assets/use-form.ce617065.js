@@ -23342,7 +23342,7 @@ const devices = [
     realMobile: true
   }
 ];
-const baseUrl = { "VITE_ROOT_PATH": "./src/ui-app/", "BASE_URL": "/", "MODE": "production", "DEV": false, "PROD": true }.VITE_SYNGRISY_BASED_URL || "";
+const baseUrl = { "VITE_ROOT_PATH": "./src/ui-app/", "BASE_URL": "/", "MODE": "production", "DEV": false, "PROD": true }.VITE_SYNGRISI_BASED_URL || "";
 const indexRoute = { "VITE_ROOT_PATH": "./src/ui-app/", "BASE_URL": "/", "MODE": "production", "DEV": false, "PROD": true }.VITE_INDEX_ROUTE || "/";
 const config = {
   baseUri: baseUrl,
