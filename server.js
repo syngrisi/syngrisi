@@ -79,7 +79,7 @@ app.use(fileUpload({
 log.info('Connect to database', this);
 // mongoose instance connection url connection
 mongoose.Promise = global.Promise;
-mongoose.connect(config.connectionString, {});
+mongoose.connect(config.connectionString, { useUnifiedTopology: true });
 
 const viewPath = path.join(__dirname, 'mvc/views');
 
