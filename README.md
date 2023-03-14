@@ -19,6 +19,8 @@ There are two modes in which we could run Syngrisi:
 
 ## Quick start
 
+https://user-images.githubusercontent.com/23633060/225095007-39ee0a29-61c1-4f46-99ab-1af67052accb.mp4
+
 ### Native Mode
 Install in current folder
 ```bash
