@@ -21,8 +21,13 @@ Feature: Check Details - Initial image resize
         When I wait for "3" seconds
         When I execute javascript code:
         """
+        return mainView.canvas.viewportTransform[4] + '_' + mainView.canvas.viewportTransform[5]
+        """
+
+        When I execute javascript code:
+        """
         return mainView.canvas.viewportTransform[4] + '_' + mainView.canvas.viewportTransform[5] === '362.5_0'
-        || mainView.canvas.viewportTransform[4] + '_' + mainView.canvas.viewportTransform[5] === '340_0'
+        || mainView.canvas.viewportTransform[4] + '_' + mainView.canvas.viewportTransform[5] === '340.5_0'
         """
         Then I expect the stored "js" string is equal:
         """

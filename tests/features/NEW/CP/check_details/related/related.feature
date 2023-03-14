@@ -82,7 +82,7 @@ Feature: Check details Related Checks
         Then I expect that element "[data-related-check-item='CheckName'] [data-related-check='branch']" to have text "INTEGRATION2"
         Then I expect that element "[data-related-check-item='CheckName'] [data-related-check='os-label']" to have text "macOS"
         Then I expect that element "[data-related-check-item='CheckName'] [data-related-check='browser-name']" to have text "firefox"
-        Then I expect that element "[data-related-check-item='CheckName'] [data-related-check='browser-version']" to contain text "10"
+        Then I expect that element "[data-related-check-item='CheckName'] [data-related-check='browser-version']" to contain text "11"
 
         # 2
         Then I wait on element "(//*[@data-related-check-item='CheckName'])[2]" to be displayed
@@ -91,7 +91,7 @@ Feature: Check details Related Checks
         Then I expect that element "(//*[@data-related-check-item='CheckName'])[2]//*[@data-related-check='branch']" to have text "INTEGRATION1"
         Then I expect that element "(//*[@data-related-check-item='CheckName'])[2]//*[@data-related-check='os-label']" to have text "macOS"
         Then I expect that element "(//*[@data-related-check-item='CheckName'])[2]//*[@data-related-check='browser-name']" to have text "safari"
-        Then I expect that element "(//*[@data-related-check-item='CheckName'])[2]//*[@data-related-check='browser-version']" to contain text "10"
+        Then I expect that element "(//*[@data-related-check-item='CheckName'])[2]//*[@data-related-check='browser-version']" to contain text "11"
 
         # 1
         Then I wait on element "(//*[@data-related-check-item='CheckName'])[3]" to be displayed
@@ -100,7 +100,7 @@ Feature: Check details Related Checks
         Then I expect that element "(//*[@data-related-check-item='CheckName'])[3]//*[@data-related-check='branch']" to have text "INTEGRATION1"
         Then I expect that element "(//*[@data-related-check-item='CheckName'])[3]//*[@data-related-check='os-label']" to have text "Windows"
         Then I expect that element "(//*[@data-related-check-item='CheckName'])[3]//*[@data-related-check='browser-name']" to have text "safari"
-        Then I expect that element "(//*[@data-related-check-item='CheckName'])[3]//*[@data-related-check='browser-version']" to contain text "10"
+        Then I expect that element "(//*[@data-related-check-item='CheckName'])[3]//*[@data-related-check='browser-version']" to contain text "11"
 
         # other name
         Then I wait on element "[data-related-check-item='CheckName2']" to not be displayed
