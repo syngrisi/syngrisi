@@ -13,7 +13,7 @@ const {
 const { config } = require('../../../config');
 const { getDiff } = require('../../../lib/comparator');
 const orm = require('../../../lib/dbItems');
-const { parseDiff } = require('../../../lib/parseDiff');
+// const { parseDiff } = require('../../../lib/parseDiff');
 const { getAllElementsByPositionFromDump } = require('../../../lib/getElementsByPixPositionsFromDump');
 const testUtil = require('./utils/tests');
 const checkUtil = require('./utils/check');
@@ -319,32 +319,32 @@ const checksGroupByIdent = async (req, res) => {
 
 exports.checksGroupByIdent = checksGroupByIdent;
 
-exports.affectedElements = async (req, res) => {
-    try {
-        if (!req.query.checktid || !req.query.diffid) {
-            const e = 'checktid|diffid query values are empty';
-            fatalError(req, res, e);
-        }
-        const chk = await Check.findById(req.query.checktid)
-            .exec()
-            .catch((e) => {
-                fatalError(req, res, e);
-            });
-        if (!chk) {
-            fatalError(req, res, `Cannot find check with such id: '${req.query.checktid}'`);
-        }
-
-        const imDiffData = await fs.readFile(`${config.defaultBaselinePath}${req.query.diffid}.png`);
-        const positions = parseDiff(imDiffData);
-        const result = await getAllElementsByPositionFromDump(JSON.parse(chk.domDump), positions);
-        console.table(Array.from(result), ['tag', 'id', 'x', 'y', 'width', 'height', 'domPath']);
-        res.json(result);
-        return result;
-    } catch (e) {
-        fatalError(req, res, e);
-    }
-    return null;
-};
+// exports.affectedElements = async (req, res) => {
+//     try {
+//         if (!req.query.checktid || !req.query.diffid) {
+//             const e = 'checktid|diffid query values are empty';
+//             fatalError(req, res, e);
+//         }
+//         const chk = await Check.findById(req.query.checktid)
+//             .exec()
+//             .catch((e) => {
+//                 fatalError(req, res, e);
+//             });
+//         if (!chk) {
+//             fatalError(req, res, `Cannot find check with such id: '${req.query.checktid}'`);
+//         }
+//
+//         const imDiffData = await fs.readFile(`${config.defaultBaselinePath}${req.query.diffid}.png`);
+//         const positions = parseDiff(imDiffData);
+//         const result = await getAllElementsByPositionFromDump(JSON.parse(chk.domDump), positions);
+//         console.table(Array.from(result), ['tag', 'id', 'x', 'y', 'width', 'height', 'domPath']);
+//         res.json(result);
+//         return result;
+//     } catch (e) {
+//         fatalError(req, res, e);
+//     }
+//     return null;
+// };
 
 function parseSorting(params) {
     return Object.keys(params)
