@@ -6,9 +6,7 @@ const {
     ensureApiKey,
     ensureLoggedInOrApiKey,
 } = require('../../lib/ensureLogin/ensureLoggedIn');
-// const UI = require('../controllers/ui/ui_controller');
-// const { admin, admin2 } = require('../controllers/ui/admin');
-const { runs } = require('../controllers/ui/runs');
+
 const API = require('../controllers/api/api_controller');
 
 module.exports = async (app) => {
@@ -38,11 +36,11 @@ module.exports = async (app) => {
             API.updateBaselineBySnapshotId(req, res)
                 .catch(next);
         })
-        .get('/runs', ensureLoggedIn(),
-            (req, res, next) => {
-                runs(req, res)
-                    .catch(next);
-            })
+        // .get('/runs', ensureLoggedIn(),
+        //     (req, res, next) => {
+        //         runs(req, res)
+        //             .catch(next);
+        //     })
         .get('/run/:id', ensureLoggedIn(), async (req, res, next) => {
             API.getRun(req, res)
                 .catch(next);
