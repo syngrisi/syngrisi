@@ -17,8 +17,7 @@ async function task() {
             for (const check of checks) {
                 const testId = check.test;
                 const test = await Test.findOne({ _id: testId });
-                console.log(test.checks.map((x: any) => x.toString()), check?._id.toString())
-                if (testId && !test.checks.map((x: any) => x.toString()).includes(check?._id.toString())) {
+                if (test && testId && !test.checks.map((x: any) => x.toString()).includes(check?._id.toString())) {
                     const newChecksArray = test.checks || [];
                     newChecksArray.push(check._id);
                     await test.update({ _id: test._id }, { $set: { checks: newChecksArray } });
