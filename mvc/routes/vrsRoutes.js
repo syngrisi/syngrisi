@@ -45,10 +45,11 @@ module.exports = async (app) => {
             API.getRun(req, res)
                 .catch(next);
         })
-        .get('/affectedelements', ensureApiKey(), async (req, res, next) => {
-            API.affectedElements(req, res)
-                .catch(next);
-        })
+        // .get('/affectedelements', ensureApiKey(), async (req, res, next) => {
+        //     // console.log('!!!!!');
+        //     API.affectedElements(req, res)
+        //         .catch(next);
+        // })
         // .get('/checksgroupview', ensureLoggedIn(), async (req, res, next) => {
         //     UI.checksGroupView(req, res)
         //         .catch(next);
