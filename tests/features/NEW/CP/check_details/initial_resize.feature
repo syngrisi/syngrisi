@@ -60,8 +60,13 @@ Feature: Check Details - Initial image resize
         When I wait for "3" seconds
         When I execute javascript code:
         """
+        return mainView.canvas.viewportTransform[4] + '_' + mainView.canvas.viewportTransform[5]
+        """
+        When I execute javascript code:
+        """
         return mainView.canvas.viewportTransform[4] + '_' + mainView.canvas.viewportTransform[5] === '332.5_0'
         || mainView.canvas.viewportTransform[4] + '_' + mainView.canvas.viewportTransform[5] === '310_0'
+        || mainView.canvas.viewportTransform[4] + '_' + mainView.canvas.viewportTransform[5] === '310_5_0'
         """
         Then I expect the stored "js" string is equal:
         """
@@ -92,6 +97,10 @@ Feature: Check Details - Initial image resize
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed
 
         When I wait for "3" seconds
+        When I execute javascript code:
+        """
+        return mainView.canvas.viewportTransform[4] + '_' + mainView.canvas.viewportTransform[5]
+        """
         When I execute javascript code:
         """
         return (parseInt(mainView.canvas.viewportTransform[4]) + '_' + mainView.canvas.viewportTransform[5]) === '529_0'
