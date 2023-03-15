@@ -6,7 +6,7 @@ const {
     ensureApiKey,
     ensureLoggedInOrApiKey,
 } = require('../../lib/ensureLogin/ensureLoggedIn');
-const UI = require('../controllers/ui/ui_controller');
+// const UI = require('../controllers/ui/ui_controller');
 // const { admin, admin2 } = require('../controllers/ui/admin');
 const { runs } = require('../controllers/ui/runs');
 const API = require('../controllers/api/api_controller');
@@ -51,22 +51,22 @@ module.exports = async (app) => {
             API.affectedElements(req, res)
                 .catch(next);
         })
-        .get('/checksgroupview', ensureLoggedIn(), async (req, res, next) => {
-            UI.checksGroupView(req, res)
-                .catch(next);
-        })
-        .get('/checkview', ensureLoggedIn(), (req, res, next) => {
-            UI.checkView(req, res)
-                .catch(next);
-        })
-        .get('/checkview2', ensureLoggedIn(), (req, res, next) => {
-            UI.checkView2(req, res)
-                .catch(next);
-        })
-        .get('/diffview', ensureLoggedIn(), (req, res, next) => {
-            UI.diffView(req, res)
-                .catch(next);
-        })
+        // .get('/checksgroupview', ensureLoggedIn(), async (req, res, next) => {
+        //     UI.checksGroupView(req, res)
+        //         .catch(next);
+        // })
+        // .get('/checkview', ensureLoggedIn(), (req, res, next) => {
+        //     UI.checkView(req, res)
+        //         .catch(next);
+        // })
+        // .get('/checkview2', ensureLoggedIn(), (req, res, next) => {
+        //     UI.checkView2(req, res)
+        //         .catch(next);
+        // })
+        // .get('/diffview', ensureLoggedIn(), (req, res, next) => {
+        //     UI.diffView(req, res)
+        //         .catch(next);
+        // })
         // .get('/admin', ensureLoggedIn(), (req, res, next) => {
         //     admin(req, res)
         //         .catch(next);

@@ -35,7 +35,9 @@
         "clear_test_db_only": "mongo VRSdbTest$CID --eval \"db.dropDatabase();\"",
         "docker_clear_test": "rm -rf ./data/db_data && rm -rf ./baselinesTest/$CID",
         "docker_clear_test_db_only": "rm -rf ./data/db_data",
-        "clear_test_screenshots_only": "rm -rf ./baselinesTest/$CID/*"
+        "clear_test_screenshots_only": "rm -rf ./baselinesTest/$CID/*",
+        "deadfile:be": "deadfile ./server.js --exclude tests baseline* .* tasks backups data docs mvc/views/react",
+        "deadfile:fe": "deadfile ./mvc/views/react/index2/index.html ./mvc/views/react/auth/index.html --dir ./mvc/views/react"
     },
     "author": {
         "name": "Viktar Silakou",
