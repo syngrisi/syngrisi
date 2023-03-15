@@ -14,13 +14,17 @@ async function task() {
             // console.log(checks);
             for (const check of checks) {
                 const testId = check.test;
-                if (testId) {
-                    const test = await Test.findOne({ _id: testId });
+                const test = await Test.findOne({ _id: testId });
+                console.log(test.checks.map((x) => x.toString()), check?._id.toString());
+                if (testId && !test.checks.map((x) => x.toString()).includes(check?._id.toString())) {
                     const newChecksArray = test.checks || [];
                     newChecksArray.push(check._id);
                     await test.update({ _id: test._id }, { $set: { checks: newChecksArray } });
                     await test.save();
                     process.stdout.write('.');
+                }
+                else {
+                    process.stdout.write('x');
                 }
             }
             /**
