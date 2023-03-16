@@ -4403,8 +4403,8 @@ const tableColumns = {
   },
   name: {
     label: "Name",
-    headStyle: { width: "20%" },
-    cellStyle: { width: "20%" },
+    headStyle: { width: "35%" },
+    cellStyle: { width: "35%" },
     type: "StringFilter"
   },
   status: {
@@ -4421,10 +4421,8 @@ const tableColumns = {
   },
   markedAs: {
     label: "Accepted",
-    headStyle: { width: "auto" },
-    cellStyle: {
-      width: "auto"
-    },
+    headStyle: { width: "7%" },
+    cellStyle: { width: "7%" },
     type: "AcceptedFilter"
   },
   startDate: {
