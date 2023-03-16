@@ -5175,7 +5175,7 @@ function Check({
     ...query,
     ["checkId"]: check._id
   }));
-  const linkToCheckOverlay = `/?${overlayParamsString}`;
+  const linkToCheckOverlay = `/?${overlayParamsString}&modalIsOpen=true`;
   const handlePreviewImageClick = (e2) => {
     if (!e2.metaKey && !e2.ctrlKey)
       e2.preventDefault();

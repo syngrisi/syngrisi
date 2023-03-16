@@ -46,7 +46,7 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
             { ...query, ['checkId' as string]: check._id },
         ),
     );
-    const linkToCheckOverlay = `/?${overlayParamsString}`;
+    const linkToCheckOverlay = `/?${overlayParamsString}&modalIsOpen=true`;
 
     const handlePreviewImageClick = (e: React.MouseEvent<HTMLDivElement>) => {
         if (!e.metaKey && !e.ctrlKey) e.preventDefault();
