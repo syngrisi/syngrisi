@@ -54,10 +54,11 @@ module.exports = async (app) => {
         //     UI.checksGroupView(req, res)
         //         .catch(next);
         // })
-        // .get('/checkview', ensureLoggedIn(), (req, res, next) => {
-        //     UI.checkView(req, res)
-        //         .catch(next);
-        // })
+        .get('/checkview', ensureLoggedIn(), (req, res) => {
+            const { id } = req.query;
+            // backward compatibility
+            res.redirect(`/?checkId=${id}&modalIsOpen=true`);
+        })
         // .get('/checkview2', ensureLoggedIn(), (req, res, next) => {
         //     UI.checkView2(req, res)
         //         .catch(next);
