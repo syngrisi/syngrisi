@@ -17,7 +17,7 @@ router
     )
     .get(
         ensureLoggedIn(),
-        authorization('admin'),
+        authorization('user'),
         userController.getUsers
     );
 
