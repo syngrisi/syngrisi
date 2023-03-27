@@ -18,6 +18,17 @@ exports.authorization = (type) => {
                 log.silly(`user: '${req.user?.username}' was successfully authorized, type: '${type}'`);
                 return next();
             }
+            log.warn(`user authorization: '${req.user?.username}' wrong role, type: '${type}'`);
+            throw new ApiError(httpStatus.FORBIDDEN, 'Authorization Error - wrong Role');
+        }),
+        user: catchAsync(async (req, res, next) => {
+            if (!(await global.AppSettings.isAuthEnabled())) {
+                return next();
+            }
+            if (req.user?.role === 'admin') {
+                log.silly(`user: '${req.user?.username}' was successfully authorized, type: '${type}'`);
+                return next();
+            }
             if (
                 type === 'user'
                 && (req.user?.role === 'user' || req.user?.role === 'reviewer')
