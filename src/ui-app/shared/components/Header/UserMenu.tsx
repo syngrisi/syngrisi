@@ -97,7 +97,7 @@ function UserMenu() {
                         User Details
                     </Menu.Item>
                     <Menu.Item
-                        disabled={isAdmin}
+                        disabled={!isAdmin}
                         icon={<IconSettings size={14} />}
                         onClick={() => window.location.assign('/admin/')}
                     >
