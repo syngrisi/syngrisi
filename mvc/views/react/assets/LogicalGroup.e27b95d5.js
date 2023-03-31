@@ -12319,7 +12319,7 @@ function useColorScheme() {
   return [colorScheme, toggleColorScheme];
 }
 function UserMenu() {
-  var _a, _b, _c, _d;
+  var _a, _b, _c, _d, _e;
   const theme = useMantineTheme();
   const [colorScheme, toggleColorScheme] = useColorScheme();
   const apiKey = UserHooks.useApiKey();
@@ -12328,6 +12328,7 @@ function UserMenu() {
   const [userInfoModalOpened, setUserInfoModalOpened] = react.exports.useState(false);
   const currentUser = UserHooks.useCurrentUser();
   const userInitials = currentUser.isSuccess && currentUser.data.firstName ? `${(_a = currentUser == null ? void 0 : currentUser.data) == null ? void 0 : _a.firstName[0]}${(_b = currentUser == null ? void 0 : currentUser.data) == null ? void 0 : _b.lastName[0]}` : "";
+  const isAdmin = ((_c = currentUser == null ? void 0 : currentUser.data) == null ? void 0 : _c.role) === "admin";
   return /* @__PURE__ */ jsxs(Fragment, {
     children: [/* @__PURE__ */ jsxs(Menu, {
       shadow: "md",
@@ -12376,7 +12377,7 @@ function UserMenu() {
                 style: {
                   marginRight: "10px"
                 }
-              }), (_c = currentUser == null ? void 0 : currentUser.data) == null ? void 0 : _c.firstName, " ", (_d = currentUser == null ? void 0 : currentUser.data) == null ? void 0 : _d.lastName]
+              }), (_d = currentUser == null ? void 0 : currentUser.data) == null ? void 0 : _d.firstName, " ", (_e = currentUser == null ? void 0 : currentUser.data) == null ? void 0 : _e.lastName]
             }), /* @__PURE__ */ jsx(ToggleThemeButton, {
               colorScheme,
               toggleColorScheme
@@ -12392,12 +12393,21 @@ function UserMenu() {
           },
           children: "User Details"
         }), /* @__PURE__ */ jsx(Menu.Item, {
+          disabled: !isAdmin,
           icon: /* @__PURE__ */ jsx(CMe, {
             size: 14
           }),
-          component: "a",
-          href: "/admin/",
-          children: "Admin Panel"
+          children: /* @__PURE__ */ jsx("a", {
+            href: "/admin/",
+            style: {
+              cursor: "pointer",
+              display: "flex",
+              textDecoration: "none",
+              alignItems: "center",
+              color: "inherit"
+            },
+            children: "Admin Panel"
+          })
         }), /* @__PURE__ */ jsx(Menu.Item, {
           icon: /* @__PURE__ */ jsx(P5, {
             size: 14

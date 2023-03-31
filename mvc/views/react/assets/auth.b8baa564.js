@@ -623,12 +623,12 @@ function App() {
   const isDark = () => colorScheme === "dark";
   react.exports.useEffect(function onColorSchemeChange() {
     if (!isDark()) {
-      document.body.style.backgroundColor = "#ffffff";
-      document.body.style.setProperty("--before-opacity", "1");
+      document.body.style.backgroundColor = "#1e1e1e";
+      document.body.style.setProperty("--before-opacity", "0.7");
       return;
     }
     document.body.style.backgroundColor = "#000000";
-    document.body.style.setProperty("--before-opacity", "0.5");
+    document.body.style.setProperty("--before-opacity", "0.7");
   }, [colorScheme]);
   const toggleColorScheme = (value) => {
     setColorScheme(value || (isDark() ? "light" : "dark"));
