@@ -13,6 +13,7 @@ export function LabelUser({ username, dataTest = 'user-label', size = 'xs' }: Pr
 
     const userQuery = UserHooks.useUsersByUsername(username);
 
+
     const userInitials = (
         userQuery.isSuccess
         && (userQuery.data.results.length > 0)
@@ -49,9 +50,9 @@ export function LabelUser({ username, dataTest = 'user-label', size = 'xs' }: Pr
                         {userInitials}
                     </ThemeIcon>
                     <Text size={size as any} data-test={dataTest}>
-                        {userQuery?.data?.results[0].firstName}
+                        {userQuery?.data?.results[0] ? userQuery?.data?.results[0].firstName : ''}
                         &nbsp;
-                        {userQuery?.data?.results[0].lastName}
+                        {userQuery?.data?.results[0] ? userQuery?.data?.results[0].lastName : ''}
                     </Text>
                 </Group>
             )
