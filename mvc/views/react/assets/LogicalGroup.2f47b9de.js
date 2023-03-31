@@ -12397,17 +12397,8 @@ function UserMenu() {
           icon: /* @__PURE__ */ jsx(CMe, {
             size: 14
           }),
-          children: /* @__PURE__ */ jsx("a", {
-            href: "/admin/",
-            style: {
-              cursor: "pointer",
-              display: "flex",
-              textDecoration: "none",
-              alignItems: "center",
-              color: "inherit"
-            },
-            children: "Admin Panel"
-          })
+          onClick: () => window.location.assign("/admin/"),
+          children: "Admin Panel"
         }), /* @__PURE__ */ jsx(Menu.Item, {
           icon: /* @__PURE__ */ jsx(P5, {
             size: 14
