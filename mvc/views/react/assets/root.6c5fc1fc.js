@@ -4977,7 +4977,7 @@ function LabelUser({
   dataTest = "user-label",
   size = "xs"
 }) {
-  var _a, _b, _c, _d, _e;
+  var _a, _b, _c, _d, _e, _f, _g;
   const theme = useMantineTheme();
   const userQuery = UserHooks.useUsersByUsername(username);
   const userInitials = userQuery.isSuccess && userQuery.data.results.length > 0 && userQuery.data.results[0].firstName ? `${(_a = userQuery == null ? void 0 : userQuery.data) == null ? void 0 : _a.results[0].firstName[0]}${(_c = (_b = userQuery == null ? void 0 : userQuery.data) == null ? void 0 : _b.results[0]) == null ? void 0 : _c.lastName[0]}` : "";
@@ -5007,7 +5007,7 @@ function LabelUser({
     }), /* @__PURE__ */ jsxs(Text, {
       size,
       "data-test": dataTest,
-      children: [(_d = userQuery == null ? void 0 : userQuery.data) == null ? void 0 : _d.results[0].firstName, "\xA0", (_e = userQuery == null ? void 0 : userQuery.data) == null ? void 0 : _e.results[0].lastName]
+      children: [((_d = userQuery == null ? void 0 : userQuery.data) == null ? void 0 : _d.results[0]) ? (_e = userQuery == null ? void 0 : userQuery.data) == null ? void 0 : _e.results[0].firstName : "", "\xA0", ((_f = userQuery == null ? void 0 : userQuery.data) == null ? void 0 : _f.results[0]) ? (_g = userQuery == null ? void 0 : userQuery.data) == null ? void 0 : _g.results[0].lastName : ""]
     })]
   });
 }
@@ -5314,7 +5314,8 @@ function Check({
         })
       }), /* @__PURE__ */ jsx(Card.Section, {
         m: 2,
-        children: /* @__PURE__ */ jsx(Tooltip.Floating, {
+        children: /* @__PURE__ */ jsx(Tooltip, {
+          openDelay: 300,
           multiline: true,
           zIndex: 1e3,
           withinPortal: true,

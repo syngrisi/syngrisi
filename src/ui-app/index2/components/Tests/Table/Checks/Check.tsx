@@ -204,7 +204,8 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                                 </Tooltip>
                             </Paper>
                             <Card.Section m={2}>
-                                <Tooltip.Floating
+                                <Tooltip
+                                    openDelay={300}
                                     multiline
                                     zIndex={1000}
                                     withinPortal
@@ -240,7 +241,7 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                                         </Group>
                                     </a>
 
-                                </Tooltip.Floating>
+                                </Tooltip>
                             </Card.Section>
 
                             {/* CHECK TOOLBAR */}
