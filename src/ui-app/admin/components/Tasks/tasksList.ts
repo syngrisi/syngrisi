@@ -35,7 +35,7 @@ export const tasksList: ITask[] = [
     {
         label: 'Handle Database Consistency',
         name: 'handle_database_consistency',
-        description: 'Checks and removes non-consistent items',
+        description: 'Checking and removing inconsistent elements',
         inputs: [
             { name: 'clean', label: 'Remove', type: 'Checkbox', default: false },
         ],
@@ -43,7 +43,7 @@ export const tasksList: ITask[] = [
     {
         label: 'Remove old logs',
         name: 'remove_old_logs',
-        description: 'Remove logs that older particular threshold',
+        description: 'Removing logs that older particular threshold',
         inputs: [
             { name: 'days', label: 'Remove older that (days)', type: 'TextInput', default: 30 },
             { name: 'statistics', label: 'Only statistics', type: 'Checkbox', default: false },
