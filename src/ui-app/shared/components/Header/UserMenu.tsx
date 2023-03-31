@@ -97,21 +97,11 @@ function UserMenu() {
                         User Details
                     </Menu.Item>
                     <Menu.Item
-                        disabled={!isAdmin}
+                        disabled={isAdmin}
                         icon={<IconSettings size={14} />}
+                        onClick={() => window.location.assign('/admin/')}
                     >
-                        <a
-                            href="/admin/"
-                            style={{
-                                cursor: 'pointer',
-                                display: 'flex',
-                                textDecoration: 'none',
-                                alignItems: 'center',
-                                color: 'inherit',
-                            }}
-                        >
-                            Admin Panel
-                        </a>
+                        Admin Panel
                     </Menu.Item>
                     <Menu.Item
                         icon={<IconKey size={14} />}
