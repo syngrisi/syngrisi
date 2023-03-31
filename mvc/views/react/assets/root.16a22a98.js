@@ -4980,7 +4980,7 @@ function LabelUser({
   var _a, _b, _c, _d, _e;
   const theme = useMantineTheme();
   const userQuery = UserHooks.useUsersByUsername(username);
-  const userInitials = userQuery.isSuccess && userQuery.data.results[0].firstName ? `${(_a = userQuery == null ? void 0 : userQuery.data) == null ? void 0 : _a.results[0].firstName[0]}${(_c = (_b = userQuery == null ? void 0 : userQuery.data) == null ? void 0 : _b.results[0]) == null ? void 0 : _c.lastName[0]}` : "";
+  const userInitials = userQuery.isSuccess && userQuery.data.results.length > 0 && userQuery.data.results[0].firstName ? `${(_a = userQuery == null ? void 0 : userQuery.data) == null ? void 0 : _a.results[0].firstName[0]}${(_c = (_b = userQuery == null ? void 0 : userQuery.data) == null ? void 0 : _b.results[0]) == null ? void 0 : _c.lastName[0]}` : "";
   return userQuery.isLoading ? null : /* @__PURE__ */ jsxs(Group, {
     spacing: 12,
     p: 0,
