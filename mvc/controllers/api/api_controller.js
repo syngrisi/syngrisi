@@ -1020,6 +1020,7 @@ async function createCheck(
     const lastSuccessCheck = await getLastSuccessCheck(checkIdent);
     return {
         ...savedCheck.toObject(),
+        currentSnapshot,
         executeTime: totalCheckHandleTime,
         lastSuccess: lastSuccessCheck ? (lastSuccessCheck).id : null,
     };
