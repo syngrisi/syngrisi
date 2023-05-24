@@ -957,6 +957,7 @@ async function createCheck(
 
     let totalCheckHandleTime;
     let compareResult;
+    let diffSnapshot;
     /** compare actual with baseline if a check isn't new */
     if ((checkUpdateParams.status !== 'new') && (!checkUpdateParams.failReasons.includes('not_accepted'))) {
         try {
@@ -977,7 +978,7 @@ async function createCheck(
 
                 log.debug(logMsg, $this, logOpts);
                 log.debug(`saving diff snapshot for check with Id: '${check.id}'`, $this, logOpts);
-                const diffSnapshot = await createSnapshot({
+                diffSnapshot = await createSnapshot({
                     name: checkParam.name,
                     fileData: compareResult.getBuffer(),
                 });
@@ -1018,12 +1019,16 @@ async function createCheck(
     await test.save();
 
     const lastSuccessCheck = await getLastSuccessCheck(checkIdent);
-    return {
+
+    const result = {
         ...savedCheck.toObject(),
         currentSnapshot,
         executeTime: totalCheckHandleTime,
         lastSuccess: lastSuccessCheck ? (lastSuccessCheck).id : null,
     };
+
+    if (diffSnapshot) result['diffSnapshot'] = diffSnapshot;
+    return result;
 }
 
 exports.createCheck = async (req, res) => {
