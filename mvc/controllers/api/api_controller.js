@@ -1706,9 +1706,11 @@ exports.task_handle_old_checks = async (req, res) => {
 
         taskOutput('> get all checks data', res);
         const allChecksBefore = await Check.find()
+            .lean()
             .exec();
         taskOutput('> get snapshots data', res);
         const allSnapshotsBefore = await Snapshot.find()
+            .lean()
             .exec();
         taskOutput('> get files data', res);
         const allFilesBefore = (await fs.readdir(config.defaultBaselinePath, { withFileTypes: true }))
@@ -1741,7 +1743,7 @@ exports.task_handle_old_checks = async (req, res) => {
             .map((x) => x.valueOf());
 
         taskOutput('>>> collect all old snapshots', res);
-        const oldSnapshots = await Snapshot.find({ _id: { $in: allOldSnapshotsUniqueIds } });
+        const oldSnapshots = await Snapshot.find({ _id: { $in: allOldSnapshotsUniqueIds } }).lean();
 
         const outTable = stringTable.create(
             [
@@ -1846,9 +1848,11 @@ exports.task_handle_old_checks = async (req, res) => {
 
             taskOutput('> get all checks data', res);
             const allChecksAfter = await Check.find()
+                .lean()
                 .exec();
             taskOutput('> get snapshots data', res);
             const allSnapshotsAfter = await Snapshot.find()
+                .lean()
                 .exec();
             taskOutput('> get files data', res);
             const allFilesAfter = (await fs.readdir(config.defaultBaselinePath, { withFileTypes: true }))
@@ -1899,6 +1903,7 @@ exports.task_handle_database_consistency = async (req, res) => {
             .exec();
         taskOutput('get tests data', res);
         const allTestsBefore = await Test.find()
+            .lean()
             .exec();
         taskOutput('get checks data', res);
         const allChecksBefore = await Check.find()
@@ -1906,6 +1911,7 @@ exports.task_handle_database_consistency = async (req, res) => {
             .exec();
         taskOutput('get snapshots data', res);
         const allSnapshotsBefore = await Snapshot.find()
+            .lean()
             .exec();
         taskOutput('get files data', res);
         const allFilesBefore = (await fs.readdir(config.defaultBaselinePath, { withFileTypes: true }))
