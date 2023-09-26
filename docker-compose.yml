@@ -4,7 +4,7 @@ services:
         container_name: syngrisi-app-server
         restart: always
         # command: tail -f /dev/null
-        command: sh -c "node server.js"
+        command: sh -c "node --max-old-space-size=4096 server.js"
         build:
             context: .
             dockerfile: syngrisi-app.dockerfile
