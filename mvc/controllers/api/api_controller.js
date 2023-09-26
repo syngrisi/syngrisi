@@ -1898,8 +1898,9 @@ exports.task_handle_database_consistency = async (req, res) => {
         taskOutput('get tests data', res);
         const allTestsBefore = await Test.find()
             .exec();
-        taskOutput('get checks data', res);
+        taskOutput('get checks data_', res);
         const allChecksBefore = await Check.find()
+            .lean()
             .exec();
         taskOutput('get snapshots data', res);
         const allSnapshotsBefore = await Snapshot.find()
