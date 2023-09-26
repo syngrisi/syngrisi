@@ -1717,7 +1717,9 @@ exports.task_handle_old_checks = async (req, res) => {
             .filter((x) => x.includes('.png'));
 
         taskOutput('> get old checks data', res);
-        const oldChecks = await Check.find({ createdDate: { $lt: trashHoldDate } });
+        const oldChecks = await Check.find({ createdDate: { $lt: trashHoldDate } })
+            .lean()
+            .exec();
 
         taskOutput('>>> collect all baselineIds for old Checks ', res);
         const oldSnapshotsBaselineIdIds = oldChecks.map((x) => x.baselineId)
@@ -1898,7 +1900,7 @@ exports.task_handle_database_consistency = async (req, res) => {
         taskOutput('get tests data', res);
         const allTestsBefore = await Test.find()
             .exec();
-        taskOutput('get checks data_', res);
+        taskOutput('get checks data', res);
         const allChecksBefore = await Check.find()
             .lean()
             .exec();
