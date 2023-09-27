@@ -11,21 +11,21 @@ interface IOption {
 }
 
 interface Props {
-    optionsData: any
-    value: any
-    required?: boolean
-    loaded?: boolean
-    label: string
-    onChange: any
-    name: string
-    searchable: boolean
-    clearable: boolean
-    sx: Sx
-    'data-test': string
-    placeholder: string
-    styles: Styles<BaseSelectStylesNames, Record<string, any>> | undefined
-    variant: InputVariant
-    disabled: boolean
+    optionsData: any;
+    value: any;
+    required?: boolean;
+    loaded?: boolean;
+    label: string;
+    onChange: any;
+    name: string;
+    searchable: boolean;
+    clearable: boolean;
+    sx: Sx;
+    'data-test': string;
+    placeholder: string;
+    styles: Styles<BaseSelectStylesNames, Record<string, any>> | undefined;
+    variant: InputVariant;
+    disabled: boolean;
 }
 
 // select component for selenium
@@ -45,6 +45,7 @@ function SafeSelect(
         placeholder,
         variant,
         disabled,
+        label
     }: Partial<Props>,
 ): ReactElement {
     const changeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,6 +54,7 @@ function SafeSelect(
     return (
         <>
             <Select
+                label={label}
                 data={optionsData}
                 required={required}
                 dropdownPosition="bottom"
