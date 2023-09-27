@@ -1970,21 +1970,23 @@ exports.task_handle_database_consistency = async (req, res) => {
                 !(allSnapshotsBeforeIds.includes(check.baselineId))
                 || !(allSnapshotsBeforeIds.includes(check.actualSnapshotId.valueOf()))
             ) {
-                abandonedChecks.push(check);
+                abandonedChecks.push(check._id.valueOf());
             }
         }
 
         taskOutput(`> calculate empty tests`, res);
         const checksUniqueTests = (await Check.find()
+            .lean()
             .distinct('test')
-            .exec()).map((x) => x.valueOf());
+            .exec())
+            .map((x) => x.valueOf());
 
         const emptyTests = [];
 
         // eslint-disable-next-line no-restricted-syntax,no-unused-vars
         for (const [index, test] of allTestsBefore.entries()) {
             if (!checksUniqueTests.includes(test._id.valueOf())) {
-                emptyTests.push(test);
+                emptyTests.push(test._id.valueOf());
             }
         }
 
@@ -1999,7 +2001,7 @@ exports.task_handle_database_consistency = async (req, res) => {
         for (const run of allRunsBefore) {
             // eslint-disable-next-line no-await-in-loop
             if (!checksUniqueRuns.includes(run._id.valueOf())) {
-                emptyRuns.push(run);
+                emptyRuns.push(run._id.valueOf());
             }
         }
 
@@ -2014,7 +2016,7 @@ exports.task_handle_database_consistency = async (req, res) => {
         for (const suite of allSuitesBefore) {
             // eslint-disable-next-line no-await-in-loop
             if (!checksUniqueSuites.includes(suite._id.valueOf())) {
-                emptySuites.push(suite);
+                emptySuites.push(suite._id.valueOf());
             }
         }
         taskOutput(`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`, res);
@@ -2036,13 +2038,15 @@ exports.task_handle_database_consistency = async (req, res) => {
             taskOutput(`STAGE #3: Remove non consistent items`, res);
 
             taskOutput(`> remove empty suites`, res);
-            await Promise.all(emptySuites.map((x) => x.delete()));
+            await Suite.deleteMany({ _id: { $in: emptySuites } });
             taskOutput(`> remove empty runs`, res);
-            await Promise.all(emptyRuns.map((x) => x.delete()));
+            await Run.deleteMany({ _id: { $in: emptyRuns } });
             taskOutput(`> remove empty tests`, res);
-            await Promise.all(emptyTests.map((x) => x.delete()));
+            await Test.deleteMany({ _id: { $in: emptyTests } });
+            taskOutput(`> remove abandoned checks`, res);
+            await Check.deleteMany({ _id: { $in: abandonedChecks } });
             taskOutput(`> remove abandoned snapshots`, res);
-            await Promise.all(abandonedSnapshots.map((x) => x.delete()));
+            await Snapshot.deleteMany({ _id: { $in: abandonedSnapshots } });
             taskOutput(`> remove abandoned files`, res);
             await Promise.all(abandonedFiles.map((filename) => fs.unlink(`${config.defaultBaselinePath}/${filename}`)));
             const allFilesAfter = fss.readdirSync(config.defaultBaselinePath, { withFileTypes: true })
@@ -2055,11 +2059,11 @@ exports.task_handle_database_consistency = async (req, res) => {
             taskOutput(`Current items:`, res);
             const afterStatTable = stringTable.create(
                 [
-                    { item: 'suites', count: (await Suite.find()).length },
-                    { item: 'runs', count: (await Run.find()).length },
-                    { item: 'tests', count: (await Test.find()).length },
-                    { item: 'checks', count: (await Check.find()).length },
-                    { item: 'snapshots', count: (await Snapshot.find()).length },
+                    { item: 'suites', count: await Suite.countDocuments() },
+                    { item: 'runs', count: await Run.countDocuments() },
+                    { item: 'tests', count: await Test.countDocuments() },
+                    { item: 'checks', count: await Check.countDocuments() },
+                    { item: 'snapshots', count: await Snapshot.countDocuments() },
                     { item: 'files', count: allFilesAfter.length },
                 ]
             );
