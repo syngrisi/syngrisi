@@ -24,7 +24,6 @@ Feature: User roles
 
     @e2e
     Scenario: User - roles (pending)
-        When I fail
         # login as test admin
         When I login via http with user:"Test" password "123"
 
@@ -56,7 +55,7 @@ Feature: User roles
         """
         {
             "username": "superadmin@gmail.com",
-            "firstName": "Johnny",
+            "firstName": "Sonny",
             "lastName": "Doe",
             "role": "admin",
             "password": "Password-123"
@@ -70,10 +69,13 @@ Feature: User roles
         Then I wait on element "span*=JD" to be displayed
 
         # generate and parse API key
-        When I click on the element "a#user-icon"
-        When I click on the element "#generate-api"
-        When I accept the confirmbox
+        When I click on the element "span*=JD"
+        When I click on the element "button=Generate API key"
+        When I click on the element "button=Generate"
+#        When I click on the element "[data-test='copy-api-icon']"
         When I parse the API key
+        When I click on the element "button=Close"
+
 
         # create checks
         When I set the API key in config
@@ -83,9 +85,9 @@ Feature: User roles
           testName: User test
         """
         When I wait for "2" seconds
-        When I click on the element "#user-icon"
-        When I click on the element "=Sign Out"
-        When I wait for "2" seconds
+
+        # logout
+        When I log out of the application
 
         ## reviewer
         # login
@@ -93,10 +95,11 @@ Feature: User roles
         Then I wait on element "span*=RR" to be displayed
 
         # generate and parse API key
-        When I click on the element "a#user-icon"
-        When I click on the element "#generate-api"
-        When I accept the confirmbox
+        When I click on the element "span*=RR"
+        When I click on the element "button=Generate API key"
+        When I click on the element "button=Generate"
         When I parse the API key
+        When I click on the element "button=Close"
 
         # create checks
         When I set the API key in config
@@ -106,21 +109,20 @@ Feature: User roles
           testName: Reviewer test
         """
 
-        When I wait for "2" seconds
-        When I click on the element "#user-icon"
-        When I click on the element "=Sign Out"
-        When I wait for "2" seconds
+        # logout
+        When I log out of the application
 
         ## admin
         # login
         When I login with user:"superadmin@gmail.com" password "Password-123"
-        Then I wait on element "span*=JD" to be displayed
+        Then I wait on element "span*=SD" to be displayed
 
         # generate and parse API key
-        When I click on the element "a#user-icon"
-        When I click on the element "#generate-api"
-        When I accept the confirmbox
+        When I click on the element "span*=SD"
+        When I click on the element "button=Generate API key"
+        When I click on the element "button=Generate"
         When I parse the API key
+        When I click on the element "button=Close"
 
         # create checks
         When I set the API key in config
@@ -130,48 +132,57 @@ Feature: User roles
           testName: Admin test
         """
 
+        # logout
         When I wait for "2" seconds
-        When I click on the element "#user-icon"
-        When I click on the element "=Sign Out"
+        When I go to "logout" page
         When I wait for "2" seconds
-
+        When I refresh page
 
         ### verify checks
-        ## user
+        ## USER
         # login
         When I login with user:"user@gmail.com" password "Password-123"
         Then I wait on element "span*=JD" to be displayed
         # checks
-        When I wait for "3" seconds
-        Then I expect that element "//span[contains(text(), 'User test')]/../../..//span[@name='cell-creator' and contains(text(), 'user@gmail.com')]" does appear exactly "5" times
-        Then I expect that element "//span[contains(text(), 'Reviewer test')]/../../..//span[@name='cell-creator']" is not displayed
-        Then I expect that element "//span[contains(text(), 'Admin test')]/../../..//span[@name='cell-creator']" is not displayed
-        When I wait for "2" seconds
-        When I click on the element "#user-icon"
-        When I click on the element "=Sign Out"
-        When I wait for "2" seconds
 
-        ## reviewer
+        When I wait for "3" seconds
+        Then I expect that element "//div[contains(text(), 'User test')]" does appear exactly "5" times
+        Then I expect that element "[data-table-test-creatorusername='user@gmail.com']" does appear exactly "5" times
+        Then I expect that element "//div[contains(text(), 'Reviewer test')]" is not displayed
+        Then I expect that element "//div[contains(text(), 'Admin test')]" is not displayed
+
+        # logout
+        When I log out of the application
+
+        ## REVIEWER
         # login
         When I login with user:"reviewer@gmail.com" password "Password-123"
         Then I wait on element "span*=RR" to be displayed
         # checks
         When I wait for "3" seconds
-        Then I expect that element "//span[contains(text(), 'User test')]/../../..//span[@name='cell-creator']" does appear exactly "5" times
-        Then I expect that element "//span[contains(text(), 'Reviewer test')]/../../..//span[@name='cell-creator' and contains(text(), 'reviewer@gmail.com')]" does appear exactly "7" times
-        Then I expect that element "//span[contains(text(), 'Admin test')]/../../..//span[@name='cell-creator']" does appear exactly "3" times
 
-        When I wait for "2" seconds
-        When I click on the element "#user-icon"
-        When I click on the element "=Sign Out"
-        When I wait for "2" seconds
+        Then I expect that element "//div[contains(text(), 'User test')]" does appear exactly "5" times
+        Then I expect that element "[data-table-test-creatorusername='user@gmail.com']" does appear exactly "5" times
 
-        ## admin
+        Then I expect that element "//div[contains(text(), 'Reviewer test')]" does appear exactly "7" times
+        Then I expect that element "[data-table-test-creatorusername='reviewer@gmail.com']" does appear exactly "7" times
+
+        Then I expect that element "//div[contains(text(), 'Admin test')]" does appear exactly "3" times
+        Then I expect that element "[data-table-test-creatorusername='superadmin@gmail.com']" does appear exactly "3" times
+
+        # logout
+        When I log out of the application
+
+        ## ADMIN
         # login
         When I login with user:"superadmin@gmail.com" password "Password-123"
-        Then I wait on element "span*=JD" to be displayed
+        Then I wait on element "span*=SD" to be displayed
         # checks
-        When I wait for "3" seconds
-        Then I expect that element "//span[contains(text(), 'User test')]/../../..//span[@name='cell-creator']" does appear exactly "5" times
-        Then I expect that element "//span[contains(text(), 'Reviewer test')]/../../..//span[@name='cell-creator']" does appear exactly "7" times
-        Then I expect that element "//span[contains(text(), 'Admin test')]/../../..//span[@name='cell-creator' and contains(text(), 'superadmin@gmail.com')]" does appear exactly "3" times
+        Then I expect that element "//div[contains(text(), 'User test')]" does appear exactly "5" times
+        Then I expect that element "[data-table-test-creatorusername='user@gmail.com']" does appear exactly "5" times
+
+        Then I expect that element "//div[contains(text(), 'Reviewer test')]" does appear exactly "7" times
+        Then I expect that element "[data-table-test-creatorusername='reviewer@gmail.com']" does appear exactly "7" times
+
+        Then I expect that element "//div[contains(text(), 'Admin test')]" does appear exactly "3" times
+        Then I expect that element "[data-table-test-creatorusername='superadmin@gmail.com']" does appear exactly "3" times

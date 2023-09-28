@@ -13,6 +13,10 @@ const getTest = catchAsync(async (req, res) => {
         ...deserializeIfJSON(req.query.filter),
     };
 
+    if (req.user?.role === 'user') {
+        filter.creatorUsername = req.user?.username;
+    }
+
     const options = pick(req.query, ['sortBy', 'limit', 'page', 'populate']);
     const result = await testService.queryTests(filter, options);
     res.status(httpStatus.OK)
