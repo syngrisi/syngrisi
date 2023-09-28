@@ -6,6 +6,10 @@ const { deserializeIfJSON, pick } = require('../utils');
 
 const get = catchAsync(async (req, res) => {
     const filter = req.query.filter ? deserializeIfJSON(pick(req.query, ['filter']).filter) : {};
+    if (req.user?.role === 'user') {
+        filter.creatorUsername = req.user?.username;
+    }
+
     const options = pick(req.query, ['sortBy', 'limit', 'page', 'populate']);
     const result = await genericService.get('VRSCheck', filter, options);
     res.send(result);

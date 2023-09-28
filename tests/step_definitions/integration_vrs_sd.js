@@ -316,3 +316,10 @@ When(/^I maximize window$/, function () {
 When(/^I reload session$/, function () {
     browser.reloadSession();
 });
+
+When(/^I log out of the application$/, function () {
+    browser.url(`http://${browser.config.serverDomain}:${browser.config.serverPort}/auth/logout`);
+    browser.pause(2000);
+    browser.refresh();
+    browser.pause(500);
+});

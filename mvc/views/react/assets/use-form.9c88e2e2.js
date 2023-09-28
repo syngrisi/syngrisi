@@ -23342,8 +23342,8 @@ const devices = [
     realMobile: true
   }
 ];
-const baseUrl = { "VITE_ROOT_PATH": "./src/ui-app/", "BASE_URL": "/", "MODE": "production", "DEV": false, "PROD": true }.VITE_SYNGRISI_BASED_URL || "";
-const indexRoute = { "VITE_ROOT_PATH": "./src/ui-app/", "BASE_URL": "/", "MODE": "production", "DEV": false, "PROD": true }.VITE_INDEX_ROUTE || "/";
+const baseUrl = { "VITE_OPENAI_API_KEY": "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", "VITE_ROOT_PATH": "./src/ui-app/", "BASE_URL": "/", "MODE": "production", "DEV": false, "PROD": true }.VITE_SYNGRISI_BASED_URL || "";
+const indexRoute = { "VITE_OPENAI_API_KEY": "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", "VITE_ROOT_PATH": "./src/ui-app/", "BASE_URL": "/", "MODE": "production", "DEV": false, "PROD": true }.VITE_INDEX_ROUTE || "/";
 const config = {
   baseUri: baseUrl,
   devices,

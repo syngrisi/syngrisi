@@ -52,8 +52,12 @@ export function ApiKeyModalResult({ opened, setOpened, apiKey }: { opened: boole
                                     icon={<IconKey />}
                                     style={{ display: 'inline' }}
                                 />
-                                <ActionIcon ml={-10}>
-                                    <CopyIcon size={18} onClick={copyHandler} color={successCopy ? 'green' : 'gray'} />
+                                <ActionIcon ml={-10} data-test="copy-api-icon">
+                                    <CopyIcon
+                                        size={18}
+                                        onClick={copyHandler}
+                                        color={successCopy ? 'green' : 'gray'}
+                                    />
                                 </ActionIcon>
                             </Group>
                         </>
