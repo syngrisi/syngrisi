@@ -151,7 +151,7 @@ export function CheckDetails({ initCheckData, checkQuery, closeHandler }: Props)
             const diffImgSrc = `${config.baseUri}/snapshoots/${currentCheck?.diffId?.filename}?diffImg`;
             const diffImage = currentCheck?.diffId?.filename ? await imageFromUrl(diffImgSrc) : null;
 
-            await setMainView((prev) => {
+            setMainView((prev) => {
                 if (prev) return prev; // for dev mode, when components render twice
                 const MV = new MainView(
                     {
@@ -185,9 +185,9 @@ export function CheckDetails({ initCheckData, checkQuery, closeHandler }: Props)
             mainView.getSnapshotIgnoreRegionsDataAndDrawRegions(baselineId);
         }
     }, [
-        baselineQuery.data?.timestamp,
+        // baselineQuery.data?.timestamp,
         mainView?.toString(),
-        query.checkId,
+        // query.checkId,
     ]);
 
     return (
