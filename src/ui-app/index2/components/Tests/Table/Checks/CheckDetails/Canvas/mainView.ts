@@ -8,25 +8,25 @@ import { log } from '../../../../../../../shared/utils/Logger';
 
 /* eslint-disable dot-notation,no-underscore-dangle */
 interface IRectParams {
-    name: any
-    fill: any
-    stroke: any
-    strokeWidth: any
-    top: any
-    left: any
-    width: any
-    height: any
+    name: any;
+    fill: any;
+    stroke: any;
+    strokeWidth: any;
+    top: any;
+    left: any;
+    width: any;
+    height: any;
 }
 
 interface Props {
-    canvasElementWidth: number
-    canvasElementHeight: number
-    canvasId: string
+    canvasElementWidth: number;
+    canvasElementHeight: number;
+    canvasId: string;
     // url: string
-    actual: any
-    expectedImage: any
-    actualImage: any
-    diffImage: any
+    actual: any;
+    expectedImage: any;
+    actualImage: any;
+    diffImage: any;
 }
 
 export class MainView {
@@ -347,6 +347,13 @@ export class MainView {
         r.bringToFront();
     }
 
+    removeAllRegions() {
+        const regions = this.allRects;
+        regions.forEach((region) => {
+            this.canvas.remove(region);
+        });
+    }
+
     get allRects() {
         return this.canvas.getObjects()
             .filter((r) => (r.name === 'ignore_rect') || (r.name === 'bound_rect'));
@@ -481,6 +488,7 @@ export class MainView {
     }
 
     async getSnapshotIgnoreRegionsDataAndDrawRegions(id: string) {
+        this.removeAllRegions();
         const regionData = await MainView.getRegionsData(id);
         this.drawRegions(regionData.ignoreRegions);
     }

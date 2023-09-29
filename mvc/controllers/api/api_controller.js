@@ -732,19 +732,26 @@ async function createNewBaseline(params) {
 
     const identFields = buildIdentObject(params);
 
+    const lastBaseline = await Baseline.findOne(identFields)
+        .exec();
+
     const sameBaseline = await Baseline.findOne({ ...identFields, ...{ snapshootId: params.actualSnapshotId } })
         .exec();
+
+    const baselineParams = lastBaseline?.ignoreRegions
+        ? { ...identFields, ...{ ignoreRegions: lastBaseline.ignoreRegions } }
+        : identFields;
 
     if (sameBaseline) {
         log.debug(`the baseline with same ident and snapshot id: ${params.actualSnapshotId} already exist`, $this);
     } else {
         log.debug(`the baseline with same ident and snapshot id: ${params.actualSnapshotId} does not exist,
-         create new one, identFields: ${JSON.stringify(identFields)}`, $this);
+         create new one, baselineParams: ${JSON.stringify(baselineParams)}`, $this);
     }
 
     log.silly({ sameBaseline });
 
-    const resultedBaseline = sameBaseline || await Baseline.create(identFields);
+    const resultedBaseline = sameBaseline || await Baseline.create(baselineParams);
 
     resultedBaseline.markedAs = params.markedAs;
     resultedBaseline.markedById = params.markedById;
@@ -754,7 +761,7 @@ async function createNewBaseline(params) {
     resultedBaseline.snapshootId = params.actualSnapshotId;
 
     return resultedBaseline.save();
-};
+}
 
 module.exports.createNewBaseline = createNewBaseline;
 
@@ -2132,7 +2139,7 @@ exports.task_test = async (req, res, next) => {
     );
 
     for (let i = 0; i < x; i += 1) {
-        await new Promise(r => setTimeout(() => r(), interval));
+        await new Promise((r) => setTimeout(() => r(), interval));
         taskOutput(`- Task Output - '${i}'\n`, res);
         if (isAborted) {
             taskOutput(`the task was aborted\n`, res);
