@@ -22440,6 +22440,13 @@ class MainView {
     this.canvas.add(r);
     r.bringToFront();
   }
+  removeAllRegions() {
+    const regions = this.allRects;
+    console.log("\u2764\uFE0F", regions);
+    regions.forEach((region) => {
+      this.canvas.remove(region);
+    });
+  }
   get allRects() {
     return this.canvas.getObjects().filter((r) => r.name === "ignore_rect" || r.name === "bound_rect");
   }
@@ -22542,6 +22549,7 @@ class MainView {
     return null;
   }
   async getSnapshotIgnoreRegionsDataAndDrawRegions(id) {
+    this.removeAllRegions();
     const regionData = await MainView.getRegionsData(id);
     this.drawRegions(regionData.ignoreRegions);
   }
@@ -24353,7 +24361,7 @@ function CheckDetails({
   checkQuery,
   closeHandler
 }) {
-  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k;
+  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j;
   useDocumentTitle(initCheckData == null ? void 0 : initCheckData.name);
   const canvasElementRef = react.exports.useRef(null);
   const {
@@ -24456,7 +24464,7 @@ function CheckDetails({
       const actualImage = await imageFromUrl(actualImg.src);
       const diffImgSrc = `${config.baseUri}/snapshoots/${(_c2 = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _c2.filename}?diffImg`;
       const diffImage = ((_d2 = currentCheck == null ? void 0 : currentCheck.diffId) == null ? void 0 : _d2.filename) ? await imageFromUrl(diffImgSrc) : null;
-      await setMainView((prev) => {
+      setMainView((prev) => {
         var _a3, _b3;
         if (prev)
           return prev;
@@ -24479,9 +24487,12 @@ function CheckDetails({
     if (!baselineId)
       return;
     if (mainView) {
+      console.log("\u{1F480}REGIONS");
       mainView.getSnapshotIgnoreRegionsDataAndDrawRegions(baselineId);
     }
-  }, [(_k = baselineQuery.data) == null ? void 0 : _k.timestamp, mainView == null ? void 0 : mainView.toString(), query.checkId]);
+  }, [
+    mainView == null ? void 0 : mainView.toString()
+  ]);
   return /* @__PURE__ */ jsx(Group, {
     style: {
       width: "96vw"
