@@ -228,12 +228,12 @@ Feature: Check details - Regions
     When I click on the element "[data-test-preview-image='CheckName']"
 
     Then I wait on element "[data-check-header-name='CheckName']" to be displayed
+    When I wait for "2" seconds
     When I execute javascript code:
     """
      return (mainView.allRects.length.toString());
     """
 
-    When I wait for "1" seconds
     Then I expect the stored "js" string is equal:
     """
       1
