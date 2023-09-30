@@ -15,6 +15,7 @@ Feature: User roles
         Given I start Server
         When I create via http test user
         Given I stop the Syngrisi server
+        When I wait for "4" seconds
         When I set env variables:
         """
           SYNGRISI_TEST_MODE: 0
@@ -23,7 +24,7 @@ Feature: User roles
         Given I start Server and start Driver
 
     @e2e
-    Scenario: User - roles (pending)
+    Scenario: User - roles
         # login as test admin
         When I login via http with user:"Test" password "123"
 
@@ -65,6 +66,8 @@ Feature: User roles
         ### create checks
         ## user
         # login
+        When I reload session
+        When I open the app
         When I login with user:"user@gmail.com" password "Password-123"
         Then I wait on element "span*=JD" to be displayed
 

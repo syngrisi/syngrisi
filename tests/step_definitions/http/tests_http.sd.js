@@ -99,11 +99,13 @@ Given(/^I create via http new VRS Check with:$/, async function (yml) {
 When(/^I remove via http Inconsistent items$/, async function () {
     const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}`
         + '/task_handle_database_consistency?clean=true';
+    console.log('👉', { uri: uri });
+
     const result = (await requestWithLastSessionSid(
         uri,
         this,
     ));
     // console.log({ STATUS: result.raw.statusCode });
-    expect(result.raw.statusCode)
+    await expect(result.raw.statusCode)
         .toBe(200);
 });

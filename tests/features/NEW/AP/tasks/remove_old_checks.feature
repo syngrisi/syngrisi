@@ -158,8 +158,8 @@ Feature: Task - Remove old checks
           name: CheckName_2
           createdDate: <currentDate-20>
         """
-        Then I expect via http that "CheckName" check exist exactly "1" times
-        Then I expect via http that "CheckName" snapshot exist exactly "1" times
+        Then I expect via http that "^CheckName$" check exist exactly "1" times
+        Then I expect via http that "^CheckName$" snapshot exist exactly "1" times
 
         Then I expect via http that "CheckName_2" check exist exactly "1" times
         Then I expect via http that "CheckName_2" snapshot exist exactly "1" times
@@ -169,8 +169,8 @@ Feature: Task - Remove old checks
 
         When I remove via http checks that older than "11" days
 
-        Then I expect via http that "CheckName" check exist exactly "1" times
-        Then I expect via http that "CheckName" snapshot exist exactly "1" times
+        Then I expect via http that "^CheckName$" check exist exactly "1" times
+        Then I expect via http that "^CheckName$" snapshot exist exactly "1" times
 
         Then I expect via http that "CheckName_2" check exist exactly "0" times
         Then I expect via http that "CheckName_2" snapshot exist exactly "1" times
