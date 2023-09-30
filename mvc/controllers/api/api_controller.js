@@ -1645,6 +1645,19 @@ exports.testsByFilter = (req, res) => {
         });
 };
 
+exports.runsByFilter = (req, res) => {
+    log.debug(JSON.stringify(req.query, null, 2));
+    if (Object.keys(req.query).length === 0) {
+        res.status(400)
+            .json({ error: 'the query is empty' });
+    }
+    Run.find(req.query)
+        .then((result) => {
+            res.json(result);
+        });
+};
+
+
 exports.getScreenshotList = (req, res) => {
     const files = fss.readdirSync(config.defaultBaselinePath);
     res.json(files);
