@@ -136,7 +136,7 @@ When(/^I update via http last "([^"]*)" checks with params:$/, async function (n
 
 When(/^I update via http check with params:$/, async function (str) {
     const params = YAML.parse(this.fillItemsPlaceHolders(fillCommonPlaceholders(str)));
-    const checkId = this.STATE.check._id;
+    const checkId = this.STATE.currentCheck._id;
 
     const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
         + `checksupdate/${checkId}`;

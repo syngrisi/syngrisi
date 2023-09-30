@@ -188,7 +188,6 @@ Feature: Check details - Regions
     """
      return (mainView.allRects.length.toString());
     """
-
     When I wait for "1" seconds
     Then I expect the stored "js" string is equal:
     """
@@ -204,21 +203,21 @@ Feature: Check details - Regions
             filePath: files/A.png
     """
 
-    # open second check and check absence
+    # open second check and check region presence
     When I go to "main" page
     When I unfold the test "TestName"
     When I click on the element "[data-test-preview-image='CheckName']"
 
     Then I wait on element "[data-check-header-name='CheckName']" to be displayed
+    When I wait for "3" seconds
     When I execute javascript code:
     """
      return (mainView.allRects.length.toString());
     """
 
-    When I wait for "1" seconds
     Then I expect the stored "js" string is equal:
     """
-      0
+      1
     """
 
     # accept second check and check presence
