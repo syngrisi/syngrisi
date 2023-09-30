@@ -5,6 +5,7 @@ const testsRoute = require('./test.route');
 const usersRoute = require('./users.route');
 const logsRoute = require('./logs.route');
 const runsRoute = require('./runs.route');
+const snapshotRoute = require('./snapshots.route');
 const checkRoute = require('./checks.route');
 const baselinesRoute = require('./baselines.route');
 const suitesRoute = require('./suites.route');
@@ -37,6 +38,10 @@ const defaultRoutes = [
     {
         path: '/runs',
         route: runsRoute,
+    },
+    {
+        path: '/snapshots',
+        route: snapshotRoute,
     },
     {
         path: '/checks',

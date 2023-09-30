@@ -4,6 +4,7 @@ module.exports.logsController = require('./logs.controller');
 module.exports.checksController = require('./check.controller');
 module.exports.baselinesController = require('./baseline.controller');
 module.exports.runsController = require('./runs.controller');
+module.exports.snapshotController = require('./snapshots.controller');
 module.exports.suiteController = require('./suite.controller');
 module.exports.testsController = require('./test.controller');
 module.exports.settingsController = require('./settings.controller');

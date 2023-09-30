@@ -498,6 +498,9 @@ AppSchema.plugin(toJSON);
 BaselineSchema.plugin(toJSON);
 BaselineSchema.plugin(paginate);
 
+SnapshotSchema.plugin(toJSON);
+SnapshotSchema.plugin(paginate);
+
 CheckSchema.plugin(toJSON);
 CheckSchema.plugin(paginate);
 
