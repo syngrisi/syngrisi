@@ -8,4 +8,7 @@ router
     .route('/')
     .get(ensureLoggedIn(), baselinesController.get);
 
+router.route('/:id')
+    .put(ensureLoggedIn(), baselinesController.put);
+
 module.exports = router;

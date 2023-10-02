@@ -22479,7 +22479,7 @@ class MainView {
   }
   static async sendIgnoreRegions(id, regionsData) {
     try {
-      const response = await fetch(`${config.baseUri}/baselines/${id}`, {
+      const response = await fetch(`${config.baseUri}/v1/baselines/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, ignoreRegions: regionsData })
@@ -22531,12 +22531,12 @@ class MainView {
       if (!baselineId) {
         return [];
       }
-      const url = `${config.baseUri}/baselines/${baselineId}`;
+      const url = `${config.baseUri}/v1/baselines?filter={"_id":"${baselineId}"}`;
       const response = await fetch(url);
       const text = await response.text();
       if (response.status === 200) {
         log.debug(`Successfully got ignored regions, id: '${baselineId}'  resp: '${text}'`);
-        return JSON.parse(text);
+        return JSON.parse(text).results[0];
       }
       if (response.status === 202) {
         log.debug("No regions");
