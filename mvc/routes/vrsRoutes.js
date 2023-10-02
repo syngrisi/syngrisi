@@ -11,22 +11,12 @@ const API = require('../controllers/api/api_controller');
 
 module.exports = async (app) => {
     await app
+        // move to v1
         .put('/checksupdate/:id', ensureLoggedIn(), async (req, res, next) => {
             await queue.add(() => API.updateCheck(req, res)
                 .catch(next));
         })
-        // .put('/baselines/:id', ensureLoggedIn(), async (req, res, next) => {
-        //     API.updateBaseline(req, res)
-        //         .catch(next);
-        // })
-        // .put('/baselines_by_snapshot_id/:id', ensureLoggedIn(), async (req, res, next) => {
-        //     API.updateBaselineBySnapshotId(req, res)
-        //         .catch(next);
-        // })
-        .get('/run/:id', ensureLoggedIn(), async (req, res, next) => {
-            API.getRun(req, res)
-                .catch(next);
-        })
+        // don't remove
         .get('/checkview', ensureLoggedIn(), (req, res) => {
             const { id } = req.query;
             // backward compatibility
@@ -39,25 +29,9 @@ module.exports = async (app) => {
         .get('/ident', ensureLoggedInOrApiKey(), (req, res) => {
             API.getIdent(req, res);
         })
-        .get('/check_if_screenshot_has_baselines', ensureLoggedInOrApiKey(), (req, res) => {
-            API.checkIfScreenshotHasBaselines(req, res);
-        })
-        .post('/password', ensureLoggedIn(), (req, res) => {
-            API.changePassword(req, res);
-        })
         .post('/checks', ensureApiKey(), async (req, res, next) => {
             req.log.trace('post \'/checks\' queue pending count: ', queue.pending);
             await queue.add(() => API.createCheck(req, res)
-                .catch(next));
-        })
-        .post('/users', ensureLoggedIn(), async (req, res, next) => {
-            req.log.trace('post \'/users\' queue pending count: ', queue.pending);
-            await queue.add(() => API.createUser(req, res)
-                .catch(next));
-        })
-        .put('/users', ensureLoggedIn(), async (req, res, next) => {
-            req.log.trace('put \'/users\' queue pending count: ', queue.pending);
-            await queue.add(() => API.updateUser(req, res)
                 .catch(next));
         })
         // SDK method don't remove

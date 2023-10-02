@@ -39,23 +39,30 @@ When(/^I login via http with user:"([^"]*)" password "([^"]*)"$/, async function
 
 When(/^I create via http user as:"([^"]*)" with params:$/, async function (user, json) {
     const params = JSON.parse(json);
-    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/users`;
+
+    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
+        + `v1/users`;
+    console.log('💥👉', { uri: uri });
+
     const { sessionSid } = this.getSavedItem('users')[user];
     // console.log({ sessionSid });
 
-    const res = await requestWithLastSessionSid(`${uri}`,
+    const res = await (await requestWithLastSessionSid(
+        uri,
         this,
         {
             method: 'POST',
-            form: {
+            json: {
                 username: params.username,
                 firstName: params.firstName,
                 lastName: params.lastName,
                 role: params.role,
                 password: params.password,
             },
-        });
-    // console.log({ respBody: res.json });
+        }
+    )).json;
+
+    console.log({ respBody: res });
 });
 
 When(/^I generate via http API key for the User$/, async function () {
