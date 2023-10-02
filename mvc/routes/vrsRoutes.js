@@ -60,49 +60,19 @@ module.exports = async (app) => {
             await queue.add(() => API.updateUser(req, res)
                 .catch(next));
         })
+        // SDK method don't remove
         .post('/tests', ensureApiKey(), async (req, res, next) => {
             req.log.trace('post \'/tests\' queue pending count: ', queue.pending);
             await queue.add(() => API.createTest(req, res)
                 .catch(next));
         })
-        .delete('/tests/:id', ensureLoggedIn(), async (req, res, next) => {
-            API.removeTest(req, res)
-                .catch(next);
-        })
-        .delete('/users/:id', ensureLoggedIn(), async (req, res, next) => {
-            API.removeUser(req, res)
-                .catch(next);
-        })
         .get('/apikey/', ensureLoggedIn(), async (req, res, next) => {
             API.generateApiKey(req, res)
-                .catch(next);
-        })
-        .delete('/suites/:id', ensureLoggedIn(), async (req, res, next) => {
-            API.removeSuite(req, res)
-                .catch(next);
-        })
-        .delete('/runs/:id', ensureLoggedIn(), async (req, res, next) => {
-            API.removeRun(req, res)
                 .catch(next);
         })
         .post('/session/:testid', ensureApiKey(), async (req, res, next) => {
             API.stopSession(req, res)
                 .catch(next);
-        })
-        .get('/checks', ensureLoggedIn(), async (req, res, next) => {
-            req.log.trace(`get '/checks' queue pending count: ${queue.pending} `);
-            await queue.add(() => API.getChecks(req, res)
-                .catch(next));
-        })
-        // eslint-disable-next-line consistent-return
-        .put('/tests/:id', async (req, res, next) => {
-            if (process.env.SYNGRISI_TEST_MODE !== '1') {
-                res.status('400')
-                    .json({ error: 'only in test mode' });
-                return next();
-            }
-            API.updateTest(req, res)
-                .catch(() => next);
         })
         .get('/screenshots', ensureLoggedIn(), async (req, res) => {
             API.getScreenshotList(req, res);
@@ -115,19 +85,7 @@ module.exports = async (app) => {
             API.status(req, res)
                 .catch(next);
         })
-        // just for testing purposes
-        .get('/status_with_api_key', ensureApiKey(), async (req, res, next) => {
-            API.status(req, res)
-                .catch(next);
-        })
-        .get('/status_with_logged_in', ensureLoggedIn(), async (req, res, next) => {
-            API.status(req, res)
-                .catch(next);
-        })
-        .get('/status_with_api_key_or_logged_in', ensureLoggedInOrApiKey(), async (req, res, next) => {
-            API.status(req, res)
-                .catch(next);
-        })
+        // for testing purposes
         .get('/task_handle_old_checks', ensureLoggedInOrApiKey(), async (req, res, next) => {
             API.task_handle_old_checks(req, res, next)
                 .catch(next);

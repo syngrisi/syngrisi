@@ -154,30 +154,6 @@ exports.checksGroupedByIdent = async function checksGroupedByIdent(checkFilter) 
     }
 };
 
-exports.checksGroupedByIdent2 = function checksGroupedByIdent2(testId) {
-    Check.find({ test: testId })
-        .sort({ updatedDate: 1 })
-        .then((checks) => {
-            const result = {};
-            checks.forEach((check) => {
-                if (result[checkIdent(check)] === undefined) {
-                    result[checkIdent(check)] = {};
-                    result[checkIdent(check)]['checks'] = [];
-                }
-                result[checkIdent(check)]['checks'].push(check);
-            });
-            // transform ident group object to array
-            const result2 = Object.keys(result)
-                .map((idnt) => ({
-                    ident: idnt,
-                    checks: result[idnt].checks,
-                    status: groupStatus(result[idnt].checks),
-                    viewport: groupViewPort(result[idnt].checks),
-                }));
-            return result2;
-        });
-};
-
 exports.waitUntil = async function waitUntil(cb, attempts = 5, interval = 700) {
     let result = false;
     let iteration = 0;
