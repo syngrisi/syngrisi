@@ -29,7 +29,6 @@ const User = mongoose.model('VRSUser');
 const Baseline = mongoose.model('VRSBaseline');
 const {
     checksGroupedByIdent,
-    checksGroupedByIdent2,
     calculateAcceptedStatus,
     ProgressBar,
 } = require('../utils');
@@ -37,7 +36,6 @@ const {
     fatalError,
     waitUntil,
     removeEmptyProperties,
-    buildQuery,
     buildIdentObject,
     ident,
 } = require('../utils');
@@ -217,7 +215,6 @@ function parseSorting(params) {
 }
 
 // users
-
 function getApiKey() {
     const uuidAPIKey = require('uuid-apikey');
 
@@ -313,27 +310,6 @@ const updateUser = async (req, res) => {
 
 exports.updateUser = updateUser;
 
-exports.removeUser = async (req, res) => {
-    const params = req.body;
-    const logOpts = {
-        msgType: 'REMOVE',
-        itemType: 'user',
-        ref: params.username,
-        user: req?.user?.username,
-        scope: 'removeUser',
-    };
-    try {
-        const { id } = req.params;
-        log.debug(`remove the user with id: '${id}'`, $this, logOpts);
-        const user = await User.findByIdAndDelete(id);
-        log.debug(`user with id: '${user._id}' and username: '${user.username}' was removed`, $this, logOpts);
-        res.status(200)
-            .send({ message: `user with id: '${user._id}' and username: '${user.username}' was removed` });
-    } catch (e) {
-        fatalError(req, res, e);
-    }
-};
-
 // tests
 async function updateTest(params) {
     const opts = { ...params };
@@ -351,46 +327,6 @@ async function updateTest(params) {
     await test.save();
     return test;
 }
-
-exports.updateTest = async (req, res) => {
-    const opts = removeEmptyProperties(req.body);
-    const { id } = req.params;
-    const logOpts = {
-        msgType: 'UPDATE',
-        itemType: 'test',
-        ref: id,
-        user: req?.user?.username,
-        scope: 'updateTest',
-    };
-    try {
-        log.debug(`update test with id '${id}' with params '${JSON.stringify(opts, null, 2)}'`,
-            $this, logOpts);
-
-        const test = await Test.findOneAndUpdate({ _id: id }, opts, { new: true });
-        res.status(200)
-            .json({
-                message: `Test with id: '${id}' was updated`,
-                test: test.toObject(),
-            });
-        return test;
-    } catch (e) {
-        fatalError(req, res, e);
-    }
-    return null;
-};
-
-exports.removeTest = async (req, res) => {
-    try {
-        const { id } = req.params;
-        await testUtil.removeTest(id);
-        res.status(200)
-            .json({
-                message: `Test with id: '${id}' and all related checks were removed`,
-            });
-    } catch (e) {
-        fatalError(req, res, e);
-    }
-};
 
 exports.createTest = async (req, res) => {
     const logOpts = {
@@ -455,66 +391,6 @@ exports.createTest = async (req, res) => {
         fatalError(req, res, e);
     }
     return null;
-};
-
-// suites
-exports.removeSuite = async (req, res) => {
-    const logOpts = {
-        scope: 'removeSuite',
-        user: req?.user?.username,
-        itemType: 'suite',
-        msgType: 'REMOVE',
-    };
-    const { id } = req.params;
-    try {
-        const suite = await Suite.findOne({ _id: id });
-        log.info(`remove suite with name: '${suite.name}'`, $this, { ...logOpts, ...{ ref: id } });
-        const tests = await Test.find({ suite: id });
-
-        const results = [];
-        for (const test of tests) {
-            results.push(testUtil.removeTest(test._id));
-        }
-
-        await Promise.all(results);
-        const out = await Suite.findByIdAndDelete(id);
-        res.status(200)
-            .send(`Suite with id: '${id}' and all related tests and checks were removed
-                    output: '${JSON.stringify(out)}'`);
-    } catch (e) {
-        const errMsg = `cannot remove the suite with id: '${id}', error: '${e}'`;
-        log.error(errMsg, $this, logOpts);
-        throw new Error(errMsg);
-    }
-};
-
-exports.removeRun = async (req, res) => {
-    const logOpts = {
-        scope: 'removeRun',
-        user: req?.user?.username,
-        itemType: 'run',
-        msgType: 'REMOVE',
-    };
-    const { id } = req.params;
-    try {
-        const run = await Run.findOne({ _id: id });
-        log.info(`delete run and checks which associate with the run: '${run.name}'`, $this, { ...logOpts, ...{ ref: id } });
-        const tests = await Test.find({ run: id });
-
-        const results = [];
-        for (const test of tests) {
-            results.push(testUtil.removeTest(test._id));
-        }
-        await Promise.all(results);
-        const out = await Run.findByIdAndDelete(id);
-        res.status(200)
-            .send(`Run with id: '${id}' and all related tests and checks were removed
-                    output: '${JSON.stringify(out)}'`);
-    } catch (e) {
-        const errMsg = `cannot remove the run with id: '${id}', error: '${e}'`;
-        log.error(errMsg, $this, logOpts);
-        throw new Error(errMsg);
-    }
 };
 
 // checks
@@ -979,87 +855,6 @@ exports.createCheck = async (req, res) => {
     }
 };
 
-exports.getChecks = async (req, res) => {
-    const opts = req.query;
-
-    const pageSize = parseInt(process.env['SYNGRISI_PAGINATION_SIZE'], 10) || 50;
-
-    const skip = opts.page ? ((parseInt(opts.page, 10)) * pageSize - pageSize) : 0;
-
-    let sortFilter = parseSorting(opts);
-    if (Object.keys(sortFilter).length < 1) {
-        sortFilter = { updatedDate: -1 };
-    }
-
-    const query = buildQuery(opts);
-    // console.log({ query });
-    // console.log({opts})
-    if (opts.filter_suitename_eq) {
-        const decodedQuerystringSuiteName = Object.keys(querystring.decode(opts.filter_suitename_eq))[0];
-        const suite = await Suite.findOne({ name: { $eq: decodedQuerystringSuiteName } })
-            .exec();
-        if (opts.filter_suitename_eq && !suite) {
-            res.status(200)
-                .json({});
-            return;
-        }
-        if (suite) {
-            query.suite = suite.id;
-            delete query.suitename;
-        }
-    }
-
-    if (req.user.role === 'user') {
-        query.creatorUsername = req.user.username;
-    }
-    // console.log({ query });
-    const tests = await Test
-        .find(query)
-        .sort(sortFilter)
-        .skip(skip)
-        .limit(pageSize)
-        .exec();
-    // console.log({ tests });
-    const checksByTestGroupedByIdent = {};
-
-    for (const test of tests) {
-        const checkFilter = { test: test.id };
-        const groups = await checksGroupedByIdent(checkFilter);
-        // console.log(groups.length);
-        if (Object.keys(groups).length > 0) {
-            // console.log({groups})
-            checksByTestGroupedByIdent[test.id] = groups;
-            checksByTestGroupedByIdent[test.id]['id'] = test.id;
-            checksByTestGroupedByIdent[test.id]['creatorId'] = test.creatorId;
-            checksByTestGroupedByIdent[test.id]['creatorUsername'] = test.creatorUsername;
-            checksByTestGroupedByIdent[test.id]['markedAs'] = test.markedAs;
-            checksByTestGroupedByIdent[test.id]['markedByUsername'] = test.markedByUsername;
-            checksByTestGroupedByIdent[test.id]['markedDate'] = test.markedDate;
-            checksByTestGroupedByIdent[test.id]['markedAs'] = test.markedAs;
-            checksByTestGroupedByIdent[test.id]['name'] = test.name;
-            checksByTestGroupedByIdent[test.id]['status'] = test.status;
-            checksByTestGroupedByIdent[test.id]['browserName'] = test.browserName;
-            checksByTestGroupedByIdent[test.id]['browserVersion'] = test.browserVersion;
-            checksByTestGroupedByIdent[test.id]['browserFullVersion'] = test.browserFullVersion;
-            checksByTestGroupedByIdent[test.id]['viewport'] = test.viewport;
-            checksByTestGroupedByIdent[test.id]['calculatedViewport'] = test.calculatedViewport;
-            checksByTestGroupedByIdent[test.id]['os'] = test.os;
-            checksByTestGroupedByIdent[test.id]['platform'] = global.devices.filter((x) => x.device === test.os)[0]?.os || test.os;
-            checksByTestGroupedByIdent[test.id]['blinking'] = test.blinking;
-            checksByTestGroupedByIdent[test.id]['updatedDate'] = test.updatedDate;
-            checksByTestGroupedByIdent[test.id]['createdDate'] = test.createdDate;
-            checksByTestGroupedByIdent[test.id]['suite'] = test.suite;
-            checksByTestGroupedByIdent[test.id]['run'] = test.run;
-            checksByTestGroupedByIdent[test.id]['tags'] = test.tags;
-            checksByTestGroupedByIdent[test.id]['branch'] = test.branch;
-            checksByTestGroupedByIdent[test.id]['app'] = test.app;
-        }
-    }
-    // console.log(Object.keys(checksByTestGroupedByIdent).length);
-    res.status(200)
-        .json(checksByTestGroupedByIdent);
-};
-
 exports.getIdent = async (req, res) => {
     res.json(ident);
 };
@@ -1324,7 +1119,8 @@ exports.task_handle_old_checks = async (req, res) => {
             .map((x) => x.valueOf());
 
         taskOutput('>>> collect all old snapshots', res);
-        const oldSnapshots = await Snapshot.find({ _id: { $in: allOldSnapshotsUniqueIds } }).lean();
+        const oldSnapshots = await Snapshot.find({ _id: { $in: allOldSnapshotsUniqueIds } })
+            .lean();
 
         const outTable = stringTable.create(
             [
