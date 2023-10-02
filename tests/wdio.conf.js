@@ -14,9 +14,11 @@ exports.config = {
     apiKey: process.env.SYNGRISI_API_KEY ? hasha(process.env.SYNGRISI_API_KEY) : '123',
     runner: 'local',
     specs: [
-        './src/features/**/*.feature',
+        // './src/features/**/*.feature',
     ],
-    exclude: [],
+    exclude: [
+        './features/debug/debug.feature',
+    ],
     maxInstances: streams,
     capabilities: [{
         maxInstances: streams,

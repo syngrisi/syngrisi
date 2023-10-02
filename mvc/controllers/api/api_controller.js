@@ -191,35 +191,6 @@ async function compareSnapshots(baselineSnapshot, actual, opts = {}) {
     }
 }
 
-exports.updateSnapshot = async (req, res) => {
-    const logOpts = {
-        scope: 'updateSnapshot',
-        ref: req.id,
-        itemType: 'snapshot',
-        msgType: 'UPDATE',
-    };
-    try {
-        const opts = removeEmptyProperties(req.body);
-        const { id } = req.params;
-        opts['updatedDate'] = Date.now();
-        // eslint-disable-next-line max-len
-        log.debug(`start update snapshot with id: '${id}', params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`, $this, logOpts);
-        const snp = await Snapshot.findByIdAndUpdate(id, opts)
-            .exec();
-        await snp.save();
-        log.debug(`snapshot with id: '${id}' and opts: '${JSON.stringify(opts)}' was updated`, $this, logOpts);
-        res.status(200)
-            .json({
-                item: 'Snapshot',
-                action: 'update',
-                id,
-                opts,
-            });
-    } catch (e) {
-        fatalError(req, res, e);
-    }
-};
-
 exports.updateBaseline = async (req, res) => {
     const logOpts = {
         scope: 'updateBaseline',
@@ -1332,75 +1303,6 @@ function addMarkedAsOptions(params, user, mark) {
     return opts;
 }
 
-exports.acceptCheck = async function acceptCheck(req, res) {
-    const checkId = req.params.id;
-    const logOpts = {
-        msgType: 'ACCEPT',
-        itemType: 'check',
-        ref: checkId,
-        user: req?.user?.username,
-        scope: 'acceptCheck',
-    };
-    try {
-        log.debug(`accept check: ${checkId}`, $this, logOpts);
-        const check = await Check.findById(checkId)
-            .exec();
-        const test = await Test.findById(check.test)
-            .exec();
-
-        /** update check */
-        let opts = removeEmptyProperties(req.body);
-        if (!opts.baselineId) {
-            const errMsg = `fail to accept check with id: '${checkId}' - the baselineId is empty`;
-            log.error(errMsg);
-            res.status(400)
-                .json({
-                    message: errMsg,
-                });
-            return;
-        }
-        opts = addMarkedAsOptions(opts, req.user, 'accepted');
-        opts.status = (check.status[0] === 'new') ? 'new' : 'passed';
-        opts['updatedDate'] = Date.now();
-
-        log.debug(`update check id: '${checkId}' with opts: '${JSON.stringify(opts)}'`,
-            $this, logOpts);
-
-        Object.assign(check, opts);
-        log.debug(`update check with options: '${JSON.stringify(check.toObject())}'`, $this, logOpts);
-
-        await createNewBaseline(check.toObject());
-        await check.save();
-
-        /** update test statuses and date, suite date */
-        const testCalculatedStatus = await testUtil.calculateTestStatus(check.test);
-        const testCalculatedAcceptedStatus = await calculateAcceptedStatus(check.test);
-
-        test.status = testCalculatedStatus;
-        test.markedAs = testCalculatedAcceptedStatus;
-        test.updatedDate = new Date();
-
-        await orm.updateItemDate('VRSSuite', check.suite);
-        log.debug(`update test with status: '${testCalculatedStatus}', marked: '${testCalculatedAcceptedStatus}'`,
-            $this,
-            {
-                msgType: 'UPDATE',
-                itemType: 'test',
-                ref: test._id,
-            });
-        await test.save();
-        await check.save();
-        log.debug(`check with id: '${checkId}' was updated`, $this, logOpts);
-
-        res.status(200)
-            .json({
-                message: `check with id: '${checkId}' was accepted`,
-            });
-    } catch (e) {
-        fatalError(req, res, e);
-    }
-};
-
 exports.getBaselines = (req, res) => {
     Baseline.find(req.query)
         .then((baselines) => {
@@ -1464,25 +1366,6 @@ exports.checkIfScreenshotHasBaselines = async (req, res) => {
             });
     } catch (e) {
         log.error(e);
-        fatalError(req, res, e);
-    }
-};
-
-exports.removeCheck = async (req, res) => {
-    const { id } = req.params;
-    const logOpts = {
-        scope: 'removeCheck',
-        itemType: 'check',
-        ref: id,
-        msgType: 'REMOVE',
-    };
-    try {
-        log.info(`remove check with, id: '${id}', user: '${req.user.username}', params: '${JSON.stringify(req.params)}'`, $this, logOpts);
-        await checkUtil.removeCheck(id);
-        res.status(200)
-            .json({ message: `check with id: '${id}' was removed` });
-    } catch (e) {
-        log.error(`cannot remove the check with id: '${id}', error: '${e}'`, $this, logOpts);
         fatalError(req, res, e);
     }
 };
@@ -1656,7 +1539,6 @@ exports.runsByFilter = (req, res) => {
             res.json(result);
         });
 };
-
 
 exports.getScreenshotList = (req, res) => {
     const files = fss.readdirSync(config.defaultBaselinePath);

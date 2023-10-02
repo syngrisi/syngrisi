@@ -11,22 +11,9 @@ const API = require('../controllers/api/api_controller');
 
 module.exports = async (app) => {
     await app
-        .delete('/checks/:id', ensureLoggedIn(), async (req, res, next) => {
-            API.removeCheck(req, res)
-                .catch(next);
-        })
-        // use only for accept
-        .put('/acceptChecks/:id', ensureLoggedIn(), async (req, res, next) => {
-            await queue.add(() => API.acceptCheck(req, res)
-                .catch(next));
-        })
         .put('/checksupdate/:id', ensureLoggedIn(), async (req, res, next) => {
             await queue.add(() => API.updateCheck(req, res)
                 .catch(next));
-        })
-        .put('/snapshots/:id', ensureLoggedIn(), async (req, res, next) => {
-            API.updateSnapshot(req, res)
-                .catch(next);
         })
         .put('/baselines/:id', ensureLoggedIn(), async (req, res, next) => {
             API.updateBaseline(req, res)
@@ -36,45 +23,15 @@ module.exports = async (app) => {
             API.updateBaselineBySnapshotId(req, res)
                 .catch(next);
         })
-        // .get('/runs', ensureLoggedIn(),
-        //     (req, res, next) => {
-        //         runs(req, res)
-        //             .catch(next);
-        //     })
         .get('/run/:id', ensureLoggedIn(), async (req, res, next) => {
             API.getRun(req, res)
                 .catch(next);
         })
-        // .get('/affectedelements', ensureApiKey(), async (req, res, next) => {
-        //     // console.log('!!!!!');
-        //     API.affectedElements(req, res)
-        //         .catch(next);
-        // })
-        // .get('/checksgroupview', ensureLoggedIn(), async (req, res, next) => {
-        //     UI.checksGroupView(req, res)
-        //         .catch(next);
-        // })
         .get('/checkview', ensureLoggedIn(), (req, res) => {
             const { id } = req.query;
             // backward compatibility
             res.redirect(`/?checkId=${id}&modalIsOpen=true`);
         })
-        // .get('/checkview2', ensureLoggedIn(), (req, res, next) => {
-        //     UI.checkView2(req, res)
-        //         .catch(next);
-        // })
-        // .get('/diffview', ensureLoggedIn(), (req, res, next) => {
-        //     UI.diffView(req, res)
-        //         .catch(next);
-        // })
-        // .get('/admin', ensureLoggedIn(), (req, res, next) => {
-        //     admin(req, res)
-        //         .catch(next);
-        // })
-        // .get('/admin2/*', ensureLoggedIn(), (req, res, next) => {
-        //     admin2(req, res, next)
-        //         .catch(next);
-        // })
         .get('/users', ensureLoggedIn(), async (req, res, next) => {
             API.getUsers(req, res)
                 .catch(next);
