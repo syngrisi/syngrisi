@@ -6,45 +6,23 @@ const { default: checkVRS } = require('../../src/support/check/checkVrs');
 const YAML = require('yaml');
 const { error } = require('winston');
 
-When(/^I remove via http (\d+)st check with name "([^"]*)"$/, async function (num, name) {
-    const testUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
-        + `checks/byfilter?name=${name}`;
-    // console.log({ uri: testUri });
-    const check = (await requestWithLastSessionSid(
-        testUri,
-        this
-    )).json[num - 1];
-    // console.log({ check });
-    const id = check._id;
-
-    const removeCheckUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
-        + `checks/${id}`;
-    // console.log({ uri: removeCheckUri });
-    const result = (await requestWithLastSessionSid(
-        removeCheckUri,
-        this,
-        {
-            method: 'DELETE',
-            form: { id: id }
-        }
-    )).json;
-    // console.log({ result });
-});
-
 When(/^I accept via http the (\d+)st check with name "([^"]*)"$/, async function (num, name) {
 
-    const checkUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
-        + `checks/byfilter?name=${name}`;
-    console.log('👉', { uri: checkUri });
+    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
+        + `v1/checks?limit=0&filter={"$and":[{"name":{"$regex":"${name}","$options":"im"}}]}`;
+
+    console.log('💥👉', { uri: uri });
     const checks = (await requestWithLastSessionSid(
-        checkUri,
+        uri,
         this
-    )).json;
+    )).json.results;
+
+    console.log('👉', { checks: checks });
+
     const check = checks[num - 1];
-    // console.log(JSON.stringify(checks, null, '\t'));
     const checkId = check._id;
-    const checkAcceptUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
-        + `acceptChecks/${checkId}`;
+    const checkAcceptUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/v1/checks/`
+        + `accept/${checkId}`;
 
     const result = await (await requestWithLastSessionSid(
         checkAcceptUri,
