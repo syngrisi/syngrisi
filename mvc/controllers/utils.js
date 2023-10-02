@@ -18,7 +18,7 @@ exports.ident = ident;
 
 /**
  * Returns check `Ident` object
- * @param {Object} params  - plain object with bunch of properties
+ * @param {Object} params  - plain object with a bunch of properties
  * @returns {Object} - plain object with only ident properties
  */
 exports.buildIdentObject = (params) => Object.fromEntries(

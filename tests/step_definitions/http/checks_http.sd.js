@@ -35,7 +35,7 @@ When(/^I accept via http the (\d+)st check with name "([^"]*)"$/, async function
 
     const checkUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
         + `checks/byfilter?name=${name}`;
-    // console.log({ uri: checkUri });
+    console.log('👉', { uri: checkUri });
     const checks = (await requestWithLastSessionSid(
         checkUri,
         this

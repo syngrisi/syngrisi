@@ -112,6 +112,10 @@ When(/^I fail$/, function () {
     throw new Error('Failed step');
 });
 
+When(/^I pending$/, function () {
+    return 'pending';
+});
+
 When(/^I hold key "([^"]*)"$/, async function (key) {
     await browser.performActions([{
         type: 'key',
