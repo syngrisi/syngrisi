@@ -15,14 +15,14 @@ module.exports = async (app) => {
             await queue.add(() => API.updateCheck(req, res)
                 .catch(next));
         })
-        .put('/baselines/:id', ensureLoggedIn(), async (req, res, next) => {
-            API.updateBaseline(req, res)
-                .catch(next);
-        })
-        .put('/baselines_by_snapshot_id/:id', ensureLoggedIn(), async (req, res, next) => {
-            API.updateBaselineBySnapshotId(req, res)
-                .catch(next);
-        })
+        // .put('/baselines/:id', ensureLoggedIn(), async (req, res, next) => {
+        //     API.updateBaseline(req, res)
+        //         .catch(next);
+        // })
+        // .put('/baselines_by_snapshot_id/:id', ensureLoggedIn(), async (req, res, next) => {
+        //     API.updateBaselineBySnapshotId(req, res)
+        //         .catch(next);
+        // })
         .get('/run/:id', ensureLoggedIn(), async (req, res, next) => {
             API.getRun(req, res)
                 .catch(next);
