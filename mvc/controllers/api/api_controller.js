@@ -191,61 +191,61 @@ async function compareSnapshots(baselineSnapshot, actual, opts = {}) {
     }
 }
 
-exports.updateBaseline = async (req, res) => {
-    const logOpts = {
-        scope: 'updateBaseline',
-        ref: req.id,
-        itemType: 'baseline',
-        msgType: 'UPDATE',
-    };
-    try {
-        const opts = removeEmptyProperties(req.body);
-        const { id } = req.params;
-        // eslint-disable-next-line max-len
-        log.debug(`start update baseline with id: '${id}', params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`, $this, logOpts);
-        const baseline = await Baseline.findByIdAndUpdate(id, opts)
-            .exec();
-        await baseline.save();
-        log.debug(`baseline with id: '${id}' and opts: '${JSON.stringify(opts)}' was updated`, $this, logOpts);
-        res.status(200)
-            .json({
-                item: 'Baseline',
-                action: 'update',
-                id,
-                opts,
-            });
-    } catch (e) {
-        fatalError(req, res, e);
-    }
-};
+// exports.updateBaseline = async (req, res) => {
+//     const logOpts = {
+//         scope: 'updateBaseline',
+//         ref: req.id,
+//         itemType: 'baseline',
+//         msgType: 'UPDATE',
+//     };
+//     try {
+//         const opts = removeEmptyProperties(req.body);
+//         const { id } = req.params;
+//         // eslint-disable-next-line max-len
+//         log.debug(`start update baseline with id: '${id}', params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`, $this, logOpts);
+//         const baseline = await Baseline.findByIdAndUpdate(id, opts)
+//             .exec();
+//         await baseline.save();
+//         log.debug(`baseline with id: '${id}' and opts: '${JSON.stringify(opts)}' was updated`, $this, logOpts);
+//         res.status(200)
+//             .json({
+//                 item: 'Baseline',
+//                 action: 'update',
+//                 id,
+//                 opts,
+//             });
+//     } catch (e) {
+//         fatalError(req, res, e);
+//     }
+// };
 
-exports.updateBaselineBySnapshotId = async (req, res) => {
-    const logOpts = {
-        scope: 'updateBaseline',
-        ref: req.id,
-        itemType: 'baseline',
-        msgType: 'UPDATE',
-    };
-    try {
-        const opts = removeEmptyProperties(req.body);
-        const { id: snapshotId } = req.params;
-        // eslint-disable-next-line max-len
-        log.debug(`start update baseline with snapshot id: '${snapshotId}', params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`, $this, logOpts);
-        const baseline = await Baseline.findOneAndUpdate({ snapshootId: snapshotId }, opts)
-            .exec();
-        await baseline.save();
-        log.debug(`baseline with id: '${snapshotId}' and opts: '${JSON.stringify(opts)}' was updated`, $this, logOpts);
-        res.status(200)
-            .json({
-                item: 'Baseline',
-                action: 'update',
-                snapshotId,
-                opts,
-            });
-    } catch (e) {
-        fatalError(req, res, e);
-    }
-};
+// exports.updateBaselineBySnapshotId = async (req, res) => {
+//     const logOpts = {
+//         scope: 'updateBaseline',
+//         ref: req.id,
+//         itemType: 'baseline',
+//         msgType: 'UPDATE',
+//     };
+//     try {
+//         const opts = removeEmptyProperties(req.body);
+//         const { id: snapshotId } = req.params;
+//         // eslint-disable-next-line max-len
+//         log.debug(`start update baseline with snapshot id: '${snapshotId}', params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`, $this, logOpts);
+//         const baseline = await Baseline.findOneAndUpdate({ snapshootId: snapshotId }, opts)
+//             .exec();
+//         await baseline.save();
+//         log.debug(`baseline with id: '${snapshotId}' and opts: '${JSON.stringify(opts)}' was updated`, $this, logOpts);
+//         res.status(200)
+//             .json({
+//                 item: 'Baseline',
+//                 action: 'update',
+//                 snapshotId,
+//                 opts,
+//             });
+//     } catch (e) {
+//         fatalError(req, res, e);
+//     }
+// };
 
 exports.getBaseline = async (req, res) => {
     try {
