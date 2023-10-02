@@ -1,5 +1,6 @@
 /* eslint-disable valid-jsdoc */
 const mongoose = require('mongoose');
+const { removeEmptyProperties, fatalError } = require('../../mvc/controllers/utils');
 
 const $this = this;
 $this.logMeta = {
@@ -22,6 +23,30 @@ const get = async (modelName, filter, options) => {
     return itemModel.paginate(filter, options);
 };
 
+const put = async (modelName, id, options, user) => {
+    const $this = this;
+
+    const itemModel = mongoose.model(modelName);
+
+    const logOpts = {
+        scope: 'generic.service.put',
+        ref: id,
+        itemType: modelName,
+        msgType: 'UPDATE',
+    };
+
+    const opts = removeEmptyProperties(options);
+    // eslint-disable-next-line max-len
+    log.debug(`start update '${modelName}' with id: '${id}', body: '${JSON.stringify(opts)}'`, $this, logOpts);
+    const item = await itemModel.findByIdAndUpdate(id, options)
+        .exec();
+
+    await item.save();
+    log.debug(`baseline with id: '${id}' and opts: '${JSON.stringify(opts)}' was updated`, $this, logOpts);
+    return item;
+};
+
 module.exports = {
     get,
+    put,
 };
