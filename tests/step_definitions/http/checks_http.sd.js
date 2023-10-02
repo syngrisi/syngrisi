@@ -36,34 +36,6 @@ When(/^I accept via http the (\d+)st check with name "([^"]*)"$/, async function
     )).json;
 });
 
-When(/^I parse via http "([^"]*)" snapshot for (\d)st check with name "([^"]*)"$/, async function (type, num, name) {
-    const checkUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
-        + `checks/byfilter?name=${name}`;
-    // console.log({ uri: checkUri });
-    const check = (await requestWithLastSessionSid(
-        checkUri,
-        this
-    )).json[num - 1];
-    const transformType = {
-        actual: 'baselineId',
-        baseline: 'actualSnapshotId'
-    };
-    // console.log({ check });
-
-    const snapshotId = check[transformType[type]];
-    console.log({ snapshotId });
-    const snapshotUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
-        + `snapshot/${snapshotId}`;
-    console.log({ snapshotUri: snapshotUri });
-    const snapshot = (await requestWithLastSessionSid(
-        snapshotUri,
-        this
-    )).json;
-    console.log({ snapshot: snapshot });
-
-    this.saveItem('snapshot', snapshot);
-});
-
 When(/^I check image with path: "([^"]*)" as "([^"]*)"$/, async function (filePath, checkName) {
     browser.pause(300);
     const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${filePath}`);
@@ -87,13 +59,16 @@ When(/^I check image with path: "([^"]*)" as "([^"]*)" and suppress exceptions$/
 When(/^I update via http last "([^"]*)" checks with params:$/, async function (num, str) {
     const params = YAML.parse(this.fillItemsPlaceHolders(fillCommonPlaceholders(str)));
 
-    const checkUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
-        + `checks/byfilter?name=${params.name}`;
 
+    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
+        + `v1/checks?limit=0&filter={"name": "${params.name}"}`;
+        // + `v1/checks?limit=0&filter={"$and":[{"name":{"$regex":"${name}","$options":"im"}}]}`;
+
+    console.log('💥👉', { uri: uri });
     const checks = (await requestWithLastSessionSid(
-        checkUri,
+        uri,
         this
-    )).json;
+    )).json.results;
 
     const lastChecks = checks.slice(num * -1, checks.length);
 
