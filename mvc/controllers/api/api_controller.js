@@ -232,32 +232,6 @@ exports.generateApiKey = async (req, res) => {
         .json({ apikey: apiKey });
 };
 
-exports.createUser = async (req, res) => {
-    const params = req.body;
-    const logOpts = {
-        msgType: 'CREATE',
-        itemType: 'user',
-        ref: params.username,
-        user: req?.user?.username,
-        scope: 'createUser',
-    };
-    try {
-        log.debug(`create the user with name '${params.username}', params: '${JSON.stringify(params)}'`,
-            $this, logOpts);
-
-        const opts = removeEmptyProperties(Object.assign(params, { updatedDate: new Date() }));
-        const user = await orm.createUser(opts);
-        const updatedUser = await user.setPassword(opts.password);
-        await updatedUser.save();
-        log.debug(`password for user: '${user.username}' set successfully`, $this, logOpts);
-        res.json(user);
-        return [req, res, user];
-    } catch (e) {
-        fatalError(req, res, e);
-    }
-    return null;
-};
-
 exports.getUsers = async (req, res) => {
     const users = await User.find()
         .exec();
@@ -265,50 +239,6 @@ exports.getUsers = async (req, res) => {
         .json(users);
     return users;
 };
-
-const updateUser = async (req, res) => {
-    const params = req.body;
-    const logOpts = {
-        msgType: 'UPDATE',
-        itemType: 'user',
-        ref: params.username,
-        user: req?.user?.username,
-        scope: 'updateUser',
-    };
-
-    try {
-        log.info(`update user with id: '${params.id}' name '${params.username}', params: '${JSON.stringify(params)}'`,
-            $this, logOpts);
-
-        const opts = removeEmptyProperties(Object.assign(params, { updatedDate: new Date() }));
-
-        const user = await User.findById(opts.id);
-        if (!user) {
-            res.status(500)
-                .json({
-                    status: 'Error',
-                    message: `Cannot find user with id: '${opts.id}'`,
-                });
-            throw new Error(`cannot find the user with id: ${opts.id}`);
-        }
-        const { password } = opts;
-
-        await User.findByIdAndUpdate(user._id, params);
-
-        if (password) {
-            await user.setPassword(password);
-            await user.save();
-        }
-        log.debug(`user '${user.username}' was updated successfully`, $this, logOpts);
-        res.json(user);
-        return [req, res, user];
-    } catch (e) {
-        fatalError(req, res, e);
-    }
-    return null;
-};
-
-exports.updateUser = updateUser;
 
 // tests
 async function updateTest(params) {
@@ -394,6 +324,7 @@ exports.createTest = async (req, res) => {
 };
 
 // checks
+// move to v1
 exports.updateCheck = async (req, res) => {
     const opts = removeEmptyProperties(req.body);
     const { id } = req.params;
@@ -859,34 +790,6 @@ exports.getIdent = async (req, res) => {
     res.json(ident);
 };
 
-exports.getRun = async (req, res) => {
-    try {
-        const opts = removeEmptyProperties(req.body);
-        const { id } = req.params;
-        log.debug(`get run with id: '${id}',  params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`,
-            $this, {
-                msgType: 'GET',
-                itemType: 'run',
-                scope: 'getRun',
-            });
-        const run = await Run.findById(id)
-            .exec();
-
-        res.json(run);
-    } catch (e) {
-        fatalError(req, res, e);
-    }
-};
-
-function addMarkedAsOptions(params, user, mark) {
-    const opts = { ...params };
-    opts.markedById = user._id;
-    opts.markedByUsername = user.username;
-    opts.markedDate = new Date();
-    opts.markedAs = mark;
-    return opts;
-}
-
 function removeNonIdentProperties(params) {
     const opts = { ...params };
     for (const prop of Object.keys(opts)) {
@@ -896,56 +799,6 @@ function removeNonIdentProperties(params) {
     }
     return opts;
 }
-
-exports.checkIfScreenshotHasBaselines = async (req, res) => {
-    const logOpts = {
-        scope: 'checkIfScreenshotHasBaselines',
-        itemType: 'baseline',
-        msgType: 'GET',
-    };
-    try {
-        log.debug(`check is baseline exist: '${JSON.stringify(req.query, null, ' ')}'`, logOpts);
-        if (!req.query.imghash) {
-            res.status(400)
-                .json({ respStatus: 'imghash is empty' });
-            return;
-        }
-        const app = await App.findOne({ name: req.query.app });
-        const opts = removeNonIdentProperties(req.query);
-        opts.app = app._id;
-        const lastBaseline = await Baseline.findOne(opts)
-            .sort({ updatedDate: -1 })
-            .exec();
-        if (!lastBaseline) {
-            log.warn(`such baseline does not exists: ${JSON.stringify(opts, null, ' ')}`, logOpts);
-            res.status(404)
-                .json({
-                    respStatus: 'baseline not found',
-                    params: opts,
-                });
-            return;
-        }
-        const snapshot = await Snapshot.findOne({ _id: lastBaseline.toObject().snapshootId })
-            .exec();
-        const snapshotObj = snapshot.toObject();
-        if (snapshotObj
-            && (snapshotObj?.imghash.toString() === req.query.imghash)) {
-            // console.log(snapshotObj?.imghash.toString());
-            // console.log(req.query.imghash);
-            res.json({ ...snapshotObj, ...{ respStatus: 'success', params: opts } });
-            return;
-        }
-        log.warn(`such snapshot does not exists: ${JSON.stringify(req.query, null, ' ')}`, logOpts);
-        res.status(404)
-            .json({
-                respStatus: 'snapshot not found',
-                params: req.query,
-            });
-    } catch (e) {
-        log.error(e);
-        fatalError(req, res, e);
-    }
-};
 
 exports.stopSession = async (req, res) => {
     const testId = req.params.testid;
