@@ -6,27 +6,14 @@ const { requestWithLastSessionSid, fillCommonPlaceholders } = require('../../src
 
 Then(/^I expect via http (\d+) baselines$/, async function (num) {
     const baselines = (await requestWithLastSessionSid(
-        `http://${browser.config.serverDomain}:${browser.config.serverPort}/all_baselines`,
+        `http://${browser.config.serverDomain}:${browser.config.serverPort}/v1/baselines?limit=0&filter={}`,
         this
-    )).json;
+    ))
+        .json
+        .results;
 
     expect(baselines.length)
         .toBe(parseInt(num, 10));
-});
-
-Then(/^I expect via http ([\d]+)st baseline with:$/, async function (num, yml) {
-    const baselines = (await requestWithLastSessionSid(
-        `http://${browser.config.serverDomain}:${browser.config.serverPort}/all_baselines`,
-        this
-    )).json;
-    console.log({ baselines });
-
-    const params = YAML.parse(yml);
-    const baseline = baselines[parseInt(num, 10) - 1];
-    baseline.markedByUsername = baseline.markedByUsername || '';
-    baseline.markedAs = baseline.markedAs || '';
-    expect(baseline)
-        .toMatchObject(params);
 });
 
 When(/^I check if baseline exist:$/, async function (yml) {

@@ -94,46 +94,6 @@ module.exports = async (app) => {
             await queue.add(() => API.getChecks(req, res)
                 .catch(next));
         })
-        .get('/checks2', ensureLoggedIn(), async (req, res, next) => {
-            API.getChecks2(req, res)
-                .catch(next);
-        })
-        .get('/snapshot/:id', ensureLoggedIn(), async (req, res, next) => {
-            API.getSnapshot(req, res)
-                .catch(next);
-        })
-        .get('/baselines/:id', ensureLoggedIn(), async (req, res, next) => {
-            API.getBaseline(req, res)
-                .catch(next);
-        })
-        .get('/all_baselines', ensureLoggedIn(), (req, res) => {
-            API.getBaselines(req, res);
-        })
-        .get('/checkhistory/:id', ensureLoggedIn(), async (req, res, next) => {
-            API.getCheckHistory(req, res)
-                .catch(next);
-        })
-        .get('/check/:id', ensureLoggedIn(), async (req, res, next) => {
-            API.getCheck(req, res)
-                .catch(next);
-        })
-        .get('/checks/byident/:testid', async (req, res, next) => {
-            API.checksGroupByIdent(req, res)
-                .catch(next);
-        })
-        .get('/test/:id', ensureLoggedIn(), async (req, res, next) => {
-            API.getTestById(req, res)
-                .catch(next);
-        })
-        .get('/checks/byfilter', ensureLoggedIn(), async (req, res) => {
-            API.checksByFilter(req, res);
-        })
-        .get('/snapshots/byfilter', ensureLoggedIn(), async (req, res) => {
-            API.shapshotsByFilter(req, res);
-        })
-        .get('/tests/byfilter', ensureLoggedIn(), async (req, res) => {
-            API.testsByFilter(req, res);
-        })
         // eslint-disable-next-line consistent-return
         .put('/tests/:id', async (req, res, next) => {
             if (process.env.SYNGRISI_TEST_MODE !== '1') {

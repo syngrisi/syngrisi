@@ -191,80 +191,6 @@ async function compareSnapshots(baselineSnapshot, actual, opts = {}) {
     }
 }
 
-// exports.updateBaseline = async (req, res) => {
-//     const logOpts = {
-//         scope: 'updateBaseline',
-//         ref: req.id,
-//         itemType: 'baseline',
-//         msgType: 'UPDATE',
-//     };
-//     try {
-//         const opts = removeEmptyProperties(req.body);
-//         const { id } = req.params;
-//         // eslint-disable-next-line max-len
-//         log.debug(`start update baseline with id: '${id}', params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`, $this, logOpts);
-//         const baseline = await Baseline.findByIdAndUpdate(id, opts)
-//             .exec();
-//         await baseline.save();
-//         log.debug(`baseline with id: '${id}' and opts: '${JSON.stringify(opts)}' was updated`, $this, logOpts);
-//         res.status(200)
-//             .json({
-//                 item: 'Baseline',
-//                 action: 'update',
-//                 id,
-//                 opts,
-//             });
-//     } catch (e) {
-//         fatalError(req, res, e);
-//     }
-// };
-
-// exports.updateBaselineBySnapshotId = async (req, res) => {
-//     const logOpts = {
-//         scope: 'updateBaseline',
-//         ref: req.id,
-//         itemType: 'baseline',
-//         msgType: 'UPDATE',
-//     };
-//     try {
-//         const opts = removeEmptyProperties(req.body);
-//         const { id: snapshotId } = req.params;
-//         // eslint-disable-next-line max-len
-//         log.debug(`start update baseline with snapshot id: '${snapshotId}', params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`, $this, logOpts);
-//         const baseline = await Baseline.findOneAndUpdate({ snapshootId: snapshotId }, opts)
-//             .exec();
-//         await baseline.save();
-//         log.debug(`baseline with id: '${snapshotId}' and opts: '${JSON.stringify(opts)}' was updated`, $this, logOpts);
-//         res.status(200)
-//             .json({
-//                 item: 'Baseline',
-//                 action: 'update',
-//                 snapshotId,
-//                 opts,
-//             });
-//     } catch (e) {
-//         fatalError(req, res, e);
-//     }
-// };
-
-exports.getBaseline = async (req, res) => {
-    try {
-        if (!req.params.id) {
-            return res.status(204)
-                .json([]);
-        }
-        return res.json(await Baseline.findById(req.params.id));
-    } catch (e) {
-        log.error(`cannot get a snapshot with id: '${req.params.id}', error: ${e}`,
-            $this,
-            {
-                scope: 'getSnapshot',
-                msgType: 'GET',
-            });
-        return fatalError(req, res, e);
-    }
-};
-
 exports.getSnapshot = async (req, res) => {
     try {
         res.json(await Snapshot.findById(req.params.id));
@@ -278,44 +204,6 @@ exports.getSnapshot = async (req, res) => {
         fatalError(req, res, e);
     }
 };
-
-const checksGroupByIdent = async (req, res) => {
-    try {
-        const testId = req.params.testid;
-        res.json(await checksGroupedByIdent({ test: testId }));
-    } catch (e) {
-        fatalError(req, res, e);
-    }
-};
-
-exports.checksGroupByIdent = checksGroupByIdent;
-
-// exports.affectedElements = async (req, res) => {
-//     try {
-//         if (!req.query.checktid || !req.query.diffid) {
-//             const e = 'checktid|diffid query values are empty';
-//             fatalError(req, res, e);
-//         }
-//         const chk = await Check.findById(req.query.checktid)
-//             .exec()
-//             .catch((e) => {
-//                 fatalError(req, res, e);
-//             });
-//         if (!chk) {
-//             fatalError(req, res, `Cannot find check with such id: '${req.query.checktid}'`);
-//         }
-//
-//         const imDiffData = await fs.readFile(`${config.defaultBaselinePath}${req.query.diffid}.png`);
-//         const positions = parseDiff(imDiffData);
-//         const result = await getAllElementsByPositionFromDump(JSON.parse(chk.domDump), positions);
-//         console.table(Array.from(result), ['tag', 'id', 'x', 'y', 'width', 'height', 'domPath']);
-//         res.json(result);
-//         return result;
-//     } catch (e) {
-//         fatalError(req, res, e);
-//     }
-//     return null;
-// };
 
 function parseSorting(params) {
     return Object.keys(params)
@@ -1091,86 +979,6 @@ exports.createCheck = async (req, res) => {
     }
 };
 
-exports.getChecks2 = async (req, res) => {
-    const opts = req.query;
-
-    const pageSize = parseInt(process.env['SYNGRISI_PAGINATION_SIZE'], 10) || 50;
-
-    const skip = opts.page ? ((parseInt(opts.page, 10)) * pageSize - pageSize) : 0;
-
-    let sortFilter = parseSorting(opts);
-    if (Object.keys(sortFilter).length < 1) {
-        sortFilter = { updatedDate: -1 };
-    }
-
-    const query = buildQuery(opts);
-    // console.log({ query });
-    // console.log({opts})
-    if (opts.filter_suitename_eq) {
-        const decodedQuerystringSuiteName = Object.keys(querystring.decode(opts.filter_suitename_eq))[0];
-        const suite = await Suite.findOne({ name: { $eq: decodedQuerystringSuiteName } })
-            .exec();
-        if (opts.filter_suitename_eq && !suite) {
-            res.status(200)
-                .json({});
-        }
-        if (suite) {
-            query.suite = suite.id;
-            delete query.suitename;
-        }
-    }
-
-    if (req.user.role === 'user') {
-        query.creatorUsername = req.user.username;
-    }
-    // console.log({ query });
-    const tests = await Test
-        .find(query)
-        .sort(sortFilter)
-        .skip(skip)
-        .limit(pageSize)
-        .exec();
-    // console.log({ tests });
-    // const suites = await getSuitesByTestsQuery(query);
-    const checksByTestGroupedByIdent = [];
-
-    for (const test of tests) {
-        const groups = await checksGroupedByIdent2(test.id);
-        // console.log(Object.keys(groups).length);
-        if (Object.keys(groups).length > 0) {
-            // console.log({groups})
-            checksByTestGroupedByIdent.push({
-                id: test.id,
-                creatorId: test.creatorId,
-                creatorUsername: test.creatorUsername,
-                markedAs: test.markedAs,
-                markedByUsername: test.markedByUsername,
-                markedDate: test.markedDate,
-                name: test.name,
-                status: test.status,
-                browserName: test.browserName,
-                browserVersion: test.browserVersion,
-                browserFullVersion: test.browserFullVersion,
-                viewport: test.viewport,
-                calculatedViewport: test.calculatedViewport,
-                os: test.os,
-                blinking: test.blinking,
-                updatedDate: test.updatedDate,
-                createdDate: test.createdDate,
-                suite: test.suite,
-                run: test.run,
-                tags: test.tags,
-                branch: test.branch,
-                app: test.app,
-                groups: groups,
-            });
-        }
-    }
-    // console.log(Object.keys(checksByTestGroupedByIdent).length);
-    res.status(200)
-        .json(checksByTestGroupedByIdent);
-};
-
 exports.getChecks = async (req, res) => {
     const opts = req.query;
 
@@ -1252,25 +1060,6 @@ exports.getChecks = async (req, res) => {
         .json(checksByTestGroupedByIdent);
 };
 
-exports.getCheck = async (req, res) => {
-    try {
-        const opts = removeEmptyProperties(req.body);
-        const { id } = req.params;
-        log.debug(`get check with id: '${id}',  params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`,
-            $this, {
-                msgType: 'GET',
-                itemType: 'check',
-                scope: 'getCheck',
-            });
-        const check = await Check.findById(id)
-            .exec();
-
-        res.json(check);
-    } catch (e) {
-        fatalError(req, res, e);
-    }
-};
-
 exports.getIdent = async (req, res) => {
     res.json(ident);
 };
@@ -1302,13 +1091,6 @@ function addMarkedAsOptions(params, user, mark) {
     opts.markedAs = mark;
     return opts;
 }
-
-exports.getBaselines = (req, res) => {
-    Baseline.find(req.query)
-        .then((baselines) => {
-            res.json(baselines);
-        });
-};
 
 function removeNonIdentProperties(params) {
     const opts = { ...params };
@@ -1366,60 +1148,6 @@ exports.checkIfScreenshotHasBaselines = async (req, res) => {
             });
     } catch (e) {
         log.error(e);
-        fatalError(req, res, e);
-    }
-};
-
-exports.getTestById = async (req, res) => {
-    try {
-        const opts = removeEmptyProperties(req.body);
-        const { id } = req.params;
-        log.debug(`get test with id: '${id}',  params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`,
-            $this, {
-                msgType: 'GET',
-                itemType: 'test',
-            });
-        await Test.findById(id)
-            .then(async (snp) => {
-                res.json(snp);
-            })
-            .catch(
-                (err) => {
-                    res.status(400)
-                        .send(`Cannot GET a test with id: '${id}', error: ${err}`);
-                }
-            );
-    } catch (e) {
-        fatalError(req, res, e);
-    }
-};
-
-exports.getCheckHistory = async (req, res) => {
-    try {
-        const opts = removeEmptyProperties(req.body);
-        const { id } = req.params;
-        log.debug(`get check history, id: '${id}',  params: '${JSON.stringify(req.params)}', body: '${JSON.stringify(opts)}'`,
-            $this, {
-                msgType: 'GET_HISTORY',
-                itemType: 'check',
-            });
-        const check = await Check.findById(id);
-        if (!check) {
-            throw new Error(`Cannot find check with id: ${id}`);
-        }
-        const checkLogs = await Log.find({
-            $or: [
-                { 'meta.ref': check._id.toString() },
-                { 'meta.ref': check.suite.toString() },
-                { 'meta.ref': check.test.toString() },
-                { 'meta.ref': check.run.toString() },
-                { 'meta.ref': check.baselineId.toString() },
-                { 'meta.ref': check.actualSnapshotId.toString() },
-            ],
-        });
-
-        res.json(checkLogs);
-    } catch (e) {
         fatalError(req, res, e);
     }
 };
@@ -1491,55 +1219,6 @@ exports.stopSession = async (req, res) => {
 };
 
 // TESTABILITY
-exports.checksByFilter = (req, res) => {
-    log.debug(JSON.stringify(req.query, null, 2));
-    if (Object.keys(req.query).length === 0) {
-        res.status(400)
-            .json({ error: 'the query is empty' });
-    }
-    Check.find(req.query)
-        // .limit(100)
-        .then((result) => {
-            res.json(result);
-        });
-};
-
-exports.shapshotsByFilter = (req, res) => {
-    log.debug(JSON.stringify(req.query, null, 2));
-    if (Object.keys(req.query).length === 0) {
-        res.status(400)
-            .json({ error: 'the query is empty' });
-    }
-    Snapshot.find(req.query)
-        .then((result) => {
-            res.json(result);
-        });
-};
-
-exports.testsByFilter = (req, res) => {
-    log.debug(JSON.stringify(req.query, null, 2));
-    if (Object.keys(req.query).length === 0) {
-        res.status(400)
-            .json({ error: 'the query is empty' });
-    }
-    Test.find(req.query)
-        .then((result) => {
-            res.json(result);
-        });
-};
-
-exports.runsByFilter = (req, res) => {
-    log.debug(JSON.stringify(req.query, null, 2));
-    if (Object.keys(req.query).length === 0) {
-        res.status(400)
-            .json({ error: 'the query is empty' });
-    }
-    Run.find(req.query)
-        .then((result) => {
-            res.json(result);
-        });
-};
-
 exports.getScreenshotList = (req, res) => {
     const files = fss.readdirSync(config.defaultBaselinePath);
     res.json(files);
