@@ -97,10 +97,10 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, s
                 check.markedByUsername
                     ? (
                         <Stack spacing="xs" p={5}>
-                            <Text>
+                            <Text data-test="accept-button-tooltip-username">
                                 Accepted by: {check.markedByUsername}
                             </Text>
-                            <Text>
+                            <Text data-test="accept-button-tooltip-date">
                                 Accepted Date: {check.markedDate}
                             </Text>
                         </Stack>

@@ -61,5 +61,6 @@ Given(/^I setup driver$/, async () => {
 
 Given(/^I start session with parameters:$/, async (params) => {
     const sessOpts = YAML.parse(params);
+    if (!sessOpts.suiteName) sessOpts.suiteName = 'Int suite';
     await startSession(sessOpts);
 });

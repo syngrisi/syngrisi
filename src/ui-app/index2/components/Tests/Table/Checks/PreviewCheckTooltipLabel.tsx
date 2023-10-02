@@ -10,7 +10,7 @@ import { ViewPortLabel } from './ViewPortLabel';
 import { getStatusMessage } from '../../../../../shared/utils/utils';
 
 interface Props {
-    check: any
+    check: any;
 }
 
 export function PreviewCheckTooltipLabel({ check }: Props) {
@@ -111,7 +111,7 @@ export function PreviewCheckTooltipLabel({ check }: Props) {
                     <Text size="xs">Created Date: </Text>
                 </Group>
                 <Group>
-                    <Badge color="blue">
+                    <Badge color="blue" data-test="date-tooltip-label">
                         {dateFns.format(dateFns.parseISO(check.createdDate), 'yyyy-MM-dd HH:mm:ss')}
                     </Badge>
                 </Group>
