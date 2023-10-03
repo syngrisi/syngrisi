@@ -4,7 +4,7 @@ const { got } = require('got-cjs');
 const { requestWithLastSessionSid } = require('../../src/utills/common');
 
 When(/^I create via http test user$/, async function () {
-    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/loadTestUser`;
+    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/v1/tasks/loadTestUser`;
     // console.log({ uri });
     const res = await got.get(uri);
     console.log({ response: res.body });
@@ -22,7 +22,7 @@ When(/^I login via http with user:"([^"]*)" password "([^"]*)"$/, async function
             headers: {
                 'upgrade-insecure-requests': '1',
             },
-            json: { username: login, password, },
+            json: { username: login, password },
         }
     ));
     // console.log({ Body: res.body });
@@ -41,8 +41,8 @@ When(/^I create via http user as:"([^"]*)" with params:$/, async function (user,
     const params = JSON.parse(json);
 
     const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
-        + `v1/users`;
-    console.log('💥👉', { uri: uri });
+        + 'v1/users';
+    console.log('💥👉', { uri });
 
     const { sessionSid } = this.getSavedItem('users')[user];
     // console.log({ sessionSid });

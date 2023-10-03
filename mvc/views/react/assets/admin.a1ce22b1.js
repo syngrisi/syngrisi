@@ -12503,7 +12503,7 @@ function Task({
   async function handleTask(name, opts) {
     const queryParams = queryString.stringify(opts);
     const ctrl = new AbortController();
-    fetch(`/task_${name}?${queryParams}`, {
+    fetch(`/v1/tasks/task_${name}?${queryParams}`, {
       signal: ctrl.signal
     }).then((response) => response.body).then((rs) => {
       const reader = rs.getReader();

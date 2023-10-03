@@ -183,7 +183,7 @@ const startServer = (params) => {
     let timeoutMsg = '';
     browser.waitUntil(async () => {
         const response = got.get(`http://${browser.config.serverDomain}:`
-            + `${cidPort}/status`, { throwHttpErrors: false });
+            + `${cidPort}/v1/tasks/status`, { throwHttpErrors: false });
         // console.log({ response });
         const jsonResp = await response.json();
         console.log({ isAlive: jsonResp.alive });
