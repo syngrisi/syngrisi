@@ -3,7 +3,13 @@ const passport = require('passport');
 const mongoose = require('mongoose');
 
 const User = mongoose.model('VRSUser');
+const hasha = require('hasha');
+const uuidAPIKey = require('uuid-apikey');
 const catchAsync = require('../utils/catchAsync');
+
+function getApiKey() {
+    return uuidAPIKey.create().apiKey;
+}
 
 const $this = this;
 $this.logMeta = {
@@ -11,6 +17,21 @@ $this.logMeta = {
     msgType: 'AUTHENTICATION',
 };
 // const { authService, userService, tokenService, emailService } = require('../services');
+
+const apikey = catchAsync(async (req, res, next) => {
+    const apiKey = getApiKey();
+    log.debug(
+        `generate API Key for user: '${req.user.username}'`,
+        $this,
+        { user: req.user.username, scope: 'apikey', msgType: 'GENERATE_API' }
+    );
+    const hash = hasha(apiKey);
+    const user = await User.findOne({ username: req.user.username });
+    user.apiKey = hash;
+    await user.save();
+    res.status(200)
+        .json({ apikey: apiKey });
+});
 
 const login = catchAsync(async (req, res, next) => {
     const logOpts = {
@@ -133,4 +154,5 @@ module.exports = {
     changePassword,
     changePasswordFirstRun,
     logout,
+    apikey,
 };

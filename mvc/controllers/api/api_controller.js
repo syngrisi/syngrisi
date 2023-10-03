@@ -5,26 +5,14 @@ const mongoose = require('mongoose');
 const hasha = require('hasha');
 const fs = require('fs').promises;
 const fss = require('fs');
-const stringTable = require('string-table');
-const {
-    format,
-    subDays,
-} = require('date-fns');
+
 const { config } = require('../../../config');
 const { getDiff } = require('../../../lib/comparator');
 const orm = require('../../../lib/dbItems');
-// const { parseDiff } = require('../../../lib/parseDiff');
-const { getAllElementsByPositionFromDump } = require('../../../lib/getElementsByPixPositionsFromDump');
-const testUtil = require('./utils/tests');
-const checkUtil = require('./utils/check');
 
 const Snapshot = mongoose.model('VRSSnapshot');
 const Check = mongoose.model('VRSCheck');
 const Test = mongoose.model('VRSTest');
-const Run = mongoose.model('VRSRun');
-const Log = mongoose.model('VRSLog');
-const App = mongoose.model('VRSApp');
-const Suite = mongoose.model('VRSSuite');
 const User = mongoose.model('VRSUser');
 const Baseline = mongoose.model('VRSBaseline');
 const {
@@ -72,7 +60,6 @@ async function getNotPendingChecksByIdent(identifier) {
         .exec();
 }
 
-// snapshots
 async function getSnapshotByImgHash(hash) {
     return Snapshot.findOne({ imghash: hash })
         .exec();
@@ -188,84 +175,6 @@ async function compareSnapshots(baselineSnapshot, actual, opts = {}) {
     }
 }
 
-exports.getSnapshot = async (req, res) => {
-    try {
-        res.json(await Snapshot.findById(req.params.id));
-    } catch (e) {
-        log.error(`cannot get a snapshot with id: '${req.params.id}', error: ${e}`,
-            $this,
-            {
-                scope: 'getSnapshot',
-                msgType: 'GET',
-            });
-        fatalError(req, res, e);
-    }
-};
-
-// users
-function getApiKey() {
-    const uuidAPIKey = require('uuid-apikey');
-
-    return uuidAPIKey.create().apiKey;
-}
-
-exports.generateApiKey = async (req, res) => {
-    const apiKey = getApiKey();
-    log.debug(`generate API Key for user: '${req.user.username}'`, $this, { user: req.user.username });
-    const hash = hasha(apiKey);
-    const user = await User.findOne({ username: req.user.username });
-    user.apiKey = hash;
-    await user.save();
-    res.status(200)
-        .json({ apikey: apiKey });
-};
-
-exports.getUsers = async (req, res) => {
-    const users = await User.find()
-        .exec();
-    res.status(200)
-        .json(users);
-    return users;
-};
-
-// checks
-exports.updateCheck = async (req, res) => {
-    const opts = removeEmptyProperties(req.body);
-    const { id } = req.params;
-    const logOpts = {
-        msgType: 'UPDATE',
-        itemType: 'check',
-        ref: id,
-        user: req?.user?.username,
-        scope: 'updateCheck',
-    };
-    try {
-        log.debug(`update check with id '${id}' with params '${JSON.stringify(opts, null, 2)}'`,
-            $this, logOpts);
-
-        const check = await Check.findOneAndUpdate({ _id: id }, opts, { new: true })
-            .exec();
-        const test = await Test.findOne({ _id: check.test })
-            .exec();
-
-        test.status = await testUtil.calculateTestStatus(check.test);
-
-        await orm.updateItemDate('VRSCheck', check);
-        await orm.updateItemDate('VRSTest', test);
-        await test.save();
-        await check.save();
-        res.status(200)
-            .json({
-                message: `Check with id: '${id}' was updated`,
-                check: check.toObject(),
-            });
-        return check;
-    } catch (e) {
-        fatalError(req, res, e);
-    }
-    return null;
-};
-
 function prettyCheckParams(result) {
     if (!result.domDump) {
         return JSON.stringify(result);
@@ -285,55 +194,6 @@ async function getBaseline(params) {
     if (acceptedBaseline) return acceptedBaseline;
     return null;
 }
-
-// const validateBaselineParam = (params) => {
-//     const mandatoryParams = ['markedAs', 'markedById', 'markedByUsername', 'markedDate'];
-//     for (const param of mandatoryParams) {
-//         if (!param) {
-//             const errMsg = `invalid baseline parameters, '${param}' is empty, params: ${JSON.stringify(params)}`;
-//             log.error(errMsg);
-//             throw new Error(errMsg);
-//         }
-//     }
-// };
-
-// async function createNewBaseline(params) {
-//     validateBaselineParam(params);
-//
-//     const identFields = buildIdentObject(params);
-//
-//     const lastBaseline = await Baseline.findOne(identFields)
-//         .exec();
-//
-//     const sameBaseline = await Baseline.findOne({ ...identFields, ...{ snapshootId: params.actualSnapshotId } })
-//         .exec();
-//
-//     const baselineParams = lastBaseline?.ignoreRegions
-//         ? { ...identFields, ...{ ignoreRegions: lastBaseline.ignoreRegions } }
-//         : identFields;
-//
-//     if (sameBaseline) {
-//         log.debug(`the baseline with same ident and snapshot id: ${params.actualSnapshotId} already exist`, $this);
-//     } else {
-//         log.debug(`the baseline with same ident and snapshot id: ${params.actualSnapshotId} does not exist,
-//          create new one, baselineParams: ${JSON.stringify(baselineParams)}`, $this);
-//     }
-//
-//     log.silly({ sameBaseline });
-//
-//     const resultedBaseline = sameBaseline || await Baseline.create(baselineParams);
-//
-//     resultedBaseline.markedAs = params.markedAs;
-//     resultedBaseline.markedById = params.markedById;
-//     resultedBaseline.markedByUsername = params.markedByUsername;
-//     resultedBaseline.lastMarkedDate = params.markedDate;
-//     resultedBaseline.createdDate = new Date();
-//     resultedBaseline.snapshootId = params.actualSnapshotId;
-//
-//     return resultedBaseline.save();
-// }
-
-// module.exports.createNewBaseline = createNewBaseline;
 
 async function createBaselineIfNotExist(params) {
     // find if baseline already exist

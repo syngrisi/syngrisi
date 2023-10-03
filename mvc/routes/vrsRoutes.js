@@ -11,16 +11,7 @@ const API = require('../controllers/api/api_controller');
 
 module.exports = async (app) => {
     await app
-        // move to v1
-        .put('/checksupdate/:id', ensureLoggedIn(), async (req, res, next) => {
-            await queue.add(() => API.updateCheck(req, res)
-                .catch(next));
-        })
-        .get('/apikey/', ensureLoggedIn(), async (req, res, next) => {
-            API.generateApiKey(req, res)
-                .catch(next);
-        })
-        // SDK
+        // SDK !!!!!!!!!!!!
         .post('/tests', ensureApiKey(), async (req, res, next) => {
             req.log.trace('post \'/tests\' queue pending count: ', queue.pending);
             await queue.add(() => API.createTest(req, res)

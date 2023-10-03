@@ -66,7 +66,7 @@ When(/^I create via http user as:"([^"]*)" with params:$/, async function (user,
 });
 
 When(/^I generate via http API key for the User$/, async function () {
-    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/apikey`;
+    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/v1/auth/apikey`;
     console.log({ uri });
     const res = await requestWithLastSessionSid(uri, this);
     // console.log({ respBodyJSON: res.json });

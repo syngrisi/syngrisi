@@ -12,6 +12,10 @@ router
     .route('/:id')
     .delete(ensureLoggedIn(), checksController.remove);
 
+// update
+router.route('/:id')
+    .put(ensureLoggedIn(), checksController.update);
+
 router.route('/accept/:id')
     .put(ensureLoggedIn(), checksController.accept);
 

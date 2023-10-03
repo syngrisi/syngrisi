@@ -9,6 +9,7 @@ const { calculateAcceptedStatus, buildIdentObject } = require('../../../mvc/cont
 // const { createNewBaseline } = require('../../mvc/controllers/api/api_controller');
 const testUtil = require('../../../mvc/controllers/api/utils/tests');
 const checkUtil = require('../../../mvc/controllers/api/utils/check');
+const orm = require('../../../lib/dbItems');
 
 const $this = this;
 $this.logMeta = {
@@ -65,7 +66,7 @@ async function createNewBaseline(params) {
 }
 
 /**
- * Accept a chek
+ * Accept a check
  * @param {String} id - check id
  * @param {Object} user - current user
  * @param {String} baselineId -new baseline id
@@ -144,7 +145,33 @@ const remove = async (id, user) => {
     return checkUtil.removeCheck(id);
 };
 
+const update = async (id, opts, user) => {
+    const logOpts = {
+        msgType: 'UPDATE',
+        itemType: 'check',
+        ref: id,
+        user,
+        scope: 'updateCheck',
+    };
+    log.debug(`update check with id '${id}' with params '${JSON.stringify(opts, null, 2)}'`,
+        $this, logOpts);
+
+    const check = await Check.findOneAndUpdate({ _id: id }, opts, { new: true })
+        .exec();
+    const test = await Test.findOne({ _id: check.test })
+        .exec();
+
+    test.status = await testUtil.calculateTestStatus(check.test);
+
+    await orm.updateItemDate('VRSCheck', check);
+    await orm.updateItemDate('VRSTest', test);
+    await test.save();
+    await check.save();
+    return check;
+};
+
 module.exports = {
     accept,
     remove,
+    update,
 };
