@@ -11693,7 +11693,7 @@ function HeaderLogo({
 }
 const UsersService = {
   async getApiKey() {
-    const resp = await ky(`${config$1.baseUri}/apikey`);
+    const resp = await ky(`${config$1.baseUri}/v1/auth/apikey`);
     if (resp.ok) {
       return resp.json();
     }

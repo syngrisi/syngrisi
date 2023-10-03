@@ -62,7 +62,6 @@ When(/^I update via http last "([^"]*)" checks with params:$/, async function (n
 
     const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
         + `v1/checks?limit=0&filter={"name": "${params.name}"}`;
-        // + `v1/checks?limit=0&filter={"$and":[{"name":{"$regex":"${name}","$options":"im"}}]}`;
 
     console.log('💥👉', { uri: uri });
     const checks = (await requestWithLastSessionSid(
@@ -73,9 +72,7 @@ When(/^I update via http last "([^"]*)" checks with params:$/, async function (n
     const lastChecks = checks.slice(num * -1, checks.length);
 
     for (const check of lastChecks) {
-        const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
-            + `checksupdate/${check._id}`;
-
+        const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/v1/checks/${check._id}`;
         const result = (await requestWithLastSessionSid(
             uri,
             this,
@@ -91,8 +88,7 @@ When(/^I update via http check with params:$/, async function (str) {
     const params = YAML.parse(this.fillItemsPlaceHolders(fillCommonPlaceholders(str)));
     const checkId = this.STATE.currentCheck._id;
 
-    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
-        + `checksupdate/${checkId}`;
+    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/v1/checks/${checkId}`
     try {
         const result = (await requestWithLastSessionSid(
             uri,

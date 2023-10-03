@@ -13,7 +13,7 @@ export interface IApiResult {
 
 export const UsersService = {
     async getApiKey(): Promise<{ apikey: string }> {
-        const resp = await ky(`${config.baseUri}/apikey`);
+        const resp = await ky(`${config.baseUri}/v1/auth/apikey`);
         if (resp.ok) {
             return resp.json();
         }
