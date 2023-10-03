@@ -4,16 +4,65 @@ const mongoose = require('mongoose');
 const Check = mongoose.model('VRSCheck');
 const Test = mongoose.model('VRSTest');
 const Suite = mongoose.model('VRSSuite');
-const { calculateAcceptedStatus } = require('../../mvc/controllers/utils');
-const { createNewBaseline } = require('../../mvc/controllers/api/api_controller');
-const testUtil = require('../../mvc/controllers/api/utils/tests');
-const checkUtil = require('../../mvc/controllers/api/utils/check');
+const Baseline = mongoose.model('VRSBaseline');
+const { calculateAcceptedStatus, buildIdentObject } = require('../../../mvc/controllers/utils');
+// const { createNewBaseline } = require('../../mvc/controllers/api/api_controller');
+const testUtil = require('../../../mvc/controllers/api/utils/tests');
+const checkUtil = require('../../../mvc/controllers/api/utils/check');
 
 const $this = this;
 $this.logMeta = {
     scope: 'check_service',
     msgType: 'CHECK',
 };
+
+const validateBaselineParam = (params) => {
+    const mandatoryParams = ['markedAs', 'markedById', 'markedByUsername', 'markedDate'];
+    // eslint-disable-next-line no-restricted-syntax
+    for (const param of mandatoryParams) {
+        if (!param) {
+            const errMsg = `invalid baseline parameters, '${param}' is empty, params: ${JSON.stringify(params)}`;
+            log.error(errMsg);
+            throw new Error(errMsg);
+        }
+    }
+};
+
+async function createNewBaseline(params) {
+    validateBaselineParam(params);
+
+    const identFields = buildIdentObject(params);
+
+    const lastBaseline = await Baseline.findOne(identFields)
+        .exec();
+
+    const sameBaseline = await Baseline.findOne({ ...identFields, ...{ snapshootId: params.actualSnapshotId } })
+        .exec();
+
+    const baselineParams = lastBaseline?.ignoreRegions
+        ? { ...identFields, ...{ ignoreRegions: lastBaseline.ignoreRegions } }
+        : identFields;
+
+    if (sameBaseline) {
+        log.debug(`the baseline with same ident and snapshot id: ${params.actualSnapshotId} already exist`, $this);
+    } else {
+        log.debug(`the baseline with same ident and snapshot id: ${params.actualSnapshotId} does not exist,
+         create new one, baselineParams: ${JSON.stringify(baselineParams)}`, $this);
+    }
+
+    log.silly({ sameBaseline });
+
+    const resultedBaseline = sameBaseline || await Baseline.create(baselineParams);
+
+    resultedBaseline.markedAs = params.markedAs;
+    resultedBaseline.markedById = params.markedById;
+    resultedBaseline.markedByUsername = params.markedByUsername;
+    resultedBaseline.lastMarkedDate = params.markedDate;
+    resultedBaseline.createdDate = new Date();
+    resultedBaseline.snapshootId = params.actualSnapshotId;
+
+    return resultedBaseline.save();
+}
 
 /**
  * Accept a chek

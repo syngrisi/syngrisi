@@ -16,26 +16,29 @@ module.exports = async (app) => {
             await queue.add(() => API.updateCheck(req, res)
                 .catch(next));
         })
-        .get('/ident', ensureLoggedInOrApiKey(), (req, res) => {
-            API.getIdent(req, res);
+        .get('/apikey/', ensureLoggedIn(), async (req, res, next) => {
+            API.generateApiKey(req, res)
+                .catch(next);
+        })
+        // SDK
+        .post('/tests', ensureApiKey(), async (req, res, next) => {
+            req.log.trace('post \'/tests\' queue pending count: ', queue.pending);
+            await queue.add(() => API.createTest(req, res)
+                .catch(next));
+        })
+        .post('/session/:testid', ensureApiKey(), async (req, res, next) => {
+            API.stopSession(req, res)
+                .catch(next);
         })
         .post('/checks', ensureApiKey(), async (req, res, next) => {
             req.log.trace('post \'/checks\' queue pending count: ', queue.pending);
             await queue.add(() => API.createCheck(req, res)
                 .catch(next));
         })
-        // SDK method don't remove
-        .post('/tests', ensureApiKey(), async (req, res, next) => {
-            req.log.trace('post \'/tests\' queue pending count: ', queue.pending);
-            await queue.add(() => API.createTest(req, res)
-                .catch(next));
+        .get('/ident', ensureLoggedInOrApiKey(), (req, res) => {
+            API.getIdent(req, res);
         })
-        .get('/apikey/', ensureLoggedIn(), async (req, res, next) => {
-            API.generateApiKey(req, res)
-                .catch(next);
-        })
-        .post('/session/:testid', ensureApiKey(), async (req, res, next) => {
-            API.stopSession(req, res)
-                .catch(next);
+        .get('/check_if_screenshot_has_baselines', ensureLoggedInOrApiKey(), (req, res) => {
+            API.checkIfScreenshotHasBaselines(req, res);
         });
 };

@@ -1,6 +1,6 @@
 /* eslint-disable import/no-relative-packages */
 import ky from 'ky';
-import * as devices from '../data/devices.json';
+import * as devices from '../server/data/devices.json';
 
 // @ts-ignore
 const baseUrl: any = import.meta.env.VITE_SYNGRISI_BASED_URL || '';
