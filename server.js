@@ -30,7 +30,7 @@ global.AppSettings = new AppSettings();
 const { config } = require('./config');
 const { Logger } = require('./lib/logger');
 
-const { disableCors } = require('./src/middlewares/disableCors');
+const { disableCors } = require('./src/server/middlewares/disableCors');
 
 global.log = new Logger({ dbConnectionString: config.connectionString });
 this.logMeta = { scope: 'entrypoint' };
@@ -92,13 +92,13 @@ app.use('/static', express.static('./static'));
 app.use('/assets', express.static('./mvc/views/react/assets'));
 app.use('/lib', express.static('./mvc/views/lib'));
 const routes = require('./mvc/routes/vrsRoutes');
-const routes2 = require('./src/routes/v1');
+const routes2 = require('./src/server/routes/v1');
 
 app.use('/v1', routes2);
 
-app.use('/auth', require('./src/routes/ui/auth'));
-app.use('/admin*', require('./src/routes/ui/admin'));
-app.use('/', require('./src/routes/ui/index2'));
+app.use('/auth', require('./src/server/routes/ui/auth'));
+app.use('/admin*', require('./src/server/routes/ui/admin'));
+app.use('/', require('./src/server/routes/ui/index2'));
 
 routes(app); // register the route
 
@@ -120,10 +120,10 @@ log.info('Get Application version', this);
 global.version = require('./package.json').version;
 
 log.info('Load devices list', this);
-global.devices = require('./src/data/devices.json');
+global.devices = require('./src/server/data/devices.json');
 
 if (fs.existsSync('./src/data/custom_devices.json')) {
-    global.devices = [...global.devices, ...require('./src/data/custom_devices.json')];
+    global.devices = [...global.devices, ...require('./src/server/data/custom_devices.json')];
 }
 
 log.info(chalk.green(`Syngrisi version: ${global.version} started at http://localhost:${config.port}`), this);

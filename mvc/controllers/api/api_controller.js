@@ -30,7 +30,6 @@ const Baseline = mongoose.model('VRSBaseline');
 const {
     checksGroupedByIdent,
     calculateAcceptedStatus,
-    ProgressBar,
 } = require('../utils');
 const {
     fatalError,
@@ -203,17 +202,6 @@ exports.getSnapshot = async (req, res) => {
     }
 };
 
-function parseSorting(params) {
-    return Object.keys(params)
-        .filter((key) => key.startsWith('sort_'))
-        .reduce((obj, key) => {
-            const props = key.split('_');
-            const sortBy = props[1];
-            obj[sortBy] = parseInt(props[2], 10);
-            return obj;
-        }, {});
-}
-
 // users
 function getApiKey() {
     const uuidAPIKey = require('uuid-apikey');
@@ -240,7 +228,148 @@ exports.getUsers = async (req, res) => {
     return users;
 };
 
-// tests
+// checks
+exports.updateCheck = async (req, res) => {
+    const opts = removeEmptyProperties(req.body);
+    const { id } = req.params;
+    const logOpts = {
+        msgType: 'UPDATE',
+        itemType: 'check',
+        ref: id,
+        user: req?.user?.username,
+        scope: 'updateCheck',
+    };
+    try {
+        log.debug(`update check with id '${id}' with params '${JSON.stringify(opts, null, 2)}'`,
+            $this, logOpts);
+
+        const check = await Check.findOneAndUpdate({ _id: id }, opts, { new: true })
+            .exec();
+        const test = await Test.findOne({ _id: check.test })
+            .exec();
+
+        test.status = await testUtil.calculateTestStatus(check.test);
+
+        await orm.updateItemDate('VRSCheck', check);
+        await orm.updateItemDate('VRSTest', test);
+        await test.save();
+        await check.save();
+        res.status(200)
+            .json({
+                message: `Check with id: '${id}' was updated`,
+                check: check.toObject(),
+            });
+        return check;
+    } catch (e) {
+        fatalError(req, res, e);
+    }
+    return null;
+};
+
+function prettyCheckParams(result) {
+    if (!result.domDump) {
+        return JSON.stringify(result);
+    }
+    const dump = JSON.parse(result.domDump);
+    const resObs = { ...result };
+    delete resObs.domDump;
+    resObs.domDump = `${JSON.stringify(dump)
+        .substr(0, 20)}... and about ${dump.length} items]`;
+    return JSON.stringify(resObs);
+}
+
+async function getBaseline(params) {
+    const identFieldsAccepted = Object.assign(buildIdentObject(params), { markedAs: 'accepted' });
+    const acceptedBaseline = await Baseline.findOne(identFieldsAccepted, {}, { sort: { createdDate: -1 } });
+    log.debug(`acceptedBaseline: '${acceptedBaseline ? JSON.stringify(acceptedBaseline) : 'not found'}'`, $this, { itemType: 'baseline' });
+    if (acceptedBaseline) return acceptedBaseline;
+    return null;
+}
+
+// const validateBaselineParam = (params) => {
+//     const mandatoryParams = ['markedAs', 'markedById', 'markedByUsername', 'markedDate'];
+//     for (const param of mandatoryParams) {
+//         if (!param) {
+//             const errMsg = `invalid baseline parameters, '${param}' is empty, params: ${JSON.stringify(params)}`;
+//             log.error(errMsg);
+//             throw new Error(errMsg);
+//         }
+//     }
+// };
+
+// async function createNewBaseline(params) {
+//     validateBaselineParam(params);
+//
+//     const identFields = buildIdentObject(params);
+//
+//     const lastBaseline = await Baseline.findOne(identFields)
+//         .exec();
+//
+//     const sameBaseline = await Baseline.findOne({ ...identFields, ...{ snapshootId: params.actualSnapshotId } })
+//         .exec();
+//
+//     const baselineParams = lastBaseline?.ignoreRegions
+//         ? { ...identFields, ...{ ignoreRegions: lastBaseline.ignoreRegions } }
+//         : identFields;
+//
+//     if (sameBaseline) {
+//         log.debug(`the baseline with same ident and snapshot id: ${params.actualSnapshotId} already exist`, $this);
+//     } else {
+//         log.debug(`the baseline with same ident and snapshot id: ${params.actualSnapshotId} does not exist,
+//          create new one, baselineParams: ${JSON.stringify(baselineParams)}`, $this);
+//     }
+//
+//     log.silly({ sameBaseline });
+//
+//     const resultedBaseline = sameBaseline || await Baseline.create(baselineParams);
+//
+//     resultedBaseline.markedAs = params.markedAs;
+//     resultedBaseline.markedById = params.markedById;
+//     resultedBaseline.markedByUsername = params.markedByUsername;
+//     resultedBaseline.lastMarkedDate = params.markedDate;
+//     resultedBaseline.createdDate = new Date();
+//     resultedBaseline.snapshootId = params.actualSnapshotId;
+//
+//     return resultedBaseline.save();
+// }
+
+// module.exports.createNewBaseline = createNewBaseline;
+
+async function createBaselineIfNotExist(params) {
+    // find if baseline already exist
+    const baseline = await getBaseline(params);
+    if (baseline) return Promise.resolve(baseline);
+    const identFields = buildIdentObject(params);
+
+    const resultedBaseline = await Baseline.create(identFields);
+    return resultedBaseline.save();
+}
+
+const lackOfParamsGuard = (req, res) => {
+    let errMsg = null;
+    if (!req.body.testid) {
+        errMsg = `Cannot create check without 'testid' parameter, `
+            + `try to initialize the session at first. parameters: '${JSON.stringify(req.body)}'`;
+    }
+    if (!req.body.hashcode) {
+        errMsg = `Cannot create check without 'hashcode' parameter, parameters: '${JSON.stringify(req.body)}'`;
+    }
+
+    if (!req.body.name) {
+        errMsg = `Cannot create check without check name parameter, `
+            + ` parameters: '${JSON.stringify(req.body)}'`;
+    }
+    if (errMsg) {
+        res.status(400)
+            .send({
+                status: 'paramNotFound',
+                message: errMsg,
+            });
+        throw new Error(errMsg);
+    }
+};
+
+// SDK
 async function updateTest(params) {
     const opts = { ...params };
     const logOpts = {
@@ -323,155 +452,73 @@ exports.createTest = async (req, res) => {
     return null;
 };
 
-// checks
-// move to v1
-exports.updateCheck = async (req, res) => {
-    const opts = removeEmptyProperties(req.body);
-    const { id } = req.params;
+exports.stopSession = async (req, res) => {
+    const testId = req.params.testid;
     const logOpts = {
-        msgType: 'UPDATE',
-        itemType: 'check',
-        ref: id,
-        user: req?.user?.username,
-        scope: 'updateCheck',
+        msgType: 'END_SESSION',
+        itemType: 'test',
+        scope: 'stopSession',
+        ref: testId,
     };
     try {
-        log.debug(`update check with id '${id}' with params '${JSON.stringify(opts, null, 2)}'`,
-            $this, logOpts);
+        if (!testId || testId === 'undefined') {
+            fatalError(req, res, 'Cannot stop test Session testId is empty');
+            return;
+        }
+        await waitUntil(async () => (await Check.find({ test: testId })
+            .exec())
+            .filter((ch) => ch.status.toString() !== 'pending').length > 0);
+        const checksGroup = await checksGroupedByIdent({ test: testId });
+        const groupStatuses = Object.keys(checksGroup)
+            .map((group) => checksGroup[group].status);
+        const groupViewPorts = Object.keys(checksGroup)
+            .map((group) => checksGroup[group].viewport);
+        const uniqueGroupViewports = Array.from(new Set(groupViewPorts));
+        let testViewport;
+        if (uniqueGroupViewports.length === 1) {
+            // eslint-disable-next-line prefer-destructuring
+            testViewport = uniqueGroupViewports[0];
+        } else {
+            testViewport = uniqueGroupViewports.length;
+        }
 
-        const check = await Check.findOneAndUpdate({ _id: id }, opts, { new: true })
-            .exec();
-        const test = await Test.findOne({ _id: check.test })
-            .exec();
-
-        test.status = await testUtil.calculateTestStatus(check.test);
-
-        await orm.updateItemDate('VRSCheck', check);
-        await orm.updateItemDate('VRSTest', test);
-        await test.save();
-        await check.save();
-        res.status(200)
-            .json({
-                message: `Check with id: '${id}' was updated`,
-                check: check.toObject(),
-            });
-        return check;
+        let testStatus = 'not set';
+        if (groupStatuses.some((st) => st === 'failed')) {
+            testStatus = 'Failed';
+        }
+        if (groupStatuses.some((st) => st === 'passed')
+            && !groupStatuses.some((st) => st === 'failed')) {
+            testStatus = 'Passed';
+        }
+        if (groupStatuses.some((st) => st === 'new')
+            && !groupStatuses.some((st) => st === 'failed')) {
+            testStatus = 'Passed';
+        }
+        if (groupStatuses.some((st) => st === 'blinking')
+            && !groupStatuses.some((st) => st === 'failed')) {
+            testStatus = 'Passed';
+        }
+        if (groupStatuses.every((st) => st === 'new')) {
+            testStatus = 'New';
+        }
+        const blinkingCount = groupStatuses.filter((g) => g === 'blinking').length;
+        const testParams = {
+            id: testId,
+            status: testStatus,
+            blinking: blinkingCount,
+            calculatedViewport: testViewport,
+        };
+        log.info(`the session is over, the test will be updated with parameters: '${JSON.stringify(testParams)}'`, $this, logOpts);
+        const updatedTest = await updateTest(testParams);
+        const result = updatedTest.toObject();
+        result.calculatedStatus = testStatus;
+        res.json(result);
     } catch (e) {
         fatalError(req, res, e);
     }
-    return null;
 };
 
-function prettyCheckParams(result) {
-    if (!result.domDump) {
-        return JSON.stringify(result);
-    }
-    const dump = JSON.parse(result.domDump);
-    const resObs = { ...result };
-    delete resObs.domDump;
-    resObs.domDump = `${JSON.stringify(dump)
-        .substr(0, 20)}... and about ${dump.length} items]`;
-    return JSON.stringify(resObs);
-}
-
-async function getBaseline(params) {
-    const identFieldsAccepted = Object.assign(buildIdentObject(params), { markedAs: 'accepted' });
-    const acceptedBaseline = await Baseline.findOne(identFieldsAccepted, {}, { sort: { createdDate: -1 } });
-    log.debug(`acceptedBaseline: '${acceptedBaseline ? JSON.stringify(acceptedBaseline) : 'not found'}'`, $this, { itemType: 'baseline' });
-    if (acceptedBaseline) return acceptedBaseline;
-    return null;
-}
-
-const validateBaselineParam = (params) => {
-    const mandatoryParams = ['markedAs', 'markedById', 'markedByUsername', 'markedDate'];
-    for (const param of mandatoryParams) {
-        if (!param) {
-            const errMsg = `invalid baseline parameters, '${param}' is empty, params: ${JSON.stringify(params)}`;
-            log.error(errMsg);
-            throw new Error(errMsg);
-        }
-    }
-};
-
-async function createNewBaseline(params) {
-    validateBaselineParam(params);
-
-    const identFields = buildIdentObject(params);
-
-    const lastBaseline = await Baseline.findOne(identFields)
-        .exec();
-
-    const sameBaseline = await Baseline.findOne({ ...identFields, ...{ snapshootId: params.actualSnapshotId } })
-        .exec();
-
-    const baselineParams = lastBaseline?.ignoreRegions
-        ? { ...identFields, ...{ ignoreRegions: lastBaseline.ignoreRegions } }
-        : identFields;
-
-    if (sameBaseline) {
-        log.debug(`the baseline with same ident and snapshot id: ${params.actualSnapshotId} already exist`, $this);
-    } else {
-        log.debug(`the baseline with same ident and snapshot id: ${params.actualSnapshotId} does not exist,
-         create new one, baselineParams: ${JSON.stringify(baselineParams)}`, $this);
-    }
-
-    log.silly({ sameBaseline });
-
-    const resultedBaseline = sameBaseline || await Baseline.create(baselineParams);
-
-    resultedBaseline.markedAs = params.markedAs;
-    resultedBaseline.markedById = params.markedById;
-    resultedBaseline.markedByUsername = params.markedByUsername;
-    resultedBaseline.lastMarkedDate = params.markedDate;
-    resultedBaseline.createdDate = new Date();
-    resultedBaseline.snapshootId = params.actualSnapshotId;
-
-    return resultedBaseline.save();
-}
-
-module.exports.createNewBaseline = createNewBaseline;
-
-async function createBaselineIfNotExist(params) {
-    // find if baseline already exist
-    const baseline = await getBaseline(params);
-    if (baseline) return Promise.resolve(baseline);
-    const identFields = buildIdentObject(params);
-
-    const resultedBaseline = await Baseline.create(identFields);
-    return resultedBaseline.save();
-}
-
-const lackOfParamsGuard = (req, res) => {
-    let errMsg = null;
-    if (!req.body.testid) {
-        errMsg = `Cannot create check without 'testid' parameter, `
-            + `try to initialize the session at first. parameters: '${JSON.stringify(req.body)}'`;
-    }
-    if (!req.body.hashcode) {
-        errMsg = `Cannot create check without 'hashcode' parameter, parameters: '${JSON.stringify(req.body)}'`;
-    }
-
-    if (!req.body.name) {
-        errMsg = `Cannot create check without check name parameter, `
-            + ` parameters: '${JSON.stringify(req.body)}'`;
-    }
-    if (errMsg) {
-        res.status(400)
-            .send({
-                status: 'paramNotFound',
-                message: errMsg,
-            });
-        throw new Error(errMsg);
-    }
-};
-
-async function createCheck(
-    checkParam,
-    test,
-    suite,
-    app,
-    currentUser
-) {
+async function createCheck(checkParam, test, suite, app, currentUser) {
     const logOpts = {
         scope: 'createCheck',
         user: currentUser.username,
@@ -790,78 +837,53 @@ exports.getIdent = async (req, res) => {
     res.json(ident);
 };
 
-function removeNonIdentProperties(params) {
-    const opts = { ...params };
-    for (const prop of Object.keys(opts)) {
-        if (!(ident.includes(prop.toString()))) {
-            delete opts[prop];
-        }
-    }
-    return opts;
-}
-
-exports.stopSession = async (req, res) => {
-    const testId = req.params.testid;
+exports.checkIfScreenshotHasBaselines = async (req, res) => {
     const logOpts = {
-        msgType: 'END_SESSION',
-        itemType: 'test',
-        scope: 'stopSession',
-        ref: testId,
+        scope: 'checkIfScreenshotHasBaselines',
+        itemType: 'baseline',
+        msgType: 'GET',
     };
     try {
-        if (!testId || testId === 'undefined') {
-            fatalError(req, res, 'Cannot stop test Session testId is empty');
+        log.debug(`check is baseline exist: '${JSON.stringify(req.query, null, ' ')}'`, logOpts);
+        if (!req.query.imghash) {
+            res.status(400)
+                .json({ respStatus: 'imghash is empty' });
             return;
         }
-        await waitUntil(async () => (await Check.find({ test: testId })
-            .exec())
-            .filter((ch) => ch.status.toString() !== 'pending').length > 0);
-        const checksGroup = await checksGroupedByIdent({ test: testId });
-        const groupStatuses = Object.keys(checksGroup)
-            .map((group) => checksGroup[group].status);
-        const groupViewPorts = Object.keys(checksGroup)
-            .map((group) => checksGroup[group].viewport);
-        const uniqueGroupViewports = Array.from(new Set(groupViewPorts));
-        let testViewport;
-        if (uniqueGroupViewports.length === 1) {
-            // eslint-disable-next-line prefer-destructuring
-            testViewport = uniqueGroupViewports[0];
-        } else {
-            testViewport = uniqueGroupViewports.length;
+        const app = await App.findOne({ name: req.query.app });
+        const opts = removeNonIdentProperties(req.query);
+        opts.app = app._id;
+        const lastBaseline = await Baseline.findOne(opts)
+            .sort({ updatedDate: -1 })
+            .exec();
+        if (!lastBaseline) {
+            log.warn(`such baseline does not exists: ${JSON.stringify(opts, null, ' ')}`, logOpts);
+            res.status(404)
+                .json({
+                    respStatus: 'baseline not found',
+                    params: opts,
+                });
+            return;
         }
-
-        let testStatus = 'not set';
-        if (groupStatuses.some((st) => st === 'failed')) {
-            testStatus = 'Failed';
+        const snapshot = await Snapshot.findOne({ _id: lastBaseline.toObject().snapshootId })
+            .exec();
+        const snapshotObj = snapshot.toObject();
+        if (snapshotObj
+            && (snapshotObj?.imghash.toString() === req.query.imghash)) {
+            // console.log(snapshotObj?.imghash.toString());
+            // console.log(req.query.imghash);
+            res.json({ ...snapshotObj, ...{ respStatus: 'success', params: opts } });
+            return;
         }
-        if (groupStatuses.some((st) => st === 'passed')
-            && !groupStatuses.some((st) => st === 'failed')) {
-            testStatus = 'Passed';
-        }
-        if (groupStatuses.some((st) => st === 'new')
-            && !groupStatuses.some((st) => st === 'failed')) {
-            testStatus = 'Passed';
-        }
-        if (groupStatuses.some((st) => st === 'blinking')
-            && !groupStatuses.some((st) => st === 'failed')) {
-            testStatus = 'Passed';
-        }
-        if (groupStatuses.every((st) => st === 'new')) {
-            testStatus = 'New';
-        }
-        const blinkingCount = groupStatuses.filter((g) => g === 'blinking').length;
-        const testParams = {
-            id: testId,
-            status: testStatus,
-            blinking: blinkingCount,
-            calculatedViewport: testViewport,
-        };
-        log.info(`the session is over, the test will be updated with parameters: '${JSON.stringify(testParams)}'`, $this, logOpts);
-        const updatedTest = await updateTest(testParams);
-        const result = updatedTest.toObject();
-        result.calculatedStatus = testStatus;
-        res.json(result);
+        log.warn(`such snapshot does not exists: ${JSON.stringify(req.query, null, ' ')}`, logOpts);
+        res.status(404)
+            .json({
+                respStatus: 'snapshot not found',
+                params: req.query,
+            });
     } catch (e) {
+        log.error(e);
         fatalError(req, res, e);
     }
 };
+// END OF SDK

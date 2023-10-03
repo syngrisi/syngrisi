@@ -7,7 +7,7 @@ const catchAsync = require('../../utils/catchAsync');
 const router = express.Router();
 
 const authController = catchAsync(async (req, res) => {
-    res.status(httpStatus.OK).sendFile(path.normalize(path.join(__dirname + './../../../mvc/views/react/auth/index.html')));
+    res.status(httpStatus.OK).sendFile(path.normalize(path.join(__dirname + './../../../../mvc/views/react/auth/index.html')));
 });
 
 router.get('*', authController);

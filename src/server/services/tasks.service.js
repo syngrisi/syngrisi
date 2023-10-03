@@ -4,8 +4,8 @@ const { promises: fs } = require('fs');
 const stringTable = require('string-table');
 const mongoose = require('mongoose');
 const fss = require('fs');
-const { config } = require('../../config');
-const { ProgressBar } = require('../../mvc/controllers/utils');
+const { config } = require('../../../config');
+const { ProgressBar } = require('../../../mvc/controllers/utils');
 
 const Snapshot = mongoose.model('VRSSnapshot');
 const Check = mongoose.model('VRSCheck');
