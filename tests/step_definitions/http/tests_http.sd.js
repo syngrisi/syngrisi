@@ -9,7 +9,7 @@ const { requestWithLastSessionSid } = require('../../src/utills/common');
 
 When(/^I remove via http checks that older than "([^"]*)" days$/, async function (days) {
     const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}`
-        + `/task_handle_old_checks?days=${days}&remove=true`;
+        + `/v1/tasks/task_handle_old_checks?days=${days}&remove=true`;
     const result = (await requestWithLastSessionSid(
         uri,
         this,
@@ -21,7 +21,7 @@ When(/^I remove via http checks that older than "([^"]*)" days$/, async function
 
 When(/^I remove via http Inconsistent items$/, async function () {
     const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}`
-        + '/task_handle_database_consistency?clean=true';
+        + '/v1/tasks/task_handle_database_consistency?clean=true';
     console.log('👉', { uri: uri });
 
     const result = (await requestWithLastSessionSid(

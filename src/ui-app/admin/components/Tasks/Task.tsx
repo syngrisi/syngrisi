@@ -29,7 +29,7 @@ export default function Task({ item }: { item: ITask }) {
         const ctrl = new AbortController();
 
         fetch(
-            `/task_${name}?${queryParams}`,
+            `/v1/tasks/task_${name}?${queryParams}`,
             { signal: ctrl.signal },
         )
             .then((response) => response.body)

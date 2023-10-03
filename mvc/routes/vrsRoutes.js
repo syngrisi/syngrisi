@@ -16,16 +16,6 @@ module.exports = async (app) => {
             await queue.add(() => API.updateCheck(req, res)
                 .catch(next));
         })
-        // don't remove
-        .get('/checkview', ensureLoggedIn(), (req, res) => {
-            const { id } = req.query;
-            // backward compatibility
-            res.redirect(`/?checkId=${id}&modalIsOpen=true`);
-        })
-        .get('/users', ensureLoggedIn(), async (req, res, next) => {
-            API.getUsers(req, res)
-                .catch(next);
-        })
         .get('/ident', ensureLoggedInOrApiKey(), (req, res) => {
             API.getIdent(req, res);
         })
@@ -46,34 +36,6 @@ module.exports = async (app) => {
         })
         .post('/session/:testid', ensureApiKey(), async (req, res, next) => {
             API.stopSession(req, res)
-                .catch(next);
-        })
-        .get('/screenshots', ensureLoggedIn(), async (req, res) => {
-            API.getScreenshotList(req, res);
-        })
-        .get('/loadTestUser', ensureLoggedIn(), async (req, res, next) => {
-            API.loadTestUser(req, res)
-                .catch(next);
-        })
-        .get('/status', async (req, res, next) => {
-            API.status(req, res)
-                .catch(next);
-        })
-        // for testing purposes
-        .get('/task_handle_old_checks', ensureLoggedInOrApiKey(), async (req, res, next) => {
-            API.task_handle_old_checks(req, res, next)
-                .catch(next);
-        })
-        .get('/task_handle_database_consistency', ensureLoggedInOrApiKey(), async (req, res, next) => {
-            API.task_handle_database_consistency(req, res, next)
-                .catch(next);
-        })
-        .get('/task_remove_old_logs', ensureLoggedInOrApiKey(), async (req, res, next) => {
-            API.task_remove_old_logs(req, res, next)
-                .catch(next);
-        })
-        .get('/task_test', ensureLoggedInOrApiKey(), async (req, res, next) => {
-            await API.task_test(req, res, next)
                 .catch(next);
         });
 };

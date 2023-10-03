@@ -3,8 +3,8 @@ const { Then } = require('cucumber');
 const { requestWithLastSessionSid } = require('../src/utills/common');
 
 Then(/^I expect exact "([^"]*)" snapshot files$/, async function (num) {
-    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
-        + 'screenshots';
+    const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}`
+        + '/v1/tasks/screenshots';
     console.log({ uri: uri });
     const items = (await requestWithLastSessionSid(
         uri,
