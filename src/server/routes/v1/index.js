@@ -12,6 +12,7 @@ const suitesRoute = require('./suites.route');
 const settingsRoute = require('./settings.route');
 const testDistinctRoute = require('./test_distinct.route');
 const tasksRoute = require('./tasks.route');
+const clientRoute = require('./client.route');
 
 const router = express.Router();
 
@@ -19,6 +20,10 @@ const defaultRoutes = [
     {
         path: '/auth',
         route: authRoute,
+    },
+    {
+        path: '/client',
+        route: clientRoute,
     },
     {
         path: '/tasks',
