@@ -1,5 +1,5 @@
 /* eslint-disable no-await-in-loop,no-restricted-syntax */
-require('../../mvc/models/vrsModel');
+require('../../src/server/models/vrsModel');
 
 const utils = require('../lib/utils');
 const { Check, Test, Run, Suite } = require('../lib/common');

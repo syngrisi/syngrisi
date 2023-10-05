@@ -5,10 +5,10 @@ const Check = mongoose.model('VRSCheck');
 const Test = mongoose.model('VRSTest');
 const Suite = mongoose.model('VRSSuite');
 const Baseline = mongoose.model('VRSBaseline');
-const { calculateAcceptedStatus, buildIdentObject } = require('../../../mvc/controllers/utils');
+const { calculateAcceptedStatus, buildIdentObject } = require('../utils/utils');
 // const { createNewBaseline } = require('../../mvc/controllers/api/api_controller');
-const testUtil = require('../../../mvc/controllers/api/utils/tests');
-const checkUtil = require('../../../mvc/controllers/api/utils/check');
+const testUtil = require('../utils/tests');
+const checkUtil = require('../utils/check');
 const orm = require('../../../lib/dbItems');
 
 const $this = this;

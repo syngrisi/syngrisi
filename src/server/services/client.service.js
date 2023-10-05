@@ -13,7 +13,7 @@ const { promises: fs } = require('fs');
 const httpStatus = require('http-status');
 const {
     removeEmptyProperties, waitUntil, checksGroupedByIdent, buildIdentObject, calculateAcceptedStatus, ident,
-} = require('../../../mvc/controllers/utils');
+} = require('../utils/utils');
 const orm = require('../../../lib/dbItems');
 const { createItemIfNotExistAsync, createRunIfNotExist, createSuiteIfNotExist } = require('../../../lib/dbItems');
 const { config } = require('../../../config');

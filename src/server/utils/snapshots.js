@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const fss = require('fs');
-const { config } = require('../../../../config');
+const { config } = require('../../../config');
 
 const Baseline = mongoose.model('VRSBaseline');
 const Snapshot = mongoose.model('VRSSnapshot');
