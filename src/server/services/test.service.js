@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-syntax,no-await-in-loop */
 const mongoose = require('mongoose');
-const testUtil = require('../../../mvc/controllers/api/utils/tests');
+const testUtil = require('../utils/tests');
 const checkService = require('./check.service');
 
 const Test = mongoose.model('VRSTest');

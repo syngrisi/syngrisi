@@ -3,7 +3,7 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const { genericService, checkService } = require('../services');
 const { deserializeIfJSON, pick } = require('../utils');
-const { removeEmptyProperties } = require('../../../mvc/controllers/utils');
+const { removeEmptyProperties } = require('../utils/utils');
 
 const get = catchAsync(async (req, res) => {
     const filter = req.query.filter ? deserializeIfJSON(pick(req.query, ['filter']).filter) : {};

@@ -10,7 +10,7 @@ const fs = require('fs');
 const app = express();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-require('./mvc/models/vrsModel'); // created model loading here
+require('./src/server/models/vrsModel'); // created model loading here
 const fileUpload = require('express-fileupload');
 const pino = require('pino');
 const path = require('path');
@@ -91,16 +91,13 @@ app.use('/snapshoots', express.static(config.defaultBaselinePath));
 app.use('/static', express.static('./static'));
 app.use('/assets', express.static('./mvc/views/react/assets'));
 app.use('/lib', express.static('./mvc/views/lib'));
-const routes = require('./mvc/routes/vrsRoutes');
-const routes2 = require('./src/server/routes/v1');
+const routes = require('./src/server/routes/v1');
 
-app.use('/v1', routes2);
+app.use('/v1', routes);
 
 app.use('/auth', require('./src/server/routes/ui/auth'));
 app.use('/admin*', require('./src/server/routes/ui/admin'));
 app.use('/', require('./src/server/routes/ui/index2'));
-
-routes(app); // register the route
 
 app.use((req, res) => {
     res.status(404)
