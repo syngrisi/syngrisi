@@ -8,4 +8,5 @@ module.exports = {
     genericService: require('./generic.service'),
     appService: require('./app.service'),
     tasksService: require('./tasks.service'),
+    clientService: require('./client.service'),
 };

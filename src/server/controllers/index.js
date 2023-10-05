@@ -9,3 +9,4 @@ module.exports.suiteController = require('./suite.controller');
 module.exports.testsController = require('./test.controller');
 module.exports.settingsController = require('./settings.controller');
 module.exports.tasksController = require('./tasks.controller');
+module.exports.clientController = require('./client.controller');
