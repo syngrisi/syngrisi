@@ -318,6 +318,31 @@ async function createBaselineIfNotExist(params) {
     return resultedBaseline.save();
 }
 
+const isBaselineValid = (baseline, logOpts) => {
+    const keys = [
+        'name', 'app', 'branch', 'browserName', 'viewport', 'os',
+        'createdDate', 'lastMarkedDate', 'markedAs', 'markedById', 'markedByUsername', 'snapshootId',
+    ];
+    // eslint-disable-next-line no-restricted-syntax
+    for (const key of keys) {
+        if (!baseline[key]) {
+            log.error(`invalid baseline, the '${key}' property is empty`, $this, logOpts);
+            return false;
+        }
+    }
+    return true;
+};
+
+// copy marked* properties from baseline and baseline.snapshotId
+const updateCheckParamsFromBaseline = (params, baseline) => {
+    const updatedParams = { ...params };
+    updatedParams.baselineId = baseline.snapshootId;
+    updatedParams.markedAs = baseline.markedAs;
+    updatedParams.markedDate = baseline.lastMarkedDate;
+    updatedParams.markedByUsername = baseline.markedByUsername;
+    return updatedParams;
+};
+
 const createCheck = async (checkParam, test, suite, app, currentUser) => {
     const logOpts = {
         scope: 'createCheck',
@@ -325,60 +350,10 @@ const createCheck = async (checkParam, test, suite, app, currentUser) => {
         itemType: 'check',
         msgType: 'CREATE',
     };
-    const executionTimer = process.hrtime();
-
-    /**
-     * Usually there are two stages of checking the creating Check request:
-     * Phase 1
-     *   1. Client sends request with 'req.body.hashcode' value but without 'req.files.file.data'
-     *   2. The server finds for a snapshot with this image 'hashcode' and if found - go to Step 3 of Phase2,
-     *      if not - sends response "{status: 'requiredFileData', message: 'cannot found an image
-     *      with this hashcode, please add image file data and resend request'}"
-     * Phase 2
-     *   1. The client receives a response with incomplete status and resends the same request but,
-     *   with 'req.files.file.data' parameter
-     *   2. The server creates a new snapshot based on these parameters
-     *   3. The server makes the comparison and returns to the check  response the the client
-     *   with one of 'complete` status (eq: new, failed, passed)
-     */
-
-    /** PREPARE ACTUAL SNAPSHOT */
-    /** look up the snapshot with same hashcode if didn't find, ask for file data */
-    const snapshotFoundedByHashcode = await getSnapshotByImgHash(checkParam.hashCode);
-    if (!checkParam.hashCode && !checkParam.files) {
-        log.debug('hashCode or files parameters should be present', $this, logOpts);
-        return { status: 'needFiles' };
-    }
-
-    if (!checkParam.files && !snapshotFoundedByHashcode) {
-        log.debug(`cannot find the snapshot with hash: '${checkParam.hashCode}'`, $this, logOpts);
-        return { status: 'needFiles' };
-    }
-
     let currentSnapshot;
     let currentBaselineSnapshot;
-
-    const fileData = checkParam.files ? checkParam.files.file.data : false;
-
-    if (snapshotFoundedByHashcode) {
-        const fullFilename = `${config.defaultBaselinePath}${snapshotFoundedByHashcode.filename}`;
-        if (!fss.existsSync(fullFilename)) {
-            throw new Error(`Cannot found the baseline file: '${fullFilename}'`);
-        }
-
-        log.debug(`snapshot with such hashcode: '${checkParam.hashCode}' is already exists, will clone it`, $this, logOpts);
-        currentSnapshot = await cloneSnapshot(snapshotFoundedByHashcode, checkParam.name);
-    } else {
-        log.debug(`snapshot with such hashcode: '${checkParam.hashCode}' does not exists, will create it`, $this, logOpts);
-        currentSnapshot = await createSnapshot({
-            name: checkParam.name,
-            fileData,
-            hashCode: checkParam.hashCode,
-        });
-    }
-
     /** PREPARE DUMMY CHECK */
-    const newCheckParams = {
+    let newCheckParams = {
         test: checkParam.testId,
         name: checkParam.name,
         status: 'pending',
@@ -396,160 +371,199 @@ const createCheck = async (checkParam, test, suite, app, currentUser) => {
         creatorId: currentUser._id,
         creatorUsername: currentUser.username,
     };
-    const check = await Check.create(newCheckParams);
-    log.debug(`create the new check document with params: '${prettyCheckParams(newCheckParams)}'`, $this, logOpts);
-    let savedCheck = await check.save();
-    log.debug(`the check with id: '${check.id}', was created, will updated with data during creating process`, $this, logOpts);
-
-    logOpts.ref = check.id;
-
-    log.debug('update test with check id', $this, logOpts);
-    test.checks.push(check.id);
-    await test.save();
-
-    /** HANDLE BASELINE */
     const checkIdent = buildIdentObject(newCheckParams);
-    log.info(`find a baseline for the check with identifier: '${JSON.stringify(checkIdent)}'`, $this, logOpts);
-    const storedBaseline = await getBaseline(newCheckParams);
-    const isBaselineValid = (baseline) => {
-        const keys = [
-            'name', 'app', 'branch', 'browserName', 'viewport', 'os',
-            'createdDate', 'lastMarkedDate', 'markedAs', 'markedById', 'markedByUsername', 'snapshootId',
-        ];
-        // eslint-disable-next-line no-restricted-syntax
-        for (const key of keys) {
-            if (!baseline[key]) {
-                log.error(`invalid baseline, the '${key}' property is empty`, $this, logOpts);
-                return false;
-            }
-        }
-        return true;
-    };
-    // copy marked* properties from baseline and baseline.snapshotId
-    const updateCheckParamsFromBaseline = (params, baseline) => {
-        const updatedParams = { ...params };
-        updatedParams.baselineId = baseline.snapshootId;
-        updatedParams.markedAs = baseline.markedAs;
-        updatedParams.markedDate = baseline.lastMarkedDate;
-        updatedParams.markedByUsername = baseline.markedByUsername;
-        return updatedParams;
-    };
-    let checkUpdateParams = {};
-    checkUpdateParams.failReasons = [];
-    checkUpdateParams.actualSnapshotId = currentSnapshot.id;
 
-    // let check;
-    // if last check has baseline id copy properties from last check
-    // and set it as `currentBaseline` to make diff
-    if (storedBaseline !== null) {
-        log.debug(`a baseline for check name: '${checkParam.name}', id: '${storedBaseline.snapshootId}' is already exists`, $this, logOpts);
-        if (!isBaselineValid(storedBaseline)) {
-            checkUpdateParams.failReasons.push('invalid_baseline');
-        }
-        checkUpdateParams = updateCheckParamsFromBaseline(checkUpdateParams, storedBaseline);
-        currentBaselineSnapshot = await Snapshot.findById(storedBaseline.snapshootId);
-    } else {
-        const checksWithSameIdent = await getNotPendingChecksByIdent(checkIdent);
-        if (checksWithSameIdent.length > 0) {
-            log.error(`checks with ident'${JSON.stringify(checkIdent)}' exist, but baseline is absent`, $this, logOpts);
-            checkUpdateParams.failReasons.push('not_accepted');
-            checkUpdateParams.baselineId = currentSnapshot.id;
-            currentBaselineSnapshot = currentSnapshot;
-        } else {
-            checkUpdateParams.baselineId = currentSnapshot.id;
-            checkUpdateParams.status = 'new';
-            currentBaselineSnapshot = currentSnapshot;
-            log.debug(`create the new check with params: '${prettyCheckParams(checkUpdateParams)}'`, $this, logOpts);
-        }
-    }
-    await Check.findByIdAndUpdate(check._id, checkUpdateParams);
-
-    /** COMPARING SECTION */
-
-    /* check if we can ignore 1 px dimensions difference from the bottom */
-    const ignoreDifferentResolutions = ({ height, width }) => {
-        if ((width === 0) && (height === -1)) return true;
-        if ((width === 0) && (height === 1)) return true;
-        return false;
-    };
-    const areSnapshotsDifferent = (compareResult) => compareResult.rawMisMatchPercentage.toString() !== '0';
-    const areSnapshotsWrongDimensions = (compareResult) => !compareResult.isSameDimensions
-        && !ignoreDifferentResolutions(compareResult.dimensionDifference);
-
+    let check;
     let totalCheckHandleTime;
-    let compareResult;
+    let checkCompareResult;
     let diffSnapshot;
-    /** compare actual with baseline if a check isn't new */
-    if ((checkUpdateParams.status !== 'new') && (!checkUpdateParams.failReasons.includes('not_accepted'))) {
-        try {
-            log.debug(`'the check with name: '${checkParam.name}' isn't new, make comparing'`, $this, logOpts);
-            compareResult = await compareSnapshots(currentBaselineSnapshot, currentSnapshot, { vShifting: checkParam.vShifting });
-            log.silly(`ignoreDifferentResolutions: '${ignoreDifferentResolutions(compareResult.dimensionDifference)}'`);
-            log.silly(`dimensionDifference: '${JSON.stringify(compareResult.dimensionDifference)}`);
-            if (areSnapshotsDifferent(compareResult) || areSnapshotsWrongDimensions(compareResult)) {
-                let logMsg;
-                if (areSnapshotsWrongDimensions(compareResult)) {
-                    logMsg = 'snapshots have different dimensions';
-                    checkUpdateParams.failReasons.push('wrong_dimensions');
-                }
-                if (areSnapshotsDifferent(compareResult)) {
-                    logMsg = 'snapshots have differences';
-                    checkUpdateParams.failReasons.push('different_images');
-                }
 
-                log.debug(logMsg, $this, logOpts);
-                log.debug(`saving diff snapshot for check with Id: '${check.id}'`, $this, logOpts);
-                diffSnapshot = await createSnapshot({
-                    name: checkParam.name,
-                    fileData: compareResult.getBuffer(),
-                });
-                checkUpdateParams.diffId = diffSnapshot.id;
-                checkUpdateParams.status = 'failed';
-            } else {
-                await createBaselineIfNotExist(check.toObject());
-                checkUpdateParams.status = 'passed';
+    const executionTimer = process.hrtime();
+
+    try {
+        /**
+         * Usually there are two stages of checking the creating Check request:
+         * Phase 1
+         *   1. Client sends request with 'req.body.hashcode' value but without 'req.files.file.data'
+         *   2. The server finds for a snapshot with this image 'hashcode' and if found - go to Step 3 of Phase2,
+         *      if not - sends response "{status: 'requiredFileData', message: 'cannot found an image
+         *      with this hashcode, please add image file data and resend request'}"
+         * Phase 2
+         *   1. The client receives a response with incomplete status and resends the same request but,
+         *   with 'req.files.file.data' parameter
+         *   2. The server creates a new snapshot based on these parameters
+         *   3. The server makes the comparison and returns to the check  response the the client
+         *   with one of 'complete` status (eq: new, failed, passed)
+         */
+
+        /** PREPARE ACTUAL SNAPSHOT */
+        /** look up the snapshot with same hashcode if didn't find, ask for file data */
+        const snapshotFoundedByHashcode = await getSnapshotByImgHash(checkParam.hashCode);
+        if (!checkParam.hashCode && !checkParam.files) {
+            log.debug('hashCode or files parameters should be present', $this, logOpts);
+            return { status: 'needFiles' };
+        }
+
+        if (!checkParam.files && !snapshotFoundedByHashcode) {
+            log.debug(`cannot find the snapshot with hash: '${checkParam.hashCode}'`, $this, logOpts);
+            return { status: 'needFiles' };
+        }
+
+        const fileData = checkParam.files ? checkParam.files.file.data : false;
+
+        if (snapshotFoundedByHashcode) {
+            const fullFilename = `${config.defaultBaselinePath}${snapshotFoundedByHashcode.filename}`;
+            if (!fss.existsSync(fullFilename)) {
+                throw new Error(`Couldn't find the baseline file: '${fullFilename}'`);
             }
 
-            checkUpdateParams.updatedDate = Date.now();
-            totalCheckHandleTime = process.hrtime(executionTimer)
-                .toString();
-
-            compareResult.totalCheckHandleTime = totalCheckHandleTime;
-            checkUpdateParams.result = JSON.stringify(compareResult, null, '\t');
-        } catch (e) {
-            checkUpdateParams.updatedDate = Date.now();
-            checkUpdateParams.status = 'failed';
-            checkUpdateParams.result = `{ "server error": "error during comparing - ${e}" }`;
-            checkUpdateParams.failReasons.push('internal_server_error');
-            await Check.findByIdAndUpdate(check._id, checkUpdateParams);
-            throw e;
+            log.debug(`snapshot with such hashcode: '${checkParam.hashCode}' is already exists, will clone it`, $this, logOpts);
+            currentSnapshot = await cloneSnapshot(snapshotFoundedByHashcode, checkParam.name);
+        } else {
+            log.debug(`snapshot with such hashcode: '${checkParam.hashCode}' does not exists, will create it`, $this, logOpts);
+            currentSnapshot = await createSnapshot({
+                name: checkParam.name,
+                fileData,
+                hashCode: checkParam.hashCode,
+            });
         }
+
+        /** HANDLE BASELINE */
+        log.info(`find a baseline for the check with identifier: '${JSON.stringify(checkIdent)}'`, $this, logOpts);
+        const storedBaseline = await getBaseline(checkIdent);
+
+        // let checkUpdateParams = {};
+        newCheckParams.failReasons = [];
+        newCheckParams.actualSnapshotId = currentSnapshot.id;
+
+        // let check;
+        // if last check has baseline id copy properties from last check
+        // and set it as `currentBaseline` to make diff
+        if (storedBaseline !== null) {
+            log.debug(`a baseline for check name: '${checkParam.name}', id: '${storedBaseline.snapshootId}' is already exists`, $this, logOpts);
+            if (!isBaselineValid(storedBaseline, logOpts)) {
+                newCheckParams.failReasons.push('invalid_baseline');
+            }
+            newCheckParams = updateCheckParamsFromBaseline(newCheckParams, storedBaseline);
+            currentBaselineSnapshot = await Snapshot.findById(storedBaseline.snapshootId);
+        } else {
+            const checksWithSameIdent = await getNotPendingChecksByIdent(checkIdent);
+            if (checksWithSameIdent.length > 0) {
+                log.error(`checks with ident'${JSON.stringify(checkIdent)}' exist, but baseline is absent`, $this, logOpts);
+                newCheckParams.failReasons.push('not_accepted');
+                newCheckParams.baselineId = currentSnapshot.id;
+                currentBaselineSnapshot = currentSnapshot;
+            } else {
+                newCheckParams.baselineId = currentSnapshot.id;
+                newCheckParams.status = 'new';
+                currentBaselineSnapshot = currentSnapshot;
+                log.debug(`create the new check with params: '${prettyCheckParams(newCheckParams)}'`, $this, logOpts);
+            }
+        }
+        // await Check.findByIdAndUpdate(check._id, checkUpdateParams);
+
+        /** COMPARING SECTION */
+
+        /* check if we can ignore 1 px dimensions difference from the bottom */
+        const ignoreDifferentResolutions = ({ height, width }) => {
+            if ((width === 0) && (height === -1)) return true;
+            if ((width === 0) && (height === 1)) return true;
+            return false;
+        };
+        const areSnapshotsDifferent = (compareResult) => compareResult.rawMisMatchPercentage.toString() !== '0';
+        const areSnapshotsWrongDimensions = (compareResult) => !compareResult.isSameDimensions
+            && !ignoreDifferentResolutions(compareResult.dimensionDifference);
+
+        /** compare actual with baseline if a check isn't new */
+        if ((newCheckParams.status !== 'new') && (!newCheckParams.failReasons.includes('not_accepted'))) {
+            try {
+                log.debug(`'the check with name: '${checkParam.name}' isn't new, make comparing'`, $this, logOpts);
+                checkCompareResult = await compareSnapshots(currentBaselineSnapshot, currentSnapshot, { vShifting: checkParam.vShifting });
+                log.silly(`ignoreDifferentResolutions: '${ignoreDifferentResolutions(checkCompareResult.dimensionDifference)}'`);
+                log.silly(`dimensionDifference: '${JSON.stringify(checkCompareResult.dimensionDifference)}`);
+                if (areSnapshotsDifferent(checkCompareResult) || areSnapshotsWrongDimensions(checkCompareResult)) {
+                    let logMsg;
+                    if (areSnapshotsWrongDimensions(checkCompareResult)) {
+                        logMsg = 'snapshots have different dimensions';
+                        newCheckParams.failReasons.push('wrong_dimensions');
+                    }
+                    if (areSnapshotsDifferent(checkCompareResult)) {
+                        logMsg = 'snapshots have differences';
+                        newCheckParams.failReasons.push('different_images');
+                    }
+
+                    log.debug(logMsg, $this, logOpts);
+                    log.debug(`saving diff snapshot for check with name: '${newCheckParams.name}'`, $this, logOpts);
+                    diffSnapshot = await createSnapshot({
+                        name: checkParam.name,
+                        fileData: checkCompareResult.getBuffer(),
+                    });
+                    newCheckParams.diffId = diffSnapshot.id;
+                    newCheckParams.status = 'failed';
+                } else {
+                    await createBaselineIfNotExist(newCheckParams);
+                    newCheckParams.status = 'passed';
+                }
+
+                newCheckParams.updatedDate = Date.now();
+                totalCheckHandleTime = process.hrtime(executionTimer)
+                    .toString();
+
+                checkCompareResult.totalCheckHandleTime = totalCheckHandleTime;
+                newCheckParams.result = JSON.stringify(checkCompareResult, null, '\t');
+            } catch (e) {
+                newCheckParams.updatedDate = Date.now();
+                newCheckParams.status = 'failed';
+                newCheckParams.result = `{ "server error": "error during comparing - ${e}" }`;
+                newCheckParams.failReasons.push('internal_server_error');
+                throw e;
+            }
+        }
+
+        if (newCheckParams.failReasons.length > 0) {
+            newCheckParams.status = 'failed';
+        }
+        log.debug(`create the new check document with params: '${prettyCheckParams(newCheckParams)}'`, $this, logOpts);
+        check = await Check.create(newCheckParams);
+        await check.save();
+        log.debug(`the check with id: '${check.id}', was created, will updated with data during creating process`, $this, logOpts);
+        logOpts.ref = check.id;
+        log.debug(`update test with check id: '${check.id}'`, $this, logOpts);
+        test.checks.push(check.id);
+        await test.save();
+        const savedCheck = await Check.findById(check._id); // !!! const savedCheck =  await test.save();
+        // update test and suite
+        test.markedAs = await calculateAcceptedStatus(check.test);
+        test.updatedDate = new Date();
+        log.debug('update suite', $this, logOpts);
+        await orm.updateItemDate('VRSSuite', check.suite);
+        await test.save();
+
+        const lastSuccessCheck = await getLastSuccessCheck(checkIdent);
+
+        const result = {
+            ...savedCheck.toObject(),
+            currentSnapshot,
+            executeTime: totalCheckHandleTime,
+            lastSuccess: lastSuccessCheck ? (lastSuccessCheck).id : null,
+        };
+
+        if (diffSnapshot) result.diffSnapshot = diffSnapshot;
+        return result;
+    } catch (e) {
+        // Emergency check creation and test update
+        if (!check) {
+            log.debug(`create the new check document with params: '${prettyCheckParams(newCheckParams)}'`, $this, logOpts);
+            check = await Check.create(newCheckParams);
+            await check.save();
+            log.debug(`the check with id: '${check.id}', was created, will updated with data during creating process`, $this, logOpts);
+            logOpts.ref = check.id;
+            log.debug(`update test with check id: '${check.id}'`, $this, logOpts);
+            test.checks.push(check.id);
+            await test.save();
+        }
+        throw e;
     }
-
-    log.debug(`update check with params: '${JSON.stringify(checkUpdateParams)}'`, $this, logOpts);
-    if (checkUpdateParams.failReasons.length > 0) {
-        checkUpdateParams.status = 'failed';
-    }
-    await Check.findByIdAndUpdate(check._id, checkUpdateParams);
-    savedCheck = await Check.findById(check._id);
-    // update test and suite
-    test.markedAs = await calculateAcceptedStatus(check.test);
-    test.updatedDate = new Date();
-    log.debug('update suite', $this, logOpts);
-    await orm.updateItemDate('VRSSuite', check.suite);
-    await test.save();
-
-    const lastSuccessCheck = await getLastSuccessCheck(checkIdent);
-
-    const result = {
-        ...savedCheck.toObject(),
-        currentSnapshot,
-        executeTime: totalCheckHandleTime,
-        lastSuccess: lastSuccessCheck ? (lastSuccessCheck).id : null,
-    };
-
-    if (diffSnapshot) result.diffSnapshot = diffSnapshot;
-    return result;
 };
 
 const getIdent = () => ident;
