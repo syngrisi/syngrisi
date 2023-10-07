@@ -403,14 +403,94 @@ async function inspectBaseline(newCheckParams, storedBaseline, checkIdent, curre
     return { inspectBaselineParams: params, currentBaselineSnapshot };
 }
 
-const createCheck = async (checkParam, test, suite, app, currentUser) => {
+/* check if we can ignore 1 px dimensions difference from the bottom */
+const ignoreDifferentResolutions = ({ height, width }) => {
+    if ((width === 0) && (height === -1)) return true;
+    if ((width === 0) && (height === 1)) return true;
+    return false;
+};
+
+// checkParam.vShifting
+const compare = async (expectedSnapshot, actualSnapshot, newCheckParams, vShifting, skipSaveOnCompareError, currentUser) => {
+    const logOpts = {
+        scope: 'createCheck.compare',
+        user: currentUser.username,
+        itemType: 'check',
+        msgType: 'COMPARE',
+    };
+
+    const executionTimer = process.hrtime();
+    const params = {};
+    params.failReasons = [...newCheckParams.failReasons];
+
+    let checkCompareResult;
+    let diffSnapshot;
+
+    const areSnapshotsDifferent = (compareResult) => compareResult.rawMisMatchPercentage.toString() !== '0';
+    const areSnapshotsWrongDimensions = (compareResult) => !compareResult.isSameDimensions
+        && !ignoreDifferentResolutions(compareResult.dimensionDifference);
+
+    /** compare actual with baseline if a check isn't new */
+    if ((newCheckParams.status !== 'new') && (!newCheckParams.failReasons.includes('not_accepted'))) {
+        try {
+            log.debug(`'the check with name: '${newCheckParams.name}' isn't new, make comparing'`, $this, logOpts);
+            checkCompareResult = await compareSnapshots(expectedSnapshot, actualSnapshot, { vShifting });
+            log.silly(`ignoreDifferentResolutions: '${ignoreDifferentResolutions(checkCompareResult.dimensionDifference)}'`);
+            log.silly(`dimensionDifference: '${JSON.stringify(checkCompareResult.dimensionDifference)}`);
+
+            if (areSnapshotsDifferent(checkCompareResult) || areSnapshotsWrongDimensions(checkCompareResult)) {
+                let logMsg;
+                if (areSnapshotsWrongDimensions(checkCompareResult)) {
+                    logMsg = 'snapshots have different dimensions';
+                    params.failReasons.push('wrong_dimensions');
+                }
+                if (areSnapshotsDifferent(checkCompareResult)) {
+                    logMsg = 'snapshots have differences';
+                    params.failReasons.push('different_images');
+                }
+
+                log.debug(logMsg, $this, logOpts);
+                log.debug(`saving diff snapshot for check with name: '${newCheckParams.name}'`, $this, logOpts);
+                if (!skipSaveOnCompareError) {
+                    diffSnapshot = await createSnapshot({ // reduce duplications!!!
+                        name: newCheckParams.name,
+                        fileData: checkCompareResult.getBuffer(),
+                    });
+                }
+                params.diffId = diffSnapshot.id;
+                params.status = 'failed';
+            } else {
+                params.status = 'passed';
+            }
+
+            const totalCheckHandleTime = process.hrtime(executionTimer)
+                .toString();
+
+            checkCompareResult.totalCheckHandleTime = totalCheckHandleTime;
+            params.result = JSON.stringify(checkCompareResult, null, '\t');
+        } catch (e) {
+            params.updatedDate = Date.now();
+            params.status = 'failed';
+            params.result = `{ "server error": "error during comparing - ${e}" }`;
+            params.failReasons.push('internal_server_error');
+            throw e;
+        }
+    }
+
+    if (newCheckParams.failReasons.length > 0) {
+        params.status = 'failed';
+    }
+    return params;
+};
+
+const createCheck = async (checkParam, test, suite, app, currentUser, skipSaveOnCompareError = false) => {
     const logOpts = {
         scope: 'createCheck',
         user: currentUser.username,
         itemType: 'check',
         msgType: 'CREATE',
     };
-    let currentSnapshot;
+    let actualSnapshot;
     let currentBaselineSnapshot;
 
     const newCheckParams = {
@@ -436,10 +516,7 @@ const createCheck = async (checkParam, test, suite, app, currentUser) => {
 
     let check;
     let totalCheckHandleTime;
-    let checkCompareResult;
     let diffSnapshot;
-
-    const executionTimer = process.hrtime();
 
     try {
         /**
@@ -462,77 +539,28 @@ const createCheck = async (checkParam, test, suite, app, currentUser) => {
         const { needFilesStatus, snapshotFoundedByHashcode } = await isNeedFiles(checkParam, logOpts);
         if (needFilesStatus) return { status: 'needFiles' };
 
-        currentSnapshot = await prepareActualSnapshot(checkParam, snapshotFoundedByHashcode, logOpts);
-        newCheckParams.actualSnapshotId = currentSnapshot.id;
+        actualSnapshot = await prepareActualSnapshot(checkParam, snapshotFoundedByHashcode, logOpts);
+        newCheckParams.actualSnapshotId = actualSnapshot.id;
 
         /** HANDLE BASELINE */
         log.info(`find a baseline for the check with identifier: '${JSON.stringify(checkIdent)}'`, $this, logOpts);
         const storedBaseline = await getBaseline(checkIdent);
 
-        const inspectBaselineResult = await inspectBaseline(newCheckParams, storedBaseline, checkIdent, currentSnapshot, logOpts);
+        const inspectBaselineResult = await inspectBaseline(newCheckParams, storedBaseline, checkIdent, actualSnapshot, logOpts);
         Object.assign(newCheckParams, inspectBaselineResult.inspectBaselineParams);
         currentBaselineSnapshot = inspectBaselineResult.currentBaselineSnapshot;
 
         /** COMPARING SECTION */
+        const compareResult = await compare(
+            currentBaselineSnapshot,
+            actualSnapshot,
+            newCheckParams,
+            checkParam.vShifting,
+            skipSaveOnCompareError,
+            currentUser,
+        );
+        Object.assign(newCheckParams, compareResult);
 
-        /* check if we can ignore 1 px dimensions difference from the bottom */
-        const ignoreDifferentResolutions = ({ height, width }) => {
-            if ((width === 0) && (height === -1)) return true;
-            if ((width === 0) && (height === 1)) return true;
-            return false;
-        };
-        const areSnapshotsDifferent = (compareResult) => compareResult.rawMisMatchPercentage.toString() !== '0';
-        const areSnapshotsWrongDimensions = (compareResult) => !compareResult.isSameDimensions
-            && !ignoreDifferentResolutions(compareResult.dimensionDifference);
-
-        /** compare actual with baseline if a check isn't new */
-        if ((newCheckParams.status !== 'new') && (!newCheckParams.failReasons.includes('not_accepted'))) {
-            try {
-                log.debug(`'the check with name: '${checkParam.name}' isn't new, make comparing'`, $this, logOpts);
-                checkCompareResult = await compareSnapshots(currentBaselineSnapshot, currentSnapshot, { vShifting: checkParam.vShifting });
-                log.silly(`ignoreDifferentResolutions: '${ignoreDifferentResolutions(checkCompareResult.dimensionDifference)}'`);
-                log.silly(`dimensionDifference: '${JSON.stringify(checkCompareResult.dimensionDifference)}`);
-
-                if (areSnapshotsDifferent(checkCompareResult) || areSnapshotsWrongDimensions(checkCompareResult)) {
-                    let logMsg;
-                    if (areSnapshotsWrongDimensions(checkCompareResult)) {
-                        logMsg = 'snapshots have different dimensions';
-                        newCheckParams.failReasons.push('wrong_dimensions');
-                    }
-                    if (areSnapshotsDifferent(checkCompareResult)) {
-                        logMsg = 'snapshots have differences';
-                        newCheckParams.failReasons.push('different_images');
-                    }
-
-                    log.debug(logMsg, $this, logOpts);
-                    log.debug(`saving diff snapshot for check with name: '${newCheckParams.name}'`, $this, logOpts);
-                    diffSnapshot = await createSnapshot({ // reduce duplications!!!
-                        name: checkParam.name,
-                        fileData: checkCompareResult.getBuffer(),
-                    });
-                    newCheckParams.diffId = diffSnapshot.id;
-                    newCheckParams.status = 'failed';
-                } else {
-                    newCheckParams.status = 'passed';
-                }
-
-                totalCheckHandleTime = process.hrtime(executionTimer)
-                    .toString();
-
-                checkCompareResult.totalCheckHandleTime = totalCheckHandleTime;
-                newCheckParams.result = JSON.stringify(checkCompareResult, null, '\t');
-            } catch (e) {
-                newCheckParams.updatedDate = Date.now();
-                newCheckParams.status = 'failed';
-                newCheckParams.result = `{ "server error": "error during comparing - ${e}" }`;
-                newCheckParams.failReasons.push('internal_server_error');
-                throw e;
-            }
-        }
-
-        if (newCheckParams.failReasons.length > 0) {
-            newCheckParams.status = 'failed';
-        }
         log.debug(`create the new check document with params: '${prettyCheckParams(newCheckParams)}'`, $this, logOpts);
         check = await Check.create(newCheckParams);
         await check.save();
@@ -554,7 +582,7 @@ const createCheck = async (checkParam, test, suite, app, currentUser) => {
 
         const result = {
             ...savedCheck.toObject(),
-            currentSnapshot,
+            currentSnapshot: actualSnapshot,
             executeTime: totalCheckHandleTime,
             lastSuccess: lastSuccessCheck ? (lastSuccessCheck).id : null,
         };
