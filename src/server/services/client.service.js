@@ -431,7 +431,7 @@ const compare = async (expectedSnapshot, actualSnapshot, newCheckParams, vShifti
         && !ignoreDifferentResolutions(compareResult.dimensionDifference);
 
     /** compare actual with baseline if a check isn't new */
-    if ((newCheckParams.status !== 'new') && (!newCheckParams.failReasons.includes('not_accepted'))) {
+    if ((newCheckParams.status !== 'new') && (!params.failReasons.includes('not_accepted'))) {
         try {
             log.debug(`'the check with name: '${newCheckParams.name}' isn't new, make comparing'`, $this, logOpts);
             checkCompareResult = await compareSnapshots(expectedSnapshot, actualSnapshot, { vShifting });
@@ -477,11 +477,31 @@ const compare = async (expectedSnapshot, actualSnapshot, newCheckParams, vShifti
         }
     }
 
-    if (newCheckParams.failReasons.length > 0) {
+    if (params.failReasons.length > 0) {
         params.status = 'failed';
     }
     return params;
 };
+
+const createCheckParams = (checkParam, suite, app, test, currentUser) => ({
+    test: checkParam.testId,
+    name: checkParam.name,
+    status: 'pending',
+    viewport: checkParam.viewport,
+    browserName: checkParam.browserName,
+    browserVersion: checkParam.browserVersion,
+    browserFullVersion: checkParam.browserFullVersion,
+    os: checkParam.os,
+    updatedDate: Date.now(),
+    suite: suite.id,
+    app: app.id,
+    branch: checkParam.branch,
+    domDump: checkParam.domDump,
+    run: test.run,
+    creatorId: currentUser._id,
+    creatorUsername: currentUser.username,
+    failReasons: [],
+});
 
 const createCheck = async (checkParam, test, suite, app, currentUser, skipSaveOnCompareError = false) => {
     const logOpts = {
@@ -493,25 +513,7 @@ const createCheck = async (checkParam, test, suite, app, currentUser, skipSaveOn
     let actualSnapshot;
     let currentBaselineSnapshot;
 
-    const newCheckParams = {
-        test: checkParam.testId,
-        name: checkParam.name,
-        status: 'pending',
-        viewport: checkParam.viewport,
-        browserName: checkParam.browserName,
-        browserVersion: checkParam.browserVersion,
-        browserFullVersion: checkParam.browserFullVersion,
-        os: checkParam.os,
-        updatedDate: Date.now(),
-        suite: suite.id,
-        app: app.id,
-        branch: checkParam.branch,
-        domDump: checkParam.domDump,
-        run: test.run,
-        creatorId: currentUser._id,
-        creatorUsername: currentUser.username,
-        failReasons: [],
-    };
+    const newCheckParams = createCheckParams(checkParam, suite, app, test, currentUser);
     const checkIdent = buildIdentObject(newCheckParams);
 
     let check;
@@ -530,7 +532,7 @@ const createCheck = async (checkParam, test, suite, app, currentUser, skipSaveOn
          *   1. The client receives a response with incomplete status and resends the same request but,
          *   with 'req.files.file.data' parameter
          *   2. The server creates a new snapshot based on these parameters
-         *   3. The server makes the comparison and returns to the check  response the the client
+         *   3. The server makes the comparison and returns to the client some check response
          *   with one of 'complete` status (eq: new, failed, passed)
          */
 
@@ -559,24 +561,28 @@ const createCheck = async (checkParam, test, suite, app, currentUser, skipSaveOn
             skipSaveOnCompareError,
             currentUser,
         );
+
         Object.assign(newCheckParams, compareResult);
 
         log.debug(`create the new check document with params: '${prettyCheckParams(newCheckParams)}'`, $this, logOpts);
         check = await Check.create(newCheckParams);
-        await check.save();
+        const savedCheck = await check.save();
+
         log.debug(`the check with id: '${check.id}', was created, will updated with data during creating process`, $this, logOpts);
         logOpts.ref = check.id;
         log.debug(`update test with check id: '${check.id}'`, $this, logOpts);
+
         test.checks.push(check.id);
-        await test.save();
-        const savedCheck = await Check.findById(check._id); // !!! const savedCheck =  await test.save();
-        // update test and suite
         test.markedAs = await calculateAcceptedStatus(check.test);
         test.updatedDate = new Date();
-        log.debug('update suite', $this, logOpts);
+
+        await test.save();
+
+        // update test and suite
+        log.debug('update suite and run', $this, logOpts);
+
         await orm.updateItemDate('VRSSuite', check.suite);
         await orm.updateItemDate('VRSRun', check.run);
-        await test.save();
 
         const lastSuccessCheck = await getLastSuccessCheck(checkIdent); // we need this?
 

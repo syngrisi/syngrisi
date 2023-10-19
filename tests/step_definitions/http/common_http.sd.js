@@ -54,6 +54,7 @@ Then(/^I expect via http ([\d]+)st (test|check|baseline) filtered as "([^"]*)" m
     )).json.results;
 
     console.log('👉', { items: items });
+    // console.log('👉', { items: JSON.stringify(items, null, '\t') });
 
     const params = YAML.parse(yml);
     const item = items[parseInt(num, 10) - 1];

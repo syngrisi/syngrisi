@@ -2,11 +2,10 @@ Feature: Low images difference
     This feature checks if images with a low difference (rawMisMatchPercentage, e.q.: 0.001) are properly compared
 
     Background:
-        When I pending
         Given I clear Database and stop Server
         Given I start Server and start Driver
 
-    Scenario: VRS create two checks - [new, accept, passed]
+    Scenario: Low images difference
         Given I create "1" tests with:
         """
           testName: TestName
@@ -24,22 +23,15 @@ Feature: Low images difference
                 filePath: files/low_diff_1.png
         """
 
-        When I open the app
-
-#        When I START DEBUGGER
-#
-#        When I wait and refresh page on element "span=Low difference - 1" for "3" seconds to exist
-#        Then I expect that 1th test "Low difference - 1" has "Failed" status
-#
-#        When I click on "Low difference - 1" VRS test
-#        Then I expect that VRS test "Low difference - 1" is unfolded
-#        Then I expect that VRS check "1/1 Check - 1" has "Failed" status
-#        Then I expect the "1/1 Check - 1" check has "previously accept" acceptance status
-#
-#        Then I expect that 2th test "Low difference - 1" has "New" status
-#
-#        When I open "Check - 1" view
-#        Then I expect that element "#mismatch_percentage" is displayed
-#        Then the element "#mismatch_percentage" contains the text "(0.0005228758169934641%)"
-#        Then the element "//div[contains(text(), 'rawMisMatchPercentage')]/../div[2]" contains the text "0.0005228758169934641"
-#        Then the element "//div[contains(text(), 'misMatchPercentage')]/../div[2]" contains the text "0.00"
+        Then I expect via http 2st check filtered as "name=CheckName" matched:
+        """
+          name: CheckName
+          status: [new]
+        """
+        Then I expect via http 1st check filtered as "name=CheckName" matched:
+        """
+          name: CheckName
+          status: [failed]
+          markedAs: accepted
+          failReasons: [different_images]
+        """
