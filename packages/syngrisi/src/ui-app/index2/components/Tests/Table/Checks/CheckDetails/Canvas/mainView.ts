@@ -411,7 +411,7 @@ export class MainView {
             errorMsg({ error: 'Cannot set baseline ignored regions' });
             // MainView.showToaster('Cannot set baseline ignored regions', 'Error');
         } catch (e) {
-            log.error(`Cannot set baseline ignored regions: ${e.stack || e}`);
+            log.error(`Cannot set baseline ignored regions: ${e.stack  || e.toString()}`);
             errorMsg({ error: 'Cannot set baseline ignored regions' });
             // MainView.showToaster('Cannot set baseline ignored regions', 'Error');
         }
@@ -480,7 +480,7 @@ export class MainView {
             // MainView.showToaster('Cannot get baseline ignored regions', 'Error');
             errorMsg({ error: 'Cannot get baseline ignored regions' });
         } catch (e) {
-            log.error(`Cannot get baseline ignored regions: ${e.stack || e}`);
+            log.error(`Cannot get baseline ignored regions: ${e.stack  || e.toString()}`);
             // MainView.showToaster('Cannot get baseline ignored regions', 'Error');
             errorMsg({ error: 'Cannot get baseline ignored regions' });
         }

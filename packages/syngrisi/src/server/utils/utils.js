@@ -147,7 +147,7 @@ exports.checksGroupedByIdent = async function checksGroupedByIdent(checkFilter) 
         }
         return result;
     } catch (e) {
-        log.error(e.stack);
+        log.error(e.stack || e.toString());
         throw new Error(e);
     }
 };
