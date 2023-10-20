@@ -10,12 +10,12 @@ export default class SyngrisiCucumberService {
     // noinspection JSUnusedLocalSymbols
     // eslint-disable-next-line no-unused-vars
     constructor(serviceOptions, capabilities, config) {
-        log.trace('service initialization start');
+        log.trace('start of service initialization');
         this.options = serviceOptions;
         log.debug(`init the syngrisi driver with options: ${JSON.stringify(this.options)}`);
         const syngrisi = require('@syngrisi/syngrisi-wdio-sdk');
         this.vDriver = new syngrisi.SyngrisiDriver({ url: this.options.endpoint });
-        log.trace('service initialization end');
+        log.trace('finish of service initialization');
     }
 
     // eslint-disable-next-line valid-jsdoc
