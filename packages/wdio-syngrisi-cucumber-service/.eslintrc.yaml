@@ -1,0 +1,62 @@
+env:
+  es6: true
+  node: true
+
+extends:
+  - 'airbnb-base'
+
+globals:
+  assert: true
+  expect: true
+  browser: readonly
+  $: readonly
+  $$: readonly
+  window: readonly
+  document: readonly
+  navigator: readonly
+
+parserOptions:
+  ecmaVersion: 2020
+
+root: true
+
+rules:
+  'no-plusplus': [ 2, { allowForLoopAfterthoughts: true } ]
+  linebreak-style: off
+  comma-dangle:
+    - 'error'
+    - arrays: 'always-multiline'
+      objects: 'always-multiline'
+      imports: 'never'
+      exports: 'never'
+      functions: 'ignore'
+  global-require: 'off'
+
+  import/no-extraneous-dependencies: 0
+  indent:
+    - 'error'
+    - 4
+    - SwitchCase: 1
+  max-len:
+    - 'error'
+    - 140
+    - ignoreStrings: true
+    - ignoreTemplateLiterals: true
+  new-cap:
+    - 'error'
+    - newIsCap: true
+      capIsNewExceptions:
+        - 'Given'
+        - 'When'
+        - 'Then'
+  require-jsdoc:
+    - 'error'
+    - require:
+        FunctionDeclaration: true
+        MethodDefinition: true
+        ClassDeclaration: true
+  strict: 'off'
+  valid-jsdoc:
+    - 'error'
+    - requireReturn: false
+      matchDescription: '.+'
