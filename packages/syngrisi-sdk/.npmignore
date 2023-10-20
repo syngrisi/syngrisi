@@ -9,6 +9,7 @@
 /docs
 
 # misc
+/.idea
 .DS_Store
 .env.local
 .env.development.local
@@ -34,3 +35,6 @@ README.md
 .eslintrc.json
 webpack.config.js
 babel.config.js
+debug.js
+debug.mjs
+
