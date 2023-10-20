@@ -1,0 +1,40 @@
+{
+  "name": "@syngrisi/syngrisi-wdio-sdk",
+  "version": "1.3.2",
+  "description": "Syngrisi WebdriverIO SDK",
+  "main": "SyngrisiDriver.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 0",
+    "pub": "np"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/viktor-silakov/vrs-sdk.git"
+  },
+  "keywords": [
+    "visual",
+    "regression",
+    "test",
+    "SDK"
+  ],
+  "author": "Viktar Silakou",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/viktor-silakov/vrs-sdk/issues"
+  },
+  "homepage": "https://github.com/viktor-silakov/vrs-sdk/blob/master/README.md",
+  "dependencies": {
+    "@wdio/logger": "^7.16.0",
+    "form-data": "^4.0.0",
+    "got-cjs": "^12.0.4",
+    "hasha": "^5.2.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.3.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.3"
+  }
+}
