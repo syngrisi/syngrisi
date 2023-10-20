@@ -35,4 +35,5 @@ README.md
 webpack.config.js
 babel.config.js
 /.idea/
+debug.js
 
