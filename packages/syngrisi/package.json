@@ -1,6 +1,6 @@
 {
     "name": "syngrisi",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "description": "Syngrisi - Visual Testing Tool",
     "main": "server.js",
     "private": true,
@@ -51,7 +51,7 @@
     },
     "license": "MIT",
     "dependencies": {
-        "@syngrisi/node-resemble.js": "^0.0.16",
+        "@syngrisi/node-resemble.js": "^2.0.1",
         "body-parser": "^1.19.0",
         "bootstrap": "^5.2.0",
         "bootstrap-icons": "^1.9.1",
