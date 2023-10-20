@@ -39,7 +39,7 @@ const createUser = catchAsync(async (req, res) => {
             .send(user);
     } catch (e) {
         if (e.statusCode) {
-            log.error(e.toString(), $this);
+            log.error(e.stack, $this);
             res.status(e.statusCode)
                 .json({ message: e.message });
         } else {
