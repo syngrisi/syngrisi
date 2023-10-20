@@ -54,7 +54,7 @@ module.exports.removeCheck = async function removeCheck(id) {
         }
         return check;
     } catch (e) {
-        const errMsg = `cannot remove a check with id: '${id}', error: '${e}'`;
+        const errMsg = `cannot remove a check with id: '${id}', error: '${e.stack}'`;
         log.error(errMsg, $this, logOpts);
         throw new Error(errMsg);
     }

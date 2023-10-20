@@ -31,7 +31,7 @@ module.exports.removeTest = async function removeTest(id) {
         }
         return Test.findByIdAndDelete(id);
     } catch (e) {
-        log.error(`cannot remove test with id: ${id} error: ${e}`, logOpts);
+        log.error(`cannot remove test with id: ${id} error: ${e.stack}`, logOpts);
         throw new Error();
     }
 };

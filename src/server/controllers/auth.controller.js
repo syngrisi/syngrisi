@@ -76,7 +76,7 @@ const logout = catchAsync(async (req, res) => {
                 .json({ message: 'success' })
         );
     } catch (e) {
-        log.error(e);
+        log.error(e.stack);
         res.status(httpStatus.INTERNAL_SERVER_ERROR)
             .json({ message: 'fail' });
     }
@@ -110,7 +110,7 @@ const changePassword = catchAsync(async (req, res) => {
     try {
         await user.changePassword(currentPassword, newPassword);
     } catch (e) {
-        log.error(e.toString(), this, logOpts);
+        log.error(e.stack, this, logOpts);
         return res.status(httpStatus.INTERNAL_SERVER_ERROR)
             .json({ message: e.toString() });
     }
