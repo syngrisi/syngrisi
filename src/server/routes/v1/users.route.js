@@ -6,7 +6,6 @@ const { authorization } = require('../../middlewares/authorization');
 const router = express.Router();
 
 router.get('/current', userController.current);
-// router.get('/current', ensureLoggedIn(), userController.current);
 
 router
     .route('/')

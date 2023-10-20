@@ -1,6 +1,6 @@
 /* eslint-disable valid-jsdoc */
 const mongoose = require('mongoose');
-const { removeEmptyProperties, fatalError } = require('../utils/utils');
+const { removeEmptyProperties } = require('../utils/utils');
 
 const $this = this;
 $this.logMeta = {

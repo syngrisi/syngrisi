@@ -97,7 +97,7 @@ app.use('/v1', routes);
 
 app.use('/auth', require('./src/server/routes/ui/auth'));
 app.use('/admin*', require('./src/server/routes/ui/admin'));
-app.use('/', require('./src/server/routes/ui/index2'));
+app.use('/', require('./src/server/routes/ui'));
 
 app.use((req, res) => {
     res.status(404)
