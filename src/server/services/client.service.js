@@ -595,7 +595,7 @@ const createCheck = async (checkParam, test, suite, app, currentUser, skipSaveOn
         if (diffSnapshot) result.diffSnapshot = diffSnapshot;
         return result;
     } catch (e) {
-        // Emergency check creation and test update
+        // emergency check creation and test update
         if (!check) {
             newCheckParams.status = 'failed';
             newCheckParams.result = `{ "server error": "${e}" }`;

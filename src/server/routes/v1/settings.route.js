@@ -20,8 +20,4 @@ router
         settingsController.updateSetting
     );
 
-// router
-//     .route('/distinct')
-//     .get(ensureLoggedIn(), logsController.distinct);
-
 module.exports = router;
