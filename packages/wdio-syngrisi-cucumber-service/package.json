@@ -1,6 +1,6 @@
 {
   "name": "wdio-syngrisi-cucumber-service",
-  "version": "2.0.1",
+  "version": "2.0.4",
   "description": "WDIO Service for Syngrisi visual tests using Cucumber",
   "main": "dist/index.js",
   "np": {
