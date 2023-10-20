@@ -83,7 +83,7 @@ export default function LoginForm() {
             log.error(((typeof result) === 'object') ? JSON.stringify(result) : result.toString());
             setErrorMessage('Connection error');
         } catch (e: any) {
-            log.error(e.stack || e);
+            log.error(e.stack || e.toString());
             setErrorMessage('Connection error');
         } finally {
             setLoader(false);

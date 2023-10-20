@@ -125,7 +125,7 @@ export default function ChangePasswordForm() {
             log.error(((typeof result) === 'object') ? JSON.stringify(result) : result.toString());
             return setErrorMessage(result.message);
         } catch (e: any) {
-            log.error(e.stack || e);
+            log.error(e.stack || e.toString());
             setErrorMessage('Connection error');
         } finally {
             setLoader(false);

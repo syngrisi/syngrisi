@@ -136,7 +136,7 @@ async function getDiff(baselineOrigin, actualOrigin, opts = {}) {
         log.silly(`${JSON.stringify(moreFittingResult, null, '  ')}`, $this, logOpts);
         return moreFittingResult;
     } catch (e) {
-        log.error(e.stack, $this, logOpts);
+        log.error(e.stack || e.toString(), $this, logOpts);
         throw new Error(e);
     }
 }

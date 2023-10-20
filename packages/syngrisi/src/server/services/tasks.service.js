@@ -262,7 +262,7 @@ const task_handle_database_consistency = async (options, res) => {
         taskOutput(`> Done in ${elapsedSeconds} seconds, ${elapsedSeconds / 60} min`, res);
         taskOutput('- end...\n', res);
     } catch (e) {
-        log.error(e.stack.toString() || e);
+        log.error(e.stack || e.toString());
         taskOutput(e.stack || e, res);
     } finally {
         res.end();

@@ -53,7 +53,7 @@ const login = catchAsync(async (req, res, next) => {
 
             req.logIn(user, (e) => {
                 if (e) {
-                    log.error(e.stack || e);
+                    log.error(e.stack || e.toString());
                     return next(e);
                 }
                 log.info('user is logged in', this, { user: user.username });
@@ -76,7 +76,7 @@ const logout = catchAsync(async (req, res) => {
                 .json({ message: 'success' })
         );
     } catch (e) {
-        log.error(e.stack);
+        log.error(e.stack || e.toString());
         res.status(httpStatus.INTERNAL_SERVER_ERROR)
             .json({ message: 'fail' });
     }
@@ -110,7 +110,7 @@ const changePassword = catchAsync(async (req, res) => {
     try {
         await user.changePassword(currentPassword, newPassword);
     } catch (e) {
-        log.error(e.stack, this, logOpts);
+        log.error(e.stack || e.toString(), this, logOpts);
         return res.status(httpStatus.INTERNAL_SERVER_ERROR)
             .json({ message: e.toString() });
     }

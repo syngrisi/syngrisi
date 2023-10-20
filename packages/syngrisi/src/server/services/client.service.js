@@ -302,7 +302,7 @@ async function compareSnapshots(baselineSnapshot, actual, opts = {}) {
         }
         return diff;
     } catch (e) {
-        const errMsg = `cannot compare snapshots: ${e}\n ${e.stack}`;
+        const errMsg = `cannot compare snapshots: ${e}\n ${e.stack || e.toString()}`;
         log.error(errMsg, $this, logOpts);
         throw new Error(e);
     }
@@ -469,9 +469,9 @@ const compare = async (expectedSnapshot, actualSnapshot, newCheckParams, vShifti
         } catch (e) {
             params.updatedDate = Date.now();
             params.status = 'failed';
-            params.result = { server_error: `error during comparing - ${e.stack}` };
+            params.result = { server_error: `error during comparing - ${e.stack || e.toString()}` };
             params.failReasons.push('internal_server_error');
-            log.error(`error during comparing - ${e.stack}`, $this, logOpts);
+            log.error(`error during comparing - ${e.stack || e.toString()}`, $this, logOpts);
             throw e;
         }
     }
