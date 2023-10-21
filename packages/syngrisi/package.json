@@ -3,11 +3,12 @@
     "version": "2.0.3",
     "description": "Syngrisi - Visual Testing Tool",
     "main": "server.js",
-    "private": true,
     "repository": {
         "type": "git",
         "url": "git+https://github.com/viktor-silakov/syngrisi"
     },
+    "files": ["src", "mvc", "static", "tasks",
+        "config.js", "server.js", "docker-compose.yml"],
     "homepage": "https://github.com/viktor-silakov/syngrisi",
     "keywords": [
         "testing",
@@ -40,7 +41,8 @@
         "docker_clear_test_db_only": "rm -rf ./data/db_data",
         "clear_test_screenshots_only": "rm -rf ./baselinesTest/$CID/*",
         "deadfile:be": "npx deadfile ./server.js --exclude tests tasks backups data docs mvc/views/react src/ui-app baseline*",
-        "deadfile:fe": "deadfile ./mvc/views/react/index2/index.html ./mvc/views/react/auth/index.html --dir ./mvc/views/react"
+        "deadfile:fe": "deadfile ./mvc/views/react/index2/index.html ./mvc/views/react/auth/index.html --dir ./mvc/views/react",
+        "pkglist": "npx npm-packlist # list of files that will be published in syngrisi package, show the files section"
     },
     "author": {
         "name": "Viktar Silakou",

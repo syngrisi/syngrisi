@@ -9,7 +9,7 @@ const { calculateAcceptedStatus, buildIdentObject } = require('../utils/utils');
 // const { createNewBaseline } = require('../../mvc/controllers/api/api_controller');
 const testUtil = require('../utils/tests');
 const checkUtil = require('../utils/check');
-const orm = require('../../../lib/dbItems');
+const orm = require('../lib/dbItems');
 
 const $this = this;
 $this.logMeta = {

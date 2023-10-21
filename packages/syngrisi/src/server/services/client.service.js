@@ -14,11 +14,11 @@ const httpStatus = require('http-status');
 const {
     removeEmptyProperties, waitUntil, checksGroupedByIdent, buildIdentObject, calculateAcceptedStatus, ident,
 } = require('../utils/utils');
-const orm = require('../../../lib/dbItems');
-const { createItemIfNotExistAsync, createRunIfNotExist, createSuiteIfNotExist } = require('../../../lib/dbItems');
+const orm = require('../lib/dbItems');
+const { createItemIfNotExistAsync, createRunIfNotExist, createSuiteIfNotExist } = require('../lib/dbItems');
 const { config } = require('../../../config');
 const prettyCheckParams = require('../utils/prettyCheckParams');
-const { getDiff } = require('../../../lib/comparator');
+const { getDiff } = require('../lib/comparator');
 const ApiError = require('../utils/ApiError');
 
 const $this = this;

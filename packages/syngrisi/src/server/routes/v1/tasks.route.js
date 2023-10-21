@@ -1,5 +1,5 @@
 const express = require('express');
-const { ensureLoggedIn } = require('../../../../lib/ensureLogin/ensureLoggedIn');
+const { ensureLoggedIn } = require('../../lib/ensureLogin/ensureLoggedIn');
 const { authorization } = require('../../middlewares/authorization');
 const { tasksController } = require('../../controllers');
 

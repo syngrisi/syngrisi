@@ -58,7 +58,7 @@ const loadTestUser = async () => {
     const testAdmin = await User.findOne({ username: 'Test' });
     if (!testAdmin) {
         log.info('create the test Administrator', $this, logOpts);
-        const adminData = JSON.parse(fss.readFileSync('./lib/testAdmin.json'));
+        const adminData = JSON.parse(fss.readFileSync('./src/server/lib/testAdmin.json'));
         const admin = await User.create(adminData);
         log.info(`test Administrator with id: '${admin._id}' was created`, $this, logOpts);
         return admin;

@@ -1,6 +1,6 @@
 const express = require('express');
 const { settingsController } = require('../../controllers');
-const { ensureLoggedIn } = require('../../../../lib/ensureLogin/ensureLoggedIn');
+const { ensureLoggedIn } = require('../../lib/ensureLogin/ensureLoggedIn');
 const { authorization } = require('../../middlewares/authorization');
 
 const router = express.Router();

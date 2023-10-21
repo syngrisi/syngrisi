@@ -4,8 +4,8 @@ const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const { clientService } = require('../services');
 const { pick } = require('../utils');
-const orm = require('../../../lib/dbItems');
-const { createItemIfNotExistAsync, createSuiteIfNotExist } = require('../../../lib/dbItems');
+const orm = require('../lib/dbItems');
+const { createItemIfNotExistAsync, createSuiteIfNotExist } = require('../lib/dbItems');
 const prettyCheckParams = require('../utils/prettyCheckParams');
 
 const User = mongoose.model('VRSUser');
