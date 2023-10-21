@@ -97,10 +97,10 @@ app.set('view engine', 'ejs');
 
 app.use(express.json({ limit: '50mb' }));
 
-app.use('/snapshoots', express.static(path.join(__dirname, config.defaultBaselinePath)));
+app.use('/snapshoots', express.static(path.join(process.cwd(), config.defaultBaselinePath)));
+
 app.use('/static', express.static(`${__dirname}/static`));
 app.use('/assets', express.static(`${__dirname}/mvc/views/react/assets`));
-// app.use('/lib', express.static(`${__dirname}/mvc/views/lib`));
 const routes = require('./src/server/routes/v1');
 
 app.use('/v1', routes);
