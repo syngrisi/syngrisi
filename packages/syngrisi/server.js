@@ -96,10 +96,11 @@ app.set('views', viewPath);
 app.set('view engine', 'ejs');
 
 app.use(express.json({ limit: '50mb' }));
+
 app.use('/snapshoots', express.static(config.defaultBaselinePath));
-app.use('/static', express.static('./static'));
-app.use('/assets', express.static('./mvc/views/react/assets'));
-app.use('/lib', express.static('./mvc/views/lib'));
+app.use('/static', express.static(`${__dirname}/static`));
+app.use('/assets', express.static(`${__dirname}/mvc/views/react/assets`));
+// app.use('/lib', express.static(`${__dirname}/mvc/views/lib`));
 const routes = require('./src/server/routes/v1');
 
 app.use('/v1', routes);
@@ -132,5 +133,5 @@ if (fs.existsSync('./src/data/custom_devices.json')) {
     global.devices = [...global.devices, ...require('./src/server/data/custom_devices.json')];
 }
 
-log.info(chalk.green(`Syngrisi version: ${chalk.blueBright.bold(global.version)} started at http://localhost:${config.port}`), this);
+log.info(chalk.green(`Syngrisi version: ${chalk.blue(global.version)} started at http://localhost:${config.port}`), this);
 log.info(chalk.whiteBright('Press <Ctrl+C> to exit'), this);
