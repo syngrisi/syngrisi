@@ -6,7 +6,7 @@ function getSafeId(uid, errorMessage) {
     if (typeof value !== "string" || value.trim().length === 0) {
       throw new Error(errorMessage);
     }
-    return `${uid}-${value}`;
+    return  `${uid}-${value}`;
   };
 }
 function keys(object) {
