@@ -14,7 +14,8 @@
         "tasks",
         "config.js",
         "server.js",
-        "docker-compose.yml"
+        "docker-compose.yml",
+        ".nvmrc"
     ],
     "homepage": "https://github.com/viktor-silakov/syngrisi",
     "keywords": [
