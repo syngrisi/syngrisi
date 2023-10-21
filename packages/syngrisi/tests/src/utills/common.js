@@ -157,7 +157,8 @@ const startServer = (params) => {
                 cwd: cmdPath,
             });
     } else {
-        const nodePath = process.env.SYNGRISI_TEST_SERVER_NODE_PATH || 'node';
+        // const nodePath = process.env.SYNGRISI_TEST_SERVER_NODE_PATH || 'node';
+        const nodePath = 'node';
         child = spawn(nodePath,
             ['server.js', `syngrisi_test_server_${cid}`], {
                 env,

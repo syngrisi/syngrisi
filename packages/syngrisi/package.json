@@ -7,6 +7,9 @@
         "type": "git",
         "url": "git+https://github.com/viktor-silakov/syngrisi"
     },
+    "engines": {
+        "node": ">=14.20.0"
+    },
     "files": [
         "src",
         "mvc",
@@ -26,7 +29,7 @@
         "comparison"
     ],
     "scripts": {
-        "test": "cd tests && npm run test",
+        "test": "npm run build && cd tests && npm run test",
         "test:docker": "cd tests && npm run test:docker",
         "smoke": "cd tests && npm run smoke",
         "build": "rm -rf mvc/views/react/assets && cross-env VITE_ROOT_PATH='./src/ui-app/' vite build",
