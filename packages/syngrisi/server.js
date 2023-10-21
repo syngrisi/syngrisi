@@ -48,10 +48,15 @@ app.use(compression({ filter: compressionFilter }));
 
 app.use(disableCors);
 
+const storeSessionKey = process.env.SYNGRISI_SESSION_STORE_KEY || require('crypto')
+    .randomBytes(64)
+    .toString('hex');
+
 const expressSession = session({
-    secret: process.env.SYNGRISI_SESSION_STORE_KEY || require('crypto')
-        .randomBytes(64)
-        .toString('hex'), resave: true, saveUninitialized: false, cookie: { secure: false },
+    secret: storeSessionKey,
+    resave: true,
+    saveUninitialized: false,
+    cookie: { secure: false },
     store: MongoStore.create({ mongoUrl: config.connectionString }),
 });
 
@@ -61,6 +66,9 @@ log.info('Init passport', this);
 app.use(passport.initialize());
 app.use(session({
     store: MongoStore.create({ mongoUrl: 'mongodb://localhost/test-app' }),
+    secret: storeSessionKey,
+    resave: true,
+    saveUninitialized: true,
 }));
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
@@ -124,5 +132,5 @@ if (fs.existsSync('./src/data/custom_devices.json')) {
     global.devices = [...global.devices, ...require('./src/server/data/custom_devices.json')];
 }
 
-log.info(chalk.green(`Syngrisi version: ${global.version} started at http://localhost:${config.port}`), this);
+log.info(chalk.green(`Syngrisi version: ${chalk.blueBright.bold(global.version)} started at http://localhost:${config.port}`), this);
 log.info(chalk.whiteBright('Press <Ctrl+C> to exit'), this);

@@ -30,9 +30,9 @@ export const checkEmptyDirectory = (directory: string): boolean => {
 
 export const getDirectoryName = (): string => process.cwd()
 
-export const getSyngrisiVersion = (installDir: string) => {
-    return JSON.parse(fs.readFileSync(path.join(installDir, 'package.json')).toString()).version
-}
+// export const getSyngrisiVersion = (installDir: string) => {
+//     return JSON.parse(fs.readFileSync(path.join(installDir, 'package.json')).toString()).version
+// }
 
 export const installDependencies = (directory: string): void => {
     child_process.execSync('npm install', { cwd: directory, stdio: 'inherit' })
