@@ -69,6 +69,7 @@
     "git-clone": "^0.2.0",
     "inquirer": "^9.1.4",
     "minimist": "^1.2.8",
+    "read-pkg-up": "^10.1.0",
     "semver": "^7.3.8"
   },
   "gitHead": "ce9023a819d9aa4b93a1c8631328420e63645f91"
