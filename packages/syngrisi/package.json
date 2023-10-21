@@ -1,14 +1,21 @@
 {
     "name": "syngrisi",
-    "version": "2.0.3",
+    "version": "2.1.0-alpha.0",
     "description": "Syngrisi - Visual Testing Tool",
     "main": "server.js",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/viktor-silakov/syngrisi"
     },
-    "files": ["src", "mvc", "static", "tasks",
-        "config.js", "server.js", "docker-compose.yml"],
+    "files": [
+        "src",
+        "mvc",
+        "static",
+        "tasks",
+        "config.js",
+        "server.js",
+        "docker-compose.yml"
+    ],
     "homepage": "https://github.com/viktor-silakov/syngrisi",
     "keywords": [
         "testing",

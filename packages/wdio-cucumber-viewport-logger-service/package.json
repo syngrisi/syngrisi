@@ -1,6 +1,6 @@
 {
   "name": "wdio-cucumber-viewport-logger-service",
-  "version": "1.0.4",
+  "version": "2.1.0-alpha.0",
   "description": "WebdriverIO Viewport Logger Service for Cucumber",
   "homepage": "https://github.com/viktor-silakov/wdio-cucumber-viewport-logger-service",
   "repository": {
