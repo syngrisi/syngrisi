@@ -2,7 +2,7 @@
 import * as utils from './utils.js'
 import { DOCKER_SETUP_MANUAL_URL, MONGODB_SETUP_MANUAL_URL, NODE_VERSION } from './constants.js'
 import chalk from 'chalk'
-import { getSyngrisiVersion, runProgram } from './utils.js'
+import { runProgram } from './utils.js'
 import path from 'node:path'
 import fs from 'node:fs/promises'
 import { ProgramOpts } from './types'
@@ -83,7 +83,8 @@ export async function createSyngrisiProject(opts: ProgramOpts) {
 
     await runProgram('npm', ['install', `syngrisi${npmTag}`], { cwd: root, stdio: 'ignore' })
 
-    console.log(chalk.green.bold(`✔ Syngrisi '${getSyngrisiVersion(root)}' version has been successfully installed\n`))
+    console.log(chalk.green.bold(`✔ Syngrisi successfully installed in the following directory: ${root}\n`))
+    console.log(chalk.blue(`project root dir: ${root}\n`))
     // console.log(chalk.whiteBright.bold('Run "npm start" if you want to run it natively (requires MongoDB), or "docker-compose up" to run it in a Docker container (requires Docker).\n'
     //     + 'Read "README.md" for detailed configuration information.\n'))
 }
