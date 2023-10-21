@@ -85,7 +85,6 @@
         "moment": "^2.29.4",
         "mongodb": "^4.10.0",
         "mongoose": "^6.6.2",
-        "node-libpng": "^0.2.20",
         "nodemon": "^2.0.20",
         "p-queue": "^6.4.0",
         "passport": "^0.6.0",
