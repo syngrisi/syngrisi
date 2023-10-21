@@ -1,7 +1,7 @@
 const fs = require('fs');
 const request = require('request');
 const FormData = require('form-data');
-const { config } = require('../config');
+const { config } = require('../../../config');
 
 const uploadBaseline = async function (filepath, url = 'http://vrs:3000/', name = 'TestName',) {
     return new Promise(async function (resolve, reject) {

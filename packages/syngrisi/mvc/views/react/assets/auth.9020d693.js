@@ -326,7 +326,7 @@ function ChangePasswordForm() {
       log.error(typeof result === "object" ? JSON.stringify(result) : result.toString());
       return setErrorMessage(result.message);
     } catch (e) {
-      log.error(e.stack || e);
+      log.error(e.stack || e.toString());
       setErrorMessage("Connection error");
     } finally {
       setLoader(false);
@@ -456,7 +456,7 @@ function LoginForm() {
       log.error(typeof result === "object" ? JSON.stringify(result) : result.toString());
       setErrorMessage("Connection error");
     } catch (e) {
-      log.error(e.stack || e);
+      log.error(e.stack || e.toString());
       setErrorMessage("Connection error");
     } finally {
       setLoader(false);

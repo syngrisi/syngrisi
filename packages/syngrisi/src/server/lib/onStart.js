@@ -1,7 +1,8 @@
 /* eslint-disable no-underscore-dangle */
-// this code should runs only once at server start
+// this code should run only once at server start
 const fs = require('fs');
 const mongoose = require('mongoose');
+const users = require('./testUsers.json');
 
 const User = mongoose.model('VRSUser');
 const $this = this;
@@ -11,7 +12,7 @@ $this.logMeta = {
 };
 
 exports.createTempDir = function createTempDir() {
-    const dir = '../.tmp';
+    const dir = '.tmp';
     if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir);
     }
@@ -28,13 +29,14 @@ exports.createBasicUsers = async function createBasicUsers() {
     const defGuest = await User.findOne({ username: 'Guest' });
     if (!defAdmin) {
         log.info('create the default Administrator', $this);
-        const adminData = JSON.parse(fs.readFileSync('lib/admin.json'));
+        const adminData = JSON.parse(fs.readFileSync('./src/server/lib/admin.json'));
+
         const admin = await User.create(adminData);
         log.info(`administrator with id: '${admin._id}' was created`, $this);
     }
     if (!defGuest) {
         log.info('create the default Guest', $this);
-        const guestData = JSON.parse(fs.readFileSync('lib/guest.json'));
+        const guestData = JSON.parse(fs.readFileSync('./src/server/lib/guest.json'));
         const guest = await User.create(guestData);
         log.info(`guest with id: '${guest._id}' was created`, $this);
     }
@@ -43,5 +45,9 @@ exports.createBasicUsers = async function createBasicUsers() {
 exports.createTestsUsers = async function createTestsUsers() {
     const users = require('./testUsers.json');
     log.debug('creating tests users', $this);
-    await User.insertMany(users);
+    try {
+        await User.insertMany(users);
+    } catch (e) {
+        console.warn(e);
+    }
 };

@@ -23,12 +23,12 @@ const LocalStrategy = require('passport-local').Strategy;
 const logger = require('pino-http')({
     name: 'vrs', autoLogging: true, useLevel: 'info',
 }, pino.destination('./application.log'));
-const { AppSettings } = require('./lib/AppSettings');
+const { AppSettings } = require('./src/server/lib/AppSettings');
 
 global.AppSettings = new AppSettings();
 
 const { config } = require('./config');
-const { Logger } = require('./lib/logger');
+const { Logger } = require('./src/server/lib/logger');
 
 const { disableCors } = require('./src/server/middlewares/disableCors');
 
@@ -106,7 +106,7 @@ app.use((req, res) => {
 
 app.listen(config.port, async () => {
     log.debug('run onStart jobs', this);
-    const startUp = await require('./lib/onStart');
+    const startUp = await require('./src/server/lib/onStart');
     startUp.createTempDir();
     await startUp.createBasicUsers();
     await startUp.createInitialSettings();

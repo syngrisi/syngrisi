@@ -5,10 +5,10 @@ node_modules
 .DS_Store
 /tests/files/randomImg.png
 *.bak
-/lib/debug.js
-/lib/B.png
-/lib/A.png
-/lib/rsJsEngine.js
+/src/server/lib/debug.js
+/src/server/lib/B.png
+/src/server/lib/A.png
+/src/server/lib/rsJsEngine.js
 /.idea/
 /debug.js
 /debug.ts

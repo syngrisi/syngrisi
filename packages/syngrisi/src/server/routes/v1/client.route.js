@@ -1,6 +1,6 @@
 const express = require('express');
 const { clientController } = require('../../controllers');
-const { ensureApiKey } = require('../../../../lib/ensureLogin/ensureLoggedIn');
+const { ensureApiKey } = require('../../lib/ensureLogin/ensureLoggedIn');
 
 const router = express.Router();
 
