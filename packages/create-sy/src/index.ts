@@ -1,9 +1,12 @@
 // noinspection ExceptionCaughtLocallyJS
-
 import * as utils from './utils.js'
-import { DOCKER_SETUP_MANUAL_URL, MONGODB_SETUP_MANUAL_URL, NODE_VERSION, REPO_URI } from './constants.js'
+import { DOCKER_SETUP_MANUAL_URL, MONGODB_SETUP_MANUAL_URL, NODE_VERSION } from './constants.js'
 import chalk from 'chalk'
-import { getSyngrisiVersion } from './utils.js'
+import { getSyngrisiVersion, runProgram } from './utils.js'
+import path from 'node:path'
+import fs from 'node:fs/promises'
+import { ProgramOpts } from './types'
+import { readPackageUp } from 'read-pkg-up'
 
 export async function run() {
     try {
@@ -35,27 +38,52 @@ export async function run() {
 
         utils.checkNodeVersion()
 
-        const installDir = args._[0] || '.'
+        const dirParam = args._[0] || '.'
+        const installDir = dirParam !== '.' ? dirParam : utils.getDirectoryName()
 
-        if (!utils.checkEmptyDirectory(installDir)) {
-            const msg = `❌ The directory '${installDir}' is not empty! Please specify an empty directory.`
-            console.log(chalk.red(msg))
-            process.exitCode = 1
-            throw new Error(msg)
-        }
-
-        const cloneDir = installDir !== '.' ? installDir : utils.getDirectoryName()
-
-        console.log(`Cloning ${chalk.green(REPO_URI)} to ${chalk.green(cloneDir)}...`)
-        await utils.cloneRepo(cloneDir)
-
-        console.log(`Installing dependencies in ${chalk.green(cloneDir)}...`)
-        await utils.installDependencies(cloneDir)
-
-        console.log(chalk.green.bold(`✔ Syngrisi '${getSyngrisiVersion(installDir)}' version has been successfully installed\n`))
-        console.log(chalk.whiteBright.bold('Run "npm start" if you want to run it natively (requires MongoDB), or "docker-compose up" to run it in a Docker container (requires Docker).\n'
-            + 'Read "README.md" for detailed configuration information.\n'))
+        return createSyngrisiProject({
+            force: args.force,
+            installDir,
+            npmTag: args.npmTag || ''
+        })
     } catch (error: any) {
         console.error(chalk.red(error.message))
     }
+}
+
+export async function createSyngrisiProject(opts: ProgramOpts) {
+    let npmTag = ''
+    if (opts.npmTag) {
+        npmTag = opts.npmTag?.startsWith('@') ? opts.npmTag : `@${opts.npmTag}`
+    }
+
+    const root = opts.installDir
+
+    /**
+     * check if a package.json exists and if not create one
+     */
+    const project = await readPackageUp({ cwd: root })
+
+    if (!project) {
+        await fs.mkdir(root, { recursive: true })
+        await fs.writeFile(
+            path.resolve(root, 'package.json'),
+            JSON.stringify({
+                name: 'syngrisi_new_project',
+                // type: 'module'
+            }, null, 2)
+        )
+
+        /**
+         * create a package-lock.json
+         */
+        await runProgram('npm', ['install'], { cwd: root, stdio: 'ignore' })
+    }
+    console.log(chalk.green(`\nInstalling ${chalk.bold('Syngrisi')}`))
+
+    await runProgram('npm', ['install', `syngrisi${npmTag}`], { cwd: root, stdio: 'ignore' })
+
+    console.log(chalk.green.bold(`✔ Syngrisi '${getSyngrisiVersion(root)}' version has been successfully installed\n`))
+    // console.log(chalk.whiteBright.bold('Run "npm start" if you want to run it natively (requires MongoDB), or "docker-compose up" to run it in a Docker container (requires Docker).\n'
+    //     + 'Read "README.md" for detailed configuration information.\n'))
 }
