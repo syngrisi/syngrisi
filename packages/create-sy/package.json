@@ -69,6 +69,7 @@
     "git-clone": "^0.2.0",
     "inquirer": "^9.1.4",
     "minimist": "^1.2.8",
+    "ora": "^7.0.1",
     "read-pkg-up": "^10.1.0",
     "semver": "^7.3.8"
   },

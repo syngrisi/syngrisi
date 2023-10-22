@@ -7,12 +7,13 @@ import path from 'node:path'
 import fs from 'node:fs/promises'
 import { ProgramOpts } from './types'
 import { readPackageUp } from 'read-pkg-up'
+import ora from 'ora'
 
 export async function run() {
     try {
         const args = utils.parseArguments()
 
-        if (!args.force) {
+        if (!args.yes) {
             const continueInstallation = await utils.prompt('Do you want to continue with the installation?')
             if (!continueInstallation) {
                 console.log(chalk.yellow('❌ Installation canceled'))
@@ -20,23 +21,23 @@ export async function run() {
             }
         }
 
-        if (!utils.checkDocker()) {
-            console.log(chalk.yellow('⚠️ Docker Compose is not installed.'
-                + `Please install Docker Compose if you want to run Syngrisi inside containers. ${DOCKER_SETUP_MANUAL_URL}`))
-        }
-        if (!utils.checkMongoDB()) {
-            console.log(chalk.yellow('⚠️ MongoDB is not installed.'
-                + `Please install MongoDB if you want to run Syngrisi in the native mode. ${MONGODB_SETUP_MANUAL_URL}`))
-        }
+        if (!args.force) {
+            if (!utils.checkDocker()) {
+                console.log(chalk.yellow('⚠️ Docker Compose is not installed.'
+                    + `Please install Docker Compose if you want to run Syngrisi inside containers. ${DOCKER_SETUP_MANUAL_URL}\n`))
+            }
+            if (!utils.checkMongoDB()) {
+                console.log(chalk.yellow('⚠️ MongoDB is not installed.'
+                    + `Please install MongoDB if you want to run Syngrisi in the native mode. ${MONGODB_SETUP_MANUAL_URL}\n`))
+            }
 
-        if (!utils.checkNodeVersion()) {
-            const msg = `❌ This version: '${process.version}' of Node.js is not supported. Please use Node.js version ${NODE_VERSION}`
-            console.log(chalk.yellow(msg))
-            process.exitCode = 1
-            throw new Error(msg)
+            if (!utils.checkNodeVersion()) {
+                const msg = `❌ This version: '${process.version}' of Node.js is not supported. Please use Node.js version ${NODE_VERSION}\n`
+                console.log(chalk.yellow(msg))
+                process.exitCode = 1
+                throw new Error(msg)
+            }
         }
-
-        utils.checkNodeVersion()
 
         const dirParam = args._[0] || '.'
         const installDir = dirParam !== '.' ? dirParam : utils.getDirectoryName()
@@ -70,7 +71,6 @@ export async function createSyngrisiProject(opts: ProgramOpts) {
             path.resolve(root, 'package.json'),
             JSON.stringify({
                 name: 'syngrisi_new_project',
-                // type: 'module'
             }, null, 2)
         )
 
@@ -79,12 +79,11 @@ export async function createSyngrisiProject(opts: ProgramOpts) {
          */
         await runProgram('npm', ['install'], { cwd: root, stdio: 'ignore' })
     }
-    console.log(chalk.green(`\nInstalling ${chalk.bold('Syngrisi')}`))
-
+    const spinner = ora(chalk.green(`Installing ${chalk.bold('Syngrisi')}`)).start()
     await runProgram('npm', ['install', `syngrisi${npmTag}`], { cwd: root, stdio: 'ignore' })
+    spinner.stop()
 
-    console.log(chalk.green.bold(`✔ Syngrisi successfully installed in the following directory: ${root}\n`))
-    console.log(chalk.blue(`project root dir: ${root}\n`))
-    // console.log(chalk.whiteBright.bold('Run "npm start" if you want to run it natively (requires MongoDB), or "docker-compose up" to run it in a Docker container (requires Docker).\n'
-    //     + 'Read "README.md" for detailed configuration information.\n'))
+    console.log(chalk.green(`✔ Syngrisi ${chalk.greenBright(utils.getSyngrisiVersion(root))} successfully installed in the following directory: ${root}`))
+    console.log(chalk.white(`To run the application use the ${chalk.whiteBright('npx sy')} command`))
+    console.log(chalk.white.bold('For detailed configuration see https://github.com/viktor-silakov/syngrisi'))
 }
