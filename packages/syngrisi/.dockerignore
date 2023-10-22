@@ -16,3 +16,4 @@ debug*
 .npmrc
 docker-compose.yml
 data
+*.bak
