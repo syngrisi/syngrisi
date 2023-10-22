@@ -4,7 +4,9 @@ services:
         container_name: syngrisi-app-server
         restart: always
         # command: tail -f /dev/null
-        command: sh -c "node --max-old-space-size=4096 server.js"
+        working_dir: /usr/src/syngrisi
+#        command: sh -c "npx --node-arg=--max-old-space-size=4096 sy"
+        command: /bin/sh -c "while true; do node index.js; done"
         build:
             context: .
             dockerfile: syngrisi-app.dockerfile
@@ -31,12 +33,12 @@ services:
             SYNGRISI_PAGINATION_SIZE: "${SYNGRISI_PAGINATION_SIZE:-50}"
             SYNGRISI_SESSION_STORE_KEY: "${SYNGRISI_SESSION_STORE_KEY}"
             SYNGRISI_APP_PORT: 3000
-        healthcheck:
-            test: wget -q -O - http://syngrisi-app:3000/status | grep alive:true
-            interval: 1m30s
-            timeout: 10s
-            retries: 3
-            start_period: 40s
+#        healthcheck:
+#            test: wget -q -O - http://syngrisi-app:3000/status | grep alive:true
+#            interval: 1m30s
+#            timeout: 10s
+#            retries: 3
+#            start_period: 40s
 
     syngrisi-db:
         cap_add:
