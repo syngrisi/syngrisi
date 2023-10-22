@@ -12,7 +12,21 @@ import ora from 'ora'
 export async function run() {
     try {
         const args = utils.parseArguments()
-        console.log(args, args.yes, !args._.includes('--yes'))
+
+        if (args.help || args._.includes('--help')) {
+            console.log(`
+            Usage: syngrisi [DIRECTORY] [OPTIONS]
+
+            DIRECTORY:
+            Specify the directory where Syngrisi will be installed. If not provided, the current directory will be used.
+
+            Options:
+            -f, --force   Force the installation even if the checks are not passed
+            -y, --yes     Automatically agree to continue the installation
+            --help        Show usage information and exit
+        `)
+            return
+        }
 
         if (args.yes === undefined && !args._.includes('--yes')) {
             const continueInstallation = await utils.prompt('Do you want to continue with the installation?')
