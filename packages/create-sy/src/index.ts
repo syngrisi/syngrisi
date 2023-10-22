@@ -12,10 +12,9 @@ import ora from 'ora'
 export async function run() {
     try {
         const args = utils.parseArguments()
-        console.log(args)
-        return
+        console.log(args, args.yes, !args._.includes('--yes'))
 
-        if (!args.yes) {
+        if (args.yes === undefined && !args._.includes('--yes')) {
             const continueInstallation = await utils.prompt('Do you want to continue with the installation?')
             if (!continueInstallation) {
                 console.log(chalk.yellow('❌ Installation canceled'))
@@ -23,7 +22,7 @@ export async function run() {
             }
         }
 
-        if (!args.force) {
+        if (args.force === undefined && !args._.includes('--force')) {
             if (!utils.checkDocker()) {
                 console.log(chalk.yellow('⚠️ Docker Compose is not installed.'
                     + `Please install Docker Compose if you want to run Syngrisi inside containers. ${DOCKER_SETUP_MANUAL_URL}\n`))
