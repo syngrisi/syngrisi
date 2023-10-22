@@ -12,6 +12,8 @@ import ora from 'ora'
 export async function run() {
     try {
         const args = utils.parseArguments()
+        console.log(args)
+        return
 
         if (!args.yes) {
             const continueInstallation = await utils.prompt('Do you want to continue with the installation?')
