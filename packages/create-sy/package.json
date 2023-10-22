@@ -66,6 +66,7 @@
   },
   "dependencies": {
     "chalk": "^5.2.0",
+    "cross-spawn": "^7.0.3",
     "git-clone": "^0.2.0",
     "inquirer": "^9.1.4",
     "minimist": "^1.2.8",
