@@ -37,16 +37,32 @@ Install in certain folder
 ```bash
 npm init sy@latest <path_to_syngrisi>
 ```
+See more details about set up customization in [create-sy](../create-sy) package documentation
 
 > ⚠️ Make sure MongoDB started before run Syngrisi
 
 Run the server
 
 ```shell script
-npm start
+npx sy
 ```
 
 ### Container Mode
+
+Besides running the application natively, you can also launch it in a Docker container using a Docker Compose file. This script facilitates the download and execution of such file from this repository.
+```bash
+# check if docker-compose installed
+command -v docker-compose >/dev/null 2>&1 || { echo >&2 "docker-compose is required, please install and run it again"; exit 1; }
+
+mkdir my_new_syngrisi_project && cd my_new_syngrisi_project
+curl -LO https://raw.githubusercontent.com/viktor-silakov/SYNGRISI-NEW/main/packages/syngrisi/syngrisi-app.dockerfile
+curl -LO https://raw.githubusercontent.com/viktor-silakov/SYNGRISI-NEW/main/packages/syngrisi/docker-compose.yml
+sudo docker-compose up
+```
+
+You're free to modify the Docker Compose file based on your requirements. Be sure to properly set up service definitions and options, otherwise, services might not operate as desired.
+
+Environment variables in Docker Compose can be set in an environment file or directly in the shell. For more details on configuration, please refer to the following documentation.
 
 ```shell script
 sudo docker-compose up
