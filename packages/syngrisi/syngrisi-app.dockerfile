@@ -2,17 +2,26 @@ FROM node:14.20.0-alpine3.16
 
 WORKDIR /usr/src/syngrisi
 
-ENV PYTHONUNBUFFERED=1
+RUN apk add --no-cache rsync mongodb-tools && \
+    npm init sy@latest /usr/src/syngrisi -- --yes --force
 
-# mongodb-tools && rsync
-RUN apk add --no-cache rsync mongodb-tools
 
-# install dependencies
-COPY package*.json ./
-RUN npm install
+# FROM node:14.20.0-alpine3.16
+#
+# WORKDIR /usr/src/syngrisi
+#
+# ENV PYTHONUNBUFFERED=1
+#
+# # mongodb-tools && rsync
+# RUN apk add --no-cache rsync mongodb-tools
+#
+# # install dependencies
+# # COPY package*.json ./
+# # RUN npm install
+# RUN npm init sy@latest -- --yes --force
 
-# copy source
-COPY . ./
+# # copy source
+# COPY . ./
 
 
 # FROM node:14.20.0-alpine3.16
