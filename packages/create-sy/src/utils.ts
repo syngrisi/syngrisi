@@ -7,6 +7,7 @@ import semver from 'semver'
 import minimist from 'minimist'
 import path from 'node:path'
 import spawn from 'cross-spawn'
+import { Arguments } from './types'
 
 export const checkNodeVersion = (): boolean => {
     const unsupportedNodeVersion = !semver.satisfies(process.version, NODE_VERSION)
@@ -71,7 +72,17 @@ function printAndExit(error?: string, signal?: NodeJS.Signals | null) {
     process.exit(1)
 }
 
-export const parseArguments = (): any => minimist(process.argv.slice(2))
+
+export function parseArguments(): Arguments {
+    const args: string[] = process.argv.slice(2)
+    const parsedArgs: minimist.ParsedArgs = minimist(args)
+
+    // Handle shorthands
+    parsedArgs.force = parsedArgs.force || parsedArgs.f
+    parsedArgs.yes = parsedArgs.yes || parsedArgs.y
+
+    return parsedArgs as Arguments
+}
 
 export function runProgram(command: string, args: string[], options: SpawnOptions) {
     const child = spawn(command, args, { stdio: 'inherit', ...options })
