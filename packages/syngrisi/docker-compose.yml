@@ -5,8 +5,8 @@ services:
         restart: always
         # command: tail -f /dev/null
         working_dir: /usr/src/syngrisi
-#        command: sh -c "npx --node-arg=--max-old-space-size=4096 sy"
-        command: /bin/sh -c "while true; do node index.js; done"
+        command: sh -c "npx --node-arg=--max-old-space-size=4096 sy"
+#        command: /bin/sh -c "while true; do node index.js; done"
         build:
             context: .
             dockerfile: syngrisi-app.dockerfile
