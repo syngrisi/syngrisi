@@ -5,7 +5,7 @@
     "packages/*"
   ],
   "scripts": {
-    "test": "lerna run test --scope=syngrisi",
+    "test": "lerna run test --scope=create-sy --scope=syngrisi",
     "start": "lerna run start --scope=syngrisi",
     "build": "lerna run build",
     "graph": "nx graph"
