@@ -66,3 +66,4 @@ build
 .idea/
 .DS_Store
 *.tsbuildinfo
+tests/*.js
