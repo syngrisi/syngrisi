@@ -23,3 +23,5 @@ node_modules
 .env
 /src/server/data/custom_devices.json
 /static/data/custom_devices.json
+/coverage/
+/.nyc_output/

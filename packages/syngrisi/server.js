@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+const v8 = require('v8');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const MongoStore = require('connect-mongo');
@@ -36,6 +37,17 @@ const { disableCors } = require('./src/server/middlewares/disableCors');
 global.log = new Logger({ dbConnectionString: config.connectionString });
 this.logMeta = { scope: 'entrypoint' };
 log.info('Init the application', this);
+
+const coverage = process.env.SYNGRISI_COVERAGE === 'true';
+process.on('SIGINT', () => {
+    if (coverage) {
+        log.info('take coverage');
+        v8.takeCoverage();
+        v8.stopCoverage();
+    }
+    console.log('Program shutting down (Ctrl+C).');
+    process.exit(1);
+});
 
 function compressionFilter(req, res) {
     if (req.headers['x-no-compression']) {

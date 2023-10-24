@@ -180,7 +180,7 @@ exports.hooks = {
         }
     },
     afterScenario: async function (uri, feature, scenario, result, sourceLocation) {
-        if (browser.syngrisiServer) await browser.syngrisiServer.kill();
+        if (browser.syngrisiServer) await browser.syngrisiServer.kill('SIGINT');
         // await browser.execute('localStorage.clear()');
     },
     // afterFeature: function (uri, feature, scenarios) {
