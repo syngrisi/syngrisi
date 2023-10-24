@@ -140,6 +140,7 @@ const startServer = (params) => {
     env.SYNGRISI_DISABLE_FIRST_RUN = process.env.SYNGRISI_DISABLE_FIRST_RUN || '1';
     env.SYNGRISI_AUTH = process.env.SYNGRISI_AUTH || '0';
     env.SYNGRISI_APP_PORT = cidPort;
+    env.SYNGRISI_COVERAGE = 'true';
     browser.config.serverPort = cidPort;
     browser.config.testScreenshotsFolder = `./baselinesTest/${cid}/`;
     if (process.env.DOCKER !== '1') env.SYNGRISI_IMAGES_PATH = browser.config.testScreenshotsFolder;
@@ -158,9 +159,9 @@ const startServer = (params) => {
             });
     } else {
         // const nodePath = process.env.SYNGRISI_TEST_SERVER_NODE_PATH || 'node';
-        const nodePath = 'node';
-        child = spawn(nodePath,
-            ['server.js', `syngrisi_test_server_${cid}`], {
+        // const nodePath = 'c8';
+        child = spawn('c8',
+            ['node', 'server.js', `syngrisi_test_server_${cid}`], {
                 env,
                 shell: process.platform === 'win32',
                 cwd: cmdPath,
@@ -205,7 +206,7 @@ const stopServer = () => {
             output = execSync('docker-compose stop')
                 .toString();
         } else {
-            output = execSync(`pkill -f syngrisi_test_server_${getCid()}`)
+            output = execSync(`pkill -SIGINT -f syngrisi_test_server_${getCid()}`)
                 .toString();
         }
     } catch (e) {
