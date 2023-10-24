@@ -1,6 +1,6 @@
 import chalk from 'chalk'
 import child_process, { SpawnOptions } from 'node:child_process'
-import fs from 'node:fs'
+import fss from 'node:fs'
 import inquirer from 'inquirer'
 import { NODE_VERSION } from './constants.js'
 import semver from 'semver'
@@ -9,9 +9,12 @@ import path from 'node:path'
 import spawn from 'cross-spawn'
 import { Arguments } from './types'
 
-export const checkNodeVersion = (): boolean => {
+export const checkNodeVersion = (): { supported: boolean, version: string } => {
     const unsupportedNodeVersion = !semver.satisfies(process.version, NODE_VERSION)
-    return !unsupportedNodeVersion
+    return {
+        supported: !unsupportedNodeVersion,
+        version: process.version
+    }
 
 }
 export const checkDocker = (): boolean => {
@@ -25,21 +28,21 @@ export const checkDocker = (): boolean => {
     }
 }
 
-export const checkEmptyDirectory = (directory: string): boolean => {
-    return fs.readdirSync(directory).length <= 0
-}
+// export const checkEmptyDirectory = (directory: string): boolean => {
+//     return fs.readdirSync(directory).length <= 0
+// }
 
 export const getDirectoryName = (): string => process.cwd()
 
 export const getSyngrisiVersion = (installDir: string) => {
-    return JSON.parse(fs.readFileSync(path.join(installDir, 'package.json')).toString()).dependencies?.syngrisi
+    return JSON.parse(fss.readFileSync(path.join(installDir, 'package.json')).toString()).dependencies?.syngrisi
 }
 
 export const installDependencies = (directory: string): void => {
     child_process.execSync('npm install', { cwd: directory, stdio: 'inherit' })
 }
 
-export const prompt = async (message: string): Promise<string> => {
+export const prompt = async (message: string): Promise<boolean> => {
     const { answer } = await inquirer.prompt([
         {
             type: 'confirm',
@@ -62,20 +65,22 @@ export const checkMongoDB = (): boolean => {
     }
 }
 
-function printAndExit(error?: string, signal?: NodeJS.Signals | null) {
+export function printAndExit(error?: string, signal?: NodeJS.Signals | null) {
     if (signal === 'SIGINT') {
         console.log('\n\nGoodbye 👋')
     } else {
-        console.log(`\n\n⚠️  Ups, something went wrong${error ? `: ${error}` : ''}!`)
+        console.error(`\n\nRuntime error: '${error}'`)
     }
-
     process.exit(1)
 }
 
+export function getArgs() {
+    const args: string[] = process.argv.slice(2)
+    return minimist(args)
+}
 
 export function parseArguments(): Arguments {
-    const args: string[] = process.argv.slice(2)
-    const parsedArgs: minimist.ParsedArgs = minimist(args)
+    const parsedArgs: minimist.ParsedArgs = getArgs()
 
     // Handle shorthands
     parsedArgs.force = parsedArgs.force || parsedArgs.f
