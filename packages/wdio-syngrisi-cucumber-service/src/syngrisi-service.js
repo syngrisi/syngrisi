@@ -91,7 +91,7 @@ export default class SyngrisiCucumberService {
             );
             log.trace('beforeScenario hook END');
         } catch (e) {
-            const errMsg = 'error in Syngrisi Cucumber service, maybe Syngrisi is not started,\n'
+            const errMsg = 'error in Syngrisi Cucumber service, probably Syngrisi is not started,\n'
                 + ` beforeScenario hook: '${e + (e.trace || '')}' read the logs`;
             const errMockFn = () => {
                 log.error(errMsg);
