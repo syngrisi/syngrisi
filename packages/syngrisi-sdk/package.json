@@ -2,13 +2,16 @@
   "name": "@syngrisi/syngrisi-wdio-sdk",
   "version": "2.0.4",
   "description": "Syngrisi WebdriverIO SDK",
-  "main": "SyngrisiDriver.js",
+  "main": "dist/WDIODriver.js",
   "directories": {
-    "lib": "lib"
+    "lib": "src/lib"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",
-    "pub": "np"
+    "pub": "np",
+    "build": "run-s clean compile",
+    "clean": "rimraf tsconfig.tsbuildinfo ./build ./coverage",
+    "compile": "tsc -p ./tsconfig.json"
   },
   "repository": {
     "type": "git",
@@ -27,14 +30,24 @@
   },
   "homepage": "https://github.com/viktor-silakov/vrs-sdk/blob/master/README.md",
   "dependencies": {
+    "@wdio/globals": "^8.20.0",
     "@wdio/logger": "^7.16.0",
     "form-data": "^4.0.0",
     "got-cjs": "^12.0.4",
     "hasha": "^5.2.0"
   },
   "devDependencies": {
-    "eslint": "^8.3.0",
+    "@types/node": "^20.8.8",
+    "@typescript-eslint/eslint-plugin": "^5.48.2",
+    "@typescript-eslint/parser": "^5.48.2",
+    "@vitest/coverage-c8": "^0.28.1",
+    "@wdio/types": "^8.20.0",
+    "c8": "^7.12.0",
+    "eslint": "^8.52.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.25.3"
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-unicorn": "^45.0.2",
+    "typescript": "^5.2.2",
+    "vitest": "^0.34.6"
   }
 }
