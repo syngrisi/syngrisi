@@ -55,7 +55,7 @@ const startSession = async (params, username) => {
     log.info(`create test with name '${params.name}', params: '${JSON.stringify(params)}'`, $this, logOpts);
     const opts = removeEmptyProperties({
         name: params.name,
-        status: params.status,
+        status: 'Running',
         app: params.app,
         tags: params.tags && JSON.parse(params.tags),
         branch: params.branch,

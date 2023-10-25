@@ -11,12 +11,9 @@ export interface SessionParams {
     browserVersion?: string;
     browserFullVersion?: string;
     tags?: string[];
-}
 
-// interface API {
-//     getIdent(apikey: string): Promise<string>;
-//     startSession(sessionParams: SessionParams, apikey: string): Promise<RespJson>;
-// }
+    [key: string]: string | string[] | undefined;
+}
 
 export interface ApiSessionParams {
     run: string;
@@ -25,26 +22,87 @@ export interface ApiSessionParams {
     tags?: string[];
     branch?: string;
     name: string;
-    status: string;
+    // status: string;
     viewport: string;
     browserName: string;
     browserVersion: string;
     os: string;
     app: string;
+    [key: string]: string | string[] | undefined;
 }
 
-// interface RespJson {
-//     _id: string;
-// }
-//
-// interface WDIODriver {
-//     static getOS(): Promise<string>;
-//     static getViewport(): Promise<string>;
-//     static getBrowserName(): Promise<string>;
-//     static getBrowserVersion(): Promise<string>;
-//     static getBrowserFullVersion(): Promise<string>;
-// }
-//
-// interface Log {
-//     error(message: string): void;
-// }
+export interface CheckParams {
+    testId: string;
+    suite: string;
+    browser: string;
+    browserVersion: string;
+    browserFullVersion: string;
+    os: string;
+    app: string;
+    branch: string;
+    viewport?: string;
+}
+
+export interface CheckOptions {
+    testId: string;
+    suite: string;
+    name: string;
+    viewport: string;
+    hashCode: string;
+    domDump: any;
+    browserName: string;
+    browserVersion: string;
+    browserFullVersion: string;
+    os: string;
+    app: string;
+    branch: string;
+}
+
+export interface CheckResult {
+    name: string;
+    test: string;
+    suite: string;
+    app: string;
+    branch: string;
+    baselineId: string;
+    actualSnapshotId: string;
+    updatedDate: string;
+    status: string[];
+    browserName: string;
+    browserVersion: string;
+    browserFullVersion: string;
+    viewport: string;
+    os: string;
+    result: {
+        isSameDimensions: boolean;
+        dimensionDifference: {
+            width: number;
+            height: number;
+        };
+        rawMisMatchPercentage: number;
+        misMatchPercentage: string;
+        analysisTime: number;
+        executionTotalTime: string;
+        totalCheckHandleTime: string;
+    };
+    run: string;
+    markedAs: string;
+    markedDate: string;
+    markedByUsername: string;
+    creatorId: string;
+    creatorUsername: string;
+    failReasons: string[];
+    _id: string;
+    createdDate: string;
+    __v: number;
+    currentSnapshot: {
+        name: string;
+        filename: string;
+        imghash: string;
+        _id: string;
+        createdDate: string;
+        id: string;
+    };
+    lastSuccess: string;
+}
+

@@ -2,8 +2,8 @@ import FormData from 'form-data'
 import got from 'got-cjs'
 import hasha from 'hasha'
 import logger from '@wdio/logger'
-import { printErrorResponseBody } from './utils'
-import { ApiSessionParams } from '../types'
+import { prettyCheckResult, printErrorResponseBody } from './utils'
+import { ApiSessionParams, CheckOptions, CheckResult } from '../types'
 
 const log = logger('syngrisi-wdio-sdk')
 
@@ -25,31 +25,20 @@ class SyngrisiApi {
     }
 
     public async startSession(params: ApiSessionParams, apikey: string): Promise<any> {
-        try {
-            const apiHash = hasha(apikey)
-            const form = new FormData()
-            form.append('run', params.run)
-            form.append('suite', params.suite)
-            form.append('runident', params.runident)
-            if (params.tags) form.append('tags', JSON.stringify(params.tags))
-            if (params.branch) form.append('branch', params.branch)
-            form.append('name', params.name)
-            form.append('status', params.status)
-            form.append('viewport', params.viewport)
-            form.append('browser', params.browserName)
-            form.append('browserVersion', params.browserVersion)
-            form.append('os', params.os)
-            form.append('app', params.app)
-            const response = await got.post(`${this.config.url}v1/client/startSession`, {
-                body: form,
-                headers: { apikey: apiHash },
-            }).json()
-            return response
-        } catch (e: any) {
-            log.info(`Cannot createTest with params: '${JSON.stringify(params)}', error: '${e}'`)
-            printErrorResponseBody(e)
-            throw new Error(e + e.stack)
-        }
+        const apiHash = hasha(apikey)
+        const form = new FormData()
+        const required = ['run', 'suite', 'runident', 'name', 'viewport', 'browser', 'browserVersion', 'os', 'app']
+        required.forEach(param => form.append(param, params[param]))
+
+        // optional
+        if (params.tags) form.append('tags', JSON.stringify(params.tags))
+        if (params.branch) form.append('branch', params.branch)
+
+        const response = await got.post(`${this.config.url}v1/client/startSession`, {
+            body: form,
+            headers: { apikey: apiHash },
+        }).json()
+        return response
     }
 
     public async stopSession(testId: string, apikey: string): Promise<any> {
@@ -66,34 +55,72 @@ class SyngrisiApi {
         }
     }
 
+    addMessageIfCheckFailed(result: any) {
+        const patchedResult = result
+        if (patchedResult.status.includes('failed')) {
+            const checkView = `'${this.config.url}?checkId=${patchedResult._id}&modalIsOpen=true'`
+            patchedResult.message = `To evaluate the results of the check, follow the link: '${checkView}'`
+            // basically the links is useless - backward compatibility
+            patchedResult.vrsGroupLink = checkView
+            patchedResult.vrsDiffLink = checkView
+        }
+        return patchedResult
+    }
+
+    public async coreCheck(imageBuffer: Buffer, params: CheckOptions, apikey: string): Promise<CheckResult> {
+        let resultWithHash = await this.createCheck(params, null, params.hashCode, apikey)
+        resultWithHash = this.addMessageIfCheckFailed(resultWithHash)
+
+        log.info(`Check result Phase #1: ${prettyCheckResult(resultWithHash)}`)
+        if (resultWithHash.status === 'requiredFileData') {
+            let resultWithFile = await this.createCheck(params, imageBuffer, params.hashCode, apikey)
+            log.info(`Check result Phase #2: ${prettyCheckResult(resultWithFile)}`)
+            resultWithFile = this.addMessageIfCheckFailed(resultWithFile)
+            return resultWithFile
+        }
+        return resultWithHash
+    }
+
     public async createCheck(params: any, imageBuffer: Buffer | null, hashCode: string, apikey: string): Promise<any> {
         const apiHash = hasha(apikey)
         const url = `${this.config.url}v1/client/createCheck`
         const form = new FormData()
+        const fieldsMapping = {
+            branch: 'branch',
+            app: 'appName',
+            suite: 'suitename',
+            domDump: 'domdump',
+            vShifting: 'vShifting',
+            testId: 'testid',
+            name: 'name',
+            viewport: 'viewport',
+            browserName: 'browserName',
+            browserVersion: 'browserVersion',
+            browserFullVersion: 'browserFullVersion',
+            os: 'os'
+        }
+
         try {
-            if (params.branch) form.append('branch', params.branch)
-            if (params.app) form.append('appName', params.app)
-            if (params.suite) form.append('suitename', params.suite)
-            if (params.domDump) form.append('domdump', params.domDump || '')
+            Object.keys(fieldsMapping).forEach(key => {
+                if (params[key]) { // @ts-ignore
+                    form.append(fieldsMapping[key], params[key])
+                }
+            })
+
             if (hashCode) form.append('hashcode', hashCode)
             if (imageBuffer) form.append('file', imageBuffer, 'file')
-            if (params.vShifting) form.append('vShifting', params.vShifting)
 
-            form.append('testid', params.testId)
-            form.append('name', params.name)
-            form.append('viewport', params.viewport)
-            form.append('browserName', params.browserName)
-            form.append('browserVersion', params.browserVersion)
-            form.append('browserFullVersion', params.browserFullVersion)
-            form.append('os', params.os)
             const result = await got.post(url, {
                 body: form,
                 headers: { apikey: apiHash },
             }).json()
+
             return result
         } catch (e: any) {
-            printErrorResponseBody(e)
-            throw new Error(`fait to post data, response body: ${e.response?.body} \n '${e.stack || e}'`)
+            log.error('❌ createCheck error create check vi API' + e.stack || e.toString())
+            log.error('👉 Params:', params)
+            if (e.response) printErrorResponseBody(e)
+            throw e
         }
     }
 
@@ -114,7 +141,7 @@ class SyngrisiApi {
                 .json()
             return result
         } catch (e: any) {
-            throw new Error(e + e.stack)
+            throw new Error(e.toString() + e.stack)
         }
     }
 }

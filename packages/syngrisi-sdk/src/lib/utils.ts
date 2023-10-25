@@ -3,8 +3,8 @@ import logger from '@wdio/logger'
 const log = logger('wdio-syngrisi-cucumber-service')
 
 export const printErrorResponseBody = (e: any): void => {
-    if (e.response && e.response.body) {
-        log.error(`ERROR RESPONSE BODY: ${e.response.body}`)
+    if (e.response && e.response?.body) {
+        log.error(`ERROR RESPONSE BODY: ${e.response?.body}`)
     }
 }
 
