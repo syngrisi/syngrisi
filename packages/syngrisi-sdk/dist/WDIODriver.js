@@ -57,6 +57,7 @@ var getDomDump_1 = require("./lib/getDomDump");
 Object.defineProperty(exports, "getDomDump", { enumerable: true, get: function () { return getDomDump_1.getDomDump; } });
 var utils_1 = require("./lib/utils");
 var api_1 = require("./lib/api");
+var wdioHelpers_1 = require("./lib/wdioHelpers");
 var log = (0, logger_1.default)('syngrisi-wdio-sdk');
 var WDIODriver = /** @class */ (function () {
     function WDIODriver(cfg) {
@@ -64,156 +65,129 @@ var WDIODriver = /** @class */ (function () {
         this.config = cfg;
         this.params = {};
     }
-    WDIODriver.getViewport = function () {
-        return __awaiter(this, void 0, void 0, function () {
-            var viewport;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        if (WDIODriver.isAndroid()) {
-                            // @ts-ignore
-                            return [2 /*return*/, browser.capabilities.deviceScreenSize];
-                        }
-                        return [4 /*yield*/, browser.getWindowSize()];
-                    case 1:
-                        viewport = _a.sent();
-                        if (viewport && viewport.width && viewport.height) {
-                            return [2 /*return*/, "".concat(viewport.width, "x").concat(viewport.height)];
-                        }
-                        return [2 /*return*/, '0x0'];
-                }
-            });
-        });
-    };
-    WDIODriver.transformOs = function (platform) {
-        var lowercasePlatform = platform.toLowerCase();
-        var transform = {
-            win32: 'WINDOWS',
-            windows: 'WINDOWS',
-            macintel: 'macOS',
-        };
-        return transform[lowercasePlatform] || platform;
-    };
-    // not really os but more wide therm 'platform'
-    WDIODriver.getOS = function () {
-        var _a, _b, _c, _d, _e, _f;
-        return __awaiter(this, void 0, void 0, function () {
-            var platform, navPlatform, x, e_1;
-            return __generator(this, function (_g) {
-                switch (_g.label) {
-                    case 0:
-                        if (!(WDIODriver.isAndroid() || WDIODriver.isIos())) return [3 /*break*/, 1];
-                        // @ts-ignore
-                        platform = ((_b = (_a = browser.options) === null || _a === void 0 ? void 0 : _a.capabilities['bstack:options']) === null || _b === void 0 ? void 0 : _b.deviceName)
-                            // @ts-ignore
-                            || ((_c = browser.options) === null || _c === void 0 ? void 0 : _c.capabilities['appium:deviceName'])
-                            // @ts-ignore
-                            || ((_e = (_d = browser.options) === null || _d === void 0 ? void 0 : _d.capabilities) === null || _e === void 0 ? void 0 : _e.deviceName);
-                        if (!platform) {
-                            throw new Error("Cannot get the platform of your device: ".concat(JSON.stringify((_f = browser.options) === null || _f === void 0 ? void 0 : _f.capabilities)));
-                        }
-                        return [3 /*break*/, 10];
-                    case 1:
-                        navPlatform = void 0;
-                        x = 0;
-                        _g.label = 2;
-                    case 2:
-                        if (!(x < 5)) return [3 /*break*/, 9];
-                        _g.label = 3;
-                    case 3:
-                        _g.trys.push([3, 5, , 8]);
-                        return [4 /*yield*/, browser.execute(function () { return navigator.platform; })];
-                    case 4:
-                        navPlatform = _g.sent();
-                        if (navPlatform)
-                            return [3 /*break*/, 9];
-                        return [3 /*break*/, 8];
-                    case 5:
-                        e_1 = _g.sent();
-                        log.error("Error - cannot get the platform #".concat(x, ": '").concat(e_1, "'"));
-                        return [4 /*yield*/, browser.pause(500)];
-                    case 6:
-                        _g.sent();
-                        return [4 /*yield*/, browser.execute(function () { return navigator.platform; })];
-                    case 7:
-                        navPlatform = _g.sent();
-                        return [3 /*break*/, 8];
-                    case 8:
-                        x++;
-                        return [3 /*break*/, 2];
-                    case 9:
-                        // @ts-ignore
-                        platform = browser.capabilities.platform || navPlatform;
-                        _g.label = 10;
-                    case 10:
-                        if (process.env.ENV_POSTFIX) {
-                            return [2 /*return*/, "".concat(platform, "_").concat(process.env.ENV_POSTFIX)];
-                        }
-                        return [2 /*return*/, WDIODriver.transformOs(platform)];
-                }
-            });
-        });
-    };
-    WDIODriver.getBrowserName = function () {
-        // @ts-ignore
-        var browserName = browser.capabilities.browserName;
-        // @ts-ignore
-        var chromeOpts = browser.options.capabilities['goog:chromeOptions'];
-        if (chromeOpts && chromeOpts.args && chromeOpts.args.includes('--headless')) {
-            browserName += ' [HEADLESS]';
-        }
-        return browserName;
-    };
-    WDIODriver.isAndroid = function () {
-        return (browser.isAndroid
-            // @ts-ignore
-            || (browser.options.capabilities.browserName === 'Android')
-            // @ts-ignore
-            || (browser.options.capabilities.platformName === 'Android'));
-    };
-    WDIODriver.isIos = function () {
-        var _a, _b, _c;
-        return browser.isIOS
-            // @ts-ignore
-            || (browser.execute(function () { return navigator.platform; }) === 'iPhone')
-            // @ts-ignore
-            || (((_b = (_a = browser.options.capabilities) === null || _a === void 0 ? void 0 : _a.platformName) === null || _b === void 0 ? void 0 : _b.toLowerCase()) === 'ios')
-            // @ts-ignore
-            || (((_c = browser.options.capabilities) === null || _c === void 0 ? void 0 : _c.browserName) === 'iPhone')
-            || false;
-    };
-    WDIODriver.getBrowserFullVersion = function () {
-        var _a, _b, _c, _d, _e, _f;
-        var version;
-        if (WDIODriver.isAndroid() || WDIODriver.isIos()) {
-            // @ts-ignore
-            version = ((_b = (_a = browser.options) === null || _a === void 0 ? void 0 : _a.capabilities['bstack:options']) === null || _b === void 0 ? void 0 : _b.osVersion)
-                // @ts-ignore
-                || ((_c = browser.capabilities) === null || _c === void 0 ? void 0 : _c.version)
-                // @ts-ignore
-                || ((_d = browser.options) === null || _d === void 0 ? void 0 : _d.capabilities.platformVersion);
-        }
-        else {
-            // @ts-ignore
-            version = ((_e = browser.capabilities) === null || _e === void 0 ? void 0 : _e.browserVersion) || ((_f = browser.capabilities) === null || _f === void 0 ? void 0 : _f.version);
-        }
-        if (!version) {
-            // eslint-disable-next-line max-len
-            throw new Error('Cannot get Browser Version, try to check "capabilities.version", "capabilities.platformVersion" or "capabilities.browserVersion"');
-        }
-        return version;
-    };
-    // return major version of browser
-    WDIODriver.getBrowserVersion = function () {
-        var fullVersion = WDIODriver.getBrowserFullVersion();
-        if (!fullVersion.includes('.')) {
-            return fullVersion;
-        }
-        return fullVersion.split('.')[0];
-    };
+    // static async getViewport() {
+    //     if (isAndroid()) {
+    //         // @ts-ignore
+    //         return browser.capabilities.deviceScreenSize
+    //     }
+    //
+    //     const viewport = await browser.getWindowSize()
+    //     if (viewport && viewport.width && viewport.height) {
+    //         return `${viewport.width}x${viewport.height}`
+    //     }
+    //     return '0x0'
+    // }
+    //
+    // static transformOs(platform: string) {
+    //     const lowercasePlatform = platform.toLowerCase()
+    //     const transform: { [key: string]: string } = {
+    //         win32: 'WINDOWS',
+    //         windows: 'WINDOWS',
+    //         macintel: 'macOS',
+    //     }
+    //     return transform[lowercasePlatform] || platform
+    // }
+    //
+    // // not really os but more wide therm 'platform'
+    // static async getOS() {
+    //     let platform
+    //     if (isAndroid() || isIos()) {
+    //
+    //         // @ts-ignore
+    //         platform = browser.options?.capabilities['bstack:options']?.deviceName
+    //             // @ts-ignore
+    //             || browser.options?.capabilities['appium:deviceName']
+    //             // @ts-ignore
+    //             || browser.options?.capabilities?.deviceName
+    //         if (!platform) {
+    //
+    //             throw new Error(`Cannot get the platform of your device: ${JSON.stringify(browser.options?.capabilities)}`)
+    //         }
+    //     } else {
+    //         let navPlatform
+    //         for (let x = 0; x < 5; x++) {
+    //             try {
+    //                 navPlatform = await browser.execute(() => navigator.platform)
+    //                 if (navPlatform) break
+    //             } catch (e) {
+    //                 log.error(`Error - cannot get the platform #${x}: '${e}'`)
+    //                 await browser.pause(500)
+    //                 navPlatform = await browser.execute(() => navigator.platform)
+    //             }
+    //         }
+    //         // @ts-ignore
+    //         platform = browser.capabilities.platform || navPlatform
+    //     }
+    //
+    //     if (process.env.ENV_POSTFIX) {
+    //         return `${platform}_${process.env.ENV_POSTFIX}`
+    //     }
+    //     return transformOs(platform)
+    // }
+    //
+    // static getBrowserName() {
+    //     // @ts-ignore
+    //     let { browserName } = browser.capabilities
+    //     // @ts-ignore
+    //     const chromeOpts = browser.options.capabilities['goog:chromeOptions']
+    //     if (chromeOpts && chromeOpts.args && chromeOpts.args.includes('--headless')) {
+    //         browserName += ' [HEADLESS]'
+    //     }
+    //     return browserName
+    // }
+    //
+    // static isAndroid() {
+    //     return (
+    //         browser.isAndroid
+    //         // @ts-ignore
+    //         || (browser.options.capabilities.browserName === 'Android')
+    //         // @ts-ignore
+    //         || (browser.options.capabilities.platformName === 'Android')
+    //     )
+    // }
+    //
+    // static isIos() {
+    //     return browser.isIOS
+    //         // @ts-ignore
+    //         || (browser.execute(() => navigator.platform) === 'iPhone')
+    //         // @ts-ignore
+    //         || (browser.options.capabilities?.platformName?.toLowerCase() === 'ios')
+    //         // @ts-ignore
+    //         || (browser.options.capabilities?.browserName === 'iPhone')
+    //         || false
+    // }
+    //
+    // static getBrowserFullVersion() {
+    //     let version
+    //     if (isAndroid() || isIos()) {
+    //         // @ts-ignore
+    //         version = browser.options?.capabilities['bstack:options']?.osVersion
+    //             // @ts-ignore
+    //             || browser.capabilities?.version
+    //             // @ts-ignore
+    //             || browser.options?.capabilities.platformVersion
+    //     } else {
+    //         // @ts-ignore
+    //         version = browser.capabilities?.browserVersion || browser.capabilities?.version
+    //     }
+    //     if (!version) {
+    //         // eslint-disable-next-line max-len
+    //         throw new Error('Cannot get Browser Version, try to check "capabilities.version", "capabilities.platformVersion" or "capabilities.browserVersion"')
+    //     }
+    //     return version
+    // }
+    //
+    // // return major version of browser
+    // static getBrowserVersion() {
+    //     const fullVersion = getBrowserFullVersion()
+    //     if (!fullVersion.includes('.')) {
+    //         return fullVersion
+    //     }
+    //     return fullVersion.split('.')[0]
+    // }
     WDIODriver.prototype.startTestSession = function (params, apikey) {
         return __awaiter(this, void 0, void 0, function () {
-            var $this, _a, os, _b, viewport, _c, browserName, _d, browserVersion, _e, browserFullVersion, _f, testName, respJson, e_2;
+            var $this, _a, os, _b, viewport, _c, browserName, _d, browserVersion, _e, browserFullVersion, _f, testName, respJson, e_1;
             return __generator(this, function (_g) {
                 switch (_g.label) {
                     case 0:
@@ -233,7 +207,7 @@ var WDIODriver = /** @class */ (function () {
                         }
                         _b = params.os;
                         if (_b) return [3 /*break*/, 4];
-                        return [4 /*yield*/, WDIODriver.getOS()];
+                        return [4 /*yield*/, (0, wdioHelpers_1.getOS)()];
                     case 3:
                         _b = (_g.sent());
                         _g.label = 4;
@@ -241,7 +215,7 @@ var WDIODriver = /** @class */ (function () {
                         os = _b;
                         _c = params.viewport;
                         if (_c) return [3 /*break*/, 6];
-                        return [4 /*yield*/, WDIODriver.getViewport()];
+                        return [4 /*yield*/, (0, wdioHelpers_1.getViewport)()];
                     case 5:
                         _c = (_g.sent());
                         _g.label = 6;
@@ -249,7 +223,7 @@ var WDIODriver = /** @class */ (function () {
                         viewport = _c;
                         _d = params.browserName;
                         if (_d) return [3 /*break*/, 8];
-                        return [4 /*yield*/, WDIODriver.getBrowserName()];
+                        return [4 /*yield*/, (0, wdioHelpers_1.getBrowserName)()];
                     case 7:
                         _d = (_g.sent());
                         _g.label = 8;
@@ -257,7 +231,7 @@ var WDIODriver = /** @class */ (function () {
                         browserName = _d;
                         _e = params.browserVersion;
                         if (_e) return [3 /*break*/, 10];
-                        return [4 /*yield*/, WDIODriver.getBrowserVersion()];
+                        return [4 /*yield*/, (0, wdioHelpers_1.getBrowserVersion)()];
                     case 9:
                         _e = (_g.sent());
                         _g.label = 10;
@@ -265,7 +239,7 @@ var WDIODriver = /** @class */ (function () {
                         browserVersion = _e;
                         _f = params.browserFullVersion;
                         if (_f) return [3 /*break*/, 12];
-                        return [4 /*yield*/, WDIODriver.getBrowserFullVersion()];
+                        return [4 /*yield*/, (0, wdioHelpers_1.getBrowserFullVersion)()];
                     case 11:
                         _f = (_g.sent());
                         _g.label = 12;
@@ -304,9 +278,9 @@ var WDIODriver = /** @class */ (function () {
                         $this.params.testId = respJson._id;
                         return [2 /*return*/, respJson];
                     case 14:
-                        e_2 = _g.sent();
-                        log.error("Cannot start session, error: '".concat(e_2, "' \n '").concat(e_2.stack || '', "'"));
-                        throw new Error("Cannot start session, error: '".concat(e_2, "' \n '").concat(e_2.stack || '', "'"));
+                        e_1 = _g.sent();
+                        log.error("Cannot start session, error: '".concat(e_1, "' \n '").concat(e_1.stack || '', "'"));
+                        throw new Error("Cannot start session, error: '".concat(e_1, "' \n '").concat(e_1.stack || '', "'"));
                     case 15: return [2 /*return*/];
                 }
             });
@@ -377,7 +351,7 @@ var WDIODriver = /** @class */ (function () {
                         };
                         _a = params.viewport;
                         if (_a) return [3 /*break*/, 2];
-                        return [4 /*yield*/, WDIODriver.getViewport()];
+                        return [4 /*yield*/, (0, wdioHelpers_1.getViewport)()];
                     case 1:
                         _a = (_e.sent());
                         _e.label = 2;
@@ -385,7 +359,7 @@ var WDIODriver = /** @class */ (function () {
                         _d.viewport = _a;
                         _b = $this.params.browserName;
                         if (_b) return [3 /*break*/, 4];
-                        return [4 /*yield*/, WDIODriver.getBrowserVersion()];
+                        return [4 /*yield*/, (0, wdioHelpers_1.getBrowserVersion)()];
                     case 3:
                         _b = (_e.sent());
                         _e.label = 4;
@@ -393,7 +367,7 @@ var WDIODriver = /** @class */ (function () {
                         _d.browserName = _b;
                         _c = $this.params.os;
                         if (_c) return [3 /*break*/, 6];
-                        return [4 /*yield*/, WDIODriver.getOS()];
+                        return [4 /*yield*/, (0, wdioHelpers_1.getOS)()];
                     case 5:
                         _c = (_e.sent());
                         _e.label = 6;
@@ -413,7 +387,7 @@ var WDIODriver = /** @class */ (function () {
     WDIODriver.prototype.check = function (checkName, imageBuffer, apikey, params, domDump) {
         var _a, _b, _c, _d, _e, _f, _g, _h;
         return __awaiter(this, void 0, void 0, function () {
-            var $this, opts, _j, _k, _l, _m, _o, e_3;
+            var $this, opts, _j, _k, _l, _m, _o, e_2;
             var _p;
             return __generator(this, function (_q) {
                 switch (_q.label) {
@@ -434,7 +408,7 @@ var WDIODriver = /** @class */ (function () {
                         };
                         _j = (params === null || params === void 0 ? void 0 : params.viewport);
                         if (_j) return [3 /*break*/, 3];
-                        return [4 /*yield*/, WDIODriver.getViewport()];
+                        return [4 /*yield*/, (0, wdioHelpers_1.getViewport)()];
                     case 2:
                         _j = (_q.sent());
                         _q.label = 3;
@@ -442,7 +416,7 @@ var WDIODriver = /** @class */ (function () {
                         _p.viewport = _j;
                         _k = ((_c = $this.params) === null || _c === void 0 ? void 0 : _c.browserName);
                         if (_k) return [3 /*break*/, 5];
-                        return [4 /*yield*/, WDIODriver.getBrowserVersion()];
+                        return [4 /*yield*/, (0, wdioHelpers_1.getBrowserVersion)()];
                     case 4:
                         _k = (_q.sent());
                         _q.label = 5;
@@ -450,7 +424,7 @@ var WDIODriver = /** @class */ (function () {
                         _p.browserName = _k;
                         _l = ((_d = $this.params) === null || _d === void 0 ? void 0 : _d.browserVersion);
                         if (_l) return [3 /*break*/, 7];
-                        return [4 /*yield*/, WDIODriver.getBrowserVersion()];
+                        return [4 /*yield*/, (0, wdioHelpers_1.getBrowserVersion)()];
                     case 6:
                         _l = (_q.sent());
                         _q.label = 7;
@@ -458,7 +432,7 @@ var WDIODriver = /** @class */ (function () {
                         _p.browserVersion = _l;
                         _m = ((_e = $this.params) === null || _e === void 0 ? void 0 : _e.browserFullVersion);
                         if (_m) return [3 /*break*/, 9];
-                        return [4 /*yield*/, WDIODriver.getBrowserFullVersion()];
+                        return [4 /*yield*/, (0, wdioHelpers_1.getBrowserFullVersion)()];
                     case 8:
                         _m = (_q.sent());
                         _q.label = 9;
@@ -466,7 +440,7 @@ var WDIODriver = /** @class */ (function () {
                         _p.browserFullVersion = _m;
                         _o = ((_f = $this.params) === null || _f === void 0 ? void 0 : _f.os);
                         if (_o) return [3 /*break*/, 11];
-                        return [4 /*yield*/, WDIODriver.getOS()];
+                        return [4 /*yield*/, (0, wdioHelpers_1.getOS)()];
                     case 10:
                         _o = (_q.sent());
                         _q.label = 11;
@@ -481,8 +455,8 @@ var WDIODriver = /** @class */ (function () {
                         Object.assign(opts, params);
                         return [2 /*return*/, $this.coreCheck(imageBuffer, opts, apikey)];
                     case 12:
-                        e_3 = _q.sent();
-                        throw new Error("cannot create check, parameters: '".concat(JSON.stringify(opts), ", error: '").concat(e_3.stack || e_3, "'"));
+                        e_2 = _q.sent();
+                        throw new Error("cannot create check, parameters: '".concat(JSON.stringify(opts), ", error: '").concat(e_2.stack || e_2, "'"));
                     case 13: return [2 /*return*/];
                 }
             });

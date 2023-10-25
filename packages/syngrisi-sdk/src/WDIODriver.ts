@@ -4,11 +4,7 @@ import { getDomDump } from './lib/getDomDump'
 import { prettyCheckResult } from './lib/utils'
 import { SyngrisiApi } from './lib/api'
 import { SessionParams } from './types'
-// import { WebdriverIO } from '@wdio/types/build/Options';
-// import { Browser } from 'webdriverio'
-// import '@wdio/types'
-
-declare var browser: WebdriverIO.Browser
+import { getBrowserFullVersion, getBrowserName, getBrowserVersion, getOS, getViewport } from './lib/wdioHelpers'
 
 const log = logger('syngrisi-wdio-sdk')
 export { getDomDump }
@@ -29,126 +25,126 @@ class WDIODriver {
         this.params = {}
     }
 
-    static async getViewport() {
-        if (WDIODriver.isAndroid()) {
-            // @ts-ignore
-            return browser.capabilities.deviceScreenSize
-        }
-
-        const viewport = await browser.getWindowSize()
-        if (viewport && viewport.width && viewport.height) {
-            return `${viewport.width}x${viewport.height}`
-        }
-        return '0x0'
-    }
-
-    static transformOs(platform: string) {
-        const lowercasePlatform = platform.toLowerCase()
-        const transform: { [key: string]: string } = {
-            win32: 'WINDOWS',
-            windows: 'WINDOWS',
-            macintel: 'macOS',
-        }
-        return transform[lowercasePlatform] || platform
-    }
-
-    // not really os but more wide therm 'platform'
-    static async getOS() {
-        let platform
-        if (WDIODriver.isAndroid() || WDIODriver.isIos()) {
-
-            // @ts-ignore
-            platform = browser.options?.capabilities['bstack:options']?.deviceName
-                // @ts-ignore
-                || browser.options?.capabilities['appium:deviceName']
-                // @ts-ignore
-                || browser.options?.capabilities?.deviceName
-            if (!platform) {
-
-                throw new Error(`Cannot get the platform of your device: ${JSON.stringify(browser.options?.capabilities)}`)
-            }
-        } else {
-            let navPlatform
-            for (let x = 0; x < 5; x++) {
-                try {
-                    navPlatform = await browser.execute(() => navigator.platform)
-                    if (navPlatform) break
-                } catch (e) {
-                    log.error(`Error - cannot get the platform #${x}: '${e}'`)
-                    await browser.pause(500)
-                    navPlatform = await browser.execute(() => navigator.platform)
-                }
-            }
-            // @ts-ignore
-            platform = browser.capabilities.platform || navPlatform
-        }
-
-        if (process.env.ENV_POSTFIX) {
-            return `${platform}_${process.env.ENV_POSTFIX}`
-        }
-        return WDIODriver.transformOs(platform)
-    }
-
-    static getBrowserName() {
-        // @ts-ignore
-        let { browserName } = browser.capabilities
-        // @ts-ignore
-        const chromeOpts = browser.options.capabilities['goog:chromeOptions']
-        if (chromeOpts && chromeOpts.args && chromeOpts.args.includes('--headless')) {
-            browserName += ' [HEADLESS]'
-        }
-        return browserName
-    }
-
-    static isAndroid() {
-        return (
-            browser.isAndroid
-            // @ts-ignore
-            || (browser.options.capabilities.browserName === 'Android')
-            // @ts-ignore
-            || (browser.options.capabilities.platformName === 'Android')
-        )
-    }
-
-    static isIos() {
-        return browser.isIOS
-            // @ts-ignore
-            || (browser.execute(() => navigator.platform) === 'iPhone')
-            // @ts-ignore
-            || (browser.options.capabilities?.platformName?.toLowerCase() === 'ios')
-            // @ts-ignore
-            || (browser.options.capabilities?.browserName === 'iPhone')
-            || false
-    }
-
-    static getBrowserFullVersion() {
-        let version
-        if (WDIODriver.isAndroid() || WDIODriver.isIos()) {
-            // @ts-ignore
-            version = browser.options?.capabilities['bstack:options']?.osVersion
-                // @ts-ignore
-                || browser.capabilities?.version
-                // @ts-ignore
-                || browser.options?.capabilities.platformVersion
-        } else {
-            // @ts-ignore
-            version = browser.capabilities?.browserVersion || browser.capabilities?.version
-        }
-        if (!version) {
-            // eslint-disable-next-line max-len
-            throw new Error('Cannot get Browser Version, try to check "capabilities.version", "capabilities.platformVersion" or "capabilities.browserVersion"')
-        }
-        return version
-    }
-
-    // return major version of browser
-    static getBrowserVersion() {
-        const fullVersion = WDIODriver.getBrowserFullVersion()
-        if (!fullVersion.includes('.')) {
-            return fullVersion
-        }
-        return fullVersion.split('.')[0]
-    }
+    // static async getViewport() {
+    //     if (isAndroid()) {
+    //         // @ts-ignore
+    //         return browser.capabilities.deviceScreenSize
+    //     }
+    //
+    //     const viewport = await browser.getWindowSize()
+    //     if (viewport && viewport.width && viewport.height) {
+    //         return `${viewport.width}x${viewport.height}`
+    //     }
+    //     return '0x0'
+    // }
+    //
+    // static transformOs(platform: string) {
+    //     const lowercasePlatform = platform.toLowerCase()
+    //     const transform: { [key: string]: string } = {
+    //         win32: 'WINDOWS',
+    //         windows: 'WINDOWS',
+    //         macintel: 'macOS',
+    //     }
+    //     return transform[lowercasePlatform] || platform
+    // }
+    //
+    // // not really os but more wide therm 'platform'
+    // static async getOS() {
+    //     let platform
+    //     if (isAndroid() || isIos()) {
+    //
+    //         // @ts-ignore
+    //         platform = browser.options?.capabilities['bstack:options']?.deviceName
+    //             // @ts-ignore
+    //             || browser.options?.capabilities['appium:deviceName']
+    //             // @ts-ignore
+    //             || browser.options?.capabilities?.deviceName
+    //         if (!platform) {
+    //
+    //             throw new Error(`Cannot get the platform of your device: ${JSON.stringify(browser.options?.capabilities)}`)
+    //         }
+    //     } else {
+    //         let navPlatform
+    //         for (let x = 0; x < 5; x++) {
+    //             try {
+    //                 navPlatform = await browser.execute(() => navigator.platform)
+    //                 if (navPlatform) break
+    //             } catch (e) {
+    //                 log.error(`Error - cannot get the platform #${x}: '${e}'`)
+    //                 await browser.pause(500)
+    //                 navPlatform = await browser.execute(() => navigator.platform)
+    //             }
+    //         }
+    //         // @ts-ignore
+    //         platform = browser.capabilities.platform || navPlatform
+    //     }
+    //
+    //     if (process.env.ENV_POSTFIX) {
+    //         return `${platform}_${process.env.ENV_POSTFIX}`
+    //     }
+    //     return transformOs(platform)
+    // }
+    //
+    // static getBrowserName() {
+    //     // @ts-ignore
+    //     let { browserName } = browser.capabilities
+    //     // @ts-ignore
+    //     const chromeOpts = browser.options.capabilities['goog:chromeOptions']
+    //     if (chromeOpts && chromeOpts.args && chromeOpts.args.includes('--headless')) {
+    //         browserName += ' [HEADLESS]'
+    //     }
+    //     return browserName
+    // }
+    //
+    // static isAndroid() {
+    //     return (
+    //         browser.isAndroid
+    //         // @ts-ignore
+    //         || (browser.options.capabilities.browserName === 'Android')
+    //         // @ts-ignore
+    //         || (browser.options.capabilities.platformName === 'Android')
+    //     )
+    // }
+    //
+    // static isIos() {
+    //     return browser.isIOS
+    //         // @ts-ignore
+    //         || (browser.execute(() => navigator.platform) === 'iPhone')
+    //         // @ts-ignore
+    //         || (browser.options.capabilities?.platformName?.toLowerCase() === 'ios')
+    //         // @ts-ignore
+    //         || (browser.options.capabilities?.browserName === 'iPhone')
+    //         || false
+    // }
+    //
+    // static getBrowserFullVersion() {
+    //     let version
+    //     if (isAndroid() || isIos()) {
+    //         // @ts-ignore
+    //         version = browser.options?.capabilities['bstack:options']?.osVersion
+    //             // @ts-ignore
+    //             || browser.capabilities?.version
+    //             // @ts-ignore
+    //             || browser.options?.capabilities.platformVersion
+    //     } else {
+    //         // @ts-ignore
+    //         version = browser.capabilities?.browserVersion || browser.capabilities?.version
+    //     }
+    //     if (!version) {
+    //         // eslint-disable-next-line max-len
+    //         throw new Error('Cannot get Browser Version, try to check "capabilities.version", "capabilities.platformVersion" or "capabilities.browserVersion"')
+    //     }
+    //     return version
+    // }
+    //
+    // // return major version of browser
+    // static getBrowserVersion() {
+    //     const fullVersion = getBrowserFullVersion()
+    //     if (!fullVersion.includes('.')) {
+    //         return fullVersion
+    //     }
+    //     return fullVersion.split('.')[0]
+    // }
 
     async startTestSession(params: SessionParams, apikey: string) {
         const $this = this
@@ -163,11 +159,11 @@ class WDIODriver {
                 $this.params.suite = params.suite || 'Unknown'
             }
 
-            const os = params.os || await WDIODriver.getOS()
-            const viewport = params.viewport || await WDIODriver.getViewport()
-            const browserName = params.browserName || await WDIODriver.getBrowserName()
-            const browserVersion = params.browserVersion || await WDIODriver.getBrowserVersion()
-            const browserFullVersion = params.browserFullVersion || await WDIODriver.getBrowserFullVersion()
+            const os = params.os || await getOS()
+            const viewport = params.viewport || await getViewport()
+            const browserName = params.browserName || await getBrowserName()
+            const browserVersion = params.browserVersion || await getBrowserVersion()
+            const browserFullVersion = params.browserFullVersion || await getBrowserFullVersion()
             const testName = params.test
 
             Object.assign(
@@ -259,9 +255,9 @@ class WDIODriver {
         const imgHash = hasha(imageBuffer)
         let opts = {
             name: name,
-            viewport: params.viewport || await WDIODriver.getViewport(),
-            browserName: $this.params.browserName || await WDIODriver.getBrowserVersion(),
-            os: $this.params.os || await WDIODriver.getOS(),
+            viewport: params.viewport || await getViewport(),
+            browserName: $this.params.browserName || await getBrowserVersion(),
+            os: $this.params.os || await getOS(),
             app: $this.params.app,
             branch: $this.params.branch,
             imghash: imgHash,
@@ -285,11 +281,11 @@ class WDIODriver {
                 testId: $this.params?.testId,
                 suite: $this.params?.suite,
                 name: checkName,
-                viewport: params?.viewport || await WDIODriver.getViewport(),
-                browserName: $this.params?.browserName || await WDIODriver.getBrowserVersion(),
-                browserVersion: $this.params?.browserVersion || await WDIODriver.getBrowserVersion(),
-                browserFullVersion: $this.params?.browserFullVersion || await WDIODriver.getBrowserFullVersion(),
-                os: $this.params?.os || await WDIODriver.getOS(),
+                viewport: params?.viewport || await getViewport(),
+                browserName: $this.params?.browserName || await getBrowserVersion(),
+                browserVersion: $this.params?.browserVersion || await getBrowserVersion(),
+                browserFullVersion: $this.params?.browserFullVersion || await getBrowserFullVersion(),
+                os: $this.params?.os || await getOS(),
                 app: $this.params?.app,
                 branch: $this.params?.branch,
                 hashCode: hasha(imageBuffer),
