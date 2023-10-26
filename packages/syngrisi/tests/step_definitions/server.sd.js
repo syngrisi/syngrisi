@@ -13,6 +13,11 @@ When(/^I start Server$/, { timeout: 600000 }, () => {
     startServer('');
 });
 
+When(/^I start Driver$/, { timeout: 600000 }, () => {
+    startDriver('');
+});
+
+
 When(/^I start Server and start Driver$/, { timeout: 600000 }, () => {
     startServer('');
     startDriver('');
@@ -48,7 +53,7 @@ When(/^I set env variables:$/, (yml) => {
 });
 
 Given(/^I stop session$/, async () => {
-    await browser.vDriver.stopTestSession(browser.config.apiKey);
+    await browser.vDriver.stopTestSession();
 });
 
 Given(/^I setup driver with parameters:$/, async (params) => {

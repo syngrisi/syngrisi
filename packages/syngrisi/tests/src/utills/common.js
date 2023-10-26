@@ -64,7 +64,7 @@ const startSession = async (sessOpts) => {
     if (sessOpts.suiteName === 'EMPTY') {
         delete opts.suite;
     }
-    await browser.vDriver.startTestSession(opts, browser.config.apiKey);
+    await browser.vDriver.startTestSession(opts);
 };
 
 const fillCommonPlaceholders = function fillPlaceholders(str) {
@@ -241,6 +241,7 @@ const startDriver = (params) => {
     const drvOpts = YAML.parse(params) || {};
     browser.vDriver = new SyngrisiDriver({
         url: drvOpts.url || `http://${browser.config.serverDomain}:${browser.config.serverPort}/`,
+        apiKey: browser.config.apiKey,
     });
 };
 

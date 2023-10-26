@@ -3,14 +3,14 @@ import got from 'got-cjs'
 import hasha from 'hasha'
 import logger from '@wdio/logger'
 import { prettyCheckResult, printErrorResponseBody } from './utils'
-import { ApiSessionParams, CheckOptions, CheckResult } from '../types'
+import { ApiSessionParams, CheckOptions, CheckResult, Config } from './types'
 
 const log = logger('syngrisi-wdio-sdk')
 
 class SyngrisiApi {
     private config: any
 
-    constructor(cfg: any) {
+    constructor(cfg: Config) {
         this.config = cfg
     }
 
@@ -24,8 +24,8 @@ class SyngrisiApi {
         return str.join('&')
     }
 
-    public async startSession(params: ApiSessionParams, apikey: string): Promise<any> {
-        const apiHash = hasha(apikey)
+    public async startSession(params: ApiSessionParams): Promise<any> {
+        const apiHash = hasha(this.config.apiKey)
         const form = new FormData()
         const required = ['run', 'suite', 'runident', 'name', 'viewport', 'browser', 'browserVersion', 'os', 'app']
         required.forEach(param => form.append(param, params[param]))
@@ -41,9 +41,9 @@ class SyngrisiApi {
         return response
     }
 
-    public async stopSession(testId: string, apikey: string): Promise<any> {
+    public async stopSession(testId: string): Promise<any> {
         try {
-            const apiHash = hasha(apikey)
+            const apiHash = hasha(this.config.apiKey)
             const form = new FormData()
             const response = await got.post(`${this.config.url}v1/client/stopSession/${testId}`, {
                 body: form,
@@ -67,13 +67,13 @@ class SyngrisiApi {
         return patchedResult
     }
 
-    public async coreCheck(imageBuffer: Buffer, params: CheckOptions, apikey: string): Promise<CheckResult> {
-        let resultWithHash = await this.createCheck(params, null, params.hashCode, apikey)
+    public async coreCheck(imageBuffer: Buffer, params: CheckOptions): Promise<CheckResult> {
+        let resultWithHash = await this.createCheck(params, null, params.hashCode)
         resultWithHash = this.addMessageIfCheckFailed(resultWithHash)
 
         log.info(`Check result Phase #1: ${prettyCheckResult(resultWithHash)}`)
         if (resultWithHash.status === 'requiredFileData') {
-            let resultWithFile = await this.createCheck(params, imageBuffer, params.hashCode, apikey)
+            let resultWithFile = await this.createCheck(params, imageBuffer, params.hashCode)
             log.info(`Check result Phase #2: ${prettyCheckResult(resultWithFile)}`)
             resultWithFile = this.addMessageIfCheckFailed(resultWithFile)
             return resultWithFile
@@ -81,8 +81,8 @@ class SyngrisiApi {
         return resultWithHash
     }
 
-    public async createCheck(params: any, imageBuffer: Buffer | null, hashCode: string, apikey: string): Promise<any> {
-        const apiHash = hasha(apikey)
+    public async createCheck(params: any, imageBuffer: Buffer | null, hashCode: string): Promise<any> {
+        const apiHash = hasha(this.config.apiKey)
         const url = `${this.config.url}v1/client/createCheck`
         const form = new FormData()
         const fieldsMapping = {
@@ -130,10 +130,10 @@ class SyngrisiApi {
         return result
     }
 
-    public async checkIfBaselineExist(params: any, apikey: string): Promise<any> {
+    public async checkIfBaselineExist(params: any): Promise<any> {
         try {
             const searchString = this.objectToSearch({
-                ...params, ...{ apikey: hasha(apikey) },
+                ...params, ...{ apikey: hasha(this.config.apiKey) },
             })
             const url = `${this.config.url}v1/client/checkIfScreenshotHasBaselines?${searchString}`
             // console.log({ url });

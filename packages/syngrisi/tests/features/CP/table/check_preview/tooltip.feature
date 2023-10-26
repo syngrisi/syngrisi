@@ -22,6 +22,7 @@ Feature: Check Preview - Tooltip
     When I login via http with user:"Test" password "123"
     When I generate via http API key for the User
     When I set the API key in config
+    When I start Driver
 
   Scenario: Status View - Tooltip
     When I login with user:"Test" password "123"

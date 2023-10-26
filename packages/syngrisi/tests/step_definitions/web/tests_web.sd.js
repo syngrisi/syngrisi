@@ -142,7 +142,7 @@ When(/^I create "([^"]*)" tests with params:$/, { timeout: 600000 }, async funct
             branch: params.branch || 'integration',
             tags: params.tags || [],
             suite: params.suite || 'Integration suite',
-        }, browser.config.apiKey);
+        });
         browser.pause(300);
 
         const filePath = params.filePath || 'files/A.png';
@@ -157,7 +157,7 @@ When(/^I create "([^"]*)" tests with params:$/, { timeout: 600000 }, async funct
         // console.log({ test });
         this.STATE.test = test;
         this.STATE.currentCheck = checkResult;
-        await browser.vDriver.stopTestSession(browser.config.apiKey);
+        await browser.vDriver.stopTestSession();
     }
 });
 
@@ -181,7 +181,7 @@ When(/^I create "([^"]*)" tests with:$/, { timeout: 60000000 }, async function (
             run: params.runName || process.env.RUN_NAME || 'integration_run_name',
             runident: params.runIdent || process.env.RUN_IDENT || uuidv4(),
             suite: params.suiteName || 'Integration suite',
-        }, browser.config.apiKey);
+        });
         browser.pause(300);
         const checkResult = [];
         for (const check of params.checks) {
@@ -191,7 +191,7 @@ When(/^I create "([^"]*)" tests with:$/, { timeout: 60000000 }, async function (
         }
 
         this.STATE.currentCheck = checkResult[0];
-        await browser.vDriver.stopTestSession(browser.config.apiKey);
+        await browser.vDriver.stopTestSession();
     };
     for (const i of Array.from(Array(parseInt(num, 10))
         .keys())) {
