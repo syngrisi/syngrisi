@@ -45,6 +45,7 @@ Feature: API key generation
 
         # create checks
         When I set the API key in config
+        When I start Driver
         When I create "1" tests with params:
         """
           filePath: files/A.png

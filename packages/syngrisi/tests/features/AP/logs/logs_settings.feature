@@ -72,7 +72,7 @@ Feature: Logs Table Settings
             When I wait for "3" seconds
             When I select the option with the text "Message" for element "select[data-test='table-sort-by-select']"
 
-            When I wait for "3" seconds
+            When I wait for "5" seconds
             When I execute javascript code:
             """
             const elements = Array
@@ -87,7 +87,7 @@ Feature: Logs Table Settings
             """
 
             When I click on the element "[title='sort order is descendant']"
-            When I wait for "3" seconds
+            When I wait for "5" seconds
             When I execute javascript code:
             """
             const elements = Array

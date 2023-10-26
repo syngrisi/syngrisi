@@ -1,11 +1,8 @@
 {
-  "name": "@syngrisi/syngrisi-wdio-sdk",
+  "name": "@syngrisi/core-api",
   "version": "2.0.4",
-  "description": "Syngrisi WebdriverIO SDK",
-  "main": "dist/WDIODriver.js",
-  "directories": {
-    "lib": "src/lib"
-  },
+  "description": "Syngrisi Core JS client",
+  "main": "dist/SyngrisiApi.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",
     "pub": "np",
@@ -15,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/viktor-silakov/vrs-sdk.git"
+    "url": "git+ssh://git@github.com:viktor-silakov/syngrisi.git"
   },
   "keywords": [
     "visual",
@@ -26,12 +23,11 @@
   "author": "Viktar Silakou",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/viktor-silakov/vrs-sdk/issues"
+    "url": "https://github.com/viktor-silakov/syngrisi/issues"
   },
-  "homepage": "https://github.com/viktor-silakov/vrs-sdk/blob/master/README.md",
+  "homepage": "https://github.com/viktor-silakov/syngrisi",
   "dependencies": {
-    "@syngrisi/core-api": "^2.0.4",
-    "@wdio/globals": "^8.20.0",
+    "@syngrisi/core-api": "*",
     "@wdio/logger": "^7.16.0",
     "form-data": "^4.0.0",
     "got-cjs": "^12.0.4",

@@ -9,7 +9,6 @@ export default function (name, imageBuffer, params, domDump) {
                 const result = browser.vDriver.check(
                     name,
                     imageBuffer,
-                    browser.config.apiKey,
                     params,
                     domDump,
                 );

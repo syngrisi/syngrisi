@@ -1,8 +1,9 @@
 /* eslint-disable prefer-arrow-callback,func-names,no-console */
 const frisby = require('frisby');
-const { When } = require('cucumber');
+const { When, Then } = require('cucumber');
 const YAML = require('yaml');
 const { fillCommonPlaceholders } = require('../src/utills/common');
+const fs = require("fs");
 
 When(/^I send "([^"]*)" request to "([^"]*)"$/, async function (reqType, url) {
     const responce = frisby[reqType](url);
@@ -57,4 +58,28 @@ When(/^I expect the "([^"]*)" ([\d]+)st value response with:$/, async function (
     console.log({ response });
     expect(response)
         .toMatchObject(params);
+});
+
+When(/^I execute WDIODriver "([^"]*)" method with params:$/, async function (methodName, params) {
+    const opts = JSON.parse(
+        this.fillItemsPlaceHolders(fillCommonPlaceholders(params))
+    );
+    // const response = await browser.vDriver[methodName](opts, browser.config.apiKey);
+    let response;
+    if (methodName === 'check') {
+        const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${opts.filePath}`);
+        response = await browser.vDriver[methodName](opts.checkName, imageBuffer, opts.params);
+    } else {
+        response = await browser.vDriver[methodName](opts);
+    }
+    console.log(methodName, '💛', JSON.stringify(response, null, '    '));
+    await this.saveItem(methodName, response);
+});
+
+Then(/^I expect WDIODriver "([^"]*)" return value match object:$/, async function (methodName, params) {
+    const value = await this.getSavedItem(methodName);
+    const opts = JSON.parse(
+        this.fillItemsPlaceHolders(fillCommonPlaceholders(params))
+    );
+    expect(value).toMatchObject(opts);
 });

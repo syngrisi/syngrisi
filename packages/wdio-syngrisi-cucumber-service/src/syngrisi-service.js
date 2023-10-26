@@ -14,7 +14,7 @@ export default class SyngrisiCucumberService {
         this.options = serviceOptions;
         log.debug(`init the syngrisi driver with options: ${JSON.stringify(this.options)}`);
         const syngrisi = require('@syngrisi/syngrisi-wdio-sdk');
-        this.vDriver = new syngrisi.SyngrisiDriver({ url: this.options.endpoint });
+        this.vDriver = new syngrisi.SyngrisiDriver({ url: this.options.endpoint, apiKey: this.options.apikey });
         log.trace('finish of service initialization');
     }
 
@@ -72,21 +72,21 @@ export default class SyngrisiCucumberService {
             };
             log.debug(`start syngrisi session with params: '${JSON.stringify(params)}', apikey: ${this.options.apikey}`);
 
-            await this.vDriver.startTestSession(params, this.options.apikey);
+            await this.vDriver.startTestSession(params);
 
             const $this = this;
             browser.addCommand(
                 'syngrisiCheck',
                 // eslint-disable-next-line arrow-body-style
                 async (checkName, imageBuffer, opts, domDump = null) => {
-                    return $this.vDriver.check(checkName, imageBuffer, $this.options.apikey, opts, domDump);
+                    return $this.vDriver.check(checkName, imageBuffer, opts, domDump);
                 }
             );
             browser.addCommand(
                 'syngrisiIsBaselineExist',
                 // eslint-disable-next-line arrow-body-style
                 async (name, imageBuffer) => {
-                    return $this.vDriver.checkIfBaselineExist(name, imageBuffer, $this.options.apikey, params);
+                    return $this.vDriver.checkIfBaselineExist(name, imageBuffer, params);
                 }
             );
             log.trace('beforeScenario hook END');
@@ -140,7 +140,7 @@ export default class SyngrisiCucumberService {
                 return;
             }
             log.debug(`stop session with api key: '${this.options.apikey}'`);
-            await this.vDriver.stopTestSession(this.options.apikey);
+            await this.vDriver.stopTestSession();
             log.trace('afterScenario hook END');
         } catch (e) {
             throw new Error(`error in Syngrisi Cucumber service afterScenario hook: '${e + (e.trace || '')}'`);

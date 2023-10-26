@@ -82,6 +82,7 @@ Feature: User roles
 
         # create checks
         When I set the API key in config
+        When I start Driver
         When I create "5" tests with params:
         """
           filePath: files/A.png
@@ -106,6 +107,7 @@ Feature: User roles
 
         # create checks
         When I set the API key in config
+        When I start Driver
         When I create "7" tests with params:
         """
           filePath: files/A.png
@@ -129,6 +131,7 @@ Feature: User roles
 
         # create checks
         When I set the API key in config
+        When I start Driver
         When I create "3" tests with params:
         """
           filePath: files/A.png

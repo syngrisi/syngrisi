@@ -1,16 +1,14 @@
 import hasha from 'hasha'
 import { default as logger } from '@wdio/logger'
 import { getDomDump } from './lib/getDomDump'
-import { SyngrisiApi } from './lib/api'
-import { CheckOptions, CheckParams, SessionParams } from './types'
+
+// @ts-ignore
+import { SyngrisiApi } from '@syngrisi/core-api'
+import { CheckOptions, CheckParams, Config, SessionParams } from './types'
 import { getBrowserFullVersion, getBrowserName, getBrowserVersion, getOS, getViewport } from './lib/wdioHelpers'
 
 const log = logger('syngrisi-wdio-sdk')
 export { getDomDump }
-
-export interface Config {
-    url: string
-}
 
 class WDIODriver {
     api: SyngrisiApi
@@ -18,7 +16,6 @@ class WDIODriver {
     params: any
 
     constructor(cfg: Config) {
-
         this.api = new SyngrisiApi(cfg)
         this.params = {
             test: {}
@@ -35,7 +32,7 @@ class WDIODriver {
         }
     }
 
-    async startTestSession(params: SessionParams, apikey: string) {
+    async startTestSession(params: SessionParams) {
         try {
             WDIODriver.sessionParamsGuard(params)
 
@@ -59,7 +56,7 @@ class WDIODriver {
                 browserFullVersion: params.browserFullVersion || await getBrowserFullVersion()
             }
 
-            const respJson = await this.api.startSession(this.params.test, apikey)
+            const respJson = await this.api.startSession(this.params.test)
 
             if (!respJson) {
                 throw new Error(`response is empty, params: ${JSON.stringify(params, null, '\t')}`)
@@ -74,9 +71,13 @@ class WDIODriver {
         }
     }
 
-    async stopTestSession(apikey: string) {
-        const result = await this.api.stopSession(this.params.test.testId, apikey)
+    // async stopTestSession(apikey: string, testId: string) {
+    async stopTestSession() {
+        const testId = this.params.test.testId
+        this.params.test.testId = undefined
+        const result = await this.api.stopSession(testId)
         log.info(`Session with testId: '${result._id}' was stopped`)
+        return result
     }
 
     // identArgsGuard(params: any) {
@@ -101,11 +102,10 @@ class WDIODriver {
      * @param {Buffer} imageBuffer  image buffer
      * @param {string} name         name of check
      * @param {Object} params       object that must be related to ident array
-     * @param {string} apikey       apikey
      * @returns {Promise<Object>}
      */
     // ident:  ['name', 'viewport', 'browserName', 'os', 'app', 'branch'];
-    async checkIfBaselineExist(name: string, imageBuffer: Buffer, apikey: string, params: any) {
+    async checkIfBaselineExist(name: string, imageBuffer: Buffer, params: any) {
         const imgHash = hasha(imageBuffer)
         // this.params.ident = await this.api.getIdent(apikey)
         let opts = {
@@ -118,10 +118,10 @@ class WDIODriver {
             imghash: imgHash,
         }
 
-        return this.api.checkIfBaselineExist(opts, apikey)
+        return this.api.checkIfBaselineExist(opts)
     }
 
-    async check(checkName: string, imageBuffer: Buffer, apikey: string, params: CheckParams, domDump: any) {
+    async check(checkName: string, imageBuffer: Buffer, params: CheckParams, domDump: any) {
         if (this.params.test.testId === undefined) {
             throw new Error('The test id is empty, the session may not have started yet:'
                 + `check name: '${checkName}', driver: '${JSON.stringify(this, null, '\t')}'`)
@@ -149,7 +149,7 @@ class WDIODriver {
                 opts,
                 params,
             )
-            return this.api.coreCheck(imageBuffer, opts, apikey)
+            return this.api.coreCheck(imageBuffer, opts)
         } catch (e: any) {
             log.error(`cannot create check, params: '${JSON.stringify(params)}' opts: '${JSON.stringify(opts)}, error: '${e.stack || e.toString()}'`)
             throw e

@@ -8,17 +8,18 @@ const hasha_1 = __importDefault(require("hasha"));
 const logger_1 = __importDefault(require("@wdio/logger"));
 const getDomDump_1 = require("./lib/getDomDump");
 Object.defineProperty(exports, "getDomDump", { enumerable: true, get: function () { return getDomDump_1.getDomDump; } });
-const api_1 = require("./lib/api");
+// @ts-ignore
+const core_api_1 = require("@syngrisi/core-api");
 const wdioHelpers_1 = require("./lib/wdioHelpers");
 const log = (0, logger_1.default)('syngrisi-wdio-sdk');
 class WDIODriver {
     constructor(cfg) {
-        this.api = new api_1.SyngrisiApi(cfg);
+        this.api = new core_api_1.SyngrisiApi(cfg);
         this.params = {
             test: {}
         };
     }
-    async startTestSession(params, apikey) {
+    async startTestSession(params) {
         try {
             WDIODriver.sessionParamsGuard(params);
             if (params.suite) {
@@ -38,7 +39,7 @@ class WDIODriver {
                 tags: params.tags,
                 browserFullVersion: params.browserFullVersion || await (0, wdioHelpers_1.getBrowserFullVersion)()
             };
-            const respJson = await this.api.startSession(this.params.test, apikey);
+            const respJson = await this.api.startSession(this.params.test);
             if (!respJson) {
                 throw new Error(`response is empty, params: ${JSON.stringify(params, null, '\t')}`);
             }
@@ -51,9 +52,13 @@ class WDIODriver {
             throw new Error(eMsg);
         }
     }
-    async stopTestSession(apikey) {
-        const result = await this.api.stopSession(this.params.test.testId, apikey);
+    // async stopTestSession(apikey: string, testId: string) {
+    async stopTestSession() {
+        const testId = this.params.test.testId;
+        this.params.test.testId = undefined;
+        const result = await this.api.stopSession(testId);
         log.info(`Session with testId: '${result._id}' was stopped`);
+        return result;
     }
     // identArgsGuard(params: any) {
     //     this.params.ident.forEach((item: string) => {
@@ -75,11 +80,10 @@ class WDIODriver {
      * @param {Buffer} imageBuffer  image buffer
      * @param {string} name         name of check
      * @param {Object} params       object that must be related to ident array
-     * @param {string} apikey       apikey
      * @returns {Promise<Object>}
      */
     // ident:  ['name', 'viewport', 'browserName', 'os', 'app', 'branch'];
-    async checkIfBaselineExist(name, imageBuffer, apikey, params) {
+    async checkIfBaselineExist(name, imageBuffer, params) {
         const imgHash = (0, hasha_1.default)(imageBuffer);
         // this.params.ident = await this.api.getIdent(apikey)
         let opts = {
@@ -91,9 +95,9 @@ class WDIODriver {
             branch: this.params.branch,
             imghash: imgHash,
         };
-        return this.api.checkIfBaselineExist(opts, apikey);
+        return this.api.checkIfBaselineExist(opts);
     }
-    async check(checkName, imageBuffer, apikey, params, domDump) {
+    async check(checkName, imageBuffer, params, domDump) {
         if (this.params.test.testId === undefined) {
             throw new Error('The test id is empty, the session may not have started yet:'
                 + `check name: '${checkName}', driver: '${JSON.stringify(this, null, '\t')}'`);
@@ -116,7 +120,7 @@ class WDIODriver {
                 branch: this.params.test.branch,
             };
             Object.assign(opts, params);
-            return this.api.coreCheck(imageBuffer, opts, apikey);
+            return this.api.coreCheck(imageBuffer, opts);
         }
         catch (e) {
             log.error(`cannot create check, params: '${JSON.stringify(params)}' opts: '${JSON.stringify(opts)}, error: '${e.stack || e.toString()}'`);

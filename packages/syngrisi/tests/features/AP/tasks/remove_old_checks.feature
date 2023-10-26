@@ -22,6 +22,7 @@ Feature: Task - Remove old checks
         When I login via http with user:"Test" password "123"
         When I generate via http API key for the User
         When I set the API key in config
+        When I start Driver
 
     @smoke
     Scenario: Remove old checks [unaccepted]

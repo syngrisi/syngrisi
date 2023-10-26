@@ -110,4 +110,3 @@ export interface CheckResult {
     };
     lastSuccess: string;
 }
-
