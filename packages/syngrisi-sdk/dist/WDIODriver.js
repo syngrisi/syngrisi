@@ -10,7 +10,11 @@ const getDomDump_1 = require("./lib/getDomDump");
 Object.defineProperty(exports, "getDomDump", { enumerable: true, get: function () { return getDomDump_1.getDomDump; } });
 // @ts-ignore
 const core_api_1 = require("@syngrisi/core-api");
+const Baseline_schema_1 = require("./schemas/Baseline.schema");
+const Check_schema_1 = require("./schemas/Check.schema");
+const SessionParams_schema_1 = require("./schemas/SessionParams.schema");
 const wdioHelpers_1 = require("./lib/wdioHelpers");
+const paramsGuard_1 = require("./schemas/paramsGuard");
 const log = (0, logger_1.default)('syngrisi-wdio-sdk');
 class WDIODriver {
     constructor(cfg) {
@@ -19,9 +23,9 @@ class WDIODriver {
             test: {}
         };
     }
-    async startTestSession(params) {
+    async startTestSession({ params, suppressErrors = false }) {
         try {
-            WDIODriver.sessionParamsGuard(params);
+            (0, paramsGuard_1.paramsGuard)(params, 'startTestSession, params', SessionParams_schema_1.SessionParamsSchema);
             if (params.suite) {
                 this.params.suite = params.suite || 'Unknown';
             }
@@ -39,12 +43,15 @@ class WDIODriver {
                 tags: params.tags,
                 browserFullVersion: params.browserFullVersion || await (0, wdioHelpers_1.getBrowserFullVersion)()
             };
-            const respJson = await this.api.startSession(this.params.test);
-            if (!respJson) {
+            const result = await this.api.startSession(this.params.test);
+            if (result.error && !suppressErrors) {
+                throw `❌ Start Test Session Error: ${JSON.stringify(result, null, '  ')}`;
+            }
+            if (!result) {
                 throw new Error(`response is empty, params: ${JSON.stringify(params, null, '\t')}`);
             }
-            this.params.test.testId = respJson._id;
-            return respJson;
+            this.params.test.testId = result._id;
+            return result;
         }
         catch (e) {
             const eMsg = `Cannot start session, error: '${e}' \n '${e.stack}'`;
@@ -52,13 +59,22 @@ class WDIODriver {
             throw new Error(eMsg);
         }
     }
-    // async stopTestSession(apikey: string, testId: string) {
-    async stopTestSession() {
-        const testId = this.params.test.testId;
-        this.params.test.testId = undefined;
-        const result = await this.api.stopSession(testId);
-        log.info(`Session with testId: '${result._id}' was stopped`);
-        return result;
+    async stopTestSession({ suppressErrors = false } = {}) {
+        try {
+            const testId = this.params.test.testId;
+            this.params.test.testId = undefined;
+            const result = await this.api.stopSession(testId);
+            if (result.error && !suppressErrors) {
+                throw `❌ Start Test Session Error: ${JSON.stringify(result, null, '  ')}`;
+            }
+            log.info(`Session with testId: '${result._id}' was stopped`);
+            return result;
+        }
+        catch (e) {
+            const eMsg = `Cannot stop session, error: '${e}' \n '${e.stack}'`;
+            log.error(eMsg);
+            throw e;
+        }
     }
     // identArgsGuard(params: any) {
     //     this.params.ident.forEach((item: string) => {
@@ -76,51 +92,67 @@ class WDIODriver {
     //     return opts
     // }
     /**
-     * Check if the baseline exist with specific ident and specific hashcode
-     * @param {Buffer} imageBuffer  image buffer
-     * @param {string} name         name of check
-     * @param {Object} params       object that must be related to ident array
+     * Check if the baseline exist with specific ident and specific snapshot hashcode
+     * @param {Buffer} imageBuffer      image buffer
+     * @param {string} name             name of check
+     * @param {Object} params           object that must be related to ident array
+     * @param {boolean} suppressErrors  suppress API errors
      * @returns {Promise<Object>}
      */
     // ident:  ['name', 'viewport', 'browserName', 'os', 'app', 'branch'];
-    async checkIfBaselineExist(name, imageBuffer, params) {
+    async checkIfBaselineExist({ params, imageBuffer, suppressErrors = false }) {
+        if (!Buffer.isBuffer(imageBuffer))
+            throw new Error('checkIfBaselineExist - wrong imageBuffer');
+        (0, paramsGuard_1.paramsGuard)(params, 'checkIfBaselineExist, params', Baseline_schema_1.BaselineParamsSchema);
         const imgHash = (0, hasha_1.default)(imageBuffer);
-        // this.params.ident = await this.api.getIdent(apikey)
         let opts = {
-            name: name,
+            name: params.name,
             viewport: params.viewport || await (0, wdioHelpers_1.getViewport)(),
-            browserName: this.params.browser || await (0, wdioHelpers_1.getBrowserVersion)(),
-            os: this.params.os || await (0, wdioHelpers_1.getOS)(),
-            app: this.params.app,
-            branch: this.params.branch,
+            browserName: params.browserName || this.params.test.browser || await (0, wdioHelpers_1.getBrowserVersion)(),
+            os: params.os || this.params.test.os || await (0, wdioHelpers_1.getOS)(),
+            app: params.app || this.params.test.app,
+            branch: params.branch || this.params.test.branch,
             imghash: imgHash,
         };
-        return this.api.checkIfBaselineExist(opts);
+        (0, paramsGuard_1.paramsGuard)(opts, 'checkIfBaselineExist, opts', Baseline_schema_1.RequiredIdentOptionsSchema);
+        const result = await this.api.checkIfBaselineExist(opts);
+        if (result.error && !suppressErrors) {
+            throw `❌ Check If Baseline With certain snapshot hashcode error: ${JSON.stringify(result, null, '  ')}`;
+        }
+        return result;
     }
-    async check(checkName, imageBuffer, params, domDump) {
+    async check({ checkName, imageBuffer, params, domDump, suppressErrors = false }) {
         if (this.params.test.testId === undefined) {
             throw new Error('The test id is empty, the session may not have started yet:'
                 + `check name: '${checkName}', driver: '${JSON.stringify(this, null, '\t')}'`);
         }
+        if (!Buffer.isBuffer(imageBuffer))
+            throw new Error('check - wrong imageBuffer');
         let opts = null;
         try {
-            // ident:  ['name', 'viewport', 'browserName', 'os', 'app', 'branch'];
             opts = {
-                testId: this.params.test.testId,
-                suite: this.params.test.suite,
+                // ident:  ['name', 'viewport', 'browserName', 'os', 'app', 'branch'];
                 name: checkName,
                 viewport: params?.viewport || await (0, wdioHelpers_1.getViewport)(),
-                hashCode: (0, hasha_1.default)(imageBuffer),
-                domDump: domDump,
                 browserName: this.params.test.browser,
-                browserVersion: this.params.test.browserVersion,
-                browserFullVersion: this.params.test.browserFullVersion,
                 os: this.params.test.os,
                 app: this.params.test.app,
                 branch: this.params.test.branch,
+                // ['name', 'viewport', 'browserName', 'os', 'app', 'branch', 'testId', 'suite', 'browserVersion', 'browserFullVersion' ];
+                testId: this.params.test.testId,
+                suite: this.params.test.suite,
+                browserVersion: this.params.test.browserVersion,
+                browserFullVersion: this.params.test.browserFullVersion,
+                hashCode: (0, hasha_1.default)(imageBuffer),
+                domDump: domDump,
             };
+            (0, paramsGuard_1.paramsGuard)(opts, 'check, opts', Check_schema_1.CheckOptionsSchema);
             Object.assign(opts, params);
-            return this.api.coreCheck(imageBuffer, opts);
+            const result = this.api.coreCheck(imageBuffer, opts);
+            if (result.error && !suppressErrors) {
+                throw `❌ Create Check error: ${JSON.stringify(result, null, '  ')}`;
+            }
+            return result;
         }
         catch (e) {
             log.error(`cannot create check, params: '${JSON.stringify(params)}' opts: '${JSON.stringify(opts)}, error: '${e.stack || e.toString()}'`);
@@ -128,12 +160,4 @@ class WDIODriver {
         }
     }
 }
-WDIODriver.sessionParamsGuard = (params) => {
-    const requiredParams = ['run', 'runident', 'test', 'branch', 'app'];
-    for (const param of requiredParams) {
-        if (!params[param]) {
-            throw new Error(`error startTestSession: Mandatory parameter '${param}' is missing. Params: '${JSON.stringify(params)}'`);
-        }
-    }
-};
 exports.SyngrisiDriver = WDIODriver;

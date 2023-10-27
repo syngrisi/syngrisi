@@ -72,21 +72,30 @@ export default class SyngrisiCucumberService {
             };
             log.debug(`start syngrisi session with params: '${JSON.stringify(params)}', apikey: ${this.options.apikey}`);
 
-            await this.vDriver.startTestSession(params);
+            await this.vDriver.startTestSession({ params });
 
             const $this = this;
             browser.addCommand(
                 'syngrisiCheck',
                 // eslint-disable-next-line arrow-body-style
                 async (checkName, imageBuffer, opts, domDump = null) => {
-                    return $this.vDriver.check(checkName, imageBuffer, opts, domDump);
+                    return $this.vDriver.check({
+                        checkName,
+                        imageBuffer,
+                        params: opts,
+                        domDump,
+                    });
                 }
             );
+            // ident:  ['name', 'viewport', 'browserName', 'os', 'app', 'branch'];
             browser.addCommand(
                 'syngrisiIsBaselineExist',
                 // eslint-disable-next-line arrow-body-style
                 async (name, imageBuffer) => {
-                    return $this.vDriver.checkIfBaselineExist(name, imageBuffer, params);
+                    const opts = { ...params, ...{ name } };
+                    return $this.vDriver.checkIfBaselineExist(
+                        { params: opts, imageBuffer }
+                    );
                 }
             );
             log.trace('beforeScenario hook END');
@@ -140,7 +149,7 @@ export default class SyngrisiCucumberService {
                 return;
             }
             log.debug(`stop session with api key: '${this.options.apikey}'`);
-            await this.vDriver.stopTestSession();
+            await this.vDriver.stopTestSession({});
             log.trace('afterScenario hook END');
         } catch (e) {
             throw new Error(`error in Syngrisi Cucumber service afterScenario hook: '${e + (e.trace || '')}'`);

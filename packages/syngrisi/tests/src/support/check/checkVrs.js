@@ -1,4 +1,4 @@
-export default function (name, imageBuffer, params, domDump) {
+export default function (checkName, imageBuffer, params, domDump, suppressErrors) {
     return new Promise(
         (resolve, reject) => {
             try {
@@ -7,10 +7,13 @@ export default function (name, imageBuffer, params, domDump) {
                 }
 
                 const result = browser.vDriver.check(
-                    name,
-                    imageBuffer,
-                    params,
-                    domDump,
+                    {
+                        checkName,
+                        imageBuffer,
+                        params,
+                        domDump,
+                        suppressErrors,
+                    }
                 );
                 return resolve(result);
             } catch (e) {

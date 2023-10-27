@@ -2,10 +2,20 @@ import hasha from 'hasha'
 import { default as logger } from '@wdio/logger'
 import { getDomDump } from './lib/getDomDump'
 
+
 // @ts-ignore
 import { SyngrisiApi } from '@syngrisi/core-api'
-import { CheckOptions, CheckParams, Config, SessionParams } from './types'
+import {
+    BaselineParams,
+    BaselineParamsSchema,
+    RequiredIdentOptionsSchema,
+    RequiredIdentOptions
+} from './schemas/Baseline.schema'
+import { CheckOptions, CheckOptionsSchema } from './schemas/Check.schema'
+import { CheckParams, Config } from './types'
+import { SessionParams, SessionParamsSchema } from './schemas/SessionParams.schema'
 import { getBrowserFullVersion, getBrowserName, getBrowserVersion, getOS, getViewport } from './lib/wdioHelpers'
+import { paramsGuard } from './schemas/paramsGuard'
 
 const log = logger('syngrisi-wdio-sdk')
 export { getDomDump }
@@ -22,19 +32,9 @@ class WDIODriver {
         }
     }
 
-    static sessionParamsGuard = (params: SessionParams) => {
-        const requiredParams = ['run', 'runident', 'test', 'branch', 'app']
-
-        for (const param of requiredParams) {
-            if (!params[param]) {
-                throw new Error(`error startTestSession: Mandatory parameter '${param}' is missing. Params: '${JSON.stringify(params)}'`)
-            }
-        }
-    }
-
-    async startTestSession(params: SessionParams) {
+    async startTestSession({ params, suppressErrors = false }: { params: SessionParams, suppressErrors: boolean }) {
         try {
-            WDIODriver.sessionParamsGuard(params)
+            paramsGuard(params, 'startTestSession, params', SessionParamsSchema)
 
             if (params.suite) {
                 this.params.suite = params.suite || 'Unknown'
@@ -56,14 +56,17 @@ class WDIODriver {
                 browserFullVersion: params.browserFullVersion || await getBrowserFullVersion()
             }
 
-            const respJson = await this.api.startSession(this.params.test)
+            const result = await this.api.startSession(this.params.test)
+            if (result.error && !suppressErrors) {
+                throw `❌ Start Test Session Error: ${JSON.stringify(result, null, '  ')}`
+            }
 
-            if (!respJson) {
+            if (!result) {
                 throw new Error(`response is empty, params: ${JSON.stringify(params, null, '\t')}`)
             }
 
-            this.params.test.testId = respJson._id
-            return respJson
+            this.params.test.testId = result._id
+            return result
         } catch (e: any) {
             const eMsg = `Cannot start session, error: '${e}' \n '${e.stack}'`
             log.error(eMsg)
@@ -71,13 +74,22 @@ class WDIODriver {
         }
     }
 
-    // async stopTestSession(apikey: string, testId: string) {
-    async stopTestSession() {
-        const testId = this.params.test.testId
-        this.params.test.testId = undefined
-        const result = await this.api.stopSession(testId)
-        log.info(`Session with testId: '${result._id}' was stopped`)
-        return result
+    async stopTestSession({ suppressErrors = false }: { suppressErrors?: boolean } = {}) {
+        try {
+            const testId = this.params.test.testId
+            this.params.test.testId = undefined
+            const result = await this.api.stopSession(testId)
+            if (result.error && !suppressErrors) {
+                throw `❌ Start Test Session Error: ${JSON.stringify(result, null, '  ')}`
+            }
+            log.info(`Session with testId: '${result._id}' was stopped`)
+            return result
+        } catch (e: any) {
+            const eMsg = `Cannot stop session, error: '${e}' \n '${e.stack}'`
+            log.error(eMsg)
+            throw e
+        }
+
     }
 
     // identArgsGuard(params: any) {
@@ -98,58 +110,85 @@ class WDIODriver {
     // }
 
     /**
-     * Check if the baseline exist with specific ident and specific hashcode
-     * @param {Buffer} imageBuffer  image buffer
-     * @param {string} name         name of check
-     * @param {Object} params       object that must be related to ident array
+     * Check if the baseline exist with specific ident and specific snapshot hashcode
+     * @param {Buffer} imageBuffer      image buffer
+     * @param {string} name             name of check
+     * @param {Object} params           object that must be related to ident array
+     * @param {boolean} suppressErrors  suppress API errors
      * @returns {Promise<Object>}
      */
     // ident:  ['name', 'viewport', 'browserName', 'os', 'app', 'branch'];
-    async checkIfBaselineExist(name: string, imageBuffer: Buffer, params: any) {
+    async checkIfBaselineExist({ params, imageBuffer, suppressErrors = false }
+                                   : { name: string, imageBuffer: Buffer, params: BaselineParams, suppressErrors: boolean }) {
+        if(!Buffer.isBuffer(imageBuffer)) throw new Error('checkIfBaselineExist - wrong imageBuffer')
+        paramsGuard(params, 'checkIfBaselineExist, params', BaselineParamsSchema)
         const imgHash = hasha(imageBuffer)
-        // this.params.ident = await this.api.getIdent(apikey)
-        let opts = {
-            name: name,
+
+        let opts: RequiredIdentOptions = {
+            name: params.name,
             viewport: params.viewport || await getViewport(),
-            browserName: this.params.browser || await getBrowserVersion(),
-            os: this.params.os || await getOS(),
-            app: this.params.app,
-            branch: this.params.branch,
+            browserName: params.browserName || this.params.test.browser || await getBrowserVersion(),
+            os: params.os || this.params.test.os || await getOS(),
+            app: params.app || this.params.test.app,
+            branch: params.branch || this.params.test.branch,
             imghash: imgHash,
         }
 
-        return this.api.checkIfBaselineExist(opts)
+        paramsGuard(opts, 'checkIfBaselineExist, opts', RequiredIdentOptionsSchema)
+
+        const result = await this.api.checkIfBaselineExist(opts)
+
+        if (result.error && !suppressErrors) {
+            throw `❌ Check If Baseline With certain snapshot hashcode error: ${JSON.stringify(result, null, '  ')}`
+        }
+        return result
     }
 
-    async check(checkName: string, imageBuffer: Buffer, params: CheckParams, domDump: any) {
+    async check({ checkName, imageBuffer, params, domDump, suppressErrors = false }: {
+        checkName: string,
+        imageBuffer: Buffer,
+        params: CheckParams,
+        domDump: any,
+        suppressErrors: boolean
+    }) {
         if (this.params.test.testId === undefined) {
             throw new Error('The test id is empty, the session may not have started yet:'
                 + `check name: '${checkName}', driver: '${JSON.stringify(this, null, '\t')}'`)
         }
+        if (!Buffer.isBuffer(imageBuffer)) throw new Error('check - wrong imageBuffer')
         let opts: CheckOptions | null = null
 
         try {
-            // ident:  ['name', 'viewport', 'browserName', 'os', 'app', 'branch'];
             opts = {
-                testId: this.params.test.testId,
-                suite: this.params.test.suite,
+                // ident:  ['name', 'viewport', 'browserName', 'os', 'app', 'branch'];
                 name: checkName,
                 viewport: params?.viewport || await getViewport(),
-                hashCode: hasha(imageBuffer),
-                domDump: domDump,
-
                 browserName: this.params.test.browser,
-                browserVersion: this.params.test.browserVersion,
-                browserFullVersion: this.params.test.browserFullVersion,
                 os: this.params.test.os,
                 app: this.params.test.app,
                 branch: this.params.test.branch,
+
+                // ['name', 'viewport', 'browserName', 'os', 'app', 'branch', 'testId', 'suite', 'browserVersion', 'browserFullVersion' ];
+                testId: this.params.test.testId,
+                suite: this.params.test.suite,
+                browserVersion: this.params.test.browserVersion,
+                browserFullVersion: this.params.test.browserFullVersion,
+
+                hashCode: hasha(imageBuffer),
+                domDump: domDump,
             }
+            paramsGuard(opts, 'check, opts', CheckOptionsSchema)
+
             Object.assign(
                 opts,
                 params,
             )
-            return this.api.coreCheck(imageBuffer, opts)
+            const result = this.api.coreCheck(imageBuffer, opts)
+
+            if (result.error && !suppressErrors) {
+                throw `❌ Create Check error: ${JSON.stringify(result, null, '  ')}`
+            }
+            return result
         } catch (e: any) {
             log.error(`cannot create check, params: '${JSON.stringify(params)}' opts: '${JSON.stringify(opts)}, error: '${e.stack || e.toString()}'`)
             throw e

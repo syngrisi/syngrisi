@@ -33,11 +33,20 @@ class SyngrisiApi {
             form.append('tags', JSON.stringify(params.tags));
         if (params.branch)
             form.append('branch', params.branch);
-        const response = await got_cjs_1.default.post(`${this.config.url}v1/client/startSession`, {
-            body: form,
-            headers: { apikey: apiHash },
-        }).json();
-        return response;
+        let result;
+        try {
+            result = await got_cjs_1.default.post(`${this.config.url}v1/client/startSession`, {
+                body: form,
+                headers: { apikey: apiHash },
+            }).json();
+            return result;
+        }
+        catch (e) {
+            log.error(`❌ Error posting start session data: '${e.stack || e}'`);
+            if (e.response)
+                (0, utils_1.printErrorResponseBody)(e);
+            return (0, utils_1.errorObject)(e);
+        }
     }
     async stopSession(testId) {
         try {
@@ -50,7 +59,10 @@ class SyngrisiApi {
             return response;
         }
         catch (e) {
-            throw new Error(`Cannot stop the test session with id: '${testId}', error: '${e}'`);
+            log.error(`❌ Error posting stop session data for test: '${testId}', error: '${e.stack || e}'`);
+            if (e.response)
+                (0, utils_1.printErrorResponseBody)(e);
+            return (0, utils_1.errorObject)(e);
         }
     }
     addMessageIfCheckFailed(result) {
@@ -94,16 +106,16 @@ class SyngrisiApi {
             browserFullVersion: 'browserFullVersion',
             os: 'os'
         };
+        Object.keys(fieldsMapping).forEach(key => {
+            if (params[key]) { // @ts-ignore
+                form.append(fieldsMapping[key], params[key]);
+            }
+        });
+        if (hashCode)
+            form.append('hashcode', hashCode);
+        if (imageBuffer)
+            form.append('file', imageBuffer, 'file');
         try {
-            Object.keys(fieldsMapping).forEach(key => {
-                if (params[key]) { // @ts-ignore
-                    form.append(fieldsMapping[key], params[key]);
-                }
-            });
-            if (hashCode)
-                form.append('hashcode', hashCode);
-            if (imageBuffer)
-                form.append('file', imageBuffer, 'file');
             const result = await got_cjs_1.default.post(url, {
                 body: form,
                 headers: { apikey: apiHash },
@@ -111,17 +123,24 @@ class SyngrisiApi {
             return result;
         }
         catch (e) {
-            log.error('❌ createCheck error create check vi API' + e.stack || e.toString());
-            log.error('👉 Params:', params);
+            log.error(`❌ Error posting create check data params: '${JSON.stringify(params)}', error: '${e.stack || e}'`);
             if (e.response)
                 (0, utils_1.printErrorResponseBody)(e);
-            throw e;
+            return (0, utils_1.errorObject)(e);
         }
     }
     async getIdent(apiKey) {
         const url = `${this.config.url}v1/client/getIdent?apikey=${(0, hasha_1.default)(apiKey)}`;
-        const result = await got_cjs_1.default.get(url).json();
-        return result;
+        try {
+            const result = await got_cjs_1.default.get(url).json();
+            return result;
+        }
+        catch (e) {
+            log.error(`❌ Error getting ident data, error: '${e.stack || e}'`);
+            if (e.response)
+                (0, utils_1.printErrorResponseBody)(e);
+            return (0, utils_1.errorObject)(e);
+        }
     }
     async checkIfBaselineExist(params) {
         try {
@@ -130,12 +149,15 @@ class SyngrisiApi {
             });
             const url = `${this.config.url}v1/client/checkIfScreenshotHasBaselines?${searchString}`;
             // console.log({ url });
-            const result = got_cjs_1.default.get(url, { throwHttpErrors: false })
+            const result = await got_cjs_1.default.get(url)
                 .json();
             return result;
         }
         catch (e) {
-            throw new Error(e.toString() + e.stack);
+            log.error(`❌ Error getting if baseline exist data, error: '${e.stack || e}'`);
+            if (e.response)
+                (0, utils_1.printErrorResponseBody)(e);
+            return (0, utils_1.errorObject)(e);
         }
     }
 }

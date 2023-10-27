@@ -135,13 +135,15 @@ When(/^I create "([^"]*)" tests with params:$/, { timeout: 600000 }, async funct
         .keys())) {
         // console.log(`Create test # ${i}`);
         test = await browser.vDriver.startTestSession({
-            app: params.appName || params.project || 'Test App',
-            test: `${params.testName} - ${i + 1}`,
-            run: params.run || process.env.RUN_NAME || 'integration_run_name',
-            runident: params.runident || process.env.RUN_IDENT || 'integration_run_ident',
-            branch: params.branch || 'integration',
-            tags: params.tags || [],
-            suite: params.suite || 'Integration suite',
+            params: {
+                app: params.appName || params.project || 'Test App',
+                test: `${params.testName} - ${i + 1}`,
+                run: params.run || process.env.RUN_NAME || 'integration_run_name',
+                runident: params.runident || process.env.RUN_IDENT || 'integration_run_ident',
+                branch: params.branch || 'integration',
+                tags: params.tags || [],
+                suite: params.suite || 'Integration suite',
+            },
         });
         browser.pause(300);
 
@@ -172,15 +174,17 @@ When(/^I create "([^"]*)" tests with:$/, { timeout: 60000000 }, async function (
 
     const createTest = async (params) => {
         await browser.vDriver.startTestSession({
-            app: params.project || 'Test App',
-            branch: params.branch || 'integration',
-            // test: params.testName.includes('-') ? (`${params.testName}${i + 1}`) : params.testName,
-            os: params.os,
-            browserName: params.browserName,
-            test: params.testName,
-            run: params.runName || process.env.RUN_NAME || 'integration_run_name',
-            runident: params.runIdent || process.env.RUN_IDENT || uuidv4(),
-            suite: params.suiteName || 'Integration suite',
+            params: {
+                app: params.project || 'Test App',
+                branch: params.branch || 'integration',
+                // test: params.testName.includes('-') ? (`${params.testName}${i + 1}`) : params.testName,
+                os: params.os,
+                browserName: params.browserName,
+                test: params.testName,
+                run: params.runName || process.env.RUN_NAME || 'integration_run_name',
+                runident: params.runIdent || process.env.RUN_IDENT || uuidv4(),
+                suite: params.suiteName || 'Integration suite',
+            },
         });
         browser.pause(300);
         const checkResult = [];

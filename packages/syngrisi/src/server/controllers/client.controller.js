@@ -146,7 +146,7 @@ const getIdent = catchAsync(async (req, res) => {
 });
 
 const checkIfScreenshotHasBaselines = catchAsync(async (req, res) => {
-    const result = clientService.checkIfScreenshotHasBaselines(req.query);
+    const result = await clientService.checkIfScreenshotHasBaselines(req.query);
     res.send(result);
 });
 

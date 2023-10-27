@@ -21,7 +21,13 @@ When(/^I check if baseline exist:$/, async function (yml) {
     const filePath = params.filePath || 'files/A.png';
     const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${filePath}`);
     delete params.filePath;
-    const result = await browser.vDriver.checkIfBaselineExist(params.name, imageBuffer, params);
+    const result = await browser.vDriver.checkIfBaselineExist(
+        {
+            name: params.name,
+            imageBuffer: imageBuffer,
+            params: params,
+        }
+    );
     console.log({ result });
-    this.saveItem('checkedBaseline', result?.respStatus);
+    this.saveItem('checkedBaseline', result?.snapshotFound);
 });
