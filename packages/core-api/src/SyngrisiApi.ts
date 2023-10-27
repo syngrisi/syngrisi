@@ -2,7 +2,7 @@ import FormData from 'form-data'
 import got from 'got-cjs'
 import hasha from 'hasha'
 import logger from '@wdio/logger'
-import { prettyCheckResult, printErrorResponseBody } from './utils'
+import { errorObject, prettyCheckResult, printErrorResponseBody } from './utils'
 import { ApiSessionParams, CheckOptions, CheckResult, Config } from './types'
 
 const log = logger('syngrisi-wdio-sdk')
@@ -34,11 +34,18 @@ class SyngrisiApi {
         if (params.tags) form.append('tags', JSON.stringify(params.tags))
         if (params.branch) form.append('branch', params.branch)
 
-        const response = await got.post(`${this.config.url}v1/client/startSession`, {
-            body: form,
-            headers: { apikey: apiHash },
-        }).json()
-        return response
+        let result;
+        try {
+            result = await got.post(`${this.config.url}v1/client/startSession`, {
+                body: form,
+                headers: { apikey: apiHash },
+            }).json()
+            return result
+        } catch (e: any) {
+            log.error(`❌ Error posting start session data: '${e.stack || e}'`)
+            if (e.response) printErrorResponseBody(e)
+            return errorObject(e)
+        }
     }
 
     public async stopSession(testId: string): Promise<any> {
@@ -50,8 +57,10 @@ class SyngrisiApi {
                 headers: { apikey: apiHash },
             }).json()
             return response
-        } catch (e) {
-            throw new Error(`Cannot stop the test session with id: '${testId}', error: '${e}'`)
+        } catch (e: any) {
+            log.error(`❌ Error posting stop session data for test: '${testId}', error: '${e.stack || e}'`)
+            if (e.response) printErrorResponseBody(e)
+            return errorObject(e)
         }
     }
 
@@ -100,16 +109,16 @@ class SyngrisiApi {
             os: 'os'
         }
 
+        Object.keys(fieldsMapping).forEach(key => {
+            if (params[key]) { // @ts-ignore
+                form.append(fieldsMapping[key], params[key])
+            }
+        })
+
+        if (hashCode) form.append('hashcode', hashCode)
+        if (imageBuffer) form.append('file', imageBuffer, 'file')
+
         try {
-            Object.keys(fieldsMapping).forEach(key => {
-                if (params[key]) { // @ts-ignore
-                    form.append(fieldsMapping[key], params[key])
-                }
-            })
-
-            if (hashCode) form.append('hashcode', hashCode)
-            if (imageBuffer) form.append('file', imageBuffer, 'file')
-
             const result = await got.post(url, {
                 body: form,
                 headers: { apikey: apiHash },
@@ -117,17 +126,22 @@ class SyngrisiApi {
 
             return result
         } catch (e: any) {
-            log.error('❌ createCheck error create check vi API' + e.stack || e.toString())
-            log.error('👉 Params:', params)
+            log.error(`❌ Error posting create check data params: '${JSON.stringify(params)}', error: '${e.stack || e}'`)
             if (e.response) printErrorResponseBody(e)
-            throw e
+            return errorObject(e)
         }
     }
 
     public async getIdent(apiKey: string): Promise<any> {
         const url = `${this.config.url}v1/client/getIdent?apikey=${hasha(apiKey)}`
-        const result = await got.get(url).json()
-        return result
+        try {
+            const result = await got.get(url).json()
+            return result
+        } catch (e: any) {
+            log.error(`❌ Error getting ident data, error: '${e.stack || e}'`)
+            if (e.response) printErrorResponseBody(e)
+            return errorObject(e)
+        }
     }
 
     public async checkIfBaselineExist(params: any): Promise<any> {
@@ -137,11 +151,13 @@ class SyngrisiApi {
             })
             const url = `${this.config.url}v1/client/checkIfScreenshotHasBaselines?${searchString}`
             // console.log({ url });
-            const result = got.get(url, { throwHttpErrors: false })
+            const result = await got.get(url)
                 .json()
             return result
         } catch (e: any) {
-            throw new Error(e.toString() + e.stack)
+            log.error(`❌ Error getting if baseline exist data, error: '${e.stack || e}'`)
+            if (e.response) printErrorResponseBody(e)
+            return errorObject(e)
         }
     }
 }

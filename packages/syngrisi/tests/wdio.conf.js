@@ -103,7 +103,7 @@ exports.config = {
     beforeStep({ uri, feature, step }, context) {
         if (process.env.LOG === '1' || process.env.DBG === '1') {
             // eslint-disable-next-line no-console
-            console.log(`STEP BEFORE: ${step.step.keyword} ${step.step.text}: ${step.sourceLocation.uri.split(path.sep)
+            console.log(`🧩 STEP BEFORE: ${step.step.keyword} ${step.step.text}: ${step.sourceLocation.uri.split(path.sep)
                 .join(path.posix.sep)}:${step.step.location.line}, ${step.step.location.column}`);
         }
     },

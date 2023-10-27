@@ -64,7 +64,7 @@ const startSession = async (sessOpts) => {
     if (sessOpts.suiteName === 'EMPTY') {
         delete opts.suite;
     }
-    await browser.vDriver.startTestSession(opts);
+    await browser.vDriver.startTestSession({ params: opts });
 };
 
 const fillCommonPlaceholders = function fillPlaceholders(str) {

@@ -19,7 +19,6 @@ export interface SessionParams {
 
     [key: string]: string | string[] | undefined;
 }
-
 export interface ApiSessionParams {
     run: string;
     suite: string;
@@ -33,6 +32,7 @@ export interface ApiSessionParams {
     browserVersion: string;
     os: string;
     app: string;
+
     [key: string]: string | string[] | undefined;
 }
 
@@ -46,21 +46,6 @@ export interface CheckParams {
     app: string;
     branch: string;
     viewport?: string;
-}
-
-export interface CheckOptions {
-    testId: string;
-    suite: string;
-    name: string;
-    viewport: string;
-    hashCode: string;
-    domDump: any;
-    browserName: string;
-    browserVersion: string;
-    browserFullVersion: string;
-    os: string;
-    app: string;
-    branch: string;
 }
 
 export interface CheckResult {

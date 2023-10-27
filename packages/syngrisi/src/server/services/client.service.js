@@ -633,31 +633,47 @@ const checkIfScreenshotHasBaselines = async (query) => {
         itemType: 'baseline',
         msgType: 'GET',
     };
-    log.debug(`check is baseline exist: '${JSON.stringify(query, null, ' ')}'`, logOpts);
+    const opts = removeNonIdentProperties(query);
+    log.debug(`check if baseline exist: '${JSON.stringify(query, null, ' ')}'`, logOpts);
     if (!query.imghash) {
         throw new ApiError(httpStatus.BAD_REQUEST, 'imghash is empty');
     }
+    const result = {
+        baselineFound: false,
+        snapshotFound: false,
+        opts,
+    };
+
     const app = await App.findOne({ name: query.app });
-    const opts = removeNonIdentProperties(query);
+    if (!app) {
+        result.errorMsg = `Cannot find the app`
+        return result
+    }
     opts.app = app._id;
     const lastBaseline = await Baseline.findOne(opts)
         .sort({ updatedDate: -1 })
         .exec();
     if (!lastBaseline) {
         log.warn(`such baseline does not exists: ${JSON.stringify(opts, null, ' ')}`, logOpts);
-        throw new ApiError(httpStatus.NOT_FOUND, `snapshot not found, params: ${JSON.stringify(query)}`);
+        result.errorMsg = `Cannot find the baseline`
+        return result
     }
+    result.lastBaseline = lastBaseline;
+    result.baselineFound = true;
+
     const snapshot = await Snapshot.findOne({ _id: lastBaseline.toObject().snapshootId })
         .exec();
     const snapshotObj = snapshot.toObject();
+
     if (snapshotObj
         && (snapshotObj?.imghash.toString() === query.imghash)) {
-        // console.log(snapshotObj?.imghash.toString());
-        // console.log(query.imghash);
-        return { ...snapshotObj, ...{ respStatus: 'success', params: opts } };
+        result.snapshotFound = true;
+        result.snapshot = snapshotObj;
+        return result;
     }
     log.warn(`such snapshot does not exists: ${JSON.stringify(query, null, ' ')}`, logOpts);
-    throw new ApiError(httpStatus.NOT_FOUND, `snapshot not found, params: ${JSON.stringify(query)}`);
+    result.snapshotFound = false;
+    return result;
 };
 
 module.exports = {

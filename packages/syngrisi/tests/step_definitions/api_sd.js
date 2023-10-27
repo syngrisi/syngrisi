@@ -2,8 +2,9 @@
 const frisby = require('frisby');
 const { When, Then } = require('cucumber');
 const YAML = require('yaml');
+const fs = require('fs');
+const chalk = require('chalk');
 const { fillCommonPlaceholders } = require('../src/utills/common');
-const fs = require("fs");
 
 When(/^I send "([^"]*)" request to "([^"]*)"$/, async function (reqType, url) {
     const responce = frisby[reqType](url);
@@ -66,14 +67,30 @@ When(/^I execute WDIODriver "([^"]*)" method with params:$/, async function (met
     );
     // const response = await browser.vDriver[methodName](opts, browser.config.apiKey);
     let response;
-    if (methodName === 'check') {
-        const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${opts.filePath}`);
-        response = await browser.vDriver[methodName](opts.checkName, imageBuffer, opts.params);
-    } else {
-        response = await browser.vDriver[methodName](opts);
+    try {
+        if (methodName === 'check') {
+            const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${opts.filePath}`);
+            response = await browser.vDriver.check({
+                checkName: opts.checkName,
+                imageBuffer,
+                params: opts.params,
+            });
+        } else if (methodName === 'checkIfBaselineExist') {
+            const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${opts.filePath}`);
+            response = await browser.vDriver.checkIfBaselineExist({
+                params: opts.params,
+                imageBuffer,
+            });
+        } else {
+            response = await browser.vDriver[methodName](opts);
+        }
+        console.log(methodName, '💛💛💛', JSON.stringify(response, null, '    '));
+        await this.saveItem(methodName, response);
+    } catch (e) {
+        console.error(chalk.magentaBright(`❌❌❌  ${e}`));
+        response = e.toString();
+        await this.saveItem(`${methodName}_error`, response);
     }
-    console.log(methodName, '💛', JSON.stringify(response, null, '    '));
-    await this.saveItem(methodName, response);
 });
 
 Then(/^I expect WDIODriver "([^"]*)" return value match object:$/, async function (methodName, params) {
@@ -82,4 +99,10 @@ Then(/^I expect WDIODriver "([^"]*)" return value match object:$/, async functio
         this.fillItemsPlaceHolders(fillCommonPlaceholders(params))
     );
     expect(value).toMatchObject(opts);
+});
+
+Then(/^I expect WDIODriver "([^"]*)" method throws ane error containing:$/, async function (methodName, expectedMessage) {
+    const errMsg = await this.getSavedItem(`${methodName}_error`);
+    console.log('💥', errMsg);
+    expect(errMsg).toContain(expectedMessage.trim());
 });

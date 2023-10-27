@@ -19,3 +19,13 @@ export const prettyCheckResult = (result: any): string => {
         .substr(0, 20)}... and about ${dump.length} items]`
     return JSON.stringify(resObs)
 }
+
+export const errorObject = (e: any) => {
+    return {
+        error: true,
+        errorMsg: e.toString(),
+        statusCode: e.response?.statusCode,
+        statusMessage: e.response?.statusMessage,
+        stack: e.stack
+    }
+}
