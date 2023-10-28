@@ -21,7 +21,7 @@
     "SDK"
   ],
   "author": "Viktar Silakou",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/viktor-silakov/syngrisi/issues"
   },
@@ -46,5 +46,6 @@
     "eslint-plugin-unicorn": "^45.0.2",
     "typescript": "^5.2.2",
     "vitest": "^0.34.6"
-  }
+  },
+  "gitHead": "44ff5b7f07e68c60a3aed5f49e9793e32f733e82"
 }
