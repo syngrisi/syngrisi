@@ -32,7 +32,7 @@ class WDIODriver {
         }
     }
 
-    async startTestSession({ params, suppressErrors = false }: { params: SessionParams, suppressErrors: boolean }) {
+    async startTestSession({ params, suppressErrors = false }: { params: SessionParams, suppressErrors?: boolean }) {
         try {
             paramsGuard(params, 'startTestSession, params', SessionParamsSchema)
 
@@ -119,7 +119,7 @@ class WDIODriver {
      */
     // ident:  ['name', 'viewport', 'browserName', 'os', 'app', 'branch'];
     async checkIfBaselineExist({ params, imageBuffer, suppressErrors = false }
-                                   : { name: string, imageBuffer: Buffer, params: BaselineParams, suppressErrors: boolean }) {
+                                   : { name: string, imageBuffer: Buffer, params: BaselineParams, suppressErrors?: boolean }) {
         if(!Buffer.isBuffer(imageBuffer)) throw new Error('checkIfBaselineExist - wrong imageBuffer')
         paramsGuard(params, 'checkIfBaselineExist, params', BaselineParamsSchema)
         const imgHash = hasha(imageBuffer)
@@ -149,7 +149,7 @@ class WDIODriver {
         imageBuffer: Buffer,
         params: CheckParams,
         domDump: any,
-        suppressErrors: boolean
+        suppressErrors?: boolean
     }) {
         if (this.params.test.testId === undefined) {
             throw new Error('The test id is empty, the session may not have started yet:'

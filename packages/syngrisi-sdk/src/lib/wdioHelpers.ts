@@ -17,16 +17,6 @@ export const getViewport = async () => {
     return '0x0'
 }
 
-export const transformOs = (platform: string) => {
-    const lowercasePlatform = platform.toLowerCase()
-    const transform: { [key: string]: string } = {
-        win32: 'WINDOWS',
-        windows: 'WINDOWS',
-        macintel: 'macOS',
-    }
-    return transform[lowercasePlatform] || platform
-}
-
 export const getOS = async () => {
     let platform
     if (isAndroid() || isIos()) {
@@ -60,7 +50,7 @@ export const getOS = async () => {
     if (process.env.ENV_POSTFIX) {
         return `${platform}_${process.env.ENV_POSTFIX}`
     }
-    return transformOs(platform)
+    return platform
 }
 
 export const getBrowserName = () => {

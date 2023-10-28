@@ -2,7 +2,7 @@ import FormData from 'form-data'
 import got from 'got-cjs'
 import hasha from 'hasha'
 import logger from '@wdio/logger'
-import { errorObject, prettyCheckResult, printErrorResponseBody } from './utils'
+import { errorObject, prettyCheckResult, printErrorResponseBody, transformOs } from './utils'
 import { ApiSessionParams, CheckOptions, CheckResult, Config } from './types'
 
 const log = logger('syngrisi-wdio-sdk')
@@ -25,6 +25,7 @@ class SyngrisiApi {
     }
 
     public async startSession(params: ApiSessionParams): Promise<any> {
+        params.os = transformOs(params.os)
         const apiHash = hasha(this.config.apiKey)
         const form = new FormData()
         const required = ['run', 'suite', 'runident', 'name', 'viewport', 'browser', 'browserVersion', 'os', 'app']
@@ -77,6 +78,7 @@ class SyngrisiApi {
     }
 
     public async coreCheck(imageBuffer: Buffer, params: CheckOptions): Promise<CheckResult> {
+        params.os = transformOs(params.os)
         let resultWithHash = await this.createCheck(params, null, params.hashCode)
         resultWithHash = this.addMessageIfCheckFailed(resultWithHash)
 
@@ -145,6 +147,7 @@ class SyngrisiApi {
     }
 
     public async checkIfBaselineExist(params: any): Promise<any> {
+        params.os = transformOs(params.os)
         try {
             const searchString = this.objectToSearch({
                 ...params, ...{ apikey: hasha(this.config.apiKey) },
