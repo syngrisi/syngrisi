@@ -3,6 +3,7 @@
   "version": "2.1.17-alpha.0",
   "description": "Syngrisi Core JS client",
   "main": "dist/SyngrisiApi.js",
+  "private": false,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",
     "pub": "np",
@@ -47,5 +48,5 @@
     "typescript": "^5.2.2",
     "vitest": "^0.34.6"
   },
-  "gitHead": "eda754e56d4b11aebf417c7ecd9e1b0b3aea5039"
+  "gitHead": "21a4157fbe0e550b3775a6b4c83309eeedb23acb"
 }
