@@ -2,7 +2,6 @@ import hasha from 'hasha'
 import { default as logger } from '@wdio/logger'
 import { getDomDump } from './lib/getDomDump'
 
-
 // @ts-ignore
 import { SyngrisiApi } from '@syngrisi/core-api'
 import {

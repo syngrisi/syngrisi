@@ -7,7 +7,7 @@ export const paramsGuard = (params: any, functionName: string, schema: ZodObject
     } else {
         const errorDetails = result.error.format()
         throw new Error(`
-        Invalid '${functionName}' parameters: \n${JSON.stringify(errorDetails, null, 2)}
+        Invalid '${functionName}' parameters: ${JSON.stringify(errorDetails)}
         \n error: ${result.error?.stack || result.error}
         \n params: ${JSON.stringify(params, null, 2)}
         `)
