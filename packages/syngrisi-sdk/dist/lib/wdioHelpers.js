@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getBrowserVersion = exports.getBrowserFullVersion = exports.isIos = exports.isAndroid = exports.getBrowserName = exports.getOS = exports.getViewport = void 0;
 const logger_1 = __importDefault(require("@wdio/logger"));
 const log = (0, logger_1.default)('syngrisi-wdio-sdk');
+// @ts-ignore
+const core_api_1 = require("@syngrisi/core-api");
 const getViewport = async () => {
     if ((0, exports.isAndroid)()) {
         // @ts-ignore
@@ -51,7 +53,7 @@ const getOS = async () => {
     if (process.env.ENV_POSTFIX) {
         return `${platform}_${process.env.ENV_POSTFIX}`;
     }
-    return platform;
+    return (0, core_api_1.transformOs)(platform);
 };
 exports.getOS = getOS;
 const getBrowserName = () => {

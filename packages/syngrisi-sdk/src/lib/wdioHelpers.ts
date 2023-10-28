@@ -2,6 +2,9 @@ import { default as logger } from '@wdio/logger'
 
 const log = logger('syngrisi-wdio-sdk')
 
+// @ts-ignore
+import { transformOs } from '@syngrisi/core-api'
+
 declare var browser: WebdriverIO.Browser
 
 export const getViewport = async () => {
@@ -50,7 +53,7 @@ export const getOS = async () => {
     if (process.env.ENV_POSTFIX) {
         return `${platform}_${process.env.ENV_POSTFIX}`
     }
-    return platform
+    return transformOs(platform)
 }
 
 export const getBrowserName = () => {
