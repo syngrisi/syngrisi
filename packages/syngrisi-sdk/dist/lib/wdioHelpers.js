@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getBrowserVersion = exports.getBrowserFullVersion = exports.isIos = exports.isAndroid = exports.getBrowserName = exports.getOS = exports.transformOs = exports.getViewport = void 0;
+exports.getBrowserVersion = exports.getBrowserFullVersion = exports.isIos = exports.isAndroid = exports.getBrowserName = exports.getOS = exports.getViewport = void 0;
 const logger_1 = __importDefault(require("@wdio/logger"));
 const log = (0, logger_1.default)('syngrisi-wdio-sdk');
 const getViewport = async () => {
@@ -18,16 +18,6 @@ const getViewport = async () => {
     return '0x0';
 };
 exports.getViewport = getViewport;
-const transformOs = (platform) => {
-    const lowercasePlatform = platform.toLowerCase();
-    const transform = {
-        win32: 'WINDOWS',
-        windows: 'WINDOWS',
-        macintel: 'macOS',
-    };
-    return transform[lowercasePlatform] || platform;
-};
-exports.transformOs = transformOs;
 const getOS = async () => {
     let platform;
     if ((0, exports.isAndroid)() || (0, exports.isIos)()) {
@@ -61,7 +51,7 @@ const getOS = async () => {
     if (process.env.ENV_POSTFIX) {
         return `${platform}_${process.env.ENV_POSTFIX}`;
     }
-    return (0, exports.transformOs)(platform);
+    return platform;
 };
 exports.getOS = getOS;
 const getBrowserName = () => {

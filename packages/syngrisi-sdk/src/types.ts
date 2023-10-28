@@ -37,15 +37,12 @@ export interface ApiSessionParams {
 }
 
 export interface CheckParams {
-    testId: string;
-    suite: string;
-    browser: string;
-    browserVersion: string;
-    browserFullVersion: string;
-    os: string;
-    app: string;
-    branch: string;
+    checkName?: string
     viewport?: string;
+    browserName?: string,
+    os?: string,
+    browserVersion?: string,
+    browserFullVersion?: string,
 }
 
 export interface CheckResult {

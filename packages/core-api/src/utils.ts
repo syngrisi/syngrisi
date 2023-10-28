@@ -29,3 +29,17 @@ export const errorObject = (e: any) => {
         stack: e.stack
     }
 }
+
+export const transformOs = (platform: string) => {
+    const lowercasePlatform = platform.toLowerCase()
+    const transform: {
+        [key: string]: string
+    } = {
+        win32: 'WINDOWS',
+        windows: 'WINDOWS',
+        macintel: 'macOS',
+        'mac os': 'macOS',
+    }
+
+    return transform[lowercasePlatform] || platform
+}

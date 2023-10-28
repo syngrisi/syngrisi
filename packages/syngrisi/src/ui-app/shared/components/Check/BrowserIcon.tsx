@@ -9,7 +9,7 @@ import {
 } from 'react-icons/si';
 // import {PiGoogleChromeLogoThin} from 'react-icons/pi'
 import { TbQuestionMark } from 'react-icons/tb';
-import { AiOutlineChrome, FiChrome } from 'react-icons/all';
+import { FaSafari, FiChrome } from 'react-icons/all';
 
 interface Props {
     browser: string
@@ -29,6 +29,7 @@ const browserIconMap = (key: string) => {
         Msedge: SiMicrosoftedge,
         Safari: SiSafari,
         safari: SiSafari,
+        webkit: FaSafari,
         'internet explorer': SiInternetexplorer,
     } as { [key: string]: any };
     return map[key] || TbQuestionMark;

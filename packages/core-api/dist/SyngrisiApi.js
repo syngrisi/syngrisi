@@ -24,6 +24,7 @@ class SyngrisiApi {
         return str.join('&');
     }
     async startSession(params) {
+        params.os = (0, utils_1.transformOs)(params.os);
         const apiHash = (0, hasha_1.default)(this.config.apiKey);
         const form = new form_data_1.default();
         const required = ['run', 'suite', 'runident', 'name', 'viewport', 'browser', 'browserVersion', 'os', 'app'];
@@ -77,6 +78,7 @@ class SyngrisiApi {
         return patchedResult;
     }
     async coreCheck(imageBuffer, params) {
+        params.os = (0, utils_1.transformOs)(params.os);
         let resultWithHash = await this.createCheck(params, null, params.hashCode);
         resultWithHash = this.addMessageIfCheckFailed(resultWithHash);
         log.info(`Check result Phase #1: ${(0, utils_1.prettyCheckResult)(resultWithHash)}`);
@@ -143,6 +145,7 @@ class SyngrisiApi {
         }
     }
     async checkIfBaselineExist(params) {
+        params.os = (0, utils_1.transformOs)(params.os);
         try {
             const searchString = this.objectToSearch({
                 ...params, ...{ apikey: (0, hasha_1.default)(this.config.apiKey) },

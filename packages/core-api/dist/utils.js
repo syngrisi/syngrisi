@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.errorObject = exports.prettyCheckResult = exports.printErrorResponseBody = void 0;
+exports.transformOs = exports.errorObject = exports.prettyCheckResult = exports.printErrorResponseBody = void 0;
 const logger_1 = __importDefault(require("@wdio/logger"));
 const log = (0, logger_1.default)('wdio-syngrisi-cucumber-service');
 const printErrorResponseBody = (e) => {
@@ -34,3 +34,14 @@ const errorObject = (e) => {
     };
 };
 exports.errorObject = errorObject;
+const transformOs = (platform) => {
+    const lowercasePlatform = platform.toLowerCase();
+    const transform = {
+        win32: 'WINDOWS',
+        windows: 'WINDOWS',
+        macintel: 'macOS',
+        'mac os': 'macOS',
+    };
+    return transform[lowercasePlatform] || platform;
+};
+exports.transformOs = transformOs;
