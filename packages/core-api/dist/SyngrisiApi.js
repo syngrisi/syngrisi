@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SyngrisiApi = void 0;
+exports.transformOs = exports.SyngrisiApi = void 0;
 const form_data_1 = __importDefault(require("form-data"));
 const got_cjs_1 = __importDefault(require("got-cjs"));
 const hasha_1 = __importDefault(require("hasha"));
@@ -24,7 +24,6 @@ class SyngrisiApi {
         return str.join('&');
     }
     async startSession(params) {
-        params.os = (0, utils_1.transformOs)(params.os);
         const apiHash = (0, hasha_1.default)(this.config.apiKey);
         const form = new form_data_1.default();
         const required = ['run', 'suite', 'runident', 'name', 'viewport', 'browser', 'browserVersion', 'os', 'app'];
@@ -78,7 +77,6 @@ class SyngrisiApi {
         return patchedResult;
     }
     async coreCheck(imageBuffer, params) {
-        params.os = (0, utils_1.transformOs)(params.os);
         let resultWithHash = await this.createCheck(params, null, params.hashCode);
         resultWithHash = this.addMessageIfCheckFailed(resultWithHash);
         log.info(`Check result Phase #1: ${(0, utils_1.prettyCheckResult)(resultWithHash)}`);
@@ -145,7 +143,6 @@ class SyngrisiApi {
         }
     }
     async checkIfBaselineExist(params) {
-        params.os = (0, utils_1.transformOs)(params.os);
         try {
             const searchString = this.objectToSearch({
                 ...params, ...{ apikey: (0, hasha_1.default)(this.config.apiKey) },
@@ -165,3 +162,5 @@ class SyngrisiApi {
     }
 }
 exports.SyngrisiApi = SyngrisiApi;
+var utils_2 = require("./utils");
+Object.defineProperty(exports, "transformOs", { enumerable: true, get: function () { return utils_2.transformOs; } });
