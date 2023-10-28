@@ -1,6 +1,6 @@
 {
     "name": "syngrisi",
-    "version": "2.1.18-alpha.0",
+    "version": "2.1.19-alpha.0",
     "description": "Syngrisi - Visual Testing Tool",
     "main": "server.js",
     "bin": {
