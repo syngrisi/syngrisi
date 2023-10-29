@@ -81,7 +81,7 @@ class WDIODriver {
             if (result.error && !suppressErrors) {
                 throw `❌ Start Test Session Error: ${JSON.stringify(result, null, '  ')}`
             }
-            log.info(`Session with testId: '${result._id}' was stopped`)
+            log.debug(`Session with testId: '${result._id}' was stopped`)
             return result
         } catch (e: any) {
             const eMsg = `Cannot stop session, error: '${e}' \n '${e.stack}'`
