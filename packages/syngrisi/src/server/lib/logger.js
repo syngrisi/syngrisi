@@ -8,13 +8,15 @@ const {
 const formatISO9075 = require('date-fns/formatISO9075');
 const { parseISO } = require('date-fns');
 
+let logLevel = process.env.SYNGRISI_LOG_LEVEL ? process.env.SYNGRISI_LOG_LEVEL : '';
+
 module.exports.Logger = class Logger {
     constructor(opts) {
         this.connectionString = opts.connectionString;
         this.winstonLogger = winston.createLogger({
             transports: [
                 new winston.transports.Console({
-                    level: 'silly',
+                    level: logLevel || 'silly',
                     format: winston.format.combine(
                         winston.format.colorize(),
                         winston.format.timestamp(),
@@ -37,7 +39,7 @@ module.exports.Logger = class Logger {
                     ),
                 }),
                 new winston.transports.MongoDB({
-                    level: 'debug',
+                    level: logLevel || 'debug',
                     format: winston.format.combine(
                         winston.format.timestamp(),
                         winston.format.json(),

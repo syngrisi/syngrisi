@@ -10,6 +10,10 @@ const hasha_1 = __importDefault(require("hasha"));
 const logger_1 = __importDefault(require("@wdio/logger"));
 const utils_1 = require("./utils");
 const log = (0, logger_1.default)('syngrisi-wdio-sdk');
+// 0 | 4 | 2 | 1 | 3 | 5 | "trace" | "debug" | "info" | "warn" | "error" |
+if (process.env.SYNGRISI_LOG_LEVEL) {
+    log.setLevel(process.env.SYNGRISI_LOG_LEVEL);
+}
 class SyngrisiApi {
     constructor(cfg) {
         this.config = cfg;
