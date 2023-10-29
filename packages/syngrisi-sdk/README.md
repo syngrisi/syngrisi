@@ -1,25 +1,28 @@
 ## SDK for Syngrisi tool
 
 ### Base Flow Overview
+
 There is 3 basic step for particular test:
 ![syngrisi flow](./docs/flow.png)
 
 ### Installation
+
 ```shell script
 npm i @syngrisi/syngrisi-wdio-sdk --save-dev
 ```
+
 ### Usage Example
 
 ```javascript
 const syngrisi = require('@syngrisi/syngrisi-wdio-sdk');
 const vrsHost = 'localhost';
 const vrsPort = 3000;
-const VRSConfig = { url: `http://${vrsHost}:${vrsPort}/`};
-const {remote} = require('webdriverio');
+const VRSConfig = { url: `http://${vrsHost}:${vrsPort}/` };
+const { remote } = require('webdriverio');
 
 ;(async () => {
     global.browser = await remote({
-        capabilities: {browserName: 'chrome'}
+        capabilities: { browserName: 'chrome' }
     })
     // 0. Add Syngrisi driver to browser object
     browser.vDriver = new syngrisi.vDriver(VRSConfig);
@@ -68,7 +71,9 @@ const {remote} = require('webdriverio');
 ### Environment variables
 
 `RUN_NAME` - use such variable to set up specific run name, by default it will generate automatically
-`ENV_POSTFIX` - will add to platform property, you can use this to set some unique platform name for particular environment
+`ENV_POSTFIX` - will add to platform property, you can use this to set some unique platform name for particular
+environment
+`SYNGRISI_LOG_LEVEL` - logging level (`0 | 4 | 2 | 1 | 3 | 5 | "trace" | "debug" | "info" | "warn" | "error" `)
 
 ### SDK API
 
@@ -78,32 +83,27 @@ const {remote} = require('webdriverio');
 
 ##### Parameters
 
-| Name | Type | Details |
-|------|------|---------|
-|`cfg`|`object`| e.g.: `{url: 'http://localhost:3000'}`|
-
-
+| Name  | Type     | Details                                |
+|-------|----------|----------------------------------------|
+| `cfg` | `object` | e.g.: `{url: 'http://localhost:3000'}` |
 
 - `startTestSession(params)` - starts of the test session
 
-
 ##### Parameters
-    
-| Name | Type | Details |
-|------|------|---------|
-|`params`|`object`| e.g: {app: 'App Name', <br>test: 'Test Name',<br>suite: 'Suite Name'}|
 
+| Name     | Type     | Details                                                               |
+|----------|----------|-----------------------------------------------------------------------|
+| `params` | `object` | e.g: {app: 'App Name', <br>test: 'Test Name',<br>suite: 'Suite Name'} |
 
 - `checkSnapshot(checkName, imageBuffer, domDump)` - create snapshot and send to Syngrisi API
 
-
 ##### Parameters
-    
-| Name | Type | Details |
-|------|------|---------|
-|`checkName`|`String`| eg.: 'Check Name'|
-|`imageBuffer`|`Buffer`| File buffer|
-|`domDump`|`String`| Web Page DOM Dump JSON string, to get properly dump use `getDomDump()` method  |
+
+| Name          | Type     | Details                                                                       |
+|---------------|----------|-------------------------------------------------------------------------------|
+| `checkName`   | `String` | eg.: 'Check Name'                                                             |
+| `imageBuffer` | `Buffer` | File buffer                                                                   |
+| `domDump`     | `String` | Web Page DOM Dump JSON string, to get properly dump use `getDomDump()` method |
 
 - `stopTestSession()` - stop of the test session
 

@@ -35,6 +35,7 @@ const { Logger } = require('./src/server/lib/logger');
 const { disableCors } = require('./src/server/middlewares/disableCors');
 
 global.log = new Logger({ dbConnectionString: config.connectionString });
+
 this.logMeta = { scope: 'entrypoint' };
 log.info('Init the application', this);
 

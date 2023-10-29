@@ -2,10 +2,16 @@ import FormData from 'form-data'
 import got from 'got-cjs'
 import hasha from 'hasha'
 import logger from '@wdio/logger'
+import { LogLevelDesc } from 'loglevel'
 import { errorObject, prettyCheckResult, printErrorResponseBody } from './utils'
 import { ApiSessionParams, CheckOptions, CheckResult, Config } from './types'
 
 const log = logger('syngrisi-wdio-sdk')
+
+// 0 | 4 | 2 | 1 | 3 | 5 | "trace" | "debug" | "info" | "warn" | "error" |
+if (process.env.SYNGRISI_LOG_LEVEL) {
+    log.setLevel(process.env.SYNGRISI_LOG_LEVEL as LogLevelDesc)
+}
 
 class SyngrisiApi {
     private config: any
