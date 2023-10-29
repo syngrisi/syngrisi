@@ -73,7 +73,7 @@ const { remote } = require('webdriverio');
 `RUN_NAME` - use such variable to set up specific run name, by default it will generate automatically
 `ENV_POSTFIX` - will add to platform property, you can use this to set some unique platform name for particular
 environment
-`SYNGRISI_LOG_LEVEL` - logging level (`0 | 4 | 2 | 1 | 3 | 5 | "trace" | "debug" | "info" | "warn" | "error" `)
+`SYNGRISI_LOG_LEVEL` - logging level (`"trace" | "debug" | "info" | "warn" | "error"`)
 
 ### SDK API
 
