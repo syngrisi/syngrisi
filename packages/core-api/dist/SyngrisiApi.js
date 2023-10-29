@@ -79,10 +79,10 @@ class SyngrisiApi {
     async coreCheck(imageBuffer, params) {
         let resultWithHash = await this.createCheck(params, null, params.hashCode);
         resultWithHash = this.addMessageIfCheckFailed(resultWithHash);
-        log.info(`Check result Phase #1: ${(0, utils_1.prettyCheckResult)(resultWithHash)}`);
+        log.debug(`Check result Phase #1: ${(0, utils_1.prettyCheckResult)(resultWithHash)}`);
         if (resultWithHash.status === 'requiredFileData') {
             let resultWithFile = await this.createCheck(params, imageBuffer, params.hashCode);
-            log.info(`Check result Phase #2: ${(0, utils_1.prettyCheckResult)(resultWithFile)}`);
+            log.debug(`Check result Phase #2: ${(0, utils_1.prettyCheckResult)(resultWithFile)}`);
             resultWithFile = this.addMessageIfCheckFailed(resultWithFile);
             return resultWithFile;
         }
