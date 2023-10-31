@@ -50,19 +50,16 @@ const createSuiteIfNotExist = async function (params, logsMeta = {}) {
     log.debug(`try to create suite if exist, params: '${JSON.stringify(params)}'`,
         $this,
         { ...logOpts, ...logsMeta });
-    const suite = await Suite.findOne({ name: params.name })
-        .exec();
-    if (suite) {
-        log.debug(`suite with name: '${params.name}' already exist, update app id`,
-            $this,
-            { ...logOpts, ...logsMeta });
-        suite.app = params.app;
-        return suite.save();
-    }
-    log.debug(`suite with name: '${params.name}' suite with name does not exists, create new`,
+    const options = { upsert: true, new: true, setDefaultsOnInsert: true };
+    const suite = Suite.findOneAndUpdate(
+        { name: params.name },
+        params,
+        options
+    )
+    log.debug(`suite with name: '${params.name}' was created`,
         $this,
         { ...logOpts, ...logsMeta });
-    return Suite.create(params);
+    return suite
 };
 
 exports.createSuiteIfNotExist = createSuiteIfNotExist;
@@ -80,19 +77,18 @@ const createRunIfNotExist = async function (params, logsMeta = {}) {
     log.debug(`try to create run if exist, params: '${JSON.stringify(params)}'`,
         $this,
         { ...logOpts, ...logsMeta });
-    const run = await Run.findOne({ name: params.name, ident: params.ident })
-        .exec();
-    if (run) {
-        log.debug(`run with name: '${params.name}' already exist, update app id`,
-            $this,
-            { ...logOpts, ...logsMeta });
-        run.app = params.app;
-        return run.save();
-    }
-    log.debug(`run with name: '${params.name}' suite with name does not exists, create new`,
+
+    const options = { upsert: true, new: true, setDefaultsOnInsert: true };
+    const run = await Run
+        .findOneAndUpdate(
+            { name: params.name, ident: params.ident },
+            { ...params, createdDate: params.createdDate || new Date() },
+            options
+        )
+    log.debug(`run with name: '${params.name}' was created: ${run}`,
         $this,
         { ...logOpts, ...logsMeta });
-    return Run.create({ ...params, createdDate: params.createdDate || new Date() });
+    return run
 };
 
 exports.createRunIfNotExist = createRunIfNotExist;
@@ -105,18 +101,19 @@ const createItemIfNotExistAsync = async function (modelName, params, logsMeta = 
     };
     try {
         const itemModel = mongoose.model(modelName);
-        const item = await itemModel.findOne(params);
-        if (item) {
-            log.debug(`ORM item '${modelName}' already exists, params: '${JSON.stringify(params)}'`, $this, { ...logOpts, ...logsMeta });
-            return item;
-        }
-        log.debug(`ORM item '${modelName}' does not exists, create new one, params: '${JSON.stringify(params)}'`, $this, { ...logOpts, ...logsMeta });
-        const newItem = await itemModel.create(params);
-        // await newItem.save();
-        log.info(`ORM item '${modelName}' was created: '${JSON.stringify(newItem)}'`, $this, { ...logOpts, ...{ ref: newItem._id }, ...logsMeta });
-        return newItem;
+        const options = { upsert: true, new: true, setDefaultsOnInsert: true };
+
+        const item = await itemModel
+            .findOneAndUpdate(
+                params,
+                params,
+                options
+            )
+
+        log.info(`ORM item '${modelName}' was created: '${JSON.stringify(item)}'`, $this, { ...logOpts, ...{ ref: item._id }, ...logsMeta });
+        return item;
     } catch (e) {
-        log.debug(`cannot create '${modelName}' ORM item, error: '${e}'`, $this, { ...logOpts, ...logsMeta });
+        log.debug(`cannot create '${modelName}' ORM item, error: '${e.stack || e}'`, $this, { ...logOpts, ...logsMeta });
     }
     return null;
 };

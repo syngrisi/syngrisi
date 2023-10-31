@@ -108,165 +108,6 @@ Feature: Client API Basics
     }
     """
 
-  Scenario: Baseline with same snapshots hashcode exist - [baseline: 'found', snapshot: 'not found'] (not accepted)
-    Given I create "1" tests with:
-    """
-      testName: TestName
-      project: ProjectName
-      branch: BranchName
-      checks:
-          - checkName: check-name
-            viewport: 500x500
-            browserName: safari
-            os: Windows
-            browserVersion: 1.0
-            browserFullVersion: 1.0.111.1
-            filePath: files/A.png
-    """
-
-    When I wait for "5" seconds
-    When I execute WDIODriver "checkIfBaselineExist" method with params:
-    """
-    {
-        "params": {
-            "name": "check-name",
-            "viewport": "500x500",
-            "browserName": "safari",
-            "os": "Windows",
-            "app": "ProjectName",
-            "branch": "BranchName"
-        },
-        "filePath": "files/A.png"
-    }
-    """
-    Then I expect WDIODriver "checkIfBaselineExist" return value match object:
-    """
-    {
-       "baselineFound": false,
-       "snapshotFound": false
-    }
-    """
-
-  Scenario: Baseline with same snapshots hashcode exist - [baseline: 'found', snapshot: 'not found'] (different image)
-    Given I create "1" tests with:
-    """
-      testName: TestName
-      project: ProjectName
-      branch: BranchName
-      checks:
-          - checkName: check-name
-            viewport: 500x500
-            browserName: safari
-            os: Windows
-            browserVersion: 1.0
-            browserFullVersion: 1.0.111.1
-            filePath: files/A.png
-    """
-    When I accept via http the 1st check with name "check-name"
-
-    When I wait for "5" seconds
-    When I execute WDIODriver "checkIfBaselineExist" method with params:
-    """
-    {
-        "params": {
-            "name": "check-name",
-            "viewport": "500x500",
-            "browserName": "safari",
-            "os": "Windows",
-            "app": "ProjectName",
-            "branch": "BranchName"
-        },
-        "filePath": "files/B.png"
-    }
-    """
-    Then I expect WDIODriver "checkIfBaselineExist" return value match object:
-    """
-    {
-       "baselineFound": true,
-       "snapshotFound": false
-    }
-    """
-
-  Scenario: Baseline with same snapshots hashcode exist - success
-    Given I create "1" tests with:
-    """
-      testName: TestName
-      project: ProjectName
-      branch: BranchName
-      checks:
-          - checkName: check-name
-            viewport: 500x500
-            browserName: safari
-            os: Windows
-            browserVersion: 1.0
-            browserFullVersion: 1.0.111.1
-            filePath: files/A.png
-    """
-    When I accept via http the 1st check with name "check-name"
-
-    When I wait for "5" seconds
-    When I execute WDIODriver "checkIfBaselineExist" method with params:
-    """
-    {
-        "params": {
-            "name": "check-name",
-            "viewport": "500x500",
-            "browserName": "safari",
-            "os": "Windows",
-            "app": "ProjectName",
-            "branch": "BranchName"
-        },
-        "filePath": "files/A.png"
-    }
-    """
-    Then I expect WDIODriver "checkIfBaselineExist" return value match object:
-    """
-    {
-       "baselineFound": true,
-       "snapshotFound": true
-    }
-    """
-
-  Scenario: Baseline with same snapshots hashcode exist - not found (different name)
-    Given I create "1" tests with:
-    """
-      testName: TestName
-      project: ProjectName
-      branch: BranchName
-      checks:
-          - checkName: check-name
-            viewport: 500x500
-            browserName: safari
-            os: Windows
-            browserVersion: 1.0
-            browserFullVersion: 1.0.111.1
-            filePath: files/A.png
-    """
-    When I accept via http the 1st check with name "check-name"
-
-    When I wait for "5" seconds
-    When I execute WDIODriver "checkIfBaselineExist" method with params:
-    """
-    {
-        "params": {
-            "name": "check-name_1",
-            "viewport": "500x500",
-            "browserName": "safari",
-            "os": "Windows",
-            "app": "ProjectName",
-            "branch": "BranchName"
-        },
-        "filePath": "files/A.png"
-    }
-    """
-    Then I expect WDIODriver "checkIfBaselineExist" return value match object:
-    """
-    {
-       "baselineFound": false,
-       "snapshotFound": false
-    }
-    """
-
   Scenario: Get baselines by ident and snapshots by id [success, success]
     When I execute WDIODriver "startTestSession" method with params:
     """
@@ -355,6 +196,60 @@ Feature: Client API Basics
     }
     """
 
+  Scenario: Get baselines - not found (different name)
+    When I execute WDIODriver "startTestSession" method with params:
+    """
+    {
+        "params": {
+            "app": "project-name",
+            "branch": "branch-name",
+            "tags": ["tag1", "tag2", "tag3"],
+            "browserVersion": "123",
+            "test": "test-name",
+            "suite": "suite-name",
+            "run": "run-name",
+            "runident": "test-run-ident"
+        }
+    }
+    """
+    When I execute WDIODriver "check" method with params:
+    """
+    {
+        "checkName": "check-name",
+        "filePath": "./files/A.png",
+        "params": {
+            "checkName": "check-name",
+            "viewport": "500x500",
+            "browserName": "safari",
+            "os": "Windows",
+            "browserVersion": 2,
+            "browserFullVersion": "1.2.3.4"
+        }
+    }
+    """
+    When I accept via http the 1st check with name "check-name"
+
+    When I execute WDIODriver "getBaselines" method with params:
+    """
+    {
+        "params": {
+            "name": "check-name_wrong",
+            "viewport": "500x500",
+            "browserName": "safari",
+            "os": "Windows",
+            "app": "project-name",
+            "branch": "branch-name"
+        }
+    }
+    """
+
+    Then I expect WDIODriver "getBaselines" return value match object:
+    """
+        {
+
+        }
+    """
+
   Scenario: Get baselines by ident and snapshots by id [success, wrong id]
     When I execute WDIODriver "startTestSession" method with params:
     """
@@ -435,7 +330,7 @@ Feature: Client API Basics
     }
     """
 
-  Scenario: Get baselines by ident and snapshots by id [failed not accepted]
+  Scenario: Get baselines by ident [empty (not accepted)]
     When I execute WDIODriver "startTestSession" method with params:
     """
     {
