@@ -2,14 +2,13 @@ const express = require('express');
 
 const { clientController } = require('../../controllers');
 const { ensureApiKey } = require('../../lib/ensureLogin/ensureLoggedIn');
-
 const router = express.Router();
 
 router
     .route('/startSession')
     .post(ensureApiKey(),
         async (req, res, next) => {
-            await global.queue.add(
+            return global.queue.add(
                 () => clientController.startSession(req, res, next)
             );
         });
@@ -33,9 +32,5 @@ router
 router
     .route('/snapshots')
     .get(ensureApiKey(), clientController.getSnapshots);
-
-// router
-//     .route('/checkIfScreenshotHasBaselines')
-//     .get(ensureApiKey(), clientController.checkIfScreenshotHasBaselines);
 
 module.exports = router;

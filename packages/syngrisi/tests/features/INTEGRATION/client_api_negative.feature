@@ -119,45 +119,6 @@ Feature: Client API Negative
     Invalid 'check, opts' parameters: {"_errors":[],"name":{"_errors":["String must contain at least 1 character(s)"]}}
     """
 
-  Scenario: Baseline with same snapshots hashcode exist - without name
-    When I execute WDIODriver "checkIfBaselineExist" method with params:
-    """
-    {
-        "params": {
-            "viewport": "500x500",
-            "browserName": "safari",
-            "os": "Windows",
-            "app": "ProjectName",
-            "branch": "BranchName"
-        },
-        "filePath": "files/A.png"
-    }
-    """
-    Then I expect WDIODriver "checkIfBaselineExist" method throws ane error containing:
-    """
-    Invalid 'checkIfBaselineExist, params' parameters: {"_errors":[],"name":{"_errors":["Required"]}}
-    """
-
-  Scenario: Baseline with same snapshots hashcode exist - empty os name
-    When I execute WDIODriver "checkIfBaselineExist" method with params:
-    """
-    {
-        "params": {
-            "name" : "CheckName",
-            "viewport": "500x500",
-            "browserName": "safari",
-            "os": "",
-            "app": "ProjectName",
-            "branch": "BranchName"
-        },
-        "filePath": "files/A.png"
-    }
-    """
-    Then I expect WDIODriver "checkIfBaselineExist" method throws ane error containing:
-    """
-    Invalid 'checkIfBaselineExist, params' parameters: {"_errors":[],"os":{"_errors":["String must contain at least 1 character(s)"]}}
-    """
-
   Scenario: Get baselines by ident - without name
     When I execute WDIODriver "startTestSession" method with params:
     """
