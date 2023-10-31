@@ -75,17 +75,23 @@ When(/^I execute WDIODriver "([^"]*)" method with params:$/, async function (met
                 imageBuffer,
                 params: opts.params,
             });
+            await this.saveItem(methodName, response);
         } else if (methodName === 'checkIfBaselineExist') {
             const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${opts.filePath}`);
             response = await browser.vDriver.checkIfBaselineExist({
                 params: opts.params,
                 imageBuffer,
             });
+            await this.saveItem(methodName, response);
+        } else if (methodName === 'getBaselines') {
+            response = await browser.vDriver[methodName](opts);
+            const savedItem = response.results[0] || {};
+            await this.saveItem(methodName, savedItem);
         } else {
             response = await browser.vDriver[methodName](opts);
+            await this.saveItem(methodName, response);
         }
         console.log(methodName, '💛💛💛', JSON.stringify(response, null, '    '));
-        await this.saveItem(methodName, response);
     } catch (e) {
         console.error(chalk.magentaBright(`❌❌❌  ${e}`));
         response = e.toString();

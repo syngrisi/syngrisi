@@ -18,6 +18,9 @@ const pino = require('pino');
 const path = require('path');
 const compression = require('compression');
 const passport = require('passport');
+const PQueue = require('p-queue').default;
+
+global.queue = new PQueue({ concurrency: 1 });
 
 const User = mongoose.model('VRSUser');
 const LocalStrategy = require('passport-local').Strategy;

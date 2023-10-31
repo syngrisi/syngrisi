@@ -157,3 +157,106 @@ Feature: Client API Negative
     """
     Invalid 'checkIfBaselineExist, params' parameters: {"_errors":[],"os":{"_errors":["String must contain at least 1 character(s)"]}}
     """
+
+  Scenario: Get baselines by ident - without name
+    When I execute WDIODriver "startTestSession" method with params:
+    """
+    {
+        "params": {
+            "app": "project-name",
+            "branch": "branch-name",
+            "tags": ["tag1", "tag2", "tag3"],
+            "browserVersion": "123",
+            "test": "test-name",
+            "suite": "suite-name",
+            "run": "run-name",
+            "runident": "test-run-ident"
+        }
+    }
+    """
+    When I execute WDIODriver "check" method with params:
+    """
+    {
+        "checkName": "check-name",
+        "filePath": "./files/A.png",
+        "params": {
+            "checkName": "check-name",
+            "viewport": "500x500",
+            "browserName": "safari",
+            "os": "Windows",
+            "browserVersion": 2,
+            "browserFullVersion": "1.2.3.4"
+        }
+    }
+    """
+    When I accept via http the 1st check with name "check-name"
+
+    When I execute WDIODriver "getBaselines" method with params:
+    """
+    {
+        "params": {
+            "viewport": "500x500",
+            "browserName": "safari",
+            "os": "Windows",
+            "app": "project-name",
+            "branch": "branch-name"
+        }
+    }
+    """
+
+    Then I expect WDIODriver "getBaselines" method throws ane error containing:
+    """
+    Invalid 'getBaseline, opts' parameters: {"_errors":[],"name":{"_errors":["Required"]}}
+    """
+
+  Scenario: Get baselines by ident - empty name
+    When I execute WDIODriver "startTestSession" method with params:
+    """
+    {
+        "params": {
+            "app": "project-name",
+            "branch": "branch-name",
+            "tags": ["tag1", "tag2", "tag3"],
+            "browserVersion": "123",
+            "test": "test-name",
+            "suite": "suite-name",
+            "run": "run-name",
+            "runident": "test-run-ident"
+        }
+    }
+    """
+    When I execute WDIODriver "check" method with params:
+    """
+    {
+        "checkName": "check-name",
+        "filePath": "./files/A.png",
+        "params": {
+            "checkName": "check-name",
+            "viewport": "500x500",
+            "browserName": "safari",
+            "os": "Windows",
+            "browserVersion": 2,
+            "browserFullVersion": "1.2.3.4"
+        }
+    }
+    """
+    When I accept via http the 1st check with name "check-name"
+
+    When I execute WDIODriver "getBaselines" method with params:
+    """
+    {
+        "params": {
+            "name": "",
+            "viewport": "500x500",
+            "browserName": "safari",
+            "os": "Windows",
+            "app": "project-name",
+            "branch": "branch-name"
+        }
+    }
+    """
+
+    Then I expect WDIODriver "getBaselines" method throws ane error containing:
+    """
+    Invalid 'getBaseline, opts' parameters: {"_errors":[],"name":{"_errors":["String must contain at least 1 character(s)"]}}
+    """

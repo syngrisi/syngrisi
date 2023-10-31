@@ -31,7 +31,10 @@ class WDIODriver {
         }
     }
 
-    async startTestSession({ params, suppressErrors = false }: { params: SessionParams, suppressErrors?: boolean }) {
+    async startTestSession({ params, suppressErrors = false }: {
+        params: SessionParams,
+        suppressErrors?: boolean
+    }) {
         try {
             paramsGuard(params, 'startTestSession, params', SessionParamsSchema)
 
@@ -73,7 +76,9 @@ class WDIODriver {
         }
     }
 
-    async stopTestSession({ suppressErrors = false }: { suppressErrors?: boolean } = {}) {
+    async stopTestSession({ suppressErrors = false }: {
+        suppressErrors?: boolean
+    } = {}) {
         try {
             const testId = this.params.test.testId
             this.params.test.testId = undefined
@@ -116,29 +121,66 @@ class WDIODriver {
      * @param {boolean} suppressErrors  suppress API errors
      * @returns {Promise<Object>}
      */
-    // ident:  ['name', 'viewport', 'browserName', 'os', 'app', 'branch'];
-    async checkIfBaselineExist({ params, imageBuffer, suppressErrors = false }
-                                   : { name: string, imageBuffer: Buffer, params: BaselineParams, suppressErrors?: boolean }) {
-        if(!Buffer.isBuffer(imageBuffer)) throw new Error('checkIfBaselineExist - wrong imageBuffer')
-        paramsGuard(params, 'checkIfBaselineExist, params', BaselineParamsSchema)
-        const imgHash = hasha(imageBuffer)
+    // // ident:  ['name', 'viewport', 'browserName', 'os', 'app', 'branch'];
+    // async checkIfBaselineExist({ params, imageBuffer, suppressErrors = false }
+    //                                : {
+    //     name: string,
+    //     imageBuffer: Buffer,
+    //     params: BaselineParams,
+    //     suppressErrors?: boolean
+    // }) {
+    //     if (!Buffer.isBuffer(imageBuffer)) throw new Error('checkIfBaselineExist - wrong imageBuffer')
+    //     paramsGuard(params, 'checkIfBaselineExist, params', BaselineParamsSchema)
+    //     const imgHash = hasha(imageBuffer)
+    //
+    //     let opts: RequiredIdentOptions = {
+    //         name: params.name,
+    //         viewport: params.viewport || await getViewport(),
+    //         browserName: params.browserName || this.params.test.browser || await getBrowserVersion(),
+    //         os: params.os || this.params.test.os || await getOS(),
+    //         app: params.app || this.params.test.app,
+    //         branch: params.branch || this.params.test.branch,
+    //         imghash: imgHash,
+    //     }
+    //
+    //     paramsGuard(opts, 'checkIfBaselineExist, opts', RequiredIdentOptionsSchema)
+    //
+    //     const result = await this.api.checkIfBaselineExist(opts)
+    //
+    //     if (result.error && !suppressErrors) {
+    //         throw `❌ Check If Baseline With certain snapshot hashcode error: ${JSON.stringify(result, null, '  ')}`
+    //     }
+    //     return result
+    // }
 
-        let opts: RequiredIdentOptions = {
+    // ident:  ['name', 'viewport', 'browserName', 'os', 'app', 'branch'];
+    async getBaselines({ params }: {
+        params: BaselineParams
+    }) {
+        let opts: BaselineParams = {
             name: params.name,
             viewport: params.viewport || await getViewport(),
             browserName: params.browserName || this.params.test.browser || await getBrowserVersion(),
             os: params.os || this.params.test.os || await getOS(),
             app: params.app || this.params.test.app,
             branch: params.branch || this.params.test.branch,
-            imghash: imgHash,
         }
+        paramsGuard(opts, 'getBaseline, opts', BaselineParamsSchema)
 
-        paramsGuard(opts, 'checkIfBaselineExist, opts', RequiredIdentOptionsSchema)
+        const result = await this.api.getBaselines(opts)
 
-        const result = await this.api.checkIfBaselineExist(opts)
+        if (result.error) {
+            throw `❌ Get baselines error: ${JSON.stringify(result, null, '  ')}`
+        }
+        return result
+    }
 
-        if (result.error && !suppressErrors) {
-            throw `❌ Check If Baseline With certain snapshot hashcode error: ${JSON.stringify(result, null, '  ')}`
+    async getSnapshots({ params }: any) {
+
+        const result = await this.api.getSnapshots(params)
+
+        if (result.error) {
+            throw `❌ Get snapshots error: ${JSON.stringify(result, null, '  ')}`
         }
         return result
     }

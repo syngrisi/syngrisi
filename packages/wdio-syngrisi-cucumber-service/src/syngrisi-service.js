@@ -87,17 +87,35 @@ export default class SyngrisiCucumberService {
                     });
                 }
             );
-            // ident:  ['name', 'viewport', 'browserName', 'os', 'app', 'branch'];
+
             browser.addCommand(
-                'syngrisiIsBaselineExist',
+                'getLastBaseline',
                 // eslint-disable-next-line arrow-body-style
-                async (name, imageBuffer) => {
-                    const opts = { ...params, ...{ name } };
-                    return $this.vDriver.checkIfBaselineExist(
-                        { params: opts, imageBuffer }
-                    );
+                async (opts) => {
+                    const result = await $this.vDriver.getBaselines({ params: opts });
+                    return result.results?.length > 0 ? result.results[0] : null;
                 }
             );
+            browser.addCommand(
+                'getSnapshot',
+                // eslint-disable-next-line arrow-body-style
+                async (opts) => {
+                    const result = await $this.vDriver.getSnapshots({ params: opts });
+                    return result.results?.length > 0 ? result.results[0] : null;
+                }
+            );
+
+            // ident:  ['name', 'viewport', 'browserName', 'os', 'app', 'branch'];
+            // browser.addCommand(
+            //     'syngrisiIsBaselineExist',
+            //     // eslint-disable-next-line arrow-body-style
+            //     async (name, imageBuffer) => {
+            //         const opts = { ...params, ...{ name } };
+            //         return $this.vDriver.checkIfBaselineExist(
+            //             { params: opts, imageBuffer }
+            //         );
+            //     }
+            // );
             log.trace('beforeScenario hook END');
         } catch (e) {
             const errMsg = 'error in Syngrisi Cucumber service, probably Syngrisi is not started,\n'

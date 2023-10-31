@@ -34,7 +34,7 @@ function parseHrtimeToSeconds(hrtime) {
 const status = async (currentUser) => {
     const count = await User.countDocuments();
 
-    log.info(`server status: check users counts: ${count}`);
+    log.silly(`server status: check users counts: ${count}`);
     if (count > 1) {
         return { alive: true, currentUser: currentUser?.username };
     }

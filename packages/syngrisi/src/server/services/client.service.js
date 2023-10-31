@@ -67,39 +67,43 @@ const startSession = async (params, username) => {
         startDate: new Date(),
         updatedDate: new Date(),
     });
+    try {
+        const app = await createItemIfNotExistAsync(
+            'VRSApp',
+            {
+                name: params.app,
+            },
+            { user: username, itemType: 'app' }
+        );
+        opts.app = app._id;
 
-    const app = await createItemIfNotExistAsync(
-        'VRSApp',
-        {
-            name: params.app,
-        },
-        { user: username, itemType: 'app' }
-    );
-    opts.app = app._id;
+        const run = await createRunIfNotExist(
+            {
+                name: params.run,
+                ident: params.runident,
+                app: app._id,
+            },
+            { user: username, itemType: 'run' }
+        );
+        opts.run = run._id;
 
-    const run = await createRunIfNotExist(
-        {
-            name: params.run,
-            ident: params.runident,
-            app: app._id,
-        },
-        { user: username, itemType: 'run' }
-    );
-    opts.run = run._id;
+        const suite = await createSuiteIfNotExist(
+            {
+                name: params.suite || 'Others',
+                app: app._id,
+                createdDate: new Date(),
+            },
+            { user: username, itemType: 'suite' },
+        );
 
-    const suite = await createSuiteIfNotExist(
-        {
-            name: params.suite || 'Others',
-            app: app._id,
-            createdDate: new Date(),
-        },
-        { user: username, itemType: 'suite' },
-    );
+        opts.suite = suite._id;
 
-    opts.suite = suite._id;
+        const test = await orm.createTest(opts);
+        return test;
+    } catch (e) {
+        throw e;
+    }
 
-    const test = await orm.createTest(opts);
-    return test;
 };
 const endSession = async (testId, username) => {
     const logOpts = {
@@ -627,53 +631,67 @@ function removeNonIdentProperties(params) {
     return opts;
 }
 
-const checkIfScreenshotHasBaselines = async (query) => {
+// const checkIfScreenshotHasBaselines = async (query) => {
+//     const logOpts = {
+//         scope: 'checkIfScreenshotHasBaselines',
+//         itemType: 'baseline',
+//         msgType: 'GET',
+//     };
+//     const opts = removeNonIdentProperties(query);
+//     log.debug(`check if baseline exist: '${JSON.stringify(query, null, ' ')}'`, logOpts);
+//     if (!query.imghash) {
+//         throw new ApiError(httpStatus.BAD_REQUEST, 'imghash is empty');
+//     }
+//     const result = {
+//         baselineFound: false,
+//         snapshotFound: false,
+//         opts,
+//     };
+//
+//     const app = await App.findOne({ name: query.app });
+//     if (!app) {
+//         result.errorMsg = `Cannot find the app`;
+//         return result;
+//     }
+//     opts.app = app._id;
+//     const lastBaseline = await Baseline.findOne(opts)
+//         .sort({ updatedDate: -1 })
+//         .exec();
+//     if (!lastBaseline) {
+//         log.warn(`such baseline does not exists: ${JSON.stringify(opts, null, ' ')}`, logOpts);
+//         result.errorMsg = `Cannot find the baseline`;
+//         return result;
+//     }
+//     result.lastBaseline = lastBaseline;
+//     result.baselineFound = true;
+//
+//     const snapshot = await Snapshot.findOne({ _id: lastBaseline.toObject().snapshootId })
+//         .exec();
+//     const snapshotObj = snapshot.toObject();
+//
+//     if (snapshotObj
+//         && (snapshotObj?.imghash.toString() === query.imghash)) {
+//         result.snapshotFound = true;
+//         result.snapshot = snapshotObj;
+//         return result;
+//     }
+//     log.warn(`such snapshot does not exists: ${JSON.stringify(query, null, ' ')}`, logOpts);
+//     result.snapshotFound = false;
+//     return result;
+// };
+const getBaselines = async (filter, options) => {
     const logOpts = {
-        scope: 'checkIfScreenshotHasBaselines',
+        scope: 'getBaselines',
         itemType: 'baseline',
         msgType: 'GET',
     };
-    const opts = removeNonIdentProperties(query);
-    log.debug(`check if baseline exist: '${JSON.stringify(query, null, ' ')}'`, logOpts);
-    if (!query.imghash) {
-        throw new ApiError(httpStatus.BAD_REQUEST, 'imghash is empty');
-    }
-    const result = {
-        baselineFound: false,
-        snapshotFound: false,
-        opts,
-    };
-
-    const app = await App.findOne({ name: query.app });
+    const app = await App.findOne({ name: filter.app });
     if (!app) {
-        result.errorMsg = `Cannot find the app`
-        return result
+        log.error(`Cannot find the app: '${filter.app}'`);
+        return {};
     }
-    opts.app = app._id;
-    const lastBaseline = await Baseline.findOne(opts)
-        .sort({ updatedDate: -1 })
-        .exec();
-    if (!lastBaseline) {
-        log.warn(`such baseline does not exists: ${JSON.stringify(opts, null, ' ')}`, logOpts);
-        result.errorMsg = `Cannot find the baseline`
-        return result
-    }
-    result.lastBaseline = lastBaseline;
-    result.baselineFound = true;
-
-    const snapshot = await Snapshot.findOne({ _id: lastBaseline.toObject().snapshootId })
-        .exec();
-    const snapshotObj = snapshot.toObject();
-
-    if (snapshotObj
-        && (snapshotObj?.imghash.toString() === query.imghash)) {
-        result.snapshotFound = true;
-        result.snapshot = snapshotObj;
-        return result;
-    }
-    log.warn(`such snapshot does not exists: ${JSON.stringify(query, null, ' ')}`, logOpts);
-    result.snapshotFound = false;
-    return result;
+    filter.app = app._id;
+    return Baseline.paginate(filter, options);
 };
 
 module.exports = {
@@ -681,5 +699,6 @@ module.exports = {
     endSession,
     createCheck,
     getIdent,
-    checkIfScreenshotHasBaselines,
+    // checkIfScreenshotHasBaselines,
+    getBaselines,
 };

@@ -158,7 +158,37 @@ class SyngrisiApi {
             return result;
         }
         catch (e) {
-            log.error(`❌ Error getting if baseline exist data, error: '${e.stack || e}'`);
+            log.error(`❌ Error getting if baseline exist, params: ${JSON.stringify(params)} data, error: '${e.stack || e}'`);
+            if (e.response)
+                (0, utils_1.printErrorResponseBody)(e);
+            return (0, utils_1.errorObject)(e);
+        }
+    }
+    async getBaselines(params) {
+        try {
+            const filter = JSON.stringify({ ...params, apikey: (0, hasha_1.default)(this.config.apiKey) });
+            const url = `${this.config.url}v1/client/baselines?filter=${filter}`;
+            const result = await got_cjs_1.default.get(url)
+                .json();
+            return result;
+        }
+        catch (e) {
+            log.error(`❌ Error getting baselines, params: ${JSON.stringify(params)} data, error: '${e.stack || e}'`);
+            if (e.response)
+                (0, utils_1.printErrorResponseBody)(e);
+            return (0, utils_1.errorObject)(e);
+        }
+    }
+    async getSnapshots(params) {
+        try {
+            const filter = JSON.stringify({ ...params, apikey: (0, hasha_1.default)(this.config.apiKey) });
+            const url = `${this.config.url}v1/client/snapshots?filter=${filter}`;
+            const result = await got_cjs_1.default.get(url)
+                .json();
+            return result;
+        }
+        catch (e) {
+            log.error(`❌ Error getting snapshots, params: ${JSON.stringify(params)} data, error: '${e.stack || e}'`);
             if (e.response)
                 (0, utils_1.printErrorResponseBody)(e);
             return (0, utils_1.errorObject)(e);
