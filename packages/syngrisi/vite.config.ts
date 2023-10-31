@@ -12,6 +12,7 @@ const config = {
         },
     },
     build: {
+        tsconfig: "./vite.tsconfig.json",
         minify: false,
         outDir: path.resolve(__dirname, 'mvc/views/react'),
         // 'public/ui-app',

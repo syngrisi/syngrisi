@@ -7,7 +7,6 @@ import { errorObject, prettyCheckResult, printErrorResponseBody } from './utils'
 import { ApiSessionParams, CheckOptions, CheckResult, Config } from './types'
 
 const log = logger('syngrisi-wdio-sdk')
-
 // 0 | 4 | 2 | 1 | 3 | 5 | "trace" | "debug" | "info" | "warn" | "error" |
 if (process.env.SYNGRISI_LOG_LEVEL) {
     log.setLevel(process.env.SYNGRISI_LOG_LEVEL as LogLevelDesc)
@@ -161,7 +160,37 @@ class SyngrisiApi {
                 .json()
             return result
         } catch (e: any) {
-            log.error(`❌ Error getting if baseline exist data, error: '${e.stack || e}'`)
+            log.error(`❌ Error getting if baseline exist, params: ${JSON.stringify(params)} data, error: '${e.stack || e}'`)
+            if (e.response) printErrorResponseBody(e)
+            return errorObject(e)
+        }
+    }
+
+    public async getBaselines(params: any): Promise<any> {
+        try {
+            const filter = JSON.stringify({ ...params, apikey: hasha(this.config.apiKey) })
+
+            const url = `${this.config.url}v1/client/baselines?filter=${filter}`
+            const result = await got.get(url)
+                .json()
+            return result
+        } catch (e: any) {
+            log.error(`❌ Error getting baselines, params: ${JSON.stringify(params)} data, error: '${e.stack || e}'`)
+            if (e.response) printErrorResponseBody(e)
+            return errorObject(e)
+        }
+    }
+
+    public async getSnapshots(params: any): Promise<any> {
+        try {
+            const filter = JSON.stringify({ ...params, apikey: hasha(this.config.apiKey) })
+
+            const url = `${this.config.url}v1/client/snapshots?filter=${filter}`
+            const result = await got.get(url)
+                .json()
+            return result
+        } catch (e: any) {
+            log.error(`❌ Error getting snapshots, params: ${JSON.stringify(params)} data, error: '${e.stack || e}'`)
             if (e.response) printErrorResponseBody(e)
             return errorObject(e)
         }

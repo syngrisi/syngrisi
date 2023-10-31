@@ -20,7 +20,7 @@ exports.hooks = {
      */
     onPrepare: function (config, capabilities) {
         const result = child.execSync('rm -f ./logs/*');
-        child.execSync('rm -rf ../coverage/*');
+        child.execSync('rm -rf ../coverage');
         // console.log({ logsRemove: result.toString() });
     },
     /**

@@ -99,12 +99,39 @@ class WDIODriver {
      * @param {boolean} suppressErrors  suppress API errors
      * @returns {Promise<Object>}
      */
+    // // ident:  ['name', 'viewport', 'browserName', 'os', 'app', 'branch'];
+    // async checkIfBaselineExist({ params, imageBuffer, suppressErrors = false }
+    //                                : {
+    //     name: string,
+    //     imageBuffer: Buffer,
+    //     params: BaselineParams,
+    //     suppressErrors?: boolean
+    // }) {
+    //     if (!Buffer.isBuffer(imageBuffer)) throw new Error('checkIfBaselineExist - wrong imageBuffer')
+    //     paramsGuard(params, 'checkIfBaselineExist, params', BaselineParamsSchema)
+    //     const imgHash = hasha(imageBuffer)
+    //
+    //     let opts: RequiredIdentOptions = {
+    //         name: params.name,
+    //         viewport: params.viewport || await getViewport(),
+    //         browserName: params.browserName || this.params.test.browser || await getBrowserVersion(),
+    //         os: params.os || this.params.test.os || await getOS(),
+    //         app: params.app || this.params.test.app,
+    //         branch: params.branch || this.params.test.branch,
+    //         imghash: imgHash,
+    //     }
+    //
+    //     paramsGuard(opts, 'checkIfBaselineExist, opts', RequiredIdentOptionsSchema)
+    //
+    //     const result = await this.api.checkIfBaselineExist(opts)
+    //
+    //     if (result.error && !suppressErrors) {
+    //         throw `❌ Check If Baseline With certain snapshot hashcode error: ${JSON.stringify(result, null, '  ')}`
+    //     }
+    //     return result
+    // }
     // ident:  ['name', 'viewport', 'browserName', 'os', 'app', 'branch'];
-    async checkIfBaselineExist({ params, imageBuffer, suppressErrors = false }) {
-        if (!Buffer.isBuffer(imageBuffer))
-            throw new Error('checkIfBaselineExist - wrong imageBuffer');
-        (0, paramsGuard_1.paramsGuard)(params, 'checkIfBaselineExist, params', Baseline_schema_1.BaselineParamsSchema);
-        const imgHash = (0, hasha_1.default)(imageBuffer);
+    async getBaselines({ params }) {
         let opts = {
             name: params.name,
             viewport: params.viewport || await (0, wdioHelpers_1.getViewport)(),
@@ -112,12 +139,18 @@ class WDIODriver {
             os: params.os || this.params.test.os || await (0, wdioHelpers_1.getOS)(),
             app: params.app || this.params.test.app,
             branch: params.branch || this.params.test.branch,
-            imghash: imgHash,
         };
-        (0, paramsGuard_1.paramsGuard)(opts, 'checkIfBaselineExist, opts', Baseline_schema_1.RequiredIdentOptionsSchema);
-        const result = await this.api.checkIfBaselineExist(opts);
-        if (result.error && !suppressErrors) {
-            throw `❌ Check If Baseline With certain snapshot hashcode error: ${JSON.stringify(result, null, '  ')}`;
+        (0, paramsGuard_1.paramsGuard)(opts, 'getBaseline, opts', Baseline_schema_1.BaselineParamsSchema);
+        const result = await this.api.getBaselines(opts);
+        if (result.error) {
+            throw `❌ Get baselines error: ${JSON.stringify(result, null, '  ')}`;
+        }
+        return result;
+    }
+    async getSnapshots({ params }) {
+        const result = await this.api.getSnapshots(params);
+        if (result.error) {
+            throw `❌ Get snapshots error: ${JSON.stringify(result, null, '  ')}`;
         }
         return result;
     }

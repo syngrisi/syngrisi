@@ -2,11 +2,13 @@ const httpStatus = require('http-status');
 const mongoose = require('mongoose');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
-const { clientService } = require('../services');
-const { pick } = require('../utils');
+const { clientService, genericService } = require('../services');
+const { pick, deserializeIfJSON } = require('../utils');
 const orm = require('../lib/dbItems');
 const { createItemIfNotExistAsync, createSuiteIfNotExist } = require('../lib/dbItems');
 const prettyCheckParams = require('../utils/prettyCheckParams');
+const { paramsGuard } = require("../../../dist/utils/paramsGuard");
+const { RequiredIdentOptionsSchema } = require("../../../dist/schemas/getBaseline.shema");
 
 const User = mongoose.model('VRSUser');
 const Test = mongoose.model('VRSTest');
@@ -18,7 +20,7 @@ $this.logMeta = {
 };
 
 // exports.createCheck = async (req, res) => ;
-const startSession = catchAsync(async (req, res) => {
+const startSession = catchAsync(async (req, res, next) => {
     const params = pick(
         req.body,
         ['name', 'status', 'app', 'tags', 'branch', 'viewport', 'browser', 'browserVersion', 'browserFullVersion',
@@ -144,9 +146,24 @@ const getIdent = catchAsync(async (req, res) => {
     const result = clientService.getIdent();
     res.send(result);
 });
+//
+// const checkIfScreenshotHasBaselines = catchAsync(async (req, res) => {
+//     const result = await clientService.checkIfScreenshotHasBaselines(req.query);
+//     res.send(result);
+// });
 
-const checkIfScreenshotHasBaselines = catchAsync(async (req, res) => {
-    const result = await clientService.checkIfScreenshotHasBaselines(req.query);
+const getBaselines = catchAsync(async (req, res) => {
+    const filter = req.query.filter ? deserializeIfJSON(pick(req.query, ['filter']).filter) : {};
+    paramsGuard(filter, 'getBaseline, filter', RequiredIdentOptionsSchema)
+    const options = pick(req.query, ['sortBy', 'limit', 'page', 'populate']);
+    const result = await clientService.getBaselines(filter, options);
+    res.send(result);
+});
+
+const getSnapshots = catchAsync(async (req, res) => {
+    const filter = req.query.filter ? deserializeIfJSON(pick(req.query, ['filter']).filter) : {};
+    const options = pick(req.query, ['sortBy', 'limit', 'page', 'populate']);
+    const result = await genericService.get('VRSSnapshot', filter, options);
     res.send(result);
 });
 
@@ -155,5 +172,7 @@ module.exports = {
     endSession,
     createCheck,
     getIdent,
-    checkIfScreenshotHasBaselines,
+    // checkIfScreenshotHasBaselines,
+    getBaselines,
+    getSnapshots
 };
