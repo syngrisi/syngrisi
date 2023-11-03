@@ -1,11 +1,8 @@
-const mongoose = require('mongoose');
 const snapshotUtil = require('./snapshots');
 const { calculateAcceptedStatus } = require('./utils');
 const testUtil = require('./tests');
 const orm = require('../lib/dbItems');
-
-const Check = mongoose.model('VRSCheck');
-const Test = mongoose.model('VRSTest');
+const { Check, Test } = require('../models');
 
 const $this = this;
 

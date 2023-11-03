@@ -1,10 +1,7 @@
 /* eslint-disable no-restricted-syntax,no-await-in-loop */
-const mongoose = require('mongoose');
 const testUtil = require('../utils/tests');
 const checkService = require('./check.service');
-
-const Test = mongoose.model('VRSTest');
-const Check = mongoose.model('VRSCheck');
+const { Test, Check } = require('../models');
 
 const $this = this;
 $this.logMeta = {

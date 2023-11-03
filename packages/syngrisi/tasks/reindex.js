@@ -1,4 +1,4 @@
-require('../src/server/models/vrsModel');
+require('../src/server/models');
 const utils = require('./lib/utils');
 const {
     User, Snapshot, Check, Test, Run, Log, App, Suite, Baseline,

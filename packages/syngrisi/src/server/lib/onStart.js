@@ -1,10 +1,10 @@
 /* eslint-disable no-underscore-dangle */
 // this code should run only once at server start
 const fs = require('fs');
-const mongoose = require('mongoose');
-const users = require('./testUsers.json');
+// eslint-disable-next-line no-unused-vars
+const testUsers = require('./testUsers.json');
+const { User } = require('../models');
 
-const User = mongoose.model('VRSUser');
 const $this = this;
 $this.logMeta = {
     scope: 'on_start',

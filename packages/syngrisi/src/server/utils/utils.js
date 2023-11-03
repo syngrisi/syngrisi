@@ -1,17 +1,6 @@
 /* eslint-disable dot-notation,object-shorthand */
-const mongoose = require('mongoose');
-
 const moment = require('moment');
-
-const Check = mongoose.model('VRSCheck');
-
-const Test = mongoose.model('VRSTest');
-
-const Run = mongoose.model('VRSRun');
-
-const Suite = mongoose.model('VRSSuite');
-
-const Baseline = mongoose.model('VRSBaseline');
+const { Check, Test, Run, Suite, Baseline } = require('../models');
 
 const ident = ['name', 'viewport', 'browserName', 'os', 'app', 'branch'];
 exports.ident = ident;
@@ -156,6 +145,7 @@ exports.waitUntil = async function waitUntil(cb, attempts = 5, interval = 700) {
     let result = false;
     let iteration = 0;
     while (result === false) {
+        // eslint-disable-next-line no-await-in-loop
         result = await cb();
         await new Promise((r) => setTimeout(r, interval));
         iteration += 1;

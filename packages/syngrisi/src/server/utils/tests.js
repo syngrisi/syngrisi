@@ -1,8 +1,5 @@
-const mongoose = require('mongoose');
 const checkUtil = require('./check');
-
-const Check = mongoose.model('VRSCheck');
-const Test = mongoose.model('VRSTest');
+const { Check, Test } = require('../models');
 
 module.exports.calculateTestStatus = async function calculateTestStatus(testId) {
     const checksInTest = await Check.find({ test: testId });
@@ -26,7 +23,9 @@ module.exports.removeTest = async function removeTest(id) {
     try {
         log.debug(`try to delete all checks associated to test with ID: '${id}'`, logOpts);
         const checks = await Check.find({ test: id });
+        // eslint-disable-next-line no-restricted-syntax
         for (const check of checks) {
+            // eslint-disable-next-line no-await-in-loop
             await checkUtil.removeCheck(check._id);
         }
         return Test.findByIdAndDelete(id);

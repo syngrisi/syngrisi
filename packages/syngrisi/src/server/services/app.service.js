@@ -1,7 +1,5 @@
 /* eslint-disable valid-jsdoc */
-const mongoose = require('mongoose');
-
-const App = mongoose.model('VRSApp');
+const { App } = require('../models');
 
 const $this = this;
 $this.logMeta = {

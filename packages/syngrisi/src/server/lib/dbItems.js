@@ -1,8 +1,7 @@
 /* eslint-disable no-underscore-dangle,func-names */
 const mongoose = require('mongoose');
 
-const Suite = mongoose.model('VRSSuite');
-const Run = mongoose.model('VRSRun');
+const { Suite, Run } = require('../models');
 
 const $this = this;
 $this.logMeta = {
@@ -38,7 +37,66 @@ async function updateItemDate(mdClass, id) {
 
 exports.updateItemDate = updateItemDate;
 
-// eslint-disable-next-line func-names
+const createItemIfNotExist = async function (modelName, params, logsMeta = {}) {
+    const logOpts = {
+        scope: 'createItemIfNotExist',
+        msgType: 'CREATE',
+        itemType: modelName,
+    };
+    try {
+        const itemModel = mongoose.model(modelName);
+        const options = { upsert: true, new: true, setDefaultsOnInsert: true };
+
+        await itemModel.init();
+        const item = await itemModel
+            .findOneAndUpdate(
+                params,
+                params,
+                options
+            );
+
+        log.info(`ORM item '${modelName}' was created: '${JSON.stringify(item)}'`, $this, { ...logOpts, ...{ ref: item._id }, ...logsMeta });
+        return item;
+    } catch (e) {
+        log.debug(`cannot create '${modelName}' ORM item, error: '${e.stack || e}'`, $this, { ...logOpts, ...logsMeta });
+    }
+    return null;
+};
+
+exports.createItemIfNotExistAsync = createItemIfNotExist;
+
+async function createItemProm(modelName, params) {
+    try {
+        const itemModel = mongoose.model(modelName);
+        log.debug(`start to create ORM item via promise: '${modelName}', params: '${JSON.stringify(params)}'`, $this);
+        await itemModel.init();
+        const item = await itemModel.create(params);
+        return item;
+    } catch (e) {
+        const errMsg = `cannot create '${modelName}', error: '${e.stack || e}'`;
+        log.error(errMsg, $this);
+        throw new Error(errMsg);
+    }
+}
+
+// SPECIFIC
+exports.createAppIfNotExist = async function createAppIfNotExist(params) {
+    if (!params.name) {
+        return {};
+    }
+    // log.debug(`create App with name '${params.name}' if not exist`, $this);
+    return createItemIfNotExist('VRSApp', params);
+};
+
+exports.createTest = async function createTest(params) {
+    return createItemProm('VRSTest', params);
+};
+
+exports.createUser = async function createUser(params) {
+    return createItemProm('VRSUser', params)
+        .catch((e) => Promise.reject(e));
+};
+
 const createSuiteIfNotExist = async function (params, logsMeta = {}) {
     const logOpts = {
         scope: 'createSuiteIfNotExist',
@@ -55,11 +113,11 @@ const createSuiteIfNotExist = async function (params, logsMeta = {}) {
         { name: params.name },
         params,
         options
-    )
+    );
     log.debug(`suite with name: '${params.name}' was created`,
         $this,
         { ...logOpts, ...logsMeta });
-    return suite
+    return suite;
 };
 
 exports.createSuiteIfNotExist = createSuiteIfNotExist;
@@ -70,114 +128,36 @@ const createRunIfNotExist = async function (params, logsMeta = {}) {
         msgType: 'CREATE',
         itemType: 'VRSRun',
     };
-    if (!params.name || !params.app || !params.ident) {
-        throw new Error(`Cannot create run, wrong params: '${JSON.stringify(params)}'`);
+    try {
+        if (!params.name || !params.app || !params.ident) {
+            throw new Error(`Cannot create run, wrong params: '${JSON.stringify(params)}'`);
+        }
+
+        log.debug(`try to create run if exist, params: '${JSON.stringify(params)}'`,
+            $this,
+            { ...logOpts, ...logsMeta });
+
+        const options = { upsert: true, new: true, setDefaultsOnInsert: true };
+        await Run.init();
+        const run = await Run
+            .findOneAndUpdate(
+                {
+                    name: params.name,
+                    ident: params.ident,
+                },
+                { ...params, createdDate: params.createdDate || new Date() },
+                options
+            );
+        log.debug(`run with name: '${params.name}' was created: ${run}`,
+            $this,
+            { ...logOpts, ...logsMeta });
+        return run;
+    } catch (e) {
+        log.error(`cannot create run, params: '${JSON.stringify(params)}', error: '${e.stack || e}'`,
+            $this,
+            { ...logOpts, ...logsMeta });
+        throw e;
     }
-
-    log.debug(`try to create run if exist, params: '${JSON.stringify(params)}'`,
-        $this,
-        { ...logOpts, ...logsMeta });
-
-    const options = { upsert: true, new: true, setDefaultsOnInsert: true };
-    const run = await Run
-        .findOneAndUpdate(
-            { name: params.name, ident: params.ident },
-            { ...params, createdDate: params.createdDate || new Date() },
-            options
-        )
-    log.debug(`run with name: '${params.name}' was created: ${run}`,
-        $this,
-        { ...logOpts, ...logsMeta });
-    return run
 };
 
 exports.createRunIfNotExist = createRunIfNotExist;
-
-const createItemIfNotExistAsync = async function (modelName, params, logsMeta = {}) {
-    const logOpts = {
-        scope: 'createItemIfNotExist',
-        msgType: 'CREATE',
-        itemType: modelName,
-    };
-    try {
-        const itemModel = mongoose.model(modelName);
-        const options = { upsert: true, new: true, setDefaultsOnInsert: true };
-
-        const item = await itemModel
-            .findOneAndUpdate(
-                params,
-                params,
-                options
-            )
-
-        log.info(`ORM item '${modelName}' was created: '${JSON.stringify(item)}'`, $this, { ...logOpts, ...{ ref: item._id }, ...logsMeta });
-        return item;
-    } catch (e) {
-        log.debug(`cannot create '${modelName}' ORM item, error: '${e.stack || e}'`, $this, { ...logOpts, ...logsMeta });
-    }
-    return null;
-};
-
-exports.createItemIfNotExistAsync = createItemIfNotExistAsync;
-
-async function createItem(modelName, params) {
-    const Item = mongoose.model(modelName);
-    // const test = await Item.findOne({name: params.name});
-    log.debug(`start to create ORM item '${modelName}', params: '${JSON.stringify(params)}'`, $this);
-    return Item.create(params)
-        .then(async function (tst) {
-            return tst.save()
-                .then(async function (savedTest) {
-                    log.debug(`ORM item: '${modelName}' was created: '${JSON.stringify(savedTest)}'`, $this);
-                    return savedTest;
-                });
-        })
-        .catch(function (err) {
-            log.debug(`cannot create ORM item'${modelName}', error: '${err}'`, $this);
-        });
-}
-
-async function createItemSync(modelName, params) {
-    const Item = mongoose.model(modelName);
-    log.debug(`start to create ORM item (sync): '${modelName}', params: '${JSON.stringify(params)}'`, $this);
-    return Item.create(params)
-        .then((tst) => tst.save()
-            .then(async (savedTest) => {
-                log.debug(`ORM item: '${modelName}' was created: '${JSON.stringify(savedTest)}'`, $this);
-                return savedTest;
-            }))
-        .catch((err) => {
-            log.debug(`cannot create '${modelName}', error: '${err}'`, $this);
-        });
-}
-
-async function createItemProm(modelName, params) {
-    try {
-        const Item = mongoose.model(modelName);
-        log.debug(`start to create ORM item via promise: '${modelName}', params: '${JSON.stringify(params)}'`, $this);
-        const item = await Item.create(params);
-        return item;
-    } catch (e) {
-        const errMsg = `cannot create '${modelName}', error: '${e.stack}'`;
-        log.error(errMsg, $this);
-        throw new Error(errMsg);
-    }
-}
-
-// SPECIFIC
-exports.createAppIfNotExist = async function createAppIfNotExist(params) {
-    if (!params.name) {
-        return {};
-    }
-    // log.debug(`create App with name '${params.name}' if not exist`, $this);
-    return createItemIfNotExistAsync('VRSApp', params);
-};
-
-exports.createTest = async function createTest(params) {
-    return createItem('VRSTest', params);
-};
-
-exports.createUser = async function createUser(params) {
-    return createItemProm('VRSUser', params)
-        .catch((e) => Promise.reject(e));
-};

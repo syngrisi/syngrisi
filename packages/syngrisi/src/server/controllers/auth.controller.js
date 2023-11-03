@@ -1,10 +1,8 @@
 const httpStatus = require('http-status');
 const passport = require('passport');
-const mongoose = require('mongoose');
-
-const User = mongoose.model('VRSUser');
 const hasha = require('hasha');
 const uuidAPIKey = require('uuid-apikey');
+const { User } = require('../models');
 const catchAsync = require('../utils/catchAsync');
 
 function getApiKey() {
@@ -128,7 +126,7 @@ const changePasswordFirstRun = catchAsync(async (req, res) => {
         ref: req?.user?.username,
     };
 
-    const { newPassword, newPasswordConfirmation } = req.body;
+    const { newPassword } = req.body;
 
     if ((await global.AppSettings.isAuthEnabled()) && ((await global.AppSettings.isFirstRun()))) {
         log.debug(`first run, change password for default 'Administrator', params: '${JSON.stringify(req.body)}'`, $this, logOpts);

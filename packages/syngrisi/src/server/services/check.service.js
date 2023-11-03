@@ -1,10 +1,11 @@
 /* eslint-disable valid-jsdoc */
-const mongoose = require('mongoose');
+const {
+    Check,
+    Test,
+    Suite,
+    Baseline,
+} = require('../models');
 
-const Check = mongoose.model('VRSCheck');
-const Test = mongoose.model('VRSTest');
-const Suite = mongoose.model('VRSSuite');
-const Baseline = mongoose.model('VRSBaseline');
 const { calculateAcceptedStatus, buildIdentObject } = require('../utils/utils');
 // const { createNewBaseline } = require('../../mvc/controllers/api/api_controller');
 const testUtil = require('../utils/tests');

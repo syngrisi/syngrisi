@@ -24,8 +24,6 @@ const get = async (modelName, filter, options) => {
 };
 
 const put = async (modelName, id, options, user) => {
-    const $this = this;
-
     const itemModel = mongoose.model(modelName);
 
     const logOpts = {
@@ -33,6 +31,7 @@ const put = async (modelName, id, options, user) => {
         ref: id,
         itemType: modelName,
         msgType: 'UPDATE',
+        user: user?.username,
     };
 
     const opts = removeEmptyProperties(options);

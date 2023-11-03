@@ -1,69 +1,70 @@
 env:
-    es6: true
-    node: true
+  es6: true
+  node: true
 
 plugins:
-    - wdio
+  - wdio
 
 extends:
-    - 'airbnb-base'
+  - 'airbnb-base'
 globals:
-    assert: true
-    expect: true
-    document: readonly
-    window: readonly
-    browser: readonly
-    log: readonly
-    $: readonly
-    $$: readonly
+  assert: true
+  expect: true
+  document: readonly
+  window: readonly
+  browser: readonly
+  log: readonly
+  $: readonly
+  $$: readonly
 
 parserOptions:
-    ecmaVersion: 2020
+  ecmaVersion: 2021
+  sourceType: module
 
 root: true
 
 rules:
-    linebreak-style: off
-    comma-dangle:
-        - 'error'
-        -   arrays: 'always-multiline'
-            objects: 'always-multiline'
-            imports: 'never'
-            exports: 'never'
-            functions: 'ignore'
-    global-require: 'off'
-    import/no-extraneous-dependencies: 0
-    indent:
-        - 'error'
-        - 4
-        -   SwitchCase: 1
-    max-len:
-        - 'error'
-        - 140
-        -   ignoreStrings: true
-        -   ignoreTemplateLiterals: true
-    new-cap:
-        - 'error'
-        -   newIsCap: true
-            capIsNewExceptions:
-                - 'Given'
-                - 'When'
-                - 'Then'
-    require-jsdoc:
-        - 'error'
-        -   require:
-                FunctionDeclaration: true
-                MethodDefinition: true
-                ClassDeclaration: true
-    strict: 'off'
-    valid-jsdoc:
-        - 'error'
-        -   requireReturn: false
-            matchDescription: '.+'
-    object-curly-newline:
-        - 'off'
-        -   "ObjectExpression": "never"
+  linebreak-style: off
+  comma-dangle:
+    - 'error'
+    - arrays: 'always-multiline'
+      objects: 'always-multiline'
+      imports: 'never'
+      exports: 'never'
+      functions: 'ignore'
+  global-require: 'off'
+  import/no-extraneous-dependencies: 0
+  indent:
+    - 'error'
+    - 4
+    - SwitchCase: 1
+  max-len:
+    - 'error'
+    - 140
+    - ignoreStrings: true
+    - ignoreTemplateLiterals: true
+  new-cap:
+    - 'error'
+    - newIsCap: true
+      capIsNewExceptions:
+        - 'Given'
+        - 'When'
+        - 'Then'
+  require-jsdoc:
+    - 'error'
+    - require:
+        FunctionDeclaration: true
+        MethodDefinition: true
+        ClassDeclaration: true
+  strict: 'off'
+  valid-jsdoc:
+    - 'error'
+    - requireReturn: false
+      matchDescription: '.+'
+  object-curly-newline:
+    - 'off'
+    - "ObjectExpression": "never"
 
-    no-underscore-dangle:
-        - 'error'
-        -   allow: ['_id']
+  no-underscore-dangle:
+    - 'error'
+    - allow: [ '_id' ]

@@ -1,8 +1,8 @@
+const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
-const { genericService, checkService } = require('../services');
+const { genericService } = require('../services');
 const { deserializeIfJSON, pick } = require('../utils');
 const ApiError = require('../utils/ApiError');
-const httpStatus = require('http-status');
 
 const get = catchAsync(async (req, res) => {
     const filter = req.query.filter ? deserializeIfJSON(pick(req.query, ['filter']).filter) : {};

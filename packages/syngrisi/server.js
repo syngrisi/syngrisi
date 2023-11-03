@@ -4,30 +4,25 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const MongoStore = require('connect-mongo');
 const chalk = require('chalk');
-
 const session = require('express-session');
-
 const fs = require('fs');
-
 const app = express();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-require('./src/server/models/vrsModel'); // created model loading here
 const fileUpload = require('express-fileupload');
 const pino = require('pino');
 const path = require('path');
 const compression = require('compression');
 const passport = require('passport');
 const PQueue = require('p-queue').default;
-
 global.queue = new PQueue({ concurrency: 1 });
 
-const User = mongoose.model('VRSUser');
 const LocalStrategy = require('passport-local').Strategy;
-
 const logger = require('pino-http')({
     name: 'vrs', autoLogging: true, useLevel: 'info',
 }, pino.destination('./application.log'));
+
+const { User } = require('./src/server/models');
 const { AppSettings } = require('./src/server/lib/AppSettings');
 
 global.AppSettings = new AppSettings();
@@ -38,6 +33,8 @@ const { Logger } = require('./src/server/lib/logger');
 const { disableCors } = require('./src/server/middlewares/disableCors');
 
 global.log = new Logger({ dbConnectionString: config.connectionString });
+// object-container for bottleneck instances
+global.limiter = {};
 
 this.logMeta = { scope: 'entrypoint' };
 log.info('Init the application', this);

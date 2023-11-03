@@ -1,6 +1,6 @@
 "use strict";
 /* eslint-disable no-await-in-loop,no-restricted-syntax */
-require('../../src/server/models/vrsModel');
+require('../../src/server/models');
 const utils = require('../lib/utils');
 const { Check, Test, Run, Suite } = require('../lib/common');
 async function task() {

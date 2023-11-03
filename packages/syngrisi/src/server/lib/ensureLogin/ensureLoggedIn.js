@@ -31,9 +31,8 @@
  * @return {Function}
  * @api public
  */
-const mongoose = require('mongoose');
+const { User } = require('../../models');
 
-const User = mongoose.model('VRSUser');
 const $this = this;
 $this.logMeta = {
     scope: 'Authentication',

@@ -1,17 +1,20 @@
 const express = require('express');
-
+const Bottleneck = require('bottleneck/es5');
 const { clientController } = require('../../controllers');
 const { ensureApiKey } = require('../../lib/ensureLogin/ensureLoggedIn');
+
 const router = express.Router();
+
+global.limiter.startSession = new Bottleneck({
+    maxConcurrent: 1,
+});
 
 router
     .route('/startSession')
     .post(ensureApiKey(),
-        async (req, res, next) => {
-            return global.queue.add(
-                () => clientController.startSession(req, res, next)
-            );
-        });
+        async (req, res, next) => global.limiter.startSession.schedule(
+            () => clientController.startSession(req, res, next)
+        ));
 
 router
     .route('/stopSession/:testid')

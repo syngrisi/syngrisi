@@ -8,7 +8,7 @@ const {
 const formatISO9075 = require('date-fns/formatISO9075');
 const { parseISO } = require('date-fns');
 
-let logLevel = process.env.SYNGRISI_LOG_LEVEL ? process.env.SYNGRISI_LOG_LEVEL : '';
+const logLevel = process.env.SYNGRISI_LOG_LEVEL ? process.env.SYNGRISI_LOG_LEVEL : '';
 
 module.exports.Logger = class Logger {
     constructor(opts) {

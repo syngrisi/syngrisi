@@ -521,13 +521,14 @@ UserSchema.statics.isEmailTaken = async function (username, excludeUserId) {
 
 UserSchema.plugin(passportLocalMongoose, { hashField: 'password' });
 
-module.exports = mongoose.model('VRSSnapshot', SnapshotSchema);
-module.exports = mongoose.model('VRSCheck', CheckSchema);
-module.exports = mongoose.model('VRSTest', TestSchema);
-module.exports = mongoose.model('VRSLog', LogSchema);
-module.exports = mongoose.model('VRSSuite', SuiteSchema);
-module.exports = mongoose.model('VRSApp', AppSchema);
-module.exports = mongoose.model('VRSRun', RunSchema);
-module.exports = mongoose.model('VRSUser', UserSchema);
-module.exports = mongoose.model('VRSBaseline', BaselineSchema);
-module.exports = mongoose.model('VRSAppSettings', AppSettingsSchema);
+const Snapshot = mongoose.model('VRSSnapshot', SnapshotSchema);
+const Check = mongoose.model('VRSCheck', CheckSchema);
+const Test = mongoose.model('VRSTest', TestSchema);
+const Log = mongoose.model('VRSLog', LogSchema);
+const Suite = mongoose.model('VRSSuite', SuiteSchema);
+const App = mongoose.model('VRSApp', AppSchema);
+const Run = mongoose.model('VRSRun', RunSchema);
+const User = mongoose.model('VRSUser', UserSchema);
+const Baseline = mongoose.model('VRSBaseline', BaselineSchema);
+const AppSettings = mongoose.model('VRSAppSettings', AppSettingsSchema);
+module.exports = { Snapshot, Check, Test, Log, Suite, App, Run, User, Baseline, AppSettings };
