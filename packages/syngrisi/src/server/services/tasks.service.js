@@ -2,19 +2,19 @@
 const { subDays, format } = require('date-fns');
 const { promises: fs } = require('fs');
 const stringTable = require('string-table');
-const mongoose = require('mongoose');
 const fss = require('fs');
 const { config } = require('../../../config');
 const { ProgressBar } = require('../utils/utils');
-
-const Snapshot = mongoose.model('VRSSnapshot');
-const Check = mongoose.model('VRSCheck');
-const Test = mongoose.model('VRSTest');
-const Run = mongoose.model('VRSRun');
-const Log = mongoose.model('VRSLog');
-const Suite = mongoose.model('VRSSuite');
-const User = mongoose.model('VRSUser');
-const Baseline = mongoose.model('VRSBaseline');
+const {
+    Snapshot,
+    Check,
+    Test,
+    Run,
+    Log,
+    Suite,
+    User,
+    Baseline
+} = require('../models');
 
 const $this = this;
 $this.logMeta = {

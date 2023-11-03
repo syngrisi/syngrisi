@@ -1,8 +1,6 @@
 /* eslint-disable valid-jsdoc */
 const httpStatus = require('http-status');
-const mongoose = require('mongoose');
-
-const User = mongoose.model('VRSUser');
+const { User } = require('../models');
 const ApiError = require('../utils/ApiError');
 
 const $this = this;

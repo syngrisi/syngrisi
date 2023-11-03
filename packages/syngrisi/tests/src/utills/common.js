@@ -133,7 +133,7 @@ const startServer = (params) => {
     // const srvOpts = YAML.parse(params) || {};
     const cid = getCid();
 
-    const databaseName = 'VRSdbTest';
+    const databaseName = 'SyngrisiDbTest';
     const cmdPath = '../';
     const cidPort = 3002 + cid;
     const env = { ...process.env };

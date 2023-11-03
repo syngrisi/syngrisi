@@ -30,6 +30,7 @@ const toJSON = (schema) => {
 
             ret.id = ret._id.toString();
             // delete ret._id;
+            // eslint-disable-next-line no-underscore-dangle
             delete ret.__v;
             delete ret.createdAt;
             delete ret.updatedAt;

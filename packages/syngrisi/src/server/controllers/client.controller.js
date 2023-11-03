@@ -1,5 +1,4 @@
 const httpStatus = require('http-status');
-const mongoose = require('mongoose');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const { clientService, genericService } = require('../services');
@@ -7,11 +6,10 @@ const { pick, deserializeIfJSON } = require('../utils');
 const orm = require('../lib/dbItems');
 const { createItemIfNotExistAsync, createSuiteIfNotExist } = require('../lib/dbItems');
 const prettyCheckParams = require('../utils/prettyCheckParams');
-const { paramsGuard } = require("../../../dist/utils/paramsGuard");
-const { RequiredIdentOptionsSchema } = require("../../../dist/schemas/getBaseline.shema");
+const { paramsGuard } = require('../../../dist/utils/paramsGuard');
+const { RequiredIdentOptionsSchema } = require('../../../dist/schemas/getBaseline.shema');
 
-const User = mongoose.model('VRSUser');
-const Test = mongoose.model('VRSTest');
+const { User, Test } = require('../models');
 
 const $this = this;
 $this.logMeta = {
@@ -154,7 +152,7 @@ const getIdent = catchAsync(async (req, res) => {
 
 const getBaselines = catchAsync(async (req, res) => {
     const filter = req.query.filter ? deserializeIfJSON(pick(req.query, ['filter']).filter) : {};
-    paramsGuard(filter, 'getBaseline, filter', RequiredIdentOptionsSchema)
+    paramsGuard(filter, 'getBaseline, filter', RequiredIdentOptionsSchema);
     const options = pick(req.query, ['sortBy', 'limit', 'page', 'populate']);
     const result = await clientService.getBaselines(filter, options);
     res.send(result);
@@ -174,5 +172,5 @@ module.exports = {
     getIdent,
     // checkIfScreenshotHasBaselines,
     getBaselines,
-    getSnapshots
+    getSnapshots,
 };

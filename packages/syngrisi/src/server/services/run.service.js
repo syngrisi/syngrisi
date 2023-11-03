@@ -1,8 +1,6 @@
 /* eslint-disable valid-jsdoc,no-restricted-syntax,no-await-in-loop */
-const mongoose = require('mongoose');
+const { Test, Run } = require('../models');
 
-const Test = mongoose.model('VRSTest');
-const Run = mongoose.model('VRSRun');
 const testService = require('./test.service');
 
 const $this = this;

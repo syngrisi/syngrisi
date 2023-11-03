@@ -70,7 +70,7 @@ inquirer
         }
 
         console.log('Remove the Destination Database');
-        const removeDbResult = execSync(`mongo '${answers.destConnectionString}' --eval "db.dropDatabase();"`)
+        const removeDbResult = execSync(`mongosh '${answers.destConnectionString}' --eval "db.dropDatabase();"`)
             .toString();
         console.log(removeDbResult);
 

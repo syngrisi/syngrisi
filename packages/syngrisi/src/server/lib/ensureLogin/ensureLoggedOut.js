@@ -27,17 +27,18 @@
  * @api public
  */
 module.exports = function ensureLoggedOut(options) {
-  if (typeof options == 'string') {
-    options = { redirectTo: options }
-  }
-  options = options || {};
-  
-  var url = options.redirectTo || '/';
-  
-  return function(req, res, next) {
-    if (req.isAuthenticated && req.isAuthenticated()) {
-      return res.redirect(url);
+    let opts;
+    if (typeof options === 'string') {
+        opts = { redirectTo: options };
     }
-    next();
-  }
-}
+    opts = options || {};
+
+    const url = opts.redirectTo || '/';
+
+    return function (req, res, next) {
+        if (req.isAuthenticated && req.isAuthenticated()) {
+            return res.redirect(url);
+        }
+        return next();
+    };
+};

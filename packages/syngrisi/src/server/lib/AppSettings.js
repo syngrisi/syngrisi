@@ -1,9 +1,7 @@
 /* eslint-disable dot-notation */
-const mongoose = require('mongoose');
-
 class AppSettings {
     constructor() {
-        this.model = mongoose.model('VRSAppSettings');
+        this.model = require('../models').AppSettings;
         (async () => {
             this.cache = await this.model.find()
                 .lean()

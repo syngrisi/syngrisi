@@ -1,7 +1,5 @@
 /* eslint-disable valid-jsdoc */
-const mongoose = require('mongoose');
-
-const Log = mongoose.model('VRSLog');
+const { Log } = require('../models');
 // const ApiError = require('../utils/ApiError');
 
 const $this = this;

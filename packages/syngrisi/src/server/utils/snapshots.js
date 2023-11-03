@@ -1,9 +1,7 @@
-const mongoose = require('mongoose');
 const fss = require('fs');
 const { config } = require('../../../config');
 
-const Baseline = mongoose.model('VRSBaseline');
-const Snapshot = mongoose.model('VRSSnapshot');
+const { Baseline, Snapshot } = require('../models');
 
 const $this = this;
 

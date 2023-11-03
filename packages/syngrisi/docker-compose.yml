@@ -1,63 +1,62 @@
 version: '3.9'
 services:
-    syngrisi-app:
-        container_name: syngrisi-app-server
-        restart: always
-        # command: tail -f /dev/null
-        working_dir: /usr/src/syngrisi
-        command: sh -c "npx --node-arg=--max-old-space-size=4096 sy"
-#        command: /bin/sh -c "while true; do node index.js; done"
-        build:
-            context: .
-            dockerfile: syngrisi-app.dockerfile
+  syngrisi-app:
+    container_name: syngrisi-app-server
+    restart: always
+    # command: tail -f /dev/null
+    working_dir: /usr/src/syngrisi
+    command: sh -c "npx --node-arg=--max-old-space-size=4096 sy"
+    build:
+      context: .
+      dockerfile: syngrisi-app.dockerfile
 
-        ports:
-            - "${SYNGRISI_DOCKER_PORT:-5000}:3000"
-        volumes:
-            # /syngrisi/baselines
-            - "${SYNGRISI_DOCKER_IMAGES_PATH:-./baselines}:/usr/src/syngrisi/baselines"
-            - "${SYNGRISI_DOCKER_BACKUPS_PATH:-./backups}:/usr/src/syngrisi/backups"
-        depends_on:
-            - 'syngrisi-db'
-        logging:
-            driver: 'json-file'
-            options:
-                max-size: '100m'
-                max-file: '10'
-        environment:
-            SYNGRISI_DB_URI: "${SYNGRISI_DB_URI:-mongodb://syngrisi-db/VRSdb}"
-            SYNGRISI_IMAGES_PATH: "${SYNGRISI_IMAGES_PATH:-./baselines/}"
-            SYNGRISI_AUTH: "${SYNGRISI_AUTH:-1}"
-            SYNGRISI_TEST_MODE: "${SYNGRISI_TEST_MODE:-0}"
-            SYNGRISI_DISABLE_FIRST_RUN: "${SYNGRISI_DISABLE_FIRST_RUN:-0}"
-            SYNGRISI_PAGINATION_SIZE: "${SYNGRISI_PAGINATION_SIZE:-50}"
-            SYNGRISI_SESSION_STORE_KEY: "${SYNGRISI_SESSION_STORE_KEY}"
-            SYNGRISI_APP_PORT: 3000
-#        healthcheck:
-#            test: wget -q -O - http://syngrisi-app:3000/status | grep alive:true
-#            interval: 1m30s
-#            timeout: 10s
-#            retries: 3
-#            start_period: 40s
+    ports:
+      - "${SYNGRISI_DOCKER_PORT:-5000}:3000"
+    volumes:
+      # /syngrisi/baselines
+      - "${SYNGRISI_DOCKER_IMAGES_PATH:-./baselines}:/usr/src/syngrisi/baselines"
+      - "${SYNGRISI_DOCKER_BACKUPS_PATH:-./backups}:/usr/src/syngrisi/backups"
+    depends_on:
+      - 'syngrisi-db'
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '100m'
+        max-file: '10'
+    environment:
+      SYNGRISI_DB_URI: "${SYNGRISI_DB_URI:-mongodb://syngrisi-db/SyngrisiDb}"
+      SYNGRISI_IMAGES_PATH: "${SYNGRISI_IMAGES_PATH:-./baselines/}"
+      SYNGRISI_AUTH: "${SYNGRISI_AUTH:-1}"
+      SYNGRISI_TEST_MODE: "${SYNGRISI_TEST_MODE:-0}"
+      SYNGRISI_DISABLE_FIRST_RUN: "${SYNGRISI_DISABLE_FIRST_RUN:-0}"
+      SYNGRISI_PAGINATION_SIZE: "${SYNGRISI_PAGINATION_SIZE:-50}"
+      SYNGRISI_SESSION_STORE_KEY: "${SYNGRISI_SESSION_STORE_KEY}"
+      SYNGRISI_APP_PORT: 3000
+  #        healthcheck:
+  #            test: wget -q -O - http://syngrisi-app:3000/status | grep alive:true
+  #            interval: 1m30s
+  #            timeout: 10s
+  #            retries: 3
+  #            start_period: 40s
 
-    syngrisi-db:
-        cap_add:
-            - CHOWN
-        image: mongo:4.2.21
-        container_name: syngrisi-db-server
-        ports:
-            - "${SYNGRISI_DOCKER_DB_PORT:-27017}:27017"
-        command: [ "--bind_ip_all", "${SYNGRISI_DOCKER_DB_AUTH_ARG:---noauth}" ]
-        restart: always
-        volumes:
-            - "${SYNGRISI_DOCKER_DB_PATH:-./data/db_data}:/data/db"
-        environment:
-            MONGO_INITDB_ROOT_USERNAME: "${MONGODB_ROOT_USERNAME}"
-            MONGO_INITDB_ROOT_PASSWORD: "${MONGODB_ROOT_PASSWORD}"
+  syngrisi-db:
+    cap_add:
+      - CHOWN
+    image: mongo:7.0.2
+    container_name: syngrisi-db-server
+    ports:
+      - "${SYNGRISI_DOCKER_DB_PORT:-27017}:27017"
+    command: [ "--bind_ip_all", "${SYNGRISI_DOCKER_DB_AUTH_ARG:---noauth}" ]
+    restart: always
+    volumes:
+      - "${SYNGRISI_DOCKER_DB_PATH:-./data/db_data}:/data/db"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "${MONGODB_ROOT_USERNAME}"
+      MONGO_INITDB_ROOT_PASSWORD: "${MONGODB_ROOT_PASSWORD}"
 
-        healthcheck:
-            test: [ "CMD", "mongo", "${SYNGRISI_DB_URI:-mongodb://syngrisi-db/VRSdb}", " --eval", "'db.runCommand(\"ping\").ok'" ]
-            interval: 1m30s
-            timeout: 10s
-            retries: 3
-            start_period: 40s
+    healthcheck:
+      test: [ "CMD", "mongosh", "--quiet", "--eval", "db.runCommand('ping').ok" ]
+      interval: 5s
+      timeout: 15s
+      retries: 3000
+      start_period: 40s
