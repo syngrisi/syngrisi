@@ -15,6 +15,7 @@
     },
     "files": [
         "src",
+        "dist",
         "mvc",
         "static",
         "tasks",
