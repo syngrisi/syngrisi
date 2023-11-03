@@ -3,9 +3,9 @@ services:
   syngrisi-app:
     container_name: syngrisi-app-server
     restart: always
-    # command: tail -f /dev/null
     working_dir: /usr/src/syngrisi
     command: sh -c "npx --node-arg=--max-old-space-size=4096 sy"
+#    command: sh -c "tail -f /dev/null"
     build:
       context: .
       dockerfile: syngrisi-app.dockerfile
@@ -17,7 +17,8 @@ services:
       - "${SYNGRISI_DOCKER_IMAGES_PATH:-./baselines}:/usr/src/syngrisi/baselines"
       - "${SYNGRISI_DOCKER_BACKUPS_PATH:-./backups}:/usr/src/syngrisi/backups"
     depends_on:
-      - 'syngrisi-db'
+      syngrisi-db:
+        condition: service_healthy
     logging:
       driver: 'json-file'
       options:
@@ -50,6 +51,11 @@ services:
     restart: always
     volumes:
       - "${SYNGRISI_DOCKER_DB_PATH:-./data/db_data}:/data/db"
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '100m'
+        max-file: '10'
     environment:
       MONGO_INITDB_ROOT_USERNAME: "${MONGODB_ROOT_USERNAME}"
       MONGO_INITDB_ROOT_PASSWORD: "${MONGODB_ROOT_PASSWORD}"
@@ -57,6 +63,7 @@ services:
     healthcheck:
       test: [ "CMD", "mongosh", "--quiet", "--eval", "db.runCommand('ping').ok" ]
       interval: 5s
-      timeout: 15s
-      retries: 3000
-      start_period: 40s
+      timeout: 30s
+      retries: 10
+      start_period: 30s
+
