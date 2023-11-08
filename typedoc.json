@@ -1,0 +1,8 @@
+{
+  "entryPoints": ["packages/*"],
+  "name": "Syngrisi Packages API",
+  "entryPointStrategy": "packages",
+  "includeVersion": false
+
+  // "logLevel": "Verbose"
+}

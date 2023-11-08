@@ -2,14 +2,15 @@
   "name": "@syngrisi/core-api",
   "version": "2.1.25-alpha.0",
   "description": "Syngrisi Core JS client",
-  "main": "dist/SyngrisiApi.js",
+  "main": "dist/src/SyngrisiApi.js",
   "private": false,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",
     "pub": "np",
     "build": "run-s clean compile",
     "clean": "rimraf tsconfig.tsbuildinfo ./build ./coverage",
-    "compile": "tsc -p ./tsconfig.json"
+    "compile": "tsc -p ./tsconfig.json --declaration",
+    "pkglist": "npx npm-packlist # list of files that will be published in syngrisi package, show the files section"
   },
   "repository": {
     "type": "git",
@@ -32,10 +33,11 @@
     "@wdio/logger": "^7.16.0",
     "form-data": "^4.0.0",
     "got-cjs": "^12.0.4",
-    "hasha": "^5.2.0"
+    "hasha": "^5.2.0",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@types/node": "^20.8.8",
+    "@types/node": "^20.8.10",
     "@typescript-eslint/eslint-plugin": "^5.48.2",
     "@typescript-eslint/parser": "^5.48.2",
     "@vitest/coverage-c8": "^0.28.1",
@@ -45,6 +47,7 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.29.0",
     "eslint-plugin-unicorn": "^45.0.2",
+    "typedoc": "^0.25.3",
     "typescript": "^5.2.2",
     "vitest": "^0.34.6"
   },
