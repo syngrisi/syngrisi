@@ -13,7 +13,8 @@
   "main": "src/index.js",
   "scripts": {
     "test": "exit 0",
-    "pub": "np"
+    "pub": "np",
+    "pkglist": "npx npm-packlist # list of files that will be published in syngrisi package, show the files section"
   },
   "keywords": [
     "wdio",

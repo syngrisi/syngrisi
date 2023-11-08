@@ -6,7 +6,8 @@
   "scripts": {
     "test": "gulp test",
     "build": "echo build",
-    "release": "release-it --github.release"
+    "release": "release-it --github.release",
+    "pkglist": "npx npm-packlist # list of files that will be published in syngrisi package, show the files section"
   },
   "repository": {
     "type": "git",

@@ -9,7 +9,8 @@
     "test": "lerna run test --scope=create-sy --scope=syngrisi",
     "start": "lerna run start --scope=syngrisi",
     "build": "lerna run build",
-    "graph": "nx graph"
+    "graph": "nx graph",
+    "docs": "typedoc"
   },
   "dependencies": {},
   "devDependencies": {
