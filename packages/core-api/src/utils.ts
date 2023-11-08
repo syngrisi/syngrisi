@@ -1,5 +1,6 @@
 import logger from '@wdio/logger'
 import { ZodObject } from 'zod'
+import { ErrorObject } from '../schemas/SyngrisiApi.schema'
 
 const log = logger('syngrisi-core-api')
 
@@ -21,13 +22,6 @@ export const prettyCheckResult = (result: any): string => {
     return JSON.stringify(resObs)
 }
 
-export interface ErrorObject {
-    error: boolean;
-    errorMsg: string;
-    statusCode?: number; // statusCode is optional because it may not be present if e.response is undefined
-    statusMessage?: string; // statusMessage is optional for the same reason as statusCode
-    stack?: string; // stack is optional as it may not be present on all error objects
-}
 
 export const errorObject = (e: any): ErrorObject => {
     return {
@@ -67,7 +61,7 @@ export const errorObject = (e: any): ErrorObject => {
  * transformOs('linux'); // 'linux' is not in the transform mapping, so returns input 'linux'
  */
 export const transformOs = (platform: string) => {
-    const lowercasePlatform = platform.toLowerCase();
+    const lowercasePlatform = platform.toLowerCase()
     const transform: {
         [key: string]: string;
     } = {
@@ -75,10 +69,10 @@ export const transformOs = (platform: string) => {
         windows: 'WINDOWS',
         macintel: 'macOS',
         'mac os': 'macOS',
-    };
+    }
 
-    return transform[lowercasePlatform] || platform;
-};
+    return transform[lowercasePlatform] || platform
+}
 
 
 export const paramsGuard = (params: any, functionName: string, schema: ZodObject<any>) => {

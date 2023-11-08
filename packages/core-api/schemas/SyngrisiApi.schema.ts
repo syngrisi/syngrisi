@@ -177,3 +177,12 @@ export const SessionResponseSchema = z.object({
 })
 
 export type SessionResponse = z.infer<typeof SessionResponseSchema>;
+
+export interface ErrorObject {
+    error: boolean;
+    errorMsg: string;
+    statusCode?: number; // statusCode is optional because it may not be present if e.response is undefined
+    statusMessage?: string; // statusMessage is optional for the same reason as statusCode
+    stack?: string; // stack is optional as it may not be present on all error objects
+}
+

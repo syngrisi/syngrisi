@@ -3,7 +3,7 @@ import got from 'got-cjs'
 import hasha from 'hasha'
 import logger from '@wdio/logger'
 import { LogLevelDesc } from 'loglevel'
-import { ErrorObject, errorObject, paramsGuard, prettyCheckResult, printErrorResponseBody } from './utils'
+import { errorObject, paramsGuard, prettyCheckResult, printErrorResponseBody } from './utils'
 import {
     BaselineParams,
     BaselineParamsSchema,
@@ -18,7 +18,7 @@ import {
     ApiSessionParamsSchema,
     Config,
     ConfigSchema,
-    SessionResponse, ConstructorParam,
+    SessionResponse, ConstructorParam, ErrorObject,
 } from '../schemas/SyngrisiApi.schema'
 
 const log = logger('core-api')
