@@ -336,3 +336,4 @@ class SyngrisiApi {
 
 export { SyngrisiApi }
 export { transformOs } from './utils'
+export * from '../schemas/SyngrisiApi.schema'
