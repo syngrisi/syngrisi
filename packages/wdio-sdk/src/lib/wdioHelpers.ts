@@ -1,8 +1,11 @@
 import { default as logger } from '@wdio/logger'
+import { LogLevelDesc } from 'loglevel'
 
 const log = logger('syngrisi-wdio-sdk')
+if (process.env.SYNGRISI_LOG_LEVEL) {
+    log.setLevel(process.env.SYNGRISI_LOG_LEVEL as LogLevelDesc)
+}
 
-// @ts-ignore
 import { transformOs } from '@syngrisi/core-api'
 
 declare var browser: WebdriverIO.Browser
