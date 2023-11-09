@@ -13,7 +13,7 @@ export default class SyngrisiCucumberService {
         log.trace('start of service initialization');
         this.options = serviceOptions;
         log.debug(`init the syngrisi driver with options: ${JSON.stringify(this.options)}`);
-        const syngrisi = require('@syngrisi/syngrisi-wdio-sdk');
+        const syngrisi = require('@syngrisi/wdio-sdk');
         this.vDriver = new syngrisi.SyngrisiDriver({ url: this.options.endpoint, apiKey: this.options.apikey });
         log.trace('finish of service initialization');
     }
