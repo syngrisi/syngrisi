@@ -17,10 +17,10 @@ async function updateItem(itemType, filter, params) {
         itemType,
     };
     log.debug(`update item type: '${itemType}', filter: '${JSON.stringify(filter)}', params: '${JSON.stringify(params)}'`, $this, logOpts);
-    const item = await mongoose.model(itemType)
+    const itemModel = await mongoose.model(itemType)
         .findOne(filter);
-    const updatedItem = await item.updateOne(params);
-    log.debug(`'${itemType}' was updated: '${JSON.stringify(updatedItem)}'`, $this, { ...logOpts, ...{ ref: item._id } });
+    const updatedItem = await itemModel.updateOne(params);
+    log.debug(`'${itemType}' was updated: '${JSON.stringify(updatedItem)}'`, $this, { ...logOpts, ...{ ref: itemModel._id } });
     return updatedItem;
 }
 
@@ -28,10 +28,10 @@ exports.updateItem = updateItem;
 
 async function updateItemDate(mdClass, id) {
     log.debug(`update date for the item: '${mdClass}' with id: '${id}'`, $this);
-    const item = await mongoose.model(mdClass)
+    const itemModel = await mongoose.model(mdClass)
         .findById(id);
-    const updatedItem = await item.updateOne({ updatedDate: Date.now() });
-    log.debug(`'${mdClass}' date updated: '${JSON.stringify(item)}'`, $this);
+    const updatedItem = await itemModel.updateOne({ updatedDate: Date.now() });
+    log.debug(`'${mdClass}' date updated: '${JSON.stringify(itemModel)}'`, $this);
     return updatedItem;
 }
 
@@ -64,12 +64,12 @@ const createItemIfNotExist = async function (modelName, params, logsMeta = {}) {
 };
 
 exports.createItemIfNotExistAsync = createItemIfNotExist;
+exports.createItemIfNotExist = createItemIfNotExist;
 
 async function createItemProm(modelName, params) {
     try {
         const itemModel = mongoose.model(modelName);
         log.debug(`start to create ORM item via promise: '${modelName}', params: '${JSON.stringify(params)}'`, $this);
-        await itemModel.init();
         const item = await itemModel.create(params);
         return item;
     } catch (e) {
@@ -113,7 +113,8 @@ const createSuiteIfNotExist = async function (params, logsMeta = {}) {
         { name: params.name },
         params,
         options
-    );
+    )
+        .exec();
     log.debug(`suite with name: '${params.name}' was created`,
         $this,
         { ...logOpts, ...logsMeta });
@@ -128,6 +129,7 @@ const createRunIfNotExist = async function (params, logsMeta = {}) {
         msgType: 'CREATE',
         itemType: 'VRSRun',
     };
+    let run;
     try {
         if (!params.name || !params.app || !params.ident) {
             throw new Error(`Cannot create run, wrong params: '${JSON.stringify(params)}'`);
@@ -139,21 +141,31 @@ const createRunIfNotExist = async function (params, logsMeta = {}) {
 
         const options = { upsert: true, new: true, setDefaultsOnInsert: true };
         await Run.init();
-        const run = await Run
+        run = await Run
             .findOneAndUpdate(
                 {
-                    name: params.name,
                     ident: params.ident,
                 },
                 { ...params, createdDate: params.createdDate || new Date() },
                 options
-            );
+            )
+            .exec();
+
         log.debug(`run with name: '${params.name}' was created: ${run}`,
             $this,
             { ...logOpts, ...logsMeta });
         return run;
     } catch (e) {
-        log.error(`cannot create run, params: '${JSON.stringify(params)}', error: '${e.stack || e}'`,
+        // e ==== {"ok":0,"code":11000,"codeName":"DuplicateKey","keyPattern":{"ident":1},"keyValue":{"ident":"cd933acc-6ecb-472c-8dd1-03ec00260bec"}}
+        if (e.code === 11000) {
+            log.warn(`run key duplication collision: '${JSON.stringify(params)}', error: '${e.stack || e}'`,
+                $this,
+                { ...logOpts, ...logsMeta });
+            run = await Run.findOne({ name: params.name, ident: params.ident });
+            log.warn(`run key duplication collision, found: '${JSON.stringify(run)}'`, $this, { ...logOpts, ...logsMeta });
+            if (run) return run;
+        }
+        log.error(`cannot create run, params: '${JSON.stringify(params)}', error: '${e.stack || e}', obj: ${JSON.stringify(e)}`,
             $this,
             { ...logOpts, ...logsMeta });
         throw e;

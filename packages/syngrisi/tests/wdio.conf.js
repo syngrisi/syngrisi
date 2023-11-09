@@ -26,6 +26,7 @@ exports.config = {
         'goog:chromeOptions': {
             args: process.env.HL === '1' ? ['--headless', '--enable-automation'] : ['--enable-automation'],
             // binary: './chromium/Chromium.app/Contents/MacOS/Chromium',
+            binary: './chrome/mac-118.0.5993.70/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing',
             prefs: {
                 credentials_enable_service: false,
                 download: {

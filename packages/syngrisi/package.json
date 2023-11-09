@@ -37,6 +37,7 @@
         "test:docker": "cd tests && npm run test:docker",
         "smoke": "cd tests && npm run smoke",
         "build": "rm -rf mvc/views/react/assets && cross-env VITE_ROOT_PATH='./src/ui-app/' vite build",
+        "compile": "tsc -p ./tsconfig.json # Server only",
         "dev": "cross-env VITE_SYNGRISI_BASED_URL='http://localhost:3000' VITE_INDEX_ROUTE='index2/' vite",
         "dev:admin": "cross-env VITE_SYNGRISI_BASED_URL='http://localhost:3000' VITE_INDEX_ROUTE='admin/' vite/' vite #(!) open http://localhost:8080/admin/ ",
         "build:watch": "cross-env VITE_ROOT_PATH='./src/ui-app/' vite build --watch",

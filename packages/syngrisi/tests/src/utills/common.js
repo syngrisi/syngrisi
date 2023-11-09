@@ -8,7 +8,7 @@ const {
 } = require('date-fns');
 const { got } = require('got-cjs');
 const { spawn, execSync } = require('child_process');
-const { SyngrisiDriver } = require('@syngrisi/syngrisi-wdio-sdk');
+const { SyngrisiDriver } = require('@syngrisi/wdio-sdk');
 const hasha = require('hasha');
 
 const saveRandomImage = async function saveRandomImage(fullPath) {
@@ -174,6 +174,11 @@ const startServer = (params) => {
         if (process.env.DBG === '1') {
             console.log(`SERVER_${cid}: ${data}`);
         }
+    });
+
+    child.on('error', (err) => {
+        log.error(`Failed to start child process: ${err.message}`);
+        stream.write(`Failed to start child process: ${err.message}`);
     });
 
     child.stderr.setEncoding('utf8');

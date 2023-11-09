@@ -21,7 +21,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@syngrisi/syngrisi-wdio-sdk": "../../syngrisi-sdk",
+    "@syngrisi/syngrisi-wdio-sdk": "../../wdio-sdk",
     "@wdio/allure-reporter": "^6.8.1",
     "@wdio/local-runner": "file:src/support/local-runner-patched",
     "allure-commandline": "^2.17.2",
@@ -49,7 +49,7 @@
     "@wdio/static-server-service": "^6.10.10",
     "@wdio/sync": "^6.11.0",
     "babel-jest": "^26.0.1",
-    "chromedriver": "117.0.3",
+    "chromedriver": "118.0.1",
     "cross-env": "^7.0.3",
     "eslint": "^7.24.0",
     "eslint-config-airbnb-base": "^14.1.0",

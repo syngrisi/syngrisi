@@ -25,3 +25,5 @@ node_modules
 /static/data/custom_devices.json
 /coverage/
 /.nyc_output/
+/src_to_json/
+/dist/
