@@ -10,7 +10,8 @@
     "start": "lerna run start --scope=syngrisi",
     "build": "lerna run build",
     "graph": "nx graph",
-    "docs": "typedoc"
+    "docs": "typedoc",
+    "gpt:export": "node src_to_json.js # this serializes the source folder and individual files into a single JSON file in the `src_to_json` folder for export to custom GPTs."
   },
   "dependencies": {},
   "devDependencies": {
