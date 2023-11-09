@@ -5,3 +5,4 @@ baselines*/
 .idea/
 /coverage/
 /src_to_json/
+/packages/playwright-sdk/dist/

@@ -1,17 +1,21 @@
 {
-  "name": "@syngrisi/syngrisi-wdio-sdk",
+  "name": "@syngrisi/wdio-sdk",
   "version": "2.1.25-alpha.0",
   "description": "Syngrisi WebdriverIO SDK",
   "main": "dist/WDIODriver.js",
   "directories": {
     "lib": "src/lib"
   },
+  "engines": {
+    "node": ">=14.20.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",
     "pub": "np",
     "build": "run-s clean compile",
     "clean": "rimraf tsconfig.tsbuildinfo ./build ./coverage",
-    "compile": "tsc -p ./tsconfig.json"
+    "compile": "tsc -p ./tsconfig.json",
+    "pkglist": "npx npm-packlist # list of files that will be published in syngrisi package, show the files section"
   },
   "repository": {
     "type": "git",

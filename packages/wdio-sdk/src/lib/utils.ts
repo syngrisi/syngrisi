@@ -1,6 +1,10 @@
 import logger from '@wdio/logger'
+import { LogLevelDesc } from 'loglevel';
 
-const log = logger('wdio-syngrisi-cucumber-service')
+const log = logger('syngrisi-wdio-sdk')
+if (process.env.SYNGRISI_LOG_LEVEL) {
+    log.setLevel(process.env.SYNGRISI_LOG_LEVEL as LogLevelDesc)
+}
 
 export const printErrorResponseBody = (e: any): void => {
     if (e.response && e.response?.body) {
