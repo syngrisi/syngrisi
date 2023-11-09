@@ -94,7 +94,7 @@ Feature: Test Isolation by Run
     When I click on the element "(//*[@data-item-name='Run-1'])[2]"
     When I wait on element "//div[contains(text(), 'TestRun-1')]" to be displayed
 
-    Scenario: Checks Isolation by Run - same name same ident
+  Scenario: Checks Isolation by Run - same name same ident
     Given I create "1" tests with:
     """
       testName: TestRun-1

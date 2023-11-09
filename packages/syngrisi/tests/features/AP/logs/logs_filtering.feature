@@ -117,7 +117,8 @@ Feature: Logs Table Filter
         When I select the option with the text "error" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-1']//select[@data-test='table-filter-value']"
 
         When I click on the element "[data-test='table-filter-apply']"
-        When I wait for "3" seconds
+        When I wait for "5" seconds
+        When I wait on element "[data-test*='table_row_']" to be displayed
 
         Then I expect that element "[data-test*='table_row_']" does appear exactly "6" times
         Then I expect that element "//*[@data-test='table-row-Level' and @title='warn']" does appear exactly "3" times

@@ -4,12 +4,12 @@ const catchAsync = require('../utils/catchAsync');
 const { clientService, genericService } = require('../services');
 const { pick, deserializeIfJSON } = require('../utils');
 const orm = require('../lib/dbItems');
-const { createItemIfNotExistAsync, createSuiteIfNotExist } = require('../lib/dbItems');
 const prettyCheckParams = require('../utils/prettyCheckParams');
 const { paramsGuard } = require('../../../dist/utils/paramsGuard');
 const { RequiredIdentOptionsSchema } = require('../../../dist/schemas/getBaseline.shema');
 
-const { User, Test } = require('../models');
+const { User, Test, App, Suite } = require('../models');
+const { createCheckParamsSchema } = require('../../../dist/schemas/createCheck.shema');
 
 const $this = this;
 $this.logMeta = {
@@ -63,44 +63,35 @@ const lackOfParamsGuard = (req, res) => {
 };
 
 const createCheck = catchAsync(async (req, res) => {
-    lackOfParamsGuard(req, res);
+    const apiKey = req.headers.apikey;
+    const params = req.body;
+    paramsGuard(params, 'createCheck, params', createCheckParamsSchema);
+
     const logOpts = {
         scope: 'createCheck',
         user: req?.user?.username,
         itemType: 'check',
         msgType: 'CREATE',
     };
-    const apiKey = req.headers.apikey;
+
     const currentUser = await User.findOne({ apiKey })
         .exec();
 
-    log.info(`start create check: '${prettyCheckParams(req.body.name)}'`, $this, logOpts);
+    log.info(`start create check: '${prettyCheckParams(params.name)}'`, $this, logOpts);
 
     /** look for or create test and suite */
-    log.debug(`try to find test with id: '${req.body.testid}'`, $this, logOpts);
-    const test = await Test.findById(req.body.testid)
+    log.debug(`try to find test with id: '${params.testid}'`, $this, logOpts);
+    const test = await Test.findById(params.testid)
         .exec();
     if (!test) {
-        const errMsg = `can't find test with id: '${req.body.testid}', `
+        const errMsg = `can't find test with id: '${params.testid}', `
             + `parameters: '${JSON.stringify(req.body)}', username: '${currentUser.username}', apiKey: ${apiKey}`;
         res.status(400)
             .send({ status: 'testNotFound', message: errMsg });
         throw new Error(errMsg);
     }
-    const app = await createItemIfNotExistAsync(
-        'VRSApp',
-        { name: req.body.appName || 'Unknown' },
-        { user: currentUser.username, itemType: 'app' }
-    );
-
-    const suite = await createSuiteIfNotExist(
-        {
-            name: req.body.suitename || 'Others',
-            app: app._id,
-            createdDate: new Date(),
-        },
-        { user: req?.user?.username, itemType: 'suite' },
-    );
+    const app = await App.findOne({ name: params.appName }).exec();
+    const suite = await Suite.findOne({ name: params.suitename }).exec();
 
     await orm.updateItem('VRSTest', { _id: test.id }, {
         suite: suite.id,
@@ -110,18 +101,18 @@ const createCheck = catchAsync(async (req, res) => {
 
     const result = await clientService.createCheck(
         {
-            branch: req.body.branch,
-            hashCode: req.body.hashcode,
-            testId: req.body.testid,
-            name: req.body.name,
-            viewport: req.body.viewport,
-            browserName: req.body.browserName,
-            browserVersion: req.body.browserVersion,
-            browserFullVersion: req.body.browserFullVersion,
-            os: req.body.os,
+            branch: params.branch,
+            hashCode: params.hashcode,
+            testId: params.testid,
+            name: params.name,
+            viewport: params.viewport,
+            browserName: params.browserName,
+            browserVersion: params.browserVersion,
+            browserFullVersion: params.browserFullVersion,
+            os: params.os,
             files: req.files,
-            domDump: req.body.domdump,
-            vShifting: req.body.vShifting,
+            domDump: params.domdump,
+            vShifting: params.vShifting,
         },
         test,
         suite,
@@ -133,7 +124,7 @@ const createCheck = catchAsync(async (req, res) => {
             .json({
                 status: 'requiredFileData',
                 message: 'could not find a snapshot with such a hash code, please add image file data and resend request',
-                hashCode: req.body.hashcode,
+                hashCode: params.hashcode,
             });
         return;
     }

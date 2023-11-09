@@ -69,6 +69,10 @@
     "skipLibCheck": true,                           /* Skip type checking of declaration files. */
     "forceConsistentCasingInFileNames": true        /* Disallow inconsistently-cased references to the same file. */
   },
+  "include": [
+    "src/server",
+    "server",
+  ],
   "exclude": [
     "tests/**",
     "example",
@@ -77,6 +81,7 @@
     "__mocks__",
     "coverage",
     "node_modules",
-    "vitest.config.ts"
+    "vitest.config.ts",
+    "debug.ts"
   ]
 }
