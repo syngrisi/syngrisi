@@ -1,17 +1,9 @@
-import { Browser, Page } from '@playwright/test'
-import { ViewportSize } from 'playwright-core'
+import { Page } from '@playwright/test'
 
 export type BrowserName = 'chromium' | 'firefox' | 'webkit';
 
-export interface PW {
-    page: Page
-    browser: Browser
-    browserName: BrowserName
-    viewport: ViewportSize
-}
-
 export interface Config {
-    pw: PW
+    page: Page
     url: string
     apiKey: string
 }
