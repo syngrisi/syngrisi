@@ -92,9 +92,16 @@ pre-defined Functional and Visual Syngrisi checks steps.
 * Affected elements analyse based on DOM dump and diff image.
 * UI panel to observe results and manage test data (baselines, regions, test, suites, runs. etc.) )
 
-## Environment variables
-
+## Configuration via Environment Variables
+Environment variables are used to modify the behavior of the Syngrisi without code changes.
 The System Environment variables have priority more than correspondent Syngrisi Admin Settings if they exist.
+Example: To set the log level to debug, use the following command:
+
+Windows:`set SYNGRISI_LOG_LEVEL=debug`
+macOS/Linux: `export SYNGRISI_LOG_LEVEL=debug`
+
+You can also include the variables in your `.env` or modify variables in `docker-compose.yml` file before start Syngrisi service.
+
 
 | Variable                       | Host | Docker | Description                                                                                                                                                       | Default Value                              |
 |--------------------------------|------|--------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------|
