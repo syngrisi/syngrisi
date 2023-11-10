@@ -41,7 +41,7 @@ function convertToJson(inputPaths) {
         fs.mkdirSync(outputDir);
     }
 
-    const outputName = inputPaths.length === 1 ? sanitizeFileName(inputPaths[0]) + '.json' : 'COMMON.json';
+    const outputName = inputPaths.length === 1 ? sanitizeFileName(inputPaths[0]) + '.json' : 'syngrisi-codebase.json';
     const outputPath = path.join(outputDir, outputName);
 
     fs.writeFileSync(outputPath, JSON.stringify(filesContent, null, 2), 'utf-8');

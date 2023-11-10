@@ -4,7 +4,7 @@
   "description": "Syngrisi WebdriverIO SDK",
   "main": "dist/WDIODriver.js",
   "directories": {
-    "lib": "src/lib"
+    "lib": "src"
   },
   "engines": {
     "node": ">=14.20.0"

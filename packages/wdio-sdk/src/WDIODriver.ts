@@ -30,13 +30,14 @@ const log = logger('syngrisi-wdio-sdk')
 if (process.env.SYNGRISI_LOG_LEVEL) {
     log.setLevel(process.env.SYNGRISI_LOG_LEVEL as LogLevelDesc)
 }
+
 export { getDomDump }
 
 /**
  * The `WDIODriver` class is responsible for managing the interaction between WebdriverIO and the Syngrisi server.
  * It provides methods to start and stop test sessions, retrieve baselines and snapshots, and perform visual checks.
  */
-class WDIODriver {
+export class WDIODriver {
     api: SyngrisiApi
     params: DriverParams
 
@@ -77,7 +78,7 @@ class WDIODriver {
      *   suppressErrors: true
      * });
      */
-    async startTestSession({ params, suppressErrors = false }: {
+    public async startTestSession({ params, suppressErrors = false }: {
         params: SessionParams,
         suppressErrors?: boolean
     }): Promise<SessionResponse | ErrorObject> {
