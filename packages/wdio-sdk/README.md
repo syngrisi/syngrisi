@@ -1,7 +1,7 @@
 # Syngrisi WebdriverIO SDK
 
 The Syngrisi SDK for WebdriverIO, `@syngrisi/wdio-sdk` provides a simple and powerful way to integrate visual regression
-testing into your WebdriverIO tests. By using this SDK, you can send screenshots from your browser tests to the Syngrisi
+testing into your WebdriverIO tests. By using this SDK, you can send snapshots from your browser tests to the Syngrisi
 server for comparison against baseline images, and easily manage visual testing sessions.
 
 ## Features
@@ -17,14 +17,14 @@ To install the Syngrisi WebdriverIO SDK, run:
 
 ```bash
 npm install @syngrisi/wdio-sdk
-````
+```
 
 ## Base Workflow Overview
 
 There is 3 basic step for particular test:
 
 <p align="center">
-<img src="./docs/flow.png" width="40%">
+<img src="./docs/flow.png" alt="workflow" width="40%">
 </p>
 
 ## Usage
@@ -40,7 +40,7 @@ const { SyngrisiDriver } = require('@syngrisi/wdio-sdk');
 
 const config = {
     apiKey: 'your-api-key',
-    serverUrl: 'https://syngrisi-server.com'
+    serverUrl: 'your-singrisi-url'
 };
 
 const driver = new SyngrisiDriver(config);
@@ -68,18 +68,23 @@ const sessionParams = {
 await driver.startTestSession({ params: sessionParams });
 ```
 
-### 3. Perform a Check
+### 3. Perform a visual Check
 
 Perform a visual check by providing the check name, image buffer, and any additional parameters.
 
 ```js
-const fs = require('fs');
-const imageBuffer_01 = fs.readFileSync('path-to-screenshot_01.png');
-const imageBuffer_02 = fs.readFileSync('path-to-screenshot_02.png');
-
-await driver.check({ 'Main Page', imageBuffer_01, params: {/* other parameters */ } });
-await driver.check({ 'About Page', imageBuffer_02, params: {/* other parameters */ } });
-
+driver.check({
+    checkName: 'Header',
+    imageBuffer:  await $('#header').saveScreenshot(),
+    params: {
+        viewport: '1200x800',
+        browserName: 'chrome',
+        os: 'Windows',
+        app: 'MyProject',
+        branch: 'develop'
+    }
+});
+await driver.check({ 'About Page', await $('#header').saveScreenshot(), params: {/* other parameters */ } });
 ```
 
 ### 4. Stop the Test Session
@@ -91,6 +96,12 @@ await driver.stopTestSession();
 ```
 
 ## Environment variables
+Environment variables are used to modify the behavior of the Syngrisi WebdriverIO SDK without code changes.
+
+Example: To set the log level to debug, use the following command:
+
+Windows: `set SYNGRISI_LOG_LEVEL=debug`
+macOS/Linux: `export SYNGRISI_LOG_LEVEL=debug`
 
 `ENV_POSTFIX` - will add to platform property, you can use this to set some unique platform name for particular
 environment
