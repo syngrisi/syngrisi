@@ -78,7 +78,9 @@ function dumpElement(el: Element): DomDumpElement {
         domPath: getDomPath(el),
     }
 }
-
+/**
+ * @hidden - hidden for typedoc
+ */
 export function getDomDump(done: (result: string) => void): string {
     const elements = Array.from(document.body.getElementsByTagName('*')).filter((x) => isVisible(x))
 
