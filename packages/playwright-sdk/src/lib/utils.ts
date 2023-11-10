@@ -2,23 +2,7 @@ import logger from '@wdio/logger'
 import { faker } from '@faker-js/faker'
 import { TestInfo } from '@playwright/test'
 
-export const log = logger('playwright-syngrisi-sdk')
-// export const printErrorResponseBody = (e: any): void => {
-//     if (e.response && e.response?.body) {
-//         log.error(`ERROR RESPONSE BODY: ${e.response?.body}`)
-//     }
-// }
-// export const prettyCheckResult = (result: any): string => {
-//     if (!result.domDump) {
-//         return JSON.stringify(result)
-//     }
-//     const dump = JSON.parse(result.domDump)
-//     const resObs = { ...result }
-//     delete resObs.domDump
-//     resObs.domDump = `${JSON.stringify(dump)
-//         .substr(0, 20)}... and about ${dump.length} items]`
-//     return JSON.stringify(resObs)
-// }
+export const log = logger('syngrisi-playwright-sdk')
 
 interface WaitOptions {
     attempts?: number;
@@ -71,7 +55,6 @@ export const getSuiteTitle = (testInfo: TestInfo) => {
         return titles[titles.length - 2]
     }
     return null
-
 }
 
 export const getTestTitle = (testInfo: TestInfo) => {
