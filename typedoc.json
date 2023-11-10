@@ -1,6 +1,6 @@
 {
   "entryPoints": ["packages/*"],
-  "name": "Syngrisi Packages API",
+  "name": "Syngrisi Documentation",
   "entryPointStrategy": "packages",
   "includeVersion": false
 
