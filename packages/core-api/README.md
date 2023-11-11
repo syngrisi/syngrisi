@@ -4,9 +4,11 @@
 
 Syngrisi Core API (`@syngrisi/core-api`) provides an interface to communicate with the Syngrisi visual regression
 testing service. This service allows clients to start and stop sessions, create checks, and get snapshots and baselines.
-This is the common JS/TS library, if you use WebdriverIO or Playwright try to
-use [appropriate packages](https://www.npmjs.com/search?q=%40syngrisi). For detailed documentation on the API methods
-and their parameters, refer to [Syngrisi Core API Documentation](TODO: fill url).
+This is the common JS/TS library, if you use WebdriverIO as automation framework try to use [wdio-syngrisi-cucumber-service](https://www.npmjs.com/package/wdio-syngrisi-cucumber-service) or [@syngrisi/syngrisi-wdio-sdk](https://www.npmjs.com/package/@syngrisi/syngrisi-wdio-sdk), if Playwright try to
+use [@syngrisi/playwright-sdk](https://www.npmjs.com/package/@syngrisi/playwright-sdk). For detailed documentation on the API methods
+and their parameters, refer to [Syngrisi Core API Documentation](https://syngrisi.github.io/syngrisi/modules/_syngrisi_core_api.html).
+
+Syngrisi Core API (`@syngrisi/core-api`) provides a way to interact with the Syngrisi visual regression testing service. This service lets you start and stop testing sessions, set up test checks, and retrieve snapshots and baseline images. This is a common JavaScript/TypeScript library. If your automation framework is WebdriverIO, consider using [wdio-syngrisi-cucumber-service](https://www.npmjs.com/package/wdio-syngrisi-cucumber-service) or [@syngrisi/syngrisi-wdio-sdk](https://www.npmjs.com/package/@syngrisi/syngrisi-wdio-sdk). If you are using Playwright, the @syngrisi/playwright-sdk is recommended. For a comprehensive guide on how to use the API's functions and parameters, please check out the [Syngrisi Core API Documentation](https://syngrisi.github.io/syngrisi/modules/_syngrisi_core_api.html).
 
 ### Installation
 
@@ -18,7 +20,7 @@ npm install @syngrisi/core-api
 
 ## Basic Workflow
 
-### Start Session
+### 1. Start Session
 
 To begin visual regression testing, start a session with the Syngrisi service:
 
@@ -48,7 +50,7 @@ const sessionResponse = await apiClient.startSession({
 
 ```
 
-### Create Check
+### 2. Create Check
 
 Once the session is started, you can perform a visual check:
 
@@ -66,7 +68,7 @@ const checkResponse = await apiClient.coreCheck(imageBuffer, {
 });
 ```
 
-### Stop Session
+### 3. Stop Session
 
 After checks are completed, stop the session:
 
