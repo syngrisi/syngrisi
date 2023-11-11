@@ -1,8 +1,9 @@
 // noinspection ExceptionCaughtLocallyJS
 import * as utils from './utils.js'
-import { DOCKER_SETUP_MANUAL_URL, MONGODB_SETUP_MANUAL_URL, NODE_VERSION } from './constants.js'
+import { MONGODB_SETUP_MANUAL_URL, MONGODB_VERSION, NODE_VERSION, SYNGRISI_DOCUMENTATION_LINK } from './constants.js'
 import chalk from 'chalk'
 import { createSyngrisiProject } from './createSyngrisiProject.js'
+import { checkMongoDB } from './utils.js'
 
 export async function run() {
     try {
@@ -32,13 +33,18 @@ export async function run() {
         }
 
         if (args.force === undefined && !args._.includes('--force')) {
-            if (!utils.checkDocker()) {
-                console.log(chalk.yellow('⚠️ Docker Compose is not installed.'
-                    + `Please install Docker Compose if you want to run Syngrisi inside containers. ${DOCKER_SETUP_MANUAL_URL}\n`))
-            }
-            if (!utils.checkMongoDB()) {
+
+            const mongoCheck = checkMongoDB()
+            if (!mongoCheck || (!mongoCheck.supported && (mongoCheck.version === 'unknown'))) {
                 console.log(chalk.yellow('⚠️ MongoDB is not installed.'
                     + `Please install MongoDB if you want to run Syngrisi in the native mode. ${MONGODB_SETUP_MANUAL_URL}\n`))
+            }
+            if (!mongoCheck.supported && (mongoCheck.version !== 'unknown')) {
+                console.log(chalk.yellow(
+                    `⚠️ Wrong MongoDB version: '${mongoCheck.version}' `
+                    + `Please install the proper MongoDB version: '${MONGODB_VERSION}' if you want to run Syngrisi in the native mode. ${MONGODB_SETUP_MANUAL_URL}\n`
+                    + `Or use standalone remote MongoDB instance, for more information read Syngrisi documentation ${SYNGRISI_DOCUMENTATION_LINK}.`
+                ))
             }
 
             const versionObj = utils.checkNodeVersion()
