@@ -2,7 +2,7 @@ import chalk from 'chalk'
 import child_process, { SpawnOptions } from 'node:child_process'
 import fss from 'node:fs'
 import inquirer from 'inquirer'
-import { NODE_VERSION } from './constants.js'
+import { MONGODB_VERSION, NODE_VERSION } from './constants.js'
 import semver from 'semver'
 import minimist from 'minimist'
 import path from 'node:path'
@@ -54,14 +54,26 @@ export const prompt = async (message: string): Promise<boolean> => {
     return answer
 }
 
-export const checkMongoDB = (): boolean => {
+export const getInstalledMongoVersion = (): string => {
+    const versionOutput = child_process.execSync('mongod1 --version').toString()
+    const versionMatch = versionOutput.match(/db version v(\d+\.\d+\.\d+)/)
+    if (!versionMatch) {
+        throw new Error(chalk.red(`❌ Cannot parse MongoDB version, output: '${versionOutput}'`))
+    }
+    return versionMatch[1]
+}
+export const checkMongoDB = (): { version: string, supported: boolean } => {
     try {
-        child_process.execSync('mongod --version', { stdio: 'ignore' })
-        console.log(chalk.green('✔ MongoDB is installed.'))
-        return true
+        const installedVersion = getInstalledMongoVersion()
+        if (!semver.satisfies(installedVersion, MONGODB_VERSION)) {
+            console.error(chalk.red(`❌ MongoDB version is not satisfies requirements: '${MONGODB_VERSION}'. Installed version is '${installedVersion}'.`))
+            return { version: installedVersion, supported: false }
+        }
+        console.log(chalk.green(`✔ MongoDB version is satisfactory. Installed version is ${installedVersion}.`))
+        return { version: installedVersion, supported: true }
     } catch (error: any) {
-        console.error(chalk.yellow(error.message))
-        return false
+        console.error(chalk.yellow(`Error checking MongoDB version: ${error.message}`))
+        return { version: 'unknown', supported: false }
     }
 }
 
