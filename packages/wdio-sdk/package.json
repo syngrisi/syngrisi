@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/viktor-silakov/vrs-sdk.git"
+    "url": "git@github.com:syngrisi/syngrisi.git"
   },
   "keywords": [
     "visual",
@@ -30,9 +30,9 @@
   "author": "Viktar Silakou",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/viktor-silakov/vrs-sdk/issues"
+    "url": "https://github.com/syngrisi/syngrisi/issues"
   },
-  "homepage": "https://github.com/viktor-silakov/vrs-sdk/blob/master/README.md",
+  "homepage": "https://github.com/syngrisi/syngrisi/tree/main/packages/wdio-sdk#readme",
   "dependencies": {
     "@syngrisi/core-api": "^2.1.25-alpha.0",
     "@wdio/globals": "^8.20.0",
