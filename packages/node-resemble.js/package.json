@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/viktor-silakov/syngrisi-tool.git",
+    "url": "git+git@github.com:syngrisi/syngrisi.git",
     "directory": "packages/node-resemble.js"
   },
   "keywords": [
@@ -26,9 +26,9 @@
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/viktor-silakov/syngrisi-tool/issues"
+    "url": "https://github.com/syngrisi/syngrisi/issues"
   },
-  "homepage": "https://github.com/viktor-silakov/syngrisi-tool/node-resemble.js/",
+  "homepage": "https://github.com/syngrisi/syngrisi/node-resemble.js/",
   "dependencies": {
     "jpeg-js": "0.4.4",
     "pngjs": "^7.0.0",
