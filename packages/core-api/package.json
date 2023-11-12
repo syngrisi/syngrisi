@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com:viktor-silakov/syngrisi.git"
+    "url": "git@github.com:syngrisi/syngrisi.git"
   },
   "keywords": [
     "visual",
@@ -25,9 +25,9 @@
   "author": "Viktar Silakou",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/viktor-silakov/syngrisi/issues"
+    "url": "https://github.com/syngrisi/syngrisi/issues"
   },
-  "homepage": "https://github.com/viktor-silakov/syngrisi",
+  "homepage": "https://github.com/syngrisi/syngrisi/tree/main/packages/core-api",
   "dependencies": {
     "@syngrisi/core-api": "*",
     "@wdio/logger": "^7.16.0",
