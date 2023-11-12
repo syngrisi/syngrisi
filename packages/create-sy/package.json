@@ -7,14 +7,14 @@
     "email": "1105714@gmail.com"
   },
   "license": "MIT",
-  "homepage": "https://github.com/viktor-silakov/syngrisi-tool",
+  "homepage": "https://github.com/syngrisi/syngrisi/tree/main/packages/create-sy",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/viktor-silakov/syngrisi-tool.git",
+    "url": "git+git@github.com:syngrisi/syngrisi.git",
     "directory": "packages/create-sy"
   },
   "bugs": {
-    "url": "https://github.com/viktor-silakov/syngrisi-tool/issues"
+    "url": "https://github.com/syngrisi/syngrisi/issues"
   },
   "keywords": [
     "Syngrisi",
