@@ -44,5 +44,5 @@ export const createSyngrisiProject = async (opts: ProgramOpts) => {
 
     console.log(chalk.green(`✔ Syngrisi ${chalk.greenBright(getSyngrisiVersion(root))} successfully installed in the following directory: ${root}`))
     console.log(chalk.white(`To run the application use the ${chalk.whiteBright('npx sy')} command`))
-    console.log(chalk.white.bold('For detailed configuration see https://github.com/viktor-silakov/syngrisi'))
+    console.log(chalk.white.bold('For detailed configuration see https://github.com/syngrisi/syngrisi/tree/main/packages/syngrisi'))
 }
