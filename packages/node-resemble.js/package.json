@@ -1,6 +1,6 @@
 {
   "name": "@syngrisi/node-resemble.js",
-  "version": "2.0.1",
+  "version": "2.1.30-alpha.0",
   "description": "Image analysis and comparison for nodejs",
   "main": "resemble.js",
   "scripts": {
