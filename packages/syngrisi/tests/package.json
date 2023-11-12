@@ -7,10 +7,10 @@
   "name": "syngrisi-test-solution",
   "version": "2.0.0",
   "description": "Syngrisi test solution",
-  "homepage": "https://github.com/viktor-silakov/syngrisi/tree/master/tests",
+  "homepage": "https://github.com/syngrisi/syngrisi/tree/main/packages/syngrisi",
   "repository": {
     "type": "git",
-    "getUrl": "https://github.com/viktor-silakov/syngrisi.git"
+    "getUrl": "git@github.com:syngrisi/syngrisi.git"
   },
   "scripts": {
     "test": "source ~/.nvm/nvm.sh && nvm use && cross-env RETRY=2 STREAMS=4 LOG=1 HL=1 npx wdio --spec './features/**/*.feature' --exclude 'features/debug/debug.feature'",

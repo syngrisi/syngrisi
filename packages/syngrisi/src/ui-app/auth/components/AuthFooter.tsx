@@ -25,12 +25,12 @@ function AuthFooter() {
     }
     if (isLoading) return null;
 
-    const tagUrl = `https://github.com/viktor-silakov/syngrisi/releases/tag/v${data.version}`;
+    const tagUrl = `https://github.com/syngrisi/syngrisi/releases/tag/v${data.version}`;
     // eslint-disable-next-line consistent-return
     return (
         <Center>
             <Anchor
-                href="https://github.com/viktor-silakov/syngrisi"
+                href="https://github.com/syngrisi/syngrisi/tree/main/packages/syngrisi"
                 target="_blank"
                 className={classes.footerLink}
             >

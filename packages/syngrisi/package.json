@@ -8,7 +8,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/viktor-silakov/syngrisi"
+        "url": "git+https://github.com/syngrisi/syngrisi"
     },
     "engines": {
         "node": ">=14.20.0"
@@ -24,7 +24,7 @@
         "docker-compose.yml",
         ".nvmrc"
     ],
-    "homepage": "https://github.com/viktor-silakov/syngrisi",
+    "homepage": "https://github.com/syngrisi/syngrisi/tree/main/packages/syngrisi",
     "keywords": [
         "testing",
         "regression",
@@ -65,7 +65,7 @@
         "email": "1105714@gmail.com"
     },
     "bugs": {
-        "url": "https://github.com/viktor-silakov/syngrisi/issues"
+        "url": "https://github.com/syngrisi/syngrisi/issues"
     },
     "license": "MIT",
     "dependencies": {
