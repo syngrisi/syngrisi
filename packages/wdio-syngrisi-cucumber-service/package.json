@@ -8,10 +8,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com:viktor-silakov/wdio-syngrisi-cucumber-service.git"
+    "url": "git@github.com:syngrisi/syngrisi.git"
   },
   "bugs": {
-    "url": "https://github.com/viktor-silakov/wdio-syngrisi-cucumber-service/issues"
+    "url": "https://github.com/syngrisi/syngrisi/issues"
   },
   "scripts": {
     "pub": "run-s install:global clean compile; np",

@@ -1,7 +1,7 @@
 # WDIO Syngrisi Cucumber Service
 
 The service helps integrate [WebdriverIO](https://webdriver.io/) test framework
-and [Syngrisi](https://github.com/viktor-silakov/syngrisi) visual testing tool.
+and [Syngrisi](https://github.com/syngrisi/syngrisi/tree/main/packages/syngrisi#readme) visual testing tool.
 
 ## Installation
 
