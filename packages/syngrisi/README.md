@@ -58,8 +58,8 @@ script facilitates the download and execution of such file from this repository.
 command -v docker-compose >/dev/null 2>&1 || { echo >&2 "docker-compose is required, please install and run it again"; exit 1; }
 
 mkdir my_new_syngrisi_project && cd my_new_syngrisi_project
-curl -LO https://raw.githubusercontent.com/viktor-silakov/SYNGRISI-NEW/main/packages/syngrisi/syngrisi-app.dockerfile
-curl -LO https://raw.githubusercontent.com/viktor-silakov/SYNGRISI-NEW/main/packages/syngrisi/docker-compose.yml
+curl -LO https://raw.githubusercontent.com/syngrisi/syngrisi/main/packages/syngrisi/syngrisi-app.dockerfile
+curl -LO https://raw.githubusercontent.com/syngrisi/syngrisi/main/packages/syngrisi/docker-compose.yml
 sudo docker-compose up
 ```
 
@@ -76,7 +76,7 @@ sudo docker-compose up
 ## Syngrisi Cucumber Boilerplate
 
 You can set up
-the [Syngrisi Cucumber Boilerplate project](https://github.com/viktor-silakov/syngrisi-cucumber-boilerplate) with
+the [Syngrisi Cucumber Boilerplate project](https://github.com/syngrisi/syngrisi-cucumber-boilerplate) with
 pre-defined Functional and Visual Syngrisi checks steps.
 
 ## Features
