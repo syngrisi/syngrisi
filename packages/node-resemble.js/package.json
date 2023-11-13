@@ -30,14 +30,16 @@
   },
   "homepage": "https://github.com/syngrisi/syngrisi/node-resemble.js/",
   "dependencies": {
+    "deadfile": "1.2.0",
+    "istanbul-middleware": "^0.1.1",
     "jpeg-js": "0.4.4",
     "pngjs": "^7.0.0",
     "sharp": "^0.31.3"
   },
   "devDependencies": {
-    "gulp": "4.0.2",
+    "gulp": "^3.9.1",
     "gulp-jasmine": "4.0.0",
     "gulp-util": "3.0.7"
   },
-  "gitHead": "ce9023a819d9aa4b93a1c8631328420e63645f91"
+  "gitHead": "bf92123f516b52646893b810a54c02e7c878b364"
 }

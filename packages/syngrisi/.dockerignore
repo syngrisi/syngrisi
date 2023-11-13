@@ -13,7 +13,7 @@ debug*
 .gitignore
 .idea
 .npmignore
-.npmrc
+.npmrc.bak
 docker-compose.yml
 data
 *.bak
