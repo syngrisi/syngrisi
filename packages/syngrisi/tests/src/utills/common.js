@@ -140,7 +140,7 @@ const startServer = (params) => {
     env.SYNGRISI_DISABLE_FIRST_RUN = process.env.SYNGRISI_DISABLE_FIRST_RUN || '1';
     env.SYNGRISI_AUTH = process.env.SYNGRISI_AUTH || '0';
     env.SYNGRISI_APP_PORT = cidPort;
-    env.SYNGRISI_COVERAGE = 'true';
+    env.SYNGRISI_COVERAGE = process.env.SYNGRISI_COVERAGE === 'true' ? 'true' : 'false';
     browser.config.serverPort = cidPort;
     browser.config.testScreenshotsFolder = `./baselinesTest/${cid}/`;
     if (process.env.DOCKER !== '1') env.SYNGRISI_IMAGES_PATH = browser.config.testScreenshotsFolder;
@@ -159,13 +159,23 @@ const startServer = (params) => {
             });
     } else {
         // const nodePath = process.env.SYNGRISI_TEST_SERVER_NODE_PATH || 'node';
+        const nodePath = process.env.SYNGRISI_TEST_SERVER_NODE_PATH || '/Users/exadel/.nvm/versions/node/v21.1.0/bin/node';
         // const nodePath = 'c8';
-        child = spawn('c8',
-            ['node', 'server.js', `syngrisi_test_server_${cid}`], {
-                env,
-                shell: process.platform === 'win32',
-                cwd: cmdPath,
-            });
+        if (process.env.SYNGRISI_COVERAGE === 'true') {
+            child = spawn('c8',
+                [nodePath, 'server.js', `syngrisi_test_server_${cid}`], {
+                    env,
+                    shell: process.platform === 'win32',
+                    cwd: cmdPath,
+                });
+        } else {
+            child = spawn(nodePath,
+                ['server.js', `syngrisi_test_server_${cid}`], {
+                    env,
+                    shell: process.platform === 'win32',
+                    cwd: cmdPath,
+                });
+        }
     }
     child.stdout.setEncoding('utf8');
     child.stdout.on('data', (data) => {
@@ -184,7 +194,7 @@ const startServer = (params) => {
     child.stderr.setEncoding('utf8');
 
     child.stderr.on('data', (data) => {
-        console.log(`stderr: ${data}`);
+        console.log(`❌ STDERR: ${data}`);
     });
 
     browser.pause(2500);

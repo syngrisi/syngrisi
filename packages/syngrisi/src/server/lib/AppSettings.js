@@ -10,7 +10,7 @@ class AppSettings {
     }
 
     count() {
-        return this.model.count();
+        return this.model.countDocuments().exec();
     }
 
     async loadInitialFromFile() {

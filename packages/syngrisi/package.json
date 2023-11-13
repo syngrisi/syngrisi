@@ -11,7 +11,7 @@
         "url": "git+https://github.com/syngrisi/syngrisi"
     },
     "engines": {
-        "node": ">=14.20.0"
+        "node": ">=21"
     },
     "files": [
         "src",
@@ -74,10 +74,10 @@
         "bootstrap": "^5.2.0",
         "bootstrap-icons": "^1.9.1",
         "bottleneck": "^2.19.5",
-        "bson": "^4.7.0",
+        "bson": "^4.7.2",
         "chalk": "^4.1.2",
         "compression": "^1.7.4",
-        "connect-mongo": "^4.6.0",
+        "connect-mongo": "^5.1.0",
         "cookie-parser": "^1.4.6",
         "date-fns": "^2.21.3",
         "dotenv": "^16.0.0",
@@ -85,21 +85,22 @@
         "express": "^4.18.1",
         "express-fileupload": "^1.4.0",
         "express-session": "^1.17.1",
+        "gulp": "^3.9.1",
         "hasha": "^5.1.0",
         "http-status": "^1.5.2",
-        "inquirer": "^8.2.4",
-        "istanbul-middleware": "^0.2.2",
+        "inquirer": "^9.2.12",
+        "istanbul-middleware": "^0.1.1",
         "moment": "^2.29.4",
-        "mongodb": "^4.10.0",
-        "mongoose": "^6.6.2",
-        "nodemon": "^2.0.20",
+        "mongodb": "^6.2.0",
+        "mongoose": "^6.12.3",
+        "nodemon": "^3.0.1",
         "p-queue": "^6.4.0",
         "passport": "^0.6.0",
         "passport-local": "^1.0.0",
         "passport-local-mongoose": "^6.3.0",
-        "pino": "^6.11.3",
+        "pino": "^8.16.1",
         "pino-http": "^5.2.0",
-        "prettier": "^2.2.1",
+        "prettier": "^3.0.3",
         "querystring": "^0.2.1",
         "simple-icons-font": "^7.5.0",
         "string-table": "^0.1.5",
@@ -111,21 +112,22 @@
     "devDependencies": {
         "@types/fabric": "^4.5.12",
         "@types/jquery": "^3.5.14",
-        "@types/node": "^18.6.0",
+        "@types/mongoose": "^5.11.97",
+        "@types/node": "^20.9.0",
         "@types/react": "^18.0.15",
         "@types/react-dom": "^18.0.6",
         "@vitejs/plugin-react": "^2.0.0",
         "babel-eslint": "^10.1.0",
         "c8": "^8.0.1",
         "cross-env": "^7.0.3",
-        "deadfile": "^2.1.0",
+        "deadfile": "^1.2.0",
         "eslint": "^7.32.0",
         "eslint-config-airbnb-base": "^14.1.0",
         "eslint-plugin-import": "^2.20.2",
         "form-data": "^4.0.0",
         "nyc": "^15.1.0",
         "sass": "^1.54.0",
-        "typescript": "^4.6.4",
+        "typescript": "^5.2.2",
         "vite": "^3.0.9"
     },
     "nyc": {
@@ -145,5 +147,5 @@
             ".js"
         ]
     },
-    "gitHead": "add4626c47aef10aebf632dc16803b53184d5076"
+    "gitHead": "bf92123f516b52646893b810a54c02e7c878b364"
 }
