@@ -142,7 +142,10 @@ const getIdent = catchAsync(async (req, res) => {
 // });
 
 const getBaselines = catchAsync(async (req, res) => {
-    const filter = req.query.filter ? deserializeIfJSON(pick(req.query, ['filter']).filter) : {};
+    const filter = pick(
+        (req.query.filter ? deserializeIfJSON(req.query.filter) : {}),
+        ['name', 'viewport', 'browserName', 'os', 'app', 'branch']
+    );
     paramsGuard(filter, 'getBaseline, filter', RequiredIdentOptionsSchema);
     const options = pick(req.query, ['sortBy', 'limit', 'page', 'populate']);
     const result = await clientService.getBaselines(filter, options);
@@ -150,7 +153,10 @@ const getBaselines = catchAsync(async (req, res) => {
 });
 
 const getSnapshots = catchAsync(async (req, res) => {
-    const filter = req.query.filter ? deserializeIfJSON(pick(req.query, ['filter']).filter) : {};
+    const filter = pick(
+        (req.query.filter ? deserializeIfJSON(req.query.filter) : {}),
+        ['_id', 'name', 'imghash', 'createdDate', 'filename', 'id']
+    );
     const options = pick(req.query, ['sortBy', 'limit', 'page', 'populate']);
     const result = await genericService.get('VRSSnapshot', filter, options);
     res.send(result);

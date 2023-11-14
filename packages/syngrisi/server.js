@@ -129,6 +129,7 @@ log.info('Connect to database', this);
 
 mongoose.Promise = global.Promise;
 let server;
+mongoose.set('strictQuery', false);
 // mongoose instance connection url connection
 mongoose.connect(config.connectionString, { useUnifiedTopology: true }).then(() => {
     log.info('Connected to MongoDB');

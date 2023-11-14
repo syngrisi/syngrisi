@@ -34,7 +34,18 @@ const getUsers = catchAsync(async (req, res) => {
 
 const createUser = catchAsync(async (req, res) => {
     try {
-        const user = await usersService.createUser(req.body);
+        const userData = pick(req.body, [
+            // 'id',
+            'username',
+            'firstName',
+            'lastName',
+            'role',
+            'password',
+            'apiKey',
+            'expiration',
+            'meta',
+        ]);
+        const user = await usersService.createUser(userData);
         res.status(httpStatus.CREATED)
             .send(user);
     } catch (e) {

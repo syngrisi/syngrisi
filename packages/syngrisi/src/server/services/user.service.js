@@ -24,8 +24,7 @@ const createUser = async (userBody) => {
         ref: userBody.username,
         scope: 'createUser',
     };
-    log.debug(`create the user with name '${userBody.username}', params: '${JSON.stringify(userBody)}'`,
-        $this, logOpts);
+    log.debug(`create the user with name '${userBody.username}', params: '${JSON.stringify(userBody)}'`, $this, logOpts);
 
     const user = await User.create({ ...userBody, createdDate: Date.now() });
 
@@ -111,14 +110,13 @@ const updateUserById = async (userId, updateBody) => {
  * @param {ObjectId} userId
  * @returns {Promise<User>}
  */
-const deleteUserById = async (userId) => {
-    const user = await getUserById(userId);
-    if (!user) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
-    }
-    await user.remove();
-    return user;
-};
+const deleteUserById = async (userId) => User.findByIdAndDelete(userId).exec();
+// const user = await getUserById(userId);
+// if (!user) {
+//     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+// }
+// await user.remove();
+// return user;
 
 module.exports = {
     createUser,
