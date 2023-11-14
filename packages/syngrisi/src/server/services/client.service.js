@@ -635,6 +635,7 @@ const getBaselines = async (filter, options) => {
         return {};
     }
     filter.app = app._id;
+    log.debug(`Get baselines with filter: '${JSON.stringify(filter)}', options: '${JSON.stringify(options)}'`, $this, logOpts);
     return Baseline.paginate(filter, options);
 };
 

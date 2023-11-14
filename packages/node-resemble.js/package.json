@@ -30,8 +30,6 @@
   },
   "homepage": "https://github.com/syngrisi/syngrisi/node-resemble.js/",
   "dependencies": {
-    "deadfile": "1.2.0",
-    "istanbul-middleware": "^0.1.1",
     "jpeg-js": "0.4.4",
     "pngjs": "^7.0.0",
     "sharp": "^0.31.3"
