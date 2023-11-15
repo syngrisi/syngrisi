@@ -42,7 +42,7 @@ When(/^I create via http user as:"([^"]*)" with params:$/, async function (user,
 
     const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
         + 'v1/users';
-    console.log('💥👉', { uri });
+    console.log('👉', { uri });
 
     const { sessionSid } = this.getSavedItem('users')[user];
     // console.log({ sessionSid });

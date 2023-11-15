@@ -11,7 +11,7 @@ When(/^I accept via http the (\d+)st check with name "([^"]*)"$/, async function
     const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
         + `v1/checks?limit=0&filter={"$and":[{"name":{"$regex":"${name}","$options":"im"}}]}`;
 
-    console.log('💥👉', { uri: uri });
+    console.log('👉', { uri: uri });
     const checks = (await requestWithLastSessionSid(
         uri,
         this
@@ -63,7 +63,7 @@ When(/^I update via http last "([^"]*)" checks with params:$/, async function (n
     const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
         + `v1/checks?limit=0&filter={"name": "${params.name}"}`;
 
-    console.log('💥👉', { uri: uri });
+    console.log('👉', { uri: uri });
     const checks = (await requestWithLastSessionSid(
         uri,
         this
