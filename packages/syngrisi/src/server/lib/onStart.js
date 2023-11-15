@@ -25,8 +25,8 @@ exports.createInitialSettings = async function createInitialSettings() {
 };
 
 exports.createBasicUsers = async function createBasicUsers() {
-    const defAdmin = await User.findOne({ username: 'Administrator' });
-    const defGuest = await User.findOne({ username: 'Guest' });
+    const defAdmin = await User.findOne({ username: 'Administrator' }).exec();
+    const defGuest = await User.findOne({ username: 'Guest' }).exec();
     if (!defAdmin) {
         log.info('create the default Administrator', $this);
         const adminData = JSON.parse(fs.readFileSync(`${__dirname}/admin.json`));
