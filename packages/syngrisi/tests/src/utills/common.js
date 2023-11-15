@@ -1,11 +1,6 @@
 const ImageJS = require('imagejs');
 const YAML = require('yaml');
 const faker = require('faker');
-const moment = require('moment');
-/* eslint-disable no-console */
-const {
-    subDays,
-} = require('date-fns');
 const { got } = require('got-cjs');
 const { spawn, execSync } = require('child_process');
 const { SyngrisiDriver } = require('@syngrisi/wdio-sdk');
@@ -67,12 +62,19 @@ const startSession = async (sessOpts) => {
     await browser.vDriver.startTestSession({ params: opts });
 };
 
+const subDays = (date, days) => {
+    const result = new Date(date);
+    result.setDate(result.getDate() - days);
+    return result;
+};
+
+exports.subDays = subDays;
+
 const fillCommonPlaceholders = function fillPlaceholders(str) {
     require('./extendString');
     return str.formatPlaceholders(
         {
-            'YYYY-MM-DD': moment(new Date())
-                .format('YYYY-MM-DD'),
+            'YYYY-MM-DD': new Date(new Date()).toISOString().split('T')[0],
             Email: faker.internet.email()
                 .toLowerCase(),
             ShortSlug: faker.lorem.slug(2),
@@ -197,7 +199,7 @@ const startServer = (params) => {
         console.log(`❌ STDERR: ${data}`);
     });
 
-    browser.pause(2500);
+    // browser.pause(500);
     let timeoutMsg = '';
     browser.waitUntil(async () => {
         const response = got.get(`http://${browser.config.serverDomain}:`
@@ -208,8 +210,8 @@ const startServer = (params) => {
         timeoutMsg = `Cannot connect to server,  statusCode: '${(await response).status}'`
             + `\n serverRespBody: '${(await response).body}'`;
         return (jsonResp.alive === true);
-    }, { timeout: 10000, timeoutMsg });
-    browser.pause(2500);
+    }, { timeout: 15000, timeoutMsg });
+    browser.pause(500);
     console.log(`SERVER IS STARTED, PID: '${child.pid}' port: '${cidPort}'`);
     browser.syngrisiServer = child;
 };
