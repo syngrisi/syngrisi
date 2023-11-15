@@ -28,5 +28,5 @@
   "dependencies": {
     "@wdio/logger": "^7.19.0"
   },
-  "gitHead": "bf92123f516b52646893b810a54c02e7c878b364"
+  "gitHead": "adc129857801f07ff80a435887ddd04fe4182962"
 }

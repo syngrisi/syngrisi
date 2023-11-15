@@ -55,7 +55,7 @@ export const prompt = async (message: string): Promise<boolean> => {
 }
 
 export const getInstalledMongoVersion = (): string => {
-    const versionOutput = child_process.execSync('mongod1 --version').toString()
+    const versionOutput = child_process.execSync('mongod --version').toString()
     const versionMatch = versionOutput.match(/db version v(\d+\.\d+\.\d+)/)
     if (!versionMatch) {
         throw new Error(chalk.red(`❌ Cannot parse MongoDB version, output: '${versionOutput}'`))
