@@ -32,7 +32,7 @@ function parseHrtimeToSeconds(hrtime) {
 }
 
 const status = async (currentUser) => {
-    const count = await User.countDocuments();
+    const count = await User.countDocuments().exec();
 
     log.silly(`server status: check users counts: ${count}`);
     if (count > 1) {
@@ -55,7 +55,7 @@ const loadTestUser = async () => {
     if (process.env.SYNGRISI_TEST_MODE !== '1') {
         return { message: 'the feature works only in test mode' };
     }
-    const testAdmin = await User.findOne({ username: 'Test' });
+    const testAdmin = await User.findOne({ username: 'Test' }).exec();
     if (!testAdmin) {
         log.info('create the test Administrator', $this, logOpts);
         const adminData = JSON.parse(fss.readFileSync('./src/server/lib/testAdmin.json'));
