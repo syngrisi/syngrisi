@@ -11,7 +11,7 @@ const {
     Baseline,
 } = require('../models');
 const {
-    removeEmptyProperties, waitUntil, checksGroupedByIdent, buildIdentObject, calculateAcceptedStatus, ident,
+    removeEmptyProperties, waitUntil, buildIdentObject, calculateAcceptedStatus, ident,
 } = require('../utils/utils');
 const orm = require('../lib/dbItems');
 const { createItemIfNotExistAsync, createRunIfNotExist, createSuiteIfNotExist } = require('../lib/dbItems');
@@ -116,40 +116,39 @@ const endSession = async (testId, username) => {
     await waitUntil(async () => (await Check.find({ test: testId })
         .exec())
         .filter((ch) => ch.status.toString() !== 'pending').length > 0);
-    const checksGroup = await checksGroupedByIdent({ test: testId });
-    const groupStatuses = Object.keys(checksGroup)
-        .map((group) => checksGroup[group].status);
-    const groupViewPorts = Object.keys(checksGroup)
-        .map((group) => checksGroup[group].viewport);
-    const uniqueGroupViewports = Array.from(new Set(groupViewPorts));
+    const sessionChecks = await Check.find({ test: testId }).lean().exec();
+    const checksStatuses = sessionChecks.map((x) => x.status[0]);
+    const checksViewports = sessionChecks.map((x) => x.viewport);
+
+    const uniqueChecksViewports = Array.from(new Set(checksViewports));
     let testViewport;
-    if (uniqueGroupViewports.length === 1) {
+    if (uniqueChecksViewports.length === 1) {
         // eslint-disable-next-line prefer-destructuring
-        testViewport = uniqueGroupViewports[0];
+        testViewport = uniqueChecksViewports[0];
     } else {
-        testViewport = uniqueGroupViewports.length;
+        testViewport = uniqueChecksViewports.length;
     }
 
     let testStatus = 'not set';
-    if (groupStatuses.some((st) => st === 'failed')) {
+    if (checksStatuses.some((st) => st === 'failed')) {
         testStatus = 'Failed';
     }
-    if (groupStatuses.some((st) => st === 'passed')
-        && !groupStatuses.some((st) => st === 'failed')) {
+    if (checksStatuses.some((st) => st === 'passed')
+        && !checksStatuses.some((st) => st === 'failed')) {
         testStatus = 'Passed';
     }
-    if (groupStatuses.some((st) => st === 'new')
-        && !groupStatuses.some((st) => st === 'failed')) {
+    if (checksStatuses.some((st) => st === 'new')
+        && !checksStatuses.some((st) => st === 'failed')) {
         testStatus = 'Passed';
     }
-    if (groupStatuses.some((st) => st === 'blinking')
-        && !groupStatuses.some((st) => st === 'failed')) {
+    if (checksStatuses.some((st) => st === 'blinking')
+        && !checksStatuses.some((st) => st === 'failed')) {
         testStatus = 'Passed';
     }
-    if (groupStatuses.every((st) => st === 'new')) {
+    if (checksStatuses.every((st) => st === 'new')) {
         testStatus = 'New';
     }
-    const blinkingCount = groupStatuses.filter((g) => g === 'blinking').length;
+    const blinkingCount = checksStatuses.filter((g) => g === 'blinking').length;
     const testParams = {
         id: testId,
         status: testStatus,

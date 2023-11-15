@@ -1,9 +1,9 @@
 /* eslint-disable camelcase */
-const { subDays, format } = require('date-fns');
 const { promises: fs } = require('fs');
 const stringTable = require('string-table');
 const fss = require('fs');
 const { config } = require('../../../config');
+const { subDays, dateToISO8601 } = require('../utils');
 const { ProgressBar } = require('../utils/utils');
 const {
     Snapshot,
@@ -13,7 +13,7 @@ const {
     Log,
     Suite,
     User,
-    Baseline
+    Baseline,
 } = require('../models');
 
 const $this = this;
@@ -287,7 +287,7 @@ const task_remove_old_logs = async (options, res) => {
     if (options.statistics === 'false') {
         taskOutput(
             `- will remove all logs older that: '${options.days}' days,`
-            + ` '${format(trashHoldDate, 'yyyy-MM-dd')}'\n`,
+            + ` '${dateToISO8601(trashHoldDate)}'\n`,
             res
         );
         await Log.deleteMany(filter);
@@ -375,7 +375,7 @@ const task_handle_old_checks = async (options, res) => {
 
         if (options.remove === 'true') {
             taskOutput(`STAGE #2 Remove checks that older that: '${options.days}' days,`
-                + ` '${format(trashHoldDate, 'yyyy-MM-dd')}'\n`, res);
+                + ` '${dateToISO8601(trashHoldDate)}'\n`, res);
 
             taskOutput('> remove checks', res);
             const checkRemovingResult = await Check.deleteMany({ createdDate: { $lt: trashHoldDate } });

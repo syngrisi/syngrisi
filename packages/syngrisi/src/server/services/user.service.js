@@ -77,7 +77,7 @@ const updateUserById = async (userId, updateBody) => {
     };
 
     log.info(
-        `update user with id: '${updateBody.id}' name '${updateBody.username}', params: '${JSON.stringify(updateBody)}'`,
+        `update user with id: '${userId}' name '${updateBody.username}', params: '${JSON.stringify(updateBody)}'`,
         $this,
         logOpts
     );
