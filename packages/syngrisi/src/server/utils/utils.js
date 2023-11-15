@@ -1,6 +1,6 @@
 /* eslint-disable dot-notation,object-shorthand */
-const moment = require('moment');
-const { Check, Test, Run, Suite, Baseline } = require('../models');
+// const moment = require('moment');
+const { Check, Test, Run, Suite } = require('../models');
 
 const ident = ['name', 'viewport', 'browserName', 'os', 'app', 'branch'];
 exports.ident = ident;
@@ -62,30 +62,6 @@ exports.buildQuery = (params) => {
     return query;
 };
 
-function groupStatus(checks) {
-    const statuses = checks.map((check) => check.status[0]);
-    const lastStatus = statuses[statuses.length - 1];
-    let resultStatus = 'not set';
-
-    if (statuses.includes('failed')) {
-        resultStatus = 'failed';
-    }
-    if (statuses.includes('failed') && lastStatus === 'passed') {
-        resultStatus = 'blinking';
-    }
-    if (!statuses.includes('failed')) {
-        resultStatus = 'passed';
-    }
-    if (lastStatus === 'new') {
-        resultStatus = 'new';
-    }
-    return resultStatus;
-}
-
-function groupViewPort(checks) {
-    return checks[0].viewport;
-}
-
 const fatalError = function fatalError(req, res, e) {
     const errMsg = e.stack ? `Fatal error: '${e}' \n  '${e.stack}'` : `Fatal error: ${e} \n`;
     req.log.fatal(errMsg);
@@ -103,42 +79,6 @@ exports.removeEmptyProperties = function removeEmptyProperties(obj) {
     return Object.fromEntries(Object.entries(obj)
         // eslint-disable-next-line no-unused-vars
         .filter(([_, v]) => (v != null) && (v !== '')));
-};
-
-exports.checksGroupedByIdent = async function checksGroupedByIdent(checkFilter) {
-    // return new Promise(async (resolve, reject) => {
-    try {
-        const chs = await Check.find(checkFilter)
-            .exec();
-        const checks = await Promise.all(
-            chs.map(async (ch) => {
-                const baseline = await Baseline.findOne({ snapshootId: ch.baselineId })
-                    .exec();
-                ch.realBaselineId = baseline?._id;
-                ch.formattedCreatedDate = moment(ch.createdDate)
-                    .format('YYYY-MM-DD hh:mm');
-                return ch;
-            })
-        );
-        const result = {};
-        checks.forEach((check) => {
-            if (result[checkIdent(check)] === undefined) {
-                result[checkIdent(check)] = {};
-                result[checkIdent(check)]['checks'] = [];
-            }
-            result[checkIdent(check)]['checks'].push(check);
-        });
-        for (const groupIdent in result) {
-            result[groupIdent].status = groupStatus(result[groupIdent].checks);
-        }
-        for (const groupIdent in result) {
-            result[groupIdent].viewport = groupViewPort(result[groupIdent].checks);
-        }
-        return result;
-    } catch (e) {
-        log.error(e.stack || e.toString());
-        throw new Error(e);
-    }
 };
 
 exports.waitUntil = async function waitUntil(cb, attempts = 5, interval = 700) {

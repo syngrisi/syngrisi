@@ -5,8 +5,7 @@ const {
     gray,
     magenta,
 } = require('chalk');
-const formatISO9075 = require('date-fns/formatISO9075');
-const { parseISO } = require('date-fns');
+const { formatISOToDateTime } = require('../utils');
 
 const logLevel = process.env.SYNGRISI_LOG_LEVEL ? process.env.SYNGRISI_LOG_LEVEL : '';
 
@@ -32,7 +31,8 @@ module.exports.Logger = class Logger {
                                 ? `\n${JSON.stringify(info.message, null, 2)}`
                                 : info.message;
 
-                            return `${info.level} ${scope}${formatISO9075(parseISO(info.metadata.timestamp))} `
+                            // return `${info.level} ${scope}${formatISO9075(parseISO(info.metadata.timestamp))} `
+                            return `${info.level} ${scope}${formatISOToDateTime(info.metadata.timestamp)} `
                                 + `${info.metadata.ms}${user}${ref}${msgType}${itemType} '${msg}'`;
                         }),
                         winston.format.padLevels(),

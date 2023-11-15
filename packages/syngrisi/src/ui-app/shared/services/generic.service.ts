@@ -78,7 +78,7 @@ export const GenericService = {
     },
 
     async update(resource: string, data: { [key: string]: any }) {
-        const url = `${config.baseUri}/v1/${resource}/${data.name}`;
+        const url = `${config.baseUri}/v1/${resource}/${data.name || data.id}`;
         const resp = await ky.patch(
             url,
             { json: data },

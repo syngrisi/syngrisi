@@ -79,12 +79,12 @@ app.use(expressSession);
 
 log.info('Init passport', this);
 app.use(passport.initialize());
-app.use(session({
-    store: MongoStore.create({ mongoUrl: 'mongodb://localhost/test-app' }),
-    secret: storeSessionKey,
-    resave: true,
-    saveUninitialized: true,
-}));
+// app.use(session({
+//     store: MongoStore.create({ mongoUrl: 'mongodb://localhost/test-app' }),
+//     secret: storeSessionKey,
+//     resave: true,
+//     saveUninitialized: true,
+// }));
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
@@ -128,29 +128,30 @@ app.use((req, res) => {
 log.info('Connect to database', this);
 
 mongoose.Promise = global.Promise;
+
 let server;
 mongoose.set('strictQuery', false);
 // mongoose instance connection url connection
-mongoose.connect(config.connectionString, { useUnifiedTopology: true }).then(() => {
+mongoose.connect(config.connectionString, { useUnifiedTopology: true }).then(async () => {
     log.info('Connected to MongoDB');
-    server = app.listen(config.port, async () => {
-        log.debug('run onStart jobs', this);
-        const startUp = await require('./src/server/lib/onStart');
-        startUp.createTempDir();
-        await startUp.createBasicUsers();
-        await startUp.createInitialSettings();
-        if (process.env.SYNGRISI_TEST_MODE === '1') await startUp.createTestsUsers();
+    log.debug('run onStart jobs', this);
+    const startUp = await require('./src/server/lib/onStart');
+    startUp.createTempDir();
+    await startUp.createBasicUsers();
+    await startUp.createInitialSettings();
+    if (process.env.SYNGRISI_TEST_MODE === '1') await startUp.createTestsUsers();
 
-        log.info('Get Application version', this);
-        global.version = require('./package.json').version;
+    log.info('Get Application version', this);
+    global.version = require('./package.json').version;
 
-        log.info('Load devices list', this);
-        global.devices = require('./src/server/data/devices.json');
+    log.info('Load devices list', this);
+    global.devices = require('./src/server/data/devices.json');
 
-        if (fs.existsSync('./src/data/custom_devices.json')) {
-            global.devices = [...global.devices, ...require('./src/server/data/custom_devices.json')];
-        }
+    if (fs.existsSync('./src/data/custom_devices.json')) {
+        global.devices = [...global.devices, ...require('./src/server/data/custom_devices.json')];
+    }
 
+    server = app.listen(config.port, () => {
         log.info(chalk.green(`Syngrisi version: ${chalk.blue(global.version)} started at http://localhost:${config.port}`), this);
         log.info(chalk.whiteBright('Press <Ctrl+C> to exit'), this);
     });

@@ -50,7 +50,6 @@ Feature: Check Detail Appearance
         Then I expect that element "[data-check='image-size']" to contain text "744X464"
         Then I expect that element "[data-check='image-date'] span" to contain text "<YYYY-MM-DD>"
 
-
         # default view
         Then I expect that element "//*[@data-check='actual-view']/.." has the class "mantine-SegmentedControl-labelActive"
 

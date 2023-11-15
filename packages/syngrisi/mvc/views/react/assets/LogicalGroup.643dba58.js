@@ -11753,7 +11753,8 @@ options: '${JSON.stringify(options)}', error: '${e}'}`);
          '${url}', data: '${JSON.parse(data)}' resp: '${JSON.stringify(resp)}'`);
   },
   async update(resource, data) {
-    const url = `${config$1.baseUri}/v1/${resource}/${data.name}`;
+    console.log("\u{1F437}", resource, data);
+    const url = `${config$1.baseUri}/v1/${resource}/${data.name || data.id}`;
     const resp = await ky.patch(
       url,
       { json: data }
