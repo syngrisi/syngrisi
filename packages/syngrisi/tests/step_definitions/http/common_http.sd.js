@@ -7,7 +7,7 @@ Then(/^I expect via http that "([^"]*)" (test|check|snapshot|run|suite) exist ex
     const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
         + `v1/${itemName}s?limit=0&filter={"$and":[{"name":{"$regex":"${name}","$options":"im"}}]}`;
 
-    console.log('💥👉', { uri: uri });
+    console.log('👉', { uri: uri });
     const items = (await requestWithLastSessionSid(
         uri,
         this
@@ -47,7 +47,7 @@ Then(/^I expect via http ([\d]+)st (test|check|baseline) filtered as "([^"]*)" m
     const uri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`
         + `v1/${itemName}s?limit=0&filter={"$and":${convertQueryToMongoFilter(filter)}}`;
 
-    console.log('💥👉', { uri: uri });
+    console.log('👉', { uri: uri });
     const items = (await requestWithLastSessionSid(
         uri,
         this
