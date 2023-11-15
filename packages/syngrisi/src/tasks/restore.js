@@ -3,7 +3,7 @@ const inquirer = require('inquirer');
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
-const { config } = require('../config');
+const { config } = require('../../config');
 
 const backupFolder = config.backupsFolder;
 if (!fs.existsSync(backupFolder)) {

@@ -7,7 +7,7 @@ const {
     Suite,
     User,
     Baseline,
-} = require('../../src/server/models');
+} = require('../../server/models');
 
 // const url = 'mongodb://localhost/VRSdb';
 
