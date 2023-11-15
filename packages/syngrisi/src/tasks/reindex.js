@@ -1,4 +1,4 @@
-require('../src/server/models');
+require('../server/models');
 const utils = require('./lib/utils');
 const {
     User, Snapshot, Check, Test, Run, Log, App, Suite, Baseline,
