@@ -5,11 +5,11 @@ const { clientService, genericService } = require('../services');
 const { pick, deserializeIfJSON } = require('../utils');
 const orm = require('../lib/dbItems');
 const prettyCheckParams = require('../utils/prettyCheckParams');
-const { paramsGuard } = require('../../../dist/utils/paramsGuard');
-const { RequiredIdentOptionsSchema } = require('../../../dist/schemas/getBaseline.shema');
+const { paramsGuard } = require('../../../dist/src/server/utils/paramsGuard');
+const { RequiredIdentOptionsSchema } = require('../../../dist/src/server/schemas/getBaseline.shema');
 
 const { User, Test, App, Suite } = require('../models');
-const { createCheckParamsSchema } = require('../../../dist/schemas/createCheck.shema');
+const { createCheckParamsSchema } = require('../../../dist/src/server/schemas/createCheck.shema');
 
 const $this = this;
 $this.logMeta = {
