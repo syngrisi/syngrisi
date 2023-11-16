@@ -93,6 +93,7 @@ pre-defined Functional and Visual Syngrisi checks steps.
 * UI panel to observe results and manage test data (baselines, regions, test, suites, runs. etc.) )
 
 ## Configuration via Environment Variables
+
 Environment variables are used to modify the behavior of the Syngrisi without code changes.
 The System Environment variables have priority more than correspondent Syngrisi Admin Settings if they exist.
 Example: To set the log level to debug, use the following command:
@@ -100,30 +101,30 @@ Example: To set the log level to debug, use the following command:
 Windows:`set SYNGRISI_LOG_LEVEL=debug`
 macOS/Linux: `export SYNGRISI_LOG_LEVEL=debug`
 
-You can also include the variables in your `.env` or modify variables in `docker-compose.yml` file before start Syngrisi service.
+You can also include the variables in your `.env` or modify variables in `docker-compose.yml` file before start Syngrisi
+service.
 
-
-| Variable                       | Host | Docker | Description                                                                                                                                                       | Default Value                              |
-|--------------------------------|------|--------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------|
-| `SYNGRISI_DOCKER_IMAGES_PATH`  | -    | +      | Docker internal folder for Syngrisi Images (screenshots and diffs)                                                                                                | `./baselines`                              |
-| `SYNGRISI_DOCKER_PORT`         | -    | +      | Docker external Syngrisi App Server Port (host port)                                                                                                              | `5000`                                     |
-| `SYNGRISI_DOCKER_DB_PORT`      | -    | +      | Docker external Syngrisi Database Server Port (host port)                                                                                                         | `27017`                                    |
-| `SYNGRISI_DOCKER_DB_AUTH_ARG`  | -    | +      | To enable mongo database authentication set it to `--auth` be sure that you create user for `SyngrisiDb` database and add appropriate values to connection string | `--noauth`                                 |
-| `SYNGRISI_DOCKER_BACKUPS_PATH` | -    | +      | Host Backup Folder path                                                                                                                                           | ./backups/                                 |
-| `SYNGRISI_DOCKER_DB_PATH`      | -    | +      | Host Path to Syngrisi Database files                                                                                                                              | `./data/db_data`                           |
-| `SYNGRISI_DB_URI`              | +    | +      | [Connection URI](https://www.mongodb.com/docs/manual/reference/connection-string/) for Mongo DB service                                                           | ```mongodb://localhost:27017/SyngrisiDb``` |
-| `SYNGRISI_IMAGES_PATH`         | +    | +      | Put the identical Variable from above section from host to container                                                                                              | `./baselines/`                             |
-| `SYNGRISI_APP_PORT`            | +    | -      | TCP port for application server                                                                                                                                   | `3000`                                     |
-| `SYNGRISI_AUTH`                | +    | +      | Put the identical Variable from above section from host to container                                                                                              | `1`                                        |
-| `MONGODB_ROOT_USERNAME`        | -    | +      | Username for the Database Root user, that will be created at first Applications start                                                                             | -                                          |
-| `MONGODB_ROOT_PASSWORD`        | -    | +      | Password for the Database Root user, that will be created at first Applications start                                                                             | -                                          |
-| `LOGLEVEL`                     | +    | -      | Log level (`error` `warn`,`info`,`verbose`,`debug`,`silly`)                                                                                                       | `debug`                                    |
-| `SYNGRISI_PAGINATION_SIZE`     | +    | -      | Number of tests items on that return `/checks?page={page_num}` API                                                                                                | `50`                                       |
-| `SYNGRISI_TEST_MODE`           | +    | +      | Enables test admin user if equal `1`, used only for tests purposes                                                                                                | `0`                                        |
-| `SYNGRISI_DISABLE_FIRST_RUN`   | +    | +      | Disable first run procedure, disabled if equal `1`, used only for tests purposes                                                                                  | `0`                                        |
-| `SYNGRISI_DISABLE_DEV_CORS`    | +    | -      | Disable CORS for vite dev server, only for dev and test purposes                                                                                                  | `-`                                        |
-| `SYNGRISI_SESSION_STORE_KEY`   | +    | +      | A Secret for session storage                                                                                                                                      | random generated                           |
-| `SYNGRISI_COVERAGE`            | +    | -      | Enable coverage, if `true` generated coverage data to `./coverage`                                                                                                | -                                          |
+| Variable                       | Host | Docker | Description                                                                                                                                                       | Default Value                          |
+|--------------------------------|------|--------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------|
+| `SYNGRISI_DOCKER_IMAGES_PATH`  | -    | +      | Docker internal folder for Syngrisi Images (screenshots and diffs)                                                                                                | `./baselines`                          |
+| `SYNGRISI_DOCKER_PORT`         | -    | +      | Docker external Syngrisi App Server Port (host port)                                                                                                              | `5000`                                 |
+| `SYNGRISI_DOCKER_DB_PORT`      | -    | +      | Docker external Syngrisi Database Server Port (host port)                                                                                                         | `27017`                                |
+| `SYNGRISI_DOCKER_DB_AUTH_ARG`  | -    | +      | To enable mongo database authentication set it to `--auth` be sure that you create user for `SyngrisiDb` database and add appropriate values to connection string | `--noauth`                             |
+| `SYNGRISI_DOCKER_BACKUPS_PATH` | -    | +      | Host Backup Folder path                                                                                                                                           | ./backups/                             |
+| `SYNGRISI_DOCKER_DB_PATH`      | -    | +      | Host Path to Syngrisi Database files                                                                                                                              | `./data/db_data`                       |
+| `SYNGRISI_DB_URI`              | +    | +      | [Connection URI](https://www.mongodb.com/docs/manual/reference/connection-string/) for Mongo DB service                                                           | `mongodb://127.0.0.1:27017/SyngrisiDb` |
+| `SYNGRISI_IMAGES_PATH`         | +    | +      | Put the identical Variable from above section from host to container                                                                                              | `./baselines/`                         |
+| `SYNGRISI_APP_PORT`            | +    | -      | TCP port for application server                                                                                                                                   | `3000`                                 |
+| `SYNGRISI_AUTH`                | +    | +      | Put the identical Variable from above section from host to container                                                                                              | `1`                                    |
+| `MONGODB_ROOT_USERNAME`        | -    | +      | Username for the Database Root user, that will be created at first Applications start                                                                             | -                                      |
+| `MONGODB_ROOT_PASSWORD`        | -    | +      | Password for the Database Root user, that will be created at first Applications start                                                                             | -                                      |
+| `LOGLEVEL`                     | +    | -      | Log level (`error` `warn`,`info`,`verbose`,`debug`,`silly`)                                                                                                       | `debug`                                |
+| `SYNGRISI_PAGINATION_SIZE`     | +    | -      | Number of tests items on that return `/checks?page={page_num}` API                                                                                                | `50`                                   |
+| `SYNGRISI_TEST_MODE`           | +    | +      | Enables test admin user if equal `1`, used only for tests purposes                                                                                                | `0`                                    |
+| `SYNGRISI_DISABLE_FIRST_RUN`   | +    | +      | Disable first run procedure, disabled if equal `1`, used only for tests purposes                                                                                  | `0`                                    |
+| `SYNGRISI_DISABLE_DEV_CORS`    | +    | -      | Disable CORS for vite dev server, only for dev and test purposes                                                                                                  | `-`                                    |
+| `SYNGRISI_SESSION_STORE_KEY`   | +    | +      | A Secret for session storage                                                                                                                                      | random generated                       |
+| `SYNGRISI_COVERAGE`            | +    | -      | Enable coverage, if `true` generated coverage data to `./coverage`                                                                                                | -                                      |
 
 ## Devices list
 
