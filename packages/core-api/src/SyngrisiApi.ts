@@ -254,8 +254,8 @@ class SyngrisiApi {
         }
     }
 
-    public async getIdent(apiKey: string): Promise<string[] | ErrorObject> {
-        const url = `${this.url('getIdent')}?apikey=${hasha(apiKey)}`
+    public async getIdent(): Promise<string[] | ErrorObject> {
+        const url = `${this.url('getIdent')}?apikey=${this.config.apiHash}`
         try {
             const result: string[] = await got(url).json()
             return result
@@ -287,9 +287,9 @@ class SyngrisiApi {
     public async getBaselines(params: BaselineParams): Promise<BaselineResponse | ErrorObject> {
         paramsGuard(params, 'getBaselines, params', BaselineParamsSchema)
         try {
-            const filter = JSON.stringify({ ...params, apikey: this.config.apiHash })
+            const filter = JSON.stringify(params)
 
-            const url = `${this.url('baselines')}?filter=${filter}`
+            const url = `${this.url('baselines')}?filter=${filter}&apikey=${this.config.apiHash}`
             const result: BaselineResponse = await got(url)
                 .json()
             return result
@@ -320,9 +320,9 @@ class SyngrisiApi {
     public async getSnapshots(params: Snapshot): Promise<SnapshotResponse | ErrorObject> {
         try {
             paramsGuard(params, 'getSnapshots, params', SnapshotSchema)
-            const filter = JSON.stringify({ ...params, apikey: this.config.apiHash })
+            const filter = JSON.stringify(params)
 
-            const url = `${this.url('snapshots')}?filter=${filter}`
+            const url = `${this.url('snapshots')}?filter=${filter}&apikey=${this.config.apiHash}`
             const result: SnapshotResponse = await got.get(url)
                 .json()
             return result
