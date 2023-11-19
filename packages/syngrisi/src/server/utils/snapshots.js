@@ -26,7 +26,7 @@ const removeSnapshotFile = async (snapshot) => {
     };
     log.debug({ isLastSnapshotFile: isLastSnapshotFile() });
     if (isLastSnapshotFile()) {
-        const path = `${config.defaultBaselinePath}${snapshot.filename}`;
+        const path = `${config.defaultImagesPath}${snapshot.filename}`;
         log.silly(`path: ${path}`, $this);
         if (fss.existsSync(path)) {
             log.debug(`remove file: '${path}'`, $this, {
@@ -66,7 +66,7 @@ module.exports.removeSnapshot = async (id) => {
     log.debug(`snapshot: '${id}' is not related to baseline, try to remove it`, logOpts);
     await Snapshot.findByIdAndDelete(id);
     log.debug(`snapshot: '${id}' was removed`, logOpts);
-    const path = `${config.defaultBaselinePath}${snapshot.filename}`;
+    const path = `${config.defaultImagesPath}${snapshot.filename}`;
 
     log.debug(`try to remove snapshot file, id: '${snapshot._id}', filename: '${path}'`, logOpts);
     await removeSnapshotFile(snapshot);

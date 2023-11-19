@@ -106,14 +106,14 @@ service.
 
 | Variable                       | Host | Docker | Description                                                                                                                                                       | Default Value                          |
 |--------------------------------|------|--------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------|
-| `SYNGRISI_DOCKER_IMAGES_PATH`  | -    | +      | Docker internal folder for Syngrisi Images (screenshots and diffs)                                                                                                | `./baselines`                          |
+| `SYNGRISI_DOCKER_IMAGES_PATH`  | -    | +      | Docker internal folder for Syngrisi Images (screenshots and diffs)                                                                                                | `./.snapshots-images`                  |
 | `SYNGRISI_DOCKER_PORT`         | -    | +      | Docker external Syngrisi App Server Port (host port)                                                                                                              | `5000`                                 |
 | `SYNGRISI_DOCKER_DB_PORT`      | -    | +      | Docker external Syngrisi Database Server Port (host port)                                                                                                         | `27017`                                |
 | `SYNGRISI_DOCKER_DB_AUTH_ARG`  | -    | +      | To enable mongo database authentication set it to `--auth` be sure that you create user for `SyngrisiDb` database and add appropriate values to connection string | `--noauth`                             |
 | `SYNGRISI_DOCKER_BACKUPS_PATH` | -    | +      | Host Backup Folder path                                                                                                                                           | ./backups/                             |
 | `SYNGRISI_DOCKER_DB_PATH`      | -    | +      | Host Path to Syngrisi Database files                                                                                                                              | `./data/db_data`                       |
 | `SYNGRISI_DB_URI`              | +    | +      | [Connection URI](https://www.mongodb.com/docs/manual/reference/connection-string/) for Mongo DB service                                                           | `mongodb://127.0.0.1:27017/SyngrisiDb` |
-| `SYNGRISI_IMAGES_PATH`         | +    | +      | Put the identical Variable from above section from host to container                                                                                              | `./baselines/`                         |
+| `SYNGRISI_IMAGES_PATH`         | +    | +      | Put the identical Variable from above section from host to container                                                                                              | `./.snapshots-images/`                 |
 | `SYNGRISI_APP_PORT`            | +    | -      | TCP port for application server                                                                                                                                   | `3000`                                 |
 | `SYNGRISI_AUTH`                | +    | +      | Put the identical Variable from above section from host to container                                                                                              | `1`                                    |
 | `MONGODB_ROOT_USERNAME`        | -    | +      | Username for the Database Root user, that will be created at first Applications start                                                                             | -                                      |
@@ -125,6 +125,7 @@ service.
 | `SYNGRISI_DISABLE_DEV_CORS`    | +    | -      | Disable CORS for vite dev server, only for dev and test purposes                                                                                                  | `-`                                    |
 | `SYNGRISI_SESSION_STORE_KEY`   | +    | +      | A Secret for session storage                                                                                                                                      | random generated                       |
 | `SYNGRISI_COVERAGE`            | +    | -      | Enable coverage, if `true` generated coverage data to `./coverage`                                                                                                | -                                      |
+| `SYNGRISI_HTTP_LOG`            | +    | +      | Enable HTTP logs, if `true` logging all HTTP request to `./logs/http.log` file                                                                                    | `false`                                |
 
 ## Devices list
 

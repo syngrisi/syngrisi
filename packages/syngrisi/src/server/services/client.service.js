@@ -220,7 +220,7 @@ async function createSnapshot(parameters) {
     opts.imghash = hashCode || hasha(fileData);
     const snapshot = new Snapshot(opts);
     const filename = `${snapshot.id}.png`;
-    const path = `${config.defaultBaselinePath}${filename}`;
+    const path = `${config.defaultImagesPath}${filename}`;
     log.debug(`save screenshot for: '${name}' snapshot to: '${path}'`, $this, logOpts);
     await fs.writeFile(path, fileData);
     snapshot.filename = filename;
@@ -267,8 +267,8 @@ async function compareSnapshots(baselineSnapshot, actual, opts = {}) {
                 executionTotalTime: '0',
             };
         } else {
-            const baselinePath = `${config.defaultBaselinePath}${baselineSnapshot.filename}`;
-            const actualPath = `${config.defaultBaselinePath}${actual.filename}`;
+            const baselinePath = `${config.defaultImagesPath}${baselineSnapshot.filename}`;
+            const actualPath = `${config.defaultImagesPath}${actual.filename}`;
             const baselineData = await fs.readFile(baselinePath);
             const actualData = await fs.readFile(actualPath);
             log.debug(`baseline path: ${baselinePath}`, $this, logOpts);
@@ -342,7 +342,7 @@ const prepareActualSnapshot = async (checkParam, snapshotFoundedByHashcode, logO
     const fileData = checkParam.files ? checkParam.files.file.data : false;
 
     if (snapshotFoundedByHashcode) {
-        const fullFilename = `${config.defaultBaselinePath}${snapshotFoundedByHashcode.filename}`;
+        const fullFilename = `${config.defaultImagesPath}${snapshotFoundedByHashcode.filename}`;
         if (!fss.existsSync(fullFilename)) {
             throw new Error(`Couldn't find the baseline file: '${fullFilename}'`);
         }

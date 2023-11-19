@@ -42,7 +42,7 @@ const status = async (currentUser) => {
 };
 
 const screenshots = async () => {
-    const files = fss.readdirSync(config.defaultBaselinePath);
+    const files = fss.readdirSync(config.defaultImagesPath);
     return files;
 };
 
@@ -101,7 +101,7 @@ const task_handle_database_consistency = async (options, res) => {
             .lean()
             .exec();
         taskOutput('get files data', res);
-        const allFilesBefore = (await fs.readdir(config.defaultBaselinePath, { withFileTypes: true }))
+        const allFilesBefore = (await fs.readdir(config.defaultImagesPath, { withFileTypes: true }))
             .filter((item) => !item.isDirectory())
             .map(((x) => x.name))
             .filter((x) => x.includes('.png'));
@@ -125,7 +125,7 @@ const task_handle_database_consistency = async (options, res) => {
         taskOutput('> calculate abandoned snapshots', res);
         // eslint-disable-next-line
         const abandonedSnapshots = allSnapshotsBefore.filter((sn) => {
-            return !fss.existsSync(`${config.defaultBaselinePath}/${sn.filename}`);
+            return !fss.existsSync(`${config.defaultImagesPath}/${sn.filename}`);
         });
 
         taskOutput('> calculate abandoned files', res);
@@ -236,8 +236,8 @@ const task_handle_database_consistency = async (options, res) => {
             taskOutput('> remove abandoned snapshots', res);
             await Snapshot.deleteMany({ _id: { $in: abandonedSnapshots } });
             taskOutput('> remove abandoned files', res);
-            await Promise.all(abandonedFiles.map((filename) => fs.unlink(`${config.defaultBaselinePath}/${filename}`)));
-            const allFilesAfter = fss.readdirSync(config.defaultBaselinePath, { withFileTypes: true })
+            await Promise.all(abandonedFiles.map((filename) => fs.unlink(`${config.defaultImagesPath}/${filename}`)));
+            const allFilesAfter = fss.readdirSync(config.defaultImagesPath, { withFileTypes: true })
                 .filter((item) => !item.isDirectory())
                 .map(((x) => x.name))
                 .filter((x) => x.includes('.png'));
@@ -324,7 +324,7 @@ const task_handle_old_checks = async (options, res) => {
             .lean()
             .exec();
         taskOutput('> get files data', res);
-        const allFilesBefore = (await fs.readdir(config.defaultBaselinePath, { withFileTypes: true }))
+        const allFilesBefore = (await fs.readdir(config.defaultImagesPath, { withFileTypes: true }))
             .filter((item) => !item.isDirectory())
             .map(((x) => x.name))
             .filter((x) => x.includes('.png'));
@@ -453,7 +453,7 @@ const task_handle_old_checks = async (options, res) => {
             taskOutput(`>> found: ${filesToDelete.length}`, res);
 
             taskOutput(`>> remove these files: ${filesToDelete.length}`, res);
-            await Promise.all(filesToDelete.map((filename) => fs.unlink(`${config.defaultBaselinePath}/${filename}`)));
+            await Promise.all(filesToDelete.map((filename) => fs.unlink(`${config.defaultImagesPath}/${filename}`)));
             taskOutput(`>> done: ${filesToDelete.length}`, res);
 
             taskOutput('STAGE #3 Calculate common stats after Removing', res);
@@ -467,7 +467,7 @@ const task_handle_old_checks = async (options, res) => {
                 .lean()
                 .exec();
             taskOutput('> get files data', res);
-            const allFilesAfter = (await fs.readdir(config.defaultBaselinePath, { withFileTypes: true }))
+            const allFilesAfter = (await fs.readdir(config.defaultImagesPath, { withFileTypes: true }))
                 .filter((item) => !item.isDirectory())
                 .map(((x) => x.name))
                 .filter((x) => x.includes('.png'));
