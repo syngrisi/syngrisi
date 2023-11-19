@@ -1,6 +1,6 @@
 {
   "name": "@syngrisi/playwright-sdk",
-  "version": "2.1.39-alpha.0",
+  "version": "2.1.40-alpha.0",
   "description": "Syngrisi Playwright SDK",
   "main": "dist/PlaywrightDriver.js",
   "directories": {
