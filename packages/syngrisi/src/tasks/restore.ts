@@ -20,7 +20,7 @@ const run = async () => {
     const answers = {
         backupSubFolder: await select({ message: 'Enter the Backup Folder name Filename', choices: backupsFolders }),
         destConnectionString: await input({ message: 'Enter the Destination Database Connection String URI', default: config.connectionString }),
-        destImagesSubFolder: await input({ message: 'Enter the Images Folder Path', default: config.defaultBaselinePath }),
+        destImagesSubFolder: await input({ message: 'Enter the Images Folder Path', default: config.defaultImagesPath }),
         confirm: await confirm({ message: '⚠️ Caution! All current Application Data will be removed, before the Restoring! Continue?', default: false }),
     };
 

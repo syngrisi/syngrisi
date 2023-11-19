@@ -20,9 +20,7 @@ const PQueue = require('p-queue').default;
 global.queue = new PQueue({ concurrency: 1 });
 
 const LocalStrategy = require('passport-local').Strategy;
-const logger = require('pino-http')({
-    name: 'vrs', autoLogging: true, useLevel: 'info',
-}, pino.destination('./application.log'));
+const pinoLogger = require('pino-http');
 
 const { User } = require('./src/server/models');
 const { AppSettings } = require('./src/server/lib/AppSettings');
@@ -92,14 +90,23 @@ passport.deserializeUser(User.deserializeUser());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(logger);
+
+if (config.enableHttpLogger === 'true') {
+    app.use(pinoLogger(
+        {
+            name: 'vrs',
+            autoLogging: true,
+            useLevel: 'info',
+        },
+        pino.destination(config.httpLoggerFilePath))
+    );
+}
 
 app.use(cookieParser());
 
 app.use(fileUpload({
     limits: { fileSize: 50 * 1024 * 1024 },
 }));
-
 
 const viewPath = path.join(__dirname, 'mvc/views');
 
@@ -108,7 +115,7 @@ app.set('view engine', 'ejs');
 
 app.use(express.json({ limit: '50mb' }));
 
-app.use('/snapshoots', express.static(path.join(process.cwd(), config.defaultBaselinePath)));
+app.use('/snapshoots', express.static(path.join(process.cwd(), config.defaultImagesPath)));
 
 app.use('/static', express.static(`${__dirname}/static`));
 app.use('/assets', express.static(`${__dirname}/mvc/views/react/assets`));
@@ -132,27 +139,28 @@ mongoose.Promise = global.Promise;
 let server;
 mongoose.set('strictQuery', false);
 // mongoose instance connection url connection
-mongoose.connect(config.connectionString, { useUnifiedTopology: true }).then(async () => {
-    log.info('Connected to MongoDB');
-    log.debug('run onStart jobs', this);
-    const startUp = await require('./src/server/lib/onStart');
-    startUp.createTempDir();
-    await startUp.createBasicUsers();
-    await startUp.createInitialSettings();
-    if (process.env.SYNGRISI_TEST_MODE === '1') await startUp.createTestsUsers();
+mongoose.connect(config.connectionString, { useUnifiedTopology: true })
+    .then(async () => {
+        log.info('Connected to MongoDB');
+        log.debug('run onStart jobs', this);
+        const startUp = await require('./src/server/lib/onStart');
+        startUp.createTempDir();
+        await startUp.createBasicUsers();
+        await startUp.createInitialSettings();
+        if (process.env.SYNGRISI_TEST_MODE === '1') await startUp.createTestsUsers();
 
-    log.info('Get Application version', this);
-    global.version = require('./package.json').version;
+        log.info('Get Application version', this);
+        global.version = require('./package.json').version;
 
-    log.info('Load devices list', this);
-    global.devices = require('./src/server/data/devices.json');
+        log.info('Load devices list', this);
+        global.devices = require('./src/server/data/devices.json');
 
-    if (fs.existsSync('./src/data/custom_devices.json')) {
-        global.devices = [...global.devices, ...require('./src/server/data/custom_devices.json')];
-    }
+        if (fs.existsSync('./src/data/custom_devices.json')) {
+            global.devices = [...global.devices, ...require('./src/server/data/custom_devices.json')];
+        }
 
-    server = app.listen(config.port, () => {
-        log.info(chalk.green(`Syngrisi version: ${chalk.blue(global.version)} started at http://localhost:${config.port}`), this);
-        log.info(chalk.whiteBright('Press <Ctrl+C> to exit'), this);
+        server = app.listen(config.port, () => {
+            log.info(chalk.green(`Syngrisi version: ${chalk.blue(global.version)} started at http://localhost:${config.port}`), this);
+            log.info(chalk.whiteBright('Press <Ctrl+C> to exit'), this);
+        });
     });
-});

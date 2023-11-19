@@ -18,7 +18,7 @@ const run = async () => {
     const answers = {
         folder: await input({ message: 'Enter the Backup Folder name Filename', default: backupSubFolder }),
         connectionString: await input({ message: 'Enter the Database Connection String URI', default: config.connectionString }),
-        imagesPath: await input({ message: 'Enter the Images Folder Path', default: config.defaultBaselinePath }),
+        imagesPath: await input({ message: 'Enter the Images Folder Path', default: config.defaultImagesPath }),
         confirm: await confirm({ message: 'Continue?' }),
     };
 
