@@ -294,7 +294,7 @@ class SyngrisiApi {
                 .json()
             return result
         } catch (e: any) {
-            log.error(`❌ Error getting baselines, params: ${JSON.stringify(params)} data, error: '${e.stack || e}'`)
+            log.error(`❌ Error getting baselines, params: '${JSON.stringify(params)}' data, error: '${e.stack || e}'`)
             if (e.response) printErrorResponseBody(e)
             return errorObject(e)
         }
@@ -327,7 +327,7 @@ class SyngrisiApi {
                 .json()
             return result
         } catch (e: any) {
-            log.error(`❌ Error getting snapshots, params: ${JSON.stringify(params)} data, error: '${e.stack || e}'`)
+            log.error(`❌ Error getting snapshots, params: '${JSON.stringify(params)}' data, error: '${e.stack || e}'`)
             if (e.response) printErrorResponseBody(e)
             return errorObject(e)
         }
