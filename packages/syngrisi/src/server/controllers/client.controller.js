@@ -38,29 +38,29 @@ const endSession = catchAsync(async (req, res) => {
     res.send(result);
 });
 
-const lackOfParamsGuard = (req, res) => {
-    let errMsg = null;
-    if (!req.body.testid) {
-        errMsg = 'Cannot create check without \'testid\' parameter, '
-            + `try to initialize the session at first. parameters: '${JSON.stringify(req.body)}'`;
-    }
-    if (!req.body.hashcode) {
-        errMsg = `Cannot create check without 'hashcode' parameter, parameters: '${JSON.stringify(req.body)}'`;
-    }
-
-    if (!req.body.name) {
-        errMsg = 'Cannot create check without check name parameter, '
-            + ` parameters: '${JSON.stringify(req.body)}'`;
-    }
-    if (errMsg) {
-        res.status(400)
-            .send({
-                status: 'paramNotFound',
-                message: errMsg,
-            });
-        throw new Error(errMsg);
-    }
-};
+// const lackOfParamsGuard = (req, res) => {
+//     let errMsg = null;
+//     if (!req.body.testid) {
+//         errMsg = 'Cannot create check without \'testid\' parameter, '
+//             + `try to initialize the session at first. parameters: '${JSON.stringify(req.body)}'`;
+//     }
+//     if (!req.body.hashcode) {
+//         errMsg = `Cannot create check without 'hashcode' parameter, parameters: '${JSON.stringify(req.body)}'`;
+//     }
+//
+//     if (!req.body.name) {
+//         errMsg = 'Cannot create check without check name parameter, '
+//             + ` parameters: '${JSON.stringify(req.body)}'`;
+//     }
+//     if (errMsg) {
+//         res.status(400)
+//             .send({
+//                 status: 'paramNotFound',
+//                 message: errMsg,
+//             });
+//         throw new Error(errMsg);
+//     }
+// };
 
 const createCheck = catchAsync(async (req, res) => {
     const apiKey = req.headers.apikey;
