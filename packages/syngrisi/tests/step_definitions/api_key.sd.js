@@ -1,4 +1,4 @@
-/* eslint-disable func-names */
+/* eslint-disable func-names,prefer-arrow-callback */
 const { When } = require('cucumber');
 
 When(/^I parse the API key$/, function () {
@@ -9,4 +9,8 @@ When(/^I parse the API key$/, function () {
 
 When(/^I set the API key in config$/, function () {
     browser.config.apiKey = this.getSavedItem('apiKey').value;
+});
+
+When(/^I set API key: "([^"]*)" in config$/, function (apiKey) {
+    browser.config.apiKey = apiKey;
 });
