@@ -1,8 +1,16 @@
-Feature: Client API Basics
+Feature: Client API Basics, with auth
 
   Background:
     Given I clear Database and stop Server
+    When I set env variables:
+    """
+      SYNGRISI_TEST_MODE: 1
+      SYNGRISI_AUTH: 1
+    """
+    # `testuser@test.com` API key
+    When I set API key: "NTSAEXR-CZ1MFWD-KY0Q3MG-HY6SKD1" in config
     Given I start Server and start Driver
+    When I login via http with user:"testuser@test.com" password "Test-123"
 
   Scenario: Start, Stop Session, create check
     When I execute WDIODriver "startTestSession" method with params:
@@ -74,7 +82,7 @@ Feature: Client API Basics
         "os": "Windows",
         "result": "{}",
         "run": "<startTestSession: run>",
-        "creatorUsername": "Guest",
+        "creatorUsername": "testuser@test.com",
         "failReasons": []
     }
     """
@@ -141,6 +149,8 @@ Feature: Client API Basics
         }
     }
     """
+#    When I login with user:"testuser@test.com" password "Test-123"
+
     When I accept via http the 1st check with name "check-name"
 
     When I execute WDIODriver "getBaselines" method with params:
@@ -166,7 +176,7 @@ Feature: Client API Basics
           "viewport": "500x500",
           "os": "Windows",
           "markedAs": "accepted",
-          "markedByUsername": "Guest"
+          "markedByUsername": "testuser@test.com"
         }
     """
 
@@ -310,7 +320,7 @@ Feature: Client API Basics
           "viewport": "500x500",
           "os": "Windows",
           "markedAs": "accepted",
-          "markedByUsername": "Guest"
+          "markedByUsername": "testuser@test.com"
         }
     """
 

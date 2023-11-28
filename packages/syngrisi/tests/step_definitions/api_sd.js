@@ -109,7 +109,7 @@ Then(/^I expect WDIODriver "([^"]*)" return value match object:$/, async functio
     expect(value).toMatchObject(opts);
 });
 
-Then(/^I expect WDIODriver "([^"]*)" method throws ane error containing:$/, async function (methodName, expectedMessage) {
+Then(/^I expect WDIODriver "([^"]*)" method throws an error containing:$/, async function (methodName, expectedMessage) {
     const errMsg = await this.getSavedItem(`${methodName}_error`);
     console.log('👉', errMsg);
     expect(errMsg).toContain(expectedMessage.trim());

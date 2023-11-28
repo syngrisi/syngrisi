@@ -4,7 +4,7 @@ Feature: Client API Negative
     Given I clear Database and stop Server
     Given I start Server and start Driver
 
-  Scenario: Start, Stop Session, create check
+  Scenario: Start Session, stopped Server
     When I stop Server
     When I wait for "5" seconds
     When I execute WDIODriver "startTestSession" method with params:
@@ -22,7 +22,7 @@ Feature: Client API Negative
         }
     }
     """
-    Then I expect WDIODriver "startTestSession" method throws ane error containing:
+    Then I expect WDIODriver "startTestSession" method throws an error containing:
     """
     RequestError: connect ECONNREFUSED
     """
@@ -42,7 +42,7 @@ Feature: Client API Negative
         }
     }
     """
-    Then I expect WDIODriver "startTestSession" method throws ane error containing:
+    Then I expect WDIODriver "startTestSession" method throws an error containing:
     """
     Invalid 'startTestSession, params' parameters: {"_errors":[],"test":{"_errors":["Required"]}}
     """
@@ -77,7 +77,7 @@ Feature: Client API Negative
         }
     }
     """
-    Then I expect WDIODriver "check" method throws ane error containing:
+    Then I expect WDIODriver "check" method throws an error containing:
     """
     Invalid 'check, opts' parameters: {"_errors":[],"name":{"_errors":["Required"]}}
     """
@@ -114,7 +114,7 @@ Feature: Client API Negative
         }
     }
     """
-    Then I expect WDIODriver "check" method throws ane error containing:
+    Then I expect WDIODriver "check" method throws an error containing:
     """
     Invalid 'check, opts' parameters: {"_errors":[],"name":{"_errors":["String must contain at least 1 character(s)"]}}
     """
@@ -165,7 +165,7 @@ Feature: Client API Negative
     }
     """
 
-    Then I expect WDIODriver "getBaselines" method throws ane error containing:
+    Then I expect WDIODriver "getBaselines" method throws an error containing:
     """
     Invalid 'getBaseline, opts' parameters: {"_errors":[],"name":{"_errors":["Required"]}}
     """
@@ -217,7 +217,7 @@ Feature: Client API Negative
     }
     """
 
-    Then I expect WDIODriver "getBaselines" method throws ane error containing:
+    Then I expect WDIODriver "getBaselines" method throws an error containing:
     """
     Invalid 'getBaseline, opts' parameters: {"_errors":[],"name":{"_errors":["String must contain at least 1 character(s)"]}}
     """
