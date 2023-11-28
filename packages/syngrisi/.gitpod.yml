@@ -1,0 +1,20 @@
+tasks:
+  - init: npm install
+    command: npm start
+  - init: 'mkdir -p /workspace/data && mongod --dbpath /workspace/data'
+#  - init: 'echo "Starting MongoDB" && mongod --fork --logpath /tmp/mongod.log'
+ports:
+  - port: 3000
+    onOpen: open-browser
+
+image: gitpod/workspace-mongodb
+
+github:
+  prebuilds:
+    master: true
+    branches: true
+    pullRequests: true
+    addComment: true
+    addBadge: true
+    addLabel: true
+
