@@ -1,139 +1,144 @@
 {
-    "name": "syngrisi",
-    "version": "2.1.39-alpha.0",
-    "description": "Syngrisi - Visual Testing Tool",
-    "main": "server.js",
-    "bin": {
-        "sy": "server.js"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/syngrisi/syngrisi"
-    },
-    "engines": {
-        "node": ">=20"
-    },
-    "files": [
-        "src",
-        "dist",
-        "mvc",
-        "static",
-        "src/tasks",
-        "config.js",
-        "server.js",
-        "docker-compose.yml",
-        ".nvmrc"
+  "name": "syngrisi",
+  "version": "2.1.39-alpha.0",
+  "description": "Syngrisi - Visual Testing Tool",
+  "main": "server.js",
+  "bin": {
+    "sy": "server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/syngrisi/syngrisi"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "src",
+    "dist",
+    "mvc",
+    "static",
+    "src/tasks",
+    "config.js",
+    "server.js",
+    "docker-compose.yml",
+    ".nvmrc"
+  ],
+  "homepage": "https://github.com/syngrisi/syngrisi/tree/main/packages/syngrisi",
+  "keywords": [
+    "testing",
+    "regression",
+    "visual",
+    "screenshots",
+    "comparison"
+  ],
+  "scripts": {
+    "clean:server": "rm -rf dist",
+    "build:ui": "rm -rf mvc/views/react/assets && cross-env VITE_ROOT_PATH='./src/ui-app/' vite build",
+    "build:server": "npm run clean:server && tsc -b --verbose",
+    "build": "npm run build:ui && npm run build:server",
+    "install:server": "npm i",
+    "install:ui": "cd src/ui-app && npm i && cd --",
+    "install": "npm run install:server && npm run install:ui",
+    "test": "npm run build && cd tests && npm run test",
+    "test:docker": "cd tests && npm run test:docker",
+    "smoke": "cd tests && npm run smoke",
+    "dev": "cross-env VITE_SYNGRISI_BASED_URL='http://localhost:3000' VITE_INDEX_ROUTE='index2/' vite",
+    "dev:admin": "cross-env VITE_SYNGRISI_BASED_URL='http://localhost:3000' VITE_INDEX_ROUTE='admin/' vite/' vite #(!) open http://localhost:8080/admin/ ",
+    "build:watch": "cross-env VITE_ROOT_PATH='./src/ui-app/' vite build --watch",
+    "pub": "np --yolo --no-publish",
+    "starttest": "node server.js",
+    "tasks:reindex": "node src/tasks/reindex.js",
+    "tasks:backup": "node dist/src/tasks/backup.js",
+    "tasks:restore": "node dist/src/tasks/restore.js",
+    "tasks:migration_2_0": "node src/tasks/migrations/2.0.migration.js",
+    "startservice": "forever start -l forever.log -o out.log -e err.log server.js",
+    "start": "nodemon --ignore 'mvc/views/lib/*.js' --ignore 'tests' server.js",
+    "clean": "read -p \"Are you sure you want to clean the project? [y/n] \" REPLY; if [[ $REPLY =~ ^[Yy]$ ]]; then mongosh SyngrisiDb --eval \"db.dropDatabase();\" && rm -f ./baselines/*.png; fi",
+    "start_test": "cross-env SYNGRISI_DB_URI='mongodb://localhost/SyngrisiDbTest' nodemon server.js",
+    "clear_test": "mongosh SyngrisiDbTest$CID --eval \"db.dropDatabase();\" && rm -rf ./baselinesTest/$CID",
+    "clear_test_db_only": "mongosh SyngrisiDbTest$CID --eval \"db.dropDatabase();\"",
+    "docker_clear_test": "rm -rf ./data/db_data && rm -rf ./baselinesTest/$CID",
+    "docker_clear_test_db_only": "rm -rf ./data/db_data",
+    "clear_test_screenshots_only": "rm -rf ./baselinesTest/$CID/*",
+    "deadfile:be": "npx deadfile ./server.js --exclude tests src/tasks backups data docs mvc/views/react src/ui-app baseline*",
+    "deadfile:fe": "deadfile ./mvc/views/react/index2/index.html ./mvc/views/react/auth/index.html --dir ./mvc/views/react",
+    "pkglist": "npx npm-packlist # list of files that will be published in syngrisi package, show the files section"
+  },
+  "author": {
+    "name": "Viktar Silakou",
+    "email": "1105714@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/syngrisi/syngrisi/issues"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@inquirer/prompts": "^3.3.0",
+    "@syngrisi/node-resemble.js": "^2.1.36-alpha.0",
+    "body-parser": "^1.19.0",
+    "bottleneck": "^2.19.5",
+    "bson": "^5.5.1",
+    "chalk": "^4.1.2",
+    "compression": "^1.7.4",
+    "connect-mongo": "^5.1.0",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.0.0",
+    "express": "^4.18.2",
+    "express-fileupload": "^1.4.0",
+    "express-session": "^1.17.1",
+    "hasha": "^5.1.0",
+    "http-status": "^1.5.2",
+    "mongoose": "^7.6.4",
+    "nodemon": "^3.0.1",
+    "p-queue": "^6.4.0",
+    "passport": "^0.6.0",
+    "passport-local": "^1.0.0",
+    "passport-local-mongoose": "^8.0.0",
+    "pino": "^8.16.1",
+    "pino-http": "^8.5.1",
+    "string-table": "^0.1.5",
+    "uuid-apikey": "^1.5.2",
+    "winston": "^3.11.0",
+    "winston-mongodb": "^5.1.1",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/fabric": "^4.5.12",
+    "@types/jquery": "^3.5.14",
+    "@types/mongoose": "^5.11.97",
+    "@types/node": "^20.9.0",
+    "@types/react": "^18.0.15",
+    "@types/react-dom": "^18.0.6",
+    "@typescript-eslint/eslint-plugin": "^6.11.0",
+    "@typescript-eslint/parser": "^6.11.0",
+    "@vitejs/plugin-react": "^2.0.0",
+    "babel-eslint": "^10.1.0",
+    "c8": "^8.0.1",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.53.0",
+    "form-data": "^4.0.0",
+    "parcel": "^2.10.2",
+    "sass": "^1.54.0",
+    "typescript": "^5.2.2",
+    "vite": "^3.0.9"
+  },
+  "nyc": {
+    "all": true,
+    "include": [
+      "src/server/**/*.js"
     ],
-    "homepage": "https://github.com/syngrisi/syngrisi/tree/main/packages/syngrisi",
-    "keywords": [
-        "testing",
-        "regression",
-        "visual",
-        "screenshots",
-        "comparison"
+    "exclude": [
+      "**/*.test.js",
+      "coverage/**",
+      "node_modules/**"
     ],
-    "scripts": {
-        "test": "npm run build && cd tests && npm run test",
-        "test:docker": "cd tests && npm run test:docker",
-        "smoke": "cd tests && npm run smoke",
-        "build": "rm -rf mvc/views/react/assets && cross-env VITE_ROOT_PATH='./src/ui-app/' vite build",
-        "compile": "tsc -p ./tsconfig.json # Server only",
-        "dev": "cross-env VITE_SYNGRISI_BASED_URL='http://localhost:3000' VITE_INDEX_ROUTE='index2/' vite",
-        "dev:admin": "cross-env VITE_SYNGRISI_BASED_URL='http://localhost:3000' VITE_INDEX_ROUTE='admin/' vite/' vite #(!) open http://localhost:8080/admin/ ",
-        "build:watch": "cross-env VITE_ROOT_PATH='./src/ui-app/' vite build --watch",
-        "pub": "np --yolo --no-publish",
-        "starttest": "node server.js",
-        "tasks:reindex": "node src/tasks/reindex.js",
-        "tasks:backup": "node dist/src/tasks/backup.js",
-        "tasks:restore": "node dist/src/tasks/restore.js",
-        "tasks:migration_2_0": "node src/tasks/migrations/2.0.migration.js",
-        "startservice": "forever start -l forever.log -o out.log -e err.log server.js",
-        "start": "nodemon --ignore 'mvc/views/lib/*.js' --ignore 'tests' server.js",
-        "clean": "read -p \"Are you sure you want to clean the project? [y/n] \" REPLY; if [[ $REPLY =~ ^[Yy]$ ]]; then mongosh SyngrisiDb --eval \"db.dropDatabase();\" && rm -f ./baselines/*.png; fi",
-        "start_test": "cross-env SYNGRISI_DB_URI='mongodb://localhost/SyngrisiDbTest' nodemon server.js",
-        "clear_test": "mongosh SyngrisiDbTest$CID --eval \"db.dropDatabase();\" && rm -rf ./baselinesTest/$CID",
-        "clear_test_db_only": "mongosh SyngrisiDbTest$CID --eval \"db.dropDatabase();\"",
-        "docker_clear_test": "rm -rf ./data/db_data && rm -rf ./baselinesTest/$CID",
-        "docker_clear_test_db_only": "rm -rf ./data/db_data",
-        "clear_test_screenshots_only": "rm -rf ./baselinesTest/$CID/*",
-        "deadfile:be": "npx deadfile ./server.js --exclude tests src/tasks backups data docs mvc/views/react src/ui-app baseline*",
-        "deadfile:fe": "deadfile ./mvc/views/react/index2/index.html ./mvc/views/react/auth/index.html --dir ./mvc/views/react",
-        "pkglist": "npx npm-packlist # list of files that will be published in syngrisi package, show the files section"
-    },
-    "author": {
-        "name": "Viktar Silakou",
-        "email": "1105714@gmail.com"
-    },
-    "bugs": {
-        "url": "https://github.com/syngrisi/syngrisi/issues"
-    },
-    "license": "MIT",
-    "dependencies": {
-        "@inquirer/prompts": "^3.3.0",
-        "@syngrisi/node-resemble.js": "^2.1.36-alpha.0",
-        "body-parser": "^1.19.0",
-        "bottleneck": "^2.19.5",
-        "bson": "^5.5.1",
-        "chalk": "^4.1.2",
-        "compression": "^1.7.4",
-        "connect-mongo": "^5.1.0",
-        "cookie-parser": "^1.4.6",
-        "dotenv": "^16.0.0",
-        "express": "^4.18.2",
-        "express-fileupload": "^1.4.0",
-        "express-session": "^1.17.1",
-        "hasha": "^5.1.0",
-        "http-status": "^1.5.2",
-        "mongoose": "^7.6.4",
-        "nodemon": "^3.0.1",
-        "p-queue": "^6.4.0",
-        "passport": "^0.6.0",
-        "passport-local": "^1.0.0",
-        "passport-local-mongoose": "^8.0.0",
-        "pino": "^8.16.1",
-        "pino-http": "^8.5.1",
-        "string-table": "^0.1.5",
-        "uuid-apikey": "^1.5.2",
-        "winston": "^3.11.0",
-        "winston-mongodb": "^5.1.1",
-        "zod": "^3.22.4"
-    },
-    "devDependencies": {
-        "@types/fabric": "^4.5.12",
-        "@types/jquery": "^3.5.14",
-        "@types/mongoose": "^5.11.97",
-        "@types/node": "^20.9.0",
-        "@types/react": "^18.0.15",
-        "@types/react-dom": "^18.0.6",
-        "@typescript-eslint/eslint-plugin": "^6.11.0",
-        "@typescript-eslint/parser": "^6.11.0",
-        "@vitejs/plugin-react": "^2.0.0",
-        "babel-eslint": "^10.1.0",
-        "c8": "^8.0.1",
-        "cross-env": "^7.0.3",
-        "eslint": "^8.53.0",
-        "form-data": "^4.0.0",
-        "parcel": "^2.10.2",
-        "sass": "^1.54.0",
-        "typescript": "^5.2.2",
-        "vite": "^3.0.9"
-    },
-    "nyc": {
-        "all": true,
-        "include": [
-            "src/server/**/*.js"
-        ],
-        "exclude": [
-            "**/*.test.js",
-            "coverage/**",
-            "node_modules/**"
-        ],
-        "reporter": [
-            "json"
-        ],
-        "extension": [
-            ".js"
-        ]
-    },
-    "gitHead": "df1d7bc159619fcf0e612229be1a79652a84e5e7"
+    "reporter": [
+      "json"
+    ],
+    "extension": [
+      ".js"
+    ]
+  },
+  "gitHead": "df1d7bc159619fcf0e612229be1a79652a84e5e7"
 }
