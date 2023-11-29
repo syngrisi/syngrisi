@@ -1,6 +1,6 @@
 tasks:
   - init: 'cd packages/syngrisi/ && npm install'
-    command: 'cd packages/syngrisi/ && npm start`
+    command: 'cd packages/syngrisi/ && npm start'
   - init: 'mkdir -p /workspace/data && mongod --dbpath /workspace/data'
 #  - init: 'echo "Starting MongoDB" && mongod --fork --logpath /tmp/mongod.log'
 ports:
