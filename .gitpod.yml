@@ -1,3 +1,5 @@
+image: gitpod/workspace-mongodb
+
 tasks:
   - init: 'mkdir -p /workspace/data && mongod --dbpath /workspace/data'
   - init: 'cd packages/syngrisi/ && npm run install && npm run build'
@@ -6,8 +8,6 @@ tasks:
 ports:
   - port: 3000
     onOpen: open-browser
-
-image: gitpod/workspace-mongodb
 
 github:
   prebuilds:
