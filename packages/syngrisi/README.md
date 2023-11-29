@@ -4,6 +4,12 @@ Syngrisi is designed to facilitate automated visual regression testing. It seaml
 existing test automation kits, providing an API for automated solutions and a user-friendly UI for reviewing and
 managing visual test data.
 
+## Try with a Single-Click
+
+To quickly preview the project without setting it up locally, click the 'Open in Gitpod' button. Gitpod will automatically set up an environment, install the [Syngrisi Cucumber Boilerplate Project](https://github.com/syngrisi/syngrisi-cucumber-boilerplate), and launch the Syngrisi instance for you.
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/syngrisi/syngrisi-cucumber-boilerplate)
+
 ## System Prerequisites <a name="prerequisites"></a>
 
 There are two modes in which Syngrisi can be run:
