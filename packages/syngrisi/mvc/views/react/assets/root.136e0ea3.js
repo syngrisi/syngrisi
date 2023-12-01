@@ -3679,7 +3679,6 @@ function NavbarItems({
   groupByValue,
   activeItemsHandler
 }) {
-  console.log("\u{1F4A5}", groupByValue, infinityQuery.data.pages);
   return infinityQuery.data ? infinityQuery.data.pages.map((page) => page.results.map((item, index) => {
     const Item = BaseItemWrapper;
     return /* @__PURE__ */ jsx(react.exports.Fragment, {
