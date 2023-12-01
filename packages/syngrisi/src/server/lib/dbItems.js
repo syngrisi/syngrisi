@@ -1,7 +1,12 @@
 /* eslint-disable no-underscore-dangle,func-names */
+/* global log */
 const mongoose = require('mongoose');
 
-const { Suite, Run } = require('../models');
+const {
+    Suite,
+    Run,
+    App
+} = require('../models');
 
 const $this = this;
 $this.logMeta = {
@@ -45,7 +50,11 @@ const createItemIfNotExist = async function (modelName, params, logsMeta = {}) {
     };
     try {
         const itemModel = mongoose.model(modelName);
-        const options = { upsert: true, new: true, setDefaultsOnInsert: true };
+        const options = {
+            upsert: true,
+            new: true,
+            setDefaultsOnInsert: true
+        };
 
         await itemModel.init();
         const item = await itemModel
@@ -80,14 +89,6 @@ async function createItemProm(modelName, params) {
 }
 
 // SPECIFIC
-exports.createAppIfNotExist = async function createAppIfNotExist(params) {
-    if (!params.name) {
-        return {};
-    }
-    // log.debug(`create App with name '${params.name}' if not exist`, $this);
-    return createItemIfNotExist('VRSApp', params);
-};
-
 exports.createTest = async function createTest(params) {
     return createItemProm('VRSTest', params);
 };
@@ -95,6 +96,33 @@ exports.createTest = async function createTest(params) {
 exports.createUser = async function createUser(params) {
     return createItemProm('VRSUser', params)
         .catch((e) => Promise.reject(e));
+};
+
+exports.createAppIfNotExist = async function createAppIfNotExist(params) {
+    const logOpts = {
+        scope: 'createAppIfNotExist',
+        msgType: 'CREATE',
+        itemType: 'VRSApp',
+    };
+    if (!params.name) return {};
+    // throw new Error(`Cannot create app, wrong params: '${JSON.stringify(params)}'`);
+
+    log.debug(`try to create app if exist, params: '${JSON.stringify(params)}'`,
+        $this, logOpts);
+
+    let app = await App.findOne({ name: params.name })
+        .exec();
+
+    if (app) {
+        log.debug(`app already exist: '${JSON.stringify(params)}'`,
+            $this, logOpts);
+        return app;
+    }
+
+    app = await App.create(params);
+    log.debug(`app with name: '${params.name}' was created`,
+        $this, logOpts);
+    return app;
 };
 
 const createSuiteIfNotExist = async function (params, logsMeta = {}) {
@@ -108,13 +136,19 @@ const createSuiteIfNotExist = async function (params, logsMeta = {}) {
     log.debug(`try to create suite if exist, params: '${JSON.stringify(params)}'`,
         $this,
         { ...logOpts, ...logsMeta });
-    const options = { upsert: true, new: true, setDefaultsOnInsert: true };
-    const suite = Suite.findOneAndUpdate(
-        { name: params.name },
-        params,
-        options
-    )
+
+    let suite = await Suite.findOne({ name: params.name })
         .exec();
+
+    if (suite) {
+        log.debug(`suite already exist: '${JSON.stringify(params)}'`,
+            $this,
+            { ...logOpts, ...logsMeta });
+        return suite;
+    }
+
+    suite = await Suite.create(params);
+
     log.debug(`suite with name: '${params.name}' was created`,
         $this,
         { ...logOpts, ...logsMeta });
@@ -139,17 +173,20 @@ const createRunIfNotExist = async function (params, logsMeta = {}) {
             $this,
             { ...logOpts, ...logsMeta });
 
-        const options = { upsert: true, new: true, setDefaultsOnInsert: true };
-        await Run.init();
-        run = await Run
-            .findOneAndUpdate(
-                {
-                    ident: params.ident,
-                },
-                { ...params, createdDate: params.createdDate || new Date() },
-                options
-            )
+        let run = await Run.findOne({ ident: params.ident })
             .exec();
+
+        if (run) {
+            log.debug(`run already exist: '${JSON.stringify(params)}'`,
+                $this,
+                { ...logOpts, ...logsMeta });
+            return run;
+        }
+
+        run = await Run.create({
+            ...params,
+            createdDate: params.createdDate || new Date()
+        });
 
         log.debug(`run with name: '${params.name}' was created: ${run}`,
             $this,
@@ -161,7 +198,10 @@ const createRunIfNotExist = async function (params, logsMeta = {}) {
             log.warn(`run key duplication collision: '${JSON.stringify(params)}', error: '${e.stack || e}'`,
                 $this,
                 { ...logOpts, ...logsMeta });
-            run = await Run.findOne({ name: params.name, ident: params.ident });
+            run = await Run.findOne({
+                name: params.name,
+                ident: params.ident
+            });
             log.warn(`run key duplication collision, found: '${JSON.stringify(run)}'`, $this, { ...logOpts, ...logsMeta });
             if (run) return run;
         }
