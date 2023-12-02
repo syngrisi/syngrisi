@@ -39,7 +39,7 @@
     "build": "npm run build:ui && npm run build:server",
     "install:server": "npm i",
     "install:ui": "cd src/ui-app && npm i && cd --",
-    "install": "npm run install:server && npm run install:ui",
+    "install:all": "npm run install:server && npm run install:ui",
     "test": "npm run build && cd tests && npm run test",
     "test:docker": "cd tests && npm run test:docker",
     "smoke": "cd tests && npm run smoke",
