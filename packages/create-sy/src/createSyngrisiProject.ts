@@ -39,7 +39,7 @@ export const createSyngrisiProject = async (opts: ProgramOpts) => {
         await runProgram('npm', ['install'], { cwd: root, stdio: 'ignore' })
     }
     const spinner = ora(chalk.green(`Installing ${chalk.bold('Syngrisi')}`)).start()
-    await runProgram('npm', ['install', `syngrisi${npmTag}`], { cwd: root, stdio: 'ignore' })
+    await runProgram('npm', ['install', `@syngrisi/syngrisi${npmTag}`], { cwd: root, stdio: 'ignore' })
     spinner.stop()
 
     console.log(chalk.green(`✔ Syngrisi ${chalk.greenBright(getSyngrisiVersion(root))} successfully installed in the following directory: ${root}`))
