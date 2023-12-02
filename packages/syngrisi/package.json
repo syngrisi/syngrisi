@@ -1,5 +1,5 @@
 {
-  "name": "syngrisi",
+  "name": "@syngrisi/syngrisi",
   "version": "2.2.1",
   "description": "Syngrisi - Visual Testing Tool",
   "main": "server.js",
@@ -140,5 +140,5 @@
       ".js"
     ]
   },
-  "gitHead": "df1d7bc159619fcf0e612229be1a79652a84e5e7"
+  "gitHead": "a0d3926ab3ce0c104e75f1e41f3be19211442142"
 }
