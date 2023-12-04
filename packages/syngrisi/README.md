@@ -30,7 +30,8 @@ There are two modes in which Syngrisi can be run:
 
 https://user-images.githubusercontent.com/23633060/225095007-39ee0a29-61c1-4f46-99ab-1af67052accb.mp4
 
-> 💡If you want to try Syngrisi for the first time, you can use [boilerplate projects](#boilerplates); they are installed easily and quickly and allow you to evaluate the basic capabilities of the tool.
+> [!TIP] 
+> If you want to try Syngrisi for the first time, you can use [boilerplate projects](#boilerplates); they are installed easily and quickly and allow you to evaluate the basic capabilities of the tool.
 
 ### Native Mode Installation
 
