@@ -49,7 +49,8 @@ npm init sy@latest <path_to_syngrisi>
 
 For more details on setup customization, refer to the [create-sy](../create-sy) package documentation.
 
-> ⚠️ Important: Ensure that MongoDB is running before starting Syngrisi in native mode.
+> [!IMPORTANT]
+> Ensure that MongoDB is running before starting Syngrisi in **native** mode.
 
 To run the server, execute:
 
