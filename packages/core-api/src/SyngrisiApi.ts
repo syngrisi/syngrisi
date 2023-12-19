@@ -287,7 +287,7 @@ class SyngrisiApi {
     public async getBaselines(params: BaselineParams): Promise<BaselineResponse | ErrorObject> {
         paramsGuard(params, 'getBaselines, params', BaselineParamsSchema)
         try {
-            const filter = JSON.stringify(params)
+            const filter = encodeURIComponent(JSON.stringify(params))
 
             const url = `${this.url('baselines')}?filter=${filter}&apikey=${this.config.apiHash}`
             const result: BaselineResponse = await got(url)
@@ -320,7 +320,7 @@ class SyngrisiApi {
     public async getSnapshots(params: Snapshot): Promise<SnapshotResponse | ErrorObject> {
         try {
             paramsGuard(params, 'getSnapshots, params', SnapshotSchema)
-            const filter = JSON.stringify(params)
+            const filter = encodeURIComponent(JSON.stringify(params))
 
             const url = `${this.url('snapshots')}?filter=${filter}&apikey=${this.config.apiHash}`
             const result: SnapshotResponse = await got.get(url)
