@@ -1,14 +1,15 @@
-import { test as base } from "@playwright/test";
+/* eslint-disable no-empty-pattern */
+import { Page, TestInfo, test as base } from '@playwright/test';
 import { ServerManager } from "../utils";
 
-function generateDatabaseName(testInfo: any): string {
+function generateDatabaseName(testInfo: TestInfo): string {
   const testName = testInfo.title.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
   const timestamp = Date.now();
   const workerIndex = testInfo.workerIndex;
   return `testdb_${testName}_${workerIndex}_${timestamp}`;
 }
 
-export const test = base.extend<{ locator: Function, server: ServerManager | null, baseUrl: string, port: string, databaseName: string }>({
+export const test = base.extend<{ locator: Page['locator'], server: ServerManager | null, baseUrl: string, port: string, databaseName: string }>({
   port: async ({ }, use, testInfo) => {
     const port = String(4000 + testInfo.workerIndex);
     await use(port);
@@ -46,14 +47,13 @@ export const test = base.extend<{ locator: Function, server: ServerManager | nul
     }
   },
 
-  baseUrl: async ({ port }, use, testInfo) => {
+  baseUrl: async ({ port }, use) => {
     const baseUrl = `http://localhost:${port}`;
     await use(baseUrl);
   },
 
   locator: async ({ page }, use) => {
-    let locator = page.locator.bind(page);
+    const locator = page.locator.bind(page);
     await use(locator);
-    locator = null;
   }
 });

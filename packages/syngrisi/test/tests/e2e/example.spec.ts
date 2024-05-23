@@ -1,9 +1,11 @@
 // import { expect } from '@playwright/test';
 import { test } from '../../src/fixtures/base';
 
-test('has title @tag1', async ({ page, server, _x, baseUrl }) => {
+test('has title @tag1', async ({ page, server, locator, baseUrl }) => {
   
   await page.goto(baseUrl);
+
+  await locator('#test');
   // await page.pause();
   // await page.goto('https://playwright.dev/');
 
@@ -18,6 +20,6 @@ test('test2 @tag2', async ({ page, server , baseUrl }) => {
     // await page.pause();
 });
 
-test('test3 @no_server', async ({ page, server, baseUrl }) => {
+test('test3 @no_server', async ({ server, baseUrl }) => {
   console.log('test3');
 });
