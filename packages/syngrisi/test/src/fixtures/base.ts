@@ -9,12 +9,12 @@ function generateDatabaseName(testInfo: any): string {
 }
 
 export const test = base.extend<{ locator: Function, server: ServerManager | null, baseUrl: string, port: string, databaseName: string }>({
-  port: async ({}, use, testInfo) => {
+  port: async ({ }, use, testInfo) => {
     const port = String(4000 + testInfo.workerIndex);
     await use(port);
   },
 
-  databaseName: async ({}, use, testInfo) => {
+  databaseName: async ({ }, use, testInfo) => {
     const databaseName = generateDatabaseName(testInfo);
     await use(databaseName);
   },

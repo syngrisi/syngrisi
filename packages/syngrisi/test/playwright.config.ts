@@ -22,9 +22,10 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
+  outputDir: 'artifacts/test-results',
 
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: [['html', { open: 'on-failure' }]],
+  reporter: [['html', { open: 'on-failure', outputFolder: 'artifacts/playwright-report' }]],
 
   timeout: 30_000,
 
@@ -40,9 +41,8 @@ export default defineConfig({
     // trace: 'on-first-retry',
     trace: 'on',
     screenshot: { mode: 'only-on-failure', fullPage: true },
-
-
   },
+
   /* Configure projects for major browsers */
   projects: [
     {
