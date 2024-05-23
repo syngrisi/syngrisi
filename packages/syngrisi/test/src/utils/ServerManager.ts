@@ -69,7 +69,7 @@ export class ServerManager {
 
       console.log(`SERVER IS STARTED, PID: '${this.child?.pid}' port: '${this.port}'`);
     } catch (err) {
-      console.error(`Failed to spawn child process: ${err.message}`);
+      console.error(`Failed to spawn child process: ${(err instanceof Error) ? err.message : err}`);
     }
   }
 
@@ -119,8 +119,8 @@ export class ServerManager {
 
       try {
         this.child!.kill("SIGTERM");
-      } catch (err) {
-        console.error(`Error while killing the child process: ${err.message}`);
+      } catch (err: unknown) {
+        console.error(`Error while killing the child process: ${(err instanceof Error) ? err.message : err}`);
         reject(err);
       }
     });

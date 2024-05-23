@@ -1,11 +1,16 @@
 // import { expect } from '@playwright/test';
 import { test } from '../../src/fixtures/base';
 
-test('has title @tag1', async ({ page, server, locator, baseUrl }) => {
+test('has title @tag1', async ({ page, server, baseUrl, log }) => {
   
   await page.goto(baseUrl);
 
-  await locator('#test');
+    log.debug("DEBUG");
+    log.info("INFO");
+    log.warn("WARN");
+    log.error("ERROR");
+
+  // await locator('#test');
   // await page.pause();
   // await page.goto('https://playwright.dev/');
 
