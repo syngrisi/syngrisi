@@ -1,6 +1,6 @@
 /* eslint-disable no-empty-pattern */
 import { Page, TestInfo, test as base } from '@playwright/test';
-import { ServerManager } from "../utils";
+import { ServerManager, Logger, LogLevel, LogLevelType } from "../utils";
 
 function generateDatabaseName(testInfo: TestInfo): string {
   const testName = testInfo.title.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
@@ -9,7 +9,20 @@ function generateDatabaseName(testInfo: TestInfo): string {
   return `testdb_${testName}_${workerIndex}_${timestamp}`;
 }
 
-export const test = base.extend<{ locator: Page['locator'], server: ServerManager | null, baseUrl: string, port: string, databaseName: string }>({
+function getLogLevelFromEnv(): LogLevelType {
+  const logLevel = process.env['LOG_LEVEL']?.toLowerCase() as LogLevelType;
+  if (Object.values(LogLevel).includes(logLevel)) {
+    return logLevel;
+  }
+  return LogLevel.INFO;
+}
+
+export const test = base.extend<{ locator: Page['locator'], server: ServerManager | null, baseUrl: string, port: string, databaseName: string, log: Logger }>({
+  log: async ({ }, use) => {
+    const logger = new Logger(getLogLevelFromEnv());
+    await use(logger);
+  },
+
   port: async ({ }, use, testInfo) => {
     const port = String(4000 + testInfo.workerIndex);
     await use(port);
@@ -20,17 +33,16 @@ export const test = base.extend<{ locator: Page['locator'], server: ServerManage
     await use(databaseName);
   },
 
-  server: async ({ port, databaseName }, use, testInfo) => {
-    console.log('START SERVER FIXTURE');
+  server: async ({ port, databaseName, log }, use, testInfo) => {
+    log.info('START SERVER FIXTURE');
 
-    console.log(testInfo.tags);
-    console.log(testInfo.workerIndex);
+    log.info(`Test tags: ${testInfo.tags}`);
+    log.info(`Worker index: ${testInfo.workerIndex}`);
 
     if (!testInfo.tags.includes('@no_server')) {
-
       const server = new ServerManager(port, databaseName);
 
-      console.log(`🚀 Starting Syngrisi server \n\ttest: '${testInfo.title}' \n\tparameters: ${JSON.stringify({ port, databaseName })}`);
+      log.info(`🚀 Starting Syngrisi server \n\ttest: '${testInfo.title}' \n\tparameters: ${JSON.stringify({ port, databaseName })}`);
 
       const env = { ...process.env, SYNGRISI_APP_PORT: port, SYNGRISI_DB_URI: `mongodb://localhost/${databaseName}` }; // Use current environment variables
 
@@ -41,7 +53,7 @@ export const test = base.extend<{ locator: Page['locator'], server: ServerManage
 
       await server.stopServer();
 
-      console.log(`🚀 Server was started with parameters: ${JSON.stringify({ port, databaseName })}`);
+      log.info(`🚀 Server was started with parameters: ${JSON.stringify({ port, databaseName })}`);
     } else {
       await use(null);
     }
