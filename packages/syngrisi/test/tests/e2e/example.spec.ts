@@ -1,7 +1,7 @@
-import { expect } from '@playwright/test';
+// import { expect } from '@playwright/test';
 import { test } from '../../src/fixtures/base';
 
-test('has title @tag1', async ({ page, server, baseUrl }) => {
+test('has title @tag1', async ({ page, server, _x, baseUrl }) => {
   
   await page.goto(baseUrl);
   // await page.pause();
@@ -12,12 +12,12 @@ test('has title @tag1', async ({ page, server, baseUrl }) => {
 });
 
 
-test('test2 @tag2', async ({ page, server, baseUrl }) => {
+test('test2 @tag2', async ({ page, server , baseUrl }) => {
     console.log('test2');
     await page.goto(baseUrl);
     // await page.pause();
 });
 
-test('test3 @no_server', async ({ page, server }) => {
+test('test3 @no_server', async ({ page, server, baseUrl }) => {
   console.log('test3');
 });
