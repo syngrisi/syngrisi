@@ -9,9 +9,11 @@ type LogLevelType = typeof LogLevel[keyof typeof LogLevel];
 
 class Logger {
   private level: LogLevelType;
+  private useColors: boolean;
 
-  constructor(level: LogLevelType = LogLevel.INFO) {
+  constructor(level: LogLevelType = LogLevel.INFO, useColors: boolean = true) {
     this.level = level;
+    this.useColors = useColors;
   }
 
   private shouldLog(level: LogLevelType): boolean {
@@ -22,6 +24,9 @@ class Logger {
   }
 
   private getColor(level: LogLevelType): string {
+    if (!this.useColors) {
+      return '';
+    }
     switch (level) {
       case LogLevel.DEBUG:
         return '\x1b[34m'; // Blue
@@ -40,7 +45,7 @@ class Logger {
     if (this.shouldLog(level)) {
       const timestamp = new Date().toISOString();
       const color = this.getColor(level);
-      const reset = '\x1b[0m';
+      const reset = this.useColors ? '\x1b[0m' : '';
       console.log(`${color}[${timestamp}] [${level.toUpperCase()}] ${message}${reset}`);
     }
   }
