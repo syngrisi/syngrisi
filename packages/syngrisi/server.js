@@ -28,21 +28,21 @@ const { AppSettings } = require('./src/server/lib/AppSettings');
 global.AppSettings = new AppSettings();
 
 const { config } = require('./config');
-const { Logger } = require('./src/server/lib/logger');
 
 const { disableCors } = require('./src/server/middlewares/disableCors');
 
-global.log = new Logger({ dbConnectionString: config.connectionString });
+const log2 = require("./dist/src/server/lib/logger2").default;
+
 // object-container for bottleneck instances
 global.limiter = {};
 
-this.logMeta = { scope: 'entrypoint' };
-log.info('Init the application', this);
+const logMeta = { scope: 'entrypoint' };
+log2.info('Init the application', logMeta);
 
 const coverage = process.env.SYNGRISI_COVERAGE === 'true';
 process.on('SIGINT', () => {
     if (coverage) {
-        log.info('take coverage');
+        log2.info('take coverage');
         v8.takeCoverage();
         v8.stopCoverage();
     }
@@ -75,7 +75,7 @@ const expressSession = session({
 
 app.use(expressSession);
 
-log.info('Init passport', this);
+log2.info('Init passport', this);
 app.use(passport.initialize());
 // app.use(session({
 //     store: MongoStore.create({ mongoUrl: 'mongodb://localhost/test-app' }),
@@ -132,7 +132,7 @@ app.use((req, res) => {
         .json({ url: `${req.originalUrl} not found` });
 });
 
-log.info('Connect to database', this);
+log2.info('Connect to database', this);
 
 mongoose.Promise = global.Promise;
 
@@ -141,18 +141,18 @@ mongoose.set('strictQuery', false);
 // mongoose instance connection url connection
 mongoose.connect(config.connectionString, { useUnifiedTopology: true })
     .then(async () => {
-        log.info('Connected to MongoDB');
-        log.debug('run onStart jobs', this);
+        log2.info('Connected to MongoDB');
+        log2.debug('run onStart jobs', logMeta);
         const startUp = await require('./src/server/lib/onStart');
         startUp.createTempDir();
         await startUp.createBasicUsers();
         await startUp.createInitialSettings();
         if (process.env.SYNGRISI_TEST_MODE === '1') await startUp.createTestsUsers();
 
-        log.info('Get Application version', this);
+        log2.info('Get Application version', logMeta);
         global.version = require('./package.json').version;
 
-        log.info('Load devices list', this);
+        log2.info('Load devices list', logMeta);
         global.devices = require('./src/server/data/devices.json');
 
         if (fs.existsSync('./src/data/custom_devices.json')) {
@@ -160,7 +160,7 @@ mongoose.connect(config.connectionString, { useUnifiedTopology: true })
         }
 
         server = app.listen(config.port, () => {
-            log.info(chalk.green(`Syngrisi version: ${chalk.blue(global.version)} started at http://localhost:${config.port}`), this);
-            log.info(chalk.whiteBright('Press <Ctrl+C> to exit'), this);
+            log2.info(chalk.green(`Syngrisi version: ${chalk.blue(global.version)} started at http://localhost:${config.port}`), logMeta);
+            log2.info(chalk.whiteBright('Press <Ctrl+C> to exit'), logMeta);
         });
     });
