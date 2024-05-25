@@ -62,18 +62,18 @@ exports.buildQuery = (params) => {
     return query;
 };
 
-const fatalError = function fatalError(req, res, e) {
-    const errMsg = e.stack ? `Fatal error: '${e}' \n  '${e.stack}'` : `Fatal error: ${e} \n`;
-    req.log.fatal(errMsg);
-    log.error(errMsg);
-    res.status(500)
-        .json({
-            status: 'fatalError',
-            message: errMsg,
-        });
-};
+// const fatalError = function fatalError(req, res, e) {
+//     const errMsg = e.stack ? `Fatal error: '${e}' \n  '${e.stack}'` : `Fatal error: ${e} \n`;
+//     req.log.fatal(errMsg);
+//     log.error(errMsg);
+//     res.status(500)
+//         .json({
+//             status: 'fatalError',
+//             message: errMsg,
+//         });
+// };
 
-exports.fatalError = fatalError;
+// exports.fatalError = fatalError;
 
 exports.removeEmptyProperties = function removeEmptyProperties(obj) {
     return Object.fromEntries(Object.entries(obj)
