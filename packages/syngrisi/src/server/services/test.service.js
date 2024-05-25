@@ -1,5 +1,4 @@
 /* eslint-disable no-restricted-syntax,no-await-in-loop */
-const testUtil = require('../utils/tests');
 const checkService = require('./check.service');
 const { Test, Check } = require('../models');
 
@@ -42,7 +41,20 @@ const remove = async (id, user) => {
         msgType: 'REMOVE',
     };
     log.info(`remove test with, id: '${id}', user: '${user.username}'`, $this, logOpts);
-    return testUtil.removeTest(id);
+
+    try {
+        log.debug(`try to delete all checks associated to test with ID: '${id}'`, logOpts);
+        const checks = await Check.find({ test: id });
+        // eslint-disable-next-line no-restricted-syntax
+        for (const check of checks) {
+            // eslint-disable-next-line no-await-in-loop
+            await checkService.remove(check._id, user);
+        }
+        return Test.findByIdAndDelete(id);
+    } catch (e) {
+        log.error(`cannot remove test with id: ${id} error: ${e.stack || e.toString()}`, logOpts);
+        throw new Error();
+    }
 };
 
 const accept = async (id, user) => {

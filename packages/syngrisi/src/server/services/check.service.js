@@ -7,9 +7,7 @@ const {
 } = require('../models');
 
 const { calculateAcceptedStatus, buildIdentObject } = require('../utils/utils');
-// const { createNewBaseline } = require('../../mvc/controllers/api/api_controller');
-const testUtil = require('../utils/tests');
-const checkUtil = require('../utils/check');
+const snapshotService = require("./snapshot.service");
 const orm = require('../lib/dbItems');
 
 const $this = this;
@@ -17,6 +15,20 @@ $this.logMeta = {
     scope: 'check_service',
     msgType: 'CHECK',
 };
+
+async function calculateTestStatus(testId) {
+    const checksInTest = await Check.find({ test: testId });
+    const statuses = checksInTest.map((x) => x.status[0]);
+    let testCalculatedStatus = 'Failed';
+    if (statuses.every((x) => (x === 'new') || (x === 'passed'))) {
+        testCalculatedStatus = 'Passed';
+    }
+    if (statuses.every((x) => (x === 'new'))) {
+        testCalculatedStatus = 'New';
+    }
+    return testCalculatedStatus;
+};
+
 
 const validateBaselineParam = (params) => {
     const mandatoryParams = ['markedAs', 'markedById', 'markedByUsername', 'markedDate'];
@@ -106,7 +118,7 @@ const accept = async (id, baselineId, user) => {
     await check.save();
 
     /** update test statuses and date, suite date */
-    const testCalculatedStatus = await testUtil.calculateTestStatus(check.test);
+    const testCalculatedStatus = await calculateTestStatus(check.test);
 
     const testCalculatedAcceptedStatus = await calculateAcceptedStatus(check.test);
 
@@ -127,6 +139,54 @@ const accept = async (id, baselineId, user) => {
     log.debug(`check with id: '${id}' was updated`, $this, logOpts);
     return check;
 };
+ 
+async function removeCheck(id, user) {
+    const logOpts = {
+        scope: 'removeCheck',
+        itemType: 'check',
+        ref: id,
+        msgType: 'REMOVE',
+        user: user?.username,
+    };
+
+    try {
+        const check = await Check.findByIdAndDelete(id)
+            .exec();
+
+        log.debug(`check with id: '${id}' was removed, update test: ${check.test}`, $this, logOpts);
+
+        const test = await Test.findById(check.test)
+            .exec();
+        const testCalculatedStatus = await calculateTestStatus(check.test);
+        const testCalculatedAcceptedStatus = await calculateAcceptedStatus(check.test);
+        test.status = testCalculatedStatus;
+        test.markedAs = testCalculatedAcceptedStatus;
+        test.updatedDate = new Date();
+        await orm.updateItemDate('VRSSuite', check.suite);
+        await test.save();
+
+        if ((check.baselineId) && (check.baselineId !== 'undefined')) {
+            log.debug(`try to remove the snapshot, baseline: ${check.baselineId}`, $this, logOpts);
+            await snapshotService.remove(check.baselineId?.toString());
+        }
+
+        if ((check.actualSnapshotId) && (check.baselineId !== 'undefined')) {
+            log.debug(`try to remove the snapshot, actual: ${check.actualSnapshotId}`, $this, logOpts);
+            await snapshotService.remove(check.actualSnapshotId?.toString());
+        }
+
+        if ((check.diffId) && (check.baselineId !== 'undefined')) {
+            log.debug(`try to remove snapshot, diff: ${check.diffId}`, $this, logOpts);
+            await snapshotService.remove(check.diffId?.toString());
+        }
+        return check;
+    } catch (e) {
+        const errMsg = `cannot remove a check with id: '${id}', error: '${e.stack || e.toString()}'`;
+        log.error(errMsg, $this, logOpts);
+        throw new Error(errMsg);
+    }
+};
+
 
 /**
  * Remove a chek
@@ -143,7 +203,7 @@ const remove = async (id, user) => {
         msgType: 'REMOVE',
     };
     log.info(`remove check with, id: '${id}', user: '${user.username}'`, $this, logOpts);
-    return checkUtil.removeCheck(id);
+    return removeCheck(id, user);
 };
 
 const update = async (id, opts, user) => {
@@ -162,7 +222,7 @@ const update = async (id, opts, user) => {
     const test = await Test.findOne({ _id: check.test })
         .exec();
 
-    test.status = await testUtil.calculateTestStatus(check.test);
+    test.status = await calculateTestStatus(check.test);
 
     await orm.updateItemDate('VRSCheck', check);
     await orm.updateItemDate('VRSTest', test);
