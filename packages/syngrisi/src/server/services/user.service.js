@@ -2,9 +2,9 @@
 const httpStatus = require('http-status');
 const { User } = require('../models');
 const ApiError = require('../utils/ApiError');
+const log2 = require("../../../dist/src/server/lib/logger2").default;
 
-const $this = this;
-$this.logMeta = {
+const fileLogMeta = {
     scope: 'user_service',
     msgType: 'USER',
 };
@@ -24,14 +24,14 @@ const createUser = async (userBody) => {
         ref: userBody.username,
         scope: 'createUser',
     };
-    log.debug(`create the user with name '${userBody.username}', params: '${JSON.stringify(userBody)}'`, $this, logOpts);
+    log2.debug(`create the user with name '${userBody.username}', params: '${JSON.stringify(userBody)}'`, fileLogMeta, logOpts);
 
     const user = await User.create({ ...userBody, createdDate: Date.now() });
 
     const updatedUser = await user.setPassword(userBody.password);
     await updatedUser.save();
 
-    log.debug(`password for user: '${userBody.username}' set successfully`, $this, logOpts);
+    log2.debug(`password for user: '${userBody.username}' set successfully`, fileLogMeta, logOpts);
     return updatedUser;
 };
 
@@ -76,9 +76,9 @@ const updateUserById = async (userId, updateBody) => {
         scope: 'updateUserById',
     };
 
-    log.info(
+    log2.info(
         `update user with id: '${userId}' name '${updateBody.username}', params: '${JSON.stringify(updateBody)}'`,
-        $this,
+        fileLogMeta,
         logOpts
     );
     const user = await getUserById(userId);
@@ -89,12 +89,12 @@ const updateUserById = async (userId, updateBody) => {
         throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
     }
     if (updateBody.password) {
-        log.debug(`update password for '${updateBody.username}'`, $this, logOpts);
+        log2.debug(`update password for '${updateBody.username}'`, fileLogMeta, logOpts);
         await user.setPassword(updateBody.password);
         await user.save();
-        log.debug(`password for '${updateBody.username}' was updated`, $this, logOpts);
+        log2.debug(`password for '${updateBody.username}' was updated`, fileLogMeta, logOpts);
     }
-    log.debug(`user '${updateBody.username}' was updated successfully`, $this, logOpts);
+    log2.debug(`user '${updateBody.username}' was updated successfully`, fileLogMeta, logOpts);
 
     // remove password
     const { password, ...newupdateBody } = updateBody;

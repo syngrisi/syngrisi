@@ -1,12 +1,6 @@
 /* eslint-disable valid-jsdoc */
 const { App } = require('../models');
 
-const $this = this;
-$this.logMeta = {
-    scope: 'logs_service',
-    msgType: 'LOG',
-};
-
 /**
  * Query for users
  * @param {Object} filter - Mongo filter

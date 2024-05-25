@@ -5,9 +5,10 @@ const { User } = require('../models');
 const adminData = require('../../seeds/admin.json');
 const guestData = require('../../seeds/guest.json');
 const testUsers = require('../../seeds/testUsers.json');
+const log2 = require("../../../dist/src/server/lib/logger2").default;
 
-const $this = this;
-$this.logMeta = {
+
+const fileLogMeta = {
     scope: 'on_start',
     msgType: 'SETUP',
 };
@@ -29,19 +30,19 @@ exports.createBasicUsers = async function createBasicUsers() {
     const defAdmin = await User.findOne({ username: 'Administrator' }).exec();
     const defGuest = await User.findOne({ username: 'Guest' }).exec();
     if (!defAdmin) {
-        log.info('create the default Administrator', $this);
+        log2.info('create the default Administrator', fileLogMeta);
         const admin = await User.create(adminData);
-        log.info(`administrator with id: '${admin._id}' was created`, $this);
+        log2.info(`administrator with id: '${admin._id}' was created`, fileLogMeta);
     }
     if (!defGuest) {
-        log.info('create the default Guest', $this);
+        log2.info('create the default Guest', fileLogMeta);
         const guest = await User.create(guestData);
-        log.info(`guest with id: '${guest._id}' was created`, $this);
+        log2.info(`guest with id: '${guest._id}' was created`, fileLogMeta);
     }
 };
 
 exports.createTestsUsers = async function createTestsUsers() {
-    log.debug('creating tests users', $this);
+    log2.debug('creating tests users', fileLogMeta);
     try {
         await User.insertMany(testUsers);
     } catch (e) {

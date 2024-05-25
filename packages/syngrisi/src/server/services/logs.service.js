@@ -1,12 +1,5 @@
 /* eslint-disable valid-jsdoc */
 const { Log } = require('../models');
-// const ApiError = require('../utils/ApiError');
-
-const $this = this;
-$this.logMeta = {
-    scope: 'logs_service',
-    msgType: 'LOG',
-};
 
 /**
  * Query for users

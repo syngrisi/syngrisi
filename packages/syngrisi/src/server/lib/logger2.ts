@@ -2,7 +2,7 @@
 import winston, { Logger as WinstonLogger } from 'winston';
 import 'winston-mongodb';
 import { blue, gray, magenta } from 'chalk';
-import { formatISOToDateTime } from '../utils';
+import formatISOToDateTime  from '../utils/formatISOToDateTime';
 import { config } from '../../../config';
 import path from 'path';
 
@@ -21,17 +21,31 @@ interface MetaData {
     scope?: string;
 }
 
+
 function getScriptLine(): string {
     const stack = new Error().stack;
     if (stack) {
         const stackLines = stack.split('\n');
-        const callerLine = stackLines[3]; // Adjust the index based on where you need the caller info
-        const match = callerLine.match(/\((.*):(\d+):(\d+)\)/);
-        if (match) {
-            const scriptPath = match[1];
-            const relativePath = path.relative(process.cwd(), scriptPath);
-            const lineNumber = match[2];
-            return `${relativePath}:${lineNumber}`;
+        let loggerLineIndex = -1;
+        
+        // last string contains 'lib/logger'
+        for (let i = 0; i < stackLines.length; i++) {
+            if (stackLines[i].includes('lib/logger')) {
+                loggerLineIndex = i;
+            }
+        }
+
+        // check string after 'lib/logger'
+        const targetLineIndex = loggerLineIndex + 1;
+        if (targetLineIndex >= 0 && targetLineIndex < stackLines.length) {
+            const targetLine = stackLines[targetLineIndex];
+            const match = targetLine.match(/at\s+(?:.+\s+\()?(.+):(\d+):(\d+)\)?/);
+            if (match) {
+                const scriptPath = match[1];
+                const relativePath = path.relative(process.cwd(), scriptPath);
+                const lineNumber = match[2];
+                return `${relativePath}:${lineNumber}`;
+            }
         }
     }
     return 'unknown';
