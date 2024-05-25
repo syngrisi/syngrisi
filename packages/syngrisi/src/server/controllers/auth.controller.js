@@ -4,13 +4,13 @@ const hasha = require('hasha');
 const uuidAPIKey = require('uuid-apikey');
 const { User } = require('../models');
 const catchAsync = require('../utils/catchAsync');
+const log2 = require("../../../dist/src/server/lib/logger2").default;
 
 function getApiKey() {
     return uuidAPIKey.create().apiKey;
 }
 
-const $this = this;
-$this.logMeta = {
+const fileLogMeta = {
     scope: 'authentication',
     msgType: 'AUTHENTICATION',
 };
@@ -18,9 +18,9 @@ $this.logMeta = {
 
 const apikey = catchAsync(async (req, res, next) => {
     const apiKey = getApiKey();
-    log.debug(
+    log2.debug(
         `generate API Key for user: '${req.user.username}'`,
-        $this,
+        fileLogMeta,
         { user: req.user.username, scope: 'apikey', msgType: 'GENERATE_API' }
     );
     const hash = hasha(apiKey);
@@ -39,22 +39,22 @@ const login = catchAsync(async (req, res, next) => {
     passport.authenticate('local',
         (err, user, info) => {
             if (err) {
-                log.error(`Authentication error: '${err}'`, this, logOpts);
+                log2.error(`Authentication error: '${err}'`, this, logOpts);
                 return res.status(httpStatus.UNAUTHORIZED)
                     .json({ message: 'authentication error' });
             }
             if (!user) {
-                log.error(`Authentication error: '${info.message}'`, this, logOpts);
+                log2.error(`Authentication error: '${info.message}'`, this, logOpts);
                 return res.status(httpStatus.UNAUTHORIZED)
                     .json({ message: `Authentication error: '${info.message}'` });
             }
 
             req.logIn(user, (e) => {
                 if (e) {
-                    log.error(e.stack || e.toString());
+                    log2.error(e.stack || e.toString());
                     return next(e);
                 }
-                log.info('user is logged in', this, { user: user.username });
+                log2.info('user is logged in', this, { user: user.username });
                 return res.status(200)
                     .json({ message: 'success' });
             });
@@ -67,14 +67,14 @@ const logout = catchAsync(async (req, res) => {
         msgType: 'AUTHENTICATION',
     };
     try {
-        log.debug(`try to log out user: '${req?.user?.username}'`, $this, logOpts);
+        log2.debug(`try to log out user: '${req?.user?.username}'`, fileLogMeta, logOpts);
         await req.logout(
             {},
             () => res.status(httpStatus.OK)
                 .json({ message: 'success' })
         );
     } catch (e) {
-        log.error(e.stack || e.toString());
+        log2.error(e.stack || e.toString());
         res.status(httpStatus.INTERNAL_SERVER_ERROR)
             .json({ message: 'fail' });
     }
@@ -96,11 +96,11 @@ const changePassword = catchAsync(async (req, res) => {
 
     const username = req?.user?.username;
 
-    log.debug(`change password for '${username}', params: '${JSON.stringify(req.body)}'`, this, logOpts);
+    log2.debug(`change password for '${username}', params: '${JSON.stringify(req.body)}'`, this, logOpts);
 
     const user = await User.findOne({ username });
     if (!user) {
-        log.error('user is not logged in', this, logOpts);
+        log2.error('user is not logged in', this, logOpts);
         return res.status(httpStatus.UNAUTHORIZED)
             .json({ message: 'user is not logged in' });
     }
@@ -108,12 +108,12 @@ const changePassword = catchAsync(async (req, res) => {
     try {
         await user.changePassword(currentPassword, newPassword);
     } catch (e) {
-        log.error(e.stack || e.toString(), this, logOpts);
+        log2.error(e.stack || e.toString(), this, logOpts);
         return res.status(httpStatus.INTERNAL_SERVER_ERROR)
             .json({ message: e.toString() });
     }
 
-    log.debug(`password was successfully changed for user: ${req.user.username}`, this, logOpts);
+    log2.debug(`password was successfully changed for user: ${req.user.username}`, this, logOpts);
     return res.status(200)
         .json({ message: 'success' });
 });
@@ -129,20 +129,20 @@ const changePasswordFirstRun = catchAsync(async (req, res) => {
     const { newPassword } = req.body;
 
     if ((await global.AppSettings.isAuthEnabled()) && ((await global.AppSettings.isFirstRun()))) {
-        log.debug(`first run, change password for default 'Administrator', params: '${JSON.stringify(req.body)}'`, $this, logOpts);
+        log2.debug(`first run, change password for default 'Administrator', params: '${JSON.stringify(req.body)}'`, fileLogMeta, logOpts);
         const user = await User.findOne({ username: 'Administrator' })
             .exec();
         logOpts.ref = user?.username;
 
         await user.setPassword(newPassword);
         await user.save();
-        log.debug('password was successfully changed for default Administrator', $this, logOpts);
+        log2.debug('password was successfully changed for default Administrator', fileLogMeta, logOpts);
         await global.AppSettings.set('first_run', false);
         return res.status(200)
             .json({ message: 'success' });
     }
-    log.error(`trying to use first run API with no first run state, auth: '${await global.AppSettings.isAuthEnabled()}', `
-        + `global settings: '${(await global.AppSettings.get('first_run'))}'`, $this, logOpts);
+    log2.error(`trying to use first run API with no first run state, auth: '${await global.AppSettings.isAuthEnabled()}', `
+        + `global settings: '${(await global.AppSettings.get('first_run'))}'`, fileLogMeta, logOpts);
     return res.status(httpStatus.FORBIDDEN)
         .json({ message: 'forbidden' });
 });

@@ -32,9 +32,9 @@
  * @api public
  */
 const { User } = require('../../models');
+const log2 = require("../../../../dist/src/server/lib/logger2").default;
 
-const $this = this;
-$this.logMeta = {
+const fileLogMeta = {
     scope: 'Authentication',
     msgType: 'LOGIN',
 };
@@ -55,7 +55,7 @@ const handleBasicAuth = async (req) => {
         const result = new Promise((resolve) => {
             req.logIn(guest, (err) => {
                 if (err) {
-                    log.error(`cannot find quest user: '${err}'`, $this, logOpts);
+                    log2.error(`cannot find quest user: '${err}'`, fileLogMeta, logOpts);
                     resolve({
                         type: 'redirect',
                         status: 301,
@@ -86,7 +86,7 @@ const handleBasicAuth = async (req) => {
         && ((await global.AppSettings.isFirstRun()))
         && process.env.SYNGRISI_DISABLE_FIRST_RUN !== '1'
     ) {
-        log.info('first run, set admin password', $this, logOpts);
+        log2.info('first run, set admin password', fileLogMeta, logOpts);
         result.type = 'redirect';
         result.status = 301;
         result.value = '/auth/change?first_run=true';
@@ -94,7 +94,7 @@ const handleBasicAuth = async (req) => {
     }
 
     if (await global.AppSettings.isAuthEnabled()) {
-        log.info(`user is not authenticated - ${req.originalUrl}`, $this, logOpts);
+        log2.info(`user is not authenticated - ${req.originalUrl}`, fileLogMeta, logOpts);
 
         result.type = 'redirect';
         result.status = 301;
@@ -113,10 +113,10 @@ exports.ensureLoggedIn = function ensureLoggedIn() {
     // eslint-disable-next-line consistent-return
     return async (req, res, next) => {
         const result = await handleBasicAuth(req);
-        // log.silly(result, {
+        // log2.silly(result, {
         //     scope: 'ensureLoggedIn',
         //     msgType: 'AUTH_API',
-        // }, $this);
+        // }, fileLogMeta);
         req.user = result.user || req.user;
         if (result.type === 'success') {
             return next();
@@ -144,12 +144,12 @@ const handleAPIAuth = async (hashedApiKey) => {
         const guest = await User.findOne({ username: 'Guest' });
 
         if (!guest) {
-            log.error('cannot find Guest user');
+            log2.error('cannot find Guest user');
             result.type = 'error';
             result.value = 'cannot find Guest user';
             return result;
         }
-        log.debug('authentication disabled', logOpts, { user: 'Guest' });
+        log2.debug('authentication disabled', logOpts, { user: 'Guest' });
         result.type = 'success';
         result.user = guest;
         result.status = 200;
@@ -157,7 +157,7 @@ const handleAPIAuth = async (hashedApiKey) => {
     }
 
     if (!hashedApiKey) {
-        log.debug('API key missing', logOpts);
+        log2.debug('API key missing', logOpts);
         result.type = 'error';
         result.status = 401;
         result.value = 'API key missing';
@@ -166,13 +166,13 @@ const handleAPIAuth = async (hashedApiKey) => {
 
     const user = await User.findOne({ apiKey: hashedApiKey });
     if (!user) {
-        log.error(`wrong API key: ${hashedApiKey}`, logOpts);
+        log2.error(`wrong API key: ${hashedApiKey}`, logOpts);
         result.type = 'error';
         result.status = 401;
         result.value = 'wrong API key';
         return result;
     }
-    log.debug('authenticated', $this, { ...logOpts, ...{ user: user?.username } });
+    log2.debug('authenticated', fileLogMeta, { ...logOpts, ...{ user: user?.username } });
     result.type = 'success';
     result.status = 200;
     result.user = user;
@@ -186,14 +186,14 @@ exports.ensureApiKey = function ensureApiKey() {
     };
     // eslint-disable-next-line consistent-return
     return async (req, res, next) => {
-        log.silly(`headers: ${JSON.stringify(req.headers, null, '..')}`, logOpts);
-        log.silly(`SYNGRISI_AUTH: '${process.env.SYNGRISI_AUTH}'`);
+        log2.silly(`headers: ${JSON.stringify(req.headers, null, '..')}`, logOpts);
+        log2.silly(`SYNGRISI_AUTH: '${process.env.SYNGRISI_AUTH}'`);
         const hashedApiKey = req.headers.apikey || req.query.apikey;
         const result = await handleAPIAuth(hashedApiKey);
         req.user = req.user || result.user;
         req.headers.apikey = result?.user?.apiKey || req?.headers?.apikey;
         if (result.type !== 'success') {
-            log.info(`${result.value} - ${req.originalUrl}`, $this, logOpts);
+            log2.info(`${result.value} - ${req.originalUrl}`, fileLogMeta, logOpts);
             res.status(result.status)
                 .json({ error: result.value });
             return next(new Error(result.value));
@@ -213,7 +213,7 @@ exports.ensureLoggedInOrApiKey = () => async (req, res, next) => {
         (basicAuthResult.type !== 'success')
         && (apiKeyResult.type !== 'success')
     ) {
-        log.info(`Unauthorized - ${req.originalUrl}`);
+        log2.info(`Unauthorized - ${req.originalUrl}`);
         // res.status(401).json({ error: `${`${apiKeyResult.value} ${basicAuthResult.value}`} - ${req.originalUrl}` });
         res.status(401)
             .json({ error: `Unauthorized - ${req.originalUrl}` });

@@ -1,5 +1,6 @@
-const $this = this;
-$this.logMeta = {
+const log2 = require("../../../dist/src/server/lib/logger2").default;
+
+const fileLogMeta = {
     scope: 'comparator',
     msgType: 'COMPARE',
 };
@@ -77,7 +78,7 @@ async function makeDiff(imgData1, imgData2, options = {}) {
 //         return diff;
 //     } catch (e) {
 //         const errMsg = `error in compareWithVerticalShiftingStabilization ${e}\n ${e?.stack || e.toString()}`;
-//         log.error(errMsg, $this, logOpts);
+//         log2.error(errMsg, fileLogMeta, logOpts);
 //         throw new Error(errMsg);
 //     }
 // }
@@ -91,19 +92,19 @@ async function getDiff(baselineOrigin, actualOrigin, opts = {}) {
     try {
         const executionTimer = process.hrtime();
         // direct comparison
-        log.debug(`SAMPLE #1: ${process.hrtime(executionTimer)
-            .toString()}`, $this, logOpts);
+        log2.debug(`SAMPLE #1: ${process.hrtime(executionTimer)
+            .toString()}`, fileLogMeta, logOpts);
 
         const directDiff = await makeDiff(baselineOrigin, actualOrigin, opts);
-        log.debug(`SAMPLE #2: ${process.hrtime(executionTimer)
-            .toString()}`, $this, logOpts);
+        log2.debug(`SAMPLE #2: ${process.hrtime(executionTimer)
+            .toString()}`, fileLogMeta, logOpts);
 
         directDiff.executionTotalTime = process.hrtime(executionTimer)
             .toString();
 
-        log.debug(`SAMPLE #3: ${process.hrtime(executionTimer)
-            .toString()}`, $this, logOpts);
-        log.debug(`the diff is: ${JSON.stringify(directDiff, null, 4)}`, $this, logOpts);
+        log2.debug(`SAMPLE #3: ${process.hrtime(executionTimer)
+            .toString()}`, fileLogMeta, logOpts);
+        log2.debug(`the diff is: ${JSON.stringify(directDiff, null, 4)}`, fileLogMeta, logOpts);
 
         return directDiff;
 
@@ -125,8 +126,8 @@ async function getDiff(baselineOrigin, actualOrigin, opts = {}) {
         //     ...(await compareWithVerticalShiftingStabilization(baselineOrigin, actualOrigin, 'updown', opts))];
         // diffs = [...diffs,
         //     ...(await compareWithVerticalShiftingStabilization(baselineOrigin, actualOrigin, 'downup', opts))];
-        // log.debug(`SAMPLE #4 (vShifting): ${process.hrtime(executionTimer)
-        //     .toString()}`, $this, logOpts);
+        // log2.debug(`SAMPLE #4 (vShifting): ${process.hrtime(executionTimer)
+        //     .toString()}`, fileLogMeta, logOpts);
         // const values = await Promise.all(diffs);
         // console.table(values, ['stabMethod', 'vOffset', 'topStablePixels', 'rawMisMatchPercentage', 'analysisTime']);
         //
@@ -136,10 +137,10 @@ async function getDiff(baselineOrigin, actualOrigin, opts = {}) {
         // );
         // moreFittingResult.executionTotalTime = process.hrtime(executionTimer)
         //     .toString();
-        // log.silly(`${JSON.stringify(moreFittingResult, null, '  ')}`, $this, logOpts);
+        // log2.silly(`${JSON.stringify(moreFittingResult, null, '  ')}`, fileLogMeta, logOpts);
         // return moreFittingResult;
     } catch (e) {
-        log.error(e.stack || e.toString(), $this, logOpts);
+        log2.error(e.stack || e.toString(), fileLogMeta, logOpts);
         throw new Error(e);
     }
 }

@@ -1,9 +1,9 @@
 /* eslint-disable valid-jsdoc */
 const mongoose = require('mongoose');
 const { removeEmptyProperties } = require('../utils/utils');
+const log2 = require("../../../dist/src/server/lib/logger2").default;
 
-const $this = this;
-$this.logMeta = {
+const fileLogMeta = {
     scope: 'generic.service',
     msgType: 'LOF',
 };
@@ -36,12 +36,12 @@ const put = async (modelName, id, options, user) => {
 
     const opts = removeEmptyProperties(options);
     // eslint-disable-next-line max-len
-    log.debug(`start update '${modelName}' with id: '${id}', body: '${JSON.stringify(opts)}'`, $this, logOpts);
+    log2.debug(`start update '${modelName}' with id: '${id}', body: '${JSON.stringify(opts)}'`, fileLogMeta, logOpts);
     const item = await itemModel.findByIdAndUpdate(id, options)
         .exec();
 
     await item.save();
-    log.debug(`baseline with id: '${id}' and opts: '${JSON.stringify(opts)}' was updated`, $this, logOpts);
+    log2.debug(`baseline with id: '${id}' and opts: '${JSON.stringify(opts)}' was updated`, fileLogMeta, logOpts);
     return item;
 };
 

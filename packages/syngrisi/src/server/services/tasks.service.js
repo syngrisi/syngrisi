@@ -5,6 +5,8 @@ const fss = require('fs');
 const { config } = require('../../../config');
 const { subDays, dateToISO8601 } = require('../utils');
 const { ProgressBar } = require('../utils/utils');
+const log2 = require("../../../dist/src/server/lib/logger2").default;
+
 const {
     Snapshot,
     Check,
@@ -18,15 +20,14 @@ const {
 
 const testAdminUser = require('../../seeds/testAdmin.json');
 
-const $this = this;
-$this.logMeta = {
+const fileLogMeta = {
     scope: 'app_service',
     msgType: 'APP',
 };
 
 function taskOutput(msg, res) {
     res.write(`${msg.toString()}\n`);
-    log.debug(msg.toString(), $this);
+    log2.debug(msg.toString(), fileLogMeta);
 }
 
 function parseHrtimeToSeconds(hrtime) {
@@ -36,7 +37,7 @@ function parseHrtimeToSeconds(hrtime) {
 const status = async (currentUser) => {
     const count = await User.countDocuments().exec();
 
-    log.silly(`server status: check users counts: ${count}`);
+    log2.silly(`server status: check users counts: ${count}`);
     if (count > 1) {
         return { alive: true, currentUser: currentUser?.username };
     }
@@ -59,13 +60,13 @@ const loadTestUser = async () => {
     }
     const testAdmin = await User.findOne({ username: 'Test' }).exec();
     if (!testAdmin) {
-        log.info('create the test Administrator', $this, logOpts);
+        log2.info('create the test Administrator', fileLogMeta, logOpts);
         const admin = await User.create(testAdminUser);
-        log.info(`test Administrator with id: '${admin._id}' was created`, $this, logOpts);
+        log2.info(`test Administrator with id: '${admin._id}' was created`, fileLogMeta, logOpts);
         return admin;
     }
 
-    log.info(`test admin is exists: ${JSON.stringify(testAdmin, null, 2)}`, $this, logOpts);
+    log2.info(`test admin is exists: ${JSON.stringify(testAdmin, null, 2)}`, fileLogMeta, logOpts);
     return { msg: `already exist '${testAdmin}'` };
 };
 
@@ -263,7 +264,7 @@ const task_handle_database_consistency = async (options, res) => {
         taskOutput(`> Done in ${elapsedSeconds} seconds, ${elapsedSeconds / 60} min`, res);
         taskOutput('- end...\n', res);
     } catch (e) {
-        log.error(e.stack || e.toString());
+        log2.error(e.stack || e.toString());
         taskOutput(e.stack || e, res);
     } finally {
         res.end();
@@ -279,9 +280,9 @@ const task_remove_old_logs = async (options, res) => {
     });
     const trashHoldDate = subDays(new Date(), parseInt(options.days, 10));
     const filter = { timestamp: { $lt: trashHoldDate } };
-    const allLogsCountBefore = await Log.find({})
+    const allLogsCountBefore = await log2.find({})
         .countDocuments();
-    const oldLogsCount = await Log.find(filter)
+    const oldLogsCount = await log2.find(filter)
         .countDocuments();
     taskOutput(`- the count of all documents is: '${allLogsCountBefore}'\n`, res);
     taskOutput(`- the count of documents to be removed is: '${oldLogsCount}'\n`, res);
@@ -291,8 +292,8 @@ const task_remove_old_logs = async (options, res) => {
             + ` '${dateToISO8601(trashHoldDate)}'\n`,
             res
         );
-        await Log.deleteMany(filter);
-        const allLogsCountAfter = await Log.find({})
+        await log2.deleteMany(filter);
+        const allLogsCountAfter = await log2.find({})
             .countDocuments();
         taskOutput(`- the count of all documents now is: '${allLogsCountAfter}'\n`, res);
     }
@@ -487,7 +488,7 @@ const task_handle_old_checks = async (options, res) => {
 
         taskOutput(`> done in ${elapsedSeconds} seconds ${elapsedSeconds / 60} min`, res);
     } catch (e) {
-        log.error(e.stack.toString() || e);
+        log2.error(e.stack.toString() || e);
         taskOutput(e.stack || e, res);
     } finally {
         res.end();
@@ -518,7 +519,7 @@ const task_test = async (options = 'empty', req, res) => {
         taskOutput(`- Task Output: '${i}', options: ${options}\n`, res);
         if (isAborted) {
             taskOutput('the task was aborted\n', res);
-            log.warn('the task was aborted', $this);
+            log2.warn('the task was aborted', fileLogMeta);
             res.flush();
             return res.end();
         }
