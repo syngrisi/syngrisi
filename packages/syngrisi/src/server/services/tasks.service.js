@@ -16,6 +16,8 @@ const {
     Baseline,
 } = require('../models');
 
+const testAdminUser = require('../../seeds/testAdmin.json');
+
 const $this = this;
 $this.logMeta = {
     scope: 'app_service',
@@ -58,8 +60,7 @@ const loadTestUser = async () => {
     const testAdmin = await User.findOne({ username: 'Test' }).exec();
     if (!testAdmin) {
         log.info('create the test Administrator', $this, logOpts);
-        const adminData = JSON.parse(fss.readFileSync('./src/server/lib/testAdmin.json'));
-        const admin = await User.create(adminData);
+        const admin = await User.create(testAdminUser);
         log.info(`test Administrator with id: '${admin._id}' was created`, $this, logOpts);
         return admin;
     }

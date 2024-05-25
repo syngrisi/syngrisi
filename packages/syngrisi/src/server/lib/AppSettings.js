@@ -1,7 +1,10 @@
 /* eslint-disable dot-notation */
+const { AppSettings: AppSettingsModel } = require('../models');
+const initialAppSettings = require('../../seeds/initialAppSettings.json');
+
 class AppSettings {
     constructor() {
-        this.model = require('../models').AppSettings;
+        this.model = AppSettingsModel;
         (async () => {
             this.cache = await this.model.find()
                 .lean()
@@ -14,7 +17,7 @@ class AppSettings {
     }
 
     async loadInitialFromFile() {
-        const settings = require('./initialAppSettings.json');
+        const settings = initialAppSettings;
         // console.log({ settings });
         await this.model.insertMany(settings);
         this.cache = settings;
