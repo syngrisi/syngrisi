@@ -1,6 +1,6 @@
 /* eslint-disable no-empty-pattern */
-import { Page, TestInfo, test as base } from '@playwright/test';
-import { ServerManager, Logger, LogLevel, LogLevelType } from "../utils";
+import { Page, TestInfo, test as base  } from '@playwright/test';
+import { ServerManager, Logger, getLogLevelFromEnv } from "../utils";
 
 function generateDatabaseName(testInfo: TestInfo): string {
   const testName = testInfo.title.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
@@ -9,17 +9,9 @@ function generateDatabaseName(testInfo: TestInfo): string {
   return `testdb_${testName}_${workerIndex}_${timestamp}`;
 }
 
-function getLogLevelFromEnv(): LogLevelType {
-  const logLevel = process.env['LOG_LEVEL']?.toLowerCase() as LogLevelType;
-  if (Object.values(LogLevel).includes(logLevel)) {
-    return logLevel;
-  }
-  return LogLevel.INFO;
-}
-
 export const test = base.extend<{ locator: Page['locator'], server: ServerManager | null, baseUrl: string, port: string, databaseName: string, log: Logger }>({
   log: async ({ }, use) => {
-    const logger = new Logger(getLogLevelFromEnv());
+    const logger = new Logger();
     await use(logger);
   },
 
