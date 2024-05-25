@@ -1,2 +1,2 @@
 export { ServerManager } from './ServerManager';
-export { Logger, LogLevel, LogLevelType } from './Logger';
+export { Logger, LogLevel, LogLevelType, getLogLevelFromEnv} from './Logger';

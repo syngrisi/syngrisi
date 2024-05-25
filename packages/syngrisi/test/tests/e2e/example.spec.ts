@@ -9,6 +9,8 @@ test('has title @tag1', async ({ page, server, baseUrl, log }) => {
     log.info("INFO");
     log.warn("WARN");
     log.error("ERROR");
+    log.info('Test');
+    
 
   // await locator('#test');
   // await page.pause();

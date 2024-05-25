@@ -7,11 +7,19 @@ const LogLevel = {
 
 type LogLevelType = typeof LogLevel[keyof typeof LogLevel];
 
+export function getLogLevelFromEnv(): LogLevelType {
+  const logLevel = process.env['LOG_LEVEL']?.toLowerCase() as LogLevelType;
+  if (Object.values(LogLevel).includes(logLevel)) {
+    return logLevel;
+  }
+  return LogLevel.INFO;
+}
+
 class Logger {
   private level: LogLevelType;
   private useColors: boolean;
 
-  constructor(level: LogLevelType = LogLevel.INFO, useColors: boolean = true) {
+  constructor(level: LogLevelType = getLogLevelFromEnv(), useColors = true) {
     this.level = level;
     this.useColors = useColors;
   }
