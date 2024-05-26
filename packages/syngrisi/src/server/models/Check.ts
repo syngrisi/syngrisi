@@ -1,9 +1,48 @@
-const mongoose = require('mongoose');
-const { toJSON, paginate } = require('./plugins');
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import mongoose, { Schema, Document, Model } from 'mongoose';
+import { toJSON, paginate } from './plugins';
 
-const { Schema } = mongoose;
+interface CheckDocument extends Document {
+    name: { [key: string]: string };
+    test: Schema.Types.ObjectId;
+    suite: Schema.Types.ObjectId;
+    app: Schema.Types.ObjectId;
+    branch?: string;
+    realBaselineId?: Schema.Types.ObjectId;
+    baselineId?: Schema.Types.ObjectId;
+    actualSnapshotId?: Schema.Types.ObjectId;
+    diffId?: Schema.Types.ObjectId;
+    createdDate: Date;
+    updatedDate?: Date;
+    status: {
+        type: {
+          type: string;
+          enum: ['new', 'pending', 'approved', 'running', 'passed', 'failed', 'aborted'];
+        }[];
+        default: 'new';
+      };
+    browserName?: string;
+    browserVersion?: string;
+    browserFullVersion?: string;
+    viewport?: string;
+    os?: string;
+    domDump?: string;
+    result?: string;
+    run?: Schema.Types.ObjectId;
+    markedAs?: 'bug' | 'accepted';
+    markedDate?: Date;
+    markedById?: Schema.Types.ObjectId;
+    markedByUsername?: string;
+    markedBugComment?: string;
+    creatorId?: Schema.Types.ObjectId;
+    creatorUsername?: string;
+    failReasons?: string[];
+    vOffset?: string;
+    topStablePixels?: string;
+    meta?: any;
+}
 
-const CheckSchema = new Schema({
+const CheckSchema: Schema<CheckDocument> = new Schema({
     name: {
         type: String,
         required: 'CheckSchema: the name of the check entity is empty',
@@ -126,5 +165,5 @@ const CheckSchema = new Schema({
 CheckSchema.plugin(toJSON);
 CheckSchema.plugin(paginate);
 
-const Check = mongoose.model('VRSCheck', CheckSchema);
-module.exports = Check;
+const Check: Model<CheckDocument> = mongoose.model<CheckDocument>('VRSCheck', CheckSchema);
+export default Check;

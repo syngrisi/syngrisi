@@ -1,9 +1,32 @@
-const mongoose = require('mongoose');
-const { toJSON, paginate, paginateDistinct } = require('./plugins');
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import mongoose, { Schema, Document, Model } from 'mongoose';
+import { toJSON, paginate, paginateDistinct } from './plugins';
 
-const { Schema } = mongoose;
+interface TestDocument extends Document {
+    name: { [key: string]: string | boolean | number};
+    description?: string;
+    status?: string;
+    browserName?: string;
+    browserVersion?: string;
+    branch?: string;
+    tags?: string[];
+    viewport?: string;
+    calculatedViewport?: string;
+    os?: string;
+    app: Schema.Types.ObjectId;
+    blinking?: number;
+    updatedDate?: Date;
+    startDate?: Date;
+    checks?: Schema.Types.ObjectId[];
+    suite?: Schema.Types.ObjectId;
+    run?: Schema.Types.ObjectId;
+    markedAs?: 'Bug' | 'Accepted' | 'Unaccepted' | 'Partially';
+    creatorId?: Schema.Types.ObjectId;
+    creatorUsername?: string;
+    meta?: any;
+}
 
-const TestSchema = new Schema(
+const TestSchema: Schema<TestDocument> = new Schema(
     {
         name: {
             type: String,
@@ -87,5 +110,5 @@ TestSchema.plugin(toJSON);
 TestSchema.plugin(paginate);
 TestSchema.plugin(paginateDistinct);
 
-const Test = mongoose.model('VRSTest', TestSchema);
-module.exports = Test;
+const Test: Model<TestDocument> = mongoose.model<TestDocument>('VRSTest', TestSchema);
+export default Test;

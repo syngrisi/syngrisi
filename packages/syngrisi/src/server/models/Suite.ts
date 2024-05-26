@@ -1,9 +1,18 @@
-const mongoose = require('mongoose');
-const { toJSON, paginate } = require('./plugins');
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import mongoose, { Schema, Document, Model } from 'mongoose';
+import { toJSON, paginate } from './plugins';
 
-const { Schema } = mongoose;
+interface SuiteDocument extends Document {
+    name: { [key: string]: string | boolean | number};
+    tags?: string[];
+    app: Schema.Types.ObjectId;
+    description?: string;
+    updatedDate?: Date;
+    createdDate?: Date;
+    meta?: any;
+}
 
-const SuiteSchema = new Schema({
+const SuiteSchema: Schema<SuiteDocument> = new Schema({
     name: {
         type: String,
         default: 'Others',
@@ -36,5 +45,5 @@ const SuiteSchema = new Schema({
 SuiteSchema.plugin(paginate);
 SuiteSchema.plugin(toJSON);
 
-const Suite = mongoose.model('VRSSuite', SuiteSchema);
-module.exports = Suite;
+const Suite: Model<SuiteDocument> = mongoose.model<SuiteDocument>('VRSSuite', SuiteSchema);
+export default Suite;
