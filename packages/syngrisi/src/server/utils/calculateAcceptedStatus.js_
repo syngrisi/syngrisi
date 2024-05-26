@@ -1,6 +1,6 @@
 const { Check } = require('../models');
 
-exports.calculateAcceptedStatus = async function calculateAcceptedStatus(testId) {
+// exports.calculateAcceptedStatus = async function calculateAcceptedStatus(testId) {
     const checksInTest = await Check.find({ test: testId });
     const statuses = checksInTest.map((x) => x.markedAs);
     if (statuses.length < 1) {
