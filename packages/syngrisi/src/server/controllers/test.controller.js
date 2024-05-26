@@ -1,6 +1,6 @@
 /* eslint-disable indent,no-useless-escape */
 const httpStatus = require('http-status');
-const pick = require('../utils/pick');
+const { pick } = require('../utils');
 // eslint-disable-next-line no-unused-vars
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');

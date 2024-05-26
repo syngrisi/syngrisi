@@ -13,9 +13,10 @@ const { Log } = require('../models');
 const queryLogs = async (filter, options) => Log.paginate(filter, options);
 
 const distinct = async (field) => Log.distinct(field);
+const log2 = require("../../../dist/src/server/lib/logger2").default;
 
 const createLogs = async (body) => {
-    log[body.level || 'debug'](body.message,
+    log2[body.level || 'debug'](body.message,
         {
             user: body.user,
             scope: body.scope || 'test_scope',

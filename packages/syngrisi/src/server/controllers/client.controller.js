@@ -4,7 +4,7 @@ const catchAsync = require('../utils/catchAsync');
 const { clientService, genericService } = require('../services');
 const { pick, deserializeIfJSON } = require('../utils');
 const orm = require('../lib/dbItems');
-const prettyCheckParams = require('../utils/prettyCheckParams');
+const { prettyCheckParams } = require('../utils');
 const { paramsGuard } = require('../../../dist/src/server/utils/paramsGuard');
 const { RequiredIdentOptionsSchema } = require('../../../dist/src/server/schemas/getBaseline.shema');
 

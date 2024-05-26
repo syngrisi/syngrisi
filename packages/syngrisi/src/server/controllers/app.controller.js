@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
-const pick = require('../utils/pick');
+const { pick } = require('../utils');
 const { appService } = require('../services');
 
 const info = catchAsync(async (req, res) => {
