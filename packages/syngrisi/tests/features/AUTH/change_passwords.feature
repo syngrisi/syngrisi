@@ -43,6 +43,9 @@ Feature: Change Password
         Given I start Server and start Driver
         When I wait for "5" seconds
         When I open the app
+        # TODO: should be deleted - for tests isolation
+        When I delete the cookie "connect.sid"
+
 
     @smoke
     Scenario: Change Password - Smoke
@@ -72,6 +75,7 @@ Feature: Change Password
         When I set "Password-456" to the inputfield "#new-password-confirmation"
         When I click on the element "#change-password"
         Then I expect that element "#error-message" contain text "user is not logged in"
+
 
     Scenario: Change Password - Wrong Current Password
         # login

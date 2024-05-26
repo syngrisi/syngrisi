@@ -116,6 +116,11 @@ When(/^I pending$/, function () {
     return 'pending';
 });
 
+When(/^I start debug$/, async function () {
+    await browser.debug();
+});
+
+
 When(/^I hold key "([^"]*)"$/, async function (key) {
     await browser.performActions([{
         type: 'key',

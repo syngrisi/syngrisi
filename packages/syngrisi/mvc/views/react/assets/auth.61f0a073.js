@@ -316,6 +316,7 @@ function ChangePasswordForm() {
       });
       const result = await resp.json();
       setLoader(false);
+      console.log(result);
       if (result.message === "success") {
         return window.location.assign("/auth/changeSuccess");
       }
