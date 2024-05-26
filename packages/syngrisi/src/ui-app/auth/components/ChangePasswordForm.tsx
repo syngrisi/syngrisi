@@ -114,7 +114,7 @@ export default function ChangePasswordForm() {
             );
             const result: { message: string } = await resp.json();
             setLoader(false);
-
+            console.log(result);
             if (result.message === 'success') {
                 return window.location.assign('/auth/changeSuccess');
             }

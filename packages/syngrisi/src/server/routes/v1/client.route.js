@@ -1,7 +1,7 @@
 const express = require('express');
 const Bottleneck = require('bottleneck/es5');
 const { clientController } = require('../../controllers');
-const { ensureApiKey } = require('../../lib/ensureLogin/ensureLoggedIn');
+const { ensureApiKey } = require('../../lib/ensureLogin');
 
 const router = express.Router();
 

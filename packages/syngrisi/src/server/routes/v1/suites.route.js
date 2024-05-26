@@ -1,6 +1,6 @@
 const express = require('express');
 const { suiteController } = require('../../controllers');
-const { ensureLoggedIn } = require('../../lib/ensureLogin/ensureLoggedIn');
+const { ensureLoggedIn } = require('../../lib/ensureLogin');
 
 const router = express.Router();
 
