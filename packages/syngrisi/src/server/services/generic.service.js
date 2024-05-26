@@ -1,6 +1,6 @@
 /* eslint-disable valid-jsdoc */
 const mongoose = require('mongoose');
-const { removeEmptyProperties } = require('../utils/utils');
+const { removeEmptyProperties } = require('../utils');
 const log2 = require("../../../dist/src/server/lib/logger2").default;
 
 const fileLogMeta = {

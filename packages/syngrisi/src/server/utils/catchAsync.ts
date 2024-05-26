@@ -1,10 +1,12 @@
-const log2 = require("../../../dist/src/server/lib/logger2").default;
+import { Request, Response, NextFunction } from 'express';
+import log2 from "../lib/logger2";
 
-const catchAsync = (fn) => (req, res, next) => {
-    Promise.resolve(fn(req, res, next)).catch((err) => {
-        log2.error(err.stack || err.toString());
-        return next(err);
-    });
-};
+const catchAsync = (fn: (req: Request, res: Response, next: NextFunction) => Promise<void>) => 
+    (req: Request, res: Response, next: NextFunction) => {
+        Promise.resolve(fn(req, res, next)).catch((err) => {
+            log2.error(err.stack || err.toString());
+            return next(err);
+        });
+    };
 
-module.exports = catchAsync;
+export default catchAsync;

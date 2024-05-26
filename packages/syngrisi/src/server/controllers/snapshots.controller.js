@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 const httpStatus = require('http-status');
 const { EJSON } = require('bson');
-const catchAsync = require('../utils/catchAsync');
+const { catchAsync } = require('../utils');
 const { genericService } = require('../services');
 const { pick } = require('../utils');
 

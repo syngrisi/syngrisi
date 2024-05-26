@@ -1,6 +1,8 @@
 const httpStatus = require('http-status');
-const ApiError = require('../utils/ApiError');
-const catchAsync = require('../utils/catchAsync');
+
+const { ApiError } = require('../utils');
+
+const { catchAsync } = require('../utils');
 const log2 = require("../../../dist/src/server/lib/logger2").default;
 
 const fileLogMeta = {

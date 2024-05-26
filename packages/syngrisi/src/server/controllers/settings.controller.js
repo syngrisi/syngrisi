@@ -1,4 +1,4 @@
-const catchAsync = require('../utils/catchAsync');
+const { catchAsync } = require('../utils');
 
 const getSettings = catchAsync(async (req, res) => {
     const result = global.AppSettings.cache;

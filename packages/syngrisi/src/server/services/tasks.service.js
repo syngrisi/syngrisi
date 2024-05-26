@@ -4,7 +4,7 @@ const stringTable = require('string-table');
 const fss = require('fs');
 const { config } = require('../../../config');
 const { subDays, dateToISO8601 } = require('../utils');
-const { ProgressBar } = require('../utils/utils');
+const { ProgressBar } = require('../utils');
 const log2 = require("../../../dist/src/server/lib/logger2").default;
 
 const {

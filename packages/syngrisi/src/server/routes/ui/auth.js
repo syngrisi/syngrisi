@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const httpStatus = require('http-status');
 
-const catchAsync = require('../../utils/catchAsync');
+const { catchAsync } = require('../../utils');
 
 const router = express.Router();
 

@@ -2,8 +2,9 @@
 const httpStatus = require('http-status');
 const { pick } = require('../utils');
 // eslint-disable-next-line no-unused-vars
-const ApiError = require('../utils/ApiError');
-const catchAsync = require('../utils/catchAsync');
+const { ApiError } = require('../utils');
+
+const { catchAsync } = require('../utils');
 const { testService } = require('../services');
 const { deserializeIfJSON } = require('../utils');
 

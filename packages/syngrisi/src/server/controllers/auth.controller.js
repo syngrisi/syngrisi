@@ -3,7 +3,7 @@ const passport = require('passport');
 const hasha = require('hasha');
 const uuidAPIKey = require('uuid-apikey');
 const { User } = require('../models');
-const catchAsync = require('../utils/catchAsync');
+const { catchAsync } = require('../utils');
 const log2 = require("../../../dist/src/server/lib/logger2").default;
 
 function getApiKey() {
