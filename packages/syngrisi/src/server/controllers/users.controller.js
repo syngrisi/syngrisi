@@ -2,7 +2,7 @@ const httpStatus = require('http-status');
 const { EJSON } = require('bson');
 const catchAsync = require('../utils/catchAsync');
 const { usersService } = require('../services');
-const pick = require('../utils/pick');
+const { pick } = require('../utils');
 const log2 = require("../../../dist/src/server/lib/logger2").default;
 const fileLogMeta = {
     scope: 'users',

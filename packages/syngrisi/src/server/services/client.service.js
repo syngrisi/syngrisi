@@ -16,7 +16,7 @@ const {
 const orm = require('../lib/dbItems');
 const { createItemIfNotExistAsync, createRunIfNotExist, createSuiteIfNotExist } = require('../lib/dbItems');
 const { config } = require('../../../config');
-const prettyCheckParams = require('../utils/prettyCheckParams');
+const { prettyCheckParams } = require('../utils');
 const { getDiff } = require('../lib/comparator');
 // const ApiError = require('../utils/ApiError');
 const log2 = require("../../../dist/src/server/lib/logger2").default;

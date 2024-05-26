@@ -20,47 +20,47 @@ const checkIdent = function checkIdent(check) {
 };
 exports.checkIdent = checkIdent;
 
-// parse uniques suites that are in the tests with particular find query
-exports.getSuitesByTestsQuery = async (query) => {
-    const suitesIds = await Test
-        .find(query)
-        .distinct('suite');
-    const suites = await Suite.find(
-        { _id: { $in: suitesIds } }
-    )
-        .sort({ name: 'asc' });
-    return suites;
-};
+// // parse uniques suites that are in the tests with particular find query
+// exports.getSuitesByTestsQuery = async (query) => {
+//     const suitesIds = await Test
+//         .find(query)
+//         .distinct('suite');
+//     const suites = await Suite.find(
+//         { _id: { $in: suitesIds } }
+//     )
+//         .sort({ name: 'asc' });
+//     return suites;
+// };
 
-exports.getRunsByTestsQuery = async (query, limit = 150) => {
-    const runsIds = await Test
-        .find(query)
-        .distinct('run');
-    const runs = await Run.find({ _id: { $in: runsIds } })
-        .limit(limit)
-        .sort({ updatedDate: -1 });
-    return runs;
-};
+// exports.getRunsByTestsQuery = async (query, limit = 150) => {
+//     const runsIds = await Test
+//         .find(query)
+//         .distinct('run');
+//     const runs = await Run.find({ _id: { $in: runsIds } })
+//         .limit(limit)
+//         .sort({ updatedDate: -1 });
+//     return runs;
+// };
 
-exports.buildQuery = (params) => {
-    const querystring = require('querystring');
-    const query = Object.keys(params)
-        .filter((key) => key.startsWith('filter_'))
-        .reduce((obj, key) => {
-            const props = key.split('_');
-            const name = props[1] === 'id' ? '_id' : props[1];
-            const operator = props[2];
-            const value = decodeURI(params[key]);
-            const decodedValue = Object.keys(querystring.decode(value))[0];
-            obj[`${name}`] = { [`$${operator}`]: decodedValue };
-            if (operator === 'regex') {
-                obj[`${name}`]['$options'] = 'i';
-            }
-            return obj;
-        }, {});
+// exports.buildQuery = (params) => {
+//     const querystring = require('querystring');
+//     const query = Object.keys(params)
+//         .filter((key) => key.startsWith('filter_'))
+//         .reduce((obj, key) => {
+//             const props = key.split('_');
+//             const name = props[1] === 'id' ? '_id' : props[1];
+//             const operator = props[2];
+//             const value = decodeURI(params[key]);
+//             const decodedValue = Object.keys(querystring.decode(value))[0];
+//             obj[`${name}`] = { [`$${operator}`]: decodedValue };
+//             if (operator === 'regex') {
+//                 obj[`${name}`]['$options'] = 'i';
+//             }
+//             return obj;
+//         }, {});
 
-    return query;
-};
+//     return query;
+// };
 
 // const fatalError = function fatalError(req, res, e) {
 //     const errMsg = e.stack ? `Fatal error: '${e}' \n  '${e.stack}'` : `Fatal error: ${e} \n`;

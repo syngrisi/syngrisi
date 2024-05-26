@@ -1,7 +1,7 @@
-const subDays = (date, days) => {
+const subDays = (date: Date, days: number): Date => {
     const result = new Date(date);
     result.setDate(result.getDate() - days);
     return result;
 };
 
-module.exports = subDays;
+export default subDays;

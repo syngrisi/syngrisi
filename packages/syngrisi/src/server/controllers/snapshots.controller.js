@@ -3,7 +3,7 @@ const httpStatus = require('http-status');
 const { EJSON } = require('bson');
 const catchAsync = require('../utils/catchAsync');
 const { genericService } = require('../services');
-const pick = require('../utils/pick');
+const { pick } = require('../utils');
 
 const get = catchAsync(async (req, res) => {
     const filter = req.query.filter ? EJSON.parse(pick(req.query, ['filter']).filter) : {};
