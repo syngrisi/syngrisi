@@ -1,9 +1,19 @@
-const mongoose = require('mongoose');
-const { toJSON, paginate } = require('./plugins');
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import mongoose, { Schema, Document, Model } from 'mongoose';
+import { toJSON, paginate } from './plugins';
 
-const { Schema } = mongoose;
+interface RunDocument extends Document {
+    name: { [key: string]: string | boolean | number};
+    app: Schema.Types.ObjectId;
+    ident: { [key: string]: string | boolean | number};
+    description?: string;
+    updatedDate?: Date;
+    createdDate?: Date;
+    parameters?: string[];
+    meta?: any;
+}
 
-const RunSchema = new Schema({
+const RunSchema: Schema<RunDocument> = new Schema({
     name: {
         type: String,
         required: 'RunSchema: the run name cannot be empty',
@@ -39,5 +49,5 @@ const RunSchema = new Schema({
 RunSchema.plugin(paginate);
 RunSchema.plugin(toJSON);
 
-const Run = mongoose.model('VRSRun', RunSchema);
-module.exports = Run;
+const Run: Model<RunDocument> = mongoose.model<RunDocument>('VRSRun', RunSchema);
+export default Run;
