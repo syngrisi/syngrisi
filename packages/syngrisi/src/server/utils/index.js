@@ -14,6 +14,7 @@ module.exports = {
     checkIdent: require('../../../dist/src/server/utils/checkIdent').checkIdent,
     removeEmptyProperties: require('../../../dist/src/server/utils/removeEmptyProperties').removeEmptyProperties,
     waitUntil: require('../../../dist/src/server/utils/waitUntil').waitUntil,
-    calculateAcceptedStatus: require('./calculateAcceptedStatus').calculateAcceptedStatus,
+    calculateAcceptedStatus: require('../../../dist/src/server/utils/calculateAcceptedStatus').calculateAcceptedStatus,
+    // calculateAcceptedStatus: require('./calculateAcceptedStatus').calculateAcceptedStatus,
     ProgressBar: require('../../../dist/src/server/utils/ProgressBar').ProgressBar,
 };
