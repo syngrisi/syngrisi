@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
-const ApiError = require('../utils/ApiError');
-const catchAsync = require('../utils/catchAsync');
+const { ApiError } = require('../utils');
+const { catchAsync } = require('../utils');
 const { clientService, genericService } = require('../services');
 const { pick, deserializeIfJSON } = require('../utils');
 const orm = require('../lib/dbItems');

@@ -1,6 +1,6 @@
 import pick from './pick';
 import isJSON from './isJSON';
-// import catchAsync from './catchAsync';
+import catchAsync  from './catchAsync';
 // import ApiError from './ApiError';
 // import deserializeIfJSON from './deserializeIfJSON';
 import subDays from './subDays';
@@ -11,7 +11,7 @@ import subDays from './subDays';
 export {
     pick,
     isJSON,
-    // catchAsync,
+    catchAsync,
     // ApiError,
     // deserializeIfJSON,
     subDays,

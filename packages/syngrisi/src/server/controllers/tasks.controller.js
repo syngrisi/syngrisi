@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 // const httpStatus = require('http-status');
-const catchAsync = require('../utils/catchAsync');
+const { catchAsync } = require('../utils');
 const { pick } = require('../utils');
 const { tasksService } = require('../services');
 

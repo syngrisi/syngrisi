@@ -1,0 +1,17 @@
+import Check from '../models';
+
+export const calculateAcceptedStatus = async (testId: string): Promise<string> => {
+    const checksInTest = await Check.find({ test: testId });
+    const statuses = checksInTest.map((x) => x.markedAs);
+    if (statuses.length < 1) {
+        return 'Unaccepted';
+    }
+    let testCalculatedStatus = 'Unaccepted';
+    if (statuses.some((x) => x === 'accepted')) {
+        testCalculatedStatus = 'Partially';
+    }
+    if (statuses.every((x) => x === 'accepted')) {
+        testCalculatedStatus = 'Accepted';
+    }
+    return testCalculatedStatus;
+};

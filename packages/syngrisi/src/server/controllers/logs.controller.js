@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
 const { EJSON } = require('bson');
-const catchAsync = require('../utils/catchAsync');
+const { catchAsync } = require('../utils');
 const { logsService } = require('../services');
 const { pick } = require('../utils');
 

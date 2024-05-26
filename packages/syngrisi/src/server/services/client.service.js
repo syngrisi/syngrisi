@@ -12,13 +12,14 @@ const {
 } = require('../models');
 const {
     removeEmptyProperties, waitUntil, buildIdentObject, calculateAcceptedStatus, ident,
-} = require('../utils/utils');
+} = require('../utils');
 const orm = require('../lib/dbItems');
 const { createItemIfNotExistAsync, createRunIfNotExist, createSuiteIfNotExist } = require('../lib/dbItems');
 const { config } = require('../../../config');
 const { prettyCheckParams } = require('../utils');
 const { getDiff } = require('../lib/comparator');
-// const ApiError = require('../utils/ApiError');
+// const { ApiError } = require('../utils');
+
 const log2 = require("../../../dist/src/server/lib/logger2").default;
 
 const fileLogMeta = {

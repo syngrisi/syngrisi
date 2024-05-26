@@ -1,7 +1,7 @@
 /* eslint-disable valid-jsdoc */
 const httpStatus = require('http-status');
 const { User } = require('../models');
-const ApiError = require('../utils/ApiError');
+const { ApiError } = require('../utils');
 const log2 = require("../../../dist/src/server/lib/logger2").default;
 
 const fileLogMeta = {

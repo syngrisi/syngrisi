@@ -6,7 +6,7 @@ const {
     Baseline,
 } = require('../models');
 
-const { calculateAcceptedStatus, buildIdentObject } = require('../utils/utils');
+const { calculateAcceptedStatus, buildIdentObject } = require('../utils');
 const snapshotService = require("./snapshot.service");
 const orm = require('../lib/dbItems');
 const log2 = require("../../../dist/src/server/lib/logger2").default;
