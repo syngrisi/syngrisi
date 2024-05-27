@@ -1,0 +1,38 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import express from 'express';
+import { userController } from '../../controllers';
+import { ensureLoggedIn } from '../../middlewares/ensureLogin';
+import { authorization } from '../../middlewares';
+
+const router = express.Router();
+
+router.get('/current', userController.current);
+
+router
+    .route('/')
+    .post(
+        ensureLoggedIn(),
+        authorization('admin'),
+        userController.createUser
+    )
+    .get(
+        ensureLoggedIn(),
+        authorization('user'),
+        userController.getUsers
+    );
+
+router
+    .route('/:userId')
+    .patch(
+        ensureLoggedIn(),
+        authorization('admin'),
+        userController.updateUser
+    )
+    .delete(
+        ensureLoggedIn(),
+        authorization('admin'),
+        userController.deleteUser
+    );
+
+export default router;
