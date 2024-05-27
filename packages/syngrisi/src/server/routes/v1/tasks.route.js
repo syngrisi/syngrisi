@@ -1,6 +1,6 @@
 const express = require('express');
-const { ensureLoggedIn } = require('../../lib/ensureLogin');
-const { authorization } = require('../../middlewares/authorization');
+const { ensureLoggedIn } = require('../../middlewares/ensureLogin');
+const { authorization } = require('../../middlewares');
 const { tasksController } = require('../../controllers');
 
 const router = express.Router();

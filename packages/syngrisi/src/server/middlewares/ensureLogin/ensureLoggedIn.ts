@@ -38,7 +38,7 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { User } from '../../models';
-import log from "../logger";
+import log from "../../lib/logger";
 
 const fileLogMeta = {
     scope: 'Authentication',

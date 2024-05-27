@@ -1,19 +1,22 @@
-const httpStatus = require('http-status');
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import httpStatus from 'http-status';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { Request, Response, NextFunction } from 'express';
+import { ApiError } from '../utils';
+import { catchAsync } from '../utils';
+import log from '../lib/logger';
+// import AppSettings from '../models/AppSettings';
 
-const { ApiError } = require('../utils');
+// const fileLogMeta = {
+//     scope: 'authorization',
+//     msgType: 'AUTHORIZATION',
+// };
 
-const { catchAsync } = require('../utils');
-const log = require("../../../dist/src/server/lib/logger").default;
-
-const fileLogMeta = {
-    scope: 'authorization',
-    msgType: 'AUTHORIZATION',
-};
-
-exports.authorization = (type) => {
-    const types = {
-        admin: catchAsync(async (req, res, next) => {
-            if (!(await global.AppSettings.isAuthEnabled())) {
+const AppSettings = (global as any ).AppSettings;
+export const authorization = (type: string) => {
+    const types: { [key: string]: (req: any, res: Response, next: NextFunction) => any } = {
+        admin: catchAsync(async (req: any, res: Response, next: NextFunction) => {
+            if (!(await AppSettings.isAuthEnabled())) {
                 return next();
             }
             if (req.user?.role === 'admin') {
@@ -23,8 +26,8 @@ exports.authorization = (type) => {
             log.warn(`user authorization: '${req.user?.username}' wrong role, type: '${type}'`);
             throw new ApiError(httpStatus.FORBIDDEN, 'Authorization Error - wrong Role');
         }),
-        user: catchAsync(async (req, res, next) => {
-            if (!(await global.AppSettings.isAuthEnabled())) {
+        user: catchAsync(async (req: any, res: Response, next: NextFunction) => {
+            if (!(await AppSettings.isAuthEnabled())) {
                 return next();
             }
             if (req.user?.role === 'admin') {
