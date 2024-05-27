@@ -10,7 +10,7 @@ const { RequiredIdentOptionsSchema } = require('../../../dist/src/server/schemas
 
 const { User, Test, App, Suite } = require('../models');
 const { createCheckParamsSchema } = require('../../../dist/src/server/schemas/createCheck.shema');
-const log2 = require("../../../dist/src/server/lib/logger2").default;
+const log = require("../../../dist/src/server/lib/logger").default;
 
 const fileLogMeta = {
     scope: 'client_controller',
@@ -77,10 +77,10 @@ const createCheck = catchAsync(async (req, res) => {
     const currentUser = await User.findOne({ apiKey })
         .exec();
 
-    log2.info(`start create check: '${prettyCheckParams(params.name)}'`, fileLogMeta, logOpts);
+    log.info(`start create check: '${prettyCheckParams(params.name)}'`, fileLogMeta, logOpts);
 
     /** look for or create test and suite */
-    log2.debug(`try to find test with id: '${params.testid}'`, fileLogMeta, logOpts);
+    log.debug(`try to find test with id: '${params.testid}'`, fileLogMeta, logOpts);
     const test = await Test.findById(params.testid)
         .exec();
     if (!test) {

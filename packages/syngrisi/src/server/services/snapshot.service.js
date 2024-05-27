@@ -1,7 +1,7 @@
 const fs = require('fs');
 const { config } = require('../../../config');
 const { Baseline, Snapshot } = require('../models');
-const log2 = require("../../../dist/src/server/lib/logger2").default;
+const log = require("../../../dist/src/server/lib/logger").default;
 
 const fileLogMeta = {
     scope: 'snapshot_helper',
@@ -16,7 +16,7 @@ const removeSnapshotFile = async (snapshot) => {
     let relatedSnapshots;
     if (snapshot.filename) {
         relatedSnapshots = await Snapshot.find({ filename: snapshot.filename });
-        log2.debug(`there are '${relatedSnapshots.length}' snapshots with filename: '${snapshot.filename}'`, fileLogMeta);
+        log.debug(`there are '${relatedSnapshots.length}' snapshots with filename: '${snapshot.filename}'`, fileLogMeta);
     }
 
     const isLastSnapshotFile = () => {
@@ -26,13 +26,13 @@ const removeSnapshotFile = async (snapshot) => {
         return (relatedSnapshots.length === 0);
     };
 
-    log2.debug({ isLastSnapshotFile: isLastSnapshotFile() });
+    log.debug({ isLastSnapshotFile: isLastSnapshotFile() });
 
     if (isLastSnapshotFile()) {
         const path = `${config.defaultImagesPath}${snapshot.filename}`;
-        log2.silly(`path: ${path}`, fileLogMeta);
+        log.silly(`path: ${path}`, fileLogMeta);
         if (fs.existsSync(path)) {
-            log2.debug(`removing file: '${path}'`, fileLogMeta, {
+            log.debug(`removing file: '${path}'`, fileLogMeta, {
                 msgType: 'REMOVE',
                 itemType: 'file',
             });
@@ -53,31 +53,31 @@ const remove = async (id) => {
         itemType: 'snapshot',
         ref: id,
     };
-    log2.silly(`deleting snapshot with id: '${id}'`, logOpts);
+    log.silly(`deleting snapshot with id: '${id}'`, logOpts);
 
     if (!id) {
-        log2.warn('id is empty');
+        log.warn('id is empty');
         return;
     }
 
     const snapshot = await Snapshot.findById(id);
     if (!snapshot) {
-        log2.warn(`cannot find snapshot with id: '${id}'`);
+        log.warn(`cannot find snapshot with id: '${id}'`);
         return;
     }
 
     const baseline = await Baseline.findOne({ snapshootId: id });
     if (baseline) {
-        log2.debug(`snapshot: '${id}' is related to a baseline, skipping deletion`, logOpts);
+        log.debug(`snapshot: '${id}' is related to a baseline, skipping deletion`, logOpts);
         return;
     }
 
-    log2.debug(`snapshot: '${id}' is not related to a baseline, attempting to remove it`, logOpts);
+    log.debug(`snapshot: '${id}' is not related to a baseline, attempting to remove it`, logOpts);
     await Snapshot.findByIdAndDelete(id);
-    log2.debug(`snapshot: '${id}' was removed`, logOpts);
+    log.debug(`snapshot: '${id}' was removed`, logOpts);
 
     const path = `${config.defaultImagesPath}${snapshot.filename}`;
-    log2.debug(`attempting to remove snapshot file, id: '${snapshot._id}', filename: '${path}'`, logOpts);
+    log.debug(`attempting to remove snapshot file, id: '${snapshot._id}', filename: '${path}'`, logOpts);
     await removeSnapshotFile(snapshot);
 };
 

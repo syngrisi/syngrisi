@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { Run } from '../../models';
-import log2 from "../../lib/logger2";
+import log from "../logger";
 
 const fileLogMeta = {
     scope: 'dbitems',
@@ -20,12 +20,12 @@ export async function createRunIfNotExist(params: any, logsMeta = {}): Promise<a
             throw new Error(`Cannot create run, wrong params: '${JSON.stringify(params)}'`);
         }
 
-        log2.debug(`try to create run if exist, params: '${JSON.stringify(params)}'`, fileLogMeta, { ...logOpts, ...logsMeta });
+        log.debug(`try to create run if exist, params: '${JSON.stringify(params)}'`, fileLogMeta, { ...logOpts, ...logsMeta });
 
         run = await Run.findOne({ ident: params.ident }).exec();
 
         if (run) {
-            log2.debug(`run already exist: '${JSON.stringify(params)}'`, fileLogMeta, { ...logOpts, ...logsMeta });
+            log.debug(`run already exist: '${JSON.stringify(params)}'`, fileLogMeta, { ...logOpts, ...logsMeta });
             return run;
         }
 
@@ -34,16 +34,16 @@ export async function createRunIfNotExist(params: any, logsMeta = {}): Promise<a
             createdDate: params.createdDate || new Date(),
         });
 
-        log2.debug(`run with name: '${params.name}' was created: ${run}`, fileLogMeta, { ...logOpts, ...logsMeta });
+        log.debug(`run with name: '${params.name}' was created: ${run}`, fileLogMeta, { ...logOpts, ...logsMeta });
         return run;
     } catch (e: any) {
         if (e.code === 11000) {
-            log2.warn(`run key duplication collision: '${JSON.stringify(params)}', error: '${e.stack || e}'`, fileLogMeta, { ...logOpts, ...logsMeta });
+            log.warn(`run key duplication collision: '${JSON.stringify(params)}', error: '${e.stack || e}'`, fileLogMeta, { ...logOpts, ...logsMeta });
             run = await Run.findOne({ name: params.name, ident: params.ident });
-            log2.warn(`run key duplication collision, found: '${JSON.stringify(run)}'`, fileLogMeta, { ...logOpts, ...logsMeta });
+            log.warn(`run key duplication collision, found: '${JSON.stringify(run)}'`, fileLogMeta, { ...logOpts, ...logsMeta });
             if (run) return run;
         }
-        log2.error(`cannot create run, params: '${JSON.stringify(params)}', error: '${e.stack || e}', obj: ${JSON.stringify(e)}`, fileLogMeta, { ...logOpts, ...logsMeta });
+        log.error(`cannot create run, params: '${JSON.stringify(params)}', error: '${e.stack || e}', obj: ${JSON.stringify(e)}`, fileLogMeta, { ...logOpts, ...logsMeta });
         throw e;
     }
 }

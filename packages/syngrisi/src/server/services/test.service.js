@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-syntax,no-await-in-loop */
 const checkService = require('./check.service');
 const { Test, Check } = require('../models');
-const log2 = require("../../../dist/src/server/lib/logger2").default;
+const log = require("../../../dist/src/server/lib/logger").default;
 
 const fileLogMeta = {
     scope: 'test_service',
@@ -40,10 +40,10 @@ const remove = async (id, user) => {
         user: user?.username,
         msgType: 'REMOVE',
     };
-    log2.info(`remove test with, id: '${id}', user: '${user.username}'`, fileLogMeta, logOpts);
+    log.info(`remove test with, id: '${id}', user: '${user.username}'`, fileLogMeta, logOpts);
 
     try {
-        log2.debug(`try to delete all checks associated to test with ID: '${id}'`, logOpts);
+        log.debug(`try to delete all checks associated to test with ID: '${id}'`, logOpts);
         const checks = await Check.find({ test: id });
         // eslint-disable-next-line no-restricted-syntax
         for (const check of checks) {
@@ -52,7 +52,7 @@ const remove = async (id, user) => {
         }
         return Test.findByIdAndDelete(id);
     } catch (e) {
-        log2.error(`cannot remove test with id: ${id} error: ${e.stack || e.toString()}`, logOpts);
+        log.error(`cannot remove test with id: ${id} error: ${e.stack || e.toString()}`, logOpts);
         throw new Error();
     }
 };
@@ -65,7 +65,7 @@ const accept = async (id, user) => {
         user: user?.username,
         msgType: 'ACCEPT',
     };
-    log2.info(`accept test with, id: '${id}', user: '${user.username}'`, fileLogMeta, logOpts);
+    log.info(`accept test with, id: '${id}', user: '${user.username}'`, fileLogMeta, logOpts);
 
     const checks = await Check.find({ test: id })
         .exec();
