@@ -5,7 +5,7 @@ const fss = require('fs');
 const { config } = require('../../../config');
 const { subDays, dateToISO8601 } = require('../utils');
 const { ProgressBar } = require('../utils');
-const log2 = require("../../../dist/src/server/lib/logger2").default;
+const log = require("../../../dist/src/server/lib/logger").default;
 
 const {
     Snapshot,
@@ -27,7 +27,7 @@ const fileLogMeta = {
 
 function taskOutput(msg, res) {
     res.write(`${msg.toString()}\n`);
-    log2.debug(msg.toString(), fileLogMeta);
+    log.debug(msg.toString(), fileLogMeta);
 }
 
 function parseHrtimeToSeconds(hrtime) {
@@ -37,7 +37,7 @@ function parseHrtimeToSeconds(hrtime) {
 const status = async (currentUser) => {
     const count = await User.countDocuments().exec();
 
-    log2.silly(`server status: check users counts: ${count}`);
+    log.silly(`server status: check users counts: ${count}`);
     if (count > 1) {
         return { alive: true, currentUser: currentUser?.username };
     }
@@ -60,13 +60,13 @@ const loadTestUser = async () => {
     }
     const testAdmin = await User.findOne({ username: 'Test' }).exec();
     if (!testAdmin) {
-        log2.info('create the test Administrator', fileLogMeta, logOpts);
+        log.info('create the test Administrator', fileLogMeta, logOpts);
         const admin = await User.create(testAdminUser);
-        log2.info(`test Administrator with id: '${admin._id}' was created`, fileLogMeta, logOpts);
+        log.info(`test Administrator with id: '${admin._id}' was created`, fileLogMeta, logOpts);
         return admin;
     }
 
-    log2.info(`test admin is exists: ${JSON.stringify(testAdmin, null, 2)}`, fileLogMeta, logOpts);
+    log.info(`test admin is exists: ${JSON.stringify(testAdmin, null, 2)}`, fileLogMeta, logOpts);
     return { msg: `already exist '${testAdmin}'` };
 };
 
@@ -264,7 +264,7 @@ const task_handle_database_consistency = async (options, res) => {
         taskOutput(`> Done in ${elapsedSeconds} seconds, ${elapsedSeconds / 60} min`, res);
         taskOutput('- end...\n', res);
     } catch (e) {
-        log2.error(e.stack || e.toString());
+        log.error(e.stack || e.toString());
         taskOutput(e.stack || e, res);
     } finally {
         res.end();
@@ -280,9 +280,9 @@ const task_remove_old_logs = async (options, res) => {
     });
     const trashHoldDate = subDays(new Date(), parseInt(options.days, 10));
     const filter = { timestamp: { $lt: trashHoldDate } };
-    const allLogsCountBefore = await log2.find({})
+    const allLogsCountBefore = await log.find({})
         .countDocuments();
-    const oldLogsCount = await log2.find(filter)
+    const oldLogsCount = await log.find(filter)
         .countDocuments();
     taskOutput(`- the count of all documents is: '${allLogsCountBefore}'\n`, res);
     taskOutput(`- the count of documents to be removed is: '${oldLogsCount}'\n`, res);
@@ -292,8 +292,8 @@ const task_remove_old_logs = async (options, res) => {
             + ` '${dateToISO8601(trashHoldDate)}'\n`,
             res
         );
-        await log2.deleteMany(filter);
-        const allLogsCountAfter = await log2.find({})
+        await log.deleteMany(filter);
+        const allLogsCountAfter = await log.find({})
             .countDocuments();
         taskOutput(`- the count of all documents now is: '${allLogsCountAfter}'\n`, res);
     }
@@ -488,7 +488,7 @@ const task_handle_old_checks = async (options, res) => {
 
         taskOutput(`> done in ${elapsedSeconds} seconds ${elapsedSeconds / 60} min`, res);
     } catch (e) {
-        log2.error(e.stack.toString() || e);
+        log.error(e.stack.toString() || e);
         taskOutput(e.stack || e, res);
     } finally {
         res.end();
@@ -519,7 +519,7 @@ const task_test = async (options = 'empty', req, res) => {
         taskOutput(`- Task Output: '${i}', options: ${options}\n`, res);
         if (isAborted) {
             taskOutput('the task was aborted\n', res);
-            log2.warn('the task was aborted', fileLogMeta);
+            log.warn('the task was aborted', fileLogMeta);
             res.flush();
             return res.end();
         }

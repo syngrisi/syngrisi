@@ -1,6 +1,6 @@
 /* eslint-disable valid-jsdoc,no-restricted-syntax,no-await-in-loop */
 const { Test, Run } = require('../models');
-const log2 = require("../../../dist/src/server/lib/logger2").default;
+const log = require("../../../dist/src/server/lib/logger").default;
 
 const testService = require('./test.service');
 
@@ -23,7 +23,7 @@ const remove = async (id, user) => {
         user: user?.username,
         msgType: 'REMOVE',
     };
-    log2.info(`remove run with, id: '${id}', user: '${user.username}'`, fileLogMeta, logOpts);
+    log.info(`remove run with, id: '${id}', user: '${user.username}'`, fileLogMeta, logOpts);
     const tests = await Test.find({ run: id })
         .exec();
 

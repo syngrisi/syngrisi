@@ -2,7 +2,7 @@
 
 import { User } from '../../models';
 import testUsers from '../../../seeds/testUsers.json';
-import log2 from "../../lib/logger2";
+import log from "../logger";
 
 const fileLogMeta = {
     scope: 'on_start',
@@ -10,7 +10,7 @@ const fileLogMeta = {
 };
 
 export async function createTestsUsers(): Promise<void> {
-    log2.debug('creating tests users', fileLogMeta);
+    log.debug('creating tests users', fileLogMeta);
     try {
         await User.insertMany(testUsers);
     } catch (e) {

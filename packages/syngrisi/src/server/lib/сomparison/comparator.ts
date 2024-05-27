@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import log2 from "../logger2";
+import log from "../logger";
 import compareImages from './compareImagesNode';
 
 const fileLogMeta = {
@@ -34,19 +34,19 @@ async function getDiff(baselineOrigin: any, actualOrigin: any, opts: any = {}): 
     try {
         const executionTimer = process.hrtime();
 
-        log2.debug(`SAMPLE #1: ${process.hrtime(executionTimer).toString()}`, fileLogMeta, logOpts);
+        log.debug(`SAMPLE #1: ${process.hrtime(executionTimer).toString()}`, fileLogMeta, logOpts);
 
         const directDiff = await makeDiff(baselineOrigin, actualOrigin, opts);
-        log2.debug(`SAMPLE #2: ${process.hrtime(executionTimer).toString()}`, fileLogMeta, logOpts);
+        log.debug(`SAMPLE #2: ${process.hrtime(executionTimer).toString()}`, fileLogMeta, logOpts);
 
         directDiff.executionTotalTime = process.hrtime(executionTimer).toString();
 
-        log2.debug(`SAMPLE #3: ${process.hrtime(executionTimer).toString()}`, fileLogMeta, logOpts);
-        log2.debug(`the diff is: ${JSON.stringify(directDiff, null, 4)}`, fileLogMeta, logOpts);
+        log.debug(`SAMPLE #3: ${process.hrtime(executionTimer).toString()}`, fileLogMeta, logOpts);
+        log.debug(`the diff is: ${JSON.stringify(directDiff, null, 4)}`, fileLogMeta, logOpts);
 
         return directDiff;
     } catch (e: any) {
-        log2.error(e.stack || e.toString(), fileLogMeta, logOpts);
+        log.error(e.stack || e.toString(), fileLogMeta, logOpts);
         throw new Error(e);
     }
 }

@@ -3,7 +3,7 @@ const { EJSON } = require('bson');
 const { catchAsync } = require('../utils');
 const { usersService } = require('../services');
 const { pick } = require('../utils');
-const log2 = require("../../../dist/src/server/lib/logger2").default;
+const log = require("../../../dist/src/server/lib/logger").default;
 const fileLogMeta = {
     scope: 'users',
 };
@@ -13,7 +13,7 @@ const current = catchAsync(async (req, res) => {
         scope: 'users',
         msgType: 'GET_CURRENT_USER',
     };
-    log2.debug(`current user is: '${req?.user?.username || 'not_logged'}'`, fileLogMeta, logOpts);
+    log.debug(`current user is: '${req?.user?.username || 'not_logged'}'`, fileLogMeta, logOpts);
     res.status(httpStatus.OK)
         .json({
             id: req?.user?.id,
@@ -49,7 +49,7 @@ const createUser = catchAsync(async (req, res) => {
             .send(user);
     } catch (e) {
         if (e.statusCode) {
-            log2.error(e.stack || e.toString(), fileLogMeta);
+            log.error(e.stack || e.toString(), fileLogMeta);
             res.status(e.statusCode)
                 .json({ message: e.message });
         } else {

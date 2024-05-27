@@ -1,7 +1,7 @@
 /* eslint-disable valid-jsdoc,no-restricted-syntax,no-await-in-loop */
 const { Test, Suite } = require('../models');
 const testService = require('./test.service');
-const log2 = require("../../../dist/src/server/lib/logger2").default;
+const log = require("../../../dist/src/server/lib/logger").default;
 
 
 const fileLogMeta = {
@@ -23,7 +23,7 @@ const remove = async (id, user) => {
         user: user?.username,
         msgType: 'REMOVE',
     };
-    log2.info(`remove suite with, id: '${id}', user: '${user.username}'`, fileLogMeta, logOpts);
+    log.info(`remove suite with, id: '${id}', user: '${user.username}'`, fileLogMeta, logOpts);
     const tests = await Test.find({ suite: id })
         .exec();
 
