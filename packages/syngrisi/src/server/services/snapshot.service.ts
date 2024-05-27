@@ -1,19 +1,21 @@
-const fs = require('fs');
-const { config } = require('../../../config');
-const { Baseline, Snapshot } = require('../models');
-const log = require("../../../dist/src/server/lib/logger").default;
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import fs from 'fs';
+import { config } from '../../../config';
+import { Baseline, Snapshot } from '../models';
+import log from "../lib/logger";
+import { SnapshotDocument } from '../models/Snapshot';
 
 const fileLogMeta = {
     scope: 'snapshot_helper',
     msgType: 'API',
 };
 
-/**
- * Remove the snapshot file if it's the last one with that filename.
- * @param {Object} snapshot - Snapshot document
- */
-const removeSnapshotFile = async (snapshot) => {
-    let relatedSnapshots;
+// interface SnapshotDocument extends Document {
+//     filename?: string;
+// }
+
+const removeSnapshotFile = async (snapshot: SnapshotDocument) => {
+    let relatedSnapshots: any[];
     if (snapshot.filename) {
         relatedSnapshots = await Snapshot.find({ filename: snapshot.filename });
         log.debug(`there are '${relatedSnapshots.length}' snapshots with filename: '${snapshot.filename}'`, fileLogMeta);
@@ -41,12 +43,7 @@ const removeSnapshotFile = async (snapshot) => {
     }
 };
 
-/**
- * Remove a snapshot by ID.
- * @param {String} id - Snapshot ID
- * @returns {Promise<void>}
- */
-const remove = async (id) => {
+const remove = async (id: string) => {
     const logOpts = {
         scope: 'removeSnapshot',
         msgType: 'REMOVE',
@@ -60,7 +57,7 @@ const remove = async (id) => {
         return;
     }
 
-    const snapshot = await Snapshot.findById(id);
+    const snapshot: SnapshotDocument | null = await Snapshot.findById(id).lean().exec();
     if (!snapshot) {
         log.warn(`cannot find snapshot with id: '${id}'`);
         return;
@@ -81,6 +78,6 @@ const remove = async (id) => {
     await removeSnapshotFile(snapshot);
 };
 
-module.exports = {
+export {
     remove,
 };

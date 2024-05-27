@@ -3,6 +3,7 @@
 export { updateItem } from './updateItem';
 export { updateItemDate } from './updateItemDate';
 export { createItemIfNotExist } from './createItemIfNotExist';
+export { createItemIfNotExist as createItemIfNotExistAsync } from './createItemIfNotExist';
 export { createItemProm } from './createItemProm';
 export { createTest } from './createTest';
 export { createUser } from './createUser';

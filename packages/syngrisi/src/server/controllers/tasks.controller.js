@@ -2,7 +2,8 @@
 // const httpStatus = require('http-status');
 const { catchAsync } = require('../utils');
 const { pick } = require('../utils');
-const { tasksService } = require('../services');
+const { tasksService } = require('../../../dist/src/server/services');
+
 
 const task_test = catchAsync(async (req, res) => {
     const { options } = pick(req.query, ['options']);

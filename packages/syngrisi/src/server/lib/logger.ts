@@ -2,7 +2,7 @@
 import winston, { Logger as WinstonLogger } from 'winston';
 import 'winston-mongodb';
 import { blue, gray, magenta } from 'chalk';
-import formatISOToDateTime  from '../utils/formatISOToDateTime';
+import formatISOToDateTime from '../utils/formatISOToDateTime';
 import { config } from '../../../config';
 import path from 'path';
 
@@ -21,13 +21,12 @@ interface MetaData {
     scope?: string;
 }
 
-
 function getScriptLine(): string {
     const stack = new Error().stack;
     if (stack) {
         const stackLines = stack.split('\n');
         let loggerLineIndex = -1;
-        
+
         // last string contains 'lib/logger'
         for (let i = 0; i < stackLines.length; i++) {
             if (stackLines[i].includes('lib/logger')) {
@@ -105,35 +104,36 @@ class Logger {
         return args.slice(1).reduce((acc, obj) => ({ ...acc, ...obj }), {});
     }
 
-    private log(severity: string, msg: string, ...meta: any[]): void {
+    private log(severity: string, msg: string | object, ...meta: any[]): void {
         const mergedMeta = Logger.mergeMeta(meta);
         if (!mergedMeta.scope) {
             mergedMeta.scope = getScriptLine();
         }
-        this.winstonLogger.log(severity, msg, mergedMeta);
+        const formattedMsg = typeof msg === 'object' ? JSON.stringify(msg, null, 2) : msg;
+        this.winstonLogger.log(severity, formattedMsg, mergedMeta);
     }
 
-    public error(msg: string, ...meta: any[]): void {
+    public error(msg: string | object, ...meta: any[]): void {
         this.log('error', `${msg}\n stacktrace: ${new Error().stack}`, ...meta);
     }
 
-    public warn(msg: string, ...meta: any[]): void {
+    public warn(msg: string | object, ...meta: any[]): void {
         this.log('warn', `${msg}\n stacktrace: ${new Error().stack}`, ...meta);
     }
 
-    public info(msg: string, ...meta: any[]): void {
+    public info(msg: string | object, ...meta: any[]): void {
         this.log('info', msg, ...meta);
     }
 
-    public verbose(msg: string, ...meta: any[]): void {
+    public verbose(msg: string | object, ...meta: any[]): void {
         this.log('verbose', msg, ...meta);
     }
 
-    public debug(msg: string, ...meta: any[]): void {
+    public debug(msg: string | object, ...meta: any[]): void {
         this.log('debug', msg, ...meta);
     }
 
-    public silly(msg: string, ...meta: any[]): void {
+    public silly(msg: string | object, ...meta: any[]): void {
         this.log('silly', msg, ...meta);
     }
 }

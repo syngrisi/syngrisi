@@ -1,6 +1,8 @@
 const httpStatus = require('http-status');
 const { catchAsync } = require('../utils');
-const { genericService } = require('../services');
+// const { genericService } = require('../services');
+const { genericService } = require('../../../dist/src/server/services');
+
 const { deserializeIfJSON, pick } = require('../utils');
 
 const { ApiError } = require('../utils');

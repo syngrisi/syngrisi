@@ -1,40 +1,39 @@
-/* eslint-disable valid-jsdoc */
-const {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {
     Check,
     Test,
     Suite,
     Baseline,
-} = require('../models');
+    CheckDocument,
+} from '../models';
 
-const { calculateAcceptedStatus, buildIdentObject } = require('../utils');
-const snapshotService = require("./snapshot.service");
-const orm = require('../lib/dbItems');
-const log = require("../../../dist/src/server/lib/logger").default;
+import { calculateAcceptedStatus, buildIdentObject } from '../utils';
+import * as snapshotService from './snapshot.service';
+import * as orm from '../lib/dbItems';
+import log from '../lib/logger';
 
 const fileLogMeta = {
     scope: 'check_service',
     msgType: 'CHECK',
 };
 
-async function calculateTestStatus(testId) {
+async function calculateTestStatus(testId: string): Promise<string> {
     const checksInTest = await Check.find({ test: testId });
-    const statuses = checksInTest.map((x) => x.status[0]);
+    const statuses = checksInTest.map((x: CheckDocument) => x.status[0]);
     let testCalculatedStatus = 'Failed';
-    if (statuses.every((x) => (x === 'new') || (x === 'passed'))) {
+    if (statuses.every((x: string) => (x === 'new') || (x === 'passed'))) {
         testCalculatedStatus = 'Passed';
     }
-    if (statuses.every((x) => (x === 'new'))) {
+    if (statuses.every((x: string) => (x === 'new'))) {
         testCalculatedStatus = 'New';
     }
     return testCalculatedStatus;
 }
 
-
-const validateBaselineParam = (params) => {
+const validateBaselineParam = (params: any): void => {
     const mandatoryParams = ['markedAs', 'markedById', 'markedByUsername', 'markedDate'];
-    // eslint-disable-next-line no-restricted-syntax
     for (const param of mandatoryParams) {
-        if (!param) {
+        if (!params[param]) {
             const errMsg = `invalid baseline parameters, '${param}' is empty, params: ${JSON.stringify(params)}`;
             log.error(errMsg);
             throw new Error(errMsg);
@@ -42,19 +41,16 @@ const validateBaselineParam = (params) => {
     }
 };
 
-async function createNewBaseline(params) {
+async function createNewBaseline(params: any): Promise<any> {
     validateBaselineParam(params);
 
     const identFields = buildIdentObject(params);
 
-    const lastBaseline = await Baseline.findOne(identFields)
-        .exec();
-
-    const sameBaseline = await Baseline.findOne({ ...identFields, ...{ snapshootId: params.actualSnapshotId } })
-        .exec();
+    const lastBaseline = await Baseline.findOne(identFields).exec();
+    const sameBaseline = await Baseline.findOne({ ...identFields, snapshootId: params.actualSnapshotId }).exec();
 
     const baselineParams = lastBaseline?.ignoreRegions
-        ? { ...identFields, ...{ ignoreRegions: lastBaseline.ignoreRegions } }
+        ? { ...identFields, ignoreRegions: lastBaseline.ignoreRegions }
         : identFields;
 
     if (sameBaseline) {
@@ -78,14 +74,7 @@ async function createNewBaseline(params) {
     return resultedBaseline.save();
 }
 
-/**
- * Accept a check
- * @param {String} id - check id
- * @param {Object} user - current user
- * @param {String} baselineId -new baseline id
- * @returns {Promise<Check>}
- */
-const accept = async (id, baselineId, user) => {
+const accept = async (id: string, baselineId: string, user: any): Promise<CheckDocument> => {
     const logMeta = {
         msgType: 'ACCEPT',
         itemType: 'check',
@@ -94,32 +83,28 @@ const accept = async (id, baselineId, user) => {
         scope: 'accept',
     };
     log.debug(`accept check: ${id}`, fileLogMeta, logMeta);
-    const check = await Check.findById(id)
-        .exec();
-    const test = await Test.findById(check.test)
-        .exec();
+    const check = await Check.findById(id).exec();
+    if (!check) throw new Error(`cannot find check with id: ${id}`);
+    const test = await Test.findById(check.test).exec();
+    if (!test) throw new Error(`cannot find test with id: ${check.test}`);
 
-    /** update check */
-    const opts = {};
+    const opts: any = {};
     opts.markedById = user._id;
     opts.markedByUsername = user.username;
     opts.markedDate = new Date();
     opts.markedAs = 'accepted';
     opts.status = (check.status[0] === 'new') ? 'new' : 'passed';
-    opts.updatedDate = Date.now();
+    opts.updatedDate = new Date();
     opts.baselineId = baselineId;
 
-    log.debug(`update check id: '${id}' with opts: '${JSON.stringify(opts)}'`,
-        fileLogMeta, logMeta);
+    log.debug(`update check id: '${id}' with opts: '${JSON.stringify(opts)}'`, fileLogMeta, logMeta);
 
     Object.assign(check, opts);
     log.debug(`update check with options: '${JSON.stringify(check.toObject())}'`, fileLogMeta, logMeta);
     await createNewBaseline(check.toObject());
     await check.save();
 
-    /** update test statuses and date, suite date */
-    const testCalculatedStatus = await calculateTestStatus(check.test);
-
+    const testCalculatedStatus = await calculateTestStatus(String(check.test));
     const testCalculatedAcceptedStatus = await calculateAcceptedStatus(check.test);
 
     test.status = testCalculatedStatus;
@@ -127,20 +112,18 @@ const accept = async (id, baselineId, user) => {
     test.updatedDate = new Date();
 
     await Suite.findByIdAndUpdate(check.suite, { updatedDate: Date.now() });
-    log.debug(`update test with status: '${testCalculatedStatus}', marked: '${testCalculatedAcceptedStatus}'`,
-        fileLogMeta,
-        {
-            msgType: 'UPDATE',
-            itemType: 'test',
-            ref: test._id,
-        });
+    log.debug(`update test with status: '${testCalculatedStatus}', marked: '${testCalculatedAcceptedStatus}'`, fileLogMeta, {
+        msgType: 'UPDATE',
+        itemType: 'test',
+        ref: test._id,
+    });
     await test.save();
     await check.save();
     log.debug(`check with id: '${id}' was updated`, fileLogMeta, logMeta);
     return check;
 };
 
-async function removeCheck(id, user) {
+async function removeCheck(id: string, user: any): Promise<CheckDocument> {
     const logMeta = {
         scope: 'removeCheck',
         itemType: 'check',
@@ -150,13 +133,14 @@ async function removeCheck(id, user) {
     };
 
     try {
-        const check = await Check.findByIdAndDelete(id)
-            .exec();
+        const check: any = await Check.findByIdAndDelete(id).exec();
+        if (!check) throw new Error(`cannot find check with id: ${id}`);
 
         log.debug(`check with id: '${id}' was removed, update test: ${check.test}`, fileLogMeta, logMeta);
 
-        const test = await Test.findById(check.test)
-            .exec();
+        const test = await Test.findById(check.test).exec();
+        if (!test) throw new Error(`cannot find test with id: ${check.test}`);
+
         const testCalculatedStatus = await calculateTestStatus(check.test);
         const testCalculatedAcceptedStatus = await calculateAcceptedStatus(check.test);
         test.status = testCalculatedStatus;
@@ -165,36 +149,29 @@ async function removeCheck(id, user) {
         await orm.updateItemDate('VRSSuite', check.suite);
         await test.save();
 
-        if ((check.baselineId) && (check.baselineId !== 'undefined')) {
+        if (check.baselineId && check.baselineId !== 'undefined') {
             log.debug(`try to remove the snapshot, baseline: ${check.baselineId}`, fileLogMeta, logMeta);
-            await snapshotService.remove(check.baselineId?.toString());
+            await snapshotService.remove(check.baselineId.toString());
         }
 
-        if ((check.actualSnapshotId) && (check.baselineId !== 'undefined')) {
+        if (check.actualSnapshotId && check.baselineId !== 'undefined') {
             log.debug(`try to remove the snapshot, actual: ${check.actualSnapshotId}`, fileLogMeta, logMeta);
-            await snapshotService.remove(check.actualSnapshotId?.toString());
+            await snapshotService.remove(check.actualSnapshotId.toString());
         }
 
-        if ((check.diffId) && (check.baselineId !== 'undefined')) {
+        if (check.diffId && check.baselineId !== 'undefined') {
             log.debug(`try to remove snapshot, diff: ${check.diffId}`, fileLogMeta, logMeta);
-            await snapshotService.remove(check.diffId?.toString());
+            await snapshotService.remove(check.diffId.toString());
         }
         return check;
-    } catch (e) {
-        const errMsg = `cannot remove a check with id: '${id}', error: '${e.stack || e.toString()}'`;
+    } catch (e: unknown) {
+        const errMsg = `cannot remove a check with id: '${id}', error: '${e instanceof Error ? e.stack : String(e)}'`;
         log.error(errMsg, fileLogMeta, logMeta);
         throw new Error(errMsg);
     }
 }
 
-
-/**
- * Remove a chek
- * @param {String} id - check id
- * @param {Object} user - current user
- * @returns {Promise<Check>}
- */
-const remove = async (id, user) => {
+const remove = async (id: string, user: any): Promise<CheckDocument> => {
     const logMeta = {
         scope: 'removeCheck',
         itemType: 'check',
@@ -206,7 +183,7 @@ const remove = async (id, user) => {
     return removeCheck(id, user);
 };
 
-const update = async (id, opts, user) => {
+const update = async (id: string, opts: Partial<CheckDocument>, user: any): Promise<CheckDocument> => {
     const logMeta = {
         msgType: 'UPDATE',
         itemType: 'check',
@@ -214,15 +191,15 @@ const update = async (id, opts, user) => {
         user,
         scope: 'updateCheck',
     };
-    log.debug(`update check with id '${id}' with params '${JSON.stringify(opts, null, 2)}'`,
-        fileLogMeta, logMeta);
+    log.debug(`update check with id '${id}' with params '${JSON.stringify(opts, null, 2)}'`, fileLogMeta, logMeta);
 
-    const check = await Check.findOneAndUpdate({ _id: id }, opts, { new: true })
-        .exec();
-    const test = await Test.findOne({ _id: check.test })
-        .exec();
+    const check = await Check.findOneAndUpdate({ _id: id }, opts, { new: true }).exec();
+    if (!check) throw new Error(`cannot find check with id: ${id}`);
 
-    test.status = await calculateTestStatus(check.test);
+    const test = await Test.findOne({ _id: check.test }).exec();
+    if (!test) throw new Error(`cannot find test with id: ${check.test}`);
+
+    test.status = await calculateTestStatus(String(check.test));
 
     await orm.updateItemDate('VRSCheck', check);
     await orm.updateItemDate('VRSTest', test);
@@ -231,7 +208,7 @@ const update = async (id, opts, user) => {
     return check;
 };
 
-module.exports = {
+export {
     accept,
     remove,
     update,

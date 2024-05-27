@@ -2,7 +2,7 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { toJSON, paginate } from './plugins';
 
-interface SnapshotDocument extends Document {
+export interface SnapshotDocument extends Document {
     name: { [key: string]: string | boolean | number};
     path?: string;
     filename?: string;

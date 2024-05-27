@@ -1,4 +1,5 @@
 export { default as Check } from './Check';
+export { CheckDocument } from './Check';
 export { default as Log } from './Log';
 export { default as App } from './App';
 export { default as Snapshot } from './Snapshot';

@@ -1,13 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Check } from '../models';
 
-export const calculateAcceptedStatus = async function calculateAcceptedStatus(testId: any): Promise<string> {
+
+type statusType = 'Bug' | 'Accepted' | 'Unaccepted' | 'Partially';
+
+export const calculateAcceptedStatus = async function calculateAcceptedStatus(testId: any): Promise<statusType> {
     const checksInTest: any[] = await Check.find({ test: testId });
     const statuses: any[] = checksInTest.map((x: any) => x.markedAs);
     if (statuses.length < 1) {
         return 'Unaccepted';
     }
-    let testCalculatedStatus: string = 'Unaccepted';
+    let testCalculatedStatus: statusType = 'Unaccepted';
     if (statuses.some((x: any) => x === 'accepted')) {
         testCalculatedStatus = 'Partially';
     }
