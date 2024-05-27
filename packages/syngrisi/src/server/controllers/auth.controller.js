@@ -16,6 +16,7 @@ const fileLogMeta = {
 };
 // const { authService, userService, tokenService, emailService } = require('../services');
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const apikey = catchAsync(async (req, res, next) => {
     const apiKey = getApiKey();
     log.debug(
