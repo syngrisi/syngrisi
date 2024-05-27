@@ -1,6 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Request, Response, NextFunction } from 'express';
+
 // disable CORS for development purposes
-module.exports.disableCors = (req, res, next) => {
+export const disableCors = (req: Request, res: Response, next: NextFunction): void => {
     if (process.env.SYNGRISI_DISABLE_DEV_CORS !== '1') return next();
+    
     // Website you wish to allow to connect
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
 
@@ -12,7 +16,7 @@ module.exports.disableCors = (req, res, next) => {
 
     // Set to true if you need the website to include cookies in the requests sent
     // to the API (e.g. in case you use sessions)
-    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
 
     // Pass to next layer of middleware
     return next();

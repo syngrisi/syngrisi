@@ -3,8 +3,8 @@ const path = require('path');
 const httpStatus = require('http-status');
 
 const { catchAsync } = require('../../utils');
-const { ensureLoggedIn } = require('../../lib/ensureLogin');
-const { authorization } = require('../../middlewares/authorization');
+const { ensureLoggedIn } = require('../../middlewares/ensureLogin');
+const { authorization } = require('../../middlewares');
 
 const router = express.Router();
 

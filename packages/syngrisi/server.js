@@ -29,7 +29,7 @@ global.AppSettings = new AppSettings();
 
 const { config } = require('./config');
 
-const { disableCors } = require('./src/server/middlewares/disableCors');
+const { disableCors } = require('./src/server/middlewares');
 
 const log = require("./dist/src/server/lib/logger").default;
 
@@ -123,9 +123,10 @@ const routes = require('./src/server/routes/v1');
 
 app.use('/v1', routes);
 
-app.use('/auth', require('./src/server/routes/ui/auth'));
-app.use('/admin*', require('./src/server/routes/ui/admin'));
-app.use('/', require('./src/server/routes/ui'));
+app.use('/auth', require('./dist/src/server/routes/ui/auth').default);
+// app.use('/admin*', require('./src/server/routes/ui/admin'));
+app.use('/admin*', require('./dist/src/server/routes/ui/admin').default);
+app.use('/', require('./dist/src/server/routes/ui').default);
 
 app.use((req, res) => {
     res.status(404)
