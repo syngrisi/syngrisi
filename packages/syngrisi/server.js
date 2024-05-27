@@ -143,7 +143,7 @@ mongoose.connect(config.connectionString, { useUnifiedTopology: true })
     .then(async () => {
         log2.info('Connected to MongoDB');
         log2.debug('run onStart jobs', logMeta);
-        const startUp = await require('./src/server/lib/onStart');
+        const startUp = await require('./src/server/lib/startup');
         startUp.createTempDir();
         await startUp.createBasicUsers();
         await startUp.createInitialSettings();

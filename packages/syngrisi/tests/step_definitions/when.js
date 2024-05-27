@@ -137,6 +137,7 @@ When(/^I release key "([^"]*)"$/, async function (key) {
     }]);
 });
 
+// eslint-disable-next-line no-unused-vars
 When(/^I scroll by "([^"]*)"$/, async function (value) {
     // await browser.scroll(200, 200);
     await browser.performActions([

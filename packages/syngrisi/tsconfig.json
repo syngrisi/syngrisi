@@ -73,7 +73,7 @@
   "include": [
     "src/server/**/*.ts",
     "src/server/**/*.mts",
-    "src/tasks", "src/server/utils/calculateAcceptedStatus.js_", "src/server/utils/calculateAcceptedStatus.ts_", "src/server/lib/ensureLogin/index.js", "src/server/lib/ensureLogin/ensureLoggedOut.ts_",
+    "src/tasks", "src/server/utils/calculateAcceptedStatus.js_", "src/server/utils/calculateAcceptedStatus.ts_", "src/server/lib/ensureLogin/index.js", "src/server/lib/ensureLogin/ensureLoggedOut.ts_", "src/server/lib/startup/index.js", "src/server/lib/onStart.ts_", "src/server/lib/AppSettings.ts_",
   ],
   "exclude": [
     "tests/**",
