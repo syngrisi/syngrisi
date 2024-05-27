@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const { catchAsync } = require('../utils');
 const { pick } = require('../utils');
-const { appService } = require('../services');
+const { appService } = require('../../../dist/src/server/services');
 
 const info = catchAsync(async (req, res) => {
     res.status(httpStatus.OK)

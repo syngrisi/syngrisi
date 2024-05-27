@@ -1,7 +1,8 @@
 const httpStatus = require('http-status');
 const { EJSON } = require('bson');
 const { catchAsync } = require('../utils');
-const { logsService } = require('../services');
+const { logsService} = require('../../../dist/src/server/services');
+
 const { pick } = require('../utils');
 
 const getLogs = catchAsync(async (req, res) => {

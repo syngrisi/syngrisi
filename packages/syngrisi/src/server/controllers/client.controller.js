@@ -1,7 +1,8 @@
 const httpStatus = require('http-status');
 const { ApiError } = require('../utils');
 const { catchAsync } = require('../utils');
-const { clientService, genericService } = require('../services');
+const { clientService,  genericService} = require('../../../dist/src/server/services');
+
 const { pick, deserializeIfJSON } = require('../utils');
 const orm = require('../lib/dbItems');
 const { prettyCheckParams } = require('../utils');

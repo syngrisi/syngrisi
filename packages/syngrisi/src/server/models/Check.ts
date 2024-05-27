@@ -2,7 +2,7 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { toJSON, paginate } from './plugins';
 
-interface CheckDocument extends Document {
+export interface CheckDocument extends Document {
     name: { [key: string]: string };
     test: Schema.Types.ObjectId;
     suite: Schema.Types.ObjectId;
@@ -14,13 +14,8 @@ interface CheckDocument extends Document {
     diffId?: Schema.Types.ObjectId;
     createdDate: Date;
     updatedDate?: Date;
-    status: {
-        type: {
-          type: string;
-          enum: ['new', 'pending', 'approved', 'running', 'passed', 'failed', 'aborted'];
-        }[];
-        default: 'new';
-      };
+    // status: ['new', 'pending', 'approved', 'running', 'passed', 'failed', 'aborted'];
+    status: ('new' | 'pending' | 'approved' | 'running' | 'passed' | 'failed' | 'aborted' | 'blinking')[];
     browserName?: string;
     browserVersion?: string;
     browserFullVersion?: string;
@@ -42,7 +37,8 @@ interface CheckDocument extends Document {
     meta?: any;
 }
 
-const CheckSchema: Schema<CheckDocument> = new Schema({
+// const CheckSchema: Schema<CheckDocument> = new Schema({
+const CheckSchema = new Schema<CheckDocument>({
     name: {
         type: String,
         required: 'CheckSchema: the name of the check entity is empty',
@@ -97,7 +93,7 @@ const CheckSchema: Schema<CheckDocument> = new Schema({
                 message: 'status is required',
             },
         }],
-        default: 'new',
+        default: ['new'],
     },
     browserName: {
         type: String,

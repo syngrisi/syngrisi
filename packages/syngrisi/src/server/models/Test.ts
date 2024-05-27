@@ -2,7 +2,7 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { toJSON, paginate, paginateDistinct } from './plugins';
 
-interface TestDocument extends Document {
+export interface TestDocument extends Document {
     name: { [key: string]: string | boolean | number};
     description?: string;
     status?: string;

@@ -1,7 +1,9 @@
 const httpStatus = require('http-status');
 const { ApiError } = require('../utils');
 const { catchAsync } = require('../utils');
-const { genericService, checkService } = require('../services');
+// const { genericService, checkService } = require('../services');
+const { genericService,  checkService} = require('../../../dist/src/server/services');
+
 const { deserializeIfJSON, pick } = require('../utils');
 const { removeEmptyProperties } = require('../utils');
 

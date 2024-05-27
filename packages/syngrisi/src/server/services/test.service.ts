@@ -1,38 +1,28 @@
-/* eslint-disable no-restricted-syntax,no-await-in-loop */
-const checkService = require('./check.service');
-const { Test, Check } = require('../models');
-const log = require("../../../dist/src/server/lib/logger").default;
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { checkService } from './index';
+import { Test, Check } from '../models';
+import log from "../lib/logger";
+
 
 const fileLogMeta = {
     scope: 'test_service',
     msgType: 'TEST',
 };
 
-/**
- * Query for test
- * @param {Object} filter - Mongo filter
- * @param {Object} options - Query options
- * @param {string} [options.sortBy] - Sort option in the format: sortField:(desc|asc)
- * @param {number} [options.limit] - Maximum number of results per page (default = 10)
- * @param {number} [options.page] - Current page (default = 1)
- * @returns {Promise<QueryResult>} - result
- */
-const queryTests = async (filter, options) => {
+const queryTests = async (filter: any, options: any) => {
+    // @ts-ignore
     const tests = await Test.paginate(filter, options);
     return tests;
 };
-const queryTestsDistinct = async (filter, options) => {
+
+const queryTestsDistinct = async (filter: any, options: any) => {
+    // @ts-ignore
     const tests = await Test.paginateDistinct(filter, options);
     return tests;
 };
 
-/**
- * Remove a test
- * @param {String} id - test id
- * @param {Object} user - current user
- * @returns {Promise<Check>} - removed test
- */
-const remove = async (id, user) => {
+const remove = async (id: string, user: any) => {
     const logOpts = {
         scope: 'removeTest',
         itemType: 'test',
@@ -45,19 +35,17 @@ const remove = async (id, user) => {
     try {
         log.debug(`try to delete all checks associated to test with ID: '${id}'`, logOpts);
         const checks = await Check.find({ test: id });
-        // eslint-disable-next-line no-restricted-syntax
         for (const check of checks) {
-            // eslint-disable-next-line no-await-in-loop
             await checkService.remove(check._id, user);
         }
         return Test.findByIdAndDelete(id);
-    } catch (e) {
-        log.error(`cannot remove test with id: ${id} error: ${e.stack || e.toString()}`, logOpts);
+    } catch (e: unknown) {
+        log.error(`cannot remove test with id: ${id} error: ${(e instanceof Error) ? e.stack : String(e)}`, logOpts);
         throw new Error();
     }
 };
 
-const accept = async (id, user) => {
+const accept = async (id: string, user: any) => {
     const logOpts = {
         scope: 'acceptTest',
         itemType: 'test',
@@ -67,8 +55,7 @@ const accept = async (id, user) => {
     };
     log.info(`accept test with, id: '${id}', user: '${user.username}'`, fileLogMeta, logOpts);
 
-    const checks = await Check.find({ test: id })
-        .exec();
+    const checks: any = await Check.find({ test: id }).exec();
 
     for (const check of checks) {
         await checkService.accept(check._id, check.actualSnapshotId, user);
@@ -76,7 +63,7 @@ const accept = async (id, user) => {
     return { message: 'success' };
 };
 
-module.exports = {
+export {
     queryTests,
     queryTestsDistinct,
     remove,

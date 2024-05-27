@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
 import passportLocalMongoose from 'passport-local-mongoose';
 import { toJSON, paginate } from './plugins';
 
-interface UserDocument extends Document {
+export interface UserDocument extends Document {
     username: { [key: string]: string | boolean | number};
     firstName: { [key: string]: string | boolean | number};
     lastName: { [key: string]: string | boolean | number};
@@ -19,8 +19,17 @@ interface UserDocument extends Document {
     updatedDate?: Date;
     expiration?: Date;
     meta?: any;
+    
     isEmailTaken(username: string, excludeUserId?: string): Promise<boolean>;
+    paginate: any; 
+    setPassword: (password: string) => Promise<UserDocument>;
 }
+
+// export interface UserModel extends Model<UserDocument> {
+//     isEmailTaken(username: string, excludeUserId?: string): Promise<boolean>;
+//     paginate: any; 
+//     setPassword: (password: string) => Promise<UserDocument>;
+// }
 
 const UserSchema: Schema<UserDocument> = new Schema({
     username: {
@@ -73,5 +82,8 @@ UserSchema.plugin(toJSON);
 UserSchema.plugin(paginate);
 UserSchema.plugin(passportLocalMongoose, { hashField: 'password' });
 
-const User: Model<UserDocument> = mongoose.model<UserDocument>('VRSUser', UserSchema);
+// const User: Model<UserDocument> = mongoose.model<UserDocument>('VRSUser', UserSchema);
+
+const User = mongoose.model<UserDocument>('VRSUser', UserSchema);
+
 export default User;

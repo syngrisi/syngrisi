@@ -1,40 +1,49 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable camelcase */
-const { promises: fs } = require('fs');
-const stringTable = require('string-table');
-const fss = require('fs');
-const { config } = require('../../../config');
-const { subDays, dateToISO8601 } = require('../utils');
-const { ProgressBar } = require('../utils');
-const log = require("../../../dist/src/server/lib/logger").default;
 
-const {
+interface StringTable {
+    create(data: { [key: string]: any }[]): string;
+}
+
+import fs, { promises as fsp } from 'fs';
+// @ts-ignore
+import st from 'string-table';
+import { config } from '../../../config';
+import { subDays, dateToISO8601 } from '../utils';
+import { ProgressBar } from '../utils';
+import log from "../lib/logger";
+import testAdminUser from '../../seeds/testAdmin.json'
+const stringTable: StringTable = st;
+
+import {
     Snapshot,
     Check,
     Test,
     Run,
-    Log,
     Suite,
     User,
+    Log,
     Baseline,
-} = require('../models');
+} from '../models';
 
-const testAdminUser = require('../../seeds/testAdmin.json');
+// const testAdminUser = require('../../seeds/testAdmin.json');
 
 const fileLogMeta = {
     scope: 'app_service',
     msgType: 'APP',
 };
 
-function taskOutput(msg, res) {
+function taskOutput(msg: any, res: any) {
     res.write(`${msg.toString()}\n`);
     log.debug(msg.toString(), fileLogMeta);
 }
 
-function parseHrtimeToSeconds(hrtime) {
+function parseHrtimeToSeconds(hrtime: any) {
     return (hrtime[0] + (hrtime[1] / 1e9)).toFixed(3);
 }
 
-const status = async (currentUser) => {
+const status = async (currentUser: any) => {
     const count = await User.countDocuments().exec();
 
     log.silly(`server status: check users counts: ${count}`);
@@ -45,7 +54,7 @@ const status = async (currentUser) => {
 };
 
 const screenshots = async () => {
-    const files = fss.readdirSync(config.defaultImagesPath);
+    const files = fs.readdirSync(config.defaultImagesPath);
     return files;
 };
 
@@ -70,110 +79,84 @@ const loadTestUser = async () => {
     return { msg: `already exist '${testAdmin}'` };
 };
 
-const task_handle_database_consistency = async (options, res) => {
-    // this header to response with chunks data
+const task_handle_database_consistency = async (options: any, res: any) => {
     res.writeHead(200, {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
         'Content-Encoding': 'none',
         'x-no-compression': 'true',
     });
-    // res.setHeader('x-no-compression', 'true');
     try {
         const startTime = process.hrtime();
         taskOutput('- starting...\n', res);
         taskOutput('---------------------------------', res);
         taskOutput('STAGE #1: Calculate Common stats', res);
         taskOutput('get runs data', res);
-        const allRunsBefore = await Run.find()
-            .exec();
+        const allRunsBefore = await Run.find().exec();
         taskOutput('get suites data', res);
-        const allSuitesBefore = await Suite.find()
-            .exec();
+        const allSuitesBefore = await Suite.find().exec();
         taskOutput('get tests data', res);
-        const allTestsBefore = await Test.find()
-            .lean()
-            .exec();
+        const allTestsBefore = await Test.find().lean().exec();
         taskOutput('get checks data', res);
-        const allChecksBefore = await Check.find()
-            .lean()
-            .exec();
+        const allChecksBefore = await Check.find().lean().exec();
         taskOutput('get snapshots data', res);
-        const allSnapshotsBefore = await Snapshot.find()
-            .lean()
-            .exec();
+        const allSnapshotsBefore = await Snapshot.find().lean().exec();
         taskOutput('get files data', res);
-        const allFilesBefore = (await fs.readdir(config.defaultImagesPath, { withFileTypes: true }))
-            .filter((item) => !item.isDirectory())
-            .map(((x) => x.name))
-            .filter((x) => x.includes('.png'));
+        const allFilesBefore = (await fsp.readdir(config.defaultImagesPath, { withFileTypes: true }))
+            .filter((item: any) => !item.isDirectory())
+            .map((x: any) => x.name)
+            .filter((x: any) => x.includes('.png'));
 
         taskOutput('-----------------------------', res);
-        const beforeStatTable = stringTable.create(
-            [
-                { item: 'suites', count: allSuitesBefore.length },
-                { item: 'runs', count: allRunsBefore.length },
-                { item: 'tests', count: allTestsBefore.length },
-                { item: 'checks', count: allChecksBefore.length },
-                { item: 'snapshots', count: allSnapshotsBefore.length },
-                { item: 'files', count: allFilesBefore.length },
-            ]
-        );
+        const beforeStatTable = stringTable.create([
+            { item: 'suites', count: allSuitesBefore.length },
+            { item: 'runs', count: allRunsBefore.length },
+            { item: 'tests', count: allTestsBefore.length },
+            { item: 'checks', count: allChecksBefore.length },
+            { item: 'snapshots', count: allSnapshotsBefore.length },
+            { item: 'files', count: allFilesBefore.length },
+        ]);
         res.flush();
         taskOutput(beforeStatTable, res);
 
         taskOutput('---------------------------------', res);
         taskOutput('STAGE #2: Calculate Inconsistent Items', res);
         taskOutput('> calculate abandoned snapshots', res);
-        // eslint-disable-next-line
-        const abandonedSnapshots = allSnapshotsBefore.filter((sn) => {
-            return !fss.existsSync(`${config.defaultImagesPath}/${sn.filename}`);
-        });
+        const abandonedSnapshots = allSnapshotsBefore.filter((sn: any) => !fs.existsSync(`${config.defaultImagesPath}/${sn.filename}`));
 
         taskOutput('> calculate abandoned files', res);
-        const snapshotsUniqueFiles = Array.from(new Set(allSnapshotsBefore.map((x) => x.filename)));
-        const abandonedFiles = [];
+        const snapshotsUniqueFiles = Array.from(new Set(allSnapshotsBefore.map((x: any) => x.filename)));
+        const abandonedFiles: any[] = [];
         const progress = new ProgressBar(allFilesBefore.length);
-        // eslint-disable-next-line no-restricted-syntax
         for (const [index, file] of allFilesBefore.entries()) {
             setTimeout(() => {
                 progress.writeIfChange(index, allFilesBefore.length, taskOutput, res);
             }, 10);
 
-            if (!(snapshotsUniqueFiles.includes(file.toString()))) {
+            if (!snapshotsUniqueFiles.includes(file.toString())) {
                 abandonedFiles.push(file);
             }
         }
-        // we don't remove the abandoned checks yet, need more statistics
         taskOutput('> calculate abandoned checks', res);
-        const allSnapshotsBeforeIds = allSnapshotsBefore.map((x) => x._id.valueOf());
+        const allSnapshotsBeforeIds = allSnapshotsBefore.map((x: any) => x._id.valueOf());
 
-        const allChecksBeforeLight = allChecksBefore.map((x) => ({
+        const allChecksBeforeLight = allChecksBefore.map((x: any) => ({
             _id: x._id.valueOf(), baselineId: x.baselineId.valueOf(), actualSnapshotId: x.actualSnapshotId.valueOf(),
         }));
-        const abandonedChecks = [];
+        const abandonedChecks: any[] = [];
         const progressChecks = new ProgressBar(allChecksBefore.length);
-        // eslint-disable-next-line no-restricted-syntax
         for (const [index, check] of allChecksBeforeLight.entries()) {
             progressChecks.writeIfChange(index, allChecksBeforeLight.length, taskOutput, res);
-            if (
-                !(allSnapshotsBeforeIds.includes(check.baselineId))
-                || !(allSnapshotsBeforeIds.includes(check.actualSnapshotId.valueOf()))
-            ) {
+            if (!allSnapshotsBeforeIds.includes(check.baselineId) || !allSnapshotsBeforeIds.includes(check.actualSnapshotId.valueOf())) {
                 abandonedChecks.push(check._id.valueOf());
             }
         }
 
         taskOutput('> calculate empty tests', res);
-        const checksUniqueTests = (await Check.find()
-            .lean()
-            .distinct('test')
-            .exec())
-            .map((x) => x.valueOf());
+        const checksUniqueTests = (await Check.find().lean().distinct('test').exec()).map((x: any) => x.valueOf());
 
-        const emptyTests = [];
-
-        // eslint-disable-next-line no-restricted-syntax,no-unused-vars
+        const emptyTests: any[] = [];
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         for (const [index, test] of allTestsBefore.entries()) {
             if (!checksUniqueTests.includes(test._id.valueOf())) {
                 emptyTests.push(test._id.valueOf());
@@ -182,14 +165,10 @@ const task_handle_database_consistency = async (options, res) => {
 
         taskOutput('> calculate empty runs', res);
 
-        const checksUniqueRuns = (await Check.find()
-            .distinct('run')
-            .exec()).map((x) => x.valueOf());
+        const checksUniqueRuns = (await Check.find().distinct('run').exec()).map((x: any) => x.valueOf());
 
-        const emptyRuns = [];
-        // eslint-disable-next-line no-restricted-syntax
+        const emptyRuns: any[] = [];
         for (const run of allRunsBefore) {
-            // eslint-disable-next-line no-await-in-loop
             if (!checksUniqueRuns.includes(run._id.valueOf())) {
                 emptyRuns.push(run._id.valueOf());
             }
@@ -197,30 +176,24 @@ const task_handle_database_consistency = async (options, res) => {
 
         taskOutput('> calculate empty suites', res);
 
-        const checksUniqueSuites = (await Check.find()
-            .distinct('suite')
-            .exec()).map((x) => x.valueOf());
+        const checksUniqueSuites = (await Check.find().distinct('suite').exec()).map((x: any) => x.valueOf());
 
-        const emptySuites = [];
-        // eslint-disable-next-line no-restricted-syntax
+        const emptySuites: any[] = [];
         for (const suite of allSuitesBefore) {
-            // eslint-disable-next-line no-await-in-loop
             if (!checksUniqueSuites.includes(suite._id.valueOf())) {
                 emptySuites.push(suite._id.valueOf());
             }
         }
         taskOutput('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', res);
         taskOutput('Current inconsistent items:', res);
-        const inconsistentStatTable = stringTable.create(
-            [
-                { item: 'empty suites', count: emptySuites.length },
-                { item: 'empty runs', count: emptyRuns.length },
-                { item: 'empty tests', count: emptyTests.length },
-                { item: 'abandoned checks', count: abandonedChecks.length },
-                { item: 'abandoned snapshots', count: abandonedSnapshots.length },
-                { item: 'abandoned files', count: abandonedFiles.length },
-            ]
-        );
+        const inconsistentStatTable = stringTable.create([
+            { item: 'empty suites', count: emptySuites.length },
+            { item: 'empty runs', count: emptyRuns.length },
+            { item: 'empty tests', count: emptyTests.length },
+            { item: 'abandoned checks', count: abandonedChecks.length },
+            { item: 'abandoned snapshots', count: abandonedSnapshots.length },
+            { item: 'abandoned files', count: abandonedFiles.length },
+        ]);
         taskOutput(inconsistentStatTable, res);
 
         if (options.clean) {
@@ -238,41 +211,39 @@ const task_handle_database_consistency = async (options, res) => {
             taskOutput('> remove abandoned snapshots', res);
             await Snapshot.deleteMany({ _id: { $in: abandonedSnapshots } });
             taskOutput('> remove abandoned files', res);
-            await Promise.all(abandonedFiles.map((filename) => fs.unlink(`${config.defaultImagesPath}/${filename}`)));
-            const allFilesAfter = fss.readdirSync(config.defaultImagesPath, { withFileTypes: true })
-                .filter((item) => !item.isDirectory())
-                .map(((x) => x.name))
-                .filter((x) => x.includes('.png'));
+            await Promise.all(abandonedFiles.map((filename) => fsp.unlink(`${config.defaultImagesPath}/${filename}`)));
+            const allFilesAfter = fs.readdirSync(config.defaultImagesPath, { withFileTypes: true })
+                .filter((item: any) => !item.isDirectory())
+                .map((x: any) => x.name)
+                .filter((x: any) => x.includes('.png'));
 
             taskOutput('STAGE #4: Calculate Common stats after cleaning', res);
             taskOutput('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', res);
             taskOutput('Current items:', res);
-            const afterStatTable = stringTable.create(
-                [
-                    { item: 'suites', count: await Suite.countDocuments() },
-                    { item: 'runs', count: await Run.countDocuments() },
-                    { item: 'tests', count: await Test.countDocuments() },
-                    { item: 'checks', count: await Check.countDocuments() },
-                    { item: 'snapshots', count: await Snapshot.countDocuments() },
-                    { item: 'files', count: allFilesAfter.length },
-                ]
-            );
+            const afterStatTable = stringTable.create([
+                { item: 'suites', count: await Suite.countDocuments() },
+                { item: 'runs', count: await Run.countDocuments() },
+                { item: 'tests', count: await Test.countDocuments() },
+                { item: 'checks', count: await Check.countDocuments() },
+                { item: 'snapshots', count: await Snapshot.countDocuments() },
+                { item: 'files', count: allFilesAfter.length },
+            ]);
             taskOutput(afterStatTable, res);
         }
 
         const elapsedSeconds = parseHrtimeToSeconds(process.hrtime(startTime));
         taskOutput(`> Done in ${elapsedSeconds} seconds, ${elapsedSeconds / 60} min`, res);
         taskOutput('- end...\n', res);
-    } catch (e) {
-        log.error(e.stack || e.toString());
-        taskOutput(e.stack || e, res);
+    } catch (e: unknown) {
+        const errMsg = e instanceof Error ? e.message : String(e);
+        log.error(errMsg);
+        taskOutput(errMsg, res);
     } finally {
         res.end();
     }
 };
 
-const task_remove_old_logs = async (options, res) => {
-    // this header to response with chunks data
+const task_remove_old_logs = async (options: any, res: any) => {
     res.writeHead(200, {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
@@ -280,21 +251,14 @@ const task_remove_old_logs = async (options, res) => {
     });
     const trashHoldDate = subDays(new Date(), parseInt(options.days, 10));
     const filter = { timestamp: { $lt: trashHoldDate } };
-    const allLogsCountBefore = await log.find({})
-        .countDocuments();
-    const oldLogsCount = await log.find(filter)
-        .countDocuments();
+    const allLogsCountBefore = await Log.find({}).countDocuments();
+    const oldLogsCount = await Log.find(filter).countDocuments();
     taskOutput(`- the count of all documents is: '${allLogsCountBefore}'\n`, res);
     taskOutput(`- the count of documents to be removed is: '${oldLogsCount}'\n`, res);
     if (options.statistics === 'false') {
-        taskOutput(
-            `- will remove all logs older that: '${options.days}' days,`
-            + ` '${dateToISO8601(trashHoldDate)}'\n`,
-            res
-        );
-        await log.deleteMany(filter);
-        const allLogsCountAfter = await log.find({})
-            .countDocuments();
+        taskOutput(`- will remove all logs older that: '${options.days}' days, '${dateToISO8601(trashHoldDate)}'\n`, res);
+        await Log.deleteMany(filter);
+        const allLogsCountAfter = await Log.find({}).countDocuments();
         taskOutput(`- the count of all documents now is: '${allLogsCountAfter}'\n`, res);
     }
 
@@ -302,8 +266,7 @@ const task_remove_old_logs = async (options, res) => {
     res.end();
 };
 
-const task_handle_old_checks = async (options, res) => {
-    // this header to response with chunks data
+const task_handle_old_checks = async (options: any, res: any) => {
     res.writeHead(200, {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
@@ -318,66 +281,51 @@ const task_handle_old_checks = async (options, res) => {
         const trashHoldDate = subDays(new Date(), parseInt(options.days, 10));
 
         taskOutput('> get all checks data', res);
-        const allChecksBefore = await Check.find()
-            .lean()
-            .exec();
+        const allChecksBefore = await Check.find().lean().exec();
         taskOutput('> get snapshots data', res);
-        const allSnapshotsBefore = await Snapshot.find()
-            .lean()
-            .exec();
+        const allSnapshotsBefore = await Snapshot.find().lean().exec();
         taskOutput('> get files data', res);
-        const allFilesBefore = (await fs.readdir(config.defaultImagesPath, { withFileTypes: true }))
-            .filter((item) => !item.isDirectory())
-            .map(((x) => x.name))
-            .filter((x) => x.includes('.png'));
+        const allFilesBefore = (await fsp.readdir(config.defaultImagesPath, { withFileTypes: true }))
+            .filter((item: any) => !item.isDirectory())
+            .map((x: any) => x.name)
+            .filter((x: any) => x.includes('.png'));
 
         taskOutput('> get old checks data', res);
-        const oldChecks = await Check.find({ createdDate: { $lt: trashHoldDate } })
-            .lean()
-            .exec();
+        const oldChecks = await Check.find({ createdDate: { $lt: trashHoldDate } }).lean().exec();
 
         taskOutput('>>> collect all baselineIds for old Checks ', res);
-        const oldSnapshotsBaselineIdIds = oldChecks.map((x) => x.baselineId)
-            .filter((x) => x);
+        const oldSnapshotsBaselineIdIds = oldChecks.map((x: any) => x.baselineId).filter((x: any) => x);
 
         taskOutput('>>> collect all actualSnapshotId for old Checks ', res);
-        const oldSnapshotsActualSnapshotIdIds = oldChecks.map((x) => x.actualSnapshotId)
-            .filter((x) => x);
+        const oldSnapshotsActualSnapshotIdIds = oldChecks.map((x: any) => x.actualSnapshotId).filter((x: any) => x);
 
         taskOutput('>>> collect all diffId for old Checks ', res);
-        const oldSnapshotsDiffIds = oldChecks.map((x) => x.diffId)
-            .filter((x) => x);
+        const oldSnapshotsDiffIds = oldChecks.map((x: any) => x.diffId).filter((x: any) => x);
 
         taskOutput('>>> calculate all unique snapshots ids for old Checks ', res);
 
-        const allOldSnapshotsUniqueIds = Array.from(
-            new Set([...oldSnapshotsBaselineIdIds, ...oldSnapshotsActualSnapshotIdIds, ...oldSnapshotsDiffIds])
-        )
-            .map((x) => x.valueOf());
+        const allOldSnapshotsUniqueIds = Array.from(new Set([...oldSnapshotsBaselineIdIds, ...oldSnapshotsActualSnapshotIdIds, ...oldSnapshotsDiffIds]))
+            .map((x: any) => x.valueOf());
 
         taskOutput('>>> collect all old snapshots', res);
-        const oldSnapshots = await Snapshot.find({ _id: { $in: allOldSnapshotsUniqueIds } })
-            .lean();
+        const oldSnapshots = await Snapshot.find({ _id: { $in: allOldSnapshotsUniqueIds } }).lean();
 
-        const outTable = stringTable.create(
-            [
-                { item: 'all checks', count: allChecksBefore.length },
-                { item: 'all snapshots', count: allSnapshotsBefore.length },
-                { item: 'all files', count: allFilesBefore.length },
-                { item: `checks older than: '${options.days}' days`, count: oldChecks.length },
-                { item: 'old snapshots baseline ids', count: oldSnapshotsBaselineIdIds.length },
-                { item: 'old snapshots actual snapshotId', count: oldSnapshotsActualSnapshotIdIds.length },
-                { item: 'old snapshots diffIds', count: oldSnapshotsDiffIds.length },
-                { item: 'all old snapshots unique Ids', count: allOldSnapshotsUniqueIds.length },
-                { item: 'all old snapshots', count: oldSnapshots.length },
-            ]
-        );
+        const outTable = stringTable.create([
+            { item: 'all checks', count: allChecksBefore.length },
+            { item: 'all snapshots', count: allSnapshotsBefore.length },
+            { item: 'all files', count: allFilesBefore.length },
+            { item: `checks older than: '${options.days}' days`, count: oldChecks.length },
+            { item: 'old snapshots baseline ids', count: oldSnapshotsBaselineIdIds.length },
+            { item: 'old snapshots actual snapshotId', count: oldSnapshotsActualSnapshotIdIds.length },
+            { item: 'old snapshots diffIds', count: oldSnapshotsDiffIds.length },
+            { item: 'all old snapshots unique Ids', count: allOldSnapshotsUniqueIds.length },
+            { item: 'all old snapshots', count: oldSnapshots.length },
+        ]);
 
         taskOutput(outTable, res);
 
         if (options.remove === 'true') {
-            taskOutput(`STAGE #2 Remove checks that older that: '${options.days}' days,`
-                + ` '${dateToISO8601(trashHoldDate)}'\n`, res);
+            taskOutput(`STAGE #2 Remove checks that older that: '${options.days}' days, '${dateToISO8601(trashHoldDate)}'\n`, res);
 
             taskOutput('> remove checks', res);
             const checkRemovingResult = await Check.deleteMany({ createdDate: { $lt: trashHoldDate } });
@@ -387,17 +335,13 @@ const task_handle_old_checks = async (options, res) => {
 
             taskOutput('>> collect data to removing', res);
             taskOutput('>>> get all baselines snapshots id`s', res);
-            const baselinesSnapshotsIds = (await Baseline.find({})
-                .distinct('snapshootId'));
+            const baselinesSnapshotsIds = (await Baseline.find({}).distinct('snapshootId'));
 
-            // get baselineIds after removing
             taskOutput('>>> get all checks snapshots baselineId', res);
-            const checksSnapshotsBaselineId = (await Check.find({})
-                .distinct('baselineId'));
+            const checksSnapshotsBaselineId = (await Check.find({}).distinct('baselineId'));
 
             taskOutput('>>> get all checks snapshots actualSnapshotId', res);
-            const checksSnapshotsActualSnapshotId = (await Check.find({})
-                .distinct('actualSnapshotId'));
+            const checksSnapshotsActualSnapshotId = (await Check.find({}).distinct('actualSnapshotId'));
 
             taskOutput('>> remove baselines snapshots', res);
 
@@ -413,8 +357,6 @@ const task_handle_old_checks = async (options, res) => {
             taskOutput(`>>> removed: '${removedByBaselineSnapshotsResult.deletedCount}'`, res);
 
             taskOutput('>> remove actual snapshots', res);
-            // here we give all old checks and then exclude all baselines
-            // and all checks related to new checks with actual and baseline snapshots with such baselineId
             taskOutput('>> remove all old snapshots that not related to new baseline and check items', res);
             const removedByActualSnapshotsResult = await Snapshot.deleteMany({
                 $and: [
@@ -436,66 +378,59 @@ const task_handle_old_checks = async (options, res) => {
 
             taskOutput('> remove files', res);
             taskOutput('>>> collect all old snapshots filenames', res);
-            const oldSnapshotsUniqueFilenames = Array.from(new Set(oldSnapshots.map((x) => x.filename)));
+            const oldSnapshotsUniqueFilenames = Array.from(new Set(oldSnapshots.map((x: any) => x.filename)));
             taskOutput(`>> found: ${oldSnapshotsUniqueFilenames.length}`, res);
 
             taskOutput('> get all current snapshots filenames', res);
-            const allCurrentSnapshotsFilenames = await Snapshot.find()
-                .distinct('filename')
-                .exec();
+            const allCurrentSnapshotsFilenames = await Snapshot.find().distinct('filename').exec();
 
             taskOutput('>> calculate interception between all current snapshot filenames and old shapshots filenames', res);
-            const arrayIntersection = (arr1, arr2) => arr1.filter((x) => arr2.includes(x));
+            const arrayIntersection = (arr1: any, arr2: any) => arr1.filter((x: any) => arr2.includes(x));
             const filesInterception = arrayIntersection(allCurrentSnapshotsFilenames, oldSnapshotsUniqueFilenames);
             taskOutput(`>> found: ${filesInterception.length}`, res);
 
             taskOutput('>> calculate filenames to remove', res);
-            const arrayDiff = (arr1, arr2) => arr1.filter((x) => !arr2.includes(x));
+            const arrayDiff = (arr1: any, arr2: any) => arr1.filter((x: any) => !arr2.includes(x));
             const filesToDelete = arrayDiff(oldSnapshotsUniqueFilenames, filesInterception);
             taskOutput(`>> found: ${filesToDelete.length}`, res);
 
             taskOutput(`>> remove these files: ${filesToDelete.length}`, res);
-            await Promise.all(filesToDelete.map((filename) => fs.unlink(`${config.defaultImagesPath}/${filename}`)));
+            await Promise.all(filesToDelete.map((filename: string) => fsp.unlink(`${config.defaultImagesPath}/${filename}`)));
             taskOutput(`>> done: ${filesToDelete.length}`, res);
 
             taskOutput('STAGE #3 Calculate common stats after Removing', res);
 
             taskOutput('> get all checks data', res);
-            const allChecksAfter = await Check.find()
-                .lean()
-                .exec();
+            const allChecksAfter = await Check.find().lean().exec();
             taskOutput('> get snapshots data', res);
-            const allSnapshotsAfter = await Snapshot.find()
-                .lean()
-                .exec();
+            const allSnapshotsAfter = await Snapshot.find().lean().exec();
             taskOutput('> get files data', res);
-            const allFilesAfter = (await fs.readdir(config.defaultImagesPath, { withFileTypes: true }))
-                .filter((item) => !item.isDirectory())
-                .map(((x) => x.name))
-                .filter((x) => x.includes('.png'));
+            const allFilesAfter = (await fsp.readdir(config.defaultImagesPath, { withFileTypes: true }))
+                .filter((item: any) => !item.isDirectory())
+                .map((x: any) => x.name)
+                .filter((x: any) => x.includes('.png'));
 
-            const outTableAfter = stringTable.create(
-                [
-                    { item: 'all checks', count: allChecksAfter.length },
-                    { item: 'all snapshots', count: allSnapshotsAfter.length },
-                    { item: 'all files', count: allFilesAfter.length },
-                ]
-            );
+            const outTableAfter = stringTable.create([
+                { item: 'all checks', count: allChecksAfter.length },
+                { item: 'all snapshots', count: allSnapshotsAfter.length },
+                { item: 'all files', count: allFilesAfter.length },
+            ]);
 
             taskOutput(outTableAfter, res);
         }
         const elapsedSeconds = parseHrtimeToSeconds(process.hrtime(startTime));
 
         taskOutput(`> done in ${elapsedSeconds} seconds ${elapsedSeconds / 60} min`, res);
-    } catch (e) {
-        log.error(e.stack.toString() || e);
-        taskOutput(e.stack || e, res);
+    } catch (e: unknown) {
+        const errMsg = e instanceof Error ? e.message : String(e);
+        log.error(errMsg);
+        taskOutput(errMsg, res);
     } finally {
         res.end();
     }
 };
-const task_test = async (options = 'empty', req, res) => {
-    // this header to response with chunks data
+
+const task_test = async (options = 'empty', req: any, res: any) => {
     res.writeHead(200, {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
@@ -503,19 +438,15 @@ const task_test = async (options = 'empty', req, res) => {
     });
 
     const x = 1000;
-    const interval = 30;
+    // const interval = 30;
     let isAborted = false;
 
-    req.on(
-        'close',
-        () => {
-            isAborted = true;
-        }
-    );
+    req.on('close', () => {
+        isAborted = true;
+    });
 
     for (let i = 0; i < x; i += 1) {
-        // eslint-disable-next-line no-await-in-loop
-        await new Promise((r) => setTimeout(() => r(), interval));
+        // await new Promise((r) => setTimeout(() => r(), interval));
         taskOutput(`- Task Output: '${i}', options: ${options}\n`, res);
         if (isAborted) {
             taskOutput('the task was aborted\n', res);
@@ -527,7 +458,7 @@ const task_test = async (options = 'empty', req, res) => {
     return res.end();
 };
 
-module.exports = {
+export {
     task_test,
     task_handle_old_checks,
     task_handle_database_consistency,

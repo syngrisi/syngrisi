@@ -2,7 +2,8 @@
 const httpStatus = require('http-status');
 const { EJSON } = require('bson');
 const { catchAsync } = require('../utils');
-const { genericService, suiteService } = require('../services');
+const { genericService, suiteService } = require('../../../dist/src/server/services');
+
 const { pick } = require('../utils');
 
 const get = catchAsync(async (req, res) => {

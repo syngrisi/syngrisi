@@ -1,7 +1,9 @@
 const httpStatus = require('http-status');
 const { EJSON } = require('bson');
 const { catchAsync } = require('../utils');
-const { usersService } = require('../services');
+// const { usersService } = require('../services');
+const { usersService } = require('../../../dist/src/server/services');
+
 const { pick } = require('../utils');
 const log = require("../../../dist/src/server/lib/logger").default;
 const fileLogMeta = {

@@ -5,7 +5,9 @@ const { pick } = require('../utils');
 const { ApiError } = require('../utils');
 
 const { catchAsync } = require('../utils');
-const { testService } = require('../services');
+// const { testService } = require('../services');
+const { testService } = require('../../../dist/src/server/services');
+
 const { deserializeIfJSON } = require('../utils');
 
 const getTest = catchAsync(async (req, res) => {

@@ -1,33 +1,41 @@
-/* eslint-disable valid-jsdoc */
-const fss = require('fs');
-const hasha = require('hasha');
-const { promises: fs } = require('fs');
-// const httpStatus = require('http-status');
-const {
-    Snapshot,
-    Check,
-    Test,
-    App,
-    Baseline,
-} = require('../models');
-const {
-    removeEmptyProperties, waitUntil, buildIdentObject, calculateAcceptedStatus, ident,
-} = require('../utils');
-const orm = require('../lib/dbItems');
-const { createItemIfNotExistAsync, createRunIfNotExist, createSuiteIfNotExist } = require('../lib/dbItems');
-const { config } = require('../../../config');
-const { prettyCheckParams } = require('../utils');
-const { getDiff } = require('../lib/сomparison');
-// const { ApiError } = require('../utils');
-
-const log = require("../../../dist/src/server/lib/logger").default;
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import fs, { promises as fsp } from 'fs';
+import hasha from 'hasha';
+import { Snapshot, Check, Test, App, Baseline } from '../models';
+import { removeEmptyProperties, waitUntil, buildIdentObject, calculateAcceptedStatus, ident } from '../utils';
+import { updateItemDate, createTest, createItemIfNotExistAsync, createRunIfNotExist, createSuiteIfNotExist } from '../lib/dbItems';
+import { config } from '../../../config';
+import { prettyCheckParams } from '../utils';
+import { getDiff } from '../lib/сomparison';
+import log from "../lib/logger";
+import { LogOpts } from '../../types/logOpts';
 
 const fileLogMeta = {
     scope: 'client_service',
     msgType: 'CLIENT_REQUEST',
 };
 
-async function updateTest(params) {
+interface UpdateTestParams {
+    id: string;
+    name?: string;
+    app?: any;
+    tags?: any;
+    branch?: string;
+    viewport?: string;
+    browserName?: string;
+    browserVersion?: string;
+    browserFullVersion?: string;
+    os?: string;
+    startDate?: Date;
+    updatedDate?: number;
+    status?: string;
+    run?: any;
+    suite?: any;
+    [key: string]: any;
+}
+
+async function updateTest(params: UpdateTestParams) {
     const opts = { ...params };
     const logOpts = {
         msgType: 'UPDATE',
@@ -37,21 +45,19 @@ async function updateTest(params) {
     opts.updatedDate = Date.now();
     log.debug(`update test id '${opts.id}' with params '${JSON.stringify(opts)}'`, fileLogMeta, logOpts);
 
-    const test = await Test.findByIdAndUpdate(opts.id, opts)
-        .exec();
+    const test = await Test.findByIdAndUpdate(opts.id, opts).exec();
 
-    await test.save();
+    await test?.save();
     return test;
 }
 
-const startSession = async (params, username) => {
+const startSession = async (params: any, username: string) => {
     const logOpts = {
         scope: 'createTest',
         user: username,
         itemType: 'test',
         msgType: 'CREATE',
     };
-    // CREATE TESTS
     log.info(`create test with name '${params.name}', params: '${JSON.stringify(params)}'`, fileLogMeta, logOpts);
     const opts = removeEmptyProperties({
         name: params.name,
@@ -70,35 +76,25 @@ const startSession = async (params, username) => {
     try {
         const app = await createItemIfNotExistAsync(
             'VRSApp',
-            {
-                name: params.app,
-            },
+            { name: params.app },
             { user: username, itemType: 'app' }
         );
         opts.app = app._id;
 
         const run = await createRunIfNotExist(
-            {
-                name: params.run,
-                ident: params.runident,
-                app: app._id,
-            },
+            { name: params.run, ident: params.runident, app: app._id },
             { user: username, itemType: 'run' }
         );
         opts.run = run._id;
 
         const suite = await createSuiteIfNotExist(
-            {
-                name: params.suite || 'Others',
-                app: app._id,
-                createdDate: new Date(),
-            },
-            { user: username, itemType: 'suite' },
+            { name: params.suite || 'Others', app: app._id, createdDate: new Date() },
+            { user: username, itemType: 'suite' }
         );
 
         opts.suite = suite._id;
 
-        const test = await orm.createTest(opts);
+        const test = await createTest(opts);
         return test;
     } catch (e) {
         log.error(`cannot start session '${params.i}', params: '${JSON.stringify(params)}'`, fileLogMeta, logOpts);
@@ -106,7 +102,7 @@ const startSession = async (params, username) => {
     }
 };
 
-const endSession = async (testId, username) => {
+const endSession = async (testId: string, username: string) => {
     const logOpts = {
         msgType: 'END_SESSION',
         user: username,
@@ -114,17 +110,15 @@ const endSession = async (testId, username) => {
         scope: 'stopSession',
         ref: testId,
     };
-    await waitUntil(async () => (await Check.find({ test: testId })
-        .exec())
-        .filter((ch) => ch.status.toString() !== 'pending').length > 0);
+    await waitUntil(async () => (await Check.find({ test: testId }).exec()).filter((ch) => ch.status.toString() !== 'pending').length > 0);
     const sessionChecks = await Check.find({ test: testId }).lean().exec();
+    // @ts-ignore
     const checksStatuses = sessionChecks.map((x) => x.status[0]);
     const checksViewports = sessionChecks.map((x) => x.viewport);
 
     const uniqueChecksViewports = Array.from(new Set(checksViewports));
-    let testViewport;
+    let testViewport: any;
     if (uniqueChecksViewports.length === 1) {
-        // eslint-disable-next-line prefer-destructuring
         testViewport = uniqueChecksViewports[0];
     } else {
         testViewport = uniqueChecksViewports.length;
@@ -134,23 +128,20 @@ const endSession = async (testId, username) => {
     if (checksStatuses.some((st) => st === 'failed')) {
         testStatus = 'Failed';
     }
-    if (checksStatuses.some((st) => st === 'passed')
-        && !checksStatuses.some((st) => st === 'failed')) {
+    if (checksStatuses.some((st) => st === 'passed') && !checksStatuses.some((st) => st === 'failed')) {
         testStatus = 'Passed';
     }
-    if (checksStatuses.some((st) => st === 'new')
-        && !checksStatuses.some((st) => st === 'failed')) {
+    if (checksStatuses.some((st) => st === 'new') && !checksStatuses.some((st) => st === 'failed')) {
         testStatus = 'Passed';
     }
-    if (checksStatuses.some((st) => st === 'blinking')
-        && !checksStatuses.some((st) => st === 'failed')) {
+    if (checksStatuses.some((st) => st === 'blinking') && !checksStatuses.some((st) => st === 'failed')) {
         testStatus = 'Passed';
     }
     if (checksStatuses.every((st) => st === 'new')) {
         testStatus = 'New';
     }
     const blinkingCount = checksStatuses.filter((g) => g === 'blinking').length;
-    const testParams = {
+    const testParams: UpdateTestParams = {
         id: testId,
         status: testStatus,
         blinking: blinkingCount,
@@ -158,12 +149,12 @@ const endSession = async (testId, username) => {
     };
     log.info(`the session is over, the test will be updated with parameters: '${JSON.stringify(testParams)}'`, fileLogMeta, logOpts);
     const updatedTest = await updateTest(testParams);
-    const result = updatedTest.toObject();
+    const result : any = updatedTest?.toObject();
     result.calculatedStatus = testStatus;
     return result;
 };
 
-async function getBaseline(params) {
+async function getBaseline(params: any) {
     const identFieldsAccepted = Object.assign(buildIdentObject(params), { markedAs: 'accepted' });
     const acceptedBaseline = await Baseline.findOne(identFieldsAccepted, {}, { sort: { createdDate: -1 } });
     log.debug(`acceptedBaseline: '${acceptedBaseline ? JSON.stringify(acceptedBaseline) : 'not found'}'`, fileLogMeta, { itemType: 'baseline' });
@@ -171,7 +162,7 @@ async function getBaseline(params) {
     return null;
 }
 
-async function getLastSuccessCheck(identifier) {
+async function getLastSuccessCheck(identifier: any) {
     const condition = [{
         ...identifier,
         status: 'new',
@@ -179,43 +170,31 @@ async function getLastSuccessCheck(identifier) {
         ...identifier,
         status: 'passed',
     }];
-    return (await Check.find({
-        $or: condition,
-    })
-        .sort({ updatedDate: -1 })
-        .limit(1))[0];
+    return (await Check.find({ $or: condition }).sort({ updatedDate: -1 }).limit(1))[0];
 }
 
-async function getNotPendingChecksByIdent(identifier) {
+async function getNotPendingChecksByIdent(identifier: any) {
     return Check.find({
         ...identifier,
-        status: {
-            $ne: 'pending',
-        },
-    })
-        .sort({ updatedDate: -1 })
-        .exec();
+        status: { $ne: 'pending' },
+    }).sort({ updatedDate: -1 }).exec();
 }
 
-async function getSnapshotByImgHash(hash) {
-    return Snapshot.findOne({ imghash: hash })
-        .exec();
+async function getSnapshotByImgHash(hash: string) {
+    return Snapshot.findOne({ imghash: hash }).exec();
 }
 
-async function createSnapshot(parameters) {
-    const {
-        name,
-        fileData,
-        hashCode,
-    } = parameters;
+interface CreateSnapshotParameters {
+    name: string;
+    fileData: Buffer;
+    hashCode?: string;
+}
 
-    const opts = {
-        name,
-    };
-    const logOpts = {
-        scope: 'createSnapshot',
-        itemType: 'snapshot',
-    };
+async function createSnapshot(parameters: CreateSnapshotParameters) {
+    const { name, fileData, hashCode } = parameters;
+
+    const opts: any = { name };
+    const logOpts = { scope: 'createSnapshot', itemType: 'snapshot' };
     if (!fileData) throw new Error(`cannot create the snapshot, the 'fileData' is not set, name: '${name}'`);
 
     opts.imghash = hashCode || hasha(fileData);
@@ -223,26 +202,28 @@ async function createSnapshot(parameters) {
     const filename = `${snapshot.id}.png`;
     const path = `${config.defaultImagesPath}${filename}`;
     log.debug(`save screenshot for: '${name}' snapshot to: '${path}'`, fileLogMeta, logOpts);
-    await fs.writeFile(path, fileData);
+    await fsp.writeFile(path, fileData);
     snapshot.filename = filename;
     await snapshot.save();
     log.debug(`snapshot was saved: '${JSON.stringify(snapshot)}'`, fileLogMeta, { ...logOpts, ...{ ref: snapshot._id } });
     return snapshot;
 }
 
-async function cloneSnapshot(sourceSnapshot, name) {
+async function cloneSnapshot(sourceSnapshot: any, name: string) {
     const { filename } = sourceSnapshot;
     const hashCode = sourceSnapshot.imghash;
-    const newSnapshot = new Snapshot({
-        name,
-        filename,
-        imghash: hashCode,
-    });
+    const newSnapshot = new Snapshot({ name, filename, imghash: hashCode });
     await newSnapshot.save();
     return newSnapshot;
 }
 
-async function compareSnapshots(baselineSnapshot, actual, opts = {}) {
+interface CompareSnapshotsOptions {
+    vShifting?: boolean;
+    ignore?: string;
+    ignoredBoxes?: any;
+} 
+
+async function compareSnapshots(baselineSnapshot: any, actual: any, opts: CompareSnapshotsOptions = {}) {
     const logOpts = {
         scope: 'compareSnapshots',
         ref: baselineSnapshot.id,
@@ -252,16 +233,12 @@ async function compareSnapshots(baselineSnapshot, actual, opts = {}) {
     try {
         log.debug(`compare baseline and actual snapshots with ids: [${baselineSnapshot.id}, ${actual.id}]`, fileLogMeta, logOpts);
         log.debug(`current baseline snapshot: ${JSON.stringify(baselineSnapshot)}`, fileLogMeta, logOpts);
-        let diff;
+        let diff: any;
         if (baselineSnapshot.imghash === actual.imghash) {
             log.debug(`baseline and actual snapshot have the identical image hashes: '${baselineSnapshot.imghash}'`, fileLogMeta, logOpts);
-            // stub for diff object
             diff = {
                 isSameDimensions: true,
-                dimensionDifference: {
-                    width: 0,
-                    height: 0,
-                },
+                dimensionDifference: { width: 0, height: 0 },
                 rawMisMatchPercentage: 0,
                 misMatchPercentage: '0.00',
                 analysisTime: 0,
@@ -270,19 +247,21 @@ async function compareSnapshots(baselineSnapshot, actual, opts = {}) {
         } else {
             const baselinePath = `${config.defaultImagesPath}${baselineSnapshot.filename}`;
             const actualPath = `${config.defaultImagesPath}${actual.filename}`;
-            const baselineData = await fs.readFile(baselinePath);
-            const actualData = await fs.readFile(actualPath);
+            const baselineData = await fsp.readFile(baselinePath);
+            const actualData = await fsp.readFile(actualPath);
             log.debug(`baseline path: ${baselinePath}`, fileLogMeta, logOpts);
             log.debug(`actual path: ${actualPath}`, fileLogMeta, logOpts);
             const options = opts;
-            const baseline = await Baseline.findOne({ snapshootId: baselineSnapshot._id })
-                .exec();
+            const baseline = await Baseline.findOne({ snapshootId: baselineSnapshot._id }).exec();
 
-            if (baseline.ignoreRegions) {
-                log.debug(`ignore regions: '${baseline.ignoreRegions}', type: '${typeof baseline.ignoreRegions}'`);
-                options.ignoredBoxes = JSON.parse(baseline.ignoreRegions);
+            if(baseline){ // ts refactoring TODO: find out a proper way
+                if (baseline.ignoreRegions) {
+                    log.debug(`ignore regions: '${baseline.ignoreRegions}', type: '${typeof baseline.ignoreRegions}'`);
+                    options.ignoredBoxes = JSON.parse(baseline.ignoreRegions);
+                }
+                options.ignore = baseline.matchType || 'nothing';
             }
-            options.ignore = baseline.matchType || 'nothing';
+            
             diff = await getDiff(baselineData, actualData, options);
         }
 
@@ -292,32 +271,27 @@ async function compareSnapshots(baselineSnapshot, actual, opts = {}) {
         }
         if (diff.stabMethod && diff.vOffset) {
             if (diff.stabMethod === 'downup') {
-                // this mean that we delete first 'diff.vOffset' line of pixels from actual
-                // then we will use this during parse actual page DOM dump
                 actual.vOffset = -diff.vOffset;
                 await actual.save();
             }
             if (diff.stabMethod === 'updown') {
-                // this mean that we delete first 'diff.vOffset' line of pixels from baseline
-                // then we will use this during parse actual page DOM dump
                 baselineSnapshot.vOffset = -diff.vOffset;
                 await baselineSnapshot.save();
             }
         }
         return diff;
-    } catch (e) {
-        const errMsg = `cannot compare snapshots: ${e}\n ${e.stack || e.toString()}`;
+    } catch (e: unknown) {
+        const errMsg = `cannot compare snapshots: ${e}\n ${e instanceof Error ? e.stack : e}`;
         log.error(errMsg, fileLogMeta, logOpts);
-        throw new Error(e);
+        throw new Error(String(e));
     }
 }
 
-const isBaselineValid = (baseline, logOpts) => {
+const isBaselineValid = (baseline: any, logOpts: any) => {
     const keys = [
         'name', 'app', 'branch', 'browserName', 'viewport', 'os',
         'createdDate', 'lastMarkedDate', 'markedAs', 'markedById', 'markedByUsername', 'snapshootId',
     ];
-    // eslint-disable-next-line no-restricted-syntax
     for (const key of keys) {
         if (!baseline[key]) {
             log.error(`invalid baseline, the '${key}' property is empty`, fileLogMeta, logOpts);
@@ -327,8 +301,7 @@ const isBaselineValid = (baseline, logOpts) => {
     return true;
 };
 
-// copy marked* properties from baseline and baseline.snapshotId
-const updateCheckParamsFromBaseline = (params, baseline) => {
+const updateCheckParamsFromBaseline = (params: any, baseline: any) => {
     const updatedParams = { ...params };
     updatedParams.baselineId = baseline.snapshootId;
     updatedParams.markedAs = baseline.markedAs;
@@ -337,14 +310,14 @@ const updateCheckParamsFromBaseline = (params, baseline) => {
     return updatedParams;
 };
 
-const prepareActualSnapshot = async (checkParam, snapshotFoundedByHashcode, logOpts) => {
-    let currentSnapshot;
+const prepareActualSnapshot = async (checkParam: any, snapshotFoundedByHashcode: any, logOpts: any) => {
+    let currentSnapshot: any;
 
     const fileData = checkParam.files ? checkParam.files.file.data : false;
 
     if (snapshotFoundedByHashcode) {
         const fullFilename = `${config.defaultImagesPath}${snapshotFoundedByHashcode.filename}`;
-        if (!fss.existsSync(fullFilename)) {
+        if (!fs.existsSync(fullFilename)) {
             throw new Error(`Couldn't find the baseline file: '${fullFilename}'`);
         }
 
@@ -352,17 +325,13 @@ const prepareActualSnapshot = async (checkParam, snapshotFoundedByHashcode, logO
         currentSnapshot = await cloneSnapshot(snapshotFoundedByHashcode, checkParam.name);
     } else {
         log.debug(`snapshot with such hashcode: '${checkParam.hashCode}' does not exists, will create it`, fileLogMeta, logOpts);
-        currentSnapshot = await createSnapshot({
-            name: checkParam.name,
-            fileData,
-            hashCode: checkParam.hashCode,
-        });
+        currentSnapshot = await createSnapshot({ name: checkParam.name, fileData, hashCode: checkParam.hashCode });
     }
 
     return currentSnapshot;
 };
 
-async function isNeedFiles(checkParam, logOpts) {
+async function isNeedFiles(checkParam: any, logOpts: any) {
     const snapshotFoundedByHashcode = await getSnapshotByImgHash(checkParam.hashCode);
 
     if (!checkParam.hashCode && !checkParam.files) {
@@ -377,11 +346,9 @@ async function isNeedFiles(checkParam, logOpts) {
     return { needFilesStatus: false, snapshotFoundedByHashcode };
 }
 
-async function inspectBaseline(newCheckParams, storedBaseline, checkIdent, currentSnapshot, logOpts) {
-    // check if baseline exist, if this true set some check properties
-    // if false set 'not_accepted' of "new" status
-    let currentBaselineSnapshot = null;
-    const params = {};
+async function inspectBaseline(newCheckParams: any, storedBaseline: any, checkIdent: any, currentSnapshot: any, logOpts: any) {
+    let currentBaselineSnapshot: any = null;
+    const params: any = {};
     params.failReasons = [];
     if (storedBaseline !== null) {
         log.debug(`a baseline for check name: '${newCheckParams.name}', id: '${storedBaseline.snapshootId}' is already exists`, fileLogMeta, logOpts);
@@ -407,15 +374,13 @@ async function inspectBaseline(newCheckParams, storedBaseline, checkIdent, curre
     return { inspectBaselineParams: params, currentBaselineSnapshot };
 }
 
-/* check if we can ignore 1 px dimensions difference from the bottom */
-const ignoreDifferentResolutions = ({ height, width }) => {
+const ignoreDifferentResolutions = ({ height, width }: any) => {
     if ((width === 0) && (height === -1)) return true;
     if ((width === 0) && (height === 1)) return true;
     return false;
 };
 
-// checkParam.vShifting
-const compare = async (expectedSnapshot, actualSnapshot, newCheckParams, vShifting, skipSaveOnCompareError, currentUser) => {
+const compare = async (expectedSnapshot: any, actualSnapshot: any, newCheckParams: any, vShifting: any, skipSaveOnCompareError: boolean, currentUser: any) => {
     const logOpts = {
         scope: 'createCheck.compare',
         user: currentUser.username,
@@ -424,17 +389,15 @@ const compare = async (expectedSnapshot, actualSnapshot, newCheckParams, vShifti
     };
 
     const executionTimer = process.hrtime();
-    const params = {};
+    const params: any = {};
     params.failReasons = [...newCheckParams.failReasons];
 
-    let checkCompareResult;
-    let diffSnapshot;
+    let checkCompareResult: any;
+    let diffSnapshot: any;
 
-    const areSnapshotsDifferent = (compareResult) => compareResult.rawMisMatchPercentage.toString() !== '0';
-    const areSnapshotsWrongDimensions = (compareResult) => !compareResult.isSameDimensions
-        && !ignoreDifferentResolutions(compareResult.dimensionDifference);
+    const areSnapshotsDifferent = (compareResult: any) => compareResult.rawMisMatchPercentage.toString() !== '0';
+    const areSnapshotsWrongDimensions = (compareResult: any) => !compareResult.isSameDimensions && !ignoreDifferentResolutions(compareResult.dimensionDifference);
 
-    /** compare actual with baseline if a check isn't new */
     if ((newCheckParams.status !== 'new') && (!params.failReasons.includes('not_accepted'))) {
         try {
             log.debug(`'the check with name: '${newCheckParams.name}' isn't new, make comparing'`, fileLogMeta, logOpts);
@@ -453,10 +416,10 @@ const compare = async (expectedSnapshot, actualSnapshot, newCheckParams, vShifti
                     params.failReasons.push('different_images');
                 }
 
-                log.debug(logMsg, fileLogMeta, logOpts);
+                if (logMsg) log.debug(logMsg, fileLogMeta, logOpts);
                 log.debug(`saving diff snapshot for check with name: '${newCheckParams.name}'`, fileLogMeta, logOpts);
                 if (!skipSaveOnCompareError) {
-                    diffSnapshot = await createSnapshot({ // reduce duplications!!!
+                    diffSnapshot = await createSnapshot({
                         name: newCheckParams.name,
                         fileData: checkCompareResult.getBuffer(),
                     });
@@ -468,15 +431,15 @@ const compare = async (expectedSnapshot, actualSnapshot, newCheckParams, vShifti
                 params.status = 'passed';
             }
 
-            checkCompareResult.totalCheckHandleTime = process.hrtime(executionTimer)
-                .toString();
+            checkCompareResult.totalCheckHandleTime = process.hrtime(executionTimer).toString();
             params.result = JSON.stringify(checkCompareResult, null, '\t');
-        } catch (e) {
+        } catch (e: unknown) {
+            const errMsg = e instanceof Error ? e.message : e;
             params.updatedDate = Date.now();
             params.status = 'failed';
-            params.result = { server_error: `error during comparing - ${e.stack || e.toString()}` };
+            params.result = { server_error: `error during comparing - ${errMsg}` };
             params.failReasons.push('internal_server_error');
-            log.error(`error during comparing - ${e.stack || e.toString()}`, fileLogMeta, logOpts);
+            log.error(`error during comparing - ${errMsg}`, fileLogMeta, logOpts);
             throw e;
         }
     }
@@ -487,7 +450,30 @@ const compare = async (expectedSnapshot, actualSnapshot, newCheckParams, vShifti
     return params;
 };
 
-const createCheckParams = (checkParam, suite, app, test, currentUser) => ({
+interface CreateCheckParams {
+    test: string;
+    name: { [key: string]: string };
+    // status:  'new' | 'pending' | 'passed' | 'failed' | 'blinking';
+    status: 'new' | 'pending' | 'passed' | 'failed';
+    viewport: string;
+    browserName: string;
+    browserVersion: string;
+    browserFullVersion: string;
+    os: string;
+    updatedDate: number;
+    suite: string;
+    app: string;
+    branch?: string;
+    domDump?: string;
+    run: string;
+    creatorId: string;
+    creatorUsername: string;
+    failReasons: string[];
+    actualSnapshotId?: string
+    result?: string
+}
+
+const createCheckParams = (checkParam: any, suite: any, app: any, test: any, currentUser: any): CreateCheckParams => ({
     test: checkParam.testId,
     name: checkParam.name,
     status: 'pending',
@@ -507,48 +493,30 @@ const createCheckParams = (checkParam, suite, app, test, currentUser) => ({
     failReasons: [],
 });
 
-const createCheck = async (checkParam, test, suite, app, currentUser, skipSaveOnCompareError = false) => {
-    const logOpts = {
+const createCheck = async (checkParam: any, test: any, suite: any, app: any, currentUser: any, skipSaveOnCompareError = false) => {
+    const logOpts: LogOpts = {
         scope: 'createCheck',
         user: currentUser.username,
         itemType: 'check',
         msgType: 'CREATE',
     };
-    let actualSnapshot;
-    let currentBaselineSnapshot;
+    let actualSnapshot: any;
+    let currentBaselineSnapshot: any;
 
     const newCheckParams = createCheckParams(checkParam, suite, app, test, currentUser);
     const checkIdent = buildIdentObject(newCheckParams);
 
-    let check;
-    let totalCheckHandleTime;
-    let diffSnapshot;
+    let check: any;
+    let totalCheckHandleTime: any;
+    let diffSnapshot: any;
 
     try {
-        /**
-         * Usually there are two stages of checking the creating Check request:
-         * Phase 1
-         *   1. Client sends request with 'req.body.hashcode' value but without 'req.files.file.data'
-         *   2. The server finds for a snapshot with this image 'hashcode' and if found - go to Step 3 of Phase2,
-         *      if not - sends response "{status: 'requiredFileData', message: 'cannot found an image
-         *      with this hashcode, please add image file data and resend request'}"
-         * Phase 2
-         *   1. The client receives a response with incomplete status and resends the same request but,
-         *   with 'req.files.file.data' parameter
-         *   2. The server creates a new snapshot based on these parameters
-         *   3. The server makes the comparison and returns to the client some check response
-         *   with one of 'complete` status (eq: new, failed, passed)
-         */
-
-        /** PREPARE ACTUAL SNAPSHOT */
-        /** look up the snapshot with same hashcode if didn't find, ask for file data */
         const { needFilesStatus, snapshotFoundedByHashcode } = await isNeedFiles(checkParam, logOpts);
         if (needFilesStatus) return { status: 'needFiles' };
 
         actualSnapshot = await prepareActualSnapshot(checkParam, snapshotFoundedByHashcode, logOpts);
         newCheckParams.actualSnapshotId = actualSnapshot.id;
 
-        /** HANDLE BASELINE */
         log.info(`find a baseline for the check with identifier: '${JSON.stringify(checkIdent)}'`, fileLogMeta, logOpts);
         const storedBaseline = await getBaseline(checkIdent);
 
@@ -556,15 +524,7 @@ const createCheck = async (checkParam, test, suite, app, currentUser, skipSaveOn
         Object.assign(newCheckParams, inspectBaselineResult.inspectBaselineParams);
         currentBaselineSnapshot = inspectBaselineResult.currentBaselineSnapshot;
 
-        /** COMPARING SECTION */
-        const compareResult = await compare(
-            currentBaselineSnapshot,
-            actualSnapshot,
-            newCheckParams,
-            checkParam.vShifting,
-            skipSaveOnCompareError,
-            currentUser,
-        );
+        const compareResult = await compare(currentBaselineSnapshot, actualSnapshot, newCheckParams, checkParam.vShifting, skipSaveOnCompareError, currentUser);
 
         Object.assign(newCheckParams, compareResult);
 
@@ -582,27 +542,25 @@ const createCheck = async (checkParam, test, suite, app, currentUser, skipSaveOn
 
         await test.save();
 
-        // update test and suite
         log.debug('update suite and run', fileLogMeta, logOpts);
 
-        await orm.updateItemDate('VRSSuite', check.suite);
-        await orm.updateItemDate('VRSRun', check.run);
+        await updateItemDate('VRSSuite', check.suite);
+        await updateItemDate('VRSRun', check.run);
 
-        const lastSuccessCheck = await getLastSuccessCheck(checkIdent); // we need this?
+        const lastSuccessCheck = await getLastSuccessCheck(checkIdent);
 
-        const result = {
+        const result: any = {
             ...savedCheck.toObject(),
             currentSnapshot: actualSnapshot,
             expectedSnapshot: currentBaselineSnapshot,
             diffSnapshot: compareResult.diffSnapshot,
             executeTime: totalCheckHandleTime,
-            lastSuccess: lastSuccessCheck ? (lastSuccessCheck).id : null,
+            lastSuccess: lastSuccessCheck ? lastSuccessCheck.id : null,
         };
 
         if (diffSnapshot) result.diffSnapshot = diffSnapshot;
         return result;
     } catch (e) {
-        // emergency check creation and test update
         if (!check) {
             newCheckParams.status = 'failed';
             newCheckParams.result = `{ "server error": "${e}" }`;
@@ -623,7 +581,7 @@ const createCheck = async (checkParam, test, suite, app, currentUser, skipSaveOn
 
 const getIdent = () => ident;
 
-const getBaselines = async (filter, options) => {
+const getBaselines = async (filter: any, options: any) => {
     const logOpts = {
         scope: 'getBaselines',
         itemType: 'baseline',
@@ -636,14 +594,14 @@ const getBaselines = async (filter, options) => {
     }
     filter.app = app._id;
     log.debug(`Get baselines with filter: '${JSON.stringify(filter)}', options: '${JSON.stringify(options)}'`, fileLogMeta, logOpts);
+    // @ts-ignore
     return Baseline.paginate(filter, options);
 };
 
-module.exports = {
+export {
     startSession,
     endSession,
     createCheck,
     getIdent,
-    // checkIfScreenshotHasBaselines,
     getBaselines,
 };
