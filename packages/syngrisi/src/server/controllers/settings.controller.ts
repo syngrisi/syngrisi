@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { catchAsync } from '../utils';
 
-const AppSettings = (global as any).AppSettings
 const getSettings = catchAsync(async (req: any, res: any) => {
+    const AppSettings = (global as any).AppSettings
     const result = AppSettings.cache;
     res.json(result);
 });
 
 const updateSetting = catchAsync(async (req: any, res: any) => {
+    const AppSettings = (global as any).AppSettings
     const { name } = req.params;
     await AppSettings.set(name, req.body.value);
     if (req.body.enabled === false) {
