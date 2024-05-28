@@ -1,27 +1,27 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import express from 'express';
-import { checksController } from '../../controllers';
+import { checkController } from '../../controllers';
 import { ensureLoggedIn } from '../../middlewares/ensureLogin';
 
 const router = express.Router();
 
 router
     .route('/')
-    .get(ensureLoggedIn(), checksController.get);
+    .get(ensureLoggedIn(), checkController.get);
 
 router
     .route('/:id')
-    .delete(ensureLoggedIn(), checksController.remove);
+    .delete(ensureLoggedIn(), checkController.remove);
 
 // update
 router.route('/:id')
-    .put(ensureLoggedIn(), checksController.update);
+    .put(ensureLoggedIn(), checkController.update);
 
 router.route('/accept/:id')
-    .put(ensureLoggedIn(), checksController.accept);
+    .put(ensureLoggedIn(), checkController.accept);
 
 router.route('/get_via_post')
-    .post(ensureLoggedIn(), checksController.getViaPost);
+    .post(ensureLoggedIn(), checkController.getViaPost);
 
 export default router;

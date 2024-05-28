@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 import express from 'express';
-import { snapshotController } from '../../controllers';
+import { testController } from '../../controllers';
 import { ensureLoggedIn } from '../../middlewares/ensureLogin';
 
 const router = express.Router();
 
 router
-    .route('/')
-    .get(ensureLoggedIn(), snapshotController.get);
+    .route('/:id')
+    .get(
+        ensureLoggedIn(),
+        testController.distinct
+    );
 
 export default router;

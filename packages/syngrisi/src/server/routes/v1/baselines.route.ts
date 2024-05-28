@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import express from 'express';
 // import { baselinesController } from '../../controllers';
-import  {baselinesController}  from '../../controllers/auth.controller';
+import { baselineController } from '../../controllers';
 
 import { ensureLoggedIn } from '../../middlewares/ensureLogin';
 
@@ -9,9 +9,9 @@ const router = express.Router();
 
 router
     .route('/')
-    .get(ensureLoggedIn(), baselinesController.get);
+    .get(ensureLoggedIn(), baselineController.get);
 
 router.route('/:id')
-    .put(ensureLoggedIn(), baselinesController.put);
-
+    .put(ensureLoggedIn(), baselineController.put);
+baselineController
 export default router;

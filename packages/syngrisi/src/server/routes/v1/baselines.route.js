@@ -1,14 +1,14 @@
-const express = require('express');
-const { baselinesController } = require('../../controllers');
-const { ensureLoggedIn } = require('../../middlewares/ensureLogin');
+// const express = require('express');
+// const { baselinesController } = require('../../controllers');
+// const { ensureLoggedIn } = require('../../middlewares/ensureLogin');
 
-const router = express.Router();
+// const router = express.Router();
 
-router
-    .route('/')
-    .get(ensureLoggedIn(), baselinesController.get);
+// router
+//     .route('/')
+//     .get(ensureLoggedIn(), baselinesController.get);
 
-router.route('/:id')
-    .put(ensureLoggedIn(), baselinesController.put);
+// router.route('/:id')
+//     .put(ensureLoggedIn(), baselinesController.put);
 
-module.exports = router;
+// module.exports = router;

@@ -119,7 +119,7 @@ app.use('/snapshoots', express.static(path.join(process.cwd(), config.defaultIma
 
 app.use('/static', express.static(`${__dirname}/static`));
 app.use('/assets', express.static(`${__dirname}/mvc/views/react/assets`));
-const routes = require('./src/server/routes/v1/index');
+const routes = require('./dist/src/server/routes/v1/index.route').default;
 
 app.use('/v1', routes);
 

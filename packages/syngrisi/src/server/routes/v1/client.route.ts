@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import express from 'express';
+// @ts-ignore
 import Bottleneck from 'bottleneck/es5';
 import { clientController } from '../../controllers';
 import { ensureApiKey } from '../../middlewares/ensureLogin';

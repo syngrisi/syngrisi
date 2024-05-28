@@ -1,14 +1,14 @@
-const express = require('express');
-const { testsController } = require('../../controllers');
-const { ensureLoggedIn } = require('../../middlewares/ensureLogin');
+// const express = require('express');
+// const { testsController } = require('../../controllers');
+// const { ensureLoggedIn } = require('../../middlewares/ensureLogin');
 
-const router = express.Router();
+// const router = express.Router();
 
-router
-    .route('/:id')
-    .get(
-        ensureLoggedIn(),
-        testsController.distinct
-    );
+// router
+//     .route('/:id')
+//     .get(
+//         ensureLoggedIn(),
+//         testsController.distinct
+//     );
 
-module.exports = router;
+// module.exports = router;
