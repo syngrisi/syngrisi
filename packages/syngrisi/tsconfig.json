@@ -14,7 +14,7 @@
     // "jsx": "preserve",                           /* Specify JSX code generation: 'preserve', 'react-native', 'react', 'react-jsx' or 'react-jsxdev'. */
     // "declaration": true,                         /* Generates corresponding '.d.ts' file. */
     // "declarationMap": true,                      /* Generates a sourcemap for each corresponding '.d.ts' file. */
-    // "sourceMap": true,                           /* Generates corresponding '.map' file. */
+    "sourceMap": true,                           /* Generates corresponding '.map' file. */
     // "outFile": "./",                             /* Concatenate and emit output to single file. */
     "outDir": "./dist",                            /* Redirect output structure to the directory. */
 //    "rootDir": "src",                             /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
@@ -72,8 +72,10 @@
   },
   "include": [
     "src/server/**/*.ts",
+    "src/server.ts",
+    "src/config.ts",
     "src/server/**/*.mts",
-    "src/tasks", "src/server/utils/calculateAcceptedStatus.js_", "src/server/utils/calculateAcceptedStatus.ts_", "src/server/middlewares/ensureLogin/index.js", "src/server/middlewares/ensureLogin/ensureLoggedOut.ts_", "src/server/lib/startup/index.js", "src/server/lib/onStart.ts_", "src/server/lib/AppSettings.ts_", "src/server/middlewares/index.js", "src/server/routes/v1/all.js",
+    "src/tasks",
   ],
   "exclude": [
     "tests/**",

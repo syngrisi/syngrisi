@@ -3,7 +3,7 @@ import winston, { Logger as WinstonLogger } from 'winston';
 import 'winston-mongodb';
 import { blue, gray, magenta } from 'chalk';
 import formatISOToDateTime from '../utils/formatISOToDateTime';
-import { config } from '../../../config';
+import { config } from '../../config';
 import path from 'path';
 
 const logLevel: string = process.env.SYNGRISI_LOG_LEVEL || '';

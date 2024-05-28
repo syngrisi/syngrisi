@@ -3,21 +3,28 @@
 
 import express from 'express';
 // @ts-ignore
-import Bottleneck from 'bottleneck/es5';
+import Bottleneck from 'bottleneck';
 import { clientController } from '../../controllers';
 import { ensureApiKey } from '../../middlewares/ensureLogin';
 
 const router = express.Router();
 
-(global as any).limiter.startSession = new Bottleneck({
+// const limiter:object = (global as any ).limiter ;
+
+// if (limiter) {
+//     limiter = {};
+//   }
+
+
+const startSessionLimiter = new Bottleneck({
     maxConcurrent: 1,
 });
 
 router
     .route('/startSession')
     .post(ensureApiKey(),
-        async (req, res, next) => (global as any).limiter.startSession.schedule(
-            () => clientController.startSession(req, res, next)
+        async (req, res, next) => startSessionLimiter.schedule(
+            async () => clientController.startSession(req, res, next)
         ));
 
 router

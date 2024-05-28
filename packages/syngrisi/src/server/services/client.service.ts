@@ -5,7 +5,7 @@ import hasha from 'hasha';
 import { Snapshot, Check, Test, App, Baseline } from '../models';
 import { removeEmptyProperties, waitUntil, buildIdentObject, calculateAcceptedStatus, ident } from '../utils';
 import { updateItemDate, createTest, createItemIfNotExistAsync, createRunIfNotExist, createSuiteIfNotExist } from '../lib/dbItems';
-import { config } from '../../../config';
+import { config } from '../../config';
 import { prettyCheckParams } from '../utils';
 import { getDiff } from '../lib/сomparison';
 import log from "../lib/logger";
@@ -149,7 +149,7 @@ const endSession = async (testId: string, username: string) => {
     };
     log.info(`the session is over, the test will be updated with parameters: '${JSON.stringify(testParams)}'`, fileLogMeta, logOpts);
     const updatedTest = await updateTest(testParams);
-    const result : any = updatedTest?.toObject();
+    const result: any = updatedTest?.toObject();
     result.calculatedStatus = testStatus;
     return result;
 };
@@ -221,7 +221,7 @@ interface CompareSnapshotsOptions {
     vShifting?: boolean;
     ignore?: string;
     ignoredBoxes?: any;
-} 
+}
 
 async function compareSnapshots(baselineSnapshot: any, actual: any, opts: CompareSnapshotsOptions = {}) {
     const logOpts = {
@@ -254,14 +254,14 @@ async function compareSnapshots(baselineSnapshot: any, actual: any, opts: Compar
             const options = opts;
             const baseline = await Baseline.findOne({ snapshootId: baselineSnapshot._id }).exec();
 
-            if(baseline){ // ts refactoring TODO: find out a proper way
+            if (baseline) { // ts refactoring TODO: find out a proper way
                 if (baseline.ignoreRegions) {
                     log.debug(`ignore regions: '${baseline.ignoreRegions}', type: '${typeof baseline.ignoreRegions}'`);
                     options.ignoredBoxes = JSON.parse(baseline.ignoreRegions);
                 }
                 options.ignore = baseline.matchType || 'nothing';
             }
-            
+
             diff = await getDiff(baselineData, actualData, options);
         }
 
