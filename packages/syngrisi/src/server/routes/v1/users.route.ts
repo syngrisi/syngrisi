@@ -1,25 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import express from 'express';
-import { userController } from '../../controllers';
+import { usersController } from '../../controllers';
 import { ensureLoggedIn } from '../../middlewares/ensureLogin';
 import { authorization } from '../../middlewares';
 
 const router = express.Router();
 
-router.get('/current', userController.current);
+router.get('/current', usersController.current);
 
 router
     .route('/')
     .post(
         ensureLoggedIn(),
         authorization('admin'),
-        userController.createUser
+        usersController.createUser
     )
     .get(
         ensureLoggedIn(),
         authorization('user'),
-        userController.getUsers
+        usersController.getUsers
     );
 
 router
@@ -27,12 +27,12 @@ router
     .patch(
         ensureLoggedIn(),
         authorization('admin'),
-        userController.updateUser
+        usersController.updateUser
     )
     .delete(
         ensureLoggedIn(),
         authorization('admin'),
-        userController.deleteUser
+        usersController.deleteUser
     );
 
 export default router;

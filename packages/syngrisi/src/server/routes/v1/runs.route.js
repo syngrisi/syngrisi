@@ -1,15 +1,15 @@
-const express = require('express');
-const { runsController } = require('../../controllers');
-const { ensureLoggedIn } = require('../../middlewares/ensureLogin');
+// const express = require('express');
+// const { runsController } = require('../../controllers');
+// const { ensureLoggedIn } = require('../../middlewares/ensureLogin');
 
-const router = express.Router();
+// const router = express.Router();
 
-router
-    .route('/')
-    .get(ensureLoggedIn(), runsController.get);
+// router
+//     .route('/')
+//     .get(ensureLoggedIn(), runsController.get);
 
-router
-    .route('/:id')
-    .delete(ensureLoggedIn(), runsController.remove);
+// router
+//     .route('/:id')
+//     .delete(ensureLoggedIn(), runsController.remove);
 
-module.exports = router;
+// module.exports = router;

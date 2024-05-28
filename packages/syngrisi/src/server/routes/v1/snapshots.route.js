@@ -1,11 +1,11 @@
-const express = require('express');
-const { snapshotController } = require('../../controllers');
-const { ensureLoggedIn } = require('../../middlewares/ensureLogin');
+// const express = require('express');
+// const { snapshotController } = require('../../controllers');
+// const { ensureLoggedIn } = require('../../middlewares/ensureLogin');
 
-const router = express.Router();
+// const router = express.Router();
 
-router
-    .route('/')
-    .get(ensureLoggedIn(), snapshotController.get);
+// router
+//     .route('/')
+//     .get(ensureLoggedIn(), snapshotController.get);
 
-module.exports = router;
+// module.exports = router;

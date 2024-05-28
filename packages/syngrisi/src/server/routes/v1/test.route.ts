@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import express from 'express';
-import testController from '../../controllers/test.controller';
+import { testController } from '../../controllers';
 import { ensureLoggedIn } from '../../middlewares/ensureLogin';
 
 const router = express.Router();
