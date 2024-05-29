@@ -51,10 +51,6 @@ global.queue = new PQueue({ concurrency: 1 });
 global.AppSettings = new AppSettings();
 
 // @ts-ignore
-console.log('!!!!!!!!!!!!!!!!!', global.AppSettings );
-
-// global.limiter = {};
-
 const logMeta = { scope: 'entrypoint' };
 log.info('Init the application', logMeta);
 
@@ -130,7 +126,6 @@ app.use(
 
 const baseDir = process.cwd();
 const viewPath = path.join(baseDir, './mvc/views/');
-console.log('🐷', { viewPath });
 
 
 app.set('views', viewPath);
@@ -140,20 +135,13 @@ app.use(express.json({ limit: '50mb' }));
 
 const screenshotsPath = path.join(baseDir, config.defaultImagesPath);
 
-console.log('🐷', { screenshotsPath });
-
 app.use('/snapshoots', express.static(screenshotsPath));
 
 const staticPath = path.join(baseDir, './src/server/static/static');
-console.log('🐷', { staticPath });
 
-
-// app.use('../static', express.static(`${__dirname}/static`));
 app.use('../static', express.static(staticPath));
 
 const assetsPath = path.join(baseDir, './mvc/views/react/assets');
-console.log('🐷', { assetsPath });
-
 app.use('/assets', express.static(assetsPath));
 
 app.use('/v1', routes);
