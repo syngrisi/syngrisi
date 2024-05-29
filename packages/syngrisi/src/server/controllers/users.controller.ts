@@ -5,16 +5,12 @@ import { catchAsync, pick } from '../utils';
 import { usersService } from '../services';
 import log from "../lib/logger";
 
-const fileLogMeta = {
-    scope: 'users',
-};
-
 const current = catchAsync(async (req: any, res: any) => {
     const logOpts = {
         scope: 'users',
         msgType: 'GET_CURRENT_USER',
     };
-    log.debug(`current user is: '${req?.user?.username || 'not_logged'}'`, fileLogMeta, logOpts);
+    log.debug(`current user is: '${req?.user?.username || 'not_logged'}'`, logOpts);
     res.status(httpStatus.OK).json({
         id: req?.user?.id,
         username: req?.user?.username,
@@ -32,7 +28,13 @@ const getUsers = catchAsync(async (req: any, res: any) => {
 });
 
 const createUser = catchAsync(async (req: any, res: any) => {
+    const logOpts = {
+        scope: 'users',
+        msgType: 'CREATE',
+    };
+
     try {
+
         const userData = pick(req.body, [
             'username',
             'firstName',
@@ -47,7 +49,7 @@ const createUser = catchAsync(async (req: any, res: any) => {
         res.status(httpStatus.CREATED).send(user);
     } catch (e: any) {
         if (e.statusCode) {
-            log.error(e.stack || e.toString(), fileLogMeta);
+            log.error(e.stack || e.toString(), logOpts);
             res.status(e.statusCode).json({ message: e.message });
         } else {
             throw e;

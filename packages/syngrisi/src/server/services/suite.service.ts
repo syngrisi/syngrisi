@@ -3,10 +3,6 @@
 import { Test, Suite } from '../models';
 import * as testService from './test.service';
 import log from '../lib/logger';
-const fileLogMeta = {
-    scope: 'suite_service',
-    msgType: 'SUITE',
-};
 
 const remove = async (id: string, user: any) => {
     const logOpts = {
@@ -16,7 +12,7 @@ const remove = async (id: string, user: any) => {
         user: user?.username,
         msgType: 'REMOVE',
     };
-    log.info(`remove suite with, id: '${id}', user: '${user.username}'`, fileLogMeta, logOpts);
+    log.info(`remove suite with, id: '${id}', user: '${user.username}'`, logOpts);
     const tests = await Test.find({ suite: id }).exec();
 
     for (const test of tests) {

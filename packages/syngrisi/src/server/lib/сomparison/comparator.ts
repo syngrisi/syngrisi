@@ -3,11 +3,6 @@
 import log from "../logger";
 import compareImages from './compareImagesNode';
 
-const fileLogMeta = {
-    scope: 'comparator',
-    msgType: 'COMPARE',
-};
-
 const DEFAULT_OPTIONS = {
     output: {
         largeImageThreshold: 0,
@@ -34,19 +29,19 @@ async function getDiff(baselineOrigin: any, actualOrigin: any, opts: any = {}): 
     try {
         const executionTimer = process.hrtime();
 
-        log.debug(`SAMPLE #1: ${process.hrtime(executionTimer).toString()}`, fileLogMeta, logOpts);
+        log.debug(`SAMPLE #1: ${process.hrtime(executionTimer).toString()}`, logOpts);
 
         const directDiff = await makeDiff(baselineOrigin, actualOrigin, opts);
-        log.debug(`SAMPLE #2: ${process.hrtime(executionTimer).toString()}`, fileLogMeta, logOpts);
+        log.debug(`SAMPLE #2: ${process.hrtime(executionTimer).toString()}`, logOpts);
 
         directDiff.executionTotalTime = process.hrtime(executionTimer).toString();
 
-        log.debug(`SAMPLE #3: ${process.hrtime(executionTimer).toString()}`, fileLogMeta, logOpts);
-        log.debug(`the diff is: ${JSON.stringify(directDiff, null, 4)}`, fileLogMeta, logOpts);
+        log.debug(`SAMPLE #3: ${process.hrtime(executionTimer).toString()}`, logOpts);
+        log.debug(`the diff is: ${JSON.stringify(directDiff, null, 4)}`, logOpts);
 
         return directDiff;
     } catch (e: any) {
-        log.error(e.stack || e.toString(), fileLogMeta, logOpts);
+        log.error(e.stack || e.toString(), logOpts);
         throw new Error(e);
     }
 }

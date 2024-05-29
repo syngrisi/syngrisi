@@ -42,7 +42,7 @@ import routes from './server/routes/v1/index.route';
 import authRoutes from './server/routes/ui/auth';
 import adminRoutes from './server/routes/ui/admin';
 import uiRoutes from './server/routes/ui';
-import { vi } from 'vitest';
+// import { vi } from 'vitest';
 
 // @ts-ignore
 global.queue = new PQueue({ concurrency: 1 });
@@ -134,6 +134,9 @@ app.set('view engine', 'ejs');
 app.use(express.json({ limit: '50mb' }));
 
 const screenshotsPath = path.join(baseDir, config.defaultImagesPath);
+
+// console.log(screenshotsPath);
+
 
 app.use('/snapshoots', express.static(screenshotsPath));
 

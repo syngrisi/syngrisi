@@ -7,11 +7,6 @@ import { RequiredIdentOptionsSchema, createCheckParamsSchema } from '../schemas'
 import { User, Test, App, Suite } from '../models';
 import log from "../lib/logger";
 
-const fileLogMeta = {
-    scope: 'client_controller',
-    msgType: 'API',
-};
-
 const startSession = catchAsync(async (req: any, res: any) => {
     const params = pick(
         req.body,
@@ -48,9 +43,9 @@ const createCheck = catchAsync(async (req: any, res: any) => {
     if (!currentUser) throw new Error(`cannot get current user`);
 
 
-    log.info(`start create check: '${prettyCheckParams(params.name)}'`, fileLogMeta, logOpts);
+    log.info(`start create check: '${prettyCheckParams(params.name)}'`, logOpts);
 
-    log.debug(`try to find test with id: '${params.testid}'`, fileLogMeta, logOpts);
+    log.debug(`try to find test with id: '${params.testid}'`, logOpts);
     const test = await Test.findById(params.testid).exec();
     if (!test) {
         const errMsg = `can't find test with id: '${params.testid}', `

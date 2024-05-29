@@ -114,27 +114,27 @@ function convertToJson(inputPaths) {
 }
 
 const paths = [
-    'packages/core-api/src',
-    'packages/core-api/README.md',
-    'packages/wdio-sdk/src',
-    'packages/wdio-sdk/README.md',
-    'packages/playwright-sdk/src',
-    'packages/playwright-sdk/README.md',
+    // 'packages/core-api/src',
+    // 'packages/core-api/README.md',
+    // 'packages/wdio-sdk/src',
+    // 'packages/wdio-sdk/README.md',
+    // 'packages/playwright-sdk/src',
+    // 'packages/playwright-sdk/README.md',
     'packages/syngrisi/src/server',
-    'packages/syngrisi/src/ui-app/admin',
-    'packages/syngrisi/src/ui-app/auth',
-    'packages/syngrisi/src/ui-app/index2',
-    'packages/syngrisi/src/ui-app/shared',
+    // 'packages/syngrisi/src/ui-app/admin',
+    // 'packages/syngrisi/src/ui-app/auth',
+    // 'packages/syngrisi/src/ui-app/index2',
+    // 'packages/syngrisi/src/ui-app/shared',
     'packages/syngrisi/README.md',
-    'packages/create-sy/src',
-    'packages/create-sy/README.md',
-    'packages/wdio-syngrisi-cucumber-service/src',
-    'packages/wdio-syngrisi-cucumber-service/README.md',
-    '../syngrisi-cucumber-boilerplate/README.md',
-    '../syngrisi-cucumber-boilerplate/src/features/syngrisi/',
+    // 'packages/create-sy/src',
+    // 'packages/create-sy/README.md',
+    // 'packages/wdio-syngrisi-cucumber-service/src',
+    // 'packages/wdio-syngrisi-cucumber-service/README.md',
+    // '../syngrisi-cucumber-boilerplate/README.md',
+    // '../syngrisi-cucumber-boilerplate/src/features/syngrisi/',
 
-    '../syngrisi-playwright-boilerplate/README.md',
-    '../syngrisi-playwright-boilerplate/tests/'
+    // '../syngrisi-playwright-boilerplate/README.md',
+    // '../syngrisi-playwright-boilerplate/tests/'
 ];
 
 convertToJson(paths);

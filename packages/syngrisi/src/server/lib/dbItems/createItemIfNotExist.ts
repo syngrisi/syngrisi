@@ -3,11 +3,6 @@
 import mongoose from 'mongoose';
 import log from "../logger";
 
-const fileLogMeta = {
-    scope: 'dbitems',
-    msgType: 'DB',
-};
-
 export async function createItemIfNotExist(modelName: string, params: any, logsMeta = {}): Promise<any> {
     const logOpts = {
         scope: 'createItemIfNotExist',
@@ -25,10 +20,10 @@ export async function createItemIfNotExist(modelName: string, params: any, logsM
         await itemModel.init();
         const item = await itemModel.findOneAndUpdate(params, params, options);
 
-        log.info(`ORM item '${modelName}' was created: '${JSON.stringify(item)}'`, fileLogMeta, { ...logOpts, ...{ ref: item?._id }, ...logsMeta });
+        log.info(`ORM item '${modelName}' was created: '${JSON.stringify(item)}'`, { ...logOpts, ...{ ref: item?._id }, ...logsMeta });
         return item;
     } catch (e: any) {
-        log.debug(`cannot create '${modelName}' ORM item, error: '${e.stack || e}'`, fileLogMeta, { ...logOpts, ...logsMeta });
+        log.debug(`cannot create '${modelName}' ORM item, error: '${e.stack || e}'`, { ...logOpts, ...logsMeta });
     }
     return null;
 }
