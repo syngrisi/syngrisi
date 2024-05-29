@@ -4,12 +4,6 @@ import { checkService } from './index';
 import { Test, Check } from '../models';
 import log from "../lib/logger";
 
-
-const fileLogMeta = {
-    scope: 'test_service',
-    msgType: 'TEST',
-};
-
 const queryTests = async (filter: any, options: any) => {
     // @ts-ignore
     const tests = await Test.paginate(filter, options);
@@ -30,7 +24,7 @@ const remove = async (id: string, user: any) => {
         user: user?.username,
         msgType: 'REMOVE',
     };
-    log.info(`remove test with, id: '${id}', user: '${user.username}'`, fileLogMeta, logOpts);
+    log.info(`remove test with, id: '${id}', user: '${user.username}'`, logOpts);
 
     try {
         log.debug(`try to delete all checks associated to test with ID: '${id}'`, logOpts);
@@ -53,7 +47,7 @@ const accept = async (id: string, user: any) => {
         user: user?.username,
         msgType: 'ACCEPT',
     };
-    log.info(`accept test with, id: '${id}', user: '${user.username}'`, fileLogMeta, logOpts);
+    log.info(`accept test with, id: '${id}', user: '${user.username}'`, logOpts);
 
     const checks: any = await Check.find({ test: id }).exec();
 

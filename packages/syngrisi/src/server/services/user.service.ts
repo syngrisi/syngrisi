@@ -4,12 +4,6 @@ import httpStatus from 'http-status';
 import { User } from '../models';
 import { ApiError } from '../utils';
 import log from "../lib/logger";
-// import {  UserModel } from '../models/User';
-
-const fileLogMeta = {
-    scope: 'user_service',
-    msgType: 'USER',
-};
 
 const createUser = async (userBody: any) => {
     // @ts-ignore
@@ -22,14 +16,14 @@ const createUser = async (userBody: any) => {
         ref: userBody.username,
         scope: 'createUser',
     };
-    log.debug(`create the user with name '${userBody.username}', params: '${JSON.stringify(userBody)}'`, fileLogMeta, logOpts);
+    log.debug(`create the user with name '${userBody.username}', params: '${JSON.stringify(userBody)}'`, logOpts);
 
     const user = await User.create({ ...userBody, createdDate: Date.now() });
 
     const updatedUser = await user.setPassword(userBody.password);
     await updatedUser.save();
 
-    log.debug(`password for user: '${userBody.username}' set successfully`, fileLogMeta, logOpts);
+    log.debug(`password for user: '${userBody.username}' set successfully`, logOpts);
     return updatedUser;
 };
 
@@ -48,13 +42,10 @@ const updateUserById = async (userId: string, updateBody: any) => {
         msgType: 'UPDATE',
         itemType: 'user',
         scope: 'updateUserById',
+        ref: userId,
     };
 
-    log.info(
-        `update user with id: '${userId}' name '${updateBody.username}', params: '${JSON.stringify(updateBody)}'`,
-        fileLogMeta,
-        logOpts
-    );
+    log.info(`update user with id: '${userId}' name '${updateBody.username}', params: '${JSON.stringify(updateBody)}'`, logOpts);
     const user = await getUserById(userId);
     if (!user) {
         throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
@@ -64,12 +55,12 @@ const updateUserById = async (userId: string, updateBody: any) => {
         throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
     }
     if (updateBody.password) {
-        log.debug(`update password for '${updateBody.username}'`, fileLogMeta, logOpts);
+        log.debug(`update password for '${updateBody.username}'`, logOpts);
         await user.setPassword(updateBody.password);
         await user.save();
-        log.debug(`password for '${updateBody.username}' was updated`, fileLogMeta, logOpts);
+        log.debug(`password for '${updateBody.username}' was updated`, logOpts);
     }
-    log.debug(`user '${updateBody.username}' was updated successfully`, fileLogMeta, logOpts);
+    log.debug(`user '${updateBody.username}' was updated successfully`, logOpts);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...newupdateBody } = updateBody;

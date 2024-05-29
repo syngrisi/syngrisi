@@ -40,10 +40,6 @@ import { Request, Response, NextFunction } from 'express';
 import { User } from '../../models';
 import log from "../../lib/logger";
 
-const fileLogMeta = {
-    scope: 'Authentication',
-    msgType: 'LOGIN',
-};
 
 const handleBasicAuth = async (req: any): Promise<any> => {
     const logOpts = {
@@ -59,7 +55,7 @@ const handleBasicAuth = async (req: any): Promise<any> => {
         const result = new Promise((resolve) => {
             req.logIn(guest, (err: any) => {
                 if (err) {
-                    log.error(`cannot find guest user: '${err}'`, fileLogMeta, logOpts);
+                    log.error(`cannot find guest user: '${err}'`, logOpts);
                     resolve({
                         type: 'redirect',
                         status: 301,
@@ -90,7 +86,7 @@ const handleBasicAuth = async (req: any): Promise<any> => {
         && ((await global.AppSettings.isFirstRun()))
         && process.env.SYNGRISI_DISABLE_FIRST_RUN !== '1'
     ) {
-        log.info('first run, set admin password', fileLogMeta, logOpts);
+        log.info('first run, set admin password', logOpts);
         result.type = 'redirect';
         result.status = 301;
         result.value = '/auth/change?first_run=true';
@@ -98,7 +94,7 @@ const handleBasicAuth = async (req: any): Promise<any> => {
     }
 
     if (await global.AppSettings.isAuthEnabled()) {
-        log.info(`user is not authenticated - ${req.originalUrl}`, fileLogMeta, logOpts);
+        log.info(`user is not authenticated - ${req.originalUrl}`, logOpts);
 
         result.type = 'redirect';
         result.status = 301;
@@ -171,7 +167,7 @@ const handleAPIAuth = async (hashedApiKey: string): Promise<any> => {
         result.value = 'wrong API key';
         return result;
     }
-    log.debug('authenticated', fileLogMeta, { ...logOpts, ...{ user: user?.username } });
+    log.debug('authenticated', { ...logOpts, ...{ user: user?.username } });
     result.type = 'success';
     result.status = 200;
     result.user = user;
@@ -191,7 +187,7 @@ export function ensureApiKey(): (req: Request, res: Response, next: NextFunction
         req.user = req.user || result.user;
         req.headers.apikey = result?.user?.apiKey || req?.headers?.apikey;
         if (result.type !== 'success') {
-            log.info(`${result.value} - ${req.originalUrl}`, fileLogMeta, logOpts);
+            log.info(`${result.value} - ${req.originalUrl}`, logOpts);
             res.status(result.status).json({ error: result.value });
             return next(new Error(result.value));
         }

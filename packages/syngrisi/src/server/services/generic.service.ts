@@ -4,11 +4,6 @@ import mongoose from 'mongoose';
 import { removeEmptyProperties } from '../utils';
 import log from '../lib/logger';
 
-const fileLogMeta = {
-    scope: 'generic.service',
-    msgType: 'LOF',
-};
-
 const get = async (modelName: string, filter: any, options: any) => {
     const itemModel = mongoose.model(modelName);
     // @ts-ignore
@@ -27,13 +22,13 @@ const put = async (modelName: string, id: string, options: object, user: any) =>
     };
 
     const opts = removeEmptyProperties(options);
-    log.debug(`start update '${modelName}' with id: '${id}', body: '${JSON.stringify(opts)}'`, fileLogMeta, logOpts);
+    log.debug(`start update '${modelName}' with id: '${id}', body: '${JSON.stringify(opts)}'`, logOpts);
     const item = await itemModel.findByIdAndUpdate(id, options).exec();
     if (!item) throw new Error(`cannot find the item: ${modelName}, id: ${id}, options: ${JSON.stringify(options)}`);
 
 
     await item.save();
-    log.debug(`baseline with id: '${id}' and opts: '${JSON.stringify(opts)}' was updated`, fileLogMeta, logOpts);
+    log.debug(`baseline with id: '${id}' and opts: '${JSON.stringify(opts)}' was updated`, logOpts);
     return item;
 };
 

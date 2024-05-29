@@ -12,11 +12,6 @@ import * as snapshotService from './snapshot.service';
 import * as orm from '../lib/dbItems';
 import log from '../lib/logger';
 
-const fileLogMeta = {
-    scope: 'check_service',
-    msgType: 'CHECK',
-};
-
 async function calculateTestStatus(testId: string): Promise<string> {
     const checksInTest = await Check.find({ test: testId });
     const statuses = checksInTest.map((x: CheckDocument) => x.status[0]);
@@ -42,6 +37,13 @@ const validateBaselineParam = (params: any): void => {
 };
 
 async function createNewBaseline(params: any): Promise<any> {
+
+    const logOpts = {
+        scope: 'createNewBaseline',
+        msgType: 'CREATE',
+    };
+
+
     validateBaselineParam(params);
 
     const identFields = buildIdentObject(params);
@@ -54,10 +56,10 @@ async function createNewBaseline(params: any): Promise<any> {
         : identFields;
 
     if (sameBaseline) {
-        log.debug(`the baseline with same ident and snapshot id: ${params.actualSnapshotId} already exist`, fileLogMeta);
+        log.debug(`the baseline with same ident and snapshot id: ${params.actualSnapshotId} already exist`, logOpts);
     } else {
         log.debug(`the baseline with same ident and snapshot id: ${params.actualSnapshotId} does not exist,
-         create new one, baselineParams: ${JSON.stringify(baselineParams)}`, fileLogMeta);
+         create new one, baselineParams: ${JSON.stringify(baselineParams)}`, logOpts);
     }
 
     log.silly({ sameBaseline });
@@ -75,14 +77,14 @@ async function createNewBaseline(params: any): Promise<any> {
 }
 
 const accept = async (id: string, baselineId: string, user: any): Promise<CheckDocument> => {
-    const logMeta = {
+    const logOpts = {
         msgType: 'ACCEPT',
         itemType: 'check',
         ref: id,
         user: user?.username,
         scope: 'accept',
     };
-    log.debug(`accept check: ${id}`, fileLogMeta, logMeta);
+    log.debug(`accept check: ${id}`, logOpts);
     const check = await Check.findById(id).exec();
     if (!check) throw new Error(`cannot find check with id: ${id}`);
     const test = await Test.findById(check.test).exec();
@@ -97,10 +99,10 @@ const accept = async (id: string, baselineId: string, user: any): Promise<CheckD
     opts.updatedDate = new Date();
     opts.baselineId = baselineId;
 
-    log.debug(`update check id: '${id}' with opts: '${JSON.stringify(opts)}'`, fileLogMeta, logMeta);
+    log.debug(`update check id: '${id}' with opts: '${JSON.stringify(opts)}'`, logOpts);
 
     Object.assign(check, opts);
-    log.debug(`update check with options: '${JSON.stringify(check.toObject())}'`, fileLogMeta, logMeta);
+    log.debug(`update check with options: '${JSON.stringify(check.toObject())}'`, logOpts);
     await createNewBaseline(check.toObject());
     await check.save();
 
@@ -112,14 +114,14 @@ const accept = async (id: string, baselineId: string, user: any): Promise<CheckD
     test.updatedDate = new Date();
 
     await Suite.findByIdAndUpdate(check.suite, { updatedDate: Date.now() });
-    log.debug(`update test with status: '${testCalculatedStatus}', marked: '${testCalculatedAcceptedStatus}'`, fileLogMeta, {
+    log.debug(`update test with status: '${testCalculatedStatus}', marked: '${testCalculatedAcceptedStatus}'`, logOpts, {
         msgType: 'UPDATE',
         itemType: 'test',
         ref: test._id,
     });
     await test.save();
     await check.save();
-    log.debug(`check with id: '${id}' was updated`, fileLogMeta, logMeta);
+    log.debug(`check with id: '${id}' was updated`, logOpts);
     return check;
 };
 
@@ -136,7 +138,7 @@ async function removeCheck(id: string, user: any): Promise<CheckDocument> {
         const check: any = await Check.findByIdAndDelete(id).exec();
         if (!check) throw new Error(`cannot find check with id: ${id}`);
 
-        log.debug(`check with id: '${id}' was removed, update test: ${check.test}`, fileLogMeta, logMeta);
+        log.debug(`check with id: '${id}' was removed, update test: ${check.test}`, logMeta);
 
         const test = await Test.findById(check.test).exec();
         if (!test) throw new Error(`cannot find test with id: ${check.test}`);
@@ -150,36 +152,36 @@ async function removeCheck(id: string, user: any): Promise<CheckDocument> {
         await test.save();
 
         if (check.baselineId && check.baselineId !== 'undefined') {
-            log.debug(`try to remove the snapshot, baseline: ${check.baselineId}`, fileLogMeta, logMeta);
+            log.debug(`try to remove the snapshot, baseline: ${check.baselineId}`, logMeta);
             await snapshotService.remove(check.baselineId.toString());
         }
 
         if (check.actualSnapshotId && check.baselineId !== 'undefined') {
-            log.debug(`try to remove the snapshot, actual: ${check.actualSnapshotId}`, fileLogMeta, logMeta);
+            log.debug(`try to remove the snapshot, actual: ${check.actualSnapshotId}`, logMeta);
             await snapshotService.remove(check.actualSnapshotId.toString());
         }
 
         if (check.diffId && check.baselineId !== 'undefined') {
-            log.debug(`try to remove snapshot, diff: ${check.diffId}`, fileLogMeta, logMeta);
+            log.debug(`try to remove snapshot, diff: ${check.diffId}`, logMeta);
             await snapshotService.remove(check.diffId.toString());
         }
         return check;
     } catch (e: unknown) {
         const errMsg = `cannot remove a check with id: '${id}', error: '${e instanceof Error ? e.stack : String(e)}'`;
-        log.error(errMsg, fileLogMeta, logMeta);
+        log.error(errMsg, logMeta);
         throw new Error(errMsg);
     }
 }
 
 const remove = async (id: string, user: any): Promise<CheckDocument> => {
-    const logMeta = {
+    const logOpts = {
         scope: 'removeCheck',
         itemType: 'check',
         ref: id,
         user: user?.username,
         msgType: 'REMOVE',
     };
-    log.info(`remove check with, id: '${id}', user: '${user.username}'`, fileLogMeta, logMeta);
+    log.info(`remove check with, id: '${id}', user: '${user.username}'`, logOpts);
     return removeCheck(id, user);
 };
 
@@ -191,7 +193,7 @@ const update = async (id: string, opts: Partial<CheckDocument>, user: any): Prom
         user,
         scope: 'updateCheck',
     };
-    log.debug(`update check with id '${id}' with params '${JSON.stringify(opts, null, 2)}'`, fileLogMeta, logMeta);
+    log.debug(`update check with id '${id}' with params '${JSON.stringify(opts, null, 2)}'`, logMeta);
 
     const check = await Check.findOneAndUpdate({ _id: id }, opts, { new: true }).exec();
     if (!check) throw new Error(`cannot find check with id: ${id}`);

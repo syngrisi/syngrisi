@@ -9,12 +9,6 @@ import log from '../lib/logger';
 // import { createLog } from '../controllers/logs.controller';
 // import AppSettings from '../models/AppSettings';
 
-// const fileLogMeta = {
-//     scope: 'authorization',
-//     msgType: 'AUTHORIZATION',
-// };
-
-
 
 export const authorization = (type: string) => {
 

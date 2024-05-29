@@ -27,16 +27,9 @@ import {
     Baseline,
 } from '../models';
 
-// const testAdminUser = require('../../seeds/testAdmin.json');
-
-const fileLogMeta = {
-    scope: 'app_service',
-    msgType: 'APP',
-};
-
 function taskOutput(msg: any, res: any) {
     res.write(`${msg.toString()}\n`);
-    log.debug(msg.toString(), fileLogMeta);
+    log.debug(msg.toString());
 }
 
 function parseHrtimeToSeconds(hrtime: any) {
@@ -69,13 +62,13 @@ const loadTestUser = async () => {
     }
     const testAdmin = await User.findOne({ username: 'Test' }).exec();
     if (!testAdmin) {
-        log.info('create the test Administrator', fileLogMeta, logOpts);
+        log.info('create the test Administrator', logOpts);
         const admin = await User.create(testAdminUser);
-        log.info(`test Administrator with id: '${admin._id}' was created`, fileLogMeta, logOpts);
+        log.info(`test Administrator with id: '${admin._id}' was created`, logOpts);
         return admin;
     }
 
-    log.info(`test admin is exists: ${JSON.stringify(testAdmin, null, 2)}`, fileLogMeta, logOpts);
+    log.info(`test admin is exists: ${JSON.stringify(testAdmin, null, 2)}`, logOpts);
     return { msg: `already exist '${testAdmin}'` };
 };
 
@@ -450,7 +443,7 @@ const task_test = async (options = 'empty', req: any, res: any) => {
         taskOutput(`- Task Output: '${i}', options: ${options}\n`, res);
         if (isAborted) {
             taskOutput('the task was aborted\n', res);
-            log.warn('the task was aborted', fileLogMeta);
+            log.warn('the task was aborted');
             res.flush();
             return res.end();
         }

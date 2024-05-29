@@ -3,7 +3,7 @@
 import mongoose from 'mongoose';
 import log from "../logger";
 
-const fileLogMeta = {
+const logOpts = {
     scope: 'dbitems',
     msgType: 'DB',
 };
@@ -11,12 +11,12 @@ const fileLogMeta = {
 export async function createItemProm(modelName: string, params: any): Promise<any> {
     try {
         const itemModel = mongoose.model(modelName);
-        log.debug(`start to create ORM item via promise: '${modelName}', params: '${JSON.stringify(params)}'`, fileLogMeta);
+        log.debug(`start to create ORM item via promise: '${modelName}', params: '${JSON.stringify(params)}'`, logOpts);
         const item = await itemModel.create(params);
         return item;
     } catch (e: any) {
         const errMsg = `cannot create '${modelName}', error: '${e.stack || e}'`;
-        log.error(errMsg, fileLogMeta);
+        log.error(errMsg, logOpts);
         throw new Error(errMsg);
     }
 }

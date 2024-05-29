@@ -4,10 +4,6 @@ import { Test, Run } from '../models';
 import log from '../lib/logger';
 import * as testService from './test.service';
 
-const fileLogMeta = {
-    scope: 'run_service',
-    msgType: 'RUN',
-};
 
 const remove = async (id: string, user: any) => {
     const logOpts = {
@@ -17,7 +13,7 @@ const remove = async (id: string, user: any) => {
         user: user?.username,
         msgType: 'REMOVE',
     };
-    log.info(`remove run with, id: '${id}', user: '${user.username}'`, fileLogMeta, logOpts);
+    log.info(`remove run with, id: '${id}', user: '${user.username}'`, logOpts);
     const tests = await Test.find({ run: id }).exec();
 
     for (const test of tests) {

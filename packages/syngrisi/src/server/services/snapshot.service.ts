@@ -5,7 +5,7 @@ import { Baseline, Snapshot } from '../models';
 import log from "../lib/logger";
 import { SnapshotDocument } from '../models/Snapshot';
 
-const fileLogMeta = {
+const logOpts = {
     scope: 'snapshot_helper',
     msgType: 'API',
 };
@@ -18,7 +18,7 @@ const removeSnapshotFile = async (snapshot: SnapshotDocument) => {
     let relatedSnapshots: any[];
     if (snapshot.filename) {
         relatedSnapshots = await Snapshot.find({ filename: snapshot.filename });
-        log.debug(`there are '${relatedSnapshots.length}' snapshots with filename: '${snapshot.filename}'`, fileLogMeta);
+        log.debug(`there are '${relatedSnapshots.length}' snapshots with filename: '${snapshot.filename}'`, logOpts);
     }
 
     const isLastSnapshotFile = () => {
@@ -32,9 +32,9 @@ const removeSnapshotFile = async (snapshot: SnapshotDocument) => {
 
     if (isLastSnapshotFile()) {
         const path = `${config.defaultImagesPath}${snapshot.filename}`;
-        log.silly(`path: ${path}`, fileLogMeta);
+        log.silly(`path: ${path}`, logOpts);
         if (fs.existsSync(path)) {
-            log.debug(`removing file: '${path}'`, fileLogMeta, {
+            log.debug(`removing file: '${path}'`, logOpts, {
                 msgType: 'REMOVE',
                 itemType: 'file',
             });

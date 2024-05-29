@@ -12,11 +12,6 @@ function getApiKey(): string {
     return uuidAPIKey.create().apiKey;
 }
 
-const fileLogMeta = {
-    scope: 'authentication',
-    msgType: 'AUTHENTICATION',
-};
-
 type UserType = {
     changePassword: (currentPasswor: string, newPassword: string) => void,
     apiKey: string,
@@ -27,16 +22,23 @@ type UserType = {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const apikey = catchAsync(async (req: any, res: any, next: any) => {
+    const logOpts = {
+        user: req.user.username,
+        scope: 'apikey',
+        msgType: 'GENERATE_API'
+    };
+
     const apiKey = getApiKey();
     log.debug(
         `generate API Key for user: '${req.user.username}'`,
-        fileLogMeta,
-        { user: req.user.username, scope: 'apikey', msgType: 'GENERATE_API' }
+        logOpts
     );
     const hash = hasha(apiKey);
 
     const user: UserType | null = await User.findOne({ username: req.user.username });
-    user!.apiKey = hash;
+    if (!user) throw new Error(`cannot find the user with username: '${req.user.username}'`);
+
+    user.apiKey = hash;
     await user!.save();
     res.status(200).json({ apikey: apiKey });
 });
@@ -73,7 +75,7 @@ const logout = catchAsync(async (req: any, res: any) => {
         msgType: 'AUTHENTICATION',
     };
     try {
-        log.debug(`try to log out user: '${req?.user?.username}'`, fileLogMeta, logOpts);
+        log.debug(`try to log out user: '${req?.user?.username}'`, logOpts);
         await req.logout({}, () => res.status(httpStatus.OK).json({ message: 'success' }));
     } catch (e: any) {
         log.error(e.stack || e.toString());
@@ -124,7 +126,7 @@ const changePasswordFirstRun = catchAsync(async (req: any, res: any) => {
     const AppSettings = (global as any).AppSettings;
 
     if ((await AppSettings.isAuthEnabled()) && ((await AppSettings.isFirstRun()))) {
-        log.debug(`first run, change password for default 'Administrator', params: '${JSON.stringify(req.body)}'`, fileLogMeta, logOpts);
+        log.debug(`first run, change password for default 'Administrator', params: '${JSON.stringify(req.body)}'`, logOpts);
         const user = await User.findOne({ username: 'Administrator' }).exec();
         logOpts.ref = user?.username;
 
@@ -132,11 +134,11 @@ const changePasswordFirstRun = catchAsync(async (req: any, res: any) => {
         await user.setPassword(newPassword);
         // @ts-ignore
         await user.save();
-        log.debug('password was successfully changed for default Administrator', fileLogMeta, logOpts);
+        log.debug('password was successfully changed for default Administrator', logOpts);
         await AppSettings.set('first_run', false);
         return res.status(200).json({ message: 'success' });
     }
-    log.error(`trying to use first run API with no first run state, auth: '${await AppSettings.isAuthEnabled()}', global settings: '${(await AppSettings.get('first_run'))}'`, fileLogMeta, logOpts);
+    log.error(`trying to use first run API with no first run state, auth: '${await AppSettings.isAuthEnabled()}', global settings: '${(await AppSettings.get('first_run'))}'`, logOpts);
     return res.status(httpStatus.FORBIDDEN).json({ message: 'forbidden' });
 });
 
