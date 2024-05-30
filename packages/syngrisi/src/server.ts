@@ -48,9 +48,6 @@ import uiRoutes from './server/routes/ui';
 global.queue = new PQueue({ concurrency: 1 });
 
 // @ts-ignore
-global.AppSettings = new AppSettings();
-
-// @ts-ignore
 const logMeta = { scope: 'entrypoint' };
 log.info('Init the application', logMeta);
 
@@ -91,7 +88,7 @@ const expressSession = session({
 // @ts-ignore
 app.use(expressSession);
 
-log.info('Init passport', this);
+log.info('Init passport', logMeta);
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy({}, User.authenticate()));
@@ -124,9 +121,10 @@ app.use(
     fileUpload({ limits: { fileSize: 50 * 1024 * 1024 }, })
 );
 
+
+log.info('Init static middlewares', logMeta);
 const baseDir = process.cwd();
 const viewPath = path.join(baseDir, './mvc/views/');
-
 
 app.set('views', viewPath);
 app.set('view engine', 'ejs');
@@ -135,17 +133,15 @@ app.use(express.json({ limit: '50mb' }));
 
 const screenshotsPath = path.join(baseDir, config.defaultImagesPath);
 
-// console.log(screenshotsPath);
-
-
 app.use('/snapshoots', express.static(screenshotsPath));
-
 const staticPath = path.join(baseDir, './src/server/static/static');
 
 app.use('../static', express.static(staticPath));
-
 const assetsPath = path.join(baseDir, './mvc/views/react/assets');
 app.use('/assets', express.static(assetsPath));
+
+
+log.info('Init routes', logMeta);
 
 app.use('/v1', routes);
 app.use('/auth', authRoutes);
@@ -163,12 +159,15 @@ mongoose.Promise = global.Promise;
 // // eslint-disable-next-line @typescript-eslint/no-unused-vars
 // let server: any;
 mongoose.set('strictQuery', false);
-
 mongoose
     // .connect(config.connectionString, { useUnifiedTopology: true })
     .connect(config.connectionString)
     .then(async () => {
         log.info('Connected to MongoDB');
+        log.info('Load application setting', logMeta);
+        // @ts-ignore
+        global.AppSettings = await (new AppSettings()).init();  
+
         log.debug('run onStart jobs', logMeta);
         const startUp = await import('./server/lib/startup');
         startUp.createTempDir();

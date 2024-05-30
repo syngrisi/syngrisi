@@ -2,7 +2,8 @@
   "name": "@syngrisi/syngrisi",
   "version": "2.2.3",
   "description": "Syngrisi - Visual Testing Tool",
-  "main": "server.js",
+  "main": "./dist/src/server.js",
+  "type": "commonjs",
   "bin": {
     "sy": "server.js"
   },
