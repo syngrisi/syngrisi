@@ -4,6 +4,7 @@ import path from 'path';
 import httpStatus from 'http-status';
 
 import { catchAsync } from '../../utils';
+import { Midleware } from '../../../types/Midleware';
 
 const router = express.Router();
 const rootDir = path.resolve(process.cwd());
@@ -16,6 +17,6 @@ const authController = catchAsync(async (req: Request, res: Response) => {
 
 });
 
-router.get('*', authController);
+router.get('*', authController as Midleware);
 
 export default router;

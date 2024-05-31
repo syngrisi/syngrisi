@@ -2,11 +2,13 @@
 import httpStatus from 'http-status';
 import { pick, ApiError, catchAsync, deserializeIfJSON } from '../utils';
 import { testService } from '../services';
+import { Response } from "express";
+import { ExtRequest } from '../../types/ExtRequest';
 
-const getTest = catchAsync(async (req: any, res: any) => {
+const getTest = catchAsync(async (req: ExtRequest, res: Response) => {
     const filter = {
-        ...deserializeIfJSON(req.query.base_filter),
-        ...deserializeIfJSON(req.query.filter),
+        ...deserializeIfJSON(String(req.query.base_filter)),
+        ...deserializeIfJSON(String(req.query.filter)),
     };
 
     if (req.user?.role === 'user') {
@@ -18,7 +20,7 @@ const getTest = catchAsync(async (req: any, res: any) => {
     res.status(httpStatus.OK).send(result);
 });
 
-const distinct = catchAsync(async (req: any, res: any) => {
+const distinct = catchAsync(async (req: ExtRequest, res: Response) => {
     const filter = pick(req.query, [
         'suite',
         'run',
@@ -42,14 +44,14 @@ const distinct = catchAsync(async (req: any, res: any) => {
     res.status(httpStatus.OK).send(result);
 });
 
-const remove = catchAsync(async (req: any, res: any) => {
+const remove = catchAsync(async (req: ExtRequest, res: Response) => {
     const { id } = req.params;
     if (!id) throw new ApiError(httpStatus.BAD_REQUEST, 'Cannot remove the test - Id not found');
     const result = await testService.remove(id, req?.user);
     res.send(result);
 });
 
-const accept = catchAsync(async (req: any, res: any) => {
+const accept = catchAsync(async (req: ExtRequest, res: Response) => {
     const { id } = req.params;
     if (!id) throw new ApiError(httpStatus.BAD_REQUEST, 'Cannot accept the check - Id not found');
     const result = await testService.accept(id, req?.user);

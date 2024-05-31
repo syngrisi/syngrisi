@@ -4,10 +4,12 @@ import httpStatus from 'http-status';
 import { EJSON } from 'bson';
 import { catchAsync } from '../utils';
 import { genericService } from '../services';
+import { Response } from "express";
 
 import { pick } from '../utils';
+import { ExtRequest } from '../../types/ExtRequest';
 
-const get = catchAsync(async (req: any, res: any) => {
+const get = catchAsync(async (req: ExtRequest, res: Response) => {
     // const filter = req.query.filter ? EJSON.parse(pick(req.query, ['filter']).filter) : {};
     const filter = typeof req.query.filter === 'string'
     ? EJSON.parse(req.query.filter)

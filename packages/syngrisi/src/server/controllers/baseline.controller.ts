@@ -20,7 +20,7 @@ const get = catchAsync(async (req: ExtRequest, res: Response) => {
     res.send(result);
 });
 
-const put = catchAsync(async (req: any, res: any) => {
+const put = catchAsync(async (req: ExtRequest, res: Response) => {
     const { id } = req.params;
     if (!id) throw new ApiError(httpStatus.BAD_REQUEST, 'Cannot update the baseline - Id not found');
     const result = await genericService.put('VRSBaseline', id, req.body, req?.user);

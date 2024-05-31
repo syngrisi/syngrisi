@@ -2,8 +2,10 @@
 import httpStatus from 'http-status';
 import { ApiError, catchAsync, deserializeIfJSON, pick, removeEmptyProperties } from '../utils';
 import { genericService, checkService } from '../services';
+import { ExtRequest } from '../../types/ExtRequest';
+import { Response } from "express";
 
-const get = catchAsync(async (req: any, res: any) => {
+const get = catchAsync(async (req: ExtRequest, res: Response) => {
     // const filter = req.query.filter ? deserializeIfJSON(pick(req.query, ['filter']).filter) : {};
     const filter = typeof req.query.filter === 'string'
     ? deserializeIfJSON(req.query.filter)
@@ -18,14 +20,14 @@ const get = catchAsync(async (req: any, res: any) => {
     res.send(result);
 });
 
-const getViaPost = catchAsync(async (req: any, res: any) => {
+const getViaPost = catchAsync(async (req: ExtRequest, res: Response) => {
     const filter = req.body.filter ? pick(req.body, ['filter']).filter : {};
     const options = req.body.options ? pick(req.body, ['options']).options : {};
     const result = await genericService.get('VRSCheck', filter, options);
     res.send(result);
 });
 
-const update = catchAsync(async (req: any, res: any) => {
+const update = catchAsync(async (req: ExtRequest, res: Response) => {
     const { id } = req.params;
     if (!id) throw new ApiError(httpStatus.BAD_REQUEST, 'Cannot accept the check - Id not found');
     const opts = removeEmptyProperties(req.body);
@@ -34,7 +36,7 @@ const update = catchAsync(async (req: any, res: any) => {
     res.send(result);
 });
 
-const accept = catchAsync(async (req: any, res: any) => {
+const accept = catchAsync(async (req: ExtRequest, res: Response) => {
     const { id } = req.params;
     if (!id) throw new ApiError(httpStatus.BAD_REQUEST, 'Cannot accept the check - Id not found');
     if (!req.body.baselineId) throw new ApiError(httpStatus.BAD_REQUEST, `Cannot accept the check: ${id} - new Baseline Id not found`);
@@ -42,7 +44,7 @@ const accept = catchAsync(async (req: any, res: any) => {
     res.send(result);
 });
 
-const remove = catchAsync(async (req: any, res: any) => {
+const remove = catchAsync(async (req: ExtRequest, res: Response) => {
     const { id } = req.params;
     if (!id) throw new ApiError(httpStatus.BAD_REQUEST, 'Cannot remove the check - Id not found');
     const result = await checkService.remove(id, req?.user);

@@ -39,9 +39,10 @@
 import { Request, Response, NextFunction } from 'express';
 import { User } from '../../models';
 import log from "../../lib/logger";
+import { ExtRequest } from '../../../types/ExtRequest';
 
 
-const handleBasicAuth = async (req: any): Promise<any> => {
+const handleBasicAuth = async (req: ExtRequest): Promise<any> => {
     const logOpts = {
         scope: 'handleBasicAuth',
         msgType: 'AUTH_API',
