@@ -1,41 +1,37 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status';
 import passport from 'passport';
 import hasha from 'hasha';
 import uuidAPIKey from 'uuid-apikey';
+import { Response, NextFunction } from "express"
+import { ExtRequest } from '../../types/ExtRequest';
 import { User } from '../models';
-import { catchAsync } from '../utils';
+import { catchAsync, errMsg } from '../utils';
 import log from "../lib/logger";
+import { User as IUser } from '../../types/User';
 
 function getApiKey(): string {
     return uuidAPIKey.create().apiKey;
 }
 
-type UserType = {
-    changePassword: (currentPasswor: string, newPassword: string) => void,
-    apiKey: string,
-    username: string,
-    save: () => void,
-    setPassword: (newPassword: string) => void,
-}
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const apikey = catchAsync(async (req: any, res: any, next: any) => {
+const apikey = catchAsync(async (req: ExtRequest, res: Response) => {
     const logOpts = {
-        user: req.user.username,
+        user: req?.user?.username || undefined,
         scope: 'apikey',
         msgType: 'GENERATE_API'
     };
 
     const apiKey = getApiKey();
     log.debug(
-        `generate API Key for user: '${req.user.username}'`,
+        `generate API Key for user: '${req.user?.username}'`,
         logOpts
     );
     const hash = hasha(apiKey);
 
-    const user: UserType | null = await User.findOne({ username: req.user.username });
+    if (!req.user?.username) throw new Error(`Username is empty`);
+
+    const user = await User.findOne({ username: req.user.username });
     if (!user) throw new Error(`cannot find the user with username: '${req.user.username}'`);
 
     user.apiKey = hash;
@@ -43,33 +39,34 @@ const apikey = catchAsync(async (req: any, res: any, next: any) => {
     res.status(200).json({ apikey: apiKey });
 });
 
-const login = catchAsync(async (req: any, res: any, next: any) => {
+const login = catchAsync(async (req: ExtRequest, res: Response, next: NextFunction) => {
     const logOpts = {
         scope: 'login',
         msgType: 'AUTHENTICATION',
     };
-    passport.authenticate('local', (err: any, user: any, info: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    passport.authenticate('local', (err: unknown, user: any, info: any) => {
         if (err) {
-            log.error(`Authentication error: '${err}'`, this, logOpts);
+            log.error(`Authentication error: '${err}'`, logOpts);
             return res.status(httpStatus.UNAUTHORIZED).json({ message: 'authentication error' });
         }
         if (!user) {
-            log.error(`Authentication error: '${info.message}'`, this, logOpts);
+            log.error(`Authentication error: '${info.message}'`, logOpts);
             return res.status(httpStatus.UNAUTHORIZED).json({ message: `Authentication error: '${info.message}'` });
         }
 
-        req.logIn(user, (e: any) => {
+        req.logIn(user, (e: unknown) => {
             if (e) {
-                log.error(e.stack || e.toString());
+                log.error(e, logOpts);
                 return next(e);
             }
-            log.info('user is logged in', this, { user: user.username });
+            log.info('user is logged in', { user: user.username });
             return res.status(200).json({ message: 'success' });
         });
     })(req, res, next);
 });
 
-const logout = catchAsync(async (req: any, res: any) => {
+const logout = catchAsync(async (req: ExtRequest, res: Response) => {
     const logOpts = {
         scope: 'logout',
         msgType: 'AUTHENTICATION',
@@ -77,13 +74,13 @@ const logout = catchAsync(async (req: any, res: any) => {
     try {
         log.debug(`try to log out user: '${req?.user?.username}'`, logOpts);
         await req.logout({}, () => res.status(httpStatus.OK).json({ message: 'success' }));
-    } catch (e: any) {
-        log.error(e.stack || e.toString());
+    } catch (e: unknown) {
+        log.error(e, logOpts);
         res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: 'fail' });
     }
 });
 
-const changePassword = catchAsync(async (req: any, res: any) => {
+const changePassword = catchAsync(async (req: ExtRequest, res: Response) => {
     const logOpts = {
         scope: 'changePassword',
         msgType: 'CHANGE_PASSWORD',
@@ -95,26 +92,28 @@ const changePassword = catchAsync(async (req: any, res: any) => {
 
     const username = req?.user?.username;
 
-    log.debug(`change password for '${username}', params: '${JSON.stringify(req.body)}'`, this, logOpts);
+    log.debug(`change password for '${username}', params: '${JSON.stringify(req.body)}'`, logOpts);
 
-    const user: UserType | null = await User.findOne({ username });
+    const user: IUser | null = await User.findOne({ username });
+    // if (!user) throw new Error(`cannot find user with username: ${username}`);
+
     if (!user) {
-        log.error('user is not logged in', this, logOpts);
+        log.error('user is not logged in', logOpts);
         return res.status(httpStatus.UNAUTHORIZED).json({ message: 'user is not logged in' });
     }
 
     try {
         await user.changePassword(currentPassword, newPassword);
-    } catch (e: any) {
-        log.error(e.stack || e.toString(), this, logOpts);
-        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: e.toString() });
+    } catch (e: unknown) {
+        log.error(e, logOpts);
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: errMsg(e) });
     }
 
-    log.debug(`password was successfully changed for user: ${req.user.username}`, this, logOpts);
+    log.debug(`password was successfully changed for user: ${req.user?.username}`, logOpts);
     return res.status(200).json({ message: 'success' });
 });
 
-const changePasswordFirstRun = catchAsync(async (req: any, res: any) => {
+const changePasswordFirstRun = catchAsync(async (req: ExtRequest, res: Response) => {
     const logOpts = {
         scope: 'changePasswordFirstRun',
         msgType: 'CHANGE_PASSWORD_FIRST_RUN',
@@ -123,23 +122,23 @@ const changePasswordFirstRun = catchAsync(async (req: any, res: any) => {
     };
 
     const { newPassword } = req.body;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const AppSettings = (global as any).AppSettings;
 
     if ((await AppSettings.isAuthEnabled()) && ((await AppSettings.isFirstRun()))) {
         log.debug(`first run, change password for default 'Administrator', params: '${JSON.stringify(req.body)}'`, logOpts);
         const user = await User.findOne({ username: 'Administrator' }).exec();
-        logOpts.ref = user?.username;
-
-        // @ts-ignore
+        if (!user) throw new Error(`cannot find the Administrator`);
+        logOpts.ref = String(user?.username);
         await user.setPassword(newPassword);
-        // @ts-ignore
         await user.save();
         log.debug('password was successfully changed for default Administrator', logOpts);
         await AppSettings.set('first_run', false);
-        return res.status(200).json({ message: 'success' });
+        res.status(200).json({ message: 'success' });
+    } else {
+        log.error(`trying to use first run API with no first run state, auth: '${await AppSettings.isAuthEnabled()}', global settings: '${JSON.stringify(await AppSettings.get('first_run'))}'`, logOpts);
+        res.status(httpStatus.FORBIDDEN).json({ message: 'forbidden' });
     }
-    log.error(`trying to use first run API with no first run state, auth: '${await AppSettings.isAuthEnabled()}', global settings: '${(await AppSettings.get('first_run'))}'`, logOpts);
-    return res.status(httpStatus.FORBIDDEN).json({ message: 'forbidden' });
 });
 
 export {

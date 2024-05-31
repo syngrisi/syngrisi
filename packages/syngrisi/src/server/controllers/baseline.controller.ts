@@ -4,11 +4,17 @@ import { catchAsync } from '../utils';
 import { genericService } from '../services';
 
 import { deserializeIfJSON, pick } from '../utils';
+import { Response } from "express";
 
 import { ApiError } from '../utils';
+import { ExtRequest } from '../../types/ExtRequest';
 
-const get = catchAsync(async (req: any, res: any) => {
-    const filter = req.query.filter ? deserializeIfJSON(pick(req.query, ['filter']).filter) : {};
+const get = catchAsync(async (req: ExtRequest, res: Response) => {
+    const filter = typeof req.query.filter === 'string'
+    ? deserializeIfJSON(req.query.filter)
+    : {};
+
+    // const filter = req.query.filter ? deserializeIfJSON(pick(req.query, ['filter']).filter) : {};
     const options = pick(req.query, ['sortBy', 'limit', 'page', 'populate']);
     const result = await genericService.get('VRSBaseline', filter, options);
     res.send(result);

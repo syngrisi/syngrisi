@@ -12,7 +12,7 @@ import log from '../lib/logger';
 
 export const authorization = (type: string) => {
 
-    const types: { [key: string]: (req: any, res: Response, next: NextFunction) => any } = {
+    const types: { [key: string]: (req: Request, res: Response, next: NextFunction) => any } = {
         admin: catchAsync(async (req: any, res: Response, next: NextFunction) => {
             const AppSettings = (global as any).AppSettings;
             if (!(await AppSettings.isAuthEnabled())) {

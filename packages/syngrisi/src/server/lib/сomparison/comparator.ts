@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { errMsg } from "../../utils";
 import log from "../logger";
 import compareImages from './compareImagesNode';
 
@@ -40,9 +41,9 @@ async function getDiff(baselineOrigin: any, actualOrigin: any, opts: any = {}): 
         log.debug(`the diff is: ${JSON.stringify(directDiff, null, 4)}`, logOpts);
 
         return directDiff;
-    } catch (e: any) {
-        log.error(e.stack || e.toString(), logOpts);
-        throw new Error(e);
+    } catch (e: unknown) {
+        log.error(errMsg(e), logOpts);
+        throw new Error(errMsg(e));
     }
 }
 

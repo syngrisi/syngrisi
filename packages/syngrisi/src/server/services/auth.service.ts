@@ -5,6 +5,7 @@ import uuidAPIKey from 'uuid-apikey';
 import { User } from '../models';
 import log from "../lib/logger";
 import { User as IUser } from '../../types/User';
+import { errMsg } from '../utils';
 
 function getApiKey(): string {
     return uuidAPIKey.create().apiKey;
@@ -50,9 +51,9 @@ const changeUserPassword = async (username: string, currentPassword: string, new
 
     try {
         await user.changePassword(currentPassword, newPassword);
-    } catch (e: any) {
-        log.error(e.stack || e.toString(), logOpts);
-        throw new Error(e.toString());
+    } catch (e: unknown) {
+        log.error(e, logOpts);
+        throw new Error(errMsg(e));
     }
 
     log.debug(`password was successfully changed for user: ${username}`, logOpts);

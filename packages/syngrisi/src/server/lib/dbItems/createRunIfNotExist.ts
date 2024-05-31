@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Run } from '../../models';
+import { errMsg } from '../../utils';
 import log from "../logger";
 
 export async function createRunIfNotExist(params: any, logsMeta = {}): Promise<any> {
@@ -32,12 +33,12 @@ export async function createRunIfNotExist(params: any, logsMeta = {}): Promise<a
         return run;
     } catch (e: any) {
         if (e.code === 11000) {
-            log.warn(`run key duplication collision: '${JSON.stringify(params)}', error: '${e.stack || e}'`, { ...logOpts, ...logsMeta });
+            log.warn(`run key duplication collision: '${JSON.stringify(params)}', error: '${errMsg(e)}'`, { ...logOpts, ...logsMeta });
             run = await Run.findOne({ name: params.name, ident: params.ident });
             log.warn(`run key duplication collision, found: '${JSON.stringify(run)}'`, { ...logOpts, ...logsMeta });
             if (run) return run;
         }
-        log.error(`cannot create run, params: '${JSON.stringify(params)}', error: '${e.stack || e}', obj: ${JSON.stringify(e)}`, { ...logOpts, ...logsMeta });
+        log.error(`cannot create run, params: '${JSON.stringify(params)}', error: '${errMsg(e)}', obj: ${JSON.stringify(e)}`, { ...logOpts, ...logsMeta });
         throw e;
     }
 }

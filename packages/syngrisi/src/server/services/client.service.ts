@@ -3,7 +3,7 @@
 import fs, { promises as fsp } from 'fs';
 import hasha from 'hasha';
 import { Snapshot, Check, Test, App, Baseline } from '../models';
-import { removeEmptyProperties, waitUntil, buildIdentObject, calculateAcceptedStatus, ident } from '../utils';
+import { removeEmptyProperties, waitUntil, buildIdentObject, calculateAcceptedStatus, ident, errMsg } from '../utils';
 import { updateItemDate, createTest, createItemIfNotExistAsync, createRunIfNotExist, createSuiteIfNotExist } from '../lib/dbItems';
 import { config } from '../../config';
 import { prettyCheckParams } from '../utils';
@@ -91,8 +91,8 @@ const startSession = async (params: any, username: string) => {
 
         const test = await createTest(opts);
         return test;
-    } catch (e) {
-        log.error(`cannot start session '${params.i}', params: '${JSON.stringify(params)}'`, logOpts);
+    } catch (e: unknown) {
+        log.error(`cannot start session '${params.i}', params: '${JSON.stringify(params)}', error: ${errMsg(e)}`, logOpts);
         throw e;
     }
 };
