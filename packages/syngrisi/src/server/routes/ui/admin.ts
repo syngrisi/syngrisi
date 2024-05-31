@@ -6,6 +6,7 @@ import httpStatus from 'http-status';
 import { catchAsync } from '../../utils';
 import { ensureLoggedIn } from '../../middlewares/ensureLogin';
 import { authorization } from '../../middlewares';
+import { Midleware } from '../../../types/Midleware';
 
 const router = express.Router();
 const rootDir = path.resolve(process.cwd());
@@ -18,8 +19,11 @@ const adminController = catchAsync(async (req: Request, res: Response) => {
 
 });
 
-router.get('*', ensureLoggedIn(),
-    authorization('admin'),
-    adminController);
+router.get(
+    '*',
+    ensureLoggedIn(),
+    authorization('admin') as Midleware,
+    adminController as Midleware
+);
 
 export default router;

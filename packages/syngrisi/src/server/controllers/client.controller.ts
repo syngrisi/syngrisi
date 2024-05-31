@@ -1,33 +1,34 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status';
 import { ApiError, catchAsync, pick, deserializeIfJSON, prettyCheckParams, paramsGuard } from '../utils';
 import { clientService, genericService } from '../services';
 import { updateItem } from '../lib/dbItems';
 import { RequiredIdentOptionsSchema, createCheckParamsSchema } from '../schemas';
 import { User, Test, App, Suite } from '../models';
+import { Response } from "express";
 import log from "../lib/logger";
+import { ExtRequest } from '../../types/ExtRequest';
 
-const startSession = catchAsync(async (req: any, res: any) => {
+const startSession = catchAsync(async (req: ExtRequest, res: Response) => {
     const params = pick(
         req.body,
         ['name', 'status', 'app', 'tags', 'branch', 'viewport', 'browser', 'browserVersion', 'browserFullVersion',
             'os', 'run', 'runident', 'suite']
     );
-    const result = await clientService.startSession(params, req?.user?.username);
+    const result = await clientService.startSession(params, String(req?.user?.username));
     res.send(result);
 });
 
-const endSession = catchAsync(async (req: any, res: any) => {
+const endSession = catchAsync(async (req: ExtRequest, res: Response) => {
     const testId = req.params.testid;
     if (!testId || testId === 'undefined') {
         throw new ApiError(httpStatus.BAD_REQUEST, 'Cannot stop test Session testId is empty');
     }
 
-    const result = await clientService.endSession(testId, req?.user?.username);
+    const result = await clientService.endSession(testId, String(req?.user?.username));
     res.send(result);
 });
 
-const createCheck = catchAsync(async (req: any, res: any) => {
+const createCheck = catchAsync(async (req: ExtRequest, res: Response) => {
     const apiKey = req.headers.apikey;
     const params = req.body;
     paramsGuard(params, 'createCheck, params', createCheckParamsSchema);
@@ -95,14 +96,14 @@ const createCheck = catchAsync(async (req: any, res: any) => {
     res.json(result);
 });
 
-const getIdent = catchAsync(async (req: any, res: any) => {
+const getIdent = catchAsync(async (req: ExtRequest, res: Response) => {
     const result = clientService.getIdent();
     res.send(result);
 });
 
-const getBaselines = catchAsync(async (req: any, res: any) => {
+const getBaselines = catchAsync(async (req: ExtRequest, res: Response) => {
     const filter = pick(
-        (req.query.filter ? deserializeIfJSON(req.query.filter) : {}),
+        (req.query.filter ? deserializeIfJSON(String(req.query.filter)) : {}),
         ['name', 'viewport', 'browserName', 'os', 'app', 'branch']
     );
     paramsGuard(filter, 'getBaseline, filter', RequiredIdentOptionsSchema);
@@ -111,9 +112,9 @@ const getBaselines = catchAsync(async (req: any, res: any) => {
     res.send(result);
 });
 
-const getSnapshots = catchAsync(async (req: any, res: any) => {
+const getSnapshots = catchAsync(async (req: ExtRequest, res: Response) => {
     const filter = pick(
-        (req.query.filter ? deserializeIfJSON(req.query.filter) : {}),
+        (req.query.filter ? deserializeIfJSON(String(req.query.filter)) : {}),
         ['_id', 'name', 'imghash', 'createdDate', 'filename', 'id']
     );
     const options = pick(req.query, ['sortBy', 'limit', 'page', 'populate']);

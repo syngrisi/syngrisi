@@ -4,8 +4,11 @@ import { EJSON } from 'bson';
 import { catchAsync, pick } from '../utils';
 import { usersService } from '../services';
 import log from "../lib/logger";
+import { ExtRequest } from '../../types/ExtRequest';
+import { Response } from "express";
 
-const current = catchAsync(async (req: any, res: any) => {
+
+const current = catchAsync(async (req: ExtRequest, res: Response) => {
     const logOpts = {
         scope: 'users',
         msgType: 'GET_CURRENT_USER',
@@ -20,7 +23,7 @@ const current = catchAsync(async (req: any, res: any) => {
     });
 });
 
-const getUsers = catchAsync(async (req: any, res: any) => {
+const getUsers = catchAsync(async (req: ExtRequest, res: Response) => {
     // const filter = req.query.filter ? EJSON.parse(pick(req.query, ['filter']).filter) : {};
     const filter = typeof req.query.filter === 'string'
     ? EJSON.parse(req.query.filter)
@@ -31,7 +34,7 @@ const getUsers = catchAsync(async (req: any, res: any) => {
     res.send(result);
 });
 
-const createUser = catchAsync(async (req: any, res: any) => {
+const createUser = catchAsync(async (req: ExtRequest, res: Response) => {
     const logOpts = {
         scope: 'users',
         msgType: 'CREATE',
@@ -61,12 +64,12 @@ const createUser = catchAsync(async (req: any, res: any) => {
     }
 });
 
-const updateUser = catchAsync(async (req: any, res: any) => {
+const updateUser = catchAsync(async (req: ExtRequest, res: Response) => {
     const user = await usersService.updateUserById(req.params.userId, req.body);
     res.send(user);
 });
 
-const deleteUser = catchAsync(async (req: any, res: any) => {
+const deleteUser = catchAsync(async (req: ExtRequest, res: Response) => {
     await usersService.deleteUserById(req.params.userId);
     res.status(httpStatus.NO_CONTENT).send();
 });

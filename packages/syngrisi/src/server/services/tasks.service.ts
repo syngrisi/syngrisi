@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable camelcase */
+import { Response } from "express";
 
 interface StringTable {
     create(data: { [key: string]: any }[]): string;
@@ -26,6 +27,7 @@ import {
     Log,
     Baseline,
 } from '../models';
+import { ExtRequest } from '../../types/ExtRequest';
 
 function taskOutput(msg: any, res: any) {
     res.write(`${msg.toString()}\n`);
@@ -423,7 +425,7 @@ const task_handle_old_checks = async (options: any, res: any) => {
     }
 };
 
-const task_test = async (options = 'empty', req: any, res: any) => {
+const task_test = async (options = 'empty', req: ExtRequest, res: Response) => {
     res.writeHead(200, {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
@@ -444,7 +446,7 @@ const task_test = async (options = 'empty', req: any, res: any) => {
         if (isAborted) {
             taskOutput('the task was aborted\n', res);
             log.warn('the task was aborted');
-            res.flush();
+            (res as any).flush();
             return res.end();
         }
     }

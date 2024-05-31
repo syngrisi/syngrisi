@@ -1,13 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { ExtRequest } from '../../types/ExtRequest';
 import { catchAsync } from '../utils';
+import { Response } from "express";
 
-const getSettings = catchAsync(async (req: any, res: any) => {
+
+const getSettings = catchAsync(async (req: ExtRequest, res: Response) => {
     const AppSettings = (global as any).AppSettings
     const result = AppSettings.cache;
     res.json(result);
 });
 
-const updateSetting = catchAsync(async (req: any, res: any) => {
+const updateSetting = catchAsync(async (req: ExtRequest, res: Response) => {
     const AppSettings = (global as any).AppSettings
     const { name } = req.params;
     await AppSettings.set(name, req.body.value);
