@@ -55,9 +55,9 @@ export const GenericService = {
             if (resp.ok) {
                 return resp.json();
             }
-        } catch (e) {
+        } catch (e: unknown) {
             log.error(`cannot get (get_via_post) ${resource},`
-                + `\noptions: '${JSON.stringify(options)}', error: '${e.stack || e.toString()}'}`);
+                + `\noptions: '${JSON.stringify(options)}', error: '${String(e)}'}`);
 
             throw new Error(`cannot get (get_via_post) ${resource},`
                 + `\noptions: '${JSON.stringify(options)}', error: '${e}'}`);

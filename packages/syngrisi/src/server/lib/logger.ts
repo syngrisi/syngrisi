@@ -113,8 +113,16 @@ class Logger {
         this.winstonLogger.log(severity, formattedMsg, mergedMeta);
     }
 
-    public error(msg: string | object, ...meta: any[]): void {
-        this.log('error', `${msg}\n stacktrace: ${new Error().stack}`, ...meta);
+    public error(msg: string | object | unknown, ...meta: any[]): void {
+        let message: unknown = String(msg);
+
+        if ((msg instanceof Object)) {
+            message = JSON.stringify(msg);
+        }
+        if ((msg instanceof Error)) {
+            message = msg.stack;
+        }
+        this.log('error', `${message}\n stacktrace: ${new Error().stack}`, ...meta);
     }
 
     public warn(msg: string | object, ...meta: any[]): void {

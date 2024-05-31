@@ -6,7 +6,11 @@ import { catchAsync, pick } from '../utils';
 import { genericService, runService } from '../services';
 
 const get = catchAsync(async (req: any, res: any) => {
-    const filter = req.query.filter ? EJSON.parse(pick(req.query, ['filter']).filter) : {};
+    // const filter = req.query.filter ? EJSON.parse(pick(req.query, ['filter']).filter) : {};
+    const filter = typeof req.query.filter === 'string'
+    ? EJSON.parse(req.query.filter)
+    : {};
+
     const options = pick(req.query, ['sortBy', 'limit', 'page']);
     const result = await genericService.get('VRSRun', filter, options);
     res.send(result);

@@ -11735,7 +11735,7 @@ const GenericService = {
       }
     } catch (e) {
       log.error(`cannot get (get_via_post) ${resource},
-options: '${JSON.stringify(options)}', error: '${e.stack || e.toString()}'}`);
+options: '${JSON.stringify(options)}', error: '${String(e)}'}`);
       throw new Error(`cannot get (get_via_post) ${resource},
 options: '${JSON.stringify(options)}', error: '${e}'}`);
     }

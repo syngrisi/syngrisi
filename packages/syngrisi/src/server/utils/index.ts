@@ -14,6 +14,7 @@ export { buildIdentObject } from './buildIdentObject';
 export { calculateAcceptedStatus } from './calculateAcceptedStatus';
 export { ident } from './ident';
 import subDays from './subDays';
+export { errMsg } from './errMsg';
 
 export {
     pick,

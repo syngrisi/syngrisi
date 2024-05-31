@@ -4,7 +4,11 @@ import { ApiError, catchAsync, deserializeIfJSON, pick, removeEmptyProperties } 
 import { genericService, checkService } from '../services';
 
 const get = catchAsync(async (req: any, res: any) => {
-    const filter = req.query.filter ? deserializeIfJSON(pick(req.query, ['filter']).filter) : {};
+    // const filter = req.query.filter ? deserializeIfJSON(pick(req.query, ['filter']).filter) : {};
+    const filter = typeof req.query.filter === 'string'
+    ? deserializeIfJSON(req.query.filter)
+    : {};
+
     if (req.user?.role === 'user') {
         filter.creatorUsername = req.user?.username;
     }

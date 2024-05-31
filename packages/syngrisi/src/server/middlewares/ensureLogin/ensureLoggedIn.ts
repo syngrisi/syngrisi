@@ -139,7 +139,7 @@ const handleAPIAuth = async (hashedApiKey: string): Promise<any> => {
         const guest = await User.findOne({ username: 'Guest' });
 
         if (!guest) {
-            log.error('cannot find Guest user');
+            log.error('cannot find Guest user', logOpts);
             result.type = 'error';
             result.value = 'cannot find Guest user';
             return result;

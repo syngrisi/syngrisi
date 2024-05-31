@@ -36,8 +36,8 @@
   "scripts": {
     "clean:server": "rm -rf dist",
     "build:ui": "rm -rf mvc/views/react/assets && cross-env VITE_ROOT_PATH='./src/ui-app/' vite build",
-    "build:server_strict": "npm run clean:server && tsc -b --verbose",
-    "build:server": "npm run clean:server && tsc --strict false",
+    "build:server": "npm run clean:server && tsc -b --verbose",
+    "build:server_no_strict": "npm run clean:server && tsc --strict false",
     "build": "npm run build:ui && npm run build:server",
     "install:server": "npm i",
     "install:ui": "cd src/ui-app && npm i && cd --",

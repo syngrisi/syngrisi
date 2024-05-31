@@ -21,7 +21,11 @@ const current = catchAsync(async (req: any, res: any) => {
 });
 
 const getUsers = catchAsync(async (req: any, res: any) => {
-    const filter = req.query.filter ? EJSON.parse(pick(req.query, ['filter']).filter) : {};
+    // const filter = req.query.filter ? EJSON.parse(pick(req.query, ['filter']).filter) : {};
+    const filter = typeof req.query.filter === 'string'
+    ? EJSON.parse(req.query.filter)
+    : {};
+
     const options = pick(req.query, ['sortBy', 'limit', 'page']);
     const result = await usersService.queryUsers(filter, options);
     res.send(result);
@@ -49,7 +53,7 @@ const createUser = catchAsync(async (req: any, res: any) => {
         res.status(httpStatus.CREATED).send(user);
     } catch (e: any) {
         if (e.statusCode) {
-            log.error(e.stack || e.toString(), logOpts);
+            log.error(e, logOpts);
             res.status(e.statusCode).json({ message: e.message });
         } else {
             throw e;
