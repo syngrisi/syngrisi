@@ -4,7 +4,7 @@ import hasha from 'hasha';
 import uuidAPIKey from 'uuid-apikey';
 import { User } from '../models';
 import log from "../lib/logger";
-import { User as IUser } from '../../types/User';
+import { RequestUser } from '../../types/RequestUser';
 import { errMsg } from '../utils';
 
 function getApiKey(): string {
@@ -25,7 +25,7 @@ const generateApiKey = async (username: string): Promise<string> => {
     );
     const hash = hasha(apiKey);
 
-    const user: IUser | null = await User.findOne({ username });
+    const user: RequestUser | null = await User.findOne({ username });
     if (!user) throw new Error(`cannot find the user with username: '${username}'`);
 
     user.apiKey = hash;
@@ -43,7 +43,7 @@ const changeUserPassword = async (username: string, currentPassword: string, new
 
     log.debug(`change password for '${username}', params: '${JSON.stringify({ currentPassword, newPassword })}'`, logOpts);
 
-    const user: IUser | null = await User.findOne({ username });
+    const user: RequestUser | null = await User.findOne({ username });
     if (!user) {
         log.error('user is not logged in', logOpts);
         throw new Error('user is not logged in');
