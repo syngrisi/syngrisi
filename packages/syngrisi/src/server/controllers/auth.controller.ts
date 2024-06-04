@@ -9,6 +9,7 @@ import { User } from '../models';
 import { catchAsync, errMsg } from '../utils';
 import log from "../lib/logger";
 import { RequestUser } from '../../types/RequestUser';
+import { appSettings } from "../lib/AppSettings";
 
 function getApiKey(): string {
     return uuidAPIKey.create().apiKey;
@@ -122,8 +123,8 @@ const changePasswordFirstRun = catchAsync(async (req: ExtRequest, res: Response)
     };
 
     const { newPassword } = req.body;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const AppSettings = (global as any).AppSettings;
+
+    const AppSettings = await appSettings;
 
     if ((await AppSettings.isAuthEnabled()) && ((await AppSettings.isFirstRun()))) {
         log.debug(`first run, change password for default 'Administrator', params: '${JSON.stringify(req.body)}'`, logOpts);

@@ -12,7 +12,6 @@ import chalk from 'chalk';
 
 // @ts-ignore
 import session from 'express-session';
-import fs from 'fs';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 // @ts-ignore
@@ -30,8 +29,6 @@ import { Strategy as LocalStrategy } from 'passport-local';
 import pinoLogger from 'pino-http';
 
 import { User } from './server/models';
-import { AppSettings } from './server/lib/AppSettings';
-
 import { config } from './config';
 
 import { disableCors } from './server/middlewares';
@@ -165,9 +162,6 @@ mongoose
     .then(async () => {
         log.info('Connected to MongoDB');
         log.info('Load application setting', logMeta);
-        // @ts-ignore
-        global.AppSettings = await (new AppSettings()).init();  
-
         log.debug('run onStart jobs', logMeta);
         const startUp = await import('./server/lib/startup');
         startUp.createTempDir();
@@ -176,18 +170,12 @@ mongoose
         if (process.env.SYNGRISI_TEST_MODE === '1') await startUp.createTestsUsers();
 
         log.info('Get Application version', logMeta);
-        (global as any).version = (await import('../package.json')).version;
 
         log.info('Load devices list', logMeta);
-        (global as any).devices = (await import('./server/data/devices.json')).default;
-
-        if (fs.existsSync('./src/data/custom_devices.json')) {
-            (global as any).devices = [...(global as any).devices, ...(await import('./server/data/custom_devices.json')).default];
-        }
 
         app.listen(config.port, () => {
             log.info(
-                chalk.green(`Syngrisi version: ${chalk.blue((global as any).version)} started at http://localhost:${config.port}`),
+                chalk.green(`Syngrisi version: ${chalk.blue((config.version))} started at http://localhost:${config.port}`),
                 logMeta
             );
             log.info(chalk.whiteBright('Press <Ctrl+C> to exit'), logMeta);

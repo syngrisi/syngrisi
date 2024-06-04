@@ -6,7 +6,7 @@ import initialAppSettings from '../../../seeds/initialAppSettings.json';
 
 class AppSettings {
     private model: any;
-    private cache: any;
+    public cache: any;
 
     constructor() {
         this.model = AppSettingsModel;
@@ -38,7 +38,7 @@ class AppSettings {
 
     async get(name: string): Promise<any> {
         this.ensureInitialized();
-        return this.cache.find((x: any) => x.name === name) 
+        return this.cache.find((x: any) => x.name === name)
             || (this.model.findOne({ name }).exec());
     }
 
@@ -83,4 +83,5 @@ class AppSettings {
     }
 }
 
-export { AppSettings };
+const appSettings = (new AppSettings()).init();
+export { AppSettings, appSettings };

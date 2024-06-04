@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { appSettings } from "../AppSettings";
 
 export async function createInitialSettings(): Promise<void> {
-    if ((await (global as any ).AppSettings.count()) < 1) {
-        await (global as any).AppSettings.loadInitialFromFile();
+    const settings = await appSettings;
+    if (await settings.count() < 1) {
+        await settings.loadInitialFromFile();
     }
 }

@@ -1,5 +1,9 @@
 import fs from 'fs';
 import dotenv from 'dotenv';
+import { version } from '../package.json';
+
+import devices from "./server/data/devices.json";
+const customDevicesPath = './server/data/custom_devices.json';
 
 dotenv.config();
 
@@ -9,6 +13,14 @@ if (!fs.existsSync(bsPath)) {
 }
 
 export const config = {
+    version,
+    // this isn't used 
+    getDevices: async () => {
+        if (fs.existsSync(customDevicesPath)) {
+            return [...devices, ...(await import(customDevicesPath)).default];
+        }
+        return devices;
+    },
     defaultImagesPath: bsPath,
     connectionString: process.env.SYNGRISI_DB_URI || process.env.VRS_CONN_STRING || 'mongodb://127.0.0.1:27017/SyngrisiDb',
     port: process.env.SYNGRISI_APP_PORT || 3000,

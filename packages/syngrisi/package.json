@@ -33,16 +33,22 @@
     "screenshots",
     "comparison"
   ],
+  "nodemonConfig": {
+    "ignore": ["mvc/views/lib/*.js"],
+    "include": ["dist"],
+    "delay": 500
+  },
   "scripts": {
+    "start": "nodemon --ignore 'mvc/views/lib/*.js' --ignore 'tests' ./dist/src/server.js",
+    "test": "npm run build && cd tests && npm run test",
+    "build": "npm run build:ui && npm run build:server",
     "clean:server": "rm -rf dist",
     "build:ui": "rm -rf mvc/views/react/assets && cross-env VITE_ROOT_PATH='./src/ui-app/' vite build",
     "build:server": "npm run clean:server && tsc -b --verbose",
     "build:server_no_strict": "npm run clean:server && tsc --strict false",
-    "build": "npm run build:ui && npm run build:server",
     "install:server": "npm i",
     "install:ui": "cd src/ui-app && npm i && cd --",
     "install:all": "npm run install:server && npm run install:ui",
-    "test": "npm run build && cd tests && npm run test",
     "test:docker": "cd tests && npm run test:docker",
     "smoke": "cd tests && npm run smoke",
     "dev": "cross-env VITE_SYNGRISI_BASED_URL='http://localhost:3000' VITE_INDEX_ROUTE='index2/' vite",
@@ -55,7 +61,6 @@
     "tasks:restore": "node dist/src/tasks/restore.js",
     "tasks:migration_2_0": "node src/tasks/migrations/2.0.migration.js",
     "startservice": "forever start -l forever.log -o out.log -e err.log server.js",
-    "start": "nodemon --ignore 'mvc/views/lib/*.js' --ignore 'tests' ./dist/src/server.js",
     "clean": "read -p \"Are you sure you want to clean the project? [y/n] \" REPLY; if [[ $REPLY =~ ^[Yy]$ ]]; then mongosh SyngrisiDb --eval \"db.dropDatabase();\" && rm -f ./baselines/*.png; fi",
     "start_test": "cross-env SYNGRISI_DB_URI='mongodb://localhost/SyngrisiDbTest' nodemon server.js",
     "clear_test": "mongosh SyngrisiDbTest$CID --eval \"db.dropDatabase();\" && rm -rf ./baselinesTest/$CID",
