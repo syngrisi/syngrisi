@@ -40,6 +40,8 @@ import { Request, Response, NextFunction } from 'express';
 import { User } from '../../models';
 import log from "../../lib/logger";
 import { ExtRequest } from '../../../types/ExtRequest';
+import { appSettings } from "../../lib/AppSettings";
+
 
 
 const handleBasicAuth = async (req: ExtRequest): Promise<any> => {
@@ -51,7 +53,8 @@ const handleBasicAuth = async (req: ExtRequest): Promise<any> => {
     if (req.isAuthenticated()) {
         return { type: 'success', status: 200 };
     }
-    if (!(await global.AppSettings.isAuthEnabled())) {
+    const AppSettings = await appSettings;
+    if (!(await AppSettings.isAuthEnabled())) {
         const guest = await User.findOne({ username: 'Guest' });
         const result = new Promise((resolve) => {
             req.logIn(guest, (err: any) => {
@@ -82,9 +85,8 @@ const handleBasicAuth = async (req: ExtRequest): Promise<any> => {
         value: '',
         user: null,
     };
-
-    if ((await global.AppSettings.isAuthEnabled())
-        && ((await global.AppSettings.isFirstRun()))
+    if ((await AppSettings.isAuthEnabled())
+        && ((await AppSettings.isFirstRun()))
         && process.env.SYNGRISI_DISABLE_FIRST_RUN !== '1'
     ) {
         log.info('first run, set admin password', logOpts);
@@ -94,7 +96,7 @@ const handleBasicAuth = async (req: ExtRequest): Promise<any> => {
         return result;
     }
 
-    if (await global.AppSettings.isAuthEnabled()) {
+    if (await AppSettings.isAuthEnabled()) {
         log.info(`user is not authenticated - ${req.originalUrl}`, logOpts);
 
         result.type = 'redirect';
@@ -135,8 +137,8 @@ const handleAPIAuth = async (hashedApiKey: string): Promise<any> => {
         value: '',
         user: null,
     };
-
-    if (!(await global.AppSettings.isAuthEnabled())) {
+    const AppSettings = await appSettings; 
+    if (!(await AppSettings.isAuthEnabled())) {
         const guest = await User.findOne({ username: 'Guest' });
 
         if (!guest) {

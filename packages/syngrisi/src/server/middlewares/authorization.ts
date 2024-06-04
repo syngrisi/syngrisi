@@ -7,6 +7,7 @@ import { ApiError } from '../utils';
 import { catchAsync } from '../utils';
 import log from '../lib/logger';
 import { ExtRequest } from '../../types/ExtRequest';
+import { appSettings } from "../lib/AppSettings";
 // import { createLog } from '../controllers/logs.controller';
 // import AppSettings from '../models/AppSettings';
 
@@ -15,7 +16,7 @@ export const authorization = (type: string) => {
 
     const types: { [key: string]: (req: any, res: any, next: NextFunction) => any } = {
         admin: catchAsync(async (req: ExtRequest, res: Response, next: NextFunction) => {
-            const AppSettings = (global as any).AppSettings;
+            const AppSettings = await appSettings;
             if (!(await AppSettings.isAuthEnabled())) {
                 return next();
             }
@@ -27,7 +28,7 @@ export const authorization = (type: string) => {
             throw new ApiError(httpStatus.FORBIDDEN, 'Authorization Error - wrong Role');
         }),
         user: catchAsync(async (req: ExtRequest, res: Response, next: NextFunction) => {
-            const AppSettings = (global as any).AppSettings;
+            const AppSettings = await appSettings;
 
             // @ts-ignore
             if (!(await AppSettings.isAuthEnabled())) {

@@ -6,6 +6,7 @@ import { User } from '../models';
 import log from "../lib/logger";
 import { RequestUser } from '../../types/RequestUser';
 import { errMsg } from '../utils';
+import { appSettings } from "../lib/AppSettings";
 
 function getApiKey(): string {
     return uuidAPIKey.create().apiKey;
@@ -67,7 +68,7 @@ const changePasswordFirstRun = async (newPassword: string): Promise<void> => {
         ref: 'Administrator',
     };
 
-    const AppSettings = (global as any).AppSettings;
+    const AppSettings = await appSettings;
 
     if ((await AppSettings.isAuthEnabled()) && ((await AppSettings.isFirstRun()))) {
         log.debug(`first run, change password for default 'Administrator', params: '${JSON.stringify({ newPassword })}'`, logOpts);
