@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import fs from 'fs';
 import { config } from '../../config';
 import { Baseline, Snapshot } from '../models';
@@ -15,7 +14,7 @@ const logOpts = {
 // }
 
 const removeSnapshotFile = async (snapshot: SnapshotDocument) => {
-    let relatedSnapshots: any[];
+    let relatedSnapshots: SnapshotDocument[];
     if (snapshot.filename) {
         relatedSnapshots = await Snapshot.find({ filename: snapshot.filename });
         log.debug(`there are '${relatedSnapshots.length}' snapshots with filename: '${snapshot.filename}'`, logOpts);

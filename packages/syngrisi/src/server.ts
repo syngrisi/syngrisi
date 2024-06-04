@@ -149,7 +149,7 @@ app.use((req, res) => {
     res.status(404).json({ url: `${req.originalUrl} not found` });
 });
 
-log.info('Connect to database', this);
+log.info('Connect to database');
 
 mongoose.Promise = global.Promise;
 

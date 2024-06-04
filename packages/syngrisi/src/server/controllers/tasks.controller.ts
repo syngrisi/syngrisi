@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { catchAsync, pick } from '../utils';
 import { tasksService } from '../services';
 import { Response } from "express";

@@ -47,7 +47,7 @@ async function updateTest(params: UpdateTestParams) {
 }
 
 const startSession = async (params: any, username: string) => {
-    const logOpts: LogOpts = {
+    const logOpts = {
         scope: 'createTest',
         user: username,
         itemType: 'test',
@@ -98,7 +98,7 @@ const startSession = async (params: any, username: string) => {
 };
 
 const endSession = async (testId: string, username: string) => {
-    const logOpts: LogOpts = {
+    const logOpts = {
         scope: 'stopSession',
         msgType: 'END_SESSION',
         user: username,
@@ -225,7 +225,7 @@ interface CompareSnapshotsOptions {
 }
 
 async function compareSnapshots(baselineSnapshot: any, actual: any, opts: CompareSnapshotsOptions = {}) {
-    const logOpts: LogOpts = {
+    const logOpts = {
         scope: 'compareSnapshots',
         ref: baselineSnapshot.id,
         itemType: 'snapshot',
@@ -534,7 +534,7 @@ const createCheck = async (checkParam: any, test: any, suite: any, app: any, cur
         const savedCheck = await check.save();
 
         log.debug(`the check with id: '${check.id}', was created, will updated with data during creating process`, logOpts);
-        logOpts.ref = check.id;
+        logOpts.ref = String(check.id);
         log.debug(`update test with check id: '${check.id}'`, logOpts);
 
         test.checks.push(check.id);

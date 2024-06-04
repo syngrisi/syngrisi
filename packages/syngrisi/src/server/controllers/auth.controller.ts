@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import httpStatus from 'http-status';
 import passport from 'passport';
 import hasha from 'hasha';

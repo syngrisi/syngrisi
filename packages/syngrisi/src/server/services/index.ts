@@ -10,11 +10,6 @@ import * as clientService from './client.service';
 import * as usersService from './user.service';
 import * as checkService from './check.service';
 
-// import * as tasksService from '../../../dist/src/server/services/tasks.service';
-// import * as clientService from '../../../dist/src/server/services/client.service';
-// import * as usersService from '../../../dist/src/server/services/user.service';
-// import * as checkService from '../../../dist/src/server/services/check.service';
-
 export {
     runService,
     suiteService,

@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import express from 'express';
-// import { baselinesController } from '../../controllers';
 import { baselineController } from '../../controllers';
 
 import { ensureLoggedIn } from '../../middlewares/ensureLogin';

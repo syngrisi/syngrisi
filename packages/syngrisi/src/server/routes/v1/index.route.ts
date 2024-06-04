@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import express from 'express';
 import authRoute from './auth.route';
 import appRoute from './app.route';

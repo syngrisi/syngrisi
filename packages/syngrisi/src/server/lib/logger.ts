@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import winston, { Logger as WinstonLogger } from 'winston';
 import 'winston-mongodb';
 import { blue, gray, magenta } from 'chalk';
 import formatISOToDateTime from '../utils/formatISOToDateTime';
 import { config } from '../../config';
 import path from 'path';
+import { LogOpts } from '../../types/logOpts';
 
 const logLevel: string = process.env.SYNGRISI_LOG_LEVEL || '';
 
@@ -12,14 +12,14 @@ interface LoggerOptions {
     dbConnectionString: string;
 }
 
-interface MetaData {
-    [key: string]: unknown;
-    user?: string;
-    ref?: string;
-    msgType?: string;
-    itemType?: string;
-    scope?: string;
-}
+// export interface LogOpts {
+//     [key: string]: unknown;
+//     user?: string;
+//     ref?: string;
+//     msgType?: string;
+//     itemType?: string;
+//     scope?: string;
+// }
 
 function getScriptLine(): string {
     const stack = new Error().stack;
@@ -100,11 +100,11 @@ class Logger {
         this.winstonLogger = createWinstonLogger(opts);
     }
 
-    private static mergeMeta(args: any[]): MetaData {
+    private static mergeMeta(args: LogOpts[]): LogOpts {
         return args.slice(1).reduce((acc, obj) => ({ ...acc, ...obj }), {});
     }
 
-    private log(severity: string, msg: string | object, ...meta: any[]): void {
+    private log(severity: string, msg: string | object, ...meta: LogOpts[]): void {
         const mergedMeta = Logger.mergeMeta(meta);
         if (!mergedMeta.scope) {
             mergedMeta.scope = getScriptLine();
@@ -113,7 +113,7 @@ class Logger {
         this.winstonLogger.log(severity, formattedMsg, mergedMeta);
     }
 
-    public error(msg: string | object | unknown, ...meta: any[]): void {
+    public error(msg: string | object | unknown, ...meta: LogOpts[]): void {
         let message: unknown = String(msg);
 
         if ((msg instanceof Object)) {
@@ -125,23 +125,23 @@ class Logger {
         this.log('error', `${message}\n stacktrace: ${new Error().stack}`, ...meta);
     }
 
-    public warn(msg: string | object, ...meta: any[]): void {
+    public warn(msg: string | object, ...meta: LogOpts[]): void {
         this.log('warn', `${msg}\n stacktrace: ${new Error().stack}`, ...meta);
     }
 
-    public info(msg: string | object, ...meta: any[]): void {
+    public info(msg: string | object, ...meta: LogOpts[]): void {
         this.log('info', msg, ...meta);
     }
 
-    public verbose(msg: string | object, ...meta: any[]): void {
+    public verbose(msg: string | object, ...meta: LogOpts[]): void {
         this.log('verbose', msg, ...meta);
     }
 
-    public debug(msg: string | object, ...meta: any[]): void {
+    public debug(msg: string | object, ...meta: LogOpts[]): void {
         this.log('debug', msg, ...meta);
     }
 
-    public silly(msg: string | object, ...meta: any[]): void {
+    public silly(msg: string | object, ...meta: LogOpts[]): void {
         this.log('silly', msg, ...meta);
     }
 }

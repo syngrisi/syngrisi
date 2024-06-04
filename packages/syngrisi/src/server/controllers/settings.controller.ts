@@ -1,11 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ExtRequest } from '../../types/ExtRequest';
 import { catchAsync } from '../utils';
 import { Response } from "express";
 import { appSettings } from "../lib/AppSettings";
-
-
-
 
 const getSettings = catchAsync(async (req: ExtRequest, res: Response) => {
     const AppSettings = await appSettings;
