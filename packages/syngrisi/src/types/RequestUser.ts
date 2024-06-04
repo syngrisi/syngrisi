@@ -1,4 +1,4 @@
-export interface User {
+export interface RequestUser {
   changePassword: (currentPassword: string, newPassword: string) => void;
   apiKey: string;
   username: string;

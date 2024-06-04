@@ -8,7 +8,7 @@ import { ExtRequest } from '../../types/ExtRequest';
 import { User } from '../models';
 import { catchAsync, errMsg } from '../utils';
 import log from "../lib/logger";
-import { User as IUser } from '../../types/User';
+import { RequestUser } from '../../types/RequestUser';
 
 function getApiKey(): string {
     return uuidAPIKey.create().apiKey;
@@ -94,7 +94,7 @@ const changePassword = catchAsync(async (req: ExtRequest, res: Response) => {
 
     log.debug(`change password for '${username}', params: '${JSON.stringify(req.body)}'`, logOpts);
 
-    const user: IUser | null = await User.findOne({ username });
+    const user: RequestUser | null = await User.findOne({ username });
     // if (!user) throw new Error(`cannot find user with username: ${username}`);
 
     if (!user) {

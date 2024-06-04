@@ -1,8 +1,8 @@
 import { Request } from 'express';
-import { User } from './User';
+import { RequestUser } from './RequestUser';
 
 export interface ExtRequest extends Request {
-    user?: User;
+    user?: RequestUser;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     files?: any;
 }
