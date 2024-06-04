@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Router } from 'express';
 import * as appController from '../../controllers/app.controller';
 import { Midleware } from '../../../types/Midleware';

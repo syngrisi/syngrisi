@@ -2,7 +2,7 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { toJSON } from './plugins';
 
-interface AppSettingsDocument extends Document {
+export interface AppSettingsDocument extends Document {
     name: { [key: string]: string | boolean | number };
     label: { [key: string]: string };
     description?: string;

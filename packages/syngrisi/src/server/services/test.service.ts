@@ -1,8 +1,9 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { checkService } from './index';
 import { Test, Check } from '../models';
 import log from "../lib/logger";
+import { RequestUser } from '../../types/RequestUser';
 
 const queryTests = async (filter: any, options: any) => {
     // @ts-ignore
@@ -16,7 +17,7 @@ const queryTestsDistinct = async (filter: any, options: any) => {
     return tests;
 };
 
-const remove = async (id: string, user: any) => {
+const remove = async (id: string, user: RequestUser) => {
     const logOpts = {
         scope: 'removeTest',
         itemType: 'test',
@@ -39,7 +40,7 @@ const remove = async (id: string, user: any) => {
     }
 };
 
-const accept = async (id: string, user: any) => {
+const accept = async (id: string, user: RequestUser) => {
     const logOpts = {
         scope: 'acceptTest',
         itemType: 'test',

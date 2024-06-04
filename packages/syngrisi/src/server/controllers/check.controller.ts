@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status';
 import { ApiError, catchAsync, deserializeIfJSON, pick, removeEmptyProperties } from '../utils';
 import { genericService, checkService } from '../services';

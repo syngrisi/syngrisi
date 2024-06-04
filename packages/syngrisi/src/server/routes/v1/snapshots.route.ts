@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import express from 'express';
 import { snapshotsController } from '../../controllers';
 import { ensureLoggedIn } from '../../middlewares/ensureLogin';

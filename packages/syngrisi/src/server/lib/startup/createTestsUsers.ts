@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { User } from '../../models';
 import testUsers from '../../../seeds/testUsers.json';
 import log from "../logger";

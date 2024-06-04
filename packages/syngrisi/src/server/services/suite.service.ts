@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Test, Suite } from '../models';
 import * as testService from './test.service';
 import log from '../lib/logger';
+import { RequestUser } from '../../types/RequestUser';
 
-const remove = async (id: string, user: any) => {
+const remove = async (id: string, user: RequestUser) => {
     const logOpts = {
         scope: 'removeSuite',
         itemType: 'suite',

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status';
 import { pick, ApiError, catchAsync, deserializeIfJSON } from '../utils';
 import { testService } from '../services';
@@ -47,6 +46,7 @@ const distinct = catchAsync(async (req: ExtRequest, res: Response) => {
 const remove = catchAsync(async (req: ExtRequest, res: Response) => {
     const { id } = req.params;
     if (!id) throw new ApiError(httpStatus.BAD_REQUEST, 'Cannot remove the test - Id not found');
+    if (!req.user) throw new ApiError(httpStatus.BAD_REQUEST, 'Cannot remove the test - req.user is empty');
     const result = await testService.remove(id, req?.user);
     res.send(result);
 });
@@ -54,6 +54,7 @@ const remove = catchAsync(async (req: ExtRequest, res: Response) => {
 const accept = catchAsync(async (req: ExtRequest, res: Response) => {
     const { id } = req.params;
     if (!id) throw new ApiError(httpStatus.BAD_REQUEST, 'Cannot accept the check - Id not found');
+    if (!req.user) throw new ApiError(httpStatus.BAD_REQUEST, 'Cannot accept the check - req.user is empty');
     const result = await testService.accept(id, req?.user);
     res.send(result);
 });

@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import httpStatus from 'http-status';
 import { EJSON } from 'bson';
-import { catchAsync, pick } from '../utils';
+import { ApiError, catchAsync, pick } from '../utils';
 import { usersService } from '../services';
 import log from "../lib/logger";
 import { ExtRequest } from '../../types/ExtRequest';
 import { Response } from "express";
-
 
 const current = catchAsync(async (req: ExtRequest, res: Response) => {
     const logOpts = {
@@ -41,7 +40,6 @@ const createUser = catchAsync(async (req: ExtRequest, res: Response) => {
     };
 
     try {
-
         const userData = pick(req.body, [
             'username',
             'firstName',
@@ -54,8 +52,8 @@ const createUser = catchAsync(async (req: ExtRequest, res: Response) => {
         ]);
         const user = await usersService.createUser(userData);
         res.status(httpStatus.CREATED).send(user);
-    } catch (e: any) {
-        if (e.statusCode) {
+    } catch (e: unknown) {
+        if (e instanceof ApiError &&  e.statusCode) {
             log.error(e, logOpts);
             res.status(e.statusCode).json({ message: e.message });
         } else {

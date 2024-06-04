@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import express from 'express';
 import * as authController from '../../controllers/auth.controller';
 import { Midleware } from '../../../types/Midleware';

@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Test, Run } from '../models';
 import log from '../lib/logger';
 import * as testService from './test.service';
+import { RequestUser } from '../../types/RequestUser';
 
 
-const remove = async (id: string, user: any) => {
+const remove = async (id: string, user: RequestUser) => {
+   
     const logOpts = {
         scope: 'removeRun',
         itemType: 'run',

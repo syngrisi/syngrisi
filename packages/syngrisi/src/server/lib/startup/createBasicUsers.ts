@@ -1,6 +1,4 @@
 /* eslint-disable no-underscore-dangle */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { User } from '../../models';
 import adminData from '../../../seeds/admin.json';
 import guestData from '../../../seeds/guest.json';

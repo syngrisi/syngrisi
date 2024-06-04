@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status';
 import { EJSON } from 'bson';
 import { catchAsync } from '../utils';

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import httpStatus from 'http-status';
 import { EJSON } from 'bson';
@@ -20,6 +19,7 @@ const get = catchAsync(async (req: ExtRequest, res: Response) => {
 
 const remove = catchAsync(async (req: ExtRequest, res: Response) => {
     const { id } = req.params;
+    if(!req.user) throw new Error("req.user is empty");
     const result = await suiteService.remove(id, req?.user);
     res.send(result);
 });
