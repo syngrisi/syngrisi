@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import express from 'express';
 // @ts-ignore
-import { clientController } from '../../controllers';
-import { ensureApiKey } from '../../middlewares/ensureLogin';
+import { clientController } from '@controllers';
+import { ensureApiKey } from '@middlewares/ensureLogin';
 import { Midleware } from '../../../types/Midleware';
 
 const router = express.Router();

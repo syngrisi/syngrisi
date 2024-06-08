@@ -1,6 +1,6 @@
 import httpStatus from 'http-status';
-import { catchAsync, deserializeIfJSON, pick } from '../utils';
-import { appService } from '../services';
+import { catchAsync, deserializeIfJSON, pick } from '@utils';
+import { appService } from '@services';
 import { Request, Response } from "express"
 import { config } from "../config";
 

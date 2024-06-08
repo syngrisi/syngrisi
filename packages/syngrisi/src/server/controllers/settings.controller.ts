@@ -1,5 +1,5 @@
-import { ExtRequest } from '../../types/ExtRequest';
-import { catchAsync } from '../utils';
+import { ExtRequest } from '@types/ExtRequest';
+import { catchAsync } from '@utils';
 import { Response } from "express";
 import { appSettings } from "../lib/AppSettings";
 

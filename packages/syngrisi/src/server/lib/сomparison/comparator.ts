@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { errMsg } from "../../utils";
+import { errMsg } from "@utils";
 import log from "../logger";
 import compareImages from './compareImagesNode';
 

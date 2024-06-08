@@ -1,7 +1,7 @@
 /* eslint-disable dot-notation */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { AppSettings as AppSettingsModel } from '../../models';
+import { AppSettings as AppSettingsModel } from '@models';
 import initialAppSettings from '../../../seeds/initialAppSettings.json';
 
 class AppSettings {

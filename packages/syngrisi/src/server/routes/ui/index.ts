@@ -3,8 +3,8 @@ import express, { Response } from 'express';
 import path from 'path';
 import httpStatus from 'http-status';
 
-import { catchAsync } from '../../utils';
-import { ensureLoggedIn } from '../../middlewares/ensureLogin';
+import { catchAsync } from '@utils';
+import { ensureLoggedIn } from '@middlewares/ensureLogin';
 import { ExtRequest } from '../../../types/ExtRequest';
 import { Midleware } from '../../../types/Midleware';
 

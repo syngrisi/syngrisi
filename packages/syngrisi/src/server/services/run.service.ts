@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Test, Run } from '../models';
-import log from '../lib/logger';
+import { Test, Run } from '@models';
+import log from '@lib/logger';
 import * as testService from './test.service';
-import { RequestUser } from '../../types/RequestUser';
+import { RequestUser } from '@types/RequestUser';
 
 
 const remove = async (id: string, user: RequestUser) => {

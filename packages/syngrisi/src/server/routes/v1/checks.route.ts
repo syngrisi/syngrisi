@@ -1,6 +1,7 @@
 import express from 'express';
-import { checkController } from '../../controllers';
-import { ensureLoggedIn } from '../../middlewares/ensureLogin';
+import { checkController } from '@controllers';
+
+import { ensureLoggedIn } from '@middlewares/ensureLogin';
 import { Midleware } from '../../../types/Midleware';
 
 const router = express.Router();

@@ -2,14 +2,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import fs, { promises as fsp } from 'fs';
 import hasha from 'hasha';
-import { Snapshot, Check, Test, App, Baseline } from '../models';
-import { removeEmptyProperties, waitUntil, buildIdentObject, calculateAcceptedStatus, ident, errMsg } from '../utils';
-import { updateItemDate, createTest, createItemIfNotExistAsync, createRunIfNotExist, createSuiteIfNotExist } from '../lib/dbItems';
-import { config } from '../config';
-import { prettyCheckParams } from '../utils';
-import { getDiff } from '../lib/сomparison';
+import { Snapshot, Check, Test, App, Baseline } from '@models';
+import { removeEmptyProperties, waitUntil, buildIdentObject, calculateAcceptedStatus, ident, errMsg } from '@utils';
+import { updateItemDate, createTest, createItemIfNotExistAsync, createRunIfNotExist, createSuiteIfNotExist } from '@lib/dbItems';
+import { config } from '@config';
+import { prettyCheckParams } from '@utils';
+import { getDiff } from '@lib/сomparison';
 import log from "../lib/logger";
-import { LogOpts } from '../../types/logOpts';
+import { LogOpts } from '@types/logOpts';
 
 interface UpdateTestParams {
     id: string;

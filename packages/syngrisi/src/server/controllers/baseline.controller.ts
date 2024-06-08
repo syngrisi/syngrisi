@@ -1,12 +1,12 @@
 import httpStatus from 'http-status';
-import { catchAsync } from '../utils';
-import { genericService } from '../services';
+import { catchAsync } from '@utils';
+import { genericService } from '@services';
 
-import { deserializeIfJSON, pick } from '../utils';
+import { deserializeIfJSON, pick } from '@utils';
 import { Response } from "express";
 
-import { ApiError } from '../utils';
-import { ExtRequest } from '../../types/ExtRequest';
+import { ApiError } from '@utils';
+import { ExtRequest } from '@types/ExtRequest';
 
 const get = catchAsync(async (req: ExtRequest, res: Response) => {
     const filter = typeof req.query.filter === 'string'

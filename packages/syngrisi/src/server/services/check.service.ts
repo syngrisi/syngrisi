@@ -5,12 +5,12 @@ import {
     Suite,
     Baseline,
     CheckDocument,
-} from '../models';
+} from '@models';
 
-import { calculateAcceptedStatus, buildIdentObject } from '../utils';
+import { calculateAcceptedStatus, buildIdentObject } from '@utils';
 import * as snapshotService from './snapshot.service';
-import * as orm from '../lib/dbItems';
-import log from '../lib/logger';
+import * as orm from '@lib/dbItems';
+import log from '@lib/logger';
 
 async function calculateTestStatus(testId: string): Promise<string> {
     const checksInTest = await Check.find({ test: testId });

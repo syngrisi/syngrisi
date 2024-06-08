@@ -1,7 +1,7 @@
 import express from 'express';
-import { settingsController } from '../../controllers';
-import { ensureLoggedIn } from '../../middlewares/ensureLogin';
-import { authorization } from '../../middlewares';
+import { settingsController } from '@controllers';
+import { ensureLoggedIn } from '@middlewares/ensureLogin';
+import { authorization } from '@middlewares';
 import { Midleware } from '../../../types/Midleware';
 
 const router = express.Router();

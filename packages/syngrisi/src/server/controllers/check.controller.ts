@@ -1,7 +1,7 @@
 import httpStatus from 'http-status';
-import { ApiError, catchAsync, deserializeIfJSON, pick, removeEmptyProperties } from '../utils';
-import { genericService, checkService } from '../services';
-import { ExtRequest } from '../../types/ExtRequest';
+import { ApiError, catchAsync, deserializeIfJSON, pick, removeEmptyProperties } from '@utils';
+import { genericService, checkService } from '@services';
+import { ExtRequest } from '@types/ExtRequest';
 import { Response } from "express";
 
 const get = catchAsync(async (req: ExtRequest, res: Response) => {

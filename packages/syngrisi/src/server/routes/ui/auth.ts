@@ -3,8 +3,8 @@ import express, { Request, Response } from 'express';
 import path from 'path';
 import httpStatus from 'http-status';
 
-import { catchAsync } from '../../utils';
-import { Midleware } from '../../../types/Midleware';
+import { catchAsync } from '@utils';
+import { Midleware } from '@types/Midleware';
 
 const router = express.Router();
 const rootDir = path.resolve(process.cwd());

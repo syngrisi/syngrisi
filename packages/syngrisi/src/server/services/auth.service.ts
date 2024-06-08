@@ -2,10 +2,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import hasha from 'hasha';
 import uuidAPIKey from 'uuid-apikey';
-import { User } from '../models';
+import { User } from '@models';
 import log from "../lib/logger";
-import { RequestUser } from '../../types/RequestUser';
-import { errMsg } from '../utils';
+import { RequestUser } from '@types/RequestUser';
+import { errMsg } from '@utils';
 import { appSettings } from "../lib/AppSettings";
 
 function getApiKey(): string {
