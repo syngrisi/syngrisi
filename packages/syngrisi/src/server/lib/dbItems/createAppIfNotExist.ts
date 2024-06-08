@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { App } from '@models';
-import log from "../logger";
+import log from "@logger";
 
 export async function createAppIfNotExist(params: any): Promise<any> {
     const logOpts = {

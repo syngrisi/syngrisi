@@ -40,7 +40,7 @@ import { Request, Response, NextFunction } from 'express';
 import { User } from '@models';
 import log from "../../lib/logger";
 import { ExtRequest } from '../../../types/ExtRequest';
-import { appSettings } from "../../lib/AppSettings";
+import { appSettings } from "@settings";
 
 
 

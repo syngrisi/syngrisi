@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Suite } from '@models';
-import log from "../logger";
+import log from "@logger";
 
 export async function createSuiteIfNotExist(params: any, logsMeta = {}): Promise<any> {
     const logOpts = {

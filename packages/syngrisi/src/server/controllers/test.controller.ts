@@ -2,7 +2,7 @@ import httpStatus from 'http-status';
 import { pick, ApiError, catchAsync, deserializeIfJSON } from '@utils';
 import { testService } from '@services';
 import { Response } from "express";
-import { ExtRequest } from '@types/ExtRequest';
+import { ExtRequest } from '@types';
 
 const getTest = catchAsync(async (req: ExtRequest, res: Response) => {
     const filter = {

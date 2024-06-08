@@ -6,7 +6,7 @@ import { RequiredIdentOptionsSchema, createCheckParamsSchema } from '@schemas';
 import { User, Test, App, Suite } from '@models';
 import { Response } from "express";
 import log from "../lib/logger";
-import { ExtRequest } from '@types/ExtRequest';
+import { ExtRequest } from '@types';
 
 const startSession = catchAsync(async (req: ExtRequest, res: Response) => {
     const params = pick(

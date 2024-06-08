@@ -2,7 +2,7 @@ import httpStatus from 'http-status';
 import { catchAsync, deserializeIfJSON, pick } from '@utils';
 import { appService } from '@services';
 import { Request, Response } from "express"
-import { config } from "../config";
+import { config } from "@config";
 
 const info = catchAsync(async (req: Request, res: Response) => {
     res.status(httpStatus.OK).json({ version: config.version });

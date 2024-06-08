@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Run } from '@models';
 import { errMsg } from '@utils';
-import log from "../logger";
+import log from "@logger";
 
 export async function createRunIfNotExist(params: any, logsMeta = {}): Promise<any> {
     const logOpts = {

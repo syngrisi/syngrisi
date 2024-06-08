@@ -4,7 +4,7 @@ import { EJSON } from 'bson';
 import { catchAsync, pick } from '@utils';
 import { genericService, suiteService } from '@services';
 import { Response } from "express";
-import { ExtRequest } from '@types/ExtRequest';
+import { ExtRequest } from '@types';
 
 const get = catchAsync(async (req: ExtRequest, res: Response) => {
     // const filter = req.query.filter ? EJSON.parse(pick(req.query, ['filter']).filter) : {};

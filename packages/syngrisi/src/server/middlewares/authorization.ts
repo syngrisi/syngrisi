@@ -6,8 +6,8 @@ import { Response, NextFunction } from 'express';
 import { ApiError } from '@utils';
 import { catchAsync } from '@utils';
 import log from '@lib/logger';
-import { ExtRequest } from '@types/ExtRequest';
-import { appSettings } from "../lib/AppSettings";
+import { ExtRequest } from '@types';
+import { appSettings } from "@settings";
 // import { createLog } from '@controllers/logs.controller';
 // import AppSettings from '@models/AppSettings';
 

@@ -9,7 +9,7 @@ import { config } from '@config';
 import { prettyCheckParams } from '@utils';
 import { getDiff } from '@lib/сomparison';
 import log from "../lib/logger";
-import { LogOpts } from '@types/logOpts';
+import { LogOpts } from '@types';
 
 interface UpdateTestParams {
     id: string;

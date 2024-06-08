@@ -3,7 +3,7 @@ import httpStatus from 'http-status';
 import { EJSON } from 'bson';
 import { catchAsync, pick } from '@utils';
 import { genericService, runService } from '@services';
-import { ExtRequest } from '@types/ExtRequest';
+import { ExtRequest } from '@types';
 import { Response } from "express";
 
 

@@ -2,7 +2,7 @@
 import { User } from '@models';
 import adminData from '../../../seeds/admin.json';
 import guestData from '../../../seeds/guest.json';
-import log from "../logger";
+import log from "@logger";
 
 const logOpts = {
     scope: 'on_start',

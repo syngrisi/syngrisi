@@ -1,4 +1,4 @@
-import { appSettings } from "../AppSettings";
+import { appSettings } from "@settings";
 
 export async function createInitialSettings(): Promise<void> {
     const settings = await appSettings;

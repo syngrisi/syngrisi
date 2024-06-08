@@ -4,7 +4,7 @@ import { EJSON } from 'bson';
 import { ApiError, catchAsync, pick } from '@utils';
 import { usersService } from '@services';
 import log from "../lib/logger";
-import { ExtRequest } from '@types/ExtRequest';
+import { ExtRequest } from '@types';
 import { Response } from "express";
 
 const current = catchAsync(async (req: ExtRequest, res: Response) => {

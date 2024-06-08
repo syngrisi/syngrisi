@@ -3,7 +3,7 @@
 import { checkService } from './index';
 import { Test, Check } from '@models';
 import log from "../lib/logger";
-import { RequestUser } from '@types/RequestUser';
+import { RequestUser } from '@types';
 
 const queryTests = async (filter: any, options: any) => {
     // @ts-ignore
