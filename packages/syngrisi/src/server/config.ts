@@ -1,6 +1,6 @@
 import fs from 'fs';
 import dotenv from 'dotenv';
-import { version } from '../../package.json';
+import { version } from '@root/package.json';
 
 import devices from "./data/devices.json";
 const customDevicesPath = './server/data/custom_devices.json';

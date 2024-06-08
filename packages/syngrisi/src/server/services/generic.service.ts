@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose from 'mongoose';
-import { removeEmptyProperties } from '../utils';
-import log from '../lib/logger';
+import { removeEmptyProperties } from '@utils';
+import log from '@lib/logger';
 
 const get = async (modelName: string, filter: any, options: any) => {
     const itemModel = mongoose.model(modelName);

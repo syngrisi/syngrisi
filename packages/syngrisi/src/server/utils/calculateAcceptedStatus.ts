@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Check } from '../models';
+import { Check } from '@models';
 
 
 type statusType = 'Bug' | 'Accepted' | 'Unaccepted' | 'Partially';

@@ -1,9 +1,9 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import httpStatus from 'http-status';
 import { EJSON } from 'bson';
-import { catchAsync, pick } from '../utils';
-import { genericService, runService } from '../services';
-import { ExtRequest } from '../../types/ExtRequest';
+import { catchAsync, pick } from '@utils';
+import { genericService, runService } from '@services';
+import { ExtRequest } from '@types/ExtRequest';
 import { Response } from "express";
 
 

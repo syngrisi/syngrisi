@@ -3,9 +3,9 @@ import express, { Request, Response } from 'express';
 import path from 'path';
 import httpStatus from 'http-status';
 
-import { catchAsync } from '../../utils';
-import { ensureLoggedIn } from '../../middlewares/ensureLogin';
-import { authorization } from '../../middlewares';
+import { catchAsync } from '@utils';
+import { ensureLoggedIn } from '@middlewares/ensureLogin';
+import { authorization } from '@middlewares';
 import { Midleware } from '../../../types/Midleware';
 
 const router = express.Router();

@@ -1,11 +1,11 @@
 import httpStatus from 'http-status';
 import { EJSON } from 'bson';
-import { catchAsync } from '../utils';
-import { logsService } from '../services';
+import { catchAsync } from '@utils';
+import { logsService } from '@services';
 import { Response } from "express";
 
-import { pick } from '../utils';
-import { ExtRequest } from '../../types/ExtRequest';
+import { pick } from '@utils';
+import { ExtRequest } from '@types/ExtRequest';
 
 const getLogs = catchAsync(async (req: ExtRequest, res: Response) => {
     // const filter = req.query.filter ? EJSON.parse(pick(req.query, ['filter']).filter) : {};

@@ -1,8 +1,8 @@
 import fs from 'fs';
-import { config } from '../config';
-import { Baseline, Snapshot } from '../models';
+import { config } from '@config';
+import { Baseline, Snapshot } from '@models';
 import log from "../lib/logger";
-import { SnapshotDocument } from '../models/Snapshot';
+import { SnapshotDocument } from '@models/Snapshot';
 
 const logOpts = {
     scope: 'snapshot_helper',

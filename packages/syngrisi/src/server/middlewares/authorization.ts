@@ -3,13 +3,13 @@
 import httpStatus from 'http-status';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Response, NextFunction } from 'express';
-import { ApiError } from '../utils';
-import { catchAsync } from '../utils';
-import log from '../lib/logger';
-import { ExtRequest } from '../../types/ExtRequest';
+import { ApiError } from '@utils';
+import { catchAsync } from '@utils';
+import log from '@lib/logger';
+import { ExtRequest } from '@types/ExtRequest';
 import { appSettings } from "../lib/AppSettings";
-// import { createLog } from '../controllers/logs.controller';
-// import AppSettings from '../models/AppSettings';
+// import { createLog } from '@controllers/logs.controller';
+// import AppSettings from '@models/AppSettings';
 
 
 export const authorization = (type: string) => {

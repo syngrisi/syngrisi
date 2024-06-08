@@ -10,9 +10,9 @@ interface StringTable {
 import fs, { promises as fsp } from 'fs';
 // @ts-ignore
 import st from 'string-table';
-import { config } from '../config';
-import { subDays, dateToISO8601 } from '../utils';
-import { ProgressBar } from '../utils';
+import { config } from '@config';
+import { subDays, dateToISO8601 } from '@utils';
+import { ProgressBar } from '@utils';
 import log from "../lib/logger";
 import testAdminUser from '../../seeds/testAdmin.json'
 const stringTable: StringTable = st;
@@ -26,8 +26,8 @@ import {
     User,
     Log,
     Baseline,
-} from '../models';
-import { ExtRequest } from '../../types/ExtRequest';
+} from '@models';
+import { ExtRequest } from '@types/ExtRequest';
 
 function taskOutput(msg: any, res: any) {
     res.write(`${msg.toString()}\n`);

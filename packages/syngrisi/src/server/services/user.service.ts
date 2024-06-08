@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status';
-import { User } from '../models';
-import { ApiError } from '../utils';
+import { User } from '@models';
+import { ApiError } from '@utils';
 import log from "../lib/logger";
 
 const createUser = async (userBody: any) => {

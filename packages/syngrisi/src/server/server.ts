@@ -28,12 +28,12 @@ import crypto from 'crypto';
 import { Strategy as LocalStrategy } from 'passport-local';
 import pinoLogger from 'pino-http';
 
-import { User } from './models';
-import { config } from './config';
+import { User } from '@models';
+import { config } from '@config';
 
-import { disableCors } from './middlewares';
+import { disableCors } from '@middlewares';
 
-import log from './lib/logger';
+import log from '@lib/logger';
 
 import routes from './routes/v1/index.route';
 import authRoutes from './routes/ui/auth';
@@ -163,7 +163,7 @@ mongoose
         log.info('Connected to MongoDB');
         log.info('Load application setting', logMeta);
         log.debug('run onStart jobs', logMeta);
-        const startUp = await import('./lib/startup');
+        const startUp = await import('@lib/startup');
         startUp.createTempDir();
         await startUp.createBasicUsers();
         await startUp.createInitialSettings();

@@ -1,12 +1,12 @@
 import httpStatus from 'http-status';
-import { ApiError, catchAsync, pick, deserializeIfJSON, prettyCheckParams, paramsGuard } from '../utils';
-import { clientService, genericService } from '../services';
-import { updateItem } from '../lib/dbItems';
-import { RequiredIdentOptionsSchema, createCheckParamsSchema } from '../schemas';
-import { User, Test, App, Suite } from '../models';
+import { ApiError, catchAsync, pick, deserializeIfJSON, prettyCheckParams, paramsGuard } from '@utils';
+import { clientService, genericService } from '@services';
+import { updateItem } from '@lib/dbItems';
+import { RequiredIdentOptionsSchema, createCheckParamsSchema } from '@schemas';
+import { User, Test, App, Suite } from '@models';
 import { Response } from "express";
 import log from "../lib/logger";
-import { ExtRequest } from '../../types/ExtRequest';
+import { ExtRequest } from '@types/ExtRequest';
 
 const startSession = catchAsync(async (req: ExtRequest, res: Response) => {
     const params = pick(

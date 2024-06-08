@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { checkService } from './index';
-import { Test, Check } from '../models';
+import { Test, Check } from '@models';
 import log from "../lib/logger";
-import { RequestUser } from '../../types/RequestUser';
+import { RequestUser } from '@types/RequestUser';
 
 const queryTests = async (filter: any, options: any) => {
     // @ts-ignore
