@@ -3,12 +3,11 @@ import passport from 'passport';
 import hasha from 'hasha';
 import uuidAPIKey from 'uuid-apikey';
 import { Response, NextFunction } from "express"
-import { ExtRequest } from '@types/ExtRequest';
 import { User } from '@models';
 import { catchAsync, errMsg } from '@utils';
-import log from "../lib/logger";
-import { RequestUser } from '@types/RequestUser';
-import { appSettings } from "../lib/AppSettings";
+import log from "@logger";
+import { RequestUser, ExtRequest } from '@types';
+import { appSettings } from "@settings";
 
 function getApiKey(): string {
     return uuidAPIKey.create().apiKey;

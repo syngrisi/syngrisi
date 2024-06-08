@@ -4,9 +4,9 @@ import hasha from 'hasha';
 import uuidAPIKey from 'uuid-apikey';
 import { User } from '@models';
 import log from "../lib/logger";
-import { RequestUser } from '@types/RequestUser';
+import { RequestUser } from '@types';
 import { errMsg } from '@utils';
-import { appSettings } from "../lib/AppSettings";
+import { appSettings } from "@settings";
 
 function getApiKey(): string {
     return uuidAPIKey.create().apiKey;

@@ -2,7 +2,7 @@
 import { Test, Suite } from '@models';
 import * as testService from './test.service';
 import log from '@lib/logger';
-import { RequestUser } from '@types/RequestUser';
+import { RequestUser } from '@types';
 
 const remove = async (id: string, user: RequestUser) => {
     const logOpts = {

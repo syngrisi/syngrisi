@@ -4,7 +4,7 @@ import { blue, gray, magenta } from 'chalk';
 import formatISOToDateTime from '@utils/formatISOToDateTime';
 import { config } from '@config';
 import path from 'path';
-import { LogOpts } from '@types/logOpts';
+import { LogOpts } from '@types';
 
 const logLevel: string = process.env.SYNGRISI_LOG_LEVEL || '';
 

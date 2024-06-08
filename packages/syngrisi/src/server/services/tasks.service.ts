@@ -27,7 +27,7 @@ import {
     Log,
     Baseline,
 } from '@models';
-import { ExtRequest } from '@types/ExtRequest';
+import { ExtRequest } from '@types';
 
 function taskOutput(msg: any, res: any) {
     res.write(`${msg.toString()}\n`);

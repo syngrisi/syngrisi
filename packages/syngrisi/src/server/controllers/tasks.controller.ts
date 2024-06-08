@@ -1,7 +1,7 @@
 import { catchAsync, pick } from '@utils';
 import { tasksService } from '@services';
 import { Response } from "express";
-import { ExtRequest } from '@types/ExtRequest';
+import { ExtRequest } from '@types';
 
 
 const task_test = catchAsync(async (req: ExtRequest, res: Response) => {

@@ -1,7 +1,7 @@
-import { ExtRequest } from '@types/ExtRequest';
+import { ExtRequest } from '@types';
 import { catchAsync } from '@utils';
 import { Response } from "express";
-import { appSettings } from "../lib/AppSettings";
+import { appSettings } from "@settings";
 
 const getSettings = catchAsync(async (req: ExtRequest, res: Response) => {
     const AppSettings = await appSettings;

@@ -1,6 +1,6 @@
 import { User } from '@models';
 import testUsers from '../../../seeds/testUsers.json';
-import log from "../logger";
+import log from "@logger";
 
 const logOpts = {
     scope: 'on_start',

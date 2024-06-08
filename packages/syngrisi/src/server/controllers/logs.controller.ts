@@ -5,7 +5,7 @@ import { logsService } from '@services';
 import { Response } from "express";
 
 import { pick } from '@utils';
-import { ExtRequest } from '@types/ExtRequest';
+import { ExtRequest } from '@types';
 
 const getLogs = catchAsync(async (req: ExtRequest, res: Response) => {
     // const filter = req.query.filter ? EJSON.parse(pick(req.query, ['filter']).filter) : {};

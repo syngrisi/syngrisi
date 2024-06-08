@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose from 'mongoose';
-import log from "../logger";
+import log from "@logger";
 
 
 export async function updateItem(itemType: string, filter: any, params: any): Promise<any> {

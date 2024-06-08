@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import mongoose from 'mongoose';
-import log from "../logger";
+import log from "@logger";
 
 const logOpts = {
     scope: 'dbitems',

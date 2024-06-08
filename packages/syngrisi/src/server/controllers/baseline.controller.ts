@@ -6,7 +6,7 @@ import { deserializeIfJSON, pick } from '@utils';
 import { Response } from "express";
 
 import { ApiError } from '@utils';
-import { ExtRequest } from '@types/ExtRequest';
+import { ExtRequest } from '@types';
 
 const get = catchAsync(async (req: ExtRequest, res: Response) => {
     const filter = typeof req.query.filter === 'string'
