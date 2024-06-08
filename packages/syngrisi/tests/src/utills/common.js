@@ -165,14 +165,14 @@ const startServer = (params) => {
         // const nodePath = 'c8';
         if (process.env.SYNGRISI_COVERAGE === 'true') {
             child = spawn('c8',
-                [nodePath, './dist/src/server.js', `syngrisi_test_server_${cid}`], {
+                [nodePath, './dist/server/server.js', `syngrisi_test_server_${cid}`], {
                     env,
                     shell: process.platform === 'win32',
                     cwd: cmdPath,
                 });
         } else {
             child = spawn(nodePath,
-                ['./dist/src/server.js', `syngrisi_test_server_${cid}`], {
+                ['./dist/server/server.js', `syngrisi_test_server_${cid}`], {
                     env,
                     shell: process.platform === 'win32',
                     cwd: cmdPath,

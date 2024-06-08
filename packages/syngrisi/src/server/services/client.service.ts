@@ -5,7 +5,7 @@ import hasha from 'hasha';
 import { Snapshot, Check, Test, App, Baseline } from '../models';
 import { removeEmptyProperties, waitUntil, buildIdentObject, calculateAcceptedStatus, ident, errMsg } from '../utils';
 import { updateItemDate, createTest, createItemIfNotExistAsync, createRunIfNotExist, createSuiteIfNotExist } from '../lib/dbItems';
-import { config } from '../../config';
+import { config } from '../config';
 import { prettyCheckParams } from '../utils';
 import { getDiff } from '../lib/сomparison';
 import log from "../lib/logger";
