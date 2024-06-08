@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { config } from '../../config';
+import { config } from '../config';
 import { Baseline, Snapshot } from '../models';
 import log from "../lib/logger";
 import { SnapshotDocument } from '../models/Snapshot';

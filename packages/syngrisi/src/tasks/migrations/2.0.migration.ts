@@ -1,8 +1,8 @@
 /* eslint-disable no-await-in-loop,no-restricted-syntax */
 require('../../server/models');
 
-const utils = require('../lib/utils');
-const { Check, Test, Run, Suite } = require('../lib/common');
+const utils = require('../lib');
+const { Check, Test, Run, Suite } = require('../lib');
 
 async function task() {
     await utils.runMongoCode(async () => {

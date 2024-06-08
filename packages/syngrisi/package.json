@@ -2,7 +2,7 @@
   "name": "@syngrisi/syngrisi",
   "version": "2.2.3",
   "description": "Syngrisi - Visual Testing Tool",
-  "main": "./dist/src/server.js",
+  "main": "./dist/server/server.js",
   "type": "commonjs",
   "bin": {
     "sy": "server.js"
@@ -34,17 +34,23 @@
     "comparison"
   ],
   "nodemonConfig": {
-    "ignore": ["mvc/views/lib/*.js"],
-    "include": ["dist"],
+    "ignore": [
+      "mvc/views/lib/*.js"
+    ],
+    "include": [
+      "dist"
+    ],
     "delay": 500
   },
   "scripts": {
-    "start": "nodemon --ignore 'mvc/views/lib/*.js' --ignore 'tests' ./dist/src/server.js",
+    "start": "nodemon --ignore 'mvc/views/lib/*.js' --ignore 'tests'",
+    "server:watch": "npx tsup --watch # compile all server ts files changes", 
     "test": "npm run build && cd tests && npm run test",
     "build": "npm run build:ui && npm run build:server",
-    "clean:server": "rm -rf dist",
+    "clean:server": "rimraf dist",
     "build:ui": "rm -rf mvc/views/react/assets && cross-env VITE_ROOT_PATH='./src/ui-app/' vite build",
-    "build:server": "npm run clean:server && tsc -b --verbose",
+    "build:server": "npm run clean:server&& npx tsup",
+    "build:server_old": "npm run clean:server && tsc -b --verbose",
     "build:server_no_strict": "npm run clean:server && tsc --strict false",
     "install:server": "npm i",
     "install:ui": "cd src/ui-app && npm i && cd --",
@@ -130,9 +136,12 @@
     "eslint": "^8.53.0",
     "form-data": "^4.0.0",
     "parcel": "^2.10.2",
+    "rimraf": "^5.0.7",
     "sass": "^1.54.0",
+    "tsup": "^8.1.0",
     "typescript": "^5.2.2",
-    "vite": "^3.0.9"
+    "vite": "^3.0.9",
+    "vite-tsconfig-paths": "^4.3.2"
   },
   "nyc": {
     "all": true,

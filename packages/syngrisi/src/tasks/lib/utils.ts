@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { config } from "../../config";
+import { config } from "../../server/config";
 
 const connect = async () => {
     const connection = await mongoose.connect(config.connectionString, {});

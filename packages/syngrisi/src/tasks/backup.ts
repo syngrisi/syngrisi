@@ -2,7 +2,7 @@ import { input, confirm } from '@inquirer/prompts';
 import * as fs from 'node:fs'
 import * as path from 'node:path';
 import { execSync } from 'child_process';
-import { config } from '../config';
+import { config } from '../server/config';
 
 const run = async () => {
     const backupFolder: string = config.backupsFolder;

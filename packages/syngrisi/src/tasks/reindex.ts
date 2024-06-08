@@ -3,7 +3,7 @@ import '../server/models';
 import { runMongoCode } from './lib/utils';
 import { User, Snapshot, Check, Test, Run, Log, App, Suite, Baseline } from './lib/index';
 
-await (async () => {
+(async () => {
     await runMongoCode(async () => {
         return new Promise<void>((resolve) => {
             const result: any[] = [];
