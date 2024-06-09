@@ -2,16 +2,12 @@ import fs from 'fs';
 import dotenv from 'dotenv';
 import { version } from '@root/package.json';
 import crypto from 'crypto';
+import { env } from "./envConfig";
 
 import devices from "./data/devices.json";
 const customDevicesPath = './server/data/custom_devices.json';
 
 dotenv.config();
-
-const bsPath = process.env.SYNGRISI_IMAGES_PATH || './.snapshots-images/';
-if (!fs.existsSync(bsPath)) {
-    fs.mkdirSync(bsPath, { recursive: true });
-}
 
 export const config = {
     version,
@@ -22,17 +18,22 @@ export const config = {
         }
         return devices;
     },
-    defaultImagesPath: bsPath,
-    connectionString: process.env.SYNGRISI_DB_URI || process.env.VRS_CONN_STRING || 'mongodb://127.0.0.1:27017/SyngrisiDb',
-    host: 'localhost',
-    port: process.env.SYNGRISI_APP_PORT || 3000,
+    defaultImagesPath: env.SYNGRISI_IMAGES_PATH,
+    connectionString: env.SYNGRISI_DB_URI ||'mongodb://127.0.0.1:27017/SyngrisiDb',
+    host: env.SYNGRISI_HOSTNAME,
+    port: env.SYNGRISI_APP_PORT || 3000,
     backupsFolder: './backups',
-    enableHttpLogger: process.env.SYNGRISI_HTTP_LOG === 'true',
+    enableHttpLogger: env.SYNGRISI_HTTP_LOG,
     httpLoggerFilePath: './logs/http.log',
-    storeSessionKey: process.env.SYNGRISI_SESSION_STORE_KEY || crypto.randomBytes(64).toString('hex'),
-    codeCoverage: process.env.SYNGRISI_COVERAGE === 'true',
-    disableCors: process.env.SYNGRISI_DISABLE_DEV_CORS !== '1',
+    storeSessionKey: env.SYNGRISI_SESSION_STORE_KEY || crypto.randomBytes(64).toString('hex'),
+    codeCoverage: env.SYNGRISI_COVERAGE,
+    disableCors: env.SYNGRISI_DISABLE_DEV_CORS,
     fileUploadMaxSize: 50 * 1024 * 1024,
-    testMode: process.env.SYNGRISI_TEST_MODE === '1', 
+    testMode: env.SYNGRISI_TEST_MODE, 
     jsonLimit: '50mb',
 };
+
+if (!fs.existsSync(config.defaultImagesPath)) {
+    fs.mkdirSync(config.defaultImagesPath, { recursive: true });
+}
+

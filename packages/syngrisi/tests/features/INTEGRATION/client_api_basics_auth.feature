@@ -4,8 +4,8 @@ Feature: Client API Basics, with auth
     Given I clear Database and stop Server
     When I set env variables:
     """
-      SYNGRISI_TEST_MODE: 1
-      SYNGRISI_AUTH: 1
+      SYNGRISI_TEST_MODE: true
+      SYNGRISI_AUTH: true
     """
     # `testuser@test.com` API key
     When I set API key: "NTSAEXR-CZ1MFWD-KY0Q3MG-HY6SKD1" in config

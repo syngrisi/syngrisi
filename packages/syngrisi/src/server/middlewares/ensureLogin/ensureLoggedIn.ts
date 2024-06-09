@@ -41,6 +41,7 @@ import { User } from '@models';
 import log from "../../lib/logger";
 import { ExtRequest } from '../../../types/ExtRequest';
 import { appSettings } from "@settings";
+import { env } from "@/server/envConfig";
 
 
 
@@ -87,7 +88,7 @@ const handleBasicAuth = async (req: ExtRequest): Promise<any> => {
     };
     if ((await AppSettings.isAuthEnabled())
         && ((await AppSettings.isFirstRun()))
-        && process.env.SYNGRISI_DISABLE_FIRST_RUN !== '1'
+        && !env.SYNGRISI_DISABLE_FIRST_RUN
     ) {
         log.info('first run, set admin password', logOpts);
         result.type = 'redirect';
@@ -184,7 +185,7 @@ export function ensureApiKey(): (req: Request, res: Response, next: NextFunction
     };
     return async (req: Request, res: Response, next: NextFunction) => {
         log.silly(`headers: ${JSON.stringify(req.headers, null, '..')}`, logOpts);
-        log.silly(`SYNGRISI_AUTH: '${process.env.SYNGRISI_AUTH}'`);
+        log.silly(`SYNGRISI_AUTH: '${env.SYNGRISI_AUTH}'`);
         const hashedApiKey = req.headers.apikey || req.query.apikey;
         const result = await handleAPIAuth(hashedApiKey);
         req.user = req.user || result.user;

@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable camelcase */
 import { Response } from "express";
+import { env } from "@/server/envConfig";
 
 interface StringTable {
     create(data: { [key: string]: any }[]): string;
@@ -59,7 +60,7 @@ const loadTestUser = async () => {
         msgType: 'LOAD',
         ref: 'Administrator',
     };
-    if (process.env.SYNGRISI_TEST_MODE !== '1') {
+    if (!env.SYNGRISI_TEST_MODE) {
         return { message: 'the feature works only in test mode' };
     }
     const testAdmin = await User.findOne({ username: 'Test' }).exec();

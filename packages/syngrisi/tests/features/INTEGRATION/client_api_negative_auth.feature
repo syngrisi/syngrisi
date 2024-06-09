@@ -4,8 +4,8 @@ Feature: Client API Negative, with authentication
     Given I clear Database and stop Server
     When I set env variables:
     """
-      SYNGRISI_TEST_MODE: 1
-      SYNGRISI_AUTH: 1
+      SYNGRISI_TEST_MODE: true
+      SYNGRISI_AUTH: true
     """
     Given I start Server and start Driver
 

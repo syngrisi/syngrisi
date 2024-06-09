@@ -4,8 +4,8 @@ Feature: First run
         Given I clear Database and stop Server
         When I set env variables:
         """
-          SYNGRISI_DISABLE_FIRST_RUN: 0
-          SYNGRISI_AUTH: 1
+          SYNGRISI_DISABLE_FIRST_RUN: false
+          SYNGRISI_AUTH: true
         """
         Given I start Server and start Driver
         When I wait for "3" seconds
