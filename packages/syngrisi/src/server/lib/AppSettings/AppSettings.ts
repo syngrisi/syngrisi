@@ -3,6 +3,7 @@
 
 import { AppSettings as AppSettingsModel } from '@models';
 import initialAppSettings from '../../../seeds/initialAppSettings.json';
+import { env } from "@/server/envConfig";
 
 class AppSettings {
     private model: any;
@@ -74,7 +75,7 @@ class AppSettings {
 
     async isAuthEnabled(): Promise<boolean> {
         this.ensureInitialized();
-        return process.env.SYNGRISI_AUTH === '1' || (await this.get('authentication'))?.value === 'true';
+        return env.SYNGRISI_AUTH  || (await this.get('authentication'))?.value === 'true';
     }
 
     async isFirstRun(): Promise<boolean> {

@@ -4,16 +4,16 @@ Feature: API key generation
         Given I clear Database and stop Server
         When I set env variables:
         """
-          SYNGRISI_TEST_MODE: 1
-          SYNGRISI_AUTH: 0
+          SYNGRISI_TEST_MODE: true
+          SYNGRISI_AUTH: false
         """
         Given I start Server
         When I create via http test user
         Given I stop the Syngrisi server
         When I set env variables:
         """
-          SYNGRISI_TEST_MODE: 1
-          SYNGRISI_AUTH: 1
+          SYNGRISI_TEST_MODE: true
+          SYNGRISI_AUTH: true
         """
         Given I start Server and start Driver
         When I login via http with user:"Test" password "123"

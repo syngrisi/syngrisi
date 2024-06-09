@@ -25,8 +25,8 @@ Feature: Admin Settings
         Given I stop Server
         When I set env variables:
         """
-          SYNGRISI_DISABLE_FIRST_RUN: 0
-          SYNGRISI_AUTH: 1
+          SYNGRISI_DISABLE_FIRST_RUN: false
+          SYNGRISI_AUTH: true
         """
         Given I start Server and start Driver
         When I open the app
@@ -37,8 +37,8 @@ Feature: Admin Settings
         Given I stop Server
         When I set env variables:
         """
-          SYNGRISI_DISABLE_FIRST_RUN: 1
-          SYNGRISI_AUTH: 0
+          SYNGRISI_DISABLE_FIRST_RUN: true
+          SYNGRISI_AUTH: false
         """
         Given I start Server and start Driver
         When I go to "settings" page
@@ -57,8 +57,8 @@ Feature: Admin Settings
         Given I stop Server
         When I set env variables:
         """
-          SYNGRISI_DISABLE_FIRST_RUN: 0
-          SYNGRISI_AUTH: 1
+          SYNGRISI_DISABLE_FIRST_RUN: false
+          SYNGRISI_AUTH: true
         """
         Given I start Server and start Driver
         When I open the app

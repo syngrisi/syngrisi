@@ -139,8 +139,8 @@ const startServer = (params) => {
     const cmdPath = '../';
     const cidPort = 3002 + cid;
     const env = { ...process.env };
-    env.SYNGRISI_DISABLE_FIRST_RUN = process.env.SYNGRISI_DISABLE_FIRST_RUN || '1';
-    env.SYNGRISI_AUTH = process.env.SYNGRISI_AUTH || '0';
+    env.SYNGRISI_DISABLE_FIRST_RUN = process.env.SYNGRISI_DISABLE_FIRST_RUN || 'true';
+    env.SYNGRISI_AUTH = process.env.SYNGRISI_AUTH || 'false';
     env.SYNGRISI_APP_PORT = cidPort;
     env.SYNGRISI_COVERAGE = process.env.SYNGRISI_COVERAGE === 'true' ? 'true' : 'false';
     browser.config.serverPort = cidPort;

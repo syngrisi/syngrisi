@@ -7,7 +7,6 @@ import connectDB from '@lib/connectDb';
 import { createTempDir, createBasicUsers, createInitialSettings, createTestsUsers } from '@lib/startup';
 import { errMsg } from './utils';
 
-
 const logMeta = { scope: 'entrypoint' };
 
 log.info('Connect to database');
