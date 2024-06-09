@@ -10,8 +10,7 @@ exports.config = {
     rootPath: process.cwd(),
     testPlatform: process.env.TEST_PLATFORM || 'macOS',
     serverPort: 3001,
-    serverDomain: 'vrs',
-    // syngrisiUrl: 'http://vrs:3001/',
+    serverDomain: 'localhost',
     testScreenshotsFolder: '',
     apiKey: process.env.SYNGRISI_API_KEY ? hasha(process.env.SYNGRISI_API_KEY) : '123',
     runner: 'local',
@@ -59,7 +58,7 @@ exports.config = {
     // },
     //
     bail: 0,
-    baseUrl: 'http://vrs:3000',
+    baseUrl: 'http://localhost:3000',
     waitforTimeout: 5000,
     connectionRetryTimeout: 90000,
     connectionRetryCount: 3,
