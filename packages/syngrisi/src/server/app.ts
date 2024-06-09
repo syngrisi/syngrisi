@@ -1,4 +1,5 @@
 import express from 'express';
+import helmet from 'helmet';
 import compression from 'compression';
 import fileUpload from 'express-fileupload';
 import cookieParser from 'cookie-parser';
@@ -17,6 +18,7 @@ import uiRoutes from './routes/ui';
 import { compressionFilter, disableCors } from './middlewares';
 import { User } from './models';
 import httpLogger from '@lib/httpLogger';
+import errorHandler from './middlewares/errorHandler';
 
 const logMeta = { scope: 'app.ts' };
 
@@ -24,6 +26,7 @@ log.info('Init the application', logMeta);
 const app = express();
 
 log.info('\t- basic http conf', logMeta);
+app.use(helmet());
 app.use(compression({ filter: compressionFilter }));
 app.use(disableCors);
 // app.use(bodyParser.urlencoded({ extended: true }));
@@ -62,6 +65,8 @@ app.use('/v1', routes);
 app.use('/auth', authRoutes);
 app.use('/admin*', adminRoutes);
 app.use('/', uiRoutes);
+
+app.use(errorHandler());
 
 // Error handling
 app.use((req, res) => {
