@@ -13,9 +13,14 @@ module.exports = {
         'ecmaVersion': 'latest'
     },
     'plugins': [
-        '@typescript-eslint'
+        '@typescript-eslint',
+        'custom'
     ],
-    'rules': {},
+    'rules': {
+        'custom/test-rule': 'warn',
+        'custom/validate-request-rule': 'error',
+        'custom/check-route-registration': 'error',
+    },
     overrides: [
         {
             files: ['*.ts'],

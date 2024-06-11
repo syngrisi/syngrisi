@@ -6,6 +6,7 @@ import { usersService } from '@services';
 import log from "../lib/logger";
 import { ExtRequest } from '@types';
 import { Response } from "express";
+import { errMsg } from '../utils/errMsg';
 
 const current = catchAsync(async (req: ExtRequest, res: Response) => {
     const logOpts = {
@@ -22,18 +23,23 @@ const current = catchAsync(async (req: ExtRequest, res: Response) => {
     });
 });
 
-const getUsers = catchAsync(async (req: ExtRequest, res: Response) => {
-    // const filter = req.query.filter ? EJSON.parse(pick(req.query, ['filter']).filter) : {};
+const get = catchAsync(async (req: ExtRequest, res: Response) => {
     const filter = typeof req.query.filter === 'string'
-    ? EJSON.parse(req.query.filter)
-    : {};
+        ? EJSON.parse(req.query.filter)
+        : {};
 
     const options = pick(req.query, ['sortBy', 'limit', 'page']);
     const result = await usersService.queryUsers(filter, options);
     res.send(result);
 });
 
-const createUser = catchAsync(async (req: ExtRequest, res: Response) => {
+
+const getById = catchAsync(async (req: ExtRequest, res: Response) => {
+    const user = await usersService.getUserById(req.params.userId);
+    res.send(user);
+});
+
+const create = catchAsync(async (req: ExtRequest, res: Response) => {
     const logOpts = {
         scope: 'users',
         msgType: 'CREATE',
@@ -53,29 +59,31 @@ const createUser = catchAsync(async (req: ExtRequest, res: Response) => {
         const user = await usersService.createUser(userData);
         res.status(httpStatus.CREATED).send(user);
     } catch (e: unknown) {
-        if (e instanceof ApiError &&  e.statusCode) {
+        if (e instanceof ApiError && e.statusCode) {
             log.error(e, logOpts);
             res.status(e.statusCode).json({ message: e.message });
         } else {
+            log.error(errMsg(e), logOpts);
             throw e;
         }
     }
 });
 
-const updateUser = catchAsync(async (req: ExtRequest, res: Response) => {
+const update = catchAsync(async (req: ExtRequest, res: Response) => {
     const user = await usersService.updateUserById(req.params.userId, req.body);
     res.send(user);
 });
 
-const deleteUser = catchAsync(async (req: ExtRequest, res: Response) => {
+const remove = catchAsync(async (req: ExtRequest, res: Response) => {
     await usersService.deleteUserById(req.params.userId);
     res.status(httpStatus.NO_CONTENT).send();
 });
 
 export {
     current,
-    createUser,
-    updateUser,
-    deleteUser,
-    getUsers,
+    create,
+    update,
+    remove,
+    get,
+    getById,
 };
