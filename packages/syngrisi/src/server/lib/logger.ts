@@ -5,24 +5,16 @@ import formatISOToDateTime from '@utils/formatISOToDateTime';
 import { config } from '@config';
 import path from 'path';
 import { LogOpts } from '@types';
+import { ApiError } from '../utils';
 
 const logLevel: string = process.env.SYNGRISI_LOG_LEVEL || '';
 
 interface LoggerOptions {
     dbConnectionString: string;
 }
-
-// export interface LogOpts {
-//     [key: string]: unknown;
-//     user?: string;
-//     ref?: string;
-//     msgType?: string;
-//     itemType?: string;
-//     scope?: string;
-// }
-
 function getScriptLine(): string {
     const stack = new Error().stack;
+
     if (stack) {
         const stackLines = stack.split('\n');
         let loggerLineIndex = -1;
@@ -115,14 +107,17 @@ class Logger {
 
     public error(msg: string | object | unknown, ...meta: LogOpts[]): void {
         let message: unknown = String(msg);
-
+        let code = 0;
         if ((msg instanceof Object)) {
             message = JSON.stringify(msg);
         }
         if ((msg instanceof Error)) {
             message = msg.stack;
         }
-        this.log('error', `${message}\n stacktrace: ${new Error().stack}`, ...meta);
+        if ((msg instanceof ApiError)) {
+            code = msg.statusCode;
+        }
+        this.log('error', `${code !== 0 ? '[' + code + ']' : ''}${message}\n stacktrace: ${new Error().stack}`, ...meta);
     }
 
     public warn(msg: string | object, ...meta: LogOpts[]): void {

@@ -108,6 +108,14 @@ service.
 
 More details on environment variables are available in the [docs/environment_variables.md](docs/environment_variables.md) file.
 
+## API documentation
+
+To view the OpenAPI documentation, use Swagger. The documentation is available at:
+
+Swagger UI: `http://your-domain/swagger/`
+
+Swagger JSON: `http://your-domain/swagger/json`
+
 ## Devices list <a name="devices"></a>
 
 Syngrisi includes a [list](./static/data/custom_devices.json) of recognized devices, sourced from BrowserStack.

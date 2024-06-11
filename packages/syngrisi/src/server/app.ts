@@ -19,6 +19,7 @@ import { compressionFilter, disableCors } from './middlewares';
 import { User } from './models';
 import httpLogger from '@lib/httpLogger';
 import errorHandler from './middlewares/errorHandler';
+import { openAPIRouter } from './api-docs/openAPIRouter';
 
 const logMeta = { scope: 'app.ts' };
 
@@ -66,11 +67,9 @@ app.use('/auth', authRoutes);
 app.use('/admin*', adminRoutes);
 app.use('/', uiRoutes);
 
+app.use('/swagger', openAPIRouter);
+
 app.use(errorHandler());
 
-// Error handling
-app.use((req, res) => {
-    res.status(404).json({ url: `${req.originalUrl} not found` });
-});
 
 export default app;

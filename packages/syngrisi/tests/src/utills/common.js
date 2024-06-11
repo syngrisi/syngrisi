@@ -95,18 +95,29 @@ const fillCommonPlaceholders = function fillPlaceholders(str) {
 const requestWithLastSessionSid = async function requestWithLastSessionSid(uri, $this, opts = { method: 'GET' }, body) {
     const sessionSid = $this.getSavedItem('lastSessionId');
 
-    const res = await got(
-        `${uri}`,
-        {
-            headers: {
-                cookie: `connect.sid=${sessionSid}`,
+    let res;
+    try {
+        res = await got(
+            `${uri}`,
+            {
+                headers: {
+                    cookie: `connect.sid=${sessionSid}`,
+                },
+                form: opts.form,
+                json: opts.json,
+                method: opts.method,
+                body,
             },
-            form: opts.form,
-            json: opts.json,
-            method: opts.method,
-            body,
-        },
-    );
+        );
+    } catch (error) {
+        console.log('uri:', uri);
+        console.log('method:', opts.method);
+        console.log('👉 request json:', opts.json);
+        console.log('👉 request body:', body);
+        console.log('❌ response:', error?.response?.body);
+        throw error;
+    }
+
     let json;
     try {
         json = JSON.parse(res.body);
@@ -155,10 +166,10 @@ const startServer = (params) => {
     if (process.env.DOCKER === '1') {
         child = spawn('docker-compose',
             ['up', '-d'], {
-                env,
-                shell: process.platform === 'win32',
-                cwd: cmdPath,
-            });
+            env,
+            shell: process.platform === 'win32',
+            cwd: cmdPath,
+        });
     } else {
         // const nodePath = process.env.SYNGRISI_TEST_SERVER_NODE_PATH || 'node';
         const nodePath = process.env.SYNGRISI_TEST_SERVER_NODE_PATH || '/Users/exadel/.nvm/versions/node/v21.1.0/bin/node';
@@ -166,17 +177,17 @@ const startServer = (params) => {
         if (process.env.SYNGRISI_COVERAGE === 'true') {
             child = spawn('c8',
                 [nodePath, './dist/server/server.js', `syngrisi_test_server_${cid}`], {
-                    env,
-                    shell: process.platform === 'win32',
-                    cwd: cmdPath,
-                });
+                env,
+                shell: process.platform === 'win32',
+                cwd: cmdPath,
+            });
         } else {
             child = spawn(nodePath,
                 ['./dist/server/server.js', `syngrisi_test_server_${cid}`], {
-                    env,
-                    shell: process.platform === 'win32',
-                    cwd: cmdPath,
-                });
+                env,
+                shell: process.platform === 'win32',
+                cwd: cmdPath,
+            });
         }
     }
     child.stdout.setEncoding('utf8');

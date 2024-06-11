@@ -24,7 +24,12 @@ const createUser = async (userBody: any) => {
     await updatedUser.save();
 
     log.debug(`password for user: '${userBody.username}' set successfully`, logOpts);
-    return updatedUser;
+
+    const userWithSelectedFields = await User.findById(updatedUser._id)
+        .select('username firstName lastName role createdDate updatedDate createdDate')
+        .exec();
+
+    return userWithSelectedFields;
 };
 
 const queryUsers = async (filter: any, options: any) => {
@@ -33,7 +38,9 @@ const queryUsers = async (filter: any, options: any) => {
     return users;
 };
 
-const getUserById = async (id: string) => User.findById(id);
+const getUserById = async (id: string) => User.findById(id)
+    .select('username firstName lastName role createdDate updatedDate createdDate')
+    .exec();
 
 const getUserByEmail = async (email: string) => User.findOne({ email });
 
