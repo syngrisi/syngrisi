@@ -15,12 +15,12 @@ const addErrorToRequestLog: ErrorRequestHandler = (err, _req, res, next) => {
   res.locals.err = err;
   if (env.NODE_ENV !== "production") {
     if (err instanceof ApiError) {
-      res.json({
+      res.status(err.statusCode).json({
         name: err.name,
         message: err.message,
         status: err.statusCode,
         // sanitise stacktrace
-        stacktrace:  err?.stack?.replace(/(\/[^\/]+\.js):(\d+)/g, '<path>:<line>'),
+        stacktrace: JSON.stringify(err.stack),
       });
     }
     else {
