@@ -18,9 +18,9 @@ Feature: Update User
         SYNGRISI_AUTH: true
         """
         Given I start Server and start Driver
-        When I login with user:"Test" password "123"
+        When I login with user:"Test" password "123456aA-"
         Then I wait on element "span*=TA" to be displayed
-        When I login via http with user:"Test" password "123"
+        When I login via http with user:"Test" password "123456aA-"
         When I create via http user as:"Test" with params:
         """
         {

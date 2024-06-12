@@ -19,13 +19,13 @@ Feature: Check Preview - Tooltip
     Given I start Server and start Driver
 
     # set API key
-    When I login via http with user:"Test" password "123"
+    When I login via http with user:"Test" password "123456aA-"
     When I generate via http API key for the User
     When I set the API key in config
     When I start Driver
 
   Scenario: Status View - Tooltip
-    When I login with user:"Test" password "123"
+    When I login with user:"Test" password "123456aA-"
     # NEW
     Given I create "1" tests with:
     """

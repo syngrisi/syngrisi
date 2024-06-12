@@ -16,7 +16,7 @@ Feature: User Information
           SYNGRISI_AUTH: true
         """
         Given I start Server and start Driver
-        When I login via http with user:"Test" password "123"
+        When I login via http with user:"Test" password "123456aA-"
 
         When I create via http user as:"Test" with params:
         """

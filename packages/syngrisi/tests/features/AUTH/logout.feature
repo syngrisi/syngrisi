@@ -19,7 +19,7 @@ Feature: Logout
         Given I start Server and start Driver
 
     Scenario: Logout - default Test user
-        When I login with user:"Test" password "123"
+        When I login with user:"Test" password "123456aA-"
         Then I wait on element "span*=TA" to be displayed
         When I wait for "2" seconds
 

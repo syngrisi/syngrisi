@@ -19,7 +19,7 @@ Feature: Task - Remove old checks
         Given I start Server and start Driver
 
         # create user
-        When I login via http with user:"Test" password "123"
+        When I login via http with user:"Test" password "123456aA-"
         When I generate via http API key for the User
         When I set the API key in config
         When I start Driver

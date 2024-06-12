@@ -19,7 +19,7 @@ Feature: Accept by user
     Given I start Server
 
     # set API key
-    When I login via http with user:"Test" password "123"
+    When I login via http with user:"Test" password "123456aA-"
     When I generate via http API key for the User
     When I set the API key in config
     When I start Driver
@@ -44,4 +44,4 @@ Feature: Accept by user
 
 
     When I open the app
-    When I login with user:"Test" password "123"
+    When I login with user:"Test" password "123456aA-"

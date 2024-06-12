@@ -16,7 +16,7 @@ Feature: API key generation
           SYNGRISI_AUTH: true
         """
         Given I start Server and start Driver
-        When I login via http with user:"Test" password "123"
+        When I login via http with user:"Test" password "123456aA-"
 
     @smoke
     Scenario: Smoke API key generation

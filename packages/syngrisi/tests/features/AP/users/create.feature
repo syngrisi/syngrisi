@@ -20,7 +20,7 @@ Feature: Create User
         When I wait for "3" seconds
         Given I start Server and start Driver
         When I reload session
-        When I login with user:"Test" password "123"
+        When I login with user:"Test" password "123456aA-"
         Then I wait on element "span*=TA" to be displayed
         When I set window size: "1700x768"
 
