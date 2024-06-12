@@ -17,9 +17,9 @@ module.exports = {
         'custom'
     ],
     'rules': {
-        'custom/test-rule': 'warn',
         'custom/validate-request-rule': 'error',
         'custom/check-route-registration': 'error',
+        'custom/test-rule': 'off'
     },
     overrides: [
         {

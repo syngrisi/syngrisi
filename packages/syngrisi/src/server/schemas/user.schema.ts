@@ -1,6 +1,6 @@
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import { z } from 'zod';
-import { commonValidations } from './utils/commonValidations';
+import { commonValidations } from '@schemas/utils';
 
 extendZodWithOpenApi(z);
 
@@ -23,9 +23,7 @@ export const UserSchema = z.object({
   id: commonValidations.id.openapi({ example: "6bbF35cAB3C59dA969edAe79" }),
 })
 
-const body = (schema: z.ZodTypeAny) => z.object({ body: schema })
-
-export const UserCreateReqSchema = body(
+export const UserCreateReqSchema = 
   z.object({
     username: z.string().min(1, 'UserSchema: the username name is empty').openapi({ example: "johndoe@example.com" }),
     firstName: z.string().min(1, 'UserSchema: the firstName name is empty').openapi({ example: "John" }),
@@ -33,7 +31,6 @@ export const UserCreateReqSchema = body(
     role: z.enum(['admin', 'reviewer', 'user']),
     password: z.string().optional(),
   })
-)
 
 export const UserCurrentRespSchema = z.object({
   _id: commonValidations.id.openapi({ example: "6bbF35cAB3C59dA969edAe79" }),
@@ -58,11 +55,7 @@ export const UserCreateRespSchema = z.object({
 })
 
 
-export const getBodySchema = (schema: z.ZodTypeAny) => ({
-  content: {
-    'application/json': { schema: schema }
-  }
-})
+
 
 // Input Validation for 'GET users/:id' endpoint
 export const GetUserSchema = z.object({

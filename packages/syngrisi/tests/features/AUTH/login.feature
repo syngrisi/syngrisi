@@ -21,13 +21,13 @@ Feature: Login
         When I reload session
 
     Scenario: Login - default Test user
-        When I login with user:"Test" password "123"
+        When I login with user:"Test" password "123456aA-"
         Then I wait on element "span*=TA" to be displayed
 
     @smoke
     Scenario: Login - Create user and login
         # crate user
-        When I login via http with user:"Test" password "123"
+        When I login via http with user:"Test" password "123456aA-"
         When I create via http user as:"Test" with params:
         """
         {
@@ -54,7 +54,7 @@ Feature: Login
 
     @smoke
     Scenario: Login - Wrong password
-        When I login with user:"Test" password "567"
+        When I login with user:"Test" password "Password-567"
         When I wait for "1" seconds
         Then I expect that element "#error-message" contain text "Authentication error: 'Password or username is incorrect'"
 
@@ -69,7 +69,7 @@ Feature: Login
         Then the element "#password" is displayed
 
     Scenario: Login - Invalid email
-        When I login with user:"asd" password "1"
+        When I login with user:"asd" password "PasswordInvEmail-567"
         When I wait for "1" seconds
         Then the element ".mantine-Input-wrapper + div.mantine-InputWrapper-error" contains the text "Invalid email"
 
@@ -78,7 +78,7 @@ Feature: Login
         When I wait for "1" seconds
         Then the current url contains "?origin=%2F%3FgroupBy%3Dtest-distinct%252FbrowserName"
         When I set "Test" to the inputfield "#email"
-        When I set "123" to the inputfield "#password"
+        When I set "123456aA-" to the inputfield "#password"
         When I click on the element "#submit"
         When I wait for "1" seconds
         Then the current url contains "<syngrisiUrl>?groupBy=test-distinct%2FbrowserName"

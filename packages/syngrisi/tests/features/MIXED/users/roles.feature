@@ -26,7 +26,7 @@ Feature: User roles
     @e2e
     Scenario: User - roles
         # login as test admin
-        When I login via http with user:"Test" password "123"
+        When I login via http with user:"Test" password "123456aA-"
 
         ## create user
         # user

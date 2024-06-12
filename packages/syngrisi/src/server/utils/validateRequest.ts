@@ -4,17 +4,13 @@ import { ZodError, ZodSchema } from 'zod';
 import { ResponseStatus, ServiceResponse } from './ServiceResponse';
 import log from '@logger';
 import { LogOpts } from '@root/src/types';
+import { errMsg } from './errMsg';
 
 const logOpts: LogOpts = {
   scope: 'validateRequests',
   itemType: 'type',
   msgType: 'VALIDATION',
 };
-// import { ResponseStatus, ServiceResponse } from '@/common/models/serviceResponse';
-
-// export const handleServiceResponse = (serviceResponse: ServiceResponse<any>, response: Response) => {
-//   return response.status(serviceResponse.statusCode).send(serviceResponse);
-// };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function getReceivedValueFromRequest(request: { body: any; query: any; params: any }, path: (string | number)[]): any {
@@ -49,6 +45,7 @@ export const validateRequest = (schema: ZodSchema) => (req: Request, res: Respon
       log.error(errorMessage, logOpts);
       res.status(statusCode).send(new ServiceResponse<null>(ResponseStatus.Failed, errorMessage, null, statusCode));
     } else {
+      log.error(`Unexpected error: ${errMsg(err)}`, logOpts);
       next(err);
     }
   }

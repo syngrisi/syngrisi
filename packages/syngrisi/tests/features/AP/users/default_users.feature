@@ -18,7 +18,7 @@ Feature: Default Users
         SYNGRISI_AUTH: true
         """
         Given I start Server and start Driver
-        When I login with user:"Test" password "123"
+        When I login with user:"Test" password "123456aA-"
         Then I wait on element "span*=TA" to be displayed
 
     Scenario: Default Administrator and Guest should be created after first server start

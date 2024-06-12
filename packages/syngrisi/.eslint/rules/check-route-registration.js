@@ -71,7 +71,7 @@ module.exports = {
         if (!isRegistered) {
           context.report({
             node,
-            message: `API route '${method}:${path}' is not registered in userRegistry`,
+            message: `API route '${method}:${path}' is not registered in Open API registry`,
           });
         }
       });
@@ -108,7 +108,7 @@ module.exports = {
         // Track path registrations
         if (
           callee.type === 'MemberExpression' &&
-          callee.object.name === 'userRegistry' &&
+          callee.object.name === 'registry' &&
           callee.property.name === 'registerPath'
         ) {
           trackRegistration(node);

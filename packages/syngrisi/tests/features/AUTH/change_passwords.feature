@@ -20,7 +20,7 @@ Feature: Change Password
         Given I start Server and start Driver
 
         # crate user
-        When I login via http with user:"Test" password "123"
+        When I login via http with user:"Test" password "123456aA-"
         When I create via http user as:"Test" with params:
         """
         {
@@ -83,7 +83,7 @@ Feature: Change Password
         Then I wait on element "span*=JD" to be displayed
 
         When I go to "change_password" page
-        When I set "WRONG-123" to the inputfield "#current-password"
+        When I set "WRONGpass-123" to the inputfield "#current-password"
         When I set "Password-456" to the inputfield "#new-password"
         When I set "Password-456" to the inputfield "#new-password-confirmation"
         When I click on the element "#change-password"
