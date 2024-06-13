@@ -6,8 +6,8 @@ import { validateRequest } from '@utils/validateRequest';
 import { AuthLoginSchema, AuthChangePasswordSchema, AuthApiKeyRespSchema, AuthLoginSuccessRespSchema, AuthChangePasswordFirstRunSchema } from '@schemas/Auth.schema';
 import { createApiResponse, createApiEmptyResponse } from '@api-docs/openAPIResponseBuilders';
 import { SkipValid } from '../../schemas/SkipValid.schema';
-import { getOAPIBodySchema } from '../../schemas/common/getOAPIBodySchema';
-import { getReqBodySchema } from '../../schemas/common/getReqBodySchema';
+import { createRequestBodySchema } from '../../schemas/utils/createRequestBodySchema';
+import { createRequestOpenApiBodySchema } from '../../schemas/utils/createRequestOpenApiBodySchema';
 
 export const registry = new OpenAPIRegistry();
 const router = express.Router();
@@ -15,6 +15,7 @@ const router = express.Router();
 registry.registerPath({
     method: 'get',
     path: '/v1/auth/logout',
+    summary: 'Logout the current user.',
     tags: ['Auth'],
     responses: createApiEmptyResponse('Logout success'),
 });
@@ -25,10 +26,10 @@ router.get(
     authController.logout as Midleware
 );
 
-// Register the OpenAPI documentation for the GET /apikey endpoint
 registry.registerPath({
     method: 'get',
     path: '/v1/auth/apikey',
+    summary: 'Generate a new API key for the current user.',
     tags: ['Auth'],
     responses: createApiResponse(AuthApiKeyRespSchema, 'API Key generated'),
 });
@@ -42,42 +43,45 @@ router.get(
 registry.registerPath({
     method: 'post',
     path: '/v1/auth/login',
+    summary: 'Login a user with username and password.',
     tags: ['Auth'],
-    request: { body: getOAPIBodySchema(AuthLoginSchema) },
+    request: { body: createRequestOpenApiBodySchema(AuthLoginSchema) },
     responses: createApiResponse(AuthLoginSuccessRespSchema, 'Login success'),
 });
 
 router.post(
     '/login',
-    validateRequest(getReqBodySchema(AuthLoginSchema)),
+    validateRequest(createRequestBodySchema(AuthLoginSchema)),
     authController.login as Midleware
 );
 
 registry.registerPath({
     method: 'post',
     path: '/v1/auth/change',
+    summary: 'Change the password for the current user.',
     tags: ['Auth'],
-    request: { body: getOAPIBodySchema(AuthChangePasswordSchema) },
+    request: { body: createRequestOpenApiBodySchema(AuthChangePasswordSchema) },
     responses: createApiEmptyResponse('Password changed'),
 });
 
 router.post(
     '/change',
-    validateRequest(getReqBodySchema(AuthChangePasswordSchema)),
+    validateRequest(createRequestBodySchema(AuthChangePasswordSchema)),
     authController.changePassword as Midleware
 );
 
 registry.registerPath({
     method: 'post',
     path: '/v1/auth/change_first_run',
+    summary: 'Change the password for the first run.',
     tags: ['Auth'],
-    request: { body: getOAPIBodySchema(AuthChangePasswordFirstRunSchema) },
+    request: { body: createRequestOpenApiBodySchema(AuthChangePasswordFirstRunSchema) },
     responses: createApiEmptyResponse('First run password changed'),
 });
 
 router.post(
     '/change_first_run',
-    validateRequest(getReqBodySchema(AuthChangePasswordFirstRunSchema)),
+    validateRequest(createRequestBodySchema(AuthChangePasswordFirstRunSchema)),
     authController.changePasswordFirstRun as Midleware
 );
 

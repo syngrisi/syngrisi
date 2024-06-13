@@ -6,13 +6,13 @@ import { usersController } from '@controllers';
 import { ensureLoggedIn } from '@middlewares/ensureLogin';
 import { authorization } from '@middlewares';
 import { validateRequest } from '@utils/validateRequest';
-import { GetUserSchema, UserCreateReqSchema, UserCreateRespSchema, UserCurrentRespSchema, UserGetRespSchema, UserSchema } from '@root/src/server/schemas/User.schema';
+import { GetUserSchema, UserCreateReqSchema, UserCreateRespSchema, UserCurrentRespSchema, UserGetRespSchema, UserSchema } from '@schemas/User.schema';
 import { SkipValid } from '@schemas/SkipValid.schema';
 import { createApiEmptyResponse, createApiResponse, createMultipleApiResponse } from '@api-docs/openAPIResponseBuilders';
-import { ReqGetMultipleSchema, } from '@schemas/common/ReqGetMultiple.schema';
-import { getReqBodySchema } from '@schemas/common/getReqBodySchema';
-import { getReqQueryMultipleSchema } from '@schemas/common/getReqQuerySchema';
-import { getOAPIBodySchema } from '@schemas/common/getOAPIBodySchema';
+import { RequestPaginationSchema } from '../../schemas/common/RequestPagination.schema';
+import { createRequestOpenApiBodySchema } from '../../schemas/utils/createRequestOpenApiBodySchema';
+import { createRequestQuerySchema } from '../../schemas/utils/createRequestQuerySchema';
+import { createRequestBodySchema } from '../../schemas/utils/createRequestBodySchema';
 
 export const registry = new OpenAPIRegistry();
 const router = express.Router();
@@ -20,8 +20,8 @@ const router = express.Router();
 registry.registerPath({
     method: 'get',
     path: '/v1/users/current',
-    tags: ['User'],
-    // request: { params: GetUserSchema.shape.params },
+    summary: 'Retrieve current user details.',
+    tags: ['Users'],
     responses: createApiResponse(UserCurrentRespSchema, 'Success'),
 });
 
@@ -32,16 +32,18 @@ router.get('/current',
 registry.registerPath({
     method: 'get',
     path: '/v1/users/',
-    tags: ['User'],
-    request: { query: ReqGetMultipleSchema },
+    summary: 'List users with pagination, and optional filtering and sorting.',
+    tags: ['Users'],
+    request: { query: RequestPaginationSchema },
     responses: createMultipleApiResponse(UserSchema, 'Success'),
 });
 
 registry.registerPath({
     method: 'post',
     path: '/v1/users/',
-    tags: ['User'],
-    request: { body: getOAPIBodySchema(UserCreateReqSchema) },
+    summary: 'Create a new user.',
+    tags: ['Users'],
+    request: { body: createRequestOpenApiBodySchema(UserCreateReqSchema) },
     responses: createApiResponse(UserCreateRespSchema, 'Success'),
 });
 
@@ -50,20 +52,21 @@ router
     .get(
         ensureLoggedIn(),
         authorization('user') as Midleware,
-        validateRequest(getReqQueryMultipleSchema(ReqGetMultipleSchema)),
+        validateRequest(createRequestQuerySchema(RequestPaginationSchema)),
         usersController.get as Midleware
     )
     .post(
         ensureLoggedIn(),
         authorization('admin') as Midleware,
-        validateRequest(getReqBodySchema(UserCreateReqSchema)),
+        validateRequest(createRequestBodySchema(UserCreateReqSchema)),
         usersController.create as Midleware
     );
 
 registry.registerPath({
     method: 'get',
     path: '/v1/users/{userId}',
-    tags: ['User'],
+    summary: 'Retrieve user details by user ID.',
+    tags: ['Users'],
     request: { params: GetUserSchema.shape.params },
     responses: createApiResponse(UserGetRespSchema, 'Success'),
 });
@@ -71,15 +74,17 @@ registry.registerPath({
 registry.registerPath({
     method: 'patch',
     path: '/v1/users/{userId}',
-    tags: ['User'],
-    request: { params: GetUserSchema.shape.params, body: getOAPIBodySchema(UserSchema) },
+    summary: 'Update user details by user ID.',
+    tags: ['Users'],
+    request: { params: GetUserSchema.shape.params, body: createRequestOpenApiBodySchema(UserSchema) },
     responses: createApiResponse(UserGetRespSchema, 'Success'),
 });
 
 registry.registerPath({
     method: 'delete',
     path: '/v1/users/{userId}',
-    tags: ['User'],
+    summary: 'Remove user by user ID.',
+    tags: ['Users'],
     request: { params: GetUserSchema.shape.params },
     responses: createApiEmptyResponse('No Content', StatusCodes.NO_CONTENT),
 });

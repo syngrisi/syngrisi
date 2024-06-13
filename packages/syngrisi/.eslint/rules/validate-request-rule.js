@@ -9,12 +9,14 @@ module.exports = {
         schema: [] // no options
     },
     create(context) {
+        const filename = context.getFilename();
+        
+        if (!filename.endsWith('route.ts')) {
+            return {};
+        }
+
         return {
-            // // Handle direct method calls on router
-            // "CallExpression[callee.object.name='router'][callee.property.name=/^(get|post|patch|delete)$/]": checkMiddleware,
-            // // Handle method calls following router.route()
-            // "CallExpression[callee.object.callee.property.name='route'][callee.property.name=/^(get|post|patch|delete)$/]": checkMiddleware,
-            "[callee.property.name=/^(get|post|patch|delete)$/]": checkMiddleware,
+            "[callee.property.name=/^(get|post|patch|delete|put)$/]": checkMiddleware,
         };
 
         function checkMiddleware(node) {

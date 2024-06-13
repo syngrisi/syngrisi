@@ -1,14 +1,14 @@
 
 import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { z } from 'zod';
-import { QueryFilterSchema } from './QueryFilter.schema';
+import { requestQueryFilterSchema } from './requestQueryFilterSchema.schema';
 import { commonValidations } from '../utils';
 export const registry = new OpenAPIRegistry();
 extendZodWithOpenApi(z);
 
-export const ReqGetMultipleSchema =
+export const RequestPaginationSchema =
     z.object({
-        filter: QueryFilterSchema.optional(),
+        filter: requestQueryFilterSchema.optional(),
         limit: commonValidations.positiveNumberString.optional().openapi({example: "10"}),
         page: commonValidations.positiveNumberString.optional().openapi({example: "2"}),
         sortBy: z.string().optional().openapi({example: "name"}),

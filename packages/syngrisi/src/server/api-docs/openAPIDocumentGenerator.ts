@@ -6,7 +6,7 @@ import { registry as app } from '../routes/v1/app.route';
 import { registry as auth } from '../routes/v1/auth.route';
 // import { registry as logs } from '../routes/v1/logs.route';
 // import { registry as tasks } from '../routes/v1/tasks.route';
-// import { registry as baselines } from '../routes/v1/baselines.route';
+import { registry as baselines } from '../routes/v1/baselines.route';
 // import { registry as runs } from '../routes/v1/runs.route';
 // import { registry as test } from '../routes/v1/test.route';
 // import { registry as checks } from '../routes/v1/checks.route';
@@ -22,7 +22,7 @@ export function generateOpenAPIDocument() {
     auth,
     // logs,
     // tasks,
-    // baselines,
+    baselines,
     // runs,
     // test,
     // checks,

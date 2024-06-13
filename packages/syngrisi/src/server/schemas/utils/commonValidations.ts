@@ -12,7 +12,10 @@ export const commonValidations = {
     .regex(mongooseIdRegex, {
       message: 'Invalid Mongoose ObjectId format: /^[0-9a-fA-F]{24}$/',
     })
-    .openapi({ example: "6bbF35cAB3C59dA969edAe79" }),
+    .openapi({
+      description: 'baseline ID',
+      example: "6bbF35cAB3C59dA969edAe79"
+    }),
   version: VersionSchema.openapi({ example: "1.1.2" }),
   positiveNumberString: z.string().refine(value => {
     const num = Number(value);
@@ -32,4 +35,5 @@ export const commonValidations = {
     })
     .openapi({ example: "Aa1!IJASSNOJ" }),
   username: z.string().min(1).openapi({ example: "john.doe@example.com" }),
+  date: z.string().datetime().min(1),
 };
