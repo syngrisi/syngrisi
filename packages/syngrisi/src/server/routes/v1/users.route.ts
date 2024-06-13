@@ -8,7 +8,7 @@ import { authorization } from '@middlewares';
 import { validateRequest } from '@utils/validateRequest';
 import { GetUserSchema, UserCreateReqSchema, UserCreateRespSchema, UserCurrentRespSchema, UserGetRespSchema, UserSchema } from '@schemas/User.schema';
 import { SkipValid } from '@schemas/SkipValid.schema';
-import { createApiEmptyResponse, createApiResponse, createMultipleApiResponse } from '@api-docs/openAPIResponseBuilders';
+import { createApiEmptyResponse, createApiResponse, createPaginatedApiResponse } from '@api-docs/openAPIResponseBuilders';
 import { RequestPaginationSchema } from '../../schemas/common/RequestPagination.schema';
 import { createRequestOpenApiBodySchema } from '../../schemas/utils/createRequestOpenApiBodySchema';
 import { createRequestQuerySchema } from '../../schemas/utils/createRequestQuerySchema';
@@ -35,7 +35,7 @@ registry.registerPath({
     summary: 'List users with pagination, and optional filtering and sorting.',
     tags: ['Users'],
     request: { query: RequestPaginationSchema },
-    responses: createMultipleApiResponse(UserSchema, 'Success'),
+    responses: createPaginatedApiResponse(UserSchema, 'Success'),
 });
 
 registry.registerPath({

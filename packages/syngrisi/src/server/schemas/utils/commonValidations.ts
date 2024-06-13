@@ -5,17 +5,18 @@ import VersionSchema from '@schemas/common/Version.schema';
 extendZodWithOpenApi(z);
 
 const mongooseIdRegex = /^[0-9a-fA-F]{24}$/;
+const id = z
+  .string()
+  .regex(mongooseIdRegex, {
+    message: 'Invalid Mongoose ObjectId format: /^[0-9a-fA-F]{24}$/',
+  })
+  .openapi({
+    description: 'baseline ID',
+    example: "6bbF35cAB3C59dA969edAe79"
+  });
 
 export const commonValidations = {
-  id: z
-    .string()
-    .regex(mongooseIdRegex, {
-      message: 'Invalid Mongoose ObjectId format: /^[0-9a-fA-F]{24}$/',
-    })
-    .openapi({
-      description: 'baseline ID',
-      example: "6bbF35cAB3C59dA969edAe79"
-    }),
+  id,
   version: VersionSchema.openapi({ example: "1.1.2" }),
   positiveNumberString: z.string().refine(value => {
     const num = Number(value);
@@ -35,5 +36,12 @@ export const commonValidations = {
     })
     .openapi({ example: "Aa1!IJASSNOJ" }),
   username: z.string().min(1).openapi({ example: "john.doe@example.com" }),
-  date: z.string().datetime().min(1),
+  // TODO: workaround TBD
+  date: z.string().refine(val => {
+    const date = new Date(val);
+    return !isNaN(date.getTime());
+  }, {
+    message: 'Invalid date format'
+  }),
+  paramsId: { params: z.object({ id }) },
 };
