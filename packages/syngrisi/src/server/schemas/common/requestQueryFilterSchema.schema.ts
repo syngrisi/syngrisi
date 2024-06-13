@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 extendZodWithOpenApi(z);
 
-export const QueryFilterSchema = z
+export const requestQueryFilterSchema = z
     .string()
     .optional()
     .refine((data) => {

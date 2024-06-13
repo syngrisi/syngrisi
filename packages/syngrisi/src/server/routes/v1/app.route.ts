@@ -9,8 +9,8 @@ import {
     createMultipleApiResponse,
 } from '@api-docs/openAPIResponseBuilders';
 import { SkipValid } from '@schemas/SkipValid.schema';
-import { ReqGetMultipleSchema } from '@schemas/common/ReqGetMultiple.schema';
-import { getReqQueryMultipleSchema } from '@schemas/common/getReqQuerySchema';
+import { RequestPaginationSchema } from '../../schemas/common/RequestPagination.schema';
+import { createRequestQuerySchema } from '../../schemas/utils/createRequestQuerySchema';
 
 export const registry = new OpenAPIRegistry();
 
@@ -19,6 +19,7 @@ const router = express.Router();
 registry.registerPath({
     method: 'get',
     path: '/v1/app/info',
+    summary: "The current Syngrisi instance information.",
     tags: ['App'],
     responses: createApiResponse(AppInfoRespSchema, 'Success'),
 });
@@ -32,14 +33,15 @@ router.get(
 registry.registerPath({
     method: 'get',
     path: '/v1/app',
+    summary: "List of applications (projects) with pagination, and optional filtering and sorting.",
     tags: ['App'],
-    request: { query: ReqGetMultipleSchema },
+    request: { query: RequestPaginationSchema },
     responses: createMultipleApiResponse(AppRespSchema, 'Success'),
 });
 
 router.get(
     '/',
-    validateRequest(getReqQueryMultipleSchema(ReqGetMultipleSchema)),
+    validateRequest(createRequestQuerySchema(RequestPaginationSchema)),
     appController.get as Midleware
 );
 

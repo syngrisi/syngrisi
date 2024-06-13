@@ -1,5 +1,5 @@
 import { z } from 'zod';
-export const getOAPIBodySchema = (schema: z.ZodTypeAny) => ({
+export const createRequestOpenApiBodySchema = (schema: z.ZodTypeAny) => ({
     content: {
         'application/json': { schema: schema }
     }
