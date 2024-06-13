@@ -4,12 +4,13 @@ import * as baselineController from '@controllers/baseline.controller';
 import { Midleware } from '@types';
 import { validateRequest } from '@utils/validateRequest';
 import { BaselineGetSchema, BaselinePutSchema } from '@schemas/Baseline.schema';
-import { createApiEmptyResponse, createMultipleApiResponse } from '@api-docs/openAPIResponseBuilders';
+import { createApiEmptyResponse, createPaginatedApiResponse } from '@api-docs/openAPIResponseBuilders';
 import { ensureLoggedIn } from '@middlewares/ensureLogin';
-import { createRequestQuerySchema } from '../../schemas/utils/createRequestQuerySchema';
-import { RequestPaginationSchema } from '../../schemas/common/RequestPagination.schema';
-import { createRequestOpenApiBodySchema } from '../../schemas/utils/createRequestOpenApiBodySchema';
-import { createRequestBodySchema } from '../../schemas/utils/createRequestBodySchema';
+import { createRequestQuerySchema } from '@schemas/utils/createRequestQuerySchema';
+import { RequestPaginationSchema } from '@schemas/common/RequestPagination.schema';
+import { createRequestOpenApiBodySchema } from '@schemas/utils/createRequestOpenApiBodySchema';
+import { createRequestBodySchema } from '@schemas/utils/createRequestBodySchema';
+import { commonValidations } from '@schemas/utils';
 
 export const registry = new OpenAPIRegistry();
 const router = express.Router();
@@ -19,7 +20,8 @@ registry.registerPath({
     path: '/v1/baselines',
     summary: "List of baselines with pagination, and optional filtering and sorting.",
     tags: ['Baselines'],
-    responses: createMultipleApiResponse(BaselineGetSchema, 'Success'),
+    request: { query: RequestPaginationSchema },
+    responses: createPaginatedApiResponse(BaselineGetSchema, 'Success'),
 });
 
 router.get(
@@ -35,7 +37,7 @@ registry.registerPath({
     path: '/v1/baselines/{id}',
     summary: "Only for testing purposes for now",
     tags: ['Baselines'],
-    request: { body: createRequestOpenApiBodySchema(BaselinePutSchema) },
+    request: { params: commonValidations.paramsId.params,  body: createRequestOpenApiBodySchema(BaselinePutSchema) },
     responses: createApiEmptyResponse('Success'),
 });
 

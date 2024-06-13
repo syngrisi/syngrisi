@@ -10,7 +10,16 @@ export const requestQueryFilterSchema = z
         if(!data) return false
         try {
             const parsed = JSON.parse(data);
-            const valueSchema = z.union([z.string(), z.number(), z.boolean()]);
+
+            // Define a recursive schema to support nested objects and arrays
+            const valueSchema = z.lazy(() => z.union([
+                z.string(),
+                z.number(),
+                z.boolean(),
+                z.array(z.any()),
+                z.record(z.any())
+            ]));
+
             const schema = z.record(valueSchema);
             schema.parse(parsed);
             return true;
@@ -20,5 +29,4 @@ export const requestQueryFilterSchema = z
     }, {
         message: "Invalid JSON string or does not match the required schema",
     })
-    .openapi({ example: '{"key1": "value1", "key2": 123, "key3": true}' });
-
+    .openapi({ example: '{"key1": "value1", "key2": 123, "key3": true, "$and":[{"name":"CheckName"}]}' });

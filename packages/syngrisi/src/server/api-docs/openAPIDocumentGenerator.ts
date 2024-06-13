@@ -9,7 +9,7 @@ import { registry as auth } from '../routes/v1/auth.route';
 import { registry as baselines } from '../routes/v1/baselines.route';
 // import { registry as runs } from '../routes/v1/runs.route';
 // import { registry as test } from '../routes/v1/test.route';
-// import { registry as checks } from '../routes/v1/checks.route';
+import { registry as checks } from '../routes/v1/checks.route';
 // import { registry as settings } from '../routes/v1/settings.route';
 // import { registry as testDistinct } from '../routes/v1/test_distinct.route';
 // import { registry as client } from '../routes/v1/client.route';
@@ -25,7 +25,7 @@ export function generateOpenAPIDocument() {
     baselines,
     // runs,
     // test,
-    // checks,
+    checks,
     // settings,
     // testDistinct,
     // client,

@@ -6,7 +6,7 @@ import { validateRequest } from '@utils/validateRequest';
 import { AppInfoRespSchema, AppRespSchema } from '@root/src/server/schemas/App.schema';
 import {
     createApiResponse,
-    createMultipleApiResponse,
+    createPaginatedApiResponse,
 } from '@api-docs/openAPIResponseBuilders';
 import { SkipValid } from '@schemas/SkipValid.schema';
 import { RequestPaginationSchema } from '../../schemas/common/RequestPagination.schema';
@@ -36,7 +36,7 @@ registry.registerPath({
     summary: "List of applications (projects) with pagination, and optional filtering and sorting.",
     tags: ['App'],
     request: { query: RequestPaginationSchema },
-    responses: createMultipleApiResponse(AppRespSchema, 'Success'),
+    responses: createPaginatedApiResponse(AppRespSchema, 'Success'),
 });
 
 router.get(

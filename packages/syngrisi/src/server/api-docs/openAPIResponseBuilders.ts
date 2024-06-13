@@ -24,7 +24,7 @@ export function createApiEmptyResponse(description: string, statusCode: number =
 }
 
 
-export function createMultipleApiResponse(schema: z.ZodTypeAny, description: string, statusCode:number = StatusCodes.OK) {
+export function createPaginatedApiResponse(schema: z.ZodTypeAny, description: string, statusCode:number = StatusCodes.OK) {
   return {
     [statusCode]: {
       description,
