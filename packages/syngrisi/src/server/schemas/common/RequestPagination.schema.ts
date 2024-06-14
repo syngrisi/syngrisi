@@ -10,8 +10,8 @@ export const RequestPaginationSchema =
     z.object({
         filter: requestQueryFilterSchema.optional(),
         limit: commonValidations.positiveNumberString.optional().openapi({example: "10"}),
-        page: commonValidations.positiveNumberString.optional().openapi({example: "2"}),
-        sortBy: z.string().optional().openapi({example: "name"}),
-        populate: z.string().optional().openapi({example: "check"}),
+        page: commonValidations.positiveNumberString.optional().openapi({example: "1"}),
+        sortBy: z.string().optional().openapi({example: "id"}),
+        populate: z.string().optional().openapi({example: "test"}),
     });
 

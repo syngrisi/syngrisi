@@ -44,4 +44,8 @@ export const commonValidations = {
     message: 'Invalid date format'
   }),
   paramsId: { params: z.object({ id }) },
+  paramsTestId: { params: z.object({ testid: id }) },
+  success: z.object({
+    message: z.literal("success")
+  }),
 };

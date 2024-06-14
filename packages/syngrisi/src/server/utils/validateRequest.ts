@@ -22,7 +22,7 @@ function getReceivedValueFromRequest(request: { body: any; query: any; params: a
   return currentValue;
 }
 
-export const validateRequest = (schema: ZodSchema) => (req: Request, res: Response, next: NextFunction) => {
+export const validateRequest = (schema: ZodSchema, endpoint = '') => (req: Request, res: Response, next: NextFunction) => {
   try {
     schema.parse({
       body: req.body,
@@ -31,16 +31,20 @@ export const validateRequest = (schema: ZodSchema) => (req: Request, res: Respon
     });
     next();
   } catch (err) {
+    
     if (err instanceof ZodError) {
       const errors = err.errors.map((e) => {
         const receivedValue = getReceivedValueFromRequest(
           { body: req.body, query: req.query, params: req.params },
           e.path
         );
-        return `${e.path.join('.')}: Expected ${e.message}, but received ${JSON.stringify(receivedValue)}`;
+        return `\nError path: '${e.path.join('.')}': \nError ${e.message}, but received ${JSON.stringify(receivedValue)}`;
       }).join(', ');
 
-      const errorMessage = `Validation failed: ${errors}, \nbody: ${JSON.stringify(req.body)}, \nquery: ${JSON.stringify(req.query)}, \nparams: ${JSON.stringify(req.params)}`;
+      const errorMessage = ` ${endpoint ? '\nValidation error in the endpoint: "' + endpoint + '"' : ''}`
+        + `${errors}, \nHTTP PROPERTIES:\n\tbody: ${JSON.stringify(req.body, null, '\t')}, `
+        +`\n\tquery: ${JSON.stringify(req.query, null, '\t')}, \n\tparams: ${JSON.stringify(req.params, null, '\t')}`;
+
       const statusCode = StatusCodes.BAD_REQUEST;
       log.error(errorMessage, logOpts);
       res.status(statusCode).send(new ServiceResponse<null>(ResponseStatus.Failed, errorMessage, null, statusCode));
