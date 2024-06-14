@@ -55,9 +55,7 @@ export const UserCreateRespSchema = z.object({
 })
 
 
-
-
 // Input Validation for 'GET users/:id' endpoint
-export const GetUserSchema = z.object({
-  params: z.object({ userId: commonValidations.id }),
-});
+// export const GetUserSchema = z.object({
+//   params: z.object({ userId: commonValidations.id }),
+// });

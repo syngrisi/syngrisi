@@ -22,7 +22,7 @@ registry.registerPath({
 
 router.get(
     '/logout',
-    validateRequest(SkipValid),
+    validateRequest(SkipValid, '/v1/auth/logout'),
     authController.logout as Midleware
 );
 
@@ -36,7 +36,7 @@ registry.registerPath({
 
 router.get(
     '/apikey',
-    validateRequest(SkipValid),
+    validateRequest(SkipValid, '/v1/auth/apikey'),
     authController.apikey as Midleware
 );
 
@@ -51,7 +51,7 @@ registry.registerPath({
 
 router.post(
     '/login',
-    validateRequest(createRequestBodySchema(AuthLoginSchema)),
+    validateRequest(createRequestBodySchema(AuthLoginSchema), '/v1/auth/login'),
     authController.login as Midleware
 );
 
@@ -66,7 +66,7 @@ registry.registerPath({
 
 router.post(
     '/change',
-    validateRequest(createRequestBodySchema(AuthChangePasswordSchema)),
+    validateRequest(createRequestBodySchema(AuthChangePasswordSchema), '/v1/auth/change'),
     authController.changePassword as Midleware
 );
 
@@ -81,7 +81,7 @@ registry.registerPath({
 
 router.post(
     '/change_first_run',
-    validateRequest(createRequestBodySchema(AuthChangePasswordFirstRunSchema)),
+    validateRequest(createRequestBodySchema(AuthChangePasswordFirstRunSchema),  '/v1/auth/change_first_run'),
     authController.changePasswordFirstRun as Midleware
 );
 

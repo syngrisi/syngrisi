@@ -6,13 +6,14 @@ import { usersController } from '@controllers';
 import { ensureLoggedIn } from '@middlewares/ensureLogin';
 import { authorization } from '@middlewares';
 import { validateRequest } from '@utils/validateRequest';
-import { GetUserSchema, UserCreateReqSchema, UserCreateRespSchema, UserCurrentRespSchema, UserGetRespSchema, UserSchema } from '@schemas/User.schema';
+import { UserCreateReqSchema, UserCreateRespSchema, UserCurrentRespSchema, UserGetRespSchema, UserSchema } from '@schemas/User.schema';
 import { SkipValid } from '@schemas/SkipValid.schema';
 import { createApiEmptyResponse, createApiResponse, createPaginatedApiResponse } from '@api-docs/openAPIResponseBuilders';
-import { RequestPaginationSchema } from '../../schemas/common/RequestPagination.schema';
-import { createRequestOpenApiBodySchema } from '../../schemas/utils/createRequestOpenApiBodySchema';
-import { createRequestQuerySchema } from '../../schemas/utils/createRequestQuerySchema';
-import { createRequestBodySchema } from '../../schemas/utils/createRequestBodySchema';
+import { RequestPaginationSchema } from '@schemas/common/RequestPagination.schema';
+import { createRequestOpenApiBodySchema } from '@schemas/utils/createRequestOpenApiBodySchema';
+import { createRequestQuerySchema } from '@schemas/utils/createRequestQuerySchema';
+import { createRequestBodySchema } from '@schemas/utils/createRequestBodySchema';
+import { getByIdParamsSchema } from '@schemas/utils/createRequestParamsSchema';
 
 export const registry = new OpenAPIRegistry();
 const router = express.Router();
@@ -26,7 +27,7 @@ registry.registerPath({
 });
 
 router.get('/current',
-    validateRequest(SkipValid),
+    validateRequest(SkipValid, '/v1/users/current'),
     usersController.current as Midleware);
 
 registry.registerPath({
@@ -52,13 +53,13 @@ router
     .get(
         ensureLoggedIn(),
         authorization('user') as Midleware,
-        validateRequest(createRequestQuerySchema(RequestPaginationSchema)),
+        validateRequest(createRequestQuerySchema(RequestPaginationSchema), '/v1/users/'),
         usersController.get as Midleware
     )
     .post(
         ensureLoggedIn(),
         authorization('admin') as Midleware,
-        validateRequest(createRequestBodySchema(UserCreateReqSchema)),
+        validateRequest(createRequestBodySchema(UserCreateReqSchema), '/v1/users/'),
         usersController.create as Midleware
     );
 
@@ -67,7 +68,7 @@ registry.registerPath({
     path: '/v1/users/{userId}',
     summary: 'Retrieve user details by user ID.',
     tags: ['Users'],
-    request: { params: GetUserSchema.shape.params },
+    request: {params: getByIdParamsSchema('userId')},
     responses: createApiResponse(UserGetRespSchema, 'Success'),
 });
 
@@ -76,7 +77,7 @@ registry.registerPath({
     path: '/v1/users/{userId}',
     summary: 'Update user details by user ID.',
     tags: ['Users'],
-    request: { params: GetUserSchema.shape.params, body: createRequestOpenApiBodySchema(UserSchema) },
+    request: { params: getByIdParamsSchema('userId'), body: createRequestOpenApiBodySchema(UserSchema) },
     responses: createApiResponse(UserGetRespSchema, 'Success'),
 });
 
@@ -85,7 +86,7 @@ registry.registerPath({
     path: '/v1/users/{userId}',
     summary: 'Remove user by user ID.',
     tags: ['Users'],
-    request: { params: GetUserSchema.shape.params },
+    request: { params: getByIdParamsSchema('userId') },
     responses: createApiEmptyResponse('No Content', StatusCodes.NO_CONTENT),
 });
 
@@ -94,19 +95,19 @@ router
     .get(
         ensureLoggedIn(),
         authorization('admin') as Midleware,
-        validateRequest(GetUserSchema),
+        validateRequest(getByIdParamsSchema('userId'), '/v1/users/{userId}'),
         usersController.getById as Midleware
     )
     .patch(
         ensureLoggedIn(),
         authorization('admin') as Midleware,
-        validateRequest(GetUserSchema),
+        validateRequest(getByIdParamsSchema('userId'), '/v1/users/{userId}'),
         usersController.update as Midleware
     )
     .delete(
         ensureLoggedIn(),
         authorization('admin') as Midleware,
-        validateRequest(GetUserSchema),
+        validateRequest(getByIdParamsSchema('userId'), '/v1/users/{userId}'),
 
         usersController.remove as Midleware
     );

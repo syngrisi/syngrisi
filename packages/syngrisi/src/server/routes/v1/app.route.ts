@@ -26,7 +26,7 @@ registry.registerPath({
 
 router.get(
     '/info',
-    validateRequest(SkipValid),
+    validateRequest(SkipValid, '/v1/app/info'),
     appController.info as Midleware
 );
 
@@ -41,7 +41,7 @@ registry.registerPath({
 
 router.get(
     '/',
-    validateRequest(createRequestQuerySchema(RequestPaginationSchema)),
+    validateRequest(createRequestQuerySchema(RequestPaginationSchema), '/v1/app'),
     appController.get as Midleware
 );
 
