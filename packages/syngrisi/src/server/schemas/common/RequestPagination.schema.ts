@@ -11,7 +11,7 @@ export const RequestPaginationSchema =
         filter: requestQueryFilterSchema.optional(),
         limit: commonValidations.positiveNumberString.optional().openapi({example: "10"}),
         page: commonValidations.positiveNumberString.optional().openapi({example: "1"}),
-        sortBy: z.string().optional().openapi({example: "id"}),
+        sortBy: z.string().optional().openapi({example: "name:desc"}),
         populate: z.string().optional().openapi({example: "test"}),
     });
 
