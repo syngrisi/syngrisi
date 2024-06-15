@@ -26,7 +26,7 @@ registry.registerPath({
 router.get(
     '/',
     ensureLoggedIn(),
-    validateRequest(createRequestQuerySchema(RequestPaginationSchema), '/v1/logs'),
+    validateRequest(createRequestQuerySchema(RequestPaginationSchema), 'get, /v1/logs'),
     logsController.getLogs as Midleware
 );
 
@@ -42,7 +42,7 @@ registry.registerPath({
 router.get(
     '/distinct',
     ensureLoggedIn(),
-    validateRequest(createRequestQuerySchema(LogDistinctSchema), '/v1/logs/distinct'),
+    validateRequest(createRequestQuerySchema(LogDistinctSchema), 'get, /v1/logs/distinct'),
     logsController.distinct as Midleware
 );
 
@@ -58,7 +58,7 @@ registry.registerPath({
 router.post(
     '/',
     ensureLoggedIn(),
-    validateRequest(createRequestBodySchema(LogCreateSchema), '/v1/logs'),
+    validateRequest(createRequestBodySchema(LogCreateSchema), 'post, /v1/logs'),
     logsController.createLog as Midleware
 );
 

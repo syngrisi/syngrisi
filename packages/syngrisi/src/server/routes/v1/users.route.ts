@@ -27,7 +27,7 @@ registry.registerPath({
 });
 
 router.get('/current',
-    validateRequest(SkipValid, '/v1/users/current'),
+    validateRequest(SkipValid, 'get, /v1/users/current'),
     usersController.current as Midleware);
 
 registry.registerPath({
@@ -53,13 +53,13 @@ router
     .get(
         ensureLoggedIn(),
         authorization('user') as Midleware,
-        validateRequest(createRequestQuerySchema(RequestPaginationSchema), '/v1/users/'),
+        validateRequest(createRequestQuerySchema(RequestPaginationSchema), 'get, /v1/users/'),
         usersController.get as Midleware
     )
     .post(
         ensureLoggedIn(),
         authorization('admin') as Midleware,
-        validateRequest(createRequestBodySchema(UserCreateReqSchema), '/v1/users/'),
+        validateRequest(createRequestBodySchema(UserCreateReqSchema), 'post, /v1/users/'),
         usersController.create as Midleware
     );
 
@@ -95,19 +95,19 @@ router
     .get(
         ensureLoggedIn(),
         authorization('admin') as Midleware,
-        validateRequest(getByIdParamsSchema('userId'), '/v1/users/{userId}'),
+        validateRequest(getByIdParamsSchema('userId'), 'get, /v1/users/{userId}'),
         usersController.getById as Midleware
     )
     .patch(
         ensureLoggedIn(),
         authorization('admin') as Midleware,
-        validateRequest(getByIdParamsSchema('userId'), '/v1/users/{userId}'),
+        validateRequest(getByIdParamsSchema('userId'), 'patch, /v1/users/{userId}'),
         usersController.update as Midleware
     )
     .delete(
         ensureLoggedIn(),
         authorization('admin') as Midleware,
-        validateRequest(getByIdParamsSchema('userId'), '/v1/users/{userId}'),
+        validateRequest(getByIdParamsSchema('userId'), 'delete, /v1/users/{userId}'),
 
         usersController.remove as Midleware
     );

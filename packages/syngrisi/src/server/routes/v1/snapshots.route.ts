@@ -25,7 +25,7 @@ registry.registerPath({
 router.get(
     '/',
     ensureLoggedIn(),
-    validateRequest(createRequestQuerySchema(RequestPaginationSchema), '/v1/snapshots'),
+    validateRequest(createRequestQuerySchema(RequestPaginationSchema), 'get, /v1/snapshots'),
     snapshotsController.get as Midleware
 );
 

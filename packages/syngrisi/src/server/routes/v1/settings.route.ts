@@ -28,7 +28,7 @@ router.get(
     '/',
     ensureLoggedIn(),
     authorization('admin') as Midleware,
-    validateRequest(SkipValid),
+    validateRequest(SkipValid, 'get, /v1/settings'),
     settingsController.getSettings as Midleware
 );
 
@@ -47,7 +47,7 @@ router.patch(
     '/:name',
     ensureLoggedIn(),
     authorization('admin') as Midleware,
-    validateRequest(validateSchema, '/v1/settings/{name}'),
+    validateRequest(validateSchema, 'patch, /v1/settings/{name}'),
     settingsController.updateSetting as Midleware
 );
 

@@ -29,7 +29,7 @@ registry.registerPath({
 router.get(
     '/',
     ensureLoggedIn(),
-    validateRequest(createRequestQuerySchema(RequestPaginationSchema), '/v1/checks'),
+    validateRequest(createRequestQuerySchema(RequestPaginationSchema), 'get, /v1/checks'),
     checkController.get as Midleware
 );
 
@@ -45,7 +45,7 @@ registry.registerPath({
 router.delete(
     '/:id',
     ensureLoggedIn(),
-    validateRequest(getByIdParamsSchema(), '/v1/checks/{id}'),
+    validateRequest(getByIdParamsSchema(), 'delete, /v1/checks/{id}'),
     checkController.remove as Midleware
 );
 
@@ -61,7 +61,7 @@ registry.registerPath({
 router.put(
     '/:id',
     ensureLoggedIn(),
-    validateRequest(getByIdParamsSchema().merge(createRequestBodySchema(CheckUpdateSchema)), '/v1/checks/{id}'),
+    validateRequest(getByIdParamsSchema().merge(createRequestBodySchema(CheckUpdateSchema)), 'put, /v1/checks/{id}'),
     checkController.update as Midleware
 );
 
@@ -77,7 +77,7 @@ registry.registerPath({
 router.put(
     '/accept/:id',
     ensureLoggedIn(),
-    validateRequest(createRequestBodySchema(CheckAcceptSchema), '/v1/checks/accept/{id}'),
+    validateRequest(createRequestBodySchema(CheckAcceptSchema), 'put, /v1/checks/accept/{id}'),
     checkController.accept as Midleware
 );
 
@@ -92,7 +92,7 @@ registry.registerPath({
 router.post(
     '/get_via_post',
     ensureLoggedIn(),
-    validateRequest(SkipValid, '/v1/checks/get_via_post'),
+    validateRequest(SkipValid, 'post, /v1/checks/get_via_post'),
     checkController.getViaPost as Midleware
 );
 

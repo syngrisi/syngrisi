@@ -25,7 +25,7 @@ registry.registerPath({
 router.get(
     '/:id',
     ensureLoggedIn(),
-    validateRequest(createRequestParamsSchema(TestDistinctRequestParamsSchema), '/v1/test-distinct/{id}'),
+    validateRequest(createRequestParamsSchema(TestDistinctRequestParamsSchema), 'get, /v1/test-distinct/{id}'),
     testController.distinct as Midleware
 );
 
