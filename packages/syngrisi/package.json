@@ -43,8 +43,9 @@
     "delay": 500
   },
   "scripts": {
-    "start": "SYNGRISI_AUTH=false nodemon --ignore 'mvc/views/lib/*.js' --ignore 'tests'",
-    "server:watch": "npx tsup --watch # compile all server ts files changes",
+    "server:watch": "npx tsup --watch --onSuccess \"node ./dist/server/server.js\" # compile all server ts files changes",
+    "start": "if [ \"$NODE_ENV\" = \"development\" ]; then npm run server:watch; else node ./dist/server/server.js; fi",
+    "start_old": "SYNGRISI_AUTH=false nodemon --ignore 'mvc/views/lib/*.js' --ignore 'tests'",
     "test": "npm run build && cd tests && npm run test",
     "build": "npm run build:ui && npm run build:server",
     "clean:server": "rimraf dist",
