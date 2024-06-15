@@ -28,7 +28,7 @@ registry.registerPath({
 router.get(
     '/',
     ensureLoggedIn(),
-    validateRequest(createRequestQuerySchema(RequestPaginationSchema)),
+    validateRequest(createRequestQuerySchema(RequestPaginationSchema), 'get, /v1/baselines'),
 
     baselineController.get as Midleware
 );
@@ -45,7 +45,7 @@ registry.registerPath({
 router.put(
     '/:id',
     ensureLoggedIn(),
-    validateRequest(getByIdParamsSchema().merge(createRequestBodySchema(BaselinePutSchema))),
+    validateRequest(getByIdParamsSchema().merge(createRequestBodySchema(BaselinePutSchema)), 'put, /v1/baselines/{id}'),
     baselineController.put as Midleware
 );
 

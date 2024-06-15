@@ -78,7 +78,7 @@ registry.registerPath({
 router.get(
     '/getIdent',
     ensureApiKey(),
-    validateRequest(SkipValid, '/v1/client/getIdent'),
+    validateRequest(SkipValid, 'get, /v1/client/getIdent'),
     clientController.getIdent as Midleware
 );
 
@@ -100,7 +100,7 @@ registry.registerPath({
 router.get(
     '/baselines',
     ensureApiKey(),
-    validateRequest(createRequestQuerySchema(ExtRequestBaselineSchema), '/v1/client/baselines'),
+    validateRequest(createRequestQuerySchema(ExtRequestBaselineSchema), 'get, /v1/client/baselines'),
     clientController.getBaselines as Midleware
 );
 
@@ -116,7 +116,7 @@ registry.registerPath({
 router.get(
     '/snapshots',
     ensureApiKey(),
-    validateRequest(createRequestQuerySchema(RequestPaginationSchema), '/v1/client/snapshots'),
+    validateRequest(createRequestQuerySchema(RequestPaginationSchema), 'get, /v1/client/snapshots'),
     clientController.getSnapshots as Midleware
 );
 

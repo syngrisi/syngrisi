@@ -26,7 +26,7 @@ registry.registerPath({
 router.get(
     '/',
     ensureLoggedIn(),
-    validateRequest(createRequestQuerySchema(RequestPaginationSchema), '/v1/runs'),
+    validateRequest(createRequestQuerySchema(RequestPaginationSchema), 'get, /v1/runs'),
     runController.get as Midleware
 );
 
@@ -42,7 +42,7 @@ registry.registerPath({
 router.delete(
     '/:id',
     ensureLoggedIn(),
-    validateRequest(getByIdParamsSchema(), '/v1/runs/{id}'),
+    validateRequest(getByIdParamsSchema(), 'delete, /v1/runs/{id}'),
     runController.remove as Midleware
 );
 

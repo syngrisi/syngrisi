@@ -23,7 +23,7 @@ router.get(
     '/task_test',
     ensureLoggedIn(),
     authorization('admin') as Midleware,
-    validateRequest(SkipValid, '/v1/tasks/task_test'),
+    validateRequest(SkipValid, 'get, /v1/tasks/task_test'),
     tasksController.task_test as Midleware
 );
 
@@ -39,7 +39,7 @@ router.get(
     '/task_handle_old_checks',
     ensureLoggedIn(),
     authorization('admin') as Midleware,
-    validateRequest(SkipValid, '/v1/tasks/task_handle_old_checks'),
+    validateRequest(SkipValid, 'get, /v1/tasks/task_handle_old_checks'),
     tasksController.task_handle_old_checks as Midleware
 );
 
@@ -55,7 +55,7 @@ router.get(
     '/task_handle_database_consistency',
     ensureLoggedIn(),
     authorization('admin') as Midleware,
-    validateRequest(SkipValid, '/v1/tasks/task_handle_database_consistency'),
+    validateRequest(SkipValid, 'get, /v1/tasks/task_handle_database_consistency'),
     tasksController.task_handle_database_consistency as Midleware
 );
 
@@ -71,7 +71,7 @@ router.get(
     '/task_remove_old_logs',
     ensureLoggedIn(),
     authorization('admin') as Midleware,
-    validateRequest(SkipValid, '/v1/tasks/task_remove_old_logs'),
+    validateRequest(SkipValid, 'get, /v1/tasks/task_remove_old_logs'),
     tasksController.task_remove_old_logs as Midleware
 );
 
@@ -86,7 +86,7 @@ registry.registerPath({
 router.get(
     '/loadTestUser',
     ensureLoggedIn() as Midleware,
-    validateRequest(SkipValid, '/v1/tasks/loadTestUser'),
+    validateRequest(SkipValid, 'get, /v1/tasks/loadTestUser'),
     tasksController.loadTestUser as Midleware
 );
 
@@ -100,7 +100,7 @@ registry.registerPath({
 
 router.get(
     '/status',
-    validateRequest(SkipValid, '/v1/tasks/status'),
+    validateRequest(SkipValid, 'get, /v1/tasks/status'),
     tasksController.status as Midleware
 );
 
@@ -114,7 +114,7 @@ registry.registerPath({
 
 router.get(
     '/screenshots',
-    validateRequest(SkipValid, '/v1/tasks/screenshots'),
+    validateRequest(SkipValid, 'get, /v1/tasks/screenshots'),
     tasksController.screenshots as Midleware
 );
 

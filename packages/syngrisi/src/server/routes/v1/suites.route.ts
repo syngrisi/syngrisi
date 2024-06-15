@@ -24,7 +24,7 @@ registry.registerPath({
 router.get(
     '/',
     ensureLoggedIn(),
-    validateRequest(SkipValid, '/v1/suites'),
+    validateRequest(SkipValid, 'get, /v1/suites'),
     suiteController.get as Midleware
 );
 
@@ -40,7 +40,7 @@ registry.registerPath({
 router.delete(
     '/:id',
     ensureLoggedIn(),
-    validateRequest(getByIdParamsSchema(), '/v1/suites/{id}'),
+    validateRequest(getByIdParamsSchema(), 'delete, /v1/suites/{id}'),
     suiteController.remove as Midleware
 );
 
