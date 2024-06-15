@@ -13,7 +13,7 @@ const queryTests = async (filter: any, options: any) => {
 
 const queryTestsDistinct = async (filter: any, options: any) => {
     // @ts-ignore
-    const tests = await Test.paginateDistinct(filter, options);
+    const tests = await Test.paginateDistinct({filter: filter ? JSON.stringify(filter) : null}, options);
     return tests;
 };
 

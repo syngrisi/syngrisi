@@ -19,27 +19,22 @@ const getTest = catchAsync(async (req: ExtRequest, res: Response) => {
     res.status(httpStatus.OK).send(result);
 });
 
+
+export const distinct_with_filter = catchAsync(async (req: ExtRequest, res: Response) => {
+    const filter = req.query.filter ? deserializeIfJSON(String(req.query.filter)) : undefined;
+    const options = { ...pick(req.query, ['sortBy', 'limit', 'page', 'populate']), field: req.params.field };
+    const result = await testService.queryTestsDistinct( filter , options);
+    res.status(httpStatus.OK).send(result);
+});
+
+// TODO: [Obsolete] use 'distinct_with_filter' instead of this
 const distinct = catchAsync(async (req: ExtRequest, res: Response) => {
-    const filter = pick(req.query, [
-        'suite',
-        'run',
-        'markedAs',
-        'creatorId',
-        'creatorUsername',
-        'name',
-        'status',
-        'browserName',
-        'browserVersion',
-        'branch',
-        'tags',
-        'viewport',
-        'os',
-        'app',
-        'startDate',
-        'filter',
-    ]);
+
+    //⚠️ the filter is obsolete there, for filtering use `/v1/test/distict`
+    const filter = {};
+
     const options = { ...pick(req.query, ['sortBy', 'limit', 'page', 'populate']), field: req.params.id };
-    const result = await testService.queryTestsDistinct(filter, options);
+    const result = await testService.queryTestsDistinct( filter , options);
     res.status(httpStatus.OK).send(result);
 });
 
