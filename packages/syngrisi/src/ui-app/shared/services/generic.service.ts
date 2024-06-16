@@ -36,30 +36,6 @@ export const GenericService = {
         throw new Error(`cannot get resource: ${uri}, resp: '${JSON.stringify(resp)}'`);
     },
 
-    // eslint-disable-next-line consistent-return
-    async get_via_post(resource: string, filter: any = {}, options: IRequestOptions = {}, queryID = '') {
-        try {
-            const resp = await ky(`${config.baseUri}/v1/${resource}/get_via_post`, {
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    filter,
-                    options,
-                    queryID,
-                }),
-                method: 'POST',
-            });
-            if (resp.ok) {
-                return resp.json();
-            }
-        } catch (e: unknown) {
-            log.error(`cannot get (get_via_post) ${resource},`
-                + `\noptions: '${JSON.stringify(options)}', error: '${String(e)}'}`);
-
-            throw new Error(`cannot get (get_via_post) ${resource},`
-                + `\noptions: '${JSON.stringify(options)}', error: '${e}'}`);
-        }
-    },
-
     async create<ResType>(resource: string, data: ResType): Promise<ResType[]> {
         const url = `${config.baseUri}/v1/${resource}`;
         const resp = await ky.post(
