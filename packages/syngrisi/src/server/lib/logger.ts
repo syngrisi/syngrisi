@@ -6,8 +6,9 @@ import { config } from '@config';
 import path from 'path';
 import { LogOpts } from '@types';
 import { ApiError } from '../utils';
+import { env } from "@env";
 
-const logLevel: string = process.env.SYNGRISI_LOG_LEVEL || '';
+const logLevel: string = env.SYNGRISI_LOG_LEVEL;
 
 interface LoggerOptions {
     dbConnectionString: string;
