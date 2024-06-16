@@ -16,14 +16,15 @@ interface Props {
 export function Checks({ item, testUpdateQuery }: Props) {
     // eslint-disable-next-line no-unused-vars
     const [checksViewMode, setChecksViewMode] = useLocalStorage({ key: 'check-view-mode', defaultValue: 'bounded' });
+
     const checksQuery = useQuery(
         [
             'preview_checks',
             item._id,
         ],
-        () => GenericService.get_via_post(
+        () => GenericService.get(
             'checks',
-            { _id: { $in: item.checks.map((x: any) => x._id) } },
+            { test: item._id },
             {
                 populate: 'baselineId,actualSnapshotId,diffId',
                 limit: '0',
@@ -41,6 +42,33 @@ export function Checks({ item, testUpdateQuery }: Props) {
             },
         },
     );
+
+    // const checksQuery = useQuery(
+    //     [
+    //         'preview_checks',
+    //         item._id,
+    //     ],
+    //     () => GenericService.get_via_post(
+    //         'checks',
+    //         { _id: { $in: item.checks.map((x: any) => x._id) } },
+    //         {
+    //             populate: 'baselineId,actualSnapshotId,diffId',
+    //             limit: '0',
+    //             sortBy: 'CreatedDate',
+    //             sortOrder: -1,
+    //         },
+    //         'checksByIds',
+    //     ),
+    //     {
+    //         refetchOnWindowFocus: false,
+    //         onSuccess: () => {
+    //         },
+    //         onError: (e) => {
+    //             errorMsg({ error: e });
+    //         },
+    //     },
+    // );
+
     const ChecksContainer = (checksViewMode === 'list') ? Stack : Group;
 
     return (
