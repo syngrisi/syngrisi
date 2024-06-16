@@ -31,6 +31,10 @@ export const config = {
     fileUploadMaxSize: 50 * 1024 * 1024,
     testMode: env.SYNGRISI_TEST_MODE, 
     jsonLimit: '50mb',
+    helmet: {
+        crossOriginEmbedderPolicy: !env.SYNGRISI_DISABLE_DEV_CORS,
+        crossOriginResourcePolicy: !env.SYNGRISI_DISABLE_DEV_CORS,
+      }
 };
 
 if (!fs.existsSync(config.defaultImagesPath)) {

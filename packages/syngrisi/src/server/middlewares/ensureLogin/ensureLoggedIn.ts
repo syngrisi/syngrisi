@@ -98,7 +98,7 @@ const handleBasicAuth = async (req: ExtRequest): Promise<any> => {
     }
 
     if (await AppSettings.isAuthEnabled()) {
-        log.info(`user is not authenticated - ${req.originalUrl}`, logOpts);
+        log.info(`user is not authenticated, will redirected - ${req.originalUrl}`, logOpts);
 
         result.type = 'redirect';
         result.status = 301;

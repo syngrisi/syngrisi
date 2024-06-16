@@ -20,16 +20,19 @@ import { User } from './models';
 import httpLogger from '@lib/httpLogger';
 import errorHandler from './middlewares/errorHandler';
 import { openAPIRouter } from './api-docs/openAPIRouter';
+import { LogOpts } from '../types';
 
-const logMeta = { scope: 'app.ts' };
+const logMeta: LogOpts = { scope: 'app.ts', msgType: "Init" };
 
 log.info('Init the application', logMeta);
 const app = express();
 
 log.info('\t- basic http conf', logMeta);
-app.use(helmet());
-app.use(compression({ filter: compressionFilter }));
+
+app.use(helmet(config.helmet));
 app.use(disableCors);
+
+app.use(compression({ filter: compressionFilter }));
 // app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(express.urlencoded({ extended: true }));
@@ -42,11 +45,11 @@ if (config.enableHttpLogger) app.use(httpLogger);
 log.info('\t- authentication', logMeta);
 // Session and Passport setup
 app.use(session({
-    secret: config.storeSessionKey,
-    resave: true,
-    saveUninitialized: false,
-    cookie: { secure: false },
-    store: MongoStore.create({ mongoUrl: config.connectionString }),
+  secret: config.storeSessionKey,
+  resave: true,
+  saveUninitialized: false,
+  cookie: { secure: false },
+  store: MongoStore.create({ mongoUrl: config.connectionString }),
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -70,6 +73,5 @@ app.use('/', uiRoutes);
 app.use('/swagger', openAPIRouter);
 
 app.use(errorHandler());
-
 
 export default app;
