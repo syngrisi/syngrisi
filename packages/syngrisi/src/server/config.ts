@@ -6,7 +6,7 @@ import { env } from "./envConfig";
 
 import devices from "./data/devices.json";
 const customDevicesPath = './server/data/custom_devices.json';
-
+const logsFolder = './logs';
 dotenv.config();
 
 export const config = {
@@ -19,25 +19,30 @@ export const config = {
         return devices;
     },
     defaultImagesPath: env.SYNGRISI_IMAGES_PATH,
-    connectionString: env.SYNGRISI_DB_URI ||'mongodb://127.0.0.1:27017/SyngrisiDb',
+    connectionString: env.SYNGRISI_DB_URI || 'mongodb://127.0.0.1:27017/SyngrisiDb',
     host: env.SYNGRISI_HOSTNAME,
     port: env.SYNGRISI_APP_PORT || 3000,
     backupsFolder: './backups',
     enableHttpLogger: env.SYNGRISI_HTTP_LOG,
-    httpLoggerFilePath: './logs/http.log',
+    httpLoggerFilePath: `${logsFolder}/http.log`,
     storeSessionKey: env.SYNGRISI_SESSION_STORE_KEY || crypto.randomBytes(64).toString('hex'),
     codeCoverage: env.SYNGRISI_COVERAGE,
     disableCors: env.SYNGRISI_DISABLE_DEV_CORS,
     fileUploadMaxSize: 50 * 1024 * 1024,
-    testMode: env.SYNGRISI_TEST_MODE, 
+    testMode: env.SYNGRISI_TEST_MODE,
     jsonLimit: '50mb',
     helmet: {
         crossOriginEmbedderPolicy: !env.SYNGRISI_DISABLE_DEV_CORS,
         crossOriginResourcePolicy: !env.SYNGRISI_DISABLE_DEV_CORS,
-      }
+    }
 };
 
 if (!fs.existsSync(config.defaultImagesPath)) {
     fs.mkdirSync(config.defaultImagesPath, { recursive: true });
 }
+
+if (!fs.existsSync(logsFolder)) {
+    fs.mkdirSync(logsFolder, { recursive: true });
+}
+
 
