@@ -1,8 +1,9 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Test, Suite } from '@models';
 import * as testService from './test.service';
 import log from '@lib/logger';
 import { RequestUser } from '@types';
+import { ApiError } from '../utils';
+import httpStatus from 'http-status';
 
 const remove = async (id: string, user: RequestUser) => {
     const logOpts = {
@@ -18,8 +19,9 @@ const remove = async (id: string, user: RequestUser) => {
     for (const test of tests) {
         await testService.remove(test._id, user);
     }
-    // @ts-ignore
-    const suite = await Suite.findByIdAndRemove(id).exec();
+    const suite = await Suite.findByIdAndDelete(id).exec();
+    if (!suite) throw new ApiError(httpStatus.NOT_FOUND, `cannot remove suite with id: '${id}', not found`);
+    
     return suite;
 };
 

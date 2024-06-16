@@ -1,26 +1,22 @@
-/* eslint-disable no-param-reassign, valid-jsdoc */
-/* tslint:disable */
-/* eslint-disable */
-
-import { Schema, Document } from 'mongoose';
+import { Schema, Document, FilterQuery } from 'mongoose';
 import { EJSON } from 'bson';
+import { PaginateOptions, QueryResult } from './utils';
 
-type QueryResult = {
-  results: Document[];
-  page: number;
-  limit: number;
-  totalPages: number;
-  totalResults: number;
-  timestamp: number;
-};
+// type QueryResult = {
+//   results: Document[];
+//   page: number;
+//   limit: number;
+//   totalPages: number;
+//   totalResults: number;
+//   timestamp: number;
+// };
 
 // type PaginateOptions = {
 //   sortBy?: string;
 //   populate?: string;
 //   limit?: number;
 //   page?: number;
-//   field?: string;
-//   filter?: string;
+//   field: string;
 // };
 
 const paginateDistinct = (schema: Schema): void => {
@@ -36,8 +32,9 @@ const paginateDistinct = (schema: Schema): void => {
    * @param {number} [options.page] - Current page (default = 1)
    * @returns {Promise<QueryResult>}
    */
-  schema.statics.paginateDistinct = async function (filter: any, options: any): Promise<QueryResult> {
-    let sort: any = {};
+  schema.statics.paginateDistinct = async function (filter: FilterQuery<unknown>, options: PaginateOptions): Promise<QueryResult> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let sort: any;
     if (options.sortBy) {
       options.sortBy.split(',')
         .forEach((sortOption: string) => {
@@ -65,10 +62,10 @@ const paginateDistinct = (schema: Schema): void => {
       { $limit: limit },
     ];
     const aggregatedDocs = (await this.aggregate(aggregateArr))
-      .filter((x: any) => x._id)
-      .map((x: any) => {
-        if (x[options.field]) {
-          return x[options.field][0];
+      .filter((x) => x._id)
+      .map((x) => {
+        if (x[options.field!]) {
+          return x[options.field!][0];
         }
         return { name: x._id };
       });

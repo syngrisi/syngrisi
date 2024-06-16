@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document, Model } from 'mongoose';
 import passportLocalMongoose from 'passport-local-mongoose';
 import { toJSON, paginate } from './plugins';
+import { PluginExtededModel } from './plugins/utils';
 
 export interface UserDocument extends Document {
     username: { [key: string]: string | boolean | number};
@@ -22,14 +23,8 @@ export interface UserDocument extends Document {
     
     isEmailTaken(username: string, excludeUserId?: string): Promise<boolean>;
     paginate: any; 
-    setPassword: (password: string) => Promise<UserDocument>;
+    setPassword: (password: string) => Promise<void>;
 }
-
-// export interface UserModel extends Model<UserDocument> {
-//     isEmailTaken(username: string, excludeUserId?: string): Promise<boolean>;
-//     paginate: any; 
-//     setPassword: (password: string) => Promise<UserDocument>;
-// }
 
 const UserSchema: Schema<UserDocument> = new Schema({
     username: {
@@ -82,8 +77,5 @@ UserSchema.plugin(toJSON);
 UserSchema.plugin(paginate);
 UserSchema.plugin(passportLocalMongoose, { hashField: 'password' });
 
-// const User: Model<UserDocument> = mongoose.model<UserDocument>('VRSUser', UserSchema);
-
-const User = mongoose.model<UserDocument>('VRSUser', UserSchema);
-
-export default User;
+const User: Model<UserDocument> = mongoose.model<UserDocument>('VRSUser', UserSchema);
+export default User as PluginExtededModel<UserDocument>;

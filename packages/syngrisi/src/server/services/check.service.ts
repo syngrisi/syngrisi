@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
     Check,
     Test,
@@ -11,6 +10,9 @@ import { calculateAcceptedStatus, buildIdentObject } from '@utils';
 import * as snapshotService from './snapshot.service';
 import * as orm from '@lib/dbItems';
 import log from '@lib/logger';
+import { BaselineDocument } from '@models/Baseline';
+import { Schema } from 'mongoose';
+import { LogOpts, RequestUser } from '@root/src/types';
 
 async function calculateTestStatus(testId: string): Promise<string> {
     const checksInTest = await Check.find({ test: testId });
@@ -25,10 +27,36 @@ async function calculateTestStatus(testId: string): Promise<string> {
     return testCalculatedStatus;
 }
 
-const validateBaselineParam = (params: any): void => {
+
+export interface baselineParamsType extends Document {
+    snapshootId?: string;
+    name: { [key: string]: string | boolean | number };
+    app: string;
+    branch?: string;
+    browserName?: string;
+    browserVersion?: string;
+    browserFullVersion?: string;
+    viewport?: string;
+    os?: string;
+    markedAs?: 'bug' | 'accepted';
+    lastMarkedDate?: Date;
+    createdDate?: Date;
+    updatedDate?: Date;
+    markedById?: Schema.Types.ObjectId;
+    markedByUsername?: string;
+    ignoreRegions?: string;
+    boundRegions?: string;
+    matchType?: 'antialiasing' | 'nothing' | 'colors';
+    meta?: object;
+    actualSnapshotId: Schema.Types.ObjectId;
+    markedDate: Date;
+}
+
+
+const validateBaselineParam = (params: baselineParamsType): void => {
     const mandatoryParams = ['markedAs', 'markedById', 'markedByUsername', 'markedDate'];
     for (const param of mandatoryParams) {
-        if (!params[param]) {
+        if (!params[param as keyof baselineParamsType]) {
             const errMsg = `invalid baseline parameters, '${param}' is empty, params: ${JSON.stringify(params)}`;
             log.error(errMsg);
             throw new Error(errMsg);
@@ -36,8 +64,7 @@ const validateBaselineParam = (params: any): void => {
     }
 };
 
-async function createNewBaseline(params: any): Promise<any> {
-
+async function createNewBaseline(params: baselineParamsType): Promise<BaselineDocument> {
     const logOpts = {
         scope: 'createNewBaseline',
         msgType: 'CREATE',
@@ -64,19 +91,19 @@ async function createNewBaseline(params: any): Promise<any> {
 
     log.silly({ sameBaseline });
 
-    const resultedBaseline = sameBaseline || await Baseline.create(baselineParams);
+    const resultedBaseline: BaselineDocument = sameBaseline || await Baseline.create(baselineParams);
 
     resultedBaseline.markedAs = params.markedAs;
-    resultedBaseline.markedById = params.markedById;
+    resultedBaseline.markedById = params.markedById //? new Schema.Types.ObjectId(String(params.markedById)) : undefined;
     resultedBaseline.markedByUsername = params.markedByUsername;
     resultedBaseline.lastMarkedDate = params.markedDate;
     resultedBaseline.createdDate = new Date();
-    resultedBaseline.snapshootId = params.actualSnapshotId;
+    resultedBaseline.snapshootId = params.actualSnapshotId //? new Schema.Types.ObjectId(String(params.actualSnapshotId)) : undefined;
 
     return resultedBaseline.save();
 }
 
-const accept = async (id: string, baselineId: string, user: any): Promise<CheckDocument> => {
+const accept = async (id: string, baselineId: string, user: RequestUser): Promise<CheckDocument> => {
     const logOpts = {
         msgType: 'ACCEPT',
         itemType: 'check',
@@ -89,19 +116,15 @@ const accept = async (id: string, baselineId: string, user: any): Promise<CheckD
     if (!check) throw new Error(`cannot find check with id: ${id}`);
     const test = await Test.findById(check.test).exec();
     if (!test) throw new Error(`cannot find test with id: ${check.test}`);
+    check.markedById = user._id;
+    check.markedByUsername = user.username;
+    check.markedDate = new Date();
+    check.markedAs = 'accepted';
+    check.status = (check.status[0] === 'new') ? ['new'] : ['passed'];
+    check.updatedDate = new Date();
 
-    const opts: any = {};
-    opts.markedById = user._id;
-    opts.markedByUsername = user.username;
-    opts.markedDate = new Date();
-    opts.markedAs = 'accepted';
-    opts.status = (check.status[0] === 'new') ? 'new' : 'passed';
-    opts.updatedDate = new Date();
-    opts.baselineId = baselineId;
+    check.baselineId = baselineId as unknown as Schema.Types.ObjectId;
 
-    log.debug(`update check id: '${id}' with opts: '${JSON.stringify(opts)}'`, logOpts);
-
-    Object.assign(check, opts);
     log.debug(`update check with options: '${JSON.stringify(check.toObject())}'`, logOpts);
     await createNewBaseline(check.toObject());
     await check.save();
@@ -125,7 +148,7 @@ const accept = async (id: string, baselineId: string, user: any): Promise<CheckD
     return check;
 };
 
-async function removeCheck(id: string, user: any): Promise<CheckDocument> {
+async function removeCheck(id: string, user: RequestUser): Promise<CheckDocument> {
     const logMeta = {
         scope: 'removeCheck',
         itemType: 'check',
@@ -135,7 +158,7 @@ async function removeCheck(id: string, user: any): Promise<CheckDocument> {
     };
 
     try {
-        const check: any = await Check.findByIdAndDelete(id).exec();
+        const check = (await Check.findByIdAndDelete(id).exec()) as unknown as CheckDocument;
         if (!check) throw new Error(`cannot find check with id: ${id}`);
 
         log.debug(`check with id: '${id}' was removed, update test: ${check.test}`, logMeta);
@@ -143,7 +166,7 @@ async function removeCheck(id: string, user: any): Promise<CheckDocument> {
         const test = await Test.findById(check.test).exec();
         if (!test) throw new Error(`cannot find test with id: ${check.test}`);
 
-        const testCalculatedStatus = await calculateTestStatus(check.test);
+        const testCalculatedStatus = await calculateTestStatus(String(check.test));
         const testCalculatedAcceptedStatus = await calculateAcceptedStatus(check.test);
         test.status = testCalculatedStatus;
         test.markedAs = testCalculatedAcceptedStatus;
@@ -151,17 +174,17 @@ async function removeCheck(id: string, user: any): Promise<CheckDocument> {
         await orm.updateItemDate('VRSSuite', check.suite);
         await test.save();
 
-        if (check.baselineId && check.baselineId !== 'undefined') {
+        if (check.baselineId && String(check.baselineId) !== 'undefined') {
             log.debug(`try to remove the snapshot, baseline: ${check.baselineId}`, logMeta);
             await snapshotService.remove(check.baselineId.toString());
         }
 
-        if (check.actualSnapshotId && check.baselineId !== 'undefined') {
+        if (check.actualSnapshotId && String(check.baselineId) !== 'undefined') {
             log.debug(`try to remove the snapshot, actual: ${check.actualSnapshotId}`, logMeta);
             await snapshotService.remove(check.actualSnapshotId.toString());
         }
 
-        if (check.diffId && check.baselineId !== 'undefined') {
+        if (check.diffId && String(check.baselineId) !== 'undefined') {
             log.debug(`try to remove snapshot, diff: ${check.diffId}`, logMeta);
             await snapshotService.remove(check.diffId.toString());
         }
@@ -173,7 +196,7 @@ async function removeCheck(id: string, user: any): Promise<CheckDocument> {
     }
 }
 
-const remove = async (id: string, user: any): Promise<CheckDocument> => {
+const remove = async (id: string, user: RequestUser): Promise<CheckDocument> => {
     const logOpts = {
         scope: 'removeCheck',
         itemType: 'check',
@@ -185,8 +208,8 @@ const remove = async (id: string, user: any): Promise<CheckDocument> => {
     return removeCheck(id, user);
 };
 
-const update = async (id: string, opts: Partial<CheckDocument>, user: any): Promise<CheckDocument> => {
-    const logMeta = {
+const update = async (id: string, opts: Partial<CheckDocument>, user: string): Promise<CheckDocument> => {
+    const logMeta: LogOpts = {
         msgType: 'UPDATE',
         itemType: 'check',
         ref: id,

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { toJSON, paginate } from './plugins';
+import { PluginExtededModel } from './plugins/utils';
 
 interface RunDocument extends Document {
     name: { [key: string]: string | boolean | number};
@@ -50,4 +51,5 @@ RunSchema.plugin(paginate);
 RunSchema.plugin(toJSON);
 
 const Run: Model<RunDocument> = mongoose.model<RunDocument>('VRSRun', RunSchema);
-export default Run;
+export default Run as PluginExtededModel<RunDocument>;
+

@@ -10,7 +10,6 @@ import { createRequestQuerySchema } from '@schemas/utils/createRequestQuerySchem
 import { RequestPaginationSchema } from '@schemas/common/RequestPagination.schema';
 import { createRequestOpenApiBodySchema } from '@schemas/utils/createRequestOpenApiBodySchema';
 import { createRequestBodySchema } from '@schemas/utils/createRequestBodySchema';
-import { SkipValid } from '@schemas/SkipValid.schema';
 import { commonValidations } from '@schemas/utils';
 import { getByIdParamsSchema } from '@schemas/utils/createRequestParamsSchema';
 
@@ -67,31 +66,12 @@ router.put(
 
 registry.registerPath({
     method: 'put',
-    path: '/v1/checks/accept/{id}',
+    path: '/v1/checks/{id}/accept',
     summary: "Accept a check by ID",
     tags: ['Checks'],
     request: { params: commonValidations.paramsId.params, body: createRequestOpenApiBodySchema(CheckAcceptSchema) },
     responses: createApiResponse(CheckGetSchema, 'Success'),
 });
-
-
-// // OBSOLETE
-// router.put(
-//     '/accept/:id',
-//     ensureLoggedIn(),
-//     validateRequest(createRequestBodySchema(CheckAcceptSchema), 'put, /v1/checks/accept/{id}'),
-//     checkController.accept as Midleware
-// );
-
-
-// registry.registerPath({
-//     method: 'put',
-//     path: '/v1/checks/{id}/accept',
-//     summary: "Accept a check by ID",
-//     tags: ['Checks'],
-//     request: { params: commonValidations.paramsId.params, body: createRequestOpenApiBodySchema(CheckAcceptSchema) },
-//     responses: createApiResponse(CheckGetSchema, 'Success'),
-// });
 
 router.put(
     '/:id/accept',

@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { toJSON } from './plugins';
+import { PluginExtededModel } from './plugins/utils';
 
 export interface AppSettingsDocument extends Document {
     name: { [key: string]: string | boolean | number };
@@ -43,4 +44,5 @@ const AppSettingsSchema: Schema<AppSettingsDocument> = new Schema({
 AppSettingsSchema.plugin(toJSON);
 
 const AppSettings: Model<AppSettingsDocument> = mongoose.model<AppSettingsDocument>('VRSAppSettings', AppSettingsSchema);
-export default AppSettings;
+export default AppSettings as PluginExtededModel<AppSettingsDocument>;
+

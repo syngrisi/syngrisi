@@ -3,6 +3,8 @@ import { Test, Run } from '@models';
 import log from '@lib/logger';
 import * as testService from './test.service';
 import { RequestUser } from '@types';
+import httpStatus from 'http-status';
+import { ApiError } from '../utils';
 
 
 const remove = async (id: string, user: RequestUser) => {
@@ -20,8 +22,10 @@ const remove = async (id: string, user: RequestUser) => {
     for (const test of tests) {
         await testService.remove(test._id, user);
     }
-    // @ts-ignore
-    const run = await Run.findByIdAndRemove(id).exec();
+    const run = await Run.findByIdAndDelete(id).exec();
+    if (!run) {
+        throw new ApiError(httpStatus.NOT_FOUND, `cannot remove run with id: '${id}', not found`);
+    }
     return run;
 };
 

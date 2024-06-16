@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { toJSON, paginate } from './plugins';
+import { PluginExtededModel } from './plugins/utils';
 
 interface AppDocument extends Document {
     name: { [key: string]: string | boolean | number};
@@ -39,4 +40,4 @@ AppSchema.plugin(paginate);
 AppSchema.plugin(toJSON);
 
 const App: Model<AppDocument> = mongoose.model<AppDocument>('VRSApp', AppSchema);
-export default App;
+export default App as PluginExtededModel<AppDocument>;

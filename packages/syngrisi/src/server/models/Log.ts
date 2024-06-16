@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { toJSON, paginate } from './plugins';
+import { PluginExtededModel } from './plugins/utils';
 
 interface LogDocument extends Document {
     timestamp?: Date;
@@ -32,4 +33,5 @@ LogSchema.plugin(toJSON);
 LogSchema.plugin(paginate);
 
 const Log: Model<LogDocument> = mongoose.model<LogDocument>('VRSLog', LogSchema);
-export default Log;
+export default Log as PluginExtededModel<LogDocument>;
+

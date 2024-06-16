@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { toJSON, paginate, paginateDistinct } from './plugins';
+import { PluginExtededModel } from './plugins/utils';
 
 export interface TestDocument extends Document {
     name: { [key: string]: string | boolean | number};
@@ -111,4 +112,6 @@ TestSchema.plugin(paginate);
 TestSchema.plugin(paginateDistinct);
 
 const Test: Model<TestDocument> = mongoose.model<TestDocument>('VRSTest', TestSchema);
-export default Test;
+
+
+export default Test as PluginExtededModel<TestDocument>;

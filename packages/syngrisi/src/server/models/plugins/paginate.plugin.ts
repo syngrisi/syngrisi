@@ -1,22 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Schema, Document } from 'mongoose';
-
-type QueryResult = {
-  results: Document[];
-  page: number;
-  limit: number;
-  totalPages: number;
-  totalResults: number;
-  timestamp: number;
-};
-
-type PaginateOptions = {
-  sortBy?: string;
-  populate?: string;
-  limit?: number;
-  page?: number;
-};
+import { Schema, Document, FilterQuery } from 'mongoose';
+import { PaginateOptions, QueryResult } from './utils';
 
 const paginate = (schema: Schema) => {
   /**
@@ -31,8 +14,8 @@ const paginate = (schema: Schema) => {
    * @param {number} [options.page] - Current page (default = 1)
    * @returns {Promise<QueryResult>}
    */
-  schema.statics.paginate = async function (filter: any, options: PaginateOptions): Promise<QueryResult> {
-    let sort: any = '';
+  schema.statics.paginate = async function (filter: FilterQuery<unknown>, options: PaginateOptions): Promise<QueryResult> {
+    let sort: string | object;
     if (options.sortBy) {
       const sortingCriteria: string[] = [];
       options.sortBy.split(',')
@@ -62,8 +45,9 @@ const paginate = (schema: Schema) => {
             populateOption
               .split('.')
               .reverse()
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore
-              .reduce((a: any, b: any) => ({ path: b, populate: a }))
+              .reduce((a, b) => ({ path: b, populate: a }))
           );
         });
     }
