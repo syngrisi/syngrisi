@@ -92,11 +92,13 @@ class Logger {
         this.winstonLogger = createWinstonLogger(opts);
     }
 
-    private static mergeMeta(args: LogOpts[]): LogOpts {
-        return args.slice(1).reduce((acc, obj) => ({ ...acc, ...obj }), {});
+    private static mergeMeta(objects: LogOpts[]): LogOpts {
+        return objects.reduce((acc, obj) => {
+            return { ...acc, ...obj };
+        }, {});
     }
 
-    private log(severity: string, msg: string | object, ...meta: LogOpts[]): void {
+    private log(severity: string, msg: string | object, meta: LogOpts[]): void {
         const mergedMeta = Logger.mergeMeta(meta);
         if (!mergedMeta.scope) {
             mergedMeta.scope = getScriptLine();
@@ -117,27 +119,27 @@ class Logger {
         if ((msg instanceof ApiError)) {
             code = msg.statusCode;
         }
-        this.log('error', `${code !== 0 ? '[' + code + ']' : ''}${message}\n stacktrace: ${new Error().stack}`, ...meta);
+        this.log('error', `${code !== 0 ? '[' + code + ']' : ''}${message}\n stacktrace: ${new Error().stack}`, meta);
     }
 
     public warn(msg: string | object, ...meta: LogOpts[]): void {
-        this.log('warn', `${msg}\n stacktrace: ${new Error().stack}`, ...meta);
+        this.log('warn', `${msg}\n stacktrace: ${new Error().stack}`, meta);
     }
 
     public info(msg: string | object, ...meta: LogOpts[]): void {
-        this.log('info', msg, ...meta);
+        this.log('info', msg, meta);
     }
 
     public verbose(msg: string | object, ...meta: LogOpts[]): void {
-        this.log('verbose', msg, ...meta);
+        this.log('verbose', msg, meta);
     }
 
     public debug(msg: string | object, ...meta: LogOpts[]): void {
-        this.log('debug', msg, ...meta);
+        this.log('debug', msg, meta);
     }
 
     public silly(msg: string | object, ...meta: LogOpts[]): void {
-        this.log('silly', msg, ...meta);
+        this.log('silly', msg, meta);
     }
 }
 
