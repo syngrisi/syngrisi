@@ -74,12 +74,32 @@ registry.registerPath({
     responses: createApiResponse(CheckGetSchema, 'Success'),
 });
 
+
+// // OBSOLETE
+// router.put(
+//     '/accept/:id',
+//     ensureLoggedIn(),
+//     validateRequest(createRequestBodySchema(CheckAcceptSchema), 'put, /v1/checks/accept/{id}'),
+//     checkController.accept as Midleware
+// );
+
+
+// registry.registerPath({
+//     method: 'put',
+//     path: '/v1/checks/{id}/accept',
+//     summary: "Accept a check by ID",
+//     tags: ['Checks'],
+//     request: { params: commonValidations.paramsId.params, body: createRequestOpenApiBodySchema(CheckAcceptSchema) },
+//     responses: createApiResponse(CheckGetSchema, 'Success'),
+// });
+
 router.put(
-    '/accept/:id',
+    '/:id/accept',
     ensureLoggedIn(),
-    validateRequest(createRequestBodySchema(CheckAcceptSchema), 'put, /v1/checks/accept/{id}'),
+    validateRequest(createRequestBodySchema(CheckAcceptSchema), 'put, /v1/checks/{id}/accept'),
     checkController.accept as Midleware
 );
+
 
 
 export default router;

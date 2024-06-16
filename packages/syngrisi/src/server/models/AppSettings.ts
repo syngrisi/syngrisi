@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { toJSON } from './plugins';
 
@@ -7,7 +6,7 @@ export interface AppSettingsDocument extends Document {
     label: { [key: string]: string };
     description?: string;
     type: { [key: string]: string };
-    value: any;
+    value: Schema.Types.Mixed;
     env_variable?: string;
     enabled?: boolean;
 }

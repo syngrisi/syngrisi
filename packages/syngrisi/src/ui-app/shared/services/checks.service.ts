@@ -6,7 +6,7 @@ export const ChecksService = {
     // eslint-disable-next-line consistent-return
     async acceptCheck({ check, newBaselineId }: { check: any, newBaselineId: string }) {
         try {
-            const resp = await ky(`${config.baseUri}/v1/checks/accept/${check._id}`, {
+            const resp = await ky(`${config.baseUri}/v1/checks/${check._id}/accept`, {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     baselineId: newBaselineId,
