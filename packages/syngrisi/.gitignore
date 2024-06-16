@@ -7,11 +7,10 @@ node_modules
 /data
 /coverage/
 /dist/
-/logs/
 /.snapshots-images/
 /.nyc_output/
 /src_to_json/
-/logs/*
+logs/**
 *.log
 .DS_Store
 /tests/files/randomImg.png
