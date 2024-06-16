@@ -81,19 +81,5 @@ router.put(
     checkController.accept as Midleware
 );
 
-registry.registerPath({
-    method: 'post',
-    path: '/v1/checks/get_via_post',
-    summary: "OBSOLETE!!! Get checks via POST request",
-    tags: ['Checks'],
-    responses: createPaginatedApiResponse(CheckGetSchema, 'Success'),
-});
-
-router.post(
-    '/get_via_post',
-    ensureLoggedIn(),
-    validateRequest(SkipValid, 'post, /v1/checks/get_via_post'),
-    checkController.getViaPost as Midleware
-);
 
 export default router;
