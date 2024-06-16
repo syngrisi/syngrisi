@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { toJSON, paginate } from './plugins';
+import { PluginExtededModel } from './plugins/utils';
 
-interface BaselineDocument extends Document {
+export interface BaselineDocument extends Document {
     snapshootId?: Schema.Types.ObjectId;
     name: { [key: string]: string | boolean | number};
     app: Schema.Types.ObjectId;
@@ -94,4 +95,5 @@ BaselineSchema.plugin(toJSON);
 BaselineSchema.plugin(paginate);
 
 const Baseline: Model<BaselineDocument> = mongoose.model<BaselineDocument>('VRSBaseline', BaselineSchema);
-export default Baseline;
+export default Baseline as PluginExtededModel<BaselineDocument>;
+

@@ -1,18 +1,17 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { checkService } from './index';
 import { Test, Check } from '@models';
 import log from "../lib/logger";
 import { RequestUser } from '@types';
+import { FilterQuery } from 'mongoose';
+import { PaginateOptions } from '../models/plugins/utils';
 
-const queryTests = async (filter: any, options: any) => {
-    // @ts-ignore
+
+const queryTests = async (filter: FilterQuery<typeof Test>, options: PaginateOptions) => {
     const tests = await Test.paginate(filter, options);
     return tests;
 };
 
-const queryTestsDistinct = async (filter: any, options: any) => {
-    // @ts-ignore
+const queryTestsDistinct = async (filter: FilterQuery<typeof Test>, options: PaginateOptions) => {
     const tests = await Test.paginateDistinct({filter: filter ? JSON.stringify(filter) : null}, options);
     return tests;
 };
@@ -50,10 +49,10 @@ const accept = async (id: string, user: RequestUser) => {
     };
     log.info(`accept test with, id: '${id}', user: '${user.username}'`, logOpts);
 
-    const checks: any = await Check.find({ test: id }).exec();
+    const checks = await Check.find({ test: id }).exec();
 
     for (const check of checks) {
-        await checkService.accept(check._id, check.actualSnapshotId, user);
+        await checkService.accept(check._id, String(check.actualSnapshotId), user);
     }
     return { message: 'success' };
 };

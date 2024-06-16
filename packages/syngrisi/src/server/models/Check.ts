@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { toJSON, paginate } from './plugins';
+import { PluginExtededModel } from './plugins/utils';
 
 export interface CheckDocument extends Document {
     name: { [key: string]: string };
@@ -162,4 +163,5 @@ CheckSchema.plugin(toJSON);
 CheckSchema.plugin(paginate);
 
 const Check: Model<CheckDocument> = mongoose.model<CheckDocument>('VRSCheck', CheckSchema);
-export default Check;
+export default Check as PluginExtededModel<CheckDocument>;
+

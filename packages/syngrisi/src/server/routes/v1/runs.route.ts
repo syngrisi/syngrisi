@@ -10,6 +10,8 @@ import { createRequestQuerySchema } from '@schemas/utils/createRequestQuerySchem
 import { RequestPaginationSchema } from '@schemas/common/RequestPagination.schema';
 import { commonValidations } from '@schemas/utils';
 import { getByIdParamsSchema } from '@schemas/utils/createRequestParamsSchema';
+import { ApiErrorSchema } from '@schemas/common/ApiError.schema';
+import StatusCodes from 'http-status';
 
 export const registry = new OpenAPIRegistry();
 const router = express.Router();
@@ -33,10 +35,14 @@ router.get(
 registry.registerPath({
     method: 'delete',
     path: '/v1/runs/{id}',
-    summary: "Delete a run by ID",
+    summary: "Remove a run by ID",
+    description: "Remove a run by ID",
     tags: ['Runs'],
     request: commonValidations.paramsId,
-    responses: createApiResponse(RunResponseSchema, 'Success'),
+    responses: {
+        ...createApiResponse(RunResponseSchema, 'Success'),
+        ...createApiResponse(ApiErrorSchema, 'ApiError', StatusCodes.NOT_FOUND),
+    },
 });
 
 router.delete(

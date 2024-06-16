@@ -9,6 +9,8 @@ import { ensureLoggedIn } from '@middlewares/ensureLogin';
 import { commonValidations } from '@schemas/utils';
 import { getByIdParamsSchema } from '@schemas/utils/createRequestParamsSchema';
 import { SkipValid } from '@schemas/SkipValid.schema';
+import { ApiErrorSchema } from '@schemas/common/ApiError.schema';
+import StatusCodes from 'http-status';
 
 export const registry = new OpenAPIRegistry();
 const router = express.Router();
@@ -34,7 +36,10 @@ registry.registerPath({
     summary: "Delete a suite by ID",
     tags: ['Suites'],
     request: commonValidations.paramsId,
-    responses: createApiResponse(SuiteGetSchema, 'Success'),
+    responses: {
+        ...createApiResponse(SuiteGetSchema, 'Success'),
+        ...createApiResponse(ApiErrorSchema, 'ApiError', StatusCodes.NOT_FOUND),
+    },
 });
 
 router.delete(

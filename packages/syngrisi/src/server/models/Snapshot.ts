@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { toJSON, paginate } from './plugins';
+import { PluginExtededModel } from './plugins/utils';
 
 export interface SnapshotDocument extends Document {
     name: { [key: string]: string | boolean | number};
@@ -43,4 +44,5 @@ SnapshotSchema.plugin(toJSON);
 SnapshotSchema.plugin(paginate);
 
 const Snapshot: Model<SnapshotDocument> = mongoose.model<SnapshotDocument>('VRSSnapshot', SnapshotSchema);
-export default Snapshot;
+
+export default Snapshot as PluginExtededModel<SnapshotDocument>;

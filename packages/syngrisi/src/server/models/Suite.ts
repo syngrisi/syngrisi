@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { toJSON, paginate } from './plugins';
+import { PluginExtededModel } from './plugins/utils';
 
 interface SuiteDocument extends Document {
     name: { [key: string]: string | boolean | number};
@@ -46,4 +47,5 @@ SuiteSchema.plugin(paginate);
 SuiteSchema.plugin(toJSON);
 
 const Suite: Model<SuiteDocument> = mongoose.model<SuiteDocument>('VRSSuite', SuiteSchema);
-export default Suite;
+
+export default Suite as PluginExtededModel<SuiteDocument>;

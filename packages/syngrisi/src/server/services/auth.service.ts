@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import hasha from 'hasha';
 import uuidAPIKey from 'uuid-apikey';
 import { User } from '@models';
 import log from "../lib/logger";
 import { RequestUser } from '@types';
-import { errMsg } from '@utils';
+import { ApiError, errMsg } from '@utils';
 import { appSettings } from "@settings";
+import httpStatus from 'http-status';
 
 function getApiKey(): string {
     return uuidAPIKey.create().apiKey;
@@ -73,11 +72,12 @@ const changePasswordFirstRun = async (newPassword: string): Promise<void> => {
     if ((await AppSettings.isAuthEnabled()) && ((await AppSettings.isFirstRun()))) {
         log.debug(`first run, change password for default 'Administrator', params: '${JSON.stringify({ newPassword })}'`, logOpts);
         const user = await User.findOne({ username: 'Administrator' }).exec();
+
+        if (!user) throw new ApiError(httpStatus.NOT_FOUND, `cannot change password at first run, user withusername: 'Administrator', not found`);
+
         logOpts.ref = String(user?.username);
 
-        // @ts-ignore
         await user.setPassword(newPassword);
-        // @ts-ignore
         await user.save();
         log.debug('password was successfully changed for default Administrator', logOpts);
         await AppSettings.set('first_run', false);

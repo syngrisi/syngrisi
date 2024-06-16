@@ -1,9 +1,8 @@
 
-import { extendZodWithOpenApi, OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
+import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 import { z } from 'zod';
 import { requestQueryFilterSchema } from './requestQueryFilterSchema.schema';
 import { commonValidations } from '../utils';
-export const registry = new OpenAPIRegistry();
 extendZodWithOpenApi(z);
 
 export const RequestPaginationSchema =

@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { App } from '@models';
+import { FilterQuery } from 'mongoose';
+import { PaginateOptions } from '@models/plugins/utils';
 
-// @ts-ignore
-const get = async (filter: any, options: any) => App.paginate(filter, options);
+const get = async (filter:  FilterQuery<typeof App> , options: PaginateOptions) => App.paginate(filter, options);
 
 export {
     get,
