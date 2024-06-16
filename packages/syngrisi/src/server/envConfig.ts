@@ -26,4 +26,5 @@ export const env = cleanEnv(process.env, {
   SYNGRISI_PAGINATION_SIZE: num({ default: 50 }),
   SYNGRISI_DISABLE_DEV_CORS: bool({ default: false, devDefault: true }),
   SYNGRISI_SESSION_STORE_KEY: str({ default: crypto.randomBytes(64).toString('hex') }),
+  SYNGRISI_LOG_LEVEL: str({ default: 'debug' }),
 });
