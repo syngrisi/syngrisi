@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { toJSON, paginate } from './plugins';
 import { PluginExtededModel } from './plugins/utils';
 
 export interface BaselineDocument extends Document {
     snapshootId?: Schema.Types.ObjectId;
-    name: { [key: string]: string | boolean | number};
+    name: { [key: string]: string | boolean | number };
     app: Schema.Types.ObjectId;
     branch?: string;
     browserName?: string;
@@ -22,7 +21,7 @@ export interface BaselineDocument extends Document {
     ignoreRegions?: string;
     boundRegions?: string;
     matchType?: 'antialiasing' | 'nothing' | 'colors';
-    meta?: any;
+    meta?: Record<string, unknown>;
 }
 
 const BaselineSchema: Schema<BaselineDocument> = new Schema({

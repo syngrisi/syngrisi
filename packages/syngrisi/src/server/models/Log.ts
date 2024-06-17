@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { toJSON, paginate } from './plugins';
 import { PluginExtededModel } from './plugins/utils';
@@ -7,8 +6,8 @@ interface LogDocument extends Document {
     timestamp?: Date;
     level?: string;
     message?: string;
-    meta?: any;
-    hostname?: any;
+    meta?: Record<string, unknown>;
+    hostname?: string;
 }
 
 const LogSchema: Schema<LogDocument> = new Schema({

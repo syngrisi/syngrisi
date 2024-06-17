@@ -1,13 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import passportLocalMongoose from 'passport-local-mongoose';
 import { toJSON, paginate } from './plugins';
 import { PluginExtededModel } from './plugins/utils';
 
 export interface UserDocument extends Document {
-    username: { [key: string]: string | boolean | number};
-    firstName: { [key: string]: string | boolean | number};
-    lastName: { [key: string]: string | boolean | number};
+    username: { [key: string]: string | boolean | number };
+    firstName: { [key: string]: string | boolean | number };
+    lastName: { [key: string]: string | boolean | number };
     role: {
         type: string,
         enum: ['admin', 'reviewer', 'user'],
@@ -19,11 +18,11 @@ export interface UserDocument extends Document {
     createdDate?: Date;
     updatedDate?: Date;
     expiration?: Date;
-    meta?: any;
-    
-    isEmailTaken(username: string, excludeUserId?: string): Promise<boolean>;
-    paginate: any; 
-    setPassword: (password: string) => Promise<void>;
+    meta?: Record<string, unknown>;
+
+    isEmailTaken: (username: string) => Promise<boolean>;
+    // paginate: any;
+    setPassword: (password: string) => Promise<UserDocument>;
 }
 
 const UserSchema: Schema<UserDocument> = new Schema({
@@ -78,4 +77,5 @@ UserSchema.plugin(paginate);
 UserSchema.plugin(passportLocalMongoose, { hashField: 'password' });
 
 const User: Model<UserDocument> = mongoose.model<UserDocument>('VRSUser', UserSchema);
+
 export default User as PluginExtededModel<UserDocument>;

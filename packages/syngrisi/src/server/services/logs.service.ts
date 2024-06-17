@@ -1,16 +1,17 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Log } from '@models';
 import log from '@lib/logger';
+import { LogOpts } from '@root/src/types';
+import { FilterQuery } from 'mongoose';
+import { PaginateOptions } from '@models/plugins/utils';
 
 
-
-// @ts-ignore
-const queryLogs = async (filter: any, options: any) => Log.paginate(filter, options);
+const queryLogs = async (filter: FilterQuery<typeof Log>, options: PaginateOptions) => Log.paginate(filter, options);
 
 const distinct = async (field: string) => Log.distinct(field);
 
-const createLogs = async (body: any) => {
+type LogBody = LogOpts & { message: string; level?: string };
+
+const createLogs = async (body: LogBody) => {
     log[(body.level || 'debug') as keyof typeof log](body.message, {
         user: body.user,
         scope: body.scope || 'test_scope',

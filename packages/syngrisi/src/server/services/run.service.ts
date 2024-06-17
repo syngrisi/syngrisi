@@ -1,11 +1,9 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Test, Run } from '@models';
 import log from '@lib/logger';
 import * as testService from './test.service';
 import { RequestUser } from '@types';
 import httpStatus from 'http-status';
 import { ApiError } from '../utils';
-
 
 const remove = async (id: string, user: RequestUser) => {
    

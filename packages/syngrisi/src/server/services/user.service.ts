@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status';
 import { User } from '@models';
 import { ApiError } from '@utils';
 import log from "../lib/logger";
+import { UserCreateReq } from '../schemas/User.schema';
+import { FilterQuery } from 'mongoose';
+import { PaginateOptions } from '../models/plugins/utils';
 
-const createUser = async (userBody: any) => {
-    // @ts-ignore
+const createUser = async (userBody: UserCreateReq) => {
+    //  @ts-ignore
     if (await User.isEmailTaken(userBody.username)) {
         throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
     }
@@ -31,9 +33,7 @@ const createUser = async (userBody: any) => {
 
     return userWithSelectedFields;
 };
-
-const queryUsers = async (filter: any, options: any) => {
-    // @ts-ignore
+const queryUsers = async (filter:  FilterQuery<typeof Test>, options: PaginateOptions) => {
     const users = await User.paginate(filter, options);
     return users;
 };
@@ -44,7 +44,7 @@ const getUserById = async (id: string) => User.findById(id)
 
 const getUserByEmail = async (email: string) => User.findOne({ email });
 
-const updateUserById = async (userId: string, updateBody: any) => {
+const updateUserById = async (userId: string, updateBody: UserCreateReq) => {
     const logOpts = {
         msgType: 'UPDATE',
         itemType: 'user',
@@ -57,7 +57,7 @@ const updateUserById = async (userId: string, updateBody: any) => {
     if (!user) {
         throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
     }
-    // @ts-ignore
+    //  @ts-ignore
     if (updateBody.email && (await User.isEmailTaken(updateBody.email, userId))) {
         throw new ApiError(httpStatus.BAD_REQUEST, 'Email already taken');
     }

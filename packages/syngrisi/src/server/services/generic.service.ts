@@ -1,16 +1,15 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import mongoose from 'mongoose';
+import mongoose, { FilterQuery } from 'mongoose';
 import { removeEmptyProperties } from '@utils';
-import log from '@lib/logger';
+import log from '@logger';
+import { ExtededModelMembers, PaginateOptions } from '@models/plugins/utils';
+import { RequestUser } from '@root/src/types';
 
-const get = async (modelName: string, filter: any, options: any) => {
+const get = async (modelName: string, filter: FilterQuery<typeof Test>, options: PaginateOptions) => {
     const itemModel = mongoose.model(modelName);
-    // @ts-ignore
-    return itemModel.paginate(filter, options);
+    return (itemModel as unknown as ExtededModelMembers<typeof itemModel>).paginate(filter, options);
 };
 
-const put = async (modelName: string, id: string, options: object, user: any) => {
+const put = async (modelName: string, id: string, options: object, user: RequestUser) => {
     const itemModel = mongoose.model(modelName);
 
     const logOpts = {

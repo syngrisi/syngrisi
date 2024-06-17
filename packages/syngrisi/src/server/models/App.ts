@@ -1,15 +1,14 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { toJSON, paginate } from './plugins';
 import { PluginExtededModel } from './plugins/utils';
 
 interface AppDocument extends Document {
-    name: { [key: string]: string | boolean | number};
+    name: { [key: string]: string | boolean | number };
     description?: string;
     version?: string;
     updatedDate?: Date;
     createdDate?: Date;
-    meta?: any;
+    meta?: Record<string, unknown>;
 }
 
 const AppSchema: Schema<AppDocument> = new Schema({

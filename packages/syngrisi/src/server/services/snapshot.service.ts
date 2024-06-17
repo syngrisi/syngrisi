@@ -9,10 +9,6 @@ const logOpts = {
     msgType: 'API',
 };
 
-// interface SnapshotDocument extends Document {
-//     filename?: string;
-// }
-
 const removeSnapshotFile = async (snapshot: SnapshotDocument) => {
     let relatedSnapshots: SnapshotDocument[];
     if (snapshot.filename) {
