@@ -1,11 +1,8 @@
+import { baselineParamsType } from '../services/check.service';
+import { CreateCheckParams } from '../services/client.service';
 import { ident } from './ident';
 
-interface Params {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [key: string]: any;
-}
-
-export const buildIdentObject = (params: Params): Params =>
+export const buildIdentObject = (params: baselineParamsType | CreateCheckParams) =>
     Object.fromEntries(
         Object.entries(params).filter(([key]) => ident.includes(key))
     );

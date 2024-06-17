@@ -1,17 +1,17 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { toJSON, paginate } from './plugins';
 import { PluginExtededModel } from './plugins/utils';
 
 interface RunDocument extends Document {
-    name: { [key: string]: string | boolean | number};
+    name: { [key: string]: string | boolean | number };
     app: Schema.Types.ObjectId;
-    ident: { [key: string]: string | boolean | number};
+    ident: { [key: string]: string | boolean | number };
     description?: string;
     updatedDate?: Date;
     createdDate?: Date;
     parameters?: string[];
-    meta?: any;
+    meta?: Record<string, unknown>;
 }
 
 const RunSchema: Schema<RunDocument> = new Schema({

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { toJSON, paginate } from './plugins';
 import { PluginExtededModel } from './plugins/utils';
@@ -35,7 +34,7 @@ export interface CheckDocument extends Document {
     failReasons?: string[];
     vOffset?: string;
     topStablePixels?: string;
-    meta?: any;
+    meta?: Record<string, unknown>;
 }
 
 // const CheckSchema: Schema<CheckDocument> = new Schema({

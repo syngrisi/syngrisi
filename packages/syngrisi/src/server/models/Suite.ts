@@ -1,16 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import { toJSON, paginate } from './plugins';
 import { PluginExtededModel } from './plugins/utils';
 
 interface SuiteDocument extends Document {
-    name: { [key: string]: string | boolean | number};
+    name: { [key: string]: string | boolean | number };
     tags?: string[];
     app: Schema.Types.ObjectId;
     description?: string;
     updatedDate?: Date;
     createdDate?: Date;
-    meta?: any;
+    meta?: Record<string, unknown>;
 }
 
 const SuiteSchema: Schema<SuiteDocument> = new Schema({

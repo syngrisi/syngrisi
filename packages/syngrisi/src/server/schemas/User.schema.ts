@@ -23,14 +23,17 @@ export const UserSchema = z.object({
   id: commonValidations.id.openapi({ example: "6bbF35cAB3C59dA969edAe79" }),
 })
 
-export const UserCreateReqSchema = 
+export const UserCreateReqSchema =
   z.object({
     username: z.string().min(1, 'UserSchema: the username name is empty').openapi({ example: "johndoe@example.com" }),
     firstName: z.string().min(1, 'UserSchema: the firstName name is empty').openapi({ example: "John" }),
     lastName: z.string().min(1, 'UserSchema: the lastName name is empty').openapi({ example: "Doe" }),
     role: z.enum(['admin', 'reviewer', 'user']),
-    password: z.string().optional(),
+    email: z.string().optional(),
+    password: z.string(),
   })
+
+export type UserCreateReq = z.infer<typeof UserCreateReqSchema>
 
 export const UserCurrentRespSchema = z.object({
   _id: commonValidations.id.openapi({ example: "6bbF35cAB3C59dA969edAe79" }),
@@ -54,8 +57,3 @@ export const UserCreateRespSchema = z.object({
   id: commonValidations.id.openapi({ example: "6bbF35cAB3C59dA969edAe79" }),
 })
 
-
-// Input Validation for 'GET users/:id' endpoint
-// export const GetUserSchema = z.object({
-//   params: z.object({ userId: commonValidations.id }),
-// });

@@ -451,7 +451,7 @@ const compare = async (expectedSnapshot: any, actualSnapshot: any, newCheckParam
     return params;
 };
 
-interface CreateCheckParams {
+export interface CreateCheckParams {
     test: string;
     name: { [key: string]: string };
     // status:  'new' | 'pending' | 'passed' | 'failed' | 'blinking';

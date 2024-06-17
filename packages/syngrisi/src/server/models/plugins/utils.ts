@@ -8,8 +8,6 @@ export type PaginateOptions = {
   field?: string;
 };
 
-// import { z } from 'zod';
-
 interface PaginatedResponse<T> {
   results: T[];
   page: number;

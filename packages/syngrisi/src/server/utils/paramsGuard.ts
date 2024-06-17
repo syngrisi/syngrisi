@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ZodObject, SafeParseError } from 'zod';
 
 export const paramsGuard = (params: any, functionName: string, schema: ZodObject<any>) => {
