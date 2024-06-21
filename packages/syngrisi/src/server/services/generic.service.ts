@@ -9,7 +9,7 @@ const get = async (modelName: string, filter: FilterQuery<typeof Test>, options:
     return (itemModel as unknown as ExtededModelMembers<typeof itemModel>).paginate(filter, options);
 };
 
-const put = async (modelName: string, id: string, options: object, user: RequestUser) => {
+const put = async (modelName: string, id: string, options: { [key: string]: unknown }, user: RequestUser) => {
     const itemModel = mongoose.model(modelName);
 
     const logOpts = {

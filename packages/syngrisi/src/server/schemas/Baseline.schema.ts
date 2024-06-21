@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { commonValidations } from './utils';
 
 const BaselineGetSchema = z.object({
@@ -56,6 +55,8 @@ const BaselineGetSchema = z.object({
     id: commonValidations.id,
 });
 
+export type BaselineType = z.infer<typeof BaselineGetSchema>;
+
 const BaselinePutSchema = z.object({
     name: z.string().min(1).openapi({
         description: 'Name of the baseline',
@@ -100,8 +101,6 @@ const BaselinePutSchema = z.object({
 });
 
 
+
 export { BaselineGetSchema, BaselinePutSchema };
 
-const registry = new OpenAPIRegistry();
-registry.registerComponent('schemas', 'BaselineGetSchema', BaselineGetSchema);
-registry.registerComponent('schemas', 'BaselinePutSchema', BaselinePutSchema);

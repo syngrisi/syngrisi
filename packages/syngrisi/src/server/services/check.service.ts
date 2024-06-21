@@ -10,7 +10,7 @@ import { calculateAcceptedStatus, buildIdentObject } from '@utils';
 import * as snapshotService from './snapshot.service';
 import * as orm from '@lib/dbItems';
 import log from '@lib/logger';
-import { BaselineDocument } from '@models/Baseline';
+import { BaselineDocument } from '@models/Baseline.model';
 import { Schema } from 'mongoose';
 import { LogOpts, RequestUser } from '@root/src/types';
 

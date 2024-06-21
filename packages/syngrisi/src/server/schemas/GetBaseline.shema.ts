@@ -9,6 +9,8 @@ export const RequiredIdentOptionsSchema = z.object({
     branch: z.string().min(1),
 })
 
+export type RequiredIdentOptionsType = z.infer<typeof RequiredIdentOptionsSchema>
+
 export const IdentJSONStringSchema = z
     .string()
     .optional()

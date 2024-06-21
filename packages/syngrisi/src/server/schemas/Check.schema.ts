@@ -103,7 +103,10 @@ const CheckGetSchema = z.object({
     id: commonValidations.id,
 });
 
+
 const CheckUpdateSchema = CheckGetSchema.omit({ id: true, _id: true }).partial();
+
+export type CheckUpdateType = z.infer<typeof CheckUpdateSchema>
 
 const CheckAcceptSchema = z.object({
     baselineId: commonValidations.id.openapi({

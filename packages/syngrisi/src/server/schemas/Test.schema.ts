@@ -85,6 +85,10 @@ const TestGetSchema = z.object({
     })
 });
 
+const UpdateTestSchema = TestGetSchema.omit({ id: true, _id: true }).partial();
+
+export type UpdateTestType = z.infer<typeof UpdateTestSchema>;
+
 const TestAcceptSchema = z.object({
     id: commonValidations.id,
 });
