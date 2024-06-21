@@ -30,6 +30,10 @@ const ClientStartSessionSchema = z.object({
         description: 'Browser version',
         example: '125'
     }),
+    browserFullVersion: z.string().min(1).openapi({
+        description: 'Browser full version',
+        example: '125.12.56.001'
+    }).optional(),
     os: z.string().min(1).openapi({
         description: 'Operating system',
         example: 'macOS'
@@ -47,6 +51,8 @@ const ClientStartSessionSchema = z.object({
         example: 'Smoke tests'
     })
 });
+
+export type ClientStartSessionType = z.infer<typeof ClientStartSessionSchema>
 
 const ClientStartSessionResponseSchema = z.object({
     name: z.string().openapi({

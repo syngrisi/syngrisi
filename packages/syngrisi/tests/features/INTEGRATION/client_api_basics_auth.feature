@@ -112,8 +112,7 @@ Feature: Client API Basics, with auth
         "blinking": 0,
         "checks": ["<check: _id>"],
         "suite": "<startTestSession: suite>",
-        "run": "<startTestSession: run>",
-        "calculatedStatus": "New"
+        "run": "<startTestSession: run>"
     }
     """
 
