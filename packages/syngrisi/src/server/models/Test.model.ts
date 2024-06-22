@@ -63,7 +63,8 @@ const TestSchema: Schema<TestDocument> = new Schema(
         app: {
             type: Schema.Types.ObjectId,
             ref: 'VRSApp',
-            required: 'TestSchema: the app field is empty',
+            required: [true, 'TestSchema: The "app" field must be required'],
+
         },
         blinking: {
             type: Number,
