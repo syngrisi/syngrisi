@@ -15,3 +15,5 @@ export const AppRespSchema = z.object({
     id: commonValidations.id,
     name: z.string().min(1, 'AppRespSchema: the name is empty').openapi({ example: "Admin Panel" }),
 });
+
+// export type AppType = z.infer<typeof AppRespSchema>;

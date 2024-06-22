@@ -1,5 +1,4 @@
 import { z } from 'zod';
-// import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import { commonValidations } from './utils';
 
 const CheckGetSchema = z.object({
@@ -106,7 +105,7 @@ const CheckGetSchema = z.object({
 
 const CheckUpdateSchema = CheckGetSchema.omit({ id: true, _id: true }).partial();
 
-export type CheckUpdateType = z.infer<typeof CheckUpdateSchema>
+// export type CheckUpdateType = z.infer<typeof CheckUpdateSchema> & { files: { file: UploadedFile } } & { hashCode: string };
 
 const CheckAcceptSchema = z.object({
     baselineId: commonValidations.id.openapi({

@@ -1,19 +1,21 @@
 import httpStatus from 'http-status';
-import { ApiError, catchAsync, pick, deserializeIfJSON, prettyCheckParams, paramsGuard } from '@utils';
+import { ApiError, catchAsync, pick, deserializeIfJSON, paramsGuard } from '@utils';
 import { clientService, genericService } from '@services';
 import { updateItem } from '@lib/dbItems';
-import { RequiredIdentOptionsSchema, createCheckParamsSchema } from '@schemas';
+import { RequiredIdentOptionsSchema, RequiredIdentOptionsType, createCheckParamsSchema } from '@schemas';
 import { User, Test, App, Suite } from '@models';
 import { Response } from "express";
 import log from "../lib/logger";
 import { ExtRequest } from '@types';
+import { ClientStartSessionType } from '../schemas/Client.schema';
+import { CreateCheckParams } from '../services/client.service';
 
 const startSession = catchAsync(async (req: ExtRequest, res: Response) => {
     const params = pick(
         req.body,
         ['name', 'status', 'app', 'tags', 'branch', 'viewport', 'browser', 'browserVersion', 'browserFullVersion',
             'os', 'run', 'runident', 'suite']
-    );
+    ) as ClientStartSessionType;
     const result = await clientService.startSession(params, String(req?.user?.username));
     res.send(result);
 });
@@ -29,35 +31,35 @@ const endSession = catchAsync(async (req: ExtRequest, res: Response) => {
 });
 
 const createCheck = catchAsync(async (req: ExtRequest, res: Response) => {
-    const apiKey = req.headers.apikey;
     const params = req.body;
     paramsGuard(params, 'createCheck, params', createCheckParamsSchema);
 
+    const apiKey = req.headers.apikey;
+    const currentUser = await User.findOne({ apiKey });
+    if (!currentUser) throw new ApiError(httpStatus.NOT_FOUND, `cannot get current user by API`);
+
+
     const logOpts = {
         scope: 'createCheck',
-        user: req?.user?.username,
+        user: currentUser.username,
         itemType: 'check',
         msgType: 'CREATE',
     };
 
-    const currentUser = await User.findOne({ apiKey }).exec();
-    if (!currentUser) throw new Error(`cannot get current user`);
-
-
-    log.info(`start create check: '${prettyCheckParams(params.name)}'`, logOpts);
+    log.info(`start to create check: '${params.name}'`, logOpts);
 
     log.debug(`try to find test with id: '${params.testid}'`, logOpts);
-    const test = await Test.findById(params.testid).exec();
+    const test = await Test.findById(params.testid);
     if (!test) {
         const errMsg = `can't find test with id: '${params.testid}', `
             + `parameters: '${JSON.stringify(req.body)}', username: '${currentUser.username}', apiKey: ${apiKey}`;
-        res.status(400).send({ status: 'testNotFound', message: errMsg });
-        throw new Error(errMsg);
+        // res.status(400).send({ status: 'testNotFound', message: errMsg });
+        throw new ApiError(httpStatus.NOT_FOUND, errMsg);
     }
-    const app = await App.findOne({ name: params.appName }).exec();
-    const suite = await Suite.findOne({ name: params.suitename }).exec();
-    if (!suite) throw new Error(`cannot get suite: ${params.suitename}`);
-
+    const app = await App.findOne({ name: params.appName });
+    if (!app) throw new ApiError(httpStatus.NOT_FOUND, `cannot get the app: ${params.appName}`);
+    const suite = await Suite.findOne({ name: params.suitename });
+    if (!suite) throw new ApiError(httpStatus.NOT_FOUND, `cannot get the suite: ${params.suitename}`);
 
     await updateItem('VRSTest', { _id: test.id }, {
         suite: suite.id,
@@ -69,7 +71,7 @@ const createCheck = catchAsync(async (req: ExtRequest, res: Response) => {
         {
             branch: params.branch,
             hashCode: params.hashcode,
-            testId: params.testid,
+            // testId: params.testid,
             name: params.name,
             viewport: params.viewport,
             browserName: params.browserName,
@@ -79,7 +81,7 @@ const createCheck = catchAsync(async (req: ExtRequest, res: Response) => {
             files: req.files,
             domDump: params.domdump,
             vShifting: params.vShifting,
-        },
+        } as CreateCheckParams,
         test,
         suite,
         app,
@@ -105,7 +107,7 @@ const getBaselines = catchAsync(async (req: ExtRequest, res: Response) => {
     const filter = pick(
         (req.query.filter ? deserializeIfJSON(String(req.query.filter)) : {}),
         ['name', 'viewport', 'browserName', 'os', 'app', 'branch']
-    );
+    ) as RequiredIdentOptionsType;
     paramsGuard(filter, 'getBaseline, filter', RequiredIdentOptionsSchema);
     const options = pick(req.query, ['sortBy', 'limit', 'page', 'populate']);
     const result = await clientService.getBaselines(filter, options);

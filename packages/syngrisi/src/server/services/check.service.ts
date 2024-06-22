@@ -30,14 +30,14 @@ async function calculateTestStatus(testId: string): Promise<string> {
 
 export interface baselineParamsType extends Document {
     snapshootId?: string;
-    name: { [key: string]: string | boolean | number };
+    name: string;
     app: string;
-    branch?: string;
-    browserName?: string;
+    branch: string;
+    browserName: string;
     browserVersion?: string;
     browserFullVersion?: string;
-    viewport?: string;
-    os?: string;
+    viewport: string;
+    os: string;
     markedAs?: 'bug' | 'accepted';
     lastMarkedDate?: Date;
     createdDate?: Date;

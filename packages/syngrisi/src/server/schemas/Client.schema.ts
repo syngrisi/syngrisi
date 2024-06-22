@@ -176,6 +176,8 @@ const ClientCreateCheckSchema = z.object({
     })
 });
 
+// export type CreateCheckType = z.infer<typeof ClientCreateCheckSchema>;
+
 const SnapshotSchema = z.object({
     name: z.string().openapi({
         description: 'Name of the snapshot',

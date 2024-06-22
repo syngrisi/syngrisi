@@ -3,7 +3,7 @@ import { toJSON, paginate } from './plugins';
 import { PluginExtededModel } from './plugins/utils';
 
 export interface CheckDocument extends Document {
-    name: { [key: string]: string };
+    name: string;
     test: Schema.Types.ObjectId;
     suite: Schema.Types.ObjectId;
     app: Schema.Types.ObjectId;
