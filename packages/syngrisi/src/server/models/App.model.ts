@@ -16,7 +16,7 @@ const AppSchema: Schema<AppDocument> = new Schema({
         type: String,
         default: 'Others',
         unique: true,
-        required: 'AppSchema: the Application name is empty',
+        required: [true, 'AppSchema: The "name" field must be required'],
     },
     description: {
         type: String,

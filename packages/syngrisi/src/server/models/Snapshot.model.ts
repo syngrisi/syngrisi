@@ -15,7 +15,7 @@ export interface SnapshotDocument extends Document {
 const SnapshotSchema: Schema<SnapshotDocument> = new Schema({
     name: {
         type: String,
-        required: 'SnapshotSchema: the name of the snapshot entity is empty',
+        required: [true, 'SnapshotSchema: The "name" field must be required'],
     },
     path: {
         type: String,
@@ -25,7 +25,7 @@ const SnapshotSchema: Schema<SnapshotDocument> = new Schema({
     },
     imghash: {
         type: String,
-        required: 'SnapshotSchema: the image hash of the snapshot entity is empty',
+        required: [true, 'SnapshotSchema: The "imghash" field must be required'],
     },
     createdDate: {
         type: Date,

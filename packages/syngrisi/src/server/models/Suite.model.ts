@@ -17,7 +17,7 @@ const SuiteSchema: Schema<SuiteDocument> = new Schema({
         type: String,
         default: 'Others',
         unique: true,
-        required: 'SuiteSchema: the suite name is empty',
+        required: [true, 'SuiteSchema: The "name" field must be required'],
     },
     tags: {
         type: [String],
@@ -25,7 +25,7 @@ const SuiteSchema: Schema<SuiteDocument> = new Schema({
     app: {
         type: Schema.Types.ObjectId,
         ref: 'VRSApp',
-        required: 'SuiteSchema: the app field is empty',
+        required: [true, 'SuiteSchema: The "app" field must be required'],
     },
     description: {
         type: String,

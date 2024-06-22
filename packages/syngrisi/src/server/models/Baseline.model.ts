@@ -30,12 +30,12 @@ const BaselineSchema: Schema<BaselineDocument> = new Schema({
     },
     name: {
         type: String,
-        required: 'VRSBaselineSchema: the name of the snapshoot entity is empty',
+        required: [true, 'VRSBaselineSchema: The "name" field must be required'],
     },
     app: {
         type: Schema.Types.ObjectId,
         ref: 'VRSApp',
-        required: 'VRSBaselineSchema: the app field is empty',
+        required: [true, 'VRSBaselineSchema: The "app" field must be required'],
     },
     branch: {
         type: String,

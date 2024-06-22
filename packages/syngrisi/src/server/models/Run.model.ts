@@ -17,17 +17,17 @@ export interface RunDocument extends Document {
 const RunSchema: Schema<RunDocument> = new Schema({
     name: {
         type: String,
-        required: 'RunSchema: the run name cannot be empty',
+        required: [true, 'RunSchema: The "name" field must be required'],
     },
     app: {
         type: Schema.Types.ObjectId,
         ref: 'VRSApp',
-        required: 'RunSchema: the app field is empty',
+        required: [true, 'RunSchema: The "app" field must be required'],
     },
     ident: {
         type: String,
         unique: true,
-        required: 'RunSchema: the run ident run cannot be empty',
+        required: [true, 'RunSchema: The "ident" field must be required'],
     },
     description: {
         type: String,

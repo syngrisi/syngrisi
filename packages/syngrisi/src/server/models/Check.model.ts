@@ -41,22 +41,22 @@ export interface CheckDocument extends Document {
 const CheckSchema = new Schema<CheckDocument>({
     name: {
         type: String,
-        required: 'CheckSchema: the name of the check entity is empty',
+        required: [true, 'CheckSchema: The "name" field must be required'],
     },
     test: {
         type: Schema.Types.ObjectId,
         ref: 'VRSTest',
-        required: 'CheckSchema: the test name of the check entity is empty',
+        required: [true, 'CheckSchema: The "test" field must be required'],
     },
     suite: {
         type: Schema.Types.ObjectId,
         ref: 'VRSSuite',
-        required: 'CheckSchema: the app field is empty',
+        required: [true, 'CheckSchema: The "suite" field must be required'],
     },
     app: {
         type: Schema.Types.ObjectId,
         ref: 'VRSApp',
-        required: 'CheckSchema: the app field is empty',
+        required: [true, 'CheckSchema: The "app" field must be required'],
     },
     branch: {
         type: String,

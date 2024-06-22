@@ -3,15 +3,13 @@ import passportLocalMongoose from 'passport-local-mongoose';
 import { toJSON, paginate } from './plugins';
 import { PluginExtededModel } from './plugins/utils';
 
+export type UserRole = 'admin' | 'reviewer' | 'user';
+
 export interface UserDocument extends Document {
-    username: { [key: string]: string | boolean | number };
-    firstName: { [key: string]: string | boolean | number };
-    lastName: { [key: string]: string | boolean | number };
-    role: {
-        type: string,
-        enum: ['admin', 'reviewer', 'user'],
-        required: string,
-    };
+    username: string;
+    firstName: string;
+    lastName: string;
+    role: UserRole;
     password?: string;
     token?: string;
     apiKey?: string;
@@ -19,30 +17,28 @@ export interface UserDocument extends Document {
     updatedDate?: Date;
     expiration?: Date;
     meta?: Record<string, unknown>;
-
     isEmailTaken: (username: string) => Promise<boolean>;
-    // paginate: any;
     setPassword: (password: string) => Promise<UserDocument>;
 }
 
-const UserSchema: Schema<UserDocument> = new Schema({
+const UserSchema = new Schema<UserDocument>({
     username: {
         type: String,
         unique: true,
-        required: 'UserSchema: the username name is empty',
+        required: [true, 'UserSchema: The "username" field must be required'],
     },
     firstName: {
         type: String,
-        required: 'UserSchema: the firstName name is empty',
+        required: [true, 'UserSchema: The "firstName" field must be required'],
     },
     lastName: {
         type: String,
-        required: 'UserSchema: the lastName name is empty',
+        required: [true, 'UserSchema: The "lastName" field must be required'],
     },
     role: {
         type: String,
         enum: ['admin', 'reviewer', 'user'],
-        required: 'UserSchema: role is required',
+        required: [true, 'UserSchema: The "role" field must be required'],
     },
     password: {
         type: String,

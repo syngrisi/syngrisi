@@ -16,22 +16,22 @@ const AppSettingsSchema: Schema<AppSettingsDocument> = new Schema({
     name: {
         type: String,
         unique: true,
-        required: 'AppSettingsSchema: the name is empty',
+        required: [true, 'AppSettingsSchema: The "name" field must be required'],
     },
     label: {
         type: String,
-        required: 'AppSettingsSchema: the label is empty',
+        required: [true, 'AppSettingsSchema: The "label" field must be required'],
     },
     description: {
         type: String,
     },
     type: {
         type: String,
-        required: 'AppSettingsSchema: the type is empty',
+        required: [true, 'AppSettingsSchema: The "type" field must be required'],
     },
     value: {
         type: Schema.Types.Mixed,
-        required: 'AppSettingsSchema: the value is empty',
+        required: [true, 'AppSettingsSchema: The "value" field must be required'],
     },
     env_variable: {
         type: String,
