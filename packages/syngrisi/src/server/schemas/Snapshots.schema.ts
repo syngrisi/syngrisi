@@ -30,6 +30,13 @@ const SnapshotsResponseSchema = z.array(
     SnapshotSchema
 );
 
+// const SnapshotUpdateSchema = SnapshotSchema.omit({
+//     _id: true,
+//     id: true
+// }).partial();
+
+// export type SnapshotUpdateType = z.infer<typeof SnapshotUpdateSchema>;
+
 export type SnapshotType = z.infer<typeof SnapshotSchema>;
 
 export { SnapshotsResponseSchema };

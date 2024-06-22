@@ -29,4 +29,6 @@ const SuiteGetSchema = z.object({
     })
 });
 
+// export type SuiteType = z.infer<typeof SuiteGetSchema>;
+
 export { SuiteGetSchema };

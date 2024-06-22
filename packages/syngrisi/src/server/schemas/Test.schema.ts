@@ -85,6 +85,8 @@ const TestGetSchema = z.object({
     })
 });
 
+// export type TestType = z.infer<typeof TestGetSchema>;
+
 const UpdateTestSchema = TestGetSchema.omit({ id: true, _id: true }).partial();
 
 export type UpdateTestType = z.infer<typeof UpdateTestSchema>;
