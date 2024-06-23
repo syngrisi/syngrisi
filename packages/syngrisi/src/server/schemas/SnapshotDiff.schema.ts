@@ -15,4 +15,4 @@ export const SnapshotDiffSchema = z.object({
 
 });
 
-export type SnapshotDiff = z.infer<typeof SnapshotDiffSchema> & { getBuffer: () => Buffer, totalCheckHandleTime: string };
+export type SnapshotDiff = z.infer<typeof SnapshotDiffSchema> & { getBuffer: (() => Buffer) | null, totalCheckHandleTime?: string };
