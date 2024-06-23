@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment_ */
-/* eslint-disable @typescript-eslint/no-explicit-any_ */
 import fs, { promises as fsp } from 'fs';
 import hasha from 'hasha';
 import { Snapshot, Check, Test, App, Baseline, CheckDocument } from '@models';
@@ -245,6 +243,7 @@ async function compareSnapshots(baselineSnapshot: SnapshotDocument, actual: Snap
                 misMatchPercentage: '0.00',
                 analysisTime: 0,
                 executionTotalTime: '0',
+                getBuffer: null
             };
         } else {
             const baselinePath = `${config.defaultImagesPath}${baselineSnapshot.filename}`;
@@ -303,7 +302,7 @@ const isBaselineValid = (baseline: BaselineDocument) => {
     return true;
 };
 
-const updateCheckParamsFromBaseline = (params: CreateCheckParamsExtended, baseline: BaselineDocument) => {
+const updateCheckParamsFromBaseline = (params: CreateCheckParamsExtended, baseline: BaselineDocument): CreateCheckParamsExtended => {
     const updatedParams = { ...params };
     updatedParams.baselineId = baseline.snapshootId.toString();
     updatedParams.markedAs = baseline.markedAs;
@@ -350,7 +349,14 @@ async function isNeedFiles(checkParam: CreateCheckParams, logOpts: LogOpts)
     return { needFilesStatus: false, snapshotFoundedByHashcode };
 }
 
-async function inspectBaseline(newCheckParams: CreateCheckParamsExtended, storedBaseline: BaselineDocument | null, checkIdent: IdentType, currentSnapshot: SnapshotDocument, logOpts: LogOpts) {
+async function inspectBaseline(
+    newCheckParams: CreateCheckParamsExtended,
+    storedBaseline: BaselineDocument | null,
+    checkIdent: IdentType,
+    currentSnapshot: SnapshotDocument,
+    logOpts: LogOpts
+): Promise<{ inspectBaselineParams: CreateCheckParamsExtended, currentBaselineSnapshot: SnapshotDocument }> {
+
     let currentBaselineSnapshot: SnapshotDocument | null = null;
     const params: Partial<(CreateCheckParamsExtended)> = {};
     params.failReasons = [];
@@ -361,6 +367,7 @@ async function inspectBaseline(newCheckParams: CreateCheckParamsExtended, stored
         }
         Object.assign(params, updateCheckParamsFromBaseline(newCheckParams, storedBaseline));
         currentBaselineSnapshot = await Snapshot.findById(storedBaseline.snapshootId);
+        if (!currentBaselineSnapshot) throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, `Cannot find the snapshot with id: ${storedBaseline.snapshootId}`);
     } else {
         const checksWithSameIdent = await getNotPendingChecksByIdent(checkIdent);
         if (checksWithSameIdent.length > 0) {
@@ -376,7 +383,7 @@ async function inspectBaseline(newCheckParams: CreateCheckParamsExtended, stored
         }
     }
 
-    return { inspectBaselineParams: params, currentBaselineSnapshot };
+    return { inspectBaselineParams: params as CreateCheckParamsExtended, currentBaselineSnapshot };
 }
 
 type DimensionType = { height: number, width: number };
@@ -445,7 +452,7 @@ const compare = async (
                 if (!skipSaveOnCompareError) {
                     diffSnapshot = await createSnapshot({
                         name: newCheckParams.name,
-                        fileData: checkCompareResult.getBuffer(),
+                        fileData: checkCompareResult.getBuffer!(),
                     });
                     compareResult.diffId = diffSnapshot.id;
                     compareResult.diffSnapshot = diffSnapshot;
@@ -469,7 +476,7 @@ const compare = async (
     if (compareResult.failReasons.length > 0) {
         compareResult.status = 'failed';
     }
-    return compareResult;
+    return compareResult as CompareResult;
 };
 
 export interface CreateCheckParams {
@@ -588,8 +595,6 @@ const createCheck = async (checkParam: CreateCheckParams, test: TestDocument, su
         currentBaselineSnapshot = inspectBaselineResult.currentBaselineSnapshot;
 
         const compareResult = await compare(currentBaselineSnapshot, actualSnapshot, newCheckParams, skipSaveOnCompareError, currentUser);
-        console.log('💥💥💥💥💥💥💥💥', compareResult);
-
 
         Object.assign(newCheckParams, compareResult);
 
@@ -633,53 +638,6 @@ const createCheck = async (checkParam: CreateCheckParams, test: TestDocument, su
             executeTime: totalCheckHandleTime,
             lastSuccess: lastSuccessCheck ? lastSuccessCheck.id : null,
         };
-
-        // const X = {
-        //     name: 'Git body SMALL',
-        //     test: new ObjectId("66769ca2d39c19e5a0ba5a9c"),
-        //     suite: new ObjectId("666e5b796281ddb9148d7297"),
-        //     app: new ObjectId("6651dd45b9c3e1e0b8c1ce26"),
-        //     branch: 'master',
-        //     baselineId: new ObjectId("6674fc7669b19f0edfcb6f2d"),
-        //     actualSnapshotId: new ObjectId("66769cc3d39c19e5a0ba5b05"),
-        //     diffId: new ObjectId("66769cc3d39c19e5a0ba5b0a"),
-        //     updatedDate: 2024-06-22T09:43:31.154Z,
-        //     status: [ 'failed' ],
-        //     browserName: 'chrome',
-        //     browserVersion: '126',
-        //     browserFullVersion: '126.0.6478.114',
-        //     viewport: '880x900',
-        //     os: 'macOS',
-        //     result: '{\n' +
-        //       '\t"isSameDimensions": true,\n' +
-        //       '\t"dimensionDifference": {\n' +
-        //       '\t\t"width": 0,\n' +
-        //       '\t\t"height": 0\n' +
-        //       '\t},\n' +
-        //       '\t"rawMisMatchPercentage": 0.47075925304707594,\n' +
-        //       '\t"misMatchPercentage": "0.47",\n' +
-        //       '\t"analysisTime": 133,\n' +
-        //       '\t"executionTotalTime": "0,604853692",\n' +
-        //       '\t"totalCheckHandleTime": "0,627080502"\n' +
-        //       '}',
-        //     run: new ObjectId("66769ca2d39c19e5a0ba5a99"),
-        //     markedAs: 'accepted',
-        //     markedDate: 2024-06-21T04:20:03.072Z,
-        //     markedByUsername: 'Administrator',
-        //     creatorId: new ObjectId("66519e582c2c701cc438ce59"),
-        //     creatorUsername: 'Guest',
-        //     failReasons: [ 'different_images' ],
-        //     _id: new ObjectId("66769cc3d39c19e5a0ba5b0c"),
-        //     createdDate: 2024-06-22T09:43:31.799Z,
-        //     __v: 0,
-        //     SNAPSHOOT
-        //     executeTime: 0,
-        //     lastSuccess: '6676629664f190b08f239d2a'
-        //   }
-        // console.log('👹👹👹👹👹👹👹👹👹👹', result);
-
-
-        // if (diffSnapshot) result.diffSnapshot = diffSnapshot;
 
         return result;
     } catch (e: unknown) {
