@@ -3,7 +3,7 @@ import { toJSON, paginate, paginateDistinct } from './plugins';
 import { PluginExtededModel } from './plugins/utils';
 
 export interface TestDocument extends Document {
-    name: { [key: string]: string | boolean | number };
+    name: string;
     description?: string;
     status?: string;
     browserName: string;

@@ -15,7 +15,7 @@ import { ClientStartSessionType } from '@schemas/Client.schema';
 import { RequiredIdentOptionsType } from '@schemas';
 import { SnapshotDiff } from '@schemas/SnapshotDiff.schema';
 import { SnapshotDocument } from '@models/Snapshot.model';
-import { BaselineType } from '@schemas/Baseline.schema';
+// import { BaselineType } from '@schemas/Baseline.schema';
 import { PaginateOptions } from '@models/plugins/utils';
 import httpStatus from 'http-status';
 import { UserDocument } from '@models/User.model';
@@ -25,6 +25,7 @@ import { AppDocument } from '@models/App.model';
 import { IdentType } from '@utils/buildIdentObject';
 import StatusCodes from 'http-status';
 import { SuiteDocument } from '@models/Suite.model';
+import { BaselineDocument } from '../models/Baseline.model';
 
 
 async function updateTest(id: string, update: UpdateTestType) {
@@ -191,7 +192,8 @@ async function createSnapshot(parameters: CreateSnapshotParameters) {
 
     const { name, fileData, hashCode } = parameters;
 
-    const opts: SnapshotUpdateType = { name };
+    const opts: Partial<SnapshotDocument> = { name };
+    // const opts: SnapshotUpdateType = { name };
 
     // if (!fileData) throw new Error(`cannot create the snapshot, the 'fileData' is not set, name: '${name}'`);
     if (fileData === null) throw new ApiError(httpStatus.BAD_REQUEST, `cannot create the snapshot, the 'fileData' is not set, name: '${name}'`);
@@ -287,13 +289,13 @@ async function compareSnapshots(baselineSnapshot: SnapshotDocument, actual: Snap
     }
 }
 
-const isBaselineValid = (baseline: BaselineType) => {
+const isBaselineValid = (baseline: BaselineDocument) => {
     const keys = [
         'name', 'app', 'branch', 'browserName', 'viewport', 'os',
         'createdDate', 'lastMarkedDate', 'markedAs', 'markedById', 'markedByUsername', 'snapshootId',
     ];
     for (const key of keys) {
-        if (!baseline[key as keyof BaselineType]) {
+        if (!baseline[key as keyof BaselineDocument]) {
             log.error(`invalid baseline, the '${key}' property is empty`);
             return false;
         }
@@ -301,11 +303,11 @@ const isBaselineValid = (baseline: BaselineType) => {
     return true;
 };
 
-const updateCheckParamsFromBaseline = (params: CreateCheckParamsExtended, baseline: BaselineType) => {
+const updateCheckParamsFromBaseline = (params: CreateCheckParamsExtended, baseline: BaselineDocument) => {
     const updatedParams = { ...params };
-    updatedParams.baselineId = baseline.snapshootId;
+    updatedParams.baselineId = baseline.snapshootId.toString();
     updatedParams.markedAs = baseline.markedAs;
-    updatedParams.markedDate = baseline.lastMarkedDate;
+    updatedParams.markedDate = baseline.lastMarkedDate?.toString();
     updatedParams.markedByUsername = baseline.markedByUsername;
     return updatedParams;
 };
@@ -348,9 +350,9 @@ async function isNeedFiles(checkParam: CreateCheckParams, logOpts: LogOpts)
     return { needFilesStatus: false, snapshotFoundedByHashcode };
 }
 
-async function inspectBaseline(newCheckParams: CreateCheckParamsExtended, storedBaseline: any, checkIdent: IdentType, currentSnapshot: SnapshotDocument, logOpts: LogOpts) {
-    let currentBaselineSnapshot: any = null;
-    const params: Partial<(CreateCheckParams)> = {};
+async function inspectBaseline(newCheckParams: CreateCheckParamsExtended, storedBaseline: BaselineDocument | null, checkIdent: IdentType, currentSnapshot: SnapshotDocument, logOpts: LogOpts) {
+    let currentBaselineSnapshot: SnapshotDocument | null = null;
+    const params: Partial<(CreateCheckParamsExtended)> = {};
     params.failReasons = [];
     if (storedBaseline !== null) {
         log.debug(`a baseline for check name: '${newCheckParams.name}', id: '${storedBaseline.snapshootId}' is already exists`, logOpts);
@@ -364,7 +366,7 @@ async function inspectBaseline(newCheckParams: CreateCheckParamsExtended, stored
         if (checksWithSameIdent.length > 0) {
             log.error(`checks with ident'${JSON.stringify(checkIdent)}' exist, but baseline is absent`, logOpts);
             params.failReasons.push('not_accepted');
-            params.baselineId = currentSnapshot.id;
+            params.baselineId = currentSnapshot.id.toString();
             currentBaselineSnapshot = currentSnapshot;
         } else {
             params.baselineId = currentSnapshot.id;
@@ -377,13 +379,32 @@ async function inspectBaseline(newCheckParams: CreateCheckParamsExtended, stored
     return { inspectBaselineParams: params, currentBaselineSnapshot };
 }
 
-const ignoreDifferentResolutions = ({ height, width }: any) => {
+type DimensionType = { height: number, width: number };
+
+const ignoreDifferentResolutions = ({ height, width }: DimensionType) => {
     if ((width === 0) && (height === -1)) return true;
     if ((width === 0) && (height === 1)) return true;
     return false;
 };
 
-const compare = async (expectedSnapshot: any, actualSnapshot: any, newCheckParams: any, vShifting: any, skipSaveOnCompareError: boolean, currentUser: any) => {
+interface CompareResult {
+    failReasons: string[];
+    diffId: string;
+    diffSnapshot: SnapshotDocument;
+    status: string;
+    result: string;
+    isSameDimensions: boolean;
+    dimensionDifference: DimensionType;
+}
+
+const compare = async (
+    expectedSnapshot: SnapshotDocument,
+    actualSnapshot: SnapshotDocument,
+    newCheckParams: CreateCheckParamsExtended,
+    // vShifting: boolean,
+    skipSaveOnCompareError: boolean,
+    currentUser: UserDocument
+): Promise<CompareResult> => {
     const logOpts: LogOpts = {
         scope: 'createCheck.compare',
         user: currentUser.username,
@@ -392,19 +413,19 @@ const compare = async (expectedSnapshot: any, actualSnapshot: any, newCheckParam
     };
 
     const executionTimer = process.hrtime();
-    const params: any = {};
-    params.failReasons = [...newCheckParams.failReasons];
+    const compareResult: Partial<CompareResult> = {};
+    compareResult.failReasons = [...newCheckParams.failReasons];
 
-    let checkCompareResult: any;
-    let diffSnapshot: any;
+    let checkCompareResult: SnapshotDiff;
+    let diffSnapshot: SnapshotDocument | null = null;
 
-    const areSnapshotsDifferent = (compareResult: any) => compareResult.rawMisMatchPercentage.toString() !== '0';
-    const areSnapshotsWrongDimensions = (compareResult: any) => !compareResult.isSameDimensions && !ignoreDifferentResolutions(compareResult.dimensionDifference);
+    const areSnapshotsDifferent = (result: SnapshotDiff) => result.rawMisMatchPercentage.toString() !== '0';
+    const areSnapshotsWrongDimensions = (result: Partial<CompareResult>) => !result.isSameDimensions && !ignoreDifferentResolutions(result.dimensionDifference!);
 
-    if ((newCheckParams.status !== 'new') && (!params.failReasons.includes('not_accepted'))) {
+    if ((newCheckParams.status !== 'new') && (!compareResult.failReasons.includes('not_accepted'))) {
         try {
             log.debug(`'the check with name: '${newCheckParams.name}' isn't new, make comparing'`, logOpts);
-            checkCompareResult = await compareSnapshots(expectedSnapshot, actualSnapshot, { vShifting });
+            checkCompareResult = await compareSnapshots(expectedSnapshot, actualSnapshot, { vShifting: newCheckParams.vShifting });
             log.silly(`ignoreDifferentResolutions: '${ignoreDifferentResolutions(checkCompareResult.dimensionDifference)}'`);
             log.silly(`dimensionDifference: '${JSON.stringify(checkCompareResult.dimensionDifference)}`);
 
@@ -412,11 +433,11 @@ const compare = async (expectedSnapshot: any, actualSnapshot: any, newCheckParam
                 let logMsg;
                 if (areSnapshotsWrongDimensions(checkCompareResult)) {
                     logMsg = 'snapshots have different dimensions';
-                    params.failReasons.push('wrong_dimensions');
+                    compareResult.failReasons.push('wrong_dimensions');
                 }
                 if (areSnapshotsDifferent(checkCompareResult)) {
                     logMsg = 'snapshots have differences';
-                    params.failReasons.push('different_images');
+                    compareResult.failReasons.push('different_images');
                 }
 
                 if (logMsg) log.debug(logMsg, logOpts);
@@ -426,31 +447,29 @@ const compare = async (expectedSnapshot: any, actualSnapshot: any, newCheckParam
                         name: newCheckParams.name,
                         fileData: checkCompareResult.getBuffer(),
                     });
+                    compareResult.diffId = diffSnapshot.id;
+                    compareResult.diffSnapshot = diffSnapshot;
                 }
-                params.diffId = diffSnapshot.id;
-                params.diffSnapshot = diffSnapshot;
-                params.status = 'failed';
+                compareResult.status = 'failed';
             } else {
-                params.status = 'passed';
+                compareResult.status = 'passed';
             }
 
             checkCompareResult.totalCheckHandleTime = process.hrtime(executionTimer).toString();
-            params.result = JSON.stringify(checkCompareResult, null, '\t');
+            compareResult.result = JSON.stringify(checkCompareResult, null, '\t');
         } catch (e: unknown) {
-            const errMsg = e instanceof Error ? e.message : e;
-            params.updatedDate = Date.now();
-            params.status = 'failed';
-            params.result = { server_error: `error during comparing - ${errMsg}` };
-            params.failReasons.push('internal_server_error');
-            log.error(`error during comparing - ${errMsg}`, logOpts);
-            throw e;
+            // compareResult.updatedDate = Date.now();
+            compareResult.status = 'failed';
+            compareResult.result = JSON.stringify({ server_error: `error during comparing - ${errMsg(e)}` });
+            compareResult.failReasons.push('internal_server_error');
+            throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, `error during comparing: ${errMsg(e)}`);
         }
     }
 
-    if (params.failReasons.length > 0) {
-        params.status = 'failed';
+    if (compareResult.failReasons.length > 0) {
+        compareResult.status = 'failed';
     }
-    return params;
+    return compareResult;
 };
 
 export interface CreateCheckParams {
@@ -475,7 +494,7 @@ export interface CreateCheckParams {
     result?: string,
     files?: { file: UploadedFile },
     hashCode: string,
-    vShifting?: string
+    vShifting?: boolean
 }
 export interface CreateCheckParamsExtended {
     test: string;
@@ -500,7 +519,7 @@ export interface CreateCheckParamsExtended {
     result?: string,
     files?: { file: UploadedFile },
     hashCode: string,
-    vShifting?: string,
+    vShifting?: boolean,
     baselineId?: string,
     markedAs?: string
     markedDate?: string,
@@ -544,7 +563,7 @@ const createCheck = async (checkParam: CreateCheckParams, test: TestDocument, su
 
     let check: CheckDocument | null = null;
     const totalCheckHandleTime = 0;
-    const diffSnapshot: object | null = null;
+    // const diffSnapshot: object | null = null;
 
     const addCheck = (test: TestDocument, check: CheckDocument) => {
         if (test.checks) {
@@ -568,7 +587,9 @@ const createCheck = async (checkParam: CreateCheckParams, test: TestDocument, su
         Object.assign(newCheckParams, inspectBaselineResult.inspectBaselineParams);
         currentBaselineSnapshot = inspectBaselineResult.currentBaselineSnapshot;
 
-        const compareResult = await compare(currentBaselineSnapshot, actualSnapshot, newCheckParams, checkParam.vShifting, skipSaveOnCompareError, currentUser);
+        const compareResult = await compare(currentBaselineSnapshot, actualSnapshot, newCheckParams, skipSaveOnCompareError, currentUser);
+        console.log('💥💥💥💥💥💥💥💥', compareResult);
+
 
         Object.assign(newCheckParams, compareResult);
 
@@ -594,14 +615,69 @@ const createCheck = async (checkParam: CreateCheckParams, test: TestDocument, su
 
         const lastSuccessCheck = await getLastSuccessCheck(checkIdent);
 
-        const result: any = {
-            ...savedCheck.toObject(),
+        const checkObject = savedCheck.toObject();
+
+        type CheckResult = (typeof checkObject) & {
+            currentSnapshot: SnapshotDocument,
+            expectedSnapshot: SnapshotDocument,
+            diffSnapshot: SnapshotDocument,
+            executeTime: number,
+            lastSuccess: string,
+        }
+
+        const result: CheckResult = {
+            ...checkObject,
             currentSnapshot: actualSnapshot,
             expectedSnapshot: currentBaselineSnapshot,
             diffSnapshot: compareResult.diffSnapshot,
             executeTime: totalCheckHandleTime,
             lastSuccess: lastSuccessCheck ? lastSuccessCheck.id : null,
         };
+
+        // const X = {
+        //     name: 'Git body SMALL',
+        //     test: new ObjectId("66769ca2d39c19e5a0ba5a9c"),
+        //     suite: new ObjectId("666e5b796281ddb9148d7297"),
+        //     app: new ObjectId("6651dd45b9c3e1e0b8c1ce26"),
+        //     branch: 'master',
+        //     baselineId: new ObjectId("6674fc7669b19f0edfcb6f2d"),
+        //     actualSnapshotId: new ObjectId("66769cc3d39c19e5a0ba5b05"),
+        //     diffId: new ObjectId("66769cc3d39c19e5a0ba5b0a"),
+        //     updatedDate: 2024-06-22T09:43:31.154Z,
+        //     status: [ 'failed' ],
+        //     browserName: 'chrome',
+        //     browserVersion: '126',
+        //     browserFullVersion: '126.0.6478.114',
+        //     viewport: '880x900',
+        //     os: 'macOS',
+        //     result: '{\n' +
+        //       '\t"isSameDimensions": true,\n' +
+        //       '\t"dimensionDifference": {\n' +
+        //       '\t\t"width": 0,\n' +
+        //       '\t\t"height": 0\n' +
+        //       '\t},\n' +
+        //       '\t"rawMisMatchPercentage": 0.47075925304707594,\n' +
+        //       '\t"misMatchPercentage": "0.47",\n' +
+        //       '\t"analysisTime": 133,\n' +
+        //       '\t"executionTotalTime": "0,604853692",\n' +
+        //       '\t"totalCheckHandleTime": "0,627080502"\n' +
+        //       '}',
+        //     run: new ObjectId("66769ca2d39c19e5a0ba5a99"),
+        //     markedAs: 'accepted',
+        //     markedDate: 2024-06-21T04:20:03.072Z,
+        //     markedByUsername: 'Administrator',
+        //     creatorId: new ObjectId("66519e582c2c701cc438ce59"),
+        //     creatorUsername: 'Guest',
+        //     failReasons: [ 'different_images' ],
+        //     _id: new ObjectId("66769cc3d39c19e5a0ba5b0c"),
+        //     createdDate: 2024-06-22T09:43:31.799Z,
+        //     __v: 0,
+        //     SNAPSHOOT
+        //     executeTime: 0,
+        //     lastSuccess: '6676629664f190b08f239d2a'
+        //   }
+        // console.log('👹👹👹👹👹👹👹👹👹👹', result);
+
 
         // if (diffSnapshot) result.diffSnapshot = diffSnapshot;
 

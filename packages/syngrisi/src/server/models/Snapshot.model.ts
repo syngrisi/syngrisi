@@ -3,10 +3,10 @@ import { toJSON, paginate } from './plugins';
 import { PluginExtededModel } from './plugins/utils';
 
 export interface SnapshotDocument extends Document {
-    name: { [key: string]: string | boolean | number};
+    name: string;
     path?: string;
     filename?: string;
-    imghash: { [key: string]: string | boolean | number};
+    imghash: string;
     createdDate?: Date;
     vOffset?: number;
     hOffset?: number;

@@ -4,9 +4,9 @@ import { toJSON, paginate } from './plugins';
 import { PluginExtededModel } from './plugins/utils';
 
 export interface RunDocument extends Document {
-    name: { [key: string]: string | boolean | number };
+    name: string;
     app: Schema.Types.ObjectId;
-    ident: { [key: string]: string | boolean | number };
+    ident: string;
     description?: string;
     updatedDate?: Date;
     createdDate?: Date;
