@@ -3,8 +3,8 @@ import { toJSON } from './plugins';
 import { PluginExtededModel } from './plugins/utils';
 
 export interface AppSettingsDocument extends Document {
-    name: { [key: string]: string | boolean | number };
-    label: { [key: string]: string };
+    name: string;
+    label: string;
     description?: string;
     type: { [key: string]: string };
     value: Schema.Types.Mixed;

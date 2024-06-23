@@ -3,8 +3,8 @@ import { toJSON, paginate } from './plugins';
 import { PluginExtededModel } from './plugins/utils';
 
 export interface BaselineDocument extends Document {
-    snapshootId?: Schema.Types.ObjectId;
-    name: { [key: string]: string | boolean | number };
+    snapshootId: Schema.Types.ObjectId;
+    name: string;
     app: Schema.Types.ObjectId;
     branch?: string;
     browserName?: string;

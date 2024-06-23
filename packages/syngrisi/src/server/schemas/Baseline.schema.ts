@@ -55,7 +55,7 @@ const BaselineGetSchema = z.object({
     id: commonValidations.id,
 });
 
-export type BaselineType = z.infer<typeof BaselineGetSchema>;
+// export type BaselineType = z.infer<typeof BaselineGetSchema>;
 
 const BaselinePutSchema = z.object({
     name: z.string().min(1).openapi({

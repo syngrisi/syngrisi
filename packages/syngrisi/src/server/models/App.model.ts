@@ -3,7 +3,7 @@ import { toJSON, paginate } from './plugins';
 import { PluginExtededModel } from './plugins/utils';
 
 export interface AppDocument extends Document {
-    name: { [key: string]: string | boolean | number };
+    name: string;
     description?: string;
     version?: string;
     updatedDate?: Date;

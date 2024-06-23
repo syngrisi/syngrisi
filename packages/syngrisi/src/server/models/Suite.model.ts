@@ -3,7 +3,7 @@ import { toJSON, paginate } from './plugins';
 import { PluginExtededModel } from './plugins/utils';
 
 export interface SuiteDocument extends Document {
-    name: { [key: string]: string | boolean | number };
+    name: string;
     tags?: string[];
     app: Schema.Types.ObjectId;
     description?: string;
