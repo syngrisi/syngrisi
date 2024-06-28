@@ -34,6 +34,14 @@ export const config = {
     helmet: {
         crossOriginEmbedderPolicy: !env.SYNGRISI_DISABLE_DEV_CORS,
         crossOriginResourcePolicy: !env.SYNGRISI_DISABLE_DEV_CORS,
+        contentSecurityPolicy: {
+            directives: {
+                frameAncestors: ["'self'", "vscode-webview:", "vscode-resource:",  "https:", "http:"],
+                frameSrc: ["'self'", "vscode-webview:", "https:", "http:"],
+                scriptSrc: ["'self'", "'unsafe-inline'"],
+                styleSrc: ["'self'", "'unsafe-inline'"]
+            },
+        },
     }
 };
 
