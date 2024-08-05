@@ -1,4 +1,4 @@
-FROM node:14.20.0-alpine3.16
+FROM node:21-alpine3.18
 
 WORKDIR /usr/src/syngrisi
 
