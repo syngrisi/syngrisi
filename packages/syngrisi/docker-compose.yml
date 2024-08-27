@@ -5,6 +5,7 @@ services:
     restart: always
     working_dir: /usr/src/syngrisi
     command: sh -c "npx --node-arg=--max-old-space-size=4096 sy"
+#    command: sh -c "tail -f /dev/null"
     build:
       context: .
       dockerfile: syngrisi-app.dockerfile
@@ -33,6 +34,12 @@ services:
       SYNGRISI_SESSION_STORE_KEY: "${SYNGRISI_SESSION_STORE_KEY}"
       SYNGRISI_APP_PORT: 3000
       SYNGRISI_HTTP_LOG: "${SYNGRISI_HTTP_LOG}"
+  #        healthcheck:
+  #            test: wget -q -O - http://syngrisi-app:3000/status | grep alive:true
+  #            interval: 1m30s
+  #            timeout: 10s
+  #            retries: 3
+  #            start_period: 40s
 
   syngrisi-db:
     cap_add:
