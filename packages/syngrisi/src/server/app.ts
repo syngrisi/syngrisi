@@ -60,7 +60,8 @@ passport.deserializeUser(User.deserializeUser());
 
 log.info('\t- static files', logMeta);
 const baseDir = path.resolve(__dirname, '..', '..');
-app.use('/snapshoots', express.static(path.join(baseDir, config.defaultImagesPath)));
+const baseProcessDir = path.resolve(process.cwd());
+app.use('/snapshoots', express.static(path.join(baseProcessDir, config.defaultImagesPath)));
 app.use('/assets', express.static(path.join(baseDir, './mvc/views/react/assets'), {
     setHeaders: (res) => {
         res.set('Access-Control-Allow-Origin', '*');
