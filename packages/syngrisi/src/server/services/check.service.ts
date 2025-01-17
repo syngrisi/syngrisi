@@ -123,6 +123,7 @@ const accept = async (id: string, baselineId: string, user: RequestUser): Promis
     check.status = (check.status[0] === 'new') ? ['new'] : ['passed'];
     check.updatedDate = new Date();
 
+    // TODO: remove this line
     check.baselineId = baselineId as unknown as Schema.Types.ObjectId;
 
     log.debug(`update check with options: '${JSON.stringify(check.toObject())}'`, logOpts);
