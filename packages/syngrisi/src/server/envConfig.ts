@@ -5,8 +5,12 @@ import path from 'path';
 import dotenv from 'dotenv';
 dotenv.config();
 
+if (!process.env.NODE_ENV) {
+    process.env.NODE_ENV = 'development';
+}
+
 export const env = cleanEnv(process.env, {
-  NODE_ENV: str({ choices: ['development', 'production', 'test'] }),
+  NODE_ENV: str({ choices: ['development', 'production', 'test'], default: 'development' }),
   SYNGRISI_DB_URI: str({ devDefault: 'mongodb://127.0.0.1:27017/SyngrisiDb' }),
   SYNGRISI_APP_PORT: port({ devDefault: 3000 }),
   SYNGRISI_IMAGES_PATH: str({ devDefault: "./.snapshots-images/" }),
