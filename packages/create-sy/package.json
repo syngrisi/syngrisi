@@ -1,7 +1,7 @@
 {
   "name": "create-sy",
   "version": "2.2.7-alpha.0",
-  "description": "Install and setup Syngrisi",
+  "description": "Easily install and configure Syngrisi for visual testing.",
   "author": {
     "name": "Viktar Silakou",
     "email": "1105714@gmail.com"
