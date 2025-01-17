@@ -9,7 +9,7 @@ import { authorization } from '@middlewares';
 import { Midleware } from '../../../types/Midleware';
 
 const router = express.Router();
-const rootDir = path.resolve(__dirname);
+const rootDir = path.resolve(__dirname, '..', '..');
 
 
 const adminController = catchAsync(async (req: Request, res: Response) => {

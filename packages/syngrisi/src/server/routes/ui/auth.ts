@@ -7,7 +7,7 @@ import { catchAsync } from '@utils';
 import { Midleware } from '@types';
 
 const router = express.Router();
-const rootDir = path.resolve(__dirname);
+const rootDir = path.resolve(__dirname, '..', '..');
 
 
 const authController = catchAsync(async (req: Request, res: Response) => {
