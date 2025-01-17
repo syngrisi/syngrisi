@@ -1,6 +1,6 @@
 {
   "name": "@syngrisi/syngrisi",
-  "version": "2.2.10-alpha.0",
+  "version": "2.2.11-alpha.0",
   "description": "Syngrisi - Visual Testing Tool",
   "main": "./dist/server/server.js",
   "type": "commonjs",
