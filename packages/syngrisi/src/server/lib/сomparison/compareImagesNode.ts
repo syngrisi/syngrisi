@@ -30,7 +30,8 @@ export default function compareImages(image1: any, image2: any, options: any): P
                 colors: 'ignoreColors',
                 nothing: 'ignoreNothing',
             };
-            const ignoreMethod = ignoreTransform[options.ignore] ? ignoreTransform[options.ignore] : 'ignoreAntialiasing';
+            const ignoreMethod = ignoreTransform[options.ignore] ? ignoreTransform[options.ignore] : 'ignoreNothing';
+
             const outputOpts = options.output;
             resemble.outputSettings(outputOpts);
             let ignoredRect;

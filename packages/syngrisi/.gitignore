@@ -28,3 +28,4 @@ logs/**
 /src/server/data/custom_devices.json
 /static/data/custom_devices.json
 mvc/**
+.zencoder/
