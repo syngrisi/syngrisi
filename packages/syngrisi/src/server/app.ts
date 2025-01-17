@@ -61,8 +61,14 @@ passport.deserializeUser(User.deserializeUser());
 log.info('\t- static files', logMeta);
 const baseDir = path.resolve(__dirname, '..', '..');
 app.use('/snapshoots', express.static(path.join(baseDir, config.defaultImagesPath)));
-app.use('/assets', express.static(path.join(baseDir, './mvc/views/react/assets')));
-app.use('../static', express.static(path.join(baseDir, './src/server/static/static')));
+app.use('/assets', express.static(path.join(baseDir, './mvc/views/react/assets'), {
+    setHeaders: (res) => {
+        res.set('Access-Control-Allow-Origin', '*');
+        res.set('Access-Control-Allow-Methods', 'GET');
+        res.set('Access-Control-Allow-Headers', 'Content-Type');
+    }
+}));
+app.use('/static', express.static(path.join(baseDir, './src/server/static/static')));
 
 log.info('\t- routes', logMeta);
 app.use('/v1', routes);
