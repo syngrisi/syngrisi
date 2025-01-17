@@ -37,6 +37,3 @@ npm init sy my-app-dir -- -f -y
 
 This command initializes a Syngrisi project in my-app-dir, bypassing pre-install checks and confirming prompts
 automatically.
-
-
-

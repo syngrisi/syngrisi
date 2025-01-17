@@ -5,7 +5,7 @@
   "main": "./dist/server/server.js",
   "type": "commonjs",
   "bin": {
-    "sy": "server.js"
+    "sy": "./dist/server/server.js"
   },
   "repository": {
     "type": "git",
