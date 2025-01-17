@@ -59,7 +59,7 @@ passport.serializeUser(User.serializeUser() as ((user: Express.User, done: (err:
 passport.deserializeUser(User.deserializeUser());
 
 log.info('\t- static files', logMeta);
-const baseDir = process.cwd();
+const baseDir = path.resolve(__dirname, '..', '..');
 app.use('/snapshoots', express.static(path.join(baseDir, config.defaultImagesPath)));
 app.use('/assets', express.static(path.join(baseDir, './mvc/views/react/assets')));
 app.use('../static', express.static(path.join(baseDir, './src/server/static/static')));
