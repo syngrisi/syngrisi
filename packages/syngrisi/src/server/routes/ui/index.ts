@@ -9,7 +9,7 @@ import { ExtRequest } from '../../../types/ExtRequest';
 import { Midleware } from '../../../types/Midleware';
 
 const router = express.Router();
-const rootDir = path.resolve(process.cwd());
+const rootDir = path.resolve(__dirname);
 
 const staticIndex = async (req: ExtRequest, res: Response) => {
     res.status(httpStatus.OK)
