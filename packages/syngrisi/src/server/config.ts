@@ -11,7 +11,7 @@ dotenv.config();
 
 export const config = {
     version,
-    // this isn't used 
+    // this isn't used
     getDevices: async () => {
         if (fs.existsSync(customDevicesPath)) {
             return [...devices, ...(await import(customDevicesPath)).default];
@@ -33,14 +33,24 @@ export const config = {
     jsonLimit: '50mb',
     tmpDir: env.SYNGRISI_TMP_DIR,
     helmet: {
-        crossOriginEmbedderPolicy: !env.SYNGRISI_DISABLE_DEV_CORS,
-        crossOriginResourcePolicy: !env.SYNGRISI_DISABLE_DEV_CORS,
+        crossOriginEmbedderPolicy: false,
+        crossOriginResourcePolicy: false,
+        crossOriginOpenerPolicy: false,
         contentSecurityPolicy: {
             directives: {
-                frameAncestors: ["'self'", "vscode-webview:", "vscode-resource:",  "https:", "http:"],
-                frameSrc: ["'self'", "vscode-webview:", "https:", "http:"],
-                scriptSrc: ["'self'", "'unsafe-inline'"],
-                styleSrc: ["'self'", "'unsafe-inline'"]
+                // frameAncestors: ["'self'", "vscode-webview:", "vscode-resource:",  "https:", "http:"],
+                // frameSrc: ["'self'", "vscode-webview:", "https:", "http:"],
+                // scriptSrc: ["'self'", "'unsafe-inline'"],
+                // styleSrc: ["'self'", "'unsafe-inline'"]
+
+                defaultSrc: ["'self'", "*", "'unsafe-inline'", "'unsafe-eval'", "data:", "blob:"],
+                frameAncestors: ["'self'", "*"],
+                frameSrc: ["'self'", "*"],
+                scriptSrc: ["'self'", "*", "'unsafe-inline'", "'unsafe-eval'"],
+                styleSrc: ["'self'", "*", "'unsafe-inline'"],
+                imgSrc: ["'self'", "*", "data:", "blob:"],
+                fontSrc: ["'self'", "*", "data:"],
+                connectSrc: ["'self'", "*"]
             },
         },
     }
