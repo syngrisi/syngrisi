@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Badge, Tooltip, useMantineTheme, Text, Stack } from '@mantine/core';
 import { BsHandThumbsUp, BsHandThumbsUpFill } from 'react-icons/all';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useSearchParams } from 'react-router-dom';
 import ActionPopoverIcon from '../../../../../shared/components/ActionPopoverIcon';
 import { ChecksService } from '../../../../../shared/services';
 import { errorMsg, successMsg } from '../../../../../shared/utils/utils';
@@ -19,6 +20,8 @@ interface Props {
 export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, size = 19 }: Props) {
     const queryClient = useQueryClient();
     const theme = useMantineTheme();
+    const [searchParams] = useSearchParams();
+    const apikey = searchParams.get('apikey') || undefined;
     const isAccepted = (check.markedAs === 'accepted');// || mutationAcceptCheck.isSuccess;
     const isCurrentlyAccepted = ((check.baselineId?._id === check.actualSnapshotId?._id) && isAccepted);
     // eslint-disable-next-line no-nested-ternary
@@ -30,7 +33,7 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, s
 
     const mutationAcceptCheck = useMutation(
         {
-            mutationFn: (data: { check: any, newBaselineId: string }) => ChecksService.acceptCheck(data),
+            mutationFn: (data: { check: any, newBaselineId: string }) => ChecksService.acceptCheck({ ...data, apikey }),
             // eslint-disable-next-line no-unused-vars
             onSuccess: async (result: any) => {
                 successMsg({ message: 'Check has been successfully accepted' });

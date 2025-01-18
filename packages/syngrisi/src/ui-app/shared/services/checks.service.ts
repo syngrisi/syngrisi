@@ -4,10 +4,14 @@ import config from '../../config';
 
 export const ChecksService = {
     // eslint-disable-next-line consistent-return
-    async acceptCheck({ check, newBaselineId }: { check: any, newBaselineId: string }) {
+    async acceptCheck({ check, newBaselineId, apikey }: { check: any, newBaselineId: string, apikey?: string }) {
         try {
+            const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+            if (apikey) {
+                headers.apikey = apikey;
+            }
             const resp = await ky(`${config.baseUri}/v1/checks/${check._id}/accept`, {
-                headers: { 'Content-Type': 'application/json' },
+                headers,
                 body: JSON.stringify({
                     baselineId: newBaselineId,
                 }),
@@ -23,10 +27,14 @@ export const ChecksService = {
     },
 
     // eslint-disable-next-line consistent-return
-    async removeCheck({ id }: { id: string }) {
+    async removeCheck({ id, apikey }: { id: string, apikey?: string }) {
         try {
+            const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+            if (apikey) {
+                headers.apikey = apikey;
+            }
             const resp = await ky(`${config.baseUri}/v1/checks/${id}`, {
-                headers: { 'Content-Type': 'application/json' },
+                headers,
                 method: 'DELETE',
             });
             if (resp.ok) {

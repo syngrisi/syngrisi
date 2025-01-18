@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { IconTrash } from '@tabler/icons';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useSearchParams } from 'react-router-dom';
 import ActionPopoverIcon from '../../../../../shared/components/ActionPopoverIcon';
 import { ChecksService } from '../../../../../shared/services';
 import { errorMsg, successMsg } from '../../../../../shared/utils/utils';
@@ -17,8 +18,11 @@ interface Props {
 
 export function RemoveButton({ testUpdateQuery, check, closeHandler, initCheck, size = 24 }: Props) {
     const queryClient = useQueryClient();
+    const [searchParams] = useSearchParams();
+    const apikey = searchParams.get('apikey') || undefined;
+
     const mutationRemoveCheck = useMutation(
-        (data: { id: string }) => ChecksService.removeCheck(data),
+        (data: { id: string }) => ChecksService.removeCheck({ ...data, apikey }),
         {
             onSuccess: async () => {
                 successMsg({ message: 'Check has been successfully removed' });

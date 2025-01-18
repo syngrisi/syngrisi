@@ -2,15 +2,15 @@ import * as React from 'react';
 import { Group, Paper, useMantineTheme } from '@mantine/core';
 
 interface Props {
-    related: any
-    canvasElementRef: React.MutableRefObject<any>
+    canvasElementRef: React.MutableRefObject<any>;
+    isRelatedOpened?: boolean;
 }
 
-export function Canvas({ related, canvasElementRef }: Props) {
+export function Canvas({ canvasElementRef, isRelatedOpened = false }: Props) {
     const theme = useMantineTheme();
 
     return (
-        <Group sx={{ width: related.opened ? '90%' : '100%' }}>
+        <Group sx={{ width: isRelatedOpened ? '90%' : '100%' }}>
             <Paper
                 shadow="xl"
                 withBorder
