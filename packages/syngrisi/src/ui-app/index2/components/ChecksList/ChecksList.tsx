@@ -74,7 +74,7 @@ export function ChecksList() {
             <Group position="apart">
                 <Title order={2} style={{ maxWidth: '80%' }}>
                     <Text truncate>
-                        Latest for for for for for for for for for:
+                        Latest for:
                         {' '}
                         {checkName}
                     </Text>
