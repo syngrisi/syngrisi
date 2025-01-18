@@ -35,9 +35,15 @@ interface Props {
     initCheckData: any, // initially open check by clicking from table (not from related panel)
     checkQuery: any,
     closeHandler: any,
+    relatedChecksInitiallyOpened?: boolean,
 }
 
-export function CheckDetails({ initCheckData, checkQuery, closeHandler }: Props) {
+export function CheckDetails({
+    initCheckData,
+    checkQuery,
+    closeHandler,
+    relatedChecksInitiallyOpened = true,
+}: Props) {
     useDocumentTitle(initCheckData?.name);
     const canvasElementRef = useRef(null);
     const { query } = useParams();
@@ -46,7 +52,7 @@ export function CheckDetails({ initCheckData, checkQuery, closeHandler }: Props)
 
     const [relatedActiveCheckId, setRelatedActiveCheckId] = useState<string>(initCheckData._id);
 
-    const [relatedChecksOpened, relatedChecksHandler] = useDisclosure(true);
+    const [relatedChecksOpened, relatedChecksHandler] = useDisclosure(relatedChecksInitiallyOpened);
     const related: any = useRelatedChecks(initCheckData);
     related.opened = relatedChecksOpened;
     related.handler = relatedChecksHandler;
