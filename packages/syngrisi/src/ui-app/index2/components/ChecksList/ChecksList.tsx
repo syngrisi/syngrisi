@@ -14,6 +14,7 @@ import config from '../../../config';
 export function ChecksList() {
     const [searchParams, setSearchParams] = useSearchParams();
     const checkName = searchParams.get('name');
+    const apiKey = searchParams.get('apikey');
     const [previewSize, setPreviewSize] = React.useState('medium');
 
     const getPreviewHeight = (size: string) => {
@@ -37,6 +38,7 @@ export function ChecksList() {
                 limit: '5',
                 sortBy: 'CreatedDate',
                 sortOrder: -1,
+                apikey: apiKey,
             },
             'checksListQuery',
         ),
@@ -162,7 +164,10 @@ export function ChecksList() {
                     })}
                 </Stack>
             </ScrollArea>
-            <CheckModal relatedChecksInitiallyOpened={false} />
+            <CheckModal
+                relatedChecksInitiallyOpened={false}
+                apikey={apiKey}
+            />
         </Stack>
     );
 }

@@ -1,9 +1,7 @@
 import ky from 'ky';
-
 import queryString from 'query-string';
 import config from '../../config';
 import ILog from '../interfaces/ILog';
-import { log } from '../utils';
 
 export interface IApiResult {
     results: ILog[]
@@ -20,6 +18,7 @@ interface IRequestOptions {
     page?: string
     populate?: string
     sortOrder?: string | number
+    apikey?: string | null
 }
 
 export const GenericService = {

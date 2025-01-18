@@ -5,7 +5,7 @@ import { Midleware } from '@types';
 import { validateRequest } from '@utils/validateRequest';
 import { CheckGetSchema, CheckUpdateSchema, CheckAcceptSchema } from '@schemas/Check.schema';
 import { createApiResponse, createPaginatedApiResponse } from '@api-docs/openAPIResponseBuilders';
-import { ensureLoggedIn } from '@middlewares/ensureLogin';
+import { ensureLoggedInOrApiKey } from '@middlewares/ensureLogin/ensureLoggedIn';
 import { createRequestQuerySchema } from '@schemas/utils/createRequestQuerySchema';
 import { RequestPaginationSchema } from '@schemas/common/RequestPagination.schema';
 import { createRequestOpenApiBodySchema } from '@schemas/utils/createRequestOpenApiBodySchema';
@@ -27,7 +27,7 @@ registry.registerPath({
 
 router.get(
     '/',
-    ensureLoggedIn(),
+    ensureLoggedInOrApiKey(),
     validateRequest(createRequestQuerySchema(RequestPaginationSchema), 'get, /v1/checks'),
     checkController.get as Midleware
 );
@@ -43,7 +43,7 @@ registry.registerPath({
 
 router.delete(
     '/:id',
-    ensureLoggedIn(),
+    ensureLoggedInOrApiKey(),
     validateRequest(getByIdParamsSchema(), 'delete, /v1/checks/{id}'),
     checkController.remove as Midleware
 );
@@ -59,7 +59,7 @@ registry.registerPath({
 
 router.put(
     '/:id',
-    ensureLoggedIn(),
+    ensureLoggedInOrApiKey(),
     validateRequest(getByIdParamsSchema().merge(createRequestBodySchema(CheckUpdateSchema)), 'put, /v1/checks/{id}'),
     checkController.update as Midleware
 );
@@ -75,7 +75,7 @@ registry.registerPath({
 
 router.put(
     '/:id/accept',
-    ensureLoggedIn(),
+    ensureLoggedInOrApiKey(),
     validateRequest(createRequestBodySchema(CheckAcceptSchema), 'put, /v1/checks/{id}/accept'),
     checkController.accept as Midleware
 );
