@@ -18,11 +18,11 @@ import { errorMsg } from '../../../../../shared/utils';
 import { CheckDetails } from './CheckDetails/CheckDetails';
 
 interface Props {
-    relatedChecksInitiallyOpened?: boolean;
+    relatedRendered?: boolean;
     apikey?: string;
 }
 
-export function CheckModal({ relatedChecksInitiallyOpened = true, apikey }: Props) {
+export function CheckModal({ relatedRendered = true, apikey }: Props) {
     const { query, setQuery } = useParams();
     const [checkModalOpened, checkModalHandlers] = useDisclosure(false);
 
@@ -111,7 +111,7 @@ export function CheckModal({ relatedChecksInitiallyOpened = true, apikey }: Prop
                                     initCheckData={checkData}
                                     checkQuery={checkQuery}
                                     closeHandler={closeHandler}
-                                    relatedChecksInitiallyOpened={relatedChecksInitiallyOpened}
+                                    relatedRendered={relatedRendered}
                                 />
                             )
                             : (

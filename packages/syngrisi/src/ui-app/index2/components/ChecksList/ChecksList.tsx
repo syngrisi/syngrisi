@@ -165,7 +165,7 @@ export function ChecksList() {
                 </Stack>
             </ScrollArea>
             <CheckModal
-                relatedChecksInitiallyOpened={false}
+                relatedRendered={false}
                 apikey={apiKey}
             />
         </Stack>

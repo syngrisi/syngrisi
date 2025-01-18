@@ -10,8 +10,7 @@ import { createImageAndWaitForLoad, imageFromUrl } from './Canvas/helpers';
 import { errorMsg } from '../../../../../../shared/utils';
 import { GenericService } from '../../../../../../shared/services';
 import config from '../../../../../../config';
-import { RelatedChecks } from './RelatedChecks/RelatedChecks';
-import { useRelatedChecks } from './hooks/useRelatedChecks';
+import { RelatedChecksContainer } from './RelatedChecks/RelatedChecksContainer';
 import { useParams } from '../../../../../hooks/useParams';
 import { Toolbar } from './Toolbar/Toolbar';
 import { Header } from './Header';
@@ -35,14 +34,14 @@ interface Props {
     initCheckData: any, // initially open check by clicking from table (not from related panel)
     checkQuery: any,
     closeHandler: any,
-    relatedChecksInitiallyOpened?: boolean,
+    relatedRendered?: boolean,
 }
 
 export function CheckDetails({
     initCheckData,
     checkQuery,
     closeHandler,
-    relatedChecksInitiallyOpened = true,
+    relatedRendered = true,
 }: Props) {
     useDocumentTitle(initCheckData?.name);
     const canvasElementRef = useRef(null);
@@ -51,18 +50,11 @@ export function CheckDetails({
     const [mainView, setMainView] = useState<MainView | null>(null);
 
     const [relatedActiveCheckId, setRelatedActiveCheckId] = useState<string>(initCheckData._id);
+    const [relatedChecksOpened, relatedChecksHandler] = useDisclosure(relatedRendered);
 
-    const [relatedChecksOpened, relatedChecksHandler] = useDisclosure(relatedChecksInitiallyOpened);
-    const related: any = useRelatedChecks(initCheckData);
-    related.opened = relatedChecksOpened;
-    related.handler = relatedChecksHandler;
-
-    related.relatedActiveCheckId = relatedActiveCheckId;
-    related.setRelatedActiveCheckId = setRelatedActiveCheckId;
-
-    const currentCheck = related.relatedFlatChecksData.find((x: any) => x._id === relatedActiveCheckId) || initCheckData;
-
+    const currentCheck = initCheckData;
     const textLoader = <Loader size="xs" color="blue" variant="dots" />;
+
     const currentCheckSafe = {
         _id: currentCheck?._id,
         name: currentCheck?.name || '',
@@ -147,8 +139,6 @@ export function CheckDetails({
             const actualImgSrc = `${config.baseUri}/snapshoots/${currentCheck?.actualSnapshotId?.filename}?actualImg`;
             const actualImg = await createImageAndWaitForLoad(actualImgSrc);
 
-            // eslint-disable-next-line max-len
-            // document.getElementById('snapshoot').style.height = `${MainView.calculateExpectedCanvasViewportAreaSize().height - 10}px`;
             canvasElementRef.current.style.height = `${MainView.calculateExpectedCanvasViewportAreaSize().height - 10}px`;
 
             const expectedImage = await imageFromUrl(expectedImg.src);
@@ -162,8 +152,6 @@ export function CheckDetails({
                 const MV = new MainView(
                     {
                         canvasId: '2d',
-                        // canvasElementWidth: document.getElementById('snapshoot')!.clientWidth,
-                        // canvasElementHeight: document.getElementById('snapshoot')!.clientHeight,
                         canvasElementWidth: canvasElementRef.current?.clientWidth,
                         canvasElementHeight: canvasElementRef.current?.clientHeight,
                         expectedImage,
@@ -191,16 +179,12 @@ export function CheckDetails({
             mainView.getSnapshotIgnoreRegionsDataAndDrawRegions(baselineId);
         }
     }, [
-        // baselineQuery.data?.timestamp,
         mainView?.toString(),
-        // query.checkId,
     ]);
 
     return (
         <Group style={{ width: '96vw' }} spacing={4}>
-
             <Stack sx={{ width: '100%' }}>
-
                 {/* Header */}
                 <Header
                     classes={classes}
@@ -224,18 +208,21 @@ export function CheckDetails({
                     noWrap
                 >
                     {/* Related checks */}
-                    <Group
-                        align="start"
-                        noWrap
-                    >
-                        <RelatedChecks
+                    {relatedRendered && (
+                        <RelatedChecksContainer
                             currentCheck={initCheckData}
-                            related={related}
+                            opened={relatedChecksOpened}
+                            handler={relatedChecksHandler}
+                            activeCheckId={relatedActiveCheckId}
+                            setActiveCheckId={setRelatedActiveCheckId}
                         />
-                    </Group>
+                    )}
 
                     {/* Canvas container */}
-                    <Canvas related={related} canvasElementRef={canvasElementRef} />
+                    <Canvas
+                        canvasElementRef={canvasElementRef}
+                        isRelatedOpened={relatedRendered && relatedChecksOpened}
+                    />
                 </Group>
             </Stack>
         </Group>
