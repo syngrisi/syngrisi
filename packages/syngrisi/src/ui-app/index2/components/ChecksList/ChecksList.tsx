@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
-import { Card, Group, Image, Stack, Text, Title, UnstyledButton } from '@mantine/core';
+import { Card, Group, Image, Stack, Text, Title, UnstyledButton, SegmentedControl } from '@mantine/core';
 import { GenericService } from '../../../shared/services';
 import { Status } from '../../../shared/components/Check/Status';
 import { ViewPortLabel } from '../Tests/Table/Checks/ViewPortLabel';
@@ -14,6 +14,18 @@ import config from '../../../config';
 export function ChecksList() {
     const [searchParams, setSearchParams] = useSearchParams();
     const checkName = searchParams.get('name');
+    const [previewSize, setPreviewSize] = React.useState('medium');
+
+    const getPreviewHeight = (size: string) => {
+        switch (size) {
+            case 'small':
+                return 100;
+            case 'large':
+                return 600;
+            default:
+                return 400;
+        }
+    };
 
     const checksQuery = useQuery(
         ['checks_list', checkName],
@@ -35,11 +47,7 @@ export function ChecksList() {
     );
 
     if (!checkName) {
-        return (
-            <Text>
-                Please provide a check name in the URL query parameter, e.g. ?name=test123
-            </Text>
-        );
+        return <Text>Please provide a check name in the URL query parameter, e.g. ?name=test123</Text>;
     }
 
     if (checksQuery.isLoading) {
@@ -54,7 +62,6 @@ export function ChecksList() {
         return (
             <Text>
                 No checks found with name:
-                {' '}
                 {checkName}
             </Text>
         );
@@ -62,16 +69,45 @@ export function ChecksList() {
 
     return (
         <Stack p="md">
-            <Title order={2}>
-                Latest Checks for:
-                {' '}
-                {checkName}
-            </Title>
+            <Group position="apart">
+                <Title order={2}>
+                    Latest Checks for:
+                    {checkName}
+                </Title>
+                <SegmentedControl
+                    value={previewSize}
+                    onChange={setPreviewSize}
+                    data={[
+                        {
+                            value: 'small',
+                            label: (
+                                <Group spacing={4}>
+                                    <Text size="sm">S</Text>
+                                </Group>
+                            ),
+                        },
+                        {
+                            value: 'medium',
+                            label: (
+                                <Group spacing={4}>
+                                    <Text size="sm">M</Text>
+                                </Group>
+                            ),
+                        },
+                        {
+                            value: 'large',
+                            label: (
+                                <Group spacing={4}>
+                                    <Text size="sm">L</Text>
+                                </Group>
+                            ),
+                        },
+                    ]}
+                />
+            </Group>
             <Stack>
                 {checksQuery.data.results.map((check: any) => {
-                    const imageFilename = check.diffId?.filename
-                        || check.actualSnapshotId?.filename
-                        || check.baselineId?.filename;
+                    const imageFilename = check.diffId?.filename || check.actualSnapshotId?.filename || check.baselineId?.filename;
                     const imagePreviewSrc = `${config.baseUri}/snapshoots/${imageFilename}`;
 
                     return (
@@ -79,12 +115,7 @@ export function ChecksList() {
                             <Group position="apart" mb="xs">
                                 <Group>
                                     <Status check={check} />
-                                    <ViewPortLabel
-                                        check={check}
-                                        sizes={sizes}
-                                        color="blue"
-                                        checksViewSize="medium"
-                                    />
+                                    <ViewPortLabel check={check} sizes={sizes} color="blue" checksViewSize="medium" />
                                 </Group>
                                 <Group spacing={4}>
                                     <AcceptButton
@@ -93,11 +124,7 @@ export function ChecksList() {
                                         checksQuery={checksQuery}
                                         size={19}
                                     />
-                                    <RemoveButton
-                                        check={check}
-                                        testUpdateQuery={checksQuery}
-                                        size={24}
-                                    />
+                                    <RemoveButton check={check} testUpdateQuery={checksQuery} size={24} />
                                     <Text size="sm" color="dimmed">
                                         {new Date(check.createdDate).toLocaleString()}
                                     </Text>
@@ -115,7 +142,7 @@ export function ChecksList() {
                             >
                                 <Image
                                     src={imagePreviewSrc}
-                                    height={200}
+                                    height={getPreviewHeight(previewSize)}
                                     fit="contain"
                                     withPlaceholder
                                     alt={check.name}
