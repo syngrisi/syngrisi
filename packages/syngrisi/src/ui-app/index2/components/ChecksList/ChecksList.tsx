@@ -162,7 +162,7 @@ export function ChecksList() {
                     })}
                 </Stack>
             </ScrollArea>
-            <CheckModal />
+            <CheckModal relatedChecksInitiallyOpened={false} />
         </Stack>
     );
 }

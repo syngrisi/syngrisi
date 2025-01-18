@@ -17,7 +17,11 @@ import { GenericService } from '../../../../../shared/services';
 import { errorMsg } from '../../../../../shared/utils';
 import { CheckDetails } from './CheckDetails/CheckDetails';
 
-export function CheckModal() {
+interface Props {
+    relatedChecksInitiallyOpened?: boolean;
+}
+
+export function CheckModal({ relatedChecksInitiallyOpened = true }: Props) {
     const { query, setQuery } = useParams();
     const [checkModalOpened, checkModalHandlers] = useDisclosure(false);
 
@@ -105,6 +109,7 @@ export function CheckModal() {
                                     initCheckData={checkData}
                                     checkQuery={checkQuery}
                                     closeHandler={closeHandler}
+                                    relatedChecksInitiallyOpened={relatedChecksInitiallyOpened}
                                 />
                             )
                             : (
