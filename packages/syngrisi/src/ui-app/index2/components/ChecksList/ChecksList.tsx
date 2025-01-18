@@ -6,6 +6,8 @@ import { GenericService } from '../../../shared/services';
 import { Status } from '../../../shared/components/Check/Status';
 import { ViewPortLabel } from '../Tests/Table/Checks/ViewPortLabel';
 import { sizes } from '../Tests/Table/Checks/checkSizes';
+import { AcceptButton } from '../Tests/Table/Checks/AcceptButton';
+import { RemoveButton } from '../Tests/Table/Checks/RemoveButton';
 import config from '../../../config';
 
 export function ChecksList() {
@@ -83,9 +85,22 @@ export function ChecksList() {
                                         checksViewSize="medium"
                                     />
                                 </Group>
-                                <Text size="sm" color="dimmed">
-                                    {new Date(check.createdDate).toLocaleString()}
-                                </Text>
+                                <Group spacing={4}>
+                                    <AcceptButton
+                                        check={check}
+                                        testUpdateQuery={checksQuery}
+                                        checksQuery={checksQuery}
+                                        size={19}
+                                    />
+                                    <RemoveButton
+                                        check={check}
+                                        testUpdateQuery={checksQuery}
+                                        size={24}
+                                    />
+                                    <Text size="sm" color="dimmed">
+                                        {new Date(check.createdDate).toLocaleString()}
+                                    </Text>
+                                </Group>
                             </Group>
                             <Image
                                 src={imagePreviewSrc}
