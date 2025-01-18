@@ -72,10 +72,12 @@ export function ChecksList() {
     return (
         <Stack p="md" h="100vh">
             <Group position="apart">
-                <Title order={2}>
-                    Latest Checks for:
-                    {' '}
-                    {checkName}
+                <Title order={2} style={{ maxWidth: '80%' }}>
+                    <Text truncate>
+                        Latest for for for for for for for for for:
+                        {' '}
+                        {checkName}
+                    </Text>
                 </Title>
                 <SegmentedControl
                     value={previewSize}
