@@ -4,7 +4,7 @@ import path from 'path';
 import httpStatus from 'http-status';
 
 import { catchAsync } from '@utils';
-import { ensureLoggedIn } from '@middlewares/ensureLogin';
+import { ensureLoggedIn, ensureLoggedInOrApiKey } from '@middlewares/ensureLogin/ensureLoggedIn';
 import { ExtRequest } from '../../../types/ExtRequest';
 import { Midleware } from '../../../types/Midleware';
 
@@ -25,7 +25,7 @@ router.get(
 // eslint-disable-next-line custom/check-route-registration
 router.get(
     '/checks-list',
-    ensureLoggedIn(),
+    ensureLoggedInOrApiKey(),
     catchAsync(staticIndex) as Midleware
 );
 

@@ -19,9 +19,10 @@ import { CheckDetails } from './CheckDetails/CheckDetails';
 
 interface Props {
     relatedChecksInitiallyOpened?: boolean;
+    apikey?: string;
 }
 
-export function CheckModal({ relatedChecksInitiallyOpened = true }: Props) {
+export function CheckModal({ relatedChecksInitiallyOpened = true, apikey }: Props) {
     const { query, setQuery } = useParams();
     const [checkModalOpened, checkModalHandlers] = useDisclosure(false);
 
@@ -52,6 +53,7 @@ export function CheckModal({ relatedChecksInitiallyOpened = true }: Props) {
                 {
                     populate: 'baselineId,actualSnapshotId,diffId,test,suite,app',
                     limit: '1',
+                    apikey,
                 },
                 'initial_check_for_check_details_modal',
             ),

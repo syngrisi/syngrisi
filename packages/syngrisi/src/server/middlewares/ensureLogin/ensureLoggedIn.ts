@@ -138,7 +138,7 @@ const handleAPIAuth = async (hashedApiKey: string): Promise<any> => {
         value: '',
         user: null,
     };
-    const AppSettings = await appSettings; 
+    const AppSettings = await appSettings;
     if (!(await AppSettings.isAuthEnabled())) {
         const guest = await User.findOne({ username: 'Guest' });
 
