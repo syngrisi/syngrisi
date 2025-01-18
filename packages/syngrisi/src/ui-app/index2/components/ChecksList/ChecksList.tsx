@@ -36,8 +36,7 @@ export function ChecksList() {
             {
                 populate: 'baselineId,actualSnapshotId,diffId',
                 limit: '5',
-                sortBy: 'CreatedDate',
-                sortOrder: -1,
+                sortBy: 'createdDate:desc',
                 apikey: apiKey,
             },
             'checksListQuery',
