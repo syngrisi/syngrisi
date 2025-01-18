@@ -1,17 +1,18 @@
 import * as React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
-import { Card, Group, Image, Stack, Text, Title } from '@mantine/core';
+import { Card, Group, Image, Stack, Text, Title, UnstyledButton } from '@mantine/core';
 import { GenericService } from '../../../shared/services';
 import { Status } from '../../../shared/components/Check/Status';
 import { ViewPortLabel } from '../Tests/Table/Checks/ViewPortLabel';
 import { sizes } from '../Tests/Table/Checks/checkSizes';
 import { AcceptButton } from '../Tests/Table/Checks/AcceptButton';
 import { RemoveButton } from '../Tests/Table/Checks/RemoveButton';
+import { CheckModal } from '../Tests/Table/Checks/CheckModal';
 import config from '../../../config';
 
 export function ChecksList() {
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const checkName = searchParams.get('name');
 
     const checksQuery = useQuery(
@@ -102,17 +103,29 @@ export function ChecksList() {
                                     </Text>
                                 </Group>
                             </Group>
-                            <Image
-                                src={imagePreviewSrc}
-                                height={200}
-                                fit="contain"
-                                withPlaceholder
-                                alt={check.name}
-                            />
+                            <UnstyledButton
+                                onClick={() => {
+                                    setSearchParams((prev) => {
+                                        prev.set('checkId', check.id);
+                                        prev.set('modalIsOpen', 'true');
+                                        return prev;
+                                    });
+                                }}
+                                w="100%"
+                            >
+                                <Image
+                                    src={imagePreviewSrc}
+                                    height={200}
+                                    fit="contain"
+                                    withPlaceholder
+                                    alt={check.name}
+                                />
+                            </UnstyledButton>
                         </Card>
                     );
                 })}
             </Stack>
+            <CheckModal />
         </Stack>
     );
 }
