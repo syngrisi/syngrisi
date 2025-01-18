@@ -17,6 +17,7 @@ import { SpotlightProvider } from '@mantine/spotlight';
 import config from '../config';
 
 import IndexLayout from './IndexLayout';
+import { ChecksList } from './components/ChecksList/ChecksList';
 import useColorScheme from '../shared/hooks/useColorSheme';
 import { navigationData } from '../shared/navigation/navigationData';
 import { INavDataItem } from '../shared/navigation/interfaces';
@@ -150,6 +151,7 @@ function App() {
                             <NavigationProgress />
                             <Routes>
                                 <Route path={config.indexRoute} element={<IndexLayout />} />
+                                <Route path="/checks-list" element={<ChecksList />} />
                             </Routes>
                         </NotificationsProvider>
                     </SpotlightProvider>

@@ -22,4 +22,11 @@ router.get(
     catchAsync(staticIndex) as Midleware
 );
 
+// eslint-disable-next-line custom/check-route-registration
+router.get(
+    '/checks-list',
+    ensureLoggedIn(),
+    catchAsync(staticIndex) as Midleware
+);
+
 export default router;
