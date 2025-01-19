@@ -124,7 +124,7 @@ const accept = async (id: string, baselineId: string, user: RequestUser): Promis
     check.updatedDate = new Date();
 
     // TODO: remove this line
-    check.baselineId = baselineId as unknown as Schema.Types.ObjectId;
+    // check.baselineId = baselineId as unknown as Schema.Types.ObjectId;
 
     log.debug(`update check with options: '${JSON.stringify(check.toObject())}'`, logOpts);
     await createNewBaseline(check.toObject());
