@@ -1,6 +1,6 @@
 {
   "name": "@syngrisi/syngrisi",
-  "version": "2.2.18-alpha.0",
+  "version": "2.2.19-alpha.0",
   "description": "Syngrisi - Visual Testing Tool",
   "main": "./dist/server/server.js",
   "type": "commonjs",
@@ -151,7 +151,7 @@
     "sass": "^1.54.0",
     "tsup": "^8.1.0",
     "typescript": "^5.2.2",
-    "vite":"^6.0.7",
+    "vite": "^6.0.7",
     "vite-tsconfig-paths": "5.1.4"
   },
   "nyc": {
