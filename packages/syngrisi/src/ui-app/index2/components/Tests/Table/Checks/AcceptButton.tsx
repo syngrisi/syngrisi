@@ -8,6 +8,7 @@ import ActionPopoverIcon from '../../../../../shared/components/ActionPopoverIco
 import { ChecksService } from '../../../../../shared/services';
 import { errorMsg, successMsg } from '../../../../../shared/utils/utils';
 import { log } from '../../../../../shared/utils/Logger';
+import { ident } from '../../../../../shared/utils/ident';
 
 interface Props {
     check: any
@@ -25,25 +26,14 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, s
 
     // Fetch the current baseline using the check's ident fields
     const { data: currentBaseline } = useQuery({
-        queryKey: [
-            'baseline',
-            check.name,
-            check.viewport,
-            check.browserName,
-            check.os,
-            check.app,
-            check.branch,
-        ],
+        queryKey: ['baseline', ...ident.map((field) => check[field])],
         queryFn: async () => {
-            const params = new URLSearchParams({
-                name: check.name,
-                viewport: check.viewport,
-                browserName: check.browserName,
-                os: check.os,
-                app: check.app,
-                branch: check.branch,
-                markedAs: 'accepted',
-            });
+            const params = new URLSearchParams(
+                Object.fromEntries([
+                    ...ident.map((field) => [field, check[field]]),
+                    ['markedAs', 'accepted'],
+                ]),
+            );
             const response = await fetch(
                 `/v1/baselines?${params.toString()}`,
                 { headers: apikey ? { apikey } : undefined },
@@ -52,10 +42,6 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, s
             return data.results[0]; // Get the first baseline that matches the ident
         },
     });
-    console.log('currentBaseline🔥🔥🔥🔥', currentBaseline);
-    console.log('check👉👉👉👉👉👉', check);
-    console.log('snapshotId👉', currentBaseline?.snapshootId);
-    console.log('actualSnapshotId👉', check.actualSnapshotId._id);
 
     const isAccepted = (check.markedAs === 'accepted');
     const isCurrentlyAccepted = isAccepted
@@ -79,15 +65,7 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, s
                     { queryKey: ['related_checks_infinity_pages', initCheck?._id || check._id] },
                 );
                 await queryClient.invalidateQueries({
-                    queryKey: [
-                        'baseline',
-                        check.name,
-                        check.viewport,
-                        check.browserName,
-                        check.os,
-                        check.app,
-                        check.branch,
-                    ],
+                    queryKey: ['baseline', ...ident.map((field) => check[field])],
                 });
                 checksQuery.refetch();
                 if (testUpdateQuery) testUpdateQuery.refetch();
