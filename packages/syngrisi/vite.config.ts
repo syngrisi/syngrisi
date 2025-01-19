@@ -14,6 +14,7 @@ const config = {
     build: {
         // tsconfig: "./vite.tsconfig.json",
         minify: false,
+        sourcemap: true,
         outDir: path.resolve(__dirname, 'mvc/views/react'),
         // 'public/ui-app',
         rollupOptions: {
@@ -29,6 +30,13 @@ const config = {
         port: 8080,
         hot: true,
         open: 'http://localhost:8080/',
+    },
+    css: {
+        devSourcemap: true,
+    },
+    esbuild: {
+        keepNames: true,
+        sourcemap: true,
     },
 };
 
