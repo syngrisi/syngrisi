@@ -135,10 +135,10 @@ export function ChecksList() {
                         const imagePreviewSrc = `${config.baseUri}/snapshoots/${imageFilename}`;
 
                         return (
-                            <Card key={check.id} shadow="sm" p="md">
-                                <Group position="center" mb="xs">
-                                    <Group position="center" spacing="xs">
-                                        {/* <Tooltip
+                            <Card key={check.id} shadow="sm" p="md" style={{ maxWidth: '900px' }}>
+                                <Group position="apart">
+                                    <Group position="left" mb="xs" mt="xs">
+                                        <Tooltip
                                             withinPortal
                                             label={dateFns.format(new Date(check.createdDate), 'yyyy-MM-dd HH:mm:ss')}
                                         >
@@ -146,7 +146,9 @@ export function ChecksList() {
                                                 {dateFns.formatDistanceToNow(new Date(check.createdDate))}
                                                 &nbsp;ago
                                             </Text>
-                                        </Tooltip> */}
+                                        </Tooltip>
+                                    </Group>
+                                    <Group position="right">
                                         <OsIcon os={check.os} size={19} />
                                         <Box style={{ marginTop: 2 }}>
                                             <BrowserIcon browser={check.browserName} size={16} />
@@ -162,6 +164,26 @@ export function ChecksList() {
                                                 {check.browserVersion ? `${check.browserVersion}` : ''}
                                             </Text>
                                         </Badge>
+
+                                        <Status check={check} />
+                                        <ViewPortLabel
+                                            check={check}
+                                            sizes={sizes}
+                                            color="blue"
+                                            checksViewSize="medium"
+                                        />
+                                    </Group>
+                                </Group>
+                                <Group position="center" mb="xs">
+                                    <Group spacing={4} position="center">
+                                        <AcceptButton
+                                            check={check}
+                                            testUpdateQuery={checksQuery}
+                                            checksQuery={checksQuery}
+                                            size={19}
+                                        />
+                                        <RemoveButton check={check} testUpdateQuery={checksQuery} size={24} />
+
                                     </Group>
                                 </Group>
                                 <Stack>
@@ -183,38 +205,6 @@ export function ChecksList() {
                                             alt={check.name}
                                         />
                                     </UnstyledButton>
-                                    <Stack>
-                                        <Group spacing={4} position="center">
-                                            <Status check={check} />
-                                            <ViewPortLabel
-                                                check={check}
-                                                sizes={sizes}
-                                                color="blue"
-                                                checksViewSize="medium"
-                                            />
-
-                                            <AcceptButton
-                                                check={check}
-                                                testUpdateQuery={checksQuery}
-                                                checksQuery={checksQuery}
-                                                size={19}
-                                            />
-                                            <RemoveButton check={check} testUpdateQuery={checksQuery} size={24} />
-
-                                        </Group>
-                                        <Group spacing={4} position="center">
-                                            <Tooltip
-                                                withinPortal
-                                                label={dateFns.format(new Date(check.createdDate), 'yyyy-MM-dd HH:mm:ss')}
-                                            >
-                                                <Text size="sm" color="dimmed">
-                                                    {dateFns.formatDistanceToNow(new Date(check.createdDate))}
-                                                    &nbsp;ago
-                                                </Text>
-                                            </Tooltip>
-                                        </Group>
-                                    </Stack>
-
                                 </Stack>
 
                             </Card>
