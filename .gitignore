@@ -16,3 +16,4 @@ baselines*/
 /export_gpt_codebase/
 debug.html
 .tmp_
+lerna-debug.log
