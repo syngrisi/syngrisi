@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
-import { Card, Group, Image, Stack, Text, Title, UnstyledButton, SegmentedControl, ScrollArea } from '@mantine/core';
+import { Card, Group, Image, Stack, Text, Title, UnstyledButton, SegmentedControl, ScrollArea, Tooltip } from '@mantine/core';
 import { GenericService } from '../../../shared/services';
 import { Status } from '../../../shared/components/Check/Status';
 import { ViewPortLabel } from '../Tests/Table/Checks/ViewPortLabel';
@@ -10,6 +10,9 @@ import { AcceptButton } from '../Tests/Table/Checks/AcceptButton';
 import { RemoveButton } from '../Tests/Table/Checks/RemoveButton';
 import { CheckModal } from '../Tests/Table/Checks/CheckModal';
 import config from '../../../config';
+import { BrowserIcon } from '../../../shared/components/Check/BrowserIcon';
+import { OsIcon } from '../../../shared/components/Check/OsIcon';
+import * as dateFns from 'date-fns';
 
 export function ChecksList() {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -124,12 +127,49 @@ export function ChecksList() {
 
                         return (
                             <Card key={check.id} shadow="sm" p="md">
-                                <Group position="apart" mb="xs">
-                                    <Group>
-                                        <Status check={check} />
-                                        <ViewPortLabel check={check} sizes={sizes} color="blue" checksViewSize="medium" />
+                                <Group position="center" mb="xs">
+                                    <Group position="center">
+                                        <Tooltip
+                                            withinPortal
+                                            label={dateFns.format(new Date(check.createdDate), 'yyyy-MM-dd HH:mm:ss')}
+                                        >
+                                            <Text size="sm" color="dimmed">
+                                                {dateFns.formatDistanceToNow(new Date(check.createdDate))}
+                                                ago
+                                            </Text>
+                                        </Tooltip>
+                                        <OsIcon os={check.os} size={19} />
+                                        <BrowserIcon browser={check.browserName} size={19} />
                                     </Group>
-                                    <Group spacing={4}>
+                                </Group>
+                                <Stack>
+                                    <UnstyledButton
+                                        onClick={() => {
+                                            setSearchParams((prev) => {
+                                                prev.set('checkId', check.id);
+                                                prev.set('modalIsOpen', 'true');
+                                                return prev;
+                                            });
+                                        }}
+                                        w="100%"
+                                    >
+                                        <Image
+                                            src={imagePreviewSrc}
+                                            height={getPreviewHeight(previewSize)}
+                                            fit="contain"
+                                            withPlaceholder
+                                            alt={check.name}
+                                        />
+                                    </UnstyledButton>
+                                    <Group spacing={4} position="center">
+                                        <Status check={check} />
+                                        <ViewPortLabel
+                                            check={check}
+                                            sizes={sizes}
+                                            color="blue"
+                                            checksViewSize="medium"
+                                        />
+
                                         <AcceptButton
                                             check={check}
                                             testUpdateQuery={checksQuery}
@@ -137,29 +177,10 @@ export function ChecksList() {
                                             size={19}
                                         />
                                         <RemoveButton check={check} testUpdateQuery={checksQuery} size={24} />
-                                        <Text size="sm" color="dimmed">
-                                            {new Date(check.createdDate).toLocaleString()}
-                                        </Text>
+
                                     </Group>
-                                </Group>
-                                <UnstyledButton
-                                    onClick={() => {
-                                        setSearchParams((prev) => {
-                                            prev.set('checkId', check.id);
-                                            prev.set('modalIsOpen', 'true');
-                                            return prev;
-                                        });
-                                    }}
-                                    w="100%"
-                                >
-                                    <Image
-                                        src={imagePreviewSrc}
-                                        height={getPreviewHeight(previewSize)}
-                                        fit="contain"
-                                        withPlaceholder
-                                        alt={check.name}
-                                    />
-                                </UnstyledButton>
+                                </Stack>
+
                             </Card>
                         );
                     })}
