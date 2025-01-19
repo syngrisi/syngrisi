@@ -151,8 +151,8 @@
     "sass": "^1.54.0",
     "tsup": "^8.1.0",
     "typescript": "^5.2.2",
-    "vite": "^3.0.9",
-    "vite-tsconfig-paths": "^4.3.2"
+    "vite":"^6.0.7",
+    "vite-tsconfig-paths": "5.1.4"
   },
   "nyc": {
     "all": true,
