@@ -6,12 +6,12 @@ import { IconRefresh } from '@tabler/icons';
 
 export function ErrorFallback({ error, resetErrorBoundary }: { error: any, resetErrorBoundary: any }) {
     const [errorDetails] = useState(
-        `Url: ${window.location.href}\n`
-        + `Message: ${error.message}\n`
-        + `Stacktrace: ${error.stack}\n`,
+        `URL: ${window.location.href}
+Message: ${error.message}
+Stack Trace: ${error.stack}`,
     );
     return (
-        <Paper role="alert">
+        <Paper role="alert" p="md">
             <Title>Something went wrong</Title>
 
             <Stack align="center" spacing={8}>
@@ -24,8 +24,7 @@ export function ErrorFallback({ error, resetErrorBoundary }: { error: any, reset
                         size="md"
                         onClick={() => {
                             resetErrorBoundary();
-                            // @ts-ignore
-                            window.navigation.reload();
+                            window.location.reload();
                         }}
                     >
                         Refresh
@@ -38,29 +37,30 @@ export function ErrorFallback({ error, resetErrorBoundary }: { error: any, reset
                         size="md"
                         onClick={() => {
                             resetErrorBoundary();
-                            document.location = '/';
+                            document.location.href = '/';
                         }}
                     >
                         Go to main page
                     </Button>
                 </Group>
-                <Group position="left" pt={30}>
+                <Group position="left" pt={30} w="100%">
                     <Text>Error Details:</Text>
                 </Group>
-                <pre style={{ backgroundColor: 'black', color: 'white', padding: '10px' }}>
-                    {errorDetails}
-                </pre>
+                <Paper withBorder p="sm" style={{ backgroundColor: 'black', width: '100%' }}>
+                    <Text style={{ color: 'white', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                        {errorDetails}
+                    </Text>
+                </Paper>
             </Stack>
-            <Group position="center">
-                <CopyButton value={errorDetails}>
+            <Group position="center" mt="md">
+                <CopyButton value={errorDetails} timeout={2000}>
                     {({ copied, copy }) => (
                         <Button color={copied ? 'teal' : 'blue'} onClick={copy}>
-                            {copied ? 'Copied' : 'Copy Error Details'}
+                            {copied ? 'Copied!' : 'Copy Error Details'}
                         </Button>
                     )}
                 </CopyButton>
             </Group>
-
         </Paper>
     );
 }
