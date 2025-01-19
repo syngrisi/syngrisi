@@ -32,11 +32,11 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, s
                 Object.fromEntries([
                     ...ident.map((field) => [field, check[field]]),
                     ['markedAs', 'accepted'],
+                    ...(apikey ? [['apikey', apikey]] : []),
                 ]),
             );
             const response = await fetch(
                 `/v1/baselines?${params.toString()}`,
-                { headers: apikey ? { apikey } : undefined },
             );
             const data = await response.json();
             return data.results[0]; // Get the first baseline that matches the ident

@@ -12,6 +12,7 @@ import { createRequestOpenApiBodySchema } from '@schemas/utils/createRequestOpen
 import { createRequestBodySchema } from '@schemas/utils/createRequestBodySchema';
 import { commonValidations } from '@schemas/utils';
 import { getByIdParamsSchema } from '@schemas/utils/createRequestParamsSchema';
+import { ensureLoggedInOrApiKey } from '../../middlewares/ensureLogin/ensureLoggedIn';
 
 export const registry = new OpenAPIRegistry();
 const router = express.Router();
@@ -27,7 +28,7 @@ registry.registerPath({
 
 router.get(
     '/',
-    ensureLoggedIn(),
+    ensureLoggedInOrApiKey(),
     validateRequest(createRequestQuerySchema(RequestPaginationSchema), 'get, /v1/baselines'),
 
     baselineController.get as Midleware
