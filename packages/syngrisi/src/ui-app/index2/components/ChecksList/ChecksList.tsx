@@ -122,8 +122,7 @@ export function ChecksList() {
                         const imageFilename = check.diffId?.filename
                             || check.actualSnapshotId?.filename
                             || check.baselineId?.filename;
-                        const imagePreviewSrc =
-                            `${config.baseUri}/snapshoots/${imageFilename}`;
+                        const imagePreviewSrc = `${config.baseUri}/snapshoots/${imageFilename}`;
 
                         return (
                             <Card key={check.id} shadow="sm" p="md">
