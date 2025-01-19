@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
-import { Card, Group, Image, Stack, Text, Title, UnstyledButton, SegmentedControl, ScrollArea, Tooltip } from '@mantine/core';
+import { Card, Group, Image, Stack, Text, Title, UnstyledButton, SegmentedControl, ScrollArea, Tooltip, Box } from '@mantine/core';
 import { GenericService } from '../../../shared/services';
 import { Status } from '../../../shared/components/Check/Status';
 import { ViewPortLabel } from '../Tests/Table/Checks/ViewPortLabel';
@@ -127,7 +127,7 @@ export function ChecksList() {
                         return (
                             <Card key={check.id} shadow="sm" p="md">
                                 <Group position="center" mb="xs">
-                                    <Group position="center">
+                                    <Group position="center" spacing="xs">
                                         <Tooltip
                                             withinPortal
                                             label={dateFns.format(new Date(check.createdDate), 'yyyy-MM-dd HH:mm:ss')}
@@ -138,7 +138,9 @@ export function ChecksList() {
                                             </Text>
                                         </Tooltip>
                                         <OsIcon os={check.os} size={19} />
-                                        <BrowserIcon browser={check.browserName} size={19} />
+                                        <Box style={{ marginTop: 2 }}>
+                                            <BrowserIcon browser={check.browserName} size={16} />
+                                        </Box>
                                     </Group>
                                 </Group>
                                 <Stack>
