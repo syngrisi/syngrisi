@@ -1,7 +1,21 @@
 import * as React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
-import { Card, Group, Image, Stack, Text, Title, UnstyledButton, SegmentedControl, ScrollArea, Tooltip, Box, Badge } from '@mantine/core';
+import {
+    Card,
+    Group,
+    Image,
+    Stack,
+    Text,
+    Title,
+    UnstyledButton,
+    SegmentedControl,
+    ScrollArea,
+    Tooltip,
+    Box,
+    Badge,
+} from '@mantine/core';
+import * as dateFns from 'date-fns';
 import { GenericService } from '../../../shared/services';
 import { Status } from '../../../shared/components/Check/Status';
 import { ViewPortLabel } from '../Tests/Table/Checks/ViewPortLabel';
@@ -12,7 +26,6 @@ import { CheckModal } from '../Tests/Table/Checks/CheckModal';
 import config from '../../../config';
 import { BrowserIcon } from '../../../shared/components/Check/BrowserIcon';
 import { OsIcon } from '../../../shared/components/Check/OsIcon';
-import * as dateFns from 'date-fns';
 
 export function ChecksList() {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -20,16 +33,13 @@ export function ChecksList() {
     const apiKey = searchParams.get('apikey');
     const [previewSize, setPreviewSize] = React.useState('medium');
 
-    const getPreviewHeight = (size: string) => {
-        switch (size) {
-            case 'small':
-                return 100;
-            case 'large':
-                return 600;
-            default:
-                return 400;
-        }
+    const previewHeights = {
+        small: 100,
+        large: 600,
+        medium: 400,
     };
+
+    const getPreviewHeight = (size: string) => previewHeights[size as keyof typeof previewHeights] || 400;
 
     const checksQuery = useQuery(
         ['checks_list', checkName],
