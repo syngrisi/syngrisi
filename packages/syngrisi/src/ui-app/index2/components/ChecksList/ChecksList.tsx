@@ -137,7 +137,7 @@ export function ChecksList() {
                         return (
                             <Card key={check.id} shadow="sm" p="md" style={{ maxWidth: '900px' }}>
                                 <Group position="apart">
-                                    <Group position="left" mb="xs" mt="xs">
+                                    <Group position="left" mb="xs" mt="xs" spacing={4}>
                                         <Tooltip
                                             withinPortal
                                             label={dateFns.format(new Date(check.createdDate), 'yyyy-MM-dd HH:mm:ss')}
@@ -174,8 +174,19 @@ export function ChecksList() {
                                         />
                                     </Group>
                                 </Group>
-                                <Group position="center" mb="xs">
-                                    <Group spacing={4} position="center">
+                                <Group position="center">
+                                    <Group
+                                        spacing={4}
+                                        position="center"
+                                        style={{
+                                            backgroundColor: '#f0f8ff',
+                                            borderTopRightRadius: '4px',
+                                            borderTopLeftRadius: '4px',
+                                            // borderBottomRightRadius: '6px',
+                                            // borderBottomLeftRadius: '6px',
+                                            padding: '4px',
+                                        }}
+                                    >
                                         <AcceptButton
                                             check={check}
                                             testUpdateQuery={checksQuery}
@@ -183,7 +194,6 @@ export function ChecksList() {
                                             size={19}
                                         />
                                         <RemoveButton check={check} testUpdateQuery={checksQuery} size={24} />
-
                                     </Group>
                                 </Group>
                                 <Stack>
@@ -197,6 +207,7 @@ export function ChecksList() {
                                         }}
                                         w="100%"
                                     >
+
                                         <Image
                                             src={imagePreviewSrc}
                                             height={getPreviewHeight(previewSize)}
