@@ -6,6 +6,7 @@ import {
     SiInternetexplorer,
     SiMicrosoftedge,
     SiSafari,
+    SiVisualstudiocode,
 } from 'react-icons/si';
 // import {PiGoogleChromeLogoThin} from 'react-icons/pi'
 import { TbQuestionMark } from 'react-icons/tb';
@@ -31,6 +32,8 @@ const browserIconMap = (key: string) => {
         safari: SiSafari,
         webkit: FaSafari,
         'internet explorer': SiInternetexplorer,
+        vscode: SiVisualstudiocode,
+        VSCode: SiVisualstudiocode,
     } as { [key: string]: any };
     return map[key] || TbQuestionMark;
 };
