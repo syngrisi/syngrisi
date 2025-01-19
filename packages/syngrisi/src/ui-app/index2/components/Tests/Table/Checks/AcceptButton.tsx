@@ -71,14 +71,24 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, s
     const mutationAcceptCheck = useMutation(
         {
             mutationFn: (data: { check: any, newBaselineId: string }) => ChecksService.acceptCheck({ ...data, apikey }),
-            // eslint-disable-next-line no-unused-vars
-            onSuccess: async (result: any) => {
+            onSuccess: async () => {
                 successMsg({ message: 'Check has been successfully accepted' });
                 await queryClient.invalidateQueries({ queryKey: ['preview_checks', check.test._id] });
                 await queryClient.invalidateQueries({ queryKey: ['check_for_modal', check._id] });
                 await queryClient.refetchQueries(
                     { queryKey: ['related_checks_infinity_pages', initCheck?._id || check._id] },
                 );
+                await queryClient.invalidateQueries({
+                    queryKey: [
+                        'baseline',
+                        check.name,
+                        check.viewport,
+                        check.browserName,
+                        check.os,
+                        check.app,
+                        check.branch,
+                    ],
+                });
                 checksQuery.refetch();
                 if (testUpdateQuery) testUpdateQuery.refetch();
             },
