@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { Badge, Tooltip, useMantineTheme, Text, Stack } from '@mantine/core';
 import { BsHandThumbsUp, BsHandThumbsUpFill } from 'react-icons/all';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 import ActionPopoverIcon from '../../../../../shared/components/ActionPopoverIcon';
 import { ChecksService } from '../../../../../shared/services';
@@ -22,8 +22,45 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, s
     const theme = useMantineTheme();
     const [searchParams] = useSearchParams();
     const apikey = searchParams.get('apikey') || undefined;
-    const isAccepted = (check.markedAs === 'accepted');// || mutationAcceptCheck.isSuccess;
-    const isCurrentlyAccepted = ((check.baselineId?._id === check.actualSnapshotId?._id) && isAccepted);
+
+    // Fetch the current baseline using the check's ident fields
+    const { data: currentBaseline } = useQuery({
+        queryKey: [
+            'baseline',
+            check.name,
+            check.viewport,
+            check.browserName,
+            check.os,
+            check.app,
+            check.branch,
+        ],
+        queryFn: async () => {
+            const params = new URLSearchParams({
+                name: check.name,
+                viewport: check.viewport,
+                browserName: check.browserName,
+                os: check.os,
+                app: check.app,
+                branch: check.branch,
+                markedAs: 'accepted',
+            });
+            const response = await fetch(
+                `/v1/baselines?${params.toString()}`,
+                { headers: apikey ? { apikey } : undefined },
+            );
+            const data = await response.json();
+            return data.results[0]; // Get the first baseline that matches the ident
+        },
+    });
+    console.log('currentBaseline🔥🔥🔥🔥', currentBaseline);
+    console.log('check👉👉👉👉👉👉', check);
+    console.log('snapshotId👉', currentBaseline?.snapshootId);
+    console.log('actualSnapshotId👉', check.actualSnapshotId._id);
+
+    const isAccepted = (check.markedAs === 'accepted');
+    const isCurrentlyAccepted = isAccepted
+        && currentBaseline?.snapshootId
+        && check.actualSnapshotId?._id === currentBaseline.snapshootId;
     // eslint-disable-next-line no-nested-ternary
     const likeIconColor = isAccepted
         ? theme.colorScheme === 'dark'
