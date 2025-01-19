@@ -24,19 +24,6 @@ const config = {
                 admin: path.resolve(__dirname, 'src/ui-app/admin/index.html'),
                 // stub: path.resolve(__dirname, 'src/ui-app/stub.html'),
             },
-            output: {
-                manualChunks: (id) => {
-                    if (id.includes('node_modules')) {
-                        // Split node_modules into separate chunks
-                        return 'vendor';
-                    }
-                    // Keep source files separate
-                    return path.parse(id).name;
-                },
-                entryFileNames: 'assets/[name]-[hash].js',
-                chunkFileNames: 'assets/[name]-[hash].js',
-                assetFileNames: 'assets/[name]-[hash].[ext]'
-            }
         },
     },
     server: {
