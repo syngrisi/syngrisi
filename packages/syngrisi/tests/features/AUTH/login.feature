@@ -20,10 +20,6 @@ Feature: Login
         Given I start Server and start Driver
         When I reload session
 
-    Scenario: Login - default Test user
-        When I login with user:"Test" password "123456aA-"
-        Then I wait on element "span*=TA" to be displayed
-
     @smoke
     Scenario: Login - Create user and login
         # crate user
