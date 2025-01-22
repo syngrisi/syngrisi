@@ -26,8 +26,7 @@ exports.config = {
         browserName: 'chrome',
         'goog:chromeOptions': {
             args: process.env.HL === '1' ? ['--headless', '--enable-automation', '--disable-gpu'] : ['--enable-automation'],
-            // binary: './chromium/Chromium.app/Contents/MacOS/Chromium',
-            binary: './chrome/mac-118.0.5993.70/chrome-mac-x64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing',
+            binary: path.resolve(__dirname, './chrome/chrome/mac_arm-118.0.5993.70/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing'),
             prefs: {
                 credentials_enable_service: false,
                 download: {
