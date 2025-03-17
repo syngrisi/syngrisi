@@ -13,7 +13,7 @@ export const env = cleanEnv(process.env, {
     NODE_ENV: str({ choices: ['development', 'production', 'test'] }),
     SYNGRISI_DB_URI: str({ default: 'mongodb://127.0.0.1:27017/SyngrisiDb' }),
     SYNGRISI_APP_PORT: port({ default: 3000 }),
-    SYNGRISI_IMAGES_PATH: str({ default: "./.snapshots-images/" }),
+    SYNGRISI_IMAGES_PATH: str({ default: path.join(process.cwd(), './.snapshots-images') }),
     SYNGRISI_TMP_DIR: str({ default: path.join(process.cwd(), '.tmp') }),
     SYNGRISI_HTTP_LOG: bool({ default: false }),
     SYNGRISI_COVERAGE: bool({ default: false }),
