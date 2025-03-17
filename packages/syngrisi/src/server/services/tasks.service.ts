@@ -29,6 +29,7 @@ import {
     Baseline,
 } from '@models';
 import { ExtRequest } from '@types';
+import path from "path";
 
 function taskOutput(msg: any, res: any) {
     res.write(`${msg.toString()}\n`);
@@ -118,7 +119,7 @@ const task_handle_database_consistency = async (options: any, res: any) => {
         taskOutput('---------------------------------', res);
         taskOutput('STAGE #2: Calculate Inconsistent Items', res);
         taskOutput('> calculate abandoned snapshots', res);
-        const abandonedSnapshots = allSnapshotsBefore.filter((sn: any) => !fs.existsSync(`${config.defaultImagesPath}/${sn.filename}`));
+        const abandonedSnapshots = allSnapshotsBefore.filter((sn: any) => !fs.existsSync(path.join(config.defaultImagesPath, sn.filename)));
 
         taskOutput('> calculate abandoned files', res);
         const snapshotsUniqueFiles = Array.from(new Set(allSnapshotsBefore.map((x: any) => x.filename)));
@@ -207,7 +208,7 @@ const task_handle_database_consistency = async (options: any, res: any) => {
             taskOutput('> remove abandoned snapshots', res);
             await Snapshot.deleteMany({ _id: { $in: abandonedSnapshots } });
             taskOutput('> remove abandoned files', res);
-            await Promise.all(abandonedFiles.map((filename) => fsp.unlink(`${config.defaultImagesPath}/${filename}`)));
+            await Promise.all(abandonedFiles.map((filename) => fsp.unlink(path.join(config.defaultImagesPath, filename))));
             const allFilesAfter = fs.readdirSync(config.defaultImagesPath, { withFileTypes: true })
                 .filter((item: any) => !item.isDirectory())
                 .map((x: any) => x.name)
@@ -391,7 +392,7 @@ const task_handle_old_checks = async (options: any, res: any) => {
             taskOutput(`>> found: ${filesToDelete.length}`, res);
 
             taskOutput(`>> remove these files: ${filesToDelete.length}`, res);
-            await Promise.all(filesToDelete.map((filename: string) => fsp.unlink(`${config.defaultImagesPath}/${filename}`)));
+            await Promise.all(filesToDelete.map((filename: string) => fsp.unlink(path.join(config.defaultImagesPath, filename))));
             taskOutput(`>> done: ${filesToDelete.length}`, res);
 
             taskOutput('STAGE #3 Calculate common stats after Removing', res);

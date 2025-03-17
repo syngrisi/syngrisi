@@ -3,6 +3,7 @@ import { config } from '@config';
 import { Baseline, Snapshot } from '@models';
 import log from "../lib/logger";
 import { SnapshotDocument } from '@models/Snapshot';
+import path from 'path';
 
 const logOpts = {
     scope: 'snapshot_helper',
@@ -26,14 +27,14 @@ const removeSnapshotFile = async (snapshot: SnapshotDocument) => {
     log.debug({ isLastSnapshotFile: isLastSnapshotFile() });
 
     if (isLastSnapshotFile()) {
-        const path = `${config.defaultImagesPath}${snapshot.filename}`;
-        log.silly(`path: ${path}`, logOpts);
-        if (fs.existsSync(path)) {
-            log.debug(`removing file: '${path}'`, logOpts, {
+        const imagePath = path.join(config.defaultImagesPath, snapshot.filename);
+        log.silly(`path: ${imagePath}`, logOpts);
+        if (fs.existsSync(imagePath)) {
+            log.debug(`removing file: '${imagePath}'`, logOpts, {
                 msgType: 'REMOVE',
                 itemType: 'file',
             });
-            fs.unlinkSync(path);
+            fs.unlinkSync(imagePath);
         }
     }
 };
@@ -68,8 +69,8 @@ const remove = async (id: string) => {
     await Snapshot.findByIdAndDelete(id);
     log.debug(`snapshot: '${id}' was removed`, logOpts);
 
-    const path = `${config.defaultImagesPath}${snapshot.filename}`;
-    log.debug(`attempting to remove snapshot file, id: '${snapshot._id}', filename: '${path}'`, logOpts);
+    const imagePath = path.join(config.defaultImagesPath, snapshot.filename);
+    log.debug(`attempting to remove snapshot file, id: '${snapshot._id}', filename: '${imagePath}'`, logOpts);
     await removeSnapshotFile(snapshot);
 };
 

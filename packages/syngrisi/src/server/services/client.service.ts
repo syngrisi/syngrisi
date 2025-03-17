@@ -24,7 +24,7 @@ import { IdentType } from '@utils/buildIdentObject';
 import StatusCodes from 'http-status';
 import { SuiteDocument } from '@models/Suite.model';
 import { BaselineDocument } from '../models/Baseline.model';
-
+import path from 'path';
 
 async function updateTest(id: string, update: UpdateTestType) {
     const logOpts: LogOpts = {
@@ -200,9 +200,9 @@ async function createSnapshot(parameters: CreateSnapshotParameters) {
     opts.imghash = hashCode || hasha(fileData);
     const snapshot = new Snapshot(opts);
     const filename = `${snapshot.id}.png`;
-    const path = `${config.defaultImagesPath}${filename}`;
-    log.debug(`save screenshot for: '${name}' snapshot to: '${path}'`, logOpts);
-    await fsp.writeFile(path, fileData);
+    const imagePath = path.join(config.defaultImagesPath, filename);
+    log.debug(`save screenshot for: '${name}' snapshot to: '${imagePath}'`, logOpts);
+    await fsp.writeFile(imagePath, fileData);
     snapshot.filename = filename;
     await snapshot.save();
     log.debug(`snapshot was saved: '${JSON.stringify(snapshot)}'`, { ...logOpts, ...{ ref: snapshot._id } });
@@ -246,8 +246,8 @@ async function compareSnapshots(baselineSnapshot: SnapshotDocument, actual: Snap
                 getBuffer: null
             };
         } else {
-            const baselinePath = `${config.defaultImagesPath}${baselineSnapshot.filename}`;
-            const actualPath = `${config.defaultImagesPath}${actual.filename}`;
+            const baselinePath = path.join(config.defaultImagesPath, baselineSnapshot.filename);
+            const actualPath = path.join(config.defaultImagesPath, actual.filename);
             const baselineData = await fsp.readFile(baselinePath);
             const actualData = await fsp.readFile(actualPath);
             log.debug(`baseline path: ${baselinePath}`, logOpts);
@@ -316,7 +316,7 @@ const prepareActualSnapshot = async (checkParam: CreateCheckParams, snapshotFoun
     const fileData = checkParam.files ? checkParam.files.file.data : null;
 
     if (snapshotFoundedByHashcode) {
-        const fullFilename = `${config.defaultImagesPath}${snapshotFoundedByHashcode.filename}`;
+        const fullFilename = path.join(config.defaultImagesPath, snapshotFoundedByHashcode.filename);
         if (!fs.existsSync(fullFilename)) {
             throw new Error(`Couldn't find the baseline file: '${fullFilename}'`);
         }

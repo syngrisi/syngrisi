@@ -45,11 +45,11 @@ if (config.enableHttpLogger) app.use(httpLogger);
 log.info('\t- authentication', logMeta);
 // Session and Passport setup
 app.use(session({
-  secret: config.storeSessionKey,
-  resave: true,
-  saveUninitialized: false,
-  cookie: { secure: false },
-  store: MongoStore.create({ mongoUrl: config.connectionString }),
+    secret: config.storeSessionKey,
+    resave: true,
+    saveUninitialized: false,
+    cookie: { secure: false },
+    store: MongoStore.create({ mongoUrl: config.connectionString }),
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -60,8 +60,7 @@ passport.deserializeUser(User.deserializeUser());
 
 log.info('\t- static files', logMeta);
 const baseDir = path.resolve(__dirname, '..', '..');
-const baseProcessDir = path.resolve(process.cwd());
-app.use('/snapshoots', express.static(path.join(baseProcessDir, config.defaultImagesPath)));
+app.use('/snapshoots', express.static(config.defaultImagesPath));
 app.use('/assets', express.static(path.join(baseDir, './mvc/views/react/assets'), {
     setHeaders: (res) => {
         res.set('Access-Control-Allow-Origin', '*');
