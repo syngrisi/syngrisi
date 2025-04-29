@@ -1,3 +1,9 @@
+var __defProp = Object.defineProperty;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField = (obj, key, value) => {
+  __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+  return value;
+};
 function _mergeNamespaces(n2, m2) {
   for (var i = 0; i < m2.length; i++) {
     const e2 = m2[i];
@@ -10178,18 +10184,14 @@ var createCache = function createCache2(options) {
 };
 const createCache$1 = createCache;
 function _extends() {
-  _extends = Object.assign ? Object.assign.bind() : function(target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i];
-      for (var key in source) {
-        if (Object.prototype.hasOwnProperty.call(source, key)) {
-          target[key] = source[key];
-        }
-      }
+  return _extends = Object.assign ? Object.assign.bind() : function(n2) {
+    for (var e2 = 1; e2 < arguments.length; e2++) {
+      var t2 = arguments[e2];
+      for (var r2 in t2)
+        ({}).hasOwnProperty.call(t2, r2) && (n2[r2] = t2[r2]);
     }
-    return target;
-  };
-  return _extends.apply(this, arguments);
+    return n2;
+  }, _extends.apply(null, arguments);
 }
 var reactIs$1 = { exports: {} };
 var reactIs_production_min = {};
@@ -21987,25 +21989,10 @@ class HTTPError extends Error {
     const title = response.statusText || "";
     const status = `${code} ${title}`.trim();
     const reason = status ? `status code ${status}` : "an unknown error";
-    super(`Request failed with ${reason}`);
-    Object.defineProperty(this, "response", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, "request", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, "options", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
+    super(`Request failed with ${reason}: ${request.method} ${request.url}`);
+    __publicField(this, "response");
+    __publicField(this, "request");
+    __publicField(this, "options");
     this.name = "HTTPError";
     this.response = response;
     this.request = request;
@@ -22014,21 +22001,198 @@ class HTTPError extends Error {
 }
 class TimeoutError extends Error {
   constructor(request) {
-    super("Request timed out");
-    Object.defineProperty(this, "request", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
+    super(`Request timed out: ${request.method} ${request.url}`);
+    __publicField(this, "request");
     this.name = "TimeoutError";
     this.request = request;
   }
 }
+const supportsRequestStreams = (() => {
+  let duplexAccessed = false;
+  let hasContentType = false;
+  const supportsReadableStream = typeof globalThis.ReadableStream === "function";
+  const supportsRequest = typeof globalThis.Request === "function";
+  if (supportsReadableStream && supportsRequest) {
+    try {
+      hasContentType = new globalThis.Request("https://empty.invalid", {
+        body: new globalThis.ReadableStream(),
+        method: "POST",
+        get duplex() {
+          duplexAccessed = true;
+          return "half";
+        }
+      }).headers.has("Content-Type");
+    } catch (error) {
+      if (error instanceof Error && error.message === "unsupported BodyInit type") {
+        return false;
+      }
+      throw error;
+    }
+  }
+  return duplexAccessed && !hasContentType;
+})();
+const supportsAbortController = typeof globalThis.AbortController === "function";
+const supportsResponseStreams = typeof globalThis.ReadableStream === "function";
+const supportsFormData = typeof globalThis.FormData === "function";
+const requestMethods = ["get", "post", "put", "patch", "head", "delete"];
+const responseTypes = {
+  json: "application/json",
+  text: "text/*",
+  formData: "multipart/form-data",
+  arrayBuffer: "*/*",
+  blob: "*/*"
+};
+const maxSafeTimeout = 2147483647;
+const usualFormBoundarySize = new TextEncoder().encode("------WebKitFormBoundaryaxpyiPgbbPti10Rw").length;
+const stop = Symbol("stop");
+const kyOptionKeys = {
+  json: true,
+  parseJson: true,
+  stringifyJson: true,
+  searchParams: true,
+  prefixUrl: true,
+  retry: true,
+  timeout: true,
+  hooks: true,
+  throwHttpErrors: true,
+  onDownloadProgress: true,
+  onUploadProgress: true,
+  fetch: true
+};
+const requestOptionsRegistry = {
+  method: true,
+  headers: true,
+  body: true,
+  mode: true,
+  credentials: true,
+  cache: true,
+  redirect: true,
+  referrer: true,
+  referrerPolicy: true,
+  integrity: true,
+  keepalive: true,
+  signal: true,
+  window: true,
+  dispatcher: true,
+  duplex: true,
+  priority: true
+};
+const getBodySize = (body) => {
+  if (!body) {
+    return 0;
+  }
+  if (body instanceof FormData) {
+    let size2 = 0;
+    for (const [key, value] of body) {
+      size2 += usualFormBoundarySize;
+      size2 += new TextEncoder().encode(`Content-Disposition: form-data; name="${key}"`).length;
+      size2 += typeof value === "string" ? new TextEncoder().encode(value).length : value.size;
+    }
+    return size2;
+  }
+  if (body instanceof Blob) {
+    return body.size;
+  }
+  if (body instanceof ArrayBuffer) {
+    return body.byteLength;
+  }
+  if (typeof body === "string") {
+    return new TextEncoder().encode(body).length;
+  }
+  if (body instanceof URLSearchParams) {
+    return new TextEncoder().encode(body.toString()).length;
+  }
+  if ("byteLength" in body) {
+    return body.byteLength;
+  }
+  if (typeof body === "object" && body !== null) {
+    try {
+      const jsonString = JSON.stringify(body);
+      return new TextEncoder().encode(jsonString).length;
+    } catch {
+      return 0;
+    }
+  }
+  return 0;
+};
+const streamResponse = (response, onDownloadProgress) => {
+  const totalBytes = Number(response.headers.get("content-length")) || 0;
+  let transferredBytes = 0;
+  if (response.status === 204) {
+    if (onDownloadProgress) {
+      onDownloadProgress({ percent: 1, totalBytes, transferredBytes }, new Uint8Array());
+    }
+    return new Response(null, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: response.headers
+    });
+  }
+  return new Response(new ReadableStream({
+    async start(controller) {
+      const reader = response.body.getReader();
+      if (onDownloadProgress) {
+        onDownloadProgress({ percent: 0, transferredBytes: 0, totalBytes }, new Uint8Array());
+      }
+      async function read() {
+        const { done, value } = await reader.read();
+        if (done) {
+          controller.close();
+          return;
+        }
+        if (onDownloadProgress) {
+          transferredBytes += value.byteLength;
+          const percent = totalBytes === 0 ? 0 : transferredBytes / totalBytes;
+          onDownloadProgress({ percent, transferredBytes, totalBytes }, value);
+        }
+        controller.enqueue(value);
+        await read();
+      }
+      await read();
+    }
+  }), {
+    status: response.status,
+    statusText: response.statusText,
+    headers: response.headers
+  });
+};
+const streamRequest = (request, onUploadProgress) => {
+  const totalBytes = getBodySize(request.body);
+  let transferredBytes = 0;
+  return new Request(request, {
+    duplex: "half",
+    body: new ReadableStream({
+      async start(controller) {
+        const reader = request.body instanceof ReadableStream ? request.body.getReader() : new Response("").body.getReader();
+        async function read() {
+          const { done, value } = await reader.read();
+          if (done) {
+            if (onUploadProgress) {
+              onUploadProgress({ percent: 1, transferredBytes, totalBytes: Math.max(totalBytes, transferredBytes) }, new Uint8Array());
+            }
+            controller.close();
+            return;
+          }
+          transferredBytes += value.byteLength;
+          let percent = totalBytes === 0 ? 0 : transferredBytes / totalBytes;
+          if (totalBytes < transferredBytes || percent === 1) {
+            percent = 0.99;
+          }
+          if (onUploadProgress) {
+            onUploadProgress({ percent: Number(percent.toFixed(2)), transferredBytes, totalBytes }, value);
+          }
+          controller.enqueue(value);
+          await read();
+        }
+        await read();
+      }
+    })
+  });
+};
 const isObject = (value) => value !== null && typeof value === "object";
 const validateAndMerge = (...sources) => {
   for (const source of sources) {
-    if ((!isObject(source) || Array.isArray(source)) && typeof source !== "undefined") {
+    if ((!isObject(source) || Array.isArray(source)) && source !== void 0) {
       throw new TypeError("The `options` argument must be an object");
     }
   }
@@ -22047,9 +22211,20 @@ const mergeHeaders = (source1 = {}, source2 = {}) => {
   }
   return result;
 };
+function newHookValue(original, incoming, property) {
+  var _a, _b;
+  return Object.hasOwn(incoming, property) && incoming[property] === void 0 ? [] : deepMerge((_a = original[property]) != null ? _a : [], (_b = incoming[property]) != null ? _b : []);
+}
+const mergeHooks = (original = {}, incoming = {}) => ({
+  beforeRequest: newHookValue(original, incoming, "beforeRequest"),
+  beforeRetry: newHookValue(original, incoming, "beforeRetry"),
+  afterResponse: newHookValue(original, incoming, "afterResponse"),
+  beforeError: newHookValue(original, incoming, "beforeError")
+});
 const deepMerge = (...sources) => {
   let returnValue = {};
   let headers = {};
+  let hooks = {};
   for (const source of sources) {
     if (Array.isArray(source)) {
       if (!Array.isArray(returnValue)) {
@@ -22063,6 +22238,10 @@ const deepMerge = (...sources) => {
         }
         returnValue = { ...returnValue, [key]: value };
       }
+      if (isObject(source.hooks)) {
+        hooks = mergeHooks(hooks, source.hooks);
+        returnValue.hooks = hooks;
+      }
       if (isObject(source.headers)) {
         headers = mergeHeaders(headers, source.headers);
         returnValue.headers = headers;
@@ -22071,34 +22250,6 @@ const deepMerge = (...sources) => {
   }
   return returnValue;
 };
-const supportsStreams = (() => {
-  let duplexAccessed = false;
-  let hasContentType = false;
-  const supportsReadableStream = typeof globalThis.ReadableStream === "function";
-  if (supportsReadableStream) {
-    hasContentType = new globalThis.Request("https://a.com", {
-      body: new globalThis.ReadableStream(),
-      method: "POST",
-      get duplex() {
-        duplexAccessed = true;
-        return "half";
-      }
-    }).headers.has("Content-Type");
-  }
-  return duplexAccessed && !hasContentType;
-})();
-const supportsAbortController = typeof globalThis.AbortController === "function";
-const supportsFormData = typeof globalThis.FormData === "function";
-const requestMethods = ["get", "post", "put", "patch", "head", "delete"];
-const responseTypes = {
-  json: "application/json",
-  text: "text/*",
-  formData: "multipart/form-data",
-  arrayBuffer: "*/*",
-  blob: "*/*"
-};
-const maxSafeTimeout = 2147483647;
-const stop = Symbol("stop");
 const normalizeRequestMethod = (input) => requestMethods.includes(input) ? input.toUpperCase() : input;
 const retryMethods = ["get", "put", "head", "delete", "options", "trace"];
 const retryStatusCodes = [408, 413, 429, 500, 502, 503, 504];
@@ -22108,7 +22259,9 @@ const defaultRetryOptions = {
   methods: retryMethods,
   statusCodes: retryStatusCodes,
   afterStatusCodes: retryAfterStatusCodes,
-  maxRetryAfter: Number.POSITIVE_INFINITY
+  maxRetryAfter: Number.POSITIVE_INFINITY,
+  backoffLimit: Number.POSITIVE_INFINITY,
+  delay: (attemptCount) => 0.3 * 2 ** (attemptCount - 1) * 1e3
 };
 const normalizeRetryOptions = (retry = {}) => {
   if (typeof retry === "number") {
@@ -22125,74 +22278,71 @@ const normalizeRetryOptions = (retry = {}) => {
   }
   return {
     ...defaultRetryOptions,
-    ...retry,
-    afterStatusCodes: retryAfterStatusCodes
+    ...retry
   };
 };
-const timeout = async (request, abortController, options) => new Promise((resolve, reject) => {
-  const timeoutId = setTimeout(() => {
-    if (abortController) {
-      abortController.abort();
-    }
-    reject(new TimeoutError(request));
-  }, options.timeout);
-  void options.fetch(request).then(resolve).catch(reject).then(() => {
-    clearTimeout(timeoutId);
+async function timeout(request, init, abortController, options) {
+  return new Promise((resolve, reject) => {
+    const timeoutId = setTimeout(() => {
+      if (abortController) {
+        abortController.abort();
+      }
+      reject(new TimeoutError(request));
+    }, options.timeout);
+    void options.fetch(request, init).then(resolve).catch(reject).then(() => {
+      clearTimeout(timeoutId);
+    });
   });
-});
-const delay = async (ms) => new Promise((resolve) => {
-  setTimeout(resolve, ms);
-});
+}
+async function delay(ms, { signal }) {
+  return new Promise((resolve, reject) => {
+    if (signal) {
+      signal.throwIfAborted();
+      signal.addEventListener("abort", abortHandler, { once: true });
+    }
+    function abortHandler() {
+      clearTimeout(timeoutId);
+      reject(signal.reason);
+    }
+    const timeoutId = setTimeout(() => {
+      signal == null ? void 0 : signal.removeEventListener("abort", abortHandler);
+      resolve();
+    }, ms);
+  });
+}
+const findUnknownOptions = (request, options) => {
+  const unknownOptions = {};
+  for (const key in options) {
+    if (!(key in requestOptionsRegistry) && !(key in kyOptionKeys) && !(key in request)) {
+      unknownOptions[key] = options[key];
+    }
+  }
+  return unknownOptions;
+};
 class Ky {
   constructor(input, options = {}) {
-    var _a, _b, _c;
-    Object.defineProperty(this, "request", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, "abortController", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, "_retryCount", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: 0
-    });
-    Object.defineProperty(this, "_input", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
-    Object.defineProperty(this, "_options", {
-      enumerable: true,
-      configurable: true,
-      writable: true,
-      value: void 0
-    });
+    __publicField(this, "request");
+    __publicField(this, "abortController");
+    __publicField(this, "_retryCount", 0);
+    __publicField(this, "_input");
+    __publicField(this, "_options");
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i2;
     this._input = input;
     this._options = {
-      credentials: this._input.credentials || "same-origin",
       ...options,
       headers: mergeHeaders(this._input.headers, options.headers),
-      hooks: deepMerge({
+      hooks: mergeHooks({
         beforeRequest: [],
         beforeRetry: [],
         beforeError: [],
         afterResponse: []
       }, options.hooks),
-      method: normalizeRequestMethod((_a = options.method) != null ? _a : this._input.method),
+      method: normalizeRequestMethod((_b = (_a = options.method) != null ? _a : this._input.method) != null ? _b : "GET"),
       prefixUrl: String(options.prefixUrl || ""),
       retry: normalizeRetryOptions(options.retry),
       throwHttpErrors: options.throwHttpErrors !== false,
-      timeout: typeof options.timeout === "undefined" ? 1e4 : options.timeout,
-      fetch: (_b = options.fetch) != null ? _b : globalThis.fetch.bind(globalThis)
+      timeout: (_c = options.timeout) != null ? _c : 1e4,
+      fetch: (_d = options.fetch) != null ? _d : globalThis.fetch.bind(globalThis)
     };
     if (typeof this._input !== "string" && !(this._input instanceof URL || this._input instanceof globalThis.Request)) {
       throw new TypeError("`input` must be a string, URL, or Request");
@@ -22207,18 +22357,18 @@ class Ky {
       this._input = this._options.prefixUrl + this._input;
     }
     if (supportsAbortController) {
+      const originalSignal = (_e = this._options.signal) != null ? _e : this._input.signal;
       this.abortController = new globalThis.AbortController();
-      if (this._options.signal) {
-        this._options.signal.addEventListener("abort", () => {
-          this.abortController.abort();
-        });
-      }
-      this._options.signal = this.abortController.signal;
+      this._options.signal = originalSignal ? AbortSignal.any([originalSignal, this.abortController.signal]) : this.abortController.signal;
+    }
+    if (supportsRequestStreams) {
+      this._options.duplex = "half";
+    }
+    if (this._options.json !== void 0) {
+      this._options.body = (_h = (_g = (_f = this._options).stringifyJson) == null ? void 0 : _g.call(_f, this._options.json)) != null ? _h : JSON.stringify(this._options.json);
+      this._options.headers.set("content-type", (_i2 = this._options.headers.get("content-type")) != null ? _i2 : "application/json");
     }
     this.request = new globalThis.Request(this._input, this._options);
-    if (supportsStreams) {
-      this.request.duplex = "half";
-    }
     if (this._options.searchParams) {
       const textSearchParams = typeof this._options.searchParams === "string" ? this._options.searchParams.replace(/^\?/, "") : new URLSearchParams(this._options.searchParams).toString();
       const searchParams = "?" + textSearchParams;
@@ -22226,18 +22376,25 @@ class Ky {
       if ((supportsFormData && this._options.body instanceof globalThis.FormData || this._options.body instanceof URLSearchParams) && !(this._options.headers && this._options.headers["content-type"])) {
         this.request.headers.delete("content-type");
       }
-      this.request = new globalThis.Request(new globalThis.Request(url, this.request), this._options);
+      this.request = new globalThis.Request(new globalThis.Request(url, { ...this.request }), this._options);
     }
-    if (this._options.json !== void 0) {
-      this._options.body = JSON.stringify(this._options.json);
-      this.request.headers.set("content-type", (_c = this._options.headers.get("content-type")) != null ? _c : "application/json");
-      this.request = new globalThis.Request(this.request, { body: this._options.body });
+    if (this._options.onUploadProgress) {
+      if (typeof this._options.onUploadProgress !== "function") {
+        throw new TypeError("The `onUploadProgress` option must be a function");
+      }
+      if (!supportsRequestStreams) {
+        throw new Error("Request streams are not supported in your environment. The `duplex` option for `Request` is not available.");
+      }
+      const originalBody = this.request.body;
+      if (originalBody) {
+        this.request = streamRequest(this.request, this._options.onUploadProgress);
+      }
     }
   }
   static create(input, options) {
     const ky2 = new Ky(input, options);
-    const fn = async () => {
-      if (ky2._options.timeout > maxSafeTimeout) {
+    const function_ = async () => {
+      if (typeof ky2._options.timeout === "number" && ky2._options.timeout > maxSafeTimeout) {
         throw new RangeError(`The \`timeout\` option cannot be greater than ${maxSafeTimeout}`);
       }
       await Promise.resolve();
@@ -22260,22 +22417,31 @@ class Ky {
         if (typeof ky2._options.onDownloadProgress !== "function") {
           throw new TypeError("The `onDownloadProgress` option must be a function");
         }
-        if (!supportsStreams) {
+        if (!supportsResponseStreams) {
           throw new Error("Streams are not supported in your environment. `ReadableStream` is missing.");
         }
-        return ky2._stream(response.clone(), ky2._options.onDownloadProgress);
+        return streamResponse(response.clone(), ky2._options.onDownloadProgress);
       }
       return response;
     };
     const isRetriableMethod = ky2._options.retry.methods.includes(ky2.request.method.toLowerCase());
-    const result = isRetriableMethod ? ky2._retry(fn) : fn();
+    const result = (isRetriableMethod ? ky2._retry(function_) : function_()).finally(async () => {
+      var _a;
+      if (!ky2.request.bodyUsed) {
+        await ((_a = ky2.request.body) == null ? void 0 : _a.cancel());
+      }
+    });
     for (const [type, mimeType] of Object.entries(responseTypes)) {
       result[type] = async () => {
         ky2.request.headers.set("accept", ky2.request.headers.get("accept") || mimeType);
-        const awaitedResult = await result;
-        const response = awaitedResult.clone();
+        const response = await result;
         if (type === "json") {
           if (response.status === 204) {
+            return "";
+          }
+          const arrayBuffer = await response.clone().arrayBuffer();
+          const responseSize = arrayBuffer.byteLength;
+          if (responseSize === 0) {
             return "";
           }
           if (options.parseJson) {
@@ -22288,33 +22454,32 @@ class Ky {
     return result;
   }
   _calculateRetryDelay(error) {
+    var _a, _b, _c, _d;
     this._retryCount++;
-    if (this._retryCount < this._options.retry.limit && !(error instanceof TimeoutError)) {
-      if (error instanceof HTTPError) {
-        if (!this._options.retry.statusCodes.includes(error.response.status)) {
-          return 0;
-        }
-        const retryAfter = error.response.headers.get("Retry-After");
-        if (retryAfter && this._options.retry.afterStatusCodes.includes(error.response.status)) {
-          let after = Number(retryAfter);
-          if (Number.isNaN(after)) {
-            after = Date.parse(retryAfter) - Date.now();
-          } else {
-            after *= 1e3;
-          }
-          if (typeof this._options.retry.maxRetryAfter !== "undefined" && after > this._options.retry.maxRetryAfter) {
-            return 0;
-          }
-          return after;
-        }
-        if (error.response.status === 413) {
-          return 0;
-        }
-      }
-      const BACKOFF_FACTOR = 0.3;
-      return BACKOFF_FACTOR * 2 ** (this._retryCount - 1) * 1e3;
+    if (this._retryCount > this._options.retry.limit || error instanceof TimeoutError) {
+      throw error;
     }
-    return 0;
+    if (error instanceof HTTPError) {
+      if (!this._options.retry.statusCodes.includes(error.response.status)) {
+        throw error;
+      }
+      const retryAfter = (_c = (_b = (_a = error.response.headers.get("Retry-After")) != null ? _a : error.response.headers.get("RateLimit-Reset")) != null ? _b : error.response.headers.get("X-RateLimit-Reset")) != null ? _c : error.response.headers.get("X-Rate-Limit-Reset");
+      if (retryAfter && this._options.retry.afterStatusCodes.includes(error.response.status)) {
+        let after = Number(retryAfter) * 1e3;
+        if (Number.isNaN(after)) {
+          after = Date.parse(retryAfter) - Date.now();
+        } else if (after >= Date.parse("2024-01-01")) {
+          after -= Date.now();
+        }
+        const max2 = (_d = this._options.retry.maxRetryAfter) != null ? _d : after;
+        return after < max2 ? after : max2;
+      }
+      if (error.response.status === 413) {
+        throw error;
+      }
+    }
+    const retryDelay = this._options.retry.delay(this._retryCount);
+    return Math.min(this._options.retry.backoffLimit, retryDelay);
   }
   _decorateResponse(response) {
     if (this._options.parseJson) {
@@ -22322,27 +22487,27 @@ class Ky {
     }
     return response;
   }
-  async _retry(fn) {
+  async _retry(function_) {
     try {
-      return await fn();
+      return await function_();
     } catch (error) {
       const ms = Math.min(this._calculateRetryDelay(error), maxSafeTimeout);
-      if (ms !== 0 && this._retryCount > 0) {
-        await delay(ms);
-        for (const hook of this._options.hooks.beforeRetry) {
-          const hookResult = await hook({
-            request: this.request,
-            options: this._options,
-            error,
-            retryCount: this._retryCount
-          });
-          if (hookResult === stop) {
-            return;
-          }
-        }
-        return this._retry(fn);
+      if (this._retryCount < 1) {
+        throw error;
       }
-      throw error;
+      await delay(ms, { signal: this._options.signal });
+      for (const hook of this._options.hooks.beforeRetry) {
+        const hookResult = await hook({
+          request: this.request,
+          options: this._options,
+          error,
+          retryCount: this._retryCount
+        });
+        if (hookResult === stop) {
+          return;
+        }
+      }
+      return this._retry(function_);
     }
   }
   async _fetch() {
@@ -22356,51 +22521,13 @@ class Ky {
         return result;
       }
     }
+    const nonRequestOptions = findUnknownOptions(this.request, this._options);
+    const mainRequest = this.request;
+    this.request = mainRequest.clone();
     if (this._options.timeout === false) {
-      return this._options.fetch(this.request.clone());
+      return this._options.fetch(mainRequest, nonRequestOptions);
     }
-    return timeout(this.request.clone(), this.abortController, this._options);
-  }
-  _stream(response, onDownloadProgress) {
-    const totalBytes = Number(response.headers.get("content-length")) || 0;
-    let transferredBytes = 0;
-    if (response.status === 204) {
-      if (onDownloadProgress) {
-        onDownloadProgress({ percent: 1, totalBytes, transferredBytes }, new Uint8Array());
-      }
-      return new globalThis.Response(null, {
-        status: response.status,
-        statusText: response.statusText,
-        headers: response.headers
-      });
-    }
-    return new globalThis.Response(new globalThis.ReadableStream({
-      async start(controller) {
-        const reader = response.body.getReader();
-        if (onDownloadProgress) {
-          onDownloadProgress({ percent: 0, transferredBytes: 0, totalBytes }, new Uint8Array());
-        }
-        async function read() {
-          const { done, value } = await reader.read();
-          if (done) {
-            controller.close();
-            return;
-          }
-          if (onDownloadProgress) {
-            transferredBytes += value.byteLength;
-            const percent = totalBytes === 0 ? 0 : transferredBytes / totalBytes;
-            onDownloadProgress({ percent, transferredBytes, totalBytes }, value);
-          }
-          controller.enqueue(value);
-          await read();
-        }
-        await read();
-      }
-    }), {
-      status: response.status,
-      statusText: response.statusText,
-      headers: response.headers
-    });
+    return timeout(mainRequest, nonRequestOptions, this.abortController, this._options);
   }
 }
 /*! MIT License © Sindre Sorhus */
@@ -22410,7 +22537,12 @@ const createInstance = (defaults) => {
     ky2[method] = (input, options) => Ky.create(input, validateAndMerge(defaults, options, { method }));
   }
   ky2.create = (newDefaults) => createInstance(validateAndMerge(newDefaults));
-  ky2.extend = (newDefaults) => createInstance(validateAndMerge(defaults, newDefaults));
+  ky2.extend = (newDefaults) => {
+    if (typeof newDefaults === "function") {
+      newDefaults = newDefaults(defaults != null ? defaults : {});
+    }
+    return createInstance(validateAndMerge(defaults, newDefaults));
+  };
   ky2.stop = stop;
   return ky2;
 };
@@ -23353,11 +23485,11 @@ const config = {
 var queryString = {};
 var strictUriEncode = (str) => encodeURIComponent(str).replace(/[!'()*]/g, (x2) => `%${x2.charCodeAt(0).toString(16).toUpperCase()}`);
 var token = "%[a-f0-9]{2}";
-var singleMatcher = new RegExp(token, "gi");
+var singleMatcher = new RegExp("(" + token + ")|([^%]+?)", "gi");
 var multiMatcher = new RegExp("(" + token + ")+", "gi");
 function decodeComponents(components, split) {
   try {
-    return decodeURIComponent(components.join(""));
+    return [decodeURIComponent(components.join(""))];
   } catch (err) {
   }
   if (components.length === 1) {
@@ -23372,10 +23504,10 @@ function decode(input) {
   try {
     return decodeURIComponent(input);
   } catch (err) {
-    var tokens = input.match(singleMatcher);
+    var tokens = input.match(singleMatcher) || [];
     for (var i = 1; i < tokens.length; i++) {
       input = decodeComponents(tokens, i).join("");
-      tokens = input.match(singleMatcher);
+      tokens = input.match(singleMatcher) || [];
     }
     return input;
   }
@@ -24098,21 +24230,21 @@ function getInputOnChange(setValue) {
     }
   };
 }
-var __defProp = Object.defineProperty;
+var __defProp2 = Object.defineProperty;
 var __defProps = Object.defineProperties;
 var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
 var __getOwnPropSymbols = Object.getOwnPropertySymbols;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __propIsEnum = Object.prototype.propertyIsEnumerable;
-var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __defNormalProp2 = (obj, key, value) => key in obj ? __defProp2(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __spreadValues = (a, b2) => {
   for (var prop in b2 || (b2 = {}))
     if (__hasOwnProp.call(b2, prop))
-      __defNormalProp(a, prop, b2[prop]);
+      __defNormalProp2(a, prop, b2[prop]);
   if (__getOwnPropSymbols)
     for (var prop of __getOwnPropSymbols(b2)) {
       if (__propIsEnum.call(b2, prop))
-        __defNormalProp(a, prop, b2[prop]);
+        __defNormalProp2(a, prop, b2[prop]);
     }
   return a;
 };

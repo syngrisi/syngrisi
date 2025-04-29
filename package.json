@@ -6,8 +6,8 @@
   ],
   "scripts": {
     "publish": "lerna publish",
-    "test": "lerna run test --scope=create-sy --scope=syngrisi",
-    "start": "lerna run start --scope=syngrisi",
+    "test": "lerna run test --scope=create-sy --scope=@syngrisi/syngrisi",
+    "start": "lerna run start --scope=@syngrisi/syngrisi",
     "build": "lerna run build",
     "graph": "nx graph",
     "docs": "typedoc",
