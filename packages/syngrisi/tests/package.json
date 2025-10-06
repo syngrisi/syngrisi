@@ -13,7 +13,7 @@
     "getUrl": "git@github.com:syngrisi/syngrisi.git"
   },
   "scripts": {
-    "test": "arch -x86_64 source ~/.nvm/nvm.sh && nvm use && cross-env RETRY=1 STREAMS=4 LOG=1 HL=1 npx wdio --spec './features/**/*.feature' --exclude 'features/debug/debug.feature'",
+    "test": "cross-env RETRY=1 STREAMS=8 LOG=1 HL=1 npx wdio --spec './features/**/*.feature' --exclude 'features/debug/debug.feature'",
     "test:docker": "cd .. && docker-compose build && cd tests && arch -x86_64 cross-env LOG=1 RETRY=1 HL=1 DOCKER=1 SYNGRISI_DOCKER_PORT=3102 SYNGRISI_DOCKER_DB_PORT=27018 SYNGRISI_DOCKER_IMAGES_PATH=./baselinesTest/100/ SYNGRISI_DB_URI=mongodb://syngrisi-db:27017/SyngrisiDb npx wdio --cucumberOpts.tagExpression='not @exclude_docker and not @Pending' --spec 'features/**/*.feature'",
     "report": "cp -R ./allure-report/history ./allure-results/; allure generate -c && allure open",
     "smoke": "arch -x86_64 cross-env STREAMS=4 LOG=1 HL=1 npx wdio --spec 'features/**/*.feature' --cucumberOpts.tagExpression='@smoke'",
