@@ -10,7 +10,38 @@ npm i
 npm test                        # to run all tests in headless mode
 npm run testui                  # to run all tests in normal mode
 npx wdio --spec <path to spec>  # run particular spec
+
 ```
+
+Run tests with custom server Nodejs path
+
+```shell
+ SYNGRISI_TEST_SERVER_NODE_PATH=$(nvm which v20.19.2) npx wdio --spec features/AUTH/login_smoke.feature
+```
+
+## Chrome 118
+
+Local runs require a Chrome 118 binary. Download it with `@puppeteer/browsers` and store the path in `.env`.
+
+1. Temporarily switch to a modern Node runtime (for example `nvm use v20.19.2`). Node 14 cannot parse the syntax used by the `@puppeteer/browsers` CLI.
+2. Install the browser build:
+
+    ```bash
+    npx @puppeteer/browsers install chrome@118 --path packages/syngrisi/chrome --platform mac-arm64
+    ```
+
+    The command prints the absolute path to the downloaded executable.
+
+3. Create `packages/syngrisi/tests/.env` (see the sample below) and assign that path to `CHROME_BINARY`. WDIO reads the value and injects it into `goog:chromeOptions.binary`.
+4. Switch back to Node 14 before running the tests: `nvm use v14.20.0`.
+
+`CHROME_BINARY` must be an absolute path. Example:
+
+```env
+CHROME_BINARY=/Users/<user>/Projects/syngrisi/packages/syngrisi/chrome/mac_arm-118.0.5993.70/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing
+```
+
+Update the `.env` value if the binary lives elsewhere.
 
 ## Useful methods
 
