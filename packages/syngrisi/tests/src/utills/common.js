@@ -1,6 +1,7 @@
 const ImageJS = require('imagejs');
 const YAML = require('yaml');
 const faker = require('faker');
+const path = require('path');
 const { got } = require('got-cjs');
 const { spawn, execSync } = require('child_process');
 const { SyngrisiDriver } = require('@syngrisi/wdio-sdk');
@@ -161,7 +162,11 @@ const startServer = (params) => {
     if (process.env.DOCKER !== '1') env.SYNGRISI_DB_URI = `mongodb://localhost/${databaseName}${cid}`;
 
     const fs = require('fs');
-    const stream = fs.createWriteStream(`./logs/${cid}_server_log.log`);
+    const logsDir = path.resolve(process.cwd(), 'logs');
+    if (!fs.existsSync(logsDir)) {
+        fs.mkdirSync(logsDir, { recursive: true });
+    }
+    const stream = fs.createWriteStream(path.join(logsDir, `${cid}_server_log.log`));
     let child;
     if (process.env.DOCKER === '1') {
         child = spawn('docker-compose',
@@ -172,7 +177,7 @@ const startServer = (params) => {
         });
     } else {
         // const nodePath = process.env.SYNGRISI_TEST_SERVER_NODE_PATH || 'node';
-        const nodePath = process.env.SYNGRISI_TEST_SERVER_NODE_PATH || '/Users/exadel/.nvm/versions/node/v21.1.0/bin/node';
+        const nodePath = process.env.SYNGRISI_TEST_SERVER_NODE_PATH || process.execPath;
         // const nodePath = 'c8';
         if (process.env.SYNGRISI_COVERAGE === 'true') {
             child = spawn('c8',
@@ -200,7 +205,7 @@ const startServer = (params) => {
     });
 
     child.on('error', (err) => {
-        log.error(`Failed to start child process: ${err.message}`);
+        console.error(`Failed to start child process: ${err.message}`);
         stream.write(`Failed to start child process: ${err.message}`);
     });
 
