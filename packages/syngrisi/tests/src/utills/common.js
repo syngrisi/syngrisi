@@ -218,15 +218,32 @@ const startServer = (params) => {
     // browser.pause(500);
     let timeoutMsg = '';
     browser.waitUntil(async () => {
-        const response = got.get(`http://${browser.config.serverDomain}:`
-            + `${cidPort}/v1/tasks/status`, { throwHttpErrors: false });
-        // console.log({ response });
-        const jsonResp = await response.json();
-        console.log({ isAlive: jsonResp.alive });
-        timeoutMsg = `Cannot connect to server,  statusCode: '${(await response).status}'`
-            + `\n serverRespBody: '${(await response).body}'`;
-        return (jsonResp.alive === true);
-    }, { timeout: 15000, timeoutMsg });
+        try {
+            const request = got.get(
+                `http://${browser.config.serverDomain}:${cidPort}/v1/tasks/status`,
+                { throwHttpErrors: false, timeout: { request: 5000 } }
+            );
+            const response = await request;
+            const statusCode = response.status ?? response.statusCode;
+            timeoutMsg = `Cannot connect to server, statusCode: '${statusCode}'
+ serverRespBody: '${response.body}'`;
+            if (!response.body) {
+                return false;
+            }
+            let jsonResp;
+            try {
+                jsonResp = JSON.parse(response.body);
+            } catch (parseErr) {
+                timeoutMsg += `\n parseError: '${parseErr.message}'`;
+                return false;
+            }
+            console.log({ isAlive: jsonResp.alive });
+            return jsonResp.alive === true;
+        } catch (err) {
+            timeoutMsg = `Cannot connect to server, error: '${err.message}'`;
+            return false;
+        }
+    }, { timeout: 20000, timeoutMsg });
     browser.pause(500);
     console.log(`SERVER IS STARTED, PID: '${child.pid}' port: '${cidPort}'`);
     browser.syngrisiServer = child;

@@ -65,10 +65,27 @@ When(/^I execute WDIODriver "([^"]*)" method with params:$/, async function (met
     const opts = JSON.parse(
         this.fillItemsPlaceHolders(fillCommonPlaceholders(params))
     );
-    // const response = await browser.vDriver[methodName](opts, browser.config.apiKey);
+    // вспомогательные флаги для повторных попыток при сетевых сбоях
+    if (!this.STATE) this.STATE = {};
+    if (methodName === 'startTestSession') {
+        this.STATE.lastStartSessionParams = opts;
+    }
+
+    const execute = async () => browser.vDriver[methodName](opts);
     let response;
     try {
         if (methodName === 'check') {
+            const maybeRecover = async () => {
+                if (this.STATE.sessionStarted === false && this.STATE.lastStartSessionParams) {
+                    try {
+                        await retryStartSession.call(this);
+                    } catch (e) {
+                        throw e;
+                    }
+                }
+            };
+            await maybeRecover();
+
             const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${opts.filePath}`);
             response = await browser.vDriver.check({
                 checkName: opts.checkName,
@@ -76,30 +93,76 @@ When(/^I execute WDIODriver "([^"]*)" method with params:$/, async function (met
                 params: opts.params,
             });
             await this.saveItem(methodName, response);
-        }
-        // else if (methodName === 'checkIfBaselineExist') {
-        //     const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${opts.filePath}`);
-        //     response = await browser.vDriver.checkIfBaselineExist({
-        //         params: opts.params,
-        //         imageBuffer,
-        //     });
-        //     await this.saveItem(methodName, response);
-        // }
-        else if (methodName === 'getBaselines') {
-            response = await browser.vDriver[methodName](opts);
+        } else if (methodName === 'getBaselines') {
+            response = await execute();
             const savedItem = response.results[0] || {};
             await this.saveItem(methodName, savedItem);
         } else {
-            response = await browser.vDriver[methodName](opts);
+            response = await executeWithRetry.call(this, methodName, execute);
             await this.saveItem(methodName, response);
         }
         console.log(methodName, '💛💛💛', JSON.stringify(response, null, '    '));
+        if (methodName === 'startTestSession') {
+            this.STATE.sessionStarted = true;
+        }
     } catch (e) {
         console.error(chalk.magentaBright(`❌❌❌  ${e}`));
         response = e.toString();
+        if (methodName === 'startTestSession') {
+            this.STATE.sessionStarted = false;
+        }
+        if (methodName === 'check'
+            && response.includes('test id is empty')
+            && this.STATE.lastStartSessionParams) {
+            try {
+                await retryStartSession.call(this);
+                const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${opts.filePath}`);
+                const retryResult = await browser.vDriver.check({
+                    checkName: opts.checkName,
+                    imageBuffer,
+                    params: opts.params,
+                });
+                await this.saveItem(methodName, retryResult);
+                console.log(methodName, '💛💛💛', JSON.stringify(retryResult, null, '    '));
+                return;
+            } catch (retryErr) {
+                response = retryErr.toString();
+            }
+        }
         await this.saveItem(`${methodName}_error`, response);
     }
 });
+
+async function executeWithRetry(methodName, execute) {
+    if (methodName !== 'startTestSession') {
+        return execute();
+    }
+    const attempts = 3;
+    let lastError;
+    for (let attempt = 1; attempt <= attempts; attempt += 1) {
+        try {
+            const result = await execute();
+            return result;
+        } catch (err) {
+            const msg = err.toString();
+            lastError = err;
+            if (attempt < attempts && msg.includes('RequestError')) {
+                browser.pause(1000);
+                continue;
+            }
+            throw err;
+        }
+    }
+    throw lastError;
+}
+
+async function retryStartSession() {
+    if (!this.STATE.lastStartSessionParams) throw new Error('No params to restart session');
+    const execute = async () => browser.vDriver.startTestSession(this.STATE.lastStartSessionParams);
+    const result = await executeWithRetry.call(this, 'startTestSession', execute);
+    this.STATE.sessionStarted = true;
+    return result;
+}
 
 Then(/^I expect WDIODriver "([^"]*)" return value match object:$/, async function (methodName, params) {
     const value = await this.getSavedItem(methodName);
