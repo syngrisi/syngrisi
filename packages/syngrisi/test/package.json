@@ -18,5 +18,8 @@
     "eslint": "^8.57.0",
     "mongoose": "^8.4.0",
     "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "allure-commandline": "^2.34.1"
   }
 }
