@@ -18,6 +18,12 @@ const streams = process.env.DOCKER === '1' ? 1 : (parseInt(process.env.STREAMS, 
 const chromeBinary = process.env.CHROME_BINARY
     || path.resolve(__dirname, './chrome/chrome/mac_arm-118.0.5993.70/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing');
 
+const baseChromeArgs = ['--enable-automation', '--disable-dev-shm-usage', '--no-sandbox', '--window-size=1920,1080'];
+const headlessArgs = ['--headless', '--disable-gpu'];
+const chromeArgs = process.env.HL === '1'
+    ? [...headlessArgs, ...baseChromeArgs]
+    : baseChromeArgs;
+
 exports.config = {
     rootPath: process.cwd(),
     testPlatform: process.env.TEST_PLATFORM || 'macOS',
@@ -37,7 +43,7 @@ exports.config = {
         maxInstances: streams,
         browserName: 'chrome',
         'goog:chromeOptions': {
-            args: process.env.HL === '1' ? ['--headless', '--enable-automation', '--disable-gpu'] : ['--enable-automation'],
+            args: chromeArgs,
             binary: chromeBinary,
             prefs: {
                 credentials_enable_service: false,
