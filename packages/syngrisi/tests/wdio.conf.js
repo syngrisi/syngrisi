@@ -93,6 +93,7 @@ exports.config = {
                 outputDir: 'allure-results',
                 disableWebdriverStepsReporting: true,
                 disableWebdriverScreenshotsReporting: true,
+                addConsoleLogs: true,
             },
         ],
     ],

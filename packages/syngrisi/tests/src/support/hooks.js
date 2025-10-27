@@ -152,8 +152,10 @@ exports.hooks = {
         require('../utills/addCommands');
         browser.setWindowSize(1366, 768);
     },
-    // beforeStep: function ({uri, feature, step}, context) {
-    // },
+    beforeStep: function ({ uri, feature, step }, context) {
+        const allureReporter = require('@wdio/allure-reporter').default;
+        allureReporter.addStep(`${step.step.keyword}${step.step.text}`);
+    },
     afterStep: function ({ uri, feature, step }, context, { error, result, duration, passed }) {
         // console.log({ step });
         if (!passed) {
@@ -163,7 +165,7 @@ exports.hooks = {
                 .replace(/"/g, '@')
                 .replace(/:/g, '')
                 .replace(/\//g, '_')
-            }`;
+                }`;
             browser.saveScreenshot(`${baseFileName}.png`);
             const errMsg = `${cid}# error in: /${step.step.text}:${step.sourceLocation.uri}:${step.step.location.line}, ${step.step.location.column}\n`
                 + error + '\n'
