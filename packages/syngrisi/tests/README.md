@@ -5,8 +5,9 @@ WebdriverIO [Cucumber Boilerplate project](https://github.com/webdriverio/cucumb
 
 ## Quick Start
 
-```shell script
-npm i
+```shell
+nvm use v14.20.0
+npm install
 npm test                        # to run all tests in headless mode
 npm run testui                  # to run all tests in normal mode
 npx wdio --spec <path to spec>  # run particular spec
@@ -16,7 +17,7 @@ npx wdio --spec <path to spec>  # run particular spec
 Run tests with custom server Nodejs path
 
 ```shell
- SYNGRISI_TEST_SERVER_NODE_PATH=$(nvm which v20.19.2) npx wdio --spec features/AUTH/login_smoke.feature
+SYNGRISI_TEST_SERVER_NODE_PATH=$(nvm which v20.19.2) npx wdio --spec features/AUTH/login_smoke.feature
 ```
 
 ## Chrome 118
@@ -33,7 +34,7 @@ Local runs require a Chrome 118 binary. Download it with `@puppeteer/browsers` a
     The command prints the absolute path to the downloaded executable.
 
 3. Create `packages/syngrisi/tests/.env` (see the sample below) and assign that path to `CHROME_BINARY`. WDIO reads the value and injects it into `goog:chromeOptions.binary`.
-4. Switch back to Node 14 before running the tests: `nvm use v14.20.0`.
+4. Switch back to Node 14 before running the tests: `nvm use v14.20.0` and reinstall node modules if you had a different version active (`npm install`).
 
 `CHROME_BINARY` must be an absolute path. Example:
 

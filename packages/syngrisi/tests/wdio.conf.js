@@ -6,6 +6,14 @@ const hasha = require('hasha');
 
 const { hooks } = require('./src/support/hooks');
 
+if (!process.env.CHROME_BINARY) {
+    console.warn('Warning: CHROME_BINARY is not set. Falling back to the bundled Chrome binary.');
+}
+
+if (!process.env.SYNGRISI_TEST_SERVER_NODE_PATH) {
+    console.warn('Warning: SYNGRISI_TEST_SERVER_NODE_PATH is not set. The default Node executable will be used.');
+}
+
 const streams = process.env.DOCKER === '1' ? 1 : (parseInt(process.env.STREAMS, 10) || 3);
 const chromeBinary = process.env.CHROME_BINARY
     || path.resolve(__dirname, './chrome/chrome/mac_arm-118.0.5993.70/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing');
