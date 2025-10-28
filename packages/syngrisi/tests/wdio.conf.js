@@ -57,7 +57,7 @@ exports.config = {
     }],
     // Level of logging verbosity: trace | debug | info | warn | error | silent
     logLevel: 'warn',
-    // outputDir: path.join(__dirname, '/logs'),
+    outputDir: path.join(__dirname, '/logs'),
     //
     // Set specific log levels per logger
     // loggers:

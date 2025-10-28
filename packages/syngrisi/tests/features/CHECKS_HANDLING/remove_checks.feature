@@ -62,6 +62,7 @@ Feature: Remove checks
         Then I expect that element "//*[@data-related-check-item='CheckName-1']" does appear exactly "2" times
         When I click on the element "(//*[@data-related-check-item='CheckName-1'])[2]"
 
+
         When I wait on element "//*[@data-check-header-name]//*[@data-test='check-status']/span[text()='new']" to be displayed
 
         When I click on the element ".modal [data-test='check-remove-icon']"

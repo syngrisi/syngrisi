@@ -1,3 +1,10 @@
 {
-    "zencoder.enableRepoIndexing": true
+  "zencoder.enableRepoIndexing": true,
+  "playwright-bdd-helper.componentsFilePath": "packages/syngrisi/src/dummy.po.ts",
+  "cucumberautocomplete.steps": [
+    "packages/syngrisi/tests/step_definitions/**/*.js"
+  ],
+  // "cucumberautocomplete.strictGherkinCompletion": true,
+  "cucumberautocomplete.syncfeatures": "packages/syngrisi/tests/features/**/*.feature",
+  "playwright-bdd-helper.commandTemplate": "npx cross-env LOG=1 npx wdio --spec \"{{featurePath}}\""
 }

@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import checkClass from '../src/support/check/checkClass';
 import checkContainsAnyText from '../src/support/check/checkContainsAnyText';
 import checkIsEmpty from '../src/support/check/checkIsEmpty';
@@ -175,7 +176,6 @@ Then(
 );
 
 Then(
-    // eslint-disable-next-line max-len
     /^I wait on element "([^"]*)?"(?: for (\d+)ms)*(?: to( not)* (be checked|be enabled|be selected|be displayed|not be displayed|contain a text|contain a value|exist|clickable))*$/,
     {
         wrapperOptions: {
