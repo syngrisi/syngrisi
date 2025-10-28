@@ -112,9 +112,13 @@ Then(/^I expect that(:? (\d)th)? VRS check "([^"]*)" has "([^"]*)" status$/, (nu
 When(/^I remove the "([^"]*)" check$/, function (name) {
     const removeIcon = $(`[data-check='${name}'] [data-test='check-remove-icon']`);
     removeIcon.waitForDisplayed();
+    removeIcon.scrollIntoView({ block: 'center', inline: 'center' });
+    removeIcon.waitForClickable({ timeout: 5000 });
     removeIcon.click();
     const confirmButton = $(`[data-test="check-remove-icon-confirm"][data-confirm-button-name="${name}"]`);
     confirmButton.waitForDisplayed();
+    confirmButton.scrollIntoView({ block: 'center', inline: 'center' });
+    confirmButton.waitForClickable({ timeout: 5000 });
     browser.pause(500);
     confirmButton.click();
 });
