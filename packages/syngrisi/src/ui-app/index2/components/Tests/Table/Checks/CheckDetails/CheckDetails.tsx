@@ -55,6 +55,12 @@ export function CheckDetails({
     const currentCheck = initCheckData;
     const textLoader = <Loader size="xs" color="blue" variant="dots" />;
 
+    useEffect(() => {
+        if (initCheckData?._id) {
+            setRelatedActiveCheckId(initCheckData._id);
+        }
+    }, [initCheckData?._id]);
+
     const currentCheckSafe = {
         _id: currentCheck?._id,
         name: currentCheck?.name || '',
@@ -86,6 +92,9 @@ export function CheckDetails({
         diffId: { filename: currentCheck?.diffId?.filename },
 
         parsedResult: currentCheck?.result ? JSON.parse(currentCheck?.result) : null,
+        // Add enriched flags for AcceptButton icon state
+        isCurrentlyAccepted: currentCheck?.isCurrentlyAccepted,
+        wasAcceptedEarlier: currentCheck?.wasAcceptedEarlier,
     };
 
     const baselineQuery = useQuery(

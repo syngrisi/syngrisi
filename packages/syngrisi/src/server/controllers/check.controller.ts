@@ -16,14 +16,22 @@ const get = catchAsync(async (req: ExtRequest, res: Response) => {
 
     const options = pick(req.query, ['sortBy', 'limit', 'page', 'populate']);
     const result = await genericService.get('VRSCheck', filter, options);
-    res.send(result);
+    const resultsWithAcceptance = await checkService.enrichChecksWithCurrentAcceptance(result.results);
+    res.send({
+        ...result,
+        results: resultsWithAcceptance,
+    });
 });
 
 const getViaPost = catchAsync(async (req: ExtRequest, res: Response) => {
     const filter = req.body.filter ? pick(req.body, ['filter']).filter : {};
     const options = req.body.options ? pick(req.body, ['options']).options : {};
     const result = await genericService.get('VRSCheck', filter, options);
-    res.send(result);
+    const resultsWithAcceptance = await checkService.enrichChecksWithCurrentAcceptance(result.results);
+    res.send({
+        ...result,
+        results: resultsWithAcceptance,
+    });
 });
 
 const update = catchAsync(async (req: ExtRequest, res: Response) => {
