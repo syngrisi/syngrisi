@@ -32,7 +32,7 @@ export function CheckModal({ relatedRendered = true, apikey }: Props) {
             setInitCheckId(query.checkId);
             checkModalHandlers.open();
         }
-    }, [query.modalIsOpen]);
+    }, [query.modalIsOpen, query.checkId]);
 
     const closeHandler = () => {
         checkModalHandlers.close();
