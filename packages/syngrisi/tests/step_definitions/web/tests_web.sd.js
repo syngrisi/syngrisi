@@ -1,10 +1,11 @@
 /* eslint-disable no-console,func-names,no-restricted-syntax,no-await-in-loop */
-const { When, Then } = require('cucumber');
-const YAML = require('yaml');
-const fs = require('fs');
-const { TableVRSComp } = require('../../src/PO/vrs/tableVRS.comp');
-const { default: checkVRS } = require('../../src/support/check/checkVrs');
-const { fillCommonPlaceholders } = require('../../src/utills/common');
+import { When, Then } from '@wdio/cucumber-framework';
+import YAML from 'yaml';
+import fs from 'fs';
+import { TableVRSComp } from '../../src/PO/vrs/tableVRS.comp.js';
+import checkVRS from '../../src/support/check/checkVrs.js';
+import { fillCommonPlaceholders, getConfig } from '../../src/utills/common.js';
+import { getVDriver } from '../../src/utills/vDriver.js';
 
 When(/^I click on "([^"]*)" VRS test$/, (testName) => {
     TableVRSComp.init();
@@ -103,7 +104,7 @@ When(/^I expect that(:? (\d)th)? test "([^"]*)" (has|contains) "([^"]*)" (status
             return;
         }
         expect(el)
-            .toHaveTextContaining(fieldValue);
+            .toHaveText(fieldValue, { containing: true });
     });
 
 When(/^I expect that(:? (\d)th)? VRS test "([^"]*)" has blink icon$/,
@@ -134,7 +135,9 @@ When(/^I create "([^"]*)" tests with params:$/, { timeout: 600000 }, async funct
     for (const i of Array.from(Array(parseInt(num, 10))
         .keys())) {
         // console.log(`Create test # ${i}`);
-        test = await browser.vDriver.startTestSession({
+        const driver = getVDriver();
+        console.log('[create tests with params] vDriver before startTestSession:', driver);
+        test = await driver.startTestSession({
             params: {
                 app: params.appName || params.project || 'Test App',
                 test: `${params.testName} - ${i + 1}`,
@@ -145,10 +148,11 @@ When(/^I create "([^"]*)" tests with params:$/, { timeout: 600000 }, async funct
                 suite: params.suite || 'Integration suite',
             },
         });
-        browser.pause(300);
+        await browser.pause(300);
 
         const filePath = params.filePath || 'files/A.png';
-        const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${filePath}`);
+        const config = getConfig();
+        const imageBuffer = fs.readFileSync(`${config.rootPath}/${filePath}`);
         const checkName = params.checkName || `Check - ${Math.random()
             .toString(36)
             .substring(7)}`;
@@ -159,7 +163,7 @@ When(/^I create "([^"]*)" tests with params:$/, { timeout: 600000 }, async funct
         // console.log({ test });
         this.STATE.test = test;
         this.STATE.currentCheck = checkResult;
-        await browser.vDriver.stopTestSession();
+        await driver.stopTestSession();
     }
 });
 
@@ -173,7 +177,9 @@ When(/^I create "([^"]*)" tests with:$/, { timeout: 60000000 }, async function (
     }
 
     const createTest = async (params) => {
-        await browser.vDriver.startTestSession({
+        const driver = getVDriver();
+        console.log('[createTest helper] vDriver before startTestSession:', driver);
+        await driver.startTestSession({
             params: {
                 app: params.project || 'Test App',
                 branch: params.branch || 'integration',
@@ -186,16 +192,17 @@ When(/^I create "([^"]*)" tests with:$/, { timeout: 60000000 }, async function (
                 suite: params.suiteName || 'Integration suite',
             },
         });
-        browser.pause(300);
+        await browser.pause(300);
         const checkResult = [];
         for (const check of params.checks) {
             const filepath = check.filePath || 'files/A.png';
-            const imageBuffer = fs.readFileSync(`${browser.config.rootPath}/${filepath}`);
+            const config = getConfig();
+            const imageBuffer = fs.readFileSync(`${config.rootPath}/${filepath}`);
             checkResult.push(await checkVRS(check.checkName, imageBuffer, check));
         }
 
         this.STATE.currentCheck = checkResult[0];
-        await browser.vDriver.stopTestSession();
+        await driver.stopTestSession();
     };
     for (const i of Array.from(Array(parseInt(num, 10))
         .keys())) {
@@ -205,12 +212,206 @@ When(/^I create "([^"]*)" tests with:$/, { timeout: 60000000 }, async function (
     }
 });
 
-When(/^I unfold the test "([^"]*)"$/, function (name) {
-    const testElement = $(`[data-table-test-name=${name}]`);
-    testElement.waitForDisplayed({ timeout: 7000 });
-    testElement.click();
-    browser.waitUntil(
-        () => $$('[data-table-check-name]').find((x) => x.isDisplayed()),
-        { timeout: 7000 }
-    );
+When(/^I unfold the test "([^"]*)"$/, async function (name) {
+    const candidateSelectors = [
+        `[data-table-test-name="${name}"]`,
+        `tr[data-row-name="${name}"]`,
+    ];
+
+    let testElement;
+    let selectedSelector;
+    for (const selector of candidateSelectors) {
+        // eslint-disable-next-line no-await-in-loop
+        const candidate = await $(selector);
+        // eslint-disable-next-line no-await-in-loop
+        if (await candidate.isExisting()) {
+            // eslint-disable-next-line no-await-in-loop
+            const tagName = await candidate.getTagName();
+            if (process.env.DBG === '1') {
+                console.log(`[unfoldTest] matched selector "${selector}" with tag "${tagName}"`);
+            }
+            // eslint-disable-next-line no-await-in-loop
+            const rowCandidate = tagName === 'tr'
+                ? candidate
+                : await candidate.$('./ancestor::tr[1]');
+            // eslint-disable-next-line no-await-in-loop
+            if (await rowCandidate?.isExisting()) {
+                testElement = rowCandidate;
+                selectedSelector = selector;
+                break;
+            }
+        }
+    }
+
+    if (!testElement) {
+        throw new Error(`Unable to locate test row for "${name}"`);
+    }
+
+    await testElement.scrollIntoView({ block: 'center', inline: 'center' });
+    await testElement.waitForDisplayed({ timeout: 10000 });
+
+    // Add retry logic for clicking to handle race condition in collapse component
+    const maxRetries = 3;
+    let lastError;
+    let rowNameAttr;
+
+    if (process.env.DBG === '1') {
+        rowNameAttr = await testElement.getAttribute('data-row-name');
+        console.log(`[unfoldTest] using row for selector "${selectedSelector}" (rowName="${rowNameAttr}")`);
+    }
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            if (attempt > 1) {
+                console.log(`[unfoldTest] Retry attempt ${attempt}/${maxRetries} for test "${name}"`);
+                await browser.pause(500); // Small pause between retries
+            }
+
+            await testElement.click();
+
+            if (process.env.DBG === '1') {
+                const siblingInfo = await browser.execute((rowName) => {
+                    const selector = rowName ? `tr[data-row-name="${rowName}"]` : null;
+                    const row = selector ? document.querySelector(selector) : null;
+                    if (!row) {
+                        return { foundRow: false };
+                    }
+                    const sibling = row.nextElementSibling;
+                    if (!sibling) {
+                        return { foundRow: true, hasSibling: false };
+                    }
+                    return {
+                        foundRow: true,
+                        hasSibling: true,
+                        siblingTag: sibling.tagName,
+                        collapseExists: !!sibling.querySelector('[data-test="table-test-collapsed-row"]'),
+                    };
+                }, rowNameAttr || null);
+                console.log('[unfoldTest] sibling info:', siblingInfo);
+                const collapseState = await browser.execute((rowName) => {
+                    const selector = rowName ? `tr[data-row-name="${rowName}"]` : null;
+                    const row = selector ? document.querySelector(selector) : null;
+                    const collapse = row?.nextElementSibling?.querySelector('[data-test="table-test-collapsed-row"]');
+                    if (!collapse) {
+                        return null;
+                    }
+                    const style = window.getComputedStyle(collapse);
+                    return {
+                        display: style.display,
+                        visibility: style.visibility,
+                        height: style.height,
+                        maxHeight: style.maxHeight,
+                        dataState: collapse.getAttribute('data-state'),
+                        ariaHidden: collapse.getAttribute('aria-hidden'),
+                    };
+                }, rowNameAttr || null);
+                console.log('[unfoldTest] collapse state:', collapseState);
+                const collapseHtml = await browser.execute((rowName) => {
+                    const selector = rowName ? `tr[data-row-name="${rowName}"]` : null;
+                    const row = selector ? document.querySelector(selector) : null;
+                    const collapse = row?.nextElementSibling?.querySelector('[data-test="table-test-collapsed-row"]');
+                    return collapse ? collapse.innerHTML : null;
+                }, rowNameAttr || null);
+                if (collapseHtml) {
+                    console.log('[unfoldTest] collapse html snippet:', collapseHtml.slice(0, 500));
+                }
+            }
+
+            await browser.waitUntil(async () => {
+                const isOpen = await browser.execute((rowName) => {
+                    const selector = rowName ? `tr[data-row-name="${rowName}"]` : null;
+                    const row = selector ? document.querySelector(selector) : null;
+                    const collapse = row?.nextElementSibling?.querySelector('[data-test="table-test-collapsed-row"]');
+                    if (!collapse) {
+                        return { aria: null, previews: 0, display: null, height: 0 };
+                    }
+                    const style = window.getComputedStyle(collapse);
+                    const rect = collapse.getBoundingClientRect();
+                    return {
+                        aria: collapse.getAttribute('aria-hidden'),
+                        previews: collapse.querySelectorAll('[data-test="data-table-check-name"], [data-test-preview-image]').length,
+                        display: style.display,
+                        height: rect.height,
+                    };
+                }, rowNameAttr || null);
+                if (process.env.DBG === '1') {
+                    console.log('[unfoldTest] collapse aria-hidden state:', isOpen);
+                }
+                return isOpen
+                    && (isOpen.aria === 'false' || isOpen.aria === false)
+                    && isOpen.display !== 'none'
+                    && (isOpen.height || 0) > 0;
+            }, { timeout: 30000, interval: 200, timeoutMsg: 'Collapse element did not become visible/expanded after 30s' });
+
+            await browser.waitUntil(async () => {
+                const collapseRoot = await $('[data-test="table-test-collapsed-row"][aria-hidden="false"]');
+                if (!await collapseRoot.isExisting()) {
+                    return false;
+                }
+
+                const visiblePreview = await browser.execute(() => {
+                    const collapse = document.querySelector('[data-test="table-test-collapsed-row"][aria-hidden="false"]');
+                    if (!collapse) {
+                        return { anyVisible: false, debug: [] };
+                    }
+
+                    const candidates = Array.from(
+                        collapse.querySelectorAll('[data-test-preview-image], [data-check-previw-link]'),
+                    ).map((el) => {
+                        const content = el.querySelector('img, canvas, picture, svg') || el;
+                        return { wrapper: el, content };
+                    });
+
+                    const debug = candidates.map(({ wrapper, content }) => {
+                        const wrapperStyle = window.getComputedStyle(wrapper);
+                        const contentStyle = window.getComputedStyle(content);
+                        const wrapperRect = wrapper.getBoundingClientRect();
+                        const contentRect = content.getBoundingClientRect();
+                        return {
+                            tag: wrapper.tagName,
+                            previewAttr: wrapper.getAttribute('data-test-preview-image'),
+                            linkAttr: wrapper.getAttribute('data-check-previw-link'),
+                            classes: wrapper.className,
+                            display: wrapperStyle.display,
+                            visibility: wrapperStyle.visibility,
+                            width: wrapperRect.width,
+                            height: wrapperRect.height,
+                            contentTag: content.tagName,
+                            contentDisplay: contentStyle.display,
+                            contentVisibility: contentStyle.visibility,
+                            contentWidth: contentRect.width,
+                            contentHeight: contentRect.height,
+                        };
+                    });
+
+                    const anyVisible = candidates.some(({ content }) => {
+                        const style = window.getComputedStyle(content);
+                        if (style.display === 'none' || style.visibility === 'hidden') {
+                            return false;
+                        }
+                        const rect = content.getBoundingClientRect();
+                        return rect.width > 1 && rect.height > 1;
+                    });
+
+                    return { anyVisible, debug };
+                });
+
+                if (process.env.DBG === '1') {
+                    console.log('[unfoldTest] preview candidates:', visiblePreview.debug);
+                }
+
+                return visiblePreview.anyVisible;
+            }, { timeout: 20000, interval: 200 });
+
+            // If we reach here, both waitUntil succeeded - break out of retry loop
+            break;
+        } catch (error) {
+            lastError = error;
+            if (attempt === maxRetries) {
+                console.log(`[unfoldTest] All ${maxRetries} attempts failed for test "${name}"`);
+                throw new Error(`Failed to unfold test "${name}" after ${maxRetries} attempts. Last error: ${error.message}`);
+            }
+            // If not last attempt, loop will retry
+        }
+    }
 });
