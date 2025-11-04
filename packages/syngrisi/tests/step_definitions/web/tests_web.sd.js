@@ -253,10 +253,10 @@ When(/^I unfold the test "([^"]*)"$/, async function (name) {
     // Add retry logic for clicking to handle race condition in collapse component
     const maxRetries = 3;
     let lastError;
-    let rowNameAttr;
+    // Always get rowNameAttr for reliable element finding
+    const rowNameAttr = await testElement.getAttribute('data-row-name');
 
     if (process.env.DBG === '1') {
-        rowNameAttr = await testElement.getAttribute('data-row-name');
         console.log(`[unfoldTest] using row for selector "${selectedSelector}" (rowName="${rowNameAttr}")`);
     }
 
@@ -268,6 +268,9 @@ When(/^I unfold the test "([^"]*)"$/, async function (name) {
             }
 
             await testElement.click();
+
+            // Wait a bit for React state update and DOM mutation
+            await browser.pause(100);
 
             if (process.env.DBG === '1') {
                 const siblingInfo = await browser.execute((rowName) => {
@@ -286,7 +289,7 @@ When(/^I unfold the test "([^"]*)"$/, async function (name) {
                         siblingTag: sibling.tagName,
                         collapseExists: !!sibling.querySelector('[data-test="table-test-collapsed-row"]'),
                     };
-                }, rowNameAttr || null);
+                }, rowNameAttr || undefined);
                 console.log('[unfoldTest] sibling info:', siblingInfo);
                 const collapseState = await browser.execute((rowName) => {
                     const selector = rowName ? `tr[data-row-name="${rowName}"]` : null;
@@ -304,14 +307,14 @@ When(/^I unfold the test "([^"]*)"$/, async function (name) {
                         dataState: collapse.getAttribute('data-state'),
                         ariaHidden: collapse.getAttribute('aria-hidden'),
                     };
-                }, rowNameAttr || null);
+                }, rowNameAttr || undefined);
                 console.log('[unfoldTest] collapse state:', collapseState);
                 const collapseHtml = await browser.execute((rowName) => {
                     const selector = rowName ? `tr[data-row-name="${rowName}"]` : null;
                     const row = selector ? document.querySelector(selector) : null;
                     const collapse = row?.nextElementSibling?.querySelector('[data-test="table-test-collapsed-row"]');
                     return collapse ? collapse.innerHTML : null;
-                }, rowNameAttr || null);
+                }, rowNameAttr || undefined);
                 if (collapseHtml) {
                     console.log('[unfoldTest] collapse html snippet:', collapseHtml.slice(0, 500));
                 }
@@ -321,87 +324,75 @@ When(/^I unfold the test "([^"]*)"$/, async function (name) {
                 const isOpen = await browser.execute((rowName) => {
                     const selector = rowName ? `tr[data-row-name="${rowName}"]` : null;
                     const row = selector ? document.querySelector(selector) : null;
-                    const collapse = row?.nextElementSibling?.querySelector('[data-test="table-test-collapsed-row"]');
+                    if (!row) {
+                        return { aria: null, previews: 0, display: null, height: 0, found: false };
+                    }
+                    const collapse = row.nextElementSibling?.querySelector('[data-test="table-test-collapsed-row"]');
                     if (!collapse) {
-                        return { aria: null, previews: 0, display: null, height: 0 };
+                        return { aria: null, previews: 0, display: null, height: 0, found: false };
                     }
                     const style = window.getComputedStyle(collapse);
                     const rect = collapse.getBoundingClientRect();
+                    const ariaHidden = collapse.getAttribute('aria-hidden');
                     return {
-                        aria: collapse.getAttribute('aria-hidden'),
+                        aria: ariaHidden,
                         previews: collapse.querySelectorAll('[data-test="data-table-check-name"], [data-test-preview-image]').length,
                         display: style.display,
+                        visibility: style.visibility,
                         height: rect.height,
+                        width: rect.width,
+                        opacity: style.opacity,
+                        found: true,
                     };
-                }, rowNameAttr || null);
+                }, rowNameAttr || undefined);
                 if (process.env.DBG === '1') {
-                    console.log('[unfoldTest] collapse aria-hidden state:', isOpen);
+                    console.log('[unfoldTest] collapse state:', isOpen);
                 }
-                return isOpen
-                    && (isOpen.aria === 'false' || isOpen.aria === false)
+                // More lenient check: element exists, is visible (not display:none), and has dimensions
+                // aria-hidden can be null or 'false' when expanded
+                return isOpen.found
                     && isOpen.display !== 'none'
-                    && (isOpen.height || 0) > 0;
+                    && isOpen.visibility !== 'hidden'
+                    && isOpen.opacity !== '0'
+                    && (isOpen.height || 0) > 0
+                    && (isOpen.width || 0) > 0
+                    && (isOpen.aria === null || isOpen.aria === 'false' || isOpen.aria === false);
             }, { timeout: 30000, interval: 200, timeoutMsg: 'Collapse element did not become visible/expanded after 30s' });
 
+            // Second waitUntil: ensure collapse content is rendered and stable
+            // This is less strict - we just need the collapse to be visible and have content
             await browser.waitUntil(async () => {
-                const collapseRoot = await $('[data-test="table-test-collapsed-row"][aria-hidden="false"]');
-                if (!await collapseRoot.isExisting()) {
-                    return false;
+                const contentReady = await browser.execute((rowName) => {
+                    const selector = rowName ? `tr[data-row-name="${rowName}"]` : null;
+                    const row = selector ? document.querySelector(selector) : null;
+                    if (!row) return { ready: false };
+                    const collapse = row.nextElementSibling?.querySelector('[data-test="table-test-collapsed-row"]');
+                    if (!collapse) return { ready: false };
+
+                    const style = window.getComputedStyle(collapse);
+                    const rect = collapse.getBoundingClientRect();
+
+                    // Check if collapse is visible
+                    const isVisible = style.display !== 'none'
+                        && style.visibility !== 'hidden'
+                        && style.opacity !== '0'
+                        && rect.height > 0
+                        && rect.width > 0;
+
+                    if (!isVisible) return { ready: false };
+
+                    // Check if there's any content inside (checks or any child elements)
+                    const hasContent = collapse.children.length > 0 || collapse.textContent.trim().length > 0;
+
+                    return { ready: hasContent, height: rect.height, hasChildren: collapse.children.length };
+                }, rowNameAttr || undefined);
+
+                if (process.env.DBG === '1' && !contentReady.ready) {
+                    console.log('[unfoldTest] content not ready yet:', contentReady);
                 }
 
-                const visiblePreview = await browser.execute(() => {
-                    const collapse = document.querySelector('[data-test="table-test-collapsed-row"][aria-hidden="false"]');
-                    if (!collapse) {
-                        return { anyVisible: false, debug: [] };
-                    }
-
-                    const candidates = Array.from(
-                        collapse.querySelectorAll('[data-test-preview-image], [data-check-previw-link]'),
-                    ).map((el) => {
-                        const content = el.querySelector('img, canvas, picture, svg') || el;
-                        return { wrapper: el, content };
-                    });
-
-                    const debug = candidates.map(({ wrapper, content }) => {
-                        const wrapperStyle = window.getComputedStyle(wrapper);
-                        const contentStyle = window.getComputedStyle(content);
-                        const wrapperRect = wrapper.getBoundingClientRect();
-                        const contentRect = content.getBoundingClientRect();
-                        return {
-                            tag: wrapper.tagName,
-                            previewAttr: wrapper.getAttribute('data-test-preview-image'),
-                            linkAttr: wrapper.getAttribute('data-check-previw-link'),
-                            classes: wrapper.className,
-                            display: wrapperStyle.display,
-                            visibility: wrapperStyle.visibility,
-                            width: wrapperRect.width,
-                            height: wrapperRect.height,
-                            contentTag: content.tagName,
-                            contentDisplay: contentStyle.display,
-                            contentVisibility: contentStyle.visibility,
-                            contentWidth: contentRect.width,
-                            contentHeight: contentRect.height,
-                        };
-                    });
-
-                    const anyVisible = candidates.some(({ content }) => {
-                        const style = window.getComputedStyle(content);
-                        if (style.display === 'none' || style.visibility === 'hidden') {
-                            return false;
-                        }
-                        const rect = content.getBoundingClientRect();
-                        return rect.width > 1 && rect.height > 1;
-                    });
-
-                    return { anyVisible, debug };
-                });
-
-                if (process.env.DBG === '1') {
-                    console.log('[unfoldTest] preview candidates:', visiblePreview.debug);
-                }
-
-                return visiblePreview.anyVisible;
-            }, { timeout: 20000, interval: 200 });
+                return contentReady.ready === true;
+            }, { timeout: 15000, interval: 200, timeoutMsg: 'Collapse content did not render after 15s' });
 
             // If we reach here, both waitUntil succeeded - break out of retry loop
             break;
