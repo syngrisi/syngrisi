@@ -117,6 +117,8 @@ export function Row(
                         pt={10}
                         pb={10}
                         data-test="table-test-collapsed-row"
+                        transitionDuration={200}
+                        transitionTimingFunction="ease-out"
                     >
                         <Checks item={test} testUpdateQuery={testUpdateQuery} infinityQuery={infinityQuery} />
                     </Collapse>

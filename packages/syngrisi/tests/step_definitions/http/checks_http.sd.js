@@ -2,7 +2,7 @@
 const { When } = require('cucumber');
 const { requestWithLastSessionSid, fillCommonPlaceholders } = require('../../src/utills/common');
 const fs = require('fs');
-const { default: checkVRS } = require('../../src/support/check/checkVrs');
+const checkVRS = require('../../src/support/check/checkVrs');
 const YAML = require('yaml');
 const { error } = require('winston');
 
