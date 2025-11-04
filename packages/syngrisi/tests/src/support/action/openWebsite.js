@@ -9,5 +9,22 @@ export default (type, page) => {
      * @type {String}
      */
     const url = (type === 'url') ? page : browser.options.baseUrl + page;
-    browser.url(url);
+    try {
+        browser.url(url);
+    } catch (error) {
+        const errorMsg = error.message || error.toString() || '';
+        if (errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed')) {
+            // Browser disconnected, try to reconnect by refreshing
+            console.warn('Browser disconnected during navigation, attempting to reconnect');
+            try {
+                browser.reloadSession();
+                browser.url(url);
+            } catch (reconnectError) {
+                console.error('Failed to reconnect browser:', reconnectError.message);
+                throw error;
+            }
+        } else {
+            throw error;
+        }
+    }
 };
