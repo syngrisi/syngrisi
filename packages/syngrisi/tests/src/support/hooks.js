@@ -166,7 +166,16 @@ exports.hooks = {
                 .replace(/:/g, '')
                 .replace(/\//g, '_')
                 }`;
-            browser.saveScreenshot(`${baseFileName}.png`);
+            try {
+                browser.saveScreenshot(`${baseFileName}.png`);
+            } catch (screenshotError) {
+                const errorMsg = screenshotError.message || screenshotError.toString() || '';
+                if (errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed')) {
+                    console.warn('Browser disconnected, skipping screenshot');
+                } else {
+                    console.warn('Failed to save screenshot:', screenshotError.message);
+                }
+            }
             const errMsg = `${cid}# error in: /${step.step.text}:${step.sourceLocation.uri}:${step.step.location.line}, ${step.step.location.column}\n`
                 + error + '\n'
                 + error?.stack;
@@ -178,7 +187,14 @@ exports.hooks = {
                 if (error.stack) {
                     console.error(error.stack);
                 }
-                browser.debug();
+                try {
+                    browser.debug();
+                } catch (debugError) {
+                    const errorMsg = debugError.message || debugError.toString() || '';
+                    if (errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed')) {
+                        console.warn('Browser disconnected, skipping debug');
+                    }
+                }
             }
         }
     },

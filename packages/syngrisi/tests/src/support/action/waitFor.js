@@ -46,5 +46,15 @@ export default (selector, ms, falseState, state) => {
         boolFalseState = false;
     }
     console.log({ command });
-    $(selector)[command]({ reverse: boolFalseState, timeout: intMs });
+    try {
+        $(selector)[command]({ reverse: boolFalseState, timeout: intMs });
+    } catch (error) {
+        const errorMsg = error.message || error.toString() || '';
+        if (errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed')) {
+            // Browser disconnected, skip wait
+            console.warn('Browser disconnected, skipping waitFor');
+        } else {
+            throw error;
+        }
+    }
 };

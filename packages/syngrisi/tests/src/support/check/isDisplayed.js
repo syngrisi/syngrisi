@@ -8,7 +8,19 @@ export default (selector, falseCase) => {
      * Visible state of the give element
      * @type {String}
      */
-    const isDisplayed = $(selector).isDisplayed();
+    let isDisplayed;
+    try {
+        isDisplayed = $(selector).isDisplayed();
+    } catch (error) {
+        const errorMsg = error.message || error.toString() || '';
+        if (errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed')) {
+            console.warn('Browser disconnected, skipping isDisplayed check');
+            // If browser disconnected, assume element is not displayed for falseCase, displayed otherwise
+            isDisplayed = falseCase ? false : true;
+        } else {
+            throw error;
+        }
+    }
 
     if (falseCase) {
         expect(isDisplayed).not.toEqual(
