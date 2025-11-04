@@ -7,7 +7,7 @@ const fs = require('fs');
 const { Given, When, Then } = require('cucumber');
 const { getDomDump } = require('@syngrisi/wdio-sdk');
 // const SyngrisiDriver = require('@syngrisi/wdio-sdk').SyngrisiDriver;
-const checkVRS = require('../src/support/check/checkVrs').default;
+const checkVRS = require('../src/support/check/checkVrs');
 const waitForAndRefresh = require('../src/support/action/waitForAndRefresh').default;
 // const { startSession, killServer, startDriver } = require('../src/utills/common');
 
