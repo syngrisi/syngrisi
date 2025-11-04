@@ -1,4 +1,4 @@
-export default function (checkName, imageBuffer, params, domDump, suppressErrors) {
+module.exports = function (checkName, imageBuffer, params, domDump, suppressErrors) {
     return new Promise(
         (resolve, reject) => {
             try {

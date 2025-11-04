@@ -1,11 +1,11 @@
 /* eslint-disable no-console,func-names,no-restricted-syntax,no-await-in-loop */
-import { When, Then } from '@wdio/cucumber-framework';
-import YAML from 'yaml';
-import fs from 'fs';
-import { TableVRSComp } from '../../src/PO/vrs/tableVRS.comp.js';
-import checkVRS from '../../src/support/check/checkVrs.js';
-import { fillCommonPlaceholders, getConfig } from '../../src/utills/common.js';
-import { getVDriver } from '../../src/utills/vDriver.js';
+const { When, Then } = require('cucumber');
+const YAML = require('yaml');
+const fs = require('fs');
+const { TableVRSComp } = require('../../src/PO/vrs/tableVRS.comp.js');
+const checkVRS = require('../../src/support/check/checkVrs.js');
+const { fillCommonPlaceholders, getConfig } = require('../../src/utills/common.js');
+const { getVDriver } = require('../../src/utills/vDriver.js');
 
 When(/^I click on "([^"]*)" VRS test$/, (testName) => {
     TableVRSComp.init();

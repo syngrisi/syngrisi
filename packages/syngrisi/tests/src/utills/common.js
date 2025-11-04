@@ -295,6 +295,12 @@ const startDriver = (params) => {
     });
 };
 
+const getConfig = () => {
+    return {
+        rootPath: browser.config.rootPath || process.cwd(),
+    };
+};
+
 module.exports = {
     saveRandomImage,
     startSession,
@@ -307,4 +313,5 @@ module.exports = {
     startDriver,
     getCid,
     clearScreenshotsFolder,
+    getConfig,
 };
