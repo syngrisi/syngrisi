@@ -5,8 +5,10 @@ const YAML = require('yaml');
 Then(/^I expect that the "([^"]*)" saved value equal the "([^"]*)" saved value$/, function (first, second) {
     const firstItem = this.getSavedItem(first);
     const secondItem = this.getSavedItem(second);
-    expect(firstItem.toString())
-        .toBe(secondItem.toString());
+    const firstStr = firstItem !== null && firstItem !== undefined ? firstItem.toString() : '';
+    const secondStr = secondItem !== null && secondItem !== undefined ? secondItem.toString() : '';
+    expect(firstStr)
+        .toBe(secondStr);
 });
 
 Then(/^I expect "([^"]*)" saved object:$/, function (itemName, yml) {
@@ -28,14 +30,17 @@ Then(/^I expect the stored "([^"]*)" string is( not|) (equal|contain):$/, functi
     const assertMethod = `to${capitalize(type)}`;
     // console.log({ assertMethod });
 
+    const expectedStr = expected ? expected.toString().trim() : '';
+    const itemValueStr = itemValue !== null && itemValue !== undefined ? itemValue.toString().trim() : '';
+
     // eslint-disable-next-line no-console
-    console.log('Expect:', expected.toString().trim());
+    console.log('Expect:', expectedStr);
     // eslint-disable-next-line no-console
-    console.log('Stored:', itemValue.toString().trim());
+    console.log('Stored:', itemValueStr);
     if (condition === ' not') {
-        expect(itemValue.trim())
-            .not[assertMethod](expected.toString().trim());
+        expect(itemValueStr)
+            .not[assertMethod](expectedStr);
     } else {
-        expect(itemValue.toString().trim())[assertMethod](expected.trim());
+        expect(itemValueStr)[assertMethod](expectedStr);
     }
 });
