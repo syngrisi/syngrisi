@@ -1,102 +1,122 @@
-Feature: Logs Table Settings
 
-    Background:
-        Given I clear Database and stop Server
-        Given I start Server and start Driver
+Execution of 87 spec files started at 2025-11-04T15:33:35.148Z
 
-    Scenario: Set visible Columns
-        When I go to "logs" page
-        When I wait on element "[data-test='table-header-Id']" to be displayed
-        Then I expect that element "[data-test='table-header-Id']" is displayed
-        Then I expect that element "[data-test='table-header-Level']" is displayed
-        Then I expect that element "[data-test='table-header-Message']" is displayed
-        Then I expect that element "[data-test='table-header-User']" is displayed
-        Then I expect that element "[data-test='table-header-Timestamp']" is displayed
-        Then I expect that element "th" does appear exactly "6" times
-
-        Then I expect that element "[data-test='table-row-Id']" is displayed
-        Then I expect that element "[data-test='table-row-Level']" is displayed
-        Then I expect that element "[data-test='table-row-Message']" is displayed
-        Then I expect that element "[data-test='table-row-User']" is displayed
-        Then I expect that element "[data-test='table-row-Timestamp']" is displayed
-        Then I expect that element "tbody tr:first-of-type td" does appear exactly "6" times
-
-        When I click on the element "[data-test='table-sorting']"
-        When I wait on element "[data-test='settings-visible-columns-Id']" to exist
-        When I click on the element "[data-test='settings-visible-columns-Id']" via js
-        When I wait on element "data-test='table-header-Id'" to not be displayed
-        Then I expect that element "[data-test='table-row-Id']" is not displayed
-        Then I expect that element "th" does appear exactly "5" times
-        Then I expect that element "tbody tr:first-of-type td" does appear exactly "5" times
-
-        When I click on the element "[data-test='settings-visible-columns-Scope']" via js
-        When I wait on element "[data-test='table-header-Scope']" to be displayed
-        Then I expect that element "[data-test='table-row-Scope']" is displayed
-        Then I expect that element "th" does appear exactly "6" times
-        Then I expect that element "tbody tr:first-of-type td" does appear exactly "6" times
-
-        Scenario: Sorting
-            When I create "1" log messages with params:
-            """
-              message: 2-TESTMSG
-              level: info
-            """
-            When I create "1" log messages with params:
-            """
-              message: 0-TESTMSG
-              level: info
-            """
-            When I create "1" log messages with params:
-            """
-              message: 1-TESTMSG
-              level: info
-            """
-            When I go to "logs" page
-            When I wait on element "//*[@data-test='table-row-Message' and contains(., '0-TESTMSG')]" for 10000ms to be displayed
-            Then I expect that element "//*[@data-test='table-row-Message' and contains(., '1-TESTMSG')]" is displayed
-            Then I expect that element "//*[@data-test='table-row-Message' and contains(., '2-TESTMSG')]" is displayed
-            When I execute javascript code:
-            """
-            const elements = Array
-                .from(document.querySelectorAll("[data-test='table-row-Message']"))
-                .filter(x=> x.innerText.includes('-TESTMSG'));
-            const result = elements.map(x=>x.innerText).join(', ');
-            return result;
-            """
-            Then I expect the stored "js" string is equal:
-            """
-              1-TESTMSG, 0-TESTMSG, 2-TESTMSG
-            """
-
-            When I click on the element "[data-test='table-sorting']"
-            When I wait for "3" seconds
-            When I select the option with the text "Message" for element "select[data-test='table-sort-by-select']"
-
-            When I wait for "5" seconds
-            When I execute javascript code:
-            """
-            const elements = Array
-                .from(document.querySelectorAll("[data-test='table-row-Message']"))
-                .filter(x=> x.innerText.includes('-TESTMSG'));
-            const result = elements.map(x=>x.innerText).join(', ');
-            return result;
-            """
-            Then I expect the stored "js" string is equal:
-            """
-              2-TESTMSG, 1-TESTMSG, 0-TESTMSG
-            """
-
-            When I click on the element "[title='sort order is descendant']"
-            When I wait for "5" seconds
-            When I execute javascript code:
-            """
-            const elements = Array
-                .from(document.querySelectorAll("[data-test='table-row-Message']"))
-                .filter(x=> x.innerText.includes('-TESTMSG'));
-            const result = elements.map(x=>x.innerText).join(', ');
-            return result;
-            """
-            Then I expect the stored "js" string is equal:
-            """
-              0-TESTMSG, 1-TESTMSG, 2-TESTMSG
-            """
+rm: ./logs/html-dumps: is a directory
+Starting ChromeDriver 118.0.5993.70 (e52f33f30b91b4ddfad649acddc39ab570473b86-refs/branch-heads/5993@{#1216}) on port 7777
+Only local connections are allowed.
+Please see https://chromedriver.chromium.org/security-considerations for suggestions on keeping ChromeDriver safe.
+IPv4 port not available. Exiting...
+[1762270415.233][SEVERE]: bind() failed: Address already in use (48)
+[0-1] RUNNING in chrome - /features/AP/logs/logs_basics.feature
+[0-2] RUNNING in chrome - /features/AP/logs/logs_filtering.feature
+[0-0] RUNNING in chrome - /features/AP/access.feature
+[0-0] WARNING: cannot stop te Syngrisi server
+[0-0] {
+  result: '\n' +
+    '> @syngrisi/syngrisi@2.2.27-alpha.0 clear_test /Users/a1/Projects/syngrisi/packages/syngrisi\n' +
+    '> mongosh SyngrisiDbTest$CID --eval "db.dropDatabase();" && rm -rf ./baselinesTest/$CID\n' +
+    '\n' +
+    "{ ok: 1, dropped: 'SyngrisiDbTest0' }\n"
+}
+[0-2] {
+  result: '\n' +
+    '> @syngrisi/syngrisi@2.2.27-alpha.0 clear_test /Users/a1/Projects/syngrisi/packages/syngrisi\n' +
+    '> mongosh SyngrisiDbTest$CID --eval "db.dropDatabase();" && rm -rf ./baselinesTest/$CID\n' +
+    '\n' +
+    "{ ok: 1, dropped: 'SyngrisiDbTest2' }\n"
+}
+[0-1] {
+  result: '\n' +
+    '> @syngrisi/syngrisi@2.2.27-alpha.0 clear_test /Users/a1/Projects/syngrisi/packages/syngrisi\n' +
+    '> mongosh SyngrisiDbTest$CID --eval "db.dropDatabase();" && rm -rf ./baselinesTest/$CID\n' +
+    '\n' +
+    "{ ok: 1, dropped: 'SyngrisiDbTest1' }\n"
+}
+[0-2] { isAlive: true }
+[0-0] { isAlive: true }
+[0-1] { isAlive: true }
+[0-2] SERVER IS STARTED, PID: '71447' port: '3004'
+[0-0] SERVER IS STARTED, PID: '71449' port: '3002'
+[0-1] SERVER IS STARTED, PID: '71448' port: '3003'
+[0-2] { command: 'waitForDisplayed' }
+[0-0] WARNING: cannot stop te Syngrisi server
+[0-1] { command: 'waitForDisplayed' }
+[0-2] { command: 'waitForDisplayed' }
+[0-0] {
+  result: '\n' +
+    '> @syngrisi/syngrisi@2.2.27-alpha.0 clear_test /Users/a1/Projects/syngrisi/packages/syngrisi\n' +
+    '> mongosh SyngrisiDbTest$CID --eval "db.dropDatabase();" && rm -rf ./baselinesTest/$CID\n' +
+    '\n' +
+    "{ ok: 1, dropped: 'SyngrisiDbTest0' }\n"
+}
+[0-0] { isAlive: true }
+[0-0] SERVER IS STARTED, PID: '71631' port: '3002'
+[0-1] js result 👉: 1284.5
+[0-1] Expect: 0
+Stored: 1284.5
+[0-1] js result 👉: 0
+[0-1] Expect: 0
+Stored: 0
+[0-1] WARNING: cannot stop te Syngrisi server
+[0-2] WARNING: cannot stop te Syngrisi server
+[0-1] {
+  result: '\n' +
+    '> @syngrisi/syngrisi@2.2.27-alpha.0 clear_test /Users/a1/Projects/syngrisi/packages/syngrisi\n' +
+    '> mongosh SyngrisiDbTest$CID --eval "db.dropDatabase();" && rm -rf ./baselinesTest/$CID\n' +
+    '\n' +
+    "{ ok: 1, dropped: 'SyngrisiDbTest1' }\n"
+}
+[0-2] {
+  result: '\n' +
+    '> @syngrisi/syngrisi@2.2.27-alpha.0 clear_test /Users/a1/Projects/syngrisi/packages/syngrisi\n' +
+    '> mongosh SyngrisiDbTest$CID --eval "db.dropDatabase();" && rm -rf ./baselinesTest/$CID\n' +
+    '\n' +
+    "{ ok: 1, dropped: 'SyngrisiDbTest2' }\n"
+}
+[0-0] { command: 'waitForDisplayed' }
+[0-1] { isAlive: true }
+[0-2] { isAlive: true }
+[0-1] SERVER IS STARTED, PID: '71838' port: '3003'
+[0-2] SERVER IS STARTED, PID: '71840' port: '3004'
+[0-2] { command: 'waitForDisplayed' }
+[0-0] WARNING: cannot stop te Syngrisi server
+[0-2] { command: 'waitForDisplayed' }
+[0-0] {
+  result: '\n' +
+    '> @syngrisi/syngrisi@2.2.27-alpha.0 clear_test /Users/a1/Projects/syngrisi/packages/syngrisi\n' +
+    '> mongosh SyngrisiDbTest$CID --eval "db.dropDatabase();" && rm -rf ./baselinesTest/$CID\n' +
+    '\n' +
+    "{ ok: 1, dropped: 'SyngrisiDbTest0' }\n"
+}
+[0-0] { isAlive: true }
+[0-0] SERVER IS STARTED, PID: '71968' port: '3002'
+[0-2] WARNING: cannot stop te Syngrisi server
+[0-0] { command: 'waitForDisplayed' }
+[0-2] {
+  result: '\n' +
+    '> @syngrisi/syngrisi@2.2.27-alpha.0 clear_test /Users/a1/Projects/syngrisi/packages/syngrisi\n' +
+    '> mongosh SyngrisiDbTest$CID --eval "db.dropDatabase();" && rm -rf ./baselinesTest/$CID\n' +
+    '\n' +
+    "{ ok: 1, dropped: 'SyngrisiDbTest2' }\n"
+}
+[0-2] { isAlive: true }
+[0-0] PASSED in chrome - /features/AP/access.feature
+[0-2] SERVER IS STARTED, PID: '72222' port: '3004'
+[0-2] { command: 'waitForDisplayed' }
+[0-2] { command: 'waitForDisplayed' }
+[0-1] { command: 'waitForDisplayed' }
+[0-1] WARNING: cannot stop te Syngrisi server
+/Users/a1/Projects/syngrisi/packages/syngrisi/tests/node_modules/@wdio/cli/build/interface.js:127
+            throw new Error('Could not find job');
+                  ^
+Error: Could not find job
+    at WDIOCLInterface.clearJob (/Users/a1/Projects/syngrisi/packages/syngrisi/tests/node_modules/@wdio/cli/build/interface.js:127:19)
+    at WDIOCLInterface.emit (events.js:400:28)
+    at WDIOCLInterface.emit (domain.js:475:12)
+    at Launcher.endHandler (/Users/a1/Projects/syngrisi/packages/syngrisi/tests/node_modules/@wdio/cli/build/launcher.js:222:28)
+    at WorkerInstance.emit (events.js:400:28)
+    at WorkerInstance.emit (domain.js:475:12)
+    at WorkerInstance._handleExit (/Users/a1/Projects/syngrisi/packages/syngrisi/tests/src/support/local-runner-patched/build/worker.js:101:14)
+    at ChildProcess.emit (events.js:400:28)
+    at ChildProcess.emit (domain.js:475:12)
+    at Process.ChildProcess._handle.onexit (internal/child_process.js:285:12)
