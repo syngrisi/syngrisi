@@ -50,9 +50,12 @@ export default (selector, ms, falseState, state) => {
         $(selector)[command]({ reverse: boolFalseState, timeout: intMs });
     } catch (error) {
         const errorMsg = error.message || error.toString() || '';
-        if (errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed')) {
-            // Browser disconnected, skip wait
-            console.warn('Browser disconnected, skipping waitFor');
+        const isDisconnected = errorMsg.includes('disconnected')
+            || errorMsg.includes('failed to check if window was closed')
+            || errorMsg.includes('ECONNREFUSED');
+        if (isDisconnected) {
+            // Browser disconnected or ChromeDriver unavailable, skip wait
+            console.warn('Browser disconnected or ChromeDriver unavailable, skipping waitFor');
         } else {
             throw error;
         }
