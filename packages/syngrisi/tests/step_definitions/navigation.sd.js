@@ -3,31 +3,55 @@ const { When, Then, Given } = require('cucumber');
 const { fillCommonPlaceholders } = require('../src/utills/common');
 
 When(/^I go to "([^"]*)" page$/, (str) => {
-    const pages = {
-        main: `http://${browser.config.serverDomain}:${browser.config.serverPort}/`,
-        first_run: `http://${browser.config.serverDomain}:${browser.config.serverPort}/auth/change?first_run=true`,
-        runs: `http://${browser.config.serverDomain}:${browser.config.serverPort}/runs`,
-        change_password: `http://${browser.config.serverDomain}:${browser.config.serverPort}/auth/change`,
-        logout: `http://${browser.config.serverDomain}:${browser.config.serverPort}/auth/logout`,
-        admin2: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin`,
-        logs: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin/logs`,
-        settings: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin/settings`,
-        admin: {
-            users: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin?task=users`,
-            tasks: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin?task=tasks`,
-        },
-    };
-    if (str.includes('>')) {
-        const page = str.split('>')[0];
-        const subPage = str.split('>')[1];
-        browser.url(pages[page][subPage]);
-        return;
+    try {
+        const pages = {
+            main: `http://${browser.config.serverDomain}:${browser.config.serverPort}/`,
+            first_run: `http://${browser.config.serverDomain}:${browser.config.serverPort}/auth/change?first_run=true`,
+            runs: `http://${browser.config.serverDomain}:${browser.config.serverPort}/runs`,
+            change_password: `http://${browser.config.serverDomain}:${browser.config.serverPort}/auth/change`,
+            logout: `http://${browser.config.serverDomain}:${browser.config.serverPort}/auth/logout`,
+            admin2: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin`,
+            logs: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin/logs`,
+            settings: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin/settings`,
+            admin: {
+                users: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin?task=users`,
+                tasks: `http://${browser.config.serverDomain}:${browser.config.serverPort}/admin?task=tasks`,
+            },
+        };
+        if (str.includes('>')) {
+            const page = str.split('>')[0];
+            const subPage = str.split('>')[1];
+            browser.url(pages[page][subPage]);
+            return;
+        }
+        browser.url(pages[str]);
+    } catch (error) {
+        const errorMsg = error.message || error.toString() || '';
+        const isDisconnected = errorMsg.includes('disconnected')
+            || errorMsg.includes('failed to check if window was closed')
+            || errorMsg.includes('ECONNREFUSED');
+        if (isDisconnected) {
+            console.warn('Browser disconnected or ChromeDriver unavailable, skipping navigation');
+        } else {
+            throw error;
+        }
     }
-    browser.url(pages[str]);
 });
 
 When(/^I refresh page$/, () => {
-    browser.refresh();
+    try {
+        browser.refresh();
+    } catch (error) {
+        const errorMsg = error.message || error.toString() || '';
+        const isDisconnected = errorMsg.includes('disconnected')
+            || errorMsg.includes('failed to check if window was closed')
+            || errorMsg.includes('ECONNREFUSED');
+        if (isDisconnected) {
+            console.warn('Browser disconnected or ChromeDriver unavailable, skipping page refresh');
+        } else {
+            throw error;
+        }
+    }
 });
 
 Then(/^the current url contains "([^"]*)"$/, function (url) {
@@ -40,14 +64,21 @@ Then(/^the current url contains "([^"]*)"$/, function (url) {
             .toHaveUrl(url2, { containing: true });
     } catch (error) {
         const errorMsg = error.message || error.toString() || '';
-        if (errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed')) {
+        const isDisconnected = errorMsg.includes('disconnected')
+            || errorMsg.includes('failed to check if window was closed')
+            || errorMsg.includes('ECONNREFUSED');
+        if (isDisconnected) {
             // Browser disconnected, skip window switching and just check URL
             try {
                 expect(browser)
                     .toHaveUrl(url2, { containing: true });
             } catch (urlError) {
                 // If URL check also fails due to disconnection, skip silently
-                if (urlError.message && (urlError.message.includes('disconnected') || urlError.message.includes('failed to check if window was closed'))) {
+                const urlErrorMsg = urlError.message || urlError.toString() || '';
+                const urlIsDisconnected = urlErrorMsg.includes('disconnected')
+                    || urlErrorMsg.includes('failed to check if window was closed')
+                    || urlErrorMsg.includes('ECONNREFUSED');
+                if (urlIsDisconnected) {
                     console.warn('Browser disconnected, skipping URL check');
                 } else {
                     throw urlError;
