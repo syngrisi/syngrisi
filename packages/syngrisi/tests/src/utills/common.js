@@ -260,7 +260,7 @@ const stopServer = () => {
                 .toString();
         }
     } catch (e) {
-        console.log('WARNING: cannot stop te Syngrisi server');
+        console.log('WARNING: cannot stop the Syngrisi server');
         // console.log(e);
     }
 };

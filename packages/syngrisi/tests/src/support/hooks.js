@@ -21,6 +21,12 @@ exports.hooks = {
     onPrepare: function (config, capabilities) {
         const result = child.execSync('rm -f ./logs/*');
         child.execSync('rm -rf ../coverage');
+        // Kill any existing ChromeDriver processes on port 7777
+        try {
+            child.execSync('lsof -ti:7777 | xargs kill -9 2>/dev/null || true', { stdio: 'ignore' });
+        } catch (e) {
+            // Ignore errors if no process found
+        }
         // console.log({ logsRemove: result.toString() });
     },
     /**
@@ -146,9 +152,15 @@ exports.hooks = {
     /**
      * Cucumber-specific hooks
      */
-    // beforeFeature: function (uri, feature, scenarios) {
-    // },
+    beforeFeature: function (uri, feature, scenarios) {
+        const cid = getCid();
+        console.log(`[${cid}] ========== BEFORE FEATURE: ${feature.name} (${uri}) ==========`);
+        console.log(`[${cid}] Feature has ${scenarios.length} scenario(s)`);
+    },
     beforeScenario: function (uri, feature, scenario, sourceLocation) {
+        const cid = getCid();
+        console.log(`[${cid}] ===== BEFORE SCENARIO: ${scenario.name} (${uri}) =====`);
+        console.log(`[${cid}] Scenario tags: ${scenario.tags?.map(t => t.name).join(', ') || 'none'}`);
         require('../utills/addCommands');
         browser.setWindowSize(1366, 768);
     },
@@ -170,8 +182,8 @@ exports.hooks = {
                 browser.saveScreenshot(`${baseFileName}.png`);
             } catch (screenshotError) {
                 const errorMsg = screenshotError.message || screenshotError.toString() || '';
-                if (errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed')) {
-                    console.warn('Browser disconnected, skipping screenshot');
+                if (errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed') || errorMsg.includes('ECONNREFUSED')) {
+                    console.warn('Browser disconnected or ChromeDriver unavailable, skipping screenshot');
                 } else {
                     console.warn('Failed to save screenshot:', screenshotError.message);
                 }
@@ -199,9 +211,75 @@ exports.hooks = {
         }
     },
     afterScenario: async function (uri, feature, scenario, result, sourceLocation) {
-        if (browser.syngrisiServer) await browser.syngrisiServer.kill('SIGINT');
+        const cid = getCid();
+        console.log(`[${cid}] ===== AFTER SCENARIO: ${scenario.name} (${uri}) =====`);
+        console.log(`[${cid}] Scenario result: ${result.status}`);
+        if (browser.syngrisiServer) {
+            try {
+                const serverProcess = browser.syngrisiServer;
+                if (serverProcess && !serverProcess.killed) {
+                    serverProcess.kill('SIGINT');
+                    // Wait max 1 second for graceful shutdown
+                    await Promise.race([
+                        new Promise((resolve) => {
+                            if (serverProcess.killed) {
+                                resolve();
+                                return;
+                            }
+                            const exitHandler = () => {
+                                serverProcess.removeListener('exit', exitHandler);
+                                resolve();
+                            };
+                            serverProcess.once('exit', exitHandler);
+                        }),
+                        new Promise(resolve => setTimeout(resolve, 1000))
+                    ]);
+
+                    // Force kill if still running
+                    if (!serverProcess.killed) {
+                        try {
+                            serverProcess.kill('SIGKILL');
+                        } catch (e) {
+                            // Ignore
+                        }
+                    }
+                }
+            } catch (e) {
+                // Ignore errors when killing server
+            }
+            browser.syngrisiServer = null;
+        }
         // await browser.execute('localStorage.clear()');
     },
-    // afterFeature: function (uri, feature, scenarios) {
-    // }
+    afterFeature: function (uri, feature, scenarios) {
+        const cid = getCid();
+        console.log(`[${cid}] ========== AFTER FEATURE: ${feature.name} (${uri}) ==========`);
+    },
+    onComplete: async function (exitCode, config, capabilities, results) {
+        // Force cleanup of any remaining processes
+        try {
+            // Kill all Syngrisi test servers gracefully
+            try {
+                child.execSync('pkill -SIGINT -f "syngrisi_test_server_" || true', { stdio: 'ignore', timeout: 5000 });
+            } catch (e) {
+                // Ignore
+            }
+            // Wait a bit for graceful shutdown
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            // Force kill if still running
+            try {
+                child.execSync('pkill -9 -f "syngrisi_test_server_" || true', { stdio: 'ignore', timeout: 2000 });
+            } catch (e) {
+                // Ignore
+            }
+            // Kill any remaining ChromeDriver processes
+            try {
+                child.execSync('lsof -ti:7777 | xargs kill -9 2>/dev/null || true', { stdio: 'ignore' });
+            } catch (e) {
+                // Ignore
+            }
+        } catch (e) {
+            // Ignore cleanup errors
+        }
+    },
 };

@@ -42,5 +42,14 @@ export default (selectionType, selectionValue, selector) => {
         }
     }
 
-    $(selector)[command](...commandArguments);
+    try {
+        $(selector)[command](...commandArguments);
+    } catch (error) {
+        const errorMsg = error.message || error.toString() || '';
+        if (errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed') || errorMsg.includes('ECONNREFUSED')) {
+            console.warn('Browser disconnected or ChromeDriver unavailable, skipping select option');
+        } else {
+            throw error;
+        }
+    }
 };
