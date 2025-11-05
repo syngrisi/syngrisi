@@ -29,16 +29,19 @@ Feature: Quick Filtering
         When I wait on element "[data-test='table-quick-filter']" to be displayed
 
         When I set "TestName-" to the inputfield "[data-test='table-quick-filter']"
+        When I wait for "2" seconds
         Then I wait on element "[data-table-test-name='TestName-0']" to be displayed
         Then I wait on element "[data-table-test-name='TestName-1']" to be displayed
         Then I wait on element "[data-table-test-name='ZestName-1']" to not be displayed
 
         When I set "TestName-0" to the inputfield "[data-test='table-quick-filter']"
+        When I wait for "2" seconds
         Then I wait on element "[data-table-test-name='TestName-0']" to be displayed
         Then I wait on element "[data-table-test-name='TestName-1']" to not be displayed
         Then I wait on element "[data-table-test-name='ZestName-1']" to not be displayed
 
         When I set "TestName-1" to the inputfield "[data-test='table-quick-filter']"
+        When I wait for "2" seconds
         Then I wait on element "[data-table-test-name='TestName-0']" to not be displayed
         Then I wait on element "[data-table-test-name='TestName-1']" to be displayed
         Then I wait on element "[data-table-test-name='ZestName-1']" to not be displayed

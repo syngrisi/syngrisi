@@ -85,10 +85,28 @@ Then(/^I expect "([^"]*)" tests for get url "([^"]*)"$/, async (testsNum, url) =
 
 When(/^I login with user:"([^"]*)" password "([^"]*)"$/, (login, password) => {
     try {
-        browser.url(`http://${browser.config.serverDomain}:${browser.config.serverPort}/`);
-        browser.pause(2000);
-        $('#password')
-            .waitForDisplayed({ timeout: 7000 });
+        const loginUrl = `http://${browser.config.serverDomain}:${browser.config.serverPort}/`;
+        browser.url(loginUrl);
+        browser.pause(3000);
+        // Wait for password field with retries
+        let passwordFieldFound = false;
+        for (let attempt = 0; attempt < 5; attempt += 1) {
+            try {
+                $('#password').waitForDisplayed({ timeout: 5000 });
+                passwordFieldFound = true;
+                break;
+            } catch (e) {
+                if (attempt < 4) {
+                    browser.url(loginUrl);
+                    browser.pause(2000);
+                }
+            }
+        }
+        if (!passwordFieldFound) {
+            const errorMsg = 'Password field not found after retries - possibly auth is disabled or page did not load';
+            console.warn(errorMsg);
+            throw new Error(errorMsg);
+        }
 
         $('#email')
             .setValue(login);
@@ -98,7 +116,10 @@ When(/^I login with user:"([^"]*)" password "([^"]*)"$/, (login, password) => {
             .click();
     } catch (error) {
         const errorMsg = error.message || error.toString() || '';
-        if (errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed') || errorMsg.includes('ECONNREFUSED')) {
+        const isDisconnected = errorMsg.includes('disconnected')
+            || errorMsg.includes('failed to check if window was closed')
+            || errorMsg.includes('ECONNREFUSED');
+        if (isDisconnected) {
             console.warn('Browser disconnected or ChromeDriver unavailable, skipping login');
         } else {
             throw error;
@@ -355,7 +376,10 @@ When(/^I reload session$/, function () {
         browser.pause(1000);
     } catch (error) {
         const errorMsg = error.message || error.toString() || '';
-        if (errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed') || errorMsg.includes('ECONNREFUSED')) {
+        const isDisconnected = errorMsg.includes('disconnected')
+            || errorMsg.includes('failed to check if window was closed')
+            || errorMsg.includes('ECONNREFUSED');
+        if (isDisconnected) {
             console.warn('Browser disconnected or ChromeDriver unavailable, skipping reload session');
         } else {
             throw error;

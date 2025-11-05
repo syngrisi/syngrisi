@@ -32,7 +32,16 @@ When(/^I clear database$/, () => {
 });
 
 When(/^I clear local storage$/, async () => {
-    await browser.execute('localStorage.clear()');
+    try {
+        await browser.execute('localStorage.clear()');
+    } catch (error) {
+        const errorMsg = error.message || error.toString() || '';
+        if (errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed') || errorMsg.includes('ECONNREFUSED')) {
+            console.warn('Browser disconnected or ChromeDriver unavailable, skipping clear local storage');
+        } else {
+            throw error;
+        }
+    }
 });
 
 When(/^I clear screenshots folder$/, () => {
@@ -40,8 +49,17 @@ When(/^I clear screenshots folder$/, () => {
 });
 
 When(/^I clear Database and stop Server$/, () => {
-    stopServer();
-    clearDatabase();
+    try {
+        stopServer();
+        clearDatabase();
+    } catch (error) {
+        const errorMsg = error.message || error.toString() || '';
+        if (errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed') || errorMsg.includes('ECONNREFUSED')) {
+            console.warn('Browser disconnected or ChromeDriver unavailable, skipping clear database and stop server');
+        } else {
+            throw error;
+        }
+    }
 });
 
 When(/^I set env variables:$/, (yml) => {

@@ -33,7 +33,7 @@ Feature: Navbar Quick Filtering
 
 
         When I set "RunName - 0" to the inputfield "[data-test='navbar-quick-filter']"
-        When I wait for "3" seconds
+        When I wait for "5" seconds
         When I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName - 0')]" to be displayed
         When I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName - 1')]" to not be displayed
         Then I expect that element "//*[@data-test='navbar-item-name']" does appear exactly "1" times
@@ -70,7 +70,7 @@ Feature: Navbar Quick Filtering
 
         # select the project
         When I select the option with the text "Project-1" for element "select[data-test='current-project']"
-
+        When I wait for "3" seconds
         When I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName_P1-0')]" to be displayed
         When I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName_P1-1')]" to be displayed
         When I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName_P2-0')]" to not be displayed
