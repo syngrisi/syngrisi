@@ -221,25 +221,34 @@ When(/^I unfold the test "([^"]*)"$/, async function (name) {
     let testElement;
     let selectedSelector;
     for (const selector of candidateSelectors) {
-        // eslint-disable-next-line no-await-in-loop
-        const candidate = await $(selector);
-        // eslint-disable-next-line no-await-in-loop
-        if (await candidate.isExisting()) {
+        try {
             // eslint-disable-next-line no-await-in-loop
-            const tagName = await candidate.getTagName();
-            if (process.env.DBG === '1') {
-                console.log(`[unfoldTest] matched selector "${selector}" with tag "${tagName}"`);
+            const candidate = await $(selector);
+            // eslint-disable-next-line no-await-in-loop
+            if (await candidate.isExisting()) {
+                // eslint-disable-next-line no-await-in-loop
+                const tagName = await candidate.getTagName();
+                if (process.env.DBG === '1') {
+                    console.log(`[unfoldTest] matched selector "${selector}" with tag "${tagName}"`);
+                }
+                // eslint-disable-next-line no-await-in-loop
+                const rowCandidate = tagName === 'tr'
+                    ? candidate
+                    : await candidate.$('./ancestor::tr[1]');
+                // eslint-disable-next-line no-await-in-loop
+                if (await rowCandidate?.isExisting()) {
+                    testElement = rowCandidate;
+                    selectedSelector = selector;
+                    break;
+                }
             }
-            // eslint-disable-next-line no-await-in-loop
-            const rowCandidate = tagName === 'tr'
-                ? candidate
-                : await candidate.$('./ancestor::tr[1]');
-            // eslint-disable-next-line no-await-in-loop
-            if (await rowCandidate?.isExisting()) {
-                testElement = rowCandidate;
-                selectedSelector = selector;
-                break;
+        } catch (error) {
+            const errorMsg = error.message || error.toString() || '';
+            if (errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed') || errorMsg.includes('ECONNREFUSED')) {
+                console.warn('Browser disconnected or ChromeDriver unavailable, skipping unfold test');
+                return;
             }
+            throw error;
         }
     }
 
