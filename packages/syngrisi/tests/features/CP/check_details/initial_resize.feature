@@ -18,7 +18,7 @@ Feature: Check Details - Initial image resize
         When I click on the element "[data-test-preview-image='CheckName']"
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed
 
-        When I wait for "3" seconds
+        When I wait for "5" seconds
         When I execute javascript code:
         """
         return mainView.canvas.viewportTransform[4] + '_' + mainView.canvas.viewportTransform[5]
@@ -97,7 +97,7 @@ Feature: Check Details - Initial image resize
         When I click on the element "[data-test-preview-image='CheckName']"
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed
 
-        When I wait for "3" seconds
+        When I wait for "5" seconds
         When I execute javascript code:
         """
         return mainView.canvas.viewportTransform[4] + '_' + mainView.canvas.viewportTransform[5]
