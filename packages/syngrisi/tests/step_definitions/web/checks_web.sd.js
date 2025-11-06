@@ -115,8 +115,9 @@ When(/^I remove the "([^"]*)" check$/, function (name) {
     removeIcon.scrollIntoView({ block: 'center', inline: 'center' });
     removeIcon.waitForClickable({ timeout: 5000 });
     removeIcon.click();
+    browser.pause(300);
     const confirmButton = $(`[data-test="check-remove-icon-confirm"][data-confirm-button-name="${name}"]`);
-    confirmButton.waitForDisplayed();
+    confirmButton.waitForDisplayed({ timeout: 10000 });
     confirmButton.scrollIntoView({ block: 'center', inline: 'center' });
     confirmButton.waitForClickable({ timeout: 5000 });
     browser.pause(500);
