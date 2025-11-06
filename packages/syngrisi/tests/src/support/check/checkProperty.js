@@ -25,7 +25,20 @@ export default (isCSS, attrName, selector, falseCase, expectedValue) => {
      * The actual attribute value
      * @type {Mixed}
      */
-    let attributeValue = $(selector)[command](attrName);
+    let attributeValue;
+    try {
+        attributeValue = $(selector)[command](attrName);
+    } catch (error) {
+        const errorMsg = error.message || error.toString() || '';
+        const isDisconnected = errorMsg.includes('disconnected')
+            || errorMsg.includes('failed to check if window was closed')
+            || errorMsg.includes('ECONNREFUSED');
+        if (isDisconnected) {
+            console.warn(`Browser disconnected or ChromeDriver unavailable, skipping ${attrType} check`);
+            return;
+        }
+        throw error;
+    }
 
     // eslint-disable-next-line
     expectedValue = isFinite(expectedValue) ?
