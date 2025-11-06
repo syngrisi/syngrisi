@@ -20,6 +20,9 @@ When(/^I accept via http the (\d+)st check with name "([^"]*)"$/, async function
     console.log('👉', { checks: checks });
 
     const check = checks[num - 1];
+    if (!check) {
+        throw new Error(`Check #${num} with name "${name}" not found. Found ${checks.length} checks.`);
+    }
     const checkId = check._id;
     const checkAcceptUri = `http://${browser.config.serverDomain}:${browser.config.serverPort}/v1/checks/`
         + `${checkId}/accept`;

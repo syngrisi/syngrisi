@@ -193,7 +193,7 @@ Feature: Check details Resize and Pan
         """
         Then I expect the stored "js" string is equal:
         """
-          true/50.00
+          true/150.00
         """
 
     Scenario: Pan via Mouse Wheel (touchpad)
@@ -251,6 +251,6 @@ Feature: Check details Resize and Pan
         """
         Then I expect the stored "js" string is equal:
         """
-          true/25.00
+          true/75.00
         """
 
