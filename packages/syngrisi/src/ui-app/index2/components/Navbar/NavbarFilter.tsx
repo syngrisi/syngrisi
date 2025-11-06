@@ -39,15 +39,18 @@ export function NavbarFilter(
     const [debouncedQuickFilter] = useDebouncedValue(quickFilter, 400);
 
     useEffect(function onDebounceQuickFilterUpdate() {
-        if (!debouncedQuickFilter) setQuickFilterObject(null);
-        setQuickFilterObject(() => (
-            {
-                [quickFilterKey(groupByValue)]: {
-                    $regex: escapeRegExp(debouncedQuickFilter),
-                    $options: 'im',
-                },
-            }
-        ));
+        if (!debouncedQuickFilter) {
+            setQuickFilterObject({});
+        } else {
+            setQuickFilterObject(() => (
+                {
+                    [quickFilterKey(groupByValue)]: {
+                        $regex: escapeRegExp(debouncedQuickFilter),
+                        $options: 'im',
+                    },
+                }
+            ));
+        }
     }, [debouncedQuickFilter]);
 
     return (
