@@ -27,3 +27,6 @@ export type { TestStore } from './test-data.fixture';
 export type { TestManagerFixture } from './test-manager.fixture';
 export type { TestEngineFixture } from './test-engine.fixture';
 
+// Re-export server control functions
+export { setSkipAutoStart, getSkipAutoStart } from './app-server.fixture';
+

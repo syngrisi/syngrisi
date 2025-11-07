@@ -157,3 +157,18 @@ async function terminateProcess(child: Child | undefined): Promise<void> {
 
   await exit.catch(() => undefined);
 }
+
+export function stopServerProcess(): void {
+  const { execSync } = require('child_process');
+  const cid = getCid();
+  
+  try {
+    if (env.DOCKER === '1') {
+      execSync('docker-compose stop || true', { stdio: 'ignore' });
+    } else {
+      execSync(`pkill -SIGINT -f "syngrisi_test_server_${cid}" || true`, { stdio: 'ignore' });
+    }
+  } catch (e) {
+    // Ignore errors
+  }
+}
