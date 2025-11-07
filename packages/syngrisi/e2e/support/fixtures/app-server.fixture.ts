@@ -4,6 +4,7 @@ import { getWorkerTempDir, createDirectoryIfNotExist } from '@utils/fs';
 import { hasTag } from '@utils/common';
 import { env } from '@config';
 import { createLogger } from '@lib/logger';
+import type { RunningAppServer } from '@utils/app-server';
 
 const logger = createLogger('AppServer');
 
@@ -13,7 +14,12 @@ export type AppServerFixture = {
   serverPort: number;
   getBackendLogs: () => string;
   getFrontendLogs: () => string;
+  restart: () => Promise<void>;
 };
+
+// Store server instance outside fixture to allow restart
+let serverInstance: RunningAppServer | null = null;
+let serverFixtureValue: AppServerFixture | null = null;
 
 /**
  * Playwright fixture that provides app server management
@@ -35,26 +41,45 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           serverPort: 0,
           getBackendLogs: () => 'App server not started (@no-app-start)',
           getFrontendLogs: () => '',
+          restart: async () => {
+            throw new Error('Cannot restart server when @no-app-start tag is present');
+          },
         });
         return;
       }
 
-      logger.info(`Launching Syngrisi app server`);
-      const server = await launchAppServer({
-        env: {},
-      });
-      logger.success(`Server launched successfully`);
-      logger.info(`Base URL: ${server.baseURL}`);
-      logger.info(`Server: ${server.backendHost}:${server.serverPort}`);
+      const startServer = async () => {
+        if (serverInstance) {
+          logger.info(`Stopping existing server before restart`);
+          await serverInstance.stop();
+          serverInstance = null;
+        }
+
+        logger.info(`Launching Syngrisi app server`);
+        serverInstance = await launchAppServer({
+          env: {},
+        });
+        logger.success(`Server launched successfully`);
+        logger.info(`Base URL: ${serverInstance.baseURL}`);
+        logger.info(`Server: ${serverInstance.backendHost}:${serverInstance.serverPort}`);
+
+        serverFixtureValue = {
+          baseURL: serverInstance.baseURL,
+          backendHost: serverInstance.backendHost,
+          serverPort: serverInstance.serverPort,
+          getBackendLogs: serverInstance.getBackendLogs,
+          getFrontendLogs: serverInstance.getFrontendLogs,
+          restart: async () => {
+            logger.info(`Restarting server...`);
+            await startServer();
+          },
+        };
+      };
+
+      await startServer();
 
       try {
-        await use({
-          baseURL: server.baseURL,
-          backendHost: server.backendHost,
-          serverPort: server.serverPort,
-          getBackendLogs: server.getBackendLogs,
-          getFrontendLogs: server.getFrontendLogs,
-        });
+        await use(serverFixtureValue!);
       } finally {
         // If E2E_DEBUG is enabled and test failed, pause before stopping the server
         if (env.E2E_DEBUG && (testInfo.status === 'failed' || testInfo.status === 'timedOut')) {
@@ -92,7 +117,11 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
         }
 
         logger.info(`Stopping server...`);
-        await server.stop();
+        if (serverInstance) {
+          await serverInstance.stop();
+          serverInstance = null;
+        }
+        serverFixtureValue = null;
         logger.info(`Server stopped`);
       }
     },
