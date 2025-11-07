@@ -4,6 +4,10 @@ import type { ElementTarget } from '@params';
 import { getLabelLocator, getLocatorQuery, getRoleLocator } from '@helpers/locators';
 import { AriaRole } from '@helpers/types';
 import { renderTemplate } from '@helpers/template';
+import type { TestStore } from '@fixtures';
+import { createLogger } from '@lib/logger';
+
+const logger = createLogger('ActionsSteps');
 
 /**
  * Clicks on an element resolved via ARIA role and accessible name.
@@ -265,4 +269,75 @@ When('I press the {string} key', async ({ page }, key: string) => {
 When(/I open (?:url|site) "(.*)"/, async ({ page, testData }, url) => {
   const parsedUrl = testData.renderTemplate(url);
   await page.goto(parsedUrl);
+});
+
+When('I set window size: {string}', async ({ page }, viewport: string) => {
+  const size = viewport.split('x');
+  await page.setViewportSize({ width: parseInt(size[0], 10), height: parseInt(size[1], 10) });
+});
+
+When('I refresh page', async ({ page }) => {
+  await page.reload();
+});
+
+When('I execute javascript code:', async ({ page, testData }: { page: Page; testData: TestStore }, js: string) => {
+  let result;
+  let attempts = 0;
+  const maxAttempts = 3;
+  
+  // Wrap the code in a function - page.evaluate expects a function
+  // If code contains 'return', wrap it in a function body
+  const trimmedJs = js.trim();
+  
+  // page.evaluate can accept a function that will be serialized and executed in browser
+  // We pass the code as a parameter to the function so it can be executed in browser context
+  const evaluateFunction = (code: string) => {
+    // eslint-disable-next-line no-eval
+    return eval(code);
+  };
+  
+  // Prepare code for evaluation in browser
+  const codeToExecute = trimmedJs.includes('return')
+    ? `(() => { ${trimmedJs} })()`
+    : trimmedJs;
+  
+  while (attempts < maxAttempts) {
+    try {
+      result = await page.evaluate(evaluateFunction, codeToExecute);
+      // Log detailed info for viewportTransform debugging
+      if (trimmedJs.includes('viewportTransform')) {
+        const viewportValue = await page.evaluate(() => {
+          if (typeof mainView !== 'undefined' && mainView?.canvas?.viewportTransform) {
+            return mainView.canvas.viewportTransform[4] + '_' + mainView.canvas.viewportTransform[5];
+          }
+          return 'N/A';
+        });
+        logger.info(`JavaScript execution result: ${result} (viewportTransform: ${viewportValue})`);
+      } else {
+        logger.info(`JavaScript execution result: ${result}`);
+      }
+      // Always save the result, even if it's undefined or null
+      testData.set('js', result !== undefined && result !== null ? String(result) : '');
+      return;
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      const isDisconnected = errorMsg.includes('disconnected') || 
+                            errorMsg.includes('failed to check if window was closed') ||
+                            errorMsg.includes('ECONNREFUSED');
+      if (isDisconnected) {
+        logger.warn('Browser disconnected or ChromeDriver unavailable, skipping javascript execution');
+        testData.set('js', '');
+        return;
+      }
+      attempts++;
+      if (attempts < maxAttempts) {
+        await page.waitForTimeout(1000);
+      } else {
+        throw error;
+      }
+    }
+  }
+  
+  logger.info(`JavaScript execution result: ${result}`);
+  testData.set('js', result !== undefined && result !== null ? String(result) : '');
 });

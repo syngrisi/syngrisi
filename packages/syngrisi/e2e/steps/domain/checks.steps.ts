@@ -57,7 +57,7 @@ When('I open the {ordinal} check {string}', async ({ page }: { page: Page }, ord
 });
 
 When('I click on the element {string}', async ({ page }: { page: Page }, selector: string) => {
-  const locator = getLocatorQuery(page, selector);
+  const locator = getLocatorQuery(page, selector).first();
   await locator.waitFor({ state: 'visible', timeout: 10000 });
   await locator.scrollIntoViewIfNeeded();
   await locator.click();
