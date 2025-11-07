@@ -56,9 +56,11 @@ defineParameterType({
 
 defineParameterType({
   name: 'ordinal',
-  regexp: /\d+(?:st|nd|rd|th)/,
+  regexp: /\d+\w+/,
   transformer: (value: string): number => {
-    const numeric = Number.parseInt(value, 10);
+    // Handle non-standard ordinals like "2st", "3st", "4st", "5st", "6st" from original feature files
+    // Extract numeric part regardless of suffix
+    const numeric = Number.parseInt(value.replace(/\D/g, ''), 10);
     if (!Number.isFinite(numeric) || numeric < 1) {
       throw new Error(`Invalid ordinal: ${value}`);
     }

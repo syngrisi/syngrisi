@@ -6,6 +6,9 @@ import { getLabelLocator, getLocatorQuery, getRoleLocator } from '@helpers/locat
 import { assertCondition } from '@helpers/assertions';
 import { AriaRole } from '@helpers/types';
 import { renderTemplate } from '@helpers/template';
+import { createLogger } from '@lib/logger';
+
+const logger = createLogger('AssertionsSteps');
 
 /**
  * Resolves a locator based on a {@link ElementTarget} descriptor extracted from `{target}`.
@@ -437,6 +440,22 @@ Then(
   'I expect that element {string} to contain text {string}',
   async ({ page }, selector: string, expected: string) => {
     const locator = getLocatorQuery(page, selector);
+    // If checking test status, wait for status to change from "Running" using polling
+    if (selector.includes('table-row-Status') && expected !== 'Running') {
+      // Use polling to wait for status change (as tests may take time to complete)
+      const maxAttempts = 90; // 90 seconds with 1 second intervals (tests may take time to process)
+      for (let attempt = 0; attempt < maxAttempts; attempt++) {
+        const text = await locator.first().textContent();
+        const trimmedText = text?.trim() || '';
+        if (trimmedText === expected || trimmedText.toLowerCase() === expected.toLowerCase()) {
+          logger.info(`Test status changed to "${expected}" after ${attempt + 1} attempts`);
+          break;
+        }
+        if (attempt < maxAttempts - 1) {
+          await page.waitForTimeout(1000);
+        }
+      }
+    }
     await expect(locator.first()).toContainText(expected);
   }
 );
@@ -450,7 +469,38 @@ Then(
     let actualValue = await locator.first().evaluate((el, prop) => {
       // Convert CSS property name (background-color) to camelCase (backgroundColor)
       const camelProp = prop.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
-      return (window.getComputedStyle(el)[camelProp as keyof CSSStyleDeclaration] as string) || '';
+      const computedStyle = window.getComputedStyle(el);
+      let value = (computedStyle[camelProp as keyof CSSStyleDeclaration] as string) || '';
+
+      // For SVG elements with color property, WebdriverIO may return the computed color
+      // even if it's empty in computedStyle. Check if element is SVG and color is empty
+      if (prop === 'color' && (!value || value === 'rgba(0, 0, 0, 0)' || value === 'transparent')) {
+        // For SVG, try to get the actual fill color from computed style
+        // WebdriverIO's getCSSProperty('color') for SVG returns the computed color value
+        // which may come from fill or stroke
+        const fill = computedStyle.fill;
+        const stroke = computedStyle.stroke;
+
+        // If fill or stroke is set and is a color value, use it
+        if (fill && fill !== 'none' && fill !== 'rgba(0, 0, 0, 0)') {
+          value = fill;
+        } else if (stroke && stroke !== 'none' && stroke !== 'rgba(0, 0, 0, 0)') {
+          value = stroke;
+        }
+
+        // If still empty, check parent element's color (SVG inherits color from parent)
+        if (!value || value === 'rgba(0, 0, 0, 0)' || value === 'transparent') {
+          const parent = el.parentElement;
+          if (parent) {
+            const parentColor = window.getComputedStyle(parent).color;
+            if (parentColor && parentColor !== 'rgba(0, 0, 0, 0)') {
+              value = parentColor;
+            }
+          }
+        }
+      }
+
+      return value;
     }, cssProperty);
 
     // Normalize color values to match WebdriverIO behavior
@@ -460,6 +510,10 @@ Then(
       const rgbMatch = actualValue.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
       if (rgbMatch) {
         actualValue = `rgba(${rgbMatch[1]},${rgbMatch[2]},${rgbMatch[3]},1)`;
+      }
+      // If still empty, log warning
+      if (!actualValue) {
+        logger.warn(`CSS property "${cssProperty}" returned empty value for selector "${selector}"`);
       }
     }
 
@@ -497,5 +551,22 @@ When(
   async ({ page }, selector: string) => {
     const locator = getLocatorQuery(page, selector);
     await locator.first().waitFor({ state: 'detached', timeout: 30000 });
+  }
+);
+
+Then(
+  'the element {string} contains the text {string}',
+  async ({ page }, selector: string, expected: string) => {
+    const locator = getLocatorQuery(page, selector);
+    await expect(locator.first()).toContainText(expected);
+  }
+);
+
+Then(
+  'I expect that element {string} does appear exactly {string} times',
+  async ({ page }, selector: string, expectedCount: string) => {
+    const locator = getLocatorQuery(page, selector);
+    const count = parseInt(expectedCount, 10);
+    await expect(locator).toHaveCount(count);
   }
 );

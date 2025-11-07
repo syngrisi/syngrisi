@@ -42,11 +42,11 @@ async function createCheckViaAPI(
   form.append('browserVersion', params?.browserVersion as string || '120');
   form.append('browserFullVersion', params?.browserFullVersion as string || '120.0.0.0');
   form.append('os', params?.os as string || 'macOS');
-  
+
   // Calculate hashcode for the image (SHA-512 gives 128 hex characters)
   const hashcode = crypto.createHash('sha512').update(imageBuffer).digest('hex');
   form.append('hashcode', hashcode);
-  
+
   // Append image file
   form.append('file', imageBuffer, 'file');
 
@@ -100,6 +100,9 @@ Given('I create {string} tests with:', async (
 
       logger.info(`Test session started with ID: ${testId}`);
 
+      // Save testId for use in other step definitions
+      testData.set('lastTestId', testId);
+
       // Wait a bit for session to initialize
       await new Promise((resolve) => setTimeout(resolve, 300));
 
@@ -138,15 +141,27 @@ Given('I create {string} tests with:', async (
         testData.set('currentCheck', checkResults[0]);
       }
 
-      // Stop test session
+      // Wait a bit for session to process checks (as in original: await browser.pause(300))
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // Stop test session (using correct endpoint: /stopSession not /endSession)
       logger.info(`Stopping test session ${testId}`);
       const stopForm = new FormData();
-      await got.post(`${appServer.baseURL}/v1/client/endSession/${testId}`, {
-        body: stopForm,
-        headers,
-      }).catch((error) => {
-        logger.warn(`Failed to stop session: ${error.message}`);
-      });
+      try {
+        const response = await got.post(`${appServer.baseURL}/v1/client/stopSession/${testId}`, {
+          body: stopForm,
+          headers,
+        });
+        // endSession waits for checks to be processed and updates test status synchronously
+        // The response contains the updated test with final status
+        const updatedTest = JSON.parse(response.body);
+        logger.info(`Test session stopped, final status: ${updatedTest.status}`);
+      } catch (error: any) {
+        // 404 is acceptable if session was already stopped or doesn't exist
+        if (error.response?.statusCode !== 404) {
+          logger.warn(`Failed to stop session: ${error.message}`);
+        }
+      }
     } catch (error: any) {
       if (error.response) {
         const errorBody = error.response.body?.toString() || 'No error body';

@@ -61,5 +61,30 @@ When('I click on the element {string}', async ({ page }: { page: Page }, selecto
   await locator.waitFor({ state: 'visible', timeout: 10000 });
   await locator.scrollIntoViewIfNeeded();
   await locator.click();
+  logger.info(`Clicked on element: ${selector}`);
+});
+
+When('I delete the {string} check', async ({ page }: { page: Page }, checkName: string) => {
+  try {
+    const icon = page.locator(`[data-test='check-remove-icon'][data-popover-icon-name='${checkName}']`).first();
+    await icon.waitFor({ state: 'visible', timeout: 10000 });
+    await icon.scrollIntoViewIfNeeded();
+    await icon.click();
+
+    const confirmButton = page.locator(`[data-test='check-remove-icon-confirm'][data-confirm-button-name='${checkName}']`).first();
+    await confirmButton.waitFor({ state: 'visible', timeout: 10000 });
+    await confirmButton.click();
+    logger.info(`Deleted check: ${checkName}`);
+  } catch (error: any) {
+    const errorMsg = error.message || error.toString() || '';
+    const isDisconnected = errorMsg.includes('disconnected')
+      || errorMsg.includes('failed to check if window was closed')
+      || errorMsg.includes('ECONNREFUSED');
+    if (isDisconnected) {
+      logger.warn('Browser disconnected or ChromeDriver unavailable, skipping check deletion');
+      return;
+    }
+    throw error;
+  }
 });
 

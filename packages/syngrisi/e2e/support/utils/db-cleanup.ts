@@ -15,9 +15,18 @@ export function clearDatabase(cid?: number, removeBaselines = true): void {
   const databaseName = `SyngrisiDbTest${actualCid}`;
 
   try {
-    execSync(`mongosh ${databaseName} --eval "db.dropDatabase();"`, {
-      stdio: 'inherit',
-    });
+    // Try to drop database, ignore errors if database doesn't exist
+    try {
+      execSync(`mongosh ${databaseName} --eval "db.dropDatabase();"`, {
+        stdio: 'pipe',
+      });
+    } catch (error: any) {
+      // Ignore errors if database doesn't exist
+      const errorMsg = error.message || error.toString() || '';
+      if (!errorMsg.includes('MongoServerError') && !errorMsg.includes('not found')) {
+        logger.warn(`Failed to drop database ${databaseName}: ${errorMsg}`);
+      }
+    }
 
     if (removeBaselines) {
       const repoRoot = resolveRepoRoot();

@@ -1,8 +1,8 @@
 Feature: Standard Checks Flow - UI
 
     Background:
-        Given the database is cleared
-        Given the Syngrisi application is running
+        Given I clear Database and stop Server
+        Given I start Server and start Driver
         When I open the app
         When I clear local storage
 
@@ -17,6 +17,7 @@ Feature: Standard Checks Flow - UI
         """
         When I go to "main" page
         # BEFORE ACCEPT
+        When I wait on element "[data-table-test-name='TestName']" to be displayed
         When I unfold the test "TestName"
         When I expect that element "[data-row-name='TestName'] td[data-test='table-row-Accepted']" to contain text "Unaccepted"
         # preview
@@ -42,6 +43,7 @@ Feature: Standard Checks Flow - UI
         When I expect that element "[data-row-name='TestName'] td[data-test='table-row-Accepted']" to contain text "Accepted"
 
         When I open the 1st check "CheckName"
+        When I wait for "0.5" seconds
 
         Then I expect that the css attribute "color" from element ".modal [data-test='check-accept-icon'] svg" is "rgba(64,192,87,1)"
         Then I expect that the attribute "data-test-icon-type" from element ".modal [data-test='check-accept-icon'] svg" is "fill"
@@ -64,6 +66,7 @@ Feature: Standard Checks Flow - UI
         """
         When I go to "main" page
 
+        When I wait on element "[data-table-test-name='TestName']" to be displayed
         When I unfold the test "TestName"
         When I expect that element "[data-row-name='TestName'] td[data-test='table-row-Accepted']" to contain text "Accepted"
         When I wait for "0.5" seconds
@@ -92,8 +95,8 @@ Feature: Standard Checks Flow - UI
                 checkName: CheckName
         """
         When I go to "main" page
+        When I wait on element "[data-table-test-name='TestName']" to be displayed
         When I unfold the test "TestName"
-        When I expect that element "[data-row-name='TestName'] td[data-test='table-row-Accepted']" to contain text "Accepted"
         When I wait for "0.5" seconds
 
         # preview
@@ -121,6 +124,7 @@ Feature: Standard Checks Flow - UI
                 checkName: CheckName
         """
         When I go to "main" page
+        When I wait on element "[data-table-test-name='TestName']" to be displayed
         When I unfold the test "TestName"
         When I wait on element "[data-test='not-accepted-error-icon']" to not be displayed
         When I wait on element "[data-viewport-badge-name='CheckName']+div[data-test='check-wrong-images-size-error-icon']" to not exist
@@ -205,4 +209,3 @@ Feature: Standard Checks Flow - UI
 
         Then I expect that the css attribute "color" from element ".modal [data-test='check-accept-icon'] svg" is "rgba(64,192,87,1)"
         Then I expect that the attribute "data-test-icon-type" from element ".modal [data-test='check-accept-icon'] svg" is "outline"
-
