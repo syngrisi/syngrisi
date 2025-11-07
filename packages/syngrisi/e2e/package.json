@@ -1,0 +1,45 @@
+{
+  "name": "@syngrisi/e2e",
+  "description": "End-to-end Playwright BDD test suite for Syngrisi.",
+  "version": "0.0.1",
+  "private": true,
+  "keywords": [
+    "playwright",
+    "bdd",
+    "e2e",
+    "syngrisi"
+  ],
+  "scripts": {
+    "postinstall": "playwright install",
+    "bddgen": "bddgen",
+    "test:e2e": "bddgen && cross-env E2E_HEADLESS=1 playwright test --workers=3",
+    "test:e2e:smoke": "bddgen && cross-env playwright test --grep=@smoke --retries=1 --workers=3 --shard=${SHARD:-1/1}",
+    "test:e2e:headed": "bddgen && cross-env PLAYWRIGHT_HEADED=1 playwright test",
+    "test:mcp": "cross-env MCP_KEEP_ALIVE=0 E2E_HEADLESS=1 playwright test --workers=1 --config support/mcp/playwright.config.ts support/mcp/mcp.spec.ts",
+    "test:mcp:headed": "cross-env MCP_KEEP_ALIVE=1 E2E_HEADLESS=0 playwright test --workers=1 --config support/mcp/playwright.config.ts support/mcp/mcp.spec.ts"
+  },
+  "devDependencies": {
+    "@cucumber/cucumber-expressions": "^17.0.0",
+    "@playwright/test": "^1.56.0",
+    "@types/node": "^24.7.2",
+    "chalk": "^4.1.2",
+    "cross-env": "^7.0.3",
+    "dotenv": "^17.2.3",
+    "envalid": "^8.1.0",
+    "playwright-bdd": "^8.4.1",
+    "playwright-mcp-advanced": "^0.1.0",
+    "typescript": "^5.9.3",
+    "winston": "^3.18.3",
+    "zod": "^3.23.8"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.21.0",
+    "@types/js-yaml": "^4.0.9",
+    "@types/winston": "^2.4.4",
+    "js-yaml": "^4.1.0",
+    "pixelmatch": "^7.1.0",
+    "pngjs": "^7.0.0",
+    "tsx": "^4.20.6",
+    "yaml": "^2.6.0"
+  }
+}
