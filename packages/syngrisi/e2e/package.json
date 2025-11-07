@@ -12,9 +12,9 @@
   "scripts": {
     "postinstall": "playwright install",
     "bddgen": "bddgen",
-    "test:e2e": "bddgen && cross-env E2E_HEADLESS=1 playwright test --workers=3",
-    "test:e2e:smoke": "bddgen && cross-env playwright test --grep=@smoke --retries=1 --workers=3 --shard=${SHARD:-1/1}",
-    "test:e2e:headed": "bddgen && cross-env PLAYWRIGHT_HEADED=1 playwright test",
+    "test": "bddgen && cross-env E2E_HEADLESS=1 playwright test --workers=5",
+    "test:smoke": "bddgen && cross-env playwright test --grep=@smoke --retries=1 --workers=3 --shard=${SHARD:-1/1}",
+    "test:headed": "bddgen && cross-env PLAYWRIGHT_HEADED=1 playwright test",
     "test:mcp": "cross-env MCP_KEEP_ALIVE=0 E2E_HEADLESS=1 playwright test --workers=1 --config support/mcp/playwright.config.ts support/mcp/mcp.spec.ts",
     "test:mcp:headed": "cross-env MCP_KEEP_ALIVE=1 E2E_HEADLESS=0 playwright test --workers=1 --config support/mcp/playwright.config.ts support/mcp/mcp.spec.ts"
   },
@@ -34,8 +34,13 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.21.0",
+    "@syngrisi/wdio-sdk": "*",
+    "@types/form-data": "^2.5.2",
     "@types/js-yaml": "^4.0.9",
     "@types/winston": "^2.4.4",
+    "form-data": "^4.0.4",
+    "got-cjs": "^12.5.4",
+    "hasha": "^7.0.0",
     "js-yaml": "^4.1.0",
     "pixelmatch": "^7.1.0",
     "pngjs": "^7.0.0",
