@@ -438,7 +438,7 @@ Then(
 
 Then(
   'I expect that element {string} to contain text {string}',
-  async ({ page }, selector: string, expected: string) => {
+  async ({ page, testData }, selector: string, expected: string) => {
     const locator = getLocatorQuery(page, selector);
     // If checking test status, wait for status to change from "Running" using polling
     if (selector.includes('table-row-Status') && expected !== 'Running') {
@@ -455,6 +455,18 @@ Then(
           await page.waitForTimeout(1000);
         }
       }
+    }
+    // Handle placeholders like <YYYY-MM-DD> - replace with regex pattern for date matching
+    let expectedPattern = expected;
+    if (expected.includes('<YYYY-MM-DD>')) {
+      // Replace <YYYY-MM-DD> with regex pattern that matches date format YYYY-MM-DD or YYYY-MM-DD HH:mm:ss
+      expectedPattern = expected.replace('<YYYY-MM-DD>', '\\d{4}-\\d{2}-\\d{2}(?: \\d{2}:\\d{2}:\\d{2})?');
+      const actualText = await locator.first().textContent();
+      const regex = new RegExp(expectedPattern);
+      if (!regex.test(actualText || '')) {
+        throw new Error(`Expected text to match pattern "${expectedPattern}", but got "${actualText}"`);
+      }
+      return;
     }
     await expect(locator.first()).toContainText(expected);
   }
@@ -568,5 +580,49 @@ Then(
     const locator = getLocatorQuery(page, selector);
     const count = parseInt(expectedCount, 10);
     await expect(locator).toHaveCount(count);
+  }
+);
+
+Then(
+  'I expect that element {string} to have text {string}',
+  async ({ page }, selector: string, expected: string) => {
+    const locator = getLocatorQuery(page, selector);
+    // WebdriverIO's getText() returns the visible text (like innerText), not textContent
+    // We need to get the visible text to match WebdriverIO behavior
+    const visibleText = await locator.first().innerText();
+    await expect(visibleText).toBe(expected);
+  }
+);
+
+Then(
+  'I expect that element {string} to contain HTML {string}',
+  async ({ page }, selector: string, expected: string) => {
+    const locator = getLocatorQuery(page, selector);
+    const html = await locator.first().innerHTML();
+    await expect(html).toContain(expected);
+  }
+);
+
+Then(
+  'I expect that element {string} has the class {string}',
+  async ({ page }, selector: string, className: string) => {
+    const locator = getLocatorQuery(page, selector);
+    await expect(locator.first()).toHaveClass(new RegExp(className));
+  }
+);
+
+Then(
+  'I expect that element {string} does not have the class {string}',
+  async ({ page }, selector: string, className: string) => {
+    const locator = getLocatorQuery(page, selector);
+    await expect(locator.first()).not.toHaveClass(new RegExp(className));
+  }
+);
+
+Then(
+  'I expect that the attribute {string} from element {string} is not {string}',
+  async ({ page }, attributeName: string, selector: string, expected: string) => {
+    const locator = getLocatorQuery(page, selector);
+    await expect(locator.first()).not.toHaveAttribute(attributeName, expected);
   }
 );
