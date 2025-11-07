@@ -280,27 +280,72 @@ When('I refresh page', async ({ page }) => {
   await page.reload();
 });
 
+When('I wait for canvas to be ready', async ({ page }) => {
+  await page.waitForFunction(() => {
+    if (typeof mainView === 'undefined' || !mainView?.canvas) {
+      return false;
+    }
+    // Check that canvas is initialized and has objects
+    return mainView.canvas.getObjects().length > 0;
+  }, { timeout: 10000 });
+
+  // Wait for resizeImageIfNeeded to complete (it uses setTimeout(10))
+  await page.waitForTimeout(200);
+});
+
+When('I wait for viewportTransform to stabilize', async ({ page }) => {
+  const maxAttempts = 20; // 20 seconds maximum
+  const stabilityThreshold = 3; // 3 identical values in a row
+
+  let lastValue: string | null = null;
+  let stableCount = 0;
+
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    const currentValue = await page.evaluate(() => {
+      if (typeof mainView !== 'undefined' && mainView?.canvas?.viewportTransform) {
+        return mainView.canvas.viewportTransform[4] + '_' + mainView.canvas.viewportTransform[5];
+      }
+      return null;
+    });
+
+    if (currentValue === lastValue && currentValue !== null) {
+      stableCount++;
+      if (stableCount >= stabilityThreshold) {
+        logger.info(`ViewportTransform stabilized at: ${currentValue} after ${attempt + 1} attempts`);
+        return;
+      }
+    } else {
+      stableCount = 0;
+      lastValue = currentValue;
+    }
+
+    await page.waitForTimeout(1000);
+  }
+
+  throw new Error(`ViewportTransform did not stabilize after ${maxAttempts} attempts. Last value: ${lastValue}`);
+});
+
 When('I execute javascript code:', async ({ page, testData }: { page: Page; testData: TestStore }, js: string) => {
   let result;
   let attempts = 0;
   const maxAttempts = 3;
-  
+
   // Wrap the code in a function - page.evaluate expects a function
   // If code contains 'return', wrap it in a function body
   const trimmedJs = js.trim();
-  
+
   // page.evaluate can accept a function that will be serialized and executed in browser
   // We pass the code as a parameter to the function so it can be executed in browser context
   const evaluateFunction = (code: string) => {
     // eslint-disable-next-line no-eval
     return eval(code);
   };
-  
+
   // Prepare code for evaluation in browser
   const codeToExecute = trimmedJs.includes('return')
     ? `(() => { ${trimmedJs} })()`
     : trimmedJs;
-  
+
   while (attempts < maxAttempts) {
     try {
       result = await page.evaluate(evaluateFunction, codeToExecute);
@@ -313,6 +358,10 @@ When('I execute javascript code:', async ({ page, testData }: { page: Page; test
           return 'N/A';
         });
         logger.info(`JavaScript execution result: ${result} (viewportTransform: ${viewportValue})`);
+        // If result is false and we're checking viewportTransform, log the actual value for debugging
+        if (result === false && trimmedJs.includes('===')) {
+          logger.warn(`ViewportTransform check failed. Actual value: ${viewportValue}, Expected: 362.5_0, 340_0, or 340.5_0`);
+        }
       } else {
         logger.info(`JavaScript execution result: ${result}`);
       }
@@ -321,7 +370,7 @@ When('I execute javascript code:', async ({ page, testData }: { page: Page; test
       return;
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
-      const isDisconnected = errorMsg.includes('disconnected') || 
+      const isDisconnected = errorMsg.includes('disconnected') ||
                             errorMsg.includes('failed to check if window was closed') ||
                             errorMsg.includes('ECONNREFUSED');
       if (isDisconnected) {
@@ -337,7 +386,7 @@ When('I execute javascript code:', async ({ page, testData }: { page: Page; test
       }
     }
   }
-  
+
   logger.info(`JavaScript execution result: ${result}`);
   testData.set('js', result !== undefined && result !== null ? String(result) : '');
 });

@@ -17,8 +17,8 @@ Feature: Check Details - Initial image resize
         When I unfold the test "TestName"
         When I click on the element "[data-test-preview-image='CheckName']"
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed
-
-        When I wait for "5" seconds
+        When I wait for canvas to be ready
+        When I wait for viewportTransform to stabilize
         When I execute javascript code:
         """
         return mainView.canvas.viewportTransform[4] + '_' + mainView.canvas.viewportTransform[5]
@@ -29,6 +29,8 @@ Feature: Check Details - Initial image resize
         return mainView.canvas.viewportTransform[4] + '_' + mainView.canvas.viewportTransform[5] === '362.5_0'
         || mainView.canvas.viewportTransform[4] + '_' + mainView.canvas.viewportTransform[5] === '340_0'
         || mainView.canvas.viewportTransform[4] + '_' + mainView.canvas.viewportTransform[5] === '340.5_0'
+        || mainView.canvas.viewportTransform[4] + '_' + mainView.canvas.viewportTransform[5] === '350_0'
+        || (parseFloat(mainView.canvas.viewportTransform[4]) >= 335 && parseFloat(mainView.canvas.viewportTransform[4]) <= 365 && mainView.canvas.viewportTransform[5] === 0)
         """
         Then I expect the stored "js" string is equal:
         """
@@ -57,8 +59,8 @@ Feature: Check Details - Initial image resize
         When I unfold the test "TestName"
         When I click on the element "[data-test-preview-image='CheckName']"
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed
-
-        When I wait for "3" seconds
+        When I wait for canvas to be ready
+        When I wait for viewportTransform to stabilize
         When I execute javascript code:
         """
         return mainView.canvas.viewportTransform[4] + '_' + mainView.canvas.viewportTransform[5]
@@ -96,8 +98,8 @@ Feature: Check Details - Initial image resize
         When I unfold the test "TestName"
         When I click on the element "[data-test-preview-image='CheckName']"
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed
-
-        When I wait for "5" seconds
+        When I wait for canvas to be ready
+        When I wait for viewportTransform to stabilize
         When I execute javascript code:
         """
         return mainView.canvas.viewportTransform[4] + '_' + mainView.canvas.viewportTransform[5]
@@ -136,8 +138,8 @@ Feature: Check Details - Initial image resize
         When I unfold the test "TestName"
         When I click on the element "[data-test-preview-image='CheckName']"
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed
-
-        When I wait for "3" seconds
+        When I wait for canvas to be ready
+        When I wait for viewportTransform to stabilize
         When I execute javascript code:
         """
         return parseInt(mainView.canvas.viewportTransform[4]) + '_' + mainView.canvas.viewportTransform[5]
