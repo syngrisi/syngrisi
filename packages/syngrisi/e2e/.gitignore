@@ -1,0 +1,28 @@
+# Test results and reports
+reports/
+test-results/
+support/mcp/logs/
+support/mcp/steps/
+test-tmp-artifacts/
+
+# Dependencies
+node_modules/
+
+# Generated files
+.features-gen/
+
+# System files
+.DS_Store
+
+# Temporary files
+.tmp/
+*.tmp
+
+# Log files
+logs/
+support/mcp/logs/
+shard-logs/
+
+# Other
+*.bak
+
