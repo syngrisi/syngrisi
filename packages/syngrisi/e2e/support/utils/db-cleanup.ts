@@ -12,38 +12,33 @@ function getCid(): number {
 
 export function clearDatabase(cid?: number, removeBaselines = true): void {
   const actualCid = cid ?? getCid();
-  const databaseName = `SyngrisiDbTest${actualCid}`;
+  const cmdPath = path.resolve(resolveRepoRoot());
+  const taskNamePrefix = process.env.DOCKER === '1' ? 'docker_' : '';
 
   try {
-    // Try to drop database, ignore errors if database doesn't exist
-    try {
-      execSync(`mongosh ${databaseName} --eval "db.dropDatabase();"`, {
-        stdio: 'pipe',
-      });
-    } catch (error: any) {
-      // Ignore errors if database doesn't exist
-      const errorMsg = error.message || error.toString() || '';
-      if (!errorMsg.includes('MongoServerError') && !errorMsg.includes('not found')) {
-        logger.warn(`Failed to drop database ${databaseName}: ${errorMsg}`);
-      }
-    }
-
+    let result: string;
     if (removeBaselines) {
-      const repoRoot = resolveRepoRoot();
-      // In original tests, baselines are stored in tests/baselinesTest/${cid}/
-      // In new e2e framework, they should be in e2e/baselinesTest/${cid}/
-      const baselinesPath = path.join(repoRoot, 'e2e', 'baselinesTest', String(actualCid));
-      logger.info(`Removing baselines from: ${baselinesPath}`);
-      try {
-        execSync(`rm -rf ${baselinesPath}`, { stdio: 'inherit' });
-        logger.info(`Baselines removed successfully`);
-      } catch (error) {
-        // Ignore errors if directory doesn't exist
-        logger.warn(`Failed to remove baselines: ${(error as Error).message}`);
-      }
+      // Use npm script clear_test (as in original: npm run clear_test)
+      result = execSync(`CID=${actualCid} npm run ${taskNamePrefix}clear_test`, {
+        cwd: cmdPath,
+        stdio: 'pipe',
+      }).toString('utf8');
+    } else {
+      // Use npm script clear_test_db_only (as in original: npm run clear_test_db_only)
+      result = execSync(`CID=${actualCid} npm run ${taskNamePrefix}clear_test_db_only`, {
+        cwd: cmdPath,
+        stdio: 'pipe',
+      }).toString('utf8');
     }
-  } catch (error) {
-    throw new Error(`Failed to clear database ${databaseName}: ${error}`);
+    logger.info({ result });
+  } catch (error: any) {
+    const errorMsg = error.message || error.toString() || '';
+    if (errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed') || errorMsg.includes('ECONNREFUSED')) {
+      logger.warn('Browser disconnected or ChromeDriver unavailable, skipping clear database');
+    } else {
+      logger.error(`Failed to clear database: ${errorMsg}`);
+      throw error;
+    }
   }
 }
 
