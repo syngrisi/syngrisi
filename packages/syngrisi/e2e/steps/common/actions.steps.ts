@@ -188,7 +188,7 @@ When(
 );
 
 /**
- * Step definition: `When I wain {number} second(s)`
+ * Step definition: `When I wait for "{string}" seconds`
  *
  * Waits for the specified number of seconds, accepting templated values.
  *
@@ -196,10 +196,34 @@ When(
  *
  * @example
  * ```gherkin
- * When I wain 3 seconds
+ * When I wait for "1" seconds
  * ```
  */
-When(/I wait (.+) second(?:s)?/, async ({ page, testData }, rawSeconds: string) => {
+When(/I wait for "(.+)" second(?:s)?/, async ({ page, testData }, rawSeconds: string) => {
+  const renderedSeconds = renderTemplate(rawSeconds, testData).trim();
+  const seconds = Number.parseFloat(renderedSeconds);
+
+  if (!Number.isFinite(seconds) || seconds < 0) {
+    throw new Error(`Invalid wait duration: ${renderedSeconds}`);
+  }
+
+  await page.waitForTimeout(seconds * 1000);
+});
+
+/**
+ * Step definition: `When I wait {number} second(s)`
+ *
+ * Waits for the specified number of seconds, accepting templated values.
+ * This pattern does NOT match "I wait for ..." format.
+ *
+ * @param rawSeconds - String representation of the seconds to wait.
+ *
+ * @example
+ * ```gherkin
+ * When I wait 3 seconds
+ * ```
+ */
+When(/I wait (?!for)(.+) second(?:s)?/, async ({ page, testData }, rawSeconds: string) => {
   const renderedSeconds = renderTemplate(rawSeconds, testData).trim();
   const seconds = Number.parseFloat(renderedSeconds);
 

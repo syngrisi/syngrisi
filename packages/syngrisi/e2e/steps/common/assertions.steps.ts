@@ -421,3 +421,81 @@ Then(
     await expect(page.locator('body')).toBeVisible();
   }
 );
+
+Then(
+  'the element {string} matches the text {string}',
+  async ({ page }, selector: string, expected: string) => {
+    const locator = getLocatorQuery(page, selector);
+    // WebdriverIO's getText() returns the visible text (like innerText), not textContent
+    // We need to get the visible text to match WebdriverIO behavior
+    const visibleText = await locator.first().innerText();
+    await expect(visibleText).toBe(expected);
+  }
+);
+
+Then(
+  'I expect that element {string} to contain text {string}',
+  async ({ page }, selector: string, expected: string) => {
+    const locator = getLocatorQuery(page, selector);
+    await expect(locator.first()).toContainText(expected);
+  }
+);
+
+Then(
+  'I expect that the css attribute {string} from element {string} is {string}',
+  async ({ page }, cssProperty: string, selector: string, expected: string) => {
+    const locator = getLocatorQuery(page, selector);
+    // WebdriverIO's getCSSProperty for color properties returns attributeValue.value
+    // We need to replicate this behavior exactly - get the computed style value
+    let actualValue = await locator.first().evaluate((el, prop) => {
+      // Convert CSS property name (background-color) to camelCase (backgroundColor)
+      const camelProp = prop.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+      return (window.getComputedStyle(el)[camelProp as keyof CSSStyleDeclaration] as string) || '';
+    }, cssProperty);
+
+    // Normalize color values to match WebdriverIO behavior
+    // WebdriverIO returns rgba(r,g,b,1) format without spaces for colors
+    if (cssProperty.match(/(color|background-color)/)) {
+      // Convert rgb(r, g, b) to rgba(r,g,b,1) format (no spaces, as WebdriverIO returns)
+      const rgbMatch = actualValue.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+      if (rgbMatch) {
+        actualValue = `rgba(${rgbMatch[1]},${rgbMatch[2]},${rgbMatch[3]},1)`;
+      }
+    }
+
+    // Use exact comparison as WebdriverIO does with toEqual
+    await expect(actualValue).toBe(expected);
+  }
+);
+
+Then(
+  'I expect that the attribute {string} from element {string} is {string}',
+  async ({ page }, attributeName: string, selector: string, expected: string) => {
+    const locator = getLocatorQuery(page, selector);
+    await expect(locator.first()).toHaveAttribute(attributeName, expected);
+  }
+);
+
+When(
+  'I wait on element {string} to be displayed',
+  async ({ page }, selector: string) => {
+    const locator = getLocatorQuery(page, selector);
+    await locator.first().waitFor({ state: 'visible', timeout: 30000 });
+  }
+);
+
+When(
+  'I wait on element {string} to not be displayed',
+  async ({ page }, selector: string) => {
+    const locator = getLocatorQuery(page, selector);
+    await locator.first().waitFor({ state: 'hidden', timeout: 30000 });
+  }
+);
+
+When(
+  'I wait on element {string} to not exist',
+  async ({ page }, selector: string) => {
+    const locator = getLocatorQuery(page, selector);
+    await locator.first().waitFor({ state: 'detached', timeout: 30000 });
+  }
+);
