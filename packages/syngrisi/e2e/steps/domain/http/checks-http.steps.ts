@@ -8,6 +8,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
 import FormData from 'form-data';
+import * as yaml from 'yaml';
+import { renderTemplate } from '@helpers/template';
 
 const logger = createLogger('ChecksHttpSteps');
 
@@ -35,6 +37,7 @@ When(
     if (!check) {
       throw new Error(`Check #${ordinal + 1} (${ordinal}-based index) with name "${name}" not found. Found ${checks.length} checks.`);
     }
+    logger.info(`Fetched check for acceptance: ${JSON.stringify(check)}`);
     const checkId = check._id;
     const checkAcceptUri = `${appServer.baseURL}/v1/checks/${checkId}/accept`;
 
@@ -46,7 +49,48 @@ When(
       },
     });
 
-    logger.info(`Check ${checkId} accepted successfully`);
+    logger.info(`Check ${checkId} accepted successfully: ${JSON.stringify(result.json)}`);
+    const testId = check.test || check.testId;
+    const maxAttempts = 20;
+    for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+      try {
+        const checkFilter = encodeURIComponent(JSON.stringify({ _id: checkId }));
+        const checkDetailsResponse = await requestWithSession(
+          `${appServer.baseURL}/v1/checks?limit=0&filter=${checkFilter}`,
+          testData,
+          appServer
+        );
+        const checkDetails = (checkDetailsResponse.json.results || [])[0];
+        const testDetails =
+          testId
+            ? (
+                await requestWithSession(
+                  `${appServer.baseURL}/v1/tests?limit=0&filter=${encodeURIComponent(JSON.stringify({ _id: testId }))}`,
+                  testData,
+                  appServer
+                )
+              ).json.results?.[0]
+            : null;
+        const checkAccepted =
+          checkDetails?.markedAs === 'accepted' ||
+          (Array.isArray(checkDetails?.status)
+            ? checkDetails.status.includes('accepted')
+            : checkDetails?.isCurrentlyAccepted === true);
+        logger.info(
+          `Acceptance polling attempt ${attempt + 1}: checkAccepted=${checkAccepted}, markedAs=${testDetails?.markedAs}`
+        );
+
+        if (checkAccepted) {
+          break;
+        }
+      } catch (pollError) {
+        logger.warn(`Acceptance polling attempt ${attempt + 1} failed: ${(pollError as Error).message}`);
+      }
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (attempt === maxAttempts - 1) {
+        logger.warn(`Acceptance polling timed out for check ${checkId}`);
+      }
+    }
     return result.json;
   }
 );
@@ -61,7 +105,7 @@ When(
     await new Promise((resolve) => setTimeout(resolve, 300));
 
     const repoRoot = path.resolve(__dirname, '..', '..', '..', '..');
-    const fullPath = path.join(repoRoot, 'tests', filePath);
+    const fullPath = path.join(repoRoot, 'syngrisi', 'tests', filePath);
 
     if (!fs.existsSync(fullPath)) {
       throw new Error(`Test file not found: ${fullPath}`);
@@ -83,8 +127,8 @@ When(
     form.append('suitename', 'Integration suite');
     form.append('viewport', '1366x768');
     form.append('browserName', 'chrome');
-    form.append('browserVersion', '120');
-    form.append('browserFullVersion', '120.0.0.0');
+    form.append('browserVersion', '11');
+    form.append('browserFullVersion', '11.0.0.0');
     form.append('os', 'macOS');
 
     const hashcode = crypto.createHash('sha512').update(imageBuffer).digest('hex');
@@ -139,8 +183,8 @@ When(
       form.append('suitename', 'Integration suite');
       form.append('viewport', '1366x768');
       form.append('browserName', 'chrome');
-      form.append('browserVersion', '120');
-      form.append('browserFullVersion', '120.0.0.0');
+      form.append('browserVersion', '11');
+      form.append('browserFullVersion', '11.0.0.0');
       form.append('os', 'macOS');
 
       const hashcode = crypto.createHash('sha512').update(imageBuffer).digest('hex');
@@ -169,3 +213,59 @@ When(
   }
 );
 
+When(
+  'I update via http check with params:',
+  async (
+    { appServer, testData }: { appServer: AppServerFixture; testData: TestStore },
+    yml: string
+  ) => {
+    const currentCheck = testData.get('currentCheck') as any;
+    if (!currentCheck || !currentCheck._id) {
+      throw new Error('No current check found. Please create a check first.');
+    }
+    const checkId = currentCheck._id;
+    // Render template to replace placeholders like <currentDate-10>
+    const renderedYml = renderTemplate(yml, testData);
+    const params = yaml.parse(renderedYml);
+    const uri = `${appServer.baseURL}/v1/checks/${checkId}`;
+    logger.info(`Updating check ${checkId} with params:`, params);
+    const result = await requestWithSession(uri, testData, appServer, {
+      method: 'PUT',
+      json: params,
+    });
+    logger.info(`Check ${checkId} updated successfully`);
+    return result.json;
+  }
+);
+
+When(
+  'I update via http last {string} checks with params:',
+  async (
+    { appServer, testData }: { appServer: AppServerFixture; testData: TestStore },
+    num: string,
+    yml: string
+  ) => {
+    // Render template to replace placeholders like <currentDate-10>
+    const renderedYml = renderTemplate(yml, testData);
+    const params = yaml.parse(renderedYml);
+    const name = params.name;
+    if (!name) {
+      throw new Error('Name parameter is required in update params');
+    }
+    const uri = `${appServer.baseURL}/v1/checks?limit=${num}&filter={"$and":[{"name":{"$regex":"${name}","$options":"im"}}]}`;
+    logger.info(`Fetching last ${num} checks with name "${name}"`);
+    const checksResponse = await requestWithSession(uri, testData, appServer);
+    const checks = checksResponse.json.results;
+    logger.info(`Found ${checks.length} checks`);
+    for (const check of checks) {
+      const updateUri = `${appServer.baseURL}/v1/checks/${check._id}`;
+      logger.info(`Updating check ${check._id} with params:`, params);
+      const result = await requestWithSession(updateUri, testData, appServer, {
+        method: 'PUT',
+        json: params,
+      });
+      logger.info(`Check ${check._id} updated successfully`);
+    }
+    logger.info(`Updated ${checks.length} checks`);
+  }
+);

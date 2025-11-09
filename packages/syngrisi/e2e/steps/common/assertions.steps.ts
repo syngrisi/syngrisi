@@ -7,8 +7,71 @@ import { assertCondition } from '@helpers/assertions';
 import { AriaRole } from '@helpers/types';
 import { renderTemplate } from '@helpers/template';
 import { createLogger } from '@lib/logger';
+import type { TestStore } from '@fixtures';
 
 const logger = createLogger('AssertionsSteps');
+
+async function ensureTestDetailsVisible(page: Page, testName: string): Promise<void> {
+  if (!testName) return;
+
+  try {
+    await page.waitForFunction(
+      (name) =>
+        !!document.querySelector(`[data-table-test-name="${name}"]`) ||
+        !!document.querySelector(`tr[data-row-name="${name}"]`),
+      testName,
+      { timeout: 5000 }
+    );
+  } catch {
+    logger.warn(`Failed to locate row for test "${testName}" while ensuring details are visible`);
+    return;
+  }
+
+  const isExpanded = await page.evaluate((name) => {
+    const row = document.querySelector(`tr[data-row-name="${name}"]`);
+    if (!row) return false;
+    const collapse = row.nextElementSibling?.querySelector('[data-test="table-test-collapsed-row"]') as HTMLElement | null;
+    if (!collapse) return false;
+    const style = window.getComputedStyle(collapse);
+    const rect = collapse.getBoundingClientRect();
+    return (
+      style.display !== 'none' &&
+      style.visibility !== 'hidden' &&
+      style.opacity !== '0' &&
+      rect.height > 0 &&
+      rect.width > 0
+    );
+  }, testName);
+
+  if (isExpanded) {
+    return;
+  }
+
+  const rowLocator = page.locator(`tr[data-row-name="${testName}"]`).first();
+  if ((await rowLocator.count()) > 0) {
+    const nameCell = rowLocator.locator('[data-test="table-row-Name"]').first();
+    if ((await nameCell.count()) > 0) {
+      await nameCell.scrollIntoViewIfNeeded().catch(() => {});
+      await nameCell.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+      await nameCell.click().catch(() => {});
+      await page.waitForTimeout(100);
+      return;
+    }
+    await rowLocator.scrollIntoViewIfNeeded().catch(() => {});
+    await rowLocator.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+    await rowLocator.click().catch(() => {});
+    await page.waitForTimeout(100);
+    return;
+  }
+
+  const headerLocator = page.locator(`[data-table-test-name="${testName}"]`).first();
+  if ((await headerLocator.count()) > 0) {
+    await headerLocator.scrollIntoViewIfNeeded().catch(() => {});
+    await headerLocator.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+    await headerLocator.click().catch(() => {});
+    await page.waitForTimeout(100);
+  }
+}
 
 /**
  * Resolves a locator based on a {@link ElementTarget} descriptor extracted from `{target}`.
@@ -436,41 +499,116 @@ Then(
   }
 );
 
-Then(
-  'I expect that element {string} to contain text {string}',
-  async ({ page, testData }, selector: string, expected: string) => {
-    const locator = getLocatorQuery(page, selector);
-    // If checking test status, wait for status to change from "Running" using polling
-    if (selector.includes('table-row-Status') && expected !== 'Running') {
-      // Use polling to wait for status change (as tests may take time to complete)
-      const maxAttempts = 90; // 90 seconds with 1 second intervals (tests may take time to process)
-      for (let attempt = 0; attempt < maxAttempts; attempt++) {
-        const text = await locator.first().textContent();
-        const trimmedText = text?.trim() || '';
-        if (trimmedText === expected || trimmedText.toLowerCase() === expected.toLowerCase()) {
-          logger.info(`Test status changed to "${expected}" after ${attempt + 1} attempts`);
-          break;
-        }
-        if (attempt < maxAttempts - 1) {
-          await page.waitForTimeout(1000);
-        }
-      }
+// Shared function for checking text content with status polling
+async function checkElementContainsText(
+  page: Page,
+  selector: string,
+  expected: string,
+  testData?: any
+) {
+  const renderedExpected = renderTemplate(expected, testData);
+  const locator = getLocatorQuery(page, selector);
+  try {
+    await locator.first().waitFor({ state: 'attached', timeout: 10000 });
+  } catch (error) {
+    if (selector.includes("[data-check='")) {
+      const snapshot = await page.evaluate(() =>
+        Array.from(document.querySelectorAll('[data-check]')).map((el) => ({
+          value: el.getAttribute('data-check'),
+          text: el.textContent,
+        }))
+      );
+      logger.info(`Wait for selector "${selector}" failed; available [data-check] elements: ${JSON.stringify(snapshot)}`);
     }
-    // Handle placeholders like <YYYY-MM-DD> - replace with regex pattern for date matching
-    let expectedPattern = expected;
-    if (expected.includes('<YYYY-MM-DD>')) {
-      // Replace <YYYY-MM-DD> with regex pattern that matches date format YYYY-MM-DD or YYYY-MM-DD HH:mm:ss
-      expectedPattern = expected.replace('<YYYY-MM-DD>', '\\d{4}-\\d{2}-\\d{2}(?: \\d{2}:\\d{2}:\\d{2})?');
-      const actualText = await locator.first().textContent();
-      const regex = new RegExp(expectedPattern);
-      if (!regex.test(actualText || '')) {
-        throw new Error(`Expected text to match pattern "${expectedPattern}", but got "${actualText}"`);
-      }
-      return;
-    }
-    await expect(locator.first()).toContainText(expected);
+    throw error;
   }
-);
+  // If checking test status, wait for status to change from "Running" using polling
+  if (selector.includes('table-row-Status') && expected !== 'Running') {
+    // Use polling to wait for status change (as tests may take time to complete)
+    const maxAttempts = 90; // 90 seconds with 1 second intervals (tests may take time to process)
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      const text = await locator.first().textContent();
+      const trimmedText = text?.trim() || '';
+      if (trimmedText === expected || trimmedText.toLowerCase() === expected.toLowerCase()) {
+        logger.info(`Test status changed to "${expected}" after ${attempt + 1} attempts`);
+        break;
+      }
+      if (attempt < maxAttempts - 1) {
+        await page.waitForTimeout(1000);
+      }
+    }
+  }
+  // Handle placeholders like <YYYY-MM-DD> - replace with regex pattern for date matching
+  let expectedPattern = renderedExpected;
+  if (renderedExpected.includes('<YYYY-MM-DD>')) {
+    // Replace <YYYY-MM-DD> with regex pattern that matches date format YYYY-MM-DD or YYYY-MM-DD HH:mm:ss
+    expectedPattern = renderedExpected.replace('<YYYY-MM-DD>', '\\d{4}-\\d{2}-\\d{2}(?: \\d{2}:\\d{2}:\\d{2})?');
+    const actualText = await locator.first().textContent();
+    const regex = new RegExp(expectedPattern);
+    if (!regex.test(actualText || '')) {
+      throw new Error(`Expected text to match pattern "${expectedPattern}", but got "${actualText}"`);
+    }
+    return;
+  }
+  if (selector.includes('browser-label')) {
+    const texts = await locator.allTextContents();
+    logger.info(`Texts resolved for selector "${selector}": ${JSON.stringify(texts)}`);
+  }
+  let texts = await locator.allTextContents();
+  if (texts.length === 0) {
+    texts = await locator.evaluateAll((elements) =>
+      elements.map((el) => {
+        const htmlElement = el as HTMLElement;
+        return htmlElement.innerText ?? el.textContent ?? '';
+      })
+    );
+  }
+  const normalizedTexts = texts.map((text) => (text || '').replace(/\u00a0/g, ' '));
+  if (selector.includes('data-related-check')) {
+    logger.info(`Texts for selector "${selector}": raw=${JSON.stringify(texts)} normalized=${JSON.stringify(normalizedTexts)}`);
+  }
+  if (texts.length === 0) {
+    if (selector.includes("[data-check='")) {
+      const matchCount = await locator.count();
+      const dataCheckSnapshot = await page.evaluate(() =>
+        Array.from(document.querySelectorAll('[data-check]')).map((el) => ({
+          value: el.getAttribute('data-check'),
+          text: el.textContent,
+        }))
+      );
+      logger.info(
+        `Available [data-check] elements: ${JSON.stringify(dataCheckSnapshot)}; locator count=${matchCount}`
+      );
+      const targetOuterHtml = await page.evaluate((sel) => {
+        const node = document.querySelector(sel);
+        return node ? node.outerHTML : null;
+      }, selector);
+      logger.info(`OuterHTML for selector "${selector}": ${targetOuterHtml}`);
+      const textMatches = await page.evaluate((needle) =>
+        Array.from(document.querySelectorAll('*'))
+          .filter((el) => (el.textContent || '').includes(needle))
+          .slice(0, 5)
+          .map((el) => ({
+            tag: el.tagName,
+            text: el.textContent,
+            classes: el.className,
+            dataCheck: el.getAttribute('data-check'),
+          }))
+      , renderedExpected);
+      logger.info(`Elements containing text "${renderedExpected}": ${JSON.stringify(textMatches)}`);
+    }
+    throw new Error(`Expected at least one element for selector "${selector}", but none found`);
+  }
+  if (!normalizedTexts.some((text) => text.includes(renderedExpected))) {
+    throw new Error(`Expected any element matching "${selector}" to contain "${renderedExpected}", but texts were ${JSON.stringify(normalizedTexts)}`);
+  }
+}
+
+// Register step for Then keyword (works for both When and Then in feature files)
+// Note: In Cucumber, a step definition registered with one keyword can be used with any keyword in feature files
+Then('I expect that element {string} to contain text {string}', async ({ page, testData }, selector: string, expected: string) => {
+  await checkElementContainsText(page, selector, expected, testData);
+});
 
 Then(
   'I expect that the css attribute {string} from element {string} is {string}',
@@ -518,10 +656,20 @@ Then(
     // Normalize color values to match WebdriverIO behavior
     // WebdriverIO returns rgba(r,g,b,1) format without spaces for colors
     if (cssProperty.match(/(color|background-color)/)) {
-      // Convert rgb(r, g, b) to rgba(r,g,b,1) format (no spaces, as WebdriverIO returns)
-      const rgbMatch = actualValue.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
-      if (rgbMatch) {
-        actualValue = `rgba(${rgbMatch[1]},${rgbMatch[2]},${rgbMatch[3]},1)`;
+      // Normalize rgba values: remove spaces and ensure alpha is present
+      const rgbaMatch = actualValue.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+      if (rgbaMatch) {
+        const r = rgbaMatch[1];
+        const g = rgbaMatch[2];
+        const b = rgbaMatch[3];
+        const a = rgbaMatch[4] || '1';
+        actualValue = `rgba(${r},${g},${b},${a})`;
+      } else {
+        // Convert rgb(r, g, b) to rgba(r,g,b,1) format (no spaces, as WebdriverIO returns)
+        const rgbMatch = actualValue.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+        if (rgbMatch) {
+          actualValue = `rgba(${rgbMatch[1]},${rgbMatch[2]},${rgbMatch[3]},1)`;
+        }
       }
       // If still empty, log warning
       if (!actualValue) {
@@ -538,15 +686,182 @@ Then(
   'I expect that the attribute {string} from element {string} is {string}',
   async ({ page }, attributeName: string, selector: string, expected: string) => {
     const locator = getLocatorQuery(page, selector);
-    await expect(locator.first()).toHaveAttribute(attributeName, expected);
+    const element = locator.first();
+    const allValues = await locator.evaluateAll((nodes, attr) => nodes.map((node) => (node as HTMLElement).getAttribute(attr)), attributeName);
+    logger.info(`Collected ${allValues.length} "${attributeName}" values for selector "${selector}": ${JSON.stringify(allValues)}`);
+    const htmlSnippets = await locator.evaluateAll((nodes) => nodes.map((node) => {
+      const el = node as Element;
+      const parent = el.parentElement;
+      const parentInfo = parent
+        ? ` parent[data-test=${parent.getAttribute('data-test') || 'n/a'}, class=${parent.className}]`
+        : '';
+      return `${el.outerHTML}${parentInfo}`;
+    }));
+    logger.info(`HTML snapshots for selector "${selector}": ${htmlSnippets.join(' | ')}`);
+    const actual = await element.getAttribute(attributeName);
+    logger.info(`Attribute assertion for selector "${selector}" -> ${attributeName}="${actual}" (expected "${expected}")`);
+    await expect(element).toHaveAttribute(attributeName, expected);
   }
 );
 
 When(
   'I wait on element {string} to be displayed',
+  async ({ page, testData }: { page: Page; testData: TestStore }, selector: string) => {
+    const lastUnfoldedTest = testData?.get('lastUnfoldedTest') as string | undefined;
+    logger.info(
+      `Waiting for selector "${selector}" with last unfolded test "${lastUnfoldedTest ?? 'n/a'}"`
+    );
+    // For user initials (TU, TR, JD, TA, RR, SD, SG), use special handling
+    if (selector.match(/span\*=[A-Z]{2}/)) {
+      const match = selector.match(/span\*=([A-Z]{2})/);
+      const expectedInitials = match ? match[1] : '';
+      
+      // Wait for user icon to appear first
+      await page.locator('[data-test="user-icon"]').waitFor({ state: 'visible', timeout: 15000 });
+      
+      // Force page reload to refresh React Query cache and get updated user data
+      await page.reload({ waitUntil: 'networkidle' });
+      await page.waitForTimeout(1000);
+      
+      // Poll for initials to appear (React Query may take time to load user data)
+      const maxAttempts = 60; // 30 seconds with 500ms intervals
+      let found = false;
+      for (let attempt = 0; attempt < maxAttempts; attempt++) {
+        const iconText = await page.locator('[data-test="user-icon"]').first().textContent();
+        if (iconText && iconText.trim() === expectedInitials) {
+          found = true;
+          break;
+        }
+        if (attempt < maxAttempts - 1) {
+          await page.waitForTimeout(500);
+        }
+      }
+      
+      if (!found) {
+        const iconText = await page.locator('[data-test="user-icon"]').first().textContent();
+        throw new Error(`User initials "${expectedInitials}" not found in user icon. Actual text: "${iconText}"`);
+      }
+      return; // Success, exit early
+    }
+    
+    if (selector.includes('Test does not have any checks') && lastUnfoldedTest) {
+      await ensureTestDetailsVisible(page, lastUnfoldedTest);
+      await page.waitForFunction(
+        (testName) => {
+          const row = document.querySelector(`tr[data-row-name="${testName}"]`);
+          if (!row) return false;
+          const collapse = row.nextElementSibling?.querySelector('[data-test="table-test-collapsed-row"]') as HTMLElement | null;
+          if (!collapse) return false;
+          const style = window.getComputedStyle(collapse);
+          const rect = collapse.getBoundingClientRect();
+          const isVisible =
+            style.display !== 'none' &&
+            style.visibility !== 'hidden' &&
+            style.opacity !== '0' &&
+            rect.height > 0 &&
+            rect.width > 0;
+          if (!isVisible) return false;
+          return collapse.textContent?.includes('Test does not have any checks');
+        },
+        lastUnfoldedTest,
+        { timeout: 30000 }
+      );
+      logger.info(`Confirmed selector "${selector}" via collapse content check`);
+      return;
+    }
+    
+    // For other selectors, use standard approach
+    const locator = getLocatorQuery(page, selector);
+    const timeoutMs = 30000;
+    const intervalMs = 250;
+    const deadline = Date.now() + timeoutMs;
+    let attempts = 0;
+    let reUnfoldAttempts = 0;
+
+    while (Date.now() < deadline) {
+      attempts += 1;
+      const count = await locator.count();
+      if (count > 0) {
+        let foundVisible = false;
+        for (let i = 0; i < count; i += 1) {
+          const candidate = locator.nth(i);
+          try {
+            await candidate.scrollIntoViewIfNeeded().catch(() => {});
+            if (await candidate.isVisible()) {
+              foundVisible = true;
+              logger.info(`Selector "${selector}" became visible after ${attempts} checks`);
+              return;
+            }
+          } catch (error) {
+            logger.debug?.(`isVisible check failed for selector "${selector}" index ${i}: ${(error as Error).message}`);
+          }
+        }
+        if (!foundVisible) {
+          try {
+            const debugStyles = await locator.evaluateAll((nodes) =>
+              nodes.map((node) => {
+                const el = node as HTMLElement;
+                const style = window.getComputedStyle(el);
+                return {
+                  tag: el.tagName,
+                  display: style.display,
+                  visibility: style.visibility,
+                  opacity: style.opacity,
+                  offsetParent: el.offsetParent ? (el.offsetParent as HTMLElement).tagName : null,
+                  text: el.textContent?.trim() || '',
+                };
+              })
+            );
+            logger.info(`Selector "${selector}" not visible yet; styles: ${JSON.stringify(debugStyles)}`);
+          } catch (error) {
+            logger.debug?.(`Failed to collect debug styles for "${selector}": ${(error as Error).message}`);
+          }
+
+          if (
+            lastUnfoldedTest &&
+            selector.includes('Test does not have any checks') &&
+            attempts % 8 === 0
+          ) {
+            reUnfoldAttempts += 1;
+            logger.info(
+              `Attempt ${reUnfoldAttempts}: re-unfolding test "${lastUnfoldedTest}" while waiting for selector "${selector}"`
+            );
+            await ensureTestDetailsVisible(page, lastUnfoldedTest);
+          }
+        }
+      }
+      if (
+        count === 0 &&
+        lastUnfoldedTest &&
+        selector.includes('Test does not have any checks') &&
+        attempts % 8 === 0
+      ) {
+        reUnfoldAttempts += 1;
+        logger.info(
+          `Attempt ${reUnfoldAttempts}: no matches found for "${selector}", re-unfolding test "${lastUnfoldedTest}"`
+        );
+        await ensureTestDetailsVisible(page, lastUnfoldedTest);
+      }
+      await page.waitForTimeout(intervalMs);
+    }
+
+    throw new Error(`Element "${selector}" was not visible after ${timeoutMs}ms`);
+  }
+);
+
+When(
+  'I wait on element {string} for {int}ms to be displayed',
+  async ({ page }, selector: string, timeoutMs: number) => {
+    const locator = getLocatorQuery(page, selector);
+    await locator.first().waitFor({ state: 'visible', timeout: timeoutMs });
+  }
+);
+
+Then(
+  'I expect that element {string} is not displayed',
   async ({ page }, selector: string) => {
     const locator = getLocatorQuery(page, selector);
-    await locator.first().waitFor({ state: 'visible', timeout: 30000 });
+    await expect(locator.first()).not.toBeVisible();
   }
 );
 
@@ -565,6 +880,74 @@ When(
     await locator.first().waitFor({ state: 'detached', timeout: 30000 });
   }
 );
+
+Then(
+  'I expect that element {string} does not exist',
+  async ({ page }, selector: string) => {
+    const locator = getLocatorQuery(page, selector);
+    await expect(locator.first()).toHaveCount(0);
+  }
+);
+
+Then(
+  'I expect that element {string} is displayed',
+  async ({ page }, selector: string) => {
+    const locator = getLocatorQuery(page, selector);
+    await expect(locator.first()).toBeVisible();
+  }
+);
+
+Then('the element {string} is displayed', async ({ page }, selector: string) => {
+  const locator = getLocatorQuery(page, selector);
+  await expect(locator.first()).toBeVisible();
+});
+
+Then('the title is {string}', async ({ page }, expectedTitle: string) => {
+  const title = await page.title();
+  expect(title).toBe(expectedTitle);
+});
+
+Then('I expect that the title contains {string}', async ({ page }, expectedTitle: string) => {
+  const title = await page.title();
+  expect(title).toContain(expectedTitle);
+});
+
+Then('the css attribute {string} from element {string} is {string}', async ({ page, testData }, attrName: string, selector: string, expected: string) => {
+  const renderedSelector = renderTemplate(selector, testData);
+  const renderedExpected = renderTemplate(expected, testData);
+  const locator = getLocatorQuery(page, renderedSelector);
+  const value = await locator.first().evaluate((el: HTMLElement, attr: string) => {
+    return window.getComputedStyle(el).getPropertyValue(attr);
+  }, attrName);
+  let normalizedValue = value.trim();
+  if (/color$/i.test(attrName)) {
+    normalizedValue = normalizedValue.replace(/\s+/g, '');
+    const rgbMatch = normalizedValue.match(/^rgb\((\d+,\d+,\d+)\)$/i);
+    if (rgbMatch) {
+      normalizedValue = `rgba(${rgbMatch[1]},1)`;
+    }
+    normalizedValue = normalizedValue.replace(/rgba\(([^)]+)\)/gi, (_, content) => `rgba(${content.replace(/\s+/g, '')})`);
+  }
+  
+  const expectedTrimmed = renderedExpected.trim();
+  const pxMatch = expectedTrimmed.match(/^([\d.]+)px$/);
+  const actualPxMatch = normalizedValue.match(/^([\d.]+)px$/);
+  
+  if (pxMatch && actualPxMatch) {
+    const expectedPx = parseFloat(pxMatch[1]);
+    const actualPx = parseFloat(actualPxMatch[1]);
+    const tolerance = 10;
+    const diff = Math.abs(expectedPx - actualPx);
+    expect(diff).toBeLessThanOrEqual(tolerance);
+  } else {
+    expect(normalizedValue).toBe(expectedTrimmed);
+  }
+});
+
+When('I wait on element {string} to exist', async ({ page }, selector: string) => {
+  const locator = getLocatorQuery(page, selector);
+  await locator.first().waitFor({ state: 'attached', timeout: 30000 });
+});
 
 Then(
   'the element {string} contains the text {string}',
@@ -624,5 +1007,167 @@ Then(
   async ({ page }, attributeName: string, selector: string, expected: string) => {
     const locator = getLocatorQuery(page, selector);
     await expect(locator.first()).not.toHaveAttribute(attributeName, expected);
+  }
+);
+
+Then(
+  'I expect the url to contain {string}',
+  async ({ page, testData }, expectedUrl: string) => {
+    const renderedUrl = renderTemplate(expectedUrl, testData);
+    // Wait for URL to contain the expected string (redirects may happen via JavaScript)
+    try {
+      await page.waitForURL(`**/*${renderedUrl}*`, { timeout: 10000 });
+    } catch (e) {
+      // If waitForURL fails, try waitForFunction as fallback
+      try {
+        await page.waitForFunction(
+          (url) => window.location.href.includes(url),
+          renderedUrl,
+          { timeout: 5000 }
+        );
+      } catch (e2) {
+        // If both fail, check current URL anyway
+      }
+    }
+    // Wait for URL to contain the expected string (with longer timeout for redirects)
+    const maxWaitTime = 10000;
+    const startTime = Date.now();
+    let urlMatches = false;
+    let currentUrl = '';
+    
+    while (Date.now() - startTime < maxWaitTime && !urlMatches) {
+      await page.waitForTimeout(200);
+      currentUrl = page.url();
+      // Check both full URL and pathname (as old framework checks full URL with toContain)
+      try {
+        const urlObj = new URL(currentUrl);
+        const urlPath = urlObj.pathname + urlObj.search;
+        urlMatches = currentUrl.includes(renderedUrl) || urlPath.includes(renderedUrl);
+      } catch (e) {
+        // If URL parsing fails, just check the string
+        urlMatches = currentUrl.includes(renderedUrl);
+      }
+      if (urlMatches) break;
+    }
+    
+    // Final check
+    currentUrl = page.url();
+    try {
+      const urlObj = new URL(currentUrl);
+      const urlPath = urlObj.pathname + urlObj.search;
+      const urlPathDecoded = decodeURIComponent(urlPath);
+      const renderedUrlDecoded = decodeURIComponent(renderedUrl);
+      // Check both encoded and decoded versions
+      const matches = currentUrl.includes(renderedUrl) 
+        || urlPath.includes(renderedUrl)
+        || urlPathDecoded.includes(renderedUrlDecoded)
+        || currentUrl.includes(renderedUrlDecoded)
+        || urlPath.includes(renderedUrlDecoded); // Also check if decoded expected is in encoded path
+      if (!matches) {
+        throw new Error(`Expected URL to contain "${renderedUrl}", but got "${currentUrl}" (path: "${urlPath}", decoded path: "${urlPathDecoded}")`);
+      }
+    } catch (e: any) {
+      // If URL parsing fails or assertion fails, check the string (both encoded and decoded)
+      if (e.message && e.message.includes('Expected URL')) {
+        throw e; // Re-throw our custom error
+      }
+      const decodedCurrent = decodeURIComponent(currentUrl);
+      const decodedExpected = decodeURIComponent(renderedUrl);
+      const matches = currentUrl.includes(renderedUrl) || decodedCurrent.includes(decodedExpected);
+      if (!matches) {
+        throw new Error(`Expected URL to contain "${renderedUrl}", but got "${currentUrl}"`);
+      }
+    }
+  }
+);
+
+Then(
+  'I expect the url to not contain {string}',
+  async ({ page, testData }, expectedUrl: string) => {
+    const renderedUrl = renderTemplate(expectedUrl, testData);
+    const currentUrl = page.url();
+    expect(currentUrl).not.toContain(renderedUrl);
+  }
+);
+
+Then(
+  'I expect that the title is {string}',
+  async ({ page }, expectedTitle: string) => {
+    const title = await page.title();
+    expect(title).toBe(expectedTitle);
+  }
+);
+
+Then(
+  'I expect HTML contains:',
+  async ({ page }, docString: string) => {
+    const source = await page.content();
+    expect(source).toContain(docString.trim());
+  }
+);
+
+Then(
+  'I expect that element {string} contain value {string}',
+  async ({ page, testData }, selector: string, expected: string) => {
+    const renderedSelector = renderTemplate(selector, testData);
+    const renderedExpected = renderTemplate(expected, testData);
+    const locator = getLocatorQuery(page, renderedSelector);
+    await expect(locator.first()).toHaveValue(renderedExpected);
+  }
+);
+
+Then(
+  'I wait on element {string}',
+  async ({ page }, selector: string) => {
+    const locator = getLocatorQuery(page, selector);
+    await locator.first().waitFor({ state: 'visible', timeout: 30000 });
+  }
+);
+
+Then(
+  'I expect that element {string} contain text {string}',
+  async ({ page, testData }, selector: string, expected: string) => {
+    const renderedSelector = renderTemplate(selector, testData);
+    const renderedExpected = renderTemplate(expected, testData);
+    const locator = getLocatorQuery(page, renderedSelector);
+    // Wait for element to be visible first (especially for error messages that appear after actions)
+    // Use longer timeout for error messages and title elements that may take time to appear
+    let timeout = 10000;
+    if (selector.includes('error-message')) {
+      timeout = 15000;
+    } else if (selector.includes('#title') || selector.includes('title')) {
+      timeout = 20000; // Title elements may take longer to render
+    }
+    await locator.first().waitFor({ state: 'visible', timeout });
+    await expect(locator.first()).toContainText(renderedExpected);
+  }
+);
+
+Then(
+  'I expect that the element {string} to have attribute {string}',
+  async ({ page, testData }, selector: string, attributeName: string) => {
+    const renderedSelector = renderTemplate(selector, testData);
+    const locator = getLocatorQuery(page, renderedSelector);
+    // Wait for element to be visible first
+    await locator.first().waitFor({ state: 'visible', timeout: 10000 });
+    await expect(locator.first()).toHaveAttribute(attributeName);
+  }
+);
+
+Then(
+  'I expect that the element {string} to not have attribute {string}',
+  async ({ page, testData }, selector: string, attributeName: string) => {
+    const renderedSelector = renderTemplate(selector, testData);
+    const locator = getLocatorQuery(page, renderedSelector);
+    await expect(locator.first()).not.toHaveAttribute(attributeName);
+  }
+);
+
+When(
+  'I wait on element {string} to be {condition}',
+  async ({ page, testData }, selector: string, condition: StepCondition) => {
+    const renderedSelector = renderTemplate(selector, testData);
+    const locator = getLocatorQuery(page, renderedSelector);
+    await assertCondition(locator, condition);
   }
 );

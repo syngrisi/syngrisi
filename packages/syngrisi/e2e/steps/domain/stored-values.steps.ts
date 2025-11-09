@@ -8,39 +8,55 @@ const logger = createLogger('StoredValuesSteps');
 Then(
   'I expect the stored {string} string is contain:',
   async ({ testData }: { testData: TestStore }, itemName: string, expected: string) => {
-    const storedValue = testData.get(itemName) as string | undefined;
-    if (!storedValue) {
+    const storedValue = testData.get(itemName);
+    if (storedValue === undefined || storedValue === null) {
       throw new Error(`No stored value found for "${itemName}"`);
     }
 
-    logger.info(`Checking stored "${itemName}": "${storedValue}" contains "${expected}"`);
-    expect(storedValue).toContain(expected.trim());
+    const normalizedValue = String(storedValue);
+    logger.info(`Checking stored "${itemName}": "${normalizedValue}" contains "${expected}"`);
+    expect(normalizedValue).toContain(expected.trim());
   }
 );
 
 Then(
   'I expect the stored {string} string is not contain:',
   async ({ testData }: { testData: TestStore }, itemName: string, expected: string) => {
-    const storedValue = testData.get(itemName) as string | undefined;
-    if (!storedValue) {
+    const storedValue = testData.get(itemName);
+    if (storedValue === undefined || storedValue === null) {
       throw new Error(`No stored value found for "${itemName}"`);
     }
 
-    logger.info(`Checking stored "${itemName}": "${storedValue}" does not contain "${expected}"`);
-    expect(storedValue).not.toContain(expected.trim());
+    const normalizedValue = String(storedValue);
+    logger.info(`Checking stored "${itemName}": "${normalizedValue}" does not contain "${expected}"`);
+    expect(normalizedValue).not.toContain(expected.trim());
   }
 );
 
 Then(
   'I expect the stored {string} string is equal:',
   async ({ testData }: { testData: TestStore }, itemName: string, expected: string) => {
-    const storedValue = testData.get(itemName) as string | undefined;
-    if (!storedValue) {
+    const storedValue = testData.get(itemName);
+    if (storedValue === undefined || storedValue === null) {
       throw new Error(`No stored value found for "${itemName}"`);
     }
 
-    logger.info(`Checking stored "${itemName}": "${storedValue}" equals "${expected}"`);
-    expect(storedValue).toBe(expected.trim());
+    const normalizedValue = String(storedValue);
+    logger.info(`Checking stored "${itemName}": "${normalizedValue}" equals "${expected}"`);
+    expect(normalizedValue).toBe(expected.trim());
   }
 );
 
+Then(
+  'I expect the stored {string} string is not equal:',
+  async ({ testData }: { testData: TestStore }, itemName: string, expected: string) => {
+    const storedValue = testData.get(itemName);
+    if (storedValue === undefined || storedValue === null) {
+      throw new Error(`No stored value found for "${itemName}"`);
+    }
+
+    const normalizedValue = String(storedValue);
+    logger.info(`Checking stored "${itemName}": "${normalizedValue}" does not equal "${expected}"`);
+    expect(normalizedValue).not.toBe(expected.trim());
+  }
+);

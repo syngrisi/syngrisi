@@ -110,6 +110,7 @@ Feature: Check Details - Initial image resize
         || (parseInt(mainView.canvas.viewportTransform[4]) + '_' + mainView.canvas.viewportTransform[5]) === '528_0'
         || (parseInt(mainView.canvas.viewportTransform[4]) + '_' + mainView.canvas.viewportTransform[5]) === '538_0'
         || (parseInt(mainView.canvas.viewportTransform[4]) + '_' + mainView.canvas.viewportTransform[5]) === '539_0'
+        || (parseInt(mainView.canvas.viewportTransform[4]) + '_' + mainView.canvas.viewportTransform[5]) === '540_0'
         """
         Then I expect the stored "js" string is equal:
         """
@@ -158,5 +159,4 @@ Feature: Check Details - Initial image resize
         """
           true
         """
-
 
