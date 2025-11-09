@@ -5,7 +5,7 @@
  * @param  {String}   selectionValue Value to select by
  * @param  {String}   selector     Element selector
  */
-export default (selectionType, selectionValue, selector) => {
+export default async (selectionType, selectionValue, selector) => {
     /**
      * The method to use for selecting the option
      * @type {String}
@@ -43,7 +43,8 @@ export default (selectionType, selectionValue, selector) => {
     }
 
     try {
-        $(selector)[command](...commandArguments);
+        const element = await $(selector);
+        await element[command](...commandArguments);
     } catch (error) {
         const errorMsg = error.message || error.toString() || '';
         if (errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed') || errorMsg.includes('ECONNREFUSED')) {

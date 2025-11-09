@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle,object-shorthand,no-console,func-names */
-const { When, Given } = require('cucumber');
+const { When, Given } = require("@cucumber/cucumber");
 const YAML = require('yaml');
 const frisby = require('frisby');
 const fs = require('fs');

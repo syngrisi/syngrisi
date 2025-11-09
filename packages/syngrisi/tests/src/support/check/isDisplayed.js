@@ -3,14 +3,15 @@
  * @param  {String}   selector   Element selector
  * @param  {String}   falseCase Check for a visible or a hidden element
  */
-export default (selector, falseCase) => {
+export default async (selector, falseCase) => {
     /**
      * Visible state of the give element
      * @type {String}
      */
     let isDisplayed;
     try {
-        isDisplayed = $(selector).isDisplayed();
+        const element = await $(selector);
+        isDisplayed = await element.isDisplayed();
     } catch (error) {
         const errorMsg = error.message || error.toString() || '';
         if (errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed')) {

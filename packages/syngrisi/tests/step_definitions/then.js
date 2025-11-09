@@ -29,7 +29,7 @@ import isVisible from '../src/support/check/isDisplayed';
 import waitFor from '../src/support/action/waitFor';
 import waitForVisible from '../src/support/action/waitForDisplayed';
 
-const { Then } = require('cucumber');
+const { Then } = require("@cucumber/cucumber");
 
 Then(
     /^I expect that the title is( not)* "([^"]*)?"$/,
@@ -43,8 +43,9 @@ Then(
 
 Then(
     /^I expect that element "([^"]*)?" does appear exactly "([^"]*)?" times$/,
-    (selector, times) => {
-        expect($$(selector).length)
+    async (selector, times) => {
+        const elements = await $$(selector);
+        expect(elements.length)
             .toBe(parseInt(times, 10));
     }
     // checkIfElementExists
@@ -182,7 +183,9 @@ Then(
             retry: 3,
         },
     },
-    waitFor
+    async function (selector, ms, not, state) {
+        await waitFor(selector, ms, not, state);
+    }
 );
 
 Then(

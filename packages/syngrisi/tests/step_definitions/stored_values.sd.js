@@ -1,5 +1,5 @@
 /* eslint-disable require-jsdoc,func-names */
-const { Then } = require('cucumber');
+const { Then } = require("@cucumber/cucumber");
 const YAML = require('yaml');
 
 Then(/^I expect that the "([^"]*)" saved value equal the "([^"]*)" saved value$/, function (first, second) {

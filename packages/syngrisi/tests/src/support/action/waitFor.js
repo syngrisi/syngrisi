@@ -6,7 +6,7 @@
  * @param  {String}   state                    State to check for (default
  *                                             existence)
  */
-export default (selector, ms, falseState, state) => {
+export default async (selector, ms, falseState, state) => {
     /**
      * Maximum number of milliseconds to wait, default 10000
      * @type {Int}
@@ -17,7 +17,7 @@ export default (selector, ms, falseState, state) => {
      * Command to perform on the browser object
      * @type {String}
      */
-    let command = 'waitForExist';
+    let command = 'waitForDisplayed';
 
     /**
      * Boolean interpretation of the false state
@@ -47,7 +47,8 @@ export default (selector, ms, falseState, state) => {
     }
     console.log({ command });
     try {
-        $(selector)[command]({ reverse: boolFalseState, timeout: intMs });
+        const element = await $(selector);
+        await element[command]({ reverse: boolFalseState, timeout: intMs });
     } catch (error) {
         const errorMsg = error.message || error.toString() || '';
         const isDisconnected = errorMsg.includes('disconnected')

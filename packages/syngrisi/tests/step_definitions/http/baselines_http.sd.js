@@ -1,5 +1,5 @@
 /* eslint-disable object-shorthand,no-console,func-names */
-const { Then, When } = require('cucumber');
+const { Then, When } = require("@cucumber/cucumber");
 const YAML = require('yaml');
 const fs = require('fs');
 const { requestWithLastSessionSid, fillCommonPlaceholders } = require('../../src/utills/common');

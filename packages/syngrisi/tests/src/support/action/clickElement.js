@@ -6,7 +6,7 @@ import checkIfElementExists from '../lib/checkIfElementExists';
  * @param  {String}   type    Type of the element (link or selector)
  * @param  {String}   selector Element selector
  */
-export default (action, type, selector) => {
+export default async (action, type, selector) => {
     /**
      * Element to perform the action on
      * @type {String}
@@ -20,8 +20,9 @@ export default (action, type, selector) => {
     const method = (action === 'click') ? 'click' : 'doubleClick';
 
     try {
-        checkIfElementExists(selector2);
-        $(selector2)[method]();
+        await checkIfElementExists(selector2);
+        const element = await $(selector2);
+        await element[method]();
     } catch (error) {
         const errorMsg = error.message || error.toString() || '';
         if (errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed')) {

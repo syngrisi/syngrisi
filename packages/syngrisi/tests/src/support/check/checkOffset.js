@@ -6,17 +6,9 @@
  * @param  {String}   expectedPosition  The position to check against
  * @param  {String}   axis              The axis to check on (x or y)
  */
-export default (selector, falseCase, expectedPosition, axis) => {
-    /**
-     * Get the location of the element on the given axis
-     * @type {[type]}
-     */
-    const location = $(selector).getLocation(axis);
-
-    /**
-     * Parsed expected position
-     * @type {Int}
-     */
+export default async (selector, falseCase, expectedPosition, axis) => {
+    const element = await $(selector);
+    const location = await element.getLocation(axis);
     const intExpectedPosition = parseFloat(expectedPosition);
 
     if (falseCase) {

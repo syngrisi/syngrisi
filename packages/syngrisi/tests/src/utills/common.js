@@ -29,8 +29,8 @@ const saveRandomImage = async function saveRandomImage(fullPath) {
     });
 };
 
-const killServer = (port) => {
-    browser.waitUntil(() => {
+const killServer = async (port) => {
+    await browser.waitUntil(() => {
         console.log(`Try to kill apps on port: '${port}'`);
         try {
             const output = execSync(`npx kill-port ${port}`)
@@ -143,7 +143,7 @@ module.exports.removeConsoleColors = (string) => {
     );
 };
 
-const startServer = (params) => {
+const startServer = async (params) => {
     // const srvOpts = YAML.parse(params) || {};
     const cid = getCid();
 
@@ -217,7 +217,7 @@ const startServer = (params) => {
 
     // browser.pause(500);
     let timeoutMsg = '';
-    browser.waitUntil(async () => {
+    await browser.waitUntil(async () => {
         try {
             const request = got.get(
                 `http://${browser.config.serverDomain}:${cidPort}/v1/tasks/status`,
@@ -244,7 +244,7 @@ const startServer = (params) => {
             return false;
         }
     }, { timeout: 20000, timeoutMsg });
-    browser.pause(500);
+    await browser.pause(2000); // Wait additional 2 seconds for server to be fully ready
     console.log(`SERVER IS STARTED, PID: '${child.pid}' port: '${cidPort}'`);
     browser.syngrisiServer = child;
 };
@@ -253,15 +253,13 @@ const stopServer = () => {
     try {
         let output;
         if (process.env.DOCKER === '1') {
-            output = execSync('docker-compose stop')
+            output = execSync('docker-compose stop || true', { stdio: 'ignore' })
                 .toString();
         } else {
-            output = execSync(`pkill -SIGINT -f syngrisi_test_server_${getCid()}`)
+            output = execSync(`pkill -SIGINT -f "syngrisi_test_server_${getCid()}" || true`, { stdio: 'ignore' })
                 .toString();
         }
     } catch (e) {
-        console.log('WARNING: cannot stop the Syngrisi server');
-        // console.log(e);
     }
 };
 

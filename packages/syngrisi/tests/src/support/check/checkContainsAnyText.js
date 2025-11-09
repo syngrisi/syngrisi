@@ -5,31 +5,21 @@
  * @param  {String}   falseCase     Whether to check if the content contains
  *                                  text or not
  */
-export default (elementType, selector, falseCase) => {
-    /**
-     * The command to perform on the browser object
-     * @type {String}
-     */
+export default async (elementType, selector, falseCase) => {
     let command = 'getValue';
+    const element = await $(selector);
 
-    if (
-        elementType === 'button'
-        || $(selector).getAttribute('value') === null
-    ) {
+    if (elementType === 'button') {
         command = 'getText';
+    } else {
+        const valueAttr = await element.getAttribute('value');
+        if (valueAttr === null) {
+            command = 'getText';
+        }
     }
 
-    /**
-     * False case
-     * @type {Boolean}
-     */
     let boolFalseCase;
-
-    /**
-     * The text of the element
-     * @type {String}
-     */
-    const text = $(selector)[command]();
+    const text = await element[command]();
 
     if (typeof falseCase === 'undefined') {
         boolFalseCase = false;
