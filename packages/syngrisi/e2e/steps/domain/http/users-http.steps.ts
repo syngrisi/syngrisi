@@ -88,3 +88,31 @@ When(
   }
 );
 
+When(
+  'I create via http user as:{string} with params:',
+  async (
+    { appServer, testData }: { appServer: AppServerFixture; testData: TestStore },
+    user: string,
+    json: string
+  ) => {
+    const uri = `${appServer.baseURL}/v1/users`;
+    logger.info(`Creating user via ${uri}`);
+
+    const sessionSid = testData.get('lastSessionId') as string | undefined;
+    if (!sessionSid) {
+      throw new Error('No session ID found. Please login first.');
+    }
+
+    const params = JSON.parse(json);
+    const res = await got.post(uri, {
+      headers: {
+        cookie: `connect.sid=${sessionSid}`,
+      },
+      json: params,
+    });
+
+    const response = JSON.parse(res.body);
+    logger.info(`User created: ${response.username || response.email || 'unknown'}`);
+  }
+);
+

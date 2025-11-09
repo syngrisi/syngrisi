@@ -8,6 +8,7 @@ export const constants: { [key: string]: string } = {
   defaultProject: "Default Project",
   testUser: "test-user",
   testRepo: "test-repo",
+  testPlatform: process.env.TEST_PLATFORM || "macOS",
 };
 
 type GetValueFunc = (item: string) => unknown;
@@ -170,8 +171,23 @@ function replacePlaceholders(
 ): string {
   const funcs = Array.isArray(getValueFuncs) ? getValueFuncs : [getValueFuncs];
 
-  return input.replace(/<([\w\s.]+)(?:\[(.*?)\])?>/g, (match, item, params) => {
-    const itemParts = item.trim().split(".");
+  // First, handle special placeholders like <currentDate-10>, <currentDate-20>, etc.
+  // These need to be processed before the general placeholder replacement
+  let processedInput = input.replace(/<currentDate-(\d+)>/g, (match, days) => {
+    const date = new Date();
+    date.setDate(date.getDate() - parseInt(days, 10));
+    return date.toISOString();
+  });
+
+  // Also handle <currentDate> without offset
+  processedInput = processedInput.replace(/<currentDate>/g, () => {
+    return new Date().toISOString();
+  });
+
+  // Now handle general placeholders (including those with dashes)
+  return processedInput.replace(/<([\w\s.:\-]+)(?:\[(.*?)\])?>/g, (match, item, params) => {
+    const normalizedItem = item.trim().replace(/:/g, '.');
+    const itemParts = normalizedItem.split(".");
     let itemValue: unknown;
 
     for (const func of funcs) {

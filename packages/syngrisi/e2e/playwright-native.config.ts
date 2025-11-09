@@ -33,7 +33,7 @@ export const confObject = {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        viewport: { width: 1536, height: 864 }
+        viewport: { width: 1366, height: 768 }
       }
     }
   ]

@@ -41,24 +41,39 @@ export async function launchAppServer(
   const databaseName = 'SyngrisiDbTest';
   const cmdPath = path.resolve(REPO_ROOT);
   const cidPort = 3002 + cid;
-  const backendHost = env.E2E_BACKEND_HOST;
+  const runtimeEnv = process.env;
+  const dockerMode = runtimeEnv.DOCKER ?? env.DOCKER;
+  const backendHost = runtimeEnv.E2E_BACKEND_HOST ?? env.E2E_BACKEND_HOST;
   const baseURL = `http://${backendHost}:${cidPort}`;
 
   const serverScriptPath = path.join(cmdPath, 'dist', 'server', 'server.js');
   await ensurePathExists(serverScriptPath, "file");
 
+  const disableFirstRun = runtimeEnv.SYNGRISI_DISABLE_FIRST_RUN ?? env.SYNGRISI_DISABLE_FIRST_RUN ?? 'true';
+  const authEnabled = runtimeEnv.SYNGRISI_AUTH ?? env.SYNGRISI_AUTH ?? 'false';
+  const coverageFlag = runtimeEnv.SYNGRISI_COVERAGE ?? env.SYNGRISI_COVERAGE ?? 'false';
+
+  const nodeEnv = (additionalEnv?.NODE_ENV || runtimeEnv.NODE_ENV || 'test') as string;
+
   const spawnEnv: Record<string, string> = {
-    ...process.env,
-    SYNGRISI_DISABLE_FIRST_RUN: env.SYNGRISI_DISABLE_FIRST_RUN || 'true',
-    SYNGRISI_AUTH: env.SYNGRISI_AUTH || 'false',
+    ...runtimeEnv,
+    NODE_ENV: nodeEnv,
+    SYNGRISI_DISABLE_FIRST_RUN: disableFirstRun,
+    SYNGRISI_AUTH: authEnabled,
     SYNGRISI_APP_PORT: String(cidPort),
-    SYNGRISI_COVERAGE: env.SYNGRISI_COVERAGE === 'true' ? 'true' : 'false',
+    SYNGRISI_COVERAGE: coverageFlag === 'true' ? 'true' : 'false',
     ...additionalEnv,
   };
 
-  if (env.DOCKER !== '1') {
-    spawnEnv.SYNGRISI_DB_URI = env.SYNGRISI_DB_URI || `mongodb://localhost/${databaseName}${cid}`;
-    spawnEnv.SYNGRISI_IMAGES_PATH = env.SYNGRISI_IMAGES_PATH || path.resolve(REPO_ROOT, 'e2e', 'baselinesTest', String(cid));
+  if (dockerMode !== '1') {
+    spawnEnv.SYNGRISI_DB_URI =
+      runtimeEnv.SYNGRISI_DB_URI ||
+      env.SYNGRISI_DB_URI ||
+      `mongodb://localhost/${databaseName}${cid}`;
+    spawnEnv.SYNGRISI_IMAGES_PATH =
+      runtimeEnv.SYNGRISI_IMAGES_PATH ||
+      env.SYNGRISI_IMAGES_PATH ||
+      path.resolve(REPO_ROOT, 'baselinesTest', String(cid));
   }
 
   const nodePath = process.env.SYNGRISI_TEST_SERVER_NODE_PATH || process.execPath;
@@ -66,7 +81,7 @@ export async function launchAppServer(
   let command: string;
   let args: string[];
   
-  if (env.SYNGRISI_COVERAGE === 'true') {
+  if (spawnEnv.SYNGRISI_COVERAGE === 'true') {
     command = 'c8';
     args = [nodePath, serverScriptPath, `syngrisi_test_server_${cid}`];
   } else {
