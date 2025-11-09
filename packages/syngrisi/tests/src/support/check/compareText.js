@@ -5,18 +5,11 @@
  *                              elements match or not
  * @param  {String}   selector2  Element selector for the second element
  */
-export default (selector1, falseCase, selector2) => {
-    /**
-     * The text of the first element
-     * @type {String}
-     */
-    const text1 = $(selector1).getText();
-
-    /**
-     * The text of the second element
-     * @type {String}
-     */
-    const text2 = $(selector2).getText();
+export default async (selector1, falseCase, selector2) => {
+    const element1 = await $(selector1);
+    const element2 = await $(selector2);
+    const text1 = await element1.getText();
+    const text2 = await element2.getText();
 
     if (falseCase) {
         expect(text1).not.toEqual(

@@ -4,12 +4,9 @@
  * @param  {String}   falseCase Whether to check if the element is elected or
  *                              not
  */
-export default (selector, falseCase) => {
-    /**
-     * The selected state
-     * @type {Boolean}
-     */
-    const isSelected = $(selector).isSelected();
+export default async (selector, falseCase) => {
+    const element = await $(selector);
+    const isSelected = await element.isSelected();
 
     if (falseCase) {
         expect(isSelected)

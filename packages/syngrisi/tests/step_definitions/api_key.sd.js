@@ -1,5 +1,5 @@
 /* eslint-disable func-names,prefer-arrow-callback */
-const { When } = require('cucumber');
+const { When } = require("@cucumber/cucumber");
 
 When(/^I parse the API key$/, function () {
     const apiKey = $('[data-test=api-key]')

@@ -1,28 +1,37 @@
 /* eslint-disable no-unused-vars */
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '.env') });
-const WdioScreenshot = require('wdio-screenshot-v5');
 const hasha = require('hasha');
 
 const { hooks } = require('./src/support/hooks');
-
-if (!process.env.CHROME_BINARY) {
-    console.warn('Warning: CHROME_BINARY is not set. Falling back to the bundled Chrome binary.');
-}
 
 if (!process.env.SYNGRISI_TEST_SERVER_NODE_PATH) {
     console.warn('Warning: SYNGRISI_TEST_SERVER_NODE_PATH is not set. The default Node executable will be used.');
 }
 
 const streams = process.env.DOCKER === '1' ? 1 : (parseInt(process.env.STREAMS, 10) || 3);
-const chromeBinary = process.env.CHROME_BINARY
-    || path.resolve(__dirname, './chrome/chrome/mac_arm-118.0.5993.70/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing');
 
 const baseChromeArgs = ['--enable-automation', '--disable-dev-shm-usage', '--no-sandbox', '--window-size=1920,1080'];
 const headlessArgs = ['--headless', '--disable-gpu'];
 const chromeArgs = process.env.HL === '1'
     ? [...headlessArgs, ...baseChromeArgs]
     : baseChromeArgs;
+
+const chromeOptions = {
+    args: chromeArgs,
+    prefs: {
+        credentials_enable_service: false,
+        download: {
+            prompt_for_download: false,
+            directory_upgrade: true,
+            default_directory: '/tmp',
+        },
+    },
+};
+
+if (process.env.CHROME_BINARY) {
+    chromeOptions.binary = process.env.CHROME_BINARY;
+}
 
 exports.config = {
     rootPath: process.cwd(),
@@ -42,18 +51,7 @@ exports.config = {
     capabilities: [{
         maxInstances: streams,
         browserName: 'chrome',
-        'goog:chromeOptions': {
-            args: chromeArgs,
-            binary: chromeBinary,
-            prefs: {
-                credentials_enable_service: false,
-                download: {
-                    prompt_for_download: false,
-                    directory_upgrade: true,
-                    default_directory: '/tmp',
-                },
-            },
-        },
+        'goog:chromeOptions': chromeOptions,
     }],
     // Level of logging verbosity: trace | debug | info | warn | error | silent
     logLevel: 'warn',
@@ -75,16 +73,18 @@ exports.config = {
     // },
     //
     bail: 0,
-    baseUrl: 'http://localhost:3000',
+    baseUrl: 'about:blank',
     waitforTimeout: 5000,
     connectionRetryTimeout: 90000,
     connectionRetryCount: 3,
     services: [
         ['cucumber-viewport-logger', { enabled: false }],
-        [WdioScreenshot], 'shared-store', ['chromedriver',
-            {
-                port: 7777,
-            }]],
+        'shared-store',
+        ['chromedriver', {
+            port: 7777,
+            chromedriverCustomPath: process.env.CHROMEDRIVER_PATH,
+        }],
+    ],
     framework: 'cucumber',
     reporters: ['spec',
         [
@@ -109,15 +109,12 @@ exports.config = {
         snippets: true,
         source: true,
         profile: [],
-        require: [
-            './step_definitions/**/*.js',
-            './src/support/world.js',
-        ],
+        require: ['./step_definitions/**/*.js', './src/support/world.js'],
         snippetSyntax: undefined,
         strict: true,
         tagExpression: 'not @Pending',
         tagsInTitle: false,
-        timeout: process.env.DBG === '1' ? 600000 : 60000,
+        timeout: process.env.DBG === '1' ? 600000 : 60000
     },
 
     beforeStep({ uri, feature, step }, context) {

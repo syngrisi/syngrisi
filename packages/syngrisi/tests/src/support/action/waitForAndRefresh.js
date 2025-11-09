@@ -1,4 +1,4 @@
-export default (selector, sec, falseState, state) => {
+export default async (selector, sec, falseState, state) => {
     /**
      * Maximum number of milliseconds to wait, default 3000
      * @type {Int}
@@ -11,10 +11,11 @@ export default (selector, sec, falseState, state) => {
      */
     let boolFalseState = !!falseState;
 
-    browser.waitUntil(function () {
-        browser.refresh();
-        browser.pause(1000);
-        return !boolFalseState ? ($$(selector).length > 0) : ($$(selector).length === 0);
+    await browser.waitUntil(async function () {
+        await browser.refresh();
+        await browser.pause(1000);
+        const elements = await $$(selector);
+        return !boolFalseState ? (elements.length > 0) : (elements.length === 0);
     }, {
         timeout: ms,
         timeoutMsg: `Cannot wait and refresh for element: '${selector}', timeout: '${ms}'ms`

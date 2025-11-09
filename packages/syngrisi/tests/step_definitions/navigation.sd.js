@@ -1,8 +1,7 @@
-/* eslint-disable */
-const { When, Then, Given } = require('cucumber');
+const { When, Then, Given } = require("@cucumber/cucumber");
 const { fillCommonPlaceholders } = require('../src/utills/common');
 
-When(/^I go to "([^"]*)" page$/, (str) => {
+When(/^I go to "([^"]*)" page$/, async function (str) {
     try {
         const pages = {
             main: `http://${browser.config.serverDomain}:${browser.config.serverPort}/`,
@@ -19,12 +18,11 @@ When(/^I go to "([^"]*)" page$/, (str) => {
             },
         };
         if (str.includes('>')) {
-            const page = str.split('>')[0];
-            const subPage = str.split('>')[1];
-            browser.url(pages[page][subPage]);
+            const [page, subPage] = str.split('>');
+            await browser.url(pages[page][subPage]);
             return;
         }
-        browser.url(pages[str]);
+        await browser.url(pages[str]);
     } catch (error) {
         const errorMsg = error.message || error.toString() || '';
         const isDisconnected = errorMsg.includes('disconnected')
@@ -38,9 +36,9 @@ When(/^I go to "([^"]*)" page$/, (str) => {
     }
 });
 
-When(/^I refresh page$/, () => {
+When(/^I refresh page$/, async function () {
     try {
-        browser.refresh();
+        await browser.refresh();
     } catch (error) {
         const errorMsg = error.message || error.toString() || '';
         const isDisconnected = errorMsg.includes('disconnected')
@@ -54,13 +52,13 @@ When(/^I refresh page$/, () => {
     }
 });
 
-Then(/^the current url contains "([^"]*)"$/, function (url) {
+Then(/^the current url contains "([^"]*)"$/, async function (url) {
     const url2 = this.fillItemsPlaceHolders(fillCommonPlaceholders(url));
     try {
-        const windowHandles = browser.getWindowHandles();
+        const windowHandles = await browser.getWindowHandles();
         const lastWindowHandle = windowHandles[windowHandles.length - 1];
-        browser.switchToWindow(lastWindowHandle);
-        expect(browser)
+        await browser.switchToWindow(lastWindowHandle);
+        await expect(browser)
             .toHaveUrl(url2, { containing: true });
     } catch (error) {
         const errorMsg = error.message || error.toString() || '';
@@ -68,12 +66,10 @@ Then(/^the current url contains "([^"]*)"$/, function (url) {
             || errorMsg.includes('failed to check if window was closed')
             || errorMsg.includes('ECONNREFUSED');
         if (isDisconnected) {
-            // Browser disconnected, skip window switching and just check URL
             try {
-                expect(browser)
+                await expect(browser)
                     .toHaveUrl(url2, { containing: true });
             } catch (urlError) {
-                // If URL check also fails due to disconnection, skip silently
                 const urlErrorMsg = urlError.message || urlError.toString() || '';
                 const urlIsDisconnected = urlErrorMsg.includes('disconnected')
                     || urlErrorMsg.includes('failed to check if window was closed')
@@ -90,10 +86,10 @@ Then(/^the current url contains "([^"]*)"$/, function (url) {
     }
 });
 
-Given(/^I open the app$/, () => {
+Given(/^I open the app$/, async function () {
     try {
-        browser.url(`http://${browser.config.serverDomain}:${browser.config.serverPort}/`);
-        browser.pause(2000);
+        await browser.url(`http://${browser.config.serverDomain}:${browser.config.serverPort}/`);
+        await browser.pause(2000);
     } catch (error) {
         const errorMsg = error.message || error.toString() || '';
         if (errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed') || errorMsg.includes('ECONNREFUSED')) {
@@ -104,23 +100,21 @@ Given(/^I open the app$/, () => {
     }
 });
 
-When(/^I open "([^"]*)" view$/, (name) => {
+When(/^I open "([^"]*)" view$/, async function (name) {
     try {
-        browser.waitUntil(
-            () => {
-                let state = true;
+        await browser.waitUntil(
+            async () => {
                 try {
-                    $(`[name='${name}']`)
-                        .click();
+                    const view = await $(`[name='${name}']`);
+                    await view.click();
+                    return true;
                 } catch (e) {
                     const errorMsg = e.message || e.toString() || '';
                     if (errorMsg.includes('not interactable') || errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed')) {
-                        state = false;
-                    } else {
-                        throw e;
+                        return false;
                     }
+                    throw e;
                 }
-                return state;
             },
             {
                 timeout: 5000,
@@ -129,7 +123,6 @@ When(/^I open "([^"]*)" view$/, (name) => {
     } catch (error) {
         const errorMsg = error.message || error.toString() || '';
         if (errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed')) {
-            // Browser disconnected, skip this step
             console.warn('Browser disconnected, skipping open view step');
         } else {
             throw error;

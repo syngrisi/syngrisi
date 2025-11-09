@@ -3,7 +3,7 @@
  * @param  {String}   action    Action to perform on the modal (accept, dismiss)
  * @param  {String}   modalType Type of modal (alertbox, confirmbox, prompt)
  */
-export default (action, modalType) => {
+export default async (action, modalType) => {
     /**
      * The command to perform on the browser object
      * @type {String}
@@ -17,5 +17,5 @@ export default (action, modalType) => {
         command = 'acceptAlert';
     }
 
-    browser[command]();
+    await browser[command]();
 };

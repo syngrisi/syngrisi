@@ -6,39 +6,23 @@
  *                                  the given text or not
  * @param  {String}   expectedText  The text to check against
  */
-export default (elementType, selector, falseCase, expectedText) => {
-    /**
-     * The command to perform on the browser object
-     * @type {String}
-     */
+export default async (elementType, selector, falseCase, expectedText) => {
     let command = 'getValue';
+    const elem = await $(selector);
 
-    if (
-        ['button', 'container'].includes(elementType)
-        || $(selector).getAttribute('value') === null
-    ) {
+    if (['button', 'container'].includes(elementType)) {
         command = 'getText';
+    } else {
+        const valueAttr = await elem.getAttribute('value');
+        if (valueAttr === null) {
+            command = 'getText';
+        }
     }
 
-    /**
-     * False case
-     * @type {Boolean}
-     */
     let boolFalseCase;
-
-    /**
-     * The expected text
-     * @type {String}
-     */
     let stringExpectedText = expectedText;
 
-    /**
-     * The text of the element
-     * @type {String}
-     */
-    const elem = $(selector);
-    // elem.waitForDisplayed();
-    const text = elem[command]();
+    const text = await elem[command]();
 
     if (typeof expectedText === 'undefined') {
         stringExpectedText = falseCase;
