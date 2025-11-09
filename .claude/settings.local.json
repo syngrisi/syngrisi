@@ -7,7 +7,9 @@
       "Bash(npx cross-env:*)",
       "Bash(tee:*)",
       "Bash(nvm use:*)",
-      "Bash(pkill:*)"
+      "Bash(pkill:*)",
+      "Bash(done)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []
