@@ -1,5 +1,5 @@
 import type { Page } from '@playwright/test';
-import { When } from '@fixtures';
+import { When, Then } from '@fixtures';
 import type { ElementTarget } from '@params';
 import { getLabelLocator, getLocatorQuery, getRoleLocator } from '@helpers/locators';
 import { AriaRole } from '@helpers/types';
@@ -271,6 +271,11 @@ When(/I open (?:url|site) "(.*)"/, async ({ page, testData }, url) => {
   await page.goto(parsedUrl);
 });
 
+When('I open the url {string}', async ({ page, testData }, url: string) => {
+  const parsedUrl = testData.renderTemplate(url);
+  await page.goto(parsedUrl);
+});
+
 When('I set window size: {string}', async ({ page }, viewport: string) => {
   const size = viewport.split('x');
   await page.setViewportSize({ width: parseInt(size[0], 10), height: parseInt(size[1], 10) });
@@ -346,27 +351,103 @@ When('I execute javascript code:', async ({ page, testData }: { page: Page; test
     ? `(() => { ${trimmedJs} })()`
     : trimmedJs;
 
+  if (trimmedJs.includes('mainView.sliderView.divider.left')) {
+    try {
+      await page.waitForFunction(
+        () =>
+          typeof (window as any)?.mainView?.sliderView?.divider?.left === 'number',
+        undefined,
+        { timeout: 5000 }
+      );
+    } catch (error) {
+      logger.warn(
+        `Timeout waiting for mainView.sliderView.divider.left to be defined: ${(error as Error).message}`
+      );
+    }
+  }
+
   while (attempts < maxAttempts) {
     try {
       result = await page.evaluate(evaluateFunction, codeToExecute);
       // Log detailed info for viewportTransform debugging
       if (trimmedJs.includes('viewportTransform')) {
-        const viewportValue = await page.evaluate(() => {
+        const viewportDetails = await page.evaluate(() => {
           if (typeof mainView !== 'undefined' && mainView?.canvas?.viewportTransform) {
-            return mainView.canvas.viewportTransform[4] + '_' + mainView.canvas.viewportTransform[5];
+            const [scaleX, , , scaleY, translateX, translateY] = mainView.canvas.viewportTransform;
+            const zoom = typeof mainView.canvas.getZoom === 'function' ? mainView.canvas.getZoom() : null;
+            return {
+              summary: `${translateX}_${translateY}`,
+              scaleX,
+              scaleY,
+              translateX,
+              translateY,
+              zoom,
+              zoomFixed2: typeof zoom === 'number' ? zoom.toFixed(2) : null,
+            };
           }
-          return 'N/A';
+          return null;
         });
+        const viewportValue = viewportDetails?.summary ?? 'N/A';
         logger.info(`JavaScript execution result: ${result} (viewportTransform: ${viewportValue})`);
+        if (viewportDetails) {
+          logger.info(`Viewport transform details: ${JSON.stringify(viewportDetails)}`);
+        }
         // If result is false and we're checking viewportTransform, log the actual value for debugging
         if (result === false && trimmedJs.includes('===')) {
           logger.warn(`ViewportTransform check failed. Actual value: ${viewportValue}, Expected: 362.5_0, 340_0, or 340.5_0`);
         }
       } else {
-        logger.info(`JavaScript execution result: ${result}`);
+        try {
+          logger.info(`JavaScript execution result: ${JSON.stringify(result)}`);
+        } catch {
+          logger.info(`JavaScript execution result: ${result}`);
+        }
+        if (trimmedJs.includes('getZoom()')) {
+          try {
+            const zoomDetails = await page.evaluate(() => {
+              const canvas: any = (window as any)?.mainView?.canvas;
+              if (!canvas || typeof canvas.getZoom !== 'function') {
+                return { hasCanvas: Boolean(canvas), zoom: null };
+              }
+              const zoom = canvas.getZoom();
+              return {
+                hasCanvas: true,
+                zoom,
+                fixed2: typeof zoom === 'number' ? zoom.toFixed(2) : null,
+              };
+            });
+            logger.info(`Zoom debug info: ${JSON.stringify(zoomDetails)}`);
+          } catch (zoomError) {
+            logger.warn(`Failed to collect zoom debug info: ${(zoomError as Error).message}`);
+          }
+        }
       }
-      // Always save the result, even if it's undefined or null
-      testData.set('js', result !== undefined && result !== null ? String(result) : '');
+      if (result === undefined || result === null) {
+        try {
+          const debugInfo = await page.evaluate(() => {
+            const globalMain: any = (window as any).mainView;
+            return {
+              hasMainView: typeof globalMain !== 'undefined',
+              hasSliderView: typeof globalMain?.sliderView !== 'undefined',
+              hasDivider: typeof globalMain?.sliderView?.divider !== 'undefined',
+              dividerLeft: globalMain?.sliderView?.divider?.left ?? null,
+              currentView: globalMain?.currentView ?? null,
+              availableViews: globalMain ? Object.keys(globalMain).filter((key) => key.endsWith('View')) : [],
+            };
+          });
+          logger.info(`JavaScript execution debug info: ${JSON.stringify(debugInfo)}`);
+        } catch (debugError) {
+          logger.warn(`Failed to collect JS debug info: ${(debugError as Error).message}`);
+        }
+        attempts += 1;
+        if (attempts < maxAttempts) {
+          logger.warn(`JavaScript execution returned ${result}; retrying (${attempts}/${maxAttempts})`);
+          await page.waitForTimeout(500);
+          continue;
+        }
+        throw new Error('JavaScript execution returned undefined/null after retries');
+      }
+      testData.set('js', result);
       return;
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
@@ -387,6 +468,75 @@ When('I execute javascript code:', async ({ page, testData }: { page: Page; test
     }
   }
 
-  logger.info(`JavaScript execution result: ${result}`);
-  testData.set('js', result !== undefined && result !== null ? String(result) : '');
+  try {
+    logger.info(`JavaScript execution result: ${JSON.stringify(result)}`);
+  } catch {
+    logger.info(`JavaScript execution result: ${result}`);
+  }
+  testData.set('js', result);
+});
+
+When('I scroll to element {string}', async ({ page }, selector: string) => {
+  const locator = getLocatorQuery(page, selector);
+  const element = locator.first();
+  await element.evaluate((el) => {
+    el.scrollIntoView();
+  });
+  await page.waitForTimeout(100);
+});
+
+When(
+  'I select the option with the text {string} for element {string}',
+  async ({ page, testData }, optionText: string, selector: string) => {
+    const renderedSelector = renderTemplate(selector, testData);
+    const renderedOptionText = renderTemplate(optionText, testData);
+    const locator = getLocatorQuery(page, renderedSelector);
+    await locator.first().selectOption({ label: renderedOptionText });
+  }
+);
+
+When('I set {string} to the inputfield {string}', async ({ page, testData }, value: string, selector: string) => {
+  const renderedValue = renderTemplate(value, testData);
+  const renderedSelector = renderTemplate(selector, testData);
+  const locator = getLocatorQuery(page, renderedSelector);
+  await locator.first().fill(renderedValue);
+});
+
+When('I reload session', async ({ page, testData }: { page: Page; testData: TestStore }) => {
+  await page.context().clearCookies();
+  testData.clear();
+});
+
+When('I delete the cookie {string}', async ({ page }, cookieName: string) => {
+  await page.context().clearCookies();
+});
+
+When('I press {string}', async ({ page }, key: string) => {
+  await page.keyboard.press(key);
+});
+
+When('I hold key {string}', async ({ page }, key: string) => {
+  await page.keyboard.down(key);
+});
+
+When('I release key {string}', async ({ page }, key: string) => {
+  await page.keyboard.up(key);
+});
+
+When('I click on the element {string} via js', async ({ page }, selector: string) => {
+  const locator = getLocatorQuery(page, selector);
+  await locator.first().evaluate((el: HTMLElement) => el.click());
+});
+
+When('I move to element {string}', async ({ page }, selector: string) => {
+  const locator = getLocatorQuery(page, selector);
+  await locator.first().hover();
+});
+
+When('I move to element {string} with an offset of {int},{int}', async ({ page }, selector: string, x: number, y: number) => {
+  const locator = getLocatorQuery(page, selector);
+  const box = await locator.first().boundingBox();
+  if (box) {
+    await page.mouse.move(box.x + x, box.y + y);
+  }
 });

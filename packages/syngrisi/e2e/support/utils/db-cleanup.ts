@@ -10,7 +10,19 @@ function getCid(): number {
   return parseInt(process.env.TEST_PARALLEL_INDEX || '0', 10);
 }
 
-export function clearDatabase(cid?: number, removeBaselines = true): void {
+export function clearDatabase(
+  cidOrRemoveBaselines?: number | boolean,
+  removeBaselinesArg = true,
+): void {
+  let removeBaselines = removeBaselinesArg;
+  let cid: number | undefined;
+
+  if (typeof cidOrRemoveBaselines === 'boolean') {
+    removeBaselines = cidOrRemoveBaselines;
+  } else if (typeof cidOrRemoveBaselines === 'number') {
+    cid = cidOrRemoveBaselines;
+  }
+
   const actualCid = cid ?? getCid();
   const cmdPath = path.resolve(resolveRepoRoot());
   const taskNamePrefix = process.env.DOCKER === '1' ? 'docker_' : '';
@@ -41,4 +53,3 @@ export function clearDatabase(cid?: number, removeBaselines = true): void {
     }
   }
 }
-

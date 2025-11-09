@@ -1,4 +1,4 @@
-import { Given, When } from '@fixtures';
+import { Given, When, Then } from '@fixtures';
 import type { Page } from '@playwright/test';
 import { createLogger } from '@lib/logger';
 import * as yaml from 'yaml';
@@ -8,6 +8,8 @@ import * as crypto from 'crypto';
 import type { AppServerFixture } from '@fixtures';
 import FormData from 'form-data';
 import { got } from 'got-cjs';
+import { SyngrisiDriver } from '@syngrisi/wdio-sdk';
+import type { TestStore } from '@fixtures';
 
 const logger = createLogger('TestsSteps');
 
@@ -25,41 +27,245 @@ function uuidv4(): string {
 }
 
 async function createCheckViaAPI(
-  baseURL: string,
+  vDriver: SyngrisiDriver,
   testId: string,
   checkName: string,
   imageBuffer: Buffer,
   params?: Record<string, unknown>
 ): Promise<unknown> {
+  // Use SyngrisiDriver.check() method directly (as in old framework: browser.vDriver.check())
+  // Parameters are taken from vDriver.params.test (set by startTestSession), so we only pass optional overrides
+  logger.info(`Creating check "${checkName}" for test "${testId}" via SyngrisiDriver`);
+  
+  try {
+    const checkParams: any = {
+      checkName,
+      imageBuffer,
+      params: params || {}, // Optional params to override defaults from test session
+    };
+
+    const result = await vDriver.check(checkParams);
+    return result;
+  } catch (error: any) {
+    logger.error(`Failed to create check: ${error.message}`);
+    throw error;
+  }
+}
+
+async function createCheckForExistingTest(
+  { appServer, testData }: { appServer: AppServerFixture; testData: TestStore },
+  testId: string,
+  params: any,
+  check: any
+) {
+  const repoRoot = path.resolve(__dirname, '..', '..', '..', '..');
+  const filePath = check.filePath || params.filePath || 'files/A.png';
+  const fullPath = path.join(repoRoot, 'syngrisi', 'tests', filePath);
+  if (!fs.existsSync(fullPath)) {
+    throw new Error(`Test file not found: ${fullPath}`);
+  }
+  const imageBuffer = fs.readFileSync(fullPath);
   const form = new FormData();
   form.append('testid', testId);
-  form.append('name', checkName);
-  form.append('appName', params?.appName as string || 'Test App');
-  form.append('branch', params?.branch as string || 'integration');
-  form.append('suitename', params?.suiteName as string || 'Integration suite');
-  form.append('viewport', params?.viewport as string || '1366x768');
-  form.append('browserName', params?.browserName as string || 'chrome');
-  form.append('browserVersion', params?.browserVersion as string || '120');
-  form.append('browserFullVersion', params?.browserFullVersion as string || '120.0.0.0');
-  form.append('os', params?.os as string || 'macOS');
-
-  // Calculate hashcode for the image (SHA-512 gives 128 hex characters)
+  const resolvedCheckName = check.checkName || check.name || params.checkName || 'CheckName';
+  form.append('name', resolvedCheckName);
+  form.append('appName', params.project || 'Test App');
+  form.append('branch', params.branch || 'integration');
+  form.append('suitename', params.suite || params.suiteName || 'Integration suite');
+  form.append('viewport', check.viewport || params.viewport || '1366x768');
+  form.append('browserName', check.browserName || params.browserName || 'chrome');
+  form.append('browserVersion', check.browserVersion || params.browserVersion || '11');
+  form.append('browserFullVersion', check.browserFullVersion || params.browserFullVersion || '11.0.0.0');
+  form.append('os', check.os || params.os || 'macOS');
   const hashcode = crypto.createHash('sha512').update(imageBuffer).digest('hex');
   form.append('hashcode', hashcode);
+  form.append('file', imageBuffer, path.basename(fullPath));
 
-  // Append image file
-  form.append('file', imageBuffer, 'file');
-
+  const hashedApiKey =
+    (testData.get('hashedApiKey') as string | undefined) ||
+    hashApiKey(process.env.SYNGRISI_API_KEY || '123');
   const headers: Record<string, string> = {
-    apikey: hashApiKey(process.env.SYNGRISI_API_KEY || ''),
+    apikey: hashedApiKey,
   };
 
-  const response = await got.post(`${baseURL}/v1/client/createCheck`, {
+  logger.info(`Adding check "${resolvedCheckName}" to existing test "${testId}" via client API`);
+  const response = await got.post(`${appServer.baseURL}/v1/client/createCheck`, {
     body: form,
     headers,
   });
+  const checkResult = JSON.parse(response.body);
 
-  return JSON.parse(response.body);
+  const storedChecks =
+    (testData.get('autoCreatedChecks') as Array<{ checkId: string; snapshotId: string }>) || [];
+  const createdCheckId = checkResult?._id || checkResult?.id;
+  const createdSnapshotId =
+    checkResult?.actualSnapshotId?._id ||
+    checkResult?.actualSnapshotId?.id ||
+    checkResult?.actualSnapshotId;
+  if (createdCheckId && createdSnapshotId) {
+    storedChecks.push({ checkId: createdCheckId, snapshotId: createdSnapshotId });
+    testData.set('autoCreatedChecks', storedChecks);
+  }
+  testData.set('currentCheck', checkResult);
+  return checkResult;
+}
+
+interface CreateTestsOptions {
+  keepOriginalTestNames?: boolean;
+}
+
+async function createTestsWithParams(
+  { appServer, testData }: { appServer: AppServerFixture; testData: any },
+  num: string,
+  yml: string,
+  options: CreateTestsOptions = {}
+) {
+  const apiKey = process.env.SYNGRISI_API_KEY || '123';
+  const hashedApiKey = hashApiKey(apiKey);
+  testData.set('hashedApiKey', hashedApiKey);
+  testData.set('apiBaseUrl', appServer.baseURL);
+  const initialChecks = (testData.get('autoCreatedChecks') as Array<{ checkId: string; snapshotId: string }>) || [];
+  testData.set('autoCreatedChecks', initialChecks);
+  const createTest = async (params: any, index: number) => {
+    try {
+      const vDriver = testData.get('vDriver') as SyngrisiDriver | undefined;
+      if (!vDriver) {
+        throw new Error('SyngrisiDriver not initialized. Please call "I start Driver" step first.');
+      }
+
+      const testIndex = index + 1;
+      const shouldKeepOriginal = options.keepOriginalTestNames === true;
+      const fallbackName = `Test - ${testIndex}`;
+      const baseName = params.testName ?? fallbackName;
+      const testName = shouldKeepOriginal ? baseName : `${baseName} - ${testIndex}`;
+      const resolvedRunIdent =
+        params.runident ||
+        params.runIdent ||
+        process.env.RUN_IDENT ||
+        uuidv4();
+
+      logger.info(`Starting test session for "${testName}"`);
+      const sessionData = await vDriver.startTestSession({
+        params: {
+          app: params.project || 'Test App',
+          test: testName,
+          run: params.run || params.runName || process.env.RUN_NAME || 'integration_run_name',
+          runident: resolvedRunIdent,
+          branch: params.branch || 'integration',
+          suite: params.suite || params.suiteName || 'Integration suite',
+          tags: params.tags || [],
+          os: params.os || 'macOS',
+          browserName: params.browserName || 'chrome',
+          browserVersion: params.browserVersion || '11',
+          browserFullVersion: params.browserFullVersion || '11.0.0.0',
+          viewport: params.viewport || '1366x768',
+        },
+      });
+
+      const testId = (sessionData as any).id || (sessionData as any)._id;
+      logger.info(`Test session started with ID: ${testId}`);
+      testData.set('lastTestId', testId);
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
+      const checkResults = [];
+      for (const check of params.checks || []) {
+        const checkName = check.checkName || check.name || 'CheckName';
+        const filePath = check.filePath || 'files/A.png';
+        const repoRoot = path.resolve(__dirname, '..', '..', '..', '..');
+        const fullPath = path.join(repoRoot, 'syngrisi', 'tests', filePath);
+        if (!fs.existsSync(fullPath)) {
+          throw new Error(`Test file not found: ${fullPath}`);
+        }
+        const imageBuffer = fs.readFileSync(fullPath);
+        const checkResult = await createCheckViaAPI(
+          vDriver,
+          testId,
+          checkName,
+          imageBuffer,
+          {
+            ...check,
+            browserName: check.browserName || params.browserName || 'chrome',
+            os: check.os || params.os || 'macOS',
+            viewport: check.viewport || params.viewport || '1366x768',
+          }
+        ) as any;
+        logger.info(
+          `Check "${checkName}" created with status "${checkResult?.status}" ` +
+          `(id: ${checkResult?._id || checkResult?.id}) ` +
+          `(browser=${checkResult?.browserName}, os=${checkResult?.os})`
+        );
+        checkResults.push(checkResult);
+
+        const storedChecks =
+          (testData.get('autoCreatedChecks') as Array<{ checkId: string; snapshotId: string }>) || [];
+        const createdCheckId = checkResult?._id || checkResult?.id;
+        const createdSnapshotId = checkResult?.actualSnapshotId?._id
+          || checkResult?.actualSnapshotId?.id
+          || checkResult?.actualSnapshotId;
+        if (createdCheckId && createdSnapshotId) {
+          storedChecks.push({ checkId: createdCheckId, snapshotId: createdSnapshotId });
+          testData.set('autoCreatedChecks', storedChecks);
+        }
+      }
+
+      if (!params.checks || params.checks.length === 0) {
+        const repoRoot = path.resolve(__dirname, '..', '..', '..', '..');
+        const defaultPath = path.join(repoRoot, 'syngrisi', 'tests', params.filePath || 'files/A.png');
+        if (fs.existsSync(defaultPath)) {
+          const imageBuffer = fs.readFileSync(defaultPath);
+          const checkResult = await createCheckViaAPI(
+            vDriver,
+            testId,
+            params.checkName || 'CheckName',
+            imageBuffer,
+            {
+              browserName: params.browserName || 'chrome',
+              os: params.os || 'macOS',
+              viewport: params.viewport || '1366x768',
+            }
+          ) as any;
+          checkResults.push(checkResult);
+
+          const storedChecks =
+            (testData.get('autoCreatedChecks') as Array<{ checkId: string; snapshotId: string }>) || [];
+          const createdCheckId = checkResult?._id || checkResult?.id;
+          const createdSnapshotId = checkResult?.actualSnapshotId?._id
+            || checkResult?.actualSnapshotId?.id
+            || checkResult?.actualSnapshotId;
+          if (createdCheckId && createdSnapshotId) {
+            storedChecks.push({ checkId: createdCheckId, snapshotId: createdSnapshotId });
+            testData.set('autoCreatedChecks', storedChecks);
+          }
+        }
+      }
+
+      logger.info(`Created test "${testName}" with ${checkResults.length} checks`);
+      if (checkResults.length > 0) {
+        testData.set('currentCheck', checkResults[checkResults.length - 1]);
+        logger.info(`Saved current check: ${checkResults[checkResults.length - 1]._id || checkResults[checkResults.length - 1].id}`);
+      }
+
+      try {
+        await vDriver.stopTestSession();
+        logger.info(`Stopped test session for "${testName}"`);
+      } catch (stopError: any) {
+        logger.warn(`Failed to stop test session for "${testName}": ${stopError.message}`);
+      }
+
+      return { testId, checkResults };
+    } catch (error) {
+      logger.error(`Failed to create test: ${(error as Error).message}`);
+      throw error;
+    }
+  };
+
+  const count = parseInt(num, 10);
+  for (let i = 0; i < count; i++) {
+    const processedYml = yml.replace(/\$/g, String(i));
+    const params = yaml.parse(processedYml);
+    logger.info(`Creating test #${i + 1} with params:`, params);
+    await createTest(params, i);
+  }
 }
 
 Given('I create {string} tests with:', async (
@@ -67,122 +273,18 @@ Given('I create {string} tests with:', async (
   num: string,
   yml: string
 ) => {
-  const createTest = async (params: any) => {
-    try {
-      // Start test session via HTTP API
-      const form = new FormData();
-      form.append('run', params.runName || process.env.RUN_NAME || 'integration_run_name');
-      form.append('runident', params.runIdent || process.env.RUN_IDENT || uuidv4());
-      form.append('name', params.testName);
-      form.append('suite', params.suiteName || 'Integration suite');
-      form.append('viewport', params.viewport || '1366x768');
-      form.append('browser', params.browserName || 'chrome');
-      form.append('browserVersion', params.browserVersion || '120');
-      form.append('os', params.os || 'macOS');
-      form.append('app', params.project || 'Test App');
-      form.append('branch', params.branch || 'integration');
-      if (params.tags) {
-        form.append('tags', JSON.stringify(params.tags));
-      }
-
-      const headers: Record<string, string> = {
-        apikey: hashApiKey(process.env.SYNGRISI_API_KEY || ''),
-      };
-
-      logger.info(`Starting test session for "${params.testName}"`);
-      const sessionResponse = await got.post(`${appServer.baseURL}/v1/client/startSession`, {
-        body: form,
-        headers,
-      });
-
-      const sessionData = JSON.parse(sessionResponse.body);
-      const testId = sessionData.id || sessionData._id;
-
-      logger.info(`Test session started with ID: ${testId}`);
-
-      // Save testId for use in other step definitions
-      testData.set('lastTestId', testId);
-
-      // Wait a bit for session to initialize
-      await new Promise((resolve) => setTimeout(resolve, 300));
-
-      const checkResults = [];
-      for (const check of params.checks || []) {
-        const filepath = check.filePath || 'files/A.png';
-        // Resolve file path relative to tests directory
-        const repoRoot = path.resolve(__dirname, '..', '..', '..');
-        const fullPath = path.join(repoRoot, 'tests', filepath);
-
-        if (!fs.existsSync(fullPath)) {
-          throw new Error(`Test file not found: ${fullPath}`);
-        }
-
-        const imageBuffer = fs.readFileSync(fullPath);
-        logger.info(`Creating check "${check.checkName}" with file "${filepath}"`);
-        const checkResult = await createCheckViaAPI(
-          appServer.baseURL,
-          testId,
-          check.checkName,
-          imageBuffer,
-          {
-            appName: params.project || 'Test App',
-            branch: params.branch || 'integration',
-            suiteName: params.suiteName || 'Integration suite',
-            viewport: params.viewport || '1366x768',
-            browserName: params.browserName || 'chrome',
-            os: params.os || 'macOS',
-            ...check,
-          }
-        );
-        checkResults.push(checkResult);
-      }
-
-      if (checkResults.length > 0) {
-        testData.set('currentCheck', checkResults[0]);
-      }
-
-      // Wait a bit for session to process checks (as in original: await browser.pause(300))
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      // Stop test session (using correct endpoint: /stopSession not /endSession)
-      logger.info(`Stopping test session ${testId}`);
-      const stopForm = new FormData();
-      try {
-        const response = await got.post(`${appServer.baseURL}/v1/client/stopSession/${testId}`, {
-          body: stopForm,
-          headers,
-        });
-        // endSession waits for checks to be processed and updates test status synchronously
-        // The response contains the updated test with final status
-        const updatedTest = JSON.parse(response.body);
-        logger.info(`Test session stopped, final status: ${updatedTest.status}`);
-      } catch (error: any) {
-        // 404 is acceptable if session was already stopped or doesn't exist
-        if (error.response?.statusCode !== 404) {
-          logger.warn(`Failed to stop session: ${error.message}`);
-        }
-      }
-    } catch (error: any) {
-      if (error.response) {
-        const errorBody = error.response.body?.toString() || 'No error body';
-        logger.error(`Failed to create test: ${error.response.statusCode} - ${errorBody}`);
-        throw new Error(`Failed to create test: ${error.response.statusCode} - ${errorBody}`);
-      }
-      logger.error(`Failed to create test: ${(error as Error).message}`);
-      throw error;
-    }
-    };
-
-  const count = parseInt(num, 10);
-  for (let i = 0; i < count; i++) {
-    const processedYml = yml.replace(/\$/g, String(i));
-    const params = yaml.parse(processedYml);
-    logger.info(`Creating test #${i + 1} with params:`, params);
-    await createTest(params);
-  }
+  await createTestsWithParams({ appServer, testData }, num, yml, { keepOriginalTestNames: true });
 });
 
-When('I unfold the test {string}', async ({ page }: { page: Page }, testName: string) => {
+When('I create {string} tests with params:', async (
+  { appServer, testData }: { appServer: AppServerFixture; testData: any },
+  num: string,
+  yml: string
+) => {
+  await createTestsWithParams({ appServer, testData }, num, yml);
+});
+
+async function unfoldTestRow(page: Page, testName: string): Promise<void> {
   const candidateSelectors = [
     `[data-table-test-name="${testName}"]`,
     `tr[data-row-name="${testName}"]`,
@@ -308,5 +410,15 @@ When('I unfold the test {string}', async ({ page }: { page: Page }, testName: st
         throw new Error(`Failed to unfold test "${testName}" after ${maxRetries} attempts. Last error: ${lastError.message}`);
       }
     }
+  }
+}
+
+When('I unfold the test {string}', async (
+  { page, testData }: { page: Page; testData: TestStore },
+  testName: string
+) => {
+  await unfoldTestRow(page, testName);
+  if (testData) {
+    testData.set('lastUnfoldedTest', testName);
   }
 });

@@ -5,6 +5,7 @@ import { createLogger } from '@lib/logger';
 import { requestWithSession } from '@utils/http-client';
 import * as yaml from 'yaml';
 import { expect } from '@playwright/test';
+import { got } from 'got-cjs';
 
 const logger = createLogger('CommonHttpSteps');
 
