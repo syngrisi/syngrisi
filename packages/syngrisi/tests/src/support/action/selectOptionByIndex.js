@@ -6,12 +6,13 @@
  *
  * @todo  merge with selectOption
  */
-export default (index, obsolete, selector) => {
+export default async (index, obsolete, selector) => {
     /**
      * The index of the option to select
      * @type {Int}
      */
     const optionIndex = parseInt(index, 10);
 
-    $(selector).selectByIndex(optionIndex);
+    const element = await $(selector);
+    await element.selectByIndex(optionIndex);
 };

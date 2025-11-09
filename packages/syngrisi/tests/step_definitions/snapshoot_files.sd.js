@@ -1,5 +1,5 @@
 /* eslint-disable func-names */
-const { Then } = require('cucumber');
+const { Then } = require("@cucumber/cucumber");
 const { requestWithLastSessionSid } = require('../src/utills/common');
 
 Then(/^I expect exact "([^"]*)" snapshot files$/, async function (num) {

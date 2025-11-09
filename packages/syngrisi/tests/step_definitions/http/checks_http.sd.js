@@ -1,5 +1,5 @@
 /* eslint-disable */
-const { When } = require('cucumber');
+const { When } = require("@cucumber/cucumber");
 const { requestWithLastSessionSid, fillCommonPlaceholders } = require('../../src/utills/common');
 const fs = require('fs');
 const checkVRS = require('../../src/support/check/checkVrs');

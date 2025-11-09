@@ -1,6 +1,6 @@
 /* eslint-disable prefer-arrow-callback,func-names,no-console */
 const frisby = require('frisby');
-const { When, Then } = require('cucumber');
+const { When, Then } = require("@cucumber/cucumber");
 const YAML = require('yaml');
 const fs = require('fs');
 const chalk = require('chalk');

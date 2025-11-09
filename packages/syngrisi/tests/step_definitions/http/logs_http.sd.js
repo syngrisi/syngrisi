@@ -1,5 +1,5 @@
 /* eslint-disable prefer-arrow-callback */
-const { When } = require('cucumber');
+const { When } = require("@cucumber/cucumber");
 const YAML = require('yaml');
 const { got } = require('got-cjs');
 

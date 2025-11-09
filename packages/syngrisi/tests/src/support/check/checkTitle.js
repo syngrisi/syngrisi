@@ -4,12 +4,8 @@
  *                                  expected value or not
  * @param  {Type}     expectedTitle The expected title
  */
-export default (falseCase, expectedTitle) => {
-    /**
-     * The title of the current browser window
-     * @type {String}
-     */
-    const title = browser.getTitle();
+export default async (falseCase, expectedTitle) => {
+    const title = await browser.getTitle();
 
     if (falseCase) {
         expect(title).not.toEqual(

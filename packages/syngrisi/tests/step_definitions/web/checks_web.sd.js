@@ -1,38 +1,41 @@
-/* eslint-disable prefer-arrow-callback,no-console,func-names */
-const { When, Then } = require('cucumber');
-// const { got } = require('got-cjs');
+const { When, Then } = require("@cucumber/cucumber");
 const { fillCommonPlaceholders } = require('../../src/utills/common');
 
-When(/^I accept the "([^"]*)" check$/, (checkName) => {
-    const icon = $(`[data-test='check-accept-icon'][data-popover-icon-name='${checkName}']`);
-    icon.waitForDisplayed();
-    icon.click();
+When(/^I accept the "([^"]*)" check$/, async (checkName) => {
+    const icon = await $(`[data-test='check-accept-icon'][data-popover-icon-name='${checkName}']`);
+    await icon.waitForDisplayed();
+    await icon.scrollIntoView({ block: 'center', inline: 'center' });
+    await icon.waitForClickable({ timeout: 5000 });
+    await icon.click();
 
-    const confirmButton = $(`[data-confirm-button-name='${checkName}']`);
-    confirmButton.waitForDisplayed();
-    confirmButton.click();
+    const confirmButton = await $(`[data-confirm-button-name='${checkName}']`);
+    await confirmButton.waitForDisplayed();
+    await confirmButton.waitForClickable({ timeout: 5000 });
+    await confirmButton.click();
 
-    // expect($(`.//div[contains(normalize-space(.), '${checkName}')]/../..`))
-    //     .toBeExisting();
-    //
-    // // eslint-disable-next-line max-len
-    // $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//a[contains(@class, 'accept-button')]`)
-    //     .click();
-    // browser.pause(200);
-    // eslint-disable-next-line max-len
-    // $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../div[@name='check-buttons']//a[contains(@class, 'accept-option')]`)
-    //     .click();
+    await browser.waitUntil(async () => {
+        const svgIcon = await $(`[data-test='check-accept-icon'][data-popover-icon-name='${checkName}'] svg`);
+        if (!await svgIcon.isExisting()) {
+            return false;
+        }
+        const typeAttr = await svgIcon.getAttribute('data-test-icon-type');
+        if (typeAttr !== 'fill') {
+            return false;
+        }
+        const color = await svgIcon.getCSSProperty('color');
+        return color?.value === 'rgba(64,192,87,1)';
+    }, { timeout: 10000, timeoutMsg: `Accept icon for "${checkName}" did not reach accepted state` });
 });
 
-When(/^I delete the "([^"]*)" check$/, (checkName) => {
+When(/^I delete the "([^"]*)" check$/, async (checkName) => {
     try {
-        const icon = $(`[data-test='check-remove-icon'][data-popover-icon-name='${checkName}']`);
-        icon.waitForDisplayed();
-        icon.click();
+        const icon = await $(`[data-test='check-remove-icon'][data-popover-icon-name='${checkName}']`);
+        await icon.waitForDisplayed();
+        await icon.click();
 
-        const confirmButton = $(`[data-test='check-remove-icon-confirm'][data-confirm-button-name='${checkName}']`);
-        confirmButton.waitForDisplayed();
-        confirmButton.click();
+        const confirmButton = await $(`[data-test='check-remove-icon-confirm'][data-confirm-button-name='${checkName}']`);
+        await confirmButton.waitForDisplayed();
+        await confirmButton.click();
     } catch (error) {
         const errorMsg = error.message || error.toString() || '';
         const isDisconnected = errorMsg.includes('disconnected')
@@ -46,7 +49,7 @@ When(/^I delete the "([^"]*)" check$/, (checkName) => {
     }
 });
 
-When(/^I expect the(:? (\d)th)? "([^"]*)" check has "([^"]*)" acceptance status$/, (number, checkName, acceptStatus) => {
+When(/^I expect the(:? (\d)th)? "([^"]*)" check has "([^"]*)" acceptance status$/, async (number, checkName, acceptStatus) => {
     number = number || 1;
     const acceptStatusMap = {
         accept: 'accepted-button-icon',
@@ -54,11 +57,9 @@ When(/^I expect the(:? (\d)th)? "([^"]*)" check has "([^"]*)" acceptance status$
         'not accept': 'not-accepted-button-icon',
     };
 
-    const icon = $(`(.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//a[contains(@class, 'accept-button')]/i)[${number}]`);
-
-    const classesList = icon
-        .getAttribute('class')
-        .split(' ');
+    const icon = await $(`(.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//a[contains(@class, 'accept-button')]/i)[${number}]`);
+    const classesAttr = await icon.getAttribute('class');
+    const classesList = classesAttr.split(' ');
 
     expect(classesList)
         .toContain(
@@ -69,7 +70,6 @@ When(/^I expect the(:? (\d)th)? "([^"]*)" check has "([^"]*)" acceptance status$
         .filter((x) => x !== acceptStatus);
     console.log({ wrongStatuses });
 
-    // eslint-disable-next-line no-restricted-syntax
     for (const wrongStatus of wrongStatuses) {
         expect(classesList)
             .not
@@ -79,55 +79,52 @@ When(/^I expect the(:? (\d)th)? "([^"]*)" check has "([^"]*)" acceptance status$
     }
 });
 
-Then(/^I expect that "([^"]*)" check preview tooltip "([^"]*)" field equal to "([^"]*)"$/, function (checkNum, field, value) {
+Then(/^I expect that "([^"]*)" check preview tooltip "([^"]*)" field equal to "([^"]*)"$/, async function (checkNum, field, value) {
     const value2 = fillCommonPlaceholders(value);
-    const checkTitle = $(`(//canvas[contains(@class, 'snapshoot-canvas')])[${checkNum}]`)
-        .getAttribute('title');
-    // console.log({ checkTitle });
+    const canvas = await $(`(//canvas[contains(@class, 'snapshoot-canvas')])[${checkNum}]`);
+    const checkTitle = await canvas.getAttribute('title');
     const regex = new RegExp(`${field}: (.+?)[<]`, 'gm');
-    // console.log({ regex });
     const match = regex.exec(checkTitle);
-    // console.log({ match });
     expect(match[0])
         .toContain(value2);
 });
 
-Then(/^I expect that(:? (\d)th)? VRS check "([^"]*)" has "([^"]*)" status$/, (number, checkName, expectedStatus) => {
+Then(/^I expect that(:? (\d)th)? VRS check "([^"]*)" has "([^"]*)" status$/, async (number, checkName, expectedStatus) => {
     number = number || 1;
-    expect($(`(.//div[contains(normalize-space(.), '${checkName}')]/../..)[${number}]`))
+    await expect($(`(.//div[contains(normalize-space(.), '${checkName}')]/../..)[${number}]`))
         .toBeExisting();
 
-    const border = $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//div[@name='check-status']`);
-    // "/../../../..//div[@name='check-status']\"/"
+    const border = await $(`.//div[contains(normalize-space(.), '${checkName}') and @name='check-name']/../../../..//div[@name='check-status']`);
     const classStatuses = {
         New: 'bg-item-new',
         Passed: 'bg-item-passed',
         Failed: 'bg-item-failed',
         Blinking: 'bg-warning',
     };
-    expect(border)
+    await expect(border)
         .toHaveAttrContaining('class', classStatuses[expectedStatus]);
 });
 
-When(/^I remove the "([^"]*)" check$/, function (name) {
-    const removeIcon = $(`[data-check='${name}'] [data-test='check-remove-icon']`);
-    removeIcon.waitForDisplayed();
-    removeIcon.scrollIntoView({ block: 'center', inline: 'center' });
-    removeIcon.waitForClickable({ timeout: 5000 });
-    browser.pause(200);
-    removeIcon.click();
-    browser.pause(1000);
-    const confirmButton = $(`[data-test="check-remove-icon-confirm"][data-confirm-button-name="${name}"]`);
-    confirmButton.waitForDisplayed({ timeout: 20000 });
-    confirmButton.scrollIntoView({ block: 'center', inline: 'center' });
-    confirmButton.waitForClickable({ timeout: 5000 });
-    browser.pause(300);
-    confirmButton.click();
+When(/^I remove the "([^"]*)" check$/, async function (name) {
+    const removeIcon = await $(`[data-check='${name}'] [data-test='check-remove-icon']`);
+    await removeIcon.waitForDisplayed();
+    await removeIcon.scrollIntoView({ block: 'center', inline: 'center' });
+    await removeIcon.waitForClickable({ timeout: 5000 });
+    await browser.pause(200);
+    await removeIcon.click();
+    await browser.pause(1000);
+    const confirmButton = await $(`[data-test="check-remove-icon-confirm"][data-confirm-button-name="${name}"]`);
+    await confirmButton.waitForDisplayed({ timeout: 20000 });
+    await confirmButton.scrollIntoView({ block: 'center', inline: 'center' });
+    await confirmButton.waitForClickable({ timeout: 5000 });
+    await browser.pause(300);
+    await confirmButton.click();
 });
 
-When(/^I open the (\d)st check "([^"]*)"$/, function (num, name) {
-    const check = $(`(//*[@data-test-preview-image='${name}'])[${num}]`);
-    check.waitForDisplayed();
-    check.click();
-    $(`[data-check-header-name='${name}']`).waitForDisplayed();
+When(/^I open the (\d)st check "([^"]*)"$/, async function (num, name) {
+    const check = await $(`(//*[@data-test-preview-image='${name}'])[${num}]`);
+    await check.waitForDisplayed();
+    await check.click();
+    const header = await $(`[data-check-header-name='${name}']`);
+    await header.waitForDisplayed();
 });

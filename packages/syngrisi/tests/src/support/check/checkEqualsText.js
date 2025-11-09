@@ -6,36 +6,24 @@
  *                                  given text or not
  * @param  {String}   expectedText  The text to validate against
  */
-export default (elementType, selector, falseCase, expectedText) => {
-    /**
-     * The command to execute on the browser object
-     * @type {String}
-     */
+export default async (elementType, selector, falseCase, expectedText) => {
     let command = 'getValue';
+    const element = await $(selector);
 
-    if (
-        elementType === 'button'
-        || $(selector).getAttribute('value') === null
-    ) {
+    if (elementType === 'button') {
         command = 'getText';
+    } else {
+        const valueAttr = await element.getAttribute('value');
+        if (valueAttr === null) {
+            command = 'getText';
+        }
     }
 
-    /**
-     * The expected text to validate against
-     * @type {String}
-     */
     let parsedExpectedText = expectedText;
-
-    /**
-     * Whether to check if the content equals the given text or not
-     * @type {Boolean}
-     */
     let boolFalseCase = !!falseCase;
 
-    // Check for empty element
     if (typeof parsedExpectedText === 'function') {
         parsedExpectedText = '';
-
         boolFalseCase = !boolFalseCase;
     }
 
@@ -44,7 +32,7 @@ export default (elementType, selector, falseCase, expectedText) => {
         boolFalseCase = true;
     }
 
-    const text = $(selector)[command]();
+    const text = await element[command]();
 
     if (boolFalseCase) {
         expect(parsedExpectedText).not.toBe(text);

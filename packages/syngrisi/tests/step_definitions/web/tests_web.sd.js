@@ -1,5 +1,5 @@
 /* eslint-disable no-console,func-names,no-restricted-syntax,no-await-in-loop */
-const { When, Then } = require('cucumber');
+const { When, Then } = require("@cucumber/cucumber");
 const YAML = require('yaml');
 const fs = require('fs');
 const { TableVRSComp } = require('../../src/PO/vrs/tableVRS.comp.js');
@@ -208,6 +208,7 @@ When(/^I create "([^"]*)" tests with:$/, { timeout: 60000000 }, async function (
             const filepath = check.filePath || 'files/A.png';
             const config = getConfig();
             const imageBuffer = fs.readFileSync(`${config.rootPath}/${filepath}`);
+            console.log('[createTest helper] check params before checkVRS:', check);
             checkResult.push(await checkVRS(check.checkName, imageBuffer, check));
         }
 
@@ -232,39 +233,46 @@ When(/^I unfold the test "([^"]*)"$/, async function (name) {
 
     let testElement;
     let selectedSelector;
-    for (const selector of candidateSelectors) {
-        try {
-            // eslint-disable-next-line no-await-in-loop
-            const candidate = await $(selector);
-            // eslint-disable-next-line no-await-in-loop
-            if (await candidate.isExisting()) {
-                // eslint-disable-next-line no-await-in-loop
-                const tagName = await candidate.getTagName();
-                if (process.env.DBG === '1') {
-                    console.log(`[unfoldTest] matched selector "${selector}" with tag "${tagName}"`);
+    let skipDueToDisconnection = false;
+
+    await browser.waitUntil(async () => {
+        for (const selector of candidateSelectors) {
+            try {
+                const candidate = await $(selector);
+                if (await candidate.isExisting()) {
+                    const tagName = await candidate.getTagName();
+                    if (process.env.DBG === '1') {
+                        console.log(`[unfoldTest] matched selector "${selector}" with tag "${tagName}"`);
+                    }
+                    const rowCandidate = tagName === 'tr'
+                        ? candidate
+                        : await candidate.$('./ancestor::tr[1]');
+                    if (await rowCandidate?.isExisting()) {
+                        testElement = rowCandidate;
+                        selectedSelector = selector;
+                        return true;
+                    }
                 }
-                // eslint-disable-next-line no-await-in-loop
-                const rowCandidate = tagName === 'tr'
-                    ? candidate
-                    : await candidate.$('./ancestor::tr[1]');
-                // eslint-disable-next-line no-await-in-loop
-                if (await rowCandidate?.isExisting()) {
-                    testElement = rowCandidate;
-                    selectedSelector = selector;
-                    break;
+            } catch (error) {
+                const errorMsg = error.message || error.toString() || '';
+                const isDisconnected = errorMsg.includes('disconnected')
+                    || errorMsg.includes('failed to check if window was closed')
+                    || errorMsg.includes('ECONNREFUSED');
+                if (isDisconnected) {
+                    console.warn('Browser disconnected or ChromeDriver unavailable, skipping unfold test');
+                    skipDueToDisconnection = true;
+                    return true;
                 }
+                throw error;
             }
-        } catch (error) {
-            const errorMsg = error.message || error.toString() || '';
-            if (errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed') || errorMsg.includes('ECONNREFUSED')) {
-                console.warn('Browser disconnected or ChromeDriver unavailable, skipping unfold test');
-                return;
-            }
-            throw error;
         }
-    }
+        return false;
+    }, { timeout: 20000, interval: 250, timeoutMsg: `Unable to locate test row for "${name}" within wait window` });
 
     if (!testElement) {
+        if (skipDueToDisconnection) {
+            return;
+        }
         throw new Error(`Unable to locate test row for "${name}"`);
     }
 
@@ -279,6 +287,15 @@ When(/^I unfold the test "([^"]*)"$/, async function (name) {
 
     if (process.env.DBG === '1') {
         console.log(`[unfoldTest] using row for selector "${selectedSelector}" (rowName="${rowNameAttr}")`);
+        const dataTestValues = await browser.execute((rowName) => {
+            const selector = rowName ? `tr[data-row-name="${rowName}"]` : null;
+            const row = selector ? document.querySelector(selector) : null;
+            if (!row) {
+                return [];
+            }
+            return Array.from(row.querySelectorAll('[data-test]')).map((el) => el.getAttribute('data-test'));
+        }, rowNameAttr || undefined);
+        console.log('[unfoldTest] row data-test children:', dataTestValues);
     }
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
@@ -288,7 +305,14 @@ When(/^I unfold the test "([^"]*)"$/, async function (name) {
                 await browser.pause(500); // Small pause between retries
             }
 
-            await testElement.click();
+            const nameCell = await testElement.$('[data-test="table-row-Name"]');
+            if (await nameCell.isExisting()) {
+                await nameCell.scrollIntoView({ block: 'center', inline: 'center' });
+                await nameCell.waitForClickable({ timeout: 5000 });
+                await nameCell.click();
+            } else {
+                await testElement.click();
+            }
 
             // Wait a bit for React state update and DOM mutation
             await browser.pause(100);

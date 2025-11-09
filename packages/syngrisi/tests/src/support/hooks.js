@@ -152,34 +152,36 @@ exports.hooks = {
     /**
      * Cucumber-specific hooks
      */
-    beforeFeature: function (uri, feature, scenarios) {
+    beforeFeature: function (uri, feature) {
         const cid = getCid();
         console.log(`[${cid}] ========== BEFORE FEATURE: ${feature.name} (${uri}) ==========`);
-        console.log(`[${cid}] Feature has ${scenarios.length} scenario(s)`);
     },
-    beforeScenario: function (uri, feature, scenario, sourceLocation) {
+    beforeScenario: async function (world, context) {
         const cid = getCid();
-        console.log(`[${cid}] ===== BEFORE SCENARIO: ${scenario.name} (${uri}) =====`);
-        console.log(`[${cid}] Scenario tags: ${scenario.tags?.map(t => t.name).join(', ') || 'none'}`);
+        const scenarioName = context?.pickle?.name || world?.pickle?.name || 'unknown';
+        console.log(`[${cid}] ===== BEFORE SCENARIO: ${scenarioName} =====`);
         require('../utills/addCommands');
-        browser.setWindowSize(1366, 768);
+        await browser.setWindowSize(1366, 768);
     },
-    beforeStep: function ({ uri, feature, step }, context) {
+    beforeStep: function (step, scenario, context) {
         const allureReporter = require('@wdio/allure-reporter').default;
-        allureReporter.addStep(`${step.step.keyword}${step.step.text}`);
+        allureReporter.addStep(`${step.keyword}${step.text}`);
     },
-    afterStep: function ({ uri, feature, step }, context, { error, result, duration, passed }) {
+    afterStep: async function (step, scenario, context, result) {
         // console.log({ step });
-        if (!passed) {
+        if (result.passed === false) {
             const cid = getCid();
-            const text = `${cid}_${step.step.keyword.toLowerCase()}_${step.scenario.name} -- ${step.step.text}`.toLowerCase();
+            const scenarioName = scenario?.pickle?.name || context?.pickle?.name || scenario?.name || 'unknown';
+            const stepText = step?.text || 'unknown';
+            const stepKeyword = step?.keyword || '';
+            const text = `${cid}_${stepKeyword.toLowerCase()}_${scenarioName} -- ${stepText}`.toLowerCase();
             const baseFileName = `./logs/${text.replace(/\s/g, '_')
                 .replace(/"/g, '@')
                 .replace(/:/g, '')
                 .replace(/\//g, '_')
                 }`;
             try {
-                browser.saveScreenshot(`${baseFileName}.png`);
+                await browser.saveScreenshot(`${baseFileName}.png`);
             } catch (screenshotError) {
                 const errorMsg = screenshotError.message || screenshotError.toString() || '';
                 if (errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed') || errorMsg.includes('ECONNREFUSED')) {
@@ -188,19 +190,22 @@ exports.hooks = {
                     console.warn('Failed to save screenshot:', screenshotError.message);
                 }
             }
-            const errMsg = `${cid}# error in: /${step.step.text}:${step.sourceLocation.uri}:${step.step.location.line}, ${step.step.location.column}\n`
-                + error + '\n'
-                + error?.stack;
+            const uri = scenario?.uri || context?.pickle?.uri || scenario?.pickle?.uri || 'unknown';
+            const line = step?.location?.line || 'unknown';
+            const column = step?.location?.column || 'unknown';
+            const errMsg = `${cid}# error in: /${stepText}:${uri}:${line}, ${column}\n`
+                + result.error + '\n'
+                + result.error?.stack;
             const fs = require('fs');
             fs.writeFileSync(`${baseFileName}.log`, errMsg);
             console.error(errMsg);
 
             if (process.env['DBG'] === '1') {
-                if (error.stack) {
-                    console.error(error.stack);
+                if (result.error.stack) {
+                    console.error(result.error.stack);
                 }
                 try {
-                    browser.debug();
+                    await browser.debug();
                 } catch (debugError) {
                     const errorMsg = debugError.message || debugError.toString() || '';
                     if (errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed')) {
@@ -210,10 +215,11 @@ exports.hooks = {
             }
         }
     },
-    afterScenario: async function (uri, feature, scenario, result, sourceLocation) {
+    afterScenario: async function (world, context, result) {
         const cid = getCid();
-        console.log(`[${cid}] ===== AFTER SCENARIO: ${scenario.name} (${uri}) =====`);
-        console.log(`[${cid}] Scenario result: ${result.status}`);
+        const scenarioName = context?.pickle?.name || world?.pickle?.name || 'unknown';
+        console.log(`[${cid}] ===== AFTER SCENARIO: ${scenarioName} =====`);
+        console.log(`[${cid}] Scenario result: ${result?.status || result?.willBeRetried || 'completed'}`);
         if (browser.syngrisiServer) {
             try {
                 const serverProcess = browser.syngrisiServer;

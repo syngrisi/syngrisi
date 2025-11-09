@@ -3,14 +3,15 @@
  * @param  {String}   obsolete Type of object to close (window or tab)
  */
 /* eslint-disable no-unused-vars */
-export default (obsolete) => {
+export default async (obsolete) => {
 /* eslint-enable no-unused-vars */
     /**
      * The last opened window handle
      * @type {Object}
      */
-    const lastWindowHandle = browser.getWindowHandles().slice(-1)[0];
+    const windowHandles = await browser.getWindowHandles();
+    const lastWindowHandle = windowHandles.slice(-1)[0];
 
-    browser.closeWindow();
-    browser.switchToWindow(lastWindowHandle);
+    await browser.closeWindow();
+    await browser.switchToWindow(lastWindowHandle);
 };

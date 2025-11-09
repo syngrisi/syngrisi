@@ -1,5 +1,4 @@
-/* eslint-disable func-names */
-import { Given } from 'cucumber';
+import { Given } from "@cucumber/cucumber";
 
 import checkContainsAnyText from '../src/support/check/checkContainsAnyText';
 import checkIsEmpty from '../src/support/check/checkIsEmpty';
@@ -24,9 +23,9 @@ import setWindowSize from '../src/support/action/setWindowSize';
 import { fillCommonPlaceholders } from '../src/utills/common';
 
 Given(
-    /^I open the (url|site) "([^"]*)?"$/, function (type, url) {
+    /^I open the (url|site) "([^"]*)?"$/, async function (type, url) {
         const url2 = this.fillItemsPlaceHolders(fillCommonPlaceholders(url));
-        openWebsite(type, url2);
+        await openWebsite(type, url2);
     }
 );
 

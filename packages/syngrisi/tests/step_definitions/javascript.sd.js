@@ -1,4 +1,4 @@
-const { When } = require('cucumber');
+const { When } = require("@cucumber/cucumber");
 
 // eslint-disable-next-line func-names
 When(/^I execute javascript code:$/, function (js) {

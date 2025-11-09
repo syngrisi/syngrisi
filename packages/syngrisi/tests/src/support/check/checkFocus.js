@@ -4,12 +4,9 @@
  * @param  {String}   falseCase Whether to check if the given element has focus
  *                              or not
  */
-export default (selector, falseCase) => {
-    /**
-     * Value of the hasFocus function for the given element
-     * @type {Boolean}
-     */
-    const hasFocus = $(selector).isFocused();
+export default async (selector, falseCase) => {
+    const element = await $(selector);
+    const hasFocus = await element.isFocused();
 
     if (falseCase) {
         expect(hasFocus).not.toBe(

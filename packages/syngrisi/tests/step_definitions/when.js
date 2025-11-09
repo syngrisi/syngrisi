@@ -17,7 +17,7 @@ import setInputField from '../src/support/action/setInputField';
 import setPromptText from '../src/support/action/setPromptText';
 
 
-const { When } = require('cucumber');
+const { When } = require("@cucumber/cucumber");
 const Key = require('webdriverio/build/constants').UNICODE_CHARACTERS;
 
 When(
@@ -100,12 +100,12 @@ When(
     moveTo
 );
 
-When(/^I scroll to the bottom of page$/, { timeout: 180000 }, function () {
-    browser.execute('window.scrollTo({left: 0, top: document.body.scrollHeight, behavior: \'smooth\'});');
+When(/^I scroll to the bottom of page$/, { timeout: 180000 }, async function () {
+    await browser.execute('window.scrollTo({left: 0, top: document.body.scrollHeight, behavior: \'smooth\'});');
 });
 
-When(/^I click on browser back button$/, function () {
-    browser.back();
+When(/^I click on browser back button$/, async function () {
+    await browser.back();
 });
 
 When(/^I fail$/, function () {

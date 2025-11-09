@@ -4,12 +4,9 @@
  * @param  {String}   falseCase Whether to check if the element is visible
  *                              within the current viewport or not
  */
-export default (selector, falseCase) => {
-    /**
-     * The state of visibility of the given element inside the viewport
-     * @type {Boolean}
-     */
-    const isDisplayed = $(selector).isDisplayedInViewport();
+export default async (selector, falseCase) => {
+    const element = await $(selector);
+    const isDisplayed = await element.isDisplayedInViewport();
 
     if (falseCase) {
         expect(isDisplayed).not.toEqual(

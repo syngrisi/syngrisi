@@ -5,12 +5,12 @@
  * @param  {Number}  exactly   Check if the element exists exactly this number
  *                             of times
  */
-export default (selector, falseCase, exactly) => {
+export default async (selector, falseCase, exactly) => {
     /**
      * The number of elements found in the DOM
      * @type {Int}
      */
-    const nrOfElements = $$(selector);
+    const nrOfElements = await $$(selector);
 
     if (falseCase === true) {
         expect(nrOfElements).toHaveLength(

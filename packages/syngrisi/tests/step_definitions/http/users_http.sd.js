@@ -1,5 +1,5 @@
 /* eslint-disable prefer-arrow-callback,no-console */
-const { When } = require('cucumber');
+const { When } = require("@cucumber/cucumber");
 const { got } = require('got-cjs');
 const { requestWithLastSessionSid } = require('../../src/utills/common');
 

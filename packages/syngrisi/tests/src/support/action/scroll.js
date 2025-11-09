@@ -2,6 +2,7 @@
  * Scroll the page to the given element
  * @param  {String}   selector Element selector
  */
-export default (selector) => {
-    $(selector).scrollIntoView();
+export default async (selector) => {
+    const element = await $(selector);
+    await element.scrollIntoView();
 };

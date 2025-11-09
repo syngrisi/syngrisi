@@ -8,29 +8,12 @@
  *                                  attribute matches or not
  * @param  {String}   expectedValue The value to match against
  */
-export default (isCSS, attrName, elem, falseCase, expectedValue) => {
-    /**
-     * The command to use for fetching the expected value
-     * @type {String}
-     */
-    const command = isCSS ? 'getCssProperty' : 'getAttribute';
-
-    /**
-     * Te label to identify the attribute by
-     * @type {String}
-     */
+export default async (isCSS, attrName, elem, falseCase, expectedValue) => {
+    const command = isCSS ? 'getCSSProperty' : 'getAttribute';
     const attrType = (isCSS ? 'CSS attribute' : 'Attribute');
+    const element = await $(elem);
+    let attributeValue = await element[command](attrName);
 
-    /**
-     * The actual attribute value
-     * @type {Mixed}
-     */
-    let attributeValue = browser[command](elem, attrName);
-
-    /**
-     * when getting something with a color or font-weight WebdriverIO returns a
-     * object but we want to assert against a string
-     */
     if (attrName.match(/(font-size|line-height|display|font-weight)/)) {
         attributeValue = attributeValue.value;
     }
