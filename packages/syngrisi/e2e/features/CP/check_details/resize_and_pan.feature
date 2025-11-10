@@ -234,6 +234,43 @@ Feature: Check details Resize and Pan
 
         mainView.canvas.fire('mouse:wheel', eventObj)
         """
+        When I wait for "0.5" seconds
+        
+        # Additional mouse wheel actions for testing (to verify actions work)
+        When I execute javascript code:
+        """
+        const eventObj2 = {
+            e: {
+                ctrlKey: false,
+                preventDefault: ()=>{},
+                stopPropagation: ()=>{},
+                offsetX: 200,
+                offsetY: 200,
+                deltaY: -50,
+                deltaX: -50,
+            }
+        }
+
+        mainView.canvas.fire('mouse:wheel', eventObj2)
+        """
+        When I wait for "0.5" seconds
+        
+        When I execute javascript code:
+        """
+        const eventObj3 = {
+            e: {
+                ctrlKey: false,
+                preventDefault: ()=>{},
+                stopPropagation: ()=>{},
+                offsetX: 200,
+                offsetY: 200,
+                deltaY: -50,
+                deltaX: -50,
+            }
+        }
+
+        mainView.canvas.fire('mouse:wheel', eventObj3)
+        """
         When I wait for "1" seconds
         # check pan coordinates
         When I execute javascript code:
