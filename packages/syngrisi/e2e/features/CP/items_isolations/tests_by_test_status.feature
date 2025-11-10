@@ -18,7 +18,15 @@ Feature: Test Isolation by Test Status
     # PASSED
     Given I create "1" tests with:
     """
-      testName: TestStatus-passed
+      testName: TestStatus-passed-new
+      checks:
+          - checkName: Check-passed
+    """
+    When I accept via http the 1st check with name "Check-passed"
+
+    Given I create "1" tests with:
+    """
+      testName: TestStatus-passed-passed
       checks:
           - checkName: Check-passed
     """
@@ -45,30 +53,28 @@ Feature: Test Isolation by Test Status
     When I refresh page
     # all tests
     When I wait on element "[data-table-test-name*='TestStatus']" to be displayed
-    Then I expect that element "[data-table-test-name*='TestStatus']" does appear exactly "4" times
+    Then I expect that element "[data-table-test-name*='TestStatus']" does appear exactly "5" times
 
     When I select the option with the text "Test Status" for element "select[data-test='navbar-group-by']"
-    # When I pause
 
     # NEW
     When I wait on element "li*=New" to be displayed
     When I click on the element "li*=New"
-    # When I pause
 
     When I wait on element "[data-table-test-name='TestStatus-new']" to be displayed
-    When I wait on element "[data-table-test-name='TestStatus-passed']" to not be displayed
+    When I wait on element "[data-table-test-name='TestStatus-passed-passed']" to not be displayed
     When I wait on element "[data-table-test-name='TestStatus-failed']" to not be displayed
 
     # PASSED
     When I click on the element "li*=Passed"
 
+    When I wait on element "[data-table-test-name='TestStatus-passed-passed']" to be displayed
     When I wait on element "[data-table-test-name='TestStatus-new']" to not be displayed
-    When I wait on element "[data-table-test-name='TestStatus-passed']" to be displayed
     When I wait on element "[data-table-test-name='TestStatus-failed']" to not be displayed
 
     # FAILED
     When I click on the element "li*=Failed"
 
-    When I wait on element "[data-table-test-name='TestStatus-new']" to not be displayed
-    When I wait on element "[data-table-test-name='TestStatus-passed']" to not be displayed
     When I wait on element "[data-table-test-name='TestStatus-failed']" to be displayed
+    When I wait on element "[data-table-test-name='TestStatus-new']" to not be displayed
+    When I wait on element "[data-table-test-name='TestStatus-passed-passed']" to not be displayed
