@@ -27,7 +27,7 @@ Feature: Test Isolation by Test Status
     # FAILED
     Given I create "1" tests with:
     """
-      testName: TestStatus-failed
+      testName: TestStatus-failed-new
       checks:
           - checkName: Check-failed-baseline
             filePath: files/A.png
@@ -48,10 +48,12 @@ Feature: Test Isolation by Test Status
     Then I expect that element "[data-table-test-name*='TestStatus']" does appear exactly "4" times
 
     When I select the option with the text "Test Status" for element "select[data-test='navbar-group-by']"
+    # When I pause
 
     # NEW
     When I wait on element "li*=New" to be displayed
     When I click on the element "li*=New"
+    # When I pause
 
     When I wait on element "[data-table-test-name='TestStatus-new']" to be displayed
     When I wait on element "[data-table-test-name='TestStatus-passed']" to not be displayed
