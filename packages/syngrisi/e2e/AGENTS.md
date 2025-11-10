@@ -35,3 +35,16 @@
 
 - **Text matching**: WebdriverIO's `getText()` returns visible text (like `innerText`), which respects CSS `text-transform`. Use `innerText()` in Playwright to match this behavior.
 - **CSS Colors**: WebdriverIO's `getCSSProperty()` for color properties returns `rgba(r,g,b,1)` format without spaces. Browsers return `rgb(r, g, b)` format. To match WebdriverIO behavior exactly, normalize `rgb(r, g, b)` to `rgba(r,g,b,1)` format (no spaces) in step definitions for color properties. This normalization is REQUIRED to replicate WebdriverIO's exact behavior.
+
+## Test Execution
+
+- The project relies on `npm`, so run commands via the npm scripts inside `packages/syngrisi/e2e`.
+- To execute a single scenario in headless mode, generate steps and run the test:
+  ```bash
+  npx bddgen && yarn playwright test "features/CHECKS_HANDLING/accept_by_user.feature" --grep "Accept by user" --headed --workers=1
+  ```
+- For headed mode, run:
+  ```bash
+  npx bddgen && yarn playwright test "features/CHECKS_HANDLING/accept_by_user.feature" --grep "Accept by user" --headed --workers=1 --headed
+  ```
+- To execute the entire e2e suite, change into `packages/syngrisi/e2e` and run `npm test`.
