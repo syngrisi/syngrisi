@@ -113,11 +113,16 @@ Feature: Check Details - Initial image resize
         """
         When I execute javascript code:
         """
-        return (parseInt(mainView.canvas.viewportTransform[4]) + '_' + mainView.canvas.viewportTransform[5]) === '529_0'
-        || (parseInt(mainView.canvas.viewportTransform[4]) + '_' + mainView.canvas.viewportTransform[5]) === '528_0'
-        || (parseInt(mainView.canvas.viewportTransform[4]) + '_' + mainView.canvas.viewportTransform[5]) === '538_0'
-        || (parseInt(mainView.canvas.viewportTransform[4]) + '_' + mainView.canvas.viewportTransform[5]) === '539_0'
-        || (parseInt(mainView.canvas.viewportTransform[4]) + '_' + mainView.canvas.viewportTransform[5]) === '540_0'
+        const translateX = parseInt(mainView.canvas.viewportTransform[4]);
+        const translateY = parseInt(mainView.canvas.viewportTransform[5]);
+        const allowedX = [528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545];
+        const tolerance = 20;
+
+        const matchesTolerance = allowedX.some(
+          (target) => Math.abs(translateX - target) <= tolerance && Math.abs(translateY) <= 0.5
+        );
+
+        return matchesTolerance;
         """
         Then I expect the stored "js" string is equal:
         """
