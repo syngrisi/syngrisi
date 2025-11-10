@@ -236,23 +236,35 @@ const enrichChecksWithCurrentAcceptance = async (
         const baseline = baselinesMap.get(identKey);
         const actualSnapshotId = extractSnapshotId(check?.actualSnapshotId);
         const baselineSnapshotId = baseline ? extractSnapshotId(baseline.snapshootId) : undefined;
+        const checkBaselineSnapshotId = extractSnapshotId(check?.baselineId);
 
-        const isCurrentlyAccepted = Boolean(
-            check?.markedAs === 'accepted'
-                && actualSnapshotId
+        const matchesOwnBaseline = Boolean(
+            actualSnapshotId
+                && checkBaselineSnapshotId
+                && actualSnapshotId === checkBaselineSnapshotId,
+        );
+        const matchesLatestBaseline = Boolean(
+            actualSnapshotId
                 && baselineSnapshotId
                 && actualSnapshotId === baselineSnapshotId,
         );
 
+        const isCurrentlyAccepted = Boolean(
+            check?.markedAs === 'accepted'
+                && (matchesOwnBaseline || matchesLatestBaseline),
+        );
+
+        const hasKnownBaseline = Boolean(checkBaselineSnapshotId || baselineSnapshotId);
+
         const wasAcceptedEarlier = Boolean(
             check?.markedAs === 'accepted'
-                && baseline
+                && hasKnownBaseline
                 && !isCurrentlyAccepted,
         );
 
         // Debug logging
         if (check?.markedAs === 'accepted') {
-            log.debug(`[enrichChecks] Check ${check._id}: actualSnapshot=${actualSnapshotId}, baselineSnapshot=${baselineSnapshotId}, isCurrentlyAccepted=${isCurrentlyAccepted}, wasAcceptedEarlier=${wasAcceptedEarlier}, hasBaseline=${Boolean(baseline)}`, {
+            log.debug(`[enrichChecks] Check ${check._id}: actualSnapshot=${actualSnapshotId}, baselineSnapshot=${baselineSnapshotId}, checkBaselineSnapshot=${checkBaselineSnapshotId}, isCurrentlyAccepted=${isCurrentlyAccepted}, wasAcceptedEarlier=${wasAcceptedEarlier}, hasBaseline=${Boolean(baseline)}`, {
                 scope: 'enrichChecksWithCurrentAcceptance',
             });
         }
@@ -287,10 +299,12 @@ const accept = async (
     check.markedDate = new Date();
     check.markedAs = 'accepted';
     check.status = (check.status[0] === 'new') ? ['new'] : ['passed'];
+    // check.status = ['passed'];
     check.updatedDate = new Date();
 
-    // TODO: remove this line
-    // check.baselineId = baselineId as unknown as Schema.Types.ObjectId;
+    if (baselineId) {
+        check.baselineId = new Types.ObjectId(baselineId);
+    }
 
     log.debug(`update check with options: '${JSON.stringify(check.toObject())}'`, logOpts);
     await createNewBaseline(check.toObject());
