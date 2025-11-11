@@ -50,6 +50,7 @@ Feature: Check details Related Checks - Navigation and Accept
         status: [new]
         """
 
+        When I wait until the css attribute "color" from element ".modal [data-test='check-accept-icon'] svg" is "rgba(64,192,87,1)"
         Then I expect that the css attribute "color" from element ".modal [data-test='check-accept-icon'] svg" is "rgba(64,192,87,1)"
         Then I expect that the attribute "data-test-icon-type" from element ".modal [data-test='check-accept-icon'] svg" is "fill"
 
@@ -59,5 +60,4 @@ Feature: Check details Related Checks - Navigation and Accept
 
         Then I expect that the attribute "data-test-icon-type" from element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" is "outline"
         Then I expect that the css attribute "color" from element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" is "rgba(134,142,150,1)"
-
 
