@@ -30,35 +30,35 @@ Feature: Group by
 
     @smoke
     Scenario: Group by
-        When I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName - 1')]" to be displayed
-        When I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName - 2')]" to be displayed
+        When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName - 1')]" to be visible
+        When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName - 2')]" to be visible
 
         When I select the option with the text "Suites" for element "select[data-test='navbar-group-by']"
-        When I wait on element "//*[@data-test='navbar-item-name' and contains(., 'SuiteName - 1')]" to be displayed
-        When I wait on element "//*[@data-test='navbar-item-name' and contains(., 'SuiteName - 2')]" to be displayed
+        When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'SuiteName - 1')]" to be visible
+        When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'SuiteName - 2')]" to be visible
 
         When I select the option with the text "Browsers" for element "select[data-test='navbar-group-by']"
-        When I wait on element "//*[@data-test='navbar-item-name' and contains(., 'msedge')]" to be displayed
-        When I wait on element "//*[@data-test='navbar-item-name' and contains(., 'firefox')]" to be displayed
+        When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'msedge')]" to be visible
+        When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'firefox')]" to be visible
 
     @smoke
     Scenario: Group by after item select
     Check if base filter resetting after change grouping
-        When I wait on element "[data-table-test-name='TestName - 1']" to be displayed
-        When I wait on element "[data-table-test-name='TestName - 2']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-test-name='TestName - 1']" to be visible
+        When I wait 30 seconds for the element with locator "[data-table-test-name='TestName - 2']" to be visible
         When I click element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName - 1')]"
         When I wait for "2" seconds
         When I wait on element "[data-table-test-name='TestName - 2']" to not be displayed
-        When I wait on element "[data-table-test-name='TestName - 1']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-test-name='TestName - 1']" to be visible
         When I select the option with the text "Suites" for element "select[data-test='navbar-group-by']"
-        When I wait on element "[data-table-test-name='TestName - 1']" to be displayed
-        When I wait on element "[data-table-test-name='TestName - 2']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-test-name='TestName - 1']" to be visible
+        When I wait 30 seconds for the element with locator "[data-table-test-name='TestName - 2']" to be visible
 
     Scenario: Group by via Url
     Should apply groupBy via url params
         # suites
         When I open the url "<syngrisiUrl>?groupBy=suites"
 
-        When I wait on element "//*[@data-test='navbar-item-name' and contains(., 'SuiteName - 1')]" to be displayed
-        When I wait on element "//*[@data-test='navbar-item-name' and contains(., 'SuiteName - 2')]" to be displayed
+        When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'SuiteName - 1')]" to be visible
+        When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'SuiteName - 2')]" to be visible
 

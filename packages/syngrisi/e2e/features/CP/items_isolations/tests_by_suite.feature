@@ -36,17 +36,17 @@ Feature: Test Isolation by Suite
     When I refresh page
 
     # all tests
-    When I wait on element "//div[contains(text(), 'TestSuite')]" to be displayed
+    When I wait 30 seconds for the element with locator "//div[contains(text(), 'TestSuite')]" to be visible
     Then I expect that element "//div[contains(text(), 'TestSuite')]" does appear exactly "3" times
 
     When I select the option with the text "Suites" for element "select[data-test='navbar-group-by']"
 
     # SUITE-1
     # tests
-    When I wait on element "[data-item-name='Suite-1']" to be displayed
+    When I wait 30 seconds for the element with locator "[data-item-name='Suite-1']" to be visible
     When I click element with locator "[data-item-name='Suite-1']"
-    When I wait on element "//div[contains(text(), 'TestSuite-1.1')]" to be displayed
-    When I wait on element "//div[contains(text(), 'TestSuite-1.2')]" to be displayed
+    When I wait 30 seconds for the element with locator "//div[contains(text(), 'TestSuite-1.1')]" to be visible
+    When I wait 30 seconds for the element with locator "//div[contains(text(), 'TestSuite-1.2')]" to be visible
     When I wait on element "//div[contains(text(), 'TestSuite-2.1')]" to not be displayed
 
     # checks
@@ -61,6 +61,6 @@ Feature: Test Isolation by Suite
     # SUITE-1
     # tests
     When I click element with locator "[data-item-name='Suite-2']"
-    When I wait on element "//div[contains(text(), 'TestSuite-2.1')]" to be displayed
+    When I wait 30 seconds for the element with locator "//div[contains(text(), 'TestSuite-2.1')]" to be visible
     When I wait on element "//div[contains(text(), 'TestSuite-1.1')]" to not be displayed
     When I wait on element "//div[contains(text(), 'TestSuite-1.2')]" to not be displayed

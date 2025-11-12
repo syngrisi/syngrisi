@@ -41,7 +41,7 @@ Feature: Check Preview - Tooltip
     # image tooltip
     When I wait on element "[data-check-tooltip-name='CheckName']" to not be displayed
     When I move to element "[data-test-preview-image='CheckName']"
-    When I wait on element "[data-check-tooltip-name='CheckName']" to be displayed
+    When I wait 30 seconds for the element with locator "[data-check-tooltip-name='CheckName']" to be visible
     When I expect that element "[data-check-tooltip-name='CheckName'] [data-test='status-label']" to contain text "New - first time check"
     When I expect that element "[data-check-tooltip-name='CheckName'] [data-test='user-label']" to contain text "Test Admin"
     When I expect that element "[data-check-tooltip-name='CheckName'] [data-test='os-label']" to contain text "<testPlatform>"

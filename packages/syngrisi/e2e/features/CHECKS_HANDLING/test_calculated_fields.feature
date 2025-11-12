@@ -18,7 +18,7 @@ Feature: Test calculated fields
             viewport: 50x50
     """
     When I go to "main" page
-    When I wait on element "[data-table-test-name='TestName']" to be displayed
+    When I wait 30 seconds for the element with locator "[data-table-test-name='TestName']" to be visible
     When I expect that element "[data-row-name='TestName'] [data-test='table-row-Viewport']" to contain text "50x50"
 
   Scenario: Different viewports - [50x50, 100x100]
@@ -45,7 +45,7 @@ Feature: Test calculated fields
             viewport: 50x50
     """
     When I go to "main" page
-    When I wait on element "[data-table-test-name='TestName']" to be displayed
+    When I wait 30 seconds for the element with locator "[data-table-test-name='TestName']" to be visible
     When I expect that element "[data-row-name='TestName'] [data-test='table-row-Status']" to contain text "New"
 
   Scenario: Same viewports - [new, passed]
@@ -65,7 +65,7 @@ Feature: Test calculated fields
           - checkName: CheckName-2
     """
     When I go to "main" page
-    When I wait on element "[data-table-test-name='TestName']" to be displayed
+    When I wait 30 seconds for the element with locator "[data-table-test-name='TestName']" to be visible
     When I expect that element "[data-row-name='TestName'] [data-test='table-row-Status']" to contain text "Passed"
 
   Scenario: Same viewports - [passed, failed]
@@ -91,6 +91,6 @@ Feature: Test calculated fields
             filePath: files/B.png
     """
     When I go to "main" page
-    When I wait on element "[data-table-test-name='TestName']" to be displayed
+    When I wait 30 seconds for the element with locator "[data-table-test-name='TestName']" to be visible
     When I expect that element "[data-row-name='TestName'] [data-test='table-row-Status']" to contain text "Failed"
 

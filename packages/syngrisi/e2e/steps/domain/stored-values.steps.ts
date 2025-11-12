@@ -13,9 +13,10 @@ Then(
       throw new Error(`No stored value found for "${itemName}"`);
     }
 
-    const normalizedValue = String(storedValue);
-    logger.info(`Checking stored "${itemName}": "${normalizedValue}" contains "${expected}"`);
-    expect(normalizedValue).toContain(expected.trim());
+    const normalizedValue = String(storedValue).trim();
+    const expectedValue = expected.trim();
+    logger.info(`Checking stored "${itemName}": "${normalizedValue}" contains "${expectedValue}"`);
+    expect(normalizedValue).toContain(expectedValue);
   }
 );
 
@@ -27,9 +28,10 @@ Then(
       throw new Error(`No stored value found for "${itemName}"`);
     }
 
-    const normalizedValue = String(storedValue);
-    logger.info(`Checking stored "${itemName}": "${normalizedValue}" does not contain "${expected}"`);
-    expect(normalizedValue).not.toContain(expected.trim());
+    const normalizedValue = String(storedValue).trim();
+    const expectedValue = expected.trim();
+    logger.info(`Checking stored "${itemName}": "${normalizedValue}" does not contain "${expectedValue}"`);
+    expect(normalizedValue).not.toContain(expectedValue);
   }
 );
 
@@ -41,9 +43,10 @@ Then(
       throw new Error(`No stored value found for "${itemName}"`);
     }
 
-    const normalizedValue = String(storedValue);
-    logger.info(`Checking stored "${itemName}": "${normalizedValue}" equals "${expected}"`);
-    expect(normalizedValue).toBe(expected.trim());
+    const normalizedValue = String(storedValue).trim();
+    const expectedValue = expected.trim();
+    logger.info(`Checking stored "${itemName}": "${normalizedValue}" equals "${expectedValue}"`);
+    expect(normalizedValue).toBe(expectedValue);
   }
 );
 
@@ -55,8 +58,9 @@ Then(
       throw new Error(`No stored value found for "${itemName}"`);
     }
 
-    const normalizedValue = String(storedValue);
-    logger.info(`Checking stored "${itemName}": "${normalizedValue}" does not equal "${expected}"`);
-    expect(normalizedValue).not.toBe(expected.trim());
+    const normalizedValue = String(storedValue).trim();
+    const expectedValue = expected.trim();
+    logger.info(`Checking stored "${itemName}": "${normalizedValue}" does not equal "${expectedValue}"`);
+    expect(normalizedValue).not.toBe(expectedValue);
   }
 );

@@ -26,7 +26,7 @@ Feature: Switch Color Theme
 
         # switch theme
         When I click element with locator "[data-test='user-icon']"
-        When I wait on element "//*[@data-test='theme-button']/.." to be displayed
+        When I wait 30 seconds for the element with locator "//*[@data-test='theme-button']/.." to be visible
         When I click element with locator "//*[@data-test='theme-button']/.."
         When I wait for "3" seconds
 

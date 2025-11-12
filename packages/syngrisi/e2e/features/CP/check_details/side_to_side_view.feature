@@ -26,7 +26,7 @@ Feature: Side to side view
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed
 
     Scenario: Divider in the center
-        When I wait on element "//div[normalize-space(text())='Slider']" to be displayed
+        When I wait 30 seconds for the element with locator "//div[normalize-space(text())='Slider']" to be visible
         When I wait for "0.5" seconds
 
         When I click element with locator "//div[normalize-space(text())='Slider']"

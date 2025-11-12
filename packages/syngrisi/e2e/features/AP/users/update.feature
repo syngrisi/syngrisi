@@ -36,7 +36,7 @@ Feature: Update User
     Scenario: Update User - Success
         When I open the app
         When I go to "admin2" page
-        When I wait on element "//*[@data-test='j_doe@gmail.com']//button[@data-test='user-list-update-button']" to be displayed
+        When I wait 30 seconds for the element with locator "//*[@data-test='j_doe@gmail.com']//button[@data-test='user-list-update-button']" to be visible
         When I click element with locator "//*[@data-test='j_doe@gmail.com']//button[@data-test='user-list-update-button']"
         When I set "Alex" to the inputfield "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-first-name']"
         When I set "Jonson" to the inputfield "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-last-name']"

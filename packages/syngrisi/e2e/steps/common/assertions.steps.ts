@@ -1,10 +1,11 @@
 import type { Page } from '@playwright/test';
 import { Then, When } from '@fixtures';
 import { expect } from '@playwright/test';
-import type { ElementTarget, ExpectationCondition, StepCondition } from '@params';
+import type { ElementAttribute, ElementTarget, ExpectationCondition, StepCondition } from '@params';
 import { getLabelLocator, getLocatorQuery, getRoleLocator } from '@helpers/locators';
 import { assertCondition } from '@helpers/assertions';
 import { AriaRole } from '@helpers/types';
+import type { Locator } from '@playwright/test';
 import { renderTemplate } from '@helpers/template';
 import { createLogger } from '@lib/logger';
 import type { TestStore } from '@fixtures';
@@ -96,6 +97,42 @@ function locatorFromTarget(
   }
 
   throw new Error(`Unsupported target: ${target}`);
+}
+
+/**
+ * Resolves a locator based on role, attribute, and value.
+ *
+ * @param page - Playwright {@link Page} instance from the step world.
+ * @param role - {@link AriaRole} or 'element' for generic locators.
+ * @param attribute - {@link ElementAttribute} (`'name' | 'locator' | 'label'`).
+ * @param value - The value of the attribute.
+ */
+function getLocator({
+  page,
+  role,
+  attribute,
+  value,
+}: {
+  page: Page;
+  role: AriaRole | 'element';
+  attribute: ElementAttribute;
+  value: string;
+}): Locator {
+  if ((role as string) === 'element') {
+    if (attribute === 'locator') {
+      return getLocatorQuery(page, value);
+    }
+    if (attribute === 'label') {
+      return getLabelLocator(page, value);
+    }
+    throw new Error(`For role "element", attribute must be "locator" or "label", got "${attribute}"`);
+  }
+
+  if (attribute === 'name') {
+    return getRoleLocator(page, role as AriaRole, value);
+  }
+
+  throw new Error(`For role "${role}", attribute must be "name", got "${attribute}"`);
 }
 
 /**
@@ -1214,4 +1251,120 @@ When(
     const locator = getLocatorQuery(page, renderedSelector);
     await assertCondition(locator, condition);
   }
+);
+
+/**
+ * Waits for an element to reach a specific state.
+ *
+ * @param {object} context - The test context object.
+ * @param {number} timeoutInSeconds - The maximum time to wait.
+ * @param {AriaRole | 'element'} role - The ARIA role of the element or 'element' for generic locators.
+ * @param {ElementAttribute} attribute - The attribute to locate the element by ('name' | 'locator' | 'label').
+ * @param {string} value - The value of the attribute.
+ * @param {StepCondition} assert - The state to wait for (e.g., 'visible', 'enabled', 'checked').
+ *
+ * @example
+ * ```gherkin
+ * When I wait 5 seconds for the button with name "Submit" to be visible
+ * ```
+ *
+ * @example
+ * ```gherkin
+ * When I wait 10 seconds for the element with locator "##flora-GridLayout" to be visible
+ * ```
+ */
+When(
+  'I wait {int} seconds for the {role} with {attribute} {string} to be {condition}',
+  async (
+    { page, testData }: { page: Page; testData: TestStore },
+    timeoutInSeconds: number,
+    role: AriaRole,
+    attribute: ElementAttribute,
+    value: string,
+    condition: StepCondition,
+  ) => {
+    const locator = getLocator({
+      page,
+      role: role as AriaRole | 'element',
+      attribute,
+      value: testData.renderTemplate(value),
+    });
+    await assertCondition(locator, condition, undefined, { timeout: timeoutInSeconds * 1000 });
+  },
+);
+
+/**
+ * Waits for an element to not be displayed (hidden) with a specified timeout.
+ *
+ * @param {object} context - The test context object.
+ * @param {number} timeoutInSeconds - The maximum time to wait.
+ * @param {AriaRole | 'element'} role - The ARIA role of the element or 'element' for generic locators.
+ * @param {ElementAttribute} attribute - The attribute to locate the element by ('name' | 'locator' | 'label').
+ * @param {string} value - The value of the attribute.
+ *
+ * @example
+ * ```gherkin
+ * When I wait 30 seconds for the element with locator "[data-test='folding-table-items']" to not be displayed
+ * ```
+ */
+When(
+  'I wait {int} seconds for the {role} with {attribute} {string} to not be displayed',
+  async (
+    { page, testData }: { page: Page; testData: TestStore },
+    timeoutInSeconds: number,
+    role: AriaRole,
+    attribute: ElementAttribute,
+    value: string,
+  ) => {
+    const locator = getLocator({
+      page,
+      role: role as AriaRole | 'element',
+      attribute,
+      value: testData.renderTemplate(value),
+    });
+    await locator.first().waitFor({ state: 'hidden', timeout: timeoutInSeconds * 1000 });
+  },
+);
+
+/**
+ * Waits for an element to reach a specific state with an additional timeout in milliseconds.
+ * Note: The timeout in milliseconds overrides the timeout in seconds if provided.
+ *
+ * @param {object} context - The test context object.
+ * @param {number} timeoutInSeconds - The maximum time to wait in seconds.
+ * @param {AriaRole | 'element'} role - The ARIA role of the element or 'element' for generic locators.
+ * @param {ElementAttribute} attribute - The attribute to locate the element by ('name' | 'locator' | 'label').
+ * @param {string} value - The value of the attribute.
+ * @param {number} timeoutMs - Additional timeout in milliseconds (overrides seconds timeout).
+ * @param {StepCondition} assert - The state to wait for (e.g., 'visible', 'enabled', 'checked').
+ *
+ * @example
+ * ```gherkin
+ * When I wait 30 seconds for the element with locator "[data-test='table-row-Message']" for 10000ms to be visible
+ * ```
+ */
+When(
+  'I wait {int} seconds for the {role} with {attribute} {string} for {ordinal} to be {condition}',
+  async (
+    { page, testData }: { page: Page; testData: TestStore },
+    timeoutInSeconds: number,
+    role: AriaRole,
+    attribute: ElementAttribute,
+    value: string,
+    ordinalValue: number, // This is actually milliseconds (e.g., "10000ms"), but Playwright-BDD recognizes it as ordinal
+    condition: StepCondition,
+  ) => {
+    const locator = getLocator({
+      page,
+      role: role as AriaRole | 'element',
+      attribute,
+      value: testData.renderTemplate(value),
+    });
+    // Extract milliseconds from ordinal value
+    // Playwright-BDD's ordinal transformer extracts number and subtracts 1, so we need to add 1 back
+    // But for "10000ms", the transformer extracts 10000 and subtracts 1 = 9999
+    // So we need to add 1 to get the correct milliseconds value
+    const timeoutMs = ordinalValue + 1;
+    await assertCondition(locator, condition, undefined, { timeout: timeoutMs });
+  },
 );

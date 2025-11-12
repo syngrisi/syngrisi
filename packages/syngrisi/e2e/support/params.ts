@@ -23,10 +23,13 @@ const ROLE_NAMES = [
   'tab',
   'article',
   'region',
-  'status'
+  'status',
+  'element'
 ] as const;
 
 const TARGET_NAMES = ['locator', 'label'] as const;
+
+const ATTRIBUTE_NAMES = ['name', 'locator', 'label'] as const;
 
 const VALUE_CONDITION_NAMES: ValueCondition[] = [
   'has text',
@@ -45,6 +48,7 @@ const VALUE_CONDITION_NAMES: ValueCondition[] = [
 
 export type StepCondition = StateCondition;
 export type ElementTarget = (typeof TARGET_NAMES)[number];
+export type ElementAttribute = (typeof ATTRIBUTE_NAMES)[number];
 export type ExpectationCondition = ValueCondition;
 export const valueConditionNames = VALUE_CONDITION_NAMES;
 
@@ -84,6 +88,18 @@ defineParameterType({
   name: 'valueCondition',
   regexp: new RegExp(`(?:${buildAlternation(VALUE_CONDITION_NAMES)})`),
   transformer: (value: string): ValueCondition => normalizeCondition(value) as ValueCondition
+});
+
+defineParameterType({
+  name: 'attribute',
+  regexp: new RegExp(`(?:${ATTRIBUTE_NAMES.join('|')})`),
+  transformer: (value: string): ElementAttribute => value.toLowerCase() as ElementAttribute
+});
+
+defineParameterType({
+  name: 'assert',
+  regexp: new RegExp(`(?:${buildAlternation(stateConditionNames)})`),
+  transformer: (value: string): StepCondition => normalizeCondition(value) as StepCondition
 });
 
 function normalizeCondition(value: string): string {

@@ -27,7 +27,7 @@ Feature: Simple Views (Expected, Actual, Diff)
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed
 
     Scenario: Simple Views (Expected, Actual, Diff)
-        When I wait on element "div=Expected" to be displayed
+        When I wait 30 seconds for the element with locator "div=Expected" to be visible
 
         # expected
         When I click element with locator "div=Expected"

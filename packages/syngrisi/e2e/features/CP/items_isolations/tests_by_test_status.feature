@@ -52,29 +52,29 @@ Feature: Test Isolation by Test Status
 
     When I refresh page
     # all tests
-    When I wait on element "[data-table-test-name*='TestStatus']" to be displayed
+    When I wait 30 seconds for the element with locator "[data-table-test-name*='TestStatus']" to be visible
     Then I expect that element "[data-table-test-name*='TestStatus']" does appear exactly "5" times
 
     When I select the option with the text "Test Status" for element "select[data-test='navbar-group-by']"
 
     # NEW
-    When I wait on element "li*=New" to be displayed
+    When I wait 30 seconds for the element with locator "//li[contains(., 'New')]" to be visible
     When I click element with locator "li*=New"
 
-    When I wait on element "[data-table-test-name='TestStatus-new']" to be displayed
+    When I wait 30 seconds for the element with locator "[data-table-test-name='TestStatus-new']" to be visible
     When I wait on element "[data-table-test-name='TestStatus-passed-passed']" to not be displayed
     When I wait on element "[data-table-test-name='TestStatus-failed']" to not be displayed
 
     # PASSED
     When I click element with locator "li*=Passed"
 
-    When I wait on element "[data-table-test-name='TestStatus-passed-passed']" to be displayed
+    When I wait 30 seconds for the element with locator "[data-table-test-name='TestStatus-passed-passed']" to be visible
     When I wait on element "[data-table-test-name='TestStatus-new']" to not be displayed
     When I wait on element "[data-table-test-name='TestStatus-failed']" to not be displayed
 
     # FAILED
     When I click element with locator "li*=Failed"
 
-    When I wait on element "[data-table-test-name='TestStatus-failed']" to be displayed
+    When I wait 30 seconds for the element with locator "[data-table-test-name='TestStatus-failed']" to be visible
     When I wait on element "[data-table-test-name='TestStatus-new']" to not be displayed
     When I wait on element "[data-table-test-name='TestStatus-passed-passed']" to not be displayed

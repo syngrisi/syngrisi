@@ -20,7 +20,7 @@ Feature: Calculate Test status based on Checks statuses
 
         # [passed, new]
         When I go to "main" page
-        When I wait on element "[data-table-test-name=TestName]" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
         When I expect that element "[data-row-name='TestName'] td[data-test='table-row-Status']" to contain text "New"
 
         # check status ring
@@ -49,7 +49,7 @@ Feature: Calculate Test status based on Checks statuses
         """
 
         When I go to "main" page
-        When I wait on element "[data-table-test-name=TestName]" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
         When I expect that element "[data-row-name='TestName'] td[data-test='table-row-Status']" to contain text "Passed"
 
         # check status ring
@@ -69,7 +69,7 @@ Feature: Calculate Test status based on Checks statuses
 
         # remove passed
         When I click element with locator "[data-table-test-name=TestName]"
-        When I wait on element "[data-table-check-name='CheckName-1']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-check-name='CheckName-1']" to be visible
 
         When I remove the "CheckName-1" check
         When I expect that element "[data-row-name='TestName'] td[data-test='table-row-Status']" to contain text "New"
@@ -91,25 +91,25 @@ Feature: Calculate Test status based on Checks statuses
 
         # [passed, failed]
         When I go to "main" page
-        When I wait on element "[data-table-test-name=TestName]" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
         When I expect that element "[data-row-name='TestName'] td[data-test='table-row-Status']" to contain text "New"
 
         Given I create "1" tests with:
         """
-          testName: TestName
-          checks:
-              - checkName: CheckName-1
-                filePath: files/A.png
-              - checkName: CheckName-2
-                filePath: files/B.png
+        testName: TestName
+        checks:
+            - checkName: CheckName-1
+              filePath: files/A.png
+            - checkName: CheckName-2
+              filePath: files/B.png
         """
 
         When I go to "main" page
-        When I wait on element "[data-table-test-name=TestName]" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
         When I expect that element "[data-row-name='TestName'] td[data-test='table-row-Status']" to contain text "Failed"
 
         # remove failed
         When I click element with locator "[data-table-test-name=TestName]"
-        When I wait on element "[data-table-check-name='CheckName-2']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-check-name='CheckName-2']" to be visible
         When I remove the "CheckName-2" check
         When I expect that element "[data-row-name='TestName'] td[data-test='table-row-Status']" to contain text "Passed"

@@ -15,10 +15,10 @@ Feature: Bulk test Apply
         """
         When I go to "main" page
 
-        When I wait on element "[data-table-test-name=TestName-0]" to be displayed
-        When I wait on element "[data-table-test-name=TestName-1]" to be displayed
-        When I wait on element "//*[@data-row-name='TestName-0']//td[@data-test='table-row-Accepted']//*[text()='Unaccepted']" to be displayed
-        When I wait on element "//*[@data-row-name='TestName-1']//td[@data-test='table-row-Accepted']//*[text()='Unaccepted']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-0]" to be visible
+        When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-1]" to be visible
+        When I wait 30 seconds for the element with locator "//*[@data-row-name='TestName-0']//td[@data-test='table-row-Accepted']//*[text()='Unaccepted']" to be visible
+        When I wait 30 seconds for the element with locator "//*[@data-row-name='TestName-1']//td[@data-test='table-row-Accepted']//*[text()='Unaccepted']" to be visible
 
         When I click element with locator "[data-test-checkbox-name=TestName-0]"
         When I click element with locator "[data-test-checkbox-name=TestName-1]"
@@ -30,14 +30,14 @@ Feature: Bulk test Apply
         Then I expect that the css attribute "color" from element "(//*[@data-test='check-accept-icon']//*[@stroke])" is "rgba(134,142,150,1)"
 
         # accept
-        When I wait on element "[data-test='table-accept-tests']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-test='table-accept-tests']" to be visible
         When I click element with locator "[data-test='table-accept-tests']"
 
-        When I wait on element "[data-test='accept-test-confirm-button']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-test='accept-test-confirm-button']" to be visible
         When I click element with locator "[data-test='accept-test-confirm-button']"
 
-        When I wait on element "//*[@data-row-name='TestName-0']//td[@data-test='table-row-Accepted']//*[text()='Accepted']" to be displayed
-        When I wait on element "//*[@data-row-name='TestName-1']//td[@data-test='table-row-Accepted']//*[text()='Accepted']" to be displayed
+        When I wait 30 seconds for the element with locator "//*[@data-row-name='TestName-0']//td[@data-test='table-row-Accepted']//*[text()='Accepted']" to be visible
+        When I wait 30 seconds for the element with locator "//*[@data-row-name='TestName-1']//td[@data-test='table-row-Accepted']//*[text()='Accepted']" to be visible
 
         When I wait for "2" seconds
         
@@ -49,8 +49,8 @@ Feature: Bulk test Apply
         When I unfold the test "TestName-0"
         When I unfold the test "TestName-1"
 
-        When I wait on element "//*[@data-row-name='TestName-0']//td[@data-test='table-row-Accepted']//*[text()='Accepted']" to be displayed
-        When I wait on element "//*[@data-row-name='TestName-1']//td[@data-test='table-row-Accepted']//*[text()='Accepted']" to be displayed
+        When I wait 30 seconds for the element with locator "//*[@data-row-name='TestName-0']//td[@data-test='table-row-Accepted']//*[text()='Accepted']" to be visible
+        When I wait 30 seconds for the element with locator "//*[@data-row-name='TestName-1']//td[@data-test='table-row-Accepted']//*[text()='Accepted']" to be visible
 
         Then I expect that the attribute "data-test-icon-type" from element "(//*[@data-test='check-accept-icon']//*[@stroke])[1]" is "fill"
         Then I expect that the attribute "data-test-icon-type" from element "(//*[@data-test='check-accept-icon']//*[@stroke])[2]" is "fill"

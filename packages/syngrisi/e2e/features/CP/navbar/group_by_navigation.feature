@@ -15,7 +15,7 @@ Feature: Group by Navigation
         Then I expect that element "(//*[@data-test='bread-crumbs']//a)[1]" to have text "Test Results"
         Then I expect that the attribute "href" from element "(//*[@data-test='bread-crumbs']//a)[1]" is "/"
 
-        When I wait on element "(//*[@data-test='bread-crumbs']//a[text()='<title>'])" to be displayed
+        When I wait 30 seconds for the element with locator "(//*[@data-test='bread-crumbs']//a[text()='<title>'])" to be visible
         Then I expect that the attribute "href" from element "(//*[@data-test='bread-crumbs']//a)[2]" is "<href>"
         Then I expect that the title is "<title>"
 

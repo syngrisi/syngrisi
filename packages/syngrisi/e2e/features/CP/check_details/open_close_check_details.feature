@@ -16,7 +16,7 @@ Feature: Open/Close Check Details
         """
         When I go to "main" page
         Then I expect that the title is "By Runs"
-        When I wait on element "[data-table-test-name=TestName]" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
         Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
         When I click element with locator "[data-table-test-name=TestName]"
         Then I wait on element "[data-table-check-name='CheckName']" to be displayed
@@ -38,7 +38,7 @@ Feature: Open/Close Check Details
               - checkName: CheckName
         """
         When I go to "main" page
-        When I wait on element "[data-table-test-name=TestName]" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
         Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
         When I click element with locator "[data-table-test-name=TestName]"
         Then I wait on element "[data-table-check-name='CheckName']" to be displayed

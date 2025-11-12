@@ -36,30 +36,30 @@ Feature: Test Isolation by Accept Status
 
     When I refresh page
     # all tests
-    When I wait on element "[data-table-test-name*='AcceptStatus']" to be displayed
+    When I wait 30 seconds for the element with locator "[data-table-test-name*='AcceptStatus']" to be visible
     Then I expect that element "[data-table-test-name*='AcceptStatus']" does appear exactly "3" times
 
     When I select the option with the text "Accept Status" for element "select[data-test='navbar-group-by']"
 
     # UNACCEPTED
-    When I wait on element "li*=Unaccepted" to be displayed
+    When I wait 30 seconds for the element with locator "//li[contains(., 'Unaccepted')]" to be visible
     When I click element with locator "li*=Unaccepted"
 
-    When I wait on element "[data-table-test-name='AcceptStatus-unaccepted']" to be displayed
+    When I wait 30 seconds for the element with locator "[data-table-test-name='AcceptStatus-unaccepted']" to be visible
     When I wait on element "[data-table-test-name='AcceptStatus-partially']" to not be displayed
     When I wait on element "[data-table-test-name='AcceptStatus-accepted']" to not be displayed
 
     # PARTIALLY
-    When I wait on element "li*=Partially" to be displayed
+    When I wait 30 seconds for the element with locator "//li[contains(., 'Partially')]" to be visible
     When I click element with locator "li*=Partially"
 
     When I wait on element "[data-table-test-name='AcceptStatus-unaccepted']" to not be displayed
-    When I wait on element "[data-table-test-name='AcceptStatus-partially']" to be displayed
+    When I wait 30 seconds for the element with locator "[data-table-test-name='AcceptStatus-partially']" to be visible
     When I wait on element "[data-table-test-name='AcceptStatus-accepted']" to not be displayed
 
    # ACCEPTED
-    When I wait on element "li*=Accepted" to be displayed
+    When I wait 30 seconds for the element with locator "//li[contains(., 'Accepted')]" to be visible
     When I click element with locator "[data-testid='navbar-accept-status-accepted']"
     When I wait on element "[data-table-test-name='AcceptStatus-unaccepted']" to not be displayed
     When I wait on element "[data-table-test-name='AcceptStatus-partially']" to not be displayed
-    When I wait on element "[data-table-test-name='AcceptStatus-accepted']" to be displayed
+    When I wait 30 seconds for the element with locator "[data-table-test-name='AcceptStatus-accepted']" to be visible

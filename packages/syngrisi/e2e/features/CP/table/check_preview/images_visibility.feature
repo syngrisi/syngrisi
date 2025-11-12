@@ -22,4 +22,4 @@ Feature: Checks Preview images visibilities
         """
 
         When I open the url "<js:url>"
-        When I wait on element "img" to be displayed
+        When I wait 30 seconds for the element with locator "img" to be visible

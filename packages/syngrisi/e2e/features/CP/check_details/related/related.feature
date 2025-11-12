@@ -139,7 +139,7 @@ Feature: Check details Related Checks
         """
 
         When I go to "main" page
-        When I wait on element "[data-table-test-name=TestName]" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
 
         # filter by project
         When I select the option with the text "Project1" for element "select[data-test='current-project']"
@@ -257,7 +257,7 @@ Feature: Check details Related Checks
 
         # after filter
         When I click element with locator "[data-test='related-check-icon-open-filter']"
-        When I wait on element "label=Browser" to be displayed
+        When I wait 30 seconds for the element with locator "label=Browser" to be visible
         When I click element with locator "label=Browser"
 
         Then I wait on element "//*[@data-related-check='browser-name' and text()='firefox']" to be displayed
