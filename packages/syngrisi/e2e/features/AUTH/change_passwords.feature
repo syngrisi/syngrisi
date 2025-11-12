@@ -57,7 +57,7 @@ Feature: Change Password
         When I set "Password-123" to the inputfield "#current-password"
         When I set "Password-456" to the inputfield "#new-password"
         When I set "Password-456" to the inputfield "#new-password-confirmation"
-        When I click on the element "#change-password"
+        When I click element with locator "#change-password"
         When I wait for "2" seconds
         Then I expect the url to contain "auth/changeSuccess"
         Then I expect that element "h1=Success!" is displayed
@@ -73,7 +73,7 @@ Feature: Change Password
         When I set "Password-123" to the inputfield "#current-password"
         When I set "Password-456" to the inputfield "#new-password"
         When I set "Password-456" to the inputfield "#new-password-confirmation"
-        When I click on the element "#change-password"
+        When I click element with locator "#change-password"
         Then I expect that element "#error-message" contain text "user is not logged in"
 
 
@@ -86,7 +86,7 @@ Feature: Change Password
         When I set "WRONGpass-123" to the inputfield "#current-password"
         When I set "Password-456" to the inputfield "#new-password"
         When I set "Password-456" to the inputfield "#new-password-confirmation"
-        When I click on the element "#change-password"
+        When I click element with locator "#change-password"
         Then I expect the url to not contain "auth/changeSuccess"
         Then I expect that element "#error-message" contain text "IncorrectPasswordError: Password or username is incorrect"
 
@@ -143,7 +143,7 @@ Feature: Change Password
 
         When I set "123" to the inputfield "#current-password"
         When I set "123" to the inputfield "#new-password-confirmation"
-        When I click on the element "#change-password"
+        When I click element with locator "#change-password"
         Then the element "//*[@id='new-password-confirmation']/../../following-sibling::*" contains the text "New password and password confirmation must be match"
 
 

@@ -22,7 +22,7 @@ Feature: Navbar Quick Filtering
         When I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName - 1')]" to be displayed
         Then I expect that element "//*[@data-test='navbar-item-name']" does appear exactly "2" times
 
-        When I click on the element "[data-test='navbar-icon-open-filter']"
+        When I click element with locator "[data-test='navbar-icon-open-filter']"
         When I wait on element "[data-test='navbar-quick-filter']" to be displayed
 
         When I set "RunName - " to the inputfield "[data-test='navbar-quick-filter']"
@@ -75,7 +75,7 @@ Feature: Navbar Quick Filtering
         When I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName_P1-1')]" to be displayed
         When I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName_P2-0')]" to not be displayed
 
-        When I click on the element "[data-test='navbar-icon-open-filter']"
+        When I click element with locator "[data-test='navbar-icon-open-filter']"
         When I wait on element "[data-test='navbar-quick-filter']" to be displayed
 
         # quick filter

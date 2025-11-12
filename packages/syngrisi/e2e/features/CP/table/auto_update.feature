@@ -37,7 +37,7 @@ Feature: Test Auto Update
         Then I expect that element "[data-test='table-refresh-icon-badge']" to contain text "3"
         When I wait on element "[data-table-test-name=TestName-before]" to be displayed
 
-        When I click on the element "[data-test='table-refresh-icon']"
+        When I click element with locator "[data-test='table-refresh-icon']"
         When I wait for "10" seconds
         When I wait on element "[data-table-test-name=TestName-after]" for 10000ms to be displayed
         Then I expect that element "[data-table-test-name=TestName-after]" does appear exactly "3" times

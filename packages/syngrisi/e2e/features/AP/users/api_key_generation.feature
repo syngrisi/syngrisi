@@ -37,9 +37,9 @@ Feature: API key generation
         When I wait for "3" seconds
         When I go to "main" page
         # generate and parse API key
-        When I click on the element "[data-test=user-icon]"
-        When I click on the element "#generate-api"
-        When I click on the element "span=Generate"
+        When I click element with locator "[data-test=user-icon]"
+        When I click element with locator "#generate-api"
+        When I click element with locator "span=Generate"
         When I wait for "3" seconds
         When I parse the API key
 

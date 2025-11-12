@@ -36,10 +36,10 @@ Feature: User Information
         When I go to "main" page
         When I wait for "3" seconds
         Then I expect that element "[data-test='user-icon']" contain text "JD"
-        When I click on the element "[data-test='user-icon']"
+        When I click element with locator "[data-test='user-icon']"
         When I wait for "3" seconds
         Then I expect that element "[data-test='user-short-details']" contain text "John Doe"
-        When I click on the element "[data-test='userinfo']"
+        When I click element with locator "[data-test='userinfo']"
 
         Then I expect that element "[data-test=userinfo-username]" to contain text "user@gmail.com"
         Then I expect that element "[data-test=userinfo-role]" to contain text "user"

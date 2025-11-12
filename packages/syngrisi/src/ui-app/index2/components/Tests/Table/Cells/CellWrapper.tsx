@@ -35,6 +35,8 @@ export function CellWrapper({ type, test, itemValue }: Props) {
                 <Text
                     lineClamp={1}
                     sx={{ wordBreak: 'break-all' }}
+                    data-testid={type === 'name' ? `test-name-${itemValue}` : undefined}
+                    aria-label={type === 'name' ? `Test name: ${itemValue}` : undefined}
                     {
                         ...{
                             [`data-table-test-${type.toLowerCase()}`]: itemValue,

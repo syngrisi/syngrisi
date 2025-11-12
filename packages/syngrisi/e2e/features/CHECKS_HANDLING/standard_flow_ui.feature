@@ -34,7 +34,7 @@ Feature: Standard Checks Flow - UI
 
         Then I expect that the css attribute "color" from element ".modal [data-test='check-accept-icon'] svg" is "rgba(134,142,150,1)"
         Then I expect that the attribute "data-test-icon-type" from element ".modal [data-test='check-accept-icon'] svg" is "outline"
-        When I click on the element "[data-test='close-check-detail-icon']"
+        When I click element with locator "[data-test='close-check-detail-icon']"
 
         # AFTER ACCEPT
         # modal
@@ -49,7 +49,7 @@ Feature: Standard Checks Flow - UI
         Then I expect that the attribute "data-test-icon-type" from element ".modal [data-test='check-accept-icon'] svg" is "fill"
 
         # preview
-        When I click on the element "[data-test='close-check-detail-icon']"
+        When I click element with locator "[data-test='close-check-detail-icon']"
         # check that check wasn't unfolded after accept
         When I wait on element "[data-table-check-name='CheckName']" to be displayed
         Then I expect that the css attribute "color" from element "[data-test='check-accept-icon'] svg" is "rgba(64,192,87,1)"
@@ -84,7 +84,7 @@ Feature: Standard Checks Flow - UI
 
         Then I expect that the css attribute "color" from element ".modal [data-test='check-accept-icon'] svg" is "rgba(64,192,87,1)"
         Then I expect that the attribute "data-test-icon-type" from element ".modal [data-test='check-accept-icon'] svg" is "outline"
-        When I click on the element "[data-test='close-check-detail-icon']"
+        When I click element with locator "[data-test='close-check-detail-icon']"
 
         # FAILED BY DIFF
         Given I create "1" tests with:

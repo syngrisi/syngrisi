@@ -20,8 +20,8 @@ Feature: Bulk test Apply
         When I wait on element "//*[@data-row-name='TestName-0']//td[@data-test='table-row-Accepted']//*[text()='Unaccepted']" to be displayed
         When I wait on element "//*[@data-row-name='TestName-1']//td[@data-test='table-row-Accepted']//*[text()='Unaccepted']" to be displayed
 
-        When I click on the element "[data-test-checkbox-name=TestName-0]"
-        When I click on the element "[data-test-checkbox-name=TestName-1]"
+        When I click element with locator "[data-test-checkbox-name=TestName-0]"
+        When I click element with locator "[data-test-checkbox-name=TestName-1]"
 
         When I unfold the test "TestName-0"
         When I unfold the test "TestName-1"
@@ -31,10 +31,10 @@ Feature: Bulk test Apply
 
         # accept
         When I wait on element "[data-test='table-accept-tests']" to be displayed
-        When I click on the element "[data-test='table-accept-tests']"
+        When I click element with locator "[data-test='table-accept-tests']"
 
         When I wait on element "[data-test='accept-test-confirm-button']" to be displayed
-        When I click on the element "[data-test='accept-test-confirm-button']"
+        When I click element with locator "[data-test='accept-test-confirm-button']"
 
         When I wait on element "//*[@data-row-name='TestName-0']//td[@data-test='table-row-Accepted']//*[text()='Accepted']" to be displayed
         When I wait on element "//*[@data-row-name='TestName-1']//td[@data-test='table-row-Accepted']//*[text()='Accepted']" to be displayed

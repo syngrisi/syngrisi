@@ -20,10 +20,10 @@ Feature: Folding
         Then I expect that element "[data-test='folding-table-items']" is not displayed
 
         When I wait on element "[data-table-test-name=TestName]" to be displayed
-        When I click on the element "//*[@data-test='table-row-Name' and contains(.,'TestName')]/..//input"
+        When I click element with locator "//*[@data-test='table-row-Name' and contains(.,'TestName')]/..//input"
         When I wait on element "[data-test='folding-table-items']" to be displayed
 
-        When I click on the element "//*[@data-test='table-row-Name' and contains(.,'TestName')]/..//input"
+        When I click element with locator "//*[@data-test='table-row-Name' and contains(.,'TestName')]/..//input"
         When I wait for "5" seconds
         When I wait on element "[data-test='folding-table-items']" to not be displayed
 
@@ -37,7 +37,7 @@ Feature: Folding
         When I go to "main" page
         When I wait on element "[data-table-test-name=TestName]" to be displayed
         Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
-        When I click on the element "[data-table-test-name=TestName]"
+        When I click element with locator "[data-table-test-name=TestName]"
         Then I wait on element "[data-table-check-name='CheckName']" to be displayed
 
     Scenario: Fold/Unfold single item by select
@@ -53,16 +53,16 @@ Feature: Folding
         Then I wait on element "[data-table-check-name='Check-0']" to not be displayed
         Then I wait on element "[data-table-check-name='Check-1']" to not be displayed
 
-        When I click on the element "[data-test-checkbox-name=TestName-0]"
+        When I click element with locator "[data-test-checkbox-name=TestName-0]"
         When I wait on element "[data-test='folding-table-items']" to be displayed
 
         # unfold
-        When I click on the element "[data-test='folding-table-items']"
+        When I click element with locator "[data-test='folding-table-items']"
         Then I wait on element "[data-table-check-name='Check-0']" to be displayed
         Then I wait on element "[data-table-check-name='Check-1']" to not be displayed
 
         # fold
-        When I click on the element "[data-test='folding-table-items']"
+        When I click element with locator "[data-test='folding-table-items']"
         Then I wait on element "[data-table-check-name='Check-0']" to not be displayed
         Then I wait on element "[data-table-check-name='Check-1']" to not be displayed
 
@@ -80,17 +80,17 @@ Feature: Folding
         Then I wait on element "[data-table-check-name='Check-1']" to not be displayed
 
 
-        When I click on the element "[data-test-checkbox-name=TestName-0]"
-        When I click on the element "[data-test-checkbox-name=TestName-1]"
+        When I click element with locator "[data-test-checkbox-name=TestName-0]"
+        When I click element with locator "[data-test-checkbox-name=TestName-1]"
         When I wait on element "[data-test='folding-table-items']" to be displayed
 
         # unfold
-        When I click on the element "[data-test='folding-table-items']"
+        When I click element with locator "[data-test='folding-table-items']"
         Then I wait on element "[data-table-check-name='Check-0']" to be displayed
         Then I wait on element "[data-table-check-name='Check-1']" to be displayed
 
         # fold
-        When I click on the element "[data-test='folding-table-items']"
+        When I click element with locator "[data-test='folding-table-items']"
         Then I wait on element "[data-table-check-name='Check-0']" to not be displayed
         Then I wait on element "[data-table-check-name='Check-1']" to not be displayed
 
@@ -107,15 +107,15 @@ Feature: Folding
         Then I wait on element "[data-table-check-name='Check-0']" to not be displayed
         Then I wait on element "[data-table-check-name='Check-1']" to not be displayed
 
-        When I click on the element "[data-test='table-select-all']"
+        When I click element with locator "[data-test='table-select-all']"
         When I wait on element "[data-test='folding-table-items']" to be displayed
 
         # unfold
-        When I click on the element "[data-test='folding-table-items']"
+        When I click element with locator "[data-test='folding-table-items']"
         Then I wait on element "[data-table-check-name='Check-0']" to be displayed
         Then I wait on element "[data-table-check-name='Check-1']" to be displayed
 
         # fold
-        When I click on the element "[data-test='folding-table-items']"
+        When I click element with locator "[data-test='folding-table-items']"
         Then I wait on element "[data-table-check-name='Check-0']" to not be displayed
         Then I wait on element "[data-table-check-name='Check-1']" to not be displayed
