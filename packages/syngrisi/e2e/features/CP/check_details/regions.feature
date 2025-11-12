@@ -22,6 +22,7 @@ Feature: Check details - Regions
 
   Scenario: Regions - add, save, check
     # check absence
+    When I wait for canvas to be ready
     When I execute javascript code:
     """
        return(mainView.allRects.length.toString());
@@ -56,6 +57,7 @@ Feature: Check details - Regions
     When I wait for "1" seconds
     When I refresh page
     When I wait for "3" seconds
+    When I wait for canvas to be ready
     When I execute javascript code:
     """
      return (mainView.allRects.length.toString());
@@ -143,6 +145,7 @@ Feature: Check details - Regions
     When I wait for "1" seconds
     When I refresh page
     When I wait for "3" seconds
+    When I wait for canvas to be ready
     When I execute javascript code:
     """
      return (mainView.allRects.length.toString());
@@ -188,6 +191,7 @@ Feature: Check details - Regions
     When I wait for "1" seconds
     When I refresh page
     When I wait for "3" seconds
+    When I wait for canvas to be ready
     When I execute javascript code:
     """
      return (mainView.allRects.length.toString());
@@ -214,6 +218,7 @@ Feature: Check details - Regions
 
     Then I wait on element "[data-check-header-name='CheckName']" to be displayed
     When I wait for "3" seconds
+    When I wait for canvas to be ready
     When I execute javascript code:
     """
      return (mainView.allRects.length.toString());
@@ -233,6 +238,7 @@ Feature: Check details - Regions
 
     Then I wait on element "[data-check-header-name='CheckName']" to be displayed
     When I wait for "2" seconds
+    When I wait for canvas to be ready
     When I execute javascript code:
     """
      return (mainView.allRects.length.toString());

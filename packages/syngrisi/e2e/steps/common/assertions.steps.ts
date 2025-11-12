@@ -12,68 +12,6 @@ import type { TestStore } from '@fixtures';
 
 const logger = createLogger('AssertionsSteps');
 
-async function ensureTestDetailsVisible(page: Page, testName: string): Promise<void> {
-  if (!testName) return;
-
-  try {
-    await page.waitForFunction(
-      (name) =>
-        !!document.querySelector(`[data-table-test-name="${name}"]`) ||
-        !!document.querySelector(`tr[data-row-name="${name}"]`),
-      testName,
-      { timeout: 5000 }
-    );
-  } catch {
-    logger.warn(`Failed to locate row for test "${testName}" while ensuring details are visible`);
-    return;
-  }
-
-  const isExpanded = await page.evaluate((name) => {
-    const row = document.querySelector(`tr[data-row-name="${name}"]`);
-    if (!row) return false;
-    const collapse = row.nextElementSibling?.querySelector('[data-test="table-test-collapsed-row"]') as HTMLElement | null;
-    if (!collapse) return false;
-    const style = window.getComputedStyle(collapse);
-    const rect = collapse.getBoundingClientRect();
-    return (
-      style.display !== 'none' &&
-      style.visibility !== 'hidden' &&
-      style.opacity !== '0' &&
-      rect.height > 0 &&
-      rect.width > 0
-    );
-  }, testName);
-
-  if (isExpanded) {
-    return;
-  }
-
-  const rowLocator = page.locator(`tr[data-row-name="${testName}"]`).first();
-  if ((await rowLocator.count()) > 0) {
-    const nameCell = rowLocator.locator('[data-test="table-row-Name"]').first();
-    if ((await nameCell.count()) > 0) {
-      await nameCell.scrollIntoViewIfNeeded().catch(() => {});
-      await nameCell.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
-      await nameCell.click().catch(() => {});
-      await page.waitForTimeout(100);
-      return;
-    }
-    await rowLocator.scrollIntoViewIfNeeded().catch(() => {});
-    await rowLocator.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
-    await rowLocator.click().catch(() => {});
-    await page.waitForTimeout(100);
-    return;
-  }
-
-  const headerLocator = page.locator(`[data-table-test-name="${testName}"]`).first();
-  if ((await headerLocator.count()) > 0) {
-    await headerLocator.scrollIntoViewIfNeeded().catch(() => {});
-    await headerLocator.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
-    await headerLocator.click().catch(() => {});
-    await page.waitForTimeout(100);
-  }
-}
-
 /**
  * Resolves a locator based on a {@link ElementTarget} descriptor extracted from `{target}`.
  *
@@ -741,190 +679,6 @@ Then(
   }
 );
 
-When(
-  'I wait on element {string} to be displayed',
-  async ({ page, testData }: { page: Page; testData: TestStore }, selector: string) => {
-    const lastUnfoldedTest = testData?.get('lastUnfoldedTest') as string | undefined;
-    logger.info(
-      `Waiting for selector "${selector}" with last unfolded test "${lastUnfoldedTest ?? 'n/a'}"`
-    );
-    // For user initials (TU, TR, JD, TA, RR, SD, SG), use special handling
-    if (selector.match(/span\*=[A-Z]{2}/)) {
-      const match = selector.match(/span\*=([A-Z]{2})/);
-      const expectedInitials = match ? match[1] : '';
-
-      // Wait for user icon to appear first
-      await page.locator('[data-test="user-icon"]').waitFor({ state: 'visible', timeout: 15000 });
-
-      // Force page reload to refresh React Query cache and get updated user data
-      await page.reload({ waitUntil: 'networkidle' });
-      await page.waitForTimeout(1000);
-
-      // Poll for initials to appear (React Query may take time to load user data)
-      const maxAttempts = 60; // 30 seconds with 500ms intervals
-      let found = false;
-      for (let attempt = 0; attempt < maxAttempts; attempt++) {
-        const iconText = await page.locator('[data-test="user-icon"]').first().textContent();
-        if (iconText && iconText.trim() === expectedInitials) {
-          found = true;
-          break;
-        }
-        if (attempt < maxAttempts - 1) {
-          await page.waitForTimeout(500);
-        }
-      }
-
-      if (!found) {
-        const iconText = await page.locator('[data-test="user-icon"]').first().textContent();
-        throw new Error(`User initials "${expectedInitials}" not found in user icon. Actual text: "${iconText}"`);
-      }
-      return; // Success, exit early
-    }
-
-    if (selector.includes('Test does not have any checks') && lastUnfoldedTest) {
-      await ensureTestDetailsVisible(page, lastUnfoldedTest);
-      await page.waitForFunction(
-        (testName) => {
-          const row = document.querySelector(`tr[data-row-name="${testName}"]`);
-          if (!row) return false;
-          const collapse = row.nextElementSibling?.querySelector('[data-test="table-test-collapsed-row"]') as HTMLElement | null;
-          if (!collapse) return false;
-          const style = window.getComputedStyle(collapse);
-          const rect = collapse.getBoundingClientRect();
-          const isVisible =
-            style.display !== 'none' &&
-            style.visibility !== 'hidden' &&
-            style.opacity !== '0' &&
-            rect.height > 0 &&
-            rect.width > 0;
-          if (!isVisible) return false;
-          return collapse.textContent?.includes('Test does not have any checks');
-        },
-        lastUnfoldedTest,
-        { timeout: 30000 }
-      );
-      logger.info(`Confirmed selector "${selector}" via collapse content check`);
-      return;
-    }
-
-    // For other selectors, use standard approach
-    const locator = getLocatorQuery(page, selector);
-    const timeoutMs = 30000;
-    const intervalMs = 250;
-    const deadline = Date.now() + timeoutMs;
-    let attempts = 0;
-    let reUnfoldAttempts = 0;
-
-    while (Date.now() < deadline) {
-      attempts += 1;
-      const count = await locator.count();
-      if (count > 0) {
-        let foundVisible = false;
-        for (let i = 0; i < count; i += 1) {
-          const candidate = locator.nth(i);
-          try {
-            await candidate.scrollIntoViewIfNeeded().catch(() => {});
-            if (await candidate.isVisible()) {
-              foundVisible = true;
-              logger.info(`Selector "${selector}" became visible after ${attempts} checks`);
-              return;
-            }
-          } catch (error) {
-            logger.debug?.(`isVisible check failed for selector "${selector}" index ${i}: ${(error as Error).message}`);
-          }
-        }
-        if (!foundVisible) {
-          try {
-            const debugStyles = await locator.evaluateAll((nodes) =>
-              nodes.map((node) => {
-                const el = node as HTMLElement;
-                const style = window.getComputedStyle(el);
-                return {
-                  tag: el.tagName,
-                  display: style.display,
-                  visibility: style.visibility,
-                  opacity: style.opacity,
-                  offsetParent: el.offsetParent ? (el.offsetParent as HTMLElement).tagName : null,
-                  text: el.textContent?.trim() || '',
-                  dataTableTestName: el.getAttribute('data-table-test-name'),
-                };
-              })
-            );
-            logger.info(`Selector "${selector}" not visible yet; styles: ${JSON.stringify(debugStyles)}`);
-
-            // Debug: log all data-table-test-name attributes in the page
-            if (selector.includes('data-table-test-name')) {
-              const allTestNames = await page.evaluate(() => {
-                const elements = Array.from(document.querySelectorAll('[data-table-test-name]'));
-                return elements.map((el) => ({
-                  name: el.getAttribute('data-table-test-name'),
-                  text: el.textContent?.trim() || '',
-                  visible: (el as HTMLElement).offsetParent !== null,
-                }));
-              });
-              logger.info(`All [data-table-test-name] elements on page: ${JSON.stringify(allTestNames)}`);
-            }
-          } catch (error) {
-            logger.debug?.(`Failed to collect debug styles for "${selector}": ${(error as Error).message}`);
-          }
-
-          if (
-            lastUnfoldedTest &&
-            selector.includes('Test does not have any checks') &&
-            attempts % 8 === 0
-          ) {
-            reUnfoldAttempts += 1;
-            logger.info(
-              `Attempt ${reUnfoldAttempts}: re-unfolding test "${lastUnfoldedTest}" while waiting for selector "${selector}"`
-            );
-            await ensureTestDetailsVisible(page, lastUnfoldedTest);
-          }
-        }
-      }
-      if (count === 0) {
-        // Debug: log all data-table-test-name attributes in the page when count is 0
-        if (selector.includes('data-table-test-name') && attempts % 20 === 0) {
-          try {
-            const allTestNames = await page.evaluate(() => {
-              const elements = Array.from(document.querySelectorAll('[data-table-test-name]'));
-              return elements.map((el) => ({
-                name: el.getAttribute('data-table-test-name'),
-                text: el.textContent?.trim() || '',
-                visible: (el as HTMLElement).offsetParent !== null,
-              }));
-            });
-            logger.info(`No matches found for "${selector}" (attempt ${attempts}); All [data-table-test-name] elements on page: ${JSON.stringify(allTestNames)}`);
-          } catch (error) {
-            logger.debug?.(`Failed to collect debug info for "${selector}": ${(error as Error).message}`);
-          }
-        }
-
-        if (
-          lastUnfoldedTest &&
-          selector.includes('Test does not have any checks') &&
-          attempts % 8 === 0
-        ) {
-          reUnfoldAttempts += 1;
-          logger.info(
-            `Attempt ${reUnfoldAttempts}: no matches found for "${selector}", re-unfolding test "${lastUnfoldedTest}"`
-          );
-          await ensureTestDetailsVisible(page, lastUnfoldedTest);
-        }
-      }
-      await page.waitForTimeout(intervalMs);
-    }
-
-    throw new Error(`Element "${selector}" was not visible after ${timeoutMs}ms`);
-  }
-);
-
-When(
-  'I wait on element {string} for {int}ms to be displayed',
-  async ({ page }, selector: string, timeoutMs: number) => {
-    const locator = getLocatorQuery(page, selector);
-    await locator.first().waitFor({ state: 'visible', timeout: timeoutMs });
-  }
-);
 
 Then(
   'I expect that element {string} is not displayed',
@@ -1016,6 +770,17 @@ Then('the css attribute {string} from element {string} is {string}', async ({ pa
 When('I wait on element {string} to exist', async ({ page }, selector: string) => {
   const locator = getLocatorQuery(page, selector);
   await locator.first().waitFor({ state: 'attached', timeout: 30000 });
+});
+
+Then('I wait on element {string} to be displayed', async ({ page }, selector: string) => {
+  const locator = getLocatorQuery(page, selector);
+  await locator.first().waitFor({ state: 'visible', timeout: 30000 });
+});
+
+Then('I wait on element {string} for {ordinal} to be displayed', async ({ page }, selector: string, timeoutMs: number) => {
+  const locator = getLocatorQuery(page, selector);
+  const timeout = timeoutMs + 1;
+  await locator.first().waitFor({ state: 'visible', timeout });
 });
 
 Then(
