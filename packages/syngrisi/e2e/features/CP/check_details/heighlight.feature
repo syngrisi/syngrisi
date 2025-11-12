@@ -28,7 +28,7 @@ Feature: Check Details Difference Highlight
         When I unfold the test "TestName"
 
         When I click element with locator "[data-test-preview-image='CheckName']"
-        Then I wait on element "[data-check-header-name='CheckName']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
         When I execute javascript code:
         """

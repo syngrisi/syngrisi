@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Group, Kbd, SegmentedControl, Text, Tooltip, createStyles } from '@mantine/core';
 import { IconArrowsExchange2, IconSquareHalf, IconSquareLetterA, IconSquareLetterE } from '@tabler/icons';
 import { useHotkeys } from '@mantine/hooks';
+import { useEffect, useRef } from 'react';
 
 const useStyles = createStyles((theme) => ({
     labelIcon: {
@@ -22,6 +23,11 @@ interface Props {
 
 export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
     const { classes } = useStyles();
+    const segmentRef = useRef<HTMLDivElement>(null);
+
+    const isExpectedDisabled = currentCheck?.status[0] === 'new';
+    const isDiffDisabled = !currentCheck?.diffId?.filename;
+    const isSliderDisabled = !currentCheck?.diffId?.filename;
 
     useHotkeys([
         ['Digit1', () => setView('expected')],
@@ -33,6 +39,26 @@ export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
             if (currentCheck?.diffId?.filename) setView('slider');
         }],
     ]);
+
+    useEffect(() => {
+        if (!segmentRef.current) return;
+
+        const segmentMap = {
+            'expected': { disabled: isExpectedDisabled },
+            'actual': { disabled: false },
+            'diff': { disabled: isDiffDisabled },
+            'slider': { disabled: isSliderDisabled },
+        };
+
+        Object.entries(segmentMap).forEach(([value, { disabled }]) => {
+            const segmentElement = segmentRef.current?.querySelector(`[data-check="${value}-view"]`)?.closest('label');
+            if (segmentElement) {
+                segmentElement.setAttribute('data-segment-value', value);
+                segmentElement.setAttribute('data-segment-active', value === view ? 'true' : 'false');
+                segmentElement.setAttribute('data-segment-disabled', disabled ? 'true' : 'false');
+            }
+        });
+    }, [view, isExpectedDisabled, isDiffDisabled, isSliderDisabled]);
 
     const viewSegmentData = [
         {
@@ -57,7 +83,7 @@ export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
                 </Tooltip>
             ),
             value: 'expected',
-            disabled: currentCheck?.status[0] === 'new',
+            disabled: isExpectedDisabled,
         },
         {
             label: (
@@ -105,7 +131,7 @@ export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
                     </Tooltip>
                 ),
             value: 'diff',
-            disabled: !currentCheck?.diffId?.filename,
+            disabled: isDiffDisabled,
         },
         {
             label:
@@ -130,30 +156,32 @@ export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
                     </Tooltip>
                 ),
             value: 'slider',
-            disabled: !currentCheck?.diffId?.filename,
+            disabled: isSliderDisabled,
         },
     ];
 
     return (
-        <SegmentedControl
-            data-check="view-segment"
-            sx={{ minWidth: 0, minHeight: 0 }}
-            styles={
-                {
-                    label: {
-                        minWidth: 0,
-                        minHeight: 0,
-                        // overflow: 'hidden',
-                        fontSize: 'calc(0.1em + 0.55vw)',
-                        maxWidth: '7vw',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                    },
+        <div ref={segmentRef}>
+            <SegmentedControl
+                data-check="view-segment"
+                sx={{ minWidth: 0, minHeight: 0 }}
+                styles={
+                    {
+                        label: {
+                            minWidth: 0,
+                            minHeight: 0,
+                            // overflow: 'hidden',
+                            fontSize: 'calc(0.1em + 0.55vw)',
+                            maxWidth: '7vw',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                        },
+                    }
                 }
-            }
-            value={view}
-            onChange={setView}
-            data={viewSegmentData}
-        />
+                value={view}
+                onChange={setView}
+                data={viewSegmentData}
+            />
+        </div>
     );
 }

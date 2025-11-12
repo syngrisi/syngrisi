@@ -16,7 +16,7 @@ Feature: Check Details - Initial image resize
         When I open the app
         When I unfold the test "TestName"
         When I click element with locator "[data-test-preview-image='CheckName']"
-        Then I wait on element "[data-check-header-name='CheckName']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
         When I wait for canvas to be ready
         When I wait for viewportTransform to stabilize
         When I execute javascript code:
@@ -58,7 +58,7 @@ Feature: Check Details - Initial image resize
         When I open the app
         When I unfold the test "TestName"
         When I click element with locator "[data-test-preview-image='CheckName']"
-        Then I wait on element "[data-check-header-name='CheckName']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
         When I wait for canvas to be ready
         When I wait for viewportTransform to stabilize
         When I execute javascript code:
@@ -104,7 +104,7 @@ Feature: Check Details - Initial image resize
         When I open the app
         When I unfold the test "TestName"
         When I click element with locator "[data-test-preview-image='CheckName']"
-        Then I wait on element "[data-check-header-name='CheckName']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
         When I wait for canvas to be ready
         When I wait for viewportTransform to stabilize
         When I execute javascript code:
@@ -150,7 +150,7 @@ Feature: Check Details - Initial image resize
         When I open the app
         When I unfold the test "TestName"
         When I click element with locator "[data-test-preview-image='CheckName']"
-        Then I wait on element "[data-check-header-name='CheckName']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
         When I wait for canvas to be ready
         When I wait for viewportTransform to stabilize
         When I execute javascript code:

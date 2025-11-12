@@ -19,7 +19,7 @@ Feature: Default Users
         """
         Given I start Server and start Driver
         When I login with user:"Test" password "123456aA-"
-        Then I wait on element "span*=TA" to be displayed
+        When I wait 30 seconds for the element with locator "span*=TA" to be visible
 
     Scenario: Default Administrator and Guest should be created after first server start
         When I go to "admin>users" page

@@ -19,7 +19,7 @@ Feature: Delete User
         """
         Given I start Server and start Driver
         When I login with user:"Test" password "123456aA-"
-        Then I wait on element "span*=TA" to be displayed
+        When I wait 30 seconds for the element with locator "span*=TA" to be visible
         When I login via http with user:"Test" password "123456aA-"
         When I create via http user as:"Test" with params:
         """

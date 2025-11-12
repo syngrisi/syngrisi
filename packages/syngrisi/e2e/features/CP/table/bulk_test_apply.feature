@@ -26,7 +26,7 @@ Feature: Bulk test Apply
         When I unfold the test "TestName-0"
         When I unfold the test "TestName-1"
 
-        Then the element "(//*[@data-test='check-accept-icon']//*[@stroke])" has attribute "data-test-icon-type" "outline"
+        Then the element with locator "(//*[@data-test='check-accept-icon']//*[@stroke])" should have has attribute "data-test-icon-type=outline"
         Then the css attribute "color" from element "(//*[@data-test='check-accept-icon']//*[@stroke])" is "rgba(134,142,150,1)"
 
         # accept
@@ -41,8 +41,8 @@ Feature: Bulk test Apply
 
         When I wait for "2" seconds
         
-        Then the element "(//*[@data-test='check-accept-icon']//*[@stroke])[1]" has attribute "data-test-icon-type" "fill"
-        Then the element "(//*[@data-test='check-accept-icon']//*[@stroke])[2]" has attribute "data-test-icon-type" "fill"
+        Then the element with locator "(//*[@data-test='check-accept-icon']//*[@stroke])[1]" should have has attribute "data-test-icon-type=fill"
+        Then the element with locator "(//*[@data-test='check-accept-icon']//*[@stroke])[2]" should have has attribute "data-test-icon-type=fill"
         Then the css attribute "color" from element "(//*[@data-test='check-accept-icon']//*[@stroke])[1]" is "rgba(64,192,87,1)"
 
         When I refresh page
@@ -52,6 +52,6 @@ Feature: Bulk test Apply
         When I wait 30 seconds for the element with locator "//*[@data-row-name='TestName-0']//td[@data-test='table-row-Accepted']//*[text()='Accepted']" to be visible
         When I wait 30 seconds for the element with locator "//*[@data-row-name='TestName-1']//td[@data-test='table-row-Accepted']//*[text()='Accepted']" to be visible
 
-        Then the element "(//*[@data-test='check-accept-icon']//*[@stroke])[1]" has attribute "data-test-icon-type" "fill"
-        Then the element "(//*[@data-test='check-accept-icon']//*[@stroke])[2]" has attribute "data-test-icon-type" "fill"
+        Then the element with locator "(//*[@data-test='check-accept-icon']//*[@stroke])[1]" should have has attribute "data-test-icon-type=fill"
+        Then the element with locator "(//*[@data-test='check-accept-icon']//*[@stroke])[2]" should have has attribute "data-test-icon-type=fill"
         Then the css attribute "color" from element "(//*[@data-test='check-accept-icon']//*[@stroke])[1]" is "rgba(64,192,87,1)"

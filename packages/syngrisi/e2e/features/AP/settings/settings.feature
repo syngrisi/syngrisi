@@ -11,7 +11,7 @@ Feature: Admin Settings
         When I select the option with the text "true" for element "select[data-test='settings_value_authentication']"
         Then the element with locator "select[data-test='settings_value_authentication']" should have value "true"
         When I click element with locator "[data-test='settings_update_button_authentication']"
-        Then I wait on element "//div[contains(@class, 'mantine-Notification-title') and text()='Success']" to be displayed
+        When I wait 30 seconds for the element with locator "//div[contains(@class, 'mantine-Notification-title') and text()='Success']" to be visible
 
         When I go to "logout" page
         When I wait for "3" seconds
@@ -49,7 +49,7 @@ Feature: Admin Settings
         When I wait for "2" seconds
         Then the element with locator "select[data-test='settings_value_first_run']" should have value "false"
         When I click element with locator "[data-test='settings_update_button_first_run']"
-        Then I wait on element "//div[contains(@class, 'mantine-Notification-title') and text()='Success']" to be displayed
+        When I wait 30 seconds for the element with locator "//div[contains(@class, 'mantine-Notification-title') and text()='Success']" to be visible
         When I wait for "5" seconds
         When I go to "logout" page
         When I wait for "5" seconds

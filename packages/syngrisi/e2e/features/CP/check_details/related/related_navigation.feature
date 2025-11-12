@@ -48,7 +48,7 @@ Feature: Check details Related Checks - Navigation
 
         # after close the modal window the initial check should be unfolded but other collapsed
         When I click element with locator "[data-test='close-check-detail-icon']"
-        Then I wait on element "(//*[@data-test-preview-image='CheckName'])[1]" to be displayed
+        When I wait 30 seconds for the element with locator "(//*[@data-test-preview-image='CheckName'])[1]" to be visible
         Then I wait on element "(//*[@data-test-preview-image='CheckName'])[2]" to not be displayed
         Then I wait on element "(//*[@data-test-preview-image='CheckName'])[3]" to not be displayed
 
