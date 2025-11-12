@@ -22,8 +22,8 @@ Feature: Infinity scroll
         When I go to "main" page
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-29]" to be visible
         When I wait for "3" seconds
-        Then I expect that element "//*[@data-test='table-row-Name']" does appear exactly "20" times
+        Then the element "//*[@data-test='table-row-Name']" does appear exactly "20" times
 
         When I scroll to element "[data-table-test-name=TestName-11]"
         When I wait for "3" seconds
-        Then I expect that element "//*[@data-test='table-row-Name']" does appear exactly "30" times
+        Then the element "//*[@data-test='table-row-Name']" does appear exactly "30" times

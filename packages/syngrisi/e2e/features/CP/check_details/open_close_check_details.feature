@@ -15,7 +15,7 @@ Feature: Open/Close Check Details
               - checkName: CheckName
         """
         When I go to "main" page
-        Then I expect that the title is "By Runs"
+        Then the title is "By Runs"
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
         Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
         When I click element with locator "[data-table-test-name=TestName]"
@@ -24,11 +24,11 @@ Feature: Open/Close Check Details
 
         When I click element with locator "[data-test-preview-image='CheckName']"
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed
-        Then I expect that the title is "CheckName"
+        Then the title is "CheckName"
 
         When I click element with locator "[data-test='close-check-detail-icon']"
         Then I wait on element "[data-check-header-name='CheckName']" to not be displayed
-        Then I expect that the title is "By Runs"
+        Then the title is "By Runs"
 
     Scenario: Open/Close Check Details via url
         Given I create "1" tests with:

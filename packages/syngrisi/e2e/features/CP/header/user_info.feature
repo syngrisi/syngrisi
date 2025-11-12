@@ -35,14 +35,14 @@ Feature: User Information
         When I wait for "3" seconds
         When I go to "main" page
         When I wait for "3" seconds
-        Then I expect that element "[data-test='user-icon']" contain text "JD"
+        Then the element with locator "[data-test='user-icon']" should have contains text "JD"
         When I click element with locator "[data-test='user-icon']"
         When I wait for "3" seconds
-        Then I expect that element "[data-test='user-short-details']" contain text "John Doe"
+        Then the element with locator "[data-test='user-short-details']" should have contains text "John Doe"
         When I click element with locator "[data-test='userinfo']"
 
-        Then I expect that element "[data-test=userinfo-username]" to contain text "user@gmail.com"
-        Then I expect that element "[data-test=userinfo-role]" to contain text "user"
-        Then I expect that element "[data-test=userinfo-name]" to contain text "John Doe"
+        Then the element with locator "[data-test=userinfo-username]" should have contains text "user@gmail.com"
+        Then the element with locator "[data-test=userinfo-role]" should have contains text "user"
+        Then the element with locator "[data-test=userinfo-name]" should have contains text "John Doe"
 
 

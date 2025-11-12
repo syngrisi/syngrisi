@@ -41,7 +41,7 @@ Feature: Delete User
         When I click element with locator "//*[@data-test='j_doe@gmail.com']//button[@data-test='user-list-remove-button-confirm']"
         When I wait for "2" seconds
 
-        And I expect that element "//*[@data-test='j_doe@gmail.com']" does not exist
+        And the element "//*[@data-test='j_doe@gmail.com']" does not exist
 
 
 

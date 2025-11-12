@@ -18,7 +18,7 @@ Feature: Test Isolation by Browser
     When I refresh page
     # all tests
     When I wait 30 seconds for the element with locator "//div[contains(text(), 'TestBrowser')]" to be visible
-    Then I expect that element "//div[contains(text(), 'TestBrowser')]" does appear exactly "2" times
+    Then the element "//div[contains(text(), 'TestBrowser')]" does appear exactly "2" times
 
     When I select the option with the text "Browsers" for element "select[data-test='navbar-group-by']"
 

@@ -13,13 +13,13 @@ Feature: First run
     @smoke
     Scenario: Change Administrator password and login to system
         When I open the app
-        Then I expect that element "#title" contain text "Change Password for default Administrator"
+        Then the element with locator "#title" should have contains text "Change Password for default Administrator"
         When I set "Password-123" to the inputfield "#new-password"
         When I set "Password-123" to the inputfield "#new-password-confirmation"
         When I click element with locator "#change-password"
         When I wait for "2" seconds
-        Then I expect the url to contain "auth/changeSuccess"
-        Then I expect that element "h1=Success!" is displayed
+        Then the current url contains "auth/changeSuccess"
+        Then the element with locator "h1=Success!" should be visible
 
         # after Administrator password is set this operation should be Forbidden
         When I go to "first_run" page
@@ -27,7 +27,7 @@ Feature: First run
         When I set "Password-123" to the inputfield "#new-password-confirmation"
         When I click element with locator "#change-password"
         When I wait for "2" seconds
-        Then I expect the url to not contain "auth/changeSuccess"
-        Then I expect that element "#error-message" contain text "forbidden"
+        Then the current url does not contain "auth/changeSuccess"
+        Then the element with locator "#error-message" should have contains text "forbidden"
 
 
