@@ -244,7 +244,7 @@ When('I wait for viewportTransform to stabilize', async ({ page }) => {
   throw new Error(`ViewportTransform did not stabilize after ${maxAttempts} attempts. Last value: ${lastValue}`);
 });
 
-When('I execute javascript code:', async ({ page, testData }: { page: Page; testData: TestStore }, js: string) => {
+When('I execute javascript OLD code:', async ({ page, testData }: { page: Page; testData: TestStore }, js: string) => {
   let result;
   let attempts = 0;
   const maxAttempts = 3;
@@ -387,6 +387,35 @@ When('I execute javascript code:', async ({ page, testData }: { page: Page; test
   } catch {
     logger.info(`JavaScript execution result: ${result}`);
   }
+  testData.set('js', result);
+});
+
+/**
+ * Step definition: `When I execute javascript code:`
+ *
+ * Atomic implementation - executes JavaScript code in browser context and stores result.
+ * No retries, no special handling for specific code patterns.
+ *
+ * @param js - JavaScript code to execute (may contain 'return' statement).
+ *
+ * @example
+ * ```gherkin
+ * When I execute javascript code:
+ *   """
+ *   return document.querySelector('h1').textContent
+ *   """
+ * ```
+ */
+When('I execute javascript code:', async ({ page, testData }: { page: Page; testData: TestStore }, js: string) => {
+  const trimmedJs = js.trim();
+  const evaluateFunction = (code: string) => {
+    // eslint-disable-next-line no-eval
+    return eval(code);
+  };
+  const codeToExecute = trimmedJs.includes('return')
+    ? `(() => { ${trimmedJs} })()`
+    : trimmedJs;
+  const result = await page.evaluate(evaluateFunction, codeToExecute);
   testData.set('js', result);
 });
 
