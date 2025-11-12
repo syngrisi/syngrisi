@@ -158,6 +158,52 @@ Then(
 );
 
 /**
+ * Step definition: `Then the element with {target} {string} should not be {condition}`
+ *
+ * @param target - {@link ElementTarget} (`'label' | 'locator'`).
+ * @param rawValue - Label text or locator query that identifies the element.
+ * @param condition - {@link StepCondition} to evaluate against the resolved locator.
+ *
+ * @example
+ * ```gherkin
+ * Then the element with locator "[data-test='modal']" should not be visible
+ * ```
+ */
+Then(
+  'the element with {target} {string} should not be {condition}',
+  async ({ page }, target: ElementTarget, rawValue: string, condition: StepCondition) => {
+    const locator = locatorFromTarget(page, target, rawValue);
+    // Map "not be {condition}" to corresponding negative conditions
+    const negativeConditionMap: Record<string, StepCondition> = {
+      visible: 'hidden',
+      enabled: 'disabled',
+      checked: 'unchecked',
+      attached: 'detached',
+      present: 'absent',
+      focused: 'blurred',
+      editable: 'readonly',
+      empty: 'empty', // empty doesn't have a direct negative, but we can check for non-empty
+    };
+
+    const negativeCondition = negativeConditionMap[condition];
+    if (negativeCondition) {
+      await assertCondition(locator, negativeCondition);
+    } else {
+      // Fallback: use direct negation for conditions not in the map
+      if (condition === 'visible') {
+        await expect(locator.first()).not.toBeVisible();
+      } else if (condition === 'enabled') {
+        await expect(locator.first()).toBeDisabled();
+      } else if (condition === 'checked') {
+        await expect(locator.first()).not.toBeChecked();
+      } else {
+        throw new Error(`Unsupported "not be" condition: ${condition}`);
+      }
+    }
+  }
+);
+
+/**
  * Step definition: `Then the element with {target} {string} should be {condition} for {int} sec`
  *
  * @param target - {@link ElementTarget} (`'label' | 'locator'`).
@@ -294,15 +340,34 @@ Then(
   async ({ page, testData }, target: ElementTarget, rawValue: string, expected: string) => {
     const renderedTarget = testData ? renderTemplate(rawValue, testData) : rawValue;
     const renderedExpected = testData ? renderTemplate(expected, testData) : expected;
-    const locator = locatorFromTarget(page, target, renderedTarget);
-    await assertCondition(locator, 'has value', renderedExpected);
+
+    if (target === 'locator') {
+      // Extract index before passing to getLocatorQuery (it may strip the index)
+      const nthMatch = renderedTarget.match(/\[(\d+)\]$/);
+      const selectorWithoutIndex = renderedTarget.replace(/\[(\d+)\]$/, '');
+      const locator = getLocatorQuery(page, selectorWithoutIndex);
+      if (nthMatch) {
+        const index = parseInt(nthMatch[1], 10) - 1; // Convert 1-based to 0-based
+        const targetLocator = locator.nth(index);
+        // Wait for element to be visible and attached before checking value
+        await targetLocator.waitFor({ state: 'visible', timeout: 10000 });
+        await targetLocator.waitFor({ state: 'attached', timeout: 5000 });
+        await expect(targetLocator).toHaveValue(renderedExpected);
+      } else {
+        await expect(locator.first()).toHaveValue(renderedExpected);
+      }
+    } else {
+      const locator = locatorFromTarget(page, target, renderedTarget);
+      await assertCondition(locator, 'has value', renderedExpected);
+    }
   }
 );
 
 /**
  * Step definition: `Then the element with {target} {string} should have contains text {string}`
  *
- * Delegates to the `'contains text'` expectation handled by {@link assertCondition}.
+ * Uses checkElementContainsText for locator targets to support polling and date placeholders.
+ * For label targets, uses assertCondition for simpler behavior.
  *
  * @param target - {@link ElementTarget} representing either a label lookup or raw locator.
  * @param rawValue - Label text or locator query.
@@ -311,13 +376,20 @@ Then(
  * @example
  * ```gherkin
  * Then the element with label "Status" should have contains text "Pending"
+ * Then the element with locator "[data-test='status']" should have contains text "Pending"
  * ```
  */
 Then(
   'the element with {target} {string} should have contains text {string}',
-  async ({ page }, target: ElementTarget, rawValue: string, expected: string) => {
-    const locator = locatorFromTarget(page, target, rawValue);
-    await assertCondition(locator, 'contains text', expected);
+  async ({ page, testData }, target: ElementTarget, rawValue: string, expected: string) => {
+    if (target === 'locator') {
+      // Use checkElementContainsText for locator targets to support polling and date placeholders
+      await checkElementContainsText(page, rawValue, expected, testData);
+    } else {
+      // Use assertCondition for label targets
+      const locator = locatorFromTarget(page, target, rawValue);
+      await assertCondition(locator, 'contains text', expected);
+    }
   }
 );
 
@@ -479,9 +551,9 @@ async function checkElementContainsText(
   page: Page,
   selector: string,
   expected: string,
-  testData?: any
+  testData?: TestStore
 ) {
-  const renderedExpected = renderTemplate(expected, testData);
+  const renderedExpected = testData ? renderTemplate(expected, testData) : expected;
   const locator = getLocatorQuery(page, selector);
   try {
     await locator.first().waitFor({ state: 'attached', timeout: 10000 });
@@ -579,87 +651,11 @@ async function checkElementContainsText(
   }
 }
 
-// Register step for Then keyword (works for both When and Then in feature files)
-// Note: In Cucumber, a step definition registered with one keyword can be used with any keyword in feature files
-Then('I expect that element {string} to contain text {string}', async ({ page, testData }, selector: string, expected: string) => {
-  await checkElementContainsText(page, selector, expected, testData);
-});
+
 
 Then(
-  'I expect that the css attribute {string} from element {string} is {string}',
-  async ({ page }, cssProperty: string, selector: string, expected: string) => {
-    const locator = getLocatorQuery(page, selector);
-    // WebdriverIO's getCSSProperty for color properties returns attributeValue.value
-    // We need to replicate this behavior exactly - get the computed style value
-    let actualValue = await locator.first().evaluate((el, prop) => {
-      // Convert CSS property name (background-color) to camelCase (backgroundColor)
-      const camelProp = prop.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
-      const computedStyle = window.getComputedStyle(el);
-      let value = (computedStyle[camelProp as keyof CSSStyleDeclaration] as string) || '';
-
-      // For SVG elements with color property, WebdriverIO may return the computed color
-      // even if it's empty in computedStyle. Check if element is SVG and color is empty
-      if (prop === 'color' && (!value || value === 'rgba(0, 0, 0, 0)' || value === 'transparent')) {
-        // For SVG, try to get the actual fill color from computed style
-        // WebdriverIO's getCSSProperty('color') for SVG returns the computed color value
-        // which may come from fill or stroke
-        const fill = computedStyle.fill;
-        const stroke = computedStyle.stroke;
-
-        // If fill or stroke is set and is a color value, use it
-        if (fill && fill !== 'none' && fill !== 'rgba(0, 0, 0, 0)') {
-          value = fill;
-        } else if (stroke && stroke !== 'none' && stroke !== 'rgba(0, 0, 0, 0)') {
-          value = stroke;
-        }
-
-        // If still empty, check parent element's color (SVG inherits color from parent)
-        if (!value || value === 'rgba(0, 0, 0, 0)' || value === 'transparent') {
-          const parent = el.parentElement;
-          if (parent) {
-            const parentColor = window.getComputedStyle(parent).color;
-            if (parentColor && parentColor !== 'rgba(0, 0, 0, 0)') {
-              value = parentColor;
-            }
-          }
-        }
-      }
-
-      return value;
-    }, cssProperty);
-
-    // Normalize color values to match WebdriverIO behavior
-    // WebdriverIO returns rgba(r,g,b,1) format without spaces for colors
-    if (cssProperty.match(/(color|background-color)/)) {
-      // Normalize rgba values: remove spaces and ensure alpha is present
-      const rgbaMatch = actualValue.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
-      if (rgbaMatch) {
-        const r = rgbaMatch[1];
-        const g = rgbaMatch[2];
-        const b = rgbaMatch[3];
-        const a = rgbaMatch[4] || '1';
-        actualValue = `rgba(${r},${g},${b},${a})`;
-      } else {
-        // Convert rgb(r, g, b) to rgba(r,g,b,1) format (no spaces, as WebdriverIO returns)
-        const rgbMatch = actualValue.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
-        if (rgbMatch) {
-          actualValue = `rgba(${rgbMatch[1]},${rgbMatch[2]},${rgbMatch[3]},1)`;
-        }
-      }
-      // If still empty, log warning
-      if (!actualValue) {
-        logger.warn(`CSS property "${cssProperty}" returned empty value for selector "${selector}"`);
-      }
-    }
-
-    // Use exact comparison as WebdriverIO does with toEqual
-    await expect(actualValue).toBe(expected);
-  }
-);
-
-Then(
-  'I expect that the attribute {string} from element {string} is {string}',
-  async ({ page }, attributeName: string, selector: string, expected: string) => {
+  'the element {string} has attribute {string} {string}',
+  async ({ page }, selector: string, attributeName: string, expected: string) => {
     const locator = getLocatorQuery(page, selector);
     const element = locator.first();
     const allValues = await locator.evaluateAll((nodes, attr) => nodes.map((node) => (node as HTMLElement).getAttribute(attr)), attributeName);
@@ -680,13 +676,6 @@ Then(
 );
 
 
-Then(
-  'I expect that element {string} is not displayed',
-  async ({ page }, selector: string) => {
-    const locator = getLocatorQuery(page, selector);
-    await expect(locator.first()).not.toBeVisible();
-  }
-);
 
 When(
   'I wait on element {string} to not be displayed',
@@ -705,56 +694,95 @@ When(
 );
 
 Then(
-  'I expect that element {string} does not exist',
+  'the element {string} does not exist',
   async ({ page }, selector: string) => {
     const locator = getLocatorQuery(page, selector);
     await expect(locator.first()).toHaveCount(0);
   }
 );
 
-Then(
-  'I expect that element {string} is displayed',
-  async ({ page }, selector: string) => {
-    const locator = getLocatorQuery(page, selector);
-    await expect(locator.first()).toBeVisible();
-  }
-);
-
-Then('the element {string} is displayed', async ({ page }, selector: string) => {
-  const locator = getLocatorQuery(page, selector);
-  await expect(locator.first()).toBeVisible();
-});
 
 Then('the title is {string}', async ({ page }, expectedTitle: string) => {
   const title = await page.title();
   expect(title).toBe(expectedTitle);
 });
 
-Then('I expect that the title contains {string}', async ({ page }, expectedTitle: string) => {
+Then('the title contains {string}', async ({ page }, expectedTitle: string) => {
   const title = await page.title();
   expect(title).toContain(expectedTitle);
 });
 
-Then('the css attribute {string} from element {string} is {string}', async ({ page, testData }, attrName: string, selector: string, expected: string) => {
+Then('the css attribute {string} from element {string} is {string}', async ({ page, testData }, cssProperty: string, selector: string, expected: string) => {
   const renderedSelector = renderTemplate(selector, testData);
   const renderedExpected = renderTemplate(expected, testData);
   const locator = getLocatorQuery(page, renderedSelector);
-  const value = await locator.first().evaluate((el: HTMLElement, attr: string) => {
-    return window.getComputedStyle(el).getPropertyValue(attr);
-  }, attrName);
-  let normalizedValue = value.trim();
-  if (/color$/i.test(attrName)) {
-    normalizedValue = normalizedValue.replace(/\s+/g, '');
-    const rgbMatch = normalizedValue.match(/^rgb\((\d+,\d+,\d+)\)$/i);
-    if (rgbMatch) {
-      normalizedValue = `rgba(${rgbMatch[1]},1)`;
+  // WebdriverIO's getCSSProperty for color properties returns attributeValue.value
+  // We need to replicate this behavior exactly - get the computed style value
+  let actualValue = await locator.first().evaluate((el, prop) => {
+    // Convert CSS property name (background-color) to camelCase (backgroundColor)
+    const camelProp = prop.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+    const computedStyle = window.getComputedStyle(el);
+    let value = (computedStyle[camelProp as keyof CSSStyleDeclaration] as string) || '';
+
+    // For SVG elements with color property, WebdriverIO may return the computed color
+    // even if it's empty in computedStyle. Check if element is SVG and color is empty
+    if (prop === 'color' && (!value || value === 'rgba(0, 0, 0, 0)' || value === 'transparent')) {
+      // For SVG, try to get the actual fill color from computed style
+      // WebdriverIO's getCSSProperty('color') for SVG returns the computed color value
+      // which may come from fill or stroke
+      const fill = computedStyle.fill;
+      const stroke = computedStyle.stroke;
+
+      // If fill or stroke is set and is a color value, use it
+      if (fill && fill !== 'none' && fill !== 'rgba(0, 0, 0, 0)') {
+        value = fill;
+      } else if (stroke && stroke !== 'none' && stroke !== 'rgba(0, 0, 0, 0)') {
+        value = stroke;
+      }
+
+      // If still empty, check parent element's color (SVG inherits color from parent)
+      if (!value || value === 'rgba(0, 0, 0, 0)' || value === 'transparent') {
+        const parent = el.parentElement;
+        if (parent) {
+          const parentColor = window.getComputedStyle(parent).color;
+          if (parentColor && parentColor !== 'rgba(0, 0, 0, 0)') {
+            value = parentColor;
+          }
+        }
+      }
     }
-    normalizedValue = normalizedValue.replace(/rgba\(([^)]+)\)/gi, (_, content) => `rgba(${content.replace(/\s+/g, '')})`);
+
+    return value;
+  }, cssProperty);
+
+  // Normalize color values to match WebdriverIO behavior
+  // WebdriverIO returns rgba(r,g,b,1) format without spaces for colors
+  if (cssProperty.match(/(color|background-color)/)) {
+    // Normalize rgba values: remove spaces and ensure alpha is present
+    const rgbaMatch = actualValue.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+    if (rgbaMatch) {
+      const r = rgbaMatch[1];
+      const g = rgbaMatch[2];
+      const b = rgbaMatch[3];
+      const a = rgbaMatch[4] || '1';
+      actualValue = `rgba(${r},${g},${b},${a})`;
+    } else {
+      // Convert rgb(r, g, b) to rgba(r,g,b,1) format (no spaces, as WebdriverIO returns)
+      const rgbMatch = actualValue.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+      if (rgbMatch) {
+        actualValue = `rgba(${rgbMatch[1]},${rgbMatch[2]},${rgbMatch[3]},1)`;
+      }
+    }
+    // If still empty, log warning
+    if (!actualValue) {
+      logger.warn(`CSS property "${cssProperty}" returned empty value for selector "${selector}"`);
+    }
   }
 
+  // Handle px values with tolerance
   const expectedTrimmed = renderedExpected.trim();
   const pxMatch = expectedTrimmed.match(/^([\d.]+)px$/);
-  const actualPxMatch = normalizedValue.match(/^([\d.]+)px$/);
+  const actualPxMatch = actualValue.match(/^([\d.]+)px$/);
 
   if (pxMatch && actualPxMatch) {
     const expectedPx = parseFloat(pxMatch[1]);
@@ -763,7 +791,8 @@ Then('the css attribute {string} from element {string} is {string}', async ({ pa
     const diff = Math.abs(expectedPx - actualPx);
     expect(diff).toBeLessThanOrEqual(tolerance);
   } else {
-    expect(normalizedValue).toBe(expectedTrimmed);
+    // Use exact comparison as WebdriverIO does with toEqual
+    expect(actualValue).toBe(expectedTrimmed);
   }
 });
 
@@ -792,7 +821,7 @@ Then(
 );
 
 Then(
-  'I expect that element {string} does appear exactly {string} times',
+  'the element {string} does appear exactly {string} times',
   async ({ page }, selector: string, expectedCount: string) => {
     const locator = getLocatorQuery(page, selector);
     const count = parseInt(expectedCount, 10);
@@ -800,19 +829,9 @@ Then(
   }
 );
 
-Then(
-  'I expect that element {string} to have text {string}',
-  async ({ page }, selector: string, expected: string) => {
-    const locator = getLocatorQuery(page, selector);
-    // WebdriverIO's getText() returns the visible text (like innerText), not textContent
-    // We need to get the visible text to match WebdriverIO behavior
-    const visibleText = await locator.first().innerText();
-    await expect(visibleText).toBe(expected);
-  }
-);
 
 Then(
-  'I expect that element {string} to contain HTML {string}',
+  'the element {string} contains HTML {string}',
   async ({ page }, selector: string, expected: string) => {
     const locator = getLocatorQuery(page, selector);
     const html = await locator.first().innerHTML();
@@ -821,7 +840,7 @@ Then(
 );
 
 Then(
-  'I expect that element {string} has the class {string}',
+  'the element {string} has the class {string}',
   async ({ page }, selector: string, className: string) => {
     const locator = getLocatorQuery(page, selector);
     await expect(locator.first()).toHaveClass(new RegExp(className));
@@ -829,7 +848,7 @@ Then(
 );
 
 Then(
-  'I expect that element {string} does not have the class {string}',
+  'the element {string} does not have the class {string}',
   async ({ page }, selector: string, className: string) => {
     const locator = getLocatorQuery(page, selector);
     await expect(locator.first()).not.toHaveClass(new RegExp(className));
@@ -837,86 +856,16 @@ Then(
 );
 
 Then(
-  'I expect that the attribute {string} from element {string} is not {string}',
-  async ({ page }, attributeName: string, selector: string, expected: string) => {
+  'the element {string} does not have attribute {string} {string}',
+  async ({ page }, selector: string, attributeName: string, expected: string) => {
     const locator = getLocatorQuery(page, selector);
     await expect(locator.first()).not.toHaveAttribute(attributeName, expected);
   }
 );
 
-Then(
-  'I expect the url to contain {string}',
-  async ({ page, testData }, expectedUrl: string) => {
-    const renderedUrl = renderTemplate(expectedUrl, testData);
-    // Wait for URL to contain the expected string (redirects may happen via JavaScript)
-    try {
-      await page.waitForURL(`**/*${renderedUrl}*`, { timeout: 10000 });
-    } catch (e) {
-      // If waitForURL fails, try waitForFunction as fallback
-      try {
-        await page.waitForFunction(
-          (url) => window.location.href.includes(url),
-          renderedUrl,
-          { timeout: 5000 }
-        );
-      } catch (e2) {
-        // If both fail, check current URL anyway
-      }
-    }
-    // Wait for URL to contain the expected string (with longer timeout for redirects)
-    const maxWaitTime = 10000;
-    const startTime = Date.now();
-    let urlMatches = false;
-    let currentUrl = '';
-
-    while (Date.now() - startTime < maxWaitTime && !urlMatches) {
-      await page.waitForTimeout(200);
-      currentUrl = page.url();
-      // Check both full URL and pathname (as old framework checks full URL with toContain)
-      try {
-        const urlObj = new URL(currentUrl);
-        const urlPath = urlObj.pathname + urlObj.search;
-        urlMatches = currentUrl.includes(renderedUrl) || urlPath.includes(renderedUrl);
-      } catch (e) {
-        // If URL parsing fails, just check the string
-        urlMatches = currentUrl.includes(renderedUrl);
-      }
-      if (urlMatches) break;
-    }
-
-    // Final check
-    currentUrl = page.url();
-    try {
-      const urlObj = new URL(currentUrl);
-      const urlPath = urlObj.pathname + urlObj.search;
-      const urlPathDecoded = decodeURIComponent(urlPath);
-      const renderedUrlDecoded = decodeURIComponent(renderedUrl);
-      // Check both encoded and decoded versions
-      const matches = currentUrl.includes(renderedUrl)
-        || urlPath.includes(renderedUrl)
-        || urlPathDecoded.includes(renderedUrlDecoded)
-        || currentUrl.includes(renderedUrlDecoded)
-        || urlPath.includes(renderedUrlDecoded); // Also check if decoded expected is in encoded path
-      if (!matches) {
-        throw new Error(`Expected URL to contain "${renderedUrl}", but got "${currentUrl}" (path: "${urlPath}", decoded path: "${urlPathDecoded}")`);
-      }
-    } catch (e: any) {
-      // If URL parsing fails or assertion fails, check the string (both encoded and decoded)
-      if (e.message && e.message.includes('Expected URL')) {
-        throw e; // Re-throw our custom error
-      }
-      const decodedCurrent = decodeURIComponent(currentUrl);
-      const decodedExpected = decodeURIComponent(renderedUrl);
-      const matches = currentUrl.includes(renderedUrl) || decodedCurrent.includes(decodedExpected);
-      if (!matches) {
-        throw new Error(`Expected URL to contain "${renderedUrl}", but got "${currentUrl}"`);
-      }
-    }
-  }
-);
 
 Then(
-  'I expect the url to not contain {string}',
+  'the current url does not contain {string}',
   async ({ page, testData }, expectedUrl: string) => {
     const renderedUrl = renderTemplate(expectedUrl, testData);
     const currentUrl = page.url();
@@ -924,43 +873,15 @@ Then(
   }
 );
 
-Then(
-  'I expect that the title is {string}',
-  async ({ page }, expectedTitle: string) => {
-    const title = await page.title();
-    expect(title).toBe(expectedTitle);
-  }
-);
 
 Then(
-  'I expect HTML contains:',
+  'the HTML contains:',
   async ({ page }, docString: string) => {
     const source = await page.content();
     expect(source).toContain(docString.trim());
   }
 );
 
-Then(
-  'I expect that element {string} contain value {string}',
-  async ({ page, testData }, selector: string, expected: string) => {
-    const renderedSelector = renderTemplate(selector, testData);
-    const renderedExpected = renderTemplate(expected, testData);
-    // Extract index before passing to getLocatorQuery (it may strip the index)
-    const nthMatch = renderedSelector.match(/\[(\d+)\]$/);
-    const selectorWithoutIndex = renderedSelector.replace(/\[(\d+)\]$/, '');
-    const locator = getLocatorQuery(page, selectorWithoutIndex);
-    if (nthMatch) {
-      const index = parseInt(nthMatch[1], 10) - 1; // Convert 1-based to 0-based
-      const targetLocator = locator.nth(index);
-      // Wait for element to be visible and attached before checking value
-      await targetLocator.waitFor({ state: 'visible', timeout: 10000 });
-      await targetLocator.waitFor({ state: 'attached', timeout: 5000 });
-      await expect(targetLocator).toHaveValue(renderedExpected);
-    } else {
-      await expect(locator.first()).toHaveValue(renderedExpected);
-    }
-  }
-);
 
 Then(
   'I wait on element {string}',
@@ -970,27 +891,9 @@ Then(
   }
 );
 
-Then(
-  'I expect that element {string} contain text {string}',
-  async ({ page, testData }, selector: string, expected: string) => {
-    const renderedSelector = renderTemplate(selector, testData);
-    const renderedExpected = renderTemplate(expected, testData);
-    const locator = getLocatorQuery(page, renderedSelector);
-    // Wait for element to be visible first (especially for error messages that appear after actions)
-    // Use longer timeout for error messages and title elements that may take time to appear
-    let timeout = 10000;
-    if (selector.includes('error-message')) {
-      timeout = 15000;
-    } else if (selector.includes('#title') || selector.includes('title')) {
-      timeout = 20000; // Title elements may take longer to render
-    }
-    await locator.first().waitFor({ state: 'visible', timeout });
-    await expect(locator.first()).toContainText(renderedExpected);
-  }
-);
 
 Then(
-  'I expect that the element {string} to have attribute {string}',
+  'the element {string} has attribute {string}',
   async ({ page, testData }, selector: string, attributeName: string) => {
     const renderedSelector = renderTemplate(selector, testData);
     const locator = getLocatorQuery(page, renderedSelector);
@@ -1001,7 +904,7 @@ Then(
 );
 
 Then(
-  'I expect that the element {string} to not have attribute {string}',
+  'the element {string} does not have attribute {string}',
   async ({ page, testData }, selector: string, attributeName: string) => {
     const renderedSelector = renderTemplate(selector, testData);
     const locator = getLocatorQuery(page, renderedSelector);

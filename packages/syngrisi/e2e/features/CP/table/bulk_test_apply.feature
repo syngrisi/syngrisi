@@ -26,8 +26,8 @@ Feature: Bulk test Apply
         When I unfold the test "TestName-0"
         When I unfold the test "TestName-1"
 
-        Then I expect that the attribute "data-test-icon-type" from element "(//*[@data-test='check-accept-icon']//*[@stroke])" is "outline"
-        Then I expect that the css attribute "color" from element "(//*[@data-test='check-accept-icon']//*[@stroke])" is "rgba(134,142,150,1)"
+        Then the element "(//*[@data-test='check-accept-icon']//*[@stroke])" has attribute "data-test-icon-type" "outline"
+        Then the css attribute "color" from element "(//*[@data-test='check-accept-icon']//*[@stroke])" is "rgba(134,142,150,1)"
 
         # accept
         When I wait 30 seconds for the element with locator "[data-test='table-accept-tests']" to be visible
@@ -41,9 +41,9 @@ Feature: Bulk test Apply
 
         When I wait for "2" seconds
         
-        Then I expect that the attribute "data-test-icon-type" from element "(//*[@data-test='check-accept-icon']//*[@stroke])[1]" is "fill"
-        Then I expect that the attribute "data-test-icon-type" from element "(//*[@data-test='check-accept-icon']//*[@stroke])[2]" is "fill"
-        Then I expect that the css attribute "color" from element "(//*[@data-test='check-accept-icon']//*[@stroke])[1]" is "rgba(64,192,87,1)"
+        Then the element "(//*[@data-test='check-accept-icon']//*[@stroke])[1]" has attribute "data-test-icon-type" "fill"
+        Then the element "(//*[@data-test='check-accept-icon']//*[@stroke])[2]" has attribute "data-test-icon-type" "fill"
+        Then the css attribute "color" from element "(//*[@data-test='check-accept-icon']//*[@stroke])[1]" is "rgba(64,192,87,1)"
 
         When I refresh page
         When I unfold the test "TestName-0"
@@ -52,6 +52,6 @@ Feature: Bulk test Apply
         When I wait 30 seconds for the element with locator "//*[@data-row-name='TestName-0']//td[@data-test='table-row-Accepted']//*[text()='Accepted']" to be visible
         When I wait 30 seconds for the element with locator "//*[@data-row-name='TestName-1']//td[@data-test='table-row-Accepted']//*[text()='Accepted']" to be visible
 
-        Then I expect that the attribute "data-test-icon-type" from element "(//*[@data-test='check-accept-icon']//*[@stroke])[1]" is "fill"
-        Then I expect that the attribute "data-test-icon-type" from element "(//*[@data-test='check-accept-icon']//*[@stroke])[2]" is "fill"
-        Then I expect that the css attribute "color" from element "(//*[@data-test='check-accept-icon']//*[@stroke])[1]" is "rgba(64,192,87,1)"
+        Then the element "(//*[@data-test='check-accept-icon']//*[@stroke])[1]" has attribute "data-test-icon-type" "fill"
+        Then the element "(//*[@data-test='check-accept-icon']//*[@stroke])[2]" has attribute "data-test-icon-type" "fill"
+        Then the css attribute "color" from element "(//*[@data-test='check-accept-icon']//*[@stroke])[1]" is "rgba(64,192,87,1)"

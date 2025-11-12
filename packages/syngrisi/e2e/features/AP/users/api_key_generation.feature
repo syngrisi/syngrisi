@@ -57,6 +57,6 @@ Feature: API key generation
         When I open the app
         When I wait for "3" seconds
         Then I wait on element "[data-table-test-creatorusername='user@gmail.com']" to be displayed
-        Then I expect that element "[data-table-test-creatorusername='user@gmail.com']" does appear exactly "1" times
+        Then the element "[data-table-test-creatorusername='user@gmail.com']" does appear exactly "1" times
 
 

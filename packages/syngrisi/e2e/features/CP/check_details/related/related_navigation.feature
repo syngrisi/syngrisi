@@ -30,21 +30,21 @@ Feature: Check details Related Checks - Navigation
         When I open the 1st check "CheckName"
 
         # LAST
-        Then I expect that element "[data-check='test-name']" to contain text "TestName-2"
-        Then I expect that element "[data-check='os']" to contain text "Windows2"
-        Then I expect that element "[data-check='browser']" to contain text "safari2"
+        Then the element with locator "[data-check='test-name']" should have contains text "TestName-2"
+        Then the element with locator "[data-check='os']" should have contains text "Windows2"
+        Then the element with locator "[data-check='browser']" should have contains text "safari2"
 
         # SECOND
         When I click element with locator "[data-related-check-browser-name='safari1']"
-        Then I expect that element "[data-check='test-name']" to contain text "TestName-1"
-        Then I expect that element "[data-check='os']" to contain text "Windows1"
-        Then I expect that element "[data-check='browser']" to contain text "safari1"
+        Then the element with locator "[data-check='test-name']" should have contains text "TestName-1"
+        Then the element with locator "[data-check='os']" should have contains text "Windows1"
+        Then the element with locator "[data-check='browser']" should have contains text "safari1"
 
         # FIRST
         When I click element with locator "[data-related-check-browser-name='safari0']"
-        Then I expect that element "[data-check='test-name']" to contain text "TestName-0"
-        Then I expect that element "[data-check='os']" to contain text "Windows0"
-        Then I expect that element "[data-check='browser']" to contain text "safari0"
+        Then the element with locator "[data-check='test-name']" should have contains text "TestName-0"
+        Then the element with locator "[data-check='os']" should have contains text "Windows0"
+        Then the element with locator "[data-check='browser']" should have contains text "safari0"
 
         # after close the modal window the initial check should be unfolded but other collapsed
         When I click element with locator "[data-test='close-check-detail-icon']"

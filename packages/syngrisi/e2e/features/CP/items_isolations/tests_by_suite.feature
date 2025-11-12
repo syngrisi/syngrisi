@@ -37,7 +37,7 @@ Feature: Test Isolation by Suite
 
     # all tests
     When I wait 30 seconds for the element with locator "//div[contains(text(), 'TestSuite')]" to be visible
-    Then I expect that element "//div[contains(text(), 'TestSuite')]" does appear exactly "3" times
+    Then the element "//div[contains(text(), 'TestSuite')]" does appear exactly "3" times
 
     When I select the option with the text "Suites" for element "select[data-test='navbar-group-by']"
 

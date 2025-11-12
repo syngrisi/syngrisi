@@ -34,10 +34,10 @@ Feature: Test Auto Update
         """
         When I wait for "5" seconds
 
-        Then I expect that element "[data-test='table-refresh-icon-badge']" to contain text "3"
+        Then the element with locator "[data-test='table-refresh-icon-badge']" should have contains text "3"
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-before]" to be visible
 
         When I click element with locator "[data-test='table-refresh-icon']"
         When I wait for "10" seconds
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-after]" for 10000ms to be visible
-        Then I expect that element "[data-table-test-name=TestName-after]" does appear exactly "3" times
+        Then the element "[data-table-test-name=TestName-after]" does appear exactly "3" times

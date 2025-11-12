@@ -60,7 +60,7 @@ Feature: Remove checks
 
         # second
         When I wait 30 seconds for the element with locator "(//*[@data-related-check-item='CheckName-1'])[2]" to be visible
-        Then I expect that element "//*[@data-related-check-item='CheckName-1']" does appear exactly "2" times
+        Then the element "//*[@data-related-check-item='CheckName-1']" does appear exactly "2" times
         When I click element with locator "(//*[@data-related-check-item='CheckName-1'])[2]"
 
 

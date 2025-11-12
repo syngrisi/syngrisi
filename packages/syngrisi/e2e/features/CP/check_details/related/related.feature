@@ -78,29 +78,29 @@ Feature: Check details Related Checks
         # 3
         Then I wait on element "[data-related-check-item='CheckName']" to be displayed
         Then I wait on element "[data-related-check-item='CheckName'] [data-related-check='image']" to be displayed
-        Then I expect that element "[data-related-check-item='CheckName'] [data-viewport-badge-name='CheckName']" to have text "501X501"
-        Then I expect that element "[data-related-check-item='CheckName'] [data-related-check='branch']" to have text "INTEGRATION2"
-        Then I expect that element "[data-related-check-item='CheckName'] [data-related-check='os-label']" to have text "macOS"
-        Then I expect that element "[data-related-check-item='CheckName'] [data-related-check='browser-name']" to have text "firefox"
-        Then I expect that element "[data-related-check-item='CheckName'] [data-related-check='browser-version']" to contain text "11"
+        Then the element "[data-related-check-item='CheckName'] [data-viewport-badge-name='CheckName']" matches the text "501X501"
+        Then the element "[data-related-check-item='CheckName'] [data-related-check='branch']" matches the text "INTEGRATION2"
+        Then the element "[data-related-check-item='CheckName'] [data-related-check='os-label']" matches the text "macOS"
+        Then the element "[data-related-check-item='CheckName'] [data-related-check='browser-name']" matches the text "firefox"
+        Then the element with locator "[data-related-check-item='CheckName'] [data-related-check='browser-version']" should have contains text "11"
 
         # 2
         Then I wait on element "(//*[@data-related-check-item='CheckName'])[2]" to be displayed
         Then I wait on element "(//*[@data-related-check-item='CheckName'])[2]//*[@data-related-check='image']" to be displayed
-        Then I expect that element "(//*[@data-related-check-item='CheckName'])[2]//*[@data-viewport-badge-name='CheckName']" to have text "500X500"
-        Then I expect that element "(//*[@data-related-check-item='CheckName'])[2]//*[@data-related-check='branch']" to have text "INTEGRATION1"
-        Then I expect that element "(//*[@data-related-check-item='CheckName'])[2]//*[@data-related-check='os-label']" to have text "macOS"
-        Then I expect that element "(//*[@data-related-check-item='CheckName'])[2]//*[@data-related-check='browser-name']" to have text "safari"
-        Then I expect that element "(//*[@data-related-check-item='CheckName'])[2]//*[@data-related-check='browser-version']" to contain text "11"
+        Then the element "(//*[@data-related-check-item='CheckName'])[2]//*[@data-viewport-badge-name='CheckName']" matches the text "500X500"
+        Then the element "(//*[@data-related-check-item='CheckName'])[2]//*[@data-related-check='branch']" matches the text "INTEGRATION1"
+        Then the element "(//*[@data-related-check-item='CheckName'])[2]//*[@data-related-check='os-label']" matches the text "macOS"
+        Then the element "(//*[@data-related-check-item='CheckName'])[2]//*[@data-related-check='browser-name']" matches the text "safari"
+        Then the element with locator "(//*[@data-related-check-item='CheckName'])[2]//*[@data-related-check='browser-version']" should have contains text "11"
 
         # 1
         Then I wait on element "(//*[@data-related-check-item='CheckName'])[3]" to be displayed
         Then I wait on element "(//*[@data-related-check-item='CheckName'])[3]//*[@data-related-check='image']" to be displayed
-        Then I expect that element "(//*[@data-related-check-item='CheckName'])[3]//*[@data-viewport-badge-name='CheckName']" to have text "500X500"
-        Then I expect that element "(//*[@data-related-check-item='CheckName'])[3]//*[@data-related-check='branch']" to have text "INTEGRATION1"
-        Then I expect that element "(//*[@data-related-check-item='CheckName'])[3]//*[@data-related-check='os-label']" to have text "Windows"
-        Then I expect that element "(//*[@data-related-check-item='CheckName'])[3]//*[@data-related-check='browser-name']" to have text "safari"
-        Then I expect that element "(//*[@data-related-check-item='CheckName'])[3]//*[@data-related-check='browser-version']" to contain text "11"
+        Then the element "(//*[@data-related-check-item='CheckName'])[3]//*[@data-viewport-badge-name='CheckName']" matches the text "500X500"
+        Then the element "(//*[@data-related-check-item='CheckName'])[3]//*[@data-related-check='branch']" matches the text "INTEGRATION1"
+        Then the element "(//*[@data-related-check-item='CheckName'])[3]//*[@data-related-check='os-label']" matches the text "Windows"
+        Then the element "(//*[@data-related-check-item='CheckName'])[3]//*[@data-related-check='browser-name']" matches the text "safari"
+        Then the element with locator "(//*[@data-related-check-item='CheckName'])[3]//*[@data-related-check='browser-version']" should have contains text "11"
 
         # other name
         Then I wait on element "[data-related-check-item='CheckName2']" to not be displayed
@@ -155,8 +155,8 @@ Feature: Check details Related Checks
 #        Then I wait on element "(//*[@data-related-check-item='CheckName'])" to be displayed
 
         Then I wait on element "//*[@data-related-check='browser-name' and text()='safari']" to be displayed
-        Then I expect that element "//*[@data-related-check='browser-name' and text()='safari']" does appear exactly "2" times
-        Then I expect that element "//*[@data-related-check='browser-name' and text()='firefox']" does appear exactly "0" times
+        Then the element "//*[@data-related-check='browser-name' and text()='safari']" does appear exactly "2" times
+        Then the element "//*[@data-related-check='browser-name' and text()='firefox']" does appear exactly "0" times
 
     Scenario: Related - sort by Date
         Given I create "3" tests with:
@@ -181,15 +181,15 @@ Feature: Check details Related Checks
 
         # 3
         Then I wait on element "(//*[@data-related-check-item='CheckName'])[1]" to be displayed
-        Then I expect that element "(//*[@data-related-check-item='CheckName'])[1]//*[@data-related-check='branch']" to have text "INTEGRATION2"
+        Then the element "(//*[@data-related-check-item='CheckName'])[1]//*[@data-related-check='branch']" matches the text "INTEGRATION2"
 
         # 2
         Then I wait on element "(//*[@data-related-check-item='CheckName'])[2]" to be displayed
-        Then I expect that element "(//*[@data-related-check-item='CheckName'])[2]//*[@data-related-check='branch']" to have text "INTEGRATION1"
+        Then the element "(//*[@data-related-check-item='CheckName'])[2]//*[@data-related-check='branch']" matches the text "INTEGRATION1"
 
         # 1
         Then I wait on element "(//*[@data-related-check-item='CheckName'])[3]" to be displayed
-        Then I expect that element "(//*[@data-related-check-item='CheckName'])[3]//*[@data-related-check='branch']" to have text "INTEGRATION0"
+        Then the element "(//*[@data-related-check-item='CheckName'])[3]//*[@data-related-check='branch']" matches the text "INTEGRATION0"
 
         # sort
         When I click element with locator "[data-test='related-check-icon-open-sort']"
@@ -198,15 +198,15 @@ Feature: Check details Related Checks
 
         # 1
         Then I wait on element "(//*[@data-related-check-item='CheckName'])[1]" to be displayed
-        Then I expect that element "(//*[@data-related-check-item='CheckName'])[1]//*[@data-related-check='branch']" to have text "INTEGRATION0"
+        Then the element "(//*[@data-related-check-item='CheckName'])[1]//*[@data-related-check='branch']" matches the text "INTEGRATION0"
 
         # 2
         Then I wait on element "(//*[@data-related-check-item='CheckName'])[2]" to be displayed
-        Then I expect that element "(//*[@data-related-check-item='CheckName'])[2]//*[@data-related-check='branch']" to have text "INTEGRATION1"
+        Then the element "(//*[@data-related-check-item='CheckName'])[2]//*[@data-related-check='branch']" matches the text "INTEGRATION1"
 
         # 3
         Then I wait on element "(//*[@data-related-check-item='CheckName'])[3]" to be displayed
-        Then I expect that element "(//*[@data-related-check-item='CheckName'])[3]//*[@data-related-check='branch']" to have text "INTEGRATION2"
+        Then the element "(//*[@data-related-check-item='CheckName'])[3]//*[@data-related-check='branch']" matches the text "INTEGRATION2"
 
     Scenario: Related - filter by Browser
         Given I create "1" tests with:
@@ -252,8 +252,8 @@ Feature: Check details Related Checks
         # before filter
         Then I wait on element "//*[@data-related-check='browser-name' and text()='safari']" to be displayed
         Then I wait on element "//*[@data-related-check='browser-name' and text()='firefox']" to be displayed
-        Then I expect that element "//*[@data-related-check='browser-name' and text()='safari']" does appear exactly "1" times
-        Then I expect that element "//*[@data-related-check='browser-name' and text()='firefox']" does appear exactly "2" times
+        Then the element "//*[@data-related-check='browser-name' and text()='safari']" does appear exactly "1" times
+        Then the element "//*[@data-related-check='browser-name' and text()='firefox']" does appear exactly "2" times
 
         # after filter
         When I click element with locator "[data-test='related-check-icon-open-filter']"
@@ -261,7 +261,7 @@ Feature: Check details Related Checks
         When I click element with locator "label=Browser"
 
         Then I wait on element "//*[@data-related-check='browser-name' and text()='firefox']" to be displayed
-        Then I expect that element "//*[@data-related-check='browser-name' and text()='safari']" does appear exactly "0" times
-        Then I expect that element "//*[@data-related-check='browser-name' and text()='firefox']" does appear exactly "2" times
+        Then the element "//*[@data-related-check='browser-name' and text()='safari']" does appear exactly "0" times
+        Then the element "//*[@data-related-check='browser-name' and text()='firefox']" does appear exactly "2" times
 
 

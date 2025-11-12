@@ -32,8 +32,8 @@ Feature: Spotlight
         When I set "<keyword>" to the inputfield ".mantine-Spotlight-searchInput"
         And I press "Enter"
         When I wait for "2" seconds
-        Then I expect the url to contain "<url>"
-        And I expect that the title contains "<title>"
+        Then the current url contains "<url>"
+        And the title contains "<title>"
         And I wait on element ".mantine-Spotlight-spotlight" to not be displayed
 
         Examples:

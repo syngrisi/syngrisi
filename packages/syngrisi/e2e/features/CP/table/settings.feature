@@ -16,39 +16,39 @@ Feature: Tests Table Settings
         """
         When I go to "main" page
         When I wait 30 seconds for the element with locator "[data-test='table-header-Id']" to be visible
-        Then I expect that element "[data-test='table-header-Id']" is displayed
-        Then I expect that element "[data-test='table-header-Name']" is displayed
-        Then I expect that element "[data-test='table-header-Status']" is displayed
-        Then I expect that element "[data-test='table-header-Created']" is displayed
-        Then I expect that element "[data-test='table-header-Accepted']" is displayed
-        Then I expect that element "[data-test='table-header-Date']" is displayed
-        Then I expect that element "[data-test='table-header-Browser']" is displayed
-        Then I expect that element "[data-test='table-header-Platform']" is displayed
-        Then I expect that element "[data-test='table-header-Viewport']" is displayed
-        Then I expect that element "th" does appear exactly "10" times
+        Then the element with locator "[data-test='table-header-Id']" should be visible
+        Then the element with locator "[data-test='table-header-Name']" should be visible
+        Then the element with locator "[data-test='table-header-Status']" should be visible
+        Then the element with locator "[data-test='table-header-Created']" should be visible
+        Then the element with locator "[data-test='table-header-Accepted']" should be visible
+        Then the element with locator "[data-test='table-header-Date']" should be visible
+        Then the element with locator "[data-test='table-header-Browser']" should be visible
+        Then the element with locator "[data-test='table-header-Platform']" should be visible
+        Then the element with locator "[data-test='table-header-Viewport']" should be visible
+        Then the element "th" does appear exactly "10" times
 
-        Then I expect that element "[data-test='table-row-Id']" is displayed
-        Then I expect that element "[data-test='table-row-Name']" is displayed
-        Then I expect that element "[data-test='table-row-Status']" is displayed
-        Then I expect that element "[data-test='table-row-Created']" is displayed
-        Then I expect that element "[data-test='table-row-Accepted']" is displayed
-        Then I expect that element "[data-test='table-row-Date']" is displayed
-        Then I expect that element "[data-test='table-row-Browser']" is displayed
-        Then I expect that element "[data-test='table-row-Platform']" is displayed
-        Then I expect that element "[data-test='table-row-Viewport']" is displayed
-        Then I expect that element "tbody tr:first-of-type td" does appear exactly "10" times
+        Then the element with locator "[data-test='table-row-Id']" should be visible
+        Then the element with locator "[data-test='table-row-Name']" should be visible
+        Then the element with locator "[data-test='table-row-Status']" should be visible
+        Then the element with locator "[data-test='table-row-Created']" should be visible
+        Then the element with locator "[data-test='table-row-Accepted']" should be visible
+        Then the element with locator "[data-test='table-row-Date']" should be visible
+        Then the element with locator "[data-test='table-row-Browser']" should be visible
+        Then the element with locator "[data-test='table-row-Platform']" should be visible
+        Then the element with locator "[data-test='table-row-Viewport']" should be visible
+        Then the element "tbody tr:first-of-type td" does appear exactly "10" times
 
         When I click element with locator "[data-test='table-sorting']"
         When I wait on element "[data-test='settings-visible-columns-Id']" to exist
         When I click on the element "[data-test='settings-visible-columns-Id']" via js
         When I wait on element "[data-test='table-header-Id']" to not be displayed
-        Then I expect that element "th" does appear exactly "9" times
-        Then I expect that element "tbody tr:first-of-type td" does appear exactly "9" times
+        Then the element "th" does appear exactly "9" times
+        Then the element "tbody tr:first-of-type td" does appear exactly "9" times
 
         When I click on the element "[data-test='settings-visible-columns-Id']" via js
         When I wait 30 seconds for the element with locator "[data-test='table-header-Id']" to be visible
-        Then I expect that element "th" does appear exactly "10" times
-        Then I expect that element "tbody tr:first-of-type td" does appear exactly "10" times
+        Then the element "th" does appear exactly "10" times
+        Then the element "tbody tr:first-of-type td" does appear exactly "10" times
 
 
     Scenario: Sorting

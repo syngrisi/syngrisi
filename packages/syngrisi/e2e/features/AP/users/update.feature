@@ -45,17 +45,17 @@ Feature: Update User
         When I click element with locator "//*[@data-test='j_doe@gmail.com']//button[@data-test='user-list-send-button']"
         When I wait for "2" seconds
 
-        Then I expect that element "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-email']" contain value "j_doe@gmail.com"
-        Then I expect that element "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-first-name']" contain value "Alex"
-        Then I expect that element "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-last-name']" contain value "Jonson"
-        Then I expect that element "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-role']" contain value "Reviewer"
+        Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-email']" should have value "j_doe@gmail.com"
+        Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-first-name']" should have value "Alex"
+        Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-last-name']" should have value "Jonson"
+        Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-role']" should have value "Reviewer"
         Then I wait on element "//div[contains(@class, 'mantine-Notification-title') and text()='Success']" to be displayed
 
         When I refresh page
-        Then I expect that element "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-email']" contain value "j_doe@gmail.com"
-        Then I expect that element "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-first-name']" contain value "Alex"
-        Then I expect that element "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-last-name']" contain value "Jonson"
-        Then I expect that element "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-role']" contain value "Reviewer"
+        Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-email']" should have value "j_doe@gmail.com"
+        Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-first-name']" should have value "Alex"
+        Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-last-name']" should have value "Jonson"
+        Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-role']" should have value "Reviewer"
 
 
 

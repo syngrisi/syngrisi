@@ -21,7 +21,7 @@ Feature: Calculate Test status based on Checks statuses
         # [passed, new]
         When I go to "main" page
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
-        When I expect that element "[data-row-name='TestName'] td[data-test='table-row-Status']" to contain text "New"
+        When the element with locator "[data-row-name='TestName'] td[data-test='table-row-Status']" should have contains text "New"
 
         # check status ring
         When I execute javascript code:
@@ -50,7 +50,7 @@ Feature: Calculate Test status based on Checks statuses
 
         When I go to "main" page
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
-        When I expect that element "[data-row-name='TestName'] td[data-test='table-row-Status']" to contain text "Passed"
+        When the element with locator "[data-row-name='TestName'] td[data-test='table-row-Status']" should have contains text "Passed"
 
         # check status ring
         When I execute javascript code:
@@ -72,7 +72,7 @@ Feature: Calculate Test status based on Checks statuses
         When I wait 30 seconds for the element with locator "[data-table-check-name='CheckName-1']" to be visible
 
         When I remove the "CheckName-1" check
-        When I expect that element "[data-row-name='TestName'] td[data-test='table-row-Status']" to contain text "New"
+        When the element with locator "[data-row-name='TestName'] td[data-test='table-row-Status']" should have contains text "New"
 
     @smoke
     Scenario: Test status [(PASSED, FAILED, REMOVE FAILED) = PASSED]
@@ -92,7 +92,7 @@ Feature: Calculate Test status based on Checks statuses
         # [passed, failed]
         When I go to "main" page
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
-        When I expect that element "[data-row-name='TestName'] td[data-test='table-row-Status']" to contain text "New"
+        When the element with locator "[data-row-name='TestName'] td[data-test='table-row-Status']" should have contains text "New"
 
         Given I create "1" tests with:
         """
@@ -106,10 +106,10 @@ Feature: Calculate Test status based on Checks statuses
 
         When I go to "main" page
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
-        When I expect that element "[data-row-name='TestName'] td[data-test='table-row-Status']" to contain text "Failed"
+        When the element with locator "[data-row-name='TestName'] td[data-test='table-row-Status']" should have contains text "Failed"
 
         # remove failed
         When I click element with locator "[data-table-test-name=TestName]"
         When I wait 30 seconds for the element with locator "[data-table-check-name='CheckName-2']" to be visible
         When I remove the "CheckName-2" check
-        When I expect that element "[data-row-name='TestName'] td[data-test='table-row-Status']" to contain text "Passed"
+        When the element with locator "[data-row-name='TestName'] td[data-test='table-row-Status']" should have contains text "Passed"

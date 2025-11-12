@@ -53,7 +53,7 @@ Feature: Test Isolation by Test Status
     When I refresh page
     # all tests
     When I wait 30 seconds for the element with locator "[data-table-test-name*='TestStatus']" to be visible
-    Then I expect that element "[data-table-test-name*='TestStatus']" does appear exactly "5" times
+    Then the element "[data-table-test-name*='TestStatus']" does appear exactly "5" times
 
     When I select the option with the text "Test Status" for element "select[data-test='navbar-group-by']"
 

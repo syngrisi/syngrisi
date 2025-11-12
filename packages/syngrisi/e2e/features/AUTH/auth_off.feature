@@ -15,6 +15,6 @@ Feature: Authentication - off
         When I wait for "1" seconds
         Then the current url contains "/admin"
         When I wait on element "[data-test='user-icon']"
-        Then I expect that element "[data-test='user-icon']" to contain text "SG"
+        Then the element with locator "[data-test='user-icon']" should have contains text "SG"
 
 

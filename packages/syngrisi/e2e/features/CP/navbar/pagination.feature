@@ -21,10 +21,10 @@ Feature: Pagination
         """
     When I go to "main" page
     Then I wait on element "[data-test*='navbar_item_']" to be displayed
-    Then I expect that element "[data-test*='navbar_item_']" does appear exactly "20" times
+    Then the element "[data-test*='navbar_item_']" does appear exactly "20" times
     When I scroll to element "[data-test*='navbar_item_11']"
     When I wait for "1" seconds
-    Then I expect that element "[data-test*='navbar_item_']" does appear exactly "30" times
+    Then the element "[data-test*='navbar_item_']" does appear exactly "30" times
 
   Scenario: Pagination - Suite
   There were problems with pagination of suites when a session started with a suite that was created a long time ago, its createdData was updated,
@@ -59,8 +59,8 @@ Feature: Pagination
     When I select the option with the text "Suites" for element "select[data-test='navbar-group-by']"
 
     Then I wait on element "[data-test*='navbar_item_']" for 15000ms to be displayed
-    Then I expect that element "[data-test*='navbar_item_']" does appear exactly "20" times
+    Then the element "[data-test*='navbar_item_']" does appear exactly "20" times
     When I scroll to element "[data-test*='navbar_item_11']"
     When I wait for "1" seconds
-    Then I expect that element "[data-test*='navbar_item_']" does appear exactly "30" times
+    Then the element "[data-test*='navbar_item_']" does appear exactly "30" times
 

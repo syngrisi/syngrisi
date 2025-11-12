@@ -152,10 +152,10 @@ Feature: User roles
         # checks
 
         When I wait for "3" seconds
-        Then I expect that element "//div[contains(text(), 'User test')]" does appear exactly "5" times
-        Then I expect that element "[data-table-test-creatorusername='user@gmail.com']" does appear exactly "5" times
-        Then I expect that element "//div[contains(text(), 'Reviewer test')]" is not displayed
-        Then I expect that element "//div[contains(text(), 'Admin test')]" is not displayed
+        Then the element "//div[contains(text(), 'User test')]" does appear exactly "5" times
+        Then the element "[data-table-test-creatorusername='user@gmail.com']" does appear exactly "5" times
+        Then the element with locator "//div[contains(text(), 'Reviewer test')]" should not be visible
+        Then the element with locator "//div[contains(text(), 'Admin test')]" should not be visible
 
         # logout
         When I log out of the application
@@ -167,14 +167,14 @@ Feature: User roles
         # checks
         When I wait for "3" seconds
 
-        Then I expect that element "//div[contains(text(), 'User test')]" does appear exactly "5" times
-        Then I expect that element "[data-table-test-creatorusername='user@gmail.com']" does appear exactly "5" times
+        Then the element "//div[contains(text(), 'User test')]" does appear exactly "5" times
+        Then the element "[data-table-test-creatorusername='user@gmail.com']" does appear exactly "5" times
 
-        Then I expect that element "//div[contains(text(), 'Reviewer test')]" does appear exactly "7" times
-        Then I expect that element "[data-table-test-creatorusername='reviewer@gmail.com']" does appear exactly "7" times
+        Then the element "//div[contains(text(), 'Reviewer test')]" does appear exactly "7" times
+        Then the element "[data-table-test-creatorusername='reviewer@gmail.com']" does appear exactly "7" times
 
-        Then I expect that element "//div[contains(text(), 'Admin test')]" does appear exactly "3" times
-        Then I expect that element "[data-table-test-creatorusername='superadmin@gmail.com']" does appear exactly "3" times
+        Then the element "//div[contains(text(), 'Admin test')]" does appear exactly "3" times
+        Then the element "[data-table-test-creatorusername='superadmin@gmail.com']" does appear exactly "3" times
 
         # logout
         When I log out of the application
@@ -184,13 +184,13 @@ Feature: User roles
         When I login with user:"superadmin@gmail.com" password "Password-123"
         Then I wait on element "span*=SD" to be displayed
         # checks
-        Then I expect that element "//div[contains(text(), 'User test')]" does appear exactly "5" times
-        Then I expect that element "[data-table-test-creatorusername='user@gmail.com']" does appear exactly "5" times
+        Then the element "//div[contains(text(), 'User test')]" does appear exactly "5" times
+        Then the element "[data-table-test-creatorusername='user@gmail.com']" does appear exactly "5" times
 
-        Then I expect that element "//div[contains(text(), 'Reviewer test')]" does appear exactly "7" times
-        Then I expect that element "[data-table-test-creatorusername='reviewer@gmail.com']" does appear exactly "7" times
+        Then the element "//div[contains(text(), 'Reviewer test')]" does appear exactly "7" times
+        Then the element "[data-table-test-creatorusername='reviewer@gmail.com']" does appear exactly "7" times
 
-        Then I expect that element "//div[contains(text(), 'Admin test')]" does appear exactly "3" times
-        Then I expect that element "[data-table-test-creatorusername='superadmin@gmail.com']" does appear exactly "3" times
+        Then the element "//div[contains(text(), 'Admin test')]" does appear exactly "3" times
+        Then the element "[data-table-test-creatorusername='superadmin@gmail.com']" does appear exactly "3" times
 
 

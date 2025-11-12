@@ -21,16 +21,16 @@ Feature: Enabled disabled buttons on Check Details Modal Window
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed
 
         # view segment
-        Then I expect that element "//*[@data-check='expected-view']/.." has the class "mantine-SegmentedControl-disabled"
-        Then I expect that element "//*[@data-check='actual-view']/.." does not have the class "mantine-SegmentedControl-disabled"
-        Then I expect that element "//*[@data-check='diff-view']/.." has the class "mantine-SegmentedControl-disabled"
-        Then I expect that element "//*[@data-check='slider-view']/.." has the class "mantine-SegmentedControl-disabled"
+        Then the element "//*[@data-check='expected-view']/.." has the class "mantine-SegmentedControl-disabled"
+        Then the element "//*[@data-check='actual-view']/.." does not have the class "mantine-SegmentedControl-disabled"
+        Then the element "//*[@data-check='diff-view']/.." has the class "mantine-SegmentedControl-disabled"
+        Then the element "//*[@data-check='slider-view']/.." has the class "mantine-SegmentedControl-disabled"
 
         # action icons
-        Then  I expect that the attribute "data-disabled" from element "[data-check='highlight-icon']" is "true"
-        Then  I expect that the attribute "data-disabled" from element "[data-check='remove-ignore-region']" is "true"
-        Then  I expect that the attribute "data-disabled" from element "[data-check='add-ignore-region']" is "true"
-        Then  I expect that the attribute "data-disabled" from element "[data-check='save-ignore-region']" is not "true"
+        Then  the element "[data-check='highlight-icon']" has attribute "data-disabled" "true"
+        Then  the element "[data-check='remove-ignore-region']" has attribute "data-disabled" "true"
+        Then  the element "[data-check='add-ignore-region']" has attribute "data-disabled" "true"
+        Then  the element "[data-check='save-ignore-region']" does not have attribute "data-disabled" "true"
 
     Scenario: Passed Check
         Given I create "1" tests with:
@@ -58,16 +58,16 @@ Feature: Enabled disabled buttons on Check Details Modal Window
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed
 
         # view segment
-        Then I expect that element "//*[@data-check='expected-view']/.." does not have the class "mantine-SegmentedControl-disabled"
-        Then I expect that element "//*[@data-check='actual-view']/.." does not have the class "mantine-SegmentedControl-disabled"
-        Then I expect that element "//*[@data-check='diff-view']/.." has the class "mantine-SegmentedControl-disabled"
-        Then I expect that element "//*[@data-check='slider-view']/.." has the class "mantine-SegmentedControl-disabled"
+        Then the element "//*[@data-check='expected-view']/.." does not have the class "mantine-SegmentedControl-disabled"
+        Then the element "//*[@data-check='actual-view']/.." does not have the class "mantine-SegmentedControl-disabled"
+        Then the element "//*[@data-check='diff-view']/.." has the class "mantine-SegmentedControl-disabled"
+        Then the element "//*[@data-check='slider-view']/.." has the class "mantine-SegmentedControl-disabled"
 
         # action icons
-        Then  I expect that the attribute "data-disabled" from element "[data-check='highlight-icon']" is "true"
-        Then  I expect that the attribute "data-disabled" from element "[data-check='remove-ignore-region']" is "true"
-        Then  I expect that the attribute "data-disabled" from element "[data-check='add-ignore-region']" is not "true"
-        Then  I expect that the attribute "data-disabled" from element "[data-check='save-ignore-region']" is not "true"
+        Then  the element "[data-check='highlight-icon']" has attribute "data-disabled" "true"
+        Then  the element "[data-check='remove-ignore-region']" has attribute "data-disabled" "true"
+        Then  the element "[data-check='add-ignore-region']" does not have attribute "data-disabled" "true"
+        Then  the element "[data-check='save-ignore-region']" does not have attribute "data-disabled" "true"
 
     Scenario: Passed Check with Ignore Regions
         Given I create "1" tests with:
@@ -95,7 +95,7 @@ Feature: Enabled disabled buttons on Check Details Modal Window
 
         # without save
         When I click element with locator "[data-check='add-ignore-region']"
-        Then I expect that the attribute "data-disabled" from element "[data-check='remove-ignore-region']" is not "true"
+        Then the element "[data-check='remove-ignore-region']" does not have attribute "data-disabled" "true"
 
     Scenario: Failed Check
         Given I create "1" tests with:
@@ -124,16 +124,16 @@ Feature: Enabled disabled buttons on Check Details Modal Window
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed
 
         # view segment
-        Then I expect that element "//*[@data-check='expected-view']/.." does not have the class "mantine-SegmentedControl-disabled"
-        Then I expect that element "//*[@data-check='actual-view']/.." does not have the class "mantine-SegmentedControl-disabled"
-        Then I expect that element "//*[@data-check='diff-view']/.." does not have the class "mantine-SegmentedControl-disabled"
-        Then I expect that element "//*[@data-check='slider-view']/.." does not have the class "mantine-SegmentedControl-disabled"
+        Then the element "//*[@data-check='expected-view']/.." does not have the class "mantine-SegmentedControl-disabled"
+        Then the element "//*[@data-check='actual-view']/.." does not have the class "mantine-SegmentedControl-disabled"
+        Then the element "//*[@data-check='diff-view']/.." does not have the class "mantine-SegmentedControl-disabled"
+        Then the element "//*[@data-check='slider-view']/.." does not have the class "mantine-SegmentedControl-disabled"
 
         # action icons
-        Then  I expect that the attribute "data-disabled" from element "[data-check='highlight-icon']" is not "true"
-        Then  I expect that the attribute "data-disabled" from element "[data-check='remove-ignore-region']" is "true"
-        Then  I expect that the attribute "data-disabled" from element "[data-check='add-ignore-region']" is not "true"
-        Then  I expect that the attribute "data-disabled" from element "[data-check='save-ignore-region']" is not "true"
+        Then  the element "[data-check='highlight-icon']" does not have attribute "data-disabled" "true"
+        Then  the element "[data-check='remove-ignore-region']" has attribute "data-disabled" "true"
+        Then  the element "[data-check='add-ignore-region']" does not have attribute "data-disabled" "true"
+        Then  the element "[data-check='save-ignore-region']" does not have attribute "data-disabled" "true"
 
     Scenario: Failed Check difference more than 5%
         Given I create "1" tests with:
@@ -162,14 +162,14 @@ Feature: Enabled disabled buttons on Check Details Modal Window
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed
 
         # view segment
-        Then I expect that element "//*[@data-check='expected-view']/.." does not have the class "mantine-SegmentedControl-disabled"
-        Then I expect that element "//*[@data-check='actual-view']/.." does not have the class "mantine-SegmentedControl-disabled"
-        Then I expect that element "//*[@data-check='diff-view']/.." does not have the class "mantine-SegmentedControl-disabled"
-        Then I expect that element "//*[@data-check='slider-view']/.." does not have the class "mantine-SegmentedControl-disabled"
+        Then the element "//*[@data-check='expected-view']/.." does not have the class "mantine-SegmentedControl-disabled"
+        Then the element "//*[@data-check='actual-view']/.." does not have the class "mantine-SegmentedControl-disabled"
+        Then the element "//*[@data-check='diff-view']/.." does not have the class "mantine-SegmentedControl-disabled"
+        Then the element "//*[@data-check='slider-view']/.." does not have the class "mantine-SegmentedControl-disabled"
 
         # action icons
-        Then I expect that the attribute "data-disabled" from element "[data-check='highlight-icon']" is "true"
-        Then I expect that the attribute "data-disabled" from element "[data-check='remove-ignore-region']" is "true"
-        Then I expect that the attribute "data-disabled" from element "[data-check='add-ignore-region']" is not "true"
-        Then I expect that the attribute "data-disabled" from element "[data-check='save-ignore-region']" is not "true"
+        Then the element "[data-check='highlight-icon']" has attribute "data-disabled" "true"
+        Then the element "[data-check='remove-ignore-region']" has attribute "data-disabled" "true"
+        Then the element "[data-check='add-ignore-region']" does not have attribute "data-disabled" "true"
+        Then the element "[data-check='save-ignore-region']" does not have attribute "data-disabled" "true"
 

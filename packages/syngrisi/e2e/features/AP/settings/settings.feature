@@ -7,9 +7,9 @@ Feature: Admin Settings
     Scenario: Change Admin Settings - Enable Auth
         When I go to "settings" page
         When I wait 30 seconds for the element with locator "[data-test='settings_value_authentication']" to be visible
-        Then I expect that element "select[data-test='settings_value_authentication']" contain value "false"
+        Then the element with locator "select[data-test='settings_value_authentication']" should have value "false"
         When I select the option with the text "true" for element "select[data-test='settings_value_authentication']"
-        Then I expect that element "select[data-test='settings_value_authentication']" contain value "true"
+        Then the element with locator "select[data-test='settings_value_authentication']" should have value "true"
         When I click element with locator "[data-test='settings_update_button_authentication']"
         Then I wait on element "//div[contains(@class, 'mantine-Notification-title') and text()='Success']" to be displayed
 
@@ -17,8 +17,8 @@ Feature: Admin Settings
         When I wait for "3" seconds
         When I wait 30 seconds for the element with locator "h1=Success!" to be visible
         When I open the app
-        Then I expect the url to contain "/auth"
-        Then I expect that the title is "Login Page"
+        Then the current url contains "/auth"
+        Then the title is "Login Page"
 
     Scenario: Change Admin Settings - First Run
         # check if first_run is enabled by default
@@ -30,7 +30,7 @@ Feature: Admin Settings
         """
         Given I start Server and start Driver
         When I open the app
-        Then I expect the url to contain "auth/change?first_run=true"
+        Then the current url contains "auth/change?first_run=true"
         Then I wait on element "//h3[contains(text(), 'Change Password for default Administrator')]"
 
         # set first_run to false check if applied
@@ -44,10 +44,10 @@ Feature: Admin Settings
         When I go to "settings" page
         When I wait 30 seconds for the element with locator "[data-test='settings_value_first_run']" to be visible
 
-        Then I expect that element "select[data-test='settings_value_first_run']" contain value "true"
+        Then the element with locator "select[data-test='settings_value_first_run']" should have value "true"
         When I select the option with the text "false" for element "select[data-test='settings_value_first_run']"
         When I wait for "2" seconds
-        Then I expect that element "select[data-test='settings_value_first_run']" contain value "false"
+        Then the element with locator "select[data-test='settings_value_first_run']" should have value "false"
         When I click element with locator "[data-test='settings_update_button_first_run']"
         Then I wait on element "//div[contains(@class, 'mantine-Notification-title') and text()='Success']" to be displayed
         When I wait for "5" seconds
@@ -62,7 +62,7 @@ Feature: Admin Settings
         """
         Given I start Server and start Driver
         When I open the app
-        Then I expect the url to not contain "auth/change?first_run=true"
-        Then I expect the url to contain "/auth"
+        Then the current url does not contain "auth/change?first_run=true"
+        Then the current url contains "/auth"
 
 

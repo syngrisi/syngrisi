@@ -38,7 +38,7 @@ Feature: Test Isolation by Run
 
     # all tests
     When I wait 30 seconds for the element with locator "//div[contains(text(), 'TestRun')]" to be visible
-    Then I expect that element "//div[contains(text(), 'TestRun')]" does appear exactly "3" times
+    Then the element "//div[contains(text(), 'TestRun')]" does appear exactly "3" times
 
     # Run-1
     # tests
@@ -84,7 +84,7 @@ Feature: Test Isolation by Run
     When I refresh page
     # all tests
     When I wait 30 seconds for the element with locator "//div[contains(text(), 'TestRun')]" to be visible
-    Then I expect that element "//div[contains(text(), 'TestRun')]" does appear exactly "2" times
+    Then the element "//div[contains(text(), 'TestRun')]" does appear exactly "2" times
 
     # second run
     When I click element with locator "(//*[@data-item-name='Run-1'])[1]"
@@ -116,7 +116,7 @@ Feature: Test Isolation by Run
 
     # only 1 run
     When I wait 30 seconds for the element with locator "//div[contains(text(), 'TestRun')]" to be visible
-    Then I expect that element "//div[contains(text(), 'TestRun')]" does appear exactly "2" times
+    Then the element "//div[contains(text(), 'TestRun')]" does appear exactly "2" times
 
     # 2 tests in run
     When I click element with locator "(//*[@data-item-name='Run-1'])[1]"

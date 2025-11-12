@@ -32,12 +32,12 @@ Feature: Check details Related Checks - Navigation and Accept
         # SECOND
         Then I wait on element "[data-related-check-browser-name='safari1']" to be displayed
         When I click element with locator "[data-related-check-browser-name='safari1']"
-        Then I expect that element "[data-check='test-name']" to contain text "TestName-1"
-        Then I expect that element "[data-check='os']" to contain text "Windows1"
-        Then I expect that element "[data-check='browser']" to contain text "safari1"
+        Then the element with locator "[data-check='test-name']" should have contains text "TestName-1"
+        Then the element with locator "[data-check='os']" should have contains text "Windows1"
+        Then the element with locator "[data-check='browser']" should have contains text "safari1"
         # check icons before accept
-        Then I expect that the css attribute "color" from element ".modal [data-test='check-accept-icon'] svg" is "rgba(134,142,150,1)"
-        Then I expect that the attribute "data-test-icon-type" from element ".modal [data-test='check-accept-icon'] svg" is "outline"
+        Then the css attribute "color" from element ".modal [data-test='check-accept-icon'] svg" is "rgba(134,142,150,1)"
+        Then the element ".modal [data-test='check-accept-icon'] svg" has attribute "data-test-icon-type" "outline"
 
         # accept
         When I click element with locator ".modal button[data-test='check-accept-icon']"
@@ -51,13 +51,13 @@ Feature: Check details Related Checks - Navigation and Accept
         """
 
         When I wait until the css attribute "color" from element ".modal [data-test='check-accept-icon'] svg" is "rgba(64,192,87,1)"
-        Then I expect that the css attribute "color" from element ".modal [data-test='check-accept-icon'] svg" is "rgba(64,192,87,1)"
-        Then I expect that the attribute "data-test-icon-type" from element ".modal [data-test='check-accept-icon'] svg" is "fill"
+        Then the css attribute "color" from element ".modal [data-test='check-accept-icon'] svg" is "rgba(64,192,87,1)"
+        Then the element ".modal [data-test='check-accept-icon'] svg" has attribute "data-test-icon-type" "fill"
 
         # check icon color after close modal
         When I click element with locator "[data-test='close-check-detail-icon']"
         Then I wait on element "(//*[@data-test-preview-image='CheckName'])[1]" to be displayed
 
-        Then I expect that the attribute "data-test-icon-type" from element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" is "outline"
-        Then I expect that the css attribute "color" from element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" is "rgba(134,142,150,1)"
+        Then the element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" has attribute "data-test-icon-type" "outline"
+        Then the css attribute "color" from element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" is "rgba(134,142,150,1)"
 

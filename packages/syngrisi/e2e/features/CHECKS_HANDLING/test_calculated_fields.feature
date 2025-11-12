@@ -19,7 +19,7 @@ Feature: Test calculated fields
     """
     When I go to "main" page
     When I wait 30 seconds for the element with locator "[data-table-test-name='TestName']" to be visible
-    When I expect that element "[data-row-name='TestName'] [data-test='table-row-Viewport']" to contain text "50x50"
+    When the element with locator "[data-row-name='TestName'] [data-test='table-row-Viewport']" should have contains text "50x50"
 
   Scenario: Different viewports - [50x50, 100x100]
     Given I create "1" tests with:
@@ -32,7 +32,7 @@ Feature: Test calculated fields
             viewport: 100x100
     """
     When I go to "main" page
-    When I expect that element "[data-row-name='TestName'] [data-test='table-row-Viewport']" to contain text "≠"
+    When the element with locator "[data-row-name='TestName'] [data-test='table-row-Viewport']" should have contains text "≠"
 
   Scenario: Same viewports - [new, new]
     Given I create "1" tests with:
@@ -46,7 +46,7 @@ Feature: Test calculated fields
     """
     When I go to "main" page
     When I wait 30 seconds for the element with locator "[data-table-test-name='TestName']" to be visible
-    When I expect that element "[data-row-name='TestName'] [data-test='table-row-Status']" to contain text "New"
+    When the element with locator "[data-row-name='TestName'] [data-test='table-row-Status']" should have contains text "New"
 
   Scenario: Same viewports - [new, passed]
     Given I create "1" tests with:
@@ -66,7 +66,7 @@ Feature: Test calculated fields
     """
     When I go to "main" page
     When I wait 30 seconds for the element with locator "[data-table-test-name='TestName']" to be visible
-    When I expect that element "[data-row-name='TestName'] [data-test='table-row-Status']" to contain text "Passed"
+    When the element with locator "[data-row-name='TestName'] [data-test='table-row-Status']" should have contains text "Passed"
 
   Scenario: Same viewports - [passed, failed]
     Given I create "1" tests with:
@@ -92,5 +92,5 @@ Feature: Test calculated fields
     """
     When I go to "main" page
     When I wait 30 seconds for the element with locator "[data-table-test-name='TestName']" to be visible
-    When I expect that element "[data-row-name='TestName'] [data-test='table-row-Status']" to contain text "Failed"
+    When the element with locator "[data-row-name='TestName'] [data-test='table-row-Status']" should have contains text "Failed"
 
