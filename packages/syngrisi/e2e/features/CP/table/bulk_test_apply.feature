@@ -30,11 +30,11 @@ Feature: Bulk test Apply
         Then the css attribute "color" from element "(//*[@data-test='check-accept-icon']//*[@stroke])" is "rgba(134,142,150,1)"
 
         # accept
-        When I wait 30 seconds for the element with locator "[data-test='table-accept-tests']" to be visible
-        When I click element with locator "[data-test='table-accept-tests']"
+        When I wait 30 seconds for the element with locator "[aria-label='Accept selected tests']" to be visible
+        When I click element with locator "[aria-label='Accept selected tests']"
 
-        When I wait 30 seconds for the element with locator "[data-test='accept-test-confirm-button']" to be visible
-        When I click element with locator "[data-test='accept-test-confirm-button']"
+        When I wait 30 seconds for the element with locator "[aria-label='Accept']" to be visible
+        When I click element with locator "[aria-label='Accept']"
 
         When I wait 30 seconds for the element with locator "//*[@data-row-name='TestName-0']//td[@data-test='table-row-Accepted']//*[text()='Accepted']" to be visible
         When I wait 30 seconds for the element with locator "//*[@data-row-name='TestName-1']//td[@data-test='table-row-Accepted']//*[text()='Accepted']" to be visible

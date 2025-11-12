@@ -64,6 +64,7 @@ export default function Tests({ updateToolbar }: Props) {
             updateToolbar(
                 <ActionIcon
                     title="Table settings, sorting, and columns visibility"
+                    aria-label="Table settings, sorting, and columns visibility"
                     color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
                     data-test="table-sorting"
                     variant="subtle"
@@ -80,6 +81,7 @@ export default function Tests({ updateToolbar }: Props) {
             updateToolbar(
                 <ActionIcon
                     title="Filter the Table Data"
+                    aria-label="Filter the Table Data"
                     color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
                     data-test="table-filtering"
                     variant="subtle"

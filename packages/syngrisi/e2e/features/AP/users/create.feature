@@ -28,16 +28,16 @@ Feature: Create User
     Scenario: Create User - Success
         When I go to "admin2" page
         When I wait for "3" seconds
-        When I click element with locator "#add-new-user"
-        When I set "j_doe@gmail.com" to the inputfield "[data-test=user-add-email]"
-        When I wait on element "[data-test=user-add-first-name]" to be enabled
-        When I set "John" to the inputfield "[data-test=user-add-first-name]"
-        When I set "Doe" to the inputfield "[data-test=user-add-last-name]"
+        When I click element with locator "button[aria-label='Add New User']"
+        When I fill "j_doe@gmail.com" into element with label "Email"
+        When I wait on element "input[aria-label='First Name'][data-test='user-add-first-name']" to be enabled
+        When I fill "John" into element with locator "input[aria-label='First Name'][data-test='user-add-first-name']"
+        When I fill "Doe" into element with locator "input[aria-label='Last Name'][data-test='user-add-last-name']"
         When I select the option with the text "Reviewer" for element "select[data-test=user-add-role]"
-        When I set "Password-123" to the inputfield "[data-test=user-add-password]"
-        When I scroll to element "#create"
+        When I fill "Password-123" into element with label "Password"
+        When I scroll to element "button[aria-label='Create']"
         When I wait for "1" seconds
-        When I click element with locator "#create"
+        When I click element with locator "button[aria-label='Create']"
 
         When I wait for "3" seconds
         Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-email']" should have value "j_doe@gmail.com"
@@ -53,29 +53,29 @@ Feature: Create User
     Scenario: Create User - User Already Exist
         When I go to "admin2" page
         When I wait for "3" seconds
-        When I click element with locator "#add-new-user"
-        When I set "j_doe@gmail.com" to the inputfield "[data-test=user-add-email]"
-        When I wait on element "[data-test=user-add-first-name]" to be enabled
-        When I set "John" to the inputfield "[data-test=user-add-first-name]"
-        When I set "Doe" to the inputfield "[data-test=user-add-last-name]"
+        When I click element with locator "button[aria-label='Add New User']"
+        When I fill "j_doe@gmail.com" into element with label "Email"
+        When I wait on element "input[aria-label='First Name'][data-test='user-add-first-name']" to be enabled
+        When I fill "John" into element with locator "input[aria-label='First Name'][data-test='user-add-first-name']"
+        When I fill "Doe" into element with locator "input[aria-label='Last Name'][data-test='user-add-last-name']"
         When I select the option with the text "Reviewer" for element "select[data-test=user-add-role]"
-        When I set "Password-123" to the inputfield "[data-test=user-add-password]"
-        When I scroll to element "#create"
+        When I fill "Password-123" into element with label "Password"
+        When I scroll to element "button[aria-label='Create']"
         When I wait for "1" seconds
-        When I click element with locator "#create"
+        When I click element with locator "button[aria-label='Create']"
 
         When I wait for "3" seconds
         Then the element "//*[@data-test='j_doe@gmail.com']" does appear exactly "1" times
         Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-email']" should have value "j_doe@gmail.com"
 
-        When I click element with locator "#add-new-user"
-        When I set "j_doe@gmail.com" to the inputfield "[data-test=user-add-email]"
+        When I click element with locator "button[aria-label='Add New User']"
+        When I fill "j_doe@gmail.com" into element with label "Email"
 
-        Then the element with locator "//input[@data-test='user-add-email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" should have contains text "user with this email already exists"
+        Then the element with locator "//input[@aria-label='Email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" should have contains text "user with this email already exists"
 
-        When I scroll to element "#create"
+        When I scroll to element "button[aria-label='Create']"
         When I wait for "1" seconds
-        When I click element with locator "#create"
+        When I click element with locator "button[aria-label='Create']"
         When I wait for "3" seconds
         Then the element "//*[@data-test='j_doe@gmail.com']" does appear exactly "1" times
 
@@ -84,29 +84,29 @@ Feature: Create User
         When I wait for "3" seconds
 
         # invalid email - disabled fields
-        When I click element with locator "#add-new-user"
-        When I set "j_doe@" to the inputfield "[data-test=user-add-email]"
-        Then the element with locator "//input[@data-test='user-add-email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" should have contains text "Invalid email format"
+        When I click element with locator "button[aria-label='Add New User']"
+        When I fill "j_doe@" into element with label "Email"
+        Then the element with locator "//input[@aria-label='Email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" should have contains text "Invalid email format"
 
-        Then the element with locator "//input[@data-test='user-add-first-name']" should have has attribute "disabled"
-        Then the element with locator "//input[@data-test='user-add-last-name']" should have has attribute "disabled"
-        Then the element with locator "//input[@data-test='user-add-role']" should have has attribute "disabled"
+        Then the element with locator "input[aria-label='First Name'][data-test='user-add-first-name']" should have has attribute "disabled"
+        Then the element with locator "input[aria-label='Last Name'][data-test='user-add-last-name']" should have has attribute "disabled"
+        Then the element with locator "[data-test='user-add-role']" should be disabled
 
-        When I scroll to element "#create"
+        When I scroll to element "button[aria-label='Create']"
         When I wait for "1" seconds
-        When I click element with locator "#create"
+        When I click element with locator "button[aria-label='Create']"
         When I wait for "1" seconds
-        Then the element with locator "//input[@data-test='user-add-email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" should have contains text "Invalid email format"
+        Then the element with locator "//input[@aria-label='Email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" should have contains text "Invalid email format"
 
         # valid email - enabled fields
         When I refresh page
         When I wait for "3" seconds
-        When I click element with locator "#add-new-user"
-        When I set "j_doe@xxx" to the inputfield "[data-test=user-add-email]"
-        And the element "//input[@data-test='user-add-email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" does not exist
+        When I click element with locator "button[aria-label='Add New User']"
+        When I fill "j_doe@xxx" into element with label "Email"
+        And the element "//input[@aria-label='Email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" does not exist
 
-        Then the element with locator "//input[@data-test='user-add-first-name']" should not have attribute "disabled"
-        Then the element with locator "//input[@data-test='user-add-last-name']" should not have attribute "disabled"
-        Then the element with locator "//input[@data-test='user-add-role']" should not have attribute "disabled"
+        Then the element with locator "input[aria-label='First Name'][data-test='user-add-first-name']" should not have attribute "disabled"
+        Then the element with locator "input[aria-label='Last Name'][data-test='user-add-last-name']" should not have attribute "disabled"
+        Then the element with locator "[data-test='user-add-role']" should be enabled
 
 

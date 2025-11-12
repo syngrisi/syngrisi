@@ -65,6 +65,7 @@ export function NavbarSort(
                     <SafeSelect
                         label="Sort by"
                         data-test="navbar-sort-by-select"
+                        aria-label="Sort by"
                         sx={{ minWidth: '230px', marginTop: theme.spacing.md }}
                         value={sortBy}
                         onChange={(value: string) => setSortBy(() => value)}
@@ -73,6 +74,7 @@ export function NavbarSort(
                     <Group spacing={6} position="right">
                         <ActionIcon
                             title="Sort Order"
+                            aria-label="Sort Order"
                             data-test="navbar-sort-by-order"
                             mb={4}
                             onClick={

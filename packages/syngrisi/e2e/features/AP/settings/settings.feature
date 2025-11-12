@@ -6,11 +6,12 @@ Feature: Admin Settings
 
     Scenario: Change Admin Settings - Enable Auth
         When I go to "settings" page
-        When I wait 30 seconds for the element with locator "[data-test='settings_value_authentication']" to be visible
-        Then the element with locator "select[data-test='settings_value_authentication']" should have value "false"
+        When I wait 30 seconds for the element with label "Authentication" to be visible
+        Then the element with label "Authentication" should have value "false"
         When I select the option with the text "true" for element "select[data-test='settings_value_authentication']"
-        Then the element with locator "select[data-test='settings_value_authentication']" should have value "true"
-        When I click element with locator "[data-test='settings_update_button_authentication']"
+        When I wait for "1" seconds
+        Then the element with label "Authentication" should have value "true"
+        When I click element with locator "button[aria-label='Update Authentication']"
         When I wait 30 seconds for the element with locator "//div[contains(@class, 'mantine-Notification-title') and text()='Success']" to be visible
 
         When I go to "logout" page
@@ -42,13 +43,13 @@ Feature: Admin Settings
         """
         Given I start Server and start Driver
         When I go to "settings" page
-        When I wait 30 seconds for the element with locator "[data-test='settings_value_first_run']" to be visible
+        When I wait 30 seconds for the element with label "First Run" to be visible
 
-        Then the element with locator "select[data-test='settings_value_first_run']" should have value "true"
+        Then the element with label "First Run" should have value "true"
         When I select the option with the text "false" for element "select[data-test='settings_value_first_run']"
-        When I wait for "2" seconds
-        Then the element with locator "select[data-test='settings_value_first_run']" should have value "false"
-        When I click element with locator "[data-test='settings_update_button_first_run']"
+        When I wait for "1" seconds
+        Then the element with label "First Run" should have value "false"
+        When I click element with locator "button[aria-label='Update First Run']"
         When I wait 30 seconds for the element with locator "//div[contains(@class, 'mantine-Notification-title') and text()='Success']" to be visible
         When I wait for "5" seconds
         When I go to "logout" page
