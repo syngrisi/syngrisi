@@ -37,12 +37,12 @@ Feature: Update User
         When I open the app
         When I go to "admin2" page
         When I wait on element "//*[@data-test='j_doe@gmail.com']//button[@data-test='user-list-update-button']" to be displayed
-        When I click on the element "//*[@data-test='j_doe@gmail.com']//button[@data-test='user-list-update-button']"
+        When I click element with locator "//*[@data-test='j_doe@gmail.com']//button[@data-test='user-list-update-button']"
         When I set "Alex" to the inputfield "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-first-name']"
         When I set "Jonson" to the inputfield "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-last-name']"
         When I select the option with the text "Reviewer" for element "//*[@data-test='j_doe@gmail.com']//select[@data-test='user-list-role']"
 
-        When I click on the element "//*[@data-test='j_doe@gmail.com']//button[@data-test='user-list-send-button']"
+        When I click element with locator "//*[@data-test='j_doe@gmail.com']//button[@data-test='user-list-send-button']"
         When I wait for "2" seconds
 
         Then I expect that element "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-email']" contain value "j_doe@gmail.com"

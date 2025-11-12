@@ -31,7 +31,7 @@ Feature: Check details Related Checks - Navigation and Accept
 
         # SECOND
         Then I wait on element "[data-related-check-browser-name='safari1']" to be displayed
-        When I click on the element "[data-related-check-browser-name='safari1']"
+        When I click element with locator "[data-related-check-browser-name='safari1']"
         Then I expect that element "[data-check='test-name']" to contain text "TestName-1"
         Then I expect that element "[data-check='os']" to contain text "Windows1"
         Then I expect that element "[data-check='browser']" to contain text "safari1"
@@ -40,8 +40,8 @@ Feature: Check details Related Checks - Navigation and Accept
         Then I expect that the attribute "data-test-icon-type" from element ".modal [data-test='check-accept-icon'] svg" is "outline"
 
         # accept
-        When I click on the element ".modal button[data-test='check-accept-icon']"
-        When I click on the element "button[data-test='check-accept-icon-confirm']"
+        When I click element with locator ".modal button[data-test='check-accept-icon']"
+        When I click element with locator "button[data-test='check-accept-icon-confirm']"
         When I wait for "1" seconds
 
         Then I expect via http 2st check filtered as "name=CheckName" matched:
@@ -55,7 +55,7 @@ Feature: Check details Related Checks - Navigation and Accept
         Then I expect that the attribute "data-test-icon-type" from element ".modal [data-test='check-accept-icon'] svg" is "fill"
 
         # check icon color after close modal
-        When I click on the element "[data-test='close-check-detail-icon']"
+        When I click element with locator "[data-test='close-check-detail-icon']"
         Then I wait on element "(//*[@data-test-preview-image='CheckName'])[1]" to be displayed
 
         Then I expect that the attribute "data-test-icon-type" from element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" is "outline"

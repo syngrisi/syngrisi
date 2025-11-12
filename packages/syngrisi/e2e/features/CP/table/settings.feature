@@ -38,7 +38,7 @@ Feature: Tests Table Settings
         Then I expect that element "[data-test='table-row-Viewport']" is displayed
         Then I expect that element "tbody tr:first-of-type td" does appear exactly "10" times
 
-        When I click on the element "[data-test='table-sorting']"
+        When I click element with locator "[data-test='table-sorting']"
         When I wait on element "[data-test='settings-visible-columns-Id']" to exist
         When I click on the element "[data-test='settings-visible-columns-Id']" via js
         When I wait on element "[data-test='table-header-Id']" to not be displayed
@@ -76,10 +76,10 @@ Feature: Tests Table Settings
               TestName-2, TestName-1, TestName-0
             """
 
-        When I click on the element "[data-test='table-sorting']"
+        When I click element with locator "[data-test='table-sorting']"
         When I wait for "3" seconds
         When I select the option with the text "Name" for element "select[data-test='table-sort-by-select']"
-        When I click on the element "[title='sort order is descendant']"
+        When I click element with locator "[title='sort order is descendant']"
 
         When I wait for "3" seconds
         When I execute javascript code:
@@ -95,7 +95,7 @@ Feature: Tests Table Settings
               TestName-0, TestName-1, TestName-2
             """
 
-        When I click on the element "[title='sort order is ascendant']"
+        When I click element with locator "[title='sort order is ascendant']"
 
         When I wait for "3" seconds
         When I execute javascript code:

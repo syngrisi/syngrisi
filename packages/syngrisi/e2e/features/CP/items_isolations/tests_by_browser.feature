@@ -24,12 +24,12 @@ Feature: Test Isolation by Browser
 
     # chrome-0
     When I wait on element "li*=chrome-0" to be displayed
-    When I click on the element "li*=chrome-0"
+    When I click element with locator "li*=chrome-0"
     When I wait on element "//div[contains(text(), 'TestBrowser-0')]" to be displayed
     When I wait on element "//div[contains(text(), 'TestBrowser-1')]" to not be displayed
 
     # chrome-1
     When I wait on element "li*=chrome-1" to be displayed
-    When I click on the element "li*=chrome-1"
+    When I click element with locator "li*=chrome-1"
     When I wait on element "//div[contains(text(), 'TestBrowser-1')]" to be displayed
     When I wait on element "//div[contains(text(), 'TestBrowser-0')]" to not be displayed

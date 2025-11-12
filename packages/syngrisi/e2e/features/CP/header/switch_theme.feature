@@ -25,9 +25,9 @@ Feature: Switch Color Theme
         Then the css attribute "color" from element "[data-test='logo-container']" is "rgba(0,0,0,1)"
 
         # switch theme
-        When I click on the element "[data-test='user-icon']"
+        When I click element with locator "[data-test='user-icon']"
         When I wait on element "//*[@data-test='theme-button']/.." to be displayed
-        When I click on the element "//*[@data-test='theme-button']/.."
+        When I click element with locator "//*[@data-test='theme-button']/.."
         When I wait for "3" seconds
 
         # logo label

@@ -72,12 +72,12 @@ Feature: User roles
         Then I wait on element "span*=JD" to be displayed
 
         # generate and parse API key
-        When I click on the element "span*=JD"
-        When I click on the element "button=Generate API key"
-        When I click on the element "button=Generate"
-#        When I click on the element "[data-test='copy-api-icon']"
+        When I click element with locator "span*=JD"
+        When I click element with locator "button=Generate API key"
+        When I click element with locator "button=Generate"
+#        When I click element with locator "[data-test='copy-api-icon']"
         When I parse the API key
-        When I click on the element "button=Close"
+        When I click element with locator "button=Close"
 
 
         # create checks
@@ -99,11 +99,11 @@ Feature: User roles
         Then I wait on element "span*=RR" to be displayed
 
         # generate and parse API key
-        When I click on the element "span*=RR"
-        When I click on the element "button=Generate API key"
-        When I click on the element "button=Generate"
+        When I click element with locator "span*=RR"
+        When I click element with locator "button=Generate API key"
+        When I click element with locator "button=Generate"
         When I parse the API key
-        When I click on the element "button=Close"
+        When I click element with locator "button=Close"
 
         # create checks
         When I set the API key in config
@@ -123,11 +123,11 @@ Feature: User roles
         Then I wait on element "span*=SD" to be displayed
 
         # generate and parse API key
-        When I click on the element "span*=SD"
-        When I click on the element "button=Generate API key"
-        When I click on the element "button=Generate"
+        When I click element with locator "span*=SD"
+        When I click element with locator "button=Generate API key"
+        When I click element with locator "button=Generate"
         When I parse the API key
-        When I click on the element "button=Close"
+        When I click element with locator "button=Close"
 
         # create checks
         When I set the API key in config

@@ -46,7 +46,7 @@ Feature: Group by
     Check if base filter resetting after change grouping
         When I wait on element "[data-table-test-name='TestName - 1']" to be displayed
         When I wait on element "[data-table-test-name='TestName - 2']" to be displayed
-        When I click on the element "//*[@data-test='navbar-item-name' and contains(., 'RunName - 1')]"
+        When I click element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName - 1')]"
         When I wait for "2" seconds
         When I wait on element "[data-table-test-name='TestName - 2']" to not be displayed
         When I wait on element "[data-table-test-name='TestName - 1']" to be displayed

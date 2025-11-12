@@ -14,14 +14,14 @@ Feature: Check details Resize and Pan
         """
         When I go to "main" page
         When I unfold the test "TestName"
-        When I click on the element "[data-test-preview-image='CheckName']"
+        When I click element with locator "[data-test-preview-image='CheckName']"
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed
 
     Scenario: Resize Dropdown Usage
         # 50%
-        When I click on the element "[data-check='open-zoom-dropdown']"
+        When I click element with locator "[data-check='open-zoom-dropdown']"
         When I wait on element "//*[@data-check='zoom-dropdown']//div[text()='50%']" to be displayed
-        When I click on the element "//*[@data-check='zoom-dropdown']//div[text()='50%']"
+        When I click element with locator "//*[@data-check='zoom-dropdown']//div[text()='50%']"
         When I wait for "0.5" seconds
         When I execute javascript code:
         """
@@ -33,9 +33,9 @@ Feature: Check details Resize and Pan
         """
 
         # 100%
-        When I click on the element "[data-check='open-zoom-dropdown']"
+        When I click element with locator "[data-check='open-zoom-dropdown']"
         When I wait on element "//*[@data-check='zoom-dropdown']//div[text()='100%']" to be displayed
-        When I click on the element "//*[@data-check='zoom-dropdown']//div[text()='100%']"
+        When I click element with locator "//*[@data-check='zoom-dropdown']//div[text()='100%']"
         When I wait for "0.5" seconds
         When I execute javascript code:
         """
@@ -47,9 +47,9 @@ Feature: Check details Resize and Pan
         """
 
         # 200%
-        When I click on the element "[data-check='open-zoom-dropdown']"
+        When I click element with locator "[data-check='open-zoom-dropdown']"
         When I wait on element "//*[@data-check='zoom-dropdown']//div[text()='200%']" to be displayed
-        When I click on the element "//*[@data-check='zoom-dropdown']//div[text()='200%']"
+        When I click element with locator "//*[@data-check='zoom-dropdown']//div[text()='200%']"
         When I wait for "0.5" seconds
         When I execute javascript code:
         """
@@ -61,9 +61,9 @@ Feature: Check details Resize and Pan
         """
 
         # Fit by width
-        When I click on the element "[data-check='open-zoom-dropdown']"
+        When I click element with locator "[data-check='open-zoom-dropdown']"
         When I wait on element "//*[@data-check='zoom-dropdown']//div[text()='Fit by width ']" to be displayed
-        When I click on the element "//*[@data-check='zoom-dropdown']//div[text()='Fit by width ']"
+        When I click element with locator "//*[@data-check='zoom-dropdown']//div[text()='Fit by width ']"
         When I wait for "0.5" seconds
         When I execute javascript code:
         """
@@ -75,9 +75,9 @@ Feature: Check details Resize and Pan
         """
 
         # Fit by canvas
-        When I click on the element "[data-check='open-zoom-dropdown']"
+        When I click element with locator "[data-check='open-zoom-dropdown']"
         When I wait on element "//*[@data-check='zoom-dropdown']//div[text()='Fit to canvas ']" to be displayed
-        When I click on the element "//*[@data-check='zoom-dropdown']//div[text()='Fit to canvas ']"
+        When I click element with locator "//*[@data-check='zoom-dropdown']//div[text()='Fit to canvas ']"
         When I wait for "0.5" seconds
         When I execute javascript code:
         """

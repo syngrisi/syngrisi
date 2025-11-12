@@ -35,19 +35,19 @@ Feature: Check details Related Checks - Navigation
         Then I expect that element "[data-check='browser']" to contain text "safari2"
 
         # SECOND
-        When I click on the element "[data-related-check-browser-name='safari1']"
+        When I click element with locator "[data-related-check-browser-name='safari1']"
         Then I expect that element "[data-check='test-name']" to contain text "TestName-1"
         Then I expect that element "[data-check='os']" to contain text "Windows1"
         Then I expect that element "[data-check='browser']" to contain text "safari1"
 
         # FIRST
-        When I click on the element "[data-related-check-browser-name='safari0']"
+        When I click element with locator "[data-related-check-browser-name='safari0']"
         Then I expect that element "[data-check='test-name']" to contain text "TestName-0"
         Then I expect that element "[data-check='os']" to contain text "Windows0"
         Then I expect that element "[data-check='browser']" to contain text "safari0"
 
         # after close the modal window the initial check should be unfolded but other collapsed
-        When I click on the element "[data-test='close-check-detail-icon']"
+        When I click element with locator "[data-test='close-check-detail-icon']"
         Then I wait on element "(//*[@data-test-preview-image='CheckName'])[1]" to be displayed
         Then I wait on element "(//*[@data-test-preview-image='CheckName'])[2]" to not be displayed
         Then I wait on element "(//*[@data-test-preview-image='CheckName'])[3]" to not be displayed

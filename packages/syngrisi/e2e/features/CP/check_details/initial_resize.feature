@@ -15,7 +15,7 @@ Feature: Check Details - Initial image resize
         When I set window size: "1440x900"
         When I open the app
         When I unfold the test "TestName"
-        When I click on the element "[data-test-preview-image='CheckName']"
+        When I click element with locator "[data-test-preview-image='CheckName']"
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed
         When I wait for canvas to be ready
         When I wait for viewportTransform to stabilize
@@ -57,7 +57,7 @@ Feature: Check Details - Initial image resize
         When I set window size: "1440x900"
         When I open the app
         When I unfold the test "TestName"
-        When I click on the element "[data-test-preview-image='CheckName']"
+        When I click element with locator "[data-test-preview-image='CheckName']"
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed
         When I wait for canvas to be ready
         When I wait for viewportTransform to stabilize
@@ -103,7 +103,7 @@ Feature: Check Details - Initial image resize
         When I set window size: "1440x900"
         When I open the app
         When I unfold the test "TestName"
-        When I click on the element "[data-test-preview-image='CheckName']"
+        When I click element with locator "[data-test-preview-image='CheckName']"
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed
         When I wait for canvas to be ready
         When I wait for viewportTransform to stabilize
@@ -149,7 +149,7 @@ Feature: Check Details - Initial image resize
         When I set window size: "1440x900"
         When I open the app
         When I unfold the test "TestName"
-        When I click on the element "[data-test-preview-image='CheckName']"
+        When I click element with locator "[data-test-preview-image='CheckName']"
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed
         When I wait for canvas to be ready
         When I wait for viewportTransform to stabilize

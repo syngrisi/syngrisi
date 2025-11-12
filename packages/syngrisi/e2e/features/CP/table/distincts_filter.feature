@@ -50,7 +50,7 @@ Feature: Distinct filters functionality
 
         # BROWSER
         # open filter
-        When I click on the element "[data-test='table-filtering']"
+        When I click element with locator "[data-test='table-filtering']"
         When I wait on element "//*[@data-test='filter-main-group']" to be displayed
 
         # set filter
@@ -63,19 +63,19 @@ Feature: Distinct filters functionality
         Then I expect that element "(//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-value']//option)[2]" to have text "safari-0"
 
         # apply filter
-        When I click on the element "[data-test='table-filter-apply']"
+        When I click element with locator "[data-test='table-filter-apply']"
 
         When I wait on element "[data-table-test-name='TestName filter-0']" to not be displayed
         When I wait on element "[data-table-test-name='TestName filter-1']" to be displayed
 
         # close drawer
-        When I click on the element "[data-test='relative-wrapper-icon']"
+        When I click element with locator "[data-test='relative-wrapper-icon']"
         When I wait on element "//*[@data-test='filter-main-group']" to not be displayed
 
 
         # STATUS
         # open filter
-        When I click on the element "[data-test='table-filtering']"
+        When I click element with locator "[data-test='table-filtering']"
         When I wait on element "//*[@data-test='filter-main-group']" to be displayed
 
         # set filter new
@@ -87,7 +87,7 @@ Feature: Distinct filters functionality
         Then I expect that element "(//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-value']//option)[1]" to have text "New"
         Then I expect that element "(//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-value']//option)[2]" to have text "Failed"
 
-        When I click on the element "[data-test='table-filter-apply']"
+        When I click element with locator "[data-test='table-filter-apply']"
 
         When I wait on element "[data-table-test-name='TestName filter-1']" to be displayed
         When I wait on element "[data-table-test-name='TestName filter-0']" to be displayed
@@ -97,14 +97,10 @@ Feature: Distinct filters functionality
         When I select the option with the text "Status" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-column-name']"
         When I select the option with the text "equals" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-operator']"
 
-        When I click on the element "[data-test='table-filter-value']"
-        When I click on the element "div=Failed"
-
-        When I wait for "1" seconds
+        When I select dropdown option "Failed" by clicking div for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-value']"
         Then I expect that element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-value']" contain value "Failed"
-        When I click on the element "[data-test='table-filter-apply']"
+        When I click element with locator "[data-test='table-filter-apply']"
 
         When I wait on element "[data-table-test-name='TestName filter-1']" to not be displayed
         When I wait on element "[data-table-test-name='TestName filter-0']" to not be displayed
         When I wait on element "[data-table-test-name='TestName filter-3']" to be displayed
-

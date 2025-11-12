@@ -31,7 +31,7 @@ Feature: Navbar Refresh
         When I wait for "5" seconds
         Then I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName-2')]" to not be displayed
 
-        When I click on the element "[data-test='navbar-icon-refresh']"
+        When I click element with locator "[data-test='navbar-icon-refresh']"
         Then I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName-2')]" to be displayed
 
 

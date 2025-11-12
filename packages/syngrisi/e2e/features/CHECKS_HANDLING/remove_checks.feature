@@ -61,14 +61,14 @@ Feature: Remove checks
         # second
         When I wait on element "(//*[@data-related-check-item='CheckName-1'])[2]" to be displayed
         Then I expect that element "//*[@data-related-check-item='CheckName-1']" does appear exactly "2" times
-        When I click on the element "(//*[@data-related-check-item='CheckName-1'])[2]"
+        When I click element with locator "(//*[@data-related-check-item='CheckName-1'])[2]"
 
 
         When I wait on element "//*[@data-check-header-name]//*[@data-test='check-status']/span[text()='new']" to be displayed
 
-        When I click on the element ".modal [data-test='check-remove-icon']"
+        When I click element with locator ".modal [data-test='check-remove-icon']"
         When I wait on element "[data-test='check-remove-icon-confirm']" to be displayed
-        When I click on the element "[data-test='check-remove-icon-confirm']"
+        When I click element with locator "[data-test='check-remove-icon-confirm']"
 
         When I wait on element "//*[contains(@class, 'mantine-Notification-body')]//div[text()='Success']" to be displayed
         When I wait on element "//*[contains(@class, 'mantine-Notification-body')]//div[text()='Check has been successfully removed']" to be displayed
@@ -82,9 +82,9 @@ Feature: Remove checks
         When I wait on element "[data-check='check-name']" to be displayed
         Then the element "[data-check='check-name']" contains the text "CheckName-1"
 
-        When I click on the element ".modal [data-test='check-remove-icon']"
+        When I click element with locator ".modal [data-test='check-remove-icon']"
         When I wait on element "[data-test='check-remove-icon-confirm']" to be displayed
-        When I click on the element "[data-test='check-remove-icon-confirm']"
+        When I click element with locator "[data-test='check-remove-icon-confirm']"
 
 
         When I wait on element "//*[contains(@class, 'mantine-Notification-body')]//div[text()='Success']" to be displayed

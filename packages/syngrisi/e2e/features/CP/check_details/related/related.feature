@@ -148,9 +148,9 @@ Feature: Check details Related Checks
         When I unfold the test "TestName"
         When I open the 1st check "CheckName"
 
-#        When I click on the element "[data-table-test-name=TestName]"
+#        When I click element with locator "[data-table-test-name=TestName]"
 #        Then I wait on element "//*[@data-test-preview-image='CheckName']" to be displayed
-#        When I click on the element "//*[@data-test-preview-image='CheckName']"
+#        When I click element with locator "//*[@data-test-preview-image='CheckName']"
 #        Then I wait on element "[data-check-header-name='CheckName']" to be displayed
 #        Then I wait on element "(//*[@data-related-check-item='CheckName'])" to be displayed
 
@@ -192,8 +192,8 @@ Feature: Check details Related Checks
         Then I expect that element "(//*[@data-related-check-item='CheckName'])[3]//*[@data-related-check='branch']" to have text "INTEGRATION0"
 
         # sort
-        When I click on the element "[data-test='related-check-icon-open-sort']"
-        When I click on the element "[data-test='navbar-sort-by-order']"
+        When I click element with locator "[data-test='related-check-icon-open-sort']"
+        When I click element with locator "[data-test='navbar-sort-by-order']"
         When I wait for "1" seconds
 
         # 1
@@ -256,9 +256,9 @@ Feature: Check details Related Checks
         Then I expect that element "//*[@data-related-check='browser-name' and text()='firefox']" does appear exactly "2" times
 
         # after filter
-        When I click on the element "[data-test='related-check-icon-open-filter']"
+        When I click element with locator "[data-test='related-check-icon-open-filter']"
         When I wait on element "label=Browser" to be displayed
-        When I click on the element "label=Browser"
+        When I click element with locator "label=Browser"
 
         Then I wait on element "//*[@data-related-check='browser-name' and text()='firefox']" to be displayed
         Then I expect that element "//*[@data-related-check='browser-name' and text()='safari']" does appear exactly "0" times

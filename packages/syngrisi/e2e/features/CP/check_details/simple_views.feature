@@ -23,14 +23,14 @@ Feature: Simple Views (Expected, Actual, Diff)
         """
         When I go to "main" page
         When I unfold the test "TestName"
-        When I click on the element "[data-test-preview-image='CheckName']"
+        When I click element with locator "[data-test-preview-image='CheckName']"
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed
 
     Scenario: Simple Views (Expected, Actual, Diff)
         When I wait on element "div=Expected" to be displayed
 
         # expected
-        When I click on the element "div=Expected"
+        When I click element with locator "div=Expected"
         When I wait for "1" seconds
         When I execute javascript code:
         """
@@ -52,7 +52,7 @@ Feature: Simple Views (Expected, Actual, Diff)
         """
 
         # actual
-        When I click on the element "div=Actual"
+        When I click element with locator "div=Actual"
         When I wait for "1" seconds
         When I execute javascript code:
         """
@@ -74,7 +74,7 @@ Feature: Simple Views (Expected, Actual, Diff)
         """
 
         # diff
-        When I click on the element "div=Difference"
+        When I click element with locator "div=Difference"
         When I wait for "1" seconds
         When I execute javascript code:
         """

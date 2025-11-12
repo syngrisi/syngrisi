@@ -68,7 +68,7 @@ Feature: Calculate Test status based on Checks statuses
         """
 
         # remove passed
-        When I click on the element "[data-table-test-name=TestName]"
+        When I click element with locator "[data-table-test-name=TestName]"
         When I wait on element "[data-table-check-name='CheckName-1']" to be displayed
 
         When I remove the "CheckName-1" check
@@ -109,7 +109,7 @@ Feature: Calculate Test status based on Checks statuses
         When I expect that element "[data-row-name='TestName'] td[data-test='table-row-Status']" to contain text "Failed"
 
         # remove failed
-        When I click on the element "[data-table-test-name=TestName]"
+        When I click element with locator "[data-table-test-name=TestName]"
         When I wait on element "[data-table-check-name='CheckName-2']" to be displayed
         When I remove the "CheckName-2" check
         When I expect that element "[data-row-name='TestName'] td[data-test='table-row-Status']" to contain text "Passed"

@@ -715,14 +715,14 @@ When(
     if (selector.match(/span\*=[A-Z]{2}/)) {
       const match = selector.match(/span\*=([A-Z]{2})/);
       const expectedInitials = match ? match[1] : '';
-      
+
       // Wait for user icon to appear first
       await page.locator('[data-test="user-icon"]').waitFor({ state: 'visible', timeout: 15000 });
-      
+
       // Force page reload to refresh React Query cache and get updated user data
       await page.reload({ waitUntil: 'networkidle' });
       await page.waitForTimeout(1000);
-      
+
       // Poll for initials to appear (React Query may take time to load user data)
       const maxAttempts = 60; // 30 seconds with 500ms intervals
       let found = false;
@@ -736,14 +736,14 @@ When(
           await page.waitForTimeout(500);
         }
       }
-      
+
       if (!found) {
         const iconText = await page.locator('[data-test="user-icon"]').first().textContent();
         throw new Error(`User initials "${expectedInitials}" not found in user icon. Actual text: "${iconText}"`);
       }
       return; // Success, exit early
     }
-    
+
     if (selector.includes('Test does not have any checks') && lastUnfoldedTest) {
       await ensureTestDetailsVisible(page, lastUnfoldedTest);
       await page.waitForFunction(
@@ -769,7 +769,7 @@ When(
       logger.info(`Confirmed selector "${selector}" via collapse content check`);
       return;
     }
-    
+
     // For other selectors, use standard approach
     const locator = getLocatorQuery(page, selector);
     const timeoutMs = 30000;
@@ -809,10 +809,24 @@ When(
                   opacity: style.opacity,
                   offsetParent: el.offsetParent ? (el.offsetParent as HTMLElement).tagName : null,
                   text: el.textContent?.trim() || '',
+                  dataTableTestName: el.getAttribute('data-table-test-name'),
                 };
               })
             );
             logger.info(`Selector "${selector}" not visible yet; styles: ${JSON.stringify(debugStyles)}`);
+
+            // Debug: log all data-table-test-name attributes in the page
+            if (selector.includes('data-table-test-name')) {
+              const allTestNames = await page.evaluate(() => {
+                const elements = Array.from(document.querySelectorAll('[data-table-test-name]'));
+                return elements.map((el) => ({
+                  name: el.getAttribute('data-table-test-name'),
+                  text: el.textContent?.trim() || '',
+                  visible: (el as HTMLElement).offsetParent !== null,
+                }));
+              });
+              logger.info(`All [data-table-test-name] elements on page: ${JSON.stringify(allTestNames)}`);
+            }
           } catch (error) {
             logger.debug?.(`Failed to collect debug styles for "${selector}": ${(error as Error).message}`);
           }
@@ -830,17 +844,35 @@ When(
           }
         }
       }
-      if (
-        count === 0 &&
-        lastUnfoldedTest &&
-        selector.includes('Test does not have any checks') &&
-        attempts % 8 === 0
-      ) {
-        reUnfoldAttempts += 1;
-        logger.info(
-          `Attempt ${reUnfoldAttempts}: no matches found for "${selector}", re-unfolding test "${lastUnfoldedTest}"`
-        );
-        await ensureTestDetailsVisible(page, lastUnfoldedTest);
+      if (count === 0) {
+        // Debug: log all data-table-test-name attributes in the page when count is 0
+        if (selector.includes('data-table-test-name') && attempts % 20 === 0) {
+          try {
+            const allTestNames = await page.evaluate(() => {
+              const elements = Array.from(document.querySelectorAll('[data-table-test-name]'));
+              return elements.map((el) => ({
+                name: el.getAttribute('data-table-test-name'),
+                text: el.textContent?.trim() || '',
+                visible: (el as HTMLElement).offsetParent !== null,
+              }));
+            });
+            logger.info(`No matches found for "${selector}" (attempt ${attempts}); All [data-table-test-name] elements on page: ${JSON.stringify(allTestNames)}`);
+          } catch (error) {
+            logger.debug?.(`Failed to collect debug info for "${selector}": ${(error as Error).message}`);
+          }
+        }
+
+        if (
+          lastUnfoldedTest &&
+          selector.includes('Test does not have any checks') &&
+          attempts % 8 === 0
+        ) {
+          reUnfoldAttempts += 1;
+          logger.info(
+            `Attempt ${reUnfoldAttempts}: no matches found for "${selector}", re-unfolding test "${lastUnfoldedTest}"`
+          );
+          await ensureTestDetailsVisible(page, lastUnfoldedTest);
+        }
       }
       await page.waitForTimeout(intervalMs);
     }
@@ -928,11 +960,11 @@ Then('the css attribute {string} from element {string} is {string}', async ({ pa
     }
     normalizedValue = normalizedValue.replace(/rgba\(([^)]+)\)/gi, (_, content) => `rgba(${content.replace(/\s+/g, '')})`);
   }
-  
+
   const expectedTrimmed = renderedExpected.trim();
   const pxMatch = expectedTrimmed.match(/^([\d.]+)px$/);
   const actualPxMatch = normalizedValue.match(/^([\d.]+)px$/);
-  
+
   if (pxMatch && actualPxMatch) {
     const expectedPx = parseFloat(pxMatch[1]);
     const actualPx = parseFloat(actualPxMatch[1]);
@@ -1034,7 +1066,7 @@ Then(
     const startTime = Date.now();
     let urlMatches = false;
     let currentUrl = '';
-    
+
     while (Date.now() - startTime < maxWaitTime && !urlMatches) {
       await page.waitForTimeout(200);
       currentUrl = page.url();
@@ -1049,7 +1081,7 @@ Then(
       }
       if (urlMatches) break;
     }
-    
+
     // Final check
     currentUrl = page.url();
     try {
@@ -1058,7 +1090,7 @@ Then(
       const urlPathDecoded = decodeURIComponent(urlPath);
       const renderedUrlDecoded = decodeURIComponent(renderedUrl);
       // Check both encoded and decoded versions
-      const matches = currentUrl.includes(renderedUrl) 
+      const matches = currentUrl.includes(renderedUrl)
         || urlPath.includes(renderedUrl)
         || urlPathDecoded.includes(renderedUrlDecoded)
         || currentUrl.includes(renderedUrlDecoded)
@@ -1111,8 +1143,20 @@ Then(
   async ({ page, testData }, selector: string, expected: string) => {
     const renderedSelector = renderTemplate(selector, testData);
     const renderedExpected = renderTemplate(expected, testData);
-    const locator = getLocatorQuery(page, renderedSelector);
-    await expect(locator.first()).toHaveValue(renderedExpected);
+    // Extract index before passing to getLocatorQuery (it may strip the index)
+    const nthMatch = renderedSelector.match(/\[(\d+)\]$/);
+    const selectorWithoutIndex = renderedSelector.replace(/\[(\d+)\]$/, '');
+    const locator = getLocatorQuery(page, selectorWithoutIndex);
+    if (nthMatch) {
+      const index = parseInt(nthMatch[1], 10) - 1; // Convert 1-based to 0-based
+      const targetLocator = locator.nth(index);
+      // Wait for element to be visible and attached before checking value
+      await targetLocator.waitFor({ state: 'visible', timeout: 10000 });
+      await targetLocator.waitFor({ state: 'attached', timeout: 5000 });
+      await expect(targetLocator).toHaveValue(renderedExpected);
+    } else {
+      await expect(locator.first()).toHaveValue(renderedExpected);
+    }
   }
 );
 

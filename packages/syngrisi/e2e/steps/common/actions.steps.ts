@@ -92,7 +92,8 @@ When(
 
     if (target === 'locator') {
       const locator = getLocatorQuery(page, renderedValue);
-      await locator.click();
+      await locator.first().waitFor({ state: 'visible', timeout: 5000 });
+      await locator.first().click();
       return;
     }
 
@@ -125,6 +126,7 @@ When(
 
     if (target === 'locator') {
       const locator = getLocatorQuery(page, renderedValue, ordinal);
+      await locator.waitFor({ state: 'visible', timeout: 10000 });
       await locator.click();
       return;
     }
@@ -490,8 +492,75 @@ When(
   async ({ page, testData }, optionText: string, selector: string) => {
     const renderedSelector = renderTemplate(selector, testData);
     const renderedOptionText = renderTemplate(optionText, testData);
-    const locator = getLocatorQuery(page, renderedSelector);
-    await locator.first().selectOption({ label: renderedOptionText });
+    // Extract index before passing to getLocatorQuery (it may strip the index)
+    const nthMatch = renderedSelector.match(/\[(\d+)\]$/);
+    const selectorWithoutIndex = renderedSelector.replace(/\[(\d+)\]$/, '');
+    const locator = getLocatorQuery(page, selectorWithoutIndex);
+    const targetLocator = nthMatch
+      ? locator.nth(parseInt(nthMatch[1], 10) - 1) // Convert 1-based to 0-based
+      : locator.first();
+
+    // Wait for element to be visible and attached
+    await targetLocator.waitFor({ state: 'visible', timeout: 10000 });
+    await targetLocator.waitFor({ state: 'attached', timeout: 5000 });
+
+    // Try selectOption first, if it fails, try clicking the select and then the option
+    try {
+      await targetLocator.selectOption({ label: renderedOptionText });
+    } catch (error) {
+      // If selectOption fails, try clicking the select and then clicking the option div
+      await targetLocator.click();
+      await page.waitForTimeout(500); // Wait for dropdown to open
+      const optionLocator = page.locator(`div:has-text('${renderedOptionText}')`).first();
+      await optionLocator.waitFor({ state: 'visible', timeout: 5000 });
+      await optionLocator.click();
+    }
+  }
+);
+
+/**
+ * Step definition: `When I select dropdown option {string} by clicking div for element {string}`
+ *
+ * This step is specifically designed for custom dropdown components that don't work with standard selectOption.
+ * It clicks on the select element to open the dropdown, then clicks on the div option, and also sets the value
+ * via selectOption as a fallback to ensure the value is properly set.
+ *
+ * @param optionText - Text of the option to select
+ * @param selector - Selector for the select element
+ *
+ * @example
+ * ```gherkin
+ * When I select dropdown option "Failed" by clicking div for element "[data-test='table-filter-value']"
+ * ```
+ */
+When(
+  'I select dropdown option {string} by clicking div for element {string}',
+  async ({ page, testData }, optionText: string, selector: string) => {
+    const renderedSelector = renderTemplate(selector, testData);
+    const renderedOptionText = renderTemplate(optionText, testData);
+
+    // Get the select element
+    const selectLocator = getLocatorQuery(page, renderedSelector);
+    await selectLocator.first().waitFor({ state: 'visible', timeout: 10000 });
+    await selectLocator.first().waitFor({ state: 'attached', timeout: 5000 });
+
+    // Click on select to open dropdown
+    await selectLocator.first().click();
+    await page.waitForTimeout(500); // Wait for dropdown to open
+
+    // Click on the div option
+    const optionLocator = page.locator(`div:has-text('${renderedOptionText}')`).first();
+    await optionLocator.waitFor({ state: 'visible', timeout: 5000 });
+    await optionLocator.click();
+
+    // Also set value via selectOption as fallback to ensure value is properly set
+    try {
+      await page.waitForTimeout(300); // Small delay to ensure dropdown closed
+      await selectLocator.first().selectOption({ label: renderedOptionText });
+    } catch (error) {
+      // If selectOption fails, that's okay - we already clicked the div
+      logger.debug(`selectOption fallback failed for "${renderedOptionText}", but div click succeeded`);
+    }
   }
 );
 

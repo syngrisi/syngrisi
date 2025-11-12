@@ -59,21 +59,21 @@ Feature: Test Isolation by Test Status
 
     # NEW
     When I wait on element "li*=New" to be displayed
-    When I click on the element "li*=New"
+    When I click element with locator "li*=New"
 
     When I wait on element "[data-table-test-name='TestStatus-new']" to be displayed
     When I wait on element "[data-table-test-name='TestStatus-passed-passed']" to not be displayed
     When I wait on element "[data-table-test-name='TestStatus-failed']" to not be displayed
 
     # PASSED
-    When I click on the element "li*=Passed"
+    When I click element with locator "li*=Passed"
 
     When I wait on element "[data-table-test-name='TestStatus-passed-passed']" to be displayed
     When I wait on element "[data-table-test-name='TestStatus-new']" to not be displayed
     When I wait on element "[data-table-test-name='TestStatus-failed']" to not be displayed
 
     # FAILED
-    When I click on the element "li*=Failed"
+    When I click element with locator "li*=Failed"
 
     When I wait on element "[data-table-test-name='TestStatus-failed']" to be displayed
     When I wait on element "[data-table-test-name='TestStatus-new']" to not be displayed

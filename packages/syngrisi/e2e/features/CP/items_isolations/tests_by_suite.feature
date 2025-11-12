@@ -44,23 +44,23 @@ Feature: Test Isolation by Suite
     # SUITE-1
     # tests
     When I wait on element "[data-item-name='Suite-1']" to be displayed
-    When I click on the element "[data-item-name='Suite-1']"
+    When I click element with locator "[data-item-name='Suite-1']"
     When I wait on element "//div[contains(text(), 'TestSuite-1.1')]" to be displayed
     When I wait on element "//div[contains(text(), 'TestSuite-1.2')]" to be displayed
     When I wait on element "//div[contains(text(), 'TestSuite-2.1')]" to not be displayed
 
     # checks
-    When I click on the element "[data-table-test-name='TestSuite-1.1']"
+    When I click element with locator "[data-table-test-name='TestSuite-1.1']"
     Then I wait on element "[data-table-check-name='CheckSuite-1.1']" to be displayed
     Then I wait on element "[data-table-check-name='CheckSuite-1.2']" to be displayed
 
-    When I click on the element "[data-table-test-name='TestSuite-1.2']"
+    When I click element with locator "[data-table-test-name='TestSuite-1.2']"
     Then I wait on element "[data-table-check-name='CheckSuite-1.3']" to be displayed
     Then I wait on element "[data-table-check-name='CheckSuite-1.4']" to be displayed
 
     # SUITE-1
     # tests
-    When I click on the element "[data-item-name='Suite-2']"
+    When I click element with locator "[data-item-name='Suite-2']"
     When I wait on element "//div[contains(text(), 'TestSuite-2.1')]" to be displayed
     When I wait on element "//div[contains(text(), 'TestSuite-1.1')]" to not be displayed
     When I wait on element "//div[contains(text(), 'TestSuite-1.2')]" to not be displayed

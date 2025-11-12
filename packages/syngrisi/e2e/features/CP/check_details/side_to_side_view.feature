@@ -22,14 +22,14 @@ Feature: Side to side view
             """
         When I go to "main" page
         When I unfold the test "TestName"
-        When I click on the element "[data-test-preview-image='CheckName']"
+        When I click element with locator "[data-test-preview-image='CheckName']"
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed
 
     Scenario: Divider in the center
         When I wait on element "//div[normalize-space(text())='Slider']" to be displayed
         When I wait for "0.5" seconds
 
-        When I click on the element "//div[normalize-space(text())='Slider']"
+        When I click element with locator "//div[normalize-space(text())='Slider']"
         When I wait for "0.5" seconds
 
         When I execute javascript code:

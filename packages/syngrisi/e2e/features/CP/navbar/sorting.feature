@@ -34,9 +34,9 @@ Feature: Navbar Sorting
             """
 
         # sort order - ascending
-        When I click on the element "[data-test='navbar-icon-open-sort']"
+        When I click element with locator "[data-test='navbar-icon-open-sort']"
         When I wait on element "button[data-test='navbar-sort-by-order']" to be displayed
-        When I click on the element "button[data-test='navbar-sort-by-order']"
+        When I click element with locator "button[data-test='navbar-sort-by-order']"
         When I wait for "3" seconds
 
         When I execute javascript code:
@@ -53,7 +53,7 @@ Feature: Navbar Sorting
             """
 
          # sort order - descendant
-        When I click on the element "button[data-test='navbar-sort-by-order']"
+        When I click element with locator "button[data-test='navbar-sort-by-order']"
         When I wait for "3" seconds
 
         When I execute javascript code:
