@@ -18,7 +18,7 @@ Feature: Check details - Regions
     When I go to "main" page
     When I unfold the test "TestName"
     When I click element with locator "[data-test-preview-image='CheckName']"
-    Then I wait on element "[data-check-header-name='CheckName']" to be displayed
+    When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
   Scenario: Regions - add, save, check
     # check absence
@@ -34,7 +34,7 @@ Feature: Check details - Regions
     """
 
     # add and check presence
-    Then I wait on element "[data-check='add-ignore-region']" to be displayed
+    When I wait 30 seconds for the element with locator "[data-check='add-ignore-region']" to be visible
     When I click element with locator "[data-check='add-ignore-region']"
 
     When I execute javascript code:
@@ -126,7 +126,7 @@ Feature: Check details - Regions
 
   Scenario: Regions - delete
     # add and check presence
-    Then I wait on element "[data-check='add-ignore-region']" to be displayed
+    When I wait 30 seconds for the element with locator "[data-check='add-ignore-region']" to be visible
     When I click element with locator "[data-check='add-ignore-region']"
 
     When I execute javascript code:
@@ -183,7 +183,7 @@ Feature: Check details - Regions
 
   Scenario: Regions - copy regions from previous baseline
     # add region to first check
-    Then I wait on element "[data-check='add-ignore-region']" to be displayed
+    When I wait 30 seconds for the element with locator "[data-check='add-ignore-region']" to be visible
     When I click element with locator "[data-check='add-ignore-region']"
 
     # save refresh page check presence
@@ -216,14 +216,16 @@ Feature: Check details - Regions
     When I unfold the test "TestName"
     When I click element with locator "[data-test-preview-image='CheckName']"
 
-    Then I wait on element "[data-check-header-name='CheckName']" to be displayed
+    When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
     When I wait for "3" seconds
     When I wait for canvas to be ready
+    When I wait for "2" seconds
     When I execute javascript code:
     """
      return (mainView.allRects.length.toString());
     """
 
+    When I wait for "1" seconds
     Then I expect the stored "js" string is equal:
     """
       1
@@ -236,7 +238,7 @@ Feature: Check details - Regions
     When I unfold the test "TestName"
     When I click element with locator "[data-test-preview-image='CheckName']"
 
-    Then I wait on element "[data-check-header-name='CheckName']" to be displayed
+    When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
     When I wait for "2" seconds
     When I wait for canvas to be ready
     When I execute javascript code:

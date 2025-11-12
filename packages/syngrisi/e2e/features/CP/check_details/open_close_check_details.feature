@@ -19,11 +19,11 @@ Feature: Open/Close Check Details
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
         Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
         When I click element with locator "[data-table-test-name=TestName]"
-        Then I wait on element "[data-table-check-name='CheckName']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-check-name='CheckName']" to be visible
         Then I wait on element "[data-check-header-name='CheckName']" to not exist
 
         When I click element with locator "[data-test-preview-image='CheckName']"
-        Then I wait on element "[data-check-header-name='CheckName']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
         Then the title is "CheckName"
 
         When I click element with locator "[data-test='close-check-detail-icon']"
@@ -41,11 +41,11 @@ Feature: Open/Close Check Details
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
         Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
         When I click element with locator "[data-table-test-name=TestName]"
-        Then I wait on element "[data-table-check-name='CheckName']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-check-name='CheckName']" to be visible
         Then I wait on element "[data-check-header-name='CheckName']" to not exist
 
         When I click element with locator "[data-test-preview-image='CheckName']"
-        Then I wait on element "[data-check-header-name='CheckName']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
         When I execute javascript code:
         """
@@ -55,6 +55,6 @@ Feature: Open/Close Check Details
         Then I wait on element "[data-check-header-name='CheckName']" to not be displayed
 
         When I open the url "<js:url>"
-        Then I wait on element "[data-check-header-name='CheckName']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
 

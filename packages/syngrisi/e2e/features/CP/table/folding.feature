@@ -38,7 +38,7 @@ Feature: Folding
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
         Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
         When I click element with locator "[data-table-test-name=TestName]"
-        Then I wait on element "[data-table-check-name='CheckName']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-check-name='CheckName']" to be visible
 
     Scenario: Fold/Unfold single item by select
         Given I create "2" tests with:
@@ -58,7 +58,7 @@ Feature: Folding
 
         # unfold
         When I click element with locator "[data-test='folding-table-items']"
-        Then I wait on element "[data-table-check-name='Check-0']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-check-name='Check-0']" to be visible
         Then I wait on element "[data-table-check-name='Check-1']" to not be displayed
 
         # fold
@@ -86,8 +86,8 @@ Feature: Folding
 
         # unfold
         When I click element with locator "[data-test='folding-table-items']"
-        Then I wait on element "[data-table-check-name='Check-0']" to be displayed
-        Then I wait on element "[data-table-check-name='Check-1']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-check-name='Check-0']" to be visible
+        When I wait 30 seconds for the element with locator "[data-table-check-name='Check-1']" to be visible
 
         # fold
         When I click element with locator "[data-test='folding-table-items']"
@@ -112,8 +112,8 @@ Feature: Folding
 
         # unfold
         When I click element with locator "[data-test='folding-table-items']"
-        Then I wait on element "[data-table-check-name='Check-0']" to be displayed
-        Then I wait on element "[data-table-check-name='Check-1']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-check-name='Check-0']" to be visible
+        When I wait 30 seconds for the element with locator "[data-table-check-name='Check-1']" to be visible
 
         # fold
         When I click element with locator "[data-test='folding-table-items']"

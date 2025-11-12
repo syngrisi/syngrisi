@@ -46,7 +46,7 @@ Feature: Login
 
         # login
         When I login with user:"j_doe@gmail.com" password "Password-123"
-        Then I wait on element "span*=JD" to be displayed
+        When I wait 30 seconds for the element with locator "span*=JD" to be visible
 
     @smoke
     Scenario: Login - Wrong password
@@ -58,8 +58,8 @@ Feature: Login
         When I login with user:"" password ""
         When I wait for "1" seconds
         # we cannot check native HTML required behavior then check only indirect signs
-        Then the element "#email" has attribute "required"
-        Then the element "#password" has attribute "required"
+        Then the element with locator "#email" should have has attribute "required"
+        Then the element with locator "#password" should have has attribute "required"
         Then the current url contains "/auth"
         Then the element with locator "#email" should be visible
         Then the element with locator "#password" should be visible
@@ -67,7 +67,7 @@ Feature: Login
     Scenario: Login - Invalid email
         When I login with user:"asd" password "PasswordInvEmail-567"
         When I wait for "1" seconds
-        Then the element ".mantine-Input-wrapper + div.mantine-InputWrapper-error" contains the text "Invalid email"
+        Then the element with locator ".mantine-Input-wrapper + div.mantine-InputWrapper-error" should have contains text "Invalid email"
 
     Scenario: Redirect via origin url
         When I open the url "<syngrisiUrl>?groupBy=test-distinct%2FbrowserName"

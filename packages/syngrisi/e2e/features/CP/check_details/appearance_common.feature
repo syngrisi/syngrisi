@@ -19,11 +19,11 @@ Feature: Check Detail Appearance
         When I go to "main" page
         When I unfold the test "TestName"
         When I click element with locator "[data-test-preview-image='CheckName']"
-        Then I wait on element "[data-check-header-name='CheckName']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
         # Header
         # status
-        Then I wait on element "[data-check-status-name='CheckName']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-check-status-name='CheckName']" to be visible
         Then the css attribute "background-color" from element "[data-check-status-name='CheckName']" is "rgba(34,139,230,1)"
         Then the element "[data-check-status-name='CheckName'] span" matches the text "NEW"
 
@@ -39,11 +39,11 @@ Feature: Check Detail Appearance
 
         # os
         Then the element with locator "[data-check='os']" should have contains text "macOS"
-        Then the element "[data-check='os-icon']" contains HTML "<title>macOS</title>"
+        Then the element with locator "[data-check='os-icon']" should have contains HTML "<title>macOS</title>"
 
         # browser
         Then the element with locator "[data-check='browser']" should have contains text "chrome"
-        Then the element "[data-check='browser-icon']" contains HTML "<title>chrome"
+        Then the element with locator "[data-check='browser-icon']" should have contains HTML "<title>chrome"
 
         # Toolbar
         # image size
@@ -51,16 +51,16 @@ Feature: Check Detail Appearance
         Then the element with locator "[data-check='image-date'] span" should have contains text "<YYYY-MM-DD>"
 
         # default view
-        Then the element "//*[@data-check='actual-view']/.." has the class "mantine-SegmentedControl-labelActive"
+        Then the element with locator "[data-segment-value='actual']" should have attribute "data-segment-active" "true"
 
         # accept icon before acceptance
-        Then the element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" has attribute "data-test-icon-type" "outline"
+        Then the element with locator "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" should have has attribute "data-test-icon-type=outline"
         Then the css attribute "color" from element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" is "rgba(134,142,150,1)"
 
         # accept icon after acceptance
         When I accept via http the 1st check with name "CheckName"
         When I refresh page
-        Then the element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" has attribute "data-test-icon-type" "fill"
+        Then the element with locator "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" should have has attribute "data-test-icon-type=fill"
         Then the css attribute "color" from element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" is "rgba(64,192,87,1)"
 
         # PASSED
@@ -75,21 +75,21 @@ Feature: Check Detail Appearance
         When I go to "main" page
         When I unfold the test "TestName"
         When I click element with locator "[data-test-preview-image='CheckName']"
-        Then I wait on element "[data-check-header-name='CheckName']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
         # Header
         # status
-        Then I wait on element "[data-check-status-name='CheckName']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-check-status-name='CheckName']" to be visible
         Then the css attribute "background-color" from element "[data-check-status-name='CheckName']" is "rgba(64,192,87,1)"
         Then the element "[data-check-status-name='CheckName'] span" matches the text "PASSED"
 
         # Toolbar
         # accept icon
-        Then the element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" has attribute "data-test-icon-type" "outline"
+        Then the element with locator "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" should have has attribute "data-test-icon-type=outline"
         Then the css attribute "color" from element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" is "rgba(64,192,87,1)"
 
         # default view
-        Then the element "//*[@data-check='actual-view']/.." has the class "mantine-SegmentedControl-labelActive"
+        Then the element with locator "[data-segment-value='actual']" should have attribute "data-segment-active" "true"
 
         # FAILED
         When I accept via http the 1st check with name "CheckName"
@@ -104,21 +104,21 @@ Feature: Check Detail Appearance
         When I go to "main" page
         When I unfold the test "TestName"
         When I click element with locator "[data-test-preview-image='CheckName']"
-        Then I wait on element "[data-check-header-name='CheckName']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
         # Header
         # status
-        Then I wait on element "[data-check-status-name='CheckName']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-check-status-name='CheckName']" to be visible
         Then the css attribute "background-color" from element "[data-check-status-name='CheckName']" is "rgba(250,82,82,1)"
         Then the element "[data-check-status-name='CheckName'] span" matches the text "FAILED"
 
         # Toolbar
         # accept icon
-        Then the element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" has attribute "data-test-icon-type" "outline"
+        Then the element with locator "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" should have has attribute "data-test-icon-type=outline"
         Then the css attribute "color" from element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" is "rgba(64,192,87,1)"
         # diff percent
         Then the element with locator "[data-check='diff-percent']" should have contains text "1.34%"
 
         # default view
-        Then the element "//*[@data-check='diff-view']/.." has the class "mantine-SegmentedControl-labelActive"
+        Then the element with locator "[data-segment-value='diff']" should have attribute "data-segment-active" "true"
 

@@ -28,18 +28,18 @@ Feature: Filter by project
               checkName: Check - 1
         """
         When I go to "main" page
-        Then I wait on element "[data-test*='navbar_item_']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-test*='navbar_item_']" to be visible
         Then the element "//*[@data-test='navbar-item-name' and contains(., 'RunName Project-1')]" does appear exactly "1" times
         Then the element "//*[@data-test='navbar-item-name' and contains(., 'RunName Project-2')]" does appear exactly "1" times
 
         When I select the option with the text "Project-1" for element "select[data-test='current-project']"
-        Then I wait on element "[data-test*='navbar_item_']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-test*='navbar_item_']" to be visible
         When I wait for "1" seconds
         Then the element "//*[@data-test='navbar-item-name' and contains(., 'RunName Project-1')]" does appear exactly "1" times
         Then the element "//*[@data-test='navbar-item-name' and contains(., 'RunName Project-2')]" does appear exactly "0" times
 
         When I select the option with the text "Project-2" for element "select[data-test='current-project']"
-        Then I wait on element "[data-test*='navbar_item_']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-test*='navbar_item_']" to be visible
         When I wait for "1" seconds
         Then the element "//*[@data-test='navbar-item-name' and contains(., 'RunName Project-1')]" does appear exactly "0" times
         Then the element "//*[@data-test='navbar-item-name' and contains(., 'RunName Project-2')]" does appear exactly "1" times

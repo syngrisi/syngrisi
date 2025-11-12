@@ -80,7 +80,7 @@ Feature: Remove checks
         # first
         When I open the 1st check "CheckName-1"
         When I wait 30 seconds for the element with locator "[data-check='check-name']" to be visible
-        Then the element "[data-check='check-name']" contains the text "CheckName-1"
+        Then the element with locator "[data-check='check-name']" should have contains text "CheckName-1"
 
         When I click element with locator ".modal [data-test='check-remove-icon']"
         When I wait 30 seconds for the element with locator "[data-test='check-remove-icon-confirm']" to be visible

@@ -17,14 +17,14 @@ Feature: Check Preview - Accept Icons View
         When I go to "main" page
         When I unfold the test "TestName"
 
-        Then the element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" has attribute "data-test-icon-type" "outline"
+        Then the element with locator "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" should have has attribute "data-test-icon-type=outline"
         Then the css attribute "color" from element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" is "rgba(134,142,150,1)"
 
         # accepted in the same check
         When I accept the "CheckName" check
 
         When I wait for "0.5" seconds
-        Then the element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" has attribute "data-test-icon-type" "fill"
+        Then the element with locator "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" should have has attribute "data-test-icon-type=fill"
         Then the css attribute "color" from element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" is "rgba(64,192,87,1)"
 
         # accepted in the previous check
@@ -38,5 +38,5 @@ Feature: Check Preview - Accept Icons View
         When I go to "main" page
         When I unfold the test "TestName"
 
-        Then the element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" has attribute "data-test-icon-type" "outline"
+        Then the element with locator "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" should have has attribute "data-test-icon-type=outline"
         Then the css attribute "color" from element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" is "rgba(64,192,87,1)"

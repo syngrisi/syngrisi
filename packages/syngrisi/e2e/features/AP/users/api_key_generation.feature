@@ -56,7 +56,7 @@ Feature: API key generation
         When I wait for "2" seconds
         When I open the app
         When I wait for "3" seconds
-        Then I wait on element "[data-table-test-creatorusername='user@gmail.com']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-test-creatorusername='user@gmail.com']" to be visible
         Then the element "[data-table-test-creatorusername='user@gmail.com']" does appear exactly "1" times
 
 

@@ -21,7 +21,7 @@ Feature: Create User
         Given I start Server and start Driver
         When I reload session
         When I login with user:"Test" password "123456aA-"
-        Then I wait on element "span*=TA" to be displayed
+        When I wait 30 seconds for the element with locator "span*=TA" to be visible
         When I set window size: "1700x768"
 
     @smoke
@@ -48,7 +48,7 @@ Feature: Create User
         When I go to "logout" page
         When I wait for "3" seconds
         When I login with user:"j_doe@gmail.com" password "Password-123"
-        Then I wait on element "span*=JD" to be displayed
+        When I wait 30 seconds for the element with locator "span*=JD" to be visible
 
     Scenario: Create User - User Already Exist
         When I go to "admin2" page
@@ -88,9 +88,9 @@ Feature: Create User
         When I set "j_doe@" to the inputfield "[data-test=user-add-email]"
         Then the element with locator "//input[@data-test='user-add-email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" should have contains text "Invalid email format"
 
-        Then the element "//input[@data-test='user-add-first-name']" has attribute "disabled"
-        Then the element "//input[@data-test='user-add-last-name']" has attribute "disabled"
-        Then the element "//input[@data-test='user-add-role']" has attribute "disabled"
+        Then the element with locator "//input[@data-test='user-add-first-name']" should have has attribute "disabled"
+        Then the element with locator "//input[@data-test='user-add-last-name']" should have has attribute "disabled"
+        Then the element with locator "//input[@data-test='user-add-role']" should have has attribute "disabled"
 
         When I scroll to element "#create"
         When I wait for "1" seconds
@@ -105,8 +105,8 @@ Feature: Create User
         When I set "j_doe@xxx" to the inputfield "[data-test=user-add-email]"
         And the element "//input[@data-test='user-add-email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" does not exist
 
-        Then the element "//input[@data-test='user-add-first-name']" does not have attribute "disabled"
-        Then the element "//input[@data-test='user-add-last-name']" does not have attribute "disabled"
-        Then the element "//input[@data-test='user-add-role']" does not have attribute "disabled"
+        Then the element with locator "//input[@data-test='user-add-first-name']" should not have attribute "disabled"
+        Then the element with locator "//input[@data-test='user-add-last-name']" should not have attribute "disabled"
+        Then the element with locator "//input[@data-test='user-add-role']" should not have attribute "disabled"
 
 

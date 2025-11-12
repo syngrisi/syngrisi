@@ -29,13 +29,17 @@ const STRING_ASSERTIONS = {
   'has value': (locator: Locator, expected: string) => expect(locator).toHaveValue(expected),
   'contains value': (locator: Locator, expected: string) =>
     expect(locator).toHaveValue(new RegExp(escapeForRegex(expected))),
-  'has class': (locator: Locator, expected: string) => expect(locator).toHaveClass(expected),
+  'has class': (locator: Locator, expected: string) => expect(locator).toHaveClass(new RegExp(escapeForRegex(expected))),
   'contains class': (locator: Locator, expected: string) => expect(locator).toContainClass(expected),
   'has id': (locator: Locator, expected: string) => expect(locator).toHaveId(expected),
   'has accessible name': (locator: Locator, expected: string) =>
     expect(locator).toHaveAccessibleName(expected),
   'has accessible description': (locator: Locator, expected: string) =>
-    expect(locator).toHaveAccessibleDescription(expected)
+    expect(locator).toHaveAccessibleDescription(expected),
+  'contains HTML': async (locator: Locator, expected: string) => {
+    const html = await locator.first().innerHTML();
+    expect(html).toContain(expected);
+  }
 } as const;
 
 const NUMBER_ASSERTIONS = {

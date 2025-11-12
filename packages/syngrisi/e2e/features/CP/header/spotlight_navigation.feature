@@ -12,7 +12,7 @@ Feature: Spotlight
         Then I wait on element ".mantine-Spotlight-spotlight" to not be displayed
         And I hold key "Control"
         And I press "k"
-        Then I wait on element ".mantine-Spotlight-spotlight" to be displayed
+        When I wait 30 seconds for the element with locator ".mantine-Spotlight-spotlight" to be visible
 
         When I release key "Control"
         And I press "Escape"
@@ -20,14 +20,14 @@ Feature: Spotlight
 
         # using mouse clicks
         When I click element with locator "[data-test='spotlight-button']"
-        Then I wait on element ".mantine-Spotlight-spotlight" to be displayed
+        When I wait 30 seconds for the element with locator ".mantine-Spotlight-spotlight" to be visible
 
         When I click on the element "[data-test='logo-text']" via js
         Then I wait on element ".mantine-Spotlight-spotlight" to not be displayed
 
     Scenario Outline:  Spotlight Navigation - <keyword>
         When I click element with locator "[data-test='spotlight-button']"
-        Then I wait on element ".mantine-Spotlight-spotlight" to be displayed
+        When I wait 30 seconds for the element with locator ".mantine-Spotlight-spotlight" to be visible
 
         When I set "<keyword>" to the inputfield ".mantine-Spotlight-searchInput"
         And I press "Enter"
@@ -50,7 +50,7 @@ Feature: Spotlight
         Then the css attribute "color" from element "[data-test='logo-container']" is "rgba(0,0,0,1)"
 
         When I click element with locator "[data-test='spotlight-button']"
-        Then I wait on element ".mantine-Spotlight-spotlight" to be displayed
+        When I wait 30 seconds for the element with locator ".mantine-Spotlight-spotlight" to be visible
 
         # switch theme
         When I set "theme" to the inputfield ".mantine-Spotlight-searchInput"

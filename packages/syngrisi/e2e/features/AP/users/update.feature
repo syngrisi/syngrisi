@@ -19,7 +19,7 @@ Feature: Update User
         """
         Given I start Server and start Driver
         When I login with user:"Test" password "123456aA-"
-        Then I wait on element "span*=TA" to be displayed
+        When I wait 30 seconds for the element with locator "span*=TA" to be visible
         When I login via http with user:"Test" password "123456aA-"
         When I create via http user as:"Test" with params:
         """
@@ -49,7 +49,7 @@ Feature: Update User
         Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-first-name']" should have value "Alex"
         Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-last-name']" should have value "Jonson"
         Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-role']" should have value "Reviewer"
-        Then I wait on element "//div[contains(@class, 'mantine-Notification-title') and text()='Success']" to be displayed
+        When I wait 30 seconds for the element with locator "//div[contains(@class, 'mantine-Notification-title') and text()='Success']" to be visible
 
         When I refresh page
         Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-email']" should have value "j_doe@gmail.com"

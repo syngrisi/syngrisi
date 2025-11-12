@@ -49,12 +49,12 @@ Feature: Test Isolation by Run
 
     # checks
     When I click element with locator "[data-table-test-name='TestRun-1.1']"
-    Then I wait on element "[data-table-check-name='CheckRun-1.1']" to be displayed
-    Then I wait on element "[data-table-check-name='CheckRun-1.2']" to be displayed
+    When I wait 30 seconds for the element with locator "[data-table-check-name='CheckRun-1.1']" to be visible
+    When I wait 30 seconds for the element with locator "[data-table-check-name='CheckRun-1.2']" to be visible
 
     When I click element with locator "[data-table-test-name='TestRun-1.2']"
-    Then I wait on element "[data-table-check-name='CheckRun-1.1.1']" to be displayed
-    Then I wait on element "[data-table-check-name='CheckRun-1.2.2']" to be displayed
+    When I wait 30 seconds for the element with locator "[data-table-check-name='CheckRun-1.1.1']" to be visible
+    When I wait 30 seconds for the element with locator "[data-table-check-name='CheckRun-1.2.2']" to be visible
 
     # Run-2
     # tests

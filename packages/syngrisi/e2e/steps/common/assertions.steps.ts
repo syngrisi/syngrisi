@@ -498,6 +498,54 @@ Then(
   }
 );
 
+Then(
+  'the element with {target} {string} should not have attribute {string}',
+  async ({ page }, target: ElementTarget, rawValue: string, attributeName: string) => {
+    const locator = locatorFromTarget(page, target, rawValue);
+    await expect(locator.first()).not.toHaveAttribute(attributeName);
+  }
+);
+
+Then(
+  'the element with {target} {string} should not have attribute {string} {string}',
+  async ({ page }, target: ElementTarget, rawValue: string, attributeName: string, expected: string) => {
+    const locator = locatorFromTarget(page, target, rawValue);
+    await expect(locator.first()).not.toHaveAttribute(attributeName, expected);
+  }
+);
+
+Then(
+  'the element with {target} {string} should have attribute {string} {string}',
+  async ({ page }, target: ElementTarget, rawValue: string, attributeName: string, expected: string) => {
+    const locator = locatorFromTarget(page, target, rawValue);
+    await expect(locator.first()).toHaveAttribute(attributeName, expected);
+  }
+);
+
+Then(
+  'the element with {target} {string} should have has attribute {string}',
+  async ({ page }, target: ElementTarget, rawValue: string, attributeValue: string) => {
+    const locator = locatorFromTarget(page, target, rawValue);
+    await assertCondition(locator, 'has attribute', attributeValue);
+  }
+);
+
+Then(
+  'the element with {target} {string} should have contains HTML {string}',
+  async ({ page }, target: ElementTarget, rawValue: string, expected: string) => {
+    const locator = locatorFromTarget(page, target, rawValue);
+    await assertCondition(locator, 'contains HTML', expected);
+  }
+);
+
+Then(
+  'the element with {target} {string} should have has class {string}',
+  async ({ page }, target: ElementTarget, rawValue: string, className: string) => {
+    const locator = locatorFromTarget(page, target, rawValue);
+    await assertCondition(locator, 'has class', className);
+  }
+);
+
 /**
  * Step definition: `Then the table containing {string} should be {condition}`
  *
@@ -801,16 +849,6 @@ When('I wait on element {string} to exist', async ({ page }, selector: string) =
   await locator.first().waitFor({ state: 'attached', timeout: 30000 });
 });
 
-Then('I wait on element {string} to be displayed', async ({ page }, selector: string) => {
-  const locator = getLocatorQuery(page, selector);
-  await locator.first().waitFor({ state: 'visible', timeout: 30000 });
-});
-
-Then('I wait on element {string} for {ordinal} to be displayed', async ({ page }, selector: string, timeoutMs: number) => {
-  const locator = getLocatorQuery(page, selector);
-  const timeout = timeoutMs + 1;
-  await locator.first().waitFor({ state: 'visible', timeout });
-});
 
 Then(
   'the element {string} contains the text {string}',
@@ -991,6 +1029,44 @@ When(
       value: testData.renderTemplate(value),
     });
     await locator.first().waitFor({ state: 'hidden', timeout: timeoutInSeconds * 1000 });
+  },
+);
+
+When(
+  'I wait {int} seconds for the {role} with {attribute} {string} to not exist',
+  async (
+    { page, testData }: { page: Page; testData: TestStore },
+    timeoutInSeconds: number,
+    role: AriaRole,
+    attribute: ElementAttribute,
+    value: string,
+  ) => {
+    const locator = getLocator({
+      page,
+      role: role as AriaRole | 'element',
+      attribute,
+      value: testData.renderTemplate(value),
+    });
+    await locator.first().waitFor({ state: 'detached', timeout: timeoutInSeconds * 1000 });
+  },
+);
+
+When(
+  'I wait {int} seconds for the {role} with {attribute} {string} to exist',
+  async (
+    { page, testData }: { page: Page; testData: TestStore },
+    timeoutInSeconds: number,
+    role: AriaRole,
+    attribute: ElementAttribute,
+    value: string,
+  ) => {
+    const locator = getLocator({
+      page,
+      role: role as AriaRole | 'element',
+      attribute,
+      value: testData.renderTemplate(value),
+    });
+    await locator.first().waitFor({ state: 'attached', timeout: timeoutInSeconds * 1000 });
   },
 );
 

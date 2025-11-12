@@ -69,7 +69,7 @@ Feature: User roles
         When I reload session
         When I open the app
         When I login with user:"user@gmail.com" password "Password-123"
-        Then I wait on element "span*=JD" to be displayed
+        When I wait 30 seconds for the element with locator "span*=JD" to be visible
 
         # generate and parse API key
         When I click element with locator "span*=JD"
@@ -96,7 +96,7 @@ Feature: User roles
         ## reviewer
         # login
         When I login with user:"reviewer@gmail.com" password "Password-123"
-        Then I wait on element "span*=RR" to be displayed
+        When I wait 30 seconds for the element with locator "span*=RR" to be visible
 
         # generate and parse API key
         When I click element with locator "span*=RR"
@@ -120,7 +120,7 @@ Feature: User roles
         ## admin
         # login
         When I login with user:"superadmin@gmail.com" password "Password-123"
-        Then I wait on element "span*=SD" to be displayed
+        When I wait 30 seconds for the element with locator "span*=SD" to be visible
 
         # generate and parse API key
         When I click element with locator "span*=SD"
@@ -148,7 +148,7 @@ Feature: User roles
         ## USER
         # login
         When I login with user:"user@gmail.com" password "Password-123"
-        Then I wait on element "span*=JD" to be displayed
+        When I wait 30 seconds for the element with locator "span*=JD" to be visible
         # checks
 
         When I wait for "3" seconds
@@ -163,7 +163,7 @@ Feature: User roles
         ## REVIEWER
         # login
         When I login with user:"reviewer@gmail.com" password "Password-123"
-        Then I wait on element "span*=RR" to be displayed
+        When I wait 30 seconds for the element with locator "span*=RR" to be visible
         # checks
         When I wait for "3" seconds
 
@@ -182,7 +182,7 @@ Feature: User roles
         ## ADMIN
         # login
         When I login with user:"superadmin@gmail.com" password "Password-123"
-        Then I wait on element "span*=SD" to be displayed
+        When I wait 30 seconds for the element with locator "span*=SD" to be visible
         # checks
         Then the element "//div[contains(text(), 'User test')]" does appear exactly "5" times
         Then the element "[data-table-test-creatorusername='user@gmail.com']" does appear exactly "5" times

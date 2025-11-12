@@ -20,7 +20,7 @@ Feature: Pagination
               checkName: Check - 2
         """
     When I go to "main" page
-    Then I wait on element "[data-test*='navbar_item_']" to be displayed
+    When I wait 30 seconds for the element with locator "[data-test*='navbar_item_']" to be visible
     Then the element "[data-test*='navbar_item_']" does appear exactly "20" times
     When I scroll to element "[data-test*='navbar_item_11']"
     When I wait for "1" seconds
@@ -55,10 +55,10 @@ Feature: Pagination
     """
 
     When I go to "main" page
-    Then I wait on element "[data-test*='navbar_item_']" to be displayed
+    When I wait 30 seconds for the element with locator "[data-test*='navbar_item_']" to be visible
     When I select the option with the text "Suites" for element "select[data-test='navbar-group-by']"
 
-    Then I wait on element "[data-test*='navbar_item_']" for 15000ms to be displayed
+    When I wait 30 seconds for the element with locator "[data-test*='navbar_item_']" for 15000ms to be visible
     Then the element "[data-test*='navbar_item_']" does appear exactly "20" times
     When I scroll to element "[data-test*='navbar_item_11']"
     When I wait for "1" seconds

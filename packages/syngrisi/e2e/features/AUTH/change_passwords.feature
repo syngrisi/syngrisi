@@ -51,7 +51,7 @@ Feature: Change Password
     Scenario: Change Password - Smoke
         # login
         When I login with user:"j_doe@gmail.com" password "Password-123"
-        Then I wait on element "span*=JD" to be displayed
+        When I wait 30 seconds for the element with locator "span*=JD" to be visible
         # change password
         When I go to "change_password" page
         When I set "Password-123" to the inputfield "#current-password"
@@ -66,7 +66,7 @@ Feature: Change Password
         When I go to "logout" page
         When I wait for "2" seconds
         When I login with user:"j_doe@gmail.com" password "Password-456"
-        Then I wait on element "span*=JD" to be displayed
+        When I wait 30 seconds for the element with locator "span*=JD" to be visible
 
     Scenario: Change Password - User not Logged In
         When I go to "change_password" page
@@ -80,7 +80,7 @@ Feature: Change Password
     Scenario: Change Password - Wrong Current Password
         # login
         When I login with user:"j_doe@gmail.com" password "Password-123"
-        Then I wait on element "span*=JD" to be displayed
+        When I wait 30 seconds for the element with locator "span*=JD" to be visible
 
         When I go to "change_password" page
         When I set "WRONGpass-123" to the inputfield "#current-password"
@@ -93,12 +93,12 @@ Feature: Change Password
     Scenario: Change Password - Validation
         # login
         When I login with user:"j_doe@gmail.com" password "Password-123"
-        Then I wait on element "span*=JD" to be displayed
+        When I wait 30 seconds for the element with locator "span*=JD" to be visible
 
         When I go to "change_password" page
-        Then the element "#current-password" has attribute "required"
-        Then the element "#new-password" has attribute "required"
-        Then the element "#new-password-confirmation" has attribute "required"
+        Then the element with locator "#current-password" should have has attribute "required"
+        Then the element with locator "#new-password" should have has attribute "required"
+        Then the element with locator "#new-password-confirmation" should have has attribute "required"
 
         Then the css attribute "color" from element "#include-six-chars" is "rgba(250,82,82,1)"
         Then the css attribute "color" from element "#include-numbers" is "rgba(250,82,82,1)"
@@ -144,7 +144,7 @@ Feature: Change Password
         When I set "123" to the inputfield "#current-password"
         When I set "123" to the inputfield "#new-password-confirmation"
         When I click element with locator "#change-password"
-        Then the element "//*[@id='new-password-confirmation']/../../following-sibling::*" contains the text "New password and password confirmation must be match"
+        Then the element with locator "//*[@id='new-password-confirmation']/../../following-sibling::*" should have contains text "New password and password confirmation must be match"
 
 
 

@@ -23,7 +23,7 @@ Feature: Side to side view
         When I go to "main" page
         When I unfold the test "TestName"
         When I click element with locator "[data-test-preview-image='CheckName']"
-        Then I wait on element "[data-check-header-name='CheckName']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
     Scenario: Divider in the center
         When I wait 30 seconds for the element with locator "//div[normalize-space(text())='Slider']" to be visible
@@ -40,8 +40,8 @@ Feature: Side to side view
             """
             372
             """
-        Then I wait on element "#label_expected" to be displayed
-        Then I wait on element "#label_actual" to be displayed
+        When I wait 30 seconds for the element with locator "#label_expected" to be visible
+        When I wait 30 seconds for the element with locator "#label_actual" to be visible
 
         When I click element with locator "#snapshoot"
 

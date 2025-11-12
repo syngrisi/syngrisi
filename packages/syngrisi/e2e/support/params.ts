@@ -43,7 +43,8 @@ const VALUE_CONDITION_NAMES: ValueCondition[] = [
   'has accessible description',
   'has count',
   'has attribute',
-  'has css'
+  'has css',
+  'contains HTML'
 ];
 
 export type StepCondition = StateCondition;
