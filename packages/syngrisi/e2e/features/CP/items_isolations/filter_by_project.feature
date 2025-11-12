@@ -30,20 +30,20 @@ Feature: Filter by Project
         """
         When I go to "main" page
 
-        When I wait on element "[data-table-test-name='TestName Project-1']" to be displayed
-        When I wait on element "[data-table-test-name='TestName Project-2']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-test-name='TestName Project-1']" to be visible
+        When I wait 30 seconds for the element with locator "[data-table-test-name='TestName Project-2']" to be visible
 
         Then I expect that element "[data-table-test-name='TestName Project-1']" does appear exactly "1" times
         Then I expect that element "[data-table-test-name='TestName Project-2']" does appear exactly "1" times
 
         When I select the option with the text "Project-1" for element "select[data-test='current-project']"
         When I wait for "1" seconds
-        When I wait on element "[data-table-test-name='TestName Project-1']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-test-name='TestName Project-1']" to be visible
         Then I expect that element "[data-table-test-name='TestName Project-1']" does appear exactly "1" times
         Then I expect that element "[data-table-test-name='TestName Project-2']" does appear exactly "0" times
 
         When I select the option with the text "Project-2" for element "select[data-test='current-project']"
         When I wait for "1" seconds
-        When I wait on element "[data-table-test-name='TestName Project-2']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-test-name='TestName Project-2']" to be visible
         Then I expect that element "[data-table-test-name='TestName Project-1']" does appear exactly "0" times
         Then I expect that element "[data-table-test-name='TestName Project-2']" does appear exactly "1" times

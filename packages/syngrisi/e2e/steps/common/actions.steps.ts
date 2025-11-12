@@ -10,60 +10,6 @@ import { createLogger } from '@lib/logger';
 const logger = createLogger('ActionsSteps');
 
 /**
- * Clicks on an element resolved via ARIA role and accessible name.
- *
- * @param page - Playwright {@link Page} injected by the BDD world.
- * @param role - {@link AriaRole} captured from the `{role}` parameter.
- * @param name - Accessible name supplied via the quoted string in the step.
- * @param ordinal - Zero-based ordinal (derived from the `{ordinal}` parameter) to disambiguate multiple matches.
- */
-async function clickRole(
-  page: Page,
-  role: AriaRole,
-  name: string,
-  ordinal?: number
-) {
-  const locator = getRoleLocator(page, role, name, ordinal);
-  await locator.click();
-}
-
-/**
- * Step definition: `When I click {role} {string}`
- *
- * @param role - Role mapped by the `{role}` parameter type.
- * @param name - Accessible name of the element to interact with.
- *
- * @example
- * ```gherkin
- * When I click button "Submit"
- * ```
- */
-When('I click {role} {string}', async ({ page, testData }, role: AriaRole, name: string) => {
-  const renderedName = renderTemplate(name, testData);
-  await clickRole(page, role, renderedName);
-});
-
-/**
- * Step definition: `When I click {ordinal} {role} {string}`
- *
- * @param ordinal - Zero-based ordinal derived from natural-language ordinals (e.g. `2nd` -> `1`).
- * @param role - Role mapped by the `{role}` parameter type.
- * @param name - Accessible name of the element to interact with.
- *
- * @example
- * ```gherkin
- * When I click 2nd button "Remove"
- * ```
- */
-When(
-  'I click {ordinal} {role} {string}',
-  async ({ page, testData }, ordinal: number, role: AriaRole, name: string) => {
-    const renderedName = renderTemplate(name, testData);
-    await clickRole(page, role, renderedName, ordinal);
-  }
-);
-
-/**
  * Step definition: `When I click element with {target} {string}`
  *
  * Resolves either:
@@ -94,40 +40,6 @@ When(
       const locator = getLocatorQuery(page, renderedValue);
       await locator.first().waitFor({ state: 'visible', timeout: 5000 });
       await locator.first().click();
-      return;
-    }
-
-    throw new Error(`Unsupported target: ${target}`);
-  }
-);
-
-/**
- * Step definition: `When I click {ordinal} element with {target} {string}`
- *
- * @param ordinal - Zero-based ordinal index derived from the `{ordinal}` parameter.
- * @param target - {@link ElementTarget} defining how to resolve the locator.
- * @param rawValue - Label text or locator query used to find the elements.
- *
- * @example
- * ```gherkin
- * When I click 2nd element with locator ".todo-item .remove"
- * ```
- */
-When(
-  'I click {ordinal} element with {target} {string}',
-  async ({ page, testData }, ordinal: number, target: ElementTarget, rawValue: string) => {
-    const renderedValue = renderTemplate(rawValue, testData);
-
-    if (target === 'label') {
-      const locator = getLabelLocator(page, renderedValue, ordinal);
-      await locator.click();
-      return;
-    }
-
-    if (target === 'locator') {
-      const locator = getLocatorQuery(page, renderedValue, ordinal);
-      await locator.waitFor({ state: 'visible', timeout: 10000 });
-      await locator.click();
       return;
     }
 
@@ -220,7 +132,7 @@ When(/I wait for "(.+)" second(?:s)?/, async ({ page, testData }, rawSeconds: st
  * Step definition: `When I wait {number} second(s)`
  *
  * Waits for the specified number of seconds, accepting templated values.
- * This pattern does NOT match "I wait for ..." format.
+ * This pattern does NOT match "I wait for ..." format or "I wait X seconds for the ..." format.
  *
  * @param rawSeconds - String representation of the seconds to wait.
  *
@@ -229,7 +141,7 @@ When(/I wait for "(.+)" second(?:s)?/, async ({ page, testData }, rawSeconds: st
  * When I wait 3 seconds
  * ```
  */
-When(/I wait (?!for)(.+) second(?:s)?/, async ({ page, testData }, rawSeconds: string) => {
+When(/^I wait (?!for)(\d+(?:\.\d+)?)\s+second(?:s)?(?!\s+for\s+the)$/, async ({ page, testData }, rawSeconds: string) => {
   const renderedSeconds = renderTemplate(rawSeconds, testData).trim();
   const seconds = Number.parseFloat(renderedSeconds);
 

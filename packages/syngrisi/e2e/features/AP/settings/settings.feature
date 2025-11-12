@@ -6,7 +6,7 @@ Feature: Admin Settings
 
     Scenario: Change Admin Settings - Enable Auth
         When I go to "settings" page
-        When I wait on element "[data-test='settings_value_authentication']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-test='settings_value_authentication']" to be visible
         Then I expect that element "select[data-test='settings_value_authentication']" contain value "false"
         When I select the option with the text "true" for element "select[data-test='settings_value_authentication']"
         Then I expect that element "select[data-test='settings_value_authentication']" contain value "true"
@@ -15,7 +15,7 @@ Feature: Admin Settings
 
         When I go to "logout" page
         When I wait for "3" seconds
-        When I wait on element "h1=Success!" to be displayed
+        When I wait 30 seconds for the element with locator "h1=Success!" to be visible
         When I open the app
         Then I expect the url to contain "/auth"
         Then I expect that the title is "Login Page"
@@ -42,7 +42,7 @@ Feature: Admin Settings
         """
         Given I start Server and start Driver
         When I go to "settings" page
-        When I wait on element "[data-test='settings_value_first_run']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-test='settings_value_first_run']" to be visible
 
         Then I expect that element "select[data-test='settings_value_first_run']" contain value "true"
         When I select the option with the text "false" for element "select[data-test='settings_value_first_run']"

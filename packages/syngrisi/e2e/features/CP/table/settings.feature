@@ -15,7 +15,7 @@ Feature: Tests Table Settings
               checkName: Check - 1
         """
         When I go to "main" page
-        When I wait on element "[data-test='table-header-Id']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-test='table-header-Id']" to be visible
         Then I expect that element "[data-test='table-header-Id']" is displayed
         Then I expect that element "[data-test='table-header-Name']" is displayed
         Then I expect that element "[data-test='table-header-Status']" is displayed
@@ -46,7 +46,7 @@ Feature: Tests Table Settings
         Then I expect that element "tbody tr:first-of-type td" does appear exactly "9" times
 
         When I click on the element "[data-test='settings-visible-columns-Id']" via js
-        When I wait on element "[data-test='table-header-Id']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-test='table-header-Id']" to be visible
         Then I expect that element "th" does appear exactly "10" times
         Then I expect that element "tbody tr:first-of-type td" does appear exactly "10" times
 
@@ -60,9 +60,9 @@ Feature: Tests Table Settings
               checkName: Check - 1
         """
         When I go to "main" page
-        When I wait on element "[data-table-test-name=TestName-0]" for 10000ms to be displayed
-        When I wait on element "[data-table-test-name=TestName-1]" for 10000ms to be displayed
-        When I wait on element "[data-table-test-name=TestName-2]" for 10000ms to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-0]" for 10000ms to be visible
+        When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-1]" for 10000ms to be visible
+        When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-2]" for 10000ms to be visible
         When I execute javascript code:
             """
             const elements = Array

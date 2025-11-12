@@ -26,7 +26,7 @@ Feature: Quick Filtering
         When I go to "main" page
 
 
-        When I wait on element "[data-test='table-quick-filter']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-test='table-quick-filter']" to be visible
 
         When I set "TestName-" to the inputfield "[data-test='table-quick-filter']"
         When I wait for "2" seconds
@@ -64,7 +64,7 @@ Feature: Quick Filtering
         """
 
         When I go to "main" page
-        When I wait on element "[data-test='table-quick-filter']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-test='table-quick-filter']" to be visible
 
         Then I wait on element "[data-table-test-name='TestNameP1-0']" to be displayed
         Then I wait on element "[data-table-test-name='TestNameP1-1']" to be displayed

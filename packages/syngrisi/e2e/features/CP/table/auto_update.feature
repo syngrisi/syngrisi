@@ -21,7 +21,7 @@ Feature: Test Auto Update
               checkName: CheckName
         """
         When I go to "main" page
-        When I wait on element "[data-table-test-name=TestName-before]" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-before]" to be visible
 
         When I wait for "3" seconds
         When I refresh page
@@ -35,9 +35,9 @@ Feature: Test Auto Update
         When I wait for "5" seconds
 
         Then I expect that element "[data-test='table-refresh-icon-badge']" to contain text "3"
-        When I wait on element "[data-table-test-name=TestName-before]" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-before]" to be visible
 
         When I click element with locator "[data-test='table-refresh-icon']"
         When I wait for "10" seconds
-        When I wait on element "[data-table-test-name=TestName-after]" for 10000ms to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-after]" for 10000ms to be visible
         Then I expect that element "[data-table-test-name=TestName-after]" does appear exactly "3" times

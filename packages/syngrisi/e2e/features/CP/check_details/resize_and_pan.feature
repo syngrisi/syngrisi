@@ -20,7 +20,7 @@ Feature: Check details Resize and Pan
     Scenario: Resize Dropdown Usage
         # 50%
         When I click element with locator "[data-check='open-zoom-dropdown']"
-        When I wait on element "//*[@data-check='zoom-dropdown']//div[text()='50%']" to be displayed
+        When I wait 30 seconds for the element with locator "//*[@data-check='zoom-dropdown']//div[text()='50%']" to be visible
         When I click element with locator "//*[@data-check='zoom-dropdown']//div[text()='50%']"
         When I wait for "0.5" seconds
         When I execute javascript code:
@@ -34,7 +34,7 @@ Feature: Check details Resize and Pan
 
         # 100%
         When I click element with locator "[data-check='open-zoom-dropdown']"
-        When I wait on element "//*[@data-check='zoom-dropdown']//div[text()='100%']" to be displayed
+        When I wait 30 seconds for the element with locator "//*[@data-check='zoom-dropdown']//div[text()='100%']" to be visible
         When I click element with locator "//*[@data-check='zoom-dropdown']//div[text()='100%']"
         When I wait for "0.5" seconds
         When I execute javascript code:
@@ -48,7 +48,7 @@ Feature: Check details Resize and Pan
 
         # 200%
         When I click element with locator "[data-check='open-zoom-dropdown']"
-        When I wait on element "//*[@data-check='zoom-dropdown']//div[text()='200%']" to be displayed
+        When I wait 30 seconds for the element with locator "//*[@data-check='zoom-dropdown']//div[text()='200%']" to be visible
         When I click element with locator "//*[@data-check='zoom-dropdown']//div[text()='200%']"
         When I wait for "0.5" seconds
         When I execute javascript code:
@@ -62,7 +62,7 @@ Feature: Check details Resize and Pan
 
         # Fit by width
         When I click element with locator "[data-check='open-zoom-dropdown']"
-        When I wait on element "//*[@data-check='zoom-dropdown']//div[text()='Fit by width ']" to be displayed
+        When I wait 30 seconds for the element with locator "//*[@data-check='zoom-dropdown']//div[text()='Fit by width ']" to be visible
         When I click element with locator "//*[@data-check='zoom-dropdown']//div[text()='Fit by width ']"
         When I wait for "0.5" seconds
         When I execute javascript code:
@@ -76,7 +76,7 @@ Feature: Check details Resize and Pan
 
         # Fit by canvas
         When I click element with locator "[data-check='open-zoom-dropdown']"
-        When I wait on element "//*[@data-check='zoom-dropdown']//div[text()='Fit to canvas ']" to be displayed
+        When I wait 30 seconds for the element with locator "//*[@data-check='zoom-dropdown']//div[text()='Fit to canvas ']" to be visible
         When I click element with locator "//*[@data-check='zoom-dropdown']//div[text()='Fit to canvas ']"
         When I wait for "0.5" seconds
         When I execute javascript code:

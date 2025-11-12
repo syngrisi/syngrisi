@@ -37,14 +37,14 @@ Feature: Test Isolation by Run
     When I refresh page
 
     # all tests
-    When I wait on element "//div[contains(text(), 'TestRun')]" to be displayed
+    When I wait 30 seconds for the element with locator "//div[contains(text(), 'TestRun')]" to be visible
     Then I expect that element "//div[contains(text(), 'TestRun')]" does appear exactly "3" times
 
     # Run-1
     # tests
     When I click element with locator "[data-item-name='Run-1']"
-    When I wait on element "//div[contains(text(), 'TestRun-1.1')]" to be displayed
-    When I wait on element "//div[contains(text(), 'TestRun-1.2')]" to be displayed
+    When I wait 30 seconds for the element with locator "//div[contains(text(), 'TestRun-1.1')]" to be visible
+    When I wait 30 seconds for the element with locator "//div[contains(text(), 'TestRun-1.2')]" to be visible
     When I wait on element "//div[contains(text(), 'TestRun-2')]" to not be displayed
 
     # checks
@@ -59,7 +59,7 @@ Feature: Test Isolation by Run
     # Run-2
     # tests
     When I click element with locator "[data-item-name='Run-2']"
-    When I wait on element "//div[contains(text(), 'TestRun-2')]" to be displayed
+    When I wait 30 seconds for the element with locator "//div[contains(text(), 'TestRun-2')]" to be visible
     When I wait on element "//div[contains(text(), 'TestRun-1.1')]" to not be displayed
     When I wait on element "//div[contains(text(), 'TestRun-1.2')]" to not be displayed
 
@@ -83,16 +83,16 @@ Feature: Test Isolation by Run
 
     When I refresh page
     # all tests
-    When I wait on element "//div[contains(text(), 'TestRun')]" to be displayed
+    When I wait 30 seconds for the element with locator "//div[contains(text(), 'TestRun')]" to be visible
     Then I expect that element "//div[contains(text(), 'TestRun')]" does appear exactly "2" times
 
     # second run
     When I click element with locator "(//*[@data-item-name='Run-1'])[1]"
-    When I wait on element "//div[contains(text(), 'TestRun-2')]" to be displayed
+    When I wait 30 seconds for the element with locator "//div[contains(text(), 'TestRun-2')]" to be visible
 
     # first run
     When I click element with locator "(//*[@data-item-name='Run-1'])[2]"
-    When I wait on element "//div[contains(text(), 'TestRun-1')]" to be displayed
+    When I wait 30 seconds for the element with locator "//div[contains(text(), 'TestRun-1')]" to be visible
 
   Scenario: Checks Isolation by Run - same name same ident
     Given I create "1" tests with:
@@ -115,10 +115,10 @@ Feature: Test Isolation by Run
     When I refresh page
 
     # only 1 run
-    When I wait on element "//div[contains(text(), 'TestRun')]" to be displayed
+    When I wait 30 seconds for the element with locator "//div[contains(text(), 'TestRun')]" to be visible
     Then I expect that element "//div[contains(text(), 'TestRun')]" does appear exactly "2" times
 
     # 2 tests in run
     When I click element with locator "(//*[@data-item-name='Run-1'])[1]"
-    When I wait on element "//div[contains(text(), 'TestRun-1')]" to be displayed
-    When I wait on element "//div[contains(text(), 'TestRun-2')]" to be displayed
+    When I wait 30 seconds for the element with locator "//div[contains(text(), 'TestRun-1')]" to be visible
+    When I wait 30 seconds for the element with locator "//div[contains(text(), 'TestRun-2')]" to be visible
