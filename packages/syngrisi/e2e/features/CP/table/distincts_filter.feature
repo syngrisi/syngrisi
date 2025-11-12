@@ -50,7 +50,7 @@ Feature: Distinct filters functionality
 
         # BROWSER
         # open filter
-        When I click element with locator "[data-test='table-filtering']"
+        When I click element with locator "[aria-label='Filter the Table Data']"
         When I wait 30 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
 
         # set filter
@@ -63,19 +63,19 @@ Feature: Distinct filters functionality
         Then the element "(//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-value']//option)[2]" matches the text "safari-0"
 
         # apply filter
-        When I click element with locator "[data-test='table-filter-apply']"
+        When I click element with locator "[aria-label='Apply filter']"
 
         When I wait on element "[data-table-test-name='TestName filter-0']" to not be displayed
         When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
 
         # close drawer
-        When I click element with locator "[data-test='relative-wrapper-icon']"
+        When I click element with locator "[aria-label='Close']"
         When I wait on element "//*[@data-test='filter-main-group']" to not be displayed
 
 
         # STATUS
         # open filter
-        When I click element with locator "[data-test='table-filtering']"
+        When I click element with locator "[aria-label='Filter the Table Data']"
         When I wait 30 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
 
         # set filter new
@@ -87,7 +87,7 @@ Feature: Distinct filters functionality
         Then the element "(//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-value']//option)[1]" matches the text "New"
         Then the element "(//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-value']//option)[2]" matches the text "Failed"
 
-        When I click element with locator "[data-test='table-filter-apply']"
+        When I click element with locator "[aria-label='Apply filter']"
 
         When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
         When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-0']" to be visible
@@ -99,7 +99,7 @@ Feature: Distinct filters functionality
 
         When I select dropdown option "Failed" by clicking div for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-value']"
         Then the element with locator "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-value']" should have value "Failed"
-        When I click element with locator "[data-test='table-filter-apply']"
+        When I click element with locator "[aria-label='Apply filter']"
 
         When I wait on element "[data-table-test-name='TestName filter-1']" to not be displayed
         When I wait on element "[data-table-test-name='TestName filter-0']" to not be displayed

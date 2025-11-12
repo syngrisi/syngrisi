@@ -37,7 +37,7 @@ Feature: Test Auto Update
         Then the element with locator "[data-test='table-refresh-icon-badge']" should have contains text "3"
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-before]" to be visible
 
-        When I click element with locator "[data-test='table-refresh-icon']"
+        When I click element with locator "[aria-label='Refresh']"
         When I wait for "10" seconds
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-after]" for 10000ms to be visible
         Then the element "[data-table-test-name=TestName-after]" does appear exactly "3" times

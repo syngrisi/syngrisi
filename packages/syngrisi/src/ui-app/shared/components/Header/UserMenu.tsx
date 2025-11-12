@@ -42,6 +42,7 @@ function UserMenu() {
                 <Menu.Target>
                     <Button
                         data-test="user-icon"
+                        aria-label={`User menu for ${currentUser?.data?.firstName || ''} ${currentUser?.data?.lastName || ''}`}
                         p={0}
                         radius="xl"
                         size="md"
@@ -89,6 +90,7 @@ function UserMenu() {
                     <Menu.Divider />
                     <Menu.Item
                         data-test="userinfo"
+                        aria-label="User Details"
                         icon={<IconId size={14} />}
                         onClick={() => {
                             setUserInfoModalOpened(true);
@@ -112,6 +114,7 @@ function UserMenu() {
                     </Menu.Item>
                     <Menu.Item
                         id="generate-api"
+                        aria-label="Generate API key"
                         icon={<IconTool size={14} />}
                         onClick={() => {
                             setApiKeyModalAskOpened(true);

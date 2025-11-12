@@ -170,6 +170,7 @@ Feature: Check details - Regions
     When I wait for "1" seconds
     When I refresh page
     When I wait for "3" seconds
+    When I wait for canvas to be ready
     When I execute javascript code:
     """
      return (mainView.allRects.length.toString());
@@ -241,11 +242,16 @@ Feature: Check details - Regions
     When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
     When I wait for "2" seconds
     When I wait for canvas to be ready
+    When I wait for "2" seconds
     When I execute javascript code:
     """
      return (mainView.allRects.length.toString());
     """
-
+    When I wait for "1" seconds
+    When I repeat javascript code until stored "js" string equals "1":
+    """
+     return (mainView.allRects.length.toString());
+    """
     Then I expect the stored "js" string is equal:
     """
       1

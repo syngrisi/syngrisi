@@ -62,6 +62,7 @@ export const Email = {
         return (
             <TextInput
                 label={label}
+                aria-label={label}
                 placeholder="j.smith@example.com"
                 {...form.getInputProps('username')}
                 required

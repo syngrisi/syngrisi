@@ -50,6 +50,7 @@ export default function RemoveTestModalAsk({ opened, setOpened, selection, setSe
             <Group position="right">
                 <Button
                     data-test="confirm-remove-test-icon"
+                    aria-label="Remove"
                     color="red"
                     onClick={
                         async () => {
