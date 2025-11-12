@@ -16,15 +16,15 @@ Feature: Checks Preview Modes
         When I go to "main" page
         When I unfold the test "TestName"
 
-        When I click on the element "[data-test='table-sorting']"
+        When I click element with locator "[data-test='table-sorting']"
         When I wait for "3" seconds
         Then the css attribute "max-height" from element "[data-test-preview-image='CheckName'] img" is "153.6px"
 
-        When I click on the element "//*[@data-test='preview-mode-segment-control']//label[text()='normal']"
+        When I click element with locator "//*[@data-test='preview-mode-segment-control']//label[text()='normal']"
         When I wait for "1" seconds
         Then the css attribute "max-height" from element "[data-test-preview-image='CheckName'] img" is "none"
 
-        When I click on the element "//*[@data-test='preview-mode-segment-control']//label[text()='list']"
+        When I click element with locator "//*[@data-test='preview-mode-segment-control']//label[text()='list']"
         When I wait for "1" seconds
         Then the css attribute "width" from element "[data-test-preview-image='CheckName'] img" is "76.7969px"
 
@@ -38,18 +38,18 @@ Feature: Checks Preview Modes
         When I go to "main" page
         When I unfold the test "TestName"
 
-        When I click on the element "[data-test='table-sorting']"
+        When I click element with locator "[data-test='table-sorting']"
         When I wait for "1" seconds
         Then the css attribute "width" from element "[data-test-preview-image='CheckName'] img" is "113.75px"
 
-        When I click on the element "//*[@data-test='preview-size-segment-control']//label[text()='small']"
+        When I click element with locator "//*[@data-test='preview-size-segment-control']//label[text()='small']"
         When I wait for "0.5" seconds
         Then the css attribute "width" from element "[data-test-preview-image='CheckName'] img" is "69.5938px"
 
-        When I click on the element "//*[@data-test='preview-size-segment-control']//label[text()='large']"
+        When I click element with locator "//*[@data-test='preview-size-segment-control']//label[text()='large']"
         When I wait for "0.5" seconds
         Then the css attribute "width" from element "[data-test-preview-image='CheckName'] img" is "202.07px"
 
-        When I click on the element "//*[@data-test='preview-size-segment-control']//label[text()='xlarge']"
+        When I click element with locator "//*[@data-test='preview-size-segment-control']//label[text()='xlarge']"
         When I wait for "0.5" seconds
         Then the css attribute "width" from element "[data-test-preview-image='CheckName'] img" is "290.383px"

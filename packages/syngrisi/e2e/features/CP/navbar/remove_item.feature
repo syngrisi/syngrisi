@@ -22,12 +22,12 @@ Feature: Remove item
         When I wait on element "[data-table-test-name=TestName-1]" to be displayed
 
         # remove
-        When I click on the element "[data-item-name='RunName-0'] button"
+        When I click element with locator "[data-item-name='RunName-0'] button"
         When I wait on element "[data-item='remove-popover-action-icon_confirm']" to be displayed
-        When I click on the element "[data-item='remove-popover-action-icon_confirm']"
+        When I click element with locator "[data-item='remove-popover-action-icon_confirm']"
 
         When I wait on element "[data-test='remove-item-modal-button']" to be displayed
-        When I click on the element "[data-test='remove-item-modal-button']"
+        When I click element with locator "[data-test='remove-item-modal-button']"
 
         When I wait on element "//*[contains(@class, 'mantine-Notification-body')]//div[text()='Success']" to be displayed
         When I wait on element "//*[contains(@class, 'mantine-Notification-body')]//div[text()='Run has been successfully removed']" to be displayed
@@ -48,12 +48,12 @@ Feature: Remove item
         When I wait on element "[data-table-test-name=TestName-1]" to be displayed
 
         # remove
-        When I click on the element "[data-item-name='SuiteName-0'] button"
+        When I click element with locator "[data-item-name='SuiteName-0'] button"
         When I wait on element "[data-item='remove-popover-action-icon_confirm']" to be displayed
-        When I click on the element "[data-item='remove-popover-action-icon_confirm']"
+        When I click element with locator "[data-item='remove-popover-action-icon_confirm']"
 
         When I wait on element "[data-test='remove-item-modal-button']" to be displayed
-        When I click on the element "[data-test='remove-item-modal-button']"
+        When I click element with locator "[data-test='remove-item-modal-button']"
 
         When I wait on element "//*[contains(@class, 'mantine-Notification-body')]//div[text()='Success']" to be displayed
         When I wait on element "//*[contains(@class, 'mantine-Notification-body')]//div[text()='Suite has been successfully removed']" to be displayed

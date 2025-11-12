@@ -14,6 +14,7 @@ export function AcceptStatusItem({ item, index, handlerItemClick, className }: P
     return (
         <List.Item
             data-test={`navbar_item_${index}`}
+            data-testid={`navbar-accept-status-${item.name.toLowerCase()}`}
             onClick={handlerItemClick}
             className={className}
             sx={{ cursor: 'pointer', width: '100%' }}
@@ -26,6 +27,7 @@ export function AcceptStatusItem({ item, index, handlerItemClick, className }: P
                                 <AcceptedStatusIcon status={item.name} size={44} />
                                 <Text
                                     data-test="navbar-item-name"
+                                    data-testid={`accept-status-${item.name.toLowerCase()}`}
                                     size={16}
                                     lineClamp={1}
                                     sx={{ wordBreak: 'break-all' }}

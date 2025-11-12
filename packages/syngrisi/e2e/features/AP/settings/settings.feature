@@ -10,7 +10,7 @@ Feature: Admin Settings
         Then I expect that element "select[data-test='settings_value_authentication']" contain value "false"
         When I select the option with the text "true" for element "select[data-test='settings_value_authentication']"
         Then I expect that element "select[data-test='settings_value_authentication']" contain value "true"
-        When I click on the element "[data-test='settings_update_button_authentication']"
+        When I click element with locator "[data-test='settings_update_button_authentication']"
         Then I wait on element "//div[contains(@class, 'mantine-Notification-title') and text()='Success']" to be displayed
 
         When I go to "logout" page
@@ -48,7 +48,7 @@ Feature: Admin Settings
         When I select the option with the text "false" for element "select[data-test='settings_value_first_run']"
         When I wait for "2" seconds
         Then I expect that element "select[data-test='settings_value_first_run']" contain value "false"
-        When I click on the element "[data-test='settings_update_button_first_run']"
+        When I click element with locator "[data-test='settings_update_button_first_run']"
         Then I wait on element "//div[contains(@class, 'mantine-Notification-title') and text()='Success']" to be displayed
         When I wait for "5" seconds
         When I go to "logout" page

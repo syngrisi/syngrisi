@@ -17,7 +17,7 @@ Feature: Check details - Regions
 
     When I go to "main" page
     When I unfold the test "TestName"
-    When I click on the element "[data-test-preview-image='CheckName']"
+    When I click element with locator "[data-test-preview-image='CheckName']"
     Then I wait on element "[data-check-header-name='CheckName']" to be displayed
 
   Scenario: Regions - add, save, check
@@ -34,7 +34,7 @@ Feature: Check details - Regions
 
     # add and check presence
     Then I wait on element "[data-check='add-ignore-region']" to be displayed
-    When I click on the element "[data-check='add-ignore-region']"
+    When I click element with locator "[data-check='add-ignore-region']"
 
     When I execute javascript code:
     """
@@ -52,7 +52,7 @@ Feature: Check details - Regions
     """
 
     # save refresh page check presence
-    When I click on the element "[data-check='save-ignore-region']"
+    When I click element with locator "[data-check='save-ignore-region']"
     When I wait for "1" seconds
     When I refresh page
     When I wait for "3" seconds
@@ -93,7 +93,7 @@ Feature: Check details - Regions
     """
 
     # save
-    When I click on the element "[data-check='save-ignore-region']"
+    When I click element with locator "[data-check='save-ignore-region']"
     When I wait for "1" seconds
     When I refresh page
     When I wait for "3" seconds
@@ -125,7 +125,7 @@ Feature: Check details - Regions
   Scenario: Regions - delete
     # add and check presence
     Then I wait on element "[data-check='add-ignore-region']" to be displayed
-    When I click on the element "[data-check='add-ignore-region']"
+    When I click element with locator "[data-check='add-ignore-region']"
 
     When I execute javascript code:
     """
@@ -139,7 +139,7 @@ Feature: Check details - Regions
     """
 
     # save refresh page check presence
-    When I click on the element "[data-check='save-ignore-region']"
+    When I click element with locator "[data-check='save-ignore-region']"
     When I wait for "1" seconds
     When I refresh page
     When I wait for "3" seconds
@@ -160,10 +160,10 @@ Feature: Check details - Regions
      mainView.canvas.setActiveObject(mainView.canvas.getObjects().filter(x=>x.name==='ignore_rect')[0]);
      mainView.canvas.requestRenderAll();
     """
-    When I click on the element "[data-check='remove-ignore-region']"
+    When I click element with locator "[data-check='remove-ignore-region']"
 
     # save refresh page check absence
-    When I click on the element "[data-check='save-ignore-region']"
+    When I click element with locator "[data-check='save-ignore-region']"
     When I wait for "1" seconds
     When I refresh page
     When I wait for "3" seconds
@@ -181,10 +181,10 @@ Feature: Check details - Regions
   Scenario: Regions - copy regions from previous baseline
     # add region to first check
     Then I wait on element "[data-check='add-ignore-region']" to be displayed
-    When I click on the element "[data-check='add-ignore-region']"
+    When I click element with locator "[data-check='add-ignore-region']"
 
     # save refresh page check presence
-    When I click on the element "[data-check='save-ignore-region']"
+    When I click element with locator "[data-check='save-ignore-region']"
     When I wait for "1" seconds
     When I refresh page
     When I wait for "3" seconds
@@ -210,7 +210,7 @@ Feature: Check details - Regions
     # open second check and check region presence
     When I go to "main" page
     When I unfold the test "TestName"
-    When I click on the element "[data-test-preview-image='CheckName']"
+    When I click element with locator "[data-test-preview-image='CheckName']"
 
     Then I wait on element "[data-check-header-name='CheckName']" to be displayed
     When I wait for "3" seconds
@@ -229,7 +229,7 @@ Feature: Check details - Regions
 
     When I go to "main" page
     When I unfold the test "TestName"
-    When I click on the element "[data-test-preview-image='CheckName']"
+    When I click element with locator "[data-test-preview-image='CheckName']"
 
     Then I wait on element "[data-check-header-name='CheckName']" to be displayed
     When I wait for "2" seconds

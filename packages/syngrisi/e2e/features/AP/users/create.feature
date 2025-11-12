@@ -28,7 +28,7 @@ Feature: Create User
     Scenario: Create User - Success
         When I go to "admin2" page
         When I wait for "3" seconds
-        When I click on the element "#add-new-user"
+        When I click element with locator "#add-new-user"
         When I set "j_doe@gmail.com" to the inputfield "[data-test=user-add-email]"
         When I wait on element "[data-test=user-add-first-name]" to be enabled
         When I set "John" to the inputfield "[data-test=user-add-first-name]"
@@ -37,7 +37,7 @@ Feature: Create User
         When I set "Password-123" to the inputfield "[data-test=user-add-password]"
         When I scroll to element "#create"
         When I wait for "1" seconds
-        When I click on the element "#create"
+        When I click element with locator "#create"
 
         When I wait for "3" seconds
         Then I expect that element "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-email']" contain value "j_doe@gmail.com"
@@ -53,7 +53,7 @@ Feature: Create User
     Scenario: Create User - User Already Exist
         When I go to "admin2" page
         When I wait for "3" seconds
-        When I click on the element "#add-new-user"
+        When I click element with locator "#add-new-user"
         When I set "j_doe@gmail.com" to the inputfield "[data-test=user-add-email]"
         When I wait on element "[data-test=user-add-first-name]" to be enabled
         When I set "John" to the inputfield "[data-test=user-add-first-name]"
@@ -62,20 +62,20 @@ Feature: Create User
         When I set "Password-123" to the inputfield "[data-test=user-add-password]"
         When I scroll to element "#create"
         When I wait for "1" seconds
-        When I click on the element "#create"
+        When I click element with locator "#create"
 
         When I wait for "3" seconds
         Then I expect that element "//*[@data-test='j_doe@gmail.com']" does appear exactly "1" times
         Then I expect that element "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-email']" contain value "j_doe@gmail.com"
 
-        When I click on the element "#add-new-user"
+        When I click element with locator "#add-new-user"
         When I set "j_doe@gmail.com" to the inputfield "[data-test=user-add-email]"
 
         Then I expect that element "//input[@data-test='user-add-email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" contain text "user with this email already exists"
 
         When I scroll to element "#create"
         When I wait for "1" seconds
-        When I click on the element "#create"
+        When I click element with locator "#create"
         When I wait for "3" seconds
         Then I expect that element "//*[@data-test='j_doe@gmail.com']" does appear exactly "1" times
 
@@ -84,7 +84,7 @@ Feature: Create User
         When I wait for "3" seconds
 
         # invalid email - disabled fields
-        When I click on the element "#add-new-user"
+        When I click element with locator "#add-new-user"
         When I set "j_doe@" to the inputfield "[data-test=user-add-email]"
         Then I expect that element "//input[@data-test='user-add-email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" contain text "Invalid email format"
 
@@ -94,14 +94,14 @@ Feature: Create User
 
         When I scroll to element "#create"
         When I wait for "1" seconds
-        When I click on the element "#create"
+        When I click element with locator "#create"
         When I wait for "1" seconds
         Then I expect that element "//input[@data-test='user-add-email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" contain text "Invalid email format"
 
         # valid email - enabled fields
         When I refresh page
         When I wait for "3" seconds
-        When I click on the element "#add-new-user"
+        When I click element with locator "#add-new-user"
         When I set "j_doe@xxx" to the inputfield "[data-test=user-add-email]"
         And I expect that element "//input[@data-test='user-add-email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" does not exist
 

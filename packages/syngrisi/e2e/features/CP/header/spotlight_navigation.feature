@@ -19,14 +19,14 @@ Feature: Spotlight
         Then I wait on element ".mantine-Spotlight-spotlight" to not be displayed
 
         # using mouse clicks
-        When I click on the element "[data-test='spotlight-button']"
+        When I click element with locator "[data-test='spotlight-button']"
         Then I wait on element ".mantine-Spotlight-spotlight" to be displayed
 
         When I click on the element "[data-test='logo-text']" via js
         Then I wait on element ".mantine-Spotlight-spotlight" to not be displayed
 
     Scenario Outline:  Spotlight Navigation - <keyword>
-        When I click on the element "[data-test='spotlight-button']"
+        When I click element with locator "[data-test='spotlight-button']"
         Then I wait on element ".mantine-Spotlight-spotlight" to be displayed
 
         When I set "<keyword>" to the inputfield ".mantine-Spotlight-searchInput"
@@ -49,7 +49,7 @@ Feature: Spotlight
         # logo container
         Then the css attribute "color" from element "[data-test='logo-container']" is "rgba(0,0,0,1)"
 
-        When I click on the element "[data-test='spotlight-button']"
+        When I click element with locator "[data-test='spotlight-button']"
         Then I wait on element ".mantine-Spotlight-spotlight" to be displayed
 
         # switch theme

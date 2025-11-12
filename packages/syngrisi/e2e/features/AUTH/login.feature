@@ -75,7 +75,7 @@ Feature: Login
         Then the current url contains "?origin=%2F%3FgroupBy%3Dtest-distinct%252FbrowserName"
         When I set "Test" to the inputfield "#email"
         When I set "123456aA-" to the inputfield "#password"
-        When I click on the element "#submit"
+        When I click element with locator "#submit"
         When I wait for "1" seconds
         Then the current url contains "<syngrisiUrl>?groupBy=test-distinct%2FbrowserName"
 

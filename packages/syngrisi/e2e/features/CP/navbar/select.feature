@@ -31,7 +31,7 @@ Feature: Select Navbar Item
 
         # Select 1
         When I hold key "Meta"
-        When I click on the element "//*[@data-test='navbar-item-name' and contains(., 'RunName-1')]"
+        When I click element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName-1')]"
         # 0,0,0,0 kind of default value
         Then the css attribute "background-color" from element "//*[@data-test='navbar-item-name' and contains(., 'RunName-2')]/../../../../../../.." is "rgba(0,0,0,0)"
         Then the css attribute "background-color" from element "//*[@data-test='navbar-item-name' and contains(., 'RunName-1')]/../../../../../../.." is "rgba(235,251,238,1)"
@@ -40,7 +40,7 @@ Feature: Select Navbar Item
         When I wait on element "[data-table-test-name=TestName-2]" to not be displayed
 
         # Select 1 and 2
-        When I click on the element "//*[@data-test='navbar-item-name' and contains(., 'RunName-2')]"
+        When I click element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName-2')]"
         Then the css attribute "background-color" from element "//*[@data-test='navbar-item-name' and contains(., 'RunName-1')]/../../../../../../.." is "rgba(235,251,238,1)"
         Then the css attribute "background-color" from element "//*[@data-test='navbar-item-name' and contains(., 'RunName-2')]/../../../../../../.." is "rgba(235,251,238,1)"
         When I wait on element "[data-table-test-name=TestName-0]" to not be displayed
@@ -50,7 +50,7 @@ Feature: Select Navbar Item
         When I release key "Meta"
 
         # Select 0 and deselect 1-2 via click on 0
-        When I click on the element "//*[@data-test='navbar-item-name' and contains(., 'RunName-0')]"
+        When I click element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName-0')]"
         Then the css attribute "background-color" from element "//*[@data-test='navbar-item-name' and contains(., 'RunName-0')]/../../../../../../.." is "rgba(235,251,238,1)"
         Then the css attribute "background-color" from element "//*[@data-test='navbar-item-name' and contains(., 'RunName-1')]/../../../../../../.." is "rgba(0,0,0,0)"
         Then the css attribute "background-color" from element "//*[@data-test='navbar-item-name' and contains(., 'RunName-2')]/../../../../../../.." is "rgba(0,0,0,0)"
@@ -78,7 +78,7 @@ Feature: Select Navbar Item
         Then I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName-0')]" to be displayed
 
         # select one
-        When I click on the element "//*[@data-test='navbar-item-name' and contains(., 'RunName-0')]"
+        When I click element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName-0')]"
 
         When I wait on element "[data-table-test-name=TestName-0]" to be displayed
         When I wait on element "[data-table-test-name=TestName-1]" to not be displayed
@@ -130,7 +130,7 @@ Feature: Select Navbar Item
         Then I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName-0')]" to be displayed
 
         # select one
-        When I click on the element "//*[@data-test='navbar-item-name' and contains(., 'RunName-0')]"
+        When I click element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName-0')]"
 
         When I wait on element "[data-table-test-name=TestName-0]" to be displayed
         When I wait on element "[data-table-test-name=TestName-1]" to not be displayed
@@ -169,8 +169,8 @@ Feature: Select Navbar Item
 
         When I hold key "Meta"
         # select one
-        When I click on the element "//*[@data-test='navbar-item-name' and contains(., 'RunName-0')]"
-        When I click on the element "//*[@data-test='navbar-item-name' and contains(., 'RunName-1')]"
+        When I click element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName-0')]"
+        When I click element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName-1')]"
 
         When I wait on element "[data-table-test-name=TestName-0]" to be displayed
         When I wait on element "[data-table-test-name=TestName-1]" to be displayed

@@ -42,23 +42,23 @@ Feature: Test Isolation by Run
 
     # Run-1
     # tests
-    When I click on the element "[data-item-name='Run-1']"
+    When I click element with locator "[data-item-name='Run-1']"
     When I wait on element "//div[contains(text(), 'TestRun-1.1')]" to be displayed
     When I wait on element "//div[contains(text(), 'TestRun-1.2')]" to be displayed
     When I wait on element "//div[contains(text(), 'TestRun-2')]" to not be displayed
 
     # checks
-    When I click on the element "[data-table-test-name='TestRun-1.1']"
+    When I click element with locator "[data-table-test-name='TestRun-1.1']"
     Then I wait on element "[data-table-check-name='CheckRun-1.1']" to be displayed
     Then I wait on element "[data-table-check-name='CheckRun-1.2']" to be displayed
 
-    When I click on the element "[data-table-test-name='TestRun-1.2']"
+    When I click element with locator "[data-table-test-name='TestRun-1.2']"
     Then I wait on element "[data-table-check-name='CheckRun-1.1.1']" to be displayed
     Then I wait on element "[data-table-check-name='CheckRun-1.2.2']" to be displayed
 
     # Run-2
     # tests
-    When I click on the element "[data-item-name='Run-2']"
+    When I click element with locator "[data-item-name='Run-2']"
     When I wait on element "//div[contains(text(), 'TestRun-2')]" to be displayed
     When I wait on element "//div[contains(text(), 'TestRun-1.1')]" to not be displayed
     When I wait on element "//div[contains(text(), 'TestRun-1.2')]" to not be displayed
@@ -87,11 +87,11 @@ Feature: Test Isolation by Run
     Then I expect that element "//div[contains(text(), 'TestRun')]" does appear exactly "2" times
 
     # second run
-    When I click on the element "(//*[@data-item-name='Run-1'])[1]"
+    When I click element with locator "(//*[@data-item-name='Run-1'])[1]"
     When I wait on element "//div[contains(text(), 'TestRun-2')]" to be displayed
 
     # first run
-    When I click on the element "(//*[@data-item-name='Run-1'])[2]"
+    When I click element with locator "(//*[@data-item-name='Run-1'])[2]"
     When I wait on element "//div[contains(text(), 'TestRun-1')]" to be displayed
 
   Scenario: Checks Isolation by Run - same name same ident
@@ -119,6 +119,6 @@ Feature: Test Isolation by Run
     Then I expect that element "//div[contains(text(), 'TestRun')]" does appear exactly "2" times
 
     # 2 tests in run
-    When I click on the element "(//*[@data-item-name='Run-1'])[1]"
+    When I click element with locator "(//*[@data-item-name='Run-1'])[1]"
     When I wait on element "//div[contains(text(), 'TestRun-1')]" to be displayed
     When I wait on element "//div[contains(text(), 'TestRun-2')]" to be displayed

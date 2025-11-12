@@ -17,7 +17,7 @@ Feature: Enabled disabled buttons on Check Details Modal Window
         When I go to "main" page
         When I unfold the test "TestName"
 
-        When I click on the element "[data-test-preview-image='CheckName']"
+        When I click element with locator "[data-test-preview-image='CheckName']"
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed
 
         # view segment
@@ -51,10 +51,10 @@ Feature: Enabled disabled buttons on Check Details Modal Window
         When I unfold the test "TestName"
 #        When I wait on element "[data-table-test-name=TestName]" to be displayed
 #        Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
-#        When I click on the element "[data-table-test-name=TestName]"
+#        When I click element with locator "[data-table-test-name=TestName]"
 #        Then I wait on element "[data-table-check-name='CheckName']" to be displayed
 
-        When I click on the element "[data-test-preview-image='CheckName']"
+        When I click element with locator "[data-test-preview-image='CheckName']"
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed
 
         # view segment
@@ -87,14 +87,14 @@ Feature: Enabled disabled buttons on Check Details Modal Window
         When I go to "main" page
         When I wait on element "[data-table-test-name=TestName]" to be displayed
         Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
-        When I click on the element "[data-table-test-name=TestName]"
+        When I click element with locator "[data-table-test-name=TestName]"
         Then I wait on element "[data-table-check-name='CheckName']" to be displayed
 
-        When I click on the element "[data-test-preview-image='CheckName']"
+        When I click element with locator "[data-test-preview-image='CheckName']"
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed
 
         # without save
-        When I click on the element "[data-check='add-ignore-region']"
+        When I click element with locator "[data-check='add-ignore-region']"
         Then I expect that the attribute "data-disabled" from element "[data-check='remove-ignore-region']" is not "true"
 
     Scenario: Failed Check
@@ -117,10 +117,10 @@ Feature: Enabled disabled buttons on Check Details Modal Window
         When I go to "main" page
         When I wait on element "[data-table-test-name=TestName]" to be displayed
         Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
-        When I click on the element "[data-table-test-name=TestName]"
+        When I click element with locator "[data-table-test-name=TestName]"
         Then I wait on element "[data-table-check-name='CheckName']" to be displayed
 
-        When I click on the element "[data-test-preview-image='CheckName']"
+        When I click element with locator "[data-test-preview-image='CheckName']"
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed
 
         # view segment
@@ -155,10 +155,10 @@ Feature: Enabled disabled buttons on Check Details Modal Window
         When I go to "main" page
         When I wait on element "[data-table-test-name=TestName]" to be displayed
         Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
-        When I click on the element "[data-table-test-name=TestName]"
+        When I click element with locator "[data-table-test-name=TestName]"
         Then I wait on element "[data-table-check-name='CheckName']" to be displayed
 
-        When I click on the element "[data-test-preview-image='CheckName']"
+        When I click element with locator "[data-test-preview-image='CheckName']"
         Then I wait on element "[data-check-header-name='CheckName']" to be displayed
 
         # view segment
