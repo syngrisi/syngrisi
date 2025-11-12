@@ -19,14 +19,14 @@ Feature: Spotlight
         Then I wait on element ".mantine-Spotlight-spotlight" to not be displayed
 
         # using mouse clicks
-        When I click element with locator "[data-test='spotlight-button']"
+        When I click element with locator "button[aria-label='Search']"
         When I wait 30 seconds for the element with locator ".mantine-Spotlight-spotlight" to be visible
 
-        When I click on the element "[data-test='logo-text']" via js
+        When I click on the element "[aria-label='Syngrisi']" via js
         Then I wait on element ".mantine-Spotlight-spotlight" to not be displayed
 
     Scenario Outline:  Spotlight Navigation - <keyword>
-        When I click element with locator "[data-test='spotlight-button']"
+        When I click element with locator "button[aria-label='Search']"
         When I wait 30 seconds for the element with locator ".mantine-Spotlight-spotlight" to be visible
 
         When I set "<keyword>" to the inputfield ".mantine-Spotlight-searchInput"
@@ -45,11 +45,11 @@ Feature: Spotlight
 
     Scenario: Spotlight - switch theme
         # logo label
-        Then the css attribute "color" from element "[data-test='logo-text']" is "rgba(38,38,38,1)"
+        Then the css attribute "color" from element "[aria-label='Syngrisi']" is "rgba(38,38,38,1)"
         # logo container
-        Then the css attribute "color" from element "[data-test='logo-container']" is "rgba(0,0,0,1)"
+        Then the css attribute "color" from element "[aria-label='Logo container']" is "rgba(0,0,0,1)"
 
-        When I click element with locator "[data-test='spotlight-button']"
+        When I click element with locator "button[aria-label='Search']"
         When I wait 30 seconds for the element with locator ".mantine-Spotlight-spotlight" to be visible
 
         # switch theme
@@ -58,8 +58,8 @@ Feature: Spotlight
         When I wait for "2" seconds
 
         # logo label
-        Then the css attribute "color" from element "[data-test='logo-text']" is "rgba(255,255,255,1)"
+        Then the css attribute "color" from element "[aria-label='Syngrisi']" is "rgba(255,255,255,1)"
         # logo container
-        Then the css attribute "color" from element "[data-test='logo-container']" is "rgba(193,194,197,1)"
+        Then the css attribute "color" from element "[aria-label='Logo container']" is "rgba(193,194,197,1)"
 
 

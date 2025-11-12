@@ -148,6 +148,7 @@ function Filter(
                         <Button
                             onClick={() => resetAll()}
                             data-test="table-filter-reset"
+                            aria-label="Reset filter"
                             variant="light"
                             color="red"
                         >
@@ -155,6 +156,7 @@ function Filter(
                         </Button>
                         <Button
                             data-test="table-filter-cancel"
+                            aria-label="Cancel filter"
                             variant="light"
                             color="gray"
                             onClick={() => setOpen(false)}
@@ -163,6 +165,7 @@ function Filter(
                         </Button>
                         <Button
                             data-test="table-filter-apply"
+                            aria-label="Apply filter"
                             onClick={() => {
                                 applyFilter();
                             }}

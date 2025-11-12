@@ -26,6 +26,7 @@ function Boolean({ name, value, label, description, enabled, updateSetting }: IS
             <Group spacing="xl">
                 <SafeSelect
                     data-test={`settings_value_${name}`}
+                    aria-label={label}
                     sx={{ width: '130px' }}
                     size="md"
                     optionsData={[
@@ -38,6 +39,7 @@ function Boolean({ name, value, label, description, enabled, updateSetting }: IS
                     data-test={`settings_enabled_${name}`}
                     size="md"
                     label="enabled"
+                    aria-label={`Enable ${label}`}
                     {...form.getInputProps('enabled', { type: 'checkbox' })}
                 />
             </Group>
@@ -48,6 +50,7 @@ function Boolean({ name, value, label, description, enabled, updateSetting }: IS
                 <Button
                     type="submit"
                     data-test={`settings_update_button_${name}`}
+                    aria-label={`Update ${label}`}
                 >
                     Update
                 </Button>

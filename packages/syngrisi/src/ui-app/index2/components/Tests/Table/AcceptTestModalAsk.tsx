@@ -53,6 +53,7 @@ export default function AcceptTestModalAsk({ opened, setOpened, selection, setSe
             <Group position="right">
                 <Button
                     data-test="accept-test-confirm-button"
+                    aria-label="Accept"
                     onClick={
                         async () => {
                             await handleAcceptButtonClick();

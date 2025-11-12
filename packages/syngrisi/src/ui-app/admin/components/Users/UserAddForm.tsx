@@ -76,6 +76,7 @@ export default function UserAddForm({ setAddUser, refetch }: any) {
                 <TextInput
                     label="First Name"
                     data-test="user-add-first-name"
+                    aria-label="First Name"
                     placeholder="John"
                     {...form.getInputProps('firstName')}
                     icon={<IconUser size={16} />}
@@ -85,6 +86,7 @@ export default function UserAddForm({ setAddUser, refetch }: any) {
                 <TextInput
                     label="Last Name"
                     data-test="user-add-last-name"
+                    aria-label="Last Name"
                     placeholder="Smith"
                     {...form.getInputProps('lastName')}
                     icon={<IconUser size={16} />}
@@ -95,6 +97,7 @@ export default function UserAddForm({ setAddUser, refetch }: any) {
                 <SafeSelect
                     label="Role"
                     data-test="user-add-role"
+                    aria-label="Role"
                     optionsData={[
                         { value: 'user', label: 'User' },
                         { value: 'reviewer', label: 'Reviewer' },
@@ -125,6 +128,7 @@ export default function UserAddForm({ setAddUser, refetch }: any) {
 
                 <Button
                     id="create"
+                    aria-label="Create"
                     type="submit"
                     title="Create new User"
                     leftIcon={<IconSend size={18} />}

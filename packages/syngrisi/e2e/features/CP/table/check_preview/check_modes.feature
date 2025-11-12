@@ -16,7 +16,7 @@ Feature: Checks Preview Modes
         When I go to "main" page
         When I unfold the test "TestName"
 
-        When I click element with locator "[data-test='table-sorting']"
+        When I click element with locator "[aria-label='Table settings, sorting, and columns visibility']"
         When I wait for "3" seconds
         Then the css attribute "max-height" from element "[data-test-preview-image='CheckName'] img" is "153.6px"
 
@@ -38,7 +38,7 @@ Feature: Checks Preview Modes
         When I go to "main" page
         When I unfold the test "TestName"
 
-        When I click element with locator "[data-test='table-sorting']"
+        When I click element with locator "[aria-label='Table settings, sorting, and columns visibility']"
         When I wait for "1" seconds
         Then the css attribute "width" from element "[data-test-preview-image='CheckName'] img" is "113.75px"
 

@@ -67,6 +67,7 @@ export function NavbarGroupBySelect({ clearActiveItems, groupByValue, setGroupBy
         <SafeSelect
             label="Group by"
             data-test="navbar-group-by"
+            aria-label="Group by"
             value={groupByValue}
             onChange={handleGroupBySelect}
             optionsData={[

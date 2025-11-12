@@ -26,6 +26,7 @@ interface Props {
     styles: Styles<BaseSelectStylesNames, Record<string, any>> | undefined;
     variant: InputVariant;
     disabled: boolean;
+    'aria-label'?: string;
 }
 
 // select component for selenium
@@ -38,6 +39,7 @@ function SafeSelect(
         name,
         onChange,
         'data-test': dataTest,
+        'aria-label': ariaLabel,
         sx,
         styles,
         searchable,
@@ -68,6 +70,7 @@ function SafeSelect(
                 variant={variant}
                 styles={styles}
                 data-test={dataTest}
+                aria-label={ariaLabel}
                 disabled={disabled}
             />
             <select

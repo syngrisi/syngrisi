@@ -170,7 +170,7 @@ export default function AdminUsers() {
                         {addUser && <UserAddForm setAddUser={setAddUser} refetch={refetch} />}
                     </Group>
                     <Group position="center" mt={40} mb={150}>
-                        {!addUser && <Button onClick={() => setAddUser(true)} id="add-new-user">Add New User</Button>}
+                        {!addUser && <Button onClick={() => setAddUser(true)} id="add-new-user" aria-label="Add New User">Add New User</Button>}
                     </Group>
                 </Box>
             </ScrollArea.Autosize>

@@ -57,6 +57,7 @@ function Settings(
                 <SafeSelect
                     label="Sort by"
                     data-test="table-sort-by-select"
+                    aria-label="Sort by"
                     optionsData={selectOptionsData}
                     required={false}
                     value={sortItemValue}
@@ -65,6 +66,7 @@ function Settings(
                 <ActionIcon
                     size={36}
                     data-test="table-sort-order"
+                    aria-label={`sort order is ${sortOrder === 'desc' ? 'descendant' : 'ascendant'}`}
                     title={`sort order is ${sortOrder === 'desc' ? 'descendant' : 'ascendant'}`}
                     onClick={() => {
                         toggleSortOrder();
@@ -88,7 +90,7 @@ function Settings(
                             key={column}
                             value={column}
                             data-test={`settings-visible-columns-${tableColumns[column].label}`}
-
+                            aria-label={`Toggle ${tableColumns[column].label} column visibility`}
                         >
                             {tableColumns[column].label}
                         </Chip>

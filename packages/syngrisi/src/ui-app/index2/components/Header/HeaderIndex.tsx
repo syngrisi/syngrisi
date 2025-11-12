@@ -184,6 +184,7 @@ export default function HeaderIndex({ breadCrumbs, toolbar }: Props) {
                             placeholder="Enter Project Name"
                             variant="unstyled"
                             data-test="current-project"
+                            aria-label="Project"
                             sx={{
                                 minWidth: '150px',
                                 borderWidth: '0px 0 1px 0',
@@ -203,6 +204,7 @@ export default function HeaderIndex({ breadCrumbs, toolbar }: Props) {
                         variant="default"
                         className={classes.spotLight}
                         data-test="spotlight-button"
+                        aria-label="Search"
                     >
                         <Group position="apart" sx={{ minWidth: 200 }}>
                             <Group>

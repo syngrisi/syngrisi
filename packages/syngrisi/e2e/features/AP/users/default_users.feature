@@ -24,12 +24,12 @@ Feature: Default Users
     Scenario: Default Administrator and Guest should be created after first server start
         When I go to "admin>users" page
         When I wait for "3" seconds
-        Then the element with locator "//*[@data-test='user-list-email' and @value='Administrator']/../../..//input[@data-test='user-list-first-name' and @value='Syngrisi']" should be visible
-        Then the element with locator "//*[@data-test='user-list-email' and @value='Administrator']/../../..//input[@data-test='user-list-last-name' and @value='Admin']" should be visible
-        Then the element with locator "//*[@data-test='user-list-email' and @value='Administrator']/../../..//input[@data-test='user-list-role' and @value='Admin']" should be visible
+        Then the element with locator "//*[@data-test='user-list-email' and @value='Administrator']/../../..//input[@aria-label='First Name' and @value='Syngrisi']" should be visible
+        Then the element with locator "//*[@data-test='user-list-email' and @value='Administrator']/../../..//input[@aria-label='Last Name' and @value='Admin']" should be visible
+        Then the element with locator "//*[@data-test='user-list-email' and @value='Administrator']/../../..//select[@data-test='user-list-role']" should have value "admin"
 
-        Then the element with locator "//*[@data-test='user-list-email' and @value='Guest']/../../..//input[@data-test='user-list-first-name' and @value='Syngrisi']" should be visible
-        Then the element with locator "//*[@data-test='user-list-email' and @value='Guest']/../../..//input[@data-test='user-list-last-name' and @value='Guest']" should be visible
-        Then the element with locator "//*[@data-test='user-list-email' and @value='Guest']/../../..//input[@data-test='user-list-role' and @value='User']" should be visible
+        Then the element with locator "//*[@data-test='user-list-email' and @value='Guest']/../../..//input[@aria-label='First Name' and @value='Syngrisi']" should be visible
+        Then the element with locator "//*[@data-test='user-list-email' and @value='Guest']/../../..//input[@aria-label='Last Name' and @value='Guest']" should be visible
+        Then the element with locator "//*[@data-test='user-list-email' and @value='Guest']/../../..//select[@data-test='user-list-role']" should have value "user"
 
 

@@ -21,6 +21,7 @@ export default function AcceptTestsButton({ selection, setSelection, infinityQue
                         <ActionIcon
                             color={theme.colorScheme === 'dark' ? 'green.8' : 'green.6'}
                             data-test="table-accept-tests"
+                            aria-label="Accept selected tests"
                             variant="subtle"
                             onClick={async () => {
                                 setOpened(true);

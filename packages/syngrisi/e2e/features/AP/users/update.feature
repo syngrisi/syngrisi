@@ -36,26 +36,26 @@ Feature: Update User
     Scenario: Update User - Success
         When I open the app
         When I go to "admin2" page
-        When I wait 30 seconds for the element with locator "//*[@data-test='j_doe@gmail.com']//button[@data-test='user-list-update-button']" to be visible
-        When I click element with locator "//*[@data-test='j_doe@gmail.com']//button[@data-test='user-list-update-button']"
-        When I set "Alex" to the inputfield "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-first-name']"
-        When I set "Jonson" to the inputfield "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-last-name']"
+        When I wait 30 seconds for the element with locator "//*[@data-test='j_doe@gmail.com']//button[@aria-label='Edit User']" to be visible
+        When I click element with locator "//*[@data-test='j_doe@gmail.com']//button[@aria-label='Edit User']"
+        When I set "Alex" to the inputfield "//*[@data-test='j_doe@gmail.com']//input[@aria-label='First Name']"
+        When I set "Jonson" to the inputfield "//*[@data-test='j_doe@gmail.com']//input[@aria-label='Last Name']"
         When I select the option with the text "Reviewer" for element "//*[@data-test='j_doe@gmail.com']//select[@data-test='user-list-role']"
 
-        When I click element with locator "//*[@data-test='j_doe@gmail.com']//button[@data-test='user-list-send-button']"
+        When I click element with locator "//*[@data-test='j_doe@gmail.com']//button[@aria-label='Send changes']"
         When I wait for "2" seconds
 
         Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-email']" should have value "j_doe@gmail.com"
-        Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-first-name']" should have value "Alex"
-        Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-last-name']" should have value "Jonson"
-        Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-role']" should have value "Reviewer"
+        Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@aria-label='First Name']" should have value "Alex"
+        Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@aria-label='Last Name']" should have value "Jonson"
+        Then the element with locator "//*[@data-test='j_doe@gmail.com']//select[@data-test='user-list-role']" should have value "reviewer"
         When I wait 30 seconds for the element with locator "//div[contains(@class, 'mantine-Notification-title') and text()='Success']" to be visible
 
         When I refresh page
         Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-email']" should have value "j_doe@gmail.com"
-        Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-first-name']" should have value "Alex"
-        Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-last-name']" should have value "Jonson"
-        Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-role']" should have value "Reviewer"
+        Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@aria-label='First Name']" should have value "Alex"
+        Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@aria-label='Last Name']" should have value "Jonson"
+        Then the element with locator "//*[@data-test='j_doe@gmail.com']//select[@data-test='user-list-role']" should have value "reviewer"
 
 
 

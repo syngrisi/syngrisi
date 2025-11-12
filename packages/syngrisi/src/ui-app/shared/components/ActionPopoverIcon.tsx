@@ -78,6 +78,7 @@ export default function ActionPopoverIcon(
                         disabled={disabled}
                         data-test={testAttr}
                         data-popover-icon-name={testAttrName}
+                        aria-label={title}
                         variant={'light' as any}
                         color={iconColor}
                         onClick={() => {
@@ -101,6 +102,7 @@ export default function ActionPopoverIcon(
                 <Button
                     ref={ref}
                     data-test={`${testAttr}-confirm`}
+                    aria-label={confirmLabel}
                     color={buttonColor || color}
                     data-confirm-button-name={testAttrName}
                     onClick={() => {

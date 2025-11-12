@@ -22,7 +22,7 @@ Feature: Navbar Quick Filtering
         When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName - 1')]" to be visible
         Then the element "//*[@data-test='navbar-item-name']" does appear exactly "2" times
 
-        When I click element with locator "[data-test='navbar-icon-open-filter']"
+        When I click element with locator "[aria-label='Open filter']"
         When I wait 30 seconds for the element with locator "[data-test='navbar-quick-filter']" to be visible
 
         When I set "RunName - " to the inputfield "[data-test='navbar-quick-filter']"
@@ -75,7 +75,7 @@ Feature: Navbar Quick Filtering
         When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName_P1-1')]" to be visible
         When I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName_P2-0')]" to not be displayed
 
-        When I click element with locator "[data-test='navbar-icon-open-filter']"
+        When I click element with locator "[aria-label='Open filter']"
         When I wait 30 seconds for the element with locator "[data-test='navbar-quick-filter']" to be visible
 
         # quick filter

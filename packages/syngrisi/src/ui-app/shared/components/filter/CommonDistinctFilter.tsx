@@ -80,6 +80,7 @@ export function CommonDistinctFilter({ label, updateGroupRules, id, resource }: 
                 <SafeSelect
                     label=""
                     data-test="table-filter-operator"
+                    aria-label="Filter operator"
                     sx={{ width: '130px' }}
                     optionsData={[
                         { value: 'eq', label: 'equals' },
@@ -92,6 +93,7 @@ export function CommonDistinctFilter({ label, updateGroupRules, id, resource }: 
 
                 <SafeSelect
                     data-test="table-filter-value"
+                    aria-label="Filter value"
                     // sx={{ width: '150px' }}
                     title={form.getInputProps('value').value}
                     optionsData={items}

@@ -163,6 +163,7 @@ export default function NavbarIndex({ setBreadCrumbs }: Props) {
                                 <Group spacing={4}>
                                     <ActionIcon
                                         data-test="navbar-icon-open-filter"
+                                        aria-label="Open filter"
                                         onClick={() => toggleOpenedFilter()}
                                         mb={4}
                                     >
@@ -170,6 +171,7 @@ export default function NavbarIndex({ setBreadCrumbs }: Props) {
                                     </ActionIcon>
                                     <ActionIcon
                                         data-test="navbar-icon-open-sort"
+                                        aria-label="Open sort"
                                         onClick={() => toggleOpenedSort()}
                                         mb={4}
                                     >
@@ -178,6 +180,7 @@ export default function NavbarIndex({ setBreadCrumbs }: Props) {
 
                                     <ActionIcon
                                         data-test="navbar-icon-refresh"
+                                        aria-label="Refresh"
                                         onClick={() => refreshIconClickHandler()}
                                         mb={4}
                                     >

@@ -35,11 +35,11 @@ Feature: User Information
         When I wait for "3" seconds
         When I go to "main" page
         When I wait for "3" seconds
-        Then the element with locator "[data-test='user-icon']" should have contains text "JD"
-        When I click element with locator "[data-test='user-icon']"
+        Then the element with locator "button[data-test='user-icon']" should have contains text "JD"
+        When I click element with locator "button[data-test='user-icon']"
         When I wait for "3" seconds
         Then the element with locator "[data-test='user-short-details']" should have contains text "John Doe"
-        When I click element with locator "[data-test='userinfo']"
+        When I click element with locator "[aria-label='User Details']"
 
         Then the element with locator "[data-test=userinfo-username]" should have contains text "user@gmail.com"
         Then the element with locator "[data-test=userinfo-role]" should have contains text "user"

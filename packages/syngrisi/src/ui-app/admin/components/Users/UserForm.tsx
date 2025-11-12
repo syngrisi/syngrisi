@@ -106,6 +106,7 @@ export default function UserForm(
                     <TextInput
                         sx={{ width: '11%' }}
                         data-test="user-list-first-name"
+                        aria-label="First Name"
                         value={firstName}
                         disabled={!editMode}
                         {...form.getInputProps('firstName')}
@@ -113,6 +114,7 @@ export default function UserForm(
                     <TextInput
                         sx={{ width: '11%' }}
                         data-test="user-list-last-name"
+                        aria-label="Last Name"
                         value={lastName}
                         disabled={!editMode}
                         {...form.getInputProps('lastName')}
@@ -120,6 +122,7 @@ export default function UserForm(
                     <SafeSelect
                         sx={{ width: '11%' }}
                         data-test="user-list-role"
+                        aria-label="Role"
                         optionsData={[
                             { value: 'user', label: 'User' },
                             { value: 'reviewer', label: 'Reviewer' },
@@ -162,6 +165,7 @@ export default function UserForm(
                                     <ActionIcon
                                         name="editUser"
                                         data-test={!editMode ? 'user-list-update-button' : 'user-list-send-button'}
+                                        aria-label={editMode ? 'Send changes' : 'Edit User'}
                                         onClick={!editMode ? () => setEditMode(true) : update}
                                         variant="light"
                                         // type={edit && "submit"}

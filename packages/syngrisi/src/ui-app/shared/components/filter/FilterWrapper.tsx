@@ -41,6 +41,7 @@ export function FilterWrapper(
         >
             <SafeSelect
                 data-test="table-filter-column-name"
+                aria-label="Filter column"
                 sx={{ width: '130px' }}
                 optionsData={optionsData}
                 value={selectValue}

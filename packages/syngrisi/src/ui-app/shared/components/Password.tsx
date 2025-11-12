@@ -59,6 +59,7 @@ export const Password = {
                         disabled={disabled}
                         autoComplete="off"
                         required
+                        aria-label={label}
                         {...rest}
                         label={label}
                     />

@@ -23,19 +23,19 @@ Feature: Tests Table Filter
         When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
 
         # filter contains
-        When I click element with locator "[data-test='table-filtering']"
+        When I click element with locator "[aria-label='Filter the Table Data']"
         When I wait 30 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
         When I select the option with the text "Name" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-column-name']"
         When I select the option with the text "contains" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-operator']"
         When I set "filter-1" to the inputfield "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//input[@data-test='table-filter-value']"
-        When I click element with locator "[data-test='table-filter-apply']"
+        When I click element with locator "[aria-label='Apply filter']"
 
 
 
         When I wait on element "[data-table-test-name='TestName filter-0']" to not be displayed
         When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
 
-        When I click element with locator "[data-test='table-filter-reset']"
+        When I click element with locator "[aria-label='Reset filter']"
         When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-0']" to be visible
         When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
 
@@ -74,12 +74,12 @@ Feature: Tests Table Filter
         When I wait on element "[data-table-test-name='TestName filter-P2']" to not be displayed
 
         # filter contains
-        When I click element with locator "[data-test='table-filtering']"
+        When I click element with locator "[aria-label='Filter the Table Data']"
         When I wait 30 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
         When I select the option with the text "Name" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-column-name']"
         When I select the option with the text "contains" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-operator']"
         When I set "filter-1" to the inputfield "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//input[@data-test='table-filter-value']"
-        When I click element with locator "[data-test='table-filter-apply']"
+        When I click element with locator "[aria-label='Apply filter']"
 
         When I wait on element "[data-table-test-name='TestName filter-0']" to not be displayed
         When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
@@ -120,12 +120,12 @@ Feature: Tests Table Filter
         When I wait on element "[data-table-test-name='TestName filter-RunName-2']" to not be displayed
 
         # filter contains
-        When I click element with locator "[data-test='table-filtering']"
+        When I click element with locator "[aria-label='Filter the Table Data']"
         When I wait 30 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
         When I select the option with the text "Name" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-column-name']"
         When I select the option with the text "contains" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-operator']"
         When I set "filter-1" to the inputfield "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//input[@data-test='table-filter-value']"
-        When I click element with locator "[data-test='table-filter-apply']"
+        When I click element with locator "[aria-label='Apply filter']"
 
         When I wait on element "[data-table-test-name='TestName filter-0']" to not be displayed
         When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
@@ -176,12 +176,12 @@ Feature: Tests Table Filter
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-2]" to be visible
 
         # filter eq test name
-        When I click element with locator "[data-test='table-filtering']"
+        When I click element with locator "[aria-label='Filter the Table Data']"
         When I wait 30 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
         When I select the option with the text "Name" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-column-name']"
         When I select the option with the text "equals" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-operator']"
         When I set "TestName-1" to the inputfield "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//input[@data-test='table-filter-value']"
-        When I click element with locator "[data-test='table-filter-apply']"
+        When I click element with locator "[aria-label='Apply filter']"
 
         When I wait for "1" seconds
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-1]" to be visible
@@ -192,7 +192,7 @@ Feature: Tests Table Filter
         When I select the option with the text "Browser" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-1']//select[@data-test='table-filter-column-name']"
         When I select the option with the text "equals" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-1']//select[@data-test='table-filter-operator']"
         When I select the option with the text "firefox" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-1']//select[@data-test='table-filter-value']"
-        When I click element with locator "[data-test='table-filter-apply']"
+        When I click element with locator "[aria-label='Apply filter']"
 
         When I wait for "1" seconds
 
@@ -250,7 +250,7 @@ Feature: Tests Table Filter
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-msedge]" to be visible
 
         # filter eq test name
-        When I click element with locator "[data-test='table-filtering']"
+        When I click element with locator "[aria-label='Filter the Table Data']"
         When I wait 30 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
         When I click element with locator "//*[@data-test='filter-main-group']//*[@data-test='filter-group-operator-or']/.."
 
@@ -259,14 +259,14 @@ Feature: Tests Table Filter
         When I select the option with the text "equals" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-operator']"
         When I select the option with the text "firefox" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-value']"
 
-        When I click element with locator "[data-test='table-filter-apply']"
+        When I click element with locator "[aria-label='Apply filter']"
 
         # filter browser name equals firefox
         When I select the option with the text "Browser" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-1']//select[@data-test='table-filter-column-name']"
         When I select the option with the text "equals" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-1']//select[@data-test='table-filter-operator']"
         When I select the option with the text "chrome" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-1']//select[@data-test='table-filter-value']"
 
-        When I click element with locator "[data-test='table-filter-apply']"
+        When I click element with locator "[aria-label='Apply filter']"
 
         When I wait for "3" seconds
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-firefox]" to be visible

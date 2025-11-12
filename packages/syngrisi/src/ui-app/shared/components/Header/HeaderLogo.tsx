@@ -23,6 +23,7 @@ function HeaderLogo({ size }: { size?: number | undefined }) {
             <a href="/" style={{ display: 'flex', textDecoration: 'none', alignItems: 'center' }}>
                 <Paper
                     data-test="logo-container"
+                    aria-label="Logo container"
                     sx={{
                         justifyContent: 'center',
                         height: 44,
@@ -61,6 +62,7 @@ function HeaderLogo({ size }: { size?: number | undefined }) {
                     >
                         <Text
                             data-test="logo-text"
+                            aria-label="Syngrisi"
                             color={(theme.colorScheme === 'dark' ? 'white' : '#262626')}
                             sx={
                                 {

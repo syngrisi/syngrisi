@@ -20,19 +20,19 @@ Feature: Switch Color Theme
         When I wait for "3" seconds
 
         # logo label
-        Then the css attribute "color" from element "[data-test='logo-text']" is "rgba(38,38,38,1)"
+        Then the css attribute "color" from element "[aria-label='Syngrisi']" is "rgba(38,38,38,1)"
         # logo container
-        Then the css attribute "color" from element "[data-test='logo-container']" is "rgba(0,0,0,1)"
+        Then the css attribute "color" from element "[aria-label='Logo container']" is "rgba(0,0,0,1)"
 
         # switch theme
-        When I click element with locator "[data-test='user-icon']"
+        When I click element with locator "button[data-test='user-icon']"
         When I wait 30 seconds for the element with locator "//*[@data-test='theme-button']/.." to be visible
         When I click element with locator "//*[@data-test='theme-button']/.."
         When I wait for "3" seconds
 
         # logo label
-        Then the css attribute "color" from element "[data-test='logo-text']" is "rgba(255,255,255,1)"
+        Then the css attribute "color" from element "[aria-label='Syngrisi']" is "rgba(255,255,255,1)"
         # logo container
-        Then the css attribute "color" from element "[data-test='logo-container']" is "rgba(193,194,197,1)"
+        Then the css attribute "color" from element "[aria-label='Logo container']" is "rgba(193,194,197,1)"
 
 
