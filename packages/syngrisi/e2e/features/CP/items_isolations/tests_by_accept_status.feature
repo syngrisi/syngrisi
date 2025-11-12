@@ -37,7 +37,7 @@ Feature: Test Isolation by Accept Status
     When I refresh page
     # all tests
     When I wait 30 seconds for the element with locator "[data-table-test-name*='AcceptStatus']" to be visible
-    Then I expect that element "[data-table-test-name*='AcceptStatus']" does appear exactly "3" times
+    Then the element "[data-table-test-name*='AcceptStatus']" does appear exactly "3" times
 
     When I select the option with the text "Accept Status" for element "select[data-test='navbar-group-by']"
 

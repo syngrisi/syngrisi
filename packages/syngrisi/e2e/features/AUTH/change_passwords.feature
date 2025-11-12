@@ -59,8 +59,8 @@ Feature: Change Password
         When I set "Password-456" to the inputfield "#new-password-confirmation"
         When I click element with locator "#change-password"
         When I wait for "2" seconds
-        Then I expect the url to contain "auth/changeSuccess"
-        Then I expect that element "h1=Success!" is displayed
+        Then the current url contains "auth/changeSuccess"
+        Then the element with locator "h1=Success!" should be visible
 
         # login with new password
         When I go to "logout" page
@@ -74,7 +74,7 @@ Feature: Change Password
         When I set "Password-456" to the inputfield "#new-password"
         When I set "Password-456" to the inputfield "#new-password-confirmation"
         When I click element with locator "#change-password"
-        Then I expect that element "#error-message" contain text "user is not logged in"
+        Then the element with locator "#error-message" should have contains text "user is not logged in"
 
 
     Scenario: Change Password - Wrong Current Password
@@ -87,8 +87,8 @@ Feature: Change Password
         When I set "Password-456" to the inputfield "#new-password"
         When I set "Password-456" to the inputfield "#new-password-confirmation"
         When I click element with locator "#change-password"
-        Then I expect the url to not contain "auth/changeSuccess"
-        Then I expect that element "#error-message" contain text "IncorrectPasswordError: Password or username is incorrect"
+        Then the current url does not contain "auth/changeSuccess"
+        Then the element with locator "#error-message" should have contains text "IncorrectPasswordError: Password or username is incorrect"
 
     Scenario: Change Password - Validation
         # login
@@ -96,50 +96,50 @@ Feature: Change Password
         Then I wait on element "span*=JD" to be displayed
 
         When I go to "change_password" page
-        Then I expect that the element "#current-password" to have attribute "required"
-        Then I expect that the element "#new-password" to have attribute "required"
-        Then I expect that the element "#new-password-confirmation" to have attribute "required"
+        Then the element "#current-password" has attribute "required"
+        Then the element "#new-password" has attribute "required"
+        Then the element "#new-password-confirmation" has attribute "required"
 
-        Then I expect that the css attribute "color" from element "#include-six-chars" is "rgba(250,82,82,1)"
-        Then I expect that the css attribute "color" from element "#include-numbers" is "rgba(250,82,82,1)"
-        Then I expect that the css attribute "color" from element "#include-lowercase" is "rgba(250,82,82,1)"
-        Then I expect that the css attribute "color" from element "#include-uppercase" is "rgba(250,82,82,1)"
-        Then I expect that the css attribute "color" from element "#include-special" is "rgba(250,82,82,1)"
+        Then the css attribute "color" from element "#include-six-chars" is "rgba(250,82,82,1)"
+        Then the css attribute "color" from element "#include-numbers" is "rgba(250,82,82,1)"
+        Then the css attribute "color" from element "#include-lowercase" is "rgba(250,82,82,1)"
+        Then the css attribute "color" from element "#include-uppercase" is "rgba(250,82,82,1)"
+        Then the css attribute "color" from element "#include-special" is "rgba(250,82,82,1)"
 
         When I set "1" to the inputfield "#new-password"
-        Then I expect that the css attribute "color" from element "#include-six-chars" is "rgba(250,82,82,1)"
-        Then I expect that the css attribute "color" from element "#include-numbers" is "rgba(18,184,134,1)"
-        Then I expect that the css attribute "color" from element "#include-lowercase" is "rgba(250,82,82,1)"
-        Then I expect that the css attribute "color" from element "#include-uppercase" is "rgba(250,82,82,1)"
-        Then I expect that the css attribute "color" from element "#include-special" is "rgba(250,82,82,1)"
+        Then the css attribute "color" from element "#include-six-chars" is "rgba(250,82,82,1)"
+        Then the css attribute "color" from element "#include-numbers" is "rgba(18,184,134,1)"
+        Then the css attribute "color" from element "#include-lowercase" is "rgba(250,82,82,1)"
+        Then the css attribute "color" from element "#include-uppercase" is "rgba(250,82,82,1)"
+        Then the css attribute "color" from element "#include-special" is "rgba(250,82,82,1)"
 
         When I set "123456" to the inputfield "#new-password"
-        Then I expect that the css attribute "color" from element "#include-six-chars" is "rgba(18,184,134,1)"
-        Then I expect that the css attribute "color" from element "#include-numbers" is "rgba(18,184,134,1)"
-        Then I expect that the css attribute "color" from element "#include-lowercase" is "rgba(250,82,82,1)"
-        Then I expect that the css attribute "color" from element "#include-uppercase" is "rgba(250,82,82,1)"
-        Then I expect that the css attribute "color" from element "#include-special" is "rgba(250,82,82,1)"
+        Then the css attribute "color" from element "#include-six-chars" is "rgba(18,184,134,1)"
+        Then the css attribute "color" from element "#include-numbers" is "rgba(18,184,134,1)"
+        Then the css attribute "color" from element "#include-lowercase" is "rgba(250,82,82,1)"
+        Then the css attribute "color" from element "#include-uppercase" is "rgba(250,82,82,1)"
+        Then the css attribute "color" from element "#include-special" is "rgba(250,82,82,1)"
 
         When I set "123456a" to the inputfield "#new-password"
-        Then I expect that the css attribute "color" from element "#include-six-chars" is "rgba(18,184,134,1)"
-        Then I expect that the css attribute "color" from element "#include-numbers" is "rgba(18,184,134,1)"
-        Then I expect that the css attribute "color" from element "#include-lowercase" is "rgba(18,184,134,1)"
-        Then I expect that the css attribute "color" from element "#include-uppercase" is "rgba(250,82,82,1)"
-        Then I expect that the css attribute "color" from element "#include-special" is "rgba(250,82,82,1)"
+        Then the css attribute "color" from element "#include-six-chars" is "rgba(18,184,134,1)"
+        Then the css attribute "color" from element "#include-numbers" is "rgba(18,184,134,1)"
+        Then the css attribute "color" from element "#include-lowercase" is "rgba(18,184,134,1)"
+        Then the css attribute "color" from element "#include-uppercase" is "rgba(250,82,82,1)"
+        Then the css attribute "color" from element "#include-special" is "rgba(250,82,82,1)"
 
         When I set "123456aA" to the inputfield "#new-password"
-        Then I expect that the css attribute "color" from element "#include-six-chars" is "rgba(18,184,134,1)"
-        Then I expect that the css attribute "color" from element "#include-numbers" is "rgba(18,184,134,1)"
-        Then I expect that the css attribute "color" from element "#include-lowercase" is "rgba(18,184,134,1)"
-        Then I expect that the css attribute "color" from element "#include-uppercase" is "rgba(18,184,134,1)"
-        Then I expect that the css attribute "color" from element "#include-special" is "rgba(250,82,82,1)"
+        Then the css attribute "color" from element "#include-six-chars" is "rgba(18,184,134,1)"
+        Then the css attribute "color" from element "#include-numbers" is "rgba(18,184,134,1)"
+        Then the css attribute "color" from element "#include-lowercase" is "rgba(18,184,134,1)"
+        Then the css attribute "color" from element "#include-uppercase" is "rgba(18,184,134,1)"
+        Then the css attribute "color" from element "#include-special" is "rgba(250,82,82,1)"
 
         When I set "123456aA-" to the inputfield "#new-password"
-        Then I expect that the css attribute "color" from element "#include-six-chars" is "rgba(18,184,134,1)"
-        Then I expect that the css attribute "color" from element "#include-numbers" is "rgba(18,184,134,1)"
-        Then I expect that the css attribute "color" from element "#include-lowercase" is "rgba(18,184,134,1)"
-        Then I expect that the css attribute "color" from element "#include-uppercase" is "rgba(18,184,134,1)"
-        Then I expect that the css attribute "color" from element "#include-special" is "rgba(18,184,134,1)"
+        Then the css attribute "color" from element "#include-six-chars" is "rgba(18,184,134,1)"
+        Then the css attribute "color" from element "#include-numbers" is "rgba(18,184,134,1)"
+        Then the css attribute "color" from element "#include-lowercase" is "rgba(18,184,134,1)"
+        Then the css attribute "color" from element "#include-uppercase" is "rgba(18,184,134,1)"
+        Then the css attribute "color" from element "#include-special" is "rgba(18,184,134,1)"
 
         When I set "123" to the inputfield "#current-password"
         When I set "123" to the inputfield "#new-password-confirmation"

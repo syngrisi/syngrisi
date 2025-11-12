@@ -17,7 +17,7 @@ Feature: Folding
         """
         When I go to "main" page
         When I wait for "5" seconds
-        Then I expect that element "[data-test='folding-table-items']" is not displayed
+        Then the element with locator "[data-test='folding-table-items']" should not be visible
 
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
         When I click element with locator "//*[@data-test='table-row-Name' and contains(.,'TestName')]/..//input"

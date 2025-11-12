@@ -22,8 +22,8 @@ Feature: Bulk test Delete
         When I click element with locator "[data-test-checkbox-name=TestName-1]"
         When I wait 30 seconds for the element with locator "[data-test='table-remove-tests']" to be visible
         When I click element with locator "[data-test='table-remove-tests']"
-        Then I expect that element ".mantine-Modal-modal" to contain text "Remove selected tests?"
-        Then I expect that element ".mantine-Modal-modal" to contain text "Are you sure you want to permanently delete the selected tests?"
+        Then the element with locator ".mantine-Modal-modal" should have contains text "Remove selected tests?"
+        Then the element with locator ".mantine-Modal-modal" should have contains text "Are you sure you want to permanently delete the selected tests?"
         When I wait 30 seconds for the element with locator "[data-test='confirm-remove-test-icon']" to be visible
 
         When I click element with locator "[data-test='confirm-remove-test-icon']"

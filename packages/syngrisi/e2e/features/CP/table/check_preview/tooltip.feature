@@ -42,13 +42,13 @@ Feature: Check Preview - Tooltip
     When I wait on element "[data-check-tooltip-name='CheckName']" to not be displayed
     When I move to element "[data-test-preview-image='CheckName']"
     When I wait 30 seconds for the element with locator "[data-check-tooltip-name='CheckName']" to be visible
-    When I expect that element "[data-check-tooltip-name='CheckName'] [data-test='status-label']" to contain text "New - first time check"
-    When I expect that element "[data-check-tooltip-name='CheckName'] [data-test='user-label']" to contain text "Test Admin"
-    When I expect that element "[data-check-tooltip-name='CheckName'] [data-test='os-label']" to contain text "<testPlatform>"
-    When I expect that element "[data-check-tooltip-name='CheckName'] [data-test='date-tooltip-label']" to contain text "<YYYY-MM-DD>"
-    When I expect that element "[data-check-tooltip-name='CheckName'] [data-test='browser-label']" to contain text "chrome"
+    When the element with locator "[data-check-tooltip-name='CheckName'] [data-test='status-label']" should have contains text "New - first time check"
+    When the element with locator "[data-check-tooltip-name='CheckName'] [data-test='user-label']" should have contains text "Test Admin"
+    When the element with locator "[data-check-tooltip-name='CheckName'] [data-test='os-label']" should have contains text "<testPlatform>"
+    When the element with locator "[data-check-tooltip-name='CheckName'] [data-test='date-tooltip-label']" should have contains text "<YYYY-MM-DD>"
+    When the element with locator "[data-check-tooltip-name='CheckName'] [data-test='browser-label']" should have contains text "chrome"
 
     # acceptance tooltip
     When I move to element "[data-test='check-accept-icon']"
-    When I expect that element "[data-test='accept-button-tooltip-username']" to have text "Accepted by: Test"
-    When I expect that element "[data-test='accept-button-tooltip-date']" to contain text "<YYYY-MM-DD>"
+    When the element "[data-test='accept-button-tooltip-username']" matches the text "Accepted by: Test"
+    When the element with locator "[data-test='accept-button-tooltip-date']" should have contains text "<YYYY-MM-DD>"

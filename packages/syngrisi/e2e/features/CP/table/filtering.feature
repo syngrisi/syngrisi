@@ -172,7 +172,7 @@ Feature: Tests Table Filter
 
         When I wait for "1" seconds
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-1]" to be visible
-        When I expect that element "[data-table-test-name=TestName-1]" does appear exactly "2" times
+        When the element "[data-table-test-name=TestName-1]" does appear exactly "2" times
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-2]" to be visible
 
         # filter eq test name
@@ -185,7 +185,7 @@ Feature: Tests Table Filter
 
         When I wait for "1" seconds
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-1]" to be visible
-        When I expect that element "[data-table-test-name=TestName-1]" does appear exactly "2" times
+        When the element "[data-table-test-name=TestName-1]" does appear exactly "2" times
         When I wait on element "[data-table-test-name=TestName-2]" to not be displayed
 
         # filter eq browser name
@@ -199,7 +199,7 @@ Feature: Tests Table Filter
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-1]" to be visible
         When I wait 30 seconds for the element with locator "//*[@data-test='table-row-Browser' and contains(.,'firefox')]" to be visible
         When I wait on element "//*[@data-test='table-row-Browser' and contains(.,'chrome')]" to not be displayed
-        When I expect that element "[data-table-test-name=TestName-1]" does appear exactly "1" times
+        When the element "[data-table-test-name=TestName-1]" does appear exactly "1" times
         When I wait on element "[data-table-test-name=TestName-2]" to not be displayed
 
     Scenario: Main Group, Multiple Rules - Or

@@ -40,10 +40,10 @@ Feature: Create User
         When I click element with locator "#create"
 
         When I wait for "3" seconds
-        Then I expect that element "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-email']" contain value "j_doe@gmail.com"
-        Then I expect that element "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-first-name']" contain value "John"
-        Then I expect that element "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-last-name']" contain value "Doe"
-        Then I expect that element "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-role']" contain value "Reviewer"
+        Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-email']" should have value "j_doe@gmail.com"
+        Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-first-name']" should have value "John"
+        Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-last-name']" should have value "Doe"
+        Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-role']" should have value "Reviewer"
 
         When I go to "logout" page
         When I wait for "3" seconds
@@ -65,19 +65,19 @@ Feature: Create User
         When I click element with locator "#create"
 
         When I wait for "3" seconds
-        Then I expect that element "//*[@data-test='j_doe@gmail.com']" does appear exactly "1" times
-        Then I expect that element "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-email']" contain value "j_doe@gmail.com"
+        Then the element "//*[@data-test='j_doe@gmail.com']" does appear exactly "1" times
+        Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-email']" should have value "j_doe@gmail.com"
 
         When I click element with locator "#add-new-user"
         When I set "j_doe@gmail.com" to the inputfield "[data-test=user-add-email]"
 
-        Then I expect that element "//input[@data-test='user-add-email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" contain text "user with this email already exists"
+        Then the element with locator "//input[@data-test='user-add-email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" should have contains text "user with this email already exists"
 
         When I scroll to element "#create"
         When I wait for "1" seconds
         When I click element with locator "#create"
         When I wait for "3" seconds
-        Then I expect that element "//*[@data-test='j_doe@gmail.com']" does appear exactly "1" times
+        Then the element "//*[@data-test='j_doe@gmail.com']" does appear exactly "1" times
 
     Scenario: Create User - Invalid fields
         When I go to "admin2" page
@@ -86,27 +86,27 @@ Feature: Create User
         # invalid email - disabled fields
         When I click element with locator "#add-new-user"
         When I set "j_doe@" to the inputfield "[data-test=user-add-email]"
-        Then I expect that element "//input[@data-test='user-add-email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" contain text "Invalid email format"
+        Then the element with locator "//input[@data-test='user-add-email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" should have contains text "Invalid email format"
 
-        Then I expect that the element "//input[@data-test='user-add-first-name']" to have attribute "disabled"
-        Then I expect that the element "//input[@data-test='user-add-last-name']" to have attribute "disabled"
-        Then I expect that the element "//input[@data-test='user-add-role']" to have attribute "disabled"
+        Then the element "//input[@data-test='user-add-first-name']" has attribute "disabled"
+        Then the element "//input[@data-test='user-add-last-name']" has attribute "disabled"
+        Then the element "//input[@data-test='user-add-role']" has attribute "disabled"
 
         When I scroll to element "#create"
         When I wait for "1" seconds
         When I click element with locator "#create"
         When I wait for "1" seconds
-        Then I expect that element "//input[@data-test='user-add-email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" contain text "Invalid email format"
+        Then the element with locator "//input[@data-test='user-add-email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" should have contains text "Invalid email format"
 
         # valid email - enabled fields
         When I refresh page
         When I wait for "3" seconds
         When I click element with locator "#add-new-user"
         When I set "j_doe@xxx" to the inputfield "[data-test=user-add-email]"
-        And I expect that element "//input[@data-test='user-add-email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" does not exist
+        And the element "//input[@data-test='user-add-email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" does not exist
 
-        Then I expect that the element "//input[@data-test='user-add-first-name']" to not have attribute "disabled"
-        Then I expect that the element "//input[@data-test='user-add-last-name']" to not have attribute "disabled"
-        Then I expect that the element "//input[@data-test='user-add-role']" to not have attribute "disabled"
+        Then the element "//input[@data-test='user-add-first-name']" does not have attribute "disabled"
+        Then the element "//input[@data-test='user-add-last-name']" does not have attribute "disabled"
+        Then the element "//input[@data-test='user-add-role']" does not have attribute "disabled"
 
 

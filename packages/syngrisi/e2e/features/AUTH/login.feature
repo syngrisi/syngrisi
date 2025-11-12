@@ -52,17 +52,17 @@ Feature: Login
     Scenario: Login - Wrong password
         When I login with user:"Test" password "Password-567"
         When I wait for "1" seconds
-        Then I expect that element "#error-message" contain text "Authentication error: 'Password or username is incorrect'"
+        Then the element with locator "#error-message" should have contains text "Authentication error: 'Password or username is incorrect'"
 
     Scenario: Login - Empty credentials
         When I login with user:"" password ""
         When I wait for "1" seconds
         # we cannot check native HTML required behavior then check only indirect signs
-        Then I expect that the element "#email" to have attribute "required"
-        Then I expect that the element "#password" to have attribute "required"
+        Then the element "#email" has attribute "required"
+        Then the element "#password" has attribute "required"
         Then the current url contains "/auth"
-        Then the element "#email" is displayed
-        Then the element "#password" is displayed
+        Then the element with locator "#email" should be visible
+        Then the element with locator "#password" should be visible
 
     Scenario: Login - Invalid email
         When I login with user:"asd" password "PasswordInvEmail-567"

@@ -28,7 +28,7 @@ Feature: Logout
         When I wait for "2" seconds
         When I go to "main" page
         When I wait for "1" seconds
-        When I expect the url to contain "/auth"
+        When the current url contains "/auth"
         Then the title is "Login Page"
 
 
