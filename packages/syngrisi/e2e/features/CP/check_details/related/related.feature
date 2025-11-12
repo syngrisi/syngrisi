@@ -76,8 +76,8 @@ Feature: Check details Related Checks
         When I open the 3st check "CheckName"
 
         # 3
-        Then I wait on element "[data-related-check-item='CheckName']" to be displayed
-        Then I wait on element "[data-related-check-item='CheckName'] [data-related-check='image']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-related-check-item='CheckName']" to be visible
+        When I wait 30 seconds for the element with locator "[data-related-check-item='CheckName'] [data-related-check='image']" to be visible
         Then the element "[data-related-check-item='CheckName'] [data-viewport-badge-name='CheckName']" matches the text "501X501"
         Then the element "[data-related-check-item='CheckName'] [data-related-check='branch']" matches the text "INTEGRATION2"
         Then the element "[data-related-check-item='CheckName'] [data-related-check='os-label']" matches the text "macOS"
@@ -85,8 +85,8 @@ Feature: Check details Related Checks
         Then the element with locator "[data-related-check-item='CheckName'] [data-related-check='browser-version']" should have contains text "11"
 
         # 2
-        Then I wait on element "(//*[@data-related-check-item='CheckName'])[2]" to be displayed
-        Then I wait on element "(//*[@data-related-check-item='CheckName'])[2]//*[@data-related-check='image']" to be displayed
+        When I wait 30 seconds for the element with locator "(//*[@data-related-check-item='CheckName'])[2]" to be visible
+        When I wait 30 seconds for the element with locator "(//*[@data-related-check-item='CheckName'])[2]//*[@data-related-check='image']" to be visible
         Then the element "(//*[@data-related-check-item='CheckName'])[2]//*[@data-viewport-badge-name='CheckName']" matches the text "500X500"
         Then the element "(//*[@data-related-check-item='CheckName'])[2]//*[@data-related-check='branch']" matches the text "INTEGRATION1"
         Then the element "(//*[@data-related-check-item='CheckName'])[2]//*[@data-related-check='os-label']" matches the text "macOS"
@@ -94,8 +94,8 @@ Feature: Check details Related Checks
         Then the element with locator "(//*[@data-related-check-item='CheckName'])[2]//*[@data-related-check='browser-version']" should have contains text "11"
 
         # 1
-        Then I wait on element "(//*[@data-related-check-item='CheckName'])[3]" to be displayed
-        Then I wait on element "(//*[@data-related-check-item='CheckName'])[3]//*[@data-related-check='image']" to be displayed
+        When I wait 30 seconds for the element with locator "(//*[@data-related-check-item='CheckName'])[3]" to be visible
+        When I wait 30 seconds for the element with locator "(//*[@data-related-check-item='CheckName'])[3]//*[@data-related-check='image']" to be visible
         Then the element "(//*[@data-related-check-item='CheckName'])[3]//*[@data-viewport-badge-name='CheckName']" matches the text "500X500"
         Then the element "(//*[@data-related-check-item='CheckName'])[3]//*[@data-related-check='branch']" matches the text "INTEGRATION1"
         Then the element "(//*[@data-related-check-item='CheckName'])[3]//*[@data-related-check='os-label']" matches the text "Windows"
@@ -149,12 +149,12 @@ Feature: Check details Related Checks
         When I open the 1st check "CheckName"
 
 #        When I click element with locator "[data-table-test-name=TestName]"
-#        Then I wait on element "//*[@data-test-preview-image='CheckName']" to be displayed
+#        When I wait 30 seconds for the element with locator "//*[@data-test-preview-image='CheckName']" to be visible
 #        When I click element with locator "//*[@data-test-preview-image='CheckName']"
-#        Then I wait on element "[data-check-header-name='CheckName']" to be displayed
-#        Then I wait on element "(//*[@data-related-check-item='CheckName'])" to be displayed
+#        When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
+#        When I wait 30 seconds for the element with locator "(//*[@data-related-check-item='CheckName'])" to be visible
 
-        Then I wait on element "//*[@data-related-check='browser-name' and text()='safari']" to be displayed
+        When I wait 30 seconds for the element with locator "//*[@data-related-check='browser-name' and text()='safari']" to be visible
         Then the element "//*[@data-related-check='browser-name' and text()='safari']" does appear exactly "2" times
         Then the element "//*[@data-related-check='browser-name' and text()='firefox']" does appear exactly "0" times
 
@@ -180,15 +180,15 @@ Feature: Check details Related Checks
         When I open the 1st check "CheckName"
 
         # 3
-        Then I wait on element "(//*[@data-related-check-item='CheckName'])[1]" to be displayed
+        When I wait 30 seconds for the element with locator "(//*[@data-related-check-item='CheckName'])[1]" to be visible
         Then the element "(//*[@data-related-check-item='CheckName'])[1]//*[@data-related-check='branch']" matches the text "INTEGRATION2"
 
         # 2
-        Then I wait on element "(//*[@data-related-check-item='CheckName'])[2]" to be displayed
+        When I wait 30 seconds for the element with locator "(//*[@data-related-check-item='CheckName'])[2]" to be visible
         Then the element "(//*[@data-related-check-item='CheckName'])[2]//*[@data-related-check='branch']" matches the text "INTEGRATION1"
 
         # 1
-        Then I wait on element "(//*[@data-related-check-item='CheckName'])[3]" to be displayed
+        When I wait 30 seconds for the element with locator "(//*[@data-related-check-item='CheckName'])[3]" to be visible
         Then the element "(//*[@data-related-check-item='CheckName'])[3]//*[@data-related-check='branch']" matches the text "INTEGRATION0"
 
         # sort
@@ -197,15 +197,15 @@ Feature: Check details Related Checks
         When I wait for "1" seconds
 
         # 1
-        Then I wait on element "(//*[@data-related-check-item='CheckName'])[1]" to be displayed
+        When I wait 30 seconds for the element with locator "(//*[@data-related-check-item='CheckName'])[1]" to be visible
         Then the element "(//*[@data-related-check-item='CheckName'])[1]//*[@data-related-check='branch']" matches the text "INTEGRATION0"
 
         # 2
-        Then I wait on element "(//*[@data-related-check-item='CheckName'])[2]" to be displayed
+        When I wait 30 seconds for the element with locator "(//*[@data-related-check-item='CheckName'])[2]" to be visible
         Then the element "(//*[@data-related-check-item='CheckName'])[2]//*[@data-related-check='branch']" matches the text "INTEGRATION1"
 
         # 3
-        Then I wait on element "(//*[@data-related-check-item='CheckName'])[3]" to be displayed
+        When I wait 30 seconds for the element with locator "(//*[@data-related-check-item='CheckName'])[3]" to be visible
         Then the element "(//*[@data-related-check-item='CheckName'])[3]//*[@data-related-check='branch']" matches the text "INTEGRATION2"
 
     Scenario: Related - filter by Browser
@@ -246,12 +246,12 @@ Feature: Check details Related Checks
         When I unfold the test "TestName-1"
         When I open the 1st check "CheckName"
 
-        Then I wait on element "[data-check-header-name='CheckName']" to be displayed
-        Then I wait on element "(//*[@data-related-check-item='CheckName'])" to be displayed
+        When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
+        When I wait 30 seconds for the element with locator "(//*[@data-related-check-item='CheckName'])" to be visible
 
         # before filter
-        Then I wait on element "//*[@data-related-check='browser-name' and text()='safari']" to be displayed
-        Then I wait on element "//*[@data-related-check='browser-name' and text()='firefox']" to be displayed
+        When I wait 30 seconds for the element with locator "//*[@data-related-check='browser-name' and text()='safari']" to be visible
+        When I wait 30 seconds for the element with locator "//*[@data-related-check='browser-name' and text()='firefox']" to be visible
         Then the element "//*[@data-related-check='browser-name' and text()='safari']" does appear exactly "1" times
         Then the element "//*[@data-related-check='browser-name' and text()='firefox']" does appear exactly "2" times
 
@@ -260,7 +260,7 @@ Feature: Check details Related Checks
         When I wait 30 seconds for the element with locator "label=Browser" to be visible
         When I click element with locator "label=Browser"
 
-        Then I wait on element "//*[@data-related-check='browser-name' and text()='firefox']" to be displayed
+        When I wait 30 seconds for the element with locator "//*[@data-related-check='browser-name' and text()='firefox']" to be visible
         Then the element "//*[@data-related-check='browser-name' and text()='safari']" does appear exactly "0" times
         Then the element "//*[@data-related-check='browser-name' and text()='firefox']" does appear exactly "2" times
 

@@ -22,6 +22,6 @@ Feature: Login - Smoke
 
     Scenario: Login - default Test user
         When I login with user:"Test" password "123456aA-"
-        Then I wait on element "span*=TA" to be displayed
+        When I wait 30 seconds for the element with locator "span*=TA" to be visible
 
 

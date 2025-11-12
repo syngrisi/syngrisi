@@ -20,10 +20,10 @@ Feature: Select Navbar Item
         """
 
         When I go to "main" page
-        Then I wait on element "[data-test*='navbar_item_']" to be displayed
-        Then I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName-0')]" to be displayed
-        Then I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName-1')]" to be displayed
-        Then I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName-2')]" to be displayed
+        When I wait 30 seconds for the element with locator "[data-test*='navbar_item_']" to be visible
+        When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName-0')]" to be visible
+        When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName-1')]" to be visible
+        When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName-2')]" to be visible
 
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-0]" to be visible
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-1]" to be visible
@@ -74,8 +74,8 @@ Feature: Select Navbar Item
         """
 
         When I go to "main" page
-        Then I wait on element "[data-test*='navbar_item_']" to be displayed
-        Then I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName-0')]" to be displayed
+        When I wait 30 seconds for the element with locator "[data-test*='navbar_item_']" to be visible
+        When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName-0')]" to be visible
 
         # select one
         When I click element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName-0')]"
@@ -91,8 +91,8 @@ Feature: Select Navbar Item
         When I select the option with the text "Suites" for element "select[data-test='navbar-group-by']"
         When I move to element "body" with an offset of 0,0
 
-        Then I wait on element "//*[@data-test='navbar-item-name' and contains(., 'SuiteName-0')]" to be displayed
-        Then I wait on element "//*[@data-test='navbar-item-name' and contains(., 'SuiteName-1')]" to be displayed
+        When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'SuiteName-0')]" to be visible
+        When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'SuiteName-1')]" to be visible
 
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-0]" to be visible
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-1]" to be visible
@@ -102,8 +102,8 @@ Feature: Select Navbar Item
         # group by Runs (chek if selection did not 'stuck' on Runs grouping)
         When I select the option with the text "Runs" for element "select[data-test='navbar-group-by']"
 
-        Then I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName-0')]" to be displayed
-        Then I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName-1')]" to be displayed
+        When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName-0')]" to be visible
+        When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName-1')]" to be visible
 
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-0]" to be visible
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-1]" to be visible
@@ -126,8 +126,8 @@ Feature: Select Navbar Item
         """
 
         When I go to "main" page
-        Then I wait on element "[data-test*='navbar_item_']" to be displayed
-        Then I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName-0')]" to be displayed
+        When I wait 30 seconds for the element with locator "[data-test*='navbar_item_']" to be visible
+        When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName-0')]" to be visible
 
         # select one
         When I click element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName-0')]"
@@ -164,8 +164,8 @@ Feature: Select Navbar Item
         """
 
         When I go to "main" page
-        Then I wait on element "[data-test*='navbar_item_']" to be displayed
-        Then I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName-0')]" to be displayed
+        When I wait 30 seconds for the element with locator "[data-test*='navbar_item_']" to be visible
+        When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName-0')]" to be visible
 
         When I hold key "Meta"
         # select one

@@ -27,13 +27,13 @@ Feature: Checks Isolation by Test
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-1]" to be visible
         When I click element with locator "[data-table-test-name=TestName-1]"
 
-        Then I wait on element "[data-table-check-name='CheckName-1.1']" to be displayed
-        Then I wait on element "[data-table-check-name='CheckName-1.2']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-check-name='CheckName-1.1']" to be visible
+        When I wait 30 seconds for the element with locator "[data-table-check-name='CheckName-1.2']" to be visible
 
         Then I wait on element "[data-table-check-name='CheckName-2.1']" to not be displayed
         Then I wait on element "[data-table-check-name='CheckName-2.2']" to not be displayed
 
         When I click element with locator "[data-table-test-name=TestName-2]"
 
-        Then I wait on element "[data-table-check-name='CheckName-2.1']" to be displayed
-        Then I wait on element "[data-table-check-name='CheckName-2.2']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-check-name='CheckName-2.1']" to be visible
+        When I wait 30 seconds for the element with locator "[data-table-check-name='CheckName-2.2']" to be visible

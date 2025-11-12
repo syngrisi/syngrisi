@@ -20,7 +20,7 @@ Feature: Logout
 
     Scenario: Logout - default Test user
         When I login with user:"Test" password "123456aA-"
-        Then I wait on element "span*=TA" to be displayed
+        When I wait 30 seconds for the element with locator "span*=TA" to be visible
         When I wait for "2" seconds
 
         When I go to "logout" page

@@ -18,13 +18,13 @@ Feature: Enabled disabled buttons on Check Details Modal Window
         When I unfold the test "TestName"
 
         When I click element with locator "[data-test-preview-image='CheckName']"
-        Then I wait on element "[data-check-header-name='CheckName']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
         # view segment
-        Then the element "//*[@data-check='expected-view']/.." has the class "mantine-SegmentedControl-disabled"
-        Then the element "//*[@data-check='actual-view']/.." does not have the class "mantine-SegmentedControl-disabled"
-        Then the element "//*[@data-check='diff-view']/.." has the class "mantine-SegmentedControl-disabled"
-        Then the element "//*[@data-check='slider-view']/.." has the class "mantine-SegmentedControl-disabled"
+        Then the element with locator "[data-segment-value='expected']" should have attribute "data-segment-disabled" "true"
+        Then the element with locator "[data-segment-value='actual']" should have attribute "data-segment-disabled" "false"
+        Then the element with locator "[data-segment-value='diff']" should have attribute "data-segment-disabled" "true"
+        Then the element with locator "[data-segment-value='slider']" should have attribute "data-segment-disabled" "true"
 
         # action icons
         Then  the element "[data-check='highlight-icon']" has attribute "data-disabled" "true"
@@ -52,16 +52,16 @@ Feature: Enabled disabled buttons on Check Details Modal Window
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
 #        Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
 #        When I click element with locator "[data-table-test-name=TestName]"
-#        Then I wait on element "[data-table-check-name='CheckName']" to be displayed
+#        When I wait 30 seconds for the element with locator "[data-table-check-name='CheckName']" to be visible
 
         When I click element with locator "[data-test-preview-image='CheckName']"
-        Then I wait on element "[data-check-header-name='CheckName']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
         # view segment
-        Then the element "//*[@data-check='expected-view']/.." does not have the class "mantine-SegmentedControl-disabled"
-        Then the element "//*[@data-check='actual-view']/.." does not have the class "mantine-SegmentedControl-disabled"
-        Then the element "//*[@data-check='diff-view']/.." has the class "mantine-SegmentedControl-disabled"
-        Then the element "//*[@data-check='slider-view']/.." has the class "mantine-SegmentedControl-disabled"
+        Then the element with locator "[data-segment-value='expected']" should have attribute "data-segment-disabled" "false"
+        Then the element with locator "[data-segment-value='actual']" should have attribute "data-segment-disabled" "false"
+        Then the element with locator "[data-segment-value='diff']" should have attribute "data-segment-disabled" "true"
+        Then the element with locator "[data-segment-value='slider']" should have attribute "data-segment-disabled" "true"
 
         # action icons
         Then  the element "[data-check='highlight-icon']" has attribute "data-disabled" "true"
@@ -88,14 +88,14 @@ Feature: Enabled disabled buttons on Check Details Modal Window
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
         Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
         When I click element with locator "[data-table-test-name=TestName]"
-        Then I wait on element "[data-table-check-name='CheckName']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-check-name='CheckName']" to be visible
 
         When I click element with locator "[data-test-preview-image='CheckName']"
-        Then I wait on element "[data-check-header-name='CheckName']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
         # without save
         When I click element with locator "[data-check='add-ignore-region']"
-        Then the element "[data-check='remove-ignore-region']" does not have attribute "data-disabled" "true"
+        Then the element with locator "[data-check='remove-ignore-region']" should not have attribute "data-disabled=true"
 
     Scenario: Failed Check
         Given I create "1" tests with:
@@ -118,16 +118,16 @@ Feature: Enabled disabled buttons on Check Details Modal Window
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
         Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
         When I click element with locator "[data-table-test-name=TestName]"
-        Then I wait on element "[data-table-check-name='CheckName']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-check-name='CheckName']" to be visible
 
         When I click element with locator "[data-test-preview-image='CheckName']"
-        Then I wait on element "[data-check-header-name='CheckName']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
         # view segment
-        Then the element "//*[@data-check='expected-view']/.." does not have the class "mantine-SegmentedControl-disabled"
-        Then the element "//*[@data-check='actual-view']/.." does not have the class "mantine-SegmentedControl-disabled"
-        Then the element "//*[@data-check='diff-view']/.." does not have the class "mantine-SegmentedControl-disabled"
-        Then the element "//*[@data-check='slider-view']/.." does not have the class "mantine-SegmentedControl-disabled"
+        Then the element with locator "[data-segment-value='expected']" should have attribute "data-segment-disabled" "false"
+        Then the element with locator "[data-segment-value='actual']" should have attribute "data-segment-disabled" "false"
+        Then the element with locator "[data-segment-value='diff']" should have attribute "data-segment-disabled" "false"
+        Then the element with locator "[data-segment-value='slider']" should have attribute "data-segment-disabled" "false"
 
         # action icons
         Then  the element "[data-check='highlight-icon']" does not have attribute "data-disabled" "true"
@@ -156,20 +156,20 @@ Feature: Enabled disabled buttons on Check Details Modal Window
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
         Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
         When I click element with locator "[data-table-test-name=TestName]"
-        Then I wait on element "[data-table-check-name='CheckName']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-check-name='CheckName']" to be visible
 
         When I click element with locator "[data-test-preview-image='CheckName']"
-        Then I wait on element "[data-check-header-name='CheckName']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
         # view segment
-        Then the element "//*[@data-check='expected-view']/.." does not have the class "mantine-SegmentedControl-disabled"
-        Then the element "//*[@data-check='actual-view']/.." does not have the class "mantine-SegmentedControl-disabled"
-        Then the element "//*[@data-check='diff-view']/.." does not have the class "mantine-SegmentedControl-disabled"
-        Then the element "//*[@data-check='slider-view']/.." does not have the class "mantine-SegmentedControl-disabled"
+        Then the element with locator "[data-segment-value='expected']" should have attribute "data-segment-disabled" "false"
+        Then the element with locator "[data-segment-value='actual']" should have attribute "data-segment-disabled" "false"
+        Then the element with locator "[data-segment-value='diff']" should have attribute "data-segment-disabled" "false"
+        Then the element with locator "[data-segment-value='slider']" should have attribute "data-segment-disabled" "false"
 
         # action icons
-        Then the element "[data-check='highlight-icon']" has attribute "data-disabled" "true"
-        Then the element "[data-check='remove-ignore-region']" has attribute "data-disabled" "true"
-        Then the element "[data-check='add-ignore-region']" does not have attribute "data-disabled" "true"
-        Then the element "[data-check='save-ignore-region']" does not have attribute "data-disabled" "true"
+        Then the element with locator "[data-check='highlight-icon']" should have has attribute "data-disabled=true"
+        Then the element with locator "[data-check='remove-ignore-region']" should have has attribute "data-disabled=true"
+        Then the element with locator "[data-check='add-ignore-region']" should not have attribute "data-disabled=true"
+        Then the element with locator "[data-check='save-ignore-region']" should not have attribute "data-disabled=true"
 
