@@ -45,13 +45,13 @@ Feature: Distinct filters functionality
         When I go to "main" page
 
         When I wait for "1" seconds
-        When I wait on element "[data-table-test-name='TestName filter-0']" to be displayed
-        When I wait on element "[data-table-test-name='TestName filter-1']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-0']" to be visible
+        When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
 
         # BROWSER
         # open filter
         When I click element with locator "[data-test='table-filtering']"
-        When I wait on element "//*[@data-test='filter-main-group']" to be displayed
+        When I wait 30 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
 
         # set filter
         When I select the option with the text "Browser" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-column-name']"
@@ -66,7 +66,7 @@ Feature: Distinct filters functionality
         When I click element with locator "[data-test='table-filter-apply']"
 
         When I wait on element "[data-table-test-name='TestName filter-0']" to not be displayed
-        When I wait on element "[data-table-test-name='TestName filter-1']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
 
         # close drawer
         When I click element with locator "[data-test='relative-wrapper-icon']"
@@ -76,7 +76,7 @@ Feature: Distinct filters functionality
         # STATUS
         # open filter
         When I click element with locator "[data-test='table-filtering']"
-        When I wait on element "//*[@data-test='filter-main-group']" to be displayed
+        When I wait 30 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
 
         # set filter new
         When I select the option with the text "Status" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-column-name']"
@@ -89,8 +89,8 @@ Feature: Distinct filters functionality
 
         When I click element with locator "[data-test='table-filter-apply']"
 
-        When I wait on element "[data-table-test-name='TestName filter-1']" to be displayed
-        When I wait on element "[data-table-test-name='TestName filter-0']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
+        When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-0']" to be visible
         When I wait on element "[data-table-test-name='TestName filter-3']" to not be displayed
 
          # set filter failed
@@ -103,4 +103,4 @@ Feature: Distinct filters functionality
 
         When I wait on element "[data-table-test-name='TestName filter-1']" to not be displayed
         When I wait on element "[data-table-test-name='TestName filter-0']" to not be displayed
-        When I wait on element "[data-table-test-name='TestName filter-3']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-test-name='TestName filter-3']" to be visible

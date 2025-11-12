@@ -49,7 +49,7 @@ Feature: Enabled disabled buttons on Check Details Modal Window
 
         When I go to "main" page
         When I unfold the test "TestName"
-#        When I wait on element "[data-table-test-name=TestName]" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
 #        Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
 #        When I click element with locator "[data-table-test-name=TestName]"
 #        Then I wait on element "[data-table-check-name='CheckName']" to be displayed
@@ -85,7 +85,7 @@ Feature: Enabled disabled buttons on Check Details Modal Window
         """
 
         When I go to "main" page
-        When I wait on element "[data-table-test-name=TestName]" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
         Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
         When I click element with locator "[data-table-test-name=TestName]"
         Then I wait on element "[data-table-check-name='CheckName']" to be displayed
@@ -115,7 +115,7 @@ Feature: Enabled disabled buttons on Check Details Modal Window
         """
 
         When I go to "main" page
-        When I wait on element "[data-table-test-name=TestName]" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
         Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
         When I click element with locator "[data-table-test-name=TestName]"
         Then I wait on element "[data-table-check-name='CheckName']" to be displayed
@@ -153,7 +153,7 @@ Feature: Enabled disabled buttons on Check Details Modal Window
         """
 
         When I go to "main" page
-        When I wait on element "[data-table-test-name=TestName]" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
         Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
         When I click element with locator "[data-table-test-name=TestName]"
         Then I wait on element "[data-table-check-name='CheckName']" to be displayed

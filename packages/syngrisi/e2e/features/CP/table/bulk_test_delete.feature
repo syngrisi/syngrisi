@@ -15,16 +15,16 @@ Feature: Bulk test Delete
         """
         When I go to "main" page
 
-        When I wait on element "[data-table-test-name=TestName-0]" to be displayed
-        When I wait on element "[data-table-test-name=TestName-1]" to be displayed
+        When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-0]" to be visible
+        When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-1]" to be visible
 
         When I click element with locator "[data-test-checkbox-name=TestName-0]"
         When I click element with locator "[data-test-checkbox-name=TestName-1]"
-        When I wait on element "[data-test='table-remove-tests']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-test='table-remove-tests']" to be visible
         When I click element with locator "[data-test='table-remove-tests']"
         Then I expect that element ".mantine-Modal-modal" to contain text "Remove selected tests?"
         Then I expect that element ".mantine-Modal-modal" to contain text "Are you sure you want to permanently delete the selected tests?"
-        When I wait on element "[data-test='confirm-remove-test-icon']" to be displayed
+        When I wait 30 seconds for the element with locator "[data-test='confirm-remove-test-icon']" to be visible
 
         When I click element with locator "[data-test='confirm-remove-test-icon']"
 

@@ -35,7 +35,7 @@ Feature: Navbar Sorting
 
         # sort order - ascending
         When I click element with locator "[data-test='navbar-icon-open-sort']"
-        When I wait on element "button[data-test='navbar-sort-by-order']" to be displayed
+        When I wait 30 seconds for the element with locator "button[data-test='navbar-sort-by-order']" to be visible
         When I click element with locator "button[data-test='navbar-sort-by-order']"
         When I wait for "3" seconds
 

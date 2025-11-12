@@ -6,6 +6,6 @@ export default defineConfig({
   ...confObject,
   testDir: defineBddConfig({
     features: 'features/**/*.feature',
-    steps: ['steps/**/*.ts', 'support/fixtures/index.ts'],
+    steps: ['support/params.ts', 'steps/**/*.ts', 'support/fixtures/index.ts'],
   })
 });
