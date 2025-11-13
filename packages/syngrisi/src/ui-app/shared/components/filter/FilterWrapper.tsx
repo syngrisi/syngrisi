@@ -1,9 +1,9 @@
 /* eslint-disable */
 import { Group, ActionIcon, Box } from '@mantine/core';
 import * as React from 'react';
-import SafeSelect from '../SafeSelect';
+import SafeSelect from '@shared/components/SafeSelect';
 import { useInputState } from '@mantine/hooks'
-import Filters from './index';
+import Filters from '@shared/components/filter/index';
 import { IconMinus } from '@tabler/icons-react';
 
 

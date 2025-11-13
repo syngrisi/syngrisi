@@ -2,10 +2,10 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { IFirstPagesQuery, IPagesQuery } from '../interfaces/logQueries';
-import ILog from '../interfaces/ILog';
-import { errorMsg } from '../utils';
-import { GenericService } from '../services';
+import { IFirstPagesQuery, IPagesQuery } from '@shared/interfaces/logQueries';
+import ILog from '@shared/interfaces/ILog';
+import { errorMsg } from '@shared/utils';
+import { GenericService } from '@shared/services';
 
 interface IIScrollParams {
     resourceName: string

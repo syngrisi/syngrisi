@@ -17,15 +17,15 @@ import {
 import { createStyles } from '@mantine/styles';
 import { useEffect, useState } from 'react';
 import { useToggle } from '@mantine/hooks';
-import useInfinityScroll from '../../../shared/hooks/useInfinityScroll';
+import useInfinityScroll from '@shared/hooks/useInfinityScroll';
 
-import { NavbarItems } from './NavbarItems';
-import SkeletonWrapper from './Skeletons/SkeletonWrapper';
-import { NavbarSort } from './NavbarSort';
-import { useParams } from '../../hooks/useParams';
-import { NavbarFilter } from './NavbarFilter';
-import { NavbarGroupBySelect } from './NavbarGroupBySelect';
-import { useNavbarActiveItems } from '../../hooks/useNavbarActiveItems';
+import { NavbarItems } from '@index/components/Navbar/NavbarItems';
+import SkeletonWrapper from '@index/components/Navbar/Skeletons/SkeletonWrapper';
+import { NavbarSort } from '@index/components/Navbar/NavbarSort';
+import { useParams } from '@hooks/useParams';
+import { NavbarFilter } from '@index/components/Navbar/NavbarFilter';
+import { NavbarGroupBySelect } from '@index/components/Navbar/NavbarGroupBySelect';
+import { useNavbarActiveItems } from '@hooks/useNavbarActiveItems';
 
 const useStyles = createStyles((theme) => ({
     navbar: {

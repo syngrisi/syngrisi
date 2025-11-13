@@ -1,6 +1,6 @@
 /* eslint-disable prefer-arrow-callback */
 import { useEffect, useState } from 'react';
-import { useParams } from './useParams';
+import { useParams } from '@hooks/useParams';
 
 interface Props {
     groupByValue: string

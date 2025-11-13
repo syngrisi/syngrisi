@@ -3,8 +3,8 @@ import { resetNavigationProgress, stopNavigationProgress } from '@mantine/nprogr
 import { useContext, useEffect } from 'react';
 import { Anchor } from '@mantine/core';
 import * as React from 'react';
-import { AppContext } from '../../admin/AppContext';
-import { getNavigationItem } from '../navigation/navigationData';
+import { AppContext } from '@admin/AppContext';
+import { getNavigationItem } from '@shared/navigation/navigationData';
 
 export function useSubpageEffect(title: string) {
     const { setAppTitle }: any = useContext(AppContext);

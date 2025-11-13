@@ -8,10 +8,10 @@ import {
 import { IconSortAscending, IconSortDescending } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useInputState, useToggle } from '@mantine/hooks';
-import { adminLogsTableColumns } from './adminLogsTableColumns';
-import RelativeDrawer from '../../../../shared/components/RelativeDrawer';
-import SafeSelect from '../../../../shared/components/SafeSelect';
-import { useParams } from '../../../hooks/useParams';
+import { adminLogsTableColumns } from '@admin/components/Logs/Table/adminLogsTableColumns';
+import RelativeDrawer from '@shared/components/RelativeDrawer';
+import SafeSelect from '@shared/components/SafeSelect';
+import { useParams } from '@admin/hooks/useParams';
 
 interface Props {
     open: boolean

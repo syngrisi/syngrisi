@@ -5,13 +5,13 @@ import { ActionIcon, Group, TextInput } from '@mantine/core';
 import { IconEdit, IconSend, IconX } from '@tabler/icons-react';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
-import { errorMsg, log } from '../../../shared/utils';
-import { Password } from '../../../shared/components/Password';
-import ActionPopoverIcon from '../../../shared/components/ActionPopoverIcon';
-import { GenericService } from '../../../shared/services';
-import SafeSelect from '../../../shared/components/SafeSelect';
-import IUser from '../../../shared/interfaces/IUser';
-import { successMsg } from '../../../shared/utils/utils';
+import { errorMsg, log } from '@shared/utils';
+import { Password } from '@shared/components/Password';
+import ActionPopoverIcon from '@shared/components/ActionPopoverIcon';
+import { GenericService } from '@shared/services';
+import SafeSelect from '@shared/components/SafeSelect';
+import IUser from '@shared/interfaces/IUser';
+import { successMsg } from '@shared/utils/utils';
 
 export default function UserForm(
     {

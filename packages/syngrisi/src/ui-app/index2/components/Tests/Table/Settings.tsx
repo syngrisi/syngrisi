@@ -9,10 +9,10 @@ import {
 import { IconSortAscending, IconSortDescending } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useInputState, useToggle, useLocalStorage } from '@mantine/hooks';
-import { tableColumns } from './tableColumns';
-import RelativeDrawer from '../../../../shared/components/RelativeDrawer';
-import SafeSelect from '../../../../shared/components/SafeSelect';
-import { SearchParams } from '../../../../shared/utils';
+import { tableColumns } from '@index/components/Tests/Table/tableColumns';
+import RelativeDrawer from '@shared/components/RelativeDrawer';
+import SafeSelect from '@shared/components/SafeSelect';
+import { SearchParams } from '@shared/utils';
 
 interface Props {
     open: boolean

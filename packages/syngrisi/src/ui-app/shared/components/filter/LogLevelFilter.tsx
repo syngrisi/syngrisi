@@ -3,9 +3,9 @@ import { Group } from '@mantine/core';
 import * as React from 'react';
 import { useEffect } from 'react';
 import { useForm } from '@mantine/form';
-import SafeSelect from '../SafeSelect';
-import { generateItemFilter } from '../../utils';
-import { useDistinctLogQuery } from '../../hooks/useDistinctLogQuery';
+import SafeSelect from '@shared/components/SafeSelect';
+import { generateItemFilter } from '@shared/utils';
+import { useDistinctLogQuery } from '@shared/hooks/useDistinctLogQuery';
 
 interface Props {
     label: string

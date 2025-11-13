@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { fabric } from 'fabric';
-import { MainView } from '../Canvas/mainView';
+import { MainView } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/mainView';
 
 export interface IGroup {
     minX: number

@@ -1,7 +1,7 @@
 import ky from 'ky';
 
-import config from '../../config';
-import IUser from '../interfaces/IUser';
+import config from '@config';
+import IUser from '@shared/interfaces/IUser';
 
 export interface IApiResult {
     results: IUser[],

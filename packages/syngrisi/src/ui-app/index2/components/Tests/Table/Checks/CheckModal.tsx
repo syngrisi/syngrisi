@@ -12,10 +12,10 @@ import { useDisclosure } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { IconX } from '@tabler/icons-react';
-import { useParams } from '../../../../hooks/useParams';
-import { GenericService } from '../../../../../shared/services';
-import { errorMsg } from '../../../../../shared/utils';
-import { CheckDetails } from './CheckDetails/CheckDetails';
+import { useParams } from '@hooks/useParams';
+import { GenericService } from '@shared/services';
+import { errorMsg } from '@shared/utils';
+import { CheckDetails } from '@index/components/Tests/Table/Checks/CheckDetails/CheckDetails';
 
 interface Props {
     relatedRendered?: boolean;

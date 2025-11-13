@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Group } from '@mantine/core';
-import { useRelatedChecks } from '../hooks/useRelatedChecks';
-import { RelatedChecks } from './RelatedChecks';
+import { useRelatedChecks } from '@index/components/Tests/Table/Checks/CheckDetails/hooks/useRelatedChecks';
+import { RelatedChecks } from '@index/components/Tests/Table/Checks/CheckDetails/RelatedChecks/RelatedChecks';
 
 interface Props {
     currentCheck: any;

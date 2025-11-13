@@ -2,10 +2,10 @@
 import { Group } from '@mantine/core';
 import * as React from 'react';
 import { useEffect } from 'react';
-import SafeSelect from '../SafeSelect';
+import SafeSelect from '@shared/components/SafeSelect';
 import { useForm } from '@mantine/form';
 import { DatePicker } from '@mantine/dates';
-import { generateItemFilter } from '../../utils';
+import { generateItemFilter } from '@shared/utils';
 
 interface Props {
     label: string

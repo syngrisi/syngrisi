@@ -6,9 +6,9 @@ import queryString from 'query-string';
 import { useForm } from '@mantine/form';
 import { useRef, useState } from 'react';
 
-import { log } from '../../../shared/utils';
-import { IInput, ITask } from './tasksList';
-import { useSubpageEffect } from '../../../shared/hooks';
+import { log } from '@shared/utils';
+import { IInput, ITask } from '@admin/components/Tasks/tasksList';
+import { useSubpageEffect } from '@shared/hooks';
 
 export default function Task({ item }: { item: ITask }) {
     useSubpageEffect(`Task: ${item.label}`);

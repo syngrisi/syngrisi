@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle,prefer-arrow-callback,react/jsx-one-expression-per-line */
 import React from 'react';
-import { RunItem, SuiteItem, BrowserItem, PlatformItem, StatusItem, AcceptStatusItem } from '.';
+import { RunItem, SuiteItem, BrowserItem, PlatformItem, StatusItem, AcceptStatusItem } from '@index/components/Navbar/Items';
 
 const itemTypesMap = {
     runs: 'Run',

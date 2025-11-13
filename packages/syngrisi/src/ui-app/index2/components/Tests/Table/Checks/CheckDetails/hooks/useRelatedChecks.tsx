@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { useEffect, useState } from 'react';
-import useInfinityScrollRelatedChecks from '../../../../../../../shared/hooks/useInfinityScrollRelatedChecks';
-import { useParams } from '../../../../../../hooks/useParams';
+import useInfinityScrollRelatedChecks from '@shared/hooks/useInfinityScrollRelatedChecks';
+import { useParams } from '@hooks/useParams';
 
 export function useRelatedChecks(checkData: any) {
     const { query } = useParams();

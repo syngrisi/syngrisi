@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ThemeIcon, useMantineTheme, Text, Group } from '@mantine/core';
-import { UserHooks } from '../../hooks';
+import { UserHooks } from '@shared/hooks';
 
 interface Props {
     username: string

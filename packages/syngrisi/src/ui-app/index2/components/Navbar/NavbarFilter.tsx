@@ -4,7 +4,7 @@ import { ActionIcon, FocusTrap, Loader, TextInput, Transition } from '@mantine/c
 import { IconX } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useDebouncedValue } from '@mantine/hooks';
-import { escapeRegExp } from '../../../shared/utils/utils';
+import { escapeRegExp } from '@shared/utils/utils';
 
 const quickFilterKey = (value: string) => {
     const transform = {

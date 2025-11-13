@@ -5,9 +5,9 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconArrowsSort, IconFilter, IconRefresh, IconX } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { RelatedChecksSkeleton } from './RelatedChecksSkeleton';
-import { RelatedChecksItems } from './RelatedChecksItems';
-import { RelatedCheckSort } from './RelatedCheckSort';
+import { RelatedChecksSkeleton } from '@index/components/Tests/Table/Checks/CheckDetails/RelatedChecks/RelatedChecksSkeleton';
+import { RelatedChecksItems } from '@index/components/Tests/Table/Checks/CheckDetails/RelatedChecks/RelatedChecksItems';
+import { RelatedCheckSort } from '@index/components/Tests/Table/Checks/CheckDetails/RelatedChecks/RelatedCheckSort';
 
 interface Props {
     currentCheck: any

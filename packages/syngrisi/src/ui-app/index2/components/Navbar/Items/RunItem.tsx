@@ -5,11 +5,11 @@ import * as dateFns from 'date-fns';
 import { useMemo, useState } from 'react';
 import { useDisclosure } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
-import RemoveItemModalAsk from './RemoveItemModalAsk';
-import { StatusesRing } from '../../../../shared/components/Tests/StatusesRing';
-import { GenericService } from '../../../../shared/services';
-import { errorMsg } from '../../../../shared/utils';
-import { RemoveItemPopover } from './RemoveItemPopover';
+import RemoveItemModalAsk from '@index/components/Navbar/Items/RemoveItemModalAsk';
+import { StatusesRing } from '@shared/components/Tests/StatusesRing';
+import { GenericService } from '@shared/services';
+import { errorMsg } from '@shared/utils';
+import { RemoveItemPopover } from '@index/components/Navbar/Items/RemoveItemPopover';
 
 interface Props {
     item: { [key: string]: string }

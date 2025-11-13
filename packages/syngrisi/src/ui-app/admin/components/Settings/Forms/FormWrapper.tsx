@@ -1,11 +1,11 @@
 import { Paper } from '@mantine/core';
 import React, { FC } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { ISettingForm, ISettingFormUpdateData } from './interfaces';
-import SettingsForms from './index';
-import { errorMsg } from '../../../../shared/utils';
-import { successMsg } from '../../../../shared/utils/utils';
-import { GenericService } from '../../../../shared/services';
+import { ISettingForm, ISettingFormUpdateData } from '@admin/components/Settings/Forms/interfaces';
+import SettingsForms from '@admin/components/Settings/Forms/index';
+import { errorMsg } from '@shared/utils';
+import { successMsg } from '@shared/utils/utils';
+import { GenericService } from '@shared/services';
 
 function FormWrapper({ name, value, label, description, enabled, type, settingsQuery }: ISettingForm) {
     const Form: FC<ISettingForm> = SettingsForms[type as keyof typeof SettingsForms];

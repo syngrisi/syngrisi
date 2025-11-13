@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { Skeleton } from '@mantine/core';
 
-import { tableColumns } from './tableColumns';
+import { tableColumns } from '@index/components/Tests/Table/tableColumns';
 
 interface Props {
     infinityQuery: any,

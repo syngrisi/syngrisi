@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle,indent */
 import * as React from 'react';
-import { RelatedCheckItem } from './RelatedCheckItem';
+import { RelatedCheckItem } from '@index/components/Tests/Table/Checks/CheckDetails/RelatedChecks/RelatedCheckItem';
 
 interface Props {
     infinityQuery: any

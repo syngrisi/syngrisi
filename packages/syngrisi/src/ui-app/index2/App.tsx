@@ -14,14 +14,14 @@ import { NotificationsProvider } from '@mantine/notifications';
 
 import { IconFilter, IconMoonStars, IconSearch, IconSun } from '@tabler/icons-react';
 import { SpotlightProvider } from '@mantine/spotlight';
-import config from '../config';
+import config from '@config';
 
-import IndexLayout from './IndexLayout';
-import { ChecksList } from './components/ChecksList/ChecksList';
-import useColorScheme from '../shared/hooks/useColorSheme';
-import { navigationData } from '../shared/navigation/navigationData';
-import { INavDataItem } from '../shared/navigation/interfaces';
-import { useParams } from './hooks/useParams';
+import IndexLayout from '@index/IndexLayout';
+import { ChecksList } from '@index/components/ChecksList/ChecksList';
+import useColorScheme from '@shared/hooks/useColorSheme';
+import { navigationData } from '@shared/navigation/navigationData';
+import { INavDataItem } from '@shared/navigation/interfaces';
+import { useParams } from '@hooks/useParams';
 
 const queryClient = new QueryClient();
 

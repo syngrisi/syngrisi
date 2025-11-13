@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Group, Text, Tooltip } from '@mantine/core';
 import { useMemo } from 'react';
-import { tableColumns } from '../tableColumns';
-import { StatusesRing } from '../../../../../shared/components/Tests/StatusesRing';
+import { tableColumns } from '@index/components/Tests/Table/tableColumns';
+import { StatusesRing } from '@shared/components/Tests/StatusesRing';
 
 interface Props {
     type: string
