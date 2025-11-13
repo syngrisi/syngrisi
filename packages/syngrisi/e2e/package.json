@@ -19,21 +19,21 @@
     "test:mcp:headed": "cross-env MCP_KEEP_ALIVE=1 E2E_HEADLESS=0 playwright test --workers=1 --config support/mcp/playwright.config.ts support/mcp/mcp.spec.ts"
   },
   "devDependencies": {
-    "@cucumber/cucumber-expressions": "^17.0.0",
-    "@playwright/test": "^1.56.0",
-    "@types/node": "^24.7.2",
-    "chalk": "^4.1.2",
-    "cross-env": "^7.0.3",
+    "@cucumber/cucumber-expressions": "^18.0.1",
+    "@playwright/test": "^1.56.1",
+    "@types/node": "^24.10.1",
+    "chalk": "^5.6.2",
+    "cross-env": "^10.1.0",
     "dotenv": "^17.2.3",
-    "envalid": "^8.1.0",
+    "envalid": "^8.1.1",
     "playwright-bdd": "^8.4.1",
     "playwright-mcp-advanced": "^0.1.0",
     "typescript": "^5.9.3",
     "winston": "^3.18.3",
-    "zod": "^3.23.8"
+    "zod": "^4.1.12"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.21.0",
+    "@modelcontextprotocol/sdk": "^1.21.1",
     "@syngrisi/wdio-sdk": "*",
     "@types/form-data": "^2.5.2",
     "@types/js-yaml": "^4.0.9",
@@ -41,10 +41,10 @@
     "form-data": "^4.0.4",
     "got-cjs": "^12.5.4",
     "hasha": "^7.0.0",
-    "js-yaml": "^4.1.0",
+    "js-yaml": "^4.1.1",
     "pixelmatch": "^7.1.0",
     "pngjs": "^7.0.0",
     "tsx": "^4.20.6",
-    "yaml": "^2.6.0"
+    "yaml": "^2.8.1"
   }
 }
