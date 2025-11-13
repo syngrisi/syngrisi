@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { GenericService, UsersService } from '../services';
-import { errorMsg } from '../utils';
+import { GenericService, UsersService } from '@shared/services';
+import { errorMsg } from '@shared/utils';
 
 export const UserHooks = {
     useApiKey() {

@@ -3,9 +3,9 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useDocumentTitle } from '@mantine/hooks';
 import { Anchor } from '@mantine/core';
-import SafeSelect from '../../../shared/components/SafeSelect';
-import { useParams } from '../../hooks/useParams';
-import { getNavigationItem } from '../../../shared/navigation/navigationData';
+import SafeSelect from '@shared/components/SafeSelect';
+import { useParams } from '@hooks/useParams';
+import { getNavigationItem } from '@shared/navigation/navigationData';
 
 interface Props {
     clearActiveItems: any;

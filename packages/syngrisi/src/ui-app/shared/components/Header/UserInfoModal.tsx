@@ -2,7 +2,7 @@ import * as React from 'react';
 import { IconAt, IconUser } from '@tabler/icons-react';
 import { Avatar, Button, Group, Loader, Modal, Text } from '@mantine/core';
 import { createStyles } from '@mantine/styles';
-import { UserHooks } from '../../hooks';
+import { UserHooks } from '@shared/hooks';
 
 export function UserInfoModal({ opened, setOpened }: { opened: boolean, setOpened: any }) {
     const user = UserHooks.useCurrentUser();

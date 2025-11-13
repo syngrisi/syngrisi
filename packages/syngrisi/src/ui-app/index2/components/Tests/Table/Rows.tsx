@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-one-expression-per-line */
 import React, { useEffect, useState } from 'react';
-import UnfoldActionIcon from './UnfoldActionIcon';
-import { Row } from './Row';
+import UnfoldActionIcon from '@index/components/Tests/Table/UnfoldActionIcon';
+import { Row } from '@index/components/Tests/Table/Row';
 
 interface Props {
     infinityQuery: any

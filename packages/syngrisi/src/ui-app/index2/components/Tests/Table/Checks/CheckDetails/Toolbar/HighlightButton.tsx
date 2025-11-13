@@ -2,8 +2,8 @@ import * as React from 'react';
 import { ActionIcon, Group, Text, Tooltip } from '@mantine/core';
 import { IconBulb } from '@tabler/icons-react';
 import { useState } from 'react';
-import { highlightDiff, IGroup } from './highlightDiff';
-import { MainView } from '../Canvas/mainView';
+import { highlightDiff, IGroup } from '@index/components/Tests/Table/Checks/CheckDetails/Toolbar/highlightDiff';
+import { MainView } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/mainView';
 
 interface Props {
     mainView: MainView,

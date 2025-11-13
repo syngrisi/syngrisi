@@ -13,11 +13,11 @@ import ky from 'ky';
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useDocumentTitle } from '@mantine/hooks';
-import { log } from '../../shared/utils';
-import config from '../../config';
-import Bars from './change-password/Bars';
-import PasswordRequirement from './change-password/PasswordRequirement';
-import requirements from './change-password/requirements';
+import { log } from '@shared/utils';
+import config from '@config';
+import Bars from '@auth/components/change-password/Bars';
+import PasswordRequirement from '@auth/components/change-password/PasswordRequirement';
+import requirements from '@auth/components/change-password/requirements';
 
 export default function ChangePasswordForm() {
     useDocumentTitle('Change Password Page');

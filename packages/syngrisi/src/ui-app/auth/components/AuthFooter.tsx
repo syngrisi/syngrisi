@@ -3,9 +3,9 @@ import { IconExternalLink } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import * as React from 'react';
 import ky from 'ky';
-import useStyle from '../commonStyles';
-import config from '../../config';
-import { log } from '../../shared/utils';
+import useStyle from '@auth/commonStyles';
+import config from '@config';
+import { log } from '@shared/utils';
 
 function AuthFooter() {
     const { classes } = useStyle();

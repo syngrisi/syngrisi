@@ -1,12 +1,12 @@
 /* eslint-disable react/jsx-one-expression-per-line */
 import { Checkbox, Collapse, createStyles, Paper, RingProgress, Text, Tooltip } from '@mantine/core';
 import React, { useContext, useEffect, useState } from 'react';
-import { IPage } from '../../../../shared/interfaces/logQueries';
-import ILog from '../../../../shared/interfaces/ILog';
-import { adminLogsTableColumns } from './adminLogsTableColumns';
-import { adminLogsCreateStyle } from './adminLogsCreateStyle';
-import UnfoldActionIcon from '../UnfoldActionIcon';
-import { AppContext } from '../../../AppContext';
+import { IPage } from '@shared/interfaces/logQueries';
+import ILog from '@shared/interfaces/ILog';
+import { adminLogsTableColumns } from '@admin/components/Logs/Table/adminLogsTableColumns';
+import { adminLogsCreateStyle } from '@admin/components/Logs/Table/adminLogsCreateStyle';
+import UnfoldActionIcon from '@admin/components/Logs/UnfoldActionIcon';
+import { AppContext } from '@admin/AppContext';
 
 const useStyles = createStyles(adminLogsCreateStyle as any);
 

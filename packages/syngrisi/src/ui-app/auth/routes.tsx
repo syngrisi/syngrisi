@@ -1,8 +1,8 @@
 import React from 'react';
-import LogoutForm from './components/LogoutForm';
-import ChangePasswordForm from './components/ChangePasswordForm';
-import LoginForm from './components/LoginForm';
-import ChangePasswordSuccessForm from './components/ChangePasswordSuccessForm';
+import LogoutForm from '@auth/components/LogoutForm';
+import ChangePasswordForm from '@auth/components/ChangePasswordForm';
+import LoginForm from '@auth/components/LoginForm';
+import ChangePasswordSuccessForm from '@auth/components/ChangePasswordSuccessForm';
 
 const routesItems = [
     {

@@ -1,6 +1,6 @@
 import { Checkbox, Text } from '@mantine/core';
 import React from 'react';
-import { adminLogsTableColumns } from './adminLogsTableColumns';
+import { adminLogsTableColumns } from '@admin/components/Logs/Table/adminLogsTableColumns';
 
 interface Props {
     data: any

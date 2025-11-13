@@ -2,8 +2,8 @@
 import { ActionIcon, Box, Button, Chip, Group, Paper, useMantineTheme } from '@mantine/core';
 import React from 'react';
 import { IconPlus, IconX } from '@tabler/icons-react';
-import { FilterWrapper } from './FilterWrapper';
-import { uuid } from '../../utils';
+import { FilterWrapper } from '@shared/components/filter/FilterWrapper';
+import { uuid } from '@shared/utils';
 
 interface Props {
     fields: any

@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import ky from 'ky';
-import config from '../../config';
+import config from '@config';
 
 export const ChecksService = {
     // eslint-disable-next-line consistent-return

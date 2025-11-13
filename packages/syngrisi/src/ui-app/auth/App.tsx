@@ -1,5 +1,5 @@
 /* eslint-disable max-len,prefer-arrow-callback */
-import '../asserts/css/auth/index.css';
+import '@asserts/css/auth/index.css';
 import * as React from 'react';
 
 import {
@@ -15,10 +15,10 @@ import {
 import { useHotkeys, useLocalStorage } from '@mantine/hooks';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import AuthFooter from './components/AuthFooter';
-import AuthLogo from './components/AuthLogo';
-import routesItems from './routes';
-import ToggleThemeButton from './components/ToggleThemeButton';
+import AuthFooter from '@auth/components/AuthFooter';
+import AuthLogo from '@auth/components/AuthLogo';
+import routesItems from '@auth/routes';
+import ToggleThemeButton from '@auth/components/ToggleThemeButton';
 
 const queryClient = new QueryClient();
 

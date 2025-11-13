@@ -11,6 +11,16 @@
     "forceConsistentCasingInFileNames": true,
     "module": "ESNext",
     "moduleResolution": "Node",
+    "baseUrl": ".",
+    "paths": {
+        "@shared/*": ["shared/*"],
+        "@hooks/*": ["index2/hooks/*"],
+        "@index/*": ["index2/*"],
+        "@admin/*": ["admin/*"],
+        "@auth/*": ["auth/*"],
+        "@asserts/*": ["asserts/*"],
+        "@config": ["config.ts"]
+    },
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,

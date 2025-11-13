@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Text, Tooltip } from '@mantine/core';
-import { Status } from './Status';
-import { StartDate } from './StartDate';
-import { Os } from './Os';
-import { BrowserName } from './BrowserName';
-import { BrowserVersion } from './BrowserVersion';
-import { Branch } from './Branch';
-import { Viewport } from './ViewPort';
-import { tableColumns } from '../tableColumns';
+import { Status } from '@index/components/Tests/Table/Cells/Status';
+import { StartDate } from '@index/components/Tests/Table/Cells/StartDate';
+import { Os } from '@index/components/Tests/Table/Cells/Os';
+import { BrowserName } from '@index/components/Tests/Table/Cells/BrowserName';
+import { BrowserVersion } from '@index/components/Tests/Table/Cells/BrowserVersion';
+import { Branch } from '@index/components/Tests/Table/Cells/Branch';
+import { Viewport } from '@index/components/Tests/Table/Cells/ViewPort';
+import { tableColumns } from '@index/components/Tests/Table/tableColumns';
 
 interface Props {
     type: string

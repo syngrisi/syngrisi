@@ -17,14 +17,14 @@ import { createStyles } from '@mantine/styles';
 import { useEffect } from 'react';
 import { openSpotlight } from '@mantine/spotlight';
 import { useQuery } from '@tanstack/react-query';
-import HeaderLogo from '../../../shared/components/Header/HeaderLogo';
-import { errorMsg } from '../../../shared/utils';
-import UserMenu from '../../../shared/components/Header/UserMenu';
-import { links } from '../../../shared/components/heaserLinks';
-import SafeSelect from '../../../shared/components/SafeSelect';
-import { GenericService } from '../../../shared/services';
-import { useParams } from '../../hooks/useParams';
-import { QuickFilter } from './QuickFilter';
+import HeaderLogo from '@shared/components/Header/HeaderLogo';
+import { errorMsg } from '@shared/utils';
+import UserMenu from '@shared/components/Header/UserMenu';
+import { links } from '@shared/components/heaserLinks';
+import SafeSelect from '@shared/components/SafeSelect';
+import { GenericService } from '@shared/services';
+import { useParams } from '@hooks/useParams';
+import { QuickFilter } from '@index/components/Header/QuickFilter';
 
 const useStyles = createStyles((theme) => ({
     quickFilter: {

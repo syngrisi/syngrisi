@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { Badge, BadgeVariant, Loader } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
-import { sizes } from '../../../index2/components/Tests/Table/Checks/checkSizes';
+import { sizes } from '@index/components/Tests/Table/Checks/checkSizes';
 
 const statusColor = (status: string) => {
     const map = {

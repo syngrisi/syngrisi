@@ -4,8 +4,8 @@ import { ActionIcon, Group, Kbd, Stack, Text, Tooltip } from '@mantine/core';
 import { IconDeviceFloppy, IconShape, IconShapeOff } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useHotkeys } from '@mantine/hooks';
-import { MainView } from '../Canvas/mainView';
-import { log } from '../../../../../../../shared/utils/Logger';
+import { MainView } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/mainView';
+import { log } from '@shared/utils/Logger';
 
 interface Props {
     mainView: any

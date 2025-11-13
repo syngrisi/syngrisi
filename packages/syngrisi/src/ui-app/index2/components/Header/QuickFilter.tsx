@@ -17,9 +17,9 @@ import { IconChevronDown, IconX } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useClickOutside, useDebouncedValue, useDisclosure } from '@mantine/hooks';
 import { createStyles } from '@mantine/styles';
-import { useDistinctQuery } from '../../../shared/hooks/useDistinctQuery';
-import { escapeRegExp } from '../../../shared/utils/utils';
-import { useParams } from '../../hooks/useParams';
+import { useDistinctQuery } from '@shared/hooks/useDistinctQuery';
+import { escapeRegExp } from '@shared/utils/utils';
+import { useParams } from '@hooks/useParams';
 
 const chipStyles: any = {
     label: {

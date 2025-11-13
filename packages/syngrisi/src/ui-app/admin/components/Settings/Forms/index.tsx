@@ -1,4 +1,4 @@
-import { Boolean } from './Boolean';
+import { Boolean } from '@admin/components/Settings/Forms/Boolean';
 
 export default {
     Boolean,

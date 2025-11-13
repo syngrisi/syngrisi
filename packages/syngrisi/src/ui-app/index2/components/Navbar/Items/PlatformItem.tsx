@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import * as React from 'react';
 import { Group, List, Stack, Text, Tooltip } from '@mantine/core';
-import { OsIcon } from '../../../../shared/components/Check/OsIcon';
+import { OsIcon } from '@shared/components/Check/OsIcon';
 
 interface Props {
     item: { [key: string]: string }

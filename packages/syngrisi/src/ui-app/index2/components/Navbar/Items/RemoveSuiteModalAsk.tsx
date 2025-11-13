@@ -2,10 +2,10 @@
 import { Button, Group, Modal, Text } from '@mantine/core';
 import * as React from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { errorMsg, successMsg } from '../../../../shared/utils/utils';
-import { log } from '../../../../shared/utils/Logger';
-import { SuitesService } from '../../../../shared/services';
-import { useParams } from '../../../hooks/useParams';
+import { errorMsg, successMsg } from '@shared/utils/utils';
+import { log } from '@shared/utils/Logger';
+import { SuitesService } from '@shared/services';
+import { useParams } from '@hooks/useParams';
 
 interface Props {
     opened: boolean,

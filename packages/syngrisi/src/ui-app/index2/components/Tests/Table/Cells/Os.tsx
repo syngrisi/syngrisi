@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Group, Text, Tooltip } from '@mantine/core';
-import { tableColumns } from '../tableColumns';
-import { OsIcon } from '../../../../../shared/components/Check/OsIcon';
+import { tableColumns } from '@index/components/Tests/Table/tableColumns';
+import { OsIcon } from '@shared/components/Check/OsIcon';
 
 interface Props {
     type: string

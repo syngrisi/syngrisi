@@ -1,7 +1,7 @@
 import ky from 'ky';
 import queryString from 'query-string';
-import config from '../../config';
-import ILog from '../interfaces/ILog';
+import config from '@config';
+import ILog from '@shared/interfaces/ILog';
 
 export interface IApiResult {
     results: ILog[]

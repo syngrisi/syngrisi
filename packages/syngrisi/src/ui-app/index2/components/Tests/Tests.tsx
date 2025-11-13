@@ -9,13 +9,13 @@ import { useSearchParams } from 'react-router-dom';
 import { useLocalStorage } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { IconAdjustments, IconFilter } from '@tabler/icons-react';
-import RefreshActionIcon from './Table/RefreshActionIcon';
-import useInfinityScroll from '../../../shared/hooks/useInfinityScroll';
-import TestsTable from './Table/TestsTable';
-import Settings from './Table/Settings';
-import Filter from './Table/Filter';
-import { useNavProgressFetchEffect } from '../../../shared/hooks';
-import { useParams } from '../../hooks/useParams';
+import RefreshActionIcon from '@index/components/Tests/Table/RefreshActionIcon';
+import useInfinityScroll from '@shared/hooks/useInfinityScroll';
+import TestsTable from '@index/components/Tests/Table/TestsTable';
+import Settings from '@index/components/Tests/Table/Settings';
+import Filter from '@index/components/Tests/Table/Filter';
+import { useNavProgressFetchEffect } from '@shared/hooks';
+import { useParams } from '@hooks/useParams';
 
 interface Props {
     updateToolbar: any
