@@ -12,7 +12,7 @@ import { Route, Routes, useNavigate } from 'react-router-dom';
 import { NavigationProgress } from '@mantine/nprogress';
 import { NotificationsProvider } from '@mantine/notifications';
 
-import { IconFilter, IconMoonStars, IconSearch, IconSun } from '@tabler/icons';
+import { IconFilter, IconMoonStars, IconSearch, IconSun } from '@tabler/icons-react';
 import { SpotlightProvider } from '@mantine/spotlight';
 import config from '../config';
 

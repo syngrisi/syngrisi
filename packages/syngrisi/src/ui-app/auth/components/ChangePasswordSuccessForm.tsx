@@ -6,7 +6,7 @@ import {
     Button,
     Text,
 } from '@mantine/core';
-import { IconCircleCheck } from '@tabler/icons';
+import { IconCircleCheck } from '@tabler/icons-react';
 import { useDocumentTitle } from '@mantine/hooks';
 
 export default function ChangePasswordSuccessForm() {

@@ -1,6 +1,6 @@
 import winston, { Logger as WinstonLogger } from 'winston';
 import 'winston-mongodb';
-import { blue, gray, magenta } from 'chalk';
+import chalk from 'chalk';
 import formatISOToDateTime from '@utils/formatISOToDateTime';
 import { config } from '@config';
 import path from 'path';
@@ -54,11 +54,11 @@ function createWinstonLogger(opts: LoggerOptions): WinstonLogger {
                     winston.format.ms(),
                     winston.format.metadata(),
                     winston.format.printf((info) => {
-                        const user = info.metadata.user ? blue(` <${info.metadata.user}>`) : '';
-                        const ref = info.metadata.ref ? gray(` ${info.metadata.ref}`) : '';
+                        const user = info.metadata.user ? chalk.blue(` <${info.metadata.user}>`) : '';
+                        const ref = info.metadata.ref ? chalk.gray(` ${info.metadata.ref}`) : '';
                         const msgType = info.metadata.msgType ? ` ${info.metadata.msgType}` : '';
-                        const itemType = info.metadata.itemType ? magenta(` ${info.metadata.itemType}`) : '';
-                        const scope = info.metadata.scope ? magenta(` [${info.metadata.scope}] `) : magenta(` [${getScriptLine()}] `);
+                        const itemType = info.metadata.itemType ? chalk.magenta(` ${info.metadata.itemType}`) : '';
+                        const scope = info.metadata.scope ? chalk.magenta(` [${info.metadata.scope}] `) : chalk.magenta(` [${getScriptLine()}] `);
                         const msg = typeof info.message === 'object'
                             ? `\n${JSON.stringify(info.message, null, 2)}`
                             : info.message;

@@ -1,7 +1,7 @@
 /* eslint-disable dot-notation,prefer-arrow-callback */
 import { ActionIcon, Box, Button, Chip, Group, Paper, useMantineTheme } from '@mantine/core';
 import React from 'react';
-import { IconPlus, IconX } from '@tabler/icons';
+import { IconPlus, IconX } from '@tabler/icons-react';
 import { FilterWrapper } from './FilterWrapper';
 import { uuid } from '../../utils';
 

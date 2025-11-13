@@ -1,5 +1,5 @@
 import { ActionIcon, Transition, useMantineTheme } from '@mantine/core';
-import { IconArrowsVertical, IconFold } from '@tabler/icons';
+import { IconArrowsVertical, IconFold } from '@tabler/icons-react';
 import React from 'react';
 import { useToggle } from '@mantine/hooks';
 

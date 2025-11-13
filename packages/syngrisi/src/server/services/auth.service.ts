@@ -1,4 +1,4 @@
-import hasha from 'hasha';
+import { hashSync } from 'hasha';
 import uuidAPIKey from 'uuid-apikey';
 import { User } from '@models';
 import log from "../lib/logger";
@@ -23,7 +23,7 @@ const generateApiKey = async (username: string): Promise<string> => {
         `generate API Key for user: '${username}'`,
         logOpts
     );
-    const hash = hasha(apiKey);
+    const hash = hashSync(apiKey);
 
     const user: RequestUser | null = await User.findOne({ username });
     if (!user) throw new Error(`cannot find the user with username: '${username}'`);

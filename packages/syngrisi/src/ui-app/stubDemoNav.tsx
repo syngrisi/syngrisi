@@ -6,7 +6,7 @@ import {
     NavLink,
 } from '@mantine/core';
 
-import { IconFingerprint } from '@tabler/icons';
+import { IconFingerprint } from '@tabler/icons-react';
 
 function DemoNav() {
     const useStyles = createStyles((theme) => ({

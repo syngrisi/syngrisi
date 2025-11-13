@@ -13,7 +13,7 @@ import {
     Button,
     Divider,
 } from '@mantine/core';
-import { IconChevronDown, IconX } from '@tabler/icons';
+import { IconChevronDown, IconX } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useClickOutside, useDebouncedValue, useDisclosure } from '@mantine/hooks';
 import { createStyles } from '@mantine/styles';

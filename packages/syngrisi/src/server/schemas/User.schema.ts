@@ -18,7 +18,7 @@ export const UserSchema = z.object({
   createdDate: z.date().optional().openapi({ example: "2024-05-25T15:23:21.150Z" }),
   updatedDate: z.date().optional().openapi({ example: "2024-05-26T15:23:21.150Z" }),
   expiration: z.date().optional(),
-  meta: z.record(z.any()).optional(),
+  meta: z.record(z.string(), z.any()).optional(),
   _id: commonValidations.id.openapi({ example: "6bbF35cAB3C59dA969edAe79" }),
   id: commonValidations.id.openapi({ example: "6bbF35cAB3C59dA969edAe79" }),
 })

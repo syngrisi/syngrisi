@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { ActionIcon, Button, Group, Kbd, Popover, Stack, Text, Tooltip } from '@mantine/core';
-import { IconChevronDown, IconZoomIn, IconZoomOut } from '@tabler/icons';
+import { IconChevronDown, IconZoomIn, IconZoomOut } from '@tabler/icons-react';
 import { useDisclosure, useHotkeys } from '@mantine/hooks';
 import { fabric } from 'fabric';
 import { MainView } from '../Canvas/mainView';

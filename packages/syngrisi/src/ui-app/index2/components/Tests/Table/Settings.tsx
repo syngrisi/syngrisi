@@ -6,7 +6,7 @@ import {
     SegmentedControl,
     Text,
 } from '@mantine/core';
-import { IconSortAscending, IconSortDescending } from '@tabler/icons';
+import { IconSortAscending, IconSortDescending } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useInputState, useToggle, useLocalStorage } from '@mantine/hooks';
 import { tableColumns } from './tableColumns';

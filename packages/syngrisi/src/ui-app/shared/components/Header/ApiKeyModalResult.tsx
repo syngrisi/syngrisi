@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { IconCheck, IconCopy, IconKey } from '@tabler/icons';
+import { IconCheck, IconCopy, IconKey } from '@tabler/icons-react';
 import { ActionIcon, Button, Group, Loader, Modal, Text, TextInput } from '@mantine/core';
 import * as React from 'react';
 import { log } from '../../utils';

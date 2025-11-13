@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ActionIcon, Group, Transition } from '@mantine/core';
-import { IconSortAscending, IconSortDescending, IconX } from '@tabler/icons';
+import { IconSortAscending, IconSortDescending, IconX } from '@tabler/icons-react';
 import SafeSelect from '../../../../../../../shared/components/SafeSelect';
 
 type Props = {

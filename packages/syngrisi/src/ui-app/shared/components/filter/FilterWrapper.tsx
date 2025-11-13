@@ -4,7 +4,7 @@ import * as React from 'react';
 import SafeSelect from '../SafeSelect';
 import { useInputState } from '@mantine/hooks'
 import Filters from './index';
-import { IconMinus } from '@tabler/icons';
+import { IconMinus } from '@tabler/icons-react';
 
 
 interface Props {

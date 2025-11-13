@@ -1,6 +1,6 @@
 import httpStatus from 'http-status';
 import passport from 'passport';
-import hasha from 'hasha';
+import { hashSync } from 'hasha';
 import uuidAPIKey from 'uuid-apikey';
 import { Response, NextFunction } from "express"
 import { User } from '@models';
@@ -26,7 +26,7 @@ const apikey = catchAsync(async (req: ExtRequest, res: Response) => {
         `generate API Key for user: '${req.user?.username}'`,
         logOpts
     );
-    const hash = hasha(apiKey);
+    const hash = hashSync(apiKey);
 
     if (!req.user?.username) throw new Error(`Username is empty`);
 

@@ -13,7 +13,7 @@ import {
     IconArrowsSort,
     IconFilter,
     IconRefresh,
-} from '@tabler/icons';
+} from '@tabler/icons-react';
 import { createStyles } from '@mantine/styles';
 import { useEffect, useState } from 'react';
 import { useToggle } from '@mantine/hooks';
