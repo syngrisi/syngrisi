@@ -10,6 +10,7 @@ import { Strategy as LocalStrategy } from 'passport-local';
 import path from 'path';
 import log from '@logger';
 import { config } from '@config';
+import { baseDir } from '@lib/baseDir';
 import routes from './routes/v1/index.route';
 import authRoutes from './routes/ui/auth';
 import adminRoutes from './routes/ui/admin';
@@ -59,7 +60,6 @@ passport.serializeUser(User.serializeUser() as ((user: Express.User, done: (err:
 passport.deserializeUser(User.deserializeUser());
 
 log.info('\t- static files', logMeta);
-const baseDir = path.resolve(__dirname, '..', '..');
 app.use('/snapshoots', express.static(config.defaultImagesPath));
 app.use('/assets', express.static(path.join(baseDir, './mvc/views/react/assets'), {
     setHeaders: (res) => {
@@ -73,7 +73,7 @@ app.use('/static', express.static(path.join(baseDir, './src/server/static/static
 log.info('\t- routes', logMeta);
 app.use('/v1', routes);
 app.use('/auth', authRoutes);
-app.use('/admin*', adminRoutes);
+app.use('/admin', adminRoutes);
 app.use('/', uiRoutes);
 
 app.use('/swagger', openAPIRouter);

@@ -1,5 +1,5 @@
 import { Group, Switch, useMantineTheme } from '@mantine/core';
-import { IconSun, IconMoonStars } from '@tabler/icons';
+import { IconSun, IconMoonStars } from '@tabler/icons-react';
 
 import React, { ReactElement } from 'react';
 

@@ -5,7 +5,7 @@ import ky from 'ky';
 import {
     Button, Container, LoadingOverlay, Paper, Text, Title,
 } from '@mantine/core';
-import { IconCircleCheck, IconCircleX } from '@tabler/icons';
+import { IconCircleCheck, IconCircleX } from '@tabler/icons-react';
 import * as React from 'react';
 import { useEffect } from 'react';
 import { log } from '../../shared/utils';

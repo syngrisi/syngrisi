@@ -17,10 +17,10 @@ export const requestQueryFilterSchema = z
                 z.number(),
                 z.boolean(),
                 z.array(z.any()),
-                z.record(z.any())
+                z.record(z.string(), z.any())
             ]));
 
-            const schema = z.record(valueSchema);
+            const schema = z.record(z.string(), valueSchema);
             schema.parse(parsed);
             return true;
         } catch (e) {

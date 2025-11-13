@@ -4,7 +4,7 @@ import {
     createStyles,
     NavLink,
 } from '@mantine/core';
-import { TablerIcon } from '@tabler/icons';
+import { TablerIcon } from '@tabler/icons-react';
 import { Link, useLocation } from 'react-router-dom';
 
 const useStyles = createStyles((theme) => ({

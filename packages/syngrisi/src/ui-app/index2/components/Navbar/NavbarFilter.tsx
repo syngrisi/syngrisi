@@ -1,7 +1,7 @@
 /* eslint-disable prefer-arrow-callback */
 import * as React from 'react';
 import { ActionIcon, FocusTrap, Loader, TextInput, Transition } from '@mantine/core';
-import { IconX } from '@tabler/icons';
+import { IconX } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useDebouncedValue } from '@mantine/hooks';
 import { escapeRegExp } from '../../../shared/utils/utils';

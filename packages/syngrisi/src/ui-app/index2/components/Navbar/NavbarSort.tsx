@@ -1,7 +1,7 @@
 /* eslint-disable prefer-arrow-callback */
 import * as React from 'react';
 import { ActionIcon, Group, Transition, useMantineTheme } from '@mantine/core';
-import { IconSortAscending, IconSortDescending, IconX } from '@tabler/icons';
+import { IconSortAscending, IconSortDescending, IconX } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import SafeSelect from '../../../shared/components/SafeSelect';
 import { useParams } from '../../hooks/useParams';

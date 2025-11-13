@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import * as React from 'react';
-import { IconCheck, IconX } from '@tabler/icons';
+import { IconCheck, IconX } from '@tabler/icons-react';
 import { Box, PasswordInput, Popover, Text } from '@mantine/core';
 import { useEffect, useState } from 'react';
 
