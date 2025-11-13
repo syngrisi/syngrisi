@@ -135,6 +135,10 @@ Feature: Check details - Regions
     """
 
     When I wait for "1" seconds
+    When I repeat javascript code until stored "js" string equals "1":
+    """
+     return (mainView.allRects.length.toString());
+    """
     Then I expect the stored "js" string is equal:
     """
       1
