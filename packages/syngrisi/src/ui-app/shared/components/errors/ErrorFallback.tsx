@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { Group, Title, Button, Text, Paper, Stack, CopyButton } from '@mantine/core';
 import { useState } from 'react';
-import { IconRefresh } from '@tabler/icons';
+import { IconRefresh } from '@tabler/icons-react';
 
 export function ErrorFallback({ error, resetErrorBoundary }: { error: any, resetErrorBoundary: any }) {
     const [errorDetails] = useState(

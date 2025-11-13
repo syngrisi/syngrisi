@@ -13,7 +13,7 @@ import {
     IconSettings,
     IconId,
     IconLogout,
-} from '@tabler/icons';
+} from '@tabler/icons-react';
 import { useState } from 'react';
 // import { isDark } from '../../utils';
 import { UserHooks } from '../../hooks';

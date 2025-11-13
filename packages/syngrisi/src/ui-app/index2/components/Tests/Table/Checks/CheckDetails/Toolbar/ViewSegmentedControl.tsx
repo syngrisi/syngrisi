@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Group, Kbd, SegmentedControl, Text, Tooltip, createStyles } from '@mantine/core';
-import { IconArrowsExchange2, IconSquareHalf, IconSquareLetterA, IconSquareLetterE } from '@tabler/icons';
+import { IconArrowsExchange2, IconSquareHalf, IconSquareLetterA, IconSquareLetterE } from '@tabler/icons-react';
 import { useHotkeys } from '@mantine/hooks';
 import { useEffect, useRef } from 'react';
 

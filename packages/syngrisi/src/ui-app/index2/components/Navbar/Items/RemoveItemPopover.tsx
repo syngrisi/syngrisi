@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ActionIcon, Button, Group, Popover } from '@mantine/core';
-import { IconDotsVertical } from '@tabler/icons';
+import { IconDotsVertical } from '@tabler/icons-react';
 
 interface Props {
     opened: boolean

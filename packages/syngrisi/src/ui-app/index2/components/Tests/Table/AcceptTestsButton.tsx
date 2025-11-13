@@ -1,5 +1,5 @@
 import { ActionIcon, Transition, useMantineTheme } from '@mantine/core';
-import { IconThumbUp } from '@tabler/icons';
+import { IconThumbUp } from '@tabler/icons-react';
 import React, { useState } from 'react';
 import AcceptTestModalAsk from './AcceptTestModalAsk';
 

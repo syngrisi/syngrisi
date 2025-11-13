@@ -8,7 +8,10 @@ export default defineConfig({
     "src/server/**/*.mts",
     "src/tasks/**/*.ts"
   ],
+  format: ['esm'],
   splitting: false,
   sourcemap: true,
   clean: true,
+  target: 'es2022',
+  platform: 'node',
 });

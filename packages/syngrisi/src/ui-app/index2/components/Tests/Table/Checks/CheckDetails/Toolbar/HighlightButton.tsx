@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ActionIcon, Group, Text, Tooltip } from '@mantine/core';
-import { IconBulb } from '@tabler/icons';
+import { IconBulb } from '@tabler/icons-react';
 import { useState } from 'react';
 import { highlightDiff, IGroup } from './highlightDiff';
 import { MainView } from '../Canvas/mainView';

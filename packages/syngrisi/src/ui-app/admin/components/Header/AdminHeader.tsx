@@ -9,7 +9,7 @@ import {
     Text,
 } from '@mantine/core';
 import * as React from 'react';
-import { IconSearch } from '@tabler/icons';
+import { IconSearch } from '@tabler/icons-react';
 import { createStyles } from '@mantine/styles';
 import { useContext } from 'react';
 import { openSpotlight } from '@mantine/spotlight';

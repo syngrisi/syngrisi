@@ -11,7 +11,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { IconX } from '@tabler/icons';
+import { IconX } from '@tabler/icons-react';
 import { useParams } from '../../../../hooks/useParams';
 import { GenericService } from '../../../../../shared/services';
 import { errorMsg } from '../../../../../shared/utils';

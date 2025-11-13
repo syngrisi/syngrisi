@@ -1,7 +1,7 @@
 /* eslint-disable prefer-arrow-callback */
 import * as React from 'react';
 import { ActionIcon, Group, Kbd, Stack, Text, Tooltip } from '@mantine/core';
-import { IconDeviceFloppy, IconShape, IconShapeOff } from '@tabler/icons';
+import { IconDeviceFloppy, IconShape, IconShapeOff } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useHotkeys } from '@mantine/hooks';
 import { MainView } from '../Canvas/mainView';

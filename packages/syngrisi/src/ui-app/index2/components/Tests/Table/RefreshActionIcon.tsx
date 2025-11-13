@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, { FunctionComponent } from 'react';
 import { ActionIcon, Badge, useMantineTheme } from '@mantine/core';
-import { IconRefresh } from '@tabler/icons';
+import { IconRefresh } from '@tabler/icons-react';
 
 interface Props {
     newestItemsQuery: any,

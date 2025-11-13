@@ -1,5 +1,5 @@
 import fs, { promises as fsp } from 'fs';
-import hasha from 'hasha';
+import { hashSync } from 'hasha';
 import { Snapshot, Check, Test, App, Baseline, CheckDocument } from '@models';
 import { removeEmptyProperties, waitUntil, buildIdentObject, calculateAcceptedStatus, ident, errMsg, ApiError } from '@utils';
 import { updateItemDate, createTest, createItemIfNotExistAsync, createRunIfNotExist, createSuiteIfNotExist } from '@lib/dbItems';
@@ -197,7 +197,7 @@ async function createSnapshot(parameters: CreateSnapshotParameters) {
     if (fileData === null) throw new ApiError(httpStatus.BAD_REQUEST, `cannot create the snapshot, the 'fileData' is not set, name: '${name}'`);
 
 
-    opts.imghash = hashCode || hasha(fileData);
+    opts.imghash = hashCode || hashSync(fileData);
     const snapshot = new Snapshot(opts);
     const filename = `${snapshot.id}.png`;
     const imagePath = path.join(config.defaultImagesPath, filename);

@@ -1,6 +1,6 @@
 import React, { CSSProperties } from 'react';
 import { ActionIcon, Box, Group, Paper, Text, Transition } from '@mantine/core';
-import { IconX } from '@tabler/icons';
+import { IconX } from '@tabler/icons-react';
 
 interface Props {
     children: any,

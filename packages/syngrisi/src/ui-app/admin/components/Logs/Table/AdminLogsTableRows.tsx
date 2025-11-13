@@ -111,8 +111,7 @@ const AdminLogsTableRows = ({ data, selection, setSelection, visibleFields }: Pr
                                 Object.keys(adminLogsTableColumns).map((column: string) => {
                                     if (!visibleFields.includes(column)) return undefined;
                                     const itemValue = column.includes('.')
-                                        // @ts-ignore
-                                        ? item[column?.split('.')[0]][column?.split('.')[1]]
+                                        ? column.split('.').reduce((obj, key) => obj?.[key], item as any)
                                         : item[column];
 
                                     if (column === 'level') {
@@ -148,7 +147,7 @@ const AdminLogsTableRows = ({ data, selection, setSelection, visibleFields }: Pr
                                             data-test={`table-row-${adminLogsTableColumns[column].label}`}
                                             style={{ ...adminLogsTableColumns[column].cellStyle }}
                                         >
-                                            <Tooltip label={item[column]} multiline withinPortal>
+                                            <Tooltip label={itemValue} multiline withinPortal>
                                                 <Text
                                                     lineClamp={1}
                                                     sx={{ wordBreak: 'break-all' }}

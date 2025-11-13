@@ -4,7 +4,7 @@ import {
     IconUsers,
     IconSettings,
     IconArticle, IconListDetails,
-} from '@tabler/icons';
+} from '@tabler/icons-react';
 import { createStyles } from '@mantine/styles';
 import { LinksGroup } from './NavbarLinksGroup';
 import { taskLinks } from '../Tasks/tasksList';

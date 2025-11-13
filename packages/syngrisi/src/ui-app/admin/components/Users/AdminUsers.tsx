@@ -13,7 +13,7 @@ import {
 import { useContext, useEffect, useState } from 'react';
 import { createStyles } from '@mantine/styles';
 
-import { IconRefresh } from '@tabler/icons';
+import { IconRefresh } from '@tabler/icons-react';
 import { useNavProgressFetchEffect, UserHooks, useSubpageEffect } from '../../../shared/hooks';
 import UserForm from './UserForm';
 import IUser from '../../../shared/interfaces/IUser';

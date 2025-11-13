@@ -7,13 +7,13 @@ import { catchAsync } from '@utils';
 import { ensureLoggedIn, ensureLoggedInOrApiKey } from '@middlewares/ensureLogin/ensureLoggedIn';
 import { ExtRequest } from '../../../types/ExtRequest';
 import { Midleware } from '../../../types/Midleware';
+import { baseDir } from '@lib/baseDir';
 
 const router = express.Router();
-const rootDir = path.resolve(__dirname, '..', '..');
 
 const staticIndex = async (req: ExtRequest, res: Response) => {
     res.status(httpStatus.OK)
-        .sendFile(path.normalize(path.join(rootDir, `/mvc/views/react/index2/index.html`)));
+        .sendFile(path.normalize(path.join(baseDir, `./mvc/views/react/index2/index.html`)));
 }
 
 router.get(

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Affix, Button, Text, Transition } from '@mantine/core';
-import { IconArrowUp } from '@tabler/icons';
+import { IconArrowUp } from '@tabler/icons-react';
 
 interface Props {
     loaded: string

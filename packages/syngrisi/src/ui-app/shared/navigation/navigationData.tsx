@@ -11,7 +11,7 @@ import {
     IconStatusChange,
     IconUser,
     IconUserExclamation,
-} from '@tabler/icons';
+} from '@tabler/icons-react';
 import { INavDataItem } from './interfaces';
 
 // used in spotlight

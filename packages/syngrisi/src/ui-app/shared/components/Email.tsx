@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import * as React from 'react';
-import { IconAt } from '@tabler/icons';
+import { IconAt } from '@tabler/icons-react';
 import { Loader, TextInput } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';

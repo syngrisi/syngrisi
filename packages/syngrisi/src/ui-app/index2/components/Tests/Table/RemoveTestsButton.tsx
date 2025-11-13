@@ -1,5 +1,5 @@
 import { ActionIcon, Transition, useMantineTheme } from '@mantine/core';
-import { IconTrash } from '@tabler/icons';
+import { IconTrash } from '@tabler/icons-react';
 import React, { useState } from 'react';
 import RemoveTestModalAsk from './RemoveTestModalAsk';
 

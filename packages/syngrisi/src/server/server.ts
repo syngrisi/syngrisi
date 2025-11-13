@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-import 'source-map-support/register';
 import app from './app';
 import v8 from 'v8';
 import { config } from '@config';

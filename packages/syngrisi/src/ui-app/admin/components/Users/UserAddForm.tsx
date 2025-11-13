@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { useForm } from '@mantine/form';
 import { Button, Group, TextInput } from '@mantine/core';
-import { IconSend, IconUser, IconX } from '@tabler/icons';
+import { IconSend, IconUser, IconX } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { errorMsg, log } from '../../../shared/utils';

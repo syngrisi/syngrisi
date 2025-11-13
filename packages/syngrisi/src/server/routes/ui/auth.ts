@@ -5,18 +5,16 @@ import httpStatus from 'http-status';
 
 import { catchAsync } from '@utils';
 import { Midleware } from '@types';
+import { baseDir } from '@lib/baseDir';
 
 const router = express.Router();
-const rootDir = path.resolve(__dirname, '..', '..');
-
 
 const authController = catchAsync(async (req: Request, res: Response) => {
     res.status(httpStatus.OK)
-    // .sendFile(path.normalize(path.join(`${__dirname}./../../../../mvc/views/react/auth/index.html`)));
-    .sendFile(path.normalize(path.join(rootDir, `/mvc/views/react/auth/index.html`)));
+        .sendFile(path.normalize(path.join(baseDir, `./mvc/views/react/auth/index.html`)));
 
 });
 
-router.get('*', authController as Midleware);
+router.get(/.*/, authController as Midleware);
 
 export default router;

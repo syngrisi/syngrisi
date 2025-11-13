@@ -12,7 +12,7 @@ import { useDocumentTitle } from '@mantine/hooks';
 import { NavigationProgress } from '@mantine/nprogress';
 import { NotificationsProvider } from '@mantine/notifications';
 
-import { IconSearch } from '@tabler/icons';
+import { IconSearch } from '@tabler/icons-react';
 import { SpotlightProvider } from '@mantine/spotlight';
 import { AppContext } from './AppContext';
 

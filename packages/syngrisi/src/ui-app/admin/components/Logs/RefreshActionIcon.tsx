@@ -1,6 +1,6 @@
 import React from 'react';
 import { ActionIcon, Badge, useMantineTheme } from '@mantine/core';
-import { IconRefresh } from '@tabler/icons';
+import { IconRefresh } from '@tabler/icons-react';
 
 interface Props {
     newestItemsQuery: any,

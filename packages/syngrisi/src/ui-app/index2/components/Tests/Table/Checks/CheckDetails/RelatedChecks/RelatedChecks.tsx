@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { ActionIcon, Group, ScrollArea, Stack, Text, Transition, Chip, Burger, Divider, Tooltip } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconArrowsSort, IconFilter, IconRefresh, IconX } from '@tabler/icons';
+import { IconArrowsSort, IconFilter, IconRefresh, IconX } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { RelatedChecksSkeleton } from './RelatedChecksSkeleton';

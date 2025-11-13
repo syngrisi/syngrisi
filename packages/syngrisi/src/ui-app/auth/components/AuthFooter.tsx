@@ -1,5 +1,5 @@
 import { Anchor, Center, Text } from '@mantine/core';
-import { IconExternalLink } from '@tabler/icons';
+import { IconExternalLink } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import * as React from 'react';
 import ky from 'ky';

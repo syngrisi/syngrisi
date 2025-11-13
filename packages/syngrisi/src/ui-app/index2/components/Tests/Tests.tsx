@@ -8,7 +8,7 @@ import {
 import { useSearchParams } from 'react-router-dom';
 import { useLocalStorage } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
-import { IconAdjustments, IconFilter } from '@tabler/icons';
+import { IconAdjustments, IconFilter } from '@tabler/icons-react';
 import RefreshActionIcon from './Table/RefreshActionIcon';
 import useInfinityScroll from '../../../shared/hooks/useInfinityScroll';
 import TestsTable from './Table/TestsTable';

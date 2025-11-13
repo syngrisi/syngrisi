@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
 
-import VersionSchema from '@schemas/common/Version.schema';
+import { VersionBaseSchema } from '@schemas/common/Version.schema';
 extendZodWithOpenApi(z);
 
 const mongooseIdRegex = /^[0-9a-fA-F]{24}$/;
@@ -17,7 +17,7 @@ const id = z
 
 export const commonValidations = {
   id,
-  version: VersionSchema.openapi({ example: "1.1.2" }),
+  version: VersionBaseSchema.openapi({ example: "1.1.2" }),
   positiveNumberString: z.string().refine(value => {
     const num = Number(value);
     return Number.isInteger(num) && num >= 0;

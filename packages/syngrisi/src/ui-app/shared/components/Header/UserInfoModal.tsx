@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IconAt, IconUser } from '@tabler/icons';
+import { IconAt, IconUser } from '@tabler/icons-react';
 import { Avatar, Button, Group, Loader, Modal, Text } from '@mantine/core';
 import { createStyles } from '@mantine/styles';
 import { UserHooks } from '../../hooks';

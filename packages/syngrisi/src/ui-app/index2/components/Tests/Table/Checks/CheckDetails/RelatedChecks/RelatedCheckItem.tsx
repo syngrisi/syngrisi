@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { Group, Image, Paper, useMantineTheme, Text, Stack, Badge, Tooltip } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
-import { IconGitBranch } from '@tabler/icons';
+import { IconGitBranch } from '@tabler/icons-react';
 import config from '../../../../../../../config';
 import { Status } from '../../../../../../../shared/components/Check/Status';
 import { ViewPortLabel } from '../../ViewPortLabel';
