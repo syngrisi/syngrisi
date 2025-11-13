@@ -1,7 +1,7 @@
 import { ActionIcon, Transition, useMantineTheme } from '@mantine/core';
 import { IconThumbUp } from '@tabler/icons-react';
 import React, { useState } from 'react';
-import AcceptTestModalAsk from './AcceptTestModalAsk';
+import AcceptTestModalAsk from '@index/components/Tests/Table/AcceptTestModalAsk';
 
 interface Props {
     selection: any

@@ -13,10 +13,10 @@ import { IconSearch } from '@tabler/icons-react';
 import { createStyles } from '@mantine/styles';
 import { useContext } from 'react';
 import { openSpotlight } from '@mantine/spotlight';
-import HeaderLogo from '../../../shared/components/Header/HeaderLogo';
-import UserMenu from '../../../shared/components/Header/UserMenu';
-import { AppContext } from '../../AppContext';
-import { links } from '../../../shared/components/heaserLinks';
+import HeaderLogo from '@shared/components/Header/HeaderLogo';
+import UserMenu from '@shared/components/Header/UserMenu';
+import { AppContext } from '@admin/AppContext';
+import { links } from '@shared/components/heaserLinks';
 
 const useStyles = createStyles((theme) => ({
     header: {

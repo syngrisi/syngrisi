@@ -1,6 +1,6 @@
-export { RunItem } from './RunItem';
-export { SuiteItem } from './SuiteItem';
-export { BrowserItem } from './BrowserItem';
-export { PlatformItem } from './PlatformItem';
-export { StatusItem } from './StatusItem';
-export { AcceptStatusItem } from './AcceptStatusItem';
+export { RunItem } from '@index/components/Navbar/Items/RunItem';
+export { SuiteItem } from '@index/components/Navbar/Items/SuiteItem';
+export { BrowserItem } from '@index/components/Navbar/Items/BrowserItem';
+export { PlatformItem } from '@index/components/Navbar/Items/PlatformItem';
+export { StatusItem } from '@index/components/Navbar/Items/StatusItem';
+export { AcceptStatusItem } from '@index/components/Navbar/Items/AcceptStatusItem';

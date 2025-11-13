@@ -12,7 +12,7 @@ import {
     IconUser,
     IconUserExclamation,
 } from '@tabler/icons-react';
-import { INavDataItem } from './interfaces';
+import { INavDataItem } from '@shared/navigation/interfaces';
 
 // used in spotlight
 export function navigationData(): INavDataItem[] {

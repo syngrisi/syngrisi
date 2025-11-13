@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Badge, Text, Tooltip } from '@mantine/core';
 import { IconGitBranch } from '@tabler/icons-react';
-import { tableColumns } from '../tableColumns';
+import { tableColumns } from '@index/components/Tests/Table/tableColumns';
 
 interface Props {
     type: string

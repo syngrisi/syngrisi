@@ -5,7 +5,7 @@ import { ActionIcon, Button, Group, Kbd, Popover, Stack, Text, Tooltip } from '@
 import { IconChevronDown, IconZoomIn, IconZoomOut } from '@tabler/icons-react';
 import { useDisclosure, useHotkeys } from '@mantine/hooks';
 import { fabric } from 'fabric';
-import { MainView } from '../Canvas/mainView';
+import { MainView } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/mainView';
 
 interface Props {
     view: string

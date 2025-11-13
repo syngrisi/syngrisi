@@ -16,16 +16,16 @@ import {
     Badge,
 } from '@mantine/core';
 import * as dateFns from 'date-fns';
-import { GenericService } from '../../../shared/services';
-import { Status } from '../../../shared/components/Check/Status';
-import { ViewPortLabel } from '../Tests/Table/Checks/ViewPortLabel';
-import { sizes } from '../Tests/Table/Checks/checkSizes';
-import { AcceptButton } from '../Tests/Table/Checks/AcceptButton';
-import { RemoveButton } from '../Tests/Table/Checks/RemoveButton';
-import { CheckModal } from '../Tests/Table/Checks/CheckModal';
-import config from '../../../config';
-import { BrowserIcon } from '../../../shared/components/Check/BrowserIcon';
-import { OsIcon } from '../../../shared/components/Check/OsIcon';
+import { GenericService } from '@shared/services';
+import { Status } from '@shared/components/Check/Status';
+import { ViewPortLabel } from '@index/components/Tests/Table/Checks/ViewPortLabel';
+import { sizes } from '@index/components/Tests/Table/Checks/checkSizes';
+import { AcceptButton } from '@index/components/Tests/Table/Checks/AcceptButton';
+import { RemoveButton } from '@index/components/Tests/Table/Checks/RemoveButton';
+import { CheckModal } from '@index/components/Tests/Table/Checks/CheckModal';
+import config from '@config';
+import { BrowserIcon } from '@shared/components/Check/BrowserIcon';
+import { OsIcon } from '@shared/components/Check/OsIcon';
 
 export function ChecksList() {
     const [searchParams, setSearchParams] = useSearchParams();

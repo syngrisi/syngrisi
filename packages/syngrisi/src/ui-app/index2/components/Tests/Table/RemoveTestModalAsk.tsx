@@ -1,9 +1,9 @@
 import { Button, Group, Modal, Text } from '@mantine/core';
 import * as React from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { TestsService } from '../../../../shared/services';
-import { errorMsg, successMsg } from '../../../../shared/utils/utils';
-import { log } from '../../../../shared/utils/Logger';
+import { TestsService } from '@shared/services';
+import { errorMsg, successMsg } from '@shared/utils/utils';
+import { log } from '@shared/utils/Logger';
 
 interface Props {
     opened: boolean,

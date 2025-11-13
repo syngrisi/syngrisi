@@ -2,8 +2,8 @@
 import { Checkbox, Button, Group, Title, Text } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import React from 'react';
-import { ISettingForm, ISettingFormUpdateData } from './interfaces';
-import SafeSelect from '../../../../shared/components/SafeSelect';
+import { ISettingForm, ISettingFormUpdateData } from '@admin/components/Settings/Forms/interfaces';
+import SafeSelect from '@shared/components/SafeSelect';
 // actually this component not represent boolean data,
 // this is string in boolean-like view "true" / "false"
 function Boolean({ name, value, label, description, enabled, updateSetting }: ISettingForm) {

@@ -14,12 +14,12 @@ import { useContext, useEffect, useState } from 'react';
 import { createStyles } from '@mantine/styles';
 
 import { IconRefresh } from '@tabler/icons-react';
-import { useNavProgressFetchEffect, UserHooks, useSubpageEffect } from '../../../shared/hooks';
-import UserForm from './UserForm';
-import IUser from '../../../shared/interfaces/IUser';
+import { useNavProgressFetchEffect, UserHooks, useSubpageEffect } from '@shared/hooks';
+import UserForm from '@admin/components/Users/UserForm';
+import IUser from '@shared/interfaces/IUser';
 
-import UserAddForm from './UserAddForm';
-import { AppContext } from '../../AppContext';
+import UserAddForm from '@admin/components/Users/UserAddForm';
+import { AppContext } from '@admin/AppContext';
 
 export default function AdminUsers() {
     const { updateToolbar }: any = useContext(AppContext);

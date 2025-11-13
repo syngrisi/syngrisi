@@ -1,8 +1,8 @@
 /* eslint-disable */
 import * as React from 'react';
-import { IPage } from '../../../shared/interfaces/logQueries';
-import ILog from '../../../shared/interfaces/ILog';
-import { BaseItemWrapper } from './Items/BaseItemWrapper';
+import { IPage } from '@shared/interfaces/logQueries';
+import ILog from '@shared/interfaces/ILog';
+import { BaseItemWrapper } from '@index/components/Navbar/Items/BaseItemWrapper';
 
 type Props = {
     infinityQuery: any,

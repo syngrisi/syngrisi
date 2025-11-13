@@ -10,14 +10,14 @@ import { useLocalStorage } from '@mantine/hooks';
 import { useEffect, useContext, useState } from 'react';
 import { IconAdjustments, IconFilter } from '@tabler/icons-react';
 import { JsonParam, StringParam, useQueryParams } from 'use-query-params';
-import { useSubpageEffect, useNavProgressFetchEffect } from '../../../shared/hooks';
-import { AppContext } from '../../AppContext';
-import RefreshActionIcon from './RefreshActionIcon';
-import useInfinityScroll from '../../../shared/hooks/useInfinityScroll';
-import AdminLogsTable from './Table/AdminLogsTable';
-import AdminLogsTableSettings from './Table/AdminLogsTableSettings';
-import AdminLogsTableFilter from './Table/AdminLogsTableFilter';
-import InfinityScrollSkeletonFiller from './Table/InfinityScrollSkeletonFIller';
+import { useSubpageEffect, useNavProgressFetchEffect } from '@shared/hooks';
+import { AppContext } from '@admin/AppContext';
+import RefreshActionIcon from '@admin/components/Logs/RefreshActionIcon';
+import useInfinityScroll from '@shared/hooks/useInfinityScroll';
+import AdminLogsTable from '@admin/components/Logs/Table/AdminLogsTable';
+import AdminLogsTableSettings from '@admin/components/Logs/Table/AdminLogsTableSettings';
+import AdminLogsTableFilter from '@admin/components/Logs/Table/AdminLogsTableFilter';
+import InfinityScrollSkeletonFiller from '@admin/components/Logs/Table/InfinityScrollSkeletonFIller';
 
 /**
  * example:

@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Badge, Divider, Group, Stack, Text } from '@mantine/core';
 import * as dateFns from 'date-fns';
-import { sizes } from './checkSizes';
-import { StatusIcon } from '../../../../../shared/components/Check/StatusIcon';
-import { LabelUser } from '../../../../../shared/components/Users/LabelUser';
-import { BrowserIcon } from '../../../../../shared/components/Check/BrowserIcon';
-import { OsIcon } from '../../../../../shared/components/Check/OsIcon';
-import { ViewPortLabel } from './ViewPortLabel';
-import { getStatusMessage } from '../../../../../shared/utils/utils';
+import { sizes } from '@index/components/Tests/Table/Checks/checkSizes';
+import { StatusIcon } from '@shared/components/Check/StatusIcon';
+import { LabelUser } from '@shared/components/Users/LabelUser';
+import { BrowserIcon } from '@shared/components/Check/BrowserIcon';
+import { OsIcon } from '@shared/components/Check/OsIcon';
+import { ViewPortLabel } from '@index/components/Tests/Table/Checks/ViewPortLabel';
+import { getStatusMessage } from '@shared/utils/utils';
 
 interface Props {
     check: any;

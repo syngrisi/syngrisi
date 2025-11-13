@@ -4,7 +4,7 @@ import { IconAt } from '@tabler/icons-react';
 import { Loader, TextInput } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { GenericService } from '../services';
+import { GenericService } from '@shared/services';
 
 interface IDuplicationFreeEmail {
     form: any,

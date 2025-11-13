@@ -10,8 +10,8 @@ import {
 import { TbQuestionMark } from 'react-icons/tb';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import config from '../../../config';
-import { log } from '../../utils/Logger';
+import config from '@config';
+import { log } from '@shared/utils/Logger';
 
 interface Props {
     os: string

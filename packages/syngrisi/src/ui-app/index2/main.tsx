@@ -5,9 +5,9 @@ import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 import { parse, stringify } from 'query-string';
 import { ErrorBoundary } from 'react-error-boundary';
-import { ErrorFallback } from '../shared/components/errors/ErrorFallback';
+import { ErrorFallback } from '@shared/components/errors/ErrorFallback';
 
-import App from './App';
+import App from '@index/App';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <React.StrictMode>

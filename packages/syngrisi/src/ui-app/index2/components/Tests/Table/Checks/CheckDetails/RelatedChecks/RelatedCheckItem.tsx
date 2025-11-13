@@ -3,14 +3,14 @@ import * as React from 'react';
 import { Group, Image, Paper, useMantineTheme, Text, Stack, Badge, Tooltip } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
 import { IconGitBranch } from '@tabler/icons-react';
-import config from '../../../../../../../config';
-import { Status } from '../../../../../../../shared/components/Check/Status';
-import { ViewPortLabel } from '../../ViewPortLabel';
-import { sizes } from '../../checkSizes';
-import { BrowserIcon } from '../../../../../../../shared/components/Check/BrowserIcon';
-import { OsIcon } from '../../../../../../../shared/components/Check/OsIcon';
-import { PreviewCheckTooltipLabel } from '../../PreviewCheckTooltipLabel';
-import { useParams } from '../../../../../../hooks/useParams';
+import config from '@config';
+import { Status } from '@shared/components/Check/Status';
+import { ViewPortLabel } from '@index/components/Tests/Table/Checks/ViewPortLabel';
+import { sizes } from '@index/components/Tests/Table/Checks/checkSizes';
+import { BrowserIcon } from '@shared/components/Check/BrowserIcon';
+import { OsIcon } from '@shared/components/Check/OsIcon';
+import { PreviewCheckTooltipLabel } from '@index/components/Tests/Table/Checks/PreviewCheckTooltipLabel';
+import { useParams } from '@hooks/useParams';
 
 interface Props {
     checkData: any

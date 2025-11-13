@@ -1,7 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 import { Group, Progress } from '@mantine/core';
 import * as React from 'react';
-import requirements from './requirements';
+import requirements from '@auth/components/change-password/requirements';
 
 export default function Bars({ value }: { value: string }) {
     function getStrength(password: string): number {

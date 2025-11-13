@@ -8,11 +8,11 @@ import {
     Stack,
 } from '@mantine/core';
 import { useState } from 'react';
-import RelativeDrawer from '../../../../shared/components/RelativeDrawer';
-import { adminLogsTableColumns } from './adminLogsTableColumns';
-import LogicalGroup from '../../../../shared/components/filter/LogicalGroup';
-import { uuid } from '../../../../shared/utils';
-import { useParams } from '../../../hooks/useParams';
+import RelativeDrawer from '@shared/components/RelativeDrawer';
+import { adminLogsTableColumns } from '@admin/components/Logs/Table/adminLogsTableColumns';
+import LogicalGroup from '@shared/components/filter/LogicalGroup';
+import { uuid } from '@shared/utils';
+import { useParams } from '@admin/hooks/useParams';
 
 interface Props {
     open: boolean

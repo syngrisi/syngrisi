@@ -5,14 +5,14 @@ import { Button, Group, TextInput } from '@mantine/core';
 import { IconSend, IconUser, IconX } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { errorMsg, log } from '../../../shared/utils';
-import { Password } from '../../../shared/components/Password';
-import { Email } from '../../../shared/components/Email';
-import { useSubpageEffect } from '../../../shared/hooks';
-import { GenericService } from '../../../shared/services';
-import SafeSelect from '../../../shared/components/SafeSelect';
-import IUser from '../../../shared/interfaces/IUser';
-import { successMsg } from '../../../shared/utils/utils';
+import { errorMsg, log } from '@shared/utils';
+import { Password } from '@shared/components/Password';
+import { Email } from '@shared/components/Email';
+import { useSubpageEffect } from '@shared/hooks';
+import { GenericService } from '@shared/services';
+import SafeSelect from '@shared/components/SafeSelect';
+import IUser from '@shared/interfaces/IUser';
+import { successMsg } from '@shared/utils/utils';
 
 export default function UserAddForm({ setAddUser, refetch }: any) {
     useSubpageEffect('Users');

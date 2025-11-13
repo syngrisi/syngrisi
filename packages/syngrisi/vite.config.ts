@@ -9,6 +9,13 @@ const config = {
     // base: '',
     resolve: {
         alias: {
+            '@shared': path.resolve(__dirname, './src/ui-app/shared'),
+            '@hooks': path.resolve(__dirname, './src/ui-app/index2/hooks'),
+            '@index': path.resolve(__dirname, './src/ui-app/index2'),
+            '@admin': path.resolve(__dirname, './src/ui-app/admin'),
+            '@auth': path.resolve(__dirname, './src/ui-app/auth'),
+            '@asserts': path.resolve(__dirname, './src/ui-app/asserts'),
+            '@config': path.resolve(__dirname, './src/ui-app/config.ts'),
         },
     },
     build: {

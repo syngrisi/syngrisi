@@ -16,12 +16,12 @@ import {
 } from '@tabler/icons-react';
 import { useState } from 'react';
 // import { isDark } from '../../utils';
-import { UserHooks } from '../../hooks';
-import ApiKeyModalAsk from './ApiKeyModalAsk';
-import { ApiKeyModalResult } from './ApiKeyModalResult';
-import { UserInfoModal } from './UserInfoModal';
-import ToggleThemeButton from '../ToggleThemeButton';
-import useColorScheme from '../../hooks/useColorSheme';
+import { UserHooks } from '@shared/hooks';
+import ApiKeyModalAsk from '@shared/components/Header/ApiKeyModalAsk';
+import { ApiKeyModalResult } from '@shared/components/Header/ApiKeyModalResult';
+import { UserInfoModal } from '@shared/components/Header/UserInfoModal';
+import ToggleThemeButton from '@shared/components/ToggleThemeButton';
+import useColorScheme from '@shared/hooks/useColorSheme';
 
 function UserMenu() {
     const theme = useMantineTheme();

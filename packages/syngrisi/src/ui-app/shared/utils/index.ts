@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/extensions
-export { SearchParams } from './SearchParams';
-export { uuid, errorMsg } from './utils';
-export { generateItemFilter } from './filters';
-export * from './Logger';
+export { SearchParams } from '@shared/utils/SearchParams';
+export { uuid, errorMsg } from '@shared/utils/utils';
+export { generateItemFilter } from '@shared/utils/filters';
+export * from '@shared/utils/Logger';

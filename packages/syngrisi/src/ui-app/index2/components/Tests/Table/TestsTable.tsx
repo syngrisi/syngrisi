@@ -7,16 +7,16 @@ import {
     Text,
 } from '@mantine/core';
 
-import InfinityScrollSkeleton from './InfinityScrollSkeleton';
-import PagesCountAffix from './PagesCountAffix';
-import ILog from '../../../../shared/interfaces/ILog';
-import { testsCreateStyle } from './testsCreateStyle';
-import Rows from './Rows';
-import Heads from './Heads';
-import { CheckModal } from './Checks/CheckModal';
-import RemoveTestsButton from './RemoveTestsButton';
-import AcceptTestsButton from './AcceptTestsButton';
-import { useParams } from '../../../hooks/useParams';
+import InfinityScrollSkeleton from '@index/components/Tests/Table/InfinityScrollSkeleton';
+import PagesCountAffix from '@index/components/Tests/Table/PagesCountAffix';
+import ILog from '@shared/interfaces/ILog';
+import { testsCreateStyle } from '@index/components/Tests/Table/testsCreateStyle';
+import Rows from '@index/components/Tests/Table/Rows';
+import Heads from '@index/components/Tests/Table/Heads';
+import { CheckModal } from '@index/components/Tests/Table/Checks/CheckModal';
+import RemoveTestsButton from '@index/components/Tests/Table/RemoveTestsButton';
+import AcceptTestsButton from '@index/components/Tests/Table/AcceptTestsButton';
+import { useParams } from '@hooks/useParams';
 
 const useStyles = createStyles(testsCreateStyle as any);
 

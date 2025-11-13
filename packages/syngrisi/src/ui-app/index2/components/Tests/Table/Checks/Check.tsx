@@ -14,14 +14,14 @@ import {
 import queryString from 'query-string';
 import { useLocalStorage } from '@mantine/hooks';
 import { encodeQueryParams } from 'use-query-params';
-import { useParams } from '../../../../hooks/useParams';
-import config from '../../../../../config';
-import { AcceptButton } from './AcceptButton';
-import { RemoveButton } from './RemoveButton';
-import { ViewPortLabel } from './ViewPortLabel';
-import { sizes } from './checkSizes';
-import { Status } from '../../../../../shared/components/Check/Status';
-import { PreviewCheckTooltipLabel } from './PreviewCheckTooltipLabel';
+import { useParams } from '@hooks/useParams';
+import config from '@config';
+import { AcceptButton } from '@index/components/Tests/Table/Checks/AcceptButton';
+import { RemoveButton } from '@index/components/Tests/Table/Checks/RemoveButton';
+import { ViewPortLabel } from '@index/components/Tests/Table/Checks/ViewPortLabel';
+import { sizes } from '@index/components/Tests/Table/Checks/checkSizes';
+import { Status } from '@shared/components/Check/Status';
+import { PreviewCheckTooltipLabel } from '@index/components/Tests/Table/Checks/PreviewCheckTooltipLabel';
 
 interface Props {
     check: any

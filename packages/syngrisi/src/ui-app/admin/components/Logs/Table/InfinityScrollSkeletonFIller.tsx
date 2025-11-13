@@ -2,7 +2,7 @@
 import React, { FunctionComponent } from 'react';
 import { Skeleton } from '@mantine/core';
 
-import { adminLogsTableColumns } from './adminLogsTableColumns';
+import { adminLogsTableColumns } from '@admin/components/Logs/Table/adminLogsTableColumns';
 
 interface Props {
     visibleFields: any

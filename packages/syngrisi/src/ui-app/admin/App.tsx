@@ -14,12 +14,12 @@ import { NotificationsProvider } from '@mantine/notifications';
 
 import { IconSearch } from '@tabler/icons-react';
 import { SpotlightProvider } from '@mantine/spotlight';
-import { AppContext } from './AppContext';
+import { AppContext } from '@admin/AppContext';
 
-import AdminLayout from './AdminLayout';
-import useColorScheme from '../shared/hooks/useColorSheme';
-import { navigationData } from '../shared/navigation/navigationData';
-import { INavDataItem } from '../shared/navigation/interfaces';
+import AdminLayout from '@admin/AdminLayout';
+import useColorScheme from '@shared/hooks/useColorSheme';
+import { navigationData } from '@shared/navigation/navigationData';
+import { INavDataItem } from '@shared/navigation/interfaces';
 
 const queryClient = new QueryClient();
 

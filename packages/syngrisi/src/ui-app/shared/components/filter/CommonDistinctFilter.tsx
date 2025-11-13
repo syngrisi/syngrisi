@@ -4,9 +4,9 @@ import { useQuery } from '@tanstack/react-query';
 import { useForm } from '@mantine/form';
 import { useEffect } from 'react';
 import { Group } from '@mantine/core';
-import { GenericService } from '../../services';
-import { errorMsg, generateItemFilter } from '../../utils';
-import SafeSelect from '../SafeSelect';
+import { GenericService } from '@shared/services';
+import { errorMsg, generateItemFilter } from '@shared/utils';
+import SafeSelect from '@shared/components/SafeSelect';
 
 interface FilterItems {
     value: string,

@@ -29,6 +29,9 @@
                     ".ts",
                     ".tsx"
                 ]
+            },
+            "typescript": {
+                "project": "./tsconfig.json"
             }
         }
     },

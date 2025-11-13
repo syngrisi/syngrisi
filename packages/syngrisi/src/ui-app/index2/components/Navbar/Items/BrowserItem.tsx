@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import * as React from 'react';
 import { Group, List, Stack, Text, Tooltip } from '@mantine/core';
-import { BrowserIcon } from '../../../../shared/components/Check/BrowserIcon';
+import { BrowserIcon } from '@shared/components/Check/BrowserIcon';
 
 interface Props {
     item: { [key: string]: string }

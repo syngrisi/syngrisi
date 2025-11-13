@@ -3,8 +3,8 @@ import { Group, TextInput } from '@mantine/core';
 import * as React from 'react';
 import { useEffect } from 'react';
 import { useForm } from '@mantine/form';
-import SafeSelect from '../SafeSelect';
-import { generateItemFilter } from '../../utils';
+import SafeSelect from '@shared/components/SafeSelect';
+import { generateItemFilter } from '@shared/utils';
 
 interface Props {
     label: string

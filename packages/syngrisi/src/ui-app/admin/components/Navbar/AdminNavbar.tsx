@@ -6,8 +6,8 @@ import {
     IconArticle, IconListDetails,
 } from '@tabler/icons-react';
 import { createStyles } from '@mantine/styles';
-import { LinksGroup } from './NavbarLinksGroup';
-import { taskLinks } from '../Tasks/tasksList';
+import { LinksGroup } from '@admin/components/Navbar/NavbarLinksGroup';
+import { taskLinks } from '@admin/components/Tasks/tasksList';
 
 const navbarItems = [
     { label: 'Users', icon: IconUsers, link: '/admin/users' },

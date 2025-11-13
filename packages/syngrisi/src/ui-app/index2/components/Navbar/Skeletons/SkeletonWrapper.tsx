@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { Stack } from '@mantine/core';
-import { SuitesDummySkeleton } from './SuitesDummySkeleton';
-import { RunsDummySkeleton } from './RunsDummySkeleton';
-import SimpleDummySkeleton from './SimpleDummySkeleton';
+import { SuitesDummySkeleton } from '@index/components/Navbar/Skeletons/SuitesDummySkeleton';
+import { RunsDummySkeleton } from '@index/components/Navbar/Skeletons/RunsDummySkeleton';
+import SimpleDummySkeleton from '@index/components/Navbar/Skeletons/SimpleDummySkeleton';
 
 interface Props {
     infinityQuery: any,

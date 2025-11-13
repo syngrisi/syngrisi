@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import * as React from 'react';
 import { Group, List, Stack, Text, Tooltip } from '@mantine/core';
-import { StatusIcon } from '../../../../shared/components/Check/StatusIcon';
+import { StatusIcon } from '@shared/components/Check/StatusIcon';
 
 interface Props {
     item: { [key: string]: string }

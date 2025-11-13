@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { errorMsg } from '../utils';
-import { GenericService } from '../services';
+import { errorMsg } from '@shared/utils';
+import { GenericService } from '@shared/services';
 
 interface IIScrollParams {
     resourceName: string

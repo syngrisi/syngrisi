@@ -1,10 +1,10 @@
 import { fabric } from 'fabric';
-import { SimpleView } from './simpleView';
-import { SideToSideView } from './sideToSideView';
-import { lockImage } from './helpers';
-import { errorMsg, successMsg } from '../../../../../../../shared/utils/utils';
-import config from '../../../../../../../config';
-import { log } from '../../../../../../../shared/utils/Logger';
+import { SimpleView } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/simpleView';
+import { SideToSideView } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/sideToSideView';
+import { lockImage } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/helpers';
+import { errorMsg, successMsg } from '@shared/utils/utils';
+import config from '@config';
+import { log } from '@shared/utils/Logger';
 
 /* eslint-disable dot-notation,no-underscore-dangle */
 interface IRectParams {

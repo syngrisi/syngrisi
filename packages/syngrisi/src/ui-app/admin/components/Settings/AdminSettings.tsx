@@ -2,11 +2,11 @@
 import * as React from 'react';
 import { Title, LoadingOverlay, Text, Box } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
-import { useSubpageEffect, useNavProgressFetchEffect } from '../../../shared/hooks';
-import { ISettingForm } from './Forms/interfaces';
-import { errorMsg, log } from '../../../shared/utils';
-import { FormWrapper } from './Forms/FormWrapper';
-import { GenericService } from '../../../shared/services';
+import { useSubpageEffect, useNavProgressFetchEffect } from '@shared/hooks';
+import { ISettingForm } from '@admin/components/Settings/Forms/interfaces';
+import { errorMsg, log } from '@shared/utils';
+import { FormWrapper } from '@admin/components/Settings/Forms/FormWrapper';
+import { GenericService } from '@shared/services';
 
 export default function AdminSettings() {
     useSubpageEffect('Settings');

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Text, Tooltip } from '@mantine/core';
 import * as dateFns from 'date-fns';
-import { tableColumns } from '../tableColumns';
+import { tableColumns } from '@index/components/Tests/Table/tableColumns';
 
 interface Props {
     type: string

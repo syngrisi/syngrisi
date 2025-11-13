@@ -2,9 +2,9 @@ import { AppShell } from '@mantine/core';
 import * as React from 'react';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useState } from 'react';
-import HeaderIndex from './components/Header/HeaderIndex';
-import NavBarIndex from './components/Navbar/NavbarIndex';
-import Tests from './components/Tests/Tests';
+import HeaderIndex from '@index/components/Header/HeaderIndex';
+import NavBarIndex from '@index/components/Navbar/NavbarIndex';
+import Tests from '@index/components/Tests/Tests';
 
 export default function IndexLayout() {
     const [breadCrumbs, setBreadCrumbs] = useState<any>([]);

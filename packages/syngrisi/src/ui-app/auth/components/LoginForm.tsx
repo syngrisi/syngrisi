@@ -16,8 +16,8 @@ import { useForm } from '@mantine/form';
 import ky from 'ky';
 import { useState } from 'react';
 import { useDocumentTitle } from '@mantine/hooks';
-import { log } from '../../shared/utils';
-import config from '../../config';
+import { log } from '@shared/utils';
+import config from '@config';
 
 export default function LoginForm() {
     useDocumentTitle('Login Page');

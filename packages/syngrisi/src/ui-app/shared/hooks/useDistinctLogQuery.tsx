@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { GenericService } from '../services';
-import { errorMsg } from '../utils';
+import { GenericService } from '@shared/services';
+import { errorMsg } from '@shared/utils';
 
 interface Props {
     resource: string

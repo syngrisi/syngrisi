@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { showNotification } from '@mantine/notifications';
-import log from './Logger';
+import log from '@shared/utils/Logger';
 
 export function uuid() {
     // @ts-ignore

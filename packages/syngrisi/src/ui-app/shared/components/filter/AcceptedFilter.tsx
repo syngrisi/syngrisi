@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading,react-hooks/exhaustive-deps */
 import * as React from 'react';
-import { CommonDistinctFilter } from './CommonDistinctFilter';
+import { CommonDistinctFilter } from '@shared/components/filter/CommonDistinctFilter';
 
 interface Props {
     label: string

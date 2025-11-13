@@ -2,15 +2,15 @@
 import * as React from 'react';
 import { Divider, Group } from '@mantine/core';
 import { useEffect, useState } from 'react';
-import { ScreenshotDetails } from './ScreenshotDetails';
-import { ZoomToolbar } from './ZoomToolbar';
-import { MainView } from '../Canvas/mainView';
-import { ViewSegmentedControl } from './ViewSegmentedControl';
-import { HighlightButton } from './HighlightButton';
-import { RegionsToolbar } from './RegionsToolbar';
-import { AcceptButton } from '../../AcceptButton';
-import { RemoveButton } from '../../RemoveButton';
-import { useParams } from '../../../../../../hooks/useParams';
+import { ScreenshotDetails } from '@index/components/Tests/Table/Checks/CheckDetails/Toolbar/ScreenshotDetails';
+import { ZoomToolbar } from '@index/components/Tests/Table/Checks/CheckDetails/Toolbar/ZoomToolbar';
+import { MainView } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/mainView';
+import { ViewSegmentedControl } from '@index/components/Tests/Table/Checks/CheckDetails/Toolbar/ViewSegmentedControl';
+import { HighlightButton } from '@index/components/Tests/Table/Checks/CheckDetails/Toolbar/HighlightButton';
+import { RegionsToolbar } from '@index/components/Tests/Table/Checks/CheckDetails/Toolbar/RegionsToolbar';
+import { AcceptButton } from '@index/components/Tests/Table/Checks/AcceptButton';
+import { RemoveButton } from '@index/components/Tests/Table/Checks/RemoveButton';
+import { useParams } from '@hooks/useParams';
 
 interface Props {
     mainView: any
@@ -45,10 +45,9 @@ export function Toolbar(
     }, [mainView?.diffImage, query.checkId]);
 
     useEffect(function switchView() {
-        if (mainView) {
-            mainView.switchView(view);
-        }
-    }, [view]);
+        if (!mainView) return;
+        mainView.switchView(view);
+    }, [view, mainView]);
 
     return (
         <Group position="apart" noWrap data-check="toolbar">

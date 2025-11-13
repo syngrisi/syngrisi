@@ -1,7 +1,7 @@
 import { ActionIcon, Transition, useMantineTheme } from '@mantine/core';
 import { IconTrash } from '@tabler/icons-react';
 import React, { useState } from 'react';
-import RemoveTestModalAsk from './RemoveTestModalAsk';
+import RemoveTestModalAsk from '@index/components/Tests/Table/RemoveTestModalAsk';
 
 interface Props {
     selection: any

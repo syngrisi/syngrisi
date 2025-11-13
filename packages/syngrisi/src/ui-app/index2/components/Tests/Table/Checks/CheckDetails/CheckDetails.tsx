@@ -5,16 +5,16 @@ import { fabric } from 'fabric';
 import { createStyles, Group, Loader, Stack } from '@mantine/core';
 import { useDisclosure, useDocumentTitle } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
-import { MainView } from './Canvas/mainView';
-import { createImageAndWaitForLoad, imageFromUrl } from './Canvas/helpers';
-import { errorMsg } from '../../../../../../shared/utils';
-import { GenericService } from '../../../../../../shared/services';
-import config from '../../../../../../config';
-import { RelatedChecksContainer } from './RelatedChecks/RelatedChecksContainer';
-import { useParams } from '../../../../../hooks/useParams';
-import { Toolbar } from './Toolbar/Toolbar';
-import { Header } from './Header';
-import { Canvas } from './Canvas/Canvas';
+import { MainView } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/mainView';
+import { createImageAndWaitForLoad, imageFromUrl } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/helpers';
+import { errorMsg } from '@shared/utils';
+import { GenericService } from '@shared/services';
+import config from '@config';
+import { RelatedChecksContainer } from '@index/components/Tests/Table/Checks/CheckDetails/RelatedChecks/RelatedChecksContainer';
+import { useParams } from '@hooks/useParams';
+import { Toolbar } from '@index/components/Tests/Table/Checks/CheckDetails/Toolbar/Toolbar';
+import { Header } from '@index/components/Tests/Table/Checks/CheckDetails/Header';
+import { Canvas } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/Canvas';
 
 // eslint-disable-next-line no-unused-vars
 const useStyles = createStyles((theme) => ({

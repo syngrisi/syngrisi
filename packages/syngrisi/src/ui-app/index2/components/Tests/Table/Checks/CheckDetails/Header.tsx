@@ -2,12 +2,12 @@ import * as React from 'react';
 import { ActionIcon, Group, Loader, Text, Tooltip, useMantineTheme } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
 import { useMemo } from 'react';
-import { Status } from '../../../../../../shared/components/Check/Status';
-import { ViewPortLabel } from '../ViewPortLabel';
-import { sizes } from '../checkSizes';
-import { OsIcon } from '../../../../../../shared/components/Check/OsIcon';
-import { BrowserIcon } from '../../../../../../shared/components/Check/BrowserIcon';
-import { getStatusMessage } from '../../../../../../shared/utils/utils';
+import { Status } from '@shared/components/Check/Status';
+import { ViewPortLabel } from '@index/components/Tests/Table/Checks/ViewPortLabel';
+import { sizes } from '@index/components/Tests/Table/Checks/checkSizes';
+import { OsIcon } from '@shared/components/Check/OsIcon';
+import { BrowserIcon } from '@shared/components/Check/BrowserIcon';
+import { getStatusMessage } from '@shared/utils/utils';
 
 interface Props {
     classes: any

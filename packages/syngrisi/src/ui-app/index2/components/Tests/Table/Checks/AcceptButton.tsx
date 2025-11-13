@@ -4,10 +4,10 @@ import { Badge, Tooltip, useMantineTheme, Text, Stack } from '@mantine/core';
 import { BsHandThumbsUp, BsHandThumbsUpFill } from 'react-icons/all';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
-import ActionPopoverIcon from '../../../../../shared/components/ActionPopoverIcon';
-import { ChecksService } from '../../../../../shared/services';
-import { errorMsg, successMsg } from '../../../../../shared/utils/utils';
-import { log } from '../../../../../shared/utils/Logger';
+import ActionPopoverIcon from '@shared/components/ActionPopoverIcon';
+import { ChecksService } from '@shared/services';
+import { errorMsg, successMsg } from '@shared/utils/utils';
+import { log } from '@shared/utils/Logger';
 
 interface Props {
     check: any

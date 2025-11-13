@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { IconCheck, IconCopy, IconKey } from '@tabler/icons-react';
 import { ActionIcon, Button, Group, Loader, Modal, Text, TextInput } from '@mantine/core';
 import * as React from 'react';
-import { log } from '../../utils';
+import { log } from '@shared/utils';
 
 export function ApiKeyModalResult({ opened, setOpened, apiKey }: { opened: boolean, setOpened: any, apiKey: any }) {
     const [successCopy, setSuccessCopy] = useState(false);

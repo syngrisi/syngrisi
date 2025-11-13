@@ -1,4 +1,4 @@
-import { escapeRegExp } from './utils';
+import { escapeRegExp } from '@shared/utils/utils';
 
 export function generateItemFilter(label: string, operator: string, value: string) {
     const transform: any = {

@@ -3,8 +3,8 @@
 /* global fabric */
 
 import { fabric } from 'fabric';
-import { log } from '../../../../../../../shared/utils/Logger';
-import { errorMsg } from '../../../../../../../shared/utils';
+import { log } from '@shared/utils/Logger';
+import { errorMsg } from '@shared/utils';
 
 function imageFromUrl(url: string) {
     return new Promise(

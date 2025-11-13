@@ -4,8 +4,8 @@ import { Group, List, Stack, Text, Tooltip } from '@mantine/core';
 import * as dateFns from 'date-fns';
 import { useState } from 'react';
 import { useDisclosure } from '@mantine/hooks';
-import RemoveItemModalAsk from './RemoveItemModalAsk';
-import { RemoveItemPopover } from './RemoveItemPopover';
+import RemoveItemModalAsk from '@index/components/Navbar/Items/RemoveItemModalAsk';
+import { RemoveItemPopover } from '@index/components/Navbar/Items/RemoveItemPopover';
 
 interface Props {
     item: { [key: string]: string }

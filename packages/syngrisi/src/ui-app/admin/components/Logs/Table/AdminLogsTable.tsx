@@ -6,12 +6,12 @@ import {
     ScrollArea,
 } from '@mantine/core';
 
-import InfinityScrollSkeleton from './InfinityScrollSkeleton';
-import PagesCountAffix from './PagesCountAffix';
-import ILog from '../../../../shared/interfaces/ILog';
-import { adminLogsCreateStyle } from './adminLogsCreateStyle';
-import AdminLogsTableRows from './AdminLogsTableRows';
-import AdminLogsTableHeads from './AdminLogsTableHeads';
+import InfinityScrollSkeleton from '@admin/components/Logs/Table/InfinityScrollSkeleton';
+import PagesCountAffix from '@admin/components/Logs/Table/PagesCountAffix';
+import ILog from '@shared/interfaces/ILog';
+import { adminLogsCreateStyle } from '@admin/components/Logs/Table/adminLogsCreateStyle';
+import AdminLogsTableRows from '@admin/components/Logs/Table/AdminLogsTableRows';
+import AdminLogsTableHeads from '@admin/components/Logs/Table/AdminLogsTableHeads';
 
 const useStyles = createStyles(adminLogsCreateStyle as any);
 

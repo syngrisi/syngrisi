@@ -3,10 +3,10 @@ import * as React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Group, Stack, Text } from '@mantine/core';
 import { useLocalStorage } from '@mantine/hooks';
-import { GenericService } from '../../../../../shared/services';
-import { errorMsg } from '../../../../../shared/utils';
-import { ChecksSkeleton } from './ChecksSkeleton';
-import { Check } from './Check';
+import { GenericService } from '@shared/services';
+import { errorMsg } from '@shared/utils';
+import { ChecksSkeleton } from '@index/components/Tests/Table/Checks/ChecksSkeleton';
+import { Check } from '@index/components/Tests/Table/Checks/Check';
 
 interface Props {
     item: any,

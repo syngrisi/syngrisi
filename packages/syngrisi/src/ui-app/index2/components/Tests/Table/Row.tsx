@@ -3,12 +3,12 @@ import * as React from 'react';
 import { Checkbox, Collapse, createStyles } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { tableColumns } from './tableColumns';
-import { Checks } from './Checks/Checks';
-import { testsCreateStyle } from './testsCreateStyle';
-import { GenericService } from '../../../../shared/services';
-import { errorMsg } from '../../../../shared/utils';
-import { CellWrapper } from './Cells/CellWrapper';
+import { tableColumns } from '@index/components/Tests/Table/tableColumns';
+import { Checks } from '@index/components/Tests/Table/Checks/Checks';
+import { testsCreateStyle } from '@index/components/Tests/Table/testsCreateStyle';
+import { GenericService } from '@shared/services';
+import { errorMsg } from '@shared/utils';
+import { CellWrapper } from '@index/components/Tests/Table/Cells/CellWrapper';
 
 const useStyles = createStyles(testsCreateStyle as any);
 
