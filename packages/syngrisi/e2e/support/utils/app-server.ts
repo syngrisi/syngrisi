@@ -17,6 +17,10 @@ export interface RunningAppServer {
   baseURL: string;
   backendHost: string;
   serverPort: number;
+  config: {
+    connectionString: string;
+    defaultImagesPath: string;
+  };
   stop: () => Promise<void>;
   getBackendLogs: () => string;
   getFrontendLogs: () => string;
@@ -55,6 +59,15 @@ export async function launchAppServer(
 
   const nodeEnv = (additionalEnv?.NODE_ENV || runtimeEnv.NODE_ENV || 'test') as string;
 
+  const defaultConnectionString =
+    runtimeEnv.SYNGRISI_DB_URI ||
+    env.SYNGRISI_DB_URI ||
+    `mongodb://localhost/${databaseName}${cid}`;
+  const defaultImagesPath =
+    runtimeEnv.SYNGRISI_IMAGES_PATH ||
+    env.SYNGRISI_IMAGES_PATH ||
+    path.resolve(REPO_ROOT, 'baselinesTest', String(cid));
+
   const spawnEnv: Record<string, string> = {
     ...runtimeEnv,
     NODE_ENV: nodeEnv,
@@ -66,14 +79,8 @@ export async function launchAppServer(
   };
 
   if (dockerMode !== '1') {
-    spawnEnv.SYNGRISI_DB_URI =
-      runtimeEnv.SYNGRISI_DB_URI ||
-      env.SYNGRISI_DB_URI ||
-      `mongodb://localhost/${databaseName}${cid}`;
-    spawnEnv.SYNGRISI_IMAGES_PATH =
-      runtimeEnv.SYNGRISI_IMAGES_PATH ||
-      env.SYNGRISI_IMAGES_PATH ||
-      path.resolve(REPO_ROOT, 'baselinesTest', String(cid));
+    spawnEnv.SYNGRISI_DB_URI = defaultConnectionString;
+    spawnEnv.SYNGRISI_IMAGES_PATH = defaultImagesPath;
   }
 
   const nodePath = process.env.SYNGRISI_TEST_SERVER_NODE_PATH || process.execPath;
@@ -120,6 +127,10 @@ export async function launchAppServer(
     baseURL,
     backendHost,
     serverPort: cidPort,
+    config: {
+      connectionString: spawnEnv.SYNGRISI_DB_URI ?? defaultConnectionString,
+      defaultImagesPath: spawnEnv.SYNGRISI_IMAGES_PATH ?? defaultImagesPath,
+    },
     stop: () => terminateProcess(backend),
     getBackendLogs: backendLogs,
     getFrontendLogs: () => "",
