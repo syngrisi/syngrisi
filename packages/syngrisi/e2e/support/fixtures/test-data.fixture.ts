@@ -317,11 +317,12 @@ export class TestStore {
    *
    * @example
    * testData.set("username", "john_doe");
-   * const result = testData.renderTemplate("User <username> created on <generateDate>");
-   * // Result: "User john_doe created on 2024-01-15"
-   */
+  * const result = testData.renderTemplate("User <username> created on <generateDate>");
+  * // Result: "User john_doe created on 2024-01-15"
+  */
   renderTemplate(input: string): string {
-    return replacePlaceholders(input, [
+    const normalizedInput = input.replace(/{{\s*([^}]+)\s*}}/g, (_, key: string) => `<${key.trim()}>`);
+    return replacePlaceholders(normalizedInput, [
       (item) => this.get(item), // stored data
       (item) => (this.dataGenerator)[item as keyof DataGenerator], // generators
       (item) => constants[item], // constants

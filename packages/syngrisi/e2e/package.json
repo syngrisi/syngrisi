@@ -12,7 +12,7 @@
   "scripts": {
     "postinstall": "playwright install",
     "bddgen": "bddgen",
-    "test": "bddgen && cross-env E2E_HEADLESS=1 playwright test --workers=10",
+    "test": "bddgen && cross-env E2E_HEADLESS=1 playwright test --workers=8",
     "test:smoke": "bddgen && cross-env playwright test --grep=@smoke --retries=1 --workers=3 --shard=${SHARD:-1/1}",
     "test:headed": "bddgen && cross-env PLAYWRIGHT_HEADED=1 playwright test",
     "test:mcp": "cross-env MCP_KEEP_ALIVE=0 E2E_HEADLESS=1 playwright test --workers=1 --config support/mcp/playwright.config.ts support/mcp/mcp.spec.ts",
