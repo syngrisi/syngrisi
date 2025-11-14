@@ -48,13 +48,13 @@
     "@types/ua-parser-js": "^0.7.38",
     "@typescript-eslint/eslint-plugin": "^5.48.2",
     "@typescript-eslint/parser": "^5.48.2",
-    "@vitest/coverage-c8": "^0.28.1",
+    "@vitest/coverage-v8": "^4.0.8",
     "c8": "^7.12.0",
     "eslint": "^8.52.0",
     "eslint-plugin-import": "^2.29.0",
     "eslint-plugin-unicorn": "^45.0.2",
     "typescript": "^5.2.2",
-    "vitest": "^0.34.6"
+    "vitest": "^4.0.8"
   },
   "gitHead": "df1d7bc159619fcf0e612229be1a79652a84e5e7"
 }

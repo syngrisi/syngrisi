@@ -12,6 +12,7 @@ export default defineConfig({
             '**/node_modules/**', '__mocks__'
         ],
         coverage: {
+            provider: 'v8',
             enabled: true,
             exclude: ['**/build/**', '__mocks__', '**/*.test.ts', 'src/utils*'],
             lines: 97,
