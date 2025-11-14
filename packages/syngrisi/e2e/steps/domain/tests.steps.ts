@@ -165,7 +165,8 @@ async function createTestsWithParams(
       const testId = (sessionData as any).id || (sessionData as any)._id;
       logger.info(`Test session started with ID: ${testId}`);
       testData.set('lastTestId', testId);
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      // Allow backend to finish persisting test/check data before further actions
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const checkResults = [];
       for (const check of params.checks || []) {

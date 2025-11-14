@@ -1,10 +1,11 @@
 import { test as base } from 'playwright-bdd';
 import { launchAppServer } from '@utils/app-server';
-import { getWorkerTempDir, createDirectoryIfNotExist } from '@utils/fs';
+import { getWorkerTempDir, createDirectoryIfNotExist, resolveRepoRoot } from '@utils/fs';
 import { hasTag } from '@utils/common';
 import { env } from '@config';
 import { createLogger } from '@lib/logger';
 import type { RunningAppServer } from '@utils/app-server';
+import path from 'path';
 
 const logger = createLogger('AppServer');
 
@@ -12,6 +13,10 @@ export type AppServerFixture = {
   baseURL: string;
   backendHost: string;
   serverPort: number;
+  config: {
+    connectionString: string;
+    defaultImagesPath: string;
+  };
   getBackendLogs: () => string;
   getFrontendLogs: () => string;
   restart: () => Promise<void>;
@@ -22,6 +27,23 @@ export type AppServerFixture = {
 // Store server instance outside fixture to allow restart
 let serverInstance: RunningAppServer | null = null;
 let serverFixtureValue: AppServerFixture | null = null;
+const defaultCid = process.env.DOCKER === '1' ? 100 : parseInt(process.env.TEST_PARALLEL_INDEX || '0', 10);
+
+function getFallbackConfig(): { connectionString: string; defaultImagesPath: string } {
+  const repoRoot = resolveRepoRoot();
+  return {
+    connectionString:
+      process.env.SYNGRISI_DB_URI ||
+      env.SYNGRISI_DB_URI ||
+      `mongodb://localhost/SyngrisiDbTest${defaultCid}`,
+    defaultImagesPath:
+      process.env.SYNGRISI_IMAGES_PATH ||
+      env.SYNGRISI_IMAGES_PATH ||
+      path.resolve(repoRoot, 'baselinesTest', String(defaultCid)),
+  };
+}
+
+let lastKnownConfig = getFallbackConfig();
 
 // Global flag to control automatic server startup
 // Set to true when "I clear Database and stop Server" is called
@@ -68,6 +90,7 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
         serverInstance = await launchAppServer({
           env: {},
         });
+        lastKnownConfig = serverInstance.config;
         logger.success(`Server launched successfully`);
         logger.info(`Base URL: ${serverInstance.baseURL}`);
         logger.info(`Server: ${serverInstance.backendHost}:${serverInstance.serverPort}`);
@@ -76,6 +99,7 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           baseURL: serverInstance.baseURL,
           backendHost: serverInstance.backendHost,
           serverPort: serverInstance.serverPort,
+          config: lastKnownConfig,
           getBackendLogs: serverInstance.getBackendLogs,
           getFrontendLogs: serverInstance.getFrontendLogs,
           restart: async () => {
@@ -99,6 +123,7 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
               baseURL: '',
               backendHost: env.E2E_BACKEND_HOST,
               serverPort: 0,
+              config: lastKnownConfig,
               getBackendLogs: () => 'App server stopped',
               getFrontendLogs: () => '',
               restart: async () => {
@@ -121,6 +146,7 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           baseURL: '',
           backendHost: env.E2E_BACKEND_HOST,
           serverPort: 0,
+          config: lastKnownConfig,
           getBackendLogs: () => 'App server not started',
           getFrontendLogs: () => '',
           restart: async () => {
@@ -190,4 +216,3 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
     { scope: 'test' },  // Note: Cannot use 'worker' scope due to dependencies on test fixtures (page, $step, $uri)
   ],
 });
-
