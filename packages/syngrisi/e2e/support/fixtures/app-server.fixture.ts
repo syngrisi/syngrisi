@@ -48,6 +48,10 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
       const skipAppStart = hasTag(testInfo, '@no-app-start') || skipAutoStart;
 
       const startServer = async () => {
+        // Reset skipAutoStart when explicitly starting server
+        // This ensures server starts even after "I clear Database and stop Server" step
+        skipAutoStart = false;
+
         // Stop any existing server instance first
         if (serverInstance) {
           logger.info(`Stopping existing server before restart`);
@@ -183,7 +187,7 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
         }
       }
     },
-    { scope: 'test' },
+    { scope: 'test' },  // Note: Cannot use 'worker' scope due to dependencies on test fixtures (page, $step, $uri)
   ],
 });
 

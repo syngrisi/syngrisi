@@ -93,10 +93,12 @@ const ensureFreshBuild = (): void => {
 };
 
 export default async function globalSetup(_config: FullConfig) {
+  logger.info('Building @syngrisi/syngrisi package...');
   ensureFreshBuild();
+
   await cleanLogsDir();
   await ensureBaselinesTestDir();
-  
+
   // Clear database for main worker (CID 0)
   try {
     logger.info('Clearing database for worker 0');
@@ -104,6 +106,6 @@ export default async function globalSetup(_config: FullConfig) {
   } catch (error) {
     logger.warn(`Failed to clear database: ${(error as Error).message}`);
   }
-  
+
   logger.info('Global setup completed');
 }
