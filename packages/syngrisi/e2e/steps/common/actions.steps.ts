@@ -1,4 +1,4 @@
-import type { Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 import { When, Then } from '@fixtures';
 import type { ElementTarget } from '@params';
 import { getLabelLocator, getLocatorQuery, getRoleLocator } from '@helpers/locators';
@@ -8,6 +8,131 @@ import type { TestStore } from '@fixtures';
 import { createLogger } from '@lib/logger';
 
 const logger = createLogger('ActionsSteps');
+const SAVE_IGNORE_REGION_SELECTOR = /data-check\s*=\s*['"]save-ignore-region['"]/i;
+const ADD_IGNORE_REGION_SELECTOR = /data-check\s*=\s*['"]add-ignore-region['"]/i;
+const REMOVE_IGNORE_REGION_SELECTOR = /data-check\s*=\s*['"]remove-ignore-region['"]/i;
+const SEGMENT_VALUE_SELECTOR = /data-segment-value\s*=\s*['"]([^'"]+)['"]/i;
+
+function shouldWaitForIgnoreRegionSave(value: string): boolean {
+  return SAVE_IGNORE_REGION_SELECTOR.test(value);
+}
+
+type IgnoreRegionAction = 'add' | 'remove' | null;
+
+function getIgnoreRegionAction(value: string): IgnoreRegionAction {
+  if (ADD_IGNORE_REGION_SELECTOR.test(value)) {
+    return 'add';
+  }
+  if (REMOVE_IGNORE_REGION_SELECTOR.test(value)) {
+    return 'remove';
+  }
+  return null;
+}
+
+function extractSegmentValue(value: string): string | null {
+  const match = SEGMENT_VALUE_SELECTOR.exec(value);
+  return match ? match[1].trim() : null;
+}
+
+// Wait for the backend PUT that persists ignore regions before continuing.
+async function waitForIgnoreRegionsSave(page: Page, locator: Locator): Promise<void> {
+  const [response] = await Promise.all([
+    page.waitForResponse(
+      (resp) => {
+        if (resp.request().method() !== 'PUT') {
+          return false;
+        }
+        if (!resp.url().includes('/v1/baselines/')) {
+          return false;
+        }
+        const body = resp.request().postData() || '';
+        return body.includes('ignoreRegions');
+      },
+      { timeout: 15000 }
+    ),
+    locator.click(),
+  ]);
+
+  await response.finished();
+  if (!response.ok()) {
+    throw new Error(`Saving ignore regions failed with status ${response.status()}`);
+  }
+}
+
+// Ensures the canvas finished switching to the requested simple view.
+async function waitForViewChange(page: Page, view: string): Promise<void> {
+  const normalizedView = view.trim().toLowerCase();
+  await page.waitForFunction(
+    (expected) => {
+      const target = document.querySelector(`[data-segment-value="${expected}"]`);
+      const isActive = target?.getAttribute('data-segment-active') === 'true';
+      const mainView: any = (window as any).mainView;
+      if (!mainView || !isActive) {
+        return false;
+      }
+      const targetImage = mainView?.[`${expected}Image`];
+      if (!targetImage) {
+        return false;
+      }
+      const objects = typeof mainView.canvas?.getObjects === 'function'
+        ? mainView.canvas.getObjects()
+        : [];
+      const canvasHasImage = Array.isArray(objects) ? objects.includes(targetImage) : false;
+      return canvasHasImage && mainView.currentView === expected;
+    },
+    normalizedView,
+    { timeout: 15000 }
+  );
+}
+
+async function waitForCanvasBootstrap(page: Page): Promise<void> {
+  await page.waitForFunction(
+    () => {
+      const mainView: any = (window as any).mainView;
+      const canvas = mainView?.canvas;
+      if (!mainView || !canvas) {
+        return false;
+      }
+      const objects = typeof canvas.getObjects === 'function' ? canvas.getObjects() : [];
+      return Array.isArray(objects);
+    },
+    undefined,
+    { timeout: 15000 }
+  );
+}
+
+async function getIgnoreRegionCount(page: Page): Promise<number> {
+  return page.evaluate(() => {
+    const mainView: any = (window as any).mainView;
+    if (!mainView?.canvas) {
+      return -1;
+    }
+    if (Array.isArray(mainView.allRects)) {
+      return mainView.allRects.length;
+    }
+    if (typeof mainView?.canvas?.getObjects === 'function') {
+      return mainView.canvas.getObjects().filter((x: any) => x.name === 'ignore_rect').length;
+    }
+    return -1;
+  });
+}
+
+async function waitForIgnoreRegionCountChange(page: Page, expected: number): Promise<void> {
+  await page.waitForFunction(
+    (target) => {
+      const mainView: any = (window as any).mainView;
+      if (!mainView?.canvas) {
+        return false;
+      }
+      const current = Array.isArray(mainView.allRects)
+        ? mainView.allRects.length
+        : mainView.canvas.getObjects().filter((x: any) => x.name === 'ignore_rect').length;
+      return current === target;
+    },
+    expected,
+    { timeout: 15000 }
+  );
+}
 
 /**
  * Step definition: `When I click element with {target} {string}`
@@ -38,8 +163,33 @@ When(
 
     if (target === 'locator') {
       const locator = getLocatorQuery(page, renderedValue);
-      await locator.first().waitFor({ state: 'visible', timeout: 5000 });
-      await locator.first().click();
+      const targetLocator = locator.first();
+      await targetLocator.waitFor({ state: 'visible', timeout: 5000 });
+
+      const ignoreRegionAction = getIgnoreRegionAction(renderedValue);
+      if (ignoreRegionAction) {
+        await waitForCanvasBootstrap(page);
+        const currentCount = await getIgnoreRegionCount(page);
+        const delta = ignoreRegionAction === 'add' ? 1 : -1;
+        const targetCount = Math.max(0, currentCount + delta);
+        await targetLocator.click();
+        await waitForIgnoreRegionCountChange(page, targetCount);
+        return;
+      }
+
+      if (shouldWaitForIgnoreRegionSave(renderedValue)) {
+        await waitForIgnoreRegionsSave(page, targetLocator);
+        return;
+      }
+
+      const segmentValue = extractSegmentValue(renderedValue);
+      if (segmentValue) {
+        await targetLocator.click();
+        await waitForViewChange(page, segmentValue);
+        return;
+      }
+
+      await targetLocator.click();
       return;
     }
 
