@@ -40,7 +40,7 @@ describe('createSyngrisiProject', () => {
         expect(fs.mkdir).toBeCalledWith('.', { 'recursive': true })
         expect(readPackageUp).toBeCalledTimes(1)
         expect(printAndExit).toBeCalledTimes(0)
-        expect(runProgram).toBeCalledWith('npm', ['install', 'syngrisi'], { cwd: '.', stdio: 'ignore' })
+        expect(runProgram).toBeCalledWith('npm', ['install', '@syngrisi/syngrisi'], { cwd: '.', stdio: 'ignore' })
     })
 
     it('happy path - package.json exist', async () => {
@@ -53,7 +53,7 @@ describe('createSyngrisiProject', () => {
         expect(fs.mkdir).toBeCalledTimes(0)
         expect(readPackageUp).toBeCalledTimes(1)
         expect(printAndExit).toBeCalledTimes(0)
-        expect(runProgram).toBeCalledWith('npm', ['install', 'syngrisi'], { cwd: '.', stdio: 'ignore' })
+        expect(runProgram).toBeCalledWith('npm', ['install', '@syngrisi/syngrisi'], { cwd: '.', stdio: 'ignore' })
     })
 
     it('happy path - not empty npmTag', async () => {
@@ -64,7 +64,7 @@ describe('createSyngrisiProject', () => {
         expect(fs.mkdir).toBeCalledWith('.', { 'recursive': true })
         expect(readPackageUp).toBeCalledTimes(1)
         expect(printAndExit).toBeCalledTimes(0)
-        expect(runProgram).toBeCalledWith('npm', ['install', 'syngrisi@latest'], { cwd: '.', stdio: 'ignore' })
+        expect(runProgram).toBeCalledWith('npm', ['install', '@syngrisi/syngrisi@latest'], { cwd: '.', stdio: 'ignore' })
     })
 
     it('empty install dir option', async () => {

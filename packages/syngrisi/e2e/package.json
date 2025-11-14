@@ -38,6 +38,8 @@
     "@types/form-data": "^2.5.2",
     "@types/js-yaml": "^4.0.9",
     "@types/winston": "^2.4.4",
+    "cheerio": "^1.0.0",
+    "domhandler": "^5.0.3",
     "form-data": "^4.0.4",
     "got-cjs": "^12.5.4",
     "hasha": "^7.0.0",
