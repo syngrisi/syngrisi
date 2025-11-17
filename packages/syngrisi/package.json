@@ -141,6 +141,7 @@
     "cross-env": "^10.1.0",
     "eslint": "^9.39.1",
     "eslint-plugin-custom": "file:.eslint",
+    "playwright-bdd": "^8.4.1",
     "rimraf": "^6.1.0",
     "sass": "^1.94.0",
     "tsup": "^8.5.1",

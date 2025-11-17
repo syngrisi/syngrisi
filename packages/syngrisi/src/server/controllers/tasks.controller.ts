@@ -10,22 +10,22 @@ const task_test = catchAsync(async (req: ExtRequest, res: Response) => {
 });
 
 const task_handle_old_checks = catchAsync(async (req: ExtRequest, res: Response) => {
-    const options = pick(req.query, ['days', 'remove']);
+    const options = pick(req.query, ['days', 'remove', 'dryRun']);
     await tasksService.task_handle_old_checks(options, res);
 });
 
 const task_handle_database_consistency = catchAsync(async (req: ExtRequest, res: Response) => {
-    const options = pick(req.query, ['days', 'clean']);
+    const options = pick(req.query, ['days', 'clean', 'dryRun']);
     await tasksService.task_handle_database_consistency(options, res);
 });
 
 const task_remove_old_logs = catchAsync(async (req: ExtRequest, res: Response) => {
-    const options = pick(req.query, ['days', 'statistics']);
+    const options = pick(req.query, ['days', 'statistics', 'dryRun']);
     await tasksService.task_remove_old_logs(options, res);
 });
 
 const task_handle_orphan_files = catchAsync(async (req: ExtRequest, res: Response) => {
-    const options = pick(req.query, ['execute']);
+    const options = pick(req.query, ['execute', 'dryRun']);
     await tasksService.task_handle_orphan_files(options, res);
 });
 
