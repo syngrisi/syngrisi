@@ -68,6 +68,7 @@
     "task:consistency": "node dist/tasks/cli/handle-database-consistency.cli.js",
     "task:old-checks": "node dist/tasks/cli/handle-old-checks.cli.js",
     "task:old-logs": "node dist/tasks/cli/remove-old-logs.cli.js",
+    "task:orphan-files": "node dist/tasks/cli/handle-orphan-files.cli.js",
     "startservice": "forever start -l forever.log -o out.log -e err.log server.js",
     "clean": "read -p \"Are you sure you want to clean the project? [y/n] \" REPLY; if [[ $REPLY =~ ^[Yy]$ ]]; then mongosh SyngrisiDb --eval \"db.dropDatabase();\" && rm -f ./baselines/*.png; fi",
     "start_test": "cross-env SYNGRISI_DB_URI='mongodb://localhost/SyngrisiDbTest' nodemon server.js",

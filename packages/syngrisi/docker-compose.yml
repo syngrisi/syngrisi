@@ -4,7 +4,7 @@ services:
     container_name: syngrisi-app-server
     restart: always
     working_dir: /usr/src/syngrisi
-    command: sh -c "npx --node-arg=--max-old-space-size=4096 sy"
+    command: sh -c "npx --node-arg=--max-old-space-size=8192 sy"
 #    command: sh -c "tail -f /dev/null"
     build:
       context: .
