@@ -58,15 +58,22 @@ const loadTestUser = async () => {
 
 const task_handle_database_consistency = async (options: any, res: Response) => {
     const output = new HttpOutputWriter(res);
-    const clean = options.clean === 'true' || options.clean === true;
+    let clean = options.clean === 'true' || options.clean === true;
+    if (options.dryRun !== undefined) {
+        const dryRun = options.dryRun === 'true' || options.dryRun === true;
+        clean = !dryRun;
+    }
     await handleDatabaseConsistencyTask({ clean }, output);
 };
 
 const task_remove_old_logs = async (options: any, res: Response) => {
     const output = new HttpOutputWriter(res);
     const days = parseInt(options.days, 10);
-    const statistics = options.statistics === 'true' || options.statistics === true;
-    await removeOldLogsTask({ days, statistics }, output);
+    let dryRun = options.statistics === 'true' || options.statistics === true;
+    if (options.dryRun !== undefined) {
+        dryRun = options.dryRun === 'true' || options.dryRun === true;
+    }
+    await removeOldLogsTask({ days, dryRun }, output);
 };
 
 const task_handle_old_checks = async (options: any, res: Response) => {
@@ -89,8 +96,13 @@ const task_handle_old_checks = async (options: any, res: Response) => {
 
 const task_handle_orphan_files = async (options: any, res: Response) => {
     const output = new HttpOutputWriter(res);
-    const execute = options.execute === 'true' || options.execute === true;
-    const dryRun = !execute; // inverse logic: execute=false means dryRun=true
+    let dryRun = options.dryRun === 'true' || options.dryRun === true;
+    if (options.execute !== undefined) {
+        const execute = options.execute === 'true' || options.execute === true;
+        dryRun = !execute; // inverse logic: execute=false means dryRun=true
+    } else if (options.dryRun === undefined) {
+        dryRun = true;
+    }
     await handleOrphanFilesTask({ dryRun }, output);
 };
 

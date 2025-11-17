@@ -5,13 +5,13 @@ import { ConsoleOutputWriter } from '../lib/output-writer';
 
 interface CliOptions {
     days: number;
-    statistics: boolean;
+    dryRun: boolean;
 }
 
 function parseArgs(args: string[]): CliOptions {
     const options: CliOptions = {
         days: 30,
-        statistics: true,
+        dryRun: true,
     };
 
     for (let i = 0; i < args.length; i++) {
@@ -24,17 +24,17 @@ function parseArgs(args: string[]): CliOptions {
             }
             options.days = daysValue;
         } else if (arg === '--remove' || arg === '-r') {
-            options.statistics = false;
+            options.dryRun = false;
         } else if (arg === '--help' || arg === '-h') {
             printHelp();
             process.exit(0);
         } else if (!arg.startsWith('-')) {
-            // Support positional arguments: days [statistics]
+            // Support positional arguments: days [dryRun]
             const daysValue = parseInt(arg, 10);
             if (!isNaN(daysValue)) {
                 options.days = daysValue;
                 if (args[i + 1] === 'false') {
-                    options.statistics = false;
+                    options.dryRun = false;
                     i++;
                 }
             }
@@ -46,7 +46,7 @@ function parseArgs(args: string[]): CliOptions {
 
 function printHelp() {
     console.log(`
-Usage: remove-old-logs [options] [days] [statistics]
+Usage: remove-old-logs [options] [days] [dryRun]
 
 Options:
   --days <number>, -d <number>  Remove logs older than this many days (default: 30)
@@ -55,7 +55,7 @@ Options:
 
 Positional arguments:
   days         Number of days (alternative to --days)
-  statistics   'false' to remove items (alternative to --remove)
+  dryRun       'false' to remove items (alternative to --remove)
 
 Description:
   Removes logs that are older than specified days.
@@ -81,7 +81,7 @@ async function main() {
 
     console.log('Running task: Remove Old Logs');
     console.log(`Days threshold: ${options.days}`);
-    console.log(`Mode: ${options.statistics ? 'DRY RUN (statistics only)' : 'REMOVE (will delete items)'}\n`);
+    console.log(`Mode: ${options.dryRun ? 'DRY RUN (statistics only)' : 'REMOVE (will delete items)'}\n`);
 
     try {
         await runMongoCode(async () => {
