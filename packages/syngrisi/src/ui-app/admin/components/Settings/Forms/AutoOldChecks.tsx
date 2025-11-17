@@ -51,7 +51,7 @@ export function AutoOldChecks({ name, value, label, description, enabled, update
                 <Group spacing="xl" align="flex-end">
                     <NumberInput
                         data-test={`settings_value_${name}_days`}
-                        aria-label={`${label} days`}
+                        aria-label="Days to keep checks"
                         label="Days to keep checks"
                         min={1}
                         step={1}

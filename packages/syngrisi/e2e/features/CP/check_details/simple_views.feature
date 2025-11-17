@@ -31,6 +31,10 @@ Feature: Simple Views (Expected, Actual, Diff)
 
         # expected
         When I click element with locator "[data-segment-value='expected']"
+        When I wait up to 30 seconds for javascript condition:
+        """
+        return mainView.canvas.getObjects().indexOf(mainView.expectedImage) !== -1;
+        """
         When I wait for "1" seconds
         When I execute javascript code:
         """
@@ -53,6 +57,10 @@ Feature: Simple Views (Expected, Actual, Diff)
 
         # actual
         When I click element with locator "[data-segment-value='actual']"
+        When I wait up to 30 seconds for javascript condition:
+        """
+        return mainView.canvas.getObjects().indexOf(mainView.actualImage) !== -1;
+        """
         When I wait for "1" seconds
         When I execute javascript code:
         """
@@ -75,6 +83,10 @@ Feature: Simple Views (Expected, Actual, Diff)
 
         # diff
         When I click element with locator "[data-segment-value='diff']"
+        When I wait up to 30 seconds for javascript condition:
+        """
+        return mainView.canvas.getObjects().indexOf(mainView.diffImage) !== -1;
+        """
         When I wait for "1" seconds
         When I execute javascript code:
         """
@@ -84,5 +96,4 @@ Feature: Simple Views (Expected, Actual, Diff)
         """
           0
         """
-
 
