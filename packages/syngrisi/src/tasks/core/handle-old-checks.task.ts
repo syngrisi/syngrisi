@@ -31,6 +31,11 @@ export interface HandleOldChecksOptions {
  * Handle old checks task
  * Removes checks and related items that are older than specified days
  *
+ * IMPORTANT: Baseline records are NEVER removed automatically by this task.
+ * Baselines represent the reference/golden images and should not be lost.
+ * Only Checks and their associated Snapshots (actual, diff) are removed.
+ * Baseline snapshots are preserved if they are still referenced by any Baseline.
+ *
  * @param options - Task options
  * @param output - Output writer for streaming results
  */
@@ -100,6 +105,8 @@ export async function handleOldChecksTask(
             output.write('> remove snapshots');
 
             output.write('>> collect data to removing');
+            // NOTE: We get all Baseline snapshots to ensure we DON'T remove them
+            // Baselines are reference/golden images and must be preserved
             output.write('>>> get all baselines snapshots id`s');
             const baselinesSnapshotsIds = (await Baseline.find({}).distinct('snapshootId'));
 
