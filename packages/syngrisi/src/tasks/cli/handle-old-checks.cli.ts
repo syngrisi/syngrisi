@@ -50,7 +50,7 @@ Usage: handle-old-checks [options] [days] [remove]
 
 Options:
   --days <number>, -d <number>  Check older than this many days (default: 180)
-  --remove, -r                  Actually remove old checks (default: false, only show statistics)
+  --remove, -r                  Actually remove old checks (default: false, dry run mode)
   --help, -h                    Show this help message
 
 Positional arguments:
@@ -59,20 +59,23 @@ Positional arguments:
 
 Description:
   Removes checks and related items that are older than specified days.
+  By default runs in DRY RUN mode - shows statistics of what would be deleted
+  including the total volume of data in GB, without actually deleting anything.
+
   ⚠️ We strongly recommend running the 'handle-database-consistency' task
   before and after removing checks via this task.
 
 Examples:
-  # Show statistics for checks older than 180 days (dry run)
+  # Dry run: show statistics for checks older than 180 days (default)
   npm run task:old-checks
 
-  # Show statistics for checks older than 90 days
+  # Dry run: show statistics for checks older than 90 days
   npm run task:old-checks -- --days 90
 
-  # Remove checks older than 180 days
+  # Actually remove checks older than 180 days
   npm run task:old-checks -- --remove
 
-  # Remove checks older than 90 days (using positional args)
+  # Actually remove checks older than 90 days (using positional args)
   npm run task:old-checks -- 90 true
     `);
 }
@@ -83,7 +86,7 @@ async function main() {
 
     console.log('Running task: Handle Old Checks');
     console.log(`Days threshold: ${options.days}`);
-    console.log(`Mode: ${options.remove ? 'REMOVE (will delete items)' : 'DRY RUN (statistics only)'}\n`);
+    console.log(`Mode: ${options.remove ? 'REMOVE (will delete items)' : 'DRY RUN (shows statistics without deleting)'}\n`);
 
     try {
         await runMongoCode(async () => {

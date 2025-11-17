@@ -215,16 +215,20 @@ export async function handleDatabaseConsistencyTask(
             const baselineId = check.baselineId?.toString();
             const actualSnapshotId = check.actualSnapshotId?.toString();
 
-            // Check if snapshots exist
+            // IMPORTANT: Collect ALL check references first (even if snapshots are missing)
+            // This ensures tests are only marked empty when checks are physically deleted from DB
+            // This enables layer-by-layer cleanup: snapshots → checks → tests → runs/suites
+            if (check.test) checksTestIds.add(check.test.toString());
+            if (check.run) checksRunIds.add(check.run.toString());
+            if (check.suite) checksSuiteIds.add(check.suite.toString());
+
+            // Then check if snapshots exist in DB - if not, mark check as abandoned
+            // Note: Checks are abandoned only if their snapshots don't exist in DB,
+            // not if snapshot files are missing (that makes snapshots abandoned)
             if (!baselineId || !actualSnapshotId ||
                 !snapshotIdsSet.has(baselineId) ||
                 !snapshotIdsSet.has(actualSnapshotId)) {
                 abandonedCheckIds.push(checkId);
-            } else {
-                // Valid check - collect references
-                if (check.test) checksTestIds.add(check.test.toString());
-                if (check.run) checksRunIds.add(check.run.toString());
-                if (check.suite) checksSuiteIds.add(check.suite.toString());
             }
 
             checksProcessed++;
@@ -303,57 +307,93 @@ export async function handleDatabaseConsistencyTask(
             output.write('---------------------------------');
             output.write('STAGE #3: Remove non consistent items');
 
-            // Start a MongoDB session for transaction
-            const session = await mongoose.startSession();
             let dbOperationSuccess = false;
+            let useTransaction = true;
+
+            // Check if MongoDB supports transactions (requires replica set or sharded cluster)
+            // @ts-ignore - accessing internal mongoose connection
+            const isReplicaSet = mongoose.connection.db?.admin &&
+                               await mongoose.connection.db.admin()
+                                   .command({ isMaster: 1 })
+                                   .then((result: { setName?: string; msg?: string }) => !!(result.setName || result.msg === 'isdbgrid'))
+                                   .catch(() => false);
+
+            // Try to use transaction if supported (requires replica set)
+            let session: mongoose.ClientSession | undefined;
+            if (isReplicaSet) {
+                try {
+                    session = await mongoose.startSession();
+                    await session.startTransaction();
+                    output.write('> using MongoDB transaction for data consistency');
+                } catch (err) {
+                    if (session) {
+                        await session.endSession();
+                        session = undefined;
+                    }
+                    useTransaction = false;
+                    output.write('> MongoDB transactions failed to start, proceeding without transaction');
+                }
+            } else {
+                useTransaction = false;
+                output.write('> standalone MongoDB detected, proceeding without transactions');
+            }
 
             try {
-                await session.startTransaction();
+                const deleteOptions = (session && useTransaction) ? { session } : {};
 
-                output.write('> remove empty suites');
-                const suitesResult = await Suite.deleteMany(
-                    { _id: { $in: emptySuiteIds } },
-                    { session }
-                );
-                output.write(`>> deleted ${suitesResult.deletedCount} suites`);
-
-                output.write('> remove empty runs');
-                const runsResult = await Run.deleteMany(
-                    { _id: { $in: emptyRunIds } },
-                    { session }
-                );
-                output.write(`>> deleted ${runsResult.deletedCount} runs`);
-
-                output.write('> remove empty tests');
-                const testsResult = await Test.deleteMany(
-                    { _id: { $in: emptyTestIds } },
-                    { session }
-                );
-                output.write(`>> deleted ${testsResult.deletedCount} tests`);
-
-                output.write('> remove abandoned checks');
-                const checksResult = await Check.deleteMany(
-                    { _id: { $in: abandonedCheckIds } },
-                    { session }
-                );
-                output.write(`>> deleted ${checksResult.deletedCount} checks`);
+                // Delete in correct order: from bottom to top of the hierarchy
+                // This ensures that each run only deletes one "layer" of dependencies
 
                 output.write('> remove abandoned snapshots');
                 const snapshotsResult = await Snapshot.deleteMany(
                     { _id: { $in: abandonedSnapshotIds } },
-                    { session }
+                    deleteOptions
                 );
                 output.write(`>> deleted ${snapshotsResult.deletedCount} snapshots`);
 
-                await session.commitTransaction();
-                output.write('>> database transaction committed successfully');
+                output.write('> remove abandoned checks');
+                const checksResult = await Check.deleteMany(
+                    { _id: { $in: abandonedCheckIds } },
+                    deleteOptions
+                );
+                output.write(`>> deleted ${checksResult.deletedCount} checks`);
+
+                output.write('> remove empty tests');
+                const testsResult = await Test.deleteMany(
+                    { _id: { $in: emptyTestIds } },
+                    deleteOptions
+                );
+                output.write(`>> deleted ${testsResult.deletedCount} tests`);
+
+                output.write('> remove empty runs');
+                const runsResult = await Run.deleteMany(
+                    { _id: { $in: emptyRunIds } },
+                    deleteOptions
+                );
+                output.write(`>> deleted ${runsResult.deletedCount} runs`);
+
+                output.write('> remove empty suites');
+                const suitesResult = await Suite.deleteMany(
+                    { _id: { $in: emptySuiteIds } },
+                    deleteOptions
+                );
+                output.write(`>> deleted ${suitesResult.deletedCount} suites`);
+
+                if (session && useTransaction) {
+                    await session.commitTransaction();
+                    output.write('>> database transaction committed successfully');
+                }
                 dbOperationSuccess = true;
             } catch (error) {
-                await session.abortTransaction();
-                output.write('>> database transaction aborted due to error');
+                if (session && useTransaction) {
+                    await session.abortTransaction();
+                    output.write('>> database transaction aborted due to error');
+                }
                 throw error;
             } finally {
-                await session.endSession();
+                if (session) {
+                    await session.endSession();
+                }
             }
 
             // Only remove files if database operations succeeded
