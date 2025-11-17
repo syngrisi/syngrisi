@@ -40,10 +40,11 @@ export interface HandleOldChecksOptions {
  *
  * PERFORMANCE OPTIMIZATIONS:
  * - Uses countDocuments() instead of loading full collections for statistics
- * - Uses distinct() queries to efficiently collect unique IDs without loading full documents
+ * - Uses aggregation pipelines with $group to collect unique IDs (avoids 16MB distinct limit)
  * - Only loads required fields (projections) when full documents are needed
  * - Processes file operations in batches to avoid memory spikes
  * - Reuses computed data to avoid redundant queries
+ * - Aggregation pipelines work efficiently even with millions of documents
  *
  * RECOMMENDED DATABASE INDEXES for optimal performance:
  * - Check.createdDate (for date-based queries)
@@ -88,13 +89,29 @@ export async function handleOldChecksTask(
         const oldChecksCount = await Check.countDocuments({ createdDate: { $lt: trashHoldDate } }).exec();
 
         output.write('>>> collect all baselineId snapshot IDs from old Checks ');
-        const oldChecksBaselineSnapshotIds = await Check.distinct('baselineId', { createdDate: { $lt: trashHoldDate } }).exec();
+        // Use aggregation to avoid 16MB distinct limit
+        const baselineIdResults = await Check.aggregate([
+            { $match: { createdDate: { $lt: trashHoldDate }, baselineId: { $ne: null } } },
+            { $group: { _id: '$baselineId' } },
+            { $project: { _id: 1 } }
+        ]).exec();
+        const oldChecksBaselineSnapshotIds = baselineIdResults.map(doc => doc._id);
 
         output.write('>>> collect all actualSnapshotId from old Checks ');
-        const oldChecksActualSnapshotIds = await Check.distinct('actualSnapshotId', { createdDate: { $lt: trashHoldDate } }).exec();
+        const actualSnapshotIdResults = await Check.aggregate([
+            { $match: { createdDate: { $lt: trashHoldDate }, actualSnapshotId: { $ne: null } } },
+            { $group: { _id: '$actualSnapshotId' } },
+            { $project: { _id: 1 } }
+        ]).exec();
+        const oldChecksActualSnapshotIds = actualSnapshotIdResults.map(doc => doc._id);
 
         output.write('>>> collect all diffId snapshot IDs from old Checks ');
-        const oldChecksDiffSnapshotIds = await Check.distinct('diffId', { createdDate: { $lt: trashHoldDate } }).exec();
+        const diffIdResults = await Check.aggregate([
+            { $match: { createdDate: { $lt: trashHoldDate }, diffId: { $ne: null } } },
+            { $group: { _id: '$diffId' } },
+            { $project: { _id: 1 } }
+        ]).exec();
+        const oldChecksDiffSnapshotIds = diffIdResults.map(doc => doc._id);
 
         output.write('>>> calculate all unique snapshots ids for old Checks ');
 
@@ -191,19 +208,41 @@ export async function handleOldChecksTask(
                 // NOTE: We get all Baseline snapshots to ensure we DON'T remove them
                 // Baselines are reference/golden images and must be preserved
                 output.write('>>> get all baselines snapshot IDs');
-                const baselinesSnapshotIds = useTransactions && session
-                    ? await Baseline.distinct('snapshootId', {}).session(session)
-                    : await Baseline.distinct('snapshootId', {});
+                // Use aggregation to avoid 16MB distinct limit
+                const baselineAggregation = Baseline.aggregate([
+                    { $match: { snapshootId: { $ne: null } } },
+                    { $group: { _id: '$snapshootId' } },
+                    { $project: { _id: 1 } }
+                ]);
+                if (useTransactions && session) {
+                    baselineAggregation.session(session);
+                }
+                const baselinesSnapshotResults = await baselineAggregation.exec();
+                const baselinesSnapshotIds = baselinesSnapshotResults.map(doc => doc._id);
 
                 output.write('>>> get all checks baseline snapshot IDs');
-                const checksBaselineSnapshotIds = useTransactions && session
-                    ? await Check.distinct('baselineId', {}).session(session)
-                    : await Check.distinct('baselineId', {});
+                const checksBaselineAggregation = Check.aggregate([
+                    { $match: { baselineId: { $ne: null } } },
+                    { $group: { _id: '$baselineId' } },
+                    { $project: { _id: 1 } }
+                ]);
+                if (useTransactions && session) {
+                    checksBaselineAggregation.session(session);
+                }
+                const checksBaselineResults = await checksBaselineAggregation.exec();
+                const checksBaselineSnapshotIds = checksBaselineResults.map(doc => doc._id);
 
                 output.write('>>> get all checks actual snapshot IDs');
-                const checksActualSnapshotIds = useTransactions && session
-                    ? await Check.distinct('actualSnapshotId', {}).session(session)
-                    : await Check.distinct('actualSnapshotId', {});
+                const checksActualAggregation = Check.aggregate([
+                    { $match: { actualSnapshotId: { $ne: null } } },
+                    { $group: { _id: '$actualSnapshotId' } },
+                    { $project: { _id: 1 } }
+                ]);
+                if (useTransactions && session) {
+                    checksActualAggregation.session(session);
+                }
+                const checksActualResults = await checksActualAggregation.exec();
+                const checksActualSnapshotIds = checksActualResults.map(doc => doc._id);
 
                 output.write('>> remove baselines snapshots');
 
@@ -277,7 +316,13 @@ export async function handleOldChecksTask(
                 output.write(`>> found: ${oldSnapshotsUniqueFilenames.length}`);
 
                 output.write('> get all current snapshots filenames');
-                const allCurrentSnapshotsFilenames = await Snapshot.distinct('filename').exec() as string[];
+                // Use aggregation to avoid 16MB distinct limit
+                const currentFilenamesResults = await Snapshot.aggregate([
+                    { $match: { filename: { $ne: null } } },
+                    { $group: { _id: '$filename' } },
+                    { $project: { _id: 1 } }
+                ]).exec();
+                const allCurrentSnapshotsFilenames = currentFilenamesResults.map(doc => doc._id as string);
 
                 output.write('>> calculate intersection between all current snapshot filenames and old snapshots filenames');
                 const arrayIntersection = (arr1: string[], arr2: string[]) => arr1.filter((x: string) => arr2.includes(x));
@@ -291,7 +336,12 @@ export async function handleOldChecksTask(
 
                 // Re-check current snapshots right before deletion to prevent race condition
                 output.write('>> re-validating files to delete to prevent race condition');
-                const currentSnapshotsBeforeDeletion = await Snapshot.distinct('filename').exec() as string[];
+                const revalidateFilenamesResults = await Snapshot.aggregate([
+                    { $match: { filename: { $ne: null } } },
+                    { $group: { _id: '$filename' } },
+                    { $project: { _id: 1 } }
+                ]).exec();
+                const currentSnapshotsBeforeDeletion = revalidateFilenamesResults.map(doc => doc._id as string);
                 filesToDelete = filesToDelete.filter((filename: string) => !currentSnapshotsBeforeDeletion.includes(filename));
                 output.write(`>> validated: ${filesToDelete.length} files safe to delete`);
 
