@@ -24,6 +24,11 @@ const task_remove_old_logs = catchAsync(async (req: ExtRequest, res: Response) =
     await tasksService.task_remove_old_logs(options, res);
 });
 
+const task_handle_orphan_files = catchAsync(async (req: ExtRequest, res: Response) => {
+    const options = pick(req.query, ['execute']);
+    await tasksService.task_handle_orphan_files(options, res);
+});
+
 const status = catchAsync(async (req: ExtRequest, res: Response) => {
     res.send(await tasksService.status(req.user));
 });
@@ -40,6 +45,7 @@ export {
     task_test,
     task_handle_old_checks,
     task_handle_database_consistency,
+    task_handle_orphan_files,
     task_remove_old_logs,
     status,
     loadTestUser,

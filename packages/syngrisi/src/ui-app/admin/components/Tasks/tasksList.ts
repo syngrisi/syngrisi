@@ -49,6 +49,14 @@ export const tasksList: ITask[] = [
             { name: 'statistics', label: 'Only statistics', type: 'Checkbox', default: false },
         ],
     },
+    {
+        label: 'Handle Orphan Files',
+        name: 'handle_orphan_files',
+        description: 'Finds and removes image files that are not referenced by any Snapshot in the database. By default runs in dry-run mode (only shows statistics). Check the "Execute" checkbox to actually remove files.',
+        inputs: [
+            { name: 'execute', label: 'Execute (remove files)', type: 'Checkbox', default: false },
+        ],
+    },
 ];
 
 export const taskLinks = tasksList.map(
