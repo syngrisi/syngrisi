@@ -17,10 +17,10 @@ export const tasksList: ITask[] = [
     {
         label: 'Handle old Checks',
         name: 'handle_old_checks',
-        description: '⚠️We strongly recommended doing the remove inconsistent items procedure Before and After removing checks via this task.',
+        description: '⚠️We strongly recommend running the "Handle Database Consistency" task before and after removing checks. By default runs in DRY RUN mode (shows statistics including data volume in GB). Uncheck "Dry run" to actually delete old checks.',
         inputs: [
             { name: 'days', label: 'Check older that (days)', type: 'TextInput', default: 180 },
-            { name: 'remove', label: 'Remove', type: 'Checkbox', default: false },
+            { name: 'dryRun', label: 'Dry run', type: 'Checkbox', default: true },
         ],
     },
     // {
@@ -43,10 +43,10 @@ export const tasksList: ITask[] = [
     {
         label: 'Remove old logs',
         name: 'remove_old_logs',
-        description: 'Removing logs that older particular threshold',
+        description: 'Removing logs that older particular threshold. By default runs in DRY RUN mode (shows statistics without deleting). Uncheck "Dry run" to actually remove logs.',
         inputs: [
             { name: 'days', label: 'Remove older that (days)', type: 'TextInput', default: 30 },
-            { name: 'statistics', label: 'Only statistics', type: 'Checkbox', default: false },
+            { name: 'statistics', label: 'Dry run', type: 'Checkbox', default: true },
         ],
     },
     {
