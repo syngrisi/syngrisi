@@ -50,7 +50,7 @@ Feature: CLI Tasks
       checkName: CheckName
     """
     Then I expect exact "2" snapshot files
-    When I run CLI task "consistency" with args "--clean"
+    When I run CLI task "consistency" with args "--clean --yes"
     Then I expect exact "1" snapshot files
 
   Scenario: CLI - Handle Old Checks [statistics only]
