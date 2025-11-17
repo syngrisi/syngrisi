@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import fs, { promises as fsp } from 'fs';
+import { promises as fsp } from 'fs';
 // @ts-ignore
 import st from 'string-table';
 import path from 'path';
+import mongoose from 'mongoose';
 import { config } from '@config';
-import { ProgressBar } from '@utils';
 import { IOutputWriter } from '../lib/output-writer';
 import {
     Snapshot,
@@ -12,16 +11,30 @@ import {
     Test,
     Run,
     Suite,
+    Baseline,
 } from '../lib';
 
 interface StringTable {
-    create(data: { [key: string]: any }[]): string;
+    create(data: Array<Record<string, string | number>>): string;
 }
 
 const stringTable: StringTable = st;
 
-function parseHrtimeToSeconds(hrtime: any) {
+// Supported image formats
+const SUPPORTED_IMAGE_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.webp', '.gif'];
+
+function parseHrtimeToSeconds(hrtime: [number, number]): string {
     return (hrtime[0] + (hrtime[1] / 1e9)).toFixed(3);
+}
+
+function isImageFile(filename: string): boolean {
+    const ext = path.extname(filename).toLowerCase();
+    return SUPPORTED_IMAGE_EXTENSIONS.includes(ext);
+}
+
+interface FileEntry {
+    name: string;
+    isDirectory(): boolean;
 }
 
 export interface HandleDatabaseConsistencyOptions {
@@ -42,31 +55,45 @@ export async function handleDatabaseConsistencyTask(
     try {
         const startTime = process.hrtime();
         output.write('- starting...\n');
+
+        // Validate config before starting
+        output.write('> validating configuration');
+        try {
+            await fsp.access(config.defaultImagesPath);
+        } catch {
+            throw new Error(`Images directory not found or not accessible: ${config.defaultImagesPath}`);
+        }
+
         output.write('---------------------------------');
         output.write('STAGE #1: Calculate Common stats');
-        output.write('get runs data');
-        const allRunsBefore = await Run.find().exec();
-        output.write('get suites data');
-        const allSuitesBefore = await Suite.find().exec();
-        output.write('get tests data');
-        const allTestsBefore = await Test.find().lean().exec();
-        output.write('get checks data');
-        const allChecksBefore = await Check.find().lean().exec();
-        output.write('get snapshots data');
-        const allSnapshotsBefore = await Snapshot.find().lean().exec();
+
+        output.write('get baselines count');
+        const baselinesCount = await Baseline.countDocuments();
+        output.write('get runs count');
+        const runsCount = await Run.countDocuments();
+        output.write('get suites count');
+        const suitesCount = await Suite.countDocuments();
+        output.write('get tests count');
+        const testsCount = await Test.countDocuments();
+        output.write('get checks count');
+        const checksCount = await Check.countDocuments();
+        output.write('get snapshots count');
+        const snapshotsCount = await Snapshot.countDocuments();
+
         output.write('get files data');
         const allFilesBefore = (await fsp.readdir(config.defaultImagesPath, { withFileTypes: true }))
-            .filter((item: any) => !item.isDirectory())
-            .map((x: any) => x.name)
-            .filter((x: any) => x.includes('.png'));
+            .filter((item: FileEntry) => !item.isDirectory())
+            .map((x: FileEntry) => x.name)
+            .filter((filename: string) => isImageFile(filename));
 
         output.write('-----------------------------');
         const beforeStatTable = stringTable.create([
-            { item: 'suites', count: allSuitesBefore.length },
-            { item: 'runs', count: allRunsBefore.length },
-            { item: 'tests', count: allTestsBefore.length },
-            { item: 'checks', count: allChecksBefore.length },
-            { item: 'snapshots', count: allSnapshotsBefore.length },
+            { item: 'baselines', count: baselinesCount },
+            { item: 'suites', count: suitesCount },
+            { item: 'runs', count: runsCount },
+            { item: 'tests', count: testsCount },
+            { item: 'checks', count: checksCount },
+            { item: 'snapshots', count: snapshotsCount },
             { item: 'files', count: allFilesBefore.length },
         ]);
         output.flush?.();
@@ -74,106 +101,312 @@ export async function handleDatabaseConsistencyTask(
 
         output.write('---------------------------------');
         output.write('STAGE #2: Calculate Inconsistent Items');
-        output.write('> calculate abandoned snapshots');
-        const abandonedSnapshots = allSnapshotsBefore.filter((sn: any) => !fs.existsSync(path.join(config.defaultImagesPath, sn.filename)));
 
+        // Build baseline snapshot references - CRITICAL: these snapshots must NEVER be deleted
+        output.write('> building baseline snapshot references (protected from deletion)');
+        const baselineSnapshotIds = new Set<string>();
+        const baselineSnapshotFilenames = new Set<string>();
+        const baselineCursor = Baseline.find().select('snapshootId').cursor();
+        let baselinesProcessed = 0;
+
+        for await (const baseline of baselineCursor) {
+            if (baseline.snapshootId) {
+                baselineSnapshotIds.add(baseline.snapshootId.toString());
+            }
+            baselinesProcessed++;
+            if (baselinesProcessed % 10000 === 0) {
+                output.write(`>> processed ${baselinesProcessed} baselines...`);
+            }
+        }
+        output.write(`>> found ${baselineSnapshotIds.size} snapshots referenced by ${baselinesProcessed} baselines (PROTECTED)`);
+
+        // Build snapshot filenames set using cursor
+        output.write('> building snapshot filenames index');
+        const snapshotFilenamesSet = new Set<string>();
+        const snapshotIdsSet = new Set<string>();
+        const snapshotsByFilename = new Map<string, string>();
+
+        let snapshotsProcessed = 0;
+        const snapshotCursor = Snapshot.find().select('filename _id').cursor();
+        for await (const snapshot of snapshotCursor) {
+            const snapshotId = snapshot._id.toString();
+            if (snapshot.filename) {
+                snapshotFilenamesSet.add(snapshot.filename);
+                snapshotsByFilename.set(snapshot.filename, snapshotId);
+
+                // Track filenames of baseline-protected snapshots
+                if (baselineSnapshotIds.has(snapshotId)) {
+                    baselineSnapshotFilenames.add(snapshot.filename);
+                }
+            }
+            snapshotIdsSet.add(snapshotId);
+            snapshotsProcessed++;
+            if (snapshotsProcessed % 10000 === 0) {
+                output.write(`>> processed ${snapshotsProcessed} snapshots...`);
+            }
+        }
+        output.write(`>> indexed ${snapshotIdsSet.size} snapshots with ${snapshotFilenamesSet.size} unique filenames`);
+        output.write(`>> ${baselineSnapshotFilenames.size} snapshot files are protected by baseline references`);
+
+        // Calculate abandoned snapshots (snapshots without files)
+        // IMPORTANT: Exclude snapshots referenced by baselines
+        output.write('> calculate abandoned snapshots (checking file existence)');
+        const abandonedSnapshotIds: string[] = [];
+        const protectedSnapshotsSkipped: string[] = [];
+        let filesChecked = 0;
+
+        for (const [filename, snapshotId] of snapshotsByFilename.entries()) {
+            // CRITICAL: Skip snapshots that are referenced by baselines
+            if (baselineSnapshotIds.has(snapshotId)) {
+                protectedSnapshotsSkipped.push(snapshotId);
+                filesChecked++;
+                continue;
+            }
+
+            try {
+                await fsp.access(path.join(config.defaultImagesPath, filename));
+            } catch {
+                // File doesn't exist and snapshot is not protected by baseline
+                abandonedSnapshotIds.push(snapshotId);
+            }
+            filesChecked++;
+            if (filesChecked % 1000 === 0) {
+                output.write(`>> checked ${filesChecked}/${snapshotsByFilename.size} files (${(filesChecked / snapshotsByFilename.size * 100).toFixed(1)}%)`);
+            }
+        }
+        output.write(`>> found ${abandonedSnapshotIds.length} abandoned snapshots`);
+        output.write(`>> skipped ${protectedSnapshotsSkipped.length} snapshots (protected by baselines)`);
+
+        // Calculate abandoned files (files without snapshots)
+        // IMPORTANT: Exclude files that belong to baseline-referenced snapshots
         output.write('> calculate abandoned files');
-        const snapshotsUniqueFiles = Array.from(new Set(allSnapshotsBefore.map((x: any) => x.filename)));
-        const abandonedFiles: any[] = [];
-        const progress = new ProgressBar(allFilesBefore.length);
-        for (const [index, file] of allFilesBefore.entries()) {
-            setTimeout(() => {
-                progress.writeIfChange(index, allFilesBefore.length, (msg: any) => output.write(msg));
-            }, 10);
+        const abandonedFiles: string[] = [];
+        const protectedFilesSkipped: string[] = [];
 
-            if (!snapshotsUniqueFiles.includes(file.toString())) {
+        for (const file of allFilesBefore) {
+            // CRITICAL: Skip files that are protected by baseline references
+            if (baselineSnapshotFilenames.has(file)) {
+                protectedFilesSkipped.push(file);
+                continue;
+            }
+
+            // File is abandoned if no snapshot references it
+            if (!snapshotFilenamesSet.has(file)) {
                 abandonedFiles.push(file);
             }
         }
-        output.write('> calculate abandoned checks');
-        const allSnapshotsBeforeIds = allSnapshotsBefore.map((x: any) => x._id.valueOf());
+        output.write(`>> found ${abandonedFiles.length} abandoned files`);
+        output.write(`>> skipped ${protectedFilesSkipped.length} files (protected by baseline snapshots)`);
 
-        const allChecksBeforeLight = allChecksBefore.map((x: any) => ({
-            _id: x._id.valueOf(), baselineId: x.baselineId.valueOf(), actualSnapshotId: x.actualSnapshotId.valueOf(),
-        }));
-        const abandonedChecks: any[] = [];
-        const progressChecks = new ProgressBar(allChecksBefore.length);
-        for (const [index, check] of allChecksBeforeLight.entries()) {
-            progressChecks.writeIfChange(index, allChecksBeforeLight.length, (msg: any) => output.write(msg));
-            if (!allSnapshotsBeforeIds.includes(check.baselineId) || !allSnapshotsBeforeIds.includes(check.actualSnapshotId.valueOf())) {
-                abandonedChecks.push(check._id.valueOf());
+        // Build checks index using cursor
+        output.write('> building checks index');
+        const checksTestIds = new Set<string>();
+        const checksRunIds = new Set<string>();
+        const checksSuiteIds = new Set<string>();
+        const abandonedCheckIds: string[] = [];
+
+        let checksProcessed = 0;
+        const checkCursor = Check.find()
+            .select('_id test run suite baselineId actualSnapshotId')
+            .cursor();
+
+        for await (const check of checkCursor) {
+            const checkId = check._id.toString();
+            const baselineId = check.baselineId?.toString();
+            const actualSnapshotId = check.actualSnapshotId?.toString();
+
+            // Check if snapshots exist
+            if (!baselineId || !actualSnapshotId ||
+                !snapshotIdsSet.has(baselineId) ||
+                !snapshotIdsSet.has(actualSnapshotId)) {
+                abandonedCheckIds.push(checkId);
+            } else {
+                // Valid check - collect references
+                if (check.test) checksTestIds.add(check.test.toString());
+                if (check.run) checksRunIds.add(check.run.toString());
+                if (check.suite) checksSuiteIds.add(check.suite.toString());
+            }
+
+            checksProcessed++;
+            if (checksProcessed % 10000 === 0) {
+                output.write(`>> processed ${checksProcessed} checks...`);
             }
         }
+        output.write(`>> processed ${checksProcessed} checks`);
+        output.write(`>> found ${abandonedCheckIds.length} abandoned checks`);
 
+        // Calculate empty tests (tests without checks)
         output.write('> calculate empty tests');
-        const checksUniqueTests = (await Check.find().lean().distinct('test').exec()).map((x: any) => x.valueOf());
-
-        const emptyTests: any[] = [];
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        for (const [index, test] of allTestsBefore.entries()) {
-            if (!checksUniqueTests.includes(test._id.valueOf())) {
-                emptyTests.push(test._id.valueOf());
+        const emptyTestIds: string[] = [];
+        const testCursor = Test.find().select('_id').cursor();
+        for await (const test of testCursor) {
+            if (!checksTestIds.has(test._id.toString())) {
+                emptyTestIds.push(test._id.toString());
             }
         }
+        output.write(`>> found ${emptyTestIds.length} empty tests`);
 
+        // Calculate empty runs (runs without checks)
         output.write('> calculate empty runs');
-
-        const checksUniqueRuns = (await Check.find().distinct('run').exec()).map((x: any) => x.valueOf());
-
-        const emptyRuns: any[] = [];
-        for (const run of allRunsBefore) {
-            if (!checksUniqueRuns.includes(run._id.valueOf())) {
-                emptyRuns.push(run._id.valueOf());
+        const emptyRunIds: string[] = [];
+        const runCursor = Run.find().select('_id').cursor();
+        for await (const run of runCursor) {
+            if (!checksRunIds.has(run._id.toString())) {
+                emptyRunIds.push(run._id.toString());
             }
         }
+        output.write(`>> found ${emptyRunIds.length} empty runs`);
 
+        // Calculate empty suites (suites without checks)
         output.write('> calculate empty suites');
-
-        const checksUniqueSuites = (await Check.find().distinct('suite').exec()).map((x: any) => x.valueOf());
-
-        const emptySuites: any[] = [];
-        for (const suite of allSuitesBefore) {
-            if (!checksUniqueSuites.includes(suite._id.valueOf())) {
-                emptySuites.push(suite._id.valueOf());
+        const emptySuiteIds: string[] = [];
+        const suiteCursor = Suite.find().select('_id').cursor();
+        for await (const suite of suiteCursor) {
+            if (!checksSuiteIds.has(suite._id.toString())) {
+                emptySuiteIds.push(suite._id.toString());
             }
         }
+        output.write(`>> found ${emptySuiteIds.length} empty suites`);
         output.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
         output.write('Current inconsistent items:');
         const inconsistentStatTable = stringTable.create([
-            { item: 'empty suites', count: emptySuites.length },
-            { item: 'empty runs', count: emptyRuns.length },
-            { item: 'empty tests', count: emptyTests.length },
-            { item: 'abandoned checks', count: abandonedChecks.length },
-            { item: 'abandoned snapshots', count: abandonedSnapshots.length },
+            { item: 'empty suites', count: emptySuiteIds.length },
+            { item: 'empty runs', count: emptyRunIds.length },
+            { item: 'empty tests', count: emptyTestIds.length },
+            { item: 'abandoned checks', count: abandonedCheckIds.length },
+            { item: 'abandoned snapshots', count: abandonedSnapshotIds.length },
             { item: 'abandoned files', count: abandonedFiles.length },
         ]);
         output.write(inconsistentStatTable);
+
+        // Show samples of items to be removed
+        const showSample = (items: string[], label: string) => {
+            if (items.length > 0) {
+                output.write(`\n> Sample ${label} (first 5):`);
+                items.slice(0, 5).forEach((id) => {
+                    output.write(`  - ${id}`);
+                });
+                if (items.length > 5) {
+                    output.write(`  ... and ${items.length - 5} more`);
+                }
+            }
+        };
+
+        showSample(emptySuiteIds, 'empty suite IDs');
+        showSample(emptyRunIds, 'empty run IDs');
+        showSample(emptyTestIds, 'empty test IDs');
+        showSample(abandonedCheckIds, 'abandoned check IDs');
+        showSample(abandonedSnapshotIds, 'abandoned snapshot IDs');
+        showSample(abandonedFiles, 'abandoned files');
 
         if (options.clean) {
             output.write('---------------------------------');
             output.write('STAGE #3: Remove non consistent items');
 
-            output.write('> remove empty suites');
-            await Suite.deleteMany({ _id: { $in: emptySuites } });
-            output.write('> remove empty runs');
-            await Run.deleteMany({ _id: { $in: emptyRuns } });
-            output.write('> remove empty tests');
-            await Test.deleteMany({ _id: { $in: emptyTests } });
-            output.write('> remove abandoned checks');
-            await Check.deleteMany({ _id: { $in: abandonedChecks } });
-            output.write('> remove abandoned snapshots');
-            await Snapshot.deleteMany({ _id: { $in: abandonedSnapshots } });
-            output.write('> remove abandoned files');
-            await Promise.all(abandonedFiles.map((filename) => fsp.unlink(path.join(config.defaultImagesPath, filename))));
-            const allFilesAfter = fs.readdirSync(config.defaultImagesPath, { withFileTypes: true })
-                .filter((item: any) => !item.isDirectory())
-                .map((x: any) => x.name)
-                .filter((x: any) => x.includes('.png'));
+            // Start a MongoDB session for transaction
+            const session = await mongoose.startSession();
+            let dbOperationSuccess = false;
+
+            try {
+                await session.startTransaction();
+
+                output.write('> remove empty suites');
+                const suitesResult = await Suite.deleteMany(
+                    { _id: { $in: emptySuiteIds } },
+                    { session }
+                );
+                output.write(`>> deleted ${suitesResult.deletedCount} suites`);
+
+                output.write('> remove empty runs');
+                const runsResult = await Run.deleteMany(
+                    { _id: { $in: emptyRunIds } },
+                    { session }
+                );
+                output.write(`>> deleted ${runsResult.deletedCount} runs`);
+
+                output.write('> remove empty tests');
+                const testsResult = await Test.deleteMany(
+                    { _id: { $in: emptyTestIds } },
+                    { session }
+                );
+                output.write(`>> deleted ${testsResult.deletedCount} tests`);
+
+                output.write('> remove abandoned checks');
+                const checksResult = await Check.deleteMany(
+                    { _id: { $in: abandonedCheckIds } },
+                    { session }
+                );
+                output.write(`>> deleted ${checksResult.deletedCount} checks`);
+
+                output.write('> remove abandoned snapshots');
+                const snapshotsResult = await Snapshot.deleteMany(
+                    { _id: { $in: abandonedSnapshotIds } },
+                    { session }
+                );
+                output.write(`>> deleted ${snapshotsResult.deletedCount} snapshots`);
+
+                await session.commitTransaction();
+                output.write('>> database transaction committed successfully');
+                dbOperationSuccess = true;
+            } catch (error) {
+                await session.abortTransaction();
+                output.write('>> database transaction aborted due to error');
+                throw error;
+            } finally {
+                await session.endSession();
+            }
+
+            // Only remove files if database operations succeeded
+            if (dbOperationSuccess) {
+                output.write('> remove abandoned files');
+                const batchSize = 100;
+                let removedCount = 0;
+                const failedFiles: Array<{ filename: string; error: string }> = [];
+
+                for (let i = 0; i < abandonedFiles.length; i += batchSize) {
+                    const batch = abandonedFiles.slice(i, i + batchSize);
+                    output.write(`>> processing batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(abandonedFiles.length / batchSize)}`);
+
+                    const results = await Promise.allSettled(
+                        batch.map((filename) =>
+                            fsp.unlink(path.join(config.defaultImagesPath, filename))
+                        )
+                    );
+
+                    results.forEach((result, index) => {
+                        if (result.status === 'fulfilled') {
+                            removedCount++;
+                        } else {
+                            failedFiles.push({
+                                filename: batch[index],
+                                error: result.reason?.message || 'Unknown error'
+                            });
+                        }
+                    });
+                }
+
+                output.write(`>> successfully removed: ${removedCount} files`);
+                if (failedFiles.length > 0) {
+                    output.write(`>> failed to remove: ${failedFiles.length} files`);
+                    failedFiles.slice(0, 10).forEach(({ filename, error }) => {
+                        output.write(`   - ${filename}: ${error}`);
+                    });
+                    if (failedFiles.length > 10) {
+                        output.write(`   ... and ${failedFiles.length - 10} more failures`);
+                    }
+                }
+            }
+
+            const allFilesAfter = (await fsp.readdir(config.defaultImagesPath, { withFileTypes: true }))
+                .filter((item: FileEntry) => !item.isDirectory())
+                .map((x: FileEntry) => x.name)
+                .filter((filename: string) => isImageFile(filename));
 
             output.write('STAGE #4: Calculate Common stats after cleaning');
             output.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
             output.write('Current items:');
             const afterStatTable = stringTable.create([
+                { item: 'baselines', count: await Baseline.countDocuments() },
                 { item: 'suites', count: await Suite.countDocuments() },
                 { item: 'runs', count: await Run.countDocuments() },
                 { item: 'tests', count: await Test.countDocuments() },
@@ -182,14 +415,18 @@ export async function handleDatabaseConsistencyTask(
                 { item: 'files', count: allFilesAfter.length },
             ]);
             output.write(afterStatTable);
+        } else {
+            output.write('\n⚠️  DRY RUN MODE - No items were actually removed');
+            output.write('   Run with --clean flag to perform actual cleanup\n');
         }
 
         const elapsedSeconds = parseHrtimeToSeconds(process.hrtime(startTime));
-        output.write(`> Done in ${elapsedSeconds} seconds, ${elapsedSeconds / 60} min`);
+        const elapsedMinutes = (Number(elapsedSeconds) / 60).toFixed(2);
+        output.write(`> Done in ${elapsedSeconds} seconds (${elapsedMinutes} min)`);
         output.write('- end...\n');
     } catch (e: unknown) {
-        const errMsg = e instanceof Error ? e.message : String(e);
-        output.write(errMsg);
+        const errMsg = e instanceof Error ? `${e.message}\n${e.stack}` : String(e);
+        output.write(`Error: ${errMsg}`);
         throw e;
     } finally {
         output.end();
