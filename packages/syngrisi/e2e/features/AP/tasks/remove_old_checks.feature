@@ -6,6 +6,7 @@ Feature: Task - Remove old checks
         """
           SYNGRISI_TEST_MODE: true
           SYNGRISI_AUTH: false
+          SYNGRISI_AUTO_REMOVE_CHECKS_POLL_INTERVAL_MS: 1000
         """
         Given I start Server
         When I create via http test user
@@ -15,6 +16,7 @@ Feature: Task - Remove old checks
         """
         SYNGRISI_TEST_MODE: true
         SYNGRISI_AUTH: true
+        SYNGRISI_AUTO_REMOVE_CHECKS_POLL_INTERVAL_MS: 1000
         """
         Given I start Server and start Driver
 
@@ -179,4 +181,39 @@ Feature: Task - Remove old checks
         Then I expect via http 2 baselines
         Then I expect exact "2" snapshot files
 
+    Scenario: Auto removal task removes outdated checks based on settings
+        When I create "1" tests with:
+        """
+          testName: AutoCleanupOld
+          checks:
+            - checkName: auto_old
+              filePath: files/A.png
+        """
+        When I update via http check with params:
+        """
+          createdDate: <currentDate-12>
+        """
 
+        When I create "1" tests with:
+        """
+          testName: AutoCleanupNew
+          checks:
+            - checkName: auto_fresh
+              filePath: files/B.png
+        """
+
+        Then I expect via http that "auto_old" check exist exactly "1" times
+        Then I expect via http that "auto_fresh" check exist exactly "1" times
+
+        When I update via http setting "auto_remove_old_checks" with params:
+        """
+          value:
+            days: 10
+            lastRunAt: <currentDate-20>
+          enabled: true
+        """
+
+        Then I wait up to 60 seconds via http that "auto_old" check exist exactly "0" times
+        Then I expect via http that "auto_fresh" check exist exactly "1" times
+        Then I expect via http that "auto_fresh" snapshot exist exactly "1" times
+        Then I expect exact "1" snapshot files
