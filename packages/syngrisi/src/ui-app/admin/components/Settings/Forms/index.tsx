@@ -4,4 +4,5 @@ import { AutoOldChecks } from '@admin/components/Settings/Forms/AutoOldChecks';
 export default {
     Boolean,
     AutoOldChecks,
+    AutoOldLogs: AutoOldChecks,
 };

@@ -22,7 +22,7 @@ When('I go to {string} page', async ({ page, appServer }: { page: Page; appServe
   const adminPages: Record<string, Record<string, string>> = {
     admin: {
       users: `${appServer.baseURL}/admin?task=users`,
-      tasks: `${appServer.baseURL}/admin?task=tasks`,
+      tasks: `${appServer.baseURL}/admin/tasks/handle_old_checks`,
     },
   };
 

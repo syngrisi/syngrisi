@@ -45,18 +45,30 @@ class AppSettings {
 
     async set(name: string, value: any): Promise<void> {
         this.ensureInitialized();
-        const item = await this.model.findOneAndUpdate({ name }, { value });
-        await item.save();
+        const item = await this.model.findOneAndUpdate(
+            { name },
+            { value },
+            { new: true }
+        ).lean().exec();
+        if (!item) {
+            throw new Error(`Setting '${name}' not found`);
+        }
         const cachedItem = this.cache.find((x: any) => x.name === name);
         if (cachedItem) {
-            cachedItem['value'] = value;
+            cachedItem['value'] = item.value;
         }
     }
 
     async enable(name: string): Promise<void> {
         this.ensureInitialized();
-        const item = await this.model.findOneAndUpdate({ name }, { enabled: true });
-        await item.save();
+        const item = await this.model.findOneAndUpdate(
+            { name },
+            { enabled: true },
+            { new: true }
+        ).lean().exec();
+        if (!item) {
+            throw new Error(`Setting '${name}' not found`);
+        }
         const cachedItem = this.cache.find((x: any) => x.name === name);
         if (cachedItem) {
             cachedItem['enabled'] = true;
@@ -65,8 +77,14 @@ class AppSettings {
 
     async disable(name: string): Promise<void> {
         this.ensureInitialized();
-        const item = await this.model.findOneAndUpdate({ name }, { enabled: false });
-        await item.save();
+        const item = await this.model.findOneAndUpdate(
+            { name },
+            { enabled: false },
+            { new: true }
+        ).lean().exec();
+        if (!item) {
+            throw new Error(`Setting '${name}' not found`);
+        }
         const cachedItem = this.cache.find((x: any) => x.name === name);
         if (cachedItem) {
             cachedItem['enabled'] = false;

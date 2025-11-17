@@ -1,20 +1,25 @@
 import log from '@logger';
-import { handleOldChecksTask } from '@/tasks/core';
-import { LoggerOutputWriter } from '@/tasks/lib/output-writer';
 import { appSettings } from '@settings';
 import { env } from '@/server/envConfig';
 import { errMsg } from '@/server/utils';
 
-type AutoRemoveOldChecksValue = {
+type AutoCleanupValue = {
     days?: number;
     lastRunAt?: string | null;
 };
 
-const DEFAULT_DAYS = 365;
+interface SchedulerOptions {
+    settingName: string;
+    defaultDays: number;
+    scope: string;
+    runTask: (days: number) => Promise<void>;
+}
 
-class AutoOldChecksScheduler {
+export class AutoCleanupScheduler {
     private timer: NodeJS.Timeout | null = null;
     private running = false;
+
+    constructor(private options: SchedulerOptions) {}
 
     start(): void {
         if (this.timer) {
@@ -25,14 +30,14 @@ class AutoOldChecksScheduler {
             void this.tick();
         }, intervalMs);
         void this.tick();
-        log.info(`[auto_old_checks] scheduler started (poll every ${intervalMs}ms)`);
+        log.info(`[${this.options.scope}] scheduler started (poll every ${intervalMs}ms)`);
     }
 
     stop(): void {
         if (this.timer) {
             clearInterval(this.timer);
             this.timer = null;
-            log.info('[auto_old_checks] scheduler stopped');
+            log.info(`[${this.options.scope}] scheduler stopped`);
         }
     }
 
@@ -44,13 +49,15 @@ class AutoOldChecksScheduler {
 
         try {
             const AppSettings = await appSettings;
-            const setting = await AppSettings.get('auto_remove_old_checks');
+            const setting = await AppSettings.get(this.options.settingName);
             if (!setting || !setting.enabled) {
                 return;
             }
 
-            const value: AutoRemoveOldChecksValue = setting.value ?? {};
-            const days = typeof value.days === 'number' && value.days > 0 ? value.days : DEFAULT_DAYS;
+            const value: AutoCleanupValue = setting.value ?? {};
+            const days = typeof value.days === 'number' && value.days >= 0
+                ? value.days
+                : this.options.defaultDays;
             const lastRunAt = value.lastRunAt ? new Date(value.lastRunAt) : null;
             const now = Date.now();
             const minInterval = env.SYNGRISI_AUTO_REMOVE_CHECKS_MIN_INTERVAL_MS;
@@ -60,22 +67,18 @@ class AutoOldChecksScheduler {
                 return;
             }
 
-            log.info(`[auto_old_checks] triggering cleanup for checks older than ${days} days`);
-            const output = new LoggerOutputWriter('auto_old_checks');
-            await handleOldChecksTask({ days, remove: true }, output);
-
-            await AppSettings.set('auto_remove_old_checks', {
+            log.info(`[${this.options.scope}] triggering cleanup for items older than ${days} days`);
+            await this.options.runTask(days);
+            await AppSettings.set(this.options.settingName, {
                 ...value,
                 days,
                 lastRunAt: new Date(now).toISOString(),
             });
-            log.info('[auto_old_checks] cleanup completed');
+            log.info(`[${this.options.scope}] cleanup completed`);
         } catch (error) {
-            log.error(`[auto_old_checks] scheduler error: ${errMsg(error)}`);
+            log.error(`[${this.options.scope}] scheduler error: ${errMsg(error)}`);
         } finally {
             this.running = false;
         }
     }
 }
-
-export const autoOldChecksScheduler = new AutoOldChecksScheduler();

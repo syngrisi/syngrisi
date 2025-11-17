@@ -25,5 +25,16 @@
             "lastRunAt": null
         },
         "enabled": false
+    },
+    {
+        "name": "auto_remove_old_logs",
+        "label": "Auto remove old logs",
+        "description": "Automatically delete logs older than the configured number of days once per day",
+        "type": "AutoOldLogs",
+        "value": {
+            "days": 120,
+            "lastRunAt": null
+        },
+        "enabled": true
     }
 ]

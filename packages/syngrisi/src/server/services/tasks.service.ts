@@ -91,6 +91,11 @@ const task_handle_old_checks = async (options: any, res: Response) => {
         remove = options.remove === 'true' || options.remove === true;
     }
 
+    log.info('handle_old_checks task invocation', {
+        rawOptions: options,
+        parsed: { days, remove },
+    });
+
     await handleOldChecksTask({ days, remove }, output);
 };
 

@@ -195,3 +195,80 @@ Then(
     throw new Error(`Timed out waiting for ${name} checks to reach ${count}`);
   }
 );
+
+When(
+  'I create via http log with params:',
+  async (
+    { appServer, testData }: { appServer: AppServerFixture; testData: TestStore },
+    yml: string
+  ) => {
+    const rendered = renderTemplate(yml, testData);
+    const body = yaml.parse(rendered);
+    const uri = `${appServer.baseURL}/v1/logs`;
+    logger.info(`Creating log via ${uri} with body: ${rendered}`);
+    const result = await requestWithSession(uri, testData, appServer, {
+      method: 'POST',
+      json: body,
+    });
+    const statusCode = result.raw?.statusCode;
+    expect(statusCode).toBe(201);
+  }
+);
+
+Then(
+  'I expect via http logs with message {string} exist exactly {string} times',
+  async (
+    { appServer, testData }: { appServer: AppServerFixture; testData: TestStore },
+    message: string,
+    num: string
+  ) => {
+    const uri = `${appServer.baseURL}/v1/logs?limit=0&filter={"$and":[{"message":{"$regex":"${message}","$options":"im"}}]}`;
+    const response = await requestWithSession(uri, testData, appServer);
+    const items = response.json.results;
+    expect(items.length).toBe(parseInt(num, 10));
+  }
+);
+
+Then(
+  'I wait up to {int} seconds via http that logs with message {string} exist exactly {string} times',
+  async (
+    { appServer, testData }: { appServer: AppServerFixture; testData: TestStore },
+    timeoutSeconds: number,
+    message: string,
+    expectedCount: string
+  ) => {
+    const target = parseInt(expectedCount, 10);
+    const uri = `${appServer.baseURL}/v1/logs?limit=0&filter={"$and":[{"message":{"$regex":"${message}","$options":"im"}}]}`;
+    const deadline = Date.now() + timeoutSeconds * 1000;
+
+    while (Date.now() <= deadline) {
+      const response = await requestWithSession(uri, testData, appServer);
+      const items = response.json.results;
+      if (items.length === target) {
+        logger.info(`Logs count for "${message}" reached ${target}`);
+        return;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+
+    throw new Error(`Timed out waiting for logs count to reach ${expectedCount}`);
+  }
+);
+
+Then(
+  'I expect via http setting {string} days equals {int}',
+  async (
+    { appServer, testData }: { appServer: AppServerFixture; testData: TestStore },
+    name: string,
+    expectedDays: number
+  ) => {
+    const uri = `${appServer.baseURL}/v1/settings`;
+    const response = await requestWithSession(uri, testData, appServer);
+    const setting = response.json.find((item: any) => item.name === name);
+    if (!setting) {
+      throw new Error(`Setting '${name}' not found`);
+    }
+    const days = Number(setting.value?.days);
+    expect(days).toBe(expectedDays);
+  }
+);
