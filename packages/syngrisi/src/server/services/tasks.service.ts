@@ -72,7 +72,18 @@ const task_remove_old_logs = async (options: any, res: Response) => {
 const task_handle_old_checks = async (options: any, res: Response) => {
     const output = new HttpOutputWriter(res);
     const days = parseInt(options.days, 10);
-    const remove = options.remove === 'true' || options.remove === true;
+
+    // Support both 'dryRun' (new UI) and 'remove' (backward compatibility)
+    let remove: boolean;
+    if (options.dryRun !== undefined) {
+        // New parameter: dryRun=true means DON'T remove (dry run mode)
+        const dryRun = options.dryRun === 'true' || options.dryRun === true;
+        remove = !dryRun; // Invert: dryRun=true → remove=false
+    } else {
+        // Old parameter: remove=true means actually remove
+        remove = options.remove === 'true' || options.remove === true;
+    }
+
     await handleOldChecksTask({ days, remove }, output);
 };
 
