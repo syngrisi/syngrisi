@@ -77,6 +77,22 @@ router.get(
 
 registry.registerPath({
     method: 'get',
+    path: '/v1/tasks/task_handle_orphan_files',
+    summary: "Handle orphan files task",
+    tags: ['Tasks'],
+    responses: createApiResponse(SkipValid, 'Success'),
+});
+
+router.get(
+    '/task_handle_orphan_files',
+    ensureLoggedIn(),
+    authorization('admin') as Midleware,
+    validateRequest(SkipValid, 'get, /v1/tasks/task_handle_orphan_files'),
+    tasksController.task_handle_orphan_files as Midleware
+);
+
+registry.registerPath({
+    method: 'get',
     path: '/v1/tasks/loadTestUser',
     summary: "Load test user",
     tags: ['Tasks'],
