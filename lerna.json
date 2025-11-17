@@ -3,5 +3,10 @@
   "version": "2.3.3",
   "packages": [
     "packages/*"
-  ]
+  ],
+  "command": {
+    "publish": {
+      "message": "chore(release): publish %s"
+    }
+  }
 }

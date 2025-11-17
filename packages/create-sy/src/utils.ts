@@ -38,6 +38,18 @@ export const getSyngrisiVersion = (installDir: string) => {
     return JSON.parse(fss.readFileSync(path.join(installDir, 'package.json')).toString()).dependencies?.syngrisi
 }
 
+export const getCreateSyVersion = (): string => {
+    try {
+        // Get the path to create-sy's package.json
+        const packageJsonPath = new URL('../package.json', import.meta.url)
+        const packageJson = JSON.parse(fss.readFileSync(packageJsonPath, 'utf-8'))
+        return packageJson.version
+    } catch (error) {
+        console.error(chalk.yellow('⚠️ Could not read create-sy version, using latest'))
+        return 'latest'
+    }
+}
+
 export const installDependencies = (directory: string): void => {
     child_process.execSync('npm install', { cwd: directory, stdio: 'inherit' })
 }

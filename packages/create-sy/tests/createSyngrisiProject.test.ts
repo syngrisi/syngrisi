@@ -19,7 +19,8 @@ vi.mock('../src/utils', async () => {
         ...actual,
         runProgram: vi.fn(),
         printAndExit: vi.fn(),
-        getSyngrisiVersion: vi.fn().mockReturnValue('1.2.3')
+        getSyngrisiVersion: vi.fn().mockReturnValue('1.2.3'),
+        getCreateSyVersion: vi.fn().mockReturnValue('2.3.3')
     }
 })
 
@@ -40,7 +41,7 @@ describe('createSyngrisiProject', () => {
         expect(fs.mkdir).toBeCalledWith('.', { 'recursive': true })
         expect(readPackageUp).toBeCalledTimes(1)
         expect(printAndExit).toBeCalledTimes(0)
-        expect(runProgram).toBeCalledWith('npm', ['install', '@syngrisi/syngrisi'], { cwd: '.', stdio: 'ignore' })
+        expect(runProgram).toBeCalledWith('npm', ['install', '@syngrisi/syngrisi@2.3.3'], { cwd: '.', stdio: 'ignore' })
     })
 
     it('happy path - package.json exist', async () => {
@@ -53,7 +54,7 @@ describe('createSyngrisiProject', () => {
         expect(fs.mkdir).toBeCalledTimes(0)
         expect(readPackageUp).toBeCalledTimes(1)
         expect(printAndExit).toBeCalledTimes(0)
-        expect(runProgram).toBeCalledWith('npm', ['install', '@syngrisi/syngrisi'], { cwd: '.', stdio: 'ignore' })
+        expect(runProgram).toBeCalledWith('npm', ['install', '@syngrisi/syngrisi@2.3.3'], { cwd: '.', stdio: 'ignore' })
     })
 
     it('happy path - not empty npmTag', async () => {
