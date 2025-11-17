@@ -4,7 +4,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import ora from 'ora'
 import chalk from 'chalk'
-import { getSyngrisiVersion, printAndExit, runProgram } from './utils.js'
+import { getCreateSyVersion, getSyngrisiVersion, printAndExit, runProgram } from './utils.js'
 
 export const createSyngrisiProject = async (opts: ProgramOpts) => {
     if (!opts.installDir) {
@@ -14,7 +14,12 @@ export const createSyngrisiProject = async (opts: ProgramOpts) => {
     let npmTag = ''
 
     if (opts.npmTag) {
+        // User explicitly specified a version/tag
         npmTag = opts.npmTag?.startsWith('@') ? opts.npmTag : `@${opts.npmTag}`
+    } else {
+        // Use create-sy version to install matching syngrisi version
+        const createSyVersion = getCreateSyVersion()
+        npmTag = `@${createSyVersion}`
     }
 
     const root = opts.installDir
