@@ -78,6 +78,9 @@ curl -LO https://raw.githubusercontent.com/syngrisi/syngrisi/main/packages/syngr
 sudo docker compose up
 ```
 
+> [!NOTE]
+> By default Docker pulls the `latest` npm tag of `@syngrisi/syngrisi`. To pin a specific release, set `SYNGRISI_NPM_TAG`, e.g. `SYNGRISI_NPM_TAG=2.3.0 docker compose up`.
+
 You are free to modify the Docker Compose file according to your requirements. Ensure that service definitions and options are set up correctly; otherwise, services may not function as expected.
 
 Environment variables for Docker Compose can be configured either in an environment file or directly in the shell. For detailed
