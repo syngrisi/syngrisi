@@ -31,6 +31,8 @@ export const env = cleanEnv(process.env, {
     SYNGRISI_DISABLE_DEV_CORS: bool({ default: true, devDefault: true }),
     SYNGRISI_SESSION_STORE_KEY: str({ default: crypto.randomBytes(64).toString('hex') }),
     SYNGRISI_LOG_LEVEL: str({ default: 'debug' }),
+    SYNGRISI_AUTO_REMOVE_CHECKS_POLL_INTERVAL_MS: num({ default: 10 * 60 * 1000 }), // 10 minutes
+    SYNGRISI_AUTO_REMOVE_CHECKS_MIN_INTERVAL_MS: num({ default: 24 * 60 * 60 * 1000 }),
 
     // trunk features
     SYNGRISI_TRUNK_FEATURE_AI_SEVERITY: bool({ default: false }),

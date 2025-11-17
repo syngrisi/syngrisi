@@ -12,7 +12,7 @@ Feature: Admin Settings
         When I wait for "1" seconds
         Then the element with label "Authentication" should have value "true"
         When I click element with locator "button[aria-label='Update Authentication']"
-        When I wait 30 seconds for the element with locator "//div[contains(@class, 'mantine-Notification-title') and text()='Success']" to be visible
+        When I wait 30 seconds for the element with locator "//*[@aria-label='notification-success']" to be visible
 
         When I go to "logout" page
         When I wait for "3" seconds
@@ -50,7 +50,7 @@ Feature: Admin Settings
         When I wait for "1" seconds
         Then the element with label "First Run" should have value "false"
         When I click element with locator "button[aria-label='Update First Run']"
-        When I wait 30 seconds for the element with locator "//div[contains(@class, 'mantine-Notification-title') and text()='Success']" to be visible
+        When I wait 30 seconds for the element with locator "//*[@aria-label='notification-success']" to be visible
         When I wait for "5" seconds
         When I go to "logout" page
         When I wait for "5" seconds
@@ -66,4 +66,11 @@ Feature: Admin Settings
         Then the current url does not contain "auth/change?first_run=true"
         Then the current url contains "/auth"
 
-
+    Scenario: Configure auto remove old checks setting
+        When I go to "settings" page
+        When I wait 30 seconds for the element with label "Days to keep checks" to be visible
+        Then the element with label "Days to keep checks" should have value "365"
+        When I fill "30" into element with label "Days to keep checks"
+        When I click element with label "Enable Auto remove old checks"
+        When I click element with locator "button[aria-label='Update Auto remove old checks']"
+        When I wait 30 seconds for the element with locator "//*[@aria-label='notification-success']" to be visible

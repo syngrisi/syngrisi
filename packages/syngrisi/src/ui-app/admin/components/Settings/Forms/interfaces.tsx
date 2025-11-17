@@ -1,17 +1,16 @@
 export interface ISettingForm {
-    name: string
-    value: string
-    label: string
-    description: string
-    enabled: boolean
-    // setFormData?: any
-    updateSetting?: any
-    type?: string
-    settingsQuery?: any
+    name: string;
+    value: any;
+    label: string;
+    description: string;
+    enabled: boolean;
+    updateSetting?: any;
+    type?: string;
+    settingsQuery?: any;
 }
 
 export interface ISettingFormUpdateData {
-    name: string
-    enabled: boolean
-    value: string
+    name: string;
+    enabled: boolean;
+    value: any;
 }

@@ -14,5 +14,16 @@
         "type": "Boolean",
         "value": "false",
         "enabled": true
+    },
+    {
+        "name": "auto_remove_old_checks",
+        "label": "Auto remove old checks",
+        "description": "Automatically delete checks older than the configured number of days once per day",
+        "type": "AutoOldChecks",
+        "value": {
+            "days": 365,
+            "lastRunAt": null
+        },
+        "enabled": false
     }
 ]

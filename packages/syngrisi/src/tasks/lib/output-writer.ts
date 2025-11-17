@@ -90,3 +90,19 @@ export class MockOutputWriter implements IOutputWriter {
         this.messages = [];
     }
 }
+
+/**
+ * Output writer that logs to the server logger
+ * Useful for scheduled/background tasks
+ */
+export class LoggerOutputWriter implements IOutputWriter {
+    constructor(private scope = 'task') {}
+
+    write(message: string): void {
+        log.info(`[${this.scope}] ${message}`);
+    }
+
+    end(): void {
+        // Nothing to do for logger output
+    }
+}

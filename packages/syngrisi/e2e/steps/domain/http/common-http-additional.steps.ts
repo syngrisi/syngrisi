@@ -4,6 +4,8 @@ import type { TestStore } from '@fixtures';
 import { createLogger } from '@lib/logger';
 import { requestWithSession } from '@utils/http-client';
 import { expect } from '@playwright/test';
+import * as yaml from 'yaml';
+import { renderTemplate } from '@helpers/template';
 
 const logger = createLogger('CommonHttpAdditionalSteps');
 
@@ -145,5 +147,51 @@ When(
     const statusCode = result.raw?.statusCode;
     logger.info(`Old checks removed, status: ${statusCode}`);
     expect(statusCode).toBe(200);
+  }
+);
+
+When(
+  'I update via http setting {string} with params:',
+  async (
+    { appServer, testData }: { appServer: AppServerFixture; testData: TestStore },
+    name: string,
+    yml: string
+  ) => {
+    const rendered = renderTemplate(yml, testData);
+    const body = yaml.parse(rendered);
+    const uri = `${appServer.baseURL}/v1/settings/${name}`;
+    logger.info(`Updating setting ${name} via ${uri} with body: ${rendered}`);
+    const result = await requestWithSession(uri, testData, appServer, {
+      method: 'PATCH',
+      json: body,
+    });
+    const statusCode = result.raw?.statusCode;
+    expect(statusCode).toBe(200);
+  }
+);
+
+Then(
+  'I wait up to {int} seconds via http that {string} check exist exactly {string} times',
+  async (
+    { appServer, testData }: { appServer: AppServerFixture; testData: TestStore },
+    timeoutSeconds: number,
+    name: string,
+    expectedCount: string
+  ) => {
+    const uri = `${appServer.baseURL}/v1/checks?limit=0&filter={"$and":[{"name":{"$regex":"${name}","$options":"im"}}]}`;
+    const count = parseInt(expectedCount, 10);
+    const deadline = Date.now() + timeoutSeconds * 1000;
+
+    while (Date.now() <= deadline) {
+      const response = await requestWithSession(uri, testData, appServer);
+      const items = response.json.results;
+      if (items.length === count) {
+        logger.info(`Condition met for "${name}" with ${items.length} checks`);
+        return;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+
+    throw new Error(`Timed out waiting for ${name} checks to reach ${count}`);
   }
 );
