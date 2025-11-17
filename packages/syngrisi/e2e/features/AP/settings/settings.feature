@@ -74,3 +74,11 @@ Feature: Admin Settings
         When I click element with label "Enable Auto remove old checks"
         When I click element with locator "button[aria-label='Update Auto remove old checks']"
         When I wait 30 seconds for the element with locator "//*[@aria-label='notification-success']" to be visible
+
+    Scenario: Configure auto remove old logs setting
+        When I go to "settings" page
+        When I wait 30 seconds for the element with label "Days to keep logs" to be visible
+        Then the element with label "Days to keep logs" should have value "120"
+        When I fill "45" into element with label "Days to keep logs"
+        When I click element with locator "button[aria-label='Update Auto remove old logs']"
+        When I wait 30 seconds for the element with locator "//*[@aria-label='notification-success']" to be visible
