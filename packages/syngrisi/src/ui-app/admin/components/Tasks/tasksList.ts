@@ -35,9 +35,9 @@ export const tasksList: ITask[] = [
     {
         label: 'Handle Database Consistency',
         name: 'handle_database_consistency',
-        description: 'Checking and removing inconsistent elements',
+        description: 'Checking and removing inconsistent elements. By default runs in DRY RUN mode (only shows statistics). Uncheck "Dry run" to actually remove the inconsistent elements.',
         inputs: [
-            { name: 'clean', label: 'Remove', type: 'Checkbox', default: false },
+            { name: 'dryRun', label: 'Dry run', type: 'Checkbox', default: true },
         ],
     },
     {
@@ -46,15 +46,15 @@ export const tasksList: ITask[] = [
         description: 'Removing logs that older particular threshold. By default runs in DRY RUN mode (shows statistics without deleting). Uncheck "Dry run" to actually remove logs.',
         inputs: [
             { name: 'days', label: 'Remove older that (days)', type: 'TextInput', default: 30 },
-            { name: 'statistics', label: 'Dry run', type: 'Checkbox', default: true },
+            { name: 'dryRun', label: 'Dry run', type: 'Checkbox', default: true },
         ],
     },
     {
         label: 'Handle Orphan Files',
         name: 'handle_orphan_files',
-        description: 'Finds and removes image files that are not referenced by any Snapshot in the database. By default runs in dry-run mode (only shows statistics). Check the "Execute" checkbox to actually remove files.',
+        description: 'Finds and removes image files that are not referenced by any Snapshot in the database. By default runs in dry-run mode (only shows statistics). Uncheck "Dry run" to actually remove files.',
         inputs: [
-            { name: 'execute', label: 'Execute (remove files)', type: 'Checkbox', default: false },
+            { name: 'dryRun', label: 'Dry run', type: 'Checkbox', default: true },
         ],
     },
 ];

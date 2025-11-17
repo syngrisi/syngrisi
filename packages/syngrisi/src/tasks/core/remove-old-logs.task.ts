@@ -5,7 +5,7 @@ import { Log } from '../lib';
 
 export interface RemoveOldLogsOptions {
     days: number;
-    statistics: boolean;
+    dryRun: boolean;
 }
 
 /**
@@ -27,7 +27,7 @@ export async function removeOldLogsTask(
         output.write(`- the count of all documents is: '${allLogsCountBefore}'\n`);
         output.write(`- the count of documents to be removed is: '${oldLogsCount}'\n`);
 
-        if (!options.statistics) {
+        if (!options.dryRun) {
             output.write(`- will remove all logs older that: '${options.days}' days, '${dateToISO8601(trashHoldDate)}'\n`);
             await Log.deleteMany(filter);
             const allLogsCountAfter = await Log.find({}).countDocuments();

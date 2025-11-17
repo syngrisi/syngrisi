@@ -105,13 +105,13 @@ Tasks can also be called via HTTP endpoints (requires admin authentication):
 
 ```bash
 # Handle database consistency
-curl "http://localhost:3000/v1/tasks/task_handle_database_consistency?clean=true"
+curl "http://localhost:3000/v1/tasks/task_handle_database_consistency?dryRun=false"
 
 # Handle old checks
-curl "http://localhost:3000/v1/tasks/task_handle_old_checks?days=180&remove=true"
+curl "http://localhost:3000/v1/tasks/task_handle_old_checks?days=180&dryRun=false"
 
 # Remove old logs
-curl "http://localhost:3000/v1/tasks/task_remove_old_logs?days=30&statistics=false"
+curl "http://localhost:3000/v1/tasks/task_remove_old_logs?days=30&dryRun=false"
 ```
 
 ## Available Tasks
@@ -132,7 +132,8 @@ curl "http://localhost:3000/v1/tasks/task_remove_old_logs?days=30&statistics=fal
 - `--clean, -c` - Actually remove inconsistent items (default: false, only show statistics)
 
 **HTTP Query Parameters**:
-- `clean=true|false` - Remove inconsistent items
+- `dryRun=true|false` - true (default) shows statistics only, false performs cleanup
+- `clean=true|false` - Legacy parameter (clean=true is equivalent to dryRun=false)
 
 **Example**:
 ```bash
@@ -160,7 +161,8 @@ npm run task:consistency -- --clean
 
 **HTTP Query Parameters**:
 - `days=<number>` - Days threshold
-- `remove=true|false` - Remove old checks
+- `dryRun=true|false` - true (default) shows statistics only, false removes checks
+- `remove=true|false` - Legacy parameter (remove=true is equivalent to dryRun=false)
 
 **Example**:
 ```bash
@@ -189,7 +191,8 @@ npm run task:old-checks -- 90 true
 
 **HTTP Query Parameters**:
 - `days=<number>` - Days threshold
-- `statistics=true|false` - true = dry run, false = actually remove
+- `dryRun=true|false` - true (default) shows statistics only, false removes logs
+- `statistics=true|false` - Legacy parameter (statistics=true is equivalent to dryRun=true)
 
 **Example**:
 ```bash
