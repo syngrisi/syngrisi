@@ -6,6 +6,7 @@ import log from '@logger';
 import chalk from 'chalk';
 import connectDB from '@lib/connectDb';
 import { createTempDir, createBasicUsers, createInitialSettings, createTestsUsers } from '@lib/startup';
+import { autoOldChecksScheduler } from '@lib/schedulers/autoOldChecksScheduler';
 import { errMsg } from './utils';
 
 const logMeta = { scope: 'entrypoint' };
@@ -27,12 +28,14 @@ connectDB().then(async () => {
         log.info(
             chalk.whiteBright('Press <Ctrl+C> to exit'), logMeta
         );
+        autoOldChecksScheduler.start();
     });
 
 
     // exit events
     const onCloseSignal = () => {
         log.info('sigint received, shutting down');
+        autoOldChecksScheduler.stop();
         if (config.codeCoverage) {
             log.info('take coverage');
             v8.takeCoverage();
@@ -51,4 +54,3 @@ connectDB().then(async () => {
     log.error(`Could not connect to MongoDB: ${errMsg(err)} `);
     process.exit(1);
 });
-

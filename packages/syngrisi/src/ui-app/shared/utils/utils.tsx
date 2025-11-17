@@ -17,6 +17,7 @@ export function errorMsg(params: Required<{ error: any }>) {
         autoClose: 7000,
         title: 'Error',
         color: 'red',
+        'aria-label': 'notification-error',
     });
 }
 
@@ -27,6 +28,7 @@ export function successMsg(params: Required<{ message: string }>) {
         autoClose: 4000,
         title: 'Success',
         color: 'green',
+        'aria-label': 'notification-success',
     });
 }
 
