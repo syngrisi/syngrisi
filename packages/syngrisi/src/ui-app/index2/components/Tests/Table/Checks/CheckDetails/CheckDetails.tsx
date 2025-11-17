@@ -189,6 +189,7 @@ export function CheckDetails({
         }
     }, [
         mainView?.toString(),
+        baselineId,
     ]);
 
     return (

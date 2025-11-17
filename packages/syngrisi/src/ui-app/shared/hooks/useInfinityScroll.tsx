@@ -100,6 +100,9 @@ export default function useInfinityScroll(
                 'infinity_pages',
                 resourceName,
                 firstPageData.timestamp,
+                sortBy,
+                JSON.stringify(filterObj),
+                JSON.stringify(baseFilterObj),
             ],
             queryFn: ({ pageParam = 1 }) => GenericService.get(
                 resourceName,

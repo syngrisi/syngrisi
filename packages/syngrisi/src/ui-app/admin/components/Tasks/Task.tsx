@@ -162,7 +162,6 @@ export default function Task({ item }: { item: ITask }) {
 
     const Inputs = item.inputs.map(
         (input: IInput) => {
-            // Validate component type
             if (!VALID_MANTINE_INPUTS.includes(input.type)) {
                 log.error(`Invalid input type: ${input.type}`);
                 return (
@@ -172,6 +171,10 @@ export default function Task({ item }: { item: ITask }) {
                 );
             }
 
+            const inputProps = input.type === 'Checkbox'
+                ? form.getInputProps(input.name, { type: 'checkbox' })
+                : form.getInputProps(input.name);
+
             return React.createElement(
                 // @ts-ignore
                 mCore[input.type],
@@ -180,7 +183,7 @@ export default function Task({ item }: { item: ITask }) {
                     name: input.name,
                     key: input.name,
                     mt: 10,
-                    ...form.getInputProps(input.name),
+                    ...inputProps,
                 },
             );
         },

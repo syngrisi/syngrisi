@@ -77,25 +77,24 @@ async function collectCheckSnapshotIds(matchFilter: CheckSnapshotMatch = {}) {
         { $project: { _id: 1 } }
     ]);
 
-    const aggregation = Check.aggregate([
-        {
-            $facet: {
-                baselineIds: buildPipeline('baselineId'),
-                actualIds: buildPipeline('actualSnapshotId'),
-                diffIds: buildPipeline('diffId'),
-            }
-        }
-    ]);
-    const [results] = await aggregation.exec();
-
-    const normalizeDocs = (docs?: { _id: unknown }[]) => (docs ?? [])
+    const normalizeDocs = (docs: { _id: unknown }[]) => docs
         .map((doc) => normalizeId(doc._id))
         .filter((id): id is string => Boolean(id));
 
+    const [
+        baselineResults,
+        actualResults,
+        diffResults,
+    ] = await Promise.all([
+        Check.aggregate(buildPipeline('baselineId')).exec(),
+        Check.aggregate(buildPipeline('actualSnapshotId')).exec(),
+        Check.aggregate(buildPipeline('diffId')).exec(),
+    ]);
+
     return {
-        baselineIds: normalizeDocs(results?.baselineIds),
-        actualIds: normalizeDocs(results?.actualIds),
-        diffIds: normalizeDocs(results?.diffIds),
+        baselineIds: normalizeDocs(baselineResults),
+        actualIds: normalizeDocs(actualResults),
+        diffIds: normalizeDocs(diffResults),
     };
 }
 

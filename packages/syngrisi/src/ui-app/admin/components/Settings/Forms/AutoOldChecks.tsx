@@ -3,17 +3,31 @@ import { Button, Checkbox, Group, NumberInput, Stack, Text, Title } from '@manti
 import { useForm } from '@mantine/form';
 import { ISettingForm } from '@admin/components/Settings/Forms/interfaces';
 
-type AutoOldChecksValue = {
+type AutoRetentionValue = {
     days?: number;
     lastRunAt?: string | null;
 };
 
+const FIELD_LABELS: Record<string, { label: string; aria: string; defaultDays: number }> = {
+    auto_remove_old_checks: {
+        label: 'Days to keep checks',
+        aria: 'Days to keep checks',
+        defaultDays: 365,
+    },
+    auto_remove_old_logs: {
+        label: 'Days to keep logs',
+        aria: 'Days to keep logs',
+        defaultDays: 120,
+    },
+};
+
 export function AutoOldChecks({ name, value, label, description, enabled, updateSetting }: ISettingForm) {
-    const parsedValue: AutoOldChecksValue = typeof value === 'object' && value !== null ? value : {};
+    const parsedValue: AutoRetentionValue = typeof value === 'object' && value !== null ? value : {};
+    const labels = FIELD_LABELS[name] ?? { label: 'Days to keep items', aria: 'Days to keep items', defaultDays: 365 };
 
     const form = useForm({
         initialValues: {
-            days: parsedValue.days ?? 365,
+            days: parsedValue.days ?? labels.defaultDays,
             enabled,
         },
         validate: {
@@ -23,15 +37,17 @@ export function AutoOldChecks({ name, value, label, description, enabled, update
 
     useEffect(() => {
         form.setValues({
-            days: (typeof parsedValue.days === 'number' && parsedValue.days > 0) ? parsedValue.days : 365,
+            days: (typeof parsedValue.days === 'number' && parsedValue.days > 0)
+                ? parsedValue.days
+                : labels.defaultDays,
             enabled,
         });
-    }, [parsedValue.days, enabled]);
+    }, [parsedValue.days, enabled, labels.defaultDays]);
 
     const handleSubmit = (values: { days: number; enabled: boolean }) => {
-        const payload: AutoOldChecksValue = {
+        const payload: AutoRetentionValue = {
             ...parsedValue,
-            days: values.days ?? 365,
+            days: values.days ?? labels.defaultDays,
         };
         updateSetting?.mutate({
             name,
@@ -51,8 +67,8 @@ export function AutoOldChecks({ name, value, label, description, enabled, update
                 <Group spacing="xl" align="flex-end">
                     <NumberInput
                         data-test={`settings_value_${name}_days`}
-                        aria-label="Days to keep checks"
-                        label="Days to keep checks"
+                        aria-label={labels.aria}
+                        label={labels.label}
                         min={1}
                         step={1}
                         {...form.getInputProps('days')}
