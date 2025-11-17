@@ -166,6 +166,16 @@ export function navigationData(): INavDataItem[] {
             ],
         },
         {
+            title: 'Task: Handle Orphan Files',
+            description: 'Find and remove orphan image files',
+            group: 'tasks',
+            crumbs: [
+                { title: 'Admin', href: '/admin' },
+                { title: 'Tasks', href: '/admin/tasks' },
+                { title: 'Handle Orphan Files', href: '/admin/tasks/handle_orphan_files' },
+            ],
+        },
+        {
             title: 'Task: Test',
             description: 'test',
             group: 'tasks',

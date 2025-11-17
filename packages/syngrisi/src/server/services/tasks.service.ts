@@ -11,6 +11,7 @@ import { HttpOutputWriter } from '@/tasks/lib/output-writer';
 import {
     handleDatabaseConsistencyTask,
     handleOldChecksTask,
+    handleOrphanFilesTask,
     removeOldLogsTask,
 } from '@/tasks/core';
 
@@ -75,12 +76,15 @@ const task_handle_old_checks = async (options: any, res: Response) => {
     await handleOldChecksTask({ days, remove }, output);
 };
 
+const task_handle_orphan_files = async (options: any, res: Response) => {
+    const output = new HttpOutputWriter(res);
+    const execute = options.execute === 'true' || options.execute === true;
+    const dryRun = !execute; // inverse logic: execute=false means dryRun=true
+    await handleOrphanFilesTask({ dryRun }, output);
+};
+
 const task_test = async (options = 'empty', req: ExtRequest, res: Response) => {
-    res.writeHead(200, {
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        'Content-Encoding': 'none',
-    });
+    const output = new HttpOutputWriter(res);
 
     const x = 1000;
     // const interval = 30;
@@ -92,21 +96,22 @@ const task_test = async (options = 'empty', req: ExtRequest, res: Response) => {
 
     for (let i = 0; i < x; i += 1) {
         // await new Promise((r) => setTimeout(() => r(), interval));
-        taskOutput(`- Task Output: '${i}', options: ${options}\n`, res);
+        output.write(`- Task Output: '${i}', options: ${options}`);
         if (isAborted) {
-            taskOutput('the task was aborted\n', res);
+            output.write('the task was aborted');
             log.warn('the task was aborted');
-            (res as any).flush();
-            return res.end();
+            output.flush?.();
+            return output.end();
         }
     }
-    return res.end();
+    return output.end();
 };
 
 export {
     task_test,
     task_handle_old_checks,
     task_handle_database_consistency,
+    task_handle_orphan_files,
     task_remove_old_logs,
     status,
     loadTestUser,
