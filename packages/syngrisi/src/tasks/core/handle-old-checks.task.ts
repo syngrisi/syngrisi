@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { promises as fsp } from 'fs';
-import { Dirent } from 'fs';
 // @ts-ignore
 import st from 'string-table';
 import path from 'path';
@@ -22,6 +21,112 @@ const stringTable: StringTable = st;
 
 function parseHrtimeToSeconds(hrtime: [number, number]): string {
     return (hrtime[0] + (hrtime[1] / 1e9)).toFixed(3);
+}
+
+const normalizeId = (id: unknown): string | null => {
+    if (!id) {
+        return null;
+    }
+    try {
+        return id.toString();
+    } catch (error) {
+        return null;
+    }
+};
+
+async function countPngFiles(dirPath: string): Promise<number> {
+    const dir = await fsp.opendir(dirPath);
+    let count = 0;
+    try {
+        for await (const dirent of dir) {
+            if (!dirent.isDirectory() && dirent.name.endsWith('.png')) {
+                count += 1;
+            }
+        }
+    } finally {
+        try {
+            await dir.close();
+        } catch (error) {
+            const err = error as NodeJS.ErrnoException;
+            if (err?.code !== 'ERR_DIR_CLOSED') {
+                throw error;
+            }
+        }
+    }
+    return count;
+}
+
+async function collectBaselineSnapshotIds(): Promise<string[]> {
+    const aggregation = Baseline.aggregate([
+        { $match: { snapshootId: { $ne: null } } },
+        { $group: { _id: '$snapshootId' } },
+        { $project: { _id: 1 } }
+    ]);
+    const results = await aggregation.exec();
+    return results
+        .map(doc => normalizeId(doc._id))
+        .filter((id): id is string => Boolean(id));
+}
+
+type CheckSnapshotMatch = Record<string, unknown>;
+
+async function collectCheckSnapshotIds(matchFilter: CheckSnapshotMatch = {}) {
+    const buildPipeline = (field: 'baselineId' | 'actualSnapshotId' | 'diffId') => ([
+        { $match: { ...matchFilter, [field]: { $ne: null } } },
+        { $group: { _id: `$${field}` } },
+        { $project: { _id: 1 } }
+    ]);
+
+    const aggregation = Check.aggregate([
+        {
+            $facet: {
+                baselineIds: buildPipeline('baselineId'),
+                actualIds: buildPipeline('actualSnapshotId'),
+                diffIds: buildPipeline('diffId'),
+            }
+        }
+    ]);
+    const [results] = await aggregation.exec();
+
+    const normalizeDocs = (docs?: { _id: unknown }[]) => (docs ?? [])
+        .map((doc) => normalizeId(doc._id))
+        .filter((id): id is string => Boolean(id));
+
+    return {
+        baselineIds: normalizeDocs(results?.baselineIds),
+        actualIds: normalizeDocs(results?.actualIds),
+        diffIds: normalizeDocs(results?.diffIds),
+    };
+}
+
+async function deleteFilesWithLimit(files: string[], limit: number) {
+    let index = 0;
+    let success = 0;
+    const failures: { file: string; reason: unknown }[] = [];
+
+    async function worker() {
+        while (true) {
+            let current: string | undefined;
+            // Extract next filename
+            if (index < files.length) {
+                current = files[index];
+                index += 1;
+            }
+            if (!current) {
+                break;
+            }
+            try {
+                await fsp.unlink(path.join(config.defaultImagesPath, current));
+                success += 1;
+            } catch (error) {
+                failures.push({ file: current, reason: error });
+            }
+        }
+    }
+
+    const workers = Array.from({ length: Math.min(limit, files.length) }, () => worker());
+    await Promise.all(workers);
+    return { success, failures };
 }
 
 export interface HandleOldChecksOptions {
@@ -80,10 +185,7 @@ export async function handleOldChecksTask(
         output.write('> count snapshots');
         const allSnapshotsCountBefore = await Snapshot.countDocuments().exec();
         output.write('> get files data');
-        const allFilesBefore = (await fsp.readdir(config.defaultImagesPath, { withFileTypes: true }))
-            .filter((item: Dirent) => !item.isDirectory())
-            .map((x: Dirent) => x.name)
-            .filter((x: string) => x.includes('.png'));
+        const allFilesBefore = await countPngFiles(config.defaultImagesPath);
 
         output.write('> count old checks');
         const oldChecksCount = await Check.countDocuments({ createdDate: { $lt: trashHoldDate } }).exec();
@@ -95,7 +197,9 @@ export async function handleOldChecksTask(
             { $group: { _id: '$baselineId' } },
             { $project: { _id: 1 } }
         ]).exec();
-        const oldChecksBaselineSnapshotIds = baselineIdResults.map(doc => doc._id);
+        const oldChecksBaselineSnapshotIds = baselineIdResults
+            .map(doc => normalizeId(doc._id))
+            .filter((id): id is string => Boolean(id));
 
         output.write('>>> collect all actualSnapshotId from old Checks ');
         const actualSnapshotIdResults = await Check.aggregate([
@@ -103,7 +207,9 @@ export async function handleOldChecksTask(
             { $group: { _id: '$actualSnapshotId' } },
             { $project: { _id: 1 } }
         ]).exec();
-        const oldChecksActualSnapshotIds = actualSnapshotIdResults.map(doc => doc._id);
+        const oldChecksActualSnapshotIds = actualSnapshotIdResults
+            .map(doc => normalizeId(doc._id))
+            .filter((id): id is string => Boolean(id));
 
         output.write('>>> collect all diffId snapshot IDs from old Checks ');
         const diffIdResults = await Check.aggregate([
@@ -111,7 +217,9 @@ export async function handleOldChecksTask(
             { $group: { _id: '$diffId' } },
             { $project: { _id: 1 } }
         ]).exec();
-        const oldChecksDiffSnapshotIds = diffIdResults.map(doc => doc._id);
+        const oldChecksDiffSnapshotIds = diffIdResults
+            .map(doc => normalizeId(doc._id))
+            .filter((id): id is string => Boolean(id));
 
         output.write('>>> calculate all unique snapshots ids for old Checks ');
 
@@ -157,7 +265,7 @@ export async function handleOldChecksTask(
         const outTable = stringTable.create([
             { item: 'all checks', count: allChecksCountBefore },
             { item: 'all snapshots', count: allSnapshotsCountBefore },
-            { item: 'all files', count: allFilesBefore.length },
+            { item: 'all files', count: allFilesBefore },
             { item: `checks older than: '${options.days}' days`, count: oldChecksCount },
             { item: 'old checks baseline snapshot ids', count: oldChecksBaselineSnapshotIds.length },
             { item: 'old checks actual snapshot ids', count: oldChecksActualSnapshotIds.length },
@@ -195,6 +303,18 @@ export async function handleOldChecksTask(
                 session = null;
             }
 
+            let collectedCheckSnapshotIds: Awaited<ReturnType<typeof collectCheckSnapshotIds>> | null = null;
+            let collectedBaselineSnapshotIds: string[] = [];
+            try {
+                output.write('> collect current snapshot references');
+                collectedCheckSnapshotIds = await collectCheckSnapshotIds({ createdDate: { $gte: trashHoldDate } });
+                collectedBaselineSnapshotIds = await collectBaselineSnapshotIds();
+                output.write('>>> snapshot references collected');
+            } catch (collectError) {
+                output.write('>>> failed to collect snapshot references');
+                throw collectError;
+            }
+
             try {
                 output.write('> remove checks');
                 const checkRemovingResult = useTransactions && session
@@ -202,89 +322,41 @@ export async function handleOldChecksTask(
                     : await Check.deleteMany({ createdDate: { $lt: trashHoldDate } });
                 output.write(`>>> removed: '${checkRemovingResult.deletedCount}'`);
 
-            output.write('> remove snapshots');
+                output.write('> remove snapshots');
 
-                output.write('>> collect data to removing');
-                // NOTE: We get all Baseline snapshots to ensure we DON'T remove them
-                // Baselines are reference/golden images and must be preserved
-                output.write('>>> get all baselines snapshot IDs');
-                // Use aggregation to avoid 16MB distinct limit
-                const baselineAggregation = Baseline.aggregate([
-                    { $match: { snapshootId: { $ne: null } } },
-                    { $group: { _id: '$snapshootId' } },
-                    { $project: { _id: 1 } }
-                ]);
-                if (useTransactions && session) {
-                    baselineAggregation.session(session);
+                if (!collectedCheckSnapshotIds) {
+                    throw new Error('snapshot ids were not collected');
                 }
-                const baselinesSnapshotResults = await baselineAggregation.exec();
-                const baselinesSnapshotIds = baselinesSnapshotResults.map(doc => doc._id);
 
-                output.write('>>> get all checks baseline snapshot IDs');
-                const checksBaselineAggregation = Check.aggregate([
-                    { $match: { baselineId: { $ne: null } } },
-                    { $group: { _id: '$baselineId' } },
-                    { $project: { _id: 1 } }
-                ]);
-                if (useTransactions && session) {
-                    checksBaselineAggregation.session(session);
-                }
-                const checksBaselineResults = await checksBaselineAggregation.exec();
-                const checksBaselineSnapshotIds = checksBaselineResults.map(doc => doc._id);
-
-                output.write('>>> get all checks actual snapshot IDs');
-                const checksActualAggregation = Check.aggregate([
-                    { $match: { actualSnapshotId: { $ne: null } } },
-                    { $group: { _id: '$actualSnapshotId' } },
-                    { $project: { _id: 1 } }
-                ]);
-                if (useTransactions && session) {
-                    checksActualAggregation.session(session);
-                }
-                const checksActualResults = await checksActualAggregation.exec();
-                const checksActualSnapshotIds = checksActualResults.map(doc => doc._id);
+                const checksBaselineSnapshotIds = new Set(collectedCheckSnapshotIds.baselineIds);
+                const checksActualSnapshotIds = new Set(collectedCheckSnapshotIds.actualIds);
+                const baselinesSnapshotIds = new Set(collectedBaselineSnapshotIds);
 
                 output.write('>> remove baselines snapshots');
 
                 output.write('>> remove all old snapshots that not related to new baseline and check items');
+                const deletableBaselineSnapshots = oldChecksBaselineSnapshotIds.filter((id) => {
+                    if (!id) return false;
+                    return !checksBaselineSnapshotIds.has(id)
+                        && !checksActualSnapshotIds.has(id)
+                        && !baselinesSnapshotIds.has(id);
+                });
                 const removedByBaselineSnapshotsResult = useTransactions && session
-                    ? await Snapshot.deleteMany({
-                        $and: [
-                            { _id: { $nin: checksBaselineSnapshotIds } },
-                            { _id: { $nin: checksActualSnapshotIds } },
-                            { _id: { $nin: baselinesSnapshotIds } },
-                            { _id: { $in: oldChecksBaselineSnapshotIds } },
-                        ],
-                    }, { session })
-                    : await Snapshot.deleteMany({
-                        $and: [
-                            { _id: { $nin: checksBaselineSnapshotIds } },
-                            { _id: { $nin: checksActualSnapshotIds } },
-                            { _id: { $nin: baselinesSnapshotIds } },
-                            { _id: { $in: oldChecksBaselineSnapshotIds } },
-                        ],
-                    });
+                    ? await Snapshot.deleteMany({ _id: { $in: deletableBaselineSnapshots } }, { session })
+                    : await Snapshot.deleteMany({ _id: { $in: deletableBaselineSnapshots } });
                 output.write(`>>> removed: '${removedByBaselineSnapshotsResult.deletedCount}'`);
 
                 output.write('>> remove actual snapshots');
                 output.write('>> remove all old snapshots that not related to new baseline and check items');
+                const deletableActualSnapshots = oldChecksActualSnapshotIds.filter((id) => {
+                    if (!id) return false;
+                    return !checksBaselineSnapshotIds.has(id)
+                        && !checksActualSnapshotIds.has(id)
+                        && !baselinesSnapshotIds.has(id);
+                });
                 const removedByActualSnapshotsResult = useTransactions && session
-                    ? await Snapshot.deleteMany({
-                        $and: [
-                            { _id: { $nin: checksBaselineSnapshotIds } },
-                            { _id: { $nin: checksActualSnapshotIds } },
-                            { _id: { $nin: baselinesSnapshotIds } },
-                            { _id: { $in: oldChecksActualSnapshotIds } },
-                        ],
-                    }, { session })
-                    : await Snapshot.deleteMany({
-                        $and: [
-                            { _id: { $nin: checksBaselineSnapshotIds } },
-                            { _id: { $nin: checksActualSnapshotIds } },
-                            { _id: { $nin: baselinesSnapshotIds } },
-                            { _id: { $in: oldChecksActualSnapshotIds } },
-                        ],
-                    });
+                    ? await Snapshot.deleteMany({ _id: { $in: deletableActualSnapshots } }, { session })
+                    : await Snapshot.deleteMany({ _id: { $in: deletableActualSnapshots } });
                 output.write(`>>> removed: '${removedByActualSnapshotsResult.deletedCount}'`);
 
                 output.write('>> remove all old diff snapshots');
@@ -323,15 +395,14 @@ export async function handleOldChecksTask(
                     { $project: { _id: 1 } }
                 ]).exec();
                 const allCurrentSnapshotsFilenames = currentFilenamesResults.map(doc => doc._id as string);
+                const currentSnapshotsSet = new Set(allCurrentSnapshotsFilenames);
 
                 output.write('>> calculate intersection between all current snapshot filenames and old snapshots filenames');
-                const arrayIntersection = (arr1: string[], arr2: string[]) => arr1.filter((x: string) => arr2.includes(x));
-                const filesIntersection = arrayIntersection(allCurrentSnapshotsFilenames, oldSnapshotsUniqueFilenames);
+                const filesIntersection = oldSnapshotsUniqueFilenames.filter((filename) => currentSnapshotsSet.has(filename));
                 output.write(`>> found: ${filesIntersection.length}`);
 
                 output.write('>> calculate filenames to remove');
-                const arrayDiff = (arr1: string[], arr2: string[]) => arr1.filter((x: string) => !arr2.includes(x));
-                let filesToDelete = arrayDiff(oldSnapshotsUniqueFilenames, filesIntersection);
+                let filesToDelete = oldSnapshotsUniqueFilenames.filter((filename) => !currentSnapshotsSet.has(filename));
                 output.write(`>> found: ${filesToDelete.length}`);
 
                 // Re-check current snapshots right before deletion to prevent race condition
@@ -341,30 +412,21 @@ export async function handleOldChecksTask(
                     { $group: { _id: '$filename' } },
                     { $project: { _id: 1 } }
                 ]).exec();
-                const currentSnapshotsBeforeDeletion = revalidateFilenamesResults.map(doc => doc._id as string);
-                filesToDelete = filesToDelete.filter((filename: string) => !currentSnapshotsBeforeDeletion.includes(filename));
+                const currentSnapshotsBeforeDeletion = new Set(revalidateFilenamesResults.map(doc => doc._id as string));
+                filesToDelete = filesToDelete.filter((filename: string) => !currentSnapshotsBeforeDeletion.has(filename));
                 output.write(`>> validated: ${filesToDelete.length} files safe to delete`);
 
                 output.write(`>> remove these files: ${filesToDelete.length}`);
-                const fileDeleteResults = await Promise.allSettled(
-                    filesToDelete.map((filename: string) =>
-                        fsp.unlink(path.join(config.defaultImagesPath, filename))
-                    )
-                );
+                const { success, failures } = await deleteFilesWithLimit(filesToDelete, 25);
 
-                const successCount = fileDeleteResults.filter(r => r.status === 'fulfilled').length;
-                const failedResults = fileDeleteResults.filter(r => r.status === 'rejected');
-
-                if (failedResults.length > 0) {
-                    output.write(`>> warning: ${failedResults.length} files failed to delete:`);
-                    failedResults.forEach((result) => {
-                        if (result.status === 'rejected') {
-                            output.write(`   - ${filesToDelete[fileDeleteResults.indexOf(result)]}: ${result.reason}`);
-                        }
+                if (failures.length > 0) {
+                    output.write(`>> warning: ${failures.length} files failed to delete:`);
+                    failures.forEach((failure) => {
+                        output.write(`   - ${failure.file}: ${failure.reason}`);
                     });
                 }
 
-                output.write(`>> done: ${successCount} files deleted successfully, ${failedResults.length} failed`);
+                output.write(`>> done: ${success} files deleted successfully, ${failures.length} failed`);
 
                 output.write('STAGE #3 Calculate common stats after Removing');
 
@@ -373,15 +435,12 @@ export async function handleOldChecksTask(
                 output.write('> count snapshots');
                 const allSnapshotsCountAfter = await Snapshot.countDocuments().exec();
                 output.write('> get files data');
-                const allFilesAfter = (await fsp.readdir(config.defaultImagesPath, { withFileTypes: true }))
-                    .filter((item: Dirent) => !item.isDirectory())
-                    .map((x: Dirent) => x.name)
-                    .filter((x: string) => x.includes('.png'));
+                const allFilesAfter = await countPngFiles(config.defaultImagesPath);
 
                 const outTableAfter = stringTable.create([
                     { item: 'all checks', count: allChecksCountAfter },
                     { item: 'all snapshots', count: allSnapshotsCountAfter },
-                    { item: 'all files', count: allFilesAfter.length },
+                    { item: 'all files', count: allFilesAfter },
                 ]);
 
                 output.write(outTableAfter);
