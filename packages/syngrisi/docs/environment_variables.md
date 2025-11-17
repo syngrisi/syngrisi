@@ -95,3 +95,7 @@
 15. `SYNGRISI_HTTP_LOG`
     - Description: Enable HTTP logs, if `true` logging all HTTP request to `./logs/http.log` file
     - Default Value: `false`
+
+16. `SYNGRISI_NPM_TAG`
+    - Description: npm tag or version used during Docker build to install `@syngrisi/syngrisi` (e.g. `latest`, `2.3.0`)
+    - Default Value: `latest`
