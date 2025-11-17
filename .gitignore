@@ -18,3 +18,4 @@ debug.html
 .tmp_
 lerna-debug.log
 chrome
+*.tsbuildinfo
