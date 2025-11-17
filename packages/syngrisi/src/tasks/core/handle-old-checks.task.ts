@@ -4,7 +4,7 @@ import { Dirent } from 'fs';
 // @ts-ignore
 import st from 'string-table';
 import path from 'path';
-import mongoose, { Schema } from 'mongoose';
+import mongoose from 'mongoose';
 import { config } from '@config';
 import { subDays, dateToISO8601 } from '@utils';
 import { IOutputWriter } from '../lib/output-writer';
@@ -16,19 +16,6 @@ import {
 
 interface StringTable {
     create(data: Record<string, string | number>[]): string;
-}
-
-interface CheckLean {
-    _id: Schema.Types.ObjectId;
-    baselineId?: Schema.Types.ObjectId;
-    actualSnapshotId?: Schema.Types.ObjectId;
-    diffId?: Schema.Types.ObjectId;
-    createdDate: Date;
-}
-
-interface SnapshotLean {
-    _id: Schema.Types.ObjectId;
-    filename?: string;
 }
 
 const stringTable: StringTable = st;
@@ -50,6 +37,19 @@ export interface HandleOldChecksOptions {
  * Baselines represent the reference/golden images and should not be lost.
  * Only Checks and their associated Snapshots (actual, diff) are removed.
  * Baseline snapshots are preserved if they are still referenced by any Baseline.
+ *
+ * PERFORMANCE OPTIMIZATIONS:
+ * - Uses countDocuments() instead of loading full collections for statistics
+ * - Uses distinct() queries to efficiently collect unique IDs without loading full documents
+ * - Only loads required fields (projections) when full documents are needed
+ * - Processes file operations in batches to avoid memory spikes
+ * - Reuses computed data to avoid redundant queries
+ *
+ * RECOMMENDED DATABASE INDEXES for optimal performance:
+ * - Check.createdDate (for date-based queries)
+ * - Check.baselineId, Check.actualSnapshotId, Check.diffId (for distinct queries)
+ * - Snapshot.filename (for distinct filename queries)
+ * - Baseline.snapshootId (for baseline preservation checks)
  *
  * @param options - Task options
  * @param output - Output writer for streaming results
@@ -74,61 +74,79 @@ export async function handleOldChecksTask(
 
         const trashHoldDate = subDays(new Date(), options.days);
 
-        output.write('> get all checks data');
-        const allChecksBefore = await Check.find().lean().exec();
-        output.write('> get snapshots data');
-        const allSnapshotsBefore = await Snapshot.find().lean().exec();
+        output.write('> count all checks');
+        const allChecksCountBefore = await Check.countDocuments().exec();
+        output.write('> count snapshots');
+        const allSnapshotsCountBefore = await Snapshot.countDocuments().exec();
         output.write('> get files data');
         const allFilesBefore = (await fsp.readdir(config.defaultImagesPath, { withFileTypes: true }))
             .filter((item: Dirent) => !item.isDirectory())
             .map((x: Dirent) => x.name)
             .filter((x: string) => x.includes('.png'));
 
-        output.write('> get old checks data');
-        const oldChecks = await Check.find({ createdDate: { $lt: trashHoldDate } }).lean().exec() as CheckLean[];
+        output.write('> count old checks');
+        const oldChecksCount = await Check.countDocuments({ createdDate: { $lt: trashHoldDate } }).exec();
 
         output.write('>>> collect all baselineId snapshot IDs from old Checks ');
-        const oldChecksBaselineSnapshotIds = oldChecks.map((x: CheckLean) => x.baselineId).filter((x): x is Schema.Types.ObjectId => !!x);
+        const oldChecksBaselineSnapshotIds = await Check.distinct('baselineId', { createdDate: { $lt: trashHoldDate } }).exec();
 
         output.write('>>> collect all actualSnapshotId from old Checks ');
-        const oldChecksActualSnapshotIds = oldChecks.map((x: CheckLean) => x.actualSnapshotId).filter((x): x is Schema.Types.ObjectId => !!x);
+        const oldChecksActualSnapshotIds = await Check.distinct('actualSnapshotId', { createdDate: { $lt: trashHoldDate } }).exec();
 
         output.write('>>> collect all diffId snapshot IDs from old Checks ');
-        const oldChecksDiffSnapshotIds = oldChecks.map((x: CheckLean) => x.diffId).filter((x): x is Schema.Types.ObjectId => !!x);
+        const oldChecksDiffSnapshotIds = await Check.distinct('diffId', { createdDate: { $lt: trashHoldDate } }).exec();
 
         output.write('>>> calculate all unique snapshots ids for old Checks ');
 
-        const allOldSnapshotsUniqueIds = Array.from(new Set([...oldChecksBaselineSnapshotIds, ...oldChecksActualSnapshotIds, ...oldChecksDiffSnapshotIds]))
-            .map((x: Schema.Types.ObjectId) => x.valueOf());
+        const allOldSnapshotsUniqueIds = Array.from(new Set([
+            ...oldChecksBaselineSnapshotIds.filter(x => x != null),
+            ...oldChecksActualSnapshotIds.filter(x => x != null),
+            ...oldChecksDiffSnapshotIds.filter(x => x != null)
+        ]));
 
-        output.write('>>> collect all old snapshots');
-        const oldSnapshots = await Snapshot.find({ _id: { $in: allOldSnapshotsUniqueIds } }).lean() as SnapshotLean[];
+        output.write('>>> collect filenames from old snapshots');
+        // Only load filenames, not entire snapshot documents
+        const oldSnapshotsData = await Snapshot.find(
+            { _id: { $in: allOldSnapshotsUniqueIds } },
+            { filename: 1 }
+        ).lean().exec() as { filename?: string }[];
 
         // Calculate total size of old snapshot files
         output.write('>>> calculate total size of old snapshot files');
-        const oldSnapshotsFilenames = Array.from(new Set(oldSnapshots.map((x: SnapshotLean) => x.filename).filter((f): f is string => !!f)));
+        const oldSnapshotsFilenames = Array.from(new Set(oldSnapshotsData.map(x => x.filename).filter((f): f is string => !!f)));
         let totalOldFilesSize = 0;
-        for (const filename of oldSnapshotsFilenames) {
-            try {
-                const filePath = path.join(config.defaultImagesPath, filename);
-                const stats = await fsp.stat(filePath);
-                totalOldFilesSize += stats.size;
-            } catch (error) {
-                // File might not exist, skip it
+
+        // Process files in batches to avoid too many concurrent operations
+        const BATCH_SIZE = 100;
+        for (let i = 0; i < oldSnapshotsFilenames.length; i += BATCH_SIZE) {
+            const batch = oldSnapshotsFilenames.slice(i, i + BATCH_SIZE);
+            const batchResults = await Promise.allSettled(
+                batch.map(async (filename) => {
+                    const filePath = path.join(config.defaultImagesPath, filename);
+                    const stats = await fsp.stat(filePath);
+                    return stats.size;
+                })
+            );
+
+            for (const result of batchResults) {
+                if (result.status === 'fulfilled') {
+                    totalOldFilesSize += result.value;
+                }
+                // Silently skip files that don't exist
             }
         }
         const totalOldFilesSizeGB = (totalOldFilesSize / (1024 * 1024 * 1024)).toFixed(3);
 
         const outTable = stringTable.create([
-            { item: 'all checks', count: allChecksBefore.length },
-            { item: 'all snapshots', count: allSnapshotsBefore.length },
+            { item: 'all checks', count: allChecksCountBefore },
+            { item: 'all snapshots', count: allSnapshotsCountBefore },
             { item: 'all files', count: allFilesBefore.length },
-            { item: `checks older than: '${options.days}' days`, count: oldChecks.length },
+            { item: `checks older than: '${options.days}' days`, count: oldChecksCount },
             { item: 'old checks baseline snapshot ids', count: oldChecksBaselineSnapshotIds.length },
             { item: 'old checks actual snapshot ids', count: oldChecksActualSnapshotIds.length },
             { item: 'old checks diff snapshot ids', count: oldChecksDiffSnapshotIds.length },
             { item: 'all old snapshots unique Ids', count: allOldSnapshotsUniqueIds.length },
-            { item: 'all old snapshots', count: oldSnapshots.length },
+            { item: 'old snapshot filenames', count: oldSnapshotsFilenames.length },
             { item: 'total size of old files', count: `${totalOldFilesSizeGB} GB` },
         ]);
 
@@ -254,12 +272,12 @@ export async function handleOldChecksTask(
                 }
 
                 output.write('> remove files');
-                output.write('>>> collect all old snapshots filenames');
-                const oldSnapshotsUniqueFilenames = Array.from(new Set(oldSnapshots.map((x: SnapshotLean) => x.filename).filter((f): f is string => !!f)));
+                output.write('>>> using previously collected old snapshots filenames');
+                const oldSnapshotsUniqueFilenames = oldSnapshotsFilenames;
                 output.write(`>> found: ${oldSnapshotsUniqueFilenames.length}`);
 
                 output.write('> get all current snapshots filenames');
-                const allCurrentSnapshotsFilenames = await Snapshot.find().distinct('filename').exec() as string[];
+                const allCurrentSnapshotsFilenames = await Snapshot.distinct('filename').exec() as string[];
 
                 output.write('>> calculate intersection between all current snapshot filenames and old snapshots filenames');
                 const arrayIntersection = (arr1: string[], arr2: string[]) => arr1.filter((x: string) => arr2.includes(x));
@@ -273,7 +291,7 @@ export async function handleOldChecksTask(
 
                 // Re-check current snapshots right before deletion to prevent race condition
                 output.write('>> re-validating files to delete to prevent race condition');
-                const currentSnapshotsBeforeDeletion = await Snapshot.find().distinct('filename').exec() as string[];
+                const currentSnapshotsBeforeDeletion = await Snapshot.distinct('filename').exec() as string[];
                 filesToDelete = filesToDelete.filter((filename: string) => !currentSnapshotsBeforeDeletion.includes(filename));
                 output.write(`>> validated: ${filesToDelete.length} files safe to delete`);
 
@@ -289,7 +307,7 @@ export async function handleOldChecksTask(
 
                 if (failedResults.length > 0) {
                     output.write(`>> warning: ${failedResults.length} files failed to delete:`);
-                    failedResults.forEach((result, index) => {
+                    failedResults.forEach((result) => {
                         if (result.status === 'rejected') {
                             output.write(`   - ${filesToDelete[fileDeleteResults.indexOf(result)]}: ${result.reason}`);
                         }
@@ -300,10 +318,10 @@ export async function handleOldChecksTask(
 
                 output.write('STAGE #3 Calculate common stats after Removing');
 
-                output.write('> get all checks data');
-                const allChecksAfter = await Check.find().lean().exec();
-                output.write('> get snapshots data');
-                const allSnapshotsAfter = await Snapshot.find().lean().exec();
+                output.write('> count all checks');
+                const allChecksCountAfter = await Check.countDocuments().exec();
+                output.write('> count snapshots');
+                const allSnapshotsCountAfter = await Snapshot.countDocuments().exec();
                 output.write('> get files data');
                 const allFilesAfter = (await fsp.readdir(config.defaultImagesPath, { withFileTypes: true }))
                     .filter((item: Dirent) => !item.isDirectory())
@@ -311,8 +329,8 @@ export async function handleOldChecksTask(
                     .filter((x: string) => x.includes('.png'));
 
                 const outTableAfter = stringTable.create([
-                    { item: 'all checks', count: allChecksAfter.length },
-                    { item: 'all snapshots', count: allSnapshotsAfter.length },
+                    { item: 'all checks', count: allChecksCountAfter },
+                    { item: 'all snapshots', count: allSnapshotsCountAfter },
                     { item: 'all files', count: allFilesAfter.length },
                 ]);
 
