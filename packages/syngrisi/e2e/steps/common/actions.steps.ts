@@ -278,6 +278,16 @@ When(/I wait for "(.+)" second(?:s)?/, async ({ page, testData }, rawSeconds: st
   await page.waitForTimeout(seconds * 1000);
 });
 
+When(
+  'I wait up to {int} seconds for javascript condition:',
+  async ({ page }: { page: Page }, timeoutSeconds: number, js: string) => {
+    const trimmedJs = js.trim();
+    const expression = trimmedJs.includes('return') ? trimmedJs : `return (${trimmedJs});`;
+    const wrappedFunction = `(() => { ${expression} })()`;
+    await page.waitForFunction(wrappedFunction, { timeout: timeoutSeconds * 1000 });
+  }
+);
+
 /**
  * Step definition: `When I wait {number} second(s)`
  *
