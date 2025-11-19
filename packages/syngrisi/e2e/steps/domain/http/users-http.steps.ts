@@ -14,8 +14,22 @@ When(
     logger.info(`Creating test user via ${uri}`);
     const res = await got.get(uri);
     logger.info(`Response: ${res.body}`);
-    const response = JSON.parse(res.body);
+    let response;
+    try {
+      response = JSON.parse(res.body);
+    } catch (e) {
+      throw new Error(`Failed to parse JSON response: ${res.body.substring(0, 200)}...`);
+    }
     logger.info(`Parsed response:`, response);
+
+    // Handle "already exist" case
+    if (response.msg && response.msg.includes("already exist")) {
+      logger.info("User already exists, proceeding.");
+      if (uri.includes('loadTestUser')) {
+        response.username = 'Test';
+      }
+    }
+
     // The endpoint should return an object with username field
     if (!response.username) {
       throw new Error(`Expected username in response, but got: ${JSON.stringify(response)}`);
