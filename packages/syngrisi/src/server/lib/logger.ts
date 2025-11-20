@@ -44,31 +44,35 @@ function getScriptLine(): string {
 }
 
 function createWinstonLogger(opts: LoggerOptions): WinstonLogger {
-    return winston.createLogger({
-        transports: [
-            new winston.transports.Console({
-                level: logLevel || 'silly',
-                format: winston.format.combine(
-                    winston.format.colorize(),
-                    winston.format.timestamp(),
-                    winston.format.ms(),
-                    winston.format.metadata(),
-                    winston.format.printf((info) => {
-                        const user = info.metadata.user ? chalk.blue(` <${info.metadata.user}>`) : '';
-                        const ref = info.metadata.ref ? chalk.gray(` ${info.metadata.ref}`) : '';
-                        const msgType = info.metadata.msgType ? ` ${info.metadata.msgType}` : '';
-                        const itemType = info.metadata.itemType ? chalk.magenta(` ${info.metadata.itemType}`) : '';
-                        const scope = info.metadata.scope ? chalk.magenta(` [${info.metadata.scope}] `) : chalk.magenta(` [${getScriptLine()}] `);
-                        const msg = typeof info.message === 'object'
-                            ? `\n${JSON.stringify(info.message, null, 2)}`
-                            : info.message;
+    const transports: winston.transport[] = [
+        new winston.transports.Console({
+            level: logLevel || 'silly',
+            format: winston.format.combine(
+                winston.format.colorize(),
+                winston.format.timestamp(),
+                winston.format.ms(),
+                winston.format.metadata(),
+                winston.format.printf((info) => {
+                    const user = info.metadata.user ? chalk.blue(` <${info.metadata.user}>`) : '';
+                    const ref = info.metadata.ref ? chalk.gray(` ${info.metadata.ref}`) : '';
+                    const msgType = info.metadata.msgType ? ` ${info.metadata.msgType}` : '';
+                    const itemType = info.metadata.itemType ? chalk.magenta(` ${info.metadata.itemType}`) : '';
+                    const scope = info.metadata.scope ? chalk.magenta(` [${info.metadata.scope}] `) : chalk.magenta(` [${getScriptLine()}] `);
+                    const msg = typeof info.message === 'object'
+                        ? `\n${JSON.stringify(info.message, null, 2)}`
+                        : info.message;
 
-                        return `${info.level} ${scope}${formatISOToDateTime(info.metadata.timestamp)} `
-                            + `${info.metadata.ms}${user}${ref}${msgType}${itemType} '${msg}'`;
-                    }),
-                    winston.format.padLevels(),
-                ),
-            }),
+                    return `${info.level} ${scope}${formatISOToDateTime(info.metadata.timestamp)} `
+                        + `${info.metadata.ms}${user}${ref}${msgType}${itemType} '${msg}'`;
+                }),
+                winston.format.padLevels(),
+            ),
+        }),
+    ];
+
+    // Skip Mongo transport in test mode to avoid polluting vrslogs with framework diagnostics
+    if (!env.SYNGRISI_TEST_MODE) {
+        transports.push(
             new winston.transports.MongoDB({
                 level: logLevel || 'debug',
                 format: winston.format.combine(
@@ -82,8 +86,10 @@ function createWinstonLogger(opts: LoggerOptions): WinstonLogger {
                 db: opts.dbConnectionString,
                 collection: 'vrslogs',
             }),
-        ],
-    });
+        );
+    }
+
+    return winston.createLogger({ transports });
 }
 
 class Logger {

@@ -66,32 +66,46 @@ export default function useInfinityScroll(
     ) as IFirstPagesQuery<ILog>;
 
 
-    const firstPageData: { [key: string]: string | undefined } = useMemo(() => ({
-        newestItemsFilterValue: (newestItemsFilterKey && firstPageQuery?.data?.results?.length)
-            ? firstPageQuery?.data?.results[0][newestItemsFilterKey]
-            : undefined,
-        totalPages: firstPageQuery?.data?.totalPages,
-        totalResults: firstPageQuery?.data?.totalResults,
-        timestamp: firstPageQuery?.data?.timestamp,
-    }), [firstPageQuery?.data?.timestamp]);
+    const firstPageData: { [key: string]: string | undefined } = useMemo(() => {
+        const getTimestamp = () => {
+            if (!firstPageQuery?.data?.timestamp) return undefined;
+            const ts = String(firstPageQuery.data.timestamp);
+            // Handle the custom high-precision timestamp format from paginate plugin
+            // which concatenates ms + 3 digits of ns, resulting in a 16-digit number.
+            // We truncate it back to 13 digits (ms) to get a valid Date.
+            const ms = ts.length > 13 ? parseInt(ts.substring(0, 13), 10) : firstPageQuery.data.timestamp;
+            return new Date(ms).toISOString();
+        };
+
+        return {
+            newestItemsFilterValue: newestItemsFilterKey
+                ? (firstPageQuery?.data?.results?.length
+                    ? firstPageQuery?.data?.results[0][newestItemsFilterKey]
+                    : getTimestamp())
+                : undefined,
+            totalPages: firstPageQuery?.data?.totalPages,
+            totalResults: firstPageQuery?.data?.totalResults,
+            timestamp: firstPageQuery?.data?.timestamp,
+        };
+    }, [firstPageQuery?.data?.timestamp]);
 
     const newestItemsFilter = (newestItemsFilterKey && firstPageData.newestItemsFilterValue)
         ? { [newestItemsFilterKey]: { $lte: firstPageData.newestItemsFilterValue } }
         : {};
 
     const newRequestFilter = useMemo(() => {
-            return {
-                $and: [
-                    baseFilterObj,
-                    newestItemsFilter,
-                    // { [newestItemsFilterKey]: { $lte: new Date(firstPageData.newestItemsFilterValue!) } },
-                    // { [newestItemsFilterKey]: { $lte: firstPageData.newestItemsFilterValue! } },
-                    filterObj || {},
-                ],
-            };
-        }, [
-            firstPageData.timestamp,
-        ]
+        return {
+            $and: [
+                baseFilterObj,
+                newestItemsFilter,
+                // { [newestItemsFilterKey]: { $lte: new Date(firstPageData.newestItemsFilterValue!) } },
+                // { [newestItemsFilterKey]: { $lte: firstPageData.newestItemsFilterValue! } },
+                filterObj || {},
+            ],
+        };
+    }, [
+        firstPageData.timestamp,
+    ]
     );
 
     const infinityQuery: IPagesQuery<ILog> = useInfiniteQuery(

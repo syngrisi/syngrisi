@@ -48,9 +48,9 @@ export default function AdminLogs() {
     const { firstPageQuery, infinityQuery, newestItemsQuery } = useInfinityScroll({
         resourceName: 'logs',
         filterObj: query.filter,
-        newestItemsFilterKey: undefined, // Disable newestItemsFilter for logs to allow all items regardless of timestamp
+        newestItemsFilterKey: 'timestamp',
         sortBy: query.sortBy || '',
-        infinityScrollLimit: 100, // Increased limit to ensure all logs are loaded on first page
+        infinityScrollLimit: 20,
     });
     useNavProgressFetchEffect(infinityQuery.isFetching);
 

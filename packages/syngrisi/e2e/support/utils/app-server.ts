@@ -36,17 +36,47 @@ function getCid(): number {
   return parseInt(process.env.TEST_PARALLEL_INDEX || '0', 10);
 }
 
+function resolveTestPaths(cid: number) {
+  const databaseName = 'SyngrisiDbTest';
+  const requestedDbUri =
+    process.env.SYNGRISI_DB_URI ||
+    env.SYNGRISI_DB_URI ||
+    '';
+  const requestedImagesPath =
+    process.env.SYNGRISI_IMAGES_PATH ||
+    env.SYNGRISI_IMAGES_PATH ||
+    '';
+
+  const enforcedDbUri = `mongodb://localhost/${databaseName}${cid}`;
+  const enforcedImagesPath = path.resolve(REPO_ROOT, 'baselinesTest', String(cid));
+
+  if (requestedDbUri && requestedDbUri !== enforcedDbUri) {
+    backendLogger.warn(
+      `Overriding provided SYNGRISI_DB_URI (${requestedDbUri}) with test database ${enforcedDbUri} to isolate e2e runs`,
+    );
+  }
+
+  if (requestedImagesPath && requestedImagesPath !== enforcedImagesPath) {
+    backendLogger.warn(
+      `Overriding provided SYNGRISI_IMAGES_PATH (${requestedImagesPath}) with test path ${enforcedImagesPath} to isolate e2e runs`,
+    );
+  }
+
+  return {
+    connectionString: enforcedDbUri,
+    defaultImagesPath: enforcedImagesPath,
+  };
+}
+
 export async function launchAppServer(
   options: LaunchAppServerOptions = {},
 ): Promise<RunningAppServer> {
   const { env: additionalEnv, cid: providedCid } = options;
   const cid = providedCid ?? getCid();
 
-  const databaseName = 'SyngrisiDbTest';
   const cmdPath = path.resolve(REPO_ROOT);
   const cidPort = 3002 + cid;
   const runtimeEnv = process.env;
-  const dockerMode = runtimeEnv.DOCKER ?? env.DOCKER;
   const backendHost = runtimeEnv.E2E_BACKEND_HOST ?? env.E2E_BACKEND_HOST;
   const baseURL = `http://${backendHost}:${cidPort}`;
 
@@ -59,14 +89,7 @@ export async function launchAppServer(
 
   const nodeEnv = (additionalEnv?.NODE_ENV || runtimeEnv.NODE_ENV || 'test') as string;
 
-  const defaultConnectionString =
-    runtimeEnv.SYNGRISI_DB_URI ||
-    env.SYNGRISI_DB_URI ||
-    `mongodb://localhost/${databaseName}${cid}`;
-  const defaultImagesPath =
-    runtimeEnv.SYNGRISI_IMAGES_PATH ||
-    env.SYNGRISI_IMAGES_PATH ||
-    path.resolve(REPO_ROOT, 'baselinesTest', String(cid));
+  const { connectionString: defaultConnectionString, defaultImagesPath } = resolveTestPaths(cid);
 
   const spawnEnv: Record<string, string> = {
     ...runtimeEnv,
@@ -80,35 +103,17 @@ export async function launchAppServer(
     ...additionalEnv,
   };
 
-  // Emit debug info to stdout to trace per-worker runtime configuration
-  console.log(
-    JSON.stringify(
-      {
-        scope: 'launchAppServer',
-        cid,
-        cidPort,
-        connectionString: spawnEnv.SYNGRISI_DB_URI ?? defaultConnectionString,
-        imagesPath: spawnEnv.SYNGRISI_IMAGES_PATH ?? defaultImagesPath,
-        authEnabled: spawnEnv.SYNGRISI_AUTH,
-        testMode: spawnEnv.SYNGRISI_TEST_MODE ?? runtimeEnv.SYNGRISI_TEST_MODE,
-        disableFirstRun: spawnEnv.SYNGRISI_DISABLE_FIRST_RUN,
-        testParallelIndex: process.env.TEST_PARALLEL_INDEX,
-      },
-      null,
-      2,
-    ),
-  );
 
-  if (dockerMode !== '1') {
-    spawnEnv.SYNGRISI_DB_URI = defaultConnectionString;
-    spawnEnv.SYNGRISI_IMAGES_PATH = defaultImagesPath;
-  }
+
+  // Always force test DB and baselines path for e2e isolation (even if user .env points elsewhere)
+  spawnEnv.SYNGRISI_DB_URI = defaultConnectionString;
+  spawnEnv.SYNGRISI_IMAGES_PATH = defaultImagesPath;
 
   const nodePath = process.env.SYNGRISI_TEST_SERVER_NODE_PATH || process.execPath;
-  
+
   let command: string;
   let args: string[];
-  
+
   if (spawnEnv.SYNGRISI_COVERAGE === 'true') {
     command = 'c8';
     args = [nodePath, serverScriptPath, `syngrisi_test_server_${cid}`];
@@ -209,7 +214,7 @@ async function terminateProcess(child: Child | undefined): Promise<void> {
 export function stopServerProcess(): void {
   const { execSync } = require('child_process');
   const cid = getCid();
-  
+
   try {
     if (env.DOCKER === '1') {
       execSync('docker-compose stop || true', { stdio: 'ignore' });

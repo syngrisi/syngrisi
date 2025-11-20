@@ -2,6 +2,7 @@ import { AutoCleanupScheduler } from './autoCleanupScheduler';
 import { handleOldChecksTask, removeOldLogsTask } from '@/tasks/core';
 import { LoggerOutputWriter } from '@/tasks/lib/output-writer';
 
+
 const checksScheduler = new AutoCleanupScheduler({
     settingName: 'auto_remove_old_checks',
     defaultDays: 365,
