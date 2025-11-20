@@ -17,7 +17,24 @@ export const authorization = (type: string) => {
     const types: { [key: string]: (req: any, res: any, next: NextFunction) => any } = {
         admin: catchAsync(async (req: ExtRequest, res: Response, next: NextFunction) => {
             const AppSettings = await appSettings;
-            if (!(await AppSettings.isAuthEnabled())) {
+            const authEnabled = await AppSettings.isAuthEnabled();
+            log.info(`authorization check`, {
+                type,
+                user: req.user?.username,
+                role: req.user?.role,
+                authEnabled,
+            });
+            // Emit to stdout for easier debugging in test runs
+            console.log(
+                JSON.stringify({
+                    scope: 'authorization',
+                    type,
+                    user: req.user?.username,
+                    role: req.user?.role,
+                    authEnabled,
+                })
+            );
+            if (!authEnabled) {
                 return next();
             }
             if (req.user?.role === 'admin') {
@@ -31,7 +48,23 @@ export const authorization = (type: string) => {
             const AppSettings = await appSettings;
 
             // @ts-ignore
-            if (!(await AppSettings.isAuthEnabled())) {
+            const authEnabled = await AppSettings.isAuthEnabled();
+            log.info(`authorization check`, {
+                type,
+                user: req.user?.username,
+                role: req.user?.role,
+                authEnabled,
+            });
+            console.log(
+                JSON.stringify({
+                    scope: 'authorization',
+                    type,
+                    user: req.user?.username,
+                    role: req.user?.role,
+                    authEnabled,
+                })
+            );
+            if (!authEnabled) {
                 return next();
             }
             if (req.user?.role === 'admin') {

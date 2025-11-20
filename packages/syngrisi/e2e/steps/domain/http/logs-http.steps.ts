@@ -26,25 +26,22 @@ When(
     const httpAgent = new http.Agent({ keepAlive: false });
     const httpsAgent = new https.Agent({ keepAlive: false });
 
-    for (let i = 0; i < total; i += chunkSize) {
-      const chunk = Array.from({ length: Math.min(chunkSize, total - i) }, (_, j) => i + j);
+    for (let i = 0; i < total; i++) {
       try {
-        await Promise.all(chunk.map(idx =>
-          got.post(uri, {
-            json: { ...params, message: params.message?.replace(/\$/g, String(idx)) || `Message ${idx}` },
-            retry: { limit: 5, methods: ['POST'] },
-            agent: {
-              http: httpAgent,
-              https: httpsAgent
-            }
-          }).json()
-        ));
+        await got.post(uri, {
+          json: { ...params, message: params.message?.replace(/\$/g, String(i)) || `Message ${i}` },
+          retry: { limit: 5, methods: ['POST'] },
+          agent: {
+            http: httpAgent,
+            https: httpsAgent
+          }
+        }).json();
       } catch (e: any) {
-        logger.error(`Failed to create log message chunk ${i}: ${e.message}`);
+        logger.error(`Failed to create log message ${i}: ${e.message}`);
         throw e;
       }
       // Add a delay to allow server to process
-      await new Promise(resolve => setTimeout(resolve, 300));
+      await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
     logger.info(`Created ${num} log messages`);

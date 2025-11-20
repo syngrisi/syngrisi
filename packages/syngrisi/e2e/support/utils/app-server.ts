@@ -9,7 +9,7 @@ import { createLogger } from "@lib/logger";
 
 const REPO_ROOT = resolveRepoRoot();
 
-const backendLogger = createLogger('backend', { fileLevel: 'debug', consoleLevel: 'error' });
+const backendLogger = createLogger('backend', { fileLevel: 'debug', consoleLevel: 'info' });
 
 type Child = ReturnType<typeof spawn>;
 
@@ -73,10 +73,31 @@ export async function launchAppServer(
     NODE_ENV: nodeEnv,
     SYNGRISI_DISABLE_FIRST_RUN: disableFirstRun,
     SYNGRISI_AUTH: authEnabled,
+    // Preserve the requested value even if dotenv overwrites SYNGRISI_AUTH inside the server process
+    SYNGRISI_AUTH_OVERRIDE: authEnabled,
     SYNGRISI_APP_PORT: String(cidPort),
     SYNGRISI_COVERAGE: coverageFlag === 'true' ? 'true' : 'false',
     ...additionalEnv,
   };
+
+  // Emit debug info to stdout to trace per-worker runtime configuration
+  console.log(
+    JSON.stringify(
+      {
+        scope: 'launchAppServer',
+        cid,
+        cidPort,
+        connectionString: spawnEnv.SYNGRISI_DB_URI ?? defaultConnectionString,
+        imagesPath: spawnEnv.SYNGRISI_IMAGES_PATH ?? defaultImagesPath,
+        authEnabled: spawnEnv.SYNGRISI_AUTH,
+        testMode: spawnEnv.SYNGRISI_TEST_MODE ?? runtimeEnv.SYNGRISI_TEST_MODE,
+        disableFirstRun: spawnEnv.SYNGRISI_DISABLE_FIRST_RUN,
+        testParallelIndex: process.env.TEST_PARALLEL_INDEX,
+      },
+      null,
+      2,
+    ),
+  );
 
   if (dockerMode !== '1') {
     spawnEnv.SYNGRISI_DB_URI = defaultConnectionString;
@@ -162,7 +183,8 @@ function startBackendLogCapture(child: Child): () => string {
     const text = String(data || "");
     if (!text) return;
     chunks.push(text);
-    if (chunks.length > 200) chunks.shift();
+    // keep more lines to aid debugging parallel test runs
+    if (chunks.length > 1000) chunks.shift();
     backendLogger.info(text.trim());
   };
   child.stdout?.on("data", record);

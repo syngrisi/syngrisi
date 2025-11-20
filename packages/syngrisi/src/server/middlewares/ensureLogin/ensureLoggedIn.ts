@@ -51,11 +51,13 @@ const handleBasicAuth = async (req: ExtRequest): Promise<any> => {
         msgType: 'AUTH_API',
     };
 
+    const AppSettings = await appSettings;
+    const authEnabled = process.env.SYNGRISI_AUTH_OVERRIDE === 'true' || await AppSettings.isAuthEnabled();
+
     if (req.isAuthenticated()) {
         return { type: 'success', status: 200 };
     }
-    const AppSettings = await appSettings;
-    if (!(await AppSettings.isAuthEnabled())) {
+    if (!authEnabled) {
         const guest = await User.findOne({ username: 'Guest' });
         const result = new Promise((resolve) => {
             req.logIn(guest, (err: any) => {
@@ -86,7 +88,7 @@ const handleBasicAuth = async (req: ExtRequest): Promise<any> => {
         value: '',
         user: null,
     };
-    if ((await AppSettings.isAuthEnabled())
+    if (authEnabled
         && ((await AppSettings.isFirstRun()))
         && !env.SYNGRISI_DISABLE_FIRST_RUN
     ) {
@@ -97,7 +99,7 @@ const handleBasicAuth = async (req: ExtRequest): Promise<any> => {
         return result;
     }
 
-    if (await AppSettings.isAuthEnabled()) {
+    if (authEnabled) {
         log.info(`user is not authenticated, will redirected - ${req.originalUrl}`, logOpts);
 
         result.type = 'redirect';
