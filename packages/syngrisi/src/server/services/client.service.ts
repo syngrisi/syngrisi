@@ -1,15 +1,9 @@
-import fs, { promises as fsp } from 'fs';
-import { hashSync } from 'hasha';
-import { Snapshot, Check, Test, App, Baseline, CheckDocument } from '@models';
-import { removeEmptyProperties, waitUntil, buildIdentObject, calculateAcceptedStatus, ident, errMsg, ApiError } from '@utils';
-import { updateItemDate, createTest, createItemIfNotExistAsync, createRunIfNotExist, createSuiteIfNotExist } from '@lib/dbItems';
-import { config } from '@config';
+import { Snapshot, Check, App, Baseline, CheckDocument } from '@models';
+import { buildIdentObject, calculateAcceptedStatus, ident, errMsg, ApiError } from '@utils';
+import { updateItemDate } from '@lib/dbItems';
 import { prettyCheckParams } from '@utils';
-import { getDiff } from '@lib/сomparison';
 import log from "@logger";
 import { LogOpts } from '@types';
-import { UpdateTestType } from '@schemas/Test.schema';
-import { ClientStartSessionType } from '@schemas/Client.schema';
 import { RequiredIdentOptionsType } from '@schemas';
 import { SnapshotDiff } from '@schemas/SnapshotDiff.schema';
 import { SnapshotDocument } from '@models/Snapshot.model';
@@ -24,126 +18,9 @@ import { IdentType } from '@utils/buildIdentObject';
 import StatusCodes from 'http-status';
 import { SuiteDocument } from '@models/Suite.model';
 import { BaselineDocument } from '../models/Baseline.model';
-import path from 'path';
-
-async function updateTest(id: string, update: UpdateTestType) {
-    const logOpts: LogOpts = {
-        scope: 'updateTest',
-        itemType: 'test',
-        msgType: 'UPDATE',
-        ref: id,
-    };
-    log.debug(`update test id '${id}' with params '${JSON.stringify(update)}'`, logOpts);
-    const updatedDate = update.updatedDate || Date.now();
-    const test = await Test.findByIdAndUpdate(
-        id,
-        { ...update, updatedDate }
-    ).exec();
-    await test?.save();
-    return test;
-}
-
-const startSession = async (params: ClientStartSessionType, username: string) => {
-    const logOpts = {
-        scope: 'createTest',
-        user: username,
-        itemType: 'test',
-        msgType: 'CREATE',
-    };
-    log.info(`create test with name '${params.name}', params: '${JSON.stringify(params)}'`, logOpts);
-    const opts = removeEmptyProperties({
-        name: params.name,
-        status: 'Running',
-        app: params.app,
-        tags: params.tags && JSON.parse(params.tags),
-        branch: params.branch,
-        viewport: params.viewport,
-        browserName: params.browser,
-        browserVersion: params.browserVersion,
-        browserFullVersion: params.browserFullVersion,
-        os: params.os,
-        startDate: new Date(),
-        updatedDate: new Date(),
-    });
-    try {
-        const app = await createItemIfNotExistAsync(
-            'VRSApp',
-            { name: params.app },
-            { user: username, itemType: 'app' }
-        );
-        opts.app = app._id;
-
-        const run = await createRunIfNotExist(
-            { name: params.run, ident: params.runident, app: app._id },
-            { user: username, itemType: 'run' }
-        );
-        opts.run = run._id;
-
-        const suite = await createSuiteIfNotExist(
-            { name: params.suite || 'Others', app: app._id, createdDate: new Date() },
-            { user: username, itemType: 'suite' }
-        );
-
-        opts.suite = suite._id;
-
-        const test = await createTest(opts);
-        return test;
-    } catch (e: unknown) {
-        log.error(`cannot start session '${params.name}', params: '${JSON.stringify(params)}', error: ${errMsg(e)}`, logOpts);
-        throw e;
-    }
-};
-
-const endSession = async (testId: string, username: string) => {
-    const logOpts = {
-        scope: 'stopSession',
-        msgType: 'END_SESSION',
-        user: username,
-        itemType: 'test',
-        ref: testId,
-    };
-    await waitUntil(async () => (await Check.find({ test: testId }).exec()).filter((ch) => ch.status.toString() !== 'pending').length > 0);
-    const sessionChecks = await Check.find({ test: testId }).lean().exec();
-
-    const checksStatuses = sessionChecks.map((x) => x.status[0]);
-    // const checksViewports = sessionChecks.map((x) => x.viewport);
-
-    // const uniqueChecksViewports = Array.from(new Set(checksViewports));
-    // let calculatedViewport: string | undefined;
-    // if (uniqueChecksViewports.length === 1) {
-    //     calculatedViewport = uniqueChecksViewports[0];
-    // } else {
-    //     calculatedViewport = String(uniqueChecksViewports.length);
-    // }
-
-    let status = 'not set';
-    if (checksStatuses.some((st) => st === 'failed')) {
-        status = 'Failed';
-    }
-    if (checksStatuses.some((st) => st === 'passed') && !checksStatuses.some((st) => st === 'failed')) {
-        status = 'Passed';
-    }
-    if (checksStatuses.some((st) => st === 'new') && !checksStatuses.some((st) => st === 'failed')) {
-        status = 'Passed';
-    }
-    if (checksStatuses.some((st) => st === 'blinking') && !checksStatuses.some((st) => st === 'failed')) {
-        status = 'Passed';
-    }
-    if (checksStatuses.every((st) => st === 'new')) {
-        status = 'New';
-    }
-    const blinking = checksStatuses.filter((g) => g === 'blinking').length;
-    const testParams = {
-        status,
-        blinking,
-        // calculatedViewport,
-    };
-    log.info(`the session is over, the test will be updated with parameters: '${JSON.stringify(testParams)}'`, logOpts);
-    const updatedTest = await updateTest(testId, testParams);
-    const result = updatedTest?.toObject();
-    // result.calculatedStatus = status;
-    return result;
-};
+import { prepareActualSnapshot, isNeedFiles, createSnapshot } from './snapshot-file.service';
+import { compareSnapshots } from './comparison.service';
+import { startSession, endSession } from './test-run.service';
 
 async function getAcceptedBaseline(params: IdentType) {
     const identFieldsAccepted = Object.assign(buildIdentObject(params), { markedAs: 'accepted' });
@@ -171,123 +48,6 @@ async function getNotPendingChecksByIdent(identifier: RequiredIdentOptionsType) 
     }).sort({ updatedDate: -1 }).exec();
 }
 
-async function getSnapshotByImgHash(hash: string): Promise<SnapshotDocument | null> {
-    return Snapshot.findOne({ imghash: hash });
-}
-
-interface CreateSnapshotParameters {
-    name: string;
-    fileData: Buffer | null;
-    hashCode?: string;
-}
-
-async function createSnapshot(parameters: CreateSnapshotParameters) {
-    const logOpts: LogOpts = {
-        scope: 'createSnapshot',
-        itemType: 'snapshot',
-        msgType: 'CREATE'
-    };
-
-    const { name, fileData, hashCode } = parameters;
-
-    const opts: Partial<SnapshotDocument> = { name };
-    // const opts: SnapshotUpdateType = { name };
-
-    // if (!fileData) throw new Error(`cannot create the snapshot, the 'fileData' is not set, name: '${name}'`);
-    if (fileData === null) throw new ApiError(httpStatus.BAD_REQUEST, `cannot create the snapshot, the 'fileData' is not set, name: '${name}'`);
-
-
-    opts.imghash = hashCode || hashSync(fileData);
-    const snapshot = new Snapshot(opts);
-    const filename = `${snapshot.id}.png`;
-    const imagePath = path.join(config.defaultImagesPath, filename);
-    log.debug(`save screenshot for: '${name}' snapshot to: '${imagePath}'`, logOpts);
-    await fsp.writeFile(imagePath, fileData);
-    snapshot.filename = filename;
-    await snapshot.save();
-    log.debug(`snapshot was saved: '${JSON.stringify(snapshot)}'`, { ...logOpts, ...{ ref: snapshot._id } });
-    return snapshot;
-}
-
-async function cloneSnapshot(sourceSnapshot: SnapshotDocument, name: string) {
-    const { filename } = sourceSnapshot;
-    const hashCode = sourceSnapshot.imghash;
-    const newSnapshot = new Snapshot({ name, filename, imghash: hashCode });
-    await newSnapshot.save();
-    return newSnapshot;
-}
-
-interface CompareSnapshotsOptions {
-    vShifting?: boolean;
-    ignore?: string;
-    ignoredBoxes?: string;
-}
-
-async function compareSnapshots(baselineSnapshot: SnapshotDocument, actual: SnapshotDocument, opts: CompareSnapshotsOptions = {}) {
-    const logOpts = {
-        scope: 'compareSnapshots',
-        ref: baselineSnapshot.id,
-        itemType: 'snapshot',
-        msgType: 'COMPARE',
-    };
-    try {
-        log.debug(`compare baseline and actual snapshots with ids: [${baselineSnapshot.id}, ${actual.id}]`, logOpts);
-        log.debug(`current baseline snapshot: ${JSON.stringify(baselineSnapshot)}`, logOpts);
-        let diff: SnapshotDiff;
-        if (baselineSnapshot.imghash === actual.imghash) {
-            log.debug(`baseline and actual snapshot have the identical image hashes: '${baselineSnapshot.imghash}'`, logOpts);
-            diff = {
-                isSameDimensions: true,
-                dimensionDifference: { width: 0, height: 0 },
-                rawMisMatchPercentage: 0,
-                misMatchPercentage: '0.00',
-                analysisTime: 0,
-                executionTotalTime: '0',
-                getBuffer: null
-            };
-        } else {
-            const baselinePath = path.join(config.defaultImagesPath, baselineSnapshot.filename);
-            const actualPath = path.join(config.defaultImagesPath, actual.filename);
-            const baselineData = await fsp.readFile(baselinePath);
-            const actualData = await fsp.readFile(actualPath);
-            log.debug(`baseline path: ${baselinePath}`, logOpts);
-            log.debug(`actual path: ${actualPath}`, logOpts);
-            const options = opts;
-            const baseline = await Baseline.findOne({ snapshootId: baselineSnapshot._id }).exec();
-
-            if (baseline) { // ts refactoring TODO: find out a proper way
-                if (baseline.ignoreRegions) {
-                    log.debug(`ignore regions: '${baseline.ignoreRegions}', type: '${typeof baseline.ignoreRegions}'`);
-                    options.ignoredBoxes = JSON.parse(baseline.ignoreRegions);
-                }
-                options.ignore = baseline.matchType || 'nothing';
-            }
-
-            diff = await getDiff(baselineData, actualData, options);
-        }
-
-        log.silly(`the diff is: '${JSON.stringify(diff, null, 2)}'`);
-        if (diff.rawMisMatchPercentage.toString() !== '0') {
-            log.debug(`images are different, ids: [${baselineSnapshot.id}, ${actual.id}], rawMisMatchPercentage: '${diff.rawMisMatchPercentage}'`);
-        }
-        if (diff.stabMethod && diff.vOffset) {
-            if (diff.stabMethod === 'downup') {
-                actual.vOffset = -diff.vOffset;
-                await actual.save();
-            }
-            if (diff.stabMethod === 'updown') {
-                baselineSnapshot.vOffset = -diff.vOffset;
-                await baselineSnapshot.save();
-            }
-        }
-        return diff;
-    } catch (e: unknown) {
-        const errMsg = `cannot compare snapshots: ${e}\n ${e instanceof Error ? e.stack : e}`;
-        log.error(errMsg, logOpts);
-        throw new Error(String(e));
-    }
-}
-
 const isBaselineValid = (baseline: BaselineDocument) => {
     const keys = [
         'name', 'app', 'branch', 'browserName', 'viewport', 'os',
@@ -310,44 +70,6 @@ const updateCheckParamsFromBaseline = (params: CreateCheckParamsExtended, baseli
     updatedParams.markedByUsername = baseline.markedByUsername;
     return updatedParams;
 };
-
-const prepareActualSnapshot = async (checkParam: CreateCheckParams, snapshotFoundedByHashcode: SnapshotDocument | null, logOpts: LogOpts) => {
-    let currentSnapshot: SnapshotDocument;
-    const fileData = checkParam.files ? checkParam.files.file.data : null;
-
-    if (snapshotFoundedByHashcode) {
-        const fullFilename = path.join(config.defaultImagesPath, snapshotFoundedByHashcode.filename);
-        if (!fs.existsSync(fullFilename)) {
-            throw new Error(`Couldn't find the baseline file: '${fullFilename}'`);
-        }
-
-        log.debug(`snapshot with such hashcode: '${checkParam.hashCode}' is already exists, will clone it`, logOpts);
-
-        if (!checkParam.name) throw new ApiError(httpStatus.BAD_REQUEST, `Cannot prepareActualSnapshot name is empty, hashe: ${checkParam.hashCode}`);
-        currentSnapshot = await cloneSnapshot(snapshotFoundedByHashcode, checkParam.name);
-    } else {
-        log.debug(`snapshot with such hashcode: '${checkParam.hashCode}' does not exists, will create it`, logOpts);
-        currentSnapshot = await createSnapshot({ name: checkParam.name!, fileData, hashCode: checkParam.hashCode });
-    }
-
-    return currentSnapshot;
-};
-
-async function isNeedFiles(checkParam: CreateCheckParams, logOpts: LogOpts)
-    : Promise<{ needFilesStatus: boolean; snapshotFoundedByHashcode: SnapshotDocument | null; }> {
-    const snapshotFoundedByHashcode = await getSnapshotByImgHash(checkParam.hashCode);
-
-    if (!checkParam.hashCode && !checkParam.files) {
-        log.debug('hashCode or files parameters should be present', logOpts);
-        return { needFilesStatus: true, snapshotFoundedByHashcode };
-    }
-
-    if (!checkParam.files && !snapshotFoundedByHashcode) {
-        log.debug(`cannot find the snapshot with hash: '${checkParam.hashCode}'`, logOpts);
-        return { needFilesStatus: true, snapshotFoundedByHashcode };
-    }
-    return { needFilesStatus: false, snapshotFoundedByHashcode };
-}
 
 async function inspectBaseline(
     newCheckParams: CreateCheckParamsExtended,

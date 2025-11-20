@@ -12,15 +12,30 @@ export async function createSuiteIfNotExist(params: any, logsMeta = {}): Promise
 
     log.debug(`try to create suite if exist, params: '${JSON.stringify(params)}'`,  { ...logOpts, ...logsMeta });
 
-    let suite = await Suite.findOne({ name: params.name }).exec();
+    const filter = { name: params.name };
+    const update = {
+        $setOnInsert: {
+            ...params,
+            createdDate: params.createdDate || new Date(),
+        },
+    };
 
-    if (suite) {
-        log.debug(`suite already exist: '${JSON.stringify(params)}'`,  { ...logOpts, ...logsMeta });
+    try {
+        const suite = await Suite.findOneAndUpdate(
+            filter,
+            update,
+            { new: true, upsert: true }
+        ).exec();
+
+        log.debug(`suite with name: '${params.name}' was created or reused`,  { ...logOpts, ...logsMeta });
         return suite;
+    } catch (e: any) {
+        if (e.code === 11000) {
+            log.warn(`suite key duplication collision: '${JSON.stringify(params)}'`, { ...logOpts, ...logsMeta });
+            const suite = await Suite.findOne(filter).exec();
+            if (suite) return suite;
+        }
+        log.error(`cannot create suite, params: '${JSON.stringify(params)}', error: '${e?.stack || e}'`, { ...logOpts, ...logsMeta });
+        throw e;
     }
-
-    suite = await Suite.create(params);
-
-    log.debug(`suite with name: '${params.name}' was created`,  { ...logOpts, ...logsMeta });
-    return suite;
 }

@@ -1,5 +1,5 @@
 export { default as Check } from './Check.model';
-export { CheckDocument } from './Check.model';
+export type { CheckDocument } from './Check.model';
 export { default as Log } from './Log.model';
 export { default as App } from './App.model';
 export { default as Snapshot } from './Snapshot.model';

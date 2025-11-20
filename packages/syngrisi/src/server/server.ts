@@ -7,6 +7,7 @@ import chalk from 'chalk';
 import connectDB from '@lib/connectDb';
 import { createTempDir, createBasicUsers, createInitialSettings, createTestsUsers } from '@lib/startup';
 import { autoCleanupSchedulers } from '@lib/schedulers/autoCleanupSchedulers';
+import { runMigrations } from '@lib/migrations';
 import { errMsg } from './utils';
 
 const logMeta = { scope: 'entrypoint' };
@@ -15,6 +16,7 @@ log.info('Connect to database');
 connectDB().then(async () => {
     log.debug('run init jobs', logMeta);
     // const startUp = await import('@lib/startup');
+    await runMigrations();
     createTempDir();
     await createBasicUsers();
     await createInitialSettings();
