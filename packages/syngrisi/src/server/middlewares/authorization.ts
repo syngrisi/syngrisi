@@ -24,16 +24,7 @@ export const authorization = (type: string) => {
                 role: req.user?.role,
                 authEnabled,
             });
-            // Emit to stdout for easier debugging in test runs
-            console.log(
-                JSON.stringify({
-                    scope: 'authorization',
-                    type,
-                    user: req.user?.username,
-                    role: req.user?.role,
-                    authEnabled,
-                })
-            );
+
             if (!authEnabled) {
                 return next();
             }
@@ -55,15 +46,7 @@ export const authorization = (type: string) => {
                 role: req.user?.role,
                 authEnabled,
             });
-            console.log(
-                JSON.stringify({
-                    scope: 'authorization',
-                    type,
-                    user: req.user?.username,
-                    role: req.user?.role,
-                    authEnabled,
-                })
-            );
+
             if (!authEnabled) {
                 return next();
             }

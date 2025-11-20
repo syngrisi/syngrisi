@@ -18,14 +18,7 @@ const adminController = catchAsync(async (req: ExtRequest, res: Response) => {
     const AppSettings = await appSettings;
     const authEnabled = await AppSettings.isAuthEnabled();
 
-    console.log(
-        JSON.stringify({
-            scope: 'adminController',
-            user: req.user?.username,
-            role: req.user?.role,
-            authEnabled,
-        })
-    );
+
 
     if (authEnabled && req.user?.role !== 'admin') {
         return res.status(httpStatus.FORBIDDEN).send('Authorization Error - wrong Role');

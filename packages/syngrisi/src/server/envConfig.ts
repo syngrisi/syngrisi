@@ -27,7 +27,8 @@ export const env = cleanEnv(process.env, {
     MONGODB_ROOT_USERNAME: str({ default: '' }),
     MONGODB_ROOT_PASSWORD: str({ default: '' }),
     LOGLEVEL: str({ choices: ['error', 'warn', 'info', 'verbose', 'debug', 'silly'], default: 'debug' }),
-    SYNGRISI_PAGINATION_SIZE: num({ default: 50 }),
+    // Legacy tests expect 20 rows per page; keep default aligned for e2e
+    SYNGRISI_PAGINATION_SIZE: num({ default: 20 }),
     SYNGRISI_DISABLE_DEV_CORS: bool({ default: true, devDefault: true }),
     SYNGRISI_SESSION_STORE_KEY: str({ default: crypto.randomBytes(64).toString('hex') }),
     SYNGRISI_LOG_LEVEL: str({ default: 'debug' }),
