@@ -8,6 +8,7 @@ import { createApiResponse, createApiEmptyResponse } from '@api-docs/openAPIResp
 import { SkipValid } from '../../schemas/SkipValid.schema';
 import { createRequestBodySchema } from '../../schemas/utils/createRequestBodySchema';
 import { createRequestOpenApiBodySchema } from '../../schemas/utils/createRequestOpenApiBodySchema';
+import { ensureSameOrigin } from '@middlewares';
 
 export const registry = new OpenAPIRegistry();
 const router = express.Router();
@@ -22,6 +23,7 @@ registry.registerPath({
 
 router.get(
     '/logout',
+    ensureSameOrigin,
     validateRequest(SkipValid, 'get, /v1/auth/logout'),
     authController.logout as Midleware
 );
@@ -36,6 +38,7 @@ registry.registerPath({
 
 router.get(
     '/apikey',
+    ensureSameOrigin,
     validateRequest(SkipValid, 'get, /v1/auth/apikey'),
     authController.apikey as Midleware
 );
@@ -51,6 +54,7 @@ registry.registerPath({
 
 router.post(
     '/login',
+    ensureSameOrigin,
     validateRequest(createRequestBodySchema(AuthLoginSchema), 'post, /v1/auth/login'),
     authController.login as Midleware
 );
@@ -66,6 +70,7 @@ registry.registerPath({
 
 router.post(
     '/change',
+    ensureSameOrigin,
     validateRequest(createRequestBodySchema(AuthChangePasswordSchema), 'post, /v1/auth/change'),
     authController.changePassword as Midleware
 );
@@ -81,6 +86,7 @@ registry.registerPath({
 
 router.post(
     '/change_first_run',
+    ensureSameOrigin,
     validateRequest(createRequestBodySchema(AuthChangePasswordFirstRunSchema),  'post, /v1/auth/change_first_run'),
     authController.changePasswordFirstRun as Midleware
 );

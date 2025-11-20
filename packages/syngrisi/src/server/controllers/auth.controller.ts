@@ -91,7 +91,7 @@ const changePassword = catchAsync(async (req: ExtRequest, res: Response) => {
 
     const username = req?.user?.username;
 
-    log.debug(`change password for '${username}', params: '${JSON.stringify(req.body)}'`, logOpts);
+    log.debug(`change password for '${username}'`, logOpts);
 
     const user: RequestUser | null = await User.findOne({ username });
     // if (!user) throw new Error(`cannot find user with username: ${username}`);
@@ -125,7 +125,7 @@ const changePasswordFirstRun = catchAsync(async (req: ExtRequest, res: Response)
     const AppSettings = await appSettings;
 
     if ((await AppSettings.isAuthEnabled()) && ((await AppSettings.isFirstRun()))) {
-        log.debug(`first run, change password for default 'Administrator', params: '${JSON.stringify(req.body)}'`, logOpts);
+        log.debug(`first run, change password for default 'Administrator'`, logOpts);
         const user = await User.findOne({ username: 'Administrator' }).exec();
         if (!user) throw new Error(`cannot find the Administrator`);
         logOpts.ref = String(user?.username);

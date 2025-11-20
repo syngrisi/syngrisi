@@ -1,6 +1,7 @@
 import { When } from '@fixtures';
 import type { TestStore, AppServerFixture } from '@fixtures';
 import { createLogger } from '@lib/logger';
+import { createAuthHeaders } from '@utils/http-client';
 import * as crypto from 'crypto';
 import { got } from 'got-cjs';
 
@@ -20,7 +21,7 @@ When(
 
     const apiKey = apiKeyData.value;
     process.env.SYNGRISI_API_KEY = apiKey;
-    logger.info(`API key set in config: ${apiKey.substring(0, 10)}...`);
+    logger.info('API key set in config');
   }
 );
 
@@ -86,9 +87,10 @@ When(
       const uri = `${appServer.baseURL}/v1/auth/apikey`;
       logger.info('Fetching API key via HTTP fallback');
       const response = await got.get(uri, {
-        headers: {
-          cookie: `connect.sid=${sessionCookie.value}`,
-        },
+        headers: createAuthHeaders(appServer, {
+          sessionId: sessionCookie.value,
+          path: '/v1/auth/apikey',
+        }),
       });
       const parsed = JSON.parse(response.body);
       apiKey = parsed?.apikey;
@@ -99,6 +101,6 @@ When(
     }
     
     testData.set('apiKey', { value: apiKey });
-    logger.info(`API key parsed: ${apiKey.substring(0, 10)}... (length=${apiKey.length})`);
+    logger.info(`API key parsed and stored (length=${apiKey.length})`);
   }
 );

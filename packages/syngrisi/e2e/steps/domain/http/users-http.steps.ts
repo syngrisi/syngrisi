@@ -2,6 +2,7 @@ import { When } from '@fixtures';
 import type { AppServerFixture } from '@fixtures';
 import type { TestStore } from '@fixtures';
 import { createLogger } from '@lib/logger';
+import { createAuthHeaders } from '@utils/http-client';
 import { got } from 'got-cjs';
 import { expect } from '@playwright/test';
 
@@ -50,9 +51,12 @@ When(
     logger.info(`Logging in user "${login}"`);
 
     const res = await got.post(uri, {
-      headers: {
-        'upgrade-insecure-requests': '1',
-      },
+      headers: createAuthHeaders(appServer, {
+        path: '/v1/auth/login',
+        headers: {
+          'upgrade-insecure-requests': '1',
+        },
+      }),
       json: { username: login, password },
     });
 
@@ -89,16 +93,15 @@ When(
     }
 
     const res = await got.get(uri, {
-      headers: {
-        cookie: `connect.sid=${sessionSid}`,
-      },
+      headers: createAuthHeaders(appServer, {
+        sessionId: sessionSid,
+        path: '/v1/auth/apikey',
+      }),
     });
 
     const response = JSON.parse(res.body);
-    const apiKey = response.apikey;
-    logger.info(`API key generated: ${apiKey.substring(0, 10)}...`);
-
-    testData.set('apiKey', { value: apiKey });
+    testData.set('apiKey', { value: response.apikey });
+    logger.info('API key generated successfully');
   }
 );
 
@@ -119,9 +122,10 @@ When(
 
     const params = JSON.parse(json);
     const res = await got.post(uri, {
-      headers: {
-        cookie: `connect.sid=${sessionSid}`,
-      },
+      headers: createAuthHeaders(appServer, {
+        sessionId: sessionSid,
+        path: '/v1/users',
+      }),
       json: params,
     });
 
@@ -129,4 +133,3 @@ When(
     logger.info(`User created: ${response.username || response.email || 'unknown'}`);
   }
 );
-

@@ -41,7 +41,7 @@ const changeUserPassword = async (username: string, currentPassword: string, new
         ref: username,
     };
 
-    log.debug(`change password for '${username}', params: '${JSON.stringify({ currentPassword, newPassword })}'`, logOpts);
+    log.debug(`change password for '${username}'`, logOpts);
 
     const user: RequestUser | null = await User.findOne({ username });
     if (!user) {
@@ -70,7 +70,7 @@ const changePasswordFirstRun = async (newPassword: string): Promise<void> => {
     const AppSettings = await appSettings;
 
     if ((await AppSettings.isAuthEnabled()) && ((await AppSettings.isFirstRun()))) {
-        log.debug(`first run, change password for default 'Administrator', params: '${JSON.stringify({ newPassword })}'`, logOpts);
+        log.debug(`first run, change password for default 'Administrator'`, logOpts);
         const user = await User.findOne({ username: 'Administrator' }).exec();
 
         if (!user) throw new ApiError(httpStatus.NOT_FOUND, `cannot change password at first run, user withusername: 'Administrator', not found`);

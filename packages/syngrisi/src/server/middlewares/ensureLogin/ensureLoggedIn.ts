@@ -42,6 +42,19 @@ import log from "../../lib/logger";
 import { ExtRequest } from '../../../types/ExtRequest';
 import { appSettings } from "@settings";
 import { env } from "@/server/envConfig";
+import { hashSync } from 'hasha';
+
+export const normalizeIncomingApiKey = (rawKey: unknown): string | undefined => {
+    if (Array.isArray(rawKey)) {
+        rawKey = rawKey[0];
+    }
+    if (rawKey === undefined || rawKey === null) return undefined;
+    const apiKey = String(rawKey).trim();
+    if (!apiKey) return undefined;
+    const hashedPattern = /^[a-f0-9]{128}$/i;
+    if (hashedPattern.test(apiKey)) return apiKey;
+    return hashSync(apiKey);
+};
 
 
 
@@ -128,7 +141,7 @@ export function ensureLoggedIn(options?: any): (req: Request, res: Response, nex
     };
 }
 
-const handleAPIAuth = async (hashedApiKey: string): Promise<any> => {
+const handleAPIAuth = async (rawApiKey: unknown): Promise<any> => {
     const logOpts = {
         scope: 'handleAPIAuth',
         msgType: 'AUTH_API',
@@ -157,6 +170,7 @@ const handleAPIAuth = async (hashedApiKey: string): Promise<any> => {
         return result;
     }
 
+    const hashedApiKey = normalizeIncomingApiKey(rawApiKey);
     if (!hashedApiKey) {
         log.debug('API key missing', logOpts);
         result.type = 'error';
@@ -167,7 +181,7 @@ const handleAPIAuth = async (hashedApiKey: string): Promise<any> => {
 
     const user = await User.findOne({ apiKey: hashedApiKey });
     if (!user) {
-        log.error(`wrong API key: ${hashedApiKey}`, logOpts);
+        log.error('wrong API key provided', logOpts);
         result.type = 'error';
         result.status = 401;
         result.value = 'wrong API key';
@@ -186,16 +200,19 @@ export function ensureApiKey(): (req: Request, res: Response, next: NextFunction
         msgType: 'AUTH_API',
     };
     return async (req: Request, res: Response, next: NextFunction) => {
-        log.silly(`headers: ${JSON.stringify(req.headers, null, '..')}`, logOpts);
-        log.silly(`SYNGRISI_AUTH: '${env.SYNGRISI_AUTH}'`);
-        const hashedApiKey = req.headers.apikey || req.query.apikey;
-        const result = await handleAPIAuth(hashedApiKey);
+        const rawApiKey = req.headers.apikey ?? req.query.apikey;
+        const result = await handleAPIAuth(rawApiKey);
         req.user = req.user || result.user;
-        req.headers.apikey = result?.user?.apiKey || req?.headers?.apikey;
+        if ('apikey' in req.query) {
+            delete (req.query as Record<string, unknown>).apikey;
+        }
         if (result.type !== 'success') {
             log.info(`${result.value} - ${req.originalUrl}`, logOpts);
             res.status(result.status).json({ error: result.value });
             return next(new Error(result.value));
+        }
+        if ('apikey' in req.headers) {
+            delete (req.headers as Record<string, unknown>).apikey;
         }
         return next();
     };
@@ -205,9 +222,12 @@ export function ensureLoggedInOrApiKey(): (req: Request, res: Response, next: Ne
     return async (req: Request, res: Response, next: NextFunction) => {
         const basicAuthResult = await handleBasicAuth(req);
 
-        const hashedApiKey = req.headers.apikey || req.query.apikey;
-        const apiKeyResult = await handleAPIAuth(hashedApiKey);
+        const rawApiKey = req.headers.apikey ?? req.query.apikey;
+        const apiKeyResult = await handleAPIAuth(rawApiKey);
         req.user = req.user || apiKeyResult.user;
+        if ('apikey' in req.query) {
+            delete (req.query as Record<string, unknown>).apikey;
+        }
 
         if (
             (basicAuthResult.type !== 'success')
@@ -216,6 +236,9 @@ export function ensureLoggedInOrApiKey(): (req: Request, res: Response, next: Ne
             log.info(`Unauthorized - ${req.originalUrl}`);
             res.status(401).json({ error: `Unauthorized - ${req.originalUrl}` });
             return next(new Error(`Unauthorized - ${req.originalUrl}`));
+        }
+        if ('apikey' in req.headers) {
+            delete (req.headers as Record<string, unknown>).apikey;
         }
         return next();
     };
