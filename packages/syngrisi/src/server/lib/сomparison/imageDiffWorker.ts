@@ -1,0 +1,33 @@
+import { parentPort, workerData } from 'node:worker_threads';
+import compareImages from './compareImagesNode';
+
+const run = async () => {
+    const { baselineOrigin, actualOrigin, options } = workerData as {
+        baselineOrigin: Buffer;
+        actualOrigin: Buffer;
+        options: Record<string, unknown>;
+    };
+
+    try {
+        // Perform heavy image diff work off the main thread.
+        const compareResult = await compareImages(baselineOrigin, actualOrigin, options);
+        const resultBuffer = typeof compareResult?.getBuffer === 'function'
+            ? await compareResult.getBuffer()
+            : null;
+
+        // Functions are not structured-cloneable; send plain data plus buffer.
+        const { getBuffer, ...plainResult } = compareResult || {};
+        parentPort?.postMessage({
+            ok: true,
+            result: plainResult,
+            diffBuffer: resultBuffer,
+        });
+    } catch (error) {
+        parentPort?.postMessage({
+            ok: false,
+            error: error instanceof Error ? error.message : String(error),
+        });
+    }
+};
+
+void run();
