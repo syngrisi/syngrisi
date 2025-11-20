@@ -23,6 +23,7 @@ import errorHandler from './middlewares/errorHandler';
 import { openAPIRouter } from './api-docs/openAPIRouter';
 import { LogOpts } from '../types';
 import { env } from './envConfig';
+import { ensureLoggedInOrApiKey } from './middlewares/ensureLogin/ensureLoggedIn';
 
 const logMeta: LogOpts = { scope: 'app.ts', msgType: "Init" };
 
@@ -66,7 +67,11 @@ passport.serializeUser(User.serializeUser() as ((user: Express.User, done: (err:
 passport.deserializeUser(User.deserializeUser());
 
 log.info('\t- static files', logMeta);
-app.use('/snapshoots', express.static(config.defaultImagesPath));
+app.use(
+    '/snapshoots',
+    ensureLoggedInOrApiKey(),
+    express.static(config.defaultImagesPath)
+);
 app.use('/assets', express.static(path.join(baseDir, './mvc/views/react/assets'), {
     setHeaders: (res) => {
         res.set('Access-Control-Allow-Origin', '*');
