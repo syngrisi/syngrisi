@@ -17,24 +17,26 @@ export async function createRunIfNotExist(params: any, logsMeta = {}): Promise<a
 
         log.debug(`try to create run if exist, params: '${JSON.stringify(params)}'`, { ...logOpts, ...logsMeta });
 
-        run = await Run.findOne({ ident: params.ident }).exec();
+        const filter = { ident: params.ident };
+        const update = {
+            $setOnInsert: {
+                ...params,
+                createdDate: params.createdDate || new Date(),
+            },
+        };
 
-        if (run) {
-            log.debug(`run already exist: '${JSON.stringify(params)}'`, { ...logOpts, ...logsMeta });
-            return run;
-        }
-
-        run = await Run.create({
-            ...params,
-            createdDate: params.createdDate || new Date(),
-        });
+        run = await Run.findOneAndUpdate(
+            filter,
+            update,
+            { new: true, upsert: true }
+        ).exec();
 
         log.debug(`run with name: '${params.name}' was created: ${run}`, { ...logOpts, ...logsMeta });
         return run;
     } catch (e: any) {
         if (e.code === 11000) {
             log.warn(`run key duplication collision: '${JSON.stringify(params)}', error: '${errMsg(e)}'`, { ...logOpts, ...logsMeta });
-            run = await Run.findOne({ name: params.name, ident: params.ident });
+            run = await Run.findOne({ ident: params.ident });
             log.warn(`run key duplication collision, found: '${JSON.stringify(run)}'`, { ...logOpts, ...logsMeta });
             if (run) return run;
         }

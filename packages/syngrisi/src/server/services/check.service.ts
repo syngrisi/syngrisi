@@ -75,32 +75,55 @@ async function createNewBaseline(params: baselineParamsType): Promise<BaselineDo
 
     const identFields = buildIdentObject(params);
 
-    const lastBaseline = await Baseline.findOne(identFields).exec();
-    const sameBaseline = await Baseline.findOne({ ...identFields, snapshootId: params.actualSnapshotId }).exec();
+    const lastBaseline = await Baseline.findOne(identFields).sort({ createdDate: -1 }).exec();
+    const filter = { ...identFields, snapshootId: params.actualSnapshotId };
 
     const baselineParams = lastBaseline?.ignoreRegions
         ? { ...identFields, ignoreRegions: lastBaseline.ignoreRegions }
         : identFields;
 
-    if (sameBaseline) {
-        log.debug(`the baseline with same ident and snapshot id: ${params.actualSnapshotId} already exist`, logOpts);
-    } else {
-        log.debug(`the baseline with same ident and snapshot id: ${params.actualSnapshotId} does not exist,
-         create new one, baselineParams: ${JSON.stringify(baselineParams)}`, logOpts);
+    const update = {
+        $setOnInsert: {
+            ...baselineParams,
+            snapshootId: params.actualSnapshotId,
+            createdDate: new Date(),
+        },
+        $set: {
+            markedAs: params.markedAs,
+            markedById: params.markedById,
+            markedByUsername: params.markedByUsername,
+            lastMarkedDate: params.markedDate,
+        },
+    };
+
+    try {
+        const baseline = await Baseline.findOneAndUpdate(
+            filter,
+            update,
+            { new: true, upsert: true },
+        ).exec();
+
+        log.debug(`baseline upserted for snapshot id: ${params.actualSnapshotId}`, logOpts);
+        log.silly({ baseline });
+        return baseline as BaselineDocument;
+    } catch (err: any) {
+        if (err?.code === 11000) {
+            log.warn(`baseline duplicate key detected for filter ${JSON.stringify(filter)}, retrying fetch`, logOpts);
+            const existing = await Baseline.findOne(filter).exec();
+            if (existing) {
+                existing.markedAs = params.markedAs;
+                existing.markedById = params.markedById;
+                existing.markedByUsername = params.markedByUsername;
+                existing.lastMarkedDate = params.markedDate;
+                existing.createdDate = new Date();
+                existing.snapshootId = params.actualSnapshotId;
+                return existing.save();
+            }
+        }
+
+        log.error(`cannot upsert baseline: ${err instanceof Error ? err.message : String(err)}`, logOpts);
+        throw err;
     }
-
-    log.silly({ sameBaseline });
-
-    const resultedBaseline: BaselineDocument = sameBaseline || await Baseline.create(baselineParams);
-
-    resultedBaseline.markedAs = params.markedAs;
-    resultedBaseline.markedById = params.markedById //? new Schema.Types.ObjectId(String(params.markedById)) : undefined;
-    resultedBaseline.markedByUsername = params.markedByUsername;
-    resultedBaseline.lastMarkedDate = params.markedDate;
-    resultedBaseline.createdDate = new Date();
-    resultedBaseline.snapshootId = params.actualSnapshotId //? new Schema.Types.ObjectId(String(params.actualSnapshotId)) : undefined;
-
-    return resultedBaseline.save();
 }
 
 const extractSnapshotId = (snapshot: unknown): string | undefined => {
