@@ -93,7 +93,21 @@ class AppSettings {
 
     async isAuthEnabled(): Promise<boolean> {
         this.ensureInitialized();
-        return env.SYNGRISI_AUTH  || (await this.get('authentication'))?.value === 'true';
+        // Prefer explicit override to force-enable auth when set
+        const envOverride = process.env.SYNGRISI_AUTH_OVERRIDE;
+        if (typeof envOverride !== 'undefined') {
+            if (envOverride === 'true') {
+                return true;
+            }
+            // Allow DB setting to win when override is explicitly false
+        }
+
+        const envAuth = process.env.SYNGRISI_AUTH;
+        if (envAuth === 'true') {
+            return true;
+        }
+
+        return (await this.get('authentication'))?.value === 'true';
     }
 
     async isFirstRun(): Promise<boolean> {

@@ -24,37 +24,37 @@ export type AppServerFixture = {
   stop: () => Promise<void>;
 };
 
-// Store server instance outside fixture to allow restart
-let serverInstance: RunningAppServer | null = null;
-let serverFixtureValue: AppServerFixture | null = null;
-const defaultCid = process.env.DOCKER === '1' ? 100 : parseInt(process.env.TEST_PARALLEL_INDEX || '0', 10);
+// Helpers to get per-worker CID
+const getCurrentCid = (): number => (process.env.DOCKER === '1' ? 100 : parseInt(process.env.TEST_PARALLEL_INDEX || '0', 10));
+
+// Store server instances per CID to avoid cross-worker interference
+const serverInstances = new Map<number, RunningAppServer>();
+const serverFixtures = new Map<number, AppServerFixture>();
+const skipAutoStartMap = new Map<number, boolean>();
 
 function getFallbackConfig(): { connectionString: string; defaultImagesPath: string } {
   const repoRoot = resolveRepoRoot();
+  const cid = getCurrentCid();
   return {
     connectionString:
       process.env.SYNGRISI_DB_URI ||
       env.SYNGRISI_DB_URI ||
-      `mongodb://localhost/SyngrisiDbTest${defaultCid}`,
+      `mongodb://localhost/SyngrisiDbTest${cid}`,
     defaultImagesPath:
       process.env.SYNGRISI_IMAGES_PATH ||
       env.SYNGRISI_IMAGES_PATH ||
-      path.resolve(repoRoot, 'baselinesTest', String(defaultCid)),
+      path.resolve(repoRoot, 'baselinesTest', String(cid)),
   };
 }
 
 let lastKnownConfig = getFallbackConfig();
 
-// Global flag to control automatic server startup
-// Set to true when "I clear Database and stop Server" is called
-let skipAutoStart = false;
-
 export function setSkipAutoStart(value: boolean): void {
-  skipAutoStart = value;
+  skipAutoStartMap.set(getCurrentCid(), value);
 }
 
 export function getSkipAutoStart(): boolean {
-  return skipAutoStart;
+  return skipAutoStartMap.get(getCurrentCid()) ?? true;
 }
 
 /**
@@ -67,18 +67,54 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
       const tempDir = getWorkerTempDir();
       logger.debug(`Using temp directory: ${tempDir}`);
 
-      const skipAppStart = hasTag(testInfo, '@no-app-start') || skipAutoStart;
+      const cid = getCurrentCid();
+      const skipAppStart = hasTag(testInfo, '@no-app-start') || getSkipAutoStart();
+      let fixtureValue: AppServerFixture = {
+        baseURL: '',
+        backendHost: env.E2E_BACKEND_HOST,
+        serverPort: 0,
+        config: lastKnownConfig,
+        getBackendLogs: () => 'App server not started',
+        getFrontendLogs: () => '',
+        restart: async () => {
+          logger.info(`Restarting server...`);
+        },
+        start: async () => {
+          logger.info(`Starting server...`);
+        },
+        stop: async () => {
+          logger.info(`Stopping server...`);
+        },
+      };
+
+      const stopServer = async () => {
+        logger.info(`Stopping server...`);
+        const currentInstance = serverInstances.get(cid);
+        if (currentInstance) {
+          await currentInstance.stop();
+          serverInstances.delete(cid);
+        }
+        // Also stop via pkill to ensure process is killed
+        const { stopServerProcess } = require('@utils/app-server');
+        stopServerProcess();
+        fixtureValue.baseURL = '';
+        fixtureValue.serverPort = 0;
+        fixtureValue.getBackendLogs = () => 'App server stopped';
+        fixtureValue.getFrontendLogs = () => '';
+        serverFixtures.set(cid, fixtureValue);
+      };
 
       const startServer = async () => {
         // Reset skipAutoStart when explicitly starting server
         // This ensures server starts even after "I clear Database and stop Server" step
-        skipAutoStart = false;
+        skipAutoStartMap.set(cid, false);
 
         // Stop any existing server instance first
-        if (serverInstance) {
+        const existingInstance = serverInstances.get(cid);
+        if (existingInstance) {
           logger.info(`Stopping existing server before restart`);
-          await serverInstance.stop();
-          serverInstance = null;
+          await existingInstance.stop();
+          serverInstances.delete(cid);
         }
 
         // Also stop any process that might be running on the port (via pkill)
@@ -87,62 +123,38 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
 
         logger.info(`Launching Syngrisi app server`);
         // Use current process.env for server restart (includes env variables set by "I set env variables:")
-        serverInstance = await launchAppServer({
+        const instance = await launchAppServer({
           env: {},
         });
-        lastKnownConfig = serverInstance.config;
+        serverInstances.set(cid, instance);
+        lastKnownConfig = instance.config;
         logger.success(`Server launched successfully`);
-        logger.info(`Base URL: ${serverInstance.baseURL}`);
-        logger.info(`Server: ${serverInstance.backendHost}:${serverInstance.serverPort}`);
+        logger.info(`Base URL: ${instance.baseURL}`);
+        logger.info(`Server: ${instance.backendHost}:${instance.serverPort}`);
 
-        serverFixtureValue = {
-          baseURL: serverInstance.baseURL,
-          backendHost: serverInstance.backendHost,
-          serverPort: serverInstance.serverPort,
-          config: lastKnownConfig,
-          getBackendLogs: serverInstance.getBackendLogs,
-          getFrontendLogs: serverInstance.getFrontendLogs,
-          restart: async () => {
-            logger.info(`Restarting server...`);
-            await startServer();
-          },
-          start: async () => {
-            logger.info(`Starting server...`);
-            await startServer();
-          },
-          stop: async () => {
-            logger.info(`Stopping server...`);
-            if (serverInstance) {
-              await serverInstance.stop();
-              serverInstance = null;
-            }
-            // Also stop via pkill to ensure process is killed
-            const { stopServerProcess } = require('@utils/app-server');
-            stopServerProcess();
-            serverFixtureValue = {
-              baseURL: '',
-              backendHost: env.E2E_BACKEND_HOST,
-              serverPort: 0,
-              config: lastKnownConfig,
-              getBackendLogs: () => 'App server stopped',
-              getFrontendLogs: () => '',
-              restart: async () => {
-                await startServer();
-              },
-              start: async () => {
-                await startServer();
-              },
-              stop: async () => {
-                // Already stopped
-              },
-            };
-          },
+        // Update existing fixture object so callers see latest values
+        fixtureValue.baseURL = instance.baseURL;
+        fixtureValue.backendHost = instance.backendHost;
+        fixtureValue.serverPort = instance.serverPort;
+        fixtureValue.config = lastKnownConfig;
+        fixtureValue.getBackendLogs = instance.getBackendLogs;
+        fixtureValue.getFrontendLogs = instance.getFrontendLogs;
+        fixtureValue.stop = stopServer;
+        fixtureValue.start = async () => {
+          logger.info(`Starting server...`);
+          await startServer();
         };
+        fixtureValue.restart = async () => {
+          logger.info(`Restarting server...`);
+          await startServer();
+        };
+
+        serverFixtures.set(cid, fixtureValue);
       };
 
       if (skipAppStart) {
         logger.info(`Skipping automatic app server launch (tag @no-app-start or skipAutoStart flag)`);
-        serverFixtureValue = {
+        fixtureValue = {
           baseURL: '',
           backendHost: env.E2E_BACKEND_HOST,
           serverPort: 0,
@@ -156,18 +168,40 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
             await startServer();
           },
           stop: async () => {
-            // Server not started
+            await stopServer();
           },
         };
+        serverFixtures.set(cid, fixtureValue);
       } else {
+        fixtureValue = {
+          baseURL: '',
+          backendHost: env.E2E_BACKEND_HOST,
+          serverPort: 0,
+          config: lastKnownConfig,
+          getBackendLogs: () => '',
+          getFrontendLogs: () => '',
+          restart: async () => {
+            logger.info(`Restarting server...`);
+            await startServer();
+          },
+          start: async () => {
+            logger.info(`Starting server...`);
+            await startServer();
+          },
+          stop: async () => {
+            await stopServer();
+          },
+        };
+        serverFixtures.set(cid, fixtureValue);
         await startServer();
       }
 
       try {
-        await use(serverFixtureValue!);
+        const fixtureValue = serverFixtures.get(cid)!;
+        await use(fixtureValue);
       } finally {
         // Reset skipAutoStart flag after each test
-        skipAutoStart = false;
+        skipAutoStartMap.set(cid, false);
         // If E2E_DEBUG is enabled and test failed, pause before stopping the server
         if (env.E2E_DEBUG && (testInfo.status === 'failed' || testInfo.status === 'timedOut')) {
           const location = `${$uri || 'unknown'}`;
@@ -204,11 +238,12 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
         }
 
         // Only stop server if it was started by fixture (not manually stopped)
-        if (serverInstance && !skipAutoStart) {
+        const runningInstance = serverInstances.get(cid);
+        if (runningInstance && !getSkipAutoStart()) {
           logger.info(`Stopping server...`);
-          await serverInstance.stop();
-          serverInstance = null;
-          serverFixtureValue = null;
+          await runningInstance.stop();
+          serverInstances.delete(cid);
+          serverFixtures.delete(cid);
           logger.info(`Server stopped`);
         }
       }
