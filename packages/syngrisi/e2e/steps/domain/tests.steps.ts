@@ -26,6 +26,16 @@ function uuidv4(): string {
   });
 }
 
+const fileBufferCache = new Map<string, Buffer>();
+
+function getCachedFileBuffer(fullPath: string): Buffer {
+  const cached = fileBufferCache.get(fullPath);
+  if (cached) return cached;
+  const buffer = fs.readFileSync(fullPath);
+  fileBufferCache.set(fullPath, buffer);
+  return buffer;
+}
+
 async function createCheckViaAPI(
   vDriver: SyngrisiDriver,
   testId: string,
@@ -64,7 +74,7 @@ async function createCheckForExistingTest(
   if (!fs.existsSync(fullPath)) {
     throw new Error(`Test file not found: ${fullPath}`);
   }
-  const imageBuffer = fs.readFileSync(fullPath);
+  const imageBuffer = getCachedFileBuffer(fullPath);
   const form = new FormData();
   form.append('testid', testId);
   const resolvedCheckName = check.checkName || check.name || params.checkName || 'CheckName';
@@ -165,7 +175,7 @@ async function createTestsWithParams(
       const testId = (sessionData as any).id || (sessionData as any)._id;
       logger.info(`Test session started with ID: ${testId}`);
       testData.set('lastTestId', testId);
-      // Allow backend to finish persisting test/check data before further actions
+      // Allow backend to finish persisting test/check data before further actions (legacy behavior)
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const checkResults = [];
@@ -177,7 +187,7 @@ async function createTestsWithParams(
         if (!fs.existsSync(fullPath)) {
           throw new Error(`Test file not found: ${fullPath}`);
         }
-        const imageBuffer = fs.readFileSync(fullPath);
+        const imageBuffer = getCachedFileBuffer(fullPath);
         const checkResult = await createCheckViaAPI(
           vDriver,
           testId,
@@ -213,7 +223,7 @@ async function createTestsWithParams(
         const repoRoot = path.resolve(__dirname, '..', '..', '..', '..');
         const defaultPath = path.join(repoRoot, 'syngrisi', 'tests', params.filePath || 'files/A.png');
         if (fs.existsSync(defaultPath)) {
-          const imageBuffer = fs.readFileSync(defaultPath);
+          const imageBuffer = getCachedFileBuffer(defaultPath);
           const checkResult = await createCheckViaAPI(
             vDriver,
             testId,

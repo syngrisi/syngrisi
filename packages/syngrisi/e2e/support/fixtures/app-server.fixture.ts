@@ -7,6 +7,7 @@ import { createLogger } from '@lib/logger';
 import type { RunningAppServer } from '@utils/app-server';
 import path from 'path';
 
+const reuseServerBetweenTests = env.E2E_REUSE_SERVER;
 const logger = createLogger('AppServer');
 
 export type AppServerFixture = {
@@ -69,6 +70,7 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
 
       const cid = getCurrentCid();
       const skipAppStart = hasTag(testInfo, '@no-app-start') || getSkipAutoStart();
+      const existingInstance = serverInstances.get(cid);
       let fixtureValue: AppServerFixture = {
         baseURL: '',
         backendHost: env.E2E_BACKEND_HOST,
@@ -112,6 +114,26 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
         // Stop any existing server instance first
         const existingInstance = serverInstances.get(cid);
         if (existingInstance) {
+          if (reuseServerBetweenTests) {
+            logger.info(`Reusing existing server (port ${existingInstance.serverPort})`);
+            fixtureValue.baseURL = existingInstance.baseURL;
+            fixtureValue.backendHost = existingInstance.backendHost;
+            fixtureValue.serverPort = existingInstance.serverPort;
+            fixtureValue.config = existingInstance.config;
+            fixtureValue.getBackendLogs = existingInstance.getBackendLogs;
+            fixtureValue.getFrontendLogs = existingInstance.getFrontendLogs;
+            fixtureValue.stop = stopServer;
+            fixtureValue.start = async () => {
+              logger.info(`Starting server...`);
+              await startServer();
+            };
+            fixtureValue.restart = async () => {
+              logger.info(`Restarting server...`);
+              await startServer();
+            };
+            serverFixtures.set(cid, fixtureValue);
+            return;
+          }
           logger.info(`Stopping existing server before restart`);
           await existingInstance.stop();
           serverInstances.delete(cid);
@@ -155,16 +177,38 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
       if (skipAppStart) {
         logger.info(`Skipping automatic app server launch (tag @no-app-start or skipAutoStart flag)`);
         fixtureValue = {
-          baseURL: '',
-          backendHost: env.E2E_BACKEND_HOST,
-          serverPort: 0,
-          config: lastKnownConfig,
-          getBackendLogs: () => 'App server not started',
-          getFrontendLogs: () => '',
+          baseURL: existingInstance?.baseURL || '',
+          backendHost: existingInstance?.backendHost || env.E2E_BACKEND_HOST,
+          serverPort: existingInstance?.serverPort || 0,
+          config: existingInstance?.config || lastKnownConfig,
+          getBackendLogs: existingInstance?.getBackendLogs || (() => 'App server not started'),
+          getFrontendLogs: existingInstance?.getFrontendLogs || (() => ''),
           restart: async () => {
             await startServer();
           },
           start: async () => {
+            await startServer();
+          },
+          stop: async () => {
+            await stopServer();
+          },
+        };
+        serverFixtures.set(cid, fixtureValue);
+      } else if (existingInstance && reuseServerBetweenTests) {
+        logger.info(`Reusing already running server on port ${existingInstance.serverPort}`);
+        fixtureValue = {
+          baseURL: existingInstance.baseURL,
+          backendHost: existingInstance.backendHost,
+          serverPort: existingInstance.serverPort,
+          config: existingInstance.config,
+          getBackendLogs: existingInstance.getBackendLogs,
+          getFrontendLogs: existingInstance.getFrontendLogs,
+          restart: async () => {
+            logger.info(`Restarting server...`);
+            await startServer();
+          },
+          start: async () => {
+            logger.info(`Starting server...`);
             await startServer();
           },
           stop: async () => {
@@ -239,7 +283,7 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
 
         // Only stop server if it was started by fixture (not manually stopped)
         const runningInstance = serverInstances.get(cid);
-        if (runningInstance && !getSkipAutoStart()) {
+        if (runningInstance && !getSkipAutoStart() && !reuseServerBetweenTests) {
           logger.info(`Stopping server...`);
           await runningInstance.stop();
           serverInstances.delete(cid);
