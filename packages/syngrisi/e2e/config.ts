@@ -59,6 +59,10 @@ export const env = cleanEnv(process.env, {
   E2E_FORCE_TRACE: bool({
     default: false,
     desc: 'Enable Playwright trace for all test runs'
+  }),
+  E2E_REUSE_SERVER: bool({
+    default: true,
+    desc: 'Keep Syngrisi server running between tests to reduce startup overhead'
   })
 });
 

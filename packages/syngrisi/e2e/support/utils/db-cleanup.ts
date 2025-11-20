@@ -1,7 +1,9 @@
-import { execSync } from 'child_process';
 import path from 'path';
+import fs from 'fs/promises';
+import { MongoClient } from 'mongodb';
 import { resolveRepoRoot } from '@utils/fs';
 import { createLogger } from '@lib/logger';
+import { env } from '@config';
 
 const logger = createLogger('DbCleanup');
 
@@ -10,10 +12,26 @@ function getCid(): number {
   return parseInt(process.env.TEST_PARALLEL_INDEX || '0', 10);
 }
 
-export function clearDatabase(
+function resolveDbUri(cid: number): string {
+  const requestedUri = process.env.SYNGRISI_DB_URI || env.SYNGRISI_DB_URI || '';
+  const enforcedUri = `mongodb://localhost/SyngrisiDbTest${cid}`;
+
+  if (requestedUri && requestedUri !== enforcedUri) {
+    logger.warn(`Overriding provided SYNGRISI_DB_URI (${requestedUri}) with test database ${enforcedUri}`);
+  }
+
+  return enforcedUri;
+}
+
+function resolveBaselinesPath(cid: number): string {
+  const repoRoot = resolveRepoRoot();
+  return path.join(repoRoot, 'baselinesTest', String(cid));
+}
+
+export async function clearDatabase(
   cidOrRemoveBaselines?: number | boolean,
   removeBaselinesArg = true,
-): void {
+): Promise<void> {
   let removeBaselines = removeBaselinesArg;
   let cid: number | undefined;
 
@@ -24,25 +42,15 @@ export function clearDatabase(
   }
 
   const actualCid = cid ?? getCid();
-  const cmdPath = path.resolve(resolveRepoRoot());
-  const taskNamePrefix = process.env.DOCKER === '1' ? 'docker_' : '';
+  const dbUri = resolveDbUri(actualCid);
+  const baselinesPath = resolveBaselinesPath(actualCid);
 
+  const client = new MongoClient(dbUri, { retryWrites: false });
   try {
-    let result: string;
-    if (removeBaselines) {
-      // Use npm script clear_test (as in original: npm run clear_test)
-      result = execSync(`CID=${actualCid} npm run ${taskNamePrefix}clear_test`, {
-        cwd: cmdPath,
-        stdio: 'pipe',
-      }).toString('utf8');
-    } else {
-      // Use npm script clear_test_db_only (as in original: npm run clear_test_db_only)
-      result = execSync(`CID=${actualCid} npm run ${taskNamePrefix}clear_test_db_only`, {
-        cwd: cmdPath,
-        stdio: 'pipe',
-      }).toString('utf8');
-    }
-    logger.info({ result });
+    await client.connect();
+    const db = client.db();
+    const dropResult = await db.dropDatabase();
+    logger.info(`Dropped database ${db.databaseName}: ${dropResult}`);
   } catch (error: any) {
     const errorMsg = error.message || error.toString() || '';
     if (errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed') || errorMsg.includes('ECONNREFUSED')) {
@@ -51,5 +59,19 @@ export function clearDatabase(
       logger.error(`Failed to clear database: ${errorMsg}`);
       throw error;
     }
+  } finally {
+    await client.close().catch(() => undefined);
+  }
+
+  if (!removeBaselines) {
+    return;
+  }
+
+  try {
+    await fs.rm(baselinesPath, { recursive: true, force: true });
+    await fs.mkdir(baselinesPath, { recursive: true });
+    logger.info(`Cleared baselines folder: ${baselinesPath}`);
+  } catch (error: any) {
+    logger.warn(`Failed to clear baselines folder ${baselinesPath}: ${error.message || error.toString()}`);
   }
 }

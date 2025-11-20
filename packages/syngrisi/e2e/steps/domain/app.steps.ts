@@ -14,7 +14,7 @@ Given('the Syngrisi application is running', async ({ appServer }: { appServer: 
 
 Given('the database is cleared', async ({ appServer }: { appServer: AppServerFixture }) => {
   logger.info('Clearing database');
-  clearDatabase();
+  await clearDatabase();
   // Restart server to recreate Guest user (as in original WebdriverIO tests)
   logger.info('Restarting server to recreate Guest user');
   await appServer.restart();
@@ -23,7 +23,7 @@ Given('the database is cleared', async ({ appServer }: { appServer: AppServerFix
 When('I open the app', async ({ page, appServer }: { page: Page; appServer: AppServerFixture }) => {
   logger.info(`Opening app at ${appServer.baseURL}`);
   await page.goto(appServer.baseURL);
-  await page.waitForTimeout(2000);
+  await page.waitForLoadState('networkidle');
 });
 
 When('I clear local storage', async ({ page }: { page: Page }) => {

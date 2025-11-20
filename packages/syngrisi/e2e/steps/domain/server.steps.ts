@@ -134,10 +134,10 @@ Given(
       if (appServer.baseURL) {
         await appServer.stop();
       }
-      
+
       // Clear database (removeBaselines = true by default, as in original)
       logger.info('Clearing database...');
-      clearDatabase(undefined, true); // Explicitly pass removeBaselines = true to clear screenshots folder
+      await clearDatabase(undefined, true); // Explicitly pass removeBaselines = true to clear screenshots folder
       
       // Reset legacy default environment expectations between scenarios
       process.env.SYNGRISI_DISABLE_FIRST_RUN = 'true';
@@ -184,7 +184,7 @@ When(
   'I clear database',
   async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }) => {
     logger.info('Clearing database...');
-    clearDatabase(false);
+    await clearDatabase(false);
     logger.info('Database cleared');
     resetTestCreationState(testData);
   }

@@ -106,6 +106,8 @@ export default function LoginForm() {
                         onChange={(event) => form.setFieldValue('email', event.currentTarget.value)}
                         error={form.errors.email && 'Invalid email'}
                         required
+                        aria-label="Email"
+                        data-test="login-email-input"
                     />
                     <PasswordInput
                         label="Password"
@@ -115,16 +117,32 @@ export default function LoginForm() {
                         onChange={(event) => form.setFieldValue('password', event.currentTarget.value)}
                         required
                         mt="md"
+                        aria-label="Password"
+                        data-test="login-password-input"
                     />
 
                     <Group position="apart" mt="md">
                         <Checkbox
                             label="Remember me"
                             onChange={(event) => form.setFieldValue('rememberMe', event.currentTarget.checked)}
+                            aria-label="Remember me"
+                            data-test="login-remember-me"
                         />
                     </Group>
                     {errorMessage
-                    && <Text size="sm" color="red" mt="md" id="error-message" hidden={false}>{errorMessage}</Text>}
+                    && (
+                        <Text
+                            size="sm"
+                            color="red"
+                            mt="md"
+                            id="error-message"
+                            hidden={false}
+                            aria-live="assertive"
+                            data-test="login-error-message"
+                        >
+                            {errorMessage}
+                        </Text>
+                    )}
 
                     <Button
                         fullWidth
@@ -132,6 +150,8 @@ export default function LoginForm() {
                         mt="xl"
                         color="green"
                         type="submit"
+                        aria-label="Sign in"
+                        data-test="login-submit"
                     >
                         Sign in
                     </Button>

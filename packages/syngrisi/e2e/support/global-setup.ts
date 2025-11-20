@@ -102,7 +102,7 @@ export default async function globalSetup(_config: FullConfig) {
   // Clear database for main worker (CID 0)
   try {
     logger.info('Clearing database for worker 0');
-    clearDatabase(0, false);
+    await clearDatabase(0, false);
   } catch (error) {
     logger.warn(`Failed to clear database: ${(error as Error).message}`);
   }
