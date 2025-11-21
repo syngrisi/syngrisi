@@ -176,7 +176,8 @@ async function createTestsWithParams(
       logger.info(`Test session started with ID: ${testId}`);
       testData.set('lastTestId', testId);
       // Allow backend to finish persisting test/check data before further actions (legacy behavior)
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Increased wait time to ensure data is fully indexed and available to UI
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       const checkResults = [];
       for (const check of params.checks || []) {
@@ -263,6 +264,9 @@ async function createTestsWithParams(
         logger.warn(`Failed to stop test session for "${testName}": ${stopError.message}`);
       }
 
+      // Additional wait after test completion to ensure all data is persisted and indexed
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       return { testId, checkResults };
     } catch (error) {
       logger.error(`Failed to create test: ${(error as Error).message}`);
@@ -276,6 +280,12 @@ async function createTestsWithParams(
     const params = yaml.parse(processedYml);
     logger.info(`Creating test #${i + 1} with params:`, params);
     await createTest(params, i);
+  }
+
+  // Additional wait after all tests are created to ensure data is fully available
+  if (count > 0) {
+    logger.info(`Waiting for ${count} test(s) to be fully indexed...`);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
   }
 }
 

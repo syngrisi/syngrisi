@@ -141,7 +141,7 @@ Given(
       
       // Reset legacy default environment expectations between scenarios
       process.env.SYNGRISI_DISABLE_FIRST_RUN = 'true';
-      process.env.SYNGRISI_TEST_MODE = 'true';
+      process.env.SYNGRISI_TEST_MODE = '1'; // Backend expects '1', not 'true'
       process.env.SYNGRISI_AUTH = 'false';
       
       // Set flag to skip automatic server startup in fixture
