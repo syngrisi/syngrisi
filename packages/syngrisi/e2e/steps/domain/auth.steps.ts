@@ -1,13 +1,13 @@
 import { When } from '@fixtures';
 import type { Page } from '@playwright/test';
 import { createLogger } from '@lib/logger';
-import type { AppServerFixture } from '@fixtures';
+import type { AppServerFixture, TestStore } from '@fixtures';
 
 const logger = createLogger('AuthSteps');
 
 When(
   'I login with user:{string} password {string}',
-  async ({ page, appServer }: { page: Page; appServer: AppServerFixture }, login: string, password: string) => {
+  async ({ page, appServer, testData }: { page: Page; appServer: AppServerFixture; testData: TestStore }, login: string, password: string) => {
     logger.info(`Logging in user "${login}" via UI`);
 
     try {
@@ -92,6 +92,17 @@ When(
           await page.locator('[data-test="user-icon"]').waitFor({ state: 'visible', timeout: 10000 });
           // Additional wait for React Query to load user data
           await page.waitForTimeout(2000);
+
+          // Store session cookie for HTTP requests
+          const cookies = await page.context().cookies();
+          const sessionCookie = cookies.find((cookie) => cookie.name === 'connect.sid');
+          if (sessionCookie) {
+            testData.set('lastSessionId', sessionCookie.value);
+            logger.info(`Session cookie stored for user "${login}"`);
+          } else {
+            logger.warn('Session cookie not found after login');
+          }
+
           logger.info(`User "${login}" logged in successfully`);
         } catch (e) {
           // User icon might not appear if auth is disabled or user data not loaded yet

@@ -15,8 +15,10 @@ Given('the Syngrisi application is running', async ({ appServer }: { appServer: 
 Given('the database is cleared', async ({ appServer }: { appServer: AppServerFixture }) => {
   logger.info('Clearing database');
   await clearDatabase();
-  // Restart server to recreate Guest user (as in original WebdriverIO tests)
-  logger.info('Restarting server to recreate Guest user');
+  // Ensure test users will be created on server restart
+  process.env.SYNGRISI_TEST_MODE = '1'; // Backend expects '1', not 'true'
+  // Restart server to recreate Guest user and test users (as in original WebdriverIO tests)
+  logger.info('Restarting server to recreate Guest user and test users');
   await appServer.restart();
 });
 
