@@ -100,6 +100,7 @@ export async function launchAppServer(
     SYNGRISI_AUTH_OVERRIDE: authEnabled,
     SYNGRISI_APP_PORT: String(cidPort),
     SYNGRISI_COVERAGE: coverageFlag === 'true' ? 'true' : 'false',
+    SYNGRISI_TEST_MODE: 'true',  // Always enable test mode for E2E tests to create test users
     ...additionalEnv,
   };
 

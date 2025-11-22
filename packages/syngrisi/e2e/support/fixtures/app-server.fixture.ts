@@ -20,7 +20,7 @@ export type AppServerFixture = {
   };
   getBackendLogs: () => string;
   getFrontendLogs: () => string;
-  restart: () => Promise<void>;
+  restart: (force?: boolean) => Promise<void>;
   start: () => Promise<void>;
   stop: () => Promise<void>;
 };
@@ -78,7 +78,7 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
         config: lastKnownConfig,
         getBackendLogs: () => 'App server not started',
         getFrontendLogs: () => '',
-        restart: async () => {
+        restart: async (force = false) => {
           logger.info(`Restarting server...`);
         },
         start: async () => {
@@ -106,7 +106,7 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
         serverFixtures.set(cid, fixtureValue);
       };
 
-      const startServer = async () => {
+      const startServer = async (forceRestart = false) => {
         // Reset skipAutoStart when explicitly starting server
         // This ensures server starts even after "I clear Database and stop Server" step
         skipAutoStartMap.set(cid, false);
@@ -114,7 +114,8 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
         // Stop any existing server instance first
         const existingInstance = serverInstances.get(cid);
         if (existingInstance) {
-          if (reuseServerBetweenTests) {
+          // Only reuse if explicitly allowing reuse AND not forcing a restart
+          if (reuseServerBetweenTests && !forceRestart) {
             logger.info(`Reusing existing server (port ${existingInstance.serverPort})`);
             fixtureValue.baseURL = existingInstance.baseURL;
             fixtureValue.backendHost = existingInstance.backendHost;
@@ -127,9 +128,9 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
               logger.info(`Starting server...`);
               await startServer();
             };
-            fixtureValue.restart = async () => {
+            fixtureValue.restart = async (force = false) => {
               logger.info(`Restarting server...`);
-              await startServer();
+              await startServer(force);
             };
             serverFixtures.set(cid, fixtureValue);
             return;
@@ -166,9 +167,9 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           logger.info(`Starting server...`);
           await startServer();
         };
-        fixtureValue.restart = async () => {
+        fixtureValue.restart = async (force = false) => {
           logger.info(`Restarting server...`);
-          await startServer();
+          await startServer(force);
         };
 
         serverFixtures.set(cid, fixtureValue);
@@ -183,8 +184,8 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           config: existingInstance?.config || lastKnownConfig,
           getBackendLogs: existingInstance?.getBackendLogs || (() => 'App server not started'),
           getFrontendLogs: existingInstance?.getFrontendLogs || (() => ''),
-          restart: async () => {
-            await startServer();
+          restart: async (force = false) => {
+            await startServer(force);
           },
           start: async () => {
             await startServer();
@@ -203,9 +204,9 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           config: existingInstance.config,
           getBackendLogs: existingInstance.getBackendLogs,
           getFrontendLogs: existingInstance.getFrontendLogs,
-          restart: async () => {
+          restart: async (force = false) => {
             logger.info(`Restarting server...`);
-            await startServer();
+            await startServer(force);
           },
           start: async () => {
             logger.info(`Starting server...`);
@@ -224,9 +225,9 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           config: lastKnownConfig,
           getBackendLogs: () => '',
           getFrontendLogs: () => '',
-          restart: async () => {
+          restart: async (force = false) => {
             logger.info(`Restarting server...`);
-            await startServer();
+            await startServer(force);
           },
           start: async () => {
             logger.info(`Starting server...`);

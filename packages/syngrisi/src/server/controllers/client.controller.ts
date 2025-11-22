@@ -8,7 +8,7 @@ import { Response } from "express";
 import log from "../lib/logger";
 import { ExtRequest } from '@types';
 import { ClientStartSessionType } from '../schemas/Client.schema';
-import { CreateCheckParams } from '../services/client.service';
+import { CreateCheckParams } from '../../types/Check';
 
 const startSession = catchAsync(async (req: ExtRequest, res: Response) => {
     const params = pick(

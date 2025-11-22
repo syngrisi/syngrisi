@@ -19,7 +19,44 @@ Given('the database is cleared', async ({ appServer }: { appServer: AppServerFix
   process.env.SYNGRISI_TEST_MODE = '1'; // Backend expects '1', not 'true'
   // Restart server to recreate Guest user and test users (as in original WebdriverIO tests)
   logger.info('Restarting server to recreate Guest user and test users');
-  await appServer.restart();
+  // IMPORTANT: Force restart to ensure users are recreated after database clear
+  await appServer.restart(true);
+
+  // Wait for server to be fully ready with users created
+  logger.info('Waiting for users to be created in database...');
+  const got = (await import('got-cjs')).got;
+  const maxAttempts = 30;
+  let attempt = 0;
+  let usersReady = false;
+
+  while (attempt < maxAttempts && !usersReady) {
+    attempt++;
+    try {
+      // Try to get app info which will only work when server is fully initialized
+      const response = await got(`${appServer.baseURL}/v1/app/info`, {
+        timeout: { request: 2000 },
+        retry: { limit: 0 },
+      });
+
+      if (response.statusCode === 200) {
+        logger.info(`Server is responding (attempt ${attempt}/${maxAttempts})`);
+        // Give a bit more time for users to be created
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        usersReady = true;
+      }
+    } catch (error) {
+      if (attempt < maxAttempts) {
+        logger.warn(`Server not ready yet, waiting... (attempt ${attempt}/${maxAttempts})`);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    }
+  }
+
+  if (!usersReady) {
+    throw new Error('Server did not become ready in time after restart');
+  }
+
+  logger.info('✓ Server is ready with users created');
 });
 
 When('I open the app', async ({ page, appServer }: { page: Page; appServer: AppServerFixture }) => {
