@@ -6,7 +6,12 @@ import { config } from '@config';
 import { getDiff } from '@lib/сomparison';
 import log from '@logger';
 import { SnapshotDiff } from '@schemas/SnapshotDiff.schema';
-import { LogOpts } from '@types';
+import { LogOpts, RequestUser } from '@types';
+import { UserDocument } from '@models/User.model';
+import { CreateCheckParamsExtended } from '../../types/Check';
+import { createSnapshot } from './snapshot-file.service';
+import { errMsg, ApiError } from '@utils';
+import httpStatus from 'http-status';
 
 export interface CompareSnapshotsOptions {
     vShifting?: boolean;
@@ -37,6 +42,9 @@ export const compareSnapshots = async (baselineSnapshot: SnapshotDocument, actua
                 getBuffer: null
             };
         } else {
+            if (!baselineSnapshot.filename || !actual.filename) {
+                throw new Error('Snapshot filename is missing');
+            }
             const baselinePath = path.join(config.defaultImagesPath, baselineSnapshot.filename);
             const actualPath = path.join(config.defaultImagesPath, actual.filename);
             const baselineData = await fsp.readFile(baselinePath);
@@ -77,4 +85,96 @@ export const compareSnapshots = async (baselineSnapshot: SnapshotDocument, actua
         log.error(errMsg, logOpts);
         throw new Error(String(e));
     }
+};
+
+type DimensionType = { height: number, width: number };
+
+export const ignoreDifferentResolutions = ({ height, width }: DimensionType) => {
+    if ((width === 0) && (height === -1)) return true;
+    if ((width === 0) && (height === 1)) return true;
+    return false;
+};
+
+export interface CompareResult {
+    failReasons: string[];
+    diffId: string;
+    diffSnapshot: SnapshotDocument;
+    status: string;
+    result: string;
+    isSameDimensions: boolean;
+    dimensionDifference: DimensionType;
+}
+
+export const compareCheck = async (
+    expectedSnapshot: SnapshotDocument,
+    actualSnapshot: SnapshotDocument,
+    newCheckParams: CreateCheckParamsExtended,
+    skipSaveOnCompareError: boolean,
+    currentUser: RequestUser
+): Promise<CompareResult> => {
+    const logOpts: LogOpts = {
+        scope: 'createCheck.compare',
+        user: currentUser.username,
+        itemType: 'check',
+        msgType: 'COMPARE',
+    };
+
+    const executionTimer = process.hrtime();
+    const compareResult: Partial<CompareResult> = {};
+    compareResult.failReasons = [...newCheckParams.failReasons];
+
+    let checkCompareResult: SnapshotDiff;
+    let diffSnapshot: SnapshotDocument | null = null;
+
+    const areSnapshotsDifferent = (result: SnapshotDiff) => result.rawMisMatchPercentage.toString() !== '0';
+    const areSnapshotsWrongDimensions = (result: Partial<CompareResult>) => !result.isSameDimensions && !ignoreDifferentResolutions(result.dimensionDifference!);
+
+    if ((newCheckParams.status !== 'new') && (!compareResult.failReasons.includes('not_accepted'))) {
+        try {
+            log.debug(`'the check with name: '${newCheckParams.name}' isn't new, make comparing'`, logOpts);
+            checkCompareResult = await compareSnapshots(expectedSnapshot, actualSnapshot, { vShifting: newCheckParams.vShifting });
+            log.silly(`ignoreDifferentResolutions: '${ignoreDifferentResolutions(checkCompareResult.dimensionDifference)}'`);
+            log.silly(`dimensionDifference: '${JSON.stringify(checkCompareResult.dimensionDifference)}`);
+
+            if (areSnapshotsDifferent(checkCompareResult) || areSnapshotsWrongDimensions(checkCompareResult)) {
+                let logMsg;
+                if (areSnapshotsWrongDimensions(checkCompareResult)) {
+                    logMsg = 'snapshots have different dimensions';
+                    compareResult.failReasons.push('wrong_dimensions');
+                }
+                if (areSnapshotsDifferent(checkCompareResult)) {
+                    logMsg = 'snapshots have differences';
+                    compareResult.failReasons.push('different_images');
+                }
+
+                if (logMsg) log.debug(logMsg, logOpts);
+                log.debug(`saving diff snapshot for check with name: '${newCheckParams.name}'`, logOpts);
+                if (!skipSaveOnCompareError) {
+                    diffSnapshot = await createSnapshot({
+                        name: newCheckParams.name,
+                        fileData: checkCompareResult.getBuffer!(),
+                    });
+                    compareResult.diffId = diffSnapshot.id;
+                    compareResult.diffSnapshot = diffSnapshot;
+                }
+                compareResult.status = 'failed';
+            } else {
+                compareResult.status = 'passed';
+            }
+
+            checkCompareResult.totalCheckHandleTime = process.hrtime(executionTimer).toString();
+            compareResult.result = JSON.stringify(checkCompareResult, null, '\t');
+        } catch (e: unknown) {
+            // compareResult.updatedDate = Date.now();
+            compareResult.status = 'failed';
+            compareResult.result = JSON.stringify({ server_error: `error during comparing - ${errMsg(e)}` });
+            compareResult.failReasons.push('internal_server_error');
+            throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, `error during comparing: ${errMsg(e)}`);
+        }
+    }
+
+    if (compareResult.failReasons.length > 0) {
+        compareResult.status = 'failed';
+    }
+    return compareResult as CompareResult;
 };
