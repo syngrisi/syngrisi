@@ -5,7 +5,7 @@ import { Midleware } from '@types';
 import { validateRequest } from '@utils/validateRequest';
 import { LogGetSchema, LogCreateSchema, LogDistinctSchema, LogCreateRespSchema, LogDistinctResponseSchema } from '@schemas/Logs.schema';
 import { createApiResponse, createPaginatedApiResponse } from '@api-docs/openAPIResponseBuilders';
-import { ensureLoggedIn } from '@middlewares/ensureLogin';
+import { ensureLoggedInOrApiKey } from '@middlewares/ensureLogin';
 import { createRequestQuerySchema } from '@schemas/utils/createRequestQuerySchema';
 import { RequestPaginationSchema } from '@schemas/common/RequestPagination.schema';
 import { createRequestOpenApiBodySchema } from '@schemas/utils/createRequestOpenApiBodySchema';
@@ -25,7 +25,7 @@ registry.registerPath({
 
 router.get(
     '/',
-    ensureLoggedIn(),
+    ensureLoggedInOrApiKey(),
     validateRequest(createRequestQuerySchema(RequestPaginationSchema), 'get, /v1/logs'),
     logsController.getLogs as Midleware
 );
@@ -41,7 +41,7 @@ registry.registerPath({
 
 router.get(
     '/distinct',
-    ensureLoggedIn(),
+    ensureLoggedInOrApiKey(),
     validateRequest(createRequestQuerySchema(LogDistinctSchema), 'get, /v1/logs/distinct'),
     logsController.distinct as Midleware
 );
@@ -57,7 +57,7 @@ registry.registerPath({
 
 router.post(
     '/',
-    ensureLoggedIn(),
+    ensureLoggedInOrApiKey(),
     validateRequest(createRequestBodySchema(LogCreateSchema), 'post, /v1/logs'),
     logsController.createLog as Midleware
 );

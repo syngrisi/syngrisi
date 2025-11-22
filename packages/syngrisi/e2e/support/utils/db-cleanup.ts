@@ -45,12 +45,14 @@ export async function clearDatabase(
   const dbUri = resolveDbUri(actualCid);
   const baselinesPath = resolveBaselinesPath(actualCid);
 
+
+
   const client = new MongoClient(dbUri, { retryWrites: false });
   try {
     await client.connect();
     const db = client.db();
     const dropResult = await db.dropDatabase();
-    logger.info(`Dropped database ${db.databaseName}: ${dropResult}`);
+    logger.info(`✓ Dropped database ${db.databaseName}: ${dropResult}`);
   } catch (error: any) {
     const errorMsg = error.message || error.toString() || '';
     if (errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed') || errorMsg.includes('ECONNREFUSED')) {

@@ -284,7 +284,30 @@ When(
     const trimmedJs = js.trim();
     const expression = trimmedJs.includes('return') ? trimmedJs : `return (${trimmedJs});`;
     const wrappedFunction = `(() => { ${expression} })()`;
-    await page.waitForFunction(wrappedFunction, { timeout: timeoutSeconds * 1000 });
+
+    // Custom polling implementation to bypass global actionTimeout
+    const pollingInterval = 100; // Check every 100ms
+    const timeoutMs = timeoutSeconds * 1000;
+    const startTime = Date.now();
+
+    while (true) {
+      try {
+        const result = await page.evaluate(wrappedFunction);
+        if (result) {
+          return; // Condition met
+        }
+      } catch (error) {
+        // Ignore evaluation errors and continue polling
+      }
+
+      if (Date.now() - startTime >= timeoutMs) {
+        throw new Error(
+          `Timeout ${timeoutSeconds}s exceeded waiting for javascript condition:\n${trimmedJs}`
+        );
+      }
+
+      await page.waitForTimeout(pollingInterval);
+    }
   }
 );
 

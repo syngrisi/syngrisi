@@ -43,6 +43,10 @@ const login = catchAsync(async (req: ExtRequest, res: Response, next: NextFuncti
         scope: 'login',
         msgType: 'AUTHENTICATION',
     };
+
+    // Log login attempt
+    log.info(`Login attempt for user: ${req.body.username}`, logOpts);
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     passport.authenticate('local', (err: unknown, user: any, info: any) => {
         if (err) {
@@ -50,10 +54,12 @@ const login = catchAsync(async (req: ExtRequest, res: Response, next: NextFuncti
             return res.status(httpStatus.UNAUTHORIZED).json({ message: 'authentication error' });
         }
         if (!user) {
-            log.error(`Authentication error: '${info.message}'`, logOpts);
+            log.error(`Authentication failed for '${req.body.username}': '${info.message}'`, logOpts);
+            log.error(`Info object: ${JSON.stringify(info)}`, logOpts);
             return res.status(httpStatus.UNAUTHORIZED).json({ message: `Authentication error: '${info.message}'` });
         }
 
+        log.info(`User authenticated successfully: ${user.username}`, logOpts);
         req.logIn(user, (e: unknown) => {
             if (e) {
                 log.error(e, logOpts);
