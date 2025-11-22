@@ -32,6 +32,7 @@ Feature: Check Preview - Tooltip
       testName: TestName
       checks:
           - checkName: CheckName
+            filePath: files/A.png
     """
     When I accept via http the 1st check with name "CheckName"
 

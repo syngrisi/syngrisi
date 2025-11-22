@@ -182,7 +182,16 @@ async function createTestsWithParams(
       const checkResults = [];
       for (const check of params.checks || []) {
         const checkName = check.checkName || check.name || 'CheckName';
-        const filePath = check.filePath || 'files/A.png';
+        if (!check.filePath) {
+          throw new Error(
+            `filePath is required for check "${checkName}". ` +
+            `Please specify filePath in the feature file. Example:\n` +
+            `  checks:\n` +
+            `    - checkName: ${checkName}\n` +
+            `      filePath: files/A.png`
+          );
+        }
+        const filePath = check.filePath;
         const repoRoot = path.resolve(__dirname, '..', '..', '..', '..');
         const fullPath = path.join(repoRoot, 'syngrisi', 'tests', filePath);
         if (!fs.existsSync(fullPath)) {

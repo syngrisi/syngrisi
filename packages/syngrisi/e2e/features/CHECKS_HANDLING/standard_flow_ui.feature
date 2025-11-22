@@ -14,6 +14,7 @@ Feature: Standard Checks Flow - UI
           testName: TestName
           checks:
               - checkName: CheckName
+                filePath: files/A.png
         """
         When I go to "main" page
         # BEFORE ACCEPT

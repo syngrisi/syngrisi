@@ -13,7 +13,9 @@ Feature: Test Isolation by Suite
       suiteName: Suite-1
       checks:
           - checkName: CheckSuite-1.1
+            filePath: files/A.png
           - checkName: CheckSuite-1.2
+            filePath: files/A.png
     """
     Given I create "1" tests with:
     """
@@ -21,7 +23,9 @@ Feature: Test Isolation by Suite
       suiteName: Suite-1
       checks:
           - checkName: CheckSuite-1.3
+            filePath: files/A.png
           - checkName: CheckSuite-1.4
+            filePath: files/A.png
     """
 
     Given I create "1" tests with:
@@ -30,7 +34,9 @@ Feature: Test Isolation by Suite
       suiteName: Suite-2
       checks:
           - checkName: CheckSuite-2.1
+            filePath: files/A.png
           - checkName: CheckSuite-2.2
+            filePath: files/A.png
     """
 
     When I refresh page

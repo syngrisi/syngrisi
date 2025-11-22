@@ -14,6 +14,7 @@ Feature: Switch Color Theme
           testName: TestName-1
           checks:
              - checkName: Check-1
+               filePath: files/A.png
         """
 
         When I go to "main" page

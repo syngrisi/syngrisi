@@ -46,7 +46,7 @@
     "server:watch": "npx tsup --watch --onSuccess \"node ./dist/server/server.js\" # compile all server ts files changes",
     "start": "if [ \"$NODE_ENV\" = \"development\" ]; then npm run server:watch; else node ./dist/server/server.js; fi",
     "start_old": "SYNGRISI_AUTH=false nodemon --ignore 'mvc/views/lib/*.js' --ignore 'tests'",
-    "test": "npm run build && cd tests && npm run test",
+    "test": "npm run build && cd e2e && npm run test",
     "build": "npm run build:ui && npm run build:server",
     "clean:server": "rimraf dist",
     "build:ui": "rm -rf mvc/views/react/assets && cross-env VITE_ROOT_PATH='./src/ui-app/' vite build",

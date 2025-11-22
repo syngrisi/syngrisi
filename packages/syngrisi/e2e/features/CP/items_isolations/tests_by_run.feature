@@ -14,7 +14,9 @@ Feature: Test Isolation by Run
       runIdent: Run-1
       checks:
           - checkName: CheckRun-1.1
+            filePath: files/A.png
           - checkName: CheckRun-1.2
+            filePath: files/A.png
     """
     Given I create "1" tests with:
     """
@@ -23,7 +25,9 @@ Feature: Test Isolation by Run
       runIdent: Run-1
       checks:
           - checkName: CheckRun-1.1.1
+            filePath: files/A.png
           - checkName: CheckRun-1.2.2
+            filePath: files/A.png
     """
     Given I create "1" tests with:
     """
@@ -32,7 +36,9 @@ Feature: Test Isolation by Run
       runIdent: Run-2
       checks:
           - checkName: CheckRun-2.1
+            filePath: files/A.png
           - checkName: CheckRun-2.2
+            filePath: files/A.png
     """
     When I refresh page
 
@@ -71,6 +77,7 @@ Feature: Test Isolation by Run
       runIdent: XXX
       checks:
           - checkName: CheckRun-1
+            filePath: files/A.png
     """
     Given I create "1" tests with:
     """
@@ -79,6 +86,7 @@ Feature: Test Isolation by Run
       runIdent: YYY
       checks:
           - checkName: CheckRun-2
+            filePath: files/A.png
     """
 
     When I refresh page
@@ -102,6 +110,7 @@ Feature: Test Isolation by Run
       runIdent: XXX
       checks:
           - checkName: CheckRun-1
+            filePath: files/A.png
     """
     Given I create "1" tests with:
     """
@@ -110,6 +119,7 @@ Feature: Test Isolation by Run
       runIdent: XXX
       checks:
           - checkName: CheckRun-2
+            filePath: files/A.png
     """
 
     When I refresh page

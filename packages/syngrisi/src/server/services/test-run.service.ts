@@ -1,6 +1,6 @@
-import { removeEmptyProperties, waitUntil, errMsg } from '@utils';
+import { removeEmptyProperties, waitUntil, errMsg, calculateAcceptedStatus } from '@utils';
 import { Check, Test } from '@models';
-import { createRunIfNotExist, createSuiteIfNotExist, createItemIfNotExistAsync, createTest } from '@lib/dbItems';
+import { createRunIfNotExist, createSuiteIfNotExist, createItemIfNotExistAsync, createTest, updateItemDate } from '@lib/dbItems';
 import log from '@logger';
 import { LogOpts } from '@types';
 import { ClientStartSessionType } from '@schemas/Client.schema';
@@ -117,4 +117,20 @@ export const endSession = async (testId: string, username: string) => {
     const updatedTest = await updateTest(testId, testParams);
     const result = updatedTest?.toObject() as TestDocument;
     return result;
+};
+
+export const updateTestAfterCheck = async (test: TestDocument, check: CheckDocument, logOpts: LogOpts, session?: any) => {
+    log.debug(`update test with check id: '${check.id}'`, logOpts);
+    if (test.checks) {
+        test.checks.push(check.id);
+    } else {
+        test.checks = [check.id];
+    }
+    test.markedAs = await calculateAcceptedStatus(check.test);
+    test.updatedDate = new Date();
+    await test.save({ session });
+
+    log.debug('update suite and run', logOpts);
+    await updateItemDate('VRSSuite', check.suite); // updateItemDate might need session support too?
+    await updateItemDate('VRSRun', check.run);
 };

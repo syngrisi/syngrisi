@@ -52,6 +52,7 @@ Feature: Navbar Quick Filtering
           runName: RunName_P1-$
           checks:
              - checkName: Check
+               filePath: files/A.png
         """
 
         When I create "1" tests with:
@@ -61,6 +62,7 @@ Feature: Navbar Quick Filtering
           runName: RunName_P2-$
           checks:
              - checkName: Check
+               filePath: files/A.png
         """
 
         When I go to "main" page

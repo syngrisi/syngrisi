@@ -13,7 +13,9 @@ Feature: Partially Accepted Test
           testName: TestName
           checks:
               - checkName: CheckName-1
+                filePath: files/A.png
               - checkName: CheckName-2
+                filePath: files/A.png
         """
         When I go to "main" page
 

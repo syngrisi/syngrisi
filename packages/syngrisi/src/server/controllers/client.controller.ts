@@ -60,12 +60,6 @@ const createCheck = catchAsync(async (req: ExtRequest, res: Response) => {
     const suite = await Suite.findOne({ name: params.suitename });
     if (!suite) throw new ApiError(httpStatus.NOT_FOUND, `cannot get the suite: ${params.suitename}`);
 
-    await updateItem('VRSTest', { _id: test.id }, {
-        suite: suite.id,
-        creatorId: currentUser._id,
-        creatorUsername: currentUser.username,
-    });
-
     const result = await clientService.createCheck(
         {
             branch: params.branch,

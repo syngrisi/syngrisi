@@ -33,6 +33,7 @@ Feature: Task - Remove old checks
           testName: TestName
           checks:
             - checkName: unaccepted
+              filePath: files/A.png
         """
         When I update via http check with params:
         """
@@ -56,6 +57,7 @@ Feature: Task - Remove old checks
           testName: TestName
           checks:
             - checkName: CheckName
+              filePath: files/A.png
         """
         When I update via http check with params:
         """
@@ -67,6 +69,7 @@ Feature: Task - Remove old checks
           testName: TestName
           checks:
             - checkName: CheckName
+              filePath: files/A.png
         """
         When I update via http check with params:
         """
@@ -283,6 +286,7 @@ Feature: Task - Remove old checks
           testName: UITaskRun
           checks:
             - checkName: ui_task_check
+              filePath: files/A.png
         """
         When I update via http check with params:
         """

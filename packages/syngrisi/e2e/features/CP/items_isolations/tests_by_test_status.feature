@@ -13,6 +13,7 @@ Feature: Test Isolation by Test Status
       testName: TestStatus-new
       checks:
           - checkName: Check-new
+            filePath: files/A.png
     """
 
     # PASSED
@@ -21,6 +22,7 @@ Feature: Test Isolation by Test Status
       testName: TestStatus-passed-new
       checks:
           - checkName: Check-passed
+            filePath: files/A.png
     """
     When I accept via http the 1st check with name "Check-passed"
 
@@ -29,6 +31,7 @@ Feature: Test Isolation by Test Status
       testName: TestStatus-passed-passed
       checks:
           - checkName: Check-passed
+            filePath: files/A.png
     """
     When I accept via http the 1st check with name "Check-passed"
 

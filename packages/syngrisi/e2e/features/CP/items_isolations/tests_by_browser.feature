@@ -13,6 +13,7 @@ Feature: Test Isolation by Browser
       browserName: chrome-$
       checks:
           - checkName: Check-1
+            filePath: files/A.png
     """
 
     When I refresh page

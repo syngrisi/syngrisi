@@ -3,7 +3,7 @@ import { promises as fsp } from 'fs';
 import { Baseline } from '@models';
 import { SnapshotDocument } from '@models/Snapshot.model';
 import { config } from '@config';
-import { getDiff } from '@lib/сomparison';
+import { getDiff } from '@lib/comparison';
 import log from '@logger';
 import { SnapshotDiff } from '@schemas/SnapshotDiff.schema';
 import { LogOpts, RequestUser } from '@types';
@@ -105,12 +105,15 @@ export interface CompareResult {
     dimensionDifference: DimensionType;
 }
 
+import { ClientSession } from 'mongoose';
+
 export const compareCheck = async (
     expectedSnapshot: SnapshotDocument,
     actualSnapshot: SnapshotDocument,
     newCheckParams: CreateCheckParamsExtended,
     skipSaveOnCompareError: boolean,
-    currentUser: RequestUser
+    currentUser: RequestUser,
+    session?: ClientSession
 ): Promise<CompareResult> => {
     const logOpts: LogOpts = {
         scope: 'createCheck.compare',
@@ -153,7 +156,7 @@ export const compareCheck = async (
                     diffSnapshot = await createSnapshot({
                         name: newCheckParams.name,
                         fileData: checkCompareResult.getBuffer!(),
-                    });
+                    }, session);
                     compareResult.diffId = diffSnapshot.id;
                     compareResult.diffSnapshot = diffSnapshot;
                 }

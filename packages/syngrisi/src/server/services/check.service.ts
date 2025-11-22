@@ -263,26 +263,26 @@ const enrichChecksWithCurrentAcceptance = async (
 
         const matchesOwnBaseline = Boolean(
             actualSnapshotId
-                && checkBaselineSnapshotId
-                && actualSnapshotId === checkBaselineSnapshotId,
+            && checkBaselineSnapshotId
+            && actualSnapshotId === checkBaselineSnapshotId,
         );
         const matchesLatestBaseline = Boolean(
             actualSnapshotId
-                && baselineSnapshotId
-                && actualSnapshotId === baselineSnapshotId,
+            && baselineSnapshotId
+            && actualSnapshotId === baselineSnapshotId,
         );
 
         const isCurrentlyAccepted = Boolean(
             check?.markedAs === 'accepted'
-                && (matchesOwnBaseline || matchesLatestBaseline),
+            && (matchesOwnBaseline || matchesLatestBaseline),
         );
 
         const hasKnownBaseline = Boolean(checkBaselineSnapshotId || baselineSnapshotId);
 
         const wasAcceptedEarlier = Boolean(
             check?.markedAs === 'accepted'
-                && hasKnownBaseline
-                && !isCurrentlyAccepted,
+            && hasKnownBaseline
+            && !isCurrentlyAccepted,
         );
 
         // Debug logging
@@ -438,9 +438,15 @@ const update = async (id: string, opts: Partial<CheckDocument>, user: string): P
     return check;
 };
 
+const createCheckDocument = async (checkParams: any, session?: any): Promise<CheckDocument> => {
+    const [check] = await Check.create([checkParams], { session });
+    return check;
+};
+
 export {
     accept,
     remove,
     update,
     enrichChecksWithCurrentAcceptance,
+    createCheckDocument,
 };

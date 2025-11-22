@@ -1,50 +1,102 @@
 # E2E Framework Rules for AI Agents
 
-## CRITICAL RULE: Test Fidelity
+## E2E Test Agent - Strict Rules
 
-**NEVER modify test assertions or add normalization logic that changes the actual behavior being tested.**
+### 🚫 ABSOLUTE PROHIBITIONS
 
-- Tests MUST exactly replicate the logic from `packages/syngrisi/tests/features/`
-- DO NOT add color normalization, case-insensitive text matching, or any other "helpful" transformations
-- If a test fails, investigate WHY it fails - don't work around it by changing the assertion logic
-- Use exact string matching: `expect(actual).toBe(expected)` - no regex, no normalization
-- For CSS properties, use Playwright's `toHaveCSS()` directly - it handles browser differences correctly
-- If there's a mismatch between expected and actual values, debug the root cause:
-  - Check if the application behavior changed
-  - Verify selectors are correct
-  - Add debug logging to understand what's happening
-  - Fix the application or test data, not the assertion
+#### 1. Global Timeouts
 
-## Step Definitions
+-   **NEVER** modify `playwright.config.ts` timeouts without user consent
+-   **NEVER** change global `timeout`, `actionTimeout`, `navigationTimeout` without user consent
+-   **MUST STOP** and ask user: "Action X is timing out. Adjust timeout or investigate why it's slow?"
 
-- Step definitions MUST match the original WebdriverIO/Cucumber step definitions exactly
-- Use the same comparison logic as the original tests
-- Preserve all original test behavior and expectations
-- Keep all environment management steps (database cleanup, server/driver start, storage reset) identical to the original feature backgrounds. If the legacy scenario started with `Given I clear Database and stop Server`, you MUST provide the same guarantees via Playwright fixtures/steps (e.g. `Given the database is cleared` plus server start). Never skip or reorder these setup steps.
-- Ensure API helpers mirror legacy behavior: reuse the same hashing algorithms, default payload values, wait timings, and file resolution logic so that created entities are byte-for-byte compatible with the original tests.
-- Maintain the exact feature structure: scenario titles, tags, comments, and data tables should remain unchanged unless the original files are updated.
+### 2. Working Around Failures
 
-## Debugging
+**FORBIDDEN:**
 
-- When tests fail, add detailed logging to understand the issue
-- Use Playwright's built-in debugging tools (screenshots, traces, console logs)
-- Never "fix" a test by changing what it's testing - fix the underlying issue
-- Validate cross-scenario isolation explicitly: double-check that data created in one scenario cannot leak into the next. If the legacy suite depended on a fresh DB per background, replicate that behavior in the new stack.
+-   Changing assertions to match wrong behavior
+-   Adding `waitForTimeout()` to mask issues
+-   Relaxing expectations without understanding why
+-   Catching errors without investigation
 
-## Known Differences: WebdriverIO vs Playwright
+**REQUIRED:**
 
-- **Text matching**: WebdriverIO's `getText()` returns visible text (like `innerText`), which respects CSS `text-transform`. Use `innerText()` in Playwright to match this behavior.
-- **CSS Colors**: WebdriverIO's `getCSSProperty()` for color properties returns `rgba(r,g,b,1)` format without spaces. Browsers return `rgb(r, g, b)` format. To match WebdriverIO behavior exactly, normalize `rgb(r, g, b)` to `rgba(r,g,b,1)` format (no spaces) in step definitions for color properties. This normalization is REQUIRED to replicate WebdriverIO's exact behavior.
+-   Investigate WHY test fails
+-   Add debug logging
+-   Capture actual vs expected state
+-   Find root cause before any changes
+
+### 3. Selector Priority (STRICT ORDER)
+
+1. ✅ ARIA roles — `When I click element with locator "button[aria-label='Add New User']"`
+2. ✅ Labels — `When I fill "j_doe@gmail.com" into element with label "Email"`
+3. ✅ Text — `Then the element "[data-check-status-name='CheckName'] span" matches the text "NEW"`
+4. ⚠️ TestID (only if above unavailable) — `Then the element with locator "[data-test='user-add-role']" should be enabled`
+5. ❌ CSS/XPath (very rare case, only if above unavailable) — `Then the element with locator "//input[@aria-label='Email']/../../div[contains(@class, 'mantine-InputWrapper-error')]" should have contains text "Invalid email format"`
+
+### 4. Missing Accessibility
+
+If good selectors unavailable change the layout to add accessibility features (`packages/syngrisi/src/ui-app`):
+
+-   Use semantic HTML (`<button>`, `<nav>`)
+-   Add ARIA roles/labels
+-   Add labels for inputs
+-   Add alt text for images
+
+## 📋 MANDATORY WORKFLOW
+
+```
+Failure → STOP → Debug → Analyze → Document → ASK USER → WAIT → Proceed
+```
+
+---
+
+## When Test Fails
+
+1. **Capture state:** actual vs expected
+2. **Add debug:** logging, screenshots
+3. **Analyze:** check selector, timing, app behavior, errors
+4. **Report:** "STOP: [failure reason]. Options: A) [action1] B) [action2]. Awaiting approval."
+5. **WAIT** for user response
+
+---
+
+## ❌ NEVER Say/Do
+
+-   "I'll increase timeout"
+-   "Let me adjust the assertion"
+-   "I'll use CSS selector instead"
+-   Make changes without explaining WHY
+-   Proceed without approval on critical decisions
+
+---
+
+## ✅ ALWAYS Say
+
+-   "STOP: Investigation required"
+-   "Root cause: [details]"
+-   "Awaiting approval before proceeding"
+-   "Should I [A] or [B]?"
+
+---
+
+## ENFORCEMENT
+
+**Any rule violation = immediate STOP + user approval required**
 
 ## Test Execution
 
-- The project relies on `npm`, so run commands via the npm scripts inside `packages/syngrisi/e2e`.
-- To execute a single scenario in headless mode, generate steps and run the test:
-  ```bash
-  npx bddgen && yarn playwright test "features/CHECKS_HANDLING/accept_by_user.feature" --grep "Accept by user" --headed --workers=1
-  ```
-- For headed mode, run:
-  ```bash
-  npx bddgen && yarn playwright test "features/CHECKS_HANDLING/accept_by_user.feature" --grep "Accept by user" --headed --workers=1 --headed
-  ```
-- To execute the entire e2e suite, change into `packages/syngrisi/e2e` and run `npm test`.
+-   The project relies on `npm`, so run commands via the npm scripts inside `packages/syngrisi/e2e`.
+-   To execute a single scenario in headless mode, generate steps and run the test:
+
+    ```bash
+    npx bddgen && yarn playwright test "features/CHECKS_HANDLING/accept_by_user.feature" --grep "Accept by user" --workers=2
+    ```
+
+-   For headed mode, run:
+
+    ```bash
+    npx bddgen && yarn playwright test "features/CHECKS_HANDLING/accept_by_user.feature" --grep "Accept by user" --workers=1 --headed
+    ```
+
+-   To execute the entire e2e suite, change into `packages/syngrisi/e2e` and run `npm test`.
