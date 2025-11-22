@@ -12,6 +12,7 @@ Feature: Bulk test Apply
           testName: TestName-$
           checks:
               - checkName: CheckName
+                filePath: files/A.png
         """
         When I go to "main" page
 

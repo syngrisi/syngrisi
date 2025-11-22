@@ -12,6 +12,7 @@ Feature: Checks Preview Modes
           testName: "TestName"
           checks:
               - checkName: CheckName
+                filePath: files/A.png
         """
         When I go to "main" page
         When I unfold the test "TestName"
@@ -34,6 +35,7 @@ Feature: Checks Preview Modes
           testName: "TestName"
           checks:
               - checkName: CheckName
+                filePath: files/A.png
         """
         When I go to "main" page
         When I unfold the test "TestName"

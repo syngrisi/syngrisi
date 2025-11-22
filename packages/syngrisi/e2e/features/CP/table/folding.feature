@@ -33,6 +33,7 @@ Feature: Folding
           testName: "TestName"
           checks:
               - checkName: CheckName
+                filePath: files/A.png
         """
         When I go to "main" page
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
@@ -46,6 +47,7 @@ Feature: Folding
           testName: "TestName-$"
           checks:
             - checkName: Check-$
+              filePath: files/A.png
         """
         Given I go to "main" page
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-0]" to be visible
@@ -72,6 +74,7 @@ Feature: Folding
           testName: "TestName-$"
           checks:
             - checkName: Check-$
+              filePath: files/A.png
         """
         Given I go to "main" page
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-0]" to be visible
@@ -100,6 +103,7 @@ Feature: Folding
           testName: "TestName-$"
           checks:
             - checkName: Check-$
+              filePath: files/A.png
         """
         Given I go to "main" page
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-0]" to be visible

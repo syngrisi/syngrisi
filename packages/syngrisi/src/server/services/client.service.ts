@@ -1,6 +1,5 @@
 import { Check, CheckDocument } from '@models';
-import { buildIdentObject, calculateAcceptedStatus, ident, errMsg, ApiError, prettyCheckParams } from '@utils';
-import { updateItemDate } from '@lib/dbItems';
+import { buildIdentObject, ident, errMsg, ApiError, prettyCheckParams } from '@utils';
 import log from "@logger";
 import { LogOpts, RequestUser } from '@types';
 
@@ -10,8 +9,9 @@ import { SuiteDocument } from '@models/Suite.model';
 import { SnapshotDocument } from '@models/Snapshot.model';
 import StatusCodes from 'http-status';
 import { prepareActualSnapshot, isNeedFiles } from './snapshot-file.service';
-import { startSession, endSession } from './test-run.service';
+import { startSession, endSession, updateTestAfterCheck } from './test-run.service';
 import * as BaselineService from './baseline.service';
+import * as CheckService from './check.service';
 import { compareCheck } from './comparison.service';
 import { CreateCheckParams, CreateCheckParamsExtended } from '../../types/Check';
 
@@ -36,6 +36,32 @@ const createCheckParams = (checkParam: CreateCheckParams, suite: SuiteDocument, 
     failReasons: [],
 });
 
+import mongoose from 'mongoose';
+import * as SnapshotService from './snapshot.service';
+
+import fs, { promises as fsp } from 'fs';
+import { config } from '@config';
+import path from 'path';
+
+/**
+ * Check if the MongoDB deployment supports transactions (requires replica set or sharded cluster)
+ */
+async function supportsTransactions(): Promise<boolean> {
+    try {
+        if (!mongoose.connection.db) {
+            log.warn('MongoDB connection not established. Transactions will be disabled.');
+            return false;
+        }
+        const adminDb = mongoose.connection.db.admin();
+        const serverStatus = await adminDb.serverStatus();
+        // Check if running as part of a replica set
+        return serverStatus.repl !== undefined;
+    } catch (e) {
+        log.warn(`Failed to detect MongoDB replica set: ${errMsg(e)}. Transactions will be disabled.`);
+        return false;
+    }
+}
+
 const createCheck = async (checkParam: CreateCheckParams, test: TestDocument, suite: SuiteDocument, app: AppDocument, currentUser: RequestUser, skipSaveOnCompareError = false) => {
     const logOpts: LogOpts = {
         scope: 'createCheck',
@@ -43,8 +69,9 @@ const createCheck = async (checkParam: CreateCheckParams, test: TestDocument, su
         itemType: 'check',
         msgType: 'CREATE',
     };
-    let actualSnapshot: SnapshotDocument;
+    let actualSnapshot: SnapshotDocument | null = null;
     let currentBaselineSnapshot: SnapshotDocument;
+    let diffSnapshot: SnapshotDocument | null = null;
 
     const newCheckParams = createCheckParams(checkParam, suite, app, test, currentUser);
     const checkIdent = buildIdentObject(newCheckParams);
@@ -52,19 +79,36 @@ const createCheck = async (checkParam: CreateCheckParams, test: TestDocument, su
     let check: CheckDocument | null = null;
     const totalCheckHandleTime = 0;
 
-    const addCheck = (test: TestDocument, check: CheckDocument) => {
-        if (test.checks) {
-            test.checks.push(check.id);
-        } else {
-            test.checks = [check.id];
-        }
+    // Check if transactions are supported (requires replica set)
+    const useTransactions = await supportsTransactions();
+    let session: mongoose.ClientSession | undefined;
+
+    if (useTransactions) {
+        session = await mongoose.startSession();
+        session.startTransaction();
+        log.debug('Using MongoDB transactions for createCheck', logOpts);
+    } else {
+        log.debug('MongoDB transactions not available, executing without session', logOpts);
     }
 
     try {
         const { needFilesStatus, snapshotFoundedByHashcode } = await isNeedFiles(checkParam, logOpts);
-        if (needFilesStatus) return { status: 'needFiles' };
+        if (needFilesStatus) {
+            if (session) {
+                await session.abortTransaction();
+                session.endSession();
+            }
+            return { status: 'needFiles' };
+        }
 
-        actualSnapshot = await prepareActualSnapshot(checkParam, snapshotFoundedByHashcode, logOpts);
+        // update test with suite and creator
+        // moved from controller to be part of transaction
+        test.suite = suite.id;
+        test.creatorId = currentUser._id;
+        test.creatorUsername = currentUser.username;
+        await test.save({ session });
+
+        actualSnapshot = await prepareActualSnapshot(checkParam, snapshotFoundedByHashcode, logOpts, session);
         newCheckParams.actualSnapshotId = actualSnapshot.id;
 
         log.info(`find a baseline for the check with identifier: '${JSON.stringify(checkIdent)}'`, logOpts);
@@ -74,33 +118,35 @@ const createCheck = async (checkParam: CreateCheckParams, test: TestDocument, su
         Object.assign(newCheckParams, inspectBaselineResult.inspectBaselineParams);
         currentBaselineSnapshot = inspectBaselineResult.currentBaselineSnapshot;
 
-        const compareResult = await compareCheck(currentBaselineSnapshot, actualSnapshot, newCheckParams, skipSaveOnCompareError, currentUser);
+        const compareResult = await compareCheck(currentBaselineSnapshot, actualSnapshot, newCheckParams, skipSaveOnCompareError, currentUser, session);
 
         Object.assign(newCheckParams, compareResult);
+        if (compareResult.diffSnapshot) {
+            diffSnapshot = compareResult.diffSnapshot;
+        }
 
         log.debug(`create the new check document with params: '${prettyCheckParams(newCheckParams)}'`, logOpts);
-        check = await Check.create(newCheckParams);
-        const savedCheck = await check.save();
+        check = await CheckService.createCheckDocument(newCheckParams, session);
+        const savedCheck = check;
 
         log.debug(`the check with id: '${check.id}', was created, will updated with data during creating process`, logOpts);
         logOpts.ref = String(check.id);
-        log.debug(`update test with check id: '${check.id}'`, logOpts);
 
-        addCheck(test, check);
-
-        test.markedAs = await calculateAcceptedStatus(check.test);
-        test.updatedDate = new Date();
-
-        await test.save();
-
-        log.debug('update suite and run', logOpts);
-
-        await updateItemDate('VRSSuite', check.suite);
-        await updateItemDate('VRSRun', check.run);
+        await updateTestAfterCheck(test, check, logOpts, session);
 
         const lastSuccessCheck = await BaselineService.getLastSuccessCheck(checkIdent);
 
+        if (session) {
+            await session.commitTransaction();
+            session.endSession();
+        }
+
         const checkObject = savedCheck.toObject();
+
+        // Convert status from array to string for SDK compatibility
+        if (checkObject.status && Array.isArray(checkObject.status)) {
+            checkObject.status = checkObject.status[0] as any;
+        }
 
         type CheckResult = (typeof checkObject) & {
             currentSnapshot: SnapshotDocument,
@@ -121,26 +167,89 @@ const createCheck = async (checkParam: CreateCheckParams, test: TestDocument, su
 
         return result;
     } catch (e: unknown) {
-        newCheckParams.status = 'failed';
-        newCheckParams.result = `{ "server error": "${errMsg(e)}" }`;
-        newCheckParams.failReasons.push('internal_server_error');
-
-        if (!check) {
-            log.debug(`create the new check document with params: '${prettyCheckParams(newCheckParams)}'`, logOpts);
-            check = await Check.create(newCheckParams);
-            await check.save();
-        } else {
-            check.set(newCheckParams)
-            await check.save();
+        if (session) {
+            await session.abortTransaction();
+            session.endSession();
         }
 
-        log.debug(`the check with id: '${check.id}', was created, will updated with data during creating process`, logOpts);
-        logOpts.ref = check.id;
-        log.debug(`update test with check id: '${check.id}'`, logOpts);
-        addCheck(test, check);
-        await test.save();
+        log.error(`${session ? 'transaction aborted' : 'operation failed'}, cleaning up files... error: ${errMsg(e)}`, logOpts);
 
-        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, errMsg(e));
+        // Cleanup files if transaction aborted
+        // We only cleanup if the file was created in this transaction (i.e. not a clone of existing one)
+        // But prepareActualSnapshot logic is complex.
+        // If snapshotFoundedByHashcode is false, we created a NEW file.
+        // If snapshotFoundedByHashcode is true, we cloned it (DB only, file reused? No, cloneSnapshot saves NEW DB record but reuses filename? No.)
+        // Let's check cloneSnapshot:
+        // const newSnapshot = new Snapshot({ name, filename, imghash: hashCode });
+        // It reuses the filename! So we should NOT delete the file if it was cloned.
+        // Wait, cloneSnapshot reuses the filename from sourceSnapshot.
+        // So multiple snapshots point to the SAME file.
+        // In that case, we should NEVER delete the file if it's referenced by others.
+        // But if we created a NEW snapshot with NEW file (createSnapshot), we should delete it.
+        // createSnapshot: const filename = `${snapshot.id}.png`; -> Unique filename!
+        // cloneSnapshot: const filename = sourceSnapshot.filename; -> Shared filename.
+
+        // So, if actualSnapshot was created via createSnapshot, it has a unique filename based on its ID.
+        // If it was created via cloneSnapshot, it shares filename.
+
+        // How to distinguish?
+        // We can check if actualSnapshot.filename includes actualSnapshot.id?
+        // createSnapshot: filename = `${snapshot.id}.png`
+        // cloneSnapshot: filename = sourceSnapshot.filename (which is `${sourceSnapshot.id}.png`)
+        // So if filename == `${actualSnapshot.id}.png`, it's a new file.
+
+        if (actualSnapshot && actualSnapshot.filename === `${actualSnapshot.id}.png`) {
+            const imagePath = path.join(config.defaultImagesPath, actualSnapshot.filename);
+            try {
+                if (fs.existsSync(imagePath)) {
+                    await fsp.unlink(imagePath);
+                    log.debug(`deleted orphan file: ${imagePath}`, logOpts);
+                }
+            } catch (err) {
+                log.error(`failed to delete orphan file: ${imagePath}, error: ${errMsg(err)}`, logOpts);
+            }
+        }
+
+        if (diffSnapshot && diffSnapshot.filename) {
+            // Diff snapshot is always new file?
+            // compareCheck -> createSnapshot -> unique filename.
+            const imagePath = path.join(config.defaultImagesPath, diffSnapshot.filename);
+            try {
+                if (fs.existsSync(imagePath)) {
+                    await fsp.unlink(imagePath);
+                    log.debug(`deleted orphan diff file: ${imagePath}`, logOpts);
+                }
+            } catch (err) {
+                log.error(`failed to delete orphan diff file: ${imagePath}, error: ${errMsg(err)}`, logOpts);
+            }
+        }
+
+        // We still want to record the failure?
+        // The user requirement says: "Операции с файловой системой должны откатываться в блоке catch."
+        // And "Если сохранение файла пройдет успешно, а запись в БД упадет ... появятся "осиротевшие" файлы".
+        // So the goal is to prevent orphan files.
+
+        // Do we still want to save a "failed" check?
+        // The original code tried to save a failed check.
+        // If we want to do that, we need a NEW transaction or just a separate write.
+        // But if the original failure was DB related, maybe this will fail too?
+        // Let's try to save the failure record as before, but outside the aborted transaction.
+
+        try {
+            newCheckParams.status = 'failed';
+            newCheckParams.result = JSON.stringify({ "server error": errMsg(e) });
+            newCheckParams.failReasons.push('internal_server_error');
+
+            log.debug(`create the failed check document`, logOpts);
+            const failedCheck = await CheckService.createCheckDocument(newCheckParams);
+            await updateTestAfterCheck(test, failedCheck, logOpts);
+            const failedObj = failedCheck.toObject();
+            if (failedObj.status && Array.isArray(failedObj.status)) failedObj.status = failedObj.status[0] as any;
+            return { ...failedObj, executeTime: 0 } as any;
+        } catch (err2) {
+            log.error(`failed to record check failure: ${errMsg(err2)}`, logOpts);
+            return { status: 'failed', error: errMsg(e) } as any;
+        }
     }
 };
 

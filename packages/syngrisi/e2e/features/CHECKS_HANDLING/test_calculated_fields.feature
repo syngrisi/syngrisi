@@ -13,8 +13,10 @@ Feature: Test calculated fields
       testName: TestName
       checks:
           - checkName: CheckName-1
+            filePath: files/A.png
             viewport: 50x50
           - checkName: CheckName-2
+            filePath: files/A.png
             viewport: 50x50
     """
     When I go to "main" page
@@ -27,8 +29,10 @@ Feature: Test calculated fields
       testName: TestName
       checks:
           - checkName: CheckName-1
+            filePath: files/A.png
             viewport: 50x50
           - checkName: CheckName-2
+            filePath: files/A.png
             viewport: 100x100
     """
     When I go to "main" page
@@ -40,8 +44,10 @@ Feature: Test calculated fields
       testName: TestName
       checks:
           - checkName: CheckName-1
+            filePath: files/A.png
             viewport: 50x50
           - checkName: CheckName-2
+            filePath: files/A.png
             viewport: 50x50
     """
     When I go to "main" page
@@ -54,6 +60,7 @@ Feature: Test calculated fields
       testName: TestName
       checks:
           - checkName: CheckName-1
+            filePath: files/A.png
     """
     When I accept via http the 1st check with name "CheckName-1"
 
@@ -62,7 +69,9 @@ Feature: Test calculated fields
       testName: TestName
       checks:
           - checkName: CheckName-1
+            filePath: files/A.png
           - checkName: CheckName-2
+            filePath: files/A.png
     """
     When I go to "main" page
     When I wait 30 seconds for the element with locator "[data-table-test-name='TestName']" to be visible

@@ -13,6 +13,7 @@ Feature: Open/Close Check Details
           testName: "TestName"
           checks:
               - checkName: CheckName
+                filePath: files/A.png
         """
         When I go to "main" page
         Then the title is "By Runs"
@@ -36,6 +37,7 @@ Feature: Open/Close Check Details
           testName: "TestName"
           checks:
               - checkName: CheckName
+                filePath: files/A.png
         """
         When I go to "main" page
         When I wait 30 seconds for the element with locator "[data-table-test-name=TestName]" to be visible

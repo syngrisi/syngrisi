@@ -58,6 +58,13 @@ export function CheckModal({ relatedRendered = true, apikey }: Props) {
                 'initial_check_for_check_details_modal',
             ),
             enabled: checkModalOpened,
+            refetchInterval: (data) => {
+                const check = data?.results?.[0];
+                if (check && !check.diffId) {
+                    return 1000;
+                }
+                return false;
+            },
             refetchOnWindowFocus: false,
             onError: (e) => {
                 errorMsg({ error: e });
