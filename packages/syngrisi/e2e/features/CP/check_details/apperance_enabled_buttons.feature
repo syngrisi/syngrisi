@@ -13,6 +13,7 @@ Feature: Enabled disabled buttons on Check Details Modal Window
           testName: "TestName"
           checks:
               - checkName: CheckName
+                filePath: files/A.png
         """
         When I go to "main" page
         When I unfold the test "TestName"
@@ -38,6 +39,7 @@ Feature: Enabled disabled buttons on Check Details Modal Window
           testName: "TestName"
           checks:
               - checkName: CheckName
+                filePath: files/A.png
         """
         When I accept via http the 1st check with name "CheckName"
         Given I create "1" tests with:
@@ -45,6 +47,7 @@ Feature: Enabled disabled buttons on Check Details Modal Window
           testName: "TestName"
           checks:
               - checkName: CheckName
+                filePath: files/A.png
         """
 
         When I go to "main" page
@@ -75,6 +78,7 @@ Feature: Enabled disabled buttons on Check Details Modal Window
           testName: "TestName"
           checks:
               - checkName: CheckName
+                filePath: files/A.png
         """
         When I accept via http the 1st check with name "CheckName"
         Given I create "1" tests with:
@@ -82,6 +86,7 @@ Feature: Enabled disabled buttons on Check Details Modal Window
           testName: "TestName"
           checks:
               - checkName: CheckName
+                filePath: files/A.png
         """
 
         When I go to "main" page

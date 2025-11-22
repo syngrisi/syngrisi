@@ -12,6 +12,7 @@ Feature: Remove item
           runName: RunName-$
           checks:
               - checkName: CheckName-1
+                filePath: files/A.png
         """
 
     Scenario: Remove Run

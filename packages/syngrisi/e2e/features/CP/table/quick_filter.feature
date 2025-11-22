@@ -13,6 +13,7 @@ Feature: Quick Filtering
           testName: "TestName-$"
           checks:
              - checkName: Check - 1
+               filePath: files/A.png
         """
 
         When I create "1" tests with:
@@ -21,6 +22,7 @@ Feature: Quick Filtering
           testName: "ZestName-1"
           checks:
              - checkName: Check - 1
+               filePath: files/A.png
         """
 
         When I go to "main" page
@@ -53,6 +55,7 @@ Feature: Quick Filtering
           testName: "TestNameP1-$"
           checks:
              - checkName: Check - 1
+               filePath: files/A.png
         """
 
         When I create "1" tests with:
@@ -61,6 +64,7 @@ Feature: Quick Filtering
           testName: "TestNameP2-$"
           checks:
              - checkName: Check - 1
+               filePath: files/A.png
         """
 
         When I go to "main" page

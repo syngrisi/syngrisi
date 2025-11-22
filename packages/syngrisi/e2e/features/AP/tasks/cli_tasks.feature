@@ -59,6 +59,7 @@ Feature: CLI Tasks
       testName: TestName
       checks:
         - checkName: unaccepted
+          filePath: files/A.png
     """
     When I update via http check with params:
     """
@@ -80,6 +81,7 @@ Feature: CLI Tasks
       testName: TestName
       checks:
         - checkName: unaccepted
+          filePath: files/A.png
     """
     When I update via http check with params:
     """
@@ -101,6 +103,7 @@ Feature: CLI Tasks
       testName: TestName
       checks:
         - checkName: unaccepted
+          filePath: files/A.png
     """
     When I update via http check with params:
     """

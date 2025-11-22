@@ -14,6 +14,7 @@ Feature: Navbar Refresh
           testName: TestName-1
           checks:
              - checkName: Check-1
+               filePath: files/A.png
         """
 
         When I go to "main" page
@@ -26,6 +27,7 @@ Feature: Navbar Refresh
           testName: TestName-2
           checks:
              - checkName: Check-1
+               filePath: files/A.png
         """
 
         When I wait for "5" seconds

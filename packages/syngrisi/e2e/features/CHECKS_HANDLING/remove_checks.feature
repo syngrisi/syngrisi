@@ -13,7 +13,9 @@ Feature: Remove checks
           testName: TestName
           checks:
               - checkName: CheckName-1
+                filePath: files/A.png
               - checkName: CheckName-2
+                filePath: files/A.png
         """
         When I go to "main" page
 
@@ -47,6 +49,7 @@ Feature: Remove checks
           testName: TestName-$
           checks:
               - checkName: CheckName-1
+                filePath: files/A.png
         """
 
         When I go to "main" page

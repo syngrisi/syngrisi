@@ -9,6 +9,7 @@ import { config } from '@config';
 import log from '@logger';
 import { LogOpts } from '@types';
 import { UploadedFile } from 'express-fileupload';
+import { ClientSession } from 'mongoose';
 
 export interface CreateSnapshotParameters {
     name: string;
@@ -27,7 +28,7 @@ const snapshotExists = async (hash?: string): Promise<SnapshotDocument | null> =
     return Snapshot.findOne({ imghash: hash });
 };
 
-export async function createSnapshot(parameters: CreateSnapshotParameters) {
+export async function createSnapshot(parameters: CreateSnapshotParameters, session?: ClientSession) {
     const logOpts: LogOpts = {
         scope: 'createSnapshot',
         itemType: 'snapshot',
@@ -50,16 +51,16 @@ export async function createSnapshot(parameters: CreateSnapshotParameters) {
     log.debug(`save screenshot for: '${name}' snapshot to: '${imagePath}'`, logOpts);
     await fsp.writeFile(imagePath, fileData);
     snapshot.filename = filename;
-    await snapshot.save();
-    log.debug(`snapshot was saved: '${JSON.stringify(snapshot)}'`, { ...logOpts, ...{ ref: snapshot._id } });
+    await snapshot.save({ session });
+    log.debug(`snapshot was saved: '${JSON.stringify(snapshot)}'`, { ...logOpts, ...{ ref: String(snapshot._id) } });
     return snapshot;
 }
 
-export async function cloneSnapshot(sourceSnapshot: SnapshotDocument, name: string) {
+export async function cloneSnapshot(sourceSnapshot: SnapshotDocument, name: string, session?: ClientSession) {
     const { filename } = sourceSnapshot;
     const hashCode = sourceSnapshot.imghash;
     const newSnapshot = new Snapshot({ name, filename, imghash: hashCode });
-    await newSnapshot.save();
+    await newSnapshot.save({ session });
     return newSnapshot;
 }
 
@@ -84,12 +85,16 @@ export async function isNeedFiles(
 export async function prepareActualSnapshot(
     checkParam: SnapshotRequestPayload,
     snapshotFoundedByHashcode: SnapshotDocument | null,
-    logOpts: LogOpts
+    logOpts: LogOpts,
+    session?: ClientSession
 ): Promise<SnapshotDocument> {
     let currentSnapshot: SnapshotDocument;
     const fileData = checkParam.files ? checkParam.files.file.data : null;
 
     if (snapshotFoundedByHashcode) {
+        if (!snapshotFoundedByHashcode.filename) {
+            throw new Error(`Snapshot filename is missing for hash: ${checkParam.hashCode}`);
+        }
         const fullFilename = path.join(config.defaultImagesPath, snapshotFoundedByHashcode.filename);
         if (!fs.existsSync(fullFilename)) {
             throw new Error(`Couldn't find the baseline file: '${fullFilename}'`);
@@ -98,10 +103,10 @@ export async function prepareActualSnapshot(
         log.debug(`snapshot with such hashcode: '${checkParam.hashCode}' is already exists, will clone it`, logOpts);
 
         if (!checkParam.name) throw new ApiError(httpStatus.BAD_REQUEST, `Cannot prepareActualSnapshot name is empty, hashe: ${checkParam.hashCode}`);
-        currentSnapshot = await cloneSnapshot(snapshotFoundedByHashcode, checkParam.name);
+        currentSnapshot = await cloneSnapshot(snapshotFoundedByHashcode, checkParam.name, session);
     } else {
         log.debug(`snapshot with such hashcode: '${checkParam.hashCode}' does not exists, will create it`, logOpts);
-        currentSnapshot = await createSnapshot({ name: checkParam.name!, fileData, hashCode: checkParam.hashCode });
+        currentSnapshot = await createSnapshot({ name: checkParam.name!, fileData, hashCode: checkParam.hashCode }, session);
     }
 
     return currentSnapshot;

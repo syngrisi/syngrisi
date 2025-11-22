@@ -15,8 +15,8 @@ const run = async () => {
             ? await compareResult.getBuffer()
             : null;
 
-        // Functions are not structured-cloneable; send plain data plus buffer.
-        const { getBuffer, ...plainResult } = compareResult || {};
+        // Functions are not structured-cloneable; remove all function props and send plain data plus buffer.
+        const plainResult = Object.fromEntries(Object.entries(compareResult || {}).filter(([_, v]) => typeof v !== 'function'));
         parentPort?.postMessage({
             ok: true,
             result: plainResult,

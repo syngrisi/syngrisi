@@ -13,6 +13,7 @@ Feature: Test Isolation by Accept Status
       testName: AcceptStatus-unaccepted
       checks:
           - checkName: Check-unaccepted
+            filePath: files/A.png
     """
 
     # PARTIALLY
@@ -21,7 +22,9 @@ Feature: Test Isolation by Accept Status
       testName: AcceptStatus-partially
       checks:
           - checkName: Check-part1
+            filePath: files/A.png
           - checkName: Check-part2
+            filePath: files/A.png
     """
     When I accept via http the 1st check with name "Check-part1"
 
@@ -31,6 +34,7 @@ Feature: Test Isolation by Accept Status
       testName: AcceptStatus-accepted
       checks:
           - checkName: Check-accepted
+            filePath: files/A.png
     """
     When I accept via http the 1st check with name "Check-accepted"
 
