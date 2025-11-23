@@ -31,6 +31,11 @@ Feature: Side to side view
 
     When I click element with locator "//div[normalize-space(text())='Slider']"
 
+    When I wait up to 30 seconds for javascript condition:
+      """
+        return mainView && mainView.sliderView && mainView.sliderView.divider && mainView.sliderView.divider.left !== undefined
+      """
+
     When I execute javascript code:
       """
             return mainView.sliderView.divider.left
