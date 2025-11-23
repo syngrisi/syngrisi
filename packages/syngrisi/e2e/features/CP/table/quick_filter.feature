@@ -31,19 +31,16 @@ Feature: Quick Filtering
         When I wait 30 seconds for the element with locator "[data-test='table-quick-filter']" to be visible
 
         When I set "TestName-" to the inputfield "[data-test='table-quick-filter']"
-        When I wait for "2" seconds
         When I wait 30 seconds for the element with locator "[data-table-test-name='TestName-0']" to be visible
         When I wait 30 seconds for the element with locator "[data-table-test-name='TestName-1']" to be visible
         Then I wait on element "[data-table-test-name='ZestName-1']" to not be displayed
 
         When I set "TestName-0" to the inputfield "[data-test='table-quick-filter']"
-        When I wait for "2" seconds
         When I wait 30 seconds for the element with locator "[data-table-test-name='TestName-0']" to be visible
         Then I wait on element "[data-table-test-name='TestName-1']" to not be displayed
         Then I wait on element "[data-table-test-name='ZestName-1']" to not be displayed
 
         When I set "TestName-1" to the inputfield "[data-test='table-quick-filter']"
-        When I wait for "2" seconds
         Then I wait on element "[data-table-test-name='TestName-0']" to not be displayed
         When I wait 30 seconds for the element with locator "[data-table-test-name='TestName-1']" to be visible
         Then I wait on element "[data-table-test-name='ZestName-1']" to not be displayed

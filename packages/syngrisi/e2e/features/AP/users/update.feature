@@ -43,7 +43,6 @@ Feature: Update User
         When I select the option with the text "Reviewer" for element "//*[@data-test='j_doe@gmail.com']//select[@data-test='user-list-role']"
 
         When I click element with locator "//*[@data-test='j_doe@gmail.com']//button[@aria-label='Send changes']"
-        When I wait for "2" seconds
 
         Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@data-test='user-list-email']" should have value "j_doe@gmail.com"
         Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@aria-label='First Name']" should have value "Alex"

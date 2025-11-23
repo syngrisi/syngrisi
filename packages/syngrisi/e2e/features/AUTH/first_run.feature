@@ -8,7 +8,6 @@ Feature: First run
           SYNGRISI_AUTH: true
         """
         Given I start Server and start Driver
-        When I wait for "3" seconds
 
     @smoke
     Scenario: Change Administrator password and login to system
@@ -17,7 +16,6 @@ Feature: First run
         When I set "Password-123" to the inputfield "#new-password"
         When I set "Password-123" to the inputfield "#new-password-confirmation"
         When I click element with locator "#change-password"
-        When I wait for "2" seconds
         Then the current url contains "auth/changeSuccess"
         Then the element with locator "h1=Success!" should be visible
 
@@ -26,7 +24,6 @@ Feature: First run
         When I set "Password-123" to the inputfield "#new-password"
         When I set "Password-123" to the inputfield "#new-password-confirmation"
         When I click element with locator "#change-password"
-        When I wait for "2" seconds
         Then the current url does not contain "auth/changeSuccess"
         Then the element with locator "#error-message" should have contains text "forbidden"
 

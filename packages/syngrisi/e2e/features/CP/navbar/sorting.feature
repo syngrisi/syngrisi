@@ -19,7 +19,6 @@ Feature: Navbar Sorting
         When I go to "main" page
 
         # without sorting action
-        When I wait for "3" seconds
         When I execute javascript code:
             """
             const elements = Array
@@ -37,9 +36,9 @@ Feature: Navbar Sorting
         When I click element with locator "[data-test='navbar-icon-open-sort']"
         When I wait 30 seconds for the element with locator "button[data-test='navbar-sort-by-order']" to be visible
         When I click element with locator "button[data-test='navbar-sort-by-order']"
-        When I wait for "3" seconds
+        When I wait 2 seconds
 
-        When I execute javascript code:
+        When I repeat javascript code until stored "js" string equals "RunName - 0, RunName - 1, RunName - 2":
             """
             const elements = Array
                 .from(document.querySelectorAll("[data-test='navbar-item-name']"))
@@ -54,9 +53,9 @@ Feature: Navbar Sorting
 
          # sort order - descendant
         When I click element with locator "button[data-test='navbar-sort-by-order']"
-        When I wait for "3" seconds
+        When I wait 2 seconds
 
-        When I execute javascript code:
+        When I repeat javascript code until stored "js" string equals "RunName - 2, RunName - 1, RunName - 0":
             """
             const elements = Array
                 .from(document.querySelectorAll("[data-test='navbar-item-name']"))

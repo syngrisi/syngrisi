@@ -35,7 +35,6 @@ Feature: Check Details Difference Highlight
         window.slowHighlight=1
         """
         When I click element with locator "[data-check='highlight-icon']"
-        When I wait for "3" seconds
         When I execute javascript code:
         """
         return mainView.canvas.getObjects().filter(x=>x.name=="highlight").length.toString()

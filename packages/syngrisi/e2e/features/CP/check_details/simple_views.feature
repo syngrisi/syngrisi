@@ -35,7 +35,6 @@ Feature: Simple Views - Expected, Actual, Diff
       """
         return mainView.canvas.getObjects().indexOf(mainView.expectedImage) !== -1;
       """
-    When I wait for "1" seconds
     When I execute javascript code:
       """
         return mainView.canvas.getObjects().indexOf(mainView.expectedImage)
@@ -45,7 +44,6 @@ Feature: Simple Views - Expected, Actual, Diff
       0
       """
 
-    When I wait for "1" seconds
     When I execute javascript code:
       """
         return mainView.canvas.getObjects().indexOf(mainView.actualImage)
@@ -61,7 +59,6 @@ Feature: Simple Views - Expected, Actual, Diff
       """
         return mainView.canvas.getObjects().indexOf(mainView.actualImage) !== -1;
       """
-    When I wait for "1" seconds
     When I execute javascript code:
       """
         return mainView.canvas.getObjects().indexOf(mainView.expectedImage)
@@ -71,7 +68,6 @@ Feature: Simple Views - Expected, Actual, Diff
       -1
       """
 
-    When I wait for "1" seconds
     When I execute javascript code:
       """
         return mainView.canvas.getObjects().indexOf(mainView.actualImage)
@@ -87,7 +83,6 @@ Feature: Simple Views - Expected, Actual, Diff
       """
         return mainView.canvas.getObjects().indexOf(mainView.diffImage) !== -1;
       """
-    When I wait for "1" seconds
     When I execute javascript code:
       """
         return mainView.canvas.getObjects().indexOf(mainView.diffImage)

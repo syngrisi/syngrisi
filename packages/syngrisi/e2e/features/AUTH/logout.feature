@@ -21,13 +21,10 @@ Feature: Logout
     Scenario: Logout - default Test user
         When I login with user:"Test" password "123456aA-"
         When I wait 30 seconds for the element with locator "span*=TA" to be visible
-        When I wait for "2" seconds
 
         When I go to "logout" page
 
-        When I wait for "2" seconds
         When I go to "main" page
-        When I wait for "1" seconds
         When the current url contains "/auth"
         Then the title is "Login Page"
 

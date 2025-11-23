@@ -30,7 +30,6 @@ Feature: Checks with different resolutions 1px
           - checkName: CheckName
             filePath: files/A.png
     """
-    When I wait for "10" seconds
 
     When I expect via http 1st test filtered as "name=Checks with different resolutions 1px - 2" matched:
     """

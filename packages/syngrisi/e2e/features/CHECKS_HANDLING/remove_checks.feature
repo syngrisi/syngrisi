@@ -21,7 +21,6 @@ Feature: Remove checks
 
         When I wait 30 seconds for the element with locator "[data-table-test-name='TestName']" to be visible
         When I unfold the test "TestName"
-        When I wait for "1" seconds
         When I wait 30 seconds for the element with locator "[data-table-check-name='CheckName-1']" to be visible
         When I wait 30 seconds for the element with locator "[data-table-check-name='CheckName-2']" to be visible
 

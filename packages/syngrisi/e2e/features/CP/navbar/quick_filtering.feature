@@ -26,20 +26,17 @@ Feature: Navbar Quick Filtering
         When I wait 30 seconds for the element with locator "[data-test='navbar-quick-filter']" to be visible
 
         When I set "RunName - " to the inputfield "[data-test='navbar-quick-filter']"
-        When I wait for "3" seconds
         When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName - 0')]" to be visible
         When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName - 1')]" to be visible
         Then the element "//*[@data-test='navbar-item-name']" does appear exactly "2" times
 
 
         When I set "RunName - 0" to the inputfield "[data-test='navbar-quick-filter']"
-        When I wait for "5" seconds
         When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName - 0')]" to be visible
         When I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName - 1')]" to not be displayed
         Then the element "//*[@data-test='navbar-item-name']" does appear exactly "1" times
 
         When I set "RunName - " to the inputfield "[data-test='navbar-quick-filter']"
-        When I wait for "3" seconds
         When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName - 0')]" to be visible
         When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName - 1')]" to be visible
         Then the element "//*[@data-test='navbar-item-name']" does appear exactly "2" times
@@ -72,7 +69,6 @@ Feature: Navbar Quick Filtering
 
         # select the project
         When I select the option with the text "Project-1" for element "select[data-test='current-project']"
-        When I wait for "3" seconds
         When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName_P1-0')]" to be visible
         When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName_P1-1')]" to be visible
         When I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName_P2-0')]" to not be displayed
@@ -82,20 +78,17 @@ Feature: Navbar Quick Filtering
 
         # quick filter
         When I set "RunName_" to the inputfield "[data-test='navbar-quick-filter']"
-        When I wait for "3" seconds
         When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName_P1-0')]" to be visible
         When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName_P1-1')]" to be visible
         Then the element "//*[@data-test='navbar-item-name']" does appear exactly "2" times
 
 
         When I set "RunName_P1-0" to the inputfield "[data-test='navbar-quick-filter']"
-        When I wait for "5" seconds
         When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName_P1-0')]" to be visible
         When I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName_P1-1')]" to not be displayed
         Then the element "//*[@data-test='navbar-item-name']" does appear exactly "1" times
 
         When I set "RunName_" to the inputfield "[data-test='navbar-quick-filter']"
-        When I wait for "3" seconds
         When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName_P1-0')]" to be visible
         When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName_P1-1')]" to be visible
         Then the element "//*[@data-test='navbar-item-name']" does appear exactly "2" times

@@ -315,53 +315,24 @@ When('I create {string} tests with params:', async (
 });
 
 async function unfoldTestRow(page: Page, testName: string): Promise<void> {
-  const candidateSelectors = [
-    `[data-table-test-name="${testName}"]`,
-    `tr[data-row-name="${testName}"]`,
-  ];
+  const selector = `[data-table-test-name="${testName}"], tr[data-row-name="${testName}"]`;
+  logger.info(`Waiting for test "${testName}" to appear on the page using selector: ${selector}`);
 
-  // Wait for the test to appear on the page
-  logger.info(`Waiting for test "${testName}" to appear on the page`);
-  await page.waitForFunction(
-    (name) => {
-      const selectors = [
-        `[data-table-test-name="${name}"]`,
-        `tr[data-row-name="${name}"]`,
-      ];
-      return selectors.some((sel) => document.querySelector(sel) !== null);
-    },
-    testName,
-    { timeout: 30000 }
-  );
-
-  let testElement = null;
-  let selectedSelector = '';
-
-  for (const selector of candidateSelectors) {
-    try {
-      const candidate = page.locator(selector).first();
-      if (await candidate.count() > 0) {
-        const tagName = await candidate.evaluate((el) => el.tagName.toLowerCase());
-        logger.info(`Matched selector "${selector}" with tag "${tagName}"`);
-
-        if (tagName === 'tr') {
-          testElement = candidate;
-        } else {
-          testElement = candidate.locator('xpath=./ancestor::tr[1]').first();
-        }
-
-        if ((await testElement.count()) > 0) {
-          selectedSelector = selector;
-          break;
-        }
-      }
-    } catch (error) {
-      logger.warn(`Failed to find element with selector "${selector}": ${(error as Error).message}`);
-    }
+  const candidate = page.locator(selector).first();
+  try {
+    await candidate.waitFor({ state: 'attached', timeout: 30000 });
+  } catch (error) {
+    throw new Error(`Unable to locate test row for "${testName}"`);
   }
 
-  if (!testElement || (await testElement.count()) === 0) {
-    throw new Error(`Unable to locate test row for "${testName}"`);
+  const tagName = await candidate.evaluate((el) => el.tagName.toLowerCase());
+  logger.info(`Matched test element with tag "${tagName}"`);
+
+  let testElement;
+  if (tagName === 'tr') {
+    testElement = candidate;
+  } else {
+    testElement = candidate.locator('xpath=./ancestor::tr[1]').first();
   }
 
   await testElement.scrollIntoViewIfNeeded();
