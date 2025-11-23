@@ -59,6 +59,45 @@ Failure → STOP → Debug → Analyze → Document → ASK USER → WAIT → Pr
 4. **Report:** "STOP: [failure reason]. Options: A) [action1] B) [action2]. Awaiting approval."
 5. **WAIT** for user response
 
+## Test Execution
+
+-   The project relies on `npm`, so run commands via the npm scripts inside `packages/syngrisi/e2e`.
+-   To execute a single scenario in headless mode, generate steps and run the test:
+
+    ```bash
+    npx bddgen && yarn playwright test "features/CHECKS_HANDLING/accept_by_user.feature" --grep "Accept by user" --workers=2
+    ```
+
+-   For headed mode, run:
+
+    ```bash
+    npx bddgen && yarn playwright test "features/CHECKS_HANDLING/accept_by_user.feature" --grep "Accept by user" --workers=1 --headed
+    ```
+
+-   To execute the entire e2e suite, change into `packages/syngrisi/e2e` and run `npm test`.
+
+## After Fixing a Test
+
+After fixing any test, you MUST run it multiple times in a concurrent environment (only after you make sure that it works in one thread) to ensure stability. For example:
+
+```bash
+npx bddgen && yarn playwright test "features/CHECKS_HANDLING/accept_by_user.feature" --grep "Accept by user" --workers=3 --repeat-each=4
+```
+
+This helps verify that the test works reliably under parallel execution and is not flaky.
+
+## Fixing Multiple Tests
+
+If multiple tests need to be fixed, it is better to do it in bulk by fixing the test code (without breaking the test logic), then run them all together.
+
+Example command:
+
+```bash
+npx bddgen && yarn playwright test "features/CP/check_details/regions.feature" "packages/syngrisi/e2e/features/CP/check_details/regions.feature" <add more tests here> --workers=8
+```
+
+Then continue working on all failing tests, gradually narrowing down the number of failing tests.
+
 ---
 
 ## ❌ NEVER Say/Do
@@ -83,20 +122,3 @@ Failure → STOP → Debug → Analyze → Document → ASK USER → WAIT → Pr
 ## ENFORCEMENT
 
 **Any rule violation = immediate STOP + user approval required**
-
-## Test Execution
-
--   The project relies on `npm`, so run commands via the npm scripts inside `packages/syngrisi/e2e`.
--   To execute a single scenario in headless mode, generate steps and run the test:
-
-    ```bash
-    npx bddgen && yarn playwright test "features/CHECKS_HANDLING/accept_by_user.feature" --grep "Accept by user" --workers=2
-    ```
-
--   For headed mode, run:
-
-    ```bash
-    npx bddgen && yarn playwright test "features/CHECKS_HANDLING/accept_by_user.feature" --grep "Accept by user" --workers=1 --headed
-    ```
-
--   To execute the entire e2e suite, change into `packages/syngrisi/e2e` and run `npm test`.

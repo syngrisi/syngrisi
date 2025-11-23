@@ -33,6 +33,10 @@ Feature: Simple Views - Expected, Actual, Diff
     When I click element with locator "[data-segment-value='expected']"
     When I wait up to 30 seconds for javascript condition:
       """
+        return mainView && mainView.expectedImage
+      """
+    When I wait up to 30 seconds for javascript condition:
+      """
         return mainView.canvas.getObjects().indexOf(mainView.expectedImage) !== -1;
       """
     When I execute javascript code:

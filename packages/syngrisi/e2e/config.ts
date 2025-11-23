@@ -32,6 +32,10 @@ export const env = cleanEnv(process.env, {
     default: 'false',
     desc: 'Enable coverage collection'
   }),
+  SYNGRISI_V8_COVERAGE_ON_EXIT: str({
+    default: 'false',
+    desc: 'Enable v8 coverage collection on exit'
+  }),
   DOCKER: str({
     default: '0',
     desc: 'Run tests in Docker mode'

@@ -47,33 +47,41 @@ export async function clearDatabase(
 
 
 
-  const client = new MongoClient(dbUri, { retryWrites: false });
-  try {
-    await client.connect();
-    const db = client.db();
-    const dropResult = await db.dropDatabase();
-    logger.info(`✓ Dropped database ${db.databaseName}: ${dropResult}`);
-  } catch (error: any) {
-    const errorMsg = error.message || error.toString() || '';
-    if (errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed') || errorMsg.includes('ECONNREFUSED')) {
-      logger.warn('Browser disconnected or ChromeDriver unavailable, skipping clear database');
-    } else {
-      logger.error(`Failed to clear database: ${errorMsg}`);
-      throw error;
+  const tasks: Promise<void>[] = [];
+
+  // Task 1: Drop Database
+  tasks.push((async () => {
+    const client = new MongoClient(dbUri, { retryWrites: false });
+    try {
+      await client.connect();
+      const db = client.db();
+      const dropResult = await db.dropDatabase();
+      logger.info(`✓ Dropped database ${db.databaseName}: ${dropResult}`);
+    } catch (error: any) {
+      const errorMsg = error.message || error.toString() || '';
+      if (errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed') || errorMsg.includes('ECONNREFUSED')) {
+        logger.warn('Browser disconnected or ChromeDriver unavailable, skipping clear database');
+      } else {
+        logger.error(`Failed to clear database: ${errorMsg}`);
+        throw error;
+      }
+    } finally {
+      await client.close().catch(() => undefined);
     }
-  } finally {
-    await client.close().catch(() => undefined);
+  })());
+
+  // Task 2: Clear Baselines (if required)
+  if (removeBaselines) {
+    tasks.push((async () => {
+      try {
+        await fs.rm(baselinesPath, { recursive: true, force: true });
+        await fs.mkdir(baselinesPath, { recursive: true });
+        logger.info(`Cleared baselines folder: ${baselinesPath}`);
+      } catch (error: any) {
+        logger.warn(`Failed to clear baselines folder ${baselinesPath}: ${error.message || error.toString()}`);
+      }
+    })());
   }
 
-  if (!removeBaselines) {
-    return;
-  }
-
-  try {
-    await fs.rm(baselinesPath, { recursive: true, force: true });
-    await fs.mkdir(baselinesPath, { recursive: true });
-    logger.info(`Cleared baselines folder: ${baselinesPath}`);
-  } catch (error: any) {
-    logger.warn(`Failed to clear baselines folder ${baselinesPath}: ${error.message || error.toString()}`);
-  }
+  await Promise.all(tasks);
 }
