@@ -591,6 +591,11 @@ When('I execute javascript OLD code:', async ({ page, testData }: { page: Page; 
  */
 When('I execute javascript code:', async ({ page, testData }: { page: Page; testData: TestStore }, js: string) => {
   const trimmedJs = js.trim();
+
+  if (trimmedJs.includes('mainView')) {
+    await waitForCanvasBootstrap(page);
+  }
+
   const evaluateFunction = (code: string) => {
     // eslint-disable-next-line no-eval
     return eval(code);

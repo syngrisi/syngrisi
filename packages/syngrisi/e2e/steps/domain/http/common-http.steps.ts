@@ -48,20 +48,22 @@ const expectViaHttpCheckMatched = async (
   yml: string
 ) => {
   const uri = `${appServer.baseURL}/v1/checks?limit=0&filter={"$and":${convertQueryToMongoFilter(filter)}}`;
-
-  logger.info(`Fetching checks with filter "${filter}"`);
-  const itemsResponse = await requestWithSession(uri, testData, appServer);
-  const items = itemsResponse.json.results;
-
-  logger.info(`Found ${items.length} checks`);
-
   const params = yaml.parse(yml);
-  // Playwright BDD ordinal is 0-based: "1st" = 0, "2nd" = 1, etc.
-  const item = items[ordinal];
-  if (!item) {
-    throw new Error(`Item #${ordinal + 1} (${ordinal}-based index) not found. Found ${items.length} items.`);
-  }
-  expect(item).toMatchObject(params);
+
+  await expect.poll(async () => {
+    logger.info(`Fetching checks with filter "${filter}"`);
+    const itemsResponse = await requestWithSession(uri, testData, appServer);
+    const items = itemsResponse.json.results;
+
+    logger.info(`Found ${items.length} checks`);
+
+    // Playwright BDD ordinal is 0-based: "1st" = 0, "2nd" = 1, etc.
+    const item = items[ordinal];
+    return item;
+  }, {
+    timeout: 10000,
+    message: `Check #${ordinal} matching ${JSON.stringify(params)} not found`
+  }).toMatchObject(params);
 };
 
 Then(

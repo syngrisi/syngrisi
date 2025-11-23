@@ -3,7 +3,7 @@ import { commonValidations } from './utils';
 
 const LogGetSchema = z.object({
     _id: commonValidations.id,
-    level: z.string().min(1).openapi({
+    level: z.enum(['error', 'warn', 'info', 'verbose', 'debug', 'silly']).openapi({
         description: 'Log level',
         example: 'info'
     }),
@@ -23,7 +23,7 @@ const LogGetSchema = z.object({
 });
 
 const LogCreateSchema = z.object({
-    level: z.string().min(1).openapi({
+    level: z.enum(['error', 'warn', 'info', 'verbose', 'debug', 'silly']).openapi({
         description: 'Log level',
         example: 'info'
     }).optional(),

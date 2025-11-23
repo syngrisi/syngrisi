@@ -39,8 +39,37 @@ const createLogs = async (body: LogBody) => {
     return { message: 'success' };
 };
 
+const createManyLogs = async (bodies: LogBody[]) => {
+    const payloads = bodies.map(body => ({
+        message: body.message,
+        level: body.level || 'debug',
+        user: body.user,
+        scope: body.scope || 'test_scope',
+        msgType: body.msgType || 'TEST_MSG_TYPE',
+    }));
+
+    if (env.SYNGRISI_TEST_MODE) {
+        await Log.insertMany(payloads.map(p => ({
+            message: p.message,
+            level: p.level,
+            meta: { user: p.user, scope: p.scope, msgType: p.msgType },
+            timestamp: new Date(),
+        })));
+    } else {
+        payloads.forEach(payload => {
+            log[payload.level as keyof typeof log](payload.message, {
+                user: payload.user,
+                scope: payload.scope,
+                msgType: payload.msgType,
+            });
+        });
+    }
+    return { message: 'success', count: bodies.length };
+};
+
 export {
     queryLogs,
     distinct,
     createLogs,
+    createManyLogs,
 };

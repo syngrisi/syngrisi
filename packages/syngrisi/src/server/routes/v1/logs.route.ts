@@ -1,4 +1,5 @@
 import express from 'express';
+import { z } from 'zod';
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import * as logsController from '@controllers/logs.controller';
 import { Midleware } from '@types';
@@ -60,6 +61,22 @@ router.post(
     ensureLoggedInOrApiKey(),
     validateRequest(createRequestBodySchema(LogCreateSchema), 'post, /v1/logs'),
     logsController.createLog as Midleware
+);
+
+registry.registerPath({
+    method: 'post',
+    path: '/v1/logs/bulk',
+    summary: "Create multiple log entries",
+    tags: ['Logs'],
+    request: { body: createRequestOpenApiBodySchema(z.array(LogCreateSchema)) },
+    responses: createApiResponse(LogCreateRespSchema, 'Success', StatusCodes.CREATED),
+});
+
+router.post(
+    '/bulk',
+    ensureLoggedInOrApiKey(),
+    validateRequest(createRequestBodySchema(z.array(LogCreateSchema)), 'post, /v1/logs/bulk'),
+    logsController.createMany as Midleware
 );
 
 export default router;

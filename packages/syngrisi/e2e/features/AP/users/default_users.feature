@@ -23,7 +23,6 @@ Feature: Default Users
 
     Scenario: Default Administrator and Guest should be created after first server start
         When I go to "admin>users" page
-        When I wait for "3" seconds
         Then the element with locator "//*[@data-test='user-list-email' and @value='Administrator']/../../..//input[@aria-label='First Name' and @value='Syngrisi']" should be visible
         Then the element with locator "//*[@data-test='user-list-email' and @value='Administrator']/../../..//input[@aria-label='Last Name' and @value='Admin']" should be visible
         Then the element with locator "//*[@data-test='user-list-email' and @value='Administrator']/../../..//select[@data-test='user-list-role']" should have value "admin"

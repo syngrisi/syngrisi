@@ -10,8 +10,8 @@ import { ExtRequest } from '@types';
 const getLogs = catchAsync(async (req: ExtRequest, res: Response) => {
     // const filter = req.query.filter ? EJSON.parse(pick(req.query, ['filter']).filter) : {};
     const filter = typeof req.query.filter === 'string'
-    ? EJSON.parse(req.query.filter)
-    : {};
+        ? EJSON.parse(req.query.filter)
+        : {};
 
     const options = pick(req.query, ['sortBy', 'limit', 'page']);
     const result = await logsService.queryLogs(filter, options);
@@ -29,8 +29,14 @@ const createLog = catchAsync(async (req: ExtRequest, res: Response) => {
     res.status(httpStatus.CREATED).send(user);
 });
 
+const createMany = catchAsync(async (req: ExtRequest, res: Response) => {
+    const result = await logsService.createManyLogs(req.body);
+    res.status(httpStatus.CREATED).send(result);
+});
+
 export {
     getLogs,
     distinct,
     createLog,
+    createMany,
 };

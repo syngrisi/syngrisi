@@ -15,7 +15,6 @@ Feature: User roles
         Given I start Server
         When I create via http test user
         Given I stop the Syngrisi server
-        When I wait for "4" seconds
         When I set env variables:
         """
           SYNGRISI_TEST_MODE: false
@@ -88,7 +87,6 @@ Feature: User roles
           filePath: files/A.png
           testName: User test
         """
-        When I wait for "2" seconds
 
         # logout
         When I log out of the application
@@ -139,9 +137,7 @@ Feature: User roles
         """
 
         # logout
-        When I wait for "2" seconds
         When I go to "logout" page
-        When I wait for "2" seconds
         When I refresh page
 
         ### verify checks
@@ -151,7 +147,6 @@ Feature: User roles
         When I wait 30 seconds for the element with locator "span*=JD" to be visible
         # checks
 
-        When I wait for "3" seconds
         Then the element "//div[contains(text(), 'User test')]" does appear exactly "5" times
         Then the element "[data-table-test-creatorusername='user@gmail.com']" does appear exactly "5" times
         Then the element with locator "//div[contains(text(), 'Reviewer test')]" should not be visible
@@ -165,7 +160,6 @@ Feature: User roles
         When I login with user:"reviewer@gmail.com" password "Password-123"
         When I wait 30 seconds for the element with locator "span*=RR" to be visible
         # checks
-        When I wait for "3" seconds
 
         Then the element "//div[contains(text(), 'User test')]" does appear exactly "5" times
         Then the element "[data-table-test-creatorusername='user@gmail.com']" does appear exactly "5" times

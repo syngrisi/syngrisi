@@ -22,7 +22,6 @@ Feature: Standard Checks Flow - UI
         When I unfold the test "TestName"
         When the element with locator "[data-row-name='TestName'] td[data-test='table-row-Accepted']" should have contains text "Unaccepted"
         # preview
-        When I wait for "1" seconds
         Then the element "[data-check-status-name='CheckName'] span" matches the text "NEW"
         Then the css attribute "background-color" from element "[data-check-status-name='CheckName']" is "rgba(34,139,230,1)"
         Then the element with locator "[data-test='check-accept-icon'] svg" should have has attribute "data-test-icon-type=outline"
@@ -40,11 +39,9 @@ Feature: Standard Checks Flow - UI
         # AFTER ACCEPT
         # modal
         When I accept the "CheckName" check
-        When I wait for "1" seconds
         When the element with locator "[data-row-name='TestName'] td[data-test='table-row-Accepted']" should have contains text "Accepted"
 
         When I open the 1st check "CheckName"
-        When I wait for "0.5" seconds
 
         Then the css attribute "color" from element ".modal [data-test='check-accept-icon'] svg" is "rgba(64,192,87,1)"
         Then the element with locator ".modal [data-test='check-accept-icon'] svg" should have has attribute "data-test-icon-type=fill"
@@ -70,7 +67,6 @@ Feature: Standard Checks Flow - UI
         When I wait 30 seconds for the element with locator "[data-table-test-name='TestName']" to be visible
         When I unfold the test "TestName"
         When the element with locator "[data-row-name='TestName'] td[data-test='table-row-Accepted']" should have contains text "Accepted"
-        When I wait for "0.5" seconds
 
         # preview
         Then the element "[data-check-status-name='CheckName'] span" matches the text "PASSED"
@@ -98,7 +94,6 @@ Feature: Standard Checks Flow - UI
         When I go to "main" page
         When I wait 30 seconds for the element with locator "[data-table-test-name='TestName']" to be visible
         When I unfold the test "TestName"
-        When I wait for "0.5" seconds
 
         # preview
         Then the element "[data-check-status-name='CheckName'] span" matches the text "FAILED"
@@ -139,7 +134,6 @@ Feature: Standard Checks Flow - UI
         """
         When I go to "main" page
         When I unfold the test "TestName"
-        When I wait for "0.5" seconds
         Then the element "[data-check-status-name='CheckName'] span" matches the text "FAILED"
         Then the css attribute "background-color" from element "[data-check-status-name='CheckName']" is "rgba(250,82,82,1)"
 
@@ -190,7 +184,6 @@ Feature: Standard Checks Flow - UI
         """
         When I go to "main" page
         When I unfold the test "TestName"
-        When I wait for "0.5" seconds
 
         # preview
         Then the element "[data-check-status-name='CheckName'] span" matches the text "FAILED"

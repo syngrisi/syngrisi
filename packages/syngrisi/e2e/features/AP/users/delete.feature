@@ -39,7 +39,6 @@ Feature: Delete User
         When I wait 30 seconds for the element with locator "//*[@data-test='j_doe@gmail.com']" to be visible
         When I click element with locator "//*[@data-test='j_doe@gmail.com']//button[@aria-label='Remove user']"
         When I click element with locator "button[aria-label='Delete']"
-        When I wait for "2" seconds
 
         And the element "//*[@data-test='j_doe@gmail.com']" does not exist
 

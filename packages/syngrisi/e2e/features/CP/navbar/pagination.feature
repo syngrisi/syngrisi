@@ -23,7 +23,6 @@ Feature: Pagination
     When I wait 30 seconds for the element with locator "[data-test*='navbar_item_']" to be visible
     Then the element "[data-test*='navbar_item_']" does appear exactly "20" times
     When I scroll to element "[data-test*='navbar_item_11']"
-    When I wait for "1" seconds
     Then the element "[data-test*='navbar_item_']" does appear exactly "30" times
 
   Scenario: Pagination - Suite
@@ -61,6 +60,5 @@ Feature: Pagination
     When I wait 30 seconds for the element with locator "[data-test*='navbar_item_']" for 15000ms to be visible
     Then the element "[data-test*='navbar_item_']" does appear exactly "20" times
     When I scroll to element "[data-test*='navbar_item_11']"
-    When I wait for "1" seconds
     Then the element "[data-test*='navbar_item_']" does appear exactly "30" times
 

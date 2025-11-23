@@ -143,7 +143,6 @@ Feature: Check details Related Checks
 
         # filter by project
         When I select the option with the text "Project1" for element "select[data-test='current-project']"
-        When I wait for "1" seconds
 
         When I unfold the test "TestName"
         When I open the 1st check "CheckName"
@@ -181,32 +180,31 @@ Feature: Check details Related Checks
 
         # 3
         When I wait 30 seconds for the element with locator "(//*[@data-related-check-item='CheckName'])[1]" to be visible
-        Then the element "(//*[@data-related-check-item='CheckName'])[1]//*[@data-related-check='branch']" matches the text "INTEGRATION2"
+        Then the element with locator "(//*[@data-related-check-item='CheckName'])[1]//*[@data-related-check='branch']" should have text "integration2"
 
         # 2
         When I wait 30 seconds for the element with locator "(//*[@data-related-check-item='CheckName'])[2]" to be visible
-        Then the element "(//*[@data-related-check-item='CheckName'])[2]//*[@data-related-check='branch']" matches the text "INTEGRATION1"
+        Then the element with locator "(//*[@data-related-check-item='CheckName'])[2]//*[@data-related-check='branch']" should have text "integration1"
 
         # 1
         When I wait 30 seconds for the element with locator "(//*[@data-related-check-item='CheckName'])[3]" to be visible
-        Then the element "(//*[@data-related-check-item='CheckName'])[3]//*[@data-related-check='branch']" matches the text "INTEGRATION0"
+        Then the element with locator "(//*[@data-related-check-item='CheckName'])[3]//*[@data-related-check='branch']" should have text "integration0"
 
         # sort
         When I click element with locator "[data-test='related-check-icon-open-sort']"
         When I click element with locator "[data-test='navbar-sort-by-order']"
-        When I wait for "1" seconds
 
         # 1
         When I wait 30 seconds for the element with locator "(//*[@data-related-check-item='CheckName'])[1]" to be visible
-        Then the element "(//*[@data-related-check-item='CheckName'])[1]//*[@data-related-check='branch']" matches the text "INTEGRATION0"
+        Then the element with locator "(//*[@data-related-check-item='CheckName'])[1]//*[@data-related-check='branch']" should have text "integration0"
 
         # 2
         When I wait 30 seconds for the element with locator "(//*[@data-related-check-item='CheckName'])[2]" to be visible
-        Then the element "(//*[@data-related-check-item='CheckName'])[2]//*[@data-related-check='branch']" matches the text "INTEGRATION1"
+        Then the element with locator "(//*[@data-related-check-item='CheckName'])[2]//*[@data-related-check='branch']" should have text "integration1"
 
         # 3
         When I wait 30 seconds for the element with locator "(//*[@data-related-check-item='CheckName'])[3]" to be visible
-        Then the element "(//*[@data-related-check-item='CheckName'])[3]//*[@data-related-check='branch']" matches the text "INTEGRATION2"
+        Then the element with locator "(//*[@data-related-check-item='CheckName'])[3]//*[@data-related-check='branch']" should have text "integration2"
 
     Scenario: Related - filter by Browser
         Given I create "1" tests with:

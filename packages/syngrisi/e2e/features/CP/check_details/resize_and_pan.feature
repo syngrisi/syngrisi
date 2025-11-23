@@ -22,7 +22,6 @@ Feature: Check details Resize and Pan
         When I click element with locator "[data-check='open-zoom-dropdown']"
         When I wait 30 seconds for the element with locator "//*[@data-check='zoom-dropdown']//div[text()='50%']" to be visible
         When I click element with locator "//*[@data-check='zoom-dropdown']//div[text()='50%']"
-        When I wait for "0.5" seconds
         When I execute javascript code:
         """
         return mainView.canvas.getZoom().toString()
@@ -36,7 +35,6 @@ Feature: Check details Resize and Pan
         When I click element with locator "[data-check='open-zoom-dropdown']"
         When I wait 30 seconds for the element with locator "//*[@data-check='zoom-dropdown']//div[text()='100%']" to be visible
         When I click element with locator "//*[@data-check='zoom-dropdown']//div[text()='100%']"
-        When I wait for "0.5" seconds
         When I execute javascript code:
         """
         return mainView.canvas.getZoom().toString()
@@ -50,7 +48,6 @@ Feature: Check details Resize and Pan
         When I click element with locator "[data-check='open-zoom-dropdown']"
         When I wait 30 seconds for the element with locator "//*[@data-check='zoom-dropdown']//div[text()='200%']" to be visible
         When I click element with locator "//*[@data-check='zoom-dropdown']//div[text()='200%']"
-        When I wait for "0.5" seconds
         When I execute javascript code:
         """
         return mainView.canvas.getZoom().toString()
@@ -64,7 +61,6 @@ Feature: Check details Resize and Pan
         When I click element with locator "[data-check='open-zoom-dropdown']"
         When I wait 30 seconds for the element with locator "//*[@data-check='zoom-dropdown']//div[text()='Fit by width ']" to be visible
         When I click element with locator "//*[@data-check='zoom-dropdown']//div[text()='Fit by width ']"
-        When I wait for "0.5" seconds
         When I execute javascript code:
         """
         return (mainView.canvas.getZoom().toFixed(2) > 1.45) && (mainView.canvas.getZoom().toFixed(2) < 1.65)
@@ -78,7 +74,6 @@ Feature: Check details Resize and Pan
         When I click element with locator "[data-check='open-zoom-dropdown']"
         When I wait 30 seconds for the element with locator "//*[@data-check='zoom-dropdown']//div[text()='Fit to canvas ']" to be visible
         When I click element with locator "//*[@data-check='zoom-dropdown']//div[text()='Fit to canvas ']"
-        When I wait for "0.5" seconds
         When I execute javascript code:
         """
         return (mainView.canvas.getZoom().toFixed(2) > 0.27).toString()
@@ -89,7 +84,6 @@ Feature: Check details Resize and Pan
         """
 
     Scenario: Resize via Ctrl + Mouse Wheel
-        When I wait for "1" seconds
 
         # before zoom: check zoom coefficient
         When I execute javascript code:
@@ -122,7 +116,6 @@ Feature: Check details Resize and Pan
 
         mainView.canvas.fire('mouse:wheel', eventObj)
         """
-        When I wait for "1" seconds
 
         # after zoom: check zoom coefficient
         When I execute javascript code:
@@ -140,7 +133,6 @@ Feature: Check details Resize and Pan
         """
 
     Scenario: Pan via central mouse button and Mouse Move
-        When I wait for "1" seconds
         # check pan coordinates
         When I execute javascript code:
         """
@@ -175,7 +167,6 @@ Feature: Check details Resize and Pan
 
         mainView.canvas.fire('mouse:move', eventObj)
         """
-        When I wait for "1" seconds
         # check pan coordinates
 
         When I execute javascript code:
@@ -197,7 +188,6 @@ Feature: Check details Resize and Pan
         """
 
     Scenario: Pan via Mouse Wheel (touchpad)
-        When I wait for "1" seconds
         # check pan coordinates
         When I execute javascript code:
         """
@@ -234,7 +224,6 @@ Feature: Check details Resize and Pan
 
         mainView.canvas.fire('mouse:wheel', eventObj)
         """
-        When I wait for "0.5" seconds
         
         # Additional mouse wheel actions for testing (to verify actions work)
         When I execute javascript code:
@@ -253,7 +242,6 @@ Feature: Check details Resize and Pan
 
         mainView.canvas.fire('mouse:wheel', eventObj2)
         """
-        When I wait for "0.5" seconds
         
         When I execute javascript code:
         """
@@ -271,7 +259,6 @@ Feature: Check details Resize and Pan
 
         mainView.canvas.fire('mouse:wheel', eventObj3)
         """
-        When I wait for "1" seconds
         # check pan coordinates
         When I execute javascript code:
         """
