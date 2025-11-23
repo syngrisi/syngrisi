@@ -52,7 +52,7 @@ function createWinstonLogger(opts: LoggerOptions): WinstonLogger {
                 winston.format.timestamp(),
                 winston.format.ms(),
                 winston.format.metadata(),
-                winston.format.printf((info) => {
+                winston.format.printf((info: any) => {
                     const user = info.metadata.user ? chalk.blue(` <${info.metadata.user}>`) : '';
                     const ref = info.metadata.ref ? chalk.gray(` ${info.metadata.ref}`) : '';
                     const msgType = info.metadata.msgType ? ` ${info.metadata.msgType}` : '';
@@ -81,7 +81,6 @@ function createWinstonLogger(opts: LoggerOptions): WinstonLogger {
                     winston.format.metadata(),
                 ),
                 options: {
-                    useUnifiedTopology: true,
                 },
                 db: opts.dbConnectionString,
                 collection: 'vrslogs',

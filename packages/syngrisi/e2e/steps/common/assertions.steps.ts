@@ -751,13 +751,13 @@ Then(
 
 
 Then('the title is {string}', async ({ page }, expectedTitle: string) => {
-  const title = await page.title();
-  expect(title).toBe(expectedTitle);
+  await expect(page).toHaveTitle(expectedTitle);
 });
 
 Then('the title contains {string}', async ({ page }, expectedTitle: string) => {
-  const title = await page.title();
-  expect(title).toContain(expectedTitle);
+  // Escape regex characters for expectedTitle
+  const escapedTitle = expectedTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  await expect(page).toHaveTitle(new RegExp(escapedTitle));
 });
 
 Then('the css attribute {string} from element {string} is {string}', async ({ page, testData }, cssProperty: string, selector: string, expected: string) => {

@@ -43,11 +43,8 @@ Feature: Check details - Regions
 
     When I repeat javascript code until stored "js" string equals "1":
     """
+     if (typeof mainView === 'undefined' || !mainView.allRects) return "loading";
      return (mainView.allRects.length.toString());
-    """
-    Then I expect the stored "js" string is equal:
-    """
-      1
     """
 
     # save refresh page check presence
@@ -60,11 +57,8 @@ Feature: Check details - Regions
 
     When I repeat javascript code until stored "js" string equals "1":
     """
+     if (typeof mainView === 'undefined' || !mainView.allRects) return "loading";
      return (mainView.allRects.length.toString());
-    """
-    Then I expect the stored "js" string is equal:
-    """
-      1
     """
 
     # check initial coordinates
@@ -97,13 +91,10 @@ Feature: Check details - Regions
     When I refresh page
 
     # check updated coordinates
-    When I execute javascript code:
+    When I repeat javascript code until stored "js" string equals "1":
     """
+     if (typeof mainView === 'undefined' || !mainView.canvas) return "0";
      return mainView.canvas.getObjects().filter(x=>x.name==='ignore_rect').length.toString()
-    """
-    Then I expect the stored "js" string is equal:
-    """
-      1
     """
 
     When I execute javascript code:
@@ -126,35 +117,20 @@ Feature: Check details - Regions
     When I wait 3 seconds
     When I click element with locator "[data-check='add-ignore-region']"
 
-    When I execute javascript code:
-    """
-     return (mainView.allRects.length.toString());
-    """
-
     When I repeat javascript code until stored "js" string equals "1":
     """
+     if (typeof mainView === 'undefined' || !mainView.allRects) return "loading";
      return (mainView.allRects.length.toString());
-    """
-    Then I expect the stored "js" string is equal:
-    """
-      1
     """
 
     # save refresh page check presence
     When I click element with locator "[data-check='save-ignore-region']"
     When I refresh page
-    When I execute javascript code:
-    """
-     return (mainView.allRects.length.toString());
-    """
 
     When I repeat javascript code until stored "js" string equals "1":
     """
+     if (typeof mainView === 'undefined' || !mainView.allRects) return "loading";
      return (mainView.allRects.length.toString());
-    """
-    Then I expect the stored "js" string is equal:
-    """
-      1
     """
 
     # select and remove
@@ -168,14 +144,11 @@ Feature: Check details - Regions
     # save refresh page check absence
     When I click element with locator "[data-check='save-ignore-region']"
     When I refresh page
-    When I execute javascript code:
-    """
-     return (mainView.allRects.length.toString());
-    """
 
-    Then I expect the stored "js" string is equal:
+    When I repeat javascript code until stored "js" string equals "0":
     """
-      0
+     if (typeof mainView === 'undefined' || !mainView.allRects) return "loading";
+     return (mainView.allRects.length.toString());
     """
 
   Scenario: Regions - copy regions from previous baseline
@@ -186,17 +159,10 @@ Feature: Check details - Regions
     # save refresh page check presence
     When I click element with locator "[data-check='save-ignore-region']"
     When I refresh page
-    When I execute javascript code:
-    """
-     return (mainView.allRects.length.toString());
-    """
     When I repeat javascript code until stored "js" string equals "1":
     """
+     if (typeof mainView === 'undefined' || !mainView.allRects) return "loading";
      return (mainView.allRects.length.toString());
-    """
-    Then I expect the stored "js" string is equal:
-    """
-      1
     """
 
     # create second check
@@ -214,14 +180,10 @@ Feature: Check details - Regions
     When I click element with locator "[data-test-preview-image='CheckName']"
 
     When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
-    When I execute javascript code:
+    When I repeat javascript code until stored "js" string equals "1":
     """
+     if (typeof mainView === 'undefined' || !mainView.allRects) return "loading";
      return (mainView.allRects.length.toString());
-    """
-
-    Then I expect the stored "js" string is equal:
-    """
-      1
     """
 
     # accept second check and check presence
@@ -232,15 +194,8 @@ Feature: Check details - Regions
     When I click element with locator "[data-test-preview-image='CheckName']"
 
     When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
-    When I execute javascript code:
-    """
-     return (mainView.allRects.length.toString());
-    """
     When I repeat javascript code until stored "js" string equals "1":
     """
+     if (typeof mainView === 'undefined' || !mainView.allRects) return "loading";
      return (mainView.allRects.length.toString());
-    """
-    Then I expect the stored "js" string is equal:
-    """
-      1
     """

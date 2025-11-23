@@ -8,11 +8,12 @@ import connectDB from '@lib/connectDb';
 import { createTempDir, createBasicUsers, createInitialSettings, createTestsUsers } from '@lib/startup';
 import { autoCleanupSchedulers } from '@lib/schedulers/autoCleanupSchedulers';
 import { runMigrations } from '@lib/migrations';
+import { env } from '@env';
 import { errMsg } from './utils';
 
 const logMeta = { scope: 'entrypoint' };
 
-log.info('Connect to database');
+log.info('Connect to database', logMeta);
 connectDB().then(async () => {
     log.debug('run init jobs', logMeta);
     // const startUp = await import('@lib/startup');
@@ -40,7 +41,7 @@ connectDB().then(async () => {
         log.info('sigint received, shutting down');
         autoCleanupSchedulers.checks.stop();
         autoCleanupSchedulers.logs.stop();
-        if (config.codeCoverage) {
+        if (config.codeCoverage && env.SYNGRISI_V8_COVERAGE_ON_EXIT) {
             log.info('take coverage');
             v8.takeCoverage();
             v8.stopCoverage();
