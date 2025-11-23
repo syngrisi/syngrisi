@@ -44,19 +44,16 @@ Feature: Navigation via link parameters
         """
         When I go to "main" page
 
-        When I wait for "1" seconds
         When I wait 30 seconds for the element with locator "[data-table-test-name='TestName Project-1']" to be visible
         When I wait 30 seconds for the element with locator "[data-table-test-name='TestName Project-2-unfiltered']" to be visible
         When I wait 30 seconds for the element with locator "[data-table-test-name='TestName Project-2-filter-0']" to be visible
         When I wait 30 seconds for the element with locator "[data-table-test-name='TestName Project-2-filter-1']" to be visible
 
         # select project
-        When I wait for "3" seconds
         # this is workaround: it's impossible for now to select 'Project-2' straightaway at this moment
         When I select the option with the text "Project-1" for element "select[data-test='current-project']"
         When I select the option with the text "Project-2" for element "select[data-test='current-project']"
 
-        When I wait for "1" seconds
         When I wait on element "[data-table-test-name='TestName Project-1']" to not be displayed
         When I wait 30 seconds for the element with locator "[data-table-test-name='TestName Project-2-unfiltered']" to be visible
         When I wait 30 seconds for the element with locator "[data-table-test-name='TestName Project-2-filter-0']" to be visible
@@ -64,7 +61,6 @@ Feature: Navigation via link parameters
 
         # group by suite and chose second suite
         When I select the option with the text "Suites" for element "select[data-test='navbar-group-by']"
-        When I wait for "1" seconds
         When I click element with locator "//*[@data-test='navbar-item-name' and contains(.,'SuiteNameProject-2-2')]"
 
         When I wait on element "[data-table-test-name='TestName Project-1']" to not be displayed
@@ -79,7 +75,6 @@ Feature: Navigation via link parameters
         When I select the option with the text "contains" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-operator']"
         When I set "filter-1" to the inputfield "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//input[@data-test='table-filter-value']"
         When I click element with locator "[aria-label='Apply filter']"
-        When I wait for "5" seconds
         When I wait on element "[data-table-test-name='TestName Project-1']" to not be displayed
         When I wait on element "[data-table-test-name='TestName Project-2-unfiltered']" to not be displayed
         When I wait on element "[data-table-test-name='TestName Project-2-filter-0']" to not be displayed
@@ -87,7 +82,6 @@ Feature: Navigation via link parameters
 
         # refresh page
         When I refresh page
-        When I wait for "5" seconds
         When I wait on element "[data-table-test-name='TestName Project-1']" to not be displayed
         When I wait on element "[data-table-test-name='TestName Project-2-unfiltered']" to not be displayed
         When I wait on element "[data-table-test-name='TestName Project-2-filter-0']" to not be displayed

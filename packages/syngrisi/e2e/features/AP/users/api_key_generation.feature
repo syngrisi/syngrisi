@@ -34,13 +34,11 @@ Feature: API key generation
         """
 
         When I login with user:"user@gmail.com" password "Password-123"
-        When I wait for "3" seconds
         When I go to "main" page
         # generate and parse API key
         When I click element with locator "button[data-test='user-icon']"
         When I click element with locator "[aria-label='Generate API key']"
         When I click element with locator "span=Generate"
-        When I wait for "3" seconds
         When I parse the API key
 
         # create checks
@@ -53,9 +51,7 @@ Feature: API key generation
         """
 
         # check tests
-        When I wait for "2" seconds
         When I open the app
-        When I wait for "3" seconds
         When I wait 30 seconds for the element with locator "[data-table-test-creatorusername='user@gmail.com']" to be visible
         Then the element "[data-table-test-creatorusername='user@gmail.com']" does appear exactly "1" times
 

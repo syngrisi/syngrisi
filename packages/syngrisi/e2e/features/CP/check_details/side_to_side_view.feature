@@ -28,10 +28,8 @@ Feature: Side to side view
 
   Scenario: Divider in the center
     When I wait 30 seconds for the element with locator "//div[normalize-space(text())='Slider']" to be visible
-    When I wait for "0.5" seconds
 
     When I click element with locator "//div[normalize-space(text())='Slider']"
-    When I wait for "0.5" seconds
 
     When I execute javascript code:
       """

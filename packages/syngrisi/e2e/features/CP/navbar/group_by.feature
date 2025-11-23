@@ -47,7 +47,6 @@ Feature: Group by
         When I wait 30 seconds for the element with locator "[data-table-test-name='TestName - 1']" to be visible
         When I wait 30 seconds for the element with locator "[data-table-test-name='TestName - 2']" to be visible
         When I click element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName - 1')]"
-        When I wait for "2" seconds
         When I wait on element "[data-table-test-name='TestName - 2']" to not be displayed
         When I wait 30 seconds for the element with locator "[data-table-test-name='TestName - 1']" to be visible
         When I select the option with the text "Suites" for element "select[data-test='navbar-group-by']"

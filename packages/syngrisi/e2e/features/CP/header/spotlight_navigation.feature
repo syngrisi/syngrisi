@@ -31,7 +31,7 @@ Feature: Spotlight
 
         When I set "<keyword>" to the inputfield ".mantine-Spotlight-searchInput"
         And I press "Enter"
-        When I wait for "2" seconds
+
         Then the current url contains "<url>"
         And the title contains "<title>"
         And I wait on element ".mantine-Spotlight-spotlight" to not be displayed
@@ -55,7 +55,7 @@ Feature: Spotlight
         # switch theme
         When I set "theme" to the inputfield ".mantine-Spotlight-searchInput"
         And I press "Enter"
-        When I wait for "2" seconds
+
 
         # logo label
         Then the css attribute "color" from element "[aria-label='Syngrisi']" is "rgba(255,255,255,1)"

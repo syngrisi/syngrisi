@@ -764,84 +764,87 @@ Then('the css attribute {string} from element {string} is {string}', async ({ pa
   const renderedSelector = renderTemplate(selector, testData);
   const renderedExpected = renderTemplate(expected, testData);
   const locator = getLocatorQuery(page, renderedSelector);
-  // WebdriverIO's getCSSProperty for color properties returns attributeValue.value
-  // We need to replicate this behavior exactly - get the computed style value
-  let actualValue = await locator.first().evaluate((el, prop) => {
-    // Convert CSS property name (background-color) to camelCase (backgroundColor)
-    const camelProp = prop.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
-    const computedStyle = window.getComputedStyle(el);
-    let value = (computedStyle[camelProp as keyof CSSStyleDeclaration] as string) || '';
 
-    // For SVG elements with color property, WebdriverIO may return the computed color
-    // even if it's empty in computedStyle. Check if element is SVG and color is empty
-    if (prop === 'color' && (!value || value === 'rgba(0, 0, 0, 0)' || value === 'transparent')) {
-      // For SVG, try to get the actual fill color from computed style
-      // WebdriverIO's getCSSProperty('color') for SVG returns the computed color value
-      // which may come from fill or stroke
-      const fill = computedStyle.fill;
-      const stroke = computedStyle.stroke;
+  await expect(async () => {
+    // WebdriverIO's getCSSProperty for color properties returns attributeValue.value
+    // We need to replicate this behavior exactly - get the computed style value
+    let actualValue = await locator.first().evaluate((el, prop) => {
+      // Convert CSS property name (background-color) to camelCase (backgroundColor)
+      const camelProp = prop.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+      const computedStyle = window.getComputedStyle(el);
+      let value = (computedStyle[camelProp as keyof CSSStyleDeclaration] as string) || '';
 
-      // If fill or stroke is set and is a color value, use it
-      if (fill && fill !== 'none' && fill !== 'rgba(0, 0, 0, 0)') {
-        value = fill;
-      } else if (stroke && stroke !== 'none' && stroke !== 'rgba(0, 0, 0, 0)') {
-        value = stroke;
-      }
+      // For SVG elements with color property, WebdriverIO may return the computed color
+      // even if it's empty in computedStyle. Check if element is SVG and color is empty
+      if (prop === 'color' && (!value || value === 'rgba(0, 0, 0, 0)' || value === 'transparent')) {
+        // For SVG, try to get the actual fill color from computed style
+        // WebdriverIO's getCSSProperty('color') for SVG returns the computed color value
+        // which may come from fill or stroke
+        const fill = computedStyle.fill;
+        const stroke = computedStyle.stroke;
 
-      // If still empty, check parent element's color (SVG inherits color from parent)
-      if (!value || value === 'rgba(0, 0, 0, 0)' || value === 'transparent') {
-        const parent = el.parentElement;
-        if (parent) {
-          const parentColor = window.getComputedStyle(parent).color;
-          if (parentColor && parentColor !== 'rgba(0, 0, 0, 0)') {
-            value = parentColor;
+        // If fill or stroke is set and is a color value, use it
+        if (fill && fill !== 'none' && fill !== 'rgba(0, 0, 0, 0)') {
+          value = fill;
+        } else if (stroke && stroke !== 'none' && stroke !== 'rgba(0, 0, 0, 0)') {
+          value = stroke;
+        }
+
+        // If still empty, check parent element's color (SVG inherits color from parent)
+        if (!value || value === 'rgba(0, 0, 0, 0)' || value === 'transparent') {
+          const parent = el.parentElement;
+          if (parent) {
+            const parentColor = window.getComputedStyle(parent).color;
+            if (parentColor && parentColor !== 'rgba(0, 0, 0, 0)') {
+              value = parentColor;
+            }
           }
         }
       }
-    }
 
-    return value;
-  }, cssProperty);
+      return value;
+    }, cssProperty);
 
-  // Normalize color values to match WebdriverIO behavior
-  // WebdriverIO returns rgba(r,g,b,1) format without spaces for colors
-  if (cssProperty.match(/(color|background-color)/)) {
-    // Normalize rgba values: remove spaces and ensure alpha is present
-    const rgbaMatch = actualValue.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
-    if (rgbaMatch) {
-      const r = rgbaMatch[1];
-      const g = rgbaMatch[2];
-      const b = rgbaMatch[3];
-      const a = rgbaMatch[4] || '1';
-      actualValue = `rgba(${r},${g},${b},${a})`;
-    } else {
-      // Convert rgb(r, g, b) to rgba(r,g,b,1) format (no spaces, as WebdriverIO returns)
-      const rgbMatch = actualValue.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
-      if (rgbMatch) {
-        actualValue = `rgba(${rgbMatch[1]},${rgbMatch[2]},${rgbMatch[3]},1)`;
+    // Normalize color values to match WebdriverIO behavior
+    // WebdriverIO returns rgba(r,g,b,1) format without spaces for colors
+    if (cssProperty.match(/(color|background-color)/)) {
+      // Normalize rgba values: remove spaces and ensure alpha is present
+      const rgbaMatch = actualValue.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+      if (rgbaMatch) {
+        const r = rgbaMatch[1];
+        const g = rgbaMatch[2];
+        const b = rgbaMatch[3];
+        const a = rgbaMatch[4] || '1';
+        actualValue = `rgba(${r},${g},${b},${a})`;
+      } else {
+        // Convert rgb(r, g, b) to rgba(r,g,b,1) format (no spaces, as WebdriverIO returns)
+        const rgbMatch = actualValue.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+        if (rgbMatch) {
+          actualValue = `rgba(${rgbMatch[1]},${rgbMatch[2]},${rgbMatch[3]},1)`;
+        }
+      }
+      // If still empty, log warning
+      if (!actualValue) {
+        logger.warn(`CSS property "${cssProperty}" returned empty value for selector "${selector}"`);
       }
     }
-    // If still empty, log warning
-    if (!actualValue) {
-      logger.warn(`CSS property "${cssProperty}" returned empty value for selector "${selector}"`);
+
+    // Handle px values with tolerance
+    const expectedTrimmed = renderedExpected.trim();
+    const pxMatch = expectedTrimmed.match(/^([\d.]+)px$/);
+    const actualPxMatch = actualValue.match(/^([\d.]+)px$/);
+
+    if (pxMatch && actualPxMatch) {
+      const expectedPx = parseFloat(pxMatch[1]);
+      const actualPx = parseFloat(actualPxMatch[1]);
+      const tolerance = 10;
+      const diff = Math.abs(expectedPx - actualPx);
+      expect(diff).toBeLessThanOrEqual(tolerance);
+    } else {
+      // Use exact comparison as WebdriverIO does with toEqual
+      expect(actualValue).toBe(expectedTrimmed);
     }
-  }
-
-  // Handle px values with tolerance
-  const expectedTrimmed = renderedExpected.trim();
-  const pxMatch = expectedTrimmed.match(/^([\d.]+)px$/);
-  const actualPxMatch = actualValue.match(/^([\d.]+)px$/);
-
-  if (pxMatch && actualPxMatch) {
-    const expectedPx = parseFloat(pxMatch[1]);
-    const actualPx = parseFloat(actualPxMatch[1]);
-    const tolerance = 10;
-    const diff = Math.abs(expectedPx - actualPx);
-    expect(diff).toBeLessThanOrEqual(tolerance);
-  } else {
-    // Use exact comparison as WebdriverIO does with toEqual
-    expect(actualValue).toBe(expectedTrimmed);
-  }
+  }).toPass({ timeout: 10000 });
 });
 
 When('I wait on element {string} to exist', async ({ page }, selector: string) => {

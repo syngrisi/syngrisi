@@ -36,7 +36,6 @@ Feature: Check details Related Checks - Navigation and Accept
         # accept
         When I click element with locator ".modal button[data-test='check-accept-icon']"
         When I click element with locator "button[data-test='check-accept-icon-confirm']"
-        When I wait for "1" seconds
 
         Then I expect via http 1st check filtered as "name=CheckName" matched:
         """

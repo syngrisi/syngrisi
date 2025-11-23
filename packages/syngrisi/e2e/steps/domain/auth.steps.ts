@@ -25,6 +25,10 @@ When(
           passwordFieldFound = true;
           break;
         } catch (e) {
+          const errorMsg = (e as Error).message || '';
+          if (errorMsg.includes('Target page, context or browser has been closed')) {
+            throw e;
+          }
           if (attempt < 4) {
             logger.warn(`Password field not found, retrying (attempt ${attempt + 1}/5)`);
           }
@@ -118,7 +122,8 @@ When(
       const errorMsg = error.message || error.toString() || '';
       const isDisconnected = errorMsg.includes('disconnected')
         || errorMsg.includes('failed to check if window was closed')
-        || errorMsg.includes('ECONNREFUSED');
+        || errorMsg.includes('ECONNREFUSED')
+        || errorMsg.includes('Target page, context or browser has been closed');
       if (isDisconnected) {
         logger.warn('Browser disconnected or Playwright browser unavailable, skipping login');
       } else {

@@ -30,11 +30,9 @@ Feature: Navbar Refresh
                filePath: files/A.png
         """
 
-        When I wait for "5" seconds
         Then I wait on element "//*[@data-test='navbar-item-name' and contains(., 'RunName-2')]" to not be displayed
 
         When I click element with locator "[data-test='navbar-icon-refresh']"
-        When I wait for "2" seconds
         When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName-2')]" to be visible
 
 

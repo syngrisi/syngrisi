@@ -22,12 +22,10 @@ Feature: Check details - Regions
 
   Scenario: Regions - add, save, check
     # check absence
-    When I wait for canvas to be ready
     When I execute javascript code:
     """
        return(mainView.allRects.length.toString());
     """
-    When I wait for "1" seconds
     Then I expect the stored "js" string is equal:
     """
       0
@@ -35,6 +33,7 @@ Feature: Check details - Regions
 
     # add and check presence
     When I wait 30 seconds for the element with locator "[data-check='add-ignore-region']" to be visible
+    When I wait 3 seconds
     When I click element with locator "[data-check='add-ignore-region']"
 
     When I execute javascript code:
@@ -42,7 +41,6 @@ Feature: Check details - Regions
      return (mainView.allRects.length.toString());
     """
 
-    When I wait for "1" seconds
     When I repeat javascript code until stored "js" string equals "1":
     """
      return (mainView.allRects.length.toString());
@@ -54,16 +52,12 @@ Feature: Check details - Regions
 
     # save refresh page check presence
     When I click element with locator "[data-check='save-ignore-region']"
-    When I wait for "1" seconds
     When I refresh page
-    When I wait for "3" seconds
-    When I wait for canvas to be ready
     When I execute javascript code:
     """
      return (mainView.allRects.length.toString());
     """
 
-    When I wait for "1" seconds
     When I repeat javascript code until stored "js" string equals "1":
     """
      return (mainView.allRects.length.toString());
@@ -100,9 +94,7 @@ Feature: Check details - Regions
 
     # save
     When I click element with locator "[data-check='save-ignore-region']"
-    When I wait for "1" seconds
     When I refresh page
-    When I wait for "3" seconds
 
     # check updated coordinates
     When I execute javascript code:
@@ -131,6 +123,7 @@ Feature: Check details - Regions
   Scenario: Regions - delete
     # add and check presence
     When I wait 30 seconds for the element with locator "[data-check='add-ignore-region']" to be visible
+    When I wait 3 seconds
     When I click element with locator "[data-check='add-ignore-region']"
 
     When I execute javascript code:
@@ -138,7 +131,6 @@ Feature: Check details - Regions
      return (mainView.allRects.length.toString());
     """
 
-    When I wait for "1" seconds
     When I repeat javascript code until stored "js" string equals "1":
     """
      return (mainView.allRects.length.toString());
@@ -150,16 +142,12 @@ Feature: Check details - Regions
 
     # save refresh page check presence
     When I click element with locator "[data-check='save-ignore-region']"
-    When I wait for "1" seconds
     When I refresh page
-    When I wait for "3" seconds
-    When I wait for canvas to be ready
     When I execute javascript code:
     """
      return (mainView.allRects.length.toString());
     """
 
-    When I wait for "1" seconds
     When I repeat javascript code until stored "js" string equals "1":
     """
      return (mainView.allRects.length.toString());
@@ -179,16 +167,12 @@ Feature: Check details - Regions
 
     # save refresh page check absence
     When I click element with locator "[data-check='save-ignore-region']"
-    When I wait for "1" seconds
     When I refresh page
-    When I wait for "3" seconds
-    When I wait for canvas to be ready
     When I execute javascript code:
     """
      return (mainView.allRects.length.toString());
     """
 
-    When I wait for "1" seconds
     Then I expect the stored "js" string is equal:
     """
       0
@@ -201,15 +185,11 @@ Feature: Check details - Regions
 
     # save refresh page check presence
     When I click element with locator "[data-check='save-ignore-region']"
-    When I wait for "1" seconds
     When I refresh page
-    When I wait for "3" seconds
-    When I wait for canvas to be ready
     When I execute javascript code:
     """
      return (mainView.allRects.length.toString());
     """
-    When I wait for "1" seconds
     When I repeat javascript code until stored "js" string equals "1":
     """
      return (mainView.allRects.length.toString());
@@ -234,15 +214,11 @@ Feature: Check details - Regions
     When I click element with locator "[data-test-preview-image='CheckName']"
 
     When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
-    When I wait for "3" seconds
-    When I wait for canvas to be ready
-    When I wait for "2" seconds
     When I execute javascript code:
     """
      return (mainView.allRects.length.toString());
     """
 
-    When I wait for "1" seconds
     Then I expect the stored "js" string is equal:
     """
       1
@@ -256,14 +232,10 @@ Feature: Check details - Regions
     When I click element with locator "[data-test-preview-image='CheckName']"
 
     When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
-    When I wait for "2" seconds
-    When I wait for canvas to be ready
-    When I wait for "2" seconds
     When I execute javascript code:
     """
      return (mainView.allRects.length.toString());
     """
-    When I wait for "1" seconds
     When I repeat javascript code until stored "js" string equals "1":
     """
      return (mainView.allRects.length.toString());

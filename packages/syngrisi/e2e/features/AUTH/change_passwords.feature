@@ -39,9 +39,7 @@ Feature: Change Password
         SYNGRISI_TEST_MODE: false
         SYNGRISI_AUTH: true
         """
-        When I wait for "3" seconds
         Given I start Server and start Driver
-        When I wait for "5" seconds
         When I open the app
         # TODO: should be deleted - for tests isolation
         When I delete the cookie "connect.sid"
@@ -51,22 +49,20 @@ Feature: Change Password
     Scenario: Change Password - Smoke
         # login
         When I login with user:"j_doe@gmail.com" password "Password-123"
-        When I wait 30 seconds for the element with locator "span*=JD" to be visible
+        When I wait 10 seconds for the element with locator "span*=JD" to be visible
         # change password
         When I go to "change_password" page
         When I set "Password-123" to the inputfield "#current-password"
         When I set "Password-456" to the inputfield "#new-password"
         When I set "Password-456" to the inputfield "#new-password-confirmation"
         When I click element with locator "#change-password"
-        When I wait for "2" seconds
         Then the current url contains "auth/changeSuccess"
         Then the element with locator "h1=Success!" should be visible
 
         # login with new password
         When I go to "logout" page
-        When I wait for "2" seconds
         When I login with user:"j_doe@gmail.com" password "Password-456"
-        When I wait 30 seconds for the element with locator "span*=JD" to be visible
+        When I wait 10 seconds for the element with locator "span*=JD" to be visible
 
     Scenario: Change Password - User not Logged In
         When I go to "change_password" page
@@ -80,7 +76,7 @@ Feature: Change Password
     Scenario: Change Password - Wrong Current Password
         # login
         When I login with user:"j_doe@gmail.com" password "Password-123"
-        When I wait 30 seconds for the element with locator "span*=JD" to be visible
+        When I wait 10 seconds for the element with locator "span*=JD" to be visible
 
         When I go to "change_password" page
         When I set "WRONGpass-123" to the inputfield "#current-password"
@@ -93,7 +89,7 @@ Feature: Change Password
     Scenario: Change Password - Validation
         # login
         When I login with user:"j_doe@gmail.com" password "Password-123"
-        When I wait 30 seconds for the element with locator "span*=JD" to be visible
+        When I wait 10 seconds for the element with locator "span*=JD" to be visible
 
         When I go to "change_password" page
         Then the element with locator "#current-password" should have has attribute "required"
