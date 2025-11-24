@@ -34,6 +34,22 @@
    - Description: Enable coverage, if `true` generated coverage data to `./coverage`
    - Default Value: `-`
 
+9. `SYNGRISI_RATE_LIMIT_WINDOW_MS`
+   - Description: Window size for rate limiting in milliseconds
+   - Default Value: `900000` (15 minutes)
+
+10. `SYNGRISI_RATE_LIMIT_MAX`
+    - Description: Maximum number of requests per window
+    - Default Value: `100`
+
+11. `SYNGRISI_AUTH_RATE_LIMIT_WINDOW_MS`
+    - Description: Window size for authentication rate limiting in milliseconds
+    - Default Value: `900000` (15 minutes)
+
+12. `SYNGRISI_AUTH_RATE_LIMIT_MAX`
+    - Description: Maximum number of authentication requests per window
+    - Default Value: `5`
+
 ### Docker Mode
 
 1. `SYNGRISI_DOCKER_IMAGES_PATH`

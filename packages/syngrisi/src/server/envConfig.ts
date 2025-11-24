@@ -41,4 +41,10 @@ export const env = cleanEnv(process.env, {
     OPENAI_API_BASE_URL: str({ default: 'https://api.openai.com/v1' }),
     OPENAI_API_KEY: str({ default: '' }),
     SYNGRISI_V8_COVERAGE_ON_EXIT: bool({ default: false }),
+
+    // Rate Limiting
+    SYNGRISI_RATE_LIMIT_WINDOW_MS: num({ default: 15 * 60 * 1000 }), // 15 minutes
+    SYNGRISI_RATE_LIMIT_MAX: num({ default: 5000 }),
+    SYNGRISI_AUTH_RATE_LIMIT_WINDOW_MS: num({ default: 15 * 60 * 1000 }), // 15 minutes
+    SYNGRISI_AUTH_RATE_LIMIT_MAX: num({ default: 200 }),
 });

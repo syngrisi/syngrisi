@@ -16,7 +16,7 @@ import authRoutes from './routes/ui/auth';
 import adminRoutes from './routes/ui/admin';
 import uiRoutes from './routes/ui';
 
-import { compressionFilter, disableCors } from './middlewares';
+import { compressionFilter, disableCors, apiLimiter } from './middlewares';
 import { User } from './models';
 import httpLogger from '@lib/httpLogger';
 import errorHandler from './middlewares/errorHandler';
@@ -82,7 +82,7 @@ app.use('/assets', express.static(path.join(baseDir, './mvc/views/react/assets')
 app.use('/static', express.static(path.join(baseDir, './src/server/static/static')));
 
 log.info('\t- routes', logMeta);
-app.use('/v1', routes);
+app.use('/v1', apiLimiter, routes);
 app.use('/auth', authRoutes);
 app.use('/admin', adminRoutes);
 app.use('/', uiRoutes);
