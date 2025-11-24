@@ -1,7 +1,8 @@
+@fast-server
 Feature: Accept by user
 
   Background:
-    Given I clear Database and stop Server
+#     Given I clear Database and stop Server
     When I set env variables:
     """
       SYNGRISI_TEST_MODE: true
@@ -45,4 +46,3 @@ Feature: Accept by user
 
     When I open the app
     When I login with user:"Test" password "123456aA-"
-

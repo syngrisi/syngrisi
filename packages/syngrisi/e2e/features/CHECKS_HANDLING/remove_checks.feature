@@ -1,8 +1,9 @@
+@fast-server
 Feature: Remove checks
 
     Background:
-        Given I clear Database and stop Server
-        Given I start Server and start Driver
+#         Given I clear Database and stop Server
+#         Given I start Server and start Driver
         When I open the app
         When I clear local storage
 
@@ -98,4 +99,3 @@ Feature: Remove checks
         # after modal close
         When I wait on element "[data-table-check-name='CheckName-1']" to not be displayed
         When I wait 30 seconds for the element with locator "//*[text()='Test does not have any checks']" to be visible
-

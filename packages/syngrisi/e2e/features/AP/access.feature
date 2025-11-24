@@ -1,13 +1,14 @@
+@fast-server
 Feature: Access to admin Panel
 
     Background:
-        Given I clear Database and stop Server
+#         Given I clear Database and stop Server
         When I set env variables:
         """
           SYNGRISI_TEST_MODE: true
           SYNGRISI_AUTH: true
         """
-        Given I start Server and start Driver
+#         Given I start Server and start Driver
 
     Scenario: Open Admin Panel as Anonymous User
         When I go to "admin2" page
@@ -31,4 +32,3 @@ Feature: Access to admin Panel
         """
           Authorization Error - wrong Role
         """
-

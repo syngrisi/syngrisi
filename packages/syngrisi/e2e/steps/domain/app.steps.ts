@@ -59,10 +59,14 @@ Given('the database is cleared', async ({ appServer }: { appServer: AppServerFix
   logger.info('✓ Server is ready with users created');
 });
 
-When('I open the app', async ({ page, appServer }: { page: Page; appServer: AppServerFixture }) => {
+When('I open the app', async ({ page, appServer, testData }: { page: Page; appServer: AppServerFixture; testData: any }) => {
   logger.info(`Opening app at ${appServer.baseURL}`);
   await page.goto(appServer.baseURL);
   await page.waitForLoadState('networkidle');
+
+  // Ensure templated URLs work (e.g., <syngrisiUrl> in features)
+  const normalizedUrl = appServer.baseURL.endsWith('/') ? appServer.baseURL : `${appServer.baseURL}/`;
+  testData?.set?.('syngrisiUrl', normalizedUrl);
 });
 
 When('I clear local storage', async ({ page }: { page: Page }) => {

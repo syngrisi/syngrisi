@@ -31,6 +31,7 @@ function resolveBaselinesPath(cid: number): string {
 export async function clearDatabase(
   cidOrRemoveBaselines?: number | boolean,
   removeBaselinesArg = true,
+  softClean = false,
 ): Promise<void> {
   let removeBaselines = removeBaselinesArg;
   let cid: number | undefined;
@@ -55,8 +56,18 @@ export async function clearDatabase(
     try {
       await client.connect();
       const db = client.db();
-      const dropResult = await db.dropDatabase();
-      logger.info(`✓ Dropped database ${db.databaseName}: ${dropResult}`);
+      if (softClean) {
+        const collections = await db.listCollections().toArray();
+        for (const collection of collections) {
+          if (collection.name !== 'system.indexes') {
+            await db.collection(collection.name).deleteMany({});
+          }
+        }
+        logger.info(`✓ Soft cleaned database ${db.databaseName}`);
+      } else {
+        const dropResult = await db.dropDatabase();
+        logger.info(`✓ Dropped database ${db.databaseName}: ${dropResult}`);
+      }
     } catch (error: any) {
       const errorMsg = error.message || error.toString() || '';
       if (errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed') || errorMsg.includes('ECONNREFUSED')) {
@@ -71,7 +82,7 @@ export async function clearDatabase(
   })());
 
   // Task 2: Clear Baselines (if required)
-  if (removeBaselines) {
+  if (removeBaselines && !softClean) {
     tasks.push((async () => {
       try {
         await fs.rm(baselinesPath, { recursive: true, force: true });

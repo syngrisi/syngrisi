@@ -1,9 +1,9 @@
-@smoke
+@smoke @fast-server
 Feature: Filter by Project
 
   Background:
-    Given I clear Database and stop Server
-    Given I start Server and start Driver
+#     Given I clear Database and stop Server
+#     Given I start Server and start Driver
     When I open the app
     When I clear local storage
 

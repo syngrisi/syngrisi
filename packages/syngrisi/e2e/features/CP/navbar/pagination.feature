@@ -1,9 +1,9 @@
-@smoke
+@smoke @fast-server
 Feature: Pagination
 
   Background:
-    Given I clear Database and stop Server
-    Given I start Server and start Driver
+#     Given I clear Database and stop Server
+#     Given I start Server and start Driver
     When I open the app
     When I clear local storage
 
@@ -61,4 +61,3 @@ Feature: Pagination
     Then the element "[data-test*='navbar_item_']" does appear exactly "20" times
     When I scroll to element "[data-test*='navbar_item_11']"
     Then the element "[data-test*='navbar_item_']" does appear exactly "30" times
-

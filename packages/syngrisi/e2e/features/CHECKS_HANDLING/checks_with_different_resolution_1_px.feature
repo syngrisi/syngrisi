@@ -1,3 +1,4 @@
+@fast-server
 Feature: Checks with different resolutions 1px
   The 1px difference resolution should be ignored
   But this is applicable only if image was cropped by 1px from the bottom
@@ -10,8 +11,8 @@ Feature: Checks with different resolutions 1px
 #    └───────────┘   └───────────┘
 
   Background:
-    Given I clear Database and stop Server
-    Given I start Server and start Driver
+#     Given I clear Database and stop Server
+#     Given I start Server and start Driver
 
   Scenario: Two checks with identical image parts but different resolutions [1px, bottom]
     Given I create "1" tests with:
@@ -41,4 +42,3 @@ Feature: Checks with different resolutions 1px
       status: [passed]
     """
     When I open the app
-

@@ -1,9 +1,9 @@
-@smoke
+@smoke @fast-server
 Feature: Remove Inconsistent items
 
   Background:
-    Given I clear Database and stop Server
-    Given I start Server and start Driver
+#     Given I clear Database and stop Server
+#     Given I start Server and start Driver
     When I create "1" tests with params:
     """
       run: RunName
@@ -16,7 +16,7 @@ Feature: Remove Inconsistent items
     Then I expect exact "1" snapshot files
     Given I stop Server
     When I clear database
-    Given I start Server and start Driver
+#     Given I start Server and start Driver
 
     When I create "1" tests with params:
     """
@@ -55,5 +55,4 @@ Feature: Remove Inconsistent items
     Then I expect via http that "TestName - 1" test exist exactly "0" times
     Then I expect via http that "RunName" run exist exactly "0" times
     Then I expect via http that "SuiteName" suite exist exactly "0" times
-
 

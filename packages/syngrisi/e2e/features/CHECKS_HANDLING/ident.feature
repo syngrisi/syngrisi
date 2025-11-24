@@ -1,11 +1,12 @@
+@fast-server
 Feature: Ident flow
 When app perform the check it select the check baseline using the ident fields (ident):
 ['name', 'viewport', 'browserName', 'os', 'app', 'branch'], if we have two checks with same name but different ident
 we should use different baselines for each checks.
 
   Background:
-    Given I clear Database and stop Server
-    Given I start Server and start Driver
+#     Given I clear Database and stop Server
+#     Given I start Server and start Driver
 
   Scenario: Ident flow, same ident [accepted, passed]
     # first check
@@ -276,4 +277,3 @@ we should use different baselines for each checks.
       status: [failed]
       failReasons: [different_images]
     """
-

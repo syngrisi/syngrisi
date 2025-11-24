@@ -1,9 +1,9 @@
-@integration @smoke @e2e
+@integration @smoke @e2e @fast-server
 Feature: One Check without session starting
 
     Background:
-        Given I clear Database and stop Server
-        Given I start Server and start Driver
+#         Given I clear Database and stop Server
+#         Given I start Server and start Driver
 
     Scenario: Create new check - without session ending
         When I check image with path: "files/A.png" as "new int check" and suppress exceptions
@@ -11,4 +11,3 @@ Feature: One Check without session starting
         """
         The test id is empty
         """
-

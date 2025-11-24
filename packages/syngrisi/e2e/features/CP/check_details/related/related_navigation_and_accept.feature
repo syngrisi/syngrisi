@@ -1,9 +1,9 @@
-@smoke
+@smoke @fast-server
 Feature: Check details Related Checks - Navigation and Accept
 
     Background:
-        Given I clear Database and stop Server
-        Given I start Server and start Driver
+#         Given I clear Database and stop Server
+#         Given I start Server and start Driver
         When I open the app
         When I clear local storage
 
@@ -59,4 +59,3 @@ Feature: Check details Related Checks - Navigation and Accept
 
         Then the element with locator "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" should have has attribute "data-test-icon-type=outline"
         Then the css attribute "color" from element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" is "rgba(134,142,150,1)"
-
