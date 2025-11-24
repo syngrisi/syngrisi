@@ -1,9 +1,9 @@
-@smoke
+@smoke @fast-server
 Feature: CLI Tasks
 
   Background:
-    Given I clear Database and stop Server
-    Given I start Server and start Driver
+#     Given I clear Database and stop Server
+#     Given I start Server and start Driver
 
   Scenario: CLI - Handle Database Consistency [statistics only]
     When I create "1" tests with params:
@@ -16,7 +16,7 @@ Feature: CLI Tasks
     Then I expect exact "1" snapshot files
     Given I stop Server
     When I clear database
-    Given I start Server and start Driver
+#     Given I start Server and start Driver
 
     When I create "1" tests with params:
     """
@@ -40,7 +40,7 @@ Feature: CLI Tasks
     Then I expect exact "1" snapshot files
     Given I stop Server
     When I clear database
-    Given I start Server and start Driver
+#     Given I start Server and start Driver
 
     When I create "1" tests with params:
     """

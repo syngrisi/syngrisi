@@ -5,7 +5,9 @@ import * as yaml from 'yaml';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
+import { env } from '@config';
 import type { AppServerFixture } from '@fixtures';
+import { isServerRunning } from '@utils/app-server';
 import FormData from 'form-data';
 import { got } from 'got-cjs';
 import { SyngrisiDriver } from '@syngrisi/wdio-sdk';
@@ -138,9 +140,23 @@ async function createTestsWithParams(
   testData.set('autoCreatedChecks', initialChecks);
   const createTest = async (params: any, index: number) => {
     try {
-      const vDriver = testData.get('vDriver') as SyngrisiDriver | undefined;
+      const cid = process.env.DOCKER === '1' ? 100 : parseInt(process.env.TEST_PARALLEL_INDEX || '0', 10);
+      const serverPort = appServer.serverPort || parseInt(process.env.SYNGRISI_APP_PORT || '', 10) || 3002 + cid;
+      if (!(await isServerRunning(serverPort))) {
+        logger.info(`App server is not running on port ${serverPort}, starting before creating tests`);
+        await appServer.start();
+      }
+
+      let vDriver = testData.get('vDriver') as SyngrisiDriver | undefined;
       if (!vDriver) {
-        throw new Error('SyngrisiDriver not initialized. Please call "I start Driver" step first.');
+        const baseURL = appServer.baseURL || `http://${env.E2E_BACKEND_HOST}:${appServer.serverPort || 3002}`;
+        const normalizedURL = baseURL.endsWith('/') ? baseURL : `${baseURL}/`;
+        vDriver = new SyngrisiDriver({
+          url: normalizedURL,
+          apiKey,
+        });
+        testData.set('vDriver', vDriver);
+        logger.info('SyngrisiDriver auto-initialized because it was missing');
       }
 
       const testIndex = index + 1;

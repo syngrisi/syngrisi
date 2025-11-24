@@ -1,7 +1,8 @@
+@fast-server
 Feature: Login
 
     Background:
-        Given I clear Database and stop Server
+#         Given I clear Database and stop Server
 
         When I set env variables:
         """
@@ -17,7 +18,7 @@ Feature: Login
           SYNGRISI_AUTH: "true"
         """
 
-        Given I start Server and start Driver
+#         Given I start Server and start Driver
         When I reload session
 
     @smoke
@@ -42,7 +43,7 @@ Feature: Login
         SYNGRISI_TEST_MODE: false
         SYNGRISI_AUTH: true
         """
-        Given I start Server and start Driver
+#         Given I start Server and start Driver
 
         # login
         When I login with user:"j_doe@gmail.com" password "Password-123"
@@ -73,5 +74,4 @@ Feature: Login
         When I set "123456aA-" to the inputfield "#password"
         When I click element with locator "#submit"
         Then the current url contains "<syngrisiUrl>?groupBy=test-distinct%2FbrowserName"
-
 

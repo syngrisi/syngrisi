@@ -1,4 +1,4 @@
-@integration
+@integration @fast-server
 Feature: User roles
     By default we have 3 roles:
     - admin: can to do and see seeing everything
@@ -6,7 +6,7 @@ Feature: User roles
     - reviewer: can see and accept all tests
 
     Background:
-        Given I clear Database and stop Server
+#         Given I clear Database and stop Server
         When I set env variables:
         """
           SYNGRISI_TEST_MODE: true
@@ -20,7 +20,7 @@ Feature: User roles
           SYNGRISI_TEST_MODE: false
           SYNGRISI_AUTH: true
         """
-        Given I start Server and start Driver
+#         Given I start Server and start Driver
 
     @e2e
     Scenario: User - roles
@@ -186,5 +186,4 @@ Feature: User roles
 
         Then the element "//div[contains(text(), 'Admin test')]" does appear exactly "3" times
         Then the element "[data-table-test-creatorusername='superadmin@gmail.com']" does appear exactly "3" times
-
 

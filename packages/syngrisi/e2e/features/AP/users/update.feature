@@ -1,8 +1,8 @@
-@integration
+@integration @fast-server
 Feature: Update User
 
     Background:
-        Given I clear Database and stop Server
+#         Given I clear Database and stop Server
         When I set env variables:
         """
           SYNGRISI_TEST_MODE: true
@@ -17,7 +17,7 @@ Feature: Update User
         SYNGRISI_TEST_MODE: true
         SYNGRISI_AUTH: true
         """
-        Given I start Server and start Driver
+#         Given I start Server and start Driver
         When I login with user:"Test" password "123456aA-"
         When I wait 30 seconds for the element with locator "span*=TA" to be visible
         When I login via http with user:"Test" password "123456aA-"
@@ -55,6 +55,5 @@ Feature: Update User
         Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@aria-label='First Name']" should have value "Alex"
         Then the element with locator "//*[@data-test='j_doe@gmail.com']//input[@aria-label='Last Name']" should have value "Jonson"
         Then the element with locator "//*[@data-test='j_doe@gmail.com']//select[@data-test='user-list-role']" should have value "reviewer"
-
 
 

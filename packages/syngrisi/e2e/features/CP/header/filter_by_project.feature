@@ -1,8 +1,8 @@
-@smoke
+@smoke @fast-server
 Feature: Filter by project
   Background:
-    Given I clear Database and stop Server
-    Given I start Server and start Driver
+#     Given I clear Database and stop Server
+#     Given I start Server and start Driver
     When I open the app
     When I clear local storage
 
@@ -43,5 +43,4 @@ Feature: Filter by project
 
     Then the element "//*[@data-test='navbar-item-name' and contains(., 'RunName Project-1')]" does appear exactly "0" times
     Then the element "//*[@data-test='navbar-item-name' and contains(., 'RunName Project-2')]" does appear exactly "1" times
-
 

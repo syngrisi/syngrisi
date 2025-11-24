@@ -1,8 +1,9 @@
+@fast-server
 Feature: Check Details - Initial image resize
 
     Background:
-        Given I clear Database and stop Server
-        Given I start Server and start Driver
+#         Given I clear Database and stop Server
+#         Given I start Server and start Driver
 
     Scenario: Image fit in the viewport
         Given I create "1" tests with:

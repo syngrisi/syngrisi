@@ -1,7 +1,8 @@
+@fast-server
 Feature: User Information
 
   Background:
-    Given I clear Database and stop Server
+#     Given I clear Database and stop Server
     When I set env variables:
       """
           SYNGRISI_TEST_MODE: true
@@ -15,7 +16,7 @@ Feature: User Information
           SYNGRISI_TEST_MODE: false
           SYNGRISI_AUTH: true
       """
-    Given I start Server and start Driver
+#     Given I start Server and start Driver
     When I login via http with user:"Test" password "123456aA-"
 
     When I create via http user as:"Test" with params:
@@ -44,5 +45,4 @@ Feature: User Information
     Then the element with locator "[data-test=userinfo-username]" should have contains text "user@gmail.com"
     Then the element with locator "[data-test=userinfo-role]" should have contains text "user"
     Then the element with locator "[data-test=userinfo-name]" should have contains text "John Doe"
-
 

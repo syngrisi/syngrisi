@@ -1,8 +1,9 @@
+@fast-server
 Feature: Change Password
 
     Background:
         When I set window size: "1050x768"
-        Given I clear Database and stop Server
+#         Given I clear Database and stop Server
         When I set env variables:
         """
           SYNGRISI_TEST_MODE: true
@@ -17,7 +18,7 @@ Feature: Change Password
         SYNGRISI_TEST_MODE: true
         SYNGRISI_AUTH: true
         """
-        Given I start Server and start Driver
+#         Given I start Server and start Driver
 
         # crate user
         When I login via http with user:"Test" password "123456aA-"
@@ -39,7 +40,7 @@ Feature: Change Password
         SYNGRISI_TEST_MODE: false
         SYNGRISI_AUTH: true
         """
-        Given I start Server and start Driver
+#         Given I start Server and start Driver
         When I open the app
         # TODO: should be deleted - for tests isolation
         When I delete the cookie "connect.sid"
@@ -141,7 +142,6 @@ Feature: Change Password
         When I set "123" to the inputfield "#new-password-confirmation"
         When I click element with locator "#change-password"
         Then the element with locator "//*[@id='new-password-confirmation']/../../following-sibling::*" should have contains text "New password and password confirmation must be match"
-
 
 
 

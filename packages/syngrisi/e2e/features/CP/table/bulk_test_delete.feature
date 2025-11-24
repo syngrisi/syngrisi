@@ -1,8 +1,9 @@
+@fast-server
 Feature: Bulk test Delete
 
     Background:
-        Given I clear Database and stop Server
-        Given I start Server and start Driver
+#         Given I clear Database and stop Server
+#         Given I start Server and start Driver
         When I open the app
         When I clear local storage
 
@@ -34,5 +35,4 @@ Feature: Bulk test Delete
 
         When I wait on element "[data-table-test-name=TestName-0]" to not be displayed
         When I wait on element "[data-table-test-name=TestName-1]" to not be displayed
-
 

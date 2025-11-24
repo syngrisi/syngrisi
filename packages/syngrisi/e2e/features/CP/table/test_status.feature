@@ -1,8 +1,9 @@
+@fast-server
 Feature: Calculate Test status based on Checks statuses
 
     Background:
-        Given I clear Database and stop Server
-        Given I start Server and start Driver
+#         Given I clear Database and stop Server
+#         Given I start Server and start Driver
         When I open the app
         When I clear local storage
 

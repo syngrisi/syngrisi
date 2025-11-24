@@ -1,8 +1,9 @@
+@fast-server
 Feature: Partially Accepted Test
 
     Background:
-        Given I clear Database and stop Server
-        Given I start Server and start Driver
+#         Given I clear Database and stop Server
+#         Given I start Server and start Driver
         When I open the app
         When I clear local storage
 
@@ -28,4 +29,3 @@ Feature: Partially Accepted Test
         When I wait 30 seconds for the element with locator "//*[@data-row-name='TestName']//td[@data-test='table-row-Accepted']//*[text()='Partially']" to be visible
         When I accept the "CheckName-2" check
         When I wait 30 seconds for the element with locator "//*[@data-row-name='TestName']//td[@data-test='table-row-Accepted']//*[text()='Accepted']" to be visible
-

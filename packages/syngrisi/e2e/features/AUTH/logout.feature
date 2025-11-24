@@ -1,7 +1,8 @@
+@fast-server
 Feature: Logout
 
     Background:
-        Given I clear Database and stop Server
+#         Given I clear Database and stop Server
         When I set env variables:
         """
           SYNGRISI_TEST_MODE: true
@@ -16,7 +17,7 @@ Feature: Logout
         SYNGRISI_TEST_MODE: false
         SYNGRISI_AUTH: true
         """
-        Given I start Server and start Driver
+#         Given I start Server and start Driver
 
     Scenario: Logout - default Test user
         When I login with user:"Test" password "123456aA-"
@@ -27,5 +28,4 @@ Feature: Logout
         When I go to "main" page
         When the current url contains "/auth"
         Then the title is "Login Page"
-
 

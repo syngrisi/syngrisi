@@ -1,8 +1,8 @@
-@integration
+@integration @fast-server
 Feature: Delete User
 
     Background:
-        Given I clear Database and stop Server
+#         Given I clear Database and stop Server
         When I set env variables:
         """
           SYNGRISI_TEST_MODE: true
@@ -17,7 +17,7 @@ Feature: Delete User
         SYNGRISI_TEST_MODE: true
         SYNGRISI_AUTH: true
         """
-        Given I start Server and start Driver
+#         Given I start Server and start Driver
         When I login with user:"Test" password "123456aA-"
         When I wait 30 seconds for the element with locator "span*=TA" to be visible
         When I login via http with user:"Test" password "123456aA-"
@@ -41,6 +41,5 @@ Feature: Delete User
         When I click element with locator "button[aria-label='Delete']"
 
         And the element "//*[@data-test='j_doe@gmail.com']" does not exist
-
 
 

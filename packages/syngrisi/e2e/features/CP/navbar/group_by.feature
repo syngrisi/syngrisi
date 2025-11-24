@@ -1,8 +1,9 @@
+@fast-server @env:SYNGRISI_AUTH:false @env:SYNGRISI_TEST_MODE:true
 Feature: Group by
 
     Background:
-        Given I clear Database and stop Server
-        Given I start Server and start Driver
+#         Given I clear Database and stop Server
+#         Given I start Server and start Driver
         When I open the app
         When I clear local storage
 
@@ -57,7 +58,7 @@ Feature: Group by
     Should apply groupBy via url params
         # suites
         When I open the url "<syngrisiUrl>?groupBy=suites"
+        When I wait for "5" seconds
 
         When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'SuiteName - 1')]" to be visible
         When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'SuiteName - 2')]" to be visible
-

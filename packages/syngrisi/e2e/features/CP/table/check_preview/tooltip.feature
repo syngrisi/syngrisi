@@ -1,7 +1,8 @@
+@fast-server
 Feature: Check Preview - Tooltip
 
   Background:
-    Given I clear Database and stop Server
+#     Given I clear Database and stop Server
     When I set env variables:
     """
       SYNGRISI_TEST_MODE: true
@@ -16,7 +17,7 @@ Feature: Check Preview - Tooltip
       SYNGRISI_TEST_MODE: false
       SYNGRISI_AUTH: true
     """
-    Given I start Server and start Driver
+#     Given I start Server and start Driver
 
     # set API key
     When I login via http with user:"Test" password "123456aA-"

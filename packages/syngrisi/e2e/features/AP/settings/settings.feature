@@ -1,8 +1,9 @@
+@fast-server
 Feature: Admin Settings
 
     Background:
-        Given I clear Database and stop Server
-        Given I start Server and start Driver
+#         Given I clear Database and stop Server
+#         Given I start Server and start Driver
 
     Scenario: Change Admin Settings - Enable Auth
         When I go to "settings" page
@@ -27,7 +28,7 @@ Feature: Admin Settings
           SYNGRISI_DISABLE_FIRST_RUN: false
           SYNGRISI_AUTH: true
         """
-        Given I start Server and start Driver
+#         Given I start Server and start Driver
         When I open the app
         Then the current url contains "auth/change?first_run=true"
         Then I wait on element "//h3[contains(text(), 'Change Password for default Administrator')]"
@@ -39,7 +40,7 @@ Feature: Admin Settings
           SYNGRISI_DISABLE_FIRST_RUN: true
           SYNGRISI_AUTH: false
         """
-        Given I start Server and start Driver
+#         Given I start Server and start Driver
         When I go to "settings" page
         When I wait 30 seconds for the element with label "First Run" to be visible
 
@@ -56,7 +57,7 @@ Feature: Admin Settings
           SYNGRISI_DISABLE_FIRST_RUN: false
           SYNGRISI_AUTH: true
         """
-        Given I start Server and start Driver
+#         Given I start Server and start Driver
         When I open the app
         Then the current url does not contain "auth/change?first_run=true"
         Then the current url contains "/auth"

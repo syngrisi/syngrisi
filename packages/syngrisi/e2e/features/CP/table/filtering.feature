@@ -1,8 +1,9 @@
+@fast-server
 Feature: Tests Table Filter
 
   Background:
-    Given I clear Database and stop Server
-    Given I start Server and start Driver
+#     Given I clear Database and stop Server
+#     Given I start Server and start Driver
     When I open the app
     When I clear local storage
 
@@ -272,4 +273,3 @@ Feature: Tests Table Filter
     When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-firefox]" to be visible
     When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-chrome]" to be visible
     When I wait on element "[data-table-test-name=TestName-msedge]" to not be displayed
-

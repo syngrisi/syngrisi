@@ -6,6 +6,8 @@ import type { FullConfig } from '@playwright/test';
 import { resolveRepoRoot } from '@utils/fs';
 import { createLogger } from '@lib/logger';
 import { clearDatabase } from '@utils/db-cleanup';
+import { stopAllServers } from '@utils/app-server';
+import { MongoClient } from 'mongodb';
 
 const logger = createLogger('GlobalSetup');
 const repoRoot = resolveRepoRoot();
@@ -98,6 +100,31 @@ export default async function globalSetup(_config: FullConfig) {
 
   await cleanLogsDir();
   await ensureBaselinesTestDir();
+
+  try {
+    const client = new MongoClient('mongodb://localhost:27017');
+    await client.connect();
+    const admin = client.db().admin();
+    const { databases } = await admin.listDatabases();
+    const testDbs = databases.filter((db) => db.name.startsWith('SyngrisiDbTest'));
+
+    logger.info(`Found ${testDbs.length} stray test databases. Cleaning up...`);
+    for (const db of testDbs) {
+      await client.db(db.name).dropDatabase();
+      logger.info(`Dropped ${db.name}`);
+    }
+
+    await client.close();
+  } catch (e) {
+    logger.warn(`Failed to cleanup stray databases: ${(e as Error).message}`);
+  }
+
+  try {
+    logger.info('Stopping any running syngrisi test servers');
+    stopAllServers();
+  } catch (e) {
+    logger.warn(`Failed to stop running servers: ${(e as Error).message}`);
+  }
 
   // Clear database for main worker (CID 0)
   try {

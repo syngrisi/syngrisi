@@ -1,9 +1,9 @@
-@smoke
+@smoke @fast-server
 Feature: Enabled disabled buttons on Check Details Modal Window
 
     Background:
-        Given I clear Database and stop Server
-        Given I start Server and start Driver
+#         Given I clear Database and stop Server
+#         Given I start Server and start Driver
         When I open the app
         When I clear local storage
 
@@ -177,4 +177,3 @@ Feature: Enabled disabled buttons on Check Details Modal Window
         Then the element with locator "[data-check='remove-ignore-region']" should have has attribute "data-disabled=true"
         Then the element with locator "[data-check='add-ignore-region']" should not have attribute "data-disabled=true"
         Then the element with locator "[data-check='save-ignore-region']" should not have attribute "data-disabled=true"
-

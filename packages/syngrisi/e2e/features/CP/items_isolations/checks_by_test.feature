@@ -1,10 +1,11 @@
+@fast-server
 Feature: Checks Isolation by Test
     Every checks are related to one test.
     Each test should contain only it checks and no extra checks
 
     Background:
-        Given I clear Database and stop Server
-        Given I start Server and start Driver
+#         Given I clear Database and stop Server
+#         Given I start Server and start Driver
         When I open the app
         When I clear local storage
         Given I create "2" tests with:

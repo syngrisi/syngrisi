@@ -1,9 +1,9 @@
-@smoke
+@smoke @fast-server
 Feature: Switch Color Theme
 
   Background:
-    Given I clear Database and stop Server
-    Given I start Server and start Driver
+#     Given I clear Database and stop Server
+#     Given I start Server and start Driver
     When I open the app
     When I clear local storage
 
@@ -35,5 +35,4 @@ Feature: Switch Color Theme
     Then the css attribute "color" from element "[aria-label='Syngrisi']" is "rgba(255,255,255,1)"
     # logo container
     Then the css attribute "color" from element "[aria-label='Logo container']" is "rgba(193,194,197,1)"
-
 

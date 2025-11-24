@@ -1,9 +1,9 @@
-@smoke
+@smoke @fast-server
 Feature: Check Details Difference Highlight
 
     Background:
-        Given I clear Database and stop Server
-        Given I start Server and start Driver
+#         Given I clear Database and stop Server
+#         Given I start Server and start Driver
         When I open the app
         When I clear local storage
 
@@ -43,4 +43,3 @@ Feature: Check Details Difference Highlight
         """
           151
         """
-

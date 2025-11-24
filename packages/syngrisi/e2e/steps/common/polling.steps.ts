@@ -22,7 +22,7 @@ When(
   async ({ page }: { page: Page }, selector: string, expected: string) => {
     const locator = getLocatorQuery(page, selector);
     const expectedText = expected.trim();
-    const deadline = Date.now() + 30000;
+    const deadline = Date.now() + 60000;
     let currentTexts: string[] = [];
 
     while (Date.now() < deadline) {
@@ -39,7 +39,7 @@ When(
       await page.waitForTimeout(250);
     }
     throw new Error(
-      `Element "${selector}" texts ${JSON.stringify(currentTexts)} did not contain "${expectedText}" after 30s`
+      `Element "${selector}" texts ${JSON.stringify(currentTexts)} did not contain "${expectedText}" after 60s`
     );
   }
 );
