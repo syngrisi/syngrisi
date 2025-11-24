@@ -32,7 +32,12 @@ const paginate = (schema: Schema) => {
     const page = options.page && parseInt(options.page.toString(), 10) > 0 ? parseInt(options.page.toString(), 10) : 1;
     const skip = (page - 1) * limit;
 
-    const countPromise = this.countDocuments(filter).exec();
+    // Prefer fast estimation for unfiltered queries on large collections; fall back to exact counts when filters are used.
+    const countStrategy = options.countStrategy
+      ?? (filter && Object.keys(filter).length === 0 ? 'estimated' : 'exact');
+    const countPromise = countStrategy === 'estimated'
+      ? this.estimatedDocumentCount().exec()
+      : this.countDocuments(filter).exec();
     let docsPromise = this.find(filter)
       .sort(sort)
       .skip(skip)
