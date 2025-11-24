@@ -1,9 +1,10 @@
+@fast-server @env:SYNGRISI_AUTH:false @env:SYNGRISI_TEST_MODE:true
 Feature: Group by Navigation
     Check Breadcrumbs, Title and Url changes behaviour on grouping changes
 
     Background:
-        Given I clear Database and stop Server
-        Given I start Server and start Driver
+#         Given I clear Database and stop Server
+#         Given I start Server and start Driver
         When I open the app
         When I clear local storage
 
@@ -40,6 +41,7 @@ Feature: Group by Navigation
 
         # suites
         When I open the url "<syngrisiUrl>?groupBy=suites"
+        When I wait for "5" seconds
         Then the element "(//*[@data-test='bread-crumbs']//a)[1]" matches the text "Test Results"
         Then the element with locator "(//*[@data-test='bread-crumbs']//a)[1]" should have has attribute "href=/"
         Then the element "(//*[@data-test='bread-crumbs']//a)[2]" matches the text "By Suites"

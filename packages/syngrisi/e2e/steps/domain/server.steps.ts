@@ -12,11 +12,16 @@ import type { TestStore } from '@fixtures';
 import * as path from 'path';
 import { execSync } from 'child_process';
 import * as fs from 'fs';
+import { hasTag } from '@utils/common';
+import type { BddContext } from 'playwright-bdd/dist/runtime/bddContext';
 
 const logger = createLogger('ServerSteps');
 
 // Store driver instance for tests
 let vDriver: SyngrisiDriver | null = null;
+
+const restartAfterEnvSet = new Map<number, boolean>();
+const getCid = (): number => (process.env.DOCKER === '1' ? 100 : parseInt(process.env.TEST_PARALLEL_INDEX || '0', 10));
 
 function resetTestCreationState(testData?: TestStore): void {
   if (!testData) return;
@@ -30,12 +35,24 @@ function resetTestCreationState(testData?: TestStore): void {
 
 When(
   'I set env variables:',
-  async ({}, yml: string) => {
+  async ({ appServer, $bddContext }: { appServer: AppServerFixture; $bddContext?: BddContext }, yml: string) => {
     const params = yaml.parse(yml);
     Object.keys(params).forEach((key) => {
       process.env[key] = String(params[key]);
       logger.info(`Set env variable ${key}=${params[key]}`);
     });
+    const testInfo = ($bddContext as BddContext | undefined)?.testInfo;
+    const isFastMode = hasTag(testInfo, '@fast-server');
+    const cid = getCid();
+    if (restartAfterEnvSet.get(cid)) {
+      logger.info('Env updated after server stop, restarting server to apply new values');
+      await appServer.start();
+      restartAfterEnvSet.set(cid, false);
+    } else if (isFastMode && appServer.baseURL) {
+      logger.info('Fast mode: restarting server to apply env overrides');
+      await appServer.restart();
+      restartAfterEnvSet.set(cid, false);
+    }
   }
 );
 
@@ -45,6 +62,7 @@ Given(
     // Always start server (even if it was stopped by "I clear Database and stop Server")
     logger.info('Starting server...');
     await appServer.start();
+    restartAfterEnvSet.set(getCid(), false);
     
     // Wait a bit for server to be fully ready
     await new Promise(resolve => setTimeout(resolve, 2000));
@@ -82,6 +100,7 @@ Given(
       logger.info('Starting server...');
       await appServer.start();
     }
+    restartAfterEnvSet.set(getCid(), false);
     // Set syngrisiUrl for template rendering (as in old tests)
     const syngrisiUrl = `${appServer.baseURL}/`;
     testData.set('syngrisiUrl', syngrisiUrl);
@@ -96,6 +115,7 @@ When(
     // Stop server process (as in original stopServer())
     logger.info('Stopping Syngrisi server...');
     stopServerProcess();
+    restartAfterEnvSet.set(getCid(), true);
     
     // Also stop via fixture if running
     if (appServer.baseURL) {
@@ -112,6 +132,7 @@ When(
     // Stop server process (as in original stopServer())
     logger.info('Stopping server...');
     stopServerProcess();
+    restartAfterEnvSet.set(getCid(), true);
     
     // Also stop via fixture if running
     if (appServer.baseURL) {
@@ -124,7 +145,15 @@ When(
 
 Given(
   'I clear Database and stop Server',
-  async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }) => {
+  async (
+    { appServer, testData, $bddContext }: { appServer: AppServerFixture; testData: TestStore; $bddContext?: unknown },
+    _testInfo,
+  ) => {
+    const testInfo = ($bddContext as BddContext | undefined)?.testInfo;
+    if (hasTag(testInfo, '@fast-server')) {
+      logger.info('STEP SKIPPED: Clear DB & Stop Server handled by fixture in @fast-server mode');
+      return;
+    }
     try {
       // Stop server first (as in original: stopServer() then clearDatabase())
       logger.info('Stopping server...');

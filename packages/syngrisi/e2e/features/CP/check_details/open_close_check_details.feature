@@ -1,9 +1,9 @@
-@smoke
+@smoke @fast-server
 Feature: Open/Close Check Details
 
     Background:
-        Given I clear Database and stop Server
-        Given I start Server and start Driver
+#         Given I clear Database and stop Server
+#         Given I start Server and start Driver
         When I open the app
         When I clear local storage
 
@@ -58,5 +58,4 @@ Feature: Open/Close Check Details
 
         When I open the url "<js:url>"
         When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
-
 

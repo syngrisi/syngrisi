@@ -1,7 +1,8 @@
+@fast-server
 Feature: Login - Smoke
 
     Background:
-        Given I clear Database and stop Server
+#         Given I clear Database and stop Server
 
         When I set env variables:
         """
@@ -17,11 +18,10 @@ Feature: Login - Smoke
           SYNGRISI_AUTH: "true"
         """
 
-        Given I start Server and start Driver
+#         Given I start Server and start Driver
         When I reload session
 
     Scenario: Login - default Test user
         When I login with user:"Test" password "123456aA-"
         When I wait 30 seconds for the element with locator "span*=TA" to be visible
-
 

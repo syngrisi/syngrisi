@@ -1,8 +1,8 @@
-@integration
+@integration @fast-server
 Feature: Create User
 
     Background:
-        Given I clear Database and stop Server
+#         Given I clear Database and stop Server
         When I set env variables:
         """
         SYNGRISI_TEST_MODE: true
@@ -17,7 +17,7 @@ Feature: Create User
         SYNGRISI_TEST_MODE: false
         SYNGRISI_AUTH: true
         """
-        Given I start Server and start Driver
+#         Given I start Server and start Driver
         When I reload session
         When I login with user:"Test" password "123456aA-"
         When I wait 30 seconds for the element with locator "span*=TA" to be visible
@@ -94,5 +94,4 @@ Feature: Create User
         Then the element with locator "input[aria-label='First Name'][data-test='user-add-first-name']" should not have attribute "disabled"
         Then the element with locator "input[aria-label='Last Name'][data-test='user-add-last-name']" should not have attribute "disabled"
         Then the element with locator "[data-test='user-add-role']" should be enabled
-
 

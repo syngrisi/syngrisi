@@ -1,9 +1,10 @@
+@fast-server
 Feature: Test calculated fields
   during the session end - calculated common fields based in checks in test: [viewport, status]
 
   Background:
-    Given I clear Database and stop Server
-    Given I start Server and start Driver
+#     Given I clear Database and stop Server
+#     Given I start Server and start Driver
     When I open the app
     When I clear local storage
 
@@ -102,4 +103,3 @@ Feature: Test calculated fields
     When I go to "main" page
     When I wait 30 seconds for the element with locator "[data-table-test-name='TestName']" to be visible
     When the element with locator "[data-row-name='TestName'] [data-test='table-row-Status']" should have contains text "Failed"
-

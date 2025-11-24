@@ -1,8 +1,8 @@
-@smoke
+@smoke @fast-server
 Feature: Check details Resize and Pan
     Background:
-        Given I clear Database and stop Server
-        Given I start Server and start Driver
+#         Given I clear Database and stop Server
+#         Given I start Server and start Driver
         When I open the app
         When I clear local storage
         Given I create "1" tests with:
@@ -277,4 +277,3 @@ Feature: Check details Resize and Pan
         """
           true/75.00
         """
-

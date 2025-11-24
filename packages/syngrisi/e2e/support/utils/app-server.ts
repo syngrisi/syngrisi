@@ -2,6 +2,7 @@ import path from "path";
 import { spawn } from "child_process";
 import { once } from "events";
 import http from "http";
+import net from "net";
 import { env } from '@config';
 import { sleep, waitFor } from "@utils/common";
 import { resolveRepoRoot, ensurePathExists } from "@utils/fs";
@@ -183,6 +184,29 @@ function isHttpServiceAvailable(url: string): Promise<boolean> {
   });
 }
 
+export function isServerRunning(port: number): Promise<boolean> {
+  return new Promise((resolve) => {
+    const socket = new net.Socket();
+    socket.setTimeout(1000);
+
+    socket.on('connect', () => {
+      socket.destroy();
+      resolve(true);
+    });
+
+    socket.on('timeout', () => {
+      socket.destroy();
+      resolve(false);
+    });
+
+    socket.on('error', () => {
+      resolve(false);
+    });
+
+    socket.connect(port, '127.0.0.1');
+  });
+}
+
 function startBackendLogCapture(child: Child): () => string {
   const chunks: string[] = [];
   const record = (data: unknown) => {
@@ -225,4 +249,27 @@ export function stopServerProcess(): void {
   } catch (e) {
     // Ignore errors
   }
+}
+
+export function stopAllServers(): void {
+  const { execSync } = require('child_process');
+  try {
+    if (env.DOCKER === '1') {
+      execSync('docker-compose stop || true', { stdio: 'ignore' });
+    } else {
+      execSync(`pkill -SIGINT -f "syngrisi_test_server_" || true`, { stdio: 'ignore' });
+    }
+  } catch (e) {
+    // Ignore errors
+  }
+}
+
+export async function findAvailablePort(preferred: number, maxAttempts = 10): Promise<number> {
+  let port = preferred;
+  for (let i = 0; i < maxAttempts; i++) {
+    const free = !(await isServerRunning(port));
+    if (free) return port;
+    port += 1;
+  }
+  throw new Error(`No available port found starting from ${preferred} within ${maxAttempts} attempts`);
 }

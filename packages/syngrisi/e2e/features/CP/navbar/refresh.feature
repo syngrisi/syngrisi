@@ -1,9 +1,9 @@
-@smoke
+@smoke @fast-server
 Feature: Navbar Refresh
 
     Background:
-        Given I clear Database and stop Server
-        Given I start Server and start Driver
+#         Given I clear Database and stop Server
+#         Given I start Server and start Driver
         When I open the app
         When I clear local storage
 
@@ -34,5 +34,4 @@ Feature: Navbar Refresh
 
         When I click element with locator "[data-test='navbar-icon-refresh']"
         When I wait 30 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName-2')]" to be visible
-
 

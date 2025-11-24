@@ -1,8 +1,9 @@
+@fast-server
 Feature: Distinct filters functionality
 
   Background:
-    Given I clear Database and stop Server
-    Given I start Server and start Driver
+#     Given I clear Database and stop Server
+#     Given I start Server and start Driver
     When I open the app
     When I clear local storage
     When I set window size: "1440x900"

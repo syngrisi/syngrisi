@@ -1,9 +1,9 @@
-@smoke
+@smoke @fast-server
 Feature: Check Detail Appearance
 
     Background:
-        Given I clear Database and stop Server
-        Given I start Server and start Driver
+#         Given I clear Database and stop Server
+#         Given I start Server and start Driver
         When I open the app
         When I clear local storage
 
@@ -121,4 +121,3 @@ Feature: Check Detail Appearance
 
         # default view
         Then the element with locator "[data-segment-value='diff']" should have attribute "data-segment-active" "true"
-

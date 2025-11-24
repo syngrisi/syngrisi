@@ -1,10 +1,10 @@
-@smoke
+@smoke @fast-server
 Feature: Check details Related Checks
 
     Background:
         When I set window size: "1440x900"
-        Given I clear Database and stop Server
-        Given I start Server and start Driver
+#         Given I clear Database and stop Server
+#         Given I start Server and start Driver
         When I open the app
         When I clear local storage
 
@@ -261,5 +261,4 @@ Feature: Check details Related Checks
         When I wait 30 seconds for the element with locator "//*[@data-related-check='browser-name' and text()='firefox']" to be visible
         Then the element "//*[@data-related-check='browser-name' and text()='safari']" does appear exactly "0" times
         Then the element "//*[@data-related-check='browser-name' and text()='firefox']" does appear exactly "2" times
-
 
