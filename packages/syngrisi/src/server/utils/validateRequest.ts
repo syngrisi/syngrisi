@@ -51,12 +51,17 @@ export const validateRequest = (schema: ZodSchema, endpoint = '') => (req: Reque
     });
     next();
   } catch (err) {
-    
+
     if (err instanceof ZodError) {
+      log.error(`ZodError caught: ${JSON.stringify(err)}`, logOpts);
+      if (!err.errors) {
+        log.error(`ZodError has no errors property! Keys: ${Object.keys(err)}`, logOpts);
+      }
       const sanitizedBody = sanitizeValueForLogging(req.body);
       const sanitizedQuery = sanitizeValueForLogging(req.query);
       const sanitizedParams = sanitizeValueForLogging(req.params);
-      const errors = err.errors.map((e) => {
+      const zodErrors = err.errors || (err as any).issues || [];
+      const errors = zodErrors.map((e: any) => {
         const receivedValue = getReceivedValueFromRequest(
           { body: sanitizedBody, query: sanitizedQuery, params: sanitizedParams },
           e.path
@@ -66,7 +71,7 @@ export const validateRequest = (schema: ZodSchema, endpoint = '') => (req: Reque
 
       const errorMessage = ` ${endpoint ? '\nValidation error in the endpoint: "' + endpoint + '"' : ''}`
         + `${errors}, \nHTTP PROPERTIES:\n\tbody: ${JSON.stringify(sanitizedBody, null, '\t')}, `
-        +`\n\tquery: ${JSON.stringify(sanitizedQuery, null, '\t')}, \n\tparams: ${JSON.stringify(sanitizedParams, null, '\t')}`;
+        + `\n\tquery: ${JSON.stringify(sanitizedQuery, null, '\t')}, \n\tparams: ${JSON.stringify(sanitizedParams, null, '\t')}`;
 
       const statusCode = StatusCodes.BAD_REQUEST;
       log.error(errorMessage, logOpts);
