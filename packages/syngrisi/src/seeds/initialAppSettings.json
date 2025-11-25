@@ -70,25 +70,9 @@
         "enabled": true
     },
     {
-        "name": "sso_cert",
-        "label": "SSO Certificate",
-        "description": "Public certificate of the Identity Provider (for SAML)",
-        "type": "String",
-        "value": "",
-        "enabled": true
-    },
-    {
         "name": "sso_client_id",
         "label": "SSO Client ID",
         "description": "Client ID for OAuth2",
-        "type": "String",
-        "value": "",
-        "enabled": true
-    },
-    {
-        "name": "sso_client_secret",
-        "label": "SSO Client Secret",
-        "description": "Client Secret for OAuth2",
         "type": "String",
         "value": "",
         "enabled": true

@@ -22,11 +22,24 @@ import config from '@config';
 export default function LoginForm() {
     useDocumentTitle('Login Page');
     const [ssoEnabled, setSsoEnabled] = useState(false);
+    const [ssoCheckFailed, setSsoCheckFailed] = useState(false);
+    const [ssoLoading, setSsoLoading] = useState(true);
 
     useEffect(() => {
-        ky.get(`${config.baseUri}/v1/auth/sso/status`).json<{ ssoEnabled: boolean }>()
-            .then(data => setSsoEnabled(data.ssoEnabled))
-            .catch(err => log.error(err));
+        setSsoLoading(true);
+        ky.get(`${config.baseUri}/v1/auth/sso/status`, { retry: 2, timeout: 5000 })
+            .json<{ ssoEnabled: boolean }>()
+            .then(data => {
+                setSsoEnabled(data.ssoEnabled);
+                setSsoCheckFailed(false);
+            })
+            .catch(err => {
+                log.error('Failed to check SSO status:', err);
+                setSsoCheckFailed(true);
+                // Don't show SSO button on error (conservative approach)
+                setSsoEnabled(false);
+            })
+            .finally(() => setSsoLoading(false));
     }, []);
 
     const form = useForm({
@@ -107,7 +120,13 @@ export default function LoginForm() {
                 >
                     <Title>Sign in</Title>
 
-                    {ssoEnabled && (
+                    {ssoCheckFailed && (
+                        <Text size="xs" color="orange" mb="sm">
+                            Could not check SSO availability
+                        </Text>
+                    )}
+
+                    {ssoEnabled && !ssoLoading && (
                         <>
                             <Button
                                 fullWidth
