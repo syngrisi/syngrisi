@@ -36,5 +36,61 @@
             "lastRunAt": null
         },
         "enabled": true
+    },
+    {
+        "name": "sso_enabled",
+        "label": "Enable SSO",
+        "description": "Enable Single Sign-On (SSO) authentication",
+        "type": "Boolean",
+        "value": "false",
+        "enabled": true
+    },
+    {
+        "name": "sso_protocol",
+        "label": "SSO Protocol",
+        "description": "Protocol used for SSO (oauth2 or saml)",
+        "type": "String",
+        "value": "oauth2",
+        "enabled": true
+    },
+    {
+        "name": "sso_entry_point",
+        "label": "SSO Entry Point",
+        "description": "URL of the Identity Provider (IdP) entry point",
+        "type": "String",
+        "value": "",
+        "enabled": true
+    },
+    {
+        "name": "sso_issuer",
+        "label": "SSO Issuer",
+        "description": "Entity ID of the Identity Provider",
+        "type": "String",
+        "value": "",
+        "enabled": true
+    },
+    {
+        "name": "sso_cert",
+        "label": "SSO Certificate",
+        "description": "Public certificate of the Identity Provider (for SAML)",
+        "type": "String",
+        "value": "",
+        "enabled": true
+    },
+    {
+        "name": "sso_client_id",
+        "label": "SSO Client ID",
+        "description": "Client ID for OAuth2",
+        "type": "String",
+        "value": "",
+        "enabled": true
+    },
+    {
+        "name": "sso_client_secret",
+        "label": "SSO Client Secret",
+        "description": "Client Secret for OAuth2",
+        "type": "String",
+        "value": "",
+        "enabled": true
     }
 ]

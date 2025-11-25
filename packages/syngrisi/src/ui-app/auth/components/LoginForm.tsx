@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useEffect, useState } from 'react';
 import {
     TextInput,
     PasswordInput,
@@ -10,17 +10,25 @@ import {
     Button,
     Text,
     LoadingOverlay,
+    Divider,
 } from '@mantine/core';
 import { useSearchParams } from 'react-router-dom';
 import { useForm } from '@mantine/form';
 import ky from 'ky';
-import { useState } from 'react';
 import { useDocumentTitle } from '@mantine/hooks';
 import { log } from '@shared/utils';
 import config from '@config';
 
 export default function LoginForm() {
     useDocumentTitle('Login Page');
+    const [ssoEnabled, setSsoEnabled] = useState(false);
+
+    useEffect(() => {
+        ky.get(`${config.baseUri}/v1/auth/sso/status`).json<{ ssoEnabled: boolean }>()
+            .then(data => setSsoEnabled(data.ssoEnabled))
+            .catch(err => log.error(err));
+    }, []);
+
     const form = useForm({
         initialValues: {
             email: '',
@@ -98,6 +106,24 @@ export default function LoginForm() {
                     onSubmit={form.onSubmit((values) => handleFormSubmissions(values))}
                 >
                     <Title>Sign in</Title>
+
+                    {ssoEnabled && (
+                        <>
+                            <Button
+                                fullWidth
+                                component="a"
+                                href={`${config.baseUri}/v1/auth/sso`}
+                                mt="xl"
+                                mb="lg"
+                                variant="outline"
+                                color="blue"
+                            >
+                                Sign in with SSO
+                            </Button>
+                            <Divider label="OR" labelPosition="center" my="lg" />
+                        </>
+                    )}
+
                     <TextInput
                         label="Email"
                         id="email"
@@ -130,19 +156,19 @@ export default function LoginForm() {
                         />
                     </Group>
                     {errorMessage
-                    && (
-                        <Text
-                            size="sm"
-                            color="red"
-                            mt="md"
-                            id="error-message"
-                            hidden={false}
-                            aria-live="assertive"
-                            data-test="login-error-message"
-                        >
-                            {errorMessage}
-                        </Text>
-                    )}
+                        && (
+                            <Text
+                                size="sm"
+                                color="red"
+                                mt="md"
+                                id="error-message"
+                                hidden={false}
+                                aria-live="assertive"
+                                data-test="login-error-message"
+                            >
+                                {errorMessage}
+                            </Text>
+                        )}
 
                     <Button
                         fullWidth

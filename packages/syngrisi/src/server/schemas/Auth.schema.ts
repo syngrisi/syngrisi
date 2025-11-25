@@ -5,7 +5,7 @@ import { commonValidations } from './utils';
 extendZodWithOpenApi(z);
 export const AuthLoginSchema = z.object({
     username: commonValidations.username,
-    password: commonValidations.password
+    password: z.string()
 });
 
 export const AuthLoginSuccessRespSchema = commonValidations.success;

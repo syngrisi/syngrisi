@@ -8,6 +8,8 @@ import { errorMsg, log } from '@shared/utils';
 import { FormWrapper } from '@admin/components/Settings/Forms/FormWrapper';
 import { GenericService } from '@shared/services';
 
+import { SsoSettingsForm } from './SsoSettingsForm';
+
 export default function AdminSettings() {
     useSubpageEffect('Settings');
     const settingsQuery: any = useQuery(
@@ -31,19 +33,26 @@ export default function AdminSettings() {
                     settingsQuery.isLoading
                         ? <LoadingOverlay visible={settingsQuery.isLoading} />
                         : settingsQuery.isSuccess
-                            ? settingsQuery.data.map(
-                                (item: ISettingForm) => (
-                                    <FormWrapper
-                                        key={item.name}
-                                        name={item.name}
-                                        description={item.description}
-                                        label={item.label}
-                                        value={item.value}
-                                        enabled={item.enabled}
-                                        type={item.type}
-                                        settingsQuery={settingsQuery}
-                                    />
-                                ),
+                            ? (
+                                <>
+                                    <SsoSettingsForm settings={settingsQuery.data} refetch={settingsQuery.refetch} />
+                                    {settingsQuery.data
+                                        .filter((item: ISettingForm) => !item.name.startsWith('sso_'))
+                                        .map(
+                                            (item: ISettingForm) => (
+                                                <FormWrapper
+                                                    key={item.name}
+                                                    name={item.name}
+                                                    description={item.description}
+                                                    label={item.label}
+                                                    value={item.value}
+                                                    enabled={item.enabled}
+                                                    type={item.type}
+                                                    settingsQuery={settingsQuery}
+                                                />
+                                            ),
+                                        )}
+                                </>
                             )
                             : <Text color="red"> Cannot load data: {settingsQuery.error.toString()}</Text>
                 }
