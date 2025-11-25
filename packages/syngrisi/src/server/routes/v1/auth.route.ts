@@ -1,4 +1,5 @@
 import express from 'express';
+import crypto from 'crypto';
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import * as authController from '@controllers/auth.controller';
 import { Midleware } from '@types';
@@ -11,7 +12,10 @@ import { createRequestOpenApiBodySchema } from '../../schemas/utils/createReques
 import { ensureSameOrigin, authLimiter } from '@middlewares';
 import passport from 'passport';
 import { AppSettings } from '../../models';
-import { initSSOStrategies } from '../../services/auth-sso.service';
+import { initSSOStrategies, getSSOSecretsStatus } from '../../services/auth-sso.service';
+import log from '@logger';
+
+const logMeta = { scope: 'auth.route', msgType: 'SSO' };
 
 export const registry = new OpenAPIRegistry();
 const router = express.Router();
@@ -96,17 +100,31 @@ router.post(
 );
 
 // SSO Routes
+
+// Get SSO status (public endpoint)
 router.get('/sso/status', async (req, res) => {
     const ssoEnabledSetting = await AppSettings.findOne({ name: 'sso_enabled' });
     const isEnabled = process.env.SSO_ENABLED === 'true' || (ssoEnabledSetting?.value as unknown as string) === 'true';
     res.json({ ssoEnabled: isEnabled });
 });
 
-router.get('/sso', async (req, res, next) => {
-    try {
-        // Re-initialize SSO strategies to pick up any env var changes (for testing)
-        await initSSOStrategies(passport);
+// Get SSO secrets configuration status (for admin UI)
+router.get('/sso/secrets-status', async (req, res) => {
+    const status = getSSOSecretsStatus();
+    res.json(status);
+});
 
+// Re-initialize SSO strategies (only in test mode)
+if (process.env.NODE_ENV === 'test' || process.env.SYNGRISI_TEST_MODE === 'true') {
+    router.post('/sso/reinit', async (req, res) => {
+        await initSSOStrategies(passport);
+        res.json({ success: true });
+    });
+}
+
+// Main SSO entry point with CSRF protection via state parameter
+router.get('/sso', authLimiter, async (req, res, next) => {
+    try {
         const settings = await AppSettings.find({
             name: { $in: ['sso_enabled', 'sso_protocol'] }
         });
@@ -121,19 +139,31 @@ router.get('/sso', async (req, res, next) => {
         }
 
         const protocol = getSetting('sso_protocol');
+
+        // Generate CSRF state token for OAuth2
         if (protocol === 'oauth2') {
-            passport.authenticate('google', { scope: ['profile', 'email'] })(req, res, next);
+            const state = crypto.randomBytes(16).toString('hex');
+            // Store state in session for validation in callback
+            (req.session as any).oauthState = state;
+
+            passport.authenticate('google', {
+                scope: ['profile', 'email'],
+                state: state
+            })(req, res, next);
         } else if (protocol === 'saml') {
+            // SAML uses RelayState and InResponseTo for CSRF protection
             passport.authenticate('saml', { failureRedirect: '/auth?error=saml_fail' })(req, res, next);
         } else {
             res.redirect('/auth?error=invalid_protocol');
         }
     } catch (error) {
+        log.error('SSO initiation error', { ...logMeta, error });
         next(error);
     }
 });
 
-router.get('/sso/oauth/callback', async (req, res, next) => {
+// OAuth callback with state validation
+router.get('/sso/oauth/callback', authLimiter, async (req, res, next) => {
     // Handle mocked SSO for testing
     if (process.env.SYNGRISI_TEST_MODE === 'true' && req.query.code === 'mock_auth_code') {
         try {
@@ -157,15 +187,30 @@ router.get('/sso/oauth/callback', async (req, res, next) => {
 
             return res.redirect('/');
         } catch (error) {
+            log.error('Mock SSO callback error', { ...logMeta, error });
             return next(error);
         }
     }
+
+    // Validate CSRF state parameter
+    const stateFromQuery = req.query.state as string | undefined;
+    const stateFromSession = (req.session as any).oauthState;
+
+    if (!stateFromQuery || stateFromQuery !== stateFromSession) {
+        log.warn('OAuth callback state mismatch - possible CSRF attack', logMeta);
+        return res.redirect('/auth?error=invalid_state');
+    }
+
+    // Clear the state from session after validation
+    delete (req.session as any).oauthState;
 
     // Normal OAuth flow
     passport.authenticate('google', { failureRedirect: '/auth?error=oauth_fail' })(req, res, next);
 });
 
+// SAML callback
 router.post('/sso/saml/callback',
+    authLimiter,
     passport.authenticate('saml', { failureRedirect: '/auth?error=saml_fail' }),
     (req, res) => {
         res.redirect('/');

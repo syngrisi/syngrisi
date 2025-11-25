@@ -115,3 +115,62 @@
 16. `SYNGRISI_NPM_TAG`
     - Description: npm tag or version used during Docker build to install `@syngrisi/syngrisi` (e.g. `latest`, `2.3.0`)
     - Default Value: `latest`
+
+### SSO (Single Sign-On) Configuration
+
+SSO allows users to authenticate using external identity providers (OAuth2/Google or SAML).
+
+**Important Security Note:** For security reasons, SSO secrets (client secret, certificates) must be configured via environment variables only. They cannot be set through the admin UI.
+
+1. `SSO_ENABLED`
+   - Description: Enable Single Sign-On authentication
+   - Default Value: `false`
+
+2. `SSO_PROTOCOL`
+   - Description: SSO protocol to use (`oauth2` or `saml`)
+   - Default Value: `oauth2`
+
+3. `SSO_CLIENT_ID`
+   - Description: Client ID for OAuth2 authentication (e.g., Google OAuth)
+   - Default Value: -
+
+4. `SSO_CLIENT_SECRET`
+   - Description: Client Secret for OAuth2 authentication. **Must be set via environment variable for security.**
+   - Default Value: -
+
+5. `SSO_ENTRY_POINT`
+   - Description: URL of the Identity Provider (IdP) entry point for SAML
+   - Default Value: -
+
+6. `SSO_ISSUER`
+   - Description: Entity ID/Issuer of the Identity Provider for SAML
+   - Default Value: -
+
+7. `SSO_CERT`
+   - Description: Public certificate of the Identity Provider for SAML. **Must be set via environment variable for security.**
+   - Default Value: -
+
+8. `SSO_DEFAULT_ROLE`
+   - Description: Default role assigned to new users created via SSO
+   - Default Value: `user`
+
+#### OAuth2 (Google) Setup Example
+
+```bash
+export SSO_ENABLED=true
+export SSO_PROTOCOL=oauth2
+export SSO_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
+export SSO_CLIENT_SECRET=your-google-client-secret
+```
+
+#### SAML Setup Example
+
+```bash
+export SSO_ENABLED=true
+export SSO_PROTOCOL=saml
+export SSO_ENTRY_POINT=https://idp.example.com/sso/saml
+export SSO_ISSUER=https://idp.example.com
+export SSO_CERT="-----BEGIN CERTIFICATE-----
+MIICpDCCAYwCCQD...
+-----END CERTIFICATE-----"
+```

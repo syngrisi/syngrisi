@@ -24,6 +24,7 @@ export const processSSOUser = async (profile: any, provider: 'oauth' | 'saml', d
         let user = await User.findOne({ providerId, provider });
 
         if (user) {
+            log.info(`SSO login successful for ${email} via ${provider}`, logMeta);
             return done(null, user);
         }
 
@@ -36,6 +37,7 @@ export const processSSOUser = async (profile: any, provider: 'oauth' | 'saml', d
                 user.provider = provider;
                 user.providerId = providerId;
                 await user.save();
+                log.info(`SSO login successful for ${email} via ${provider} (account linked)`, logMeta);
                 return done(null, user);
             }
             // If provider is different but email same? (e.g. switched from saml to oauth)
@@ -46,15 +48,17 @@ export const processSSOUser = async (profile: any, provider: 'oauth' | 'saml', d
             user.provider = provider;
             user.providerId = providerId;
             await user.save();
+            log.info(`SSO login successful for ${email} via ${provider}`, logMeta);
             return done(null, user);
         }
 
         // 3. Create new user
+        const defaultRole = process.env.SSO_DEFAULT_ROLE || 'user';
         const newUser = new User({
             username: email,
             firstName,
             lastName,
-            role: 'user', // Default role
+            role: defaultRole,
             provider,
             providerId,
             password: uuidv4(), // Random password
@@ -62,6 +66,7 @@ export const processSSOUser = async (profile: any, provider: 'oauth' | 'saml', d
         });
 
         await newUser.save();
+        log.info(`SSO login successful for ${email} via ${provider} (new user created with role: ${defaultRole})`, logMeta);
         return done(null, newUser);
 
     } catch (error) {
@@ -70,29 +75,53 @@ export const processSSOUser = async (profile: any, provider: 'oauth' | 'saml', d
     }
 };
 
+// Helper to get SSO setting - env vars take priority, secrets ONLY from env vars
+const getSSOSetting = (name: string, settings: any[], secretsOnlyFromEnv = false): string | undefined => {
+    const envName = name.toUpperCase();
+    const envValue = process.env[envName];
+
+    // For secrets, ONLY use env vars (never from DB for security)
+    if (secretsOnlyFromEnv) {
+        return envValue;
+    }
+
+    // For non-secrets, env vars take priority, then DB
+    if (envValue) return envValue;
+    return settings.find(s => s.name === name)?.value as string | undefined;
+};
+
+// Check if SSO secrets are configured via environment variables
+export const getSSOSecretsStatus = () => {
+    return {
+        clientSecretConfigured: !!process.env.SSO_CLIENT_SECRET,
+        certConfigured: !!process.env.SSO_CERT,
+    };
+};
+
 export const initSSOStrategies = async (passportInstance: passport.PassportStatic) => {
     try {
+        // Only fetch non-secret settings from DB
         const settings = await AppSettings.find({
-            name: { $in: ['sso_enabled', 'sso_protocol', 'sso_entry_point', 'sso_issuer', 'sso_cert', 'sso_client_id', 'sso_client_secret'] }
+            name: { $in: ['sso_enabled', 'sso_protocol', 'sso_entry_point', 'sso_issuer', 'sso_client_id'] }
         });
 
-        const getSetting = (name: string) => {
-            const envName = name.toUpperCase();
-            if (process.env[envName]) return process.env[envName];
-            return settings.find(s => s.name === name)?.value as string | undefined;
-        };
-
-        const ssoEnabled = getSetting('sso_enabled') === 'true';
+        const ssoEnabled = getSSOSetting('sso_enabled', settings) === 'true';
         if (!ssoEnabled) {
             log.info('SSO is disabled', logMeta);
             return;
         }
 
-        const protocol = getSetting('sso_protocol');
+        const protocol = getSSOSetting('sso_protocol', settings);
 
         if (protocol === 'oauth2') {
-            const clientID = getSetting('sso_client_id');
-            const clientSecret = getSetting('sso_client_secret');
+            const clientID = getSSOSetting('sso_client_id', settings);
+            // Client secret ONLY from env var (security: never from DB)
+            const clientSecret = getSSOSetting('sso_client_secret', settings, true);
+
+            if (!clientSecret) {
+                log.warn('OAuth2 SSO enabled but SSO_CLIENT_SECRET env var not set', logMeta);
+                return;
+            }
 
             if (clientID && clientSecret) {
                 passportInstance.use(new GoogleStrategy({
@@ -113,9 +142,15 @@ export const initSSOStrategies = async (passportInstance: passport.PassportStati
                 log.info('Google OAuth2 strategy initialized', logMeta);
             }
         } else if (protocol === 'saml') {
-            const entryPoint = getSetting('sso_entry_point');
-            const issuer = getSetting('sso_issuer');
-            const cert = getSetting('sso_cert');
+            const entryPoint = getSSOSetting('sso_entry_point', settings);
+            const issuer = getSSOSetting('sso_issuer', settings);
+            // Certificate ONLY from env var (security: never from DB)
+            const cert = getSSOSetting('sso_cert', settings, true);
+
+            if (!cert) {
+                log.warn('SAML SSO enabled but SSO_CERT env var not set', logMeta);
+                return;
+            }
 
             if (entryPoint && issuer && cert) {
                 passportInstance.use(new SamlStrategy({

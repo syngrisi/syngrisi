@@ -12,7 +12,17 @@ const logOpts: LogOpts = {
   msgType: 'VALIDATION',
 };
 
-const sensitiveKeys = new Set(['password', 'currentpassword', 'newpassword', 'apikey']);
+const sensitiveKeys = new Set([
+  'password',
+  'currentpassword',
+  'newpassword',
+  'apikey',
+  'sso_client_secret',
+  'sso_cert',
+  'clientsecret',
+  'secret',
+  'token',
+]);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const sanitizeValueForLogging = (value: any): any => {
@@ -53,14 +63,17 @@ export const validateRequest = (schema: ZodSchema, endpoint = '') => (req: Reque
   } catch (err) {
 
     if (err instanceof ZodError) {
-      log.error(`ZodError caught: ${JSON.stringify(err)}`, logOpts);
-      if (!err.errors) {
-        log.error(`ZodError has no errors property! Keys: ${Object.keys(err)}`, logOpts);
+      // ZodError always has .errors property (array of ZodIssue)
+      // Use Array.isArray check to ensure we have a valid array
+      const zodErrors = Array.isArray(err.errors) ? err.errors : [];
+
+      if (zodErrors.length === 0) {
+        log.error(`ZodError with empty errors array! Raw error: ${JSON.stringify(err)}`, logOpts);
       }
+
       const sanitizedBody = sanitizeValueForLogging(req.body);
       const sanitizedQuery = sanitizeValueForLogging(req.query);
       const sanitizedParams = sanitizeValueForLogging(req.params);
-      const zodErrors = err.errors || (err as any).issues || [];
       const errors = zodErrors.map((e: any) => {
         const receivedValue = getReceivedValueFromRequest(
           { body: sanitizedBody, query: sanitizedQuery, params: sanitizedParams },
