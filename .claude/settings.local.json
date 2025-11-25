@@ -9,7 +9,9 @@
       "Bash(nvm use:*)",
       "Bash(pkill:*)",
       "Bash(done)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run bddgen:*)"
     ],
     "deny": [],
     "ask": []

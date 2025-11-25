@@ -38,3 +38,9 @@ Feature: SSO Authentication
         When I open the app
         When I login with user:"Administrator" password "Administrator"
         Then the title is "By Runs"
+
+    Scenario: SSO secrets status endpoint returns correct values
+        When I request "GET" "/v1/auth/sso/secrets-status"
+        Then the response status should be 200
+        And the response body should contain "clientSecretConfigured"
+        And the response body should contain "certConfigured"

@@ -1,9 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Paper, Title, Select, TextInput, Button, Group, Switch, Divider, PasswordInput } from '@mantine/core';
-import { useMutation } from '@tanstack/react-query';
+import { Paper, Title, Select, TextInput, Button, Switch, Text, Badge, Group, Alert } from '@mantine/core';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { GenericService } from '@shared/services';
 import { errorMsg } from '@shared/utils';
 import { successMsg } from '@shared/utils/utils';
+import ky from 'ky';
+import config from '@config';
+
+interface SecretsStatus {
+    clientSecretConfigured: boolean;
+    certConfigured: boolean;
+}
+
+const validateUrl = (url: string): boolean => {
+    if (!url) return true; // Empty is valid (not required)
+    try {
+        new URL(url);
+        return true;
+    } catch {
+        return false;
+    }
+};
 
 export const SsoSettingsForm = ({ settings, refetch }: { settings: any[], refetch: () => void }) => {
     const getVal = (name: string) => settings.find(s => s.name === name)?.value || '';
@@ -11,19 +28,23 @@ export const SsoSettingsForm = ({ settings, refetch }: { settings: any[], refetc
     const [enabled, setEnabled] = useState(getVal('sso_enabled') === 'true');
     const [protocol, setProtocol] = useState(getVal('sso_protocol') || 'oauth2');
     const [clientId, setClientId] = useState(getVal('sso_client_id'));
-    const [clientSecret, setClientSecret] = useState(getVal('sso_client_secret'));
     const [entryPoint, setEntryPoint] = useState(getVal('sso_entry_point'));
     const [issuer, setIssuer] = useState(getVal('sso_issuer'));
-    const [cert, setCert] = useState(getVal('sso_cert'));
+    const [entryPointError, setEntryPointError] = useState('');
+
+    // Fetch secrets configuration status from server
+    const { data: secretsStatus } = useQuery<SecretsStatus>(
+        ['sso-secrets-status'],
+        () => ky.get(`${config.baseUri}/v1/auth/sso/secrets-status`).json<SecretsStatus>(),
+        { refetchOnWindowFocus: false }
+    );
 
     useEffect(() => {
         setEnabled(getVal('sso_enabled') === 'true');
         setProtocol(getVal('sso_protocol') || 'oauth2');
         setClientId(getVal('sso_client_id'));
-        setClientSecret(getVal('sso_client_secret'));
         setEntryPoint(getVal('sso_entry_point'));
         setIssuer(getVal('sso_issuer'));
-        setCert(getVal('sso_cert'));
     }, [settings]);
 
     const updateSetting = useMutation(
@@ -34,23 +55,31 @@ export const SsoSettingsForm = ({ settings, refetch }: { settings: any[], refetc
     );
 
     const handleSave = async () => {
+        // Validate URL before saving
+        if (protocol === 'saml' && entryPoint && !validateUrl(entryPoint)) {
+            setEntryPointError('Invalid Entry Point URL');
+            errorMsg({ message: 'Invalid Entry Point URL' });
+            return;
+        }
+        setEntryPointError('');
+
         try {
             await updateSetting.mutateAsync({ name: 'sso_enabled', value: String(enabled) });
             await updateSetting.mutateAsync({ name: 'sso_protocol', value: protocol });
 
             if (protocol === 'oauth2') {
                 await updateSetting.mutateAsync({ name: 'sso_client_id', value: clientId });
-                await updateSetting.mutateAsync({ name: 'sso_client_secret', value: clientSecret });
+                // Note: Client secret is configured via SSO_CLIENT_SECRET env var
             } else {
                 await updateSetting.mutateAsync({ name: 'sso_entry_point', value: entryPoint });
                 await updateSetting.mutateAsync({ name: 'sso_issuer', value: issuer });
-                await updateSetting.mutateAsync({ name: 'sso_cert', value: cert });
+                // Note: Certificate is configured via SSO_CERT env var
             }
 
             successMsg({ message: 'SSO settings saved' });
             refetch();
         } catch (e) {
-            // Error handled in mutation
+            errorMsg({ error: e, message: 'Failed to save SSO settings' });
         }
     };
 
@@ -85,12 +114,17 @@ export const SsoSettingsForm = ({ settings, refetch }: { settings: any[], refetc
                                 onChange={(e) => setClientId(e.currentTarget.value)}
                                 mb="sm"
                             />
-                            <PasswordInput
-                                label="Client Secret"
-                                value={clientSecret}
-                                onChange={(e) => setClientSecret(e.currentTarget.value)}
-                                mb="sm"
-                            />
+                            <Group spacing="xs" mb="sm">
+                                <Text size="sm">Client Secret:</Text>
+                                <Badge color={secretsStatus?.clientSecretConfigured ? 'green' : 'red'}>
+                                    {secretsStatus?.clientSecretConfigured ? 'Configured via ENV' : 'Not configured'}
+                                </Badge>
+                            </Group>
+                            {!secretsStatus?.clientSecretConfigured && (
+                                <Alert color="yellow" mb="sm">
+                                    Set the SSO_CLIENT_SECRET environment variable to configure the client secret securely.
+                                </Alert>
+                            )}
                         </>
                     )}
 
@@ -99,7 +133,11 @@ export const SsoSettingsForm = ({ settings, refetch }: { settings: any[], refetc
                             <TextInput
                                 label="Entry Point URL"
                                 value={entryPoint}
-                                onChange={(e) => setEntryPoint(e.currentTarget.value)}
+                                onChange={(e) => {
+                                    setEntryPoint(e.currentTarget.value);
+                                    setEntryPointError('');
+                                }}
+                                error={entryPointError}
                                 mb="sm"
                             />
                             <TextInput
@@ -108,12 +146,17 @@ export const SsoSettingsForm = ({ settings, refetch }: { settings: any[], refetc
                                 onChange={(e) => setIssuer(e.currentTarget.value)}
                                 mb="sm"
                             />
-                            <TextInput
-                                label="Certificate (Public Key)"
-                                value={cert}
-                                onChange={(e) => setCert(e.currentTarget.value)}
-                                mb="sm"
-                            />
+                            <Group spacing="xs" mb="sm">
+                                <Text size="sm">Certificate:</Text>
+                                <Badge color={secretsStatus?.certConfigured ? 'green' : 'red'}>
+                                    {secretsStatus?.certConfigured ? 'Configured via ENV' : 'Not configured'}
+                                </Badge>
+                            </Group>
+                            {!secretsStatus?.certConfigured && (
+                                <Alert color="yellow" mb="sm">
+                                    Set the SSO_CERT environment variable to configure the certificate securely.
+                                </Alert>
+                            )}
                         </>
                     )}
 
