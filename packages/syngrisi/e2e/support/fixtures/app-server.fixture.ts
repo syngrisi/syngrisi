@@ -79,6 +79,10 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
         'SYNGRISI_APP_PORT',
         'SYNGRISI_DB_URI',
         'SYNGRISI_IMAGES_PATH',
+        'SSO_ENABLED',
+        'SSO_CLIENT_ID',
+        'SSO_CLIENT_SECRET',
+        'SSO_PROTOCOL',
       ];
       const originalEnv: Record<string, string | undefined> = {};
       envKeysToReset.forEach((key) => {

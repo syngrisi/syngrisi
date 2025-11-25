@@ -24,6 +24,7 @@ import { openAPIRouter } from './api-docs/openAPIRouter';
 import { LogOpts } from '../types';
 import { env } from './envConfig';
 import { ensureLoggedInOrApiKey } from './middlewares/ensureLogin/ensureLoggedIn';
+import { initSSOStrategies } from './services/auth-sso.service';
 
 const logMeta: LogOpts = { scope: 'app.ts', msgType: "Init" };
 
@@ -62,6 +63,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy({}, User.authenticate()));
+initSSOStrategies(passport);
 
 passport.serializeUser(User.serializeUser() as ((user: Express.User, done: (err: unknown) => void) => void));
 passport.deserializeUser(User.deserializeUser());

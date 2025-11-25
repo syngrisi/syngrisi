@@ -67,6 +67,10 @@ export const env = cleanEnv(process.env, {
   E2E_REUSE_SERVER: bool({
     default: true,
     desc: 'Keep Syngrisi server running between tests to reduce startup overhead'
+  }),
+  TEST_SSO_MOCK: str({
+    default: 'true',
+    desc: 'Mock SSO interactions'
   })
 });
 
