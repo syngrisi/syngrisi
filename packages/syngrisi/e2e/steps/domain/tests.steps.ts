@@ -140,7 +140,7 @@ async function createTestsWithParams(
   testData.set('autoCreatedChecks', initialChecks);
   const createTest = async (params: any, index: number) => {
     try {
-      const cid = process.env.DOCKER === '1' ? 100 : parseInt(process.env.TEST_PARALLEL_INDEX || '0', 10);
+      const cid = process.env.DOCKER === '1' ? 100 : parseInt(process.env.TEST_WORKER_INDEX || '0', 10);
       const serverPort = appServer.serverPort || parseInt(process.env.SYNGRISI_APP_PORT || '', 10) || 3002 + cid;
       if (!(await isServerRunning(serverPort))) {
         logger.info(`App server is not running on port ${serverPort}, starting before creating tests`);

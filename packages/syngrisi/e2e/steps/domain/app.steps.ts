@@ -61,8 +61,13 @@ Given('the database is cleared', async ({ appServer }: { appServer: AppServerFix
 
 When('I open the app', async ({ page, appServer, testData }: { page: Page; appServer: AppServerFixture; testData: any }) => {
   logger.info(`Opening app at ${appServer.baseURL}`);
+  logger.info(`SSO_ENABLED=${process.env.SSO_ENABLED}, SSO_PROTOCOL=${process.env.SSO_PROTOCOL}`);
+
   await page.goto(appServer.baseURL);
+  logger.info(`After goto - URL: ${page.url()}`);
+
   await page.waitForLoadState('networkidle');
+  logger.info(`After networkidle - URL: ${page.url()}, Title: ${await page.title()}`);
 
   // Ensure templated URLs work (e.g., <syngrisiUrl> in features)
   const normalizedUrl = appServer.baseURL.endsWith('/') ? appServer.baseURL : `${appServer.baseURL}/`;

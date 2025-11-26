@@ -34,7 +34,7 @@ export type LaunchAppServerOptions = {
 
 function getCid(): number {
   if (env.DOCKER === '1') return 100;
-  return parseInt(process.env.TEST_PARALLEL_INDEX || '0', 10);
+  return parseInt(process.env.TEST_WORKER_INDEX || '0', 10);
 }
 
 function resolveTestPaths(cid: number) {
@@ -101,7 +101,8 @@ export async function launchAppServer(
     SYNGRISI_AUTH_OVERRIDE: authEnabled,
     SYNGRISI_APP_PORT: String(cidPort),
     SYNGRISI_COVERAGE: coverageFlag === 'true' ? 'true' : 'false',
-    SYNGRISI_TEST_MODE: 'true',  // Always enable test mode for E2E tests to create test users
+    // Only enable test mode if not explicitly set to false (allows real SSO testing)
+    SYNGRISI_TEST_MODE: runtimeEnv.SYNGRISI_TEST_MODE ?? 'true',
     ...additionalEnv,
   };
 

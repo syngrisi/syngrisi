@@ -9,7 +9,7 @@ const logger = createLogger('DbCleanup');
 
 function getCid(): number {
   if (process.env.DOCKER === '1') return 100;
-  return parseInt(process.env.TEST_PARALLEL_INDEX || '0', 10);
+  return parseInt(process.env.TEST_WORKER_INDEX || '0', 10);
 }
 
 function resolveDbUri(cid: number): string {
@@ -57,9 +57,13 @@ export async function clearDatabase(
       await client.connect();
       const db = client.db();
       if (softClean) {
+        // Preserve 'users' and 'sessions' collections during soft clean
+        // Users are created at server startup (Guest, Administrator) and must persist
+        // Sessions keep user authentication state
+        const preserveCollections = ['system.indexes', 'users', 'sessions'];
         const collections = await db.listCollections().toArray();
         for (const collection of collections) {
-          if (collection.name !== 'system.indexes') {
+          if (!preserveCollections.includes(collection.name)) {
             await db.collection(collection.name).deleteMany({});
           }
         }

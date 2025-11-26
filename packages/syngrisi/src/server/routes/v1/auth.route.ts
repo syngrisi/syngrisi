@@ -122,6 +122,16 @@ if (process.env.NODE_ENV === 'test' || process.env.SYNGRISI_TEST_MODE === 'true'
     });
 }
 
+// Helper to determine which OAuth2 strategy to use
+const getOAuth2StrategyName = (): string => {
+    // Use custom oauth2 strategy if custom URLs are configured
+    if (process.env.SSO_AUTHORIZATION_URL && process.env.SSO_TOKEN_URL) {
+        return 'oauth2';
+    }
+    // Otherwise use Google OAuth2 (legacy)
+    return 'google';
+};
+
 // Main SSO entry point with CSRF protection via state parameter
 router.get('/sso', authLimiter, async (req, res, next) => {
     try {
@@ -146,8 +156,11 @@ router.get('/sso', authLimiter, async (req, res, next) => {
             // Store state in session for validation in callback
             (req.session as any).oauthState = state;
 
-            passport.authenticate('google', {
-                scope: ['profile', 'email'],
+            const strategyName = getOAuth2StrategyName();
+            log.debug(`Using OAuth2 strategy: ${strategyName}`, logMeta);
+
+            passport.authenticate(strategyName, {
+                scope: ['openid', 'profile', 'email'],
                 state: state
             })(req, res, next);
         } else if (protocol === 'saml') {
@@ -164,34 +177,6 @@ router.get('/sso', authLimiter, async (req, res, next) => {
 
 // OAuth callback with state validation
 router.get('/sso/oauth/callback', authLimiter, async (req, res, next) => {
-    // Handle mocked SSO for testing
-    if (process.env.SYNGRISI_TEST_MODE === 'true' && req.query.code === 'mock_auth_code') {
-        try {
-            const { processSSOUser } = await import('../../services/auth-sso.service');
-            const mockProfile = {
-                emails: [{ value: 'sso-user@test.com' }],
-                id: 'mock-sso-id',
-                name: { givenName: 'SSO', familyName: 'User' }
-            };
-
-            await new Promise((resolve, reject) => {
-                processSSOUser(mockProfile, 'oauth', (error: any, user?: any) => {
-                    if (error) return reject(error);
-                    // Manually log in the user
-                    req.login(user, (err) => {
-                        if (err) return reject(err);
-                        resolve(user);
-                    });
-                });
-            });
-
-            return res.redirect('/');
-        } catch (error) {
-            log.error('Mock SSO callback error', { ...logMeta, error });
-            return next(error);
-        }
-    }
-
     // Validate CSRF state parameter
     const stateFromQuery = req.query.state as string | undefined;
     const stateFromSession = (req.session as any).oauthState;
@@ -204,8 +189,14 @@ router.get('/sso/oauth/callback', authLimiter, async (req, res, next) => {
     // Clear the state from session after validation
     delete (req.session as any).oauthState;
 
-    // Normal OAuth flow
-    passport.authenticate('google', { failureRedirect: '/auth?error=oauth_fail' })(req, res, next);
+    // Use the same strategy that was used for initiation
+    const strategyName = getOAuth2StrategyName();
+    log.debug(`OAuth callback using strategy: ${strategyName}`, logMeta);
+
+    passport.authenticate(strategyName, {
+        failureRedirect: '/auth?error=oauth_fail',
+        successRedirect: '/',
+    })(req, res, next);
 });
 
 // SAML callback
