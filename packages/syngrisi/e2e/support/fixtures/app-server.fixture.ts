@@ -258,8 +258,23 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           serverInstances.delete(cid);
         }
 
-        const launchFreshInstance = async () => {
-          const instance = await launchAppServer({ cid });
+        const launchFreshInstance = async (useProcessEnvAuth = false) => {
+          // By default, fast-server mode disables auth to avoid race conditions
+          // But if test explicitly sets SYNGRISI_AUTH via "I set env variables", respect it
+          const envOverrides: Record<string, string> = {
+            SSO_ENABLED: 'false',
+          };
+
+          if (!useProcessEnvAuth) {
+            // Default: explicitly disable auth to prevent race conditions with parallel workers
+            envOverrides.SYNGRISI_AUTH = 'false';
+          }
+          // If useProcessEnvAuth is true, don't override - let process.env value be used
+
+          const instance = await launchAppServer({
+            cid,
+            env: envOverrides,
+          });
           serverInstances.set(cid, instance);
           lastKnownConfig = instance.config;
           fixtureValue.baseURL = instance.baseURL;
@@ -281,14 +296,16 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           getBackendLogs: fixtureValue.getBackendLogs,
           getFrontendLogs: fixtureValue.getFrontendLogs,
           restart: async () => {
-            logger.info(`Fast mode restart: relaunching server on port ${workerPort}`);
+            logger.info(`Fast mode restart: relaunching server on port ${workerPort} (using process.env)`);
             stopServerProcess();
-            await launchFreshInstance();
+            // Use process.env values since test may have set them via "I set env variables"
+            await launchFreshInstance(true);
           },
           start: async () => {
-            logger.info(`Fast mode: restarting server to apply latest env on port ${workerPort}`);
+            logger.info(`Fast mode: restarting server to apply latest env on port ${workerPort} (using process.env)`);
             stopServerProcess();
-            await launchFreshInstance();
+            // Use process.env values since test may have set them via "I set env variables"
+            await launchFreshInstance(true);
           },
           stop: async () => {
             logger.info(`Fast mode: stopping server on port ${workerPort}`);
