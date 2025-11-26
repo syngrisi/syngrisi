@@ -57,10 +57,11 @@ export async function clearDatabase(
       await client.connect();
       const db = client.db();
       if (softClean) {
-        // Preserve 'users' and 'sessions' collections during soft clean
-        // Users are created at server startup (Guest, Administrator) and must persist
-        // Sessions keep user authentication state
-        const preserveCollections = ['system.indexes', 'users', 'sessions'];
+        // Preserve critical collections during soft clean to avoid race conditions
+        // - users: Guest/Administrator created at startup, must persist
+        // - sessions: keep user authentication state
+        // - appsettings: auth settings must be consistent between server restarts
+        const preserveCollections = ['system.indexes', 'users', 'sessions', 'appsettings'];
         const collections = await db.listCollections().toArray();
         for (const collection of collections) {
           if (!preserveCollections.includes(collection.name)) {

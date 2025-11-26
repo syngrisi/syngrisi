@@ -84,9 +84,11 @@ export async function launchAppServer(
   const serverScriptPath = path.join(cmdPath, 'dist', 'server', 'server.js');
   await ensurePathExists(serverScriptPath, "file");
 
-  const disableFirstRun = runtimeEnv.SYNGRISI_DISABLE_FIRST_RUN ?? env.SYNGRISI_DISABLE_FIRST_RUN ?? 'true';
-  const authEnabled = runtimeEnv.SYNGRISI_AUTH ?? env.SYNGRISI_AUTH ?? 'false';
-  const coverageFlag = runtimeEnv.SYNGRISI_COVERAGE ?? env.SYNGRISI_COVERAGE ?? 'false';
+  // IMPORTANT: Check additionalEnv FIRST to avoid race conditions with parallel workers
+  // Each worker may set different values in process.env, so explicit options take precedence
+  const disableFirstRun = additionalEnv?.SYNGRISI_DISABLE_FIRST_RUN ?? runtimeEnv.SYNGRISI_DISABLE_FIRST_RUN ?? env.SYNGRISI_DISABLE_FIRST_RUN ?? 'true';
+  const authEnabled = additionalEnv?.SYNGRISI_AUTH ?? runtimeEnv.SYNGRISI_AUTH ?? env.SYNGRISI_AUTH ?? 'false';
+  const coverageFlag = additionalEnv?.SYNGRISI_COVERAGE ?? runtimeEnv.SYNGRISI_COVERAGE ?? env.SYNGRISI_COVERAGE ?? 'false';
 
   const nodeEnv = (additionalEnv?.NODE_ENV || runtimeEnv.NODE_ENV || 'test') as string;
 

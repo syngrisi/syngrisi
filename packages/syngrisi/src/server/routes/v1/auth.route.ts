@@ -12,7 +12,7 @@ import { createRequestOpenApiBodySchema } from '../../schemas/utils/createReques
 import { ensureSameOrigin, authLimiter } from '@middlewares';
 import passport from 'passport';
 import { AppSettings } from '../../models';
-import { initSSOStrategies, getSSOSecretsStatus } from '../../services/auth-sso.service';
+import { initSSOStrategies, getSSOSecretsStatus, getOAuth2StrategyName, AUTH_STRATEGY } from '../../services/auth-sso.service';
 import log from '@logger';
 
 const logMeta = { scope: 'auth.route', msgType: 'SSO' };
@@ -122,15 +122,7 @@ if (process.env.NODE_ENV === 'test' || process.env.SYNGRISI_TEST_MODE === 'true'
     });
 }
 
-// Helper to determine which OAuth2 strategy to use
-const getOAuth2StrategyName = (): string => {
-    // Use custom oauth2 strategy if custom URLs are configured
-    if (process.env.SSO_AUTHORIZATION_URL && process.env.SSO_TOKEN_URL) {
-        return 'oauth2';
-    }
-    // Otherwise use Google OAuth2 (legacy)
-    return 'google';
-};
+
 
 // Main SSO entry point with CSRF protection via state parameter
 router.get('/sso', authLimiter, async (req, res, next) => {
@@ -151,7 +143,7 @@ router.get('/sso', authLimiter, async (req, res, next) => {
         const protocol = getSetting('sso_protocol');
 
         // Generate CSRF state token for OAuth2
-        if (protocol === 'oauth2') {
+        if (protocol === AUTH_STRATEGY.OAUTH2) {
             const state = crypto.randomBytes(16).toString('hex');
             // Store state in session for validation in callback
             (req.session as any).oauthState = state;
@@ -163,9 +155,9 @@ router.get('/sso', authLimiter, async (req, res, next) => {
                 scope: ['openid', 'profile', 'email'],
                 state: state
             })(req, res, next);
-        } else if (protocol === 'saml') {
+        } else if (protocol === AUTH_STRATEGY.SAML) {
             // SAML uses RelayState and InResponseTo for CSRF protection
-            passport.authenticate('saml', { failureRedirect: '/auth?error=saml_fail' })(req, res, next);
+            passport.authenticate(AUTH_STRATEGY.SAML, { failureRedirect: '/auth?error=saml_fail' })(req, res, next);
         } else {
             res.redirect('/auth?error=invalid_protocol');
         }
@@ -202,7 +194,7 @@ router.get('/sso/oauth/callback', authLimiter, async (req, res, next) => {
 // SAML callback
 router.post('/sso/saml/callback',
     authLimiter,
-    passport.authenticate('saml', { failureRedirect: '/auth?error=saml_fail' }),
+    passport.authenticate(AUTH_STRATEGY.SAML, { failureRedirect: '/auth?error=saml_fail' }),
     (req, res) => {
         res.redirect('/');
     }

@@ -3,14 +3,31 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { Strategy as OAuth2Strategy } from 'passport-oauth2';
 import { Strategy as SamlStrategy } from 'passport-saml';
 import { AppSettings, User } from '../models';
-import { UserDocument } from '../models/User.model';
 import log from '@logger';
 import { v4 as uuidv4 } from 'uuid';
 import { LogOpts } from '@types';
-import https from 'https';
-import http from 'http';
+import { env } from '../envConfig';
 
 const logMeta: LogOpts = { scope: 'auth-sso.service', msgType: 'SSO' };
+
+export const AUTH_STRATEGY = {
+    GOOGLE: 'google',
+    OAUTH2: 'oauth2',
+    SAML: 'saml',
+};
+
+export interface NormalizedProfile {
+    id: string;
+    email?: string;
+    emails?: { value: string }[];
+    name?: {
+        givenName?: string;
+        familyName?: string;
+    };
+    displayName?: string;
+    provider?: string;
+    _json?: any;
+}
 
 export const processSSOUser = async (profile: any, provider: 'oauth' | 'saml', done: (error: any, user?: any) => void) => {
     try {
@@ -102,33 +119,46 @@ export const getSSOSecretsStatus = () => {
 };
 
 /**
+ * Determine which OAuth2 strategy to use based on configuration
+ */
+export const getOAuth2StrategyName = (): string => {
+    if (env.SSO_AUTHORIZATION_URL && env.SSO_TOKEN_URL) {
+        return AUTH_STRATEGY.OAUTH2;
+    }
+    return AUTH_STRATEGY.GOOGLE;
+};
+
+/**
  * Fetch user profile from OAuth2 userinfo endpoint
  */
 async function fetchUserProfile(userinfoUrl: string, accessToken: string): Promise<any> {
-    return new Promise((resolve, reject) => {
-        const url = new URL(userinfoUrl);
-        const client = url.protocol === 'https:' ? https : http;
-
-        const req = client.get(userinfoUrl, {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'Accept': 'application/json',
-            },
-        }, (res) => {
-            let data = '';
-            res.on('data', (chunk) => data += chunk);
-            res.on('end', () => {
-                try {
-                    resolve(JSON.parse(data));
-                } catch (e) {
-                    reject(new Error(`Failed to parse userinfo response: ${e}`));
-                }
-            });
-        });
-
-        req.on('error', reject);
-        req.end();
+    const response = await fetch(userinfoUrl, {
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Accept': 'application/json',
+        },
     });
+
+    if (!response.ok) {
+        throw new Error(`Failed to fetch user profile: ${response.status} ${response.statusText}`);
+    }
+
+    return response.json();
+}
+
+/**
+ * Normalize user profile from various providers
+ */
+function normalizeProfile(userInfo: any): NormalizedProfile {
+    return {
+        id: userInfo.sub || userInfo.id,
+        emails: userInfo.email ? [{ value: userInfo.email }] : [],
+        email: userInfo.email,
+        name: {
+            givenName: userInfo.given_name || userInfo.name?.split(' ')[0] || 'SSO',
+            familyName: userInfo.family_name || userInfo.name?.split(' ').slice(1).join(' ') || 'User',
+        },
+    };
 }
 
 export const initSSOStrategies = async (passportInstance: passport.PassportStatic) => {
@@ -146,7 +176,7 @@ export const initSSOStrategies = async (passportInstance: passport.PassportStati
 
         const protocol = getSSOSetting('sso_protocol', settings);
 
-        if (protocol === 'oauth2') {
+        if (protocol === AUTH_STRATEGY.OAUTH2) {
             const clientID = getSSOSetting('sso_client_id', settings);
             // Client secret ONLY from env var (security: never from DB)
             const clientSecret = getSSOSetting('sso_client_secret', settings, true);
@@ -157,16 +187,16 @@ export const initSSOStrategies = async (passportInstance: passport.PassportStati
             }
 
             // Check for custom OAuth2 endpoints (for Logto, Keycloak, etc.)
-            const authorizationURL = process.env.SSO_AUTHORIZATION_URL;
-            const tokenURL = process.env.SSO_TOKEN_URL;
-            const userinfoURL = process.env.SSO_USERINFO_URL;
+            const authorizationURL = env.SSO_AUTHORIZATION_URL;
+            const tokenURL = env.SSO_TOKEN_URL;
+            const userinfoURL = env.SSO_USERINFO_URL;
 
             if (clientID && clientSecret) {
                 // Use custom OAuth2 strategy if custom URLs are provided
                 if (authorizationURL && tokenURL) {
                     log.info('Initializing custom OAuth2 strategy (Logto/generic)', logMeta);
 
-                    passportInstance.use('oauth2', new OAuth2Strategy({
+                    passportInstance.use(AUTH_STRATEGY.OAUTH2, new OAuth2Strategy({
                         authorizationURL,
                         tokenURL,
                         clientID,
@@ -181,17 +211,7 @@ export const initSSOStrategies = async (passportInstance: passport.PassportStati
                                 const userInfo = await fetchUserProfile(userinfoURL, accessToken);
                                 log.debug('Fetched user info from OAuth2 provider', { ...logMeta, userInfo });
 
-                                // Transform to standard profile format
-                                const normalizedProfile = {
-                                    id: userInfo.sub || userInfo.id,
-                                    emails: userInfo.email ? [{ value: userInfo.email }] : [],
-                                    email: userInfo.email,
-                                    name: {
-                                        givenName: userInfo.given_name || userInfo.name?.split(' ')[0] || 'SSO',
-                                        familyName: userInfo.family_name || userInfo.name?.split(' ').slice(1).join(' ') || 'User',
-                                    },
-                                };
-
+                                const normalizedProfile = normalizeProfile(userInfo);
                                 return processSSOUser(normalizedProfile, 'oauth', done);
                             }
 
@@ -217,7 +237,7 @@ export const initSSOStrategies = async (passportInstance: passport.PassportStati
                     log.info('Google OAuth2 strategy initialized', logMeta);
                 }
             }
-        } else if (protocol === 'saml') {
+        } else if (protocol === AUTH_STRATEGY.SAML) {
             const entryPoint = getSSOSetting('sso_entry_point', settings);
             const issuer = getSSOSetting('sso_issuer', settings);
             // Certificate ONLY from env var (security: never from DB)

@@ -47,4 +47,9 @@ export const env = cleanEnv(process.env, {
     SYNGRISI_RATE_LIMIT_MAX: num({ default: 5000 }),
     SYNGRISI_AUTH_RATE_LIMIT_WINDOW_MS: num({ default: 15 * 60 * 1000 }), // 15 minutes
     SYNGRISI_AUTH_RATE_LIMIT_MAX: num({ default: 200 }),
+
+    // SSO Configuration
+    SSO_AUTHORIZATION_URL: str({ default: '' }),
+    SSO_TOKEN_URL: str({ default: '' }),
+    SSO_USERINFO_URL: str({ default: '' }),
 });
