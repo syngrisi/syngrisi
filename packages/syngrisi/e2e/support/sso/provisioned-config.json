@@ -1,0 +1,25 @@
+{
+  "app": {
+    "clientId": "syngrisi-e2e-app",
+    "clientSecret": "syngrisi-test-secret-12345",
+    "appName": "syngrisi-e2e-test"
+  },
+  "user": {
+    "email": "test@syngrisi.test",
+    "password": "Test123!"
+  },
+  "endpoints": {
+    "authorization": "http://localhost:3001/oidc/auth",
+    "token": "http://localhost:3001/oidc/token",
+    "userinfo": "http://localhost:3001/oidc/me"
+  },
+  "env": {
+    "SSO_ENABLED": "true",
+    "SSO_PROTOCOL": "oauth2",
+    "SSO_CLIENT_ID": "syngrisi-e2e-app",
+    "SSO_CLIENT_SECRET": "syngrisi-test-secret-12345",
+    "SSO_AUTHORIZATION_URL": "http://localhost:3001/oidc/auth",
+    "SSO_TOKEN_URL": "http://localhost:3001/oidc/token",
+    "SSO_USERINFO_URL": "http://localhost:3001/oidc/me"
+  }
+}

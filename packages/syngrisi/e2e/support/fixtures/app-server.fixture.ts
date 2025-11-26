@@ -27,7 +27,7 @@ export type AppServerFixture = {
 };
 
 // Helpers to get per-worker CID
-const getCurrentCid = (): number => (process.env.DOCKER === '1' ? 100 : parseInt(process.env.TEST_PARALLEL_INDEX || '0', 10));
+const getCurrentCid = (): number => (process.env.DOCKER === '1' ? 100 : parseInt(process.env.TEST_WORKER_INDEX || '0', 10));
 
 // Store server instances per CID to avoid cross-worker interference
 const serverInstances = new Map<number, RunningAppServer>();
@@ -83,6 +83,13 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
         'SSO_CLIENT_ID',
         'SSO_CLIENT_SECRET',
         'SSO_PROTOCOL',
+        // OAuth2/Logto specific
+        'SSO_AUTHORIZATION_URL',
+        'SSO_TOKEN_URL',
+        'SSO_USERINFO_URL',
+        'SSO_CALLBACK_URL',
+        'LOGTO_ENDPOINT',
+        'LOGTO_ADMIN_ENDPOINT',
       ];
       const originalEnv: Record<string, string | undefined> = {};
       envKeysToReset.forEach((key) => {
@@ -217,6 +224,20 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
         process.env.SYNGRISI_APP_PORT = String(workerPort);
         process.env.SYNGRISI_DB_URI = workerDbUri;
 
+        // Fast-server mode runs without authentication and SSO
+        // Explicitly reset these to prevent leakage from SSO tests
+        process.env.SYNGRISI_AUTH = 'false';
+        process.env.SSO_ENABLED = 'false';
+        delete process.env.SSO_CLIENT_ID;
+        delete process.env.SSO_CLIENT_SECRET;
+        delete process.env.SSO_PROTOCOL;
+        delete process.env.SSO_AUTHORIZATION_URL;
+        delete process.env.SSO_TOKEN_URL;
+        delete process.env.SSO_USERINFO_URL;
+        delete process.env.SSO_CALLBACK_URL;
+        delete process.env.LOGTO_ENDPOINT;
+        delete process.env.LOGTO_ADMIN_ENDPOINT;
+
         const fullReset = (process.env.FAST_SERVER_FULL_RESET || '').toLowerCase() === 'true';
         if (fullReset) {
           logger.info(`Fast mode: full reset enabled, dropping DB and baselines`);
@@ -227,8 +248,12 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
         }
 
         const running = await isServerRunning(workerPort);
-        if (running && fullReset) {
-          logger.info(`Fast mode: restarting server on port ${workerPort} after full reset`);
+
+        // Fast-server mode ALWAYS starts fresh to ensure correct env vars (auth=false, SSO=false)
+        // This is critical because a non-fast-server test (like SSO tests) may have left
+        // a server running with different settings (auth=true)
+        if (running) {
+          logger.info(`Fast mode: stopping existing server on port ${workerPort} to ensure clean config`);
           stopServerProcess();
           serverInstances.delete(cid);
         }
@@ -245,21 +270,8 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           fixtureValue.getFrontendLogs = instance.getFrontendLogs;
         };
 
-        if (!running || fullReset) {
-          await launchFreshInstance();
-        } else {
-          logger.info(`Fast mode: reusing already running server on port ${workerPort}`);
-          const instance = serverInstances.get(cid);
-          fixtureValue.baseURL = instance?.baseURL || `http://localhost:${workerPort}`;
-          fixtureValue.backendHost = instance?.backendHost || env.E2E_BACKEND_HOST;
-          fixtureValue.serverPort = workerPort;
-          fixtureValue.config = instance?.config || {
-            connectionString: workerDbUri,
-            defaultImagesPath: getFallbackConfig().defaultImagesPath,
-          };
-          fixtureValue.getBackendLogs = instance?.getBackendLogs || (() => 'Reused server; logs unavailable');
-          fixtureValue.getFrontendLogs = instance?.getFrontendLogs || (() => '');
-        }
+        // Always launch fresh instance in fast-server mode
+        await launchFreshInstance();
 
         fixtureValue = {
           baseURL: fixtureValue.baseURL,

@@ -21,7 +21,7 @@ const logger = createLogger('ServerSteps');
 let vDriver: SyngrisiDriver | null = null;
 
 const restartAfterEnvSet = new Map<number, boolean>();
-const getCid = (): number => (process.env.DOCKER === '1' ? 100 : parseInt(process.env.TEST_PARALLEL_INDEX || '0', 10));
+const getCid = (): number => (process.env.DOCKER === '1' ? 100 : parseInt(process.env.TEST_WORKER_INDEX || '0', 10));
 
 function resetTestCreationState(testData?: TestStore): void {
   if (!testData) return;
@@ -92,10 +92,11 @@ Given(
 Given(
   'I start Server',
   async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }) => {
-    // Start server if not already running, or restart to apply new env variables
+    // Start server if not already running, or FORCE restart to apply new env variables
+    // Force restart is necessary because env vars may have changed (e.g., SSO config)
     if (appServer.baseURL) {
-      logger.info('Server is running, restarting to apply new env variables');
-      await appServer.restart();
+      logger.info('Server is running, force restarting to apply new env variables');
+      await appServer.restart(true); // Force restart to apply new env
     } else {
       logger.info('Starting server...');
       await appServer.start();
@@ -227,7 +228,7 @@ When(
     const cid =
       process.env.DOCKER === '1'
         ? 100
-        : parseInt(process.env.TEST_PARALLEL_INDEX || '0', 10);
+        : parseInt(process.env.TEST_WORKER_INDEX || '0', 10);
     try {
       logger.info(`Running clear_test_screenshots_only for CID=${cid}`);
       const result = execSync(`CID=${cid} npm run clear_test_screenshots_only`, {

@@ -68,9 +68,21 @@ export const env = cleanEnv(process.env, {
     default: true,
     desc: 'Keep Syngrisi server running between tests to reduce startup overhead'
   }),
-  TEST_SSO_MOCK: str({
+  E2E_REUSE_LOGTO: str({
     default: 'true',
-    desc: 'Mock SSO interactions'
+    desc: 'Keep Logto containers running between tests (set to "false" in CI for clean state)'
+  }),
+  LOGTO_PORT: num({
+    default: 3001,
+    desc: 'Logto main port'
+  }),
+  LOGTO_ADMIN_PORT: num({
+    default: 3050,
+    desc: 'Logto admin console port (3050 to avoid conflict with Syngrisi E2E workers 3002-3020)'
+  }),
+  LOGTO_POSTGRES_PORT: num({
+    default: 5433,
+    desc: 'Postgres port for Logto'
   })
 });
 
