@@ -702,6 +702,15 @@ When('I set {string} to the inputfield {string}', async ({ page, testData }, val
 
 When('I reload session', async ({ page, testData }: { page: Page; testData: TestStore }) => {
   await page.context().clearCookies();
+  // Clear all browser storage to ensure clean session state
+  try {
+    await page.evaluate(() => {
+      localStorage.clear();
+      sessionStorage.clear();
+    });
+  } catch {
+    // Page might not have a valid context yet - ignore
+  }
   testData.clear();
 });
 
