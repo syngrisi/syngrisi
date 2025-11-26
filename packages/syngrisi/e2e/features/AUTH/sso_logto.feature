@@ -17,8 +17,8 @@ Feature: SSO Authentication with Logto
         When I configure SSO with client ID "syngrisi-e2e-test" and secret "auto-provisioned"
         When I set env variables:
             """
-      SYNGRISI_AUTH: true
-      SYNGRISI_TEST_MODE: false
+            SYNGRISI_AUTH: true
+            SYNGRISI_TEST_MODE: false
             """
         Given I start Server
 
