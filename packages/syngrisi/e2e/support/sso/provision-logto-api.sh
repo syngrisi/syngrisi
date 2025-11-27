@@ -268,20 +268,231 @@ EOF
     fi
 }
 
+# SAML App configuration (Logto as SAML IdP)
+# Logto can act as a SAML Identity Provider via SAML applications
+SAML_APP_ID="syngrisi-saml-app"
+SAML_APP_NAME="syngrisi-e2e-saml"
+SAML_ENTITY_ID="syngrisi-e2e-sp"
+# SAML ACS URLs for E2E testing (base port 3002 + worker CID for parallel execution)
+# Note: Logto SAML app only supports single ACS URL, so we use port 3002 as default
+SAML_ACS_URL="http://localhost:3002/v1/auth/sso/saml/callback"
+# Additional ACS URLs for parallel workers (3002-3011) - will be added via API update
+SAML_ACS_URLS_JSON='[
+    {"binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "url": "http://localhost:3002/v1/auth/sso/saml/callback"},
+    {"binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "url": "http://localhost:3003/v1/auth/sso/saml/callback"},
+    {"binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "url": "http://localhost:3004/v1/auth/sso/saml/callback"},
+    {"binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "url": "http://localhost:3005/v1/auth/sso/saml/callback"},
+    {"binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "url": "http://localhost:3006/v1/auth/sso/saml/callback"},
+    {"binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "url": "http://localhost:3007/v1/auth/sso/saml/callback"},
+    {"binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "url": "http://localhost:3008/v1/auth/sso/saml/callback"},
+    {"binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "url": "http://localhost:3009/v1/auth/sso/saml/callback"},
+    {"binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "url": "http://localhost:3010/v1/auth/sso/saml/callback"},
+    {"binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "url": "http://localhost:3011/v1/auth/sso/saml/callback"}
+]'
+
+# Create or update SAML application for Syngrisi (Logto as IdP)
+create_saml_app() {
+    log_step "Creating SAML application: $SAML_APP_NAME (Logto as IdP)..."
+
+    # Check if SAML app exists using /api/applications?types=SAML
+    # Get the FIRST matching app (there might be multiple if previous runs created duplicates)
+    local existing_app=$(curl -s "${LOGTO_ENDPOINT}/api/applications?types=SAML" \
+        -H "Authorization: Bearer $TOKEN" | jq -r "[.[] | select(.name==\"${SAML_APP_NAME}\")] | first | .id // empty")
+
+    if [ -n "$existing_app" ] && [ "$existing_app" != "null" ]; then
+        log_info "SAML application already exists with ID: $existing_app"
+        SAML_APP_ID="$existing_app"
+
+        # Update the existing app with correct settings
+        log_info "Updating SAML application settings..."
+        curl -s -X PATCH "${LOGTO_ENDPOINT}/api/saml-applications/${SAML_APP_ID}" \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{
+                \"entityId\": \"${SAML_ENTITY_ID}\",
+                \"acsUrl\": {
+                    \"binding\": \"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\",
+                    \"url\": \"${SAML_ACS_URL}\"
+                },
+                \"nameIdFormat\": \"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress\"
+            }" > /dev/null
+
+        log_info "SAML application updated"
+        return 0
+    fi
+
+    # Create new SAML application
+    # Logto SAML app requires: name, description, and SAML config (entityId, acsUrl)
+    # Note: Use proper SAML binding format per OASIS spec
+    local response=$(curl -s -X POST "${LOGTO_ENDPOINT}/api/saml-applications" \
+        -H "Authorization: Bearer $TOKEN" \
+        -H "Content-Type: application/json" \
+        -d "{
+            \"name\": \"${SAML_APP_NAME}\",
+            \"description\": \"SAML app for Syngrisi E2E testing\",
+            \"entityId\": \"${SAML_ENTITY_ID}\",
+            \"acsUrl\": {
+                \"binding\": \"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\",
+                \"url\": \"${SAML_ACS_URL}\"
+            },
+            \"nameIdFormat\": \"urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress\"
+        }")
+
+    local app_id=$(echo "$response" | jq -r '.id // empty')
+
+    if [ -n "$app_id" ] && [ "$app_id" != "null" ]; then
+        SAML_APP_ID="$app_id"
+        log_info "SAML application created with ID: $app_id"
+
+        # Create signing certificate for the SAML application
+        log_info "Creating SAML signing certificate..."
+        local cert_response=$(curl -s -X POST "${LOGTO_ENDPOINT}/api/saml-applications/${SAML_APP_ID}/secrets" \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{"lifeSpanInYears": 5}')
+
+        if echo "$cert_response" | jq -e '.id' > /dev/null 2>&1; then
+            log_info "SAML signing certificate created"
+        else
+            log_warn "Could not create signing certificate: $cert_response"
+        fi
+    else
+        log_warn "SAML application creation may have failed"
+        log_warn "Response: $response"
+
+        # Try with minimal required fields
+        log_info "Trying with minimal fields..."
+        response=$(curl -s -X POST "${LOGTO_ENDPOINT}/api/saml-applications" \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{
+                \"name\": \"${SAML_APP_NAME}\",
+                \"description\": \"SAML app for Syngrisi E2E testing\"
+            }")
+        app_id=$(echo "$response" | jq -r '.id // empty')
+        if [ -n "$app_id" ] && [ "$app_id" != "null" ]; then
+            SAML_APP_ID="$app_id"
+            log_info "SAML application created with ID: $app_id"
+
+            # Update with SAML settings
+            curl -s -X PATCH "${LOGTO_ENDPOINT}/api/saml-applications/${SAML_APP_ID}" \
+                -H "Authorization: Bearer $TOKEN" \
+                -H "Content-Type: application/json" \
+                -d "{
+                    \"entityId\": \"${SAML_ENTITY_ID}\",
+                    \"acsUrl\": {
+                        \"binding\": \"urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST\",
+                        \"url\": \"${SAML_ACS_URL}\"
+                    }
+                }" > /dev/null
+        fi
+    fi
+}
+
+# Get SAML IdP metadata and certificate from Logto
+get_saml_metadata() {
+    log_step "Getting SAML IdP configuration from Logto..."
+
+    if [ -z "$SAML_APP_ID" ] || [ "$SAML_APP_ID" = "syngrisi-saml-app" ]; then
+        log_warn "SAML app ID not set, skipping metadata retrieval"
+        return 0
+    fi
+
+    # Logto SAML endpoints
+    # SSO URL: /api/saml/{id}/authn (HTTP Redirect binding)
+    # Metadata: /api/saml-applications/{id}/metadata (requires /api/ prefix)
+    SAML_SSO_URL="${LOGTO_ENDPOINT}/api/saml/${SAML_APP_ID}/authn"
+    SAML_METADATA_URL="${LOGTO_ENDPOINT}/api/saml-applications/${SAML_APP_ID}/metadata"
+
+    log_info "SAML SSO URL: $SAML_SSO_URL"
+    log_info "SAML Metadata URL: $SAML_METADATA_URL"
+
+    # Get certificate from Management API (secrets endpoint)
+    log_info "Fetching SAML signing certificate..."
+    local secrets_response=$(curl -s "${LOGTO_ENDPOINT}/api/saml-applications/${SAML_APP_ID}/secrets" \
+        -H "Authorization: Bearer $TOKEN")
+
+    # Get the active certificate
+    SAML_CERT=$(echo "$secrets_response" | jq -r '[.[] | select(.active == true)][0].certificate // empty')
+
+    if [ -n "$SAML_CERT" ] && [ "$SAML_CERT" != "null" ]; then
+        # Remove PEM headers/footers and newlines for passport-saml
+        SAML_CERT_CLEAN=$(echo "$SAML_CERT" | sed 's/-----BEGIN CERTIFICATE-----//g' | sed 's/-----END CERTIFICATE-----//g' | tr -d '\r\n' | tr -d ' ')
+        log_info "SAML certificate retrieved (${#SAML_CERT_CLEAN} chars)"
+    else
+        log_warn "Could not find active SAML certificate"
+        # Try first certificate if no active one
+        SAML_CERT=$(echo "$secrets_response" | jq -r '.[0].certificate // empty')
+        if [ -n "$SAML_CERT" ] && [ "$SAML_CERT" != "null" ]; then
+            SAML_CERT_CLEAN=$(echo "$SAML_CERT" | sed 's/-----BEGIN CERTIFICATE-----//g' | sed 's/-----END CERTIFICATE-----//g' | tr -d '\r\n' | tr -d ' ')
+            log_info "Using first available certificate (${#SAML_CERT_CLEAN} chars)"
+        else
+            log_warn "No SAML certificates found"
+        fi
+    fi
+
+    # Set IdP entity ID (from Logto SAML metadata - format: /saml/{id})
+    SAML_IDP_ENTITY_ID="${LOGTO_ENDPOINT}/saml/${SAML_APP_ID}"
+    log_info "SAML IdP Entity ID: $SAML_IDP_ENTITY_ID"
+}
+
 # Save configuration to file
 save_config() {
     log_step "Saving configuration to provisioned-config.json..."
 
     cat > "${SCRIPT_DIR}/provisioned-config.json" << EOF
 {
+  "oauth2": {
+    "app": {
+      "clientId": "${OIDC_APP_ID}",
+      "clientSecret": "${OIDC_APP_SECRET}",
+      "appName": "${OIDC_APP_NAME}"
+    },
+    "endpoints": {
+      "authorization": "${LOGTO_ENDPOINT}/oidc/auth",
+      "token": "${LOGTO_ENDPOINT}/oidc/token",
+      "userinfo": "${LOGTO_ENDPOINT}/oidc/me"
+    },
+    "env": {
+      "SSO_ENABLED": "true",
+      "SSO_PROTOCOL": "oauth2",
+      "SSO_CLIENT_ID": "${OIDC_APP_ID}",
+      "SSO_CLIENT_SECRET": "${OIDC_APP_SECRET}",
+      "SSO_AUTHORIZATION_URL": "${LOGTO_ENDPOINT}/oidc/auth",
+      "SSO_TOKEN_URL": "${LOGTO_ENDPOINT}/oidc/token",
+      "SSO_USERINFO_URL": "${LOGTO_ENDPOINT}/oidc/me"
+    }
+  },
+  "saml": {
+    "appId": "${SAML_APP_ID}",
+    "spEntityId": "${SAML_ENTITY_ID}",
+    "idpEntityId": "${SAML_IDP_ENTITY_ID:-${LOGTO_ENDPOINT}/saml-applications/${SAML_APP_ID}}",
+    "acsUrl": "${SAML_ACS_URL}",
+    "idpEndpoint": "${LOGTO_ENDPOINT}",
+    "metadataUrl": "${SAML_METADATA_URL:-${LOGTO_ENDPOINT}/saml-applications/${SAML_APP_ID}/metadata}",
+    "certificate": "${SAML_CERT_CLEAN:-}",
+    "endpoints": {
+      "entryPoint": "${SAML_SSO_URL:-${LOGTO_ENDPOINT}/api/saml/${SAML_APP_ID}/authn}",
+      "issuer": "${SAML_IDP_ENTITY_ID:-${LOGTO_ENDPOINT}/saml-applications/${SAML_APP_ID}}"
+    },
+    "env": {
+      "SSO_ENABLED": "true",
+      "SSO_PROTOCOL": "saml",
+      "SSO_ENTRY_POINT": "${SAML_SSO_URL:-${LOGTO_ENDPOINT}/api/saml/${SAML_APP_ID}/authn}",
+      "SSO_ISSUER": "${SAML_ENTITY_ID}",
+      "SSO_IDP_ISSUER": "${SAML_IDP_ENTITY_ID:-${LOGTO_ENDPOINT}/saml-applications/${SAML_APP_ID}}",
+      "SSO_CERT": "${SAML_CERT_CLEAN:-}"
+    }
+  },
+  "user": {
+    "email": "${TEST_USER_EMAIL}",
+    "password": "${TEST_USER_PASSWORD}",
+    "username": "${TEST_USER_USERNAME}"
+  },
   "app": {
     "clientId": "${OIDC_APP_ID}",
     "clientSecret": "${OIDC_APP_SECRET}",
     "appName": "${OIDC_APP_NAME}"
-  },
-  "user": {
-    "email": "${TEST_USER_EMAIL}",
-    "password": "${TEST_USER_PASSWORD}"
   },
   "endpoints": {
     "authorization": "${LOGTO_ENDPOINT}/oidc/auth",
@@ -317,6 +528,8 @@ main() {
     configure_sign_in_experience
     create_test_user
     create_oidc_app
+    create_saml_app
+    get_saml_metadata
     save_config
 
     echo ""

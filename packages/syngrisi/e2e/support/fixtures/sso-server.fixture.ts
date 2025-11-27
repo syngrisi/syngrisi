@@ -21,16 +21,52 @@ import * as path from 'path';
 
 const logger = createLogger('SSOServer');
 
-/** Provisioned config structure (saved by provision-logto-api.sh) */
-interface ProvisionedConfig {
+/** OAuth2 config structure */
+interface OAuth2Config {
   app: {
     clientId: string;
     clientSecret: string;
     appName: string;
   };
+  endpoints: {
+    authorization: string;
+    token: string;
+    userinfo: string;
+  };
+  env: Record<string, string>;
+}
+
+/** SAML config structure (matches provisioned-config.json) */
+interface SAMLConfig {
+  appId?: string;
+  spEntityId?: string;   // Service Provider Entity ID (Syngrisi)
+  idpEntityId?: string;  // Identity Provider Entity ID (Logto)
+  acsUrl?: string;       // Assertion Consumer Service URL
+  idpEndpoint?: string;  // Logto endpoint
+  metadataUrl?: string;  // SAML metadata URL
+  certificate?: string;  // IdP signing certificate (base64, no PEM headers)
+  endpoints?: {
+    entryPoint: string;  // SSO login URL
+    issuer: string;      // IdP issuer
+  };
+  env?: Record<string, string>;
+}
+
+/** Provisioned config structure (saved by provision-logto-api.sh) */
+interface ProvisionedConfig {
+  // New structured format
+  oauth2?: OAuth2Config;
+  saml?: SAMLConfig;
   user: {
     email: string;
     password: string;
+    username?: string;
+  };
+  // Legacy format (backwards compatible)
+  app: {
+    clientId: string;
+    clientSecret: string;
+    appName: string;
   };
   endpoints: {
     authorization: string;
@@ -81,10 +117,18 @@ export interface SSOServerFixture {
   stopLogto: () => Promise<void>;
   /** Check if Logto is running */
   isLogtoRunning: () => Promise<boolean>;
-  /** Get environment variables for Syngrisi SSO configuration */
+  /** Get environment variables for Syngrisi SSO configuration (OAuth2) */
   getSSOEnvVars: (appConfig: Partial<LogtoAppConfig>) => Record<string, string>;
+  /** Get environment variables for SAML SSO configuration */
+  getSAMLSSOEnvVars: (samlConfig?: Partial<SAMLConfig>) => Record<string, string>;
   /** Get provisioned app credentials (auto-loads from provisioned-config.json) */
   getProvisionedCredentials: () => { clientId: string; clientSecret: string } | null;
+  /** Get provisioned SAML config */
+  getProvisionedSAMLConfig: () => SAMLConfig | null;
+  /** Get provisioned OAuth2 config */
+  getProvisionedOAuth2Config: () => OAuth2Config | null;
+  /** Get provisioned user credentials */
+  getProvisionedUser: () => { email: string; password: string; username?: string } | null;
 }
 
 /**
@@ -142,12 +186,64 @@ export const ssoServerFixture = base.extend<{ ssoServer: SSOServerFixture }>({
 
         getProvisionedCredentials: () => {
           if (fixture.provisionedConfig) {
+            // Try new format first, then legacy
+            const oauth2 = fixture.provisionedConfig.oauth2;
+            if (oauth2) {
+              return {
+                clientId: oauth2.app.clientId,
+                clientSecret: oauth2.app.clientSecret,
+              };
+            }
             return {
               clientId: fixture.provisionedConfig.app.clientId,
               clientSecret: fixture.provisionedConfig.app.clientSecret,
             };
           }
           return null;
+        },
+
+        getProvisionedSAMLConfig: () => {
+          return fixture.provisionedConfig?.saml || null;
+        },
+
+        getProvisionedOAuth2Config: () => {
+          return fixture.provisionedConfig?.oauth2 || null;
+        },
+
+        getProvisionedUser: () => {
+          if (fixture.provisionedConfig?.user) {
+            return {
+              email: fixture.provisionedConfig.user.email,
+              password: fixture.provisionedConfig.user.password,
+              username: fixture.provisionedConfig.user.username,
+            };
+          }
+          return null;
+        },
+
+        getSAMLSSOEnvVars: (samlConfig?: Partial<SAMLConfig>) => {
+          // Use provisioned SAML config as defaults
+          const provSaml = fixture.provisionedConfig?.saml;
+
+          const envVars: Record<string, string> = {
+            SSO_ENABLED: 'true',
+            SSO_PROTOCOL: 'saml',
+            SSO_ENTRY_POINT: samlConfig?.endpoints?.entryPoint || provSaml?.endpoints?.entryPoint || 'http://localhost:3001/api/saml/unknown/authn',
+            SSO_ISSUER: samlConfig?.spEntityId || provSaml?.spEntityId || 'syngrisi-e2e-sp',
+          };
+
+          // Add IdP issuer if available
+          if (samlConfig?.idpEntityId || provSaml?.idpEntityId) {
+            envVars.SSO_IDP_ISSUER = samlConfig?.idpEntityId || provSaml?.idpEntityId || '';
+          }
+
+          // Add certificate from provisioned config (priority: certificate field > env.SSO_CERT)
+          const cert = samlConfig?.certificate || provSaml?.certificate || provSaml?.env?.SSO_CERT;
+          if (cert && cert !== 'FETCH_FROM_METADATA' && cert.length > 0) {
+            envVars.SSO_CERT = cert;
+          }
+
+          return envVars;
         },
 
         getSSOEnvVars: (appConfig: Partial<LogtoAppConfig>) => {
@@ -222,4 +318,4 @@ export const ssoServerFixture = base.extend<{ ssoServer: SSOServerFixture }>({
   ],
 });
 
-export type { LogtoConfig, LogtoAppConfig };
+export type { LogtoConfig, LogtoAppConfig, SAMLConfig, OAuth2Config };
