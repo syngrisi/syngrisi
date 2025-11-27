@@ -66,6 +66,10 @@ export function getSkipAutoStart(): boolean {
 export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
   appServer: [
     async ({ page, $step, $uri }, use, testInfo) => {
+      // CRITICAL: Set TEST_WORKER_INDEX BEFORE any code that uses getCurrentCid()
+      // This ensures proper isolation between parallel workers
+      process.env.TEST_WORKER_INDEX = String(testInfo.parallelIndex);
+
       const tempDir = getWorkerTempDir();
       logger.debug(`Using temp directory: ${tempDir}`);
 
