@@ -49,7 +49,21 @@ export const env = cleanEnv(process.env, {
     SYNGRISI_AUTH_RATE_LIMIT_MAX: num({ default: 200 }),
 
     // SSO Configuration
+    SSO_ENABLED: bool({ default: false }),
+    SSO_PROTOCOL: str({ choices: ['', 'oauth2', 'saml'], default: '' }),
+    SSO_CLIENT_ID: str({ default: '' }),
+    SSO_CLIENT_SECRET: str({ default: '' }),
     SSO_AUTHORIZATION_URL: str({ default: '' }),
     SSO_TOKEN_URL: str({ default: '' }),
     SSO_USERINFO_URL: str({ default: '' }),
+    SSO_CALLBACK_URL: str({ default: '/v1/auth/sso/oauth/callback' }),
+    // SAML specific
+    SSO_ENTRY_POINT: str({ default: '' }),
+    SSO_ISSUER: str({ default: '' }),
+    SSO_CERT: str({ default: '' }),
+    SSO_IDP_ISSUER: str({ default: '' }),
+    // SSO user settings
+    SSO_DEFAULT_ROLE: str({ choices: ['', 'user', 'admin', 'reviewer'], default: 'user' }),
+    SSO_AUTO_CREATE_USERS: bool({ default: true }),
+    SSO_ALLOW_ACCOUNT_LINKING: bool({ default: true }),
 });
