@@ -2,8 +2,8 @@
 Feature: Simple Views - Expected, Actual, Diff
 
   Background:
-#     Given I clear Database and stop Server
-#     Given I start Server and start Driver
+    #     Given I clear Database and stop Server
+    #     Given I start Server and start Driver
     When I open the app
     When I clear local storage
     Given I create "1" tests with:
@@ -28,6 +28,7 @@ Feature: Simple Views - Expected, Actual, Diff
 
   Scenario: Simple Views (Expected, Actual, Diff)
     When I wait 30 seconds for the element with locator "[data-segment-value='expected']" to be visible
+    Then the element with locator "[data-segment-value='expected']" should have attribute "data-segment-disabled" "false"
 
     # expected
     When I click element with locator "[data-segment-value='expected']"

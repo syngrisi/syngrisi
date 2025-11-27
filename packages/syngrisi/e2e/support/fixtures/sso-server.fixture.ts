@@ -290,19 +290,33 @@ export const ssoServerFixture = base.extend<{ ssoServer: SSOServerFixture }>({
       if (expectExternal) {
         const running = await isLogtoAvailable();
         if (!running) {
-          logger.error('Test expects external Logto (@sso-external) but it is not running');
-          throw new Error('External Logto not available');
+          // Try to auto-start Logto if container CLI is available
+          if (isContainerCLIAvailable()) {
+            logger.info('Logto not running, but container CLI available - auto-starting...');
+            try {
+              await fixture.startLogto();
+              logger.success('Logto auto-started for @sso-external test');
+            } catch (error) {
+              logger.error('Failed to auto-start Logto', { error });
+              throw new Error('External Logto not available and auto-start failed');
+            }
+          } else {
+            logger.error('Test expects external Logto (@sso-external) but it is not running');
+            logger.info('Either start Logto manually or install Apple container CLI for auto-start');
+            throw new Error('External Logto not available');
+          }
+        } else {
+          fixture.isAvailable = true;
+          fixture.logtoConfig = LOGTO_DEFAULT_CONFIG;
+          logger.info('Using external Logto instance');
         }
-        fixture.isAvailable = true;
-        fixture.logtoConfig = LOGTO_DEFAULT_CONFIG;
-        logger.info('Using external Logto instance');
       }
 
       try {
         await use(fixture);
       } finally {
-        // Clean up Logto if we started it
-        if (startedByTest && needsLogto) {
+        // Clean up Logto if we started it (either via @sso-logto or auto-start for @sso-external)
+        if (startedByTest) {
           // Keep running by default (faster), stop only if explicitly disabled
           const reuseLogto = process.env.E2E_REUSE_LOGTO !== 'false';
           if (!reuseLogto) {

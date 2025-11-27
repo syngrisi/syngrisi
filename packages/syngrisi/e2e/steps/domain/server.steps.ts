@@ -38,8 +38,13 @@ When(
   async ({ appServer, $bddContext }: { appServer: AppServerFixture; $bddContext?: BddContext }, yml: string) => {
     const params = yaml.parse(yml);
     Object.keys(params).forEach((key) => {
-      process.env[key] = String(params[key]);
-      logger.info(`Set env variable ${key}=${params[key]}`);
+      if (params[key] === null || params[key] === undefined) {
+        delete process.env[key];
+        logger.info(`Unset env variable ${key}`);
+      } else {
+        process.env[key] = String(params[key]);
+        logger.info(`Set env variable ${key}=${params[key]}`);
+      }
     });
     const testInfo = ($bddContext as BddContext | undefined)?.testInfo;
     const isFastMode = hasTag(testInfo, '@fast-server');
@@ -63,15 +68,15 @@ Given(
     logger.info('Starting server...');
     await appServer.start();
     restartAfterEnvSet.set(getCid(), false);
-    
+
     // Wait a bit for server to be fully ready
     await new Promise(resolve => setTimeout(resolve, 2000));
-    
+
     // Set syngrisiUrl for template rendering (as in old tests)
     const syngrisiUrl = `${appServer.baseURL}/`;
     testData.set('syngrisiUrl', syngrisiUrl);
     resetTestCreationState(testData);
-    
+
     // Initialize SyngrisiDriver (as in original WebdriverIO tests)
     // Ensure URL ends with / (as SyngrisiApi expects)
     const apiKey = process.env.SYNGRISI_API_KEY || '123';
@@ -80,10 +85,10 @@ Given(
       url: normalizedURL,
       apiKey: apiKey,
     });
-    
+
     // Store driver in testData for use in other steps
     testData.set('vDriver', vDriver);
-    
+
     logger.info(`Server started at ${appServer.baseURL}`);
     logger.info('SyngrisiDriver initialized');
   }
@@ -117,7 +122,7 @@ When(
     logger.info('Stopping Syngrisi server...');
     stopServerProcess();
     restartAfterEnvSet.set(getCid(), true);
-    
+
     // Also stop via fixture if running
     if (appServer.baseURL) {
       await appServer.stop();
@@ -134,7 +139,7 @@ When(
     logger.info('Stopping server...');
     stopServerProcess();
     restartAfterEnvSet.set(getCid(), true);
-    
+
     // Also stop via fixture if running
     if (appServer.baseURL) {
       await appServer.stop();
@@ -159,7 +164,7 @@ Given(
       // Stop server first (as in original: stopServer() then clearDatabase())
       logger.info('Stopping server...');
       stopServerProcess();
-      
+
       // Also stop via fixture if running
       if (appServer.baseURL) {
         await appServer.stop();
@@ -168,15 +173,15 @@ Given(
       // Clear database (removeBaselines = true by default, as in original)
       logger.info('Clearing database...');
       await clearDatabase(undefined, true); // Explicitly pass removeBaselines = true to clear screenshots folder
-      
+
       // Reset legacy default environment expectations between scenarios
       process.env.SYNGRISI_DISABLE_FIRST_RUN = 'true';
       process.env.SYNGRISI_TEST_MODE = '1'; // Backend expects '1', not 'true'
       process.env.SYNGRISI_AUTH = 'false';
-      
+
       // Set flag to skip automatic server startup in fixture
       setSkipAutoStart(true);
-      
+
       logger.info('Database cleared and server stopped');
       resetTestCreationState(testData);
     } catch (error: any) {
@@ -202,10 +207,10 @@ When(
       url: normalizedURL,
       apiKey: apiKey,
     });
-    
+
     // Store driver in testData for use in other steps
     testData.set('vDriver', vDriver);
-    
+
     logger.info('SyngrisiDriver initialized');
   }
 );

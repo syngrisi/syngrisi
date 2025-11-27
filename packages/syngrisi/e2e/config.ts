@@ -45,8 +45,8 @@ export const env = cleanEnv(process.env, {
     desc: 'Run Playwright tests in headed mode'
   }),
   PLAYWRIGHT_WORKERS: num({
-    default: 1 as any,
-    desc: 'Number of parallel workers for Playwright'
+    default: 4 as any,
+    desc: 'Number of parallel workers for Playwright (4 is optimal for stability with fast-server tests)'
   }),
   SYNGRISI_DB_URI: str({
     default: '',

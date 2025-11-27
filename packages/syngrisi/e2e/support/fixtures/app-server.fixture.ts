@@ -1,7 +1,7 @@
 import { test as base } from 'playwright-bdd';
 import { launchAppServer, isServerRunning, stopServerProcess, findAvailablePort } from '@utils/app-server';
 import { getWorkerTempDir, resolveRepoRoot } from '@utils/fs';
-import { hasTag } from '@utils/common';
+import { hasTag, waitFor } from '@utils/common';
 import { env } from '@config';
 import { createLogger } from '@lib/logger';
 import type { RunningAppServer } from '@utils/app-server';
@@ -242,14 +242,10 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
         delete process.env.LOGTO_ENDPOINT;
         delete process.env.LOGTO_ADMIN_ENDPOINT;
 
-        const fullReset = (process.env.FAST_SERVER_FULL_RESET || '').toLowerCase() === 'true';
-        if (fullReset) {
-          logger.info(`Fast mode: full reset enabled, dropping DB and baselines`);
-          await clearDatabase(cid, true, false);
-        } else {
-          logger.info(`Fast mode: soft clean enabled, keeping baselines`);
-          await clearDatabase(cid, false, true);
-        }
+        // Always do full database reset in fast-server mode to ensure clean state
+        // This prevents authentication and other settings from persisting between tests
+        logger.info(`Fast mode: full reset enabled, dropping DB and baselines`);
+        await clearDatabase(cid, true, false);
 
         const running = await isServerRunning(workerPort);
 
@@ -259,6 +255,11 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
         if (running) {
           logger.info(`Fast mode: stopping existing server on port ${workerPort} to ensure clean config`);
           stopServerProcess();
+          // Wait for server to actually stop to avoid race conditions (EADDRINUSE or connecting to old server)
+          await waitFor(() => isServerRunning(workerPort).then((r) => !r), {
+            timeoutMs: 5000,
+            description: `Server stop on port ${workerPort}`,
+          });
           serverInstances.delete(cid);
         }
 
