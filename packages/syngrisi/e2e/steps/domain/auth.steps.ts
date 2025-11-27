@@ -94,8 +94,21 @@ When(
         // Login might be successful - wait for user icon to appear (indicates user data loaded)
         try {
           await page.locator('[data-test="user-icon"]').waitFor({ state: 'visible', timeout: 10000 });
-          // Additional wait for React Query to load user data
-          await page.waitForTimeout(2000);
+
+          // Wait for user initials to be loaded (not empty) - this indicates React Query finished loading
+          const userInitials = page.locator('[data-test="user-initials"]');
+          await userInitials.waitFor({ state: 'visible', timeout: 10000 });
+
+          // Wait until initials have actual content (not empty)
+          await page.waitForFunction(
+            () => {
+              const el = document.querySelector('[data-test="user-initials"]');
+              return el && el.textContent && el.textContent.trim().length >= 2;
+            },
+            { timeout: 10000 }
+          );
+
+          logger.info('User initials loaded, login complete');
 
           // Store session cookie for HTTP requests
           const cookies = await page.context().cookies();
@@ -110,7 +123,7 @@ When(
           logger.info(`User "${login}" logged in successfully`);
         } catch (e) {
           // User icon might not appear if auth is disabled or user data not loaded yet
-          logger.warn('User icon not found after login, continuing anyway');
+          logger.warn('User icon/initials not found after login, continuing anyway');
         }
       } else if (errorVisible) {
         logger.info(`Login failed for user "${login}" - error message displayed`);
