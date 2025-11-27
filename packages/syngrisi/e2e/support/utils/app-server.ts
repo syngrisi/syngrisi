@@ -48,7 +48,7 @@ function resolveTestPaths(cid: number) {
     env.SYNGRISI_IMAGES_PATH ||
     '';
 
-  const enforcedDbUri = `mongodb://localhost/${databaseName}${cid}`;
+  const enforcedDbUri = `mongodb://127.0.0.1/${databaseName}${cid}`;
   const enforcedImagesPath = path.resolve(REPO_ROOT, 'baselinesTest', String(cid));
 
   if (requestedDbUri && requestedDbUri !== enforcedDbUri) {
@@ -98,15 +98,20 @@ export async function launchAppServer(
     ...runtimeEnv,
     NODE_ENV: nodeEnv,
     SYNGRISI_DISABLE_FIRST_RUN: disableFirstRun,
-    SYNGRISI_AUTH: authEnabled,
-    // Preserve the requested value even if dotenv overwrites SYNGRISI_AUTH inside the server process
-    SYNGRISI_AUTH_OVERRIDE: authEnabled,
     SYNGRISI_APP_PORT: String(cidPort),
     SYNGRISI_COVERAGE: coverageFlag === 'true' ? 'true' : 'false',
     // Only enable test mode if not explicitly set to false (allows real SSO testing)
     SYNGRISI_TEST_MODE: runtimeEnv.SYNGRISI_TEST_MODE ?? 'true',
     ...additionalEnv,
   };
+
+  if (authEnabled !== '') {
+    spawnEnv.SYNGRISI_AUTH = authEnabled;
+    spawnEnv.SYNGRISI_AUTH_OVERRIDE = authEnabled;
+  } else {
+    delete spawnEnv.SYNGRISI_AUTH;
+    delete spawnEnv.SYNGRISI_AUTH_OVERRIDE;
+  }
 
 
 

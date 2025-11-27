@@ -106,6 +106,9 @@ class AppSettings {
         if (envAuth === 'true') {
             return true;
         }
+        if (envAuth === 'false') {
+            return false;
+        }
 
         return (await this.get('authentication'))?.value === 'true';
     }

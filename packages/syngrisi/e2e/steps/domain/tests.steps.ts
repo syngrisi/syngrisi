@@ -48,7 +48,7 @@ async function createCheckViaAPI(
   // Use SyngrisiDriver.check() method directly (as in old framework: browser.vDriver.check())
   // Parameters are taken from vDriver.params.test (set by startTestSession), so we only pass optional overrides
   logger.info(`Creating check "${checkName}" for test "${testId}" via SyngrisiDriver`);
-  
+
   try {
     const checkParams: any = {
       checkName,

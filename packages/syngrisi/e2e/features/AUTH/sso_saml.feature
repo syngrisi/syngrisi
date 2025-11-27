@@ -48,6 +48,9 @@ Feature: SSO Authentication with SAML 2.0
         # Test that existing local users are linked when they login via SAML
         # with the same email
 
+        # Reset user to 'local' provider to ensure test isolation
+        When I reset user "test@syngrisi.test" provider to local
+
         When I reload session
         When I open the app
         When I click SSO login button
