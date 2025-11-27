@@ -75,6 +75,9 @@ Feature: SSO Common Scenarios and Edge Cases
 
         Then Logto SSO should be available
 
+        # Reset user to 'local' provider to ensure test isolation
+        When I reset user "test@syngrisi.test" provider to local
+
         When I reload session
         When I open the app
         When I click SSO login button

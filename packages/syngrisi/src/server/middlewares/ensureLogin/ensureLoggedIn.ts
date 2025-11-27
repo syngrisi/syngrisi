@@ -65,7 +65,7 @@ const handleBasicAuth = async (req: ExtRequest): Promise<any> => {
     };
 
     const AppSettings = await appSettings;
-    const authEnabled = process.env.SYNGRISI_AUTH_OVERRIDE === 'true' || await AppSettings.isAuthEnabled();
+    const authEnabled = await AppSettings.isAuthEnabled();
 
     if (req.isAuthenticated()) {
         return { type: 'success', status: 200 };
@@ -137,7 +137,7 @@ export function ensureLoggedIn(options?: any): (req: Request, res: Response, nex
             return next();
         }
         res.status(result.status).redirect(result.value);
-        return next('redirect');
+        // return next('redirect'); // Do not call next with error for redirect
     };
 }
 

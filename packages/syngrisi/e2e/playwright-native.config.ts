@@ -34,7 +34,7 @@ export const confObject = {
       use: {
         ...devices['Desktop Chrome'],
         viewport: { width: 1366, height: 768 }
-      }
+      },
     }
   ]
 } satisfies PlaywrightTestConfig;

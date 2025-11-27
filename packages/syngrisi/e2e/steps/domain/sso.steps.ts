@@ -4,6 +4,7 @@ import { expect } from '@playwright/test';
 import { AppServerFixture } from '../../support/fixtures/app-server.fixture';
 import type { SSOServerFixture } from '../../support/fixtures/sso-server.fixture';
 import { got } from 'got-cjs';
+import { MongoClient } from 'mongodb';
 
 // Store last response for assertions
 let lastResponse: { status: number; body: any } | null = null;
@@ -26,7 +27,7 @@ When(
 
 Then(
     'the response status should be {int}',
-    async ({}: {}, expectedStatus: number) => {
+    async ({ }: {}, expectedStatus: number) => {
         expect(lastResponse).not.toBeNull();
         expect(lastResponse!.status).toBe(expectedStatus);
     }
@@ -34,7 +35,7 @@ Then(
 
 Then(
     'the response body should contain {string}',
-    async ({}: {}, expectedContent: string) => {
+    async ({ }: {}, expectedContent: string) => {
         expect(lastResponse).not.toBeNull();
         const bodyStr = typeof lastResponse!.body === 'string'
             ? lastResponse!.body
@@ -193,8 +194,8 @@ When(
         await identifierInput.clear();
         await identifierInput.fill(username);
 
-        // Small delay to ensure input is registered
-        await page.waitForTimeout(100);
+        // Verify input value
+        await expect(identifierInput).toHaveValue(username);
 
         // Check if password field is already visible (single-page form)
         const passwordField = page.locator('input[type="password"]');
@@ -202,11 +203,11 @@ When(
             // Single-page form: fill password and submit
             await passwordField.clear();
             await passwordField.fill(password);
-            await page.waitForTimeout(100);
+            await expect(passwordField).toHaveValue(password);
 
             // Click submit and wait for navigation
             await Promise.all([
-                page.waitForNavigation({ waitUntil: 'networkidle', timeout: 30000 }).catch(() => {}),
+                page.waitForNavigation({ waitUntil: 'networkidle', timeout: 30000 }).catch(() => { }),
                 page.click('button[type="submit"]'),
             ]);
         } else {
@@ -215,10 +216,10 @@ When(
             await page.waitForSelector('input[type="password"]', { timeout: 15000 });
             await passwordField.clear();
             await passwordField.fill(password);
-            await page.waitForTimeout(100);
+            await expect(passwordField).toHaveValue(password);
 
             await Promise.all([
-                page.waitForNavigation({ waitUntil: 'networkidle', timeout: 30000 }).catch(() => {}),
+                page.waitForNavigation({ waitUntil: 'networkidle', timeout: 30000 }).catch(() => { }),
                 page.click('button[type="submit"]'),
             ]);
         }
@@ -446,10 +447,16 @@ Then('my session should be destroyed', async ({ page, appServer }: { page: Page;
 Then(
     'the user {string} should have provider type {string}',
     async ({ appServer }: { appServer: AppServerFixture }, email: string, expectedProvider: string) => {
-        // This would require an API endpoint to check user details
-        // For now, we'll skip this verification or use direct DB access
-        // The test should still pass based on successful login
-        console.log(`Verification: user ${email} should have provider ${expectedProvider}`);
+        const client = new MongoClient(appServer.config.connectionString);
+        try {
+            await client.connect();
+            const db = client.db();
+            const user = await db.collection('vrsusers').findOne({ username: email });
+            expect(user, `User with email ${email} not found`).not.toBeNull();
+            expect(user!.provider).toBe(expectedProvider);
+        } finally {
+            await client.close();
+        }
     }
 );
 
@@ -459,7 +466,36 @@ Then(
 Then(
     'a new user {string} should be created with role {string}',
     async ({ appServer }: { appServer: AppServerFixture }, email: string, expectedRole: string) => {
-        // This would require an API endpoint to check user details
-        console.log(`Verification: user ${email} should be created with role ${expectedRole}`);
+        const client = new MongoClient(appServer.config.connectionString);
+        try {
+            await client.connect();
+            const db = client.db();
+            const user = await db.collection('vrsusers').findOne({ username: email });
+            expect(user, `User with email ${email} not found`).not.toBeNull();
+            expect(user!.role).toBe(expectedRole);
+        } finally {
+            await client.close();
+        }
+    }
+);
+
+/**
+ * Reset user's provider to 'local' for testing account linking
+ * This ensures test isolation when running multiple SSO provider tests
+ */
+When(
+    'I reset user {string} provider to local',
+    async ({ appServer }: { appServer: AppServerFixture }, email: string) => {
+        const client = new MongoClient(appServer.config.connectionString);
+        try {
+            await client.connect();
+            const db = client.db();
+            await db.collection('vrsusers').updateOne(
+                { username: email },
+                { $set: { provider: 'local', providerId: null } }
+            );
+        } finally {
+            await client.close();
+        }
     }
 );

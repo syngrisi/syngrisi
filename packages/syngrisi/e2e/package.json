@@ -12,11 +12,16 @@
   "scripts": {
     "postinstall": "playwright install",
     "bddgen": "bddgen",
-    "test": "bddgen && cross-env SYNGRISI_LOG_LEVEL=warn E2E_HEADLESS=1 playwright test --workers=10; say 'this is the end'",
-    "test:smoke": "bddgen && cross-env SYNGRISI_LOG_LEVEL=warn playwright test --grep=@smoke --retries=1 --workers=8 --shard=${SHARD:-1/1}",
+    "test": "bddgen && run-s -c test:clean-blob test:parallel test:sso test:combine-blob test:merge-reports",
+    "test:clean-blob": "rm -rf reports/blob-parallel reports/blob-sso reports/blob-combined reports/playwright-report",
+    "test:parallel": "cross-env SYNGRISI_LOG_LEVEL=warn PLAYWRIGHT_BLOB_OUTPUT_DIR=reports/blob-parallel playwright test --grep-invert \"@saml|@sso-external|@sso-logto\" --workers=4 --reporter=blob,list",
+    "test:sso": "cross-env SYNGRISI_LOG_LEVEL=warn PLAYWRIGHT_BLOB_OUTPUT_DIR=reports/blob-sso playwright test --grep \"@saml|@sso-external|@sso-logto\" --workers=1 --reporter=blob,list",
+    "test:combine-blob": "mkdir -p reports/blob-combined && cp reports/blob-parallel/*.zip reports/blob-combined/ 2>/dev/null || true && cp reports/blob-sso/*.zip reports/blob-combined/ 2>/dev/null || true",
+    "test:merge-reports": "cross-env PLAYWRIGHT_HTML_REPORT=reports/playwright-report PW_TEST_HTML_REPORT_OPEN=never playwright merge-reports --reporter=html ./reports/blob-combined",
+    "test:smoke": "bddgen && cross-env SYNGRISI_LOG_LEVEL=warn playwright test --grep=@smoke --retries=1 --workers=4 --shard=${SHARD:-1/1}",
     "test:headed": "bddgen && cross-env SYNGRISI_LOG_LEVEL=warn PLAYWRIGHT_HEADED=1 playwright test",
-    "test:mcp": "cross-env SYNGRISI_LOG_LEVEL=warn MCP_KEEP_ALIVE=0 E2E_HEADLESS=1 playwright test --workers=1 --config support/mcp/playwright.config.ts support/mcp/mcp.spec.ts",
-    "test:mcp:headed": "cross-env SYNGRISI_LOG_LEVEL=warn MCP_KEEP_ALIVE=1 E2E_HEADLESS=0 playwright test --workers=1 --config support/mcp/playwright.config.ts support/mcp/mcp.spec.ts"
+    "test:mcp": "cross-env SYNGRISI_LOG_LEVEL=warn MCP_KEEP_ALIVE=0 playwright test --workers=1 --config support/mcp/playwright.config.ts support/mcp/mcp.spec.ts",
+    "test:mcp:headed": "cross-env SYNGRISI_LOG_LEVEL=warn MCP_KEEP_ALIVE=1 PLAYWRIGHT_HEADED=1 playwright test --workers=1 --config support/mcp/playwright.config.ts support/mcp/mcp.spec.ts"
   },
   "devDependencies": {
     "@cucumber/cucumber-expressions": "^18.0.1",
@@ -27,6 +32,7 @@
     "dotenv": "^17.2.3",
     "envalid": "^8.1.1",
     "mongodb": "^6.12.0",
+    "npm-run-all": "^4.1.5",
     "playwright-bdd": "^8.4.1",
     "playwright-mcp-advanced": "^0.1.0",
     "typescript": "^5.9.3",
