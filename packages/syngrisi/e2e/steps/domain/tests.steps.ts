@@ -142,13 +142,19 @@ async function createTestsWithParams(
     try {
       const cid = process.env.DOCKER === '1' ? 100 : parseInt(process.env.TEST_WORKER_INDEX || '0', 10);
       const serverPort = appServer.serverPort || parseInt(process.env.SYNGRISI_APP_PORT || '', 10) || 3002 + cid;
+      let serverWasStarted = false;
       if (!(await isServerRunning(serverPort))) {
         logger.info(`App server is not running on port ${serverPort}, starting before creating tests`);
         await appServer.start();
+        serverWasStarted = true;
+        // Wait for server to be fully ready after startup
+        logger.info('Waiting for server to be fully ready...');
+        await new Promise((resolve) => setTimeout(resolve, 3000));
       }
 
       let vDriver = testData.get('vDriver') as SyngrisiDriver | undefined;
-      if (!vDriver) {
+      // Recreate vDriver if server was just started or if vDriver is missing
+      if (!vDriver || serverWasStarted) {
         const baseURL = appServer.baseURL || `http://${env.E2E_BACKEND_HOST}:${appServer.serverPort || 3002}`;
         const normalizedURL = baseURL.endsWith('/') ? baseURL : `${baseURL}/`;
         vDriver = new SyngrisiDriver({
@@ -156,7 +162,7 @@ async function createTestsWithParams(
           apiKey,
         });
         testData.set('vDriver', vDriver);
-        logger.info('SyngrisiDriver auto-initialized because it was missing');
+        logger.info(serverWasStarted ? 'SyngrisiDriver recreated after server restart' : 'SyngrisiDriver auto-initialized because it was missing');
       }
 
       const testIndex = index + 1;
