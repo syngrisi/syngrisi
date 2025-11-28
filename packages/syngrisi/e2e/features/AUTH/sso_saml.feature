@@ -76,5 +76,5 @@ Feature: SSO Authentication with SAML 2.0
 
         Then I should be redirected back to the app
         Then I should be authenticated via SSO
-        # New users should be created with 'user' role by default
-        Then a new user "test@syngrisi.test" should be created with role "user"
+        # New users should be created with 'reviewer' role by default
+        Then a new user "test@syngrisi.test" should be created with role "reviewer"

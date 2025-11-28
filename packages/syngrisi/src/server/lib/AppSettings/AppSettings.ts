@@ -3,11 +3,12 @@
 
 import { AppSettings as AppSettingsModel } from '@models';
 import initialAppSettings from '../../../seeds/initialAppSettings.json';
-import { env } from "@/server/envConfig";
 
 class AppSettings {
     private model: any;
     public cache: any;
+    private lastFetch: number = 0;
+    private TTL = 30 * 1000; // 30 seconds
 
     constructor() {
         this.model = AppSettingsModel;
@@ -15,36 +16,47 @@ class AppSettings {
     }
 
     async init() {
-        this.cache = await this.model.find().lean().exec();
+        await this.refreshCache();
         return this;
     }
 
-    private ensureInitialized() {
+    private async refreshCache() {
+        this.cache = await this.model.find().lean().exec();
+        this.lastFetch = Date.now();
+    }
+
+    private async ensureInitialized() {
         if (!this.cache) {
-            throw new Error('AppSettings is not initialized. Please call init() before using this method.');
+            // If not initialized, try to initialize (lazy init fallback, though explicit init is preferred)
+            await this.refreshCache();
+        }
+        // Check TTL
+        if (Date.now() - this.lastFetch > this.TTL) {
+            await this.refreshCache();
         }
     }
 
     async count(): Promise<number> {
-        this.ensureInitialized();
+        await this.ensureInitialized();
         return this.model.countDocuments().exec();
     }
 
     async loadInitialFromFile(): Promise<void> {
-        this.ensureInitialized();
+        await this.ensureInitialized();
         const settings = initialAppSettings;
         await this.model.insertMany(settings);
         this.cache = settings;
+        this.lastFetch = Date.now();
     }
 
     async get(name: string): Promise<any> {
-        this.ensureInitialized();
+        await this.ensureInitialized();
         return this.cache.find((x: any) => x.name === name)
             || (this.model.findOne({ name }).exec());
     }
 
     async set(name: string, value: any): Promise<void> {
-        this.ensureInitialized();
+        await this.ensureInitialized();
         const item = await this.model.findOneAndUpdate(
             { name },
             { value },
@@ -53,6 +65,7 @@ class AppSettings {
         if (!item) {
             throw new Error(`Setting '${name}' not found`);
         }
+        // Update local cache immediately
         const cachedItem = this.cache.find((x: any) => x.name === name);
         if (cachedItem) {
             cachedItem['value'] = item.value;
@@ -60,7 +73,7 @@ class AppSettings {
     }
 
     async enable(name: string): Promise<void> {
-        this.ensureInitialized();
+        await this.ensureInitialized();
         const item = await this.model.findOneAndUpdate(
             { name },
             { enabled: true },
@@ -76,7 +89,7 @@ class AppSettings {
     }
 
     async disable(name: string): Promise<void> {
-        this.ensureInitialized();
+        await this.ensureInitialized();
         const item = await this.model.findOneAndUpdate(
             { name },
             { enabled: false },
@@ -92,7 +105,7 @@ class AppSettings {
     }
 
     async isAuthEnabled(): Promise<boolean> {
-        this.ensureInitialized();
+        await this.ensureInitialized();
         // Prefer explicit override to force-enable auth when set
         const envOverride = process.env.SYNGRISI_AUTH_OVERRIDE;
         if (typeof envOverride !== 'undefined') {
@@ -114,10 +127,10 @@ class AppSettings {
     }
 
     async isFirstRun(): Promise<boolean> {
-        this.ensureInitialized();
+        await this.ensureInitialized();
         return (await this.get('first_run'))?.value === 'true';
     }
 }
 
-const appSettings = (new AppSettings()).init();
+const appSettings = new AppSettings();
 export { AppSettings, appSettings };

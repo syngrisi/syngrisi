@@ -14,7 +14,7 @@
     "bddgen": "bddgen",
     "test": "bddgen && run-s -c test:clean-blob test:parallel test:sso test:combine-blob test:merge-reports test:stats",
     "test:clean-blob": "rm -rf reports/blob-parallel reports/blob-sso reports/blob-combined reports/playwright-report reports/report.json",
-    "test:parallel": "cross-env SYNGRISI_LOG_LEVEL=warn PLAYWRIGHT_BLOB_OUTPUT_DIR=reports/blob-parallel playwright test --grep-invert \"@saml|@sso-external|@sso-logto\" --workers=4 --reporter=blob,list",
+    "test:parallel": "cross-env SYNGRISI_LOG_LEVEL=warn PLAYWRIGHT_BLOB_OUTPUT_DIR=reports/blob-parallel playwright test --grep-invert \"@saml|@sso-external|@sso-logto\" --workers=8 --reporter=blob,list",
     "test:sso": "cross-env SYNGRISI_LOG_LEVEL=warn PLAYWRIGHT_BLOB_OUTPUT_DIR=reports/blob-sso playwright test --grep \"@saml|@sso-external|@sso-logto\" --workers=1 --reporter=blob,list",
     "test:combine-blob": "mkdir -p reports/blob-combined && cp reports/blob-parallel/*.zip reports/blob-combined/ 2>/dev/null || true && cp reports/blob-sso/*.zip reports/blob-combined/ 2>/dev/null || true",
     "test:merge-reports": "cross-env PLAYWRIGHT_HTML_REPORT=reports/playwright-report PW_TEST_HTML_REPORT_OPEN=never playwright merge-reports --reporter=html,json ./reports/blob-combined > reports/report.json",

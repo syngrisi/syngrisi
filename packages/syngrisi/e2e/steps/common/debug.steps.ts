@@ -270,6 +270,21 @@ When('I pause', async ({ page, testEngine }) => {
   await page.pause();
 });
 
+/**
+ * Pauses execution for a specified number of milliseconds.
+ * Useful for waiting for async operations or animations to complete.
+ *
+ * @example
+ * ```gherkin
+ * When I pause for 1000 ms
+ * When I pause for 500 ms
+ * ```
+ */
+When('I pause for {int} ms', async ({ page }, ms: number) => {
+  logger.info(`Pausing for ${ms}ms`);
+  await page.waitForTimeout(ms);
+});
+
 When('I fail', async ({ page }) => {
   logger.info('Failing as requested');
   expect(false).toBe(true);
