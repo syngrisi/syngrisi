@@ -149,6 +149,10 @@ class SyngrisiApi {
 
     private addMessageIfCheckFailed(result: any) {
         const patchedResult = result
+        // Skip if result is an error object or status is not a string
+        if (patchedResult.error || typeof patchedResult.status !== 'string') {
+            return patchedResult
+        }
         if (patchedResult.status.includes('failed')) {
             const checkView = `'${this.config.url}?checkId=${patchedResult._id}&modalIsOpen=true'`
             patchedResult.message = `To evaluate the results of the check, follow the link: '${checkView}'`
@@ -230,7 +234,6 @@ class SyngrisiApi {
         paramsGuard(params, 'createCheck, params', CheckParamsSchema)
 
         const url = `${this.url('createCheck')}`
-        const form = new FormData()
         const fieldsMapping = {
             branch: 'branch',
             app: 'appName',
@@ -246,29 +249,48 @@ class SyngrisiApi {
             os: 'os'
         }
 
-        Object.keys(fieldsMapping).forEach(key => {
-            // @ts-ignore
-            if (params[key]) {
+        const maxRetries = 3
+        const retryDelayMs = 2000
+
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+            const form = new FormData()
+
+            Object.keys(fieldsMapping).forEach(key => {
                 // @ts-ignore
-                form.append(fieldsMapping[key], params[key])
+                if (params[key]) {
+                    // @ts-ignore
+                    form.append(fieldsMapping[key], params[key])
+                }
+            })
+
+            if (hashCode) form.append('hashcode', hashCode)
+            if (imageBuffer) form.append('file', imageBuffer, 'file')
+
+            try {
+                const result: CheckResponse = await got.post(url, {
+                    body: form,
+                    headers: { apikey: this.config.apiHash },
+                }).json()
+
+                return result
+            } catch (e: any) {
+                const is401 = e.response?.statusCode === 401
+                const isLastAttempt = attempt === maxRetries
+
+                if (is401 && !isLastAttempt) {
+                    log.warn(`⚠️ 401 error on createCheck, retrying in ${retryDelayMs}ms (attempt ${attempt}/${maxRetries})`)
+                    await new Promise(resolve => setTimeout(resolve, retryDelayMs))
+                    continue
+                }
+
+                log.error(`❌ Error posting create check data params: '${JSON.stringify(params)}', error: '${e.stack || e}'`)
+                if (e.response) printErrorResponseBody(e)
+                return errorObject(e)
             }
-        })
-
-        if (hashCode) form.append('hashcode', hashCode)
-        if (imageBuffer) form.append('file', imageBuffer, 'file')
-
-        try {
-            const result: CheckResponse = await got.post(url, {
-                body: form,
-                headers: { apikey: this.config.apiHash },
-            }).json()
-
-            return result
-        } catch (e: any) {
-            log.error(`❌ Error posting create check data params: '${JSON.stringify(params)}', error: '${e.stack || e}'`)
-            if (e.response) printErrorResponseBody(e)
-            return errorObject(e)
         }
+
+        // This should never be reached, but TypeScript needs it
+        return errorObject(new Error('Max retries exceeded'))
     }
 
     public async getIdent(): Promise<string[] | ErrorObject> {
