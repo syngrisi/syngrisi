@@ -4,13 +4,13 @@ import { Response } from "express";
 import { appSettings } from "@settings";
 
 const getSettings = catchAsync(async (req: ExtRequest, res: Response) => {
-    const AppSettings = await appSettings;
+    const AppSettings = appSettings;
     const result = AppSettings.cache;
     res.json(result);
 });
 
 const updateSetting = catchAsync(async (req: ExtRequest, res: Response) => {
-    const AppSettings = await appSettings;
+    const AppSettings = appSettings;
 
     const { name } = req.params;
     await AppSettings.set(name, req.body.value);

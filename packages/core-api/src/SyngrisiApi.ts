@@ -85,27 +85,44 @@ class SyngrisiApi {
      */
     public async startSession(params: ApiSessionParams): Promise<SessionResponse | ErrorObject> {
         paramsGuard(params, 'startSession, params', ApiSessionParamsSchema)
-        const form = new FormData()
-        const required = ['run', 'suite', 'runident', 'name', 'viewport', 'browser', 'browserVersion', 'os', 'app']
-        // @ts-ignore
-        required.forEach(param => form.append(param, params[param]))
 
-        // optional
-        if (params.tags) form.append('tags', JSON.stringify(params.tags))
-        if (params.branch) form.append('branch', params.branch)
+        const maxRetries = 3
+        const retryDelayMs = 2000
 
-        let result
-        try {
-            result = await got.post(this.url('startSession'), {
-                body: form,
-                headers: { apikey: this.config.apiHash },
-            }).json() as SessionResponse
-            return result
-        } catch (e: any) {
-            log.error(`❌ Error posting start session data: '${e.stack || e}'`)
-            if (e.response) printErrorResponseBody(e)
-            return errorObject(e)
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+            const form = new FormData()
+            const required = ['run', 'suite', 'runident', 'name', 'viewport', 'browser', 'browserVersion', 'os', 'app']
+            // @ts-ignore
+            required.forEach(param => form.append(param, params[param]))
+
+            // optional
+            if (params.tags) form.append('tags', JSON.stringify(params.tags))
+            if (params.branch) form.append('branch', params.branch)
+
+            try {
+                const result = await got.post(this.url('startSession'), {
+                    body: form,
+                    headers: { apikey: this.config.apiHash },
+                }).json() as SessionResponse
+                return result
+            } catch (e: any) {
+                const is401 = e.response?.statusCode === 401
+                const isLastAttempt = attempt === maxRetries
+
+                if (is401 && !isLastAttempt) {
+                    log.warn(`⚠️ 401 error on startSession, retrying in ${retryDelayMs}ms (attempt ${attempt}/${maxRetries})`)
+                    await new Promise(resolve => setTimeout(resolve, retryDelayMs))
+                    continue
+                }
+
+                log.error(`❌ Error posting start session data: '${e.stack || e}'`)
+                if (e.response) printErrorResponseBody(e)
+                return errorObject(e)
+            }
         }
+
+        // This should never be reached, but TypeScript needs it
+        return errorObject(new Error('Max retries exceeded'))
     }
 
     /**

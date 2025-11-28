@@ -19,7 +19,7 @@ export class AutoCleanupScheduler {
     private timer: NodeJS.Timeout | null = null;
     private running = false;
 
-    constructor(private options: SchedulerOptions) {}
+    constructor(private options: SchedulerOptions) { }
 
     start(): void {
         if (this.timer) {
@@ -48,7 +48,7 @@ export class AutoCleanupScheduler {
         this.running = true;
 
         try {
-            const AppSettings = await appSettings;
+            const AppSettings = appSettings;
             const setting = await AppSettings.get(this.options.settingName);
             if (!setting || !setting.enabled) {
                 return;

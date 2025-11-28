@@ -15,7 +15,7 @@ const router = express.Router();
 
 const adminController = catchAsync(async (req: ExtRequest, res: Response) => {
     // Extra guard to ensure only admins can access this UI when auth is enabled
-    const AppSettings = await appSettings;
+    const AppSettings = appSettings;
     const authEnabled = await AppSettings.isAuthEnabled();
 
 

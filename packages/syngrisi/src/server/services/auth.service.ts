@@ -67,7 +67,7 @@ const changePasswordFirstRun = async (newPassword: string): Promise<void> => {
         ref: 'Administrator',
     };
 
-    const AppSettings = await appSettings;
+    const AppSettings = appSettings;
 
     if ((await AppSettings.isAuthEnabled()) && ((await AppSettings.isFirstRun()))) {
         log.debug(`first run, change password for default 'Administrator'`, logOpts);

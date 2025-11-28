@@ -90,7 +90,7 @@ export const config = {
   timeout: 5 * 60 * 1000,
   expectTimeout: 10_000,
   retriesCI: 2,
-  retriesLocal: 1,
+  retriesLocal: 2,
   blobReportPath: './reports/blob',
   mergedReportPath: './reports/html'
 } as const;

@@ -7,9 +7,27 @@ const logOpts = {
     msgType: 'SETUP',
 };
 
+// Helper function to wait for a condition with timeout
+async function waitForCondition(
+    condition: () => Promise<boolean>,
+    timeoutMs: number,
+    intervalMs: number = 100
+): Promise<boolean> {
+    const startTime = Date.now();
+    while (Date.now() - startTime < timeoutMs) {
+        if (await condition()) {
+            return true;
+        }
+        await new Promise(resolve => setTimeout(resolve, intervalMs));
+    }
+    return false;
+}
+
 export async function createTestsUsers(): Promise<void> {
     log.debug('creating tests users', logOpts);
     try {
+        const createdApiKeys: string[] = [];
+
         for (const userData of testUsers) {
             const existingUser = await User.findOne({ username: userData.username });
             if (!existingUser) {
@@ -27,6 +45,7 @@ export async function createTestsUsers(): Promise<void> {
                 await newUser.setPassword(password);
                 await newUser.save();
                 log.info(`Created user: ${newUser.username} with role: ${newUser.role}`, logOpts);
+                createdApiKeys.push(userData.apiKey);
 
                 // Verify password was set correctly by trying to authenticate immediately
                 try {
@@ -43,6 +62,25 @@ export async function createTestsUsers(): Promise<void> {
             } else {
                 log.debug(`User ${userData.username} already exists`, logOpts);
             }
+        }
+
+        // Wait for all created users to be findable by apiKey (ensures MongoDB indexing is complete)
+        if (createdApiKeys.length > 0) {
+            log.info(`Waiting for ${createdApiKeys.length} users to be indexed by apiKey...`, logOpts);
+            for (const apiKey of createdApiKeys) {
+                const indexed = await waitForCondition(
+                    async () => {
+                        const found = await User.findOne({ apiKey });
+                        return !!found;
+                    },
+                    5000, // 5 second timeout per user
+                    50    // check every 50ms
+                );
+                if (!indexed) {
+                    log.error(`✗ User with apiKey ${apiKey.substring(0, 16)}... not indexed after 5s`, logOpts);
+                }
+            }
+            log.info(`✓ All test users indexed and findable by apiKey`, logOpts);
         }
 
         const users = await User.find({});

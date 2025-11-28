@@ -64,7 +64,7 @@ const handleBasicAuth = async (req: ExtRequest): Promise<any> => {
         msgType: 'AUTH_API',
     };
 
-    const AppSettings = await appSettings;
+    const AppSettings = appSettings;
     const authEnabled = await AppSettings.isAuthEnabled();
 
     if (req.isAuthenticated()) {
@@ -153,7 +153,7 @@ const handleAPIAuth = async (rawApiKey: unknown): Promise<any> => {
         value: '',
         user: null,
     };
-    const AppSettings = await appSettings;
+    const AppSettings = appSettings;
     if (!(await AppSettings.isAuthEnabled())) {
         const guest = await User.findOne({ username: 'Guest' });
 

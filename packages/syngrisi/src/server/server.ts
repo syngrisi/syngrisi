@@ -10,6 +10,7 @@ import { autoCleanupSchedulers } from '@lib/schedulers/autoCleanupSchedulers';
 import { runMigrations } from '@lib/migrations';
 import { env } from '@env';
 import { errMsg } from './utils';
+import { appSettings } from '@settings';
 
 const logMeta = { scope: 'entrypoint' };
 
@@ -17,6 +18,7 @@ log.info('Connect to database', logMeta);
 connectDB().then(async () => {
     log.debug('run init jobs', logMeta);
     // const startUp = await import('@lib/startup');
+    await appSettings.init();
     await runMigrations();
     createTempDir();
     await createBasicUsers();

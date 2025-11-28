@@ -50,6 +50,8 @@ Feature: Spotlight
         # logo container
         Then the css attribute "color" from element "[aria-label='Logo container']" is "rgba(0,0,0,1)"
 
+        # Wait for React to fully initialize and all JS to load before interacting
+        When I pause for 1000 ms
         When I click element with locator "button[aria-label='Search']"
         When I wait 30 seconds for the element with locator ".mantine-Spotlight-spotlight" to be visible
 

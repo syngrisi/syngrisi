@@ -63,7 +63,7 @@ export const env = cleanEnv(process.env, {
     SSO_CERT: str({ default: '' }),
     SSO_IDP_ISSUER: str({ default: '' }),
     // SSO user settings
-    SSO_DEFAULT_ROLE: str({ choices: ['', 'user', 'admin', 'reviewer'], default: 'user' }),
+    SSO_DEFAULT_ROLE: str({ choices: ['', 'user', 'admin', 'reviewer'], default: 'reviewer' }),
     SSO_AUTO_CREATE_USERS: bool({ default: true }),
     SSO_ALLOW_ACCOUNT_LINKING: bool({ default: true }),
 });
