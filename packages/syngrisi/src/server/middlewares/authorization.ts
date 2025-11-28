@@ -16,7 +16,7 @@ export const authorization = (type: string) => {
 
     const types: { [key: string]: (req: any, res: any, next: NextFunction) => any } = {
         admin: catchAsync(async (req: ExtRequest, res: Response, next: NextFunction) => {
-            const AppSettings = await appSettings;
+            const AppSettings = appSettings;
             const authEnabled = await AppSettings.isAuthEnabled();
             log.info(`authorization check`, {
                 type,
@@ -36,7 +36,7 @@ export const authorization = (type: string) => {
             throw new ApiError(httpStatus.FORBIDDEN, 'Authorization Error - wrong Role');
         }),
         user: catchAsync(async (req: ExtRequest, res: Response, next: NextFunction) => {
-            const AppSettings = await appSettings;
+            const AppSettings = appSettings;
 
             // @ts-ignore
             const authEnabled = await AppSettings.isAuthEnabled();

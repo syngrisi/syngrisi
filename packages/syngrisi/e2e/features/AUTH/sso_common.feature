@@ -113,8 +113,8 @@ Feature: SSO Common Scenarios and Edge Cases
 
         Then I should be redirected back to the app
         Then I should be authenticated via SSO
-        # New users should be created with 'user' role by default
-        Then a new user "test@syngrisi.test" should be created with role "user"
+        # New users should be created with 'reviewer' role by default
+        Then a new user "test@syngrisi.test" should be created with role "reviewer"
 
     Scenario: SSO button visibility based on configuration
         # Test that SSO button is visible only when SSO is enabled

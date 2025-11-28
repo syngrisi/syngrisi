@@ -159,6 +159,12 @@ export async function launchAppServer(
     }),
   ]);
 
+  // Stabilization delay to ensure MongoDB has completed all user creation writes
+  // This addresses race conditions where tests start before users are fully indexed
+  // 5000ms is needed for parallel test execution with heavy database load
+  // Note: core-api has 401 retry logic for additional resilience
+  await sleep(5000);
+
   return {
     baseURL,
     backendHost,
@@ -190,6 +196,38 @@ function isHttpServiceAvailable(url: string): Promise<boolean> {
       .on("error", () => resolve(false));
     req.end();
   });
+}
+
+function isApiKeyAuthWorking(url: string, apiKey: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    const parsedUrl = new URL(url);
+    const options = {
+      hostname: parsedUrl.hostname,
+      port: parsedUrl.port || 80,
+      path: parsedUrl.pathname,
+      method: 'GET',
+      headers: {
+        'apikey': apiKey,
+      },
+    };
+    const req = http
+      .request(options, (res) => {
+        res.resume();
+        // 200 means auth worked, 401 means it didn't
+        resolve(res.statusCode === 200);
+      })
+      .on("error", () => resolve(false));
+    req.end();
+  });
+}
+
+async function waitForApiKeyAuth(url: string, apiKey: string, timeoutMs: number): Promise<void> {
+  await waitFor(() => isApiKeyAuthWorking(url, apiKey), {
+    timeoutMs,
+    description: `API key authentication at ${url}`,
+    intervalMs: 100,
+  });
+  backendLogger.info(`✓ API key authentication verified at ${url}`);
 }
 
 export function isServerRunning(port: number): Promise<boolean> {

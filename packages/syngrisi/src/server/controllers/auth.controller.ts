@@ -128,7 +128,7 @@ const changePasswordFirstRun = catchAsync(async (req: ExtRequest, res: Response)
 
     const { newPassword } = req.body;
 
-    const AppSettings = await appSettings;
+    const AppSettings = appSettings;
 
     if ((await AppSettings.isAuthEnabled()) && ((await AppSettings.isFirstRun()))) {
         log.debug(`first run, change password for default 'Administrator'`, logOpts);

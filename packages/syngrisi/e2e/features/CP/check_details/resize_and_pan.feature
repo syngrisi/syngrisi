@@ -18,6 +18,8 @@ Feature: Check details Resize and Pan
         When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
     Scenario: Resize Dropdown Usage
+        # Wait for canvas and React to fully initialize
+        When I pause for 500 ms
         # 50%
         When I click element with locator "[data-check='open-zoom-dropdown']"
         When I wait 30 seconds for the element with locator "//*[@data-check='zoom-dropdown']//div[text()='50%']" to be visible
