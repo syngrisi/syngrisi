@@ -9,6 +9,7 @@ export { removeEmptyProperties } from './removeEmptyProperties';
 export { default as deserializeIfJSON } from './deserializeIfJSON';
 export { default as prettyCheckParams } from './prettyCheckParams';
 export { waitUntil } from './waitUntil';
+export * from './imageUtils';
 export { paramsGuard } from './paramsGuard';
 export { buildIdentObject } from './buildIdentObject';
 export { calculateAcceptedStatus } from './calculateAcceptedStatus';

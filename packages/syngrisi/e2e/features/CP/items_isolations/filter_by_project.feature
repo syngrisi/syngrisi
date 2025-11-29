@@ -15,7 +15,7 @@ Feature: Filter by Project
           runName: "RunName Project-1"
           runIdent: "RunIdent Project-1 $"
           checks:
-      - filePath: files/A.png
+            - filePath: files/A.png
               checkName: Check - 1
       """
   When I create "1" tests with:
@@ -25,7 +25,7 @@ Feature: Filter by Project
           runName: "RunName Project-2"
           runIdent: "RunIdent Project-2 $"
           checks:
-      - filePath: files/A.png
+            - filePath: files/A.png
               checkName: Check - 1
       """
   When I go to "main" page

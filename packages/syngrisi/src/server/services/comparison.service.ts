@@ -16,7 +16,7 @@ import httpStatus from 'http-status';
 export interface CompareSnapshotsOptions {
     vShifting?: boolean;
     ignore?: string;
-    ignoredBoxes?: string;
+    ignoredBoxes?: any[];
 }
 
 export const compareSnapshots = async (baselineSnapshot: SnapshotDocument, actual: SnapshotDocument, opts: CompareSnapshotsOptions = {}) => {
@@ -51,18 +51,7 @@ export const compareSnapshots = async (baselineSnapshot: SnapshotDocument, actua
             const actualData = await fsp.readFile(actualPath);
             log.debug(`baseline path: ${baselinePath}`, logOpts);
             log.debug(`actual path: ${actualPath}`, logOpts);
-            const options = opts;
-            const baseline = await Baseline.findOne({ snapshootId: baselineSnapshot._id }).exec();
-
-            if (baseline) { // ts refactoring TODO: find out a proper way
-                if (baseline.ignoreRegions) {
-                    log.debug(`ignore regions: '${baseline.ignoreRegions}', type: '${typeof baseline.ignoreRegions}'`);
-                    options.ignoredBoxes = JSON.parse(baseline.ignoreRegions);
-                }
-                options.ignore = baseline.matchType || 'nothing';
-            }
-
-            diff = await getDiff(baselineData, actualData, options);
+            diff = await getDiff(baselineData, actualData, opts);
         }
 
         log.silly(`the diff is: '${JSON.stringify(diff, null, 2)}'`);
@@ -135,9 +124,56 @@ export const compareCheck = async (
     if ((newCheckParams.status !== 'new') && (!compareResult.failReasons.includes('not_accepted'))) {
         try {
             log.debug(`'the check with name: '${newCheckParams.name}' isn't new, make comparing'`, logOpts);
-            checkCompareResult = await compareSnapshots(expectedSnapshot, actualSnapshot, { vShifting: newCheckParams.vShifting });
+
+            const baseline = await Baseline.findOne({ snapshootId: expectedSnapshot._id }).exec();
+            const compareOptions: CompareSnapshotsOptions = { vShifting: newCheckParams.vShifting };
+
+            if (baseline) {
+                if (baseline.ignoreRegions) {
+                    log.debug(`ignore regions: '${baseline.ignoreRegions}', type: '${typeof baseline.ignoreRegions}'`);
+                    compareOptions.ignoredBoxes = JSON.parse(baseline.ignoreRegions);
+                }
+                compareOptions.ignore = baseline.matchType || 'nothing';
+            }
+
+            checkCompareResult = await compareSnapshots(expectedSnapshot, actualSnapshot, compareOptions);
             log.silly(`ignoreDifferentResolutions: '${ignoreDifferentResolutions(checkCompareResult.dimensionDifference)}'`);
             log.silly(`dimensionDifference: '${JSON.stringify(checkCompareResult.dimensionDifference)}`);
+
+            // Auto-ignore 1px height difference if configured to ignore resolutions
+            if (areSnapshotsDifferent(checkCompareResult) && ignoreDifferentResolutions(checkCompareResult.dimensionDifference!)) {
+                const baselineDims = checkCompareResult.baselineDimensions;
+                const actualDims = checkCompareResult.actualDimensions;
+
+                if (baselineDims && actualDims) {
+                    const heightDiff = actualDims.height - baselineDims.height;
+                    let ignoredBox;
+
+                    if (heightDiff === 1) {
+                        // Actual is taller. Ignore bottom 1px.
+                        ignoredBox = { left: 0, top: actualDims.height - 1, right: actualDims.width, bottom: actualDims.height };
+                    } else if (heightDiff === -1) {
+                        // Baseline is taller. Ignore bottom 1px.
+                        ignoredBox = { left: 0, top: baselineDims.height - 1, right: baselineDims.width, bottom: baselineDims.height };
+                    }
+
+                    if (ignoredBox) {
+                        log.debug(`Retrying comparison with ignored box for 1px diff: ${JSON.stringify(ignoredBox)}`, logOpts);
+                        const retryOptions = { ...compareOptions };
+                        // resemble expects objects with left, top, right, bottom for ignoreRectangles in compareImagesNode?
+                        // compareImagesNode maps them: return [it.left, it.top, it.right - it.left, it.bottom - it.top];
+                        // So we should pass objects.
+                        retryOptions.ignoredBoxes = retryOptions.ignoredBoxes ? [...retryOptions.ignoredBoxes, ignoredBox] : [ignoredBox];
+
+                        const retryResult = await compareSnapshots(expectedSnapshot, actualSnapshot, retryOptions);
+
+                        if (!areSnapshotsDifferent(retryResult)) {
+                            log.debug(`Retry passed with ignored box`, logOpts);
+                            checkCompareResult = retryResult;
+                        }
+                    }
+                }
+            }
 
             if (areSnapshotsDifferent(checkCompareResult) || areSnapshotsWrongDimensions(checkCompareResult)) {
                 let logMsg;

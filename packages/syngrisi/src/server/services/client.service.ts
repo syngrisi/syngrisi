@@ -62,12 +62,64 @@ async function supportsTransactions(): Promise<boolean> {
     }
 }
 
+const cleanupOrphanFiles = async (
+    actualSnapshot: SnapshotDocument | null,
+    diffSnapshot: SnapshotDocument | null,
+    logOpts: LogOpts
+) => {
+    if (actualSnapshot && actualSnapshot.filename === `${actualSnapshot.id}.png`) {
+        const imagePath = path.join(config.defaultImagesPath, actualSnapshot.filename);
+        try {
+            if (fs.existsSync(imagePath)) {
+                await fsp.unlink(imagePath);
+                log.debug(`deleted orphan file: ${imagePath}`, logOpts);
+            }
+        } catch (err) {
+            log.error(`failed to delete orphan file: ${imagePath}, error: ${errMsg(err)}`, logOpts);
+        }
+    }
+
+    if (diffSnapshot && diffSnapshot.filename) {
+        const imagePath = path.join(config.defaultImagesPath, diffSnapshot.filename);
+        try {
+            if (fs.existsSync(imagePath)) {
+                await fsp.unlink(imagePath);
+                log.debug(`deleted orphan diff file: ${imagePath}`, logOpts);
+            }
+        } catch (err) {
+            log.error(`failed to delete orphan diff file: ${imagePath}, error: ${errMsg(err)}`, logOpts);
+        }
+    }
+};
+
+const recordCheckFailure = async (
+    e: unknown,
+    newCheckParams: CreateCheckParamsExtended,
+    test: TestDocument,
+    logOpts: LogOpts
+) => {
+    try {
+        newCheckParams.status = 'failed';
+        newCheckParams.result = JSON.stringify({ "server error": errMsg(e) });
+        newCheckParams.failReasons.push('internal_server_error');
+
+        log.debug(`create the failed check document`, logOpts);
+        const failedCheck = await CheckService.createCheckDocument(newCheckParams);
+        await updateTestAfterCheck(test, failedCheck, logOpts);
+        const failedObj = failedCheck.toObject();
+        if (failedObj.status && Array.isArray(failedObj.status)) failedObj.status = failedObj.status[0] as any;
+        return { ...failedObj, executeTime: 0 } as any;
+    } catch (err2) {
+        log.error(`failed to record check failure: ${errMsg(err2)}`, logOpts);
+        return { status: 'failed', error: errMsg(e) } as any;
+    }
+};
+
 const createCheck = async (checkParam: CreateCheckParams, test: TestDocument, suite: SuiteDocument, app: AppDocument, currentUser: RequestUser, skipSaveOnCompareError = false) => {
     const logOpts: LogOpts = {
         scope: 'createCheck',
         user: currentUser.username,
         itemType: 'check',
-        msgType: 'CREATE',
     };
     let actualSnapshot: SnapshotDocument | null = null;
     let currentBaselineSnapshot: SnapshotDocument;
@@ -174,82 +226,9 @@ const createCheck = async (checkParam: CreateCheckParams, test: TestDocument, su
 
         log.error(`${session ? 'transaction aborted' : 'operation failed'}, cleaning up files... error: ${errMsg(e)}`, logOpts);
 
-        // Cleanup files if transaction aborted
-        // We only cleanup if the file was created in this transaction (i.e. not a clone of existing one)
-        // But prepareActualSnapshot logic is complex.
-        // If snapshotFoundedByHashcode is false, we created a NEW file.
-        // If snapshotFoundedByHashcode is true, we cloned it (DB only, file reused? No, cloneSnapshot saves NEW DB record but reuses filename? No.)
-        // Let's check cloneSnapshot:
-        // const newSnapshot = new Snapshot({ name, filename, imghash: hashCode });
-        // It reuses the filename! So we should NOT delete the file if it was cloned.
-        // Wait, cloneSnapshot reuses the filename from sourceSnapshot.
-        // So multiple snapshots point to the SAME file.
-        // In that case, we should NEVER delete the file if it's referenced by others.
-        // But if we created a NEW snapshot with NEW file (createSnapshot), we should delete it.
-        // createSnapshot: const filename = `${snapshot.id}.png`; -> Unique filename!
-        // cloneSnapshot: const filename = sourceSnapshot.filename; -> Shared filename.
+        await cleanupOrphanFiles(actualSnapshot, diffSnapshot, logOpts);
 
-        // So, if actualSnapshot was created via createSnapshot, it has a unique filename based on its ID.
-        // If it was created via cloneSnapshot, it shares filename.
-
-        // How to distinguish?
-        // We can check if actualSnapshot.filename includes actualSnapshot.id?
-        // createSnapshot: filename = `${snapshot.id}.png`
-        // cloneSnapshot: filename = sourceSnapshot.filename (which is `${sourceSnapshot.id}.png`)
-        // So if filename == `${actualSnapshot.id}.png`, it's a new file.
-
-        if (actualSnapshot && actualSnapshot.filename === `${actualSnapshot.id}.png`) {
-            const imagePath = path.join(config.defaultImagesPath, actualSnapshot.filename);
-            try {
-                if (fs.existsSync(imagePath)) {
-                    await fsp.unlink(imagePath);
-                    log.debug(`deleted orphan file: ${imagePath}`, logOpts);
-                }
-            } catch (err) {
-                log.error(`failed to delete orphan file: ${imagePath}, error: ${errMsg(err)}`, logOpts);
-            }
-        }
-
-        if (diffSnapshot && diffSnapshot.filename) {
-            // Diff snapshot is always new file?
-            // compareCheck -> createSnapshot -> unique filename.
-            const imagePath = path.join(config.defaultImagesPath, diffSnapshot.filename);
-            try {
-                if (fs.existsSync(imagePath)) {
-                    await fsp.unlink(imagePath);
-                    log.debug(`deleted orphan diff file: ${imagePath}`, logOpts);
-                }
-            } catch (err) {
-                log.error(`failed to delete orphan diff file: ${imagePath}, error: ${errMsg(err)}`, logOpts);
-            }
-        }
-
-        // We still want to record the failure?
-        // The user requirement says: "Операции с файловой системой должны откатываться в блоке catch."
-        // And "Если сохранение файла пройдет успешно, а запись в БД упадет ... появятся "осиротевшие" файлы".
-        // So the goal is to prevent orphan files.
-
-        // Do we still want to save a "failed" check?
-        // The original code tried to save a failed check.
-        // If we want to do that, we need a NEW transaction or just a separate write.
-        // But if the original failure was DB related, maybe this will fail too?
-        // Let's try to save the failure record as before, but outside the aborted transaction.
-
-        try {
-            newCheckParams.status = 'failed';
-            newCheckParams.result = JSON.stringify({ "server error": errMsg(e) });
-            newCheckParams.failReasons.push('internal_server_error');
-
-            log.debug(`create the failed check document`, logOpts);
-            const failedCheck = await CheckService.createCheckDocument(newCheckParams);
-            await updateTestAfterCheck(test, failedCheck, logOpts);
-            const failedObj = failedCheck.toObject();
-            if (failedObj.status && Array.isArray(failedObj.status)) failedObj.status = failedObj.status[0] as any;
-            return { ...failedObj, executeTime: 0 } as any;
-        } catch (err2) {
-            log.error(`failed to record check failure: ${errMsg(err2)}`, logOpts);
-            return { status: 'failed', error: errMsg(e) } as any;
-        }
+        return recordCheckFailure(e, newCheckParams, test, logOpts);
     }
 };
 

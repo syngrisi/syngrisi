@@ -76,9 +76,13 @@ export async function launchAppServer(
   const cid = providedCid ?? getCid();
 
   const cmdPath = path.resolve(REPO_ROOT);
-  const cidPort = 3002 + cid;
   const runtimeEnv = process.env;
   const backendHost = runtimeEnv.E2E_BACKEND_HOST ?? env.E2E_BACKEND_HOST;
+
+  // Determine port priority: options.env > process.env > default calculation
+  const envPort = additionalEnv?.SYNGRISI_APP_PORT ?? runtimeEnv.SYNGRISI_APP_PORT;
+  const cidPort = envPort ? parseInt(envPort, 10) : 3002 + cid;
+
   const baseURL = `http://${backendHost}:${cidPort}`;
 
   const serverScriptPath = path.join(cmdPath, 'dist', 'server', 'server.js');

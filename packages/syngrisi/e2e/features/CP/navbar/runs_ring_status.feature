@@ -27,8 +27,8 @@ Feature: Runs Ring Statuses
           runName: "RunName-1"
           runIdent: "RunIdent-1"
           checks:
-              - checkName: CheckName-1
-        filePath: files/A.png
+            - checkName: CheckName-1
+              filePath: files/A.png
     """
 
     # failed

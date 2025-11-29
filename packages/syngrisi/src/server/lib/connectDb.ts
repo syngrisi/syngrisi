@@ -17,14 +17,14 @@ const connectDB = async () => {
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
         try {
             await mongoose.connect(config.connectionString, {
-                maxPoolSize: 20,
+                maxPoolSize: 50,
                 minPoolSize: 2,
                 serverSelectionTimeoutMS: 10000,
                 connectTimeoutMS: 30000,
                 socketTimeoutMS: 45000,
                 family: 4, // Use IPv4, disable IPv6
                 maxIdleTimeMS: 30000, // Close idle connections after 30s
-                waitQueueTimeoutMS: 10000, // Wait up to 10s for a connection from pool
+                waitQueueTimeoutMS: 30000, // Wait up to 30s for a connection from pool
             });
             return; // Success
         } catch (error: unknown) {

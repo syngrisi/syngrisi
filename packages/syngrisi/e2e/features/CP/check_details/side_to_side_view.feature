@@ -2,24 +2,24 @@
 Feature: Side to side view
 
   Background:
-#     Given I clear Database and stop Server
-#     Given I start Server and start Driver
+    #     Given I clear Database and stop Server
+    #     Given I start Server and start Driver
     When I open the app
     When I clear local storage
     Given I create "1" tests with:
       """
       testName: TestName
       checks:
-      - checkName: CheckName
-        filePath: files/A.png
+        - checkName: CheckName
+          filePath: files/A.png
       """
     When I accept via http the 1st check with name "CheckName"
     Given I create "1" tests with:
       """
       testName: TestName
       checks:
-      - checkName: CheckName
-        filePath: files/B.png
+        - checkName: CheckName
+          filePath: files/B.png
       """
     When I go to "main" page
     When I unfold the test "TestName"

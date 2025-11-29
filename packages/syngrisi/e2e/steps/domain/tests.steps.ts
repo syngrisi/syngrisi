@@ -149,7 +149,7 @@ async function createTestsWithParams(
         serverWasStarted = true;
         // Wait for server to be fully ready after startup
         logger.info('Waiting for server to be fully ready...');
-        await new Promise((resolve) => setTimeout(resolve, 3000));
+        await new Promise((resolve) => setTimeout(resolve, 10000));
       }
 
       let vDriver = testData.get('vDriver') as SyngrisiDriver | undefined;

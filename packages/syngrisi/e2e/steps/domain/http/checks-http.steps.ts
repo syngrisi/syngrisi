@@ -64,12 +64,12 @@ When(
         const testDetails =
           testId
             ? (
-                await requestWithSession(
-                  `${appServer.baseURL}/v1/tests?limit=0&filter=${encodeURIComponent(JSON.stringify({ _id: testId }))}`,
-                  testData,
-                  appServer
-                )
-              ).json.results?.[0]
+              await requestWithSession(
+                `${appServer.baseURL}/v1/tests?limit=0&filter=${encodeURIComponent(JSON.stringify({ _id: testId }))}`,
+                testData,
+                appServer
+              )
+            ).json.results?.[0]
             : null;
         const checkAccepted =
           checkDetails?.markedAs === 'accepted' ||
@@ -267,5 +267,86 @@ When(
       logger.info(`Check ${check._id} updated successfully`);
     }
     logger.info(`Updated ${checks.length} checks`);
+  }
+);
+
+When(
+  'I accept via SDK the {ordinal} check with name {string}',
+  async (
+    { appServer, testData }: { appServer: AppServerFixture; testData: TestStore },
+    ordinal: number,
+    name: string
+  ) => {
+    const vDriver = testData.get('vDriver') as any;
+    if (!vDriver) {
+      throw new Error('SDK Driver not found. Please start driver first with "When I start Driver"');
+    }
+
+    const uri = `${appServer.baseURL}/v1/checks?limit=0&filter={"$and":[{"name":{"$regex":"${name}","$options":"im"}}]}`;
+
+    logger.info(`Fetching checks with name "${name}"`);
+    const checksResponse = await requestWithSession(uri, testData, appServer);
+    const checks = checksResponse.json.results;
+
+    logger.info(`Found ${checks.length} checks`);
+
+    // Playwright BDD ordinal is 0-based: "1st" = 0, "2nd" = 1, etc.
+    const check = checks[ordinal];
+    if (!check) {
+      throw new Error(`Check #${ordinal + 1} (${ordinal}-based index) with name "${name}" not found. Found ${checks.length} checks.`);
+    }
+    logger.info(`Fetched check for SDK acceptance: ${JSON.stringify(check)}`);
+    const checkId = check._id;
+    const baselineId = check.actualSnapshotId;
+
+
+
+    logger.info(`Accepting check ${checkId} via SDK with baselineId ${baselineId}`);
+    let result;
+    try {
+      result = await vDriver.acceptCheck({
+        checkId,
+        baselineId,
+      });
+      logger.info(`Check ${checkId} accepted via SDK successfully: ${JSON.stringify(result)}`);
+    } catch (error: any) {
+      logger.error(`Error accepting check via SDK: ${error.message}`);
+      logger.error(error.stack);
+      throw error;
+    }
+
+    // Poll for acceptance to complete
+    const testId = check.test || check.testId;
+    const maxAttempts = 20;
+    for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+      try {
+        const checkFilter = encodeURIComponent(JSON.stringify({ _id: checkId }));
+        const checkDetailsResponse = await requestWithSession(
+          `${appServer.baseURL}/v1/checks?limit=0&filter=${checkFilter}`,
+          testData,
+          appServer
+        );
+        const checkDetails = (checkDetailsResponse.json.results || [])[0];
+        const checkAccepted =
+          checkDetails?.markedAs === 'accepted' ||
+          (Array.isArray(checkDetails?.status)
+            ? checkDetails.status.includes('accepted')
+            : checkDetails?.isCurrentlyAccepted === true);
+        logger.info(
+          `SDK Acceptance polling attempt ${attempt + 1}: checkAccepted=${checkAccepted}, markedAs=${checkDetails?.markedAs}`
+        );
+
+        if (checkAccepted) {
+          break;
+        }
+      } catch (pollError) {
+        logger.warn(`SDK Acceptance polling attempt ${attempt + 1} failed: ${(pollError as Error).message}`);
+      }
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (attempt === maxAttempts - 1) {
+        logger.warn(`SDK Acceptance polling timed out for check ${checkId}`);
+      }
+    }
+    return result;
   }
 );

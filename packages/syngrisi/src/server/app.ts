@@ -15,6 +15,7 @@ import routes from './routes/v1/index.route';
 import authRoutes from './routes/ui/auth';
 import adminRoutes from './routes/ui/admin';
 import uiRoutes from './routes/ui';
+import aiRoutes from './routes/ai.route';
 
 import { compressionFilter, disableCors, apiLimiter } from './middlewares';
 import { User } from './models';
@@ -87,6 +88,7 @@ log.info('\t- routes', logMeta);
 app.use('/v1', apiLimiter, routes);
 app.use('/auth', authRoutes);
 app.use('/admin', adminRoutes);
+app.use('/ai', aiRoutes);
 app.use('/', uiRoutes);
 
 app.use('/swagger', openAPIRouter);

@@ -9,3 +9,4 @@ export { default as Run } from './Run.model';
 export { default as User } from './User.model';
 export { default as Baseline } from './Baseline.model';
 export { default as Test } from './Test.model';
+export { default as Webhook } from './Webhook.model';

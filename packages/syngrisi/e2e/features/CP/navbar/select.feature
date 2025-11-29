@@ -2,23 +2,23 @@
 Feature: Select Navbar Item
 
   Background:
-#         Given I clear Database and stop Server
-#         Given I start Server and start Driver
+    #         Given I clear Database and stop Server
+    #         Given I start Server and start Driver
     When I open the app
     When I clear local storage
 
   @smoke
   Scenario: Select 1 and 2 items (hold the Meta key)
     When I create "3" tests with:
-    """
-          project: "Project"
-          testName: "TestName-$"
-          runName: "RunName-$"
-          runIdent: "RunIdent-$"
-          checks:
-            - filePath: files/A.png
-              checkName: Check - 1
-    """
+      """
+      project: "Project"
+      testName: "TestName-$"
+      runName: "RunName-$"
+      runIdent: "RunIdent-$"
+      checks:
+        - filePath: files/A.png
+          checkName: Check - 1
+      """
 
     When I go to "main" page
     When I wait 30 seconds for the element with locator "[data-test*='navbar_item_']" to be visible
@@ -63,16 +63,16 @@ Feature: Select Navbar Item
   @smoke
   Scenario: Select 1 item deselect via group by
     When I create "2" tests with:
-    """
-          project: "Project"
-          testName: "TestName-$"
-          runName: "RunName-$"
-          runIdent: "RunIdent-$"
-          suiteName: "SuiteName-$"
-          checks:
-      - filePath: files/A.png
-              checkName: Check - 1
-    """
+      """
+      project: "Project"
+      testName: "TestName-$"
+      runName: "RunName-$"
+      runIdent: "RunIdent-$"
+      suiteName: "SuiteName-$"
+      checks:
+        - filePath: files/A.png
+          checkName: Check - 1
+      """
 
     When I go to "main" page
     When I wait 30 seconds for the element with locator "[data-test*='navbar_item_']" to be visible
@@ -113,18 +113,18 @@ Feature: Select Navbar Item
 
 
   Scenario: Select one item via Url
-  Select multiple items via Url
+    Select multiple items via Url
     When I create "2" tests with:
-    """
-          project: "Project"
-          testName: "TestName-$"
-          runName: "RunName-$"
-          runIdent: "RunIdent-$"
-          suiteName: "SuiteName-$"
-          checks:
-            - filePath: files/A.png
-              checkName: Check - 1
-    """
+      """
+      project: "Project"
+      testName: "TestName-$"
+      runName: "RunName-$"
+      runIdent: "RunIdent-$"
+      suiteName: "SuiteName-$"
+      checks:
+        - filePath: files/A.png
+          checkName: Check - 1
+      """
 
     When I go to "main" page
     When I wait 30 seconds for the element with locator "[data-test*='navbar_item_']" to be visible
@@ -137,9 +137,9 @@ Feature: Select Navbar Item
     When I wait on element "[data-table-test-name=TestName-1]" to not be displayed
 
     When I execute javascript code:
-    """
+      """
     return {url: window.location.href}
-    """
+      """
 
     When I go to "main" page
     When I open the url "<js:url>"
@@ -151,18 +151,18 @@ Feature: Select Navbar Item
     Then the css attribute "background-color" from element "//*[@data-test='navbar-item-name' and contains(., 'RunName-1')]/../../../../../../.." is "rgba(0,0,0,0)"
 
   Scenario: Select two items via Url
-  Select multiple items via Url
+    Select multiple items via Url
     When I create "2" tests with:
-    """
-          project: "Project"
-          testName: "TestName-$"
-          runName: "RunName-$"
-          runIdent: "RunIdent-$"
-          suiteName: "SuiteName-$"
-          checks:
-      - filePath: files/A.png
-              checkName: Check - 1
-    """
+      """
+      project: "Project"
+      testName: "TestName-$"
+      runName: "RunName-$"
+      runIdent: "RunIdent-$"
+      suiteName: "SuiteName-$"
+      checks:
+        - filePath: files/A.png
+          checkName: Check - 1
+      """
 
     When I go to "main" page
     When I wait 30 seconds for the element with locator "[data-test*='navbar_item_']" to be visible
@@ -177,9 +177,9 @@ Feature: Select Navbar Item
     When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-1]" to be visible
 
     When I execute javascript code:
-    """
+      """
     return {url: window.location.href}
-    """
+      """
 
     When I go to "main" page
     When I open the url "<js:url>"

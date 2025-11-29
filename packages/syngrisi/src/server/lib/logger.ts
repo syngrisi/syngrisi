@@ -3,7 +3,6 @@ import 'winston-mongodb';
 import chalk from 'chalk';
 import formatISOToDateTime from '@utils/formatISOToDateTime';
 import { config } from '@config';
-import path from 'path';
 import { LogOpts } from '@types';
 import { ApiError } from '../utils';
 import { env } from "@env";
@@ -13,36 +12,6 @@ const logLevel: string = env.SYNGRISI_LOG_LEVEL;
 interface LoggerOptions {
     dbConnectionString: string;
 }
-function getScriptLine(): string {
-    const stack = new Error().stack;
-
-    if (stack) {
-        const stackLines = stack.split('\n');
-        let loggerLineIndex = -1;
-
-        // last string contains 'lib/logger'
-        for (let i = 0; i < stackLines.length; i++) {
-            if (stackLines[i].includes('lib/logger')) {
-                loggerLineIndex = i;
-            }
-        }
-
-        // check string after 'lib/logger'
-        const targetLineIndex = loggerLineIndex + 1;
-        if (targetLineIndex >= 0 && targetLineIndex < stackLines.length) {
-            const targetLine = stackLines[targetLineIndex];
-            const match = targetLine.match(/at\s+(?:.+\s+\()?(.+):(\d+):(\d+)\)?/);
-            if (match) {
-                const scriptPath = match[1];
-                const relativePath = path.relative(process.cwd(), scriptPath);
-                const lineNumber = match[2];
-                return `${relativePath}:${lineNumber}`;
-            }
-        }
-    }
-    return 'unknown';
-}
-
 function createWinstonLogger(opts: LoggerOptions): WinstonLogger {
     const transports: winston.transport[] = [
         new winston.transports.Console({
@@ -57,7 +26,7 @@ function createWinstonLogger(opts: LoggerOptions): WinstonLogger {
                     const ref = info.metadata.ref ? chalk.gray(` ${info.metadata.ref}`) : '';
                     const msgType = info.metadata.msgType ? ` ${info.metadata.msgType}` : '';
                     const itemType = info.metadata.itemType ? chalk.magenta(` ${info.metadata.itemType}`) : '';
-                    const scope = info.metadata.scope ? chalk.magenta(` [${info.metadata.scope}] `) : chalk.magenta(` [${getScriptLine()}] `);
+                    const scope = info.metadata.scope ? chalk.magenta(` [${info.metadata.scope}]`) : '';
                     const msg = typeof info.message === 'object'
                         ? `\n${JSON.stringify(info.message, null, 2)}`
                         : info.message;
@@ -106,9 +75,6 @@ class Logger {
 
     private log(severity: string, msg: string | object, meta: LogOpts[]): void {
         const mergedMeta = Logger.mergeMeta(meta);
-        if (!mergedMeta.scope) {
-            mergedMeta.scope = getScriptLine();
-        }
         const formattedMsg = typeof msg === 'object' ? JSON.stringify(msg, null, 2) : msg;
         this.winstonLogger.log(severity, formattedMsg, mergedMeta);
     }
