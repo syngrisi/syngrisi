@@ -15,12 +15,15 @@ module.exports = {
 
     // Function to transform path with parameters
     function transformPath(path) {
+      if (typeof path !== 'string') {
+        return path;
+      }
       return path.replace(/\/:([^\/]+)/g, '/{$1}');
     }
 
     // Function to track API route call
     function trackApiRoute(node, method, path) {
-      if (path) {
+      if (path && typeof path === 'string') {
         path = transformPath(path);
         apiCalls.set(node, { method, path });
       }

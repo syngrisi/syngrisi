@@ -59,13 +59,17 @@ export const normalizeIncomingApiKey = (rawKey: unknown): string | undefined => 
 
 
 const handleBasicAuth = async (req: ExtRequest): Promise<any> => {
+
     const logOpts = {
         scope: 'handleBasicAuth',
         msgType: 'AUTH_API',
     };
 
     const AppSettings = appSettings;
+
     const authEnabled = await AppSettings.isAuthEnabled();
+
+
 
     if (req.isAuthenticated()) {
         return { type: 'success', status: 200 };
@@ -220,7 +224,14 @@ export function ensureApiKey(): (req: Request, res: Response, next: NextFunction
 
 export function ensureLoggedInOrApiKey(): (req: Request, res: Response, next: NextFunction) => Promise<void> {
     return async (req: Request, res: Response, next: NextFunction) => {
+
         const basicAuthResult = await handleBasicAuth(req);
+
+
+
+        if (basicAuthResult.type === 'success') {
+            return next();
+        }
 
         const rawApiKey = req.headers.apikey ?? req.query.apikey;
         const apiKeyResult = await handleAPIAuth(rawApiKey);
@@ -229,10 +240,7 @@ export function ensureLoggedInOrApiKey(): (req: Request, res: Response, next: Ne
             delete (req.query as Record<string, unknown>).apikey;
         }
 
-        if (
-            (basicAuthResult.type !== 'success')
-            && (apiKeyResult.type !== 'success')
-        ) {
+        if (apiKeyResult.type !== 'success') {
             log.info(`Unauthorized - ${req.originalUrl}`);
             res.status(401).json({ error: `Unauthorized - ${req.originalUrl}` });
             return next(new Error(`Unauthorized - ${req.originalUrl}`));

@@ -21,12 +21,16 @@ class AppSettings {
     }
 
     private async refreshCache() {
+
         this.cache = await this.model.find().lean().exec();
+
         this.lastFetch = Date.now();
     }
 
     private async ensureInitialized() {
+
         if (!this.cache) {
+
             // If not initialized, try to initialize (lazy init fallback, though explicit init is preferred)
             await this.refreshCache();
         }
