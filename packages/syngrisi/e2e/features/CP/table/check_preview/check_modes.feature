@@ -7,10 +7,14 @@ Feature: Checks Preview Modes
   When I open the app
   When I clear local storage
 
+  Scenario: Checks Preview Modes
+  Given I create "1" tests with:
+      """
           testName: "TestName"
           checks:
             - checkName: CheckName
               filePath: files/A.png
+      """
   When I go to "main" page
   When I unfold the test "TestName"
 
