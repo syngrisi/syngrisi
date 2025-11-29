@@ -4,55 +4,51 @@ Feature: Checks Preview Modes
   Background:
 #     Given I clear Database and stop Server
 #     Given I start Server and start Driver
-    When I open the app
-    When I clear local storage
+  When I open the app
+  When I clear local storage
 
-  Scenario: Checks Preview Modes
-    Given I create "1" tests with:
-      """
           testName: "TestName"
           checks:
-              - checkName: CheckName
-                filePath: files/A.png
-      """
-    When I go to "main" page
-    When I unfold the test "TestName"
+            - checkName: CheckName
+              filePath: files/A.png
+  When I go to "main" page
+  When I unfold the test "TestName"
 
-    When I click element with locator "[aria-label='Table settings, sorting, and columns visibility']"
+  When I click element with locator "[aria-label='Table settings, sorting, and columns visibility']"
 
-    Then the css attribute "max-height" from element "[data-test-preview-image='CheckName'] img" is "153.6px"
+  Then the css attribute "max-height" from element "[data-test-preview-image='CheckName'] img" is "153.6px"
 
-    When I click element with locator "//*[@data-test='preview-mode-segment-control']//label[text()='normal']"
+  When I click element with locator "//*[@data-test='preview-mode-segment-control']//label[text()='normal']"
 
-    Then the css attribute "max-height" from element "[data-test-preview-image='CheckName'] img" is "none"
+  Then the css attribute "max-height" from element "[data-test-preview-image='CheckName'] img" is "none"
 
-    When I click element with locator "//*[@data-test='preview-mode-segment-control']//label[text()='list']"
+  When I click element with locator "//*[@data-test='preview-mode-segment-control']//label[text()='list']"
 
-    Then the css attribute "width" from element "[data-test-preview-image='CheckName'] img" is "76.7969px"
+  Then the css attribute "width" from element "[data-test-preview-image='CheckName'] img" is "76.7969px"
 
   Scenario: Checks Preview Sizes on Bounded mode
-    Given I create "1" tests with:
+  Given I create "1" tests with:
       """
           testName: "TestName"
           checks:
-              - checkName: CheckName
-                filePath: files/A.png
+            - checkName: CheckName
+              filePath: files/A.png
       """
-    When I go to "main" page
-    When I unfold the test "TestName"
+  When I go to "main" page
+  When I unfold the test "TestName"
 
-    When I click element with locator "[aria-label='Table settings, sorting, and columns visibility']"
+  When I click element with locator "[aria-label='Table settings, sorting, and columns visibility']"
 
-    Then the css attribute "width" from element "[data-test-preview-image='CheckName'] img" is "113.75px"
+  Then the css attribute "width" from element "[data-test-preview-image='CheckName'] img" is "113.75px"
 
-    When I click element with locator "//*[@data-test='preview-size-segment-control']//label[text()='small']"
+  When I click element with locator "//*[@data-test='preview-size-segment-control']//label[text()='small']"
 
-    Then the css attribute "width" from element "[data-test-preview-image='CheckName'] img" is "69.5938px"
+  Then the css attribute "width" from element "[data-test-preview-image='CheckName'] img" is "69.5938px"
 
-    When I click element with locator "//*[@data-test='preview-size-segment-control']//label[text()='large']"
+  When I click element with locator "//*[@data-test='preview-size-segment-control']//label[text()='large']"
 
-    Then the css attribute "width" from element "[data-test-preview-image='CheckName'] img" is "202.07px"
+  Then the css attribute "width" from element "[data-test-preview-image='CheckName'] img" is "202.07px"
 
-    When I click element with locator "//*[@data-test='preview-size-segment-control']//label[text()='xlarge']"
+  When I click element with locator "//*[@data-test='preview-size-segment-control']//label[text()='xlarge']"
 
-    Then the css attribute "width" from element "[data-test-preview-image='CheckName'] img" is "290.383px"
+  Then the css attribute "width" from element "[data-test-preview-image='CheckName'] img" is "290.383px"
