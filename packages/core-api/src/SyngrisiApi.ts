@@ -371,6 +371,42 @@ class SyngrisiApi {
             return errorObject(e)
         }
     }
+
+    /**
+     * Accepts a check by setting a new baseline for it.
+     *
+     * @param {string} checkId - The unique identifier of the check to accept.
+     * @param {string} baselineId - The unique identifier of the baseline to set as the new accepted baseline.
+     * @returns {Promise<CheckResponse | ErrorObject>} A promise that resolves with the updated check data or ErrorObject.
+     * @example
+     * const apiClient = new SyngrisiApi({
+     *     url: 'http://<your-domain>/',
+     *     apiKey: 'your-api-key'
+     * });
+     * const result = await apiClient.acceptCheck('check-id-123', 'baseline-id-456');
+     */
+    public async acceptCheck(checkId: string, baselineId: string): Promise<CheckResponse | ErrorObject> {
+        try {
+            if (!checkId) {
+                throw new Error('checkId is required')
+            }
+            if (!baselineId) {
+                throw new Error('baselineId is required')
+            }
+
+            const url = `${this.config.url}v1/checks/${checkId}/accept`
+            const result: CheckResponse = await got.put(url, {
+                json: { baselineId },
+                headers: { apikey: this.config.apiHash },
+            }).json()
+
+            return result
+        } catch (e: any) {
+            log.error(`❌ Error accepting check, checkId: '${checkId}', baselineId: '${baselineId}', error: '${e.stack || e}'`)
+            if (e.response) printErrorResponseBody(e)
+            return errorObject(e)
+        }
+    }
 }
 
 export { SyngrisiApi }

@@ -5,7 +5,7 @@
  * @module PlaywrightDriver
  */
 import hasha from 'hasha'
-import { SyngrisiApi, SessionResponse, ErrorObject, SnapshotResponse, Snapshot } from '@syngrisi/core-api'
+import { SyngrisiApi, SessionResponse, ErrorObject, SnapshotResponse, Snapshot, CheckResponse } from '@syngrisi/core-api'
 import { Browser, Page } from '@playwright/test'
 import { ViewportSize } from 'playwright-core'
 import { LogLevelDesc } from 'loglevel'
@@ -310,6 +310,38 @@ export class PlaywrightDriver {
             return result
         } catch (e: any) {
             log.error(`cannot create check, params: '${JSON.stringify(params)}' opts: '${JSON.stringify(opts)}, error: '${e.stack || e.toString()}'`)
+            throw e
+        }
+    }
+
+    /**
+     * Accepts a check by setting a new baseline for it.
+     * @param {string} checkId - The unique identifier of the check to accept.
+     * @param {string} baselineId - The unique identifier of the baseline to set as the new accepted baseline.
+     * @param {boolean} [suppressErrors=false] - Whether to suppress errors and not throw exceptions.
+     * @returns {Promise<CheckResponse | ErrorObject>} - The result of the accept operation.
+     * @example
+     * const driver = new PlaywrightDriver({ page, url: 'http://syngrisi-server.com', apiKey: 'your-api-key' });
+     * const result = await driver.acceptCheck({
+     *   checkId: 'check-id-123',
+     *   baselineId: 'baseline-id-456'
+     * });
+     */
+    async acceptCheck({ checkId, baselineId, suppressErrors = false }: {
+        checkId: string,
+        baselineId: string,
+        suppressErrors?: boolean
+    }): Promise<CheckResponse | ErrorObject> {
+        try {
+            const result = await this.api.acceptCheck(checkId, baselineId)
+
+            if ((result as ErrorObject).error && !suppressErrors) {
+                throw `❌ Accept Check error: ${JSON.stringify(result, null, '  ')}`
+            }
+            return result
+        } catch (e: any) {
+            const eMsg = `Cannot accept check, checkId: '${checkId}', baselineId: '${baselineId}', error: '${e.stack || e.toString()}'`
+            log.error(eMsg)
             throw e
         }
     }
