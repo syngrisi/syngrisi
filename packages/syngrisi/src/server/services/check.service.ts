@@ -13,6 +13,7 @@ import * as orm from '@lib/dbItems';
 import log from '@lib/logger';
 import { BaselineDocument } from '@models/Baseline.model';
 import { LogOpts, RequestUser } from '@root/src/types';
+import { webhookService } from './webhook.service';
 
 async function calculateTestStatus(testId: string): Promise<string> {
     const checksInTest = await Check.find({ test: testId });
@@ -231,25 +232,43 @@ const enrichChecksWithCurrentAcceptance = async (
     const baselinesMap = new Map<string, Record<string, unknown>>();
 
     if (baselineQueries.length > 0) {
-        for (const query of baselineQueries) {
-            const baseline = await Baseline.findOne(query)
-                .sort({ createdDate: -1 })
-                .select('snapshootId name viewport browserName os app branch')
-                .lean();
+        try {
+            const baselines = await Baseline.aggregate([
+                {
+                    $match: { $or: baselineQueries },
+                },
+                {
+                    $sort: { createdDate: -1 },
+                },
+                {
+                    $group: {
+                        _id: {
+                            name: '$name',
+                            viewport: '$viewport',
+                            browserName: '$browserName',
+                            os: '$os',
+                            app: '$app',
+                            branch: '$branch',
+                        },
+                        doc: { $first: '$$ROOT' },
+                    },
+                },
+                {
+                    $replaceRoot: { newRoot: '$doc' },
+                },
+            ]).exec();
 
-            if (baseline) {
+            baselines.forEach((baseline) => {
                 const baselineObj = baseline as unknown as Record<string, unknown>;
                 const identKey = identFields.map((field) => extractIdentValueAsString(baselineObj?.[field])).join('|');
                 baselinesMap.set(identKey, baselineObj);
                 log.debug(`[enrichChecks] Found baseline for identKey=${identKey}, snapshootId=${baselineObj.snapshootId}`, {
                     scope: 'enrichChecksWithCurrentAcceptance',
                 });
-            } else {
-                const identKey = identFields.map((field) => extractIdentValueAsString((query as Record<string, unknown>)?.[field])).join('|');
-                log.debug(`[enrichChecks] No baseline found for identKey=${identKey}, query=${JSON.stringify(query)}`, {
-                    scope: 'enrichChecksWithCurrentAcceptance',
-                });
-            }
+            });
+        } catch (err) {
+            log.error(`[enrichChecks] Error fetching baselines: ${err}`, { scope: 'enrichChecksWithCurrentAcceptance' });
+            throw err;
         }
     }
 
@@ -350,6 +369,7 @@ const accept = async (
     await check.save();
     log.debug(`check with id: '${id}' was updated`, logOpts);
     const [enrichedCheck] = await enrichChecksWithCurrentAcceptance([check]);
+    webhookService.triggerWebhooks('check.updated', enrichedCheck).catch((e) => log.error(`Webhook error: ${e}`));
     return enrichedCheck;
 };
 
@@ -435,11 +455,13 @@ const update = async (id: string, opts: Partial<CheckDocument>, user: string): P
     await orm.updateItemDate('VRSTest', test);
     await test.save();
     await check.save();
+    webhookService.triggerWebhooks('check.updated', check).catch((e) => log.error(`Webhook error: ${e}`));
     return check;
 };
 
 const createCheckDocument = async (checkParams: any, session?: any): Promise<CheckDocument> => {
     const [check] = await Check.create([checkParams], { session });
+    webhookService.triggerWebhooks('check.created', check).catch((e) => log.error(`Webhook error: ${e}`));
     return check;
 };
 
