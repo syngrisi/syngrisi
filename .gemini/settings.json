@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "test_engine": {
+      "command": "npx",
+      "args": ["--workspace", "@zenflow/e2e", "tsx", "support/mcp/bridge-cli.ts"],
+      "env": {}
+    }
+  }
+}
