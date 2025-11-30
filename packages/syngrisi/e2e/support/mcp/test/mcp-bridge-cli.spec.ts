@@ -85,6 +85,7 @@ const startBridgeCli = async (
       MCP_KEEP_ALIVE: '0', // Default to non-keepalive mode for tests
       ZENFLOW_WORKER_INSTANCE: workerInstanceId,
       MCP_DEFAULT_PORT: preferredPort,
+      E2E_HEADLESS: '1',
       ...envOverrides,
     },
     stderr: 'pipe',
@@ -213,14 +214,15 @@ test.describe('MCP Bridge CLI tests', { tag: '@no-app-start' }, () => {
       const toolsResultBootstrap = await client.listTools(undefined, { timeout: TIMEOUTS.LIST_TOOLS });
       const toolNamesBootstrap = toolsResultBootstrap.tools.map(({ name }) => name);
 
-      expect(toolNamesBootstrap, 'Bootstrap tools should include all expected methods').toEqual(
+      expect(toolNamesBootstrap, 'Bootstrap tools should NOT include step_execute_many').toEqual(
         expect.arrayContaining([
           'session_start_new',
           'step_execute_single',
-          'step_execute_many',
           'attach_existing_session',
         ]),
       );
+
+      expect(toolNamesBootstrap, 'step_execute_many should NOT be in bootstrap - it comes from remote server').not.toContain('step_execute_many');
 
       const nonSessionTools = toolsResultBootstrap.tools.filter(
         ({ name }) => name !== 'session_start_new' && name !== 'attach_existing_session',
@@ -231,8 +233,6 @@ test.describe('MCP Bridge CLI tests', { tag: '@no-app-start' }, () => {
           switch (tool.name) {
             case 'step_execute_single':
               return { stepText: 'I get current URL' };
-            case 'step_execute_many':
-              return { steps: [{ stepText: 'I get current URL' }] };
             default:
               return {};
           }
@@ -256,7 +256,7 @@ test.describe('MCP Bridge CLI tests', { tag: '@no-app-start' }, () => {
       const toolsResultAfter = await client.listTools(undefined, { timeout: TIMEOUTS.LIST_TOOLS });
       const toolNamesAfter = toolsResultAfter.tools.map(({ name }) => name);
 
-      expect(toolNamesAfter, 'Post-session tools should be available').toEqual(
+      expect(toolNamesAfter, 'Post-session tools should include step_execute_many from remote server').toEqual(
         expect.arrayContaining([
           'step_execute_single',
           'step_execute_many',

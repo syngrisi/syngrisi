@@ -27,6 +27,7 @@ export async function spawnMcpServer(options: SpawnServerOptions): Promise<Spawn
     ...process.env,
     MCP_KEEP_ALIVE: '0',
     PORT: String(port),
+    E2E_HEADLESS: process.env.E2E_HEADLESS || '0',
     ...(extraEnv ?? {}),
   };
 
@@ -39,13 +40,13 @@ export async function spawnMcpServer(options: SpawnServerOptions): Promise<Spawn
   }
 
   const projectRoot = getProjectRoot();
-  const e2eRoot = path.join(projectRoot, 'e2e');
+  const e2eRoot = projectRoot;
 
   const spawnArgs = [
     'playwright',
     'test',
     '--config',
-    path.join(e2eRoot, 'support/mcp/playwright.config.ts'),
+    path.join(e2eRoot, 'support/mcp/playwright.server.config.ts'),
     '--project=chromium',
     path.join(e2eRoot, 'support/mcp/mcp.spec.ts'),
   ];
@@ -112,7 +113,7 @@ export async function spawnMcpServer(options: SpawnServerOptions): Promise<Spawn
   child.on('error', onError);
 
   const finalPort = await readyPromise;
-  
+
   if (resolvedPort === null) {
     throw new Error('Playwright server did not report a listening port');
   }

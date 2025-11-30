@@ -46,7 +46,7 @@
   },
   "description": "A WebdriverIO runner to run tests locally",
   "engines": {
-    "node": ">=10.0.0"
+    "node": ">=22.19.0"
   },
   "gitHead": "063970498c9b1142482a1a035aa699c64cc8215c",
   "homepage": "https://github.com/webdriverio/webdriverio/tree/master/packages/wdio-local-runner",
