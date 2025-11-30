@@ -56,7 +56,7 @@ export function setSkipAutoStart(value: boolean): void {
 }
 
 export function getSkipAutoStart(): boolean {
-  return skipAutoStartMap.get(getCurrentCid()) ?? true;
+  return skipAutoStartMap.get(getCurrentCid()) ?? false;
 }
 
 /**
@@ -68,7 +68,12 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
     async ({ page, $step, $uri }, use, testInfo) => {
       // CRITICAL: Set TEST_WORKER_INDEX BEFORE any code that uses getCurrentCid()
       // This ensures proper isolation between parallel workers
-      process.env.TEST_WORKER_INDEX = String(testInfo.parallelIndex);
+      // BUT: Don't override if already set to a high value (100+) - this means we're in a
+      // spawned subprocess that needs its own unique isolation
+      const existingWorkerIndex = parseInt(process.env.TEST_WORKER_INDEX || '0', 10);
+      if (existingWorkerIndex < 100) {
+        process.env.TEST_WORKER_INDEX = String(testInfo.parallelIndex);
+      }
 
       const tempDir = getWorkerTempDir();
       logger.debug(`Using temp directory: ${tempDir}`);
@@ -139,8 +144,12 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           serverInstances.delete(cid);
         }
         // Also stop via pkill to ensure process is killed
-        const { stopServerProcess } = require('@utils/app-server');
-        stopServerProcess();
+        // BUT: Skip pkill if we're in a spawned subprocess (TEST_WORKER_INDEX >= 100)
+        const currentWorkerIndex = parseInt(process.env.TEST_WORKER_INDEX || '0', 10);
+        if (currentWorkerIndex < 100) {
+          const { stopServerProcess } = require('@utils/app-server');
+          stopServerProcess();
+        }
         fixtureValue.baseURL = '';
         fixtureValue.serverPort = 0;
         fixtureValue.getBackendLogs = () => 'App server stopped';
@@ -183,8 +192,13 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
         }
 
         // Also stop any process that might be running on the port (via pkill)
-        const { stopServerProcess } = require('@utils/app-server');
-        stopServerProcess();
+        // BUT: Skip this if we're in a spawned subprocess (TEST_WORKER_INDEX >= 100)
+        // to avoid killing servers from parallel tests
+        const currentWorkerIndex = parseInt(process.env.TEST_WORKER_INDEX || '0', 10);
+        if (currentWorkerIndex < 100) {
+          const { stopServerProcess } = require('@utils/app-server');
+          stopServerProcess();
+        }
 
         logger.info(`Launching Syngrisi app server`);
         // Use current process.env for server restart (includes env variables set by "I set env variables:")
@@ -252,9 +266,13 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
         // Fast-server mode ALWAYS starts fresh to ensure correct env vars (auth=false, SSO=false)
         // This is critical because a non-fast-server test (like SSO tests) may have left
         // a server running with different settings (auth=true)
+        // BUT: Skip pkill if we're in a spawned subprocess (TEST_WORKER_INDEX >= 100)
+        const currentWorkerIndex = parseInt(process.env.TEST_WORKER_INDEX || '0', 10);
         if (running) {
           logger.info(`Fast mode: stopping existing server on port ${workerPort} to ensure clean config`);
-          stopServerProcess();
+          if (currentWorkerIndex < 100) {
+            stopServerProcess();
+          }
           // Wait for server to actually stop to avoid race conditions (EADDRINUSE or connecting to old server)
           await waitFor(() => isServerRunning(workerPort).then((r) => !r), {
             timeoutMs: 5000,
@@ -302,19 +320,43 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           getFrontendLogs: fixtureValue.getFrontendLogs,
           restart: async () => {
             logger.info(`Fast mode restart: relaunching server on port ${workerPort} (using process.env)`);
-            stopServerProcess();
+            // Skip pkill if we're in a spawned subprocess (TEST_WORKER_INDEX >= 100)
+            if (currentWorkerIndex < 100) {
+              stopServerProcess();
+              // Wait for server to actually stop to avoid race conditions (EADDRINUSE or pkill killing new server)
+              await waitFor(() => isServerRunning(workerPort).then((r) => !r), {
+                timeoutMs: 5000,
+                description: `Server stop on port ${workerPort}`,
+              });
+            }
             // Use process.env values since test may have set them via "I set env variables"
             await launchFreshInstance(true);
           },
           start: async () => {
             logger.info(`Fast mode: restarting server to apply latest env on port ${workerPort} (using process.env)`);
-            stopServerProcess();
+            // Skip pkill if we're in a spawned subprocess (TEST_WORKER_INDEX >= 100)
+            if (currentWorkerIndex < 100) {
+              stopServerProcess();
+              // Wait for server to actually stop to avoid race conditions (EADDRINUSE or pkill killing new server)
+              await waitFor(() => isServerRunning(workerPort).then((r) => !r), {
+                timeoutMs: 5000,
+                description: `Server stop on port ${workerPort}`,
+              });
+            }
             // Use process.env values since test may have set them via "I set env variables"
             await launchFreshInstance(true);
           },
           stop: async () => {
             logger.info(`Fast mode: stopping server on port ${workerPort}`);
-            stopServerProcess();
+            // Skip pkill if we're in a spawned subprocess (TEST_WORKER_INDEX >= 100)
+            if (currentWorkerIndex < 100) {
+              stopServerProcess();
+              // Wait for server to actually stop
+              await waitFor(() => isServerRunning(workerPort).then((r) => !r), {
+                timeoutMs: 5000,
+                description: `Server stop on port ${workerPort}`,
+              });
+            }
             serverInstances.delete(cid);
           },
         };
