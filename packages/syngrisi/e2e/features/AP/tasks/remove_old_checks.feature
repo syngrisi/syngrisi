@@ -19,7 +19,7 @@ Feature: Task - Remove old checks
       SYNGRISI_AUTH: true
       SYNGRISI_AUTO_REMOVE_CHECKS_POLL_INTERVAL_MS: 1000
       """
-    # Given I start Server and start Driver
+    Given I start Server
 
     # create user
     When I login via http with user:"Test" password "123456aA-"
