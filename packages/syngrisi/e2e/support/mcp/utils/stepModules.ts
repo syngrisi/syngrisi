@@ -1,10 +1,14 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-import { e2eRoot } from '../config';
+import { e2eRoot, mcpRoot, stepsRoot } from '../config';
 import logger, { formatArgs } from './logger';
-
-const mcpRoot = path.join(__dirname, '..');
+import {
+  getCustomStepCount,
+  findCustomStepDefinitions,
+  executeCustomStep,
+  type MatchedStep,
+} from './customStepRegistry';
 
 const loadTypeScriptModule = async (modulePath: string) => {
   void require('tsx/cjs');
@@ -16,6 +20,10 @@ const loadTypeScriptModule = async (modulePath: string) => {
     logger.warn(formatArgs(`⚠️ Failed to load step module: ${modulePath}`, err));
   }
 };
+
+// Re-export custom step registry functions for external use
+export { findCustomStepDefinitions, executeCustomStep, getCustomStepCount };
+export type { MatchedStep };
 
 const loadStepModulesRecursively = async (dir: string): Promise<void> => {
   try {
@@ -39,14 +47,14 @@ const loadStepModulesRecursively = async (dir: string): Promise<void> => {
 
 export const initializeStepFinder = async () => {
   const stepDirs = [
-    path.join(e2eRoot, 'steps'),
-    path.join(mcpRoot, 'sd'),
+    stepsRoot, // packages/syngrisi/e2e/steps
+    path.join(mcpRoot, 'sd'), // packages/syngrisi/e2e/support/mcp/sd
   ];
 
   await Promise.all(stepDirs.map(async (dir) => loadStepModulesRecursively(dir)));
 
   const stepFinderPath = path.join(
-    e2eRoot,
+    e2eRoot, // e2e root contains node_modules for playwright-bdd
     'node_modules',
     'playwright-bdd',
     'dist',
@@ -67,13 +75,17 @@ export const initializeStepFinder = async () => {
     );
     // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
     const { stepDefinitions } = require(stepRegistryPath);
-    logger.info(formatArgs(`📊 Registered step definitions: ${stepDefinitions.length}`));
+    logger.info(formatArgs(`📊 playwright-bdd step definitions: ${stepDefinitions.length}`));
     stepDefinitions.slice(0, 3).forEach((definition: any, idx: number) => {
       logger.info(formatArgs(`  ${idx + 1}. ${definition.keyword} ${definition.patternString}`));
     });
   } catch (err) {
     logger.warn(formatArgs('⚠️ Unable to read step registry:', err));
   }
+
+  // Log custom step registry count
+  const customCount = getCustomStepCount();
+  logger.info(formatArgs(`📊 Custom step definitions: ${customCount}`));
 
   return StepFinder;
 };

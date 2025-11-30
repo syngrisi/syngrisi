@@ -21,8 +21,8 @@
     "test:stats": "node support/stats.js",
     "test:smoke": "bddgen && cross-env SYNGRISI_LOG_LEVEL=warn playwright test --grep=@smoke --retries=1 --workers=10 --shard=${SHARD:-1/1}",
     "test:headed": "bddgen && cross-env SYNGRISI_LOG_LEVEL=warn PLAYWRIGHT_HEADED=1 playwright test",
-    "test:mcp": "cross-env SYNGRISI_LOG_LEVEL=warn MCP_KEEP_ALIVE=0 playwright test --workers=1 --config support/mcp/playwright.config.ts support/mcp/mcp.spec.ts",
-    "test:mcp:headed": "cross-env SYNGRISI_LOG_LEVEL=warn MCP_KEEP_ALIVE=1 PLAYWRIGHT_HEADED=1 playwright test --workers=1 --config support/mcp/playwright.config.ts support/mcp/mcp.spec.ts"
+    "test:mcp": "cross-env SYNGRISI_LOG_LEVEL=warn MCP_KEEP_ALIVE=0 E2E_HEADLESS=1 playwright test --workers=1 --config support/mcp/playwright.config.ts",
+    "test:mcp:headed": "cross-env SYNGRISI_LOG_LEVEL=warn MCP_KEEP_ALIVE=1 PLAYWRIGHT_HEADED=1 playwright test --workers=1 --config support/mcp/playwright.config.ts"
   },
   "devDependencies": {
     "@cucumber/cucumber-expressions": "^18.0.1",
@@ -38,7 +38,7 @@
     "playwright-mcp-advanced": "^0.1.0",
     "typescript": "^5.9.3",
     "winston": "^3.18.3",
-    "zod": "^3.23.8"
+    "zod": "^4.1.12"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.21.1",

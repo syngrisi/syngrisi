@@ -1,4 +1,4 @@
-FROM node:14.20.0
+FROM node:22.19.0
 
 # Install Chromium and its dependencies
 RUN apt-get update && apt-get install -y \

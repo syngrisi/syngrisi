@@ -21,7 +21,7 @@ defineBddConfig(bddConfig);
 
 export default defineConfig({
   testDir,
-  testMatch: 'test/**/*.spec.ts',
+  testMatch: 'mcp.spec.ts',
   fullyParallel: true,
   use: {
     viewport: null,

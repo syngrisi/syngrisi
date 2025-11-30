@@ -17,6 +17,7 @@ import logger, { formatArgs } from './logger';
 import { requirePlaywrightBddModule } from './playwrightBddPaths';
 import { emmetifyCompactHtml } from './emmetify';
 import { getStepDefinitionsFilePath } from './stepDefinitionsStorage';
+import { findCustomStepDefinitions, type MatchedStep } from './stepModules';
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const { BddStepInvoker } = requirePlaywrightBddModule<{ BddStepInvoker: any }>(
@@ -227,6 +228,8 @@ interface StepValidationResult {
   normalizedText: string;
   keyword: string;
   matchedDefinition: any;
+  useCustomExecution?: boolean;
+  customMatch?: MatchedStep;
 }
 
 interface StepValidationError {
@@ -243,7 +246,7 @@ const validateAndResolveStep = async (
 ): Promise<ValidationResult> => {
   const normalizedText = removeGherkinKeywords(stepText);
 
-  // Find step definitions
+  // Find step definitions from playwright-bdd registry
   let stepDefinitions: any[];
   try {
     stepDefinitions = findStepDefinitionsForText(dependencies.stepFinder, normalizedText);
@@ -254,15 +257,43 @@ const validateAndResolveStep = async (
     return { ok: false, errorResponse: createErrorResponse(message) };
   }
 
-  const keyword = getStepKeyword(stepDefinitions);
-
-  // Handle no definitions found
+  // If playwright-bdd registry is empty, try custom step registry
   if (stepDefinitions.length === 0) {
+    const customMatches = findCustomStepDefinitions(normalizedText);
+
+    if (customMatches.length === 1) {
+      const customMatch = customMatches[0];
+      const keyword = customMatch.definition.keyword;
+      logger.info(formatArgs(`🔧 Using custom step registry for: "${normalizedText}"`));
+
+      return {
+        ok: true,
+        normalizedText,
+        keyword,
+        matchedDefinition: customMatch,
+        useCustomExecution: true,
+        customMatch,
+      };
+    }
+
+    if (customMatches.length > 1) {
+      const variants = customMatches
+        .map((m, index) => {
+          return `${index + 1}. ${m.definition.keyword} "${m.definition.patternString}"`;
+        })
+        .join('\n\n');
+
+      const message = `ERROR: Ambiguous step - multiple custom definitions match: "${normalizedText}"\n\nFound ${customMatches.length} matches:\n\n${variants}`;
+      await logStepExecution('When', normalizedText, 'Fail', sessionId, message);
+      return { ok: false, errorResponse: createErrorResponse(message) };
+    }
+
+    // No custom matches either - fall back to simple token search for suggestions
     const searchResults = simpleTokenSearch(dependencies.llmStepDefinitionsParsed, normalizedText);
 
     if (searchResults.length === 0) {
       const message = `ERROR: No step definitions found for step: "${normalizedText}"\n\nPlease check the step text or define a new step definition.`;
-      await logStepExecution(keyword, normalizedText, 'Not Found', sessionId, message);
+      await logStepExecution('When', normalizedText, 'Not Found', sessionId, message);
       return { ok: false, errorResponse: createErrorResponse(message) };
     }
 
@@ -277,9 +308,11 @@ const validateAndResolveStep = async (
     const stepDefinitionsFiles = await getStepDefinitionsFilePath();
     const filesListFormatted = stepDefinitionsFiles.map(p => `- ${p}`).join('\n');
     const message = `ERROR: Step definition not found for: "${normalizedText}"\n\nDid you mean one of these?\n\n${suggestionsList}\n\nAvailable test steps (open to read):\n${filesListFormatted}`;
-    await logStepExecution(keyword, normalizedText, 'Not Found', sessionId, message);
+    await logStepExecution('When', normalizedText, 'Not Found', sessionId, message);
     return { ok: false, errorResponse: createErrorResponse(message) };
   }
+
+  const keyword = getStepKeyword(stepDefinitions);
 
   // Handle multiple definitions
   if (stepDefinitions.length > 1) {
@@ -295,7 +328,7 @@ const validateAndResolveStep = async (
     return { ok: false, errorResponse: createErrorResponse(message) };
   }
 
-  // Success - single definition found
+  // Success - single definition found from playwright-bdd registry
   return {
     ok: true,
     normalizedText,
@@ -337,6 +370,52 @@ const executeMatchedDefinition = async (
   return createSuccessResponse(responseText);
 };
 
+/**
+ * Execute a step using the custom step registry (bypass BddStepInvoker).
+ */
+const executeCustomStep = async (
+  params: StepExecutorParams,
+  dependencies: StepExecutorDependencies,
+  customMatch: MatchedStep,
+  keyword: string,
+  sessionId: string,
+  stepText: string,
+  startTime: number,
+) => {
+  const textWithKeyword = `${keyword} ${params.stepText}`;
+  dependencies.updateTextWithKeyword?.(textWithKeyword);
+
+  const fixtures = dependencies.fixtures ?? {};
+  const hasDocstring = params.stepDocstring !== undefined && params.stepDocstring !== null;
+
+  logger.info(formatArgs(`🚀 Executing custom step "${textWithKeyword}"`));
+
+  // Get step parameters from the match
+  const parameters = await customMatch.getMatchedParameters();
+
+  // Add docstring to parameters if present
+  if (hasDocstring) {
+    const docStringContent = toDocStringContent(params.stepDocstring);
+    if (docStringContent !== undefined) {
+      parameters.push(docStringContent);
+    }
+  }
+
+  // Execute the step function directly
+  const result = await customMatch.definition.fn(fixtures, ...parameters);
+  logger.info(formatArgs(`✅ Custom step "${textWithKeyword}" completed`));
+
+  const duration = Date.now() - startTime;
+  await logStepExecution(keyword, stepText, 'Ok', sessionId);
+
+  const responseText =
+    result === undefined
+      ? `Duration: ${duration}ms`
+      : `Duration: ${duration}ms\nResult: ${safeStringify(result)}`;
+
+  return createSuccessResponse(responseText);
+};
+
 export const executeStep = async (
   params: StepExecutorParams,
   dependencies: StepExecutorDependencies,
@@ -354,7 +433,28 @@ export const executeStep = async (
     return validation.errorResponse;
   }
 
-  // Execute the matched definition
+  // Execute using custom registry if indicated
+  if (validation.useCustomExecution && validation.customMatch) {
+    try {
+      return await executeCustomStep(
+        params,
+        dependencies,
+        validation.customMatch,
+        validation.keyword,
+        sessionId,
+        validation.normalizedText,
+        startTime,
+      );
+    } catch (err) {
+      const duration = Date.now() - startTime;
+      const errorDetails = formatError(err);
+      const message = `Custom step execution failed for: "${validation.normalizedText}"\n\n⏱️ Duration: ${duration}ms\n\n${errorDetails}`;
+      await logStepExecution(validation.keyword, validation.normalizedText, 'Fail', sessionId, message);
+      return createErrorResponse(message);
+    }
+  }
+
+  // Execute using BddStepInvoker (playwright-bdd registry)
   try {
     return await executeMatchedDefinition(
       params,
@@ -407,11 +507,10 @@ export const executeStep = async (
   }
 };
 
-export async function createStepExecutorTool(
+export const createStepExecutorTool = (
   config: StepExecutorToolConfig,
   dependencies: StepExecutorDependencies,
-) {
-  const { createTool } = await import('playwright-mcp-advanced');
+) => {
   const zParams = createStepParamsSchema(config.supportsDocstring);
 
   return createTool(
@@ -547,10 +646,9 @@ const executePreparedStep = async (
   }
 };
 
-export async function createStepExecutorBatchTool(
+export const createStepExecutorBatchTool = (
   dependencies: StepExecutorDependencies,
-) {
-  const { createTool } = await import('playwright-mcp-advanced');
+) => {
   const zBatchStepObject = createStepParamsSchema(true);
 
   const zBatchStep = z.union([
@@ -567,7 +665,7 @@ export async function createStepExecutorBatchTool(
 
   return createTool(
     'step_execute_many',
-    'Validate and execute a sequence of Gherkin steps with optional docStrings. IMPORTANT: Use ONLY for reproducing multiple steps in sequence. NEVER use for single steps. Do NOT use in diagnostic steps as this tool does not return step values. Do NOT use for steps that return values. использовать только при ≥2 шагах; одиночные шаги запрещены.',
+    'Validate and execute a sequence of Gherkin steps with optional docStrings. IMPORTANT: Use ONLY for reproducing multiple steps in sequence. NEVER use for single steps. Do NOT use in diagnostic steps as this tool does not return step values. Do NOT use for steps that return values.',
     zBatchParams,
     async (params: z.infer<typeof zBatchParams>) => {
       dependencies.onToolInvoked?.();
@@ -608,4 +706,4 @@ export async function createStepExecutorBatchTool(
       type: 'destructive',
     },
   );
-}
+};

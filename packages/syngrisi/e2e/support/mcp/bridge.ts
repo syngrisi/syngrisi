@@ -317,19 +317,21 @@ export class SdioSseBridge {
       return CallToolResultSchema.parse(createErrorResponse('Invalid session name: sessionName'));
     }
 
+    const headless = toolArgs?.headless !== false;
+
     // Initialize new session tracking
     const sessionId = startNewSession(sessionName);
-    this.log(`📝 Session tracking initialized: "${sessionName}" (ID: ${sessionId})`);
-    bridgeLogger.info(`🎬 NEW SESSION STARTED: "${sessionName}" (ID: ${sessionId})`);
+    this.log(`📝 Session tracking initialized: "${sessionName}" (ID: ${sessionId}), headless: ${headless}`);
+    bridgeLogger.info(`🎬 NEW SESSION STARTED: "${sessionName}" (ID: ${sessionId}), headless: ${headless}`);
 
-    await this.restartAndConnectRemote(sessionName);
+    await this.restartAndConnectRemote(sessionName, { headless });
 
     // After connecting to the remote HTTP MCP server, start a new session there as well
     try {
       const client = this.client!;
       const result = await client.callTool({
         name: 'session_start_new',
-        arguments: { sessionName },
+        arguments: { sessionName, headless },
       });
       return CallToolResultSchema.parse(result);
     } catch (error) {
@@ -346,13 +348,13 @@ export class SdioSseBridge {
       const scenario = portInfo.scenario;
       const scenarioLines = scenario
         ? [
-            `Scenario: ${scenario.title ?? 'unknown'}`,
-            scenario.featurePath ? `Feature file: ${scenario.featurePath}` : '',
-            // scenario.featureUri  ? `Feature URI: ${scenario.featureUri}` : '',
-            Array.isArray(scenario.titlePath) && scenario.titlePath.length
-              ? `Title path: ${scenario.titlePath.join(' › ')}`
-              : '',
-          ].filter(Boolean)
+          `Scenario: ${scenario.title ?? 'unknown'}`,
+          scenario.featurePath ? `Feature file: ${scenario.featurePath}` : '',
+          // scenario.featureUri  ? `Feature URI: ${scenario.featureUri}` : '',
+          Array.isArray(scenario.titlePath) && scenario.titlePath.length
+            ? `Title path: ${scenario.titlePath.join(' › ')}`
+            : '',
+        ].filter(Boolean)
         : [];
       const message = [
         `Connected to debug MCP server on port ${portInfo.port}`,
@@ -403,7 +405,7 @@ export class SdioSseBridge {
     this.proxiedHandler.activate();
   }
 
-  private async restartAndConnectRemote(sessionName: string) {
+  private async restartAndConnectRemote(sessionName: string, options?: { headless?: boolean }) {
     this.log(`🔄 Starting new session: "${sessionName}"...`);
     this.log('🛑 Shutting down existing child processes...');
     await this.shutdownChild({ expected: true });
@@ -421,18 +423,32 @@ export class SdioSseBridge {
     );
 
     // Pass idle timeout configuration to spawned server
-    const idleEnv: Record<string, string> = {};
+    const extraEnv: Record<string, string> = {};
     if (process.env.MCP_IDLE_TIMEOUT_MS) {
-      idleEnv.MCP_IDLE_TIMEOUT_MS = process.env.MCP_IDLE_TIMEOUT_MS;
-      this.log(`Adding to extraEnv: MCP_IDLE_TIMEOUT_MS=${idleEnv.MCP_IDLE_TIMEOUT_MS}`);
+      extraEnv.MCP_IDLE_TIMEOUT_MS = process.env.MCP_IDLE_TIMEOUT_MS;
+      this.log(`Adding to extraEnv: MCP_IDLE_TIMEOUT_MS=${extraEnv.MCP_IDLE_TIMEOUT_MS}`);
     }
     if (process.env.MCP_IDLE_CHECK_INTERVAL_MS) {
-      idleEnv.MCP_IDLE_CHECK_INTERVAL_MS = process.env.MCP_IDLE_CHECK_INTERVAL_MS;
-      this.log(`Adding to extraEnv: MCP_IDLE_CHECK_INTERVAL_MS=${idleEnv.MCP_IDLE_CHECK_INTERVAL_MS}`);
+      extraEnv.MCP_IDLE_CHECK_INTERVAL_MS = process.env.MCP_IDLE_CHECK_INTERVAL_MS;
+      this.log(`Adding to extraEnv: MCP_IDLE_CHECK_INTERVAL_MS=${extraEnv.MCP_IDLE_CHECK_INTERVAL_MS}`);
     }
-    this.log(`extraEnv keys: ${Object.keys(idleEnv).join(', ')}`);
+    // Pass headless mode - check env first, then options, default to true (headless)
+    // IMPORTANT: process.env.E2E_HEADLESS might be '0' or '1' or undefined.
+    // If it is defined, we should respect it.
+    // If it is undefined, we use the option passed to session_start_new.
+    // If that is also undefined, we default to '1' (headless).
+    let headlessValue = '1';
+    if (process.env.E2E_HEADLESS !== undefined) {
+      headlessValue = process.env.E2E_HEADLESS;
+    } else if (options?.headless !== undefined) {
+      headlessValue = options.headless ? '1' : '0';
+    }
 
-    await this.spawnServerProcess(port, idleEnv);
+    extraEnv.E2E_HEADLESS = headlessValue;
+    this.log(`Adding to extraEnv: E2E_HEADLESS=${extraEnv.E2E_HEADLESS}`);
+    this.log(`extraEnv keys: ${Object.keys(extraEnv).join(', ')}`);
+
+    await this.spawnServerProcess(port, extraEnv);
     await this.connectToRemoteServerAtPort(this.port!);
   }
 

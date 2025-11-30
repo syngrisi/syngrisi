@@ -24,6 +24,7 @@ export const sessionStartToolDefinition = {
     type: 'object' as const,
     properties: {
       sessionName: { type: 'string', description: 'Human-readable name for the new MCP session' },
+      headless: { type: 'boolean', description: 'Run browser in headless mode (default: true)' },
     },
     required: ['sessionName'],
   },
@@ -39,8 +40,14 @@ export const stepExecuteToolDefinition = {
   inputSchema: {
     type: 'object' as const,
     properties: {
-      stepText: { type: 'string', description: 'Step text without leading keyword (e.g. `I open the app`)' },
-      stepDocstring: { description: 'Optional docString payload for the step' },
+      stepText: {
+        type: 'string' as const,
+        description: 'Step text without leading keyword (e.g. `I open the app`)',
+      },
+      stepDocstring: {
+        type: 'string' as const,
+        description: 'Optional docString payload for the step',
+      },
     },
     required: ['stepText'],
   },
@@ -59,13 +66,8 @@ export const stepExecuteBatchToolDefinition = {
         items: {
           type: 'object',
           properties: {
-            stepText: {
-              type: 'string',
-              description: 'Step text without leading keyword (e.g. `I open the app`)',
-            },
-            stepDocstring: {
-              description: 'Optional docString payload for the step',
-            },
+            stepText: { type: 'string', description: 'Step text without leading keyword (e.g. `I open the app`)' },
+            stepDocstring: { type: 'string', description: 'Optional docString payload for the step' },
           },
           required: ['stepText'],
         },
@@ -90,7 +92,7 @@ export const attachExistingSessionToolDefinition = {
 export const bootstrapToolDefinitions = [
   sessionStartToolDefinition,
   stepExecuteToolDefinition,
-  stepExecuteBatchToolDefinition,
+  // stepExecuteBatchToolDefinition is added via server builder, not bootstrap
   attachExistingSessionToolDefinition,
 ] as const;
 export interface StartMcpServerOptions {
@@ -279,6 +281,10 @@ export async function startMcpServer({
     sessionName: z
       .string()
       .describe('Human-readable name for the new MCP session'),
+    headless: z
+      .boolean()
+      .optional()
+      .describe('Run browser in headless mode (default: true)'),
   });
 
   const internalStartSession = async (sessionName: string) => {
