@@ -38,7 +38,7 @@
     "playwright-mcp-advanced": "^0.1.0",
     "typescript": "^5.9.3",
     "winston": "^3.18.3",
-    "zod": "^4.1.12"
+    "zod": "^3.23.8"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.21.1",
