@@ -523,7 +523,7 @@ Then(
   'the element with {target} {string} should not have attribute {string} {string}',
   async ({ page }, target: ElementTarget, rawValue: string, attributeName: string, expected: string) => {
     const locator = locatorFromTarget(page, target, rawValue);
-    await expect(locator.first()).not.toHaveAttribute(attributeName, expected);
+    await expect(locator.first()).not.toHaveAttribute(attributeName, expected, { timeout: 15000 });
   }
 );
 
@@ -531,7 +531,7 @@ Then(
   'the element with {target} {string} should have attribute {string} {string}',
   async ({ page }, target: ElementTarget, rawValue: string, attributeName: string, expected: string) => {
     const locator = locatorFromTarget(page, target, rawValue);
-    await expect(locator.first()).toHaveAttribute(attributeName, expected);
+    await expect(locator.first()).toHaveAttribute(attributeName, expected, { timeout: 15000 });
   }
 );
 

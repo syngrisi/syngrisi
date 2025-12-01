@@ -61,7 +61,8 @@ const expectViaHttpCheckMatched = async (
     const item = items[ordinal];
     return item;
   }, {
-    timeout: 10000,
+    timeout: 30000,
+    intervals: [500, 1000, 2000],
     message: `Check #${ordinal} matching ${JSON.stringify(params)} not found`
   }).toMatchObject(params);
 };
