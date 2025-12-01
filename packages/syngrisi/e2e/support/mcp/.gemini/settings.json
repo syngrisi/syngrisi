@@ -1,12 +1,12 @@
 {
   "mcpServers": {
-    "playwright-bdd": {
+    "syngrisi-mcp": {
       "command": "npx",
       "args": [
         "tsx",
         "bridge-cli.ts"
       ],
-      "cwd": "/Users/a1/web-qa-automation/mcp2029"
+      "cwd": "/Users/a1/Projects/syngrisi/packages/syngrisi/e2e/support/mcp"
     }
   },
   "model": {
