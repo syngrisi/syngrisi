@@ -3,7 +3,7 @@ import type { AppServerFixture } from '@fixtures';
 import type { TestStore } from '@fixtures';
 
 export interface HttpRequestOptions {
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   json?: Record<string, unknown>;
   form?: Record<string, unknown>;
   body?: string;
