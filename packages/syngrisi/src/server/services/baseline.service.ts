@@ -9,6 +9,7 @@ import httpStatus from 'http-status';
 import { IdentType } from '@utils/buildIdentObject';
 import { BaselineDocument } from '../models/Baseline.model';
 import { CreateCheckParamsExtended } from '../../types/Check';
+import { Types } from 'mongoose';
 
 export async function getAcceptedBaseline(params: IdentType) {
     const identFieldsAccepted = Object.assign(buildIdentObject(params), { markedAs: 'accepted' });
@@ -110,4 +111,65 @@ export const getBaselines = async (filter: RequiredIdentOptionsType, options: Pa
     filter.app = app.id;
     log.debug(`Get baselines with filter: '${JSON.stringify(filter)}', options: '${JSON.stringify(options)}'`, logOpts);
     return Baseline.paginate(filter, options);
+};
+
+export type BaselineUsageRow = { _id: Types.ObjectId | string, count: number };
+export type BaselineUsageMap = Record<string, number>;
+
+/**
+ * Build a fast lookup map for baseline usage counts.
+ */
+export const buildUsageCountMap = (usageRows: BaselineUsageRow[]): BaselineUsageMap => {
+    return usageRows.reduce((acc, row) => {
+        if (!row?._id) return acc;
+        const key = row._id.toString();
+        acc[key] = row.count || 0;
+        return acc;
+    }, {} as BaselineUsageMap);
+};
+
+/**
+ * Get usage counts for given baseline snapshot ids.
+ */
+export const remove = async (id: string, user: { username: string }) => {
+    const logOpts: LogOpts = {
+        scope: 'removeBaseline',
+        itemType: 'baseline',
+        ref: id,
+        user: user?.username,
+        msgType: 'REMOVE',
+    };
+    log.info(`remove baseline with, id: '${id}', user: '${user.username}'`, logOpts);
+
+    const baseline = await Baseline.findByIdAndDelete(id).exec();
+    if (!baseline) {
+        throw new ApiError(httpStatus.NOT_FOUND, `cannot remove baseline with id: '${id}', not found`);
+    }
+    return baseline;
+};
+
+export const getUsageCountsBySnapshotIds = async (snapshootIds: Array<Types.ObjectId | string | undefined | null>): Promise<BaselineUsageMap> => {
+    const normalizedIds = snapshootIds
+        .map((id) => {
+            if (!id) return null;
+            try {
+                return typeof id === 'string'
+                    ? new Types.ObjectId(id)
+                    : (id as Types.ObjectId);
+            } catch {
+                return null;
+            }
+        })
+        .filter((id): id is Types.ObjectId => Boolean(id));
+
+    if (!normalizedIds.length) return {};
+
+    const usageRows = await Check.aggregate(
+        [
+            { $match: { baselineId: { $in: normalizedIds } } },
+            { $group: { _id: '$baselineId', count: { $sum: 1 } } },
+        ],
+    );
+
+    return buildUsageCountMap(usageRows);
 };
