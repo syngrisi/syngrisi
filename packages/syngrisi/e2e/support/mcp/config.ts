@@ -21,8 +21,8 @@ export const env = cleanEnv(process.env, {
     desc: 'Run MCP Playwright browser in headless mode (0 = headed, 1 = headless)',
   }),
   MCP_DEFAULT_PORT: num({
-    default: 4242,
-    desc: 'Default MCP server port'
+    default: 0,
+    desc: 'Default MCP server port (0 = auto-select free port)'
   }),
   MCP_DEFAULT_HOST: str({
     default: '127.0.0.1',
@@ -38,7 +38,7 @@ export const env = cleanEnv(process.env, {
 });
 
 // Constants
-export const DEFAULT_PORT = 4242;
+export const DEFAULT_PORT = 0;
 export const MCP_TEST_ENGINE_DEBUG_PORT = 5252; // Fixed port for test engine MCP server
 export const DEFAULT_TIMEOUT_MS = 3_600_000; // 1 hour
 export const SERVER_READY_TIMEOUT_MS = 15_000;

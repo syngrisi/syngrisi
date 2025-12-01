@@ -36,14 +36,14 @@
     "clean": "rimraf tsconfig.tsbuildinfo ./build ./coverage",
     "compile": "tsc -p ./tsconfig.json",
     "release": "release-it --github.release",
-    "release:ci": "npm run release -- --ci --npm.skipChecks --no-git.requireCleanWorkingDir",
-    "release:patch": "npm run release -- patch",
-    "release:minor": "npm run release -- minor",
-    "release:major": "npm run release -- major",
+    "release:ci": "run-s 'release -- --ci --npm.skipChecks --no-git.requireCleanWorkingDir'",
+    "release:patch": "run-s 'release -- patch'",
+    "release:minor": "run-s 'release -- minor'",
+    "release:major": "run-s 'release -- major'",
     "test": "run-s build test:*",
     "test:eslint": "eslint -c ./.eslintrc.cjs ./src/**/*.ts ./tests/**/*.ts",
     "test:unit": "vitest run",
-    "watch": "npm run compile -- --watch"
+    "watch": "tsc -p ./tsconfig.json --watch"
   },
   "devDependencies": {
     "@types/cross-spawn": "^6.0.2",

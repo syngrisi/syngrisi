@@ -5,7 +5,7 @@
   "main": "resemble.js",
   "scripts": {
     "test": "jasmine resemble.spec.js",
-    "test:auto": "chokidar 'resemble.js' 'resemble.spec.js' -c \"npm test\"",
+    "test:auto": "chokidar 'resemble.js' 'resemble.spec.js' -c 'jasmine resemble.spec.js'",
     "build": "echo build",
     "release": "release-it --github.release",
     "pkglist": "npx npm-packlist # list of files that will be published in syngrisi package, show the files section"

@@ -76,6 +76,11 @@ const startBridgeCli = async (
   const portOverride = envOverrides.MCP_DEFAULT_PORT;
   const preferredPort = portOverride ?? String(await findEphemeralPort());
 
+  // Compute unique worker index for isolation in parallel tests
+  // Use high offset (100+) per worker to avoid conflicts with main Playwright workers
+  const parentWorkerIndex = testInfo.parallelIndex;
+  const uniqueWorkerIndex = 100 + (parentWorkerIndex * 100);
+
   const transport = new StdioClientTransport({
     command: NPX_BIN,
     args: commandArgs,
@@ -86,6 +91,8 @@ const startBridgeCli = async (
       ZENFLOW_WORKER_INSTANCE: workerInstanceId,
       MCP_DEFAULT_PORT: preferredPort,
       E2E_HEADLESS: '1',
+      // Pass unique worker index for proper isolation in spawned MCP servers
+      TEST_WORKER_INDEX: String(uniqueWorkerIndex),
       ...envOverrides,
     },
     stderr: 'pipe',

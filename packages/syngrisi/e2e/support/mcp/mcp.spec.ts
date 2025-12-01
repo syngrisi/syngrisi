@@ -1,6 +1,7 @@
 import { test } from '@fixtures';
 import logger, { formatArgs } from './utils/logger';
 import { env, DEFAULT_TIMEOUT_MS } from './config';
+import { findEphemeralPort } from './utils/port-utils';
 
 const tags = ['@start-test-engine-mcp'];
 
@@ -35,10 +36,15 @@ test.describe('MCP Server Runner', () => {
   test(
     'starts MCP server',
     { tag: tags },
-    async ({ testEngine }) => {
+    async ({ testEngine, appServer }) => {
 
       test.setTimeout(0);
-      await testEngine.start({ requestedPort: env.MCP_DEFAULT_PORT, tags });
+
+      const requestedPort = env.MCP_DEFAULT_PORT > 0
+        ? env.MCP_DEFAULT_PORT
+        : await findEphemeralPort();
+
+      await testEngine.start({ requestedPort, tags });
 
       if (!testEngine.isRunning()) {
         throw new Error('MCP server failed to start.');
