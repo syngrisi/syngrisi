@@ -146,22 +146,58 @@ export async function launchAppServer(
     },
   });
 
-  const backend = spawn(command, args, {
+  const spawnOptions = {
     cwd: cmdPath,
     env: spawnEnv,
-    stdio: ["ignore", "pipe", "pipe"],
-  });
+    stdio: ["ignore", "pipe", "pipe"] as const,
+  };
 
-  const backendLogs = startBackendLogCapture(backend);
+  // Retry logic for backend early exit (SIGINT during startup)
+  const maxRetries = 3;
+  let lastError: Error | null = null;
+  let backend: Child | null = null;
+  let backendLogs: () => string = () => '';
 
-  await Promise.race([
-    waitForHttp(`${baseURL}/v1/app/info`, 120_000),
-    once(backend, "exit").then(([code, signal]) => {
-      throw new Error(
-        `Backend exited early (code=${code} signal=${signal}).\n${backendLogs()}`,
-      );
-    }),
-  ]);
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      backend = spawn(command, args, spawnOptions);
+      backendLogs = startBackendLogCapture(backend);
+
+      await Promise.race([
+        waitForHttp(`${baseURL}/v1/app/info`, 120_000),
+        once(backend, "exit").then(([code, signal]) => {
+          throw new Error(
+            `Backend exited early (code=${code} signal=${signal}).\n${backendLogs()}`,
+          );
+        }),
+      ]);
+
+      // Success - break out of retry loop
+      lastError = null;
+      break;
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error));
+      backendLogger.warn(`Backend startup attempt ${attempt}/${maxRetries} failed: ${lastError.message}`);
+
+      // Clean up failed process
+      if (backend && !backend.killed) {
+        await terminateProcess(backend);
+      }
+
+      if (attempt < maxRetries) {
+        backendLogger.info(`Retrying backend startup in 2 seconds...`);
+        await sleep(2000);
+      }
+    }
+  }
+
+  if (lastError) {
+    throw new Error(`Backend failed to start after ${maxRetries} attempts. Last error: ${lastError.message}`);
+  }
+
+  if (!backend) {
+    throw new Error('Backend process was not created');
+  }
 
   // Stabilization delay to ensure MongoDB has completed all user creation writes
   // This addresses race conditions where tests start before users are fully indexed
@@ -177,7 +213,7 @@ export async function launchAppServer(
       connectionString: spawnEnv.SYNGRISI_DB_URI ?? defaultConnectionString,
       defaultImagesPath: spawnEnv.SYNGRISI_IMAGES_PATH ?? defaultImagesPath,
     },
-    stop: () => terminateProcess(backend),
+    stop: () => terminateProcess(backend!),
     getBackendLogs: backendLogs,
     getFrontendLogs: () => "",
   };
