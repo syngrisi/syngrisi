@@ -3,20 +3,9 @@ import { createLogger } from '@lib/logger';
 import type { Page } from '@playwright/test';
 import type { AppServerFixture } from '@fixtures';
 import { clearDatabase } from '@utils/db-cleanup';
-import { isServerRunning } from '@utils/app-server';
-import { waitFor } from '@utils/common';
+import { ensureServerReady } from '@utils/app-server';
 
 const logger = createLogger('AppSteps');
-
-/**
- * Ensures server is ready before navigation to avoid ERR_CONNECTION_REFUSED
- */
-async function ensureServerReady(port: number, timeout = 30000): Promise<void> {
-  await waitFor(() => isServerRunning(port), {
-    timeoutMs: timeout,
-    description: `Server ready on port ${port}`,
-  });
-}
 
 Given('the Syngrisi application is running', async ({ appServer }: { appServer: AppServerFixture }) => {
   if (!appServer.baseURL) {
