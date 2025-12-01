@@ -51,7 +51,7 @@ export default function LoginForm() {
 
         validate: {
             email: (val) => {
-                if ((val === 'Test') || (val === 'Administrator')) return null;
+                if ((val === 'Test') || (val === 'Administrator') || (val === 'Guest')) return null;
                 return (/^\S+@\S+$/.test(val) ? null : 'Invalid email');
             },
         },

@@ -14,7 +14,8 @@ function getCid(): number {
 
 function resolveDbUri(cid: number): string {
   const requestedUri = process.env.SYNGRISI_DB_URI || env.SYNGRISI_DB_URI || '';
-  const enforcedUri = `mongodb://localhost/SyngrisiDbTest${cid}`;
+  // Use 127.0.0.1 explicitly to match app-server.ts and avoid localhost/127.0.0.1 mismatch issues
+  const enforcedUri = `mongodb://127.0.0.1/SyngrisiDbTest${cid}`;
 
   if (requestedUri && requestedUri !== enforcedUri) {
     logger.warn(`Overriding provided SYNGRISI_DB_URI (${requestedUri}) with test database ${enforcedUri}`);
