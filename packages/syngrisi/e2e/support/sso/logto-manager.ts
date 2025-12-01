@@ -6,9 +6,11 @@
  */
 
 import { execSync, spawn, type ChildProcess } from 'child_process';
+import fs from 'fs';
 import path from 'path';
 import http from 'http';
 import { createLogger, waitFor, sleep } from './sso-logger';
+import os from 'os';
 
 const logger = createLogger('LogtoManager');
 
@@ -49,6 +51,7 @@ const DEFAULT_CONFIG: LogtoConfig = {
 };
 
 const SCRIPT_DIR = path.resolve(__dirname);
+const CONTAINER_SYSTEM_FLAG = path.join(os.tmpdir(), 'syngrisi-container-system-started.flag');
 
 /**
  * Check if Logto is available by hitting the OIDC discovery endpoint
@@ -261,6 +264,80 @@ export function isContainerCLIAvailable(): boolean {
     return true;
   } catch {
     return false;
+  }
+}
+
+/**
+ * Check if the Apple container system service (apiserver) is running
+ */
+export function isContainerSystemRunning(): boolean {
+  if (!isContainerCLIAvailable()) {
+    return false;
+  }
+
+  try {
+    const output = execSync('container system status', { stdio: ['ignore', 'pipe', 'pipe'] }).toString();
+    return output.includes('apiserver is running');
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Ensure the container system service is running. Returns true if started here.
+ */
+export function ensureContainerSystemRunning(): boolean {
+  if (!isContainerCLIAvailable()) {
+    return false;
+  }
+
+  if (isContainerSystemRunning()) {
+    return false;
+  }
+
+  logger.info('Starting Apple container system service for SSO tests...');
+  execSync('container system start', {
+    stdio: 'inherit',
+    timeout: 30_000,
+  });
+
+  try {
+    fs.writeFileSync(CONTAINER_SYSTEM_FLAG, String(Date.now()));
+  } catch (error) {
+    logger.warn('Failed to record container system flag', { error });
+  }
+
+  return true;
+}
+
+/**
+ * Stop container system service if it was started by the tests
+ */
+export function stopContainerSystemIfStarted(): void {
+  if (!isContainerCLIAvailable()) {
+    return;
+  }
+
+  const flagExists = fs.existsSync(CONTAINER_SYSTEM_FLAG);
+  if (!flagExists) {
+    return;
+  }
+
+  if (!isContainerSystemRunning()) {
+    fs.rmSync(CONTAINER_SYSTEM_FLAG, { force: true });
+    return;
+  }
+
+  try {
+    logger.info('Stopping Apple container system service started by tests...');
+    execSync('container system stop', {
+      stdio: 'inherit',
+      timeout: 30_000,
+    });
+  } catch (error) {
+    logger.warn('Failed to stop container system service', { error });
+  } finally {
+    fs.rmSync(CONTAINER_SYSTEM_FLAG, { force: true });
   }
 }
 
