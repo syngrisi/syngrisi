@@ -1,12 +1,11 @@
 {
   "mcpServers": {
-    "playwright-bdd": {
+    "test_engine": {
       "command": "npx",
-      "args": [
-        "tsx",
-        "bridge-cli.ts"
-      ],
-      "cwd": "/Users/a1/web-qa-automation/mcp2029"
+      "args": ["tsx", "packages/syngrisi/e2e/support/mcp/bridge-cli.ts"],
+      "env": {
+        "SYNGRISI_ROOT": "packages/syngrisi/e2e"
+      }
     }
   },
   "model": {
