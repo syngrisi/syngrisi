@@ -1,22 +1,22 @@
 ## План бэкенда
 
 1) **Ручка `/v1/baselines`**
-- Добавить обработку query-параметра `includeUsage` (string bool) в контроллере. После `paginate` собирать `snapshootId` текущей страницы, агрегировать `Check` по полю `baselineId` и добавлять `usageCount` в каждый элемент результата.
-- Выделить helper `buildUsageCountMap` (принимает список id и агрегированные строки) для unit-тестов и читаемости.
-- Обновить `RequestPaginationSchema`/OpenAPI, чтобы новое поле было документировано (опционально).
+- Обработка query-параметра `includeUsage` (string bool) в контроллере: после `paginate` собрать `snapshootId` текущей страницы (включая `_id` из populate), агрегировать `Check` по полю `baselineId` и добавлять `usageCount` в каждый элемент результата (0, если id невалиден/отсутствует). Для роли `user` фильтр дополняется `markedByUsername=req.user.username`, доступ через `ensureLoggedInOrApiKey`.
+- Helper `buildUsageCountMap` выделен для маппинга `_id → count` и покрыт unit-тестом (пропускает строки без `_id`).
+- `RequestPaginationSchema` расширен полями `includeUsage` и `baselineSnapshotId` для документации.
 
 2) **Фильтр для чек-вью**
-- В `testService.queryTests` реализовать поддержку фильтра `baselineSnapshotId`: получать список `test` id по чек-коллекции (`Check.find({ baselineId: snapId }).distinct('test')`), подставлять в основной фильтр `_id: { $in: [...] }`, возвращать пустую выдачу при отсутствии совпадений. Лишние поля убирать из фильтра перед вызовом `paginate`.
-- Покрыть вспомогательную логику тестом без реальной БД (мокаем `Check`).
+- В `testService.queryTests` реализована поддержка фильтра `baselineSnapshotId` через helper `resolveTestIdsByBaselineSnapshot` (валидирует ObjectId, делает `distinct('test')` по `Check.baselineId`). При отсутствии совпадений возвращается пустая страница `buildEmptyResult` с заданными page/limit; иначе в фильтр подставляется `_id: { $in: [...] }`.
+- Вспомогательная логика покрыта unit-тестами без реальной БД.
 
 3) **Задача очистки осиротевших бейзлайнов**
-- Создать core-функцию `handleOrphanBaselinesTask({ dryRun }, output, deps)` с зависимостями, пробрасываемыми для тестов. Критерий осиротевших: бейзлайны, чьи `snapshootId` не встречаются в `Check.baselineId`.
-- HTTP-ручка `/v1/tasks/task_handle_orphan_baselines` + сервисный метод в `tasks.service` + запись в `tasksList`/навигацию админки.
-- Выводить статистику: всего бейзлайнов, найдено осиротевших, первые N id/имен, суммарно удалено (в execute режиме). Dry run по умолчанию.
+- Core-функция `handleOrphanBaselinesTask({ dryRun, batchSize=500 }, output, deps)` (deps для тестов). Осиротевшие — бейзлайны, чьи `snapshootId` не встречаются в `Check.baselineId` (distinct ограничен набором `snapshootId`).
+- HTTP-ручка `/v1/tasks/task_handle_orphan_baselines` + сервисный метод в `tasks.service` (по умолчанию dryRun=true, alias execute=true) + запись в `tasksList`/навигацию админки.
+- Выводит старт/режим/total, список первых 10 id/имен (`... and N more` при избытке); в execute удаляет батчами и сообщает прогресс/остаток.
 
 4) **Тесты**
-- Unit на `buildUsageCountMap` (корректное сопоставление id, отсутствие id → 0).
-- Unit на вспомогательную функцию фильтрации тестов по baselineSnapshotId (подстановка пустого массива, массив с id).
+- Unit на `buildUsageCountMap` (корректное сопоставление id, строки без `_id` игнорируются).
+- Unit на вспомогательные функции фильтрации тестов по `baselineSnapshotId` (пустой массив, массив с id, некорректный id).
 - Unit на `handleOrphanBaselinesTask` с моками моделей (dry run не удаляет, execute удаляет из мока, выводит сообщения в `MockOutputWriter`).
 
 5) **Безопасность и обратная совместимость**

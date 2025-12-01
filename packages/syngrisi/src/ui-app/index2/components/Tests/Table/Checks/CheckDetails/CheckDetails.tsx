@@ -108,6 +108,7 @@ export function CheckDetails({
             {
                 populate: 'app',
                 limit: '1',
+                includeUsage: 'true',
             },
             'baseline_by_snapshot_id',
         ),
@@ -125,6 +126,13 @@ export function CheckDetails({
             return baselineQuery.data?.results[0]._id as string;
         }
         return '';
+    }, [baselineQuery.data?.timestamp]);
+
+    const usageCount = useMemo<number>(() => {
+        if (baselineQuery.data?.results && baselineQuery.data?.results.length > 0) {
+            return baselineQuery.data?.results[0].usageCount || 0;
+        }
+        return 0;
     }, [baselineQuery.data?.timestamp]);
 
     // init mainView
@@ -208,6 +216,7 @@ export function CheckDetails({
                     initCheckData={initCheckData}
                     classes={classes}
                     baselineId={baselineId}
+                    usageCount={usageCount}
                     closeHandler={closeHandler}
                 />
 

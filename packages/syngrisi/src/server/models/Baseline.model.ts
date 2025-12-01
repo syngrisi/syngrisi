@@ -27,6 +27,7 @@ export interface BaselineDocument extends Document {
 const BaselineSchema: Schema<BaselineDocument> = new Schema({
     snapshootId: {
         type: Schema.Types.ObjectId,
+        ref: 'VRSSnapshot',
     },
     name: {
         type: String,
