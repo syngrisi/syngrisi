@@ -122,3 +122,11 @@ Then continue working on all failing tests, gradually narrowing down the number 
 ## ENFORCEMENT
 
 **Any rule violation = immediate STOP + user approval required**
+
+## Documentation quick links
+- `packages/syngrisi/docs/agent/guides/run_test.md` — regenerate steps and run tests.
+- `packages/syngrisi/docs/agent/guides/test-generate-quick.md` — generate feature files quickly.
+- `packages/syngrisi/docs/agent/guides/update-app-layout.md` — add semantics/ARIA for selectors.
+- `packages/syngrisi/docs/agent/guides/selector_best_practices.md` — selector priority and patterns.
+- `packages/syngrisi/docs/agent/guides/mcp_test_engine_using.md` — MCP test engine and bridge usage.
+- `packages/syngrisi/docs/agent/guides/common_steps_cheatsheet.md` — most-used steps with references.

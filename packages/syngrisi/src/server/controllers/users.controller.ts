@@ -14,6 +14,7 @@ const current = catchAsync(async (req: ExtRequest, res: Response) => {
         msgType: 'GET_CURRENT_USER',
     };
     log.debug(`current user is: '${req?.user?.username || 'not_logged'}'`, logOpts);
+    res.set('Cache-Control', 'no-store');
     res.status(httpStatus.OK).json({
         id: req?.user?.id,
         username: req?.user?.username,

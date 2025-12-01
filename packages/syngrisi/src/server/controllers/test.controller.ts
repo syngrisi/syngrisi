@@ -14,8 +14,12 @@ const getTest = catchAsync(async (req: ExtRequest, res: Response) => {
         filter.creatorUsername = req.user?.username;
     }
 
+    const baselineSnapshotId = typeof req.query.baselineSnapshotId === 'string'
+        ? req.query.baselineSnapshotId
+        : undefined;
+
     const options = pick(req.query, ['sortBy', 'limit', 'page', 'populate']);
-    const result = await testService.queryTests(filter, options);
+    const result = await testService.queryTests(filter, options, baselineSnapshotId);
     res.status(httpStatus.OK).send(result);
 });
 

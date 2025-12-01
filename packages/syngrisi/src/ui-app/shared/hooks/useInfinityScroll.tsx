@@ -14,6 +14,7 @@ interface IIScrollParams {
     newestItemsFilterKey?: string
     firstPageQueryUniqueKey?: any // object or something
     infinityScrollLimit?: number
+    extraOptions?: { [key: string]: any }
     sortBy: string
 }
 
@@ -26,6 +27,7 @@ export default function useInfinityScroll(
         newestItemsFilterKey,
         sortBy,
         infinityScrollLimit = 20,
+        extraOptions = {},
     }: IIScrollParams,
 ) {
 
@@ -108,6 +110,12 @@ export default function useInfinityScroll(
     ]
     );
 
+    const getPopulate = () => {
+        if (extraOptions.populate) return extraOptions.populate;
+        if (resourceName === 'tests') return 'checks';
+        return 'suite,app,test,baselineId,actualSnapshotId,diffId';
+    };
+
     const infinityQuery: IPagesQuery<ILog> = useInfiniteQuery(
         {
             queryKey: [
@@ -125,7 +133,8 @@ export default function useInfinityScroll(
                     limit: String(infinityScrollLimit),
                     page: pageParam,
                     sortBy,
-                    populate: resourceName === 'tests' ? 'checks' : 'suite,app,test,baselineId,actualSnapshotId,diffId',
+                    populate: getPopulate(),
+                    ...extraOptions,
                 },
                 `infinity_pages_${resourceName}_${firstPageData.timestamp}`
             ),
