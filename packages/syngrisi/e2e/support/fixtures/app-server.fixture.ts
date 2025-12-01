@@ -275,7 +275,7 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           }
           // Wait for server to actually stop to avoid race conditions (EADDRINUSE or connecting to old server)
           await waitFor(() => isServerRunning(workerPort).then((r) => !r), {
-            timeoutMs: 5000,
+            timeoutMs: 15000,
             description: `Server stop on port ${workerPort}`,
           });
           serverInstances.delete(cid);
@@ -325,7 +325,7 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
               stopServerProcess();
               // Wait for server to actually stop to avoid race conditions (EADDRINUSE or pkill killing new server)
               await waitFor(() => isServerRunning(workerPort).then((r) => !r), {
-                timeoutMs: 5000,
+                timeoutMs: 15000,
                 description: `Server stop on port ${workerPort}`,
               });
             }
@@ -339,7 +339,7 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
               stopServerProcess();
               // Wait for server to actually stop to avoid race conditions (EADDRINUSE or pkill killing new server)
               await waitFor(() => isServerRunning(workerPort).then((r) => !r), {
-                timeoutMs: 5000,
+                timeoutMs: 15000,
                 description: `Server stop on port ${workerPort}`,
               });
             }
@@ -353,7 +353,7 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
               stopServerProcess();
               // Wait for server to actually stop
               await waitFor(() => isServerRunning(workerPort).then((r) => !r), {
-                timeoutMs: 5000,
+                timeoutMs: 15000,
                 description: `Server stop on port ${workerPort}`,
               });
             }

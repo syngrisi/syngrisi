@@ -102,6 +102,12 @@ When(
     const response = JSON.parse(res.body);
     testData.set('apiKey', { value: response.apikey });
     logger.info('API key generated successfully');
+
+    // Small delay to ensure API key is indexed by MongoDB before proceeding
+    // This prevents race conditions where the driver tries to use the API key
+    // before the user document is updated with the hashed key
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    logger.info('API key indexing stabilization complete');
   }
 );
 

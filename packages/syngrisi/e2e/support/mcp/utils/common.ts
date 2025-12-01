@@ -28,8 +28,15 @@ const PROJECT_MARKER_FILES = [
 const PROJECT_NAME = 'syngrisi';
 
 export function getProjectRoot(): string {
-  if (process.env.SYNGRISI_ROOT && existsSync(path.join(process.env.SYNGRISI_ROOT, 'node_modules'))) {
-    return process.env.SYNGRISI_ROOT;
+  if (process.env.SYNGRISI_ROOT) {
+    // Ensure SYNGRISI_ROOT is always an absolute path
+    const syngrisiRoot = path.isAbsolute(process.env.SYNGRISI_ROOT)
+      ? process.env.SYNGRISI_ROOT
+      : path.resolve(process.cwd(), process.env.SYNGRISI_ROOT);
+
+    if (existsSync(path.join(syngrisiRoot, 'node_modules'))) {
+      return syngrisiRoot;
+    }
   }
 
   let currentDir = process.cwd();

@@ -5,8 +5,20 @@ import type { AppServerFixture, TestStore } from '@fixtures';
 import { expect } from '@playwright/test';
 import { renderTemplate } from '@helpers/template';
 import { env } from '@config';
+import { isServerRunning } from '@utils/app-server';
+import { waitFor } from '@utils/common';
 
 const logger = createLogger('NavigationSteps');
+
+/**
+ * Ensures server is ready before navigation to avoid ERR_CONNECTION_REFUSED
+ */
+async function ensureServerReady(port: number, timeout = 30000): Promise<void> {
+  await waitFor(() => isServerRunning(port), {
+    timeoutMs: timeout,
+    description: `Server ready on port ${port}`,
+  });
+}
 
 When('I go to {string} page', async ({ page, appServer }: { page: Page; appServer: AppServerFixture }, pageName: string) => {
   // Use appServer.baseURL if available, otherwise construct from host and port
@@ -42,6 +54,11 @@ When('I go to {string} page', async ({ page, appServer }: { page: Page; appServe
 
   if (!url) {
     throw new Error(`Unknown page: ${pageName}`);
+  }
+
+  // Ensure server is ready before navigation to avoid ERR_CONNECTION_REFUSED
+  if (appServer.serverPort) {
+    await ensureServerReady(appServer.serverPort);
   }
 
   logger.info(`Navigating to ${url}`);
