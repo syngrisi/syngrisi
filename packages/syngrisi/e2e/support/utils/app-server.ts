@@ -293,6 +293,27 @@ export function isServerRunning(port: number): Promise<boolean> {
   });
 }
 
+export async function ensureServerReady(port: number, timeoutMs = 30_000): Promise<void> {
+  const host = process.env.E2E_BACKEND_HOST ?? env.E2E_BACKEND_HOST ?? '127.0.0.1';
+  const baseUrl = `http://${host}:${port}`;
+
+  await waitFor(() => isServerRunning(port), {
+    timeoutMs,
+    intervalMs: 200,
+    description: `server port ${port} to accept connections`,
+  });
+
+  await waitForHttp(`${baseUrl}/v1/app/info`, timeoutMs);
+
+  const apiKey = process.env.SYNGRISI_API_KEY;
+  const authEnabled = (process.env.SYNGRISI_AUTH ?? env.SYNGRISI_AUTH ?? 'false') === 'true';
+  if (authEnabled && apiKey) {
+    await waitForApiKeyAuth(`${baseUrl}/v1/app/info`, apiKey, timeoutMs);
+  }
+
+  backendLogger.info(`✓ Server ready at ${baseUrl}`);
+}
+
 function startBackendLogCapture(child: Child): () => string {
   const chunks: string[] = [];
   const record = (data: unknown) => {

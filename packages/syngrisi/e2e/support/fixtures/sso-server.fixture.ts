@@ -12,6 +12,7 @@ import {
   logtoTestManager,
   isLogtoAvailable,
   isContainerCLIAvailable,
+  ensureContainerSystemRunning,
   type LogtoConfig,
   type LogtoAppConfig,
   LOGTO_DEFAULT_CONFIG,
@@ -159,6 +160,7 @@ export const ssoServerFixture = base.extend<{ ssoServer: SSOServerFixture }>({
             throw new Error('Apple container CLI not available');
           }
 
+          ensureContainerSystemRunning();
           logger.info('Starting Logto SSO infrastructure...');
           const config = await logtoTestManager.ensureStarted();
           fixture.logtoConfig = config;

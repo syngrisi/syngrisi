@@ -7,6 +7,7 @@ export const confObject = {
     timeout: config.expectTimeout
   },
   globalSetup: './support/global-setup.ts',
+  globalTeardown: './support/global-teardown.ts',
   fullyParallel: true,
   retries: env.CI ? config.retriesCI : config.retriesLocal,
   outputDir: './reports/test-artifacts',
