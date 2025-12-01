@@ -270,6 +270,17 @@ When('I pause', async ({ page, testEngine }) => {
   await page.pause();
 });
 
+When('I pause with phrase: {string}', async ({ page, testEngine }, phrase: string) => {
+  if (env.CI) {
+    return;
+  }
+  const { exec } = await import('node:child_process');
+  exec(`say -v Milena "${phrase}"`);
+
+  logMcpStatus(testEngine);
+  await page.pause();
+});
+
 /**
  * Pauses execution for a specified number of milliseconds.
  * Useful for waiting for async operations or animations to complete.

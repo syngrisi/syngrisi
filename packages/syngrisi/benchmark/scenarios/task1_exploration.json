@@ -1,0 +1,16 @@
+{
+  "id": "task_01_login_guest",
+  "type": "exploration",
+  "prompt": "Запусти headless сессию. Убедись, что пользователь авторизован как гость (значок SG с aria-label \"User menu for Syngrisi Guest\"), затем открой главную страницу / и зафиксируй текущий URL.",
+  "expectations": {
+    "final_url_contains": "/",
+    "final_locator": "button[aria-label='User menu for Syngrisi Guest']",
+    "prohibited_actions": ["page.waitForTimeout"]
+  },
+  "config": {
+    "auth_mode": "guest",
+    "headless": true,
+    "max_steps": 8,
+    "min_steps": 3
+  }
+}
