@@ -15,7 +15,9 @@
     "e2e:bddgen": "npm run --prefix packages/syngrisi/e2e bddgen",
     "test:ap:tasks": "npm run e2e:bddgen && cd packages/syngrisi/e2e && yarn playwright test \"features/AP/tasks/\""
   },
-  "dependencies": {},
+  "dependencies": {
+    "playwright": "^1.57.0"
+  },
   "devDependencies": {
     "lerna": "^7.4.1",
     "playwright-bdd": "^8.4.1",

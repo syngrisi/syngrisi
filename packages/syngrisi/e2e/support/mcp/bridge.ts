@@ -12,10 +12,7 @@ import {
   CallToolResultSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 
-import { DEFAULT_PORT } from './config';
 import {
-  ensurePortFree,
-  findAvailablePort,
   waitForHttpAvailability,
 } from './utils/port-utils';
 import { spawnMcpServer } from './utils/server-spawn';
@@ -42,13 +39,12 @@ type RecordedPortInfo = {
 };
 
 interface BridgeOptions {
-  preferredPort?: number;
   input: Readable;
   output: Writable;
   logPrefix?: string;
 }
 
-type RunBridgeOptions = Partial<Pick<BridgeOptions, 'preferredPort' | 'input' | 'output' | 'logPrefix'>>;
+type RunBridgeOptions = Partial<Pick<BridgeOptions, 'input' | 'output' | 'logPrefix'>>;
 
 export class SdioSseBridge {
   private readonly options: BridgeOptions;
@@ -412,12 +408,12 @@ export class SdioSseBridge {
     await this.closeRemoteConnections();
     this.remoteShutdownNotified = false;
 
-    const startingPort = this.options.preferredPort ?? DEFAULT_PORT;
-    await ensurePortFree(startingPort, (msg) => this.log(msg));
-    const port = await findAvailablePort(startingPort);
+    // Use port 0 to let the OS/server assign a random port.
+    // The actual port will be parsed from the server's stdout.
+    const port = 0;
     this.port = port;
 
-    this.log(`Spawning MCP server on port ${port} for session "${sessionName}"`);
+    this.log(`Spawning MCP server (auto-port) for session "${sessionName}"`);
     this.log(
       `Bridge env: MCP_IDLE_TIMEOUT_MS=${process.env.MCP_IDLE_TIMEOUT_MS ?? '(unset)'}, MCP_IDLE_CHECK_INTERVAL_MS=${process.env.MCP_IDLE_CHECK_INTERVAL_MS ?? '(unset)'}`
     );
@@ -638,7 +634,6 @@ export async function runBridge(options?: RunBridgeOptions) {
     input: options?.input ?? process.stdin,
     output: options?.output ?? process.stdout,
     logPrefix: options?.logPrefix ?? '[bridge]',
-    preferredPort: options?.preferredPort,
   });
   await bridge.run();
 }

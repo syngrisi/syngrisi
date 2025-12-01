@@ -11,7 +11,9 @@ import {
   SOCKET_CONNECTION_TIMEOUT_MS,
 } from '../config';
 import { formatError } from './common';
-import { waitFor } from '@utils/common';
+// Using relative path instead of @utils alias to allow bridge-cli.ts to run from any directory
+// without requiring tsconfig.json path resolution (fixes "Cannot find module '@utils/common'" errors)
+import { waitFor } from '../../utils/common';
 
 export async function isPortAvailable(port: number): Promise<boolean> {
   return new Promise<boolean>((resolve) => {

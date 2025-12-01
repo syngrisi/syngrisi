@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Test Form</title>
+</head>
+<body>
+  <h1>Contact Form</h1>
+  <form action="/submit" method="POST">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+
+    <label for="message">Message:</label>
+    <textarea id="message" name="message" rows="4"></textarea>
+
+    <fieldset>
+      <legend>Priority:</legend>
+      <input type="radio" id="low" name="priority" value="low">
+      <label for="low">Low</label>
+      <input type="radio" id="medium" name="priority" value="medium" checked>
+      <label for="medium">Medium</label>
+      <input type="radio" id="high" name="priority" value="high">
+      <label for="high">High</label>
+    </fieldset>
+
+    <button type="submit">Send Message</button>
+  </form>
+</body>
+</html>

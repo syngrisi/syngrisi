@@ -18,7 +18,7 @@ Need an ephemeral run instead? Force the Playwright spec to exit once diagnostic
 timeout 300s bash -lc 'cd packages/syngrisi/e2e && MCP_KEEP_ALIVE=0 E2E_HEADLESS=1 npm run test:mcp'
 ```
 
-`PORT` controls the listening port (defaults to `4242`). When unset, the harness scans for a free port and reports the final selection as `🚀 MCP server listening at http://localhost:<port>`.
+The server uses dynamic port allocation (port 0), letting the OS assign a free port automatically. The actual port is reported as `🚀 MCP server listening at http://localhost:<port>`.
 
 ## Tools Exposed by the Server
 
@@ -39,7 +39,7 @@ The generated step definitions are organized into categorized YAML files stored 
 If your client only understands stdio JSON-RPC, launch the bridge instead of talking to the HTTP endpoint directly:
 
 ```bash
-timeout 300s bash -lc 'cd packages/syngrisi/e2e && npx tsx support/mcp/bridge-cli.ts --port 0'
+timeout 300s bash -lc 'cd packages/syngrisi/e2e && npx tsx support/mcp/bridge-cli.ts'
 ```
 
 - The bridge spins up its own stdio MCP server and exposes the same tool names. During bootstrap every call except `session_start_new` and `attach_existing_session` replies with a "Session not started" error.
@@ -49,6 +49,18 @@ timeout 300s bash -lc 'cd packages/syngrisi/e2e && npx tsx support/mcp/bridge-cl
 - The debug step `When I start the MCP test engine` is available from the E2E step library. It starts the MCP server, pauses the Playwright inspector, and writes the chosen port number to `support/mcp/logs/ports/<timestamp>.port`, enabling subsequent reconnection via `attach_existing_session`.
 
 For finer control (custom stdio streams or embedding in tests) import `runBridge()` from `bridge.ts`.
+
+## Emergency Cleanup
+
+If the MCP server or bridge processes become unresponsive or "zombie" processes remain, use the provided shell script to forcefully terminate them:
+
+```bash
+./support/mcp/kill-mcp.sh
+```
+
+This script will:
+1. Kill all `bridge-cli.ts` processes
+2. Kill all Playwright MCP Server processes (`mcp.spec.ts`)
 
 ## Repository Layout
 

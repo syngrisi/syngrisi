@@ -15,7 +15,10 @@ import { bddConfig } from './playwright.config';
 import { env, getIdleTimeoutMs, getIdleCheckIntervalMs } from './config';
 import { formatError, isShutdownNotification, SHUTDOWN_NOTIFICATION_METHOD } from './utils/common';
 import logger, { formatArgs } from './utils/logger';
-import { waitFor } from '@utils/common';
+// Using relative path instead of @utils alias to allow bridge-cli.ts to run from any directory
+// without requiring tsconfig.json path resolution
+import { waitFor } from '../utils/common';
+import { findEphemeralPort } from './utils/port-utils';
 
 export const sessionStartToolDefinition = {
   name: 'session_start_new',
@@ -414,14 +417,31 @@ export async function startMcpServer({
 
   logger.info(formatArgs(`🌐 Starting MCP HTTP server on port ${requestedPort || 'auto'}`));
   const { startHttpServer, startHttpTransport } = await import('playwright-mcp-advanced');
-  const httpServer = await startHttpServer({ port: requestedPort });
-  startHttpTransport(httpServer, server);
+  const startOnPort = async (port: number) => {
+    const httpSrv = await startHttpServer({ port });
+    const addr = httpSrv.address() as AddressInfo | string | null;
+    const resolved = addr && typeof addr !== 'string' ? addr.port : port;
+    return { httpSrv, resolved };
+  };
 
-  const address = httpServer.address() as AddressInfo | string | null;
-  let resolvedPort = requestedPort;
-  if (address && typeof address !== 'string') {
-    resolvedPort = address.port;
+  let httpServer: http.Server;
+  let resolvedPort: number;
+  let startResult: { httpSrv: http.Server; resolved: number };
+
+  try {
+    startResult = await startOnPort(requestedPort);
+  } catch (error) {
+    const err = error as NodeJS.ErrnoException;
+    if (err.code !== 'EADDRINUSE') {
+      throw error;
+    }
+    const fallbackPort = await findEphemeralPort();
+    logger.warn(formatArgs(`Port ${requestedPort} is busy, retrying on ${fallbackPort}`));
+    startResult = await startOnPort(fallbackPort);
   }
+  ({ httpSrv: httpServer, resolved: resolvedPort } = startResult);
+
+  startHttpTransport(httpServer, server);
   logger.info(formatArgs(`🚀 MCP server listening at http://localhost:${resolvedPort}`));
 
   // Start idle timeout checker
