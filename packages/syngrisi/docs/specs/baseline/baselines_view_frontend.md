@@ -1,36 +1,28 @@
-## План фронтенда для `/baselines`
+## Фронтенд для `/baselines`
 
-1) **Новый маршрут и навигация**
-- Добавить маршрут `/baselines` в `index2/App.tsx`, пункт в `navigationData`.
-- Подключить страницу к общему `IndexLayout`/`AppShell` (или собственной оболочке) без влияния на текущий `/` сценарий.
+1) **Маршрут и навигация**
+- `/baselines` зарегистрирован в `index2/App.tsx`, страница рендерится через общий `IndexLayout` (переключение Tests/Baselines по pathname).
+- Пункт в `navigationData`; в Spotlight-экшенах отображается только для ролей admin/reviewer. QueryParamProvider (`use-query-params`) управляет `filter/base_filter/quick_filter/app/sortBy`.
 
-2) **Страница BaselinesPage**
-- Структура: фильтры + таблица + пагинация/лимит.
-- Состояние фильтров/сортировки/страницы хранить в query params через `use-query-params` (JsonParam/StringParam) с локальным дебаунсом на ввод.
-- Фильтры: name/branch/browserName/os/viewport/app (строковый `regex` insensitive).
-- Сортировка: `createdDate`, `updatedDate`, `name`, `branch` (asc/desc). `usageCount` явно исключить из сортировки.
-- Пагинация: `Pagination` + `Select` лимита (10/20/50).
+2) **Страница и состояние**
+- Страница состоит из таблицы с бесконечной прокруткой и тулбара, где иконки открывают две боковые панели: `BaselinesSettings` (сортировка и выбор колонок) и `BaselinesFilter` (конструктор фильтров).
+- Сортировка пишется в query string через `SearchParams` (`sortBy=<field>:<asc|desc>`), доступные поля: name, branch, createdDate, browserName, viewport, os, markedAs (`usageCount` исключен). Видимость колонок хранится в `localStorage` (`baselinesVisibleFields`).
+- Фильтруемые поля в конструкторе: name, branch, browserName, viewport, os, createdDate, markedAs (string/date/enum фильтры с regex или сравнениями).
 
 3) **Получение данных**
-- Запрос через `GenericService.get('baselines', filter, { page, limit, sortBy, populate: 'snapshootId', includeUsage: true })`.
-- Обработать загрузку/ошибки (`Loader`, `Alert`), мемоизировать `filtersToApi` чтобы не дергать лишние запросы.
+- Используется `useInfinityScroll` с вызовом `GenericService.get('baselines', {...base_filter, ...filter}, { page, limit: 20, sortBy, populate: 'snapshootId', includeUsage: true })`; базовый фильтр дополняется `app` из query (`$oid`).
+- Подгрузка страниц происходит при появлении скелетона (`InfinityScrollSkeleton`), метаданные первой страницы берутся из `firstPageQuery`. Ошибки показываются текстом, при загрузке отображаются скелетоны.
 
 4) **Таблица и колонки**
-- Использовать `Table` + `ScrollArea`. Конфигурация колонок в массиве объектов `{ key, label, render, sortable }`.
-- Видимость колонок через `MultiSelect` + `useLocalStorage` (по умолчанию: preview, name, branch, browserName, viewport, os, createdDate, usageCount, markedAs).
-- Превью: миниатюра (80–100px) из `/snapshoots/<filename>`; `Tooltip`/`HoverCard` с большим превью (300–400px). Плейсхолдер при отсутствии файла.
-- Usage count: `Badge`/`Text`, подсказка что поле справочное и не сортируется.
+- Mantine `Table` + `ScrollArea`, выбор колонок через `Chip.Group` (по умолчанию: preview, name, branch, browserName, viewport, os, createdDate, usageCount, markedAs).
+- Превью: картинка 80×60 с `HoverCard` шириной 400px, плейсхолдер при отсутствии `snapshootId.filename`.
+- `usageCount` выводится `Badge` с подсказкой "Number of checks using this baseline (reference only)". OS/Browser ячейки содержат иконки, даты форматируются `yyyy-MM-dd HH:mm:ss`.
 
-5) **Редирект в чек-вью**
-- Клик по строке или отдельной кнопке → `navigate('/')` c установкой query param `filter` = `{ baselineSnapshotId: snapshootId }` (через `setQuery` из `useParams`), сбрасывая страницу/группировку в дефолт.
-- Логирование/обработка отсутствия `snapshootId`.
+5) **Навигация из таблицы**
+- Клик по строке ведет на `/` через `navigate`, добавляя `filter={"baselineSnapshotId":"<snapshootId>"}` (используется `snapshootId` из строки; чекбоксы/кнопки останавливают всплытие).
 
-6) **UI-полировка**
-- Подписи/хинты на русском; внутренние комментарии/логирование только на английском.
-- Адаптив: таблица тянется на ширину, превью ограничены.
+6) **Удаление**
+- Строки можно выделять чекбоксами; при наличии выбранных появляется иконка корзины. Удаление подтверждается модалкой и выполняется через `GenericService.delete('baselines', id)` для каждого id с последующим `refetch`.
 
 ## Тесты фронтенда
-- Юнит: функция построения API-фильтра/сортировки и маппинга ответа (без запроса) в отдельном helper — проверить regex-фильтр, сортировку, отсутствие сортировки по usageCount.
-- Компонентный smoke (через React Testing Library или существующий стек, если присутствует) для BaselinesPage: рендер загрузки, отображение строки/usageCount/превью-ховеркард по мок-данным.
-- Навигационный тест: клик по строке вызывает `navigate` с нужным query param (мокаем `useNavigate`/`useParams`).
-- Ручные проверки: загрузка данных, фильтр по имени, смена сортировки, смена страницы, редирект в `/` с примененным фильтром.
+- Специализированных unit/компонентных тестов для Baselines сейчас нет; покрытие ограничено ручными проверками и общими хуками. Требуются отдельные тесты на сортировку/фильтрацию, отображение usageCount/превью и навигацию при клике по строке.

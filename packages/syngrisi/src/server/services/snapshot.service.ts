@@ -4,6 +4,7 @@ import { Baseline, Snapshot } from '@models';
 import log from "../lib/logger";
 import { SnapshotDocument } from '@models/Snapshot';
 import path from 'path';
+import { LogOpts } from '@types';
 
 const logOpts = {
     scope: 'snapshot_helper',
@@ -40,22 +41,14 @@ const removeSnapshotFile = async (snapshot: SnapshotDocument) => {
 };
 
 const remove = async (id: string) => {
-    const logOpts = {
+    const logOpts: LogOpts = {
         scope: 'removeSnapshot',
         msgType: 'REMOVE',
         itemType: 'snapshot',
         ref: id,
     };
-    log.silly(`deleting snapshot with id: '${id}'`, logOpts);
 
     if (!id) {
-        log.warn('id is empty');
-        return;
-    }
-
-    const snapshot: SnapshotDocument | null = await Snapshot.findById(id).lean().exec();
-    if (!snapshot) {
-        log.warn(`cannot find snapshot with id: '${id}'`);
         return;
     }
 
@@ -65,13 +58,12 @@ const remove = async (id: string) => {
         return;
     }
 
-    log.debug(`snapshot: '${id}' is not related to a baseline, attempting to remove it`, logOpts);
-    await Snapshot.findByIdAndDelete(id);
-    log.debug(`snapshot: '${id}' was removed`, logOpts);
-
-    const imagePath = path.join(config.defaultImagesPath, snapshot.filename);
-    log.debug(`attempting to remove snapshot file, id: '${snapshot._id}', filename: '${imagePath}'`, logOpts);
-    await removeSnapshotFile(snapshot);
+    const snapshot = await Snapshot.findById(id);
+    if (snapshot) {
+        await removeSnapshotFile(snapshot);
+        await Snapshot.findByIdAndDelete(id);
+    } else {
+    }
 };
 
 export {
