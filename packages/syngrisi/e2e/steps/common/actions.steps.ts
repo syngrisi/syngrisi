@@ -256,6 +256,45 @@ When(
 );
 
 /**
+ * Step definition: `When I fill {string} into {role} {string}`
+ *
+ * @param value - Text to input into the control.
+ * @param role - {@link AriaRole} derived from `{role}`.
+ * @param name - Accessible name identifying the control.
+ *
+ * @example
+ * ```gherkin
+ * When I fill "user" into textbox "Username"
+ * ```
+ */
+When(
+  'I fill {string} into {role} {string}',
+  async ({ page, testData }, value: string, role: AriaRole, name: string) => {
+    const renderedValue = renderTemplate(value, testData);
+    const renderedName = renderTemplate(name, testData);
+    const locator = getRoleLocator(page, role, renderedName);
+    await locator.fill(renderedValue);
+  }
+);
+
+When(
+  'I fill {string} into element with placeholder {string}',
+  async ({ page, testData }, value: string, placeholder: string) => {
+    const renderedValue = renderTemplate(value, testData);
+    const renderedPlaceholder = renderTemplate(placeholder, testData);
+    await page.getByPlaceholder(renderedPlaceholder).fill(renderedValue);
+  }
+);
+
+Then(
+  'the element with placeholder {string} should be visible for {int} sec',
+  async ({ page, testData }, placeholder: string, seconds: number) => {
+    const renderedPlaceholder = renderTemplate(placeholder, testData);
+    await page.getByPlaceholder(renderedPlaceholder).waitFor({ state: 'visible', timeout: seconds * 1000 });
+  }
+);
+
+/**
  * Step definition: `When I wait for "{string}" seconds`
  *
  * Waits for the specified number of seconds, accepting templated values.
@@ -549,8 +588,8 @@ When('I execute javascript OLD code:', async ({ page, testData }: { page: Page; 
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
       const isDisconnected = errorMsg.includes('disconnected') ||
-                            errorMsg.includes('failed to check if window was closed') ||
-                            errorMsg.includes('ECONNREFUSED');
+        errorMsg.includes('failed to check if window was closed') ||
+        errorMsg.includes('ECONNREFUSED');
       if (isDisconnected) {
         logger.warn('Browser disconnected or ChromeDriver unavailable, skipping javascript execution');
         testData.set('js', '');
@@ -733,6 +772,12 @@ When('I release key {string}', async ({ page }, key: string) => {
 When('I click on the element {string} via js', async ({ page }, selector: string) => {
   const locator = getLocatorQuery(page, selector);
   await locator.first().evaluate((el: HTMLElement) => el.click());
+});
+
+When('I force click element with locator {string}', async ({ page, testData }, rawValue: string) => {
+  const renderedValue = renderTemplate(rawValue, testData);
+  const locator = getLocatorQuery(page, renderedValue);
+  await locator.first().click({ force: true });
 });
 
 When('I move to element {string}', async ({ page }, selector: string) => {

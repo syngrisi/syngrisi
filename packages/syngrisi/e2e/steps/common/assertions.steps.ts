@@ -363,6 +363,19 @@ Then(
   }
 );
 
+Then(
+  'the element with {target} {string} should contain value {string}',
+  async ({ page, testData }, target: ElementTarget, rawValue: string, expected: string) => {
+    const renderedTarget = testData ? renderTemplate(rawValue, testData) : rawValue;
+    const renderedExpected = testData ? renderTemplate(expected, testData) : expected;
+    const locator = locatorFromTarget(page, target, renderedTarget);
+    // Wait for element to be visible
+    await locator.first().waitFor({ state: 'visible', timeout: 10000 });
+    const value = await locator.inputValue();
+    expect(value).toContain(renderedExpected);
+  }
+);
+
 /**
  * Step definition: `Then the element with {target} {string} should have contains text {string}`
  *
@@ -689,7 +702,7 @@ async function checkElementContainsText(
             classes: el.className,
             dataCheck: el.getAttribute('data-check'),
           }))
-      , renderedExpected);
+        , renderedExpected);
       logger.info(`Elements containing text "${renderedExpected}": ${JSON.stringify(textMatches)}`);
     }
     throw new Error(`Expected at least one element for selector "${selector}", but none found`);
@@ -1114,4 +1127,89 @@ When(
     const timeoutMs = ordinalValue + 1;
     await assertCondition(locator, condition, undefined, { timeout: timeoutMs });
   },
+);
+
+/**
+ * Step definition: `Then the {role} {string} should not be {condition}`
+ *
+ * Verifies that an element with specified role and name does NOT satisfy the condition.
+ *
+ * @param role - {@link AriaRole} derived from the `{role}` parameter type.
+ * @param name - Accessible name for the element.
+ * @param condition - {@link StepCondition} value (e.g. `'visible'`, `'enabled'`).
+ *
+ * @example
+ * ```gherkin
+ * Then the button "Baselines" should not be visible
+ * ```
+ */
+Then(
+  'the {role} {string} should not be {condition}',
+  async ({ page, testData }, role: AriaRole, name: string, condition: StepCondition) => {
+    const renderedName = renderTemplate(name, testData);
+    const locator = getRoleLocator(page, role, renderedName);
+    // Invert the condition check
+    if (condition === 'visible') {
+      await expect(locator).not.toBeVisible();
+    } else if (condition === 'enabled') {
+      await expect(locator).not.toBeEnabled();
+    } else if (condition === 'checked') {
+      await expect(locator).not.toBeChecked();
+    } else if (condition === 'disabled') {
+      await expect(locator).not.toBeDisabled();
+    } else {
+      throw new Error(`Unsupported negated condition: ${condition}`);
+    }
+  }
+);
+
+/**
+ * Step definition: `Then the text {string} should be {condition}`
+ *
+ * Verifies that text is visible on the page.
+ *
+ * @param text - The text to search for on the page.
+ * @param condition - {@link StepCondition} value (e.g. `'visible'`).
+ *
+ * @example
+ * ```gherkin
+ * Then the text "Welcome" should be visible
+ * ```
+ */
+Then(
+  'the text {string} should be {condition}',
+  async ({ page, testData }, text: string, condition: StepCondition) => {
+    const renderedText = renderTemplate(text, testData);
+    const locator = page.getByText(renderedText, { exact: false });
+    await assertCondition(locator, condition);
+  }
+);
+
+/**
+ * Step definition: `Then the text {string} should not be {condition}`
+ *
+ * Verifies that text is NOT visible on the page.
+ *
+ * @param text - The text to search for on the page.
+ * @param condition - {@link StepCondition} value (e.g. `'visible'`).
+ *
+ * @example
+ * ```gherkin
+ * Then the text "Error" should not be visible
+ * ```
+ */
+Then(
+  'the text {string} should not be {condition}',
+  async ({ page, testData }, text: string, condition: StepCondition) => {
+    const renderedText = renderTemplate(text, testData);
+    const locator = page.getByText(renderedText, { exact: false });
+    // Invert the condition check
+    if (condition === 'visible') {
+      await expect(locator).not.toBeVisible();
+    } else if (condition === 'enabled') {
+      await expect(locator).not.toBeEnabled();
+    } else {
+      throw new Error(`Unsupported negated condition for text: ${condition}`);
+    }
+  }
 );

@@ -4,25 +4,31 @@ import { createLogger } from '@lib/logger';
 import type { AppServerFixture, TestStore } from '@fixtures';
 import { expect } from '@playwright/test';
 import { renderTemplate } from '@helpers/template';
+import { env } from '@config';
 
 const logger = createLogger('NavigationSteps');
 
 When('I go to {string} page', async ({ page, appServer }: { page: Page; appServer: AppServerFixture }, pageName: string) => {
+  // Use appServer.baseURL if available, otherwise construct from host and port
+  const baseURL = appServer.baseURL || `http://${env.E2E_BACKEND_HOST || 'localhost'}:${appServer.serverPort || 3002}`;
+
   const pages: Record<string, string> = {
-    main: `${appServer.baseURL}/`,
-    first_run: `${appServer.baseURL}/auth/change?first_run=true`,
-    runs: `${appServer.baseURL}/runs`,
-    change_password: `${appServer.baseURL}/auth/change`,
-    logout: `${appServer.baseURL}/auth/logout`,
-    admin2: `${appServer.baseURL}/admin`,
-    logs: `${appServer.baseURL}/admin/logs`,
-    settings: `${appServer.baseURL}/admin/settings`,
+    main: `${baseURL}/`,
+    baselines: `${baseURL}/baselines`,
+    first_run: `${baseURL}/auth/change?first_run=true`,
+    runs: `${baseURL}/`,
+    change_password: `${baseURL}/auth/change`,
+    logout: `${baseURL}/auth/logout`,
+    admin2: `${baseURL}/admin`,
+    logs: `${baseURL}/admin/logs`,
+    settings: `${baseURL}/admin/settings`,
   };
 
   const adminPages: Record<string, Record<string, string>> = {
     admin: {
-      users: `${appServer.baseURL}/admin?task=users`,
-      tasks: `${appServer.baseURL}/admin/tasks/handle_old_checks`,
+      users: `${baseURL}/admin?task=users`,
+      tasks: `${baseURL}/admin/tasks/handle_old_checks`,
+      orphan_baselines: `${baseURL}/admin/tasks/handle_orphan_baselines`,
     },
   };
 
@@ -43,7 +49,7 @@ When('I go to {string} page', async ({ page, appServer }: { page: Page; appServe
   // Wait for potential redirects (e.g., auth redirects) - client-side redirects may take time
   try {
     // Wait for navigation to complete (including client-side redirects)
-    await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
+    await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => { });
     await page.waitForTimeout(2000); // Additional wait for client-side redirects
   } catch (e) {
     // Continue anyway
@@ -117,4 +123,3 @@ Then('the current url contains {string}', async ({ page, testData }: { page: Pag
     }
   }
 });
-
