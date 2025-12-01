@@ -95,6 +95,7 @@
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^8.1.0",
     "@inquirer/prompts": "^7.10.1",
+    "@isaacs/brace-expansion": "^5.0.0",
     "@syngrisi/node-resemble.js": "^2.3.0",
     "@types/compression": "^1.8.1",
     "body-parser": "^2.2.0",
