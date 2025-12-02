@@ -30,7 +30,7 @@ When('I accept the {string} check', async ({ page }: { page: Page }, checkName: 
       return color === 'rgb(64, 192, 87)' || color === 'rgba(64, 192, 87, 1)';
     },
     checkName,
-    { timeout: 30000 }
+    { timeout: 10000 }
   );
 });
 
@@ -102,4 +102,3 @@ When('I remove the {string} check', async ({ page }: { page: Page }, checkName: 
     throw error;
   }
 });
-

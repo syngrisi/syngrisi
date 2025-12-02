@@ -4,7 +4,7 @@
       "command": "npx",
       "args": ["tsx", "packages/syngrisi/e2e/support/mcp/bridge-cli.ts"],
       "env": {
-        "SYNGRISI_ROOT": "packages/syngrisi/e2e"
+        "SYNGRISI_ROOT": "./packages/syngrisi/e2e"
       }
     }
   },

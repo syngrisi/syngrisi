@@ -35,6 +35,7 @@ interface Props {
     checkQuery: any,
     closeHandler: any,
     relatedRendered?: boolean,
+    testList?: any[],
 }
 
 export function CheckDetails({
@@ -42,10 +43,11 @@ export function CheckDetails({
     checkQuery,
     closeHandler,
     relatedRendered = true,
+    testList = [],
 }: Props) {
     useDocumentTitle(initCheckData?.name);
     const canvasElementRef = useRef(null);
-    const { query } = useParams();
+    const { query, setQuery } = useParams();
     const { classes } = useStyles();
     const [mainView, setMainView] = useState<MainView | null>(null);
 
@@ -135,6 +137,61 @@ export function CheckDetails({
         return 0;
     }, [baselineQuery.data?.timestamp]);
 
+    // Navigation Logic
+    const siblingChecksQuery = useQuery(
+        ['sibling_checks', currentCheck?.test?._id],
+        () => GenericService.get(
+            'checks',
+            { test: currentCheck?.test?._id },
+            {
+                limit: '0',
+                sortBy: 'CreatedDate',
+                sortOrder: -1,
+            },
+            'sibling_checks_for_nav'
+        ),
+        {
+            enabled: !!currentCheck?.test?._id,
+            refetchOnWindowFocus: false,
+        }
+    );
+    const siblingChecks = siblingChecksQuery.data?.results || [];
+    const currentCheckIndex = siblingChecks.findIndex((c: any) => c._id === currentCheck._id);
+    const currentTestIndex = testList.findIndex((t: any) => (t.id || t._id) === currentCheck?.test?._id);
+
+    const handleNavigateCheck = (direction: 'prev' | 'next') => {
+        if (!siblingChecks.length) return;
+        const targetIndex = direction === 'prev' ? currentCheckIndex - 1 : currentCheckIndex + 1;
+        if (targetIndex >= 0 && targetIndex < siblingChecks.length) {
+            setQuery({ checkId: siblingChecks[targetIndex]._id });
+        }
+    };
+
+    const handleNavigateTest = async (direction: 'prev' | 'next') => {
+        if (!testList || !testList.length) return;
+        const targetTestIndex = direction === 'prev' ? currentTestIndex - 1 : currentTestIndex + 1;
+
+        if (targetTestIndex >= 0 && targetTestIndex < testList.length) {
+            const targetTest = testList[targetTestIndex];
+            const targetTestId = targetTest.id || targetTest._id;
+
+            const checks = await GenericService.get(
+                'checks',
+                { test: targetTestId },
+                {
+                    limit: '1',
+                    sortBy: 'CreatedDate',
+                    sortOrder: -1,
+                },
+                'first_check_for_nav'
+            );
+
+            if (checks.results && checks.results.length > 0) {
+                setQuery({ checkId: checks.results[0]._id });
+            }
+        }
+    };
+
     // init mainView
     useEffect(() => {
         const destroyMV = async () => {
@@ -218,6 +275,12 @@ export function CheckDetails({
                     baselineId={baselineId}
                     usageCount={usageCount}
                     closeHandler={closeHandler}
+                    onNavigateCheck={handleNavigateCheck}
+                    onNavigateTest={handleNavigateTest}
+                    isFirstCheck={currentCheckIndex <= 0}
+                    isLastCheck={currentCheckIndex === siblingChecks.length - 1}
+                    isFirstTest={currentTestIndex <= 0}
+                    isLastTest={currentTestIndex === testList.length - 1}
                 />
 
                 <Group

@@ -47,6 +47,8 @@ export async function clearDatabase(
   const dbUri = resolveDbUri(actualCid);
   const baselinesPath = resolveBaselinesPath(actualCid);
 
+  logger.debug(`clearDatabase called with: cid=${cid}, removeBaselines=${removeBaselines}, softClean=${softClean}`);
+
 
 
   const tasks: Promise<void>[] = [];
@@ -59,17 +61,31 @@ export async function clearDatabase(
       const db = client.db();
       if (softClean) {
         // Preserve critical collections during soft clean to avoid race conditions
-        // - users: Guest/Administrator created at startup, must persist
+        // - vrsusers: Guest/Administrator created at startup, must persist
         // - sessions: keep user authentication state
-        // - appsettings: auth settings must be consistent between server restarts
-        const preserveCollections = ['system.indexes', 'users', 'sessions', 'appsettings'];
+        // - vrsappsettings: auth settings must be consistent between server restarts
+        const preserveCollections = ['system.indexes', 'vrsusers', 'sessions', 'vrsappsettings'];
         const collections = await db.listCollections().toArray();
+        const collectionNames = collections.map(c => c.name);
+        logger.debug(`Found collections: ${collectionNames.join(', ')}`);
+
+        const usersCollection = db.collection('vrsusers');
+        const guestBefore = await usersCollection.findOne({ username: 'Guest' });
+        logger.debug(`Guest user before soft clean: ${guestBefore ? 'FOUND' : 'NOT FOUND'}`);
+
         for (const collection of collections) {
           if (!preserveCollections.includes(collection.name)) {
+            logger.debug(`Cleaning collection: ${collection.name}`);
             await db.collection(collection.name).deleteMany({});
+          } else {
+            logger.debug(`Preserving collection: ${collection.name}`);
           }
         }
-        logger.info(`✓ Soft cleaned database ${db.databaseName}`);
+
+        const guestAfter = await usersCollection.findOne({ username: 'Guest' });
+        logger.debug(`Guest user after soft clean: ${guestAfter ? 'FOUND' : 'NOT FOUND'}`);
+
+        logger.debug(`✓ Soft cleaned database ${db.databaseName}`);
       } else {
         const dropResult = await db.dropDatabase();
         logger.info(`✓ Dropped database ${db.databaseName}: ${dropResult}`);

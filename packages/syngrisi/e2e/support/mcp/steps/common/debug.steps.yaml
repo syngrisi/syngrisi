@@ -1,17 +1,84 @@
 metadata:
   category: common/debug
-  generatedAt: '2025-12-02T04:40:46.192Z'
+  generatedAt: '2025-12-02T10:02:40.846Z'
   totalFiles: 1
-  totalSteps: 7
+  totalSteps: 13
   sourceFiles:
     - steps/common/debug.steps.ts
 steps:
+  - pattern: 'I announce: {string}'
+    description: |-
+      Step definition: `When I announce: {string}`
+
+      Announces a phrase using text-to-speech with a visible banner overlay.
+      The banner is click-through (pointer-events: none) and disappears after speech completes.
+      Useful for highlighting key moments during feature demonstrations without blocking indefinitely.
+      This step is a no-op in CI environments.
+
+      @param phrase - The text to be spoken aloud and displayed
+
+      @example
+      ```gherkin
+      When I announce: "Now observe the drag and drop behavior"
+      ```
+    line: 426
+  - pattern: 'I announce: {string} and PAUSE'
+    description: |-
+      Step definition: `When I announce: {string} and PAUSE`
+
+      Announces a phrase using text-to-speech with a visible banner overlay, then pauses the Playwright runner.
+      The banner is click-through (pointer-events: none) and disappears after pause is released.
+      Useful for highlighting key moments during feature demonstrations with manual inspection.
+      This step is a no-op in CI environments.
+
+      @param phrase - The text to be spoken aloud and displayed before pausing
+
+      @example
+      ```gherkin
+      When I announce: "Task creation completed" and PAUSE
+      ```
+    line: 455
+  - pattern: I clear highlight
+    description: |-
+      Step definition: `When I clear highlight`
+
+      Removes any active element highlight from the page.
+      This step is a no-op in CI environments.
+
+      @example
+      ```gherkin
+      When I clear highlight
+      ```
+    line: 502
   - pattern: I fail
     description: ''
-    line: 299
+    line: 524
+  - pattern: I highlight element {string}
+    description: |-
+      Step definition: `When I highlight element {string}`
+
+      Highlights a DOM element with a bright pulsing animation.
+      The highlight persists until another element is highlighted or the highlight is cleared.
+      Useful for drawing attention to specific UI elements during demos.
+      This step is a no-op in CI environments.
+
+      @param selector - CSS selector for the element to highlight
+
+      @example
+      ```gherkin
+      When I highlight element "[data-testid='submit-button']"
+      When I highlight element ".task-card"
+      ```
+    line: 484
+  - pattern: I log current URL
+    description: ''
+    line: 529
   - pattern: I pause
     description: ''
-    line: 264
+    line: 393
+  - pattern: I PAUSE
+    description: ''
+    line: 384
   - pattern: I pause for {int} ms
     description: |-
       Pauses execution for a specified number of milliseconds.
@@ -22,16 +89,16 @@ steps:
       When I pause for 1000 ms
       When I pause for 500 ms
       ```
-    line: 294
+    line: 519
   - pattern: 'I pause with phrase: {string}'
     description: ''
-    line: 273
+    line: 400
   - pattern: I start the debug MCP Test Engine
     description: ''
-    line: 309
+    line: 540
   - pattern: 'I start the MCP test engine with "codex":'
     description: ⚠️ experimental, not used widely yet
-    line: 320
+    line: 551
   - pattern: I test
     description: ''
-    line: 304
+    line: 535

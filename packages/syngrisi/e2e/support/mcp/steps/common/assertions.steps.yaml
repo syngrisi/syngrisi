@@ -1,8 +1,8 @@
 metadata:
   category: common/assertions
-  generatedAt: '2025-12-02T04:40:46.192Z'
+  generatedAt: '2025-12-02T10:02:40.846Z'
   totalFiles: 1
-  totalSteps: 55
+  totalSteps: 58
   sourceFiles:
     - steps/common/assertions.steps.ts
 steps:
@@ -23,7 +23,7 @@ steps:
       ```gherkin
       When I wait 30 seconds for the element with locator "[data-test='table-row-Message']" for 10000ms to be visible
       ```
-    line: 1106
+    line: 1107
   - pattern: I wait {int} seconds for the {role} with {attribute} {string} to be {condition}
     description: |-
       Waits for an element to reach a specific state.
@@ -44,10 +44,10 @@ steps:
       ```gherkin
       When I wait 10 seconds for the element with locator "##flora-GridLayout" to be visible
       ```
-    line: 998
+    line: 999
   - pattern: I wait {int} seconds for the {role} with {attribute} {string} to exist
     description: ''
-    line: 1070
+    line: 1071
   - pattern: I wait {int} seconds for the {role} with {attribute} {string} to not be displayed
     description: |-
       Waits for an element to not be displayed (hidden) with a specified timeout.
@@ -62,19 +62,19 @@ steps:
       ```gherkin
       When I wait 30 seconds for the element with locator "[data-test='folding-table-items']" to not be displayed
       ```
-    line: 1032
+    line: 1033
   - pattern: I wait {int} seconds for the {role} with {attribute} {string} to not exist
     description: ''
-    line: 1051
+    line: 1052
   - pattern: I wait on element {string}
     description: ''
-    line: 940
+    line: 941
   - pattern: I wait on element {string} to be {condition}
     description: ''
-    line: 969
+    line: 970
   - pattern: I wait on element {string} to exist
     description: ''
-    line: 863
+    line: 864
   - pattern: I wait on element {string} to not be displayed
     description: ''
     line: 741
@@ -229,43 +229,83 @@ steps:
       ```gherkin
       Then the button "Baselines" should not be visible
       ```
-    line: 1146
+    line: 1147
+  - pattern: the cookie {string} should be present
+    description: |-
+      Step definition: `Then the cookie {string} should be present`
+
+      Verifies that a cookie with the given name is present in the browser context.
+
+      @param name - The name of the cookie to check.
+
+      @example
+      ```gherkin
+      Then the cookie "my_session_id" should be present
+      ```
+    line: 1230
+  - pattern: the cookie {string} should have value {string}
+    description: |-
+      Step definition: `Then the cookie {string} should have value {string}`
+
+      Verifies that a cookie with the given name is present and its value matches the expected value.
+
+      @param name - The name of the cookie to check.
+      @param expectedValue - The expected value of the cookie.
+
+      @example
+      ```gherkin
+      Then the cookie "my_session_id" should have value "abc-123"
+      ```
+    line: 1273
+  - pattern: the cookie {string} should not be present
+    description: |-
+      Step definition: `Then the cookie {string} should not be present`
+
+      Verifies that a cookie with the given name is NOT present in the browser context.
+
+      @param name - The name of the cookie to check.
+
+      @example
+      ```gherkin
+      Then the cookie "my_session_id" should not be present
+      ```
+    line: 1251
   - pattern: the css attribute {string} from element {string} is {string}
     description: ''
     line: 776
   - pattern: the current url does not contain {string}
     description: ''
-    line: 921
+    line: 922
   - pattern: the element {string} contains HTML {string}
     description: ''
-    line: 887
+    line: 888
   - pattern: the element {string} contains the text {string}
     description: ''
-    line: 869
+    line: 870
   - pattern: the element {string} does appear exactly {string} times
     description: ''
-    line: 877
+    line: 878
   - pattern: the element {string} does not exist
     description: ''
     line: 757
   - pattern: the element {string} does not have attribute {string}
     description: ''
-    line: 960
+    line: 961
   - pattern: the element {string} does not have attribute {string} {string}
     description: ''
-    line: 912
+    line: 913
   - pattern: the element {string} does not have the class {string}
     description: ''
-    line: 904
+    line: 905
   - pattern: the element {string} has attribute {string}
     description: ''
-    line: 949
+    line: 950
   - pattern: the element {string} has attribute {string} {string}
     description: ''
     line: 717
   - pattern: the element {string} has the class {string}
     description: ''
-    line: 896
+    line: 897
   - pattern: the element {string} matches the text {string}
     description: ''
     line: 599
@@ -392,7 +432,7 @@ steps:
     line: 522
   - pattern: 'the HTML contains:'
     description: ''
-    line: 931
+    line: 932
   - pattern: the page should be visible
     description: |-
       Step definition: `Then the {role} {string} with aria-pressed {string} should be {condition}`
@@ -430,7 +470,7 @@ steps:
       ```gherkin
       Then the text "Welcome" should be visible
       ```
-    line: 1179
+    line: 1180
   - pattern: the text {string} should not be {condition}
     description: |-
       Step definition: `Then the text {string} should not be {condition}`
@@ -444,7 +484,7 @@ steps:
       ```gherkin
       Then the text "Error" should not be visible
       ```
-    line: 1201
+    line: 1202
   - pattern: the title contains {string}
     description: ''
     line: 770

@@ -792,3 +792,25 @@ When('I move to element {string} with an offset of {int},{int}', async ({ page }
     await page.mouse.move(box.x + x, box.y + y);
   }
 });
+
+/**
+ * Step definition: `When I click the {ordinal} {role} {string}`
+ * Clicks on the Nth element of a given role and name.
+ *
+ * @param ordinal - Zero-based ordinal index supplied by `{ordinal}` (e.g. `1st` -> `0`).
+ * @param role - {@link AriaRole} derived from the `{role}` parameter type.
+ * @param name - Accessible name for the element.
+ *
+ * @example
+ * ```gherkin
+ * When I click the 1st button "Open Check"
+ * ```
+ */
+When(
+  'I click the {ordinal} {role} {string}',
+  async ({ page, testData }, ordinal: number, role: AriaRole, name: string) => {
+    const renderedName = renderTemplate(name, testData);
+    const locator = getRoleLocator(page, role, renderedName, ordinal);
+    await locator.click();
+  }
+);

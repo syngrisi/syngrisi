@@ -1,21 +1,39 @@
-# Syngrisi MCP Benchmark
+# Syngrisi MCP Benchmark (Playwright Edition)
 
-Lives under `packages/syngrisi/e2e/support/mcp/benchmark`.
+This benchmark suite evaluates the MCP Agent using Playwright as the runner.
 
-What’s inside:
-- `scenarios/` — JSON definitions (prompt, expectations, limits).
-- `runner/` — execution harness (`run-bench.ts`, `executor.ts`, `log-parser.ts`).
-- `metrics/` — KPI calculators.
-- `reports/` — generated summaries (`run_<scenario-id>.md`).
-- `logs/bench-run.log` — прогресс запусков (команда, runId, logFile, тайминг, stdout/stderr).
+## 📊 Key Metrics
+We track 5 critical metrics (inspired by WebArena and SWE-bench):
 
-Usage:
-1) Install dev deps: `npm install` inside `packages/syngrisi/e2e/support/mcp/benchmark`.
-2) Configure `.env` locally in this folder (`packages/syngrisi/e2e/support/mcp/benchmark/.env`) for `BENCH_COMMAND`, `BENCH_DRY_RUN`, `GEMINI_API_KEY`, etc. (auto-loaded). Optionally, repo root `.env` is loaded as fallback.
-3) `BENCH_COMMAND` (real MCP launch only — mocks forbidden) must start an MCP session (`session_start_new`), feed `BENCH_SCENARIO_PROMPT` and `BENCH_SESSION_NAME` to the agent, and ensure logs appear in `packages/syngrisi/e2e/support/mcp/logs/*.jsonl`.
-4) Run: `npm run bench` (all scenarios) or `npm run bench:task1` / `npm run bench:task0` for a specific scenario. Set `BENCH_DRY_RUN=false` to execute for real.
+1.  **Success Rate**: Did the agent achieve the goal? (Pass/Fail)
+2.  **Step Efficiency**: How many turns/tool calls did it take?
+3.  **Token Usage**: Total input + output tokens (estimated from logs).
+4.  **Duration**: Wall-clock time for the run.
+5.  **Reliability Score**: Quality score (100 - penalties for errors/hallucinations).
 
-Env contract for `BENCH_COMMAND`:
-- Receives `BENCH_SCENARIO_PROMPT` (full prompt text).
-- Receives `BENCH_SESSION_NAME` (unique per run).
-- Should write MCP logs to `packages/syngrisi/e2e/support/mcp/logs/*.jsonl` so the metrics engine can read them.
+## 🚀 Running Benchmarks
+
+### Prerequisites
+1.  Ensure `BENCH_COMMAND` is set in your `.env` (command to launch your MCP agent).
+2.  Install dependencies: `npm install` in the e2e root.
+
+### Execute
+Run all scenarios:
+```bash
+npx playwright test -c support/mcp/benchmark/playwright.benchmark.config.ts
+```
+
+Run a specific scenario:
+```bash
+npx playwright test -c support/mcp/benchmark/playwright.benchmark.config.ts -g "task1"
+```
+
+### Configuration
+- **Config File**: `support/mcp/benchmark/playwright.benchmark.config.ts`
+- **Scenarios**: JSON files in `support/mcp/benchmark/scenarios/`
+- **Reporters**: Custom reporter located in `support/mcp/benchmark/reporters/`
+
+## 📂 Structure
+- `tests/scenarios.spec.ts`: Dynamically loads JSON scenarios as Playwright tests.
+- `tests/fixtures.ts`: Manages the MCP Agent process and log capturing.
+- `reporters/benchmark-reporter.ts`: Aggregates results into the 5 metrics.

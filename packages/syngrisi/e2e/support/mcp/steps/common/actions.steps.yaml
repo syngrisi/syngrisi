@@ -1,8 +1,8 @@
 metadata:
   category: common/actions
-  generatedAt: '2025-12-02T04:40:46.192Z'
+  generatedAt: '2025-12-02T10:02:40.846Z'
   totalFiles: 1
-  totalSteps: 29
+  totalSteps: 30
   sourceFiles:
     - steps/common/actions.steps.ts
 steps:
@@ -40,6 +40,20 @@ steps:
   - pattern: I click on the element {string} via js
     description: ''
     line: 772
+  - pattern: I click the {ordinal} {role} {string}
+    description: |-
+      Step definition: `When I click the {ordinal} {role} {string}`
+      Clicks on the Nth element of a given role and name.
+
+      @param ordinal - Zero-based ordinal index supplied by `{ordinal}` (e.g. `1st` -> `0`).
+      @param role - {@link AriaRole} derived from the `{role}` parameter type.
+      @param name - Accessible name for the element.
+
+      @example
+      ```gherkin
+      When I click the 1st button "Open Check"
+      ```
+    line: 809
   - pattern: I delete the cookie {string}
     description: ''
     line: 756

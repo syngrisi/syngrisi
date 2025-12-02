@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { Divider, Group, Menu, ActionIcon } from '@mantine/core';
 import { useEffect, useState } from 'react';
-import { IconDotsVertical, IconTrash } from '@tabler/icons-react';
+import { IconDotsVertical, IconTrash, IconArrowLeft, IconArrowRight, IconArrowUp, IconArrowDown } from '@tabler/icons-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GenericService } from '@shared/services';
 import { errorMsg, successMsg } from '@shared/utils/utils';
@@ -26,6 +26,12 @@ interface Props {
     checkQuery: any
     closeHandler: any
     usageCount?: number
+    onNavigateCheck?: (direction: 'prev' | 'next') => void
+    onNavigateTest?: (direction: 'prev' | 'next') => void
+    isFirstCheck?: boolean
+    isLastCheck?: boolean
+    isFirstTest?: boolean
+    isLastTest?: boolean
 }
 
 export function Toolbar(
@@ -38,6 +44,12 @@ export function Toolbar(
         checkQuery,
         closeHandler,
         usageCount,
+        onNavigateCheck,
+        onNavigateTest,
+        isFirstCheck,
+        isLastCheck,
+        isFirstTest,
+        isLastTest,
     }: Props,
 ) {
     const { query } = useParams();
@@ -86,6 +98,43 @@ export function Toolbar(
         <Group position="apart" noWrap data-check="toolbar">
             <ScreenshotDetails mainView={mainView} check={curCheck} view={view} />
             <Group spacing="sm" noWrap>
+                <Group spacing={2} noWrap>
+                    <ActionIcon
+                        onClick={() => onNavigateCheck && onNavigateCheck('prev')}
+                        disabled={isFirstCheck}
+                        title="Previous Check"
+                        variant="transparent"
+                    >
+                        <IconArrowLeft size={20} />
+                    </ActionIcon>
+                    <ActionIcon
+                        onClick={() => onNavigateCheck && onNavigateCheck('next')}
+                        disabled={isLastCheck}
+                        title="Next Check"
+                        variant="transparent"
+                    >
+                        <IconArrowRight size={20} />
+                    </ActionIcon>
+                </Group>
+                <Group spacing={2} noWrap>
+                    <ActionIcon
+                        onClick={() => onNavigateTest && onNavigateTest('prev')}
+                        disabled={isFirstTest}
+                        title="Previous Test"
+                        variant="transparent"
+                    >
+                        <IconArrowUp size={20} />
+                    </ActionIcon>
+                    <ActionIcon
+                        onClick={() => onNavigateTest && onNavigateTest('next')}
+                        disabled={isLastTest}
+                        title="Next Test"
+                        variant="transparent"
+                    >
+                        <IconArrowDown size={20} />
+                    </ActionIcon>
+                </Group>
+                <Divider orientation="vertical" />
                 <Group
                     spacing={4}
                     className={classes.zoomButtonsWrapper}

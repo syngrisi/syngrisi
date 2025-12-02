@@ -20,9 +20,10 @@ import { CheckDetails } from '@index/components/Tests/Table/Checks/CheckDetails/
 interface Props {
     relatedRendered?: boolean;
     apikey?: string;
+    testList?: any[];
 }
 
-export function CheckModal({ relatedRendered = true, apikey }: Props) {
+export function CheckModal({ relatedRendered = true, apikey, testList = [] }: Props) {
     const { query, setQuery } = useParams();
     const [checkModalOpened, checkModalHandlers] = useDisclosure(false);
 
@@ -119,6 +120,7 @@ export function CheckModal({ relatedRendered = true, apikey }: Props) {
                                     checkQuery={checkQuery}
                                     closeHandler={closeHandler}
                                     relatedRendered={relatedRendered}
+                                    testList={testList}
                                 />
                             )
                             : (
