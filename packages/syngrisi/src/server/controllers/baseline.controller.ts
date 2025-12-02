@@ -25,12 +25,20 @@ const get = catchAsync(async (req: ExtRequest, res: Response) => {
     const result = await genericService.get('VRSBaseline', filter, options);
 
     if (includeUsage && result?.results?.length) {
-        const snapshotIds = result.results.map((item: any) => item.snapshootId || item?.snapshootId?._id);
+
+        const snapshotIds = result.results.map((item: any) => (item.snapshootId && item.snapshootId._id) ? item.snapshootId._id : item.snapshootId);
         const usageMap = await getUsageCountsBySnapshotIds(snapshotIds);
 
         result.results = result.results.map((item: any) => {
             const obj = item?.toObject ? item.toObject() : item;
-            const snapId = obj.snapshootId?.toString?.() || String(obj.snapshootId || '');
+            let snapId = '';
+            if (obj.snapshootId) {
+                if (obj.snapshootId._id) {
+                    snapId = obj.snapshootId._id.toString();
+                } else {
+                    snapId = obj.snapshootId.toString();
+                }
+            }
             return {
                 ...obj,
                 usageCount: usageMap[snapId] || 0,

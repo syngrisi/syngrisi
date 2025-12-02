@@ -21,7 +21,7 @@
     "test:stats": "node support/stats.js",
     "test:smoke": "bddgen && cross-env SYNGRISI_LOG_LEVEL=warn playwright test --grep=@smoke --retries=1 --workers=10 --shard=${SHARD:-1/1}",
     "test:headed": "bddgen && cross-env SYNGRISI_LOG_LEVEL=warn PLAYWRIGHT_HEADED=1 playwright test",
-    "test:mcp": "cross-env SYNGRISI_LOG_LEVEL=debug MCP_KEEP_ALIVE=0 E2E_HEADLESS=1 playwright test --workers=8 --config support/mcp/playwright.config.ts",
+    "test:mcp": "cross-env SYNGRISI_LOG_LEVEL=debug MCP_KEEP_ALIVE=1 E2E_HEADLESS=1 playwright test --workers=1 --config support/mcp/playwright.config.ts",
     "test:mcp:headed": "cross-env SYNGRISI_LOG_LEVEL=warn MCP_KEEP_ALIVE=1 PLAYWRIGHT_HEADED=1 playwright test --workers=1 --config support/mcp/playwright.config.ts"
   },
   "devDependencies": {
@@ -41,6 +41,7 @@
     "zod": "^3.25.76"
   },
   "dependencies": {
+    "@cucumber/cucumber": "^12.3.0",
     "@modelcontextprotocol/sdk": "^1.21.1",
     "@syngrisi/wdio-sdk": "file:../../wdio-sdk",
     "@types/form-data": "^2.5.2",
