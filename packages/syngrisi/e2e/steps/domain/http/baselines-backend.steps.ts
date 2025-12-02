@@ -627,6 +627,19 @@ async function createBaselineWithUsage(
   });
   const baselinesData = JSON.parse(baselinesRes.body);
   const baselineRecord = baselinesData.results?.[0];
+  logger.info(`DEBUG: Baseline created: ${baselineRecord?._id}, snapshootId: ${baselineRecord?.snapshootId}`);
+  logger.info(`DEBUG: Initial Check snapshotId: ${snapshotId}`);
+
+  // Verify check baselineId using filter
+  const checkVerificationRes = await got.get(`${appServer.baseURL}/v1/checks?filter={"_id":"${checkId}"}`, {
+    headers: {
+      ...createAuthHeaders(appServer, { sessionId: sessionSid || undefined }),
+      apikey: hashedApiKey,
+    }
+  });
+  const checkVerificationData = JSON.parse(checkVerificationRes.body);
+  const checkVerification = checkVerificationData.results?.[0];
+  logger.info(`DEBUG: Check ${checkId} baselineId: ${checkVerification?.baselineId}`);
 
   return {
     snapshotId,
