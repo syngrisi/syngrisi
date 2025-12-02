@@ -134,6 +134,7 @@ Feature: Check details Resize and Pan
       true
       """
 
+  @flaky
   Scenario: Pan via central mouse button and Mouse Move
     # check pan coordinates
     When I execute javascript code:

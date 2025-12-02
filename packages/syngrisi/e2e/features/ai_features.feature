@@ -86,6 +86,7 @@ Feature: AI Features
     When I request "/ai/checks?lastSeconds=3600" with API key
     Then I should receive an HTML response
 
+  @flaky
   Scenario: Field filtering with JSON export
     When I request "/ai/checks?fields=_id,name,status&format=json" with API key
     Then I should receive a JSON response

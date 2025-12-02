@@ -63,7 +63,17 @@ When('I delete the {string} check', async ({ page }: { page: Page }, checkName: 
 
     const confirmButton = page.locator(`[data-test='check-remove-icon-confirm'][data-confirm-button-name='${checkName}']`).first();
     await confirmButton.waitFor({ state: 'visible', timeout: 10000 });
-    await confirmButton.click();
+
+    // Wait for DELETE API response to complete before proceeding
+    // This prevents race condition where UI update happens after test assertion
+    await Promise.all([
+      page.waitForResponse(
+        (resp) => resp.url().includes('/v1/checks/') && resp.request().method() === 'DELETE' && resp.ok(),
+        { timeout: 15000 }
+      ),
+      confirmButton.click(),
+    ]);
+
     logger.info(`Deleted check: ${checkName}`);
   } catch (error: unknown) {
     const errorMsg = error instanceof Error ? error.message : String(error);
@@ -88,7 +98,17 @@ When('I remove the {string} check', async ({ page }: { page: Page }, checkName: 
 
     const confirmButton = page.locator(`[data-test='check-remove-icon-confirm'][data-confirm-button-name='${checkName}']`).first();
     await confirmButton.waitFor({ state: 'visible', timeout: 10000 });
-    await confirmButton.click();
+
+    // Wait for DELETE API response to complete before proceeding
+    // This prevents race condition where UI update happens after test assertion
+    await Promise.all([
+      page.waitForResponse(
+        (resp) => resp.url().includes('/v1/checks/') && resp.request().method() === 'DELETE' && resp.ok(),
+        { timeout: 15000 }
+      ),
+      confirmButton.click(),
+    ]);
+
     logger.info(`Removed check: ${checkName}`);
   } catch (error: unknown) {
     const errorMsg = error instanceof Error ? error.message : String(error);

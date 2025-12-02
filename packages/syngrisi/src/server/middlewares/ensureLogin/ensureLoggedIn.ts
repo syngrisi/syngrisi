@@ -145,11 +145,14 @@ export function ensureLoggedIn(options?: any): (req: Request, res: Response, nex
     };
 }
 
-const handleAPIAuth = async (rawApiKey: unknown): Promise<any> => {
+const handleAPIAuth = async (rawApiKey: unknown, retryCount = 0): Promise<any> => {
     const logOpts = {
         scope: 'handleAPIAuth',
         msgType: 'AUTH_API',
     };
+
+    const MAX_RETRIES = 3;
+    const RETRY_DELAY_MS = 500;
 
     const result: any = {
         status: 400,
@@ -162,7 +165,13 @@ const handleAPIAuth = async (rawApiKey: unknown): Promise<any> => {
         const guest = await User.findOne({ username: 'Guest' });
 
         if (!guest) {
-            log.error('cannot find Guest user', logOpts);
+            // Retry logic for Guest user lookup during startup (MongoDB indexing race condition)
+            if (retryCount < MAX_RETRIES) {
+                log.warn(`Guest user not found (attempt ${retryCount + 1}/${MAX_RETRIES}), retrying in ${RETRY_DELAY_MS}ms...`, logOpts);
+                await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
+                return handleAPIAuth(rawApiKey, retryCount + 1);
+            }
+            log.error(`cannot find Guest user after ${MAX_RETRIES} retries`, logOpts);
             result.type = 'error';
             result.value = 'cannot find Guest user';
             return result;
@@ -185,7 +194,13 @@ const handleAPIAuth = async (rawApiKey: unknown): Promise<any> => {
 
     const user = await User.findOne({ apiKey: hashedApiKey });
     if (!user) {
-        log.error('wrong API key provided', logOpts);
+        // Retry logic for API key lookup during startup (MongoDB indexing race condition)
+        if (retryCount < MAX_RETRIES) {
+            log.warn(`API key not found (attempt ${retryCount + 1}/${MAX_RETRIES}), retrying in ${RETRY_DELAY_MS}ms...`, logOpts);
+            await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
+            return handleAPIAuth(rawApiKey, retryCount + 1);
+        }
+        log.error(`wrong API key provided after ${MAX_RETRIES} retries`, logOpts);
         result.type = 'error';
         result.status = 401;
         result.value = 'wrong API key';

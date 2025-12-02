@@ -8,13 +8,14 @@ import { useQuery } from '@tanstack/react-query';
 import { MainView } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/mainView';
 import { createImageAndWaitForLoad, imageFromUrl } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/helpers';
 import { errorMsg } from '@shared/utils';
-import { GenericService } from '@shared/services';
+import { GenericService, imagePreloadService } from '@shared/services';
 import config from '@config';
 import { RelatedChecksContainer } from '@index/components/Tests/Table/Checks/CheckDetails/RelatedChecks/RelatedChecksContainer';
 import { useParams } from '@hooks/useParams';
 import { Toolbar } from '@index/components/Tests/Table/Checks/CheckDetails/Toolbar/Toolbar';
 import { Header } from '@index/components/Tests/Table/Checks/CheckDetails/Header';
 import { Canvas } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/Canvas';
+import { log } from '@shared/utils/Logger';
 
 // eslint-disable-next-line no-unused-vars
 const useStyles = createStyles((theme) => ({
@@ -206,20 +207,53 @@ export function CheckDetails({
         const initMV = async () => {
             // init
             fabric.Object.prototype.objectCaching = false;
-            const expectedImgSrc = `${config.baseUri}/snapshoots/${currentCheck?.baselineId?.filename}?expectedImg`;
-            const expectedImg = await createImageAndWaitForLoad(expectedImgSrc);
+
+            // Build image URLs (without query params for cache lookup)
+            const expectedImgSrcBase = `${config.baseUri}/snapshoots/${currentCheck?.baselineId?.filename}`;
+            const actualImgSrcBase = `${config.baseUri}/snapshoots/${currentCheck?.actualSnapshotId?.filename}`;
+            const diffImgSrcBase = currentCheck?.diffId?.filename
+                ? `${config.baseUri}/snapshoots/${currentCheck?.diffId?.filename}`
+                : null;
+
+            // Try to get from preload cache first, fallback to loading
+            let expectedImg = imagePreloadService.getPreloadedImage(expectedImgSrcBase);
+            let actualImg = imagePreloadService.getPreloadedImage(actualImgSrcBase);
+
+            const cacheHit = !!(expectedImg && actualImg);
+            if (cacheHit) {
+                log.debug('[CheckDetails] Using preloaded images from cache');
+            } else {
+                log.debug('[CheckDetails] Loading images (cache miss)');
+            }
+
+            // Load images that are not in cache
+            if (!expectedImg) {
+                const expectedImgSrc = `${expectedImgSrcBase}?expectedImg`;
+                expectedImg = await createImageAndWaitForLoad(expectedImgSrc) as HTMLImageElement;
+            }
 
             const actual = currentCheck.actualSnapshotId || null;
-            const actualImgSrc = `${config.baseUri}/snapshoots/${currentCheck?.actualSnapshotId?.filename}?actualImg`;
-            const actualImg = await createImageAndWaitForLoad(actualImgSrc);
+            if (!actualImg) {
+                const actualImgSrc = `${actualImgSrcBase}?actualImg`;
+                actualImg = await createImageAndWaitForLoad(actualImgSrc) as HTMLImageElement;
+            }
 
             canvasElementRef.current.style.height = `${MainView.calculateExpectedCanvasViewportAreaSize().height - 10}px`;
 
             const expectedImage = await imageFromUrl(expectedImg.src);
-            const actualImage = await imageFromUrl((actualImg).src);
+            const actualImage = await imageFromUrl(actualImg.src);
 
-            const diffImgSrc = `${config.baseUri}/snapshoots/${currentCheck?.diffId?.filename}?diffImg`;
-            const diffImage = currentCheck?.diffId?.filename ? await imageFromUrl(diffImgSrc) : null;
+            // Handle diff image
+            let diffImage = null;
+            if (diffImgSrcBase) {
+                const cachedDiff = imagePreloadService.getPreloadedImage(diffImgSrcBase);
+                if (cachedDiff) {
+                    diffImage = await imageFromUrl(cachedDiff.src);
+                } else {
+                    const diffImgSrc = `${diffImgSrcBase}?diffImg`;
+                    diffImage = await imageFromUrl(diffImgSrc);
+                }
+            }
 
             setMainView((prev) => {
                 if (prev) return prev; // for dev mode, when components render twice

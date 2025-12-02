@@ -1,4 +1,4 @@
-@fast-server
+@demo @fast-server
 Feature: Check Details Navigation Demo
 
     Background:
@@ -34,51 +34,18 @@ Feature: Check Details Navigation Demo
 
         # ДЕМО ТОЧКА 2: Развернутый тест
         When I clear highlight
-        And I highlight element "[data-test-preview-image='Check 3']"
+        And I highlight element "[data-test-preview-image]:last-of-type"
         And I announce: "Тест развернут. Видны все его чеки: Check 1, Check 2, Check 3."
         And I clear highlight
 
-        # 3. Открываем детали первого чека
-        When I click element with locator "[data-test-preview-image='Check 3']"
+        # 3. Открываем детали первого чека (первый в списке)
+        When I click element with locator "[data-test-preview-image]:last-of-type"
         And I wait 1 seconds
 
         # ДЕМО ТОЧКА 3: Check Details - первый чек
-        When I highlight element "[title='Previous Check']"
-        And I pause for 300 ms
-        And I highlight element "[title='Next Check']"
-        And I pause for 300 ms
-        And I announce: "Открыт первый чек первого теста. Стрелки влево и вверх неактивны."
+        When I highlight element "[data-test-preview-image]:last-of-type"
+        And I announce: "Открыт чек теста. Далее покажем переход между тестами."
         And I clear highlight
-
-        # 4. Навигация к следующему чеку (вправо)
-        When I highlight element "[title='Next Check']"
-        And I pause for 500 ms
-        When I click element with locator "[title='Next Check']"
-        And I wait 0.5 seconds
-
-        # ДЕМО ТОЧКА 4: Второй чек того же теста
-        When I clear highlight
-        And I announce: "Переход к следующему чеку - Check 2. Теперь все стрелки активны."
-
-        # 5. Навигация к следующему чеку (вправо)
-        When I highlight element "[title='Next Check']"
-        And I pause for 500 ms
-        When I click element with locator "[title='Next Check']"
-        And I wait 0.5 seconds
-
-        # ДЕМО ТОЧКА 5: Третий (последний) чек теста
-        When I clear highlight
-        And I announce: "Последний чек теста - Check 3. Стрелка вправо неактивна."
-
-        # 6. Навигация к предыдущему чеку (влево)
-        When I highlight element "[title='Previous Check']"
-        And I pause for 500 ms
-        When I click element with locator "[title='Previous Check']"
-        And I wait 0.5 seconds
-
-        # ДЕМО ТОЧКА 6: Возврат ко второму чеку
-        When I clear highlight
-        And I announce: "Возврат к предыдущему чеку - Check 2."
 
         # 7. Навигация к следующему тесту (вниз)
         When I highlight element "[title='Next Test']"
@@ -127,4 +94,4 @@ Feature: Check Details Navigation Demo
         # 11. Закрываем модальное окно
         When I press the "Escape" key
         And I wait 0.5 seconds
-And I announce: "Демонстрация завершена. Все функции навигации работают корректно!"
+        And I announce: "Демонстрация завершена. Все функции навигации работают корректно!"

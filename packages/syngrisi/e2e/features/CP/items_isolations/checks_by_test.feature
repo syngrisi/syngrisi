@@ -4,28 +4,29 @@ Feature: Checks Isolation by Test
   Each test should contain only it checks and no extra checks
 
   Background:
-#         Given I clear Database and stop Server
-#         Given I start Server and start Driver
+    #         Given I clear Database and stop Server
+    #         Given I start Server and start Driver
     When I open the app
+    When I clear database
     When I clear local storage
     Given I create "2" tests with:
-    """
+      """
           testName: TestName-1
           checks:
             - checkName: CheckName-1.1
               filePath: files/A.png
             - checkName: CheckName-1.2
               filePath: files/A.png
-    """
+      """
     Given I create "2" tests with:
-    """
+      """
           testName: TestName-2
           checks:
             - checkName: CheckName-2.1
               filePath: files/A.png
             - checkName: CheckName-2.2
               filePath: files/A.png
-    """
+      """
 
   Scenario: Checks Isolation by Test
     When I go to "main" page

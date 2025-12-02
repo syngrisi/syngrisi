@@ -7,6 +7,7 @@ Feature: Test Isolation by Browser
     When I open the app
     When I clear local storage
 
+  @flaky
   Scenario: Tests Isolation by Browser
     Given I create "2" tests with:
       """

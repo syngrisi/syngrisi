@@ -11,7 +11,7 @@ Feature: Test Isolation by Accept Status
     # UNACCEPTED
     Given I create "1" tests with:
       """
-    testName: AcceptStatus-unaccepted
+    testName: AcceptStatus-Unique-unaccepted
     checks:
       - checkName: Check-unaccepted
         filePath: files/A.png
@@ -20,7 +20,7 @@ Feature: Test Isolation by Accept Status
     # PARTIALLY
     Given I create "1" tests with:
       """
-    testName: AcceptStatus-partially
+    testName: AcceptStatus-Unique-partially
     checks:
       - checkName: Check-part1
         filePath: files/A.png
@@ -32,7 +32,7 @@ Feature: Test Isolation by Accept Status
     # ACCEPTED
     Given I create "1" tests with:
       """
-    testName: AcceptStatus-accepted
+    testName: AcceptStatus-Unique-accepted
     checks:
       - checkName: Check-accepted
         filePath: files/A.png
@@ -41,8 +41,8 @@ Feature: Test Isolation by Accept Status
 
     When I refresh page
     # all tests
-    When I wait 30 seconds for the element with locator "[data-table-test-name*='AcceptStatus']" to be visible
-    Then the element "[data-table-test-name*='AcceptStatus']" does appear exactly "3" times
+    When I wait 30 seconds for the element with locator "[data-table-test-name*='AcceptStatus-Unique']" to be visible
+    Then the element "[data-table-test-name*='AcceptStatus-Unique']" does appear exactly "3" times
 
     When I select the option with the text "Accept Status" for element "select[data-test='navbar-group-by']"
 
@@ -50,21 +50,21 @@ Feature: Test Isolation by Accept Status
     When I wait 30 seconds for the element with locator "//li[contains(., 'Unaccepted')]" to be visible
     When I click element with locator "li*=Unaccepted"
 
-    When I wait 30 seconds for the element with locator "[data-table-test-name='AcceptStatus-unaccepted']" to be visible
-    When I wait on element "[data-table-test-name='AcceptStatus-partially']" to not be displayed
-    When I wait on element "[data-table-test-name='AcceptStatus-accepted']" to not be displayed
+    When I wait 30 seconds for the element with locator "[data-table-test-name='AcceptStatus-Unique-unaccepted']" to be visible
+    When I wait on element "[data-table-test-name='AcceptStatus-Unique-partially']" to not be displayed
+    When I wait on element "[data-table-test-name='AcceptStatus-Unique-accepted']" to not be displayed
 
     # PARTIALLY
     When I wait 30 seconds for the element with locator "//li[contains(., 'Partially')]" to be visible
     When I click element with locator "li*=Partially"
 
-    When I wait on element "[data-table-test-name='AcceptStatus-unaccepted']" to not be displayed
-    When I wait 30 seconds for the element with locator "[data-table-test-name='AcceptStatus-partially']" to be visible
-    When I wait on element "[data-table-test-name='AcceptStatus-accepted']" to not be displayed
+    When I wait on element "[data-table-test-name='AcceptStatus-Unique-unaccepted']" to not be displayed
+    When I wait 30 seconds for the element with locator "[data-table-test-name='AcceptStatus-Unique-partially']" to be visible
+    When I wait on element "[data-table-test-name='AcceptStatus-Unique-accepted']" to not be displayed
 
     # ACCEPTED
     When I wait 30 seconds for the element with locator "//li[contains(., 'Accepted')]" to be visible
     When I click element with locator "[data-testid='navbar-accept-status-accepted']"
-    When I wait on element "[data-table-test-name='AcceptStatus-unaccepted']" to not be displayed
-    When I wait on element "[data-table-test-name='AcceptStatus-partially']" to not be displayed
-    When I wait 30 seconds for the element with locator "[data-table-test-name='AcceptStatus-accepted']" to be visible
+    When I wait on element "[data-table-test-name='AcceptStatus-Unique-unaccepted']" to not be displayed
+    When I wait on element "[data-table-test-name='AcceptStatus-Unique-partially']" to not be displayed
+    When I wait 30 seconds for the element with locator "[data-table-test-name='AcceptStatus-Unique-accepted']" to be visible

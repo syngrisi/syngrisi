@@ -9,6 +9,9 @@ const logger = createLogger('DemoSteps');
 const DEMO_BANNER_ID = 'e2e-demo-banner';
 const DEMO_HIGHLIGHT_CLASS = 'e2e-demo-highlight';
 
+// Flag to skip demo steps for debugging (default: false)
+const SKIP_DEMO_TESTS = process.env.SKIP_DEMO_TESTS === 'true';
+
 const showDemoBanner = async (page: Page, text: string) => {
   await page.evaluate(
     ({ text, bannerId }) => {
@@ -178,7 +181,7 @@ const logMcpStatus = (testEngine: TestEngineFixture) => {
  * Announces a phrase using text-to-speech with a visible banner overlay.
  * The banner is click-through (pointer-events: none) and disappears after speech completes.
  * Useful for highlighting key moments during feature demonstrations without blocking indefinitely.
- * This step is a no-op in CI environments.
+ * This step is a no-op in CI environments or when SKIP_DEMO_TESTS=true.
  *
  * @param phrase - The text to be spoken aloud and displayed
  *
@@ -188,7 +191,7 @@ const logMcpStatus = (testEngine: TestEngineFixture) => {
  * ```
  */
 When('I announce: {string}', async ({ page }, phrase: string) => {
-  if (env.CI) {
+  if (env.CI || SKIP_DEMO_TESTS) {
     return;
   }
   const { promisify } = await import('node:util');
@@ -207,7 +210,7 @@ When('I announce: {string}', async ({ page }, phrase: string) => {
  * Announces a phrase using text-to-speech with a visible banner overlay, then pauses the Playwright runner.
  * The banner is click-through (pointer-events: none) and disappears after pause is released.
  * Useful for highlighting key moments during feature demonstrations with manual inspection.
- * This step is a no-op in CI environments.
+ * This step is a no-op in CI environments or when SKIP_DEMO_TESTS=true.
  *
  * @param phrase - The text to be spoken aloud and displayed before pausing
  *
@@ -217,7 +220,7 @@ When('I announce: {string}', async ({ page }, phrase: string) => {
  * ```
  */
 When('I announce: {string} and PAUSE', async ({ page, testEngine }, phrase: string) => {
-  if (env.CI) {
+  if (env.CI || SKIP_DEMO_TESTS) {
     return;
   }
   const { exec } = await import('node:child_process');
@@ -235,7 +238,7 @@ When('I announce: {string} and PAUSE', async ({ page, testEngine }, phrase: stri
  * Highlights a DOM element with a bright pulsing animation.
  * The highlight persists until another element is highlighted or the highlight is cleared.
  * Useful for drawing attention to specific UI elements during demos.
- * This step is a no-op in CI environments.
+ * This step is a no-op in CI environments or when SKIP_DEMO_TESTS=true.
  *
  * @param selector - CSS selector for the element to highlight
  *
@@ -246,7 +249,7 @@ When('I announce: {string} and PAUSE', async ({ page, testEngine }, phrase: stri
  * ```
  */
 When('I highlight element {string}', async ({ page }, selector: string) => {
-  if (env.CI) {
+  if (env.CI || SKIP_DEMO_TESTS) {
     return;
   }
   await highlightElement(page, selector);
@@ -256,7 +259,7 @@ When('I highlight element {string}', async ({ page }, selector: string) => {
  * Step definition: `When I clear highlight`
  *
  * Removes any active element highlight from the page.
- * This step is a no-op in CI environments.
+ * This step is a no-op in CI environments or when SKIP_DEMO_TESTS=true.
  *
  * @example
  * ```gherkin
@@ -264,7 +267,7 @@ When('I highlight element {string}', async ({ page }, selector: string) => {
  * ```
  */
 When('I clear highlight', async ({ page }) => {
-  if (env.CI) {
+  if (env.CI || SKIP_DEMO_TESTS) {
     return;
   }
   await clearHighlight(page);
@@ -274,7 +277,7 @@ When('I clear highlight', async ({ page }) => {
  * Step definition: `When I end the demo`
  *
  * Triggers a confetti animation on the page to celebrate the end of a demo.
- * This step is a no-op in CI environments.
+ * This step is a no-op in CI environments or when SKIP_DEMO_TESTS=true.
  *
  * @support/mcp/benchmark/.env.example
  * ```gherkin
@@ -282,7 +285,7 @@ When('I clear highlight', async ({ page }) => {
  * ```
  */
 When('I end the demo', async ({ page }) => {
-  if (env.CI) {
+  if (env.CI || SKIP_DEMO_TESTS) {
     return;
   }
 

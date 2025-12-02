@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run:*)",
+      "Bash(git worktree:*)",
+      "Bash(lsof:*)",
+      "Bash(mongosh:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
