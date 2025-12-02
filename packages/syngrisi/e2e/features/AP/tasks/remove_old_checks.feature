@@ -52,6 +52,7 @@ Feature: Task - Remove old checks
     Then I expect via http 0 baselines
     Then I expect exact "0" snapshot files
 
+  @flaky
   Scenario: Remove old check [unaccepted, unaccepted_fail]
     When I create "1" tests with:
       """

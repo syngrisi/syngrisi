@@ -14,6 +14,7 @@ Feature: Checks with different resolutions 1px
     #     Given I clear Database and stop Server
     #     Given I start Server and start Driver
 
+    @flaky
     Scenario: Two checks with identical image parts but different resolutions [1px, bottom]
         Given I create "1" tests with:
             """

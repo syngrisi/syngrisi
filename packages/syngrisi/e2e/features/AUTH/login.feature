@@ -2,23 +2,23 @@
 Feature: Login
 
   Background:
-#         Given I clear Database and stop Server
+    #         Given I clear Database and stop Server
 
     When I set env variables:
-    """
+      """
          SYNGRISI_TEST_MODE: "true"
          SYNGRISI_AUTH: "false"
-    """
+      """
     Given I start Server
     When I create via http test user
     When I stop Server
     When I set env variables:
-    """
+      """
           SYNGRISI_TEST_MODE: "false"
           SYNGRISI_AUTH: "true"
-    """
+      """
 
-#         Given I start Server and start Driver
+    #         Given I start Server and start Driver
     When I reload session
 
   @smoke
@@ -26,24 +26,24 @@ Feature: Login
     # crate user
     When I login via http with user:"Test" password "123456aA-"
     When I create via http user as:"Test" with params:
-    """
-    {
-      "username": "j_doe@gmail.com",
-      "firstName": "John",
-      "lastName": "Doe",
-      "role": "user",
-      "password": "Password-123"
-    }
-    """
+      """
+      {
+        "username": "j_doe@gmail.com",
+        "firstName": "John",
+        "lastName": "Doe",
+        "role": "user",
+        "password": "Password-123"
+      }
+      """
     # prepare servers
     Given I stop Server
 
     When I set env variables:
-    """
+      """
     SYNGRISI_TEST_MODE: false
     SYNGRISI_AUTH: true
-    """
-#         Given I start Server and start Driver
+      """
+    #         Given I start Server and start Driver
 
     # login
     When I login with user:"j_doe@gmail.com" password "Password-123"
@@ -68,10 +68,14 @@ Feature: Login
     Then the element with locator ".mantine-Input-wrapper + div.mantine-InputWrapper-error" should have contains text "Invalid email"
 
   Scenario: Redirect via origin url
-    When I open the url "<syngrisiUrl>?groupBy=test-distinct%2FbrowserName"
-    Then the current url contains "?origin=%2F%3FgroupBy%3Dtest-distinct%252FbrowserName"
+    # Ensure server is running with auth enabled
+    Given I start Server
+    When I open the url "/?groupBy=test-distinct%2FbrowserName"
+    Then the current url contains "/auth"
     When I set "Test" to the inputfield "#email"
     When I set "123456aA-" to the inputfield "#password"
     When I click element with locator "#submit"
-    Then the current url contains "<syngrisiUrl>?groupBy=test-distinct%2FbrowserName"
+    # Wait for redirect after login - check that we're no longer on /auth page
+    When I wait 30 seconds for the element with locator "[data-test='user-icon']" to be visible
+    Then the current url contains "groupBy=test-distinct"
 

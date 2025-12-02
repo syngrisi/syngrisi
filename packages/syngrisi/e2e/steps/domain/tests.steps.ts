@@ -197,9 +197,34 @@ async function createTestsWithParams(
       const testId = (sessionData as any).id || (sessionData as any)._id;
       logger.info(`Test session started with ID: ${testId}`);
       testData.set('lastTestId', testId);
-      // Allow backend to finish persisting test/check data before further actions (legacy behavior)
-      // Increased wait time to ensure data is fully indexed and available to UI
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      // Quick check that test is queryable (fast path - usually succeeds immediately)
+      // MongoDB indexing typically completes within milliseconds for single documents
+      const quickCheckMaxWaitMs = 2000;
+      const checkIntervalMs = 50;
+      const startTime = Date.now();
+      let testFound = false;
+
+      while (Date.now() - startTime < quickCheckMaxWaitMs) {
+        try {
+          const response = await got.get(`${appServer.baseURL}/v1/tests/${testId}`, {
+            headers: { apikey: hashedApiKey },
+            throwHttpErrors: false,
+            timeout: { request: 1000 },
+          });
+          if (response.statusCode === 200) {
+            testFound = true;
+            break;
+          }
+        } catch {
+          // Ignore errors, keep trying
+        }
+        await new Promise((resolve) => setTimeout(resolve, checkIntervalMs));
+      }
+
+      if (!testFound) {
+        logger.warn(`Test ${testId} not queryable after ${quickCheckMaxWaitMs}ms, proceeding anyway`);
+      }
 
       const checkResults = [];
       for (const check of params.checks || []) {
@@ -295,8 +320,8 @@ async function createTestsWithParams(
         logger.warn(`Failed to stop test session for "${testName}": ${stopError.message}`);
       }
 
-      // Additional wait after test completion to ensure all data is persisted and indexed
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Brief wait to allow session stop to propagate (much faster than polling)
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       return { testId, checkResults };
     } catch (error) {
@@ -306,17 +331,23 @@ async function createTestsWithParams(
   };
 
   const count = parseInt(num, 10);
+  const createdTestIds: string[] = [];
+
   for (let i = 0; i < count; i++) {
     const processedYml = yml.replace(/\$/g, String(i));
     const params = yaml.parse(processedYml);
     logger.info(`Creating test #${i + 1} with params:`, params);
-    await createTest(params, i);
+    const result = await createTest(params, i);
+    if (result?.testId) {
+      createdTestIds.push(result.testId);
+    }
   }
 
-  // Additional wait after all tests are created to ensure data is fully available
-  if (count > 0) {
-    logger.info(`Waiting for ${count} test(s) to be fully indexed...`);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+  // Brief final wait to ensure all data is indexed (typically <100ms for batch operations)
+  if (createdTestIds.length > 0) {
+    logger.info(`Created ${createdTestIds.length} test(s), waiting for indexing...`);
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    logger.info(`All ${createdTestIds.length} test(s) ready`);
   }
 }
 

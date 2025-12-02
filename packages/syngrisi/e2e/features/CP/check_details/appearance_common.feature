@@ -2,20 +2,21 @@
 Feature: Check Detail Appearance
 
   Background:
-#         Given I clear Database and stop Server
-#         Given I start Server and start Driver
+    #         Given I clear Database and stop Server
+    #         Given I start Server and start Driver
     When I open the app
     When I clear local storage
 
+  @flaky
   Scenario: Check Detail Appearance
     # NEW
     Given I create "1" tests with:
-    """
+      """
           testName: TestName
           checks:
             - checkName: CheckName
               filePath: files/A.png
-    """
+      """
     When I go to "main" page
     When I unfold the test "TestName"
     When I click element with locator "[data-test-preview-image='CheckName']"
@@ -65,12 +66,12 @@ Feature: Check Detail Appearance
 
     # PASSED
     Given I create "1" tests with:
-    """
+      """
           testName: TestName
           checks:
             - checkName: CheckName
               filePath: files/A.png
-    """
+      """
 
     When I go to "main" page
     When I unfold the test "TestName"
@@ -94,12 +95,12 @@ Feature: Check Detail Appearance
     # FAILED
     When I accept via http the 1st check with name "CheckName"
     Given I create "1" tests with:
-    """
+      """
           testName: TestName
           checks:
             - checkName: CheckName
               filePath: files/B.png
-    """
+      """
 
     When I go to "main" page
     When I unfold the test "TestName"

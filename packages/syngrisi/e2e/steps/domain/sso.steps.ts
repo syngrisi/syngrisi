@@ -152,15 +152,15 @@ When(
             await page.waitForLoadState('networkidle');
         }
 
-        // Wait for Logto login page - identifier input
-        await page.waitForSelector('input[name="identifier"]', { timeout: 10000 });
+        // Wait for Logto login page - identifier input (increased timeout for cold start)
+        await page.waitForSelector('input[name="identifier"]', { timeout: 60000 });
 
         // Fill email/username
         await page.fill('input[name="identifier"]', email);
         await page.click('button[type="submit"]');
 
         // Wait for password field (Logto has 2-step login)
-        await page.waitForSelector('input[type="password"]', { timeout: 10000 });
+        await page.waitForSelector('input[type="password"]', { timeout: 30000 });
         await page.fill('input[type="password"]', password);
         await page.click('button[type="submit"]');
     }
@@ -186,9 +186,9 @@ When(
             await page.waitForLoadState('networkidle');
         }
 
-        // Wait for Logto login page - identifier input to be visible and enabled
+        // Wait for Logto login page - identifier input to be visible and enabled (increased timeout for cold start)
         const identifierInput = page.locator('input[name="identifier"]');
-        await identifierInput.waitFor({ state: 'visible', timeout: 15000 });
+        await identifierInput.waitFor({ state: 'visible', timeout: 60000 });
 
         // Clear and fill username
         await identifierInput.clear();
@@ -213,7 +213,7 @@ When(
         } else {
             // 2-step form: submit identifier first, then password
             await page.click('button[type="submit"]');
-            await page.waitForSelector('input[type="password"]', { timeout: 15000 });
+            await page.waitForSelector('input[type="password"]', { timeout: 30000 });
             await passwordField.clear();
             await passwordField.fill(password);
             await expect(passwordField).toHaveValue(password);
@@ -242,13 +242,13 @@ When(
             await page.waitForLoadState('networkidle');
         }
 
-        // Fill email
-        await page.waitForSelector('input[name="identifier"]', { timeout: 10000 });
+        // Fill email (increased timeout for cold start)
+        await page.waitForSelector('input[name="identifier"]', { timeout: 60000 });
         await page.fill('input[name="identifier"]', email);
         await page.click('button[type="submit"]');
 
         // Wait for password field and fill it
-        await page.waitForSelector('input[type="password"]', { timeout: 10000 });
+        await page.waitForSelector('input[type="password"]', { timeout: 30000 });
         await page.fill('input[type="password"]', password);
 
         // Fill confirm password if present
