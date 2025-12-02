@@ -343,8 +343,8 @@ Then(
 
     if (target === 'locator') {
       // Extract index before passing to getLocatorQuery (it may strip the index)
-      const nthMatch = renderedTarget.match(/\[(\d+)\]$/);
-      const selectorWithoutIndex = renderedTarget.replace(/\[(\d+)\]$/, '');
+      const nthMatch = renderedTarget.match(/(\d+)$/);
+      const selectorWithoutIndex = renderedTarget.replace(/(\d+)$/, '');
       const locator = getLocatorQuery(page, selectorWithoutIndex);
       if (nthMatch) {
         const index = parseInt(nthMatch[1], 10) - 1; // Convert 1-based to 0-based
@@ -769,7 +769,7 @@ Then('the title is {string}', async ({ page }, expectedTitle: string) => {
 
 Then('the title contains {string}', async ({ page }, expectedTitle: string) => {
   // Escape regex characters for expectedTitle
-  const escapedTitle = expectedTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const escapedTitle = expectedTitle.replace(/[.*+?^${}()|[\\]/g, '\\$&');
   await expect(page).toHaveTitle(new RegExp(escapedTitle));
 });
 
@@ -790,6 +790,7 @@ Then('the css attribute {string} from element {string} is {string}', async ({ pa
       // For SVG elements with color property, WebdriverIO may return the computed color
       // even if it's empty in computedStyle. Check if element is SVG and color is empty
       if (prop === 'color' && (!value || value === 'rgba(0, 0, 0, 0)' || value === 'transparent')) {
+        // Replace with the actual content of the file, then append the new step
         // For SVG, try to get the actual fill color from computed style
         // WebdriverIO's getCSSProperty('color') for SVG returns the computed color value
         // which may come from fill or stroke
@@ -1211,5 +1212,70 @@ Then(
     } else {
       throw new Error(`Unsupported negated condition for text: ${condition}`);
     }
+  }
+);
+
+/**
+ * Step definition: `Then the cookie {string} should be present`
+ *
+ * Verifies that a cookie with the given name is present in the browser context.
+ *
+ * @param name - The name of the cookie to check.
+ *
+ * @example
+ * ```gherkin
+ * Then the cookie "my_session_id" should be present
+ * ```
+ */
+Then(
+  'the cookie {string} should be present',
+  async ({ page }, name: string) => {
+    const cookies = await page.context().cookies();
+    const cookie = cookies.find((c) => c.name === name);
+    expect(cookie).toBeDefined();
+  }
+);
+
+/**
+ * Step definition: `Then the cookie {string} should not be present`
+ *
+ * Verifies that a cookie with the given name is NOT present in the browser context.
+ *
+ * @param name - The name of the cookie to check.
+ *
+ * @example
+ * ```gherkin
+ * Then the cookie "my_session_id" should not be present
+ * ```
+ */
+Then(
+  'the cookie {string} should not be present',
+  async ({ page }, name: string) => {
+    const cookies = await page.context().cookies();
+    const cookie = cookies.find((c) => c.name === name);
+    expect(cookie).toBeUndefined();
+  }
+);
+
+/**
+ * Step definition: `Then the cookie {string} should have value {string}`
+ *
+ * Verifies that a cookie with the given name is present and its value matches the expected value.
+ *
+ * @param name - The name of the cookie to check.
+ * @param expectedValue - The expected value of the cookie.
+ *
+ * @example
+ * ```gherkin
+ * Then the cookie "my_session_id" should have value "abc-123"
+ * ```
+ */
+Then(
+  'the cookie {string} should have value {string}',
+  async ({ page }, name: string, expectedValue: string) => {
+    const cookies = await page.context().cookies();
+    const cookie = cookies.find((c) => c.name === name);
+    expect(cookie).toBeDefined();
+    expect(cookie?.value).toEqual(expectedValue);
   }
 );
