@@ -7,6 +7,7 @@ Feature: Check details Related Checks - Navigation
     When I open the app
     When I clear local storage
 
+  @flaky
   Scenario: Related - Navigation via Related Panel
     When I set window size: "1440x900"
     Given I create "3" tests with:

@@ -4,8 +4,9 @@ import type { ElementTarget } from '@params';
 import { getLabelLocator, getLocatorQuery, getRoleLocator } from '@helpers/locators';
 import { AriaRole } from '@helpers/types';
 import { renderTemplate } from '@helpers/template';
-import type { TestStore } from '@fixtures';
+import type { TestStore, AppServerFixture } from '@fixtures';
 import { createLogger } from '@lib/logger';
+import { ensureServerReady } from '@utils/app-server';
 
 const logger = createLogger('ActionsSteps');
 const SAVE_IGNORE_REGION_SELECTOR = /data-check\s*=\s*['"]save-ignore-region['"]/i;
@@ -407,8 +408,17 @@ When(/I open (?:url|site) "(.*)"/, async ({ page, testData }, url) => {
   await page.goto(parsedUrl);
 });
 
-When('I open the url {string}', async ({ page, testData }, url: string) => {
+When('I open the url {string}', async ({ page, testData, appServer }: { page: Page; testData: TestStore; appServer: AppServerFixture }, url: string) => {
   const parsedUrl = testData.renderTemplate(url);
+  logger.info(`Navigating to URL: ${parsedUrl}`);
+
+  // Ensure server is ready before navigation if it looks like an app URL
+  // Check both full URL and relative paths (starting with /)
+  const isAppUrl = (appServer.baseURL && parsedUrl.startsWith(appServer.baseURL)) || parsedUrl.startsWith('/');
+  if (isAppUrl && appServer.serverPort) {
+    await ensureServerReady(appServer.serverPort);
+  }
+
   await page.goto(parsedUrl);
 });
 
@@ -423,11 +433,12 @@ When('I refresh page', async ({ page }) => {
 
 When('I wait for canvas to be ready', async ({ page }) => {
   await page.waitForFunction(() => {
-    if (typeof mainView === 'undefined' || !mainView?.canvas) {
+    const globalMain = (window as any).mainView;
+    if (typeof globalMain === 'undefined' || !globalMain?.canvas) {
       return false;
     }
     // Check that canvas is initialized and has objects
-    return mainView.canvas.getObjects().length > 0;
+    return globalMain.canvas.getObjects().length > 0;
   }, { timeout: 10000 });
 
   // Wait for resizeImageIfNeeded to complete (it uses setTimeout(10))
@@ -443,8 +454,9 @@ When('I wait for viewportTransform to stabilize', async ({ page }) => {
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     const currentValue = await page.evaluate(() => {
-      if (typeof mainView !== 'undefined' && mainView?.canvas?.viewportTransform) {
-        return mainView.canvas.viewportTransform[4] + '_' + mainView.canvas.viewportTransform[5];
+      const globalMain = (window as any).mainView;
+      if (typeof globalMain !== 'undefined' && globalMain?.canvas?.viewportTransform) {
+        return globalMain.canvas.viewportTransform[4] + '_' + globalMain.canvas.viewportTransform[5];
       }
       return null;
     });
@@ -508,9 +520,10 @@ When('I execute javascript OLD code:', async ({ page, testData }: { page: Page; 
       // Log detailed info for viewportTransform debugging
       if (trimmedJs.includes('viewportTransform')) {
         const viewportDetails = await page.evaluate(() => {
-          if (typeof mainView !== 'undefined' && mainView?.canvas?.viewportTransform) {
-            const [scaleX, , , scaleY, translateX, translateY] = mainView.canvas.viewportTransform;
-            const zoom = typeof mainView.canvas.getZoom === 'function' ? mainView.canvas.getZoom() : null;
+          const globalMain = (window as any).mainView;
+          if (typeof globalMain !== 'undefined' && globalMain?.canvas?.viewportTransform) {
+            const [scaleX, , , scaleY, translateX, translateY] = globalMain.canvas.viewportTransform;
+            const zoom = typeof globalMain.canvas.getZoom === 'function' ? globalMain.canvas.getZoom() : null;
             return {
               summary: `${translateX}_${translateY}`,
               scaleX,
@@ -750,7 +763,7 @@ When('I reload session', async ({ page, testData }: { page: Page; testData: Test
   } catch {
     // Page might not have a valid context yet - ignore
   }
-  testData.clear();
+  testData.clearAll();
 });
 
 When('I delete the cookie {string}', async ({ page }, cookieName: string) => {

@@ -4,15 +4,16 @@ Feature: Pagination
   Background:
     #     Given I clear Database and stop Server
     #     Given I start Server and start Driver
+    When I clear database
     When I open the app
     When I clear local storage
 
   Scenario: Pagination
     When I create "30" tests with:
       """
-      testName: "TestName-$"
-      runName: "RunName-$"
-      runIdent: "RunIdent-$"
+      testName: "TestName-Pagination-1-$"
+      runName: "RunName-Pagination-1-$"
+      runIdent: "RunIdent-Pagination-1-$"
       checks:
         - filePath: files/A.png
           checkName: Check - 1
@@ -32,10 +33,10 @@ Feature: Pagination
 
     When I create "30" tests with:
       """
-      testName: "TestName-$"
-      runName: "RunName-$"
-      runIdent: "RunIdent-$"
-      suiteName: "SuiteName-$"
+      testName: "TestName-Pagination-2-$"
+      runName: "RunName-Pagination-2-$"
+      runIdent: "RunIdent-Pagination-2-$"
+      suiteName: "SuiteName-Pagination-2-$"
       checks:
         - filePath: files/A.png
           checkName: Check - 1
@@ -44,10 +45,10 @@ Feature: Pagination
     # such tests can be disappeared in old logic
     When I create "3" tests with:
       """
-      testName: "TestName-$"
-      runName: "RunName-$"
-      runIdent: "RunIdent-$"
-      suiteName: "SuiteName-$"
+      testName: "TestName-Pagination-2-$"
+      runName: "RunName-Pagination-2-$"
+      runIdent: "RunIdent-Pagination-2-$"
+      suiteName: "SuiteName-Pagination-2-$"
       checks:
         - filePath: files/A.png
           checkName: Check - 1

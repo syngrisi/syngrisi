@@ -4,8 +4,9 @@ Feature: Infinity scroll
   Background:
 #     Given I clear Database and stop Server
 #     Given I start Server and start Driver
-  When I open the app
-  When I clear local storage
+    When I clear database
+    When I open the app
+    When I clear local storage
 
   Scenario: Infinity scroll
   When I create "30" tests with:

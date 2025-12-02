@@ -151,6 +151,7 @@ Feature: Check details - Regions
      return (mainView.allRects.length.toString());
          """
 
+   @flaky
    Scenario: Regions - copy regions from previous baseline
       # add region to first check
       When I wait 30 seconds for the element with locator "[data-check='add-ignore-region']" to be visible

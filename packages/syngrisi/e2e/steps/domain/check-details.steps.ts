@@ -42,7 +42,8 @@ Given('I create a test run {string} with {int} checks', async ({ appServer }, ru
     const fullPath = path.join(repoRoot, 'syngrisi', 'tests', filePath);
     const imageBuffer = fs.readFileSync(fullPath);
 
-    for (let i = checkCount; i >= 1; i--) {
+    // Create checks in ascending order so "Check 1" is the oldest, matching UI navigation order
+    for (let i = 1; i <= checkCount; i++) {
         await vDriver.check({
             checkName: `Check ${i}`,
             imageBuffer,
@@ -88,9 +89,8 @@ Given('I create a test run {string} with checks:', async ({ appServer }, runName
     const imageBuffer = fs.readFileSync(fullPath);
 
     const checks = dataTable.hashes();
-    const reversedChecks = [...checks].reverse();
-
-    for (const check of reversedChecks) {
+    // Preserve the order provided in the table so navigation order matches expectations
+    for (const check of checks) {
         await vDriver.check({
             checkName: check.Name,
             imageBuffer,

@@ -16,7 +16,7 @@ Feature: CLI Tasks
     Then I expect exact "1" snapshot files
     Given I stop Server
     When I clear database
-    #     Given I start Server and start Driver
+    Given I start Server
 
     When I create "1" tests with params:
       """
@@ -40,7 +40,7 @@ Feature: CLI Tasks
     Then I expect exact "1" snapshot files
     Given I stop Server
     When I clear database
-    #     Given I start Server and start Driver
+    Given I start Server
 
     When I create "1" tests with params:
       """

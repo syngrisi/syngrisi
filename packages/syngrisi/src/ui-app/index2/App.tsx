@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import * as React from 'react';
-import { useMemo } from 'react';
+import { useMemo, ComponentPropsWithoutRef } from 'react';
 
 import {
     ColorSchemeProvider,
@@ -15,6 +15,7 @@ import { NotificationsProvider } from '@mantine/notifications';
 
 import { IconFilter, IconMoonStars, IconSearch, IconSun } from '@tabler/icons-react';
 import { SpotlightProvider } from '@mantine/spotlight';
+import { DefaultAction } from '@mantine/spotlight/esm/DefaultAction/DefaultAction';
 import config from '@config';
 
 import IndexLayout from '@index/IndexLayout';
@@ -27,6 +28,28 @@ import { useParams } from '@hooks/useParams';
 
 
 import { UserHooks } from '@shared/hooks';
+
+const SpotlightActionButton = React.forwardRef<HTMLButtonElement, ComponentPropsWithoutRef<typeof DefaultAction>>(
+    (props, ref) => {
+        const { action, ...others } = props;
+        const ariaLabel = action?.title || 'Spotlight action';
+        const dataTest = action?.title
+            ? `spotlight-action-${action.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
+            : undefined;
+
+        return (
+            <DefaultAction
+                ref={ref}
+                aria-label={ariaLabel}
+                data-test={dataTest}
+                action={action}
+                {...others}
+            />
+        );
+    },
+);
+
+SpotlightActionButton.displayName = 'SpotlightActionButton';
 
 // ... (imports)
 
@@ -161,10 +184,12 @@ function App() {
                 >
                     <SpotlightProvider
                         actions={spotlightActions}
+                        actionComponent={SpotlightActionButton}
                         highlightQuery
                         searchIcon={<IconSearch size={18} />}
                         limit={20}
                         searchPlaceholder="Search..."
+                        searchInputProps={{ 'aria-label': 'Spotlight search' }}
                         shortcut={['mod + k', 'mod + K']}
                         nothingFoundMessage="Nothing found..."
                     >

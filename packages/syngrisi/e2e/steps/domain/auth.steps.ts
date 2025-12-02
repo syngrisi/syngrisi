@@ -2,6 +2,7 @@ import { When } from '@fixtures';
 import type { Page } from '@playwright/test';
 import { createLogger } from '@lib/logger';
 import type { AppServerFixture, TestStore } from '@fixtures';
+import { ensureServerReady } from '@utils/app-server';
 
 const logger = createLogger('AuthSteps');
 
@@ -11,15 +12,20 @@ When(
     logger.info(`Logging in user "${login}" via UI`);
 
     try {
+      // Ensure server is ready before navigation
+      if (appServer.serverPort) {
+        await ensureServerReady(appServer.serverPort);
+      }
+
       const loginUrl = `${appServer.baseURL}/auth`;
-      
+
       // Wait for password field with retries (as in original)
       let passwordFieldFound = false;
       for (let attempt = 0; attempt < 5; attempt += 1) {
         try {
           await page.goto(loginUrl, { waitUntil: 'networkidle', timeout: 10000 });
           await page.waitForTimeout(attempt === 0 ? 3000 : 2000);
-          
+
           const passwordField = page.locator('#password');
           await passwordField.waitFor({ state: 'visible', timeout: 5000 });
           passwordFieldFound = true;
@@ -34,7 +40,7 @@ When(
           }
         }
       }
-      
+
       if (!passwordFieldFound) {
         const currentUrl = page.url();
         const errorMsg = `Password field not found after retries. Last visited URL: ${currentUrl}`;
@@ -47,13 +53,13 @@ When(
       if (login) {
         await emailInput.fill(login);
       }
-      
+
       const passwordInput = page.locator('#password');
       // Only fill if password is provided (empty string means don't fill)
       if (password) {
         await passwordInput.fill(password);
       }
-      
+
       // For empty credentials, don't submit - just wait to ensure page is loaded
       if (login && password) {
         const submitButton = page.locator('#submit');
@@ -71,7 +77,7 @@ When(
           await page.waitForTimeout(1000);
         }
       }
-      
+
       // Check if login was successful by waiting for URL change or error message
       try {
         // Wait for either success (URL change) or error (error message appears)
@@ -82,14 +88,14 @@ When(
       } catch (e) {
         // Continue anyway
       }
-      
+
       // Check if login was successful by checking for error message or user icon
       // Wait a bit more for error message to appear (if login failed)
       await page.waitForTimeout(2000);
-      
+
       const errorMessage = page.locator('#error-message');
       const errorVisible = await errorMessage.isVisible().catch(() => false);
-      
+
       if (!errorVisible && login && password) {
         // Login might be successful - wait for user icon to appear (indicates user data loaded)
         try {
