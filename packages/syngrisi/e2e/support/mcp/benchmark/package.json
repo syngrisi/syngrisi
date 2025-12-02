@@ -1,0 +1,15 @@
+{
+  "name": "syngrisi-benchmark",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "bench": "tsx runner/run-bench.ts",
+    "bench:task1": "tsx runner/run-bench.ts --scenario scenarios/task1_exploration.json",
+    "bench:task0": "tsx runner/run-bench.ts --scenario scenarios/task0_quick_check.json"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3"
+  }
+}
