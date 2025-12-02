@@ -15,6 +15,8 @@ const benchRoot = path.resolve(__dirname, "..");
 const repoRoot = path.resolve(__dirname, "..", "..", "..", "..", "..", "..", "..");
 const reportsDir = path.join(benchRoot, "reports");
 
+// Load env from benchmark/.env first (local overrides), then repo root .env
+dotenv.config({ path: path.join(benchRoot, ".env") });
 dotenv.config({ path: path.join(repoRoot, ".env") });
 
 interface CliOptions {

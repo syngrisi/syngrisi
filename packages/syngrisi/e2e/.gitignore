@@ -2,7 +2,6 @@
 reports/
 test-results/
 support/mcp/logs/
-support/mcp/steps/
 test-tmp-artifacts/
 
 # Dependencies
@@ -25,4 +24,3 @@ shard-logs/
 
 # Other
 *.bak
-

@@ -1,0 +1,17 @@
+metadata:
+  category: common/other
+  generatedAt: '2025-12-02T04:40:46.192Z'
+  totalFiles: 1
+  totalSteps: 3
+  sourceFiles:
+    - steps/common/polling.steps.ts
+steps:
+  - pattern: 'I repeat javascript code until stored {string} string equals {string}:'
+    description: ''
+    line: 47
+  - pattern: I wait until element {string} contains text {string}
+    description: ''
+    line: 20
+  - pattern: I wait until the css attribute {string} from element {string} is {string}
+    description: ''
+    line: 82

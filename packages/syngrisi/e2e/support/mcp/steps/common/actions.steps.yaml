@@ -1,0 +1,197 @@
+metadata:
+  category: common/actions
+  generatedAt: '2025-12-02T04:40:46.192Z'
+  totalFiles: 1
+  totalSteps: 29
+  sourceFiles:
+    - steps/common/actions.steps.ts
+steps:
+  - pattern: ^I wait (?!for)(\d+(?:\.\d+)?)\s+second(?:s)?(?!\s+for\s+the)$
+    description: |-
+      Step definition: `When I wait {number} second(s)`
+
+      Waits for the specified number of seconds, accepting templated values.
+      This pattern does NOT match "I wait for ..." format or "I wait X seconds for the ..." format.
+
+      @param rawSeconds - String representation of the seconds to wait.
+
+      @example
+      ```gherkin
+      When I wait 3 seconds
+      ```
+    line: 366
+  - pattern: I click element with {target} {string}
+    description: |-
+      Step definition: `When I click element with {target} {string}`
+
+      Resolves either:
+      - a labelled control via `page.getByLabel`, or
+      - an arbitrary locator via `page.locator`.
+
+      @param target - {@link ElementTarget} (`'label' | 'locator'`) provided by the `{target}` parameter.
+      @param rawValue - Label text or locator query identifying the element(s).
+
+      @examples
+      ```gherkin
+      When I click element with label "Email"
+      When I click element with locator "//button[@type='submit']"
+      ```
+    line: 153
+  - pattern: I click on the element {string} via js
+    description: ''
+    line: 772
+  - pattern: I delete the cookie {string}
+    description: ''
+    line: 756
+  - pattern: 'I execute javascript code:'
+    description: |-
+      Step definition: `When I execute javascript code:`
+
+      Atomic implementation - executes JavaScript code in browser context and stores result.
+      No retries, no special handling for specific code patterns.
+
+      @param js - JavaScript code to execute (may contain 'return' statement).
+
+      @example
+      ```gherkin
+      When I execute javascript code:
+        """
+        return document.querySelector('h1').textContent
+        """
+      ```
+    line: 631
+  - pattern: 'I execute javascript OLD code:'
+    description: ''
+    line: 469
+  - pattern: I fill {string} into {ordinal} element with label {string}
+    description: |-
+      Step definition: `When I fill {string} into {ordinal} element with label {string}`
+
+      @param value - Text to input into the control.
+      @param ordinal - Zero-based ordinal index resolved by `{ordinal}`.
+      @param label - Label text identifying the control.
+
+      @example
+      ```gherkin
+      When I fill "42" into 2nd element with label "Quantity"
+      ```
+    line: 248
+  - pattern: I fill {string} into {role} {string}
+    description: |-
+      Step definition: `When I fill {string} into {role} {string}`
+
+      @param value - Text to input into the control.
+      @param role - {@link AriaRole} derived from `{role}`.
+      @param name - Accessible name identifying the control.
+
+      @example
+      ```gherkin
+      When I fill "user" into textbox "Username"
+      ```
+    line: 270
+  - pattern: I fill {string} into element with {target} {string}
+    description: |-
+      Step definition: `When I fill {string} into element with {target} {string}`
+
+      Filling is intentionally limited to label-based selectors to guarantee actionable form controls.
+
+      @param value - Text to input into the resolved control.
+      @param target - {@link ElementTarget} captured via `{target}`; must be `'label'`.
+      @param rawValue - Label text identifying the control.
+
+      @examples
+      ```gherkin
+      When I fill "john@example.com" into element with label "Email"
+      ```
+    line: 214
+  - pattern: I fill {string} into element with placeholder {string}
+    description: ''
+    line: 280
+  - pattern: I force click element with locator {string}
+    description: ''
+    line: 777
+  - pattern: I hold key {string}
+    description: ''
+    line: 764
+  - pattern: I move to element {string}
+    description: ''
+    line: 783
+  - pattern: I move to element {string} with an offset of {int},{int}
+    description: ''
+    line: 788
+  - pattern: I press {string}
+    description: ''
+    line: 760
+  - pattern: I press the {string} key
+    description: |-
+      Step definition: `When I press the {string} key`
+
+      @param key - Key name to press (e.g., 'Escape', 'Enter', 'Tab').
+
+      @example
+      ```gherkin
+      When I press the "Escape" key
+      ```
+    line: 387
+  - pattern: I refresh page
+    description: ''
+    line: 420
+  - pattern: I release key {string}
+    description: ''
+    line: 768
+  - pattern: I reload session
+    description: ''
+    line: 742
+  - pattern: I scroll to element {string}
+    description: ''
+    line: 649
+  - pattern: I select dropdown option {string} by clicking div for element {string}
+    description: |-
+      Step definition: `When I select dropdown option {string} by clicking div for element {string}`
+
+      This step is specifically designed for custom dropdown components that don't work with standard selectOption.
+      It clicks on the select element to open the dropdown, then clicks on the div option, and also sets the value
+      via selectOption as a fallback to ensure the value is properly set.
+
+      @param optionText - Text of the option to select
+      @param selector - Selector for the select element
+
+      @example
+      ```gherkin
+      When I select dropdown option "Failed" by clicking div for element "[data-test='table-filter-value']"
+      ```
+    line: 704
+  - pattern: I select the option with the text {string} for element {string}
+    description: ''
+    line: 658
+  - pattern: I set {string} to the inputfield {string}
+    description: ''
+    line: 735
+  - pattern: 'I set window size: {string}'
+    description: ''
+    line: 415
+  - pattern: I wait for "(.+)" second(?:s)?
+    description: |-
+      Step definition: `When I wait for "{string}" seconds`
+
+      Waits for the specified number of seconds, accepting templated values.
+
+      @param rawSeconds - String representation of the seconds to wait.
+
+      @example
+      ```gherkin
+      When I wait for "1" seconds
+      ```
+    line: 309
+  - pattern: I wait for canvas to be ready
+    description: ''
+    line: 424
+  - pattern: I wait for viewportTransform to stabilize
+    description: ''
+    line: 437
+  - pattern: 'I wait up to {int} seconds for javascript condition:'
+    description: ''
+    line: 320
+  - pattern: the element with placeholder {string} should be visible for {int} sec
+    description: ''
+    line: 289
