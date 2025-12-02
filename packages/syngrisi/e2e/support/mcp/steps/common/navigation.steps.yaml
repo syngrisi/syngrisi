@@ -1,0 +1,26 @@
+metadata:
+  category: common/navigation
+  generatedAt: '2025-12-02T04:40:46.192Z'
+  totalFiles: 1
+  totalSteps: 2
+  sourceFiles:
+    - steps/common/actions.steps.ts
+steps:
+  - pattern: I open (?:url|site) "(.*)"
+    description: |-
+      Step definition: `When I open url {string}` or `When I open site {string}`
+
+      Navigates to the specified URL, supporting template variable substitution.
+
+      @param url - URL to navigate to, may contain template variables.
+
+      @examples
+      ```gherkin
+      When I open url "http://localhost:3000"
+      When I open site "https://example.com"
+      When I open url "{{baseUrl}}/dashboard"
+      ```
+    line: 405
+  - pattern: I open the url {string}
+    description: ''
+    line: 410
