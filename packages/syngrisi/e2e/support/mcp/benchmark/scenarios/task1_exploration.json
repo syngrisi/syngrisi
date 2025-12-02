@@ -1,0 +1,16 @@
+{
+  "id": "task_01_login_guest",
+  "type": "exploration",
+  "prompt": "Используй MCP сервер test_engine: сначала вызови session_start_new с sessionName из BENCH_SESSION_NAME и headless=true. Затем выполни шаг \"When I open the app\" (стандартный flow из фикстур). Убедись, что есть кнопка с aria-label \"User menu for Syngrisi Guest\" (инициалы SG). В финале верни текущий URL. Соблюдай правила AGENTS.md (никаких waitForTimeout).",
+  "expectations": {
+    "final_url_contains": "/",
+    "final_locator": "button[aria-label='User menu for Syngrisi Guest']",
+    "prohibited_actions": ["page.waitForTimeout"]
+  },
+  "config": {
+    "auth_mode": "guest",
+    "headless": true,
+    "max_steps": 8,
+    "min_steps": 3
+  }
+}
