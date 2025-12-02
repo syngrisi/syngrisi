@@ -1,13 +1,14 @@
 metadata:
   category: domain/app
-  generatedAt: '2025-12-02T04:40:46.192Z'
-  totalFiles: 17
-  totalSteps: 113
+  generatedAt: '2025-12-02T10:02:40.846Z'
+  totalFiles: 19
+  totalSteps: 121
   sourceFiles:
     - steps/domain/ai.steps.ts
     - steps/domain/api-key.steps.ts
     - steps/domain/app.steps.ts
     - steps/domain/auth.steps.ts
+    - steps/domain/check-details.steps.ts
     - steps/domain/checks.steps.ts
     - steps/domain/cli-tasks.steps.ts
     - steps/domain/http/baselines-backend.steps.ts
@@ -16,6 +17,7 @@ metadata:
     - steps/domain/http/common-http.steps.ts
     - steps/domain/http/logs-http.steps.ts
     - steps/domain/http/users-http.steps.ts
+    - steps/domain/mcp.steps.ts
     - steps/domain/navigation.steps.ts
     - steps/domain/server.steps.ts
     - steps/domain/sso.steps.ts
@@ -91,6 +93,21 @@ steps:
   - pattern: I login with user:{string} password {string}
     description: ''
     line: 8
+  - pattern: I click the {string} button
+    description: ''
+    line: 108
+  - pattern: I create a test run {string} with {int} checks
+    description: ''
+    line: 15
+  - pattern: 'I create a test run {string} with checks:'
+    description: ''
+    line: 60
+  - pattern: I should see the check details for {string}
+    description: ''
+    line: 140
+  - pattern: the {string} button should be {string}
+    description: ''
+    line: 122
   - pattern: I accept the {string} check
     description: ''
     line: 7
@@ -316,6 +333,15 @@ steps:
   - pattern: I login via http with user:{string} password {string}
     description: ''
     line: 43
+  - pattern: I find test {string} in the table, expand it, and open the first check {string}
+    description: ''
+    line: 25
+  - pattern: I get the current URL
+    description: ''
+    line: 43
+  - pattern: I start a new MCP session named {string} with headless {word}
+    description: ''
+    line: 8
   - pattern: I go to {string} page
     description: ''
     line: 12

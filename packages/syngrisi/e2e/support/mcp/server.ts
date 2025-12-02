@@ -11,14 +11,14 @@ import { patchStepInvoker } from './utils/stepInvokerPatch';
 import { getSessionInfo, initializeSession, startNewSession } from './utils/stepLogger';
 import type { Data } from './utils/types';
 import { initializeStepFinder } from './utils/stepModules';
-import { bddConfig } from './playwright.config';
+import { bddConfig } from './bdd.config';
 import { env, getIdleTimeoutMs, getIdleCheckIntervalMs } from './config';
 import { formatError, isShutdownNotification, SHUTDOWN_NOTIFICATION_METHOD } from './utils/common';
 import logger, { formatArgs } from './utils/logger';
 // Using relative path instead of @utils alias to allow bridge-cli.ts to run from any directory
 // without requiring tsconfig.json path resolution
 import { waitFor } from '../utils/common';
-import { findEphemeralPort } from './utils/port-utils';
+import { findEphemeralPort, waitForHttpAvailability } from './utils/port-utils';
 
 export const sessionStartToolDefinition = {
   name: 'session_start_new',
@@ -443,6 +443,9 @@ export async function startMcpServer({
 
   startHttpTransport(httpServer, server);
   logger.info(formatArgs(`🚀 MCP server listening at http://localhost:${resolvedPort}`));
+
+  // Wait for the HTTP server to be truly available before proceeding
+  await waitForHttpAvailability(resolvedPort);
 
   // Start idle timeout checker
   const startIdleChecker = () => {

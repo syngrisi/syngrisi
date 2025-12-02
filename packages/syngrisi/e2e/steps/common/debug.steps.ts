@@ -1,25 +1,145 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { spawn, type ChildProcess } from 'node:child_process';
-import { When } from '@fixtures';
+import { When, Then } from '@fixtures';
 import type { TestEngineFixture } from '@fixtures';
 import { env } from '@config';
 import { expect } from '@playwright/test';
 import { createLogger } from '@lib/logger';
 import type { BddContext } from 'playwright-bdd/dist/runtime/bddContext';
+import type { Page } from '@playwright/test';
 
 const logger = createLogger('DebugSteps');
+
+const DEMO_BANNER_ID = 'e2e-demo-banner';
+const DEMO_HIGHLIGHT_CLASS = 'e2e-demo-highlight';
+
+const showDemoBanner = async (page: Page, text: string) => {
+  await page.evaluate(
+    ({ text, bannerId }) => {
+      const existing = document.getElementById(bannerId);
+      if (existing) {
+        existing.remove();
+      }
+
+      const banner = document.createElement('div');
+      banner.id = bannerId;
+      banner.textContent = text;
+      Object.assign(banner.style, {
+        position: 'fixed',
+        bottom: '20px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        padding: '16px 32px',
+        backgroundColor: 'rgba(0, 0, 0, 0.75)',
+        color: '#fff',
+        fontSize: '24px',
+        fontWeight: 'bold',
+        borderRadius: '12px',
+        zIndex: '999999',
+        pointerEvents: 'none',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+        animation: 'e2e-banner-fade-in 0.3s ease-out',
+      });
+
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes e2e-banner-fade-in {
+          from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+          to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+      `;
+      document.head.appendChild(style);
+      document.body.appendChild(banner);
+    },
+    { text, bannerId: DEMO_BANNER_ID },
+  );
+};
+
+const hideDemoBanner = async (page: Page) => {
+  await page.evaluate((bannerId) => {
+    const banner = document.getElementById(bannerId);
+    if (banner) {
+      banner.remove();
+    }
+  }, DEMO_BANNER_ID);
+};
+
+const injectHighlightStyles = async (page: Page) => {
+  await page.evaluate((highlightClass) => {
+    const styleId = 'e2e-highlight-styles';
+    if (document.getElementById(styleId)) {
+      return;
+    }
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = `
+      @keyframes e2e-highlight-pulse {
+        0% {
+          outline-color: rgba(139, 92, 246, 1);
+          outline-width: 2px;
+        }
+        50% {
+          outline-color: rgba(139, 92, 246, 0.5);
+          outline-width: 4px;
+        }
+        100% {
+          outline-color: rgba(139, 92, 246, 1);
+          outline-width: 2px;
+        }
+      }
+      .${highlightClass} {
+        box-shadow: inset 0 0 0 1000px rgba(139, 92, 246, 0.1) !important;
+        outline: 2px solid #8b5cf6 !important;
+        outline-offset: 1px !important;
+        animation: e2e-highlight-pulse 2s infinite !important;
+      }
+    `;
+    document.head.appendChild(style);
+  }, DEMO_HIGHLIGHT_CLASS);
+};
+
+const highlightElement = async (page: Page, selector: string) => {
+  await injectHighlightStyles(page);
+
+  await page.evaluate((highlightClass) => {
+    document.querySelectorAll(`.${highlightClass}`).forEach((el) => {
+      el.classList.remove(highlightClass);
+    });
+  }, DEMO_HIGHLIGHT_CLASS);
+
+  const locator = page.locator(selector).first();
+  await locator.evaluate((el, highlightClass) => {
+    el.classList.add(highlightClass);
+  }, DEMO_HIGHLIGHT_CLASS);
+};
+
+const clearHighlight = async (page: Page) => {
+  try {
+    await page.evaluate((highlightClass) => {
+      document.querySelectorAll(`.${highlightClass}`).forEach((el) => {
+        el.classList.remove(highlightClass);
+      });
+    }, DEMO_HIGHLIGHT_CLASS);
+  } catch (error) {
+    // Ignore execution context destruction errors (happens if page navigates)
+    if (error instanceof Error && error.message.includes('Execution context was destroyed')) {
+      return;
+    }
+    throw error;
+  }
+};
 const portsLogDir = path.resolve(__dirname, '..', '..', 'support', 'mcp', 'logs', 'ports');
 
 /**
- * Step definition: `When I pause`
+ * Step definition: `When I PAUSE`
  *
  * Pauses the current Playwright runner, opening the inspector.
  * This step is a no-op in CI environments.
  *
  * @example
  * ```gherkin
- * When I pause
+ * When I PAUSE
  * ```
  */
 const logMcpStatus = (testEngine: TestEngineFixture) => {
@@ -124,11 +244,11 @@ const buildPortLogPayload = (port: number, recordedScenario: RecordedScenario | 
   recordedAt: new Date().toISOString(),
   scenario: recordedScenario
     ? {
-      title: recordedScenario.scenarioTitle,
-      titlePath: recordedScenario.titlePath,
-      featurePath: recordedScenario.relativeFeaturePath ?? recordedScenario.absoluteFeaturePath,
-      featureUri: recordedScenario.featureUri,
-    }
+        title: recordedScenario.scenarioTitle,
+        titlePath: recordedScenario.titlePath,
+        featurePath: recordedScenario.relativeFeaturePath ?? recordedScenario.absoluteFeaturePath,
+        featureUri: recordedScenario.featureUri,
+      }
     : null,
 });
 
@@ -144,7 +264,8 @@ const recordPortLog = async (port: number | null | undefined, recordedScenario: 
     const filePath = path.join(portsLogDir, `${timestampSeconds}.port`);
     const payload = buildPortLogPayload(port, recordedScenario);
 
-    await fs.writeFile(filePath, `${JSON.stringify(payload, null, 2)}\n`, 'utf8');
+    await fs.writeFile(filePath, `${JSON.stringify(payload, null, 2)}
+`, 'utf8');
     logger.info(`Recorded MCP port ${port} at ${filePath}`);
     return filePath;
   } catch (error) {
@@ -168,7 +289,7 @@ const buildCodexPrompt = (basePrompt: string | undefined, scenario: RecordedScen
   return sections.join('\n\n');
 };
 
-const shellEscape = (value: string) => `'${value.replace(/'/g, `'\\''`)}'`;
+const shellEscape = (value: string) => `'${value.replace(/'/g, `'\''`)}'`;
 
 const encodePromptForShell = (prompt: string | undefined) => {
   if (!prompt) {
@@ -182,13 +303,13 @@ const encodePromptForShell = (prompt: string | undefined) => {
 const buildAppleScriptCommand = (prompt: string | undefined) => {
   const { assignment, invocation } = encodePromptForShell(prompt);
   const shellCommand = `cd ${shellEscape(process.cwd())}; ${assignment}${invocation}`;
-  const escapedShellCommand = shellCommand.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  const escapedShellCommand = shellCommand.replace(/\\/g, '\\\\').replace(/"/g, '\"');
   return `
-tell application "Terminal"
-  activate
-  do script "${escapedShellCommand}"
-end tell
-`.trim();
+    tell application "Terminal"
+      activate
+      do script "${escapedShellCommand}"
+    end tell
+  `.trim();
 };
 
 const buildCodexInvocation = (prompt: string | undefined) => {
@@ -261,12 +382,19 @@ const startCodexInteractiveSession = (prompt: string | undefined) => {
   }
 };
 
-When('I pause', async ({ page, testEngine }) => {
+When('I PAUSE', async ({ page, testEngine }) => {
   if (env.CI) {
     return;
   }
 
   logMcpStatus(testEngine);
+  await page.pause();
+});
+
+Then('I pause', async ({ page }) => {
+  if (env.CI) {
+    return;
+  }
   await page.pause();
 });
 
@@ -299,6 +427,12 @@ When('I pause for {int} ms', async ({ page }, ms: number) => {
 When('I fail', async ({ page }) => {
   logger.info('Failing as requested');
   expect(false).toBe(true);
+});
+
+When('I log current URL', async ({ page }) => {
+  const currentUrl = page.url();
+  logger.info(`Current URL: ${currentUrl}`);
+  return currentUrl;
 });
 
 When('I test', async () => {

@@ -134,7 +134,7 @@ export default function TestsTable(
                 total={infinityQuery.data?.pages && infinityQuery.data?.pages[0].totalPages}
                 scrollAreaRef={scrollAreaRef}
             />
-            <CheckModal firstPageQuery={firstPageQuery} />
+            <CheckModal firstPageQuery={firstPageQuery} testList={flatData} />
         </>
     );
 }

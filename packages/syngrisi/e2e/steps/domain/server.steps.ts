@@ -219,7 +219,7 @@ When(
   'I clear database',
   async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }) => {
     logger.info('Clearing database...');
-    await clearDatabase(false);
+    await clearDatabase(false, false, true);
     logger.info('Database cleared');
     resetTestCreationState(testData);
   }

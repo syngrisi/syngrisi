@@ -1,10 +1,11 @@
 metadata:
   category: common/other
-  generatedAt: '2025-12-02T04:40:46.192Z'
-  totalFiles: 1
-  totalSteps: 3
+  generatedAt: '2025-12-02T10:02:40.846Z'
+  totalFiles: 2
+  totalSteps: 4
   sourceFiles:
     - steps/common/polling.steps.ts
+    - steps/tmp/test_mcp_session_flow.steps.ts
 steps:
   - pattern: 'I repeat javascript code until stored {string} string equals {string}:'
     description: ''
@@ -15,3 +16,6 @@ steps:
   - pattern: I wait until the css attribute {string} from element {string} is {string}
     description: ''
     line: 82
+  - pattern: I should see a button with aria-label {string}
+    description: ''
+    line: 4
