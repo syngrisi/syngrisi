@@ -7,6 +7,8 @@ import { findEphemeralPort } from '../mcp/utils/port-utils';
 import type { AppServerFixture } from './app-server.fixture';
 import type { TestStore } from './test-data.fixture';
 import type { TestManagerFixture } from './test-manager.fixture';
+import { Client } from '@modelcontextprotocol/sdk/client';
+import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'; // NEW IMPORT
 
 const logger = createLogger('TestEngine');
 const FEATURE_URI = 'mcp://syngrisi.mcp';
@@ -18,6 +20,7 @@ export type TestEngineFixture = {
   start: (options?: { requestedPort?: number; featureUri?: string; tags?: string[] }) => Promise<void>;
   waitForShutdown: (options?: { timeoutMs?: number }) => Promise<void>;
   stop: () => Promise<void>;
+  client: Client | null;
 };
 
 type RequiredFixtures = {
@@ -38,6 +41,7 @@ export const testEngineFixture = base.extend<{ testEngine: TestEngineFixture }>(
       testInfo,
     ) => {
       let handle: McpServerHandle | null = null;
+      let mcpClientInstance: Client | null = null;
       const defaultTags = testInfo.tags ?? [];
 
       const fixture: TestEngineFixture = {
@@ -70,6 +74,15 @@ export const testEngineFixture = base.extend<{ testEngine: TestEngineFixture }>(
             requestedPort,
           });
 
+          // OLD: mcpClientInstance = new Client(handle.baseUrl);
+          // NEW: Instantiate Client and connect to StreamableHTTPClientTransport
+          const endpoint = new URL('/mcp', handle.baseUrl);
+          const transport = new StreamableHTTPClientTransport(endpoint);
+          mcpClientInstance = new Client(
+            { name: 'test-engine-client', version: '1.0.0' },
+            { capabilities: {} }
+          );
+          await mcpClientInstance.connect(transport);
           logger.info(`MCP server started on port ${handle.port}`);
         },
         waitForShutdown: async (options) => {
@@ -85,6 +98,10 @@ export const testEngineFixture = base.extend<{ testEngine: TestEngineFixture }>(
           logger.info(`Stopping MCP server on port ${handle.port}`);
           await handle.stop();
           handle = null;
+          mcpClientInstance = null;
+        },
+        get client(): Client | null {
+          return mcpClientInstance;
         },
       };
 

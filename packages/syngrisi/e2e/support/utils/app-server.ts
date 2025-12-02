@@ -153,7 +153,7 @@ export async function launchAppServer(
   };
 
   // Retry logic for backend early exit (SIGINT during startup)
-  const maxRetries = 3;
+  const maxRetries = 5;
   let lastError: Error | null = null;
   let backend: Child | null = null;
   let backendLogs: () => string = () => '';
@@ -185,8 +185,8 @@ export async function launchAppServer(
       }
 
       if (attempt < maxRetries) {
-        backendLogger.info(`Retrying backend startup in 2 seconds...`);
-        await sleep(2000);
+        backendLogger.info(`Retrying backend startup in 5 seconds...`);
+        await sleep(5000);
       }
     }
   }
