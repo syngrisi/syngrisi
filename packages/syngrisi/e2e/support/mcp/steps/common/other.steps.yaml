@@ -1,6 +1,6 @@
 metadata:
   category: common/other
-  generatedAt: '2025-12-02T11:18:38.931Z'
+  generatedAt: '2025-12-03T12:20:18.329Z'
   totalFiles: 2
   totalSteps: 8
   sourceFiles:
@@ -14,7 +14,7 @@ steps:
       Announces a phrase using text-to-speech with a visible banner overlay.
       The banner is click-through (pointer-events: none) and disappears after speech completes.
       Useful for highlighting key moments during feature demonstrations without blocking indefinitely.
-      This step is a no-op in CI environments.
+      This step is a no-op in CI environments or when SKIP_DEMO_TESTS=true.
 
       @param phrase - The text to be spoken aloud and displayed
 
@@ -22,7 +22,7 @@ steps:
       ```gherkin
       When I announce: "Now observe the drag and drop behavior"
       ```
-    line: 190
+    line: 193
   - pattern: 'I announce: {string} and PAUSE'
     description: |-
       Step definition: `When I announce: {string} and PAUSE`
@@ -30,7 +30,7 @@ steps:
       Announces a phrase using text-to-speech with a visible banner overlay, then pauses the Playwright runner.
       The banner is click-through (pointer-events: none) and disappears after pause is released.
       Useful for highlighting key moments during feature demonstrations with manual inspection.
-      This step is a no-op in CI environments.
+      This step is a no-op in CI environments or when SKIP_DEMO_TESTS=true.
 
       @param phrase - The text to be spoken aloud and displayed before pausing
 
@@ -38,31 +38,31 @@ steps:
       ```gherkin
       When I announce: "Task creation completed" and PAUSE
       ```
-    line: 219
+    line: 222
   - pattern: I clear highlight
     description: |-
       Step definition: `When I clear highlight`
 
       Removes any active element highlight from the page.
-      This step is a no-op in CI environments.
+      This step is a no-op in CI environments or when SKIP_DEMO_TESTS=true.
 
       @example
       ```gherkin
       When I clear highlight
       ```
-    line: 266
+    line: 269
   - pattern: I end the demo
     description: |-
       Step definition: `When I end the demo`
 
       Triggers a confetti animation on the page to celebrate the end of a demo.
-      This step is a no-op in CI environments.
+      This step is a no-op in CI environments or when SKIP_DEMO_TESTS=true.
 
       @support/mcp/benchmark/.env.example
       ```gherkin
       When I end the demo
       ```
-    line: 284
+    line: 287
   - pattern: I highlight element {string}
     description: |-
       Step definition: `When I highlight element {string}`
@@ -70,7 +70,7 @@ steps:
       Highlights a DOM element with a bright pulsing animation.
       The highlight persists until another element is highlighted or the highlight is cleared.
       Useful for drawing attention to specific UI elements during demos.
-      This step is a no-op in CI environments.
+      This step is a no-op in CI environments or when SKIP_DEMO_TESTS=true.
 
       @param selector - CSS selector for the element to highlight
 
@@ -79,7 +79,7 @@ steps:
       When I highlight element "[data-testid='submit-button']"
       When I highlight element ".task-card"
       ```
-    line: 248
+    line: 251
   - pattern: 'I repeat javascript code until stored {string} string equals {string}:'
     description: ''
     line: 47

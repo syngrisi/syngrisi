@@ -78,7 +78,7 @@ export async function spawnMcpServer(options: SpawnServerOptions): Promise<Spawn
     '--config',
     path.join(e2eRoot, 'support/mcp/playwright.server.config.ts'),
     '--project=chromium',
-    path.join(e2eRoot, 'support/mcp/mcp.spec.ts'),
+    path.join(e2eRoot, 'support/mcp/test/mcp.spec.ts'),
   ];
 
   const binName = process.platform === 'win32' ? 'playwright.cmd' : 'playwright';
