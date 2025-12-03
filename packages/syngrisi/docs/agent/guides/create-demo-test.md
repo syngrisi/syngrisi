@@ -8,7 +8,7 @@ Provide universal principles for scripting narrated demo tests, independent of f
 2. Entry: verify the first screen title, highlight the primary element, and deliver a short welcome narration.
 3. Interaction blocks: for each key UI action (button press, selection, form submission) follow the pattern highlight → announce intent → perform action → assert the immediate result.
 4. Transitions: before changing views, announce what the next screen represents and why the transition matters, then confirm the new heading or landmark.
-5. Completion: describe the final state, clear highlights or overlays, assert the closing heading/message, and explicitly end the demo script.
+5. Completion: describe the final state, clear highlights or overlays, assert the closing heading/message, and **ALWAYS** explicitly end the demo script with `When I end the demo` to trigger the confetti animation.
 
 ## Annotation Rules
 
@@ -16,7 +16,8 @@ Provide universal principles for scripting narrated demo tests, independent of f
 -   Narration should explain user value or decision rationale, not implementation details.
 -   Highlight the referenced element before interacting with it and clear highlights when the focus changes.
 -   Mention only the essential selector (heading, button label, role) so narration stays portable.
--   End with a brief success summary followed by `And I end the demo`.
+-   **ALWAYS** end every demo scenario with `When I end the demo` to trigger the confetti animation and provide visual closure.
+-   The `When I end the demo` step should be the last step in your scenario after all assertions and cleanup.
 
 ## Zero-shot Examples
 
@@ -62,16 +63,18 @@ npx bddgen && yarn playwright test "features/DEMO/your_demo.feature" --workers=1
 ```
 
 ### Benefits of SKIP_DEMO_TESTS=true during development:
-- **Faster iteration**: Skip text-to-speech announcements (which can take several seconds each)
-- **Focus on logic**: Verify test flow and assertions without waiting for narration
-- **CI compatibility**: Run tests in environments where demo features are not available
-- **No code changes**: Keep all demo steps in the feature file without commenting/uncommenting
+
+-   **Faster iteration**: Skip text-to-speech announcements (which can take several seconds each)
+-   **Focus on logic**: Verify test flow and assertions without waiting for narration
+-   **CI compatibility**: Run tests in environments where demo features are not available
+-   **No code changes**: Keep all demo steps in the feature file without commenting/uncommenting
 
 By default, `SKIP_DEMO_TESTS` is `false`, so demo steps execute normally when not explicitly set.
 
 ## Development Workflow
 
 ### 1. Initial Development Phase
+
 Write your scenario with all demo steps included from the start:
 
 ```gherkin
@@ -83,10 +86,13 @@ Scenario: Demo: My Feature
     When I click element with locator "[data-test='my-button']"
     Then the title is "Success"
     When I clear highlight
+    When I announce: "Demonstration completed successfully!"
+    # REQUIRED: Always end demo with confetti animation
     When I end the demo
 ```
 
 ### 2. Debug & Test Phase
+
 Run with `SKIP_DEMO_TESTS=true` to quickly iterate:
 
 ```bash
@@ -95,12 +101,14 @@ SKIP_DEMO_TESTS=true npx bddgen && yarn playwright test "features/DEMO/my_demo.f
 ```
 
 This skips all `announce`, `highlight`, `clear highlight`, and `end the demo` steps, allowing you to focus on:
-- Selector accuracy
-- Timing issues
-- Test logic flow
-- Assertions
+
+-   Selector accuracy
+-   Timing issues
+-   Test logic flow
+-   Assertions
 
 ### 3. Final Verification Phase
+
 Run with full demo experience to verify narration and visual effects:
 
 ```bash
@@ -109,22 +117,25 @@ npx bddgen && yarn playwright test "features/DEMO/my_demo.feature" --workers=1 -
 ```
 
 Verify:
-- Text-to-speech announcements are clear and well-timed
-- Element highlights appear on correct elements
-- Transitions are smooth
-- Confetti animation plays at the end
+
+-   Text-to-speech announcements are clear and well-timed
+-   Element highlights appear on correct elements
+-   Transitions are smooth
+-   Confetti animation plays at the end
 
 ## Pre-run Checklist
 
 1. **Debug run**: Set `SKIP_DEMO_TESTS=true` and run the scenario locally to ensure all selectors, actions, and assertions work correctly without narration:
-   ```bash
-   SKIP_DEMO_TESTS=true npx bddgen && yarn playwright test "<feature-path>.feature" --grep "<Scenario name>" --workers=1 --headed
-   ```
+
+    ```bash
+    SKIP_DEMO_TESTS=true npx bddgen && yarn playwright test "<feature-path>.feature" --grep "<Scenario name>" --workers=1 --headed
+    ```
 
 2. **Full demo run**: Run with `SKIP_DEMO_TESTS=false` (or omit the variable) with `--headed` flag to verify announcements, highlights, and animations work correctly:
-   ```bash
-   npx bddgen && yarn playwright test "<feature-path>.feature" --grep "<Scenario name>" --workers=1 --headed
-   ```
+
+    ```bash
+    npx bddgen && yarn playwright test "<feature-path>.feature" --grep "<Scenario name>" --workers=1 --headed
+    ```
 
 3. **Documentation**: When sharing the demo with users, provide both commands:
     - **Debug mode**: `SKIP_DEMO_TESTS=true npx bddgen && yarn playwright test "<feature-path>.feature" --grep "<Scenario name>" --workers=1 --headed`
@@ -134,3 +145,4 @@ Verify:
 
 -   Always set `@demo` tag on the scenario
 -   All demo tests must be placed in `packages/syngrisi/e2e/features/DEMO/` folder
+-   **MANDATORY**: Every demo scenario MUST end with `When I end the demo` step to trigger the confetti animation and provide visual closure
