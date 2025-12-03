@@ -6,7 +6,7 @@ import path from 'node:path';
 import process from 'node:process';
 import type { Readable } from 'node:stream';
 
-import { TIMEOUTS, startBridgeCli, startNewSession, executeStep, executeBatch, shutdownSession, extractContentText } from '../utils';
+import { TIMEOUTS, startBridgeCli, startNewSession, executeStep, executeBatch, shutdownSession, extractContentText } from './utils';
 
 test.describe('MCP Real Scenarios', () => {
     // Run serially to avoid port conflicts - these tests start real app servers
