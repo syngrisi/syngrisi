@@ -2,7 +2,6 @@
 Feature: Check Detail Appearance
 
   Background:
-    #         Given I clear Database and stop Server
     #         Given I start Server and start Driver
     When I open the app
     When I clear local storage
@@ -20,11 +19,11 @@ Feature: Check Detail Appearance
     When I go to "main" page
     When I unfold the test "TestName"
     When I click element with locator "[data-test-preview-image='CheckName']"
-    When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
+    When I wait 10 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
     # Header
     # status
-    When I wait 30 seconds for the element with locator "[data-check-status-name='CheckName']" to be visible
+    When I wait 10 seconds for the element with locator "[data-check-status-name='CheckName']" to be visible
     Then the css attribute "background-color" from element "[data-check-status-name='CheckName']" is "rgba(34,139,230,1)"
     Then the element "[data-check-status-name='CheckName'] span" matches the text "NEW"
 
@@ -76,11 +75,11 @@ Feature: Check Detail Appearance
     When I go to "main" page
     When I unfold the test "TestName"
     When I click element with locator "[data-test-preview-image='CheckName']"
-    When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
+    When I wait 10 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
     # Header
     # status
-    When I wait 30 seconds for the element with locator "[data-check-status-name='CheckName']" to be visible
+    When I wait 10 seconds for the element with locator "[data-check-status-name='CheckName']" to be visible
     Then the css attribute "background-color" from element "[data-check-status-name='CheckName']" is "rgba(64,192,87,1)"
     Then the element "[data-check-status-name='CheckName'] span" matches the text "PASSED"
 
@@ -105,11 +104,11 @@ Feature: Check Detail Appearance
     When I go to "main" page
     When I unfold the test "TestName"
     When I click element with locator "[data-test-preview-image='CheckName']"
-    When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
+    When I wait 10 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
     # Header
     # status
-    When I wait 30 seconds for the element with locator "[data-check-status-name='CheckName']" to be visible
+    When I wait 10 seconds for the element with locator "[data-check-status-name='CheckName']" to be visible
     Then the css attribute "background-color" from element "[data-check-status-name='CheckName']" is "rgba(250,82,82,1)"
     Then the element "[data-check-status-name='CheckName'] span" matches the text "FAILED"
 

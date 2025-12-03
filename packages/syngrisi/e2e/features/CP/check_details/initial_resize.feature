@@ -2,7 +2,6 @@
 Feature: Check Details - Initial image resize
 
   Background:
-  #         Given I clear Database and stop Server
   #         Given I start Server and start Driver
 
   @flaky
@@ -18,7 +17,7 @@ Feature: Check Details - Initial image resize
     When I open the app
     When I unfold the test "TestName"
     When I click element with locator "[data-test-preview-image='CheckName']"
-    When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
+    When I wait 10 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
     When I execute javascript code:
       """
     return mainView.canvas.viewportTransform[4] + '_' + mainView.canvas.viewportTransform[5]
@@ -62,7 +61,7 @@ Feature: Check Details - Initial image resize
     When I open the app
     When I unfold the test "TestName"
     When I click element with locator "[data-test-preview-image='CheckName']"
-    When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
+    When I wait 10 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
     When I execute javascript code:
       """
     return mainView.canvas.viewportTransform[4] + '_' + mainView.canvas.viewportTransform[5]
@@ -106,7 +105,7 @@ Feature: Check Details - Initial image resize
     When I open the app
     When I unfold the test "TestName"
     When I click element with locator "[data-test-preview-image='CheckName']"
-    When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
+    When I wait 10 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
     When I execute javascript code:
       """
     return mainView.canvas.viewportTransform[4] + '_' + mainView.canvas.viewportTransform[5]
@@ -150,7 +149,7 @@ Feature: Check Details - Initial image resize
     When I open the app
     When I unfold the test "TestName"
     When I click element with locator "[data-test-preview-image='CheckName']"
-    When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
+    When I wait 10 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
     When I execute javascript code:
       """
     const translateX = parseFloat(mainView.canvas.viewportTransform[4]);

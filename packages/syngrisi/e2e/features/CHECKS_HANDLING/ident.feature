@@ -5,8 +5,6 @@ Feature: Ident flow
   we should use different baselines for each checks.
 
   Background:
-  #     Given I clear Database and stop Server
-  #     Given I start Server and start Driver
 
   @flaky
   Scenario: Ident flow, same ident [accepted, passed]

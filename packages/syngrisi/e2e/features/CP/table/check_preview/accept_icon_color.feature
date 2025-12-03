@@ -2,8 +2,6 @@
 Feature: Check Preview - Accept Icons View
 
   Background:
-    #     Given I clear Database and stop Server
-    #     Given I start Server and start Driver
     When I open the app
     When I clear local storage
 

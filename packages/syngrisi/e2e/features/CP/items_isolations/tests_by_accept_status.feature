@@ -2,8 +2,6 @@
 Feature: Test Isolation by Accept Status
 
   Background:
-    #     Given I clear Database and stop Server
-    #     Given I start Server and start Driver
     When I open the app
     When I clear local storage
 
@@ -41,30 +39,30 @@ Feature: Test Isolation by Accept Status
 
     When I refresh page
     # all tests
-    When I wait 30 seconds for the element with locator "[data-table-test-name*='AcceptStatus-Unique']" to be visible
+    When I wait 10 seconds for the element with locator "[data-table-test-name*='AcceptStatus-Unique']" to be visible
     Then the element "[data-table-test-name*='AcceptStatus-Unique']" does appear exactly "3" times
 
     When I select the option with the text "Accept Status" for element "select[data-test='navbar-group-by']"
 
     # UNACCEPTED
-    When I wait 30 seconds for the element with locator "//li[contains(., 'Unaccepted')]" to be visible
+    When I wait 10 seconds for the element with locator "//li[contains(., 'Unaccepted')]" to be visible
     When I click element with locator "li*=Unaccepted"
 
-    When I wait 30 seconds for the element with locator "[data-table-test-name='AcceptStatus-Unique-unaccepted']" to be visible
+    When I wait 10 seconds for the element with locator "[data-table-test-name='AcceptStatus-Unique-unaccepted']" to be visible
     When I wait on element "[data-table-test-name='AcceptStatus-Unique-partially']" to not be displayed
     When I wait on element "[data-table-test-name='AcceptStatus-Unique-accepted']" to not be displayed
 
     # PARTIALLY
-    When I wait 30 seconds for the element with locator "//li[contains(., 'Partially')]" to be visible
+    When I wait 10 seconds for the element with locator "//li[contains(., 'Partially')]" to be visible
     When I click element with locator "li*=Partially"
 
     When I wait on element "[data-table-test-name='AcceptStatus-Unique-unaccepted']" to not be displayed
-    When I wait 30 seconds for the element with locator "[data-table-test-name='AcceptStatus-Unique-partially']" to be visible
+    When I wait 10 seconds for the element with locator "[data-table-test-name='AcceptStatus-Unique-partially']" to be visible
     When I wait on element "[data-table-test-name='AcceptStatus-Unique-accepted']" to not be displayed
 
     # ACCEPTED
-    When I wait 30 seconds for the element with locator "//li[contains(., 'Accepted')]" to be visible
+    When I wait 10 seconds for the element with locator "//li[contains(., 'Accepted')]" to be visible
     When I click element with locator "[data-testid='navbar-accept-status-accepted']"
     When I wait on element "[data-table-test-name='AcceptStatus-Unique-unaccepted']" to not be displayed
     When I wait on element "[data-table-test-name='AcceptStatus-Unique-partially']" to not be displayed
-    When I wait 30 seconds for the element with locator "[data-table-test-name='AcceptStatus-Unique-accepted']" to be visible
+    When I wait 10 seconds for the element with locator "[data-table-test-name='AcceptStatus-Unique-accepted']" to be visible

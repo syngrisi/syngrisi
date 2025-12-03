@@ -2,8 +2,6 @@
 Feature: Simple Views - Expected, Actual, Diff
 
   Background:
-  #     Given I clear Database and stop Server
-  #     Given I start Server and start Driver
   When I open the app
   When I clear local storage
   Given I create "1" tests with:
@@ -24,10 +22,10 @@ Feature: Simple Views - Expected, Actual, Diff
   When I go to "main" page
   When I unfold the test "TestName"
   When I click element with locator "[data-test-preview-image='CheckName']"
-  When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
+  When I wait 10 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
   Scenario: Simple Views (Expected, Actual, Diff)
-  When I wait 30 seconds for the element with locator "[data-segment-value='expected']" to be visible
+  When I wait 10 seconds for the element with locator "[data-segment-value='expected']" to be visible
   Then the element with locator "[data-segment-value='expected']" should have attribute "data-segment-disabled" "false"
   # Wait for React state to stabilize before interacting with segment control
   When I pause for 500 ms
