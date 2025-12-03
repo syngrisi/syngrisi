@@ -86,7 +86,6 @@ export const startBridgeCli = async (
     cwd: e2eRoot,
     env: {
       ...(process.env as Record<string, string>),
-      MCP_KEEP_ALIVE: '0', // Default to non-keepalive mode for tests
       ZENFLOW_WORKER_INSTANCE: workerInstanceId,
       MCP_DEFAULT_PORT: preferredPort,
       E2E_HEADLESS: '1',
