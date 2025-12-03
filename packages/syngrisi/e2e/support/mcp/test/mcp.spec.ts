@@ -50,13 +50,6 @@ test.describe('MCP Server Runner', () => {
         throw new Error('MCP server failed to start.');
       }
 
-      const keepAlive = env.MCP_KEEP_ALIVE === '1';
-      if (keepAlive) {
-        logger.info(formatArgs('🛑 MCP server is running. Press Ctrl+C to stop.'));
-        await new Promise<void>(() => { /* keep process alive */ });
-        return;
-      }
-
       logger.info(formatArgs('⏳ Waiting for shutdown notification from bridge...'));
       try {
         await testEngine.waitForShutdown({ timeoutMs: DEFAULT_TIMEOUT_MS });

@@ -1,7 +1,6 @@
 import { test as base } from 'playwright-bdd';
 import type { BrowserContext, Page } from '@playwright/test';
 import { startMcpServer, type McpServerHandle } from './server';
-import { env } from './config';
 import { findEphemeralPort } from './utils/port-utils';
 import logger, { formatArgs } from './utils/logger';
 
@@ -84,11 +83,6 @@ export const testEngineFixture = base.extend<{ testEngine: TestEngineFixture }>(
         await use(fixture);
       } finally {
         if (!handle) {
-          return;
-        }
-
-        if (env.MCP_KEEP_ALIVE === '1') {
-          logger.info(formatArgs('MCP_KEEP_ALIVE=1, leaving MCP server running after test.'));
           return;
         }
 

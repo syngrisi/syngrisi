@@ -40,7 +40,6 @@ export async function spawnMcpServer(options: SpawnServerOptions): Promise<Spawn
 
   const env: NodeJS.ProcessEnv = {
     ...process.env,
-    MCP_KEEP_ALIVE: '0',
     PORT: String(port),
     E2E_HEADLESS: process.env.E2E_HEADLESS || '0',
     // Override TEST_WORKER_INDEX to ensure unique port allocation
