@@ -3,8 +3,7 @@ Feature: Group by Navigation
   Check Breadcrumbs, Title and Url changes behaviour on grouping changes
 
   Background:
-#         Given I clear Database and stop Server
-#         Given I start Server and start Driver
+    #         Given I start Server and start Driver
     When I open the app
     When I clear local storage
 
@@ -16,12 +15,12 @@ Feature: Group by Navigation
     Then the element "(//*[@data-test='bread-crumbs']//a)[1]" matches the text "Test Results"
     Then the element with locator "(//*[@data-test='bread-crumbs']//a)[1]" should have has attribute "href=/"
 
-    When I wait 30 seconds for the element with locator "(//*[@data-test='bread-crumbs']//a[text()='<title>'])" to be visible
+    When I wait 10 seconds for the element with locator "(//*[@data-test='bread-crumbs']//a[text()='<title>'])" to be visible
     Then the element with locator "(//*[@data-test='bread-crumbs']//a)[2]" should have has attribute "href=<href>"
     Then the title is "<title>"
 
     Examples:
-      | groupBy       | title            | href                                       |
+      | groupBy       | title            | href                                |
       | Runs          | By Runs          | /?groupBy=runs                      |
       | Suites        | By Suites        | /?groupBy=suites                    |
       | Browsers      | By Browser       | /?groupBy=test-distinct/browserName |

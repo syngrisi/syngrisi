@@ -2,8 +2,6 @@
 Feature: Check details - Regions
 
    Background:
-      #     Given I clear Database and stop Server
-      #     Given I start Server and start Driver
       When I open the app
       When I clear local storage
       Given I create "1" tests with:
@@ -18,7 +16,7 @@ Feature: Check details - Regions
       When I go to "main" page
       When I unfold the test "TestName"
       When I click element with locator "[data-test-preview-image='CheckName']"
-      When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
+      When I wait 10 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
    Scenario: Regions - add, save, check
       # check absence
@@ -32,7 +30,7 @@ Feature: Check details - Regions
          """
 
       # add and check presence
-      When I wait 30 seconds for the element with locator "[data-check='add-ignore-region']" to be visible
+      When I wait 10 seconds for the element with locator "[data-check='add-ignore-region']" to be visible
       When I wait 3 seconds
       When I click element with locator "[data-check='add-ignore-region']"
 
@@ -113,7 +111,7 @@ Feature: Check details - Regions
 
    Scenario: Regions - delete
       # add and check presence
-      When I wait 30 seconds for the element with locator "[data-check='add-ignore-region']" to be visible
+      When I wait 10 seconds for the element with locator "[data-check='add-ignore-region']" to be visible
       When I wait 3 seconds
       When I click element with locator "[data-check='add-ignore-region']"
 
@@ -154,7 +152,7 @@ Feature: Check details - Regions
    @flaky
    Scenario: Regions - copy regions from previous baseline
       # add region to first check
-      When I wait 30 seconds for the element with locator "[data-check='add-ignore-region']" to be visible
+      When I wait 10 seconds for the element with locator "[data-check='add-ignore-region']" to be visible
       When I click element with locator "[data-check='add-ignore-region']"
 
       # save refresh page check presence
@@ -180,7 +178,7 @@ Feature: Check details - Regions
       When I unfold the test "TestName"
       When I click element with locator "[data-test-preview-image='CheckName']"
 
-      When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
+      When I wait 10 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
       When I repeat javascript code until stored "js" string equals "1":
          """
      if (typeof mainView === 'undefined' || !mainView.allRects) return "loading";
@@ -194,7 +192,7 @@ Feature: Check details - Regions
       When I unfold the test "TestName"
       When I click element with locator "[data-test-preview-image='CheckName']"
 
-      When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
+      When I wait 10 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
       When I repeat javascript code until stored "js" string equals "1":
          """
      if (typeof mainView === 'undefined' || !mainView.allRects) return "loading";

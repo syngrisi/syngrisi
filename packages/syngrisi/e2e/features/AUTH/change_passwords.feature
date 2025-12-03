@@ -3,44 +3,43 @@ Feature: Change Password
 
   Background:
     When I set window size: "1050x768"
-#         Given I clear Database and stop Server
     When I set env variables:
-    """
+      """
           SYNGRISI_TEST_MODE: true
           SYNGRISI_AUTH: false
-    """
+      """
     Given I start Server
     When I create via http test user
     Given I stop Server
 
     When I set env variables:
-    """
+      """
     SYNGRISI_TEST_MODE: true
     SYNGRISI_AUTH: true
-    """
-#         Given I start Server and start Driver
+      """
+    #         Given I start Server and start Driver
 
     # crate user
     When I login via http with user:"Test" password "123456aA-"
     When I create via http user as:"Test" with params:
-    """
-    {
-      "username": "j_doe@gmail.com",
-      "firstName": "John",
-      "lastName": "Doe",
-      "role": "user",
-      "password": "Password-123"
-    }
-    """
+      """
+      {
+        "username": "j_doe@gmail.com",
+        "firstName": "John",
+        "lastName": "Doe",
+        "role": "user",
+        "password": "Password-123"
+      }
+      """
 
     # prepare servers
     Given I stop Server
     When I set env variables:
-    """
+      """
     SYNGRISI_TEST_MODE: false
     SYNGRISI_AUTH: true
-    """
-#         Given I start Server and start Driver
+      """
+    #         Given I start Server and start Driver
     When I open the app
     # TODO: should be deleted - for tests isolation
     When I delete the cookie "connect.sid"
