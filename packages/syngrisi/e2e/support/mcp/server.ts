@@ -37,6 +37,19 @@ export const sessionStartToolDefinition = {
   },
 };
 
+export const sessionsClearToolDefinition = {
+  name: 'sessions_clear',
+  description: 'Force-close all Playwright contexts/pages from previous sessions to free resources and reset MCP state.',
+  inputSchema: {
+    type: 'object' as const,
+    properties: {},
+  },
+  annotations: {
+    title: 'Clear MCP Sessions',
+    destructiveHint: true,
+  },
+};
+
 export const stepExecuteToolDefinition = {
   name: 'step_execute_single',
   description: 'Execute a single Gherkin step with optional docString payload. IMPORTANT: ALWAYS use this tool for single steps, diagnostic steps, and steps that return values. This is the primary tool for step-by-step execution and debugging. для ровно одного шага.',
@@ -97,6 +110,7 @@ export const bootstrapToolDefinitions = [
   stepExecuteToolDefinition,
   // stepExecuteBatchToolDefinition is added via server builder, not bootstrap
   attachExistingSessionToolDefinition,
+  sessionsClearToolDefinition,
 ] as const;
 export interface StartMcpServerOptions {
   fixtures: {
@@ -325,6 +339,42 @@ export async function startMcpServer({
     { title: sessionStartToolDefinition.annotations.title },
   );
 
+  const sessionsClearTool = await createTestingTool(
+    sessionsClearToolDefinition.name,
+    sessionsClearToolDefinition.description,
+    z.object({}),
+    async () => {
+      const page = activePage;
+      if (!page || page.isClosed()) {
+        setActivePage(null);
+        return 'No active page/browser to close. State already clean.';
+      }
+
+      const browser = page.context().browser();
+      if (!browser) {
+        setActivePage(null);
+        return 'No Playwright browser attached; state reset.';
+      }
+
+      const contexts = browser.contexts();
+      const pagesClosed = contexts.reduce(
+        (acc, ctx) => acc + ctx.pages().filter((p) => !p.isClosed()).length,
+        0,
+      );
+
+      try {
+        await browser.close();
+      } catch (err) {
+        logger.warn(formatArgs('⚠️ Failed to close browser during sessions_clear', err));
+      } finally {
+        setActivePage(null);
+      }
+
+      return `Closed browser with ${contexts.length} context(s) and ${pagesClosed} page(s).`;
+    },
+    { title: sessionsClearToolDefinition.annotations.title },
+  );
+
   const mcpAdvanced = await import('playwright-mcp-advanced');
   const server = await mcpAdvanced.createServerBuilder({
     config: {
@@ -339,6 +389,7 @@ export async function startMcpServer({
   })
     .addTools([
       sessionStartNewTool,
+      sessionsClearTool,
       stepExecuteTool,
       stepExecuteBatchTool,
     ])

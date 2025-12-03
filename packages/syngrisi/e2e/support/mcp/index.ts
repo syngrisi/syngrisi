@@ -13,6 +13,7 @@ export {
   type StartMcpServerOptions,
   type McpServerHandle,
   sessionStartToolDefinition,
+  sessionsClearToolDefinition,
   stepExecuteToolDefinition,
   stepExecuteBatchToolDefinition,
   attachExistingSessionToolDefinition,

@@ -164,6 +164,8 @@ const startBridgeCli = async (
 };
 
 const startNewSession = async (client: Client, sessionName: string) => {
+  // Clean any leaked browsers/contexts before starting a fresh session
+  await client.callTool({ name: 'sessions_clear', arguments: {} });
   const result = await client.callTool(
     {
       name: 'session_start_new',

@@ -4,6 +4,13 @@ import { env, DEFAULT_TIMEOUT_MS } from '../config';
 import { findEphemeralPort } from '../utils/port-utils';
 
 const tags = ['@start-test-engine-mcp'];
+// Keep the MCP idle shutdown short to avoid long waits in CI/local runs
+if (!process.env.MCP_IDLE_TIMEOUT_MS) {
+  process.env.MCP_IDLE_TIMEOUT_MS = '15000';
+}
+if (!process.env.MCP_IDLE_CHECK_INTERVAL_MS) {
+  process.env.MCP_IDLE_CHECK_INTERVAL_MS = '3000';
+}
 
 test.use({
   $test: ({ }, use) => use(test),
