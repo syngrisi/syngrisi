@@ -6,7 +6,8 @@ import { findEphemeralPort } from '../mcp/utils/port-utils';
 import type { AppServerFixture } from './app-server.fixture';
 import type { TestStore } from './test-data.fixture';
 import type { TestManagerFixture } from './test-manager.fixture';
-import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'; // NEW IMPORT
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 
 const logger = createLogger('TestEngine');
 const FEATURE_URI = 'mcp://syngrisi.mcp';
