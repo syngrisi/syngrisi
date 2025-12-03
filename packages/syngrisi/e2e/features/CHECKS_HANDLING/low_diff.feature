@@ -3,7 +3,6 @@ Feature: Low images difference
       This feature checks if images with a low difference (rawMisMatchPercentage, e.q.: 0.001) are properly compared
 
       Background:
-      #         Given I clear Database and stop Server
       #         Given I start Server and start Driver
 
       Scenario: Low images difference
