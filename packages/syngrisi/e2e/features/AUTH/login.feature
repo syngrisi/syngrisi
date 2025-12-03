@@ -2,7 +2,6 @@
 Feature: Login
 
   Background:
-    #         Given I clear Database and stop Server
 
     When I set env variables:
       """
@@ -47,7 +46,7 @@ Feature: Login
 
     # login
     When I login with user:"j_doe@gmail.com" password "Password-123"
-    When I wait 30 seconds for the element with locator "span*=JD" to be visible
+    When I wait 10 seconds for the element with locator "span*=JD" to be visible
 
   @smoke
   Scenario: Login - Wrong password
@@ -76,6 +75,6 @@ Feature: Login
     When I set "123456aA-" to the inputfield "#password"
     When I click element with locator "#submit"
     # Wait for redirect after login - check that we're no longer on /auth page
-    When I wait 30 seconds for the element with locator "[data-test='user-icon']" to be visible
+    When I wait 10 seconds for the element with locator "[data-test='user-icon']" to be visible
     Then the current url contains "groupBy=test-distinct"
 

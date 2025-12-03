@@ -2,7 +2,6 @@
 Feature: Standard Checks Flow - UI
 
   Background:
-    #         Given I clear Database and stop Server
     #         Given I start Server and start Driver
     When I open the app
     When I clear local storage
@@ -19,7 +18,7 @@ Feature: Standard Checks Flow - UI
       """
     When I go to "main" page
     # BEFORE ACCEPT
-    When I wait 30 seconds for the element with locator "[data-table-test-name='TestName-StandardFlow']" to be visible
+    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName-StandardFlow']" to be visible
     When I unfold the test "TestName-StandardFlow"
     When the element with locator "[data-row-name='TestName-StandardFlow'] td[data-test='table-row-Accepted']" should have contains text "Unaccepted"
     # preview
@@ -50,7 +49,7 @@ Feature: Standard Checks Flow - UI
     # preview
     When I click element with locator "[data-test='close-check-detail-icon']"
     # check that check wasn't unfolded after accept
-    When I wait 30 seconds for the element with locator "[data-table-check-name='CheckName-StandardFlow']" to be visible
+    When I wait 10 seconds for the element with locator "[data-table-check-name='CheckName-StandardFlow']" to be visible
     Then the css attribute "color" from element "[data-test='check-accept-icon'] svg" is "rgba(64,192,87,1)"
     Then the element with locator "[data-test='check-accept-icon'] svg" should have has attribute "data-test-icon-type=fill"
     Then the css attribute "background-color" from element "[data-check-status-name='CheckName-StandardFlow']" is "rgba(34,139,230,1)"
@@ -65,7 +64,7 @@ Feature: Standard Checks Flow - UI
       """
     When I go to "main" page
 
-    When I wait 30 seconds for the element with locator "[data-table-test-name='TestName-StandardFlow']" to be visible
+    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName-StandardFlow']" to be visible
     When I unfold the test "TestName-StandardFlow"
     When the element with locator "[data-row-name='TestName-StandardFlow'] td[data-test='table-row-Accepted']" should have contains text "Accepted"
 
@@ -93,7 +92,7 @@ Feature: Standard Checks Flow - UI
           checkName: CheckName-StandardFlow
       """
     When I go to "main" page
-    When I wait 30 seconds for the element with locator "[data-table-test-name='TestName-StandardFlow']" to be visible
+    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName-StandardFlow']" to be visible
     When I unfold the test "TestName-StandardFlow"
 
     # preview
@@ -121,7 +120,7 @@ Feature: Standard Checks Flow - UI
           checkName: CheckName-StandardFlow
       """
     When I go to "main" page
-    When I wait 30 seconds for the element with locator "[data-table-test-name='TestName-StandardFlow']" to be visible
+    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName-StandardFlow']" to be visible
     When I unfold the test "TestName-StandardFlow"
     When I wait on element "[data-test='not-accepted-error-icon']" to not be displayed
     When I wait on element "[data-viewport-badge-name='CheckName-StandardFlow']+div[data-test='check-wrong-images-size-error-icon']" to not exist
@@ -142,7 +141,7 @@ Feature: Standard Checks Flow - UI
     Then the element "[data-check-status-name='CheckName-StandardFlow'] span" matches the text "FAILED"
     Then the css attribute "background-color" from element "[data-check-status-name='CheckName-StandardFlow']" is "rgba(250,82,82,1)"
 
-    When I wait 30 seconds for the element with locator "[data-test='not-accepted-error-icon']" to be visible
+    When I wait 10 seconds for the element with locator "[data-test='not-accepted-error-icon']" to be visible
     When I wait on element "[data-viewport-badge-name='CheckName-StandardFlow']+div[data-test='check-wrong-images-size-error-icon']" to not exist
 
     Then the element with locator "[data-test='check-accept-icon'] svg" should have has attribute "data-test-icon-type=outline"
@@ -152,7 +151,7 @@ Feature: Standard Checks Flow - UI
     When I open the 1st check "CheckName-StandardFlow"
     Then the element ".modal [data-check-status-name='CheckName-StandardFlow']" matches the text "FAILED"
     Then the css attribute "background-color" from element ".modal [data-check-status-name='CheckName-StandardFlow']" is "rgba(250,82,82,1)"
-    When I wait 30 seconds for the element with locator ".modal [data-test='not-accepted-error-icon']" to be visible
+    When I wait 10 seconds for the element with locator ".modal [data-test='not-accepted-error-icon']" to be visible
     When I wait on element ".modal [data-viewport-badge-name='CheckName-StandardFlow']+div[data-test='check-wrong-images-size-error-icon']" to not exist
 
     Then the css attribute "color" from element ".modal [data-test='check-accept-icon'] svg" is "rgba(134,142,150,1)"
@@ -190,7 +189,7 @@ Feature: Standard Checks Flow - UI
     Then the element "[data-check-status-name='CheckName-StandardFlow'] span" matches the text "FAILED"
     Then the css attribute "background-color" from element "[data-check-status-name='CheckName-StandardFlow']" is "rgba(250,82,82,1)"
     When I wait on element "[data-test='not-accepted-error-icon']" to not be displayed
-    When I wait 30 seconds for the element with locator "[data-viewport-badge-name='CheckName-StandardFlow']+div[data-test='check-wrong-images-size-error-icon']" to be visible
+    When I wait 10 seconds for the element with locator "[data-viewport-badge-name='CheckName-StandardFlow']+div[data-test='check-wrong-images-size-error-icon']" to be visible
 
     Then the element with locator "[data-test='check-accept-icon'] svg" should have has attribute "data-test-icon-type=outline"
     Then the css attribute "color" from element "[data-test='check-accept-icon'] svg" is "rgba(64,192,87,1)"
@@ -200,7 +199,7 @@ Feature: Standard Checks Flow - UI
     Then the element ".modal [data-check-status-name='CheckName-StandardFlow']" matches the text "FAILED"
     Then the css attribute "background-color" from element ".modal [data-check-status-name='CheckName-StandardFlow']" is "rgba(250,82,82,1)"
     When I wait on element ".modal [data-test='not-accepted-error-icon']" to not be displayed
-    When I wait 30 seconds for the element with locator ".modal [data-test='check-wrong-images-size-error-icon']" to be visible
+    When I wait 10 seconds for the element with locator ".modal [data-test='check-wrong-images-size-error-icon']" to be visible
 
     Then the css attribute "color" from element ".modal [data-test='check-accept-icon'] svg" is "rgba(64,192,87,1)"
     Then the element with locator ".modal [data-test='check-accept-icon'] svg" should have has attribute "data-test-icon-type=outline"

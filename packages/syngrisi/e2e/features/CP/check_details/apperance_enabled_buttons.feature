@@ -2,7 +2,6 @@
 Feature: Enabled disabled buttons on Check Details Modal Window
 
   Background:
-    #         Given I clear Database and stop Server
     #         Given I start Server and start Driver
     When I open the app
     When I clear local storage
@@ -20,7 +19,7 @@ Feature: Enabled disabled buttons on Check Details Modal Window
     When I unfold the test "TestName"
 
     When I click element with locator "[data-test-preview-image='CheckName']"
-    When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
+    When I wait 10 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
     # view segment
     Then the element with locator "[data-segment-value='expected']" should have attribute "data-segment-disabled" "true"
@@ -53,13 +52,13 @@ Feature: Enabled disabled buttons on Check Details Modal Window
 
     When I go to "main" page
     When I unfold the test "TestName"
-    When I wait 30 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
+    When I wait 10 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
     #        Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
     #        When I click element with locator "[data-table-test-name=TestName]"
-    #        When I wait 30 seconds for the element with locator "[data-table-check-name='CheckName']" to be visible
+    #        When I wait 10 seconds for the element with locator "[data-table-check-name='CheckName']" to be visible
 
     When I click element with locator "[data-test-preview-image='CheckName']"
-    When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
+    When I wait 10 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
     # view segment
     Then the element with locator "[data-segment-value='expected']" should have attribute "data-segment-disabled" "false"
@@ -91,13 +90,13 @@ Feature: Enabled disabled buttons on Check Details Modal Window
       """
 
     When I go to "main" page
-    When I wait 30 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
+    When I wait 10 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
     Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
     When I click element with locator "[data-table-test-name=TestName]"
-    When I wait 30 seconds for the element with locator "[data-table-check-name='CheckName']" to be visible
+    When I wait 10 seconds for the element with locator "[data-table-check-name='CheckName']" to be visible
 
     When I click element with locator "[data-test-preview-image='CheckName']"
-    When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
+    When I wait 10 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
     # without save
     When I click element with locator "[data-check='add-ignore-region']"
@@ -121,13 +120,13 @@ Feature: Enabled disabled buttons on Check Details Modal Window
       """
 
     When I go to "main" page
-    When I wait 30 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
+    When I wait 10 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
     Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
     When I click element with locator "[data-table-test-name=TestName]"
-    When I wait 30 seconds for the element with locator "[data-table-check-name='CheckName']" to be visible
+    When I wait 10 seconds for the element with locator "[data-table-check-name='CheckName']" to be visible
 
     When I click element with locator "[data-test-preview-image='CheckName']"
-    When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
+    When I wait 10 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
     # view segment
     Then the element with locator "[data-segment-value='expected']" should have attribute "data-segment-disabled" "false"
@@ -159,13 +158,13 @@ Feature: Enabled disabled buttons on Check Details Modal Window
       """
 
     When I go to "main" page
-    When I wait 30 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
+    When I wait 10 seconds for the element with locator "[data-table-test-name=TestName]" to be visible
     Then I wait on element "[data-table-check-name='CheckName']" to not be displayed
     When I click element with locator "[data-table-test-name=TestName]"
-    When I wait 30 seconds for the element with locator "[data-table-check-name='CheckName']" to be visible
+    When I wait 10 seconds for the element with locator "[data-table-check-name='CheckName']" to be visible
 
     When I click element with locator "[data-test-preview-image='CheckName']"
-    When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
+    When I wait 10 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
     # view segment
     Then the element with locator "[data-segment-value='expected']" should have attribute "data-segment-disabled" "false"

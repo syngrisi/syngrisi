@@ -2,8 +2,6 @@
 Feature: Test Isolation by Test Status
 
   Background:
-    #     Given I clear Database and stop Server
-    #     Given I start Server and start Driver
     When I open the app
     When I clear local storage
 
@@ -56,29 +54,29 @@ Feature: Test Isolation by Test Status
 
     When I refresh page
     # all tests
-    When I wait 30 seconds for the element with locator "[data-table-test-name*='TestStatus-Unique']" to be visible
+    When I wait 10 seconds for the element with locator "[data-table-test-name*='TestStatus-Unique']" to be visible
     Then the element "[data-table-test-name*='TestStatus-Unique']" does appear exactly "5" times
 
     When I select the option with the text "Test Status" for element "select[data-test='navbar-group-by']"
 
     # NEW
-    When I wait 30 seconds for the element with locator "//li[contains(., 'New')]" to be visible
+    When I wait 10 seconds for the element with locator "//li[contains(., 'New')]" to be visible
     When I click element with locator "li*=New"
 
-    When I wait 30 seconds for the element with locator "[data-table-test-name='TestStatus-Unique-new']" to be visible
+    When I wait 10 seconds for the element with locator "[data-table-test-name='TestStatus-Unique-new']" to be visible
     When I wait on element "[data-table-test-name='TestStatus-Unique-passed-passed']" to not be displayed
     When I wait on element "[data-table-test-name='TestStatus-Unique-failed']" to not be displayed
 
     # PASSED
     When I click element with locator "li*=Passed"
 
-    When I wait 30 seconds for the element with locator "[data-table-test-name='TestStatus-Unique-passed-passed']" to be visible
+    When I wait 10 seconds for the element with locator "[data-table-test-name='TestStatus-Unique-passed-passed']" to be visible
     When I wait on element "[data-table-test-name='TestStatus-Unique-new']" to not be displayed
     When I wait on element "[data-table-test-name='TestStatus-Unique-failed']" to not be displayed
 
     # FAILED
     When I click element with locator "li*=Failed"
 
-    When I wait 30 seconds for the element with locator "[data-table-test-name='TestStatus-Unique-failed']" to be visible
+    When I wait 10 seconds for the element with locator "[data-table-test-name='TestStatus-Unique-failed']" to be visible
     When I wait on element "[data-table-test-name='TestStatus-Unique-new']" to not be displayed
     When I wait on element "[data-table-test-name='TestStatus-Unique-passed-passed']" to not be displayed

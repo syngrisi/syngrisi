@@ -2,8 +2,6 @@
 Feature: CLI Tasks
 
   Background:
-  #     Given I clear Database and stop Server
-  #     Given I start Server and start Driver
 
   Scenario: CLI - Handle Database Consistency [statistics only]
     When I create "1" tests with params:

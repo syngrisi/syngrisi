@@ -2,8 +2,6 @@
 Feature: Remove Inconsistent items
 
   Background:
-    #     Given I clear Database and stop Server
-    #     Given I start Server and start Driver
     When I create "1" tests with params:
       """
       run: RunName

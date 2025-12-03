@@ -2,7 +2,6 @@
 Feature: API key generation
 
   Background:
-#         Given I clear Database and stop Server
     When I set env variables:
     """
           SYNGRISI_TEST_MODE: true
@@ -53,6 +52,6 @@ Feature: API key generation
 
     # check tests
     When I open the app
-    When I wait 30 seconds for the element with locator "[data-table-test-creatorusername='user@gmail.com']" to be visible
+    When I wait 10 seconds for the element with locator "[data-table-test-creatorusername='user@gmail.com']" to be visible
     Then the element "[data-table-test-creatorusername='user@gmail.com']" does appear exactly "1" times
 

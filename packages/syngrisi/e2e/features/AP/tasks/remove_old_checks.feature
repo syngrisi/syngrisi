@@ -2,7 +2,6 @@
 Feature: Task - Remove old checks
 
   Background:
-    # Given I clear Database and stop Server
     When I set env variables:
       """
       SYNGRISI_TEST_MODE: true

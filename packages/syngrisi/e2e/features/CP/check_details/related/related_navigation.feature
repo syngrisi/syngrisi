@@ -2,7 +2,6 @@
 Feature: Check details Related Checks - Navigation
 
   Background:
-    #         Given I clear Database and stop Server
     #         Given I start Server and start Driver
     When I open the app
     When I clear local storage
@@ -46,7 +45,7 @@ Feature: Check details Related Checks - Navigation
 
     # after close the modal window the initial check should be unfolded but other collapsed
     When I click element with locator "[data-test='close-check-detail-icon']"
-    When I wait 30 seconds for the element with locator "(//*[@data-test-preview-image='CheckName'])[1]" to be visible
+    When I wait 10 seconds for the element with locator "(//*[@data-test-preview-image='CheckName'])[1]" to be visible
     Then I wait on element "(//*[@data-test-preview-image='CheckName'])[2]" to not be displayed
     Then I wait on element "(//*[@data-test-preview-image='CheckName'])[3]" to not be displayed
 
