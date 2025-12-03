@@ -289,50 +289,69 @@ When('I end the demo', async ({ page }) => {
     return;
   }
 
-  await page.evaluate(() => {
+  await page.evaluate(async () => {
     const duration = 3000;
-    const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 999999 };
+    const particleCount = 150;
+    const colors = ['#26ccff', '#a25afd', '#ff5e7e', '#88ff5a', '#fcff42', '#ffa62d', '#ff36ff'];
 
-    const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
+    // 1. Create confetti container
+    const container = document.createElement('div');
+    container.id = 'confetti-container';
+    Object.assign(container.style, {
+      position: 'fixed',
+      top: '0',
+      left: '0',
+      width: '100%',
+      height: '100%',
+      pointerEvents: 'none',
+      zIndex: '999999',
+      overflow: 'hidden'
+    });
+    document.body.appendChild(container);
 
-    // Load canvas-confetti from CDN if not present
-    if (!(window as any).confetti) {
-      const script = document.createElement('script');
-      script.src = 'https://cdn.jsdelivr.net/npm/canvas-confetti @1.6.0/dist/confetti.browser.min.js';
-      script.onload = () => startConfetti();
-      document.head.appendChild(script);
-    } else {
-      startConfetti();
+    // 2. Add animation styles
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes confetti-fall {
+        0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+        100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+      }
+      .confetti-particle {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        top: -20px;
+      }
+    `;
+    document.head.appendChild(style);
+
+    // 3. Generate particles
+    for (let i = 0; i < particleCount; i++) {
+      const particle = document.createElement('div');
+      particle.classList.add('confetti-particle');
+
+      // Random properties
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const left = Math.random() * 100 + 'vw';
+      const animDuration = Math.random() * 2 + 1.5 + 's'; // from 1.5 to 3.5s
+      const animDelay = Math.random() * 1 + 's'; // start delay up to 1s
+
+      Object.assign(particle.style, {
+        backgroundColor: color,
+        left: left,
+        animation: `confetti-fall ${animDuration} linear forwards`,
+        animationDelay: animDelay
+      });
+
+      container.appendChild(particle);
     }
 
-    function startConfetti() {
-      const interval: any = setInterval(function () {
-        const timeLeft = animationEnd - Date.now();
-
-        if (timeLeft <= 0) {
-          return clearInterval(interval);
-        }
-
-        const particleCount = 250 * (timeLeft / duration);
-        // @ts-ignore
-        window.confetti(
-          Object.assign({}, defaults, {
-            particleCount,
-            origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
-          }),
-        );
-        // @ts-ignore
-        window.confetti(
-          Object.assign({}, defaults, {
-            particleCount,
-            origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
-          }),
-        );
-      }, 250);
-    }
+    // 4. Cleanup after completion
+    await new Promise(resolve => setTimeout(resolve, duration));
+    container.remove();
+    style.remove();
   });
 
-  // Wait for animation to finish
+  // Wait for animation to visually finish for the user
   await page.waitForTimeout(4000);
 });
