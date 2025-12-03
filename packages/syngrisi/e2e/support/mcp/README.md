@@ -23,6 +23,7 @@ The server uses dynamic port allocation (port 0), letting the OS assign a free p
 `server.ts` builds the MCP surface using `playwright-mcp-advanced` and helper utilities in `utils/`:
 
 - `session_start_new` – Starts a named logging session, regenerates the categorized step definitions as YAML files (returning paths to all generated files), spins up a Playwright page, and navigates to the app under test.
+- `sessions_clear` – Force-closes all Playwright contexts/pages from previous sessions to free resources when a run crashed or leaked browsers.
 - `step_execute_single` – Execute a single BDD step with optional `stepDocstring` parameter for table or multi-line payload. **ALWAYS use this tool for single steps, diagnostic steps, and steps that return values**. This is the primary tool for step-by-step execution and debugging. Each run updates the active session log stored alongside other diagnostics. для ровно одного шага.
 - `step_execute_many` – Validate and execute multiple steps in sequence. **Use ONLY for reproducing multiple steps together**. **DO NOT use for single steps, diagnostic steps, or steps that return values** (this tool does not return individual step results). использовать только при ≥2 шагах; одиночные шаги запрещены.
 - `attach_existing_session` – Attach the bridge to a Playwright MCP server that was launched separately (for example via the debug step described below) by reading the latest port file in `support/mcp/logs/ports/`.

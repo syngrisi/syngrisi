@@ -32,6 +32,7 @@ test.describe('MCP Real Scenarios', () => {
 
         try {
             // 1. Start Session
+            await client.callTool({ name: 'sessions_clear', arguments: {} });
             const { text: sessionText } = await startNewSession(client, 'mcp-real-scenario-1');
             expect(sessionText, 'Session should start successfully').toContain('Status: Success');
 
@@ -103,6 +104,7 @@ checks:
         });
 
         try {
+            await client.callTool({ name: 'sessions_clear', arguments: {} });
             await startNewSession(client, 'mcp-real-scenario-2');
 
             const batchSteps = [
