@@ -1,8 +1,8 @@
 metadata:
   category: common/assertions
-  generatedAt: '2025-12-02T11:18:38.931Z'
+  generatedAt: '2025-12-03T12:20:18.329Z'
   totalFiles: 1
-  totalSteps: 58
+  totalSteps: 60
   sourceFiles:
     - steps/common/assertions.steps.ts
 steps:
@@ -309,6 +309,36 @@ steps:
   - pattern: the element {string} matches the text {string}
     description: ''
     line: 599
+  - pattern: the element {string} should have at least {int} items within {int} seconds
+    description: |-
+      Step definition: `Then the element {string} should have at least {int} items within {int} seconds`
+
+      Polls for minimum item count with timeout. Use for pagination/infinite scroll scenarios.
+
+      @param selector - CSS selector for items
+      @param minCount - Minimum expected count
+      @param seconds - Timeout in seconds
+
+      @example
+      ```gherkin
+      Then the element "[data-test*='navbar_item_']" should have at least 21 items within 10 seconds
+      ```
+    line: 1297
+  - pattern: the element {string} should have exactly {int} items within {int} seconds
+    description: |-
+      Step definition: `Then the element {string} should have exactly {int} items within {int} seconds`
+
+      Polls for exact item count with timeout.
+
+      @param selector - CSS selector for items
+      @param exactCount - Exact expected count
+      @param seconds - Timeout in seconds
+
+      @example
+      ```gherkin
+      Then the element "[data-test*='navbar_item_']" should have exactly 22 items within 10 seconds
+      ```
+    line: 1326
   - pattern: the element with {target} {string} should be {condition}
     description: |-
       Step definition: `Then the element with {target} {string} should be {condition}`
