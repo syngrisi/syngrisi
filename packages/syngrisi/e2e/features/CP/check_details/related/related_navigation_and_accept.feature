@@ -2,7 +2,6 @@
 Feature: Check details Related Checks - Navigation and Accept
 
   Background:
-    #         Given I clear Database and stop Server
     #         Given I start Server and start Driver
     When I open the app
     When I clear local storage
@@ -27,7 +26,7 @@ Feature: Check details Related Checks - Navigation and Accept
     When I open the 1st check "CheckName"
 
     # SECOND
-    When I wait 30 seconds for the element with locator "[data-related-check-browser-name='safari1']" to be visible
+    When I wait 10 seconds for the element with locator "[data-related-check-browser-name='safari1']" to be visible
     When I click element with locator "[data-related-check-browser-name='safari1']"
     Then the element with locator "[data-check='test-name']" should have contains text "TestName-1"
     Then the element with locator "[data-check='os']" should have contains text "Windows1"
@@ -52,7 +51,7 @@ Feature: Check details Related Checks - Navigation and Accept
 
     # check icon color after close modal
     When I click element with locator "[data-test='close-check-detail-icon']"
-    When I wait 30 seconds for the element with locator "(//*[@data-test-preview-image='CheckName'])[1]" to be visible
+    When I wait 10 seconds for the element with locator "(//*[@data-test-preview-image='CheckName'])[1]" to be visible
 
     Then the element with locator "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" should have has attribute "data-test-icon-type=outline"
     Then the css attribute "color" from element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" is "rgba(134,142,150,1)"

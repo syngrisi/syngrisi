@@ -2,8 +2,6 @@
 Feature: Admin Settings
 
   Background:
-  #         Given I clear Database and stop Server
-  #         Given I start Server and start Driver
 
   Scenario: Change Admin Settings - Enable Auth
   Given I stop Server
@@ -12,15 +10,15 @@ Feature: Admin Settings
           SYNGRISI_AUTH: ""
       """
   When I go to "settings" page
-  When I wait 30 seconds for the element with label "Authentication" to be visible
+  When I wait 10 seconds for the element with label "Authentication" to be visible
   Then the element with label "Authentication" should have value "false"
   When I select the option with the text "true" for element "select[data-test='settings_value_authentication']"
   Then the element with label "Authentication" should have value "true"
   When I click element with locator "button[aria-label='Update Authentication']"
-  When I wait 30 seconds for the element with locator "//*[@aria-label='notification-success']" to be visible
+  When I wait 10 seconds for the element with locator "//*[@aria-label='notification-success']" to be visible
 
   When I go to "logout" page
-  When I wait 30 seconds for the element with locator "h1=Success!" to be visible
+  When I wait 10 seconds for the element with locator "h1=Success!" to be visible
   When I open the app
   Then the current url contains "/auth"
   Then the title is "Login Page"
@@ -47,13 +45,13 @@ Feature: Admin Settings
       """
   #         Given I start Server and start Driver
   When I go to "settings" page
-  When I wait 30 seconds for the element with label "First Run" to be visible
+  When I wait 10 seconds for the element with label "First Run" to be visible
 
   Then the element with label "First Run" should have value "true"
   When I select the option with the text "false" for element "select[data-test='settings_value_first_run']"
   Then the element with label "First Run" should have value "false"
   When I click element with locator "button[aria-label='Update First Run']"
-  When I wait 30 seconds for the element with locator "//*[@aria-label='notification-success']" to be visible
+  When I wait 10 seconds for the element with locator "//*[@aria-label='notification-success']" to be visible
   When I go to "logout" page
 
   Given I stop Server
@@ -69,17 +67,17 @@ Feature: Admin Settings
 
   Scenario: Configure auto remove old checks setting
   When I go to "settings" page
-  When I wait 30 seconds for the element with label "Days to keep checks" to be visible
+  When I wait 10 seconds for the element with label "Days to keep checks" to be visible
   Then the element with label "Days to keep checks" should have value "365"
   When I fill "30" into element with label "Days to keep checks"
   When I click element with label "Enable Auto remove old checks"
   When I click element with locator "button[aria-label='Update Auto remove old checks']"
-  When I wait 30 seconds for the element with locator "//*[@aria-label='notification-success']" to be visible
+  When I wait 10 seconds for the element with locator "//*[@aria-label='notification-success']" to be visible
 
   Scenario: Configure auto remove old logs setting
   When I go to "settings" page
-  When I wait 30 seconds for the element with label "Days to keep logs" to be visible
+  When I wait 10 seconds for the element with label "Days to keep logs" to be visible
   Then the element with label "Days to keep logs" should have value "120"
   When I fill "45" into element with label "Days to keep logs"
   When I click element with locator "button[aria-label='Update Auto remove old logs']"
-  When I wait 30 seconds for the element with locator "//*[@aria-label='notification-success']" to be visible
+  When I wait 10 seconds for the element with locator "//*[@aria-label='notification-success']" to be visible

@@ -2,7 +2,6 @@
 Feature: Check details Related Checks - Navigation and Accept
 
   Background:
-    #         Given I clear Database and stop Server
     #         Given I start Server and start Driver
     When I open the app
     When I clear local storage
@@ -45,7 +44,7 @@ Feature: Check details Related Checks - Navigation and Accept
 
     # check icon color after close modal
     When I click element with locator "[data-test='close-check-detail-icon']"
-    When I wait 30 seconds for the element with locator "(//*[@data-test-preview-image='CheckName'])[1]" to be visible
+    When I wait 10 seconds for the element with locator "(//*[@data-test-preview-image='CheckName'])[1]" to be visible
 
     Then the element with locator "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" should have has attribute "data-test-icon-type=fill"
     Then the css attribute "color" from element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" is "rgba(64,192,87,1)"

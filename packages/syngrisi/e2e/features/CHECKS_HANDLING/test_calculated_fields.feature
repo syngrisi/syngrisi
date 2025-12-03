@@ -3,8 +3,6 @@ Feature: Test calculated fields
   during the session end - calculated common fields based in checks in test: [viewport, status]
 
   Background:
-    #     Given I clear Database and stop Server
-    #     Given I start Server and start Driver
     When I open the app
     When I clear local storage
 
@@ -21,7 +19,7 @@ Feature: Test calculated fields
           viewport: "50x50"
       """
     When I go to "main" page
-    When I wait 30 seconds for the element with locator "[data-table-test-name='TestName-Calculated-1']" to be visible
+    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName-Calculated-1']" to be visible
     When the element with locator "[data-row-name='TestName-Calculated-1'] [data-test='table-row-Viewport']" should have contains text "50x50"
 
   Scenario: Different viewports - [50x50, 100x100]
@@ -52,7 +50,7 @@ Feature: Test calculated fields
           viewport: "50x50"
       """
     When I go to "main" page
-    When I wait 30 seconds for the element with locator "[data-table-test-name='TestName-Calculated-3']" to be visible
+    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName-Calculated-3']" to be visible
     When the element with locator "[data-row-name='TestName-Calculated-3'] [data-test='table-row-Status']" should have contains text "New"
 
   Scenario: Same viewports - [new, passed]
@@ -75,7 +73,7 @@ Feature: Test calculated fields
           filePath: files/A.png
       """
     When I go to "main" page
-    When I wait 30 seconds for the element with locator "[data-table-test-name='TestName-Calculated-4']" to be visible
+    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName-Calculated-4']" to be visible
     When the element with locator "[data-row-name='TestName-Calculated-4'] [data-test='table-row-Status']" should have contains text "Passed"
 
   Scenario: Same viewports - [passed, failed]
@@ -101,5 +99,5 @@ Feature: Test calculated fields
           filePath: files/B.png
       """
     When I go to "main" page
-    When I wait 30 seconds for the element with locator "[data-table-test-name='TestName-Calculated-5']" to be visible
+    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName-Calculated-5']" to be visible
     When the element with locator "[data-row-name='TestName-Calculated-5'] [data-test='table-row-Status']" should have contains text "Failed"
