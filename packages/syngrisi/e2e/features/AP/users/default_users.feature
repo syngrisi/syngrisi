@@ -2,7 +2,7 @@
 Feature: Default Users
 
   Background:
-#         Given I clear Database and stop Server
+#         
     When I set env variables:
     """
     SYNGRISI_TEST_MODE: true
@@ -19,7 +19,7 @@ Feature: Default Users
     """
 #         Given I start Server and start Driver
     When I login with user:"Test" password "123456aA-"
-    When I wait 30 seconds for the element with locator "span*=TA" to be visible
+    When I wait 10 seconds for the element with locator "span*=TA" to be visible
 
   Scenario: Default Administrator and Guest should be created after first server start
     When I go to "admin>users" page

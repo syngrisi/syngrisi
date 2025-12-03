@@ -2,21 +2,20 @@
 Feature: Navbar Sorting
 
   Background:
-#         Given I clear Database and stop Server
-#         Given I start Server and start Driver
+    #         Given I start Server and start Driver
     When I open the app
     When I clear local storage
 
   Scenario: Sorting
     When I create "3" tests with:
-    """
+      """
           testName: "TestName - $"
           runName: "RunName - $"
           suiteName: "SuiteName - $"
           checks:
             - filePath: files/A.png
               checkName: Check - 1
-    """
+      """
     When I go to "main" page
 
     # without sorting action
@@ -35,7 +34,7 @@ Feature: Navbar Sorting
 
     # sort order - ascending
     When I click element with locator "[data-test='navbar-icon-open-sort']"
-    When I wait 30 seconds for the element with locator "button[data-test='navbar-sort-by-order']" to be visible
+    When I wait 10 seconds for the element with locator "button[data-test='navbar-sort-by-order']" to be visible
     When I click element with locator "button[data-test='navbar-sort-by-order']"
     When I wait 2 seconds
 
@@ -52,7 +51,7 @@ Feature: Navbar Sorting
               RunName - 0, RunName - 1, RunName - 2
       """
 
-         # sort order - descendant
+    # sort order - descendant
     When I click element with locator "button[data-test='navbar-sort-by-order']"
     When I wait 2 seconds
 

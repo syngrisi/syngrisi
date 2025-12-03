@@ -2,8 +2,7 @@
 Feature: Spotlight
 
   Background:
-#         Given I clear Database and stop Server
-#         Given I start Server and start Driver
+    #         Given I start Server and start Driver
     When I open the app
     When I clear local storage
     When I go to "main" page
@@ -13,7 +12,7 @@ Feature: Spotlight
     Then I wait on element ".mantine-Spotlight-spotlight" to not be displayed
     And I hold key "Control"
     And I press "k"
-    When I wait 30 seconds for the element with locator ".mantine-Spotlight-spotlight" to be visible
+    When I wait 10 seconds for the element with locator ".mantine-Spotlight-spotlight" to be visible
 
     When I release key "Control"
     And I press "Escape"
@@ -21,14 +20,14 @@ Feature: Spotlight
 
     # using mouse clicks
     When I click element with locator "button[aria-label='Search']"
-    When I wait 30 seconds for the element with locator ".mantine-Spotlight-spotlight" to be visible
+    When I wait 10 seconds for the element with locator ".mantine-Spotlight-spotlight" to be visible
 
     When I click on the element "[aria-label='Syngrisi']" via js
     Then I wait on element ".mantine-Spotlight-spotlight" to not be displayed
 
   Scenario Outline:  Spotlight Navigation - <keyword>
     When I click element with locator "button[aria-label='Search']"
-    When I wait 30 seconds for the element with locator ".mantine-Spotlight-spotlight" to be visible
+    When I wait 10 seconds for the element with locator ".mantine-Spotlight-spotlight" to be visible
 
     When I set "<keyword>" to the inputfield ".mantine-Spotlight-searchInput"
     And I press "Enter"
@@ -53,7 +52,7 @@ Feature: Spotlight
     # Wait for React to fully initialize and all JS to load before interacting
     When I pause for 1000 ms
     When I click element with locator "button[aria-label='Search']"
-    When I wait 30 seconds for the element with locator ".mantine-Spotlight-spotlight" to be visible
+    When I wait 10 seconds for the element with locator ".mantine-Spotlight-spotlight" to be visible
 
     # switch theme
     When I set "theme" to the inputfield ".mantine-Spotlight-searchInput"

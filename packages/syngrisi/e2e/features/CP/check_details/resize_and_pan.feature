@@ -1,7 +1,6 @@
 @smoke @fast-server
 Feature: Check details Resize and Pan
   Background:
-    #         Given I clear Database and stop Server
     #         Given I start Server and start Driver
     When I open the app
     When I clear local storage
@@ -15,14 +14,14 @@ Feature: Check details Resize and Pan
     When I go to "main" page
     When I unfold the test "TestName"
     When I click element with locator "[data-test-preview-image='CheckName']"
-    When I wait 30 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
+    When I wait 10 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
   Scenario: Resize Dropdown Usage
     # Wait for canvas and React to fully initialize
     When I pause for 1000 ms
     # 50%
     When I click element with locator "[data-check='open-zoom-dropdown']"
-    When I wait 30 seconds for the element with locator "//*[@data-check='zoom-dropdown']//div[text()='50%']" to be visible
+    When I wait 10 seconds for the element with locator "//*[@data-check='zoom-dropdown']//div[text()='50%']" to be visible
     When I click element with locator "//*[@data-check='zoom-dropdown']//div[text()='50%']"
     When I execute javascript code:
       """
@@ -35,7 +34,7 @@ Feature: Check details Resize and Pan
 
     # 100%
     When I click element with locator "[data-check='open-zoom-dropdown']"
-    When I wait 30 seconds for the element with locator "//*[@data-check='zoom-dropdown']//div[text()='100%']" to be visible
+    When I wait 10 seconds for the element with locator "//*[@data-check='zoom-dropdown']//div[text()='100%']" to be visible
     When I click element with locator "//*[@data-check='zoom-dropdown']//div[text()='100%']"
     When I execute javascript code:
       """
@@ -48,7 +47,7 @@ Feature: Check details Resize and Pan
 
     # 200%
     When I click element with locator "[data-check='open-zoom-dropdown']"
-    When I wait 30 seconds for the element with locator "//*[@data-check='zoom-dropdown']//div[text()='200%']" to be visible
+    When I wait 10 seconds for the element with locator "//*[@data-check='zoom-dropdown']//div[text()='200%']" to be visible
     When I click element with locator "//*[@data-check='zoom-dropdown']//div[text()='200%']"
     When I execute javascript code:
       """
@@ -61,7 +60,7 @@ Feature: Check details Resize and Pan
 
     # Fit by width
     When I click element with locator "[data-check='open-zoom-dropdown']"
-    When I wait 30 seconds for the element with locator "//*[@data-check='zoom-dropdown']//div[text()='Fit by width ']" to be visible
+    When I wait 10 seconds for the element with locator "//*[@data-check='zoom-dropdown']//div[text()='Fit by width ']" to be visible
     When I click element with locator "//*[@data-check='zoom-dropdown']//div[text()='Fit by width ']"
     When I execute javascript code:
       """
@@ -74,7 +73,7 @@ Feature: Check details Resize and Pan
 
     # Fit by canvas
     When I click element with locator "[data-check='open-zoom-dropdown']"
-    When I wait 30 seconds for the element with locator "//*[@data-check='zoom-dropdown']//div[text()='Fit to canvas ']" to be visible
+    When I wait 10 seconds for the element with locator "//*[@data-check='zoom-dropdown']//div[text()='Fit to canvas ']" to be visible
     When I click element with locator "//*[@data-check='zoom-dropdown']//div[text()='Fit to canvas ']"
     When I execute javascript code:
       """
@@ -98,7 +97,7 @@ Feature: Check details Resize and Pan
       """
     Then I expect the stored "js" string is equal:
       """
-      1.00
+      1
       """
 
     # emulate vertical mouse wheels with control key (move right and bottom)

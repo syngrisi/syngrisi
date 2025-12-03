@@ -2,25 +2,24 @@
 Feature: Create User
 
   Background:
-#         Given I clear Database and stop Server
     When I set env variables:
-    """
+      """
     SYNGRISI_TEST_MODE: true
     SYNGRISI_AUTH: false
-    """
+      """
     Given I start Server
     When I create via http test user
     Given I stop Server
 
     When I set env variables:
-    """
+      """
     SYNGRISI_TEST_MODE: false
     SYNGRISI_AUTH: true
-    """
-#         Given I start Server and start Driver
+      """
+    #         Given I start Server and start Driver
     When I reload session
     When I login with user:"Test" password "123456aA-"
-    When I wait 30 seconds for the element with locator "span*=TA" to be visible
+    When I wait 10 seconds for the element with locator "span*=TA" to be visible
     When I set window size: "1700x768"
 
   @smoke
@@ -43,7 +42,7 @@ Feature: Create User
 
     When I go to "logout" page
     When I login with user:"j_doe@gmail.com" password "Password-123"
-    When I wait 30 seconds for the element with locator "span*=JD" to be visible
+    When I wait 10 seconds for the element with locator "span*=JD" to be visible
 
   Scenario: Create User - User Already Exist
     When I go to "admin2" page
