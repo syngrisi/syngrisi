@@ -427,6 +427,7 @@ export async function startMcpServer({
   let httpServer: http.Server;
   let resolvedPort: number;
   let startResult: { httpSrv: http.Server; resolved: number };
+  let stopped = false;
 
   try {
     startResult = await startOnPort(requestedPort);
@@ -491,6 +492,10 @@ export async function startMcpServer({
       ]);
     },
     async stop() {
+      if (stopped) {
+        return;
+      }
+      stopped = true;
       stopIdleChecker();
       markShutdown();
       await closeActivePage();
@@ -498,6 +503,11 @@ export async function startMcpServer({
       await closeHttpServer(httpServer);
     },
   };
+
+  // Ensure shutdown notification triggers a full stop (including browser close)
+  shutdown.promise
+    .then(() => handleRef.stop())
+    .catch((err) => logger.error(formatArgs('❌ Error while stopping MCP server after shutdown signal:', err)));
 
   // Start the idle timeout checker
   startIdleChecker();

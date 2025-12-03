@@ -25,8 +25,8 @@
     "test:smoke-fast": "cross-env SYNGRISI_LOG_LEVEL=warn playwright test --grep '@smoke' --grep-invert '@demo|@flaky' --retries=1 --workers=10 --shard=${SHARD:-1/1}",
     "test:smoke-flaky": "cross-env SYNGRISI_LOG_LEVEL=warn playwright test --grep '@smoke' --grep '@flaky' --grep-invert '@demo' --retries=1 --workers=3 --shard=${SHARD:-1/1}",
     "test:headed": "bddgen && cross-env SYNGRISI_LOG_LEVEL=warn PLAYWRIGHT_HEADED=1 playwright test --grep-invert '@demo|@flaky'",
-    "test:mcp": "cross-env SYNGRISI_LOG_LEVEL=debug MCP_KEEP_ALIVE=1 E2E_HEADLESS=1 playwright test --workers=1 --config support/mcp/playwright.config.ts --grep-invert '@demo|@flaky'",
-    "test:mcp:headed": "cross-env SYNGRISI_LOG_LEVEL=warn MCP_KEEP_ALIVE=1 PLAYWRIGHT_HEADED=1 playwright test --workers=1 --config support/mcp/playwright.config.ts --grep-invert '@demo|@flaky'",
+    "test:mcp": "cross-env SYNGRISI_LOG_LEVEL=debug E2E_HEADLESS=1 playwright test --workers=1 --config support/mcp/playwright.config.ts --grep-invert '@demo|@flaky'",
+    "test:mcp:headed": "cross-env SYNGRISI_LOG_LEVEL=warn PLAYWRIGHT_HEADED=1 playwright test --workers=1 --config support/mcp/playwright.config.ts --grep-invert '@demo|@flaky'",
     "test:bench": "cross-env SYNGRISI_LOG_LEVEL=warn playwright test --config support/mcp/benchmark/playwright.benchmark.config.ts --grep-invert '@demo|@flaky'"
   },
   "devDependencies": {

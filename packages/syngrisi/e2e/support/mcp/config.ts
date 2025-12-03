@@ -11,10 +11,6 @@ dotenv.config({
 });
 
 export const env = cleanEnv(process.env, {
-  MCP_KEEP_ALIVE: str({
-    default: '1',
-    desc: 'Keep-alive interval for MCP bridge processes'
-  }),
   E2E_HEADLESS: str({
     choices: ['0', '1'],
     default: '0',

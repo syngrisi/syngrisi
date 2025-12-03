@@ -2,12 +2,10 @@ import { test as base } from 'playwright-bdd';
 import type { APIRequestContext, BrowserContext, Page } from '@playwright/test';
 import { createLogger } from '@lib/logger';
 import { startMcpServer, type McpServerHandle } from '../mcp/server';
-import { env } from '../mcp/config';
 import { findEphemeralPort } from '../mcp/utils/port-utils';
 import type { AppServerFixture } from './app-server.fixture';
 import type { TestStore } from './test-data.fixture';
 import type { TestManagerFixture } from './test-manager.fixture';
-import { Client } from '@modelcontextprotocol/sdk/client';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'; // NEW IMPORT
 
 const logger = createLogger('TestEngine');
@@ -112,15 +110,9 @@ export const testEngineFixture = base.extend<{ testEngine: TestEngineFixture }>(
           return;
         }
 
-        if (env.MCP_KEEP_ALIVE === '1') {
-          logger.info('MCP_KEEP_ALIVE=1, leaving MCP server running after test.');
-          return;
-        }
-
         await fixture.stop();
       }
     },
     { scope: 'test' },
   ],
 });
-
