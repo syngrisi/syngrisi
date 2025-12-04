@@ -10,13 +10,17 @@ import { got } from 'got-cjs';
 const logger = createLogger('CommonHttpSteps');
 
 function convertQueryToMongoFilter(inputString: string): string {
-  const [key, value] = inputString.split('=');
-  const result = [{
-    [key]: {
-      $regex: `${value}`,
-      $options: 'im',
-    },
-  }];
+  // Support multiple filters separated by &
+  const pairs = inputString.split('&');
+  const result = pairs.map(pair => {
+    const [key, value] = pair.split('=');
+    return {
+      [key]: {
+        $regex: `${value}`,
+        $options: 'im',
+      },
+    };
+  });
   return JSON.stringify(result);
 }
 
