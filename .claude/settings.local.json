@@ -1,5 +1,4 @@
 {
-  "enableAllProjectMcpServers": true,
   "permissions": {
     "allow": [
       "Bash(LOG_LEVEL=debug npm test:*)",
@@ -43,9 +42,12 @@
       "Bash(timeout 90 npx ts-node:*)",
       "Bash(container delete:*)",
       "Bash(timeout 120 npx ts-node:*)",
-      "Bash(npx playwright test:*)"
+      "Bash(npx playwright test:*)",
+      "Bash(grep:*)",
+      "Bash(ls:*)"
     ],
     "deny": [],
     "ask": []
-  }
+  },
+  "enableAllProjectMcpServers": true
 }

@@ -73,6 +73,8 @@ Given('I create a test run {string} with {int} checks', async ({ appServer }, ru
         }
     }
     await vDriver.stopTestSession();
+    // Brief wait for indexing
+    await new Promise(resolve => setTimeout(resolve, 300));
 });
 
 Given('I create a test run {string} with checks:', async ({ appServer }, runName, dataTable) => {
@@ -154,11 +156,17 @@ Then('the {string} button should be {string}', async ({ page }, buttonName, stat
     const title = map[buttonName];
     if (!title) throw new Error(`Unknown button: ${buttonName}`);
 
-    const btn = page.locator(`button[title="${title}"]`);
+    // Use modal context to avoid matching buttons outside the check details modal
+    const btn = page.locator(`.modal button[title="${title}"], [data-check-header-name] ~ * button[title="${title}"]`).first();
+
+    // Wait for button to be stable (navigation state may be initializing)
+    await btn.waitFor({ state: 'visible', timeout: 10000 });
+
+    // Use polling to wait for the correct state (async initialization)
     if (state === 'disabled') {
-        await expect(btn).toBeDisabled();
+        await expect(btn).toBeDisabled({ timeout: 10000 });
     } else {
-        await expect(btn).toBeEnabled();
+        await expect(btn).toBeEnabled({ timeout: 10000 });
     }
 });
 
