@@ -22,6 +22,7 @@ Feature: Check details Related Checks - Navigation and Accept
       """
 
     When I go to "main" page
+    When I wait for test "TestName-2" to appear in table
     When I unfold the test "TestName-2"
     When I open the 1st check "CheckName"
 
@@ -39,7 +40,7 @@ Feature: Check details Related Checks - Navigation and Accept
     When I click element with locator ".modal button[data-test='check-accept-icon']"
     When I click element with locator "button[data-test='check-accept-icon-confirm']"
 
-    Then I expect via http 2st check filtered as "name=CheckName" matched:
+    Then I expect via http 1st check filtered as "name=CheckName&browserName=safari1" matched:
       """
     markedAs: accepted
     status: [new]

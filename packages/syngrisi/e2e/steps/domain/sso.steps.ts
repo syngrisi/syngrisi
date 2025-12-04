@@ -188,7 +188,7 @@ When(
 
         // Wait for Logto login page - identifier input to be visible and enabled (increased timeout for cold start)
         const identifierInput = page.locator('input[name="identifier"]');
-        await identifierInput.waitFor({ state: 'visible', timeout: 60000 });
+        await identifierInput.waitFor({ state: 'visible', timeout: 90000 });
 
         // Clear and fill username
         await identifierInput.clear();

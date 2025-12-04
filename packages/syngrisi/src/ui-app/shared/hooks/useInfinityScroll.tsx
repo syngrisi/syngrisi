@@ -57,8 +57,8 @@ export default function useInfinityScroll(
                 `firstPageQuery_${firstPageQueryOptions.join('_')}`
             ),
             // enabled: false,
-            staleTime: Infinity,
-            refetchOnWindowFocus: false,
+            staleTime: 30 * 1000, // 30 seconds - data considered fresh for 30s, then can refetch
+            refetchOnWindowFocus: true,
             onError: (e) => {
                 errorMsg({ error: e });
             },
@@ -177,9 +177,9 @@ export default function useInfinityScroll(
         },
         {
             enabled: infinityQuery.data?.pages?.length! > 0,
-            refetchOnWindowFocus: !(import.meta.env.MODE === 'development'),
+            refetchOnWindowFocus: true, // Always refetch on window focus
             // @ts-ignore
-            refetchInterval: import.meta.env.MODE === 'development' ? Infinity : 3000,
+            refetchInterval: 5000, // Poll every 5 seconds in all modes
             onError: (e) => {
                 errorMsg({ error: e });
             },

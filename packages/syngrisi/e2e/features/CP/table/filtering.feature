@@ -17,10 +17,8 @@ Feature: Tests Table Filter
               checkName: Check - 1
       """
     When I go to "main" page
-
-
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName filter-0']" to be visible
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
+    When I wait for test "TestName filter-0" to appear in table
+    When I wait for test "TestName filter-1" to appear in table
 
     # filter contains
     When I click element with locator "[aria-label='Filter the Table Data']"
