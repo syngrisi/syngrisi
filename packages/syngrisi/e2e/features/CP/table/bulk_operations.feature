@@ -1,8 +1,7 @@
 @fast-server
-Feature: Bulk test Apply
+Feature: Bulk Operations - Apply and Delete
 
   Background:
-    #         Given I start Server and start Driver
     When I open the app
     When I clear local storage
 
@@ -57,3 +56,33 @@ Feature: Bulk test Apply
     Then the element with locator "(//*[@data-test='check-accept-icon']//*[@stroke])[1]" should have has attribute "data-test-icon-type=fill"
     Then the element with locator "(//*[@data-test='check-accept-icon']//*[@stroke])[2]" should have has attribute "data-test-icon-type=fill"
     Then the css attribute "color" from element "(//*[@data-test='check-accept-icon']//*[@stroke])[1]" is "rgba(64,192,87,1)"
+
+  @smoke
+  Scenario: Delete 2 tests
+    Given I create "2" tests with:
+      """
+          testName: TestName-BulkDelete-$
+          checks:
+            - checkName: CheckName
+              filePath: files/A.png
+      """
+    When I go to "main" page
+
+    When I wait 10 seconds for the element with locator "[data-table-test-name=TestName-BulkDelete-0]" to be visible
+    When I wait 10 seconds for the element with locator "[data-table-test-name=TestName-BulkDelete-1]" to be visible
+
+    When I click element with locator "[data-test-checkbox-name=TestName-BulkDelete-0]"
+    When I click element with locator "[data-test-checkbox-name=TestName-BulkDelete-1]"
+    When I wait 10 seconds for the element with locator "[aria-label='Remove selected tests']" to be visible
+    When I click element with locator "[aria-label='Remove selected tests']"
+    Then the element with locator ".mantine-Modal-modal" should have contains text "Remove selected tests?"
+    Then the element with locator ".mantine-Modal-modal" should have contains text "Are you sure you want to permanently delete the selected tests?"
+    When I wait 10 seconds for the element with locator "[aria-label='Remove']" to be visible
+
+    When I click element with locator "[aria-label='Remove']"
+
+    When I wait on element "[data-table-test-name=TestName-BulkDelete-0]" to not be displayed
+    When I wait on element "[data-table-test-name=TestName-BulkDelete-1]" to not be displayed
+
+    When I wait on element "[data-table-test-name=TestName-BulkDelete-0]" to not be displayed
+    When I wait on element "[data-table-test-name=TestName-BulkDelete-1]" to not be displayed
