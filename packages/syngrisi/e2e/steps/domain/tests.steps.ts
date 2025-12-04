@@ -608,30 +608,46 @@ When(
     const selector = `tr[data-row-name="${testName}"]`;
     logger.info(`Waiting for test "${testName}" to appear in table using selector: ${selector}`);
 
-    const maxRetries = 3;
+    const maxRetries = 6;
+    const retryDelay = 1500;
+    const refreshButton = page.locator('[data-test="table-refresh-icon"]');
+
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
+        // First check if test is already visible
         const locator = page.locator(selector).first();
-        await locator.waitFor({ state: 'visible', timeout: 10000 });
+        const isVisible = await locator.isVisible().catch(() => false);
+
+        if (isVisible) {
+          logger.info(`Test "${testName}" is now visible in table (attempt ${attempt})`);
+          return;
+        }
+
+        // Not visible yet - click Refresh and wait
+        if (await refreshButton.isVisible({ timeout: 1000 }).catch(() => false)) {
+          logger.info(`Test not found, clicking Refresh (attempt ${attempt}/${maxRetries})`);
+          await refreshButton.click();
+          await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
+        }
+
+        // Wait for test to appear with timeout
+        await locator.waitFor({ state: 'visible', timeout: 8000 });
         logger.info(`Test "${testName}" is now visible in table (attempt ${attempt})`);
         return;
       } catch {
         if (attempt < maxRetries) {
-          // Check if there's a "new items" badge and click Refresh
-          const newItemsBadge = page.locator('text="You have"').first();
-          const refreshButton = page.locator('button[aria-label="Refresh"]').first();
-
-          if (await newItemsBadge.isVisible({ timeout: 1000 }).catch(() => false)) {
-            logger.info(`New items badge visible, clicking Refresh (attempt ${attempt}/${maxRetries})`);
-            await refreshButton.click();
-            await page.waitForTimeout(2000); // Wait for data refresh
-          } else if (await refreshButton.isVisible()) {
-            logger.info(`Test not found, clicking Refresh (attempt ${attempt}/${maxRetries})`);
-            await refreshButton.click();
-            await page.waitForTimeout(2000);
-          }
+          logger.warn(`Test "${testName}" not found (attempt ${attempt}/${maxRetries}), will retry...`);
+          await page.waitForTimeout(retryDelay);
         } else {
-          throw new Error(`Test "${testName}" not found in table after ${maxRetries} attempts`);
+          // Final attempt - log current page state for debugging
+          const tableRows = await page.locator('tr[data-row-name]').count();
+          const rowNames = await page.locator('tr[data-row-name]').evaluateAll(
+            (rows) => rows.map((r) => r.getAttribute('data-row-name')).slice(0, 10)
+          );
+          throw new Error(
+            `Test "${testName}" not found in table after ${maxRetries} attempts. ` +
+            `Table has ${tableRows} rows. First 10 row names: ${JSON.stringify(rowNames)}`
+          );
         }
       }
     }
