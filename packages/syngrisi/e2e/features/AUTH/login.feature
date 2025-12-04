@@ -78,3 +78,8 @@ Feature: Login
     When I wait 10 seconds for the element with locator "[data-test='user-icon']" to be visible
     Then the current url contains "groupBy=test-distinct"
 
+  @smoke
+  Scenario: Login - default Test user
+    When I login with user:"Test" password "123456aA-"
+    When I wait 10 seconds for the element with locator "span*=TA" to be visible
+

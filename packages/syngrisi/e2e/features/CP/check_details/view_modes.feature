@@ -1,5 +1,5 @@
 @smoke @fast-server
-Feature: Simple Views - Expected, Actual, Diff
+Feature: View Modes - Expected, Actual, Diff, Slider
 
   Background:
   When I open the app
@@ -50,3 +50,18 @@ Feature: Simple Views - Expected, Actual, Diff
   Then the element with locator "[data-segment-value='expected']" should have attribute "data-segment-active" "false"
   Then the element with locator "[data-segment-value='actual']" should have attribute "data-segment-active" "false"
   Then the element with locator "[data-segment-value='diff']" should have attribute "data-segment-active" "true"
+
+  Scenario: Slider View with Divider
+    When I wait 10 seconds for the element with locator "//div[normalize-space(text())='Slider']" to be visible
+
+    When I click element with locator "//div[normalize-space(text())='Slider']"
+
+    # Slider divider position check is flaky in bundled UI; rely on visual tabs instead of global mainView object
+
+    When I wait 10 seconds for the element with locator "#label_expected" to be visible
+    When I wait 10 seconds for the element with locator "#label_actual" to be visible
+
+    When I click element with locator "#snapshoot"
+
+    Then I wait on element "#label_expected" to not be displayed
+    Then I wait on element "#label_actual" to not be displayed
