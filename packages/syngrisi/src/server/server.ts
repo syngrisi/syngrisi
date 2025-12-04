@@ -33,8 +33,8 @@ connectDB().then(async () => {
         log.info(
             chalk.whiteBright('Press <Ctrl+C> to exit'), logMeta
         );
-        // Skip schedulers in test mode - they're not needed and add overhead
-        if (!config.testMode) {
+        // Skip schedulers in test mode unless explicitly enabled
+        if (!config.testMode || env.SYNGRISI_ENABLE_SCHEDULERS_IN_TEST_MODE) {
             autoCleanupSchedulers.checks.start();
             autoCleanupSchedulers.logs.start();
         } else {
@@ -46,7 +46,7 @@ connectDB().then(async () => {
     // exit events
     const onCloseSignal = () => {
         log.info('sigint received, shutting down');
-        if (!config.testMode) {
+        if (!config.testMode || env.SYNGRISI_ENABLE_SCHEDULERS_IN_TEST_MODE) {
             autoCleanupSchedulers.checks.stop();
             autoCleanupSchedulers.logs.stop();
         }
