@@ -488,9 +488,21 @@ async function unfoldTestRow(page: Page, testName: string): Promise<void> {
 
   const candidate = page.locator(selector).first();
   try {
-    await candidate.waitFor({ state: 'attached', timeout: 30000 });
+    // Use 'visible' instead of 'attached' to ensure element is stable and rendered
+    await candidate.waitFor({ state: 'visible', timeout: 30000 });
   } catch (error) {
-    throw new Error(`Unable to locate test row for "${testName}"`);
+    // Log available tests for debugging
+    const availableTests = await page.locator('[data-row-name]').evaluateAll((els) =>
+      els.map((el) => el.getAttribute('data-row-name')).filter(Boolean)
+    );
+    logger.error(`Unable to locate test row for "${testName}". Available tests: ${availableTests.join(', ')}`);
+    throw new Error(`Unable to locate test row for "${testName}". Available: [${availableTests.join(', ')}]`);
+  }
+
+  // Check element is still connected before evaluating
+  const isConnected = await candidate.evaluate((el) => el.isConnected);
+  if (!isConnected) {
+    throw new Error(`Test row for "${testName}" was detached from DOM`);
   }
 
   const tagName = await candidate.evaluate((el) => el.tagName.toLowerCase());
@@ -608,48 +620,82 @@ When(
     const selector = `tr[data-row-name="${testName}"]`;
     logger.info(`Waiting for test "${testName}" to appear in table using selector: ${selector}`);
 
-    const maxRetries = 6;
-    const retryDelay = 1500;
+    const maxRetries = 15;
+    const retryDelay = 500;
     const refreshButton = page.locator('[data-test="table-refresh-icon"]');
+    const newItemsBadge = page.locator('[data-test="table-refresh-icon-badge"]');
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      try {
-        // First check if test is already visible
-        const locator = page.locator(selector).first();
-        const isVisible = await locator.isVisible().catch(() => false);
+      // First check if test is already visible
+      const locator = page.locator(selector).first();
+      const isVisible = await locator.isVisible().catch(() => false);
 
-        if (isVisible) {
-          logger.info(`Test "${testName}" is now visible in table (attempt ${attempt})`);
+      if (isVisible) {
+        logger.info(`Test "${testName}" is now visible in table (attempt ${attempt})`);
+        return;
+      }
+
+      // Check if there's a badge indicating new items - click Refresh and wait for badge to disappear
+      const hasBadge = await newItemsBadge.isVisible({ timeout: 300 }).catch(() => false);
+
+      if (hasBadge && await refreshButton.isVisible({ timeout: 500 }).catch(() => false)) {
+        logger.info(`New items badge found (attempt ${attempt}/${maxRetries}), clicking Refresh`);
+        await refreshButton.click();
+
+        // Wait for badge to disappear (indicates refresh completed)
+        try {
+          await newItemsBadge.waitFor({ state: 'hidden', timeout: 5000 });
+          logger.info('Badge disappeared after refresh');
+        } catch {
+          logger.warn('Badge still visible after refresh click, continuing anyway');
+        }
+
+        await page.waitForLoadState('networkidle', { timeout: 3000 }).catch(() => {});
+
+        // Check again after refresh
+        const isVisibleNow = await locator.isVisible().catch(() => false);
+        if (isVisibleNow) {
+          logger.info(`Test "${testName}" is now visible in table after badge refresh (attempt ${attempt})`);
           return;
         }
 
-        // Not visible yet - click Refresh and wait
-        if (await refreshButton.isVisible({ timeout: 1000 }).catch(() => false)) {
-          logger.info(`Test not found, clicking Refresh (attempt ${attempt}/${maxRetries})`);
-          await refreshButton.click();
-          await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
-        }
-
-        // Wait for test to appear with timeout
-        await locator.waitFor({ state: 'visible', timeout: 8000 });
-        logger.info(`Test "${testName}" is now visible in table (attempt ${attempt})`);
-        return;
-      } catch {
-        if (attempt < maxRetries) {
-          logger.warn(`Test "${testName}" not found (attempt ${attempt}/${maxRetries}), will retry...`);
-          await page.waitForTimeout(retryDelay);
-        } else {
-          // Final attempt - log current page state for debugging
-          const tableRows = await page.locator('tr[data-row-name]').count();
-          const rowNames = await page.locator('tr[data-row-name]').evaluateAll(
-            (rows) => rows.map((r) => r.getAttribute('data-row-name')).slice(0, 10)
-          );
-          throw new Error(
-            `Test "${testName}" not found in table after ${maxRetries} attempts. ` +
-            `Table has ${tableRows} rows. First 10 row names: ${JSON.stringify(rowNames)}`
-          );
-        }
+        // Continue to next iteration without additional refresh
+        await page.waitForTimeout(retryDelay);
+        continue;
       }
+
+      // No badge - click Refresh anyway (server may have data)
+      if (await refreshButton.isVisible({ timeout: 500 }).catch(() => false)) {
+        logger.info(`Test not found, clicking Refresh (attempt ${attempt}/${maxRetries})`);
+        await refreshButton.click();
+        await page.waitForLoadState('networkidle', { timeout: 3000 }).catch(() => {});
+      }
+
+      // Brief wait for UI to update
+      await page.waitForTimeout(retryDelay);
+
+      // Check one more time after refresh
+      const isVisibleAfterRefresh = await locator.isVisible().catch(() => false);
+      if (isVisibleAfterRefresh) {
+        logger.info(`Test "${testName}" is now visible in table after refresh (attempt ${attempt})`);
+        return;
+      }
+
+      if (attempt === maxRetries) {
+        // Final attempt - log current page state for debugging
+        const tableRows = await page.locator('tr[data-row-name]').count();
+        const rowNames = await page.locator('tr[data-row-name]').evaluateAll(
+          (rows) => rows.map((r) => r.getAttribute('data-row-name')).slice(0, 10)
+        );
+        const badgeVisible = await newItemsBadge.isVisible().catch(() => false);
+        throw new Error(
+          `Test "${testName}" not found in table after ${maxRetries} attempts. ` +
+          `Table has ${tableRows} rows. First 10 row names: ${JSON.stringify(rowNames)}. ` +
+          `Badge visible: ${badgeVisible}`
+        );
+      }
+
+      logger.warn(`Test "${testName}" not found (attempt ${attempt}/${maxRetries}), will retry...`);
     }
   }
 );
@@ -679,13 +725,17 @@ When(
 
     const checkElement = page.locator(checkSelector).first();
 
-    const maxRetries = 4;
+    const maxRetries = 6;
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        await checkElement.waitFor({ state: 'visible', timeout: 8000 });
+        await checkElement.waitFor({ state: 'visible', timeout: 5000 });
         logger.info(`Check "${checkName}" is now visible in collapsed row (attempt ${attempt})`);
         return;
       } catch {
+        // Log current DOM state for debugging
+        const checksCount = await page.locator('[data-table-check-name]').count();
+        logger.info(`Attempt ${attempt}/${maxRetries}: check not visible yet, total checks in DOM: ${checksCount}`);
+
         if (attempt < maxRetries) {
           // Check if collapsed row is empty or test row needs to be clicked to expand
           const collapsedRow = testRow.locator('xpath=following-sibling::tr[1]');
@@ -703,12 +753,20 @@ When(
             }
             await page.waitForTimeout(500);
           } else {
-            // Collapsed row visible but check not found - try refresh
-            logger.info(`Check "${checkName}" not visible, clicking Refresh button (attempt ${attempt}/${maxRetries})`);
+            // Collapsed row visible but check not found - try refresh and wait for network
+            logger.info(`Check "${checkName}" not visible in collapsed row, clicking Refresh button (attempt ${attempt}/${maxRetries})`);
             const refreshButton = page.locator('button[aria-label="Refresh"]').first();
             if (await refreshButton.isVisible()) {
-              await refreshButton.click();
-              await page.waitForTimeout(2000); // Wait for data to refresh
+              // Wait for network activity to complete after refresh
+              await Promise.all([
+                page.waitForResponse(
+                  (resp) => resp.url().includes('/v1/checks') && resp.status() === 200,
+                  { timeout: 5000 }
+                ).catch(() => null), // Don't fail if no request made
+                refreshButton.click(),
+              ]);
+              // Additional wait for React Query to update DOM
+              await page.waitForTimeout(1000);
             }
           }
         } else {

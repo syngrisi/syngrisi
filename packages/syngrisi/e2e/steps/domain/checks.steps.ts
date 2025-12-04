@@ -36,18 +36,54 @@ When('I accept the {string} check', async ({ page }: { page: Page }, checkName: 
 
 When('I open the {ordinal} check {string}', async ({ page }: { page: Page }, ordinal: number, name: string) => {
   // Playwright BDD ordinal is 0-based for "1st" (0), "2nd" (1), etc.
-  // So we use ordinal directly without subtracting 1
-  const check = page.locator(`[data-test-preview-image='${name}']`).nth(ordinal);
+  // We need to find the Nth VISIBLE check preview, not just the Nth element in DOM order
+  // This is important because collapsed test rows have hidden check previews
 
-  // Wait for element to be attached first, then visible
-  await check.waitFor({ state: 'attached', timeout: 10000 });
+  const allChecks = page.locator(`[data-test-preview-image='${name}']`);
 
-  // Element might be hidden initially (test not unfolded), wait for it to become visible
-  // Reduced from 30s to 15s - UI typically renders faster
-  await check.waitFor({ state: 'visible', timeout: 15000 });
+  // Wait for at least one to be attached
+  await allChecks.first().waitFor({ state: 'attached', timeout: 10000 });
 
-  await check.scrollIntoViewIfNeeded();
-  await check.click();
+  // Find the visible check at the given ordinal position among visible checks only
+  let visibleCount = 0;
+  let targetCheck = null;
+  const maxWaitTime = 15000;
+  const startTime = Date.now();
+
+  while (Date.now() - startTime < maxWaitTime) {
+    const count = await allChecks.count();
+    visibleCount = 0;
+
+    for (let i = 0; i < count; i++) {
+      const check = allChecks.nth(i);
+      const isVisible = await check.isVisible().catch(() => false);
+      if (isVisible) {
+        if (visibleCount === ordinal) {
+          targetCheck = check;
+          break;
+        }
+        visibleCount++;
+      }
+    }
+
+    if (targetCheck) {
+      break;
+    }
+
+    // Wait a bit before retrying
+    await page.waitForTimeout(200);
+  }
+
+  if (!targetCheck) {
+    const totalCount = await allChecks.count();
+    throw new Error(
+      `Could not find visible check "${name}" at ordinal position ${ordinal}. ` +
+      `Found ${visibleCount} visible checks out of ${totalCount} total elements.`
+    );
+  }
+
+  await targetCheck.scrollIntoViewIfNeeded();
+  await targetCheck.click();
 
   // Wait for modal to open and header to appear
   // Reduced from 30s to 15s

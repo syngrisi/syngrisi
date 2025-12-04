@@ -419,7 +419,8 @@ When('I open the url {string}', async ({ page, testData, appServer }: { page: Pa
     await ensureServerReady(appServer.serverPort);
   }
 
-  await page.goto(parsedUrl);
+  // Use networkidle to ensure all network requests complete (React Query data loading)
+  await page.goto(parsedUrl, { waitUntil: 'networkidle' });
 });
 
 When('I set window size: {string}', async ({ page }, viewport: string) => {
@@ -684,6 +685,9 @@ When('I scroll container {string} to bottom', async ({ page }, selector: string)
   // Wait for container to be visible
   await container.waitFor({ state: 'visible', timeout: 10000 });
 
+  // Get initial item count before scroll (for detecting new items loaded)
+  const initialCount = await page.locator('[data-test="table-row-Name"]').count();
+
   // Scroll with requestAnimationFrame to ensure IntersectionObserver fires
   await container.evaluate((el) => {
     return new Promise<void>((resolve) => {
@@ -704,8 +708,24 @@ When('I scroll container {string} to bottom', async ({ page }, selector: string)
     });
   });
 
-  // Wait for intersection observer to trigger and data to load
-  await page.waitForTimeout(1000);
+  // Wait for intersection observer to trigger and new data to load
+  // Use waitForFunction to detect when new items appear (more reliable than fixed timeout)
+  try {
+    await page.waitForFunction(
+      (prevCount) => {
+        const currentCount = document.querySelectorAll('[data-test="table-row-Name"]').length;
+        return currentCount > prevCount;
+      },
+      initialCount,
+      { timeout: 5000 }
+    );
+  } catch {
+    // If no new items loaded within timeout, that's okay - might already have all items
+    logger.info('Scroll to bottom: no new items detected within timeout (may have reached end of data)');
+  }
+
+  // Additional stabilization wait for DOM updates
+  await page.waitForTimeout(500);
 });
 
 When(

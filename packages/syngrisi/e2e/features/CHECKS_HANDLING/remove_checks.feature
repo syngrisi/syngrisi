@@ -53,7 +53,10 @@ Feature: Remove checks
       """
 
     When I go to "main" page
+    # Tests are created with indices 0 and 1; sorted by date desc, TestName-RC-1 appears first
     When I wait for test "TestName-RC-1" to appear in table
+    # Also ensure TestName-RC-0 is loaded (may need refresh for second test)
+    When I wait for test "TestName-RC-0" to appear in table
 
     When I wait on element "[data-table-check-name='CheckName-RC-1']" to not be displayed
 
