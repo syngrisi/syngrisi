@@ -1,5 +1,5 @@
 import { Given, When, Then } from '@fixtures';
-import type { Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 import { createLogger } from '@lib/logger';
 import * as yaml from 'yaml';
 import * as fs from 'fs';
@@ -508,14 +508,40 @@ async function unfoldTestRow(page: Page, testName: string): Promise<void> {
   const tagName = await candidate.evaluate((el) => el.tagName.toLowerCase());
   logger.info(`Matched test element with tag "${tagName}"`);
 
-  let testElement;
+  let testElement: Locator;
   if (tagName === 'tr') {
     testElement = candidate;
   } else {
     testElement = candidate.locator('xpath=./ancestor::tr[1]').first();
   }
 
-  await testElement.scrollIntoViewIfNeeded();
+  const rebuildTestElement = async (): Promise<Locator> => {
+    const refreshedCandidate = page.locator(selector).first();
+    await refreshedCandidate.waitFor({ state: 'visible', timeout: 10000 });
+    const refreshedTag = await refreshedCandidate.evaluate((el) => el.tagName.toLowerCase());
+    if (refreshedTag === 'tr') {
+      return refreshedCandidate;
+    }
+    return refreshedCandidate.locator('xpath=./ancestor::tr[1]').first();
+  };
+
+  const scrollIntoViewSafely = async (): Promise<void> => {
+    try {
+      await testElement.scrollIntoViewIfNeeded();
+    } catch (error: any) {
+      const message = error?.message || '';
+      if (message.includes('not attached to the DOM') || message.includes('detached from the DOM')) {
+        logger.warn(`Test row was detached before scrolling, reacquiring row for "${testName}"`);
+        testElement = await rebuildTestElement();
+        await testElement.waitFor({ state: 'visible', timeout: 10000 });
+        await testElement.scrollIntoViewIfNeeded();
+      } else {
+        throw error;
+      }
+    }
+  };
+
+  await scrollIntoViewSafely();
   await testElement.waitFor({ state: 'visible', timeout: 10000 });
 
   const maxRetries = 3;

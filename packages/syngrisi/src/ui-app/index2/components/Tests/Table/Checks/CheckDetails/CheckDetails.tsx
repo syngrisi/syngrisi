@@ -156,7 +156,27 @@ export function CheckDetails({
             refetchOnWindowFocus: false,
         }
     );
-    const siblingChecks = siblingChecksQuery.data?.results || [];
+    const siblingChecks = useMemo(() => {
+        const checks = siblingChecksQuery.data?.results || [];
+        const getTimestamp = (item: any) => {
+            const value = item?.createdDate ?? item?.CreatedDate;
+            const parsed = Number(new Date(value).getTime());
+            if (Number.isFinite(parsed)) {
+                return parsed;
+            }
+            return 0;
+        };
+        return [...checks].sort((a, b) => {
+            const timeA = getTimestamp(a);
+            const timeB = getTimestamp(b);
+            if (timeA === timeB) {
+                const idA = String(a?._id ?? a?.id ?? '');
+                const idB = String(b?._id ?? b?.id ?? '');
+                return idA.localeCompare(idB);
+            }
+            return timeA - timeB;
+        });
+    }, [siblingChecksQuery.data?.results]);
     const currentCheckIndex = siblingChecks.findIndex((c: any) => c._id === currentCheck._id);
     const currentTestIndex = testList.findIndex((t: any) => (t.id || t._id) === currentCheck?.test?._id);
 

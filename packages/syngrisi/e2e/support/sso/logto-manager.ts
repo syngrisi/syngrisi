@@ -117,7 +117,7 @@ export async function startLogtoInfrastructure(
     execSync(`bash "${scriptPath}"`, {
       env,
       stdio: 'inherit',
-      timeout: 180_000, // 3 minutes max for container startup
+      timeout: 600_000, // 10 minutes max for container startup (Logto can boot slowly)
     });
 
     // Double-check that Logto is available

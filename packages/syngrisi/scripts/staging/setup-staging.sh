@@ -164,6 +164,17 @@ install_dependencies() {
         log_error "Failed to install dependencies"
         exit 1
     fi
+
+    # Install e2e dependencies for MCP support
+    log_info "Installing e2e dependencies for MCP support..."
+    cd "${STAGING_WORKTREE_PATH}/packages/syngrisi/e2e"
+
+    if npm install; then
+        log_info "✓ E2E dependencies installed successfully"
+    else
+        log_error "Failed to install e2e dependencies"
+        exit 1
+    fi
 }
 
 build_application() {
