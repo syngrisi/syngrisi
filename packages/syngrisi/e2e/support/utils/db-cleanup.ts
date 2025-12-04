@@ -7,6 +7,33 @@ import { env } from '@config';
 
 const logger = createLogger('DbCleanup');
 
+// Connection pool: reuse MongoClient instances per URI to avoid connection overhead
+const clientPool = new Map<string, MongoClient>();
+
+async function getPooledClient(uri: string): Promise<MongoClient> {
+  let client = clientPool.get(uri);
+  if (!client) {
+    client = new MongoClient(uri, { retryWrites: false, maxPoolSize: 5 });
+    await client.connect();
+    clientPool.set(uri, client);
+    logger.debug(`Created new pooled MongoDB connection for ${uri}`);
+  }
+  return client;
+}
+
+// Cleanup function to close all pooled connections (call in global teardown)
+export async function closeAllPooledConnections(): Promise<void> {
+  for (const [uri, client] of clientPool.entries()) {
+    try {
+      await client.close();
+      logger.debug(`Closed pooled connection for ${uri}`);
+    } catch (e) {
+      logger.warn(`Failed to close pooled connection for ${uri}: ${e}`);
+    }
+  }
+  clientPool.clear();
+}
+
 function getCid(): number {
   if (process.env.DOCKER === '1') return 100;
   return parseInt(process.env.TEST_WORKER_INDEX || '0', 10);
@@ -53,11 +80,10 @@ export async function clearDatabase(
 
   const tasks: Promise<void>[] = [];
 
-  // Task 1: Drop Database
+  // Task 1: Drop Database (uses connection pooling for efficiency)
   tasks.push((async () => {
-    const client = new MongoClient(dbUri, { retryWrites: false });
     try {
-      await client.connect();
+      const client = await getPooledClient(dbUri);
       const db = client.db();
       if (softClean) {
         // Preserve critical collections during soft clean to avoid race conditions
@@ -73,14 +99,20 @@ export async function clearDatabase(
         const guestBefore = await usersCollection.findOne({ username: 'Guest' });
         logger.debug(`Guest user before soft clean: ${guestBefore ? 'FOUND' : 'NOT FOUND'}`);
 
-        for (const collection of collections) {
-          if (!preserveCollections.includes(collection.name)) {
+        // Parallelize collection cleanup (was sequential)
+        const cleanupPromises = collections
+          .filter(collection => !preserveCollections.includes(collection.name))
+          .map(collection => {
             logger.debug(`Cleaning collection: ${collection.name}`);
-            await db.collection(collection.name).deleteMany({});
-          } else {
-            logger.debug(`Preserving collection: ${collection.name}`);
-          }
-        }
+            return db.collection(collection.name).deleteMany({});
+          });
+
+        // Log preserved collections
+        collections
+          .filter(collection => preserveCollections.includes(collection.name))
+          .forEach(collection => logger.debug(`Preserving collection: ${collection.name}`));
+
+        await Promise.all(cleanupPromises);
 
         const guestAfter = await usersCollection.findOne({ username: 'Guest' });
         logger.debug(`Guest user after soft clean: ${guestAfter ? 'FOUND' : 'NOT FOUND'}`);
@@ -90,6 +122,7 @@ export async function clearDatabase(
         const dropResult = await db.dropDatabase();
         logger.info(`✓ Dropped database ${db.databaseName}: ${dropResult}`);
       }
+      // Note: Don't close pooled connection - it will be reused
     } catch (error: any) {
       const errorMsg = error.message || error.toString() || '';
       if (errorMsg.includes('disconnected') || errorMsg.includes('failed to check if window was closed') || errorMsg.includes('ECONNREFUSED')) {
@@ -98,8 +131,6 @@ export async function clearDatabase(
         logger.error(`Failed to clear database: ${errorMsg}`);
         throw error;
       }
-    } finally {
-      await client.close().catch(() => undefined);
     }
   })());
 

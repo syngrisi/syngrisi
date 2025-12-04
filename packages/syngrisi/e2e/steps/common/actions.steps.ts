@@ -446,13 +446,17 @@ When('I wait for canvas to be ready', async ({ page }) => {
 });
 
 When('I wait for viewportTransform to stabilize', async ({ page }) => {
-  const maxAttempts = 20; // 20 seconds maximum
+  // Optimized: exponential backoff starting at 100ms (was fixed 1s intervals for 20s)
+  const maxWaitMs = 10000; // 10 seconds max (reduced from 20s)
   const stabilityThreshold = 3; // 3 identical values in a row
+  const startTime = Date.now();
 
   let lastValue: string | null = null;
   let stableCount = 0;
+  let interval = 100; // Start with 100ms
+  let attempt = 0;
 
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+  while (Date.now() - startTime < maxWaitMs) {
     const currentValue = await page.evaluate(() => {
       const globalMain = (window as any).mainView;
       if (typeof globalMain !== 'undefined' && globalMain?.canvas?.viewportTransform) {
@@ -464,7 +468,7 @@ When('I wait for viewportTransform to stabilize', async ({ page }) => {
     if (currentValue === lastValue && currentValue !== null) {
       stableCount++;
       if (stableCount >= stabilityThreshold) {
-        logger.info(`ViewportTransform stabilized at: ${currentValue} after ${attempt + 1} attempts`);
+        logger.info(`ViewportTransform stabilized at: ${currentValue} after ${attempt + 1} attempts (${Date.now() - startTime}ms)`);
         return;
       }
     } else {
@@ -472,10 +476,12 @@ When('I wait for viewportTransform to stabilize', async ({ page }) => {
       lastValue = currentValue;
     }
 
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(interval);
+    interval = Math.min(interval * 1.5, 500); // Exponential backoff, max 500ms
+    attempt++;
   }
 
-  throw new Error(`ViewportTransform did not stabilize after ${maxAttempts} attempts. Last value: ${lastValue}`);
+  throw new Error(`ViewportTransform did not stabilize after ${Date.now() - startTime}ms. Last value: ${lastValue}`);
 });
 
 When('I execute javascript OLD code:', async ({ page, testData }: { page: Page; testData: TestStore }, js: string) => {
@@ -662,10 +668,44 @@ When('I execute javascript code:', async ({ page, testData }: { page: Page; test
 When('I scroll to element {string}', async ({ page }, selector: string) => {
   const locator = getLocatorQuery(page, selector);
   const element = locator.first();
+  // Use scrollIntoView with 'end' alignment to ensure element is scrolled to bottom of viewport
+  // This is important for triggering infinite scroll loaders that are positioned after the element
   await element.evaluate((el) => {
-    el.scrollIntoView();
+    el.scrollIntoView({ behavior: 'instant', block: 'end' });
   });
-  await page.waitForTimeout(100);
+  // Wait longer to allow intersection observer to trigger and async fetch to complete
+  await page.waitForTimeout(500);
+});
+
+When('I scroll container {string} to bottom', async ({ page }, selector: string) => {
+  const locator = getLocatorQuery(page, selector);
+  const container = locator.first();
+
+  // Wait for container to be visible
+  await container.waitFor({ state: 'visible', timeout: 10000 });
+
+  // Scroll with requestAnimationFrame to ensure IntersectionObserver fires
+  await container.evaluate((el) => {
+    return new Promise<void>((resolve) => {
+      const maxScroll = el.scrollHeight - el.clientHeight;
+      el.scrollTop = maxScroll;
+
+      // requestAnimationFrame ensures observer can react
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          // Small bounce to guarantee observer triggers
+          el.scrollTop = maxScroll - 1;
+          requestAnimationFrame(() => {
+            el.scrollTop = maxScroll;
+            requestAnimationFrame(() => resolve());
+          });
+        });
+      });
+    });
+  });
+
+  // Wait for intersection observer to trigger and data to load
+  await page.waitForTimeout(1000);
 });
 
 When(

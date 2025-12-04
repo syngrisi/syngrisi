@@ -51,12 +51,24 @@ When('I go to {string} page', async ({ page, appServer }: { page: Page; appServe
   }
 
   logger.info(`Navigating to ${url}`);
+  const initialUrl = page.url();
   await page.goto(url, { waitUntil: 'domcontentloaded' });
   // Wait for potential redirects (e.g., auth redirects) - client-side redirects may take time
   try {
     // Wait for navigation to complete (including client-side redirects)
     await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => { });
-    await page.waitForTimeout(2000); // Additional wait for client-side redirects
+    // Only wait for redirect stabilization if URL actually changed (redirect happened)
+    const currentUrl = page.url();
+    if (currentUrl !== initialUrl && currentUrl !== url) {
+      // A redirect occurred - wait briefly for any further redirects to settle
+      await page.waitForTimeout(500);
+    }
+    // For main page, wait for React app to render the table container
+    if (pageName === 'main') {
+      await page.waitForSelector('[data-test="table-scroll-area"]', { timeout: 10000 }).catch(() => {
+        logger.warn('Table scroll area not found after navigation to main page');
+      });
+    }
   } catch (e) {
     // Continue anyway
   }

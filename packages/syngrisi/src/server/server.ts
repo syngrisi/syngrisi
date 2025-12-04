@@ -33,16 +33,23 @@ connectDB().then(async () => {
         log.info(
             chalk.whiteBright('Press <Ctrl+C> to exit'), logMeta
         );
-        autoCleanupSchedulers.checks.start();
-        autoCleanupSchedulers.logs.start();
+        // Skip schedulers in test mode - they're not needed and add overhead
+        if (!config.testMode) {
+            autoCleanupSchedulers.checks.start();
+            autoCleanupSchedulers.logs.start();
+        } else {
+            log.debug('Skipping auto-cleanup schedulers in test mode', logMeta);
+        }
     });
 
 
     // exit events
     const onCloseSignal = () => {
         log.info('sigint received, shutting down');
-        autoCleanupSchedulers.checks.stop();
-        autoCleanupSchedulers.logs.stop();
+        if (!config.testMode) {
+            autoCleanupSchedulers.checks.stop();
+            autoCleanupSchedulers.logs.stop();
+        }
         if (config.codeCoverage && env.SYNGRISI_V8_COVERAGE_ON_EXIT) {
             log.info('take coverage');
             v8.takeCoverage();

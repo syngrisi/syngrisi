@@ -11,8 +11,10 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Configuration
-STAGING_PORT="5252"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+STAGING_ENV_FILE="${REPO_ROOT}/.env.staging"
+STAGING_ENV_EXAMPLE="${REPO_ROOT}/.env.staging.example"
 
 # Helper functions
 log_info() {
@@ -27,13 +29,34 @@ log_warn() {
     echo -e "${YELLOW}[WARN]${NC} $1"
 }
 
+ensure_env_loaded() {
+    if [ ! -f "${STAGING_ENV_FILE}" ]; then
+        log_error "Staging env file not found: ${STAGING_ENV_FILE}"
+        log_error "Create it (cp ${STAGING_ENV_EXAMPLE} ${STAGING_ENV_FILE}) and fill in values"
+        exit 1
+    fi
+
+    set -o allexport
+    # shellcheck disable=SC1090
+    source "${STAGING_ENV_FILE}"
+    set +o allexport
+
+    if [ -z "${STAGING_PORT}" ]; then
+        log_error "Missing required variable 'STAGING_PORT' in ${STAGING_ENV_FILE}"
+        exit 1
+    fi
+}
+
 # Main execution
 main() {
     echo ""
     log_info "Stopping staging server..."
     echo ""
 
-    local PID=$(lsof -ti:${STAGING_PORT} 2>/dev/null || true)
+    ensure_env_loaded
+
+    local PID
+    PID=$(lsof -ti:"${STAGING_PORT}" 2>/dev/null || true)
 
     if [ -z "${PID}" ]; then
         log_warn "No staging server running on port ${STAGING_PORT}"

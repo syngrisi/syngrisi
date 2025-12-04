@@ -48,6 +48,11 @@ const findExecutable = (name: string, searchPaths: string[]): string | null => {
 };
 
 const ensureFreshBuild = (): void => {
+  if (process.env.E2E_SKIP_BUILD === 'true') {
+    logger.info('Skipping build because E2E_SKIP_BUILD=true');
+    return;
+  }
+
   const customPaths = [
     path.dirname(process.execPath),
     process.env.FNM_MULTISHELL_PATH

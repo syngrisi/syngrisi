@@ -10,6 +10,28 @@ import { clearDatabase } from '@utils/db-cleanup';
 
 const reuseServerBetweenTests = env.E2E_REUSE_SERVER;
 const logger = createLogger('AppServer');
+const timingLogger = createLogger('timing');
+
+// Track server config for @fast-server-reuse mode
+// If config matches, we can reuse the server instead of restarting
+interface ServerConfig {
+  auth: string;
+  ssoEnabled: string;
+  dbUri: string;
+}
+const serverConfigMap = new Map<number, ServerConfig>();
+
+function getServerConfigHash(): ServerConfig {
+  return {
+    auth: process.env.SYNGRISI_AUTH || 'false',
+    ssoEnabled: process.env.SSO_ENABLED || 'false',
+    dbUri: process.env.SYNGRISI_DB_URI || '',
+  };
+}
+
+function configsMatch(a: ServerConfig, b: ServerConfig): boolean {
+  return a.auth === b.auth && a.ssoEnabled === b.ssoEnabled && a.dbUri === b.dbUri;
+}
 
 export type AppServerFixture = {
   baseURL: string;
@@ -80,7 +102,9 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
 
       const cid = getCurrentCid();
       const isFastMode = hasTag(testInfo, '@fast-server');
+      const isFastModeReuse = hasTag(testInfo, '@fast-server-reuse');
       const skipAppStart = hasTag(testInfo, '@no-app-start') || getSkipAutoStart();
+      const fixtureStart = performance.now();
       const envKeysToReset = [
         'SYNGRISI_AUTH',
         'SYNGRISI_TEST_MODE',
@@ -231,13 +255,17 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
         serverFixtures.set(cid, fixtureValue);
       };
 
-      if (isFastMode) {
+      if (isFastMode || isFastModeReuse) {
         const preferredPort = 3002 + cid;
+        const portFindStart = performance.now();
         const workerPort = await findAvailablePort(preferredPort, 20);
+        timingLogger.info(`[timing] Port finding: ${Math.round(performance.now() - portFindStart)}ms`);
+
         const workerDbName = `SyngrisiDbTest${cid}`;
         const workerDbUri = `mongodb://localhost/${workerDbName}`;
 
-        logger.info(`Running in Fast Server Mode (CID: ${cid})`);
+        const modeLabel = isFastModeReuse ? 'Fast Server Reuse Mode' : 'Fast Server Mode';
+        logger.info(`Running in ${modeLabel} (CID: ${cid})`);
 
         process.env.SYNGRISI_APP_PORT = String(workerPort);
         process.env.SYNGRISI_DB_URI = workerDbUri;
@@ -258,29 +286,26 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
 
         // Always do full database reset in fast-server mode to ensure clean state
         // This prevents authentication and other settings from persisting between tests
-        logger.info(`Fast mode: full reset enabled, dropping DB and baselines`);
+        const dbClearStart = performance.now();
+        logger.info(`${modeLabel}: full reset enabled, dropping DB and baselines`);
         await clearDatabase(cid, true, false);
+        timingLogger.info(`[timing] DB clear: ${Math.round(performance.now() - dbClearStart)}ms`);
 
         const running = await isServerRunning(workerPort);
+        const currentConfig = getServerConfigHash();
+        const existingConfig = serverConfigMap.get(cid);
+        const existingInstance = serverInstances.get(cid);
 
-        // Fast-server mode ALWAYS starts fresh to ensure correct env vars (auth=false, SSO=false)
-        // This is critical because a non-fast-server test (like SSO tests) may have left
-        // a server running with different settings (auth=true)
-        // BUT: Skip pkill if we're in a spawned subprocess (TEST_WORKER_INDEX >= 100)
+        // Check if we can reuse the server (only in fast-server-reuse mode)
+        const canReuseServer = isFastModeReuse &&
+          running &&
+          existingInstance &&
+          existingConfig &&
+          configsMatch(currentConfig, existingConfig);
+
         const currentWorkerIndex = parseInt(process.env.TEST_WORKER_INDEX || '0', 10);
-        if (running) {
-          logger.info(`Fast mode: stopping existing server on port ${workerPort} to ensure clean config`);
-          if (currentWorkerIndex < 100) {
-            stopServerProcess();
-          }
-          // Wait for server to actually stop to avoid race conditions (EADDRINUSE or connecting to old server)
-          await waitFor(() => isServerRunning(workerPort).then((r) => !r), {
-            timeoutMs: 15000,
-            description: `Server stop on port ${workerPort}`,
-          });
-          serverInstances.delete(cid);
-        }
 
+        // Define launchFreshInstance outside the if/else so it can be used by restart/start methods
         const launchFreshInstance = async (useProcessEnvAuth = false) => {
           // By default, fast-server mode disables auth to avoid race conditions
           // But if test explicitly sets SYNGRISI_AUTH via "I set env variables", respect it
@@ -299,6 +324,7 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
             env: envOverrides,
           });
           serverInstances.set(cid, instance);
+          serverConfigMap.set(cid, getServerConfigHash());
           lastKnownConfig = instance.config;
           fixtureValue.baseURL = instance.baseURL;
           fixtureValue.backendHost = instance.backendHost;
@@ -308,8 +334,37 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
           fixtureValue.getFrontendLogs = instance.getFrontendLogs;
         };
 
-        // Always launch fresh instance in fast-server mode
-        await launchFreshInstance();
+        if (canReuseServer) {
+          // Reuse existing server - just cleared the DB, server is still running
+          logger.info(`Fast-server-reuse: reusing existing server on port ${workerPort}`);
+          timingLogger.info(`[timing] Server reused (skipped restart)`);
+
+          fixtureValue.baseURL = existingInstance.baseURL;
+          fixtureValue.backendHost = existingInstance.backendHost;
+          fixtureValue.serverPort = existingInstance.serverPort;
+          fixtureValue.config = existingInstance.config;
+          fixtureValue.getBackendLogs = existingInstance.getBackendLogs;
+          fixtureValue.getFrontendLogs = existingInstance.getFrontendLogs;
+        } else {
+          // Need to start fresh server
+          if (running) {
+            const stopStart = performance.now();
+            logger.info(`${modeLabel}: stopping existing server on port ${workerPort} to ensure clean config`);
+            if (currentWorkerIndex < 100) {
+              stopServerProcess();
+            }
+            // Wait for server to actually stop to avoid race conditions (EADDRINUSE or connecting to old server)
+            await waitFor(() => isServerRunning(workerPort).then((r) => !r), {
+              timeoutMs: 15000,
+              description: `Server stop on port ${workerPort}`,
+            });
+            serverInstances.delete(cid);
+            timingLogger.info(`[timing] Server stop: ${Math.round(performance.now() - stopStart)}ms`);
+          }
+
+          // Launch fresh instance
+          await launchFreshInstance();
+        }
 
         fixtureValue = {
           baseURL: fixtureValue.baseURL,
@@ -470,7 +525,8 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
         }
 
         const runningInstance = serverInstances.get(cid);
-        if (isFastMode) {
+        if (isFastMode && !isFastModeReuse) {
+          // @fast-server: stop server and clean database after test
           logger.info(`Fast Mode: stopping server and cleaning database after test`);
           if (runningInstance) {
             await runningInstance.stop();
@@ -478,6 +534,11 @@ export const appServerFixture = base.extend<{ appServer: AppServerFixture }>({
             serverFixtures.delete(cid);
           }
           await clearDatabase(cid, true, false);
+        } else if (isFastModeReuse) {
+          // @fast-server-reuse: keep server running, just log total fixture time
+          const totalFixtureTime = Math.round(performance.now() - fixtureStart);
+          timingLogger.info(`[timing] Total fixture time (fast-server-reuse): ${totalFixtureTime}ms`);
+          // Server stays running, no cleanup needed
         } else if (runningInstance && !getSkipAutoStart() && !reuseServerBetweenTests) {
           logger.info(`Stopping server...`);
           await runningInstance.stop();

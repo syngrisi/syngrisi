@@ -43,14 +43,16 @@ When('I open the {ordinal} check {string}', async ({ page }: { page: Page }, ord
   await check.waitFor({ state: 'attached', timeout: 10000 });
 
   // Element might be hidden initially (test not unfolded), wait for it to become visible
-  await check.waitFor({ state: 'visible', timeout: 30000 });
+  // Reduced from 30s to 15s - UI typically renders faster
+  await check.waitFor({ state: 'visible', timeout: 15000 });
 
   await check.scrollIntoViewIfNeeded();
   await check.click();
 
   // Wait for modal to open and header to appear
+  // Reduced from 30s to 15s
   const header = page.locator(`[data-check-header-name='${name}']`).first();
-  await header.waitFor({ state: 'visible', timeout: 30000 });
+  await header.waitFor({ state: 'visible', timeout: 15000 });
   logger.info(`Opened ${ordinal + 1}st check: ${name}`);
 });
 
