@@ -4,7 +4,7 @@ Feature: Check Details - Initial image resize
   Background:
   #         Given I start Server and start Driver
 
-  @flaky
+  @smoke @flaky
   Scenario: Image fit in the viewport
     Given I create "1" tests with:
       """

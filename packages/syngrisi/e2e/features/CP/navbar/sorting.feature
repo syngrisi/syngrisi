@@ -6,6 +6,7 @@ Feature: Navbar Sorting
     When I open the app
     When I clear local storage
 
+  @smoke
   Scenario: Sorting
     When I create "3" tests with:
       """

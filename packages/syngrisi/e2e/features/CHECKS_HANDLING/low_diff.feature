@@ -5,6 +5,7 @@ Feature: Low images difference
       Background:
       #         Given I start Server and start Driver
 
+      @smoke
       Scenario: Low images difference
             Given I create "1" tests with:
                   """

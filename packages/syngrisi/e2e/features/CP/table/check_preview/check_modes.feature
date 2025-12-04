@@ -6,6 +6,7 @@ Feature: Checks Preview Modes
     When I open the app
     When I clear local storage
 
+  @smoke
   Scenario: Checks Preview Modes
     Given I create "1" tests with:
       """

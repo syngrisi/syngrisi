@@ -6,6 +6,7 @@ Feature: Tests Table Settings
     When I open the app
     When I clear local storage
 
+  @smoke
   Scenario: Set visible Columns
     When I create "1" tests with:
       """
