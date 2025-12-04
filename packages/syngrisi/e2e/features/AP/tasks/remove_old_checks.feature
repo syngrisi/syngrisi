@@ -7,6 +7,8 @@ Feature: Task - Remove old checks
       SYNGRISI_TEST_MODE: true
       SYNGRISI_AUTH: false
       SYNGRISI_AUTO_REMOVE_CHECKS_POLL_INTERVAL_MS: 1000
+      SYNGRISI_AUTO_REMOVE_CHECKS_MIN_INTERVAL_MS: 1000
+      SYNGRISI_ENABLE_SCHEDULERS_IN_TEST_MODE: true
       """
     Given I start Server
     When I create via http test user
@@ -17,6 +19,8 @@ Feature: Task - Remove old checks
       SYNGRISI_TEST_MODE: true
       SYNGRISI_AUTH: true
       SYNGRISI_AUTO_REMOVE_CHECKS_POLL_INTERVAL_MS: 1000
+      SYNGRISI_AUTO_REMOVE_CHECKS_MIN_INTERVAL_MS: 1000
+      SYNGRISI_ENABLE_SCHEDULERS_IN_TEST_MODE: true
       """
     Given I start Server
 
