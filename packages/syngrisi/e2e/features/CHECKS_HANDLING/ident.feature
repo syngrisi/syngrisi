@@ -6,7 +6,7 @@ Feature: Ident flow
 
   Background:
 
-  @flaky
+  @smoke @flaky
   Scenario: Ident flow, same ident [accepted, passed]
     # first check
     Given I create "1" tests with:

@@ -9,6 +9,7 @@ Feature: Access to admin Panel
     """
 #         Given I start Server and start Driver
 
+  @smoke
   Scenario: Open Admin Panel as Anonymous User
     When I go to "admin2" page
     Then the current url contains "/auth"
