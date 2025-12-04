@@ -68,6 +68,33 @@ When('I go to {string} page', async ({ page, appServer }: { page: Page; appServe
       await page.waitForSelector('[data-test="table-scroll-area"]', { timeout: 10000 }).catch(() => {
         logger.warn('Table scroll area not found after navigation to main page');
       });
+
+      // Always click Refresh twice after navigating to main page to ensure we see the latest data
+      // This is necessary because:
+      // 1. The UI uses timestamp-based filtering which may not include tests created just before navigation
+      // 2. The first refresh resets the timestamp, but new items may still be arriving
+      // 3. A second refresh after a brief delay ensures all data is captured
+      const refreshButton = page.locator('[data-test="table-refresh-icon"]');
+
+      // First refresh: reset timestamp filter to current time
+      if (await refreshButton.isVisible({ timeout: 2000 }).catch(() => false)) {
+        logger.info('First Refresh click to reset timestamp filter after navigation to main page');
+        await refreshButton.click();
+        await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
+        await page.waitForTimeout(1000); // Wait for UI to update and any late data to arrive
+      }
+
+      // Second refresh: capture any items that arrived during first refresh
+      // Check for new items badge first
+      const newItemsBadge = page.locator('[data-test="table-refresh-icon-badge"]');
+      const hasBadge = await newItemsBadge.isVisible({ timeout: 1000 }).catch(() => false);
+
+      if (hasBadge || await refreshButton.isVisible({ timeout: 500 }).catch(() => false)) {
+        logger.info(`Second Refresh click (badge visible: ${hasBadge}) to ensure all data is loaded`);
+        await refreshButton.click();
+        await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
+        await page.waitForTimeout(500);
+      }
     }
   } catch (e) {
     // Continue anyway
