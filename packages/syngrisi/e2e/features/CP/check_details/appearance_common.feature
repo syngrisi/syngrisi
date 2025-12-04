@@ -53,6 +53,18 @@ Feature: Check Detail Appearance
     # default view
     Then the element with locator "[data-segment-value='actual']" should have attribute "data-segment-active" "true"
 
+    # view segment disabled states (NEW check)
+    Then the element with locator "[data-segment-value='expected']" should have attribute "data-segment-disabled" "true"
+    Then the element with locator "[data-segment-value='actual']" should have attribute "data-segment-disabled" "false"
+    Then the element with locator "[data-segment-value='diff']" should have attribute "data-segment-disabled" "true"
+    Then the element with locator "[data-segment-value='slider']" should have attribute "data-segment-disabled" "true"
+
+    # action icons (NEW check)
+    Then  the element "[data-check='highlight-icon']" has attribute "data-disabled" "true"
+    Then  the element "[data-check='remove-ignore-region']" has attribute "data-disabled" "true"
+    Then  the element "[data-check='add-ignore-region']" has attribute "data-disabled" "true"
+    Then  the element "[data-check='save-ignore-region']" does not have attribute "data-disabled" "true"
+
     # accept icon before acceptance
     Then the element with locator "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" should have has attribute "data-test-icon-type=outline"
     Then the css attribute "color" from element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" is "rgba(134,142,150,1)"
@@ -91,6 +103,18 @@ Feature: Check Detail Appearance
     # default view
     Then the element with locator "[data-segment-value='actual']" should have attribute "data-segment-active" "true"
 
+    # view segment disabled states (PASSED check)
+    Then the element with locator "[data-segment-value='expected']" should have attribute "data-segment-disabled" "false"
+    Then the element with locator "[data-segment-value='actual']" should have attribute "data-segment-disabled" "false"
+    Then the element with locator "[data-segment-value='diff']" should have attribute "data-segment-disabled" "true"
+    Then the element with locator "[data-segment-value='slider']" should have attribute "data-segment-disabled" "true"
+
+    # action icons (PASSED check)
+    Then  the element "[data-check='highlight-icon']" has attribute "data-disabled" "true"
+    Then  the element "[data-check='remove-ignore-region']" has attribute "data-disabled" "true"
+    Then  the element "[data-check='add-ignore-region']" does not have attribute "data-disabled" "true"
+    Then  the element "[data-check='save-ignore-region']" does not have attribute "data-disabled" "true"
+
     # FAILED
     When I accept via http the 1st check with name "CheckName"
     Given I create "1" tests with:
@@ -121,3 +145,15 @@ Feature: Check Detail Appearance
 
     # default view
     Then the element with locator "[data-segment-value='diff']" should have attribute "data-segment-active" "true"
+
+    # view segment disabled states (FAILED check)
+    Then the element with locator "[data-segment-value='expected']" should have attribute "data-segment-disabled" "false"
+    Then the element with locator "[data-segment-value='actual']" should have attribute "data-segment-disabled" "false"
+    Then the element with locator "[data-segment-value='diff']" should have attribute "data-segment-disabled" "false"
+    Then the element with locator "[data-segment-value='slider']" should have attribute "data-segment-disabled" "false"
+
+    # action icons (FAILED check)
+    Then  the element "[data-check='highlight-icon']" does not have attribute "data-disabled" "true"
+    Then  the element "[data-check='remove-ignore-region']" has attribute "data-disabled" "true"
+    Then  the element "[data-check='add-ignore-region']" does not have attribute "data-disabled" "true"
+    Then  the element "[data-check='save-ignore-region']" does not have attribute "data-disabled" "true"

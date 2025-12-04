@@ -56,10 +56,10 @@ Feature: Check details Related Checks
                 browserName: firefox
       """
 
-    # other name
+    # other name - use unique test name to avoid unfold ambiguity
     Given I create "1" tests with:
       """
-          testName: TestName-Related-3
+          testName: TestName-Related-4
           project: Project1
           branch: integration1
           browserName: safari
@@ -76,7 +76,8 @@ Feature: Check details Related Checks
     When I unfold the test "TestName-Related-1"
     When I unfold the test "TestName-Related-2"
     When I unfold the test "TestName-Related-3"
-    When I open the 3st check "CheckName-Related"
+    When I unfold the test "TestName-Related-4"
+    When I open the 3rd check "CheckName-Related"
 
     # 3
     When I wait 10 seconds for the element with locator "[data-related-check-item='CheckName-Related']" to be visible
