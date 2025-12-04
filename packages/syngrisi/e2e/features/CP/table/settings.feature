@@ -15,6 +15,7 @@ Feature: Tests Table Settings
               checkName: Check - 1
       """
     When I go to "main" page
+    When I wait for test "TestName" to appear in table
     When I wait 10 seconds for the element with locator "[data-test='table-header-Id']" to be visible
     Then the element with locator "[data-test='table-header-Id']" should be visible
     Then the element with locator "[data-test='table-header-Name']" should be visible
@@ -60,7 +61,7 @@ Feature: Tests Table Settings
               checkName: Check - 1
       """
     When I go to "main" page
-    When I wait 10 seconds for the element with locator "[data-table-test-name=TestName-0]" for 10000ms to be visible
+    When I wait for test "TestName-0" to appear in table
     When I wait 10 seconds for the element with locator "[data-table-test-name=TestName-1]" for 10000ms to be visible
     When I wait 10 seconds for the element with locator "[data-table-test-name=TestName-2]" for 10000ms to be visible
     When I execute javascript code:
