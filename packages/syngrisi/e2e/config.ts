@@ -72,6 +72,10 @@ export const env = cleanEnv(process.env, {
     default: 'true',
     desc: 'Keep Logto containers running between tests (set to "false" in CI for clean state)'
   }),
+  E2E_STABILIZATION_DELAY: num({
+    default: 2000,
+    desc: 'Delay in ms after server HTTP ready before starting tests (allows MongoDB indexing)'
+  }),
   LOGTO_PORT: num({
     default: 3001,
     desc: 'Logto main port'

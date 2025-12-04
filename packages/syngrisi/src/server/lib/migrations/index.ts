@@ -27,6 +27,18 @@ export const runMigrations = async (
         throw new Error('Cannot run migrations, mongoose connection is not ready');
     }
 
+    // Skip migrations for fresh test databases (optimization for E2E tests)
+    // Fresh DBs don't need migrations and checking them adds overhead
+    const isTestDb = mongoose.connection.name?.includes('Test');
+    if (isTestDb && process.env.SYNGRISI_TEST_MODE === 'true') {
+        // Quick check: if no collections exist, skip migrations entirely
+        const collections = await mongoose.connection.db?.listCollections().toArray();
+        if (!collections || collections.length === 0) {
+            log.debug('Skipping migrations for fresh test database', { scope: 'migration' });
+            return;
+        }
+    }
+
     const applied = await readAppliedMigrationNames();
 
     for (const migration of migrations) {

@@ -10,6 +10,16 @@ function hashApiKey(apiKey: string): string {
     return crypto.createHash('sha512').update(apiKey).digest('hex');
 }
 
+// File buffer cache to avoid repeated disk reads
+const fileBufferCache = new Map<string, Buffer>();
+function getCachedFileBuffer(filePath: string): Buffer {
+    const cached = fileBufferCache.get(filePath);
+    if (cached) return cached;
+    const buffer = fs.readFileSync(filePath);
+    fileBufferCache.set(filePath, buffer);
+    return buffer;
+}
+
 import { SyngrisiDriver } from '@syngrisi/wdio-sdk';
 
 Given('I create a test run {string} with {int} checks', async ({ appServer }, runName, checkCount) => {
@@ -40,11 +50,13 @@ Given('I create a test run {string} with {int} checks', async ({ appServer }, ru
     const repoRoot = path.resolve(__dirname, '..', '..', '..', '..');
     const filePath = 'files/A.png';
     const fullPath = path.join(repoRoot, 'syngrisi', 'tests', filePath);
-    const imageBuffer = fs.readFileSync(fullPath);
+    const imageBuffer = getCachedFileBuffer(fullPath);
 
-    // Create checks in ascending order so "Check 1" is the oldest, matching UI navigation order
+    // Create checks in parallel with concurrency control (was sequential with 100ms delays)
+    const concurrency = 5;
+    const checkPromises: Promise<void>[] = [];
     for (let i = 1; i <= checkCount; i++) {
-        await vDriver.check({
+        const checkPromise = vDriver.check({
             checkName: `Check ${i}`,
             imageBuffer,
             params: {
@@ -53,7 +65,12 @@ Given('I create a test run {string} with {int} checks', async ({ appServer }, ru
                 os: 'macOS',
             }
         });
-        await new Promise(r => setTimeout(r, 100));
+        checkPromises.push(checkPromise);
+        // Execute in batches of `concurrency`
+        if (checkPromises.length >= concurrency || i === checkCount) {
+            await Promise.all(checkPromises);
+            checkPromises.length = 0;
+        }
     }
     await vDriver.stopTestSession();
 });
@@ -86,12 +103,15 @@ Given('I create a test run {string} with checks:', async ({ appServer }, runName
     const repoRoot = path.resolve(__dirname, '..', '..', '..', '..');
     const filePath = 'files/A.png';
     const fullPath = path.join(repoRoot, 'syngrisi', 'tests', filePath);
-    const imageBuffer = fs.readFileSync(fullPath);
+    const imageBuffer = getCachedFileBuffer(fullPath);
 
     const checks = dataTable.hashes();
-    // Preserve the order provided in the table so navigation order matches expectations
-    for (const check of checks) {
-        await vDriver.check({
+    // Create checks in parallel with concurrency control (was sequential with 100ms delays)
+    const concurrency = 5;
+    const checkPromises: Promise<void>[] = [];
+    for (let i = 0; i < checks.length; i++) {
+        const check = checks[i];
+        const checkPromise = vDriver.check({
             checkName: check.Name,
             imageBuffer,
             params: {
@@ -100,7 +120,12 @@ Given('I create a test run {string} with checks:', async ({ appServer }, runName
                 os: 'macOS',
             }
         });
-        await new Promise(r => setTimeout(r, 100));
+        checkPromises.push(checkPromise);
+        // Execute in batches of `concurrency`
+        if (checkPromises.length >= concurrency || i === checks.length - 1) {
+            await Promise.all(checkPromises);
+            checkPromises.length = 0;
+        }
     }
     await vDriver.stopTestSession();
 });

@@ -33,6 +33,7 @@ export default function AdminLogsTable({ infinityQuery, visibleFields }: Props) 
     const { classes, cx } = useStyles();
     const [selection, setSelection]: [string[], any] = useState([]);
     const scrollAreaRef = useRef(null);
+    const viewportRef = useRef<HTMLDivElement>(null);
     // const { updateToolbar }: any = useContext(AppContext);
     const toggleAllRows = () => setSelection(
         (current: string) => (current.length === flatData.length ? [] : flatData.map((item: ILog) => item.id)),
@@ -42,6 +43,7 @@ export default function AdminLogsTable({ infinityQuery, visibleFields }: Props) 
             <ScrollArea.Autosize
                 data-test="table-scroll-area"
                 ref={scrollAreaRef}
+                viewportRef={viewportRef}
                 maxHeight="100vh"
                 sx={{ width: '100%', paddingBottom: 115 }}
                 styles={{ scrollbar: { marginTop: '46px' } }}
@@ -68,7 +70,7 @@ export default function AdminLogsTable({ infinityQuery, visibleFields }: Props) 
                         visibleFields={visibleFields}
                     />
                     </tbody>
-                    <InfinityScrollSkeleton infinityQuery={infinityQuery} visibleFields={visibleFields} />
+                    <InfinityScrollSkeleton infinityQuery={infinityQuery} visibleFields={visibleFields} scrollRootRef={viewportRef} />
                 </Table>
             </ScrollArea.Autosize>
             <PagesCountAffix

@@ -18,11 +18,18 @@ const paginate = (schema: Schema) => {
     let sort: string | object;
     if (options.sortBy) {
       const sortingCriteria: string[] = [];
+      let primaryOrder = 'desc'; // Track order of the first sort criterion
       options.sortBy.split(',')
-        .forEach((sortOption: string) => {
+        .forEach((sortOption: string, index: number) => {
           const [key, order] = sortOption.split(':');
+          if (index === 0) primaryOrder = order || 'asc';
           sortingCriteria.push((order === 'desc' ? '-' : '') + key);
         });
+      // Add _id as secondary sort to ensure stable ordering when primary field values are equal
+      // Use same direction as the primary sort
+      if (!sortingCriteria.some(s => s === '_id' || s === '-_id')) {
+        sortingCriteria.push((primaryOrder === 'desc' ? '-' : '') + '_id');
+      }
       sort = sortingCriteria.join(' ');
     } else {
       sort = { _id: -1 };

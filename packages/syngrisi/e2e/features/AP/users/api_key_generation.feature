@@ -4,8 +4,8 @@ Feature: API key generation
   Background:
     When I set env variables:
     """
-          SYNGRISI_TEST_MODE: true
-          SYNGRISI_AUTH: false
+    SYNGRISI_TEST_MODE: true
+    SYNGRISI_AUTH: false
     """
     Given I start Server
     When I create via http test user
@@ -15,7 +15,7 @@ Feature: API key generation
     SYNGRISI_TEST_MODE: true
     SYNGRISI_AUTH: true
     """
-#         Given I start Server and start Driver
+    Given I start Server
     When I login via http with user:"Test" password "123456aA-"
 
   @smoke

@@ -161,12 +161,13 @@ Feature: Check details Related Checks
     Then the element "//*[@data-related-check='browser-name' and text()='firefox']" does appear exactly "0" times
 
   Scenario: Related - sort by Date
-    Given I create "3" tests with:
+    # Create tests one by one with delays to ensure distinct createdDate values for reliable sorting
+    Given I create "1" tests with:
       """
-          testName: TestName-Related-$
+          testName: TestName-Related-0
           project: Project1
-          branch: integration$
-          browserName: safari$
+          branch: integration0
+          browserName: safari0
           os: Windows
           viewport: 500x500
           checks:
@@ -174,7 +175,39 @@ Feature: Check details Related Checks
                 filePath: files/A.png
                 os: Windows
                 viewport: 500x500
-                browserName: safari$
+                browserName: safari0
+      """
+    When I pause for 100 ms
+    Given I create "1" tests with:
+      """
+          testName: TestName-Related-1
+          project: Project1
+          branch: integration1
+          browserName: safari1
+          os: Windows
+          viewport: 500x500
+          checks:
+              - checkName: CheckName-Related
+                filePath: files/A.png
+                os: Windows
+                viewport: 500x500
+                browserName: safari1
+      """
+    When I pause for 100 ms
+    Given I create "1" tests with:
+      """
+          testName: TestName-Related-2
+          project: Project1
+          branch: integration2
+          browserName: safari2
+          os: Windows
+          viewport: 500x500
+          checks:
+              - checkName: CheckName-Related
+                filePath: files/A.png
+                os: Windows
+                viewport: 500x500
+                browserName: safari2
       """
 
     When I go to "main" page

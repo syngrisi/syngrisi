@@ -97,7 +97,7 @@ Feature: Check details Resize and Pan
       """
     Then I expect the stored "js" string is equal:
       """
-      1
+      1.00
       """
 
     # emulate vertical mouse wheels with control key (move right and bottom)

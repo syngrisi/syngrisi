@@ -32,7 +32,13 @@ export default function IndexLayout() {
                 main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
             })}
         >
-            {isBaselinesPage ? <Baselines updateToolbar={updateToolbar} /> : <Tests updateToolbar={updateToolbar} />}
+            <main
+                role="main"
+                aria-label="Test results content"
+                style={{ width: '100%' }}
+            >
+                {isBaselinesPage ? <Baselines updateToolbar={updateToolbar} /> : <Tests updateToolbar={updateToolbar} />}
+            </main>
             <ReactQueryDevtools initialIsOpen={false} />
         </AppShell>
     );

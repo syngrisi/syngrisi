@@ -65,22 +65,27 @@ export async function createTestsUsers(): Promise<void> {
         }
 
         // Wait for all created users to be findable by apiKey (ensures MongoDB indexing is complete)
+        // Run checks in parallel for all users instead of sequentially
         if (createdApiKeys.length > 0) {
             log.info(`Waiting for ${createdApiKeys.length} users to be indexed by apiKey...`, logOpts);
-            for (const apiKey of createdApiKeys) {
-                const indexed = await waitForCondition(
-                    async () => {
-                        const found = await User.findOne({ apiKey });
-                        return !!found;
-                    },
-                    5000, // 5 second timeout per user
-                    50    // check every 50ms
-                );
-                if (!indexed) {
-                    log.error(`✗ User with apiKey ${apiKey.substring(0, 16)}... not indexed after 5s`, logOpts);
-                }
-            }
-            log.info(`✓ All test users indexed and findable by apiKey`, logOpts);
+            const indexingResults = await Promise.all(
+                createdApiKeys.map(async (apiKey) => {
+                    const indexed = await waitForCondition(
+                        async () => {
+                            const found = await User.findOne({ apiKey });
+                            return !!found;
+                        },
+                        2000, // 2 second timeout (reduced from 5s - indexing usually takes <500ms)
+                        25    // check every 25ms (faster polling)
+                    );
+                    if (!indexed) {
+                        log.error(`✗ User with apiKey ${apiKey.substring(0, 16)}... not indexed after 2s`, logOpts);
+                    }
+                    return { apiKey: apiKey.substring(0, 16), indexed };
+                })
+            );
+            const allIndexed = indexingResults.every(r => r.indexed);
+            log.info(`✓ All test users indexed and findable by apiKey: ${allIndexed}`, logOpts);
         }
 
         const users = await User.find({});

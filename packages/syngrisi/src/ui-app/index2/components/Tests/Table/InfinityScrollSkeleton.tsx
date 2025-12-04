@@ -1,6 +1,5 @@
 /* eslint-disable indent,react/jsx-indent */
-import React, { useEffect } from 'react';
-import { useInView } from 'react-intersection-observer';
+import React, { useEffect, useState, useRef } from 'react';
 import { Skeleton } from '@mantine/core';
 
 import { tableColumns } from '@index/components/Tests/Table/tableColumns';
@@ -8,20 +7,78 @@ import { tableColumns } from '@index/components/Tests/Table/tableColumns';
 interface Props {
     infinityQuery: any,
     visibleFields: any,
+    scrollRootRef?: React.RefObject<HTMLDivElement>
 }
 
-function InfinityScrollSkeleton({ infinityQuery, visibleFields }: Props) {
-    const { ref, inView } = useInView();
+function InfinityScrollSkeleton({ infinityQuery, visibleFields, scrollRootRef }: Props) {
+    const [root, setRoot] = useState<HTMLElement | null>(null);
+    const checkIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    const tfootRef = useRef<HTMLTableSectionElement | null>(null);
 
+    // Poll for scrollRootRef.current until it becomes available
     useEffect(() => {
-        if (infinityQuery === null) return;
-        if (inView) {
-            infinityQuery.fetchNextPage();
+        if (root) return;
+
+        const checkForRoot = () => {
+            if (scrollRootRef?.current && scrollRootRef.current !== root) {
+                setRoot(scrollRootRef.current);
+                if (checkIntervalRef.current) {
+                    clearInterval(checkIntervalRef.current);
+                    checkIntervalRef.current = null;
+                }
+            }
+        };
+
+        checkForRoot();
+
+        if (!root) {
+            checkIntervalRef.current = setInterval(checkForRoot, 100);
         }
-    }, [inView]);
+
+        return () => {
+            if (checkIntervalRef.current) {
+                clearInterval(checkIntervalRef.current);
+            }
+        };
+    }, [scrollRootRef, root]);
+
+    // Use scroll-based detection instead of IntersectionObserver
+    useEffect(() => {
+        if (!root || infinityQuery === null) return;
+
+        const checkShouldLoad = () => {
+            if (!tfootRef.current || !root) return;
+            if (!infinityQuery.hasNextPage || infinityQuery.isFetchingNextPage) return;
+
+            const rootRect = root.getBoundingClientRect();
+            const tfootRect = tfootRef.current.getBoundingClientRect();
+
+            // Load more if tfoot is within 400px of viewport
+            const margin = 400;
+            const isNearViewport = tfootRect.top < rootRect.bottom + margin;
+
+            if (isNearViewport) {
+                infinityQuery.fetchNextPage();
+            }
+        };
+
+        // Check on scroll
+        const handleScroll = () => {
+            checkShouldLoad();
+        };
+
+        // Check immediately on mount/update
+        checkShouldLoad();
+
+        root.addEventListener('scroll', handleScroll, { passive: true });
+
+        return () => {
+            root.removeEventListener('scroll', handleScroll);
+        };
+    }, [root, infinityQuery?.hasNextPage, infinityQuery?.isFetchingNextPage]);
 
     return (
-        <tfoot ref={ref} style={{ marginBottom: -100 }}>
+        <tfoot ref={tfootRef}>
         {
             (infinityQuery === null || infinityQuery.hasNextPage) && (
                 Object.keys(new Array(6).fill('')).map(

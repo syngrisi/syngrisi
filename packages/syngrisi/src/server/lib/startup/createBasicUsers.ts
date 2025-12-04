@@ -49,22 +49,27 @@ export async function createBasicUsers(): Promise<void> {
     }
 
     // Wait for created users to be indexed in MongoDB (prevents 401 race condition)
+    // Run checks in parallel for all users instead of sequentially
     if (createdUsers.length > 0) {
         log.info(`Waiting for ${createdUsers.length} basic users to be indexed...`, logOpts);
-        for (const user of createdUsers) {
-            const indexed = await waitForCondition(
-                async () => {
-                    const found = await User.findOne({ username: user.username });
-                    return !!found;
-                },
-                5000, // 5 second timeout per user
-                50    // check every 50ms
-            );
-            if (!indexed) {
-                log.error(`✗ User ${user.username} not indexed after 5s`, logOpts);
-            }
-        }
-        log.info(`✓ All basic users indexed`, logOpts);
+        const indexingResults = await Promise.all(
+            createdUsers.map(async (user) => {
+                const indexed = await waitForCondition(
+                    async () => {
+                        const found = await User.findOne({ username: user.username });
+                        return !!found;
+                    },
+                    2000, // 2 second timeout (reduced from 5s - indexing usually takes <500ms)
+                    25    // check every 25ms (faster polling)
+                );
+                if (!indexed) {
+                    log.error(`✗ User ${user.username} not indexed after 2s`, logOpts);
+                }
+                return { username: user.username, indexed };
+            })
+        );
+        const allIndexed = indexingResults.every(r => r.indexed);
+        log.info(`✓ All basic users indexed: ${allIndexed}`, logOpts);
     }
 
     // Verify users exist after creation
