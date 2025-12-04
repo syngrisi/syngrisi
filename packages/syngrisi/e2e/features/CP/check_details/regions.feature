@@ -14,6 +14,7 @@ Feature: Check details - Regions
       When I accept via http the 1st check with name "CheckName"
 
       When I go to "main" page
+      When I wait for test "TestName" to appear in table
       When I unfold the test "TestName"
       When I click element with locator "[data-test-preview-image='CheckName']"
       When I wait 10 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
@@ -175,6 +176,7 @@ Feature: Check details - Regions
 
       # open second check and check region presence
       When I go to "main" page
+      When I wait for test "TestName" to appear in table
       When I unfold the test "TestName"
       When I click element with locator "[data-test-preview-image='CheckName']"
 
@@ -189,6 +191,7 @@ Feature: Check details - Regions
       When I accept via http the 2st check with name "CheckName"
 
       When I go to "main" page
+      When I wait for test "TestName" to appear in table
       When I unfold the test "TestName"
       When I click element with locator "[data-test-preview-image='CheckName']"
 
