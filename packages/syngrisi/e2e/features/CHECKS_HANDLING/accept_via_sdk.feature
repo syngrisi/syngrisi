@@ -21,6 +21,7 @@ Feature: Accept check via SDK
         When I set the API key in config
         When I start Driver
 
+    @smoke
     Scenario: Accept new check via SDK acceptCheck method
         Given I create "1" tests with:
             """

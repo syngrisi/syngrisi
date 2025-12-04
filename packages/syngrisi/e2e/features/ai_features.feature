@@ -18,6 +18,7 @@ Feature: AI Features
       }
       """
 
+  @smoke
   Scenario: List checks via AI endpoint
     When I request "/ai/checks" with API key
     Then I should receive an HTML response

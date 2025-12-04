@@ -24,6 +24,7 @@ Feature: Check Preview - Tooltip
     When I set the API key in config
     When I start Driver
 
+  @smoke
   Scenario: Status View - Tooltip
     When I login with user:"Test" password "123456aA-"
     # NEW

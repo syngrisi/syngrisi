@@ -6,6 +6,7 @@ Feature: Bulk test Apply
     When I open the app
     When I clear local storage
 
+  @smoke
   Scenario: Apply 2 tests
     Given I create "2" tests with:
       """

@@ -5,6 +5,7 @@ Feature: Quick Filtering
   When I open the app
   When I clear local storage
 
+  @smoke
   Scenario: Quick Filtering
   When I create "2" tests with:
       """

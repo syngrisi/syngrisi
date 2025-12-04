@@ -6,6 +6,7 @@ Feature: Bulk test Delete
     When I open the app
     When I clear local storage
 
+  @smoke
   Scenario: Delete 2 tests
     Given I create "2" tests with:
       """

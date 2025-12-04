@@ -7,6 +7,7 @@ Feature: Spotlight
     When I clear local storage
     When I go to "main" page
 
+  @smoke
   Scenario: Spotlight Appear
     # using keystrokes
     Then I wait on element ".mantine-Spotlight-spotlight" to not be displayed

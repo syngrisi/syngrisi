@@ -18,6 +18,7 @@ Feature: Logout
       """
   #         Given I start Server and start Driver
 
+  @smoke
   Scenario: Logout - default Test user
     When I login with user:"Test" password "123456aA-"
     When I wait 10 seconds for the element with locator "span*=TA" to be visible

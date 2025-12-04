@@ -15,6 +15,7 @@ Feature: Remove item
               filePath: files/A.png
       """
 
+  @smoke
   Scenario: Remove Run
     When I go to "main" page
     When I wait 10 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName-0')]" to be visible

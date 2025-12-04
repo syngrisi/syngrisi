@@ -3,6 +3,7 @@ Feature: SSO Common Scenarios and Edge Cases
   # Common SSO scenarios that don't depend on specific protocol (OAuth2/SAML)
   # These tests verify general SSO functionality and error handling
 
+  @smoke
   Scenario: Login attempt when SSO is disabled
     # Test that SSO redirect is properly handled when SSO is disabled
     When I set env variables:

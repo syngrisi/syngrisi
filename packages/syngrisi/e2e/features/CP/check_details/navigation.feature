@@ -1,9 +1,11 @@
+@fast-server
 Feature: Check Details Navigation
 
     Background:
         Given I start Server and start Driver
         And I clear database
 
+    @smoke
     Scenario: Navigate between checks in a test
         Given I create a test run "Test 1" with 3 checks
         When I go to "main" page

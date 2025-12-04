@@ -21,6 +21,7 @@ Feature: Default Users
     When I login with user:"Test" password "123456aA-"
     When I wait 10 seconds for the element with locator "span*=TA" to be visible
 
+  @smoke
   Scenario: Default Administrator and Guest should be created after first server start
     When I go to "admin>users" page
     Then the element with locator "//*[@data-test='user-list-email' and @value='Administrator']/../../..//input[@aria-label='First Name' and @value='Syngrisi']" should be visible
