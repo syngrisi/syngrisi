@@ -1,6 +1,6 @@
 metadata:
   category: domain/app
-  generatedAt: '2025-12-03T16:12:03.042Z'
+  generatedAt: '2025-12-04T06:13:58.723Z'
   totalFiles: 19
   totalSteps: 121
   sourceFiles:
@@ -89,37 +89,37 @@ steps:
     line: 10
   - pattern: I log out of the application
     description: ''
-    line: 159
+    line: 151
   - pattern: I login with user:{string} password {string}
     description: ''
     line: 9
   - pattern: I click the {string} button
     description: ''
-    line: 108
+    line: 133
   - pattern: I create a test run {string} with {int} checks
     description: ''
-    line: 15
+    line: 25
   - pattern: 'I create a test run {string} with checks:'
     description: ''
-    line: 61
+    line: 78
   - pattern: I should see the check details for {string}
     description: ''
-    line: 140
+    line: 165
   - pattern: the {string} button should be {string}
     description: ''
-    line: 122
+    line: 147
   - pattern: I accept the {string} check
     description: ''
     line: 7
   - pattern: I delete the {string} check
     description: ''
-    line: 57
+    line: 59
   - pattern: I open the {ordinal} check {string}
     description: ''
     line: 37
   - pattern: I remove the {string} check
     description: ''
-    line: 91
+    line: 93
   - pattern: I run CLI task {string} with args {string}
     description: ''
     line: 11
@@ -347,7 +347,7 @@ steps:
     line: 12
   - pattern: the current url contains {string}
     description: ''
-    line: 65
+    line: 77
   - pattern: I clear database
     description: ''
     line: 218
@@ -486,10 +486,10 @@ steps:
     line: 53
   - pattern: 'I create {string} tests with params:'
     description: ''
-    line: 439
+    line: 477
   - pattern: 'I create {string} tests with:'
     description: ''
-    line: 431
+    line: 469
   - pattern: I unfold the test {string}
     description: ''
-    line: 547
+    line: 585

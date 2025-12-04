@@ -12,12 +12,10 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Configuration
-STAGING_WORKTREE_PATH="/Users/a1/Projects/SYNGRISI_STAGE"
-STAGING_DB_NAME="VRSdb_stage"
-STAGING_PORT="5252"
-BASELINES_PATH="/Users/a1/Projects/SYNGRISI_STAGE_DATA/baselines-2025-11-14"
-MONGODB_URI="mongodb://localhost:27017"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+STAGING_ENV_FILE="${REPO_ROOT}/.env.staging"
+STAGING_ENV_EXAMPLE="${REPO_ROOT}/.env.staging.example"
 
 # Helper functions
 log_info() {
@@ -32,6 +30,35 @@ log_section() {
     echo -e "${BLUE}╔══════════════════════════════════════════════════════════════╗${NC}"
     echo -e "${BLUE}║  $1${NC}"
     echo -e "${BLUE}╚══════════════════════════════════════════════════════════════╝${NC}"
+}
+
+ensure_env_loaded() {
+    if [ ! -f "${STAGING_ENV_FILE}" ]; then
+        log_error "Staging env file not found: ${STAGING_ENV_FILE}"
+        log_error "Create it (cp ${STAGING_ENV_EXAMPLE} ${STAGING_ENV_FILE}) and fill in values"
+        exit 1
+    fi
+
+    set -o allexport
+    # shellcheck disable=SC1090
+    source "${STAGING_ENV_FILE}"
+    set +o allexport
+
+    local required_vars=(
+        STAGING_WORKTREE_PATH
+        STAGING_DB_NAME
+        STAGING_PORT
+        STAGING_BASELINES_PATH
+        STAGING_DATA_REPO_PATH
+        STAGING_MONGODB_URI
+    )
+
+    for var in "${required_vars[@]}"; do
+        if [ -z "${!var}" ]; then
+            log_error "Missing required variable '${var}' in ${STAGING_ENV_FILE}"
+            exit 1
+        fi
+    done
 }
 
 check_worktree() {
@@ -68,7 +95,8 @@ check_worktree() {
 check_server() {
     log_section "Server Status"
 
-    local PID=$(lsof -ti:${STAGING_PORT} 2>/dev/null || true)
+    local PID
+    PID=$(lsof -ti:"${STAGING_PORT}" 2>/dev/null || true)
 
     if [ -n "${PID}" ]; then
         echo -e "${GREEN}✓${NC} Server is RUNNING"
@@ -85,19 +113,25 @@ check_server() {
 check_database() {
     log_section "Database Status"
 
-    if mongosh --quiet --eval "db.version()" "${MONGODB_URI}" &>/dev/null; then
+    if mongosh --quiet --eval "db.version()" "${STAGING_MONGODB_URI}" &>/dev/null; then
         echo -e "${GREEN}✓${NC} MongoDB is running"
 
         # Check if staging database exists
-        local DB_EXISTS=$(mongosh --quiet --eval "db.getMongo().getDBNames().includes('${STAGING_DB_NAME}')" "${MONGODB_URI}")
+        local DB_EXISTS
+        DB_EXISTS=$(mongosh --quiet --eval "db.getMongo().getDBNames().includes('${STAGING_DB_NAME}')" "${STAGING_MONGODB_URI}")
 
         if [ "${DB_EXISTS}" = "true" ]; then
             echo -e "${GREEN}✓${NC} Database '${STAGING_DB_NAME}' exists"
 
             # Get collection counts
+            if [ -z "${STAGING_MONGODB_URI}" ]; then
+                log_error "STAGING_MONGODB_URI is empty; check ${STAGING_ENV_FILE}"
+                return
+            fi
+            local FULL_MONGO_URI="${STAGING_MONGODB_URI%/}/${STAGING_DB_NAME}"
             echo ""
             echo "Collection counts:"
-            mongosh --quiet "${MONGODB_URI}/${STAGING_DB_NAME}" --eval "
+            mongosh --quiet "${FULL_MONGO_URI}" --eval "
                 db.getCollectionNames().forEach(function(collection) {
                     var count = db[collection].countDocuments();
                     if (count > 0) {
@@ -118,21 +152,24 @@ check_database() {
 check_images() {
     log_section "Images Status"
 
-    if [ -d "${BASELINES_PATH}" ]; then
+    if [ -d "${STAGING_BASELINES_PATH}" ]; then
         echo -e "${GREEN}✓${NC} Baselines path exists"
-        echo "  Path: ${BASELINES_PATH}"
+        echo "  Path: ${STAGING_BASELINES_PATH}"
 
         # Count images
-        local IMAGE_COUNT=$(find "${BASELINES_PATH}" -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" \) | wc -l | tr -d ' ')
+        local IMAGE_COUNT
+        IMAGE_COUNT=$(find "${STAGING_BASELINES_PATH}" -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" \) | wc -l | tr -d ' ')
         echo "  Images: ${IMAGE_COUNT}"
 
         # Check disk usage
-        local DISK_USAGE=$(du -sh "${BASELINES_PATH}" 2>/dev/null | cut -f1)
+        local DISK_USAGE
+        DISK_USAGE=$(du -sh "${STAGING_BASELINES_PATH}" 2>/dev/null | cut -f1)
         echo "  Disk usage: ${DISK_USAGE}"
 
         # Check git status
-        cd "/Users/a1/Projects/SYNGRISI_STAGE_DATA"
-        local GIT_STATUS=$(git status --short | wc -l | tr -d ' ')
+        cd "${STAGING_DATA_REPO_PATH}"
+        local GIT_STATUS
+        GIT_STATUS=$(git status --short | wc -l | tr -d ' ')
         if [ "${GIT_STATUS}" = "0" ]; then
             echo -e "${GREEN}✓${NC} Git: clean (no modifications)"
         else
@@ -140,7 +177,8 @@ check_images() {
             echo "  Reset: ./scripts/staging-control.sh reset"
         fi
 
-        local CURRENT_COMMIT=$(git log -1 --oneline)
+        local CURRENT_COMMIT
+        CURRENT_COMMIT=$(git log -1 --oneline)
         echo "  Commit: ${CURRENT_COMMIT}"
     else
         echo -e "${RED}✗${NC} Baselines path not found"
@@ -151,6 +189,7 @@ check_images() {
 # Main execution
 main() {
     echo ""
+    ensure_env_loaded
     check_worktree
     check_server
     check_database

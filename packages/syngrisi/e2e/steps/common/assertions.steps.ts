@@ -631,19 +631,22 @@ async function checkElementContainsText(
     throw error;
   }
   // If checking test status, wait for status to change from "Running" using polling
+  // Optimized: exponential backoff starting at 100ms, max 30s total (was 90s with 1s intervals)
   if (selector.includes('table-row-Status') && expected !== 'Running') {
-    // Use polling to wait for status change (as tests may take time to complete)
-    const maxAttempts = 90; // 90 seconds with 1 second intervals (tests may take time to process)
-    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    const maxWaitMs = 30000; // 30 seconds max (reduced from 90s)
+    const startTime = Date.now();
+    let interval = 100; // Start with 100ms
+    let attempt = 0;
+    while (Date.now() - startTime < maxWaitMs) {
       const text = await locator.first().textContent();
       const trimmedText = text?.trim() || '';
       if (trimmedText === expected || trimmedText.toLowerCase() === expected.toLowerCase()) {
-        logger.info(`Test status changed to "${expected}" after ${attempt + 1} attempts`);
+        logger.info(`Test status changed to "${expected}" after ${attempt + 1} attempts (${Date.now() - startTime}ms)`);
         break;
       }
-      if (attempt < maxAttempts - 1) {
-        await page.waitForTimeout(1000);
-      }
+      await page.waitForTimeout(interval);
+      interval = Math.min(interval * 1.5, 1000); // Exponential backoff, max 1s
+      attempt++;
     }
   }
   // Handle placeholders like <YYYY-MM-DD> - replace with regex pattern for date matching
@@ -678,32 +681,33 @@ async function checkElementContainsText(
   if (texts.length === 0) {
     if (selector.includes("[data-check='")) {
       const matchCount = await locator.count();
-      const dataCheckSnapshot = await page.evaluate(() =>
-        Array.from(document.querySelectorAll('[data-check]')).map((el) => ({
+      // Optimized: Single evaluate call instead of 3 separate calls, limited DOM scan
+      const debugInfo = await page.evaluate((args) => {
+        const { sel, needle } = args;
+        // Get [data-check] elements (limited scope)
+        const dataCheckElements = Array.from(document.querySelectorAll('[data-check]')).slice(0, 20).map((el) => ({
           value: el.getAttribute('data-check'),
-          text: el.textContent,
-        }))
-      );
-      logger.info(
-        `Available [data-check] elements: ${JSON.stringify(dataCheckSnapshot)}; locator count=${matchCount}`
-      );
-      const targetOuterHtml = await page.evaluate((sel) => {
-        const node = document.querySelector(sel);
-        return node ? node.outerHTML : null;
-      }, selector);
-      logger.info(`OuterHTML for selector "${selector}": ${targetOuterHtml}`);
-      const textMatches = await page.evaluate((needle) =>
-        Array.from(document.querySelectorAll('*'))
+          text: (el.textContent || '').slice(0, 100),
+        }));
+        // Get target element
+        const targetNode = document.querySelector(sel);
+        const targetOuterHtml = targetNode ? targetNode.outerHTML.slice(0, 500) : null;
+        // Optimized text search: only check elements with data-test or data-check attributes
+        const textMatches = Array.from(document.querySelectorAll('[data-test], [data-check], td, span'))
           .filter((el) => (el.textContent || '').includes(needle))
           .slice(0, 5)
           .map((el) => ({
             tag: el.tagName,
-            text: el.textContent,
-            classes: el.className,
+            text: (el.textContent || '').slice(0, 100),
+            classes: (el as HTMLElement).className?.slice?.(0, 50) || '',
             dataCheck: el.getAttribute('data-check'),
-          }))
-        , renderedExpected);
-      logger.info(`Elements containing text "${renderedExpected}": ${JSON.stringify(textMatches)}`);
+          }));
+        return { dataCheckElements, targetOuterHtml, textMatches };
+      }, { sel: selector, needle: renderedExpected });
+
+      logger.info(`Available [data-check] elements: ${JSON.stringify(debugInfo.dataCheckElements)}; locator count=${matchCount}`);
+      logger.info(`OuterHTML for selector "${selector}": ${debugInfo.targetOuterHtml}`);
+      logger.info(`Elements containing text "${renderedExpected}": ${JSON.stringify(debugInfo.textMatches)}`);
     }
     throw new Error(`Expected at least one element for selector "${selector}", but none found`);
   }
@@ -742,7 +746,8 @@ When(
   'I wait on element {string} to not be displayed',
   async ({ page }, selector: string) => {
     const locator = getLocatorQuery(page, selector);
-    await locator.first().waitFor({ state: 'hidden', timeout: 30000 });
+    // Reduced from 30s to 15s - elements typically disappear quickly
+    await locator.first().waitFor({ state: 'hidden', timeout: 15000 });
   }
 );
 
@@ -750,7 +755,8 @@ When(
   'I wait on element {string} to not exist',
   async ({ page }, selector: string) => {
     const locator = getLocatorQuery(page, selector);
-    await locator.first().waitFor({ state: 'detached', timeout: 30000 });
+    // Reduced from 30s to 15s - elements typically detach quickly
+    await locator.first().waitFor({ state: 'detached', timeout: 15000 });
   }
 );
 
@@ -1277,5 +1283,63 @@ Then(
     const cookie = cookies.find((c) => c.name === name);
     expect(cookie).toBeDefined();
     expect(cookie?.value).toEqual(expectedValue);
+  }
+);
+
+/**
+ * Step definition: `Then the element {string} should have at least {int} items within {int} seconds`
+ *
+ * Polls for minimum item count with timeout. Use for pagination/infinite scroll scenarios.
+ *
+ * @param selector - CSS selector for items
+ * @param minCount - Minimum expected count
+ * @param seconds - Timeout in seconds
+ *
+ * @example
+ * ```gherkin
+ * Then the element "[data-test*='navbar_item_']" should have at least 21 items within 10 seconds
+ * ```
+ */
+Then(
+  'the element {string} should have at least {int} items within {int} seconds',
+  async ({ page }, selector: string, minCount: number, seconds: number) => {
+    const locator = getLocatorQuery(page, selector);
+
+    await expect.poll(
+      async () => await locator.count(),
+      {
+        message: `Waiting for at least ${minCount} items matching "${selector}"`,
+        timeout: seconds * 1000
+      }
+    ).toBeGreaterThanOrEqual(minCount);
+  }
+);
+
+/**
+ * Step definition: `Then the element {string} should have exactly {int} items within {int} seconds`
+ *
+ * Polls for exact item count with timeout.
+ *
+ * @param selector - CSS selector for items
+ * @param exactCount - Exact expected count
+ * @param seconds - Timeout in seconds
+ *
+ * @example
+ * ```gherkin
+ * Then the element "[data-test*='navbar_item_']" should have exactly 22 items within 10 seconds
+ * ```
+ */
+Then(
+  'the element {string} should have exactly {int} items within {int} seconds',
+  async ({ page }, selector: string, exactCount: number, seconds: number) => {
+    const locator = getLocatorQuery(page, selector);
+
+    await expect.poll(
+      async () => await locator.count(),
+      {
+        message: `Waiting for exactly ${exactCount} items matching "${selector}"`,
+        timeout: seconds * 1000
+      }
+    ).toBe(exactCount);
   }
 );

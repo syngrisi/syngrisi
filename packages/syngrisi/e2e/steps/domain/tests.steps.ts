@@ -14,6 +14,7 @@ import { SyngrisiDriver } from '@syngrisi/wdio-sdk';
 import type { TestStore } from '@fixtures';
 
 const logger = createLogger('TestsSteps');
+const timingLogger = createLogger('timing');
 
 function hashApiKey(apiKey: string): string {
   // hasha uses SHA-512 by default (as in wdio.conf.js:42)
@@ -132,6 +133,12 @@ async function createTestsWithParams(
   yml: string,
   options: CreateTestsOptions = {}
 ) {
+  const fastSeed = process.env.E2E_FAST_SEED === 'true';
+  const concurrency = 6;
+  const useSharedDriver = concurrency === 1;
+  const quickCheckMaxWaitMs = fastSeed ? 500 : 2000;
+  const waitAfterStopMs = fastSeed ? 10 : 100;
+
   const apiKey = process.env.SYNGRISI_API_KEY || '123';
   const hashedApiKey = hashApiKey(apiKey);
   testData.set('hashedApiKey', hashedApiKey);
@@ -147,22 +154,40 @@ async function createTestsWithParams(
         logger.info(`App server is not running on port ${serverPort}, starting before creating tests`);
         await appServer.start();
         serverWasStarted = true;
-        // Wait for server to be fully ready after startup
+        // Wait for server to be fully ready after startup using polling
         logger.info('Waiting for server to be fully ready...');
-        await new Promise((resolve) => setTimeout(resolve, 10000));
+        const maxWaitMs = 10000;
+        const pollIntervalMs = 200;
+        const startTime = Date.now();
+        while (Date.now() - startTime < maxWaitMs) {
+          if (await isServerRunning(serverPort)) {
+            logger.info('Server is ready');
+            break;
+          }
+          await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
+        }
       }
 
       let vDriver = testData.get('vDriver') as SyngrisiDriver | undefined;
-      // Recreate vDriver if server was just started or if vDriver is missing
-      if (!vDriver || serverWasStarted) {
+      // Recreate vDriver if server was just started or if vDriver is missing.
+      // When concurrency > 1 we avoid sharing the driver to prevent state races.
+      if (!useSharedDriver || !vDriver || serverWasStarted) {
         const baseURL = appServer.baseURL || `http://${env.E2E_BACKEND_HOST}:${appServer.serverPort || 3002}`;
         const normalizedURL = baseURL.endsWith('/') ? baseURL : `${baseURL}/`;
         vDriver = new SyngrisiDriver({
           url: normalizedURL,
           apiKey,
         });
-        testData.set('vDriver', vDriver);
-        logger.info(serverWasStarted ? 'SyngrisiDriver recreated after server restart' : 'SyngrisiDriver auto-initialized because it was missing');
+        if (useSharedDriver) {
+          testData.set('vDriver', vDriver);
+        }
+        logger.info(
+          serverWasStarted
+            ? 'SyngrisiDriver recreated after server restart'
+            : useSharedDriver
+              ? 'SyngrisiDriver auto-initialized because it was missing'
+              : 'SyngrisiDriver instantiated for fast seed'
+        );
       }
 
       const testIndex = index + 1;
@@ -200,7 +225,6 @@ async function createTestsWithParams(
 
       // Quick check that test is queryable (fast path - usually succeeds immediately)
       // MongoDB indexing typically completes within milliseconds for single documents
-      const quickCheckMaxWaitMs = 2000;
       const checkIntervalMs = 50;
       const startTime = Date.now();
       let testFound = false;
@@ -321,7 +345,9 @@ async function createTestsWithParams(
       }
 
       // Brief wait to allow session stop to propagate (much faster than polling)
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      if (waitAfterStopMs > 0) {
+        await new Promise((resolve) => setTimeout(resolve, waitAfterStopMs));
+      }
 
       return { testId, checkResults };
     } catch (error) {
@@ -332,22 +358,111 @@ async function createTestsWithParams(
 
   const count = parseInt(num, 10);
   const createdTestIds: string[] = [];
+  const tasks = Array.from({ length: count }, (_v, i) => i).map((i) => ({
+    index: i,
+    params: yaml.parse(yml.replace(/\$/g, String(i))),
+  }));
 
-  for (let i = 0; i < count; i++) {
-    const processedYml = yml.replace(/\$/g, String(i));
-    const params = yaml.parse(processedYml);
-    logger.info(`Creating test #${i + 1} with params:`, params);
-    const result = await createTest(params, i);
+  const testCreationStart = performance.now();
+  timingLogger.info(`[timing] Starting test creation: ${count} tests with concurrency=${concurrency}`);
+
+  let next = 0;
+  const runNext = async () => {
+    const current = next;
+    next += 1;
+    if (current >= tasks.length) return;
+    const { index, params } = tasks[current];
+    const singleTestStart = performance.now();
+    logger.info(`Creating test #${index + 1} with params:`, params);
+    const result = await createTest(params, index);
     if (result?.testId) {
       createdTestIds.push(result.testId);
     }
-  }
+    timingLogger.debug(`[timing] Test #${index + 1} created: ${Math.round(performance.now() - singleTestStart)}ms`);
+    await runNext();
+  };
+
+  const runners = Array.from({ length: Math.min(concurrency, tasks.length) }, () => runNext());
+  await Promise.all(runners);
+  timingLogger.info(`[timing] Test creation (${count} tests, concurrency=${concurrency}): ${Math.round(performance.now() - testCreationStart)}ms`);
 
   // Brief final wait to ensure all data is indexed (typically <100ms for batch operations)
   if (createdTestIds.length > 0) {
+    const verificationStart = performance.now();
     logger.info(`Created ${createdTestIds.length} test(s), waiting for indexing...`);
     await new Promise((resolve) => setTimeout(resolve, 500));
     logger.info(`All ${createdTestIds.length} test(s) ready`);
+
+    const apiBaseUrl = appServer.baseURL;
+    logger.info(
+      `Verification context: baseURL=${apiBaseUrl}, ` +
+      `TEST_WORKER_INDEX=${process.env.TEST_WORKER_INDEX || 'unset'}, ` +
+      `SYNGRISI_DB_URI=${process.env.SYNGRISI_DB_URI || 'unset'}, ` +
+      `createdTestIds=${createdTestIds.length}`
+    );
+
+    // Validate count via /v1/checks endpoint which supports API key auth
+    // (unlike /v1/tests which only supports session auth)
+    const maxRetries = 5;
+    const retryDelays = [500, 1000, 2000, 3000, 5000];
+    let lastError: Error | null = null;
+    let verificationPassed = false;
+
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        const listResp = await got.get(`${apiBaseUrl}/v1/checks?limit=${createdTestIds.length + 5}`, {
+          headers: { apikey: hashedApiKey },
+          throwHttpErrors: false,
+          timeout: { request: 5000 },
+        });
+
+        // Check content-type to detect HTML error pages
+        const contentType = listResp.headers['content-type'] || '';
+        const isJson = contentType.includes('application/json');
+        const isHtml = contentType.includes('text/html') || listResp.body?.startsWith('<!');
+
+        if (isHtml) {
+          const bodyPreview = listResp.body?.substring(0, 200) || '';
+          logger.warn(
+            `Attempt ${attempt + 1}/${maxRetries}: API returned HTML (status=${listResp.statusCode}). ` +
+            `Content-Type: ${contentType}. Body preview: ${bodyPreview}...`
+          );
+          throw new Error(`API returned HTML instead of JSON (status ${listResp.statusCode})`);
+        }
+
+        if (listResp.statusCode !== 200) {
+          throw new Error(`List verification failed: status ${listResp.statusCode}, body: ${listResp.body?.substring(0, 200)}`);
+        }
+
+        if (!isJson && listResp.body) {
+          logger.warn(`Response Content-Type is "${contentType}", attempting JSON parse anyway`);
+        }
+
+        const body = JSON.parse(listResp.body || '{}') as { totalResults?: number };
+        const total = body?.totalResults ?? 0;
+
+        if (total < createdTestIds.length) {
+          throw new Error(`List verification count mismatch: expected >=${createdTestIds.length} checks, got ${total}`);
+        }
+
+        logger.info(`List verification passed on attempt ${attempt + 1}: totalResults=${total}`);
+        verificationPassed = true;
+        break;
+      } catch (error) {
+        lastError = error as Error;
+        if (attempt < maxRetries - 1) {
+          const delay = retryDelays[attempt];
+          logger.warn(`Verification attempt ${attempt + 1} failed: ${lastError.message}. Retrying in ${delay}ms...`);
+          await new Promise((resolve) => setTimeout(resolve, delay));
+        }
+      }
+    }
+
+    timingLogger.info(`[timing] Verification: ${Math.round(performance.now() - verificationStart)}ms`);
+
+    if (!verificationPassed) {
+      throw new Error(`Failed to verify created checks via list endpoint after ${maxRetries} attempts: ${lastError?.message}`);
+    }
   }
 }
 

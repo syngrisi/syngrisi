@@ -78,22 +78,17 @@ When(
         }
       }
 
-      // Check if login was successful by waiting for URL change or error message
-      try {
-        // Wait for either success (URL change) or error (error message appears)
-        await Promise.race([
-          page.waitForURL((url) => !url.pathname.includes('/auth/login'), { timeout: 5000 }).catch(() => null),
-          page.locator('#error-message').waitFor({ state: 'visible', timeout: 5000 }).catch(() => null),
-        ]);
-      } catch (e) {
-        // Continue anyway
-      }
-
-      // Check if login was successful by checking for error message or user icon
-      // Wait a bit more for error message to appear (if login failed)
-      await page.waitForTimeout(2000);
-
+      // Optimized: Single Promise.race instead of two sequential ones (was 5s + 3s = 8s max)
+      // Wait for any of: URL change, error message, or user icon
       const errorMessage = page.locator('#error-message');
+      const userIcon = page.locator('[data-test="user-icon"]');
+
+      await Promise.race([
+        page.waitForURL((url) => !url.pathname.includes('/auth/login'), { timeout: 5000 }).catch(() => null),
+        errorMessage.waitFor({ state: 'visible', timeout: 5000 }).catch(() => null),
+        userIcon.waitFor({ state: 'visible', timeout: 5000 }).catch(() => null),
+      ]);
+
       const errorVisible = await errorMessage.isVisible().catch(() => false);
 
       if (!errorVisible && login && password) {
@@ -156,7 +151,10 @@ When(
 When('I log out of the application', async ({ page, appServer }: { page: Page; appServer: AppServerFixture }) => {
   logger.info('Logging out of the application');
   await page.goto(`${appServer.baseURL}/auth/logout`);
-  await page.waitForTimeout(2000);
+  // Wait for logout to complete by checking URL or login form
+  await Promise.race([
+    page.waitForURL((url) => url.pathname.includes('/auth'), { timeout: 5000 }).catch(() => null),
+    page.locator('#email').waitFor({ state: 'visible', timeout: 5000 }).catch(() => null),
+  ]);
   await page.reload();
-  await page.waitForTimeout(500);
 });

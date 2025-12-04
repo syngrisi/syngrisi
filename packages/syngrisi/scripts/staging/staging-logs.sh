@@ -11,9 +11,11 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Configuration
-STAGING_WORKTREE_PATH="/Users/a1/Projects/SYNGRISI_STAGE"
-LOGS_DIR="${STAGING_WORKTREE_PATH}/packages/syngrisi/logs"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+STAGING_ENV_FILE="${REPO_ROOT}/.env.staging"
+STAGING_ENV_EXAMPLE="${REPO_ROOT}/.env.staging.example"
+LOGS_DIR=""
 
 # Helper functions
 log_info() {
@@ -24,8 +26,30 @@ log_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
+ensure_env_loaded() {
+    if [ ! -f "${STAGING_ENV_FILE}" ]; then
+        log_error "Staging env file not found: ${STAGING_ENV_FILE}"
+        log_error "Create it (cp ${STAGING_ENV_EXAMPLE} ${STAGING_ENV_FILE}) and fill in values"
+        exit 1
+    fi
+
+    set -o allexport
+    # shellcheck disable=SC1090
+    source "${STAGING_ENV_FILE}"
+    set +o allexport
+
+    if [ -z "${STAGING_WORKTREE_PATH}" ]; then
+        log_error "Missing required variable 'STAGING_WORKTREE_PATH' in ${STAGING_ENV_FILE}"
+        exit 1
+    fi
+
+    LOGS_DIR="${STAGING_WORKTREE_PATH}/packages/syngrisi/logs"
+}
+
 # Main execution
 main() {
+    ensure_env_loaded
+
     # Check if staging worktree exists
     if [ ! -d "${STAGING_WORKTREE_PATH}" ]; then
         log_error "Staging worktree not found at ${STAGING_WORKTREE_PATH}"
