@@ -111,6 +111,13 @@ try {
     console.log('\x1b[36m%s\x1b[0m', 'npx playwright show-report reports/playwright-report');
     console.log('\n');
 
+    // SSO tests warning
+    console.log('\x1b[33m%s\x1b[0m', '⚠️⚠️⚠️⚠️⚠️⚠️ SSO TESTS NOT INCLUDED ⚠️⚠️⚠️⚠️⚠️⚠️');
+    console.log('\x1b[33m%s\x1b[0m', 'SSO tests (@saml, @sso-external, @sso-logto) are excluded from this run.');
+    console.log('\x1b[33m%s\x1b[0m', 'To run SSO tests separately, use:');
+    console.log('\x1b[36m%s\x1b[0m', 'npm run test:sso');
+    console.log('\n');
+
 } catch (err) {
     console.error('Error reading or parsing report statistics:', err.message);
 }

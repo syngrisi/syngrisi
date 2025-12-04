@@ -51,6 +51,9 @@ show_help() {
     echo "  logs        - Tail staging server logs"
     echo "              Shows real-time logs with color highlighting"
     echo ""
+    echo "  claude      - Launch Claude Code with staging MCP"
+    echo "              Connects Claude to staging instance via MCP server"
+    echo ""
     echo "  help        - Display this help message"
     echo ""
     echo -e "${GREEN}Examples:${NC}"
@@ -98,6 +101,9 @@ main() {
             ;;
         logs)
             "${STAGING_SCRIPTS_DIR}/staging-logs.sh"
+            ;;
+        claude)
+            "${STAGING_SCRIPTS_DIR}/start-claude-with-staging-mcp.sh"
             ;;
         help|--help|-h)
             show_help
