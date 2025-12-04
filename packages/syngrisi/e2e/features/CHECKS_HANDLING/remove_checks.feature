@@ -18,6 +18,7 @@ Feature: Remove checks
               filePath: files/A.png
       """
     When I go to "main" page
+    When I wait for test "TestName-RC" to appear in table
 
     When I wait 10 seconds for the element with locator "[data-table-test-name='TestName-RC']" to be visible
     When I unfold the test "TestName-RC"
@@ -52,11 +53,12 @@ Feature: Remove checks
       """
 
     When I go to "main" page
+    When I wait for test "TestName-RC-1" to appear in table
 
     When I wait on element "[data-table-check-name='CheckName-RC-1']" to not be displayed
 
     When I unfold the test "TestName-RC-1"
-    When I wait 10 seconds for the element with locator "[data-table-check-name='CheckName-RC-1']" to be visible
+    When I wait for check "CheckName-RC-1" to appear in collapsed row of test "TestName-RC-1"
 
     When I open the 1st check "CheckName-RC-1"
 
@@ -77,7 +79,7 @@ Feature: Remove checks
 
     # check if modal was closed
     Then I wait on element "[data-test='full-check-path']" to not be displayed
-    When I wait 10 seconds for the element with locator "[data-table-check-name='CheckName-RC-1']" to be visible
+    When I wait for check "CheckName-RC-1" to appear in collapsed row of test "TestName-RC-1"
 
     # first
     When I open the 1st check "CheckName-RC-1"

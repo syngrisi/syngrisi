@@ -23,6 +23,7 @@ Feature: Check details Related Checks - Navigation
       """
 
     When I go to "main" page
+    When I wait for test "TestName-2" to appear in table
     When I unfold the test "TestName-2"
     When I open the 1st check "CheckName"
 

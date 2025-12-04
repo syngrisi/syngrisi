@@ -591,3 +591,114 @@ When('I unfold the test {string}', async (
     testData.set('lastUnfoldedTest', testName);
   }
 });
+
+/**
+ * Waits for a specific test row to appear in the table.
+ * This step should be used after navigation when test data was created via API
+ * and you need to ensure the UI has loaded and rendered the data.
+ *
+ * @example
+ * ```gherkin
+ * When I wait for test "TestName-1" to appear in table
+ * ```
+ */
+When(
+  'I wait for test {string} to appear in table',
+  async ({ page }: { page: Page }, testName: string) => {
+    const selector = `tr[data-row-name="${testName}"]`;
+    logger.info(`Waiting for test "${testName}" to appear in table using selector: ${selector}`);
+
+    const maxRetries = 3;
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        const locator = page.locator(selector).first();
+        await locator.waitFor({ state: 'visible', timeout: 10000 });
+        logger.info(`Test "${testName}" is now visible in table (attempt ${attempt})`);
+        return;
+      } catch {
+        if (attempt < maxRetries) {
+          // Check if there's a "new items" badge and click Refresh
+          const newItemsBadge = page.locator('text="You have"').first();
+          const refreshButton = page.locator('button[aria-label="Refresh"]').first();
+
+          if (await newItemsBadge.isVisible({ timeout: 1000 }).catch(() => false)) {
+            logger.info(`New items badge visible, clicking Refresh (attempt ${attempt}/${maxRetries})`);
+            await refreshButton.click();
+            await page.waitForTimeout(2000); // Wait for data refresh
+          } else if (await refreshButton.isVisible()) {
+            logger.info(`Test not found, clicking Refresh (attempt ${attempt}/${maxRetries})`);
+            await refreshButton.click();
+            await page.waitForTimeout(2000);
+          }
+        } else {
+          throw new Error(`Test "${testName}" not found in table after ${maxRetries} attempts`);
+        }
+      }
+    }
+  }
+);
+
+/**
+ * Waits for a specific check to appear in the collapsed row of a test.
+ * This step handles race conditions by:
+ * 1. Clicking the test row to unfold if collapsed
+ * 2. Clicking Refresh if check doesn't appear
+ *
+ * @example
+ * ```gherkin
+ * When I wait for check "CheckName-1" to appear in collapsed row of test "TestName-1"
+ * ```
+ */
+When(
+  'I wait for check {string} to appear in collapsed row of test {string}',
+  async ({ page }: { page: Page }, checkName: string, testName: string) => {
+    const testRowSelector = `tr[data-row-name="${testName}"]`;
+    const checkSelector = `[data-table-check-name="${checkName}"]`;
+
+    logger.info(`Waiting for check "${checkName}" to appear in collapsed row of test "${testName}"`);
+
+    // First ensure test row exists
+    const testRow = page.locator(testRowSelector).first();
+    await testRow.waitFor({ state: 'visible', timeout: 10000 });
+
+    const checkElement = page.locator(checkSelector).first();
+
+    const maxRetries = 4;
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        await checkElement.waitFor({ state: 'visible', timeout: 8000 });
+        logger.info(`Check "${checkName}" is now visible in collapsed row (attempt ${attempt})`);
+        return;
+      } catch {
+        if (attempt < maxRetries) {
+          // Check if collapsed row is empty or test row needs to be clicked to expand
+          const collapsedRow = testRow.locator('xpath=following-sibling::tr[1]');
+          const collapsedContent = collapsedRow.locator('[data-test="table-test-collapsed-row"]');
+          const isCollapsedVisible = await collapsedContent.isVisible({ timeout: 1000 }).catch(() => false);
+
+          if (!isCollapsedVisible) {
+            // Test row might be collapsed - click to expand
+            logger.info(`Collapsed row not visible, clicking test row to expand (attempt ${attempt}/${maxRetries})`);
+            const nameCell = testRow.locator('[data-test="table-row-Name"]').first();
+            if (await nameCell.isVisible()) {
+              await nameCell.click();
+            } else {
+              await testRow.click();
+            }
+            await page.waitForTimeout(500);
+          } else {
+            // Collapsed row visible but check not found - try refresh
+            logger.info(`Check "${checkName}" not visible, clicking Refresh button (attempt ${attempt}/${maxRetries})`);
+            const refreshButton = page.locator('button[aria-label="Refresh"]').first();
+            if (await refreshButton.isVisible()) {
+              await refreshButton.click();
+              await page.waitForTimeout(2000); // Wait for data to refresh
+            }
+          }
+        } else {
+          throw new Error(`Check "${checkName}" not found in collapsed row of test "${testName}" after ${maxRetries} attempts`);
+        }
+      }
+    }
+  }
+);
