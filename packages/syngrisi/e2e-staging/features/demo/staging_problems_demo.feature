@@ -1,4 +1,4 @@
-@demo @staging @no-app-start
+@demo @staging
 Feature: Demo: Проблемы Staging тестов
 
   Демонстрация проблем, возникающих при тестировании на staging окружении

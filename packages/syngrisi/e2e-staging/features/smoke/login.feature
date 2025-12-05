@@ -1,4 +1,4 @@
-@staging @smoke @no-app-start
+@smoke
 Feature: Staging Login
 
   Tests login functionality on staging environment with production data.
