@@ -175,6 +175,19 @@ install_dependencies() {
         log_error "Failed to install e2e dependencies"
         exit 1
     fi
+
+    # Copy MCP runtime files (.tmp/mcp contains mcp.spec.ts required by test engine)
+    log_info "Copying MCP runtime files..."
+    local SOURCE_TMP_MCP="${REPO_ROOT}/e2e/.tmp/mcp"
+    local DEST_TMP_MCP="${STAGING_WORKTREE_PATH}/packages/syngrisi/e2e/.tmp/mcp"
+
+    if [ -d "${SOURCE_TMP_MCP}" ]; then
+        mkdir -p "$(dirname "${DEST_TMP_MCP}")"
+        cp -r "${SOURCE_TMP_MCP}" "${DEST_TMP_MCP}"
+        log_info "✓ MCP runtime files copied"
+    else
+        log_warn "MCP runtime files not found at ${SOURCE_TMP_MCP}, skipping"
+    fi
 }
 
 build_application() {
