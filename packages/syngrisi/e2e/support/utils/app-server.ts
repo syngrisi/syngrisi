@@ -11,17 +11,6 @@ import { createLogger } from "@lib/logger";
 const REPO_ROOT = resolveRepoRoot();
 
 const backendLogger = createLogger('backend', { fileLevel: 'debug', consoleLevel: 'info' });
-const timingLogger = createLogger('timing', { fileLevel: 'debug', consoleLevel: 'info' });
-
-// Timing helper for performance measurements
-function measureTime<T>(name: string, fn: () => Promise<T>): Promise<T> {
-  const start = performance.now();
-  return fn().then((result) => {
-    const elapsed = Math.round(performance.now() - start);
-    timingLogger.info(`[timing] ${name}: ${elapsed}ms`);
-    return result;
-  });
-}
 
 type Child = ReturnType<typeof spawn>;
 
@@ -58,6 +47,20 @@ function resolveTestPaths(cid: number) {
     process.env.SYNGRISI_IMAGES_PATH ||
     env.SYNGRISI_IMAGES_PATH ||
     '';
+
+  // E2E_USE_ENV_CONFIG=true skips test database isolation and uses .env configuration
+  // This is used for staging MCP mode where we want to use the staging database
+  const useEnvConfig = process.env.E2E_USE_ENV_CONFIG === 'true';
+
+  if (useEnvConfig && requestedDbUri && requestedImagesPath) {
+    backendLogger.info(
+      `Using .env configuration (E2E_USE_ENV_CONFIG=true): DB=${requestedDbUri}, Images=${requestedImagesPath}`,
+    );
+    return {
+      connectionString: requestedDbUri,
+      defaultImagesPath: requestedImagesPath,
+    };
+  }
 
   const enforcedDbUri = `mongodb://127.0.0.1/${databaseName}${cid}`;
   const enforcedImagesPath = path.resolve(REPO_ROOT, 'baselinesTest', String(cid));
@@ -168,16 +171,12 @@ export async function launchAppServer(
   let lastError: Error | null = null;
   let backend: Child | null = null;
   let backendLogs: () => string = () => '';
-  const serverStartupStart = performance.now();
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      const spawnStart = performance.now();
       backend = spawn(command, args, spawnOptions);
       backendLogs = startBackendLogCapture(backend);
-      timingLogger.info(`[timing] Server spawn: ${Math.round(performance.now() - spawnStart)}ms`);
 
-      const httpWaitStart = performance.now();
       await Promise.race([
         waitForHttp(`${baseURL}/v1/app/info`, 120_000),
         once(backend, "exit").then(([code, signal]) => {
@@ -186,7 +185,6 @@ export async function launchAppServer(
           );
         }),
       ]);
-      timingLogger.info(`[timing] HTTP ready wait: ${Math.round(performance.now() - httpWaitStart)}ms`);
 
       // Success - break out of retry loop
       lastError = null;
@@ -217,14 +215,9 @@ export async function launchAppServer(
 
   // Stabilization delay to ensure MongoDB has completed all user creation writes
   // This addresses race conditions where tests start before users are fully indexed
-  // Configurable via E2E_STABILIZATION_DELAY env var (default: 2000ms, was 5000ms)
+  // 5000ms is needed for parallel test execution with heavy database load
   // Note: core-api has 401 retry logic for additional resilience
-  const stabilizationMs = parseInt(process.env.E2E_STABILIZATION_DELAY || '2000', 10);
-  timingLogger.info(`[timing] Stabilization delay: ${stabilizationMs}ms`);
-  await sleep(stabilizationMs);
-
-  const totalStartupTime = Math.round(performance.now() - serverStartupStart);
-  timingLogger.info(`[timing] Total server startup: ${totalStartupTime}ms`);
+  await sleep(5000);
 
   return {
     baseURL,

@@ -106,7 +106,7 @@ generate_mcp_config() {
             ],
             "env": {
                 "SYNGRISI_ROOT": "${STAGING_WORKTREE_PATH}/packages/syngrisi/e2e",
-                "E2E_BASE_URL": "http://localhost:${STAGING_PORT}",
+                "E2E_USE_ENV_CONFIG": "true",
                 "PATH": "${PATH}"
             }
         }
