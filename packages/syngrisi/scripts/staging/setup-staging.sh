@@ -267,6 +267,9 @@ main() {
     log_info "Starting staging environment setup..."
     echo ""
 
+    # Fix nvm/fnm conflict - unset npm_config_prefix to prevent node crashes
+    unset npm_config_prefix
+
     ensure_env_loaded
     check_prerequisites
     create_worktree
