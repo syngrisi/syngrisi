@@ -44,7 +44,15 @@
       "Bash(timeout 120 npx ts-node:*)",
       "Bash(npx playwright test:*)",
       "Bash(grep:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(tree:*)",
+      "WebSearch",
+      "Bash(unset npm_config_prefix)",
+      "Bash(./scripts/staging/reset-staging.sh:*)",
+      "Bash(bash -l -c:*)",
+      "Bash(rsync:*)",
+      "Bash(export SKIP_DEMO_TESTS=true)",
+      "Bash(npx bddgen)"
     ],
     "deny": [],
     "ask": []

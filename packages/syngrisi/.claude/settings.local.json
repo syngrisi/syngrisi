@@ -4,7 +4,8 @@
       "Bash(npm run:*)",
       "Bash(git worktree:*)",
       "Bash(lsof:*)",
-      "Bash(mongosh:*)"
+      "Bash(mongosh:*)",
+      "Bash(grep:*)"
     ],
     "deny": [],
     "ask": []

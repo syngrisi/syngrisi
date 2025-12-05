@@ -1,6 +1,6 @@
 metadata:
   category: common/other
-  generatedAt: '2025-12-04T06:13:58.723Z'
+  generatedAt: '2025-12-05T04:19:37.324Z'
   totalFiles: 2
   totalSteps: 8
   sourceFiles:
@@ -14,7 +14,7 @@ steps:
       Announces a phrase using text-to-speech with a visible banner overlay.
       The banner is click-through (pointer-events: none) and disappears after speech completes.
       Useful for highlighting key moments during feature demonstrations without blocking indefinitely.
-      This step is a no-op in CI environments or when SKIP_DEMO_TESTS=true.
+      This step is a no-op in CI environments or when SKIP_DEMO_STEPS=true.
 
       @param phrase - The text to be spoken aloud and displayed
 
@@ -30,7 +30,7 @@ steps:
       Announces a phrase using text-to-speech with a visible banner overlay, then pauses the Playwright runner.
       The banner is click-through (pointer-events: none) and disappears after pause is released.
       Useful for highlighting key moments during feature demonstrations with manual inspection.
-      This step is a no-op in CI environments or when SKIP_DEMO_TESTS=true.
+      This step is a no-op in CI environments or when SKIP_DEMO_STEPS=true.
 
       @param phrase - The text to be spoken aloud and displayed before pausing
 
@@ -44,7 +44,7 @@ steps:
       Step definition: `When I clear highlight`
 
       Removes any active element highlight from the page.
-      This step is a no-op in CI environments or when SKIP_DEMO_TESTS=true.
+      This step is a no-op in CI environments or when SKIP_DEMO_STEPS=true.
 
       @example
       ```gherkin
@@ -56,7 +56,7 @@ steps:
       Step definition: `When I end the demo`
 
       Triggers a confetti animation on the page to celebrate the end of a demo.
-      This step is a no-op in CI environments or when SKIP_DEMO_TESTS=true.
+      This step is a no-op in CI environments or when SKIP_DEMO_STEPS=true.
 
       @support/mcp/benchmark/.env.example
       ```gherkin
@@ -70,7 +70,7 @@ steps:
       Highlights a DOM element with a bright pulsing animation.
       The highlight persists until another element is highlighted or the highlight is cleared.
       Useful for drawing attention to specific UI elements during demos.
-      This step is a no-op in CI environments or when SKIP_DEMO_TESTS=true.
+      This step is a no-op in CI environments or when SKIP_DEMO_STEPS=true.
 
       @param selector - CSS selector for the element to highlight
 

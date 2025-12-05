@@ -198,7 +198,7 @@ const getChecks = catchAsync(async (req: ExtRequest, res: Response) => {
     // Field filtering for API responses
     if (fields && format) {
         const allowedFields = (fields as string).split(',').filter(f => f.trim());
-        const filteredResults = result.results.map((check: any) => {
+        const filteredResults = (result?.results || []).map((check: any) => {
             const filtered: any = {};
             allowedFields.forEach(field => {
                 if (check[field] !== undefined) {
@@ -235,7 +235,7 @@ const getChecks = catchAsync(async (req: ExtRequest, res: Response) => {
         return;
     } else if (format === 'csv') {
         const csvHeader = 'ID,Name,Status,Run,Date';
-        const csvRows = result.results.map((check: any) =>
+        const csvRows = (result?.results || []).map((check: any) =>
             `"${check._id}","${check.name}","${check.status[0]}","${check.run}","${new Date(check.createdDate).toISOString()}"`
         );
         const csv = [csvHeader, ...csvRows].join('\n');
