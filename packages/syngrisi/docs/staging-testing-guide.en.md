@@ -45,6 +45,51 @@ Staging is a separate Syngrisi instance with production-like data. It runs from 
 - Admin: `STAGING_ADMIN_USERNAME` / `STAGING_ADMIN_PASSWORD`
 - Guest password: `STAGING_GUEST_PASSWORD`
 
+## MCP Test Engine Integration
+
+### test_engine vs staging_test_engine
+
+| Aspect | test_engine | staging_test_engine |
+|--------|-------------|---------------------|
+| Directory | `/packages/syngrisi` | `STAGING_WORKTREE_PATH` |
+| Database | `SyngrisiDbTest{N}` (isolated) | `VRSdb_stage` (production data) |
+| Auth | Disabled (for speed) | Enabled (`SYNGRISI_AUTH=true`) |
+| Data | Empty/minimal | Production data |
+| Port | 3002+ | `STAGING_PORT` (5252) |
+
+### Key variable: E2E_USE_ENV_CONFIG
+
+For staging MCP, set `E2E_USE_ENV_CONFIG=true` which:
+- Disables forced override of DB to test database
+- Uses `SYNGRISI_DB_URI` and `SYNGRISI_IMAGES_PATH` from staging `.env`
+- Preserves `SYNGRISI_AUTH=true` from config
+
+This variable is automatically set when using `start-claude-with-staging-mcp.sh` or when configured in `.mcp.json`.
+
+### .mcp.json config for staging
+
+```json
+{
+    "mcpServers": {
+        "staging_test_engine": {
+            "type": "stdio",
+            "command": "npx",
+            "args": ["tsx", "${STAGING_WORKTREE_PATH}/packages/syngrisi/e2e/support/mcp/bridge-cli.ts"],
+            "env": {
+                "SYNGRISI_ROOT": "${STAGING_WORKTREE_PATH}/packages/syngrisi/e2e",
+                "E2E_USE_ENV_CONFIG": "true"
+            }
+        }
+    }
+}
+```
+
+### Launch Claude Code with staging MCP
+
+Recommended: `./scripts/staging/start-claude-with-staging-mcp.sh`
+
+This script verifies staging server is running, generates temp `.mcp.json`, and launches Claude Code.
+
 ### Auth flow samples (Gherkin)
 ```gherkin
 Given I navigate to "http://localhost:${STAGING_PORT}"
