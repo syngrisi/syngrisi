@@ -12,7 +12,7 @@ Demonstrates navigation to the Baselines section via Spotlight search.
 **Run:**
 ```bash
 # Debug mode (skip demo steps)
-SKIP_DEMO_TESTS=true npx bddgen && yarn playwright test "features/DEMO/baselines_spotlight_demo.feature" --workers=1 --headed
+SKIP_DEMO_STEPS=true npx bddgen && yarn playwright test "features/DEMO/baselines_spotlight_demo.feature" --workers=1 --headed
 
 # Full demo mode (with narration and animations)
 npx bddgen && yarn playwright test "features/DEMO/baselines_spotlight_demo.feature" --workers=1 --headed
@@ -26,7 +26,7 @@ Demonstrates navigation between checks and tests in the Check Details modal.
 **Run:**
 ```bash
 # Debug mode
-SKIP_DEMO_TESTS=true npx bddgen && yarn playwright test "features/DEMO/navigation_demo.feature" --workers=1 --headed
+SKIP_DEMO_STEPS=true npx bddgen && yarn playwright test "features/DEMO/navigation_demo.feature" --workers=1 --headed
 
 # Full demo mode
 npx bddgen && yarn playwright test "features/DEMO/navigation_demo.feature" --workers=1 --headed
@@ -49,7 +49,7 @@ Demonstrates OAuth2 SSO authentication flow with Logto Identity Provider.
 **Run:**
 ```bash
 # Debug mode (skip demo steps, requires Logto)
-SKIP_DEMO_TESTS=true npx bddgen && yarn playwright test "features/DEMO/sso_oauth2_demo.feature" --workers=1 --headed
+SKIP_DEMO_STEPS=true npx bddgen && yarn playwright test "features/DEMO/sso_oauth2_demo.feature" --workers=1 --headed
 
 # Full demo mode (with narration, requires Logto)
 npx bddgen && yarn playwright test "features/DEMO/sso_oauth2_demo.feature" --workers=1 --headed
@@ -76,7 +76,7 @@ Demonstrates SAML 2.0 SSO authentication flow with Logto as SAML Identity Provid
 **Run:**
 ```bash
 # Debug mode (skip demo steps, requires Logto)
-SKIP_DEMO_TESTS=true npx bddgen && yarn playwright test "features/DEMO/sso_saml_demo.feature" --workers=1 --headed
+SKIP_DEMO_STEPS=true npx bddgen && yarn playwright test "features/DEMO/sso_saml_demo.feature" --workers=1 --headed
 
 # Full demo mode (with narration, requires Logto)
 npx bddgen && yarn playwright test "features/DEMO/sso_saml_demo.feature" --workers=1 --headed
@@ -87,7 +87,7 @@ npx bddgen && yarn playwright test "features/DEMO/sso_saml_demo.feature" --grep 
 
 ## Environment Variables
 
-### SKIP_DEMO_TESTS
+### SKIP_DEMO_STEPS
 **Default:** `false`
 
 When set to `true`, all demo-specific steps are skipped:
@@ -99,7 +99,7 @@ When set to `true`, all demo-specific steps are skipped:
 
 **Usage:**
 ```bash
-SKIP_DEMO_TESTS=true npx bddgen && yarn playwright test "features/DEMO/your_demo.feature" --workers=1 --headed
+SKIP_DEMO_STEPS=true npx bddgen && yarn playwright test "features/DEMO/your_demo.feature" --workers=1 --headed
 ```
 
 **Benefits:**
@@ -114,7 +114,7 @@ SKIP_DEMO_TESTS=true npx bddgen && yarn playwright test "features/DEMO/your_demo
 Write your scenario with all demo steps included from the start.
 
 ### 2. Debug & Test
-Run with `SKIP_DEMO_TESTS=true` to quickly iterate:
+Run with `SKIP_DEMO_STEPS=true` to quickly iterate:
 - Verify selectors work correctly
 - Check test logic and assertions
 - Identify timing issues
@@ -155,7 +155,7 @@ Demo tests are automatically skipped in CI environments (when `CI=true`). Additi
 ```yaml
 # .github/workflows/e2e.yml
 - name: Run demo tests
-  run: SKIP_DEMO_TESTS=true npm run test:demo
+  run: SKIP_DEMO_STEPS=true npm run test:demo
 ```
 
 ## Troubleshooting
@@ -167,7 +167,7 @@ Demo tests are automatically skipped in CI environments (when `CI=true`). Additi
 
 ### Text-to-Speech Not Working
 - macOS only: Requires `say` command
-- Set `SKIP_DEMO_TESTS=true` to skip TTS
+- Set `SKIP_DEMO_STEPS=true` to skip TTS
 - Demo steps are no-op in CI environments
 
 ### Database Errors
