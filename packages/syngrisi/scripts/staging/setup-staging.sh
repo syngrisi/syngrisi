@@ -176,6 +176,16 @@ install_dependencies() {
         exit 1
     fi
 
+    # Install e2e-staging dependencies
+    log_info "Installing e2e-staging dependencies..."
+    cd "${STAGING_WORKTREE_PATH}/packages/syngrisi/e2e-staging"
+
+    if npm install; then
+        log_info "✓ E2E-staging dependencies installed successfully"
+    else
+        log_warn "Failed to install e2e-staging dependencies (folder may not exist)"
+    fi
+
     # Copy MCP runtime files (.tmp/mcp contains mcp.spec.ts required by test engine)
     log_info "Copying MCP runtime files..."
     local SOURCE_TMP_MCP="${REPO_ROOT}/e2e/.tmp/mcp"
@@ -255,6 +265,12 @@ print_success_message() {
     echo ""
     echo -e "${GREEN}Images Path:${NC}"
     echo "  ${STAGING_BASELINES_PATH}"
+    echo ""
+    echo -e "${GREEN}Run Staging Tests:${NC}"
+    echo "  cd ${STAGING_WORKTREE_PATH}/packages/syngrisi/e2e-staging && npm test"
+    echo ""
+    echo -e "${GREEN}Run Demo Tests:${NC}"
+    echo "  cd ${STAGING_WORKTREE_PATH}/packages/syngrisi/e2e-staging && npm run test:demo"
     echo ""
     echo -e "${YELLOW}To reset staging to initial state:${NC}"
     echo "  ./scripts/staging-control.sh reset"
