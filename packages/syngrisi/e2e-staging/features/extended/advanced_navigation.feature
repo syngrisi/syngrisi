@@ -1,4 +1,4 @@
-@staging @extended @no-app-start
+@extended
 Feature: Advanced Navigation on Staging
 
   Tests for keyboard navigation, search, and sorting functionality.

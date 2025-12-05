@@ -1,17 +1,14 @@
 import { defineConfig, devices } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
-import path from 'path';
 
-// Staging port from .env.staging
-const STAGING_BASE_URL = 'http://localhost:5252';
+// Staging server URL - defaults to localhost:5252, can be overridden via env
+const STAGING_BASE_URL = process.env.STAGING_BASE_URL || 'http://localhost:5252';
 
 const testDir = defineBddConfig({
-  features: 'features/STAGING/**/*.feature',
+  features: 'features/**/*.feature',
   steps: [
-    'support/params.ts',
     'steps/**/*.ts',
-    'steps/staging/*.ts',
-    'support/fixtures/index.ts'
+    'support/**/*.ts',
   ],
 });
 
@@ -21,16 +18,15 @@ export default defineConfig({
   expect: {
     timeout: 10_000,
   },
-  // Staging-specific global setup (verifies staging is running, no build/cleanup)
   globalSetup: './support/staging-global-setup.ts',
-  fullyParallel: false,  // Sequential execution for staging
-  workers: 1,            // Single worker for isolation
-  retries: 0,            // No retries - tests should be stable
-  outputDir: './reports/staging-artifacts',
+  fullyParallel: false,
+  workers: 1,
+  retries: 0,
+  outputDir: './reports/artifacts',
   reporter: [
     ['list'],
-    ['html', { open: 'never', outputFolder: './reports/staging-html' }],
-    ['json', { outputFile: './reports/staging-json/results.json' }],
+    ['html', { open: 'never', outputFolder: './reports/html' }],
+    ['json', { outputFile: './reports/results.json' }],
   ],
   use: {
     baseURL: STAGING_BASE_URL,
@@ -42,37 +38,37 @@ export default defineConfig({
   },
   projects: [
     {
-      name: 'staging-smoke',
-      testMatch: /STAGING\/smoke/,
+      name: 'smoke',
+      testMatch: /smoke/,
       use: {
         ...devices['Desktop Chrome'],
         viewport: { width: 1366, height: 768 },
       },
     },
     {
-      name: 'staging-extended',
-      testMatch: /STAGING\/extended/,
-      dependencies: ['staging-smoke'],
+      name: 'extended',
+      testMatch: /extended/,
+      dependencies: ['smoke'],
       use: {
         ...devices['Desktop Chrome'],
         viewport: { width: 1366, height: 768 },
       },
     },
     {
-      name: 'staging-maintenance',
-      testMatch: /STAGING\/maintenance/,
+      name: 'maintenance',
+      testMatch: /maintenance/,
       use: {
         ...devices['Desktop Chrome'],
         viewport: { width: 1366, height: 768 },
       },
     },
     {
-      name: 'staging-demo',
-      testMatch: /STAGING\/demo/,
+      name: 'demo',
+      testMatch: /demo/,
       use: {
         ...devices['Desktop Chrome'],
         viewport: { width: 1366, height: 768 },
-        headless: false,  // Демо всегда в headed режиме
+        headless: false,
       },
     },
   ],

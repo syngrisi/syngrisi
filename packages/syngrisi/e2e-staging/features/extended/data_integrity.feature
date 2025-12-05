@@ -1,4 +1,4 @@
-@staging @extended @no-app-start
+@extended
 Feature: Data Integrity on Staging
 
   Tests to verify data integrity on staging with production data.
