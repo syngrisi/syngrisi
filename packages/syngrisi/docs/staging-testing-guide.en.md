@@ -124,6 +124,7 @@ Then I should see admin navigation
   - `du -sh "${STAGING_WORKTREE_PATH}/packages/syngrisi/logs"`
 
 ## Troubleshooting
+- **nvm/fnm conflict (exit code 11)**: Scripts exit with code 11 silently when both fnm and nvm are installed. Run `unset npm_config_prefix` before executing scripts: `unset npm_config_prefix && ./scripts/staging-control.sh setup`. Scripts include this fix internally, but it may not work if the variable is set in the parent shell.
 - Port busy: `lsof -i :"${STAGING_PORT}"` → stop server or kill the PID.
 - DB connection fails: ensure MongoDB at `STAGING_MONGODB_URI`.
 - Worktree missing: `./scripts/staging-control.sh setup` or `git worktree add "${STAGING_WORKTREE_PATH}" <branch/commit>`.
