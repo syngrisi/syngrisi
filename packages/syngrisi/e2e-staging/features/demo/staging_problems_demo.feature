@@ -1,4 +1,4 @@
-@demo @staging
+@demo @staging @polluting
 Feature: Demo: Проблемы Staging тестов
 
   Демонстрация проблем, возникающих при тестировании на staging окружении
@@ -9,7 +9,7 @@ Feature: Demo: Проблемы Staging тестов
     And I am logged in as "reviewer" on staging
 
   @problem-preview-visibility
-  Scenario: Demo: Проблема с видимостью check preview
+  Scenario: Demo - Проблема с видимостью check preview
     # Проблема: После создания E2E checks, превью изображения не видны
     # потому что они созданы с тестовыми изображениями без реального контента
 
@@ -45,7 +45,7 @@ Feature: Demo: Проблемы Staging тестов
     When I end the demo
 
   @problem-data-pollution
-  Scenario: Demo: Загрязнение базы E2E данными
+  Scenario: Demo - Загрязнение базы E2E данными
     # Проблема: После запуска lifecycle тестов в базе остаются тестовые данные
     # которые влияют на другие тесты
 
@@ -79,7 +79,7 @@ Feature: Demo: Проблемы Staging тестов
     When I end the demo
 
   @problem-api-creation
-  Scenario: Demo: Создание check через API
+  Scenario: Demo - Создание check через API
     # Демонстрация как работает создание check через API
     # и какие проблемы при этом возникают
 

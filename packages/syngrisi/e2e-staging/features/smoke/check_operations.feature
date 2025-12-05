@@ -1,4 +1,4 @@
-@smoke
+@smoke @readonly
 Feature: Check Operations on Staging
 
   Core check operations (view, expand, modal) on staging with production data.

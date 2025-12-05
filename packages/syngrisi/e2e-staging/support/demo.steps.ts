@@ -1,5 +1,10 @@
 import { When } from './fixtures';
 import type { Page } from '@playwright/test';
+import path from 'path';
+import dotenv from 'dotenv';
+
+// Load local .env file
+dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
 const SKIP_DEMO = process.env.SKIP_DEMO_TESTS === 'true';
 

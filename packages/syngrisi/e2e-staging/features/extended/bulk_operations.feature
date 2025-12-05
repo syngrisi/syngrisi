@@ -1,4 +1,4 @@
-@extended
+@extended @readonly
 Feature: Bulk Operations on Staging
 
   Extended tests for bulk check operations and table interactions.
