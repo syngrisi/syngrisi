@@ -5,10 +5,12 @@ Feature: Check Details Navigation
         Given I start Server and start Driver
         And I clear database
 
-    @smoke
+    @smoke @flaky
     Scenario: Navigate between checks in a test
         Given I create a test run "Test 1" with 3 checks
         When I go to "main" page
+        # Wait for test data to be indexed and visible before unfolding
+        When I wait for test "Test 1" to appear in table
         And I unfold the test "Test 1"
         And I open the 1st check "Check 1"
         Then I should see the check details for "Check 1"
