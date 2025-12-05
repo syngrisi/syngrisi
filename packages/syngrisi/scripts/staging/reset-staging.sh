@@ -185,18 +185,6 @@ clean_temp_files() {
     fi
 }
 
-update_user_passwords() {
-    log_info "Updating user passwords for staging..."
-
-    # Run the password update script
-    if node "${SCRIPT_DIR}/update-staging-passwords.cjs"; then
-        log_info "✓ User passwords updated successfully"
-    else
-        log_error "Failed to update user passwords"
-        exit 1
-    fi
-}
-
 print_success_message() {
     echo ""
     echo -e "${GREEN}╔════════════════════════════════════════════════════════════════╗${NC}"
@@ -232,7 +220,6 @@ main() {
 
     stop_staging_server
     reset_database
-    update_user_passwords
     reset_baseline_images
     clean_temp_files
     print_success_message
