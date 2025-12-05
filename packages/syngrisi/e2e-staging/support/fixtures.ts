@@ -1,4 +1,5 @@
-import { test as base, expect } from '@playwright/test';
+import { test as base } from 'playwright-bdd';
+import { expect } from '@playwright/test';
 import { createBdd } from 'playwright-bdd';
 
 // Simple test fixture for staging

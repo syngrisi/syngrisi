@@ -1,4 +1,4 @@
-@extended
+@extended @readwrite
 Feature: Check Lifecycle on Staging
 
   Tests for creating, accepting, and deleting checks on staging.

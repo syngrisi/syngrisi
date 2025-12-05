@@ -1,4 +1,4 @@
-@maintenance
+@maintenance @readonly
 Feature: Cleanup Tasks on Staging
 
   Tests for admin access and basic maintenance operations.
