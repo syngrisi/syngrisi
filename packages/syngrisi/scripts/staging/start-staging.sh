@@ -90,6 +90,9 @@ main() {
     log_info "Starting staging server..."
     echo ""
 
+    # Fix nvm/fnm conflict - unset npm_config_prefix to prevent node crashes
+    unset npm_config_prefix
+
     ensure_env_loaded
 
     # Check if staging worktree exists
