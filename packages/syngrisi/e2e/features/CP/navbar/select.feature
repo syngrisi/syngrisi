@@ -164,8 +164,8 @@ Feature: Select Navbar Item
       """
 
     When I go to "main" page
-    When I wait 10 seconds for the element with locator "[data-test*='navbar_item_']" to be visible
-    When I wait 10 seconds for the element with locator "//*[@data-test='navbar-item-name' and contains(., 'RunName-Select-4-0')]" to be visible
+    # Use reliable wait for test data to appear
+    When I wait for test "TestName-Select-4-1" to appear in table
 
     When I hold key "Meta"
     # select one

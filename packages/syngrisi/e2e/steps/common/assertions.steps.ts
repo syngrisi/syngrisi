@@ -1343,3 +1343,76 @@ Then(
     ).toBe(exactCount);
   }
 );
+
+/**
+ * Step definition: `Then the element {string} should have exactly {int} items within {int} seconds with refresh`
+ *
+ * Polls for exact item count with timeout, clicking refresh button between attempts.
+ * Useful when data is created via API and table needs to be refreshed to show new items.
+ *
+ * @param selector - CSS selector for items
+ * @param exactCount - Exact expected count
+ * @param seconds - Timeout in seconds
+ *
+ * @example
+ * ```gherkin
+ * Then the element "//div[contains(text(), 'User test')]" should have exactly 5 items within 30 seconds with refresh
+ * ```
+ */
+Then(
+  'the element {string} should have exactly {int} items within {int} seconds with refresh',
+  async ({ page }, selector: string, exactCount: number, seconds: number) => {
+    const locator = getLocatorQuery(page, selector);
+    // Use the table refresh icon which has the badge for new items
+    const refreshButton = page.locator('[data-test="table-refresh-icon"]');
+    const newItemsBadge = page.locator('[data-test="table-refresh-icon-badge"]');
+    const startTime = Date.now();
+    const timeoutMs = seconds * 1000;
+    const pollInterval = 1000;
+    let lastCount = 0;
+
+    while (Date.now() - startTime < timeoutMs) {
+      lastCount = await locator.count();
+
+      if (lastCount === exactCount) {
+        return;
+      }
+
+      // Click refresh to get new data - always click if visible, regardless of badge
+      const refreshVisible = await refreshButton.isVisible({ timeout: 500 }).catch(() => false);
+
+      if (refreshVisible) {
+        // Check for badge before clicking
+        const hasBadge = await newItemsBadge.isVisible({ timeout: 200 }).catch(() => false);
+
+        await refreshButton.click();
+
+        // Wait for the refresh to complete - badge should disappear or stay gone
+        await page.waitForTimeout(500);
+
+        // If there was a badge, give extra time for data to load
+        if (hasBadge) {
+          await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
+          // Check again immediately after refresh
+          lastCount = await locator.count();
+          if (lastCount === exactCount) {
+            return;
+          }
+        }
+      }
+
+      await page.waitForTimeout(pollInterval);
+    }
+
+    // Final attempt: one more refresh and check
+    const refreshVisible = await refreshButton.isVisible({ timeout: 500 }).catch(() => false);
+    if (refreshVisible) {
+      await refreshButton.click();
+      await page.waitForLoadState('networkidle', { timeout: 3000 }).catch(() => {});
+      await page.waitForTimeout(500);
+    }
+
+    lastCount = await locator.count();
+    expect(lastCount, `Waiting for exactly ${exactCount} items matching "${selector}"`).toBe(exactCount);
+  }
+);

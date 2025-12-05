@@ -16,12 +16,15 @@ Feature: Bulk Operations - Apply and Delete
       """
     When I go to "main" page
 
-    When I wait 10 seconds for the element with locator "[data-table-test-name=TestName-BulkApply-0]" to be visible
-    When I wait 10 seconds for the element with locator "[data-table-test-name=TestName-BulkApply-1]" to be visible
-    When I wait 10 seconds for the element with locator "//*[@data-row-name='TestName-BulkApply-0']//td[@data-test='table-row-Accepted']//*[text()='Unaccepted']" to be visible
-    When I wait 10 seconds for the element with locator "//*[@data-row-name='TestName-BulkApply-1']//td[@data-test='table-row-Accepted']//*[text()='Unaccepted']" to be visible
+    # Use reliable wait for test step instead of raw locator waits
+    When I wait for test "TestName-BulkApply-0" to appear in table
+    When I wait for test "TestName-BulkApply-1" to appear in table
+    # Wait for Unaccepted status with extended timeout for parallel load
+    When I wait 15 seconds for the element with locator "//*[@data-row-name='TestName-BulkApply-0']//td[@data-test='table-row-Accepted']//*[text()='Unaccepted']" to be visible
+    When I wait 15 seconds for the element with locator "//*[@data-row-name='TestName-BulkApply-1']//td[@data-test='table-row-Accepted']//*[text()='Unaccepted']" to be visible
 
     When I click element with locator "[data-test-checkbox-name=TestName-BulkApply-0]"
+    When I wait for "1" seconds
     When I click element with locator "[data-test-checkbox-name=TestName-BulkApply-1]"
 
     When I unfold the test "TestName-BulkApply-0"
@@ -68,10 +71,12 @@ Feature: Bulk Operations - Apply and Delete
       """
     When I go to "main" page
 
-    When I wait 10 seconds for the element with locator "[data-table-test-name=TestName-BulkDelete-0]" to be visible
-    When I wait 10 seconds for the element with locator "[data-table-test-name=TestName-BulkDelete-1]" to be visible
+    # Use reliable wait for test step
+    When I wait for test "TestName-BulkDelete-0" to appear in table
+    When I wait for test "TestName-BulkDelete-1" to appear in table
 
     When I click element with locator "[data-test-checkbox-name=TestName-BulkDelete-0]"
+    When I wait for "1" seconds
     When I click element with locator "[data-test-checkbox-name=TestName-BulkDelete-1]"
     When I wait 10 seconds for the element with locator "[aria-label='Remove selected tests']" to be visible
     When I click element with locator "[aria-label='Remove selected tests']"
