@@ -1,4 +1,4 @@
-@extended
+@extended @readonly
 Feature: Data Integrity on Staging
 
   Tests to verify data integrity on staging with production data.

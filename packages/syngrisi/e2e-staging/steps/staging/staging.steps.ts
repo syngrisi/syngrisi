@@ -27,6 +27,10 @@ const STAGING_CREDENTIALS = {
     email: process.env.STAGING_REGULAR_USER_EMAIL || 'v_haluza_2@exadel.com',
     password: process.env.STAGING_REGULAR_USER_PASSWORD || '',
   },
+  reviewer2: {
+    email: process.env.STAGING_REGULAR_USER_2_EMAIL || 'mvarabyova@exadel.com',
+    password: process.env.STAGING_REGULAR_USER_2_PASSWORD || '',
+  },
   admin: {
     email: process.env.STAGING_ADMIN_USERNAME || 'Administrator',
     password: process.env.STAGING_ADMIN_PASSWORD || '',
@@ -47,7 +51,7 @@ Given('I open the staging app', async ({ page }: { page: Page }) => {
 Given(
   'I am logged in as {string} on staging',
   async ({ page }: { page: Page }, role: string) => {
-    const creds = role === 'admin' ? STAGING_CREDENTIALS.admin : STAGING_CREDENTIALS.reviewer;
+    const creds = STAGING_CREDENTIALS[role as keyof typeof STAGING_CREDENTIALS] || STAGING_CREDENTIALS.reviewer;
     logger.info(`Logging in as ${role} (${creds.email}) on staging`);
 
     await page.goto(`${STAGING_BASE_URL}/auth`, { waitUntil: 'networkidle' });
@@ -899,4 +903,28 @@ When('I cleanup staging test data', async ({ page }: { page: Page }) => {
 
   stagingTestData = {};
   logger.info('Cleanup complete');
+});
+
+// ============================================
+// GENERIC ELEMENT INTERACTION STEPS
+// ============================================
+
+/**
+ * Click element by locator
+ */
+When('I click element with locator {string}', async ({ page }: { page: Page }, locator: string) => {
+  logger.info(`Clicking element with locator: ${locator}`);
+  const element = page.locator(locator).first();
+  await element.waitFor({ state: 'visible', timeout: 10000 });
+  await element.click();
+});
+
+/**
+ * Fill text into element by locator
+ */
+When('I fill {string} into element with locator {string}', async ({ page }: { page: Page }, text: string, locator: string) => {
+  logger.info(`Filling "${text}" into element with locator: ${locator}`);
+  const element = page.locator(locator).first();
+  await element.waitFor({ state: 'visible', timeout: 10000 });
+  await element.fill(text);
 });

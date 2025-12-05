@@ -58,7 +58,6 @@ ensure_env_loaded() {
     done
 
     STAGING_TMP_DIR="${STAGING_TMP_DIR:-${STAGING_WORKTREE_PATH}/packages/syngrisi/.tmp-stage}"
-    STAGING_DATA_RESET_REF="${STAGING_DATA_RESET_REF:-init}"
 }
 
 stop_staging_server() {
@@ -134,7 +133,7 @@ reset_database() {
 }
 
 reset_baseline_images() {
-    log_info "Resetting baseline images to initial state..."
+    log_info "Resetting baseline images to latest committed state..."
 
     cd "${STAGING_DATA_REPO_PATH}"
 
@@ -144,19 +143,13 @@ reset_baseline_images() {
         exit 1
     fi
 
-    # Reset to init commit
-    log_info "Resetting to 'init' commit..."
-    if ! git rev-parse --verify --quiet "${STAGING_DATA_RESET_REF}" >/dev/null; then
-        log_error "Reset ref '${STAGING_DATA_RESET_REF}' not found in ${STAGING_DATA_REPO_PATH}"
-        log_error "Update STAGING_DATA_RESET_REF in ${STAGING_ENV_FILE} (e.g. to a commit hash)"
-        exit 1
-    fi
-
-    git reset --hard "${STAGING_DATA_RESET_REF}" &>/dev/null || {
-        log_error "Failed to reset git repository to ${STAGING_DATA_RESET_REF}"
+    # Reset to HEAD (latest commit)
+    log_info "Resetting to HEAD (latest commit)..."
+    git reset --hard HEAD &>/dev/null || {
+        log_error "Failed to reset git repository to HEAD"
         exit 1
     }
-    log_info "✓ Git reset successful (ref: ${STAGING_DATA_RESET_REF})"
+    log_info "✓ Git reset successful"
 
     # Clean untracked files
     log_info "Cleaning untracked files..."
@@ -192,7 +185,7 @@ print_success_message() {
     echo -e "${GREEN}╚════════════════════════════════════════════════════════════════╝${NC}"
     echo ""
     echo -e "${GREEN}Database:${NC} Reset to production state"
-    echo -e "${GREEN}Images:${NC} Reset to init commit"
+    echo -e "${GREEN}Images:${NC} Reset to latest commit (HEAD)"
     echo -e "${GREEN}Temp Files:${NC} Cleaned"
     echo ""
     echo -e "${GREEN}To start staging server:${NC}"

@@ -1,4 +1,4 @@
-@smoke
+@smoke @readonly
 Feature: Staging Login
 
   Tests login functionality on staging environment with production data.
@@ -13,6 +13,12 @@ Feature: Staging Login
     Given I open the staging app
     When I am logged in as "admin" on staging
     Then I should see the main dashboard
+
+  Scenario: Login as second reviewer user
+    Given I open the staging app
+    When I am logged in as "reviewer2" on staging
+    Then I should see the main dashboard
+    And I should see production data in the runs list
 
   Scenario: Logout and login again
     Given I open the staging app

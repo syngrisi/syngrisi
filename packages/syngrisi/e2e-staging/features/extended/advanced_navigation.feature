@@ -1,4 +1,4 @@
-@extended
+@extended @readonly
 Feature: Advanced Navigation on Staging
 
   Tests for keyboard navigation, search, and sorting functionality.

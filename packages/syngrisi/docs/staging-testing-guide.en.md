@@ -140,8 +140,100 @@ mongosh "${STAGING_MONGODB_URI}/${STAGING_DB_NAME}" --eval "db.dropDatabase()"
 cd "${STAGING_DATA_REPO_PATH}" && git reset --hard init && git clean -fd
 ```
 
+## Demo Scenarios
+
+Demo scenarios are used for interactive demonstration of application functionality with visual hints and annotations.
+
+### Demo Scenario Naming Rules
+
+⚠️ **IMPORTANT**: You **CANNOT** use a colon after the word "Demo" in demo scenario names.
+
+**Correct** ✅:
+```gherkin
+Scenario: Demo - Database pollution with E2E data
+Scenario: Demo - Creating check via API
+Scenario: Demo - Image preview visibility
+```
+
+**Incorrect** ❌:
+```gherkin
+Scenario: Demo: Database pollution with E2E data
+Scenario: Demo: Creating check via API
+```
+
+**Reason**: Colon in Gherkin is used to separate the keyword (Scenario) from the name. Using an additional colon can cause parsing issues and confusion when reading reports.
+
+### Demo Scenario Structure
+
+Demo scenarios typically contain:
+- 🎤 **Announce steps** - voice/text announcements for the viewer
+- 🔦 **Highlight steps** - visual highlighting of elements
+- ⏸️ **Pause steps** - pauses to emphasize attention
+- 🧹 **Cleanup steps** - cleaning up test data
+
+### File Locations
+
+Demo scenarios are located in:
+- `packages/syngrisi/e2e/features/demo/` - main demos
+- `packages/syngrisi/e2e-staging/features/demo/` - staging demos
+
+## E2E Staging Tests
+
+Staging tests are categorized by their impact on data:
+
+### Test Categories
+
+| Category | Tag | Description | Count |
+|----------|-----|-------------|-------|
+| Read-only | `@readonly` | Only read data, no modifications | 22 |
+| Read-write | `@readwrite` | Modify data but cleanup after | 3 |
+| Polluting | `@polluting` | Demo tests that leave data (run last) | 3 |
+
+### Running Tests
+
+**Bash scripts** (from `packages/syngrisi`):
+```bash
+# Individual categories
+./scripts/staging/run-readonly-tests.sh
+./scripts/staging/run-readwrite-tests.sh
+./scripts/staging/run-polluting-tests.sh
+
+# Full cycle (correct order: readonly → readwrite → polluting)
+./scripts/staging/run-all-staging-tests.sh
+```
+
+**npm scripts**:
+```bash
+npm run staging:test:readonly
+npm run staging:test:readwrite
+npm run staging:test:polluting
+npm run staging:test:all
+```
+
+**Manual execution** (from e2e-staging folder):
+```bash
+cd /path/to/SYNGRISI_STAGE/packages/syngrisi/e2e-staging
+export SKIP_DEMO_TESTS=true
+npx bddgen
+npx playwright test --grep "@readonly"
+```
+
+### Test Accounts
+- Regular user 1: `STAGING_REGULAR_USER_EMAIL` / `STAGING_REGULAR_USER_PASSWORD`
+- Regular user 2: `STAGING_REGULAR_USER_2_EMAIL` / `STAGING_REGULAR_USER_2_PASSWORD`
+- Admin: `STAGING_ADMIN_USERNAME` / `STAGING_ADMIN_PASSWORD`
+- API Key: `STAGING_API_KEY` (for SDK operations)
+
+### Claude Code TUI Commands
+- `/staging-readonly` — run read-only tests
+- `/staging-readwrite` — run read-write tests
+- `/staging-polluting` — run polluting tests
+- `/staging-demo` — interactive demo mode
+
 ## References
 - E2E features: `packages/syngrisi/e2e/features/CHECKS_HANDLING/`
+- E2E staging: `packages/syngrisi/e2e-staging/features/`
 - Env vars: `packages/syngrisi/docs/environment_variables.md`
 - Server config: `packages/syngrisi/src/server/config.ts`
 - API docs: http://localhost:${STAGING_PORT}/swagger/ (when running)
+- Investigation report: `packages/syngrisi/docs/investigations/staging-e2e-report-2024-12-05.md`

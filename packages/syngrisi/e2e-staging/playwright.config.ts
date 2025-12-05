@@ -37,6 +37,7 @@ export default defineConfig({
     video: 'retain-on-failure',
   },
   projects: [
+    // ===== Projects by folder (legacy) =====
     {
       name: 'smoke',
       testMatch: /smoke/,
@@ -65,6 +66,33 @@ export default defineConfig({
     {
       name: 'demo',
       testMatch: /demo/,
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 1366, height: 768 },
+        headless: false,
+      },
+    },
+    // ===== Projects by data impact (new) =====
+    // Use with: npx playwright test --grep "@readonly"
+    {
+      name: 'readonly',
+      // Matches tests tagged with @readonly - only read operations
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 1366, height: 768 },
+      },
+    },
+    {
+      name: 'readwrite',
+      // Matches tests tagged with @readwrite - modifies data but cleans up
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 1366, height: 768 },
+      },
+    },
+    {
+      name: 'polluting',
+      // Matches tests tagged with @polluting - creates data that remains
       use: {
         ...devices['Desktop Chrome'],
         viewport: { width: 1366, height: 768 },
