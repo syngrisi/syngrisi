@@ -1,14 +1,13 @@
-import { Given, When, Then } from '@fixtures';
+import { Given, When, Then, expect } from '../../support/fixtures';
+import { createLogger } from '../../support/logger';
 import type { Page } from '@playwright/test';
-import { expect } from '@playwright/test';
-import { createLogger } from '@lib/logger';
 import path from 'path';
 import dotenv from 'dotenv';
 import * as crypto from 'crypto';
 
 // Load staging environment variables
-const syngrisiRoot = path.resolve(__dirname, '..', '..', '..', '..');
-dotenv.config({ path: path.join(syngrisiRoot, '.env.staging') });
+const syngrisiRoot = path.resolve(__dirname, '..', '..');
+dotenv.config({ path: path.join(syngrisiRoot, '..', '.env.staging') });
 
 const logger = createLogger('StagingSteps');
 

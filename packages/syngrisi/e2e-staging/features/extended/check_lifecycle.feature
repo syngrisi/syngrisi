@@ -1,4 +1,4 @@
-@staging @extended @no-app-start
+@extended
 Feature: Check Lifecycle on Staging
 
   Tests for creating, accepting, and deleting checks on staging.

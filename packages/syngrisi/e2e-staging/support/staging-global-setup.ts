@@ -1,10 +1,10 @@
 import type { FullConfig } from '@playwright/test';
-import { createLogger } from '@lib/logger';
+import { createLogger } from './logger';
 import fs from 'fs/promises';
 import path from 'path';
 
 const logger = createLogger('StagingGlobalSetup');
-const STAGING_BASE_URL = 'http://localhost:5252';
+const STAGING_BASE_URL = process.env.STAGING_BASE_URL || 'http://localhost:5252';
 
 const ensureDir = async (dirPath: string) => {
   await fs.mkdir(dirPath, { recursive: true });
@@ -25,9 +25,8 @@ export default async function stagingGlobalSetup(_config: FullConfig) {
 
   // Ensure reports directories exist
   const reportsDir = path.join(__dirname, '..', 'reports');
-  await ensureDir(path.join(reportsDir, 'staging-artifacts'));
-  await ensureDir(path.join(reportsDir, 'staging-html'));
-  await ensureDir(path.join(reportsDir, 'staging-json'));
+  await ensureDir(path.join(reportsDir, 'artifacts'));
+  await ensureDir(path.join(reportsDir, 'html'));
 
   // Verify staging server is running
   logger.info(`Checking staging server at ${STAGING_BASE_URL}...`);

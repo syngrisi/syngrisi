@@ -1,4 +1,4 @@
-@staging @maintenance @no-app-start
+@maintenance
 Feature: Cleanup Tasks on Staging
 
   Tests for admin access and basic maintenance operations.

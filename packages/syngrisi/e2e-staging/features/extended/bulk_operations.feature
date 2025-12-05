@@ -1,4 +1,4 @@
-@staging @extended @no-app-start
+@extended
 Feature: Bulk Operations on Staging
 
   Extended tests for bulk check operations and table interactions.
