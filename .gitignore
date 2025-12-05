@@ -1,6 +1,7 @@
 node_modules/
 .DS_Store
 baselines*/
+!packages/syngrisi/src/ui-app/**/Baselines/
 /.idea/
 .idea/
 /coverage/
