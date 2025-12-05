@@ -7,6 +7,8 @@ Feature: Accept check via SDK
       SYNGRISI_TEST_MODE: true
       SYNGRISI_AUTH: false
             """
+        # Ensure server is running before creating test user
+        Given I start Server
         When I create via http test user
 
         When I set env variables:

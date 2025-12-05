@@ -252,8 +252,13 @@ Feature: Ident flow
             filePath: files/A.png
       """
     When I accept via http the 1st check with name "IdentCheck"
+    # Wait for acceptance to be fully processed before creating second check
+    Then I expect via http 1st check filtered as "name=IdentCheck" matched:
+      """
+      markedAs: accepted
+      """
 
-    # second check
+    # second check - uses different image (B.png) to trigger comparison failure
     Given I create "1" tests with:
       """
       testName: IdentTest
