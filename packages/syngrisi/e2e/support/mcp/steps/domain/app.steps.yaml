@@ -1,8 +1,8 @@
 metadata:
   category: domain/app
-  generatedAt: '2025-12-04T06:13:58.723Z'
+  generatedAt: '2025-12-05T04:19:37.324Z'
   totalFiles: 19
-  totalSteps: 121
+  totalSteps: 123
   sourceFiles:
     - steps/domain/ai.steps.ts
     - steps/domain/api-key.steps.ts
@@ -95,31 +95,31 @@ steps:
     line: 9
   - pattern: I click the {string} button
     description: ''
-    line: 133
+    line: 135
   - pattern: I create a test run {string} with {int} checks
     description: ''
     line: 25
   - pattern: 'I create a test run {string} with checks:'
     description: ''
-    line: 78
+    line: 80
   - pattern: I should see the check details for {string}
     description: ''
-    line: 165
+    line: 173
   - pattern: the {string} button should be {string}
     description: ''
-    line: 147
+    line: 149
   - pattern: I accept the {string} check
     description: ''
     line: 7
   - pattern: I delete the {string} check
     description: ''
-    line: 59
+    line: 95
   - pattern: I open the {ordinal} check {string}
     description: ''
     line: 37
   - pattern: I remove the {string} check
     description: ''
-    line: 93
+    line: 129
   - pattern: I run CLI task {string} with args {string}
     description: ''
     line: 11
@@ -302,22 +302,22 @@ steps:
     line: 232
   - pattern: 'I expect via http {ordinal} {string} filtered as {string} matched:'
     description: ''
-    line: 188
+    line: 192
   - pattern: 'I expect via http {ordinal} {string} filtered as {string} matched:'
     description: ''
-    line: 109
+    line: 113
   - pattern: 'I expect via http {ordinal} baseline filtered as {string} matched:'
     description: ''
-    line: 83
+    line: 87
   - pattern: 'I expect via http {ordinal} check filtered as {string} matched:'
     description: ''
-    line: 70
+    line: 74
   - pattern: 'I expect via http {ordinal} test filtered as {string} matched:'
     description: ''
-    line: 136
+    line: 140
   - pattern: I expect via http that {string} {string} exist exactly {string} times
     description: ''
-    line: 23
+    line: 27
   - pattern: 'I create {string} log messages with params:'
     description: ''
     line: 12
@@ -347,7 +347,7 @@ steps:
     line: 12
   - pattern: the current url contains {string}
     description: ''
-    line: 77
+    line: 104
   - pattern: I clear database
     description: ''
     line: 218
@@ -492,4 +492,27 @@ steps:
     line: 469
   - pattern: I unfold the test {string}
     description: ''
-    line: 585
+    line: 623
+  - pattern: I wait for check {string} to appear in collapsed row of test {string}
+    description: |-
+      Waits for a specific check to appear in the collapsed row of a test.
+      This step handles race conditions by:
+      1. Clicking the test row to unfold if collapsed
+      2. Clicking Refresh if check doesn't appear
+
+      @example
+      ```gherkin
+      When I wait for check "CheckName-1" to appear in collapsed row of test "TestName-1"
+      ```
+    line: 740
+  - pattern: I wait for test {string} to appear in table
+    description: |-
+      Waits for a specific test row to appear in the table.
+      This step should be used after navigation when test data was created via API
+      and you need to ensure the UI has loaded and rendered the data.
+
+      @example
+      ```gherkin
+      When I wait for test "TestName-1" to appear in table
+      ```
+    line: 643

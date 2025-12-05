@@ -26,10 +26,10 @@ const get = catchAsync(async (req: ExtRequest, res: Response) => {
 
     if (includeUsage && result?.results?.length) {
 
-        const snapshotIds = result.results.map((item: any) => (item.snapshootId && item.snapshootId._id) ? item.snapshootId._id : item.snapshootId);
+        const snapshotIds = (result?.results || []).map((item: any) => (item.snapshootId && item.snapshootId._id) ? item.snapshootId._id : item.snapshootId);
         const usageMap = await getUsageCountsBySnapshotIds(snapshotIds);
 
-        result.results = result.results.map((item: any) => {
+        result.results = (result?.results || []).map((item: any) => {
             const obj = item?.toObject ? item.toObject() : item;
             let snapId = '';
             if (obj.snapshootId) {

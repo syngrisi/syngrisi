@@ -186,6 +186,29 @@ install_dependencies() {
         log_warn "Failed to install e2e-staging dependencies (folder may not exist)"
     fi
 
+    # Create e2e-staging .env file
+    log_info "Creating e2e-staging .env file..."
+    local E2E_STAGING_ENV="${STAGING_WORKTREE_PATH}/packages/syngrisi/e2e-staging/.env"
+    cat > "${E2E_STAGING_ENV}" <<EOF
+# Staging server URL
+STAGING_BASE_URL=http://localhost:${STAGING_PORT}
+
+# Staging credentials
+STAGING_REGULAR_USER_EMAIL=${STAGING_REGULAR_USER_EMAIL}
+STAGING_REGULAR_USER_PASSWORD=${STAGING_REGULAR_USER_PASSWORD}
+
+STAGING_ADMIN_EMAIL=${STAGING_ADMIN_USERNAME}
+STAGING_ADMIN_PASSWORD=${STAGING_ADMIN_PASSWORD}
+
+# API Key for SDK operations
+STAGING_API_KEY=${STAGING_API_KEY:-}
+
+# Debug options
+SKIP_DEMO_TESTS=false
+DEBUG=false
+EOF
+    log_info "✓ e2e-staging .env file created"
+
     # Copy MCP runtime files (.tmp/mcp contains mcp.spec.ts required by test engine)
     log_info "Copying MCP runtime files..."
     local SOURCE_TMP_MCP="${REPO_ROOT}/e2e/.tmp/mcp"
