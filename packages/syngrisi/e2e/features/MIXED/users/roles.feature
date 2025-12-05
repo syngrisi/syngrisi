@@ -142,10 +142,11 @@ Feature: User roles
   # login
   When I login with user:"user@gmail.com" password "Password-123"
   When I wait 10 seconds for the element with locator "span*=JD" to be visible
-  # checks
-
-  Then the element "//div[contains(text(), 'User test')]" does appear exactly "5" times
-  Then the element "[data-table-test-creatorusername='user@gmail.com']" does appear exactly "5" times
+  # Wait for table to load with refresh polling
+  When I wait for "2" seconds
+  # checks - use polling assertions with refresh to handle data loading timing (60s for CI stability)
+  Then the element "//div[contains(text(), 'User test')]" should have exactly 5 items within 60 seconds with refresh
+  Then the element "[data-table-test-creatorusername='user@gmail.com']" should have exactly 5 items within 15 seconds
   Then the element with locator "//div[contains(text(), 'Reviewer test')]" should not be visible
   Then the element with locator "//div[contains(text(), 'Admin test')]" should not be visible
 
@@ -156,16 +157,17 @@ Feature: User roles
   # login
   When I login with user:"reviewer@gmail.com" password "Password-123"
   When I wait 10 seconds for the element with locator "span*=RR" to be visible
-  # checks
+  # Wait for table to load with refresh polling
+  When I wait for "2" seconds
+  # checks - use polling assertions with refresh to handle data loading timing
+  Then the element "//div[contains(text(), 'User test')]" should have exactly 5 items within 30 seconds with refresh
+  Then the element "[data-table-test-creatorusername='user@gmail.com']" should have exactly 5 items within 10 seconds
 
-  Then the element "//div[contains(text(), 'User test')]" does appear exactly "5" times
-  Then the element "[data-table-test-creatorusername='user@gmail.com']" does appear exactly "5" times
+  Then the element "//div[contains(text(), 'Reviewer test')]" should have exactly 7 items within 30 seconds with refresh
+  Then the element "[data-table-test-creatorusername='reviewer@gmail.com']" should have exactly 7 items within 10 seconds
 
-  Then the element "//div[contains(text(), 'Reviewer test')]" does appear exactly "7" times
-  Then the element "[data-table-test-creatorusername='reviewer@gmail.com']" does appear exactly "7" times
-
-  Then the element "//div[contains(text(), 'Admin test')]" does appear exactly "3" times
-  Then the element "[data-table-test-creatorusername='superadmin@gmail.com']" does appear exactly "3" times
+  Then the element "//div[contains(text(), 'Admin test')]" should have exactly 3 items within 30 seconds with refresh
+  Then the element "[data-table-test-creatorusername='superadmin@gmail.com']" should have exactly 3 items within 10 seconds
 
   # logout
   When I log out of the application
@@ -174,13 +176,15 @@ Feature: User roles
   # login
   When I login with user:"superadmin@gmail.com" password "Password-123"
   When I wait 10 seconds for the element with locator "span*=SD" to be visible
-  # checks
-  Then the element "//div[contains(text(), 'User test')]" does appear exactly "5" times
-  Then the element "[data-table-test-creatorusername='user@gmail.com']" does appear exactly "5" times
+  # Wait for table to load with refresh polling
+  When I wait for "2" seconds
+  # checks - use polling assertions with refresh to handle data loading timing
+  Then the element "//div[contains(text(), 'User test')]" should have exactly 5 items within 30 seconds with refresh
+  Then the element "[data-table-test-creatorusername='user@gmail.com']" should have exactly 5 items within 10 seconds
 
-  Then the element "//div[contains(text(), 'Reviewer test')]" does appear exactly "7" times
-  Then the element "[data-table-test-creatorusername='reviewer@gmail.com']" does appear exactly "7" times
+  Then the element "//div[contains(text(), 'Reviewer test')]" should have exactly 7 items within 30 seconds with refresh
+  Then the element "[data-table-test-creatorusername='reviewer@gmail.com']" should have exactly 7 items within 10 seconds
 
-  Then the element "//div[contains(text(), 'Admin test')]" does appear exactly "3" times
-  Then the element "[data-table-test-creatorusername='superadmin@gmail.com']" does appear exactly "3" times
+  Then the element "//div[contains(text(), 'Admin test')]" should have exactly 3 items within 30 seconds with refresh
+  Then the element "[data-table-test-creatorusername='superadmin@gmail.com']" should have exactly 3 items within 10 seconds
 

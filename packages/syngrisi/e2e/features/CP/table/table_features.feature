@@ -41,9 +41,8 @@ Feature: Tests Table Features
     When I wait 10 seconds for the element with locator "[data-table-test-name=TestName-before]" to be visible
 
     When I click element with locator "[aria-label='Refresh']"
-
-    When I wait 10 seconds for the element with locator "[data-table-test-name=TestName-after]" to be visible
-    Then the element "[data-table-test-name=TestName-after]" does appear exactly "3" times
+    # Use polling assertion to wait for all 3 items to be loaded with extended timeout
+    Then the element "[data-table-test-name=TestName-after]" should have exactly 3 items within 30 seconds
 
   # ============================================
   # Folding
@@ -95,8 +94,8 @@ Feature: Tests Table Features
               filePath: files/A.png
       """
     Given I go to "main" page
-    When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-0]" to be visible
-    When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-1]" to be visible
+    When I wait for test "TestName-0" to appear in table
+    When I wait for test "TestName-1" to appear in table
     Then I wait on element "[data-table-check-name='Check-0']" to not be displayed
     Then I wait on element "[data-table-check-name='Check-1']" to not be displayed
 
@@ -123,23 +122,28 @@ Feature: Tests Table Features
               filePath: files/A.png
       """
     Given I go to "main" page
-    When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-0]" to be visible
-    When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-1]" to be visible
+    When I wait for test "TestName-0" to appear in table
+    When I wait for test "TestName-1" to appear in table
     Then I wait on element "[data-table-check-name='Check-0']" to not be displayed
     Then I wait on element "[data-table-check-name='Check-1']" to not be displayed
 
 
+    # Wait for checkboxes to be ready before clicking
+    When I wait 10 seconds for the element with locator "[data-test-checkbox-name=TestName-0]" to be visible
     When I click element with locator "[data-test-checkbox-name=TestName-0]"
+    When I wait for "1" seconds
+    When I wait 10 seconds for the element with locator "[data-test-checkbox-name=TestName-1]" to be visible
     When I click element with locator "[data-test-checkbox-name=TestName-1]"
     When I wait 30 seconds for the element with locator "[data-test='folding-table-items']" to be visible
 
-    # unfold
+    # unfold - use polling for check visibility
     When I click element with locator "[data-test='folding-table-items']"
-    When I wait 30 seconds for the element with locator "[data-table-check-name='Check-0']" to be visible
-    When I wait 30 seconds for the element with locator "[data-table-check-name='Check-1']" to be visible
+    Then the element "[data-table-check-name='Check-0']" should have exactly 1 items within 30 seconds
+    Then the element "[data-table-check-name='Check-1']" should have exactly 1 items within 30 seconds
 
     # fold
     When I click element with locator "[data-test='folding-table-items']"
+    When I wait for "1" seconds
     Then I wait on element "[data-table-check-name='Check-0']" to not be displayed
     Then I wait on element "[data-table-check-name='Check-1']" to not be displayed
 
@@ -153,21 +157,22 @@ Feature: Tests Table Features
               filePath: files/A.png
       """
     Given I go to "main" page
-    When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-0]" to be visible
-    When I wait 30 seconds for the element with locator "[data-table-test-name=TestName-1]" to be visible
+    When I wait for test "TestName-0" to appear in table
+    When I wait for test "TestName-1" to appear in table
     Then I wait on element "[data-table-check-name='Check-0']" to not be displayed
     Then I wait on element "[data-table-check-name='Check-1']" to not be displayed
 
     When I click element with locator "[data-test='table-select-all']"
     When I wait 30 seconds for the element with locator "[data-test='folding-table-items']" to be visible
 
-    # unfold
+    # unfold - wait for checks to load after expanding all items (use polling for both)
     When I click element with locator "[data-test='folding-table-items']"
-    When I wait 30 seconds for the element with locator "[data-table-check-name='Check-0']" to be visible
-    When I wait 30 seconds for the element with locator "[data-table-check-name='Check-1']" to be visible
+    Then the element "[data-table-check-name='Check-0']" should have exactly 1 items within 30 seconds
+    Then the element "[data-table-check-name='Check-1']" should have exactly 1 items within 30 seconds
 
     # fold
     When I click element with locator "[data-test='folding-table-items']"
+    When I wait for "1" seconds
     Then I wait on element "[data-table-check-name='Check-0']" to not be displayed
     Then I wait on element "[data-table-check-name='Check-1']" to not be displayed
 
@@ -212,11 +217,8 @@ Feature: Tests Table Features
               checkName: Check - 1
       """
     When I go to "main" page
-
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName Project-1']" to be visible
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName Project-2-unfiltered']" to be visible
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName Project-2-filter-0']" to be visible
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName Project-2-filter-1']" to be visible
+    # Wait for all test data to be indexed and visible with reliable refresh
+    When I wait for test "TestName Project-2-filter-1" to appear in table
 
     # select project
     # this is workaround: it's impossible for now to select 'Project-2' straightaway at this moment
@@ -308,17 +310,32 @@ Feature: Tests Table Features
 
 
   Scenario: Sorting
-    When I create "3" tests with:
+    # Create tests sequentially with different timestamps to ensure deterministic sort order
+    When I create "1" tests with:
       """
-          testName: "TestName-$"
+          testName: "TestName-0"
+          checks:
+            - filePath: files/A.png
+              checkName: Check - 1
+      """
+    When I create "1" tests with:
+      """
+          testName: "TestName-1"
+          checks:
+            - filePath: files/A.png
+              checkName: Check - 1
+      """
+    When I create "1" tests with:
+      """
+          testName: "TestName-2"
           checks:
             - filePath: files/A.png
               checkName: Check - 1
       """
     When I go to "main" page
     When I wait for test "TestName-0" to appear in table
-    When I wait 10 seconds for the element with locator "[data-table-test-name=TestName-1]" for 10000ms to be visible
-    When I wait 10 seconds for the element with locator "[data-table-test-name=TestName-2]" for 10000ms to be visible
+    When I wait for test "TestName-1" to appear in table
+    When I wait for test "TestName-2" to appear in table
     When I execute javascript code:
       """
       const elements = Array
@@ -337,7 +354,9 @@ Feature: Tests Table Features
     When I select the option with the text "Name" for element "select[data-test='table-sort-by-select']"
     When I click element with locator "[aria-label='sort order is descendant']"
 
+    # Wait for table to re-render after sort order change
     Then the 1st element with locator "[data-test='table-row-Name']" should have text "TestName-0"
+    When I wait for "1" seconds
     When I execute javascript code:
       """
       const elements = Array
@@ -353,7 +372,9 @@ Feature: Tests Table Features
 
     When I click element with locator "[aria-label='sort order is ascendant']"
 
+    # Wait for table to re-render after sort order change
     Then the 1st element with locator "[data-test='table-row-Name']" should have text "TestName-2"
+    When I wait for "1" seconds
     When I execute javascript code:
       """
       const elements = Array

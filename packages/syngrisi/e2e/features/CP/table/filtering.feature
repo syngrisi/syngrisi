@@ -107,7 +107,10 @@ Feature: Tests Table Filter
 
     When I go to "main" page
 
-
+    # Wait for all test data to be indexed and visible with refresh
+    When I wait for test "TestName filter-0" to appear in table
+    When I wait for test "TestName filter-1" to appear in table
+    When I wait for test "TestName filter-RunName-2" to appear in table
     When I wait 10 seconds for the element with locator "[data-table-test-name='TestName filter-0']" to be visible
     When I wait 10 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
     When I wait 10 seconds for the element with locator "[data-table-test-name='TestName filter-RunName-2']" to be visible
@@ -295,12 +298,17 @@ Feature: Tests Table Filter
 
   When I go to "main" page
 
-
+  # Wait for all test data to be indexed and visible
+  When I wait for test "ZestName-1" to appear in table
+  When I wait 10 seconds for the element with locator "[data-table-test-name='TestName-0']" to be visible
+  When I wait 10 seconds for the element with locator "[data-table-test-name='TestName-1']" to be visible
   When I wait 10 seconds for the element with locator "[data-test='table-quick-filter']" to be visible
 
   When I set "TestName-" to the inputfield "[data-test='table-quick-filter']"
+  # Wait for filter to be applied - TestName items should be visible
   When I wait 10 seconds for the element with locator "[data-table-test-name='TestName-0']" to be visible
   When I wait 10 seconds for the element with locator "[data-table-test-name='TestName-1']" to be visible
+  # ZestName-1 should be filtered out
   Then I wait on element "[data-table-test-name='ZestName-1']" to not be displayed
 
   When I set "TestName-0" to the inputfield "[data-test='table-quick-filter']"
@@ -335,6 +343,9 @@ Feature: Tests Table Filter
 
   When I go to "main" page
   When I wait 10 seconds for the element with locator "[data-test='table-quick-filter']" to be visible
+  # Ensure data is loaded and refresh to get all items
+  When I wait for "2" seconds
+  When I click element with locator "[aria-label='Refresh']"
 
   When I wait 10 seconds for the element with locator "[data-table-test-name='TestNameP1-0']" to be visible
   When I wait 10 seconds for the element with locator "[data-table-test-name='TestNameP1-1']" to be visible

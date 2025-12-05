@@ -69,6 +69,8 @@ Feature: Login
   Scenario: Redirect via origin url
     # Ensure server is running with auth enabled
     Given I start Server
+    # Wait for server to be fully ready before opening URL
+    When I wait for "1" seconds
     When I open the url "/?groupBy=test-distinct%2FbrowserName"
     Then the current url contains "/auth"
     When I set "Test" to the inputfield "#email"
