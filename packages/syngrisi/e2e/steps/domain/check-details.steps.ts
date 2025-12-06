@@ -156,6 +156,12 @@ Then('the {string} button should be {string}', async ({ page }, buttonName, stat
     const title = map[buttonName];
     if (!title) throw new Error(`Unknown button: ${buttonName}`);
 
+    // Wait for header to be fully loaded (navigation state depends on check data)
+    await page.waitForSelector('[data-check-header-ready="true"]', { timeout: 15000 });
+
+    // Wait for navigation state to be fully calculated (sibling checks loaded)
+    await page.waitForSelector('[data-navigation-ready="true"]', { timeout: 15000 });
+
     // Use modal context to avoid matching buttons outside the check details modal
     const btn = page.locator(`.modal button[title="${title}"], [data-check-header-name] ~ * button[title="${title}"]`).first();
 
@@ -171,5 +177,7 @@ Then('the {string} button should be {string}', async ({ page }, buttonName, stat
 });
 
 Then('I should see the check details for {string}', async ({ page }, checkName) => {
+    // Wait for header to be fully loaded before checking name
+    await page.waitForSelector('[data-check-header-ready="true"]', { timeout: 15000 });
     await expect(page.locator(`[data-check-header-name='${checkName}']`)).toBeVisible();
 });

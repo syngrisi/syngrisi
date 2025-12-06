@@ -231,6 +231,7 @@ export default function NavbarIndex({ setBreadCrumbs }: Props) {
                                                 sx={{ width: '100%' }}
                                                 styles={{ itemWrapper: { width: '100%' } }}
                                                 pt={4}
+                                                data-test-navbar-ready={!infinityQuery.isFetching ? 'true' : 'false'}
                                             >
                                                 {/* eslint-disable-next-line max-len */}
                                                 <NavbarItems

@@ -858,6 +858,13 @@ When('I move to element {string}', async ({ page }, selector: string) => {
   await locator.first().hover();
 });
 
+When('I hover over {string} and wait for tooltip {string}', async ({ page }, hoverSelector: string, tooltipSelector: string) => {
+  const element = getLocatorQuery(page, hoverSelector).first();
+  await element.hover();
+  // Keep hovering while waiting for tooltip (handles openDelay)
+  await getLocatorQuery(page, tooltipSelector).waitFor({ state: 'visible', timeout: 10000 });
+});
+
 When('I move to element {string} with an offset of {int},{int}', async ({ page }, selector: string, x: number, y: number) => {
   const locator = getLocatorQuery(page, selector);
   const box = await locator.first().boundingBox();
