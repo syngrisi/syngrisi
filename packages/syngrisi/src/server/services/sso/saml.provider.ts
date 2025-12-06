@@ -4,7 +4,7 @@
  * Implements SSO authentication via SAML 2.0 protocol.
  */
 
-import { Strategy as SamlStrategy } from 'passport-saml';
+import { Strategy as SamlStrategy } from '@node-saml/passport-saml';
 import type { PassportStatic } from 'passport';
 import log from '@logger';
 import { env } from '../../envConfig';
@@ -103,18 +103,31 @@ class SAMLProvider implements SSOProvider {
             hasIdpIssuer: !!idpIssuer,
         });
 
+        // Build callback URL from SSO_CALLBACK_URL or default
+        const callbackPath = '/v1/auth/sso/saml/callback';
+        // For @node-saml/passport-saml v5+, callbackUrl must be a full URL
+        // We'll use the issuer as base URL since it typically contains the service provider URL
+        const callbackUrl = issuer.endsWith('/')
+            ? `${issuer.slice(0, -1)}${callbackPath}`
+            : `${issuer}${callbackPath}`;
+
         const samlConfig: any = {
             entryPoint,
             issuer,
             cert,
-            path: '/v1/auth/sso/saml/callback',
+            callbackUrl,
             passReqToCallback: true,
+            // Security: require signed assertions (recommended for production)
+            wantAssertionsSigned: true,
+            wantAuthnResponseSigned: false, // Some IdPs don't sign the response envelope
         };
 
         // Add IdP issuer if configured (for issuer validation)
         if (idpIssuer) {
             samlConfig.idpIssuer = idpIssuer;
         }
+
+        log.debug('SAML config', { ...logMeta, callbackUrl, hasIdpIssuer: !!idpIssuer });
 
         passport.use(SAML_STRATEGY_NAME, new SamlStrategy(
             samlConfig,
