@@ -38,7 +38,6 @@
     "@playwright/test": "^1.39.0",
     "@syngrisi/core-api": "^2.4.0",
     "@wdio/logger": "^7.16.0",
-    "hasha": "^5.2.2",
     "loglevel": "^1.8.1",
     "playwright-core": "^1.39.0",
     "ua-parser-js": "^1.0.37",
