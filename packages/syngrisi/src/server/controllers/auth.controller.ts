@@ -1,4 +1,4 @@
-import httpStatus from 'http-status';
+import { HttpStatus } from '@utils';
 import passport from 'passport';
 import { Response, NextFunction } from "express"
 import { User } from '@models';
@@ -49,12 +49,12 @@ const login = catchAsync(async (req: ExtRequest, res: Response, next: NextFuncti
     passport.authenticate('local', (err: unknown, user: any, info: any) => {
         if (err) {
             log.error(`Authentication error: '${err}'`, logOpts);
-            return res.status(httpStatus.UNAUTHORIZED).json({ message: 'authentication error' });
+            return res.status(HttpStatus.UNAUTHORIZED).json({ message: 'authentication error' });
         }
         if (!user) {
             log.error(`Authentication failed for '${req.body.username}': '${info.message}'`, logOpts);
             log.error(`Info object: ${JSON.stringify(info)}`, logOpts);
-            return res.status(httpStatus.UNAUTHORIZED).json({ message: `Authentication error: '${info.message}'` });
+            return res.status(HttpStatus.UNAUTHORIZED).json({ message: `Authentication error: '${info.message}'` });
         }
 
         log.info(`User authenticated successfully: ${user.username}`, logOpts);
@@ -76,10 +76,10 @@ const logout = catchAsync(async (req: ExtRequest, res: Response) => {
     };
     try {
         log.debug(`try to log out user: '${req?.user?.username}'`, logOpts);
-        await req.logout({}, () => res.status(httpStatus.OK).json({ message: 'success' }));
+        await req.logout({}, () => res.status(HttpStatus.OK).json({ message: 'success' }));
     } catch (e: unknown) {
         log.error(e, logOpts);
-        res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: 'fail' });
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'fail' });
     }
 });
 
@@ -102,14 +102,14 @@ const changePassword = catchAsync(async (req: ExtRequest, res: Response) => {
 
     if (!user) {
         log.error('user is not logged in', logOpts);
-        return res.status(httpStatus.UNAUTHORIZED).json({ message: 'user is not logged in' });
+        return res.status(HttpStatus.UNAUTHORIZED).json({ message: 'user is not logged in' });
     }
 
     try {
         await user.changePassword(currentPassword, newPassword);
     } catch (e: unknown) {
         log.error(e, logOpts);
-        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: errMsg(e) });
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: errMsg(e) });
     }
 
     log.debug(`password was successfully changed for user: ${req.user?.username}`, logOpts);
@@ -140,7 +140,7 @@ const changePasswordFirstRun = catchAsync(async (req: ExtRequest, res: Response)
         res.status(200).json({ message: 'success' });
     } else {
         log.error(`trying to use first run API with no first run state, auth: '${await AppSettings.isAuthEnabled()}', global settings: '${JSON.stringify(await AppSettings.get('first_run'))}'`, logOpts);
-        res.status(httpStatus.FORBIDDEN).json({ message: 'forbidden' });
+        res.status(HttpStatus.FORBIDDEN).json({ message: 'forbidden' });
     }
 });
 

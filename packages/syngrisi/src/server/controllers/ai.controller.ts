@@ -8,7 +8,7 @@ import path from 'path';
 import { accept, remove } from '@services/check.service';
 import { ExtRequest } from '@types';
 import log from '@lib/logger';
-import httpStatus from 'http-status';
+import { HttpStatus } from '@utils';
 
 const htmlShell = (title: string, content: string) => `
 <!DOCTYPE html>
@@ -496,7 +496,7 @@ const batchUpdate = catchAsync(async (req: ExtRequest, res: Response) => {
     log.info(`User: ${req.user?.username} `, { scope: 'ai.controller' });
 
     if (!ids || !Array.isArray(ids)) {
-        throw new ApiError(httpStatus.BAD_REQUEST, 'ids array is required');
+        throw new ApiError(HttpStatus.BAD_REQUEST, 'ids array is required');
     }
     if (action === 'accept') {
         for (const id of idList) {

@@ -11,7 +11,7 @@ import { UserDocument } from '@models/User.model';
 import { CreateCheckParamsExtended } from '../../types/Check';
 import { createSnapshot } from './snapshot-file.service';
 import { errMsg, ApiError } from '@utils';
-import httpStatus from 'http-status';
+import { HttpStatus } from '@utils';
 
 export interface CompareSnapshotsOptions {
     vShifting?: boolean;
@@ -208,7 +208,7 @@ export const compareCheck = async (
             compareResult.status = 'failed';
             compareResult.result = JSON.stringify({ server_error: `error during comparing - ${errMsg(e)}` });
             compareResult.failReasons.push('internal_server_error');
-            throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, `error during comparing: ${errMsg(e)}`);
+            throw new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, `error during comparing: ${errMsg(e)}`);
         }
     }
 

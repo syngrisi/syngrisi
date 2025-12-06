@@ -1,5 +1,5 @@
 
-import httpStatus from 'http-status';
+import { HttpStatus } from '@utils';
 import { EJSON } from 'bson';
 import { ApiError, catchAsync, pick } from '@utils';
 import { usersService } from '@services';
@@ -15,7 +15,7 @@ const current = catchAsync(async (req: ExtRequest, res: Response) => {
     };
     log.debug(`current user is: '${req?.user?.username || 'not_logged'}'`, logOpts);
     res.set('Cache-Control', 'no-store');
-    res.status(httpStatus.OK).json({
+    res.status(HttpStatus.OK).json({
         id: req?.user?.id,
         username: req?.user?.username,
         firstName: req?.user?.firstName,
@@ -58,7 +58,7 @@ const create = catchAsync(async (req: ExtRequest, res: Response) => {
             'meta',
         ]);
         const user = await usersService.createUser(userData);
-        res.status(httpStatus.CREATED).send(user);
+        res.status(HttpStatus.CREATED).send(user);
     } catch (e: unknown) {
         if (e instanceof ApiError && e.statusCode) {
             log.error(e, logOpts);
@@ -77,7 +77,7 @@ const update = catchAsync(async (req: ExtRequest, res: Response) => {
 
 const remove = catchAsync(async (req: ExtRequest, res: Response) => {
     await usersService.deleteUserById(req.params.userId);
-    res.status(httpStatus.NO_CONTENT).send();
+    res.status(HttpStatus.NO_CONTENT).send();
 });
 
 export {

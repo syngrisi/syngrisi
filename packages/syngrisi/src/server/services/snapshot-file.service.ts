@@ -1,6 +1,6 @@
 import fs, { promises as fsp } from 'fs';
 import path from 'path';
-import httpStatus from 'http-status';
+import { HttpStatus } from '@utils';
 import { Snapshot } from '@models';
 import { SnapshotDocument } from '@models/Snapshot.model';
 import { ApiError, hashSync } from '@utils';
@@ -39,7 +39,7 @@ export async function createSnapshot(parameters: CreateSnapshotParameters, sessi
     const opts: Partial<SnapshotDocument> = { name };
 
     if (fileData === null) {
-        throw new ApiError(httpStatus.BAD_REQUEST, `cannot create the snapshot, the 'fileData' is not set, name: '${name}'`);
+        throw new ApiError(HttpStatus.BAD_REQUEST, `cannot create the snapshot, the 'fileData' is not set, name: '${name}'`);
     }
 
 
@@ -101,7 +101,7 @@ export async function prepareActualSnapshot(
 
         log.debug(`snapshot with such hashcode: '${checkParam.hashCode}' is already exists, will clone it`, logOpts);
 
-        if (!checkParam.name) throw new ApiError(httpStatus.BAD_REQUEST, `Cannot prepareActualSnapshot name is empty, hashe: ${checkParam.hashCode}`);
+        if (!checkParam.name) throw new ApiError(HttpStatus.BAD_REQUEST, `Cannot prepareActualSnapshot name is empty, hashe: ${checkParam.hashCode}`);
         currentSnapshot = await cloneSnapshot(snapshotFoundedByHashcode, checkParam.name, session);
     } else {
         log.debug(`snapshot with such hashcode: '${checkParam.hashCode}' does not exists, will create it`, logOpts);
