@@ -7,7 +7,7 @@ import { TestDocument } from '@models/Test.model';
 import { AppDocument } from '@models/App.model';
 import { SuiteDocument } from '@models/Suite.model';
 import { SnapshotDocument } from '@models/Snapshot.model';
-import StatusCodes from 'http-status';
+import { HttpStatus } from '@utils';
 import { prepareActualSnapshot, isNeedFiles } from './snapshot-file.service';
 import { startSession, endSession, updateTestAfterCheck } from './test-run.service';
 import * as BaselineService from './baseline.service';

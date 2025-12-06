@@ -2,7 +2,7 @@ import express from 'express';
 import helmet from 'helmet';
 import compression from 'compression';
 import fileUpload from 'express-fileupload';
-import cookieParser from 'cookie-parser';
+import { cookieParser } from '@utils';
 import session from 'express-session';
 import MongoStore from 'connect-mongo';
 import passport from 'passport';

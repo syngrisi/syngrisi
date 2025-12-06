@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import StatusCodes from 'http-status';
+import { HttpStatus } from './httpStatus';
 import { ZodError, ZodSchema } from 'zod';
 import { ResponseStatus, ServiceResponse } from './ServiceResponse';
 import log from '@logger';
@@ -86,7 +86,7 @@ export const validateRequest = (schema: ZodSchema, endpoint = '') => (req: Reque
         + `${errors}, \nHTTP PROPERTIES:\n\tbody: ${JSON.stringify(sanitizedBody, null, '\t')}, `
         + `\n\tquery: ${JSON.stringify(sanitizedQuery, null, '\t')}, \n\tparams: ${JSON.stringify(sanitizedParams, null, '\t')}`;
 
-      const statusCode = StatusCodes.BAD_REQUEST;
+      const statusCode = HttpStatus.BAD_REQUEST;
       log.error(errorMessage, logOpts);
       res.status(statusCode).send(new ServiceResponse<null>(ResponseStatus.Failed, errorMessage, null, statusCode));
     } else {

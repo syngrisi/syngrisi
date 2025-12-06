@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import express, { Request, Response } from 'express';
 import path from 'path';
-import httpStatus from 'http-status';
+import { HttpStatus } from '@utils';
 
 import { catchAsync } from '@utils';
 import { ExtRequest } from '@types';
@@ -21,10 +21,10 @@ const adminController = catchAsync(async (req: ExtRequest, res: Response) => {
 
 
     if (authEnabled && req.user?.role !== 'admin') {
-        return res.status(httpStatus.FORBIDDEN).send('Authorization Error - wrong Role');
+        return res.status(HttpStatus.FORBIDDEN).send('Authorization Error - wrong Role');
     }
 
-    res.status(httpStatus.OK)
+    res.status(HttpStatus.OK)
         .sendFile(path.normalize(path.join(baseDir, `./mvc/views/react/admin/index.html`)));
 
 });

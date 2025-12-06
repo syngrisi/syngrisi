@@ -1,4 +1,4 @@
-import httpStatus from 'http-status';
+import { HttpStatus } from '@utils';
 import { ApiError, catchAsync, pick, deserializeIfJSON, paramsGuard } from '@utils';
 import { clientService, genericService } from '@services';
 import { updateItem } from '@lib/dbItems';
@@ -23,7 +23,7 @@ const startSession = catchAsync(async (req: ExtRequest, res: Response) => {
 const endSession = catchAsync(async (req: ExtRequest, res: Response) => {
     const testId = req.params.testid;
     if (!testId || testId === 'undefined') {
-        throw new ApiError(httpStatus.BAD_REQUEST, 'Cannot stop test Session testId is empty');
+        throw new ApiError(HttpStatus.BAD_REQUEST, 'Cannot stop test Session testId is empty');
     }
 
     const result = await clientService.endSession(testId, String(req?.user?.username));
@@ -35,7 +35,7 @@ const createCheck = catchAsync(async (req: ExtRequest, res: Response) => {
     paramsGuard(params, 'createCheck, params', createCheckParamsSchema);
 
     const currentUser = req.user;
-    if (!currentUser) throw new ApiError(httpStatus.UNAUTHORIZED, 'cannot get current user by API');
+    if (!currentUser) throw new ApiError(HttpStatus.UNAUTHORIZED, 'cannot get current user by API');
 
 
     const logOpts = {
@@ -53,12 +53,12 @@ const createCheck = catchAsync(async (req: ExtRequest, res: Response) => {
         const errMsg = `can't find test with id: '${params.testid}', `
             + `parameters: '${JSON.stringify(req.body)}', username: '${currentUser.username}'`;
         // res.status(400).send({ status: 'testNotFound', message: errMsg });
-        throw new ApiError(httpStatus.NOT_FOUND, errMsg);
+        throw new ApiError(HttpStatus.NOT_FOUND, errMsg);
     }
     const app = await App.findOne({ name: params.appName });
-    if (!app) throw new ApiError(httpStatus.NOT_FOUND, `cannot get the app: ${params.appName}`);
+    if (!app) throw new ApiError(HttpStatus.NOT_FOUND, `cannot get the app: ${params.appName}`);
     const suite = await Suite.findOne({ name: params.suitename });
-    if (!suite) throw new ApiError(httpStatus.NOT_FOUND, `cannot get the suite: ${params.suitename}`);
+    if (!suite) throw new ApiError(HttpStatus.NOT_FOUND, `cannot get the suite: ${params.suitename}`);
 
     const result = await clientService.createCheck(
         {

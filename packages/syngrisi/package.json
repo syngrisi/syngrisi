@@ -106,7 +106,6 @@
     "@syngrisi/node-resemble.js": "^2.3.0",
     "compression": "^1.8.1",
     "connect-mongo": "^5.1.0",
-    "cookie-parser": "^1.4.7",
     "dotenv": "^17.2.3",
     "envalid": "^8.1.1",
     "express": "^5.1.0",
@@ -114,7 +113,6 @@
     "express-rate-limit": "^8.2.1",
     "express-session": "^1.18.2",
     "helmet": "^8.1.0",
-    "http-status": "^2.1.0",
     "mongoose": "^8.19.3",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
@@ -128,7 +126,6 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
-    "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.5",
     "@types/express-fileupload": "^1.5.1",
     "@types/express-rate-limit": "^5.1.3",

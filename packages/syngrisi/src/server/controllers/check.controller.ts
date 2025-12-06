@@ -1,4 +1,4 @@
-import httpStatus from 'http-status';
+import { HttpStatus } from '@utils';
 import { ApiError, catchAsync, deserializeIfJSON, pick, removeEmptyProperties } from '@utils';
 import { genericService, checkService } from '@services';
 import { ExtRequest } from '@types';
@@ -37,7 +37,7 @@ const getViaPost = catchAsync(async (req: ExtRequest, res: Response) => {
 
 const update = catchAsync(async (req: ExtRequest, res: Response) => {
     const { id } = req.params;
-    if (!id) throw new ApiError(httpStatus.BAD_REQUEST, 'Cannot accept the check - Id not found');
+    if (!id) throw new ApiError(HttpStatus.BAD_REQUEST, 'Cannot accept the check - Id not found');
     const opts = removeEmptyProperties(req.body);
     const user = req?.user?.username || 'unknown';
     const result = await checkService.update(id, opts, user);
@@ -49,9 +49,9 @@ const update = catchAsync(async (req: ExtRequest, res: Response) => {
 const accept = catchAsync(async (req: ExtRequest, res: Response) => {
     const { id } = req.params;
 
-    if (!id) throw new ApiError(httpStatus.BAD_REQUEST, 'Cannot accept the check - Id not found');
-    if (!req.body.baselineId) throw new ApiError(httpStatus.BAD_REQUEST, `Cannot accept the check: ${id} - new Baseline Id not found`);
-    if (!req.user) throw new ApiError(httpStatus.UNAUTHORIZED, 'User not found');
+    if (!id) throw new ApiError(HttpStatus.BAD_REQUEST, 'Cannot accept the check - Id not found');
+    if (!req.body.baselineId) throw new ApiError(HttpStatus.BAD_REQUEST, `Cannot accept the check: ${id} - new Baseline Id not found`);
+    if (!req.user) throw new ApiError(HttpStatus.UNAUTHORIZED, 'User not found');
     const result = await checkService.accept(id, req.body.baselineId, req.user);
 
     res.send(result);
@@ -59,8 +59,8 @@ const accept = catchAsync(async (req: ExtRequest, res: Response) => {
 
 const remove = catchAsync(async (req: ExtRequest, res: Response) => {
     const { id } = req.params;
-    if (!id) throw new ApiError(httpStatus.BAD_REQUEST, 'Cannot remove the check - Id not found');
-    if (!req.user) throw new ApiError(httpStatus.UNAUTHORIZED, 'User not found');
+    if (!id) throw new ApiError(HttpStatus.BAD_REQUEST, 'Cannot remove the check - Id not found');
+    if (!req.user) throw new ApiError(HttpStatus.UNAUTHORIZED, 'User not found');
     const result = await checkService.remove(id, req.user);
     res.send(result);
 });

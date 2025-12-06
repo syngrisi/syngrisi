@@ -1,4 +1,4 @@
-import httpStatus from 'http-status';
+import { HttpStatus } from '@utils';
 import { EJSON } from 'bson';
 import { catchAsync } from '@utils';
 import { logsService } from '@services';
@@ -26,12 +26,12 @@ const distinct = catchAsync(async (req: ExtRequest, res: Response) => {
 
 const createLog = catchAsync(async (req: ExtRequest, res: Response) => {
     const user = await logsService.createLogs(req.body);
-    res.status(httpStatus.CREATED).send(user);
+    res.status(HttpStatus.CREATED).send(user);
 });
 
 const createMany = catchAsync(async (req: ExtRequest, res: Response) => {
     const result = await logsService.createManyLogs(req.body);
-    res.status(httpStatus.CREATED).send(result);
+    res.status(HttpStatus.CREATED).send(result);
 });
 
 export {

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import httpStatus from 'http-status';
+import { HttpStatus } from '@utils';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Response, NextFunction } from 'express';
 import { ApiError } from '@utils';
@@ -33,7 +33,7 @@ export const authorization = (type: string) => {
                 return next();
             }
             log.warn(`user authorization: '${req.user?.username}' wrong role, type: '${type}'`);
-            throw new ApiError(httpStatus.FORBIDDEN, 'Authorization Error - wrong Role');
+            throw new ApiError(HttpStatus.FORBIDDEN, 'Authorization Error - wrong Role');
         }),
         user: catchAsync(async (req: ExtRequest, res: Response, next: NextFunction) => {
             const AppSettings = appSettings;
@@ -62,14 +62,14 @@ export const authorization = (type: string) => {
                 return next();
             }
             log.warn(`user authorization: '${req.user?.username}' wrong role, type: '${type}'`);
-            throw new ApiError(httpStatus.FORBIDDEN, 'Authorization Error - wrong Role');
+            throw new ApiError(HttpStatus.FORBIDDEN, 'Authorization Error - wrong Role');
         }),
     };
     if (types[type]) return types[type];
     return catchAsync(
         () => {
-            log.error(JSON.stringify(new ApiError(httpStatus.FORBIDDEN, 'Wrong type of authorization')));
-            throw new ApiError(httpStatus.FORBIDDEN, 'Authorization Error - wrong type of authorization');
+            log.error(JSON.stringify(new ApiError(HttpStatus.FORBIDDEN, 'Wrong type of authorization')));
+            throw new ApiError(HttpStatus.FORBIDDEN, 'Authorization Error - wrong type of authorization');
         }
     );
 };

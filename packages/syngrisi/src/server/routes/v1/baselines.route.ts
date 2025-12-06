@@ -6,7 +6,7 @@ import { validateRequest } from '@utils/validateRequest';
 import { BaselineGetSchema, BaselinePutSchema } from '@schemas/Baseline.schema';
 import { createApiEmptyResponse, createApiResponse, createPaginatedApiResponse } from '@api-docs/openAPIResponseBuilders';
 import { ApiErrorSchema } from '@schemas/common/ApiError.schema';
-import StatusCodes from 'http-status';
+import { HttpStatus } from '@utils';
 import { ensureLoggedIn } from '@middlewares/ensureLogin';
 import { createRequestQuerySchema } from '@schemas/utils/createRequestQuerySchema';
 import { RequestPaginationSchema } from '@schemas/common/RequestPagination.schema';
@@ -61,7 +61,7 @@ registry.registerPath({
     request: commonValidations.paramsId,
     responses: {
         ...createApiResponse(BaselineGetSchema, 'Success'),
-        ...createApiResponse(ApiErrorSchema, 'ApiError', StatusCodes.NOT_FOUND),
+        ...createApiResponse(ApiErrorSchema, 'ApiError', HttpStatus.NOT_FOUND),
     },
 });
 
