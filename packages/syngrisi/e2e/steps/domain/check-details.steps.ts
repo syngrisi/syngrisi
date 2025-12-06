@@ -52,11 +52,9 @@ Given('I create a test run {string} with {int} checks', async ({ appServer }, ru
     const fullPath = path.join(repoRoot, 'syngrisi', 'tests', filePath);
     const imageBuffer = getCachedFileBuffer(fullPath);
 
-    // Create checks in parallel with concurrency control (was sequential with 100ms delays)
-    const concurrency = 5;
-    const checkPromises: Promise<void>[] = [];
+    // Create checks sequentially to preserve order (Check 1, Check 2, Check 3...)
     for (let i = 1; i <= checkCount; i++) {
-        const checkPromise = vDriver.check({
+        await vDriver.check({
             checkName: `Check ${i}`,
             imageBuffer,
             params: {
@@ -65,12 +63,6 @@ Given('I create a test run {string} with {int} checks', async ({ appServer }, ru
                 os: 'macOS',
             }
         });
-        checkPromises.push(checkPromise);
-        // Execute in batches of `concurrency`
-        if (checkPromises.length >= concurrency || i === checkCount) {
-            await Promise.all(checkPromises);
-            checkPromises.length = 0;
-        }
     }
     await vDriver.stopTestSession();
     // Brief wait for indexing

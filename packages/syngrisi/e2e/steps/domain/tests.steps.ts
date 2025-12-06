@@ -134,7 +134,8 @@ async function createTestsWithParams(
   options: CreateTestsOptions = {}
 ) {
   const fastSeed = process.env.E2E_FAST_SEED === 'true';
-  const concurrency = 6;
+  // Use sequential creation to guarantee test order (important for sorting tests)
+  const concurrency = 1;
   const useSharedDriver = concurrency === 1;
   const quickCheckMaxWaitMs = fastSeed ? 500 : 2000;
   const waitAfterStopMs = fastSeed ? 10 : 100;
