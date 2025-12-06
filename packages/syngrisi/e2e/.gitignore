@@ -2,7 +2,6 @@
 reports/
 test-results/
 support/mcp/logs/
-support/mcp/steps/
 test-tmp-artifacts/
 
 # Dependencies
@@ -10,6 +9,7 @@ node_modules/
 
 # Generated files
 .features-gen/
+.features-gen-demo/
 
 # System files
 .DS_Store
@@ -25,4 +25,3 @@ shard-logs/
 
 # Other
 *.bak
-

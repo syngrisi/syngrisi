@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "test_engine": {
+      "command": "npx",
+      "args": ["tsx", "packages/syngrisi/e2e/support/mcp/bridge-cli.ts"],
+      "env": {
+        "SYNGRISI_ROOT": "./packages/syngrisi/e2e"
+      }
+    }
+  },
+  "model": {
+    "name": "gemini-2.5-pro"
+  }
+}

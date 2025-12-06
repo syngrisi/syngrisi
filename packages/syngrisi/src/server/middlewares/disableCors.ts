@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response, NextFunction } from 'express';
 import { config } from '@config';
+import { env } from '../envConfig';
 
 // disable CORS for development purposes
 export const disableCors = (req: Request, res: Response, next: NextFunction): void => {
-    if (!config.disableCors) return next();
+    if (env.NODE_ENV === 'production' || !config.disableCors) return next();
 
     const origin = req.headers.origin || '*';
 

@@ -1,0 +1,16 @@
+{
+  "id": "task_02_api_ui_flow",
+  "type": "exploration",
+  "prompt": "Через HTTP-шага создай baseline \"bench-check\" (I seed via http...), открой UI, найди baseline в таблице, раскрой, открой чек и прими его (Accept).",
+  "expectations": {
+    "final_url_contains": "/",
+    "final_locator": "Accept",
+    "prohibited_actions": ["page.waitForTimeout"]
+  },
+  "config": {
+    "auth_mode": "guest",
+    "headless": true,
+    "max_steps": 16,
+    "min_steps": 6
+  }
+}

@@ -37,6 +37,7 @@ export function NavbarFilter(
 ) {
     const [quickFilter, setQuickFilter] = useState<string>('');
     const [debouncedQuickFilter] = useDebouncedValue(quickFilter, 400);
+    const isFilterSynced = (quickFilter === debouncedQuickFilter) && !infinityQuery.isFetching;
 
     useEffect(function onDebounceQuickFilterUpdate() {
         if (!debouncedQuickFilter) {
@@ -65,6 +66,7 @@ export function NavbarFilter(
                     <TextInput
                         label="Filter by"
                         data-test="navbar-quick-filter"
+                        data-test-filter-synced={isFilterSynced ? 'true' : 'false'}
                         style={styles}
                         sx={{ width: '100%' }}
                         placeholder="Filter"
@@ -73,10 +75,7 @@ export function NavbarFilter(
                             setQuickFilter(e.currentTarget.value);
                         }}
                         rightSection={
-                            (
-                                (quickFilter === debouncedQuickFilter)
-                                && !infinityQuery.isFetching
-                            )
+                            isFilterSynced
                                 ? (
                                     <ActionIcon onClick={() => {
                                         if (quickFilter === '') toggleOpenedFilter(false);

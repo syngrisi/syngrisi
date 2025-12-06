@@ -11,7 +11,7 @@ import { RequestPaginationSchema } from '@schemas/common/RequestPagination.schem
 import { commonValidations } from '@schemas/utils';
 import { getByIdParamsSchema } from '@schemas/utils/createRequestParamsSchema';
 import { ApiErrorSchema } from '@schemas/common/ApiError.schema';
-import StatusCodes from 'http-status';
+import { HttpStatus } from '@utils';
 
 export const registry = new OpenAPIRegistry();
 const router = express.Router();
@@ -41,7 +41,7 @@ registry.registerPath({
     request: commonValidations.paramsId,
     responses: {
         ...createApiResponse(RunResponseSchema, 'Success'),
-        ...createApiResponse(ApiErrorSchema, 'ApiError', StatusCodes.NOT_FOUND),
+        ...createApiResponse(ApiErrorSchema, 'ApiError', HttpStatus.NOT_FOUND),
     },
 });
 

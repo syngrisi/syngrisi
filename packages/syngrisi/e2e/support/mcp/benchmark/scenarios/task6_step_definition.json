@@ -1,0 +1,14 @@
+{
+  "id": "task_06_step_definition",
+  "type": "creation",
+  "prompt": "Напиши Step Definition (TypeScript) для проверки наличия конкретного cookie в стиле e2e/steps/common/..",
+  "expectations": {
+    "final_locator": "cookie",
+    "prohibited_actions": []
+  },
+  "config": {
+    "headless": true,
+    "max_steps": 8,
+    "min_steps": 3
+  }
+}

@@ -343,8 +343,8 @@ Then(
 
     if (target === 'locator') {
       // Extract index before passing to getLocatorQuery (it may strip the index)
-      const nthMatch = renderedTarget.match(/\[(\d+)\]$/);
-      const selectorWithoutIndex = renderedTarget.replace(/\[(\d+)\]$/, '');
+      const nthMatch = renderedTarget.match(/(\d+)$/);
+      const selectorWithoutIndex = renderedTarget.replace(/(\d+)$/, '');
       const locator = getLocatorQuery(page, selectorWithoutIndex);
       if (nthMatch) {
         const index = parseInt(nthMatch[1], 10) - 1; // Convert 1-based to 0-based
@@ -360,6 +360,19 @@ Then(
       const locator = locatorFromTarget(page, target, renderedTarget);
       await assertCondition(locator, 'has value', renderedExpected);
     }
+  }
+);
+
+Then(
+  'the element with {target} {string} should contain value {string}',
+  async ({ page, testData }, target: ElementTarget, rawValue: string, expected: string) => {
+    const renderedTarget = testData ? renderTemplate(rawValue, testData) : rawValue;
+    const renderedExpected = testData ? renderTemplate(expected, testData) : expected;
+    const locator = locatorFromTarget(page, target, renderedTarget);
+    // Wait for element to be visible
+    await locator.first().waitFor({ state: 'visible', timeout: 10000 });
+    const value = await locator.inputValue();
+    expect(value).toContain(renderedExpected);
   }
 );
 
@@ -510,7 +523,7 @@ Then(
   'the element with {target} {string} should not have attribute {string} {string}',
   async ({ page }, target: ElementTarget, rawValue: string, attributeName: string, expected: string) => {
     const locator = locatorFromTarget(page, target, rawValue);
-    await expect(locator.first()).not.toHaveAttribute(attributeName, expected);
+    await expect(locator.first()).not.toHaveAttribute(attributeName, expected, { timeout: 15000 });
   }
 );
 
@@ -518,7 +531,7 @@ Then(
   'the element with {target} {string} should have attribute {string} {string}',
   async ({ page }, target: ElementTarget, rawValue: string, attributeName: string, expected: string) => {
     const locator = locatorFromTarget(page, target, rawValue);
-    await expect(locator.first()).toHaveAttribute(attributeName, expected);
+    await expect(locator.first()).toHaveAttribute(attributeName, expected, { timeout: 15000 });
   }
 );
 
@@ -618,19 +631,22 @@ async function checkElementContainsText(
     throw error;
   }
   // If checking test status, wait for status to change from "Running" using polling
+  // Optimized: exponential backoff starting at 100ms, max 30s total (was 90s with 1s intervals)
   if (selector.includes('table-row-Status') && expected !== 'Running') {
-    // Use polling to wait for status change (as tests may take time to complete)
-    const maxAttempts = 90; // 90 seconds with 1 second intervals (tests may take time to process)
-    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    const maxWaitMs = 30000; // 30 seconds max (reduced from 90s)
+    const startTime = Date.now();
+    let interval = 100; // Start with 100ms
+    let attempt = 0;
+    while (Date.now() - startTime < maxWaitMs) {
       const text = await locator.first().textContent();
       const trimmedText = text?.trim() || '';
       if (trimmedText === expected || trimmedText.toLowerCase() === expected.toLowerCase()) {
-        logger.info(`Test status changed to "${expected}" after ${attempt + 1} attempts`);
+        logger.info(`Test status changed to "${expected}" after ${attempt + 1} attempts (${Date.now() - startTime}ms)`);
         break;
       }
-      if (attempt < maxAttempts - 1) {
-        await page.waitForTimeout(1000);
-      }
+      await page.waitForTimeout(interval);
+      interval = Math.min(interval * 1.5, 1000); // Exponential backoff, max 1s
+      attempt++;
     }
   }
   // Handle placeholders like <YYYY-MM-DD> - replace with regex pattern for date matching
@@ -665,32 +681,33 @@ async function checkElementContainsText(
   if (texts.length === 0) {
     if (selector.includes("[data-check='")) {
       const matchCount = await locator.count();
-      const dataCheckSnapshot = await page.evaluate(() =>
-        Array.from(document.querySelectorAll('[data-check]')).map((el) => ({
+      // Optimized: Single evaluate call instead of 3 separate calls, limited DOM scan
+      const debugInfo = await page.evaluate((args) => {
+        const { sel, needle } = args;
+        // Get [data-check] elements (limited scope)
+        const dataCheckElements = Array.from(document.querySelectorAll('[data-check]')).slice(0, 20).map((el) => ({
           value: el.getAttribute('data-check'),
-          text: el.textContent,
-        }))
-      );
-      logger.info(
-        `Available [data-check] elements: ${JSON.stringify(dataCheckSnapshot)}; locator count=${matchCount}`
-      );
-      const targetOuterHtml = await page.evaluate((sel) => {
-        const node = document.querySelector(sel);
-        return node ? node.outerHTML : null;
-      }, selector);
-      logger.info(`OuterHTML for selector "${selector}": ${targetOuterHtml}`);
-      const textMatches = await page.evaluate((needle) =>
-        Array.from(document.querySelectorAll('*'))
+          text: (el.textContent || '').slice(0, 100),
+        }));
+        // Get target element
+        const targetNode = document.querySelector(sel);
+        const targetOuterHtml = targetNode ? targetNode.outerHTML.slice(0, 500) : null;
+        // Optimized text search: only check elements with data-test or data-check attributes
+        const textMatches = Array.from(document.querySelectorAll('[data-test], [data-check], td, span'))
           .filter((el) => (el.textContent || '').includes(needle))
           .slice(0, 5)
           .map((el) => ({
             tag: el.tagName,
-            text: el.textContent,
-            classes: el.className,
+            text: (el.textContent || '').slice(0, 100),
+            classes: (el as HTMLElement).className?.slice?.(0, 50) || '',
             dataCheck: el.getAttribute('data-check'),
-          }))
-      , renderedExpected);
-      logger.info(`Elements containing text "${renderedExpected}": ${JSON.stringify(textMatches)}`);
+          }));
+        return { dataCheckElements, targetOuterHtml, textMatches };
+      }, { sel: selector, needle: renderedExpected });
+
+      logger.info(`Available [data-check] elements: ${JSON.stringify(debugInfo.dataCheckElements)}; locator count=${matchCount}`);
+      logger.info(`OuterHTML for selector "${selector}": ${debugInfo.targetOuterHtml}`);
+      logger.info(`Elements containing text "${renderedExpected}": ${JSON.stringify(debugInfo.textMatches)}`);
     }
     throw new Error(`Expected at least one element for selector "${selector}", but none found`);
   }
@@ -729,7 +746,8 @@ When(
   'I wait on element {string} to not be displayed',
   async ({ page }, selector: string) => {
     const locator = getLocatorQuery(page, selector);
-    await locator.first().waitFor({ state: 'hidden', timeout: 30000 });
+    // Reduced from 30s to 15s - elements typically disappear quickly
+    await locator.first().waitFor({ state: 'hidden', timeout: 15000 });
   }
 );
 
@@ -737,7 +755,8 @@ When(
   'I wait on element {string} to not exist',
   async ({ page }, selector: string) => {
     const locator = getLocatorQuery(page, selector);
-    await locator.first().waitFor({ state: 'detached', timeout: 30000 });
+    // Reduced from 30s to 15s - elements typically detach quickly
+    await locator.first().waitFor({ state: 'detached', timeout: 15000 });
   }
 );
 
@@ -751,97 +770,101 @@ Then(
 
 
 Then('the title is {string}', async ({ page }, expectedTitle: string) => {
-  const title = await page.title();
-  expect(title).toBe(expectedTitle);
+  await expect(page).toHaveTitle(expectedTitle);
 });
 
 Then('the title contains {string}', async ({ page }, expectedTitle: string) => {
-  const title = await page.title();
-  expect(title).toContain(expectedTitle);
+  // Escape regex characters for expectedTitle
+  const escapedTitle = expectedTitle.replace(/[.*+?^${}()|[\\]/g, '\\$&');
+  await expect(page).toHaveTitle(new RegExp(escapedTitle));
 });
 
 Then('the css attribute {string} from element {string} is {string}', async ({ page, testData }, cssProperty: string, selector: string, expected: string) => {
   const renderedSelector = renderTemplate(selector, testData);
   const renderedExpected = renderTemplate(expected, testData);
   const locator = getLocatorQuery(page, renderedSelector);
-  // WebdriverIO's getCSSProperty for color properties returns attributeValue.value
-  // We need to replicate this behavior exactly - get the computed style value
-  let actualValue = await locator.first().evaluate((el, prop) => {
-    // Convert CSS property name (background-color) to camelCase (backgroundColor)
-    const camelProp = prop.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
-    const computedStyle = window.getComputedStyle(el);
-    let value = (computedStyle[camelProp as keyof CSSStyleDeclaration] as string) || '';
 
-    // For SVG elements with color property, WebdriverIO may return the computed color
-    // even if it's empty in computedStyle. Check if element is SVG and color is empty
-    if (prop === 'color' && (!value || value === 'rgba(0, 0, 0, 0)' || value === 'transparent')) {
-      // For SVG, try to get the actual fill color from computed style
-      // WebdriverIO's getCSSProperty('color') for SVG returns the computed color value
-      // which may come from fill or stroke
-      const fill = computedStyle.fill;
-      const stroke = computedStyle.stroke;
+  await expect(async () => {
+    // WebdriverIO's getCSSProperty for color properties returns attributeValue.value
+    // We need to replicate this behavior exactly - get the computed style value
+    let actualValue = await locator.first().evaluate((el, prop) => {
+      // Convert CSS property name (background-color) to camelCase (backgroundColor)
+      const camelProp = prop.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
+      const computedStyle = window.getComputedStyle(el);
+      let value = (computedStyle[camelProp as keyof CSSStyleDeclaration] as string) || '';
 
-      // If fill or stroke is set and is a color value, use it
-      if (fill && fill !== 'none' && fill !== 'rgba(0, 0, 0, 0)') {
-        value = fill;
-      } else if (stroke && stroke !== 'none' && stroke !== 'rgba(0, 0, 0, 0)') {
-        value = stroke;
-      }
+      // For SVG elements with color property, WebdriverIO may return the computed color
+      // even if it's empty in computedStyle. Check if element is SVG and color is empty
+      if (prop === 'color' && (!value || value === 'rgba(0, 0, 0, 0)' || value === 'transparent')) {
+        // Replace with the actual content of the file, then append the new step
+        // For SVG, try to get the actual fill color from computed style
+        // WebdriverIO's getCSSProperty('color') for SVG returns the computed color value
+        // which may come from fill or stroke
+        const fill = computedStyle.fill;
+        const stroke = computedStyle.stroke;
 
-      // If still empty, check parent element's color (SVG inherits color from parent)
-      if (!value || value === 'rgba(0, 0, 0, 0)' || value === 'transparent') {
-        const parent = el.parentElement;
-        if (parent) {
-          const parentColor = window.getComputedStyle(parent).color;
-          if (parentColor && parentColor !== 'rgba(0, 0, 0, 0)') {
-            value = parentColor;
+        // If fill or stroke is set and is a color value, use it
+        if (fill && fill !== 'none' && fill !== 'rgba(0, 0, 0, 0)') {
+          value = fill;
+        } else if (stroke && stroke !== 'none' && stroke !== 'rgba(0, 0, 0, 0)') {
+          value = stroke;
+        }
+
+        // If still empty, check parent element's color (SVG inherits color from parent)
+        if (!value || value === 'rgba(0, 0, 0, 0)' || value === 'transparent') {
+          const parent = el.parentElement;
+          if (parent) {
+            const parentColor = window.getComputedStyle(parent).color;
+            if (parentColor && parentColor !== 'rgba(0, 0, 0, 0)') {
+              value = parentColor;
+            }
           }
         }
       }
-    }
 
-    return value;
-  }, cssProperty);
+      return value;
+    }, cssProperty);
 
-  // Normalize color values to match WebdriverIO behavior
-  // WebdriverIO returns rgba(r,g,b,1) format without spaces for colors
-  if (cssProperty.match(/(color|background-color)/)) {
-    // Normalize rgba values: remove spaces and ensure alpha is present
-    const rgbaMatch = actualValue.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
-    if (rgbaMatch) {
-      const r = rgbaMatch[1];
-      const g = rgbaMatch[2];
-      const b = rgbaMatch[3];
-      const a = rgbaMatch[4] || '1';
-      actualValue = `rgba(${r},${g},${b},${a})`;
-    } else {
-      // Convert rgb(r, g, b) to rgba(r,g,b,1) format (no spaces, as WebdriverIO returns)
-      const rgbMatch = actualValue.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
-      if (rgbMatch) {
-        actualValue = `rgba(${rgbMatch[1]},${rgbMatch[2]},${rgbMatch[3]},1)`;
+    // Normalize color values to match WebdriverIO behavior
+    // WebdriverIO returns rgba(r,g,b,1) format without spaces for colors
+    if (cssProperty.match(/(color|background-color)/)) {
+      // Normalize rgba values: remove spaces and ensure alpha is present
+      const rgbaMatch = actualValue.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/);
+      if (rgbaMatch) {
+        const r = rgbaMatch[1];
+        const g = rgbaMatch[2];
+        const b = rgbaMatch[3];
+        const a = rgbaMatch[4] || '1';
+        actualValue = `rgba(${r},${g},${b},${a})`;
+      } else {
+        // Convert rgb(r, g, b) to rgba(r,g,b,1) format (no spaces, as WebdriverIO returns)
+        const rgbMatch = actualValue.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+        if (rgbMatch) {
+          actualValue = `rgba(${rgbMatch[1]},${rgbMatch[2]},${rgbMatch[3]},1)`;
+        }
+      }
+      // If still empty, log warning
+      if (!actualValue) {
+        logger.warn(`CSS property "${cssProperty}" returned empty value for selector "${selector}"`);
       }
     }
-    // If still empty, log warning
-    if (!actualValue) {
-      logger.warn(`CSS property "${cssProperty}" returned empty value for selector "${selector}"`);
+
+    // Handle px values with tolerance
+    const expectedTrimmed = renderedExpected.trim();
+    const pxMatch = expectedTrimmed.match(/^([\d.]+)px$/);
+    const actualPxMatch = actualValue.match(/^([\d.]+)px$/);
+
+    if (pxMatch && actualPxMatch) {
+      const expectedPx = parseFloat(pxMatch[1]);
+      const actualPx = parseFloat(actualPxMatch[1]);
+      const tolerance = 10;
+      const diff = Math.abs(expectedPx - actualPx);
+      expect(diff).toBeLessThanOrEqual(tolerance);
+    } else {
+      // Use exact comparison as WebdriverIO does with toEqual
+      expect(actualValue).toBe(expectedTrimmed);
     }
-  }
-
-  // Handle px values with tolerance
-  const expectedTrimmed = renderedExpected.trim();
-  const pxMatch = expectedTrimmed.match(/^([\d.]+)px$/);
-  const actualPxMatch = actualValue.match(/^([\d.]+)px$/);
-
-  if (pxMatch && actualPxMatch) {
-    const expectedPx = parseFloat(pxMatch[1]);
-    const actualPx = parseFloat(actualPxMatch[1]);
-    const tolerance = 10;
-    const diff = Math.abs(expectedPx - actualPx);
-    expect(diff).toBeLessThanOrEqual(tolerance);
-  } else {
-    // Use exact comparison as WebdriverIO does with toEqual
-    expect(actualValue).toBe(expectedTrimmed);
-  }
+  }).toPass({ timeout: 10000 });
 });
 
 When('I wait on element {string} to exist', async ({ page }, selector: string) => {
@@ -1111,4 +1134,285 @@ When(
     const timeoutMs = ordinalValue + 1;
     await assertCondition(locator, condition, undefined, { timeout: timeoutMs });
   },
+);
+
+/**
+ * Step definition: `Then the {role} {string} should not be {condition}`
+ *
+ * Verifies that an element with specified role and name does NOT satisfy the condition.
+ *
+ * @param role - {@link AriaRole} derived from the `{role}` parameter type.
+ * @param name - Accessible name for the element.
+ * @param condition - {@link StepCondition} value (e.g. `'visible'`, `'enabled'`).
+ *
+ * @example
+ * ```gherkin
+ * Then the button "Baselines" should not be visible
+ * ```
+ */
+Then(
+  'the {role} {string} should not be {condition}',
+  async ({ page, testData }, role: AriaRole, name: string, condition: StepCondition) => {
+    const renderedName = renderTemplate(name, testData);
+    const locator = getRoleLocator(page, role, renderedName);
+    // Invert the condition check
+    if (condition === 'visible') {
+      await expect(locator).not.toBeVisible();
+    } else if (condition === 'enabled') {
+      await expect(locator).not.toBeEnabled();
+    } else if (condition === 'checked') {
+      await expect(locator).not.toBeChecked();
+    } else if (condition === 'disabled') {
+      await expect(locator).not.toBeDisabled();
+    } else {
+      throw new Error(`Unsupported negated condition: ${condition}`);
+    }
+  }
+);
+
+/**
+ * Step definition: `Then the text {string} should be {condition}`
+ *
+ * Verifies that text is visible on the page.
+ *
+ * @param text - The text to search for on the page.
+ * @param condition - {@link StepCondition} value (e.g. `'visible'`).
+ *
+ * @example
+ * ```gherkin
+ * Then the text "Welcome" should be visible
+ * ```
+ */
+Then(
+  'the text {string} should be {condition}',
+  async ({ page, testData }, text: string, condition: StepCondition) => {
+    const renderedText = renderTemplate(text, testData);
+    const locator = page.getByText(renderedText, { exact: false });
+    await assertCondition(locator, condition);
+  }
+);
+
+/**
+ * Step definition: `Then the text {string} should not be {condition}`
+ *
+ * Verifies that text is NOT visible on the page.
+ *
+ * @param text - The text to search for on the page.
+ * @param condition - {@link StepCondition} value (e.g. `'visible'`).
+ *
+ * @example
+ * ```gherkin
+ * Then the text "Error" should not be visible
+ * ```
+ */
+Then(
+  'the text {string} should not be {condition}',
+  async ({ page, testData }, text: string, condition: StepCondition) => {
+    const renderedText = renderTemplate(text, testData);
+    const locator = page.getByText(renderedText, { exact: false });
+    // Invert the condition check
+    if (condition === 'visible') {
+      await expect(locator).not.toBeVisible();
+    } else if (condition === 'enabled') {
+      await expect(locator).not.toBeEnabled();
+    } else {
+      throw new Error(`Unsupported negated condition for text: ${condition}`);
+    }
+  }
+);
+
+/**
+ * Step definition: `Then the cookie {string} should be present`
+ *
+ * Verifies that a cookie with the given name is present in the browser context.
+ *
+ * @param name - The name of the cookie to check.
+ *
+ * @example
+ * ```gherkin
+ * Then the cookie "my_session_id" should be present
+ * ```
+ */
+Then(
+  'the cookie {string} should be present',
+  async ({ page }, name: string) => {
+    const cookies = await page.context().cookies();
+    const cookie = cookies.find((c) => c.name === name);
+    expect(cookie).toBeDefined();
+  }
+);
+
+/**
+ * Step definition: `Then the cookie {string} should not be present`
+ *
+ * Verifies that a cookie with the given name is NOT present in the browser context.
+ *
+ * @param name - The name of the cookie to check.
+ *
+ * @example
+ * ```gherkin
+ * Then the cookie "my_session_id" should not be present
+ * ```
+ */
+Then(
+  'the cookie {string} should not be present',
+  async ({ page }, name: string) => {
+    const cookies = await page.context().cookies();
+    const cookie = cookies.find((c) => c.name === name);
+    expect(cookie).toBeUndefined();
+  }
+);
+
+/**
+ * Step definition: `Then the cookie {string} should have value {string}`
+ *
+ * Verifies that a cookie with the given name is present and its value matches the expected value.
+ *
+ * @param name - The name of the cookie to check.
+ * @param expectedValue - The expected value of the cookie.
+ *
+ * @example
+ * ```gherkin
+ * Then the cookie "my_session_id" should have value "abc-123"
+ * ```
+ */
+Then(
+  'the cookie {string} should have value {string}',
+  async ({ page }, name: string, expectedValue: string) => {
+    const cookies = await page.context().cookies();
+    const cookie = cookies.find((c) => c.name === name);
+    expect(cookie).toBeDefined();
+    expect(cookie?.value).toEqual(expectedValue);
+  }
+);
+
+/**
+ * Step definition: `Then the element {string} should have at least {int} items within {int} seconds`
+ *
+ * Polls for minimum item count with timeout. Use for pagination/infinite scroll scenarios.
+ *
+ * @param selector - CSS selector for items
+ * @param minCount - Minimum expected count
+ * @param seconds - Timeout in seconds
+ *
+ * @example
+ * ```gherkin
+ * Then the element "[data-test*='navbar_item_']" should have at least 21 items within 10 seconds
+ * ```
+ */
+Then(
+  'the element {string} should have at least {int} items within {int} seconds',
+  async ({ page }, selector: string, minCount: number, seconds: number) => {
+    const locator = getLocatorQuery(page, selector);
+
+    await expect.poll(
+      async () => await locator.count(),
+      {
+        message: `Waiting for at least ${minCount} items matching "${selector}"`,
+        timeout: seconds * 1000
+      }
+    ).toBeGreaterThanOrEqual(minCount);
+  }
+);
+
+/**
+ * Step definition: `Then the element {string} should have exactly {int} items within {int} seconds`
+ *
+ * Polls for exact item count with timeout.
+ *
+ * @param selector - CSS selector for items
+ * @param exactCount - Exact expected count
+ * @param seconds - Timeout in seconds
+ *
+ * @example
+ * ```gherkin
+ * Then the element "[data-test*='navbar_item_']" should have exactly 22 items within 10 seconds
+ * ```
+ */
+Then(
+  'the element {string} should have exactly {int} items within {int} seconds',
+  async ({ page }, selector: string, exactCount: number, seconds: number) => {
+    const locator = getLocatorQuery(page, selector);
+
+    await expect.poll(
+      async () => await locator.count(),
+      {
+        message: `Waiting for exactly ${exactCount} items matching "${selector}"`,
+        timeout: seconds * 1000
+      }
+    ).toBe(exactCount);
+  }
+);
+
+/**
+ * Step definition: `Then the element {string} should have exactly {int} items within {int} seconds with refresh`
+ *
+ * Polls for exact item count with timeout, clicking refresh button between attempts.
+ * Useful when data is created via API and table needs to be refreshed to show new items.
+ *
+ * @param selector - CSS selector for items
+ * @param exactCount - Exact expected count
+ * @param seconds - Timeout in seconds
+ *
+ * @example
+ * ```gherkin
+ * Then the element "//div[contains(text(), 'User test')]" should have exactly 5 items within 30 seconds with refresh
+ * ```
+ */
+Then(
+  'the element {string} should have exactly {int} items within {int} seconds with refresh',
+  async ({ page }, selector: string, exactCount: number, seconds: number) => {
+    const locator = getLocatorQuery(page, selector);
+    // Use the table refresh icon which has the badge for new items
+    const refreshButton = page.locator('[data-test="table-refresh-icon"]');
+    const newItemsBadge = page.locator('[data-test="table-refresh-icon-badge"]');
+    const startTime = Date.now();
+    const timeoutMs = seconds * 1000;
+    const pollInterval = 1000;
+    let lastCount = 0;
+
+    while (Date.now() - startTime < timeoutMs) {
+      lastCount = await locator.count();
+
+      if (lastCount === exactCount) {
+        return;
+      }
+
+      // Click refresh to get new data - always click if visible, regardless of badge
+      const refreshVisible = await refreshButton.isVisible({ timeout: 500 }).catch(() => false);
+
+      if (refreshVisible) {
+        // Check for badge before clicking
+        const hasBadge = await newItemsBadge.isVisible({ timeout: 200 }).catch(() => false);
+
+        await refreshButton.click();
+
+        // Wait for the refresh to complete - badge should disappear or stay gone
+        await page.waitForTimeout(500);
+
+        // If there was a badge, give extra time for data to load
+        if (hasBadge) {
+          await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
+          // Check again immediately after refresh
+          lastCount = await locator.count();
+          if (lastCount === exactCount) {
+            return;
+          }
+        }
+      }
+
+      await page.waitForTimeout(pollInterval);
+    }
+
+    // Final attempt: one more refresh and check
+    const refreshVisible = await refreshButton.isVisible({ timeout: 500 }).catch(() => false);
+    if (refreshVisible) {
+      await refreshButton.click();
+      await page.waitForLoadState('networkidle', { timeout: 3000 }).catch(() => {});
+      await page.waitForTimeout(500);
+    }
+
+    lastCount = await locator.count();
+    expect(lastCount, `Waiting for exactly ${exactCount} items matching "${selector}"`).toBe(exactCount);
+  }
 );

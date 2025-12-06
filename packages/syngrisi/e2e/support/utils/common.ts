@@ -17,8 +17,8 @@ export function sleep(ms: number): Promise<void> {
  * @param tag - Tag to check for
  * @returns True if the tag is present, false otherwise
  */
-export function hasTag(testInfo: TestInfo, tag: string): boolean {
-  return (testInfo.tags ?? []).includes(tag);
+export function hasTag(testInfo: Pick<TestInfo, 'tags'> | undefined, tag: string): boolean {
+  return Array.isArray(testInfo?.tags) && testInfo.tags.includes(tag);
 }
 
 export interface WaitForOptions {

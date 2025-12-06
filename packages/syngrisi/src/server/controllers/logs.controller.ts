@@ -1,4 +1,4 @@
-import httpStatus from 'http-status';
+import { HttpStatus } from '@utils';
 import { EJSON } from 'bson';
 import { catchAsync } from '@utils';
 import { logsService } from '@services';
@@ -10,8 +10,8 @@ import { ExtRequest } from '@types';
 const getLogs = catchAsync(async (req: ExtRequest, res: Response) => {
     // const filter = req.query.filter ? EJSON.parse(pick(req.query, ['filter']).filter) : {};
     const filter = typeof req.query.filter === 'string'
-    ? EJSON.parse(req.query.filter)
-    : {};
+        ? EJSON.parse(req.query.filter)
+        : {};
 
     const options = pick(req.query, ['sortBy', 'limit', 'page']);
     const result = await logsService.queryLogs(filter, options);
@@ -26,11 +26,17 @@ const distinct = catchAsync(async (req: ExtRequest, res: Response) => {
 
 const createLog = catchAsync(async (req: ExtRequest, res: Response) => {
     const user = await logsService.createLogs(req.body);
-    res.status(httpStatus.CREATED).send(user);
+    res.status(HttpStatus.CREATED).send(user);
+});
+
+const createMany = catchAsync(async (req: ExtRequest, res: Response) => {
+    const result = await logsService.createManyLogs(req.body);
+    res.status(HttpStatus.CREATED).send(result);
 });
 
 export {
     getLogs,
     distinct,
     createLog,
+    createMany,
 };

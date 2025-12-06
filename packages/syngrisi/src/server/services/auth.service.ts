@@ -1,14 +1,13 @@
-import { hashSync } from 'hasha';
-import uuidAPIKey from 'uuid-apikey';
+import { hashSync, generateApiKey as createApiKey } from '@utils/hash';
 import { User } from '@models';
 import log from "../lib/logger";
 import { RequestUser } from '@types';
 import { ApiError, errMsg } from '@utils';
 import { appSettings } from "@settings";
-import httpStatus from 'http-status';
+import { HttpStatus } from '@utils';
 
 function getApiKey(): string {
-    return uuidAPIKey.create().apiKey;
+    return createApiKey();
 }
 
 const generateApiKey = async (username: string): Promise<string> => {
@@ -41,7 +40,7 @@ const changeUserPassword = async (username: string, currentPassword: string, new
         ref: username,
     };
 
-    log.debug(`change password for '${username}', params: '${JSON.stringify({ currentPassword, newPassword })}'`, logOpts);
+    log.debug(`change password for '${username}'`, logOpts);
 
     const user: RequestUser | null = await User.findOne({ username });
     if (!user) {
@@ -67,13 +66,13 @@ const changePasswordFirstRun = async (newPassword: string): Promise<void> => {
         ref: 'Administrator',
     };
 
-    const AppSettings = await appSettings;
+    const AppSettings = appSettings;
 
     if ((await AppSettings.isAuthEnabled()) && ((await AppSettings.isFirstRun()))) {
-        log.debug(`first run, change password for default 'Administrator', params: '${JSON.stringify({ newPassword })}'`, logOpts);
+        log.debug(`first run, change password for default 'Administrator'`, logOpts);
         const user = await User.findOne({ username: 'Administrator' }).exec();
 
-        if (!user) throw new ApiError(httpStatus.NOT_FOUND, `cannot change password at first run, user withusername: 'Administrator', not found`);
+        if (!user) throw new ApiError(HttpStatus.NOT_FOUND, `cannot change password at first run, user withusername: 'Administrator', not found`);
 
         logOpts.ref = String(user?.username);
 

@@ -11,11 +11,14 @@ import { patchStepInvoker } from './utils/stepInvokerPatch';
 import { getSessionInfo, initializeSession, startNewSession } from './utils/stepLogger';
 import type { Data } from './utils/types';
 import { initializeStepFinder } from './utils/stepModules';
-import { bddConfig } from './playwright.config';
+import { bddConfig } from './bdd.config';
 import { env, getIdleTimeoutMs, getIdleCheckIntervalMs } from './config';
 import { formatError, isShutdownNotification, SHUTDOWN_NOTIFICATION_METHOD } from './utils/common';
 import logger, { formatArgs } from './utils/logger';
-import { waitFor } from '@utils/common';
+// Using relative path instead of @utils alias to allow bridge-cli.ts to run from any directory
+// without requiring tsconfig.json path resolution
+import { waitFor } from '../utils/common';
+import { findEphemeralPort, waitForHttpAvailability } from './utils/port-utils';
 
 export const sessionStartToolDefinition = {
   name: 'session_start_new',
@@ -24,11 +27,25 @@ export const sessionStartToolDefinition = {
     type: 'object' as const,
     properties: {
       sessionName: { type: 'string', description: 'Human-readable name for the new MCP session' },
+      headless: { type: 'boolean', description: 'Run browser in headless mode (default: true)' },
     },
     required: ['sessionName'],
   },
   annotations: {
     title: 'Start New Test Engine Session',
+    destructiveHint: true,
+  },
+};
+
+export const sessionsClearToolDefinition = {
+  name: 'sessions_clear',
+  description: 'Force-close all Playwright contexts/pages from previous sessions to free resources and reset MCP state.',
+  inputSchema: {
+    type: 'object' as const,
+    properties: {},
+  },
+  annotations: {
+    title: 'Clear MCP Sessions',
     destructiveHint: true,
   },
 };
@@ -39,8 +56,14 @@ export const stepExecuteToolDefinition = {
   inputSchema: {
     type: 'object' as const,
     properties: {
-      stepText: { type: 'string', description: 'Step text without leading keyword (e.g. `I open the app`)' },
-      stepDocstring: { description: 'Optional docString payload for the step' },
+      stepText: {
+        type: 'string' as const,
+        description: 'Step text without leading keyword (e.g. `I open the app`)',
+      },
+      stepDocstring: {
+        type: 'string' as const,
+        description: 'Optional docString payload for the step',
+      },
     },
     required: ['stepText'],
   },
@@ -59,13 +82,8 @@ export const stepExecuteBatchToolDefinition = {
         items: {
           type: 'object',
           properties: {
-            stepText: {
-              type: 'string',
-              description: 'Step text without leading keyword (e.g. `I open the app`)',
-            },
-            stepDocstring: {
-              description: 'Optional docString payload for the step',
-            },
+            stepText: { type: 'string', description: 'Step text without leading keyword (e.g. `I open the app`)' },
+            stepDocstring: { type: 'string', description: 'Optional docString payload for the step' },
           },
           required: ['stepText'],
         },
@@ -90,8 +108,9 @@ export const attachExistingSessionToolDefinition = {
 export const bootstrapToolDefinitions = [
   sessionStartToolDefinition,
   stepExecuteToolDefinition,
-  stepExecuteBatchToolDefinition,
+  // stepExecuteBatchToolDefinition is added via server builder, not bootstrap
   attachExistingSessionToolDefinition,
+  sessionsClearToolDefinition,
 ] as const;
 export interface StartMcpServerOptions {
   fixtures: {
@@ -279,6 +298,10 @@ export async function startMcpServer({
     sessionName: z
       .string()
       .describe('Human-readable name for the new MCP session'),
+    headless: z
+      .boolean()
+      .optional()
+      .describe('Run browser in headless mode (default: true)'),
   });
 
   const internalStartSession = async (sessionName: string) => {
@@ -316,6 +339,42 @@ export async function startMcpServer({
     { title: sessionStartToolDefinition.annotations.title },
   );
 
+  const sessionsClearTool = await createTestingTool(
+    sessionsClearToolDefinition.name,
+    sessionsClearToolDefinition.description,
+    z.object({}),
+    async () => {
+      const page = activePage;
+      if (!page || page.isClosed()) {
+        setActivePage(null);
+        return 'No active page/browser to close. State already clean.';
+      }
+
+      const browser = page.context().browser();
+      if (!browser) {
+        setActivePage(null);
+        return 'No Playwright browser attached; state reset.';
+      }
+
+      const contexts = browser.contexts();
+      const pagesClosed = contexts.reduce(
+        (acc, ctx) => acc + ctx.pages().filter((p) => !p.isClosed()).length,
+        0,
+      );
+
+      try {
+        await browser.close();
+      } catch (err) {
+        logger.warn(formatArgs('⚠️ Failed to close browser during sessions_clear', err));
+      } finally {
+        setActivePage(null);
+      }
+
+      return `Closed browser with ${contexts.length} context(s) and ${pagesClosed} page(s).`;
+    },
+    { title: sessionsClearToolDefinition.annotations.title },
+  );
+
   const mcpAdvanced = await import('playwright-mcp-advanced');
   const server = await mcpAdvanced.createServerBuilder({
     config: {
@@ -330,6 +389,7 @@ export async function startMcpServer({
   })
     .addTools([
       sessionStartNewTool,
+      sessionsClearTool,
       stepExecuteTool,
       stepExecuteBatchTool,
     ])
@@ -408,15 +468,36 @@ export async function startMcpServer({
 
   logger.info(formatArgs(`🌐 Starting MCP HTTP server on port ${requestedPort || 'auto'}`));
   const { startHttpServer, startHttpTransport } = await import('playwright-mcp-advanced');
-  const httpServer = await startHttpServer({ port: requestedPort });
-  startHttpTransport(httpServer, server);
+  const startOnPort = async (port: number) => {
+    const httpSrv = await startHttpServer({ port });
+    const addr = httpSrv.address() as AddressInfo | string | null;
+    const resolved = addr && typeof addr !== 'string' ? addr.port : port;
+    return { httpSrv, resolved };
+  };
 
-  const address = httpServer.address() as AddressInfo | string | null;
-  let resolvedPort = requestedPort;
-  if (address && typeof address !== 'string') {
-    resolvedPort = address.port;
+  let httpServer: http.Server;
+  let resolvedPort: number;
+  let startResult: { httpSrv: http.Server; resolved: number };
+  let stopped = false;
+
+  try {
+    startResult = await startOnPort(requestedPort);
+  } catch (error) {
+    const err = error as NodeJS.ErrnoException;
+    if (err.code !== 'EADDRINUSE') {
+      throw error;
+    }
+    const fallbackPort = await findEphemeralPort();
+    logger.warn(formatArgs(`Port ${requestedPort} is busy, retrying on ${fallbackPort}`));
+    startResult = await startOnPort(fallbackPort);
   }
+  ({ httpSrv: httpServer, resolved: resolvedPort } = startResult);
+
+  startHttpTransport(httpServer, server);
   logger.info(formatArgs(`🚀 MCP server listening at http://localhost:${resolvedPort}`));
+
+  // Wait for the HTTP server to be truly available before proceeding
+  await waitForHttpAvailability(resolvedPort);
 
   // Start idle timeout checker
   const startIdleChecker = () => {
@@ -462,6 +543,10 @@ export async function startMcpServer({
       ]);
     },
     async stop() {
+      if (stopped) {
+        return;
+      }
+      stopped = true;
       stopIdleChecker();
       markShutdown();
       await closeActivePage();
@@ -469,6 +554,11 @@ export async function startMcpServer({
       await closeHttpServer(httpServer);
     },
   };
+
+  // Ensure shutdown notification triggers a full stop (including browser close)
+  shutdown.promise
+    .then(() => handleRef.stop())
+    .catch((err) => logger.error(formatArgs('❌ Error while stopping MCP server after shutdown signal:', err)));
 
   // Start the idle timeout checker
   startIdleChecker();

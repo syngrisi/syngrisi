@@ -44,7 +44,7 @@ export {
 };
 
 function onImageErrorHandler(...e: any) {
-    const imgSrc = e[0].path[0].src;
+    const imgSrc = e[0]?.path?.[0]?.src || e[0]?.target?.src || 'unknown';
     const msg = `Cannot load image: '${imgSrc}'`;
     log.error(msg, e);
     errorMsg({ error: msg });

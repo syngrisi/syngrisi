@@ -1,14 +1,12 @@
 import { ErrorRequestHandler, RequestHandler } from 'express';
-import httpStatus from 'http-status';
 import { Request, Response } from "express";
 import { env } from "@env";
 import log from "@logger";
-import { ApiError } from '../utils';
-import StatusCodes from 'http-status';
+import { ApiError, HttpStatus } from '../utils';
 
 
 const unexpectedRequest: RequestHandler = (req: Request, res: Response) => {
-  res.status(httpStatus.NOT_FOUND).json({ error: `url: '${req.originalUrl}' not found` });
+  res.status(HttpStatus.NOT_FOUND).json({ error: `url: '${req.originalUrl}' not found` });
 };
 
 const addErrorToRequestLog: ErrorRequestHandler = (err, _req, res, next) => {
@@ -27,7 +25,7 @@ const addErrorToRequestLog: ErrorRequestHandler = (err, _req, res, next) => {
         });
     }
     else if(err instanceof Error) {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR)
         .json({
           name: err.name,
           type: 'Error',

@@ -20,7 +20,9 @@
       "@lib/*": ["support/lib/*"],
       "@params": ["support/params"],
       "@app-server": ["support/utils/app-server"],
-      "@logger": ["support/lib/logger"]
+      "@logger": ["support/mcp/utils/logger"],
+      "@sso": ["support/sso/index"],
+      "@sso/*": ["support/sso/*"]
     },
     "rootDir": ".",
     "outDir": "dist"

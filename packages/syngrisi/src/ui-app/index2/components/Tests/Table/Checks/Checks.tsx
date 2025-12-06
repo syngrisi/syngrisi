@@ -7,6 +7,7 @@ import { GenericService } from '@shared/services';
 import { errorMsg } from '@shared/utils';
 import { ChecksSkeleton } from '@index/components/Tests/Table/Checks/ChecksSkeleton';
 import { Check } from '@index/components/Tests/Table/Checks/Check';
+import { useImagePreloadBatch } from '@shared/hooks';
 
 interface Props {
     item: any,
@@ -34,7 +35,8 @@ export function Checks({ item, testUpdateQuery }: Props) {
             'checksByIds',
         ),
         {
-            refetchOnWindowFocus: false,
+            refetchOnWindowFocus: true,
+            staleTime: 10 * 1000, // 10 seconds - checks data considered fresh for 10s
             onSuccess: () => {
             },
             onError: (e) => {
@@ -69,6 +71,14 @@ export function Checks({ item, testUpdateQuery }: Props) {
     //     },
     // );
 
+    // Preload images for all checks when data is loaded
+    const checks = checksQuery?.data?.results || [];
+    useImagePreloadBatch(checks, {
+        enabled: checks.length > 0,
+        priority: 'medium',
+        preloadCount: 10, // Preload first 10 checks
+    });
+
     const ChecksContainer = (checksViewMode === 'list') ? Stack : Group;
 
     return (
@@ -93,7 +103,7 @@ export function Checks({ item, testUpdateQuery }: Props) {
                                         </Text>
                                     )
                                     : (
-                                        <ChecksContainer p={20} align="start">
+                                        <ChecksContainer p={20} align="start" data-test-checks-ready="true">
                                             {
                                                 checksQuery.data.results.map(
                                                     (check) => (

@@ -53,6 +53,18 @@ export const config = {
                 connectSrc: ["'self'", "*"]
             },
         },
+    },
+    rateLimit: {
+        windowMs: env.SYNGRISI_RATE_LIMIT_WINDOW_MS,
+        max: env.SYNGRISI_RATE_LIMIT_MAX,
+        standardHeaders: true,
+        legacyHeaders: false,
+    },
+    authRateLimit: {
+        windowMs: env.SYNGRISI_AUTH_RATE_LIMIT_WINDOW_MS,
+        max: env.SYNGRISI_AUTH_RATE_LIMIT_MAX,
+        standardHeaders: true,
+        legacyHeaders: false,
     }
 };
 

@@ -1,8 +1,8 @@
-import StatusCodes  from 'http-status';
+import { HttpStatus } from '@utils';
 import { z } from 'zod';
 import { ServiceResponsePaginationSchema } from './serviceResponse';
 
-export function createApiResponse(schema: z.ZodTypeAny, description: string, statusCode: number = StatusCodes.OK) {
+export function createApiResponse(schema: z.ZodTypeAny, description: string, statusCode: number = HttpStatus.OK) {
   return {
     [statusCode]: {
       description,
@@ -15,7 +15,7 @@ export function createApiResponse(schema: z.ZodTypeAny, description: string, sta
   };
 }
 
-export function createApiEmptyResponse(description: string, statusCode: number = StatusCodes.OK) {
+export function createApiEmptyResponse(description: string, statusCode: number = HttpStatus.OK) {
   return {
     [statusCode]: {
       description,
@@ -24,7 +24,7 @@ export function createApiEmptyResponse(description: string, statusCode: number =
 }
 
 
-export function createPaginatedApiResponse(schema: z.ZodTypeAny, description: string, statusCode:number = StatusCodes.OK) {
+export function createPaginatedApiResponse(schema: z.ZodTypeAny, description: string, statusCode:number = HttpStatus.OK) {
   return {
     [statusCode]: {
       description,

@@ -147,6 +147,7 @@ export function QuickFilter() {
             <TextInput
                 value={quickFilter}
                 data-test="table-quick-filter"
+                aria-label="Quick filter by test name"
                 onChange={(event) => setQuickFilter(event.currentTarget.value)}
                 size="xs"
                 radius="xs"
@@ -155,6 +156,7 @@ export function QuickFilter() {
                     (
                         <ActionIcon
                             title="clear filter"
+                            aria-label="Clear quick filter"
                             onClick={() => {
                                 resetQuickFilter();
                             }}
@@ -184,6 +186,8 @@ export function QuickFilter() {
                         >
                             <ActionIcon
                                 ml={-14}
+                                aria-label="Open quick filter options"
+                                aria-expanded={opened}
                                 onClick={toggle}
                             >
                                 <IconChevronDown size={16} />

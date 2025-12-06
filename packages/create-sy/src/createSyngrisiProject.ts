@@ -1,16 +1,26 @@
 import { ProgramOpts } from './types'
-import { readPackageUp } from 'read-pkg-up'
+import { readPackageUp } from './native/findPackageJson.js'
 import fs from 'node:fs/promises'
 import path from 'node:path'
-import ora from 'ora'
-import chalk from 'chalk'
-import { getCreateSyVersion, getSyngrisiVersion, printAndExit, runProgram } from './utils.js'
+import { createSpinner } from './native/spinner.js'
+import { c } from './native/colors.js'
+import { getCreateSyVersion, getSyngrisiVersion, printAndExit, runProgram, validateNpmTag } from './utils.js'
 
 export const createSyngrisiProject = async (opts: ProgramOpts) => {
     if (!opts.installDir) {
         printAndExit('installDir is empty')
         return
     }
+
+    // Validate npmTag before using it
+    if (opts.npmTag) {
+        const validation = validateNpmTag(opts.npmTag)
+        if (!validation.valid) {
+            printAndExit(validation.error)
+            return
+        }
+    }
+
     let npmTag = ''
 
     if (opts.npmTag) {
@@ -43,11 +53,11 @@ export const createSyngrisiProject = async (opts: ProgramOpts) => {
          */
         await runProgram('npm', ['install'], { cwd: root, stdio: 'ignore' })
     }
-    const spinner = ora(chalk.green(`Installing ${chalk.bold('Syngrisi')}`)).start()
+    const spinner = createSpinner(c.green(`Installing ${c.bold('Syngrisi')}`)).start()
     await runProgram('npm', ['install', `@syngrisi/syngrisi${npmTag}`], { cwd: root, stdio: 'ignore' })
     spinner.stop()
 
-    console.log(chalk.green(`✔ Syngrisi ${chalk.greenBright(getSyngrisiVersion(root))} successfully installed in the following directory: ${root}`))
-    console.log(chalk.white(`To run the application use the ${chalk.whiteBright('npx sy')} command`))
-    console.log(chalk.white.bold('For detailed configuration see https://github.com/syngrisi/syngrisi/tree/main/packages/syngrisi'))
+    console.log(c.green(`✔ Syngrisi ${c.greenBright(getSyngrisiVersion(root))} successfully installed in the following directory: ${root}`))
+    console.log(`To run the application use the ${c.whiteBright('npx sy')} command`)
+    console.log(c.bold('For detailed configuration see https://github.com/syngrisi/syngrisi/tree/main/packages/syngrisi'))
 }

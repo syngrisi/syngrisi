@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { Stack } from '@mantine/core';
 import { SuitesDummySkeleton } from '@index/components/Navbar/Skeletons/SuitesDummySkeleton';
@@ -9,11 +9,32 @@ interface Props {
     infinityQuery: any,
     itemType?: string,
     num?: number,
-    itemClass: string
+    itemClass: string,
+    scrollRootRef?: React.RefObject<HTMLDivElement>
 }
 
-function SkeletonWrapper({ infinityQuery, itemType, num, itemClass }: Props) {
-    const { ref, inView } = useInView();
+function SkeletonWrapper({ infinityQuery, itemType, num, itemClass, scrollRootRef }: Props) {
+    const [scrollRoot, setScrollRoot] = useState<HTMLElement | null>(null);
+
+    useEffect(() => {
+        if (typeof document === 'undefined') return;
+
+        if (scrollRootRef?.current) {
+            setScrollRoot(scrollRootRef.current);
+            return;
+        }
+
+        const fallbackRoot = document.querySelector('[data-test="navbar-scroll-area"]');
+        if (fallbackRoot instanceof HTMLElement) {
+            setScrollRoot(fallbackRoot);
+        }
+    }, [scrollRootRef]);
+
+    const { ref, inView } = useInView({
+        root: scrollRoot,
+        rootMargin: '0px',
+        threshold: 0.1,
+    });
 
     const DummySkeletons = (key: string) => {
         const map: { [key: string]: any } = {
@@ -24,10 +45,10 @@ function SkeletonWrapper({ infinityQuery, itemType, num, itemClass }: Props) {
     };
 
     useEffect(() => {
-        if (inView && infinityQuery) {
+        if (inView && infinityQuery && !infinityQuery.isFetchingNextPage) {
             infinityQuery.fetchNextPage();
         }
-    }, [inView]);
+    }, [inView, infinityQuery?.isFetchingNextPage]);
 
     const DummySkeleton = DummySkeletons(itemType!);
     return (

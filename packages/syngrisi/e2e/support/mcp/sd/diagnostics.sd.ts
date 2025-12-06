@@ -92,7 +92,7 @@ When(/^I verify page is loaded$/, async ({ page }) => {
   await page.waitForLoadState('domcontentloaded');
   const url = page.url();
   const title = await page.title();
-  
+
   const message = `Page loaded: ${title} (${url})`;
   logger.info(formatArgs(`✅ ${message}`));
   return message;
@@ -454,7 +454,7 @@ When(/^I analyze current page$/, async ({ page }) => {
   try {
     const url = page.url();
     const title = await page.title();
-    
+
     const buttons = await page.locator('role=button').evaluateAll((elements) =>
       elements.map((el) => ({
         text: el.textContent?.trim() || '',
@@ -516,7 +516,7 @@ When(/^I analyze current page$/, async ({ page }) => {
       inputs: inputs.slice(0, 10),
     };
 
-    const formatted = yaml.stringify(analysis);
+    const formatted = JSON.stringify(analysis, null, 2);
     logger.info(formatArgs(`📊 Page analysis:\n${formatted}`));
     return formatted;
   } catch (err) {
@@ -526,3 +526,71 @@ When(/^I analyze current page$/, async ({ page }) => {
   }
 });
 
+import { DOMSimplifier } from '../utils/dom-simplifier';
+
+/**
+ * Gets DOM quality metrics for a matching element.
+ * @example
+ * ```gherkin
+ * When I get DOM quality metrics of "css=.task-card"
+ * When I get DOM quality metrics of 2nd "role=button"
+ * ```
+ */
+When(
+  /^I get DOM quality metrics of (?:(first)|(\d+)(?:st|nd|rd|th)?)?\s*"([^"]+)"$/,
+  async ({ page, testData }, scopeOrNumber: 'first' | undefined, indexStr: string | undefined, component: string) => {
+    try {
+      const { locator, selector } = resolveLocator(page as Page, testData, component);
+      const count = await locator.count();
+
+      if (count === 0) {
+        throw new Error(`No elements found for locator: ${selector}`);
+      }
+
+      // Note: Currently DOMSimplifier works on the whole page.
+      // We will analyze the whole page and return metrics.
+      // Future improvement: Scope simplification to the target element.
+
+      const simplifier = new DOMSimplifier(page as Page);
+      const result = await simplifier.simplify();
+
+      const formatted = JSON.stringify({
+        stats: result.stats,
+        metrics: result.quality,
+        note: 'Metrics are for the full page context',
+      }, null, 2);
+
+      logger.info(formatArgs(`📊 DOM quality metrics:\n${formatted}`));
+      return formatted;
+    } catch (err) {
+      const message = `Failed to get DOM quality metrics: ${formatError(err)}`;
+      logger.error(formatArgs(`❌ ${message}`));
+      throw new Error(message);
+    }
+  },
+);
+
+/**
+ * Waits for navigation to complete.
+ * @example
+ * ```gherkin
+ * When I wait for navigation
+ * ```
+ */
+When(/^I wait for navigation$/, async ({ page }) => {
+  try {
+    await page.waitForLoadState('domcontentloaded');
+    try {
+      await page.waitForLoadState('networkidle', { timeout: 5000 });
+    } catch {
+      // Ignore networkidle timeout, domcontentloaded is often enough
+    }
+    const message = 'Navigation completed';
+    logger.info(formatArgs(`✅ ${message}`));
+    return message;
+  } catch (err) {
+    const message = `Failed to wait for navigation: ${formatError(err)}`;
+    logger.error(formatArgs(`❌ ${message}`));
+    throw new Error(message);
+  }
+});

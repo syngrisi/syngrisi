@@ -1,7 +1,7 @@
 module.exports = {
     root: true,
     parser: '@typescript-eslint/parser',
-    plugins: ['@typescript-eslint', 'unicorn'],
+    plugins: ['@typescript-eslint'],
     extends: [
         'eslint:recommended',
         'plugin:import/errors',
@@ -32,7 +32,6 @@ module.exports = {
         'import/default': 2,
         'import/export': 2,
 
-        'unicorn/prefer-node-protocol': ['error']
     },
     overrides: [
         {

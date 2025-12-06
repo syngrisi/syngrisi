@@ -1,13 +1,66 @@
+import { Types } from 'mongoose';
 import { checkService } from './index';
 import { Test, Check } from '@models';
 import log from "../lib/logger";
 import { RequestUser } from '@types';
 import { FilterQuery } from 'mongoose';
-import { PaginateOptions } from '../models/plugins/utils';
+import { PaginateOptions, QueryResult } from '../models/plugins/utils';
 
+const toObjectId = (id: string) => {
+    try {
+        return new Types.ObjectId(id);
+    } catch {
+        return null;
+    }
+};
 
-const queryTests = async (filter: FilterQuery<typeof Test>, options: PaginateOptions) => {
-    const tests = await Test.paginate(filter, options);
+const buildEmptyResult = (options: PaginateOptions): QueryResult => {
+    const limit = options.limit ? Number(options.limit) : 10;
+    const page = options.page ? Number(options.page) : 1;
+    return {
+        results: [],
+        page,
+        limit,
+        totalPages: 0,
+        totalResults: 0,
+        timestamp: Date.now(),
+    };
+};
+
+export const resolveTestIdsByBaselineSnapshot = async (
+    baselineSnapshotId?: string,
+    deps: { CheckModel?: typeof Check } = {},
+): Promise<Types.ObjectId[]> => {
+    const CheckModel = deps.CheckModel || Check;
+    if (!baselineSnapshotId) return [];
+    const objectId = toObjectId(baselineSnapshotId);
+    if (!objectId) return [];
+    const testIds = await CheckModel.find({ baselineId: objectId }).distinct('test');
+    return testIds.map((id) => new Types.ObjectId(id));
+};
+
+type QueryTestsDeps = {
+    CheckModel?: typeof Check
+    TestModel?: typeof Test
+};
+
+const queryTests = async (
+    filter: FilterQuery<typeof Test>,
+    options: PaginateOptions,
+    baselineSnapshotId?: string,
+    deps: QueryTestsDeps = {},
+) => {
+    const CheckModel = deps.CheckModel || Check;
+    const TestModel = deps.TestModel || Test;
+
+    if (baselineSnapshotId) {
+        const testIds = await resolveTestIdsByBaselineSnapshot(baselineSnapshotId, { CheckModel });
+        if (!testIds.length) {
+            return buildEmptyResult(options);
+        }
+        filter._id = { $in: testIds };
+    }
+    const tests = await TestModel.paginate(filter, options);
     return tests;
 };
 
@@ -62,4 +115,5 @@ export {
     queryTestsDistinct,
     remove,
     accept,
+    buildEmptyResult,
 };

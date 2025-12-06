@@ -4,8 +4,9 @@
   "cucumberautocomplete.steps": ["packages/syngrisi/e2e/steps/**/*.ts"],
   // "cucumberautocomplete.strictGherkinCompletion": true,
   "cucumberautocomplete.syncfeatures": "packages/syngrisi/e2e/features/**/*.feature",
+  "cucumberautocomplete.skipDocStringsFormat": true,
   "_cucumberautocomplete.syncfeatures": "packages/syngrisi/tests/features/**/*.feature",
-  "playwright-bdd-helper.commandTemplate": "npx bddgen && yarn playwright test \"{{featurePath}}\" --grep \"{{grepPattern}}\"{{commandArgsString}} --workers=1 --headed",
+  "playwright-bdd-helper.commandTemplate": "npx bddgen && yarn playwright test \"{{featurePath}}\" --grep \"{{grepPattern}}\"{{commandArgsString}} --workers=1 --project=demo --project=chromium --headed",
   // "playwright-bdd-helper.commandTemplate": "npx cross-env LOG=1 npx wdio --spec \"{{featurePath}}\""
   "cucumberautocomplete.customParameters": [
     {

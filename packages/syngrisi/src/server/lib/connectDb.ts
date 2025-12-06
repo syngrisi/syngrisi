@@ -6,19 +6,38 @@ import { errMsg } from '../utils/errMsg';
 mongoose.Promise = global.Promise;
 mongoose.set('strictQuery', false);
 
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 1000;
+
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 const connectDB = async () => {
-    try {
-        await mongoose.connect(config.connectionString, {
-            maxPoolSize: 10,
-            minPoolSize: 5,
-            serverSelectionTimeoutMS: 5000,
-            socketTimeoutMS: 45000,
-            family: 4 // Use IPv4, disable IPv6
-        });
-    } catch (error: unknown) {
-        log.error(`Could not connect to MongoDB: ${errMsg(error)}`);
-        process.exit(1);
+    let lastError: unknown;
+
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+        try {
+            await mongoose.connect(config.connectionString, {
+                maxPoolSize: 50,
+                minPoolSize: 2,
+                serverSelectionTimeoutMS: 10000,
+                connectTimeoutMS: 30000,
+                socketTimeoutMS: 45000,
+                family: 4, // Use IPv4, disable IPv6
+                maxIdleTimeMS: 30000, // Close idle connections after 30s
+                waitQueueTimeoutMS: 30000, // Wait up to 30s for a connection from pool
+            });
+            return; // Success
+        } catch (error: unknown) {
+            lastError = error;
+            if (attempt < MAX_RETRIES) {
+                log.warn(`MongoDB connection attempt ${attempt}/${MAX_RETRIES} failed, retrying in ${RETRY_DELAY_MS}ms...`);
+                await sleep(RETRY_DELAY_MS * attempt); // Exponential backoff
+            }
+        }
     }
+
+    log.error(`Could not connect to MongoDB after ${MAX_RETRIES} attempts: ${errMsg(lastError)}`);
+    process.exit(1);
 };
 
 export default connectDB;

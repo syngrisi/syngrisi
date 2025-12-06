@@ -1,13 +1,13 @@
 {
   "name": "@syngrisi/wdio-sdk",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Syngrisi WebdriverIO SDK",
   "main": "dist/WDIODriver.js",
   "directories": {
     "lib": "src"
   },
   "engines": {
-    "node": ">=14.20.0"
+    "node": ">=22.19.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 0",
@@ -34,27 +34,26 @@
   },
   "homepage": "https://github.com/syngrisi/syngrisi/tree/main/packages/wdio-sdk#readme",
   "dependencies": {
-    "@syngrisi/core-api": "^2.3.0",
-    "@wdio/globals": "^8.20.0",
-    "@wdio/logger": "^7.16.0",
-    "form-data": "^4.0.0",
+    "@syngrisi/core-api": "^2.4.0",
+    "@wdio/globals": "^8.46.0",
+    "@wdio/logger": "^7.26.0",
+    "form-data": "^4.0.5",
     "got-cjs": "^12.0.4",
-    "hasha": "^5.2.0",
-    "zod": "^3.22.4"
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
-    "@typescript-eslint/eslint-plugin": "^5.48.2",
-    "@typescript-eslint/parser": "^5.48.2",
-    "@vitest/coverage-v8": "^4.0.8",
-    "@wdio/types": "^8.20.0",
-    "c8": "^7.12.0",
-    "eslint": "^8.52.0",
+    "@typescript-eslint/eslint-plugin": "^8.48.1",
+    "@typescript-eslint/parser": "^8.48.1",
+    "@vitest/coverage-v8": "^4.0.15",
+    "@wdio/types": "^8.41.0",
+    "c8": "^10.1.3",
+    "eslint": "^8.57.1",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.29.0",
-    "eslint-plugin-unicorn": "^45.0.2",
-    "typescript": "^5.2.2",
-    "vitest": "^4.0.8"
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-unicorn": "^62.0.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.15"
   },
   "gitHead": "df1d7bc159619fcf0e612229be1a79652a84e5e7"
 }

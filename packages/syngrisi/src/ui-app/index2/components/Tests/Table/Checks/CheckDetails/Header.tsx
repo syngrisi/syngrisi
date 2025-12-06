@@ -32,7 +32,7 @@ export function Header(
     );
 
     return (
-        <Group position="apart" sx={{ width: '98%' }} data-check-header-name={currentCheck.name} noWrap>
+        <Group position="apart" sx={{ width: '98%' }} data-check-header-name={currentCheck.name} data-check-header-ready={currentCheck.name && currentCheck.status ? 'true' : 'false'} noWrap>
             <Group
                 position="left"
                 align="center"

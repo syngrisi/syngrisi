@@ -1,50 +1,53 @@
 # E2E Framework Rules for AI Agents
 
-## CRITICAL RULE: Test Fidelity
+## 🚨 CRITICAL PROTOCOL (Strict Enforcement)
 
-**NEVER modify test assertions or add normalization logic that changes the actual behavior being tested.**
+**ANY violation = STOP + Ask User.**
 
-- Tests MUST exactly replicate the logic from `packages/syngrisi/tests/features/`
-- DO NOT add color normalization, case-insensitive text matching, or any other "helpful" transformations
-- If a test fails, investigate WHY it fails - don't work around it by changing the assertion logic
-- Use exact string matching: `expect(actual).toBe(expected)` - no regex, no normalization
-- For CSS properties, use Playwright's `toHaveCSS()` directly - it handles browser differences correctly
-- If there's a mismatch between expected and actual values, debug the root cause:
-  - Check if the application behavior changed
-  - Verify selectors are correct
-  - Add debug logging to understand what's happening
-  - Fix the application or test data, not the assertion
+1.  **Prohibitions:**
+    -   **NEVER** modify global timeouts (`playwright.config.ts`) or use `waitForTimeout`.
+    -   **NEVER** relax assertions or mask failures to make tests pass.
+    -   **NEVER** use CSS/XPath unless _all_ other options are exhausted.
+2.  **Mandatory Workflow:**
+    -   **Failure:** STOP → Capture State (Actual vs Expected) → Debug (Logs) → Analyze Root Cause.
+    -   **Report:** "STOP: [Reason]. Root cause: [Details]. Options: A) [Action] B) [Action]. Awaiting approval."
+3.  **Flaky Tests:** Tag with `@flaky` (run separately). See `manage-flaky-tests.md`.
 
-## Step Definitions
+## 🎯 Selectors Strategy (STRICT ORDER)
 
-- Step definitions MUST match the original WebdriverIO/Cucumber step definitions exactly
-- Use the same comparison logic as the original tests
-- Preserve all original test behavior and expectations
-- Keep all environment management steps (database cleanup, server/driver start, storage reset) identical to the original feature backgrounds. If the legacy scenario started with `Given I clear Database and stop Server`, you MUST provide the same guarantees via Playwright fixtures/steps (e.g. `Given the database is cleared` plus server start). Never skip or reorder these setup steps.
-- Ensure API helpers mirror legacy behavior: reuse the same hashing algorithms, default payload values, wait timings, and file resolution logic so that created entities are byte-for-byte compatible with the original tests.
-- Maintain the exact feature structure: scenario titles, tags, comments, and data tables should remain unchanged unless the original files are updated.
+1.  **ARIA Roles:** `role="button", name="..."` (Top Priority)
+2.  **Labels:** `label="Email"`
+3.  **Text:** `text="Submit"`
+4.  **TestID:** `data-test="id"` (Fallback)
+5.  **CSS/XPath:** ❌ **Last resort only.**
 
-## Debugging
+_If robust selector missing:_ **Modify source code** (`packages/syngrisi/src/ui-app`) to add ARIA roles, labels, semantic HTML (`<nav>`), or alt text.
 
-- When tests fail, add detailed logging to understand the issue
-- Use Playwright's built-in debugging tools (screenshots, traces, console logs)
-- Never "fix" a test by changing what it's testing - fix the underlying issue
-- Validate cross-scenario isolation explicitly: double-check that data created in one scenario cannot leak into the next. If the legacy suite depended on a fresh DB per background, replicate that behavior in the new stack.
+## ⚙️ Execution & Commands
 
-## Known Differences: WebdriverIO vs Playwright
+_Working directory:_ `packages/syngrisi/e2e`
 
-- **Text matching**: WebdriverIO's `getText()` returns visible text (like `innerText`), which respects CSS `text-transform`. Use `innerText()` in Playwright to match this behavior.
-- **CSS Colors**: WebdriverIO's `getCSSProperty()` for color properties returns `rgba(r,g,b,1)` format without spaces. Browsers return `rgb(r, g, b)` format. To match WebdriverIO behavior exactly, normalize `rgb(r, g, b)` to `rgba(r,g,b,1)` format (no spaces) in step definitions for color properties. This normalization is REQUIRED to replicate WebdriverIO's exact behavior.
+**Base Command:**
 
-## Test Execution
+```bash
+npx bddgen && yarn playwright test "features/CP/check_details/regions.feature" "packages/syngrisi/e2e/features/CP/check_details/regions.feature" <add more tests here> --workers=8
+```
 
-- The project relies on `npm`, so run commands via the npm scripts inside `packages/syngrisi/e2e`.
-- To execute a single scenario in headless mode, generate steps and run the test:
-  ```bash
-  npx bddgen && yarn playwright test "features/CHECKS_HANDLING/accept_by_user.feature" --grep "Accept by user" --headed --workers=1
-  ```
-- For headed mode, run:
-  ```bash
-  npx bddgen && yarn playwright test "features/CHECKS_HANDLING/accept_by_user.feature" --grep "Accept by user" --headed --workers=1 --headed
-  ```
-- To execute the entire e2e suite, change into `packages/syngrisi/e2e` and run `npm test`.
+**Adjust flags for specific goals:**
+
+| Goal                       | Flags to append/modify                                        |
+| :------------------------- | :------------------------------------------------------------ |
+| **Filter by Scenario**     | `--grep "Scenario Name"`                                      |
+| **Debug Mode**             | `--headed --workers=1`                                        |
+| **Verify Fix (Stability)** | `--workers=3 --repeat-each=4` (Mandatory after fixing a test) |
+| **Full Suite**             | Run `npm test` instead of specific files                      |
+
+## 📚 Documentation Reference (`packages/syngrisi/docs/agent/guides/`)
+
+-   `run_test.md` (Workflow)
+-   `test-generate-quick.md` (New Features)
+-   `update-app-layout.md` (Accessibility/ARIA)
+-   `selector_best_practices.md` (Patterns)
+-   `mcp_test_engine_using.md` (MCP Bridge)
+-   `common_steps_cheatsheet.md` (Steps)
+-   `testing_strategy.md` (General Strategy)
