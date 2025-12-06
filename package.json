@@ -6,14 +6,15 @@
   ],
   "scripts": {
     "publish": "lerna publish",
-    "test": "lerna run packages/syngrisi/test --scope=create-sy --scope=@syngrisi/syngrisi",
+    "test": "lerna run test --scope=create-sy --scope=@syngrisi/syngrisi",
+    "test:unit": "lerna run test --scope=create-sy",
+    "test:e2e": "yarn --cwd packages/syngrisi/e2e bddgen && yarn --cwd packages/syngrisi/e2e playwright test",
+    "test:smoke": "yarn --cwd packages/syngrisi smoke",
     "start": "lerna run start --scope=@syngrisi/syngrisi",
     "build": "lerna run build",
     "graph": "nx graph",
     "docs": "typedoc",
-    "gpt:export": "node src_to_json.js # this serializes the source folder and individual files into a single JSON file in the `src_to_json` folder for export to custom GPTs.",
-    "e2e:bddgen": "npm run --prefix packages/syngrisi/e2e bddgen",
-    "test:ap:tasks": "npm run e2e:bddgen && cd packages/syngrisi/e2e && yarn playwright test \"features/AP/tasks/\""
+    "e2e:bddgen": "yarn --cwd packages/syngrisi/e2e bddgen"
   },
   "dependencies": {
     "playwright": "^1.57.0"
