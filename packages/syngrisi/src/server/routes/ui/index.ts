@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import express, { Response } from 'express';
 import path from 'path';
-import httpStatus from 'http-status';
+import { HttpStatus } from '@utils';
 
 import { catchAsync } from '@utils';
 import { ensureLoggedIn, ensureLoggedInOrApiKey } from '@middlewares/ensureLogin/ensureLoggedIn';
@@ -12,7 +12,7 @@ import { baseDir } from '@lib/baseDir';
 const router = express.Router();
 
 const staticIndex = async (req: ExtRequest, res: Response) => {
-    res.status(httpStatus.OK)
+    res.status(HttpStatus.OK)
         .sendFile(path.normalize(path.join(baseDir, `./mvc/views/react/index2/index.html`)));
 }
 

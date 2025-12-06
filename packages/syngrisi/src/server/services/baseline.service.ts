@@ -5,7 +5,7 @@ import { LogOpts } from '@types';
 import { RequiredIdentOptionsType } from '@schemas';
 import { SnapshotDocument } from '@models/Snapshot.model';
 import { PaginateOptions } from '@models/plugins/utils';
-import httpStatus from 'http-status';
+import { HttpStatus } from '@utils';
 import { IdentType } from '@utils/buildIdentObject';
 import { BaselineDocument } from '../models/Baseline.model';
 import { CreateCheckParamsExtended } from '../../types/Check';
@@ -78,7 +78,7 @@ export async function inspectBaseline(
         }
         Object.assign(params, updateCheckParamsFromBaseline(newCheckParams, storedBaseline));
         currentBaselineSnapshot = await Snapshot.findById(storedBaseline.snapshootId);
-        if (!currentBaselineSnapshot) throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, `Cannot find the snapshot with id: ${storedBaseline.snapshootId}`);
+        if (!currentBaselineSnapshot) throw new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, `Cannot find the snapshot with id: ${storedBaseline.snapshootId}`);
     } else {
         const checksWithSameIdent = await getNotPendingChecksByIdent(checkIdent);
         if (checksWithSameIdent.length > 0) {
@@ -143,7 +143,7 @@ export const remove = async (id: string, user: { username: string }) => {
 
     const baseline = await Baseline.findByIdAndDelete(id).exec();
     if (!baseline) {
-        throw new ApiError(httpStatus.NOT_FOUND, `cannot remove baseline with id: '${id}', not found`);
+        throw new ApiError(HttpStatus.NOT_FOUND, `cannot remove baseline with id: '${id}', not found`);
     }
     return baseline;
 };

@@ -11,7 +11,7 @@ import { createRequestQuerySchema } from '@schemas/utils/createRequestQuerySchem
 import { RequestPaginationSchema } from '@schemas/common/RequestPagination.schema';
 import { createRequestOpenApiBodySchema } from '@schemas/utils/createRequestOpenApiBodySchema';
 import { createRequestBodySchema } from '@schemas/utils/createRequestBodySchema';
-import StatusCodes from 'http-status';
+import { HttpStatus } from '@utils';
 
 export const registry = new OpenAPIRegistry();
 const router = express.Router();
@@ -53,7 +53,7 @@ registry.registerPath({
     summary: "Create a new log entry",
     tags: ['Logs'],
     request: { body: createRequestOpenApiBodySchema(LogCreateSchema) },
-    responses: createApiResponse(LogCreateRespSchema, 'Success', StatusCodes.CREATED),
+    responses: createApiResponse(LogCreateRespSchema, 'Success', HttpStatus.CREATED),
 });
 
 router.post(
@@ -69,7 +69,7 @@ registry.registerPath({
     summary: "Create multiple log entries",
     tags: ['Logs'],
     request: { body: createRequestOpenApiBodySchema(z.array(LogCreateSchema)) },
-    responses: createApiResponse(LogCreateRespSchema, 'Success', StatusCodes.CREATED),
+    responses: createApiResponse(LogCreateRespSchema, 'Success', HttpStatus.CREATED),
 });
 
 router.post(

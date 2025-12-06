@@ -4,7 +4,7 @@ import log from "../lib/logger";
 import { RequestUser } from '@types';
 import { ApiError, errMsg } from '@utils';
 import { appSettings } from "@settings";
-import httpStatus from 'http-status';
+import { HttpStatus } from '@utils';
 
 function getApiKey(): string {
     return createApiKey();
@@ -72,7 +72,7 @@ const changePasswordFirstRun = async (newPassword: string): Promise<void> => {
         log.debug(`first run, change password for default 'Administrator'`, logOpts);
         const user = await User.findOne({ username: 'Administrator' }).exec();
 
-        if (!user) throw new ApiError(httpStatus.NOT_FOUND, `cannot change password at first run, user withusername: 'Administrator', not found`);
+        if (!user) throw new ApiError(HttpStatus.NOT_FOUND, `cannot change password at first run, user withusername: 'Administrator', not found`);
 
         logOpts.ref = String(user?.username);
 
