@@ -17,14 +17,17 @@ npm run test:smoke
 # Run in headed mode (visible browser)
 npm run test:headed
 
+# Run demo tests (headed mode, single worker)
+npm run test:demo
+
 # Run specific feature file (ALWAYS run bddgen first)
-npx bddgen && npx playwright test "features/CHECKS_HANDLING/accept_by_user.feature" --grep "Accept by user" --workers=2
+npx bddgen && npx playwright test --project=chromium "features/CHECKS_HANDLING/accept_by_user.feature" --grep "Accept by user" --workers=2
 
 # Run in headed mode with single worker
-npx bddgen && npx playwright test "features/path/to/file.feature" --grep "Scenario name" --workers=1 --headed
+npx bddgen && npx playwright test --project=chromium "features/path/to/file.feature" --grep "Scenario name" --workers=1 --headed
 
 # Verify test stability after fixing (REQUIRED)
-npx bddgen && npx playwright test "features/path/to/file.feature" --grep "Test name" --workers=3 --repeat-each=4
+npx bddgen && npx playwright test --project=chromium "features/path/to/file.feature" --grep "Test name" --workers=3 --repeat-each=4
 
 # Run MCP test engine tests
 npm run test:mcp
@@ -64,11 +67,15 @@ npm run test:mcp
 @sso → support/sso/index
 ```
 
-### Test Categories
-- **Regular tests**: Run with 10 workers in parallel
+### Test Categories & Projects
+- **chromium** (default project): All tests except DEMO folder
+- **demo** project: Only `features/DEMO/` folder, runs in headed mode
+
+Test tags:
+- **Regular tests**: Run with 10 workers in parallel (`--project=chromium`)
 - **SSO tests**: Tagged `@saml`, `@sso-external`, `@sso-logto` - run with 1 worker
 - **Flaky tests**: Tagged `@flaky` - run separately with 3 workers
-- **Demo tests**: Tagged `@demo` - excluded from all runs
+- **Demo tests**: Tagged `@demo` - separate project, run with `npm run test:demo` or `--project=demo`
 - **Smoke tests**: Tagged `@smoke` - quick validation subset
 
 ## Strict Rules for E2E Tests

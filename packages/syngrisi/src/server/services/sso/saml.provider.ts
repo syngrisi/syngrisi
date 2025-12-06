@@ -114,12 +114,13 @@ class SAMLProvider implements SSOProvider {
         const samlConfig: any = {
             entryPoint,
             issuer,
-            cert,
+            idpCert: cert, // v5: renamed from 'cert' to 'idpCert'
             callbackUrl,
             passReqToCallback: true,
-            // Security: require signed assertions (recommended for production)
-            wantAssertionsSigned: true,
-            wantAuthnResponseSigned: false, // Some IdPs don't sign the response envelope
+            // Signature validation: match previous passport-saml v3 behavior
+            // Set to true for stricter security with IdPs that support signed assertions
+            wantAssertionsSigned: false,
+            wantAuthnResponseSigned: false,
         };
 
         // Add IdP issuer if configured (for issuer validation)

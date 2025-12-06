@@ -1,4 +1,4 @@
-@sso-external @slow @saml
+@sso-external @slow @saml @sso
 Feature: SSO Authentication with SAML 2.0
   # SAML 2.0 SSO tests using Logto as SAML Identity Provider
   #
