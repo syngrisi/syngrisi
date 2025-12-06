@@ -24,6 +24,10 @@
     "playwright-bdd": "^8.4.2",
     "vite": "^7.2.6"
   },
+  "resolutions": {
+    "ws": "^8.18.0",
+    "tar-fs": "^3.1.1"
+  },
   "overrides": {
     "socks": "^2.8.4",
     "vite": "^7.2.2",
