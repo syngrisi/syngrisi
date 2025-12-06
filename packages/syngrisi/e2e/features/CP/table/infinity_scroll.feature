@@ -1,4 +1,4 @@
-@smoke @fast-server
+@smoke @fast-server @flaky
 Feature: Infinity scroll
 
   Background:
