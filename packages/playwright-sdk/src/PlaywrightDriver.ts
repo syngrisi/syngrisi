@@ -4,7 +4,7 @@
  *
  * @module PlaywrightDriver
  */
-import hasha from 'hasha'
+import { createHash } from 'node:crypto'
 import { SyngrisiApi, SessionResponse, ErrorObject, SnapshotResponse, Snapshot, CheckResponse } from '@syngrisi/core-api'
 import { Browser, Page } from '@playwright/test'
 import { ViewportSize } from 'playwright-core'
@@ -265,7 +265,7 @@ export class PlaywrightDriver {
         }
         if (!Buffer.isBuffer(imageBuffer)) throw new Error('check - wrong imageBuffer')
         let opts: CheckOptions | null = null
-        const hash = hasha(imageBuffer)
+        const hash = createHash('sha512').update(imageBuffer).digest('hex')
         try {
             opts = {
                 // ident:  ['name', 'viewport', 'browserName', 'os', 'app', 'branch'];

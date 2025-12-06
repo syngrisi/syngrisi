@@ -1,4 +1,4 @@
-import hasha from 'hasha'
+import { createHash } from 'node:crypto'
 import { LogLevelDesc } from 'loglevel'
 
 import { default as logger } from '@wdio/logger'
@@ -267,7 +267,7 @@ export class WDIODriver {
                 browserVersion: this.params.test.browserVersion,
                 browserFullVersion: this.params.test.browserFullVersion,
 
-                hashCode: hasha(imageBuffer),
+                hashCode: createHash('sha512').update(imageBuffer).digest('hex'),
                 domDump: domDump,
             }
             paramsGuard(opts, 'check, opts', CheckOptsSchema)
