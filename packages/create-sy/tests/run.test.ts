@@ -3,7 +3,6 @@ import { run } from '../src'
 import { createSyngrisiProject } from '../src/createSyngrisiProject'
 import { checkMongoDB, checkNodeVersion, parseArguments, prompt } from '../src/utils'
 import * as path from 'node:path'
-import chalk from 'chalk'
 
 const WRONG_NODEVERSION = '6.9.9'
 
@@ -57,7 +56,7 @@ describe('run', () => {
         vi.mocked(prompt).mockResolvedValue(false)
 
         await run()
-        expect(vi.mocked(console.log).mock.calls[0][0]).toContain(chalk.yellow('❌ Installation canceled'))
+        expect(vi.mocked(console.log).mock.calls[0][0]).toContain('❌ Installation canceled')
 
         // console.error(console.log.mock.calls)
         expect(console.log).toBeCalledTimes(1)

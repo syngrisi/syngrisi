@@ -9,9 +9,9 @@ module.exports = {
     ],
     plugins: [
         '@babel/plugin-proposal-function-bind',
-        '@babel/plugin-proposal-class-properties',
-        '@babel/plugin-proposal-optional-catch-binding',
-        '@babel/transform-runtime',
+        '@babel/plugin-transform-class-properties',
+        '@babel/plugin-transform-optional-catch-binding',
+        '@babel/plugin-transform-runtime',
     ],
     env: {
         development: {
