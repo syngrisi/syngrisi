@@ -38,19 +38,6 @@ yarn start
 yarn test
 ```
 
-## Packages
-
-| Package | Version | Description |
-|---------|---------|-------------|
-| `@syngrisi/syngrisi` | 2.4.0 | Main visual testing application |
-| `@syngrisi/core-api` | 2.4.0 | Core JS client for API communication |
-| `@syngrisi/playwright-sdk` | 2.4.0 | Playwright integration SDK |
-| `@syngrisi/wdio-sdk` | 2.4.0 | WebdriverIO integration SDK |
-| `@syngrisi/node-resemble.js` | 2.4.0 | Image comparison library |
-| `create-sy` | 2.4.0 | CLI tool for project setup |
-| `wdio-syngrisi-cucumber-service` | 2.4.0 | WDIO Cucumber service |
-| `wdio-cucumber-viewport-logger-service` | 2.4.0 | WDIO viewport logger |
-
 ## Development
 
 ```bash
