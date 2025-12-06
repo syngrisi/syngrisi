@@ -31,13 +31,13 @@
   },
   "homepage": "https://github.com/syngrisi/syngrisi/node-resemble.js/",
   "dependencies": {
-    "jpeg-js": "0.4.4",
+    "jpeg-js": "^0.4.4",
     "pngjs": "^7.0.0",
-    "sharp": "^0.33.5"
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "chokidar-cli": "^3.0.0",
-    "jasmine": "^5.3.0"
+    "jasmine": "^5.13.0"
   },
   "gitHead": "df1d7bc159619fcf0e612229be1a79652a84e5e7"
 }
