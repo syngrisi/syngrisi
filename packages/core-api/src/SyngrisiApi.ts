@@ -1,6 +1,6 @@
 import FormData from 'form-data'
 import got from 'got-cjs'
-import hasha from 'hasha'
+import { createHash } from 'node:crypto'
 import logger from '@wdio/logger'
 import { LogLevelDesc } from 'loglevel'
 import { errorObject, paramsGuard, prettyCheckResult, printErrorResponseBody } from './utils'
@@ -25,6 +25,15 @@ const log = logger('core-api')
 // 0 | 4 | 2 | 1 | 3 | 5 | "trace" | "debug" | "info" | "warn" | "error" |
 if (process.env.SYNGRISI_LOG_LEVEL) {
     log.setLevel(process.env.SYNGRISI_LOG_LEVEL as LogLevelDesc)
+}
+
+/**
+ * Creates a SHA-512 hash of the input string (replaces hasha library)
+ * Note: hasha library uses SHA-512 by default, so we must use SHA-512 here
+ * to maintain compatibility with existing API keys stored in the database
+ */
+function hasha(input: string): string {
+    return createHash('sha512').update(input).digest('hex')
 }
 
 /**
