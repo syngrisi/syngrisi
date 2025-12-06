@@ -1,0 +1,15 @@
+{
+  "id": "task_00_quick_check",
+  "type": "exploration",
+  "prompt": "Используй MCP сервер test_engine: 1) session_start_new с sessionName из BENCH_SESSION_NAME и headless=true. 2) Через шаг \"Given I seed via http baselines with owners:\" создай baseline bench-quick с одним check QuickCheck (filePath: files/A.png) от пользователя Test/123456aA-. 3) Выполни \"When I open the app\". 4) Найди тест bench-quick в таблице, раскрой его, открой 1-й check QuickCheck. 5) Верни текущий URL. Соблюдай правила AGENTS.md (никаких waitForTimeout, без XPath).",
+  "expectations": {
+    "final_locator": "bench-quick",
+    "prohibited_actions": ["page.waitForTimeout"]
+  },
+  "config": {
+    "auth_mode": "guest",
+    "headless": true,
+    "max_steps": 12,
+    "min_steps": 6
+  }
+}

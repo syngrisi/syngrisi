@@ -76,7 +76,7 @@ export async function removeDirectory(dirPath: string): Promise<void> {
 
 /**
  * Returns the absolute path to the worker's temporary directory.
- * Uses TEST_PARALLEL_INDEX and SHARD environment variables to isolate test runs.
+ * Uses TEST_WORKER_INDEX and SHARD environment variables to isolate test runs.
  *
  * When running with shards (e.g., SHARD=1/2), each shard process gets its own directory
  * to prevent conflicts when multiple shard processes run in parallel.
@@ -88,7 +88,7 @@ export async function removeDirectory(dirPath: string): Promise<void> {
 export const getWorkerTempDir = (): string => {
   const repoRoot = resolveRepoRoot();
   const rawWorkerId =
-    process.env.TEST_PARALLEL_INDEX ||
+    process.env.TEST_WORKER_INDEX ||
     `${process.pid}`;
   const workerId = rawWorkerId.replace(/[^a-zA-Z0-9._-]/g, '_');
   const shardId = process.env.SHARD?.replace('/', '-') || 'single';

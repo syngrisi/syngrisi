@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { existsSync } from 'node:fs';
+import { existsSync, promises as fsPromises } from 'node:fs';
 import process from 'node:process';
 
 export const formatError = (err: unknown): string => {
@@ -28,8 +28,15 @@ const PROJECT_MARKER_FILES = [
 const PROJECT_NAME = 'syngrisi';
 
 export function getProjectRoot(): string {
-  if (process.env.SYNGRISI_ROOT && existsSync(path.join(process.env.SYNGRISI_ROOT, 'node_modules'))) {
-    return process.env.SYNGRISI_ROOT;
+  if (process.env.SYNGRISI_ROOT) {
+    // Ensure SYNGRISI_ROOT is always an absolute path
+    const syngrisiRoot = path.isAbsolute(process.env.SYNGRISI_ROOT)
+      ? process.env.SYNGRISI_ROOT
+      : path.resolve(process.cwd(), process.env.SYNGRISI_ROOT);
+
+    if (existsSync(path.join(syngrisiRoot, 'node_modules'))) {
+      return syngrisiRoot;
+    }
   }
 
   let currentDir = process.cwd();
@@ -65,4 +72,36 @@ export function isShutdownNotification(notification: unknown): notification is {
   }
   const candidate = notification as { method?: unknown };
   return candidate.method === SHUTDOWN_NOTIFICATION_METHOD;
+}
+
+/**
+ * Ensures a path exists and validates its type (file or directory).
+ * Throws an error with a descriptive message if the path doesn't exist or has the wrong type.
+ *
+ * Local copy to avoid @utils/fs dependency chain which requires @lib/logger.
+ *
+ * @param targetPath - Path to validate
+ * @param type - Expected type: "file" or "directory"
+ * @throws Error if path doesn't exist or has wrong type
+ */
+export async function ensurePathExists(
+  targetPath: string,
+  type: "file" | "directory",
+): Promise<void> {
+  try {
+    const stats = await fsPromises.stat(targetPath);
+    const isValid = type === "file" ? stats.isFile() : stats.isDirectory();
+    if (!isValid) {
+      throw new Error(
+        `Expected ${type} at ${targetPath}, but found non-${type} entry`,
+      );
+    }
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+      throw new Error(
+        `${type} not found at ${targetPath}`,
+      );
+    }
+    throw error;
+  }
 }

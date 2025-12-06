@@ -4,7 +4,9 @@ import * as baselineController from '@controllers/baseline.controller';
 import { Midleware } from '@types';
 import { validateRequest } from '@utils/validateRequest';
 import { BaselineGetSchema, BaselinePutSchema } from '@schemas/Baseline.schema';
-import { createApiEmptyResponse, createPaginatedApiResponse } from '@api-docs/openAPIResponseBuilders';
+import { createApiEmptyResponse, createApiResponse, createPaginatedApiResponse } from '@api-docs/openAPIResponseBuilders';
+import { ApiErrorSchema } from '@schemas/common/ApiError.schema';
+import { HttpStatus } from '@utils';
 import { ensureLoggedIn } from '@middlewares/ensureLogin';
 import { createRequestQuerySchema } from '@schemas/utils/createRequestQuerySchema';
 import { RequestPaginationSchema } from '@schemas/common/RequestPagination.schema';
@@ -48,6 +50,26 @@ router.put(
     ensureLoggedIn(),
     validateRequest(getByIdParamsSchema().merge(createRequestBodySchema(BaselinePutSchema)), 'put, /v1/baselines/{id}'),
     baselineController.put as Midleware
+);
+
+registry.registerPath({
+    method: 'delete',
+    path: '/v1/baselines/{id}',
+    summary: "Remove a baseline by ID",
+    description: "Remove a baseline by ID",
+    tags: ['Baselines'],
+    request: commonValidations.paramsId,
+    responses: {
+        ...createApiResponse(BaselineGetSchema, 'Success'),
+        ...createApiResponse(ApiErrorSchema, 'ApiError', HttpStatus.NOT_FOUND),
+    },
+});
+
+router.delete(
+    '/:id',
+    ensureLoggedIn(),
+    validateRequest(getByIdParamsSchema(), 'delete, /v1/baselines/{id}'),
+    baselineController.remove as Midleware
 );
 
 export default router;

@@ -13,6 +13,7 @@ import * as orm from '@lib/dbItems';
 import log from '@lib/logger';
 import { BaselineDocument } from '@models/Baseline.model';
 import { LogOpts, RequestUser } from '@root/src/types';
+import { webhookService } from './webhook.service';
 
 async function calculateTestStatus(testId: string): Promise<string> {
     const checksInTest = await Check.find({ test: testId });
@@ -75,32 +76,55 @@ async function createNewBaseline(params: baselineParamsType): Promise<BaselineDo
 
     const identFields = buildIdentObject(params);
 
-    const lastBaseline = await Baseline.findOne(identFields).exec();
-    const sameBaseline = await Baseline.findOne({ ...identFields, snapshootId: params.actualSnapshotId }).exec();
+    const lastBaseline = await Baseline.findOne(identFields).sort({ createdDate: -1 }).exec();
+    const filter = { ...identFields, snapshootId: params.actualSnapshotId };
 
     const baselineParams = lastBaseline?.ignoreRegions
         ? { ...identFields, ignoreRegions: lastBaseline.ignoreRegions }
         : identFields;
 
-    if (sameBaseline) {
-        log.debug(`the baseline with same ident and snapshot id: ${params.actualSnapshotId} already exist`, logOpts);
-    } else {
-        log.debug(`the baseline with same ident and snapshot id: ${params.actualSnapshotId} does not exist,
-         create new one, baselineParams: ${JSON.stringify(baselineParams)}`, logOpts);
+    const update = {
+        $setOnInsert: {
+            ...baselineParams,
+            snapshootId: params.actualSnapshotId,
+            createdDate: new Date(),
+        },
+        $set: {
+            markedAs: params.markedAs,
+            markedById: params.markedById,
+            markedByUsername: params.markedByUsername,
+            lastMarkedDate: params.markedDate,
+        },
+    };
+
+    try {
+        const baseline = await Baseline.findOneAndUpdate(
+            filter,
+            update,
+            { new: true, upsert: true },
+        ).exec();
+
+        log.debug(`baseline upserted for snapshot id: ${params.actualSnapshotId}`, logOpts);
+        log.silly({ baseline });
+        return baseline as BaselineDocument;
+    } catch (err: any) {
+        if (err?.code === 11000) {
+            log.warn(`baseline duplicate key detected for filter ${JSON.stringify(filter)}, retrying fetch`, logOpts);
+            const existing = await Baseline.findOne(filter).exec();
+            if (existing) {
+                existing.markedAs = params.markedAs;
+                existing.markedById = params.markedById;
+                existing.markedByUsername = params.markedByUsername;
+                existing.lastMarkedDate = params.markedDate;
+                existing.createdDate = new Date();
+                existing.snapshootId = params.actualSnapshotId;
+                return existing.save();
+            }
+        }
+
+        log.error(`cannot upsert baseline: ${err instanceof Error ? err.message : String(err)}`, logOpts);
+        throw err;
     }
-
-    log.silly({ sameBaseline });
-
-    const resultedBaseline: BaselineDocument = sameBaseline || await Baseline.create(baselineParams);
-
-    resultedBaseline.markedAs = params.markedAs;
-    resultedBaseline.markedById = params.markedById //? new Schema.Types.ObjectId(String(params.markedById)) : undefined;
-    resultedBaseline.markedByUsername = params.markedByUsername;
-    resultedBaseline.lastMarkedDate = params.markedDate;
-    resultedBaseline.createdDate = new Date();
-    resultedBaseline.snapshootId = params.actualSnapshotId //? new Schema.Types.ObjectId(String(params.actualSnapshotId)) : undefined;
-
-    return resultedBaseline.save();
 }
 
 const extractSnapshotId = (snapshot: unknown): string | undefined => {
@@ -208,25 +232,43 @@ const enrichChecksWithCurrentAcceptance = async (
     const baselinesMap = new Map<string, Record<string, unknown>>();
 
     if (baselineQueries.length > 0) {
-        for (const query of baselineQueries) {
-            const baseline = await Baseline.findOne(query)
-                .sort({ createdDate: -1 })
-                .select('snapshootId name viewport browserName os app branch')
-                .lean();
+        try {
+            const baselines = await Baseline.aggregate([
+                {
+                    $match: { $or: baselineQueries },
+                },
+                {
+                    $sort: { createdDate: -1 },
+                },
+                {
+                    $group: {
+                        _id: {
+                            name: '$name',
+                            viewport: '$viewport',
+                            browserName: '$browserName',
+                            os: '$os',
+                            app: '$app',
+                            branch: '$branch',
+                        },
+                        doc: { $first: '$$ROOT' },
+                    },
+                },
+                {
+                    $replaceRoot: { newRoot: '$doc' },
+                },
+            ]).exec();
 
-            if (baseline) {
+            baselines.forEach((baseline) => {
                 const baselineObj = baseline as unknown as Record<string, unknown>;
                 const identKey = identFields.map((field) => extractIdentValueAsString(baselineObj?.[field])).join('|');
                 baselinesMap.set(identKey, baselineObj);
                 log.debug(`[enrichChecks] Found baseline for identKey=${identKey}, snapshootId=${baselineObj.snapshootId}`, {
                     scope: 'enrichChecksWithCurrentAcceptance',
                 });
-            } else {
-                const identKey = identFields.map((field) => extractIdentValueAsString((query as Record<string, unknown>)?.[field])).join('|');
-                log.debug(`[enrichChecks] No baseline found for identKey=${identKey}, query=${JSON.stringify(query)}`, {
-                    scope: 'enrichChecksWithCurrentAcceptance',
-                });
-            }
+            });
+        } catch (err) {
+            log.error(`[enrichChecks] Error fetching baselines: ${err}`, { scope: 'enrichChecksWithCurrentAcceptance' });
+            throw err;
         }
     }
 
@@ -240,26 +282,26 @@ const enrichChecksWithCurrentAcceptance = async (
 
         const matchesOwnBaseline = Boolean(
             actualSnapshotId
-                && checkBaselineSnapshotId
-                && actualSnapshotId === checkBaselineSnapshotId,
+            && checkBaselineSnapshotId
+            && actualSnapshotId === checkBaselineSnapshotId,
         );
         const matchesLatestBaseline = Boolean(
             actualSnapshotId
-                && baselineSnapshotId
-                && actualSnapshotId === baselineSnapshotId,
+            && baselineSnapshotId
+            && actualSnapshotId === baselineSnapshotId,
         );
 
         const isCurrentlyAccepted = Boolean(
             check?.markedAs === 'accepted'
-                && (matchesOwnBaseline || matchesLatestBaseline),
+            && (matchesOwnBaseline || matchesLatestBaseline),
         );
 
         const hasKnownBaseline = Boolean(checkBaselineSnapshotId || baselineSnapshotId);
 
         const wasAcceptedEarlier = Boolean(
             check?.markedAs === 'accepted'
-                && hasKnownBaseline
-                && !isCurrentlyAccepted,
+            && hasKnownBaseline
+            && !isCurrentlyAccepted,
         );
 
         // Debug logging
@@ -327,6 +369,7 @@ const accept = async (
     await check.save();
     log.debug(`check with id: '${id}' was updated`, logOpts);
     const [enrichedCheck] = await enrichChecksWithCurrentAcceptance([check]);
+    webhookService.triggerWebhooks('check.updated', enrichedCheck).catch((e) => log.error(`Webhook error: ${e}`));
     return enrichedCheck;
 };
 
@@ -412,6 +455,13 @@ const update = async (id: string, opts: Partial<CheckDocument>, user: string): P
     await orm.updateItemDate('VRSTest', test);
     await test.save();
     await check.save();
+    webhookService.triggerWebhooks('check.updated', check).catch((e) => log.error(`Webhook error: ${e}`));
+    return check;
+};
+
+const createCheckDocument = async (checkParams: any, session?: any): Promise<CheckDocument> => {
+    const [check] = await Check.create([checkParams], { session });
+    webhookService.triggerWebhooks('check.created', check).catch((e) => log.error(`Webhook error: ${e}`));
     return check;
 };
 
@@ -420,4 +470,5 @@ export {
     remove,
     update,
     enrichChecksWithCurrentAcceptance,
+    createCheckDocument,
 };

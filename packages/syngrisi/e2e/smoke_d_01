@@ -1,0 +1,8 @@
+Unknown command: "test:smoke"
+
+
+Did you mean one of these?
+  npm run test:sso # run the "test:sso" package script
+  npm run test:smoke # run the "test:smoke" package script
+To see a list of supported npm commands, run:
+  npm help

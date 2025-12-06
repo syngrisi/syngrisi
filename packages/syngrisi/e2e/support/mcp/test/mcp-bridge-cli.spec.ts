@@ -76,15 +76,22 @@ const startBridgeCli = async (
   const portOverride = envOverrides.MCP_DEFAULT_PORT;
   const preferredPort = portOverride ?? String(await findEphemeralPort());
 
+  // Compute unique worker index for isolation in parallel tests
+  // Use high offset (100+) per worker to avoid conflicts with main Playwright workers
+  const parentWorkerIndex = testInfo.parallelIndex;
+  const uniqueWorkerIndex = 100 + (parentWorkerIndex * 100);
+
   const transport = new StdioClientTransport({
     command: NPX_BIN,
     args: commandArgs,
     cwd: e2eRoot,
     env: {
       ...(process.env as Record<string, string>),
-      MCP_KEEP_ALIVE: '0', // Default to non-keepalive mode for tests
       ZENFLOW_WORKER_INSTANCE: workerInstanceId,
       MCP_DEFAULT_PORT: preferredPort,
+      E2E_HEADLESS: '1',
+      // Pass unique worker index for proper isolation in spawned MCP servers
+      TEST_WORKER_INDEX: String(uniqueWorkerIndex),
       ...envOverrides,
     },
     stderr: 'pipe',
@@ -157,6 +164,8 @@ const startBridgeCli = async (
 };
 
 const startNewSession = async (client: Client, sessionName: string) => {
+  // Clean any leaked browsers/contexts before starting a fresh session
+  await client.callTool({ name: 'sessions_clear', arguments: {} });
   const result = await client.callTool(
     {
       name: 'session_start_new',
@@ -213,14 +222,15 @@ test.describe('MCP Bridge CLI tests', { tag: '@no-app-start' }, () => {
       const toolsResultBootstrap = await client.listTools(undefined, { timeout: TIMEOUTS.LIST_TOOLS });
       const toolNamesBootstrap = toolsResultBootstrap.tools.map(({ name }) => name);
 
-      expect(toolNamesBootstrap, 'Bootstrap tools should include all expected methods').toEqual(
+      expect(toolNamesBootstrap, 'Bootstrap tools should NOT include step_execute_many').toEqual(
         expect.arrayContaining([
           'session_start_new',
           'step_execute_single',
-          'step_execute_many',
           'attach_existing_session',
         ]),
       );
+
+      expect(toolNamesBootstrap, 'step_execute_many should NOT be in bootstrap - it comes from remote server').not.toContain('step_execute_many');
 
       const nonSessionTools = toolsResultBootstrap.tools.filter(
         ({ name }) => name !== 'session_start_new' && name !== 'attach_existing_session',
@@ -231,8 +241,6 @@ test.describe('MCP Bridge CLI tests', { tag: '@no-app-start' }, () => {
           switch (tool.name) {
             case 'step_execute_single':
               return { stepText: 'I get current URL' };
-            case 'step_execute_many':
-              return { steps: [{ stepText: 'I get current URL' }] };
             default:
               return {};
           }
@@ -256,7 +264,7 @@ test.describe('MCP Bridge CLI tests', { tag: '@no-app-start' }, () => {
       const toolsResultAfter = await client.listTools(undefined, { timeout: TIMEOUTS.LIST_TOOLS });
       const toolNamesAfter = toolsResultAfter.tools.map(({ name }) => name);
 
-      expect(toolNamesAfter, 'Post-session tools should be available').toEqual(
+      expect(toolNamesAfter, 'Post-session tools should include step_execute_many from remote server').toEqual(
         expect.arrayContaining([
           'step_execute_single',
           'step_execute_many',

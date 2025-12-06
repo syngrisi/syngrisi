@@ -99,7 +99,7 @@ export class LoggerOutputWriter implements IOutputWriter {
     constructor(private scope = 'task') {}
 
     write(message: string): void {
-        log.info(`[${this.scope}] ${message}`);
+        log.info(message, { scope: this.scope });
     }
 
     end(): void {

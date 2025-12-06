@@ -57,6 +57,14 @@ export const tasksList: ITask[] = [
             { name: 'dryRun', label: 'Dry run', type: 'Checkbox', default: true },
         ],
     },
+    {
+        label: 'Handle Orphan Baselines',
+        name: 'handle_orphan_baselines',
+        description: 'Finds and removes baselines whose snapshots are not referenced by any checks. By default runs in dry-run mode (only shows statistics). Uncheck "Dry run" to actually remove baselines.',
+        inputs: [
+            { name: 'dryRun', label: 'Dry run', type: 'Checkbox', default: true },
+        ],
+    },
 ];
 
 export const taskLinks = tasksList.map(

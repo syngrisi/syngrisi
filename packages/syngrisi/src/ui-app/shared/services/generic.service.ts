@@ -19,6 +19,7 @@ interface IRequestOptions {
     populate?: string
     sortOrder?: string | number
     apikey?: string | null
+    [key: string]: any  // Allow any additional parameters
 }
 
 export const GenericService = {

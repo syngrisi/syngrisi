@@ -42,20 +42,39 @@ import log from "../../lib/logger";
 import { ExtRequest } from '../../../types/ExtRequest';
 import { appSettings } from "@settings";
 import { env } from "@/server/envConfig";
+import { hashSync } from '@utils/hash';
+
+export const normalizeIncomingApiKey = (rawKey: unknown): string | undefined => {
+    if (Array.isArray(rawKey)) {
+        rawKey = rawKey[0];
+    }
+    if (rawKey === undefined || rawKey === null) return undefined;
+    const apiKey = String(rawKey).trim();
+    if (!apiKey) return undefined;
+    const hashedPattern = /^[a-f0-9]{128}$/i;
+    if (hashedPattern.test(apiKey)) return apiKey;
+    return hashSync(apiKey);
+};
 
 
 
 const handleBasicAuth = async (req: ExtRequest): Promise<any> => {
+
     const logOpts = {
         scope: 'handleBasicAuth',
         msgType: 'AUTH_API',
     };
 
+    const AppSettings = appSettings;
+
+    const authEnabled = await AppSettings.isAuthEnabled();
+
+
+
     if (req.isAuthenticated()) {
         return { type: 'success', status: 200 };
     }
-    const AppSettings = await appSettings;
-    if (!(await AppSettings.isAuthEnabled())) {
+    if (!authEnabled) {
         const guest = await User.findOne({ username: 'Guest' });
         const result = new Promise((resolve) => {
             req.logIn(guest, (err: any) => {
@@ -86,7 +105,7 @@ const handleBasicAuth = async (req: ExtRequest): Promise<any> => {
         value: '',
         user: null,
     };
-    if ((await AppSettings.isAuthEnabled())
+    if (authEnabled
         && ((await AppSettings.isFirstRun()))
         && !env.SYNGRISI_DISABLE_FIRST_RUN
     ) {
@@ -97,7 +116,7 @@ const handleBasicAuth = async (req: ExtRequest): Promise<any> => {
         return result;
     }
 
-    if (await AppSettings.isAuthEnabled()) {
+    if (authEnabled) {
         log.info(`user is not authenticated, will redirected - ${req.originalUrl}`, logOpts);
 
         result.type = 'redirect';
@@ -122,15 +141,18 @@ export function ensureLoggedIn(options?: any): (req: Request, res: Response, nex
             return next();
         }
         res.status(result.status).redirect(result.value);
-        return next('redirect');
+        // return next('redirect'); // Do not call next with error for redirect
     };
 }
 
-const handleAPIAuth = async (hashedApiKey: string): Promise<any> => {
+const handleAPIAuth = async (rawApiKey: unknown, retryCount = 0): Promise<any> => {
     const logOpts = {
         scope: 'handleAPIAuth',
         msgType: 'AUTH_API',
     };
+
+    const MAX_RETRIES = 3;
+    const RETRY_DELAY_MS = 500;
 
     const result: any = {
         status: 400,
@@ -138,12 +160,18 @@ const handleAPIAuth = async (hashedApiKey: string): Promise<any> => {
         value: '',
         user: null,
     };
-    const AppSettings = await appSettings;
+    const AppSettings = appSettings;
     if (!(await AppSettings.isAuthEnabled())) {
         const guest = await User.findOne({ username: 'Guest' });
 
         if (!guest) {
-            log.error('cannot find Guest user', logOpts);
+            // Retry logic for Guest user lookup during startup (MongoDB indexing race condition)
+            if (retryCount < MAX_RETRIES) {
+                log.warn(`Guest user not found (attempt ${retryCount + 1}/${MAX_RETRIES}), retrying in ${RETRY_DELAY_MS}ms...`, logOpts);
+                await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
+                return handleAPIAuth(rawApiKey, retryCount + 1);
+            }
+            log.error(`cannot find Guest user after ${MAX_RETRIES} retries`, logOpts);
             result.type = 'error';
             result.value = 'cannot find Guest user';
             return result;
@@ -155,6 +183,7 @@ const handleAPIAuth = async (hashedApiKey: string): Promise<any> => {
         return result;
     }
 
+    const hashedApiKey = normalizeIncomingApiKey(rawApiKey);
     if (!hashedApiKey) {
         log.debug('API key missing', logOpts);
         result.type = 'error';
@@ -165,7 +194,13 @@ const handleAPIAuth = async (hashedApiKey: string): Promise<any> => {
 
     const user = await User.findOne({ apiKey: hashedApiKey });
     if (!user) {
-        log.error(`wrong API key: ${hashedApiKey}`, logOpts);
+        // Retry logic for API key lookup during startup (MongoDB indexing race condition)
+        if (retryCount < MAX_RETRIES) {
+            log.warn(`API key not found (attempt ${retryCount + 1}/${MAX_RETRIES}), retrying in ${RETRY_DELAY_MS}ms...`, logOpts);
+            await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
+            return handleAPIAuth(rawApiKey, retryCount + 1);
+        }
+        log.error(`wrong API key provided after ${MAX_RETRIES} retries`, logOpts);
         result.type = 'error';
         result.status = 401;
         result.value = 'wrong API key';
@@ -184,16 +219,19 @@ export function ensureApiKey(): (req: Request, res: Response, next: NextFunction
         msgType: 'AUTH_API',
     };
     return async (req: Request, res: Response, next: NextFunction) => {
-        log.silly(`headers: ${JSON.stringify(req.headers, null, '..')}`, logOpts);
-        log.silly(`SYNGRISI_AUTH: '${env.SYNGRISI_AUTH}'`);
-        const hashedApiKey = req.headers.apikey || req.query.apikey;
-        const result = await handleAPIAuth(hashedApiKey);
+        const rawApiKey = req.headers.apikey ?? req.query.apikey;
+        const result = await handleAPIAuth(rawApiKey);
         req.user = req.user || result.user;
-        req.headers.apikey = result?.user?.apiKey || req?.headers?.apikey;
+        if ('apikey' in req.query) {
+            delete (req.query as Record<string, unknown>).apikey;
+        }
         if (result.type !== 'success') {
             log.info(`${result.value} - ${req.originalUrl}`, logOpts);
             res.status(result.status).json({ error: result.value });
             return next(new Error(result.value));
+        }
+        if ('apikey' in req.headers) {
+            delete (req.headers as Record<string, unknown>).apikey;
         }
         return next();
     };
@@ -201,19 +239,29 @@ export function ensureApiKey(): (req: Request, res: Response, next: NextFunction
 
 export function ensureLoggedInOrApiKey(): (req: Request, res: Response, next: NextFunction) => Promise<void> {
     return async (req: Request, res: Response, next: NextFunction) => {
+
         const basicAuthResult = await handleBasicAuth(req);
 
-        const hashedApiKey = req.headers.apikey || req.query.apikey;
-        const apiKeyResult = await handleAPIAuth(hashedApiKey);
-        req.user = req.user || apiKeyResult.user;
 
-        if (
-            (basicAuthResult.type !== 'success')
-            && (apiKeyResult.type !== 'success')
-        ) {
+
+        if (basicAuthResult.type === 'success') {
+            return next();
+        }
+
+        const rawApiKey = req.headers.apikey ?? req.query.apikey;
+        const apiKeyResult = await handleAPIAuth(rawApiKey);
+        req.user = req.user || apiKeyResult.user;
+        if ('apikey' in req.query) {
+            delete (req.query as Record<string, unknown>).apikey;
+        }
+
+        if (apiKeyResult.type !== 'success') {
             log.info(`Unauthorized - ${req.originalUrl}`);
             res.status(401).json({ error: `Unauthorized - ${req.originalUrl}` });
             return next(new Error(`Unauthorized - ${req.originalUrl}`));
+        }
+        if ('apikey' in req.headers) {
+            delete (req.headers as Record<string, unknown>).apikey;
         }
         return next();
     };

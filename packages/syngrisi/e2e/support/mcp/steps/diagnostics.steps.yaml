@@ -1,0 +1,117 @@
+metadata:
+  category: diagnostics
+  generatedAt: '2025-12-05T04:19:37.324Z'
+  totalFiles: 1
+  totalSteps: 13
+  sourceFiles:
+    - support/mcp/sd/diagnostics.sd.ts
+steps:
+  - pattern: ^I analyze current page$
+    description: |-
+      Analyzes the current page and returns structured information for AI agents.
+      Returns: URL, title, main landmarks, interactive elements, forms, and page structure.
+      @example
+      ```gherkin
+      When I analyze current page
+      ```
+    line: 453
+  - pattern: ^I get (inner|outer) HTML of (?:(first)|(\d+)(?:st|nd|rd|th)?)?\s*"([^"]+)"$
+    description: |-
+      Reads inner or outer HTML from a matching element.
+      @example
+      ```gherkin
+      When I get inner HTML of "css=.task-card"
+      When I get outer HTML of 2nd "role=button"
+      ```
+    line: 372
+  - pattern: ^I get accessibility snapshot of (?:(first)|(\d+)(?:st|nd|rd|th)?)?\s*"([^"]+)"$
+    description: |-
+      Captures an accessibility snapshot of a matching element.
+      @example
+      ```gherkin
+      When I get accessibility snapshot of "css=.task-card"
+      When I get accessibility snapshot of 2nd "role=button"
+      ```
+    line: 177
+  - pattern: ^I get count of "([^"]+)"$
+    description: |-
+      Counts elements matching the provided selector or component alias.
+      @example
+      ```gherkin
+      When I get count of "css=.task-card"
+    line: 107
+  - pattern: ^I get current URL$
+    description: |-
+      Returns the current page URL for diagnostics logging.
+      @example
+      ```gherkin
+      When I get current URL
+      ```
+    line: 75
+  - pattern: ^I get DOM quality metrics of (?:(first)|(\d+)(?:st|nd|rd|th)?)?\s*"([^"]+)"$
+    description: |-
+      Gets DOM quality metrics for a matching element.
+      @example
+      ```gherkin
+      When I get DOM quality metrics of "css=.task-card"
+      When I get DOM quality metrics of 2nd "role=button"
+      ```
+    line: 539
+  - pattern: ^I get screenshot of (?:(first)|(\d+)(?:st|nd|rd|th)?)?\s*"([^"]+)"$
+    description: |-
+      Captures a screenshot of a matching element as base64.
+      @example
+      ```gherkin
+      When I get screenshot of "css=.task-card"
+      When I get screenshot of 3rd "role=button"
+      ```
+    line: 198
+  - pattern: ^I save page screenshot as "([^"]+)"$
+    description: |-
+      Saves a full-page screenshot to the diagnostics screenshots directory.
+      @example
+      ```gherkin
+      When I save page screenshot as "dashboard"
+      ```
+    line: 218
+  - pattern: ^I save screenshot of "([^"]+)" as "([^"]+)"$
+    description: |-
+      Captures a screenshot of the first matching element and saves it to disk.
+      @example
+      ```gherkin
+      When I save screenshot of "css=.task-card" as "task-card"
+      ```
+    line: 252
+  - pattern: ^I verify page is loaded$
+    description: |-
+      Verifies that the page is fully loaded and ready for interaction.
+      @example
+      ```gherkin
+      When I verify page is loaded
+      ```
+    line: 88
+  - pattern: ^I wait for navigation$
+    description: |-
+      Waits for navigation to complete.
+      @example
+      ```gherkin
+      When I wait for navigation
+      ```
+    line: 580
+  - pattern: ^the screenshots "([^"]+)" and "([^"]+)" should match(?:\s+with\s+threshold\s+([0-9.]+))?$
+    description: |-
+      Compares two saved screenshots with optional threshold.
+      @example
+      ```gherkin
+      Then the screenshots "baseline" and "current" should match
+      Then the screenshots "baseline" and "current" should match with threshold 0.1
+      ```
+    line: 297
+  - pattern: I check browser is ready
+    description: |-
+      Confirms the browser has an open page for readiness checks.
+      @example
+      ```gherkin
+      When I check browser is ready
+      ```
+    line: 430

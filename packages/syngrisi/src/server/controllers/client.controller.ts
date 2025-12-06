@@ -1,14 +1,14 @@
-import httpStatus from 'http-status';
+import { HttpStatus } from '@utils';
 import { ApiError, catchAsync, pick, deserializeIfJSON, paramsGuard } from '@utils';
 import { clientService, genericService } from '@services';
 import { updateItem } from '@lib/dbItems';
 import { RequiredIdentOptionsSchema, RequiredIdentOptionsType, createCheckParamsSchema } from '@schemas';
-import { User, Test, App, Suite } from '@models';
+import { Test, App, Suite } from '@models';
 import { Response } from "express";
 import log from "../lib/logger";
 import { ExtRequest } from '@types';
 import { ClientStartSessionType } from '../schemas/Client.schema';
-import { CreateCheckParams } from '../services/client.service';
+import { CreateCheckParams } from '../../types/Check';
 
 const startSession = catchAsync(async (req: ExtRequest, res: Response) => {
     const params = pick(
@@ -23,7 +23,7 @@ const startSession = catchAsync(async (req: ExtRequest, res: Response) => {
 const endSession = catchAsync(async (req: ExtRequest, res: Response) => {
     const testId = req.params.testid;
     if (!testId || testId === 'undefined') {
-        throw new ApiError(httpStatus.BAD_REQUEST, 'Cannot stop test Session testId is empty');
+        throw new ApiError(HttpStatus.BAD_REQUEST, 'Cannot stop test Session testId is empty');
     }
 
     const result = await clientService.endSession(testId, String(req?.user?.username));
@@ -34,9 +34,8 @@ const createCheck = catchAsync(async (req: ExtRequest, res: Response) => {
     const params = req.body;
     paramsGuard(params, 'createCheck, params', createCheckParamsSchema);
 
-    const apiKey = req.headers.apikey;
-    const currentUser = await User.findOne({ apiKey });
-    if (!currentUser) throw new ApiError(httpStatus.NOT_FOUND, `cannot get current user by API`);
+    const currentUser = req.user;
+    if (!currentUser) throw new ApiError(HttpStatus.UNAUTHORIZED, 'cannot get current user by API');
 
 
     const logOpts = {
@@ -52,20 +51,14 @@ const createCheck = catchAsync(async (req: ExtRequest, res: Response) => {
     const test = await Test.findById(params.testid);
     if (!test) {
         const errMsg = `can't find test with id: '${params.testid}', `
-            + `parameters: '${JSON.stringify(req.body)}', username: '${currentUser.username}', apiKey: ${apiKey}`;
+            + `parameters: '${JSON.stringify(req.body)}', username: '${currentUser.username}'`;
         // res.status(400).send({ status: 'testNotFound', message: errMsg });
-        throw new ApiError(httpStatus.NOT_FOUND, errMsg);
+        throw new ApiError(HttpStatus.NOT_FOUND, errMsg);
     }
     const app = await App.findOne({ name: params.appName });
-    if (!app) throw new ApiError(httpStatus.NOT_FOUND, `cannot get the app: ${params.appName}`);
+    if (!app) throw new ApiError(HttpStatus.NOT_FOUND, `cannot get the app: ${params.appName}`);
     const suite = await Suite.findOne({ name: params.suitename });
-    if (!suite) throw new ApiError(httpStatus.NOT_FOUND, `cannot get the suite: ${params.suitename}`);
-
-    await updateItem('VRSTest', { _id: test.id }, {
-        suite: suite.id,
-        creatorId: currentUser._id,
-        creatorUsername: currentUser.username,
-    });
+    if (!suite) throw new ApiError(HttpStatus.NOT_FOUND, `cannot get the suite: ${params.suitename}`);
 
     const result = await clientService.createCheck(
         {

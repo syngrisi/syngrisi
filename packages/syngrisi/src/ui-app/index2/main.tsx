@@ -6,8 +6,19 @@ import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 import { parse, stringify } from 'query-string';
 import { ErrorBoundary } from 'react-error-boundary';
 import { ErrorFallback } from '@shared/components/errors/ErrorFallback';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import App from '@index/App';
+
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            staleTime: 30 * 1000, // 30 seconds - data considered fresh for 30s
+            retry: 2,
+            refetchOnWindowFocus: true,
+        },
+    },
+});
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <React.StrictMode>
@@ -17,17 +28,19 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
                 // reset the state of your app so the error doesn't happen again
             }}
         >
-            <BrowserRouter>
-                <QueryParamProvider
-                    adapter={ReactRouter6Adapter}
-                    options={{
-                        searchStringToObject: parse,
-                        objectToSearchString: stringify,
-                    }}
-                >
-                    <App />
-                </QueryParamProvider>
-            </BrowserRouter>
+            <QueryClientProvider client={queryClient}>
+                <BrowserRouter>
+                    <QueryParamProvider
+                        adapter={ReactRouter6Adapter}
+                        options={{
+                            searchStringToObject: parse,
+                            objectToSearchString: stringify,
+                        }}
+                    >
+                        <App />
+                    </QueryParamProvider>
+                </BrowserRouter>
+            </QueryClientProvider>
         </ErrorBoundary>
     </React.StrictMode>,
 );

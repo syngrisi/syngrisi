@@ -95,7 +95,7 @@ export const CheckParamsSchema = z.object({
         z.number(),
     ]),
     browserFullVersion: z.string().min(1),
-    hashCode: z.string().length(128),
+    hashCode: z.string().min(64), // SHA256 (64 chars) or SHA512 (128 chars)
 
     domDump: z.any().optional(), // Replace with appropriate schema if possible
 })

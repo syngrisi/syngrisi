@@ -1,16 +1,14 @@
-import httpStatus from 'http-status';
+import { HttpStatus } from '@utils';
 import passport from 'passport';
-import { hashSync } from 'hasha';
-import uuidAPIKey from 'uuid-apikey';
 import { Response, NextFunction } from "express"
 import { User } from '@models';
-import { catchAsync, errMsg } from '@utils';
+import { catchAsync, errMsg, hashSync, generateApiKey } from '@utils';
 import log from "@logger";
 import { RequestUser, ExtRequest } from '@types';
 import { appSettings } from "@settings";
 
 function getApiKey(): string {
-    return uuidAPIKey.create().apiKey;
+    return generateApiKey();
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -43,17 +41,23 @@ const login = catchAsync(async (req: ExtRequest, res: Response, next: NextFuncti
         scope: 'login',
         msgType: 'AUTHENTICATION',
     };
+
+    // Log login attempt
+    log.info(`Login attempt for user: ${req.body.username}`, logOpts);
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     passport.authenticate('local', (err: unknown, user: any, info: any) => {
         if (err) {
             log.error(`Authentication error: '${err}'`, logOpts);
-            return res.status(httpStatus.UNAUTHORIZED).json({ message: 'authentication error' });
+            return res.status(HttpStatus.UNAUTHORIZED).json({ message: 'authentication error' });
         }
         if (!user) {
-            log.error(`Authentication error: '${info.message}'`, logOpts);
-            return res.status(httpStatus.UNAUTHORIZED).json({ message: `Authentication error: '${info.message}'` });
+            log.error(`Authentication failed for '${req.body.username}': '${info.message}'`, logOpts);
+            log.error(`Info object: ${JSON.stringify(info)}`, logOpts);
+            return res.status(HttpStatus.UNAUTHORIZED).json({ message: `Authentication error: '${info.message}'` });
         }
 
+        log.info(`User authenticated successfully: ${user.username}`, logOpts);
         req.logIn(user, (e: unknown) => {
             if (e) {
                 log.error(e, logOpts);
@@ -72,10 +76,10 @@ const logout = catchAsync(async (req: ExtRequest, res: Response) => {
     };
     try {
         log.debug(`try to log out user: '${req?.user?.username}'`, logOpts);
-        await req.logout({}, () => res.status(httpStatus.OK).json({ message: 'success' }));
+        await req.logout({}, () => res.status(HttpStatus.OK).json({ message: 'success' }));
     } catch (e: unknown) {
         log.error(e, logOpts);
-        res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: 'fail' });
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'fail' });
     }
 });
 
@@ -91,21 +95,21 @@ const changePassword = catchAsync(async (req: ExtRequest, res: Response) => {
 
     const username = req?.user?.username;
 
-    log.debug(`change password for '${username}', params: '${JSON.stringify(req.body)}'`, logOpts);
+    log.debug(`change password for '${username}'`, logOpts);
 
     const user: RequestUser | null = await User.findOne({ username });
     // if (!user) throw new Error(`cannot find user with username: ${username}`);
 
     if (!user) {
         log.error('user is not logged in', logOpts);
-        return res.status(httpStatus.UNAUTHORIZED).json({ message: 'user is not logged in' });
+        return res.status(HttpStatus.UNAUTHORIZED).json({ message: 'user is not logged in' });
     }
 
     try {
         await user.changePassword(currentPassword, newPassword);
     } catch (e: unknown) {
         log.error(e, logOpts);
-        return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({ message: errMsg(e) });
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: errMsg(e) });
     }
 
     log.debug(`password was successfully changed for user: ${req.user?.username}`, logOpts);
@@ -122,10 +126,10 @@ const changePasswordFirstRun = catchAsync(async (req: ExtRequest, res: Response)
 
     const { newPassword } = req.body;
 
-    const AppSettings = await appSettings;
+    const AppSettings = appSettings;
 
     if ((await AppSettings.isAuthEnabled()) && ((await AppSettings.isFirstRun()))) {
-        log.debug(`first run, change password for default 'Administrator', params: '${JSON.stringify(req.body)}'`, logOpts);
+        log.debug(`first run, change password for default 'Administrator'`, logOpts);
         const user = await User.findOne({ username: 'Administrator' }).exec();
         if (!user) throw new Error(`cannot find the Administrator`);
         logOpts.ref = String(user?.username);
@@ -136,7 +140,7 @@ const changePasswordFirstRun = catchAsync(async (req: ExtRequest, res: Response)
         res.status(200).json({ message: 'success' });
     } else {
         log.error(`trying to use first run API with no first run state, auth: '${await AppSettings.isAuthEnabled()}', global settings: '${JSON.stringify(await AppSettings.get('first_run'))}'`, logOpts);
-        res.status(httpStatus.FORBIDDEN).json({ message: 'forbidden' });
+        res.status(HttpStatus.FORBIDDEN).json({ message: 'forbidden' });
     }
 });
 

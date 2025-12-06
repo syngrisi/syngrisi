@@ -1,9 +1,8 @@
 import { promises as fsp } from 'fs';
-// @ts-ignore
-import st from 'string-table';
 import path from 'path';
 import mongoose from 'mongoose';
 import { config } from '@config';
+import { createTable } from '@utils/stringTable';
 import { IOutputWriter } from '../lib/output-writer';
 import {
     Snapshot,
@@ -13,12 +12,6 @@ import {
     Suite,
     Baseline,
 } from '../lib';
-
-interface StringTable {
-    create(data: Array<Record<string, string | number>>): string;
-}
-
-const stringTable: StringTable = st;
 
 // Supported image formats
 const SUPPORTED_IMAGE_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.webp', '.gif'];
@@ -87,7 +80,7 @@ export async function handleDatabaseConsistencyTask(
             .filter((filename: string) => isImageFile(filename));
 
         output.write('-----------------------------');
-        const beforeStatTable = stringTable.create([
+        const beforeStatTable = createTable([
             { item: 'baselines', count: baselinesCount },
             { item: 'suites', count: suitesCount },
             { item: 'runs', count: runsCount },
@@ -123,13 +116,12 @@ export async function handleDatabaseConsistencyTask(
         // Build snapshot filenames set using cursor
         output.write('> building snapshot filenames index');
         const snapshotFilenamesSet = new Set<string>();
-        const snapshotIdsSet = new Set<string>();
         const snapshotsByFilename = new Map<string, string>();
 
         let snapshotsProcessed = 0;
         const snapshotCursor = Snapshot.find().select('filename _id').cursor();
         for await (const snapshot of snapshotCursor) {
-            const snapshotId = snapshot._id.toString();
+            const snapshotId = (snapshot as any)._id.toString();
             if (snapshot.filename) {
                 snapshotFilenamesSet.add(snapshot.filename);
                 snapshotsByFilename.set(snapshot.filename, snapshotId);
@@ -139,13 +131,12 @@ export async function handleDatabaseConsistencyTask(
                     baselineSnapshotFilenames.add(snapshot.filename);
                 }
             }
-            snapshotIdsSet.add(snapshotId);
             snapshotsProcessed++;
             if (snapshotsProcessed % 10000 === 0) {
                 output.write(`>> processed ${snapshotsProcessed} snapshots...`);
             }
         }
-        output.write(`>> indexed ${snapshotIdsSet.size} snapshots with ${snapshotFilenamesSet.size} unique filenames`);
+        output.write(`>> indexed ${snapshotsProcessed} snapshots with ${snapshotFilenamesSet.size} unique filenames`);
         output.write(`>> ${baselineSnapshotFilenames.size} snapshot files are protected by baseline references`);
 
         // Calculate abandoned snapshots (snapshots without files)
@@ -199,81 +190,118 @@ export async function handleDatabaseConsistencyTask(
         output.write(`>> skipped ${protectedFilesSkipped.length} files (protected by baseline snapshots)`);
 
         // Build checks index using cursor
-        output.write('> building checks index');
-        const checksTestIds = new Set<string>();
-        const checksRunIds = new Set<string>();
-        const checksSuiteIds = new Set<string>();
-        const abandonedCheckIds: string[] = [];
-
-        let checksProcessed = 0;
-        const checkCursor = Check.find()
-            .select('_id test run suite baselineId actualSnapshotId')
-            .cursor();
-
-        for await (const check of checkCursor) {
-            const checkId = check._id.toString();
-            const baselineId = check.baselineId?.toString();
-            const actualSnapshotId = check.actualSnapshotId?.toString();
-
-            // IMPORTANT: Collect ALL check references first (even if snapshots are missing)
-            // This ensures tests are only marked empty when checks are physically deleted from DB
-            // This enables layer-by-layer cleanup: snapshots → checks → tests → runs/suites
-            if (check.test) checksTestIds.add(check.test.toString());
-            if (check.run) checksRunIds.add(check.run.toString());
-            if (check.suite) checksSuiteIds.add(check.suite.toString());
-
-            // Then check if snapshots exist in DB - if not, mark check as abandoned
-            // Note: Checks are abandoned only if their snapshots don't exist in DB,
-            // not if snapshot files are missing (that makes snapshots abandoned)
-            if (!baselineId || !actualSnapshotId ||
-                !snapshotIdsSet.has(baselineId) ||
-                !snapshotIdsSet.has(actualSnapshotId)) {
-                abandonedCheckIds.push(checkId);
+        output.write('> calculate abandoned checks (checks with missing snapshots)');
+        const abandonedChecks = await Check.aggregate([
+            {
+                $lookup: {
+                    from: 'vrssnapshots',
+                    localField: 'baselineId',
+                    foreignField: '_id',
+                    as: 'baseline'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'vrssnapshots',
+                    localField: 'actualSnapshotId',
+                    foreignField: '_id',
+                    as: 'actual'
+                }
+            },
+            {
+                $match: {
+                    $or: [
+                        { baseline: { $size: 0 } },
+                        { actual: { $size: 0 } }
+                    ]
+                }
+            },
+            {
+                $project: {
+                    _id: 1
+                }
             }
-
-            checksProcessed++;
-            if (checksProcessed % 10000 === 0) {
-                output.write(`>> processed ${checksProcessed} checks...`);
-            }
-        }
-        output.write(`>> processed ${checksProcessed} checks`);
+        ]);
+        const abandonedCheckIds = abandonedChecks.map(c => c._id.toString());
         output.write(`>> found ${abandonedCheckIds.length} abandoned checks`);
 
         // Calculate empty tests (tests without checks)
         output.write('> calculate empty tests');
-        const emptyTestIds: string[] = [];
-        const testCursor = Test.find().select('_id').cursor();
-        for await (const test of testCursor) {
-            if (!checksTestIds.has(test._id.toString())) {
-                emptyTestIds.push(test._id.toString());
+        const emptyTests = await Test.aggregate([
+            {
+                $lookup: {
+                    from: 'vrschecks',
+                    localField: '_id',
+                    foreignField: 'test',
+                    as: 'checks'
+                }
+            },
+            {
+                $match: {
+                    checks: { $size: 0 }
+                }
+            },
+            {
+                $project: {
+                    _id: 1
+                }
             }
-        }
+        ]);
+        const emptyTestIds = emptyTests.map(t => t._id.toString());
         output.write(`>> found ${emptyTestIds.length} empty tests`);
 
         // Calculate empty runs (runs without checks)
         output.write('> calculate empty runs');
-        const emptyRunIds: string[] = [];
-        const runCursor = Run.find().select('_id').cursor();
-        for await (const run of runCursor) {
-            if (!checksRunIds.has(run._id.toString())) {
-                emptyRunIds.push(run._id.toString());
+        const emptyRuns = await Run.aggregate([
+            {
+                $lookup: {
+                    from: 'vrschecks',
+                    localField: '_id',
+                    foreignField: 'run',
+                    as: 'checks'
+                }
+            },
+            {
+                $match: {
+                    checks: { $size: 0 }
+                }
+            },
+            {
+                $project: {
+                    _id: 1
+                }
             }
-        }
+        ]);
+        const emptyRunIds = emptyRuns.map(r => r._id.toString());
         output.write(`>> found ${emptyRunIds.length} empty runs`);
 
         // Calculate empty suites (suites without checks)
         output.write('> calculate empty suites');
-        const emptySuiteIds: string[] = [];
-        const suiteCursor = Suite.find().select('_id').cursor();
-        for await (const suite of suiteCursor) {
-            if (!checksSuiteIds.has(suite._id.toString())) {
-                emptySuiteIds.push(suite._id.toString());
+        const emptySuites = await Suite.aggregate([
+            {
+                $lookup: {
+                    from: 'vrschecks',
+                    localField: '_id',
+                    foreignField: 'suite',
+                    as: 'checks'
+                }
+            },
+            {
+                $match: {
+                    checks: { $size: 0 }
+                }
+            },
+            {
+                $project: {
+                    _id: 1
+                }
             }
-        }
+        ]);
+        const emptySuiteIds = emptySuites.map(s => s._id.toString());
         output.write(`>> found ${emptySuiteIds.length} empty suites`);
         output.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
         output.write('Current inconsistent items:');
-        const inconsistentStatTable = stringTable.create([
+        const inconsistentStatTable = createTable([
             { item: 'empty suites', count: emptySuiteIds.length },
             { item: 'empty runs', count: emptyRunIds.length },
             { item: 'empty tests', count: emptyTestIds.length },
@@ -445,7 +473,7 @@ export async function handleDatabaseConsistencyTask(
             output.write('STAGE #4: Calculate Common stats after cleaning');
             output.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
             output.write('Current items:');
-            const afterStatTable = stringTable.create([
+            const afterStatTable = createTable([
                 { item: 'baselines', count: await Baseline.countDocuments() },
                 { item: 'suites', count: await Suite.countDocuments() },
                 { item: 'runs', count: await Run.countDocuments() },
