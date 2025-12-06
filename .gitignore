@@ -1,5 +1,6 @@
 node_modules/
 .DS_Store
+.claude/
 baselines*/
 !packages/syngrisi/src/ui-app/**/Baselines/
 /.idea/

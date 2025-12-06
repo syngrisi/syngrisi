@@ -1,4 +1,4 @@
-@demo @sso-external @slow @saml
+@demo @sso-external @slow @saml @sso
 Feature: SSO SAML 2.0 Authentication Demo
   # Demonstration of SAML 2.0 SSO authentication flow with Logto
   #
