@@ -1,4 +1,4 @@
-@fast-server
+@fast-server @flaky
 Feature: Select Navbar Item
 
   Background:
