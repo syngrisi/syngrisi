@@ -32,6 +32,7 @@ interface Props {
     isLastCheck?: boolean
     isFirstTest?: boolean
     isLastTest?: boolean
+    navigationReady?: boolean
 }
 
 export function Toolbar(
@@ -50,6 +51,7 @@ export function Toolbar(
         isLastCheck,
         isFirstTest,
         isLastTest,
+        navigationReady,
     }: Props,
 ) {
     const { query } = useParams();
@@ -95,7 +97,7 @@ export function Toolbar(
     }, [view, mainView]);
 
     return (
-        <Group position="apart" noWrap data-check="toolbar">
+        <Group position="apart" noWrap data-check="toolbar" data-navigation-ready={navigationReady ? 'true' : 'false'}>
             <ScreenshotDetails mainView={mainView} check={curCheck} view={view} />
             <Group spacing="sm" noWrap>
                 <Group spacing={2} noWrap>

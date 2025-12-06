@@ -11,7 +11,7 @@ export const createCheckParamsSchema = z.object({
     browserVersion: z.string().min(1),
     browserFullVersion: z.string(),
     os: z.string().min(1),
-    hashcode: z.string().length(128) // Assuming hashcode is always 128 chars length
+    hashcode: z.string().min(64) // SHA256 (64 chars) or SHA512 (128 chars)
 });
 
 export type createCheckParam = z.infer<typeof createCheckParamsSchema>;
