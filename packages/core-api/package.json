@@ -29,7 +29,6 @@
   },
   "homepage": "https://github.com/syngrisi/syngrisi/tree/main/packages/core-api",
   "dependencies": {
-    "@syngrisi/core-api": "*",
     "@wdio/logger": "^7.26.0",
     "form-data": "^4.0.5",
     "got-cjs": "^12.0.4",
