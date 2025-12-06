@@ -3,7 +3,7 @@ import app from './app';
 import v8 from 'v8';
 import { config } from '@config';
 import log from '@logger';
-import chalk from 'chalk';
+import { colors } from '@utils/colors';
 import connectDB from '@lib/connectDb';
 import { createTempDir, createBasicUsers, createInitialSettings, createTestsUsers } from '@lib/startup';
 import { autoCleanupSchedulers } from '@lib/schedulers/autoCleanupSchedulers';
@@ -27,11 +27,11 @@ connectDB().then(async () => {
 
     const server = app.listen(config.port, () => {
         log.info(
-            chalk.green(`Syngrisi version: ${chalk.blue((config.version))} started at http://${config.host}:${config.port}`),
+            colors.green(`Syngrisi version: ${colors.blue((config.version))} started at http://${config.host}:${config.port}`),
             logMeta
         );
         log.info(
-            chalk.whiteBright('Press <Ctrl+C> to exit'), logMeta
+            colors.whiteBright('Press <Ctrl+C> to exit'), logMeta
         );
         // Skip schedulers in test mode unless explicitly enabled
         if (!config.testMode || env.SYNGRISI_ENABLE_SCHEDULERS_IN_TEST_MODE) {
