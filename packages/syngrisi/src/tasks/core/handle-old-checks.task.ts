@@ -1,23 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { promises as fsp } from 'fs';
-// @ts-ignore
-import st from 'string-table';
 import path from 'path';
 import mongoose from 'mongoose';
 import { config } from '@config';
 import { subDays, dateToISO8601 } from '@utils';
+import { createTable } from '@utils/stringTable';
 import { IOutputWriter } from '../lib/output-writer';
 import {
     Snapshot,
     Check,
     Baseline,
 } from '../lib';
-
-interface StringTable {
-    create(data: Record<string, string | number>[]): string;
-}
-
-const stringTable: StringTable = st;
 
 function parseHrtimeToSeconds(hrtime: [number, number]): string {
     return (hrtime[0] + (hrtime[1] / 1e9)).toFixed(3);
@@ -261,7 +254,7 @@ export async function handleOldChecksTask(
         }
         const totalOldFilesSizeGB = (totalOldFilesSize / (1024 * 1024 * 1024)).toFixed(3);
 
-        const outTable = stringTable.create([
+        const outTable = createTable([
             { item: 'all checks', count: allChecksCountBefore },
             { item: 'all snapshots', count: allSnapshotsCountBefore },
             { item: 'all files', count: allFilesBefore },
@@ -436,7 +429,7 @@ export async function handleOldChecksTask(
                 output.write('> get files data');
                 const allFilesAfter = await countPngFiles(config.defaultImagesPath);
 
-                const outTableAfter = stringTable.create([
+                const outTableAfter = createTable([
                     { item: 'all checks', count: allChecksCountAfter },
                     { item: 'all snapshots', count: allSnapshotsCountAfter },
                     { item: 'all files', count: allFilesAfter },

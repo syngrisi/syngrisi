@@ -1,17 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { promises as fsp } from 'fs';
-// @ts-ignore
-import st from 'string-table';
 import path from 'path';
 import { config } from '@config';
+import { createTable } from '@utils/stringTable';
 import { IOutputWriter } from '../lib/output-writer';
 import { Snapshot } from '../lib';
-
-interface StringTable {
-    create(data: { [key: string]: any }[]): string;
-}
-
-const stringTable: StringTable = st;
 
 /**
  * Format bytes to human readable format
@@ -125,13 +118,13 @@ export async function handleOrphanFilesTask(
         const totalSizeAfter = totalSizeBefore - orphanFilesSize;
 
         // Create separate tables for counts and sizes
-        const countTable = stringTable.create([
+        const countTable = createTable([
             { item: 'Total files in directory', value: allFiles.length },
             { item: 'Files referenced by snapshots', value: snapshotFilenames.size },
             { item: 'Orphan files (not referenced)', value: orphanFiles.length },
         ]);
 
-        const sizeTable = stringTable.create([
+        const sizeTable = createTable([
             { item: 'Total size before', value: formatBytes(totalSizeBefore) },
             { item: 'Orphan files size', value: formatBytes(orphanFilesSize) },
             { item: 'Total size after cleanup', value: formatBytes(totalSizeAfter) },
@@ -208,7 +201,7 @@ export async function handleOrphanFilesTask(
                 actualSizeAfter += size;
             }
 
-            const outTableAfter = stringTable.create([
+            const outTableAfter = createTable([
                 { item: 'Total files after removal', count: allFilesAfter.length },
                 { item: 'Total size after removal', size: formatBytes(actualSizeAfter) },
                 { item: 'Space freed', size: formatBytes(totalSizeBefore - actualSizeAfter) },
