@@ -9,6 +9,7 @@ node_modules/
 
 # Generated files
 .features-gen/
+.features-gen-demo/
 
 # System files
 .DS_Store

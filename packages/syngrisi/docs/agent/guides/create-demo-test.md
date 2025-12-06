@@ -48,18 +48,22 @@ When I end the demo
 When I announce: "The setup is complete. Pausing now so you can inspect the current state." and PAUSE
 ```
 
-## Debugging Demo Tests
+## Running Demo Tests
 
-When developing and debugging demo tests, use the `SKIP_DEMO_TESTS` environment variable to control demo-specific steps (announce, highlight, clear highlight, end the demo):
+Demo tests are in a separate Playwright project (`demo`) and are excluded from regular test runs. Use these commands:
 
 ```bash
+# Run all demo tests (headed mode by default)
+npm run test:demo
+
+# Run specific demo test
+npx bddgen && npx playwright test --project=demo --grep "Demo name" --workers=1
+
 # Skip demo steps for faster debugging (recommended during development)
-SKIP_DEMO_TESTS=true npx bddgen && yarn playwright test "features/DEMO/your_demo.feature" --workers=1 --headed
+SKIP_DEMO_TESTS=true npx bddgen && npx playwright test --project=demo --grep "your_demo" --workers=1
 
 # Run with full demo experience (for final verification)
-SKIP_DEMO_TESTS=false npx bddgen && yarn playwright test "features/DEMO/your_demo.feature" --workers=1 --headed
-# Or simply omit the variable (default is false):
-npx bddgen && yarn playwright test "features/DEMO/your_demo.feature" --workers=1 --headed
+npx bddgen && npx playwright test --project=demo --grep "your_demo" --workers=1
 ```
 
 ### Benefits of SKIP_DEMO_TESTS=true during development:
@@ -97,7 +101,7 @@ Run with `SKIP_DEMO_TESTS=true` to quickly iterate:
 
 ```bash
 # Fast iteration without narration
-SKIP_DEMO_TESTS=true npx bddgen && yarn playwright test "features/DEMO/my_demo.feature" --workers=1 --headed
+SKIP_DEMO_TESTS=true npx bddgen && npx playwright test --project=demo --grep "my_demo" --workers=1
 ```
 
 This skips all `announce`, `highlight`, `clear highlight`, and `end the demo` steps, allowing you to focus on:
@@ -112,8 +116,8 @@ This skips all `announce`, `highlight`, `clear highlight`, and `end the demo` st
 Run with full demo experience to verify narration and visual effects:
 
 ```bash
-# Full demo mode with narration and animations
-npx bddgen && yarn playwright test "features/DEMO/my_demo.feature" --workers=1 --headed
+# Full demo mode with narration and animations (headed by default in demo project)
+npx bddgen && npx playwright test --project=demo --grep "my_demo" --workers=1
 ```
 
 Verify:
@@ -128,18 +132,18 @@ Verify:
 1. **Debug run**: Set `SKIP_DEMO_TESTS=true` and run the scenario locally to ensure all selectors, actions, and assertions work correctly without narration:
 
     ```bash
-    SKIP_DEMO_TESTS=true npx bddgen && yarn playwright test "<feature-path>.feature" --grep "<Scenario name>" --workers=1 --headed
+    SKIP_DEMO_TESTS=true npx bddgen && npx playwright test --project=demo --grep "<Scenario name>" --workers=1
     ```
 
-2. **Full demo run**: Run with `SKIP_DEMO_TESTS=false` (or omit the variable) with `--headed` flag to verify announcements, highlights, and animations work correctly:
+2. **Full demo run**: Run with `SKIP_DEMO_TESTS=false` (or omit the variable) to verify announcements, highlights, and animations work correctly (demo project runs headed by default):
 
     ```bash
-    npx bddgen && yarn playwright test "<feature-path>.feature" --grep "<Scenario name>" --workers=1 --headed
+    npx bddgen && npx playwright test --project=demo --grep "<Scenario name>" --workers=1
     ```
 
 3. **Documentation**: When sharing the demo with users, provide both commands:
-    - **Debug mode**: `SKIP_DEMO_TESTS=true npx bddgen && yarn playwright test "<feature-path>.feature" --grep "<Scenario name>" --workers=1 --headed`
-    - **Full demo mode**: `npx bddgen && yarn playwright test "<feature-path>.feature" --grep "<Scenario name>" --workers=1 --headed`
+    - **Debug mode**: `SKIP_DEMO_TESTS=true npm run test:demo`
+    - **Full demo mode**: `npm run test:demo`
 
 ## Critical Rules
 
