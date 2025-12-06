@@ -17,6 +17,8 @@ export { ident } from './ident';
 import subDays from './subDays';
 export { errMsg } from './errMsg';
 export { hashSync, generateApiKey } from './hash';
+export { createTable } from './stringTable';
+export { colors } from './colors';
 
 export {
     pick,

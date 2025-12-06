@@ -1,9 +1,8 @@
 import { promises as fsp } from 'fs';
-// @ts-ignore
-import st from 'string-table';
 import path from 'path';
 import mongoose from 'mongoose';
 import { config } from '@config';
+import { createTable } from '@utils/stringTable';
 import { IOutputWriter } from '../lib/output-writer';
 import {
     Snapshot,
@@ -13,12 +12,6 @@ import {
     Suite,
     Baseline,
 } from '../lib';
-
-interface StringTable {
-    create(data: Array<Record<string, string | number>>): string;
-}
-
-const stringTable: StringTable = st;
 
 // Supported image formats
 const SUPPORTED_IMAGE_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.webp', '.gif'];
@@ -87,7 +80,7 @@ export async function handleDatabaseConsistencyTask(
             .filter((filename: string) => isImageFile(filename));
 
         output.write('-----------------------------');
-        const beforeStatTable = stringTable.create([
+        const beforeStatTable = createTable([
             { item: 'baselines', count: baselinesCount },
             { item: 'suites', count: suitesCount },
             { item: 'runs', count: runsCount },
@@ -308,7 +301,7 @@ export async function handleDatabaseConsistencyTask(
         output.write(`>> found ${emptySuiteIds.length} empty suites`);
         output.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
         output.write('Current inconsistent items:');
-        const inconsistentStatTable = stringTable.create([
+        const inconsistentStatTable = createTable([
             { item: 'empty suites', count: emptySuiteIds.length },
             { item: 'empty runs', count: emptyRunIds.length },
             { item: 'empty tests', count: emptyTestIds.length },
@@ -480,7 +473,7 @@ export async function handleDatabaseConsistencyTask(
             output.write('STAGE #4: Calculate Common stats after cleaning');
             output.write('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
             output.write('Current items:');
-            const afterStatTable = stringTable.create([
+            const afterStatTable = createTable([
                 { item: 'baselines', count: await Baseline.countDocuments() },
                 { item: 'suites', count: await Suite.countDocuments() },
                 { item: 'runs', count: await Run.countDocuments() },
