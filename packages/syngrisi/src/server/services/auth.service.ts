@@ -1,5 +1,4 @@
-import { hashSync } from 'hasha';
-import uuidAPIKey from 'uuid-apikey';
+import { hashSync, generateApiKey as createApiKey } from '@utils/hash';
 import { User } from '@models';
 import log from "../lib/logger";
 import { RequestUser } from '@types';
@@ -8,7 +7,7 @@ import { appSettings } from "@settings";
 import httpStatus from 'http-status';
 
 function getApiKey(): string {
-    return uuidAPIKey.create().apiKey;
+    return createApiKey();
 }
 
 const generateApiKey = async (username: string): Promise<string> => {

@@ -19,7 +19,7 @@ import aiRoutes from './routes/ai.route';
 
 import { compressionFilter, disableCors, apiLimiter } from './middlewares';
 import { User } from './models';
-import httpLogger from '@lib/httpLogger';
+import httpLoggerMiddleware from '@lib/httpLoggerWinston';
 import errorHandler from './middlewares/errorHandler';
 import { openAPIRouter } from './api-docs/openAPIRouter';
 import { LogOpts } from '../types';
@@ -45,7 +45,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(fileUpload({ limits: { fileSize: config.fileUploadMaxSize } }));
 app.use(express.json({ limit: config.jsonLimit }));
-if (config.enableHttpLogger) app.use(httpLogger);
+if (config.enableHttpLogger) app.use(httpLoggerMiddleware);
 
 log.info('\t- authentication', logMeta);
 // Session and Passport setup

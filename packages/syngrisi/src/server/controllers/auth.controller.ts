@@ -1,16 +1,14 @@
 import httpStatus from 'http-status';
 import passport from 'passport';
-import { hashSync } from 'hasha';
-import uuidAPIKey from 'uuid-apikey';
 import { Response, NextFunction } from "express"
 import { User } from '@models';
-import { catchAsync, errMsg } from '@utils';
+import { catchAsync, errMsg, hashSync, generateApiKey } from '@utils';
 import log from "@logger";
 import { RequestUser, ExtRequest } from '@types';
 import { appSettings } from "@settings";
 
 function getApiKey(): string {
-    return uuidAPIKey.create().apiKey;
+    return generateApiKey();
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
