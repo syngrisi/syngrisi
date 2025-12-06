@@ -42,7 +42,7 @@ import log from "../../lib/logger";
 import { ExtRequest } from '../../../types/ExtRequest';
 import { appSettings } from "@settings";
 import { env } from "@/server/envConfig";
-import { hashSync } from 'hasha';
+import { hashSync } from '@utils/hash';
 
 export const normalizeIncomingApiKey = (rawKey: unknown): string | undefined => {
     if (Array.isArray(rawKey)) {

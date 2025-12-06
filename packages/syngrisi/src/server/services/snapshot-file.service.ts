@@ -1,10 +1,9 @@
 import fs, { promises as fsp } from 'fs';
 import path from 'path';
-import { hashSync } from 'hasha';
 import httpStatus from 'http-status';
 import { Snapshot } from '@models';
 import { SnapshotDocument } from '@models/Snapshot.model';
-import { ApiError } from '@utils';
+import { ApiError, hashSync } from '@utils';
 import { config } from '@config';
 import log from '@logger';
 import { LogOpts } from '@types';

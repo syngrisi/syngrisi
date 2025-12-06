@@ -6,7 +6,7 @@
 
 import log from '@logger';
 import { User } from '../../models';
-import { v4 as uuidv4 } from 'uuid';
+import { generateApiKey } from '@utils/hash';
 import { env } from '../../envConfig';
 import { ssoEvents } from './events';
 import { accountLinkingService } from './account-linking.service';
@@ -143,8 +143,8 @@ class SSOUserService {
             role: defaultRole,
             provider,
             providerId,
-            password: uuidv4(), // Random password (user can't login with it)
-            apiKey: uuidv4(),
+            password: generateApiKey(), // Random password (user can't login with it)
+            apiKey: generateApiKey(),
         });
 
         await newUser.save();
