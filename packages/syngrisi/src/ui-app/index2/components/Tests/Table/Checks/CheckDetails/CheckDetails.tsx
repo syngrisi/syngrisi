@@ -335,6 +335,7 @@ export function CheckDetails({
                     isLastCheck={currentCheckIndex === siblingChecks.length - 1}
                     isFirstTest={currentTestIndex <= 0}
                     isLastTest={currentTestIndex === testList.length - 1}
+                    navigationReady={!siblingChecksQuery.isLoading && siblingChecks.length > 0 && currentCheckIndex >= 0}
                 />
 
                 <Group

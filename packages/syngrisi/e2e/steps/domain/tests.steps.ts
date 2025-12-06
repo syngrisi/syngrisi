@@ -486,26 +486,40 @@ async function unfoldTestRow(page: Page, testName: string): Promise<void> {
   const selector = `[data-table-test-name="${testName}"], tr[data-row-name="${testName}"]`;
   logger.info(`Waiting for test "${testName}" to appear on the page using selector: ${selector}`);
 
-  const candidate = page.locator(selector).first();
-  try {
-    // Use 'visible' instead of 'attached' to ensure element is stable and rendered
-    await candidate.waitFor({ state: 'visible', timeout: 30000 });
-  } catch (error) {
-    // Log available tests for debugging
-    const availableTests = await page.locator('[data-row-name]').evaluateAll((els) =>
-      els.map((el) => el.getAttribute('data-row-name')).filter(Boolean)
-    );
-    logger.error(`Unable to locate test row for "${testName}". Available tests: ${availableTests.join(', ')}`);
-    throw new Error(`Unable to locate test row for "${testName}". Available: [${availableTests.join(', ')}]`);
-  }
+  // Helper to wait for element and verify it's connected (handles DOM detachment from React Query refetches)
+  const waitForConnectedElement = async (retries = 3): Promise<{ candidate: Locator; tagName: string }> => {
+    for (let i = 0; i < retries; i++) {
+      const candidate = page.locator(selector).first();
+      try {
+        // Use 'visible' instead of 'attached' to ensure element is stable and rendered
+        await candidate.waitFor({ state: 'visible', timeout: 30000 });
+      } catch (error) {
+        // Log available tests for debugging
+        const availableTests = await page.locator('[data-row-name]').evaluateAll((els) =>
+          els.map((el) => el.getAttribute('data-row-name')).filter(Boolean)
+        );
+        logger.error(`Unable to locate test row for "${testName}". Available tests: ${availableTests.join(', ')}`);
+        throw new Error(`Unable to locate test row for "${testName}". Available: [${availableTests.join(', ')}]`);
+      }
 
-  // Check element is still connected before evaluating
-  const isConnected = await candidate.evaluate((el) => el.isConnected);
-  if (!isConnected) {
-    throw new Error(`Test row for "${testName}" was detached from DOM`);
-  }
+      // Check element is still connected before evaluating
+      const isConnected = await candidate.evaluate((el) => el.isConnected);
+      if (!isConnected) {
+        if (i < retries - 1) {
+          logger.warn(`Test row for "${testName}" was detached from DOM, retrying (attempt ${i + 2}/${retries})`);
+          await page.waitForTimeout(300); // Small delay to let React settle
+          continue;
+        }
+        throw new Error(`Test row for "${testName}" was detached from DOM after ${retries} attempts`);
+      }
 
-  const tagName = await candidate.evaluate((el) => el.tagName.toLowerCase());
+      const tagName = await candidate.evaluate((el) => el.tagName.toLowerCase());
+      return { candidate, tagName };
+    }
+    throw new Error(`Failed to get connected element for "${testName}"`);
+  };
+
+  const { candidate, tagName } = await waitForConnectedElement();
   logger.info(`Matched test element with tag "${tagName}"`);
 
   let testElement: Locator;
@@ -605,6 +619,21 @@ async function unfoldTestRow(page: Page, testName: string): Promise<void> {
             rect.width > 0;
           if (!isVisible) return false;
           return collapse.children.length > 0 || collapse.textContent?.trim().length > 0;
+        },
+        testName,
+        { timeout: 15000 }
+      );
+
+      // Wait for checks to be loaded (data-test-checks-ready attribute)
+      await page.waitForFunction(
+        (rowName) => {
+          const row = document.querySelector(`tr[data-row-name="${rowName}"]`);
+          if (!row) return false;
+          const collapse = row.nextElementSibling?.querySelector('[data-test="table-test-collapsed-row"]');
+          if (!collapse) return false;
+          // Check for checks ready OR no-checks message
+          return collapse.querySelector('[data-test-checks-ready="true"]') !== null ||
+                 collapse.textContent?.includes('does not have any checks');
         },
         testName,
         { timeout: 15000 }
@@ -751,9 +780,17 @@ When(
 
     const checkElement = page.locator(checkSelector).first();
 
-    const maxRetries = 6;
+    const maxRetries = 8; // Increased from 6 to give more time for DOM updates after modal close
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
+        // First ensure checks container is ready (React Query finished loading)
+        const checksReady = page.locator('[data-test-checks-ready="true"]').first();
+        const isChecksReady = await checksReady.isVisible({ timeout: 1000 }).catch(() => false);
+        if (!isChecksReady) {
+          logger.info(`Attempt ${attempt}/${maxRetries}: checks container not ready yet, waiting...`);
+          throw new Error('Checks container not ready');
+        }
+
         await checkElement.waitFor({ state: 'visible', timeout: 5000 });
         logger.info(`Check "${checkName}" is now visible in collapsed row (attempt ${attempt})`);
         return;
@@ -777,7 +814,9 @@ When(
             } else {
               await testRow.click();
             }
-            await page.waitForTimeout(500);
+            // Wait for checks-ready indicator after expanding
+            await page.waitForSelector('[data-test-checks-ready="true"]', { timeout: 5000 }).catch(() => null);
+            await page.waitForTimeout(300);
           } else {
             // Collapsed row visible but check not found - try refresh and wait for network
             logger.info(`Check "${checkName}" not visible in collapsed row, clicking Refresh button (attempt ${attempt}/${maxRetries})`);
@@ -791,8 +830,9 @@ When(
                 ).catch(() => null), // Don't fail if no request made
                 refreshButton.click(),
               ]);
-              // Additional wait for React Query to update DOM
-              await page.waitForTimeout(1000);
+              // Wait for checks container to be ready after refresh
+              await page.waitForSelector('[data-test-checks-ready="true"]', { timeout: 5000 }).catch(() => null);
+              await page.waitForTimeout(500);
             }
           }
         } else {

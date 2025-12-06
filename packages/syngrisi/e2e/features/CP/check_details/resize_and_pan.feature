@@ -138,16 +138,16 @@ Feature: Check details Resize and Pan
     # check pan coordinates
     When I execute javascript code:
       """
-    return parseInt(mainView.canvas.viewportTransform[4]).toFixed(2).toString()
+    return parseFloat(mainView.canvas.viewportTransform[4]).toFixed(2).toString()
          + '/'
-         + parseInt(mainView.canvas.viewportTransform[5]).toFixed(2).toString()
+         + parseFloat(mainView.canvas.viewportTransform[5]).toFixed(2).toString()
       """
 
     When I execute javascript code:
       """
-    return (parseInt(mainView.canvas.viewportTransform[4]).toFixed(2) > 60).toString()
+    return (parseFloat(mainView.canvas.viewportTransform[4]) > 60).toString()
       + "/"
-      + parseInt(mainView.canvas.viewportTransform[5]).toFixed(2).toString()
+      + parseFloat(mainView.canvas.viewportTransform[5]).toFixed(2).toString()
       """
     Then I expect the stored "js" string is equal:
       """
@@ -173,16 +173,16 @@ Feature: Check details Resize and Pan
 
     When I execute javascript code:
       """
-    return parseInt(mainView.canvas.viewportTransform[4]).toFixed(2).toString()
+    return parseFloat(mainView.canvas.viewportTransform[4]).toFixed(2).toString()
          + '/'
-         + parseInt(mainView.canvas.viewportTransform[5]).toFixed(2).toString()
+         + parseFloat(mainView.canvas.viewportTransform[5]).toFixed(2).toString()
       """
 
     When I execute javascript code:
       """
-    return (parseInt(mainView.canvas.viewportTransform[4]).toFixed(2) > 100).toString()
+    return (parseFloat(mainView.canvas.viewportTransform[4]) > 100).toString()
       + "/"
-      + parseInt(mainView.canvas.viewportTransform[5]).toFixed(2).toString()
+      + parseFloat(mainView.canvas.viewportTransform[5]).toFixed(2).toString()
       """
     Then I expect the stored "js" string is equal:
       """

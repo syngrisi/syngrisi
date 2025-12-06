@@ -168,3 +168,19 @@ Then('the current url contains {string}', async ({ page, testData }: { page: Pag
     }
   }
 });
+
+// Navbar synchronization steps
+When('I wait for navbar filter to sync', async ({ page }) => {
+  await page.waitForSelector('[data-test-filter-synced="true"]', { timeout: 15000 });
+});
+
+When('I wait for navbar to be ready', async ({ page }) => {
+  await page.waitForSelector('[data-test-navbar-ready="true"]', { timeout: 15000 });
+});
+
+When('I wait for table to stabilize', async ({ page }) => {
+  // Wait for network to be idle to ensure all API calls are complete
+  await page.waitForLoadState('networkidle', { timeout: 15000 }).catch(() => {});
+  // Additional stabilization - allow React to finish rendering
+  await page.waitForTimeout(300);
+});
