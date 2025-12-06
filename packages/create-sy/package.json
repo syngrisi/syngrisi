@@ -40,20 +40,25 @@
     "release:patch": "run-s 'release -- patch'",
     "release:minor": "run-s 'release -- minor'",
     "release:major": "run-s 'release -- major'",
-    "test": "run-s build test:*",
+    "test": "run-s build test:eslint test:unit",
     "test:eslint": "eslint -c ./.eslintrc.cjs ./src/**/*.ts ./tests/**/*.ts",
     "test:unit": "vitest run",
+    "test:e2e": "run-s e2e:setup e2e:run",
+    "e2e:setup": "bash e2e/container/start-containers.sh --build",
+    "e2e:run": "vitest run --config e2e/vitest.e2e.config.ts",
+    "e2e:teardown": "bash e2e/container/stop-containers.sh",
+    "e2e:node18": "vitest run --config e2e/vitest.e2e.config.ts e2e/tests/node-versions/node18.e2e.ts",
+    "e2e:node20": "vitest run --config e2e/vitest.e2e.config.ts e2e/tests/node-versions/node20.e2e.ts",
+    "e2e:node22": "vitest run --config e2e/vitest.e2e.config.ts e2e/tests/node-versions/node22.e2e.ts",
     "watch": "tsc -p ./tsconfig.json --watch"
   },
   "devDependencies": {
     "@types/cross-spawn": "^6.0.2",
-    "@types/inquirer": "^9.0.6",
-    "@types/minimist": "^1.2.2",
     "@types/node": "^24.10.1",
     "@types/semver": "^7.3.13",
     "@typescript-eslint/eslint-plugin": "^5.48.2",
     "@typescript-eslint/parser": "^5.48.2",
-    "@vitest/coverage-v8": "^4.0.8",
+    "@vitest/coverage-v8": "^2.1.9",
     "c8": "^7.12.0",
     "eslint": "^8.52.0",
     "eslint-plugin-import": "^2.29.0",
@@ -62,15 +67,10 @@
     "release-it": "^16.2.1",
     "typescript": "^5.2.2",
     "vite": "^7.2.2",
-    "vitest": "^4.0.8"
+    "vitest": "^2.1.9"
   },
   "dependencies": {
-    "chalk": "^5.2.0",
     "cross-spawn": "^7.0.3",
-    "inquirer": "^9.1.4",
-    "minimist": "^1.2.8",
-    "ora": "^6.0.0",
-    "read-pkg-up": "^10.1.0",
     "semver": "^7.3.8"
   },
   "gitHead": "df1d7bc159619fcf0e612229be1a79652a84e5e7"

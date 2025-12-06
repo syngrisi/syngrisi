@@ -1,5 +1,5 @@
 import { vi, expect, describe, it, beforeEach } from 'vitest'
-import { readPackageUp } from 'read-pkg-up'
+import { readPackageUp } from '../src/native/findPackageJson'
 import { createSyngrisiProject } from '../src/createSyngrisiProject'
 import { printAndExit, runProgram } from '../src/utils'
 // @ts-ignore
@@ -24,12 +24,13 @@ vi.mock('../src/utils', async () => {
     }
 })
 
-vi.mock('read-pkg-up')
+vi.mock('../src/native/findPackageJson')
 
 beforeEach(async () => {
     vi.mocked(runProgram).mockClear()
     vi.mocked(readPackageUp).mockClear()
     vi.mocked(fs.mkdir).mockClear()
+    vi.mocked(printAndExit).mockClear()
 })
 
 describe('createSyngrisiProject', () => {
@@ -77,6 +78,18 @@ describe('createSyngrisiProject', () => {
         await createSyngrisiProject({ installDir: '', npmTag: '' })
         expect(printAndExit).toBeCalledTimes(1)
         expect(printAndExit).toBeCalledWith('installDir is empty')
+        expect(runProgram).toBeCalledTimes(0)
+    })
+
+    it('rejects invalid npmTag with dangerous characters', async () => {
+        vi.mocked(readPackageUp).mockResolvedValue({
+            path: '/foo/bar/package.json',
+            packageJson: { name: 'my-new-project' }
+        })
+
+        await createSyngrisiProject({ installDir: '.', npmTag: 'latest; rm -rf /' })
+        expect(printAndExit).toBeCalledTimes(1)
+        expect(printAndExit).toBeCalledWith(expect.stringContaining('Invalid npmTag'))
         expect(runProgram).toBeCalledTimes(0)
     })
 })

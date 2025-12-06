@@ -1,5 +1,5 @@
 export const MONGODB_SETUP_MANUAL_URL = 'https://www.mongodb.com/docs/manual/installation/'
 export const DOCKER_SETUP_MANUAL_URL = 'https://docs.docker.com/engine/install/'
 export const SYNGRISI_DOCUMENTATION_LINK = 'https://github.com/syngrisi/syngrisi/tree/main/packages/syngrisi#readme'
-export const NODE_VERSION = '>=14'
+export const NODE_VERSION = '>=18'
 export const MONGODB_VERSION = '>=7.0'
