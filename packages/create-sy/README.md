@@ -5,7 +5,7 @@ dependencies, allowing you to get started quickly.
 
 ## Prerequisites
 
-This initializer is for installing Syngrisi in native mode, therefore you need `Node.js >= v20.9.0`and `MongoDB >= 7.0` or remote MongoDB instance. If you want to install a dockerized Syngrisi service, please read the [Syngrisi documentation](https://github.com/syngrisi/syngrisi/tree/main/packages/syngrisi#readme).
+This initializer is for installing Syngrisi in native mode, therefore you need `Node.js >= v18` and `MongoDB >= 7.0` or remote MongoDB instance. If you want to install a dockerized Syngrisi service, please read the [Syngrisi documentation](https://github.com/syngrisi/syngrisi/tree/main/packages/syngrisi#readme).
 
 ## Usage
 

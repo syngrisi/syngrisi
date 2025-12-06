@@ -3,7 +3,7 @@ import { AppSettings as AppSettingsModel } from '@models';
 import initialAppSettings from '../../../seeds/initialAppSettings.json';
 
 export async function createInitialSettings(): Promise<void> {
-    const settings = await appSettings;
+    const settings = appSettings;
     if (await settings.count() < 1) {
         await settings.loadInitialFromFile();
     } else {

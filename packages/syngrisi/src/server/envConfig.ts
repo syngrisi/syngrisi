@@ -27,16 +27,44 @@ export const env = cleanEnv(process.env, {
     MONGODB_ROOT_USERNAME: str({ default: '' }),
     MONGODB_ROOT_PASSWORD: str({ default: '' }),
     LOGLEVEL: str({ choices: ['error', 'warn', 'info', 'verbose', 'debug', 'silly'], default: 'debug' }),
-    SYNGRISI_PAGINATION_SIZE: num({ default: 50 }),
+    // Legacy tests expect 20 rows per page; keep default aligned for e2e
+    SYNGRISI_PAGINATION_SIZE: num({ default: 20 }),
     SYNGRISI_DISABLE_DEV_CORS: bool({ default: true, devDefault: true }),
     SYNGRISI_SESSION_STORE_KEY: str({ default: crypto.randomBytes(64).toString('hex') }),
     SYNGRISI_LOG_LEVEL: str({ default: 'debug' }),
     SYNGRISI_AUTO_REMOVE_CHECKS_POLL_INTERVAL_MS: num({ default: 10 * 60 * 1000 }), // 10 minutes
     SYNGRISI_AUTO_REMOVE_CHECKS_MIN_INTERVAL_MS: num({ default: 24 * 60 * 60 * 1000 }),
+    SYNGRISI_ENABLE_SCHEDULERS_IN_TEST_MODE: bool({ default: false }),
 
     // trunk features
     SYNGRISI_TRUNK_FEATURE_AI_SEVERITY: bool({ default: false }),
     SYNGRISI_AI_KEY: str({ default: '' }),
     OPENAI_API_BASE_URL: str({ default: 'https://api.openai.com/v1' }),
     OPENAI_API_KEY: str({ default: '' }),
+    SYNGRISI_V8_COVERAGE_ON_EXIT: bool({ default: false }),
+
+    // Rate Limiting
+    SYNGRISI_RATE_LIMIT_WINDOW_MS: num({ default: 15 * 60 * 1000 }), // 15 minutes
+    SYNGRISI_RATE_LIMIT_MAX: num({ default: 5000 }),
+    SYNGRISI_AUTH_RATE_LIMIT_WINDOW_MS: num({ default: 15 * 60 * 1000 }), // 15 minutes
+    SYNGRISI_AUTH_RATE_LIMIT_MAX: num({ default: 200 }),
+
+    // SSO Configuration
+    SSO_ENABLED: bool({ default: false }),
+    SSO_PROTOCOL: str({ choices: ['', 'oauth2', 'saml'], default: '' }),
+    SSO_CLIENT_ID: str({ default: '' }),
+    SSO_CLIENT_SECRET: str({ default: '' }),
+    SSO_AUTHORIZATION_URL: str({ default: '' }),
+    SSO_TOKEN_URL: str({ default: '' }),
+    SSO_USERINFO_URL: str({ default: '' }),
+    SSO_CALLBACK_URL: str({ default: '/v1/auth/sso/oauth/callback' }),
+    // SAML specific
+    SSO_ENTRY_POINT: str({ default: '' }),
+    SSO_ISSUER: str({ default: '' }),
+    SSO_CERT: str({ default: '' }),
+    SSO_IDP_ISSUER: str({ default: '' }),
+    // SSO user settings
+    SSO_DEFAULT_ROLE: str({ choices: ['', 'user', 'admin', 'reviewer'], default: 'reviewer' }),
+    SSO_AUTO_CREATE_USERS: bool({ default: true }),
+    SSO_ALLOW_ACCOUNT_LINKING: bool({ default: true }),
 });

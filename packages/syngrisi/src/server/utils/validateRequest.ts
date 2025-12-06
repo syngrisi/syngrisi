@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import StatusCodes from 'http-status';
+import { HttpStatus } from './httpStatus';
 import { ZodError, ZodSchema } from 'zod';
 import { ResponseStatus, ServiceResponse } from './ServiceResponse';
 import log from '@logger';
@@ -10,6 +10,36 @@ const logOpts: LogOpts = {
   scope: 'validateRequests',
   itemType: 'type',
   msgType: 'VALIDATION',
+};
+
+const sensitiveKeys = new Set([
+  'password',
+  'currentpassword',
+  'newpassword',
+  'apikey',
+  'sso_client_secret',
+  'sso_cert',
+  'clientsecret',
+  'secret',
+  'token',
+]);
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const sanitizeValueForLogging = (value: any): any => {
+  if (Array.isArray(value)) {
+    return value.map((item) => sanitizeValueForLogging(item));
+  }
+  if (value && typeof value === 'object') {
+    return Object.entries(value).reduce((acc, [key, val]) => {
+      if (sensitiveKeys.has(key.toLowerCase())) {
+        acc[key] = '[REDACTED]';
+      } else {
+        acc[key] = sanitizeValueForLogging(val);
+      }
+      return acc;
+    }, Array.isArray(value) ? [] : {} as Record<string, unknown>);
+  }
+  return value;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -31,21 +61,32 @@ export const validateRequest = (schema: ZodSchema, endpoint = '') => (req: Reque
     });
     next();
   } catch (err) {
-    
+
     if (err instanceof ZodError) {
-      const errors = err.errors.map((e) => {
+      // ZodError always has .errors property (array of ZodIssue)
+      // Use Array.isArray check to ensure we have a valid array
+      const zodErrors = Array.isArray(err.errors) ? err.errors : [];
+
+      if (zodErrors.length === 0) {
+        log.error(`ZodError with empty errors array! Raw error: ${JSON.stringify(err)}`, logOpts);
+      }
+
+      const sanitizedBody = sanitizeValueForLogging(req.body);
+      const sanitizedQuery = sanitizeValueForLogging(req.query);
+      const sanitizedParams = sanitizeValueForLogging(req.params);
+      const errors = zodErrors.map((e: any) => {
         const receivedValue = getReceivedValueFromRequest(
-          { body: req.body, query: req.query, params: req.params },
+          { body: sanitizedBody, query: sanitizedQuery, params: sanitizedParams },
           e.path
         );
         return `\nError path: '${e.path.join('.')}': \nError ${e.message}, but received ${JSON.stringify(receivedValue)}`;
       }).join(', ');
 
       const errorMessage = ` ${endpoint ? '\nValidation error in the endpoint: "' + endpoint + '"' : ''}`
-        + `${errors}, \nHTTP PROPERTIES:\n\tbody: ${JSON.stringify(req.body, null, '\t')}, `
-        +`\n\tquery: ${JSON.stringify(req.query, null, '\t')}, \n\tparams: ${JSON.stringify(req.params, null, '\t')}`;
+        + `${errors}, \nHTTP PROPERTIES:\n\tbody: ${JSON.stringify(sanitizedBody, null, '\t')}, `
+        + `\n\tquery: ${JSON.stringify(sanitizedQuery, null, '\t')}, \n\tparams: ${JSON.stringify(sanitizedParams, null, '\t')}`;
 
-      const statusCode = StatusCodes.BAD_REQUEST;
+      const statusCode = HttpStatus.BAD_REQUEST;
       log.error(errorMessage, logOpts);
       res.status(statusCode).send(new ServiceResponse<null>(ResponseStatus.Failed, errorMessage, null, statusCode));
     } else {

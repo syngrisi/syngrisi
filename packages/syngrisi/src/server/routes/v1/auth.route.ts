@@ -1,4 +1,5 @@
 import express from 'express';
+import crypto from 'crypto';
 import { OpenAPIRegistry } from '@asteasolutions/zod-to-openapi';
 import * as authController from '@controllers/auth.controller';
 import { Midleware } from '@types';
@@ -8,6 +9,13 @@ import { createApiResponse, createApiEmptyResponse } from '@api-docs/openAPIResp
 import { SkipValid } from '../../schemas/SkipValid.schema';
 import { createRequestBodySchema } from '../../schemas/utils/createRequestBodySchema';
 import { createRequestOpenApiBodySchema } from '../../schemas/utils/createRequestOpenApiBodySchema';
+import { ensureSameOrigin, authLimiter } from '@middlewares';
+import passport from 'passport';
+import { AppSettings } from '../../models';
+import { initSSOStrategies, getSSOSecretsStatus, getOAuth2StrategyName, AUTH_STRATEGY } from '../../services/auth-sso.service';
+import log from '@logger';
+
+const logMeta = { scope: 'auth.route', msgType: 'SSO' };
 
 export const registry = new OpenAPIRegistry();
 const router = express.Router();
@@ -22,6 +30,7 @@ registry.registerPath({
 
 router.get(
     '/logout',
+    ensureSameOrigin,
     validateRequest(SkipValid, 'get, /v1/auth/logout'),
     authController.logout as Midleware
 );
@@ -36,6 +45,7 @@ registry.registerPath({
 
 router.get(
     '/apikey',
+    ensureSameOrigin,
     validateRequest(SkipValid, 'get, /v1/auth/apikey'),
     authController.apikey as Midleware
 );
@@ -51,6 +61,8 @@ registry.registerPath({
 
 router.post(
     '/login',
+    ensureSameOrigin,
+    authLimiter,
     validateRequest(createRequestBodySchema(AuthLoginSchema), 'post, /v1/auth/login'),
     authController.login as Midleware
 );
@@ -66,6 +78,7 @@ registry.registerPath({
 
 router.post(
     '/change',
+    ensureSameOrigin,
     validateRequest(createRequestBodySchema(AuthChangePasswordSchema), 'post, /v1/auth/change'),
     authController.changePassword as Midleware
 );
@@ -81,8 +94,110 @@ registry.registerPath({
 
 router.post(
     '/change_first_run',
-    validateRequest(createRequestBodySchema(AuthChangePasswordFirstRunSchema),  'post, /v1/auth/change_first_run'),
+    ensureSameOrigin,
+    validateRequest(createRequestBodySchema(AuthChangePasswordFirstRunSchema), 'post, /v1/auth/change_first_run'),
     authController.changePasswordFirstRun as Midleware
+);
+
+// SSO Routes
+
+// Get SSO status (public endpoint)
+router.get('/sso/status', async (req, res) => {
+    const ssoEnabledSetting = await AppSettings.findOne({ name: 'sso_enabled' });
+    const isEnabled = process.env.SSO_ENABLED === 'true' || (ssoEnabledSetting?.value as unknown as string) === 'true';
+    res.json({ ssoEnabled: isEnabled });
+});
+
+// Get SSO secrets configuration status (for admin UI)
+router.get('/sso/secrets-status', async (req, res) => {
+    const status = getSSOSecretsStatus();
+    res.json(status);
+});
+
+// Re-initialize SSO strategies (only in test mode)
+if (process.env.NODE_ENV === 'test' || process.env.SYNGRISI_TEST_MODE === 'true') {
+    router.post('/sso/reinit', async (req, res) => {
+        await initSSOStrategies(passport);
+        res.json({ success: true });
+    });
+}
+
+
+
+// Main SSO entry point with CSRF protection via state parameter
+router.get('/sso', authLimiter, async (req, res, next) => {
+    try {
+        const settings = await AppSettings.find({
+            name: { $in: ['sso_enabled', 'sso_protocol'] }
+        });
+        const getSetting = (name: string) => {
+            const envName = name.toUpperCase();
+            if (process.env[envName]) return process.env[envName];
+            return settings.find(s => s.name === name)?.value as string | undefined;
+        };
+
+        if (getSetting('sso_enabled') !== 'true') {
+            return res.redirect('/auth?error=sso_disabled');
+        }
+
+        const protocol = getSetting('sso_protocol');
+
+        // Generate CSRF state token for OAuth2
+        if (protocol === AUTH_STRATEGY.OAUTH2) {
+            const state = crypto.randomBytes(16).toString('hex');
+            // Store state in session for validation in callback
+            (req.session as any).oauthState = state;
+
+            const strategyName = getOAuth2StrategyName();
+            log.debug(`Using OAuth2 strategy: ${strategyName}`, logMeta);
+
+            passport.authenticate(strategyName, {
+                scope: ['openid', 'profile', 'email'],
+                state: state
+            })(req, res, next);
+        } else if (protocol === AUTH_STRATEGY.SAML) {
+            // SAML uses RelayState and InResponseTo for CSRF protection
+            passport.authenticate(AUTH_STRATEGY.SAML, { failureRedirect: '/auth?error=saml_fail' })(req, res, next);
+        } else {
+            res.redirect('/auth?error=invalid_protocol');
+        }
+    } catch (error) {
+        log.error('SSO initiation error', { ...logMeta, error });
+        next(error);
+    }
+});
+
+// OAuth callback with state validation
+router.get('/sso/oauth/callback', authLimiter, async (req, res, next) => {
+    // Validate CSRF state parameter
+    const stateFromQuery = req.query.state as string | undefined;
+    const stateFromSession = (req.session as any).oauthState;
+
+    if (!stateFromQuery || stateFromQuery !== stateFromSession) {
+        log.warn('OAuth callback state mismatch - possible CSRF attack', logMeta);
+        return res.redirect('/auth?error=invalid_state');
+    }
+
+    // Clear the state from session after validation
+    delete (req.session as any).oauthState;
+
+    // Use the same strategy that was used for initiation
+    const strategyName = getOAuth2StrategyName();
+    log.debug(`OAuth callback using strategy: ${strategyName}`, logMeta);
+
+    passport.authenticate(strategyName, {
+        failureRedirect: '/auth?error=oauth_fail',
+        successRedirect: '/',
+    })(req, res, next);
+});
+
+// SAML callback
+router.post('/sso/saml/callback',
+    authLimiter,
+    passport.authenticate(AUTH_STRATEGY.SAML, { failureRedirect: '/auth?error=saml_fail' }),
+    (req, res) => {
+        res.redirect('/');
+    }
 );
 
 export default router;

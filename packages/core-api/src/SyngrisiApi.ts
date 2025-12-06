@@ -1,6 +1,6 @@
 import FormData from 'form-data'
 import got from 'got-cjs'
-import hasha from 'hasha'
+import { createHash } from 'node:crypto'
 import logger from '@wdio/logger'
 import { LogLevelDesc } from 'loglevel'
 import { errorObject, paramsGuard, prettyCheckResult, printErrorResponseBody } from './utils'
@@ -25,6 +25,15 @@ const log = logger('core-api')
 // 0 | 4 | 2 | 1 | 3 | 5 | "trace" | "debug" | "info" | "warn" | "error" |
 if (process.env.SYNGRISI_LOG_LEVEL) {
     log.setLevel(process.env.SYNGRISI_LOG_LEVEL as LogLevelDesc)
+}
+
+/**
+ * Creates a SHA-512 hash of the input string (replaces hasha library)
+ * Note: hasha library uses SHA-512 by default, so we must use SHA-512 here
+ * to maintain compatibility with existing API keys stored in the database
+ */
+function hasha(input: string): string {
+    return createHash('sha512').update(input).digest('hex')
 }
 
 /**
@@ -85,27 +94,44 @@ class SyngrisiApi {
      */
     public async startSession(params: ApiSessionParams): Promise<SessionResponse | ErrorObject> {
         paramsGuard(params, 'startSession, params', ApiSessionParamsSchema)
-        const form = new FormData()
-        const required = ['run', 'suite', 'runident', 'name', 'viewport', 'browser', 'browserVersion', 'os', 'app']
-        // @ts-ignore
-        required.forEach(param => form.append(param, params[param]))
 
-        // optional
-        if (params.tags) form.append('tags', JSON.stringify(params.tags))
-        if (params.branch) form.append('branch', params.branch)
+        const maxRetries = 3
+        const retryDelayMs = 2000
 
-        let result
-        try {
-            result = await got.post(this.url('startSession'), {
-                body: form,
-                headers: { apikey: this.config.apiHash },
-            }).json() as SessionResponse
-            return result
-        } catch (e: any) {
-            log.error(`❌ Error posting start session data: '${e.stack || e}'`)
-            if (e.response) printErrorResponseBody(e)
-            return errorObject(e)
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+            const form = new FormData()
+            const required = ['run', 'suite', 'runident', 'name', 'viewport', 'browser', 'browserVersion', 'os', 'app']
+            // @ts-ignore
+            required.forEach(param => form.append(param, params[param]))
+
+            // optional
+            if (params.tags) form.append('tags', JSON.stringify(params.tags))
+            if (params.branch) form.append('branch', params.branch)
+
+            try {
+                const result = await got.post(this.url('startSession'), {
+                    body: form,
+                    headers: { apikey: this.config.apiHash },
+                }).json() as SessionResponse
+                return result
+            } catch (e: any) {
+                const is401 = e.response?.statusCode === 401
+                const isLastAttempt = attempt === maxRetries
+
+                if (is401 && !isLastAttempt) {
+                    log.warn(`⚠️ 401 error on startSession, retrying in ${retryDelayMs}ms (attempt ${attempt}/${maxRetries})`)
+                    await new Promise(resolve => setTimeout(resolve, retryDelayMs))
+                    continue
+                }
+
+                log.error(`❌ Error posting start session data: '${e.stack || e}'`)
+                if (e.response) printErrorResponseBody(e)
+                return errorObject(e)
+            }
         }
+
+        // This should never be reached, but TypeScript needs it
+        return errorObject(new Error('Max retries exceeded'))
     }
 
     /**
@@ -132,6 +158,10 @@ class SyngrisiApi {
 
     private addMessageIfCheckFailed(result: any) {
         const patchedResult = result
+        // Skip if result is an error object or status is not a string
+        if (patchedResult.error || typeof patchedResult.status !== 'string') {
+            return patchedResult
+        }
         if (patchedResult.status.includes('failed')) {
             const checkView = `'${this.config.url}?checkId=${patchedResult._id}&modalIsOpen=true'`
             patchedResult.message = `To evaluate the results of the check, follow the link: '${checkView}'`
@@ -213,7 +243,6 @@ class SyngrisiApi {
         paramsGuard(params, 'createCheck, params', CheckParamsSchema)
 
         const url = `${this.url('createCheck')}`
-        const form = new FormData()
         const fieldsMapping = {
             branch: 'branch',
             app: 'appName',
@@ -229,29 +258,48 @@ class SyngrisiApi {
             os: 'os'
         }
 
-        Object.keys(fieldsMapping).forEach(key => {
-            // @ts-ignore
-            if (params[key]) {
+        const maxRetries = 3
+        const retryDelayMs = 2000
+
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+            const form = new FormData()
+
+            Object.keys(fieldsMapping).forEach(key => {
                 // @ts-ignore
-                form.append(fieldsMapping[key], params[key])
+                if (params[key]) {
+                    // @ts-ignore
+                    form.append(fieldsMapping[key], params[key])
+                }
+            })
+
+            if (hashCode) form.append('hashcode', hashCode)
+            if (imageBuffer) form.append('file', imageBuffer, 'file')
+
+            try {
+                const result: CheckResponse = await got.post(url, {
+                    body: form,
+                    headers: { apikey: this.config.apiHash },
+                }).json()
+
+                return result
+            } catch (e: any) {
+                const is401 = e.response?.statusCode === 401
+                const isLastAttempt = attempt === maxRetries
+
+                if (is401 && !isLastAttempt) {
+                    log.warn(`⚠️ 401 error on createCheck, retrying in ${retryDelayMs}ms (attempt ${attempt}/${maxRetries})`)
+                    await new Promise(resolve => setTimeout(resolve, retryDelayMs))
+                    continue
+                }
+
+                log.error(`❌ Error posting create check data params: '${JSON.stringify(params)}', error: '${e.stack || e}'`)
+                if (e.response) printErrorResponseBody(e)
+                return errorObject(e)
             }
-        })
-
-        if (hashCode) form.append('hashcode', hashCode)
-        if (imageBuffer) form.append('file', imageBuffer, 'file')
-
-        try {
-            const result: CheckResponse = await got.post(url, {
-                body: form,
-                headers: { apikey: this.config.apiHash },
-            }).json()
-
-            return result
-        } catch (e: any) {
-            log.error(`❌ Error posting create check data params: '${JSON.stringify(params)}', error: '${e.stack || e}'`)
-            if (e.response) printErrorResponseBody(e)
-            return errorObject(e)
         }
+
+        // This should never be reached, but TypeScript needs it
+        return errorObject(new Error('Max retries exceeded'))
     }
 
     public async getIdent(): Promise<string[] | ErrorObject> {
@@ -328,6 +376,42 @@ class SyngrisiApi {
             return result
         } catch (e: any) {
             log.error(`❌ Error getting snapshots, params: '${JSON.stringify(params)}' data, error: '${e.stack || e}'`)
+            if (e.response) printErrorResponseBody(e)
+            return errorObject(e)
+        }
+    }
+
+    /**
+     * Accepts a check by setting a new baseline for it.
+     *
+     * @param {string} checkId - The unique identifier of the check to accept.
+     * @param {string} baselineId - The unique identifier of the baseline to set as the new accepted baseline.
+     * @returns {Promise<CheckResponse | ErrorObject>} A promise that resolves with the updated check data or ErrorObject.
+     * @example
+     * const apiClient = new SyngrisiApi({
+     *     url: 'http://<your-domain>/',
+     *     apiKey: 'your-api-key'
+     * });
+     * const result = await apiClient.acceptCheck('check-id-123', 'baseline-id-456');
+     */
+    public async acceptCheck(checkId: string, baselineId: string): Promise<CheckResponse | ErrorObject> {
+        try {
+            if (!checkId) {
+                throw new Error('checkId is required')
+            }
+            if (!baselineId) {
+                throw new Error('baselineId is required')
+            }
+
+            const url = `${this.config.url}v1/checks/${checkId}/accept`
+            const result: CheckResponse = await got.put(url, {
+                json: { baselineId },
+                headers: { apikey: this.config.apiHash },
+            }).json()
+
+            return result
+        } catch (e: any) {
+            log.error(`❌ Error accepting check, checkId: '${checkId}', baselineId: '${baselineId}', error: '${e.stack || e}'`)
             if (e.response) printErrorResponseBody(e)
             return errorObject(e)
         }

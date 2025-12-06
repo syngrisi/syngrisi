@@ -1,5 +1,6 @@
 /* eslint-disable max-len */
 import * as React from 'react';
+import { ComponentPropsWithoutRef } from 'react';
 import {
     ColorSchemeProvider,
     MantineProvider,
@@ -14,12 +15,35 @@ import { NotificationsProvider } from '@mantine/notifications';
 
 import { IconSearch } from '@tabler/icons-react';
 import { SpotlightProvider } from '@mantine/spotlight';
+import { DefaultAction } from '@mantine/spotlight/esm/DefaultAction/DefaultAction';
 import { AppContext } from '@admin/AppContext';
 
 import AdminLayout from '@admin/AdminLayout';
 import useColorScheme from '@shared/hooks/useColorSheme';
 import { navigationData } from '@shared/navigation/navigationData';
 import { INavDataItem } from '@shared/navigation/interfaces';
+
+const SpotlightActionButton = React.forwardRef<HTMLButtonElement, ComponentPropsWithoutRef<typeof DefaultAction>>(
+    (props, ref) => {
+        const { action, ...others } = props;
+        const ariaLabel = action?.title || 'Spotlight action';
+        const dataTest = action?.title
+            ? `spotlight-action-${action.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
+            : undefined;
+
+        return (
+            <DefaultAction
+                ref={ref}
+                aria-label={ariaLabel}
+                data-test={dataTest}
+                action={action}
+                {...others}
+            />
+        );
+    },
+);
+
+SpotlightActionButton.displayName = 'SpotlightActionButton';
 
 const queryClient = new QueryClient();
 
@@ -84,10 +108,12 @@ function App() {
                     >
                         <SpotlightProvider
                             actions={spotlightActions}
+                            actionComponent={SpotlightActionButton}
                             highlightQuery
                             searchIcon={<IconSearch size={18} />}
                             limit={7}
                             searchPlaceholder="Search..."
+                            searchInputProps={{ 'aria-label': 'Spotlight search' }}
                             shortcut={['mod + k', 'mod + K']}
                             nothingFoundMessage="Nothing found..."
                         >

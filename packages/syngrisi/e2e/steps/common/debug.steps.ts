@@ -1,25 +1,25 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { spawn, type ChildProcess } from 'node:child_process';
-import { When } from '@fixtures';
+import { When, Then } from '@fixtures';
 import type { TestEngineFixture } from '@fixtures';
 import { env } from '@config';
 import { expect } from '@playwright/test';
 import { createLogger } from '@lib/logger';
 import type { BddContext } from 'playwright-bdd/dist/runtime/bddContext';
+import type { Page } from '@playwright/test';
 
 const logger = createLogger('DebugSteps');
-const portsLogDir = path.resolve(__dirname, '..', '..', 'support', 'mcp', 'logs', 'ports');
 
 /**
- * Step definition: `When I pause`
+ * Step definition: `When I PAUSE`
  *
  * Pauses the current Playwright runner, opening the inspector.
  * This step is a no-op in CI environments.
  *
  * @example
  * ```gherkin
- * When I pause
+ * When I PAUSE
  * ```
  */
 const logMcpStatus = (testEngine: TestEngineFixture) => {
@@ -144,7 +144,8 @@ const recordPortLog = async (port: number | null | undefined, recordedScenario: 
     const filePath = path.join(portsLogDir, `${timestampSeconds}.port`);
     const payload = buildPortLogPayload(port, recordedScenario);
 
-    await fs.writeFile(filePath, `${JSON.stringify(payload, null, 2)}\n`, 'utf8');
+    await fs.writeFile(filePath, `${JSON.stringify(payload, null, 2)}
+`, 'utf8');
     logger.info(`Recorded MCP port ${port} at ${filePath}`);
     return filePath;
   } catch (error) {
@@ -168,7 +169,7 @@ const buildCodexPrompt = (basePrompt: string | undefined, scenario: RecordedScen
   return sections.join('\n\n');
 };
 
-const shellEscape = (value: string) => `'${value.replace(/'/g, `'\\''`)}'`;
+const shellEscape = (value: string) => `'${value.replace(/'/g, `'\''`)}'`;
 
 const encodePromptForShell = (prompt: string | undefined) => {
   if (!prompt) {
@@ -182,13 +183,13 @@ const encodePromptForShell = (prompt: string | undefined) => {
 const buildAppleScriptCommand = (prompt: string | undefined) => {
   const { assignment, invocation } = encodePromptForShell(prompt);
   const shellCommand = `cd ${shellEscape(process.cwd())}; ${assignment}${invocation}`;
-  const escapedShellCommand = shellCommand.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  const escapedShellCommand = shellCommand.replace(/\\/g, '\\\\').replace(/"/g, '\"');
   return `
-tell application "Terminal"
-  activate
-  do script "${escapedShellCommand}"
-end tell
-`.trim();
+    tell application "Terminal"
+      activate
+      do script "${escapedShellCommand}"
+    end tell
+  `.trim();
 };
 
 const buildCodexInvocation = (prompt: string | undefined) => {
@@ -261,7 +262,7 @@ const startCodexInteractiveSession = (prompt: string | undefined) => {
   }
 };
 
-When('I pause', async ({ page, testEngine }) => {
+When('I PAUSE', async ({ page, testEngine }) => {
   if (env.CI) {
     return;
   }
@@ -270,9 +271,48 @@ When('I pause', async ({ page, testEngine }) => {
   await page.pause();
 });
 
+Then('I pause', async ({ page }) => {
+  if (env.CI) {
+    return;
+  }
+  await page.pause();
+});
+
+When('I pause with phrase: {string}', async ({ page, testEngine }, phrase: string) => {
+  if (env.CI) {
+    return;
+  }
+  const { exec } = await import('node:child_process');
+  exec(`say -v Milena "${phrase}"`);
+
+  logMcpStatus(testEngine);
+  await page.pause();
+});
+
+/**
+ * Pauses execution for a specified number of milliseconds.
+ * Useful for waiting for async operations or animations to complete.
+ *
+ * @example
+ * ```gherkin
+ * When I pause for 1000 ms
+ * When I pause for 500 ms
+ * ```
+ */
+When('I pause for {int} ms', async ({ page }, ms: number) => {
+  logger.info(`Pausing for ${ms}ms`);
+  await page.waitForTimeout(ms);
+});
+
 When('I fail', async ({ page }) => {
   logger.info('Failing as requested');
   expect(false).toBe(true);
+});
+
+When('I log current URL', async ({ page }) => {
+  const currentUrl = page.url();
+  logger.info(`Current URL: ${currentUrl}`);
+  return currentUrl;
 });
 
 When('I test', async () => {

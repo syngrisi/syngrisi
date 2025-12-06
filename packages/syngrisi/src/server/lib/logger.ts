@@ -1,9 +1,8 @@
 import winston, { Logger as WinstonLogger } from 'winston';
 import 'winston-mongodb';
-import chalk from 'chalk';
+import { colors } from '@utils/colors';
 import formatISOToDateTime from '@utils/formatISOToDateTime';
 import { config } from '@config';
-import path from 'path';
 import { LogOpts } from '@types';
 import { ApiError } from '../utils';
 import { env } from "@env";
@@ -13,62 +12,36 @@ const logLevel: string = env.SYNGRISI_LOG_LEVEL;
 interface LoggerOptions {
     dbConnectionString: string;
 }
-function getScriptLine(): string {
-    const stack = new Error().stack;
-
-    if (stack) {
-        const stackLines = stack.split('\n');
-        let loggerLineIndex = -1;
-
-        // last string contains 'lib/logger'
-        for (let i = 0; i < stackLines.length; i++) {
-            if (stackLines[i].includes('lib/logger')) {
-                loggerLineIndex = i;
-            }
-        }
-
-        // check string after 'lib/logger'
-        const targetLineIndex = loggerLineIndex + 1;
-        if (targetLineIndex >= 0 && targetLineIndex < stackLines.length) {
-            const targetLine = stackLines[targetLineIndex];
-            const match = targetLine.match(/at\s+(?:.+\s+\()?(.+):(\d+):(\d+)\)?/);
-            if (match) {
-                const scriptPath = match[1];
-                const relativePath = path.relative(process.cwd(), scriptPath);
-                const lineNumber = match[2];
-                return `${relativePath}:${lineNumber}`;
-            }
-        }
-    }
-    return 'unknown';
-}
-
 function createWinstonLogger(opts: LoggerOptions): WinstonLogger {
-    return winston.createLogger({
-        transports: [
-            new winston.transports.Console({
-                level: logLevel || 'silly',
-                format: winston.format.combine(
-                    winston.format.colorize(),
-                    winston.format.timestamp(),
-                    winston.format.ms(),
-                    winston.format.metadata(),
-                    winston.format.printf((info) => {
-                        const user = info.metadata.user ? chalk.blue(` <${info.metadata.user}>`) : '';
-                        const ref = info.metadata.ref ? chalk.gray(` ${info.metadata.ref}`) : '';
-                        const msgType = info.metadata.msgType ? ` ${info.metadata.msgType}` : '';
-                        const itemType = info.metadata.itemType ? chalk.magenta(` ${info.metadata.itemType}`) : '';
-                        const scope = info.metadata.scope ? chalk.magenta(` [${info.metadata.scope}] `) : chalk.magenta(` [${getScriptLine()}] `);
-                        const msg = typeof info.message === 'object'
-                            ? `\n${JSON.stringify(info.message, null, 2)}`
-                            : info.message;
+    const transports: winston.transport[] = [
+        new winston.transports.Console({
+            level: logLevel || 'silly',
+            format: winston.format.combine(
+                winston.format.colorize(),
+                winston.format.timestamp(),
+                winston.format.ms(),
+                winston.format.metadata(),
+                winston.format.printf((info: any) => {
+                    const user = info.metadata.user ? colors.blue(` <${info.metadata.user}>`) : '';
+                    const ref = info.metadata.ref ? colors.gray(` ${info.metadata.ref}`) : '';
+                    const msgType = info.metadata.msgType ? ` ${info.metadata.msgType}` : '';
+                    const itemType = info.metadata.itemType ? colors.magenta(` ${info.metadata.itemType}`) : '';
+                    const scope = info.metadata.scope ? colors.magenta(` [${info.metadata.scope}]`) : '';
+                    const msg = typeof info.message === 'object'
+                        ? `\n${JSON.stringify(info.message, null, 2)}`
+                        : info.message;
 
-                        return `${info.level} ${scope}${formatISOToDateTime(info.metadata.timestamp)} `
-                            + `${info.metadata.ms}${user}${ref}${msgType}${itemType} '${msg}'`;
-                    }),
-                    winston.format.padLevels(),
-                ),
-            }),
+                    return `${info.level} ${scope}${formatISOToDateTime(info.metadata.timestamp)} `
+                        + `${info.metadata.ms}${user}${ref}${msgType}${itemType} '${msg}'`;
+                }),
+                winston.format.padLevels(),
+            ),
+        }),
+    ];
+
+    // Skip Mongo transport in test mode to avoid polluting vrslogs with framework diagnostics
+    if (!env.SYNGRISI_TEST_MODE) {
+        transports.push(
             new winston.transports.MongoDB({
                 level: logLevel || 'debug',
                 format: winston.format.combine(
@@ -77,13 +50,14 @@ function createWinstonLogger(opts: LoggerOptions): WinstonLogger {
                     winston.format.metadata(),
                 ),
                 options: {
-                    useUnifiedTopology: true,
                 },
                 db: opts.dbConnectionString,
                 collection: 'vrslogs',
             }),
-        ],
-    });
+        );
+    }
+
+    return winston.createLogger({ transports });
 }
 
 class Logger {
@@ -101,9 +75,6 @@ class Logger {
 
     private log(severity: string, msg: string | object, meta: LogOpts[]): void {
         const mergedMeta = Logger.mergeMeta(meta);
-        if (!mergedMeta.scope) {
-            mergedMeta.scope = getScriptLine();
-        }
         const formattedMsg = typeof msg === 'object' ? JSON.stringify(msg, null, 2) : msg;
         this.winstonLogger.log(severity, formattedMsg, mergedMeta);
     }

@@ -12,11 +12,16 @@ import type { TestStore } from '@fixtures';
 import * as path from 'path';
 import { execSync } from 'child_process';
 import * as fs from 'fs';
+import { hasTag } from '@utils/common';
+import type { BddContext } from 'playwright-bdd/dist/runtime/bddContext';
 
 const logger = createLogger('ServerSteps');
 
 // Store driver instance for tests
 let vDriver: SyngrisiDriver | null = null;
+
+const restartAfterEnvSet = new Map<number, boolean>();
+const getCid = (): number => (process.env.DOCKER === '1' ? 100 : parseInt(process.env.TEST_WORKER_INDEX || '0', 10));
 
 function resetTestCreationState(testData?: TestStore): void {
   if (!testData) return;
@@ -30,12 +35,29 @@ function resetTestCreationState(testData?: TestStore): void {
 
 When(
   'I set env variables:',
-  async ({}, yml: string) => {
+  async ({ appServer, $bddContext }: { appServer: AppServerFixture; $bddContext?: BddContext }, yml: string) => {
     const params = yaml.parse(yml);
     Object.keys(params).forEach((key) => {
-      process.env[key] = String(params[key]);
-      logger.info(`Set env variable ${key}=${params[key]}`);
+      if (params[key] === null || params[key] === undefined) {
+        delete process.env[key];
+        logger.info(`Unset env variable ${key}`);
+      } else {
+        process.env[key] = String(params[key]);
+        logger.info(`Set env variable ${key}=${params[key]}`);
+      }
     });
+    const testInfo = ($bddContext as BddContext | undefined)?.testInfo;
+    const isFastMode = hasTag(testInfo, '@fast-server');
+    const cid = getCid();
+    if (restartAfterEnvSet.get(cid)) {
+      logger.info('Env updated after server stop, restarting server to apply new values');
+      await appServer.start();
+      restartAfterEnvSet.set(cid, false);
+    } else if (isFastMode && appServer.baseURL) {
+      logger.info('Fast mode: restarting server to apply env overrides');
+      await appServer.restart();
+      restartAfterEnvSet.set(cid, false);
+    }
   }
 );
 
@@ -45,15 +67,16 @@ Given(
     // Always start server (even if it was stopped by "I clear Database and stop Server")
     logger.info('Starting server...');
     await appServer.start();
-    
+    restartAfterEnvSet.set(getCid(), false);
+
     // Wait a bit for server to be fully ready
     await new Promise(resolve => setTimeout(resolve, 2000));
-    
+
     // Set syngrisiUrl for template rendering (as in old tests)
     const syngrisiUrl = `${appServer.baseURL}/`;
     testData.set('syngrisiUrl', syngrisiUrl);
     resetTestCreationState(testData);
-    
+
     // Initialize SyngrisiDriver (as in original WebdriverIO tests)
     // Ensure URL ends with / (as SyngrisiApi expects)
     const apiKey = process.env.SYNGRISI_API_KEY || '123';
@@ -62,10 +85,10 @@ Given(
       url: normalizedURL,
       apiKey: apiKey,
     });
-    
+
     // Store driver in testData for use in other steps
     testData.set('vDriver', vDriver);
-    
+
     logger.info(`Server started at ${appServer.baseURL}`);
     logger.info('SyngrisiDriver initialized');
   }
@@ -74,14 +97,16 @@ Given(
 Given(
   'I start Server',
   async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }) => {
-    // Start server if not already running, or restart to apply new env variables
+    // Start server if not already running, or FORCE restart to apply new env variables
+    // Force restart is necessary because env vars may have changed (e.g., SSO config)
     if (appServer.baseURL) {
-      logger.info('Server is running, restarting to apply new env variables');
-      await appServer.restart();
+      logger.info('Server is running, force restarting to apply new env variables');
+      await appServer.restart(true); // Force restart to apply new env
     } else {
       logger.info('Starting server...');
       await appServer.start();
     }
+    restartAfterEnvSet.set(getCid(), false);
     // Set syngrisiUrl for template rendering (as in old tests)
     const syngrisiUrl = `${appServer.baseURL}/`;
     testData.set('syngrisiUrl', syngrisiUrl);
@@ -96,7 +121,8 @@ When(
     // Stop server process (as in original stopServer())
     logger.info('Stopping Syngrisi server...');
     stopServerProcess();
-    
+    restartAfterEnvSet.set(getCid(), true);
+
     // Also stop via fixture if running
     if (appServer.baseURL) {
       await appServer.stop();
@@ -112,7 +138,8 @@ When(
     // Stop server process (as in original stopServer())
     logger.info('Stopping server...');
     stopServerProcess();
-    
+    restartAfterEnvSet.set(getCid(), true);
+
     // Also stop via fixture if running
     if (appServer.baseURL) {
       await appServer.stop();
@@ -124,29 +151,37 @@ When(
 
 Given(
   'I clear Database and stop Server',
-  async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }) => {
+  async (
+    { appServer, testData, $bddContext }: { appServer: AppServerFixture; testData: TestStore; $bddContext?: unknown },
+    _testInfo,
+  ) => {
+    const testInfo = ($bddContext as BddContext | undefined)?.testInfo;
+    if (hasTag(testInfo, '@fast-server')) {
+      logger.info('STEP SKIPPED: Clear DB & Stop Server handled by fixture in @fast-server mode');
+      return;
+    }
     try {
       // Stop server first (as in original: stopServer() then clearDatabase())
       logger.info('Stopping server...');
       stopServerProcess();
-      
+
       // Also stop via fixture if running
       if (appServer.baseURL) {
         await appServer.stop();
       }
-      
+
       // Clear database (removeBaselines = true by default, as in original)
       logger.info('Clearing database...');
-      clearDatabase(undefined, true); // Explicitly pass removeBaselines = true to clear screenshots folder
-      
+      await clearDatabase(undefined, true); // Explicitly pass removeBaselines = true to clear screenshots folder
+
       // Reset legacy default environment expectations between scenarios
       process.env.SYNGRISI_DISABLE_FIRST_RUN = 'true';
-      process.env.SYNGRISI_TEST_MODE = 'true';
+      process.env.SYNGRISI_TEST_MODE = '1'; // Backend expects '1', not 'true'
       process.env.SYNGRISI_AUTH = 'false';
-      
+
       // Set flag to skip automatic server startup in fixture
       setSkipAutoStart(true);
-      
+
       logger.info('Database cleared and server stopped');
       resetTestCreationState(testData);
     } catch (error: any) {
@@ -172,10 +207,10 @@ When(
       url: normalizedURL,
       apiKey: apiKey,
     });
-    
+
     // Store driver in testData for use in other steps
     testData.set('vDriver', vDriver);
-    
+
     logger.info('SyngrisiDriver initialized');
   }
 );
@@ -184,7 +219,7 @@ When(
   'I clear database',
   async ({ appServer, testData }: { appServer: AppServerFixture; testData: TestStore }) => {
     logger.info('Clearing database...');
-    clearDatabase(false);
+    await clearDatabase(false, false, true);
     logger.info('Database cleared');
     resetTestCreationState(testData);
   }
@@ -198,7 +233,7 @@ When(
     const cid =
       process.env.DOCKER === '1'
         ? 100
-        : parseInt(process.env.TEST_PARALLEL_INDEX || '0', 10);
+        : parseInt(process.env.TEST_WORKER_INDEX || '0', 10);
     try {
       logger.info(`Running clear_test_screenshots_only for CID=${cid}`);
       const result = execSync(`CID=${cid} npm run clear_test_screenshots_only`, {

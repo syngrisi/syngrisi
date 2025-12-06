@@ -1,0 +1,34 @@
+// Generated from: ../../features/CHECKS_HANDLING/partially_accepted.feature
+import { test } from "../../../fixtures/index.ts";
+
+test.describe('Partially Accepted Test', () => {
+
+  test.beforeEach('Background', async ({ When, appServer, page, testData }, testInfo) => { if (testInfo.error) return;
+    await When('I open the app', null, { appServer, page, testData }); 
+    await When('I clear local storage', null, { page }); 
+  });
+  
+  test('Partially Accepted Test', { tag: ['@fast-server', '@smoke'] }, async ({ Given, When, appServer, page, testData }) => { 
+    await Given('I create "1" tests with:', {"docString":{"content":"    testName: TestName\n    checks:\n      - checkName: CheckName-1\n        filePath: files/A.png\n      - checkName: CheckName-2\n        filePath: files/A.png"}}, { appServer, testData }); 
+    await When('I go to "main" page', null, { appServer, page }); 
+    await When('I unfold the test "TestName"', null, { page, testData }); 
+    await When('I wait 30 seconds for the element with locator "//*[@data-row-name=\'TestName\']//td[@data-test=\'table-row-Accepted\']//*[text()=\'Unaccepted\']" to be visible', null, { page, testData }); 
+    await When('I accept the "CheckName-1" check', null, { page }); 
+    await When('I wait 30 seconds for the element with locator "//*[@data-row-name=\'TestName\']//td[@data-test=\'table-row-Accepted\']//*[text()=\'Partially\']" to be visible', null, { page, testData }); 
+    await When('I accept the "CheckName-2" check', null, { page }); 
+    await When('I wait 30 seconds for the element with locator "//*[@data-row-name=\'TestName\']//td[@data-test=\'table-row-Accepted\']//*[text()=\'Accepted\']" to be visible', null, { page, testData }); 
+  });
+
+});
+
+// == technical section ==
+
+test.use({
+  $test: [({}, use) => use(test), { scope: 'test', box: true }],
+  $uri: [({}, use) => use('../../features/CHECKS_HANDLING/partially_accepted.feature'), { scope: 'test', box: true }],
+  $bddFileData: [({}, use) => use(bddFileData), { scope: "test", box: true }],
+});
+
+const bddFileData = [ // bdd-data-start
+  {"pwTestLine":11,"pickleLine":11,"tags":["@fast-server","@smoke"],"steps":[{"pwStepLine":7,"gherkinStepLine":7,"keywordType":"Action","textWithKeyword":"When I open the app","isBg":true,"stepMatchArguments":[]},{"pwStepLine":8,"gherkinStepLine":8,"keywordType":"Action","textWithKeyword":"When I clear local storage","isBg":true,"stepMatchArguments":[]},{"pwStepLine":12,"gherkinStepLine":12,"keywordType":"Context","textWithKeyword":"Given I create \"1\" tests with:","stepMatchArguments":[{"group":{"start":9,"value":"\"1\"","children":[{"start":10,"value":"1","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]},{"pwStepLine":13,"gherkinStepLine":21,"keywordType":"Action","textWithKeyword":"When I go to \"main\" page","stepMatchArguments":[{"group":{"start":8,"value":"\"main\"","children":[{"start":9,"value":"main","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]},{"pwStepLine":14,"gherkinStepLine":24,"keywordType":"Action","textWithKeyword":"When I unfold the test \"TestName\"","stepMatchArguments":[{"group":{"start":18,"value":"\"TestName\"","children":[{"start":19,"value":"TestName","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]},{"pwStepLine":15,"gherkinStepLine":25,"keywordType":"Action","textWithKeyword":"When I wait 30 seconds for the element with locator \"//*[@data-row-name='TestName']//td[@data-test='table-row-Accepted']//*[text()='Unaccepted']\" to be visible","stepMatchArguments":[{"group":{"start":7,"value":"30","children":[]},"parameterTypeName":"int"},{"group":{"start":26,"value":"element","children":[]},"parameterTypeName":"role"},{"group":{"start":39,"value":"locator","children":[]},"parameterTypeName":"attribute"},{"group":{"start":47,"value":"\"//*[@data-row-name='TestName']//td[@data-test='table-row-Accepted']//*[text()='Unaccepted']\"","children":[{"start":48,"value":"//*[@data-row-name='TestName']//td[@data-test='table-row-Accepted']//*[text()='Unaccepted']","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"},{"group":{"start":147,"value":"visible","children":[]},"parameterTypeName":"condition"}]},{"pwStepLine":16,"gherkinStepLine":28,"keywordType":"Action","textWithKeyword":"When I accept the \"CheckName-1\" check","stepMatchArguments":[{"group":{"start":13,"value":"\"CheckName-1\"","children":[{"start":14,"value":"CheckName-1","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]},{"pwStepLine":17,"gherkinStepLine":29,"keywordType":"Action","textWithKeyword":"When I wait 30 seconds for the element with locator \"//*[@data-row-name='TestName']//td[@data-test='table-row-Accepted']//*[text()='Partially']\" to be visible","stepMatchArguments":[{"group":{"start":7,"value":"30","children":[]},"parameterTypeName":"int"},{"group":{"start":26,"value":"element","children":[]},"parameterTypeName":"role"},{"group":{"start":39,"value":"locator","children":[]},"parameterTypeName":"attribute"},{"group":{"start":47,"value":"\"//*[@data-row-name='TestName']//td[@data-test='table-row-Accepted']//*[text()='Partially']\"","children":[{"start":48,"value":"//*[@data-row-name='TestName']//td[@data-test='table-row-Accepted']//*[text()='Partially']","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"},{"group":{"start":146,"value":"visible","children":[]},"parameterTypeName":"condition"}]},{"pwStepLine":18,"gherkinStepLine":30,"keywordType":"Action","textWithKeyword":"When I accept the \"CheckName-2\" check","stepMatchArguments":[{"group":{"start":13,"value":"\"CheckName-2\"","children":[{"start":14,"value":"CheckName-2","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]},{"pwStepLine":19,"gherkinStepLine":31,"keywordType":"Action","textWithKeyword":"When I wait 30 seconds for the element with locator \"//*[@data-row-name='TestName']//td[@data-test='table-row-Accepted']//*[text()='Accepted']\" to be visible","stepMatchArguments":[{"group":{"start":7,"value":"30","children":[]},"parameterTypeName":"int"},{"group":{"start":26,"value":"element","children":[]},"parameterTypeName":"role"},{"group":{"start":39,"value":"locator","children":[]},"parameterTypeName":"attribute"},{"group":{"start":47,"value":"\"//*[@data-row-name='TestName']//td[@data-test='table-row-Accepted']//*[text()='Accepted']\"","children":[{"start":48,"value":"//*[@data-row-name='TestName']//td[@data-test='table-row-Accepted']//*[text()='Accepted']","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"},{"group":{"start":145,"value":"visible","children":[]},"parameterTypeName":"condition"}]}]},
+]; // bdd-data-end

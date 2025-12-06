@@ -1,0 +1,36 @@
+metadata:
+  category: common/llm
+  generatedAt: '2025-12-05T04:19:37.324Z'
+  totalFiles: 1
+  totalSteps: 1
+  sourceFiles:
+    - steps/common/llm.steps.ts
+steps:
+  - pattern: I get simplified DOM for LLM
+    description: |-
+      Step definition: `When I get simplified DOM for LLM`
+
+      Generates a simplified HTML representation of the current page optimized for LLM processing.
+      The simplification process removes:
+      - Invisible elements (display:none, visibility:hidden, etc.)
+      - Non-interactive elements without content (empty divs, spans, etc.)
+      - Unnecessary nested div/span wrappers
+      - Non-semantic tags (script, style, svg, etc.)
+      - Tailwind CSS utility classes and other noisy CSS classes
+
+      By default, data-ai-id attributes are NOT included in the output to keep HTML clean.
+      To include data-ai-id for element interactions, set includeDataAiId: true in options.
+
+      The step logs statistics about the simplification process, including:
+      - Number of elements at each stage
+      - Percentage of elements removed at each stage
+      - Overall reduction percentage
+
+      @returns {Promise<DOMSimplificationResult>} Result containing simplified HTML, element mappings, tree structure, and statistics
+
+      @example
+      ```gherkin
+      Given I have opened the app
+      When I get simplified DOM for LLM
+      ```
+    line: 34

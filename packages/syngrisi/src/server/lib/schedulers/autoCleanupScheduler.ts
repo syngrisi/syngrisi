@@ -19,7 +19,7 @@ export class AutoCleanupScheduler {
     private timer: NodeJS.Timeout | null = null;
     private running = false;
 
-    constructor(private options: SchedulerOptions) {}
+    constructor(private options: SchedulerOptions) { }
 
     start(): void {
         if (this.timer) {
@@ -30,14 +30,14 @@ export class AutoCleanupScheduler {
             void this.tick();
         }, intervalMs);
         void this.tick();
-        log.info(`[${this.options.scope}] scheduler started (poll every ${intervalMs}ms)`);
+        log.info(`scheduler started (poll every ${intervalMs}ms)`, { scope: this.options.scope });
     }
 
     stop(): void {
         if (this.timer) {
             clearInterval(this.timer);
             this.timer = null;
-            log.info(`[${this.options.scope}] scheduler stopped`);
+            log.info(`scheduler stopped`, { scope: this.options.scope });
         }
     }
 
@@ -48,7 +48,7 @@ export class AutoCleanupScheduler {
         this.running = true;
 
         try {
-            const AppSettings = await appSettings;
+            const AppSettings = appSettings;
             const setting = await AppSettings.get(this.options.settingName);
             if (!setting || !setting.enabled) {
                 return;
@@ -67,16 +67,16 @@ export class AutoCleanupScheduler {
                 return;
             }
 
-            log.info(`[${this.options.scope}] triggering cleanup for items older than ${days} days`);
+            log.info(`triggering cleanup for items older than ${days} days`, { scope: this.options.scope });
             await this.options.runTask(days);
             await AppSettings.set(this.options.settingName, {
                 ...value,
                 days,
                 lastRunAt: new Date(now).toISOString(),
             });
-            log.info(`[${this.options.scope}] cleanup completed`);
+            log.info(`cleanup completed`, { scope: this.options.scope });
         } catch (error) {
-            log.error(`[${this.options.scope}] scheduler error: ${errMsg(error)}`);
+            log.error(`scheduler error: ${errMsg(error)}`, { scope: this.options.scope });
         } finally {
             this.running = false;
         }

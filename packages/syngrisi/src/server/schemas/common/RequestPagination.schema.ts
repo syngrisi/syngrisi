@@ -12,5 +12,6 @@ export const RequestPaginationSchema =
         page: commonValidations.positiveNumberString.optional().openapi({example: "1"}),
         sortBy: z.string().optional().openapi({example: "name:desc"}),
         populate: z.string().optional().openapi({example: "test"}),
+        includeUsage: z.string().optional().openapi({ example: "true" }),
+        baselineSnapshotId: z.string().optional().openapi({ example: "656dd9e1a9f9dcd4a0c1beef" }),
     });
-

@@ -27,6 +27,7 @@ export interface BaselineDocument extends Document {
 const BaselineSchema: Schema<BaselineDocument> = new Schema({
     snapshootId: {
         type: Schema.Types.ObjectId,
+        ref: 'VRSSnapshot',
     },
     name: {
         type: String,
@@ -90,9 +91,20 @@ const BaselineSchema: Schema<BaselineDocument> = new Schema({
     },
 });
 
+// disable automatic index creation to allow data migrations to clean duplicates before applying uniqueness
+BaselineSchema.set('autoIndex', false);
 BaselineSchema.plugin(toJSON);
 BaselineSchema.plugin(paginate);
 
+BaselineSchema.index({
+    name: 1,
+    app: 1,
+    branch: 1,
+    browserName: 1,
+    viewport: 1,
+    os: 1,
+    snapshootId: 1,
+}, { unique: true, name: 'baseline_ident_snapshot_idx' });
+
 const Baseline: Model<BaselineDocument> = mongoose.model<BaselineDocument>('VRSBaseline', BaselineSchema);
 export default Baseline as PluginExtededModel<BaselineDocument>;
-
