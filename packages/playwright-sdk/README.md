@@ -41,7 +41,7 @@ import { PlaywrightDriver } from '@syngrisi/playwright-sdk';
 
 const config = {
     apiKey: 'your-api-key',
-    serverUrl: 'your-singrisi-url'
+    serverUrl: 'your-syngrisi-url'
 };
 
 const driver = new PlaywrightDriver(config);
@@ -121,9 +121,9 @@ macOS/Linux: `export SYNGRISI_LOG_LEVEL=debug`
 ## Documentation
 
 For detailed information about all available methods, parameters, and configurations, please refer to
-the [Syngrisi packages documentation](TODO ADD LINK TO ROOT docs folder published on github.io).
+the [Syngrisi GitHub repository](https://github.com/syngrisi/syngrisi).
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE.md).
+This project is licensed under the ISC License.
 
