@@ -1,4 +1,3 @@
-version: '3.9'
 services:
   syngrisi-app:
     container_name: syngrisi-app-server
