@@ -73,9 +73,11 @@ await driver.startTestSession({ params: sessionParams });
 Perform a visual check by providing the check name, image buffer, and any additional parameters.
 
 ```js
-driver.check({
-    checkName: 'Header',
-    imageBuffer:  await $('#header').saveScreenshot(),
+// Full page screenshot
+const fullPageScreenshot = await browser.saveScreenshot('./screenshot.png');
+await driver.check({
+    checkName: 'Full Page',
+    imageBuffer: fullPageScreenshot,
     params: {
         viewport: '1200x800',
         browserName: 'chrome',
@@ -84,7 +86,14 @@ driver.check({
         branch: 'develop'
     }
 });
-await driver.check({ 'About Page', await $('#header').saveScreenshot(), params: {/* other parameters */ } });
+
+// Element screenshot
+const headerScreenshot = await $('#header').saveScreenshot();
+await driver.check({
+    checkName: 'Header',
+    imageBuffer: headerScreenshot,
+    params: { /* parameters inherited from session if not specified */ }
+});
 ```
 
 ### 4. Stop the Test Session
@@ -93,6 +102,47 @@ Once all checks are completed, stop the test session.
 
 ```js
 await driver.stopTestSession();
+```
+
+## Additional Methods
+
+### Accept a Check
+
+Programmatically accept a check by setting a new baseline:
+
+```js
+const result = await driver.acceptCheck({
+    checkId: 'check-id-123',
+    baselineId: 'baseline-id-456'
+});
+```
+
+### Get Baselines
+
+Fetch existing baselines matching criteria:
+
+```js
+const baselines = await driver.getBaselines({
+    params: {
+        name: 'Header',
+        app: 'MyProject',
+        branch: 'main'
+    }
+});
+```
+
+### Get Snapshots
+
+Retrieve snapshots based on search criteria:
+
+```js
+const snapshots = await driver.getSnapshots({
+    params: {
+        name: 'Header',
+        app: 'MyProject',
+        branch: 'main'
+    }
+});
 ```
 
 ## Environment variables
