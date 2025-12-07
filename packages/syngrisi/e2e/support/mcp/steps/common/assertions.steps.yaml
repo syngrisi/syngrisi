@@ -1,8 +1,8 @@
 metadata:
   category: common/assertions
-  generatedAt: '2025-12-05T04:19:37.324Z'
+  generatedAt: '2025-12-07T10:28:46.488Z'
   totalFiles: 1
-  totalSteps: 60
+  totalSteps: 61
   sourceFiles:
     - steps/common/assertions.steps.ts
 steps:
@@ -339,6 +339,22 @@ steps:
       Then the element "[data-test*='navbar_item_']" should have exactly 22 items within 10 seconds
       ```
     line: 1332
+  - pattern: the element {string} should have exactly {int} items within {int} seconds with refresh
+    description: |-
+      Step definition: `Then the element {string} should have exactly {int} items within {int} seconds with refresh`
+
+      Polls for exact item count with timeout, clicking refresh button between attempts.
+      Useful when data is created via API and table needs to be refreshed to show new items.
+
+      @param selector - CSS selector for items
+      @param exactCount - Exact expected count
+      @param seconds - Timeout in seconds
+
+      @example
+      ```gherkin
+      Then the element "//div[contains(text(), 'User test')]" should have exactly 5 items within 30 seconds with refresh
+      ```
+    line: 1362
   - pattern: the element with {target} {string} should be {condition}
     description: |-
       Step definition: `Then the element with {target} {string} should be {condition}`

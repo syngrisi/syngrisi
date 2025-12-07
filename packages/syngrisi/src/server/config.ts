@@ -1,16 +1,35 @@
 import fs from 'fs';
 import dotenv from 'dotenv';
-import { version } from '@root/package.json';
+import { version, gitHead } from '@root/package.json';
 import crypto from 'crypto';
+import { execSync } from 'child_process';
 import { env } from "./envConfig";
 
 import devices from "./data/devices.json";
+
+const getCommitHash = (): string => {
+    try {
+        return execSync('git rev-parse --short HEAD', { encoding: 'utf-8' }).trim();
+    } catch {
+        return gitHead ? gitHead.substring(0, 7) : '';
+    }
+};
 const customDevicesPath = './server/data/custom_devices.json';
 const logsFolder = './logs';
 dotenv.config();
 
+// N-2 compatibility: SDKs from 2 minor versions back are supported
+// Update this when releasing new minor versions
+const CURRENT_VERSION = version;
+const [major, minor] = CURRENT_VERSION.split('.').map(Number);
+const minSupportedMinor = Math.max(0, minor - 2);
+const MIN_SUPPORTED_SDK_VERSION = `${major}.${minSupportedMinor}.0`;
+
 export const config = {
     version,
+    commitHash: getCommitHash(),
+    minSupportedSdkVersion: MIN_SUPPORTED_SDK_VERSION,
+    apiVersion: '1',
     // this isn't used
     getDevices: async () => {
         if (fs.existsSync(customDevicesPath)) {

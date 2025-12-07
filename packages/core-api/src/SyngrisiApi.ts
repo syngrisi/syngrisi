@@ -4,6 +4,8 @@ import { createHash } from 'node:crypto'
 import logger from '@wdio/logger'
 import { LogLevelDesc } from 'loglevel'
 import { errorObject, paramsGuard, prettyCheckResult, printErrorResponseBody } from './utils'
+// @ts-ignore - package.json import for version
+import { version as SDK_VERSION } from '../package.json'
 import {
     BaselineParams,
     BaselineParamsSchema,
@@ -63,6 +65,17 @@ class SyngrisiApi {
     }
 
     /**
+     * Returns common headers for API requests including API key and SDK version.
+     * @returns {Record<string, string>} Headers object with apikey and x-syngrisi-sdk-version.
+     */
+    private get headers(): Record<string, string> {
+        return {
+            apikey: this.config.apiHash!,
+            'x-syngrisi-sdk-version': SDK_VERSION,
+        }
+    }
+
+    /**
      * Constructs the URL for the given item name by appending it to the API endpoint.
      * @param {string} itemName - The name of the API item to access.
      * @returns {string} The full URL for the API item.
@@ -111,7 +124,7 @@ class SyngrisiApi {
             try {
                 const result = await got.post(this.url('startSession'), {
                     body: form,
-                    headers: { apikey: this.config.apiHash },
+                    headers: this.headers,
                 }).json() as SessionResponse
                 return result
             } catch (e: any) {
@@ -146,7 +159,7 @@ class SyngrisiApi {
             const form = new FormData()
             const response: SessionResponse = await got.post(`${this.url('stopSession')}/${testId}`, {
                 body: form,
-                headers: { apikey: this.config.apiHash },
+                headers: this.headers,
             }).json()
             return response
         } catch (e: any) {
@@ -278,7 +291,7 @@ class SyngrisiApi {
             try {
                 const result: CheckResponse = await got.post(url, {
                     body: form,
-                    headers: { apikey: this.config.apiHash },
+                    headers: this.headers,
                 }).json()
 
                 return result
@@ -406,7 +419,7 @@ class SyngrisiApi {
             const url = `${this.config.url}v1/checks/${checkId}/accept`
             const result: CheckResponse = await got.put(url, {
                 json: { baselineId },
-                headers: { apikey: this.config.apiHash },
+                headers: this.headers,
             }).json()
 
             return result

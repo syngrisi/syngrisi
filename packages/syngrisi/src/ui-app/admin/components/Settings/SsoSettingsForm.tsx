@@ -4,8 +4,8 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { GenericService } from '@shared/services';
 import { errorMsg } from '@shared/utils';
 import { successMsg } from '@shared/utils/utils';
-import ky from 'ky';
 import config from '@config';
+import { http } from '@shared/lib/http';
 
 interface SecretsStatus {
     clientSecretConfigured: boolean;
@@ -35,7 +35,10 @@ export const SsoSettingsForm = ({ settings, refetch }: { settings: any[], refetc
     // Fetch secrets configuration status from server
     const { data: secretsStatus } = useQuery<SecretsStatus>(
         ['sso-secrets-status'],
-        () => ky.get(`${config.baseUri}/v1/auth/sso/secrets-status`).json<SecretsStatus>(),
+        async () => {
+            const resp = await http.get(`${config.baseUri}/v1/auth/sso/secrets-status`, {}, 'SsoSettingsForm.secretsStatus');
+            return resp.json() as Promise<SecretsStatus>;
+        },
         { refetchOnWindowFocus: false }
     );
 

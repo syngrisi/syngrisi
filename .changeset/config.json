@@ -1,0 +1,22 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@3.0.0/schema.json",
+  "changelog": ["@changesets/changelog-github", { "repo": "syngrisi/syngrisi" }],
+  "commit": false,
+  "fixed": [
+    [
+      "@syngrisi/syngrisi",
+      "@syngrisi/core-api",
+      "@syngrisi/playwright-sdk",
+      "@syngrisi/wdio-sdk",
+      "wdio-syngrisi-cucumber-service",
+      "wdio-cucumber-viewport-logger-service",
+      "@syngrisi/node-resemble.js",
+      "create-sy"
+    ]
+  ],
+  "linked": [],
+  "access": "public",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "ignore": []
+}

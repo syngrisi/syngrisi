@@ -1,5 +1,4 @@
 /* eslint-disable import/no-relative-packages */
-import ky from 'ky';
 import * as devices from '../server/data/devices.json';
 
 // @ts-ignore
@@ -10,6 +9,6 @@ const indexRoute: any = import.meta.env.VITE_INDEX_ROUTE || '/';
 export default {
     baseUri: baseUrl,
     devices: devices.default,
-    customDevicesProm: ky(`${baseUrl}/static/data/custom_devices.json`).json(),
+    customDevicesProm: fetch(`${baseUrl}/static/data/custom_devices.json`).then(r => r.json()),
     indexRoute,
 };

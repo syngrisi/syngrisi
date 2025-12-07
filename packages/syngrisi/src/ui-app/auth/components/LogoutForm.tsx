@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useDocumentTitle } from '@mantine/hooks';
 
-import ky from 'ky';
 import {
     Button, Container, LoadingOverlay, Paper, Text, Title,
 } from '@mantine/core';
@@ -17,8 +16,8 @@ interface SafeResponse<T> {
     isJson: boolean;
 }
 
-const fetchWithContentTypeCheck = async <T,>(url: string): Promise<SafeResponse<T>> => {
-    const response = await ky.get(url, { throwHttpErrors: false });
+const fetchWithContentTypeCheck = async <T,>(url: string, caller: string): Promise<SafeResponse<T>> => {
+    const response = await fetch(url);
     const contentType = response.headers.get('content-type') || '';
     const isJson = contentType.includes('application/json');
     let data: T | null = null;
@@ -26,7 +25,8 @@ const fetchWithContentTypeCheck = async <T,>(url: string): Promise<SafeResponse<
     if (isJson) {
         try {
             data = await response.json();
-        } catch {
+        } catch (e) {
+            log.error(`[${caller}] Failed to parse JSON:`, e);
             data = null;
         }
     }
@@ -44,14 +44,14 @@ function LogoutForm() {
 
     const logoutInfo = useQuery<SafeResponse<Record<string, unknown>>>(
         ['logout'],
-        () => fetchWithContentTypeCheck<Record<string, unknown>>(`${config.baseUri}/v1/auth/logout`),
+        () => fetchWithContentTypeCheck<Record<string, unknown>>(`${config.baseUri}/v1/auth/logout`, 'LogoutForm.logout'),
         {
             refetchOnWindowFocus: false,
         },
     );
     const userInfo = useQuery<SafeResponse<Record<string, unknown>>>(
         ['current_user', logoutInfo.data?.status],
-        () => fetchWithContentTypeCheck<Record<string, unknown>>(`${config.baseUri}/v1/users/current`),
+        () => fetchWithContentTypeCheck<Record<string, unknown>>(`${config.baseUri}/v1/users/current`, 'LogoutForm.userInfo'),
         {
             refetchOnWindowFocus: false,
             enabled: logoutInfo.isSuccess,

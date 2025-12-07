@@ -20,8 +20,11 @@ npm run build:server
 # Start server (auto-watches in development)
 npm start
 
-# Development mode for UI (Vite dev server on port 8080)
+# Development mode (builds UI, watches server, auth disabled)
 npm run dev
+
+# Development mode for UI only (Vite dev server on port 8080)
+npm run dev:ui
 
 # Watch UI build
 npm run build:watch

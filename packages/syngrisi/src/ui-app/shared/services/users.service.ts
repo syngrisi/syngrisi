@@ -1,7 +1,6 @@
-import ky from 'ky';
-
 import config from '@config';
 import IUser from '@shared/interfaces/IUser';
+import { http } from '@shared/lib/http';
 
 export interface IApiResult {
     results: IUser[],
@@ -13,17 +12,11 @@ export interface IApiResult {
 
 export const UsersService = {
     async getApiKey(): Promise<{ apikey: string }> {
-        const resp = await ky(`${config.baseUri}/v1/auth/apikey`);
-        if (resp.ok) {
-            return resp.json();
-        }
-        throw new Error(`cannot get resource, resp: '${JSON.stringify(resp)}'`);
+        const resp = await http.get(`${config.baseUri}/v1/auth/apikey`, {}, 'UsersService.getApiKey');
+        return resp.json();
     },
     async getCurrentUser(): Promise<IUser> {
-        const resp = await ky(`${config.baseUri}/v1/users/current`);
-        if (resp.ok) {
-            return resp.json();
-        }
-        throw new Error(`cannot get resource, resp: '${JSON.stringify(resp)}'`);
+        const resp = await http.get(`${config.baseUri}/v1/users/current`, {}, 'UsersService.getCurrentUser');
+        return resp.json();
     },
 };
