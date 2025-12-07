@@ -38,6 +38,21 @@ jobs:
         with:
           node-version: '22'
           cache: 'yarn'
+          cache-dependency-path: |
+            yarn.lock
+            packages/syngrisi/e2e/yarn.lock
+
+      - name: Get Playwright version
+        id: playwright-version
+        working-directory: packages/syngrisi/e2e
+        run: echo "version=$(node -e "console.log(require('./package.json').devDependencies['@playwright/test'] || require('./package.json').dependencies['@playwright/test'])")" >> $GITHUB_OUTPUT
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile --ignore-engines
@@ -54,8 +69,14 @@ jobs:
         run: yarn install --ignore-engines
 
       - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         working-directory: packages/syngrisi/e2e
         run: npx playwright install --with-deps chromium
+
+      - name: Install Playwright deps only (browsers cached)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        working-directory: packages/syngrisi/e2e
+        run: npx playwright install-deps chromium
 
       - name: Generate BDD features
         working-directory: packages/syngrisi/e2e
