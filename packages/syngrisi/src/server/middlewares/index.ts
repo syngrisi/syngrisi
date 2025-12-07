@@ -4,4 +4,5 @@ export { authorization } from './authorization';
 export { compressionFilter } from './compressionFilter';
 export { ensureSameOrigin } from './ensureSameOrigin';
 export { apiLimiter, authLimiter } from './rateLimit';
+export { sdkVersionCheck } from './sdkVersionCheck';
 

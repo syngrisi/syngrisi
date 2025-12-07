@@ -13,6 +13,7 @@ import {
     IconSettings,
     IconId,
     IconLogout,
+    IconInfoCircle,
 } from '@tabler/icons-react';
 import { useState } from 'react';
 // import { isDark } from '../../utils';
@@ -20,6 +21,7 @@ import { UserHooks } from '@shared/hooks';
 import ApiKeyModalAsk from '@shared/components/Header/ApiKeyModalAsk';
 import { ApiKeyModalResult } from '@shared/components/Header/ApiKeyModalResult';
 import { UserInfoModal } from '@shared/components/Header/UserInfoModal';
+import { AboutModal } from '@shared/components/Header/AboutModal';
 import ToggleThemeButton from '@shared/components/ToggleThemeButton';
 import useColorScheme from '@shared/hooks/useColorSheme';
 
@@ -30,6 +32,7 @@ function UserMenu() {
     const [apiKeyModalAskOpened, setApiKeyModalAskOpened] = useState(false);
     const [apiKeyModalResultOpened, setApiKeyModalResultOpened] = useState(false);
     const [userInfoModalOpened, setUserInfoModalOpened] = useState(false);
+    const [aboutModalOpened, setAboutModalOpened] = useState(false);
     const currentUser: any = UserHooks.useCurrentUser();
 
     const userInitials = (currentUser.isSuccess && currentUser.data.firstName)
@@ -122,6 +125,16 @@ function UserMenu() {
                     >
                         Generate API key
                     </Menu.Item>
+                    <Menu.Item
+                        data-test="about"
+                        aria-label="About Syngrisi"
+                        icon={<IconInfoCircle size={14} />}
+                        onClick={() => {
+                            setAboutModalOpened(true);
+                        }}
+                    >
+                        About
+                    </Menu.Item>
                     <Menu.Divider />
                     <Menu.Item
                         icon={<IconLogout size={14} />}
@@ -146,6 +159,10 @@ function UserMenu() {
             <UserInfoModal
                 opened={userInfoModalOpened}
                 setOpened={setUserInfoModalOpened}
+            />
+            <AboutModal
+                opened={aboutModalOpened}
+                setOpened={setAboutModalOpened}
             />
         </>
     );
