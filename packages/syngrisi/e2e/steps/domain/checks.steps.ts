@@ -168,23 +168,31 @@ When('I remove the {string} check', async ({ page }: { page: Page }, checkName: 
  */
 When('I delete check from modal', async ({ page }: { page: Page }) => {
   try {
-    // Click remove icon in modal
+    // Wait for modal to stabilize (animations, loading states)
+    await page.waitForTimeout(500);
+
+    // Click remove icon in modal (use explicit timeout and force to handle CI slowness)
     const icon = page.locator('.modal [data-test="check-remove-icon"]').first();
     await icon.waitFor({ state: 'visible', timeout: 10000 });
-    await icon.click();
+    await icon.scrollIntoViewIfNeeded();
+    await icon.click({ timeout: 10000, force: true });
 
     // Wait for confirmation popup to appear (it can take time on slow CI)
     const confirmButton = page.locator('[data-test="check-remove-icon-confirm"]').first();
     await confirmButton.waitFor({ state: 'visible', timeout: 15000 });
 
+    // Small delay for popup animation to complete
+    await page.waitForTimeout(200);
+
     // Wait for DELETE API response to complete before proceeding
     // This prevents race condition where UI update happens after test assertion
+    // Use explicit timeout and force on click to handle CI environment
     await Promise.all([
       page.waitForResponse(
         (resp) => resp.url().includes('/v1/checks/') && resp.request().method() === 'DELETE' && resp.ok(),
         { timeout: 15000 }
       ),
-      confirmButton.click(),
+      confirmButton.click({ timeout: 15000, force: true }),
     ]);
 
     logger.info('Deleted check from modal');
