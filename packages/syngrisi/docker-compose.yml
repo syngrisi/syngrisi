@@ -66,8 +66,8 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: "${MONGODB_ROOT_PASSWORD}"
 
     healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      test: ["CMD-SHELL", "mongosh --eval \"db.adminCommand('ping')\" 2>&1 || (echo 'Healthcheck failed' && cat /var/log/mongodb/mongod.log 2>/dev/null && exit 1)"]
       interval: 5s
       timeout: 30s
       retries: 10
-      start_period: 30s
+      start_period: 40s
