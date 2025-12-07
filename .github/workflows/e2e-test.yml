@@ -46,14 +46,15 @@ jobs:
         working-directory: packages/syngrisi/src/ui-app
         run: yarn install --ignore-engines
 
+      - name: Build
+        run: yarn build
+
       - name: Install E2E dependencies
         working-directory: packages/syngrisi/e2e
         run: yarn install --ignore-engines
 
-      - name: Build
-        run: yarn build
-
       - name: Install Playwright browsers
+        working-directory: packages/syngrisi/e2e
         run: npx playwright install --with-deps chromium
 
       - name: Generate BDD features
