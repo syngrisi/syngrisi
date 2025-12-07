@@ -42,7 +42,7 @@ Feature: Remove checks
     When I wait on element "[data-table-check-name='CheckName-RC-2']" to not be displayed
     When I wait 10 seconds for the element with locator "//*[text()='Test does not have any checks']" to be visible
 
-  @smoke
+  @smoke @ci-flaky
   Scenario: Remove check via Check Details Modal
     Given I create "2" tests with:
       """

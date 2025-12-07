@@ -6,7 +6,7 @@ Feature: Standard Checks Flow - UI
     When I open the app
     When I clear local storage
 
-  @smoke @flaky
+  @smoke @flaky @ci-flaky
   Scenario: Status View - Standard Flow
     # NEW
     Given I create "1" tests with:
