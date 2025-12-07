@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { Divider, Group, Menu, ActionIcon } from '@mantine/core';
 import { useEffect, useState } from 'react';
-import { IconDotsVertical, IconTrash, IconArrowLeft, IconArrowRight, IconArrowUp, IconArrowDown } from '@tabler/icons-react';
+import { IconDotsVertical, IconTrash, IconChevronLeft, IconChevronRight, IconChevronUp, IconChevronDown } from '@tabler/icons-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GenericService } from '@shared/services';
 import { errorMsg, successMsg } from '@shared/utils/utils';
@@ -107,7 +107,7 @@ export function Toolbar(
                         title="Previous Check"
                         variant="transparent"
                     >
-                        <IconArrowLeft size={20} />
+                        <IconChevronLeft size={20} />
                     </ActionIcon>
                     <ActionIcon
                         onClick={() => onNavigateCheck && onNavigateCheck('next')}
@@ -115,7 +115,7 @@ export function Toolbar(
                         title="Next Check"
                         variant="transparent"
                     >
-                        <IconArrowRight size={20} />
+                        <IconChevronRight size={20} />
                     </ActionIcon>
                 </Group>
                 <Group spacing={2} noWrap>
@@ -125,7 +125,7 @@ export function Toolbar(
                         title="Previous Test"
                         variant="transparent"
                     >
-                        <IconArrowUp size={20} />
+                        <IconChevronUp size={20} />
                     </ActionIcon>
                     <ActionIcon
                         onClick={() => onNavigateTest && onNavigateTest('next')}
@@ -133,7 +133,7 @@ export function Toolbar(
                         title="Next Test"
                         variant="transparent"
                     >
-                        <IconArrowDown size={20} />
+                        <IconChevronDown size={20} />
                     </ActionIcon>
                 </Group>
                 <Divider orientation="vertical" />

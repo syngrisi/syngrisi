@@ -36,14 +36,14 @@ The following is a standard workflow to use the SDK in your tests:
 Before starting your test session, initialize the driver with the necessary configuration.
 
 ```js
-const { SyngrisiDriver } = require('@syngrisi/wdio-sdk');
+const { WDIODriver } = require('@syngrisi/wdio-sdk');
 
 const config = {
     apiKey: 'your-api-key',
-    serverUrl: 'your-singrisi-url'
+    serverUrl: 'your-syngrisi-url'
 };
 
-const driver = new SyngrisiDriver(config);
+const driver = new WDIODriver(config);
 ```
 
 ### 2. Start a Test Session
@@ -110,9 +110,9 @@ environment
 ## Documentation
 
 For detailed information about all available methods, parameters, and configurations, please refer to
-the [Syngrisi packages documentation](TODO ADD LINK TO ROOT docs folder published on github.io).
+the [Syngrisi GitHub repository](https://github.com/syngrisi/syngrisi).
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE.md).
+This project is licensed under the ISC License.
 

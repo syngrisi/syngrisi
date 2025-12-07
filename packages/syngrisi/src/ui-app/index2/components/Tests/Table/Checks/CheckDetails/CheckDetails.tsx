@@ -359,6 +359,7 @@ export function CheckDetails({
                     <Canvas
                         canvasElementRef={canvasElementRef}
                         isRelatedOpened={relatedRendered && relatedChecksOpened}
+                        isLoading={!mainView}
                     />
                 </Group>
             </Stack>
