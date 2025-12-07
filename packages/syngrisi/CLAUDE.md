@@ -114,6 +114,27 @@ Full list: `docs/environment_variables.md`
 
 Swagger available at `/swagger/` when server is running.
 
+## Release Process
+
+See root `AGENTS.md` for full release documentation. Quick reference:
+
+```bash
+# 1. Create changeset
+npx changeset add
+# Select @syngrisi/syngrisi, choose version type (patch/minor/major), add description
+
+# 2. Commit and push
+git add .changeset/ && git commit -m "chore: add changeset" && git push
+
+# 3. Wait for "chore(release): version packages" PR from GitHub Actions
+# 4. Merge PR → automatic npm publish + GitHub Release
+```
+
+Version types:
+- **patch**: Bug fixes, CI/Docker improvements, docs updates
+- **minor**: New features (backwards compatible)
+- **major**: Breaking changes
+
 ## Data Model
 
 Core entities: App → Suite → Run → Test → Check → Snapshot/Baseline
