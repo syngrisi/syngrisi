@@ -368,6 +368,7 @@ export class MainView {
      * 1. collect data about all rects
      * 2. convert the data to resemble.js format
      * 3. return json string
+     * @deprecated Use getRegionsData() instead
      */
     getRectData() {
         const rects = this.allRects;
@@ -390,10 +391,46 @@ export class MainView {
         return JSON.stringify(data);
     }
 
+    /**
+     * Collect data about all regions, separated by type
+     * @returns {{ ignoreRegions: string, boundRegions: string }} JSON strings for each region type
+     */
+    getRegionsData(): { ignoreRegions: string, boundRegions: string } {
+        const rects = this.allRects;
+        const ignoreRegions: any[] = [];
+        const boundRegions: any[] = [];
+        const coef = parseFloat(this.coef);
+
+        rects.forEach((reg) => {
+            const right = reg.left + reg.getScaledWidth();
+            const bottom = reg.top + reg.getScaledHeight();
+            if (coef) {
+                const regionData = {
+                    top: reg.top * coef,
+                    left: reg.left * coef,
+                    bottom: bottom * coef,
+                    right: right * coef,
+                };
+                if (reg.name === 'ignore_rect') {
+                    ignoreRegions.push(regionData);
+                } else if (reg.name === 'bound_rect') {
+                    boundRegions.push(regionData);
+                }
+            }
+        });
+        return {
+            ignoreRegions: JSON.stringify(ignoreRegions),
+            boundRegions: JSON.stringify(boundRegions),
+        };
+    }
+
     get coef() {
         return this.expectedImage.height / this.expectedImage.getScaledHeight();
     }
 
+    /**
+     * @deprecated Use sendRegions() instead
+     */
     static async sendIgnoreRegions(id: string, regionsData) {
         try {
             const response = await fetch(`${config.baseUri}/v1/baselines/${id}`, {
@@ -415,6 +452,34 @@ export class MainView {
             log.error(`Cannot set baseline ignored regions: ${errorMsg(e)}`);
             errorMsg({ error: 'Cannot set baseline ignored regions' });
             // MainView.showToaster('Cannot set baseline ignored regions', 'Error');
+        }
+    }
+
+    /**
+     * Send both ignore and bound regions to the server
+     */
+    static async sendRegions(id: string, regionsData: { ignoreRegions: string, boundRegions: string }) {
+        try {
+            const response = await fetch(`${config.baseUri}/v1/baselines/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    id,
+                    ignoreRegions: regionsData.ignoreRegions,
+                    boundRegions: regionsData.boundRegions,
+                }),
+            });
+            const text = await response.text();
+            if (response.status === 200) {
+                log.debug(`Successful send baseline regions, id: '${id}'  resp: '${text}'`);
+                successMsg({ message: 'Regions saved' });
+                return;
+            }
+            log.error(`Cannot set baseline regions, status: '${response.status}',  resp: '${text}'`);
+            errorMsg({ error: 'Cannot set baseline regions' });
+        } catch (e: unknown) {
+            log.error(`Cannot set baseline regions: ${errorMsg(e)}`);
+            errorMsg({ error: 'Cannot set baseline regions' });
         }
     }
 
@@ -492,5 +557,32 @@ export class MainView {
         this.removeAllRegions();
         const regionData = await MainView.getRegionsData(id);
         this.drawRegions(regionData.ignoreRegions);
+        this.drawBoundRegions(regionData.boundRegions);
+    }
+
+    /**
+     * Draw bound regions on the canvas
+     * @param data JSON string with bound region data
+     */
+    drawBoundRegions(data: string) {
+        if (!data || data === 'undefined' || data === '[]') {
+            return;
+        }
+        const regs = this.convertRegionsDataFromServer(JSON.parse(data));
+        regs.forEach((regParams) => {
+            const params = {
+                name: 'bound_rect',
+                fill: 'rgba(0,0,0,0)',
+                stroke: 'green',
+                strokeWidth: 3,
+                top: regParams.top,
+                left: regParams.left,
+                width: regParams.width,
+                height: regParams.height,
+            };
+            const r = this.addRect(params);
+            this.canvas.add(r);
+            r.bringToFront();
+        });
     }
 }

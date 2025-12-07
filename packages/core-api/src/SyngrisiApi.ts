@@ -429,6 +429,42 @@ class SyngrisiApi {
             return errorObject(e)
         }
     }
+
+    /**
+     * Updates a baseline with the provided properties.
+     *
+     * @param {string} baselineId - The unique identifier of the baseline to update.
+     * @param {object} updates - The properties to update on the baseline.
+     * @param {string} [updates.ignoreRegions] - JSON string of regions to ignore during comparison.
+     * @returns {Promise<any | ErrorObject>} A promise that resolves with the updated baseline or ErrorObject.
+     * @example
+     * const apiClient = new SyngrisiApi({
+     *     url: 'http://<your-domain>/',
+     *     apiKey: 'your-api-key'
+     * });
+     * const result = await apiClient.updateBaseline('baseline-id-123', {
+     *     ignoreRegions: JSON.stringify([{ left: 0, top: 0, right: 100, bottom: 50 }])
+     * });
+     */
+    public async updateBaseline(baselineId: string, updates: { ignoreRegions?: string }): Promise<any | ErrorObject> {
+        try {
+            if (!baselineId) {
+                throw new Error('baselineId is required')
+            }
+
+            const url = `${this.config.url}v1/baselines/${baselineId}`
+            const result = await got.put(url, {
+                json: updates,
+                headers: this.headers,
+            }).json()
+
+            return result
+        } catch (e: any) {
+            log.error(`❌ Error updating baseline, baselineId: '${baselineId}', updates: '${JSON.stringify(updates)}', error: '${e.stack || e}'`)
+            if (e.response) printErrorResponseBody(e)
+            return errorObject(e)
+        }
+    }
 }
 
 export { SyngrisiApi }
