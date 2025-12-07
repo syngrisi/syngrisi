@@ -39,6 +39,7 @@ export class PlaywrightDriver {
     browserName: BrowserName
     viewport: ViewportSize
     params: Params
+    private autoAccept: boolean
 
     /**
      * Constructs the PlaywrightDriver instance for interacting with Syngrisi API.
@@ -51,9 +52,10 @@ export class PlaywrightDriver {
      *   page: await browser.newPage(), // assuming 'browser' is a Playwright Browser instance
      *   url: 'your-syngrisi-url', // Syngrisi server URL
      *   apiKey: 'your-api-key', // API key for Syngrisi server authentication
+     *   autoAccept: true // Automatically accept new baselines
      * });
      */
-    constructor({ page, url, apiKey }: Config) {
+    constructor({ page, url, apiKey, autoAccept }: Config) {
         const pw = new PlaywrightEntities(page)
         this.page = pw.page
         this.browser = pw.browser
@@ -64,6 +66,7 @@ export class PlaywrightDriver {
         this.params = {
             test: {}
         }
+        this.autoAccept = autoAccept || false
     }
 
     /**
@@ -246,7 +249,8 @@ export class PlaywrightDriver {
      *     browserName: 'chrome',
      *     os: 'Windows',
      *     app: 'MyProject',
-     *     branch: 'develop'
+     *     branch: 'develop',
+     *     autoAccept: true // Auto-accept if no baseline exists
      *   },
      *   suppressErrors: false
      * });
@@ -295,10 +299,12 @@ export class PlaywrightDriver {
             }
             paramsGuard(opts, 'check, opts', CheckOptionsSchema)
 
+            // Remove autoAccept from params before sending to API (it's SDK-only)
+            const { autoAccept: checkAutoAccept, ...apiParams } = params || {}
             Object.assign(
                 // @ts-ignore
                 opts,
-                params,
+                apiParams,
             )
 
             // @ts-ignore
@@ -307,6 +313,32 @@ export class PlaywrightDriver {
             if ((result as ErrorObject).error && !suppressErrors) {
                 throw `❌ Create Check error: ${JSON.stringify(result, null, '  ')}`
             }
+
+            // Auto-accept new checks if enabled (check-level or driver-level)
+            const shouldAutoAccept = checkAutoAccept ?? this.autoAccept
+            if (shouldAutoAccept && !(result as ErrorObject).error) {
+                const checkResult = result as CheckResponse
+                const status = Array.isArray(checkResult.status)
+                    ? checkResult.status[0]
+                    : checkResult.status
+
+                if (status === 'new') {
+                    log.info(`Auto-accepting new check: '${checkName}' (id: ${checkResult._id})`)
+                    const acceptResult = await this.acceptCheck({
+                        checkId: checkResult._id,
+                        baselineId: checkResult.actualSnapshotId,
+                        suppressErrors
+                    })
+
+                    if ((acceptResult as ErrorObject).error && !suppressErrors) {
+                        log.warn(`Failed to auto-accept check '${checkName}': ${JSON.stringify(acceptResult)}`)
+                    } else {
+                        log.debug(`Successfully auto-accepted check '${checkName}'`)
+                        return acceptResult
+                    }
+                }
+            }
+
             return result
         } catch (e: any) {
             log.error(`cannot create check, params: '${JSON.stringify(params)}' opts: '${JSON.stringify(opts)}, error: '${e.stack || e.toString()}'`)
@@ -341,6 +373,87 @@ export class PlaywrightDriver {
             return result
         } catch (e: any) {
             const eMsg = `Cannot accept check, checkId: '${checkId}', baselineId: '${baselineId}', error: '${e.stack || e.toString()}'`
+            log.error(eMsg)
+            throw e
+        }
+    }
+
+    /**
+     * Region to ignore during visual comparison.
+     * Coordinates are in pixels relative to the image.
+     */
+    static Region = class {
+        left: number
+        top: number
+        right: number
+        bottom: number
+
+        constructor(left: number, top: number, right: number, bottom: number) {
+            this.left = left
+            this.top = top
+            this.right = right
+            this.bottom = bottom
+        }
+    }
+
+    /**
+     * Sets ignore regions on a baseline. These regions will be excluded from visual comparison.
+     * @param {string} baselineId - The unique identifier of the baseline.
+     * @param {Array<{left: number, top: number, right: number, bottom: number}>} regions - Array of region objects.
+     * @param {boolean} [suppressErrors=false] - Flag to suppress thrown errors.
+     * @returns {Promise<any | ErrorObject>} The update result or an error object.
+     * @example
+     * // Set ignore regions on a baseline
+     * await driver.setIgnoreRegions({
+     *   baselineId: 'baseline-id-123',
+     *   regions: [
+     *     { left: 0, top: 0, right: 100, bottom: 50 },     // Top banner
+     *     { left: 200, top: 300, right: 400, bottom: 350 } // Dynamic content area
+     *   ]
+     * });
+     *
+     * // Using Region helper class
+     * await driver.setIgnoreRegions({
+     *   baselineId: 'baseline-id-123',
+     *   regions: [
+     *     new PlaywrightDriver.Region(0, 0, 100, 50)
+     *   ]
+     * });
+     */
+    async setIgnoreRegions({ baselineId, regions, suppressErrors = false }: {
+        baselineId: string,
+        regions: Array<{ left: number, top: number, right: number, bottom: number }>,
+        suppressErrors?: boolean
+    }): Promise<any | ErrorObject> {
+        try {
+            if (!baselineId) {
+                throw new Error('baselineId is required')
+            }
+            if (!Array.isArray(regions)) {
+                throw new Error('regions must be an array')
+            }
+
+            // Validate region format
+            for (const region of regions) {
+                if (typeof region.left !== 'number' ||
+                    typeof region.top !== 'number' ||
+                    typeof region.right !== 'number' ||
+                    typeof region.bottom !== 'number') {
+                    throw new Error(`Invalid region format: ${JSON.stringify(region)}. Expected {left, top, right, bottom} as numbers.`)
+                }
+            }
+
+            const ignoreRegions = JSON.stringify(regions)
+            log.debug(`Setting ignore regions on baseline '${baselineId}': ${ignoreRegions}`)
+
+            const result = await this.api.updateBaseline(baselineId, { ignoreRegions })
+
+            if ((result as ErrorObject).error && !suppressErrors) {
+                throw `❌ Set Ignore Regions error: ${JSON.stringify(result, null, '  ')}`
+            }
+            return result
+        } catch (e: any) {
+            const eMsg = `Cannot set ignore regions, baselineId: '${baselineId}', error: '${e.stack || e.toString()}'`
             log.error(eMsg)
             throw e
         }
