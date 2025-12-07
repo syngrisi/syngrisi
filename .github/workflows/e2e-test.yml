@@ -1,0 +1,83 @@
+name: E2E Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_filter:
+        description: 'Test filter (grep pattern, e.g. "@smoke" or "Accept by user")'
+        required: false
+        default: '@smoke'
+      workers:
+        description: 'Number of parallel workers'
+        required: false
+        default: '4'
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      mongodb:
+        image: mongo:8.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile --ignore-engines
+
+      - name: Build
+        run: yarn build
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Generate BDD features
+        working-directory: packages/syngrisi/e2e
+        run: npx bddgen
+
+      - name: Run E2E tests
+        working-directory: packages/syngrisi/e2e
+        run: |
+          npx playwright test \
+            --project=chromium \
+            --grep "${{ github.event.inputs.test_filter }}" \
+            --workers=${{ github.event.inputs.workers }}
+        env:
+          SYNGRISI_DB_URI: mongodb://localhost:27017/SyngrisiDbTest
+          E2E_BASE_URL: http://localhost:3002
+          SYNGRISI_AUTH: false
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: packages/syngrisi/e2e/playwright-report/
+          retention-days: 7
+
+      - name: Upload test artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-artifacts
+          path: |
+            packages/syngrisi/e2e/test-results/
+            packages/syngrisi/e2e/screenshots/
+          retention-days: 7
