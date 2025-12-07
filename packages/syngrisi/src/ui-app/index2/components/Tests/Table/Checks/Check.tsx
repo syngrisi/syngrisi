@@ -11,7 +11,7 @@ import {
     useMantineTheme,
 } from '@mantine/core';
 
-import queryString from 'query-string';
+import { stringify } from '@shared/utils/queryParams';
 import { useLocalStorage } from '@mantine/hooks';
 import { encodeQueryParams } from 'use-query-params';
 import { useParams } from '@hooks/useParams';
@@ -44,7 +44,7 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
     const imageFilename = check.diffId?.filename || check.actualSnapshotId?.filename || check.baselineId?.filename;
     const imagePreviewSrc = `${config.baseUri}/snapshoots/${imageFilename}`;
 
-    const overlayParamsString = queryString.stringify(
+    const overlayParamsString = stringify(
         encodeQueryParams(
             queryConfig,
             { ...query, ['checkId' as string]: check._id },
