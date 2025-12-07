@@ -51,5 +51,6 @@
   "engines": {
     "npm": "please-use-yarn",
     "yarn": ">=1.22.0"
-  }
+  },
+  "version": "0.0.0"
 }
