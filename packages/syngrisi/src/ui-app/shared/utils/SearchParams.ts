@@ -1,17 +1,17 @@
-import queryString from 'query-string';
+import { parse, stringify } from '@shared/utils/queryParams';
 
 /* eslint-enable no-unused-vars, no-shadow */
 
-const getSearchParamsObject = (params: any) => queryString.parse(params.toString());
+const getSearchParamsObject = (params: URLSearchParams) => parse(params.toString());
 
 export const SearchParams = {
     changeSorting: (searchParams: URLSearchParams, setParams: any, sortItemName: string, sortDirection: string) => {
         const currentObj = getSearchParamsObject(searchParams);
-        setParams(queryString.stringify({ ...currentObj, sortBy: `${sortItemName}:${sortDirection}` }));
+        setParams(stringify({ ...currentObj, sortBy: `${sortItemName}:${sortDirection}` }));
     },
     changeFiltering: (searchParams: URLSearchParams, setParams: any, filter: any) => {
         const currentObj = getSearchParamsObject(searchParams);
         const newParamsObj = { ...currentObj, filter };
-        setParams(queryString.stringify(newParamsObj));
+        setParams(stringify(newParamsObj));
     },
 };
