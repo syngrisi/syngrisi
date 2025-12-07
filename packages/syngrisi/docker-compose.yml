@@ -48,7 +48,7 @@ services:
   syngrisi-db:
     cap_add:
       - CHOWN
-    image: mongo:${MONGODB_VERSION:-8.0}
+    image: mongo:${MONGODB_VERSION:-7.0.12}
     container_name: syngrisi-db-server
     ports:
       - "${SYNGRISI_DOCKER_DB_PORT:-27017}:27017"
