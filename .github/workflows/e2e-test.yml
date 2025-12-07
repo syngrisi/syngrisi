@@ -42,6 +42,10 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile --ignore-engines
 
+      - name: Install UI dependencies
+        working-directory: packages/syngrisi
+        run: npm run install:ui
+
       - name: Build
         run: yarn build
 
