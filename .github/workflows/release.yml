@@ -1,0 +1,79 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write  # Required for OIDC trusted publishing
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'yarn'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile --ignore-engines
+
+      - name: Build
+        run: yarn build
+
+      # Step 1: Check if there are changesets to process
+      - name: Check for changesets
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          version: yarn version
+          createGithubReleases: false
+          publish: echo "skip-publish"  # Don't publish via changesets
+          commit: "chore(release): version packages"
+          title: "chore(release): version packages"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Step 2: Publish to npm using OIDC (no token needed)
+      # This runs only when changesets actually published (merged version PR)
+      - name: Publish to npm with OIDC
+        if: steps.changesets.outputs.hasChangesets == 'false'
+        run: |
+          # Check if there are packages to publish by looking at lerna changed
+          if yarn lerna changed --json 2>/dev/null | grep -q '"name"'; then
+            echo "Publishing packages with OIDC..."
+            yarn lerna publish from-package --yes --no-verify-access
+          else
+            echo "No packages to publish"
+          fi
+
+      # Step 3: Create GitHub Release
+      - name: Get published version
+        if: steps.changesets.outputs.hasChangesets == 'false'
+        id: version
+        run: |
+          VERSION=$(node -p "require('./lerna.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        if: steps.changesets.outputs.hasChangesets == 'false' && steps.version.outputs.version
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

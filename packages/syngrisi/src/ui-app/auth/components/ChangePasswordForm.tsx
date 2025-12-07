@@ -9,7 +9,6 @@ import {
     LoadingOverlay,
 } from '@mantine/core';
 import { useForm, UseFormReturnType } from '@mantine/form';
-import ky from 'ky';
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useDocumentTitle } from '@mantine/hooks';
@@ -96,22 +95,16 @@ export default function ChangePasswordForm() {
             setErrorMessage('');
             setLoader(true);
             const url = isFirstRun ? `${config.baseUri}/v1/auth/change_first_run` : `${config.baseUri}/v1/auth/change`;
-            const resp = await ky(
-                url,
-                {
-                    throwHttpErrors: false,
-                    method: 'POST',
-                    credentials: 'include',
-                    body: JSON.stringify({
-                        currentPassword: isFirstRun ? '' : values.currentPassword,
-                        newPassword: values.newPassword,
-                        isFirstRun,
-                    }),
-                    headers: {
-                        'content-type': 'application/json',
-                    },
-                },
-            );
+            const resp = await fetch(url, {
+                method: 'POST',
+                credentials: 'include',
+                body: JSON.stringify({
+                    currentPassword: isFirstRun ? '' : values.currentPassword,
+                    newPassword: values.newPassword,
+                    isFirstRun,
+                }),
+                headers: { 'Content-Type': 'application/json' },
+            });
             const result: { message: string } = await resp.json();
             setLoader(false);
             console.log(result);
@@ -119,13 +112,13 @@ export default function ChangePasswordForm() {
                 return window.location.assign('/auth/changeSuccess');
             }
             if (result.message) {
-                log.error(((typeof result) === 'object') ? JSON.stringify(result) : result.toString());
+                log.error(`[ChangePasswordForm] ${JSON.stringify(result)}`);
                 return setErrorMessage(result.message);
             }
-            log.error(((typeof result) === 'object') ? JSON.stringify(result) : result.toString());
+            log.error(`[ChangePasswordForm] ${JSON.stringify(result)}`);
             return setErrorMessage(result.message);
         } catch (e: any) {
-            log.error(e.stack || e.toString());
+            log.error(`[ChangePasswordForm] ${e.stack || e.toString()}`);
             setErrorMessage('Connection error');
         } finally {
             setLoader(false);

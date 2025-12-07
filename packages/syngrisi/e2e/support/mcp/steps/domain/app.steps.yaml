@@ -1,8 +1,8 @@
 metadata:
   category: domain/app
-  generatedAt: '2025-12-05T04:19:37.324Z'
+  generatedAt: '2025-12-07T10:28:46.488Z'
   totalFiles: 19
-  totalSteps: 123
+  totalSteps: 126
   sourceFiles:
     - steps/domain/ai.steps.ts
     - steps/domain/api-key.steps.ts
@@ -95,19 +95,19 @@ steps:
     line: 9
   - pattern: I click the {string} button
     description: ''
-    line: 135
+    line: 127
   - pattern: I create a test run {string} with {int} checks
     description: ''
     line: 25
   - pattern: 'I create a test run {string} with checks:'
     description: ''
-    line: 80
+    line: 72
   - pattern: I should see the check details for {string}
     description: ''
-    line: 173
+    line: 171
   - pattern: the {string} button should be {string}
     description: ''
-    line: 149
+    line: 141
   - pattern: I accept the {string} check
     description: ''
     line: 7
@@ -345,6 +345,15 @@ steps:
   - pattern: I go to {string} page
     description: ''
     line: 12
+  - pattern: I wait for navbar filter to sync
+    description: Navbar synchronization steps
+    line: 173
+  - pattern: I wait for navbar to be ready
+    description: ''
+    line: 177
+  - pattern: I wait for table to stabilize
+    description: ''
+    line: 181
   - pattern: the current url contains {string}
     description: ''
     line: 104
@@ -486,13 +495,13 @@ steps:
     line: 53
   - pattern: 'I create {string} tests with params:'
     description: ''
-    line: 477
+    line: 478
   - pattern: 'I create {string} tests with:'
     description: ''
-    line: 469
+    line: 470
   - pattern: I unfold the test {string}
     description: ''
-    line: 623
+    line: 653
   - pattern: I wait for check {string} to appear in collapsed row of test {string}
     description: |-
       Waits for a specific check to appear in the collapsed row of a test.
@@ -504,7 +513,7 @@ steps:
       ```gherkin
       When I wait for check "CheckName-1" to appear in collapsed row of test "TestName-1"
       ```
-    line: 740
+    line: 770
   - pattern: I wait for test {string} to appear in table
     description: |-
       Waits for a specific test row to appear in the table.
@@ -515,4 +524,4 @@ steps:
       ```gherkin
       When I wait for test "TestName-1" to appear in table
       ```
-    line: 643
+    line: 673
