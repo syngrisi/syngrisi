@@ -1,6 +1,8 @@
 export interface Config {
     url: string
     apiKey: string
+    /** When true, automatically accept all new checks (status='new') as baseline */
+    autoAccept?: boolean
 }
 
 export interface SessionParams {
@@ -43,6 +45,8 @@ export interface CheckParams {
     os?: string,
     browserVersion?: string,
     browserFullVersion?: string,
+    /** When true, automatically accept new checks (status='new') as baseline */
+    autoAccept?: boolean,
 }
 
 export interface CheckResult {

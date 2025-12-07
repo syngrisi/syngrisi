@@ -1,11 +1,12 @@
 /* eslint-disable prefer-arrow-callback */
 import * as React from 'react';
-import { ActionIcon, Group, Kbd, Stack, Text, Tooltip } from '@mantine/core';
-import { IconDeviceFloppy, IconShape, IconShapeOff } from '@tabler/icons-react';
+import { ActionIcon, Group, Kbd, Stack, Text, Tooltip, Divider } from '@mantine/core';
+import { IconDeviceFloppy, IconShape, IconShapeOff, IconBoxMargin } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useHotkeys } from '@mantine/hooks';
 import { MainView } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/mainView';
 import { log } from '@shared/utils/Logger';
+import { MatchTypeSelector } from './MatchTypeSelector';
 
 interface Props {
     mainView: any
@@ -53,10 +54,20 @@ export function RegionsToolbar({ mainView, baselineId, view }: Props) {
     };
     useHotkeys([
         ['alt+S', () => {
-            MainView.sendIgnoreRegions(baselineId!, mainView.getRectData());
+            MainView.sendRegions(baselineId!, mainView.getRegionsData());
         }],
         ['Delete', () => mainView.removeActiveIgnoreRegions()],
         ['Backspace', () => mainView.removeActiveIgnoreRegions()],
+        ['A', () => {
+            if (baselineId && view !== 'slider') {
+                mainView.addIgnoreRegion({ name: 'ignore_rect', strokeWidth: 0 });
+            }
+        }],
+        ['B', () => {
+            if (baselineId && view !== 'slider') {
+                mainView.addBoundingRegion('bound_rect');
+            }
+        }],
     ]);
 
     useEffect(function initView() {
@@ -123,6 +134,40 @@ export function RegionsToolbar({ mainView, baselineId, view }: Props) {
             </Tooltip>
 
             <Tooltip
+                multiline
+                withinPortal
+                label={
+                    (
+                        <Stack spacing={4}>
+                            <Group noWrap spacing={4}>
+                                <Text>Checked area only</Text>
+                                <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>B</Kbd>
+                            </Group>
+                            <Text size="xs" color="dimmed">Compare only within this region</Text>
+                            {
+                                !baselineId && (
+                                    <Group noWrap spacing={4}>
+                                        <Text color="orange">&#9888;</Text>
+                                        <Text> First you need to accept this check</Text>
+                                    </Group>
+                                )
+                            }
+                        </Stack>
+                    )
+                }
+            >
+                <div>
+                    <ActionIcon
+                        data-check="add-bound-region"
+                        disabled={(view === 'slider') || !baselineId}
+                        onClick={() => mainView.addBoundingRegion('bound_rect')}
+                    >
+                        <IconBoxMargin size={24} stroke={1} />
+                    </ActionIcon>
+                </div>
+            </Tooltip>
+
+            <Tooltip
                 withinPortal
                 label={
                     (
@@ -140,11 +185,15 @@ export function RegionsToolbar({ mainView, baselineId, view }: Props) {
             >
                 <ActionIcon
                     data-check="save-ignore-region"
-                    onClick={() => MainView.sendIgnoreRegions(baselineId!, mainView.getRectData())}
+                    onClick={() => MainView.sendRegions(baselineId!, mainView.getRegionsData())}
                 >
                     <IconDeviceFloppy size={24} stroke={1} />
                 </ActionIcon>
             </Tooltip>
+
+            <Divider orientation="vertical" />
+
+            <MatchTypeSelector baselineId={baselineId} />
         </>
     );
 }

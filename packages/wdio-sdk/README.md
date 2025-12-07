@@ -39,8 +39,9 @@ Before starting your test session, initialize the driver with the necessary conf
 const { WDIODriver } = require('@syngrisi/wdio-sdk');
 
 const config = {
+    url: 'your-syngrisi-url',
     apiKey: 'your-api-key',
-    serverUrl: 'your-syngrisi-url'
+    autoAccept: false // Optional: auto-accept new baselines (default: false)
 };
 
 const driver = new WDIODriver(config);
@@ -87,12 +88,43 @@ await driver.check({
     }
 });
 
-// Element screenshot
+// Element screenshot with per-check autoAccept
 const headerScreenshot = await $('#header').saveScreenshot();
 await driver.check({
     checkName: 'Header',
     imageBuffer: headerScreenshot,
-    params: { /* parameters inherited from session if not specified */ }
+    params: {
+        autoAccept: true // Auto-accept this specific check if new
+    }
+});
+```
+
+### Auto-Accept Mode
+
+When `autoAccept` is enabled, new checks (with no existing baseline) are automatically accepted as the new baseline. This is useful for:
+- Initial test runs when establishing baselines
+- CI/CD pipelines where human review isn't needed for new checks
+- Development workflows where baselines change frequently
+
+You can enable auto-accept at two levels:
+
+1. **Driver level** (applies to all checks):
+```js
+const driver = new WDIODriver({
+    url: 'your-syngrisi-url',
+    apiKey: 'your-api-key',
+    autoAccept: true
+});
+```
+
+2. **Check level** (overrides driver setting for specific check):
+```js
+await driver.check({
+    checkName: 'Header',
+    imageBuffer: screenshot,
+    params: {
+        autoAccept: true // or false to disable for this check
+    }
 });
 ```
 
@@ -144,6 +176,44 @@ const snapshots = await driver.getSnapshots({
     }
 });
 ```
+
+### Set Ignore Regions
+
+Set regions to exclude from visual comparison on a baseline:
+
+```js
+// First, get the baseline
+const baselines = await driver.getBaselines({
+    params: {
+        name: 'Header',
+        app: 'MyProject',
+        branch: 'main'
+    }
+});
+
+// Set ignore regions (coordinates in pixels)
+await driver.setIgnoreRegions({
+    baselineId: baselines.results[0]._id,
+    regions: [
+        { left: 0, top: 0, right: 100, bottom: 50 },     // Top banner area
+        { left: 200, top: 300, right: 400, bottom: 350 } // Dynamic content
+    ]
+});
+
+// Or use the Region helper class
+await driver.setIgnoreRegions({
+    baselineId: 'baseline-id-123',
+    regions: [
+        new WDIODriver.Region(0, 0, 100, 50)
+    ]
+});
+```
+
+Region coordinates:
+- `left`: X coordinate of the left edge
+- `top`: Y coordinate of the top edge
+- `right`: X coordinate of the right edge
+- `bottom`: Y coordinate of the bottom edge
 
 ## Environment variables
 Environment variables are used to modify the behavior of the Syngrisi WebdriverIO SDK without code changes.
