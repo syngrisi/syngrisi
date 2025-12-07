@@ -19,8 +19,8 @@ There are two modes in which Syngrisi can be run:
 
 ### Native Mode
 
-- [NodeJS](https://nodejs.org/en/download/) `v20.9.0` or above.
-- [MongoDB Community Edition](https://docs.mongodb.com/manual/administration/install-community/) `6.0` or above
+- [NodeJS](https://nodejs.org/en/download/) `v22.19.0` or above.
+- [MongoDB Community Edition](https://docs.mongodb.com/manual/administration/install-community/) `8.0` or above (7.0 is also supported)
 
 ### Container Mode
 
