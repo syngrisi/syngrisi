@@ -24,13 +24,25 @@ function getDiffImageData(image: any) {
     return imgData;
 }
 
-export function highlightDiff(mainView: MainView, highlightsGroups: IGroup[] | null, imageData: any)
-    : Promise<{ groups: IGroup[], diffImageData: any }> {
+export interface HighlightDiffOptions {
+    skipAnimation?: boolean;
+}
+
+export function highlightDiff(
+    mainView: MainView,
+    highlightsGroups: IGroup[] | null,
+    imageData: any,
+    options: HighlightDiffOptions = {},
+): Promise<{ groups: IGroup[], diffImageData: any }> {
+    const { skipAnimation = false } = options;
+
     return new Promise((resolve) => {
-        // remove highlights
-        mainView.canvas.getObjects()
-            .filter((x) => x.name === 'highlight')
-            .forEach((x) => mainView.canvas.remove(x));
+        // remove highlights (only if animating)
+        if (!skipAnimation) {
+            mainView.canvas.getObjects()
+                .filter((x) => x.name === 'highlight')
+                .forEach((x) => mainView.canvas.remove(x));
+        }
 
         // get image data
         const urlData = mainView.diffImage.toDataURL({});
@@ -94,6 +106,12 @@ export function highlightDiff(mainView: MainView, highlightsGroups: IGroup[] | n
                 }
             }
             console.timeEnd('group formation');
+            console.timeEnd('process_data');
+
+            // Skip animation if requested (for auto-region feature)
+            if (skipAnimation) {
+                return resolve({ groups, diffImageData });
+            }
 
             console.time('group handling');
             // eslint-disable-next-line no-restricted-syntax
@@ -117,7 +135,6 @@ export function highlightDiff(mainView: MainView, highlightsGroups: IGroup[] | n
                 mainView.canvas.add(circle);
             }
             console.timeEnd('group handling');
-            console.timeEnd('process_data');
 
             const highlightRemoving = () => {
                 mainView.canvas.getObjects()

@@ -4,7 +4,7 @@ import path from 'path';
 import dotenv from 'dotenv';
 
 // Load local .env file
-dotenv.config({ path: path.join(__dirname, '..', '.env') });
+dotenv.config({ path: path.join(__dirname, '..', '.env'), quiet: true });
 
 const SKIP_DEMO = process.env.SKIP_DEMO_TESTS === 'true';
 

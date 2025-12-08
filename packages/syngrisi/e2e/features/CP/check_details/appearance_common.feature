@@ -6,7 +6,6 @@ Feature: Check Detail Appearance
     When I open the app
     When I clear local storage
 
-  @flaky
   Scenario: Check Detail Appearance
     # NEW
     Given I create "1" tests with:
@@ -65,15 +64,19 @@ Feature: Check Detail Appearance
     Then  the element "[data-check='add-ignore-region']" has attribute "data-disabled" "true"
     Then  the element "[data-check='save-ignore-region']" does not have attribute "data-disabled" "true"
 
-    # accept icon before acceptance
-    Then the element with locator "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" should have has attribute "data-test-icon-type=outline"
-    Then the css attribute "color" from element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" is "rgba(134,142,150,1)"
+    # accept icon before acceptance - wait for loading=false first (use toolbar scope to avoid multiple matches)
+    When I wait 10 seconds for the element with locator "[data-check='toolbar'] [data-test='check-accept-icon'][data-popover-icon-name='CheckName'][data-loading='false']" to be visible
+    When I wait 10 seconds for the element with locator "[data-check='toolbar'] [data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" to be visible
+    Then the element with locator "[data-check='toolbar'] [data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" should have has attribute "data-test-icon-type=outline"
+    Then the css attribute "color" from element "[data-check='toolbar'] [data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" is "rgba(134,142,150,1)"
 
     # accept icon after acceptance
     When I accept via http the 1st check with name "CheckName"
     When I refresh page
-    Then the element with locator "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" should have has attribute "data-test-icon-type=fill"
-    Then the css attribute "color" from element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" is "rgba(64,192,87,1)"
+    When I wait 10 seconds for the element with locator "[data-check='toolbar'] [data-test='check-accept-icon'][data-popover-icon-name='CheckName'][data-loading='false']" to be visible
+    When I wait 10 seconds for the element with locator "[data-check='toolbar'] [data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" to be visible
+    Then the element with locator "[data-check='toolbar'] [data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" should have has attribute "data-test-icon-type=fill"
+    Then the css attribute "color" from element "[data-check='toolbar'] [data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" is "rgba(64,192,87,1)"
 
     # PASSED
     Given I create "1" tests with:
@@ -96,9 +99,11 @@ Feature: Check Detail Appearance
     Then the element "[data-check-status-name='CheckName'] span" matches the text "PASSED"
 
     # Toolbar
-    # accept icon
-    Then the element with locator "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" should have has attribute "data-test-icon-type=outline"
-    Then the css attribute "color" from element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" is "rgba(64,192,87,1)"
+    # accept icon - wait for loading=false first (use toolbar scope)
+    When I wait 10 seconds for the element with locator "[data-check='toolbar'] [data-test='check-accept-icon'][data-popover-icon-name='CheckName'][data-loading='false']" to be visible
+    When I wait 10 seconds for the element with locator "[data-check='toolbar'] [data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" to be visible
+    Then the element with locator "[data-check='toolbar'] [data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" should have has attribute "data-test-icon-type=outline"
+    Then the css attribute "color" from element "[data-check='toolbar'] [data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" is "rgba(64,192,87,1)"
 
     # default view
     Then the element with locator "[data-segment-value='actual']" should have attribute "data-segment-active" "true"
@@ -137,9 +142,11 @@ Feature: Check Detail Appearance
     Then the element "[data-check-status-name='CheckName'] span" matches the text "FAILED"
 
     # Toolbar
-    # accept icon
-    Then the element with locator "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" should have has attribute "data-test-icon-type=outline"
-    Then the css attribute "color" from element "[data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" is "rgba(64,192,87,1)"
+    # accept icon - wait for loading=false first (use toolbar scope)
+    When I wait 10 seconds for the element with locator "[data-check='toolbar'] [data-test='check-accept-icon'][data-popover-icon-name='CheckName'][data-loading='false']" to be visible
+    When I wait 10 seconds for the element with locator "[data-check='toolbar'] [data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" to be visible
+    Then the element with locator "[data-check='toolbar'] [data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" should have has attribute "data-test-icon-type=outline"
+    Then the css attribute "color" from element "[data-check='toolbar'] [data-test='check-accept-icon'][data-popover-icon-name='CheckName'] svg" is "rgba(64,192,87,1)"
     # diff percent
     Then the element with locator "[data-check='diff-percent']" should have contains text "1.34%"
 

@@ -10,7 +10,8 @@ const DEMO_BANNER_ID = 'e2e-demo-banner';
 const DEMO_HIGHLIGHT_CLASS = 'e2e-demo-highlight';
 
 // Flag to skip demo steps for debugging (default: false)
-const SKIP_DEMO_STEPS = process.env.SKIP_DEMO_STEPS === 'true';
+// Check at runtime, not at module load time
+const shouldSkipDemoSteps = () => process.env.SKIP_DEMO_STEPS === 'true';
 
 const showDemoBanner = async (page: Page, text: string) => {
   await page.evaluate(
@@ -191,7 +192,7 @@ const logMcpStatus = (testEngine: TestEngineFixture) => {
  * ```
  */
 When('I announce: {string}', async ({ page }, phrase: string) => {
-  if (env.CI || SKIP_DEMO_STEPS) {
+  if (env.CI || shouldSkipDemoSteps()) {
     return;
   }
   const { promisify } = await import('node:util');
@@ -220,7 +221,7 @@ When('I announce: {string}', async ({ page }, phrase: string) => {
  * ```
  */
 When('I announce: {string} and PAUSE', async ({ page, testEngine }, phrase: string) => {
-  if (env.CI || SKIP_DEMO_STEPS) {
+  if (env.CI || shouldSkipDemoSteps()) {
     return;
   }
   const { exec } = await import('node:child_process');
@@ -249,7 +250,7 @@ When('I announce: {string} and PAUSE', async ({ page, testEngine }, phrase: stri
  * ```
  */
 When('I highlight element {string}', async ({ page }, selector: string) => {
-  if (env.CI || SKIP_DEMO_STEPS) {
+  if (env.CI || shouldSkipDemoSteps()) {
     return;
   }
   await highlightElement(page, selector);
@@ -267,7 +268,7 @@ When('I highlight element {string}', async ({ page }, selector: string) => {
  * ```
  */
 When('I clear highlight', async ({ page }) => {
-  if (env.CI || SKIP_DEMO_STEPS) {
+  if (env.CI || shouldSkipDemoSteps()) {
     return;
   }
   await clearHighlight(page);
@@ -285,7 +286,7 @@ When('I clear highlight', async ({ page }) => {
  * ```
  */
 When('I end the demo', async ({ page }) => {
-  if (env.CI || SKIP_DEMO_STEPS) {
+  if (env.CI || shouldSkipDemoSteps()) {
     return;
   }
 

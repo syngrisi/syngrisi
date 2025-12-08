@@ -76,7 +76,7 @@ export function Checks({ item, testUpdateQuery }: Props) {
     useImagePreloadBatch(checks, {
         enabled: checks.length > 0,
         priority: 'medium',
-        preloadCount: 10, // Preload first 10 checks
+        preloadCount: 30, // Preload first 30 checks (30 * 3 images = 90)
     });
 
     const ChecksContainer = (checksViewMode === 'list') ? Stack : Group;

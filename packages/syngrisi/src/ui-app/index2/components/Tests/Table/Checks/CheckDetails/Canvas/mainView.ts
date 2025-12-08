@@ -5,6 +5,7 @@ import { lockImage } from '@index/components/Tests/Table/Checks/CheckDetails/Can
 import { errorMsg, successMsg } from '@shared/utils/utils';
 import config from '@config';
 import { log } from '@shared/utils/Logger';
+import { highlightDiff } from '@index/components/Tests/Table/Checks/CheckDetails/Toolbar/highlightDiff';
 
 /* eslint-disable dot-notation,no-underscore-dangle */
 interface IRectParams {
@@ -97,6 +98,9 @@ export class MainView {
         // this.expectedCanvasViewportAreaSize = MainView.calculateExpectedCanvasViewportAreaSize();
 
         this.defaultMode = '';
+
+        // @ts-ignore - Expose mainView instance for E2E tests
+        window.mainView = this;
         this.currentView = 'actual';
 
         if (actual) {
@@ -311,8 +315,17 @@ export class MainView {
     }
 
     addIgnoreRegion(params) {
+        // @ts-ignore - Always sync window.mainView for E2E tests
+        window.mainView = this;
+
         Object.assign(params, { fill: 'MediumVioletRed' });
         const r = this.addRect(params);
+
+        // Explicitly set name property - fabric.js might not set it from constructor options
+        if (params.name && !r.name) {
+            r.name = params.name;
+        }
+
         r.setControlsVisibility({
             bl: true,
             br: true,
@@ -330,6 +343,52 @@ export class MainView {
             return;
         }
         this.canvas.setActiveObject(r);
+    }
+
+    /**
+     * Create ignore regions automatically from diff areas
+     * @param padding - pixels to add around each diff region (default: 5)
+     * @returns number of regions created
+     */
+    async createAutoIgnoreRegions(padding: number = 5): Promise<number> {
+        if (!this.diffImage) {
+            log.warn('[MainView] Cannot create auto regions: no diff image');
+            return 0;
+        }
+
+        try {
+            // Get diff groups without animation
+            const { groups } = await highlightDiff(this, null, null, { skipAnimation: true });
+
+            if (groups.length === 0) {
+                log.debug('[MainView] No diff regions found');
+                return 0;
+            }
+
+            log.debug(`[MainView] Creating ${groups.length} auto ignore regions`);
+
+            // Create ignore region for each diff group
+            // eslint-disable-next-line no-restricted-syntax
+            for (const group of groups) {
+                const regionParams = {
+                    left: Math.max(0, group.minX - padding),
+                    top: Math.max(0, group.minY - padding),
+                    width: (group.maxX - group.minX) + padding * 2,
+                    height: (group.maxY - group.minY) + padding * 2,
+                    name: 'ignore_rect',
+                    strokeWidth: 0,
+                    noSelect: true, // Don't select each region as we add it
+                };
+                this.addIgnoreRegion(regionParams);
+            }
+
+            this.canvas.renderAll();
+            return groups.length;
+        } catch (e) {
+            log.error('[MainView] Failed to create auto regions:', e);
+            errorMsg({ error: 'Failed to create auto ignore regions' });
+            return 0;
+        }
     }
 
     addBoundingRegion(name) {
@@ -520,6 +579,8 @@ export class MainView {
         regs.forEach((regParams) => {
             // eslint-disable-next-line no-param-reassign
             regParams['noSelect'] = true;
+            // eslint-disable-next-line no-param-reassign
+            regParams['name'] = 'ignore_rect';
             classThis.addIgnoreRegion(regParams);
         });
     }

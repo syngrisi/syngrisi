@@ -40,8 +40,10 @@ Before starting your test session, initialize the driver with the necessary conf
 import { PlaywrightDriver } from '@syngrisi/playwright-sdk';
 
 const config = {
+    page: page, // Playwright page object
+    url: 'your-syngrisi-url',
     apiKey: 'your-api-key',
-    serverUrl: 'your-syngrisi-url'
+    autoAccept: false // Optional: auto-accept new baselines (default: false)
 };
 
 const driver = new PlaywrightDriver(config);
@@ -74,12 +76,11 @@ await driver.startTestSession({ params: sessionParams });
 Perform a visual check by providing the check name, image buffer, and any additional parameters.
 
 ```js
-const fullPageSreenshot = await page.screenshot({fullPage: true});
-const headerScreenshot = page.locator('#header').screenshot();
-// first check
-driver.check({
-    checkName: 'Main Page',
-    imageBuffer: fullPageSreenshot,
+// Full page screenshot
+const fullPageScreenshot = await page.screenshot({ fullPage: true });
+await driver.check({
+    checkName: 'Full Page',
+    imageBuffer: fullPageScreenshot,
     params: {
         viewport: '1200x800',
         browserName: 'chrome',
@@ -89,14 +90,45 @@ driver.check({
     }
 });
 
-// second check
-driver.check({
+// Element screenshot with per-check autoAccept
+const headerScreenshot = await page.locator('#header').screenshot();
+await driver.check({
     checkName: 'Header',
     imageBuffer: headerScreenshot,
-    params: {/* other parameters */ }
+    params: {
+        autoAccept: true // Auto-accept this specific check if new
+    }
 });
+```
 
-await driver.check({ 'About Page', imageBuffer_02, params: {/* other parameters */ } });
+### Auto-Accept Mode
+
+When `autoAccept` is enabled, new checks (with no existing baseline) are automatically accepted as the new baseline. This is useful for:
+- Initial test runs when establishing baselines
+- CI/CD pipelines where human review isn't needed for new checks
+- Development workflows where baselines change frequently
+
+You can enable auto-accept at two levels:
+
+1. **Driver level** (applies to all checks):
+```js
+const driver = new PlaywrightDriver({
+    page: page,
+    url: 'your-syngrisi-url',
+    apiKey: 'your-api-key',
+    autoAccept: true
+});
+```
+
+2. **Check level** (overrides driver setting for specific check):
+```js
+await driver.check({
+    checkName: 'Header',
+    imageBuffer: screenshot,
+    params: {
+        autoAccept: true // or false to disable for this check
+    }
+});
 ```
 
 ### 4. Stop the Test Session
@@ -107,6 +139,85 @@ Once all checks are completed, stop the test session.
 await driver.stopTestSession();
 ```
 
+## Additional Methods
+
+### Accept a Check
+
+Programmatically accept a check by setting a new baseline:
+
+```js
+const result = await driver.acceptCheck({
+    checkId: 'check-id-123',
+    baselineId: 'baseline-id-456'
+});
+```
+
+### Get Baselines
+
+Fetch existing baselines matching criteria:
+
+```js
+const baselines = await driver.getBaselines({
+    params: {
+        name: 'Header',
+        app: 'MyProject',
+        branch: 'main'
+    }
+});
+```
+
+### Get Snapshots
+
+Retrieve snapshots based on search criteria:
+
+```js
+const snapshots = await driver.getSnapshots({
+    params: {
+        name: 'Header',
+        app: 'MyProject',
+        branch: 'main'
+    }
+});
+```
+
+### Set Ignore Regions
+
+Set regions to exclude from visual comparison on a baseline:
+
+```js
+// First, get the baseline
+const baselines = await driver.getBaselines({
+    params: {
+        name: 'Header',
+        app: 'MyProject',
+        branch: 'main'
+    }
+});
+
+// Set ignore regions (coordinates in pixels)
+await driver.setIgnoreRegions({
+    baselineId: baselines.results[0]._id,
+    regions: [
+        { left: 0, top: 0, right: 100, bottom: 50 },     // Top banner area
+        { left: 200, top: 300, right: 400, bottom: 350 } // Dynamic content
+    ]
+});
+
+// Or use the Region helper class
+await driver.setIgnoreRegions({
+    baselineId: 'baseline-id-123',
+    regions: [
+        new PlaywrightDriver.Region(0, 0, 100, 50)
+    ]
+});
+```
+
+Region coordinates:
+- `left`: X coordinate of the left edge
+- `top`: Y coordinate of the top edge
+- `right`: X coordinate of the right edge
+- `bottom`: Y coordinate of the bottom edge
+
 ## Environment variables
 
 Environment variables are used to modify the behavior of the Syngrisi Playwright SDK without code changes.
@@ -116,6 +227,8 @@ Example: To set the log level to debug, use the following command:
 Windows: `set SYNGRISI_LOG_LEVEL=debug`
 macOS/Linux: `export SYNGRISI_LOG_LEVEL=debug`
 
+`ENV_POSTFIX` - will add to platform property, you can use this to set some unique platform name for particular
+environment
 `SYNGRISI_LOG_LEVEL` - logging level (`"trace" | "debug" | "info" | "warn" | "error"`)
 
 ## Documentation

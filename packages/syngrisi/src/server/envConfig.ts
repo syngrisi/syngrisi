@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import path from 'path';
 
 import dotenv from 'dotenv';
-dotenv.config();
+dotenv.config({ quiet: true });
 
 if (!process.env.NODE_ENV) {
     process.env.NODE_ENV = 'production';

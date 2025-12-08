@@ -19,12 +19,10 @@
         "@mantine/nprogress": "^5.10.5",
         "@mantine/spotlight": "^5.10.5",
         "@mantine/styles": "^5.10.5",
-        "@popperjs/core": "^2.11.8",
         "@tabler/icons-react": "^3.30.0",
         "@tanstack/react-query": "^4.42.0",
         "@tanstack/react-query-devtools": "^4.42.0",
         "date-fns": "^2.30.0",
-        "dayjs": "^1.11.19",
         "fabric": "^5.5.2",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
@@ -40,7 +38,7 @@
         "@types/react-dom": "^18.3.7",
         "@typescript-eslint/eslint-plugin": "^5.62.0",
         "@typescript-eslint/parser": "^5.62.0",
-        "@vitejs/plugin-react": "^4.3.4",
+        "@vitejs/plugin-react": "^5.1.1",
         "eslint": "^8.57.1",
         "eslint-config-airbnb": "^19.0.4",
         "eslint-config-airbnb-typescript": "^17.1.0",
@@ -50,6 +48,6 @@
         "eslint-plugin-react": "^7.37.5",
         "eslint-plugin-react-hooks": "^4.6.2",
         "typescript": "^4.9.5",
-        "vite": "^5.4.21"
+        "vite": "^6.2.7"
     }
 }

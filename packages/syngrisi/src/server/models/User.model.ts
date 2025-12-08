@@ -1,7 +1,10 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
-import passportLocalMongoose from 'passport-local-mongoose';
+import plm from 'passport-local-mongoose';
 import { toJSON, paginate } from './plugins';
 import { PluginExtededModel } from './plugins/utils';
+
+// ESM/CJS interop: passport-local-mongoose exports `default` containing the plugin function
+const passportLocalMongoose = (plm as any).default || plm;
 
 export type UserRole = 'admin' | 'reviewer' | 'user';
 

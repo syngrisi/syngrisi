@@ -78,6 +78,7 @@ export default function ActionPopoverIcon(
                         disabled={disabled}
                         data-test={testAttr}
                         data-popover-icon-name={testAttrName}
+                        data-loading={loading}
                         aria-label={title}
                         variant={'light' as any}
                         color={iconColor}

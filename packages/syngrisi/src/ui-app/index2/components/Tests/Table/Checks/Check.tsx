@@ -6,6 +6,7 @@ import {
     Group,
     Image,
     Paper,
+    Skeleton,
     Text,
     Tooltip,
     useMantineTheme,
@@ -104,13 +105,9 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                                                 src={imagePreviewSrc}
                                                 data-test-preview-image={check.name}
                                                 fit="contain"
-                                                // fit={'scale-down'}
-                                                // fit={'cover'} //default
-                                                // fit={'none'}
-                                                // fit={'fill'}
                                                 width={`${imageWeight * 4}px`}
-                                                // height="100px"
                                                 withPlaceholder
+                                                placeholder={<Skeleton height={80} width={imageWeight * 4} animate />}
                                                 alt={check.name}
                                                 // sx={{
                                                 //     cursor: 'pointer',
@@ -236,6 +233,8 @@ export function Check({ check, checksViewMode, checksQuery, testUpdateQuery }: P
                                                 src={imagePreviewSrc}
                                                 fit="contain"
                                                 alt={check.name}
+                                                withPlaceholder
+                                                placeholder={<Skeleton height={100} width="100%" animate />}
                                                 styles={
                                                     () => ({
                                                         image: {
