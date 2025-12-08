@@ -128,3 +128,4 @@ jobs:
         run: yarn test:e2e
         env:
           SYNGRISI_DB_URI: mongodb://localhost:27017/SyngrisiDbTest
+          PLAYWRIGHT_WORKERS: 3
