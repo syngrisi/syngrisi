@@ -190,7 +190,13 @@ When(
         return;
       }
 
-      await targetLocator.click();
+      // Use dispatchEvent for buttons with popover tooltips that can intercept clicks
+      const isPopoverButton = /aria-label=['"](Remove|Delete|Accept)/i.test(renderedValue);
+      if (isPopoverButton) {
+        await targetLocator.dispatchEvent('click');
+      } else {
+        await targetLocator.click();
+      }
       return;
     }
 

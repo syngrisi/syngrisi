@@ -66,9 +66,13 @@ export default function ActionPopoverIcon(
             <Popover.Target>
                 <Tooltip
                     withinPortal={withinPortal}
+                    events={{ hover: true, focus: false, touch: false }}
+                    styles={{
+                        tooltip: { pointerEvents: 'none' },
+                    }}
                     label={
                         (
-                            <Group noWrap>
+                            <Group noWrap style={{ pointerEvents: 'none' }}>
                                 <Text>{title}</Text>
                             </Group>
                         )
