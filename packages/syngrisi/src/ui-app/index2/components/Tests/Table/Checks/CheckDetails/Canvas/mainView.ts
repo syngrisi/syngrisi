@@ -57,15 +57,8 @@ export class MainView {
 
     diffImage: any;
 
-    // _currentView: string;
-    //
-    // public get currentView() {
-    //     return this._currentView;
-    // }
-    //
-    // public set currentView(value: string) {
-    //     this._currentView = value;
-    // }
+    // Bounding region overlay state
+    boundingOverlayEnabled: boolean = false;
 
     constructor(
         {
@@ -115,6 +108,8 @@ export class MainView {
         this.selectionEvents();
         this.zoomEvents();
         this.panEvents();
+        this.initBoundingOverlay();
+        this.boundingRegionEvents();
 
         // views
         this.expectedView = new SimpleView(this, 'expected');
@@ -214,6 +209,79 @@ export class MainView {
             if (!activeSelection?._objects?.length || (activeSelection?._objects?.length < 2)) return;
             if (activeSelection.hasControls) {
                 activeSelection.hasControls = false;
+            }
+        });
+    }
+
+    /**
+     * Initialize bounding overlay rendering in the after:render event
+     */
+    initBoundingOverlay() {
+        this.canvas.on('after:render', () => this.renderBoundingOverlay());
+    }
+
+    /**
+     * Render semi-transparent overlay with a cutout for the bounding region
+     * Uses evenodd fill rule to create the "hole" effect
+     */
+    renderBoundingOverlay() {
+        if (!this.boundingOverlayEnabled) return;
+
+        const boundRect = this.canvas.getObjects()
+            .find((obj) => obj.name === 'bound_rect') as fabric.Rect;
+        if (!boundRect) return;
+
+        const ctx = this.canvas.getContext();
+        const vpt = this.canvas.viewportTransform;
+
+        ctx.save();
+        ctx.beginPath();
+        // Outer rectangle (entire canvas)
+        ctx.rect(0, 0, this.canvas.width!, this.canvas.height!);
+        // Apply viewport transform for correct zoom/pan handling
+        ctx.transform(vpt![0], vpt![1], vpt![2], vpt![3], vpt![4], vpt![5]);
+        // Inner rectangle (cutout) - the bounding region area
+        ctx.rect(
+            boundRect.left!,
+            boundRect.top!,
+            boundRect.getScaledWidth(),
+            boundRect.getScaledHeight(),
+        );
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.fill('evenodd');
+        ctx.restore();
+    }
+
+    /**
+     * Update bounding overlay state based on presence of bound_rect
+     */
+    updateBoundingOverlay() {
+        const hasBoundRect = this.canvas.getObjects()
+            .some((obj) => obj.name === 'bound_rect');
+        this.boundingOverlayEnabled = hasBoundRect;
+        this.canvas.requestRenderAll();
+    }
+
+    /**
+     * Subscribe to bounding region events for real-time overlay updates
+     */
+    boundingRegionEvents() {
+        // Update overlay during move/resize for real-time feedback
+        this.canvas.on('object:moving', (e) => {
+            if (e.target?.name === 'bound_rect') {
+                this.canvas.requestRenderAll();
+            }
+        });
+
+        this.canvas.on('object:scaling', (e) => {
+            if (e.target?.name === 'bound_rect') {
+                this.canvas.requestRenderAll();
+            }
+        });
+
+        this.canvas.on('object:modified', (e) => {
+            if (e.target?.name === 'bound_rect') {
+                this.canvas.requestRenderAll();
             }
         });
     }
@@ -409,6 +477,7 @@ export class MainView {
         const r = this.addRect(params);
         this.canvas.add(r);
         r.bringToFront();
+        this.updateBoundingOverlay();
     }
 
     removeAllRegions() {
@@ -416,6 +485,7 @@ export class MainView {
         regions.forEach((region) => {
             this.canvas.remove(region);
         });
+        this.updateBoundingOverlay();
     }
 
     get allRects() {
@@ -649,5 +719,6 @@ export class MainView {
             this.canvas.add(r);
             r.bringToFront();
         });
+        this.updateBoundingOverlay();
     }
 }
