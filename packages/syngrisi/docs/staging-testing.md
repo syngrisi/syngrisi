@@ -60,17 +60,17 @@ cd /Users/a1/Projects/SYNGRISI_STAGE/packages/syngrisi/e2e-staging && npm run te
 
 ### Demo: Preview Visibility Problem
 ```bash
-cd /Users/a1/Projects/SYNGRISI_STAGE/packages/syngrisi/e2e-staging && SKIP_DEMO_TESTS=true npx bddgen && npx playwright test --project demo --grep "preview"
+cd /Users/a1/Projects/SYNGRISI_STAGE/packages/syngrisi/e2e-staging && export SKIP_DEMO_TESTS=true && npx bddgen && npx playwright test --project demo --grep "preview"
 ```
 
 ### Demo: Database Pollution
 ```bash
-cd /Users/a1/Projects/SYNGRISI_STAGE/packages/syngrisi/e2e-staging && SKIP_DEMO_TESTS=true npx bddgen && npx playwright test --project demo --grep "pollution"
+cd /Users/a1/Projects/SYNGRISI_STAGE/packages/syngrisi/e2e-staging && export SKIP_DEMO_TESTS=true && npx bddgen && npx playwright test --project demo --grep "pollution"
 ```
 
 ### Demo: API Check Creation
 ```bash
-cd /Users/a1/Projects/SYNGRISI_STAGE/packages/syngrisi/e2e-staging && SKIP_DEMO_TESTS=true npx bddgen && npx playwright test --project demo --grep "api-creation"
+cd /Users/a1/Projects/SYNGRISI_STAGE/packages/syngrisi/e2e-staging && export SKIP_DEMO_TESTS=true && npx bddgen && npx playwright test --project demo --grep "api-creation"
 ```
 
 ## Prerequisites

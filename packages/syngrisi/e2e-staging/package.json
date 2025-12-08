@@ -8,7 +8,7 @@
     "test:smoke": "npx bddgen && npx playwright test --project staging-smoke",
     "test:extended": "npx bddgen && npx playwright test --project staging-extended",
     "test:demo": "npx bddgen && npx playwright test --project staging-demo",
-    "test:demo:debug": "SKIP_DEMO_TESTS=true npx bddgen && npx playwright test --project staging-demo",
+    "test:demo:debug": "export SKIP_DEMO_TESTS=true && npx bddgen && npx playwright test --project staging-demo",
     "bddgen": "npx bddgen"
   },
   "dependencies": {

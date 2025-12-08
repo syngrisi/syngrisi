@@ -47,7 +47,7 @@ Feature: Check Detail Appearance
     # Toolbar
     # image size
     Then the element with locator "[data-check='image-size']" should have contains text "744x464"
-    Then the element with locator "[data-check='image-date'] span" should have contains text "<YYYY-MM-DD>"
+    Then the element with locator "[data-check='image-date'] span" should have contains text "<HH:mm:ss>"
 
     # default view
     Then the element with locator "[data-segment-value='actual']" should have attribute "data-segment-active" "true"

@@ -649,11 +649,19 @@ async function checkElementContainsText(
       attempt++;
     }
   }
-  // Handle placeholders like <YYYY-MM-DD> - replace with regex pattern for date matching
+  // Handle placeholders like <YYYY-MM-DD> or <HH:mm:ss> - replace with regex pattern for date/time matching
   let expectedPattern = renderedExpected;
   if (renderedExpected.includes('<YYYY-MM-DD>')) {
-    // Replace <YYYY-MM-DD> with regex pattern that matches date format YYYY-MM-DD or YYYY-MM-DD HH:mm:ss
     expectedPattern = renderedExpected.replace('<YYYY-MM-DD>', '\\d{4}-\\d{2}-\\d{2}(?: \\d{2}:\\d{2}:\\d{2})?');
+    const actualText = await locator.first().textContent();
+    const regex = new RegExp(expectedPattern);
+    if (!regex.test(actualText || '')) {
+      throw new Error(`Expected text to match pattern "${expectedPattern}", but got "${actualText}"`);
+    }
+    return;
+  }
+  if (renderedExpected.includes('<HH:mm:ss>')) {
+    expectedPattern = renderedExpected.replace('<HH:mm:ss>', '\\d{2}:\\d{2}:\\d{2}');
     const actualText = await locator.first().textContent();
     const regex = new RegExp(expectedPattern);
     if (!regex.test(actualText || '')) {
