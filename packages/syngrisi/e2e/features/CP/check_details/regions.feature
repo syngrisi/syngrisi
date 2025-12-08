@@ -147,11 +147,18 @@ Feature: Check details - Regions
      return (mainView.allRects.length.toString());
          """
 
-      # select and remove
+      # select and remove - select region via JS and wait for remove button to be enabled
       When I execute javascript code:
          """
      mainView.canvas.setActiveObject(mainView.canvas.getObjects().filter(x=>x.name==='ignore_rect')[0]);
      mainView.canvas.requestRenderAll();
+         """
+      When I repeat javascript code until stored "js" string equals "enabled":
+         """
+     const btn = document.querySelector('[data-check="remove-ignore-region"]');
+     if (!btn) return "no-button";
+     if (btn.disabled || btn.hasAttribute('disabled')) return "disabled";
+     return "enabled";
          """
       When I click element with locator "[data-check='remove-ignore-region']"
 
