@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto'
 import { LogLevelDesc } from 'loglevel'
 
-import { default as logger } from '@wdio/logger'
+import logger from './lib/logger'
 import { getDomDump } from './lib/getDomDump'
 
 import {
