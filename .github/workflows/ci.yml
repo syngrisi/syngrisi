@@ -94,6 +94,10 @@ jobs:
           name: build-artifacts
           path: packages/
 
+      - name: Install E2E dependencies
+        run: npm install --no-package-lock
+        working-directory: packages/syngrisi/e2e
+
       - name: Get Playwright version
         id: playwright-version
         run: echo "version=$(node -p "require('@playwright/test/package.json').version")" >> $GITHUB_OUTPUT
