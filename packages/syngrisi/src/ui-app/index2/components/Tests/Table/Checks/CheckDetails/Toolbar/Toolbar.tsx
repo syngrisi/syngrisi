@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { Divider, Group, Menu, ActionIcon } from '@mantine/core';
 import { useEffect, useState } from 'react';
-import { IconDotsVertical, IconTrash, IconChevronLeft, IconChevronRight, IconChevronUp, IconChevronDown } from '@tabler/icons-react';
+import { IconDotsVertical, IconTrash, IconChevronLeft, IconChevronRight, IconChevronUp, IconChevronDown, IconShare } from '@tabler/icons-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GenericService } from '@shared/services';
 import { errorMsg, successMsg } from '@shared/utils/utils';
@@ -16,6 +16,7 @@ import { AcceptButton } from '@index/components/Tests/Table/Checks/AcceptButton'
 import { RemoveButton } from '@index/components/Tests/Table/Checks/RemoveButton';
 import { useParams } from '@hooks/useParams';
 import { DeleteBaselineModal } from '../Modals/DeleteBaselineModal';
+import { ShareModal } from '../Modals/ShareModal';
 
 interface Props {
     mainView: any
@@ -57,7 +58,9 @@ export function Toolbar(
     const { query } = useParams();
     const [view, setView] = useState('actual');
     const [deleteModalOpened, setDeleteModalOpened] = useState(false);
+    const [shareModalOpened, setShareModalOpened] = useState(false);
     const queryClient = useQueryClient();
+    const isShareMode = !!query.share;
 
     const mutationRemoveBaseline = useMutation(
         (id: string) => GenericService.delete('baselines', id),
@@ -162,40 +165,53 @@ export function Toolbar(
                 <RegionsToolbar mainView={mainView} baselineId={baselineId} view={view} hasDiff={!!mainView?.diffImage} />
 
                 <Divider orientation="vertical" />
-                <AcceptButton
-                    check={curCheck}
-                    initCheck={initCheckData}
-                    checksQuery={checkQuery}
-                    size={24}
-                    testUpdateQuery={checkQuery}
-                />
+                {!isShareMode && (
+                    <>
+                        <AcceptButton
+                            check={curCheck}
+                            initCheck={initCheckData}
+                            checksQuery={checkQuery}
+                            size={24}
+                            testUpdateQuery={checkQuery}
+                        />
 
-                <RemoveButton
-                    check={curCheck}
-                    initCheck={initCheckData}
-                    testUpdateQuery={checkQuery}
-                    size={30}
-                    closeHandler={closeHandler}
-                />
-                <Menu shadow="md" width={200} withinPortal>
-                    <Menu.Target>
-                        <ActionIcon data-test="check-details-menu">
-                            <IconDotsVertical size={20} />
-                        </ActionIcon>
-                    </Menu.Target>
+                        <RemoveButton
+                            check={curCheck}
+                            initCheck={initCheckData}
+                            testUpdateQuery={checkQuery}
+                            size={30}
+                            closeHandler={closeHandler}
+                        />
+                    </>
+                )}
+                {!isShareMode && (
+                    <Menu shadow="md" width={200} withinPortal>
+                        <Menu.Target>
+                            <ActionIcon data-test="check-details-menu">
+                                <IconDotsVertical size={20} />
+                            </ActionIcon>
+                        </Menu.Target>
 
-                    <Menu.Dropdown>
-                        <Menu.Item
-                            color="red"
-                            icon={<IconTrash size={14} />}
-                            disabled={!baselineId}
-                            onClick={() => setDeleteModalOpened(true)}
-                            data-test="menu-delete-baseline"
-                        >
-                            Delete Baseline
-                        </Menu.Item>
-                    </Menu.Dropdown>
-                </Menu>
+                        <Menu.Dropdown>
+                            <Menu.Item
+                                icon={<IconShare size={14} />}
+                                onClick={() => setShareModalOpened(true)}
+                                data-test="menu-share-check"
+                            >
+                                Share
+                            </Menu.Item>
+                            <Menu.Item
+                                color="red"
+                                icon={<IconTrash size={14} />}
+                                disabled={!baselineId}
+                                onClick={() => setDeleteModalOpened(true)}
+                                data-test="menu-delete-baseline"
+                            >
+                                Delete Baseline
+                            </Menu.Item>
+                        </Menu.Dropdown>
+                    </Menu>
+                )}
             </Group>
             <DeleteBaselineModal
                 opened={deleteModalOpened}
@@ -203,6 +219,11 @@ export function Toolbar(
                 onConfirm={handleDeleteBaseline}
                 usageCount={usageCount || 0}
                 snapshotId={curCheck?.baselineId?._id}
+            />
+            <ShareModal
+                opened={shareModalOpened}
+                onClose={() => setShareModalOpened(false)}
+                checkId={curCheck?._id}
             />
         </Group>
 

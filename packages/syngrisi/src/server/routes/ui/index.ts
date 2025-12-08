@@ -4,7 +4,7 @@ import path from 'path';
 import { HttpStatus } from '@utils';
 
 import { catchAsync } from '@utils';
-import { ensureLoggedIn, ensureLoggedInOrApiKey } from '@middlewares/ensureLogin/ensureLoggedIn';
+import { ensureLoggedIn, ensureLoggedInOrApiKey, ensureLoggedInOrShareToken } from '@middlewares/ensureLogin/ensureLoggedIn';
 import { ExtRequest } from '../../../types/ExtRequest';
 import { Midleware } from '../../../types/Midleware';
 import { baseDir } from '@lib/baseDir';
@@ -18,7 +18,7 @@ const staticIndex = async (req: ExtRequest, res: Response) => {
 
 router.get(
     '',
-    ensureLoggedIn(),
+    ensureLoggedInOrShareToken(),
     catchAsync(staticIndex) as Midleware
 );
 

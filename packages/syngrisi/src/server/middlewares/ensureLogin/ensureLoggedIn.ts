@@ -266,3 +266,103 @@ export function ensureLoggedInOrApiKey(): (req: Request, res: Response, next: Ne
         return next();
     };
 }
+
+/**
+ * Middleware that allows access if:
+ * 1. User is logged in, OR
+ * 2. A valid share token is present in query params
+ *
+ * Used for pages that can be accessed anonymously via share links.
+ */
+export function ensureLoggedInOrShareToken(): (req: Request, res: Response, next: NextFunction) => Promise<void> {
+    return async (req: Request, res: Response, next: NextFunction) => {
+        // Check if share token is present in query params
+        const shareToken = req.query.share as string | undefined;
+
+        if (shareToken) {
+            // Share token present - allow access without login
+            // The frontend will validate the token and show read-only mode
+            log.debug('Share token present, allowing access without login', { scope: 'ensureLoggedInOrShareToken' });
+
+            // Login as Guest user for share mode
+            const guest = await User.findOne({ username: 'Guest' });
+            if (guest) {
+                await new Promise<void>((resolve) => {
+                    req.logIn(guest, (err: any) => {
+                        if (err) {
+                            log.warn(`Failed to login as Guest for share access: ${err}`, { scope: 'ensureLoggedInOrShareToken' });
+                        }
+                        resolve();
+                    });
+                });
+            }
+            return next();
+        }
+
+        // No share token - require normal authentication
+        const result = await handleBasicAuth(req);
+        req.user = result.user || req.user;
+        if (result.type === 'success') {
+            return next();
+        }
+        res.status(result.status).redirect(result.value);
+    };
+}
+
+/**
+ * Middleware that allows access if:
+ * 1. User is logged in, OR
+ * 2. Valid API key, OR
+ * 3. Valid share token
+ *
+ * Used for API endpoints that can be accessed via share links (read-only).
+ */
+export function ensureLoggedInOrApiKeyOrShareToken(): (req: Request, res: Response, next: NextFunction) => Promise<void> {
+    return async (req: Request, res: Response, next: NextFunction) => {
+        const logOpts = {
+            scope: 'ensureLoggedInOrApiKeyOrShareToken',
+            msgType: 'AUTH_API',
+        };
+
+        // Check if share token is present in query params or headers
+        const shareToken = (req.query.share || req.headers['x-share-token']) as string | undefined;
+
+        if (shareToken) {
+            // Share token present - allow read access without login
+            log.debug('Share token present in API request, allowing read access', logOpts);
+
+            // Login as Guest user for share mode
+            const guest = await User.findOne({ username: 'Guest' });
+            if (guest) {
+                req.user = guest;
+            }
+            // Mark request as share mode to skip creator filtering
+            (req as any).isShareMode = true;
+            return next();
+        }
+
+        // Try basic auth first
+        const basicAuthResult = await handleBasicAuth(req);
+        if (basicAuthResult.type === 'success') {
+            return next();
+        }
+
+        // Try API key
+        const rawApiKey = req.headers.apikey ?? req.query.apikey;
+        const apiKeyResult = await handleAPIAuth(rawApiKey);
+        req.user = req.user || apiKeyResult.user;
+        if ('apikey' in req.query) {
+            delete (req.query as Record<string, unknown>).apikey;
+        }
+
+        if (apiKeyResult.type !== 'success') {
+            log.info(`Unauthorized - ${req.originalUrl}`, logOpts);
+            res.status(401).json({ error: `Unauthorized - ${req.originalUrl}` });
+            return next(new Error(`Unauthorized - ${req.originalUrl}`));
+        }
+        if ('apikey' in req.headers) {
+            delete (req.headers as Record<string, unknown>).apikey;
+        }
+        return next();
+    };
+}

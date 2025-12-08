@@ -10,3 +10,5 @@ export { default as User } from './User.model';
 export { default as Baseline } from './Baseline.model';
 export { default as Test } from './Test.model';
 export { default as Webhook } from './Webhook.model';
+export { default as ShareToken } from './ShareToken.model';
+export type { ShareTokenDocument } from './ShareToken.model';

@@ -11,7 +11,8 @@ const get = catchAsync(async (req: ExtRequest, res: Response) => {
         ? deserializeIfJSON(req.query.filter)
         : {};
 
-    if (req.user?.role === 'user') {
+    // Skip creator filtering for share mode (anonymous access via share link)
+    if (req.user?.role === 'user' && !req.isShareMode) {
         filter.creatorUsername = req.user?.username;
     }
 

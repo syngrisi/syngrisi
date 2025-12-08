@@ -184,3 +184,103 @@ When('I wait for table to stabilize', async ({ page }) => {
   // Additional stabilization - allow React to finish rendering
   await page.waitForTimeout(300);
 });
+
+/**
+ * Gets share URL from Share Check modal and stores it in testData
+ */
+When('I save the share URL', async ({ page, testData }: { page: Page; testData: TestStore }) => {
+  logger.info('Saving share URL from input field');
+
+  // Wait for the Share Check modal to be visible
+  const shareModal = page.getByRole('dialog', { name: 'Share Check' });
+  await shareModal.waitFor({ state: 'visible', timeout: 15000 });
+
+  let shareUrl = '';
+
+  // Find the textbox inside the Share Check modal - it contains the share URL
+  try {
+    const textbox = shareModal.getByRole('textbox');
+    if (await textbox.count() > 0) {
+      shareUrl = await textbox.inputValue();
+      logger.info(`Got URL from textbox.inputValue: ${shareUrl}`);
+    }
+  } catch (e) {
+    logger.info(`textbox.inputValue failed: ${(e as Error).message}`);
+  }
+
+  // Fallback: Get all text content from modal and extract URL
+  if (!shareUrl) {
+    const modalText = await shareModal.textContent() || '';
+    const urlMatch = modalText.match(/https?:\/\/[^\s]+/);
+    if (urlMatch) {
+      shareUrl = urlMatch[0].trim();
+      logger.info(`Got URL from textContent: ${shareUrl}`);
+    }
+  }
+
+  if (!shareUrl) {
+    throw new Error('Share URL not found in Share Check modal');
+  }
+
+  testData.set('shareUrl', shareUrl);
+  logger.info(`Saved share URL: ${shareUrl}`);
+});
+
+/**
+ * Opens the previously saved share URL
+ */
+When('I open the saved share URL', async ({ page, testData }: { page: Page; testData: TestStore }) => {
+  const shareUrl = testData.get('shareUrl') as string;
+
+  if (!shareUrl) {
+    throw new Error('Share URL not saved. Use "I save the share URL" step first.');
+  }
+
+  logger.info(`Opening saved share URL: ${shareUrl}`);
+  await page.goto(shareUrl, { waitUntil: 'domcontentloaded' });
+  await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+});
+
+/**
+ * Opens the shared check URL from the share input field (immediate - modal must be open)
+ * Gets the URL from [data-test="share-url-input"] input and navigates to it
+ */
+When('I open the shared check URL', async ({ page }: { page: Page }) => {
+  logger.info('Getting share URL from input field');
+
+  // Wait for the Share Check modal to be visible
+  const shareModal = page.getByRole('dialog', { name: 'Share Check' });
+  await shareModal.waitFor({ state: 'visible', timeout: 15000 });
+
+  let shareUrl = '';
+
+  // Find the textbox inside the Share Check modal - it contains the share URL
+  try {
+    const textbox = shareModal.getByRole('textbox');
+    if (await textbox.count() > 0) {
+      // For input elements, inputValue gets the value
+      shareUrl = await textbox.inputValue();
+      logger.info(`Got URL from textbox.inputValue: ${shareUrl}`);
+    }
+  } catch (e) {
+    logger.info(`textbox.inputValue failed: ${(e as Error).message}`);
+  }
+
+  // Fallback: Get all text content from modal and extract URL
+  if (!shareUrl) {
+    const modalText = await shareModal.textContent() || '';
+    const urlMatch = modalText.match(/https?:\/\/[^\s]+/);
+    if (urlMatch) {
+      shareUrl = urlMatch[0].trim();
+      logger.info(`Got URL from textContent: ${shareUrl}`);
+    }
+  }
+
+  if (!shareUrl) {
+    throw new Error('Share URL not found in Share Check modal');
+  }
+
+  logger.info(`Opening share URL: ${shareUrl}`);
+  await page.goto(shareUrl, { waitUntil: 'domcontentloaded' });
+  await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+});

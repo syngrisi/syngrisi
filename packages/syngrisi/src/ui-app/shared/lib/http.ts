@@ -24,6 +24,13 @@ class HttpError extends Error {
 
 const DEFAULT_TIMEOUT = 30000;
 
+// Helper to get share token from URL
+function getShareTokenFromUrl(): string | null {
+    if (typeof window === 'undefined') return null;
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('share');
+}
+
 async function fetchWithTimeout(
     url: string,
     options: RequestInit & { timeout?: number }
@@ -74,14 +81,21 @@ async function request<T = unknown>(
         headers = {},
         timeout,
         retry,
-        credentials,
+        credentials = 'include', // Include cookies for session-based authentication
         throwHttpErrors = true,
         ...rest
     } = options;
 
+    // Add share token header if present in URL (for anonymous share access)
+    const shareToken = getShareTokenFromUrl();
+    const finalHeaders: Record<string, string> = { ...headers };
+    if (shareToken) {
+        finalHeaders['x-share-token'] = shareToken;
+    }
+
     const response = await fetchWithRetry(url, {
         ...rest,
-        headers,
+        headers: finalHeaders,
         credentials,
         timeout,
         retry,

@@ -5,7 +5,7 @@ import { Midleware } from '@types';
 import { validateRequest } from '@utils/validateRequest';
 import { CheckGetSchema, CheckUpdateSchema, CheckAcceptSchema } from '@schemas/Check.schema';
 import { createApiResponse, createPaginatedApiResponse } from '@api-docs/openAPIResponseBuilders';
-import { ensureLoggedInOrApiKey } from '@middlewares/ensureLogin/ensureLoggedIn';
+import { ensureLoggedInOrApiKey, ensureLoggedInOrApiKeyOrShareToken } from '@middlewares/ensureLogin/ensureLoggedIn';
 import { createRequestQuerySchema } from '@schemas/utils/createRequestQuerySchema';
 import { RequestPaginationSchema } from '@schemas/common/RequestPagination.schema';
 import { createRequestOpenApiBodySchema } from '@schemas/utils/createRequestOpenApiBodySchema';
@@ -27,7 +27,7 @@ registry.registerPath({
 
 router.get(
     '/',
-    ensureLoggedInOrApiKey(),
+    ensureLoggedInOrApiKeyOrShareToken(),
     validateRequest(createRequestQuerySchema(RequestPaginationSchema), 'get, /v1/checks'),
     checkController.get as Midleware
 );
