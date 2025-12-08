@@ -34,7 +34,7 @@ jobs:
 
       - name: Install UI dependencies
         working-directory: packages/syngrisi/src/ui-app
-        run: yarn install --ignore-engines
+        run: npm install
 
       - name: Build
         run: yarn build
