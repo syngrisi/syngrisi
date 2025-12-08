@@ -34,7 +34,7 @@ jobs:
 
       - name: Install UI dependencies
         working-directory: packages/syngrisi/src/ui-app
-        run: npm install --ignore-scripts --legacy-peer-deps --no-package-lock
+        run: npm install --legacy-peer-deps --no-package-lock
 
       - name: Build
         run: yarn build
