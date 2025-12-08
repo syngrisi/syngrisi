@@ -3,6 +3,7 @@ import { Worker } from 'node:worker_threads';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createRequire } from 'node:module';
 import { errMsg } from "@utils";
 import log from "@logger";
 
@@ -21,10 +22,29 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const resolveWorkerScript = (): string | null => {
-    const local = path.join(__dirname, 'imageDiffWorker.js');
-    if (fs.existsSync(local)) return local;
-    const bundled = path.join(process.cwd(), 'dist', 'server', 'lib', 'comparison', 'imageDiffWorker.js');
-    if (fs.existsSync(bundled)) return bundled;
+    const candidates = [
+        // 1. Local development (relative to original source file)
+        path.join(__dirname, 'imageDiffWorker.js'),
+        // 2. Bundled mode (after tsup bundles into server.js, __dirname points to dist/server/)
+        path.join(__dirname, 'lib', 'comparison', 'imageDiffWorker.js'),
+        // 3. Legacy fallback (cwd-based)
+        path.join(process.cwd(), 'dist', 'server', 'lib', 'comparison', 'imageDiffWorker.js'),
+    ];
+
+    // 4. npm package installation (resolve via package.json)
+    try {
+        const require = createRequire(import.meta.url);
+        const pkgPath = require.resolve('@syngrisi/syngrisi/package.json');
+        const pkgDir = path.dirname(pkgPath);
+        candidates.push(path.join(pkgDir, 'dist', 'server', 'lib', 'comparison', 'imageDiffWorker.js'));
+    } catch {
+        // Package not installed as dependency, skip this candidate
+    }
+
+    for (const candidate of candidates) {
+        if (fs.existsSync(candidate)) return candidate;
+    }
+
     return null;
 };
 

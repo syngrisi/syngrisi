@@ -29,10 +29,11 @@
   },
   "homepage": "https://github.com/syngrisi/syngrisi/tree/main/packages/core-api",
   "dependencies": {
-    "@wdio/logger": "^7.26.0",
+    "@wdio/logger": "^9.18.0",
+    "@wdio/types": "^9.20.0",
     "form-data": "^4.0.5",
     "got-cjs": "^12.0.4",
-    "zod": "^3.25.76"
+    "zod": "^4.1.13"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
@@ -41,7 +42,7 @@
     "@vitest/coverage-v8": "^4.0.15",
     "@wdio/types": "^8.41.0",
     "c8": "^10.1.3",
-    "eslint": "^8.57.1",
+    "eslint": "^9.39.1",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-unicorn": "^62.0.0",

@@ -47,6 +47,8 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, s
                 successMsg({ message: 'Check has been successfully accepted' });
                 await queryClient.invalidateQueries({ queryKey: ['preview_checks', check.test._id] });
                 await queryClient.invalidateQueries({ queryKey: ['check_for_modal', check._id] });
+                // Invalidate baseline queries so toolbar buttons become enabled after accept
+                await queryClient.invalidateQueries({ queryKey: ['baseline_by_snapshot_id'] });
                 await queryClient.refetchQueries(
                     { queryKey: ['related_checks_infinity_pages', initCheck?._id || check._id] },
                 );

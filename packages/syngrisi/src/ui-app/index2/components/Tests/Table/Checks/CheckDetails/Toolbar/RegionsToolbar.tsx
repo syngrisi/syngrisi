@@ -1,21 +1,34 @@
 /* eslint-disable prefer-arrow-callback */
 import * as React from 'react';
 import { ActionIcon, Group, Kbd, Stack, Text, Tooltip, Divider } from '@mantine/core';
-import { IconDeviceFloppy, IconShape, IconShapeOff, IconBoxMargin } from '@tabler/icons-react';
+import { IconDeviceFloppy, IconShape, IconShapeOff, IconBoxMargin, IconWand } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useHotkeys } from '@mantine/hooks';
 import { MainView } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/mainView';
 import { log } from '@shared/utils/Logger';
+import { successMsg } from '@shared/utils/utils';
 import { MatchTypeSelector } from './MatchTypeSelector';
 
 interface Props {
     mainView: any
     baselineId: string
     view: string,
+    hasDiff?: boolean,
 }
 
-export function RegionsToolbar({ mainView, baselineId, view }: Props) {
+export function RegionsToolbar({ mainView, baselineId, view, hasDiff = false }: Props) {
     const [visibleRegionRemoveButton, setVisibleRegionRemoveButton] = useState(false);
+
+    const handleAutoRegion = async () => {
+        if (!baselineId || !hasDiff || view === 'slider' || !mainView) {
+            log.debug('Auto region not available: missing baseline, diff, or wrong view');
+            return;
+        }
+        const count = await mainView.createAutoIgnoreRegions();
+        if (count > 0) {
+            successMsg({ msg: `Created ${count} ignore region${count > 1 ? 's' : ''} from diff` });
+        }
+    };
 
     const regionsSelectionEvents = () => {
         const handler = () => {
@@ -67,6 +80,9 @@ export function RegionsToolbar({ mainView, baselineId, view }: Props) {
             if (baselineId && view !== 'slider') {
                 mainView.addBoundingRegion('bound_rect');
             }
+        }],
+        ['R', () => {
+            handleAutoRegion();
         }],
     ]);
 
@@ -126,9 +142,55 @@ export function RegionsToolbar({ mainView, baselineId, view }: Props) {
                     <ActionIcon
                         data-check="add-ignore-region"
                         disabled={(view === 'slider') || !baselineId}
-                        onClick={() => mainView.addIgnoreRegion({ name: 'ignore_rect', strokeWidth: 0 })}
+                        onClick={() => {
+                            // @ts-ignore - Sync window.mainView for E2E tests before calling method
+                            if (mainView) window.mainView = mainView;
+                            mainView.addIgnoreRegion({ name: 'ignore_rect', strokeWidth: 0 });
+                        }}
                     >
                         <IconShape size={24} stroke={1} />
+                    </ActionIcon>
+                </div>
+            </Tooltip>
+
+            <Tooltip
+                multiline
+                withinPortal
+                label={
+                    (
+                        <Stack spacing={4}>
+                            <Group noWrap spacing={4}>
+                                <Text>Auto ignore regions from diff</Text>
+                                <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>R</Kbd>
+                            </Group>
+                            <Text size="xs" color="dimmed">Create ignore regions for all diff areas</Text>
+                            {
+                                !baselineId && (
+                                    <Group noWrap spacing={4}>
+                                        <Text color="orange">&#9888;</Text>
+                                        <Text> First you need to accept this check</Text>
+                                    </Group>
+                                )
+                            }
+                            {
+                                baselineId && !hasDiff && (
+                                    <Group noWrap spacing={4}>
+                                        <Text color="dimmed">&#8505;</Text>
+                                        <Text color="dimmed"> No diff available</Text>
+                                    </Group>
+                                )
+                            }
+                        </Stack>
+                    )
+                }
+            >
+                <div>
+                    <ActionIcon
+                        data-check="auto-ignore-region"
+                        disabled={(view === 'slider') || !baselineId || !hasDiff}
+                        onClick={handleAutoRegion}
+                    >
+                        <IconWand size={24} stroke={1} />
                     </ActionIcon>
                 </div>
             </Tooltip>

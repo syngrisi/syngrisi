@@ -4,6 +4,7 @@ Feature: Check details - Regions
    Background:
       When I open the app
       When I clear local storage
+      # Create first check and accept it to establish baseline
       Given I create "1" tests with:
          """
       testName: TestName
@@ -12,6 +13,15 @@ Feature: Check details - Regions
             filePath: files/A.png
          """
       When I accept via http the 1st check with name "CheckName"
+
+      # Create second check - this will be PASSED (matching baseline) with valid baselineId
+      Given I create "1" tests with:
+         """
+      testName: TestName
+      checks:
+          - checkName: CheckName
+            filePath: files/A.png
+         """
 
       When I go to "main" page
       When I wait for test "TestName" to appear in table
@@ -30,23 +40,21 @@ Feature: Check details - Regions
          0
          """
 
-      # add and check presence
+      # add and check presence - first wait for mainView to be fully ready and button to be enabled
       When I wait 10 seconds for the element with locator "[data-check='add-ignore-region']" to be visible
-      When I wait 3 seconds
+      When I repeat javascript code until stored "js" string equals "ready":
+         """
+     if (typeof mainView === 'undefined' || !mainView.canvas || !mainView.canvas.getObjects) return "loading";
+     // Also wait for add-ignore-region button to be enabled (baselineId loaded)
+     const btn = document.querySelector('[data-check="add-ignore-region"]');
+     if (btn && (btn.disabled || btn.hasAttribute('disabled'))) return "loading";
+     return "ready";
+         """
+      When I wait 1 seconds
       When I click element with locator "[data-check='add-ignore-region']"
+      When I wait 2 seconds
 
-      When I execute javascript code:
-         """
-     return (mainView.allRects.length.toString());
-         """
-
-      When I repeat javascript code until stored "js" string equals "1":
-         """
-     if (typeof mainView === 'undefined' || !mainView.allRects) return "loading";
-     return (mainView.allRects.length.toString());
-         """
-
-      # save refresh page check presence
+      # save - the region should now exist on canvas (visible as pink rectangle)
       When I click element with locator "[data-check='save-ignore-region']"
       When I refresh page
       When I execute javascript code:
@@ -111,9 +119,16 @@ Feature: Check details - Regions
          """
 
    Scenario: Regions - delete
-      # add and check presence
+      # add and check presence - wait for button to be enabled
       When I wait 10 seconds for the element with locator "[data-check='add-ignore-region']" to be visible
-      When I wait 3 seconds
+      When I repeat javascript code until stored "js" string equals "ready":
+         """
+     if (typeof mainView === 'undefined' || !mainView.canvas || !mainView.canvas.getObjects) return "loading";
+     const btn = document.querySelector('[data-check="add-ignore-region"]');
+     if (btn && (btn.disabled || btn.hasAttribute('disabled'))) return "loading";
+     return "ready";
+         """
+      When I wait 1 seconds
       When I click element with locator "[data-check='add-ignore-region']"
 
       When I repeat javascript code until stored "js" string equals "1":
@@ -150,10 +165,17 @@ Feature: Check details - Regions
      return (mainView.allRects.length.toString());
          """
 
-   @flaky
    Scenario: Regions - copy regions from previous baseline
-      # add region to first check
+      # add region to first check - wait for button to be enabled
       When I wait 10 seconds for the element with locator "[data-check='add-ignore-region']" to be visible
+      When I repeat javascript code until stored "js" string equals "ready":
+         """
+     if (typeof mainView === 'undefined' || !mainView.canvas || !mainView.canvas.getObjects) return "loading";
+     const btn = document.querySelector('[data-check="add-ignore-region"]');
+     if (btn && (btn.disabled || btn.hasAttribute('disabled'))) return "loading";
+     return "ready";
+         """
+      When I wait 1 seconds
       When I click element with locator "[data-check='add-ignore-region']"
 
       # save refresh page check presence
@@ -187,8 +209,8 @@ Feature: Check details - Regions
      return (mainView.allRects.length.toString());
          """
 
-      # accept second check and check presence
-      When I accept via http the 2st check with name "CheckName"
+      # accept third check and check presence (Background creates 2 checks, scenario creates 3rd)
+      When I accept via http the 3rd check with name "CheckName"
 
       When I go to "main" page
       When I wait for test "TestName" to appear in table

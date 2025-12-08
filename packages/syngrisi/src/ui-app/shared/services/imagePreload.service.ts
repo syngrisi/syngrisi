@@ -29,8 +29,8 @@ interface ImagePreloadConfig {
 }
 
 const DEFAULT_CONFIG: ImagePreloadConfig = {
-    maxConcurrentPreloads: 4,
-    maxCacheSize: 50,
+    maxConcurrentPreloads: 6,
+    maxCacheSize: 100, // 30 checks * 3 images = 90, plus buffer
     maxCacheAge: 5 * 60 * 1000, // 5 minutes
 };
 
@@ -79,14 +79,19 @@ class ImagePreloadService {
      */
     isPreloaded(src: string): boolean {
         const cached = this.preloadedImages.get(src);
-        if (!cached) return false;
+        if (!cached) {
+            log.debug(`[ImagePreload] Cache MISS for: ${src}`);
+            return false;
+        }
 
         // Check if cache is still valid
         if (Date.now() - cached.loadedAt > this.config.maxCacheAge) {
             this.preloadedImages.delete(src);
+            log.debug(`[ImagePreload] Cache EXPIRED for: ${src}`);
             return false;
         }
 
+        log.debug(`[ImagePreload] Cache HIT for: ${src}`);
         return true;
     }
 
@@ -94,8 +99,28 @@ class ImagePreloadService {
      * Get preloaded image from cache
      */
     getPreloadedImage(src: string): HTMLImageElement | null {
-        if (!this.isPreloaded(src)) return null;
+        if (!this.isPreloaded(src)) {
+            log.debug(`[ImagePreload] getPreloadedImage returning null. Cache size: ${this.preloadedImages.size}`);
+            return null;
+        }
         return this.preloadedImages.get(src)?.image || null;
+    }
+
+    /**
+     * Store an already-loaded image in the cache
+     * Useful for images loaded outside the preload service
+     */
+    storeImage(src: string, img: HTMLImageElement): void {
+        // Manage cache size
+        this.ensureCacheSize();
+
+        // Store in cache
+        this.preloadedImages.set(src, {
+            image: img,
+            src,
+            loadedAt: Date.now(),
+        });
+        log.debug(`[ImagePreload] Stored image in cache: ${src}`);
     }
 
     /**

@@ -50,6 +50,11 @@ Packages with `@syngrisi/` scope are published via npm OIDC:
 - `@syngrisi/core-api` - Core API client
 - `@syngrisi/node-resemble.js` - Image comparison library
 
+Other published packages (require NPM_TOKEN for publishing):
+- `create-sy` - CLI tool for scaffolding new Syngrisi projects (`npm create sy`)
+- `wdio-syngrisi-cucumber-service` - WebdriverIO Cucumber integration service
+- `wdio-cucumber-viewport-logger-service` - WebdriverIO viewport logging service
+
 ### Troubleshooting
 
 If release fails:
@@ -57,3 +62,19 @@ If release fails:
 2. For OIDC issues with non-scoped packages, add `NPM_TOKEN` secret or rename to `@syngrisi/` scope
 3. Create GitHub Release manually if needed: `gh release create vX.Y.Z --generate-notes`
 
+## E2E Testing Guides
+
+- [Run Tests Guide](packages/syngrisi/docs/agent/guides/run_test.md)
+- [Common Steps Cheatsheet](packages/syngrisi/docs/agent/guides/common_steps_cheatsheet.md)
+- [MCP Test Engine Usage](packages/syngrisi/docs/agent/guides/mcp_test_engine_using.md)
+- [Quick Test Generation](packages/syngrisi/docs/agent/guides/test-generate-quick.md)
+- [All Guides Index](packages/syngrisi/docs/agent/INDEX.md)
+
+## Definition of Done (DoD) Checklist
+
+Before marking a task as complete, conduct a final self-review using the following checklist:
+
+1. **Test Coverage & Execution:** Have all necessary tests (or demo scripts) for the new functionality been written and successfully executed?
+2. **Documentation:** Is the documentation (README, code comments, usage guides) updated to reflect the new changes?
+3. **Code Review:** Have you reviewed all modified files for syntax errors, leftover debug code (console.logs/prints), and coding standards?
+4. **Smoke Testing:** Have you run a smoke test to ensure the main functionality is working and no regressions were introduced?

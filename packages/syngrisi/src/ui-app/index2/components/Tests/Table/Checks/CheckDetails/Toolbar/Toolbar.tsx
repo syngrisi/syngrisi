@@ -159,7 +159,7 @@ export function Toolbar(
                 />
                 <Divider orientation="vertical" />
 
-                <RegionsToolbar mainView={mainView} baselineId={baselineId} view={view} />
+                <RegionsToolbar mainView={mainView} baselineId={baselineId} view={view} hasDiff={!!mainView?.diffImage} />
 
                 <Divider orientation="vertical" />
                 <AcceptButton

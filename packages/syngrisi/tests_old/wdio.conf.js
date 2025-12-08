@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '.env') });
+require('dotenv').config({ path: path.resolve(__dirname, '.env'), quiet: true });
 const hasha = require('hasha');
 
 const { hooks } = require('./src/support/hooks');

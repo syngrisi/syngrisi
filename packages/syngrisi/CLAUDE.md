@@ -72,6 +72,10 @@ npm run test:migrations
   - `index2/` — main comparison page
   - `admin/` — admin panel
   - `auth/` — authentication pages
+- **Shared code**: `src/ui-app/shared/` — common components, hooks, services, utils
+  - `services/` — API services, image preload service
+  - `hooks/` — shared React hooks
+  - `components/` — reusable UI components
 - **Output**: `mvc/views/react/`
 - **UI package.json**: `src/ui-app/package.json` (separate deps)
 
