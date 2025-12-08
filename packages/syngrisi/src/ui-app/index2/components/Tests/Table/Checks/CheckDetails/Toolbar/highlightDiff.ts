@@ -11,6 +11,76 @@ export interface IGroup {
     members: { x: number, y: number }[],
 }
 
+/**
+ * Check if two groups are within merge distance of each other
+ */
+function groupsAreNearby(a: IGroup, b: IGroup, mergeDistance: number): boolean {
+    // Check if bounding boxes are within mergeDistance pixels
+    const horizontalGap = Math.max(0, Math.max(a.minX, b.minX) - Math.min(a.maxX, b.maxX));
+    const verticalGap = Math.max(0, Math.max(a.minY, b.minY) - Math.min(a.maxY, b.maxY));
+    return horizontalGap <= mergeDistance && verticalGap <= mergeDistance;
+}
+
+/**
+ * Merge two groups into one
+ */
+function mergeGroups(a: IGroup, b: IGroup): IGroup {
+    return {
+        minX: Math.min(a.minX, b.minX),
+        maxX: Math.max(a.maxX, b.maxX),
+        minY: Math.min(a.minY, b.minY),
+        maxY: Math.max(a.maxY, b.maxY),
+        imageData: a.imageData,
+        members: [...a.members, ...b.members],
+    };
+}
+
+/**
+ * Merge nearby groups that are within mergeDistance pixels of each other
+ * This reduces the number of small regions when there are many close differences
+ * @param groups - Array of groups to merge
+ * @param mergeDistance - Maximum distance in pixels between groups to merge (default: 0 = no merging)
+ * @returns Merged groups array
+ */
+export function mergeNearbyGroups(groups: IGroup[], mergeDistance: number = 0): IGroup[] {
+    if (mergeDistance <= 0 || groups.length <= 1) {
+        return groups;
+    }
+
+    let result = [...groups];
+    let merged = true;
+
+    // Keep merging until no more merges happen
+    while (merged) {
+        merged = false;
+        const newResult: IGroup[] = [];
+        const used = new Set<number>();
+
+        for (let i = 0; i < result.length; i++) {
+            if (used.has(i)) continue;
+
+            let current = result[i];
+
+            for (let j = i + 1; j < result.length; j++) {
+                if (used.has(j)) continue;
+
+                if (groupsAreNearby(current, result[j], mergeDistance)) {
+                    current = mergeGroups(current, result[j]);
+                    used.add(j);
+                    merged = true;
+                }
+            }
+
+            newResult.push(current);
+            used.add(i);
+        }
+
+        result = newResult;
+    }
+
+    return result;
+}
+
 function getDiffImageData(image: any) {
     const canvas = document.createElement('canvas');
     canvas.width = image.width;

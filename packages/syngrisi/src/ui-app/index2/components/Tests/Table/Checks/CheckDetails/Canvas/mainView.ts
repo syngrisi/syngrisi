@@ -5,7 +5,7 @@ import { lockImage } from '@index/components/Tests/Table/Checks/CheckDetails/Can
 import { errorMsg, successMsg } from '@shared/utils/utils';
 import config from '@config';
 import { log } from '@shared/utils/Logger';
-import { highlightDiff } from '@index/components/Tests/Table/Checks/CheckDetails/Toolbar/highlightDiff';
+import { highlightDiff, mergeNearbyGroups } from '@index/components/Tests/Table/Checks/CheckDetails/Toolbar/highlightDiff';
 
 /* eslint-disable dot-notation,no-underscore-dangle */
 interface IRectParams {
@@ -348,9 +348,10 @@ export class MainView {
     /**
      * Create ignore regions automatically from diff areas
      * @param padding - pixels to add around each diff region (default: 5)
+     * @param mergeDistance - merge regions within this distance in pixels (default: 15)
      * @returns number of regions created
      */
-    async createAutoIgnoreRegions(padding: number = 5): Promise<number> {
+    async createAutoIgnoreRegions(padding: number = 5, mergeDistance: number = 15): Promise<number> {
         if (!this.diffImage) {
             log.warn('[MainView] Cannot create auto regions: no diff image');
             return 0;
@@ -358,14 +359,17 @@ export class MainView {
 
         try {
             // Get diff groups without animation
-            const { groups } = await highlightDiff(this, null, null, { skipAnimation: true });
+            const { groups: rawGroups } = await highlightDiff(this, null, null, { skipAnimation: true });
 
-            if (groups.length === 0) {
+            if (rawGroups.length === 0) {
                 log.debug('[MainView] No diff regions found');
                 return 0;
             }
 
-            log.debug(`[MainView] Creating ${groups.length} auto ignore regions`);
+            // Merge nearby groups to reduce number of small regions
+            const groups = mergeNearbyGroups(rawGroups, mergeDistance);
+
+            log.debug(`[MainView] Creating ${groups.length} auto ignore regions (merged from ${rawGroups.length} raw groups, mergeDistance: ${mergeDistance}px)`);
 
             // Create ignore region for each diff group
             // eslint-disable-next-line no-restricted-syntax
