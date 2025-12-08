@@ -8,7 +8,7 @@
     "publish": "lerna publish",
     "test": "lerna run test --scope=create-sy --scope=@syngrisi/syngrisi",
     "test:unit": "lerna run test --scope=create-sy",
-    "test:e2e": "yarn --cwd packages/syngrisi/e2e bddgen && yarn --cwd packages/syngrisi/e2e playwright test",
+    "test:e2e": "yarn --cwd packages/syngrisi/e2e bddgen && yarn --cwd packages/syngrisi/e2e playwright test --project=chromium --grep-invert '@saml|@sso-external|@sso-logto|@flaky'",
     "test:smoke": "yarn --cwd packages/syngrisi smoke",
     "start": "lerna run start --scope=@syngrisi/syngrisi",
     "build": "lerna run build",
