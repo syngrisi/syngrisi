@@ -41,7 +41,7 @@
     "release:minor": "run-s 'release -- minor'",
     "release:major": "run-s 'release -- major'",
     "test": "run-s build test:eslint test:unit",
-    "test:eslint": "eslint -c ./.eslintrc.cjs ./src/**/*.ts ./tests/**/*.ts",
+    "test:eslint": "ESLINT_USE_FLAT_CONFIG=false eslint -c ./.eslintrc.cjs ./src/**/*.ts ./tests/**/*.ts",
     "test:unit": "vitest run",
     "test:e2e": "run-s e2e:setup e2e:run",
     "e2e:setup": "bash e2e/container/start-containers.sh --build",
