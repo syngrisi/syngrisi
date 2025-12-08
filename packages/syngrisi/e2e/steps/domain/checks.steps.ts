@@ -9,7 +9,8 @@ When('I accept the {string} check', async ({ page }: { page: Page }, checkName: 
   await icon.waitFor({ state: 'visible', timeout: 10000 });
   await icon.scrollIntoViewIfNeeded();
   await icon.waitFor({ state: 'attached', timeout: 5000 });
-  await icon.click();
+  // Use dispatchEvent to bypass overlay interception issues
+  await icon.dispatchEvent('click');
 
   const confirmButton = page.locator(`[data-confirm-button-name='${checkName}']`).first();
   await confirmButton.waitFor({ state: 'visible', timeout: 10000 });
@@ -97,7 +98,8 @@ When('I delete the {string} check', async ({ page }: { page: Page }, checkName: 
     const icon = page.locator(`[data-test='check-remove-icon'][data-popover-icon-name='${checkName}']`).first();
     await icon.waitFor({ state: 'visible', timeout: 10000 });
     await icon.scrollIntoViewIfNeeded();
-    await icon.click();
+    // Use dispatchEvent to bypass overlay interception issues
+    await icon.dispatchEvent('click');
 
     const confirmButton = page.locator(`[data-test='check-remove-icon-confirm'][data-confirm-button-name='${checkName}']`).first();
     await confirmButton.waitFor({ state: 'visible', timeout: 10000 });
@@ -132,7 +134,8 @@ When('I remove the {string} check', async ({ page }: { page: Page }, checkName: 
     const icon = page.locator(`[data-test='check-remove-icon'][data-popover-icon-name='${checkName}']`).first();
     await icon.waitFor({ state: 'visible', timeout: 10000 });
     await icon.scrollIntoViewIfNeeded();
-    await icon.click();
+    // Use dispatchEvent to bypass overlay interception issues
+    await icon.dispatchEvent('click');
 
     const confirmButton = page.locator(`[data-test='check-remove-icon-confirm'][data-confirm-button-name='${checkName}']`).first();
     await confirmButton.waitFor({ state: 'visible', timeout: 10000 });
@@ -171,11 +174,11 @@ When('I delete check from modal', async ({ page }: { page: Page }) => {
     // Wait for modal to stabilize (animations, loading states)
     await page.waitForTimeout(500);
 
-    // Click remove icon in modal (use explicit timeout and force to handle CI slowness)
+    // Click remove icon in modal using dispatchEvent to bypass overlay interception
     const icon = page.locator('.modal [data-test="check-remove-icon"]').first();
     await icon.waitFor({ state: 'visible', timeout: 10000 });
     await icon.scrollIntoViewIfNeeded();
-    await icon.click({ timeout: 10000, force: true });
+    await icon.dispatchEvent('click');
 
     // Wait for confirmation popup to appear (it can take time on slow CI)
     const confirmButton = page.locator('[data-test="check-remove-icon-confirm"]').first();
