@@ -191,7 +191,8 @@ When(
       }
 
       // Use dispatchEvent for buttons with popover tooltips that can intercept clicks
-      const isPopoverButton = /aria-label=['"](Remove|Delete|Accept)/i.test(renderedValue);
+      const isPopoverButton = /aria-label=['"](Remove|Delete|Accept)/i.test(renderedValue)
+        || /check-accept-icon|check-remove-icon/i.test(renderedValue);
       if (isPopoverButton) {
         await targetLocator.dispatchEvent('click');
       } else {
@@ -861,7 +862,16 @@ When('I force click element with locator {string}', async ({ page, testData }, r
 
 When('I move to element {string}', async ({ page }, selector: string) => {
   const locator = getLocatorQuery(page, selector);
-  await locator.first().hover();
+  const element = locator.first();
+
+  // Use dispatchEvent for popover buttons that have Group/Tooltip overlays intercepting hover
+  const isPopoverButton = /check-accept-icon|check-remove-icon/i.test(selector);
+  if (isPopoverButton) {
+    await element.dispatchEvent('mouseenter');
+    await element.dispatchEvent('mouseover');
+  } else {
+    await element.hover();
+  }
 });
 
 When('I hover over {string} and wait for tooltip {string}', async ({ page }, hoverSelector: string, tooltipSelector: string) => {

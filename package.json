@@ -32,9 +32,13 @@
   "resolutions": {
     "ws": "^8.18.0",
     "tar-fs": "^3.1.1",
-    "bson": "7.0.0"
+    "bson": "7.0.0",
+    "@wdio/logger/chalk": "^4.1.2"
   },
   "overrides": {
+    "@wdio/logger": {
+      "chalk": "^4.1.2"
+    },
     "socks": "^2.8.4",
     "vite": "^7.2.6",
     "bson": "7.0.0",
