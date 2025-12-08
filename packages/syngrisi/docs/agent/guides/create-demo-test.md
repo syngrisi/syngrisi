@@ -60,7 +60,7 @@ npm run test:demo
 npx bddgen && npx playwright test --project=demo --grep "Demo name" --workers=1
 
 # Skip demo steps for faster debugging (recommended during development)
-SKIP_DEMO_TESTS=true npx bddgen && npx playwright test --project=demo --grep "your_demo" --workers=1
+export SKIP_DEMO_TESTS=true && npx bddgen && npx playwright test --project=demo --grep "your_demo" --workers=1
 
 # Run with full demo experience (for final verification)
 npx bddgen && npx playwright test --project=demo --grep "your_demo" --workers=1
@@ -95,7 +95,7 @@ Scenario: Demo: My Feature
     When I end the demo
 ```
 
-### 2. DEMO BYPASS MODE
+### 2. `Silent mode` for Debug & Test Phase
 
 Run with `SKIP_DEMO_TESTS=true` to quickly iterate:
 
@@ -142,7 +142,7 @@ Verify:
     ```
 
 3. **Documentation**: When sharing the demo with users, provide both commands:
-    - **DEMO BYPASS MODE**: `SKIP_DEMO_TESTS=true npm run test:demo`
+    - **Silent Mode**: `export SKIP_DEMO_TESTS=true && yarn run test:demo`
     - **Full demo mode**: `npm run test:demo`
 
 ## Critical Rules

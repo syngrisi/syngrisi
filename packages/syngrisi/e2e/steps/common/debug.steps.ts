@@ -11,6 +11,9 @@ import type { Page } from '@playwright/test';
 
 const logger = createLogger('DebugSteps');
 
+// Check if demo should be skipped
+const SKIP_DEMO = process.env.SKIP_DEMO_TESTS === 'true';
+
 /**
  * Step definition: `When I PAUSE`
  *
@@ -300,6 +303,10 @@ When('I pause with phrase: {string}', async ({ page, testEngine }, phrase: strin
  * ```
  */
 When('I pause for {int} ms', async ({ page }, ms: number) => {
+  if (SKIP_DEMO) {
+    logger.info(`Skipping pause for ${ms}ms (SKIP_DEMO_TESTS=true)`);
+    return;
+  }
   logger.info(`Pausing for ${ms}ms`);
   await page.waitForTimeout(ms);
 });
