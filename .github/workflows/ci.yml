@@ -94,6 +94,10 @@ jobs:
           name: build-artifacts
           path: packages/
 
+      - name: Install UI dependencies
+        run: npm install --legacy-peer-deps --no-package-lock
+        working-directory: packages/syngrisi/src/ui-app
+
       - name: Install E2E dependencies
         run: npm install --no-package-lock
         working-directory: packages/syngrisi/e2e
