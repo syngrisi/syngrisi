@@ -57,10 +57,10 @@ Feature: Tests Table Filter
       """
     When I go to "main" page
 
-
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName filter-0']" to be visible
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName filter-1']" to be visible
-    When I wait 10 seconds for the element with locator "[data-table-test-name='TestName filter-P2']" to be visible
+    # Wait for all tests with proper refresh
+    When I wait for test "TestName filter-0" to appear in table
+    When I wait for test "TestName filter-1" to appear in table
+    When I wait for test "TestName filter-P2" to appear in table
 
     # select project
 
@@ -171,10 +171,10 @@ Feature: Tests Table Filter
       """
     When I go to "main" page
 
-
-    When I wait 10 seconds for the element with locator "[data-table-test-name=TestName-1]" to be visible
+    # Wait for all tests to appear with proper refresh
+    When I wait for test "TestName-1" to appear in table
+    When I wait for test "TestName-2" to appear in table
     When the element "[data-table-test-name=TestName-1]" does appear exactly "2" times
-    When I wait 10 seconds for the element with locator "[data-table-test-name=TestName-2]" to be visible
 
     # filter eq test name
     When I click element with locator "[aria-label='Filter the Table Data']"
@@ -245,10 +245,10 @@ Feature: Tests Table Filter
 
     When I go to "main" page
 
-
-    When I wait 10 seconds for the element with locator "[data-table-test-name=TestName-chrome]" to be visible
-    When I wait 10 seconds for the element with locator "[data-table-test-name=TestName-firefox]" to be visible
-    When I wait 10 seconds for the element with locator "[data-table-test-name=TestName-msedge]" to be visible
+    # Wait for all tests to appear with proper refresh
+    When I wait for test "TestName-chrome" to appear in table
+    When I wait for test "TestName-firefox" to appear in table
+    When I wait for test "TestName-msedge" to appear in table
 
     # filter eq test name
     When I click element with locator "[aria-label='Filter the Table Data']"
@@ -298,10 +298,10 @@ Feature: Tests Table Filter
 
   When I go to "main" page
 
-  # Wait for all test data to be indexed and visible
+  # Wait for all test data to be indexed and visible (use proper wait with refresh)
+  When I wait for test "TestName-0" to appear in table
+  When I wait for test "TestName-1" to appear in table
   When I wait for test "ZestName-1" to appear in table
-  When I wait 10 seconds for the element with locator "[data-table-test-name='TestName-0']" to be visible
-  When I wait 10 seconds for the element with locator "[data-table-test-name='TestName-1']" to be visible
   When I wait 10 seconds for the element with locator "[data-test='table-quick-filter']" to be visible
 
   When I set "TestName-" to the inputfield "[data-test='table-quick-filter']"
@@ -342,14 +342,11 @@ Feature: Tests Table Filter
       """
 
   When I go to "main" page
-  When I wait 10 seconds for the element with locator "[data-test='table-quick-filter']" to be visible
-  # Ensure data is loaded and refresh to get all items
-  When I wait for "2" seconds
-  When I click element with locator "[aria-label='Refresh']"
 
-  When I wait 10 seconds for the element with locator "[data-table-test-name='TestNameP1-0']" to be visible
-  When I wait 10 seconds for the element with locator "[data-table-test-name='TestNameP1-1']" to be visible
-  When I wait 10 seconds for the element with locator "[data-table-test-name='TestNameP2-0']" to be visible
+  # Wait for all tests to appear with proper refresh
+  When I wait for test "TestNameP1-0" to appear in table
+  When I wait for test "TestNameP1-1" to appear in table
+  When I wait for test "TestNameP2-0" to appear in table
 
   When I select the option with the text "Project-1" for element "select[data-test='current-project']"
 
