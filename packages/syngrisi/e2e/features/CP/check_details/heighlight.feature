@@ -33,6 +33,8 @@ Feature: Check Details Difference Highlight
       """
     window.slowHighlight=1
       """
+    # Wait for highlight button to be enabled (diff loaded)
+    When I wait 10 seconds for the element with locator "[data-check='highlight-icon']:not([disabled])" to be visible
     When I click element with locator "[data-check='highlight-icon']"
     When I execute javascript code:
       """
