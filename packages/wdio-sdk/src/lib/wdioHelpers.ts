@@ -1,4 +1,4 @@
-import { default as logger } from '@wdio/logger'
+import logger from './logger'
 import { LogLevelDesc } from 'loglevel'
 
 const log = logger('syngrisi-wdio-sdk')
