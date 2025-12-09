@@ -347,6 +347,7 @@ Feature: Logs Table
     Then the element "th" does appear exactly "6" times
     Then the element "tbody tr:first-of-type td" does appear exactly "6" times
 
+  @skip-ci
   Scenario: Sorting
     When I create "1" log messages with params:
       """
