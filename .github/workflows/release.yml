@@ -34,10 +34,13 @@ jobs:
 
       - name: Install UI dependencies
         working-directory: packages/syngrisi/src/ui-app
-        run: yarn install --ignore-engines
+        run: yarn install --frozen-lockfile --ignore-engines || yarn install --ignore-engines
 
       - name: Build
         run: yarn build
+
+      - name: Reset working tree
+        run: git checkout -- .
 
       # Step 1: Check if there are changesets to process
       - name: Check for changesets
