@@ -44,7 +44,7 @@ jobs:
         id: changesets
         uses: changesets/action@v1
         with:
-          version: yarn version
+          version: yarn changeset version
           createGithubReleases: false
           publish: echo "skip-publish"  # Don't publish via changesets
           commit: "chore(release): version packages"
