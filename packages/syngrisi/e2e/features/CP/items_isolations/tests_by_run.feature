@@ -1,4 +1,4 @@
-@fast-server
+@fast-server @smoke
 Feature: Test Isolation by Run
 
   Background:

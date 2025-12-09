@@ -31,6 +31,9 @@
     "create-sy": "./bin/sy.js"
   },
   "type": "module",
+  "engines": {
+    "node": ">=22.19.0"
+  },
   "scripts": {
     "build": "run-s clean compile",
     "clean": "rimraf tsconfig.tsbuildinfo ./build ./coverage",
@@ -73,5 +76,9 @@
     "cross-spawn": "^7.0.3",
     "semver": "^7.7.3"
   },
+  "files": [
+    "build",
+    "bin"
+  ],
   "gitHead": "12bfda406cbe5aaccf3f17fdab02a9bd1a9d6343"
 }

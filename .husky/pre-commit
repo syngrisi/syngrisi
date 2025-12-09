@@ -1,1 +1,12 @@
-npm test
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Pre-commit hook - quick checks only
+# Full tests run in CI pipeline
+# To run full tests locally, use: yarn test
+
+echo "Pre-commit: validating commit..."
+
+# lint-staged is configured but currently minimal
+# To add strict linting, unify ESLint configs across packages first
+npx lint-staged --allow-empty

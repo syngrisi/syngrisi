@@ -3,6 +3,9 @@
   "version": "2.5.0",
   "description": "Image analysis and comparison for nodejs",
   "main": "resemble.js",
+  "engines": {
+    "node": ">=22.19.0"
+  },
   "scripts": {
     "test": "jasmine resemble.spec.js",
     "test:auto": "chokidar 'resemble.js' 'resemble.spec.js' -c 'jasmine resemble.spec.js'",
@@ -29,7 +32,7 @@
   "bugs": {
     "url": "https://github.com/syngrisi/syngrisi/issues"
   },
-  "homepage": "https://github.com/syngrisi/syngrisi/node-resemble.js/",
+  "homepage": "https://github.com/syngrisi/syngrisi/tree/main/packages/node-resemble.js",
   "dependencies": {
     "jpeg-js": "^0.4.4",
     "pngjs": "^7.0.0",
@@ -39,5 +42,9 @@
     "chokidar-cli": "^3.0.0",
     "jasmine": "^5.13.0"
   },
+  "files": [
+    "resemble.js",
+    "compareImages.js"
+  ],
   "gitHead": "12bfda406cbe5aaccf3f17fdab02a9bd1a9d6343"
 }

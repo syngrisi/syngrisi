@@ -1,4 +1,4 @@
-@integration @fast-server
+@integration @fast-server @smoke
 Feature: User roles
   By default we have 3 roles:
   - admin: can to do and see seeing everything

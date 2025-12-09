@@ -1,4 +1,4 @@
-@fast-server
+@fast-server @smoke
 Feature: Test calculated fields
   during the session end - calculated common fields based in checks in test: [viewport, status]
 
