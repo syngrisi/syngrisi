@@ -125,6 +125,6 @@ jobs:
         run: yarn e2e:bddgen
 
       - name: Run E2E tests
-        run: yarn test:e2e
+        run: yarn test:e2e:ci
         env:
           SYNGRISI_DB_URI: mongodb://localhost:27017/SyngrisiDbTest
