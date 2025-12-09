@@ -22,11 +22,34 @@ npm install @syngrisi/playwright-sdk
 
 ## Base Workflow Overview
 
-There is 3 basic step for particular test:
+There are 3 basic steps for each test:
 
-<p align="center">
-<img src="./docs/flow.png" alt="workflow" width="40%">
-</p>
+```mermaid
+flowchart TD
+    subgraph Init["0. Initialization"]
+        A[new PlaywrightDriver] --> |config: page, url, apiKey| B[Setup API client]
+    end
+
+    subgraph Session["Test Session"]
+        C[startTestSession] --> |params: test, app, run, branch| D[Session started]
+        D --> E{Perform checks}
+        E --> F[check 1]
+        E --> G[check 2]
+        E --> H[check N...]
+        F & G & H --> I[stopTestSession]
+    end
+
+    subgraph Checks["Check Flow"]
+        J[check] --> |imageBuffer, checkName| K[Send to Syngrisi]
+        K --> L{Status?}
+        L --> |new + autoAccept| M[acceptCheck]
+        L --> |passed/failed| N[Return result]
+        M --> N
+    end
+
+    Init --> Session
+    Session --> Checks
+```
 
 ## Usage
 

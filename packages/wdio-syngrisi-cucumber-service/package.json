@@ -3,6 +3,9 @@
   "version": "2.5.0",
   "description": "WDIO Service for Syngrisi visual tests using Cucumber",
   "main": "dist/index.js",
+  "engines": {
+    "node": ">=22.19.0"
+  },
   "np": {
     "releaseDraft": true
   },
@@ -18,7 +21,7 @@
     "build": "run-s clean compile",
     "clean": "rimraf ./dist",
     "compile": "babel src/ -d dist/ --config-file ./babel.config.js",
-    "test": "ls",
+    "test": "vitest run",
     "install:local": "yarn remove @syngrisi/syngrisi-wdio-sdk && yarn add ../wdio-sdk",
     "install:global": "yarn remove @syngrisi/syngrisi-wdio-sdk && yarn add @syngrisi/syngrisi-wdio-sdk",
     "pkglist": "npx npm-packlist # list of files that will be published in syngrisi package, show the files section"
@@ -31,6 +34,7 @@
   "author": "Viktar Silakou",
   "license": "MIT",
   "devDependencies": {
+    "vitest": "^4.0.15",
     "@babel/cli": "^7.28.3",
     "@babel/core": "^7.28.5",
     "@babel/plugin-proposal-function-bind": "^7.27.1",
@@ -54,5 +58,8 @@
   "publishConfig": {
     "access": "public"
   },
+  "files": [
+    "dist"
+  ],
   "gitHead": "12bfda406cbe5aaccf3f17fdab02a9bd1a9d6343"
 }

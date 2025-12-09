@@ -25,7 +25,7 @@ jobs:
         run: yarn install --frozen-lockfile --ignore-engines
 
       - name: Install UI dependencies
-        run: npm install --legacy-peer-deps --no-package-lock
+        run: yarn install --ignore-engines
         working-directory: packages/syngrisi/src/ui-app
 
       - name: Build
@@ -95,11 +95,11 @@ jobs:
           path: packages/
 
       - name: Install UI dependencies
-        run: npm install --legacy-peer-deps --no-package-lock
+        run: yarn install --ignore-engines
         working-directory: packages/syngrisi/src/ui-app
 
       - name: Install E2E dependencies
-        run: npm install --no-package-lock
+        run: yarn install --ignore-engines
         working-directory: packages/syngrisi/e2e
 
       - name: Get Playwright version

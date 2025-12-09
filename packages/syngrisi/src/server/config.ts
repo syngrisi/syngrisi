@@ -8,10 +8,17 @@ import { env } from "./envConfig";
 import devices from "./data/devices.json";
 
 const getCommitHash = (): string => {
+    // In production/Docker environments, use gitHead from package.json (set during npm publish)
+    // Only try git command in development when gitHead might be outdated
+    if (gitHead) {
+        return gitHead.substring(0, 7);
+    }
+
+    // Fallback to git command (development environment)
     try {
-        return execSync('git rev-parse --short HEAD', { encoding: 'utf-8' }).trim();
+        return execSync('git rev-parse --short HEAD', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'] }).trim();
     } catch {
-        return gitHead ? gitHead.substring(0, 7) : '';
+        return '';
     }
 };
 const customDevicesPath = './server/data/custom_devices.json';

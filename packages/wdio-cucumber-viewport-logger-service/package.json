@@ -11,8 +11,11 @@
     "url": "https://github.com/syngrisi/syngrisi/issues"
   },
   "main": "src/index.js",
+  "engines": {
+    "node": ">=22.19.0"
+  },
   "scripts": {
-    "test": "exit 0",
+    "test": "vitest run",
     "pub": "np",
     "pkglist": "npx npm-packlist # list of files that will be published in syngrisi package, show the files section"
   },
@@ -26,7 +29,13 @@
   "author": "Viktar Silakou",
   "license": "MIT",
   "dependencies": {
-    "@wdio/logger": "^7.19.0"
+    "@wdio/logger": "^9.18.0"
   },
+  "devDependencies": {
+    "vitest": "^4.0.15"
+  },
+  "files": [
+    "src"
+  ],
   "gitHead": "12bfda406cbe5aaccf3f17fdab02a9bd1a9d6343"
 }

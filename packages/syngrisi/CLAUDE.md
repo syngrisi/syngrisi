@@ -6,28 +6,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 # Install all dependencies (server + UI)
-npm run install:all
+yarn install:all
 
 # Build everything (UI + server)
-npm run build
+yarn build
 
 # Build UI only (Vite → mvc/views/react)
-npm run build:ui
+yarn build:ui
 
 # Build server only (tsup → dist/)
-npm run build:server
+yarn build:server
 
 # Start server (auto-watches in development)
-npm start
+yarn start
 
 # Development mode (builds UI, watches server, auth disabled)
-npm run dev
+yarn dev
 
 # Development mode for UI only (Vite dev server on port 8080)
-npm run dev:ui
+yarn dev:ui
 
 # Watch UI build
-npm run build:watch
+yarn build:watch
 ```
 
 ## Testing
@@ -36,10 +36,10 @@ E2E tests use Playwright BDD and live in `e2e/`. Commands run from project root:
 
 ```bash
 # Full E2E suite
-npm test
+yarn test
 
 # Smoke tests
-npm run smoke
+yarn smoke
 
 # Run specific feature file (from e2e/ directory)
 cd e2e && npx bddgen && npx playwright test "features/CHECKS_HANDLING/accept_by_user.feature" --grep "Accept by user" --workers=2
@@ -51,7 +51,7 @@ cd e2e && npx bddgen && npx playwright test "features/path/to/file.feature" --gr
 cd e2e && npx bddgen && npx playwright test "features/path/to/file.feature" --grep "Test name" --workers=3 --repeat-each=4
 
 # Migration tests
-npm run test:migrations
+yarn test:migrations
 ```
 
 ## Architecture

@@ -1,4 +1,4 @@
-@fast-server
+@fast-server @smoke
 Feature: Checks Isolation by Test
   Every checks are related to one test.
   Each test should contain only it checks and no extra checks

@@ -26,7 +26,7 @@ services:
         max-size: '100m'
         max-file: '10'
     environment:
-      SYNGRISI_DB_URI: "${SYNGRISI_DB_URI:-mongodb://syngrisi-db/SyngrisiDb}"
+      SYNGRISI_DB_URI: "${SYNGRISI_DB_URI:-mongodb://syngrisi-db/SyngrisiDb?replicaSet=rs0}"
       SYNGRISI_IMAGES_PATH: "${SYNGRISI_IMAGES_PATH:-./baselines/}"
       SYNGRISI_AUTH: "${SYNGRISI_AUTH:-true}"
       SYNGRISI_TEST_MODE: "${SYNGRISI_TEST_MODE:-false}"
@@ -51,7 +51,7 @@ services:
     container_name: syngrisi-db-server
     ports:
       - "${SYNGRISI_DOCKER_DB_PORT:-27017}:27017"
-    command: [ "--bind_ip_all", "${SYNGRISI_DOCKER_DB_AUTH_ARG:---noauth}" ]
+    command: [ "--bind_ip_all", "${SYNGRISI_DOCKER_DB_AUTH_ARG:---noauth}", "--replSet", "rs0" ]
     restart: always
     volumes:
       - "${SYNGRISI_DOCKER_DB_PATH:-./data/db_data}:/data/db"

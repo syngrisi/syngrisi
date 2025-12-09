@@ -1,4 +1,4 @@
-@cp @generated @fast-server
+@cp @generated @fast-server @smoke
 Feature: Share Check Feature
 
   Background:

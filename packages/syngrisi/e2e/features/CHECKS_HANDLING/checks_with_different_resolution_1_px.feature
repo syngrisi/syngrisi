@@ -1,4 +1,4 @@
-@fast-server
+@fast-server @smoke
 Feature: Checks with different resolutions 1px
         The 1px difference resolution should be ignored
         But this is applicable only if image was cropped by 1px from the bottom
