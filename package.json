@@ -5,7 +5,7 @@
     "packages/*"
   ],
   "scripts": {
-    "publish": "lerna publish",
+    "pub": "lerna publish",
     "test": "lerna run test --scope=create-sy --scope=@syngrisi/syngrisi",
     "test:unit": "lerna run test --scope=create-sy",
     "test:e2e": "yarn --cwd packages/syngrisi/e2e bddgen && yarn --cwd packages/syngrisi/e2e playwright test --project=chromium --grep-invert '@saml|@sso-external|@sso-logto|@flaky'",
