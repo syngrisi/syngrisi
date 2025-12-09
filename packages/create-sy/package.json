@@ -11,7 +11,7 @@
   "homepage": "https://github.com/syngrisi/syngrisi/tree/main/packages/create-sy",
   "repository": {
     "type": "git",
-    "url": "git+git@github.com:syngrisi/syngrisi.git",
+    "url": "https://github.com/syngrisi/syngrisi",
     "directory": "packages/create-sy"
   },
   "bugs": {

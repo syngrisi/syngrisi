@@ -5,7 +5,7 @@
   "homepage": "https://github.com/syngrisi/syngrisi/tree/main/packages/wdio-cucumber-viewport-logger-service",
   "repository": {
     "type": "git",
-    "getUrl": "git+https://github.com/syngrisi/syngrisi.git"
+    "url": "https://github.com/syngrisi/syngrisi"
   },
   "bugs": {
     "url": "https://github.com/syngrisi/syngrisi/issues"
