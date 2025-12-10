@@ -1,8 +1,8 @@
 metadata:
   category: domain/app
-  generatedAt: '2025-12-07T10:28:46.488Z'
+  generatedAt: '2025-12-10T10:05:46.341Z'
   totalFiles: 19
-  totalSteps: 126
+  totalSteps: 130
   sourceFiles:
     - steps/domain/ai.steps.ts
     - steps/domain/api-key.steps.ts
@@ -111,15 +111,21 @@ steps:
   - pattern: I accept the {string} check
     description: ''
     line: 7
+  - pattern: I delete check from modal
+    description: |-
+      Delete check from modal dialog.
+      Uses the modal's remove icon and waits for DELETE API response.
+      More stable than raw locator clicks due to API synchronization.
+    line: 172
   - pattern: I delete the {string} check
     description: ''
-    line: 95
+    line: 96
   - pattern: I open the {ordinal} check {string}
     description: ''
-    line: 37
+    line: 38
   - pattern: I remove the {string} check
     description: ''
-    line: 129
+    line: 131
   - pattern: I run CLI task {string} with args {string}
     description: ''
     line: 11
@@ -338,13 +344,24 @@ steps:
     line: 25
   - pattern: I get the current URL
     description: ''
-    line: 43
+    line: 59
   - pattern: I start a new MCP session named {string} with headless {word}
     description: ''
     line: 8
   - pattern: I go to {string} page
     description: ''
     line: 12
+  - pattern: I open the saved share URL
+    description: Opens the previously saved share URL
+    line: 232
+  - pattern: I open the shared check URL
+    description: |-
+      Opens the shared check URL from the share input field (immediate - modal must be open)
+      Gets the URL from [data-test="share-url-input"] input and navigates to it
+    line: 248
+  - pattern: I save the share URL
+    description: Gets share URL from Share Check modal and stores it in testData
+    line: 191
   - pattern: I wait for navbar filter to sync
     description: Navbar synchronization steps
     line: 173

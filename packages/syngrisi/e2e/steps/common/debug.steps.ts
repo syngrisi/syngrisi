@@ -286,7 +286,8 @@ When('I pause with phrase: {string}', async ({ page, testEngine }, phrase: strin
     return;
   }
   const { exec } = await import('node:child_process');
-  exec(`say -v Milena "${phrase}"`);
+  const voice = process.env.E2E_SAY_VOICE || 'Alex';
+  exec(`say -v ${voice} "${phrase}"`);
 
   logMcpStatus(testEngine);
   await page.pause();

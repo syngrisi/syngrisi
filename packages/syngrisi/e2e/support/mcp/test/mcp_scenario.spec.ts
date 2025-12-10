@@ -8,6 +8,7 @@ import { got } from 'got-cjs';
 import FormData from 'form-data';
 import * as crypto from 'crypto';
 import * as yaml from 'yaml';
+import { ensureServerReady } from '@utils/app-server';
 
 
 const logger = createLogger('McpScenarioTest');
@@ -47,6 +48,12 @@ test('Perform MCP actions and get URL', async ({ page, testEngine, appServer, te
   if (!testEngine.isRunning()) {
     await testEngine.start();
   }
+  logger.info('Ensuring Syngrisi app server is running before seeding...');
+  await appServer.start();
+  logger.info(`App server started at ${appServer.baseURL}`);
+  if (appServer.serverPort) {
+    await ensureServerReady(appServer.serverPort);
+  }
   const sessionResult = await testEngine.client?.callTool(
     {
       name: 'session_start_new',
@@ -66,11 +73,24 @@ test('Perform MCP actions and get URL', async ({ page, testEngine, appServer, te
   logger.info('Seeding baselines via HTTP...');
 
   const baselineYaml = `
-- name: bench-quick
-  owner: Test/123456aA-
-  checks:
-    - name: QuickCheck
-      filePath: files/A.png
+adminUser:
+  username: Test
+  password: "123456aA-"
+users:
+  - username: bench-quick-admin@test.com
+    password: Password-123
+    role: admin
+    baselines:
+      - name: bench-quick
+        checkName: QuickCheck
+        filePath: files/A.png
+  - username: bench-quick-user@test.com
+    password: Password-123
+    role: user
+    baselines:
+      - name: bench-quick
+        checkName: QuickCheck
+        filePath: files/A.png
 `;
   const seedBaselinesResult = await testEngine.client?.callTool(
     {
