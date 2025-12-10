@@ -1,5 +1,16 @@
 # @syngrisi/syngrisi
 
+## 2.5.2
+
+### Patch Changes
+
+-   [`b1bff19`](https://github.com/syngrisi/syngrisi/commit/b1bff196f04216abe1c8ca7ed67e15928e5572e0) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - feat(scripts): add log streaming and background process handling to staging TUI
+
+-   [`ab44149`](https://github.com/syngrisi/syngrisi/commit/ab4414998da764c906db7704141eec669c2fc360) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - fix(ui): replace duplicate IconWand with IconAdjustments in CheckDetails toolbar
+
+-   Updated dependencies []:
+    -   @syngrisi/node-resemble.js@2.5.2
+
 ## 2.5.1
 
 ### Patch Changes
