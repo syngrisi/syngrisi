@@ -198,9 +198,10 @@ When('I announce: {string}', async ({ page }, phrase: string) => {
   const { promisify } = await import('node:util');
   const { exec } = await import('node:child_process');
   const execAsync = promisify(exec);
+  const voice = process.env.E2E_SAY_VOICE || 'Alex';
 
   await showDemoBanner(page, phrase);
-  await execAsync(`say -v Milena "${phrase}"`);
+  await execAsync(`say -v "${voice}" "${phrase}"`);
   await new Promise((resolve) => setTimeout(resolve, 300));
   await hideDemoBanner(page);
 });
@@ -225,7 +226,8 @@ When('I announce: {string} and PAUSE', async ({ page, testEngine }, phrase: stri
     return;
   }
   const { exec } = await import('node:child_process');
-  exec(`say -v Milena "${phrase}"`);
+  const voice = process.env.E2E_SAY_VOICE || 'Alex';
+  exec(`say -v "${voice}" "${phrase}"`);
 
   await showDemoBanner(page, phrase);
   logMcpStatus(testEngine);

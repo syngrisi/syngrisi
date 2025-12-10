@@ -1,3 +1,4 @@
+import * as crypto from 'crypto';
 import { got } from 'got-cjs';
 import type { AppServerFixture } from '@fixtures';
 import type { TestStore } from '@fixtures';
@@ -15,6 +16,10 @@ export interface AuthHeaderOptions {
   apiKey?: string;
   path?: string;
   headers?: Record<string, string>;
+}
+
+function hashApiKey(apiKey: string): string {
+  return crypto.createHash('sha512').update(apiKey).digest('hex');
 }
 
 export function createSameOriginHeaders(appServer: AppServerFixture, path = '/'): Record<string, string> {
@@ -72,8 +77,14 @@ export async function requestWithSession(
     ...options.headers,
   };
 
+  const storedApiKey = testData.get('hashedApiKey') as string | undefined;
+  const hashedApiKey = storedApiKey ?? hashApiKey(process.env.SYNGRISI_API_KEY || '123');
+  testData.set('hashedApiKey', hashedApiKey);
+
   if (sessionSid) {
     headers.cookie = `connect.sid=${sessionSid}`;
+  } else if (hashedApiKey) {
+    headers.apikey = hashedApiKey;
   }
 
   let res;
@@ -107,4 +118,3 @@ export async function requestWithSession(
     json,
   };
 }
-
