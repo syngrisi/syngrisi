@@ -1,6 +1,7 @@
 import { HttpStatus } from '@utils';
 import { ApiError, catchAsync, deserializeIfJSON, pick, removeEmptyProperties } from '@utils';
 import { genericService, checkService } from '@services';
+import { domSnapshotService } from '@services/dom-snapshot.service';
 import { ExtRequest } from '@types';
 import { CheckDocument } from '@models';
 import { Response } from "express";
@@ -66,10 +67,28 @@ const remove = catchAsync(async (req: ExtRequest, res: Response) => {
     res.send(result);
 });
 
+const getDomSnapshot = catchAsync(async (req: ExtRequest, res: Response) => {
+    const { id } = req.params;
+    if (!id) throw new ApiError(HttpStatus.BAD_REQUEST, 'Check ID is required');
+
+    const snapshot = await domSnapshotService.getDomSnapshotByCheckId(id, 'actual');
+    if (!snapshot) {
+        throw new ApiError(HttpStatus.NOT_FOUND, `No DOM snapshot found for check: ${id}`);
+    }
+
+    const content = await domSnapshotService.getDomContentBySnapshot(snapshot);
+    if (!content) {
+        throw new ApiError(HttpStatus.NOT_FOUND, `Failed to read DOM snapshot content for check: ${id}`);
+    }
+
+    res.json(content);
+});
+
 export {
     getViaPost,
     get,
     accept,
     remove,
     update,
+    getDomSnapshot,
 };

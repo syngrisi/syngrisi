@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { Divider, Group, Menu, ActionIcon } from '@mantine/core';
 import { useEffect, useState } from 'react';
-import { IconDotsVertical, IconTrash, IconChevronLeft, IconChevronRight, IconChevronUp, IconChevronDown, IconShare } from '@tabler/icons-react';
+import { IconDotsVertical, IconTrash, IconChevronLeft, IconChevronRight, IconChevronUp, IconChevronDown, IconShare, IconAnalyze } from '@tabler/icons-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GenericService } from '@shared/services';
 import { errorMsg, successMsg } from '@shared/utils/utils';
@@ -34,6 +34,8 @@ interface Props {
     isFirstTest?: boolean
     isLastTest?: boolean
     navigationReady?: boolean
+    rcaEnabled?: boolean
+    onToggleRCA?: () => void
 }
 
 export function Toolbar(
@@ -53,6 +55,8 @@ export function Toolbar(
         isFirstTest,
         isLastTest,
         navigationReady,
+        rcaEnabled,
+        onToggleRCA,
     }: Props,
 ) {
     const { query } = useParams();
@@ -160,6 +164,18 @@ export function Toolbar(
                     mainView={mainView as MainView}
                     disabled={!(view === 'diff' && parseFloat(curCheck?.parsedResult?.rawMisMatchPercentage) < 5)}
                 />
+
+                {onToggleRCA && (
+                    <ActionIcon
+                        onClick={onToggleRCA}
+                        title="Root Cause Analysis (D)"
+                        variant={rcaEnabled ? 'filled' : 'default'}
+                        color={rcaEnabled ? 'blue' : undefined}
+                        data-test="rca-toggle-button"
+                    >
+                        <IconAnalyze size={20} />
+                    </ActionIcon>
+                )}
                 <Divider orientation="vertical" />
 
                 <RegionsToolbar mainView={mainView} baselineId={baselineId} view={view} hasDiff={!!mainView?.diffImage} />
