@@ -364,6 +364,23 @@ const App: React.FC = () => {
       },
     },
     {
+      key: '0',
+      label: 'Claude Continue',
+      description: 'Continue Claude session with MCP',
+      action: () => {
+        if (status.serverRunning) {
+          // Exit TUI first, then launch Claude with --continue
+          exit();
+          const claudeScript = path.join(__dirname, 'staging/start-claude-with-staging-mcp.sh');
+          // Use spawnSync with --continue flag
+          spawnSync(claudeScript, ['--continue'], { stdio: 'inherit', shell: true });
+        } else {
+          setExecuting(true);
+          setOutput('Server is not running.\nPlease start it first (option 2).\n\nPress any key to continue...');
+        }
+      },
+    },
+    {
       key: 'q',
       label: 'Quit',
       description: 'Exit TUI',
@@ -442,7 +459,7 @@ const App: React.FC = () => {
       </Box>
 
       <Box marginTop={1}>
-        <Text dimColor>↑↓ arrows or numbers (1-9) to navigate • Enter to select • Q to quit</Text>
+        <Text dimColor>↑↓ arrows or numbers (0-9) to navigate • Enter to select • Q to quit</Text>
       </Box>
     </Box>
   );

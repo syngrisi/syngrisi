@@ -860,6 +860,12 @@ When('I force click element with locator {string}', async ({ page, testData }, r
   await locator.first().click({ force: true });
 });
 
+When('I real click element with locator {string}', async ({ page, testData }, rawValue: string) => {
+  const renderedValue = renderTemplate(rawValue, testData);
+  const locator = getLocatorQuery(page, renderedValue);
+  await locator.first().click();
+});
+
 When('I move to element {string}', async ({ page }, selector: string) => {
   const locator = getLocatorQuery(page, selector);
   const element = locator.first();

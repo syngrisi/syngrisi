@@ -753,9 +753,43 @@ Then(
 When(
   'I wait on element {string} to not be displayed',
   async ({ page }, selector: string) => {
-    const locator = getLocatorQuery(page, selector);
-    // Reduced from 30s to 15s - elements typically disappear quickly
-    await locator.first().waitFor({ state: 'hidden', timeout: 15000 });
+    await page.waitForFunction(
+      (sel) => {
+        const getNodes = () => {
+          try {
+            return Array.from(document.querySelectorAll(sel));
+          } catch {
+            const iterator = document.evaluate(
+              sel,
+              document,
+              null,
+              XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+              null
+            );
+            const xpathNodes: Array<Node> = [];
+            for (let i = 0; i < iterator.snapshotLength; i += 1) {
+              const node = iterator.snapshotItem(i);
+              if (node) xpathNodes.push(node);
+            }
+            return xpathNodes;
+          }
+        };
+        const nodes = getNodes();
+        return nodes.every((node) => {
+          if (!(node instanceof HTMLElement)) return true;
+          const style = window.getComputedStyle(node);
+          return (
+            style.display === 'none'
+            || style.visibility === 'hidden'
+            || node.offsetParent === null
+            || node.clientWidth === 0
+            || node.clientHeight === 0
+          );
+        });
+      },
+      selector,
+      { timeout: 15000 }
+    );
   }
 );
 

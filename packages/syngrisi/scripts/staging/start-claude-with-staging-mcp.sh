@@ -20,6 +20,9 @@ MAIN_PROJECT_ROOT="$(cd "${REPO_ROOT}/../.." && pwd)"
 # Temp file for MCP config
 MCP_CONFIG_FILE=""
 
+# Additional Claude arguments (passed from command line)
+CLAUDE_EXTRA_ARGS=""
+
 # Helper functions
 log_info() {
     echo -e "${GREEN}[INFO]${NC} $1"
@@ -122,16 +125,23 @@ launch_claude() {
     log_info "Working directory: ${MAIN_PROJECT_ROOT}"
     log_info "MCP server: staging_test_engine"
     log_info "Target: http://localhost:${STAGING_PORT}"
+    if [ -n "${CLAUDE_EXTRA_ARGS}" ]; then
+        log_info "Extra args: ${CLAUDE_EXTRA_ARGS}"
+    fi
     echo ""
 
     cd "${MAIN_PROJECT_ROOT}"
 
     # Launch Claude Code with the MCP config
-    exec claude --mcp-config "${MCP_CONFIG_FILE}" --dangerously-skip-permissions --verbose
+    # shellcheck disable=SC2086
+    exec claude --mcp-config "${MCP_CONFIG_FILE}" --dangerously-skip-permissions --verbose ${CLAUDE_EXTRA_ARGS}
 }
 
 # Main execution
 main() {
+    # Parse command line arguments
+    CLAUDE_EXTRA_ARGS="$*"
+
     echo ""
     echo -e "${BLUE}╔════════════════════════════════════════════════════════════════╗${NC}"
     echo -e "${BLUE}║        Claude Code + Staging MCP Launcher                      ║${NC}"

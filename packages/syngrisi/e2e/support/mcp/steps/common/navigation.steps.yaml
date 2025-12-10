@@ -1,6 +1,6 @@
 metadata:
   category: common/navigation
-  generatedAt: '2025-12-07T10:28:46.488Z'
+  generatedAt: '2025-12-10T10:05:46.341Z'
   totalFiles: 1
   totalSteps: 2
   sourceFiles:
@@ -20,7 +20,7 @@ steps:
       When I open site "https://example.com"
       When I open url "{{baseUrl}}/dashboard"
       ```
-    line: 406
+    line: 413
   - pattern: I open the url {string}
     description: ''
-    line: 411
+    line: 418

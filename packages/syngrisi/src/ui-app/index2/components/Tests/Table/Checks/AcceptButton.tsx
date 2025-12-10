@@ -128,14 +128,13 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, s
                     )
             }
         >
-            <div style={{ pointerEvents: 'none' }}>
+            <div>
                 <ActionPopoverIcon
                     iconColor={likeIconColor}
                     buttonColor="green"
                     sx={{
                         cursor: isCurrentlyAccepted ? 'default' : 'pointer',
                         '&:hover': { backgroundColor: isCurrentlyAccepted ? 'rgba(255, 255, 255, 0);' : '' },
-                        pointerEvents: 'auto',
                     }}
                     testAttr="check-accept-icon"
                     testAttrName={check.name}

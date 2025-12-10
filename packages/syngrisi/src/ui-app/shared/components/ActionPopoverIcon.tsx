@@ -69,6 +69,7 @@ export default function ActionPopoverIcon(
                     events={{ hover: true, focus: false, touch: false }}
                     styles={{
                         tooltip: { pointerEvents: 'none' },
+                        root: { pointerEvents: 'none' },
                     }}
                     label={
                         (
@@ -93,6 +94,7 @@ export default function ActionPopoverIcon(
                         title={title}
                         loading={loading}
                         size={size}
+                        style={{ pointerEvents: 'auto' }}
                         {...rest}
                     >
                         {icon}
