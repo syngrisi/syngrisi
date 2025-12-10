@@ -68,5 +68,11 @@
     "playwright": "^1.56.1",
     "tar-fs": "^3.1.1",
     "ws": "^8.18.0"
+  },
+  "resolutions": {
+    "chalk": "4.1.2",
+    "**/chalk": "4.1.2",
+    "strip-ansi": "6.0.1",
+    "**/strip-ansi": "6.0.1"
   }
 }
