@@ -1,7 +1,7 @@
 /* eslint-disable prefer-arrow-callback */
 import * as React from 'react';
 import { ActionIcon, Menu, Text, Tooltip, Group } from '@mantine/core';
-import { IconWand, IconCheck } from '@tabler/icons-react';
+import { IconAdjustments, IconCheck } from '@tabler/icons-react';
 import { useState, useEffect } from 'react';
 import config from '@config';
 import { successMsg, errorMsg } from '@shared/utils/utils';
@@ -110,7 +110,7 @@ export function MatchTypeSelector({ baselineId, initialMatchType }: Props) {
                         disabled={!baselineId}
                         loading={loading}
                     >
-                        <IconWand size={24} stroke={1} />
+                        <IconAdjustments size={24} stroke={1} />
                     </ActionIcon>
                 </Tooltip>
             </Menu.Target>
