@@ -72,4 +72,30 @@ router.delete(
     baselineController.remove as Midleware
 );
 
+registry.registerPath({
+    method: 'get',
+    path: '/v1/baselines/{id}/dom',
+    summary: "Get DOM snapshot for a baseline (for RCA feature)",
+    tags: ['Baselines'],
+    request: commonValidations.paramsId,
+    responses: {
+        200: {
+            description: 'DOM snapshot content as JSON',
+            content: {
+                'application/json': {
+                    schema: { type: 'object' },
+                },
+            },
+        },
+        404: { description: 'DOM snapshot not found' },
+    },
+});
+
+router.get(
+    '/:id/dom',
+    ensureLoggedInOrApiKey(),
+    validateRequest(getByIdParamsSchema(), 'get, /v1/baselines/{id}/dom'),
+    baselineController.getDomSnapshot as Midleware
+);
+
 export default router;

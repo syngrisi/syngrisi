@@ -80,6 +80,30 @@ router.put(
     checkController.accept as Midleware
 );
 
+registry.registerPath({
+    method: 'get',
+    path: '/v1/checks/{id}/dom',
+    summary: "Get DOM snapshot for a check (for RCA feature)",
+    tags: ['Checks'],
+    request: commonValidations.paramsId,
+    responses: {
+        200: {
+            description: 'DOM snapshot content as JSON',
+            content: {
+                'application/json': {
+                    schema: { type: 'object' },
+                },
+            },
+        },
+        404: { description: 'DOM snapshot not found' },
+    },
+});
 
+router.get(
+    '/:id/dom',
+    ensureLoggedInOrApiKeyOrShareToken(),
+    validateRequest(getByIdParamsSchema(), 'get, /v1/checks/{id}/dom'),
+    checkController.getDomSnapshot as Midleware
+);
 
 export default router;

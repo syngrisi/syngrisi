@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto'
 import logger from '@wdio/logger'
 import { LogLevelDesc } from 'loglevel'
 import { errorObject, paramsGuard, prettyCheckResult, printErrorResponseBody } from './utils'
+import { prepareDomDumpForTransfer } from './compression'
 // @ts-ignore - package.json import for version
 import { version as SDK_VERSION } from '../package.json'
 import {
@@ -256,11 +257,11 @@ class SyngrisiApi {
         paramsGuard(params, 'createCheck, params', CheckParamsSchema)
 
         const url = `${this.url('createCheck')}`
+        // Note: domDump is handled separately for compression
         const fieldsMapping = {
             branch: 'branch',
             app: 'appName',
             suite: 'suitename',
-            domDump: 'domdump',
             vShifting: 'vShifting',
             testId: 'testid',
             name: 'name',
@@ -276,6 +277,7 @@ class SyngrisiApi {
 
         for (let attempt = 1; attempt <= maxRetries; attempt++) {
             const form = new FormData()
+            const requestHeaders: Record<string, string> = { ...this.headers }
 
             Object.keys(fieldsMapping).forEach(key => {
                 // @ts-ignore
@@ -285,13 +287,22 @@ class SyngrisiApi {
                 }
             })
 
+            // Handle domDump with compression for RCA
+            if (params.domDump) {
+                const { data, isCompressed } = prepareDomDumpForTransfer(params.domDump)
+                form.append('domdump', data)
+                if (isCompressed) {
+                    requestHeaders['x-domdump-compressed'] = 'gzip'
+                }
+            }
+
             if (hashCode) form.append('hashcode', hashCode)
             if (imageBuffer) form.append('file', imageBuffer, 'file')
 
             try {
                 const result: CheckResponse = await got.post(url, {
                     body: form,
-                    headers: this.headers,
+                    headers: requestHeaders,
                 }).json()
 
                 return result
@@ -470,3 +481,5 @@ class SyngrisiApi {
 export { SyngrisiApi }
 export { transformOs } from './utils'
 export * from '../schemas/SyngrisiApi.schema'
+export * from './compression'
+export { collectDomTree, getCollectDomTreeScript, COLLECT_DOM_TREE_SCRIPT } from './domCollector'

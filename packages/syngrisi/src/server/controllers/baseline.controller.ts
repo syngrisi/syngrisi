@@ -1,6 +1,7 @@
 import { HttpStatus } from '@utils';
 import { catchAsync } from '@utils';
 import { genericService } from '@services';
+import { domSnapshotService } from '@services/dom-snapshot.service';
 
 import { deserializeIfJSON, pick } from '@utils';
 import { Response } from "express";
@@ -64,8 +65,26 @@ const remove = catchAsync(async (req: ExtRequest, res: Response) => {
     res.send(result);
 });
 
+const getDomSnapshot = catchAsync(async (req: ExtRequest, res: Response) => {
+    const { id } = req.params;
+    if (!id) throw new ApiError(HttpStatus.BAD_REQUEST, 'Baseline ID is required');
+
+    const snapshot = await domSnapshotService.getDomSnapshotByBaselineId(id);
+    if (!snapshot) {
+        throw new ApiError(HttpStatus.NOT_FOUND, `No DOM snapshot found for baseline: ${id}`);
+    }
+
+    const content = await domSnapshotService.getDomContentBySnapshot(snapshot);
+    if (!content) {
+        throw new ApiError(HttpStatus.NOT_FOUND, `Failed to read DOM snapshot content for baseline: ${id}`);
+    }
+
+    res.json(content);
+});
+
 export {
     get,
     put,
     remove,
+    getDomSnapshot,
 };
