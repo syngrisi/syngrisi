@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RCA Test Application</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+
+        .status-ok {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-broken {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .card-icon.blue { background: #e3f2fd; }
+        .card-icon.green { background: #e8f5e9; }
+        .card-icon.orange { background: #fff3e0; }
+
+        .card h3 {
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .card .value {
+            color: #667eea;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .content-section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .content-section h2 {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .item-list {
+            list-style: none;
+        }
+
+        .item-list li {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .item-list li:last-child {
+            border-bottom: none;
+        }
+
+        .item-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 12px;
+        }
+
+        .item-dot.active { background: #4caf50; }
+        .item-dot.pending { background: #ff9800; }
+        .item-dot.inactive { background: #9e9e9e; }
+
+        .item-name {
+            flex: 1;
+            color: #333;
+        }
+
+        .item-value {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd6;
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .footer {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 12px;
+            margin-top: 20px;
+        }
+
+        /* ========== BROKEN STATE STYLES ========== */
+        body.broken {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        body.broken .header {
+            padding: 32px; /* Changed from 24px */
+        }
+
+        body.broken .header h1 {
+            font-size: 32px; /* Changed from 28px */
+            color: #c0392b; /* Changed from #333 */
+        }
+
+        body.broken .cards {
+            grid-template-columns: repeat(2, 1fr); /* Changed from 3 columns */
+        }
+
+        body.broken .card {
+            padding: 24px; /* Changed from 20px */
+        }
+
+        body.broken .card .value {
+            color: #e74c3c; /* Changed from #667eea */
+            font-size: 28px; /* Changed from 24px */
+        }
+
+        body.broken .content-section h2 {
+            font-size: 18px; /* Changed from 20px */
+            color: #c0392b; /* Changed from #333 */
+        }
+
+        body.broken .item-list li {
+            padding: 16px 0; /* Changed from 12px */
+        }
+
+        body.broken .btn-primary {
+            background: #e74c3c; /* Changed from #667eea */
+        }
+
+        /* Hide one card in broken state */
+        body.broken .card:nth-child(3) {
+            display: none;
+        }
+
+        /* Add extra element in broken state */
+        .broken-notice {
+            display: none;
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 20px;
+            color: #856404;
+        }
+
+        body.broken .broken-notice {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Dashboard Overview</h1>
+            <p>Welcome back! Here's what's happening with your projects.</p>
+            <span class="status-badge status-ok" id="status-badge">All Systems Operational</span>
+        </div>
+
+        <div class="broken-notice">
+            ⚠️ Warning: Some components are experiencing issues. Our team is investigating.
+        </div>
+
+        <div class="cards">
+            <div class="card">
+                <div class="card-icon blue">📊</div>
+                <h3>Total Projects</h3>
+                <div class="value" id="projects-count">24</div>
+            </div>
+            <div class="card">
+                <div class="card-icon green">✅</div>
+                <h3>Completed Tasks</h3>
+                <div class="value" id="tasks-count">156</div>
+            </div>
+            <div class="card">
+                <div class="card-icon orange">⏳</div>
+                <h3>Pending Reviews</h3>
+                <div class="value" id="reviews-count">8</div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Recent Activity</h2>
+            <ul class="item-list">
+                <li>
+                    <span class="item-dot active"></span>
+                    <span class="item-name">Project Alpha deployment completed</span>
+                    <span class="item-value">2 hours ago</span>
+                </li>
+                <li>
+                    <span class="item-dot active"></span>
+                    <span class="item-name">New team member joined</span>
+                    <span class="item-value">5 hours ago</span>
+                </li>
+                <li>
+                    <span class="item-dot pending"></span>
+                    <span class="item-name">Code review requested</span>
+                    <span class="item-value">1 day ago</span>
+                </li>
+                <li>
+                    <span class="item-dot inactive"></span>
+                    <span class="item-name">Sprint planning scheduled</span>
+                    <span class="item-value">2 days ago</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="content-section">
+            <h2>Quick Actions</h2>
+            <div class="button-group">
+                <button class="btn btn-primary">Create Project</button>
+                <button class="btn btn-secondary">View Reports</button>
+                <button class="btn btn-secondary">Team Settings</button>
+            </div>
+        </div>
+
+        <div class="footer">
+            RCA Test Application v1.0 | For visual regression testing
+        </div>
+    </div>
+
+    <script>
+        // Check for broken state
+        const urlParams = new URLSearchParams(window.location.search);
+        const isBroken = urlParams.get('broken') === 'true';
+
+        if (isBroken) {
+            document.body.classList.add('broken');
+
+            // Update status badge
+            const badge = document.getElementById('status-badge');
+            badge.textContent = 'Issues Detected';
+            badge.className = 'status-badge status-broken';
+
+            // Change values
+            document.getElementById('projects-count').textContent = '23';
+            document.getElementById('tasks-count').textContent = '142';
+            document.getElementById('reviews-count').textContent = '12';
+        }
+    </script>
+</body>
+</html>

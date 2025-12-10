@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { DomDumpSchema } from '@syngrisi/core-api'
 
 export const CheckOptionsSchema = z.object({
     // ident:  ['name', 'viewport', 'browserName', 'os', 'app', 'branch'];
@@ -15,7 +16,7 @@ export const CheckOptionsSchema = z.object({
     browserFullVersion: z.string().min(1),
     hashCode: z.string().length(128).optional(),
 
-    domDump: z.any().optional(), // Replace with appropriate schema if possible
+    domDump: DomDumpSchema.optional(), // DomNode tree or compressed format for RCA
 })
 
 export type CheckOptions = z.infer<typeof CheckOptionsSchema>;
