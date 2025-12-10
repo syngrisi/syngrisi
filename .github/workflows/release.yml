@@ -1,8 +1,12 @@
 name: Release
 
 on:
-  push:
+  # Trigger after CI workflow completes on main
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
     branches: [main]
+  # Manual trigger with bypass option
   workflow_dispatch:
     inputs:
       skip_ci_check:
@@ -22,47 +26,39 @@ permissions:
   actions: read    # Required for checking CI workflow status
 
 jobs:
-  # Wait for CI to complete successfully before releasing
-  wait-for-ci:
+  # Check CI status for manual triggers
+  check-ci:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.skip_ci_check != 'true'
     outputs:
-      should_release: ${{ steps.check.outputs.should_release }}
+      ci_passed: ${{ steps.check.outputs.ci_passed }}
     steps:
-      - name: Check for bypass flags
-        id: bypass
-        run: |
-          # Only check FIRST LINE of commit message for bypass flags
-          COMMIT_TITLE=$(echo "${{ github.event.head_commit.message }}" | head -n 1)
-          if [[ "$COMMIT_TITLE" == *"[skip-ci-check]"* ]] || [[ "$COMMIT_TITLE" == *"[force-release]"* ]]; then
-            echo "bypass=true" >> $GITHUB_OUTPUT
-            echo "⚠️ CI check bypassed via commit message flag in title: $COMMIT_TITLE"
-          elif [[ "${{ github.event.inputs.skip_ci_check }}" == "true" ]]; then
-            echo "bypass=true" >> $GITHUB_OUTPUT
-            echo "⚠️ CI check bypassed via workflow_dispatch input"
-          else
-            echo "bypass=false" >> $GITHUB_OUTPUT
-            echo "✓ No bypass flags found, will wait for CI"
-          fi
-
-      - name: Wait for CI workflow
-        if: steps.bypass.outputs.bypass != 'true'
-        uses: lewagon/wait-on-check-action@v1.3.4
-        with:
-          ref: ${{ github.sha }}
-          check-name: 'test-e2e'
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          wait-interval: 30
-          allowed-conclusions: success
-
-      - name: Set release flag
+      - name: Check latest CI status
         id: check
-        run: echo "should_release=true" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Get the latest CI workflow run conclusion
+          CONCLUSION=$(gh run list --workflow=ci.yml --branch=main --limit=1 --json conclusion -q '.[0].conclusion')
+          echo "Latest CI conclusion: $CONCLUSION"
+          if [ "$CONCLUSION" = "success" ]; then
+            echo "ci_passed=true" >> $GITHUB_OUTPUT
+          else
+            echo "ci_passed=false" >> $GITHUB_OUTPUT
+            echo "::error::Latest CI run did not succeed (status: $CONCLUSION). Use 'Skip CI check' option for emergency release."
+            exit 1
+          fi
 
   release:
     runs-on: ubuntu-latest
-    needs: wait-for-ci
-    if: needs.wait-for-ci.outputs.should_release == 'true'
+    needs: [check-ci]
+    # Run if: (CI workflow completed successfully) OR (manual with bypass) OR (manual and check-ci passed)
+    if: |
+      always() && (
+        (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') ||
+        (github.event_name == 'workflow_dispatch' && github.event.inputs.skip_ci_check == 'true') ||
+        (github.event_name == 'workflow_dispatch' && needs.check-ci.outputs.ci_passed == 'true')
+      )
     steps:
       - uses: actions/checkout@v4
         with:
