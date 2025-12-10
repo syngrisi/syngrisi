@@ -65,7 +65,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: "${MONGODB_ROOT_PASSWORD}"
 
     healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      test: ["CMD", "mongosh", "-u", "${MONGODB_ROOT_USERNAME:-root}", "-p", "${MONGODB_ROOT_PASSWORD:-password}", "--authenticationDatabase", "admin", "--eval", "db.adminCommand('ping')"]
       interval: 5s
       timeout: 30s
       retries: 10
