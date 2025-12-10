@@ -306,6 +306,10 @@ export async function startMcpServer({
 
   const internalStartSession = async (sessionName: string) => {
     logger.info(formatArgs(`🎯 Starting new session "${sessionName}"`));
+    if (fixtures?.appServer && !fixtures.appServer.serverPort) {
+      logger.info(formatArgs('🚀 Starting Syngrisi app server before MCP session'));
+      await fixtures.appServer.start();
+    }
     const id = startNewSession(sessionName);
     const info = getSessionInfo();
     const page = activePage;

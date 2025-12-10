@@ -23,6 +23,7 @@ The server uses dynamic port allocation (port 0), letting the OS assign a free p
 `server.ts` builds the MCP surface using `playwright-mcp-advanced` and helper utilities in `utils/`:
 
 - `session_start_new` – Starts a named logging session, regenerates the categorized step definitions as YAML files (returning paths to all generated files), spins up a Playwright page, and navigates to the app under test.
+  * The server will attempt to start the Syngrisi app automatically if it is not already running, which is helpful when `@no-app-start` or other fixtures suppress the app launch.
 - `sessions_clear` – Force-closes all Playwright contexts/pages from previous sessions to free resources when a run crashed or leaked browsers.
 - `step_execute_single` – Execute a single BDD step with optional `stepDocstring` parameter for table or multi-line payload. **ALWAYS use this tool for single steps, diagnostic steps, and steps that return values**. This is the primary tool for step-by-step execution and debugging. Each run updates the active session log stored alongside other diagnostics. для ровно одного шага.
 - `step_execute_many` – Validate and execute multiple steps in sequence. **Use ONLY for reproducing multiple steps together**. **DO NOT use for single steps, diagnostic steps, or steps that return values** (this tool does not return individual step results). использовать только при ≥2 шагах; одиночные шаги запрещены.
@@ -78,5 +79,9 @@ Run the transport tests after changing the harness:
 ```bash
 timeout 180s bash -lc 'cd packages/syngrisi/e2e && E2E_HEADLESS=1 playwright test --config support/mcp/playwright.config.ts support/mcp/test'
 ```
+
+### Real scenario ordering
+
+`chromium-real-scenarios` exercises the real MCP workflow (e.g., `mcp-real-scenarios.spec.ts`). Those tests now start the bridge session first, trigger `I start Server` to force the app backend up, and then launch a fresh MCP session so all session data is created against the restarted server. When extending those specs, respect that ordering: start `session_start_new` only after the backend is ready.
 
 The suite covers both the raw HTTP server and the stdio bridge. Attach the generated logs when investigating failures.
