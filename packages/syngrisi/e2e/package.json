@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "postinstall": "playwright install",
-    "bddgen": "bddgen --config .tmp/mcp/playwright.config.ts",
+    "bddgen": "bddgen",
     "kill": "(pkill -9 -f syngrisi_test_server || true; pkill -9 -f playwright || true; pkill -9 -f chromium || true; sleep 3 && echo 'Killed all test processes') || true",
     "test": "yarn kill && bddgen && run-s -c test:clean-blob test:parallel test:flaky test:combine-blob test:merge-reports test:stats; say 'all tests done'",
     "test:clean-blob": "rm -rf reports/blob-parallel reports/blob-sso reports/blob-flaky reports/blob-combined reports/playwright-report reports/report.json",
