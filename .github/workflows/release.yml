@@ -32,15 +32,17 @@ jobs:
       - name: Check for bypass flags
         id: bypass
         run: |
-          COMMIT_MSG="${{ github.event.head_commit.message }}"
-          if [[ "$COMMIT_MSG" == *"[skip-ci-check]"* ]] || [[ "$COMMIT_MSG" == *"[force-release]"* ]]; then
+          # Only check FIRST LINE of commit message for bypass flags
+          COMMIT_TITLE=$(echo "${{ github.event.head_commit.message }}" | head -n 1)
+          if [[ "$COMMIT_TITLE" == *"[skip-ci-check]"* ]] || [[ "$COMMIT_TITLE" == *"[force-release]"* ]]; then
             echo "bypass=true" >> $GITHUB_OUTPUT
-            echo "⚠️ CI check bypassed via commit message flag"
+            echo "⚠️ CI check bypassed via commit message flag in title: $COMMIT_TITLE"
           elif [[ "${{ github.event.inputs.skip_ci_check }}" == "true" ]]; then
             echo "bypass=true" >> $GITHUB_OUTPUT
             echo "⚠️ CI check bypassed via workflow_dispatch input"
           else
             echo "bypass=false" >> $GITHUB_OUTPUT
+            echo "✓ No bypass flags found, will wait for CI"
           fi
 
       - name: Wait for CI workflow
