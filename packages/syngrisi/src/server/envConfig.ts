@@ -48,6 +48,14 @@ export const env = cleanEnv(process.env, {
     SYNGRISI_RATE_LIMIT_MAX: num({ default: 5000 }),
     SYNGRISI_AUTH_RATE_LIMIT_WINDOW_MS: num({ default: 15 * 60 * 1000 }), // 15 minutes
     SYNGRISI_AUTH_RATE_LIMIT_MAX: num({ default: 200 }),
+    // Mongo tuneables for tests/CI flake reduction
+    SYNGRISI_MONGO_SOCKET_TIMEOUT_MS: num({ default: 60_000 }),
+    SYNGRISI_MONGO_MAX_POOL_SIZE: num({ default: 20 }),
+    SYNGRISI_MONGO_MIN_POOL_SIZE: num({ default: 2 }),
+    SYNGRISI_MONGO_MAX_IDLE_TIME_MS: num({ default: 30_000 }),
+    SYNGRISI_MONGO_WAIT_QUEUE_TIMEOUT_MS: num({ default: 30_000 }),
+    SYNGRISI_MONGO_SERVER_SELECTION_TIMEOUT_MS: num({ default: 10_000 }),
+    SYNGRISI_MONGO_CONNECT_TIMEOUT_MS: num({ default: 30_000 }),
 
     // SSO Configuration
     SSO_ENABLED: bool({ default: false }),
