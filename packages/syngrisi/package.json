@@ -1,6 +1,6 @@
 {
   "name": "@syngrisi/syngrisi",
-  "version": "2.5.2",
+  "version": "2.5.3",
   "description": "Syngrisi - Visual Testing Tool",
   "main": "./dist/server/server.js",
   "type": "module",
@@ -106,7 +106,7 @@
     "@asteasolutions/zod-to-openapi": "^8.2.0",
     "@inquirer/prompts": "^8.0.2",
     "@node-saml/passport-saml": "^5.1.0",
-    "@syngrisi/node-resemble.js": "^2.5.2",
+    "@syngrisi/node-resemble.js": "^2.5.3",
     "compression": "^1.8.1",
     "connect-mongo": "^5.1.0",
     "dotenv": "^17.2.3",

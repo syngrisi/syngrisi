@@ -1,5 +1,14 @@
 # @syngrisi/syngrisi
 
+## 2.5.3
+
+### Patch Changes
+
+-   [`246ba5e`](https://github.com/syngrisi/syngrisi/commit/246ba5e5a038d319f6dfc6d4118512f031268dc9) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - fix: improve ActionPopoverIcon click handling and E2E test stability
+
+-   Updated dependencies []:
+    -   @syngrisi/node-resemble.js@2.5.3
+
 ## 2.5.2
 
 ### Patch Changes
