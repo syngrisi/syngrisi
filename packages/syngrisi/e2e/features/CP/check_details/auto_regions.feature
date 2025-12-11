@@ -55,7 +55,7 @@ Feature: Check details - Auto Regions from Diff
 
         # Click auto region button (or press R)
         When I press the "r" key
-        When I wait 2 seconds
+
 
         # Verify regions were created (at least 1 region for the diff area)
         When I repeat javascript code until stored "js" string matches "^[1-9]":
@@ -169,14 +169,14 @@ Feature: Check details - Auto Regions from Diff
 
         # Save regions (Alt+S)
         When I press "Alt+s"
-        When I wait 2 seconds
+
 
         # Verify success notification appeared
         Then the element with locator "[class*='mantine-Notification']" should have contains text "Regions saved"
 
         # Close the check details modal
         When I press the "Escape" key
-        When I wait 1 second
+        When I wait 10 seconds for the element with locator "div[role='dialog']" to not be displayed
 
         # Re-open the check details
         When I click element with locator "[data-test-preview-image='CheckToSave']"
@@ -209,7 +209,7 @@ Feature: Check details - Auto Regions from Diff
 
         # Close modal before page refresh
         When I press the "Escape" key
-        When I wait 1 second
+        When I wait 10 seconds for the element with locator "div[role='dialog']" to not be displayed
 
         # Refresh the page to verify persistence across page reload
         When I refresh page

@@ -71,7 +71,8 @@ Feature: User roles
   # generate and parse API key
   When I click element with locator "span*=JD"
   When I click element with locator "button=Generate API key"
-  When I click element with locator "button=Generate"
+  When I wait 10 seconds for the element with locator "div[role='dialog'] button:has-text('Generate')" to be visible
+  When I click element with locator "div[role='dialog'] button:has-text('Generate')"
   When I parse the API key
   When I click element with locator "button=Close"
 
@@ -142,8 +143,6 @@ Feature: User roles
   # login
   When I login with user:"user@gmail.com" password "Password-123"
   When I wait 10 seconds for the element with locator "span*=JD" to be visible
-  # Wait for table to load with refresh polling
-  When I wait for "2" seconds
   # checks - use polling assertions with refresh to handle data loading timing (60s for CI stability)
   Then the element "//div[contains(text(), 'User test')]" should have exactly 5 items within 60 seconds with refresh
   Then the element "[data-table-test-creatorusername='user@gmail.com']" should have exactly 5 items within 15 seconds
@@ -157,8 +156,6 @@ Feature: User roles
   # login
   When I login with user:"reviewer@gmail.com" password "Password-123"
   When I wait 10 seconds for the element with locator "span*=RR" to be visible
-  # Wait for table to load with refresh polling
-  When I wait for "2" seconds
   # checks - use polling assertions with refresh to handle data loading timing
   Then the element "//div[contains(text(), 'User test')]" should have exactly 5 items within 30 seconds with refresh
   Then the element "[data-table-test-creatorusername='user@gmail.com']" should have exactly 5 items within 10 seconds
@@ -176,8 +173,6 @@ Feature: User roles
   # login
   When I login with user:"superadmin@gmail.com" password "Password-123"
   When I wait 10 seconds for the element with locator "span*=SD" to be visible
-  # Wait for table to load with refresh polling
-  When I wait for "2" seconds
   # checks - use polling assertions with refresh to handle data loading timing
   Then the element "//div[contains(text(), 'User test')]" should have exactly 5 items within 30 seconds with refresh
   Then the element "[data-table-test-creatorusername='user@gmail.com']" should have exactly 5 items within 10 seconds

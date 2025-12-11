@@ -17,6 +17,12 @@ Feature: Share Check Feature
       SYNGRISI_AUTH: true
       """
     When I reload session
+
+    # Fix for 401 error: ensure valid API key is used
+    When I login via http with user:"Test" password "123456aA-"
+    When I generate via http API key for the User
+    When I set the API key in config
+
     When I login with user:"Test" password "123456aA-"
     When I wait 10 seconds for the element with locator "span*=TA" to be visible
 

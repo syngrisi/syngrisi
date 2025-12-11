@@ -14,6 +14,7 @@ Feature: Task - Remove old checks
     When I create via http test user
 
     Given I stop the Syngrisi server
+    When I wait 5 seconds
     When I set env variables:
       """
       SYNGRISI_TEST_MODE: true

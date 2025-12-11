@@ -50,9 +50,13 @@ Feature: Check details - Regions
      if (btn && (btn.disabled || btn.hasAttribute('disabled'))) return "loading";
      return "ready";
          """
-      When I wait 1 seconds
+
       When I click element with locator "[data-check='add-ignore-region']"
-      When I wait 2 seconds
+      When I repeat javascript code until stored "js" string equals "1":
+         """
+     if (typeof mainView === 'undefined' || !mainView.allRects) return "loading";
+     return (mainView.allRects.length.toString());
+         """
 
       # save - the region should now exist on canvas (visible as pink rectangle)
       When I click element with locator "[data-check='save-ignore-region']"
@@ -128,7 +132,7 @@ Feature: Check details - Regions
      if (btn && (btn.disabled || btn.hasAttribute('disabled'))) return "loading";
      return "ready";
          """
-      When I wait 1 seconds
+
       When I click element with locator "[data-check='add-ignore-region']"
 
       When I repeat javascript code until stored "js" string equals "1":
@@ -182,7 +186,7 @@ Feature: Check details - Regions
      if (btn && (btn.disabled || btn.hasAttribute('disabled'))) return "loading";
      return "ready";
          """
-      When I wait 1 seconds
+
       When I click element with locator "[data-check='add-ignore-region']"
 
       # save refresh page check presence
