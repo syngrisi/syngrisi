@@ -1,6 +1,6 @@
 {
   "name": "@syngrisi/playwright-sdk",
-  "version": "2.5.2",
+  "version": "2.5.3",
   "description": "Syngrisi Playwright SDK",
   "main": "dist/PlaywrightDriver.js",
   "directories": {
@@ -39,7 +39,7 @@
   "dependencies": {
     "@faker-js/faker": "^10.1.0",
     "@playwright/test": "^1.57.0",
-    "@syngrisi/core-api": "^2.5.2",
+    "@syngrisi/core-api": "^2.5.3",
     "@wdio/logger": "^9.18.0",
     "loglevel": "^1.9.2",
     "playwright-core": "^1.57.0",
