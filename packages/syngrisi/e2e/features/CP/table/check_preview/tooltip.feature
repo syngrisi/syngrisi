@@ -44,8 +44,7 @@ Feature: Check Preview - Tooltip
     When I wait on element "[data-check-tooltip-name='CheckName']" to not be displayed
     When I wait 10 seconds for the element with locator "[data-test-preview-image='CheckName']" to be visible
     When I wait 1 seconds
-    When I move to element "[data-test-preview-image='CheckName']"
-    When I wait 10 seconds for the element with locator "[data-check-tooltip-name='CheckName']" to be visible
+    When I hover over "[data-test-preview-image='CheckName']" and wait for tooltip "[data-check-tooltip-name='CheckName']"
     When the element with locator "[data-check-tooltip-name='CheckName'] [data-test='status-label']" should have contains text "New - first time check"
     When the element with locator "[data-check-tooltip-name='CheckName'] [data-test='user-label']" should have contains text "Test Admin"
     When the element with locator "[data-check-tooltip-name='CheckName'] [data-test='os-label']" should have contains text "<testPlatform>"

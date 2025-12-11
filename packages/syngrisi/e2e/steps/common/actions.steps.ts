@@ -192,7 +192,9 @@ When(
 
       // Use dispatchEvent for buttons with popover tooltips that can intercept clicks
       const isPopoverButton = /aria-label=['"](Remove|Delete|Accept)/i.test(renderedValue)
-        || /check-accept-icon|check-remove-icon/i.test(renderedValue);
+        || /check-accept-icon|check-remove-icon/i.test(renderedValue)
+        || /Generate/i.test(renderedValue);
+
       if (isPopoverButton) {
         await targetLocator.dispatchEvent('click');
       } else {
@@ -914,5 +916,29 @@ When(
     const renderedName = renderTemplate(name, testData);
     const locator = getRoleLocator(page, role, renderedName, ordinal);
     await locator.click();
+  }
+);
+
+When(
+  'I safely click element with {target} {string}',
+  async ({ page, testData }, target: ElementTarget, rawValue: string) => {
+    const renderedValue = renderTemplate(rawValue, testData);
+
+    if (target === 'label') {
+      const locator = getLabelLocator(page, renderedValue);
+      await locator.click();
+      return;
+    }
+
+    if (target === 'locator') {
+      const locator = getLocatorQuery(page, renderedValue);
+      const targetLocator = locator.first();
+      await targetLocator.waitFor({ state: 'visible', timeout: 5000 });
+
+      // Use JS click to bypass ALL interception/pointer-events issues
+      await targetLocator.evaluate((e: HTMLElement) => e.click());
+      return;
+    }
+    throw new Error(`Unsupported target: ${target}`);
   }
 );
