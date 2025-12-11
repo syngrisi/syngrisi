@@ -213,11 +213,9 @@ export async function launchAppServer(
     throw new Error('Backend process was not created');
   }
 
-  // Stabilization delay to ensure MongoDB has completed all user creation writes
-  // This addresses race conditions where tests start before users are fully indexed
-  // 5000ms is needed for parallel test execution with heavy database load
-  // Note: core-api has 401 retry logic for additional resilience
-  await sleep(5000);
+  // Stabilization delay removed - authentication middleware now has retry logic
+  // (3 retries with 500ms delay) for Guest user lookup - see ensureLoggedIn.ts
+  // Previous delays: 5000ms → 500ms → 0ms
 
   return {
     baseURL,
