@@ -1,7 +1,9 @@
 {
     "zencoder.enableRepoIndexing": true,
     "playwright-bdd-helper.componentsFilePath": "packages/syngrisi/src/dummy.po.ts",
-    "cucumberautocomplete.steps": ["packages/syngrisi/e2e/steps/**/*.ts"],
+    "cucumberautocomplete.steps": [
+        "packages/syngrisi/e2e/steps/**/*.ts"
+    ],
     // "cucumberautocomplete.strictGherkinCompletion": true,
     "cucumberautocomplete.syncfeatures": "packages/syngrisi/e2e/features/**/*.feature",
     "cucumberautocomplete.skipDocStringsFormat": true,
@@ -49,14 +51,13 @@
     "zencoder.mcpServers": {
         "test_engine": {
             "type": "stdio",
-            "command": "/Users/a1/.nvm/versions/node/v22.19.0/bin/npx",
+            "command": "npx",
             "args": [
                 "tsx",
-                "/Users/a1/Projects/syngrisi/packages/syngrisi/e2e/support/mcp/bridge-cli.ts"
+                "./packages/syngrisi/e2e/support/mcp/bridge-cli.ts"
             ],
             "env": {
-                "SYNGRISI_ROOT": "/Users/a1/Projects/syngrisi/packages/syngrisi/e2e",
-                "PATH": "/Users/a1/.nvm/versions/node/v22.19.0/bin:/Users/a1/.nvm/versions/node/v22.19.0/bin:/Users/a1/.nvm/versions/node/v22.19.0/bin:/Users/a1/.nvm/versions/node/v22.19.0/bin:/Users/a1/.antigravity/antigravity/bin:/Users/a1/.antigravity/antigravity/bin:/Users/a1/.local/state/fnm_multishells/83939_1764541441316/bin:/Users/a1/.codeium/windsurf/bin:/Users/a1/.codeium/windsurf/bin:/Users/a1/.codeium/windsurf/bin:/Users/a1/.codeium/windsurf/bin:/Users/a1/.jenv/shims:/Users/a1/.jenv/bin:/Users/a1/.nvm/versions/node/v22.19.0/bin:/Users/a1/.rd/bin:/Users/a1/.pyenv/shims:/Users/a1/.pyenv/bin:/Users/a1/.nvm/versions/node/v22.19.0/bin:/Users/a1/.nvm/versions/node/v22.19.0/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/opt/pmk/env/global/bin:/opt/X11/bin:/Library/Apple/usr/bin:/usr/local/go/bin:/Users/a1/.antigravity/antigravity/bin:/Users/a1/.local/state/fnm_multishells/76620_1764541436054/bin:/Users/a1/.codeium/windsurf/bin:/Users/a1/.sdkman/candidates/java/current/bin:/Users/a1/.jenv/shims:/Users/a1/.jenv/bin:/Users/a1/Library/pnpm:/Users/a1/.rd/bin:/Users/a1/.pyenv/bin:/Users/a1/.nvm/versions/node/v22.19.0/bin:/Users/a1/.cargo/bin:/Users/a1/.local/bin:/Users/a1/.lmstudio/bin:/Users/a1/.local/bin:/Users/a1/.local/bin:/Users/a1/.lmstudio/bin"
+                "SYNGRISI_ROOT": "./packages/syngrisi/e2e"
             }
         }
     }
