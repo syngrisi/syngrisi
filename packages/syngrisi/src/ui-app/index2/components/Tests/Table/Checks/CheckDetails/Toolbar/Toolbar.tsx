@@ -142,7 +142,7 @@ export function Toolbar(
 
                     <Divider orientation="vertical" />
 
-                    <ScreenshotDetails mainView={mainView} check={curCheck} view={view} />
+                    <ScreenshotDetails mainView={mainView} check={curCheck} />
                 </Group>
 
                 {/* Right side: Tools and actions */}
