@@ -38,6 +38,7 @@ interface Props {
     closeHandler: any,
     relatedRendered?: boolean,
     testList?: any[],
+    apikey?: string,
 }
 
 export function CheckDetails({
@@ -46,12 +47,14 @@ export function CheckDetails({
     closeHandler,
     relatedRendered = true,
     testList = [],
+    apikey,
 }: Props) {
     useDocumentTitle(initCheckData?.name);
     const canvasElementRef = useRef(null);
     const { query, setQuery } = useParams();
     const { classes } = useStyles();
     const [mainView, setMainView] = useState<MainView | null>(null);
+    const [isDirty, setIsDirty] = useState(false);
 
     const [relatedActiveCheckId, setRelatedActiveCheckId] = useState<string>(initCheckData._id);
     const [relatedChecksOpened, relatedChecksHandler] = useDisclosure(relatedRendered);
@@ -152,6 +155,22 @@ export function CheckDetails({
         wasAcceptedEarlier: currentCheck?.wasAcceptedEarlier,
     };
 
+    const settingsQuery = useQuery(
+        ['settings-public'],
+        () => GenericService.get('settings/public'),
+        { refetchOnWindowFocus: false }
+    );
+
+    const isShareEnabled = useMemo(() => {
+        if (!settingsQuery.data) return true;
+        const setting = settingsQuery.data.find((s: any) => s.name === 'share_enabled');
+        if (!setting) return true;
+        // Check both: setting must be enabled AND its value must be "true"
+        const valueIsTrue = setting.value === 'true' || setting.value === true;
+        const isEnabled = setting.enabled !== false;
+        return valueIsTrue && isEnabled;
+    }, [settingsQuery.data]);
+
     // Navigation Logic
     const siblingChecksQuery = useQuery(
         ['sibling_checks', currentCheck?.test?._id],
@@ -162,6 +181,7 @@ export function CheckDetails({
                 limit: '0',
                 sortBy: 'CreatedDate',
                 sortOrder: -1,
+                share: apikey,
             },
             'sibling_checks_for_nav'
         ),
@@ -196,6 +216,11 @@ export function CheckDetails({
 
     const handleNavigateCheck = (direction: 'prev' | 'next') => {
         if (!siblingChecks.length) return;
+
+        if (mainView?.isDirty() && !window.confirm('You have unsaved changes. Are you sure you want to leave?')) {
+            return;
+        }
+
         const targetIndex = direction === 'prev' ? currentCheckIndex - 1 : currentCheckIndex + 1;
         if (targetIndex >= 0 && targetIndex < siblingChecks.length) {
             setQuery({ checkId: siblingChecks[targetIndex]._id });
@@ -204,6 +229,11 @@ export function CheckDetails({
 
     const handleNavigateTest = async (direction: 'prev' | 'next') => {
         if (!testList || !testList.length) return;
+
+        if (mainView?.isDirty() && !window.confirm('You have unsaved changes. Are you sure you want to leave?')) {
+            return;
+        }
+
         const targetTestIndex = direction === 'prev' ? currentTestIndex - 1 : currentTestIndex + 1;
 
         if (targetTestIndex >= 0 && targetTestIndex < testList.length) {
@@ -217,6 +247,7 @@ export function CheckDetails({
                     limit: '1',
                     sortBy: 'CreatedDate',
                     sortOrder: -1,
+                    share: apikey,
                 },
                 'first_check_for_nav'
             );
@@ -227,105 +258,154 @@ export function CheckDetails({
         }
     };
 
-    // init mainView
-    useEffect(() => {
-        const destroyMV = async () => {
-            if (mainView) {
-                await mainView.destroyAllViews();
-                mainView.canvas.clear();
-                mainView.canvas.dispose();
-                setMainView(() => null);
+    // Helper function to load images
+    const loadImages = async () => {
+        // Build image URLs (without query params for cache lookup)
+        let expectedImgSrcBase = `${config.baseUri}/snapshoots/${currentCheck?.baselineId?.filename}`;
+        let actualImgSrcBase = `${config.baseUri}/snapshoots/${currentCheck?.actualSnapshotId?.filename}`;
+        let diffImgSrcBase = currentCheck?.diffId?.filename
+            ? `${config.baseUri}/snapshoots/${currentCheck?.diffId?.filename}`
+            : null;
+
+        if (apikey) {
+            expectedImgSrcBase += `?share=${apikey}`;
+            actualImgSrcBase += `?share=${apikey}`;
+            if (diffImgSrcBase) diffImgSrcBase += `?share=${apikey}`;
+        }
+
+        // Try to get from preload cache first, fallback to loading
+        let expectedImg = imagePreloadService.getPreloadedImage(expectedImgSrcBase);
+        let actualImg = imagePreloadService.getPreloadedImage(actualImgSrcBase);
+
+        const expectedCacheHit = !!expectedImg;
+        const actualCacheHit = !!actualImg;
+
+        if (expectedCacheHit && actualCacheHit) {
+            log.debug('[CheckDetails] Using preloaded images from cache');
+        } else {
+            log.debug(`[CheckDetails] Loading images (expected: ${expectedCacheHit ? 'HIT' : 'MISS'}, actual: ${actualCacheHit ? 'HIT' : 'MISS'})`);
+        }
+
+        // Load images that are not in cache
+        if (!expectedImg) {
+            expectedImg = await createImageAndWaitForLoad(expectedImgSrcBase) as HTMLImageElement;
+            imagePreloadService.storeImage(expectedImgSrcBase, expectedImg);
+        }
+
+        if (!actualImg) {
+            actualImg = await createImageAndWaitForLoad(actualImgSrcBase) as HTMLImageElement;
+            imagePreloadService.storeImage(actualImgSrcBase, actualImg);
+        }
+
+        // Convert HTMLImageElement to fabric.Image
+        const expectedImage = imageFromElement(expectedImg);
+        const actualImage = imageFromElement(actualImg);
+
+        // Handle diff image
+        let diffImage: fabric.Image | null = null;
+        if (diffImgSrcBase) {
+            let diffImg = imagePreloadService.getPreloadedImage(diffImgSrcBase);
+            if (diffImg) {
+                log.debug('[CheckDetails] Using preloaded diff image from cache');
+                diffImage = imageFromElement(diffImg);
+            } else {
+                log.debug('[CheckDetails] Loading diff image (cache miss)');
+                diffImg = await createImageAndWaitForLoad(diffImgSrcBase) as HTMLImageElement;
+                imagePreloadService.storeImage(diffImgSrcBase, diffImg);
+                diffImage = imageFromElement(diffImg);
             }
-        };
+        }
+
+        return { expectedImage, actualImage, diffImage };
+    };
+
+    // Initialize mainView once on mount
+    useEffect(() => {
+        let isMounted = true;
 
         const initMV = async () => {
-            // init
             fabric.Object.prototype.objectCaching = false;
 
-            // Build image URLs (without query params for cache lookup)
-            const expectedImgSrcBase = `${config.baseUri}/snapshoots/${currentCheck?.baselineId?.filename}`;
-            const actualImgSrcBase = `${config.baseUri}/snapshoots/${currentCheck?.actualSnapshotId?.filename}`;
-            const diffImgSrcBase = currentCheck?.diffId?.filename
-                ? `${config.baseUri}/snapshoots/${currentCheck?.diffId?.filename}`
-                : null;
-
-            // Try to get from preload cache first, fallback to loading
-            let expectedImg = imagePreloadService.getPreloadedImage(expectedImgSrcBase);
-            let actualImg = imagePreloadService.getPreloadedImage(actualImgSrcBase);
-
-            const expectedCacheHit = !!expectedImg;
-            const actualCacheHit = !!actualImg;
-
-            if (expectedCacheHit && actualCacheHit) {
-                log.debug('[CheckDetails] Using preloaded images from cache');
-            } else {
-                log.debug(`[CheckDetails] Loading images (expected: ${expectedCacheHit ? 'HIT' : 'MISS'}, actual: ${actualCacheHit ? 'HIT' : 'MISS'})`);
-            }
-
-            // Load images that are not in cache (no query params - use base URL for browser caching)
-            if (!expectedImg) {
-                expectedImg = await createImageAndWaitForLoad(expectedImgSrcBase) as HTMLImageElement;
-                // Store in preload cache for future use
-                imagePreloadService.storeImage(expectedImgSrcBase, expectedImg);
-            }
+            const { expectedImage, actualImage, diffImage } = await loadImages();
+            if (!isMounted) return;
 
             const actual = currentCheck.actualSnapshotId || null;
-            if (!actualImg) {
-                actualImg = await createImageAndWaitForLoad(actualImgSrcBase) as HTMLImageElement;
-                // Store in preload cache for future use
-                imagePreloadService.storeImage(actualImgSrcBase, actualImg);
-            }
-
             canvasElementRef.current.style.height = `${MainView.calculateExpectedCanvasViewportAreaSize().height - 10}px`;
 
-            // Convert HTMLImageElement to fabric.Image without reloading
-            const expectedImage = imageFromElement(expectedImg);
-            const actualImage = imageFromElement(actualImg);
+            const MV = new MainView(
+                {
+                    canvasId: '2d',
+                    canvasElementWidth: canvasElementRef.current?.clientWidth,
+                    canvasElementHeight: canvasElementRef.current?.clientHeight,
+                    expectedImage,
+                    actualImage,
+                    diffImage,
+                    actual,
+                },
+            );
+            // @ts-ignore - set window.mainView for E2E tests
+            window.mainView = MV;
+            setMainView(MV);
+        };
 
-            // Handle diff image
-            let diffImage: fabric.Image | null = null;
-            if (diffImgSrcBase) {
-                let diffImg = imagePreloadService.getPreloadedImage(diffImgSrcBase);
-                if (diffImg) {
-                    log.debug('[CheckDetails] Using preloaded diff image from cache');
-                    diffImage = imageFromElement(diffImg);
-                } else {
-                    log.debug('[CheckDetails] Loading diff image (cache miss)');
-                    diffImg = await createImageAndWaitForLoad(diffImgSrcBase) as HTMLImageElement;
-                    imagePreloadService.storeImage(diffImgSrcBase, diffImg);
-                    diffImage = imageFromElement(diffImg);
-                }
-            }
+        initMV();
 
+        // Cleanup on unmount
+        return () => {
+            isMounted = false;
             setMainView((prev) => {
                 if (prev) {
-                    // @ts-ignore - update window.mainView for E2E tests even when returning existing instance
-                    window.mainView = prev;
-                    return prev; // for dev mode, when components render twice
+                    prev.destroyAllViews();
+                    prev.canvas.clear();
+                    prev.canvas.dispose();
                 }
-                const MV = new MainView(
-                    {
-                        canvasId: '2d',
-                        canvasElementWidth: canvasElementRef.current?.clientWidth,
-                        canvasElementHeight: canvasElementRef.current?.clientHeight,
-                        expectedImage,
-                        actualImage,
-                        diffImage,
-                        actual,
-                    },
-                );
-                // @ts-ignore - set window.mainView for E2E tests
-                window.mainView = MV;
-                return MV;
+                return null;
             });
         };
-        // set view
-        destroyMV().then(() => initMV());
-    }, [
-        relatedActiveCheckId,
-        relatedChecksOpened,
-        query.checkId,
-    ]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []); // Only on mount/unmount
+
+    // Update images when check changes (navigation) - reuse existing canvas
+    useEffect(() => {
+        if (!mainView || !currentCheck?._id) return;
+
+        let isMounted = true;
+
+        const updateCheckImages = async () => {
+            log.debug('[CheckDetails] Navigation: updating images without recreating canvas');
+
+            const { expectedImage, actualImage, diffImage } = await loadImages();
+            if (!isMounted) return;
+
+            const actual = currentCheck.actualSnapshotId || null;
+
+            // Check if canvas needs resize (different viewport)
+            const newWidth = canvasElementRef.current?.clientWidth;
+            const newHeight = canvasElementRef.current?.clientHeight;
+            if (newWidth && newHeight && mainView.needsCanvasResize(newWidth, newHeight)) {
+                log.debug('[CheckDetails] Resizing canvas for new viewport');
+                mainView.resizeCanvas(newWidth, newHeight);
+            }
+
+            // Update images without recreating canvas
+            await mainView.updateImages({
+                expectedImage,
+                actualImage,
+                diffImage,
+                actual,
+            });
+
+            // @ts-ignore - update window.mainView for E2E tests
+            window.mainView = mainView;
+        };
+
+        updateCheckImages();
+
+        return () => {
+            isMounted = false;
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentCheck?._id]); // Only when check ID changes
 
     // Sync window.mainView with React state for E2E tests
     useEffect(function syncWindowMainView() {
@@ -386,6 +466,42 @@ export function CheckDetails({
         mainView.highlightRCAChange(rca.state.selectedChange);
     }, [mainView, rca.state.isEnabled, rca.state.selectedChange]);
 
+    // Handle dirty state updates from canvas events
+    useEffect(() => {
+        if (!mainView?.canvas) return;
+
+        const updateDirtyState = () => {
+            setIsDirty(mainView.isDirty());
+        };
+
+        const events = {
+            'object:added': updateDirtyState,
+            'object:removed': updateDirtyState,
+            'object:modified': updateDirtyState,
+            'selection:updated': updateDirtyState, // Maybe not needed for dirty state but good for consistency
+        };
+
+        mainView.canvas.on(events);
+
+        return () => {
+            mainView.canvas.off(events);
+        };
+    }, [mainView]);
+
+    // Native window alert for closing tab/window
+    useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            if (isDirty) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        };
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+    }, [isDirty]);
+
     return (
         <Group style={{ width: '96vw' }} spacing={4}>
             <Stack sx={{ width: '100%' }}>
@@ -413,6 +529,8 @@ export function CheckDetails({
                     navigationReady={!siblingChecksQuery.isLoading && siblingChecks.length > 0 && currentCheckIndex >= 0}
                     rcaEnabled={rca.state.isEnabled}
                     onToggleRCA={rca.toggle}
+                    isShareEnabled={isShareEnabled}
+                    apikey={apikey}
                 />
 
                 <Group

@@ -43,6 +43,7 @@ import { ExtRequest } from '../../../types/ExtRequest';
 import { appSettings } from "@settings";
 import { env } from "@/server/envConfig";
 import { hashSync } from '@utils/hash';
+import * as shareService from '@services/share.service';
 
 export const normalizeIncomingApiKey = (rawKey: unknown): string | undefined => {
     if (Array.isArray(rawKey)) {
@@ -58,12 +59,15 @@ export const normalizeIncomingApiKey = (rawKey: unknown): string | undefined => 
 
 
 
-const handleBasicAuth = async (req: ExtRequest): Promise<any> => {
+const handleBasicAuth = async (req: ExtRequest, retryCount = 0): Promise<any> => {
 
     const logOpts = {
         scope: 'handleBasicAuth',
         msgType: 'AUTH_API',
     };
+
+    const MAX_RETRIES = 3;
+    const RETRY_DELAY_MS = 500;
 
     const AppSettings = appSettings;
 
@@ -76,6 +80,23 @@ const handleBasicAuth = async (req: ExtRequest): Promise<any> => {
     }
     if (!authEnabled) {
         const guest = await User.findOne({ username: 'Guest' });
+
+        // Retry logic for Guest user lookup during startup (MongoDB indexing race condition)
+        if (!guest) {
+            if (retryCount < MAX_RETRIES) {
+                log.warn(`Guest user not found in handleBasicAuth (attempt ${retryCount + 1}/${MAX_RETRIES}), retrying in ${RETRY_DELAY_MS}ms...`, logOpts);
+                await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
+                return handleBasicAuth(req, retryCount + 1);
+            }
+            log.error(`cannot find Guest user after ${MAX_RETRIES} retries`, logOpts);
+            return {
+                type: 'redirect',
+                status: 301,
+                value: `/auth?=Error: cannot find Guest user after ${MAX_RETRIES} retries`,
+                user: null,
+            };
+        }
+
         const result = new Promise((resolve) => {
             req.logIn(guest, (err: any) => {
                 if (err) {
@@ -274,29 +295,33 @@ export function ensureLoggedInOrApiKey(): (req: Request, res: Response, next: Ne
  *
  * Used for pages that can be accessed anonymously via share links.
  */
+import * as shareService from '@services/share.service';
+
+// ... (existing imports)
+
+// ...
+
 export function ensureLoggedInOrShareToken(): (req: Request, res: Response, next: NextFunction) => Promise<void> {
     return async (req: Request, res: Response, next: NextFunction) => {
         // Check if share token is present in query params
         const shareToken = req.query.share as string | undefined;
 
         if (shareToken) {
-            // Share token present - allow access without login
-            // The frontend will validate the token and show read-only mode
-            log.debug('Share token present, allowing access without login', { scope: 'ensureLoggedInOrShareToken' });
+            // Validate share token
+            const tokenDoc = await shareService.findShareToken(shareToken);
+            if (!tokenDoc) {
+                log.warn('Invalid share token', { scope: 'ensureLoggedInOrShareToken' });
+                // If invalid, fall through to normal auth or redirect
+                // We can continue to handleBasicAuth which will redirect to login
+            } else {
+                // Share token present AND valid - allow access without login
+                log.debug('Valid share token present, allowing access without login', { scope: 'ensureLoggedInOrShareToken' });
 
-            // Login as Guest user for share mode
-            const guest = await User.findOne({ username: 'Guest' });
-            if (guest) {
-                await new Promise<void>((resolve) => {
-                    req.logIn(guest, (err: any) => {
-                        if (err) {
-                            log.warn(`Failed to login as Guest for share access: ${err}`, { scope: 'ensureLoggedInOrShareToken' });
-                        }
-                        resolve();
-                    });
-                });
+                // Do NOT login as Guest to prevent session creation with write access
+                (req as any).isShareMode = true;
+                (req as any).shareToken = tokenDoc;
+                return next();
             }
-            return next();
         }
 
         // No share token - require normal authentication
@@ -328,17 +353,39 @@ export function ensureLoggedInOrApiKeyOrShareToken(): (req: Request, res: Respon
         const shareToken = (req.query.share || req.headers['x-share-token']) as string | undefined;
 
         if (shareToken) {
-            // Share token present - allow read access without login
-            log.debug('Share token present in API request, allowing read access', logOpts);
+            // Validate share token
+            const tokenDoc = await shareService.findShareToken(shareToken);
 
-            // Login as Guest user for share mode
-            const guest = await User.findOne({ username: 'Guest' });
-            if (guest) {
-                req.user = guest;
+            if (tokenDoc) {
+                // Share token present and valid - allow read access without login
+                log.debug('Valid share token present in API request, allowing read access', logOpts);
+
+                // Login as Guest user for share mode (with retry for MongoDB indexing race condition)
+                const MAX_RETRIES = 3;
+                const RETRY_DELAY_MS = 500;
+                let guest = null;
+
+                for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+                    guest = await User.findOne({ username: 'Guest' });
+                    if (guest) break;
+                    if (attempt < MAX_RETRIES - 1) {
+                        log.warn(`Guest user not found for share API access (attempt ${attempt + 1}/${MAX_RETRIES}), retrying...`, logOpts);
+                        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS));
+                    }
+                }
+
+                if (guest) {
+                    req.user = guest;
+                    // Mark request as share mode to skip creator filtering
+                    (req as any).isShareMode = true;
+                    (req as any).shareToken = tokenDoc;
+                    return next();
+                } else {
+                    log.error(`Guest user not found for share API access after ${MAX_RETRIES} retries`, logOpts);
+                }
+            } else {
+                log.warn('Invalid share token in API request', logOpts);
             }
-            // Mark request as share mode to skip creator filtering
-            (req as any).isShareMode = true;
-            return next();
         }
 
         // Try basic auth first

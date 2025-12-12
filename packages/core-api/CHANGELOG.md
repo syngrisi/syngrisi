@@ -1,5 +1,15 @@
 # @syngrisi/core-api
 
+## 2.6.1
+
+## 2.6.0
+
+## 2.5.3
+
+### Patch Changes
+
+-   [`05fa851`](https://github.com/syngrisi/syngrisi/commit/05fa851c544a6098e1da45e4ff2df9a35ed95c27) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - Refactor API client to use centralized retry logic for better maintainability and error handling.
+
 ## 2.5.2
 
 ## 2.5.1

@@ -71,6 +71,18 @@ async function waitForViewChange(page: Page, view: string): Promise<void> {
       if (!mainView || !isActive) {
         return false;
       }
+      // For slider view, check sliderView exists and divider is on canvas
+      if (expected === 'slider') {
+        if (mainView.currentView !== expected || !mainView.sliderView) {
+          return false;
+        }
+        // Check if divider object is on canvas (indicates render completed)
+        const objects = typeof mainView.canvas?.getObjects === 'function'
+          ? mainView.canvas.getObjects()
+          : [];
+        const hasDivider = Array.isArray(objects) && objects.some((obj: any) => obj.name === 'divider');
+        return hasDivider;
+      }
       const targetImage = mainView?.[`${expected}Image`];
       if (!targetImage) {
         return false;
@@ -192,7 +204,9 @@ When(
 
       // Use dispatchEvent for buttons with popover tooltips that can intercept clicks
       const isPopoverButton = /aria-label=['"](Remove|Delete|Accept)/i.test(renderedValue)
-        || /check-accept-icon|check-remove-icon/i.test(renderedValue);
+        || /check-accept-icon|check-remove-icon/i.test(renderedValue)
+        || /Generate/i.test(renderedValue);
+
       if (isPopoverButton) {
         await targetLocator.dispatchEvent('click');
       } else {
@@ -796,10 +810,22 @@ When(
     await selectLocator.first().click();
     await page.waitForTimeout(500); // Wait for dropdown to open
 
-    // Click on the div option
-    const optionLocator = page.locator(`div:has-text('${renderedOptionText}')`).first();
-    await optionLocator.waitFor({ state: 'visible', timeout: 5000 });
-    await optionLocator.click();
+    // Click on the div option - prioritize role="option" to match actual dropdown items
+    // and avoid matching parent containers with common text like "false"
+    // Use try-catch to attempt specific selector first
+    const roleOptionSelector = `[role="option"]:has-text("${renderedOptionText}")`;
+    const genericDivSelector = `div:has-text("${renderedOptionText}")`;
+
+    try {
+      const optionLocator = page.locator(roleOptionSelector).first();
+      await optionLocator.waitFor({ state: 'visible', timeout: 2000 });
+      await optionLocator.click();
+    } catch (e) {
+      logger.warn(`Could not find role="option" with text "${renderedOptionText}", falling back to generic div`);
+      const optionLocator = page.locator(genericDivSelector).first();
+      await optionLocator.waitFor({ state: 'visible', timeout: 5000 });
+      await optionLocator.click();
+    }
 
     // Also set value via selectOption as fallback to ensure value is properly set
     try {
@@ -914,5 +940,29 @@ When(
     const renderedName = renderTemplate(name, testData);
     const locator = getRoleLocator(page, role, renderedName, ordinal);
     await locator.click();
+  }
+);
+
+When(
+  'I safely click element with {target} {string}',
+  async ({ page, testData }, target: ElementTarget, rawValue: string) => {
+    const renderedValue = renderTemplate(rawValue, testData);
+
+    if (target === 'label') {
+      const locator = getLabelLocator(page, renderedValue);
+      await locator.click();
+      return;
+    }
+
+    if (target === 'locator') {
+      const locator = getLocatorQuery(page, renderedValue);
+      const targetLocator = locator.first();
+      await targetLocator.waitFor({ state: 'visible', timeout: 5000 });
+
+      // Use JS click to bypass ALL interception/pointer-events issues
+      await targetLocator.evaluate((e: HTMLElement) => e.click());
+      return;
+    }
+    throw new Error(`Unsupported target: ${target}`);
   }
 );

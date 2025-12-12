@@ -1,10 +1,11 @@
 metadata:
   category: common/other
-  generatedAt: '2025-12-10T10:05:46.341Z'
-  totalFiles: 3
-  totalSteps: 16
+  generatedAt: '2025-12-12T15:43:17.922Z'
+  totalFiles: 4
+  totalSteps: 18
   sourceFiles:
     - steps/common/demo.steps.ts
+    - steps/common/dialog.steps.ts
     - steps/common/network.steps.ts
     - steps/common/polling.steps.ts
 steps:
@@ -81,21 +82,27 @@ steps:
       When I highlight element ".task-card"
       ```
     line: 254
+  - pattern: I prepare to accept confirmation dialog with text {string}
+    description: ''
+    line: 7
+  - pattern: I prepare to dismiss confirmation dialog with text {string}
+    description: ''
+    line: 17
   - pattern: I expect {int} new image requests were made for cached images
     description: ''
-    line: 44
+    line: 48
   - pattern: I expect at least {int} image requests were made
     description: ''
     line: 36
   - pattern: I expect at most {int} new image requests were made
     description: ''
-    line: 64
+    line: 68
   - pattern: I expect exactly {int} image requests were made
     description: ''
-    line: 57
+    line: 61
   - pattern: I log image request count
     description: ''
-    line: 74
+    line: 78
   - pattern: I reset image request counter
     description: ''
     line: 30

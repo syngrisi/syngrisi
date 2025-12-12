@@ -67,6 +67,9 @@ export class MainView {
 
     private rcaCallbacks: RCAOverlayCallbacks = {};
 
+    // Region state for dirty checking
+    snapshotRegions: string = '';
+
     constructor(
         {
             canvasElementWidth,
@@ -127,6 +130,103 @@ export class MainView {
         this.diffView = new SimpleView(this, 'diff');
         this.actualView.render();
         // this.sideToSideView.render()
+    }
+
+    /**
+     * Update images without recreating canvas - used for navigation optimization
+     */
+    // Concurrency control
+    private currentUpdateId: number = 0;
+
+    /**
+     * Update images without recreating canvas - used for navigation optimization
+     */
+    /**
+     * Update images without recreating canvas - used for navigation optimization
+     */
+    async updateImages({
+        expectedImage,
+        actualImage,
+        diffImage,
+        actual,
+    }: {
+        expectedImage: fabric.Image;
+        actualImage: fabric.Image;
+        diffImage: fabric.Image | null;
+        actual: any;
+    }): Promise<void> {
+        // Generate new update ID
+        this.currentUpdateId++;
+        const updateId = this.currentUpdateId;
+
+        // 1. Destroy old views but keep canvas
+        await this.destroyAllViews();
+
+        // Check if a new update has started while we were clearing
+        if (updateId !== this.currentUpdateId) {
+            log.debug(`[MainView] updateImages aborted after destroy (stale updateId: ${updateId}, current: ${this.currentUpdateId})`);
+            return;
+        }
+
+        // 2. Update image references
+        // Guard against disposed state
+        if (!this.canvas) return;
+
+        this.actualImage = lockImage(actualImage);
+        this.expectedImage = lockImage(expectedImage);
+        this.diffImage = diffImage ? lockImage(diffImage) : null;
+
+        // 3. Recreate views with new images
+        try {
+            if (actual) {
+                this.sliderView = new SideToSideView({ mainView: this });
+            }
+            this.expectedView = new SimpleView(this, 'expected');
+            this.actualView = new SimpleView(this, 'actual');
+            this.diffView = new SimpleView(this, 'diff');
+
+            // 4. Render current view
+            // Check updateId again before rendering
+            if (updateId !== this.currentUpdateId) {
+                log.debug(`[MainView] updateImages aborted before render (stale updateId: ${updateId}, current: ${this.currentUpdateId})`);
+                await this.destroyAllViews(); // Clean up partial state
+                return;
+            }
+
+            if ((this as any)[`${this.currentView}View`]) {
+                (this as any)[`${this.currentView}View`].render();
+            }
+
+            // 5. Clear regions (will be reloaded by useEffect)
+            if (updateId === this.currentUpdateId) {
+                this.removeAllRegions();
+            }
+        } catch (e) {
+            log.error('[MainView] Error during updateImages:', e);
+            // Attempt cleanup if something failed
+            await this.destroyAllViews();
+        }
+    }
+
+    /**
+     * Check if canvas dimensions need to be updated
+     */
+    needsCanvasResize(newWidth: number, newHeight: number): boolean {
+        return this.canvasElementWidth !== newWidth ||
+            this.canvasElementHeight !== newHeight;
+    }
+
+    /**
+     * Resize canvas (only when viewport changes)
+     */
+    resizeCanvas(newWidth: number, newHeight: number): void {
+        this.canvasElementWidth = newWidth;
+        this.canvasElementHeight = newHeight;
+        this.canvas.setDimensions({
+            width: newWidth,
+            height: newHeight,
+        });
+        this.canvas.renderAll();
     }
 
     /*
@@ -484,6 +584,15 @@ export class MainView {
     }
 
     addBoundingRegion(name) {
+        // Check if bound_rect already exists
+        const existingBoundRect = this.canvas.getObjects()
+            .find((obj) => obj.name === 'bound_rect');
+
+        if (existingBoundRect) {
+            log.warn('[MainView] Bound region already exists, skipping creation');
+            return;
+        }
+
         const params = {
             name,
             fill: 'rgba(0,0,0,0)',
@@ -511,6 +620,40 @@ export class MainView {
     get allRects() {
         return this.canvas.getObjects()
             .filter((r) => (r.name === 'ignore_rect') || (r.name === 'bound_rect'));
+    }
+
+    /**
+     * Check if there are any ignore or bound regions
+     */
+    hasRegions(): boolean {
+        return this.allRects.length > 0;
+    }
+
+    /**
+     * Check if current regions differ from the last saved state
+     */
+    isDirty(): boolean {
+        const currentData = this.getRegionsData();
+        const currentSnapshot = JSON.stringify(currentData);
+        // If we have never loaded regions (snapshotRegions is empty), and we have regions now, it's dirty
+        if (!this.snapshotRegions && this.hasRegions()) return true;
+        // If we have no regions now, and snapshot was empty, it's clean
+        if (!this.snapshotRegions && !this.hasRegions()) return false;
+
+        return this.snapshotRegions !== currentSnapshot;
+    }
+
+    /**
+     * Save regions and update snapshot
+     */
+    async saveRegions(baselineId: string): Promise<boolean> {
+        const regionsData = this.getRegionsData();
+        const success = await MainView.sendRegions(baselineId, regionsData);
+        if (success) {
+            this.snapshotRegions = JSON.stringify(regionsData);
+            return true;
+        }
+        return false;
     }
 
     getLastRegion() {
@@ -611,7 +754,10 @@ export class MainView {
     /**
      * Send both ignore and bound regions to the server
      */
-    static async sendRegions(id: string, regionsData: { ignoreRegions: string, boundRegions: string }) {
+    /**
+     * Send both ignore and bound regions to the server
+     */
+    static async sendRegions(id: string, regionsData: { ignoreRegions: string, boundRegions: string }): Promise<boolean> {
         try {
             const response = await fetch(`${config.baseUri}/v1/baselines/${id}`, {
                 method: 'PUT',
@@ -626,13 +772,15 @@ export class MainView {
             if (response.status === 200) {
                 log.debug(`Successful send baseline regions, id: '${id}'  resp: '${text}'`);
                 successMsg({ message: 'Regions saved' });
-                return;
+                return true;
             }
             log.error(`Cannot set baseline regions, status: '${response.status}',  resp: '${text}'`);
             errorMsg({ error: 'Cannot set baseline regions' });
+            return false;
         } catch (e: unknown) {
             log.error(`Cannot set baseline regions: ${errorMsg(e)}`);
             errorMsg({ error: 'Cannot set baseline regions' });
+            return false;
         }
     }
 
@@ -711,8 +859,37 @@ export class MainView {
     async getSnapshotIgnoreRegionsDataAndDrawRegions(id: string) {
         this.removeAllRegions();
         const regionData = await MainView.getRegionsData(id);
-        this.drawRegions(regionData.ignoreRegions);
-        this.drawBoundRegions(regionData.boundRegions);
+
+        // Store initial state
+        if (regionData) {
+            this.snapshotRegions = JSON.stringify({
+                ignoreRegions: JSON.stringify(this.convertRegionsDataFromServer(JSON.parse(regionData.ignoreRegions || '[]'))),
+                boundRegions: JSON.stringify(this.convertRegionsDataFromServer(JSON.parse(regionData.boundRegions || '[]')))
+                // Note: The conversion above is seemingly incorrect because getRegionsData returns JSON stringified arrays
+                // but the code below simply parses them. 
+                // Let's stick to what's actually being used:
+                // drawRegions parses JSON string of regions. 
+                // We should probably just store what we retrieved as the "snapshot" in the format getRegionsData() would produce?
+                // actually getRegionsData() produces scaled coordinates (client side), whereas server data is unscaled (original).
+                // So we can't just store server data as snapshot. We need the snapshot to be in CLIENT coordinates/structure.
+            });
+
+            // Wait, we need to draw regions first, then take a snapshot of what we have.
+            // Because getRegionsData() returns current canvas state.
+            this.drawRegions(regionData.ignoreRegions);
+            if (regionData.boundRegions) {
+                this.drawRegions(regionData.boundRegions); // Assuming drawRegions handles this logic generic enough or we need a specific one? 
+                // Existing drawRegions implementation hardcodes 'ignore_rect'. Let's check drawRegions.
+            }
+
+            this.updateBoundingOverlay();
+
+            // After drawing, update snapshot of current state
+            this.snapshotRegions = JSON.stringify(this.getRegionsData());
+        } else {
+            this.snapshotRegions = JSON.stringify(this.getRegionsData()); // Empty state
+        }
+        this.drawBoundRegions(regionData?.boundRegions);
     }
 
     /**

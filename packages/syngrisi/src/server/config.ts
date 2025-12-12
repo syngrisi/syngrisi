@@ -64,12 +64,8 @@ export const config = {
         crossOriginResourcePolicy: false,
         crossOriginOpenerPolicy: false,
         contentSecurityPolicy: {
+            useDefaults: false,
             directives: {
-                // frameAncestors: ["'self'", "vscode-webview:", "vscode-resource:",  "https:", "http:"],
-                // frameSrc: ["'self'", "vscode-webview:", "https:", "http:"],
-                // scriptSrc: ["'self'", "'unsafe-inline'"],
-                // styleSrc: ["'self'", "'unsafe-inline'"]
-
                 defaultSrc: ["'self'", "*", "'unsafe-inline'", "'unsafe-eval'", "data:", "blob:"],
                 frameAncestors: ["'self'", "*"],
                 frameSrc: ["'self'", "*"],
@@ -77,9 +73,14 @@ export const config = {
                 styleSrc: ["'self'", "*", "'unsafe-inline'"],
                 imgSrc: ["'self'", "*", "data:", "blob:"],
                 fontSrc: ["'self'", "*", "data:"],
-                connectSrc: ["'self'", "*"]
+                connectSrc: ["'self'", "*"],
+                baseUri: ["'self'"],
+                formAction: ["'self'"],
+                objectSrc: ["'none'"],
+                scriptSrcAttr: ["'none'"]
             },
         },
+        hsts: false,
     },
     rateLimit: {
         windowMs: env.SYNGRISI_RATE_LIMIT_WINDOW_MS,

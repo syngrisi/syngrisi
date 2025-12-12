@@ -12,12 +12,14 @@ import { MatchTypeSelector } from './MatchTypeSelector';
 interface Props {
     mainView: any
     baselineId: string
-    view: string,
-    hasDiff?: boolean,
+    [key: string]: any
 }
 
-export function RegionsToolbar({ mainView, baselineId, view, hasDiff = false }: Props) {
+export function RegionsToolbar({ mainView, baselineId, view, hasDiff }: Props) {
     const [visibleRegionRemoveButton, setVisibleRegionRemoveButton] = useState(false);
+    const [hasBoundRegion, setHasBoundRegion] = useState(false);
+    const [hasAnyRegion, setHasAnyRegion] = useState(false);
+    const [isDirty, setIsDirty] = useState(false);
 
     const handleAutoRegion = async () => {
         if (!baselineId || !hasDiff || view === 'slider' || !mainView) {
@@ -28,6 +30,19 @@ export function RegionsToolbar({ mainView, baselineId, view, hasDiff = false }: 
         if (count > 0) {
             successMsg({ msg: `Created ${count} ignore region${count > 1 ? 's' : ''} from diff` });
         }
+    };
+
+    const checkBoundRegionPresence = () => {
+        if (!mainView?.canvas) return;
+        const hasBound = mainView.canvas.getObjects()
+            .some((obj: any) => obj.name === 'bound_rect');
+        setHasBoundRegion(hasBound);
+    };
+
+    const checkAnyRegionPresence = () => {
+        if (!mainView) return;
+        setHasAnyRegion(mainView.hasRegions());
+        setIsDirty(mainView.isDirty());
     };
 
     const regionsSelectionEvents = () => {
@@ -45,19 +60,19 @@ export function RegionsToolbar({ mainView, baselineId, view, hasDiff = false }: 
         mainView.canvas.on(
             {
                 'selection:cleared':
-                // eslint-disable-next-line no-unused-vars
+                    // eslint-disable-next-line no-unused-vars
                     (e: any) => {
                         log.debug('cleared selection');
                         handler();
                     },
                 'selection:updated':
-                // eslint-disable-next-line no-unused-vars
+                    // eslint-disable-next-line no-unused-vars
                     (e: any) => {
                         log.debug('update selection');
                         handler();
                     },
                 'selection:created':
-                // eslint-disable-next-line no-unused-vars
+                    // eslint-disable-next-line no-unused-vars
                     (e: any) => {
                         log.debug('create selection');
                         handler();
@@ -65,9 +80,30 @@ export function RegionsToolbar({ mainView, baselineId, view, hasDiff = false }: 
             },
         );
     };
+
+    const boundRegionEvents = () => {
+        if (!mainView?.canvas) return;
+        checkBoundRegionPresence();
+        checkAnyRegionPresence();
+
+        mainView.canvas.on({
+            'object:added': (e: any) => {
+                if (e.target?.name === 'bound_rect') checkBoundRegionPresence();
+                checkAnyRegionPresence();
+            },
+            'object:removed': (e: any) => {
+                if (e.target?.name === 'bound_rect') checkBoundRegionPresence();
+                checkAnyRegionPresence();
+            },
+            'object:modified': () => {
+                checkAnyRegionPresence();
+            },
+        });
+    };
+
     useHotkeys([
         ['alt+S', () => {
-            MainView.sendRegions(baselineId!, mainView.getRegionsData());
+            mainView.saveRegions(baselineId!);
         }],
         ['Delete', () => mainView.removeActiveIgnoreRegions()],
         ['Backspace', () => mainView.removeActiveIgnoreRegions()],
@@ -77,7 +113,7 @@ export function RegionsToolbar({ mainView, baselineId, view, hasDiff = false }: 
             }
         }],
         ['B', () => {
-            if (baselineId && view !== 'slider') {
+            if (baselineId && view !== 'slider' && !hasBoundRegion) {
                 mainView.addBoundingRegion('bound_rect');
             }
         }],
@@ -89,6 +125,7 @@ export function RegionsToolbar({ mainView, baselineId, view, hasDiff = false }: 
     useEffect(function initView() {
         if (mainView) {
             regionsSelectionEvents();
+            boundRegionEvents();
         }
     }, [
         mainView?.toString(),
@@ -214,6 +251,14 @@ export function RegionsToolbar({ mainView, baselineId, view, hasDiff = false }: 
                                     </Group>
                                 )
                             }
+                            {
+                                baselineId && hasBoundRegion && (
+                                    <Group noWrap spacing={4}>
+                                        <Text color="orange">&#9888;</Text>
+                                        <Text> Bound region already exists</Text>
+                                    </Group>
+                                )
+                            }
                         </Stack>
                     )
                 }
@@ -221,7 +266,7 @@ export function RegionsToolbar({ mainView, baselineId, view, hasDiff = false }: 
                 <div>
                     <ActionIcon
                         data-check="add-bound-region"
-                        disabled={(view === 'slider') || !baselineId}
+                        disabled={(view === 'slider') || !baselineId || hasBoundRegion}
                         onClick={() => mainView.addBoundingRegion('bound_rect')}
                     >
                         <IconBoxMargin size={24} stroke={1} />
@@ -234,7 +279,7 @@ export function RegionsToolbar({ mainView, baselineId, view, hasDiff = false }: 
                 label={
                     (
                         <Group>
-                            <Text>Save ignore Regions</Text>
+                            <Text>Save regions</Text>
                             <Group align="left" spacing={4} noWrap>
 
                                 <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>Alt</Kbd>
@@ -247,7 +292,8 @@ export function RegionsToolbar({ mainView, baselineId, view, hasDiff = false }: 
             >
                 <ActionIcon
                     data-check="save-ignore-region"
-                    onClick={() => MainView.sendRegions(baselineId!, mainView.getRegionsData())}
+                    disabled={!hasAnyRegion && !isDirty}
+                    onClick={() => mainView.saveRegions(baselineId!)}
                 >
                     <IconDeviceFloppy size={24} stroke={1} />
                 </ActionIcon>

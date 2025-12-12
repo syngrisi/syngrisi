@@ -1,7 +1,6 @@
 import chalk from 'chalk';
 import type { PickleStepArgument, PickleTableRow } from '@cucumber/messages';
 import { z } from 'zod';
-import { createTool } from 'playwright-mcp-advanced';
 import type { BddContext } from 'playwright-bdd/dist/runtime/bddContext';
 import type { BddTestData, BddStepData } from 'playwright-bdd/dist/bddData/types';
 import type { Page } from '@playwright/test';
@@ -507,11 +506,12 @@ export const executeStep = async (
   }
 };
 
-export const createStepExecutorTool = (
+export const createStepExecutorTool = async (
   config: StepExecutorToolConfig,
   dependencies: StepExecutorDependencies,
 ) => {
   const zParams = createStepParamsSchema(config.supportsDocstring);
+  const { createTool } = await import('playwright-mcp-advanced');
 
   return createTool(
     config.name,
@@ -646,7 +646,7 @@ const executePreparedStep = async (
   }
 };
 
-export const createStepExecutorBatchTool = (
+export const createStepExecutorBatchTool = async (
   dependencies: StepExecutorDependencies,
 ) => {
   const zBatchStepObject = createStepParamsSchema(true);
@@ -662,6 +662,8 @@ export const createStepExecutorBatchTool = (
       .min(1)
       .describe('Ordered list of steps to execute sequentially. All steps must be valid before execution starts.'),
   });
+
+  const { createTool } = await import('playwright-mcp-advanced');
 
   return createTool(
     'step_execute_many',

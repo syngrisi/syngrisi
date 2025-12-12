@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle,react/jsx-one-expression-per-line */
 import * as React from 'react';
-import { Badge, Tooltip, useMantineTheme, Text, Stack } from '@mantine/core';
+import { Badge, useMantineTheme, Text, Stack } from '@mantine/core';
 import { BsHandThumbsUp, BsHandThumbsUpFill } from 'react-icons/all';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
@@ -108,52 +108,45 @@ export function AcceptButton({ check, testUpdateQuery, checksQuery, initCheck, s
         );
     };
 
+    const tooltipLabel = check.markedByUsername
+        ? (
+            <Stack spacing="xs" p={5}>
+                <Text data-test="accept-button-tooltip-username">
+                    Accepted by: {check.markedByUsername}
+                </Text>
+                <Text data-test="accept-button-tooltip-date">
+                    Accepted Date: {check.markedDate}
+                </Text>
+            </Stack>
+        )
+        : (
+            <Text>The check is not accepted</Text>
+        );
+
     return (
-        <Tooltip
-            withinPortal
-            label={
-                check.markedByUsername
+        <ActionPopoverIcon
+            iconColor={likeIconColor}
+            buttonColor="green"
+            sx={{
+                cursor: isCurrentlyAccepted ? 'default' : 'pointer',
+                '&:hover': { backgroundColor: isCurrentlyAccepted ? 'rgba(255, 255, 255, 0);' : '' },
+            }}
+            testAttr="check-accept-icon"
+            testAttrName={check.name}
+            variant="subtle"
+            paused={isCurrentlyAccepted}
+            icon={
+                iconType === 'fill'
                     ? (
-                        <Stack spacing="xs" p={5}>
-                            <Text data-test="accept-button-tooltip-username">
-                                Accepted by: {check.markedByUsername}
-                            </Text>
-                            <Text data-test="accept-button-tooltip-date">
-                                Accepted Date: {check.markedDate}
-                            </Text>
-                        </Stack>
+                        <BsHandThumbsUpFill size={size} data-test-icon-type="fill" />
                     )
-                    : (
-                        <Text>The check is not accepted</Text>
-                    )
+                    : (<><BsHandThumbsUp size={size} data-test-icon-type="outline" />{notAcceptedIcon}</>)
             }
-        >
-            <div>
-                <ActionPopoverIcon
-                    iconColor={likeIconColor}
-                    buttonColor="green"
-                    sx={{
-                        cursor: isCurrentlyAccepted ? 'default' : 'pointer',
-                        '&:hover': { backgroundColor: isCurrentlyAccepted ? 'rgba(255, 255, 255, 0);' : '' },
-                    }}
-                    testAttr="check-accept-icon"
-                    testAttrName={check.name}
-                    variant="subtle"
-                    paused={isCurrentlyAccepted}
-                    icon={
-                        iconType === 'fill'
-                            ? (
-                                <BsHandThumbsUpFill size={size} data-test-icon-type="fill" />
-                            )
-                            : (<><BsHandThumbsUp size={size} data-test-icon-type="outline" />{notAcceptedIcon}</>)
-                    }
-                    action={handleAcceptCheckClick}
-                    // title="Accept the check actual screenshot"
-                    loading={mutationAcceptCheck.isLoading}
-                    confirmLabel="Accept"
-                    size={size}
-                />
-            </div>
-        </Tooltip>
+            action={handleAcceptCheckClick}
+            title={tooltipLabel}
+            loading={mutationAcceptCheck.isLoading}
+            confirmLabel="Accept"
+            size={size}
+        />
     );
 }

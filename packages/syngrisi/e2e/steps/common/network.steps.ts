@@ -34,11 +34,15 @@ When('I reset image request counter', async function ({ page }) {
 });
 
 Then('I expect at least {int} image requests were made', async function ({ page }, minCount: number) {
+    await expect.poll(() => getRequests(page).length, {
+        message: `Expected at least ${minCount} image requests`,
+        timeout: 10000
+    }).toBeGreaterThanOrEqual(minCount);
+
     const requests = getRequests(page);
     const count = requests.length;
     console.log(`[Network] Image requests made: ${count}, expected at least: ${minCount}`);
     console.log(`[Network] URLs: ${requests.join(', ')}`);
-    expect(count).toBeGreaterThanOrEqual(minCount);
 });
 
 Then('I expect {int} new image requests were made for cached images', async function ({ page }, expectedCount: number) {

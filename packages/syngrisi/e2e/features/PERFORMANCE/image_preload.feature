@@ -28,8 +28,7 @@ Feature: Image Preload on Test Expand
         # Expand test - this should trigger image loading (preview + preload)
         When I unfold the test "PreloadTest"
 
-        # Wait for images to load
-        And I wait 3 seconds
+
 
         # Verify images are requested during test expand
         # Each check has 1 actual image, so at least 2 image requests expected
@@ -43,8 +42,7 @@ Feature: Image Preload on Test Expand
         When I open the 1st check "Check1"
         Then the element with locator "[data-check='toolbar']" should be visible
 
-        # Wait for canvas to render
-        And I wait 2 seconds
+
 
         # Verify canvas is rendered (image loaded successfully)
         Then the element with locator "canvas[id='2d']" should be visible

@@ -93,29 +93,6 @@ const cleanupOrphanFiles = async (
     }
 };
 
-const recordCheckFailure = async (
-    e: unknown,
-    newCheckParams: CreateCheckParamsExtended,
-    test: TestDocument,
-    logOpts: LogOpts
-) => {
-    try {
-        newCheckParams.status = 'failed';
-        newCheckParams.result = JSON.stringify({ "server error": errMsg(e) });
-        newCheckParams.failReasons.push('internal_server_error');
-
-        log.debug(`create the failed check document`, logOpts);
-        const failedCheck = await CheckService.createCheckDocument(newCheckParams);
-        await updateTestAfterCheck(test, failedCheck, logOpts);
-        const failedObj = failedCheck.toObject();
-        if (failedObj.status && Array.isArray(failedObj.status)) failedObj.status = failedObj.status[0] as any;
-        return { ...failedObj, executeTime: 0 } as any;
-    } catch (err2) {
-        log.error(`failed to record check failure: ${errMsg(err2)}`, logOpts);
-        return { status: 'failed', error: errMsg(e) } as any;
-    }
-};
-
 const createCheck = async (checkParam: CreateCheckParams, test: TestDocument, suite: SuiteDocument, app: AppDocument, currentUser: RequestUser, skipSaveOnCompareError = false) => {
     const logOpts: LogOpts = {
         scope: 'createCheck',
@@ -244,7 +221,11 @@ const createCheck = async (checkParam: CreateCheckParams, test: TestDocument, su
 
         await cleanupOrphanFiles(actualSnapshot, diffSnapshot, logOpts);
 
-        return recordCheckFailure(e, newCheckParams, test, logOpts);
+        // Throw error instead of creating failed check - maintain data consistency
+        throw new ApiError(
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            `Failed to create check: ${errMsg(e)}`
+        );
     }
 };
 

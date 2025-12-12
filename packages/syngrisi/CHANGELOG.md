@@ -1,5 +1,54 @@
 # @syngrisi/syngrisi
 
+## 2.6.1
+
+### Patch Changes
+
+-   Fix filter drawer layout and button visibility on smaller screens:
+    -   Fix alignment of buttons in check details filter
+    -   Fix filter drawer width to ensure buttons are visible on small screens
+    -   Fix table and filter drawer layout to prevent overflow
+    -   Increase filter drawer z-index and padding
+    -   Remove negative margin from filter scroll area
+
+-   Updated dependencies:
+    -   @syngrisi/node-resemble.js@2.6.1
+
+## 2.6.0
+
+### Minor Changes
+
+-   ### Features
+
+    -   Refactor screenshot details and view controls with improved UI/UX
+
+    ### Bug Fixes
+
+    -   Fix race condition in check details canvas rendering
+    -   Improve check details canvas performance by updating images on existing canvas instead of re-initializing
+    -   Resolve cursor display issues in canvas view
+    -   Improve toolbar layout and fix navigation arrow positioning
+    -   Improve ActionPopoverIcon click handling and E2E test stability
+
+    ### Improvements
+
+    -   Centralize retry logic in SyngrisiApi (core-api)
+    -   Update seed scripts and data
+
+### Patch Changes
+
+-   Updated dependencies []:
+    -   @syngrisi/node-resemble.js@2.6.0
+
+## 2.5.3
+
+### Patch Changes
+
+-   [`246ba5e`](https://github.com/syngrisi/syngrisi/commit/246ba5e5a038d319f6dfc6d4118512f031268dc9) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - fix: improve ActionPopoverIcon click handling and E2E test stability
+
+-   Updated dependencies []:
+    -   @syngrisi/node-resemble.js@2.5.3
+
 ## 2.5.2
 
 ### Patch Changes

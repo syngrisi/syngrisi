@@ -35,6 +35,7 @@ Feature: Enabled disabled buttons on Check Details Modal Window - Special Cases
     # without save
     When I click element with locator "[data-check='add-ignore-region']"
     Then the element with locator "[data-check='remove-ignore-region']" should not have attribute "data-disabled=true"
+    Then the element with locator "[data-check='save-ignore-region']" should not have attribute "data-disabled=true"
 
   Scenario: Failed Check difference more than 5%
     Given I create "1" tests with:
@@ -72,4 +73,4 @@ Feature: Enabled disabled buttons on Check Details Modal Window - Special Cases
     Then the element with locator "[data-check='highlight-icon']" should have has attribute "data-disabled=true"
     Then the element with locator "[data-check='remove-ignore-region']" should have has attribute "data-disabled=true"
     Then the element with locator "[data-check='add-ignore-region']" should not have attribute "data-disabled=true"
-    Then the element with locator "[data-check='save-ignore-region']" should not have attribute "data-disabled=true"
+    Then the element with locator "[data-check='save-ignore-region']" should have attribute "data-disabled" "true"

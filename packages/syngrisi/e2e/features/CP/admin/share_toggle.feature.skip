@@ -1,0 +1,40 @@
+@admin @settings
+Feature: Global Sharing Toggle
+    As an administrator
+    I want to enable or disable the sharing feature globally
+    So that I can control public access to the application data
+
+    Background:
+        Given I am on the "Admin Settings" page
+        And I wait 3 seconds
+
+    Scenario: Admin can disable sharing
+        # Disable Sharing
+        When I fill the "Enable Sharing" checkbox with "false"
+        And I wait 1 seconds
+        Then the "Enable Sharing" checkbox should be unchecked
+
+        # Reload to confirm persistence
+        When I reload the page
+        And I wait 2 seconds
+        Then the "Enable Sharing" checkbox should be unchecked
+
+        # Verify Share Button is disabled in Check Details
+        When I navigate to the first check details
+        Then the button "Share" should be disabled
+        And the button "Share" should have attribute "title" "Sharing is globally disabled by administrator"
+
+    Scenario: Admin can enable sharing
+        # Enable Sharing
+        When I fill the "Enable Sharing" checkbox with "true"
+        And I wait 1 seconds
+        Then the "Enable Sharing" checkbox should be checked
+
+        # Reload to confirm persistence
+        When I reload the page
+        And I wait 2 seconds
+        Then the "Enable Sharing" checkbox should be checked
+
+        # Verify Share Button is enabled in Check Details
+        When I navigate to the first check details
+        Then the button "Share" should be enabled

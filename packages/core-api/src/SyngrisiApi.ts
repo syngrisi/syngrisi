@@ -88,6 +88,35 @@ class SyngrisiApi {
         return `${this.config.url}v1/client/${itemName}`
     }
 
+    private async requestWithRetry<T>(
+        requestFn: () => Promise<T>,
+        methodName: string,
+        errorMessage: string
+    ): Promise<T | ErrorObject> {
+        const maxRetries = 3
+        const retryDelayMs = 2000
+
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+            try {
+                return await requestFn()
+            } catch (e: any) {
+                const is401 = e.response?.statusCode === 401
+                const isLastAttempt = attempt === maxRetries
+
+                if (is401 && !isLastAttempt) {
+                    log.warn(`⚠️ 401 error on ${methodName}, retrying in ${retryDelayMs}ms (attempt ${attempt}/${maxRetries})`)
+                    await new Promise(resolve => setTimeout(resolve, retryDelayMs))
+                    continue
+                }
+
+                log.error(`${errorMessage}, error: '${e.stack || e}'`)
+                if (e.response) printErrorResponseBody(e)
+                return errorObject(e)
+            }
+        }
+        return errorObject(new Error('Max retries exceeded'))
+    }
+
     /**
      * Starts a new session with the Syngrisi service using provided parameters.
      * @param {ApiSessionParams} params - Parameters for starting a new session.
@@ -109,10 +138,7 @@ class SyngrisiApi {
     public async startSession(params: ApiSessionParams): Promise<SessionResponse | ErrorObject> {
         paramsGuard(params, 'startSession, params', ApiSessionParamsSchema)
 
-        const maxRetries = 3
-        const retryDelayMs = 2000
-
-        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        return this.requestWithRetry(async () => {
             const form = new FormData()
             const required = ['run', 'suite', 'runident', 'name', 'viewport', 'browser', 'browserVersion', 'os', 'app']
             // @ts-ignore
@@ -122,30 +148,11 @@ class SyngrisiApi {
             if (params.tags) form.append('tags', JSON.stringify(params.tags))
             if (params.branch) form.append('branch', params.branch)
 
-            try {
-                const result = await got.post(this.url('startSession'), {
-                    body: form,
-                    headers: this.headers,
-                }).json() as SessionResponse
-                return result
-            } catch (e: any) {
-                const is401 = e.response?.statusCode === 401
-                const isLastAttempt = attempt === maxRetries
-
-                if (is401 && !isLastAttempt) {
-                    log.warn(`⚠️ 401 error on startSession, retrying in ${retryDelayMs}ms (attempt ${attempt}/${maxRetries})`)
-                    await new Promise(resolve => setTimeout(resolve, retryDelayMs))
-                    continue
-                }
-
-                log.error(`❌ Error posting start session data: '${e.stack || e}'`)
-                if (e.response) printErrorResponseBody(e)
-                return errorObject(e)
-            }
-        }
-
-        // This should never be reached, but TypeScript needs it
-        return errorObject(new Error('Max retries exceeded'))
+            return got.post(this.url('startSession'), {
+                body: form,
+                headers: this.headers,
+            }).json() as Promise<SessionResponse>
+        }, 'startSession', '❌ Error posting start session data')
     }
 
     /**
@@ -156,18 +163,13 @@ class SyngrisiApi {
      * const result = await apiClient.stopSession('<test-id>')
      */
     public async stopSession(testId: string): Promise<SessionResponse | ErrorObject> {
-        try {
+        return this.requestWithRetry(async () => {
             const form = new FormData()
-            const response: SessionResponse = await got.post(`${this.url('stopSession')}/${testId}`, {
+            return got.post(`${this.url('stopSession')}/${testId}`, {
                 body: form,
                 headers: this.headers,
-            }).json()
-            return response
-        } catch (e: any) {
-            log.error(`❌ Error posting stop session data for test: '${testId}', error: '${e.stack || e}'`)
-            if (e.response) printErrorResponseBody(e)
-            return errorObject(e)
-        }
+            }).json() as Promise<SessionResponse>
+        }, 'stopSession', `❌ Error posting stop session data for test: '${testId}'`)
     }
 
     private addMessageIfCheckFailed(result: any) {
@@ -272,10 +274,7 @@ class SyngrisiApi {
             os: 'os'
         }
 
-        const maxRetries = 3
-        const retryDelayMs = 2000
-
-        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        return this.requestWithRetry(async () => {
             const form = new FormData()
             const requestHeaders: Record<string, string> = { ...this.headers }
 
@@ -299,43 +298,20 @@ class SyngrisiApi {
             if (hashCode) form.append('hashcode', hashCode)
             if (imageBuffer) form.append('file', imageBuffer, 'file')
 
-            try {
-                const result: CheckResponse = await got.post(url, {
-                    body: form,
-                    headers: requestHeaders,
-                }).json()
-
-                return result
-            } catch (e: any) {
-                const is401 = e.response?.statusCode === 401
-                const isLastAttempt = attempt === maxRetries
-
-                if (is401 && !isLastAttempt) {
-                    log.warn(`⚠️ 401 error on createCheck, retrying in ${retryDelayMs}ms (attempt ${attempt}/${maxRetries})`)
-                    await new Promise(resolve => setTimeout(resolve, retryDelayMs))
-                    continue
-                }
-
-                log.error(`❌ Error posting create check data params: '${JSON.stringify(params)}', error: '${e.stack || e}'`)
-                if (e.response) printErrorResponseBody(e)
-                return errorObject(e)
-            }
-        }
-
-        // This should never be reached, but TypeScript needs it
-        return errorObject(new Error('Max retries exceeded'))
+            return got.post(url, {
+                body: form,
+                headers: requestHeaders,
+            }).json() as Promise<CheckResponse>
+        }, 'createCheck', `❌ Error posting create check data params: '${JSON.stringify(params)}'`)
     }
 
     public async getIdent(): Promise<string[] | ErrorObject> {
         const url = `${this.url('getIdent')}?apikey=${this.config.apiHash}`
-        try {
-            const result: string[] = await got(url).json()
-            return result
-        } catch (e: any) {
-            log.error(`❌ Error getting ident data, error: '${e.stack || e}'`)
-            if (e.response) printErrorResponseBody(e)
-            return errorObject(e)
-        }
+        return this.requestWithRetry(
+            () => got(url).json() as Promise<string[]>,
+            'getIdent',
+            '❌ Error getting ident data'
+        )
     }
 
     /**
@@ -358,18 +334,14 @@ class SyngrisiApi {
      */
     public async getBaselines(params: BaselineParams): Promise<BaselineResponse | ErrorObject> {
         paramsGuard(params, 'getBaselines, params', BaselineParamsSchema)
-        try {
-            const filter = encodeURIComponent(JSON.stringify(params))
+        const filter = encodeURIComponent(JSON.stringify(params))
+        const url = `${this.url('baselines')}?filter=${filter}&apikey=${this.config.apiHash}`
 
-            const url = `${this.url('baselines')}?filter=${filter}&apikey=${this.config.apiHash}`
-            const result: BaselineResponse = await got(url)
-                .json()
-            return result
-        } catch (e: any) {
-            log.error(`❌ Error getting baselines, params: '${JSON.stringify(params)}' data, error: '${e.stack || e}'`)
-            if (e.response) printErrorResponseBody(e)
-            return errorObject(e)
-        }
+        return this.requestWithRetry(
+            () => got(url).json() as Promise<BaselineResponse>,
+            'getBaselines',
+            `❌ Error getting baselines, params: '${JSON.stringify(params)}' data`
+        )
     }
 
     /**
@@ -390,19 +362,15 @@ class SyngrisiApi {
      */
 
     public async getSnapshots(params: Snapshot): Promise<SnapshotResponse | ErrorObject> {
-        try {
-            paramsGuard(params, 'getSnapshots, params', SnapshotSchema)
-            const filter = encodeURIComponent(JSON.stringify(params))
+        paramsGuard(params, 'getSnapshots, params', SnapshotSchema)
+        const filter = encodeURIComponent(JSON.stringify(params))
+        const url = `${this.url('snapshots')}?filter=${filter}&apikey=${this.config.apiHash}`
 
-            const url = `${this.url('snapshots')}?filter=${filter}&apikey=${this.config.apiHash}`
-            const result: SnapshotResponse = await got.get(url)
-                .json()
-            return result
-        } catch (e: any) {
-            log.error(`❌ Error getting snapshots, params: '${JSON.stringify(params)}' data, error: '${e.stack || e}'`)
-            if (e.response) printErrorResponseBody(e)
-            return errorObject(e)
-        }
+        return this.requestWithRetry(
+            () => got.get(url).json() as Promise<SnapshotResponse>,
+            'getSnapshots',
+            `❌ Error getting snapshots, params: '${JSON.stringify(params)}' data`
+        )
     }
 
     /**
@@ -419,26 +387,20 @@ class SyngrisiApi {
      * const result = await apiClient.acceptCheck('check-id-123', 'baseline-id-456');
      */
     public async acceptCheck(checkId: string, baselineId: string): Promise<CheckResponse | ErrorObject> {
-        try {
-            if (!checkId) {
-                throw new Error('checkId is required')
-            }
-            if (!baselineId) {
-                throw new Error('baselineId is required')
-            }
+        if (!checkId) {
+            return errorObject(new Error('checkId is required'))
+        }
+        if (!baselineId) {
+            return errorObject(new Error('baselineId is required'))
+        }
 
+        return this.requestWithRetry(async () => {
             const url = `${this.config.url}v1/checks/${checkId}/accept`
-            const result: CheckResponse = await got.put(url, {
+            return got.put(url, {
                 json: { baselineId },
                 headers: this.headers,
-            }).json()
-
-            return result
-        } catch (e: any) {
-            log.error(`❌ Error accepting check, checkId: '${checkId}', baselineId: '${baselineId}', error: '${e.stack || e}'`)
-            if (e.response) printErrorResponseBody(e)
-            return errorObject(e)
-        }
+            }).json() as Promise<CheckResponse>
+        }, 'acceptCheck', `❌ Error accepting check, checkId: '${checkId}', baselineId: '${baselineId}'`)
     }
 
     /**
@@ -458,23 +420,18 @@ class SyngrisiApi {
      * });
      */
     public async updateBaseline(baselineId: string, updates: { ignoreRegions?: string }): Promise<any | ErrorObject> {
-        try {
-            if (!baselineId) {
-                throw new Error('baselineId is required')
-            }
+        if (!baselineId) {
+            return errorObject(new Error('baselineId is required'))
+        }
 
-            const url = `${this.config.url}v1/baselines/${baselineId}`
-            const result = await got.put(url, {
+        const url = `${this.config.url}v1/baselines/${baselineId}`
+
+        return this.requestWithRetry(async () => {
+            return got.put(url, {
                 json: updates,
                 headers: this.headers,
             }).json()
-
-            return result
-        } catch (e: any) {
-            log.error(`❌ Error updating baseline, baselineId: '${baselineId}', updates: '${JSON.stringify(updates)}', error: '${e.stack || e}'`)
-            if (e.response) printErrorResponseBody(e)
-            return errorObject(e)
-        }
+        }, 'updateBaseline', `❌ Error updating baseline, baselineId: '${baselineId}', updates: '${JSON.stringify(updates)}'`)
     }
 }
 
