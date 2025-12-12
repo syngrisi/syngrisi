@@ -1,5 +1,19 @@
 # @syngrisi/syngrisi
 
+## 2.6.1
+
+### Patch Changes
+
+-   Fix filter drawer layout and button visibility on smaller screens:
+    -   Fix alignment of buttons in check details filter
+    -   Fix filter drawer width to ensure buttons are visible on small screens
+    -   Fix table and filter drawer layout to prevent overflow
+    -   Increase filter drawer z-index and padding
+    -   Remove negative margin from filter scroll area
+
+-   Updated dependencies:
+    -   @syngrisi/node-resemble.js@2.6.1
+
 ## 2.6.0
 
 ### Minor Changes
