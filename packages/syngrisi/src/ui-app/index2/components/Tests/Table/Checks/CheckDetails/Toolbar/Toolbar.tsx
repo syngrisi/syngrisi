@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Group, Divider, Paper, ActionIcon, Menu } from '@mantine/core';
+import { Group, Divider, ActionIcon, Menu } from '@mantine/core';
 import { IconDotsVertical, IconTrash, IconChevronLeft, IconChevronRight, IconChevronUp, IconChevronDown, IconShare } from '@tabler/icons-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GenericService } from '@shared/services';
@@ -99,10 +99,9 @@ export function Toolbar(
     }, [view, mainView]);
 
     return (
-        <Paper p="xs" withBorder mt="md" style={{ backgroundColor: '#fff' }}>
+        <>
             <Group position="apart" noWrap data-check="toolbar" data-navigation-ready={navigationReady ? 'true' : 'false'}>
-                <ScreenshotDetails mainView={mainView} check={curCheck} view={view} />
-                
+                {/* Left side: Navigation arrows (fixed position) + ScreenshotDetails */}
                 <Group spacing="sm" noWrap>
                     <Group spacing={2} noWrap>
                         <ActionIcon
@@ -143,6 +142,11 @@ export function Toolbar(
 
                     <Divider orientation="vertical" />
 
+                    <ScreenshotDetails mainView={mainView} check={curCheck} view={view} />
+                </Group>
+
+                {/* Right side: Tools and actions */}
+                <Group spacing="sm" noWrap>
                     <Group
                         spacing={4}
                         className={classes.zoomButtonsWrapper}
@@ -156,18 +160,18 @@ export function Toolbar(
                     <Divider orientation="vertical" />
 
                     <ViewSegmentedControl view={view} setView={setView} currentCheck={curCheck} />
-                    
+
                     <Divider orientation="vertical" />
-                    
+
                     <HighlightButton
                         mainView={mainView as MainView}
                         disabled={!(view === 'diff' && parseFloat(curCheck?.parsedResult?.rawMisMatchPercentage) < 5)}
                     />
-                    
+
                     <Divider orientation="vertical" />
-                    
+
                     <RegionsToolbar mainView={mainView} baselineId={baselineId} view={view} hasDiff={!!mainView?.diffImage} />
-                    
+
                     <Divider orientation="vertical" />
 
                     {!isShareMode && (
@@ -232,6 +236,6 @@ export function Toolbar(
                 onClose={() => setShareModalOpened(false)}
                 checkId={curCheck?._id}
             />
-        </Paper>
+        </>
     );
 }
