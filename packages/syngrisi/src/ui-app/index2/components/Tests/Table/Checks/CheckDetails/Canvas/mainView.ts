@@ -119,6 +119,64 @@ export class MainView {
         // this.sideToSideView.render()
     }
 
+    /**
+     * Update images without recreating canvas - used for navigation optimization
+     */
+    async updateImages({
+        expectedImage,
+        actualImage,
+        diffImage,
+        actual,
+    }: {
+        expectedImage: fabric.Image;
+        actualImage: fabric.Image;
+        diffImage: fabric.Image | null;
+        actual: any;
+    }): Promise<void> {
+        // 1. Destroy old views but keep canvas
+        await this.destroyAllViews();
+
+        // 2. Update image references
+        this.actualImage = lockImage(actualImage);
+        this.expectedImage = lockImage(expectedImage);
+        this.diffImage = diffImage ? lockImage(diffImage) : null;
+
+        // 3. Recreate views with new images
+        if (actual) {
+            this.sliderView = new SideToSideView({ mainView: this });
+        }
+        this.expectedView = new SimpleView(this, 'expected');
+        this.actualView = new SimpleView(this, 'actual');
+        this.diffView = new SimpleView(this, 'diff');
+
+        // 4. Render current view
+        (this as any)[`${this.currentView}View`].render();
+
+        // 5. Clear regions (will be reloaded by useEffect)
+        this.removeAllRegions();
+    }
+
+    /**
+     * Check if canvas dimensions need to be updated
+     */
+    needsCanvasResize(newWidth: number, newHeight: number): boolean {
+        return this.canvasElementWidth !== newWidth ||
+               this.canvasElementHeight !== newHeight;
+    }
+
+    /**
+     * Resize canvas (only when viewport changes)
+     */
+    resizeCanvas(newWidth: number, newHeight: number): void {
+        this.canvasElementWidth = newWidth;
+        this.canvasElementHeight = newHeight;
+        this.canvas.setDimensions({
+            width: newWidth,
+            height: newHeight,
+        });
+        this.canvas.renderAll();
+    }
+
     /*
      this is the area from the left top canvas corner till the end of the viewport
      ┌──────┬─────────────┐
@@ -464,6 +522,15 @@ export class MainView {
     }
 
     addBoundingRegion(name) {
+        // Check if bound_rect already exists
+        const existingBoundRect = this.canvas.getObjects()
+            .find((obj) => obj.name === 'bound_rect');
+
+        if (existingBoundRect) {
+            log.warn('[MainView] Bound region already exists, skipping creation');
+            return;
+        }
+
         const params = {
             name,
             fill: 'rgba(0,0,0,0)',

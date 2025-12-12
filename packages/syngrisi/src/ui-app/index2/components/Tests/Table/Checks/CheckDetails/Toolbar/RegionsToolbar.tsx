@@ -18,6 +18,7 @@ interface Props {
 
 export function RegionsToolbar({ mainView, baselineId, view, hasDiff = false }: Props) {
     const [visibleRegionRemoveButton, setVisibleRegionRemoveButton] = useState(false);
+    const [hasBoundRegion, setHasBoundRegion] = useState(false);
 
     const handleAutoRegion = async () => {
         if (!baselineId || !hasDiff || view === 'slider' || !mainView) {
@@ -28,6 +29,13 @@ export function RegionsToolbar({ mainView, baselineId, view, hasDiff = false }: 
         if (count > 0) {
             successMsg({ msg: `Created ${count} ignore region${count > 1 ? 's' : ''} from diff` });
         }
+    };
+
+    const checkBoundRegionPresence = () => {
+        if (!mainView?.canvas) return;
+        const hasBound = mainView.canvas.getObjects()
+            .some((obj: any) => obj.name === 'bound_rect');
+        setHasBoundRegion(hasBound);
     };
 
     const regionsSelectionEvents = () => {
@@ -65,6 +73,21 @@ export function RegionsToolbar({ mainView, baselineId, view, hasDiff = false }: 
             },
         );
     };
+
+    const boundRegionEvents = () => {
+        if (!mainView?.canvas) return;
+        checkBoundRegionPresence();
+
+        mainView.canvas.on({
+            'object:added': (e: any) => {
+                if (e.target?.name === 'bound_rect') checkBoundRegionPresence();
+            },
+            'object:removed': (e: any) => {
+                if (e.target?.name === 'bound_rect') checkBoundRegionPresence();
+            },
+        });
+    };
+
     useHotkeys([
         ['alt+S', () => {
             MainView.sendRegions(baselineId!, mainView.getRegionsData());
@@ -77,7 +100,7 @@ export function RegionsToolbar({ mainView, baselineId, view, hasDiff = false }: 
             }
         }],
         ['B', () => {
-            if (baselineId && view !== 'slider') {
+            if (baselineId && view !== 'slider' && !hasBoundRegion) {
                 mainView.addBoundingRegion('bound_rect');
             }
         }],
@@ -89,6 +112,7 @@ export function RegionsToolbar({ mainView, baselineId, view, hasDiff = false }: 
     useEffect(function initView() {
         if (mainView) {
             regionsSelectionEvents();
+            boundRegionEvents();
         }
     }, [
         mainView?.toString(),
@@ -214,6 +238,14 @@ export function RegionsToolbar({ mainView, baselineId, view, hasDiff = false }: 
                                     </Group>
                                 )
                             }
+                            {
+                                baselineId && hasBoundRegion && (
+                                    <Group noWrap spacing={4}>
+                                        <Text color="orange">&#9888;</Text>
+                                        <Text> Bound region already exists</Text>
+                                    </Group>
+                                )
+                            }
                         </Stack>
                     )
                 }
@@ -221,7 +253,7 @@ export function RegionsToolbar({ mainView, baselineId, view, hasDiff = false }: 
                 <div>
                     <ActionIcon
                         data-check="add-bound-region"
-                        disabled={(view === 'slider') || !baselineId}
+                        disabled={(view === 'slider') || !baselineId || hasBoundRegion}
                         onClick={() => mainView.addBoundingRegion('bound_rect')}
                     >
                         <IconBoxMargin size={24} stroke={1} />
