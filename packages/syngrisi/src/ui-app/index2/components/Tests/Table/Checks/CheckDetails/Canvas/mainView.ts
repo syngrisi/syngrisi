@@ -122,6 +122,15 @@ export class MainView {
     /**
      * Update images without recreating canvas - used for navigation optimization
      */
+    // Concurrency control
+    private currentUpdateId: number = 0;
+
+    /**
+     * Update images without recreating canvas - used for navigation optimization
+     */
+    /**
+     * Update images without recreating canvas - used for navigation optimization
+     */
     async updateImages({
         expectedImage,
         actualImage,
@@ -133,27 +142,57 @@ export class MainView {
         diffImage: fabric.Image | null;
         actual: any;
     }): Promise<void> {
+        // Generate new update ID
+        this.currentUpdateId++;
+        const updateId = this.currentUpdateId;
+
         // 1. Destroy old views but keep canvas
         await this.destroyAllViews();
 
+        // Check if a new update has started while we were clearing
+        if (updateId !== this.currentUpdateId) {
+            log.debug(`[MainView] updateImages aborted after destroy (stale updateId: ${updateId}, current: ${this.currentUpdateId})`);
+            return;
+        }
+
         // 2. Update image references
+        // Guard against disposed state
+        if (!this.canvas) return;
+
         this.actualImage = lockImage(actualImage);
         this.expectedImage = lockImage(expectedImage);
         this.diffImage = diffImage ? lockImage(diffImage) : null;
 
         // 3. Recreate views with new images
-        if (actual) {
-            this.sliderView = new SideToSideView({ mainView: this });
+        try {
+            if (actual) {
+                this.sliderView = new SideToSideView({ mainView: this });
+            }
+            this.expectedView = new SimpleView(this, 'expected');
+            this.actualView = new SimpleView(this, 'actual');
+            this.diffView = new SimpleView(this, 'diff');
+
+            // 4. Render current view
+            // Check updateId again before rendering
+            if (updateId !== this.currentUpdateId) {
+                log.debug(`[MainView] updateImages aborted before render (stale updateId: ${updateId}, current: ${this.currentUpdateId})`);
+                await this.destroyAllViews(); // Clean up partial state
+                return;
+            }
+
+            if ((this as any)[`${this.currentView}View`]) {
+                (this as any)[`${this.currentView}View`].render();
+            }
+
+            // 5. Clear regions (will be reloaded by useEffect)
+            if (updateId === this.currentUpdateId) {
+                this.removeAllRegions();
+            }
+        } catch (e) {
+            log.error('[MainView] Error during updateImages:', e);
+            // Attempt cleanup if something failed
+            await this.destroyAllViews();
         }
-        this.expectedView = new SimpleView(this, 'expected');
-        this.actualView = new SimpleView(this, 'actual');
-        this.diffView = new SimpleView(this, 'diff');
-
-        // 4. Render current view
-        (this as any)[`${this.currentView}View`].render();
-
-        // 5. Clear regions (will be reloaded by useEffect)
-        this.removeAllRegions();
     }
 
     /**
@@ -161,7 +200,7 @@ export class MainView {
      */
     needsCanvasResize(newWidth: number, newHeight: number): boolean {
         return this.canvasElementWidth !== newWidth ||
-               this.canvasElementHeight !== newHeight;
+            this.canvasElementHeight !== newHeight;
     }
 
     /**
