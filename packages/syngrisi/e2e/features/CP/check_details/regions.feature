@@ -234,3 +234,57 @@ Feature: Check details - Regions
      if (typeof mainView === 'undefined' || !mainView.allRects) return "loading";
      return (mainView.allRects.length.toString());
          """
+
+   Scenario: Regions - unsaved changes navigation alert
+      # Create test with TWO checks in the same test for navigation
+      Given I create "1" tests with:
+         """
+         testName: NavigationTest
+         checks:
+         - checkName: Check1
+           filePath: files/A.png
+         - checkName: Check2
+           filePath: files/A.png
+         """
+      And I accept via http the 1st check with name "Check1"
+      And I accept via http the 1st check with name "Check2"
+
+      # Go to Check2 (the second/newer check)
+      When I go to "main" page
+      When I wait for test "NavigationTest" to appear in table
+      When I unfold the test "NavigationTest"
+      When I click element with locator "[data-test-preview-image='Check2']"
+      When I wait 10 seconds for the element with locator "[data-check-header-name='Check2']" to be visible
+
+      # Add ignore region - wait for button
+      When I wait 10 seconds for the element with locator "[data-check='add-ignore-region']" to be visible
+      When I repeat javascript code until stored "js" string equals "ready":
+         """
+         if (typeof mainView === 'undefined' || !mainView.canvas || !mainView.canvas.getObjects) return "loading";
+         const btn = document.querySelector('[data-check="add-ignore-region"]');
+         if (btn && (btn.disabled || btn.hasAttribute('disabled'))) return "loading";
+         return "ready";
+         """
+
+      # Add region (unsaved change)
+      When I click element with locator "[data-check='add-ignore-region']"
+
+      # 1. Try to navigate to PREVIOUS check (Check1) -> Expect alert and Dismiss (Stay on page)
+      # Note: Check2 is newer, so Check1 is the "previous" check
+      When I prepare to dismiss confirmation dialog with text "You have unsaved changes"
+      When I click element with locator "[title='Previous Check']"
+
+      # Verify dirty state (region count implies state) - we are still on the same check (Check2, 1 region added)
+      When I repeat javascript code until stored "js" string equals "1":
+         """
+         if (typeof mainView === 'undefined' || !mainView.allRects) return "loading";
+         return (mainView.allRects.length.toString());
+         """
+
+      # 2. Try to navigate again -> Expect alert and Accept (Leave page)
+      When I prepare to accept confirmation dialog with text "You have unsaved changes"
+      When I click element with locator "[title='Previous Check']"
+
+      # Verify navigation happened - we should be on the previous check (Check1)
+      # Check1 header should be visible
+      When I wait 10 seconds for the element with locator "[data-check-header-name='Check1']" to be visible

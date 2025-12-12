@@ -12,13 +12,14 @@ import { MatchTypeSelector } from './MatchTypeSelector';
 interface Props {
     mainView: any
     baselineId: string
-    view: string,
-    hasDiff?: boolean,
+    [key: string]: any
 }
 
-export function RegionsToolbar({ mainView, baselineId, view, hasDiff = false }: Props) {
+export function RegionsToolbar({ mainView, baselineId, view, hasDiff }: Props) {
     const [visibleRegionRemoveButton, setVisibleRegionRemoveButton] = useState(false);
     const [hasBoundRegion, setHasBoundRegion] = useState(false);
+    const [hasAnyRegion, setHasAnyRegion] = useState(false);
+    const [isDirty, setIsDirty] = useState(false);
 
     const handleAutoRegion = async () => {
         if (!baselineId || !hasDiff || view === 'slider' || !mainView) {
@@ -38,6 +39,12 @@ export function RegionsToolbar({ mainView, baselineId, view, hasDiff = false }: 
         setHasBoundRegion(hasBound);
     };
 
+    const checkAnyRegionPresence = () => {
+        if (!mainView) return;
+        setHasAnyRegion(mainView.hasRegions());
+        setIsDirty(mainView.isDirty());
+    };
+
     const regionsSelectionEvents = () => {
         const handler = () => {
             const els = mainView.canvas.getActiveObjects()
@@ -53,19 +60,19 @@ export function RegionsToolbar({ mainView, baselineId, view, hasDiff = false }: 
         mainView.canvas.on(
             {
                 'selection:cleared':
-                // eslint-disable-next-line no-unused-vars
+                    // eslint-disable-next-line no-unused-vars
                     (e: any) => {
                         log.debug('cleared selection');
                         handler();
                     },
                 'selection:updated':
-                // eslint-disable-next-line no-unused-vars
+                    // eslint-disable-next-line no-unused-vars
                     (e: any) => {
                         log.debug('update selection');
                         handler();
                     },
                 'selection:created':
-                // eslint-disable-next-line no-unused-vars
+                    // eslint-disable-next-line no-unused-vars
                     (e: any) => {
                         log.debug('create selection');
                         handler();
@@ -77,20 +84,26 @@ export function RegionsToolbar({ mainView, baselineId, view, hasDiff = false }: 
     const boundRegionEvents = () => {
         if (!mainView?.canvas) return;
         checkBoundRegionPresence();
+        checkAnyRegionPresence();
 
         mainView.canvas.on({
             'object:added': (e: any) => {
                 if (e.target?.name === 'bound_rect') checkBoundRegionPresence();
+                checkAnyRegionPresence();
             },
             'object:removed': (e: any) => {
                 if (e.target?.name === 'bound_rect') checkBoundRegionPresence();
+                checkAnyRegionPresence();
+            },
+            'object:modified': () => {
+                checkAnyRegionPresence();
             },
         });
     };
 
     useHotkeys([
         ['alt+S', () => {
-            MainView.sendRegions(baselineId!, mainView.getRegionsData());
+            mainView.saveRegions(baselineId!);
         }],
         ['Delete', () => mainView.removeActiveIgnoreRegions()],
         ['Backspace', () => mainView.removeActiveIgnoreRegions()],
@@ -266,7 +279,7 @@ export function RegionsToolbar({ mainView, baselineId, view, hasDiff = false }: 
                 label={
                     (
                         <Group>
-                            <Text>Save ignore Regions</Text>
+                            <Text>Save regions</Text>
                             <Group align="left" spacing={4} noWrap>
 
                                 <Kbd sx={{ fontSize: 11, borderBottomWidth: 1 }}>Alt</Kbd>
@@ -279,7 +292,8 @@ export function RegionsToolbar({ mainView, baselineId, view, hasDiff = false }: 
             >
                 <ActionIcon
                     data-check="save-ignore-region"
-                    onClick={() => MainView.sendRegions(baselineId!, mainView.getRegionsData())}
+                    disabled={!hasAnyRegion && !isDirty}
+                    onClick={() => mainView.saveRegions(baselineId!)}
                 >
                     <IconDeviceFloppy size={24} stroke={1} />
                 </ActionIcon>

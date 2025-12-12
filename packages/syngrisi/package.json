@@ -45,6 +45,7 @@
   "scripts": {
     "server:watch": "npx tsup --watch --onSuccess \"node ./dist/server/server.js\" # compile all server ts files changes",
     "start": "if [ \"$NODE_ENV\" = \"development\" ]; then yarn server:watch; else node ./dist/server/server.js; fi",
+    "start:dev": "cross-env SYNGRISI_AUTH=true SYNGRISI_TEST_MODE=true SYNGRISI_ENABLE_SCHEDULERS_IN_TEST_MODE=true npx tsup --watch --onSuccess \"node ./dist/server/server.js\"",
     "test": "yarn build && cd e2e && yarn test",
     "test:mcp": "cd e2e && yarn test:mcp",
     "start:mcp": "cd e2e && yarn start:mcp",

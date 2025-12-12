@@ -37,6 +37,7 @@ interface Props {
     closeHandler: any,
     relatedRendered?: boolean,
     testList?: any[],
+    apikey?: string,
 }
 
 export function CheckDetails({
@@ -45,12 +46,14 @@ export function CheckDetails({
     closeHandler,
     relatedRendered = true,
     testList = [],
+    apikey,
 }: Props) {
     useDocumentTitle(initCheckData?.name);
     const canvasElementRef = useRef(null);
     const { query, setQuery } = useParams();
     const { classes } = useStyles();
     const [mainView, setMainView] = useState<MainView | null>(null);
+    const [isDirty, setIsDirty] = useState(false);
 
     const [relatedActiveCheckId, setRelatedActiveCheckId] = useState<string>(initCheckData._id);
     const [relatedChecksOpened, relatedChecksHandler] = useDisclosure(relatedRendered);
@@ -107,11 +110,12 @@ export function CheckDetails({
         ],
         () => GenericService.get(
             'baselines',
-            { snapshootId: currentCheck?.baselineId._id },
+            { snapshootId: currentCheck?.baselineId?._id },
             {
                 populate: 'app',
                 limit: '1',
                 includeUsage: 'true',
+                share: apikey,
             },
             'baseline_by_snapshot_id',
         ),
@@ -138,6 +142,22 @@ export function CheckDetails({
         return 0;
     }, [baselineQuery.data?.timestamp]);
 
+    const settingsQuery = useQuery(
+        ['settings-public'],
+        () => GenericService.get('settings/public'),
+        { refetchOnWindowFocus: false }
+    );
+
+    const isShareEnabled = useMemo(() => {
+        if (!settingsQuery.data) return true;
+        const setting = settingsQuery.data.find((s: any) => s.name === 'share_enabled');
+        if (!setting) return true;
+        // Check both: setting must be enabled AND its value must be "true"
+        const valueIsTrue = setting.value === 'true' || setting.value === true;
+        const isEnabled = setting.enabled !== false;
+        return valueIsTrue && isEnabled;
+    }, [settingsQuery.data]);
+
     // Navigation Logic
     const siblingChecksQuery = useQuery(
         ['sibling_checks', currentCheck?.test?._id],
@@ -148,6 +168,7 @@ export function CheckDetails({
                 limit: '0',
                 sortBy: 'CreatedDate',
                 sortOrder: -1,
+                share: apikey,
             },
             'sibling_checks_for_nav'
         ),
@@ -182,6 +203,11 @@ export function CheckDetails({
 
     const handleNavigateCheck = (direction: 'prev' | 'next') => {
         if (!siblingChecks.length) return;
+
+        if (mainView?.isDirty() && !window.confirm('You have unsaved changes. Are you sure you want to leave?')) {
+            return;
+        }
+
         const targetIndex = direction === 'prev' ? currentCheckIndex - 1 : currentCheckIndex + 1;
         if (targetIndex >= 0 && targetIndex < siblingChecks.length) {
             setQuery({ checkId: siblingChecks[targetIndex]._id });
@@ -190,6 +216,11 @@ export function CheckDetails({
 
     const handleNavigateTest = async (direction: 'prev' | 'next') => {
         if (!testList || !testList.length) return;
+
+        if (mainView?.isDirty() && !window.confirm('You have unsaved changes. Are you sure you want to leave?')) {
+            return;
+        }
+
         const targetTestIndex = direction === 'prev' ? currentTestIndex - 1 : currentTestIndex + 1;
 
         if (targetTestIndex >= 0 && targetTestIndex < testList.length) {
@@ -203,6 +234,7 @@ export function CheckDetails({
                     limit: '1',
                     sortBy: 'CreatedDate',
                     sortOrder: -1,
+                    share: apikey,
                 },
                 'first_check_for_nav'
             );
@@ -216,11 +248,17 @@ export function CheckDetails({
     // Helper function to load images
     const loadImages = async () => {
         // Build image URLs (without query params for cache lookup)
-        const expectedImgSrcBase = `${config.baseUri}/snapshoots/${currentCheck?.baselineId?.filename}`;
-        const actualImgSrcBase = `${config.baseUri}/snapshoots/${currentCheck?.actualSnapshotId?.filename}`;
-        const diffImgSrcBase = currentCheck?.diffId?.filename
+        let expectedImgSrcBase = `${config.baseUri}/snapshoots/${currentCheck?.baselineId?.filename}`;
+        let actualImgSrcBase = `${config.baseUri}/snapshoots/${currentCheck?.actualSnapshotId?.filename}`;
+        let diffImgSrcBase = currentCheck?.diffId?.filename
             ? `${config.baseUri}/snapshoots/${currentCheck?.diffId?.filename}`
             : null;
+
+        if (apikey) {
+            expectedImgSrcBase += `?share=${apikey}`;
+            actualImgSrcBase += `?share=${apikey}`;
+            if (diffImgSrcBase) diffImgSrcBase += `?share=${apikey}`;
+        }
 
         // Try to get from preload cache first, fallback to loading
         let expectedImg = imagePreloadService.getPreloadedImage(expectedImgSrcBase);
@@ -311,7 +349,7 @@ export function CheckDetails({
                 return null;
             });
         };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []); // Only on mount/unmount
 
     // Update images when check changes (navigation) - reuse existing canvas
@@ -353,7 +391,7 @@ export function CheckDetails({
         return () => {
             isMounted = false;
         };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentCheck?._id]); // Only when check ID changes
 
     // Sync window.mainView with React state for E2E tests
@@ -373,6 +411,42 @@ export function CheckDetails({
         mainView,
         baselineId,
     ]);
+
+    // Handle dirty state updates from canvas events
+    useEffect(() => {
+        if (!mainView?.canvas) return;
+
+        const updateDirtyState = () => {
+            setIsDirty(mainView.isDirty());
+        };
+
+        const events = {
+            'object:added': updateDirtyState,
+            'object:removed': updateDirtyState,
+            'object:modified': updateDirtyState,
+            'selection:updated': updateDirtyState, // Maybe not needed for dirty state but good for consistency
+        };
+
+        mainView.canvas.on(events);
+
+        return () => {
+            mainView.canvas.off(events);
+        };
+    }, [mainView]);
+
+    // Native window alert for closing tab/window
+    useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            if (isDirty) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        };
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+    }, [isDirty]);
 
     return (
         <Group style={{ width: '96vw' }} spacing={4}>
@@ -399,6 +473,8 @@ export function CheckDetails({
                     isFirstTest={currentTestIndex <= 0}
                     isLastTest={currentTestIndex === testList.length - 1}
                     navigationReady={!siblingChecksQuery.isLoading && siblingChecks.length > 0 && currentCheckIndex >= 0}
+                    isShareEnabled={isShareEnabled}
+                    apikey={apikey}
                 />
 
                 <Group

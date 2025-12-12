@@ -6,7 +6,7 @@ import {
     ActionIcon,
 } from '@mantine/core';
 import { useSearchParams } from 'react-router-dom';
-import { useLocalStorage } from '@mantine/hooks';
+import { useLocalStorage, useMediaQuery } from '@mantine/hooks';
 import { useEffect, useState, useRef } from 'react';
 import { IconAdjustments, IconFilter } from '@tabler/icons-react';
 import RefreshActionIcon from '@index/components/Tests/Table/RefreshActionIcon';
@@ -30,6 +30,7 @@ export default function Tests({ updateToolbar }: Props) {
     const [searchParams, setSearchParams] = useSearchParams();
     const [sortOpen, setSortOpen] = useState(false);
     const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+    const isMobile = useMediaQuery('(max-width: 500px)');
     const baseFilter = query.base_filter ? query.base_filter : {};
     if (query.app) baseFilter.app = { $oid: query?.app || '' };
 
@@ -146,6 +147,16 @@ export default function Tests({ updateToolbar }: Props) {
         ],
     );
 
+    const filterWidth = isMobile ? '100%' : '420px';
+    const settingsWidth = '260px';
+
+    let tableWidth = '100%';
+    if (isFilterDrawerOpen) {
+        tableWidth = isMobile ? '0%' : `calc(100% - ${filterWidth})`;
+    } else if (sortOpen) {
+        tableWidth = `calc(100% - ${settingsWidth})`;
+    }
+
     return (
         <Group position="apart" align="start" noWrap>
             <TestsTable
@@ -153,7 +164,7 @@ export default function Tests({ updateToolbar }: Props) {
                 firstPageQuery={firstPageQuery}
                 infinityQuery={infinityQuery}
                 visibleFields={visibleFields}
-                size={(sortOpen || isFilterDrawerOpen) ? '80%' : '100%'}
+                size={tableWidth}
             />
 
             <Settings

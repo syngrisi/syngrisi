@@ -28,8 +28,8 @@ const validateShare = catchAsync(async (req: ExtRequest, res: Response) => {
         throw new ApiError(HttpStatus.BAD_REQUEST, 'Share token is required');
     }
 
-    const isValid = await shareService.validateShareToken(checkId, token);
-    res.status(HttpStatus.OK).json({ valid: isValid });
+    const shareToken = await shareService.validateShareToken(checkId, token);
+    res.status(HttpStatus.OK).json({ valid: !!shareToken });
 });
 
 const revokeShare = catchAsync(async (req: ExtRequest, res: Response) => {
