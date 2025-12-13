@@ -68,7 +68,7 @@
     "staging:test:all": "./scripts/staging/run-all-staging-tests.sh",
     "test:migrations": "tsx --test src/server/migrations/__tests__/migrationRunner.test.ts",
     "dev": "npx concurrently -k -n \"UI,SERVER\" -c \"magenta,blue\" \"yarn dev:ui\" \"cross-env SYNGRISI_AUTH=false yarn server:watch\"",
-    "dev:ui": "cross-env VITE_SYNGRISI_BASED_URL='http://localhost:3000' VITE_INDEX_ROUTE='index2/' vite",
+    "dev:ui": "vite",
     "dev:admin": "cross-env VITE_SYNGRISI_BASED_URL='http://localhost:3000' VITE_INDEX_ROUTE='admin/' vite/' vite #(!) open http://localhost:8080/admin/ ",
     "build:watch": "cross-env VITE_ROOT_PATH='./src/ui-app/' vite build --watch",
     "pub": "np --yolo --no-publish",
