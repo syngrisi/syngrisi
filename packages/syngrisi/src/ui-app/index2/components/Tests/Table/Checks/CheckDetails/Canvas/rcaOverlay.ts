@@ -31,10 +31,12 @@ export class RCAOverlay {
 
     private highlightRect: fabric.Rect | null = null;
     private changeRects: fabric.Rect[] = [];
+    private wireframeRects: fabric.Rect[] = [];
 
     private imageScale: number = 1;
     private imageOffsetX: number = 0;
     private imageOffsetY: number = 0;
+    private isWireframeVisible: boolean = false;
 
     constructor(
         canvas: fabric.Canvas,
@@ -55,7 +57,8 @@ export class RCAOverlay {
         changes: DOMChange[],
         imageScale: number = 1,
         imageOffsetX: number = 0,
-        imageOffsetY: number = 0
+        imageOffsetY: number = 0,
+        showWireframe: boolean = false
     ): void {
         this.actualDom = actualDom;
         this.baselineDom = baselineDom;
@@ -63,10 +66,14 @@ export class RCAOverlay {
         this.imageScale = imageScale;
         this.imageOffsetX = imageOffsetX;
         this.imageOffsetY = imageOffsetY;
+        this.isWireframeVisible = showWireframe;
 
         this.enabled = true;
         this.bindEvents();
         this.renderChangeHighlights();
+        if (this.isWireframeVisible) {
+            this.renderWireframe();
+        }
     }
 
     /**
@@ -77,6 +84,7 @@ export class RCAOverlay {
         this.unbindEvents();
         this.clearHighlight();
         this.clearChangeHighlights();
+        this.clearWireframe();
         this.actualDom = null;
         this.baselineDom = null;
         this.changes = [];
@@ -99,6 +107,23 @@ export class RCAOverlay {
 
         if (this.enabled) {
             this.renderChangeHighlights();
+            if (this.isWireframeVisible) {
+                this.renderWireframe();
+            }
+        }
+    }
+
+    /**
+     * Toggle wireframe visibility
+     */
+    toggleWireframe(visible: boolean): void {
+        this.isWireframeVisible = visible;
+        if (this.enabled) {
+            if (visible) {
+                this.renderWireframe();
+            } else {
+                this.clearWireframe();
+            }
         }
     }
 
@@ -321,6 +346,56 @@ export class RCAOverlay {
             this.canvas.remove(rect);
         }
         this.changeRects = [];
+        this.canvas.renderAll();
+    }
+
+    /**
+     * Render wireframe for all elements
+     */
+    private renderWireframe(): void {
+        this.clearWireframe();
+        if (!this.actualDom) return;
+
+        const traverse = (node: DOMNode) => {
+            // Skip if node has no dimensions
+            if (node.rect.width > 0 && node.rect.height > 0) {
+                const canvasRect = this.domToCanvas(node.rect);
+                
+                const rect = new fabric.Rect({
+                    left: canvasRect.left,
+                    top: canvasRect.top,
+                    width: canvasRect.width,
+                    height: canvasRect.height,
+                    fill: 'transparent',
+                    stroke: 'rgba(0, 150, 255, 0.2)',
+                    strokeWidth: 1,
+                    selectable: false,
+                    evented: false,
+                    name: 'rca_wireframe',
+                });
+
+                this.wireframeRects.push(rect);
+                this.canvas.add(rect);
+                rect.sendToBack(); // Send to back so highlights are on top
+            }
+
+            if (node.children) {
+                node.children.forEach(traverse);
+            }
+        };
+
+        traverse(this.actualDom);
+        this.canvas.renderAll();
+    }
+
+    /**
+     * Clear wireframe
+     */
+    private clearWireframe(): void {
+        for (const rect of this.wireframeRects) {
+            this.canvas.remove(rect);
+        }
+        this.wireframeRects = [];
         this.canvas.renderAll();
     }
 

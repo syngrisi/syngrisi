@@ -29,6 +29,7 @@ export interface UseRCAReturn {
     selectChange: (change: DOMChange | null) => void;
     selectElement: (element: DOMNode | null) => void;
     setHoveredElement: (element: DOMNode | null) => void;
+    toggleWireframe: () => void;
 }
 
 const initialState: RCAState = {
@@ -42,6 +43,7 @@ const initialState: RCAState = {
     selectedElement: null,
     selectedChange: null,
     hoveredElement: null,
+    isWireframeEnabled: false,
 };
 
 export function useRCA(options: UseRCAOptions): UseRCAReturn {
@@ -166,6 +168,16 @@ export function useRCA(options: UseRCAOptions): UseRCAReturn {
         }));
     }, []);
 
+    /**
+     * Toggle wireframe mode
+     */
+    const toggleWireframe = useCallback(() => {
+        setState((prev) => ({
+            ...prev,
+            isWireframeEnabled: !prev.isWireframeEnabled,
+        }));
+    }, []);
+
     // Re-fetch when check changes and RCA is enabled
     useEffect(() => {
         if (state.isEnabled && checkId) {
@@ -181,6 +193,7 @@ export function useRCA(options: UseRCAOptions): UseRCAReturn {
         selectChange,
         selectElement,
         setHoveredElement,
+        toggleWireframe,
     };
 }
 

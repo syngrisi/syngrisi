@@ -116,6 +116,7 @@ export interface RCAState {
     selectedElement: DOMNode | null;
     selectedChange: DOMChange | null;
     hoveredElement: DOMNode | null;
+    isWireframeEnabled: boolean;
 }
 
 /**
