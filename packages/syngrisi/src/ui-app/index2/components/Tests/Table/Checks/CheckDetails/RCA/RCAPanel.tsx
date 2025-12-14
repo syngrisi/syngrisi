@@ -320,7 +320,9 @@ export function RCAPanel({
                     width: '500px',
                     minWidth: '500px',
                     height: '100%',
-                    backgroundColor: 'var(--mantine-color-dark-7)',
+                    backgroundColor: 'rgba(20, 20, 20, 0.85)',
+                backdropFilter: 'blur(12px)',
+                borderLeft: '1px solid rgba(255, 255, 255, 0.1)',
                 }}
             >
                 <Center style={{ height: '200px' }}>
@@ -345,7 +347,9 @@ export function RCAPanel({
                 style={{
                     width: '500px',
                     minWidth: '500px',
-                    backgroundColor: 'var(--mantine-color-dark-7)',
+                    backgroundColor: 'rgba(20, 20, 20, 0.85)',
+                backdropFilter: 'blur(12px)',
+                borderLeft: '1px solid rgba(255, 255, 255, 0.1)',
                 }}
             >
                 <Stack align="center" gap="sm">
@@ -370,7 +374,9 @@ export function RCAPanel({
                 style={{
                     width: '500px',
                     minWidth: '500px',
-                    backgroundColor: 'var(--mantine-color-dark-7)',
+                    backgroundColor: 'rgba(20, 20, 20, 0.85)',
+                backdropFilter: 'blur(12px)',
+                borderLeft: '1px solid rgba(255, 255, 255, 0.1)',
                 }}
             >
                 <Stack align="center" gap="sm">
@@ -397,7 +403,9 @@ export function RCAPanel({
                 minWidth: '500px',
                 flexShrink: 0,
                 height: '100%',
-                backgroundColor: 'var(--mantine-color-dark-7)',
+                backgroundColor: 'rgba(20, 20, 20, 0.85)',
+                backdropFilter: 'blur(12px)',
+                borderLeft: '1px solid rgba(255, 255, 255, 0.1)',
                 display: 'flex',
                 flexDirection: 'column',
             }}
@@ -415,7 +423,9 @@ export function RCAPanel({
                 value={activeTab}
                 onChange={setActiveTab}
                 variant="pills"
-                style={{ flex: 1, display: 'flex', flexDirection: 'column' }}
+                style={{
+                    flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0,
+                }}
                 data-test="rca-tabs"
             >
                 <Tabs.List p="xs">
@@ -437,8 +447,8 @@ export function RCAPanel({
                     </Tabs.Tab>
                 </Tabs.List>
 
-                <ScrollArea style={{ flex: 1 }} p="xs">
-                    <Tabs.Panel value="issues">
+                <Tabs.Panel value="issues" style={{ flex: 1, minHeight: 0 }}>
+                    <ScrollArea h="100%" p="xs" style={{ overscrollBehavior: 'contain' }}>
                         {diffResult.issues.length === 0 ? (
                             <Text size="xs" c="dimmed" ta="center" p="md">
                                 No grouped issues found.
@@ -454,9 +464,11 @@ export function RCAPanel({
                                 ))}
                             </Accordion>
                         )}
-                    </Tabs.Panel>
+                    </ScrollArea>
+                </Tabs.Panel>
 
-                    <Tabs.Panel value="changes">
+                <Tabs.Panel value="changes" style={{ flex: 1, minHeight: 0 }}>
+                    <ScrollArea h="100%" p="xs" style={{ overscrollBehavior: 'contain' }}>
                         <Stack gap="xs">
                             {diffResult.changes.map((change) => (
                                 <ChangeItem
@@ -467,8 +479,8 @@ export function RCAPanel({
                                 />
                             ))}
                         </Stack>
-                    </Tabs.Panel>
-                </ScrollArea>
+                    </ScrollArea>
+                </Tabs.Panel>
             </Tabs>
         </Paper>
     );
