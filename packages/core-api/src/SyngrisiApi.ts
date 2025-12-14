@@ -30,6 +30,10 @@ if (process.env.SYNGRISI_LOG_LEVEL) {
     log.setLevel(process.env.SYNGRISI_LOG_LEVEL as LogLevelDesc)
 }
 
+const isDomDataDisabled = (): boolean => {
+    return process.env.SYNGRISI_DISABLE_DOM_DATA === 'true'
+}
+
 /**
  * Creates a SHA-512 hash of the input string (replaces hasha library)
  * Note: hasha library uses SHA-512 by default, so we must use SHA-512 here
@@ -287,7 +291,9 @@ class SyngrisiApi {
             })
 
             // Handle domDump with compression for RCA
-            if (params.domDump) {
+            // Skip if SYNGRISI_DISABLE_DOM_DATA env var is set or skipDomData option is true
+            const shouldSkipDom = isDomDataDisabled() || params.skipDomData === true
+            if (params.domDump && !shouldSkipDom) {
                 const { data, isCompressed } = prepareDomDumpForTransfer(params.domDump)
                 form.append('domdump', data)
                 if (isCompressed) {

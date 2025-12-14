@@ -140,7 +140,12 @@ async function createTestsWithParams(
   const quickCheckMaxWaitMs = fastSeed ? 500 : 2000;
   const waitAfterStopMs = fastSeed ? 10 : 100;
 
-  const apiKey = process.env.SYNGRISI_API_KEY || '123';
+  // For @fast-server tests, auth is disabled so we should always use the default API key.
+  // Only use env SYNGRISI_API_KEY if it was explicitly set by THIS test (stored in testData),
+  // not leaked from a previous test.
+  const storedApiKey = testData.get('explicitApiKey') as string | undefined;
+  const defaultApiKey = '123';
+  const apiKey = storedApiKey || defaultApiKey;
   const hashedApiKey = hashApiKey(apiKey);
   testData.set('hashedApiKey', hashedApiKey);
   testData.set('apiBaseUrl', appServer.baseURL);
@@ -634,7 +639,7 @@ async function unfoldTestRow(page: Page, testName: string): Promise<void> {
           if (!collapse) return false;
           // Check for checks ready OR no-checks message
           return collapse.querySelector('[data-test-checks-ready="true"]') !== null ||
-                 collapse.textContent?.includes('does not have any checks');
+            collapse.textContent?.includes('does not have any checks');
         },
         testName,
         { timeout: 15000 }
@@ -706,7 +711,7 @@ When(
           logger.warn('Badge still visible after refresh click, continuing anyway');
         }
 
-        await page.waitForLoadState('networkidle', { timeout: 3000 }).catch(() => {});
+        await page.waitForLoadState('networkidle', { timeout: 3000 }).catch(() => { });
 
         // Check again after refresh
         const isVisibleNow = await locator.isVisible().catch(() => false);
@@ -724,7 +729,7 @@ When(
       if (await refreshButton.isVisible({ timeout: 500 }).catch(() => false)) {
         logger.info(`Test not found, clicking Refresh (attempt ${attempt}/${maxRetries})`);
         await refreshButton.click();
-        await page.waitForLoadState('networkidle', { timeout: 3000 }).catch(() => {});
+        await page.waitForLoadState('networkidle', { timeout: 3000 }).catch(() => { });
       }
 
       // Brief wait for UI to update

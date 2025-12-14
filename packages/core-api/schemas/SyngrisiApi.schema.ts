@@ -102,6 +102,7 @@ export const CheckParamsSchema = z.object({
     hashCode: z.string().min(64), // SHA256 (64 chars) or SHA512 (128 chars)
 
     domDump: DomDumpSchema.optional(), // DomNode tree or compressed format for RCA
+    skipDomData: z.boolean().optional(), // Skip sending DOM data even if collected
 })
 
 export type CheckParams = z.infer<typeof CheckParamsSchema>;

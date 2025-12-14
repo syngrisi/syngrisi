@@ -38,6 +38,7 @@ import {
     LogicalIssue,
     PropertyChange,
     DOMChangeType,
+    DOMRect,
 } from '@shared/interfaces/IRCA';
 
 interface RCAPanelProps {
@@ -107,35 +108,109 @@ function getSeverityColor(severity: string): string {
 }
 
 /**
- * Property diff row component
+ * Format XPath for display
  */
-function PropertyDiffRow({ prop }: { prop: PropertyChange }) {
+function formatXPath(xpath: string) {
+    const parts = xpath.split('/');
+    const relevantParts = parts.slice(-3);
     return (
-        <Box
-            style={{
-                padding: '4px 8px',
-                backgroundColor: 'var(--mantine-color-dark-6)',
-                borderRadius: '4px',
-                marginBottom: '4px',
-            }}
-        >
-            <Text size="xs" fw={500} c="dimmed">
-                {prop.property}
-            </Text>
-            <Group gap="xs" mt={2}>
-                <Text
-                    size="xs"
-                    c="red"
-                    style={{ textDecoration: 'line-through' }}
+        <Group gap={4} style={{ flexWrap: 'wrap', rowGap: 0 }}>
+            <Text size="xs" c="dimmed">... &gt;</Text>
+            {relevantParts.map((part, i) => (
+                <React.Fragment key={i}>
+                    {i > 0 && <Text size="xs" c="dimmed">&gt;</Text>}
+                    <Text size="xs" c="blue" style={{ wordBreak: 'break-all' }}>{part}</Text>
+                </React.Fragment>
+            ))}
+        </Group>
+    );
+}
+
+/**
+ * Attributes Diff Component
+ */
+function AttributesDiff({ properties }: { properties: PropertyChange[] }) {
+    if (!properties || properties.length === 0) return null;
+    return (
+        <Paper p="xs" withBorder bg="var(--mantine-color-dark-8)">
+            <Text size="xs" fw={500} mb="xs" c="dimmed">Attributes</Text>
+            <Stack gap={4}>
+                {properties.map((prop, idx) => (
+                    <Box key={idx}>
+                        {prop.baselineValue && (
+                            <Group gap="xs" style={{ backgroundColor: 'rgba(224, 49, 49, 0.15)', padding: '2px 6px', borderRadius: '4px' }}>
+                                <Text size="xs" c="red" style={{ fontFamily: 'monospace' }}>- {prop.property}: {prop.baselineValue}</Text>
+                            </Group>
+                        )}
+                        {prop.actualValue && (
+                            <Group gap="xs" style={{ backgroundColor: 'rgba(47, 158, 68, 0.15)', padding: '2px 6px', borderRadius: '4px' }}>
+                                <Text size="xs" c="green" style={{ fontFamily: 'monospace' }}>+ {prop.property}: {prop.actualValue}</Text>
+                            </Group>
+                        )}
+                    </Box>
+                ))}
+            </Stack>
+        </Paper>
+    );
+}
+
+/**
+ * Bounding Box Visualizer Component
+ */
+function BoundingBoxVisualizer({ baseline, actual }: { baseline?: DOMNode, actual?: DOMNode }) {
+    if (!baseline?.rect && !actual?.rect) return null;
+
+    const bRect = baseline?.rect;
+    const aRect = actual?.rect;
+
+    return (
+        <Paper p="xs" withBorder bg="var(--mantine-color-dark-8)">
+            <Text size="xs" fw={500} mb="xs" c="dimmed">Bounding box</Text>
+            <Group justify="center" gap="xl" align="center">
+                {/* Position */}
+                <Stack gap={4} align="flex-end">
+                    <Text size="xs" c="dimmed" fz={10}>POSITION</Text>
+                    <Group gap={8}>
+                        <Stack gap={0} align="flex-end">
+                            {bRect && <Text size="xs" c="red" td="line-through" style={{ fontFamily: 'monospace' }}>{bRect.x.toFixed(1)}</Text>}
+                            {aRect && <Text size="xs" c="green" style={{ fontFamily: 'monospace' }}>{aRect.x.toFixed(1)}</Text>}
+                        </Stack>
+                        <Stack gap={0} align="flex-end">
+                            {bRect && <Text size="xs" c="red" td="line-through" style={{ fontFamily: 'monospace' }}>{bRect.y.toFixed(1)}</Text>}
+                            {aRect && <Text size="xs" c="green" style={{ fontFamily: 'monospace' }}>{aRect.y.toFixed(1)}</Text>}
+                        </Stack>
+                    </Group>
+                </Stack>
+
+                {/* Box Visualization */}
+                <Box
+                    style={{
+                        position: 'relative',
+                        width: 120,
+                        height: 70,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        border: '1px solid var(--mantine-color-dark-4)',
+                        backgroundColor: 'var(--mantine-color-dark-7)',
+                        borderRadius: '4px'
+                    }}
                 >
-                    {prop.baselineValue}
-                </Text>
-                <Text size="xs" c="dimmed">→</Text>
-                <Text size="xs" c="green">
-                    {prop.actualValue}
-                </Text>
+                     <Stack gap={0} align="center">
+                        {bRect && (
+                            <Text size="xs" c="red" td="line-through" style={{ fontFamily: 'monospace' }}>
+                                {bRect.width} x {bRect.height}
+                            </Text>
+                        )}
+                        {aRect && (
+                            <Text size="xs" c="green" style={{ fontFamily: 'monospace' }}>
+                                {aRect.width} x {aRect.height}
+                            </Text>
+                        )}
+                    </Stack>
+                </Box>
             </Group>
-        </Box>
+        </Paper>
     );
 }
 
@@ -144,59 +219,36 @@ function PropertyDiffRow({ prop }: { prop: PropertyChange }) {
  */
 function ChangeItem({
     change,
-    isSelected,
     onSelect,
 }: {
     change: DOMChange;
-    isSelected: boolean;
     onSelect: () => void;
 }) {
     const color = getChangeColor(change.type);
     const icon = getChangeIcon(change.type);
 
     return (
-        <Paper
-            p="xs"
-            radius="sm"
-            data-test="rca-change-item"
-            data-test-change-type={change.type}
-            data-test-selected={isSelected ? 'true' : 'false'}
-            style={{
-                cursor: 'pointer',
-                backgroundColor: isSelected
-                    ? 'var(--mantine-color-blue-9)'
-                    : 'var(--mantine-color-dark-6)',
-                border: isSelected
-                    ? '1px solid var(--mantine-color-blue-5)'
-                    : '1px solid transparent',
-            }}
-            onClick={onSelect}
-        >
-            <Group gap="xs" mb={4}>
-                <ThemeIcon size="sm" variant="light" color={color}>
-                    {icon}
-                </ThemeIcon>
-                <Text size="xs" fw={500} style={{ flex: 1 }}>
-                    {change.xpath.split('/').pop() || change.type}
-                </Text>
-                <Badge size="xs" color={color}>
-                    {change.type.replace('_', ' ')}
-                </Badge>
-            </Group>
-
-            {change.changedProperties && change.changedProperties.length > 0 && (
-                <Stack gap={2} mt="xs">
-                    {change.changedProperties.slice(0, 3).map((prop, idx) => (
-                        <PropertyDiffRow key={idx} prop={prop} />
-                    ))}
-                    {change.changedProperties.length > 3 && (
-                        <Text size="xs" c="dimmed">
-                            +{change.changedProperties.length - 3} more properties
-                        </Text>
-                    )}
+        <Accordion.Item value={change.id} style={{ borderColor: 'var(--mantine-color-dark-4)', backgroundColor: 'var(--mantine-color-dark-6)', marginBottom: 4, borderRadius: 4 }}>
+            <Accordion.Control onClick={onSelect}>
+                <Group gap="xs" wrap="nowrap">
+                    <ThemeIcon size="sm" variant="light" color={color} style={{ flexShrink: 0 }}>
+                        {icon}
+                    </ThemeIcon>
+                    <Box style={{ flex: 1, overflow: 'hidden' }}>
+                        {formatXPath(change.xpath)}
+                    </Box>
+                    <Badge size="xs" color={color} variant="light">
+                        {change.type.replace('_', ' ')}
+                    </Badge>
+                </Group>
+            </Accordion.Control>
+            <Accordion.Panel>
+                <Stack gap="xs">
+                    <AttributesDiff properties={change.changedProperties || []} />
+                    <BoundingBoxVisualizer baseline={change.baselineNode} actual={change.actualNode} />
                 </Stack>
-            )}
-        </Paper>
+            </Accordion.Panel>
+        </Accordion.Item>
     );
 }
 
@@ -236,33 +288,15 @@ function IssueItem({
                 <Text size="xs" fw={500} mb="xs">
                     Affected elements ({issue.affectedChanges.length}):
                 </Text>
-                <Stack gap="xs">
+                <Accordion variant="separated" chevronPosition="left">
                     {issue.affectedChanges.map((change) => (
-                        <Paper
+                        <ChangeItem
                             key={change.id}
-                            p="xs"
-                            radius="sm"
-                            style={{
-                                cursor: 'pointer',
-                                backgroundColor: 'var(--mantine-color-dark-7)',
-                            }}
-                            onClick={() => onSelectChange(change)}
-                        >
-                            <Group gap="xs">
-                                <ThemeIcon
-                                    size="xs"
-                                    variant="light"
-                                    color={getChangeColor(change.type)}
-                                >
-                                    {getChangeIcon(change.type)}
-                                </ThemeIcon>
-                                <Text size="xs">
-                                    {change.xpath.split('/').pop()}
-                                </Text>
-                            </Group>
-                        </Paper>
+                            change={change}
+                            onSelect={() => onSelectChange(change)}
+                        />
                     ))}
-                </Stack>
+                </Accordion>
             </Accordion.Panel>
         </Accordion.Item>
     );
@@ -453,16 +487,15 @@ export function RCAPanel({
 
                 <Tabs.Panel value="changes" style={{ flex: 1, minHeight: 0 }}>
                     <ScrollArea h="100%" p="xs" style={{ overscrollBehavior: 'contain' }}>
-                        <Stack gap="xs">
+                        <Accordion variant="separated" chevronPosition="left">
                             {diffResult.changes.map((change) => (
                                 <ChangeItem
                                     key={change.id}
                                     change={change}
-                                    isSelected={selectedChange?.id === change.id}
                                     onSelect={() => onSelectChange(change)}
                                 />
                             ))}
-                        </Stack>
+                        </Accordion>
                     </ScrollArea>
                 </Tabs.Panel>
             </Tabs>

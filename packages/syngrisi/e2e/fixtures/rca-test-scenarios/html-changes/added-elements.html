@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RCA Test - HTML Added Elements</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { background: #3498db; color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .header h1 { font-size: 24px; }
+        .content { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .item { padding: 15px; border-bottom: 1px solid #eee; }
+        .item:last-child { border-bottom: none; }
+        .item-title { font-weight: bold; color: #333; }
+        .item-desc { color: #666; font-size: 14px; margin-top: 5px; }
+        .footer { text-align: center; color: #999; font-size: 12px; margin-top: 20px; }
+        .new-badge { background: #27ae60; color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; margin-left: 10px; }
+        .notification { background: #fff3cd; border: 1px solid #ffc107; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Dashboard</h1>
+            <p>Welcome to the application</p>
+        </div>
+        <!-- NEW: Notification banner -->
+        <div class="notification" data-id="notification">
+            New feature available! Check out the latest updates.
+        </div>
+        <div class="content">
+            <div class="item" data-id="item-1">
+                <div class="item-title">First Item</div>
+                <div class="item-desc">Description for the first item</div>
+            </div>
+            <div class="item" data-id="item-2">
+                <div class="item-title">Second Item</div>
+                <div class="item-desc">Description for the second item</div>
+            </div>
+            <div class="item" data-id="item-3">
+                <div class="item-title">Third Item</div>
+                <div class="item-desc">Description for the third item</div>
+            </div>
+            <!-- NEW: Fourth item -->
+            <div class="item" data-id="item-4">
+                <div class="item-title">Fourth Item <span class="new-badge">NEW</span></div>
+                <div class="item-desc">Description for the fourth item</div>
+            </div>
+        </div>
+        <div class="footer">
+            RCA Test Application v1.0
+        </div>
+    </div>
+</body>
+</html>

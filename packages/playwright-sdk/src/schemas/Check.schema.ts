@@ -17,6 +17,7 @@ export const CheckOptionsSchema = z.object({
     hashCode: z.string().length(128).optional(),
 
     domDump: DomDumpSchema.optional(), // DomNode tree or compressed format for RCA
+    skipDomData: z.boolean().optional(), // Skip sending DOM data even if collected
 })
 
 export type CheckOptions = z.infer<typeof CheckOptionsSchema>;

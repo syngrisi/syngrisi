@@ -22,6 +22,7 @@ Feature: RCA (Root Cause Analysis) Panel
 
     # Click RCA toggle button
     When I click element with locator "[data-test='rca-toggle-button']"
+    When I pause
 
     # Verify RCA panel appears with error state (no DOM snapshot available)
     When I wait 10 seconds for the element with locator "[data-test='rca-panel']" to be visible

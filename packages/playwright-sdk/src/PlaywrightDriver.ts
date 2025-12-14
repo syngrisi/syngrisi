@@ -272,9 +272,12 @@ export class PlaywrightDriver {
         let opts: CheckOptions | null = null
         const hash = createHash('sha512').update(imageBuffer).digest('hex')
 
-        // Auto-collect DOM if requested and not already provided
+        // Check if DOM data should be skipped (via env var or option)
+        const skipDomData = params?.skipDomData || process.env.SYNGRISI_DISABLE_DOM_DATA === 'true'
+
+        // Auto-collect DOM if requested and not already provided (unless skipDomData is set)
         let finalDomDump = domDump
-        if (collectDom && !domDump) {
+        if (collectDom && !domDump && !skipDomData) {
             try {
                 const collected = await this.collectDomDump()
                 finalDomDump = collected ?? undefined
@@ -308,7 +311,8 @@ export class PlaywrightDriver {
                 browserFullVersion: this.params.test.browserFullVersion,
 
                 hashCode: hash || '',
-                domDump: finalDomDump,
+                domDump: skipDomData ? undefined : finalDomDump,
+                skipDomData: skipDomData || undefined,
             }
             paramsGuard(opts, 'check, opts', CheckOptionsSchema)
 

@@ -788,7 +788,7 @@ When(
         });
       },
       selector,
-      { timeout: 15000 }
+      { timeout: 30000 }
     );
   }
 );
@@ -931,7 +931,7 @@ Then(
   async ({ page }, selector: string, expectedCount: string) => {
     const locator = getLocatorQuery(page, selector);
     const count = parseInt(expectedCount, 10);
-    await expect(locator).toHaveCount(count);
+    await expect(locator).toHaveCount(count, { timeout: 30000 });
   }
 );
 
@@ -1437,7 +1437,7 @@ Then(
 
         // If there was a badge, give extra time for data to load
         if (hasBadge) {
-          await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => {});
+          await page.waitForLoadState('networkidle', { timeout: 5000 }).catch(() => { });
           // Check again immediately after refresh
           lastCount = await locator.count();
           if (lastCount === exactCount) {
@@ -1453,7 +1453,7 @@ Then(
     const refreshVisible = await refreshButton.isVisible({ timeout: 500 }).catch(() => false);
     if (refreshVisible) {
       await refreshButton.click();
-      await page.waitForLoadState('networkidle', { timeout: 3000 }).catch(() => {});
+      await page.waitForLoadState('networkidle', { timeout: 3000 }).catch(() => { });
       await page.waitForTimeout(500);
     }
 

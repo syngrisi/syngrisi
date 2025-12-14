@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RCA Test - Combined HTML and CSS Changes</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', serif; padding: 20px; background: #e8e8e8; }
+        .container { max-width: 700px; margin: 0 auto; }
+        .header { background: #e74c3c; color: white; padding: 30px; border-radius: 0; margin-bottom: 30px; }
+        .header h1 { font-size: 28px; }
+        .content { background: #fafafa; padding: 25px; border-radius: 0; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .item { padding: 20px; border-bottom: 2px dashed #ccc; }
+        .item:last-child { border-bottom: none; }
+        .item-title { font-weight: normal; color: #e74c3c; font-size: 18px; font-style: italic; }
+        .item-desc { color: #444; font-size: 16px; margin-top: 8px; }
+        .button { 
+            display: inline-block; 
+            background: #9b59b6; 
+            color: white; 
+            padding: 15px 30px; 
+            border-radius: 25px; 
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        .sidebar { 
+            background: #3498db; 
+            color: white;
+            padding: 20px; 
+            margin-top: 25px; 
+            border-radius: 0; 
+        }
+        .footer { text-align: center; color: #666; font-size: 14px; margin-top: 25px; font-weight: bold; }
+        .new-banner {
+            background: #f39c12;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .notification {
+            background: #1abc9c;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="new-banner" data-id="new-banner">
+            New Feature Available!
+        </div>
+        <div class="header">
+            <h1>Updated Dashboard</h1>
+            <p>Welcome to the redesigned application</p>
+        </div>
+        <div class="content">
+            <div class="item" data-id="item-1">
+                <div class="item-title">Enhanced First Item</div>
+                <div class="item-desc">Updated description for the first item with more details</div>
+            </div>
+            <div class="item" data-id="item-2">
+                <div class="item-title">Improved Second Item</div>
+                <div class="item-desc">Updated description for the second item</div>
+            </div>
+            <div class="item" data-id="item-4">
+                <div class="item-title">New Fourth Item</div>
+                <div class="item-desc">Brand new item added to the list</div>
+            </div>
+            <div class="item" data-id="item-5">
+                <div class="item-title">New Fifth Item</div>
+                <div class="item-desc">Another new item added</div>
+            </div>
+            <span class="button">Save Changes</span>
+            <div class="notification" data-id="notification">
+                Your changes have been saved successfully!
+            </div>
+        </div>
+        <div class="sidebar" data-id="sidebar">
+            <strong>Navigation</strong>
+            <ul>
+                <li>Home</li>
+                <li>Settings</li>
+                <li>Profile</li>
+            </ul>
+        </div>
+        <div class="footer">
+            RCA Test Application v2.0 - Redesigned
+        </div>
+    </div>
+</body>
+</html>
