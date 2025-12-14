@@ -162,9 +162,7 @@ export function Toolbar(
                         </>
                     )}
 
-                    {!rcaEnabled && (
-                        <ScreenshotDetails mainView={mainView} check={curCheck} apikey={apikey} />
-                    )}
+                    <ScreenshotDetails mainView={mainView} check={curCheck} apikey={apikey} rcaEnabled={rcaEnabled} />
                 </Group>
 
                 {/* Right side: Tools and actions */}
@@ -285,23 +283,31 @@ export function Toolbar(
 
                                 {rcaEnabled && rcaStats && (
                                     <Group spacing={4} ml={4}>
-                                        <Badge size="sm" color="gray" variant="light" data-test="rca-stats-total-toolbar">
-                                            {rcaStats.totalChanges}
-                                        </Badge>
-                                        {rcaStats.addedNodes > 0 && (
-                                            <Badge size="sm" color="green" variant="light" data-test="rca-stats-added-toolbar">
-                                                +{rcaStats.addedNodes}
+                                        <Tooltip label="Total changes" withinPortal>
+                                            <Badge size="sm" color="gray" variant="light" data-test="rca-stats-total-toolbar">
+                                                {rcaStats.totalChanges}
                                             </Badge>
+                                        </Tooltip>
+                                        {rcaStats.addedNodes > 0 && (
+                                            <Tooltip label="Added elements" withinPortal>
+                                                <Badge size="sm" color="green" variant="light" data-test="rca-stats-added-toolbar">
+                                                    +{rcaStats.addedNodes}
+                                                </Badge>
+                                            </Tooltip>
                                         )}
                                         {rcaStats.removedNodes > 0 && (
-                                            <Badge size="sm" color="red" variant="light" data-test="rca-stats-removed-toolbar">
-                                                -{rcaStats.removedNodes}
-                                            </Badge>
+                                            <Tooltip label="Removed elements" withinPortal>
+                                                <Badge size="sm" color="red" variant="light" data-test="rca-stats-removed-toolbar">
+                                                    -{rcaStats.removedNodes}
+                                                </Badge>
+                                            </Tooltip>
                                         )}
                                         {rcaStats.styleChanges > 0 && (
-                                            <Badge size="sm" color="orange" variant="light" data-test="rca-stats-style-toolbar">
-                                                {rcaStats.styleChanges}
-                                            </Badge>
+                                            <Tooltip label="Style changes" withinPortal>
+                                                <Badge size="sm" color="orange" variant="light" data-test="rca-stats-style-toolbar">
+                                                    {rcaStats.styleChanges}
+                                                </Badge>
+                                            </Tooltip>
                                         )}
                                     </Group>
                                 )}

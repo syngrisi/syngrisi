@@ -400,7 +400,6 @@ export function RCAPanel({
                     <Text size="sm" fw={600} data-test="rca-panel-title">
                         Root Cause Analysis
                     </Text>
-                    <StatsSummary stats={diffResult.stats} />
                 </Group>
             </Box>
 
