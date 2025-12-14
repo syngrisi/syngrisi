@@ -578,8 +578,8 @@ export function CheckDetails({
                     )}
 
                     {/* Canvas container with split view for RCA panel */}
-                    <Box style={{ flex: 1, display: 'flex', minWidth: 0, position: 'relative' }}>
-                        <Box style={{ flex: 1, position: 'relative', minWidth: 0 }}>
+                    <Box style={{ flex: 1, display: 'flex', minWidth: 0, position: 'relative', overflow: 'hidden' }}>
+                        <Box style={{ flex: 1, position: 'relative', minWidth: 0, overflow: 'hidden' }}>
                             <Canvas
                                 canvasElementRef={canvasElementRef}
                                 isRelatedOpened={relatedRendered && relatedChecksOpened}

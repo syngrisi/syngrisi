@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Divider, Group, Menu, ActionIcon, Badge } from '@mantine/core';
+import { Divider, Group, Menu, ActionIcon, Badge, Tooltip as MantineTooltip } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { IconDotsVertical, IconTrash, IconChevronLeft, IconChevronRight, IconChevronUp, IconChevronDown, IconShare, IconAnalyze, IconBoxModel } from '@tabler/icons-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -283,39 +283,67 @@ export function Toolbar(
 
                                 {rcaEnabled && rcaStats && (
                                     <Group spacing={4} ml={4}>
-                                        <Tooltip label="Total changes" withinPortal>
-                                            <Badge size="sm" color="gray" variant="light" data-test="rca-stats-total-toolbar">
-                                                {rcaStats.totalChanges}
-                                            </Badge>
-                                        </Tooltip>
-                                        {rcaStats.addedNodes > 0 && (
-                                            <Tooltip label="Added elements" withinPortal>
-                                                <Badge size="sm" color="green" variant="light" data-test="rca-stats-added-toolbar">
-                                                    +{rcaStats.addedNodes}
+                                        <MantineTooltip label="Total changes" withinPortal>
+                                            <div style={{ display: 'flex' }}>
+                                                <Badge
+                                                    size="sm"
+                                                    color="gray"
+                                                    variant="light"
+                                                    data-test="rca-stats-total-toolbar"
+                                                >
+                                                    {rcaStats.totalChanges}
                                                 </Badge>
-                                            </Tooltip>
+                                            </div>
+                                        </MantineTooltip>
+                                        {rcaStats.addedNodes > 0 && (
+                                            <MantineTooltip label="Added elements" withinPortal>
+                                                <div style={{ display: 'flex' }}>
+                                                    <Badge
+                                                        size="sm"
+                                                        color="green"
+                                                        variant="light"
+                                                        data-test="rca-stats-added-toolbar"
+                                                    >
+                                                        +{rcaStats.addedNodes}
+                                                    </Badge>
+                                                </div>
+                                            </MantineTooltip>
                                         )}
                                         {rcaStats.removedNodes > 0 && (
-                                            <Tooltip label="Removed elements" withinPortal>
-                                                <Badge size="sm" color="red" variant="light" data-test="rca-stats-removed-toolbar">
-                                                    -{rcaStats.removedNodes}
-                                                </Badge>
-                                            </Tooltip>
+                                            <MantineTooltip label="Removed elements" withinPortal>
+                                                <div style={{ display: 'flex' }}>
+                                                    <Badge
+                                                        size="sm"
+                                                        color="red"
+                                                        variant="light"
+                                                        data-test="rca-stats-removed-toolbar"
+                                                    >
+                                                        -{rcaStats.removedNodes}
+                                                    </Badge>
+                                                </div>
+                                            </MantineTooltip>
                                         )}
                                         {rcaStats.styleChanges > 0 && (
-                                            <Tooltip label="Style changes" withinPortal>
-                                                <Badge size="sm" color="orange" variant="light" data-test="rca-stats-style-toolbar">
-                                                    {rcaStats.styleChanges}
-                                                </Badge>
-                                            </Tooltip>
+                                            <MantineTooltip label="Style changes" withinPortal>
+                                                <div style={{ display: 'flex' }}>
+                                                    <Badge
+                                                        size="sm"
+                                                        color="orange"
+                                                        variant="light"
+                                                        data-test="rca-stats-style-toolbar"
+                                                    >
+                                                        {rcaStats.styleChanges}
+                                                    </Badge>
+                                                </div>
+                                            </MantineTooltip>
                                         )}
                                     </Group>
                                 )}
                             </Group>
                         </>
                     )}
-                </Group >
-            </Group >
+                </Group>
+            </Group>
             <DeleteBaselineModal
                 opened={deleteModalOpened}
                 onClose={() => setDeleteModalOpened(false)}
