@@ -226,7 +226,46 @@ export class MainView {
             width: newWidth,
             height: newHeight,
         });
+        this.zoomToFit();
         this.canvas.renderAll();
+    }
+
+    /**
+     * Zoom and pan to fit the image within the canvas
+     */
+    zoomToFit(): void {
+        if (!this.canvas || !this.actualImage) return;
+
+        const imgWidth = this.actualImage.width || 0;
+        const imgHeight = this.actualImage.height || 0;
+
+        if (imgWidth === 0 || imgHeight === 0) return;
+
+        const canvasWidth = this.canvas.width || 0;
+        const canvasHeight = this.canvas.height || 0;
+
+        // Calculate scale to fit with some padding
+        const padding = 20;
+        const availableWidth = canvasWidth - padding * 2;
+        const availableHeight = canvasHeight - padding * 2;
+
+        const scaleX = availableWidth / imgWidth;
+        const scaleY = availableHeight / imgHeight;
+        const scale = Math.min(scaleX, scaleY);
+
+        // Set zoom
+        this.canvas.setZoom(scale);
+
+        // Center
+        const vpt = this.canvas.viewportTransform;
+        if (vpt) {
+            vpt[0] = scale;
+            vpt[3] = scale;
+            vpt[4] = (canvasWidth - imgWidth * scale) / 2;
+            vpt[5] = (canvasHeight - imgHeight * scale) / 2;
+        }
+
+        this.updateRCATransform();
     }
 
     /*
@@ -943,7 +982,8 @@ export class MainView {
     enableRCAOverlay(
         actualDom: DOMNode | null,
         baselineDom: DOMNode | null,
-        changes: DOMChange[]
+        changes: DOMChange[],
+        showWireframe: boolean = false
     ): void {
         if (!this.rcaOverlay) {
             log.warn('[MainView] RCA overlay not initialized');
@@ -970,9 +1010,19 @@ export class MainView {
             offsetY: imageTop,
             imageScaleX,
             imageScaleY,
+            showWireframe,
         });
 
-        this.rcaOverlay.enable(actualDom, baselineDom, changes, scale, imageLeft, imageTop);
+        this.rcaOverlay.enable(actualDom, baselineDom, changes, scale, imageLeft, imageTop, showWireframe);
+    }
+
+    /**
+     * Toggle RCA wireframe visibility
+     */
+    toggleRCAWireframe(visible: boolean): void {
+        if (this.rcaOverlay) {
+            this.rcaOverlay.toggleWireframe(visible);
+        }
     }
 
     /**

@@ -273,7 +273,7 @@ function IssueItem({
  */
 function StatsSummary({ stats }: { stats: DOMDiffResult['stats'] }) {
     return (
-        <Group gap="xs" mb="sm" data-test="rca-stats">
+        <Group gap="xs" data-test="rca-stats">
             <Badge size="sm" color="gray" variant="light" data-test="rca-stats-total">
                 {stats.totalChanges} changes
             </Badge>
@@ -313,16 +313,12 @@ export function RCAPanel({
         return (
             <Paper
                 p="md"
-                radius="md"
+                radius={0}
                 data-test="rca-panel"
                 data-test-state="loading"
                 style={{
-                    width: '500px',
-                    minWidth: '500px',
                     height: '100%',
-                    backgroundColor: 'rgba(20, 20, 20, 0.85)',
-                backdropFilter: 'blur(12px)',
-                borderLeft: '1px solid rgba(255, 255, 255, 0.1)',
+                    backgroundColor: 'transparent',
                 }}
             >
                 <Center style={{ height: '200px' }}>
@@ -341,15 +337,12 @@ export function RCAPanel({
         return (
             <Paper
                 p="md"
-                radius="md"
+                radius={0}
                 data-test="rca-panel"
                 data-test-state="error"
                 style={{
-                    width: '500px',
-                    minWidth: '500px',
-                    backgroundColor: 'rgba(20, 20, 20, 0.85)',
-                backdropFilter: 'blur(12px)',
-                borderLeft: '1px solid rgba(255, 255, 255, 0.1)',
+                    height: '100%',
+                    backgroundColor: 'transparent',
                 }}
             >
                 <Stack align="center" gap="sm">
@@ -368,15 +361,12 @@ export function RCAPanel({
         return (
             <Paper
                 p="md"
-                radius="md"
+                radius={0}
                 data-test="rca-panel"
                 data-test-state="no-changes"
                 style={{
-                    width: '500px',
-                    minWidth: '500px',
-                    backgroundColor: 'rgba(20, 20, 20, 0.85)',
-                backdropFilter: 'blur(12px)',
-                borderLeft: '1px solid rgba(255, 255, 255, 0.1)',
+                    height: '100%',
+                    backgroundColor: 'transparent',
                 }}
             >
                 <Stack align="center" gap="sm">
@@ -393,30 +383,25 @@ export function RCAPanel({
 
     return (
         <Paper
-            radius="md"
+            radius={0}
             data-test="rca-panel"
             data-test-state="ready"
             data-test-changes-count={diffResult.changes.length}
             data-test-issues-count={diffResult.issues.length}
             style={{
-                width: '500px',
-                minWidth: '500px',
-                flexShrink: 0,
                 height: '100%',
-                backgroundColor: 'rgba(20, 20, 20, 0.85)',
-                backdropFilter: 'blur(12px)',
-                borderLeft: '1px solid rgba(255, 255, 255, 0.1)',
+                backgroundColor: 'transparent',
                 display: 'flex',
                 flexDirection: 'column',
             }}
         >
             <Box p="sm" style={{ borderBottom: '1px solid var(--mantine-color-dark-5)' }}>
-                <Group justify="space-between" mb="xs">
+                <Group justify="space-between" align="center">
                     <Text size="sm" fw={600} data-test="rca-panel-title">
                         Root Cause Analysis
                     </Text>
+                    <StatsSummary stats={diffResult.stats} />
                 </Group>
-                <StatsSummary stats={diffResult.stats} />
             </Box>
 
             <Tabs

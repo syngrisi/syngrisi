@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Divider, Group, Menu, ActionIcon } from '@mantine/core';
+import { Divider, Group, Menu, ActionIcon, Badge } from '@mantine/core';
 import { useEffect, useState } from 'react';
-import { IconDotsVertical, IconTrash, IconChevronLeft, IconChevronRight, IconChevronUp, IconChevronDown, IconShare, IconAnalyze } from '@tabler/icons-react';
+import { IconDotsVertical, IconTrash, IconChevronLeft, IconChevronRight, IconChevronUp, IconChevronDown, IconShare, IconAnalyze, IconBoxModel } from '@tabler/icons-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GenericService } from '@shared/services';
 import { errorMsg, successMsg } from '@shared/utils/utils';
@@ -16,6 +16,7 @@ import { RegionsToolbar } from '@index/components/Tests/Table/Checks/CheckDetail
 import { MainView } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/mainView';
 import { DeleteBaselineModal } from '../Modals/DeleteBaselineModal';
 import { ShareModal } from '../Modals/ShareModal';
+import { DOMDiffResult } from '@shared/interfaces/IRCA';
 
 
 interface Props {
@@ -36,6 +37,9 @@ interface Props {
     navigationReady?: boolean
     rcaEnabled?: boolean
     onToggleRCA?: () => void
+    rcaStats?: DOMDiffResult['stats']
+    isWireframeEnabled?: boolean
+    onToggleWireframe?: () => void
     isShareEnabled?: boolean
     apikey?: string
 }
@@ -59,6 +63,9 @@ export function Toolbar(
         navigationReady,
         rcaEnabled,
         onToggleRCA,
+        rcaStats,
+        isWireframeEnabled,
+        onToggleWireframe,
         isShareEnabled = true,
         apikey,
     }: Props,
@@ -155,7 +162,9 @@ export function Toolbar(
                         </>
                     )}
 
-                    <ScreenshotDetails mainView={mainView} check={curCheck} apikey={apikey} />
+                    {!rcaEnabled && (
+                        <ScreenshotDetails mainView={mainView} check={curCheck} apikey={apikey} />
+                    )}
                 </Group>
 
                 {/* Right side: Tools and actions */}
@@ -180,18 +189,6 @@ export function Toolbar(
                         mainView={mainView as MainView}
                         disabled={!(view === 'diff' && parseFloat(curCheck?.parsedResult?.rawMisMatchPercentage) < 5)}
                     />
-
-                    {onToggleRCA && (
-                        <ActionIcon
-                            onClick={onToggleRCA}
-                            title="Root Cause Analysis (D)"
-                            variant={rcaEnabled ? 'filled' : 'default'}
-                            color={rcaEnabled ? 'blue' : undefined}
-                            data-test="rca-toggle-button"
-                        >
-                            <IconAnalyze size={20} />
-                        </ActionIcon>
-                    )}
 
                     <Divider orientation="vertical" />
 
@@ -259,6 +256,58 @@ export function Toolbar(
                             </Menu>
                         )
                     }
+
+                    {onToggleRCA && (
+                        <>
+                            <Divider orientation="vertical" />
+                            <Group spacing={4} noWrap>
+                                <ActionIcon
+                                    onClick={onToggleRCA}
+                                    title="Root Cause Analysis (D)"
+                                    variant={rcaEnabled ? 'filled' : 'default'}
+                                    color={rcaEnabled ? 'blue' : undefined}
+                                    data-test="rca-toggle-button"
+                                >
+                                    <IconAnalyze size={20} />
+                                </ActionIcon>
+
+                                {rcaEnabled && onToggleWireframe && (
+                                    <ActionIcon
+                                        onClick={onToggleWireframe}
+                                        title="Toggle Wireframe"
+                                        variant={isWireframeEnabled ? 'filled' : 'default'}
+                                        color={isWireframeEnabled ? 'blue' : undefined}
+                                        data-test="rca-wireframe-toggle"
+                                    >
+                                        <IconBoxModel size={20} />
+                                    </ActionIcon>
+                                )}
+
+                                {rcaEnabled && rcaStats && (
+                                    <Group spacing={4} ml={4}>
+                                        <Badge size="sm" color="gray" variant="light" data-test="rca-stats-total-toolbar">
+                                            {rcaStats.totalChanges}
+                                        </Badge>
+                                        {rcaStats.addedNodes > 0 && (
+                                            <Badge size="sm" color="green" variant="light" data-test="rca-stats-added-toolbar">
+                                                +{rcaStats.addedNodes}
+                                            </Badge>
+                                        )}
+                                        {rcaStats.removedNodes > 0 && (
+                                            <Badge size="sm" color="red" variant="light" data-test="rca-stats-removed-toolbar">
+                                                -{rcaStats.removedNodes}
+                                            </Badge>
+                                        )}
+                                        {rcaStats.styleChanges > 0 && (
+                                            <Badge size="sm" color="orange" variant="light" data-test="rca-stats-style-toolbar">
+                                                {rcaStats.styleChanges}
+                                            </Badge>
+                                        )}
+                                    </Group>
+                                )}
+                            </Group>
+                        </>
+                    )}
                 </Group >
             </Group >
             <DeleteBaselineModal

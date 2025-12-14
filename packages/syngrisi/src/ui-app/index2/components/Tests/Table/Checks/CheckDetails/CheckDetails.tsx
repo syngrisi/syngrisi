@@ -447,7 +447,8 @@ export function CheckDetails({
             mainView.enableRCAOverlay(
                 rca.state.actualDom,
                 rca.state.baselineDom,
-                rca.state.diffResult.changes
+                rca.state.diffResult.changes,
+                rca.state.isWireframeEnabled
             );
         } else {
             mainView.disableRCAOverlay();
@@ -458,7 +459,14 @@ export function CheckDetails({
         rca.state.actualDom,
         rca.state.baselineDom,
         rca.state.diffResult,
+        rca.state.isWireframeEnabled,
     ]);
+
+    // Sync wireframe state
+    useEffect(function syncRCAWireframe() {
+        if (!mainView || !rca.state.isEnabled) return;
+        mainView.toggleRCAWireframe(rca.state.isWireframeEnabled);
+    }, [mainView, rca.state.isEnabled, rca.state.isWireframeEnabled]);
 
     // Highlight selected change on canvas
     useEffect(function highlightSelectedRCAChange() {
@@ -487,6 +495,22 @@ export function CheckDetails({
             mainView.canvas.off(events);
         };
     }, [mainView]);
+
+    // Handle resize when RCA panel toggles
+    useEffect(() => {
+        if (!mainView || !canvasElementRef.current) return;
+
+        // Small timeout to allow layout to update
+        const timer = setTimeout(() => {
+            const newWidth = canvasElementRef.current.clientWidth;
+            const newHeight = canvasElementRef.current.clientHeight;
+            if (mainView.needsCanvasResize(newWidth, newHeight)) {
+                mainView.resizeCanvas(newWidth, newHeight);
+            }
+        }, 50);
+
+        return () => clearTimeout(timer);
+    }, [mainView, rca.state.isPanelOpen]);
 
     // Native window alert for closing tab/window
     useEffect(() => {
@@ -529,13 +553,16 @@ export function CheckDetails({
                     navigationReady={!siblingChecksQuery.isLoading && siblingChecks.length > 0 && currentCheckIndex >= 0}
                     rcaEnabled={rca.state.isEnabled}
                     onToggleRCA={rca.toggle}
+                    rcaStats={rca.state.diffResult?.stats}
+                    isWireframeEnabled={rca.state.isWireframeEnabled}
+                    onToggleWireframe={rca.toggleWireframe}
                     isShareEnabled={isShareEnabled}
                     apikey={apikey}
                 />
 
                 <Group
                     spacing={4}
-                    align="start"
+                    align="stretch"
                     sx={{ width: '100%' }}
                     noWrap
                 >
@@ -550,23 +577,24 @@ export function CheckDetails({
                         />
                     )}
 
-                    {/* Canvas container with relative positioning for RCA overlay */}
-                    <Box style={{ flex: 1, position: 'relative', minWidth: 0 }}>
-                        <Canvas
-                            canvasElementRef={canvasElementRef}
-                            isRelatedOpened={relatedRendered && relatedChecksOpened}
-                            isLoading={!mainView}
-                        />
+                    {/* Canvas container with split view for RCA panel */}
+                    <Box style={{ flex: 1, display: 'flex', minWidth: 0, position: 'relative' }}>
+                        <Box style={{ flex: 1, position: 'relative', minWidth: 0 }}>
+                            <Canvas
+                                canvasElementRef={canvasElementRef}
+                                isRelatedOpened={relatedRendered && relatedChecksOpened}
+                                isLoading={!mainView}
+                            />
+                        </Box>
 
-                        {/* RCA Panel - positioned as overlay on the right */}
+                        {/* RCA Panel - positioned as side panel */}
                         {rca.state.isPanelOpen && (
                             <Box
                                 style={{
-                                    position: 'absolute',
-                                    top: 0,
-                                    right: 0,
-                                    bottom: 0,
-                                    zIndex: 100,
+                                    width: '500px',
+                                    flexShrink: 0,
+                                    borderLeft: '1px solid var(--mantine-color-dark-4)',
+                                    backgroundColor: 'var(--mantine-color-dark-7)',
                                 }}
                             >
                                 <RCAPanel

@@ -67,11 +67,14 @@ await browser.syngrisiCheck('My Check');
 
 1. Open a failed check with visual differences
 2. Click the **RCA button** (brain icon) in the toolbar, or press **D** key
-3. The RCA panel opens showing:
+3. The RCA panel opens as a **side panel**, shifting the canvas to the left to ensure no content is obscured
+   - Screenshot details (size, date, diff %) are automatically hidden to save space
+   - The canvas automatically resizes and zooms to fit the new available area
+4. The panel shows:
    - Summary: total changes, added, removed, style changes
    - Issues list with expandable details
-4. **Wireframe overlay** appears on the canvas showing DOM element boundaries
-5. Click on an issue to highlight the corresponding element on the canvas
+5. **Wireframe overlay** appears on the canvas showing DOM element boundaries
+6. Click on an issue to highlight the corresponding element on the canvas
 
 ## Configuration
 
