@@ -51,6 +51,7 @@ export function CheckDetails({
 }: Props) {
     useDocumentTitle(initCheckData?.name);
     const canvasElementRef = useRef(null);
+    const canvasContainerRef = useRef(null);
     const { query, setQuery } = useParams();
     const { classes } = useStyles();
     const [mainView, setMainView] = useState<MainView | null>(null);
@@ -330,7 +331,9 @@ export function CheckDetails({
             if (!isMounted) return;
 
             const actual = currentCheck.actualSnapshotId || null;
-            canvasElementRef.current.style.height = `${MainView.calculateExpectedCanvasViewportAreaSize().height - 10}px`;
+            if (canvasContainerRef.current) {
+                canvasContainerRef.current.style.height = `${MainView.calculateExpectedCanvasViewportAreaSize().height - 10}px`;
+            }
 
             const MV = new MainView(
                 {
@@ -578,8 +581,16 @@ export function CheckDetails({
                     )}
 
                     {/* Canvas container with split view for RCA panel */}
-                    <Box style={{ flex: 1, display: 'flex', minWidth: 0, position: 'relative', overflow: 'hidden' }}>
-                        <Box style={{ flex: 1, position: 'relative', minWidth: 0, overflow: 'hidden' }}>
+                    <Box
+                        ref={canvasContainerRef}
+                        style={{
+                            flex: 1, display: 'flex', minWidth: 0, position: 'relative', overflow: 'hidden',
+                        }}
+                    >
+                        <Box style={{
+                            flex: 1, position: 'relative', minWidth: 0, overflow: 'hidden',
+                        }}
+                        >
                             <Canvas
                                 canvasElementRef={canvasElementRef}
                                 isRelatedOpened={relatedRendered && relatedChecksOpened}
@@ -595,6 +606,9 @@ export function CheckDetails({
                                     flexShrink: 0,
                                     borderLeft: '1px solid var(--mantine-color-dark-4)',
                                     backgroundColor: 'var(--mantine-color-dark-7)',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    overflow: 'hidden',
                                 }}
                             >
                                 <RCAPanel
