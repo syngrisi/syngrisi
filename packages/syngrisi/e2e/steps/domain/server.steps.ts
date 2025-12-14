@@ -3,7 +3,7 @@ import type { AppServerFixture } from '@fixtures';
 import { createLogger } from '@lib/logger';
 import * as yaml from 'yaml';
 import { env } from '@config';
-import { stopServerProcess } from '@utils/app-server';
+import { stopServerProcess, waitForServerStop } from '@utils/app-server';
 import { clearDatabase } from '@utils/db-cleanup';
 import { resolveRepoRoot } from '@utils/fs';
 import { setSkipAutoStart } from '@fixtures';
@@ -121,13 +121,20 @@ When(
     // Stop server process (as in original stopServer())
     logger.info('Stopping Syngrisi server...');
     stopServerProcess();
+    await waitForServerStop();
     restartAfterEnvSet.set(getCid(), true);
 
     // Also stop via fixture if running
     if (appServer.baseURL) {
       await appServer.stop();
     }
-    logger.info('Server stopped');
+
+    // Reset critical env vars to prevent leakage to other tests in the same worker
+    delete process.env.SYNGRISI_AUTH;
+    delete process.env.SYNGRISI_AUTH_OVERRIDE;
+    delete process.env.SYNGRISI_API_KEY;
+
+    logger.info('Server stopped and env vars reset');
     resetTestCreationState(testData);
   }
 );
@@ -138,13 +145,20 @@ When(
     // Stop server process (as in original stopServer())
     logger.info('Stopping server...');
     stopServerProcess();
+    await waitForServerStop();
     restartAfterEnvSet.set(getCid(), true);
 
     // Also stop via fixture if running
     if (appServer.baseURL) {
       await appServer.stop();
     }
-    logger.info('Server stopped');
+
+    // Reset critical env vars to prevent leakage to other tests in the same worker
+    delete process.env.SYNGRISI_AUTH;
+    delete process.env.SYNGRISI_AUTH_OVERRIDE;
+    delete process.env.SYNGRISI_API_KEY;
+
+    logger.info('Server stopped and env vars reset');
     resetTestCreationState(testData);
   }
 );
@@ -164,6 +178,7 @@ Given(
       // Stop server first (as in original: stopServer() then clearDatabase())
       logger.info('Stopping server...');
       stopServerProcess();
+      await waitForServerStop();
 
       // Also stop via fixture if running
       if (appServer.baseURL) {

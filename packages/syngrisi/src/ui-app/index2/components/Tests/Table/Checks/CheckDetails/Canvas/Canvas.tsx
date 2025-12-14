@@ -11,7 +11,7 @@ export function Canvas({ canvasElementRef, isRelatedOpened = false, isLoading = 
     const theme = useMantineTheme();
 
     return (
-        <Group sx={{ width: isRelatedOpened ? '90%' : '100%' }}>
+        <Group sx={{ flex: 1, minWidth: 0 }}>
             <Paper
                 shadow="xl"
                 withBorder
@@ -27,6 +27,7 @@ export function Canvas({ canvasElementRef, isRelatedOpened = false, isLoading = 
                         width: '100%',
                         height: '100%',
                         position: 'relative',
+                        overflow: 'hidden',
                     }
                 }
             >

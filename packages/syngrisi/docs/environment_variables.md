@@ -10,7 +10,11 @@
    - Description: Path to the folder for Syngrisi images, including screenshots and diffs.
    - Default Value: `./.snapshots-images/`
 
-3. `SYNGRISI_APP_PORT`
+3. `SYNGRISI_DOM_SNAPSHOTS_PATH`
+   - Description: Path to the folder for DOM snapshots used by Root Cause Analysis (RCA) feature. DOM snapshots are stored as compressed `.dom.gz` files.
+   - Default Value: Uses `SYNGRISI_IMAGES_PATH` if not specified
+
+4. `SYNGRISI_APP_PORT`
    - Description: TCP port for application server
    - Default Value: `3000`
 

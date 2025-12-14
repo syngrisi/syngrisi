@@ -45,6 +45,7 @@ export const config = {
         return devices;
     },
     defaultImagesPath: env.SYNGRISI_IMAGES_PATH,
+    domSnapshotsPath: env.SYNGRISI_DOM_SNAPSHOTS_PATH || env.SYNGRISI_IMAGES_PATH,
     connectionString: env.SYNGRISI_DB_URI || 'mongodb://127.0.0.1:27017/SyngrisiDb',
     host: env.SYNGRISI_HOSTNAME,
     port: env.SYNGRISI_APP_PORT || 3000,
@@ -97,6 +98,10 @@ export const config = {
 
 if (!fs.existsSync(config.defaultImagesPath)) {
     fs.mkdirSync(config.defaultImagesPath, { recursive: true });
+}
+
+if (config.domSnapshotsPath !== config.defaultImagesPath && !fs.existsSync(config.domSnapshotsPath)) {
+    fs.mkdirSync(config.domSnapshotsPath, { recursive: true });
 }
 
 if (!fs.existsSync(logsFolder)) {

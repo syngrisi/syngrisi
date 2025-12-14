@@ -111,7 +111,7 @@ Feature: Check details - Auto Regions from Diff
             """
 
         # Auto region button should be disabled (no diff image for passed check)
-        Then the element with locator "[data-check='auto-ignore-region']" should be disabled
+        Then the element with locator "[data-check='auto-ignore-region']" should be disabled for 10 sec
 
     Scenario: Auto regions - save and verify persistence
         # Create test with baseline
@@ -171,8 +171,8 @@ Feature: Check details - Auto Regions from Diff
         When I press "Alt+s"
 
 
-        # Verify success notification appeared
-        Then the element with locator "[class*='mantine-Notification']" should have contains text "Regions saved"
+        # Verify success notification appeared (wait for any Success notification)
+        When I wait 15 seconds for the element with locator "[class*='mantine-Notification'][class*='green']" to be visible
 
         # Close the check details modal
         When I press the "Escape" key

@@ -326,6 +326,28 @@ export async function ensureServerReady(port: number, timeoutMs = 30_000): Promi
   backendLogger.info(`✓ Server ready at ${baseUrl}`);
 }
 
+export async function waitForServerStop(cid?: number, timeoutMs = 25000): Promise<void> {
+  const effectiveCid = cid ?? getCid();
+  // Logic duplicated from launchAppServer to determine port
+  // Note: We assume standard port calculation here as stopping relies on killing the process by name signature usually,
+  // but to verify it's stopped we check the port.
+  // If SYNGRISI_APP_PORT is strictly set in env it overrides everything.
+  const runtimeEnv = process.env;
+  const envPort = runtimeEnv.SYNGRISI_APP_PORT;
+
+  // If we can't determine the exact port easily (complex env overrides), we might rely on pkill only,
+  // but for E2E standard runs:
+  const port = envPort ? parseInt(envPort, 10) : 3002 + effectiveCid;
+
+  await waitFor(async () => !(await isServerRunning(port)), {
+    timeoutMs,
+    intervalMs: 200,
+    description: `server port ${port} to stop accepting connections`
+  });
+
+  backendLogger.info(`✓ Server stopped (port ${port} closed)`);
+}
+
 function startBackendLogCapture(child: Child): () => string {
   const chunks: string[] = [];
   const record = (data: unknown) => {

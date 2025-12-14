@@ -1,4 +1,8 @@
 import { z } from 'zod'
+import { DomDumpSchema, DomNodeSchema, CompressedDomDumpSchema } from './DomNode.schema'
+
+// Re-export DomNode types for convenience
+export * from './DomNode.schema'
 
 const viewPort = z.string().min(3).regex(/^\d+x\d+$/) // regex for 'width x height' format
 const idString = z.string().length(24) // Assuming all ID-like strings are MongoDB ObjectIDs with fixed 24-character length
@@ -97,7 +101,8 @@ export const CheckParamsSchema = z.object({
     browserFullVersion: z.string().min(1),
     hashCode: z.string().min(64), // SHA256 (64 chars) or SHA512 (128 chars)
 
-    domDump: z.any().optional(), // Replace with appropriate schema if possible
+    domDump: DomDumpSchema.optional(), // DomNode tree or compressed format for RCA
+    skipDomData: z.boolean().optional(), // Skip sending DOM data even if collected
 })
 
 export type CheckParams = z.infer<typeof CheckParamsSchema>;

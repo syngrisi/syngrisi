@@ -2,6 +2,7 @@ import { Check, CheckDocument } from '@models';
 import { buildIdentObject, ident, errMsg, ApiError, prettyCheckParams } from '@utils';
 import log from "@logger";
 import { LogOpts, RequestUser } from '@types';
+import { domSnapshotService } from './dom-snapshot.service';
 
 import { TestDocument } from '@models/Test.model';
 import { AppDocument } from '@models/App.model';
@@ -162,6 +163,21 @@ const createCheck = async (checkParam: CreateCheckParams, test: TestDocument, su
         logOpts.ref = String(check.id);
 
         await updateTestAfterCheck(test, check, logOpts, session);
+
+        // Save DOM snapshot if provided (for RCA feature)
+        if (checkParam.domDump) {
+            try {
+                await domSnapshotService.createDomSnapshot({
+                    checkId: check.id,
+                    type: 'actual',
+                    content: checkParam.domDump,
+                });
+                log.debug(`DOM snapshot created for check: '${check.id}'`, logOpts);
+            } catch (domErr) {
+                // DOM snapshot is non-critical, log and continue
+                log.warn(`Failed to create DOM snapshot for check '${check.id}': ${errMsg(domErr)}`, logOpts);
+            }
+        }
 
         const lastSuccessCheck = await BaselineService.getLastSuccessCheck(checkIdent);
 

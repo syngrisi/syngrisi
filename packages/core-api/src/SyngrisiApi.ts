@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto'
 import logger from '@wdio/logger'
 import { LogLevelDesc } from 'loglevel'
 import { errorObject, paramsGuard, prettyCheckResult, printErrorResponseBody } from './utils'
+import { prepareDomDumpForTransfer } from './compression'
 // @ts-ignore - package.json import for version
 import { version as SDK_VERSION } from '../package.json'
 import {
@@ -27,6 +28,10 @@ const log = logger('core-api')
 // 0 | 4 | 2 | 1 | 3 | 5 | "trace" | "debug" | "info" | "warn" | "error" |
 if (process.env.SYNGRISI_LOG_LEVEL) {
     log.setLevel(process.env.SYNGRISI_LOG_LEVEL as LogLevelDesc)
+}
+
+const isDomDataDisabled = (): boolean => {
+    return process.env.SYNGRISI_DISABLE_DOM_DATA === 'true'
 }
 
 /**
@@ -258,11 +263,11 @@ class SyngrisiApi {
         paramsGuard(params, 'createCheck, params', CheckParamsSchema)
 
         const url = `${this.url('createCheck')}`
+        // Note: domDump is handled separately for compression
         const fieldsMapping = {
             branch: 'branch',
             app: 'appName',
             suite: 'suitename',
-            domDump: 'domdump',
             vShifting: 'vShifting',
             testId: 'testid',
             name: 'name',
@@ -275,6 +280,7 @@ class SyngrisiApi {
 
         return this.requestWithRetry(async () => {
             const form = new FormData()
+            const requestHeaders: Record<string, string> = { ...this.headers }
 
             Object.keys(fieldsMapping).forEach(key => {
                 // @ts-ignore
@@ -284,12 +290,23 @@ class SyngrisiApi {
                 }
             })
 
+            // Handle domDump with compression for RCA
+            // Skip if SYNGRISI_DISABLE_DOM_DATA env var is set or skipDomData option is true
+            const shouldSkipDom = isDomDataDisabled() || params.skipDomData === true
+            if (params.domDump && !shouldSkipDom) {
+                const { data, isCompressed } = prepareDomDumpForTransfer(params.domDump)
+                form.append('domdump', data)
+                if (isCompressed) {
+                    requestHeaders['x-domdump-compressed'] = 'gzip'
+                }
+            }
+
             if (hashCode) form.append('hashcode', hashCode)
             if (imageBuffer) form.append('file', imageBuffer, 'file')
 
             return got.post(url, {
                 body: form,
-                headers: this.headers,
+                headers: requestHeaders,
             }).json() as Promise<CheckResponse>
         }, 'createCheck', `❌ Error posting create check data params: '${JSON.stringify(params)}'`)
     }
@@ -427,3 +444,5 @@ class SyngrisiApi {
 export { SyngrisiApi }
 export { transformOs } from './utils'
 export * from '../schemas/SyngrisiApi.schema'
+export * from './compression'
+export { collectDomTree, getCollectDomTreeScript, COLLECT_DOM_TREE_SCRIPT } from './domCollector'

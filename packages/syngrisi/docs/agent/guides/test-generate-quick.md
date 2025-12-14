@@ -7,6 +7,12 @@ For AI agents working with the Syngrisi Playwright BDD suite in `packages/syngri
 - Tag generated files: `@generated` (plus area tags, e.g., `@ap`).
 
 ## Feature/Scenario skeleton
+
+**Naming Rules:**
+- Use dashes instead of parentheses in Feature and Scenario names
+- ✅ Good: `Feature: RCA - Demo scenarios - Silent Mode`
+- ❌ Bad: `Feature: RCA - Demo scenarios (Silent Mode)`
+
 ```gherkin
 @ap @generated
 Feature: Short, clear feature name

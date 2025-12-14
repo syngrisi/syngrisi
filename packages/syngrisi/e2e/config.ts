@@ -16,7 +16,7 @@ export const env = cleanEnv(process.env, {
     desc: 'Base URL for E2E tests'
   }),
   E2E_BACKEND_HOST: str({
-    default: 'localhost',
+    default: '127.0.0.1',
     desc: 'Host to bind backend server in E2E tests'
   }),
   E2E_LOG_LEVEL: str({

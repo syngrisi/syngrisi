@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RCA Test - Deeply Nested Modified</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; padding: 10px; background: #f5f5f5; }
+        .level { padding: 5px; border: 1px solid #ddd; margin: 3px; background: rgba(52, 152, 219, 0.1); }
+        .level:hover { background: rgba(52, 152, 219, 0.3); }
+        .content { padding: 10px; background: #e74c3c; color: white; font-size: 14px; font-weight: bold; }
+        .new-branch { padding: 8px; background: #27ae60; color: white; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <div class="level" data-level="1">
+        Level 1
+        <div class="level" data-level="2">
+            Level 2
+            <div class="level" data-level="3">
+                Level 3
+                <div class="level" data-level="4">
+                    Level 4
+                    <div class="level" data-level="5">
+                        Level 5
+                        <div class="new-branch" data-id="new-branch">
+                            New branch inserted at level 5
+                        </div>
+                        <div class="level" data-level="6">
+                            Level 6
+                            <div class="level" data-level="7">
+                                Level 7
+                                <div class="level" data-level="8">
+                                    Level 8
+                                    <div class="level" data-level="9">
+                                        Level 9
+                                        <div class="level" data-level="10">
+                                            Level 10
+                                            <div class="content" data-id="deep-content">
+                                                Modified deeply nested content
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
