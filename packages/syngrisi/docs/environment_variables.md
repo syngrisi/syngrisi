@@ -129,6 +129,8 @@
 
 SSO allows users to authenticate using external identity providers (OAuth2/Google or SAML).
 
+**See Also:** [SSO Documentation](./sso/README.md) for detailed guides on architecture, integration, troubleshooting, and security.
+
 **Important Security Note:** For security reasons, SSO secrets (client secret, certificates) must be configured via environment variables only. They cannot be set through the admin UI.
 
 1. `SSO_ENABLED`
@@ -136,8 +138,8 @@ SSO allows users to authenticate using external identity providers (OAuth2/Googl
    - Default Value: `false`
 
 2. `SSO_PROTOCOL`
-   - Description: SSO protocol to use (`oauth2` or `saml`)
-   - Default Value: `oauth2`
+   - Description: SSO protocol to use (`oauth2` or `saml`). Required when SSO is enabled.
+   - Default Value: - (empty, must be specified)
 
 3. `SSO_CLIENT_ID`
    - Description: Client ID for OAuth2 authentication (e.g., Google OAuth)
@@ -160,8 +162,43 @@ SSO allows users to authenticate using external identity providers (OAuth2/Googl
    - Default Value: -
 
 8. `SSO_DEFAULT_ROLE`
-   - Description: Default role assigned to new users created via SSO
-   - Default Value: `user`
+   - Description: Default role assigned to new users created via SSO (`user`, `admin`, or `reviewer`)
+   - Default Value: `reviewer`
+
+9. `SSO_IDP_ISSUER`
+   - Description: IdP Issuer for SAML (for issuer validation)
+   - Default Value: -
+
+10. `SSO_IDP_METADATA_URL`
+    - Description: URL to fetch IdP metadata XML automatically. When set, Syngrisi will load SSO configuration (entry point, certificate) from the metadata URL instead of requiring manual configuration. Environment variables (`SSO_ENTRY_POINT`, `SSO_CERT`) take priority if set.
+    - Default Value: -
+    - Note: Requires `SSO_ISSUER` to be set. If the URL is unavailable at startup, falls back to environment variables.
+
+11. `SSO_AUTO_CREATE_USERS`
+    - Description: Automatically create users on successful SSO login
+    - Default Value: `true`
+
+12. `SSO_ALLOW_ACCOUNT_LINKING`
+    - Description: Link SSO login to existing local account with same email
+    - Default Value: `true`
+
+#### OAuth2 Specific Variables
+
+12. `SSO_AUTHORIZATION_URL`
+    - Description: OAuth2 authorization endpoint URL (e.g., `https://idp.example.com/oauth/authorize`)
+    - Default Value: -
+
+13. `SSO_TOKEN_URL`
+    - Description: OAuth2 token endpoint URL (e.g., `https://idp.example.com/oauth/token`)
+    - Default Value: -
+
+14. `SSO_USERINFO_URL`
+    - Description: OAuth2 userinfo endpoint URL (e.g., `https://idp.example.com/oauth/userinfo`)
+    - Default Value: -
+
+15. `SSO_CALLBACK_URL`
+    - Description: OAuth2 callback URL path
+    - Default Value: `/v1/auth/sso/oauth/callback`
 
 #### OAuth2 (Google) Setup Example
 

@@ -75,6 +75,7 @@ export const env = cleanEnv(process.env, {
     SSO_ISSUER: str({ default: '' }),
     SSO_CERT: str({ default: '' }),
     SSO_IDP_ISSUER: str({ default: '' }),
+    SSO_IDP_METADATA_URL: str({ default: '' }), // URL to fetch IdP metadata XML (alternative to manual SSO_ENTRY_POINT/SSO_CERT)
     // SSO user settings
     SSO_DEFAULT_ROLE: str({ choices: ['', 'user', 'admin', 'reviewer'], default: 'reviewer' }),
     SSO_AUTO_CREATE_USERS: bool({ default: true }),

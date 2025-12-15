@@ -13,7 +13,7 @@ SSO_DEFAULT_ROLE=reviewer  # Options: 'user', 'admin', 'reviewer'
 ## User State Upon Creation
 The newly created SSO user has the following properties:
 *   **Username/Email:** Taken from the IdP profile.
-*   **Role:** `user` (default).
+*   **Role:** `reviewer` (default).
 *   **Password:** Random UUID (cannot be used for standard login).
 *   **API Key:** Random UUID (generated automatically).
 *   **Provider:** `oauth` or `saml`.
