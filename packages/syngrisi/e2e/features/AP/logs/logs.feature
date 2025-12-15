@@ -145,7 +145,7 @@ Feature: Logs Table
     When I wait 30 seconds for the element with locator "[data-test*='table_row_']" to be visible
     Then the element "[data-test*='table_row_']" does appear exactly "20" times
 
-    When I click element with locator "[data-test='table-filtering']"
+    When I click element with locator "[data-test='logs-table-filtering']"
     When I wait 30 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
     When I select the option with the text "Message" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-column-name']"
     When I select the option with the text "contains" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-0']//select[@data-test='table-filter-operator']"
@@ -174,10 +174,20 @@ Feature: Logs Table
       level: warn
       """
     When I go to "logs" page
+    When I click element with locator "[data-test='logs-table-filtering']"
+    When I wait 30 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
+    When I click element with locator "[data-test='table-filter-reset']"
+    When I click element with locator "[data-test='table-filter-apply']"
+    When I click element with locator "[data-test='logs-table-filtering']"
+    When I wait 30 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
+    When I wait 10 seconds for the element with locator "//*[@data-test='filter-main-group']//*[@data-test='table-filter-add-rule-button']" to be visible
+    When I wait 1 seconds
+    When I click on the element "//*[@data-test='filter-main-group']//*[@data-test='table-filter-add-rule-button']" via js
+    When I wait 15 seconds for the element with locator "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-1']//select[@data-test='table-filter-column-name']" to be visible
     When I wait 30 seconds for the element with locator "[data-test*='table_row_']" to be visible
     Then the element "[data-test*='table_row_']" does appear exactly "20" times
 
-    When I click element with locator "[data-test='table-filtering']"
+    When I click element with locator "[data-test='logs-table-filtering']"
     When I wait 30 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
 
     # message
@@ -191,7 +201,9 @@ Feature: Logs Table
     When I select the option with the text "equals" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-1']//select[@data-test='table-filter-operator']"
     When I select the option with the text "warn" for element "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-1']//select[@data-test='table-filter-value']"
 
-    When I click element with locator "[data-test='table-filter-apply']"
+    When I wait 1 seconds
+    When I wait 10 seconds for the element with locator "[data-test='table-filter-apply']" to be visible
+    When I click on the element "[data-test='table-filter-apply']" via js
 
 
     Then the element "//*[@data-test='table-row-Message' and contains(., 'TESTMSG')]" does appear exactly "3" times
@@ -225,7 +237,7 @@ Feature: Logs Table
     When I wait 30 seconds for the element with locator "[data-test*='table_row_']" to be visible
     Then the element "[data-test*='table_row_']" does appear exactly "20" times
 
-    When I click element with locator "[data-test='table-filtering']"
+    When I click element with locator "[data-test='logs-table-filtering']"
     When I wait 30 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
     When I click element with locator "//*[@data-test='filter-main-group']//*[@data-test='filter-group-operator-or']/.."
 
@@ -276,7 +288,7 @@ Feature: Logs Table
     When I wait 30 seconds for the element with locator "[data-test*='table_row_']" to be visible
     Then the element "[data-test*='table_row_']" does appear exactly "20" times
 
-    When I click element with locator "[data-test='table-filtering']"
+    When I click element with locator "[data-test='logs-table-filtering']"
     When I wait 30 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
 
     # message main groups

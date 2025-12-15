@@ -2,6 +2,7 @@
 Feature: CLI Tasks
 
   Background:
+    Given I start Server
 
   Scenario: CLI - Handle Database Consistency [statistics only]
     When I create "1" tests with params:

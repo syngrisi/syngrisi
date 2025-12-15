@@ -256,7 +256,8 @@ export class WDIODriver {
         let opts: CheckOpts | null = null
 
         // Check if DOM data should be skipped (via env var or option)
-        const skipDomData = params?.skipDomData || process.env.SYNGRISI_DISABLE_DOM_DATA === 'true'
+        // Default: skipDomData is true (disabled) unless explicitly enabled via env var or params
+        const skipDomData = params?.skipDomData ?? (process.env.SYNGRISI_DISABLE_DOM_DATA !== 'false')
 
         try {
             opts = {

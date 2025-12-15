@@ -9,9 +9,16 @@ const getSettings = catchAsync(async (req: ExtRequest, res: Response) => {
     res.json(result);
 });
 
+import { env } from '@env';
+
 const getPublicSettings = catchAsync(async (req: ExtRequest, res: Response) => {
     const AppSettings = appSettings;
     const result = AppSettings.cache.filter((x: any) => ['share_enabled'].includes(x.name));
+    result.push({
+        name: 'rca_enabled',
+        value: env.SYNGRISI_RCA,
+        enabled: true,
+    });
     res.json(result);
 });
 

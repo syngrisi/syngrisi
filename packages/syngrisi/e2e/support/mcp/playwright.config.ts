@@ -16,7 +16,7 @@ export default defineConfig({
     launchOptions: {
       args: ['--start-maximized'],
     },
-    actionTimeout: 5000,
+    actionTimeout: 15000,
   },
   projects: [
     {

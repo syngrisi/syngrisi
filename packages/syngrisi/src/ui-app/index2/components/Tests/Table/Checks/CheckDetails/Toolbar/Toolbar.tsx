@@ -41,6 +41,7 @@ interface Props {
     isWireframeEnabled?: boolean
     onToggleWireframe?: () => void
     isShareEnabled?: boolean
+    isRCAFeatureEnabled?: boolean
     apikey?: string
 }
 
@@ -67,6 +68,7 @@ export function Toolbar(
         isWireframeEnabled,
         onToggleWireframe,
         isShareEnabled = true,
+        isRCAFeatureEnabled = false,
         apikey,
     }: Props,
 ) {
@@ -255,7 +257,7 @@ export function Toolbar(
                         )
                     }
 
-                    {onToggleRCA && (
+                    {onToggleRCA && isRCAFeatureEnabled && (
                         <>
                             <Divider orientation="vertical" />
                             <Group spacing={4} noWrap>

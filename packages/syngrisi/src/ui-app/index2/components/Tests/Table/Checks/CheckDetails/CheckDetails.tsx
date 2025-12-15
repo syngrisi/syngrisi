@@ -172,6 +172,13 @@ export function CheckDetails({
         return valueIsTrue && isEnabled;
     }, [settingsQuery.data]);
 
+    const isRCAEnabled = useMemo(() => {
+        if (!settingsQuery.data) return false;
+        const setting = settingsQuery.data.find((s: any) => s.name === 'rca_enabled');
+        if (!setting) return false;
+        return setting.value === true || setting.value === 'true';
+    }, [settingsQuery.data]);
+
     // Navigation Logic
     const siblingChecksQuery = useQuery(
         ['sibling_checks', currentCheck?.test?._id],
@@ -555,6 +562,7 @@ export function CheckDetails({
                     isLastTest={currentTestIndex === testList.length - 1}
                     navigationReady={!siblingChecksQuery.isLoading && siblingChecks.length > 0 && currentCheckIndex >= 0}
                     rcaEnabled={rca.state.isEnabled}
+                    isRCAFeatureEnabled={isRCAEnabled}
                     onToggleRCA={rca.toggle}
                     rcaStats={rca.state.diffResult?.stats}
                     isWireframeEnabled={rca.state.isWireframeEnabled}

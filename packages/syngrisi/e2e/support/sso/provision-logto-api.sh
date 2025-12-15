@@ -33,8 +33,9 @@ OIDC_APP_SECRET="syngrisi-test-secret-12345"
 
 # Redirect URIs for E2E testing (base port 3002 + worker CID for parallel execution)
 # Supports up to 10 parallel workers (ports 3002-3011)
-OIDC_REDIRECT_URIS_JSON='["http://localhost:3002/v1/auth/sso/oauth/callback", "http://localhost:3003/v1/auth/sso/oauth/callback", "http://localhost:3004/v1/auth/sso/oauth/callback", "http://localhost:3005/v1/auth/sso/oauth/callback", "http://localhost:3006/v1/auth/sso/oauth/callback", "http://localhost:3007/v1/auth/sso/oauth/callback", "http://localhost:3008/v1/auth/sso/oauth/callback", "http://localhost:3009/v1/auth/sso/oauth/callback", "http://localhost:3010/v1/auth/sso/oauth/callback", "http://localhost:3011/v1/auth/sso/oauth/callback"]'
-POST_LOGOUT_REDIRECT_URIS_JSON='["http://localhost:3002", "http://localhost:3003", "http://localhost:3004", "http://localhost:3005", "http://localhost:3006", "http://localhost:3007", "http://localhost:3008", "http://localhost:3009", "http://localhost:3010", "http://localhost:3011"]'
+# Includes both localhost and 127.0.0.1 variants for test compatibility
+OIDC_REDIRECT_URIS_JSON='["http://localhost:3002/v1/auth/sso/oauth/callback", "http://localhost:3003/v1/auth/sso/oauth/callback", "http://localhost:3004/v1/auth/sso/oauth/callback", "http://localhost:3005/v1/auth/sso/oauth/callback", "http://localhost:3006/v1/auth/sso/oauth/callback", "http://localhost:3007/v1/auth/sso/oauth/callback", "http://localhost:3008/v1/auth/sso/oauth/callback", "http://localhost:3009/v1/auth/sso/oauth/callback", "http://localhost:3010/v1/auth/sso/oauth/callback", "http://localhost:3011/v1/auth/sso/oauth/callback", "http://127.0.0.1:3002/v1/auth/sso/oauth/callback", "http://127.0.0.1:3003/v1/auth/sso/oauth/callback", "http://127.0.0.1:3004/v1/auth/sso/oauth/callback", "http://127.0.0.1:3005/v1/auth/sso/oauth/callback", "http://127.0.0.1:3006/v1/auth/sso/oauth/callback", "http://127.0.0.1:3007/v1/auth/sso/oauth/callback", "http://127.0.0.1:3008/v1/auth/sso/oauth/callback", "http://127.0.0.1:3009/v1/auth/sso/oauth/callback", "http://127.0.0.1:3010/v1/auth/sso/oauth/callback", "http://127.0.0.1:3011/v1/auth/sso/oauth/callback"]'
+POST_LOGOUT_REDIRECT_URIS_JSON='["http://localhost:3002", "http://localhost:3003", "http://localhost:3004", "http://localhost:3005", "http://localhost:3006", "http://localhost:3007", "http://localhost:3008", "http://localhost:3009", "http://localhost:3010", "http://localhost:3011", "http://127.0.0.1:3002", "http://127.0.0.1:3003", "http://127.0.0.1:3004", "http://127.0.0.1:3005", "http://127.0.0.1:3006", "http://127.0.0.1:3007", "http://127.0.0.1:3008", "http://127.0.0.1:3009", "http://127.0.0.1:3010", "http://127.0.0.1:3011"]'
 
 # Colors for output
 RED='\033[0;31m'
@@ -58,13 +59,21 @@ check_logto() {
     log_info "Logto is available"
 }
 
+# Helper function to run psql via container
+run_psql() {
+    container exec syngrisi-test-db-sso psql -U logto -d logto "$@"
+}
+
+run_psql_query() {
+    container exec syngrisi-test-db-sso psql -U logto -d logto -tAc "$1"
+}
+
 # Bootstrap: Create M2M app for API access (requires SQL - one time only)
 bootstrap_m2m_app() {
     log_step "Bootstrapping M2M app for Management API access..."
 
     # Check if M2M app exists
-    local app_exists=$(PGPASSWORD=logto psql -h localhost -p "$POSTGRES_PORT" -U logto -d logto -tAc \
-        "SELECT COUNT(*) FROM applications WHERE id='$M2M_APP_ID' AND tenant_id='default';" 2>/dev/null || echo "0")
+    local app_exists=$(run_psql_query "SELECT COUNT(*) FROM applications WHERE id='$M2M_APP_ID' AND tenant_id='default';" 2>/dev/null || echo "0")
 
     if [ "$app_exists" = "1" ]; then
         log_info "M2M app already exists"
@@ -74,8 +83,7 @@ bootstrap_m2m_app() {
     log_info "Creating M2M app..."
 
     # Get the Management API role ID (might be different in fresh installs)
-    local role_id=$(PGPASSWORD=logto psql -h localhost -p "$POSTGRES_PORT" -U logto -d logto -tAc \
-        "SELECT id FROM roles WHERE tenant_id='default' AND name LIKE '%Management API%' LIMIT 1;" 2>/dev/null)
+    local role_id=$(run_psql_query "SELECT id FROM roles WHERE tenant_id='default' AND name LIKE '%Management API%' LIMIT 1;" 2>/dev/null)
 
     if [ -z "$role_id" ]; then
         log_error "Could not find Management API role"
@@ -84,28 +92,9 @@ bootstrap_m2m_app() {
 
     log_info "Found Management API role: $role_id"
 
-    PGPASSWORD=logto psql -h localhost -p "$POSTGRES_PORT" -U logto -d logto << EOF
--- Create M2M application
-INSERT INTO applications (tenant_id, id, name, secret, description, type, oidc_client_metadata)
-VALUES (
-    'default',
-    '$M2M_APP_ID',
-    'Syngrisi Management App',
-    '$M2M_APP_SECRET',
-    'M2M app for Syngrisi E2E test provisioning',
-    'MachineToMachine',
-    '{"redirectUris": [], "postLogoutRedirectUris": []}'
-);
-
--- Assign Management API role
-INSERT INTO applications_roles (tenant_id, id, application_id, role_id)
-VALUES (
-    'default',
-    'ar_syngrisi_m2m_001',
-    '$M2M_APP_ID',
-    '$role_id'
-);
-EOF
+    # Create M2M application and assign role
+    run_psql_query "INSERT INTO applications (tenant_id, id, name, secret, description, type, oidc_client_metadata) VALUES ('default', '$M2M_APP_ID', 'Syngrisi Management App', '$M2M_APP_SECRET', 'M2M app for Syngrisi E2E test provisioning', 'MachineToMachine', '{\"redirectUris\": [], \"postLogoutRedirectUris\": []}');"
+    run_psql_query "INSERT INTO applications_roles (tenant_id, id, application_id, role_id) VALUES ('default', 'ar_syngrisi_m2m_001', '$M2M_APP_ID', '$role_id');"
 
     log_info "M2M app created successfully"
 }
@@ -256,11 +245,7 @@ create_oidc_app() {
 
         # Update with our custom ID and secret (via SQL since API doesn't allow setting ID)
         log_info "Setting custom app ID and secret..."
-        PGPASSWORD=logto psql -h localhost -p "$POSTGRES_PORT" -U logto -d logto << EOF
-UPDATE applications
-SET id = '$OIDC_APP_ID', secret = '$OIDC_APP_SECRET'
-WHERE id = '$app_id' AND tenant_id = 'default';
-EOF
+        run_psql_query "UPDATE applications SET id = '$OIDC_APP_ID', secret = '$OIDC_APP_SECRET' WHERE id = '$app_id' AND tenant_id = 'default';"
         log_info "Application ID and secret configured"
     else
         log_warn "Application may already exist or creation failed"
@@ -274,20 +259,20 @@ SAML_APP_ID="syngrisi-saml-app"
 SAML_APP_NAME="syngrisi-e2e-saml"
 SAML_ENTITY_ID="syngrisi-e2e-sp"
 # SAML ACS URLs for E2E testing (base port 3002 + worker CID for parallel execution)
-# Note: Logto SAML app only supports single ACS URL, so we use port 3002 as default
-SAML_ACS_URL="http://localhost:3002/v1/auth/sso/saml/callback"
+# Note: Logto SAML app only supports single ACS URL, so we use 127.0.0.1 (matches test backend host)
+SAML_ACS_URL="http://127.0.0.1:3002/v1/auth/sso/saml/callback"
 # Additional ACS URLs for parallel workers (3002-3011) - will be added via API update
 SAML_ACS_URLS_JSON='[
-    {"binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "url": "http://localhost:3002/v1/auth/sso/saml/callback"},
-    {"binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "url": "http://localhost:3003/v1/auth/sso/saml/callback"},
-    {"binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "url": "http://localhost:3004/v1/auth/sso/saml/callback"},
-    {"binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "url": "http://localhost:3005/v1/auth/sso/saml/callback"},
-    {"binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "url": "http://localhost:3006/v1/auth/sso/saml/callback"},
-    {"binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "url": "http://localhost:3007/v1/auth/sso/saml/callback"},
-    {"binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "url": "http://localhost:3008/v1/auth/sso/saml/callback"},
-    {"binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "url": "http://localhost:3009/v1/auth/sso/saml/callback"},
-    {"binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "url": "http://localhost:3010/v1/auth/sso/saml/callback"},
-    {"binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "url": "http://localhost:3011/v1/auth/sso/saml/callback"}
+    {"binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "url": "http://127.0.0.1:3002/v1/auth/sso/saml/callback"},
+    {"binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "url": "http://127.0.0.1:3003/v1/auth/sso/saml/callback"},
+    {"binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "url": "http://127.0.0.1:3004/v1/auth/sso/saml/callback"},
+    {"binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "url": "http://127.0.0.1:3005/v1/auth/sso/saml/callback"},
+    {"binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "url": "http://127.0.0.1:3006/v1/auth/sso/saml/callback"},
+    {"binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "url": "http://127.0.0.1:3007/v1/auth/sso/saml/callback"},
+    {"binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "url": "http://127.0.0.1:3008/v1/auth/sso/saml/callback"},
+    {"binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "url": "http://127.0.0.1:3009/v1/auth/sso/saml/callback"},
+    {"binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "url": "http://127.0.0.1:3010/v1/auth/sso/saml/callback"},
+    {"binding": "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST", "url": "http://127.0.0.1:3011/v1/auth/sso/saml/callback"}
 ]'
 
 # Create or update SAML application for Syngrisi (Logto as IdP)

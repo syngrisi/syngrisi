@@ -50,19 +50,44 @@ async function createCheckViaAPI(
   // Parameters are taken from vDriver.params.test (set by startTestSession), so we only pass optional overrides
   logger.info(`Creating check "${checkName}" for test "${testId}" via SyngrisiDriver`);
 
-  try {
-    const checkParams: any = {
-      checkName,
-      imageBuffer,
-      params: params || {}, // Optional params to override defaults from test session
-    };
+  const maxAttempts = 3;
+  let lastError: any = null;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const checkParams: any = {
+        checkName,
+        imageBuffer,
+        params: params || {}, // Optional params to override defaults from test session
+      };
 
-    const result = await vDriver.check(checkParams);
-    return result;
-  } catch (error: any) {
-    logger.error(`Failed to create check: ${error.message}`);
-    throw error;
+      const result = await vDriver.check(checkParams);
+      return result;
+    } catch (error: any) {
+      lastError = error;
+      const message = error?.message || '';
+      const statusCode = error?.response?.statusCode || error?.statusCode;
+      const isRetryable =
+        statusCode === 404 ||
+        message.includes('404') ||
+        message.toLowerCase().includes('not found') ||
+        message.toLowerCase().includes('baseline is absent');
+
+      if (isRetryable && attempt < maxAttempts) {
+        const delayMs = 250 * attempt;
+        logger.warn(
+          `Failed to create check on attempt ${attempt}/${maxAttempts} (status: ${statusCode || 'n/a'}): ${message}. ` +
+          `Retrying in ${delayMs}ms...`
+        );
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+        continue;
+      }
+
+      logger.error(`Failed to create check: ${message}`);
+      throw error;
+    }
   }
+
+  throw lastError;
 }
 
 async function createCheckForExistingTest(
@@ -141,11 +166,11 @@ async function createTestsWithParams(
   const waitAfterStopMs = fastSeed ? 10 : 100;
 
   // For @fast-server tests, auth is disabled so we should always use the default API key.
-  // Only use env SYNGRISI_API_KEY if it was explicitly set by THIS test (stored in testData),
-  // not leaked from a previous test.
+  // Priority: 1) explicitly set by this test, 2) env variable, 3) default
   const storedApiKey = testData.get('explicitApiKey') as string | undefined;
+  const envApiKey = process.env.SYNGRISI_API_KEY;
   const defaultApiKey = '123';
-  const apiKey = storedApiKey || defaultApiKey;
+  const apiKey = storedApiKey || envApiKey || defaultApiKey;
   const hashedApiKey = hashApiKey(apiKey);
   testData.set('hashedApiKey', hashedApiKey);
   testData.set('apiBaseUrl', appServer.baseURL);

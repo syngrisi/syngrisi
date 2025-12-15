@@ -18,41 +18,46 @@
    - Description: TCP port for application server
    - Default Value: `3000`
 
-4. `SYNGRISI_AUTH`
+5. `SYNGRISI_AUTH`
    - Description: Enables authentication
    - Default Value: `true`
 
-5. `LOGLEVEL`
+6. `LOGLEVEL`
    - Description: Log level (`error` `warn`, `info`, `verbose`, `debug`, `silly`)
    - Default Value: `debug`
 
-6. `SYNGRISI_PAGINATION_SIZE`
+7. `SYNGRISI_PAGINATION_SIZE`
    - Description: Number of tests items on that return `/checks?page={page_num}` API
    - Default Value: `50`
 
-7. `SYNGRISI_DISABLE_DEV_CORS`
+8. `SYNGRISI_DISABLE_DEV_CORS`
    - Description: Disable CORS for vite dev server, only for dev and test purposes
    - Default Value: `-`
 
-8. `SYNGRISI_COVERAGE`
+9. `SYNGRISI_COVERAGE`
    - Description: Enable coverage, if `true` generated coverage data to `./coverage`
    - Default Value: `-`
 
-9. `SYNGRISI_RATE_LIMIT_WINDOW_MS`
+10. `SYNGRISI_RATE_LIMIT_WINDOW_MS`
    - Description: Window size for rate limiting in milliseconds
    - Default Value: `900000` (15 minutes)
 
-10. `SYNGRISI_RATE_LIMIT_MAX`
+11. `SYNGRISI_RATE_LIMIT_MAX`
     - Description: Maximum number of requests per window
     - Default Value: `100`
 
-11. `SYNGRISI_AUTH_RATE_LIMIT_WINDOW_MS`
+12. `SYNGRISI_AUTH_RATE_LIMIT_WINDOW_MS`
     - Description: Window size for authentication rate limiting in milliseconds
     - Default Value: `900000` (15 minutes)
 
-12. `SYNGRISI_AUTH_RATE_LIMIT_MAX`
+13. `SYNGRISI_AUTH_RATE_LIMIT_MAX`
     - Description: Maximum number of authentication requests per window
     - Default Value: `5`
+
+14. `SYNGRISI_RCA`
+    - Description: Enables Root Cause Analysis (RCA) feature. When enabled, the server accepts DOM snapshots and the UI displays the RCA panel.
+    - Default Value: `false`
+    - Note: To actually send DOM snapshots for RCA, set `SYNGRISI_DISABLE_DOM_DATA=false` (default is to skip DOM data).
 
 ### Docker Mode
 

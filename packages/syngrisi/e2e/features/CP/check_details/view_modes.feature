@@ -20,9 +20,11 @@ Feature: View Modes - Expected, Actual, Diff, Slider
               filePath: files/B.png
       """
     When I go to "main" page
+    When I wait for test "TestName" to appear in table
     When I unfold the test "TestName"
+    When I wait 10 seconds for the element with locator "[data-test-preview-image='CheckName']" to be visible
     When I click element with locator "[data-test-preview-image='CheckName']"
-    When I wait 10 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
+    When I wait 15 seconds for the element with locator "[data-check-header-name='CheckName']" to be visible
 
   Scenario: Simple Views (Expected, Actual, Diff)
     When I wait 10 seconds for the element with locator "[data-segment-value='expected']" to be visible

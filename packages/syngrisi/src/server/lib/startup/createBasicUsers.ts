@@ -59,7 +59,7 @@ export async function createBasicUsers(): Promise<void> {
                         const found = await User.findOne({ username: user.username });
                         return !!found;
                     },
-                    2000, // 2 second timeout (reduced from 5s - indexing usually takes <500ms)
+                    10000, // 10 second timeout (increased from 2s to prevent race conditions)
                     25    // check every 25ms (faster polling)
                 );
                 if (!indexed) {

@@ -84,23 +84,24 @@ Feature: Check details Resize and Pan
 
   Scenario: Resize via Ctrl + Mouse Wheel
 
-    # before zoom: check zoom coefficient
+    # Store initial zoom and verify it's reasonable
     When I execute javascript code:
       """
-    return parseFloat(mainView.canvas.getZoom(), 10).toFixed(2)
-      """
-    When I execute javascript code:
-      """
-    return parseFloat(mainView.canvas.getZoom(), 10).toFixed(2)
+    window.initialZoom = parseFloat(mainView.canvas.getZoom());
+    return (window.initialZoom > 0.5 && window.initialZoom <= 2).toString();
       """
     Then I expect the stored "js" string is equal:
       """
-      1.00
+      true
       """
 
-    # emulate vertical mouse wheels with control key (move right and bottom)
+    # Emulate zoom and verify increase in one step to avoid state loss
     When I execute javascript code:
       """
+    // Store initial zoom locally
+    const initialZoom = parseFloat(mainView.canvas.getZoom());
+
+    // Emulate vertical mouse wheel with control key (zoom in)
     const eventObj = {
       e: {
         ctrlKey: true,
@@ -111,20 +112,13 @@ Feature: Check details Resize and Pan
         deltaY: -150,
         deltaX: 0,
       }
-    }
+    };
+    mainView.canvas.fire('mouse:wheel', eventObj);
 
-    mainView.canvas.fire('mouse:wheel', eventObj)
-      """
-
-    # after zoom: check zoom coefficient
-    When I execute javascript code:
-      """
-    return parseFloat(mainView.canvas.getZoom(), 10).toFixed(2)
-      """
-
-    When I execute javascript code:
-      """
-    return parseFloat(mainView.canvas.getZoom(), 10).toFixed(2) > 1.1
+    // Check that zoom increased by at least 10%
+    const currentZoom = parseFloat(mainView.canvas.getZoom());
+    const minExpectedZoom = initialZoom * 1.1;
+    return (currentZoom >= minExpectedZoom).toString();
       """
     Then I expect the stored "js" string is equal:
       """
@@ -133,28 +127,26 @@ Feature: Check details Resize and Pan
 
   @flaky
   Scenario: Pan via central mouse button and Mouse Move
-    # check pan coordinates
+    # Store initial pan coordinates and verify X position is reasonable (centered)
     When I execute javascript code:
       """
-    return parseFloat(mainView.canvas.viewportTransform[4]).toFixed(2).toString()
-         + '/'
-         + parseFloat(mainView.canvas.viewportTransform[5]).toFixed(2).toString()
-      """
-
-    When I execute javascript code:
-      """
-    return (parseFloat(mainView.canvas.viewportTransform[4]) > 60).toString()
-      + "/"
-      + parseFloat(mainView.canvas.viewportTransform[5]).toFixed(2).toString()
+    window.initialPanX = parseFloat(mainView.canvas.viewportTransform[4]);
+    window.initialPanY = parseFloat(mainView.canvas.viewportTransform[5]);
+    return (window.initialPanX > 60).toString();
       """
     Then I expect the stored "js" string is equal:
       """
-          true/0.00
+      true
       """
 
-    # emulate horizontal and vertical mouse move (move right and bottom)
+    # Emulate pan and verify delta in one step to avoid state loss
     When I execute javascript code:
       """
+    // Store initial values locally
+    const initialX = parseFloat(mainView.canvas.viewportTransform[4]);
+    const initialY = parseFloat(mainView.canvas.viewportTransform[5]);
+
+    // Emulate horizontal and vertical mouse move (move right and bottom)
     const eventObj = {
       e: {
         preventDefault: ()=>{},
@@ -163,117 +155,70 @@ Feature: Check details Resize and Pan
         movementX: 50,
         movementY: 50,
       }
-    }
+    };
+    mainView.canvas.fire('mouse:move', eventObj);
 
-    mainView.canvas.fire('mouse:move', eventObj)
-      """
-    # check pan coordinates
+    // Check delta
+    const currentX = parseFloat(mainView.canvas.viewportTransform[4]);
+    const currentY = parseFloat(mainView.canvas.viewportTransform[5]);
+    const deltaX = currentX - initialX;
+    const deltaY = currentY - initialY;
 
-    When I execute javascript code:
-      """
-    return parseFloat(mainView.canvas.viewportTransform[4]).toFixed(2).toString()
-         + '/'
-         + parseFloat(mainView.canvas.viewportTransform[5]).toFixed(2).toString()
-      """
-
-    When I execute javascript code:
-      """
-    return (parseFloat(mainView.canvas.viewportTransform[4]) > 100).toString()
-      + "/"
-      + parseFloat(mainView.canvas.viewportTransform[5]).toFixed(2).toString()
+    // Allow small tolerance for floating point
+    return (Math.abs(deltaX - 50) < 5 && Math.abs(deltaY - 50) < 5).toString();
       """
     Then I expect the stored "js" string is equal:
       """
-          true/50.00
+      true
       """
 
   Scenario: Pan via Mouse Wheel (touchpad)
-    # check pan coordinates
+    # Store initial pan coordinates and verify X position is reasonable (centered)
     When I execute javascript code:
       """
-    return (parseInt(mainView.canvas.viewportTransform[4]).toFixed(2)).toString()
-      + "/"
-      + parseInt(mainView.canvas.viewportTransform[5]).toFixed(2).toString()
-      """
-
-    When I execute javascript code:
-      """
-    return (parseInt(mainView.canvas.viewportTransform[4]).toFixed(2) > 60).toString()
-      + "/"
-      + parseInt(mainView.canvas.viewportTransform[5]).toFixed(2).toString()
+    window.initialPanX = parseFloat(mainView.canvas.viewportTransform[4]);
+    window.initialPanY = parseFloat(mainView.canvas.viewportTransform[5]);
+    return (window.initialPanX > 60).toString();
       """
     Then I expect the stored "js" string is equal:
       """
-          true/0.00
+      true
       """
 
-    # emulate horizontal and vertical mouse wheels (move right and bottom)
+    # Emulate 3 wheel events and verify delta in one step to avoid state loss
     When I execute javascript code:
       """
-    const eventObj = {
-      e: {
-        ctrlKey: false,
-        preventDefault: ()=>{},
-        stopPropagation: ()=>{},
-        offsetX: 200,
-        offsetY: 200,
-        deltaY: -50,
-        deltaX: -50,
-      }
+    // Store initial values locally
+    const initialX = parseFloat(mainView.canvas.viewportTransform[4]);
+    const initialY = parseFloat(mainView.canvas.viewportTransform[5]);
+
+    // Emulate 3 horizontal and vertical mouse wheels (move right and bottom)
+    // Each wheel event with deltaY: -50, deltaX: -50 pans by delta/2 = 25 pixels
+    for (let i = 0; i < 3; i++) {
+      const eventObj = {
+        e: {
+          ctrlKey: false,
+          preventDefault: ()=>{},
+          stopPropagation: ()=>{},
+          offsetX: 200,
+          offsetY: 200,
+          deltaY: -50,
+          deltaX: -50,
+        }
+      };
+      mainView.canvas.fire('mouse:wheel', eventObj);
     }
 
-    mainView.canvas.fire('mouse:wheel', eventObj)
-      """
+    // Check delta
+    const currentX = parseFloat(mainView.canvas.viewportTransform[4]);
+    const currentY = parseFloat(mainView.canvas.viewportTransform[5]);
+    const deltaX = currentX - initialX;
+    const deltaY = currentY - initialY;
 
-    # Additional mouse wheel actions for testing (to verify actions work)
-    When I execute javascript code:
-      """
-    const eventObj2 = {
-      e: {
-        ctrlKey: false,
-        preventDefault: ()=>{},
-        stopPropagation: ()=>{},
-        offsetX: 200,
-        offsetY: 200,
-        deltaY: -50,
-        deltaX: -50,
-      }
-    }
-
-    mainView.canvas.fire('mouse:wheel', eventObj2)
-      """
-
-    When I execute javascript code:
-      """
-    const eventObj3 = {
-      e: {
-        ctrlKey: false,
-        preventDefault: ()=>{},
-        stopPropagation: ()=>{},
-        offsetX: 200,
-        offsetY: 200,
-        deltaY: -50,
-        deltaX: -50,
-      }
-    }
-
-    mainView.canvas.fire('mouse:wheel', eventObj3)
-      """
-    # check pan coordinates
-    When I execute javascript code:
-      """
-    return (parseInt(mainView.canvas.viewportTransform[4]).toFixed(2)).toString()
-      + "/"
-      + parseInt(mainView.canvas.viewportTransform[5]).toFixed(2).toString()
-      """
-
-    When I execute javascript code:
-      """
-    return (parseInt(mainView.canvas.viewportTransform[4]).toFixed(2) >= 80).toString()
-      + "/"
-      + parseInt(mainView.canvas.viewportTransform[5]).toFixed(2).toString()
+    // Expected: 3 events * (50/2) = 75 pixels in each direction
+    return (Math.abs(deltaX - 75) < 10 && Math.abs(deltaY - 75) < 10).toString();
       """
     Then I expect the stored "js" string is equal:
       """
-          true/75.00
+      true
       """

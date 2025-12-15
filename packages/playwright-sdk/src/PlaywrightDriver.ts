@@ -273,7 +273,8 @@ export class PlaywrightDriver {
         const hash = createHash('sha512').update(imageBuffer).digest('hex')
 
         // Check if DOM data should be skipped (via env var or option)
-        const skipDomData = params?.skipDomData || process.env.SYNGRISI_DISABLE_DOM_DATA === 'true'
+        // Default: skipDomData is true (disabled) unless explicitly enabled via env var or params
+        const skipDomData = params?.skipDomData ?? (process.env.SYNGRISI_DISABLE_DOM_DATA !== 'false')
 
         // Auto-collect DOM if requested and not already provided (unless skipDomData is set)
         let finalDomDump = domDump

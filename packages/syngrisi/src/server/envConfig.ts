@@ -37,6 +37,9 @@ export const env = cleanEnv(process.env, {
     SYNGRISI_AUTO_REMOVE_CHECKS_MIN_INTERVAL_MS: num({ default: 24 * 60 * 60 * 1000 }),
     SYNGRISI_ENABLE_SCHEDULERS_IN_TEST_MODE: bool({ default: false }),
 
+    // RCA
+    SYNGRISI_RCA: bool({ default: false }),
+
     // trunk features
     SYNGRISI_TRUNK_FEATURE_AI_SEVERITY: bool({ default: false }),
     SYNGRISI_AI_KEY: str({ default: '' }),
