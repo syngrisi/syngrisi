@@ -1,10 +1,48 @@
 # @syngrisi/syngrisi
 
+## 3.0.0
+
+### Minor Changes
+
+-   [`bfbd1c8`](https://github.com/syngrisi/syngrisi/commit/bfbd1c8b897cdf0d8806459ef84b8f435ef5be97) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - feat: add Root Cause Analysis (RCA) feature for visual regression debugging
+
+    Server:
+
+    -   Add DomSnapshot model for storing DOM snapshots with gzip compression
+    -   Add dom-snapshot.service for DOM snapshot CRUD operations with deduplication
+    -   Add new API endpoints: GET /v1/checks/{id}/dom, GET /v1/baselines/{id}/dom
+    -   Add x-domdump-compressed header support for compressed DOM data
+    -   All DOM operations are non-critical (wrapped in try-catch)
+
+    UI:
+
+    -   Add RCA panel component with DOM diff visualization
+    -   Add wireframe overlay for visual element highlighting
+    -   Add RCA toggle button in toolbar (keyboard shortcut: D)
+    -   Display change statistics: added nodes, removed nodes, style changes
+    -   Show detailed property changes (before/after values)
+    -   Graceful error handling when DOM data is unavailable
+
+    Configuration:
+
+    -   Add SYNGRISI_DOM_SNAPSHOTS_PATH for custom DOM storage location
+    -   Backward compatible: checks without DOM data work as before
+
+### Patch Changes
+
+-   [`11ce3ac`](https://github.com/syngrisi/syngrisi/commit/11ce3acab7660cb9952517acda6604944f8fc013) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - fix(ui): fix RCA panel scrolling behavior to prevent page scroll when panel scroll ends
+
+-   [`e21daff`](https://github.com/syngrisi/syngrisi/commit/e21daffe1ac1c9d4acced4eec668d32dd4b5c6cd) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - Documented that enabling RCA requires `SYNGRISI_DISABLE_DOM_DATA=false` to send DOM snapshots.
+
+-   Updated dependencies []:
+    -   @syngrisi/node-resemble.js@3.0.0
+
 ## 2.6.1
 
 ### Patch Changes
 
 -   Fix filter drawer layout and button visibility on smaller screens:
+
     -   Fix alignment of buttons in check details filter
     -   Fix filter drawer width to ensure buttons are visible on small screens
     -   Fix table and filter drawer layout to prevent overflow
