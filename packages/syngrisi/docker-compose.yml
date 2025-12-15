@@ -35,6 +35,7 @@ services:
       SYNGRISI_APP_PORT: 3000
       SYNGRISI_HTTP_LOG: "${SYNGRISI_HTTP_LOG:-false}"
       SYNGRISI_DISABLE_DEV_CORS: "true"
+      SYNGRISI_RCA: "${SYNGRISI_RCA}"
 
   syngrisi-db:
     cap_add:
