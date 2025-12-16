@@ -153,6 +153,11 @@ export const ssoServerFixture = base.extend<{ ssoServer: SSOServerFixture }>({
     async ({}, use, testInfo) => {
       const needsLogto = hasTag(testInfo, '@sso-logto');
       const expectExternal = hasTag(testInfo, '@sso-external');
+      const needsManualProvision = hasTag(testInfo, '@sso-logto-ui');
+      const skipProvisioning = needsManualProvision || process.env.E2E_LOGTO_SKIP_PROVISIONING === 'true';
+      if (skipProvisioning && process.env.E2E_LOGTO_SKIP_PROVISIONING !== 'true') {
+        process.env.E2E_LOGTO_SKIP_PROVISIONING = 'true';
+      }
       let startedByTest = false;
 
       // Load provisioned config if available
@@ -169,9 +174,15 @@ export const ssoServerFixture = base.extend<{ ssoServer: SSOServerFixture }>({
             throw new Error('Apple container CLI not available');
           }
 
+          // For UI provisioning tests we need a clean instance. If something is already running, stop it first.
+          if (needsManualProvision && await isLogtoAvailable()) {
+            logger.info('Stopping existing Logto instance to allow clean UI provisioning...');
+            await logtoTestManager.stop();
+          }
+
           ensureContainerSystemRunning();
           logger.info('Starting Logto SSO infrastructure...');
-          const config = await logtoTestManager.ensureStarted();
+          const config = await logtoTestManager.ensureStarted(undefined, skipProvisioning);
           fixture.logtoConfig = config;
           fixture.isAvailable = true;
           startedByTest = true;
