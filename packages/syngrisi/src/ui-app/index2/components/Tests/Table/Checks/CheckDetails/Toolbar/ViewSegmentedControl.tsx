@@ -4,14 +4,9 @@ import { IconArrowsExchange2, IconSquareHalf, IconSquareLetterA, IconSquareLette
 import { useHotkeys } from '@mantine/hooks';
 import { useEffect, useRef } from 'react';
 
-const useStyles = createStyles((theme) => ({
+const useStyles = createStyles(() => ({
     labelIcon: {
         minWidth: 18,
-    },
-    labelText: {
-        [`@media (max-width: ${theme.breakpoints.lg}px)`]: {
-            display: 'none',
-        },
     },
 }));
 
@@ -76,9 +71,6 @@ export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
                 >
                     <Group position="left" spacing={4} noWrap data-check="expected-view">
                         <IconSquareLetterE stroke={1} className={classes.labelIcon} />
-                        <Text lineClamp={1} className={classes.labelText}>
-                            Expected
-                        </Text>
                     </Group>
                 </Tooltip>
             ),
@@ -100,9 +92,6 @@ export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
                 >
                     <Group position="left" spacing={4} noWrap data-check="actual-view">
                         <IconSquareLetterA stroke={1} className={classes.labelIcon} />
-                        <Text lineClamp={1} className={classes.labelText}>
-                            Actual
-                        </Text>
                     </Group>
                 </Tooltip>
             ),
@@ -124,9 +113,6 @@ export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
                     >
                         <Group position="left" spacing={4} noWrap data-check="diff-view">
                             <IconArrowsExchange2 stroke={1} className={classes.labelIcon} />
-                            <Text lineClamp={1} className={classes.labelText}>
-                                Difference
-                            </Text>
                         </Group>
                     </Tooltip>
                 ),
@@ -149,9 +135,6 @@ export function ViewSegmentedControl({ view, setView, currentCheck }: Props) {
                     >
                         <Group position="left" spacing={4} noWrap data-check="slider-view">
                             <IconSquareHalf stroke={1} className={classes.labelIcon} />
-                            <Text lineClamp={1} className={classes.labelText}>
-                                Slider
-                            </Text>
                         </Group>
                     </Tooltip>
                 ),

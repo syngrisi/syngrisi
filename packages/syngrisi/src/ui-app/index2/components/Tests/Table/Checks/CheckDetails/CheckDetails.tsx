@@ -213,105 +213,148 @@ export function CheckDetails({
         }
     };
 
-    // init mainView
-    useEffect(() => {
-        const destroyMV = async () => {
-            if (mainView) {
-                await mainView.destroyAllViews();
-                mainView.canvas.clear();
-                mainView.canvas.dispose();
-                setMainView(() => null);
+    // Helper function to load images
+    const loadImages = async () => {
+        // Build image URLs (without query params for cache lookup)
+        const expectedImgSrcBase = `${config.baseUri}/snapshoots/${currentCheck?.baselineId?.filename}`;
+        const actualImgSrcBase = `${config.baseUri}/snapshoots/${currentCheck?.actualSnapshotId?.filename}`;
+        const diffImgSrcBase = currentCheck?.diffId?.filename
+            ? `${config.baseUri}/snapshoots/${currentCheck?.diffId?.filename}`
+            : null;
+
+        // Try to get from preload cache first, fallback to loading
+        let expectedImg = imagePreloadService.getPreloadedImage(expectedImgSrcBase);
+        let actualImg = imagePreloadService.getPreloadedImage(actualImgSrcBase);
+
+        const expectedCacheHit = !!expectedImg;
+        const actualCacheHit = !!actualImg;
+
+        if (expectedCacheHit && actualCacheHit) {
+            log.debug('[CheckDetails] Using preloaded images from cache');
+        } else {
+            log.debug(`[CheckDetails] Loading images (expected: ${expectedCacheHit ? 'HIT' : 'MISS'}, actual: ${actualCacheHit ? 'HIT' : 'MISS'})`);
+        }
+
+        // Load images that are not in cache
+        if (!expectedImg) {
+            expectedImg = await createImageAndWaitForLoad(expectedImgSrcBase) as HTMLImageElement;
+            imagePreloadService.storeImage(expectedImgSrcBase, expectedImg);
+        }
+
+        if (!actualImg) {
+            actualImg = await createImageAndWaitForLoad(actualImgSrcBase) as HTMLImageElement;
+            imagePreloadService.storeImage(actualImgSrcBase, actualImg);
+        }
+
+        // Convert HTMLImageElement to fabric.Image
+        const expectedImage = imageFromElement(expectedImg);
+        const actualImage = imageFromElement(actualImg);
+
+        // Handle diff image
+        let diffImage: fabric.Image | null = null;
+        if (diffImgSrcBase) {
+            let diffImg = imagePreloadService.getPreloadedImage(diffImgSrcBase);
+            if (diffImg) {
+                log.debug('[CheckDetails] Using preloaded diff image from cache');
+                diffImage = imageFromElement(diffImg);
+            } else {
+                log.debug('[CheckDetails] Loading diff image (cache miss)');
+                diffImg = await createImageAndWaitForLoad(diffImgSrcBase) as HTMLImageElement;
+                imagePreloadService.storeImage(diffImgSrcBase, diffImg);
+                diffImage = imageFromElement(diffImg);
             }
-        };
+        }
+
+        return { expectedImage, actualImage, diffImage };
+    };
+
+    // Initialize mainView once on mount
+    useEffect(() => {
+        let isMounted = true;
 
         const initMV = async () => {
-            // init
             fabric.Object.prototype.objectCaching = false;
 
-            // Build image URLs (without query params for cache lookup)
-            const expectedImgSrcBase = `${config.baseUri}/snapshoots/${currentCheck?.baselineId?.filename}`;
-            const actualImgSrcBase = `${config.baseUri}/snapshoots/${currentCheck?.actualSnapshotId?.filename}`;
-            const diffImgSrcBase = currentCheck?.diffId?.filename
-                ? `${config.baseUri}/snapshoots/${currentCheck?.diffId?.filename}`
-                : null;
-
-            // Try to get from preload cache first, fallback to loading
-            let expectedImg = imagePreloadService.getPreloadedImage(expectedImgSrcBase);
-            let actualImg = imagePreloadService.getPreloadedImage(actualImgSrcBase);
-
-            const expectedCacheHit = !!expectedImg;
-            const actualCacheHit = !!actualImg;
-
-            if (expectedCacheHit && actualCacheHit) {
-                log.debug('[CheckDetails] Using preloaded images from cache');
-            } else {
-                log.debug(`[CheckDetails] Loading images (expected: ${expectedCacheHit ? 'HIT' : 'MISS'}, actual: ${actualCacheHit ? 'HIT' : 'MISS'})`);
-            }
-
-            // Load images that are not in cache (no query params - use base URL for browser caching)
-            if (!expectedImg) {
-                expectedImg = await createImageAndWaitForLoad(expectedImgSrcBase) as HTMLImageElement;
-                // Store in preload cache for future use
-                imagePreloadService.storeImage(expectedImgSrcBase, expectedImg);
-            }
+            const { expectedImage, actualImage, diffImage } = await loadImages();
+            if (!isMounted) return;
 
             const actual = currentCheck.actualSnapshotId || null;
-            if (!actualImg) {
-                actualImg = await createImageAndWaitForLoad(actualImgSrcBase) as HTMLImageElement;
-                // Store in preload cache for future use
-                imagePreloadService.storeImage(actualImgSrcBase, actualImg);
-            }
-
             canvasElementRef.current.style.height = `${MainView.calculateExpectedCanvasViewportAreaSize().height - 10}px`;
 
-            // Convert HTMLImageElement to fabric.Image without reloading
-            const expectedImage = imageFromElement(expectedImg);
-            const actualImage = imageFromElement(actualImg);
+            const MV = new MainView(
+                {
+                    canvasId: '2d',
+                    canvasElementWidth: canvasElementRef.current?.clientWidth,
+                    canvasElementHeight: canvasElementRef.current?.clientHeight,
+                    expectedImage,
+                    actualImage,
+                    diffImage,
+                    actual,
+                },
+            );
+            // @ts-ignore - set window.mainView for E2E tests
+            window.mainView = MV;
+            setMainView(MV);
+        };
 
-            // Handle diff image
-            let diffImage: fabric.Image | null = null;
-            if (diffImgSrcBase) {
-                let diffImg = imagePreloadService.getPreloadedImage(diffImgSrcBase);
-                if (diffImg) {
-                    log.debug('[CheckDetails] Using preloaded diff image from cache');
-                    diffImage = imageFromElement(diffImg);
-                } else {
-                    log.debug('[CheckDetails] Loading diff image (cache miss)');
-                    diffImg = await createImageAndWaitForLoad(diffImgSrcBase) as HTMLImageElement;
-                    imagePreloadService.storeImage(diffImgSrcBase, diffImg);
-                    diffImage = imageFromElement(diffImg);
-                }
-            }
+        initMV();
 
+        // Cleanup on unmount
+        return () => {
+            isMounted = false;
             setMainView((prev) => {
                 if (prev) {
-                    // @ts-ignore - update window.mainView for E2E tests even when returning existing instance
-                    window.mainView = prev;
-                    return prev; // for dev mode, when components render twice
+                    prev.destroyAllViews();
+                    prev.canvas.clear();
+                    prev.canvas.dispose();
                 }
-                const MV = new MainView(
-                    {
-                        canvasId: '2d',
-                        canvasElementWidth: canvasElementRef.current?.clientWidth,
-                        canvasElementHeight: canvasElementRef.current?.clientHeight,
-                        expectedImage,
-                        actualImage,
-                        diffImage,
-                        actual,
-                    },
-                );
-                // @ts-ignore - set window.mainView for E2E tests
-                window.mainView = MV;
-                return MV;
+                return null;
             });
         };
-        // set view
-        destroyMV().then(() => initMV());
-    }, [
-        relatedActiveCheckId,
-        relatedChecksOpened,
-        query.checkId,
-    ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []); // Only on mount/unmount
+
+    // Update images when check changes (navigation) - reuse existing canvas
+    useEffect(() => {
+        if (!mainView || !currentCheck?._id) return;
+
+        let isMounted = true;
+
+        const updateCheckImages = async () => {
+            log.debug('[CheckDetails] Navigation: updating images without recreating canvas');
+
+            const { expectedImage, actualImage, diffImage } = await loadImages();
+            if (!isMounted) return;
+
+            const actual = currentCheck.actualSnapshotId || null;
+
+            // Check if canvas needs resize (different viewport)
+            const newWidth = canvasElementRef.current?.clientWidth;
+            const newHeight = canvasElementRef.current?.clientHeight;
+            if (newWidth && newHeight && mainView.needsCanvasResize(newWidth, newHeight)) {
+                log.debug('[CheckDetails] Resizing canvas for new viewport');
+                mainView.resizeCanvas(newWidth, newHeight);
+            }
+
+            // Update images without recreating canvas
+            await mainView.updateImages({
+                expectedImage,
+                actualImage,
+                diffImage,
+                actual,
+            });
+
+            // @ts-ignore - update window.mainView for E2E tests
+            window.mainView = mainView;
+        };
+
+        updateCheckImages();
+
+        return () => {
+            isMounted = false;
+        };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentCheck?._id]); // Only when check ID changes
 
     // Sync window.mainView with React state for E2E tests
     useEffect(function syncWindowMainView() {

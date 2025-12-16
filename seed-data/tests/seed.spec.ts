@@ -269,6 +269,7 @@ test.describe('Syngrisi Seed Data', () => {
           browserName: config.browser,
           browserVersion: config.version,
           viewport: config.viewport,
+          viewport: config.viewport,
         },
       });
 
@@ -314,5 +315,103 @@ test.describe('Syngrisi Seed Data', () => {
       await driver.stopTestSession();
       console.log(`  ✓ Created test for branch: ${branch}`);
     }
+  });
+
+  // --- NEW SCENARIO: Mixed Results (2 Passed, 2 Failed) ---
+  test('Create test with 4 checks (2 passed, 2 failed)', async () => {
+    const testName = 'Mixed Results Test';
+    const suiteName = 'Seeding Scenarios';
+    const branchName = 'main';
+    const appName = 'Seed App';
+
+    // 1. Create Baseline Run (Apply all 4 checks)
+    console.log('🌱 Creating Baseline Run (Run 1)...');
+    await driver.startTestSession({
+      params: {
+        app: appName,
+        test: testName,
+        run: 'Baseline Run',
+        runident: `seed-baseline-${Date.now()}`,
+        branch: branchName,
+        suite: suiteName,
+        tags: ['seed', 'baseline'],
+      },
+    });
+
+    // Check 1: Baseline A
+    await driver.check({
+      checkName: 'Check 1 (Will Pass)',
+      imageBuffer: baselineImg,
+      params: { autoAccept: true }, // Apply immediately
+    });
+
+    // Check 2: Baseline B
+    await driver.check({
+      checkName: 'Check 2 (Will Pass)',
+      imageBuffer: sameImg,
+      params: { autoAccept: true }, // Apply immediately
+    });
+
+    // Check 3: Baseline C
+    await driver.check({
+      checkName: 'Check 3 (Will Fail)',
+      imageBuffer: baselineImg,
+      params: { autoAccept: true }, // Apply immediately
+    });
+
+    // Check 4: Baseline D
+    await driver.check({
+      checkName: 'Check 4 (Will Fail)',
+      imageBuffer: sameImg,
+      params: { autoAccept: true }, // Apply immediately
+    });
+
+    await driver.stopTestSession();
+    console.log('  ✓ Baseline Run completed and checks accepted.');
+
+    // 2. Create Regression Run (2 Passed, 2 Failed)
+    console.log('🧪 Creating Regression Run (Run 2)...');
+    await driver.startTestSession({
+      params: {
+        app: appName,
+        test: testName,
+        run: 'Regression Run',
+        runident: `seed-regression-${Date.now()}`,
+        branch: branchName,
+        suite: suiteName,
+        tags: ['seed', 'regression'],
+      },
+    });
+
+    // Check 1: Matches Baseline A (Passed)
+    await driver.check({
+      checkName: 'Check 1 (Will Pass)',
+      imageBuffer: baselineImg,
+      params: {},
+    });
+
+    // Check 2: Matches Baseline B (Passed)
+    await driver.check({
+      checkName: 'Check 2 (Will Pass)',
+      imageBuffer: sameImg,
+      params: {},
+    });
+
+    // Check 3: Differs from Baseline C (Failed)
+    await driver.check({
+      checkName: 'Check 3 (Will Fail)',
+      imageBuffer: differentImg,
+      params: {},
+    });
+
+    // Check 4: Differs from Baseline D (Failed)
+    await driver.check({
+      checkName: 'Check 4 (Will Fail)',
+      imageBuffer: differentImg,
+      params: {},
+    });
+
+    await driver.stopTestSession();
+    console.log('  ✓ Regression Run completed.');
   });
 });
