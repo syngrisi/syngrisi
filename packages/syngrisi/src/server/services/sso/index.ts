@@ -12,6 +12,7 @@ export { ssoEvents, SSOEventEmitter } from './events';
 export { ssoTokenStore, SSOTokenStore } from './token-store';
 export { ssoUserService, SSOUserService } from './sso-user.service';
 export { accountLinkingService, AccountLinkingService } from './account-linking.service';
+export { metadataLoaderService, MetadataLoaderService, ParsedIdPMetadata } from './metadata-loader.service';
 
 // Providers
 export { oauth2Provider, OAuth2Provider, OAUTH2_STRATEGY_NAME, GOOGLE_STRATEGY_NAME } from './oauth2.provider';

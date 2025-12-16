@@ -46,6 +46,12 @@
     "password": "Test123!",
     "username": "testuser"
   },
+  "admin": {
+    "email": "admin@syngrisi.test",
+    "password": "Admin123!",
+    "username": "admin",
+    "consoleUrl": "http://localhost:3050"
+  },
   "app": {
     "clientId": "syngrisi-e2e-app",
     "clientSecret": "syngrisi-test-secret-12345",

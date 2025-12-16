@@ -63,6 +63,13 @@ interface ProvisionedConfig {
     password: string;
     username?: string;
   };
+  // Admin user for Logto Admin Console access
+  admin?: {
+    email: string;
+    password: string;
+    username: string;
+    consoleUrl: string;
+  };
   // Legacy format (backwards compatible)
   app: {
     clientId: string;
@@ -130,6 +137,8 @@ export interface SSOServerFixture {
   getProvisionedOAuth2Config: () => OAuth2Config | null;
   /** Get provisioned user credentials */
   getProvisionedUser: () => { email: string; password: string; username?: string } | null;
+  /** Get provisioned admin credentials for Logto Admin Console */
+  getProvisionedAdmin: () => { email: string; password: string; username: string; consoleUrl: string } | null;
 }
 
 /**
@@ -218,6 +227,18 @@ export const ssoServerFixture = base.extend<{ ssoServer: SSOServerFixture }>({
               email: fixture.provisionedConfig.user.email,
               password: fixture.provisionedConfig.user.password,
               username: fixture.provisionedConfig.user.username,
+            };
+          }
+          return null;
+        },
+
+        getProvisionedAdmin: () => {
+          if (fixture.provisionedConfig?.admin) {
+            return {
+              email: fixture.provisionedConfig.admin.email,
+              password: fixture.provisionedConfig.admin.password,
+              username: fixture.provisionedConfig.admin.username,
+              consoleUrl: fixture.provisionedConfig.admin.consoleUrl,
             };
           }
           return null;

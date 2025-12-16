@@ -1,6 +1,6 @@
 {
   "name": "@syngrisi/wdio-sdk",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Syngrisi WebdriverIO SDK",
   "main": "dist/WDIODriver.js",
   "types": "dist/WDIODriver.d.ts",
@@ -38,7 +38,7 @@
   },
   "homepage": "https://github.com/syngrisi/syngrisi/tree/main/packages/wdio-sdk#readme",
   "dependencies": {
-    "@syngrisi/core-api": "^3.0.0",
+    "@syngrisi/core-api": "^3.1.0",
     "@wdio/globals": "^9.17.0",
     "@wdio/types": "^9.20.0",
     "form-data": "^4.0.5",

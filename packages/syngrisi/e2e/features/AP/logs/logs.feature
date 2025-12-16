@@ -174,16 +174,6 @@ Feature: Logs Table
       level: warn
       """
     When I go to "logs" page
-    When I click element with locator "[data-test='logs-table-filtering']"
-    When I wait 30 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
-    When I click element with locator "[data-test='table-filter-reset']"
-    When I click element with locator "[data-test='table-filter-apply']"
-    When I click element with locator "[data-test='logs-table-filtering']"
-    When I wait 30 seconds for the element with locator "//*[@data-test='filter-main-group']" to be visible
-    When I wait 10 seconds for the element with locator "//*[@data-test='filter-main-group']//*[@data-test='table-filter-add-rule-button']" to be visible
-    When I wait 1 seconds
-    When I click on the element "//*[@data-test='filter-main-group']//*[@data-test='table-filter-add-rule-button']" via js
-    When I wait 15 seconds for the element with locator "//*[@data-test='filter-main-group']//*[@data-test='filter-rule-1']//select[@data-test='table-filter-column-name']" to be visible
     When I wait 30 seconds for the element with locator "[data-test*='table_row_']" to be visible
     Then the element "[data-test*='table_row_']" does appear exactly "20" times
 

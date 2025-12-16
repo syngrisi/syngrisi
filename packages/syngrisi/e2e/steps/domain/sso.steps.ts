@@ -13,14 +13,27 @@ When(
     'I request {string} {string}',
     async ({ appServer }: { appServer: AppServerFixture }, method: string, path: string) => {
         const url = `${appServer.baseURL}${path}`;
+        // Use 'text' responseType to handle both JSON and XML responses
         const response = await got(url, {
             method: method as 'GET' | 'POST' | 'PUT' | 'DELETE',
             throwHttpErrors: false,
-            responseType: 'json',
+            responseType: 'text',
         });
+
+        // Try to parse as JSON if it looks like JSON, otherwise keep as text
+        let body: string | Record<string, unknown> = response.body;
+        const contentType = response.headers['content-type'] || '';
+        if (contentType.includes('application/json')) {
+            try {
+                body = JSON.parse(response.body);
+            } catch {
+                // Keep as text if JSON parsing fails
+            }
+        }
+
         lastResponse = {
             status: response.statusCode,
-            body: response.body,
+            body,
         };
     }
 );
@@ -496,6 +509,149 @@ When(
             );
         } finally {
             await client.close();
+        }
+    }
+);
+
+// ==========================================
+// Logto Admin Console Step Definitions
+// ==========================================
+
+/**
+ * Open Logto Admin Console
+ * Uses provisioned admin credentials from provisioned-config.json
+ */
+When(
+    'I open Logto Admin Console',
+    async ({ page, ssoServer }: { page: Page; ssoServer: SSOServerFixture }) => {
+        const admin = ssoServer.getProvisionedAdmin();
+        if (!admin) {
+            throw new Error(
+                'Admin credentials not found in provisioned-config.json. ' +
+                'Run provision-logto-api.sh to create admin account.'
+            );
+        }
+
+        await page.goto(admin.consoleUrl);
+        await page.waitForLoadState('networkidle');
+    }
+);
+
+/**
+ * Login to Logto Admin Console
+ * Uses username/password authentication
+ */
+When(
+    'I login to Logto Admin Console',
+    async ({ page, ssoServer }: { page: Page; ssoServer: SSOServerFixture }) => {
+        const admin = ssoServer.getProvisionedAdmin();
+        if (!admin) {
+            throw new Error('Admin credentials not found in provisioned-config.json.');
+        }
+
+        // Wait for login page to load (increased timeout for cold start)
+        await page.waitForLoadState('networkidle');
+
+        // Check if we need to log in
+        const usernameInput = page.locator('input[name="identifier"]');
+        if (await usernameInput.isVisible({ timeout: 5000 }).catch(() => false)) {
+            // Fill username
+            await usernameInput.fill(admin.username);
+            await page.click('button[type="submit"]');
+
+            // Wait for password field (Logto has 2-step login)
+            await page.waitForSelector('input[type="password"]', { timeout: 30000 });
+            await page.fill('input[type="password"]', admin.password);
+            await page.click('button[type="submit"]');
+
+            // Wait for console to load
+            await page.waitForLoadState('networkidle');
+        }
+    }
+);
+
+/**
+ * Navigate to Applications section in Logto Admin Console
+ */
+When(
+    'I navigate to Applications in Logto Admin',
+    async ({ page }: { page: Page }) => {
+        // Click on Applications menu item
+        const applicationsMenu = page.locator('nav a[href*="applications"], nav button:has-text("Applications")');
+        await applicationsMenu.click();
+        await page.waitForLoadState('networkidle');
+    }
+);
+
+/**
+ * Open SAML application configuration in Logto Admin
+ * Uses the SAML app ID from provisioned config
+ */
+When(
+    'I open the SAML application in Logto Admin',
+    async ({ page, ssoServer }: { page: Page; ssoServer: SSOServerFixture }) => {
+        const samlConfig = ssoServer.getProvisionedSAMLConfig();
+        if (!samlConfig?.appId) {
+            throw new Error('SAML app ID not found in provisioned-config.json.');
+        }
+
+        // Navigate directly to the SAML application page
+        const admin = ssoServer.getProvisionedAdmin();
+        const baseUrl = admin?.consoleUrl || 'http://localhost:3050';
+        await page.goto(`${baseUrl}/applications/${samlConfig.appId}`);
+        await page.waitForLoadState('networkidle');
+    }
+);
+
+/**
+ * Highlight an input field by name in Logto Admin for demo purposes
+ */
+When(
+    'I highlight the {string} field in Logto Admin',
+    async ({ page }: { page: Page }, fieldName: string) => {
+        // Map field names to selectors
+        const fieldSelectors: Record<string, string> = {
+            'ACS URL': 'input[name*="acs"], input[placeholder*="ACS"]',
+            'Entity ID': 'input[name*="entity"], input[placeholder*="Entity"]',
+            'Name ID Format': 'select[name*="nameId"], input[name*="nameId"]',
+            'Metadata URL': 'input[readonly][value*="metadata"]',
+        };
+
+        const selector = fieldSelectors[fieldName] || `input[name*="${fieldName}"], label:has-text("${fieldName}") + input`;
+        const field = page.locator(selector).first();
+
+        if (await field.isVisible({ timeout: 5000 }).catch(() => false)) {
+            // Add highlight style
+            await field.evaluate((el) => {
+                el.style.outline = '3px solid #ff6600';
+                el.style.outlineOffset = '2px';
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+        }
+    }
+);
+
+/**
+ * Verify we are on Logto Admin Console
+ */
+Then(
+    'I should be on Logto Admin Console',
+    async ({ page }: { page: Page }) => {
+        // Check for Logto Admin Console indicators
+        const adminIndicator = page.locator('nav, [class*="admin"], [class*="console"]');
+        await expect(adminIndicator.first()).toBeVisible({ timeout: 10000 });
+    }
+);
+
+/**
+ * Scroll to show a specific section in Logto Admin for demo
+ */
+When(
+    'I scroll to {string} section in Logto Admin',
+    async ({ page }: { page: Page }, sectionName: string) => {
+        const section = page.locator(`h2:has-text("${sectionName}"), h3:has-text("${sectionName}"), legend:has-text("${sectionName}")`).first();
+        if (await section.isVisible({ timeout: 5000 }).catch(() => false)) {
+            await section.scrollIntoViewIfNeeded();
         }
     }
 );
