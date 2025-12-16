@@ -12,6 +12,7 @@ Provide universal principles for scripting narrated demo tests, independent of f
 
 ## Annotation Rules
 
+-   **Naming**: Use dashes instead of parentheses in Feature and Scenario names (e.g., `Feature: RCA - Demo - Silent Mode` instead of `Feature: RCA - Demo (Silent Mode)`).
 -   Keep every `When I announce` line concise (1–2 sentences) and in the target locale of the demo.
 -   Narration should explain user value or decision rationale, not implementation details.
 -   Highlight the referenced element before interacting with it and clear highlights when the focus changes.

@@ -12,3 +12,5 @@ export { default as Test } from './Test.model';
 export { default as Webhook } from './Webhook.model';
 export { default as ShareToken } from './ShareToken.model';
 export type { ShareTokenDocument } from './ShareToken.model';
+export { default as DomSnapshot } from './DomSnapshot.model';
+export type { DomSnapshotDocument } from './DomSnapshot.model';

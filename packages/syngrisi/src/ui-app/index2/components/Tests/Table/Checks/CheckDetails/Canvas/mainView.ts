@@ -6,6 +6,8 @@ import { errorMsg, successMsg } from '@shared/utils/utils';
 import config from '@config';
 import { log } from '@shared/utils/Logger';
 import { highlightDiff, mergeNearbyGroups } from '@index/components/Tests/Table/Checks/CheckDetails/Toolbar/highlightDiff';
+import { RCAOverlay, RCAOverlayCallbacks } from './rcaOverlay';
+import { DOMNode, DOMChange } from '@shared/interfaces/IRCA';
 
 /* eslint-disable dot-notation,no-underscore-dangle */
 interface IRectParams {
@@ -60,6 +62,11 @@ export class MainView {
     // Bounding region overlay state
     boundingOverlayEnabled: boolean = false;
 
+    // RCA (Root Cause Analysis) overlay
+    private rcaOverlay: RCAOverlay | null = null;
+
+    private rcaCallbacks: RCAOverlayCallbacks = {};
+
     // Region state for dirty checking
     snapshotRegions: string = '';
 
@@ -113,6 +120,9 @@ export class MainView {
         this.panEvents();
         this.initBoundingOverlay();
         this.boundingRegionEvents();
+
+        // Initialize RCA overlay
+        this.rcaOverlay = new RCAOverlay(this.canvas, this.rcaCallbacks);
 
         // views
         this.expectedView = new SimpleView(this, 'expected');
@@ -216,7 +226,46 @@ export class MainView {
             width: newWidth,
             height: newHeight,
         });
+        this.zoomToFit();
         this.canvas.renderAll();
+    }
+
+    /**
+     * Zoom and pan to fit the image within the canvas
+     */
+    zoomToFit(): void {
+        if (!this.canvas || !this.actualImage) return;
+
+        const imgWidth = this.actualImage.width || 0;
+        const imgHeight = this.actualImage.height || 0;
+
+        if (imgWidth === 0 || imgHeight === 0) return;
+
+        const canvasWidth = this.canvas.width || 0;
+        const canvasHeight = this.canvas.height || 0;
+
+        // Calculate scale to fit with some padding
+        const padding = 20;
+        const availableWidth = canvasWidth - padding * 2;
+        const availableHeight = canvasHeight - padding * 2;
+
+        const scaleX = availableWidth / imgWidth;
+        const scaleY = availableHeight / imgHeight;
+        const scale = Math.min(scaleX, scaleY);
+
+        // Set zoom
+        this.canvas.setZoom(scale);
+
+        // Center
+        const vpt = this.canvas.viewportTransform;
+        if (vpt) {
+            vpt[0] = scale;
+            vpt[3] = scale;
+            vpt[4] = (canvasWidth - imgWidth * scale) / 2;
+            vpt[5] = (canvasHeight - imgHeight * scale) / 2;
+        }
+
+        this.updateRCATransform();
     }
 
     /*
@@ -259,6 +308,9 @@ export class MainView {
                 y: opt.e.offsetY,
             }, zoomVal);
 
+            // Update RCA overlay transform
+            this.updateRCATransform();
+
             // setZoomPercent(() => zoomVal * 100);
             document.dispatchEvent(new Event('zoom'));
             opt.e.preventDefault();
@@ -277,6 +329,9 @@ export class MainView {
                     const delta = new fabric.Point(mEvent.movementX, mEvent.movementY);
                     this.canvas.relativePan(delta);
                     this.canvas.renderAll();
+
+                    // Update RCA overlay transform
+                    this.updateRCATransform();
                 }
             },
         );
@@ -288,6 +343,10 @@ export class MainView {
             // this.canvas.dispatchEvent(new Event('pan'));
             this.canvas.fire('pan', opt);
             this.canvas.renderAll();
+
+            // Update RCA overlay transform
+            this.updateRCATransform();
+
             opt.e.preventDefault();
             opt.e.stopPropagation();
         });
@@ -898,4 +957,122 @@ export class MainView {
         });
         this.updateBoundingOverlay();
     }
+
+    // ==================== RCA (Root Cause Analysis) Methods ====================
+
+    /**
+     * Set callbacks for RCA overlay events
+     */
+    setRCACallbacks(callbacks: RCAOverlayCallbacks): void {
+        this.rcaCallbacks = callbacks;
+        // Recreate overlay with new callbacks
+        if (this.rcaOverlay) {
+            const wasEnabled = this.rcaOverlay.isEnabled();
+            this.rcaOverlay.disable();
+            this.rcaOverlay = new RCAOverlay(this.canvas, callbacks);
+            if (wasEnabled) {
+                log.debug('[MainView] RCA callbacks updated, overlay was enabled - need to re-enable');
+            }
+        }
+    }
+
+    /**
+     * Enable RCA overlay with DOM data and changes
+     */
+    enableRCAOverlay(
+        actualDom: DOMNode | null,
+        baselineDom: DOMNode | null,
+        changes: DOMChange[],
+        showWireframe: boolean = false
+    ): void {
+        if (!this.rcaOverlay) {
+            log.warn('[MainView] RCA overlay not initialized');
+            return;
+        }
+
+        // Get the actual image position and scale on canvas
+        const image = this.actualImage || this.expectedImage;
+        const imageLeft = image?.left || 0;
+        const imageTop = image?.top || 0;
+        const imageScaleX = image?.scaleX || 1;
+        const imageScaleY = image?.scaleY || 1;
+
+        // Use image scale (not canvas zoom) for coordinate transform
+        // DOM coordinates are relative to original image size
+        const scale = imageScaleX; // Assuming uniform scale
+
+        log.debug('[MainView] Enabling RCA overlay', {
+            hasActualDom: !!actualDom,
+            hasBaselineDom: !!baselineDom,
+            changesCount: changes.length,
+            scale,
+            offsetX: imageLeft,
+            offsetY: imageTop,
+            imageScaleX,
+            imageScaleY,
+            showWireframe,
+        });
+
+        this.rcaOverlay.enable(actualDom, baselineDom, changes, scale, imageLeft, imageTop, showWireframe);
+    }
+
+    /**
+     * Toggle RCA wireframe visibility
+     */
+    toggleRCAWireframe(visible: boolean): void {
+        if (this.rcaOverlay) {
+            this.rcaOverlay.toggleWireframe(visible);
+        }
+    }
+
+    /**
+     * Disable RCA overlay
+     */
+    disableRCAOverlay(): void {
+        if (this.rcaOverlay) {
+            log.debug('[MainView] Disabling RCA overlay');
+            this.rcaOverlay.disable();
+        }
+    }
+
+    /**
+     * Update RCA overlay transform when zoom/pan changes
+     */
+    private updateRCATransform(): void {
+        if (this.rcaOverlay?.isEnabled()) {
+            // Get the actual image position and scale on canvas
+            const image = this.actualImage || this.expectedImage;
+            const imageLeft = image?.left || 0;
+            const imageTop = image?.top || 0;
+            const imageScaleX = image?.scaleX || 1;
+
+            this.rcaOverlay.updateImageTransform(imageScaleX, imageLeft, imageTop);
+        }
+    }
+
+    /**
+     * Highlight a specific DOM change on the canvas
+     */
+    highlightRCAChange(change: DOMChange | null): void {
+        if (this.rcaOverlay?.isEnabled()) {
+            this.rcaOverlay.highlightChange(change);
+        }
+    }
+
+    /**
+     * Highlight a specific DOM node on the canvas
+     */
+    highlightRCANode(node: DOMNode | null): void {
+        if (this.rcaOverlay?.isEnabled()) {
+            this.rcaOverlay.highlightNode(node);
+        }
+    }
+
+    /**
+     * Check if RCA overlay is currently enabled
+     */
+    isRCAEnabled(): boolean {
+        return this.rcaOverlay?.isEnabled() ?? false;
+    }
+
 }

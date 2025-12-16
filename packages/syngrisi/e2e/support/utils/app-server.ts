@@ -120,6 +120,8 @@ export async function launchAppServer(
     SYNGRISI_COVERAGE: coverageFlag === 'true' ? 'true' : 'false',
     // Only enable test mode if not explicitly set to false (allows real SSO testing)
     SYNGRISI_TEST_MODE: runtimeEnv.SYNGRISI_TEST_MODE ?? 'true',
+    // Enable RCA by default for tests
+    SYNGRISI_RCA: 'true',
     ...additionalEnv,
   };
 
@@ -163,7 +165,7 @@ export async function launchAppServer(
   const spawnOptions = {
     cwd: cmdPath,
     env: spawnEnv,
-    stdio: ["ignore", "pipe", "pipe"] as const,
+    stdio: ["ignore", "pipe", "pipe"],
   };
 
   // Retry logic for backend early exit (SIGINT during startup)
@@ -174,11 +176,13 @@ export async function launchAppServer(
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      backend = spawn(command, args, spawnOptions);
+      backend = spawn(command, args, spawnOptions as any);
       backendLogs = startBackendLogCapture(backend);
 
+      if (!backend) throw new Error('Failed to spawn backend process');
+
       await Promise.race([
-        waitForHttp(`${baseURL}/v1/app/info`, 120_000),
+        waitForHttp(`${baseURL}/v1/app/info`, 30_000),
         once(backend, "exit").then(([code, signal]) => {
           throw new Error(
             `Backend exited early (code=${code} signal=${signal}).\n${backendLogs()}`,
@@ -241,9 +245,13 @@ async function waitForHttp(url: string, timeoutMs: number): Promise<void> {
 function isHttpServiceAvailable(url: string): Promise<boolean> {
   return new Promise((resolve) => {
     const req = http
-      .request(url, { method: 'GET' }, (res) => {
+      .request(url, { method: 'GET', timeout: 5000 }, (res) => {
         res.resume();
         resolve(!!res.statusCode && res.statusCode < 500);
+      })
+      .on("timeout", () => {
+        req.destroy();
+        resolve(false);
       })
       .on("error", () => resolve(false));
     req.end();
@@ -324,6 +332,28 @@ export async function ensureServerReady(port: number, timeoutMs = 30_000): Promi
   }
 
   backendLogger.info(`✓ Server ready at ${baseUrl}`);
+}
+
+export async function waitForServerStop(cid?: number, timeoutMs = 25000): Promise<void> {
+  const effectiveCid = cid ?? getCid();
+  // Logic duplicated from launchAppServer to determine port
+  // Note: We assume standard port calculation here as stopping relies on killing the process by name signature usually,
+  // but to verify it's stopped we check the port.
+  // If SYNGRISI_APP_PORT is strictly set in env it overrides everything.
+  const runtimeEnv = process.env;
+  const envPort = runtimeEnv.SYNGRISI_APP_PORT;
+
+  // If we can't determine the exact port easily (complex env overrides), we might rely on pkill only,
+  // but for E2E standard runs:
+  const port = envPort ? parseInt(envPort, 10) : 3002 + effectiveCid;
+
+  await waitFor(async () => !(await isServerRunning(port)), {
+    timeoutMs,
+    intervalMs: 200,
+    description: `server port ${port} to stop accepting connections`
+  });
+
+  backendLogger.info(`✓ Server stopped (port ${port} closed)`);
 }
 
 function startBackendLogCapture(child: Child): () => string {

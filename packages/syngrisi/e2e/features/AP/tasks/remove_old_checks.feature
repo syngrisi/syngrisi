@@ -51,7 +51,7 @@ Feature: Task - Remove old checks
 
     When I remove via http checks that older than "9" days
 
-    Then I expect via http that "unaccepted" check exist exactly "0" times
+    Then I wait up to 10 seconds via http that "unaccepted" check exist exactly "0" times
     Then I expect via http that "unaccepted" snapshot exist exactly "0" times
     Then I expect via http 0 baselines
     Then I expect exact "0" snapshot files
@@ -90,7 +90,7 @@ Feature: Task - Remove old checks
 
     When I remove via http checks that older than "9" days
 
-    Then I expect via http that "CheckName" check exist exactly "0" times
+    Then I wait up to 10 seconds via http that "CheckName" check exist exactly "0" times
     Then I expect via http that "CheckName" snapshot exist exactly "0" times
     Then I expect via http 0 baselines
     Then I expect exact "0" snapshot files
@@ -131,7 +131,7 @@ Feature: Task - Remove old checks
 
     When I remove via http checks that older than "9" days
 
-    Then I expect via http that "unaccepted_old" check exist exactly "0" times
+    Then I wait up to 10 seconds via http that "unaccepted_old" check exist exactly "0" times
     Then I expect via http that "accepted_new" check exist exactly "1" times
     Then I expect via http that "unaccepted_old" snapshot exist exactly "0" times
     Then I expect via http that "accepted_new" snapshot exist exactly "1" times

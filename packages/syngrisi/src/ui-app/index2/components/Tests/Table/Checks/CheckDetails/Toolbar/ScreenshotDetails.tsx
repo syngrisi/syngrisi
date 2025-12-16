@@ -33,9 +33,12 @@ interface Props {
     mainView: any
     check: any
     apikey?: string
+    rcaEnabled?: boolean
 }
 
-export function ScreenshotDetails({ mainView, check = {}, apikey }: Props) {
+export function ScreenshotDetails({
+    mainView, check = {}, apikey, rcaEnabled,
+}: Props) {
     const { classes } = useStyles();
 
     const checkResult = check.result ? JSON.parse(check.result) : null;
@@ -101,15 +104,17 @@ export function ScreenshotDetails({ mainView, check = {}, apikey }: Props) {
                 </Group>
             </Tooltip>
 
-            <Tooltip label={`Actual image date: ${actualDateFull}`} withinPortal>
-                <Group spacing={2} noWrap>
-                    <IconCalendar size={16} className={classes.iconLabel} />
-                    <Text className={classes.labelText}>Date:</Text>
-                    <Badge color="blue" radius="sm" className={classes.infoBadges} data-check="image-date">
-                        {actualDateShort}
-                    </Badge>
-                </Group>
-            </Tooltip>
+            {!rcaEnabled && (
+                <Tooltip label={`Actual image date: ${actualDateFull}`} withinPortal>
+                    <Group spacing={2} noWrap>
+                        <IconCalendar size={16} className={classes.iconLabel} />
+                        <Text className={classes.labelText}>Date:</Text>
+                        <Badge color="blue" radius="sm" className={classes.infoBadges} data-check="image-date">
+                            {actualDateShort}
+                        </Badge>
+                    </Group>
+                </Tooltip>
+            )}
 
             {hasDiff && (
                 <Tooltip label={`Images difference: ${diffPercent}%`} withinPortal>

@@ -5,7 +5,7 @@
  * @module PlaywrightDriver
  */
 import { createHash } from 'node:crypto'
-import { SyngrisiApi, SessionResponse, ErrorObject, SnapshotResponse, Snapshot, CheckResponse } from '@syngrisi/core-api'
+import { SyngrisiApi, SessionResponse, ErrorObject, SnapshotResponse, Snapshot, CheckResponse, DomNode } from '@syngrisi/core-api'
 import { Browser, Page } from '@playwright/test'
 import { ViewportSize } from 'playwright-core'
 import { LogLevelDesc } from 'loglevel'
@@ -255,11 +255,12 @@ export class PlaywrightDriver {
      *   suppressErrors: false
      * });
      */
-    async check({ checkName, imageBuffer, params, domDump, suppressErrors = false }: {
+    async check({ checkName, imageBuffer, params, domDump, collectDom = false, suppressErrors = false }: {
         checkName: string,
         imageBuffer: Buffer,
         params: CheckParams,
-        domDump?: any,
+        domDump?: DomNode,
+        collectDom?: boolean,
         suppressErrors?: boolean
     }) {
         // console.log(params)
@@ -270,6 +271,22 @@ export class PlaywrightDriver {
         if (!Buffer.isBuffer(imageBuffer)) throw new Error('check - wrong imageBuffer')
         let opts: CheckOptions | null = null
         const hash = createHash('sha512').update(imageBuffer).digest('hex')
+
+        // Check if DOM data should be skipped (via env var or option)
+        // Default: skipDomData is true (disabled) unless explicitly enabled via env var or params
+        const skipDomData = params?.skipDomData ?? (process.env.SYNGRISI_DISABLE_DOM_DATA !== 'false')
+
+        // Auto-collect DOM if requested and not already provided (unless skipDomData is set)
+        let finalDomDump = domDump
+        if (collectDom && !domDump && !skipDomData) {
+            try {
+                const collected = await this.collectDomDump()
+                finalDomDump = collected ?? undefined
+            } catch (e) {
+                log.warn(`Failed to collect DOM dump: ${e}`)
+            }
+        }
+
         try {
             opts = {
                 // ident:  ['name', 'viewport', 'browserName', 'os', 'app', 'branch'];
@@ -295,7 +312,8 @@ export class PlaywrightDriver {
                 browserFullVersion: this.params.test.browserFullVersion,
 
                 hashCode: hash || '',
-                domDump: domDump,
+                domDump: skipDomData ? undefined : finalDomDump,
+                skipDomData: skipDomData || undefined,
             }
             paramsGuard(opts, 'check, opts', CheckOptionsSchema)
 
@@ -343,6 +361,133 @@ export class PlaywrightDriver {
         } catch (e: any) {
             log.error(`cannot create check, params: '${JSON.stringify(params)}' opts: '${JSON.stringify(opts)}, error: '${e.stack || e.toString()}'`)
             throw e
+        }
+    }
+
+    /**
+     * Collects DOM tree from the current page for RCA (Root Cause Analysis).
+     * This method captures the DOM structure along with computed styles and bounding rectangles.
+     *
+     * @returns {Promise<DomNode | null>} - The collected DOM tree or null if collection fails.
+     * @example
+     * const driver = new PlaywrightDriver({ page, url: 'http://syngrisi-server.com', apiKey: 'your-api-key' });
+     * const domDump = await driver.collectDomDump();
+     * // Use with check:
+     * await driver.check({
+     *   checkName: 'Homepage',
+     *   imageBuffer: screenshot,
+     *   params: {},
+     *   domDump: domDump
+     * });
+     * // Or use collectDom option:
+     * await driver.check({
+     *   checkName: 'Homepage',
+     *   imageBuffer: screenshot,
+     *   params: {},
+     *   collectDom: true // Auto-collects DOM
+     * });
+     */
+    async collectDomDump(): Promise<DomNode | null> {
+        try {
+            const domDump = await this.page.evaluate(() => {
+                const MAX_DEPTH = 15
+                const MAX_TEXT_LENGTH = 200
+                const SKIP_TAGS = ['SCRIPT', 'STYLE', 'NOSCRIPT', 'META', 'LINK', 'HEAD', 'SVG', 'PATH']
+                const STYLES_TO_CAPTURE = [
+                    'display', 'visibility', 'opacity',
+                    'position', 'top', 'right', 'bottom', 'left',
+                    'width', 'height', 'min-width', 'min-height', 'max-width', 'max-height',
+                    'margin', 'margin-top', 'margin-right', 'margin-bottom', 'margin-left',
+                    'padding', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left',
+                    'border', 'border-width', 'border-style', 'border-color', 'border-radius',
+                    'background-color', 'color',
+                    'font-family', 'font-size', 'font-weight', 'line-height', 'text-align',
+                    'text-decoration', 'text-transform', 'letter-spacing',
+                    'overflow', 'overflow-x', 'overflow-y',
+                    'z-index', 'transform',
+                    'flex', 'flex-direction', 'flex-wrap', 'justify-content', 'align-items', 'align-content', 'gap',
+                    'grid-template-columns', 'grid-template-rows', 'grid-gap',
+                    'box-shadow',
+                ]
+
+                function isVisible(el: Element): boolean {
+                    const style = window.getComputedStyle(el)
+                    if (style.display === 'none' || style.visibility === 'hidden' || parseFloat(style.opacity) === 0) {
+                        return false
+                    }
+                    const rect = el.getBoundingClientRect()
+                    return rect.width > 0 && rect.height > 0
+                }
+
+                function getAttributes(el: Element): Record<string, string> {
+                    const attrs: Record<string, string> = {}
+                    for (const attr of Array.from(el.attributes)) {
+                        if (!attr.name.startsWith('data-') || attr.name === 'data-testid') {
+                            attrs[attr.name] = attr.value
+                        }
+                    }
+                    return attrs
+                }
+
+                function getComputedStyles(el: Element): Record<string, string> {
+                    const computed = window.getComputedStyle(el)
+                    const styles: Record<string, string> = {}
+                    for (const prop of STYLES_TO_CAPTURE) {
+                        const value = computed.getPropertyValue(prop)
+                        if (value && value !== 'initial' && value !== 'none' && value !== 'normal' && value !== 'auto' && value !== '0px' && value !== 'rgba(0, 0, 0, 0)') {
+                            const camelProp = prop.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())
+                            styles[camelProp] = value
+                        }
+                    }
+                    return styles
+                }
+
+                function getDirectText(el: Element): string | undefined {
+                    let text = ''
+                    for (const child of Array.from(el.childNodes)) {
+                        if (child.nodeType === Node.TEXT_NODE) {
+                            text += child.textContent?.trim() || ''
+                        }
+                    }
+                    const trimmed = text.trim()
+                    if (!trimmed) return undefined
+                    return trimmed.length > MAX_TEXT_LENGTH ? trimmed.substring(0, MAX_TEXT_LENGTH) + '...' : trimmed
+                }
+
+                function collectNode(el: Element, depth: number = 0): any {
+                    if (depth > MAX_DEPTH) return null
+                    if (!isVisible(el)) return null
+                    if (SKIP_TAGS.includes(el.tagName)) return null
+
+                    const rect = el.getBoundingClientRect()
+                    const children: any[] = []
+                    for (const child of Array.from(el.children)) {
+                        const childNode = collectNode(child, depth + 1)
+                        if (childNode) children.push(childNode)
+                    }
+
+                    return {
+                        tagName: el.tagName.toLowerCase(),
+                        attributes: getAttributes(el),
+                        rect: {
+                            x: Math.round(rect.x),
+                            y: Math.round(rect.y),
+                            width: Math.round(rect.width),
+                            height: Math.round(rect.height),
+                        },
+                        computedStyles: getComputedStyles(el),
+                        children,
+                        text: getDirectText(el),
+                    }
+                }
+
+                return collectNode(document.body)
+            })
+
+            return domDump as DomNode | null
+        } catch (e: any) {
+            log.warn(`Failed to collect DOM dump: ${e.message}`)
+            return null
         }
     }
 

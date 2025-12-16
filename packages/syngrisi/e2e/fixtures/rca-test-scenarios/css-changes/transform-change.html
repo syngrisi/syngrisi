@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RCA Test - CSS Transform Change</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; padding: 20px; background: #ffffff; }
+        .container { max-width: 600px; margin: 0 auto; padding-top: 50px; }
+        .card {
+            background: #3498db;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            width: 300px;
+            height: 150px;
+            transform: rotate(5deg) scale(1.1);
+        }
+        .card h2 { font-size: 20px; margin-bottom: 10px; }
+        .card p { font-size: 14px; line-height: 1.5; }
+        .button {
+            display: inline-block;
+            background: #27ae60;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 10px;
+            transform: skewX(-5deg);
+        }
+        .info-box {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            margin-top: 40px;
+            font-size: 14px;
+            color: #333;
+            transform: translateY(20px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card" data-id="main-card">
+            <h2>Welcome</h2>
+            <p>This is a styled card component for testing CSS changes.</p>
+            <span class="button">Click Me</span>
+        </div>
+        <div class="info-box" data-id="info-box">
+            Additional information displayed in a box.
+        </div>
+    </div>
+</body>
+</html>

@@ -253,6 +253,7 @@ macOS/Linux: `export SYNGRISI_LOG_LEVEL=debug`
 `ENV_POSTFIX` - will add to platform property, you can use this to set some unique platform name for particular
 environment
 `SYNGRISI_LOG_LEVEL` - logging level (`"trace" | "debug" | "info" | "warn" | "error"`)
+`SYNGRISI_DISABLE_DOM_DATA` - disable DOM data collection for RCA (`"true" | "false"`), default: `"true"`
 
 ## Documentation
 

@@ -5,4 +5,5 @@ export { TestsService } from '@shared/services/tests.service';
 export { UsersService } from '@shared/services/users.service';
 export { GenericService } from '@shared/services/generic.service';
 export { imagePreloadService, ImagePreloadService } from '@shared/services/imagePreload.service';
+export { RCAService } from '@shared/services/rca.service';
 export type { ICheck } from '@shared/services/imagePreload.service';

@@ -47,6 +47,8 @@ export interface CheckParams {
     browserFullVersion?: string,
     /** When true, automatically accept new checks (status='new') as baseline */
     autoAccept?: boolean,
+    /** Skip sending DOM data even if collected. Useful for tests that don't need RCA. */
+    skipDomData?: boolean,
 }
 
 export interface CheckResult {

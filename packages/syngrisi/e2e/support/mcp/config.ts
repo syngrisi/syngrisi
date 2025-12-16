@@ -24,8 +24,8 @@ export const env = cleanEnv(process.env, {
     default: '127.0.0.1',
   }),
   MCP_IDLE_TIMEOUT_MS: str({
-    default: '600000',
-    desc: 'Auto-shutdown timeout after inactivity in milliseconds (default: 10 minutes)'
+    default: '1200000',
+    desc: 'Auto-shutdown timeout after inactivity in milliseconds (default: 20 minutes)'
   }),
   MCP_IDLE_CHECK_INTERVAL_MS: str({
     default: '60000',
@@ -37,14 +37,14 @@ export const env = cleanEnv(process.env, {
 export const DEFAULT_PORT = 0;
 export const MCP_TEST_ENGINE_DEBUG_PORT = 5252; // Fixed port for test engine MCP server
 export const DEFAULT_TIMEOUT_MS = 3_600_000; // 1 hour
-export const SERVER_READY_TIMEOUT_MS = 15_000;
+export const SERVER_READY_TIMEOUT_MS = 60_000;
 export const SHUTDOWN_TIMEOUT_MS = 3_600_000; // 1 hour
 export const PORT_SEARCH_ATTEMPTS = 20;
 export const GRACEFUL_SHUTDOWN_TIMEOUT_MS = 5_000;
 
 // Auto-shutdown timeout after inactivity (configurable via MCP_IDLE_TIMEOUT_MS env var)
 // Read from process.env directly to support runtime changes (e.g., in spawned processes)
-export const getIdleTimeoutMs = () => parseInt(process.env.MCP_IDLE_TIMEOUT_MS || '600000', 10);
+export const getIdleTimeoutMs = () => parseInt(process.env.MCP_IDLE_TIMEOUT_MS || '1200000', 10);
 export const getIdleCheckIntervalMs = () => parseInt(process.env.MCP_IDLE_CHECK_INTERVAL_MS || '60000', 10);
 
 // Deprecated: Use getIdleTimeoutMs() instead

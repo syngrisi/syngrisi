@@ -112,7 +112,7 @@ export function Header(
                             data-check="check-name"
                             sx={{ flexShrink: 1 }}
                             lineClamp={1}
-                            // className={classes.checkPathFragment}
+                        // className={classes.checkPathFragment}
                         >
                             &nbsp;/&nbsp;
                             {currentCheck.name || textLoader}

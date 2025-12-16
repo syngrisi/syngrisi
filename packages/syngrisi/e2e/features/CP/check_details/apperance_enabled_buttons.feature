@@ -66,6 +66,7 @@ Feature: Enabled disabled buttons on Check Details Modal Window - Special Cases
     # view segment
     Then the element with locator "[data-segment-value='expected']" should have attribute "data-segment-disabled" "false"
     Then the element with locator "[data-segment-value='actual']" should have attribute "data-segment-disabled" "false"
+    When I wait until element "[data-segment-value='diff']" has attribute "data-segment-disabled" with value "false"
     Then the element with locator "[data-segment-value='diff']" should have attribute "data-segment-disabled" "false"
     Then the element with locator "[data-segment-value='slider']" should have attribute "data-segment-disabled" "false"
 

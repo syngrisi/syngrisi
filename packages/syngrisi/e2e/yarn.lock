@@ -483,10 +483,10 @@
     color "^5.0.2"
     text-hex "1.0.x"
 
-"@syngrisi/core-api@^2.5.2":
-  version "2.5.2"
-  resolved "https://registry.yarnpkg.com/@syngrisi/core-api/-/core-api-2.5.2.tgz#ff22a7c859170c865dc5f733a717c65d723b952b"
-  integrity sha512-r/S9Ci32EuKmaLXfxd2y8YhuauLewVUEFwF7kGc8Pyy2+c31bZjW6A5QUreTRdEOfaRQaKfy/1nTQXhAQQhSdg==
+"@syngrisi/core-api@^2.6.1":
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/@syngrisi/core-api/-/core-api-2.6.1.tgz#19986c7f513a33e0a4e78ada67440bc24b8b7689"
+  integrity sha512-I8RLKMXTplnef3nQMORWtikBnh86Trwl+GAnRhXig0IFZY77LxMuYQu1qLIQ4VUzxy2+uZKT0wA7/8iPhmzgzg==
   dependencies:
     "@wdio/logger" "^9.18.0"
     "@wdio/types" "^9.20.0"
@@ -495,9 +495,9 @@
     zod "^4.1.13"
 
 "@syngrisi/wdio-sdk@file:../../wdio-sdk":
-  version "2.5.2"
+  version "2.6.1"
   dependencies:
-    "@syngrisi/core-api" "^2.5.2"
+    "@syngrisi/core-api" "^2.6.1"
     "@wdio/globals" "^9.17.0"
     "@wdio/types" "^9.20.0"
     form-data "^4.0.5"

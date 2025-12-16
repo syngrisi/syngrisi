@@ -1,8 +1,8 @@
 metadata:
   category: common/other
-  generatedAt: '2025-12-12T15:43:17.922Z'
+  generatedAt: '2025-12-15T05:55:29.444Z'
   totalFiles: 4
-  totalSteps: 18
+  totalSteps: 19
   sourceFiles:
     - steps/common/demo.steps.ts
     - steps/common/dialog.steps.ts
@@ -118,6 +118,9 @@ steps:
   - pattern: I wait until element {string} contains text {string}
     description: ''
     line: 20
+  - pattern: I wait until element {string} has attribute {string} with value {string}
+    description: ''
+    line: 170
   - pattern: I wait until the css attribute {string} from element {string} is {string}
     description: ''
     line: 117

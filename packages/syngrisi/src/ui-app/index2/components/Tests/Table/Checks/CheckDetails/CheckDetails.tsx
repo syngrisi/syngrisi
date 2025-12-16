@@ -2,8 +2,8 @@
 import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { fabric } from 'fabric';
-import { createStyles, Group, Loader, Stack } from '@mantine/core';
-import { useDisclosure, useDocumentTitle } from '@mantine/hooks';
+import { createStyles, Group, Loader, Stack, Box } from '@mantine/core';
+import { useDisclosure, useDocumentTitle, useHotkeys } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { MainView } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/mainView';
 import { createImageAndWaitForLoad, imageFromUrl, imageFromElement } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/helpers';
@@ -16,6 +16,7 @@ import { Toolbar } from '@index/components/Tests/Table/Checks/CheckDetails/Toolb
 import { Header } from '@index/components/Tests/Table/Checks/CheckDetails/Header';
 import { Canvas } from '@index/components/Tests/Table/Checks/CheckDetails/Canvas/Canvas';
 import { log } from '@shared/utils/Logger';
+import { RCAPanel, useRCA } from '@index/components/Tests/Table/Checks/CheckDetails/RCA';
 
 // eslint-disable-next-line no-unused-vars
 const useStyles = createStyles((theme) => ({
@@ -50,6 +51,7 @@ export function CheckDetails({
 }: Props) {
     useDocumentTitle(initCheckData?.name);
     const canvasElementRef = useRef(null);
+    const canvasContainerRef = useRef(null);
     const { query, setQuery } = useParams();
     const { classes } = useStyles();
     const [mainView, setMainView] = useState<MainView | null>(null);
@@ -60,6 +62,57 @@ export function CheckDetails({
 
     const currentCheck = initCheckData;
     const textLoader = <Loader size="xs" color="blue" variant="dots" />;
+
+    // Fetch baseline document to get the correct baselineId (needed for RCA)
+    // Note: currentCheck.baselineId._id is the Snapshot ID, not Baseline document ID!
+    const baselineQuery = useQuery(
+        [
+            'baseline_by_snapshot_id',
+            currentCheck?.baselineId._id,
+        ],
+        () => GenericService.get(
+            'baselines',
+            { snapshootId: currentCheck?.baselineId._id },
+            {
+                populate: 'app',
+                limit: '1',
+                includeUsage: 'true',
+            },
+            'baseline_by_snapshot_id',
+        ),
+        {
+            enabled: true,
+            refetchOnWindowFocus: false,
+            onError: (e) => {
+                errorMsg({ error: e });
+            },
+        },
+    );
+
+    // Extract the actual Baseline document ID from the query result
+    const baselineId = useMemo<string>(() => {
+        if (baselineQuery.data?.results && baselineQuery.data?.results.length > 0) {
+            return baselineQuery.data?.results[0]._id as string;
+        }
+        return '';
+    }, [baselineQuery.data?.results]);
+
+    const usageCount = useMemo<number>(() => {
+        if (baselineQuery.data?.results && baselineQuery.data?.results.length > 0) {
+            return baselineQuery.data?.results[0].usageCount || 0;
+        }
+        return 0;
+    }, [baselineQuery.data?.timestamp]);
+
+    // RCA (Root Cause Analysis) hook - uses correct Baseline document ID
+    const rca = useRCA({
+        checkId: initCheckData?._id || null,
+        baselineId: baselineId || null,  // Use computed baselineId, not Snapshot ID!
+        shareToken: query.share || undefined,
+    });
+
+    // Hotkey for RCA toggle (D key)
+    useHotkeys([['d', () => rca.toggle()]]);
 
     useEffect(() => {
         if (initCheckData?._id) {
@@ -103,45 +156,6 @@ export function CheckDetails({
         wasAcceptedEarlier: currentCheck?.wasAcceptedEarlier,
     };
 
-    const baselineQuery = useQuery(
-        [
-            'baseline_by_snapshot_id',
-            currentCheck?.baselineId._id,
-        ],
-        () => GenericService.get(
-            'baselines',
-            { snapshootId: currentCheck?.baselineId?._id },
-            {
-                populate: 'app',
-                limit: '1',
-                includeUsage: 'true',
-                share: apikey,
-            },
-            'baseline_by_snapshot_id',
-        ),
-        {
-            enabled: true,
-            refetchOnWindowFocus: false,
-            onError: (e) => {
-                errorMsg({ error: e });
-            },
-        },
-    );
-
-    const baselineId = useMemo<string>(() => {
-        if (baselineQuery.data?.results && baselineQuery.data?.results.length > 0) {
-            return baselineQuery.data?.results[0]._id as string;
-        }
-        return '';
-    }, [baselineQuery.data?.results]);
-
-    const usageCount = useMemo<number>(() => {
-        if (baselineQuery.data?.results && baselineQuery.data?.results.length > 0) {
-            return baselineQuery.data?.results[0].usageCount || 0;
-        }
-        return 0;
-    }, [baselineQuery.data?.timestamp]);
-
     const settingsQuery = useQuery(
         ['settings-public'],
         () => GenericService.get('settings/public'),
@@ -156,6 +170,13 @@ export function CheckDetails({
         const valueIsTrue = setting.value === 'true' || setting.value === true;
         const isEnabled = setting.enabled !== false;
         return valueIsTrue && isEnabled;
+    }, [settingsQuery.data]);
+
+    const isRCAEnabled = useMemo(() => {
+        if (!settingsQuery.data) return false;
+        const setting = settingsQuery.data.find((s: any) => s.name === 'rca_enabled');
+        if (!setting) return false;
+        return setting.value === true || setting.value === 'true';
     }, [settingsQuery.data]);
 
     // Navigation Logic
@@ -317,7 +338,9 @@ export function CheckDetails({
             if (!isMounted) return;
 
             const actual = currentCheck.actualSnapshotId || null;
-            canvasElementRef.current.style.height = `${MainView.calculateExpectedCanvasViewportAreaSize().height - 10}px`;
+            if (canvasContainerRef.current) {
+                canvasContainerRef.current.style.height = `${MainView.calculateExpectedCanvasViewportAreaSize().height - 10}px`;
+            }
 
             const MV = new MainView(
                 {
@@ -412,6 +435,55 @@ export function CheckDetails({
         baselineId,
     ]);
 
+    // Sync RCA overlay with MainView
+    useEffect(function syncRCAWithMainView() {
+        if (!mainView) return;
+
+        // Set callbacks for RCA overlay events
+        mainView.setRCACallbacks({
+            onElementHover: (node) => {
+                rca.setHoveredElement(node);
+            },
+            onElementClick: (node, change) => {
+                if (change) {
+                    rca.selectChange(change);
+                }
+                rca.selectElement(node);
+            },
+        });
+
+        // Enable/disable overlay based on RCA state
+        if (rca.state.isEnabled && rca.state.actualDom && rca.state.diffResult) {
+            mainView.enableRCAOverlay(
+                rca.state.actualDom,
+                rca.state.baselineDom,
+                rca.state.diffResult.changes,
+                rca.state.isWireframeEnabled
+            );
+        } else {
+            mainView.disableRCAOverlay();
+        }
+    }, [
+        mainView,
+        rca.state.isEnabled,
+        rca.state.actualDom,
+        rca.state.baselineDom,
+        rca.state.diffResult,
+        rca.state.isWireframeEnabled,
+    ]);
+
+    // Sync wireframe state
+    useEffect(function syncRCAWireframe() {
+        if (!mainView || !rca.state.isEnabled) return;
+        mainView.toggleRCAWireframe(rca.state.isWireframeEnabled);
+    }, [mainView, rca.state.isEnabled, rca.state.isWireframeEnabled]);
+
+    // Highlight selected change on canvas
+    useEffect(function highlightSelectedRCAChange() {
+        if (!mainView || !rca.state.isEnabled) return;
+        mainView.highlightRCAChange(rca.state.selectedChange);
+    }, [mainView, rca.state.isEnabled, rca.state.selectedChange]);
+
     // Handle dirty state updates from canvas events
     useEffect(() => {
         if (!mainView?.canvas) return;
@@ -433,6 +505,22 @@ export function CheckDetails({
             mainView.canvas.off(events);
         };
     }, [mainView]);
+
+    // Handle resize when RCA panel toggles
+    useEffect(() => {
+        if (!mainView || !canvasElementRef.current) return;
+
+        // Small timeout to allow layout to update
+        const timer = setTimeout(() => {
+            const newWidth = canvasElementRef.current.clientWidth;
+            const newHeight = canvasElementRef.current.clientHeight;
+            if (mainView.needsCanvasResize(newWidth, newHeight)) {
+                mainView.resizeCanvas(newWidth, newHeight);
+            }
+        }, 50);
+
+        return () => clearTimeout(timer);
+    }, [mainView, rca.state.isPanelOpen]);
 
     // Native window alert for closing tab/window
     useEffect(() => {
@@ -473,13 +561,19 @@ export function CheckDetails({
                     isFirstTest={currentTestIndex <= 0}
                     isLastTest={currentTestIndex === testList.length - 1}
                     navigationReady={!siblingChecksQuery.isLoading && siblingChecks.length > 0 && currentCheckIndex >= 0}
+                    rcaEnabled={rca.state.isEnabled}
+                    isRCAFeatureEnabled={isRCAEnabled}
+                    onToggleRCA={rca.toggle}
+                    rcaStats={rca.state.diffResult?.stats}
+                    isWireframeEnabled={rca.state.isWireframeEnabled}
+                    onToggleWireframe={rca.toggleWireframe}
                     isShareEnabled={isShareEnabled}
                     apikey={apikey}
                 />
 
                 <Group
                     spacing={4}
-                    align="start"
+                    align="stretch"
                     sx={{ width: '100%' }}
                     noWrap
                 >
@@ -494,12 +588,49 @@ export function CheckDetails({
                         />
                     )}
 
-                    {/* Canvas container */}
-                    <Canvas
-                        canvasElementRef={canvasElementRef}
-                        isRelatedOpened={relatedRendered && relatedChecksOpened}
-                        isLoading={!mainView}
-                    />
+                    {/* Canvas container with split view for RCA panel */}
+                    <Box
+                        ref={canvasContainerRef}
+                        style={{
+                            flex: 1, display: 'flex', minWidth: 0, position: 'relative', overflow: 'hidden',
+                        }}
+                    >
+                        <Box style={{
+                            flex: 1, position: 'relative', minWidth: 0, overflow: 'hidden',
+                        }}
+                        >
+                            <Canvas
+                                canvasElementRef={canvasElementRef}
+                                isRelatedOpened={relatedRendered && relatedChecksOpened}
+                                isLoading={!mainView}
+                            />
+                        </Box>
+
+                        {/* RCA Panel - positioned as side panel */}
+                        {rca.state.isPanelOpen && (
+                            <Box
+                                style={{
+                                    width: '500px',
+                                    flexShrink: 0,
+                                    borderLeft: '1px solid var(--mantine-color-dark-4)',
+                                    backgroundColor: 'var(--mantine-color-dark-7)',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    overflow: 'hidden',
+                                }}
+                            >
+                                <RCAPanel
+                                    isLoading={rca.state.isLoading}
+                                    error={rca.state.error}
+                                    diffResult={rca.state.diffResult}
+                                    selectedChange={rca.state.selectedChange}
+                                    selectedElement={rca.state.selectedElement}
+                                    onSelectChange={rca.selectChange}
+                                    onClose={rca.disable}
+                                />
+                            </Box>
+                        )}
+                    </Box>
                 </Group>
             </Stack>
         </Group>

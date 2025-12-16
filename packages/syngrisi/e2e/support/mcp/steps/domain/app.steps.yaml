@@ -1,8 +1,8 @@
 metadata:
   category: domain/app
-  generatedAt: '2025-12-12T15:43:17.922Z'
-  totalFiles: 19
-  totalSteps: 130
+  generatedAt: '2025-12-15T05:55:29.444Z'
+  totalFiles: 21
+  totalSteps: 145
   sourceFiles:
     - steps/domain/ai.steps.ts
     - steps/domain/api-key.steps.ts
@@ -19,6 +19,8 @@ metadata:
     - steps/domain/http/users-http.steps.ts
     - steps/domain/mcp.steps.ts
     - steps/domain/navigation.steps.ts
+    - steps/domain/rca-scenarios.steps.ts
+    - steps/domain/rca.steps.ts
     - steps/domain/server.steps.ts
     - steps/domain/sso.steps.ts
     - steps/domain/stored-values.steps.ts
@@ -374,21 +376,66 @@ steps:
   - pattern: the current url contains {string}
     description: ''
     line: 105
+  - pattern: I create RCA actual check with {string}
+    description: ''
+    line: 323
+  - pattern: I create RCA actual check with {string} with DOM collection enabled
+    description: ''
+    line: 337
+  - pattern: I create RCA actual check with {string} without DOM data
+    description: ''
+    line: 330
+  - pattern: I create RCA test with {string} as baseline
+    description: ''
+    line: 227
+  - pattern: I create RCA test with {string} as baseline with DOM collection enabled
+    description: ''
+    line: 241
+  - pattern: I create RCA test with {string} as baseline without DOM data
+    description: ''
+    line: 234
+  - pattern: the RCA panel should show added elements
+    description: ''
+    line: 433
+  - pattern: the RCA panel should show changes summary
+    description: ''
+    line: 524
+  - pattern: the RCA panel should show no DOM data message
+    description: ''
+    line: 501
+  - pattern: the RCA panel should show removed elements
+    description: ''
+    line: 450
+  - pattern: the RCA panel should show style changes
+    description: ''
+    line: 484
+  - pattern: the RCA panel should show text changes
+    description: ''
+    line: 467
+  - pattern: I create RCA demo actual check with DOM changes
+    description: Accepts the baseline and creates actual check with broken state
+    line: 337
+  - pattern: I create RCA demo test with baseline DOM
+    description: Creates a test with real screenshot and DOM from test app (normal state)
+    line: 263
+  - pattern: I take RCA debug screenshot {string}
+    description: Step to take RCA debug screenshot
+    line: 428
   - pattern: I clear database
     description: ''
-    line: 218
+    line: 233
   - pattern: I clear Database and stop Server
     description: ''
-    line: 152
+    line: 166
   - pattern: I clear screenshots folder
     description: ''
-    line: 228
+    line: 243
   - pattern: 'I set env variables:'
     description: ''
     line: 36
   - pattern: I start Driver
     description: ''
-    line: 198
+    line: 213
   - pattern: I start Server
     description: ''
     line: 97
@@ -397,7 +444,7 @@ steps:
     line: 64
   - pattern: I stop Server
     description: ''
-    line: 135
+    line: 142
   - pattern: I stop the Syngrisi server
     description: ''
     line: 118
@@ -512,13 +559,13 @@ steps:
     line: 53
   - pattern: 'I create {string} tests with params:'
     description: ''
-    line: 478
+    line: 508
   - pattern: 'I create {string} tests with:'
     description: ''
-    line: 470
+    line: 500
   - pattern: I unfold the test {string}
     description: ''
-    line: 653
+    line: 683
   - pattern: I wait for check {string} to appear in collapsed row of test {string}
     description: |-
       Waits for a specific check to appear in the collapsed row of a test.
@@ -530,7 +577,7 @@ steps:
       ```gherkin
       When I wait for check "CheckName-1" to appear in collapsed row of test "TestName-1"
       ```
-    line: 770
+    line: 800
   - pattern: I wait for test {string} to appear in table
     description: |-
       Waits for a specific test row to appear in the table.
@@ -541,4 +588,4 @@ steps:
       ```gherkin
       When I wait for test "TestName-1" to appear in table
       ```
-    line: 673
+    line: 703

@@ -59,6 +59,11 @@ export interface CheckParams {
      * Overrides driver-level autoAccept setting.
      */
     autoAccept?: boolean,
+    /**
+     * Skip sending DOM data even if collected.
+     * Useful for tests that don't need RCA functionality.
+     */
+    skipDomData?: boolean,
 }
 
 export interface CheckResult {

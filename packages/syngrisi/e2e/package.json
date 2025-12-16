@@ -26,7 +26,7 @@
     "test:smoke-fast": "cross-env SYNGRISI_LOG_LEVEL=warn PLAYWRIGHT_BLOB_OUTPUT_DIR=reports/blob-parallel playwright test --project=chromium --grep '@smoke' --grep-invert '@saml|@sso-external|@sso-logto|@flaky' --retries=1 --workers=12 --shard=${SHARD:-1/1} --reporter=blob,list",
     "test:smoke-flaky": "cross-env SYNGRISI_LOG_LEVEL=warn PLAYWRIGHT_BLOB_OUTPUT_DIR=reports/blob-flaky playwright test --project=chromium --grep '@smoke' --grep '@flaky' --grep-invert '@saml|@sso-external|@sso-logto' --retries=1 --workers=3 --shard=${SHARD:-1/1} --reporter=blob,list",
     "test:headed": "bddgen && cross-env SYNGRISI_LOG_LEVEL=warn PLAYWRIGHT_HEADED=1 playwright test --project=chromium --grep-invert '@flaky'",
-    "test:mcp": "cross-env SYNGRISI_LOG_LEVEL=debug E2E_HEADLESS=1 playwright test --workers=1 --config support/mcp/playwright.config.ts --grep-invert '@flaky'",
+    "test:mcp": "cross-env SYNGRISI_LOG_LEVEL=debug E2E_HEADLESS=1 MCP_IDLE_TIMEOUT_MS=15000 MCP_IDLE_CHECK_INTERVAL_MS=3000 playwright test --workers=1 --config support/mcp/playwright.config.ts --grep-invert '@flaky'",
     "test:mcp:headed": "cross-env SYNGRISI_LOG_LEVEL=warn PLAYWRIGHT_HEADED=1 playwright test --workers=1 --config support/mcp/playwright.config.ts --grep-invert '@flaky'",
     "test:bench": "cross-env SYNGRISI_LOG_LEVEL=warn playwright test --config support/mcp/benchmark/playwright.benchmark.config.ts --grep-invert '@flaky'"
   },

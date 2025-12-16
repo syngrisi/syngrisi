@@ -66,7 +66,7 @@ const handleBasicAuth = async (req: ExtRequest, retryCount = 0): Promise<any> =>
         msgType: 'AUTH_API',
     };
 
-    const MAX_RETRIES = 3;
+    const MAX_RETRIES = 10;
     const RETRY_DELAY_MS = 500;
 
     const AppSettings = appSettings;

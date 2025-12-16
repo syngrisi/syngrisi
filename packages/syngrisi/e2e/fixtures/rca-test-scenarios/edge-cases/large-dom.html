@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RCA Test - Large DOM</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; padding: 10px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .header { background: #3498db; color: white; padding: 15px; margin-bottom: 10px; }
+        .row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 5px; }
+        .cell { 
+            width: 30px; 
+            height: 30px; 
+            background: #ecf0f1; 
+            border: 1px solid #bdc3c7; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 8px; 
+            color: #7f8c8d;
+        }
+        .cell:hover { background: #3498db; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Large DOM Test (1000+ elements)</h1>
+        </div>
+        <div id="grid"></div>
+    </div>
+    <script>
+        const grid = document.getElementById('grid');
+        const rows = 40;
+        const cols = 25;
+        
+        for (let i = 0; i < rows; i++) {
+            const row = document.createElement('div');
+            row.className = 'row';
+            row.setAttribute('data-row', i);
+            
+            for (let j = 0; j < cols; j++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.setAttribute('data-cell', `${i}-${j}`);
+                cell.textContent = `${i},${j}`;
+                row.appendChild(cell);
+            }
+            
+            grid.appendChild(row);
+        }
+    </script>
+</body>
+</html>

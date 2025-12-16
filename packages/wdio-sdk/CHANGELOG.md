@@ -1,5 +1,23 @@
 # @syngrisi/wdio-sdk
 
+## 3.0.0
+
+### Major Changes
+
+-   [`bfbd1c8`](https://github.com/syngrisi/syngrisi/commit/bfbd1c8b897cdf0d8806459ef84b8f435ef5be97) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - BREAKING: update getDomDump() return format for RCA compatibility
+
+    -   Change getDomDump() return format from flat array to DomNode tree structure
+    -   New format includes: tagName, attributes, rect, computedStyles, children, text
+    -   Add skipDomData parameter to disable DOM data transmission
+    -   Respect SYNGRISI_DISABLE_DOM_DATA environment variable
+
+    Migration: If you were parsing getDomDump() output directly, update your code to handle the new tree structure.
+
+### Patch Changes
+
+-   Updated dependencies [[`bfbd1c8`](https://github.com/syngrisi/syngrisi/commit/bfbd1c8b897cdf0d8806459ef84b8f435ef5be97)]:
+    -   @syngrisi/core-api@3.0.0
+
 ## 2.6.1
 
 ### Patch Changes

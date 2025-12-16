@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RCA Test - CSS Font Change</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', serif; padding: 20px; background: #ffffff; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .card {
+            background: #3498db;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            width: 300px;
+            height: 150px;
+        }
+        .card h2 { font-size: 28px; margin-bottom: 10px; font-weight: normal; font-style: italic; }
+        .card p { font-size: 16px; line-height: 1.8; letter-spacing: 1px; }
+        .button {
+            display: inline-block;
+            background: #27ae60;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: normal;
+            margin-top: 10px;
+            text-transform: uppercase;
+        }
+        .info-box {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card" data-id="main-card">
+            <h2>Welcome</h2>
+            <p>This is a styled card component for testing CSS changes.</p>
+            <span class="button">Click Me</span>
+        </div>
+        <div class="info-box" data-id="info-box">
+            Additional information displayed in a box.
+        </div>
+    </div>
+</body>
+</html>

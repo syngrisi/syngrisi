@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RCA Test - CSS Size Change</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; padding: 20px; background: #ffffff; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .card {
+            background: #3498db;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            /* CHANGED: width from 300px to 400px */
+            width: 400px;
+            /* CHANGED: height from 150px to 200px */
+            height: 200px;
+        }
+        /* CHANGED: font-size from 20px to 28px */
+        .card h2 { font-size: 28px; margin-bottom: 10px; }
+        /* CHANGED: font-size from 14px to 16px */
+        .card p { font-size: 16px; line-height: 1.5; }
+        .button {
+            display: inline-block;
+            background: #27ae60;
+            color: white;
+            /* CHANGED: padding from 10px 20px to 15px 30px */
+            padding: 15px 30px;
+            border-radius: 4px;
+            /* CHANGED: font-size from 14px to 16px */
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .info-box {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            /* CHANGED: padding from 15px to 25px */
+            padding: 25px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card" data-id="main-card">
+            <h2>Welcome</h2>
+            <p>This is a styled card component for testing CSS changes.</p>
+            <span class="button">Click Me</span>
+        </div>
+        <div class="info-box" data-id="info-box">
+            Additional information displayed in a box.
+        </div>
+    </div>
+</body>
+</html>

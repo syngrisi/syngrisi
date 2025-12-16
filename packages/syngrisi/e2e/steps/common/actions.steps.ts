@@ -877,7 +877,9 @@ When('I release key {string}', async ({ page }, key: string) => {
 
 When('I click on the element {string} via js', async ({ page }, selector: string) => {
   const locator = getLocatorQuery(page, selector);
-  await locator.first().evaluate((el: HTMLElement) => el.click());
+  const element = locator.first();
+  await element.waitFor({ state: 'attached', timeout: 15000 });
+  await element.evaluate((el: HTMLElement) => el.click());
 });
 
 When('I force click element with locator {string}', async ({ page, testData }, rawValue: string) => {

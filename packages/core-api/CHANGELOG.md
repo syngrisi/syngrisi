@@ -1,5 +1,17 @@
 # @syngrisi/core-api
 
+## 3.0.0
+
+### Minor Changes
+
+-   [`bfbd1c8`](https://github.com/syngrisi/syngrisi/commit/bfbd1c8b897cdf0d8806459ef84b8f435ef5be97) Thanks [@viktor-silakov](https://github.com/viktor-silakov)! - feat: add DOM snapshot types and compression utilities for RCA
+
+    -   Add DomNode schema for typed DOM tree representation
+    -   Add compression utilities for efficient DOM data transfer (gzip for payloads > 50KB)
+    -   Add domCollector module for browser-side DOM tree collection
+    -   Add optional skipDomData parameter to control DOM data transmission
+    -   Add SYNGRISI_DISABLE_DOM_DATA environment variable support
+
 ## 2.6.1
 
 ## 2.6.0

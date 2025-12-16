@@ -7,6 +7,7 @@ Feature: Access to admin Panel
           SYNGRISI_TEST_MODE: true
           SYNGRISI_AUTH: true
     """
+    Given I start Server
 #         Given I start Server and start Driver
 
   @smoke
